@@ -242,19 +242,15 @@ const SEVERITY_LABEL: Record<QualityAlert['severity'], string> = {
  * header (muted neutral badge + Eye icon; the sector has no authoring
  * affordances at all). r299 (E item 1): the dashboard joined its
  * siblings — its former gold ShieldCheck «وصول قراءة فقط» badge
- * retired (gold is achievements-only per the token discipline). */
+ * retired (gold is achievements-only per the token discipline).
+ * R341 t06: the sector brow «قطاع ضمان الجودة» now rides the shared
+ * PageHeader's eyebrow slot on every seat (the local QualityBrow span
+ * retired with the raw headers) — under .hr-scope the .pf-eyebrow line
+ * is re-voiced as the reference brow (ds-core.css §A1). */
 function ReadOnlyBadge() {
   return (
     <Badge icon={Eye}>قراءة فقط</Badge>
   );
-}
-
-/* R305 DS (§D): the sector brow — every oversight board opens
- * brow → strong heading so the seven surfaces read as ONE governance
- * face. A separate element (never inside the h1) keeps heading names
- * and pinned strings byte-identical. */
-function QualityBrow() {
-  return <span className="hr-brow">قطاع ضمان الجودة</span>;
 }
 
 /** R305 DS (§D): the status vocabulary rides §0's .hr-chip tones —
@@ -1646,26 +1642,24 @@ export function QualityReportsPage() {
   return (
     <div className="page">
       <div className="hr-scope">
-      <header className="page-header">
-        <div className="page-title-block">
-          {/* R305 DS (§D): the sector brow. */}
-          <QualityBrow />
-          <h1 className="page-title">
-            {/* R341 D10: [07] nav-order index register. */}
-            <span className="page-index" aria-hidden="true" dir="ltr">[07]</span>
-            تقارير الجودة
-          </h1>
-          <p className="page-subtitle">لوحات حيّة بدلاً من تقارير ثابتة — تُحدَّث مع كل عمليّة على المنصّة.</p>
-        </div>
-        {/* R341 D10: the header CTA pair (navigation-only, the D8 grammar) —
-            the export card below is still pending, so the pair points at
-            the live boards it stands in for. */}
-        <div className="qlt-header-badges">
-          <ReadOnlyBadge />
-          <Link to="/quality/dashboard" className="btn accent sm">لوحة الجودة</Link>
-          <Link to="/quality/alerts" className="btn ghost sm">تنبيهات الجودة</Link>
-        </div>
-      </header>
+      {/* R341 t06: migrated onto the shared patterns PageHeader — the
+          sector brow rides the eyebrow slot, [07] the index register. */}
+      <PageHeader
+        index="07"
+        eyebrow="قطاع ضمان الجودة"
+        title="تقارير الجودة"
+        description="لوحات حيّة بدلاً من تقارير ثابتة — تُحدَّث مع كل عمليّة على المنصّة."
+        /* R341 D10: the header CTA pair (navigation-only, the D8
+           grammar) — the export card below is still pending, so the
+           pair points at the live boards it stands in for. */
+        actions={(
+          <>
+            <ReadOnlyBadge />
+            <Link to="/quality/dashboard" className="btn accent sm">لوحة الجودة</Link>
+            <Link to="/quality/alerts" className="btn ghost sm">تنبيهات الجودة</Link>
+          </>
+        )}
+      />
 
       {/* 4C-b: the link ledger — full-width ≥44px rows with an icon well,
           title + one-line description and a trailing chevron; hairline
@@ -1730,28 +1724,29 @@ export function QualityAlertsPage() {
   return (
     <div className="page">
       <div className="hr-scope">
-      <header className="page-header">
-        <div className="page-title-block">
-          {/* R305 DS (§D): the sector brow. */}
-          <QualityBrow />
-          <h1 className="page-title">
-            {/* R341 D10: [09] nav-order index register. */}
-            <span className="page-index" aria-hidden="true" dir="ltr">[09]</span>
-            تنبيهات الجودة
-          </h1>
-          <p className="page-subtitle">أحداث تستوجب تدخّل فريق ضمان الجودة — مُستخرجة فوريّاً من بيانات المنصّة.</p>
-        </div>
-        <div className="qlt-header-badges">
-          {q.data && q.data.counts.critical > 0 && (
-            /* R305 DS (§D): the critical count rides the chip lexicon. */
-            <span className="hr-chip" data-tone="danger">{countAr(q.data.counts.critical, ['تنبيه حرج', 'تنبيهان حرجان', 'تنبيهات حرجة', 'تنبيهاً حرجاً'])}</span>
-          )}
-          <ReadOnlyBadge />
-          {/* R341 D10: the header CTA pair (navigation-only, the D8 grammar). */}
-          <Link to="/quality/dashboard" className="btn accent sm">لوحة الجودة</Link>
-          <Link to="/quality/reports" className="btn ghost sm">تقارير الجودة</Link>
-        </div>
-      </header>
+      {/* R341 t06: migrated onto the shared patterns PageHeader — the
+          sector brow rides the eyebrow slot, [09] the index register.
+          The conditional critical-count chip stays in the actions slot
+          (leading, before the read-only cue — the sector's one
+          data-driven header signal). */}
+      <PageHeader
+        index="09"
+        eyebrow="قطاع ضمان الجودة"
+        title="تنبيهات الجودة"
+        description="أحداث تستوجب تدخّل فريق ضمان الجودة — مُستخرجة فوريّاً من بيانات المنصّة."
+        actions={(
+          <>
+            {q.data && q.data.counts.critical > 0 && (
+              /* R305 DS (§D): the critical count rides the chip lexicon. */
+              <span className="hr-chip" data-tone="danger">{countAr(q.data.counts.critical, ['تنبيه حرج', 'تنبيهان حرجان', 'تنبيهات حرجة', 'تنبيهاً حرجاً'])}</span>
+            )}
+            <ReadOnlyBadge />
+            {/* R341 D10: the header CTA pair (navigation-only, the D8 grammar). */}
+            <Link to="/quality/dashboard" className="btn accent sm">لوحة الجودة</Link>
+            <Link to="/quality/reports" className="btn ghost sm">تقارير الجودة</Link>
+          </>
+        )}
+      />
 
       {q.isPending ? (
         /* r148 (AUDIT-2 L8): قائمة تنبيهات (نقطة خطورة + سطران) —
