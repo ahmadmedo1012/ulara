@@ -11,9 +11,9 @@ import { AppTopBar } from "@/components/shell/AppTopBar";
 import { Screen, SectionBar } from "@/components/ui";
 import { T } from "@/components/ui/text";
 import { Button } from "@/components/ui/pressables";
-import { DataList, LedgerRow, makeRow, usePagedList } from "@/components/ui/data";
+import { LedgerRow, makeRow, usePagedList } from "@/components/ui/data";
 import { SimulatedBadge } from "@/components/ui/surfaces";
-import { Skeleton, ErrorState } from "@/components/ui/states";
+import { Skeleton, ErrorState, EmptyState } from "@/components/ui/states";
 import { useStaggerEntrance } from "@/motion";
 import { haptics } from "@/haptics";
 import { adminApi } from "@/api/admin";
@@ -27,13 +27,28 @@ import {
   MetricHero,
   MetricTile,
   PaperStatusChip,
+  countAr,
   type PaperRow,
 } from "@/features/governance/components";
 
 /** (tabs) Admin dashboard — «لوحة المسجل العام» (web AdminDashboardPage parity).
  *  Metric hierarchy: ONE hero (students) + supporting tiles — not a flat grid.
  *  R334 review-panel fixes: staggered entrance, haptics.selection on the
- *  menu rows, and stats failures render ErrorState (never EmptyState). */
+ *  menu rows, and stats failures render ErrorState (never EmptyState).
+ *  R341 iOS nested-scroll fix: the «سجلّ البحوث» peek is a STATIC bounded
+ *  render (see PAPERS_PEEK) — no fixed-height DataList nested in the
+ *  screen ScrollView (the inner list trapped the gesture on iOS). */
+
+/** Bounded peek rendered STATICALLY under the «سجلّ البحوث» bar (r341).
+ *  The old shape mounted a fixed-height DataList inside `<Screen scroll>`
+ *  with `nestedScrollEnabled` — a gesture chain that only exists on
+ *  Android; on iOS the inner list TRAPPED the scroll inside its 400px box
+ *  (the owner's "awkward scrolling on iPhone" report). Five rows + the
+ *  honest «… وK أخرى» count (meta.total) + the reports-tab affordance
+ *  replace the nested virtualization; the outer ScrollView owns the
+ *  gesture end-to-end. */
+const PAPERS_PEEK = 5;
+
 export default function AdminDashboard() {
   const p = usePalette();
   /* Entrance stagger — base 40, step 60 → 5th block lands at 280ms (cap 400). */
@@ -112,35 +127,42 @@ export default function AdminDashboard() {
             title="سجلّ البحوث"
             action={<SimulatedBadge note="نسبة الاقتباس" />}
           />
-          <DataList
-            data={papers.items}
-            renderItem={({ item }) => <PaperRowView item={item} />}
-            keyExtractor={(row) => row.id}
-            isLoading={papers.isLoading}
-            isError={papers.isError}
-            errorMessage={humanizeError(papers.query.error)}
-            onRetry={() => papers.refetch()}
-            refetch={papers.refetch}
-            isRefetching={papers.isRefetching}
-            onEndReached={papers.onEndReached}
-            isFetchingNextPage={papers.isFetchingNextPage}
-            hasNextPage={papers.hasNextPage}
-            loadMoreError={papers.loadMoreError}
-            onRetryLoadMore={papers.retryLoadMore}
-            emptyTitle="لا توجد بحوث بعد"
-            emptyMessage="ستظهر البحوث هنا فور رفع أول بحث إلى المنصة."
-            loadingSlot={
-              <View style={{ gap: 8, paddingTop: 8 }}>
-                <Skeleton h={64} />
-                <Skeleton h={64} />
-              </View>
-            }
-            /* bounded peek-list (5 rows) — DataList owns its scrolling */
-            style={{ height: 400 }}
-            scrollProps={{ nestedScrollEnabled: true }}
-            contentPadding={{ bottom: 8 }}
-          />
-          {papers.items.length >= 10 ? (
+          {papers.isLoading ? (
+            /* skeleton with the peek-list's geometry (2 rows of 64) */
+            <View style={{ gap: 8, paddingTop: 8 }}>
+              <Skeleton h={64} />
+              <Skeleton h={64} />
+            </View>
+          ) : papers.isError ? (
+            <ErrorState
+              message={humanizeError(papers.query.error)}
+              onRetry={() => papers.refetch()}
+            />
+          ) : papers.items.length === 0 ? (
+            <EmptyState title="لا توجد بحوث بعد" message="ستظهر البحوث هنا فور رفع أول بحث إلى المنصة." />
+          ) : (
+            /* r341: static peek (first 5, SAME row component) — no inner
+               FlashList, no nested scroller. NOTE: mobile has NO full
+               papers-log surface (the reports tab carries the trend, and
+               its own footer says the full log is web-only), so the rest
+               is an honest COUNT, not a "view all" link. */
+            <View style={{ paddingBottom: 8 }}>
+              {papers.items.slice(0, PAPERS_PEEK).map((paper) => (
+                <PaperRowView key={paper.id} item={paper} />
+              ))}
+              {papers.total > PAPERS_PEEK ? (
+                <T variant="xs" color="faint" style={{ paddingTop: 8 }}>
+                  {`… و${countAr(papers.total - PAPERS_PEEK, [
+                    "بحث آخر",
+                    "بحثان آخران",
+                    "بحوث أخرى",
+                    "بحثاً آخر",
+                  ])}`}
+                </T>
+              ) : null}
+            </View>
+          )}
+          {papers.items.length > PAPERS_PEEK ? (
             <View style={{ alignItems: "flex-start", paddingTop: 8 }}>
               <Button label="تقرير البحوث الكامل" kind="ghost" small onPress={() => router.push("/admin/reports" as never)} />
             </View>

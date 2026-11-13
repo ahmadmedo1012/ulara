@@ -1,8 +1,12 @@
 /**
  * R334 B8 — the connectivity layer under a controlled NetInfo mock:
  * the useNetworkStatus subscription (resolve + transitions) and the
- * NetworkBanner seats (offline / «عاد الاتصال») + the onlineManager
- * bridge that makes queries pause while offline.
+ * NetworkBanner seats + the onlineManager bridge that makes queries
+ * pause while the DEVICE is offline. R342 t08: the banner copy follows
+ * the honest per-dimension messaging — «لا يوجد اتصال بالشبكة» for a
+ * dead device interface, «عاد الاتصال بالخدمة» on recovery (the old
+ * «لا يوجد اتصال بالإنترنت» claim is retired: the evidence can never
+ * prove the general internet is down).
  *
  * NOTE (React 19 + RNTL 14): every post-render state push runs through
  * `await act(async () => …)` — the module-scope NetInfo mock dispatches
@@ -72,9 +76,17 @@ describe("useNetworkStatus", () => {
     await waitFor(() => getByText("false|true|wifi"));
   });
 
-  it("treats unreachable internet as offline even when a link exists", async () => {
+  it("debounces the probe: one unreachable reading stays online, two confirm offline (R341 T03)", async () => {
     const { getByText } = await render(<Probe />);
     await waitFor(() => getByText("true|true|wifi"));
+    // First unreachable probe reading (link still up) — a transient
+    // blip / blocked-probe class: must NOT flip the app offline.
+    await act(async () => {
+      NetInfoMock.__setState({ isInternetReachable: false });
+    });
+    expect(getByText("true|true|wifi")).toBeTruthy();
+    // Second consecutive unreachable reading (a separate NetInfo event):
+    // now offline is confirmed.
     await act(async () => {
       NetInfoMock.__setState({ isInternetReachable: false });
     });
@@ -91,26 +103,26 @@ describe("NetworkBanner", () => {
     expect(toJSON()).toBeNull();
   });
 
-  it("shows the offline banner with the auto-retry promise", async () => {
+  it("shows the device-offline banner («لا يوجد اتصال بالشبكة» — the honest device claim)", async () => {
     const { getByText, toJSON } = await render(<NetworkBanner />);
     await act(async () => {
       NetInfoMock.__setState({ isConnected: false });
     });
-    await waitFor(() => getByText("لا يوجد اتصال بالإنترنت — سيتم إعادة المحاولة تلقائيًا"));
+    await waitFor(() => getByText("لا يوجد اتصال بالشبكة"));
     expect(toJSON()).not.toBeNull();
   });
 
-  it("flashes «عاد الاتصال» when the connection returns", async () => {
+  it("flashes «عاد الاتصال بالخدمة» when the connection returns", async () => {
     const { getByText, queryByText } = await render(<NetworkBanner />);
     await act(async () => {
       NetInfoMock.__setState({ isConnected: false });
     });
-    await waitFor(() => getByText(/لا يوجد اتصال بالإنترنت/));
+    await waitFor(() => getByText(/لا يوجد اتصال بالشبكة/));
     await act(async () => {
       NetInfoMock.__setState({ isConnected: true });
     });
-    await waitFor(() => getByText("عاد الاتصال"));
-    expect(queryByText(/سيتم إعادة المحاولة تلقائيًا/)).toBeNull();
+    await waitFor(() => getByText("عاد الاتصال بالخدمة"));
+    expect(queryByText(/لا يوجد اتصال/)).toBeNull();
   });
 
   it("bridges NetInfo into TanStack onlineManager (queries pause offline)", async () => {

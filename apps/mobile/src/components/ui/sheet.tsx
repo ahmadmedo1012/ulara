@@ -22,11 +22,10 @@ function bs(): typeof import("@gorhom/bottom-sheet") {
   return require("@gorhom/bottom-sheet");
 }
 
-/** react-native-gesture-handler, loaded on first sheet render. */
-function gh(): typeof import("react-native-gesture-handler") {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports -- lazy load keeps RNGH v3's import-time native task out of the jest render net (R334 render-net fix)
-  return require("react-native-gesture-handler");
-}
+/** react-native-gesture-handler — the R334 render-net lazy load was for
+ *  the per-sheet GestureHandlerRootView, RETIRED in R341 (the sheet binds
+ *  to the app-root root view now); kept only for the jest fixture helpers
+ *  in sheet.test.tsx via direct import there. */
 
 /* Type-only aliases into the (lazily loaded) package — erased at compile. */
 type BottomSheetBackdropComp = (typeof import("@gorhom/bottom-sheet"))["BottomSheetBackdrop"];
@@ -34,22 +33,36 @@ type BottomSheetTextInputComp = (typeof import("@gorhom/bottom-sheet"))["BottomS
 
 /**
  * R334 2-c — AppSheet: the ds bottom sheet, on @gorhom/bottom-sheet v5.
+ * R341 lead revision — the per-sheet LOCAL providers are RETIRED.
  *
- * Contract notes (the WHY of the local providers):
- *   · BottomSheetModal REQUIRES a BottomSheetModalProvider ancestor and the
- *     app root does not mount one yet (app/_layout.tsx is outside this
- *     branch's ownership) — so every AppSheet mounts its own. The provider
- *     renders an absolute-fill hosting container that is pointer-events
- *     box-none, i.e. invisible to layout and to taps while closed.
+ * Provider contract (the R341 emulator forensics, run 43455712122):
+ *   · BottomSheetModal REQUIRES a BottomSheetModalProvider ancestor — the
+ *     APP ROOT provides it (RootSheetModalProvider, shell/SheetModalHost.tsx,
+ *     mounted in app/_layout.tsx since R334 3-a). The modal PORTALS into the
+ *     root provider's hosting container (absolute-fill, pointer-events
+ *     box-none, above the navigator) — full-screen coordinates, correct
+ *     z-order, presented above every screen.
  *   · react-native-gesture-handler 3 THROWS in __DEV__ when a GestureDetector
  *     (the sheet handle/backdrop/drag views) has no GestureHandlerRootView
- *     ancestor. Same story: mounted locally per sheet, absolutely
- *     positioned, box-none. Hoisting BOTH providers to app/_layout.tsx is the
- *     recommended follow-up for the lead (see docs/mobile/foundations/sheets.md).
+ *     ancestor — the APP ROOT provides it (app/_layout.tsx). Under jest,
+ *     tests wrap renders in the same two providers (see sheet.test.tsx).
+ *   · WHY LOCAL PROVIDERS ARE GONE: a per-sheet provider hosting container
+ *     mounted INSIDE a ScrollView (the pre-R341 state) portals the sheet
+ *     into scroll-content coordinates — the sheet never presents (the
+ *     android-smoke logout failure). Hoisting the LOCAL host to the screen
+ *     level (the r341 t01 first cut) instead broke the sibling ScrollView's
+ *     gestures on Android (swipes never scrolled — run 43455712122
+ *     forensics). ONE provider at the root fixes both ends: the sheet
+ *     hosts in root coordinates AND the screen level carries no overlay
+ *     views at all. (This is the hoist sheet.tsx's own R334 docblock
+ *     recommended: "hoisting BOTH providers to app/_layout.tsx is the
+ *     recommended follow-up for the lead" — R341 is that call.)
  *
- * Mount AppSheet at the ROOT of the screen it serves (a sibling of the screen
- * content, not nested inside a card/row) so the hosting container covers the
- * full screen.
+ * Placement note: with the root-provider binding, the <BottomSheetModal>
+ * component itself renders through a portal and carries no native view at
+ * its mount site — keep it a sibling of the screen's scroller anyway (the
+ * r341 t01 seats) so the JSX structure documents intent and the mounting
+ * contract test keeps its teeth.
  *
  * WHY THE NATIVE GRAPH IS LOADED LAZILY (R334 follow-up): ui/index.ts
  * re-exports this module, so a static import would put @gorhom/bottom-sheet
@@ -144,11 +157,9 @@ export function AppSheet({
 }: AppSheetProps) {
   const {
     BottomSheetModal,
-    BottomSheetModalProvider,
     BottomSheetScrollView,
     BottomSheetView,
   } = bs();
-  const { GestureHandlerRootView } = gh();
   const p = usePalette();
   const insets = useSafeAreaInsets();
   const reduced = useReduceMotion();
@@ -244,39 +255,50 @@ export function AppSheet({
     </View>
   ) : null;
 
+  /* R341 lead: the sheet binds to the ROOT providers — app/_layout.tsx's
+   * GestureHandlerRootView + RootSheetModalProvider (both mounted since
+   * R334 3-a). The per-sheet local host this component used to mount
+   * (its own GestureHandlerRootView + BottomSheetModalProvider, an
+   * absolute-fill overlay) is RETIRED: emulator forensics (android-smoke
+   * run 43455712122) proved that hoisting that host out of the scroll
+   * content to the screen level — the r341 t01 first cut — killed the
+   * sibling ScrollView's gestures on Android (swipes from center never
+   * scrolled), and inside the scroll content it had been the reason the
+   * modal never presented (the portal hosted in scroll-content
+   * coordinates). ONE provider at the root fixes both: the portal hosts
+   * in root coordinates (absolute-fill, above the navigator) and the
+   * screen level stays clean of overlay views. */
   return (
-    <GestureHandlerRootView style={styles.host} pointerEvents="box-none">
-      <BottomSheetModalProvider>
-        <BottomSheetModal
-          ref={sheetRef}
-          onDismiss={handleDismiss}
-          accessibilityLabel={title}
-          snapPoints={snapPoints}
-          enableDynamicSizing={dynamic}
-          maxDynamicContentSize={
-            dynamic && fraction ? Math.round(windowHeight * fraction) : undefined
-          }
-          bottomInset={insets.bottom}
-          topInset={insets.top}
-          keyboardBehavior="interactive"
-          keyboardBlurBehavior="restore"
-          enableBlurKeyboardOnGesture
-          android_keyboardInputMode="adjustResize"
-          enablePanDownToClose
-          animationConfigs={animationConfigs}
-          handleComponent={showHandle ? undefined : null}
-          handleIndicatorStyle={{ backgroundColor: p.rule, width: 36, height: 4, borderRadius: 2 }}
-          handleStyle={{ paddingTop: sp[8], paddingBottom: sp[4] }}
-          backgroundStyle={{
-            backgroundColor: p.surface,
-            borderTopLeftRadius: 0,
-            borderTopRightRadius: 0,
-            borderTopWidth: StyleSheet.hairlineWidth,
-            borderTopColor: p.rule,
-          }}
-          backdropComponent={closeOnBackdrop ? SheetBackdrop : undefined}
-          footerComponent={scrollable ? Footer : undefined}
-        >
+    <BottomSheetModal
+      ref={sheetRef}
+      onDismiss={handleDismiss}
+      accessibilityLabel={title}
+      snapPoints={snapPoints}
+      enableDynamicSizing={dynamic}
+      maxDynamicContentSize={
+        dynamic && fraction ? Math.round(windowHeight * fraction) : undefined
+      }
+      bottomInset={insets.bottom}
+      topInset={insets.top}
+      keyboardBehavior="interactive"
+      keyboardBlurBehavior="restore"
+      enableBlurKeyboardOnGesture
+      android_keyboardInputMode="adjustResize"
+      enablePanDownToClose
+      animationConfigs={animationConfigs}
+      handleComponent={showHandle ? undefined : null}
+      handleIndicatorStyle={{ backgroundColor: p.rule, width: 36, height: 4, borderRadius: 2 }}
+      handleStyle={{ paddingTop: sp[8], paddingBottom: sp[4] }}
+      backgroundStyle={{
+        backgroundColor: p.surface,
+        borderTopLeftRadius: 0,
+        borderTopRightRadius: 0,
+        borderTopWidth: StyleSheet.hairlineWidth,
+        borderTopColor: p.rule,
+      }}
+      backdropComponent={closeOnBackdrop ? SheetBackdrop : undefined}
+      footerComponent={scrollable ? Footer : undefined}
+    >
           {scrollable ? (
             <BottomSheetScrollView
               showsVerticalScrollIndicator={false}
@@ -304,9 +326,7 @@ export function AppSheet({
               ) : null}
             </BottomSheetView>
           )}
-        </BottomSheetModal>
-      </BottomSheetModalProvider>
-    </GestureHandlerRootView>
+    </BottomSheetModal>
   );
 }
 

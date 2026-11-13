@@ -30,6 +30,7 @@ import {
   type StyleProp,
   type ViewStyle,
 } from "react-native";
+import { MarkCornerstoneLayer, MarkVesselLayer } from "@/brand";
 import { usePalette } from "@/design/theme";
 import { sp } from "@/design/tokens";
 import { dsEase } from "@/design/tokens.generated";
@@ -102,70 +103,62 @@ function useDelayedPulseLoop(
   return v;
 }
 
-/* ── BootMark — the two squares + the point, converging ─────────────── */
+/* ── BootMark — the vessel + the cornerstone, converging ────────────── */
 
 /**
- * The canonical mark as a live loader (the 32-grid construction from
- * mark.ts): the axis square and the rotated square pulse in counter-phase
- * — «المربعان يتجمعان» — the point breathes. `size` 120 = the splash
- * icon size → identical position on the splash → app cross-fade.
+ * The canonical ULAra mark as a live loader — rendered through the brand
+ * system's own MarkLayers exports (MarkVesselLayer + MarkCornerstoneLayer,
+ * the same constants <Logo variant="mark"> renders and the native
+ * splash/app icons are generated from; the logo-gate law: geometry lives
+ * in the brand system, seats consume components): the ink vessel eases in
+ * while the sienna cornerstone counter-scales out and breathes —
+ * «الإناء يمتلئ» — one loader vocabulary, one mark. `size` 120 = the
+ * splash icon size → the IDENTICAL figure at the same seat, so the
+ * splash → app handoff is a pure cross-fade (the hand-drawn two-squares
+ * figure this replaces visibly MORPHED at the handoff — the same
+ * competing-construction defect class retired from the web footer in
+ * acef177).
  */
 export function BootMark({ size = 120 }: { size?: number }) {
   const p = usePalette();
   const reduced = useReduceMotion();
-  const u = size / 32;
-  const stroke = 1.5; // the mark's non-scaling hairline (mark.ts)
-  const diamondSide = 15.556; // the √2-snapped rotated square (mark.ts)
 
-  // counter-phase: the axis eases in while the diamond eases out
-  const axisScale = usePulseLoop(1, 0.88, CYCLE, EASE, !reduced);
-  const diamondScale = usePulseLoop(1, 1.09, CYCLE, EASE, !reduced);
-  const pointOpacity = usePulseLoop(1, 0.35, CYCLE, EASE, !reduced);
+  // counter-phase: the ink vessel eases in while the stone eases out
+  const vesselScale = usePulseLoop(1, 0.88, CYCLE, EASE, !reduced);
+  const stoneScale = usePulseLoop(1, 1.09, CYCLE, EASE, !reduced);
+  const stoneOpacity = usePulseLoop(1, 0.35, CYCLE, EASE, !reduced);
 
-  const axis = {
-    position: "absolute" as const,
-    left: 8 * u,
-    top: 8 * u,
-    width: 16 * u,
-    height: 16 * u,
-    borderWidth: stroke,
-    borderColor: p.text,
-  };
-  const diamond = {
-    position: "absolute" as const,
-    left: ((32 - diamondSide) / 2) * u,
-    top: ((32 - diamondSide) / 2) * u,
-    width: diamondSide * u,
-    height: diamondSide * u,
-    borderWidth: stroke,
-    borderColor: p.text,
-  };
-  const point = {
-    position: "absolute" as const,
-    left: 22 * u,
-    top: 6 * u,
-    width: 4 * u,
-    height: 4 * u,
-    backgroundColor: p.accent,
-  };
+  // both layers share the mark's own canvas — stacked, they compose the
+  // exact figure <Logo variant="mark"> renders (same brand source).
+  const seat = { position: "absolute" as const, width: size, height: size };
+
+  /* the vessel — the brand system's own single-layer render (the same
+     optical hairline and stroke math <Logo> rides, authored in-brand) */
+  const vessel = <MarkVesselLayer size={size} color={p.text} />;
+
+  /* the cornerstone — the brand system's own single-layer render (the
+     solid sienna 4×4 at the right stem's top) */
+  const cornerstone = <MarkCornerstoneLayer size={size} color={p.accent} />;
 
   if (reduced) {
     return (
       <View style={{ width: size, height: size }}>
-        <View style={axis} />
-        <View style={[diamond, { transform: [{ rotate: "45deg" }] }]} />
-        <View style={point} />
+        <View style={seat}>{vessel}</View>
+        <View style={seat}>{cornerstone}</View>
       </View>
     );
   }
 
   return (
     <View style={{ width: size, height: size }}>
-      <Animated.View style={[axis, { transform: [{ scale: axisScale }] }]} />
+      <Animated.View style={[seat, { transform: [{ scale: vesselScale }] }]}>
+        {vessel}
+      </Animated.View>
       <Animated.View
-        style={[diamond, { transform: [{ rotate: "45deg" }, { scale: diamondScale }] }]}
-      />
-      <Animated.View style={[point, { opacity: pointOpacity }]} />
+        style={[seat, { transform: [{ scale: stoneScale }] }, { opacity: stoneOpacity }]}
+      >
+        {cornerstone}
+      </Animated.View>
     </View>
   );
 }
