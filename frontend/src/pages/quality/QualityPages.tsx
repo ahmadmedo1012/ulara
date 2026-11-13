@@ -1225,24 +1225,22 @@ export function QualityEngagementPage() {
   // Page chrome stays up in every state — loading and error keep the
   // header (audit 0-e P2-39: siblings must not drop it mid-load).
   const pageHeader = (
-    <header className="page-header">
-      <div className="page-title-block">
-        {/* R305 DS (§D): the sector brow. */}
-        <QualityBrow />
-        <h1 className="page-title">
-          {/* R341 D10: [04] nav-order index register. */}
-          <span className="page-index" aria-hidden="true" dir="ltr">[04]</span>
-          الانخراط والحضور
-        </h1>
-        <p className="page-subtitle">نسب الحضور، إكمال المحاضرات، النقاط المتفاعلة.</p>
-      </div>
-      {/* R341 D10: the header CTA pair (navigation-only, the D8 grammar). */}
-      <div className="qlt-header-badges">
-        <ReadOnlyBadge />
-        <Link to="/quality/courses" className="btn accent sm">جودة المقرّرات</Link>
-        <Link to="/quality/reports" className="btn ghost sm">تقارير الجودة</Link>
-      </div>
-    </header>
+    /* R341 t06: migrated onto the shared patterns PageHeader — the
+       sector brow rides the eyebrow slot, [04] the index register. */
+    <PageHeader
+      index="04"
+      eyebrow="قطاع ضمان الجودة"
+      title="الانخراط والحضور"
+      description="نسب الحضور، إكمال المحاضرات، النقاط المتفاعلة."
+      /* R341 D10: the header CTA pair (navigation-only, the D8 grammar). */
+      actions={(
+        <>
+          <ReadOnlyBadge />
+          <Link to="/quality/courses" className="btn accent sm">جودة المقرّرات</Link>
+          <Link to="/quality/reports" className="btn ghost sm">تقارير الجودة</Link>
+        </>
+      )}
+    />
   );
   if (e.isPending) {
     return (
@@ -1411,25 +1409,25 @@ export function QualityCurriculumPage() {
   const [level, setLevel] = useState<CurriculumLevel | 'all'>('all');
   // Page chrome stays up in every state (audit 0-e P2-39).
   const pageHeader = (
-    <header className="page-header">
-      <div className="page-title-block">
-        {/* R305 DS (§D): the sector brow. */}
-        <QualityBrow />
-        <h1 className="page-title">
-          {/* R341 D10: [06] nav-order index register (05 is the moderation
-              board's own cover numeral, D7b's seat). */}
-          <span className="page-index" aria-hidden="true" dir="ltr">[06]</span>
-          مراجعة المناهج
-        </h1>
-        <p className="page-subtitle">شجرة الكلّيّات والأقسام والمقرّرات، مع مؤشرات اكتمال المحتوى.</p>
-      </div>
-      {/* R341 D10: the header CTA pair (navigation-only, the D8 grammar). */}
-      <div className="qlt-header-badges">
-        <ReadOnlyBadge />
-        <Link to="/quality/courses" className="btn accent sm">جودة المقرّرات</Link>
-        <Link to="/quality/exam-moderation" className="btn ghost sm">مراجعة الاختبارات</Link>
-      </div>
-    </header>
+    /* R341 t06: migrated onto the shared patterns PageHeader — the
+       sector brow rides the eyebrow slot, [06] the index register
+       (05 stays the moderation board's own cover numeral, D7b's
+       seat — kept in the comment register, the numeral itself never
+       rendered here). */
+    <PageHeader
+      index="06"
+      eyebrow="قطاع ضمان الجودة"
+      title="مراجعة المناهج"
+      description="شجرة الكلّيّات والأقسام والمقرّرات، مع مؤشرات اكتمال المحتوى."
+      /* R341 D10: the header CTA pair (navigation-only, the D8 grammar). */
+      actions={(
+        <>
+          <ReadOnlyBadge />
+          <Link to="/quality/courses" className="btn accent sm">جودة المقرّرات</Link>
+          <Link to="/quality/exam-moderation" className="btn ghost sm">مراجعة الاختبارات</Link>
+        </>
+      )}
+    />
   );
   if (c.isPending) {
     return (
