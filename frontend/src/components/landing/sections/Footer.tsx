@@ -3,17 +3,18 @@
  * task 1-C). The R338→R343 spec-mirror (the --fu fluid unit, the
  * fixed-height ink band, the absolutely-positioned chrome, the 88
  * data-spec conformance seats) is retired by program decision: the
- * column structure is a real responsive grid (1 col <768 · 2 cols
- * 768–1023 · 3 cols ≥1024), the link groups and the policy row are
- * flex-wrap, the ink band is a normal-flow block whose height rides
- * its art, and every seat sizes from its content. The CONTENT is the
+ * column structure is a real responsive grid (1 col <768 · 2 cols ≥768),
+ * the link groups and the policy row are flex-wrap, the ink band is a
+ * normal-flow block whose height rides its art, and every seat sizes
+ * from its content. The CONTENT is the
  * R338 folio's own, byte-verbatim: the brand identity + independence
  * paragraph, the three link families, the funnel pair, the subscribe
- * door (a real route to /contact), the construction mark (Ulara's
- * OWN geometry, never the reference's paths), the licensed skyline
- * strip, and the ten-link policy row with CSS ::after glyph
- * separators (the §A6 law — decorative glyphs are CSS content, never
- * DOM text).
+ * door (a real route to /contact), the licensed skyline strip, and the
+ * ten-link policy row with CSS ::after glyph separators (the §A6 law
+ * — decorative glyphs are CSS content, never DOM text). The R336 B2
+ * pass retired the col3 construction-mark drawing: the footer's ONE
+ * identity is the canonical stacked <Logo> (col1), same as every
+ * other surface.
  *
  * Kept structural hooks: the <footer> landmark + .fo-in inner
  * container (pinned by tests/r305/mobile-overflow.e2e.ts) and the
@@ -23,7 +24,7 @@
  * styles/landing/footer.css — the geometry lives there, in tokens.
  */
 import { Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Logo } from '../../../brand';
 import { BRAND_LABEL, LOGIN } from '../copy';
 
@@ -91,54 +92,23 @@ const CHANNEL_LINKS: [string, string][] = [
   ['/legal/terms', 'الشروط'],
 ];
 
-/* the col3 construction mark — Ulara's OWN Logo geometry, authored
- * inline line-art (never the reference's paths) */
-const MARK_PATHS = [
-  'M178 38A94 94 0 1 0 190 122', // the orbit circle (open at the reading apex)
-  'M159 56A67 67 0 1 0 168 116', // the inner second orbit
-  'M108 10v195', // the vertical construction axis
-  'M10 108h195', // the horizontal construction axis
-  'M40 40l136 136', // the diagonal construction track
-  'M178 38h.01', // the knowledge point on the orbit
-  'M55 182h105', // the base line
-  'M22 62V22h40M153 22h40v40M193 153v40h-40M62 193H22v-40', // frame corner ticks
-];
+/* R336 B2 (brand unification): the col3 hand-authored "construction
+ * mark" (the MARK_PATHS orbit drawing — a SECOND visual identity that
+ * lived in no brand source file and bypassed every brand gate) is
+ * RETIRED. The footer's ONE identity is the canonical stacked <Logo>
+ * in col1; the colophon is a two-column sheet at every breakpoint
+ * ≥768 (brand+subscribe | the link index). */
 
 export function Footer({ year }: { year: number }) {
   const [email, setEmail] = useState('');
 
-  /* the construction mark's scroll reveal — the house grammar: JS
-   * writes the veil class, CSS owns the tween, reduced-motion ships
-   * the mark visible, no-JS ships the mark visible. Paths 1–7 draw in
-   * when the mark enters the viewport; path 8 (the frame ticks) rides
-   * lit from first paint. */
-  useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const mark = document.querySelector('footer.fo-footer .fo-mark-svg');
-    if (!mark) return;
-    const veiled = [...mark.querySelectorAll<SVGPathElement>('.fo-mark-p')].slice(0, -1);
-    veiled.forEach((p) => p.classList.add('fo-mark-veiled'));
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const en of entries) {
-          if (en.isIntersecting) {
-            veiled.forEach((p) => p.classList.remove('fo-mark-veiled'));
-            io.disconnect();
-          }
-        }
-      },
-      { threshold: 0.2 },
-    );
-    io.observe(mark);
-    return () => io.disconnect();
-  }, []);
-
   return (
     <footer className="fo-footer" data-spec="footer.root" aria-label={BRAND_LABEL}>
       <div className="fo-in" data-spec="footer.in">
-        {/* ── the column band — CSS Grid: 1 col <768 · 2 cols 768–1023 ·
-            3 cols ≥1024 (col1 brand+links+subscribe · col2 the link
-            index + contact groups · col3 the construction mark) ── */}
+        {/* ── the column band — CSS Grid: 1 col <768 · 2 cols ≥768
+            (col1 brand+links+subscribe · col2 the link index + contact
+            groups). The retired col3 construction mark is gone (R336 B2):
+            ONE identity — the stacked <Logo> in col1. ── */}
         <div className="fo-grid">
           {/* col1 (RTL: the right column) — brand + link rows + subscribe */}
           <div className="fo-col fo-col1">
@@ -274,25 +244,6 @@ export function Footer({ year }: { year: number }) {
                   ))}
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* col3 (RTL: the left column) — the drawn construction mark:
-              Ulara's OWN mark geometry, authored inline line-art (the
-              circle + orbit + point construction), never the reference's
-              paths. Normal flow, sized container, square by viewBox */}
-          <div className="fo-col fo-col3">
-            <div className="fo-mark">
-              <svg
-                className="fo-mark-svg"
-                viewBox="0 0 215 215"
-                role="img"
-                aria-label="علامة أُلارا — رسم بنائي لخط المدار والنقطة"
-              >
-                {MARK_PATHS.map((d, i) => (
-                  <path key={i} className="fo-mark-p" d={d} />
-                ))}
-              </svg>
             </div>
           </div>
         </div>

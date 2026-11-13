@@ -6,9 +6,11 @@
    negative margin, the position:absolute chrome and the 88 data-spec
    conformance seats are GONE. The rebuild's mechanics:
 
-     · CSS Grid columns — 1 column <768px · 2 columns 768–1023px ·
-       3 columns ≥1024px (minmax(0, …) tracks: no content can blow a
-       track out of the sheet).
+     · CSS Grid columns — 1 column <768px · 2 columns ≥768px
+       (minmax(0, …) tracks: no content can blow a track out of the
+       sheet). R336 B2: the third column (the retired hand-authored
+       construction-mark drawing) is gone — the colophon is a two-
+       column sheet; the ONE identity is the stacked <Logo> in col1.
      · Flex with wrap for the link groups and the policy row —
        content wraps INSIDE its box instead of escaping it.
      · Normal flow everywhere: ZERO position:absolute, zero fixed
@@ -83,7 +85,7 @@ footer.fo-footer {
 }
 .fo-col { min-inline-size: 0; }
 
-/* 768–1023: col1 | col2 side by side, the mark spans below */
+/* 768–1023: col1 | col2 side by side */
 @media (min-width: 768px) {
   .fo-grid {
     grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
@@ -93,24 +95,19 @@ footer.fo-footer {
     border-inline-start: 1px solid var(--rule);
     padding-inline-start: 2.4rem;
   }
-  .fo-col3 {
-    grid-column: 1 / -1;
-  }
 }
 
-/* ≥1024: the three-column colophon — col1 1fr · col2 2fr · col3 1fr,
-   hairline-ruled at both col2 boundaries (the gap keeps the air on
-   each side of the rule, the newspaper column grammar) */
+/* ≥1024: the same two-column colophon at sheet scale — hairline-ruled
+   at the col2 boundary (the gap keeps the air on each side of the
+   rule, the newspaper column grammar). R336 B2: the retired col3
+   (the construction mark) no longer takes a track. */
 @media (min-width: 1024px) {
   .fo-grid {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
   }
   .fo-col2 {
     border-inline: 1px solid var(--rule);
     padding-inline: 2.4rem;
-  }
-  .fo-col3 {
-    grid-column: auto;
   }
 }
 
@@ -345,36 +342,9 @@ footer.fo-footer {
 }
 .fo-social:hover { color: var(--accent); }
 
-/* ── col3: the drawn construction mark (our OWN geometry) ───────────
-   normal flow, sized container: the clamp walks 96px (the phone
-   floor) → 15vw (the fluid line) → 288px; square by viewBox */
-.fo-col3 {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-.fo-mark {
-  inline-size: clamp(96px, 15vw, 288px);
-  aspect-ratio: 1;
-}
-.fo-mark-svg {
-  inline-size: 100%;
-  block-size: 100%;
-  display: block;
-  color: var(--text);
-}
-.fo-mark-p {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.7;
-  vector-effect: non-scaling-stroke;
-  transition: opacity var(--t-slow) var(--ease-out);
-}
-/* the veil class is written by the component's IntersectionObserver
-   (house grammar — JS writes the class, CSS owns the tween; RM and
-   no-JS ship the mark fully visible) */
-.fo-mark-veiled { opacity: 0; }
+/* R336 B2: the col3 construction-mark seat (.fo-col3/.fo-mark/.fo-mark-svg/
+   .fo-mark-p/.fo-mark-veiled) is RETIRED with the drawing it styled —
+   the footer's ONE identity is the canonical stacked <Logo> in col1. */
 
 /* ═══ the ink strip band — normal flow, art-driven height ══════════
    The two licensed skyline renders (light + dark twins) stack in ONE
