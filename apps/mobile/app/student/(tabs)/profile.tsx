@@ -428,24 +428,28 @@ export default function StudentProfile() {
             setConfirmLogout(true);
           }}
         />
-
-        <ConfirmSheet
-          open={confirmLogout}
-          onClose={() => setConfirmLogout(false)}
-          title="تسجيل الخروج؟"
-          message="ستنتهي جلستك على هذا الجهاز فقط — تُحفظ جلسات أجهزتك الأخرى."
-          confirmLabel="خروج"
-          destructive
-          onConfirm={async () => {
-            setConfirmLogout(false);
-            // R327 C3 — a handed-over phone must not keep pushing.
-            await unregisterPushDevices().catch(() => undefined);
-            await logout();
-            qc.clear();
-            router.replace("/");
-          }}
-        />
       </ScrollBody>
+
+      {/* Destructive logout confirm — a SIBLING of ScrollBody, never inside
+          it: the sheet mounts its own absolute-fill host, which must cover
+          the full screen from the screen root, not ride the scroll content
+          (r341 t01). */}
+      <ConfirmSheet
+        open={confirmLogout}
+        onClose={() => setConfirmLogout(false)}
+        title="تسجيل الخروج؟"
+        message="ستنتهي جلستك على هذا الجهاز فقط — تُحفظ جلسات أجهزتك الأخرى."
+        confirmLabel="خروج"
+        destructive
+        onConfirm={async () => {
+          setConfirmLogout(false);
+          // R327 C3 — a handed-over phone must not keep pushing.
+          await unregisterPushDevices().catch(() => undefined);
+          await logout();
+          qc.clear();
+          router.replace("/");
+        }}
+      />
     </Screen>
   );
 }
