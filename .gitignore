@@ -165,3 +165,9 @@ apps/mobile/*.orig
 # Vercel CLI local link (per-machine project binding)
 .vercel/
 .env*
+# r336 D: the blanket `.env*` above must NOT defeat the intentional
+# `!.env.example` whitelist at the top — a later pattern wins in
+# .gitignore, which is exactly how the template got lost (README +
+# CONTRIBUTING document `cp .env.example backend/.env`; the r323
+# ai-stream test pins its AI knobs). Re-assert the negation LAST.
+!.env.example
