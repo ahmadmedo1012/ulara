@@ -7,6 +7,25 @@
  *
  * The ula-mobile-* key family is the ONLY spelling (the retired
  * pre-ULARA fallback was removed — dev-phase installs re-login once).
+ *
+ * R336 A1 (the post-login freeze hardening — three durable-session laws):
+ *  1. setSession commits refreshCookie into STATE too. The old code only
+ *     persisted it to SecureStore; the in-memory value the API bridge
+ *     reads stayed null/stale, so every warm-session /auth/refresh was
+ *     impossible (no Cookie header → 401 → forced logout ~15 min after
+ *     login, mid-use).
+ *  2. login/register/selectInstitution AWAIT the persistence writes
+ *     (flushSessionPersistence) BEFORE the caller navigates. The old
+ *     fire-and-forget writes raced router.replace: process death in
+ *     that window silently lost the freshly authenticated session.
+ *  3. hydrate never clobbers a newer session. A deep link straight into
+ *     /auth/login at cold start can finish login while hydrate's
+ *     SecureStore reads are still in flight; the old unconditional
+ *     set() overwrote the fresh login with the stale pre-login reads
+ *     (user → null → RoleGate bounced the user back to /auth — the
+ *     "login didn't stick" freeze). A write-version guard now skips the
+ *     stale snapshot, and the reads are BOUNDED so a hung Keychain read
+ *     can never freeze the boot screen forever.
  */
 import { create } from "zustand";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -18,6 +37,11 @@ const KEY_USER = "ula-mobile-user";
 const KEY_ACCESS = "ula-mobile-access-token";
 const KEY_REFRESH = "ula-mobile-refresh-cookie";
 const KEY_INST = "ula-mobile-active-institution";
+
+/** Bounded hydrate: storage normally settles in single-digit ms; a hung
+ * Keychain/Keystore read must degrade to "guest" instead of freezing
+ * the Boot screen forever (the honest, recoverable failure). */
+const HYDRATE_TIMEOUT_MS = 5_000;
 
 export interface SessionState {
   user: AuthUser | null;
@@ -55,9 +79,52 @@ export interface RegisterPayload {
   inviteCode?: string;
 }
 
-function persistTokens(accessToken: string | null, refreshCookie: string | null) {
-  void setToken(KEY_ACCESS, accessToken);
-  void setToken(KEY_REFRESH, refreshCookie);
+/**
+ * The outstanding session-persistence work (tokens + profile cache).
+ * setToken/AsyncStorage swallow their own errors — this promise NEVER
+ * rejects; awaiting it only guarantees the writes have SETTLED, so
+ * navigation after login can never outrun durability.
+ */
+let pendingPersistence: Promise<void> = Promise.resolve();
+
+/** Await the outstanding persistence writes (login → navigate ordering). */
+export function flushSessionPersistence(): Promise<void> {
+  return pendingPersistence;
+}
+
+/**
+ * Monotonic session-write version. Every state-writing action bumps it;
+ * hydrate captures the value before its reads and ABANDONS a stale
+ * snapshot if a session was established meanwhile (deep-link race).
+ */
+let sessionWriteVersion = 0;
+
+function persistSession(
+  accessToken: string | null,
+  refreshCookie: string | null,
+  user: AuthUser | null,
+  institutionId: string | null,
+): Promise<void> {
+  pendingPersistence = Promise.all([
+    setToken(KEY_ACCESS, accessToken),
+    setToken(KEY_REFRESH, refreshCookie),
+    user
+      ? AsyncStorage.setItem(KEY_USER, JSON.stringify(user)).catch(() => undefined)
+      : AsyncStorage.removeItem(KEY_USER).catch(() => undefined),
+    institutionId
+      ? AsyncStorage.setItem(KEY_INST, institutionId).catch(() => undefined)
+      : AsyncStorage.removeItem(KEY_INST).catch(() => undefined),
+  ]).then(() => undefined);
+  return pendingPersistence;
+}
+
+/** Legacy token-only persistence (kept for the bridge's narrow writes). */
+function persistTokens(accessToken: string | null, refreshCookie: string | null): Promise<void> {
+  pendingPersistence = Promise.all([
+    setToken(KEY_ACCESS, accessToken),
+    setToken(KEY_REFRESH, refreshCookie),
+  ]).then(() => undefined);
+  return pendingPersistence;
 }
 
 export const useSession = create<SessionState>((set, get) => ({
@@ -69,13 +136,38 @@ export const useSession = create<SessionState>((set, get) => ({
   sessionEpoch: 0,
 
   hydrate: async () => {
+    const versionAtStart = sessionWriteVersion;
     try {
-      const [accessToken, refreshCookie, userJson, instId] = await Promise.all([
+      const reads = Promise.all([
         getToken(KEY_ACCESS),
         getToken(KEY_REFRESH),
         AsyncStorage.getItem(KEY_USER),
         AsyncStorage.getItem(KEY_INST),
       ]);
+      // Bound the reads: a hung SecureStore/Keychain promise must never
+      // keep isHydrated false forever (Boot screen with no escape).
+      let hangTimer: ReturnType<typeof setTimeout> | undefined;
+      const bounded = await Promise.race([
+        reads,
+        new Promise<null>((resolve) => {
+          hangTimer = setTimeout(() => resolve(null), HYDRATE_TIMEOUT_MS);
+        }),
+      ]);
+      if (hangTimer !== undefined) clearTimeout(hangTimer);
+      if (!bounded) {
+        // Storage hung: degrade to guest (isHydrated so the router can
+        // act) rather than freeze. The user re-authenticates.
+        set({ isHydrated: true });
+        return;
+      }
+      // A session was established while these reads were in flight
+      // (deep-link → login at cold start): the fresh session WINS —
+      // never clobber it with the stale pre-login snapshot.
+      if (versionAtStart !== sessionWriteVersion) {
+        set({ isHydrated: true });
+        return;
+      }
+      const [accessToken, refreshCookie, userJson, instId] = bounded;
       const user = userJson ? (JSON.parse(userJson) as AuthUser) : null;
       set({
         accessToken,
@@ -91,26 +183,25 @@ export const useSession = create<SessionState>((set, get) => ({
 
   setSession: (user, accessToken, refreshCookie) => {
     const prev = get();
+    const effectiveCookie = refreshCookie ?? prev.refreshCookie;
     const effectiveInst = user.currentInstitution?.id ?? prev.activeInstitutionId;
-    persistTokens(accessToken, refreshCookie ?? prev.refreshCookie);
-    AsyncStorage.setItem(KEY_USER, JSON.stringify(user)).catch(() => undefined);
-    if (effectiveInst) AsyncStorage.setItem(KEY_INST, effectiveInst).catch(() => undefined);
-    set({ user, accessToken, activeInstitutionId: effectiveInst });
+    sessionWriteVersion++;
+    void persistSession(accessToken, effectiveCookie, user, effectiveInst);
+    // STATE carries the cookie too — the API bridge reads it for the
+    // refresh Cookie header (the R336 A1 fix: warm-session refresh).
+    set({ user, accessToken, refreshCookie: effectiveCookie, activeInstitutionId: effectiveInst });
   },
 
   applyUser: (user) => {
-    AsyncStorage.setItem(KEY_USER, JSON.stringify(user)).catch(() => undefined);
+    sessionWriteVersion++;
     const activeInstitutionId = user.currentInstitution?.id ?? get().activeInstitutionId;
-    if (activeInstitutionId) AsyncStorage.setItem(KEY_INST, activeInstitutionId).catch(() => undefined);
+    void persistSession(get().accessToken, get().refreshCookie, user, activeInstitutionId);
     set({ user, activeInstitutionId });
   },
 
   clearSession: async () => {
-    await Promise.all([
-      persistTokens(null, null),
-      AsyncStorage.removeItem(KEY_USER).catch(() => undefined),
-      AsyncStorage.removeItem(KEY_INST).catch(() => undefined),
-    ]);
+    sessionWriteVersion++;
+    await persistSession(null, null, null, null);
     set((s) => ({
       user: null,
       accessToken: null,
@@ -127,6 +218,10 @@ export const useSession = create<SessionState>((set, get) => ({
       _skipAuth: true,
     });
     get().setSession(data.user, data.accessToken, refreshCookie);
+    // Durability BEFORE navigation: the caller router.replace()s as soon
+    // as we resolve — the tokens must already be in SecureStore so a
+    // process death in that window cannot lose the session.
+    await flushSessionPersistence();
     return data.user;
   },
 
@@ -137,6 +232,7 @@ export const useSession = create<SessionState>((set, get) => ({
       _skipAuth: true,
     });
     get().setSession(data.user, data.accessToken, refreshCookie);
+    await flushSessionPersistence();
     return data.user;
   },
 
@@ -146,8 +242,10 @@ export const useSession = create<SessionState>((set, get) => ({
       body: { institutionId },
     });
     get().setSession(data.user, data.accessToken, refreshCookie ?? undefined);
-    AsyncStorage.setItem(KEY_INST, institutionId).catch(() => undefined);
     set({ activeInstitutionId: institutionId });
+    await persistTokens(get().accessToken, get().refreshCookie).then(() =>
+      AsyncStorage.setItem(KEY_INST, institutionId).catch(() => undefined),
+    );
     return data.user;
   },
 

@@ -122,6 +122,12 @@ async function parseEnvelope<T>(res: Response): Promise<T> {
 /** Single-flight refresh — concurrent 401s share one /auth/refresh call. */
 let refreshInFlight: Promise<boolean> | null = null;
 
+/** A stalled /auth/refresh must never hang the single-flight promise
+ * forever (every later 401 would await the same dead promise — the
+ * frozen-app class). Bound it; on timeout the session degrades to
+ * expiry + re-login instead of an indefinite spinner. */
+const REFRESH_TIMEOUT_MS = 15_000;
+
 async function tryRefresh(): Promise<boolean> {
   const bridge = authBridge;
   if (!bridge) return false;
@@ -129,11 +135,14 @@ async function tryRefresh(): Promise<boolean> {
     refreshInFlight = (async () => {
       const cookie = bridge.getRefreshCookie();
       if (!cookie) return false;
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), REFRESH_TIMEOUT_MS);
       try {
         const res = await fetch(`${API_BASE}/auth/refresh`, {
           method: "POST",
           headers: { "Content-Type": "application/json", Cookie: `${REFRESH_COOKIE}=${cookie}` },
           body: "{}",
+          signal: controller.signal,
         });
         if (!res.ok) return false;
         const data = await parseEnvelope<{ user: unknown; accessToken: string }>(res);
@@ -143,6 +152,7 @@ async function tryRefresh(): Promise<boolean> {
       } catch {
         return false;
       } finally {
+        clearTimeout(timer);
         refreshInFlight = null;
       }
     })();
@@ -194,9 +204,20 @@ export async function api<T>(path: string, opts: RequestOptions = {}): Promise<T
   }
 }
 
-/** Capture a fresh refresh cookie from a session-establishing response. */
+/**
+ * Capture a fresh refresh cookie from a session-establishing response.
+ *
+ * R336 A2: this transport carries the LOGIN/REGISTER journey, so it gets
+ * the SAME AbortController + timeout discipline as api() — a stalled
+ * POST /auth/login used to leave the submit button spinning forever
+ * (no timeout escape, the literal freeze-at-login class). The dead
+ * 401 fall-through block is retired with it.
+ */
 export async function apiWithCookieCapture<T>(path: string, opts: RequestOptions = {}): Promise<{ data: T; refreshCookie: string | null }> {
+  const { timeoutMs = 20_000 } = opts;
   const url = buildUrl(path, opts.query);
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
   const headers: Record<string, string> = {};
   if (opts.rawBody === undefined && opts.body !== undefined) headers["Content-Type"] = "application/json";
   if (opts.contentType) headers["Content-Type"] = opts.contentType;
@@ -209,15 +230,18 @@ export async function apiWithCookieCapture<T>(path: string, opts: RequestOptions
       method: opts.method ?? "GET",
       headers,
       body: opts.rawBody !== undefined ? opts.rawBody : opts.body !== undefined ? JSON.stringify(opts.body) : undefined,
+      signal: controller.signal,
     });
-    if (res.status === 401 && path.startsWith("/auth/") === false) {
-      // fall through to envelope handling
-    }
     const data = await parseEnvelope<T>(res);
     return { data, refreshCookie: extractRefreshCookie(res) };
   } catch (err) {
     if (err instanceof ApiError) throw err;
+    if ((err as { name?: string })?.name === "AbortError") {
+      throw new ApiError("TIMEOUT", "انتهت مهلة الطلب — الخادم بطيء، أعد المحاولة", 0);
+    }
     throw new ApiError(NETWORK_ERROR, networkMessage, 0);
+  } finally {
+    clearTimeout(timer);
   }
 }
 

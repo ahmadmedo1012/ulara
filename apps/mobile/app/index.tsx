@@ -31,6 +31,7 @@ export default function BootScreen() {
   const router = useRouter();
   const user = useSession((s) => s.user);
   const isHydrated = useSession((s) => s.isHydrated);
+  const hydrate = useSession((s) => s.hydrate);
   const params = useLocalSearchParams<{ continue?: string }>();
 
   // Background refresh of /auth/me (60s stale window). The cached user
@@ -64,7 +65,15 @@ export default function BootScreen() {
       {user ? (
         <Boot label="جارٍ الدخول…" />
       ) : (
-        <Boot label="نستعد لتحميل أُلارا…" />
+        /* R336 A1 belt: the cold-boot wait carries Boot's own slow label
+         * + retry — a retry re-runs hydrate (idempotent reads; a hung
+         * read is also bounded inside hydrate itself). */
+        <Boot
+          label="نستعد لتحميل أُلارا…"
+          onRetry={() => {
+            void hydrate();
+          }}
+        />
       )}
     </>
   );
