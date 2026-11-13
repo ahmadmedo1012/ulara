@@ -16,6 +16,11 @@ import {
 import { useInstitutionScope } from '../../stores/auth.store';
 import { withInstitutionScope } from '../../lib/queryClient';
 import { Card, Badge, AlertRow, ProgressBar, UserAvatar } from '../../components/primitives';
+/* R341 t06 (INV-2 D3): the sector's nine hand-rolled .page-header seats
+ * fold onto the ONE shared patterns PageHeader — the platform's newest
+ * header grammar (the primitives/PageHeader form stays for the families
+ * that still own it). */
+import { PageHeader } from '../../components/patterns';
 import { StatStrip } from '../../components/primitives/Ledger';
 import { ChartFrame } from '../../components/charts';
 import { cartesianOptions, radialOptions, chartColors, useChartThemeKey } from '../../lib/chartTheme';
@@ -340,36 +345,36 @@ export function QualityDashboardPage() {
   // subtitle «رؤية لحظية لسير العملية التعليمية في الجامعة.» was a
   // second, divergent string — the handoff moved text on load.
   const pageHeader = (
-    <header className="page-header">
-      <div className="page-title-block">
-        {/* R305 DS (§D): the sector brow opens the governance face. */}
-        <QualityBrow />
-        <h1 className="page-title">
-          {/* R341 D10: the [01] nav-order gutter numeral — the R319
-              PageHeader index register (primitives/PageHeader grammar). */}
-          <span className="page-index" aria-hidden="true" dir="ltr">[01]</span>
-          لوحة الجودة
-        </h1>
-        <p className="page-subtitle">
-          بناء نظام تعليمي فعّال عبر تطوير الأداء الأكاديمي والإداري والتقني — وفقاً لمتطلبات الاعتماد المحلية والدولية.
-        </p>
-        <p className="page-header-meta">
+    /* R341 t06: the raw .page-header seat migrated onto the shared
+       patterns PageHeader — the sector brow rides the eyebrow slot
+       (re-voiced as the reference brow under .hr-scope, ds-core.css
+       §A1) and the [01] gutter numeral rides the R319 index register
+       (the same .page-index span, byte-identical, aria-hidden). */
+    <PageHeader
+      index="01"
+      eyebrow="قطاع ضمان الجودة"
+      title="لوحة الجودة"
+      description="بناء نظام تعليمي فعّال عبر تطوير الأداء الأكاديمي والإداري والتقني — وفقاً لمتطلبات الاعتماد المحلية والدولية."
+      meta={
+        <>
           {formatDate(new Date(), { weekday: 'long', day: 'numeric', month: 'long' })} · قراءة لحظية للمؤشرات
-        </p>
-      </div>
-      {/* r299 (E item 1): the sector's own read-only cue — the former
-          gold ShieldCheck «وصول قراءة فقط» badge retired (gold is
-          achievements-only per the token discipline). */}
-      {/* R341 D10: the header CTA pair (the D8 teacher-family grammar) —
-          navigation only (the sector authors nothing); the accent seat
-          is the measured hover surface (.has-shell .btn.accent:hover,
-          D6 chrome.css §10). */}
-      <div className="qlt-header-badges">
-        <ReadOnlyBadge />
-        <Link to="/quality/reports" className="btn accent sm">تقارير الجودة</Link>
-        <Link to="/quality/alerts" className="btn ghost sm">تنبيهات الجودة</Link>
-      </div>
-    </header>
+        </>
+      }
+      /* r299 (E item 1): the sector's own read-only cue — the former
+         gold ShieldCheck «وصول قراءة فقط» badge retired (gold is
+         achievements-only per the token discipline). R341 D10: the
+         header CTA pair (the D8 teacher-family grammar) — navigation
+         only (the sector authors nothing); the accent seat is the
+         measured hover surface (.has-shell .btn.accent:hover, D6
+         chrome.css §10). */
+      actions={(
+        <>
+          <ReadOnlyBadge />
+          <Link to="/quality/reports" className="btn accent sm">تقارير الجودة</Link>
+          <Link to="/quality/alerts" className="btn ghost sm">تنبيهات الجودة</Link>
+        </>
+      )}
+    />
   );
 
   if (ov.isPending || eg.isPending) {
@@ -708,29 +713,26 @@ export function QualityCoursesPage() {
   return (
     <div className="page">
       <div className="hr-scope">
-      <header className="page-header">
-        <div className="page-title-block">
-          {/* R305 DS (§D): the sector brow opens the governance face. */}
-          <QualityBrow />
-          <h1 className="page-title">
-            {/* R341 D10: [02] nav-order index register. */}
-            <span className="page-index" aria-hidden="true" dir="ltr">[02]</span>
-            جودة المقرّرات
-          </h1>
-          <p className="page-subtitle">
-            {metric
-              ? `${metricLabel} لكل مقرّر · مرتَّبة من الأدنى أولاً`
-              : 'تتبّع جودة كل مقرّر: المحاضرات، الملفات، الواجبات، التسجيلات.'}
-          </p>
-        </div>
-        {/* 4C-b: the oversight read-only cue (the sector has no authoring). */}
-        {/* R341 D10: the header CTA pair (navigation-only, the D8 grammar). */}
-        <div className="qlt-header-badges">
-          <ReadOnlyBadge />
-          <Link to="/quality/professors" className="btn accent sm">تقييم الأساتذة</Link>
-          <Link to="/quality/engagement" className="btn ghost sm">الانخراط والحضور</Link>
-        </div>
-      </header>
+      {/* R341 t06: migrated onto the shared patterns PageHeader — the
+          sector brow rides the eyebrow slot, [02] the index register. */}
+      <PageHeader
+        index="02"
+        eyebrow="قطاع ضمان الجودة"
+        title="جودة المقرّرات"
+        description={metric
+          ? `${metricLabel} لكل مقرّر · مرتَّبة من الأدنى أولاً`
+          : 'تتبّع جودة كل مقرّر: المحاضرات، الملفات، الواجبات، التسجيلات.'}
+        /* 4C-b: the oversight read-only cue (the sector has no
+           authoring). R341 D10: the header CTA pair (navigation-only,
+           the D8 grammar). */
+        actions={(
+          <>
+            <ReadOnlyBadge />
+            <Link to="/quality/professors" className="btn accent sm">تقييم الأساتذة</Link>
+            <Link to="/quality/engagement" className="btn ghost sm">الانخراط والحضور</Link>
+          </>
+        )}
+      />
       {c.isPending ? (
         <Card title="المقرّرات النشطة" icon={BookOpen}><TableSkeleton rows={4} cols={8} /></Card>
       ) :
