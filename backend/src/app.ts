@@ -277,10 +277,14 @@ export function createApp() {
   // ── Global rate limit on the API surface ─────────────────
   app.use('/api/v1', globalRateLimiter);
 
-  // r323 B5/B6 — the public status surface BEFORE the auth routers:
-  // keep-warm pings and the pilot's «حالة المنصة» card must answer
-  // regardless of rate-limit pressure on the API (it is a tiny,
-  // secret-free SELECT 1 + mode names).
+  // r323 B5/B6 + r342 t08 — the public status surface, AFTER the global
+  // limiter (its 1000 req / 15 min / IP budget applies — honest against
+  // the source; the routes' own docblocks say the same) and BEFORE the
+  // auth routers (no router-level session gate shadows them). Two jobs:
+  // `/ping` — DB-free liveness, the mobile NetInfo probe's target — and
+  // `/status` — the DB-pinging health + mode/metadata read for the
+  // keep-warm cron and the pilot's «حالة المنصة» card. Probe traffic is
+  // change-driven, not timed, so the shared budget is ample.
   app.use('/api/v1', statusRoutes);
 
   // Scheduled-jobs surface (serverless deployments): vercel.json's cron

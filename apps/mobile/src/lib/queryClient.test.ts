@@ -4,9 +4,13 @@
  * pre-R334 options. Uses requireActual: the global test setup mocks
  * @/lib/queryClient for the route render-net; this suite needs the REAL
  * module.
+ * R342 t08 — the db-health line: the cache's onError/onSuccess feed
+ * reportDbHealth (DB_UNAVAILABLE → degraded; success → healthy) — pinned
+ * by spying the network module's inlet while driving real queries.
  */
-import { describe, expect, it } from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, it } from "@jest/globals";
 import { ApiError, NETWORK_ERROR } from "@/api/client";
+import * as network from "@/lib/resilience/network";
 
 const {
   queryClient,
@@ -64,5 +68,52 @@ describe("query defaults", () => {
     expect(queries?.gcTime).toBe(5 * 60_000);
     expect(queries?.refetchOnWindowFocus).toBe(false);
     expect(queryClient.getDefaultOptions().mutations?.retry).toBe(0);
+  });
+});
+
+/* ── R342 t08: the db-health line (cache onError/onSuccess → reportDbHealth) ── */
+
+describe("query cache db-health wiring (r342 t08)", () => {
+  let reportDbHealthSpy: ReturnType<typeof jest.spyOn>;
+
+  beforeEach(() => {
+    reportDbHealthSpy = jest.spyOn(network, "reportDbHealth");
+  });
+
+  afterEach(() => {
+    reportDbHealthSpy.mockRestore();
+    queryClient.clear();
+  });
+
+  it("a DB_UNAVAILABLE query error marks the db degraded", async () => {
+    const dbDown = new ApiError("DB_UNAVAILABLE", "Database unavailable", 503);
+    await expect(
+      queryClient.fetchQuery({
+        queryKey: ["db-health-pin", "err"],
+        queryFn: () => Promise.reject(dbDown),
+        retry: false,
+      }),
+    ).rejects.toBe(dbDown);
+    expect(reportDbHealthSpy).toHaveBeenCalledWith(false);
+  });
+
+  it("a NON-db error never touches the db line (no false degradation)", async () => {
+    const plain = new ApiError("HTTP_ERROR", "خطأ", 500);
+    await expect(
+      queryClient.fetchQuery({
+        queryKey: ["db-health-pin", "err2"],
+        queryFn: () => Promise.reject(plain),
+        retry: false,
+      }),
+    ).rejects.toBe(plain);
+    expect(reportDbHealthSpy).not.toHaveBeenCalledWith(false);
+  });
+
+  it("a successful query read is the health signal — clears degradation", async () => {
+    await queryClient.fetchQuery({
+      queryKey: ["db-health-pin", "ok"],
+      queryFn: () => Promise.resolve({ fine: true }),
+    });
+    expect(reportDbHealthSpy).toHaveBeenCalledWith(true);
   });
 });
