@@ -72,9 +72,17 @@ describe("useNetworkStatus", () => {
     await waitFor(() => getByText("false|true|wifi"));
   });
 
-  it("treats unreachable internet as offline even when a link exists", async () => {
+  it("debounces the probe: one unreachable reading stays online, two confirm offline (R341 T03)", async () => {
     const { getByText } = await render(<Probe />);
     await waitFor(() => getByText("true|true|wifi"));
+    // First unreachable probe reading (link still up) — a transient
+    // blip / blocked-probe class: must NOT flip the app offline.
+    await act(async () => {
+      NetInfoMock.__setState({ isInternetReachable: false });
+    });
+    expect(getByText("true|true|wifi")).toBeTruthy();
+    // Second consecutive unreachable reading (a separate NetInfo event):
+    // now offline is confirmed.
     await act(async () => {
       NetInfoMock.__setState({ isInternetReachable: false });
     });
