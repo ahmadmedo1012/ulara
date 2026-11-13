@@ -26,7 +26,6 @@ import { countAr } from "@/features/student/more";
 import { PushFrame, gradeKindLabel, normalizeResults } from "@/features/student/components";
 
 /** «%» with Latin digits — the CountUp face for percentages. */
-const pctFace = (n: number): string => `${latn(Math.round(n))}%`;
 
 /** The Arabic share/export summary (text-only, no PII beyond grades). */
 export function resultsShareText(data: {
@@ -101,7 +100,7 @@ export default function ResultsScreen() {
                     color={gradeInk(headline.avgGradePct)}
                     accessibilityLabel={`المتوسط العام ${pct(headline.avgGradePct)}`}
                   >
-                    <CountUp value={headline.avgGradePct} formatter={pctFace} />
+                    <CountUp value={headline.avgGradePct} numerals="latin" suffix="%" />
                   </RingProgress>
                   <View style={{ alignItems: "center", gap: sp[2] }}>
                     <T variant="h4" weight="bold">

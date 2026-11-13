@@ -8,11 +8,29 @@
  *   · web — react-native-web's TextInput has no `text` native prop, so the
  *     same derived value mirrors through state via useAnimatedReaction +
  *     runOnJS (reanimated on web drives updates from the same frame loop,
- *     so the fidelity is identical — there is no separate UI thread there).
+ *     so fidelity is identical — there is no separate UI thread there).
  *
  * Reduced motion → instant: a plain Text at the final value, no hooks
- * churn, no animation. `formatter` shapes the output — Latin digits by
- * default, Arabic-Indic numerals by passing a formatter.
+ * churn, no animation.
+ *
+ * R336 G — THE POST-LOGIN FREEZE FIX (worklet discipline):
+ * The old design shaped output through a `formatter` PROP — a plain JS
+ * function captured and CALLED inside the useDerivedValue worklet. On
+ * reanimated 4 / react-native-worklets that is a synchronous REMOTE call
+ * from the UI runtime, which is forbidden: it raises
+ *   "[Worklets] Tried to synchronously call a Remote Function" →
+ *   ReactNoCrashSoftException → the ReactHost TEARS DOWN the context —
+ * the process stays alive rendering a blank, frozen screen, with NO
+ * crash signature in logcat (the soft exception matches none of the
+ * FATAL/JS-Error/SIGABRT/Invariant greps). CountUp is the KPI cell on
+ * every role dashboard, so EVERY role froze exactly at first dashboard
+ * render after login — the owner's device symptom, root-caused on the
+ * android-smoke emulator (run 43419376264 forensics: the exception
+ * lands at the login-submit → dashboard-mount instant).
+ *
+ * The face is DATA now: `numerals` ('latin' | 'arabic-indic') + `suffix`
+ * are captured primitives, and ONE module-scope 'worklet' function does
+ * the shaping on the UI thread. The formatter prop is retired.
  */
 import { useEffect, useState } from "react";
 import {
@@ -47,8 +65,30 @@ const AnimatedTextInput = Animated.createAnimatedComponent(
   TextInput as unknown as ComponentType<AnimatedTextInputProps>,
 );
 
-/** Latin digits, rounded — the default face. */
-const defaultFormatter = (n: number): string => String(Math.round(n));
+/** The numeral faces CountUp can render. */
+export type CountUpNumerals = "latin" | "arabic-indic";
+
+/** Arabic-Indic digit table — data (safe to capture in the worklet). */
+const ARABIC_INDIC = ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"];
+
+/**
+ * The ONE face-shaper — a WORKLET (module scope, 'worklet' directive) so
+ * useDerivedValue can call it ON THE UI RUNTIME. Pure digit mapping +
+ * suffix concat — exactly what lib/format's Intl-free transform does on
+ * the JS side (Hermes Intl is engine-dependent — the R326 rule), with no
+ * captured-function calls anywhere.
+ */
+const formatFace = (n: number, numerals: CountUpNumerals, suffix: string): string => {
+  "worklet";
+  const digits = String(Math.round(n));
+  if (numerals !== "arabic-indic") return digits + suffix;
+  let out = "";
+  for (let i = 0; i < digits.length; i += 1) {
+    const d = digits.charCodeAt(i) - 48;
+    out += d >= 0 && d <= 9 ? ARABIC_INDIC[d] : digits[i];
+  }
+  return out + suffix;
+};
 
 /**
  * Input-neutralizing defaults — a bare TextInput carries intrinsic
@@ -69,9 +109,12 @@ export interface CountUpProps {
   value: number;
   /** animation duration in ms (default 650 — durations.countUp). */
   duration?: number;
-  /** shape the output: `String(Math.round(n))` by default; pass an
-   *  Arabic-Indic numeral formatter for عربية output. */
-  formatter?: (n: number) => string;
+  /** the numeral face: 'latin' (default) or 'arabic-indic' — data, not a
+   *  function (R336 G: captured functions are remote calls on the UI
+   *  runtime — see the header). */
+  numerals?: CountUpNumerals;
+  /** appended after the shaped number (e.g. '%' — the rates face). */
+  suffix?: string;
   style?: StyleProp<TextStyle>;
   /** announced to screen readers — defaults to the FINAL formatted value,
    *  so a11y users never sit through the count. */
@@ -82,7 +125,8 @@ export interface CountUpProps {
 export function CountUp({
   value,
   duration = durations.countUp,
-  formatter = defaultFormatter,
+  numerals = "latin",
+  suffix = "",
   style,
   accessibilityLabel,
   testID,
@@ -98,11 +142,11 @@ export function CountUp({
     }
   }, [value, duration, reduced, progress]);
 
-  const text = useDerivedValue(() => formatter(progress.value));
+  const text = useDerivedValue(() => formatFace(progress.value, numerals, suffix));
 
   // web mirror — native never enters this path (prepare returns null there)
   const shouldMirror = Platform.OS === "web";
-  const [mirror, setMirror] = useState(() => formatter(0));
+  const [mirror, setMirror] = useState(() => formatFace(0, numerals, suffix));
   useAnimatedReaction(
     () => (shouldMirror ? text.value : null),
     (next, prev) => {
@@ -118,13 +162,25 @@ export function CountUp({
     text: text.value,
   }));
 
-  const label = accessibilityLabel ?? formatter(value);
+  /** JS-side shaping (labels + reduced motion + the web seed) — the same
+   * digits math as the worklet, for the non-animated seats. */
+  const shape = (n: number): string => {
+    const digits = String(Math.round(n));
+    if (numerals !== "arabic-indic") return digits + suffix;
+    let out = "";
+    for (let i = 0; i < digits.length; i += 1) {
+      const d = digits.charCodeAt(i) - 48;
+      out += d >= 0 && d <= 9 ? ARABIC_INDIC[d] : digits[i];
+    }
+    return out + suffix;
+  };
+  const label = accessibilityLabel ?? shape(value);
 
   if (reduced) {
     // reduced motion → the final value, immediately
     return (
       <Text testID={testID} accessibilityLabel={label} style={style}>
-        {formatter(value)}
+        {shape(value)}
       </Text>
     );
   }
@@ -153,7 +209,7 @@ export function CountUp({
   return (
     <AnimatedTextInput
       {...inputProps}
-      defaultValue={formatter(0)}
+      defaultValue={shape(0)}
       animatedProps={animatedProps}
     />
   );

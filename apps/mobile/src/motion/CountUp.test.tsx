@@ -13,6 +13,7 @@
 import { describe, expect, it, beforeEach } from "@jest/globals";
 import { render, screen } from "@testing-library/react-native";
 import { Platform } from "react-native";
+import { readFileSync } from "node:fs";
 import { useReduceMotion } from "@/hooks/useReduceMotion";
 import { CountUp } from "./CountUp";
 
@@ -26,10 +27,22 @@ beforeEach(() => {
   mockReduced.mockReturnValue(false);
 });
 
-/** Arabic-Indic numerals — the user-facing face for عربية screens. */
-const arabicDigits = (n: number): string => new Intl.NumberFormat("ar-EG").format(Math.round(n));
-
 describe("CountUp", () => {
+  it("R336 G — the worklet closure calls no captured functions (the post-login freeze contract)", () => {
+    // The formatter-prop design is BANNED here: a captured plain function
+    // called inside useDerivedValue is a synchronous REMOTE call on the UI
+    // runtime — react-native-worklets raises "Tried to synchronously call a
+    // Remote Function", the soft exception DESTROYS the ReactHost, and the
+    // app freezes on a blank screen right after login (CountUp is the KPI
+    // cell of every role dashboard). The face must stay DATA.
+    const source = readFileSync(new URL("./CountUp.tsx", import.meta.url), "utf8");
+    expect(source).toContain("useDerivedValue(() => formatFace(");
+    expect(source).not.toMatch(/formatter\??:/);
+    expect(source).not.toMatch(/formatter=/);
+    // the ONE worklet carries the 'worklet' directive
+    expect(source).toMatch(/"worklet";/);
+  });
+
   it("mounts the animated-counter branch with the final value as its a11y name", async () => {
     await render(<CountUp value={42} testID="count" />);
     const el = screen.getByTestId("count");
@@ -48,11 +61,23 @@ describe("CountUp", () => {
     expect(screen.getByTestId("count").props.accessibilityLabel).toBe("42");
   });
 
-  it("shapes output through the formatter (Arabic-Indic numerals)", async () => {
+  it("shapes output through the numerals face (Arabic-Indic — data, never a captured function: R336 G)", async () => {
     mockReduced.mockReturnValue(true);
-    await render(<CountUp value={42} formatter={arabicDigits} testID="count" />);
+    await render(<CountUp value={42} numerals="arabic-indic" testID="count" />);
     expect(screen.getByText("٤٢")).toBeTruthy();
     expect(screen.getByTestId("count").props.accessibilityLabel).toBe("٤٢");
+  });
+
+  it("appends the suffix (the rates face: 87%)", async () => {
+    mockReduced.mockReturnValue(true);
+    await render(<CountUp value={87.3} numerals="latin" suffix="%" testID="count" />);
+    expect(screen.getByText("87%")).toBeTruthy();
+  });
+
+  it("combines the Arabic-Indic face with a suffix", async () => {
+    mockReduced.mockReturnValue(true);
+    await render(<CountUp value={12} numerals="arabic-indic" suffix="%" testID="count" />);
+    expect(screen.getByText("١٢%")).toBeTruthy();
   });
 
   it("respects a custom accessibilityLabel (user-facing العربية)", async () => {
@@ -61,7 +86,7 @@ describe("CountUp", () => {
     expect(screen.getByTestId("count").props.accessibilityLabel).toBe("اثنان وأربعون درسًا");
   });
 
-  it("rounds with the default formatter", async () => {
+  it("rounds with the default (latin) face", async () => {
     mockReduced.mockReturnValue(true);
     await render(<CountUp value={41.6} testID="count" />);
     expect(screen.getByText("42")).toBeTruthy();

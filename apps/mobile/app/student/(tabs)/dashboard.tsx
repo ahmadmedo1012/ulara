@@ -59,7 +59,7 @@ export default function StudentDashboard() {
   const scope = useInstitutionScope();
   const user = useSession((s) => s.user);
   const p = usePalette();
-  const { formatNumber: fmt } = useNumerals();
+  const { formatNumber: fmt, numerals } = useNumerals();
 
   const dash = useQuery({
     queryKey: ["me", "dashboard", scope],
@@ -254,7 +254,7 @@ export default function StudentDashboard() {
                   <View key={s.label} style={{ flexGrow: 1, flexShrink: 1, flexBasis: "30%", gap: 2, alignItems: "center" }}>
                     <CountUp
                       value={s.value}
-                      formatter={(n) => fmt(Math.round(n))}
+                      numerals={numerals}
                       accessibilityLabel={s.a11y}
                       style={{ fontSize: 20, fontWeight: "700" }}
                     />

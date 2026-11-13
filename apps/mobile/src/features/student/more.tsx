@@ -98,12 +98,20 @@ export const QTYPE_LABEL: Record<string, string> = {
   ESSAY: "سؤال مقالي",
 };
 
-/** M:SS countdown, Western glyphs (contract rule 2). */
+/** M:SS countdown, Western glyphs (contract rule 2).
+ * R336 G: a WORKLET — the online-exams clock drives it from useDerivedValue
+ * on the UI runtime (a plain function would be a synchronous REMOTE call,
+ * which react-native-worklets forbids — the soft exception destroys the
+ * ReactHost and freezes the app). Worklet-safe by construction: Math +
+ * String + template literals only, no captured-function calls (the old
+ * `latn(m)` was a no-op for a number — String(m) is already Western). */
 export function fmtClock(totalSeconds: number): string {
+  "worklet";
   const s = Math.max(0, Math.floor(totalSeconds));
   const m = Math.floor(s / 60);
   const r = s % 60;
-  return `${latn(m)}:${String(r).padStart(2, "0")}`;
+  const r2 = r < 10 ? `0${r}` : String(r);
+  return `${m}:${r2}`;
 }
 
 /**
