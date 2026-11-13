@@ -8,6 +8,7 @@ import {
   Eye, EyeOff, Check,
 } from 'lucide-react';
 import { Icon } from '../components/Icon';
+import { Logo } from '../brand';
 import { useRegister } from '../hooks/useAuth';
 import { useFaculties } from '../hooks/useResources';
 import { useInstitutions } from '../hooks/useInstitutions';
@@ -333,6 +334,14 @@ export default function RegisterPage() {
             تسجيل الدخول
           </Link>
         )}
+        {/* r341 (t05 · brand parity): the canonical brand mark chip —
+            the SAME grammar every sibling auth surface carries in its
+            auth-top (AuthPage / ForgotPasswordPage / ResetPasswordPage):
+            the mark + «أُلارا» in a quiet .auth-context seat (same
+            variant, size and classes as AuthPage's r191 chip). */}
+        <span className="auth-context">
+          <Logo variant="mark" size={14} /> أُلارا
+        </span>
         {/* r157 F5: on step 2 the login link is demoted to a quiet
             .auth-context chip — the header carries ONE pill («تغيير
             نوع الحساب»); a second loud action competed with it. */}

@@ -126,9 +126,18 @@ export function Footer({ year }: { year: number }) {
               </div>
               {BRAND_ROWS.map((row, i) => (
                 <div className="fo-brow" key={i}>
-                  {row.map(([to, label]) => (
-                    <a key={to} href={to} className="fo-ilink">{label}</a>
-                  ))}
+                  {/* r341 (t05 · SPA links): route rows are router <Link>
+                      seats (no full document reload); in-page #fragment
+                      rows stay raw anchors — the browser's own scroll
+                      grammar, same convention as Statement's #chapters /
+                      Product's #cta pills. */}
+                  {row.map(([to, label]) =>
+                    to.startsWith('#') ? (
+                      <a key={to} href={to} className="fo-ilink">{label}</a>
+                    ) : (
+                      <Link key={to} to={to} className="fo-ilink">{label}</Link>
+                    ),
+                  )}
                 </div>
               ))}
             </div>
@@ -203,15 +212,28 @@ export function Footer({ year }: { year: number }) {
                         <Link to="/auth" className="fo-link fo-link-account">{LOGIN}</Link>
                       </>
                     )}
-                    {g.links.map(([to, label], li) => (
-                      <a
-                        key={to}
-                        href={to}
-                        className={gi || li ? 'fo-link' : 'fo-link fo-link-accent'}
-                      >
-                        {label}
-                      </a>
-                    ))}
+                    {g.links.map(([to, label], li) =>
+                      /* r341 (t05 · SPA links): same split as the brand
+                         rows — routes ride <Link>, #fragments stay raw
+                         anchors (keys/classes/labels unchanged). */
+                      to.startsWith('#') ? (
+                        <a
+                          key={to}
+                          href={to}
+                          className={gi || li ? 'fo-link' : 'fo-link fo-link-accent'}
+                        >
+                          {label}
+                        </a>
+                      ) : (
+                        <Link
+                          key={to}
+                          to={to}
+                          className={gi || li ? 'fo-link' : 'fo-link fo-link-accent'}
+                        >
+                          {label}
+                        </Link>
+                      ),
+                    )}
                   </div>
                 </div>
               ))}
@@ -231,16 +253,19 @@ export function Footer({ year }: { year: number }) {
               </div>
               <div className="fo-lgroup">
                 <div className="fo-mono-label">ADDRESS</div>
-                <a href="/about" className="fo-link">مساحة عمل أُلارا التجريبية</a>
+                <Link to="/about" className="fo-link">مساحة عمل أُلارا التجريبية</Link>
                 <div className="fo-rule" aria-hidden="true" />
                 <div className="fo-mono-label">REGION</div>
-                <a href="/about" className="fo-link">منصّة مستقلّة — لا تنتمي لأي جهة</a>
+                <Link to="/about" className="fo-link">منصّة مستقلّة — لا تنتمي لأي جهة</Link>
               </div>
               <div className="fo-lgroup">
                 <div className="fo-mono-label">CHANNELS</div>
                 <div className="fo-socials">
+                  {/* r341 (t05 · SPA links): every channels door is a
+                      real public route — router <Link>, same
+                      keys/classes/labels. */}
                   {CHANNEL_LINKS.map(([to, label]) => (
-                    <a key={to} href={to} className="fo-social">{label}</a>
+                    <Link key={to} to={to} className="fo-social">{label}</Link>
                   ))}
                 </div>
               </div>
@@ -287,9 +312,11 @@ export function Footer({ year }: { year: number }) {
             <p className="fo-legal-p">
               <span className="fo-mono">© {year} أُلارا</span>
               {' '}— منصّة مستقلّة · عربية أولًا · بيانات العرض اصطناعية بالكامل —{' '}
-              <a className="fo-legal-a" href="/about">
+              {/* r341 (t05 · SPA links): the © line's /about door rides
+                  the router too (same class, same visible text). */}
+              <Link className="fo-legal-a" to="/about">
                 عن المنصّة
-              </a>
+              </Link>
             </p>
           </div>
           <nav className="fo-legal-row" aria-label="سياسات المنصّة وصفحاتها العامة">
