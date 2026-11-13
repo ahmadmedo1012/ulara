@@ -24,13 +24,21 @@
 
 ## Queue
 
-- [ ] t01 — fix(mobile): settings ConfirmSheet mounting (Q1)
-- [ ] t02 — audit(mobile): worklet closure sweep + role journey verification (Q2)
-- [ ] t03 — fix(mobile): connectivity state machine honesty (Q3)
-- [ ] t04 — fix(mobile): scroll experience pass (Q4)
-- [ ] t05 — verify/fix(brand): canonical logo + footer (Q5)
-- [ ] t06 — improve(web): authenticated experience pass (Q6)
-- [ ] t07 — audit(backend): permissions + API contract spot-audit (Q7)
+- [x] t01 — fix(mobile): settings ConfirmSheet mounting (Q1)
+- [x] t02 — audit(mobile): worklet closure sweep + role journey verification (Q2)
+- [x] t03 — fix(mobile): connectivity state machine honesty (Q3)
+- [x] t04 — fix(mobile): scroll experience pass (Q4)
+- [x] t05 — verify/fix(brand): canonical logo + footer (Q5)
+- [x] t06 — improve(web): authenticated experience pass (Q6)
+- [x] t07 — audit(backend): permissions + API contract spot-audit (Q7)
 
 Tasks are created as `docs/redesign/r341/tasks/tNN-*.md` when staffed.
 One worktree per task: `/home/z/wt/tNN`, branch `wip/tNN` (r341 law).
+
+## Round state (2026-11-13, close of wave 2)
+
+All seven tasks staffed, implemented, lead-reviewed, merged into
+`wip/r341-integration`, and lead-verified (see HANDOFF.md for the full
+gate record). Integration PR: ahmadmedo1012/ulara#1. Mobile workflow
+(incl. android-smoke five-role emulator journey) dispatched on the
+branch for journey-level evidence before merge.
