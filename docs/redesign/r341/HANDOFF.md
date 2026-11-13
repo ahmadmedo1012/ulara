@@ -42,3 +42,35 @@
   sheet mounting fixed). NOT TESTED on a physical iPhone.
 - `expo export` (part of CI's Mobile gates) not run locally (disk/CPU
   budget); CI will run it.
+
+## Iteration 2 — the t01 first cut regressed the settings scroll; root-provider fix (28df896)
+
+**Evidence loop**: the dispatched android-smoke run (43455712122) on the
+wave-2 integration moved the failure point: all five roles now passed
+login, dashboard, three tabs, the settings deep-link and its title assert
+— then died scrolling to «تسجيل الخروج» (12+ center swipes, page never
+left scroll position 0; hierarchy + VLM screenshot: clean page, no
+overlay, no banner, no keyboard; touches delivered per logcat). On main
+this scroll worked and the failure was later (the «خروج» confirm never
+presenting).
+
+**Root-cause analysis**: t01's hoist moved the per-sheet
+GestureHandlerRootView + BottomSheetModalProvider host chain (an
+absolute-fill overlay) from inside the ScrollView to a full-screen
+sibling — the only structural delta vs main at that screen. The native
+interaction of that host chain with the sibling scroller kills the
+scroll gesture on Android.
+
+**Fix (28df896)**: the per-sheet local providers are RETIRED from
+AppSheet — sheets bind to the app-root providers (GestureHandlerRootView
++ RootSheetModalProvider, mounted in _layout since R334 3-a). The portal
+hosts in root coordinates (above the navigator) — the original
+presentation bug AND the scroll regression are both structurally
+impossible now. This is the hoist sheet.tsx's own R334 docblock
+recommended. Jest unaffected (both packages are mocked in the suites);
+the t01 mounting-contract source test keeps its teeth.
+
+**Verification of the fix**: tsc 0 · full mobile jest 45 suites / 1228
+tests PASS · lint 0 errors with warning sites byte-identical to main.
+The android-smoke journey re-dispatched on 28df896 for the empirical
+verdict (pending at doc time — recorded below when it lands).
