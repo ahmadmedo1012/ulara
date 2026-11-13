@@ -1,31 +1,44 @@
-# Android APK — the DIRECT distribution channel (Phase Ω).
+# Android APK — the DIRECT distribution channel (Phase Ω), split into
+# TWO lanes (R336 C — the QA/release split):
 #
-# Builds a REAL, signed, installable release APK of apps/mobile on
-# GitHub's own runners — no EAS quota, no external account — and
-# publishes it to the rolling «latest» GitHub Release, so ONE stable
-# URL always serves the newest build:
+#   ── QA lane (qa-apk) ─────────────────────────────────────────────────
+#   A real, installable APK on every qualifying push — NO release
+#   credentials required. Builds the repo's ONE recipe
+#   (scripts/build-android-local.sh) with ALLOW_DEBUG_KEYSTORE=1 (the
+#   script's own documented QA path: a release-variant APK signed with
+#   the debug key — installs on any emulator/device, Play rejects it).
+#   The QA APK is published as a workflow ARTIFACT only — it NEVER
+#   touches the rolling «latest» release. Emulator install + login
+#   journey coverage lives in mobile.yml's android-smoke job (the
+#   throwaway-keystore lane with the real backend stack).
 #
-#   https://github.com/ahmadmedo1012/ulara/releases/latest/download/ulara.apk
+#   ── Release lane (release-apk) ───────────────────────────────────────
+#   The signed production APK for the rolling «latest» GitHub Release:
+#     https://github.com/ahmadmedo1012/ulara/releases/latest/download/ulara.apk
 #
-# (the repo rename lands at integration; GitHub redirects the old
-# org/repo path, so both spellings resolve during the transition)
+#   Signing: a dedicated DIRECT-CHANNEL keystore (Android repository
+#   secrets ANDROID_KEYSTORE_B64 / ANDROID_KEYSTORE_PASSWORD /
+#   ANDROID_KEY_ALIAS / ANDROID_KEY_PASSWORD). It is deliberately
+#   SEPARATE from any future Play upload key (that one stays in EAS
+#   credentials — RELEASE.md §store-prep). A stable signature means a
+#   new APK installs as an UPDATE over previous direct installs — the
+#   key is NEVER replaced silently.
 #
-# The build itself is the repo's ONE build recipe — scripts/build-
-# android-local.sh (docs/mobile/ANDROID-LOCAL.md): expo prebuild →
-# key.properties + release signingConfig patch → gradlew assembleRelease.
-# CI just drives it with the repository-secret keystore.
-#
-# Signing: a dedicated DIRECT-CHANNEL keystore (Android repository
-# secrets ANDROID_KEYSTORE_B64 / ANDROID_KEYSTORE_PASSWORD /
-# ANDROID_KEY_ALIAS / ANDROID_KEY_PASSWORD). It is deliberately
-# SEPARATE from any future Play upload key (that one stays in EAS
-# credentials — RELEASE.md §store-prep). A stable signature means a
-# new APK installs as an UPDATE over previous direct installs.
+#   The release lane checks ALL FOUR secrets FIRST (before any SDK
+#   download) and SKIPS WITH A NOTICE when they are absent — an honest
+#   "external blocker" state instead of burning the whole setup budget
+#   and failing red at the keystore step (the run 43364410025 failure:
+#   the gate sat AFTER npm ci/SDK/NDK and reported a missing secret
+#   only after ~25 minutes of setup). When the secrets exist, the lane
+#   validates the decoded keystore with keytool (BEFORE Gradle), builds,
+#   verifies the signature certificate, and pins it against
+#   ANDROID_KEY_CERT_SHA256 when that optional secret is provided.
 #
 # Triggers:
 #   push → main, when the app or its inputs change (JS changes ship a
 #          new APK too — the bundle is embedded in the binary)
-#   workflow_dispatch → manual rebuild (quota reset, recipe change…)
+#   workflow_dispatch → lane selector: 'qa' | 'release' | 'both'
+#                       (default 'both')
 name: Android APK (direct)
 
 on:
@@ -37,24 +50,37 @@ on:
       - 'scripts/build-android-local.sh'
       - '.github/workflows/android-apk.yml'
   workflow_dispatch:
+    inputs:
+      lane:
+        description: 'Build lane'
+        type: choice
+        options: [qa, release, both]
+        default: both
 
+# Least privilege: the workflow defaults to read; ONLY the release lane
+# (which creates the rolling GitHub release) escalates to contents: write.
 permissions:
-  contents: write
+  contents: read
 
-# Never two APK pipelines at once — the second replaces the rolling
-# release only after it has a complete artifact (queued, not cancelled).
+# Never two APK pipelines at once per lane — a queued release replaces
+# the rolling release only after it has a complete artifact; QA builds
+# never block (or get blocked by) the release lane.
 concurrency:
-  group: android-apk
+  group: android-apk-${{ github.event_name == 'workflow_dispatch' && inputs.lane || 'push' }}
   cancel-in-progress: false
 
 env:
   NODE_VERSION: '22'
 
 jobs:
-  build-and-publish:
-    name: Build · sign · publish (rolling latest)
+  # ═══════════════════════════════════════════════════════════════════
+  # LANE A — QA APK (no signing secrets, artifact only)
+  # ═══════════════════════════════════════════════════════════════════
+  qa-apk:
+    name: QA APK (debug-signed · artifact)
     runs-on: ubuntu-24.04
     timeout-minutes: 50
+    if: github.event_name != 'workflow_dispatch' || inputs.lane == 'qa' || inputs.lane == 'both'
     steps:
       - uses: actions/checkout@v4
 
@@ -73,8 +99,6 @@ jobs:
         # Expo SDK 58 / RN 0.88 exact requirements — the same pins the
         # local build script checks for (scripts/build-android-local.sh §0c).
         run: |
-          # ubuntu-24.04 images don't always put cmdline-tools on PATH —
-          # resolve the binary from ANDROID_HOME, falling back to PATH.
           SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
           [ -x "$SDKMANAGER" ] || SDKMANAGER="$(command -v sdkmanager)"
           [ -n "$SDKMANAGER" ] || { echo "::error::sdkmanager not found under ANDROID_HOME=$ANDROID_HOME"; exit 1; }
@@ -107,19 +131,179 @@ jobs:
         working-directory: apps/mobile
         run: npm ci --no-audit --no-fund
 
-      - name: Release keystore (repository secrets — the direct-channel key)
+      - name: Build the QA APK (the script's own debug-keystore path)
         env:
-          ANDROID_KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_B64 }}
+          ALLOW_DEBUG_KEYSTORE: '1'
+          EXPO_NO_TELEMETRY: '1'
+          CI: 'true'
+        run: scripts/build-android-local.sh
+
+      - name: Verify the QA artifact + signature
         run: |
-          if [ -z "$ANDROID_KEYSTORE_B64" ]; then
-            echo "::error::ANDROID_KEYSTORE_B64 secret missing — the direct channel cannot sign without it (RELEASE.md §direct channel documents the key model)"
+          APK="apps/mobile/android/app/build/outputs/apk/release/app-release.apk"
+          if [ ! -f "$APK" ]; then
+            echo "::error::QA APK not found at $APK"
             exit 1
           fi
+          cp "$APK" ulara-qa.apk
+          # The debug signing identity is EXPECTED here — assert it is a
+          # valid, verifiable signature (any debug key), then record it.
+          "$ANDROID_HOME/build-tools/37.0.0/apksigner" verify --print-certs ulara-qa.apk
+          sha256sum ulara-qa.apk | tee ulara-qa.apk.sha256
+
+      - name: Upload the QA APK (30-day artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ulara-qa-apk-${{ github.sha }}
+          path: |
+            ulara-qa.apk
+            ulara-qa.apk.sha256
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: QA lane summary
+        run: |
+          {
+            echo "## Android QA APK — debug-signed artifact (NOT for Play)"
+            echo ""
+            echo "- Artifact: \`ulara-qa-apk-${GITHUB_SHA}\` (this run's artifacts)"
+            echo "- SHA-256: \`$(cut -d' ' -f1 ulara-qa.apk.sha256)\`"
+            echo "- Commit: \`${GITHUB_SHA}\`"
+            echo "- Emulator install + login journey: the mobile.yml android-smoke lane"
+            echo ""
+            echo "> This APK is signed with the DEBUG keystore (ALLOW_DEBUG_KEYSTORE) —"
+            echo "> install it on emulators/test devices only; it is never published to"
+            echo "> the rolling «latest» release."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # ═══════════════════════════════════════════════════════════════════
+  # LANE B — Release APK (secrets-gated, validated, published)
+  # ═══════════════════════════════════════════════════════════════════
+  release-apk:
+    name: Release APK (signed · rolling latest)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
+    permissions:
+      contents: write
+    if: github.event_name != 'workflow_dispatch' || inputs.lane == 'release' || inputs.lane == 'both'
+    steps:
+      # ── the secrets gate runs FIRST: all four, before ANY setup ──────
+      # A missing secret is an EXTERNAL BLOCKER (the owner must
+      # provision the direct-channel key — docs/deployment.md §5), not a
+      # build failure. Skip with a visible notice; the QA lane still
+      # ships an installable APK. Never print secret VALUES.
+      - name: Signing secrets gate (all four, before any setup)
+        id: secrets
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_B64 }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          STORE_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_PASS: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          MISSING=""
+          [ -z "$KEYSTORE_B64" ] && MISSING="$MISSING ANDROID_KEYSTORE_B64"
+          [ -z "$KEY_ALIAS" ]    && MISSING="$MISSING ANDROID_KEY_ALIAS"
+          [ -z "$STORE_PASS" ]   && MISSING="$MISSING ANDROID_KEYSTORE_PASSWORD"
+          [ -z "$KEY_PASS" ]     && MISSING="$MISSING ANDROID_KEY_PASSWORD"
+          if [ -n "$MISSING" ]; then
+            echo "::notice::Release lane SKIPPED — direct-channel signing secrets not provisioned:$MISSING. The rolling «latest» release keeps serving the previous verified build. QA lane artifacts remain available. Provision per docs/deployment.md §5 (the key must stay the ORIGINAL direct-channel identity — never generate a new one blindly: a new signature breaks in-place updates)."
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            {
+              echo "## Android release lane — SKIPPED (external signing blocker)"
+              echo ""
+              echo "Missing repository secrets:$MISSING"
+              echo ""
+              echo "The direct-channel release key is an OWNER action (docs/deployment.md §5)."
+              echo "Until it is provisioned, the rolling «latest» release keeps serving the last"
+              echo "verified signed build, and every push still produces a debug-signed QA APK"
+              echo "artifact from the qa-apk lane."
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          echo "available=true" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v4
+        if: steps.secrets.outputs.available == 'true'
+
+      - uses: actions/setup-node@v4
+        if: steps.secrets.outputs.available == 'true'
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: apps/mobile/package-lock.json
+
+      - uses: actions/setup-java@v4
+        if: steps.secrets.outputs.available == 'true'
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Android SDK components (platform 37 · build-tools 37 · NDK 27.1)
+        if: steps.secrets.outputs.available == 'true'
+        run: |
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          [ -x "$SDKMANAGER" ] || SDKMANAGER="$(command -v sdkmanager)"
+          [ -n "$SDKMANAGER" ] || { echo "::error::sdkmanager not found under ANDROID_HOME=$ANDROID_HOME"; exit 1; }
+          yes | "$SDKMANAGER" --licenses > /dev/null || true
+          "$SDKMANAGER" --install \
+            "platform-tools" \
+            "platforms;android-37.0" \
+            "build-tools;37.0.0" \
+            "ndk;27.1.12297006"
+          [ -d "$ANDROID_HOME/platforms/android-37" ] || \
+            ln -s "$ANDROID_HOME/platforms/android-37.0" "$ANDROID_HOME/platforms/android-37"
+
+      - name: Gradle + NDK cache
+        if: steps.secrets.outputs.available == 'true'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            /usr/local/lib/android/sdk/ndk
+          key: android-apk-${{ hashFiles('apps/mobile/package-lock.json', 'apps/mobile/app.config.ts') }}
+          restore-keys: |
+            android-apk-
+
+      - name: Dependencies (npm ci)
+        if: steps.secrets.outputs.available == 'true'
+        working-directory: apps/mobile
+        run: npm ci --no-audit --no-fund
+
+      # ── validate the key material BEFORE Gradle ─────────────────────
+      # A truncated-but-valid base64 secret decodes "successfully" into
+      # a corrupt keystore; keytool catches that HERE, with the alias
+      # and store password actually checked — not 20 minutes later
+      # inside assembleRelease. Secrets are never echoed.
+      - name: Materialize + validate the release keystore (keytool, pre-Gradle)
+        if: steps.secrets.outputs.available == 'true'
+        env:
+          ANDROID_KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_B64 }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        run: |
+          set -o pipefail
           printf '%s' "$ANDROID_KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/ulara-direct.jks"
           chmod 600 "$RUNNER_TEMP/ulara-direct.jks"
-          echo "keystore materialized at $RUNNER_TEMP/ulara-direct.jks"
+          echo "keystore materialized ($(wc -c < "$RUNNER_TEMP/ulara-direct.jks") bytes) — validating with keytool…"
+          if ! keytool -list -keystore "$RUNNER_TEMP/ulara-direct.jks" \
+               -storepass "$ANDROID_KEYSTORE_PASSWORD" \
+               -alias "$ANDROID_KEY_ALIAS" > "$RUNNER_TEMP/keytool-list.txt" 2>&1; then
+            echo "::error::Keystore validation FAILED — the decoded key material, alias, or store password is invalid (keytool output follows; secret values are not printed)."
+            sed -E 's/[A-Za-z0-9+/=]{20,}/<redacted>/g' "$RUNNER_TEMP/keytool-list.txt"
+            exit 1
+          fi
+          echo "keytool: keystore + alias + store password validated"
+          # Record the certificate's SHA-256 fingerprint for the pin
+          # check after the build (never a secret — it is public key material).
+          keytool -list -v -keystore "$RUNNER_TEMP/ulara-direct.jks" \
+            -storepass "$ANDROID_KEYSTORE_PASSWORD" \
+            -alias "$ANDROID_KEY_ALIAS" 2>/dev/null \
+            | grep -i 'SHA256:' | head -1 | sed -E 's/.*SHA256:\s*//' > "$RUNNER_TEMP/expected-cert-sha256.txt"
+          echo "expected cert SHA-256 fingerprint recorded"
 
       - name: Build the signed release APK (the repo's own recipe)
+        if: steps.secrets.outputs.available == 'true'
         env:
           ULARA_ANDROID_KEYSTORE: ${{ runner.temp }}/ulara-direct.jks
           ULARA_ANDROID_KEYSTORE_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
@@ -129,7 +313,17 @@ jobs:
           CI: 'true'
         run: scripts/build-android-local.sh
 
-      - name: Verify the artifact + signature
+      # ── verify BEFORE publishing ────────────────────────────────────
+      # 1. the APK exists and its signature VERIFIES;
+      # 2. the signing certificate is THE direct-channel key (pinned
+      #    against the keystore's own fingerprint, and — when the owner
+      #    provides it — against the ANDROID_KEY_CERT_SHA256 secret);
+      # 3. SHA-256 recorded as a release ASSET (SHA256SUMS.txt), not
+      #    just inline prose.
+      - name: Verify the artifact + pinned signature
+        if: steps.secrets.outputs.available == 'true'
+        env:
+          EXPECTED_CERT_SHA256: ${{ secrets.ANDROID_KEY_CERT_SHA256 }}
         run: |
           APK="apps/mobile/android/app/build/outputs/apk/release/app-release.apk"
           if [ ! -f "$APK" ]; then
@@ -137,10 +331,36 @@ jobs:
             exit 1
           fi
           cp "$APK" ulara.apk
-          "$ANDROID_HOME/build-tools/37.0.0/apksigner" verify --print-certs ulara.apk
+          APKSIGNER="$ANDROID_HOME/build-tools/37.0.0/apksigner"
+          "$APKSIGNER" verify --print-certs ulara.apk | tee "$RUNNER_TEMP/apksigner-certs.txt"
+          # Pin 1 — against the keystore the lane itself materialized:
+          EXPECTED="$(cat "$RUNNER_TEMP/expected-cert-sha256.txt" | tr -d '[:space:]' | tr 'A-F' 'a-f')"
+          ACTUAL="$("$APKSIGNER" verify --print-certs ulara.apk | grep -i 'SHA-256 digest:' | head -1 | sed -E 's/.*SHA-256 digest:\s*//' | tr -d '[:space:]' | tr 'A-F' 'a-f')"
+          if [ -z "$ACTUAL" ]; then
+            echo "::error::could not extract the APK's signing certificate SHA-256 — signature verification failed?"
+            exit 1
+          fi
+          if [ "$ACTUAL" != "$EXPECTED" ]; then
+            echo "::error::SIGNATURE PIN MISMATCH — the APK was signed by a DIFFERENT certificate than the provisioned direct-channel keystore (expected $EXPECTED, got $ACTUAL). Refusing to publish."
+            exit 1
+          fi
+          echo "signature pin: APK certificate == direct-channel keystore certificate"
+          # Pin 2 — the owner's explicit pin (optional secret):
+          if [ -n "$EXPECTED_CERT_SHA256" ]; then
+            PIN="$(printf '%s' "$EXPECTED_CERT_SHA256" | tr -d '[:space:]' | tr 'A-F' 'a-f')"
+            if [ "$ACTUAL" != "$PIN" ]; then
+              echo "::error::ANDROID_KEY_CERT_SHA256 pin mismatch — the provisioned keystore is NOT the original direct-channel identity (got $ACTUAL, pinned $PIN). Refusing to publish."
+              exit 1
+            fi
+            echo "signature pin: matches the owner's ANDROID_KEY_CERT_SHA256"
+          else
+            echo "::notice::ANDROID_KEY_CERT_SHA256 not set — record '$ACTUAL' as that secret to pin future builds to THIS identity."
+          fi
           sha256sum ulara.apk | tee apk.sha256
+          printf '%s  ulara.apk\n' "$(cut -d' ' -f1 apk.sha256)" > SHA256SUMS.txt
 
       - name: Release metadata (app version from the resolved Expo config)
+        if: steps.secrets.outputs.available == 'true'
         id: meta
         working-directory: apps/mobile
         run: |
@@ -150,12 +370,14 @@ jobs:
           echo "app version: $VERSION"
 
       - name: Publish the rolling «latest» release
+        if: steps.secrets.outputs.available == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.meta.outputs.version }}
         run: |
           SHA=$(cut -d' ' -f1 apk.sha256)
           SIZE=$(du -h ulara.apk | cut -f1)
+          CERT=$(cat "$RUNNER_TEMP/expected-cert-sha256.txt")
           NOTES="$RUNNER_TEMP/release-notes.md"
           cat > "$NOTES" <<EOF
           # أُلارا — تطبيق أندرويد (قناة التنزيل المباشر)
@@ -169,6 +391,7 @@ jobs:
           | الالتزام | \`${GITHUB_SHA}\` |
           | حجم الملف | ${SIZE} |
           | SHA-256 | \`${SHA}\` |
+          | بصمة شهادة التوقيع (SHA-256) | \`${CERT}\` |
 
           **التثبيت:** نزّل \`ulara.apk\` وافتحه على جهازك، واسمح بـ«التثبيت من
           مصادر غير معروفة» عند سؤال النظام أول مرة. التوقيع ثابت عبر البناءات —
@@ -186,12 +409,13 @@ jobs:
           #   /releases/latest/download/ulara.apk  (latest full release)
           #   /releases/download/latest/ulara.apk  (fixed tag)
           gh release delete latest --yes --cleanup-tag 2>/dev/null || true
-          gh release create latest ulara.apk#ulara.apk \
+          gh release create latest ulara.apk#ulara.apk SHA256SUMS.txt#SHA256SUMS.txt \
             --title "أُلارا — أندرويد v${VERSION} (أحدث بناء)" \
             --notes-file "$NOTES" \
             --latest
 
-      - name: Job summary
+      - name: Release lane summary
+        if: steps.secrets.outputs.available == 'true'
         run: |
           {
             echo "## Android APK — rolling «latest» release published"
@@ -201,4 +425,18 @@ jobs:
             echo "- Releases page: https://github.com/ahmadmedo1012/ulara/releases"
             echo "- App version: ${{ steps.meta.outputs.version }}"
             echo "- Commit: \`${GITHUB_SHA}\`"
+            echo "- APK SHA-256: \`${GITHUB_SHA}\` recorded in SHA256SUMS.txt on the release"
+            echo "- Signature: verified against the direct-channel keystore certificate"
           } >> "$GITHUB_STEP_SUMMARY"
+
+      # ── failure forensics: never lose the Gradle/ Expo logs ─────────
+      - name: Upload build logs on failure
+        if: failure() && steps.secrets.outputs.available == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-release-logs-${{ github.sha }}
+          path: |
+            apps/mobile/android/app/build/reports/**
+            apps/mobile/android/app/build/outputs/logs.txt
+          if-no-files-found: ignore
+          retention-days: 14
