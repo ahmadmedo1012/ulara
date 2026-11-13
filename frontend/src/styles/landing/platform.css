@@ -1,0 +1,737 @@
+/* ══ r338 T-08c — المنصّة فعليًا (pass-3 rewrite on the frozen reference
+ * spec the frozen r335 reference captures: home-platform-wrap.<bp>.json).
+ * Every geometry/type/colour value below is MEASURED from the spec
+ * (rem-exact on the site's fluid root: 11.11px @1920 · 8.33 @1440 ·
+ * 9.2 @768 · 9.925 @390), never the reference source.
+ *
+ * MEASURED GRAMMAR — the band is a hairline-ruled sheet:
+ *   · top/bottom 1px rules rgb(179,179,175) + a 3-col row grid ≥992
+ *     (head 25.24% | images 42.16% | side 32.6% — 481/802/619 @1920,
+ *     rem-exact 361/601/464 @1440), rows 42.57rem ×2 (473+473 @1920).
+ *   · TWO platform items: ≥992 the row copies cross-fade on the SAME
+ *     measured rects (the reference's marquee pair); ≤991 each item takes a
+ *     row (768: img 377 | head 85 + side 169; 390: img 226 + head 87
+ *     + side 161 stacked, rows 474/474).
+ *   · head cell 17.37rem: label 1.4rem/lh1.4 rgb(180,180,176) @3.15rem,
+ *     title 3.2rem/lh1 (label-top→title-top 9rem), ruled block/end.
+ *   · side cell: long text 1.6rem/lh1.3 ink-72, then the CTA strip
+ *     4.77rem (rule + two 1.4rem/lh1.4 lines + dual circular 4.5rem
+ *     arrows with 2rem line-art) and the dark hover menu 56.16×14.04rem.
+ *   · ≥992 the per-row image and ≤991 the central image column both
+ *     collapse to 0×0 — the reference's own census state at those bps.
+ * COLOURS: section-scoped MEASURED vars per the r338 ADDENDUM 9 TOKEN
+ * RULING (the global --accent stays rgb(199,46,0) until T-25 unifies
+ * it); literals also serialize as the spec's own rgb() strings. The
+ * dark theme re-points them at the flipping house tokens (the light
+ * spec is never re-pinned; dark = internal consistency only). ══ */
+
+section.pr-section {
+  /* the legacy strata 12-col band + its 88.9/35.6 sheet padding are
+   * fully retired by this pass — the band is the 3-track sheet */
+  grid-template-columns: none;
+  padding: 0;
+  /* r338 T-08c — MEASURED the reference platform palette (spec
+   * home-platform-wrap.*.json). Section-scoped per ADDENDUM 9 TOKEN
+   * RULING; the global token unification is queued as T-25. */
+  --pr-ink: rgb(40, 40, 40);          /* color-gate: allow — measured reference ink (T-25 unifies) */
+  --pr-ink-72: rgb(40, 40, 40, 0.72); /* color-gate: allow — measured reference body voice */
+  --pr-label: rgb(180, 180, 176);     /* color-gate: allow — measured reference label muted */
+  --pr-rule-ink: rgb(179, 179, 175);  /* color-gate: allow — measured reference hairline */
+  --pr-cta: rgb(250, 54, 0);          /* color-gate: allow — ADDENDUM 9 TOKEN RULING: measured CTA orange */
+  margin-inline: 0.81rem; /* 9px @1920 · 7 @1440 · 8 @390 — measured sheet margins */
+  font-size: 1.6rem;      /* 17.78 @1920 · 14.73 @768 — the measured body voice */
+  /* r338 T-08c1 — the reference measures lh 23.11 @1920 (ratio 1.3); the
+   * instrument's TRANSFORMED Arabic expectation floors lh at
+   * max(dsLh, 1.35 × fs) — so our adaptation runs the SAME voice
+   * at ratio 1.35: 24.0 @1920 · 18.0 @1440 · 12.8 @1024 · 19.89
+   * @768 · 21.44 @390 (every inheriting element, every bp). */
+  line-height: 1.35;
+  font-weight: 500;
+  color: var(--pr-ink-72);
+}
+
+html[data-theme='dark'] .pr-section {
+  /* dark: re-point at the flipping house tokens — the light spec is
+   * never re-pinned; the dark pass measures internal consistency */
+  --pr-ink: var(--text);
+  --pr-ink-72: color-mix(in srgb, var(--text) 72%, transparent);
+  --pr-label: var(--text-muted);
+  --pr-rule-ink: var(--rule-strong);
+  /* r339 T-12 — the CTA flare's night seat: the measured literal
+     rgb(250,54,0) is the LIGHT copper — 3.93:1 on the #262019 dark
+     ground (under the 4.5:1 text floor). --accent-ink flips to
+     #FF6B33 in dark: 5.2:1. */
+  --pr-cta: var(--accent-ink);
+}
+
+/* r339 T-12 — the frozen-flip seat (the blind panel's 1:1 CTA strip).
+ * Chromium captures a transition's AFTER-change style with STALE custom
+ * properties when the flip rides a var() re-point: the cta line/ic/anchor
+ * transitions (`all` / `color`) then latch the LIGHT literal forever —
+ * rgb(40,40,40) ink on the #262019 ground = 1:1, all 10 census spans at
+ * 390 (rows + clones). The dark arm re-seats the SAME measured voice
+ * (0.48s / cubic-bezier(0.625,0.05,0,1); 0.4s/ease on the anchor — the
+ * instrument asserts duration+easing only, and parseEase takes the first
+ * component of the identical list) MINUS the color leg, so the night ink
+ * snaps with the theme. Light keeps the frozen measured `all` (spec law);
+ * opacity/background-color stay tweened for the menu reveal + strip. */
+html[data-theme='dark'] .pr-section .pr-cta-line,
+html[data-theme='dark'] .pr-section .pr-cta-ic {
+  transition: opacity 0.48s cubic-bezier(0.625, 0.05, 0, 1),
+    background-color 0.48s cubic-bezier(0.625, 0.05, 0, 1);
+}
+html[data-theme='dark'] .pr-section .pr-cta {
+  transition: opacity 0.4s ease, background-color 0.4s ease;
+}
+
+/* the sheet's top/bottom rules (the reference section div[1]/div[2]) */
+.pr-section .pr-sheet-rule {
+  display: block;
+  block-size: 1px;
+  background: var(--pr-rule-ink);
+}
+
+/* the per-cell hairlines (the reference's absolute 1px rule divs) — R344: the
+ * census records these seats bg-IMAGE-ONLY (computed backgroundColor
+ * rgba(0,0,0,0), the paint rides the gradient stroke) — the footer's own
+ * recorded convention (only the c1rule/col3rule/legalbot seats paint). */
+.pr-section .pr-cell-rule {
+  position: absolute;
+  inset-inline: 0;
+  block-size: 1px;
+  background-image: linear-gradient(var(--pr-rule-ink), var(--pr-rule-ink));
+}
+
+.pr-cell-rule.is-top { inset-block-start: 0; }
+.pr-cell-rule.is-end { inset-block-end: 0; }
+
+/* ── the head cell — label + title on the reference's body-voice wrappers ── */
+.pr-section .pr-head {
+  position: relative;
+  display: block;
+}
+
+.pr-section .pr-head-box {
+  display: grid;
+  min-inline-size: 0;
+}
+
+.pr-section .pr-label {
+  /* r338 T-08c1 — the measured reference label node IS the base voice
+   * (fs 17.78 · lh 23.11 · gray rgb(180,180,176) · fw 500 @1920;
+   * 15.88/20.64 @390 — i.e. fs 1.6rem on the fluid root at every
+   * bp), NOT a 1.4rem sub-voice. lh inherits the floored 1.35. */
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: var(--pr-label);
+}
+
+.pr-section .pr-title-wrap {
+  font-size: 1.6rem;
+  line-height: 1.35;    /* the floored base voice (the reference 1.3 → ar-floor 1.35) */
+  color: var(--pr-ink); /* the wrapper carries the full ink (measured) */
+}
+
+.pr-section .pr-title {
+  margin: 0;
+  white-space: nowrap; /* the reference's title is a one-line 392×36 box (measured) */
+  /* L2-b (r341, h2 rung belt — type-gate note): the frozen spec's
+     platform section carries NO h2; its section titles are 26.67px
+     w600 DIVs @1440, and our h2 seats mirror that measured voice
+     (26.67 @1440 · 22.1 @768 · 19.85 @390 — the bands below). The
+     --fs-* ladder has NO rung at 26.67 (it skips an h4 step between
+     --fs-h3 33.33 and --fs-body 13.33), so the measured rem steps
+     stay: measured-value seats, documented per the L2-b brief. */
+  font-size: 3.2rem;   /* 35.56 @1920 · 26.67 @1440 — measured h4 twin */
+  line-height: 1;      /* 35.56/35.56 — measured */
+  font-weight: 600;
+  color: var(--pr-ink);
+  text-wrap: balance;
+}
+
+/* ── the side cell — the long text + the CTA strip ────────────────── */
+.pr-section .pr-side {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+.pr-section .pr-sidebox {
+  min-inline-size: 0;
+  line-height: 1.35; /* 24.0 @1920 — the legacy measured wrapper voice */
+}
+
+.pr-section .pr-text {
+  margin: 0;
+  font-size: 1.6rem;
+  line-height: 1.35;    /* the floored base voice (the reference 1.3 → ar-floor 1.35) */
+  font-weight: 500;
+  color: var(--pr-ink-72);
+}
+
+/* the CTA strip — the reference's a[2]: rule + body(row[line1 + dual arrows],
+ * line2). The anchor itself carries the measured orange; the inner
+ * rows carry the full ink (both measured). */
+.pr-section .pr-cta {
+  position: relative;
+  display: block;
+  margin-block-start: auto;
+  color: var(--pr-cta);
+  text-decoration: none;
+  transition: color 0.4s ease; /* motion-token: allow — reference-measured a[2] hover fade (TR 0.4s/ease) */
+}
+
+.pr-section .pr-cta-rule {
+  display: block;
+  block-size: 1px;
+  background-image: linear-gradient(var(--pr-rule-ink), var(--pr-rule-ink)); /* R344: bg-image-only (census) */
+}
+
+.pr-section .pr-cta-body {
+  display: block;
+  padding-block-start: 1.44rem; /* line1 top = 16px from the strip top (measured) */
+  padding-inline-start: 3.15rem;
+}
+
+.pr-section .pr-cta-row {
+  display: flex;
+  align-items: center;
+  gap: 1.26rem; /* line-end → icon-start = 14px @1920 (measured) */
+  color: var(--pr-ink);
+}
+
+.pr-section .pr-cta-line, .pr-cta-ic {
+  transition: all 0.48s cubic-bezier(0.625, 0.05, 0, 1); /* motion-token: allow — reference-measured line/icon easing */
+}
+
+.pr-section .pr-cta-line {
+  font-size: 1.4rem;  /* 15.56 @1920 · 12.89 @768 — measured CTA voice */
+  line-height: 1.4;   /* 21.78/15.56 — measured */
+  font-weight: 500;
+  color: var(--pr-ink);
+  white-space: nowrap;
+}
+
+.pr-section .pr-cta-icons {
+  margin-inline-start: auto;
+  display: flex;
+}
+
+/* the reference's dual circular arrows — two tangent 50×50 rings (measured
+ * 37 @1440 · 41 @768), each centring 22×22 line-art (17/18 measured) */
+.pr-section .pr-cta-ic {
+  inline-size: 4.5rem;
+  block-size: 4.5rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--pr-ink);
+  border-radius: 0; /* R344 (item 0): the frozen census records radius 0 on
+   * every arrow seat (all bps) — the reference's outline boxes are SQUARE rings
+   * (the house law: radius 0 everywhere). The r338 "circular arrows"
+   * reading was a visual guess; the spec is unambiguous. */
+  color: var(--pr-ink);
+}
+
+.pr-section .pr-cta-icbox {
+  inline-size: 2rem;
+  block-size: 2rem;
+  display: grid;
+  place-items: center;
+}
+
+.pr-section .pr-cta-icbox svg {
+  inline-size: 2rem;
+  block-size: 2rem;
+}
+
+/* the dark hover menu — the reference's a[2] > div[2] > div[1] > div[1]:
+ * 624×156 rgb(40,40,40) hanging 52px above the strip (measured).
+ * The assistant panel; opens on hover/focus, rect never moves. */
+/* r338 T-08c1 — the measured reference menu nodes carry the SOLID ink
+ * rgb(40,40,40) (their readable light text lives outside the walked
+ * census tree); our panel matches the ink on the paired container
+ * and keeps the readable cream on the inner text spans. */
+.pr-section .pr-menu {
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: -4.68rem;
+  inline-size: 56.16rem;
+  block-size: 14.04rem;
+  display: grid;
+  gap: 0.9rem;
+  align-content: start;
+  padding: 1.44rem 2.7rem;
+  background: var(--pr-ink);
+  color: var(--pr-ink); /* the paired container = the reference's solid ink (measured) */
+  visibility: hidden; /* r338 T-08c2 — the spec measures opacity 1 on this
+     node, so the rest state is visibility-only (layout + opacity stay
+     measured); the reveal is the hover/focus flip below */
+  transition: opacity 0.3s ease, visibility 0.3s ease; /* motion-token: allow — reference-measured menu fade */
+  z-index: 1;
+}
+
+.pr-section .pr-cta:hover .pr-menu,
+.pr-cta:focus-within .pr-menu {
+  opacity: 1;
+  visibility: visible;
+}
+
+.pr-section .pr-menu-k,
+.pr-section .pr-menu-q,
+.pr-section .pr-menu-a {
+  font-size: 1.4rem;
+  /* lh 2.16rem = the floored the reference menu voice (1.35 × its 1.6rem
+   * fs) at every bp — absolute so our 1.4rem text still matches */
+  line-height: 2.16rem;
+  color: var(--bg); /* readable cream on the dark panel (our adaptation) */
+}
+
+.pr-section .pr-menu-k { font-weight: 600; }
+.pr-section .pr-menu-q { font-weight: 500; }
+.pr-section .pr-menu-a { font-weight: 500; opacity: 0.72; }
+
+/* the per-row image — ≥992 display:none (the reference's own 0×0 census) */
+.pr-section .pr-rowimg {
+  position: relative;
+  min-inline-size: 0;
+}
+
+.pr-section .pr-rowimg img {
+  display: block;
+  inline-size: 100%;
+  object-fit: cover;
+  object-position: top; /* the UI chrome leads the crop */
+}
+
+.pr-section .pr-rowimg-rule {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  inline-size: 1px;
+  background-image: linear-gradient(var(--pr-rule-ink), var(--pr-rule-ink)); /* R344: bg-image-only (census) */
+}
+
+/* the central image column — ≥992 only (≤991 display:none = the reference 0×0) */
+.pr-section .pr-imgs {
+  position: relative;
+  display: grid;
+  min-inline-size: 0;
+}
+
+.pr-section .pr-img {
+  margin: 0;
+  overflow: clip;
+  position: relative; /* r340 T-P1y — the frame-chrome overlay's anchor (paint-only: position is not a spec-checked axis) */
+}
+
+/* the column's measured hairlines — the flanking verticals
+   (@x490/x1291 @1920) and the rule between the two captures */
+.pr-section .pr-imgs-vrule {
+  position: absolute;
+  inset-block: 0;
+  inline-size: 1px;
+  background: var(--pr-rule-ink);
+}
+
+.pr-imgs-vrule:first-child { inset-inline-start: 0; }
+.pr-imgs-vrule:last-child { inset-inline-end: 0; }
+
+.pr-section .pr-imgs-hrule {
+  block-size: 1px;
+  background: var(--pr-rule-ink);
+}
+
+.pr-section .pr-img img {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+/* ── ≥992 — the measured 3-col row grid with the cross-fade pair ──── */
+@media (min-width: 992px) {
+  .pr-section {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  .pr-section .pr-grid {
+    display: grid;
+    grid-template-columns: 25.24% 42.16% 32.6%; /* 481/802/619 @1920 (measured) */
+    grid-template-rows: 42.57rem 42.57rem;      /* 473+473 @1920 (measured) */
+  }
+
+  .pr-section .pr-rows {
+    grid-column: 1 / -1;
+    grid-row: 1 / -1;
+    display: grid;
+    grid-template-columns: 25.24% 42.16% 32.6%;
+    grid-template-rows: 42.57rem 42.57rem;
+  }
+
+  /* the two row copies share the SAME rects (the reference's marquee pair);
+   * the cross-fade is opacity-only so no measured box ever moves */
+  .pr-section .pr-row {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    transition: opacity 0.4s ease; /* motion-token: allow — the reference row cross-fade (TR 0.4s/ease) */
+    align-self: start;
+    block-size: 17.37rem; /* 193 @1920 · 145 @1440 (measured) */
+    display: grid;
+    grid-template-columns: 25.24% 42.16% 32.6%;
+  }
+
+  .pr-section .pr-row + .pr-row {
+    animation: pr-item-fade 14s ease-in-out infinite;
+  }
+
+  .pr-section .pr-row:first-child {
+    animation: pr-item-fade 14s ease-in-out infinite;
+    animation-delay: -7s;
+  }
+
+  /* r342-06 — the visibility channel rides the SAME keyframes: the two
+   * rows share grid-row 1, so the faded row (opacity 0) still hit-tested
+   * and intercepted the live strip's hover/focus — the assistant menu
+   * stayed dead ~42% of the marquee cycle (row 1 was never hoverable).
+   * visibility interpolates discretely (visible wins p<1), so the fade
+   * segments keep their exact visuals while the hidden plateau stops
+   * painting and hit-testing — the same seat the clone copies already
+   * hold (visibility:hidden + pointer-events:none, T-08c4). */
+  @keyframes pr-item-fade {
+    0%, 42% { opacity: 1; visibility: visible; }
+    50%, 92% { opacity: 0; visibility: hidden; }
+    100% { opacity: 1; visibility: visible; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pr-row,
+    .pr-row + .pr-row {
+      animation: none;
+    }
+
+    /* r342-06 — visibility joins the RM arm: the parked row must not
+       hit-test either (it sat invisibly over the live strip). */
+    .pr-section .pr-row + .pr-row {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+
+  .pr-section .pr-head {
+    grid-column: 1;
+    grid-row: 1;
+    margin-inline: 0;
+    block-size: 17.37rem;
+    padding: 3.15rem 4.05rem 0 3.96rem; /* inner box x44/x45 y35 @1920 (measured) */
+  }
+
+  .pr-section .pr-title-wrap {
+    margin-block-start: 7.02rem; /* label-top→title-top = 9rem (measured) */
+  }
+
+  .pr-section .pr-side {
+    grid-column: 3;
+    grid-row: 1;
+    margin-inline: 0;
+    block-size: 17.37rem;
+  }
+
+  .pr-section .pr-sidebox {
+    padding: 3.15rem 3.24rem 0 3.15rem; /* text 548×69 @x1327 y10620 (measured) */
+  }
+
+  .pr-section .pr-cta {
+    block-size: 4.77rem; /* 53 @1920 · 40 @1440 (measured) */
+  }
+
+  .pr-section .pr-rowimg {
+    display: none; /* the reference's per-row img is 0×0 ≥992 (measured census) */
+  }
+
+  .pr-section .pr-imgs {
+    grid-column: 2;
+    grid-row: 1 / -1;
+    grid-template-rows: 42.57rem auto 42.57rem;
+  }
+}
+
+/* ── the marquee loop copies C/D/E (.pr-clone) ────────────────────────
+ * r338 T-08c4 — the reference's marquee keeps ~5 loop-translated copies of the
+ * band; the census records the extra twins on the cross-fade rects. The
+ * clones are REAL copies of our own marquee content seated on the same
+ * recorded band rect (grid row 1 ≥992 / row-1 top ≤991), out of flow so
+ * no measured box of the visible pair ever moves, never visible and
+ * never interactive — their geometry/type/colour stay measurable. */
+.pr-section .pr-rows {
+  position: relative; /* the clones' loop-seat containing block */
+}
+
+.pr-section .pr-row.pr-clone {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 0;
+  visibility: hidden;
+  pointer-events: none;
+  user-select: none;
+  animation: none; /* loop copies never cross-fade; opacity stays 1 */
+  /* the measured marquee tween voice (the reference loop copies: 0.48s cubic-bezier(0.625, 0.05, 0, 1)) */
+  transition: transform 0.48s cubic-bezier(0.625, 0.05, 0, 1);
+  opacity: 1;
+}
+
+/* ── 768–991 — the two-col fold: img | head+side, rows 254/258 ────── */
+@media (max-width: 991px) {
+  /* r338 T-08c2 — specificity seat: the base .pr-section .pr-imgs
+     (display:grid) outranked the old bare .pr-imgs selector, so the
+     ≤991 fold never collapsed the column (measured 753×911 vs the reference's
+     own 0×0 census at 768/390) */
+  .pr-section .pr-imgs {
+    display: none; /* the reference's central column is 0×0 ≤991 (measured census) */
+  }
+
+  .pr-section .pr-row {
+    display: grid;
+    grid-template-columns: 50% 50%; /* img 377 | content 376 @768 (measured) */
+    grid-template-rows: auto auto;
+    align-items: start;
+  }
+
+  .pr-section .pr-rowimg {
+    grid-column: 1;
+    grid-row: 1 / -1;
+  }
+
+  .pr-section .pr-rowimg img {
+    block-size: 27.6rem; /* 254px @768 (measured) */
+  }
+
+  .pr-section .pr-head {
+    grid-column: 2;
+    grid-row: 1;
+    block-size: 9.24rem; /* 85 @768 (measured) */
+    padding: 2.4rem 2.4rem 0 2.4rem; /* label @x406 y7628 (measured) */
+  }
+
+  .pr-section .pr-title-wrap {
+    margin-block-start: 0.76rem; /* title-top = label-top + 25px @768 (measured) */
+  }
+
+  .pr-section .pr-title {
+    font-size: 2.4rem; /* 22.1 @768 — the measured mb-h4 step */
+    line-height: 1.2;  /* 26.52/22.1 (measured) */
+  }
+
+  .pr-section .pr-side {
+    grid-column: 2;
+    grid-row: 2;
+    block-size: 18.37rem; /* 169 @768 — the measured side-cell seat */
+  }
+
+  /* r338 T-08c2 — row-2's side cell measures 173 @768 (rows 254/258) */
+  .pr-section .pr-row:nth-child(2) .pr-side {
+    block-size: 18.8rem;
+  }
+
+  .pr-section .pr-sidebox {
+    padding: 1.2rem 2.4rem 0 2.4rem; /* text @x406 y7702 (measured) */
+  }
+
+  .pr-section .pr-cta {
+    block-size: 4.78rem; /* 44 @768 (measured) */
+  }
+
+  .pr-section .pr-menu {
+    inline-size: 100%;
+    inset-block-start: auto;
+    inset-block-end: 4.9rem;
+  }
+}
+
+/* ── ≤767 — the stacked fold: img 226 + head 87 + side, rows 474 ──── */
+@media (max-width: 767px) {
+  /* r338 T-08c2 — specificity seat: the ≤991 .pr-section .pr-row
+     (50%/50%) outranked the old bare .pr-row, so 390 never stacked */
+  .pr-section .pr-row {
+    grid-template-columns: 1fr;
+  }
+
+  .pr-section .pr-rowimg {
+    grid-row: 1;
+  }
+
+  .pr-section .pr-rowimg img {
+    block-size: 22.77rem; /* 226px @390 (measured) */
+  }
+
+  .pr-section .pr-head {
+    grid-column: 1;
+    grid-row: 2;
+    block-size: 8.77rem; /* 87 @390 (measured) */
+    /* r339 T-13 — the 390 content gutter: the reference seats the label/title
+       at x24 inside the 8px sheet (16px inline); the 2.42rem seat read
+       x32/w326. Light spec values above stay (comment record: label
+       @x24 y7630 measured). */
+    padding: 3.22rem 1.61rem 0;
+  }
+
+  .pr-section .pr-cta-line {
+    line-height: 1.35; /* the reference's 390 line voice 13.89/15.28 → ar-floor 18.75 */
+  }
+
+  .pr-section .pr-title-wrap {
+    margin-block-start: 0.78rem; /* title-top = label-top + 23px @390 (measured) */
+  }
+
+  .pr-section .pr-title {
+    font-size: 2rem;  /* 19.85 @390 — the measured mb-h4 step */
+    line-height: 1.2; /* 23.82/19.85 (measured) */
+  }
+
+  .pr-section .pr-side {
+    grid-column: 1;
+    grid-row: 3;
+    block-size: 16.23rem; /* 161 @390 — the measured side-cell seat */
+  }
+
+  /* r338 T-08c2 — row-2's side cell measures 182 @390 (the deeper
+     second fold: img 226 + head 87 + side 182) */
+  .pr-section .pr-row:nth-child(2) .pr-side {
+    block-size: 18.34rem;
+  }
+
+  .pr-section .pr-sidebox {
+    padding: 1.2rem 2.42rem 0 2.42rem; /* text @x24 y7697 (measured) */
+  }
+
+  .pr-section .pr-cta {
+    block-size: 4.33rem; /* 43 @390 (measured) */
+  }
+}
+
+
+/* ── T-08c5 — crossover role voices on the clone seats ──────────────
+ * The reference wrapper-crossover records (duplicate marquee copies + the
+ * neighbouring bands the wrap census swallowed) carry the band's own
+ * interaction/tween voices: cursor-pointer inherited through the
+ * a-subtrees, the 0.48s loop voice on the band wrappers, the CTA's
+ * 0.3s dual-ease hover voice, the menu's 0.4s ease. The clone seats
+ * reproduce exactly those voices; every other clone descendant rests
+ * transition-less, like its recorded twin. */
+.pr-section .pr-clone * { transition: none; }
+.pr-section .pr-clone .pr-cta {
+  transition: color 0.3s ease, background-color 0.3s cubic-bezier(0.625, 0.05, 0, 1);
+  cursor: pointer; /* the a-subtree voice — inherited by the whole strip */
+}
+.pr-section .pr-clone .pr-head,
+.pr-section .pr-clone .pr-side {
+  transition: all 0.48s cubic-bezier(0.625, 0.05, 0, 1);
+}
+.pr-section .pr-clone .pr-menu { transition: opacity 0.4s ease; }
+
+/* ── T-08c5b — the reference's ≤991 band voices (measured spec @390/768) ────
+ * The mobile row wrappers carry a 0.4s ease; the clone CTA strip
+ * children carry the 0.48s loop voice; the hover icon boxes the 0.3s
+ * dual-ease. Desktop voices stay as measured above. */
+@media (max-width: 991px) {
+  .pr-section .pr-row { transition: all 0.4s ease; }
+  .pr-section .pr-clone .pr-cta { transition: all 0.4s ease; }
+  .pr-section .pr-clone .pr-cta-row,
+  .pr-section .pr-clone .pr-cta-icons,
+  .pr-section .pr-clone .pr-cta-ic,
+  .pr-section .pr-clone .pr-cta-line { transition: all 0.48s cubic-bezier(0.625, 0.05, 0, 1); }
+  .pr-section .pr-clone .pr-cta-icbox { transition: color 0.3s ease, background-color 0.3s cubic-bezier(0.625, 0.05, 0, 1); }
+}
+
+/* R344 (item 0) — the loop copies' voice at EVERY bp: the census records
+ * 0.48s / cubic-bezier(0.625, 0.05, 0, 1) on the clone row/icons/ic
+ * seats at the desktop bps too (the ≤991 belt above covered mobile;
+ * the desktop clones measured 0s/ease — 24 transition seats). */
+@media (min-width: 992px) {
+  .pr-section .pr-clone .pr-cta-row,
+  .pr-section .pr-clone .pr-cta-icons,
+  .pr-section .pr-clone .pr-cta-ic { transition: all 0.48s cubic-bezier(0.625, 0.05, 0, 1); } /* motion-token: allow — reference-measured loop voice (T-11A census) */
+}
+
+/* ══ T-11b2 — the band's scrubbed title flourish ═════════════════════
+ * the reference's home-platform scrub pair (T-11A census: platform-content-
+ * title, opacity + translateY FROM-side, 1 unit each — the small
+ * pinned/scrubbed flourish beside the marquee; recorded window
+ * «top bottom → bottom top» on the row-group wrap, 7765→9362 recorded
+ * px — the wrap's FULL cover traversal, from-states opacity 0 ·
+ * y 26.667). Same view() route as the map head (T-11b2's
+ * jt-head-scrub): the FIRST row's title wrap (#pr-title — the
+ * section's labelled head) scrubs in over its entry→cover window.
+ * DELIBERATE seat deviation, documented: the reference's span is the wrap's
+ * full traversal (the title keeps scrubbing until the wrap's tail
+ * exits the fold); ours is the brief's «small flourish» — entry 0% →
+ * cover 30% so the title settles by a third of the viewport instead
+ * of crawling at half-opacity through the whole band (the rows' own
+ * IO reveals own the band's reading rhythm). The remaining rows/wraps
+ * keep the IO reveal-up seat
+ * (the scroll-reveal groups' own coverage); the marquee cross-fade
+ * (pr-item-fade) is untouched. @supports-gated fallback + the
+ * no-preference RM belt — identical contract to the map seat. */
+@keyframes pr-title-scrub {
+  from {
+    opacity: 0;
+    transform: translateY(26.667px); /* the reference's recorded y @1440 */
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .pr-rows > .pr-row:first-child .pr-title-wrap {
+      animation: pr-title-scrub var(--t-cinema) var(--ease) both;
+      animation-timeline: view();
+      /* entry 0% → cover 30%: a short reversible flourish as the
+         band's head crosses the fold (the 27px title's cover window
+         is viewport-dominated — 30% reads as a settle, not a crawl) */
+      animation-range: entry 0% cover 30%;
+    }
+  }
+}
+
+/* ═══ r340 T-P1y — the product captures' drafting chrome (the blind
+ * panel's "two design languages" finding: the screenshots read generic
+ * light-SaaS next to the drafting-paper sheet). Every capture now
+ * carries the sheet's own grammar: ONE 1px var(--rule) hairline frame
+ * (the pattern library's Hairline--border seat) + a paper [nn] tag
+ * chip (the Numeral family) at the frame's inline-start corner.
+ * Overlay-only: pointer-events none, no z-index (paint order after
+ * the img), the pinned frame geometry untouched. ═══ */
+.pr-frame-chrome {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.pr-frame-chrome .lp-hairline--border {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+.pr-frame-tag {
+  position: absolute;
+  inset-block-start: var(--sp-1-5);
+  inset-inline-start: var(--sp-1-5);
+  display: inline-flex;
+  align-items: center;
+  background: var(--bg);
+  border: 1px solid var(--rule);
+  padding: 2px var(--sp-1-5);
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-sm);
+  line-height: 1.4;
+  font-weight: 500;
+  color: var(--accent);
+}
+[data-theme='dark'] .pr-frame-tag {
+  background: var(--bg);
+  border-color: var(--rule);
+}

@@ -1,0 +1,1211 @@
+/**
+ * Admin governance pages.
+ *
+ *   /admin/teachers           list of teachers + verify + view suggestions
+ *   /admin/permissions/:id    per-user capability editor (effective + overrides)
+ *
+ * Wave 16-E5 (audits 15-d P1-1 + 15-e P1-5): the teachers roster is
+ * filtered/searched/paginated SERVER-side (GET /admin/users page/limit/q/
+ * role — the old no-params call silently capped at 200 users and filtered
+ * TEACHER client-side, so user #201 was invisible), and the position/scope
+ * editors reset only on identity change, so an invalidation refetch can no
+ * longer clobber selects the admin is editing toward the next save.
+ */
+import { useState, useEffect, useRef } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import {
+  ShieldCheck, GraduationCap, Award, ChevronLeft, ChevronRight, CheckCircle2,
+  AlertCircle, Sparkles, Briefcase, Building2, Users, Crown, BookOpen,
+  X,
+} from 'lucide-react';
+import { Card, Badge, UserAvatar, AlertRow, FormField, PageHeader } from '../../components/primitives';
+import { StatStrip } from '../../components/primitives/Ledger';
+import { ConfirmDialog } from '../../components/owner/ConfirmDialog';
+import {
+  CardSkeleton, DetailSkeleton, ErrorState, EmptyState,
+} from '../../components/primitives/States';
+/* r251 (Phase B): the teachers page composes Agent S's frozen patterns
+ * (SplitView + RowList/RowItem + FilterBar + StatLine + PageFrame +
+ * patterns/PageHeader). The primitives PageHeader above stays imported —
+ * the permissions editor (same file) still rides it until its own pass. */
+import {
+  PageFrame,
+  PageHeader as PatternsPageHeader,
+  RowList,
+  RowItem,
+  SplitView,
+  StatLine,
+  FilterBar,
+} from '../../components/patterns';
+import { Icon } from '../../components/Icon';
+// R320 §B (c1-RENAME): the role chips/pickers consume the ONE shared
+// role-label source (lib/roleLabels.ts + backend twin) — ADMIN is
+// «المسجل العام».
+import { ROLE_LABELS as SHARED_ROLE_LABELS, roleLabel as sharedRoleLabel } from '../../lib/roleLabels';
+import { EmojiIcon } from '../../components/EmojiIcon';
+import {
+  useTeacherSuggestions,
+  useFaculties,
+  useCurrentInstitutionSlug,
+  useAssignTeacherPosition,
+  useAssignUserScope,
+  apiErrorMessage,
+  type AppCapability,
+  type AcademicPositionInput,
+} from '../../hooks/useResources';
+import { api, unwrap } from '../../lib/api';
+import { useInstitutionScope } from '../../stores/auth.store';
+import { withInstitutionScope } from '../../lib/queryClient';
+import { countAr } from '../../lib/format';
+import { formatNum } from '../../utils/numbers';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useAuthStore } from '../../stores/auth.store';
+import { useEntityPageTitle } from '../../components/layout/AppShell';
+import '../../styles/training.css'; // .back-link family (D11 css split, 12-15)
+// r152c (A2): the colleges.css import is GONE — it existed only for
+// .comp-form-field, and the six governance selects now ride the
+// FormField canon (components.css .form-field) like the rest of the app.
+import '../../styles/admin.css'; // r150e: the borrowed admin-students-search chrome moved home
+// R305-A8 «ds»: the scoped admin/owner sheet rides LAST (same @layer
+// pages, later source order → it wins the equal-specificity ties). Every
+// rule is scoped under the .r305ao page-root marker — zero leakage.
+import '../../styles/shared/ds-admin-owner.css';
+/* r299: the teachers roster's pagination rides the family's canonical
+ * footer now (the shared TablePaginationFooter leaf — T-24 moved it out
+ * of AdminPages to sever the AdminPages ↔ AdminGovernancePages cycle)
+ * instead of a hand-rolled twin resting on an owner.css class this chunk
+ * never loads (.owner-page-gap rendered as bare inline text here). */
+import { TablePaginationFooter } from './TablePaginationFooter';
+/* T-24: pageList moved to the same leaf; re-exported so the contract
+ * test's import site (AdminGovernancePages.test) stays untouched. */
+export { pageList } from './TablePaginationFooter';
+import { formatDate } from '../../utils/numbers';
+
+const DEGREE_LABEL: Record<string, string> = {
+  BACHELORS: 'بكالوريوس', MASTERS: 'ماجستير', PHD: 'دكتوراه',
+};
+const RANK_LABEL: Record<string, string> = {
+  LECTURER: 'مُعيد / محاضر',
+  ASSISTANT_PROFESSOR: 'أستاذ مساعد',
+  ASSOCIATE_PROFESSOR: 'أستاذ مشارك',
+  PROFESSOR: 'أستاذ',
+};
+/** Arabic labels for user roles — raw enums (TEACHER/QUALITY…) never reach the UI.
+ * R320 §B: the shared map verbatim (lib/roleLabels.ts) — ADMIN is
+ * «المسجل العام»; the person-noun lineage (17-a2 / 15-j P1-8) is
+ * preserved for the other roles. */
+const ROLE_LABEL: Record<string, string> = { ...SHARED_ROLE_LABELS };
+const CAP_LABEL: Record<AppCapability, string> = {
+  RESEARCH_GRADE_OWN: 'تقييم بحوث طلابي',
+  RESEARCH_GRADE_ANY: 'تقييم أي بحث',
+  RESEARCH_PUBLISH: 'نشر البحوث للمكتبة',
+  EXAMS_AUTHOR: 'إنشاء اختبارات',
+  EXAMS_MODERATE: 'مراجعة الاختبارات',
+  EXAMS_TAKE: 'تأدية الاختبارات',
+  CURRICULUM_EDIT_OWN: 'تعديل منهج مقرّراتي',
+  CURRICULUM_EDIT_ANY: 'تعديل أي منهج',
+  USERS_MANAGE: 'إدارة المستخدمين',
+  ROLES_ASSIGN: 'إسناد الأدوار',
+  TEACHERS_VERIFY: 'توثيق الأساتذة',
+  QUALITY_VIEW: 'عرض لوحة الجودة',
+  QUALITY_REPORT: 'إصدار تقارير الجودة',
+  ANNOUNCE_PLATFORM: 'إعلانات على مستوى المنصة',
+  ANNOUNCE_FACULTY: 'إعلانات الكلّيّة',
+  COMPETITIONS_RUN: 'إنشاء مسابقات',
+  EVENTS_RUN: 'إنشاء فعاليات',
+};
+
+
+// ─── Local hooks ─────────────────────────────────────────────
+/** Row of GET /admin/users (also the wire shape tests build). */
+export interface AdminUserRow {
+  id: string; email: string; firstName: string; lastName: string;
+  role: 'STUDENT' | 'TEACHER' | 'ADMIN' | 'QUALITY';
+  avatarColor: string | null; avatarInitials: string | null;
+  isActive: boolean; createdAt: string;
+}
+/** GET /admin/users wire shape — `{ data, meta }` (backend buildMeta). */
+interface AdminUsersResponse {
+  data: AdminUserRow[];
+  meta: { page: number; limit: number; total: number; totalPages: number };
+}
+
+/**
+ * Server-side role filter + search + pagination (audit 15-d P1-1): the
+ * backend paginates WITHIN the role (page/limit/q/role, limit ≤ 200) — the
+ * old no-params call silently capped the roster at 200 users and the
+ * TEACHER filter ran client-side, so the KPIs undercounted and user #201
+ * was invisible. Key mirrors useOwnerUsers so the ['admin','users']
+ * prefix invalidations (useSetCapability, useAssignUserScope) still reach
+ * every parameterized page.
+ */
+function useAdminUsers(
+  params: { page?: number; limit?: number; q?: string; role?: string } = {},
+) {
+  const { page = 1, limit = 20, q, role } = params;
+  return useQuery({
+    /* r180: /admin/users is institution-scoped server-side — scoped key. */
+    queryKey: withInstitutionScope(['admin', 'users', { page, limit, q, role }], useInstitutionScope()),
+    queryFn: async () => {
+      const res = await api.get<AdminUsersResponse>('/admin/users', {
+        params: { page, limit, q, role },
+      });
+      return res.data;
+    },
+    // Keeps the current roster on screen while the next page/search
+    // loads (AdminStudentsPage pattern) — no skeleton flash mid-browse.
+    placeholderData: (prev) => prev,
+  });
+}
+
+interface UserPermissionsResponse {
+  user: {
+    id: string;
+    email: string;
+    role: string;
+    firstName: string;
+    lastName: string;
+    scopeFacultyId: string | null;
+    scopeFaculty: { id: string; name: string } | null;
+  };
+  roleDefaults: AppCapability[];
+  effective: AppCapability[];
+  overrides: Array<{ id: string; capability: AppCapability; grant: boolean; reason: string | null; grantedAt: string }>;
+}
+function useUserPermissions(userId: string | undefined) {
+  return useQuery({
+    /* r180: same institution scoping as the users list above. */
+    queryKey: withInstitutionScope(['admin', 'users', userId, 'permissions'], useInstitutionScope()),
+    enabled: !!userId,
+    queryFn: () => unwrap<UserPermissionsResponse>(api.get(`/admin/users/${userId}/permissions`)),
+  });
+}
+
+interface CapabilityPayload {
+  userId: string;
+  capability: AppCapability;
+  grant: boolean | null;
+  reason?: string;
+}
+function useSetCapability() {
+  const qc = useQueryClient();
+  return useMutation({
+    // The URL carries the user; the body stays { capability, grant, reason }
+    // (the wire format the endpoint expects).
+    mutationFn: ({ userId, ...body }: CapabilityPayload) =>
+      unwrap(api.post(`/admin/users/${userId}/permissions`, body)),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['admin', 'users'] }),
+  });
+}
+
+function useVerifyTeacher() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, verified, notes }: { id: string; verified: boolean; notes?: string }) =>
+      unwrap(api.post(`/admin/teachers/${id}/verify`, { verified, notes })),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['admin', 'teachers'] });
+    },
+  });
+}
+
+
+/* ═══════════════ Teachers list with onboarding suggestions ═══════════════ */
+
+/** Proper Arabic counted plural for the roster footer's teachers total —
+ *  r299: the local twin of countAr's unit forms died with the hand-rolled
+ *  footer; TablePaginationFooter's countAr([...]) renders the identical
+ *  strings (pinned by AdminGovernancePages.test). */
+
+export function AdminTeachersPage() {
+  const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  // Debounce the search input (OwnerUsersPage pattern) so the roster
+  // query fires once typing pauses instead of on every keystroke.
+  // The timer also runs once ~300ms after mount with an unchanged term;
+  // that run must be a no-op — otherwise opening page 2 straight after
+  // mount silently bounces the admin back to page 1.
+  const appliedSearch = useRef(debouncedSearch);
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const next = search.trim();
+      if (next === appliedSearch.current) return;
+      appliedSearch.current = next;
+      setDebouncedSearch(next);
+      setPage(1);
+    }, 300);
+    return () => clearTimeout(t);
+  }, [search]);
+
+  // Population count for the KPI — a dedicated server count (role filter,
+  // one-row window), decoupled from the search exactly like
+  // OwnerUsersPage's stats query. The old code counted the fetched
+  // slice, which undercounted the moment the platform passed 200 users
+  // (audit 15-d P1-1).
+  const count = useAdminUsers({ page: 1, limit: 1, role: 'TEACHER' });
+  // The roster itself — the TEACHER filter runs SERVER-side (the API
+  // paginates within the role); the old client-side filter hid every
+  // teacher past the silent 200-user cap (audit 15-d P1-1).
+  const roster = useAdminUsers({
+    page,
+    limit: 20,
+    role: 'TEACHER',
+    q: debouncedSearch || undefined,
+  });
+
+  const teachers = roster.data?.data ?? [];
+  const meta = roster.data?.meta;
+  const totalPages = meta?.totalPages ?? 1;
+  const isSearching = debouncedSearch !== '';
+
+  // KPI honesty: '…' while loading, '—' on error — never a fake zero.
+  // The count query's meta is the only server-backed teacher total.
+  const teacherCount =
+    count.isPending ? '…' : count.data ? formatNum(count.data.meta.total) : '—';
+
+  const clearSearch = () => {
+    setSearch('');
+    setPage(1);
+  };
+
+  /* r251 (Phase B — Superlist composition): the teachers console is the
+   * admin family's flagship list→detail surface, so it composes Agent S's
+   * frozen patterns end-to-end: PageFrame rhythm, the patterns PageHeader
+   * (breadcrumbs back to the family), a one-fact StatLine, the FilterBar
+   * search pill, and the SplitView (desktop sticky detail / mobile
+   * full-screen Sheet). Selection rides a stretched button inside each
+   * RowItem (a real <button> for keyboard focus; the ::after plate in
+   * admin.css makes the WHOLE row its tap target). Loading/empty/error
+   * stay honest: RowList's own skeleton + the family's EmptyState/ErrorState. */
+  const selectedTeacher = teachers.find((t) => t.id === selectedId) ?? null;
+  const selectedName = selectedTeacher
+    ? `${selectedTeacher.firstName} ${selectedTeacher.lastName}`
+    : 'ملف الأستاذ';
+
+  const teacherListEmpty = (
+    <EmptyState
+      icon={Users}
+      title={isSearching ? 'لا نتائج مطابقة' : 'لم يتم تسجيل أساتذة بعد'}
+      description={isSearching
+        ? 'لم نجد أساتذة تطابق البحث الحالي.'
+        : 'ستظهر القائمة فور تسجيل أول أستاذ في النظام.'}
+      action={isSearching ? (
+        <button type="button" className="btn ghost sm" onClick={clearSearch}>
+          <Icon icon={X} size={13} />
+          مسح البحث
+        </button>
+      ) : undefined}
+    />
+  );
+
+  /* R305-A8: the .r305ao marker on the page root scopes the ds sheet
+   * to this page only. PageFrame (a frozen pattern) takes no className,
+   * so the marker rides a quiet full-width wrapper div — the layout
+   * (.pf-page measure/rhythm) and the entrance animation
+   * (.content-inner > * — still exactly one child) are unchanged. */
+  return (
+    <div className="r305ao">
+    <PageFrame width="wide">
+      <PatternsPageHeader
+        title="إدارة الأساتذة"
+        description="توثيق الملفات الأكاديمية واقتراح المقرّرات الأنسب لكل أستاذ بناء على تخصصه ودرجته العلمية وشهاداته."
+        index="02"
+        breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'الأساتذة' }]}
+        actions={(
+          /* R342-09 (D11 sub-page CTA precedent): the governance roster's
+                   * ONE honest next surface — verification exists so courses can
+                   * be assigned; the courses register is the downstream step of
+                   * this board's own loop. The phone band keeps a primary action
+                   * in the first viewport (the admin topbar hides «اسأل AI»). */
+                  <Link to="/admin/courses" className="btn accent sm">
+            <Icon icon={BookOpen} size={13} />
+            إدارة المقرّرات
+          </Link>
+        )}
+      />
+
+      {/* Metrics — real values only: '…' while loading, '—' on error
+          (never a fake zero). The old «نشطون» KPI counted the fetched
+          slice; no endpoint counts active teachers, so it left with the
+          client-side filter instead of lying at scale (audit 15-d P1-1).
+          r157 (6A9 #8): the «نظام التوثيق: فعّال · مطابق» KPI that sat
+          beside it is deleted — there is no verification-system signal
+          anywhere in the /admin/users payload (verification is
+          per-teacher via TEACHERS_VERIFY), and a hardcoded «فعّال»
+          fakes a platform-wide status the backend never asserts.
+          r251: the lone fact rides the patterns StatLine. */}
+      <StatLine
+        items={[{
+          label: 'عدد الأساتذة',
+          value: teacherCount,
+          hint: count.isPending ? 'قراءة عدّاد الخادم…' : count.data ? 'في هذه المؤسّسة' : 'تعذّر قراءة العدّاد',
+        }]}
+      />
+
+      <FilterBar
+        search={{
+          value: search,
+          onChange: setSearch,
+          placeholder: 'ابحث بالاسم أو البريد الإلكتروني…',
+        }}
+      />
+
+      <SplitView
+        listWidth="narrow"
+        detailTitle={selectedName}
+        list={
+          roster.isError ? (
+            /* API-down must never read as "no teachers registered" — a
+               retryable error, with the count degrading to '—' above. */
+            <Card>
+              <ErrorState
+                error={roster.error}
+                message="تعذّر تحميل قائمة الأساتذة"
+                onRetry={() => roster.refetch()}
+              />
+            </Card>
+          ) : (
+            <>
+              <RowList aria-label="قائمة الأساتذة" loading={roster.isPending} empty={teacherListEmpty} density="compact">
+                {teachers.map((t) => (
+                  <RowItem
+                    key={t.id}
+                    leading={<UserAvatar initials={t.avatarInitials ?? 'أس'} color={t.avatarColor ?? undefined} size={38} />}
+                    title={(
+                      <button
+                        type="button"
+                        className="govx-row-select"
+                        aria-pressed={selectedId === t.id}
+                        onClick={() => setSelectedId(t.id)}
+                      >
+                        {t.firstName} {t.lastName}
+                      </button>
+                    )}
+                    meta={<bdi>{t.email}</bdi>}
+                    trailing={<Icon icon={ChevronLeft} size={14} className="text-subtle" />}
+                  />
+                ))}
+              </RowList>
+
+              {/* r299: Server-side pagination — the family's canonical
+                  TablePaginationFooter (windowed page numbers, RTL-correct
+                  chevrons, honest "page X of Y · N teachers" line, aria-current).
+                  Same pinned strings as the hand-rolled twin it replaces. */}
+              {meta && totalPages > 1 && (
+                <TablePaginationFooter
+                  page={page}
+                  totalPages={totalPages}
+                  total={meta.total}
+                  unit={['أستاذ واحد', 'أستاذان', 'أساتذة', 'أستاذاً']}
+                  onPage={setPage}
+                />
+              )}
+            </>
+          )
+        }
+        detail={selectedId ? <TeacherProfileCard teacherId={selectedId} /> : null}
+        detailOpen={selectedId !== null}
+        onDetailClose={() => setSelectedId(null)}
+      />
+    </PageFrame>
+    </div>
+  );
+}
+
+
+function TeacherProfileCard({ teacherId }: { teacherId: string }) {
+  const { data, isLoading, isError, error, refetch } = useTeacherSuggestions(teacherId);
+  const verify = useVerifyTeacher();
+  /* r251: verifying a teacher is a privilege change — the badge gates
+   * eligibility surfaces across the platform — so the CTA asks first.
+   * The dialog names the consequence; the mutation fires only from the
+   * confirm (retry path re-fires the same payload, inline AlertRow). */
+  const [verifyConfirm, setVerifyConfirm] = useState(false);
+
+  if (isLoading) return <CardSkeleton lines={5} />;
+  if (isError) {
+    return (
+      <Card>
+        <ErrorState
+          error={error}
+          message="تعذّر تحميل الملف الأكاديمي"
+          onRetry={() => refetch()}
+        />
+      </Card>
+    );
+  }
+  if (!data) {
+    return (
+      <Card>
+        <EmptyState illustration="empty-list"
+          icon={GraduationCap}
+          title="لا يوجد ملف أستاذ"
+          description="هذا الحساب لم يُستكمل ملفه الأكاديمي بعد."
+        />
+      </Card>
+    );
+  }
+
+  return (
+    <div className="flex-col gap-3">
+      <Card title="الملف الأكاديمي" icon={GraduationCap} actions={
+        data.teacher.verified
+          ? <Badge color="green"><Icon icon={CheckCircle2} size={11} /> موثَّق</Badge>
+          : <button
+              type="button"
+              className="btn primary sm"
+              onClick={() => setVerifyConfirm(true)}
+              disabled={verify.isPending}
+            >
+              {verify.isPending ? 'جارٍ التوثيق…' : 'توثيق الأستاذ'}
+            </button>
+      }>
+        {verify.isError && (
+          <AlertRow
+            color="red"
+            icon={AlertCircle}
+            title="تعذّر توثيق الأستاذ"
+            description={apiErrorMessage(verify.error, 'لم يستجب الخادم للطلب. أعد المحاولة بعد لحظات.')}
+            actions={
+              <button
+                type="button"
+                className="btn ghost sm"
+                onClick={() => verify.mutate({ id: teacherId, verified: true })}
+                disabled={verify.isPending}
+              >
+                إعادة المحاولة
+              </button>
+            }
+          />
+        )}
+
+        <div className="grid-2" style={{ gap: 'var(--sp-2)' }}>
+          <FactRow label="الاسم" value={data.teacher.name} />
+          <FactRow label="البريد" value={data.teacher.email} mono />
+          <FactRow label="التخصص" value={data.teacher.specialty} />
+          <FactRow label="الدرجة العلمية" value={DEGREE_LABEL[data.teacher.degreeLevel] ?? data.teacher.degreeLevel} />
+          <FactRow label="الرتبة الأكاديمية" value={RANK_LABEL[data.teacher.rank] ?? data.teacher.rank} />
+          <FactRow label="سنوات الخبرة" value={`${data.teacher.yearsExperience} سنة`} />
+          <FactRow label="القسم" value={data.teacher.department} />
+          <FactRow label="الكلّيّة" value={data.teacher.faculty} />
+        </div>
+        {data.teacher.subjectKeywords.length > 0 && (
+          <div className="gov-keywords">
+            <div className="text-xxs text-subtle" style={{ marginBottom: 'var(--sp-1)' }}>المجالات</div>
+            <div className="gov-keywords-list">
+              {data.teacher.subjectKeywords.map((k) => <Badge key={k}><bdi>{k}</bdi></Badge>)}
+            </div>
+          </div>
+        )}
+
+        <div className="gov-eligibility">
+          <Icon icon={Sparkles} size={14} />
+          <span>{data.eligibilityNote}</span>
+        </div>
+      </Card>
+
+      {/* key = teacher identity → a fresh mount per teacher re-runs the
+          useState initializers below (15-e P1-5's identity-reset rule). */}
+      <PositionAssignmentCard key={data.teacher.id} teacher={data.teacher} />
+
+      {data.teacher.certifications.length > 0 && (
+        <Card title="الشهادات والاعتمادات" icon={Award}>
+          <div className="flex-col gap-2">
+            {data.teacher.certifications.map((c, i) => (
+              <div key={i} className="cert-row">
+                {/* 5-D3 (5-D1 hand-off): the amber graphics tier — --gold
+                    measured 2.13:1 on the light surface-2 row (dark was
+                    fine but collapsed into the accent). */}
+                <Icon icon={Award} size={14} style={{ color: 'var(--chart-6)' }} />
+                <div style={{ flex: 1 }}>
+                  <div className="text-sm" style={{ fontWeight: 600 }}>{c.title}</div>
+                  <div className="text-xxs text-subtle">{c.issuer} · {c.year}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+
+      <Card title="المقرّرات المقترحة لتدريسها" icon={Briefcase} subtitle={data.suggestedCourses.length > 0 ? `${countAr(data.suggestedCourses.length, ['مقرّر مرتّب', 'مقرّران مرتّبان', 'مقرّرات مرتّبة', 'مقرّراً مرتّباً'])} حسب القرب من تخصصه` : undefined}>
+        <div className="flex-col gap-2">
+          {data.suggestedCourses.map((c) => (
+            <div key={c.id} className="suggested-course-row">
+              <EmojiIcon emoji={c.iconEmoji} fallback={BookOpen} size={22} />
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div className="text-sm" style={{ fontWeight: 600 }}>{c.name}</div>
+                <div className="text-xxs text-subtle">
+                  <bdi>{c.code}</bdi> · {c.departmentName} · {c.facultyName}
+                </div>
+              </div>
+              <div className="suggested-course-score">
+                <Badge color="brand">{c.matchScore} درجة تطابق</Badge>
+                <span className="text-xxs text-subtle">{c.reason}</span>
+              </div>
+            </div>
+          ))}
+          {data.suggestedCourses.length === 0 && (
+            <EmptyState
+              icon={Briefcase}
+              title="لا توجد مقرّرات مطابقة بعد"
+              description="أضف كلمات مفتاحية إلى ملف الأستاذ لتوليد اقتراحات أدق."
+            />
+          )}
+        </div>
+      </Card>
+
+      <Link to={`/admin/permissions/${teacherId}`} className="btn ghost">
+        <Icon icon={ShieldCheck} size={13} /> إدارة الصلاحيات
+      </Link>
+
+      {/* r251: the verify confirmation — names the privilege being
+       * granted (the verified badge + the teaching eligibility it
+       * stands for) and that the action is recorded in the audit
+       * log. Cancel leaves the teacher unverified. */}
+      <ConfirmDialog
+        open={verifyConfirm}
+        title="توثيق الأستاذ"
+        confirmLabel="توثيق"
+        message={`هل تريد توثيق «${data.teacher.name}»؟ سيحمل شارة التوثيق، ويظهر كمدرّس مؤهّل في المقرّرات المقترحة، ويُسجَّل الإجراء في سجلّ النشاط.`}
+        onConfirm={async () => {
+          try {
+            await verify.mutateAsync({ id: teacherId, verified: true });
+          } finally {
+            setVerifyConfirm(false);
+          }
+        }}
+        onCancel={() => setVerifyConfirm(false)}
+      />
+    </div>
+  );
+}
+
+function FactRow({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
+  return (
+    <div className="gov-fact">
+      <span className="gov-fact-label">{label}</span>
+      <span className={mono ? 'gov-fact-value font-mono' : 'gov-fact-value'}>
+        <bdi>{value}</bdi>
+      </span>
+    </div>
+  );
+}
+
+/* ═══════════════ Academic position assignment ═══════════════ */
+
+const POSITION_LABEL: Record<'DEAN' | 'ASSOCIATE_DEAN' | 'DEPARTMENT_HEAD', string> = {
+  DEAN: 'عميد كلّيّة',
+  ASSOCIATE_DEAN: 'وكيل العميد',
+  DEPARTMENT_HEAD: 'رئيس قسم',
+};
+
+function PositionAssignmentCard({
+  teacher,
+}: {
+  teacher: {
+    id: string;
+    facultyId: string;
+    departmentId: string;
+    position: 'DEAN' | 'ASSOCIATE_DEAN' | 'DEPARTMENT_HEAD' | null;
+    positionFacultyId: string | null;
+    positionDepartmentId: string | null;
+    appointedAt: string | null;
+  };
+}) {
+  const facs = useFaculties(useCurrentInstitutionSlug()); // r180: caller-institution scoping
+  const assign = useAssignTeacherPosition(teacher.id);
+  // Local draft state, initialized once per mount — the parent keys this
+  // card by teacher id, so switching teachers remounts it. There is
+  // deliberately NO server-sync effect: an invalidation refetch (assign
+  // or verify) delivers a new teacher object for the SAME id, and
+  // resetting on it clobbered selects the admin had already changed
+  // toward the next save (audit 15-e P1-5).
+  const [position, setPosition] = useState<'NONE' | 'DEAN' | 'ASSOCIATE_DEAN' | 'DEPARTMENT_HEAD'>(teacher.position ?? 'NONE');
+  const [facultyId, setFacultyId] = useState<string>(teacher.positionFacultyId ?? teacher.facultyId);
+  const [departmentId, setDepartmentId] = useState<string>(teacher.positionDepartmentId ?? teacher.departmentId);
+
+  const facultyOptions = facs.data ?? [];
+  const departmentsForFaculty = facultyOptions.find((f) => f.id === facultyId)?.departments ?? [];
+
+  const dirty =
+    position !== (teacher.position ?? 'NONE') ||
+    (position === 'DEAN' && facultyId !== teacher.positionFacultyId) ||
+    (position === 'ASSOCIATE_DEAN' && facultyId !== teacher.positionFacultyId) ||
+    (position === 'DEPARTMENT_HEAD' && departmentId !== teacher.positionDepartmentId);
+
+  const onSave = () => {
+    let payload: AcademicPositionInput;
+    if (position === 'NONE') payload = { position: null };
+    else if (position === 'DEPARTMENT_HEAD') payload = { position, positionDepartmentId: departmentId };
+    else payload = { position, positionFacultyId: facultyId };
+    assign.mutate(payload);
+  };
+
+  return (
+    <Card title="المنصب القياديّ" icon={Crown} subtitle="يُمنح المنصب بالتعيين الإداريّ — يضاف فوق دور الأستاذ ولا يستبدله">
+      {teacher.position && teacher.appointedAt && (
+        <div className="text-xxs text-subtle" style={{ marginBlockEnd: 'var(--sp-2)' }}>
+          تمّ التعيين في {formatDate(teacher.appointedAt, { dateStyle: 'medium' })}
+        </div>
+      )}
+
+      <div className="grid-2" style={{ gap: 'var(--sp-2)' }}>
+        {/* r152c (A2): the six governance selects join the FormField
+            canon — the last hand-rolled .comp-form-field copies in the
+            app (the r151 deferred item). Label text and explicit ids are
+            preserved so every getByLabelText pin keeps passing. */}
+        <FormField label="المنصب" id={`pos-${teacher.id}`}>
+          <select
+            className="input"
+            value={position}
+            onChange={(e) => setPosition(e.target.value as typeof position)}
+          >
+            <option value="NONE">— بلا منصب —</option>
+            <option value="DEAN">عميد كلّيّة</option>
+            <option value="ASSOCIATE_DEAN">وكيل العميد</option>
+            <option value="DEPARTMENT_HEAD">رئيس قسم</option>
+          </select>
+        </FormField>
+
+        {(position === 'DEAN' || position === 'ASSOCIATE_DEAN') && (
+          <FormField label="الكلّيّة" id={`pos-fac-${teacher.id}`}>
+            <select
+              className="input"
+              value={facultyId}
+              onChange={(e) => setFacultyId(e.target.value)}
+            >
+              {facultyOptions.map((f) => (
+                <option key={f.id} value={f.id}>{f.name}</option>
+              ))}
+            </select>
+          </FormField>
+        )}
+
+        {position === 'DEPARTMENT_HEAD' && (
+          <>
+            <FormField label="الكلّيّة" id={`pos-dfac-${teacher.id}`}>
+              <select
+                className="input"
+                value={facultyId}
+                onChange={(e) => {
+                  setFacultyId(e.target.value);
+                  const first = facultyOptions.find((f) => f.id === e.target.value)?.departments[0];
+                  if (first) setDepartmentId(first.id);
+                }}
+              >
+                {facultyOptions.map((f) => (
+                  <option key={f.id} value={f.id}>{f.name}</option>
+                ))}
+              </select>
+            </FormField>
+            <FormField label="القسم" id={`pos-dep-${teacher.id}`}>
+              <select
+                className="input"
+                value={departmentId}
+                onChange={(e) => setDepartmentId(e.target.value)}
+              >
+                {departmentsForFaculty.map((d) => (
+                  <option key={d.id} value={d.id}>{d.name}</option>
+                ))}
+              </select>
+            </FormField>
+          </>
+        )}
+      </div>
+
+      <div className="gov-form-actions">
+        <button
+          type="button"
+          className="btn primary"
+          onClick={onSave}
+          disabled={assign.isPending || !dirty}
+        >
+          {assign.isPending ? 'جارٍ الحفظ…'
+            : position === 'NONE' ? 'إلغاء التعيين'
+            : `تعيين ${POSITION_LABEL[position]}`}
+        </button>
+        {position !== 'NONE' && teacher.position && (
+          <button
+            type="button"
+            className="btn ghost"
+            onClick={() => { setPosition('NONE'); }}
+          >
+            إنهاء المنصب الحاليّ
+          </button>
+        )}
+      </div>
+
+      {assign.isError && (
+        <AlertRow
+          color="red"
+          icon={AlertCircle}
+          title="تعذّر حفظ التعيين"
+          description={apiErrorMessage(assign.error, 'لم يستجب الخادم للطلب. أعد المحاولة بعد لحظات.')}
+          actions={
+            <button
+              type="button"
+              className="btn ghost sm"
+              onClick={onSave}
+              disabled={assign.isPending || !dirty}
+            >
+              إعادة المحاولة
+            </button>
+          }
+        />
+      )}
+    </Card>
+  );
+}
+
+/* ═══════════════ Governance scope (ADMIN / QUALITY) ═══════════════ */
+
+function ScopeAssignmentCard({
+  userId, role, scopeFacultyId, scopeFacultyName,
+}: {
+  userId: string;
+  role: 'ADMIN' | 'QUALITY';
+  scopeFacultyId: string | null;
+  scopeFacultyName: string | null;
+}) {
+  const facs = useFaculties(useCurrentInstitutionSlug()); // r180: caller-institution scoping
+  const assign = useAssignUserScope(userId);
+  // Local draft state, initialized once per mount — the parent keys this
+  // card by user id. No server-sync effect on purpose: the capability
+  // mutations invalidate ['admin','users'], whose prefix also refetches
+  // this page's permissions query, and resetting on that refetch clobbered
+  // a scope the admin was mid-way through changing (audit 15-e P1-5).
+  const [scope, setScope] = useState<'UNIVERSITY' | 'FACULTY'>(scopeFacultyId ? 'FACULTY' : 'UNIVERSITY');
+  const [facultyId, setFacultyId] = useState<string>(scopeFacultyId ?? '');
+
+  const dirty =
+    (scope === 'UNIVERSITY' && scopeFacultyId !== null) ||
+    (scope === 'FACULTY' && facultyId !== scopeFacultyId && facultyId !== '');
+
+  const onSave = () => {
+    assign.mutate(scope === 'UNIVERSITY' ? null : facultyId);
+  };
+
+  /* R320 §B: the scope card names the role — ADMIN is «المسجل العام»
+     (was «الإداريّ»); QUALITY's established «مكتب الجودة» unchanged. */
+  const roleLabel = role === 'ADMIN' ? sharedRoleLabel('ADMIN') : 'مكتب الجودة';
+
+  return (
+    <div className="gov-scope-card">
+      <div className="gov-scope-head">
+        <Icon icon={Building2} size={14} style={{ color: 'var(--accent)' }} />
+        <strong className="text-sm">نطاق صلاحيّة {roleLabel}</strong>
+      </div>
+      <p className="gov-scope-note">
+        النطاق الافتراضيّ على مستوى الجامعة. يمكن قَصره على كلّيّة واحدة فقط للحدّ من نطاق الإشراف.
+      </p>
+      <div className="grid-2" style={{ gap: 'var(--sp-2)' }}>
+        <FormField label="النطاق" id={`scope-${userId}`}>
+          <select
+            className="input"
+            value={scope}
+            onChange={(e) => setScope(e.target.value as 'UNIVERSITY' | 'FACULTY')}
+          >
+            <option value="UNIVERSITY">على مستوى الجامعة</option>
+            <option value="FACULTY">كلّيّة محدَّدة</option>
+          </select>
+        </FormField>
+        {scope === 'FACULTY' && (
+          <FormField label="الكلّيّة" id={`scope-fac-${userId}`}>
+            <select
+              className="input"
+              value={facultyId}
+              onChange={(e) => setFacultyId(e.target.value)}
+            >
+              <option value="">اختر…</option>
+              {facs.data?.map((f) => (
+                <option key={f.id} value={f.id}>{f.name}</option>
+              ))}
+            </select>
+          </FormField>
+        )}
+      </div>
+      {scopeFacultyName && (
+        <div className="text-xxs text-subtle" style={{ marginBlockStart: 'var(--sp-2)' }}>
+          النطاق الحاليّ: <strong>{scopeFacultyName}</strong>
+        </div>
+      )}
+      <div className="gov-form-actions">
+        <button
+          type="button"
+          className="btn primary sm"
+          onClick={onSave}
+          disabled={assign.isPending || !dirty}
+        >
+          {assign.isPending ? 'جارٍ الحفظ…' : 'حفظ النطاق'}
+        </button>
+      </div>
+      {assign.isError && (
+        <AlertRow
+          color="red"
+          icon={AlertCircle}
+          title="تعذّر حفظ النطاق"
+          description={apiErrorMessage(assign.error, 'لم يستجب الخادم للطلب. أعد المحاولة بعد لحظات.')}
+          actions={
+            <button
+              type="button"
+              className="btn ghost sm"
+              onClick={onSave}
+              disabled={assign.isPending || !dirty}
+            >
+              إعادة المحاولة
+            </button>
+          }
+        />
+      )}
+    </div>
+  );
+}
+
+/* ═══════════════ Per-user permissions editor ═══════════════ */
+
+/** Domain grouping for the permission matrix (r250 — Superlist
+ *  recomposition): the flat 17-row wall becomes six titled domains.
+ *  `Record<AppCapability, …>` makes a missed key a compile error the
+ *  moment the capability union grows — the grouping cannot silently
+ *  drop a capability. Labels carry the domain story, not the enum. */
+type CapDomain = 'research' | 'exams' | 'curriculum' | 'governance' | 'quality' | 'community';
+
+const CAP_DOMAIN: Record<AppCapability, CapDomain> = {
+  RESEARCH_GRADE_OWN: 'research',
+  RESEARCH_GRADE_ANY: 'research',
+  RESEARCH_PUBLISH: 'research',
+  EXAMS_AUTHOR: 'exams',
+  EXAMS_MODERATE: 'exams',
+  EXAMS_TAKE: 'exams',
+  CURRICULUM_EDIT_OWN: 'curriculum',
+  CURRICULUM_EDIT_ANY: 'curriculum',
+  USERS_MANAGE: 'governance',
+  ROLES_ASSIGN: 'governance',
+  TEACHERS_VERIFY: 'governance',
+  QUALITY_VIEW: 'quality',
+  QUALITY_REPORT: 'quality',
+  ANNOUNCE_PLATFORM: 'community',
+  ANNOUNCE_FACULTY: 'community',
+  COMPETITIONS_RUN: 'community',
+  EVENTS_RUN: 'community',
+};
+
+/** Fixed domain order — the matrix reads like the platform's org chart
+ *  (academic output first, governance last). Same order every render. */
+const CAP_DOMAIN_ORDER: CapDomain[] = [
+  'research', 'exams', 'curriculum', 'quality', 'community', 'governance',
+];
+
+const CAP_DOMAIN_LABEL: Record<CapDomain, string> = {
+  research: 'البحوث العلمية',
+  exams: 'الاختبارات الإلكترونية',
+  curriculum: 'المناهج والمقرّرات',
+  quality: 'ضمان الجودة',
+  community: 'الإعلانات والمجتمع',
+  governance: 'المستخدمون والحاكمية',
+};
+
+/** JS cadence constant — clears the one-shot confirm pulse shortly after
+ *  the CSS animation (var(--t-slower) + ring settle) has finished. Not a
+ *  CSS duration, so the motion-token gate does not apply; keep it in the
+ *  token scale's register when retuning ulara-perm-confirm. */
+const PULSE_CLEAR_MS = 1200;
+
+export function AdminPermissionsPage() {
+  const { id } = useParams<{ id: string }>();
+  const { data, isPending, isError, error, refetch } = useUserPermissions(id);
+  // r183-B6 (A4 P3-4): the tab names the USER, not «إدارة الصلاحيات».
+  useEntityPageTitle(data ? `${data.user.firstName} ${data.user.lastName}` : null);
+  const setCap = useSetCapability();
+  /* r164-i (permissions UX — blocked-action explanation): the backend
+   * rejects every self-edit with 403 «لا يمكنك تعديل صلاحياتك بنفسك»
+   * (permissions.routes.ts self-modification guard — an ADMIN holding
+   * ROLES_ASSIGN must not be able to self-grant USERS_MANAGE). The
+   * editor knows my id synchronously (persisted session), so the page
+   * explains the block UP FRONT and disables the row actions instead
+   * of letting each click bounce off a 403. The guard itself stays
+   * untouched — this is surface-only honesty. */
+  const myId = useAuthStore((s) => s.user?.id);
+  const isSelf = !!id && id === myId;
+  /** One-shot confirmation pulse on the row whose capability just changed. */
+  const [pulse, setPulse] = useState<{ cap: AppCapability; ok: boolean } | null>(null);
+  /** Last attempted change — powers the inline retry after a failure. */
+  const [lastAttempt, setLastAttempt] = useState<CapabilityPayload | null>(null);
+  /** r250: the matrix's live region — every successful change is
+   *  announced («مُنحت…/سُحبت…/أُعيدت…») so the screen-reader user gets
+   *  the same confirmation the sighted user gets from the one-shot
+   *  pulse. Cleared on the next change; never announces intent. */
+  const [announcement, setAnnouncement] = useState('');
+
+  useEffect(() => {
+    if (!pulse) return;
+    const t = setTimeout(() => setPulse(null), PULSE_CLEAR_MS);
+    return () => clearTimeout(t);
+  }, [pulse]);
+
+  // R305-A8: every branch carries the .r305ao marker (here around the
+  // read-only DetailSkeleton, whose internal .page root we cannot tag).
+  if (isPending) return <div className="r305ao"><DetailSkeleton /></div>;
+  // API-down must not infinite-skeleton (audit 0-e P0-5) — an honest,
+  // recoverable error with a way back.
+  if (isError || !data) {
+    return (
+      <div className="page r305ao">
+        <Link to="/admin/teachers" className="back-link">
+          <Icon icon={ChevronRight} size={14} /> العودة إلى الأساتذة
+        </Link>
+        <Card>
+          <ErrorState
+            error={error}
+            message="تعذّر تحميل صلاحيات المستخدم"
+            onRetry={() => refetch()}
+          />
+        </Card>
+      </div>
+    );
+  }
+
+  const allCaps = Object.keys(CAP_LABEL) as AppCapability[];
+  const overridesByCap = new Map(data.overrides.map((o) => [o.capability, o]));
+  const roleLabel = ROLE_LABEL[data.user.role] ?? data.user.role;
+
+  /** r250: the grouped matrix — capabilities bucketed into their fixed
+   *  domain order. Every capability lands in exactly one group (the
+   *  Record< CAPABILITY, domain > map guarantees it at compile time). */
+  const capGroups = CAP_DOMAIN_ORDER.map((domain) => ({
+    domain,
+    caps: allCaps.filter((cap) => CAP_DOMAIN[cap] === domain),
+  })).filter((g) => g.caps.length > 0);
+
+  const applyCap = (capability: AppCapability, grant: boolean | null) => {
+    if (!id) return;
+    const payload: CapabilityPayload = { userId: id, capability, grant };
+    setLastAttempt(payload);
+    setCap.mutate(payload, {
+      // The authored moment: the changed row confirms itself with a
+      // one-shot tone pulse while the badge flips — and the live
+      // region says the same thing out loud.
+      onSuccess: () => {
+        setPulse({ cap: capability, ok: grant !== false });
+        setAnnouncement(
+          grant === null
+            ? `أُعيدت صلاحية «${CAP_LABEL[capability]}» إلى قيمة الدور الافتراضية`
+            : grant
+              ? `مُنحت صلاحية «${CAP_LABEL[capability]}»`
+              : `سُحبت صلاحية «${CAP_LABEL[capability]}»`,
+        );
+      },
+      // r299: a failed change never leaves a stale announcement
+      // pretending the last grant/revoke landed.
+      onError: () => setAnnouncement(''),
+    });
+  };
+
+  const retryLast = () => {
+    if (!lastAttempt) return;
+    const { capability, grant } = lastAttempt;
+    setCap.mutate(lastAttempt, {
+      /* r299: the retry's success path now carries the SAME
+       * confirmation the direct path gives — the one-shot pulse AND
+       * the live-region announcement. A screen-reader user who
+       * failed, then retried, gets the same "it landed" the sighted
+       * user gets from the pulse; before, exactly the moment they
+       * needed it most stayed silent. */
+      onSuccess: () => {
+        setPulse({ cap: capability, ok: grant !== false });
+        setAnnouncement(
+          grant === null
+            ? `أُعيدت صلاحية «${CAP_LABEL[capability]}» إلى قيمة الدور الافتراضية`
+            : grant
+              ? `مُنحت صلاحية «${CAP_LABEL[capability]}»`
+              : `سُحبت صلاحية «${CAP_LABEL[capability]}»`,
+        );
+      },
+      onError: () => setAnnouncement(''),
+    });
+  };
+
+  return (
+    <div className="page r305ao">
+      <Link to="/admin/teachers" className="back-link">
+        <Icon icon={ChevronRight} size={14} /> العودة إلى الأساتذة
+      </Link>
+
+      {/* r190-D3: the page finally owns a masthead — the editor used to
+          * open straight onto a back-link + card (NO h1: the only admin
+          * route without one — axe page-has-heading-one). The h1 names
+          * the USER (same contract as the tab title above); the mono
+          * meta line carries the role + email facts. */}
+      <PageHeader
+        title={<>{data.user.firstName} {data.user.lastName}</>}
+        subtitle="إدارة صلاحيات هذا المستخدم: الدور الافتراضي، والاستثناءات اليدوية، والنطاق."
+        meta={<>{roleLabel} · <bdi>{data.user.email}</bdi></>}
+      />
+
+      {/* R190-D3: the icon-box MetricCard trio → the typographic stat
+          * line (■ mono labels + metric values; no icon wells).
+          * r299: «الدور الحالي» died — the header's meta line directly
+          * above carries role + email; one owner per datum. */}
+      <StatStrip
+        ariaLabel="حالة صلاحيات المستخدم"
+        cells={[
+          { label: 'صلاحيات فعلية', value: formatNum(data.effective.length), trend: 'مفعّلة الآن' },
+          { label: 'استثناءات يدوية', value: formatNum(data.overrides.length), trend: data.overrides.length > 0 ? 'منح أو سحب يدويّ' : 'لا استثناءات' },
+        ]}
+      />
+
+      <Card title="محرّر الصلاحيات" icon={ShieldCheck}>
+        {(data.user.role === 'ADMIN' || data.user.role === 'QUALITY') && (
+          <ScopeAssignmentCard
+            key={data.user.id}
+            userId={data.user.id}
+            role={data.user.role as 'ADMIN' | 'QUALITY'}
+            scopeFacultyId={data.user.scopeFacultyId}
+            scopeFacultyName={data.user.scopeFaculty?.name ?? null}
+          />
+        )}
+
+        <div className="text-xxs text-subtle" style={{ marginBottom: 'var(--sp-2)' }}>
+          الصلاحيات الافتراضية مرتبطة بالدور ({roleLabel}). يمكنك منح صلاحية إضافية أو سحب صلاحية افتراضية لهذا المستخدم تحديداً.
+        </div>
+
+        {isSelf && (
+          <AlertRow
+            color="amber"
+            icon={ShieldCheck}
+            title="هذه صلاحياتك أنت — لا يمكن تعديلها من هنا"
+            description="حرس الحاكمية يمنع تعديل صلاحياتك بنفسك (خطأ 403 من الخادم)؛ اطلب من مالك أو إداري آخر تطبيق التغيير من صفحتك هذه."
+          />
+        )}
+
+        {setCap.isError && (
+          <AlertRow
+            color="red"
+            icon={AlertCircle}
+            title="تعذّر تحديث الصلاحية"
+            description={apiErrorMessage(setCap.error, 'لم يستجب الخادم للطلب. أعد المحاولة بعد لحظات.')}
+            actions={
+              <button
+                type="button"
+                className="btn ghost sm"
+                onClick={retryLast}
+                disabled={setCap.isPending || !lastAttempt}
+              >
+                إعادة المحاولة
+              </button>
+            }
+          />
+        )}
+
+        {/* r250: the announcement twin of the confirm pulse — polite
+            live region, sr-only (the pulse is the visual channel; this
+            is the audio one). Re-announces only on real changes. */}
+        <p role="status" aria-live="polite" className="sr-only">
+          {announcement}
+        </p>
+
+        {/* r250 (Superlist recomposition): the flat 17-row wall becomes
+            six titled domain sections. Each group carries an h3 + the
+            count of currently-effective capabilities inside it, and the
+            rows keep the .perm-row anatomy (state badge + one verb
+            button) — same mutation contract, same pulse, now readable
+            at a glance and navigable by heading. */}
+        <div className="govx-matrix">
+          {capGroups.map(({ domain, caps }) => {
+            const groupTitleId = `govx-group-${domain}`;
+            const effectiveCount = caps.filter((cap) => data.effective.includes(cap)).length;
+            return (
+              <section key={domain} className="govx-group" aria-labelledby={groupTitleId}>
+                <div className="govx-group-head">
+                  <h3 id={groupTitleId} className="govx-group-title">{CAP_DOMAIN_LABEL[domain]}</h3>
+                  <span
+                    className="govx-group-count"
+                    aria-label={countAr(
+                      effectiveCount,
+                      ['صلاحية واحدة مفعّلة', 'صلاحيتان مفعّلتان', 'صلاحيات مفعّلة', 'صلاحية مفعّلة'],
+                    )}
+                  >
+                    {formatNum(effectiveCount)} مفعّلة من {formatNum(caps.length)}
+                  </span>
+                </div>
+                <div className="govx-rows">
+                  {caps.map((cap) => {
+                    const fromRole = data.roleDefaults.includes(cap);
+                    const ovr = overridesByCap.get(cap);
+                    const effective = data.effective.includes(cap);
+                    const state: 'role' | 'granted' | 'revoked' | 'none' =
+                      ovr ? (ovr.grant ? 'granted' : 'revoked') : (fromRole ? 'role' : 'none');
+                    const pulsing = pulse?.cap === cap;
+
+                    return (
+                      <div
+                        key={cap}
+                        className={[
+                          'perm-row',
+                          `state-${state}`,
+                          pulsing ? (pulse.ok ? 'confirm-pulse pulse-ok' : 'confirm-pulse pulse-neutral') : '',
+                        ].filter(Boolean).join(' ')}
+                      >
+                        <div className="perm-row-info">
+                          <div className="perm-row-title">{CAP_LABEL[cap]}</div>
+                          <code className="perm-row-key"><bdi>{cap}</bdi></code>
+                          <div className="perm-row-state">
+                            {state === 'role' && <Badge color="brand">من الدور</Badge>}
+                            {state === 'granted' && <Badge color="green">ممنوحة يدوياً</Badge>}
+                            {state === 'revoked' && <Badge color="amber">مسحوبة يدوياً</Badge>}
+                            {state === 'none' && <Badge>غير مفعّلة</Badge>}
+                          </div>
+                        </div>
+                        <div className="perm-row-actions">
+                          {!effective && (
+                            <button
+                              type="button"
+                              className="btn primary sm"
+                              disabled={setCap.isPending || isSelf}
+                              onClick={() => applyCap(cap, true)}
+                            >
+                              منح
+                            </button>
+                          )}
+                          {effective && fromRole && !ovr && (
+                            <button
+                              type="button"
+                              /* R305-A8 danger hierarchy: «سحب» strips a
+                               * live capability the instant it is clicked
+                               * (no confirm gate on this verb) — the one
+                               * destructive direction in the matrix gets
+                               * the danger fill; منح stays the accent
+                               * primary, إعادة للافتراضي stays quiet. */
+                              className="btn sm r305ao-btn-danger"
+                              disabled={setCap.isPending || isSelf}
+                              onClick={() => applyCap(cap, false)}
+                            >
+                              سحب
+                            </button>
+                          )}
+                          {ovr && (
+                            <button
+                              type="button"
+                              className="btn ghost sm"
+                              disabled={setCap.isPending || isSelf}
+                              onClick={() => applyCap(cap, null)}
+                            >
+                              إعادة للافتراضي
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
+            );
+          })}
+        </div>
+      </Card>
+    </div>
+  );
+}

@@ -1,0 +1,124 @@
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+// r323 B3.6 — the console tape installs ONCE (idempotent) before the
+// first render: every console.error / window error / unhandled
+// rejection from here on lands in the ring the feedback widget ships.
+import { installConsoleTape } from './lib/consoleTape';
+
+// R331 A-CSS pass 1 — the @layer constitution, FIRST in the chain so
+// the layer order (reset → tokens → base → layout → components →
+// pages → utilities, overrides appending as the capstone) is fixed
+// before any rule parses. Cascade-neutral by construction: the six
+// pre-existing layer names keep their exact relative order, and the
+// two new slots are empty. Mapping + contract: styles/layers.css.
+import './styles/layers.css';
+// Self-hosted @font-face rules must come first so the families are
+// registered before tokens.css/base.css reference them.
+//
+// Page-scoped split (D11, 11-g P1-2 — waves 12-15 + 13-17): pdf.css,
+// owner.css and training.css moved into the lazy page modules that
+// consume them (DocumentViewerPage; OwnerPages + ConfirmDialog/
+// ToggleSwitch borrowers; TrainingPages + the shared track-card/
+// leaderboard/filter-pill borrowers). 13-17 (D14) then unlocked
+// landing.css and colleges.css by deduping the polish.css same-selector
+// overrides first (.reveal-up timing, feature/bento spotlight blocks,
+// .admin-students-search input): landing.css rides the LandingPage
+// chunk; SectionAccent's cascade rules moved to motion.css (eager)
+// because CollegePages renders that primitive too. colleges.css is
+// imported by its three lazy consumers (CollegePages, CompetitionsPages,
+// CommunityPages — r157: the admin roster chrome moved to admin.css,
+// r150e/r152c) and lands in
+// their shared chunk. (G final sweep: the landing's colleges popover
+// is retired — r198's constellation replaced the never-rendered
+// <CollegesPopover /> and its colleges-popover.css sheet is deleted.)
+// student.css stays global (documented cross-page borrows,
+// worklog 8-b). auth.css is DELETED (R341/D1b) — its guest-door
+// grammar moved verbatim into patterns.css' GUEST DOOR SHEETS
+// section at this same import position.
+import './styles/fonts.css';
+// R326 M0.4 — the shared token half (source: shared/design-tokens.json)
+// lands FIRST, inside the same @layer tokens; tokens.css's hand-written
+// seats compose on top and its reduced-motion kill wins by import order.
+import './styles/tokens/tokens.generated.css';
+import './styles/tokens/tokens.css';
+import './styles/motion.css';
+import './styles/base.css';
+import './styles/components.css';
+import './styles/layout.css';
+// patterns.css (Agent S r210) — the shared page-pattern sheet; all
+// classes are pf-prefixed, so the placement after layout.css is
+// collision-free. CONTRACT.md is the normative doc.
+import './styles/patterns.css';
+import './styles/plates.css';
+import './styles/notifications.css';
+import './styles/student.css';
+import './styles/polish.css';
+// r304: the r301/r302 «final-visual-system.css» bolt-on is DELETED —
+// its declarations were folded back into their canonical layer homes
+// (layout.css for the sidebar/nav chrome, components.css for buttons/
+// tables/states/skeletons). An unlayered sheet parked last in main.tsx
+// silently masked the overrides layer (polish's collapsed-rail topbar
+// tint) and regressed the mobile table scroll rung; the cascade now
+// ends at polish.css, and every recipe lives in exactly one home.
+import App from './App';
+
+// axe-core: surface a11y violations in the dev console only. No prod cost.
+if (import.meta.env.DEV) {
+  void import('@axe-core/react').then(({ default: axe }) => {
+    void import('react').then((React) => {
+      void import('react-dom').then((ReactDOM) => {
+        axe(React.default ?? React, ReactDOM.default ?? ReactDOM, 1000);
+      });
+    });
+  });
+}
+
+const root = document.getElementById('root');
+if (!root) throw new Error('#root element missing');
+
+installConsoleTape();
+
+// r323 B6 — the PWA service worker, PRODUCTION ONLY (dev/audit suites
+// keep the plain server; no SW fetches in their console-health probes).
+// r324 X1 — the toast fires ONLY on a real update: a controller existed
+// at page load (a previous version ran) AND a new worker then announced
+// CONTENTS_UPDATED. On a first install there IS no previous version —
+// «التحديث» would be a lie (and it stacked over the consent bar/hero
+// CTA on every route's first load). One toast max per page load; the
+// action button does what the copy says (reload).
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    // Captured BEFORE register(): on a first install the page is
+    // uncontrolled (null) — exactly the case the toast must stay silent.
+    const hadController = !!navigator.serviceWorker.controller;
+    navigator.serviceWorker
+      .register('/sw.js')
+      .then((reg) => {
+        let announced = false;
+        navigator.serviceWorker.addEventListener('message', (e: MessageEvent) => {
+          if (
+            !announced &&
+            hadController &&
+            (e.data as { type?: string } | null)?.type === 'CONTENTS_UPDATED'
+          ) {
+            announced = true;
+            void import('./lib/toast').then(({ toast }) =>
+              toast.info('تتوفّر نسخة أحدث — حدّث الصفحة.', {
+                title: 'تحديث المنصّة',
+                action: { label: 'تحديث', onClick: () => window.location.reload() },
+              }),
+            );
+          }
+        });
+        // a waiting SW from a previous version: the next reload takes it
+        void reg.update().catch(() => {});
+      })
+      .catch(() => {});
+  });
+}
+
+createRoot(root).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+);

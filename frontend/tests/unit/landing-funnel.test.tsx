@@ -1,0 +1,275 @@
+/**
+ * r164b → r188 — the landing → register → auth FUNNEL contract.
+ *
+ * Before r164b every primary CTA on the landing routed to `/auth` (the
+ * LOGIN form) — including the finale's «أنشئ حسابك الجامعي», whose label
+ * promised account CREATION. The r164b rewiring is carried into the
+ * r188 folio landing intact:
+ *   تعرّف → أنشئ حسابك / ابدأ الآن → /auth/register → /auth
+ *
+ *   · fs pins — the route contract is source-visible: 5 primary CTAs →
+ *     /auth/register (header, mobile menu, hero, finale, footer), 5
+ *     login affordances → /auth (the same surfaces' ghosts), the
+ *     warm-up warms BOTH lazy boundaries, and no primary ever carries
+ *     the login route.
+ *   · rendered guest DOM — a real guest render (auth store untouched:
+ *     user null, isHydrated false) sees the split live, the mobile menu
+ *     is a both-way funnel (register primary + login ghost), and the
+ *     finale closes the loop with an explicit login button beside the
+ *     primary (r188: the returning-visitor line became a real ghost
+ *     button — same route, clearer affordance).
+ *   · 404 way-back — home (primary) + colleges + login (r164b).
+ */
+import { describe, expect, it, beforeAll } from 'vitest';
+import { render, screen, fireEvent, within, act } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+
+import LandingPage from '../../src/pages/LandingPage';
+import NotFoundPage from '../../src/pages/NotFoundPage';
+
+/* The r188 landing boots a ResizeObserver (the reveal belt); jsdom
+ * ships neither it nor the visual rAF the canvas engines want. A
+ * per-file no-op stub keeps the shared setup.ts untouched. */
+beforeAll(() => {
+  if (typeof window !== 'undefined' && !('ResizeObserver' in window)) {
+    class ResizeObserverStub {
+      observe(): void { /* no-op */ }
+      unobserve(): void { /* no-op */ }
+      disconnect(): void { /* no-op */ }
+    }
+    Object.defineProperty(window, 'ResizeObserver', {
+      configurable: true,
+      writable: true,
+      value: ResizeObserverStub,
+    });
+  }
+});
+
+/* Static source-contract helpers (assets.test.ts convention: pure fs
+ * assertions lock in what interaction tests cannot see cheaply). */
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+const read = (p: string) => readFileSync(path.join(root, p), 'utf8');
+/** Drop /* … *‌/ blocks so rNNN tombstone prose (which quotes the OLD
+ * copy it killed) can never satisfy a content pin. */
+const stripComments = (src: string) => src.replace(/\/\*[\s\S]*?\*\//g, '');
+
+/** The landing mounts no queries of its own in the r188 folio world,
+ * but a fresh retries-off client keeps the guest render self-contained
+ * (no network in jsdom). */
+function makeQueryClient() {
+  return new QueryClient({
+    defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+  });
+}
+
+function renderLanding() {
+  return render(
+    <QueryClientProvider client={makeQueryClient()}>
+      <MemoryRouter>
+        <LandingPage />
+      </MemoryRouter>
+    </QueryClientProvider>,
+  );
+}
+
+/* ── source contract ─────────────────────────────────────────────── */
+
+describe('landing funnel — source contract (r164b → r331)', () => {
+  /* R331 component split: the landing surface is LandingPage (statement,
+   * pains, journey mount, roles, FAQ, finale, footer) + chrome/SheetNav
+   * (the header pair + the mobile menu) + hero/Hero (the hero cell).
+   * The funnel counts are computed over the WHOLE guest surface — the
+   * contract is about the page, not the file layout. */
+  /* P2-0 (r335 split): the bands moved verbatim into
+   * components/landing/sections/ — the surface list grows with them,
+   * same contract, same counts. */
+  const surface = [
+    'src/pages/LandingPage.tsx',
+    'src/components/landing/chrome/SheetNav.tsx',
+    'src/components/landing/hero/Hero.tsx',
+    'src/components/landing/sections/Hero.tsx',
+    'src/components/landing/sections/Statement.tsx',
+    'src/components/landing/sections/Live.tsx',
+    'src/components/landing/sections/Chapters.tsx',
+    'src/components/landing/sections/Product.tsx',
+    'src/components/landing/sections/Why.tsx',
+    'src/components/landing/sections/Roles.tsx',
+    'src/components/landing/sections/Vision.tsx',
+    'src/components/landing/sections/Footer.tsx',
+  ].map(read).join('\n');
+  const tsx = read('src/pages/LandingPage.tsx');
+  const live = stripComments(surface);
+
+  it('the FIVE primary CTAs all route to /auth/register (header, mobile menu, hero, finale, footer)', () => {
+    expect((live.match(/to="\/auth\/register"/g) ?? []).length).toBe(5);
+    // …and none of them is the login route anymore.
+    expect(live).not.toMatch(/to="\/auth"\s+className="(?:btn primary|btn accent)/);
+  });
+
+  it('login affordances ride the R331 register: six surfaces (header, mobile, hero secondary, finale ghost, colleges strip, footer)', () => {
+    /* R331 delta (documented): the rebuilt hero carries its own login
+     * secondary (the reference pattern: ONE orange primary + one quiet alt),
+     * joining the previous five (header, mobile, finale ghost, colleges
+     * strip, footer). The register primary count stays 5; login grows
+     * 5→6 by product decision — the hero alt is a ghost, never a second
+     * primary. */
+    expect((live.match(/to="\/auth"/g) ?? []).length).toBe(6);
+  });
+
+  it('the finale never shows login copy under a create-account button (label ↔ copy ↔ destination tell one story)', () => {
+    // The old defect, pinned dead: «سجِّل دخولك…» lede + «أنشئ حسابك
+    // الجامعي» label + /auth destination in one section. Comments are
+    // stripped so the r164b tombstone (which quotes the old lede) can't
+    // satisfy the pin from beyond the grave.
+    /* P2-0 (r335 split): the finale band lives in sections/Vision.tsx. */
+    const finaleLive = stripComments(read('src/components/landing/sections/Vision.tsx'));
+    const lede = finaleLive.indexOf('fo-cta-lede');
+    expect(lede).toBeGreaterThanOrEqual(0);
+    const actions = finaleLive.indexOf('fo-cta-actions', lede);
+    const ledeBlock = finaleLive.slice(lede, actions);
+    expect(ledeBlock).toContain('أنشئ حسابك الجامعي');
+    expect(ledeBlock).not.toContain('سجِّل دخولك');
+
+    const actionsBlock = finaleLive.slice(actions, finaleLive.indexOf('fo-cta-meta', actions));
+    expect(actionsBlock).toContain('to="/auth/register"');
+    // The returning-visitor ghost sits AFTER the primary inside the
+    // actions row, never inside the lede. R336: the copy lives in
+    // components/landing/copy.ts (LOGIN) — the section wires the
+    // constant, so the source pin accepts either the literal or the
+    // constant reference (same story, one source of truth).
+    expect(
+      actionsBlock.includes('تسجيل الدخول') || actionsBlock.includes('{LOGIN}'),
+    ).toBe(true);
+    expect(actionsBlock).toContain('to="/auth"');
+  });
+
+  it('the idle warm-up warms BOTH auth boundaries (r162 /auth + r164b /auth/register)', () => {
+    const warmAt = tsx.indexOf('const warm = () => {');
+    expect(warmAt).toBeGreaterThanOrEqual(0);
+    const warmBody = tsx.slice(warmAt, tsx.indexOf('};', warmAt));
+    expect(warmBody).toContain(`import('./AuthPage')`);
+    expect(warmBody).toContain(`import('./RegisterPage')`);
+  });
+
+  it('the mobile menu carries a login affordance (≤1080px hides the header pair)', () => {
+    /* R331: the mobile menu lives in chrome/SheetNav.tsx (the R331
+     * header split). Same contract: login ghost + register primary. */
+    const navTsx = read('src/components/landing/chrome/SheetNav.tsx');
+    const menuAt = navTsx.indexOf('fo-mobile-menu');
+    expect(menuAt).toBeGreaterThanOrEqual(0);
+    const menu = navTsx.slice(menuAt, navTsx.indexOf('fo-mb-cta', menuAt));
+    expect(menu.includes('تسجيل الدخول') || menu.includes('{LOGIN}')).toBe(true);
+    expect(navTsx.slice(menuAt)).toContain('to="/auth/register"');
+  });
+});
+
+/* ── rendered guest DOM ───────────────────────────────────────────── */
+
+describe('landing funnel — rendered guest DOM (r164b → r188)', () => {
+  it('a guest sees the split immediately: header login → /auth, header primary → /auth/register', () => {
+    const { container } = renderLanding();
+
+    /* R315 override (K-B): the header seats ride the measured cell
+     * grammar — .fo-actions-login / .fo-actions-cta (the reference's
+     * ruled cells) replace the old .btn pair; the funnel contract
+     * itself (login → /auth, primary → /auth/register, both visible
+     * in the desktop bar) is unchanged. */
+    const login = container.querySelector<HTMLAnchorElement>(
+      '.fo-header-actions .fo-actions-login',
+    );
+    const primary = container.querySelector<HTMLAnchorElement>(
+      '.fo-header-actions .fo-actions-cta',
+    );
+    expect(login?.getAttribute('href')).toBe('/auth');
+    expect(primary?.getAttribute('href')).toBe('/auth/register');
+  });
+
+  it('the hero primary carries the start promise: «أنشئ حسابك الجامعي» → /auth/register', () => {
+    const { container } = renderLanding();
+
+    const primary = container.querySelector<HTMLAnchorElement>(
+      '.fo-hero-actions .fo-hero-cta',
+    );
+    expect(primary?.textContent).toContain('أنشئ حسابك الجامعي');
+    expect(primary?.getAttribute('href')).toBe('/auth/register');
+  });
+
+  it('the finale closes the loop: primary → /auth/register AND a login ghost → /auth', () => {
+    const { container } = renderLanding();
+
+    const primary = container.querySelector<HTMLAnchorElement>(
+      '.fo-cta-actions .btn.accent',
+    );
+    expect(primary?.textContent).toContain('أنشئ حسابك الجامعي');
+    expect(primary?.getAttribute('href')).toBe('/auth/register');
+
+    const login = container.querySelector<HTMLAnchorElement>(
+      '.fo-cta-actions .btn.ghost',
+    );
+    expect(login?.textContent).toContain('تسجيل الدخول');
+    expect(login?.getAttribute('href')).toBe('/auth');
+  });
+
+  it('ONE primary per content viewport: a single accent CTA in hero and finale each', () => {
+    const { container } = renderLanding();
+
+    expect(container.querySelectorAll('.fo-hero-actions .fo-hero-cta')).toHaveLength(1);
+    expect(container.querySelectorAll('.fo-cta-actions .btn.accent')).toHaveLength(1);
+  });
+
+  it('the mobile menu is a both-way funnel: ONE register primary + a login ghost', async () => {
+    const { container } = renderLanding();
+
+    // Burger contract (F2-5): the label flips with the state.
+    fireEvent.click(screen.getByRole('button', { name: 'فتح القائمة' }));
+
+    const menu = container.querySelector('.fo-mobile-menu');
+    expect(menu).not.toBeNull();
+    expect(menu?.querySelectorAll('.btn.primary')).toHaveLength(1);
+    const primary = menu?.querySelector<HTMLAnchorElement>('.btn.primary');
+    expect(primary?.getAttribute('href')).toBe('/auth/register');
+
+    // Scoped to the menu: the header's ghost pair stays in the DOM in
+    // jsdom (CSS hides it ≤1080px — layout isn't the query's business).
+    const login = within(menu as HTMLElement).getByRole('link', { name: 'تسجيل الدخول' });
+    expect(login.getAttribute('href')).toBe('/auth');
+    // And it closes again (the menu's own click-to-close contract).
+    /* R331: the close is ANIMATED — the panel lingers through the 0.4s
+     * exit clip before unmounting (the r309 e2e pin reads the unmount
+     * with its retry clock); this pin advances the same clock. */
+    fireEvent.click(screen.getByRole('button', { name: 'إغلاق القائمة' }));
+    expect(container.querySelector('.fo-mobile-menu')).not.toBeNull(); // exit clip playing
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 430));
+    });
+    expect(container.querySelector('.fo-mobile-menu')).toBeNull();
+  }, 8000);
+});
+
+/* ── 404 way-back ─────────────────────────────────────────────────── */
+
+describe('404 way-back (r164b → r188)', () => {
+  it('ONE primary (home) + two secondary exits: colleges browse and login', () => {
+    const { container } = render(
+      <MemoryRouter>
+        <NotFoundPage />
+      </MemoryRouter>,
+    );
+
+    expect(container.querySelectorAll('.nf-actions .btn.primary')).toHaveLength(1);
+
+    const home = screen.getByRole('link', { name: /العودة إلى الرئيسية/ });
+    // r315 C4-D content-anchored pin: the 404 way-back label dropped its
+    // display tashkeel («تصفّح الكلّيّات» → «تصفح الكليات») per the
+    // zero-tashkeel-on-display-text canon — same string as the landing's.
+    const colleges = screen.getByRole('link', { name: /تصفح الكليات التجريبية/ });
+    const login = screen.getByRole('link', { name: 'تسجيل الدخول' });
+    expect(home.getAttribute('href')).toBe('/');
+    expect(colleges.getAttribute('href')).toBe('/colleges');
+    expect(login.getAttribute('href')).toBe('/auth');
+  });
+});

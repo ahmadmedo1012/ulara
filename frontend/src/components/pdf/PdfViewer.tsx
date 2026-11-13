@@ -1,0 +1,1197 @@
+import { useEffect, useRef, useState, useCallback, useMemo, memo } from 'react';
+import {
+  ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Maximize2, Minimize2,
+  Download, Search, X, LayoutGrid, MessageSquare,
+} from 'lucide-react';
+import { Icon } from '../Icon';
+import { ErrorState } from '../primitives/States';
+import { useAuthStore } from '../../stores/auth.store';
+import { toast } from '../../lib/toast';
+import { countAr } from '../../lib/format';
+import { normalizeArabicSearch } from '../../lib/search';
+import { formatInt } from '../../utils/numbers';
+import { classifyPdfLoadError } from './loadError';
+import { applySearchMarks, scanPageItems } from './searchFold';
+// pdfjs-dist v4 ships ESM; only three exports are used here
+// (GlobalWorkerOptions + getDocument + TextLayer). r134 (audit R134-W1-M
+// P2): the module is now imported DYNAMICALLY-ONLY — it was previously
+// ALSO statically imported, which baked the ~590KB pdf.mjs into the
+// PdfViewer route chunk at evaluation time and made the TextLayer
+// dynamic import below a no-op (it resolved to that same chunk, as its
+// old comment admitted). Dynamic-only keeps the chunk out of the eager
+// graph entirely and defers the fetch until a document actually loads;
+// the memoized loader also sets the worker URL exactly once, on first
+// use (the old module-level side effect).
+import type { PDFDocumentProxy } from 'pdfjs-dist';
+import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
+
+type PdfjsModule = typeof import('pdfjs-dist');
+type PdfLoadingTask = ReturnType<PdfjsModule['getDocument']>;
+
+let pdfjsPromise: Promise<PdfjsModule> | null = null;
+
+/** Load pdfjs-dist once per session (memoized) and arm the self-hosted
+ * worker URL before the module is ever used to open a document.
+ * r134 (V1 P3): a rejected chunk load used to poison the memo forever —
+ * clear the slot on failure so a retry (ErrorState / remount) can fetch
+ * again instead of hanging in the loading state with an unhandled
+ * rejection. */
+function loadPdfjs(): Promise<PdfjsModule> {
+  pdfjsPromise ??= import('pdfjs-dist').then(
+    (pdfjs) => {
+      pdfjs.GlobalWorkerOptions.workerSrc = workerUrl;
+      return pdfjs;
+    },
+    (err) => {
+      pdfjsPromise = null; // un-poison the memo — next call retries
+      throw err;
+    },
+  );
+  return pdfjsPromise;
+}
+
+interface PdfViewerProps {
+  /** PDF source: relative path (e.g. /api/v1/files/papers/x.pdf) or absolute URL. */
+  src: string;
+  /** Optional document title shown in the toolbar. */
+  title?: string;
+  /** When true, the viewer fills its parent. When false, uses an internal max-height. */
+  fill?: boolean;
+  /** External handle to navigate the viewer (parent calls .jumpToPage). */
+  controlRef?: React.MutableRefObject<{ jumpToPage: (n: number) => void } | null>;
+  /** Called whenever current page changes — parent can mirror this. */
+  onPageChange?: (page: number) => void;
+  /** Called once the document is loaded — parent gets total pages. */
+  onDocumentLoaded?: (numPages: number) => void;
+  /** r305-a7: fired when the user submits a text selection as a
+   *  contextual note — { text, page }. The parent opens the annotation
+   *  composer seeded with the quote; the API payload shape ({page,
+   *  comment, color}) is unchanged — the quote rides INSIDE comment. */
+  onAnnotateSelection?: (sel: { text: string; page: number }) => void;
+}
+
+interface DocState {
+  pdf: PDFDocumentProxy;
+  numPages: number;
+}
+
+/**
+ * One classified failure for the canvas area. `detail` feeds
+ * ErrorState's `error` prop: load failures pass a crafted
+ * `{ message: hint }` object (extractErrorDetail picks the Arabic hint
+ * as the detail line — pdf.js's own English prose must not leak into
+ * the RTL page), render failures pass the raw cause (ErrorState's own
+ * Arabic fallback advice renders). `retryable` decides the retry
+ * affordance — false for failures a retry can never fix (password,
+ * 404, 403: see lib/classifyPdfLoadError → components/pdf/loadError.ts).
+ */
+interface ViewerError {
+  message: string;
+  detail: unknown;
+  retryable: boolean;
+}
+
+/**
+ * Standard editable-surface guard for global keyboard shortcuts (audit 0-f
+ * P1-5). Returns true when the event originated inside an input, textarea,
+ * select, contenteditable host or [role=textbox] — the keystroke belongs to
+ * the user's typing (search field, page picker, annotations composer…),
+ * never to viewer shortcuts.
+ */
+function isEditableTarget(target: EventTarget | null): boolean {
+  const el = target as HTMLElement | null;
+  if (!el || typeof el.closest !== 'function') return false;
+  return !!el.closest(
+    'input, textarea, select, [contenteditable="true"], [contenteditable=""], [role="textbox"]',
+  );
+}
+
+/**
+ * Shape-matched loading placeholder — a paper-shaped frame with a faint
+ * text-line texture, mirroring the .pdf-page it stands in for (craft floor:
+ * "never a bare spinner where a shape-matched skeleton fits").
+ */
+function PdfPageSkeleton({ label = 'جارٍ تحميل المستند…' }: { label?: string }) {
+  return <div className="pdf-page-skeleton" role="status" aria-label={label} />;
+}
+
+/* ─── Thumbnail rail — the page-level navigator ─────────────────────
+   r304 (the serious workspace): the page canvas stays primary; the
+   rail is a secondary navigator that only exists when summoned from
+   the toolbar. Each thumbnail is a real page render at rail scale,
+   painted LAZILY as the button scrolls near the rail's viewport
+   (IntersectionObserver) — a 300-page document never renders 300
+   canvases. Rendered pages cache as data URLs (keyed by document), so
+   re-scrolling is free and the canvas elements themselves unmount.
+   All pdf.js work is guarded by the generation counter semantics of
+   the viewer: the rail reads the CURRENT doc through props and every
+   async hop re-checks that the document did not change under it. */
+
+const THUMB_RENDER_WIDTH = 128;
+
+/** One thumbnail button. `pageKey` namespaces the cache per document. */
+const PdfThumb = memo(function PdfThumb({
+  page, doc, pageKey, active, cache, onJump,
+}: {
+  page: number;
+  doc: PDFDocumentProxy;
+  pageKey: string;
+  active: boolean;
+  cache: Map<string, string>;
+  onJump: (n: number) => void;
+}) {
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const cached = cache.get(`${pageKey}:${page}`);
+  const [dataUrl, setDataUrl] = useState<string | null>(cached ?? null);
+
+  // Active thumb follows the page — smooth, only when it appears.
+  useEffect(() => {
+    if (active) {
+      btnRef.current?.scrollIntoView({ block: 'nearest' });
+    }
+  }, [active]);
+
+  useEffect(() => {
+    const btn = btnRef.current;
+    if (!btn || dataUrl) return;
+    let cancelled = false;
+
+    const paint = async () => {
+      try {
+        const pageObj = await doc.getPage(page);
+        if (cancelled) return;
+        const base = pageObj.getViewport({ scale: 1 });
+        const scale = THUMB_RENDER_WIDTH / base.width;
+        const viewport = pageObj.getViewport({ scale });
+        const canvas = document.createElement('canvas');
+        const dpr = Math.min(2, window.devicePixelRatio || 1);
+        canvas.width = Math.floor(viewport.width * dpr);
+        canvas.height = Math.floor(viewport.height * dpr);
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        await pageObj.render({ canvasContext: ctx, viewport }).promise;
+        if (cancelled) return;
+        const url = canvas.toDataURL('image/png');
+        cache.set(`${pageKey}:${page}`, url);
+        setDataUrl(url);
+      } catch {
+        // A destroyed document or a failed page — the ghost placeholder
+        // stays; nothing here is worth an error surface.
+      }
+    };
+
+    // IntersectionObserver root = the rail's scroll box (the closest
+    // scrolling ancestor). Fallback: paint immediately.
+    if (typeof IntersectionObserver === 'undefined') {
+      void paint();
+      return () => { cancelled = true; };
+    }
+    const io = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) {
+        io.disconnect();
+        void paint();
+      }
+    }, { rootMargin: '320px 0px' });
+    io.observe(btn);
+    return () => {
+      cancelled = true;
+      io.disconnect();
+    };
+  }, [doc, page, pageKey, cache, dataUrl]);
+
+  return (
+    <button
+      ref={btnRef}
+      type="button"
+      className={`pdf-thumb${active ? ' on' : ''}`}
+      onClick={() => onJump(page)}
+      aria-label={`الانتقال إلى الصفحة ${page}`}
+      aria-current={active ? 'true' : undefined}
+    >
+      <span className="pdf-thumb-canvas" aria-hidden="true">
+        {dataUrl
+          ? <img src={dataUrl} alt="" width={THUMB_RENDER_WIDTH} loading="lazy" />
+          : <span className="pdf-thumb-ghost" style={{ display: 'block', inlineSize: '100%' }} />}
+      </span>
+      <span className="pdf-thumb-num font-mono">{page}</span>
+    </button>
+  );
+});
+
+function PdfThumbnails({
+  doc, page, onJump,
+}: {
+  doc: PDFDocumentProxy;
+  page: number;
+  onJump: (n: number) => void;
+}) {
+  // Per-document cache namespace — the src changes with the document,
+  // so the fingerprints pair (stable per PDF) plus page is unique.
+  const cacheRef = useRef<Map<string, string>>(new Map());
+  const pageKey = doc.fingerprints?.[0] ?? 'doc';
+  const pages = useMemo(
+    () => Array.from({ length: doc.numPages }, (_, i) => i + 1),
+    [doc.numPages],
+  );
+  return (
+    <nav className="pdf-thumbs" aria-label="مصغّرات الصفحات">
+      {pages.map((n) => (
+        <PdfThumb
+          key={n}
+          page={n}
+          doc={doc}
+          pageKey={pageKey}
+          active={n === page}
+          cache={cacheRef.current}
+          onJump={onJump}
+        />
+      ))
+      }
+    </nav>
+  );
+}
+
+export default function PdfViewer({ src, title, fill = true, controlRef, onPageChange, onDocumentLoaded, onAnnotateSelection }: PdfViewerProps) {
+  const [doc, setDoc] = useState<DocState | null>(null);
+  const [page, setPage] = useState(1);
+  const [scale, setScale] = useState<number | 'fit-width'>('fit-width');
+  const [error, setError] = useState<ViewerError | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [isRendering, setIsRendering] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchHits, setSearchHits] = useState<{ page: number; count: number; snippet: string }[]>([]);
+  const [searchIdx, setSearchIdx] = useState(0);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  /** r304: the thumbnail rail — summoned from the toolbar, never
+   *  default-on (the paper owns the first impression). */
+  const [thumbsOpen, setThumbsOpen] = useState(false);
+  /** Bumped by the error-state retry button — re-runs the load effect. */
+  const [retryToken, setRetryToken] = useState(0);
+  /** True while a search walk is visiting pages — without it, a
+   *  300-page PDF looks frozen mid-search. */
+  const [isSearching, setIsSearching] = useState(false);
+  /** r305-a7: byte progress from the pdf.js loading task's onProgress
+   *  events — the skeleton is shaped, this is the honest byte count. */
+  const [progress, setProgress] = useState<{ loaded: number; total: number } | null>(null);
+  /** r305-a7: the live text selection inside the paper (contextual
+   *  notes) — null when the selection is absent/outside the layer. */
+  const [selQuote, setSelQuote] = useState<string | null>(null);
+
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const textLayerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  /* r152a (A6 P3-4): closing the search bar unmounts the focused
+   * input/close button — without an explicit restore, keyboard users
+   * land on <body>. Focus returns to the search toggle that opened
+   * the bar, but only when focus actually lived inside it. */
+  const searchToggleRef = useRef<HTMLButtonElement>(null);
+  /* r305-a7 a11y: closing the thumbnail rail (Escape) while a thumb
+   * button owns focus must not strand the keyboard user on <body> —
+   * the same r152a A6 P3-4 contract the search bar honors. */
+  const thumbsToggleRef = useRef<HTMLButtonElement>(null);
+  const viewerRef = useRef<HTMLDivElement>(null);
+  const fullscreenBtnRef = useRef<HTMLButtonElement>(null);
+  const renderTaskRef = useRef<{ cancel: () => void; promise: Promise<void> } | null>(null);
+  /** Content-box width of the canvas wrap, seeded by the ResizeObserver. */
+  const containerWRef = useRef(0);
+  /**
+   * Monotonic search generation. Every document load, every new search
+   * and every search close bumps it; an in-flight walk compares its
+   * captured generation before each await and before each state write,
+   * so a walk orphaned by a document switch or unmount can neither
+   * plant page numbers from the wrong document nor surface as an
+   * unhandled promise rejection (audit 11-f P1-3).
+   */
+  const searchGenRef = useRef(0);
+  /**
+   * The document currently on screen. Render errors are only honest for
+   * this doc: after a src switch the destroyed predecessor rejects inside
+   * the superseded render, and that stale catch must not plant an error
+   * over the newly loading document (audit 11-f P2-9).
+   */
+  const docRef = useRef<DocState | null>(null);
+  /** r305-a7: the ACTIVE query words (folded) — lives in a ref so a
+   *  page/zoom re-render repaints its marks without re-running the walk. */
+  const searchWordsRef = useRef<string[]>([]);
+  /** r305-a7: latest mark-painter — renderPage calls it through the ref
+   *  after the text layer rebuilds, without re-render churn. */
+  const paintMarksRef = useRef<() => void>(() => undefined);
+
+  // ── Load document ────────────────────────────────────────────────
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+    setDoc(null);
+    docRef.current = null;
+    setProgress(null);
+    // Kill any search walk from the previous document and drop its hits —
+    // page numbers from document A must never navigate a viewer that is
+    // now loading document B (audit 11-f P1-3).
+    searchGenRef.current += 1;
+    searchWordsRef.current = [];
+    setSearchHits([]);
+    setSearchIdx(0);
+    setIsSearching(false);
+
+    // A9 P0-1: API auth is Bearer-header-only (backend auth middleware +
+    // lib/api.ts) — the access token never rides a cookie, so pdf.js's
+    // own fetch used to arrive unauthenticated and every research
+    // document 401'd. Pass the header explicitly; same-origin requests
+    // already carry the refresh cookie, so no withCredentials is needed.
+    const token = useAuthStore.getState().accessToken;
+    // r134: pdf.mjs is fetched HERE (dynamic-only) — the task is created
+    // once the module resolves; if the effect is torn down first, the
+    // cancelled flag keeps it from ever starting (no task, nothing to
+    // destroy).
+    let task: PdfLoadingTask | null = null;
+    const start = (pdfjs: PdfjsModule): void => {
+      if (cancelled) return;
+      const t = pdfjs.getDocument({
+        url: src,
+        ...(token ? { httpHeaders: { Authorization: `Bearer ${token}` } } : {}),
+        // Self-hosted assets (public/pdfjs/*) — no runtime dependency on unpkg.com
+        cMapUrl: '/pdfjs/cmaps/',
+        cMapPacked: true,
+        standardFontDataUrl: '/pdfjs/standard_fonts/',
+      });
+      task = t;
+
+      // r305-a7: real progress tied to pdf.js's own loading events —
+      // the skeleton shows the shape, these bytes show the truth.
+      t.onProgress = (data: { loaded: number; total: number }) => {
+        if (cancelled) return;
+        setProgress({ loaded: data.loaded, total: data.total });
+      };
+
+      t.promise.then(
+        (pdf) => {
+          if (cancelled) { pdf.destroy(); return; }
+          const next: DocState = { pdf, numPages: pdf.numPages };
+          docRef.current = next;
+          setDoc(next);
+          setPage(1);
+          // A superseded render of the previous document may have planted a
+          // stale page error after this effect's initial reset — clear it
+          // again so the fresh document starts clean (audit 11-f P2-9).
+          setError(null);
+          setProgress(null);
+          setLoading(false);
+          onDocumentLoaded?.(pdf.numPages);
+        },
+        (err) => {
+          if (cancelled) return;
+          // r164f: pdf.js folds HTTP semantics into exception shapes —
+          // classifyPdfLoadError maps password / 404 / 401 / 403 to their
+          // honest Arabic states (retry only where a retry can succeed);
+          // everything else keeps the generic retryable error. Password
+          // stays non-retryable: re-running the same no-credential load
+          // can never succeed (audit 11-f P2-8).
+          const failure = classifyPdfLoadError(err);
+          setError({ message: failure.message, detail: { message: failure.hint }, retryable: failure.retryable });
+          setProgress(null);
+          setLoading(false);
+        },
+      );
+    };
+    // r134 (V1 P3): a failed lazy chunk used to leave the viewer spinning
+    // forever with an unhandled rejection — surface the honest error state
+    // (same message as the corrupt-PDF path above; the memo self-heals so
+    // the retry button genuinely re-fetches).
+    void loadPdfjs().then(start, (err) => {
+      if (cancelled) return;
+      // Same classification as a document-load rejection — a TypeError
+      // from the failed chunk import lands on the generic retryable
+      // branch (the memo self-heals so the retry genuinely re-fetches).
+      const failure = classifyPdfLoadError(err);
+      setError({ message: failure.message, detail: { message: failure.hint }, retryable: failure.retryable });
+      setProgress(null);
+      setLoading(false);
+    });
+
+    return () => {
+      cancelled = true;
+      // Orphan any search walk mid-flight on this document (src switch or
+      // unmount) before destroying the doc underneath it.
+      searchGenRef.current += 1;
+      // Null-safe since r134: if the module never resolved (fast unmount /
+      // src switch), no task was created — the cancelled flag above keeps
+      // it that way.
+      task?.destroy();
+    };
+    // retryToken: the retry button re-runs this effect for the same src.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [src, retryToken]);
+
+  const retry = useCallback(() => setRetryToken((t) => t + 1), []);
+
+  // Notify parent on page change
+  useEffect(() => { onPageChange?.(page); }, [page, onPageChange]);
+
+  // Expose imperative jump-to-page for the parent (annotations panel).
+  useEffect(() => {
+    if (!controlRef) return;
+    controlRef.current = {
+      jumpToPage: (n: number) => {
+        const max = doc?.numPages ?? 1;
+        setPage(Math.max(1, Math.min(max, n)));
+      },
+    };
+    return () => { if (controlRef) controlRef.current = null; };
+  }, [controlRef, doc]);
+
+  // ── Render current page ──────────────────────────────────────────
+  const renderPage = useCallback(async () => {
+    // Snapshot the doc and DOM nodes up front: after the first await the
+    // viewer may have moved on (src switch / unmount) and the refs can be
+    // null again — a superseded render must not dereference them.
+    const docSnapshot = doc;
+    const canvas = canvasRef.current;
+    const container = containerRef.current;
+    if (!docSnapshot || !canvas || !container) return;
+    setIsRendering(true);
+    setError(null);
+    try {
+      const pageObj = await docSnapshot.pdf.getPage(page);
+
+      // Resolve effective scale.
+      const baseViewport = pageObj.getViewport({ scale: 1 });
+      let effectiveScale: number;
+      if (scale === 'fit-width') {
+        // Observed content-box width (ResizeObserver-seeded, padding already
+        // excluded — honest at every breakpoint). Fallback for the first
+        // paint: clientWidth minus the --sp-4 × 2 canvas padding.
+        const containerW = containerWRef.current
+          || Math.max(0, container.clientWidth - 32);
+        effectiveScale = Math.max(0.5, Math.min(3, containerW / baseViewport.width));
+      } else {
+        effectiveScale = scale;
+      }
+
+      const viewport = pageObj.getViewport({ scale: effectiveScale });
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      // HiDPI support
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.floor(viewport.width * dpr);
+      canvas.height = Math.floor(viewport.height * dpr);
+      canvas.style.width = `${viewport.width}px`;
+      canvas.style.height = `${viewport.height}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      // Cancel any in-flight render
+      renderTaskRef.current?.cancel();
+      const task = pageObj.render({ canvasContext: ctx, viewport });
+      renderTaskRef.current = task;
+      try {
+        await task.promise;
+      } catch (err) {
+        // Ignore "Rendering cancelled" errors from rapid scale changes;
+        // anything else (corrupt page content) becomes a retryable error.
+        const e = err as { name?: string };
+        if (e?.name !== 'RenderingCancelledException') {
+          // Only honest for the document still on screen — see the catch
+          // below (audit 11-f P2-9). Page renders keep the raw cause:
+          // ErrorState's own Arabic fallback is the detail line.
+          if (docSnapshot === docRef.current) {
+            setError({ message: 'تعذّر عرض هذه الصفحة', detail: err, retryable: true });
+          }
+        }
+        return;
+      }
+
+      // Text layer (for selection + search highlight)
+      if (textLayerRef.current) {
+        textLayerRef.current.innerHTML = '';
+        textLayerRef.current.style.width = `${viewport.width}px`;
+        textLayerRef.current.style.height = `${viewport.height}px`;
+        try {
+          const textContent = await pageObj.getTextContent();
+          // pdfjs-dist v4 exposes TextLayer as a named export at runtime,
+          // but its type surface marks it optional in some build modes, so
+          // the constructor is resolved with a runtime lookup + truthiness
+          // check. Since r134 (dynamic-only import) this resolves the SAME
+          // memoized chunk loadPdfjs() already fetched for getDocument —
+          // zero extra network cost — and still degrades cleanly.
+          const TextLayerCtor = (await loadPdfjs()).TextLayer;
+          if (TextLayerCtor) {
+            const textLayer = new TextLayerCtor({
+              textContentSource: textContent,
+              container: textLayerRef.current,
+              viewport,
+            });
+            await textLayer.render();
+          }
+        } catch {
+          // Text-layer issues are non-fatal — selection/search degrade,
+          // the rendered page still works.
+        }
+        // r305-a7: the fresh layer has no memory of the active search —
+        // repaint its match marks through the ref (no render churn).
+        paintMarksRef.current();
+      }
+    } catch (err) {
+      // getPage() rejection — corrupt document past the load phase. Only
+      // surface it for the document still on screen: a src switch destroys
+      // the old doc, and its rejected renders must not plant an error over
+      // the newly loading document (audit 11-f P2-9).
+      if (docSnapshot === docRef.current) {
+        setError({ message: 'تعذّر عرض هذه الصفحة', detail: err, retryable: true });
+      }
+    } finally {
+      setIsRendering(false);
+    }
+  }, [doc, page, scale]);
+
+  // Cancel the in-flight canvas render whenever the rendered page/scale/
+  // document changes or the viewer unmounts — without this, a render keeps
+  // painting into a detached canvas until the worker dies (audit 11-f
+  // P2-9). The superseded render rejects with
+  // RenderingCancelledException, which renderPage classifies and ignores.
+  useEffect(() => {
+    renderPage();
+    return () => { renderTaskRef.current?.cancel(); };
+  }, [renderPage]);
+
+  // ── Fit-width recalculation ──────────────────────────────────────
+  // The canvas wrap's width changes WITHOUT any window resize when the
+  // annotations sidebar mounts/unmounts beside it (and on fullscreen entry),
+  // so a window-resize listener alone leaves the canvas at a stale scale
+  // until the next interaction (audit 0-f P2-20). ResizeObserver covers
+  // window resizes, sidebar toggles and fullscreen alike; only genuine
+  // width changes re-render (height-only scrollbar churn is ignored).
+  useEffect(() => {
+    if (scale !== 'fit-width') return;
+    const el = containerRef.current;
+    if (!el) return;
+    let raf = 0;
+    const schedule = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(renderPage);
+    };
+
+    if (typeof ResizeObserver === 'undefined') {
+      // Legacy fallback: window resize only (pre-RO browsers).
+      const onResize = () => {
+        containerWRef.current = Math.max(0, el.clientWidth - 32);
+        schedule();
+      };
+      window.addEventListener('resize', onResize);
+      return () => { window.removeEventListener('resize', onResize); cancelAnimationFrame(raf); };
+    }
+
+    let lastW = -1;
+    const ro = new ResizeObserver((entries) => {
+      const w = entries[0]?.contentRect.width ?? 0;
+      if (w <= 0) return;
+      containerWRef.current = w;
+      if (lastW < 0) { lastW = w; return; } // first observation: seed only
+      if (Math.abs(w - lastW) < 1) return;
+      lastW = w;
+      schedule();
+    });
+    ro.observe(el);
+    return () => { ro.disconnect(); cancelAnimationFrame(raf); };
+  }, [scale, renderPage]);
+
+  // ── Zoom controls (declared before the keyboard shortcuts that use
+  // them — the effect's dependency array reads these consts at render) ─
+  const SCALES = useMemo(() => [0.5, 0.75, 1, 1.25, 1.5, 2, 3], []);
+  const zoomIn = useCallback(() => {
+    setScale((cur) => {
+      const v = typeof cur === 'number' ? cur : 1;
+      const next = SCALES.find((s) => s > v) ?? SCALES[SCALES.length - 1]!;
+      return next;
+    });
+  }, [SCALES]);
+  const zoomOut = useCallback(() => {
+    setScale((cur) => {
+      const v = typeof cur === 'number' ? cur : 1;
+      const next = [...SCALES].reverse().find((s) => s < v) ?? SCALES[0]!;
+      return next;
+    });
+  }, [SCALES]);
+
+  // ── Search walk invalidation (declared before the keyboard shortcuts
+  // that use them — the effect's dependency array reads these consts at
+  // render, so TDZ rules apply) ─────────────────────────────
+  /** Invalidate any in-flight search walk without touching the results
+   *  UI — used when the search bar closes while a walk is still running. */
+  const stopSearchWalk = useCallback(() => {
+    searchGenRef.current += 1;
+    setIsSearching(false);
+  }, []);
+  /** Close the search bar: kills any in-flight walk and clears the term
+   *  and its hits together (the hits belong to the term). */
+  const closeSearch = useCallback(() => {
+    searchGenRef.current += 1;
+    setIsSearching(false);
+    // The marks belong to the term — drop the active query first so the
+    // hits-clear repaint unwraps every mark from the text layer.
+    searchWordsRef.current = [];
+    // Focus restore BEFORE the unmount (r152a A6 P3-4): after the bar
+    // is gone, document.activeElement has already fallen to <body> and
+    // the origin is unrecoverable.
+    const active = document.activeElement;
+    const wasInsideBar =
+      active instanceof HTMLElement && active.closest('.pdf-searchbar') !== null;
+    setSearchOpen(false);
+    setSearchHits([]);
+    setSearchTerm('');
+    if (wasInsideBar) searchToggleRef.current?.focus();
+  }, []);
+
+  // ── Keyboard shortcuts ───────────────────────────────────────────
+  // Scope: the viewer owns its shortcuts only while the keystroke
+  // originates inside the viewer (chrome/canvas) or while nothing more
+  // specific has focus (body) — never while the user types in an editable
+  // surface, and never while focus lives in another region such as the
+  // annotations sidebar (audit 0-f P1-5).
+  //
+  // Arrow convention (RTL): the chrome's "previous" chevron points
+  // inline-start (physically right in RTL) and "next" points inline-end
+  // (left), matching every back/forward affordance in the app. The arrow
+  // keys mirror the chevrons — ArrowRight = previous page, ArrowLeft =
+  // next page under dir=rtl (the app default); PageUp/PageDown stay
+  // physical (previous/next sheet). The live document direction is read
+  // so an LTR embedding flips the mapping symmetrically.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (isEditableTarget(e.target)) return;
+      const targetEl = e.target as HTMLElement | null;
+      const scopedToViewer =
+        !targetEl ||
+        targetEl === document.body ||
+        targetEl === document.documentElement ||
+        (viewerRef.current?.contains(targetEl) ?? false);
+      if (!scopedToViewer) return;
+
+      const rtl = document.documentElement.dir === 'rtl';
+      const prevKey = rtl ? 'ArrowRight' : 'ArrowLeft';
+      const nextKey = rtl ? 'ArrowLeft' : 'ArrowRight';
+
+      if (e.key === nextKey || e.key === 'PageDown') {
+        e.preventDefault();
+        if (doc) setPage((p) => Math.min(doc.numPages, p + 1));
+      } else if (e.key === prevKey || e.key === 'PageUp') {
+        e.preventDefault();
+        setPage((p) => Math.max(1, p - 1));
+      } else if (e.key === '/') {
+        e.preventDefault();
+        setSearchOpen(true);
+      } else if (e.key === 'Escape') {
+        setSearchOpen(false);
+        // A walk can still be visiting pages while the bar is closed —
+        // it must not jump the page from outside the visible search UI.
+        stopSearchWalk();
+        // r305-a7: Escape closes EVERY viewer overlay, not just search —
+        // the thumbnail rail and the selection→note bar are overlays too.
+        setThumbsOpen(false);
+        // r305-a7 a11y: an overlay that OWNS focus must hand it back
+        // before it unmounts — a thumbnail button or a selection-bar
+        // control focused on Escape would otherwise strand the keyboard
+        // user on <body> (the r152a A6 P3-4 contract, extended).
+        const active = document.activeElement;
+        if (active instanceof HTMLElement) {
+          if (active.closest('.pdf-thumbs') !== null) thumbsToggleRef.current?.focus();
+          else if (active.closest('.r305pdf-selbar') !== null) viewerRef.current?.focus();
+        }
+        setSelQuote(null);
+      } else if (e.key === '+' || e.key === '=') {
+        e.preventDefault();
+        zoomIn();
+      } else if (e.key === '-') {
+        e.preventDefault();
+        zoomOut();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [doc, zoomIn, zoomOut, stopSearchWalk]);
+
+  // ── Search ───────────────────────────────────────────────────────
+  // The walk visits every page asynchronously and is invalidated by the
+  // searchGenRef generation counter (see its declaration). Every state
+  // write is guarded by the captured generation and the whole walk is
+  // wrapped in try/catch, so a destroyed document rejects quietly
+  // instead of surfacing an unhandled promise rejection (audit 11-f P1-3).
+  //
+  // r305-a7: matching folds BOTH sides through the platform's Arabic
+  // normalizer (lib/search.normalizeArabicSearch — the mirror of
+  // backend search/normalize.ts): diacritics/tatweel, alif/hamza
+  // variants, ى→ي, ة→ه. The «ال» tolerance from the search contract is
+  // applied at match time (scanPageItems), so «الشبكات» finds «شبكات»
+  // and vice versa. Hits are honest per-page OCCURRENCE counts, not
+  // just first-sight booleans.
+  const runSearch = async () => {
+    const q = normalizeArabicSearch(searchTerm);
+    if (!doc || !q) {
+      // Nothing to walk — cancel whatever is in flight and reset the UI.
+      searchGenRef.current += 1;
+      searchWordsRef.current = [];
+      setSearchHits([]);
+      setSearchIdx(0);
+      setIsSearching(false);
+      return;
+    }
+    const gen = ++searchGenRef.current; // supersedes any earlier walk
+    const docSnapshot = doc;
+    const words = q.split(/\s+/).filter(Boolean);
+    searchWordsRef.current = words;
+    const hits: { page: number; count: number; snippet: string }[] = [];
+    setIsSearching(true);
+    try {
+      for (let n = 1; n <= docSnapshot.numPages; n++) {
+        if (gen !== searchGenRef.current) return; // superseded — stop walking
+        const p = await docSnapshot.pdf.getPage(n);
+        const tc = await p.getTextContent();
+        if (gen !== searchGenRef.current) return; // superseded — stop walking
+        const scan = scanPageItems(tc.items, words);
+        if (scan) hits.push({ page: n, count: scan.count, snippet: scan.snippet });
+      }
+      if (gen !== searchGenRef.current) return; // superseded — drop results
+      setSearchHits(hits);
+      setSearchIdx(0);
+      if (hits.length > 0 && hits[0]) setPage(hits[0].page);
+    } catch {
+      // The document was destroyed mid-walk (src switch / unmount): the
+      // generation check already discarded this walk — swallow the destroy
+      // rejection instead of surfacing an unhandled promise rejection. For
+      // a genuine page failure on the live document, keep the hits found.
+      if (gen !== searchGenRef.current) return;
+      setSearchHits(hits);
+      setSearchIdx(0);
+    } finally {
+      if (gen === searchGenRef.current) setIsSearching(false);
+    }
+  };
+
+  const nextHit = () => {
+    if (!searchHits.length) return;
+    const next = (searchIdx + 1) % searchHits.length;
+    setSearchIdx(next);
+    const hit = searchHits[next];
+    if (hit) setPage(hit.page);
+  };
+  const prevHit = () => {
+    if (!searchHits.length) return;
+    const next = (searchIdx - 1 + searchHits.length) % searchHits.length;
+    setSearchIdx(next);
+    const hit = searchHits[next];
+    if (hit) setPage(hit.page);
+  };
+
+  // ── Search marks on the rendered page (r305-a7) ──────────────────
+  // findController-equivalent placement: the matched slices of the
+  // CURRENT page's text layer are wrapped in mark.r305pdf-hitmark so a
+  // hit is visible where it lives, not just navigable. Re-painted when
+  // the search state moves AND after every text-layer rebuild (the
+  // painter reads page/hits/idx through the ref's fresh closure).
+  const paintSearchMarks = useCallback(() => {
+    const layer = textLayerRef.current;
+    if (!layer) return;
+    const words = searchWordsRef.current;
+    const onHitPage = words.length > 0 && searchHits.some((h) => h.page === page);
+    applySearchMarks(layer, onHitPage ? words : [], searchHits[searchIdx]?.page === page);
+  }, [page, searchHits, searchIdx]);
+  paintMarksRef.current = paintSearchMarks;
+  useEffect(() => {
+    paintMarksRef.current();
+  }, [page, searchHits, searchIdx]);
+
+  // ── Text selection → contextual note (r305-a7) ───────────────────
+  // The reader is a review workspace: selecting text inside the paper
+  // offers the annotation composer seeded with the quote. The API
+  // payload shape stays {page, comment, color} — the quote rides
+  // INSIDE the comment text. Gated to the roles the backend's
+  // annotation POST accepts (mirrors AnnotationsPanel.canAnnotate);
+  // for everyone else a selection stays a plain selection.
+  const userRole = useAuthStore((s) => s.user?.role);
+  const canAnnotate = userRole === 'TEACHER' || userRole === 'ADMIN' || userRole === 'OWNER';
+  useEffect(() => {
+    if (!onAnnotateSelection || !canAnnotate) {
+      setSelQuote(null);
+      return;
+    }
+    const onSelect = () => {
+      const sel = typeof document.getSelection === 'function' ? document.getSelection() : null;
+      if (!sel || sel.isCollapsed) {
+        setSelQuote(null);
+        return;
+      }
+      const node = sel.anchorNode;
+      const el = node instanceof Element ? node : node?.parentElement ?? null;
+      if (!el || !el.closest('.pdf-textLayer')) {
+        setSelQuote(null);
+        return;
+      }
+      const text = sel.toString().replace(/\s+/g, ' ').trim();
+      setSelQuote(text.length >= 2 ? text : null);
+    };
+    document.addEventListener('selectionchange', onSelect);
+    return () => document.removeEventListener('selectionchange', onSelect);
+  }, [onAnnotateSelection, canAnnotate]);
+
+  /* r305-a7 a11y: the selection bar unmounts on dismissal — if one of
+   * its controls owned focus (keyboard submit, Escape), focus would
+   * fall to <body>. Restore it to the viewer surface (tabIndex -1)
+   * BEFORE the unmount, the closeSearch() pattern. */
+  const dismissSelBar = useCallback(() => {
+    const active = document.activeElement;
+    const insideBar = active instanceof HTMLElement && active.closest('.r305pdf-selbar') !== null;
+    setSelQuote(null);
+    if (insideBar) viewerRef.current?.focus();
+  }, []);
+
+  const annotateSelection = useCallback(() => {
+    if (!selQuote || !onAnnotateSelection) return;
+    onAnnotateSelection({ text: selQuote, page });
+    dismissSelBar();
+    document.getSelection()?.removeAllRanges();
+  }, [selQuote, page, onAnnotateSelection, dismissSelBar]);
+
+  // ── Fullscreen ───────────────────────────────────────────────────
+  // fullscreenchange is the single source of truth for the toggle state:
+  // requestFullscreen() can legitimately fail (iframe policy, iOS Safari),
+  // and an optimistic flip would strand the toolbar showing the wrong
+  // icon (audit 0-f craft review). On exit, focus returns to the toggle
+  // button; on entry, focus lands inside the fullscreen surface so
+  // keyboard users are not stranded outside it.
+  const fullscreenSupported =
+    typeof document !== 'undefined' &&
+    typeof document.documentElement.requestFullscreen === 'function';
+
+  const toggleFullscreen = () => {
+    const el = viewerRef.current;
+    if (!el) return;
+    if (document.fullscreenElement) {
+      document.exitFullscreen?.().catch(() => undefined);
+    } else {
+      el.requestFullscreen?.()
+        .then(() => el.focus())
+        .catch(() => undefined);
+    }
+  };
+  useEffect(() => {
+    const onChange = () => {
+      const active = !!document.fullscreenElement;
+      setIsFullscreen(active);
+      if (!active) fullscreenBtnRef.current?.focus();
+    };
+    document.addEventListener('fullscreenchange', onChange);
+    return () => document.removeEventListener('fullscreenchange', onChange);
+  }, []);
+
+  // ── Download ─────────────────────────────────────────────────────
+  // A9 P0-1 (second half): the old `<a href={src} download>` navigated
+  // without the Authorization header and 401'd exactly like the viewer
+  // fetch did. Download the blob with the Bearer token, hand it to the
+  // browser as an object URL, and clean the URL up on the next
+  // download / unmount so blobs never leak.
+  const [isDownloading, setIsDownloading] = useState(false);
+  const downloadUrlRef = useRef<string | null>(null);
+  useEffect(() => () => {
+    if (downloadUrlRef.current) URL.revokeObjectURL(downloadUrlRef.current);
+  }, []);
+
+  const downloadPdf = useCallback(async () => {
+    if (isDownloading) return;
+    setIsDownloading(true);
+    try {
+      const token = useAuthStore.getState().accessToken;
+      const res = await fetch(src, token ? { headers: { Authorization: `Bearer ${token}` } } : undefined);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const blob = await res.blob();
+      if (downloadUrlRef.current) URL.revokeObjectURL(downloadUrlRef.current);
+      const url = URL.createObjectURL(blob);
+      downloadUrlRef.current = url;
+      // Filename from the last path segment; decode Arabic filenames,
+      // keeping the raw segment if it is not valid percent-encoding.
+      const rawName = src.split('/').pop() || 'document.pdf';
+      let filename = rawName;
+      try { filename = decodeURIComponent(rawName); } catch { /* keep raw */ }
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename.endsWith('.pdf') ? filename : `${filename}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } catch {
+      toast.error('تعذّر تنزيل المستند — تحقّق من اتصالك ثم أعد المحاولة.');
+    } finally {
+      setIsDownloading(false);
+    }
+  }, [src, isDownloading]);
+
+  const scaleLabel = scale === 'fit-width' ? 'ملاءمة' : `${Math.round(scale * 100)}%`;
+  const numPages = doc?.numPages ?? 1;
+
+  /* r305-a7 — honest byte progress from pdf.js's loading events:
+     percentage when the total is known, transferred KiB otherwise. */
+  const progressPct =
+    progress && progress.total > 0
+      ? Math.min(100, Math.round((progress.loaded / progress.total) * 100))
+      : null;
+  const progressLabel = !progress || progress.loaded <= 0 ? null : progressPct !== null
+    ? `جارٍ تحميل المستند… ${formatInt(progressPct)}%`
+    : `جارٍ تحميل المستند… ${formatInt(Math.floor(progress.loaded / 1024))} كيلوبايت`;
+  /* Total occurrences across all hit pages (the per-page counts the
+     walk reports) — rendered as its own chip, separate from the
+     «i / n» page-position counter. */
+  const totalOccurrences = searchHits.reduce((acc, h) => acc + h.count, 0);
+
+  return (
+    <div ref={viewerRef} tabIndex={-1} className={`pdf-viewer${fill ? ' fill' : ''}`}>
+      {/* Page-change announcements — the pageinfo input's aria-label
+          only covers itself; flips via buttons/arrow keys announce here
+          through a polite live region (r305-a7). */}
+      <p className="sr-only" role="status" aria-live="polite">
+        {`صفحة ${formatInt(page)} من ${formatInt(numPages)}`}
+      </p>
+      {/* Toolbar */}
+      <div className="pdf-toolbar">
+        {title && <div className="pdf-title" title={title}>{title}</div>}
+        <div className="pdf-toolbar-group" role="group" aria-label="التنقل بين الصفحات">
+          <button
+            type="button"
+            ref={thumbsToggleRef}
+            className={`pdf-btn${thumbsOpen ? ' on' : ''}`}
+            onClick={() => setThumbsOpen((v) => !v)}
+            aria-pressed={thumbsOpen}
+            title="مصغّرات الصفحات"
+            aria-label="مصغّرات الصفحات"
+            disabled={!doc}
+          >
+            <Icon icon={LayoutGrid} size={16} />
+          </button>
+          <button type="button" className="pdf-btn" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1} title="الصفحة السابقة" aria-label="الصفحة السابقة">
+            <Icon icon={ChevronRight} size={16} />
+          </button>
+          <span className="pdf-pageinfo">
+            <span className="pdf-pageinfo-word" aria-hidden="true">صفحة</span>
+            <input
+              type="number"
+              value={page}
+              min={1}
+              max={numPages}
+              onChange={(e) => {
+                const n = Math.max(1, Math.min(numPages, +e.target.value || 1));
+                setPage(n);
+              }}
+              aria-label={`رقم الصفحة، الحالية ${page} من ${numPages}`}
+            />
+            <span className="pdf-pageinfo-total" aria-hidden="true">من {doc ? formatInt(doc.numPages) : '—'}</span>
+          </span>
+          <button type="button" className="pdf-btn" onClick={() => doc && setPage((p) => Math.min(doc.numPages, p + 1))} disabled={!doc || page >= numPages} title="الصفحة التالية" aria-label="الصفحة التالية">
+            <Icon icon={ChevronLeft} size={16} />
+          </button>
+        </div>
+
+        <div className="pdf-toolbar-group" role="group" aria-label="التكبير">
+          <button type="button" className="pdf-btn" onClick={zoomOut} title="تصغير" aria-label="تصغير">
+            <Icon icon={ZoomOut} size={16} />
+          </button>
+          <button
+            type="button"
+            className="pdf-scale-pill"
+            onClick={() => setScale((s) => (s === 'fit-width' ? 1 : 'fit-width'))}
+            aria-pressed={scale === 'fit-width'}
+            title="ملاءمة العرض"
+          >
+            {scaleLabel}
+          </button>
+          <button type="button" className="pdf-btn" onClick={zoomIn} title="تكبير" aria-label="تكبير">
+            <Icon icon={ZoomIn} size={16} />
+          </button>
+        </div>
+
+        <div className="pdf-toolbar-group pdf-toolbar-actions">
+          <button type="button" ref={searchToggleRef} className={`pdf-btn${searchOpen ? ' on' : ''}`} onClick={() => setSearchOpen((v) => !v)} aria-pressed={searchOpen} title="بحث في المستند" aria-label="بحث في المستند">
+            <Icon icon={Search} size={16} />
+          </button>
+          <button
+            type="button"
+            className="pdf-btn"
+            onClick={downloadPdf}
+            disabled={isDownloading}
+            aria-busy={isDownloading || undefined}
+            title="تحميل المستند"
+            aria-label="تحميل المستند"
+          >
+            <Icon icon={Download} size={16} />
+          </button>
+          {fullscreenSupported && (
+            <button
+              ref={fullscreenBtnRef}
+              type="button"
+              className="pdf-btn"
+              onClick={toggleFullscreen}
+              title={isFullscreen ? 'الخروج من الشاشة الكاملة' : 'شاشة كاملة'}
+              aria-label={isFullscreen ? 'الخروج من الشاشة الكاملة' : 'عرض بملء الشاشة'}
+            >
+              <Icon icon={isFullscreen ? Minimize2 : Maximize2} size={16} />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Search bar */}
+      {searchOpen && (
+        <div className="pdf-searchbar" role="search">
+          <Icon icon={Search} size={14} className="pdf-searchbar-icon" />
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="ابحث في المستند…"
+            aria-label="البحث في المستند"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') runSearch();
+              // Escape inside the input (r152a A6 P3-4): the global
+              // viewer handler bails on editable targets, so typing
+              // Escape in the box used to do nothing — now it closes
+              // the bar and focus returns to the search toggle.
+              if (e.key === 'Escape') {
+                e.preventDefault();
+                closeSearch();
+              }
+            }}
+            autoFocus
+          />
+          {isSearching ? (
+            <span className="pdf-searchbar-count" role="status" aria-live="polite">
+              جارٍ البحث…
+            </span>
+          ) : searchHits.length > 0 && (
+            <span className="pdf-searchbar-count font-mono" aria-live="polite">
+              {searchIdx + 1} / {searchHits.length}
+            </span>
+          )}
+          {totalOccurrences > 0 && (
+            <span className="r305pdf-hitcount">
+              {countAr(totalOccurrences, ['موضع واحد', 'موضعان', 'مواضع', 'موضع'])}
+            </span>
+          )}
+          <button type="button" className="pdf-btn sm" onClick={prevHit} disabled={!searchHits.length} aria-label="النتيجة السابقة">
+            <Icon icon={ChevronRight} size={14} />
+          </button>
+          <button type="button" className="pdf-btn sm" onClick={nextHit} disabled={!searchHits.length} aria-label="النتيجة التالية">
+            <Icon icon={ChevronLeft} size={14} />
+          </button>
+          <button type="button" className="pdf-btn sm pdf-search-go" onClick={runSearch}>
+            بحث
+          </button>
+          <button type="button" className="pdf-btn sm" onClick={closeSearch} aria-label="إغلاق البحث">
+            <Icon icon={X} size={14} />
+          </button>
+        </div>
+      )}
+
+      {/* Document area — the workspace composition: the thumbnail
+          rail (when summoned) rides the inline-start edge; the canvas
+          keeps the rest. The rail is a sibling, never an overlay of
+          the paper at desktop widths; ≤920 it becomes an in-viewer
+          drawer (pdf.css). */}
+      <div className="pdf-body">
+        {thumbsOpen && doc && !loading && !error && (
+          <PdfThumbnails doc={doc.pdf} page={page} onJump={setPage} />
+        )}
+        <div className="pdf-canvas-wrap" ref={containerRef}>
+        {loading && (
+          <>
+            <PdfPageSkeleton />
+            {/* r305-a7: real progress tied to pdf.js onProgress — never a
+                fake percentage, never a skeleton pretending the bytes are
+                here. Hidden from AT (the skeleton carries the live label). */}
+            {progressLabel && (
+              <div className="r305pdf-progress" aria-hidden="true">
+                <span className="r305rp-eyebrow r305pdf-progress-label">{progressLabel}</span>
+                <span className="r305pdf-progress-track">
+                  <span
+                    className="r305pdf-progress-fill"
+                    /* The fill rides transform:scaleX (the motion gate
+                       forbids layout properties in transitions) — the
+                       inline start origin flips under [dir=rtl] in §C. */
+                    style={progressPct !== null ? { transform: `scaleX(${progressPct / 100})` } : undefined}
+                  />
+                </span>
+              </div>
+            )}
+          </>
+        )}
+        {/* !loading gate: a superseded render of the previous document can
+            plant a page error right as the next load starts — the skeleton
+            and the error must never render together (audit 11-f P2-9).
+            Non-retryable failures (password / 404 / 403) hide the retry
+            affordance: re-running the same load can never succeed
+            (classifyPdfLoadError, components/pdf/loadError.ts). */}
+        {!loading && error && (
+          <ErrorState
+            message={error.message}
+            error={error.detail}
+            onRetry={error.retryable ? retry : undefined}
+          />
+        )}
+        {!loading && !error && (
+          <div
+            className="pdf-page"
+            dir="ltr"
+            role="group"
+            aria-label={`صفحة ${page} من ${numPages}`}
+          >
+            {/* The canvas is a raster of the same text the layer below it
+                exposes — hide it from AT so the real, selectable text wins. */}
+            <canvas ref={canvasRef} aria-hidden="true" />
+            <div ref={textLayerRef} className="pdf-textLayer" />
+          </div>
+        )}
+        {isRendering && !loading && !error && (
+          <div className="pdf-rendering" role="status" aria-label="جارٍ عرض الصفحة…">
+            <span className="spinner spinner-sm" aria-hidden="true" />
+          </div>
+        )}
+        {/* Coarse-pointer hint: the browser's pinch gesture is the only
+            touch zoom this viewer has (native pinch handling is a roadmap
+            item, audit 0-f P3-38). Redundant for AT (nothing actionable) —
+            hidden from it. */}
+        <p className="pdf-touch-hint" aria-hidden="true">
+          <Icon icon={ZoomIn} size={12} />
+          قرّب بإصبعين لعرض التفاصيل
+        </p>
+        {/* r305-a7 — selection → contextual note: a live text selection
+            inside the paper surfaces ONE emphasized verb that seeds the
+            annotation composer with the quote. Reviewer-gated (the
+            backend's annotation POST accepts TEACHER/ADMIN/OWNER only). */}
+        {canAnnotate && selQuote && onAnnotateSelection && (
+          <div className="r305pdf-selbar" role="group" aria-label="إضافة ملاحظة على النص المحدد">
+            <span className="r305pdf-selbar-quote" dir="auto">{selQuote}</span>
+            <button
+              type="button"
+              className="r305pdf-selbar-btn"
+              /* Keep the selection alive through the click — without this
+                 the mousedown clears it before onClick reads the state. */
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={annotateSelection}
+            >
+              <Icon icon={MessageSquare} size={13} />
+              ملاحظة على التحديد
+            </button>
+            <button
+              type="button"
+              className="r305pdf-selbar-dismiss"
+              onClick={dismissSelBar}
+              aria-label="تجاهل التحديد"
+              title="تجاهل التحديد"
+            >
+              <Icon icon={X} size={14} />
+            </button>
+          </div>
+        )}
+        </div>
+      </div>
+    </div>
+  );
+}

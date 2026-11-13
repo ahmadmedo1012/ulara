@@ -1,0 +1,327 @@
+/* R332 — split VERBATIM from src/styles/landing.css · chrome = R1 sheet chrome/frame/grain/labels/skip/mobile-menu (1-370) + R308 sc pointer (3933-4027) + R308 sl loader (4454-4854)
+   full map + proof: docs/redesign/r332/css-split-landing.md
+
+   r335 (W-chrome) — the retired chrome is GONE from this sheet:
+     · the R313 SheetLoader (.sl-*) — the mount retired with R333 P-D,
+       the preloader (.pl, preloader.css) replaced it; the dead rules
+       + the @keyframes sl-scan are deleted;
+     · the .fo-burger/.fo-mobile-menu/.fo-mb-* cascade-losing
+       duplicates — nav.css (loaded later by SheetNav) owns every
+       header/menu rule since R331; the stale copies here could only
+       shadow future nav.css changes.
+   Everything here is LIVE chrome: the sheet frame, the grain film,
+   the band measure, the section labels, the skip link and the RM
+   belt for the surviving movers.
+
+/* ════════════════════════════════════════════════════════════════════
+   أُلارا — LANDING (r306) · «لوحة أُلارا» — the reference-only drawing
+   sheet
+   ════════════════════════════════════════════════════════════════════
+   r306 recomposes the landing page in the single canonical visual
+   system (the retired r306 exclusivity spec — the measured
+   grammar of the retired reference site, adapted for an Arabic-first
+   RTL educational platform). The r304 editorial poster is retired
+   with this sheet: no persistent 3D world, no OPTIKKA spreads, no
+   copper climax, no --poster-* namespace, no giant wordmark.
+
+   The sheet's grammar —
+     · paper ground (--bg) with graphite ink (--text) and hairlines
+       (--grid-line / --border / --rule); ONE orange signal, routed
+       through the text-safe ink tier (--accent-ink) for copy and the
+       raw accent only for large marks/fills per the fill register;
+     · mono bracketed indices ([01]…), coordinates and metadata rows
+       (the drafting-sheet identity) — Latin micro-labels, dir=ltr,
+       tabular digits only, never below the 13px Arabic floor in
+       reading copy;
+     · near-square corners (--r-xs..--r-lg — the reference renders 0;
+       Ulara keeps the hairline-crisp rungs);
+     · hairline-framed sections and FLAT interface fragments — no
+       elevation on the proof surfaces, the depth IS the paper step;
+     · block-level reveals only (RevealCssClass), the imperative
+       scroll chrome (.scrolled + --p), and NOTHING that moves when
+       reduced-motion is set.
+
+   Discipline (gates): zero raw colors (tokens + color-mix only) ·
+   radii via --r-* · spacing via the --sp-* ladder (full enforcement
+   since r198 — every literal carries a documented allow or a token) ·
+   font sizes on the type ladder (landing rides the TYPE_RADIUS_EXTRA
+   exemption for the SVG micro-labels; the reading copy stays on the
+   ladder) · zero :focus-visible rules (base.css owns focus) · hover
+   washes guarded behind (hover:hover) and (pointer:fine) · exactly
+   one [data-theme="dark"] .landing block · the RM belt covers every
+   mover + the reveals · zero @keyframes.
+   ════════════════════════════════════════════════════════════════════ */
+
+.landing {
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: clip;
+  font-family: var(--font-sans);
+  /* R322 (1-d) — the display voice re-seat: every landing title seat
+     resolves --font-display, and the R322 blind-vote face (IBM Plex
+     Sans Arabic 400/500/600 — fonts.css, zero added bytes) takes the
+     voice LANDING-LOCALLY (the .landing scope override — the narrowest
+     correct level: the app's legacy --font-display consumers keep
+     Alexandria until the authenticated-screen packages re-seat them;
+     the global token re-pin is NOT this package's diff). Alexandria
+     keeps its 600/700 cuts wired for those app seats. */
+  --font-display: var(--font-sans);
+}
+
+/* ── The sheet frame (R313 · D9) — the FULL-PAGE drafting frame: a
+ * 1px hairline at the 7px inset (the reference's fixed .main-deco
+ * layer — measured 7px @1440/768/390, 6px @1280; the fixed 7px keeps
+ * the three exact, the 1px variance at 1280 is sub-hairline) + the
+ * 10×10 corner plus marks centered on the frame corners + the mono
+ * coordinates. Decorative only: aria-hidden in the markup,
+ * pointer-transparent — and visible at EVERY breakpoint the reference
+ * shows its frame (the 390×844 census keeps it: small screens get the
+ * drafting chrome too — R313 supersedes the old desktop-only gate).
+ *
+ * R329 (gate:clean): scoped to `.landing .sheet-frame` — the frame
+ * grammar's twin lives in r319-shell.css (the shell's frame, z 150:
+ * above the topbar chrome rung, below every portaled overlay). Both
+ * sheets are unlayered, and the landing chunk loads AFTER the shell
+ * chunk, so the old unscoped landing rule clobbered the shell frame
+ * down to z 50 after any visit to the landing (the "broken edge"
+ * regression r319's comment warns about). The scope keeps the landing
+ * page rendering EXACTLY as authored (z 50, nothing between it and
+ * the landing's own overlays) while the shell's 150 wins on shell
+ * pages — and kills the cross-file duplicate the gate flagged. */
+.landing .sheet-frame {
+  --frame-inset: 7px;
+  position: fixed;
+  inset: var(--frame-inset);
+  z-index: 50;
+  pointer-events: none;
+  border: 1px solid var(--border-strong);
+}
+
+/* ═══ R314 (V3) — the paper grain + dotted micro-grid. Measured against
+ * the reference's bare-paper regions (the r314 measurement record; R344 C-6: the tiles are now inline feTurbulence data-URIs tuned to the same targets):
+ * tile std-dev matched to ±0.03% (light) — a multiply film-grain over
+ * the paper ground, exactly the reference's film-grain amplitude. The
+ * dark twin rides plain alpha (its mean IS the charcoal paper). The
+ * faint dotted micro-grid tiles under it (24px cell, 1px dots at 40%).
+ * Layer sits UNDER the flowing content (z 0, first paint) and under the
+ * fixed chrome (z 50+); pointer-transparent.
+ * R318 (C2): the grain seats on body::before while the landing is mounted
+ * (LandingPage toggles the body class) — a pseudo-element is NOT an
+ * LCP candidate, so the decorative full-viewport film can never
+ * again be the page's largest contentful paint (it measured as LCP
+ * at 4.05s cold Fast-3G, hiding the hero's real LCP time). Visual
+ * coverage is identical: fixed, full-viewport, under content. ═══ */
+body.ula-grain::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22256%22%20height%3D%22256%22%3E%3Cfilter%20id%3D%22f%22%20x%3D%220%22%20y%3D%220%22%20width%3D%22256%22%20height%3D%22256%22%20filterUnits%3D%22userSpaceOnUse%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.4%22%20numOctaves%3D%221%22%20seed%3D%2211%22%20stitchTiles%3D%22stitch%22%2F%3E%3CfeColorMatrix%20type%3D%22matrix%22%20values%3D%220%200%200%200%201.0988%20-0.2600%200%200%200%201.0988%200%20-0.2600%200%200%201.0988%200%200%200%200%201%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22256%22%20height%3D%22256%22%20filter%3D%22url%28%23f%29%22%2F%3E%3C%2Fsvg%3E'),
+    url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Crect%20x%3D%2212%22%20y%3D%2212%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23B3B3AF%22%20fill-opacity%3D%220.4%22%2F%3E%3C%2Fsvg%3E');
+  background-size: 256px, 24px;
+  background-repeat: repeat, repeat;
+  mix-blend-mode: multiply;
+  opacity: 1;
+}
+
+html[data-theme='dark'] body.ula-grain::before {
+  background-image:
+    url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22256%22%20height%3D%22256%22%3E%3Cfilter%20id%3D%22f%22%20x%3D%220%22%20y%3D%220%22%20width%3D%22256%22%20height%3D%22256%22%20filterUnits%3D%22userSpaceOnUse%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.4%22%20numOctaves%3D%221%22%20seed%3D%2211%22%20stitchTiles%3D%22stitch%22%2F%3E%3CfeColorMatrix%20type%3D%22matrix%22%20values%3D%220.0180%200%200%200%200.0100%200%200.0180%200%200%200.0100%200%200%200.0180%200%200.0100%200%200%200%200%201%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22256%22%20height%3D%22256%22%20filter%3D%22url%28%23f%29%22%2F%3E%3C%2Fsvg%3E'),
+    url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Crect%20x%3D%2212%22%20y%3D%2212%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23B3B3AF%22%20fill-opacity%3D%220.4%22%2F%3E%3C%2Fsvg%3E');
+  mix-blend-mode: normal;
+  opacity: 0.9;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* the grain is static texture — no motion to reduce */
+}
+
+/* ── R315 (K-A4): the page frame is EXACTLY the four hairlines above
+   (E-crawl ground truth: the reference's .main-deco carries NO plus
+   marks and NO mono coordinates). The old .sheet-mark / .sheet-coord
+   chrome — whose fixed top label collided with the masthead at every
+   width — is retired. ── */
+
+/* ── The sheet measure — every top-level band shares it ────────────
+   (R313 D8/D14: the header + footer LEFT the 1160 measure — the
+   reference spans both to the FULL frame width, edge to edge of the
+   7px inset, with their own ~26px seat padding.)
+   PI-B2: the retired hero seats (.fo-hero-copy/.fo-hero-fig/
+   .fo-hero-meta — no such classes in any markup) are trimmed from the
+   group; the live bands keep the measure.
+   R337 A-problem: .pm-section left this group — the problem band is
+   full-bleed in the frozen spec (strata.css carries the note). */
+.st-section,
+.chapters,
+.pr-section,
+.wy-section,
+.rl-section,
+.fo-cta {
+  max-inline-size: 1160px;
+  margin-inline: auto;
+  padding-inline: var(--sp-6);
+}
+
+/* R310 — the hero is a GRID: its children are grid items, and auto
+   margins NEUTRALIZE grid stretch (the items become fit-content
+   sized — the elevation collapsed to the SVG's intrinsic width).
+   The full-width composition gives every full-row hero child a
+   DEFINITE width; the cap + auto margins still center them.
+   PI-B2: .fo-hero-copy/.fo-hero-fig trimmed (markup-dead); the live
+   full-row child is the .fo-ticker. */
+.fo-ticker {
+  inline-size: 100%;
+}
+
+/* Sections stack over the plain paper (no world layer — the sheet IS
+ * the ground). R331 (A-Web-Nav): the masthead's rules moved to
+ * styles/r331/nav.css with the SheetNav component — nothing
+ * header-shaped lives in this sheet anymore. */
+
+/* ── R315 (K-A5): the top orange progress ribbon is RETIRED — the
+   reference has no element above the header band (E-crawl ground
+   truth). The .fo-progress rules are deleted with it. ── */
+
+/* ── Section labels — the drafting eyebrow: the mono bracketed index
+ * beside the Arabic label. The index is Latin/technical (dir=ltr,
+ * tabular); the label never drops below the 13px floor. ──── */
+.fo-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2-5);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.fo-label::before {
+  content: '';
+  inline-size: var(--sp-5);
+  block-size: 1px;
+  background: var(--rule-strong);
+}
+
+.fo-label .fo-mono {
+  color: var(--text-faint);
+  font-size: var(--fs-xxs);
+}
+
+.fo-mono {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Skip link (r172a §2 pin: the canonical accent pair — background
+ * --accent + --accent-fg label; the reveal rides :focus so the sheet
+ * keeps ZERO :focus-visible rules — base.css owns focus rings). */
+.fo-skip-link {
+  position: fixed;
+  inset-block-start: var(--sp-2);
+  inset-inline-start: var(--sp-2);
+  z-index: 100;
+  padding: var(--sp-2-5) var(--sp-4);
+  /* R323 A5 §2 (contrast-gate): the raw --accent ground fails AA for the
+     white label (3.76:1) — the skip link rides the same documented R318
+     AA seat as the button system (#DB3A00, white label 4.55:1), in both
+     themes (the link is chrome, not a themed surface). */
+  background: #DB3A00; /* color-gate: allow — R318 AA seat, documented */
+  color: var(--white);
+  border-radius: var(--r-xs);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(-160%);
+  transition: transform var(--t-fast) var(--ease);
+}
+
+.fo-skip-link:focus {
+  transform: translateY(0);
+}
+
+/* ── Scroll-progress ribbon (r172 zero-setState: --p written imperatively)
+ * The bar consumes --p via transform (GPU-composited) and paints the
+ * canonical signal. */
+/* ── R315 (K-A5): the top orange progress ribbon is RETIRED (see the
+   note above — the reference has nothing at the frame's top edge). ── */
+
+/* ── Masthead — RETIRED FROM THIS SHEET (R331 · A-Web-Nav): every
+ * header/nav rule now lives in styles/r331/nav.css, imported by
+ * components/landing/chrome/SheetNav.tsx (the file-ownership
+ * contract). The measured cell grammar, the state machine and the
+ * menu choreography are documented there against the reference. ── */
+
+/* The .btn recipes ship 32/40/48px — the sheet lifts every landing
+ * control to the 44px floor (.lg CTAs stay 48; the header pair is
+ * stretched full-bar above). */
+.landing .btn:not(.lg) {
+  block-size: 44px;
+}
+
+/* r335 (W-chrome): the .fo-burger / .fo-mobile-menu / .fo-mb-* rules
+ * that lived here are DELETED — every header/menu seat is owned by
+ * styles/landing/nav.css since R331 (imported later by SheetNav.tsx,
+ * so these copies were cascade-dead). Nothing header-shaped remains
+ * in this sheet. */
+
+/* ════════════════════════════════════════════════════════════════════
+   R308 — THE INTERACTION LAYER (docs/redesign/r308/parity-matrix.md)
+   The reference's connected instrument system, rebuilt on the token
+   canon: the entrance loader, the custom pointer (canvas + ring), the
+   hero's local inspection instrument (guides/plus/readout + drag box
+   + stations), the capabilities ticker, and the hero's staged ink-in
+   after the intro. landing.css stays the authored-choreography file
+   (check-motion-tokens wholesale allowlist): hand-tuned cascade by
+   design; every COLOR still rides tokens; every effect collapses
+   under prefers-reduced-motion.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* R333 P-D — the custom-pointer instrument (.sc-canvas/.sc-ring + the
+   data-sheet-cursor hiding ladder) moved to its own clean sheet:
+   styles/landing/cursor.css (imported by cursor/SheetCursor.tsx).
+   The 4 documented cursor !important rules retired with it — the
+   ladder re-authors without !important (author > UA cascade). */
+
+/* r335 (W-chrome): the retired R313 SheetLoader's whole sheet (.sl-*,
+ * including @keyframes sl-scan and the ≤767 loader re-composition) is
+ * DELETED — the mount retired with R333 P-D and the preloader
+ * (styles/landing/preloader.css) replaced it; these were dead rules
+ * rendering nothing. */
+
+/* ── R308 reduced motion: the complete static sheet ─────────────────
+   Every continuous instrument settles to its resolved state; nothing
+   hides content. The pointer instrument + the preloader already refuse
+   to run under RM (JS gates) — this belt covers the CSS-side effects
+   (r335 W-chrome: the retired loader's RM entries are deleted with it). */
+@media (prefers-reduced-motion: reduce) {
+  .fo-ticker-track {
+    animation: none;
+    flex-wrap: wrap;
+  }
+
+  .hi-marker-dot {
+    animation: none;
+    opacity: 0.9;
+  }
+
+  .sc-ring {
+    transition: none;
+  }
+
+  .landing.intro-draw .bp-stage .bp-drawable,
+  .landing.intro-done .bp-stage .bp-drawable {
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+    fill-opacity: 1;
+    transition: none;
+  }
+
+  .landing.intro-draw .bp-stage text,
+  .landing.intro-done .bp-stage text {
+    opacity: 1;
+    transition: none;
+  }
+}
+

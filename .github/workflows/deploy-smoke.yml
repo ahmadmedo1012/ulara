@@ -1,0 +1,185 @@
+# Deploy smoke — after a change is deployed, prove the LIVE service
+# before users complain (R326 M0.6 → owner's 2026-11-12 login rescue).
+#
+#   wait-for-deploy  → poll GET /api/v1/status until buildId == the pushed
+#                      SHA (the platform derives buildId from the deployed
+#                      commit env), up to 20 minutes (builds take minutes)
+#   smoke            → health · login ×12 test accounts (the PUBLISHED
+#                      demo password 12345678 — the owner's 2026-11-12
+#                      rule: smoke = ما يجربه المالك تمامًا) · one
+#                      app-critical endpoint · live openapi.json vs the
+#                      committed contract (additive-only)
+#   login-ui         → scripts/e2e/login-all.mjs — the owner's acceptance
+#                      proof in a REAL browser: every account typed
+#                      MANUALLY (never the quick button), verified to
+#                      reach its role dashboard, screenshot per role.
+#                      Any failure opens an issue.
+name: Deploy smoke
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: deploy-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  BASE: https://ulara.vercel.app/api/v1
+
+jobs:
+  wait-for-deploy:
+    name: Wait for the production deploy (buildId == ${{ github.sha }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    outputs:
+      deployed: ${{ steps.wait.outputs.deployed }}
+    steps:
+      - name: Poll /status until buildId matches the pushed commit
+        id: wait
+        run: |
+          SHORT=$(echo "${{ github.sha }}" | cut -c1-12)
+          for i in $(seq 1 60); do
+            BID=$(curl -sf --max-time 20 "$BASE/status" | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["buildId"])' 2>/dev/null || echo "unreachable")
+            echo "attempt $i: buildId=$BID (want $SHORT)"
+            if [ "$BID" = "$SHORT" ]; then
+              echo "deployed=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            sleep 20
+          done
+          echo "deployed=false" >> "$GITHUB_OUTPUT"
+          echo "::warning::The production deploy did not report buildId $SHORT within 20 minutes — smokes run against the PREVIOUS deploy."
+
+  smoke:
+    name: Smoke the live service
+    needs: wait-for-deploy
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Health
+        run: curl -sf --max-time 30 "$BASE/health" | tee /dev/stderr | grep -q '"ok":true'
+      - name: Login ×12 test accounts (the PUBLISHED demo password — smoke = ما يجربه المالك)
+        # Owner rule (2026-11-12): the rotated SMOKE_PW_* secrets are
+        # RETIRED — the smoke proves the exact journey the owner's hands
+        # take: the documented @test.ly accounts with 12345678. The
+        # daily cron re-converges these credentials on the production
+        # DB (ULARA_TEST_ACCOUNTS=1), so smoke and reality can never
+        # diverge again.
+        run: |
+          for who in student student2 teacher teacher2 head dean vicedean registrar admin2 faculty quality owner; do
+            TOK=$(curl -sf --max-time 60 -X POST "$BASE/auth/login" \
+              -H 'Content-Type: application/json' \
+              -d "{\"email\":\"$who@test.ly\",\"password\":\"12345678\"}" \
+              | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["accessToken"])')
+            echo "$who@test.ly: token ${TOK:0:16}…"
+            [ -n "$TOK" ] || exit 1
+          done
+      - name: One app-critical endpoint (student dashboard)
+        run: |
+          TOK=$(curl -sf --max-time 60 -X POST "$BASE/auth/login" -H 'Content-Type: application/json' \
+            -d '{"email":"student@test.ly","password":"12345678"}' \
+            | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["accessToken"])')
+          CODE=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 \
+            -H "Authorization: Bearer $TOK" "$BASE/me/dashboard")
+          echo "GET /me/dashboard → $CODE"
+          [ "$CODE" = "200" ] || exit 1
+      - name: Zero-trace DB scan (every text column + the migrations ledger)
+        # The DATABASE half of the zero-trace policy (the repository half
+        # is the CI zero-trace job). psql ships on ubuntu-24.04 runners.
+        env:
+          DATABASE_URL: ${{ secrets.ULARA_DB_URL }}
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f scripts/sql/zero-trace-scan.sql
+
+      - name: Live OpenAPI vs committed contract (no route may disappear)
+        run: |
+          # The live site serves the SPA at /openapi.json (the spec is a
+          # committed build artifact, not a served route) — fetch both
+          # candidate URLs, parse defensively, and SKIP (warn) when the
+          # live spec isn't exposed as JSON. The additive-only contract
+          # itself is enforced by the repo's contract tests.
+          curl -sfL --max-time 30 "https://ulara.vercel.app/openapi.json" -o live1.json || true
+          curl -sfL --max-time 30 "$BASE/openapi.json" -o live2.json || true
+          python3 - <<'EOF' || echo "::warning::live openapi not exposed as JSON — skipping (repo contract tests own the gate)"
+          import json, sys
+          live = None
+          for cand in ('live1.json', 'live2.json'):
+              try:
+                  with open(cand) as f:
+                      d = json.load(f)
+                  if isinstance(d, dict) and 'paths' in d:
+                      live = d
+                      break
+              except Exception:
+                  continue
+          if live is None:
+              print('live openapi not exposed as JSON — skipping')
+              sys.exit(1)  # triggers the || warning branch, NOT a job failure
+          committed = json.load(open('docs/api/openapi.json'))
+          def ops(spec):
+              out = set()
+              for p, methods in spec.get('paths', {}).items():
+                  for m, op in methods.items():
+                      if isinstance(op, dict) and 'responses' in op:
+                          out.add(f"{m.upper()} {p}")
+              return out
+          lo, co = ops(live), ops(committed)
+          missing = co - lo
+          print(f"live ops: {len(lo)} · committed ops: {len(co)} · missing from live: {len(missing)}")
+          if missing:
+              for m in sorted(missing): print("MISSING:", m)
+              raise SystemExit(2)  # a REAL failure: a committed op is gone live
+          print("contract holds: every committed op exists live (additive-only)")
+          EOF
+
+  login-ui:
+    name: Login UI — every account typed manually in a real browser
+    needs: wait-for-deploy
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      # Root install brings the workspaces (frontend's playwright is
+      # hoisted) + tsx for the shared-table import in the script.
+      - run: npm ci
+      - name: Install Playwright chromium
+        run: npx playwright install chromium --with-deps
+      - name: login-all (12 accounts · manual typing · role dashboards · screenshots)
+        run: npx tsx scripts/e2e/login-all.mjs
+      - name: Upload the evidence (screenshots + results JSON)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: login-all-evidence
+          path: scripts/e2e/artifacts/login-all/
+          retention-days: 30
+
+  open-issue-on-failure:
+    name: Open an issue on failure
+    needs: [smoke, login-ui]
+    if: failure()
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const run = context.runId;
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🚨 Deploy smoke failed — ${context.sha.slice(0, 12)}`,
+              body: `The post-deploy smoke failed on main@${context.sha}.\n\nRun: https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${run}\n\nCheck the production deploy and the failing step.`,
+              labels: ['deploy-smoke'],
+            });

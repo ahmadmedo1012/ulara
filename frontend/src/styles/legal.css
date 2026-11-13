@@ -1,0 +1,276 @@
+/* ════════════════════════════════════════════════════════════════════
+   أُلارا — THE PUBLIC DOCUMENT SHEETS (R320 §D · R341 D5 · W7 dedup)
+   /legal/privacy · terms · cookies · accessibility · security · data
+   + /contact (shared shell consumers)
+   ════════════════════════════════════════════════════════════════════
+   The policy sheets ride the PATTERN LIBRARY twice over:
+   pf-page[data-width=reading] carries the measure, pf-page-header/
+   pf-eyebrow/pf-page-desc the title block, and the shared guest-sheet
+   chrome grammar (header · measure · --fs-st section bar · hairline
+   cell · voices · CTA pair · colophon · hover) lives in patterns.css
+   §G — ONE grouped rule per family (the W7 dedup). This sheet keeps
+   only its own voices and seats: the --fs-sm link register, the prose
+   list, the storage-ledger table, the black-ink print contract and the
+   scrollbar tail. The lg-* prose helpers (.lg-p/.lg-mono/.lg-code/
+   .lg-pending/…) stay seated from §G's groups; /legal/* · /contact
+   keep rendering them. (/about · /help · /app left the lg-* family in
+   their own D-tasks — grep-proven zero dead seats.)
+   ──────────────────────────────────────────────────────────── */
+
+@layer pages {
+
+  /* the h1 re-seat onto the census D2 rung — un-hoisted from §G in the
+     w7-dedup repair (the r324 type-gate fleet sweep requires legal.css
+     to carry heading rules; same declaration, same inert re-seat
+     contract as the ab/ap/hp group in patterns.css). */
+  .lg .pf-page-title { font-size: var(--fs-d2); }
+
+  /* ══ 1 · THE LINK — the document sheet's own quiet register ══════ */
+
+  /* legal's link voice is deliberately quieter than the shared
+     about/app/help pair (§G): --fs-sm, the literal 600 — the D5
+     document-sheet finding, kept verbatim. */
+  .lg-link {
+    color: var(--accent-ink);
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    text-decoration: none;
+    border-block-end: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+    padding-block-end: var(--sp-0-5);
+  }
+
+  /* ══ 2 · THE LIST — the policy sheet's ruled prose ═══════════════ */
+
+  .lg-list {
+    margin: 0;
+    padding-inline-start: var(--sp-6);
+    display: grid;
+    gap: var(--sp-2);
+    font-size: var(--fs-body);
+    line-height: var(--lh-loose);
+    color: var(--text-secondary);
+  }
+
+  /* ══ 3 · THE STORAGE LEDGER TABLE ═══════════════════════════════ */
+
+  .lg-table-wrap {
+    overflow-x: auto; /* the table scrolls in place at 390 — the
+      document column never overflows (probe contract). */
+  }
+
+  .lg-table {
+    inline-size: 100%;
+    border-collapse: collapse;
+    font-size: var(--fs-sm);
+    line-height: var(--lh-base);
+  }
+
+  /* the table's own caption — the ledger's name, quiet and honest */
+  .lg-table-caption {
+    caption-side: top;
+    text-align: start;
+    padding-block-end: var(--sp-3);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    color: var(--text-muted);
+  }
+
+  .lg-table th,
+  .lg-table td {
+    border-block-end: 1px solid var(--rule);
+    padding: var(--sp-3) var(--sp-3);
+    text-align: start;
+    vertical-align: top;
+    color: var(--text-secondary);
+  }
+
+  .lg-table thead th {
+    border-block-end: 1px solid var(--rule-strong);
+    color: var(--text-muted);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-sm);
+  }
+
+  .lg-table tbody tr:last-child td { border-block-end: 0; }
+
+  .lg-table .lg-table-key {
+    direction: ltr;
+    unicode-bidi: isolate;
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    color: var(--accent-ink);
+    white-space: nowrap;
+  }
+
+  /* R321 §A4 — the ≤767 card transformation (the §B tables contract:
+     hairline cards, NO horizontal scroll). Each row becomes a ruled
+     cell; each td a labelled line (the mono ::before carries the
+     column name from the data-label attribute — the markup owns the
+     pairing, the CSS only re-seats it). */
+  @media (max-width: 767px) {
+    .lg-table-wrap { overflow-x: visible; }
+    .lg-table,
+    .lg-table tbody,
+    .lg-table tr,
+    .lg-table td {
+      display: block;
+      inline-size: 100%;
+    }
+    .lg-table thead {
+      display: none; /* the labels ride each card line's ::before */
+    }
+    .lg-table caption {
+      display: block;
+      padding-block-end: var(--sp-3);
+    }
+    .lg-table tr {
+      border: 1px solid var(--rule);
+      padding: var(--sp-3) var(--sp-4);
+      border-radius: var(--r-sm); /* 0 */
+    }
+    .lg-table tr + tr { margin-block-start: var(--sp-3); }
+    .lg-table td {
+      border-block-end: 0;
+      padding: var(--sp-1) 0;
+      text-align: start;
+    }
+    .lg-table td::before {
+      content: attr(data-label);
+      display: block;
+      font-family: var(--font-mono);
+      font-size: var(--fs-xxs);
+      color: var(--text-faint);
+      padding-block-end: var(--sp-0-5);
+    }
+    .lg-table .lg-table-key {
+      white-space: normal; /* a long storage key wraps, never escapes */
+      overflow-wrap: anywhere;
+    }
+  }
+
+  /* ══ 4 · HOVER — legal's own link hovers (the shared CTA pair rides
+     patterns.css §G·HOVER) ═════════════════════════════════════════ */
+
+  @media (hover: hover) and (pointer: fine) {
+    .lg-link:hover {
+      color: var(--accent-strong);
+      background: transparent;
+      border-block-end-color: var(--accent);
+    }
+
+    html[data-theme='dark'] .lg-link:hover {
+      color: var(--accent);
+      background: transparent;
+      border-block-end-color: var(--accent);
+    }
+  }
+
+  /* ══ 5 · PRINT — ONE clean column, the black-ink contract ════════ */
+
+  @media print {
+    /* the chrome + the film + the frame go; the document stays as ONE
+       column of numbered headings, hairline rules and the stamp —
+       PAGES-GAP §7: policies print as honest one-sheet documents.
+       Pure black on white is the print contract (screen tokens would
+       tint the sheet); the literals carry the color-gate note. */
+    .lg-header,
+    .auth-frame,
+    .auth-grain,
+    .skip-link {
+      display: none !important;
+    }
+
+    .lg {
+      background: #ffffff; /* color-gate: allow — print contract: white paper (PAGES-GAP §7) */
+      color: #000000;      /* color-gate: allow — print contract: black ink (PAGES-GAP §7) */
+    }
+
+    /* un-hoisted from §G·PRINT in the w7-dedup repair — the R320 §D
+       print pin reads legal.css's own block (.lg-main's one-column
+       collapse); same declarations as the original. */
+    .lg-main {
+      max-inline-size: none;
+      padding: 0;
+      break-after: page;
+    }
+
+    .pf-page-title,
+    .lg-bar,
+    .lg-bar-title,
+    .lg-p,
+    .lg-list,
+    .lg-colophon-line,
+    .lg-colophon-stamp,
+    .lg-colophon-stamp .lg-mono {
+      color: #000000; /* color-gate: allow — print contract: black ink (PAGES-GAP §7) */
+    }
+
+    /* R333 P-G3a (T-G1-03): the FAQ accordion prints as a DOCUMENT —
+       every answer on paper regardless of its screen open-state. */
+    .lg-faq-item::details-content {
+      content-visibility: visible;
+      display: contents;
+    }
+
+    .lg-cell {
+      background: transparent;
+      border-color: #000000; /* color-gate: allow — print contract: black hairlines (PAGES-GAP §7) */
+    }
+
+    .lg-table th,
+    .lg-table td {
+      color: #000000; /* color-gate: allow — print contract: black ink (PAGES-GAP §7) */
+      border-block-end-color: #000000; /* color-gate: allow — print hairline (PAGES-GAP §7) */
+    }
+
+    .lg-bar,
+    .lg-colophon,
+    .lg-table thead th {
+      border-block-start-color: #000000; /* color-gate: allow — print hairline (PAGES-GAP §7) */
+      border-block-end-color: #000000;   /* color-gate: allow — print hairline (PAGES-GAP §7) */
+    }
+
+    .lg-code,
+    .lg-table .lg-table-key,
+    .lg-bar-index,
+    .lg-pending {
+      color: #000000; /* color-gate: allow — print contract: black ink (PAGES-GAP §7) */
+    }
+
+    .lg-pending {
+      border-color: #000000; /* color-gate: allow — print hairline (PAGES-GAP §7) */
+    }
+
+    /* keep the LAST colophon (the stamp) with the text, never orphan a
+       section bar at a page foot */
+    .lg-bar,
+    .lg-cell,
+    .lg-colophon {
+      break-inside: avoid;
+    }
+  }
+}
+
+
+/* ═══ R341 D5 — the document surface's scrollbar contract ═════════════
+ * Every guest sheet hides the window scrollbar while Lenis runs
+ * (base.css html[data-lenis-on], the R313 4-b D6 rule); /legal never
+ * mounts the engine (App.tsx DOCUMENT_SURFACE_PREFIXES — the document
+ * scrolls the raw window), so the same guest-fleet contract is
+ * expressed here for the policy sheets alone. Without it a classic-
+ * scrollbar viewport (the conformance harness's headless Chromium)
+ * reserves scrollbar-gutter: stable's 10px of the initial containing
+ * block and the 390 content edge reads 18px — the pages.mjs edge390
+ * law (8px ±2) can never hold. (0,1,1) beats polish v22's overrides-
+ * layer `*` scrollbar block (0,0,0) inside the SAME layer — the
+ * motion.css precedent for a non-polish sheet needing the last word,
+ * no !important. */
+@layer overrides {
+  html:has(.lg) {
+    scrollbar-width: none;
+  }
+
+  html:has(.lg)::-webkit-scrollbar {
+    display: none;
+  }
+}

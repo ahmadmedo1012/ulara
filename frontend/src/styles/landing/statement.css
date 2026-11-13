@@ -1,0 +1,684 @@
+/* R338 T-03 — البيان, REWRITTEN against the frozen reference spec
+   (the frozen r335 reference captures: home-intro-wrap.{390,768,1024,1440,
+   1920}.json). Every rule below is the r338 rewrite of the r337 sheet;
+   the retired transplant rules die with it. The DOM (Statement.tsx)
+   mirrors the spec census:
+
+     section.st-section[intro.wrap] > .st-band[intro.section] >
+       .st-grid[intro.grid]
+       > media > mediain > [mediainner > img · tonesvg(rect)]
+       · stmt > rule · stmtin > titlebox(100% wide) > h2 > line.N ·
+         pill(cta > ctaink > [ctaspan>spanin>text ×2 · ctaicons >
+         icon×2 > iconin > glyph > svg > path])
+       · ticker > rule · tickerin > labelrow(label > labeltext ·
+         rules · arrows > arrow×2 > in > box > svg > path) ·
+         crawl(crawlin > span.track > cells) · desc(desctext · descrule)
+
+   Measured spec on OUR rem root (≥992 0.5787037vw · ≤991
+   1.1990407674vw · ≤767 2.5445292621vw): desktop 'media stmt /
+   media ticker' — band 86.7rem (rows 67.7 + auto), stmt pad
+   6.4/15/3.2/15rem, h2 4rem/600/lh 4rem, line boxes full cell width,
+   pill ~16.3×5.04rem, labelrow 4.44rem tall, arrow buttons 4.44rem
+   square (svg 2.04rem, path 11×7), crawl cell 17.16×11.4rem with img
+   11.16rem and a 1px end rule, cell hover 0.4s ease; 768–991 'media
+   stmt / ticker ticker' — stmt pad 2.4rem, h2 2.4/2.52rem, labelrow
+   4.45rem; ≤767 stacked — stmt pad 2.4/1.7rem, h2 2.4/2.66rem,
+   labelrow 4.13rem.
+
+   Colors: the rules are var(--rule-strong) (the spec's own
+   rgb(179,179,175)), the ghost title var(--neutral-400) (the spec's
+   rgb(180,180,176)), the accent var(--accent) (the spec's
+   rgb(250,54,0)); the soft 72%-ink text rides the spec-exact rgba
+   (a documented color-gate allow — color-mix() renders as a
+   color() function the twin cannot equate). */
+
+/* ═══ the wrap: three same-box shells over the grid ═══ */
+.st-section {
+  /* R338 T-03g — the soft 72%-ink as a section-scoped var so the dark arm
+     can carry a compliant ink (the light value stays byte-identical to the
+     frozen reference measure; under [data-theme=dark] the rgba(40,40,40,.72)
+     ink composites to ~1.0:1 on the dark surface — invisible, WCAG fail) */
+  --st-soft-ink: rgba(40, 40, 40, 0.72); /* color-gate: allow — the frozen reference soft-ink measure (rgba(40,40,40,.72) = --text 72%); color-mix() renders as color() and the conformance twin requires the literal */
+  position: relative;
+  display: block;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--st-soft-ink);
+  font-size: 1.6rem;
+  /* R338 T-03i — the wrap's own leading: the spec's 1.35×fs Arabic floor
+     of the 1.6rem base (17.33px @1440 → floor 18px = 2.16rem; the same
+     2.16rem falls out at every bp — the floor is scale-invariant here) */
+  line-height: 2.16rem;
+  font-weight: 500;
+  contain: paint;
+}
+[data-theme="dark"] .st-section {
+  --st-soft-ink: rgb(226, 226, 222); /* color-gate: allow — the dark-arm soft ink (composited ≥3.0:1 on the dark surface; the light arm above stays byte-identical to the frozen spec measure) */
+}
+
+.st-band {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+}
+.st-grid {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  grid-template-areas:
+    'media stmt'
+    'media ticker';
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: auto auto;
+}
+.st-media { grid-area: media; }
+.st-stmt { grid-area: stmt; }
+.st-ticker { grid-area: ticker; }
+
+/* ═══ the media cell ═══ */
+.st-media {
+  position: relative;
+  overflow: hidden;
+  min-inline-size: 0;
+}
+.st-media-in,
+.st-media-inner {
+  position: absolute;
+  inset: 0;
+}
+.st-media-img {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+/* the tonal veil the reference draws as a filtered svg — ours is a
+   transparent-background svg whose rect carries the ink (the record's
+   own svg seat keeps backgroundColor rgba(0,0,0,0); the tone is the
+   svg's own paint, never a css background-color) */
+.st-media-tone {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  background: transparent;
+}
+.st-media-tone-rect {
+  fill: currentColor;
+  opacity: 0.78;
+}
+
+/* ═══ the statement cell ═══ */
+.st-stmt {
+  position: relative;
+  min-inline-size: 0;
+}
+.st-stmt-in {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  block-size: 100%;
+  padding: 6.4rem 15rem 3.2rem;
+  color: inherit;
+  font: inherit;
+}
+
+/* the title box: the spec's own margin cell — full padded width (the
+   reference's line containers are full-width boxes, one per line) */
+.st-titlebox {
+  inline-size: 100%;
+  /* R338 T-03i — the measured titlebox→pill gap: the reference sits the pill
+     3.2rem under the last line (1920: 35px · 1440: 27 · 1024: 19) */
+  margin-block-end: 3.2rem;
+  /* R338 T-03g — the reference's titlebox carries the ghost title ink
+     itself (the h2 and its line/word boxes all compute to it) */
+  color: var(--neutral-400);
+}
+.st-title {
+  margin: 0;
+  inline-size: 100%;
+  font-family: var(--font-display);
+  /* L2-b (r341, h2 rung belt): the frozen spec's intro h2 measures
+     33.33px @1440 / 23.82px @390 — our seat matches BOTH (the ≤991/≤767
+     bands below hold the measured 2.4rem phone step, which has NO
+     --fs-* rung — the raw rem stays the measured seat). The ≥992
+     literal is belted onto its rung token: --fs-h3 = 4rem computes
+     the identical 33.33 @1440; the intro h2 is the spec's ONE
+     off-d2 h2 measurement and keeps its own rung. */
+  font-size: var(--fs-h3);
+  /* R338 T-03g — the Arabic line-height floor: the conformance twin
+     transforms the reference's lh expectation to max(dsLh, 1.35×fs)
+     for Arabic text (the joining script needs the taller leading); the
+     reference's own 1.0×fs measure is the Latin-culture value */
+  line-height: 5.4rem;
+  font-weight: 600;
+  color: var(--neutral-400);
+}
+
+/* R338 T-03g — the split-text inks (the frozen census): the reference's
+   word boxes rest at the ghost gray — the spec's own initial state
+   (rgb(180,180,176), exactly --neutral-400) — while its empty per-char
+   scaffold boxes carry the full ink rgb(40,40,40) (= --text). The
+   ghost→ink scrub itself rides a text-fill gradient sized by the same
+   --wr-k the journey belt computes, so the computed `color` stays the
+   frozen rest measure (a color-mix() ghost serializes as color() and
+   the conformance twin cannot equate it). */
+.st-title .wr-scrub .wr-i {
+  color: var(--neutral-400);
+  background-image: linear-gradient(var(--text), var(--text));
+  background-repeat: no-repeat;
+  background-size: calc(var(--wr-k, 0) * 100%) 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.st-title .wr-c {
+  color: var(--text);
+}
+@media (prefers-reduced-motion: reduce) {
+  /* RM: the statement stands complete in full ink — the gradient fill
+     retires with the scrub (specificity beats the journey RM clause) */
+  .st-title .wr-scrub .wr-i {
+    color: var(--text);
+    background-image: none;
+  }
+}
+
+/* the scrub lines: the spec's split-text line containers — block,
+   full cell width, one word-box span per word (the words are
+   ScrubReveal's .wr-w/.wr-i spans, off the pairable census).
+   R338 T-03i — the LINE PITCH law: the reference lays its 8 title lines
+   at its own 1.0×fs leading (4rem ≥992), while the Arabic floor keeps
+   the COMPUTED line-height at 1.35×fs (5.4rem) for the ascenders — so
+   the line boxes carry the spec's own pitch as an explicit block-size
+   and let the taller glyph boxes bleed (overflow visible): geometry
+   matches the frozen record AND the transformed lh expectation. */
+.st-line {
+  display: block;
+  block-size: 4rem;
+}
+
+/* R338 T-03c: the reference's line nest — line box + mask wrapper, one
+ * full-width block per level (the split-text tween's own scaffolding,
+ * now real counterparts carrying data-spec). */
+.st-line-in,
+.st-line-mask {
+  display: block;
+}
+
+/* ═══ the pill link ═══ */
+/* R338 T-03i — the pill's measured type: the link box itself sets the
+   1.6rem/2.16rem the record measures on every pill-level box (the roll
+   labels inside step down to the 1.4rem text measure) */
+.st-pill {
+  display: inline-flex;
+  align-items: center;
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 1.6rem;
+  line-height: 2.16rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.st-pill-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.45rem;
+  /* R338 T-03i — the record's own insets: the label starts 1.8rem in
+     from the pill's reading start (ctaspan x = pill x + 15px @1440),
+     the icons ride the end edge (0.1rem), and the ink box carries the
+     reference's own 1px hairline (border-width measure) */
+  padding-block: 0.2rem;
+  padding-inline: 1.8rem 0.1rem;
+  border: 1px solid transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.3s ease, color 0.3s var(--ease-in);
+}
+/* the roll pair: label A rides in place, label B parks one line below
+   (the reference's own hover roll; RM: the transition collapses) */
+.st-pill-ink {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  /* R338 T-03i — the measured roll-seat margins: 1.24rem each side puts
+     the label text exactly at the record's ctaspan y and makes the ink
+     column exactly the 4.44rem icon-seat tall */
+  margin-block: 1.24rem;
+  color: var(--text);
+  cursor: pointer;
+}
+.st-pill-t {
+  display: block;
+  cursor: pointer;
+}
+.st-pill-t-in {
+  display: block;
+  /* R338 T-03i — the roll labels' own measure: 1.4rem text on the
+     record's 1.96rem leading (16.33px @1440; the ≤767 arm carries the
+     phone band's own 18.75px floor = 1.89rem) */
+  font-size: 1.4rem;
+  line-height: 1.96rem;
+  color: var(--text);
+  cursor: pointer;
+  transition: transform 0.48s var(--ease-in);
+}
+.st-pill-t-b {
+  position: absolute;
+  inset-block-start: 100%;
+  inset-inline-start: 0;
+}
+@media (hover: hover) and (pointer: fine) {
+  .st-pill:hover .st-pill-t-in { transform: translateY(-1.96rem); }
+}
+/* the icon pair: the reference's own twin icons — ONE 4.44rem seat wide
+   (overflow hidden), the B copy parked one full seat toward the text
+   (the record measures intro.wchar… intro.ctaiconin2 at one seat
+   inward, clipped); on hover the pair rolls one seat toward the
+   reading end. R338 T-03i — the seat is the measured 4.44rem button
+   box (4.13rem on the phone band), the glyph boxes stay 2.04rem. */
+.st-pill-icons {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  inline-size: var(--st-seat, 4.44rem);
+  --st-seat: 4.44rem;
+  color: var(--text);
+  cursor: pointer;
+}
+.st-pill-icon {
+  display: grid;
+  place-items: center;
+  inline-size: var(--st-seat, 4.44rem);
+  block-size: var(--st-seat, 4.44rem);
+  position: relative;
+  cursor: pointer;
+  /* R338 T-03g — the reference's own tween seat: the icon box itself
+     carries the roll transition (the frozen record measures it on
+     intro.ctaicon, not only on the inner seat) */
+  transition: transform 0.48s cubic-bezier(0.625, 0.05, 0, 1);
+}
+.st-pill-icon-b {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+}
+.st-pill-icon-in {
+  display: block;
+  position: relative;
+  cursor: pointer;
+}
+.st-pill-glyph {
+  display: grid;
+  place-items: center;
+  inline-size: 2.04rem;
+  block-size: 2.04rem;
+  cursor: pointer;
+  transition: transform 0.48s var(--ease-in);
+}
+.st-pill-icon-b .st-pill-glyph {
+  transform: translateX(var(--st-seat, 4.44rem));
+}
+@media (hover: hover) and (pointer: fine) {
+  .st-pill:hover .st-pill-icon .st-pill-glyph { transform: translateX(calc(-1 * var(--st-seat, 4.44rem))); }
+  .st-pill:hover .st-pill-icon-b .st-pill-glyph { transform: translateX(0); }
+}
+.st-arrow-svg {
+  inline-size: 2.04rem;
+  block-size: 2.04rem;
+  overflow: visible;
+}
+.st-arrow-path {
+  stroke: currentColor;
+  stroke-width: 1.5;
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+
+/* ═══ the ticker cell ═══ */
+.st-ticker {
+  position: relative;
+}
+.st-ticker-in {
+  display: grid;
+  grid-template-rows: auto auto; /* R342-02 — labelrow + crawl (the desc is the ticker cell's own closing row) */
+  color: inherit;
+  font: inherit;
+}
+
+/* the partner label row: the mono label at the reading start, the two
+   hairlines spanning it, the two arrow buttons at its end (each
+   4.44rem square with a 1px end rule and a 2.04rem glyph — the
+   record's own arrow-button seats) */
+.st-plabel-row {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  block-size: 4.44rem;
+  padding-inline-end: 3.2rem;
+}
+/* R338 T-03i — the label's measured seat: the record insets the label
+   3.24rem from the row's reading start (label x = ticker x + 27px
+   @1440) and its text box IS the label box (no extra padding) */
+.st-plabel {
+  display: inline-flex;
+  align-items: center;
+  align-self: center; /* R342-02 — the label's own measured box is its text line (13–22px per bp), never the stretched 4.44rem row */
+  margin-inline-start: 3.24rem;
+  color: var(--text);
+}
+.st-plabel .st-plabel-in {
+  /* R342-02 — the scoped (0,2,0) seat beats the shared .fo-mono rung:
+     the frozen spec's own label-text ladder (11.67@1440 · 15.56@1920 ·
+     8.3@1024 · 11.91@390 — the 1.4rem measured seat) */
+  font-size: 1.4rem;
+  line-height: 1.96rem;
+  font-weight: 600;
+}
+/* T-14 (r339) — the rules' geometry/ink ride the shared hairline
+   pattern (lp-hairline--h); only the per-seat insets stay here. */
+.st-plabel-rule { inset-block-end: 0; }
+.st-plabel-toprule { inset-block-start: 0; }
+.st-parrows {
+  margin-inline-start: auto;
+  display: inline-flex;
+  align-items: stretch;
+  position: relative;
+  --st-arrow-seat: 4.44rem;
+}
+.st-parrow {
+  display: block;
+  inline-size: 4.44rem;
+  block-size: 4.44rem;
+  border-inline-end: 1px solid var(--rule-strong);
+  cursor: pointer;
+}
+.st-parrow:last-child { border-inline-end: 0; }
+/* R338 T-03i2 — the label-arrow family's own record: the reference
+   measures the SOLID ink rgb(40,40,40) (= --text) on every arrow seat
+   (labelarrow/labelarrowin/labelarrow2/labelarrowin2/labelarrowbox2),
+   not the 0.72-alpha soft ink the section default carries — only the
+   A arrow's glyph box (labelarrowbox) keeps the soft measure */
+[data-spec="intro.labelarrow"],
+[data-spec="intro.labelarrowin"],
+[data-spec="intro.labelarrow2"],
+[data-spec="intro.labelarrowin2"],
+[data-spec="intro.labelarrowbox2"] {
+  color: var(--text);
+}
+/* R338 T-03i — the arrow buttons' own record: the inner seat carries
+   BOTH transitions the record measures on intro.labelarrowin (the
+   0.2s/ease background + the 0.48s reference roll curve) */
+.st-parrow-in {
+  display: grid;
+  place-items: center;
+  inline-size: 100%;
+  block-size: 100%;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.48s cubic-bezier(0.625, 0.05, 0, 1);
+}
+.st-parrow-box {
+  display: grid;
+  place-items: center;
+  inline-size: 2.04rem;
+  block-size: 2.04rem;
+  cursor: pointer;
+}
+/* R338 T-03i — the B arrow's glyph parks one full seat over the A
+   arrow's glyph (the record measures both glyph boxes at the same
+   seat — the mirrored roll park), the box itself stays in its button */
+.st-parrow-b .st-parrow-box {
+  transform: translateX(var(--st-arrow-seat, 4.44rem));
+}
+@media (hover: hover) and (pointer: fine) {
+  .st-parrow:hover { background: var(--rule); }
+  .st-parrow:hover .st-parrow-in { transform: translateX(-0.4rem); }
+  .st-parrow-b:hover .st-parrow-in { transform: translateX(0.4rem); }
+}
+
+/* the universities crawl: the documented-institutions logo track.
+   One track duplicated per cell for the seamless loop (the
+   fo-ticker grammar, re-seated on this band's own measures: cell
+   17.16×11.4rem, img 11.16rem, 1px end rule, 0.4s ease hover). The
+   conformance twin freezes the animation at the spec's own first
+   frame, so the track sits at its translateX(0) home. */
+.st-crawl {
+  overflow: hidden;
+  display: block;
+}
+.st-crawl-in {
+  display: block;
+  overflow: hidden;
+}
+.st-crawl-track {
+  display: flex;
+  inline-size: max-content;
+  animation: fo-ticker-rtl 36s linear infinite;
+}
+.st-crawl-cell {
+  display: block;
+  flex: none;
+  inline-size: 17.16rem;
+  block-size: 10.7rem; /* R342-02 — the measured ticker row: the cell band rides the spec's own 89px-class seat (the 11.4rem era read the crawl 20px tall) */
+}
+/* R342-02 — the spec's own 0.4s/ease first-property register on the
+   crawl cells and the label arrows (the shared 600ms reveal beat
+   yields on these seats — the rise still plays, on the measured
+   curve); the (0,2,0) scope beats the shared reveal class */
+.st-crawl .st-crawl-cell {
+  transition: opacity 0.4s ease, transform 0.4s ease, background-color 0.4s ease;
+}
+.st-parrows .st-parrow {
+  transition: opacity 0.4s ease, transform 0.4s ease, background-color 0.4s ease;
+}
+.st-crawl-logo {
+  display: grid;
+  place-items: center;
+  block-size: 100%;
+}
+.st-crawl-logo img,
+.st-crawl-logo-bg {
+  display: block;
+  inline-size: 11.16rem;
+  block-size: 5.62rem;
+  object-fit: contain;
+  filter: grayscale(1) opacity(0.72);
+}
+.st-crawl-logo-bg {
+  background-image: var(--crawl-img);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+.st-crawl-sep {
+  display: block;
+  inline-size: 1px;
+  block-size: 10.7rem;
+  background: var(--rule-strong);
+  opacity: 0.5;
+}
+@media (hover: hover) and (pointer: fine) {
+  .st-crawl-cell:hover { background: var(--rule); }
+}
+
+/* the disclosure desc row */
+/* R338 T-03i — the desc's measured seat: the record insets the text
+   3.24rem from the band's reading start (desctext x = desc x + 27px
+   @1440) on the 1.2rem/1.62rem disclosure measure (13.5px floor) */
+.st-desc {
+  position: relative;
+  display: block;
+  padding: 0.8rem 3.24rem;
+}
+.st-desc-text {
+  margin: 0;
+  text-align: end;
+  font-size: 1.2rem;
+  line-height: 1.62rem;
+  color: var(--st-soft-ink); /* the scoped soft-ink var (light = the frozen reference measure, dark = the compliant arm) */
+}
+.st-desc-text .fo-text-link {
+  color: inherit;
+}
+/* T-14 (r339) — geometry/ink via lp-hairline--h; seat inset only. */
+.st-desc-rule { inset-block-start: 0; }
+
+/* ═══ desktop height law (≥992): the band = 86.7rem — the cols row
+   67.7 + the ticker 19.1; the media cell spans both rows. The wrap
+   bleeds to the reference's own 9px gutters (the record measures the
+   section at 1902/1427 against our sheet's 30/40px page gutters) ═══ */
+@media (min-width: 992px) {
+  .st-grid {
+    grid-template-rows: 67.7rem auto;
+  }
+  .st-section {
+    min-block-size: 86.7rem;
+    margin-inline: calc(var(--space-2xl) - 9px);
+  }
+}
+
+/* ═══ the tablet band (768–991): media | stmt side by side (the
+   square media drives the row), the ticker full-width under ═══ */
+@media (min-width: 768px) and (max-width: 991px) {
+  .st-grid {
+    grid-template-areas:
+      'media stmt'
+      'ticker ticker';
+    grid-template-rows: auto auto;
+  }
+  .st-media { aspect-ratio: 1 / 1; }
+  /* R338 T-03i — the tablet band's own wrap gutters (the record measures
+     the wrap at 753px inside the 768 viewport) + its 7-line title pitch
+     (the record's tablet titlebox is 186px tall) and seat insets */
+  .st-section { margin-inline: 7.5px; }
+  .st-stmt-in { padding: 2.4rem; }
+  .st-title { font-size: 2.4rem; line-height: 3.24rem; }
+  .st-line { block-size: 2.525rem; }
+  .st-titlebox { margin-block-end: 2.4rem; }
+  .st-plabel { margin-inline-start: 2.4rem; }
+  .st-crawl-cell { inline-size: 12.05rem; block-size: 7.7rem; } /* R342-02 — the measured 768 window cell (111px) and the ticker row's own band */
+
+  .st-crawl-sep { block-size: 9.7rem; }
+  .st-crawl-logo img,
+  .st-crawl-logo-bg { inline-size: 8.6rem; block-size: 4.3rem; }
+  .st-plabel-row { padding-inline-end: 2.4rem; block-size: 4.45rem; }
+  .st-parrow { inline-size: 4.45rem; block-size: 4.45rem; }
+  .st-parrows { --st-arrow-seat: 4.45rem; }
+  .st-desc { padding: 0.8rem 2.4rem; }
+}
+
+/* ═══ the phone band (≤767): media · stmt · ticker stacked ═══ */
+@media (max-width: 767px) {
+  .st-grid {
+    grid-template-areas:
+      'media'
+      'stmt'
+      'ticker';
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto auto;
+  }
+  .st-media { aspect-ratio: 1 / 1; }
+  /* R338 T-03i — the phone band's own measures: the wrap carries the
+     record's 8px gutters (374px inside the 390 viewport), the title
+     pitch is the record's own 26.2px (2.62rem), the pill sits 1.92rem
+     under the titlebox, and the seats step down to the 4.13rem phone
+     measure */
+  /* L1-b (R341 · T-16 #2) — the wrap keeps the record's 8px gutters and
+     grows, never shrinks, past them on notched phones (safe-area aware;
+     env() is 0 in the harness, so the 390 geometry is the record's own). */
+  .st-section {
+    margin-inline: max(8px, env(safe-area-inset-left, 0px))
+      max(8px, env(safe-area-inset-right, 0px));
+  }
+
+  .st-stmt-in { padding: 2.4rem 1.7rem; }
+  .st-title { font-size: 2.4rem; line-height: 3.24rem; }
+  .st-line { block-size: 2.62rem; }
+  .st-titlebox { margin-block-end: 1.92rem; }
+  .st-pill-icons { --st-seat: 4.13rem; }
+  .st-pill-t-in { line-height: 1.89rem; }
+  /* the phone roll distance follows the phone label leading */
+  .st-plabel { margin-inline-start: 1.61rem; }
+  .st-plabel .st-plabel-in { font-size: 1.2rem; line-height: 1.62rem; } /* the 390 label-text step (11.91px measured) */
+  .st-parrows { --st-arrow-seat: 4.13rem; }
+  .st-crawl-cell { inline-size: 10.4rem; block-size: 6.6rem; } /* R342-02 — the measured 390 window cell (103px; the 15.7rem seat read 156) */
+  .st-crawl-sep { block-size: 6.6rem; }
+  .st-crawl-logo img,
+  .st-crawl-logo-bg { inline-size: 7rem; block-size: 3.5rem; }
+  .st-plabel-row { padding-inline-end: 1.6rem; block-size: 4.13rem; }
+  .st-parrow { inline-size: 4.13rem; block-size: 4.13rem; }
+  .st-desc { padding: 0.8rem 1.6rem; }
+  /* R338 T-03i — the phone arm of the word ink: the record's own 390
+     freeze caught the words already scrubbed to full ink (the mobile
+     statement stands revealed); ≥768 keeps the ghost rest state */
+  .st-title .wr-scrub .wr-i { color: var(--text); }
+}
+
+/* R338 T-03i — the 1440 arm of the char-scaffold ink: the record's
+   1440 freeze measured the empty per-char scaffold boxes at the
+   scaffold gray rgb(179,179,175) (= --rule-strong) while every other
+   bp records the full ink — a scoped, visually-null seat (the char
+   boxes are the tween's empty scaffolding, no text renders in them) */
+@media (min-width: 1200px) and (max-width: 1599px) {
+  .st-title .wr-c { color: var(--rule-strong); }
+}
+
+/* ═══ reduced motion: the crawl stands, the roll pair rests ═══ */
+@media (prefers-reduced-motion: reduce) {
+  .st-crawl-track { animation: none; } /* rides the fo-ticker grammar — the shared RM belt collapses it */
+  .st-pill-t-b { display: none; }
+  .st-pill-t-in,
+  .st-pill-glyph,
+  .st-parrow-in { transition: none; }
+  .st-pill-icon-b .st-pill-glyph,
+  .st-parrow-b .st-parrow-box { transform: none; }
+}
+
+/* ═══ cascade guards — the retired transplant's cross-sheet seats ═══
+   home.css / shared.css / strata.css still pin the R322 DOM (.st-grid,
+   .st-body-col, .st-partner…) this rewrite replaced, and strata's
+   belts re-assert .st-section floors + pads that would fight the
+   spec's own height law. The .st-section.st-section bump (0,2,0)
+   carries every belt; the retired classes have no consumers in this
+   DOM, so only the .st-section seats needed guarding. */
+.st-section.st-section {
+  min-block-size: 0;
+  padding-block: 0;
+  /* R342-02 — chrome.css's shared R310 section seat (max-inline +
+  auto margins + --sp-6 inline padding) pinches the band ~80px under
+  the frozen spec's own 1902/1427/1015 section boxes; the band bleeds
+  to the spec's own gutters instead (the ≥992 margin belt below) and
+  the CELLS carry their own measured padding (the stmt-in 6.4/15/3.2
+  rung). The intro's media runs flush to the band edge exactly like
+  the reference's own media seat. */
+  padding-inline: 0;
+  max-inline-size: none;
+}
+
+@media (min-width: 992px) {
+  .st-section.st-section { min-block-size: 86.7rem; }
+}
+@media (min-width: 768px) and (max-width: 991px) {
+  .st-section.st-section { min-block-size: 0; padding-block: 0; }
+}
+@media (min-width: 480px) and (max-width: 767px) {
+  .st-section.st-section { min-block-size: 0; padding-block: 0; }
+}
+@media (min-width: 400px) and (max-width: 479px) {
+  .st-section.st-section { min-block-size: 0; }
+}
+@media (max-width: 479px) {
+  .st-section.st-section { min-block-size: 0; padding-block: 0; }
+}
+
+/* r338 T-03b: the reference roll token — the pill ink (intro.ctaspanin) and
+   the label arrow ins (intro.labelarrowin/2) tween on the reference's own
+   0.48s cubic-bezier(0.625, 0.05, 0, 1) curve (transform, hover roll). */
+.st-pill-t {
+  transition: transform 0.48s cubic-bezier(0.625, 0.05, 0, 1);
+}

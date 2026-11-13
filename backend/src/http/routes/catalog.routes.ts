@@ -1,0 +1,1352 @@
+import { Router } from 'express';
+import { z } from 'zod';
+import { LoanStatus, Prisma, Role } from '@prisma/client';
+import { prisma } from '../../db.js';
+import { authMiddleware } from '../middleware/auth.js';
+import { requireRole } from '../middleware/requireRole.js';
+import { validate } from '../validate.js';
+import { paginationSchema, buildMeta } from '../../lib/pagination.js';
+import { AppError } from '../../lib/errors.js';
+import { isSanctionedMediaUrl } from '../../lib/sanctioned-url.js';
+import { resolveCallerInstitutionScope, institutionContextRequiredError } from '../../lib/profile-scoping.js';
+
+const router = Router();
+
+// r178: institution basics on every public faculty row — the register
+// funnel and directory group/label faculties by institution.
+const facultyInstitutionSelect = {
+  id: true,
+  name: true,
+  nameEn: true,
+  slug: true,
+} as const;
+
+// ════════════════════════════════════════════════════
+// FACULTIES & DEPARTMENTS (public catalog)
+// ════════════════════════════════════════════════════
+// PUBLIC — declared BEFORE the router-level authMiddleware
+// below (audit 4-A13 P0-1): the anonymous /auth/register
+// funnel reads this lookup (useFaculties), as do the campus
+// map and the university directory. Express dispatches in
+// registration order, so this route answers before the auth
+// gate ever runs — previously the router-level middleware
+// swallowed it and every anonymous visitor got a 401, making
+// self-serve registration impossible.
+//
+// Projection: names/ids/emoji/city only — no PII, and
+// strictly narrower than the already-public GET /colleges
+// bundle (which additionally ships the per-faculty counts).
+// Still behind the app-level global rate limiter (app.ts
+// mounts it for the whole /api/v1 prefix).
+//
+// r178 (multi-institution): optional ?institutionSlug= filter —
+// the register page passes the institution it selected. Without
+// it the listing spans ALL ACTIVE institutions' faculties, each
+// row carrying its institution basics (the FE groups by them).
+//
+// r180: bounded with a generous take (500) — an unbounded findMany
+// answers an unbounded response body (the multi-institution growth
+// path makes that worse over time); 500 covers every realistic
+// campus directory many times over while keeping the public payload
+// honest.
+router.get('/faculties', async (req, res, next) => {
+  try {
+    const institutionSlug =
+      typeof req.query.institutionSlug === 'string' && req.query.institutionSlug.trim().length > 0
+        ? req.query.institutionSlug.trim()
+        : undefined;
+    const data = await prisma.faculty.findMany({
+      take: 500,
+      where: {
+        institution: {
+          status: 'ACTIVE',
+          ...(institutionSlug ? { slug: institutionSlug } : {}),
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        iconEmoji: true,
+        city: true,
+        institution: { select: facultyInstitutionSelect },
+        departments: { select: { id: true, name: true } },
+      },
+      orderBy: { name: 'asc' },
+    });
+    res.json({ data });
+  } catch (e) {
+    next(e);
+  }
+});
+
+// Everything below this line requires a session. Public
+// routes MUST be declared above (they would otherwise be
+// 401'd by this gate before their handler runs).
+router.use(authMiddleware);
+
+// ════════════════════════════════════════════════════
+// LIBRARY
+// ════════════════════════════════════════════════════
+router.get(
+  '/library/books',
+  validate(paginationSchema.extend({ category: z.string().optional() }), 'query'),
+  async (req, res, next) => {
+    try {
+      const { page, limit, q, category } = req.query as unknown as {
+        page: number;
+        limit: number;
+        q?: string;
+        category?: string;
+      };
+      const where = {
+        ...(category ? { category } : {}),
+        ...(q
+          ? {
+              OR: [
+                { title: { contains: q, mode: 'insensitive' as const } },
+                { author: { contains: q, mode: 'insensitive' as const } },
+              ],
+            }
+          : {}),
+      };
+      const [data, total] = await Promise.all([
+        prisma.book.findMany({
+          where,
+          skip: (page - 1) * limit,
+          take: limit,
+          orderBy: { title: 'asc' },
+        }),
+        prisma.book.count({ where }),
+      ]);
+      res.json({ data, meta: buildMeta(page, limit, total) });
+    } catch (e) {
+      next(e);
+    }
+  },
+);
+
+// ─── Pure logic (exported for DB-free unit tests) ─────────────────
+
+/** Body of POST /library/loans — a book reference and nothing else. */
+export const borrowBookSchema = z.object({ bookId: z.string().cuid() }).strict();
+
+router.post(
+  '/library/loans',
+  validate(borrowBookSchema),
+  async (req, res, next) => {
+    try {
+      const result = await prisma.$transaction(async (tx) => {
+        const book = await tx.book.findUnique({ where: { id: req.body.bookId } });
+        if (!book) throw AppError.notFound('الكتاب غير موجود');
+        // Guarded decrement: only a request that actually flips
+        // availableCopies > 0 → ≥ 0 can claim a copy, so two concurrent
+        // borrows can't both take the last copy (classic check-then-update race).
+        const claim = await tx.book.updateMany({
+          where: { id: book.id, availableCopies: { gt: 0 } },
+          data: { availableCopies: { decrement: 1 } },
+        });
+        if (claim.count === 0) throw AppError.conflict('لا توجد نسخ متاحة للاستعارة حالياً');
+        // Per-(user, book) active-loan dedupe (audit 15-b P2-3). The check
+        // runs AFTER the copy claim on purpose: the claim's row lock on the
+        // book is the serialization point for every borrow of the same book,
+        // so a same-user transaction that committed while this one waited is
+        // already visible here — the classic find-then-create race is closed
+        // without a schema edit. (Report-only: a partial unique on
+        // (bookId, userId) WHERE status <> 'RETURNED' would make it airtight
+        // at the DB level too.) Throwing rolls the whole transaction back,
+        // so the decremented copy is restored. OVERDUE counts as possession:
+        // nothing flips loans to OVERDUE today, but "still in the borrower's
+        // hands" is "not RETURNED", not "ACTIVE".
+        const activeLoan = await tx.loan.findFirst({
+          where: {
+            bookId: book.id,
+            userId: req.user!.id,
+            status: { in: [LoanStatus.ACTIVE, LoanStatus.OVERDUE] },
+          },
+          select: { id: true },
+        });
+        if (activeLoan) throw AppError.conflict('استعرت هذا الكتاب مسبقاً ولم تُعده بعد');
+        return tx.loan.create({
+          data: {
+            bookId: book.id,
+            userId: req.user!.id,
+            dueAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+          },
+        });
+      });
+      res.status(201).json({ data: result });
+    } catch (e) {
+      next(e);
+    }
+  },
+);
+
+router.post('/library/loans/:id/return', async (req, res, next) => {
+  try {
+    const loan = await prisma.loan.findUnique({
+      where: { id: req.params.id! },
+      select: { id: true, userId: true, bookId: true },
+    });
+    if (!loan || loan.userId !== req.user!.id) throw AppError.notFound();
+    const updated = await prisma.$transaction(async (tx) => {
+      // Claim the return INSIDE the transaction: the updateMany guard means
+      // only one concurrent return can flip ACTIVE → RETURNED; the loser
+      // gets a 409 instead of double-incrementing the book's copies.
+      const claim = await tx.loan.updateMany({
+        where: { id: loan.id, userId: loan.userId, status: LoanStatus.ACTIVE },
+        data: { returnedAt: new Date(), status: LoanStatus.RETURNED },
+      });
+      if (claim.count === 0) throw AppError.conflict('أُعيد هذا الكتاب مسبقاً');
+      // Restore the copy, but never above totalCopies (data-integrity clamp).
+      const book = await tx.book.findUnique({
+        where: { id: loan.bookId },
+        select: { totalCopies: true },
+      });
+      if (!book) throw AppError.notFound('الكتاب غير موجود');
+      await tx.book.updateMany({
+        where: { id: loan.bookId, availableCopies: { lt: book.totalCopies } },
+        data: { availableCopies: { increment: 1 } },
+      });
+      return tx.loan.findUnique({ where: { id: loan.id } });
+    });
+    res.json({ data: updated });
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.get('/me/loans', async (req, res, next) => {
+  try {
+    // Bounded read (audit P2-18): a personal loan history far below
+    // this cap — newest first.
+    const data = await prisma.loan.findMany({
+      where: { userId: req.user!.id },
+      include: { book: true },
+      orderBy: { borrowedAt: 'desc' },
+      take: 100,
+    });
+    res.json({ data });
+  } catch (e) {
+    next(e);
+  }
+});
+
+// ════════════════════════════════════════════════════
+// MOOC
+// ════════════════════════════════════════════════════
+router.get(
+  '/mooc',
+  validate(paginationSchema.extend({ category: z.string().optional() }), 'query'),
+  async (req, res, next) => {
+    try {
+      const { page, limit, q, category } = req.query as unknown as {
+        page: number;
+        limit: number;
+        q?: string;
+        category?: string;
+      };
+      const where = {
+        ...(category ? { category } : {}),
+        ...(q ? { title: { contains: q, mode: 'insensitive' as const } } : {}),
+      };
+      const [data, total] = await Promise.all([
+        prisma.moocCourse.findMany({
+          where,
+          skip: (page - 1) * limit,
+          take: limit,
+          orderBy: { rating: 'desc' },
+        }),
+        prisma.moocCourse.count({ where }),
+      ]);
+      res.json({ data, meta: buildMeta(page, limit, total) });
+    } catch (e) {
+      next(e);
+    }
+  },
+);
+
+router.post('/mooc/:id/enroll', async (req, res, next) => {
+  try {
+    const moocId = req.params.id!;
+    const userId = req.user!.id;
+
+    // Only a NEW enrollment row bumps the counter — a repeat enroll used to
+    // inflate `enrolled` on every call (upsert + unconditional increment).
+    const enroll = async () =>
+      prisma.$transaction(async (tx) => {
+        const existing = await tx.moocEnrollment.findUnique({
+          where: { moocId_userId: { moocId, userId } },
+        });
+        if (existing) return existing;
+        const created = await tx.moocEnrollment.create({ data: { moocId, userId } });
+        await tx.moocCourse.update({ where: { id: moocId }, data: { enrolled: { increment: 1 } } });
+        return created;
+      });
+    try {
+      const enrolled = await enroll();
+      res.status(201).json({ data: enrolled });
+    } catch (e) {
+      // P2002 = a concurrent request created the row first — treat as enrolled.
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
+        const enrolled = await prisma.moocEnrollment.findUniqueOrThrow({
+          where: { moocId_userId: { moocId, userId } },
+        });
+        res.status(201).json({ data: enrolled });
+        return;
+      }
+      throw e;
+    }
+
+  } catch (e) {
+    next(e);
+  }
+});
+
+// ════════════════════════════════════════════════════
+// JOBS
+// ════════════════════════════════════════════════════
+/** The viewer's JobApplication rows for the current jobs page — the
+ * select below projects exactly this (audit 15-d P2-10). */
+export interface ViewerApplicationRow {
+  jobId: string;
+}
+
+/**
+ * GET /jobs payload (audit 15-d P2-10): `appliedJobIds` tells the FE
+ * which jobs on THIS page the viewer already applied to — the
+ * «تمّ التقديم» badge used to be client-local fiction (`useState(false)`
+ * seeded from nothing), lost on every remount while the server-side
+ * upsert kept the application. Reads `jobId` (NOT the application's own
+ * id — the realistic mix-up this extraction pins) and preserves row
+ * order; the (jobId, userId) unique constraint guarantees no duplicates.
+ */
+export function jobsListPayload<T extends { id: string }>(
+  data: readonly T[],
+  total: number,
+  page: number,
+  limit: number,
+  applications: readonly ViewerApplicationRow[],
+): { data: T[]; meta: ReturnType<typeof buildMeta>; appliedJobIds: string[] } {
+  return {
+    data: [...data],
+    meta: buildMeta(page, limit, total),
+    appliedJobIds: applications.map((a) => a.jobId),
+  };
+}
+
+router.get(
+  '/jobs',
+  validate(paginationSchema.extend({ category: z.string().optional() }), 'query'),
+  async (req, res, next) => {
+    try {
+      const { page, limit, q, category } = req.query as unknown as {
+        page: number;
+        limit: number;
+        q?: string;
+        category?: string;
+      };
+      const where = {
+        ...(category ? { category } : {}),
+        ...(q
+          ? {
+              OR: [
+                { title: { contains: q, mode: 'insensitive' as const } },
+                { company: { contains: q, mode: 'insensitive' as const } },
+              ],
+            }
+          : {}),
+      };
+      const [data, total] = await Promise.all([
+        prisma.job.findMany({
+          where,
+          skip: (page - 1) * limit,
+          take: limit,
+          orderBy: { postedAt: 'desc' },
+        }),
+        prisma.job.count({ where }),
+      ]);
+      // Viewer's applications, bounded by the page (≤ limit) — never an
+      // unbounded scan of a user's whole application history (11-c P2-14).
+      // Runs for every authenticated caller: POST /jobs/:id/apply has no
+      // role guard, so truth is not role-gated either.
+      const applications = data.length > 0
+        ? await prisma.jobApplication.findMany({
+            where: { userId: req.user!.id, jobId: { in: data.map((j) => j.id) } },
+            select: { jobId: true },
+          })
+        : [];
+      res.json(jobsListPayload(data, total, page, limit, applications));
+    } catch (e) {
+      next(e);
+    }
+  },
+);
+
+router.post('/jobs/:id/apply', async (req, res, next) => {
+  try {
+    // Unknown jobIds previously surfaced as a P2003 FK error (400
+    // «Related record does not exist») — resolve to a clean 404, the
+    // same shape as POST /library/loans above (audit P2-14).
+    const job = await prisma.job.findUnique({
+      where: { id: req.params.id! },
+      select: { id: true },
+    });
+    if (!job) throw AppError.notFound('الوظيفة غير موجودة');
+    const created = await prisma.jobApplication.upsert({
+      where: { jobId_userId: { jobId: job.id, userId: req.user!.id } },
+      create: { jobId: job.id, userId: req.user!.id },
+      update: {},
+    });
+    res.status(201).json({ data: created });
+  } catch (e) {
+    next(e);
+  }
+});
+
+// ── POSTS (community feed) ────────────────────────────────────────
+// List convention (audit 15-i P1-4): browse-style feeds are paginated
+// (page/limit + meta); only search-as-you-type endpoints are capped.
+// `/posts` follows the paginated rule — the capped twin lives in social.
+//
+/* r179 (phase-5): the community feed is INSTITUTION-SCOPED — list,
+ * create and react all resolve the caller's VERIFIED institution
+ * context first (fail-closed 403 INSTITUTION_CONTEXT_REQUIRED without
+ * one; 403 INSTITUTION_CONTEXT_INVALID on a stale/forged claim) and
+ * filter by Post.institutionId. A foreign post id is a 404 (the same
+ * envelope as a nonexistent id). NOTE: the posts surface lives in
+ * THIS file (not social.routes.ts where the phase-5 map placed it)
+ * — the fix lands here, at the code, per the code-wins canon. */
+async function requireFeedInstitution(userId: string, claim: string | null): Promise<string> {
+  const institutionId = await resolveCallerInstitutionScope(userId, claim);
+  if (!institutionId) {
+    throw new AppError(
+      'INSTITUTION_CONTEXT_REQUIRED',
+      'حدّد المؤسسة أولًا — اختر مؤسستك ثم أعد المحاولة',
+      403,
+    );
+  }
+  return institutionId;
+}
+
+/** Feed row of GET /posts — the Prisma include below. `reactions` holds
+ * ONLY the viewer's own rows (filtered by userId in the query); it is a
+ * derivation helper, folded away before the wire (audit 15-d P2-13). */
+export interface PostFeedRow {
+  id: string;
+  authorId: string;
+  body: string;
+  hashtags: string[];
+  imageUrl: string | null;
+  createdAt: Date;
+  author: { id: string; firstName: string; lastName: string; avatarColor: string | null; avatarInitials: string | null };
+  _count: { comments: number; reactions: number };
+  reactions: ReadonlyArray<{ kind: string }>;
+}
+
+/**
+ * GET /posts list item — the feed row plus the additive `viewerReacted`
+ * flag (audit 15-d P2-13-reaction): the FE heart used to be session-local
+ * state, so a reload un-liked the UI while the server reaction persisted.
+ * True when the viewer has ANY reaction row (like or save) on the post;
+ * the raw rows are stripped from the item.
+ */
+export function postFeedItem(row: PostFeedRow): Omit<PostFeedRow, 'reactions'> & { viewerReacted: boolean } {
+  const { reactions: _viewerRows, ...post } = row;
+  return { ...post, viewerReacted: _viewerRows.length > 0 };
+}
+
+router.get('/posts', validate(paginationSchema, 'query'), async (req, res, next) => {
+  try {
+    const { page, limit, q } = req.query as unknown as { page: number; limit: number; q?: string };
+    // r179 (phase-5): the feed shows the caller's institution's posts
+    // only — the institution filter composes with the body-text filter.
+    const institutionId = await requireFeedInstitution(req.user!.id, req.user!.institutionId);
+    // `q` used to be accepted by the query schema and then silently
+    // ignored — a ?q= search returned the unfiltered page. Apply the
+    // same body-text filter as the other catalog lists (audit P2-8).
+    const where: Prisma.PostWhereInput = {
+      institutionId,
+      ...(q ? { body: { contains: q, mode: 'insensitive' } } : {}),
+    };
+    const [data, total] = await Promise.all([
+      prisma.post.findMany({
+        where,
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          author: { select: { id: true, firstName: true, lastName: true, avatarColor: true, avatarInitials: true } },
+          _count: { select: { comments: true, reactions: true } },
+          // The viewer's own reactions — feeds `viewerReacted` above.
+          reactions: { where: { userId: req.user!.id }, select: { kind: true } },
+        },
+      }),
+      prisma.post.count({ where }),
+    ]);
+    res.json({ data: data.map(postFeedItem), meta: buildMeta(page, limit, total) });
+  } catch (e) {
+    next(e);
+  }
+});
+
+export const createPostSchema = z
+  .object({
+    body: z.string().trim().min(1).max(2000),
+    hashtags: z.array(z.string().trim().min(1).max(40)).max(10).default([]),
+    // r142 (T1a-02): z.string().url() accepts javascript:/data: schemes
+    // (RFC-3986-valid) — guard to the sanctioned-URL policy instead.
+    imageUrl: z.string().trim().max(500)
+      .refine((s) => isSanctionedMediaUrl(s), {
+        message: 'imageUrl must start with https:// or /api/v1/files/papers/ or be a safe same-origin path',
+      })
+      .optional(),
+  })
+  .strict();
+
+router.post('/posts', validate(createPostSchema), async (req, res, next) => {
+  try {
+    // r179 (phase-5): a post is created INSIDE the caller's verified
+    // institution context — also the column the phase-5 base commit
+    // made required, without which this create would have thrown at
+    // runtime (Prisma rejects a missing required field).
+    const institutionId = await requireFeedInstitution(req.user!.id, req.user!.institutionId);
+    const created = await prisma.post.create({
+      data: { ...req.body, authorId: req.user!.id, institutionId },
+    });
+    res.status(201).json({ data: created });
+  } catch (e) {
+    next(e);
+  }
+});
+
+/** Body of POST /posts/:id/react — toggling one reaction kind. */
+export const reactSchema = z.object({ kind: z.enum(['like', 'save']) }).strict();
+
+router.post('/posts/:id/react', validate(reactSchema), async (req, res, next) => {
+  try {
+    // r142 (T1a-04): the DELETE twin checks post existence and 404s;
+    // the POST used to fall into P2003 → 400 «related record not
+    // found» — an inconsistent error contract for the same resource.
+    // r179 (phase-5): the lookup carries the caller's VERIFIED
+    // institution — a foreign institution's post id is a 404 (the
+    // same envelope as a nonexistent id).
+    const institutionId = await requireFeedInstitution(req.user!.id, req.user!.institutionId);
+    const post = await prisma.post.findFirst({
+      where: { id: req.params.id!, institutionId },
+      select: { id: true },
+    });
+    if (!post) throw AppError.notFound('المنشور غير موجود');
+    const created = await prisma.postReaction.upsert({
+      where: { postId_userId_kind: { postId: post.id, userId: req.user!.id, kind: req.body.kind } },
+      create: { postId: post.id, userId: req.user!.id, kind: req.body.kind },
+      update: {},
+    });
+    res.status(201).json({ data: created });
+  } catch (e) {
+    next(e);
+  }
+});
+
+/**
+ * DELETE /posts/:id/react — real un-like/un-save (C4 deferred debt, A5
+ * P2-2 hand-off: the react route was upsert-only, so the FE un-like was
+ * an aria-disabled lie). Mirrors the POST contract exactly — same URL,
+ * same { kind } body — and is OWN-REACTION-ONLY BY CONSTRUCTION: the
+ * (postId, userId, kind) compound key pins the userId to the caller, so
+ * no request can ever address another viewer's reaction (a stronger
+ * guarantee than a runtime 403 ownership check — cross-user deletion
+ * has no code path). 404 when the post is missing or the caller has no
+ * such reaction; 200 {data:{ok:true}} per the platform delete shape
+ * (D17-5 — no 204s). Live-verified: user B's DELETE of A's like 404s
+ * and A's row survives.
+ */
+router.delete('/posts/:id/react', validate(reactSchema), async (req, res, next) => {
+  try {
+    // r179 (phase-5): same verified-institution lookup as the POST —
+    // a foreign institution's post id is a 404 before any write.
+    const institutionId = await requireFeedInstitution(req.user!.id, req.user!.institutionId);
+    const post = await prisma.post.findFirst({
+      where: { id: req.params.id!, institutionId },
+      select: { id: true },
+    });
+    if (!post) throw AppError.notFound('المنشور غير موجود');
+    // Own-row claim only — the where carries the caller's id, so this
+    // can never remove someone else's reaction.
+    const deleted = await prisma.postReaction.deleteMany({
+      where: { postId: post.id, userId: req.user!.id, kind: req.body.kind },
+    });
+    if (deleted.count === 0) throw AppError.notFound('لم تسجّل هذا التفاعل على المنشور');
+    res.json({ data: { ok: true } });
+  } catch (e) {
+    next(e);
+  }
+});
+
+// ════════════════════════════════════════════════════
+// ACHIEVEMENTS / SKILLS / CERTIFICATES (read-mostly for users)
+// ════════════════════════════════════════════════════
+router.get('/me/achievements', async (req, res, next) => {
+  try {
+    const data = await prisma.userAchievement.findMany({
+      where: { userId: req.user!.id },
+      include: { achievement: true },
+      orderBy: { unlockedAt: 'desc' },
+    });
+    res.json({ data });
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.get('/me/skills', async (req, res, next) => {
+  try {
+    const data = await prisma.userSkill.findMany({
+      where: { userId: req.user!.id },
+      include: { skill: true },
+    });
+    res.json({ data });
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.get('/me/certificates', async (req, res, next) => {
+  try {
+    const data = await prisma.certificate.findMany({
+      where: { userId: req.user!.id },
+      orderBy: { createdAt: 'desc' },
+    });
+    res.json({ data });
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.get('/leaderboard', async (req, res, next) => {
+  try {
+    /* r178: StudentProfile is per-membership (user rows no longer carry
+     * the profile) — the top-10 XP board reads the profile table
+     * directly with the user projection folded in.
+     * r179 (phase-5): the board is scoped to the caller's DB-VERIFIED
+     * institution (the profile projection AND the ranking rows — an
+     * institutional caller without a context gets 403, never the
+     * cross-institution mix; the OWNER keeps the platform-wide board).
+     * Points stay platform-global per the r178 decision record — only
+     * the VISIBLE rows are institution-scoped. */
+    const callerInstitution =
+      req.user!.role === Role.OWNER
+        ? null
+        : await resolveCallerInstitutionScope(req.user!.id, req.user!.institutionId);
+    if (req.user!.role !== Role.OWNER && !callerInstitution) {
+      throw institutionContextRequiredError();
+    }
+    const rows = await prisma.studentProfile.findMany({
+      where: callerInstitution ? { institutionId: callerInstitution } : {},
+      orderBy: [{ totalXp: 'desc' }, { userId: 'asc' }],
+      take: 10,
+      select: {
+        totalXp: true,
+        level: true,
+        user: {
+          select: { id: true, firstName: true, lastName: true, avatarInitials: true, avatarColor: true },
+        },
+      },
+    });
+    res.json({
+      data: rows.map((p) => ({
+        id: p.user.id,
+        firstName: p.user.firstName,
+        lastName: p.user.lastName,
+        avatarInitials: p.user.avatarInitials,
+        avatarColor: p.user.avatarColor,
+        totalXp: p.totalXp,
+        level: p.level,
+      })),
+    });
+  } catch (e) {
+    next(e);
+  }
+});
+
+// ════════════════════════════════════════════════════
+// LABS / AR catalog
+// ════════════════════════════════════════════════════
+router.get('/labs', async (_req, res, next) => {
+  try {
+    // Bounded read (audit P2-18) — catalog domain, well below this cap.
+    const data = await prisma.virtualLab.findMany({ orderBy: { name: 'asc' }, take: 200 });
+    res.json({ data });
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.get('/ar-experiences', async (_req, res, next) => {
+  try {
+    // Bounded read (audit P2-18) — catalog domain, well below this cap.
+    const data = await prisma.arExperience.findMany({ orderBy: { title: 'asc' }, take: 200 });
+    res.json({ data });
+  } catch (e) {
+    next(e);
+  }
+});
+
+// ════════════════════════════════════════════════════
+// ADMIN STATS
+// ════════════════════════════════════════════════════
+router.get('/admin/stats', requireRole(Role.ADMIN, Role.OWNER), async (req, res, next) => {
+  try {
+    /* r179 (phase-5): the admin stats are institution-scoped for ADMIN
+     * callers (their DB-verified context pins every count — the user
+     * counts via membership, the catalogue via Course.institutionId,
+     * enrollments via the offering chain); the OWNER keeps the
+     * platform-wide numbers. */
+    const statsInstitution =
+      req.user!.role === Role.OWNER
+        ? null
+        : await resolveCallerInstitutionScope(req.user!.id, req.user!.institutionId);
+    if (req.user!.role !== Role.OWNER && !statsInstitution) {
+      throw institutionContextRequiredError();
+    }
+    const [totalStudents, totalTeachers, totalCourses, totalEnrollments] = await Promise.all([
+      statsInstitution
+        ? prisma.user.count({
+            where: { role: Role.STUDENT, memberships: { some: { institutionId: statsInstitution, isActive: true } } },
+          })
+        : prisma.user.count({ where: { role: Role.STUDENT } }),
+      statsInstitution
+        ? prisma.user.count({
+            where: { role: Role.TEACHER, memberships: { some: { institutionId: statsInstitution, isActive: true } } },
+          })
+        : prisma.user.count({ where: { role: Role.TEACHER } }),
+      statsInstitution
+        ? prisma.course.count({ where: { institutionId: statsInstitution } })
+        : prisma.course.count(),
+      statsInstitution
+        ? prisma.enrollment.count({
+            where: { offering: { course: { institutionId: statsInstitution } } },
+          })
+        : prisma.enrollment.count(),
+    ]);
+    res.json({ data: { totalStudents, totalTeachers, totalCourses, totalEnrollments } });
+  } catch (e) {
+    next(e);
+  }
+});
+
+// ── Admin: faculties with student / teacher / dept / course counts ──
+// r178 (multi-institution): the listing is institution-scoped for
+// ADMIN callers — their DB-verified membership context pins the query
+// (cross-institution faculties/counts never leak into an institutional
+// admin's console). OWNER keeps the platform-wide view and may narrow
+// it with ?institutionSlug= (an unknown/suspended slug matches
+// nothing); every row carries the institution basics either way.
+router.get('/admin/faculties', requireRole(Role.ADMIN, Role.OWNER), async (req, res, next) => {
+  try {
+    let where: Prisma.FacultyWhereInput;
+    if (req.user!.role === Role.OWNER) {
+      const slug =
+        typeof req.query.institutionSlug === 'string' && req.query.institutionSlug.trim().length > 0
+          ? req.query.institutionSlug.trim()
+          : undefined;
+      where = slug ? { institution: { slug, status: 'ACTIVE' } } : {};
+    } else {
+      const callerInstitution = await resolveCallerInstitutionScope(
+        req.user!.id,
+        req.user!.institutionId,
+      );
+      if (!callerInstitution) {
+        throw new AppError(
+          'INSTITUTION_CONTEXT_REQUIRED',
+          'حدّد المؤسسة أولًا — اختر مؤسستك ثم أعد المحاولة',
+          403,
+        );
+      }
+      where = { institutionId: callerInstitution };
+    }
+    const faculties = await prisma.faculty.findMany({
+      where,
+      orderBy: { name: 'asc' },
+      include: {
+        institution: { select: facultyInstitutionSelect },
+        departments: {
+          select: {
+            id: true,
+            name: true,
+            _count: { select: { courses: true, students: true, teachers: true } },
+          },
+        },
+      },
+    });
+
+    const data = faculties.map((f) => {
+      const studentCount = f.departments.reduce((s, d) => s + d._count.students, 0);
+      const teacherCount = f.departments.reduce((s, d) => s + d._count.teachers, 0);
+      const courseCount = f.departments.reduce((s, d) => s + d._count.courses, 0);
+      return {
+        id: f.id,
+        name: f.name,
+        nameEn: f.nameEn,
+        iconEmoji: f.iconEmoji,
+        city: f.city,
+        institution: f.institution,
+        departmentCount: f.departments.length,
+        studentCount,
+        teacherCount,
+        courseCount,
+        departments: f.departments.map((d) => ({
+          id: d.id,
+          name: d.name,
+          students: d._count.students,
+          teachers: d._count.teachers,
+          courses: d._count.courses,
+        })),
+      };
+    });
+
+    res.json({ data });
+  } catch (e) { next(e); }
+});
+
+// ════════════════════════════════════════════════════
+// r180 — ACADEMIC STRUCTURE CREATE (bootstrap dead-end fix)
+// ════════════════════════════════════════════════════
+// The r178 multi-institution model made Faculty/Department
+// institution-owned rows — but only GET routes ever existed on the
+// catalog surface: an institution created by the OWNER had NO API
+// path to build a faculty, so it could never grow a department,
+// course, offering or enrollment. The r180 academic-supply-chain
+// round closes that bootstrap dead-end with institution-scoped
+// POST /admin/faculties and POST /admin/departments.
+
+/**
+ * r180 — resolve the institution an academic-structure WRITE (faculty
+ * / department create) is scoped to, mirroring the GET above:
+ *  - ADMIN: their DB-verified membership context (403
+ *    INSTITUTION_CONTEXT_REQUIRED without one — the fail-closed r179
+ *    phase-5 contract; the token's inst claim is never trusted alone);
+ *  - OWNER: an EXPLICIT ?institutionSlug= query param, resolved to an
+ *    existing ACTIVE institution — the owner console never
+ *    auto-selects an institution (it holds no membership context to
+ *    guess from), so a missing/unknown/suspended slug is a 400 naming
+ *    the fix instead of a silent platform-wide write.
+ */
+async function resolveStructureWriteInstitution(req: {
+  user?: { id: string; role: Role; institutionId: string | null };
+  query: Record<string, unknown>;
+}): Promise<string> {
+  const user = req.user!;
+  if (user.role === Role.OWNER) {
+    const slug =
+      typeof req.query.institutionSlug === 'string' && req.query.institutionSlug.trim().length > 0
+        ? req.query.institutionSlug.trim()
+        : undefined;
+    if (!slug) {
+      throw AppError.badRequest('حدّد المؤسسة عبر institutionSlug قبل إنشاء كليات أو أقسام لها');
+    }
+    const institution = await prisma.institution.findUnique({
+      where: { slug },
+      select: { id: true, status: true },
+    });
+    if (!institution || institution.status !== 'ACTIVE') {
+      throw AppError.badRequest('المؤسسة المحددة غير موجودة أو غير نشطة');
+    }
+    return institution.id;
+  }
+  const callerInstitution = await resolveCallerInstitutionScope(user.id, user.institutionId);
+  if (!callerInstitution) throw institutionContextRequiredError();
+  return callerInstitution;
+}
+
+/** Body of POST /admin/faculties — a faculty is (name, city) inside
+ *  one institution (the @@unique([institutionId, name, city]) key);
+ *  nameEn/iconEmoji are the optional dressing the catalogue reads. */
+export const facultyCreateSchema = z
+  .object({
+    name: z.string().trim().min(1).max(200),
+    nameEn: z.string().trim().max(200).optional(),
+    iconEmoji: z.string().trim().max(10).optional(),
+    city: z.string().trim().min(1).max(100),
+  })
+  .strict();
+
+router.post(
+  '/admin/faculties',
+  requireRole(Role.ADMIN, Role.OWNER),
+  validate(facultyCreateSchema),
+  async (req, res, next) => {
+    try {
+      const data = req.body as z.infer<typeof facultyCreateSchema>;
+      const institutionId = await resolveStructureWriteInstitution(req);
+      /* Create + audit atomically (the offerings POST / pattern — the
+       * structure mutation and its audit trail land together). */
+      const faculty = await prisma.$transaction(async (tx) => {
+        const created = await tx.faculty.create({
+          data: {
+            name: data.name,
+            ...(data.nameEn ? { nameEn: data.nameEn } : {}),
+            ...(data.iconEmoji ? { iconEmoji: data.iconEmoji } : {}),
+            city: data.city,
+            institutionId,
+          },
+          // Institution basics on the wire (the same projection the
+          // GET routes ship) so the created row slots straight into
+          // the FE tables that group faculties by institution.
+          include: { institution: { select: facultyInstitutionSelect } },
+        });
+        await tx.auditLog.create({
+          data: {
+            userId: req.user!.id,
+            institutionId,
+            action: 'FACULTY_CREATED',
+            resourceType: 'Faculty',
+            resourceId: created.id,
+            metadata: { name: created.name, city: created.city },
+          },
+        });
+        return created;
+      });
+      res.status(201).json({ data: faculty });
+    } catch (e) {
+      /* @@unique([institutionId, name, city]): the same faculty name in
+       * the same city of the same institution is a 409 the operator
+       * can act on — the generic P2002 envelope («هذه القيمة
+       * مستخدمة مسبقاً») never says WHICH collision happened. */
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
+        next(AppError.conflict('توجد كلية بهذا الاسم في هذه المدينة لدى مؤسستك بالفعل'));
+        return;
+      }
+      next(e);
+    }
+  },
+);
+
+/** Body of POST /admin/departments — a department is (name) inside one
+ *  faculty (the @@unique([facultyId, name]) key); the faculty's own
+ *  chain (→ institution) carries the scoping. */
+export const departmentCreateSchema = z
+  .object({
+    name: z.string().trim().min(1).max(200),
+    nameEn: z.string().trim().max(200).optional(),
+    facultyId: z.string().cuid(),
+  })
+  .strict();
+
+router.post(
+  '/admin/departments',
+  requireRole(Role.ADMIN, Role.OWNER),
+  validate(departmentCreateSchema),
+  async (req, res, next) => {
+    try {
+      const data = req.body as z.infer<typeof departmentCreateSchema>;
+      const institutionId = await resolveStructureWriteInstitution(req);
+      /* Faculty chain guard (the assertDepartmentInInstitution contract
+       * from courses.routes POST /): the faculty must exist AND belong
+       * to the institution this write is scoped to — a
+       * cross-institution facultyId is a 403, never a silent
+       * cross-institution write. */
+      const faculty = await prisma.faculty.findUnique({
+        where: { id: data.facultyId },
+        select: { id: true, name: true, institutionId: true },
+      });
+      if (!faculty) throw AppError.notFound('الكلية المحددة غير موجودة');
+      if (faculty.institutionId !== institutionId) {
+        throw AppError.forbidden('هذه الكلية تنتمي إلى مؤسسة أخرى');
+      }
+      const department = await prisma.$transaction(async (tx) => {
+        const created = await tx.department.create({
+          data: {
+            name: data.name,
+            ...(data.nameEn ? { nameEn: data.nameEn } : {}),
+            facultyId: faculty.id,
+          },
+          // Faculty basics on the wire — the created row slots straight
+          // into the FE department tables keyed by faculty.
+          include: { faculty: { select: { id: true, name: true, city: true } } },
+        });
+        await tx.auditLog.create({
+          data: {
+            userId: req.user!.id,
+            institutionId,
+            action: 'DEPARTMENT_CREATED',
+            resourceType: 'Department',
+            resourceId: created.id,
+            metadata: { name: created.name, facultyId: faculty.id },
+          },
+        });
+        return created;
+      });
+      res.status(201).json({ data: department });
+    } catch (e) {
+      /* @@unique([facultyId, name]): the same department name in the
+       * same faculty is a 409 the operator can act on. */
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
+        next(AppError.conflict('يوجد قسم بهذا الاسم في هذه الكلية بالفعل'));
+        return;
+      }
+      next(e);
+    }
+  },
+);
+
+// ── Pure logic: /admin/reports folds (exported for DB-free tests) ──
+
+/** The /admin/reports projection of a research paper — just the three
+ *  activity timestamps the trend buckets are built from. */
+export type PaperTrendInput = {
+  uploadedAt: Date;
+  gradedAt: Date | null;
+  publishedAt: Date | null;
+};
+
+export type PaperTrendBucket = { month: string; submitted: number; graded: number; published: number };
+
+/**
+ * Last-`bucketCount` monthly paper-activity buckets, oldest → newest.
+ * `monthStart(n)` must return the FIRST instant of the month `n` months
+ * before "now" (the route passes its local-calendar closure). Bucket i is
+ * the half-open range [start, end): a paper timestamped exactly at a
+ * boundary belongs to the newer bucket, and null gradedAt/publishedAt
+ * never count in those dimensions.
+ */
+export function buildPaperTrend(
+  papers: readonly PaperTrendInput[],
+  monthStart: (monthsAgo: number) => Date,
+  bucketCount = 6,
+): PaperTrendBucket[] {
+  return Array.from({ length: bucketCount }, (_, i) => {
+    const start = monthStart(bucketCount - 1 - i);
+    const end = monthStart(bucketCount - 2 - i);
+    const label = start.toLocaleDateString('ar-LY', { month: 'short' });
+    const submitted = papers.filter((p) => p.uploadedAt >= start && p.uploadedAt < end).length;
+    const graded = papers.filter((p) => p.gradedAt !== null && p.gradedAt >= start && p.gradedAt < end).length;
+    const published = papers.filter((p) => p.publishedAt !== null && p.publishedAt >= start && p.publishedAt < end).length;
+    return { month: label, submitted, graded, published };
+  });
+}
+
+/** The /admin/reports offering projection folded by `topCoursesByEnrollments`. */
+export type TopCourseOfferingInput = {
+  courseId: string;
+  course: { name: string; code: string };
+  _count: { enrollments: number; lectures: number };
+};
+
+export type CourseEnrollmentStat = { code: string; name: string; enrollments: number; lectures: number };
+
+/**
+ * Fold bounded offering rows into per-COURSE totals so a multi-offering
+ * course occupies ONE row (per-course code/name comes from the FIRST row
+ * seen), ranked by total enrollments with a code tie-break that keeps the
+ * order stable, capped at `max` rows (the admin table renders the top 8).
+ */
+export function topCoursesByEnrollments(
+  offerings: readonly TopCourseOfferingInput[],
+  max = 8,
+): CourseEnrollmentStat[] {
+  const byCourse = new Map<string, CourseEnrollmentStat>();
+  for (const o of offerings) {
+    const row =
+      byCourse.get(o.courseId) ??
+      { code: o.course.code, name: o.course.name, enrollments: 0, lectures: 0 };
+    row.enrollments += o._count.enrollments;
+    row.lectures += o._count.lectures;
+    byCourse.set(o.courseId, row);
+  }
+  return Array.from(byCourse.values())
+    .sort((a, b) => b.enrollments - a.enrollments || a.code.localeCompare(b.code))
+    .slice(0, max);
+}
+
+// ── Admin: institutional reports
+router.get('/admin/reports', requireRole(Role.ADMIN, Role.OWNER), async (req, res, next) => {
+  try {
+    /* r179 (phase-5): the reports bundle is institution-scoped for
+     * ADMIN callers (their DB-verified context — 403 without one);
+     * OWNER keeps the platform-wide view and may narrow it with
+     * ?institutionSlug= (an unknown/suspended slug matches nothing,
+     * mirroring /admin/faculties). */
+    let reportsInstitution: string | null;
+    if (req.user!.role === Role.OWNER) {
+      const slug =
+        typeof req.query.institutionSlug === 'string' && req.query.institutionSlug.trim().length > 0
+          ? req.query.institutionSlug.trim()
+          : null;
+      if (slug) {
+        const institutions = await prisma.institution.findMany({
+          where: { slug, status: 'ACTIVE' },
+          select: { id: true },
+        });
+        // An unknown slug matches nothing (consistent with the public
+        // /faculties filter — never a 404 on an aggregate view).
+        reportsInstitution = institutions[0]?.id ?? 'no-such-institution';
+      } else {
+        reportsInstitution = null;
+      }
+    } else {
+      reportsInstitution = await resolveCallerInstitutionScope(
+        req.user!.id,
+        req.user!.institutionId,
+      );
+      if (!reportsInstitution) throw institutionContextRequiredError();
+    }
+    const now = new Date();
+    const monthStart = (n: number) => {
+      const d = new Date(now.getFullYear(), now.getMonth() - n, 1);
+      return d;
+    };
+
+    // 1) Paper publishing trend — last 6 months
+    // (r179: institution-pinned via ResearchPaper.institutionId)
+    const sixMonthsAgo = monthStart(5);
+    const allRecentPapers = await prisma.researchPaper.findMany({
+      where: {
+        ...(reportsInstitution ? { institutionId: reportsInstitution } : {}),
+        OR: [
+          { publishedAt: { gte: sixMonthsAgo } },
+          { gradedAt: { gte: sixMonthsAgo } },
+          { uploadedAt: { gte: sixMonthsAgo } },
+        ],
+      },
+      select: { publishedAt: true, gradedAt: true, uploadedAt: true },
+    });
+
+    const monthBuckets = buildPaperTrend(allRecentPapers, monthStart);
+
+    // 2) Top courses — ranked by TOTAL enrollments across their
+    //    offerings, aggregated per course so a multi-offering course
+    //    occupies ONE row (the old per-offering rows duplicated course
+    //    codes in the admin table). The metric is enrollment count,
+    //    matching the admin UI's «أكثر المقررات تسجيلاً» label — NOT a
+    //    completion rate (audit P2-22). Bounded to the 50 most recent
+    //    offerings; code tie-break keeps the top-8 stable.
+    const offerings = await prisma.courseOffering.findMany({
+      where: reportsInstitution
+        ? { course: { institutionId: reportsInstitution } }
+        : {},
+      select: {
+        courseId: true,
+        course: { select: { name: true, code: true } },
+        _count: { select: { enrollments: true, lectures: true } },
+      },
+      take: 50,
+      orderBy: { createdAt: 'desc' },
+    });
+    const courseStats = topCoursesByEnrollments(offerings);
+
+    // 3) Headline counts (r179: institution-pinned — users via
+    // membership, papers via ResearchPaper.institutionId)
+    const [totalPapers, publishedPapers, totalUsers, activeStudents] = await Promise.all([
+      reportsInstitution
+        ? prisma.researchPaper.count({ where: { institutionId: reportsInstitution } })
+        : prisma.researchPaper.count(),
+      reportsInstitution
+        ? prisma.researchPaper.count({ where: { status: 'PUBLISHED', institutionId: reportsInstitution } })
+        : prisma.researchPaper.count({ where: { status: 'PUBLISHED' } }),
+      reportsInstitution
+        ? prisma.user.count({
+            where: { memberships: { some: { institutionId: reportsInstitution, isActive: true } } },
+          })
+        : prisma.user.count(),
+      reportsInstitution
+        ? prisma.user.count({
+            where: {
+              role: Role.STUDENT,
+              memberships: { some: { institutionId: reportsInstitution, isActive: true } },
+            },
+          })
+        : prisma.user.count({ where: { role: Role.STUDENT } }),
+    ]);
+
+    res.json({
+      data: {
+        headline: { totalPapers, publishedPapers, totalUsers, activeStudents },
+        paperTrend: monthBuckets,
+        topCourses: courseStats,
+      },
+    });
+  } catch (e) { next(e); }
+});
+
+// ── Admin: courses list with full counts ─────────────────────
+// NOTE: `offerings` here is a PREVIEW (3 most recent, for the
+// recentOfferings column only) — per-course totals are computed from
+// a second bounded query over ALL of the page's courses' offerings,
+// so courses with 4+ offerings are no longer undercounted (P2-7).
+const adminCourseInclude = Prisma.validator<Prisma.CourseInclude>()({
+  department: { select: { id: true, name: true, faculty: { select: { name: true, iconEmoji: true } } } },
+  _count: { select: { offerings: true, concepts: true } },
+  offerings: {
+    select: {
+      id: true,
+      term: true,
+      _count: { select: { enrollments: true, lectures: true } },
+      teacher: { select: { firstName: true, lastName: true } },
+    },
+    orderBy: { term: 'desc' },
+    take: 3,
+  },
+});
+
+/**
+ * GET /admin/courses query envelope (audit 5-A8 P2-1, backend half):
+ * the shared pagination schema (page/limit≤100/q≤120) plus a `facultyId`
+ * filter. `q` used to be accepted by paginationSchema and then silently
+ * ignored by the handler — the same accepted-but-ignored bug class the
+ * /posts fix closed (audit P2-8) — so it now really filters (course code
+ * or name, case-insensitive). Exported for unit tests.
+ */
+export const adminCoursesQuerySchema = paginationSchema.extend({
+  facultyId: z.string().cuid().optional(),
+  // r181 (phase-8 owner setup): the OWNER console's institution-
+  // scoped catalogue view (the /admin/faculties convention — unknown/
+  // suspended slug matches nothing; ADMIN callers keep their DB-
+  // verified scope and the param is ignored for them).
+  institutionSlug: z.string().trim().min(1).max(64).optional(),
+});
+
+/**
+ * The /admin/courses list filter (5-A8 P2-1 / §5 row 4): a search term
+ * matches course code OR name; a faculty filter matches through the
+ * course's home department. Empty params → {} → the unfiltered list the
+ * endpoint always shipped (backward compatible). Exported for unit tests.
+ */
+export function adminCoursesWhere(
+  q: string | undefined,
+  facultyId: string | undefined,
+): Prisma.CourseWhereInput {
+  return {
+    ...(q
+      ? {
+          OR: [
+            { code: { contains: q, mode: 'insensitive' } },
+            { name: { contains: q, mode: 'insensitive' } },
+          ],
+        }
+      : {}),
+    ...(facultyId ? { department: { facultyId } } : {}),
+  };
+}
+
+router.get(
+  '/admin/courses',
+  requireRole(Role.ADMIN, Role.OWNER),
+  validate(adminCoursesQuerySchema, 'query'),
+  async (req, res, next) => {
+    try {
+      const { page, limit, q, facultyId, institutionSlug } = req.query as unknown as {
+        page: number;
+        limit: number;
+        q?: string;
+        facultyId?: string;
+        institutionSlug?: string;
+      };
+      /* r179 (phase-5): the admin course catalogue is institution-scoped
+       * for ADMIN callers (their DB-verified context ANDs
+       * Course.institutionId onto the filters — a foreign facultyId
+       * simply matches nothing; 403 without a context). OWNER keeps
+       * the platform-wide catalogue — and may narrow it with
+       * ?institutionSlug= since r181: the public GET /courses `in`-list
+       * convention (an unknown/suspended slug matches NOTHING — never
+       * a silent fall-back to the platform-wide view). */
+      let ownerSlugIds: string[] | null = null;
+      let adminInstitution: string | null = null;
+      if (req.user!.role === Role.OWNER) {
+        if (institutionSlug) {
+          const slugInstitutions = await prisma.institution.findMany({
+            where: { slug: institutionSlug, status: 'ACTIVE' },
+            select: { id: true },
+          });
+          ownerSlugIds = slugInstitutions.map((i) => i.id);
+        }
+      } else {
+        adminInstitution = await resolveCallerInstitutionScope(
+          req.user!.id,
+          req.user!.institutionId,
+        );
+      }
+      if (req.user!.role !== Role.OWNER && !adminInstitution) {
+        throw institutionContextRequiredError();
+      }
+      // Server-side filters (5-A8 P2-1) — and the SAME where feeds the
+      // count, so meta.total is the filtered total the FE pagination
+      // footer needs (it used to be the global course count even when a
+      // filter was applied, breaking every page count after page 1).
+      const where: Prisma.CourseWhereInput = {
+        ...adminCoursesWhere(q, facultyId),
+        ...(adminInstitution ? { institutionId: adminInstitution } : {}),
+        ...(ownerSlugIds ? { institutionId: { in: ownerSlugIds } } : {}),
+      };
+      const [courses, total] = await Promise.all([
+        prisma.course.findMany({
+          where,
+          skip: (page - 1) * limit,
+          take: limit,
+          orderBy: [{ code: 'asc' }],
+          include: adminCourseInclude,
+        }),
+        prisma.course.count({ where }),
+      ]);
+
+      // Real per-course totals across ALL of each course's offerings
+      // (count aggregation, not hydration) — summing the take:3 preview
+      // above undercounted courses with more offerings (audit P2-7).
+      const courseIds = courses.map((c) => c.id);
+      const offeringTotals = courseIds.length
+        ? await prisma.courseOffering.findMany({
+            where: { courseId: { in: courseIds } },
+            select: {
+              courseId: true,
+              _count: { select: { enrollments: true, lectures: true, materials: true } },
+            },
+          })
+        : [];
+      const totalsByCourse = new Map<
+        string,
+        { enrollments: number; lectures: number; materials: number }
+      >();
+      for (const o of offeringTotals) {
+        const t = totalsByCourse.get(o.courseId) ?? { enrollments: 0, lectures: 0, materials: 0 };
+        t.enrollments += o._count.enrollments;
+        t.lectures += o._count.lectures;
+        t.materials += o._count.materials;
+        totalsByCourse.set(o.courseId, t);
+      }
+
+      const data = courses.map((c) => {
+        const totals = totalsByCourse.get(c.id) ?? { enrollments: 0, lectures: 0, materials: 0 };
+        return {
+          id: c.id,
+          code: c.code,
+          name: c.name,
+          credits: c.credits,
+          themeColor: c.themeColor,
+          faculty: c.department?.faculty?.name ?? null,
+          facultyEmoji: c.department?.faculty?.iconEmoji ?? null,
+          department: c.department?.name ?? null,
+          // r153i: the edit form resolves the department by ID, not by
+          // name — department names are only unique PER FACULTY
+          // (@@unique([facultyId, name])) and the seed really has two
+          // same-named science departments, so name-matching could
+          // silently re-assign a course to the wrong faculty.
+          departmentId: c.department?.id ?? null,
+          offeringCount: c._count.offerings,
+          conceptCount: c._count.concepts,
+          totalEnrollments: totals.enrollments,
+          totalLectures: totals.lectures,
+          totalMaterials: totals.materials,
+          recentOfferings: c.offerings.map((o) => ({
+            id: o.id,
+            term: o.term,
+            enrollments: o._count.enrollments,
+            lectures: o._count.lectures,
+            teacher: o.teacher ? `${o.teacher.firstName} ${o.teacher.lastName}` : null,
+          })),
+        };
+      });
+
+    res.json({ data, meta: buildMeta(page, limit, total) });
+  } catch (e) { next(e); }
+});
+
+export default router;

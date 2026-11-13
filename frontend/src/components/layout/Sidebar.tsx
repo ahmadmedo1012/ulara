@@ -1,0 +1,537 @@
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { LogOut, ChevronsLeft, ChevronsRight, ChevronDown, X, Compass } from 'lucide-react';
+import { Icon } from '../Icon';
+import { Logo } from '../../brand';
+import { UserAvatar } from '../primitives';
+import { Tooltip } from '../overlays';
+import { useOverlayRegistration } from '../overlays/useOverlayRegistration';
+import { FOCUSABLE_SELECTOR } from '../overlays/useFocusTrap';
+import { ThemeToggle } from './ThemeToggle';
+import { useAuthStore } from '../../stores/auth.store';
+import { useLogout, useMe } from '../../hooks/useAuth';
+// R325 §R325.m (P2.3): the sidebar footer's role-identity seat — the
+// same accent key AppShell stamps on <body data-role> (useRoleAccent)
+// + the mono code table (STU/FAC/DPT/DEA/ADM/QUA/OWN). The PATTERN
+// chip selects its --app-role-pat-* seat in r325-shell.css via
+// [data-role] — one identity recipe, no new colours.
+import { useRoleAccent, ROLE_ACCENT_CODES } from '../../hooks/useRoleAccent';
+import { useOnboardingStore } from '../../stores/onboarding.store';
+import { useUiStore } from '../../stores/ui.store';
+import { acquireScrollLock, releaseScrollLock } from '../../lib/scrollLock';
+import { overlayStack } from '../../lib/overlayStack';
+import { NAV_BY_ROLE, displayRoleLabel, type NavGroup } from '../../lib/nav';
+
+export function Sidebar() {
+  const user = useAuthStore((s) => s.user);
+  const me = useMe();
+  const sidebarOpen = useUiStore((s) => s.sidebarOpen);
+  const closeSidebar = useUiStore((s) => s.closeSidebar);
+  const sidebarCollapsed = useUiStore((s) => s.sidebarCollapsed);
+  const toggleSidebarCollapsed = useUiStore((s) => s.toggleSidebarCollapsed);
+  const logout = useLogout();
+  const navigate = useNavigate();
+  // R325 §R325.m: the identity key (pattern + mono code) for the
+  // footer's role seat. Shared cache with AppShell's own useRoleAccent
+  // call — no second /auth/me request (react-query dedupes).
+  const accentKey = useRoleAccent();
+  // Replay trigger writes the shared onboarding store directly — the
+  // same store <OnboardingFlow /> renders from (audit 0-f P0-2 fix).
+  const startOnboarding = useOnboardingStore((s) => s.start);
+
+  // Register the mobile drawer as an overlay layer while open
+  // (15-g P2-7 — the 'sidebar-drawer' kind was reserved in
+  // lib/overlayStack.ts). Membership makes the drawer participate in
+  // the platform's Escape choreography (see the Esc effect below) and
+  // automatically inerts every document-level chord (⌘K, "/", Ctrl+B)
+  // while the drawer owns the screen — the same contract as a modal.
+  const drawerId = useOverlayRegistration(sidebarOpen, 'sidebar-drawer');
+
+  // ── Drawer focus containment (5-B5, A4 P2-5) ─────────────────────
+  // The mobile drawer is a side sheet (012 elevation-language), so it
+  // must hold focus while it owns the screen — A4 measured 6/6 Tab
+  // presses escaping behind the scrim, and focus never entered the
+  // drawer on open (activeElement stayed on the burger). The shared
+  // useFocusTrap primitive bundles registration + scroll lock + Esc,
+  // all three of which the drawer already owns above — mounting it
+  // would double-stack the layer. This effect adds exactly the two
+  // missing behaviors under the same contract: initial focus on the
+  // close button with restore-on-close (Sheet parity), and Tab
+  // cycling while the drawer is the topmost layer. Desktop never
+  // sees the drawer (the sidebar is persistent chrome there), so the
+  // band gate keeps resize edge-cases from trapping Tab in the rail.
+  const asideRef = useRef<HTMLElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const [drawerBand, setDrawerBand] = useState(
+    () =>
+      typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(max-width: 920px)').matches,
+  );
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return;
+    const mq = window.matchMedia('(max-width: 920px)');
+    const onChange = () => setDrawerBand(mq.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+
+  // ── Ghost drawer (r157, 6A4-3) ────────────────────────────
+  // The drawer's CSS only exists inside the ≤920px band. When the
+  // user resizes/rotates past 920px while the drawer is open, the
+  // 'open' class used to survive the band flip: no drawer rendered
+  // (desktop sidebar chrome took over) yet the scroll lock stayed
+  // held, the overlay-stack layer stayed registered (⌘K stayed
+  // inert!), and the burger's aria-expanded kept announcing a drawer
+  // no one could see or close. Close it the moment the band leaves
+  // while open — resizing back re-opens nothing (same as Esc).
+  useEffect(() => {
+    if (drawerBand || !sidebarOpen) return;
+    closeSidebar();
+  }, [drawerBand, sidebarOpen, closeSidebar]);
+
+  useEffect(() => {
+    if (!sidebarOpen || !drawerBand) return;
+    const previousActive = document.activeElement as HTMLElement | null;
+    const t = window.setTimeout(() => { closeBtnRef.current?.focus(); }, 0);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return;
+      // An anchored layer opened above the drawer (dropdown, notif
+      // panel) owns Tab — the same topmost-only rule the Esc effect
+      // and useFocusTrap follow.
+      if (!overlayStack.isTop(drawerId)) return;
+      const root = asideRef.current;
+      if (!root) return;
+      const all = Array.from(root.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR));
+      // offsetParent is null for display:none chrome (the desktop-only
+      // collapse button) — real browsers filter it out of the cycle.
+      // jsdom has no layout engine (always null), so fall back to the
+      // raw list there — boundary math still holds on DOM order.
+      const visible = all.filter((el) => el.offsetParent !== null);
+      const nodes = visible.length > 0 ? visible : all;
+      if (nodes.length === 0) { e.preventDefault(); return; }
+      const first = nodes[0]!;
+      const last = nodes[nodes.length - 1]!;
+      const active = document.activeElement;
+      // Body-focus leak reclaim (15-g P2-2): a click on non-focusable
+      // drawer chrome parks focus on <body> — pull it back inside
+      // instead of letting Tab walk the app behind the scrim.
+      if (!(active instanceof Node) || !root.contains(active)) {
+        e.preventDefault();
+        (e.shiftKey ? last : first).focus();
+        return;
+      }
+      if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener('keydown', onKey, true);
+    return () => {
+      window.clearTimeout(t);
+      document.removeEventListener('keydown', onKey, true);
+      previousActive?.focus?.();
+    };
+    // (r134 lint adoption: the old `eslint-disable-next-line
+    // react-hooks/exhaustive-deps` here became an unused directive under
+    // the adopted plugin version — removed.)
+  }, [sidebarOpen, drawerBand, drawerId]);
+
+  // Lock body scroll only while the mobile drawer is open. Goes through
+  // the shared ref-counted lock (lib/scrollLock, 11-e P2-12) so a drawer
+  // cycle can no longer silently drop a modal's lock: the old inline
+  // `body.style.overflow` write clobbered whatever useFocusTrap had saved.
+  useEffect(() => {
+    if (!sidebarOpen) return;
+    acquireScrollLock('sidebar-drawer');
+    return () => releaseScrollLock('sidebar-drawer');
+  }, [sidebarOpen]);
+
+  // Close mobile drawer on Escape so users always have an easy out.
+  // 15-g P2-7: the drawer answers Escape ONLY as the topmost stack
+  // layer and consumes the key (capture phase + stopImmediatePropagation
+  // — the same mechanics useFocusTrap/Dropdown use), so an overlay
+  // opened above the drawer owns the press and the drawer no longer
+  // closes out from under a layer the user is interacting with.
+  useEffect(() => {
+    if (!sidebarOpen) return;
+    const onEsc = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      if (!overlayStack.isTop(drawerId)) return;
+      e.stopImmediatePropagation();
+      closeSidebar();
+    };
+    document.addEventListener('keydown', onEsc, true);
+    return () => document.removeEventListener('keydown', onEsc, true);
+  }, [sidebarOpen, closeSidebar, drawerId]);
+
+  /* ── Collapsible nav groups (r183-B7, A4 P2-3) ────────────────────
+     Groups flagged `collapsed` in nav.ts render as ONE toggle row in
+     the full-label sidebar (drawer + desktop) so the student drawer's
+     default scrollHeight stays ≤2 screens at 390px. Two rules:
+       - the group AUTO-EXPANDS while one of its routes is the active
+         page (the sidebar's single active marker must never hide
+         behind a collapsed header — A4's «كل مسار له علامة جانبية
+         واحدة» contract);
+       - a user toggle is sticky for the sidebar's life and beats the
+         derived default (deliberately collapsing your own active
+         group is allowed).
+     The icon rail ignores the accordion: it renders every item as an
+     icon anyway, and a chevron row in a 64px rail would be a dead
+     control. */
+  const location = useLocation();
+  const [groupOverrides, setGroupOverrides] = useState<Record<string, boolean>>({});
+  const toggleGroup = (label: string, next: boolean) => {
+    setGroupOverrides((prev) => ({ ...prev, [label]: next }));
+  };
+  const isGroupActive = (g: NavGroup) =>
+    g.items.some(
+      (it) => location.pathname === it.to || location.pathname.startsWith(`${it.to}/`),
+    );
+
+  // Reflect collapse state on the shell so the grid track resizes.
+  // Toggled on documentElement so any descendent (topbar, etc.) can read it.
+  // 5-C3 (A9 P1-2 residual, live-measured): this ran in useEffect, so
+  // the FIRST shell paint rendered the .has-shell grid with the
+  // expanded default track (no attribute yet) and the attribute then
+  // animated the track 240px→64px AFTER paint — a cascade of
+  // layout-shift entries under the whole content column whenever the
+  // shell chunk resolved past the first frame (measured CLS up to
+  // 0.242 on /teacher/assignments, intermittent by chunk timing).
+  // useLayoutEffect lands the attribute before the browser ever
+  // paints the shell, so a returning user's persisted collapsed state
+  // applies from pixel one — exactly like the pre-paint theme script.
+  // User-initiated toggles still animate (the .has-shell transition
+  // is the sanctioned structural-resize exception, 5-C1).
+  useLayoutEffect(() => {
+    const root = document.documentElement;
+    if (sidebarCollapsed) root.setAttribute('data-sidebar-collapsed', '');
+    else root.removeAttribute('data-sidebar-collapsed');
+  }, [sidebarCollapsed]);
+
+  // Cmd/Ctrl+B toggles the desktop collapse (Notion-style).
+  // 15-e P1-4: inert while ANY overlay layer is open — the same guard
+  // ⌘K uses (GlobalSearch) — so a keyboard user focused on a dialog
+  // never toggles shell state behind the scrim. This now also covers
+  // the mobile drawer itself (registered above): while the drawer is
+  // open, the chord belongs to the overlay layer, not the shell.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && (e.key === 'b' || e.key === 'B')) {
+        if (!overlayStack.isEmpty()) return;
+        const t = e.target as HTMLElement | null;
+        if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+        e.preventDefault();
+        toggleSidebarCollapsed();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [toggleSidebarCollapsed]);
+
+  if (!user) return null;
+  const groups = NAV_BY_ROLE[user.role];
+  const initials = user.avatarInitials ?? `${user.firstName[0] ?? ''}${user.lastName[0] ?? ''}`;
+
+  // Composite role label that surfaces leadership appointments inline.
+  const position = me.data?.teacherProfile?.position ?? null;
+  const positionFacultyName = me.data?.teacherProfile?.positionFaculty?.name ?? null;
+  const roleLabel = displayRoleLabel(user.role, position, positionFacultyName);
+
+  const cls = [
+    'sidebar',
+    sidebarOpen ? 'open' : '',
+    sidebarCollapsed ? 'collapsed' : '',
+  ].filter(Boolean).join(' ');
+
+  return (
+    <>
+      {/* r143 (T1-f F3): <nav>, not <aside> — the sidebar is the
+          PRIMARY navigation surface on desktop (the <nav> bottom-bar
+          is display:none >640px), and aside landmarks don't show under
+          the NVDA/JAWS navigation list. No CSS impact: every rule
+          targets .sidebar, never the tag. */}
+      {/* (r157 6A4-8: data-collapsed attribute dropped — the collapse
+          channel consumers read is html[data-sidebar-collapsed],
+          written by the useLayoutEffect above; this attr had zero
+          readers.) */}
+      <nav ref={asideRef} className={cls} aria-label="القائمة الرئيسية">
+        <div className="sidebar-brand">
+          <div className="sidebar-brand-mark">
+            <Logo variant="mark" size={24} />
+          </div>
+          <div className="sidebar-brand-text">
+            <div className="sidebar-brand-name">أُلارا</div>
+            <div className="sidebar-brand-sub">نظام تشغيل الجامعة</div>
+          </div>
+          {/* Desktop: collapse / expand */}
+          <button
+            type="button"
+            className="sidebar-collapse-btn hide-on-mobile"
+            onClick={toggleSidebarCollapsed}
+            aria-label={sidebarCollapsed ? 'توسعة القائمة' : 'طيّ القائمة'}
+            title={sidebarCollapsed ? 'توسعة القائمة (Ctrl+B)' : 'طيّ القائمة (Ctrl+B)'}
+          >
+            <Icon icon={sidebarCollapsed ? ChevronsLeft : ChevronsRight} size={14} />
+          </button>
+          {/* Mobile: explicit close button (always visible inside drawer) */}
+          <button
+            ref={closeBtnRef}
+            type="button"
+            className="sidebar-mobile-close"
+            onClick={closeSidebar}
+            aria-label="إغلاق القائمة"
+            title="إغلاق"
+          >
+            <Icon icon={X} size={18} />
+          </button>
+        </div>
+
+        {/* 4-A2 P1-2: the nav groups live in their own .sidebar-nav
+            scroller so the footer below stays PINNED — the whole
+            .sidebar used to be the scroll container, which pushed the
+            account cluster (logout / theme / tour) below the fold in
+            every shell state (footer y=924+ on a 900px viewport).
+            Descendant selectors (drawer stagger, tooltips) are
+            unaffected: the .nav-group elements stay siblings inside
+            this wrapper. */}
+        <div className="sidebar-nav">
+          {groups.map((g) => {
+            /* r183-B7 (accordion-band fix): the accordion applies in
+               the full-label sidebar — the mobile DRAWER (drawerBand,
+               ≤920px, where the .collapsed class is inert CSS: drawer
+               styles are band-scoped) and the desktop EXPANDED
+               sidebar. The original `!sidebarCollapsed` gate read the
+               desktop ICON-RAIL preference, which DEFAULTS to true —
+               so a fresh user never saw the accordion in the drawer
+               and the re-cut had no effect (measured 1841px). */
+            const accordion = g.collapsed === true && (drawerBand || !sidebarCollapsed);
+            const groupOpen = groupOverrides[g.label] ?? (!accordion || isGroupActive(g));
+            return (
+            <div
+              className="nav-group"
+              key={g.label}
+              /* r305 (the reference markup pass, task 2-a): state hooks on the
+                 group wrapper, not a DOM redesign — data-nav-group marks
+                 the group for the shell CSS, and the accordion groups
+                 expose their derived state as data-collapsible /
+                 data-group-open so r305-shell.css can style the toggle,
+                 its stagger and its states without reaching into JS.
+                 aria-expanded on the toggle below stays the a11y source
+                 of truth (states-truthful contract); these attributes
+                 mirror it for selectors only. Everything else — classes,
+                 inline presentation, behavior — is untouched. */
+              data-nav-group=""
+              data-collapsible={accordion ? 'true' : undefined}
+              data-group-open={accordion ? (groupOpen ? 'true' : 'false') : undefined}
+            >
+              {accordion ? (
+                /* The section label becomes the disclosure toggle —
+                   same look (the .nav-section-label class carries the
+                   type styling), plus a rotating chevron (the
+                   AdminPages faculty-card precedent) and the drawer
+                   band's 44px touch floor. Inline resets only: no new
+                   stylesheet rules (CSS files are frozen for this
+                   wave). */
+                <button
+                  type="button"
+                  className="nav-section-label nav-group-toggle"
+                  aria-expanded={groupOpen}
+                  onClick={() => toggleGroup(g.label, !groupOpen)}
+                  title={groupOpen ? `طيّ ${g.label}` : `توسيع ${g.label}`}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 'var(--sp-2)',
+                    width: '100%',
+                    minBlockSize: '44px',
+                    marginBlockEnd: 'var(--sp-1)',
+                    background: 'none',
+                    border: 0,
+                    padding: '0 var(--sp-3)',
+                    font: 'inherit',
+                    fontWeight: 'var(--fw-semibold)',
+                    letterSpacing: 'inherit',
+                    color: 'inherit',
+                    cursor: 'pointer',
+                    textAlign: 'start',
+                    borderRadius: 'var(--r-sm)',
+                  }}
+                >
+                  <span style={{ flex: 1, textAlign: 'start', minWidth: 0 }}>{g.label}</span>
+                  <Icon
+                    icon={ChevronDown}
+                    size={14}
+                    aria-hidden
+                    style={{
+                      color: 'var(--text-muted)',
+                      flexShrink: 0,
+                      transition: 'transform var(--t-base) var(--ease)',
+                      transform: groupOpen ? 'rotate(180deg)' : 'none',
+                    }}
+                  />
+                </button>
+              ) : (
+                <div className="nav-section-label">{g.label}</div>
+              )}
+              {groupOpen && g.items.map((item) => {
+                const link = (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    /* r183-B7 (overlay history): while the drawer is
+                       open, a nav click lands on the drawer's own
+                       marker history entry — REPLACE it instead of
+                       pushing above it, so the entry is consumed by
+                       the navigation itself and browser Back returns
+                       to the pre-drawer page (no stranded marker, no
+                       dead back press). The desktop sidebar keeps
+                       normal pushes (sidebarOpen is false there — the
+                       ghost-drawer effect guarantees it). */
+                    replace={sidebarOpen}
+                    className={({ isActive }) => `nav-item${isActive ? ' on' : ''}`}
+                    onClick={closeSidebar}
+                    /* Collapsed rail a11y (axe link-name, serious): the
+                       visible .nav-label is display:none when collapsed and
+                       the portaled Tooltip only wires aria-describedby —
+                       a description, not an accessible name. aria-label
+                       restores the name exactly when the text is hidden. */
+                    aria-label={sidebarCollapsed ? item.label : undefined}
+                  >
+                    {/* R325 (P2.3): the ink fill-wipe layer — a solid
+                        var(--app-ink) slab under the row's content that
+                        sweeps in via scaleX (200ms, --t-fast) when the
+                        route activates; r325-shell.css owns the recipe
+                        (the r305 ::after stand-down is untouched — this
+                        is a dedicated child, not a pseudo-element). */}
+                    <span className="nav-fill" aria-hidden />
+                    <span className="nav-icon">
+                      <Icon icon={item.icon} size={17} />
+                    </span>
+                    <span className="nav-label">{item.label}</span>
+                    {item.badge && (
+                      <span className={`nav-badge${item.badge.tone ? ' ' + item.badge.tone : ''}`}>
+                        {item.badge.text}
+                      </span>
+                    )}
+                  </NavLink>
+                );
+                /* Collapsed icon rail: label via the portaled Tooltip
+                   primitive — hover-intent + instant on keyboard focus +
+                   aria-describedby. Replaces the old title-attribute ::after
+                   tooltip, which was clipped by the sidebar's
+                   overflow-x:hidden and hover-only (audit 0-c P2-4). Tooltip
+                   renders a fragment (no wrapper DOM), so the NavLink stays
+                   a direct .nav-group child and the v16 drawer :nth-child
+                   stagger keeps matching. */
+                return sidebarCollapsed ? (
+                  <Tooltip key={`tip-${item.to}`} content={item.label}>
+                    {link}
+                  </Tooltip>
+                ) : (
+                  link
+                );
+              })}
+            </div>
+            );
+          })}
+        </div>
+
+        <div className="sidebar-footer">
+          {/* R325 §R325.m — the ROLE IDENTITY seat (pattern chip + mono
+              code). Recognizable with colour off: the pattern is ink at
+              the element's own currentColor (--app-role-pat-*), the code
+              rides --fs-mono-md dir="ltr". Decorative for AT (the role
+              is already announced by .sidebar-user-role below); the
+              title names it for sighted users. Hidden on the collapsed
+              rail (r325-shell.css) like every other footer label. */}
+          {accentKey && (
+            <div
+              className="sidebar-role-id"
+              data-role={accentKey}
+              aria-hidden
+              title={`${roleLabel} · ${ROLE_ACCENT_CODES[accentKey]}`}
+            >
+              <span className="sidebar-role-pat" />
+              <span className="sidebar-role-code" dir="ltr">{ROLE_ACCENT_CODES[accentKey]}</span>
+            </div>
+          )}
+          <ThemeToggle />
+          {/* R319 (c1-A · B1b): the tour button's label is only hidden
+              on the COLLAPSED DESKTOP RAIL — in the mobile drawer it
+              must always read «عرض الجولة». `sidebarCollapsed` persists
+              across bands (zustand), so a user who collapsed the
+              desktop rail then opened the phone drawer used to get the
+              orphan compass icon with no label (owner screenshot). */}
+          <button
+            type="button"
+            className="sidebar-tour-trigger"
+            onClick={() => startOnboarding({ replay: true })}
+            title="إعادة عرض الجولة"
+            aria-label="إعادة عرض الجولة"
+          >
+            <Icon icon={Compass} size={14} />
+            {(!sidebarCollapsed || drawerBand) && <span>عرض الجولة</span>}
+          </button>
+          <div className="sidebar-user" title={sidebarCollapsed ? `${user.firstName} ${user.lastName}` : undefined}>
+            {/* R319 (c1-A · B1b): the shell avatar never forwards the
+                un-gated DB avatarColor — the authenticated chrome wears
+                the ONE square ink-cell grammar (mono initials on paper
+                + hairline, radius 0). The `color` prop stays on the
+                primitive for callers that still pass one. */}
+            <UserAvatar
+              initials={initials}
+              size={32}
+            />
+            <div className="sidebar-user-info">
+              <div className="sidebar-user-name" title={`${user.firstName} ${user.lastName}`}>
+                {user.firstName} {user.lastName}
+              </div>
+              {/* Grammar §4: ellipsis clamps carry `title` tooltips —
+                  the composite role line («أستاذ · عميد كلّيّة …») is the
+                  longest clamp candidate in the account cluster. */}
+              <div className="sidebar-user-role" title={roleLabel}>{roleLabel}</div>
+            </div>
+            <button
+              type="button"
+              className="sidebar-logout"
+              /* r157 (6A4-4): the redirect rides the mutation's
+                 onSettled, NOT the click — useLogout's hook-level
+                 onSettled clears the auth store + query cache first
+                 (react-query v5 runs hook callbacks before per-mutate
+                 ones), so the /auth frame can never render on top of
+                 a still-authed store (no dashboard flash, no
+                 auth-page-while-signed-in). The navigate() used to
+                 fire on click, racing the async POST /auth/logout —
+                 a slow network left the shell unmounted mid-flight. */
+              onClick={() => {
+                logout.mutate(undefined, {
+                  onSettled: () => navigate('/auth', { replace: true }),
+                });
+              }}
+              /* r176e (D-07): pending guard — a double-click used to
+                 fire a second POST /auth/logout (idempotent, but a
+                 flash of a still-active button and a wasted round
+                 trip). */
+              disabled={logout.isPending}
+              aria-busy={logout.isPending}
+              title="تسجيل الخروج"
+              aria-label="تسجيل الخروج"
+            >
+              <Icon icon={LogOut} size={14} />
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <div
+        className={`sidebar-backdrop${sidebarOpen ? ' show' : ''}`}
+        onClick={closeSidebar}
+        aria-hidden
+      />
+    </>
+  );
+}

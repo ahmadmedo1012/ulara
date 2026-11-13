@@ -1,0 +1,575 @@
+# Mobile — R326 M0.6: the app updates when the project updates.
+#
+# ONE branch (main). This workflow runs ONLY when the push touches the
+# mobile app or the shared package; every other push never queues it.
+#
+#   mobile-gates   → typecheck · expo lint · contract-check · generated-
+#                     drift (tokens/brand/OpenAPI) · expo export (both
+#                     platforms) — fast, additive, must be green
+#   eas-ota        → after gates: `eas update --auto` to the production
+#                     AND preview branches (JS/asset changes reach every
+#                     installed build whose fingerprint matches)
+#   eas-build      → after gates, ONLY when the change is native-affecting
+#                     (package.json/lock, app.config.ts, eas.json, plugin
+#                     config, icons/splash): a preview-profile build for
+#                     both platforms (internal APK + iOS simulator),
+#                     --no-wait, links in the summary.
+#   android-smoke  → Ω 1-B (D1): the crash-diagnosis machine. After gates,
+#                     on push AND manual dispatch: boots the REAL stack
+#                     (embedded PG :5433 + migrated/seeded backend :4000
+#                     with the @test.ly accounts), builds the release APK
+#                     pointed at the emulator host (10.0.2.2), runs it on
+#                     an API-34 emulator, drives the five-role login
+#                     journey with Maestro, and FORENSICALLY GATES on the
+#                     logcat — the first workflow in the repo that can
+#                     ever OBSERVE a crash instead of guessing at one.
+#
+# Production (store) builds stay manual: workflow_dispatch → RELEASE.md.
+name: Mobile
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/mobile/**'
+      - 'shared/**'
+      - '.github/workflows/mobile.yml'
+  # R327 D2: the owner's manual build trigger — e.g. when the Android
+  # free-plan quota is spent but iOS still has headroom, or to re-cut
+  # preview builds after a quota reset without waiting for a push.
+  # R327 D2b: profile joins the trigger — preview (default: internal APK
+  # + iOS simulator) or production (the store cut: Android AAB via the
+  # EAS-managed upload key; iOS production needs the owner's Apple
+  # credentials and will refuse honestly without them).
+  workflow_dispatch:
+    inputs:
+      platforms:
+        description: 'EAS platforms (all | ios | android)'
+        required: false
+        default: 'all'
+      profile:
+        description: 'EAS build profile (preview | production)'
+        required: false
+        default: 'preview'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mobile-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '22'
+  EAS_NO_VCS: '1'
+
+jobs:
+  mobile-gates:
+    name: Mobile gates (typecheck · lint · contract · export)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: apps/mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: apps/mobile/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - name: Typecheck (tsc strict)
+        run: npm run typecheck
+      - name: Lint (expo lint — 0 errors; 87 pinned warnings, r326 HANDOFF Z2 — recounted at M0.4)
+        run: npx expo lint -- --max-warnings 999
+      - name: Contract-check (consumed endpoints vs backend source)
+        run: npm run contract-check
+      - name: Generated-code drift (tokens · brand · OpenAPI types)
+        # R326 M0.4 — the committed generated files must match their
+        # sources byte-for-byte: shared/design-tokens.json → web CSS +
+        # mobile TS + the RN brand port (tokens:check), and
+        # docs/api/openapi.json → src/api/schema.generated.ts (api:types
+        # regen + diff). npx pins the generator (its ^5 typescript peer
+        # lags the app's TS6 — the tree stays untouched by design).
+        run: |
+          npm run tokens:check
+          npm run api:types
+          git diff --exit-code -- src/api/schema.generated.ts || {
+            echo "::error::src/api/schema.generated.ts drifted — run npm run api:types and commit (backend route change?)"
+            exit 1
+          }
+      - name: Render net (jest — every route screen mounts, 112 routes)
+        run: npm test -- --ci
+      - name: Export bundle (android)
+        run: npx expo export --platform android --output-dir dist-export-android
+      - name: Export bundle (ios)
+        run: npx expo export --platform ios --output-dir dist-export-ios
+      - name: Bundle budget (JS ≤ 8 MB per platform)
+        # R326 M0.4 fix: SDK 58 exports Hermes bytecode (.hbc) — the old
+        # *.js glob matched NOTHING (a vacuous 0.00 MB pass since M0.6).
+        # Measure the real per-platform chunks; FAIL when a platform
+        # exports none (layout changed again) so the gate can never go
+        # vacuous silently.
+        run: |
+          for p in android ios; do
+            SIZE=$(du -sb dist-export-$p/_expo/static/js/$p/* 2>/dev/null | awk '{s+=$1} END {print s+0}')
+            FILES=$(find dist-export-$p/_expo/static/js/$p -type f 2>/dev/null | wc -l)
+            if [ "$FILES" -eq 0 ]; then
+              echo "::error::$p exported no bundle chunks — the budget cannot be measured (export layout changed?)"
+              exit 1
+            fi
+            MB=$(awk "BEGIN {printf \"%.2f\", $SIZE / 1048576}")
+            echo "$p JS bundle: ${MB} MB ($FILES chunks)"
+            if awk "BEGIN {exit !($MB > 8)}"; then
+              echo "::error::$p JS bundle ${MB} MB exceeds the 8 MB budget"
+              exit 1
+            fi
+          done
+
+  eas-ota:
+    name: EAS Update (OTA to production + preview)
+    needs: mobile-gates
+    # The OTA publish rides the EAS project, which needs the EXPO_TOKEN
+    # repository secret AND the provisioned project id in app.config.ts.
+    # (secrets are not usable in a job-level if — the credential gate
+    # runs as the first STEP and skips the publish steps with a notice
+    # when the token is absent. The mobile quality gates above —
+    # typecheck/lint/contract/export — run unconditionally and remain
+    # the merge-relevant signal.)
+    if: github.event_name == 'push'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: apps/mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: npm ci --no-audit --no-fund
+      - name: Credential gate (EXPO_TOKEN)
+        id: ota-cred
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "::notice::EXPO_TOKEN is not configured — OTA publish skipped (set the repository secret to enable)"
+            echo "has_token=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_token=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Publish OTA update (production)
+        if: steps.ota-cred.outputs.has_token == 'true'
+        run: npx eas-cli@latest update --branch production --auto --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      - name: Publish OTA update (preview)
+        if: steps.ota-cred.outputs.has_token == 'true'
+        run: npx eas-cli@latest update --branch preview --auto --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+  eas-build:
+    name: EAS Build (preview — native change detected)
+    needs: mobile-gates
+    # push: only native-affecting changes; manual dispatch: always (the
+    # human pressed the button — that IS the intent). The EXPO_TOKEN
+    # credential gate runs as the first STEP (secrets are not usable in
+    # a job-level if) and skips the build with a notice when absent.
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'push'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: apps/mobile
+    steps:
+      # The gate runs BEFORE checkout — it only inspects the secret, never
+      # the tree — so it must not inherit the job's apps/mobile default
+      # (the directory does not exist until checkout; bash then dies with
+      # "working directory … No such file or directory" and the whole job
+      # goes red before the intended honest skip). Pin it to the workspace
+      # root, which always exists.
+      - name: Credential gate (EXPO_TOKEN)
+        id: build-cred
+        working-directory: .
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "::notice::EXPO_TOKEN is not configured — EAS build skipped (set the repository secret to enable)"
+            echo "has_token=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_token=true" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.build-cred.outputs.has_token == 'true'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - if: steps.build-cred.outputs.has_token == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      # R327 D2/Z14: the EAS CLI resolves the app's config plugins
+      # (expo-router, splash, notifications, local-authentication…)
+      # LOCALLY before queueing — without apps/mobile's node_modules it
+      # dies with «Failed to resolve plugin for module "expo-router"».
+      # This job had never actually run (it was skipped behind the red
+      # icons gate from B1 to C5), so the gap only surfaced now.
+      - if: steps.build-cred.outputs.has_token == 'true'
+        run: npm ci --no-audit --no-fund
+      - name: Detect native-affecting changes (fingerprint inputs)
+        if: steps.build-cred.outputs.has_token == 'true' && github.event_name == 'push'
+        id: native
+        run: |
+          CHANGED=$(git diff --name-only HEAD~1 HEAD || echo "")
+          NATIVE=$(echo "$CHANGED" | grep -E '^apps/mobile/(package(-lock)?\.json|app\.config\.ts|eas\.json|assets/|plugins?/)|^\.github/workflows/mobile\.yml' || true)
+          SHARED=$(echo "$CHANGED" | grep -E '^shared/' || true)
+          # shared/** feeds tokens/brand → generated files land in the app;
+          # a regenerated token file is JS-only, but shared BRAND assets can
+          # change icons → treat shared changes as native-affecting (safe).
+          if [ -n "$NATIVE" ] || [ -n "$SHARED" ]; then
+            echo "native=true" >> "$GITHUB_OUTPUT"
+            echo "Native-affecting files:"
+            echo "$NATIVE $SHARED"
+          else
+            echo "native=false" >> "$GITHUB_OUTPUT"
+            echo "JS-only change — OTA suffices, no build needed."
+          fi
+      - name: "Build (preview = internal APK + iOS sim, production = the store cut)"
+        if: steps.build-cred.outputs.has_token == 'true' && (github.event_name == 'workflow_dispatch' || steps.native.outputs.native == 'true')
+        # R327 D2: the old `|| cat build-out.txt` swallowed EAS failures —
+        # the job went green while NO build was queued (that is exactly how
+        # the missing-npm_ci gap hid). The step now fails loudly.
+        # R327 D2b: the profile rides the dispatch input (preview default);
+        # production = the AAB store cut with the EAS-managed upload key.
+        run: |
+          set +e
+          PROFILE="${{ github.event.inputs.profile || 'preview' }}"
+          npx eas-cli@latest build --profile "$PROFILE" --platform "${{ github.event.inputs.platforms || 'all' }}" --non-interactive --no-wait > build-out.txt 2>&1
+          STATUS=$?
+          set -e
+          cat build-out.txt
+          if [ "$STATUS" -ne 0 ]; then
+            echo "::error::EAS build queueing failed (exit $STATUS — see output above)"
+            exit "$STATUS"
+          fi
+          grep -oE 'https://expo\.dev/artifacts/[^ )]+' build-out.txt >> "$GITHUB_STEP_SUMMARY" || true
+          echo "## EAS $PROFILE builds queued" >> "$GITHUB_STEP_SUMMARY"
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+  # ═══════════════════════════════════════════════════════════════════
+  # Ω 1-B (D1) — android-smoke: the crash-diagnosis machine.
+  #
+  # NOBODY has ever observed the post-login crash: no emulator run, no
+  # logcat, exists anywhere in this repo's CI. This job is the machine
+  # that produces the trace: the REAL release APK (expo prebuild →
+  # signing patch → gradlew assembleRelease, the repo's one recipe,
+  # scripts/build-android-local.sh) running against the REAL backend
+  # (embedded PG + migrate + seed + :4000), driven through the five-role
+  # login journey by Maestro, with logcat captured ALWAYS and gated for
+  # crash signatures afterwards.
+  #
+  # Build-time wiring: EXPO_PUBLIC_API_BASE_URL=http://10.0.2.2:4000/api/v1
+  # — 10.0.2.2 is the Android emulator's alias for the host loopback
+  # (apps/mobile/src/api/client.ts inlines it at bundle time).
+  #
+  # Signing: a THROWAWAY per-job keystore (keytool below) — the smoke
+  # never installs over anything, so it does NOT need the production
+  # signature; using the ANDROID_* repository secrets here would only
+  # couple this job to the direct channel's key. The throwaway passwords
+  # are non-secret by construction and the key never leaves the job.
+  # (The direct channel keeps its stable key — android-apk.yml.)
+  #
+  # DATABASE_URL: postgresql://ulara@localhost:5433/ulara — the
+  # documented boot-pg.sh URL is postgresql://ulara@127.0.0.1:5433/ulara
+  # (see tools/boot-pg.sh), with one verified deviation: `localhost`, NOT
+  # `127.0.0.1` — backend/scripts/migrate-deploy.mjs's DNS pre-flight
+  # (dns.resolve4) cannot resolve IP literals (ENOTFOUND — reproduced in
+  # the 1-B sandbox: resolve4("127.0.0.1") → ENOTFOUND, resolve4("localhost")
+  # → 127.0.0.1, and a full db:deploy run passes against the localhost form).
+  # The `ulara` database itself must be CREATED after boot — boot-pg.sh
+  # only initdb's (postgres/template0/template1 exist; the app DB does not).
+  android-smoke:
+    name: Android smoke (emulator · five-role journey · logcat gate)
+    needs: mobile-gates
+    # push (workflow-paths filtered) AND manual dispatch — the dispatch
+    # makes the trace machine runnable on demand (the on: block already
+    # declares workflow_dispatch with its inputs).
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    # 65 not 50: the release APK build alone takes ~21 min (throwaway
+    # keystore, no cache hits); the journey adds ~10–15. The 50-min ceiling
+    # is what got run #9 cancelled mid-forensics — the timeout must bound
+    # runaway runs, never cut healthy long ones.
+    timeout-minutes: 65
+    env:
+      DATABASE_URL: postgresql://ulara@localhost:5433/ulara
+      EXPO_NO_TELEMETRY: '1'
+      CI: 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: apps/mobile/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Android SDK components (platform 37 · build-tools 37 · NDK 27.1)
+        # Byte-mirror of the android-apk.yml step — the repo's ONE build
+        # recipe (Expo SDK 58 / RN 0.88 exact pins). The API-34 emulator
+        # image + emulator binary are installed by the
+        # reactivecircus/android-emulator-runner step below.
+        run: |
+          # ubuntu-24.04 images don't always put cmdline-tools on PATH —
+          # resolve the binary from ANDROID_HOME, falling back to PATH.
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          [ -x "$SDKMANAGER" ] || SDKMANAGER="$(command -v sdkmanager)"
+          [ -n "$SDKMANAGER" ] || { echo "::error::sdkmanager not found under ANDROID_HOME=$ANDROID_HOME"; exit 1; }
+          yes | "$SDKMANAGER" --licenses > /dev/null || true
+          # The 2026 repository serves MINOR-VERSIONED platform packages —
+          # compileSdk 37's platform is 'platforms;android-37.0' (plain
+          # android-37 does not exist in the index; verified against
+          # repository2-3.xml). AGP/legacy paths that ask for the
+          # android-37 DIRECTORY are covered by the symlink below.
+          "$SDKMANAGER" --install \
+            "platform-tools" \
+            "platforms;android-37.0" \
+            "build-tools;37.0.0" \
+            "ndk;27.1.12297006"
+          [ -d "$ANDROID_HOME/platforms/android-37" ] || \
+            ln -s "$ANDROID_HOME/platforms/android-37.0" "$ANDROID_HOME/platforms/android-37"
+
+      - name: Gradle + NDK cache
+        # Same cache shape as android-apk.yml; restore-keys reuse the
+        # direct channel's warm caches (same recipe, same repo namespace).
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            /usr/local/lib/android/sdk/ndk
+          key: android-smoke-${{ hashFiles('apps/mobile/package-lock.json', 'apps/mobile/app.config.ts') }}
+          restore-keys: |
+            android-apk-
+
+      # ── the real stack: embedded PG → migrate → seed → backend :4000 ──
+      - name: Boot embedded PostgreSQL (tools/boot-pg.sh, :5433)
+        # `npm install`, not `npm ci`: tools/package-lock.json is DELIBERATELY
+        # GITIGNORED (.gitignore:111) — a fresh CI checkout has no lockfile to
+        # `npm ci` against, and `cd tools && npm install` is the
+        # one-time setup. Two pinned deps (~embedded-
+        # postgres/linux-x64 + pg) — the install cost is seconds.
+        run: |
+          cd tools
+          npm install --no-audit --no-fund
+          bash boot-pg.sh
+
+      - name: Create the ulara database
+        # boot-pg.sh initdb's with user ulara but creates NO application
+        # database (only postgres/template0/template1) — create it with the
+        # pg client that ships in tools/node_modules. The SQL passes the
+        # name as a $1 parameter so the whole snippet stays inside one
+        # single-quoted bash block (no nested quoting).
+        run: |
+          cd tools
+          node -e '
+            const { Client } = require("pg");
+            (async () => {
+              const c = new Client({ host: "127.0.0.1", port: 5433, user: "ulara", database: "postgres" });
+              await c.connect();
+              const r = await c.query("SELECT 1 FROM pg_database WHERE datname = $1", ["ulara"]);
+              if (r.rows.length === 0) await c.query("CREATE DATABASE ulara");
+              await c.end();
+              console.log("db ulara ready");
+            })().catch((e) => { console.error(e.message); process.exit(1); });
+          '
+
+      - name: Root workspace install (backend + frontend)
+        run: npm ci --no-audit --no-fund
+
+      - name: Migrate + seed (db:deploy + db:seed)
+        # The seed needs ONLY DATABASE_URL (prisma/seed.ts imports no
+        # env.ts — verified in the 1-B sandbox run); it provisions the two
+        # demo workspaces, the academic corpus and the @test.ly accounts
+        # (password 12345678 — TEST_PASSWORD).
+        run: |
+          npm run db:deploy
+          npm run db:seed
+
+      - name: Boot backend (:4000, test accounts on) + wait for /api/v1/status
+        # ULARA_TEST_ACCOUNTS=1 → backend/src/index.ts:36 ensures the
+        # @test.ly set at boot (non-fatal). The two JWT secrets are
+        # generated per job — they never leave the runner and only need
+        # to be ≥32 chars (backend/src/env.ts).
+        run: |
+          export JWT_ACCESS_SECRET="$(openssl rand -hex 48)"
+          export JWT_REFRESH_SECRET="$(openssl rand -hex 48)"
+          export ULARA_TEST_ACCOUNTS=1
+          export PORT=4000
+          nohup npm run dev -w backend > backend.log 2>&1 &
+          for i in $(seq 1 40); do
+            if curl -sf http://127.0.0.1:4000/api/v1/status >/dev/null 2>&1; then
+              echo "backend up (poll $i)"
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "::error::backend never answered /api/v1/status within 120s"
+          tail -40 backend.log
+          exit 1
+
+      # ── the release APK, pointed at the emulator host ─────────────────
+      - name: Mobile dependencies
+        working-directory: apps/mobile
+        run: npm ci --no-audit --no-fund
+
+      - name: Build the release APK (throwaway keystore · 10.0.2.2 base URL)
+        env:
+          EXPO_PUBLIC_API_BASE_URL: http://10.0.2.2:4000/api/v1
+          ULARA_ANDROID_KEYSTORE: ${{ runner.temp }}/smoke.jks
+          ULARA_ANDROID_KEYSTORE_ALIAS: smoke
+          # ONE password for store AND key: PKCS12 keystores cannot carry a
+          # separate key password — Java's keytool IGNORES a differing
+          # -keypass (verified: "Different store and key passwords not
+          # supported for PKCS12 KeyStores. Ignoring user-specified -keypass
+          # value.") — a mismatched keyPassword in key.properties would fail
+          # gradle signing. Fixed non-secret by construction (see above).
+          ULARA_ANDROID_KEYSTORE_PASSWORD: smoke-keystore-pass
+          ULARA_ANDROID_KEYSTORE_KEY_PASSWORD: smoke-keystore-pass
+        run: |
+          # Throwaway key: generated and destroyed with the job — the smoke
+          # does not need the production signature (see the job header).
+          keytool -genkeypair -v \
+            -keystore "$RUNNER_TEMP/smoke.jks" \
+            -alias smoke -keyalg RSA -keysize 2048 -validity 10000 \
+            -storetype PKCS12 \
+            -storepass smoke-keystore-pass -keypass smoke-keystore-pass \
+            -dname "CN=Ulara Smoke, OU=CI, O=Ulara, L=Tripoli, ST=Tripoli, C=LY"
+          scripts/build-android-local.sh
+          APK="apps/mobile/android/app/build/outputs/apk/release/app-release.apk"
+          [ -f "$APK" ] || { echo "::error::release APK not found at $APK"; exit 1; }
+          du -h "$APK"
+
+      # ── pre-emulator preparation (normal steps — full bash, fail fast) ──
+
+      # Run #10 hard evidence (log line: "ProbeKVM: This user doesn't have
+      # permissions to use KVM (/dev/kvm)"): the ubuntu-24.04 runner image
+      # ships /dev/kvm without the runner user in the kvm group, so the
+      # action boots with -accel off → software emulation → 7-min boot and
+      # a 4.5-min `adb install`. Make the node accessible so the action's
+      # own probe re-enables hardware acceleration. Ephemeral single-tenant
+      # CI VM — a world-accessible /dev/kvm lives and dies with this job.
+      - name: Unblock KVM for the emulator (ubuntu-24.04 image quirk)
+        run: sudo chmod 666 /dev/kvm || true
+
+      - name: Install Maestro CLI (before the emulator — fail fast, ~15s)
+        env:
+          MAESTRO_CLI_NO_ANALYTICS: 1
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          "$HOME/.maestro/bin/maestro" --version
+
+      # ── the emulator + the five-role journey ─────────────────────
+      # Run #10 hard evidence: the action executes EACH script LINE as its
+      # own /usr/bin/sh -c — the log shows `export PATH=...` then, on the
+      # NEXT line, `maestro: not found` (exit 127) and the immediate
+      # emulator teardown. Cross-line state (exports, FAIL variables,
+      # multi-line for-loops) never worked here: no maestro command has
+      # EVER run in any android-smoke attempt. The rewrite below makes
+      # every line standalone: absolute paths (no PATH export), failure
+      # state in the fail.flag FILE (not a variable), the five-role loop
+      # single-lined, and the forensics capture runs BEFORE the only line
+      # allowed to exit non-zero (the last one).
+      # Maestro debug capture: the CLI writes every flow's screenshots +
+      # UI hierarchy under $HOME/.maestro/tests on the RUNNER — the same
+      # machine this script and the upload step below run on. Copy that
+      # tree next to the other forensics files (single standalone line,
+      # same sh -c constraint), ALWAYS — a green run's output is exactly
+      # as diagnostic as a red one's, and run #10's post-mortem had no
+      # UI evidence at all.
+      # ── The owner's emulator prescription (2026-11-12) ────────────
+      # Run #43321515440 forensics: the DEFAULT 320×640 AOSP AVD rendered
+      # an EMPTY app surface (screen hierarchy = the status-bar clock
+      # alone, 5/5 journeys, logcat clean) — the software-GPU surface
+      # never presented the React tree. The prescription: a pixel_6
+      # profile (1080×2400) on the google_apis API-34 image with
+      # swiftshader_indirect, -no-snapshot-save, and animations OFF.
+      - name: Emulator + Maestro five-role journey
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          profile: pixel_6
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot-save -memory 4096 -cores 2
+          emulator-boot-timeout: 720
+          script: |
+            # Maestro's own recommendation + the owner's: zero animations.
+            adb shell settings put global window_animation_scale 0
+            adb shell settings put global transition_animation_scale 0
+            adb shell settings put global animator_duration_scale 0
+            # Run 43354154702 forensics: the system LAUNCHER ANR'd during
+            # the first cold-start transition (software rendering at
+            # 1080×2400) and its dialog covered the app. Give the system
+            # a settle window before the first launch + revive it if the
+            # dialog still appears (the flow's optional «Wait» tap).
+            sleep 20
+            adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
+            adb install -r apps/mobile/android/app/build/outputs/apk/release/app-release.apk || touch fail.flag
+            "$HOME/.maestro/bin/maestro" --version || touch fail.flag
+            for entry in student@test.ly:STUDENT teacher@test.ly:TEACHER registrar@test.ly:ADMIN quality@test.ly:QUALITY owner@test.ly:OWNER; do EMAIL="${entry%%:*}"; ROLE="${entry##*:}"; echo "── android-smoke: $EMAIL ($ROLE)"; "$HOME/.maestro/bin/maestro" test apps/mobile/.maestro/smoke-role.yaml -e EMAIL="$EMAIL" -e PASSWORD=12345678 -e ROLE="$ROLE" || { echo "::error::maestro journey failed for $EMAIL ($ROLE) — see logcat in the artifacts"; touch fail.flag; }; done
+            "$ANDROID_HOME/platform-tools/adb" devices > adb-devices.txt 2>&1 || true
+            timeout 60 "$ANDROID_HOME/platform-tools/adb" logcat -d > logcat.txt 2>&1; [ -s logcat.txt ] || echo "(logcat capture failed — adb device state follows:)" >> logcat.txt
+            cat adb-devices.txt >> logcat.txt 2>/dev/null || true
+            wc -c logcat.txt || true
+            cp -r "$HOME/.maestro/tests" maestro-debug 2>/dev/null || echo "(maestro debug output not found under \$HOME/.maestro/tests — no flow produced output)" > maestro-debug.txt || true
+            if [ -f fail.flag ]; then echo "::error::android-smoke stages failed — forensics are in the artifact"; exit 1; fi
+      - name: Crash gate (logcat forensics — fails the job on signatures)
+        # Deliberately OUTSIDE the emulator-runner script so it always
+        # runs, whatever happened on the emulator. The grep redirect form
+        # (not a pipe) keeps grep's own exit status the branch condition.
+        if: always()
+        run: |
+          if [ ! -s logcat.txt ]; then
+            echo "::error::logcat is empty — the emulator produced no trace (did it boot?)"
+            exit 1
+          fi
+          if grep -nE -B2 -A15 'FATAL EXCEPTION|ReactNativeJS.*Error|SIGABRT|Invariant Violation' logcat.txt > crash-report.txt; then
+            cat crash-report.txt
+            {
+              echo "## android-smoke logcat gate"
+              echo ""
+              echo "CRASH SIGNATURES FOUND (FATAL EXCEPTION | ReactNativeJS Error | SIGABRT | Invariant Violation) — the full trace with context is in the android-smoke-forensics artifact."
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "::error::logcat crash signatures — full context in the android-smoke-forensics artifact"
+            exit 1
+          fi
+          echo "clean — no crash signatures (FATAL EXCEPTION | ReactNativeJS.*Error | SIGABRT | Invariant Violation)" > crash-report.txt
+          {
+            echo "## android-smoke logcat gate"
+            echo ""
+            echo "logcat clean — no crash signatures. The five-role journeys either passed or failed on assertions; the trace is attached either way."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload forensics (logcat + backend.log + crash report + Maestro debug output)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-smoke-forensics
+          path: |
+            logcat.txt
+            adb-devices.txt
+            crash-report.txt
+            backend.log
+            maestro-debug
+            maestro-debug.txt
+          if-no-files-found: error

@@ -1,0 +1,55 @@
+{
+  "_comment": "a11y ratchet floor (ULARA Ω §7 axe gate) — per-cell serious/critical node counts keyed route|viewport|theme|dir. The floor only tightens (same philosophy as scripts/gates/stylelint-baseline.json): edit DOWN as violations are burned down (§4 loop), NEVER up to force green. A missing cell key means floor 0. Regenerate deliberately with: node scripts/brand/a11y-gate.mjs --write-baseline",
+  "generatedAt": "2026-11-12T14:27:33.736Z",
+  "axe": "4.10.3",
+  "cells": {
+    "/|390x844|light|rtl": {
+      "serious": 12,
+      "critical": 0
+    },
+    "/|1280x800|light|rtl": {
+      "serious": 7,
+      "critical": 0
+    },
+    "/|390x844|dark|rtl": {
+      "serious": 5,
+      "critical": 0
+    },
+    "/|1280x800|dark|rtl": {
+      "serious": 1,
+      "critical": 0
+    },
+    "/auth|390x844|light|rtl": {
+      "serious": 0,
+      "critical": 0
+    },
+    "/auth|1280x800|light|rtl": {
+      "serious": 0,
+      "critical": 0
+    },
+    "/auth|390x844|dark|rtl": {
+      "serious": 0,
+      "critical": 0
+    },
+    "/auth|1280x800|dark|rtl": {
+      "serious": 0,
+      "critical": 0
+    },
+    "/404|390x844|light|rtl": {
+      "serious": 0,
+      "critical": 0
+    },
+    "/404|1280x800|light|rtl": {
+      "serious": 0,
+      "critical": 0
+    },
+    "/404|390x844|dark|rtl": {
+      "serious": 0,
+      "critical": 0
+    },
+    "/404|1280x800|dark|rtl": {
+      "serious": 0,
+      "critical": 0
+    }
+  }
+}

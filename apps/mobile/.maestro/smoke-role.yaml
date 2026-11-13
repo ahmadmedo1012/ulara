@@ -1,0 +1,179 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# smoke-role.yaml — Ω 1-B (D2): the per-role login journey on the Android
+# emulator, driven by Maestro from the `android-smoke` job in
+# .github/workflows/mobile.yml.
+#
+# ENV PARAMETERS (all required; passed with `maestro test -e KEY=VALUE`):
+#   EMAIL     the test account's email. The five roles of the journey are
+#             covered by the workflow's loop (one invocation per role):
+#               student@test.ly  → STUDENT
+#               teacher@test.ly  → TEACHER
+#               registrar@test.ly→ ADMIN   (المسجل العام)
+#               quality@test.ly  → QUALITY
+#               owner@test.ly    → OWNER
+#   PASSWORD  the test account's password — 12345678 for every @test.ly
+#             account (TEST_PASSWORD, the single source of truth:
+#             backend/src/modules/auth/test-accounts.data.ts).
+#   ROLE      STUDENT | TEACHER | ADMIN | QUALITY | OWNER — drives the
+#             per-role asserts (dashboard heading, tab labels, tab-screen
+#             headings) via the ${ROLE == … ? … : …} expressions below.
+#
+# THE JOURNEY (per role):
+#   fresh state (launchApp clearState ≡ `adb shell pm clear ly.ulara.app`
+#   — the app's android package, app.config.ts) → the /auth Welcome → the
+#   login form (testID fields, the real POST /auth/login) → the role's
+#   dashboard (asserted by its always-rendered heading) → three of the
+#   role's tab bar (each tab screen asserted by its heading) → /settings
+#   via the app's `ulara://` deep link (scheme: app.config.ts) — the ONE
+#   logout surface every role can reach; ADMIN/QUALITY/OWNER carry no
+#   profile tab, and TEACHER's profile logs out through /settings anyway →
+#   the destructive ConfirmSheet confirm → back at the auth entry (after
+#   logout the shell routes a guest to /auth — app/index.tsx; the CTA
+#   «ابدأ الآن» leads to the login form, asserted as the journey's end).
+#
+# SELECTOR GROUNDING: every text/id below is copied from the app source
+# (the 1-B report's selector→file:line table); Maestro's `text` selector is
+# a FULL-STRING match (case-insensitive; verified against Maestro 2.12.1
+# Filters.textMatches — regex.matches), so «دخول» never collides with
+# «تسجيل الدخول», and the id selector matches React Native testIDs on
+# Android (RN surfaces testID as the resource-id).
+#
+# RESILIENCE: this runs a RELEASE bundle against a cold backend on an
+# emulator — every transition uses extendedWaitUntil with generous
+# timeouts, and the one flaky tap (the submit button can lose the race
+# with the keyboard-dismiss animation) rides a retry.
+name: smoke-role (Ω 1-B — five-role login journey)
+appId: ly.ulara.app
+---
+# 1 ── fresh launch → the /auth Welcome (a guest is routed there by /).
+#      The CTA stack sits at marginTop:auto in a ScrollView — on the
+#      emulator profile the content exceeds the viewport and «ابدأ الآن»
+#      lands BELOW THE FOLD (run-43257920033 forensics, spec §4), so
+#      scrollUntilVisible (a no-op when already visible) replaces the
+#      plain extendedWaitUntil.
+- launchApp:
+    appId: ly.ulara.app
+    clearState: true
+# System hardening (runs 43354154702 + 43361391615's forensics): the
+# emulator's LAUNCHER can ANR during the cold-start transition and its
+# dialog covers the app — AFTER a fixed optional tap evaluated. The
+# two-pass structure handles both orders: pass 1 gives the dialog its
+# window (and succeeds outright on a healthy boot), the optional
+# «Wait» dismisses the dialog if it appeared, pass 2 completes the wait.
+- scrollUntilVisible:
+    element:
+      text: "ابدأ الآن"            # app/auth/index.tsx — the Welcome CTA
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    text: "Wait"
+    optional: true                 # the launcher-ANR dialog's revive button
+- scrollUntilVisible:
+    element:
+      text: "ابدأ الآن"
+    direction: DOWN
+    timeout: 25000
+- tapOn:
+    text: "ابدأ الآن"              # → /auth/login
+- extendedWaitUntil:
+    visible:
+      text: "تسجيل الدخول"          # app/auth/login.tsx — the form heading
+    timeout: 20000
+
+# 2 ── the real login (POST /auth/login; the testID fields are grounded
+#      in app/auth/login.tsx — Field testID="login-email", SecretField
+#      testID="login-password")
+- tapOn:
+    id: "login-email"
+- inputText: "${EMAIL}"
+- tapOn:
+    id: "login-password"
+- inputText: "${PASSWORD}"
+# Submit via the keyboard's OWN DONE action: the last field carries
+# returnKeyType=done + onSubmitEditing → the form's primary action
+# (ui/fields.tsx autoSubmit). IMMUNE to the pixel_6 forensics failure:
+# the coordinate tap on «دخول» (y≈2074) was swallowed by the IME that
+# hideKeyboard had not fully dismissed (run 43348648092 — the tap
+# landed, "something changed", and the resting form stayed: no request,
+# no error, no loading state).
+- pressKey: enter
+- hideKeyboard
+# Belt: if the IME action did not submit, the button is now uncovered —
+# tap it. OPTIONAL so an already-submitted (navigated-away) form does
+# not fail the journey.
+- tapOn:
+    text: "دخول"               # FormScreen submitLabel (app/auth/login.tsx)
+    optional: true
+
+# 3 ── the role's dashboard landed (always-rendered heading per role:
+#      STUDENT → student/(tabs)/dashboard.tsx SectionBar «أرقامك هذا الفصل»;
+#      TEACHER → PageHeader «لوحة الأستاذ»; ADMIN → «لوحة المسجل العام»;
+#      QUALITY → «لوحة الجودة»; OWNER → «لوحة التحكم الرئيسية»)
+- extendedWaitUntil:
+    visible:
+      text: "${ROLE == 'STUDENT' ? 'أرقامك هذا الفصل' : ROLE == 'TEACHER' ? 'لوحة الأستاذ' : ROLE == 'ADMIN' ? 'لوحة المسجل العام' : ROLE == 'QUALITY' ? 'لوحة الجودة' : 'لوحة التحكم الرئيسية'}"
+    timeout: 45000
+
+# 4 ── tab visit 1 (labels: src/components/shell/roleTabs.ts ROLE_TABS;
+#      screen headings: the (tabs) screens below)
+- tapOn:
+    text: "${ROLE == 'STUDENT' ? 'مقرراتي' : ROLE == 'TEACHER' ? 'الجدول' : ROLE == 'ADMIN' ? 'الكلّيات' : ROLE == 'QUALITY' ? 'المقررات' : 'المستخدمون'}"
+- extendedWaitUntil:
+    visible:
+      text: "${ROLE == 'STUDENT' ? 'مقرّراتي الدراسية' : ROLE == 'TEACHER' ? 'جدول المحاضرات' : ROLE == 'ADMIN' ? 'الكلّيّات والأقسام' : ROLE == 'QUALITY' ? 'جودة المقرّرات' : 'إدارة المستخدمين'}"
+    timeout: 25000
+
+# 5 ── tab visit 2
+- tapOn:
+    text: "${ROLE == 'STUDENT' ? 'المساعد' : ROLE == 'TEACHER' ? 'الطلاب' : ROLE == 'ADMIN' ? 'الطلاب' : ROLE == 'QUALITY' ? 'المناهج' : 'الحيّ'}"
+- extendedWaitUntil:
+    visible:
+      text: "${ROLE == 'STUDENT' ? 'المساعد الأكاديمي' : ROLE == 'TEACHER' ? 'قائمة الطلاب' : ROLE == 'ADMIN' ? 'إدارة الطلاب' : ROLE == 'QUALITY' ? 'مراجعة المناهج' : 'المراقبة الحيّة'}"
+    timeout: 25000
+
+# 6 ── tab visit 3 (STUDENT/TEACHER: their profile tab; ADMIN/QUALITY/
+#      OWNER: their reports/governance tab). Asserts use each screen's
+#      TOP-OF-SCREEN text (assertVisible does not scroll): the STUDENT
+#      profile's PageHeader kicker and the TEACHER profile's PageHeader
+#      title (their logout button lives further down the same screen).
+- tapOn:
+    text: "${ROLE == 'STUDENT' ? 'حسابي' : ROLE == 'TEACHER' ? 'حسابي' : ROLE == 'ADMIN' ? 'التقارير' : ROLE == 'QUALITY' ? 'التقارير' : 'الحوكمة'}"
+- extendedWaitUntil:
+    visible:
+      text: "${ROLE == 'STUDENT' ? 'هويّتك الأكاديمية وبوابة جميع خدمات الطالب.' : ROLE == 'TEACHER' ? 'الملف الأكاديمي' : ROLE == 'ADMIN' ? 'التقارير المؤسسية' : ROLE == 'QUALITY' ? 'تقارير الجودة' : 'الحوكمة المتقدّمة'}"
+    timeout: 25000
+
+# 7 ── logout via /settings (the app's deep link; scheme: app.config.ts).
+#      The ONE logout surface every role can reach: ADMIN/QUALITY/OWNER
+#      carry no profile tab, and the destructive ConfirmSheet confirm is
+#      «خروج» (confirmLabel, app/settings.tsx).
+- openLink:
+    link: "ulara://settings"
+- extendedWaitUntil:
+    visible:
+      text: "الإعدادات"            # app/settings.tsx — PageHeader title
+    timeout: 20000
+# the logout Button sits in group [05] «الجلسة» at the BOTTOM of a long
+# scrolling sheet (التفضيلات · الحساب · الأمان + password card · الدعم
+# first — app/settings.tsx) — tapOn does NOT auto-scroll, so drive the
+# scroll first and let it settle on the button before tapping.
+- scrollUntilVisible:
+    element:
+      text: "تسجيل الخروج"          # the danger Button (app/settings.tsx)
+    direction: DOWN
+    timeout: 25000
+- tapOn:
+    text: "تسجيل الخروج"
+- tapOn:
+    text: "خروج"                   # ConfirmSheet confirmLabel (app/settings.tsx)
+
+# 8 ── back at the auth entry: after logout the session is cleared and the
+#      shell routes the guest to /auth (app/index.tsx) — its CTA leads to
+#      the login form, so asserting it proves we are OUT and back at the
+#      start of the journey. Same below-the-fold reality as step 1 →
+#      scrollUntilVisible, never a plain visible-wait.
+- scrollUntilVisible:
+    element:
+      text: "ابدأ الآن"
+    direction: DOWN
+    timeout: 30000

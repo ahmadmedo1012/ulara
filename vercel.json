@@ -1,0 +1,39 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
+  "installCommand": "npm ci",
+  "buildCommand": "npm --prefix backend run prisma:generate && npm run build -w frontend && npm run build -w backend && node -e \"if(!require('fs').existsSync('backend/dist/app.js')){process.exit(1)}\"",
+  "outputDirectory": "frontend/dist",
+  "functions": {
+    "api/index.ts": {
+      "maxDuration": 60
+    }
+  },
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self';script-src 'self' 'sha256-OdjYJRybXnDm7N+a72vVmEqQm6FcVwU6mMObvoiP/TA=' 'sha256-FTZgL3xgqGP26FI9CPOLZDDtv3jS/uPOSGLVh+WbA/w=';style-src 'self' 'unsafe-inline';img-src 'self' data: blob:;font-src 'self';connect-src 'self';worker-src 'self' blob:;object-src 'none';base-uri 'self';frame-src 'self'"
+        },
+        { "key": "Cross-Origin-Opener-Policy", "value": "same-origin" },
+        { "key": "Cross-Origin-Resource-Policy", "value": "cross-origin" },
+        { "key": "Origin-Agent-Cluster", "value": "?1" },
+        { "key": "Referrer-Policy", "value": "no-referrer" },
+        { "key": "Strict-Transport-Security", "value": "max-age=31536000; includeSubDomains" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-DNS-Prefetch-Control", "value": "off" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "X-Permitted-Cross-Domain-Policies", "value": "none" }
+      ]
+    }
+  ],
+  "crons": [
+    { "path": "/api/v1/jobs/daily", "schedule": "0 3 * * *" }
+  ]
+}

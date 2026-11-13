@@ -1,0 +1,305 @@
+import { useMemo, useState, type ReactNode } from 'react';
+import { Link, useInRouterContext } from 'react-router-dom';
+import {
+  Briefcase, MapPin,
+  Code, BarChart3, Palette, Network, Smartphone, Shield, BadgeCheck, GraduationCap,
+  type LucideIcon,
+} from 'lucide-react';
+/* R319 (c3-S2) — the §B2 kit: the mono-indexed section title bar + the
+ * hatched empty cell. */
+import { SectionBar, BarCount, StatusChip, EmptyCell } from '../../components/student';
+import { ErrorState, TableSkeleton } from '../../components/primitives/States';
+import { Icon } from '../../components/Icon';
+import { PageFrame, PageHeader, FilterBar } from '../../components/patterns';
+import { useJobs, useApplyJob, apiErrorMessage, type Job } from '../../hooks/useResources';
+import { formatDate, formatInt } from '../../utils/numbers';
+import { countAr } from '../../lib/format';
+/* R305 DS: the shared student vocabulary + this family's refinements. */
+import '../../styles/student/ds-core.css';
+import '../../styles/student/ds-supplemental.css';
+/* R319 (c3-S2): the sheet system — the §B2 anatomy + the family's
+ * harmonics. */
+import '../../styles/student/pages.css';
+import '../../styles/student/academic-pages.css';
+
+const TYPE_LABELS: Record<string, string> = {
+  FULL_TIME: 'دوام كامل',
+  PART_TIME: 'دوام جزئي',
+  INTERNSHIP: 'تدريب',
+  FREELANCE: 'عمل حر',
+  REMOTE: 'عن بُعد',
+};
+
+const jobIcon = (cat: string, title: string): LucideIcon => {
+  const t = title.toLowerCase();
+  if (t.includes('بيانات') || t.includes('analyst')) return BarChart3;
+  if (t.includes('ui') || t.includes('ux') || t.includes('تصميم')) return Palette;
+  if (t.includes('شبك')) return Network;
+  if (t.includes('موبايل')) return Smartphone;
+  if (t.includes('أمن')) return Shield;
+  if (cat === 'tech' || t.includes('برمج')) return Code;
+  return Briefcase;
+};
+
+/** Proper Arabic counted noun for the open-opportunities line
+ *  (countAr owns the one/two/few/many forms). */
+function openJobsLabel(n: number): string {
+  return countAr(n, ['فرصة واحدة مفتوحة', 'فرصتان مفتوحتان', 'فرص مفتوحة', 'فرصة مفتوحة']);
+}
+
+/* R342-08 — the header pair's anchor: the 18-G pin renders this page
+ * WITHOUT a Router (bare QueryClientProvider), so a bare <Link> would
+ * throw on the missing context. An honest anchor either way: in-app
+ * it rides the SPA Link; bare unit renders degrade to a plain href. */
+function JobsHeaderAction({ to, className, children }: { to: string; className: string; children: ReactNode }) {
+  const inRouter = useInRouterContext();
+  if (!inRouter) return <a href={to} className={className}>{children}</a>;
+  return <Link to={to} className={className}>{children}</Link>;
+}
+
+/** Relative posting age with proper Arabic plurals (audit 0-d —
+ *  postedAt was fetched but never shown). */
+function fmtPosted(iso: string): string {
+  const d = new Date(iso);
+  const days = Math.round((Date.now() - d.getTime()) / 86_400_000);
+  if (days <= 0) return 'اليوم';
+  if (days === 1) return 'أمس';
+  if (days === 2) return 'منذ يومين';
+  if (days <= 10) return `منذ ${days} أيام`;
+  if (days <= 30) return `منذ ${days} يوماً`;
+  return formatDate(d, { day: 'numeric', month: 'short' });
+}
+
+/** One jobs-table row. `applied` is the SERVER truth seeded from the
+ *  payload's appliedJobIds (18-G) plus any application this session
+ *  landed — the old useState(false) was client-local fiction, un-liking
+ *  the badge on every remount while the server row persisted. */
+function JobRow({ job, applied }: { job: Job; applied: boolean }) {
+  const apply = useApplyJob();
+  // Optimistic in-session flag: pressing تقدّم shows the badge before the
+  // invalidation refetch confirms it (a failure rolls it back below).
+  const [justApplied, setJustApplied] = useState(false);
+  const isApplied = applied || justApplied;
+  const Cmp = jobIcon(job.category, job.title);
+
+  const onApply = async () => {
+    try {
+      await apply.mutateAsync(job.id);
+      setJustApplied(true);
+    } catch {
+      // surfaced inline from apply.isError below
+    }
+  };
+
+  return (
+    <>
+      <tr>
+        <td className="tbl-strong" data-label="الوظيفة">
+          <div className="job-title-cell">
+            <span className="job-icon-well" aria-hidden>
+              <Icon icon={Cmp} size={18} />
+            </span>
+            <span className="job-title-block">
+              <span className="job-title" title={job.title}>{job.title}</span>
+              <span className="job-company" title={job.company}>{job.company}</span>
+            </span>
+          </div>
+        </td>
+        <td data-label="الموقع">
+          <span className="flex items-center gap-1">
+            <Icon icon={MapPin} size={12} aria-hidden /> {job.location}
+          </span>
+        </td>
+        <td data-label="النوع">{TYPE_LABELS[job.type] ?? job.type}</td>
+        <td data-label="الراتب">
+          {job.salary
+            ? <bdi className="font-mono">{job.salary}</bdi>
+            : <span className="text-xs text-subtle">حسب الاتفاق</span>}
+        </td>
+        <td
+          className="tbl-num"
+          data-label="النشر"
+          title={formatDate(job.postedAt, { dateStyle: 'long' })}
+        >
+          {fmtPosted(job.postedAt)}
+        </td>
+        <td data-label="الإجراء">
+          {isApplied ? (
+            /* R319 (c3-S2): the applied state rides the §B2 mono chip
+               register — square hairline ink, never a color-only Badge. */
+            <StatusChip label="APPLIED" tone="done" />
+          ) : (
+            /* The authored moment: actions stay quiet until the row is
+               hovered / focused (CSS .table-row-actions — persistent on
+               touch, always visible for keyboard via focus-within). */
+            <span className="table-row-actions">
+              <button
+                type="button"
+                className="btn primary sm"
+                onClick={() => void onApply()}
+                disabled={apply.isPending}
+              >
+                {apply.isPending ? 'جارٍ التقديم…' : 'تقدّم'}
+              </button>
+            </span>
+          )}
+        </td>
+      </tr>
+      {apply.isError && (
+        <tr>
+          <td colSpan={6} role="alert">
+            <p className="job-apply-error">
+              {apiErrorMessage(apply.error, 'تعذّر إرسال طلب التقديم — حاول مرة أخرى.')}
+            </p>
+          </td>
+        </tr>
+      )}
+    </>
+  );
+}
+
+export default function JobsPage() {
+  const { data, isPending, isError, error, refetch } = useJobs();
+  // 18-G: the payload carries the viewer's applications beside the
+  // jobs — the «تمّ التقديم» badge starts from server truth.
+  const jobs = useMemo(() => data?.data ?? [], [data]);
+  const appliedJobIds = new Set(data?.appliedJobIds ?? []);
+
+  /* Client-side filter over the loaded rows by النوع — the type
+     column's own values. No new hooks, no server round-trip. */
+  const [type, setType] = useState<'ALL' | Job['type']>('ALL');
+  const types = useMemo(() => Array.from(new Set(jobs.map((j) => j.type))), [jobs]);
+  const isFiltering = type !== 'ALL';
+  const filtered = isFiltering ? jobs.filter((j) => j.type === type) : jobs;
+
+  return (
+    <div className="r319s-page">
+    <PageFrame width="default">
+      <PageHeader
+        title="فرص العمل"
+        description="وظائف وفرص تدريب تجريبية مفتوحة لطلاب وخرّيجي الجامعة (بيانات عرض)."
+        /* R342-08 — the header CTA pair (the D11/D8 measured seat;
+           the phone band hides the topbar «اسأل AI» ≤920, D6):
+           «مهاراتي» is the growth surface an application rides on,
+           «التطوير الذاتي» is the tracks family that grows them —
+           the growth group's honest siblings (navigation-only). */
+        actions={(
+          <>
+            <JobsHeaderAction to="/student/skills" className="btn primary sm">
+              <Icon icon={BadgeCheck} size={13} />
+              مهاراتي
+            </JobsHeaderAction>
+            <JobsHeaderAction to="/training" className="btn ghost sm">
+              <Icon icon={GraduationCap} size={13} />
+              التطوير الذاتي
+            </JobsHeaderAction>
+          </>
+        )}
+      />
+
+      {/* R319 (c3-S2): the board opens with the §B2 title-bar — [01]
+          فرص العمل, the honest open-jobs count as mono meta (countAr for
+          assistive tech). */}
+      <SectionBar
+        index="01"
+        title="فرص العمل"
+        meta={
+          !isPending && !isError && jobs.length > 0 ? (
+            <BarCount
+              n={jobs.length}
+              srLabel={countAr(jobs.length, ['فرصة واحدة مفتوحة', 'فرصتان مفتوحتان', 'فرص مفتوحة', 'فرصةً مفتوحة'])}
+            />
+          ) : undefined
+        }
+      />
+
+      {isPending ? (
+        <TableSkeleton rows={5} cols={6} />
+      ) : isError ? (
+        <ErrorState error={error} onRetry={() => refetch()} />
+      ) : jobs.length === 0 ? (
+        /* R319 (c3-S2): the empty board is the sheet's reserved-but-empty
+           region — the hatched EmptyCell (same honest copy). */
+        <EmptyCell
+          label="لا توجد فرص نشطة هذا الأسبوع"
+          note="نضيف فرص التوظيف والتدريب من شركات وطنية وعربية بشكل دوري. ستصلك إشعارات الفرص الملائمة لتخصصك تلقائياً."
+        />
+      ) : (
+        <>
+          <FilterBar
+            filters={
+              <div className="flex items-center gap-2" role="group" aria-label="تصفية فرص العمل حسب النوع">
+                <button
+                  type="button"
+                  className={`pill${type === 'ALL' ? ' on' : ''}`}
+                  aria-pressed={type === 'ALL'}
+                  onClick={() => setType('ALL')}
+                >
+                  الكل
+                </button>
+                {types.map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    className={`pill${type === t ? ' on' : ''}`}
+                    aria-pressed={type === t}
+                    onClick={() => setType(t)}
+                  >
+                    {TYPE_LABELS[t] ?? t}
+                  </button>
+                ))}
+              </div>
+            }
+          />
+
+          {/* The counted line — honest about the filtered subset. */}
+          {/* R305 DS: the counted line is page metadata — it rides the
+              chip register (accent dot = live fact) when a count exists. */}
+          <p className="jobs-count" aria-live="polite">
+            {filtered.length === 0 ? (
+              'لا توجد فرص ضمن هذا النوع حاليّاً — جرّب نوعاً آخر.'
+            ) : (
+              <span className="r305s-chip r305s-chip--accent">
+                <span className="r305s-chip-dot" aria-hidden />
+                <bdi>
+                  {openJobsLabel(filtered.length)}
+                  {isFiltering ? ` من أصل ${formatInt(jobs.length)}` : ''}
+                </bdi>
+              </span>
+            )}
+          </p>
+
+          {filtered.length === 0 ? (
+            /* R319 (c3-S2): the empty filter bucket — the hatched
+               EmptyCell (the CoursesPage filter-bucket precedent). */
+            <EmptyCell
+              label="لا توجد فرص ضمن هذا النوع"
+              note="اختر نوعاً آخر من الأزرار أعلاه — كل الفرص المفتوحة تظهر تحت «الكل»."
+            />
+          ) : (
+            <div className="table-wrap jobs-table-wrap">
+              <table className="table tbl-stack jobs-table">
+                <thead>
+                  <tr>
+                    <th scope="col">الوظيفة</th>
+                    <th scope="col">الموقع</th>
+                    <th scope="col">النوع</th>
+                    <th scope="col">الراتب</th>
+                    <th scope="col">نُشرت</th>
+                    <th scope="col">الإجراء</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.map((j) => (
+                    <JobRow key={j.id} job={j} applied={appliedJobIds.has(j.id)} />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </>
+      )}
+    </PageFrame>
+    </div>
+  );
+}

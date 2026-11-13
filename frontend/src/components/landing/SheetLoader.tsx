@@ -1,0 +1,572 @@
+import { PREFERS_REDUCED_MOTION } from '../../lib/motion-media';
+/**
+ * SheetLoader — R313 «لوحة البدء» — the entrance sequence, rebuilt to
+ * the reference's loader semantics (D10).
+ *
+ * The reference's loader is an ASSET-GATED instrument, not a fixed
+ * clock (audits/evidence/r313/reference/digest.json → loader): a
+ * curve-shaped counter whose ~59–60% plateau EMERGES from waiting on
+ * real assets, a mono percentage (Geist Mono 10px #C43E16), an orange
+ * centre band wiping left→right, two 1px #B3B3AF translating rails,
+ * a line-drawn logo, a 10-line system log (001–010), a metadata
+ * block, an X/Y ruler readout tracking the mouse — and an 835ms
+ * CENTER-OUT TWO-BAND CLIP SPLIT exit (a horizontal slit opens at the
+ * vertical centre and widens to the edges; the counter's 100% holds
+ * ~700ms first). Gating: replays on EVERY full page load (reloads
+ * included — the reference's session flag does not suppress), never
+ * on client-side navigations, never under reduced motion / in
+ * non-visual environments (lib/motion/introGate owns the decision).
+ *
+ * Ulara keeps the honest layer the reference cannot have: every log
+ * line describes work the page is actually doing, the counter never
+ * waits past the fallback curve's 100% at ~5.65s (Promise.race timeout
+ * on the asset gate), and a visible «تخطّي» (Esc/Enter/Space) always
+ * ends it. The R309 fixed 5s+3.6s clock and the R309 exit race (the
+ * 650ms split cancelled at ~21ms by an onDone-prop remount) are both
+ * retired: the sequence owns its clock through refs, the exit plays
+ * its full 835ms, and the parent only unmounts the sheet on the
+ * exit's own finish event (wall-clock backed).
+ *
+ * R314 cycle-2 (V14 — the loader's FRAME SEQUENCE): the counter model
+ * in introGate was re-pinned to the reference's frame-captured beats
+ * (quiet boot → crawl → 60% plateau → accelerating tail → 100%@5.65s →
+ * 717ms hold → the 835ms split; total ≈ 7.2s, the reference's own
+ * window), and the staged draw-in below now spreads across the whole
+ * run — the drawing resolves ~0.85s before the fallback 100%, the
+ * same lead the reference's line-drawn wordmark keeps (draw complete
+ * ≈5.0s of its 5.65s counter) — instead of finishing at 77% of the
+ * run. See landing.css `.sl-draw-wrap` for the retuned layer ladder.
+ */
+import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  shouldPlayIntro,
+  introEnvironment,
+  markIntroSeen,
+  markIntroPlayed,
+  INTRO_SEEN_KEY,
+  loaderTargetAt,
+  loaderDoneAtMs,
+  LOADER_GATE_TIMEOUT_MS,
+  LOADER_HOLD_MS,
+} from '../../lib/motion/introGate';
+// R323 (A3 · defect 1) — the ONE brand system: the loader's mark seat
+// draws the new <Logo> (animated: the stroke-draw with the orange
+// point LAST — the loader's own line-draw treatment of the mark).
+import { Logo } from '../../brand';
+// R323 §A2 — the ONE loading-surface orchestrator: the loader asks for
+// the fullscreen seat (granted | queued), renders only while it holds
+// it, consumes the shared skip gesture, and releases on its own exit.
+import {
+  activateSheetLoader,
+  releaseSheetLoader,
+  getSnapshot,
+  subscribe,
+} from '../../lib/loaderOrchestrator';
+import { sheetEase } from '../../lib/motion/sheetConductor';
+import { ElevationDrawing } from './ElevationDrawing';
+
+/* ── The R313 instrument constants (the shape lives in introGate's
+ * pure model; these are the chrome-side numbers). ───────────────────
+ * EXIT_MS resolves the --t-sheet-exit token (835ms, the measured
+ * split) at runtime; the wall-clock fallback adds grace for hidden
+ * tabs / engine hiccups — the page can never stay covered. */
+const EXIT_TOKEN = '--t-sheet-exit';
+const EXIT_FALLBACK_MS = 835;
+/* the two #B3B3AF rails translate with the counter — a slow drafting
+ * slide (±RAIL_SLIDE_PX at 100%), opposite directions. */
+const RAIL_SLIDE_PX = 24;
+
+function motionDurationMs(name: string, fallback: number): number {
+  if (typeof window === 'undefined' || typeof getComputedStyle !== 'function') {
+    return fallback;
+  }
+  try {
+    const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    const parsed = v ? Number.parseFloat(v) : NaN;
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+export interface SheetLoaderProps {
+  onDone: () => void;
+  /** fires when the geometric EXIT BEGINS (the slit opens): the page
+   *  behind the loader starts its own ink-in then, so the reveal
+   *  resolves into a living page instead of a blank one (R310 §3.1). */
+  onExitStart?: () => void;
+}
+
+/* ── The drawing — the platform's own educational linework (the
+ * «مخطط أُلارا» geometry, composed for the loader window), staged by
+ * the [data-ink] groups against the counter's ramp (landing.css .sl). */
+function SlDraw() {
+  return (
+    <div className="sl-draw-wrap">
+      <ElevationDrawing variant="entrance" active={-1} />
+      {/* the scan line — one sweep after the structures resolve */}
+      <span className="sl-scan" aria-hidden="true" />
+    </div>
+  );
+}
+
+/* ── The honest init log — 10 lines (the reference's 001–010 count),
+ * each a thing the page is actually doing while the loader runs;
+ * `at` is the counter checkpoint that reveals the line. */
+const LOG_LINES: Array<{ at: number; code: string; text: string }> = [
+  { at: 0, code: '001', text: 'تهيئة لوحة أُلارا' },
+  { at: 7, code: '002', text: 'تحميل عائلات الخطوط' },
+  { at: 20, code: '003', text: 'تجهيز المخطط المرسوم' },
+  { at: 33, code: '004', text: 'بناء شبكة الإطار والمسطرة' },
+  { at: 45, code: '005', text: 'تجهيز أقسام الرحلة' },
+  { at: 57, code: '006', text: 'تهيئة محرك التمرير' },
+  { at: 59, code: '007', text: 'مزامنة الوسائط الأساسية' },
+  { at: 75, code: '008', text: 'معايرة أدوات المؤشر' },
+  { at: 90, code: '009', text: 'فحص جاهزية الصفحة' },
+  { at: 100, code: '010', text: 'بدء التنفيذ' },
+];
+
+/* ── The asset gate (R313: asset-gated, NOT a fixed clock) ────────────
+ * The critical assets the counter's plateau waits on: the sheet's
+ * font families (document.fonts.ready — the counter itself is mono)
+ * and every EAGER image in the document (the LCP candidates; lazy
+ * media is deliberately NOT waited on — it loads as the visitor
+ * scrolls, after the entrance). Each gate resolves on success OR
+ * failure (a broken asset never traps the visitor) and the whole gate
+ * races LOADER_GATE_TIMEOUT_MS — the counter always continues. */
+function criticalAssetGate(): Promise<void> {
+  const gates: Array<Promise<unknown>> = [];
+  try {
+    if (typeof document !== 'undefined' && document.fonts?.ready) {
+      gates.push(Promise.resolve(document.fonts.ready));
+    }
+  } catch {
+    /* fonts API unavailable — the timeout owns the gate */
+  }
+  try {
+    if (typeof document !== 'undefined') {
+      const eager = Array.from(document.querySelectorAll('img'))
+        .filter((img) => img.getAttribute('loading') !== 'lazy')
+        .slice(0, 4);
+      for (const img of eager) {
+        gates.push(
+          img.complete
+            ? Promise.resolve(null)
+            : new Promise<void>((resolve) => {
+                img.addEventListener('load', () => resolve(), { once: true });
+                img.addEventListener('error', () => resolve(), { once: true });
+              }),
+        );
+      }
+    }
+  } catch {
+    /* DOM unavailable — the timeout owns the gate */
+  }
+  if (gates.length === 0) return Promise.resolve();
+  const timeout = new Promise<void>((resolve) => {
+    setTimeout(resolve, LOADER_GATE_TIMEOUT_MS);
+  });
+  return Promise.race([Promise.allSettled(gates).then(() => undefined), timeout]);
+}
+
+export function SheetLoader({ onDone, onExitStart }: SheetLoaderProps) {
+  const [play, setPlay] = useState<boolean | null>(null);
+  const [exiting, setExiting] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const bandRef = useRef<HTMLSpanElement>(null);
+  const railTopRef = useRef<HTMLSpanElement>(null);
+  const railBotRef = useRef<HTMLSpanElement>(null);
+  const pctRef = useRef<HTMLSpanElement>(null);
+  const mainRef = useRef<HTMLDivElement>(null);
+  const crossRef = useRef<HTMLSpanElement>(null);
+  const coordRef = useRef<HTMLSpanElement>(null);
+
+  /* R313 — the exit-race fix, part 1: the parent's callbacks live in
+   * refs. The R309 clock re-ran its effects whenever the parent
+   * re-rendered (fresh inline-callback identities), cancelling the
+   * split ~21ms in; the sequence below depends on NOTHING that
+   * changes identity, so re-renders can no longer cancel it. */
+  const onDoneRef = useRef(onDone);
+  onDoneRef.current = onDone;
+  const onExitStartRef = useRef(onExitStart);
+  onExitStartRef.current = onExitStart;
+
+  /* ── Gate: motion allowed, real browser, fresh document. Then the
+   * R323 SEAT: the loader is the app's ONE fullscreen loading surface,
+   * so the play is granted through the orchestrator (activateSheet
+   * Loader) — granted → play; queued → wait for the grant snapshot.
+   * The pre-integration bridge: if the orchestrator still sits in its
+   * pristine boot phase (no Splash wiring is live — the foreman pass
+   * owns App.tsx), the phantom 'splash' seat must never deadlock the
+   * entrance, so the loader plays and the queued grant resolves into
+   * an already-running run (releaseSheetLoader is idempotent either
+   * way). ───────────── */
+  const decidedRef = useRef(false);
+  useEffect(() => {
+    if (decidedRef.current) return; /* StrictMode re-run: the decision stands */
+    decidedRef.current = true;
+    let reduced = false;
+    try {
+      reduced =
+        typeof window !== 'undefined' &&
+        typeof window.matchMedia === 'function' &&
+        window.matchMedia(PREFERS_REDUCED_MOTION).matches;
+    } catch {
+      /* matchMedia unavailable — the page stands complete */
+    }
+    const should = shouldPlayIntro(
+      typeof sessionStorage !== 'undefined' ? sessionStorage : null,
+      reduced,
+      introEnvironment(), /* R318 §C: saveData/≤2g/≤2-core visitors skip */
+    );
+    if (!should) {
+      markIntroSeen();
+      onDoneRef.current();
+      return;
+    }
+    /* the document-lifetime mark: client-side navigations back to the
+     * landing never replay (the reference's Barba behaviour) */
+    markIntroPlayed();
+
+    const granted = activateSheetLoader();
+    if (granted) {
+      setPlay(true);
+      return;
+    }
+    const snap = getSnapshot();
+    if (snap.phase === 'boot' && snap.fullscreen === 'splash') {
+      /* the phantom-splash bridge (see the block comment) */
+      setPlay(true);
+      return;
+    }
+    /* queued behind a REAL layer — the wait-for-grant belt below
+     * owns the subscription (r324: the old inline subscribe rode
+     * THIS effect's cleanup, which StrictMode tears down while the
+     * decidedRef guard blocks the re-run — see the belt's comment) */
+  }, []);
+
+  /* ── The wait-for-grant belt (r324 CI deadlock fix) ────────────────
+   * StrictMode (dev) mounts every effect, runs its cleanups, then
+   * re-runs it. The decide-once effect above used to return the
+   * queued subscription as its own cleanup — the re-run was guarded
+   * off by decidedRef, so after the teardown nothing re-armed the
+   * listener. When the decision landed while a REAL layer still held
+   * the seat (the boot splash inside its ≤250ms exit fade, on a
+   * reload whose lazy landing chunk arrives in exactly that window —
+   * the CI-only r308 replay failure), the splashExited() grant emit
+   * arrived with no subscriber and `.sl` never rendered. This belt
+   * re-checks the LIVE snapshot on every (re)run while the play is
+   * still pending and re-arms the subscription — the grant can no
+   * longer be missed, whatever the mount/unmount choreography. */
+  useEffect(() => {
+    if (play !== null) return undefined;
+    const snap = getSnapshot();
+    if (snap.fullscreen === 'sheet-loader') {
+      /* the grant already landed (e.g. between a teardown and this
+       * re-run) — play now, no subscription needed */
+      setPlay(true);
+      return undefined;
+    }
+    const onSnap = (s: ReturnType<typeof getSnapshot>) => {
+      if (s.fullscreen === 'sheet-loader') {
+        unsub();
+        setPlay(true);
+      }
+    };
+    const unsub = subscribe(onSnap);
+    return unsub;
+  }, [play]);
+
+  /* ── The sequence: asset-gated counter → hold → staged exit. ───── */
+  useEffect(() => {
+    if (!play) return undefined;
+    const root = rootRef.current;
+    if (!root) return undefined;
+
+    const startedAt = performance.now();
+    let releasedAt: number | null = null;
+    let counterDoneAt = loaderDoneAtMs(null);
+    let raf = 0;
+    let finished = false;
+    let lastAnnounced = -1;
+    const srRef = root.querySelector<HTMLElement>('.sl-sr');
+
+    /* the staged draw-in starts one frame after mount (the transition
+     * needs a style change from the initial state). */
+    const mountRaf = requestAnimationFrame(() => {
+      root.classList.add('sl-mounted');
+    });
+
+    /* the asset gate releases the counter's plateau */
+    let alive = true;
+    void criticalAssetGate().then(() => {
+      if (!alive || releasedAt !== null) return;
+      releasedAt = Math.max(0, performance.now() - startedAt);
+      counterDoneAt = loaderDoneAtMs(releasedAt);
+    });
+
+    let exitStarted = false;
+    const startExit = () => {
+      if (exitStarted) return;
+      exitStarted = true;
+      /* the page behind begins its ink-in NOW — the slit reveals a
+       * living sheet, never a blank (R310 §3.1) */
+      onExitStartRef.current?.();
+    };
+
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      cancelAnimationFrame(raf);
+      markIntroSeen();
+      /* R323 §A2: the seat frees when the loader's own exit begins —
+         no other fullscreen layer can mount behind the slit. */
+      releaseSheetLoader();
+      startExit();
+      root.classList.add('is-exiting');
+      setExiting(true);
+    };
+
+    const tick = () => {
+      const elapsed = performance.now() - startedAt;
+
+      /* the counter: the curve target, gated on the real assets — the
+       * plateau EMERGES from waiting; an early release shortens the
+       * tail (bounded at the natural rate — the reference's own
+       * warm-cache behaviour); the fallback curve's 100% at ~5.65s is
+       * the slowest possible run (the gate's timeout guarantees it). */
+      const target = loaderTargetAt(elapsed, releasedAt);
+      const pct = Math.min(100, Math.floor(target));
+
+      if (bandRef.current) {
+        bandRef.current.style.transform = `scaleX(${target / 100})`;
+      }
+      /* the two #B3B3AF rails slide in opposite directions with the
+       * counter (the reference's translating progress items) */
+      const slide = (target / 100) * RAIL_SLIDE_PX;
+      if (railTopRef.current) {
+        railTopRef.current.style.transform = `translate3d(${slide}px, 0, 0)`;
+      }
+      if (railBotRef.current) {
+        railBotRef.current.style.transform = `translate3d(${-slide}px, 0, 0)`;
+      }
+      if (pctRef.current && pctRef.current.dataset.pct !== String(pct)) {
+        pctRef.current.dataset.pct = String(pct);
+        pctRef.current.textContent = `${pct}%`;
+      }
+
+      /* the log advances with the checkpoints */
+      const lineIdx = LOG_LINES.reduce(
+        (acc, l, i) => (target >= l.at ? i : acc),
+        -1,
+      );
+      const log = root.querySelector<HTMLElement>('.sl-log');
+      if (log) {
+        const children = log.children;
+        for (let i = 0; i < children.length; i += 1) {
+          const el = children[i] as HTMLElement;
+          const on = i <= lineIdx;
+          if (el.dataset.on !== (on ? 'on' : 'off')) el.dataset.on = on ? 'on' : 'off';
+        }
+      }
+
+      /* coarse live announcements (0/50/100) — not per-frame spam */
+      const announce = target >= 100 ? 3 : target >= 50 ? 2 : target > 0 ? 1 : 0;
+      if (srRef && announce !== lastAnnounced) {
+        lastAnnounced = announce;
+        srRef.textContent =
+          target >= 100
+            ? 'اكتمل التحميل'
+            : target >= 50
+              ? 'جارٍ تحضير الصفحة — أكثر من النصف'
+              : 'جارٍ تحضير الصفحة';
+      }
+
+      /* the measured hold at 100%, then the geometric exit */
+      if (pct >= 100 && elapsed >= counterDoneAt + LOADER_HOLD_MS) {
+        finish();
+        return;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+
+    /* the skip — always available, always honest. The orchestrator's
+     * shared skip gesture (skip() → skipRequested) is consumed here
+     * too: the ACTIVE layer's component completes its own exit. */
+    const skip = (e?: Event) => {
+      if (e instanceof KeyboardEvent && !['Escape', 'Enter', ' '].includes(e.key)) return;
+      finish();
+    };
+    const skipBtn = root.querySelector<HTMLButtonElement>('.sl-skip');
+    skipBtn?.addEventListener('click', skip);
+    window.addEventListener('keydown', skip);
+    const onOrchestratorSkip = (s: ReturnType<typeof getSnapshot>) => {
+      if (s.skipRequested && s.fullscreen === 'sheet-loader') finish();
+    };
+    const unsubSkip = subscribe(onOrchestratorSkip);
+
+    /* lock the sheet while the loader owns the viewport */
+    const doc = document.documentElement;
+    const prevOverflow = doc.style.overflow;
+    doc.style.overflow = 'hidden';
+
+    return () => {
+      alive = false;
+      cancelAnimationFrame(raf);
+      cancelAnimationFrame(mountRaf);
+      window.removeEventListener('keydown', skip);
+      skipBtn?.removeEventListener('click', skip);
+      unsubSkip();
+      doc.style.overflow = prevOverflow;
+    };
+  }, [play]);
+
+  /* ── The exit: the measured 835ms CENTER-OUT TWO-BAND CLIP SPLIT —
+   *     a horizontal slit at the vertical centre (49.94/50.06%)
+   *     widening symmetrically to 0/100% (the top and bottom halves
+   *     part at the centre line). R313 race fix, part 2: the effect
+   *     depends only on `exiting` (the callbacks ride refs), the
+   *     animation is never restarted by a parent re-render, and a
+   *     wall-clock fallback ends the sequence even if the finish
+   *     event never fires (hidden tab, engine hiccup). ──────────── */
+  useEffect(() => {
+    if (!exiting || !mainRef.current) return undefined;
+    const el = mainRef.current;
+    const exitMs = Math.max(120, motionDurationMs(EXIT_TOKEN, EXIT_FALLBACK_MS));
+    const reduce =
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia(PREFERS_REDUCED_MOTION).matches;
+    if (reduce || typeof el.animate !== 'function') {
+      const t = window.setTimeout(() => onDoneRef.current(), 30);
+      return () => window.clearTimeout(t);
+    }
+    let done = false;
+    const settle = () => {
+      if (done) return;
+      done = true;
+      onDoneRef.current();
+    };
+    const anim = el.animate(
+      [
+        {
+          clipPath:
+            'polygon(0% 0%, 100% 0%, 100% 49.94%, 0% 49.94%, 0% 50.06%, 100% 50.06%, 100% 100%, 0% 100%)',
+        },
+        {
+          clipPath:
+            'polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%, 0% 100%, 100% 100%, 100% 100%, 0% 100%)',
+        },
+      ],
+      {
+        duration: exitMs,
+        easing: sheetEase(),
+        fill: 'forwards',
+      },
+    );
+    anim.onfinish = settle;
+    anim.oncancel = settle;
+    const fallback = window.setTimeout(settle, exitMs + 600);
+    return () => {
+      window.clearTimeout(fallback);
+      anim.onfinish = null;
+      anim.oncancel = null;
+      anim.cancel();
+    };
+  }, [exiting]);
+
+  /* the loader's own ruler readout — scene-relative X/Y (the
+   * reference's X:1131PX mono format) */
+  const onPointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    const root = rootRef.current;
+    if (!root) return;
+    const r = root.getBoundingClientRect();
+    const x = Math.max(0, Math.round(e.clientX - r.left));
+    const y = Math.max(0, Math.round(e.clientY - r.top));
+    if (crossRef.current) {
+      crossRef.current.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+    }
+    if (coordRef.current) {
+      coordRef.current.textContent = `X:${x}PX Y:${y}PX`;
+    }
+  }, []);
+
+  if (!play) return null;
+
+  return (
+    <div
+      ref={rootRef}
+      className="sl"
+      data-cursor="none"
+      /* R323 §A2 — the fullscreen-layer tag the overlap sampler and
+       * the orchestrator family count (exactly ONE such layer). */
+      data-fullscreen-layer="sheet-loader"
+      role="status"
+      aria-busy={!exiting}
+      aria-label="تحضير صفحة أُلارا"
+      onPointerMove={onPointerMove}
+    >
+      <div ref={mainRef} className="sl-main">
+        {/* the sheet frame + ruler */}
+        <span className="sl-frame" aria-hidden="true" />
+        <span className="sl-cross" ref={crossRef} aria-hidden="true">
+          <span className="sl-cross-h" />
+          <span className="sl-cross-v" />
+        </span>
+        <span className="sl-coord fo-mono" ref={coordRef} dir="ltr" aria-hidden="true">
+          X:0PX Y:0PX
+        </span>
+
+        {/* the drawing — the elevation's staged construction */}
+        <SlDraw />
+
+        {/* the progress instrument: the mono counter ON the orange
+            band, the two 1px #B3B3AF rails translating above/below */}
+        <div className="sl-progress" aria-hidden="true">
+          <span className="sl-rail sl-rail-top" ref={railTopRef} />
+          <span className="sl-rail sl-rail-bot" ref={railBotRef} />
+          <span className="sl-band" ref={bandRef} />
+          <span className="sl-pct fo-mono" ref={pctRef} dir="ltr">0%</span>
+        </div>
+
+        {/* the honest init log — 001…010 */}
+        <ul className="sl-log" aria-hidden="true">
+          {LOG_LINES.map((l) => (
+            <li key={l.code} data-on="off">
+              <span className="fo-mono" dir="ltr">{l.code}</span>
+              <span>{l.text}</span>
+            </li>
+          ))}
+        </ul>
+
+        {/* the title block — the sheet's identity (stable metadata,
+            no release-number label per R309 §8). R323 (A3 · defect 1):
+            the mark seat draws the NEW <Logo> animated — the mark's
+            stroke-draw runs with the entrance, the orange point LAST. */}
+        <div className="sl-meta" aria-hidden="true">
+          <span className="sl-brand">
+            <Logo variant="mark" size={22} animated className="sl-brand-logo" />
+            <span className="sl-meta-title">أُلارا — نظام تشغيل الجامعة</span>
+          </span>
+          <span className="sl-meta-row fo-mono" dir="ltr">
+            ULARA · LEARNING PLATFORM
+          </span>
+          <span className="sl-meta-row fo-mono" dir="ltr">
+            TYPE : ARABIC-FIRST LEARNING PLATFORM
+          </span>
+          <span className="sl-meta-row fo-mono" dir="ltr">
+            FOCUS : THE FULL LEARNING JOURNEY
+          </span>
+        </div>
+
+        <span className="sl-sr">جارٍ تحضير الصفحة</span>
+
+        <button type="button" className="sl-skip fo-mono">
+          تخطّي — SKIP
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export { INTRO_SEEN_KEY };

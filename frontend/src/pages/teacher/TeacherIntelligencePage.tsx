@@ -1,0 +1,680 @@
+/**
+ * Teacher Academic Intelligence — replaces the hardcoded teacher pages
+ * with real DB-backed data + risk scoring + curriculum AI suggestions.
+ *
+ *  /teacher/intelligence  →  list of my offerings with KPI summary
+ *                            + global risk panel across all offerings
+ *  /teacher/intelligence/:offeringId   →   per-course deep dive
+ *                            (roster · risk per student · curriculum AI)
+ */
+import { useMemo, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import {
+  AlertTriangle, BookOpen, Sparkles, ChevronRight, ChevronLeft,
+  Users, ClipboardCheck, BarChart3, Brain, Lightbulb, ArrowUpRight,
+  CheckCircle2, RefreshCw, MessageSquare,
+} from 'lucide-react';
+import { Card, Badge, UserAvatar, Tabs } from '../../components/primitives';
+import { StatStrip } from '../../components/primitives/Ledger';
+import { DetailSkeleton, ErrorState, EmptyState, ListSkeleton, Skeleton } from '../../components/primitives/States';
+import { Icon } from '../../components/Icon';
+import { EmojiIcon } from '../../components/EmojiIcon';
+import { CurriculumAuthoringPanel } from '../../components/curriculum';
+import { useAuthStore } from '../../stores/auth.store';
+import {
+  useTeacherOfferings, useTeacherStudents, useOfferingAnalytics,
+  useTeacherRisks, useCurriculumSuggest,
+  type TeacherOffering, type RiskLevel, type TeacherStudentRow,
+} from '../../hooks/useResources';
+import { countAr } from '../../lib/format';
+import { useEntityPageTitle } from '../../components/layout/AppShell'; // r183-B6 (A4 P3-4): entity tab title, one call only
+import '../../styles/owner.css'; // ConfirmDialog surfaces via curriculum authoring (D11 css split, 12-15)
+import '../../styles/training.css'; // shared .track-hero/.filter-pill/.back-link families (D11 css split, 12-15)
+import '../../styles/teacher/ds-core.css'; // R305 DS: §0 primitives + §E tax- composition
+/* R342-09 — the [nn] section-index register (.w11-idx, inner.css §W11):
+ * the same gutter grammar the teacher dashboard's Card titles and the
+ * done daily-work pages speak (TeacherPages.tsx:54), so the
+ * intelligence surfaces' section heads read on the numeral axis too. */
+import '../../styles/landing/inner.css';
+import { formatPct1, formatNum } from '../../utils/numbers';
+
+/* The shared risk vocabulary (the dashboard mirrors these exact
+ * strings — never reword). The chip tones are the reference §0 status
+ * vocabulary: stable=ok · watched=info · at-risk=warn · critical=danger.
+ * The severity rail + score ink no longer ride inline styles: the row
+ * carries data-severity and §E of r305-teacher-quality.css paints both
+ * (.hr-edge rail + -ink numerals) — the 5-D3 contrast decision (WATCH
+ * on --chart-6 as a graphic, --gold-ink as text) now lives in the sheet. */
+const RISK_SEV: Record<RiskLevel, 'ok' | 'watch' | 'warn' | 'critical'> = {
+  OK: 'ok',
+  WATCH: 'watch',
+  AT_RISK: 'warn',
+  CRITICAL: 'critical',
+};
+const RISK_TONE: Record<RiskLevel, 'ok' | 'info' | 'warn' | 'danger'> = {
+  OK: 'ok',
+  WATCH: 'info',
+  AT_RISK: 'warn',
+  CRITICAL: 'danger',
+};
+const RISK_LABEL: Record<RiskLevel, string> = {
+  OK: 'مستقر',
+  WATCH: 'تحت المراقبة',
+  AT_RISK: 'في خطر',
+  CRITICAL: 'حرج',
+};
+
+/* ═══════════════ Catalog (my offerings + global risks) ═══════════════ */
+export default function TeacherIntelligencePage() {
+  const offerings = useTeacherOfferings();
+  const risks = useTeacherRisks();
+
+  /* The flagged-tier ladder: honest counts of the rows this panel
+   * actually holds (the /teacher/risks endpoint skips stable students,
+   * so «مستقر» stays out of the ladder rather than reading as a
+   * lying zero). Real counts only — never invented. */
+  const flaggedCounts = useMemo(() => {
+    const rows = risks.data ?? [];
+    return {
+      WATCH: rows.filter((r) => r.riskLevel === 'WATCH').length,
+      AT_RISK: rows.filter((r) => r.riskLevel === 'AT_RISK').length,
+      CRITICAL: rows.filter((r) => r.riskLevel === 'CRITICAL').length,
+    };
+  }, [risks.data]);
+
+  return (
+    <div className="hr-scope">
+    <div className="page">
+      <header className="page-header">
+        <div className="page-title-block">
+          <span className="hr-brow">تحليل لحظي</span>
+          <h1 className="page-title">الذكاء الأكاديمي</h1>
+          <p className="page-subtitle">
+            متابعة أداء طلابك مدعومة بتحليل لحظي للحضور والدرجات والمتابعة، مع توصيات تدخّل ذكية.
+          </p>
+        </div>
+        {/* R342-09 (D8 header-CTA law): the catalog's ONE honest next
+         * action on the accent register — the risk panel's suggestions
+         * are interventions («تواصل مع الطالب…»), and the messages
+         * surface is exactly that channel. Visible at every width (the
+         * topbar «اسأل AI» hides ≤920px, so without it the first
+         * viewport at 390 carries no primary action at all). */}
+        <Link to="/teacher/messages" className="btn accent sm hr-cta">
+          <Icon icon={MessageSquare} size={13} /> تواصل مع الطلاب
+        </Link>
+      </header>
+
+      {/* Global at-risk panel */}
+      <Card
+        title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[01]</span>طلاب يحتاجون متابعة</>}
+        icon={AlertTriangle}
+        subtitle={
+          risks.isPending ? 'جارٍ التحميل…'
+          : risks.data && risks.data.length > 0 ? countAr(risks.data.length, ['طالب موزّع', 'طالبان موزّعان', 'طلاب موزّعون', 'طالباً موزّعاً'])
+          : undefined
+        }
+        actions={(
+          /* A6 P3 (22-a): the Latin run is bdi-isolated like every other
+           * Latin fragment on teacher surfaces (ResearchReview grammar).
+           * R305: the suggestion affordance rides the reference ember chip —
+           * the one warm accent on this panel. */
+          <span className="hr-chip" data-tone="ember"><Icon icon={Brain} size={11} /> <bdi>AI</bdi></span>
+        )}
+      >
+        {risks.isPending ? (
+          <ListSkeleton rows={3} />
+        ) : risks.isError ? (
+          <ErrorState
+            message="تعذَّر تحميل قائمة المتابعة"
+            error={risks.error}
+            onRetry={() => risks.refetch()}
+          />
+        ) : risks.data.length === 0 ? (
+          /* r149 (R3-A1 #6): EmptyState الكنونية بدل اليدوية. */
+          <EmptyState
+            icon={CheckCircle2}
+            title="جميع طلابك في وضع جيد"
+            description="لا حاجة لتدخّل عاجل."
+          />
+        ) : (
+          <>
+            <FlaggedLadder counts={flaggedCounts} />
+            <div className="flex-col gap-2">
+              {risks.data.map((r) => (
+                <div
+                  key={r.studentId + r.offeringId}
+                  className="risk-row hr-edge"
+                  data-severity={RISK_SEV[r.riskLevel]}
+                >
+                  <UserAvatar initials={r.avatarInitials ?? r.name.slice(0, 2)} color={r.avatarColor ?? undefined} size={38} />
+                  <div className="flex-1">
+                    <div className="risk-row-name">{r.name}</div>
+                    <div className="risk-row-meta">
+                      <span>{r.courseIcon} {r.courseName}</span>
+                      {r.signals.map((s) => <span key={s} className="hr-chip" data-tone="warn">{s}</span>)}
+                    </div>
+                    <div className="risk-row-suggestion">
+                      <Icon icon={Lightbulb} size={11} style={{ color: 'var(--gold-ink)' }} /> {r.suggestion}
+                    </div>
+                  </div>
+                  <div className="risk-row-score">
+                    <div className="risk-row-pct"><bdi>{formatPct1(r.riskScore)}%</bdi></div>
+                    <span className="hr-chip" data-tone={RISK_TONE[r.riskLevel]}>{RISK_LABEL[r.riskLevel]}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </Card>
+
+      {/* My offerings */}
+      <Card
+        title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[02]</span>مقرّراتي</>}
+        icon={BookOpen}
+        subtitle={
+          offerings.isPending ? 'جارٍ التحميل…'
+          : offerings.data && offerings.data.length > 0 ? countAr(offerings.data.length, ['مقرّر واحد هذا الفصل', 'مقرّران هذا الفصل', 'مقرّرات هذا الفصل', 'مقرّراً هذا الفصل'])
+          : undefined
+        }
+      >
+        {offerings.isPending ? (
+          <TrackGridSkeleton />
+        ) : offerings.isError ? (
+          <ErrorState
+            message="تعذَّر تحميل مقرّراتك"
+            error={offerings.error}
+            onRetry={() => offerings.refetch()}
+          />
+        ) : offerings.data.length === 0 ? (
+          <EmptyState illustration="empty-courses"
+            icon={BookOpen}
+            title="لم تُسند إليك مقرّرات بعد"
+            description="ستظهر مقرّراتك هنا فور إسنادها من قِبَل المسجل العام."
+          />
+        ) : (
+          /* r241 (Superlist): the catalog is a LIST — full-width rows with
+           * hairline separators and the counts inline, not a uniform
+           * card grid. Detail stays attached to the row (one tap). */
+          <div className="tq-rows" role="list">
+            {offerings.data.map((o) => (
+              <OfferingRow key={o.id} offering={o} />
+            ))}
+          </div>
+        )}
+      </Card>
+    </div>
+    </div>
+  );
+}
+
+/** R305 §E (.hr-kpi): the flagged-tier ladder — honest counts of what
+ * this panel holds (WATCH/AT_RISK/CRITICAL; the endpoint skips stable
+ * students, so «مستقر» is deliberately absent rather than a lying
+ * zero). Ember emphasis is reserved for a non-zero critical count. */
+function FlaggedLadder({ counts }: {
+  counts: { WATCH: number; AT_RISK: number; CRITICAL: number };
+}) {
+  const tiers = [
+    { v: 'WATCH' as const, label: RISK_LABEL.WATCH },
+    { v: 'AT_RISK' as const, label: RISK_LABEL.AT_RISK },
+    { v: 'CRITICAL' as const, label: RISK_LABEL.CRITICAL },
+  ];
+  return (
+    <div className="tax-kpis">
+      {tiers.map((t) => (
+        <div className="hr-kpi" key={t.v}>
+          <span
+            className="hr-kpi-value"
+            data-emphasis={t.v === 'CRITICAL' && counts.CRITICAL > 0 ? 'true' : undefined}
+          >
+            {formatNum(counts[t.v])}
+          </span>
+          <span className="hr-kpi-label">{t.label}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** Shape-matched skeleton for the row-list catalog (r241: rows, not
+ * thumb-card tiles — mirrors the .tq-rows anatomy the data renders). */
+function TrackGridSkeleton() {
+  return (
+    <div className="tq-rows" aria-busy="true" aria-live="polite">
+      {[0, 1, 2, 3].map((i) => (
+        <div key={i} className="tq-row" aria-hidden>
+          <Skeleton width={44} height={44} rounded="var(--r-lg)" />
+          <div className="tq-row-body">
+            <Skeleton width="38%" height={10} />
+            <Skeleton width="72%" height={16} />
+            <Skeleton width="55%" height={10} />
+          </div>
+          <Skeleton width={12} height={12} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** r241 (Superlist): one offering = one row — icon well leading, code+
+ * term kicker, course name prominent, honest counts inline, trailing
+ * chevron. The icon-well tint keys off --tq-accent (patterns.css §11
+ * owns the grammar); countAr(0) still names the reality (5-A7). */
+function OfferingRow({ offering }: { offering: TeacherOffering }) {
+  const accent = offering.course.themeColor ?? 'var(--accent)';
+  return (
+    <Link
+      to={`/teacher/intelligence/${offering.id}`}
+      className="tq-row"
+      role="listitem"
+      style={{ ['--tq-accent' as never]: accent }}
+    >
+      <span className="tq-row-icon">
+        <EmojiIcon emoji={offering.course.iconEmoji ?? '📚'} size={22} />
+      </span>
+      <span className="tq-row-body">
+        <span className="tq-row-kicker"><bdi>{offering.course.code}</bdi> · {offering.term}</span>
+        <span className="tq-row-title">{offering.course.name}</span>
+        <span className="tq-row-meta">
+          {/* P2-1/P2-4 (5-A7): countAr(0) renders the broken «0 محاضرة» —
+              each zero case gets its own honest «لا …» copy. */}
+          <span><Icon icon={Users} size={12} /> {offering._count.enrollments === 0 ? 'لا طلاب' : countAr(offering._count.enrollments, ['طالب واحد', 'طالبان', 'طلاب', 'طالباً'])}</span>
+          <span><Icon icon={BookOpen} size={12} /> {offering._count.lectures === 0 ? 'لا محاضرات' : countAr(offering._count.lectures, ['محاضرة واحدة', 'محاضرتان', 'محاضرات', 'محاضرة'])}</span>
+          <span><Icon icon={ClipboardCheck} size={12} /> {offering._count.assignments === 0 ? 'لا واجبات' : countAr(offering._count.assignments, ['واجب واحد', 'واجبان', 'واجبات', 'واجباً'])}</span>
+          {offering._count.examTemplates > 0 && (
+            <span><Icon icon={Sparkles} size={12} /> {countAr(offering._count.examTemplates, ['اختبار واحد', 'اختباران', 'اختبارات', 'اختباراً'])}</span>
+          )}
+        </span>
+      </span>
+      <Icon icon={ChevronLeft} size={14} className="tq-row-chevron" />
+    </Link>
+  );
+}
+
+/** R190 D-2: shape-matched skeleton for the analytics stat strip —
+ * the icon-card KpiSkeleton the page used painted 4 × 132px tiles
+ * that the strip (label/value/trend) replaces. */
+function AnalyticsStripSkeleton() {
+  return (
+    <div className="stat-strip" aria-busy="true" aria-live="polite">
+      {[0, 1, 2, 3].map((i) => (
+        <div key={i} className="stat-cell" aria-hidden>
+          <Skeleton width={70} height={11} />
+          <div style={{ marginBlock: 'var(--sp-1)' }}>
+            <Skeleton width={80} height={28} />
+          </div>
+          <Skeleton width={100} height={11} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ═══════════════ Per-offering deep dive ═══════════════ */
+export function TeacherOfferingDetailPage() {
+  const { offeringId } = useParams<{ offeringId: string }>();
+  const offerings = useTeacherOfferings();
+  const offering = offerings.data?.find((o) => o.id === offeringId);
+  // r183-B6 (A4 P3-4): the tab names the OFFERING's course, not the pattern.
+  useEntityPageTitle(offering?.course.name ?? null);
+  const students = useTeacherStudents(offeringId);
+  const analytics = useOfferingAnalytics(offeringId);
+  const suggest = useCurriculumSuggest();
+  const [tab, setTab] = useState<'students' | 'curriculum' | 'authoring'>('students');
+  const [riskFilter, setRiskFilter] = useState<RiskLevel | 'all'>('all');
+
+  // Hook-order stability: every hook runs before the pending/error early
+  // returns below (the LabsPage crash pattern — never conditionally skip).
+  const riskCounts = useMemo(() => {
+    const rows = students.data ?? [];
+    return {
+      all: rows.length,
+      OK: rows.filter((s) => s.riskLevel === 'OK').length,
+      WATCH: rows.filter((s) => s.riskLevel === 'WATCH').length,
+      AT_RISK: rows.filter((s) => s.riskLevel === 'AT_RISK').length,
+      CRITICAL: rows.filter((s) => s.riskLevel === 'CRITICAL').length,
+    } as Record<RiskLevel | 'all', number>;
+  }, [students.data]);
+
+  // Curriculum authoring is a TEACHER/ADMIN/OWNER capability (the routes
+  // under /teacher already exclude students; the API still 403s non-owners
+  // — this gate only hides the affordance, e.g. for QUALITY viewers).
+  const role = useAuthStore((s) => s.user?.role);
+  const canAuthor = role === 'TEACHER' || role === 'ADMIN' || role === 'OWNER';
+
+  // r157 / 6A9 — the intelligence Tabs ride the SHARED Tabs primitive
+  // (role=tab + aria-selected + roving tabindex + RTL arrows). Tradeoff,
+  // documented: the primitive is label-only, so the per-tab icons the
+  // hand-rolled buttons carried are dropped — three short Arabic labels
+  // read fine without them, and every other tab strip in the product
+  // (research review, library, alerts…) is icon-less the same way.
+  const tabItems = useMemo(() => {
+    const items: Array<{ value: 'students' | 'curriculum' | 'authoring'; label: string }> = [
+      { value: 'students', label: 'الطلاب وتقييم المخاطر' },
+      { value: 'curriculum', label: 'مساعد المنهج' },
+    ];
+    if (canAuthor) items.push({ value: 'authoring', label: 'إدارة المنهج' });
+    return items;
+  }, [canAuthor]);
+
+  // Honest tri-state (audit 0-e P0-5): pending → skeleton, error → retry,
+  // resolved-but-unknown id → a real 404 state — never an infinite skeleton.
+  if (offerings.isPending) return <div className="hr-scope"><DetailSkeleton /></div>;
+  if (offerings.isError) {
+    return (
+      <div className="hr-scope">
+      <div className="page">
+        <Link to="/teacher/intelligence" className="back-link">
+          <Icon icon={ChevronRight} size={14} />
+          العودة إلى كل مقرّراتي
+        </Link>
+        <header className="page-header">
+          <div className="page-title-block">
+            <h1 className="page-title">الذكاء الأكاديمي</h1>
+          </div>
+        </header>
+        <ErrorState
+          message="تعذَّر تحميل بيانات المقرّر"
+          error={offerings.error}
+          onRetry={() => offerings.refetch()}
+        />
+      </div>
+      </div>
+    );
+  }
+  if (!offering) {
+    return (
+      <div className="hr-scope">
+      <div className="page">
+        <Link to="/teacher/intelligence" className="back-link">
+          <Icon icon={ChevronRight} size={14} />
+          العودة إلى كل مقرّراتي
+        </Link>
+        <header className="page-header">
+          <div className="page-title-block">
+            <h1 className="page-title">الذكاء الأكاديمي</h1>
+          </div>
+        </header>
+        <EmptyState
+          icon={BookOpen}
+          title="المقرّر غير موجود"
+          description="ربما حُذف هذا العرض أو أن الرابط غير صحيح."
+        />
+      </div>
+      </div>
+    );
+  }
+  const accent = offering.course.themeColor ?? 'var(--accent)';
+  // Theme-adaptive accent ink for text/icons (wave 3-b pattern — raw accent
+  // hexes can fail contrast on the card ground in either theme).
+  const accentInk = `color-mix(in srgb, ${accent} 70%, var(--text))`;
+
+  const onSuggest = () => suggest.mutate(offeringId!);
+
+  return (
+    <div className="hr-scope">
+    <div className="page">
+      <Link to="/teacher/intelligence" className="back-link">
+        <Icon icon={ChevronRight} size={14} />
+        العودة إلى كل مقرّراتي
+      </Link>
+
+      {/* Tinted band painted by .track-hero from --track-accent (training.css
+          owns the family) — no inline gradient/stripe (audit 0-e P1-15/16). */}
+      <div className="track-hero" style={{ ['--track-accent' as never]: accent }}>
+        <div className="track-hero-icon">
+          <EmojiIcon emoji={offering.course.iconEmoji ?? '📚'} size={28} />
+        </div>
+        <div className="track-hero-main">
+          {/* R342-09 — the detail-surface classification eyebrow (.hr-eyebrow,
+           * ds-core.css §E): a param route resolves no topbar group kicker, so
+           * the surface carries its own classification line — which board this
+           * drill-down belongs to. A real classification, never decoration. */}
+          <p className="hr-eyebrow">الذكاء الأكاديمي · تحليل المقرّر</p>
+          <div className="track-hero-cat"><bdi>{offering.course.code}</bdi> · {offering.term}</div>
+          <h1 className="track-hero-title">{offering.course.name}</h1>
+          <div className="track-hero-meta">
+            {/* P2-1 (5-A7): countAr(0) renders the broken «0 طالباً» — the
+                zero case names the reality (same copy as OfferingCard). */}
+            <Badge>
+              <Icon icon={Users} size={11} />{' '}
+              {offering._count.enrollments === 0
+                ? 'لا طلاب'
+                : countAr(offering._count.enrollments, ['طالب واحد', 'طالبان', 'طلاب', 'طالباً'])}
+            </Badge>
+            <Badge>{countAr(offering.course.credits, ['وحدة واحدة', 'وحدتان', 'وحدات', 'وحدة'])}</Badge>
+            {offering.room && <Badge>قاعة {offering.room}</Badge>}
+            {/* R342-09 (D8 header-CTA law): the ledger's ONE honest next
+             * action on the accent register — the offering's grade entry
+             * (the picker pages now take ?offering=, so the drill-down
+             * lands on THIS course's ledger, not the default one). Fast
+             * navigation between offering, roster and assessment is the
+             * surface's job. */}
+            <Link
+              to={`/teacher/grades?offering=${offering.id}`}
+              className="btn accent sm hr-cta"
+            >
+              <Icon icon={ClipboardCheck} size={13} /> إدخال درجات المقرّر
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {analytics.isPending && <AnalyticsStripSkeleton />}
+      {analytics.isError && (
+        /* The strip's compact slot keeps its placement — the shared
+         * ErrorState replaces the hand-rolled .inline-retry row (the
+         * same convention the students/risks sections below use). */
+        <ErrorState
+          message="تعذَّر تحميل مؤشرات المقرّر"
+          error={analytics.error}
+          onRetry={() => analytics.refetch()}
+        />
+      )}
+      {analytics.data && (
+        <StatStrip
+          ariaLabel="مؤشّرات المقرّر"
+          cells={[
+            {
+              label: 'مسجَّلون',
+              value: formatNum(analytics.data.enrolled),
+              trend: 'تسجيلات نشطة في المقرّر',
+              trendTone: 'flat',
+            },
+            {
+              label: 'الحضور العام',
+              value: `${formatNum(analytics.data.overallAttendance)}%`,
+              trend: analytics.data.overallAttendance >= 75 ? 'فوق حدّ 75%' : 'تحت حدّ 75%',
+              trendTone: analytics.data.overallAttendance >= 75 ? 'up' : 'down',
+            },
+            {
+              label: 'متوسط الدرجات',
+              value: `${formatNum(analytics.data.avgGrade)}%`,
+              trend: analytics.data.avgGrade >= 65 ? 'فوق حدّ 65%' : 'تحت حدّ 65%',
+              trendTone: analytics.data.avgGrade >= 65 ? 'up' : 'down',
+            },
+            {
+              label: 'نسبة النجاح',
+              value: `${formatNum(analytics.data.passRate)}%`,
+              trend: 'طلاب عند 50 فأعلى',
+              trendTone: analytics.data.passRate >= 50 ? 'up' : 'down',
+            },
+          ]}
+        />
+      )}
+
+      <Tabs
+        value={tab}
+        onChange={setTab}
+        items={tabItems}
+      />
+
+      {tab === 'students' && (
+        <Card title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[01]</span>قائمة الطلاب — تحليل لحظي</>} icon={Users}>
+          {students.isPending ? (
+            <ListSkeleton rows={4} />
+          ) : students.isError ? (
+            <ErrorState
+              message="تعذَّر تحميل قائمة الطلاب"
+              error={students.error}
+              onRetry={() => students.refetch()}
+            />
+          ) : students.data.length === 0 ? (
+            <EmptyState illustration="empty-list"
+              icon={Users}
+              title="لا يوجد طلاب مسجَّلون"
+              description="ستظهر قائمة الطلاب هنا فور تسجيلهم في المقرّر."
+            />
+          ) : (
+            <>
+              {/* Risk-level filter — the page's authored moment: on a filter
+                  change non-matching rows fade between shades (is-dim) while
+                  matching rows keep their color, mirroring the matrix.
+                  R305: the group rides the shared .hr-toolbar grammar. */}
+              <div className="hr-toolbar" role="group" aria-label="تصفية بمستوى المخاطر">
+                {([
+                  { v: 'all' as const, label: 'الكل' },
+                  { v: 'OK' as const, label: RISK_LABEL.OK },
+                  { v: 'WATCH' as const, label: RISK_LABEL.WATCH },
+                  { v: 'AT_RISK' as const, label: RISK_LABEL.AT_RISK },
+                  { v: 'CRITICAL' as const, label: RISK_LABEL.CRITICAL },
+                ]).map((o) => (
+                  <button
+                    key={o.v}
+                    type="button"
+                    className={`filter-pill${riskFilter === o.v ? ' on' : ''}`}
+                    aria-pressed={riskFilter === o.v}
+                    onClick={() => setRiskFilter(o.v)}
+                  >
+                    {o.label}
+                    <span className="filter-pill-count">{riskCounts[o.v]}</span>
+                  </button>
+                ))}
+              </div>
+              <div className="flex-col gap-2">
+                {students.data.map((s) => (
+                  <StudentRow
+                    key={s.studentId}
+                    student={s}
+                    dimmed={riskFilter !== 'all' && s.riskLevel !== riskFilter}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+        </Card>
+      )}
+
+      {tab === 'curriculum' && (
+        <Card
+          title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[02]</span>اقتراح هيكل منهج (محاكاة قالبية)</>}
+          icon={Brain}
+          actions={
+            /* R305: the tab's one primary action rides the ember-flavored
+             * .hr-cta emphasis cap (never a re-painted .btn). */
+            <button
+              type="button"
+              className="btn primary sm hr-cta"
+              onClick={onSuggest}
+              disabled={suggest.isPending}
+            >
+              {suggest.isPending ? 'جارٍ الاقتراح…' : suggest.data ? 'إعادة الاقتراح' : 'اقتراح هيكل المنهج'}
+              <Icon icon={Sparkles} size={13} />
+            </button>
+          }
+        >
+          {suggest.isError && (
+            <div className="inline-retry" role="alert" style={{ marginBlockEnd: 'var(--sp-3)' }}>
+              <span className="text-sm text-muted">تعذَّر اقتراح هيكل المنهج.</span>
+              <button type="button" className="btn ghost sm" onClick={onSuggest}>
+                <Icon icon={RefreshCw} size={12} /> إعادة المحاولة
+              </button>
+            </div>
+          )}
+          {!suggest.data && !suggest.isPending && (
+            /* r149 (R3-A1 #6): EmptyState الكنونية — حالة «كيف تبدأ». */
+            <EmptyState
+              icon={Lightbulb}
+              title="ابدأ باقتراح ذكي"
+              description="اقتراح قالبيّ لهيكل منهج بمطابقة اسم المقرّر — لا تحليل ذكيّ للمحتوى (محاكاة حتى نموذج حقيقي)."
+            />
+          )}
+          {suggest.data && (
+            <>
+              <div className="ai-rationale" style={{ ['--track-accent' as never]: accent }}>
+                <div className="text-xs text-muted">{suggest.data.rationale}</div>
+                <div className="flex gap-2 flex-wrap" style={{ marginBlockStart: 'var(--sp-2)' }}>
+                  <Badge>{countAr(suggest.data.outline.length, ['فصل واحد', 'فصلان', 'فصول', 'فصلاً'])}</Badge>
+                  <Badge color="brand">{countAr(suggest.data.suggestedTotalLectures, ['محاضرة مقترحة واحدة', 'محاضرتان مقترحتان', 'محاضرات مقترحة', 'محاضرة مقترحة'])}</Badge>
+                  {suggest.data.currentLectureCount > 0 && (
+                    <Badge color="green">{countAr(suggest.data.currentLectureCount, ['محاضرة موجودة واحدة', 'محاضرتان موجودتان', 'محاضرات موجودة', 'محاضرة موجودة'])}</Badge>
+                  )}
+                </div>
+              </div>
+              <div className="flex-col gap-3">
+                {suggest.data.outline.map((ch, i) => (
+                  <div key={i} className="curriculum-chapter">
+                    <div className="curriculum-chapter-head" style={{ color: accentInk }}>
+                      <span>{ch.title}</span>
+                      <Badge>{countAr(ch.estLectures, ['محاضرة واحدة', 'محاضرتان', 'محاضرات', 'محاضرة'])}</Badge>
+                    </div>
+                    <ul className="curriculum-topics">
+                      {ch.topics.map((t) => (
+                        <li key={t}><Icon icon={ArrowUpRight} size={11} style={{ color: accentInk }} /> {t}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+              <div className="ai-next-steps">
+                <div className="text-xs text-subtle" style={{ marginBlockEnd: 'var(--sp-2)' }}>الخطوات التالية</div>
+                <ol className="ai-steps-list">
+                  {suggest.data.nextSteps.map((s) => (
+                    <li key={s} className="text-sm">{s}</li>
+                  ))}
+                </ol>
+              </div>
+            </>
+          )}
+        </Card>
+      )}
+      {tab === 'authoring' && canAuthor && offeringId && (
+        <CurriculumAuthoringPanel offeringId={offeringId} accent={accent} />
+      )}
+    </div>
+    </div>
+  );
+}
+
+function StudentRow({ student, dimmed }: { student: TeacherStudentRow; dimmed: boolean }) {
+  return (
+    <div
+      className={`risk-row hr-edge${dimmed ? ' is-dim' : ''}`}
+      data-severity={RISK_SEV[student.riskLevel]}
+    >
+      <UserAvatar initials={student.avatarInitials ?? student.name.slice(0, 2)} color={student.avatarColor ?? undefined} size={38} />
+      <div className="flex-1">
+        <div className="risk-row-name">{student.name}</div>
+        <div className="risk-row-meta">
+          <bdi className="font-mono text-xxs">{student.universityId}</bdi>
+          <span><Icon icon={ClipboardCheck} size={11} /> حضور <bdi>{student.attendancePct}%</bdi></span>
+          <span><Icon icon={BarChart3} size={11} /> درجة <bdi>{student.avgGrade}%</bdi></span>
+          <span><Icon icon={BookOpen} size={11} /> متابعة <bdi>{student.watchPct}%</bdi></span>
+        </div>
+        {student.signals.length > 0 && (
+          <div className="risk-row-meta" style={{ marginBlockStart: 'var(--sp-1)' }}>
+            {student.signals.map((s) => <span key={s} className="hr-chip" data-tone="warn">{s}</span>)}
+          </div>
+        )}
+        <div className="risk-row-suggestion">
+          <Icon icon={Lightbulb} size={11} style={{ color: 'var(--gold-ink)' }} /> {student.suggestion}
+        </div>
+      </div>
+      <div className="risk-row-score">
+        <div className="risk-row-pct"><bdi>{student.riskScore}%</bdi></div>
+        <span className="hr-chip" data-tone={RISK_TONE[student.riskLevel]}>{RISK_LABEL[student.riskLevel]}</span>
+      </div>
+    </div>
+  );
+}

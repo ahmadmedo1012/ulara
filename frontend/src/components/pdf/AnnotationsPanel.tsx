@@ -1,0 +1,319 @@
+import { useEffect, useRef, useState } from 'react';
+import {
+  MessageSquare, Plus, Trash2, ChevronLeft,
+} from 'lucide-react';
+import { Icon } from '../Icon';
+import { UserAvatar, Badge } from '../primitives';
+import { EmptyState, ErrorState, Skeleton } from '../primitives/States';
+import { useAnnotations, useCreateAnnotation, useDeleteAnnotation } from '../../hooks/useResources';
+import { apiErrorMessage, timeAgoAr } from '../../lib/format';
+// R320 §B: the author role badge consumes the ONE shared role-label
+// source (lib/roleLabels.ts + backend twin).
+import { roleLabel } from '../../lib/roleLabels';
+import { useAuthStore, type AppRole } from '../../stores/auth.store';
+
+/* Relative time is lib/format.timeAgoAr (15-h P2-2 consolidation,
+ * 16-E10) — the local "منذ 5 د" compact twin is gone, so this panel and
+ * the notification dropdown agree on the same instant. */
+
+interface AnnotationsPanelProps {
+  paperId: string;
+  /** Current PDF page — used to attach new annotations to it. */
+  currentPage: number;
+  /** Total pages — to bound the picker. */
+  numPages: number;
+  /** Caller subscribes to navigate to a specific page when the user clicks an annotation. */
+  onJumpToPage: (page: number) => void;
+  /** r305-a7 (OPTIONAL — additive): a text selection made inside the
+   *  paper, offered as a contextual note. When `seq` changes, the
+   *  composer opens anchored to `page` with the quote seeded INSIDE the
+   *  comment draft — the persisted payload shape ({page, comment,
+   *  color}) is untouched. Ignored when absent. */
+  seedDraft?: { text: string; page: number; seq: number } | null;
+}
+
+/**
+ * Teacher pen palette — the design world's section-color family inks,
+ * quoted by value (copper / mint / sky / rose / yellow / lavender).
+ *
+ * These values are PERSISTED to the API as the annotation's color, so
+ * they must be concrete hexes that stay stable across themes — a var()
+ * reference would resolve differently per theme and is not a color
+ * outside this CSS runtime (raw hex here is the documented guardrail-4
+ * exception). Each is a light-palette family ink: a mid-tone that
+ * keeps ≥3:1 against the dark theme's card ground and reads as a
+ * bounded swatch on light (the chip itself carries a border + ring).
+ * Annotations written before this palette keep rendering — the stored
+ * color string is rendered verbatim.
+ */
+const PEN_COLORS = [
+  { value: '#B57438', name: 'نحاسي' },   // copper family ink
+  { value: '#4FA66D', name: 'أخضر' },    // mint family ink
+  { value: '#5C8FCE', name: 'أزرق' },    // sky family ink
+  { value: '#DD6E78', name: 'أحمر' },    // rose family ink
+  { value: '#D6A330', name: 'ذهبي' },    // yellow family ink
+  { value: '#8A6FE0', name: 'بنفسجي' },  // lavender family ink
+] as const;
+
+/** Shape-matched list placeholder — mirrors an annotation card
+ *  (avatar + author line + two comment lines), craft floor. */
+function AnnotationsSkeleton() {
+  return (
+    <div role="status" aria-label="جارٍ تحميل الملاحظات…" className="annotations-skeleton">
+      {[0, 1, 2].map((i) => (
+        <div key={i} className="annotations-skeleton-item">
+          <Skeleton width={28} height={28} rounded="var(--r-full)" />
+          <div className="annotations-skeleton-lines">
+            <Skeleton width="42%" height={10} />
+            <Skeleton width="94%" height={10} />
+            <Skeleton width="68%" height={10} />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default function AnnotationsPanel({ paperId, currentPage, numPages, onJumpToPage, seedDraft }: AnnotationsPanelProps) {
+  const annotations = useAnnotations(paperId);
+  const createA = useCreateAnnotation(paperId);
+  const deleteA = useDeleteAnnotation(paperId);
+  const user = useAuthStore((s) => s.user);
+  // Mirrors the backend permission model (learning.routes POST
+  // /research/:id/annotations → requireRole TEACHER/ADMIN/OWNER): an
+  // OWNER reviewer can annotate too — the composer used to hide for
+  // them while the server accepted their writes.
+  const canAnnotate = user?.role === 'TEACHER' || user?.role === 'ADMIN' || user?.role === 'OWNER';
+
+  const [composing, setComposing] = useState(false);
+  const [draft, setDraft] = useState('');
+  const [draftPage, setDraftPage] = useState(currentPage);
+  const [draftColor, setDraftColor] = useState<string>(PEN_COLORS[0].value);
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!draft.trim() || createA.isPending) return;
+    createA.mutate(
+      { page: draftPage, comment: draft.trim(), color: draftColor },
+      {
+        onSuccess: () => {
+          setDraft('');
+          setComposing(false);
+        },
+      },
+    );
+  };
+
+  const startCompose = () => {
+    setDraftPage(currentPage);
+    setComposing(true);
+    setDraft('');
+  };
+
+  /* r305-a7 — the contextual-note entry: a selection inside the paper
+   * arrives as seedDraft{seq} — the composer opens anchored to the
+   * selection's page with the quote INSIDE the comment draft (the
+   * persisted payload shape is untouched). The quote is bounded so a
+   * long selection cannot crowd out the reviewer's own words. */
+  const seededSeqRef = useRef<number | null>(null);
+  useEffect(() => {
+    if (!seedDraft || seedDraft.seq === seededSeqRef.current) return;
+    seededSeqRef.current = seedDraft.seq;
+    const quote = seedDraft.text.replace(/\s+/g, ' ').trim();
+    const bounded = quote.length > 300 ? `${quote.slice(0, 300).trimEnd()}…` : quote;
+    setComposing(true);
+    setDraftPage(Math.max(1, Math.min(numPages, seedDraft.page)));
+    setDraft((prev) => {
+      const seeded = `اقتباس: «${bounded}»`;
+      if (!prev.trim()) return `${seeded}\n`;
+      return `${seeded}\n${prev}`;
+    });
+  }, [seedDraft, numPages]);
+
+  /* <section>, not <aside> (final-research D): the panel renders inside
+   * the reader's landmark tree, and a complementary landmark nested in
+   * another landmark is an axe violation (landmark-complementary-is-
+   * top-level — surfaced by the dev a11y belt on every reader visit).
+   * A labelled section carries the same semantics without the nesting
+   * rule; the label matches the mobile Sheet's title. */
+  return (
+    <section className="annotations-panel" aria-label="ملاحظات البحث">
+      <header className="annotations-header">
+        <div className="flex items-center gap-2">
+          <Icon icon={MessageSquare} size={16} className="text-subtle" />
+          <span className="text-sm font-semibold" style={{ color: 'var(--text)' }}>الملاحظات</span>
+          <Badge>{annotations.data?.length ?? 0}</Badge>
+        </div>
+        {canAnnotate && !composing && (
+          <button type="button" className="btn primary sm" onClick={startCompose}>
+            <Icon icon={Plus} size={13} />
+            إضافة ملاحظة
+          </button>
+        )}
+      </header>
+
+      {/* Composer */}
+      {composing && (
+        <form onSubmit={submit} className="annotation-composer">
+          <div className="annotation-composer-meta flex items-center gap-2">
+            <span className="text-xxs text-subtle">الصفحة</span>
+            <input
+              type="number"
+              min={1}
+              max={numPages}
+              value={draftPage}
+              onChange={(e) => setDraftPage(Math.max(1, Math.min(numPages, +e.target.value || 1)))}
+              className="annotation-page-input font-mono"
+              aria-label={`رقم الصفحة، من ${numPages}`}
+            />
+            <span className="text-xxs text-subtle">/ {numPages}</span>
+            <div className="annotation-colors" role="group" aria-label="لون القلم">
+              {PEN_COLORS.map((c) => (
+                <button
+                  key={c.value}
+                  type="button"
+                  className={`annotation-color${draftColor === c.value ? ' on' : ''}`}
+                  onClick={() => setDraftColor(c.value)}
+                  aria-pressed={draftColor === c.value}
+                  aria-label={`قلم ${c.name}`}
+                  title={`قلم ${c.name}`}
+                >
+                  <span className="annotation-color-dot" style={{ background: c.value }} />
+                </button>
+              ))}
+            </div>
+          </div>
+          <textarea
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            placeholder="اكتب ملاحظتك على هذه الصفحة…"
+            aria-label="نص الملاحظة"
+            rows={3}
+            maxLength={2000}
+            className="annotation-textarea"
+            autoFocus
+          />
+          {/* Failed save: the composer stays open with the draft intact so
+              the user can retry — the failure is never silent (audit 11-f
+              P1-1). */}
+          {createA.isError && (
+            <div className="form-error" role="alert" style={{ marginTop: 'var(--sp-2)' }}>
+              <span className="form-error-msg">
+                {apiErrorMessage(createA.error, 'تعذّر حفظ الملاحظة — تحقّق من اتصالك ثم أعد المحاولة.')}
+              </span>
+            </div>
+          )}
+          <div className="flex items-center justify-between" style={{ marginTop: 'var(--sp-2)' }}>
+            <span className="text-xxs text-subtle">{draft.length} / 2000</span>
+            <div className="flex gap-2">
+              <button type="button" className="btn ghost sm" onClick={() => { setComposing(false); setDraft(''); }}>
+                إلغاء
+              </button>
+              <button type="submit" className="btn primary sm" disabled={!draft.trim() || createA.isPending} aria-disabled={createA.isPending || undefined}>
+                {createA.isPending ? 'جارٍ…' : 'حفظ'}
+              </button>
+            </div>
+          </div>
+        </form>
+      )}
+
+      {/* List */}
+      {/* r305-a7 a11y: the notes render as a real LIST (role=list +
+          listitem) — but only in the branch that actually renders rows;
+          the pending/error/empty and inline-delete-error states must not
+          put non-listitem children inside a list. */}
+      <div
+        className="annotations-list"
+        role={annotations.isPending || annotations.isError || !annotations.data?.length || deleteA.isError ? undefined : 'list'}
+      >
+        {/* Failed delete: the annotation stays in the list (the honest
+            state — the server still has it) and the failure is surfaced
+            inline instead of silently vanishing (audit 11-f P1-1). */}
+        {deleteA.isError && (
+          <div className="form-error" role="alert" style={{ marginBlockEnd: 'var(--sp-2)' }}>
+            <span className="form-error-msg">
+              {apiErrorMessage(deleteA.error, 'تعذّر حذف الملاحظة — تحقّق من اتصالك ثم أعد المحاولة.')}
+            </span>
+          </div>
+        )}
+        {annotations.isPending ? (
+          <AnnotationsSkeleton />
+        ) : annotations.isError ? (
+          <ErrorState
+            message="تعذّر تحميل الملاحظات"
+            error={annotations.error}
+            onRetry={() => annotations.refetch()}
+          />
+        ) : !annotations.data?.length ? (
+          <EmptyState
+            icon={MessageSquare}
+            title="لا توجد ملاحظات بعد"
+            description={canAnnotate ? 'أضف أول ملاحظة على هذا البحث.' : 'سيظهر هنا أي تعليق يضعه المُقيِّم على البحث.'}
+          />
+        ) : (
+          annotations.data.map((a) => {
+            const isMine = user?.id === a.author.id;
+            const initials = a.author.avatarInitials ?? `${a.author.firstName[0] ?? ''}${a.author.lastName[0] ?? ''}`;
+            return (
+              <article
+                key={a.id}
+                className="annotation-item"
+                role={annotations.isPending || annotations.isError || !annotations.data?.length || deleteA.isError ? undefined : 'listitem'}
+                /* 1px author-color hairline (orchestrator ruling #4: the
+                   Notion hairline language — no >1px accent stripes). */
+                style={{ borderInlineStart: `1px solid ${a.color ?? 'var(--accent)'}` }}
+              >
+                <div className="annotation-item-head">
+                  <UserAvatar initials={initials} color={a.author.avatarColor ?? undefined} size={28} />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div className="text-xs font-semibold" style={{ color: 'var(--text)' }}>
+                      {a.author.firstName} {a.author.lastName}
+                    </div>
+                    <div className="flex items-center gap-2 text-xxs text-subtle">
+                      <RoleBadge role={a.author.role} />
+                      <span>·</span>
+                      <span>{timeAgoAr(a.createdAt)}</span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className="annotation-jump"
+                    onClick={() => onJumpToPage(a.page)}
+                    title={`اذهب إلى الصفحة ${a.page}`}
+                    aria-label={`الانتقال إلى الصفحة ${a.page}`}
+                  >
+                    <Icon icon={ChevronLeft} size={12} />
+                    <span className="font-mono">صفحة {a.page}</span>
+                  </button>
+                </div>
+                <p className="annotation-comment">{a.comment}</p>
+                {isMine && (
+                  <button
+                    type="button"
+                    className="annotation-delete"
+                    onClick={() => deleteA.mutate(a.id)}
+                    disabled={deleteA.isPending}
+                    aria-disabled={deleteA.isPending || undefined}
+                    aria-label="حذف الملاحظة"
+                  >
+                    <Icon icon={Trash2} size={11} />
+                  </button>
+                )}
+              </article>
+            );
+          })
+        )}
+      </div>
+    </section>
+  );
+}
+
+function RoleBadge({ role }: { role: AppRole }) {
+  // OWNER added 16-E10 (PaperAnnotation.author.role widened to AppRole —
+  // 16-E2 hand-off); labels match the ONE shared role-label source
+  // (lib/roleLabels.ts, R320 §B: ADMIN is «المسجل العام») so the same
+  // role reads identically in the sidebar and on an annotation author
+  // line (17-a2 person-nouns, 15-j P1-8; QUALITY «أخصائي جودة»).
+  const label = roleLabel(role);
+  return <span style={{ color: 'var(--accent-ink)', fontWeight: 600 }}>{label}</span>;
+}

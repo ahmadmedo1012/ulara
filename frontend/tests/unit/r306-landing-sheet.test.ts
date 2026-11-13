@@ -1,0 +1,480 @@
+/**
+ * r306 — the landing drawing-sheet contract («لوحة أُلارا»).
+ *
+ * r306 rebuilds the landing page in the single the reference canon
+ * (the retired r306 exclusivity spec): the OPTIKKA
+ * editorial poster (the 3D knowledge world, the copper climax, the
+ * --poster-* namespace, the alternating spreads, the giant wordmark)
+ * is retired. This sheet pins the new contract that interaction
+ * tests cannot see cheaply:
+ *   · the poster namespace is GONE from the active runtime scope;
+ *   · the world layer / scroll-conductor vocabulary is gone (no
+ *     canvas, no data-cam, no story hooks, no useScrollStage);
+ *   · the drawing-sheet grammar ships: the sheet frame, the mono
+ *     bracketed indices, the hairline ledger rows, the flat
+ *     fragments (no elevation, no browser chrome);
+ *   · the blueprint hotspot semantics: real buttons, aria-pressed,
+ *     a polite live-region panel, keyboard/pointer parity;
+ *   · the honest ledger is a hairline TABLE (no inverted slab);
+ *   · hygiene: one dark re-point block, the RM belt, zero keyframes,
+ *     hover washes guarded to real pointers.
+ *
+ * Pure fs assertions (landing-scrollspy-grain.test.ts convention):
+ * comments are stripped so tombstone prose quoting OLD values can
+ * never satisfy a pin.
+ */
+import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+const read = (p: string) => readFileSync(path.join(root, p), 'utf8');
+/** Drop /* … *‌/ blocks so comments quoting old values can't satisfy pins. */
+const stripComments = (src: string) => src.replace(/\/\*[\s\S]*?\*\//g, '');
+
+/* R332 split: landing.css is now the per-section family under
+ * styles/landing/ (imported in the original cascade order); the stub
+ * landing.css is rule-free. The family list below replaces the old
+ * single-file read — the aggregated text is unchanged. */
+const LANDING_FAMILY = [
+  'src/styles/landing/chrome.css',
+  'src/styles/landing/hero.css',
+  'src/styles/landing/statement.css',
+  'src/styles/landing/journey.css',
+  'src/styles/landing/pains.css',
+  'src/styles/landing/roles.css',
+  'src/styles/landing/colleges.css',
+  'src/styles/landing/cta.css',
+  'src/styles/landing/why.css',
+  'src/styles/landing/footer.css',
+  'src/styles/landing/shared.css',
+  'src/styles/landing/platform.css',
+  'src/styles/landing/strata.css',
+] as const;
+
+const live = stripComments([
+  ...LANDING_FAMILY,
+  'src/styles/landing/nav.css',
+  'src/styles/landing/hero-mechanics.css',
+].map(read).join('\n'));
+/* Strip BOTH comment forms: block comments AND line-start // prose —
+ * tombstone narration quoting retired values must neither satisfy a
+ * positive pin nor trip a not-contain pin (the landing-funnel
+ * convention, extended to line comments; URLs live inside string
+ * literals mid-line, never at line start, so the anchored pattern
+ * is safe). */
+const stripLineComments = (src: string) => src.replace(/^\s*\/\/.*$/gm, '');
+/* R331 split: the guest surface = LandingPage + chrome/SheetNav + hero/Hero.
+ * P2-0 (r335 split): + the nine section bands (same surface, new layout). */
+const liveTsx = stripLineComments(stripComments([
+  'src/pages/LandingPage.tsx',
+  'src/components/landing/chrome/SheetNav.tsx',
+  'src/components/landing/hero/Hero.tsx',
+  'src/components/landing/sections/Hero.tsx',
+  'src/components/landing/sections/Statement.tsx',
+  'src/components/landing/sections/Live.tsx',
+  'src/components/landing/sections/Chapters.tsx',
+  'src/components/landing/sections/Product.tsx',
+  'src/components/landing/sections/Why.tsx',
+  'src/components/landing/sections/Roles.tsx',
+  'src/components/landing/sections/Vision.tsx',
+  'src/components/landing/sections/Footer.tsx',
+].map(read).join('\n')));
+
+describe('r306 — the poster world is retired', () => {
+  it('no --poster-* consumer remains anywhere in the landing sheet or page', () => {
+    expect(live).not.toMatch(/--poster-/);
+    expect(liveTsx).not.toMatch(/--poster-/);
+  });
+
+  it('the 3D world vocabulary is gone: no canvas layer, no data-cam, no story hooks, no conductor', () => {
+    expect(liveTsx).not.toContain('UlaraWorld');
+    expect(liveTsx).not.toContain('data-cam');
+    expect(liveTsx).not.toContain('data-story-');
+    expect(liveTsx).not.toContain('useScrollStage');
+    expect(liveTsx).not.toContain("from 'three'");
+    expect(live).not.toContain('.world-layer');
+    expect(live).not.toContain('.lv-slab');
+    /* R313 override (WP-B2 · D14): `.fo-footer-mark` returns — the
+     * measured reference footer carries a giant 215×215 line-logo
+     * block (digest.footer), so the r306 giant-WORDMARK retirement
+     * is superseded for the MARK (the brand symbol, not the poster
+     * wordmark). The rest of the poster vocabulary stays dead. */
+  });
+
+  it('the OPTIKKA editorial devices stay retired (dotted grid, paper veil, copper climax)', () => {
+    expect(live).not.toContain('fo-hero-gridlines');
+    expect(live).not.toMatch(/\.fo-hero-copy::before|\.st-spread::before/);
+    expect(live).not.toContain('COPPER CLIMAX');
+    expect(liveTsx).not.toContain('fo-scroll-cue');
+  });
+});
+
+describe('r306 — the drawing sheet ships', () => {
+  it('the sheet frame: fixed corner registration marks + mono coordinates, decorative + visible at every breakpoint', () => {
+    /* R313 override (WP-A1 · D9): the reference keeps its full-page
+     * drafting frame at EVERY viewport (measured 7px inset @1440/768/390
+     * — the 390×844 census shows it); the old desktop-only gate
+     * (display:none base + the ≥992 block) is superseded. The frame is
+     * now a fixed 1px --border-strong rectangle at the 7px inset, with
+     * 10×10 corner plus marks + the mono coordinates. */
+    expect(liveTsx).toContain('sheet-frame');
+    expect(liveTsx).toContain('aria-hidden="true"'); // the frame never floods the a11y tree
+    expect(live).toMatch(/\.sheet-frame\s*\{[^}]*position:\s*fixed/);
+    expect(live).toMatch(/\.sheet-frame\s*\{[^}]*pointer-events:\s*none/);
+    expect(live).toMatch(/\.sheet-frame\s*\{[^}]*border:\s*1px solid var\(--border-strong\)/);
+    // all-breakpoint: the old display:none / ≥992 display:block gates are GONE
+    expect(live).not.toMatch(/\.sheet-frame\s*\{[^}]*display:\s*none/);
+    expect(live).not.toMatch(/@media \(min-width: 992px\)\s*\{\s*\.sheet-frame/);
+  });
+
+  it('the header is the 56px hairline bar with the guarded charcoal-cell nav wash', () => {
+    /* R313 override (WP-B2 · D8): the bar keeps the 56px height + the
+     * bottom hairline, but now rides the reference's own seat — FIXED
+     * at the 7px frame inset, transparent at rest (the old blurred
+     * glass is gone — the reference has no backdrop-filter). The nav hover is
+     * the reference's fill-WIPE recipe: the charcoal slab is the
+     * ::before layer (never a background swap on the cell), the label
+     * rolls one row (the dual-label track), and the 5×5 mark pair
+     * swaps chevron→signal square. */
+    expect(live).toMatch(/\.fo-header-inner\s*\{[^}]*min-block-size:\s*56px/);
+    expect(live).toMatch(/\.fo-header\s*\{[^}]*border-block-end:\s*1px solid var\(--grid-line\)/);
+    expect(live).toMatch(/\.fo-header\s*\{[^}]*position:\s*fixed/);
+    expect(live).not.toMatch(/\.fo-header\s*\{[^}]*backdrop-filter/);
+    // R315 cycle-2 re-anchor: two NEW (hover:hover) blocks (the hero
+    // graticule proximity reveal) now precede the nav block — the
+    // extractor collects every hover block and picks the one that
+    // actually contains the nav wipe rules.
+    const hoverBlock =
+      [...live.matchAll(/@media \(hover: hover\) and \(pointer: fine\)\s*\{([\s\S]*?)\n\}\s*\n(?=@media|\/\*|\.)/g)]
+        .map((m) => m[1] as string)
+        .find((b) => /\.fo-nav-link:hover/.test(b)) ?? '';
+    expect(hoverBlock).toMatch(/\.fo-nav-link:hover\s*\{[^}]*color:\s*var\(--bg\)/);
+    expect(hoverBlock).toMatch(/\.fo-nav-link:hover::before\s*\{[^}]*transform:\s*translateY\(0\)/);
+    // the wipe slab itself is the charcoal token
+    expect(live).toMatch(/\.fo-nav-link::before\s*\{[^}]*background:\s*var\(--text\)/);
+    // R331: the dropdown panel is RETIRED — the nav rides the flat
+    // real-route seat register (no fold, no data-open state machine).
+    expect(liveTsx).not.toContain('fo-drop');
+    expect(live).not.toMatch(/\.fo-drop\s*\{/);
+    expect(live).not.toContain("data-open='true'");
+  });
+
+  it('the mono bracketed indices carry the drafting voice (Latin, dir=ltr, tabular)', () => {
+    // R337: the reference census for the section is 8 accordion rows; the
+    // rewrite renders the numeral from the row data (ROLE_ROWS.num
+    // 01–08), so the PIN is the voice — mono, Latin glyphs, dir=ltr,
+    // tabular numerals — on the template, plus the full 01–08 ladder
+    // in the data, not a fixed DOM total.
+    expect(liveTsx).toMatch(/fo-mono[^>]*dir="ltr">\[\{active\.num\}\]/);
+    expect(liveTsx).toMatch(/num:\s*'0[1-8]'/);
+    expect(liveTsx).not.toMatch(/num:\s*'0[9]'/);
+    expect(live).toMatch(/\.fo-mono\s*\{[^}]*font-variant-numeric:\s*tabular-nums/);
+  });
+});
+
+describe('r306 → r310 — the elevation illustration (the honest interactive)', () => {
+  // The artwork lives in its own module (components/landing/ — the
+  // icon-gate's illustrative-diagram authoring zone). R310 promotes
+  // the r306 five-pictogram blueprint to the drafted university
+  // ELEVATION — same narrative, real architectural drawing.
+  const art = read('src/components/landing/ElevationDrawing.tsx');
+
+  it('R315 override — the hero art is the WHOLE elevation SVG on transparent paper (A.1)', () => {
+    // R315 override (owner §0-A.1, supersedes the R314 raster seat): the
+    // hero's ONE graphic object is Ulara's own drafted ELEVATION —
+    // the whole frontal building + trees + ground line + the two orange
+    // pin squares — seated in the shared 1440×720 .bp-svg frame at ≈67%
+    // of the window, centred, on TRANSPARENT paper (no <image>, no
+    // cover-crop, no white box). The R314 raster stays in the manifest
+    // (licence chain intact) but leaves the hero seat. The r306/r310
+    // «no raster» canon is restored on the hero.
+    expect(liveTsx).toContain('<HeroInkWindow />');
+    const ink = read('src/components/landing/HeroInkWindow.tsx');
+    expect(ink).toContain('className="bp-svg"');
+    // R322 override (2-b · the measured transplant): the viewBox is
+    // now the TIGHT frame around the elevation's ink (HERO_FRAME —
+    // exported, single source) instead of the fixed 1440×720 window:
+    // the ink owns the FULL art-band width (the measured img-inner
+    // grammar — 96.3% of band width at the reference). The exported
+    // frame is the contract; the literal 1440×720 pin retires.
+    expect(ink).toContain('export const HERO_FRAME');
+    expect(ink).toMatch(/viewBox=\{`\$\{HERO_FRAME\.x\} \$\{HERO_FRAME\.y\}/);
+    // the elevation seats through the exported HERO_SEAT transform (one
+    // artwork, one coordinate story — HeroInspect remaps through it)
+    expect(ink).toContain('HERO_SEAT');
+    expect(ink).toContain('ElevationArt');
+    expect(ink).toContain('variant="hero"');
+    // transparent paper: no raster <image> in the hero window
+    expect(ink).not.toContain('<image');
+    // the loader keeps its own original line drawing (SheetLoader)
+    expect(art).toContain('export const ELEVATION_VB');
+    // never canvas, never <picture>
+    expect(liveTsx).not.toContain('<picture>');
+    expect(liveTsx).not.toContain('<canvas');
+    // R343 C-1 — the ink-render programme is retired: the manifest carries
+    // the ORIGINAL card registry instead (the crawl is type-first now)
+    const manifest = read('public/media/manifest.json');
+    expect(manifest).toContain('"cards"');
+    expect(manifest).toContain('"composition"');
+  });
+
+  it('R314 override — the inspection stations are real buttons (HeroInspect) over the ink render', () => {
+    // the bp-hotspot stage row retired with the elevation; the
+    // inspection instrument's OWN markers (HeroInspect) carry the
+    // same contract: real <button>, 44px targets, aria-pressed state.
+    const inspect = read('src/components/landing/cursor/HeroInspect.tsx');
+    expect(inspect).toMatch(/DOT_TARGET_PX = 44/);
+    expect(inspect).toMatch(/aria-pressed/);
+    expect(liveTsx).toContain('<HeroInspect />');
+  });
+
+  it('R314 override — the honest stage copy lives in the inspection stations (panel retired)', () => {
+    // the details panel retired with the elevation; the SAME honest
+    // capability copy rides HeroInspect's station annotations.
+    const inspect = read('src/components/landing/cursor/HeroInspect.tsx');
+    // the stations' honest capability labels (checkpoints, research
+    // review, mastery gap — the interactive annotation copy)
+    for (const t of ['نقطة فحص', 'مراجعة بحث', 'فجوة إتقان']) {
+      expect(inspect).toContain(t);
+    }
+  });
+
+  it('R315 override — the mobile hero flow: 38vh window (width-driven elevation) + stacked strip cells', () => {
+    // R315 cycle-2 re-pin: the phone band's boundary moved 760 → 767
+    // (the reference's own live inline CSS tier — verified on the fresh
+    // stylesheet census; the old 760 was a private rung that left the
+    // 761–767 sliver outside both families). Re-anchored on content,
+    // not order: pre-existing 767 blocks now precede the V13 block,
+    // so the extractor collects every 767 block and picks the one
+    // that carries the mobile hero flow rules.
+    const mq =
+      [...live.matchAll(/@media \(max-width: 767px\)\s*\{([\s\S]*?)\n\}\s*\n/g)]
+        .map((m) => m[1] as string)
+        /* R333 re-key: the retired .fo-hero-art band grammar was
+         * deleted from the sheets (dead since the R332 W1 full-bleed
+         * rebuild; deletion proven landing-byte-identical in evidence
+         * r333/pi-b1) — the live hero anatomy is the .hro-* family,
+         * so the mobile-block extractor anchors on it now. */
+        .find((b) => /\.hro-/.test(b)) ?? '';
+    // R322 override (2-b · the measured transplant): the window family
+    // renamed .fo-hero-window → .fo-hero-art (the art BAND of the
+    // two-band hero). The seat changes, the measure holds — the
+    // elevation stays WIDTH-driven at the BASE level now (inline-size:
+    // 100%, block-size: auto on .fo-hero-art .bp-svg — the whole
+    // drawing always fits, full band width on every viewport), so the
+    // ≤767 media query only carries the stage-chrome suppression; the
+    // art-mass + stacked-cells pins move to the base seats. The 2-line
+    // H1 strip measure holds on the D1 rung (measured ≤767: h=67px =
+    // exactly 2 lines @390 AND @360).
+    /* R333 re-key: the width-driven drawing contract lives on the
+     * base .bp-svg seat (hero.css) since the band grammar retired. */
+    expect(live).toMatch(/\.bp-svg\s*\{[\s\S]*?inline-size:\s*100%/s);
+    expect(live).toMatch(/\.bp-svg\s*\{[\s\S]*?block-size:\s*auto/s);
+    // R322 override (1-d FINAL · the type-scale migration): the ≤767 H1
+    // re-clamp RETIRED — the D1 rung (--fs-d1, band-independent) governs
+    // from the base seat: 31.74px floor across the phone band (the reference's
+    // own 3.2rem phone h1), rising on the 4.8vw mid-term to 36.9px
+    // @767. The old clamp(30px, 8.4vw, 40px) was a counter-measure
+    // against the fluid root's mobile-band spike (root 19.52px @767),
+    // which the rung's px-anchored floor kills by construction; the
+    // 2-line H1 strip measure holds on the rung (measured ≤767:
+    // h=67px = exactly 2 lines @390 AND @360).
+    expect(mq).not.toMatch(/\.fo-hero-title\s*\{/);
+    expect(live).toMatch(/\.fo-hero-title\s*\{[\s\S]*?font-size:\s*var\(--fs-d1\)/s);
+  });
+
+  it('the SVG carries a full Arabic description (the drawing is informative, not decorative clutter)', () => {
+    expect(art).toMatch(/role="img"/);
+    expect(art).toContain('aria-label="واجهة معمارية لمبنى التعلّم');
+  });
+
+  it('R315 override — the richness contract lives in the elevation + the drafting chrome', () => {
+    // the five volumes + furniture ride the drafted elevation (R315
+    // A.1: whole building, trees, ground line, two orange pin squares)
+    // and the drafting chrome (rulers, + marks, dashed inner frame,
+    // ± marks) stays on the window
+    expect(liveTsx).toMatch(/className="bp-ruler bp-ruler-t"/);
+    // R321 §A6 re-pin: the marks render their glyph from CSS ::before
+    // content (out of innerText) — the spans are EMPTY now; the glyph
+    // contract moved to the stylesheet rules.
+    /* R332 note: the `" \/>"` literal below is tolerance-widened to
+     * `(?: aria-hidden="true")? \/>` — the concurrent R331 hero pass
+     * added aria-hidden to the (still EMPTY, still self-closing) mark
+     * spans; the pin's semantics (empty spans, glyph via ::before) are
+     * unchanged, and the CSS half of the pin below is untouched. */
+    expect(liveTsx).toMatch(/className="bp-plus bp-plus-tl"(?: aria-hidden="true")? \/>/);
+    expect(liveTsx).toMatch(/className="bp-dmark bp-dmark-tl"(?: aria-hidden="true")? \/>/);
+    expect(live).toMatch(/\.bp-plus::before\s*\{\s*content:\s*'\+'/);
+    expect(live).toMatch(/\.bp-dmark::before\s*\{\s*content:\s*'\+'/);
+    // R322 override (2-b) → R333 re-key: the dashed inner frame rides
+    // the live .hro-stage::before seat (same 1px dashed rule,
+    // proximity-revealed as before) after the retired band grammar
+    // was deleted (evidence r333/pi-b1, landing byte-identical).
+    expect(live).toMatch(/\.hro-stage::before\s*\{[\s\S]*?border:\s*1px dashed/s);
+    // R343 C-2 — the ink-render programme is RETIRED (the photo-derived
+    // renders deleted with their generator); the homepage's imagery is
+    // the r342 ORIGINAL illustrations (registered in the manifest) +
+    // the card system — the reuse is pinned where it renders
+    const manifestJson = read('public/media/manifest.json');
+    expect(manifestJson).toContain('statement-courtyard');
+    expect(manifestJson).toContain('footer-skyline');
+    expect(read('src/components/landing/sections/Statement.tsx')).toContain('statement-courtyard-light.webp');
+    expect(read('src/components/landing/sections/Footer.tsx')).toContain('footer-skyline-light.webp');
+  });
+});
+
+describe('r306 — the honest ledger is a hairline table', () => {
+  it('the capability matrix reads as ruled rows — no inverted slab, no window device', () => {
+    /* R313 override (WP-A1 · D7): the capability matrix moved OFF the
+     * landing onto /capabilities (the 9-section re-composition); the
+     * hairline-table contract is unchanged. R341/D9 re-key: the
+     * sub-pages' sheet moved VERBATIM from the deleted campus.css into
+     * patterns.css §10 (the lv- family rides its unlayered tail) — the
+     * pin reads the live home, contract byte-identical. */
+    const campusCss = stripComments(read('src/styles/patterns.css'));
+    expect(campusCss).toMatch(/\.lv-list\s*\{[^}]*border:\s*1px solid var\(--rule\)/);
+    expect(campusCss).toMatch(/\.lv-row\s*\{[^}]*border-block-end:\s*1px solid var\(--rule\)/);
+    expect(live).not.toContain('.lv-window');
+    expect(liveTsx).not.toContain('lv-window');
+    // R322 override (2-d): the four pains are the reference's OPEN COLUMNS
+    // now (.pm-col — no boxed cards): the ruled-row contract rides the
+    // meta row's dashed rule + the column family; the boxed .pm-card
+    // grammar (border + surface slab) is RETIRED with the boxes.
+    expect(live).toMatch(/\.pm-meta\s*\{[\s\S]*?border-block-end:\s*1px dashed var\(--rule-strong\)/s);
+    expect(liveTsx).toContain('className="pm-col"');
+    expect(live).not.toMatch(/\.pm-card\s*\{/);
+    expect(liveTsx).not.toContain('className="pm-card"');
+  });
+
+  /* R315 override (K-E): the chapters 05–06 demo ledger rows + their
+   * Mini fragments are RETIRED from the landing (owner §0-E — R310-era
+   * content outside the reference's grammar; the honest capability
+   * ledger lives on /capabilities). The two pins below flip from
+   * "the rows follow the ledger grammar" to "the rows + fragments are
+   * GONE from the markup and the sheet". */
+  it('R315 override: the chapters 05–06 demo rows + Mini fragments are RETIRED from the landing', () => {
+    expect(liveTsx).not.toContain('MiniCommunity');
+    expect(liveTsx).not.toContain('MiniGovernance');
+    expect(liveTsx).not.toContain('ch-rows');
+    expect(liveTsx).not.toContain('mini-chrome-tag');
+    expect(liveTsx).not.toContain('عرض توضيحي');
+    expect(live).not.toMatch(/\.ch-rows\s*\{/);
+    expect(live).not.toMatch(/\.mini-chrome\s*\{/);
+  });
+});
+
+describe('r306 — the funnel/a11y contracts carried forward', () => {
+  it('every chapter keeps its numbered anchor + heading contract', () => {
+    for (const id of ['statement', 'chapters', 'live', 'roles', 'colleges', 'vision']) {
+      expect(liveTsx).toContain(`id="${id}"`);
+    }
+    // R315 override (K-E): the numbered-ledger template (ch-${ch.num}-title)
+    // retired with the 05–06 demo rows; the walkthrough's own stations
+    // carry the numbered anchors now (JourneyScene: the four findings
+    // stations + the honest chapter annotations).
+    expect(liveTsx).not.toContain('ch-${ch.num}-title');
+  });
+
+  it('the registry strip keeps the accessible contract (the #colleges anchor + the public link + the disclosure)', () => {
+    /* R313 override (WP-A1 · D7): the interactive chip registry moved
+     * off the landing — the registry itself lives on /colleges and the
+     * capability/status ledgers on /capabilities. The #colleges anchor
+     * survives as the ruled registry strip at the sheet's close.
+     * Phase Ω: the fixed 25-college catalogue is retired — the strip
+     * carries the workspace truth (3 demo faculties, every institution
+     * builds its own) + the demo-data disclosure + the public
+     * /colleges link + the login affordance (the funnel's 5th). */
+    expect(liveTsx).toMatch(/className="cg-strip"/);
+    expect(liveTsx).toContain('id="colleges"');
+    expect(liveTsx).toContain('to="/colleges"');
+    // the demo-workspace disclosure rides the strip (never a tooltip)
+    expect(liveTsx).toContain('مساحة العمل التجريبية');
+    expect(liveTsx).toContain('لا جامعة ولا انتماء');
+  });
+
+  it('the honest numbers still compute from live registries (no invented adoption)', () => {
+    /* P2-0 (r335 split): the marquee + counts ride sections/Vision.tsx.
+     * Phase Ω: the fixed colleges registry is retired — the ONLY
+     * structural count left on the landing is the live-capability
+     * ledger (LIVE_CAPABILITIES → LIVE_COUNT, the meta grid's [NN]
+     * cell); the demo-faculty count on the registry strip is the
+     * workspace's real three, stated as a literal with the workspace
+     * label (it is demo data, not an adoption claim). */
+    expect(liveTsx).toContain('HERO_WORK_ITEMS');
+    expect(liveTsx).toContain('LIVE_COUNT');
+    // the retired catalogue must NOT come back
+    expect(liveTsx).not.toContain("data/colleges.config'");
+    expect(liveTsx).not.toContain('formatInt(colleges.length)');
+  });
+});
+
+describe('r306 hygiene — the sheet stays clean', () => {
+  it('no duplicated [data-theme="dark"] .landing blocks', () => {
+    const count = (live.match(/\[data-theme="dark"\] \.landing\s*\{/g) ?? []).length;
+    expect(count).toBe(1);
+  });
+
+  it('hover washes are guarded to real pointers (the r283 convention)', () => {
+    expect(live).toMatch(/@media \(hover: hover\) and \(pointer: fine\)/);
+  });
+
+  it('the reduced-motion static sheet covers every mover', () => {
+    expect(live).toMatch(
+      /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.reveal-up\s*\{\s*opacity:\s*1/,
+    );
+  });
+
+  it('r308 — continuous instruments are SCOPED keyframes, every one collapsed under reduced motion', () => {
+    /* The r306 «zero keyframes» policy is superseded by R308's
+     * continuous-instrument grammar (the reference's marquee, pulsing
+     * markers, scan line, ring crawl, tag snap — parity-matrix §D/E).
+     * The contract that survives: every @keyframes is one of the
+     * whitelisted instruments, and the reduced-motion belt collapses
+     * each of them to its resolved static state. */
+    const names = [...live.matchAll(/@keyframes\s+([a-z0-9-]+)/g)].map((m) => m[1]);
+    const ALLOWED = new Set([
+      'hi-pulse', // the inspection stations' idle pulse
+      'fo-ticker-rtl', // the capabilities crawl
+      'wy-snap', // R313: the why-stage verb snap (the 74%-hold plateau — supersedes vs-tag-snap, which moved to campus.css with the status rows)
+      'hro-fade-loop', // R331: the hero deco ledger cards' idle fade (the reference's own deco loop, 1.5s, ≥992 only) — collapsed by the hero RM belt
+      'pr-item-fade', // r338 T-08: the platform rows' cross-fade marquee (the reference's row pair, 14s, ≥992 only) — collapsed by the platform RM belt
+      'rl-rule-widen', // r339 T-11b1: the usecase row rules' once-only scroll-reveal WIDEN (width 0→100%, 800ms power2.out, fill both — the tween census' width family is reachable ONLY through a declared @keyframes; the transition envelope records no width). Not a loop: fires once on .in-view, collapsed by the roles RM belt (.rl-rule-w).
+      // T-11b2 (r339): the two scroll-driven scrub entrances — the reference's
+      // home-map scrub scene + the platform-content-title flourish. NOT
+      // ambient loops: view()-timeline entrances (animation-timeline:
+      // view(), @supports-gated with the IO reveal-up fallback for
+      // non-supporting browsers). Their RM collapse is the
+      // prefers-reduced-motion: no-preference wrapper — under reduce the
+      // rules are absent and the reveal-up static sheet stands (the
+      // belt below still collapses every ambient instrument).
+      'jt-head-scrub', // r339 T-11b2: the chapters head's scrubbed entrance (journey.css)
+      'pr-title-scrub', // r339 T-11b2: the platform band's title flourish (platform.css)
+      // r335 W-chrome: 'sl-scan' retired with the R313 SheetLoader sheet
+      // (dead .sl-* rules deleted; the preloader's own RM gates are JS-side).
+    ]);
+    for (const n of names) {
+      expect(ALLOWED.has(n ?? ''), `unexpected @keyframes ${n}`).toBe(true);
+    }
+    /* every instrument's ANIMATED SELECTOR is collapsed by the RM belt
+     * (animation: none → the resolved static state stands) */
+    const rmBelt = live.slice(live.indexOf('@media (prefers-reduced-motion: reduce)'));
+    const RM_COLLAPSED = [
+      '.hi-marker-dot', // hi-pulse
+      '.fo-ticker-track', // fo-ticker-rtl
+      '.jt-plan .bp-drawable', // R310: the plan's staged build collapses to the complete plan
+      '.pl-zone', // R310: the zone wash highlight
+      '.pm-art .pm-draw', // R313: the pain cards' draw-in collapses to the complete drawing
+      '.wy-capture', // R313: the why cross-fade collapses to the fully readable stack
+      '.wy[data-wy-stage=\'0\'] .wy-rail .wy-stage:nth-child(1) .wy-stage-verb', // R313: the wy-snap
+      '.hro-deco', // R331: the hero deco fade-loop collapses to the static ledger card
+      '.pr-row', // r338 T-08: pr-item-fade collapses to the first row (the pairmate stays hidden)
+      '.rl-rule-w', // r339 T-11b1: the row-rule widen collapses to the authored full-width rule
+      '.rl-rule-x', // r339 T-11b1: the frame-pair draw collapses to the authored unscaled hairlines
+    ];
+    for (const sel of RM_COLLAPSED) {
+      expect(rmBelt, `RM belt must collapse ${sel}`).toContain(sel);
+    }
+  });
+});

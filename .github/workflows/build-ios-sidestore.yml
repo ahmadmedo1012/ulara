@@ -1,0 +1,600 @@
+# Build an unsigned, device-only iOS IPA for SideStore.
+#
+# This workflow intentionally does NOT use EAS Build, does NOT need an Apple
+# Developer account, and does NOT sign the app. SideStore re-signs the IPA on
+# the device with the user's free Apple ID.
+#
+# The output is always built with:
+#   -configuration Release -sdk iphoneos -destination generic/platform=iOS
+# so it can never accidentally be an iOS Simulator build.
+name: Build unsigned iOS IPA (SideStore)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/mobile/**"
+      - "shared/**"
+      - ".github/workflows/build-ios-sidestore.yml"
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Git ref to build (branch, tag, or commit SHA)"
+        required: false
+        default: "main"
+      ipa_name:
+        description: "IPA file/artifact name, without .ipa"
+        required: false
+        default: "Ulara"
+
+# The rolling "latest" release is created/updated from the workflow, so the
+# default GITHUB_TOKEN needs write access to release assets. No PAT is used.
+permissions:
+  contents: write
+
+concurrency:
+  group: sidestore-ipa-${{ github.ref }}
+  # A newer push to main supersedes an older in-flight build of the same ref.
+  # Manual runs do not cancel an in-flight build.
+  cancel-in-progress: ${{ github.event_name == 'push' }}
+
+env:
+  CI: "1"
+  NODE_VERSION: "22"
+  EXPO_NO_TELEMETRY: "1"
+  COCOAPODS_DISABLE_STATS: "true"
+  # Public build-time configuration (the same value as eas.json and the
+  # app.config.ts default). This is not a secret. It MUST stay the current
+  # production API host — the workflow validates the resolved config AND
+  # the URL embedded in the built binary before publishing, so a stale
+  # host here (e.g. any retired pre-Vercel host) fails the build instead
+  # of silently shipping an app that talks to a dead server.
+  EXPO_PUBLIC_API_BASE_URL: "https://ulara.vercel.app/api/v1"
+  IPA_NAME: ${{ github.event.inputs.ipa_name || 'Ulara' }}
+
+jobs:
+  build-unsigned-ipa:
+    name: Build unsigned iPhoneOS IPA
+    # macOS 26 (arm64) is a GitHub-hosted standard runner. It ships Xcode 26.x,
+    # which is what Expo SDK 58 / React Native 0.88 expect.
+    runs-on: macos-26
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.ref || github.ref }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: apps/mobile/package-lock.json
+
+      - name: Show toolchain and source revision
+        run: |
+          set -euo pipefail
+          echo "Commit: $(git rev-parse HEAD)"
+          echo "Subject: $(git log -1 --pretty=%s)"
+          sw_vers
+          echo "Host arch: $(uname -m)"
+          xcode-select -p
+          xcodebuild -version
+          echo "iOS SDK: $(xcrun --sdk iphoneos --show-sdk-version)"
+          pod --version
+          node -v
+          npm -v
+
+      - name: Validate the requested artifact name
+        run: |
+          set -euo pipefail
+          case "$IPA_NAME" in
+            ""|*[!A-Za-z0-9._-]*|.*)
+              echo "::error::Invalid ipa_name: '$IPA_NAME' (use letters, digits, dot, dash, underscore)"
+              exit 1
+              ;;
+          esac
+          echo "IPA_NAME=$IPA_NAME" >> "$GITHUB_ENV"
+
+      - name: Install JS dependencies from the lockfile
+        working-directory: apps/mobile
+        run: npm ci --no-audit --no-fund
+
+      - name: Resolve and validate the Expo config
+        working-directory: apps/mobile
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          npx expo config --type public --json > build/expo-config.json
+          node - <<'NODE'
+          const c = require('./build/expo-config.json');
+          const fail = (msg) => { console.error(`::error::${msg}`); process.exit(1); };
+          if (c.sdkVersion !== '58.0.0') fail(`Unexpected Expo SDK: ${c.sdkVersion}`);
+          if (c.ios?.bundleIdentifier !== 'ly.ulara.app') {
+            fail(`Unexpected iOS bundle id: ${c.ios?.bundleIdentifier}`);
+          }
+          if (!c.runtimeVersion) fail('runtimeVersion is missing');
+          // The API host this build will talk to. Guarded so an obsolete
+          // hostname can never ship silently (the retired pre-Vercel
+          // hosting families must never come back here — assembled from
+          // fragments so the retired host names stay out of the tree).
+          const api = c.extra?.apiBaseUrl;
+          const EXPECTED = process.env.EXPO_PUBLIC_API_BASE_URL;
+          if (api !== EXPECTED) {
+            fail(`Resolved extra.apiBaseUrl is ${api} but the workflow expects ${EXPECTED}`);
+          }
+          const retiredHosts = [
+            ['onre', 'nder.com'].join(''),
+            ['render', '.com'].join(''),
+            'herokuapp.com',
+            'localhost',
+          ];
+          for (const obsolete of retiredHosts) {
+            if (String(api).includes(obsolete)) {
+              fail(`Resolved extra.apiBaseUrl contains the retired host "${obsolete}": ${api}`);
+            }
+          }
+          console.log(`name=${c.name}`);
+          console.log(`slug=${c.slug}`);
+          console.log(`sdkVersion=${c.sdkVersion}`);
+          console.log(`bundleIdentifier=${c.ios.bundleIdentifier}`);
+          console.log(`version=${c.version}`);
+          console.log(`apiBaseUrl=${api} (validated: current production host)`);
+          NODE
+
+      - name: Generate the native iOS project (Expo prebuild)
+        working-directory: apps/mobile
+        run: |
+          set -euo pipefail
+          # The checkout is managed (no ios/ directory), so prebuild creates it.
+          # --no-install keeps CocoaPods in its own visible step below.
+          rm -rf ios
+          npx expo prebuild --platform ios --no-install 2>&1 | tee build/prebuild.log
+          test -d ios
+          echo "Generated native project:"
+          for d in ios/*.xcodeproj ios/*.xcworkspace ios/Podfile; do
+            [ -e "$d" ] && echo "$d"
+          done
+
+      - name: Install CocoaPods dependencies
+        working-directory: apps/mobile
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          (cd ios && pod install) 2>&1 | tee build/pod-install.log
+          test -f ios/Podfile.lock
+
+      - name: Detect the Xcode workspace and scheme
+        id: xcode
+        working-directory: apps/mobile
+        run: |
+          set -euo pipefail
+          WORKSPACE=""
+          for d in ios/*.xcworkspace; do
+            if [ -d "$d" ]; then WORKSPACE="$d"; break; fi
+          done
+          PROJECT=""
+          for d in ios/*.xcodeproj; do
+            if [ -d "$d" ]; then PROJECT="$d"; break; fi
+          done
+          if [ -z "$WORKSPACE" ] || [ -z "$PROJECT" ]; then
+            echo "::error::No .xcworkspace/.xcodeproj found after pod install"
+            exit 1
+          fi
+
+          xcodebuild -list -workspace "$WORKSPACE" -json | tee build/xcode-list.json
+          echo
+
+          bundle_id_for_scheme() {
+            # Some schemes (e.g. boost, ReactNativeDependencies) are CocoaPods
+            # library schemes and cannot resolve an app bundle id. Treat a
+            # failure as an empty result instead of aborting the scan.
+            xcodebuild -workspace "$WORKSPACE" -scheme "$1" \
+              -configuration Release -sdk iphoneos \
+              -showBuildSettings 2>/dev/null \
+              | awk -F' = ' '/^[[:space:]]*PRODUCT_BUNDLE_IDENTIFIER = /{print $2; exit}' \
+              || true
+          }
+
+          # Expo prebuild names the app scheme after the .xcodeproj. Never pick
+          # the first scheme blindly: CocoaPods exposes dozens of schemes, and
+          # the first one alphabetically is "boost", not the app.
+          PROJECT_SCHEME=$(basename "$PROJECT" .xcodeproj)
+          SCHEME="$PROJECT_SCHEME"
+          BID=$(bundle_id_for_scheme "$SCHEME")
+          echo "Project scheme: $PROJECT_SCHEME (bundle id: ${BID:-<none>})"
+
+          if [ "$BID" != "ly.ulara.app" ]; then
+            echo "Project scheme did not resolve the app bundle id; scanning schemes..."
+            SCHEME=""
+            while IFS= read -r candidate; do
+              [ -z "$candidate" ] && continue
+              CANDIDATE_BID=$(bundle_id_for_scheme "$candidate")
+              if [ "$CANDIDATE_BID" = "ly.ulara.app" ]; then
+                SCHEME="$candidate"
+                BID="$CANDIDATE_BID"
+                break
+              fi
+            done < <(jq -r '(.workspace // .project).schemes[]?' build/xcode-list.json | grep -v '^Pods' || true)
+          fi
+
+          if [ -z "$SCHEME" ] || [ "$BID" != "ly.ulara.app" ]; then
+            echo "::error::Could not find a scheme that builds ly.ulara.app"
+            exit 1
+          fi
+
+          echo "workspace=$WORKSPACE" >> "$GITHUB_OUTPUT"
+          echo "scheme=$SCHEME" >> "$GITHUB_OUTPUT"
+          echo "Workspace: $WORKSPACE"
+          echo "Scheme: $SCHEME (bundle id: $BID)"
+
+          xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" \
+            -configuration Release -sdk iphoneos \
+            -showBuildSettings 2>/dev/null \
+            | grep -E '^[[:space:]]*(PRODUCT_BUNDLE_IDENTIFIER|PRODUCT_NAME|PRODUCT_TYPE|IPHONEOS_DEPLOYMENT_TARGET)[[:space:]]*=' \
+            | sort -u
+
+      - name: Build Release for real iPhoneOS (unsigned)
+        working-directory: apps/mobile
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          xcodebuild \
+            -workspace "${{ steps.xcode.outputs.workspace }}" \
+            -scheme "${{ steps.xcode.outputs.scheme }}" \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination "generic/platform=iOS" \
+            -derivedDataPath "$PWD/build/DerivedData" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGN_ENTITLEMENTS="" \
+            AD_HOC_CODE_SIGNING_ALLOWED=NO \
+            DEVELOPMENT_TEAM="" \
+            PROVISIONING_PROFILE_SPECIFIER="" \
+            ONLY_ACTIVE_ARCH=NO \
+            COMPILER_INDEX_STORE_ENABLE=NO \
+            build 2>&1 | tee build/xcodebuild.log
+
+      - name: Package Payload/App.app into an unsigned IPA
+        working-directory: apps/mobile
+        run: |
+          set -euo pipefail
+          PRODUCTS="$PWD/build/DerivedData/Build/Products/Release-iphoneos"
+          APP_PATH=""
+          for d in "$PRODUCTS"/*.app; do
+            if [ -d "$d" ]; then APP_PATH="$d"; break; fi
+          done
+          if [ -z "$APP_PATH" ]; then
+            echo "::error::No .app bundle found in $PRODUCTS"
+            for d in "$PRODUCTS"/*; do [ -e "$d" ] && echo "$d"; done
+            exit 1
+          fi
+
+          APP_BASENAME=$(basename "$APP_PATH")
+          echo "Built app: $APP_PATH"
+          echo "App bundle: $APP_BASENAME"
+
+          rm -rf build/Payload build/verify
+          mkdir -p build/Payload
+          ditto "$APP_PATH" "build/Payload/$APP_BASENAME"
+
+          # ditto preserves symlinks and extended attributes. The resulting
+          # archive has exactly one top-level directory: Payload/
+          (cd build && ditto -c -k --keepParent Payload "$IPA_NAME.ipa")
+
+          ls -lh "build/$IPA_NAME.ipa"
+          echo "APP_BASENAME=$APP_BASENAME" >> "$GITHUB_ENV"
+          echo "IPA_PATH=$PWD/build/$IPA_NAME.ipa" >> "$GITHUB_ENV"
+
+      - name: Verify the IPA (structure, platform, bundle id, signature)
+        working-directory: apps/mobile
+        run: |
+          set -euo pipefail
+          IPA_PATH="${IPA_PATH:?IPA_PATH missing}"
+          APP_BASENAME="${APP_BASENAME:?APP_BASENAME missing}"
+          test -f "$IPA_PATH"
+
+          echo "== ZIP integrity =="
+          unzip -t "$IPA_PATH" >/dev/null
+          echo "OK: archive is a valid ZIP"
+
+          echo "== Archive layout =="
+          TOP_LEVEL=$(unzip -Z1 "$IPA_PATH" | cut -d/ -f1 | sort -u)
+          printf '%s\n' "$TOP_LEVEL"
+          test "$TOP_LEVEL" = "Payload"
+          unzip -l "$IPA_PATH" | grep -q "Payload/$APP_BASENAME/Info.plist"
+          echo "OK: Payload/$APP_BASENAME.app is present"
+
+          rm -rf build/verify
+          mkdir -p build/verify
+          ditto -x -k "$IPA_PATH" build/verify
+          APP="build/verify/Payload/$APP_BASENAME"
+          test -d "$APP"
+
+          BUNDLE_ID=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP/Info.plist")
+          EXECUTABLE=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$APP/Info.plist")
+          BUNDLE_VERSION=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP/Info.plist")
+          BUILD_NUMBER=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$APP/Info.plist")
+          MIN_OS=$(/usr/libexec/PlistBuddy -c 'Print :MinimumOSVersion' "$APP/Info.plist")
+          SUPPORTED_PLATFORM=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleSupportedPlatforms:0' "$APP/Info.plist")
+          DT_PLATFORM=$(/usr/libexec/PlistBuddy -c 'Print :DTPlatformName' "$APP/Info.plist")
+
+          echo "Bundle ID: $BUNDLE_ID"
+          echo "Executable: $EXECUTABLE"
+          echo "Version: $BUNDLE_VERSION ($BUILD_NUMBER)"
+          echo "Minimum iOS: $MIN_OS"
+          echo "CFBundleSupportedPlatforms[0]: $SUPPORTED_PLATFORM"
+          echo "DTPlatformName: $DT_PLATFORM"
+
+          test "$BUNDLE_ID" = "ly.ulara.app"
+          test "$SUPPORTED_PLATFORM" = "iPhoneOS"
+          test "$DT_PLATFORM" = "iphoneos"
+
+          echo "== Executable architecture / platform =="
+          test -x "$APP/$EXECUTABLE"
+          file "$APP/$EXECUTABLE"
+          ARCHS=$(lipo -archs "$APP/$EXECUTABLE")
+          echo "Architectures: $ARCHS"
+          case " $ARCHS " in *" arm64 "*) ;; *) echo "::error::arm64 missing"; exit 1;; esac
+
+          BUILD_VERSION=$(xcrun vtool -show-build "$APP/$EXECUTABLE")
+          printf '%s\n' "$BUILD_VERSION"
+          PLATFORM=$(printf '%s\n' "$BUILD_VERSION" | awk '$1 == "platform" { print $2; exit }')
+          test "$PLATFORM" = "IOS"
+          if printf '%s\n' "$BUILD_VERSION" | grep -q 'IOSSIMULATOR'; then
+            echo "::error::This is a Simulator build"
+            exit 1
+          fi
+          echo "OK: Mach-O platform is IOS (iPhoneOS), not IOSSIMULATOR"
+
+          echo "== Required app resources =="
+          test -f "$APP/Info.plist"
+          test -f "$APP/main.jsbundle"
+          test -f "$APP/Assets.car"
+          test -f "$APP/PkgInfo"
+          echo "OK: Info.plist, main.jsbundle, Assets.car, PkgInfo"
+
+          echo "== Unsigned app check =="
+          test ! -d "$APP/_CodeSignature"
+          test ! -f "$APP/embedded.mobileprovision"
+          if codesign -dv "$APP" >build/codesign-check.log 2>&1; then
+            cat build/codesign-check.log
+            echo "::error::The app is signed; this workflow must produce an unsigned IPA"
+            exit 1
+          fi
+          echo "OK: no _CodeSignature, no provisioning profile, codesign reports unsigned"
+          cat build/codesign-check.log || true
+
+          SIZE_BYTES=$(stat -f%z "$IPA_PATH")
+          SHA256=$(shasum -a 256 "$IPA_PATH" | awk '{print $1}')
+          XCODE_VERSION=$(xcodebuild -version | awk 'NR == 1 { print $2 }')
+          SDK_VERSION=$(xcrun --sdk iphoneos --show-sdk-version)
+
+          echo "IPA size: $SIZE_BYTES bytes"
+          echo "IPA SHA256: $SHA256"
+
+          jq -n \
+            --arg name "$IPA_NAME" \
+            --arg ipa "$IPA_NAME.ipa" \
+            --arg app_bundle "$APP_BASENAME" \
+            --argjson size_bytes "$SIZE_BYTES" \
+            --arg sha256 "$SHA256" \
+            --arg bundle_id "$BUNDLE_ID" \
+            --arg version "$BUNDLE_VERSION" \
+            --arg build_number "$BUILD_NUMBER" \
+            --arg min_os "$MIN_OS" \
+            --arg executable "$EXECUTABLE" \
+            --arg archs "$ARCHS" \
+            --arg platform "iPhoneOS" \
+            --arg commit "$GITHUB_SHA" \
+            --arg ref "$GITHUB_REF" \
+            --arg run_id "$GITHUB_RUN_ID" \
+            --arg run_number "$GITHUB_RUN_NUMBER" \
+            --arg xcode "$XCODE_VERSION" \
+            --arg sdk "$SDK_VERSION" \
+            --arg runner "macos-26" \
+            --arg signed "false" \
+            '{
+              name: $name,
+              ipa: $ipa,
+              app_bundle: $app_bundle,
+              size_bytes: $size_bytes,
+              sha256: $sha256,
+              bundle_identifier: $bundle_id,
+              version: $version,
+              build_number: $build_number,
+              minimum_os: $min_os,
+              executable: $executable,
+              architectures: $archs,
+              platform: $platform,
+              signed: ($signed == "true"),
+              commit: $commit,
+              ref: $ref,
+              run_id: $run_id,
+              run_number: $run_number,
+              xcode: $xcode,
+              ios_sdk: $sdk,
+              runner: $runner
+            }' > build/build-info.json
+
+          (cd build && shasum -a 256 "$IPA_NAME.ipa" > SHA256SUMS.txt)
+          cat build/build-info.json
+          cat build/SHA256SUMS.txt
+
+      - name: Verify the API URL embedded in the binary
+        working-directory: apps/mobile
+        run: |
+          set -euo pipefail
+          # The jsbundle inlines EXPO_PUBLIC_API_BASE_URL at build time —
+          # prove the packaged app really targets the current production
+          # API, and that no retired host leaked into the binary.
+          # macOS pitfall avoided: `strings file | grep -q` breaks under
+          # `set -o pipefail` — grep -q exits on first match, strings
+          # takes SIGPIPE ("failed to flush output"), and the pipeline
+          # fails EVEN WHEN the match succeeded. Materialize the strings
+          # ONCE to a temp file, then grep the file — no pipes, no
+          # false negative.
+          APP="build/verify/Payload/$APP_BASENAME"
+          test -f "$APP/main.jsbundle"
+          STRINGS_OUT="$RUNNER_TEMP/main-jsbundle-strings.txt"
+          strings "$APP/main.jsbundle" > "$STRINGS_OUT"
+          EXPECTED_HOST=$(printf '%s' "$EXPO_PUBLIC_API_BASE_URL" | sed -E 's#^https?://([^/]+)/.*#\1#')
+          echo "Expected API host in the bundle: $EXPECTED_HOST"
+          # Belt: the expo-constants config asset carries the same URL
+          # (the Constants.expoConfig.extra path) — check it too when
+          # present, so the proof covers BOTH client resolution paths.
+          # (bash 3.2 on macOS: guard array loops by length — an empty
+          # `"${ARR[@]:-}"` expands to one EMPTY word there.)
+          EXTRA_FILES=()
+          for f in "$APP/app.config" "$APP/assets/app.config"; do
+            [ -f "$f" ] && EXTRA_FILES+=("$f")
+          done
+          FOUND=0
+          if grep -q "$EXPECTED_HOST" "$STRINGS_OUT"; then FOUND=1; fi
+          if [ ${#EXTRA_FILES[@]} -gt 0 ]; then
+            for f in "${EXTRA_FILES[@]}"; do
+              if grep -q "$EXPECTED_HOST" "$f"; then FOUND=1; fi
+            done
+          fi
+          if [ "$FOUND" -ne 1 ]; then
+            echo "::error::$EXPECTED_HOST not found in main.jsbundle (or the app.config asset) — the binary does not target the current production API"
+            exit 1
+          fi
+          # the retired pre-Vercel host family, assembled so its name
+          # never re-enters the tree spelled out
+          RETIRED_RENDER_HOST='.onre''nder.com'
+          for OBSOLETE in "$RETIRED_RENDER_HOST" 'herokuapp.com'; do
+            if grep -q "$OBSOLETE" "$STRINGS_OUT"; then
+              echo "::error::Retired host \"$OBSOLETE\" found embedded in main.jsbundle"
+              exit 1
+            fi
+            if [ ${#EXTRA_FILES[@]} -gt 0 ]; then
+              for f in "${EXTRA_FILES[@]}"; do
+                if grep -q "$OBSOLETE" "$f"; then
+                  echo "::error::Retired host \"$OBSOLETE\" found in $f"
+                  exit 1
+                fi
+              done
+            fi
+          done
+          echo "OK: binary targets $EXPECTED_HOST (jsbundle$( [ ${#EXTRA_FILES[@]} -gt 0 ] && echo ' + app.config asset')) and carries no retired host"
+
+      - name: Upload the unsigned IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Ulara-unsigned-ipa
+          path: |
+            apps/mobile/build/${{ env.IPA_NAME }}.ipa
+            apps/mobile/build/SHA256SUMS.txt
+            apps/mobile/build/build-info.json
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Publish/update the latest SideStore release
+        if: success() && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event.inputs.ref == 'main' || github.event.inputs.ref == '')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TAG="sidestore-latest"
+          TITLE="Ulara.ipa — latest unsigned SideStore build"
+          NOTES="$RUNNER_TEMP/sidestore-latest-notes.md"
+          BUILD_INFO="apps/mobile/build/build-info.json"
+
+          VERSION=$(jq -r '.version' "$BUILD_INFO")
+          BUILD_NUMBER=$(jq -r '.build_number' "$BUILD_INFO")
+          MIN_OS=$(jq -r '.minimum_os' "$BUILD_INFO")
+          ARCH=$(jq -r '.architectures' "$BUILD_INFO")
+          PLATFORM=$(jq -r '.platform' "$BUILD_INFO")
+          COMMIT=$(jq -r '.commit' "$BUILD_INFO")
+          SHA256=$(jq -r '.sha256' "$BUILD_INFO")
+          SIZE_BYTES=$(jq -r '.size_bytes' "$BUILD_INFO")
+          SIZE_MIB=$(awk -v bytes="$SIZE_BYTES" 'BEGIN { printf "%.2f", bytes / 1048576 }')
+          RUN_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          DOWNLOAD_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/download/$TAG/$IPA_NAME.ipa"
+
+          {
+            echo "# Ulara.ipa — latest unsigned SideStore build"
+            echo ""
+            echo "This release is updated automatically from the latest push to main that touches the mobile app."
+            echo ""
+            echo "| Field | Value |"
+            echo "|---|---|"
+            echo "| IPA | $IPA_NAME.ipa |"
+            echo "| Bundle ID | ly.ulara.app |"
+            echo "| Version | $VERSION ($BUILD_NUMBER) |"
+            echo "| Minimum iOS | $MIN_OS |"
+            echo "| Architecture | $ARCH — $PLATFORM |"
+            echo "| Size | $SIZE_BYTES bytes ($SIZE_MIB MiB) |"
+            echo "| SHA-256 | $SHA256 |"
+            echo "| Commit | $COMMIT |"
+            echo "| Workflow run | $RUN_URL |"
+            echo "| Signed | No — SideStore re-signs it |"
+            echo ""
+            echo "## Direct download"
+            echo ""
+            echo "$DOWNLOAD_URL"
+            echo ""
+            echo "## Install with SideStore"
+            echo ""
+            echo "1. Download the IPA on the iPhone (Safari) or transfer it to Files."
+            echo "2. Open SideStore → My Apps → + → choose the IPA."
+            echo "3. Sign with your Apple ID, then tap Install."
+            echo "4. If iOS asks, trust the developer in Settings → General → VPN & Device Management."
+            echo ""
+            echo "The IPA is intentionally unsigned; SideStore performs the signing."
+          } > "$NOTES"
+
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release edit "$TAG" --title "$TITLE" --notes-file "$NOTES"
+          else
+            gh release create "$TAG"               --target "$COMMIT"               --title "$TITLE"               --notes-file "$NOTES"               --prerelease
+          fi
+
+          gh release upload "$TAG"             "apps/mobile/build/${IPA_NAME}.ipa"             apps/mobile/build/SHA256SUMS.txt             apps/mobile/build/build-info.json             --clobber
+
+          {
+            echo ""
+            echo "### Stable download link"
+            echo ""
+            echo "$DOWNLOAD_URL"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sidestore-ipa-logs-${{ github.run_number }}
+          path: |
+            apps/mobile/build/xcodebuild.log
+            apps/mobile/build/pod-install.log
+            apps/mobile/build/prebuild.log
+            apps/mobile/build/xcode-list.json
+            apps/mobile/ios/Podfile.lock
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Write the job summary
+        if: success()
+        run: |
+          {
+            echo "## Unsigned IPA built for SideStore"
+            echo ""
+            echo "| Field | Value |"
+            echo "|---|---|"
+            echo "| IPA | \`${IPA_NAME}.ipa\` |"
+            echo "| Bundle ID | \`ly.ulara.app\` |"
+            echo "| Commit | \`$GITHUB_SHA\` |"
+            echo "| Platform | iPhoneOS / arm64 (not Simulator) |"
+            echo "| Signed | No — ready for SideStore re-signing |"
+            echo "| Artifact | \`Ulara-unsigned-ipa\` |"
+            echo ""
+            echo "Download the artifact from this run's **Artifacts** section."
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- sitemap.xml — أُلارا (R320 §D · PAGES-GAP P2-7).
+     The PUBLIC routes only, 16 exactly: the 7 existing public surfaces
+     + the 9 legal/public sheets. The five authenticated trees are
+     deliberately absent (see robots.txt). Canonical base is the one
+     absolute URL index.html declares (ulara.vercel.app). -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://ulara.vercel.app/</loc></url>
+  <url><loc>https://ulara.vercel.app/auth</loc></url>
+  <url><loc>https://ulara.vercel.app/auth/register</loc></url>
+  <url><loc>https://ulara.vercel.app/colleges</loc></url>
+  <url><loc>https://ulara.vercel.app/colleges/leaderboard</loc></url>
+  <url><loc>https://ulara.vercel.app/campus</loc></url>
+  <url><loc>https://ulara.vercel.app/capabilities</loc></url>
+  <url><loc>https://ulara.vercel.app/legal/privacy</loc></url>
+  <url><loc>https://ulara.vercel.app/legal/terms</loc></url>
+  <url><loc>https://ulara.vercel.app/legal/cookies</loc></url>
+  <url><loc>https://ulara.vercel.app/legal/accessibility</loc></url>
+  <url><loc>https://ulara.vercel.app/legal/security</loc></url>
+  <url><loc>https://ulara.vercel.app/legal/data</loc></url>
+  <url><loc>https://ulara.vercel.app/about</loc></url>
+  <url><loc>https://ulara.vercel.app/help</loc></url>
+  <url><loc>https://ulara.vercel.app/contact</loc></url>
+</urlset>

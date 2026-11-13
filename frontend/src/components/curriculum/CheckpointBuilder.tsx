@@ -1,0 +1,407 @@
+/**
+ * Checkpoint builder — the "أسئلة التفاعل" section of the إدارة المنهج panel.
+ *
+ * - CheckpointFormModal: create (POST /lectures/:lectureId/checkpoints) and
+ *   edit (PATCH /checkpoints/:id). The API field is `question` (NOT
+ *   `prompt`) and `triggerSec` is REQUIRED. Options are 2..6 strings;
+ *   correctIndex is picked via a radio per option. On EDIT the current
+ *   correct answer is hidden from the wire (learning.routes.ts never
+ *   exposes correctIndex on reads), so the radios start unselected and
+ *   correctIndex is only sent when the teacher actively (re)picks one.
+ * - CheckpointList: rows with the trigger time, question and options
+ *   count, edit (Modal) and delete (ConfirmDialog).
+ *
+ * conceptId is intentionally NOT offered in the UI: there is no
+ * teacher-facing per-course concepts read endpoint (only the student
+ * matrix + admin counts), so a select would have nothing truthful to
+ * list. See T5-F7 follow-ups.
+ */
+import { useState } from 'react';
+import { useFieldArray, useForm, type FieldErrors } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { CircleHelp, Pencil, Plus, Trash2 } from 'lucide-react';
+import { ConfirmDialog } from '../owner/ConfirmDialog';
+import { Icon } from '../Icon';
+import { Badge } from '../primitives';
+import { toast } from '../../lib/toast';
+import { countAr } from '../../lib/format';
+import {
+  apiErrorMessage,
+  useCreateCheckpoint,
+  useDeleteCheckpoint,
+  useUpdateCheckpoint,
+  type Lecture,
+  type LectureCheckpoint,
+} from '../../hooks/useResources';
+import {
+  CORRECT_INDEX_UNCHANGED,
+  adjustCorrectIndexOnRemove,
+  checkpointFormOptions,
+  checkpointFormSchema,
+  formatSec,
+  parseTimeToSec,
+  withinDuration,
+  MAX_CHECKPOINT_OPTIONS,
+  MIN_CHECKPOINT_OPTIONS,
+  type CheckpointFormValues,
+} from './curriculumValidation';
+import {
+  AuthoringModal,
+  FormField,
+  ModalActions,
+  MutationError,
+  TimeInput,
+  useDiscardGuard,
+  useFieldId,
+} from './AuthoringModal';
+
+/* ── Create / edit form ───────────────────────────────────────── */
+
+/** Per-option error text (zod issue path ["options", i, "value"]). */
+function optionErrorAt(errors: FieldErrors<CheckpointFormValues>, index: number): string | undefined {
+  const e = errors.options as unknown;
+  if (Array.isArray(e)) {
+    const item = (e as Array<{ value?: { message?: string } }>)[index];
+    return item?.value?.message;
+  }
+  return undefined;
+}
+
+/** Array-level error text (min 2 / max 6) — RHF keeps it on options.root. */
+function optionsRootError(errors: FieldErrors<CheckpointFormValues>): string | undefined {
+  const e = errors.options as unknown;
+  if (e && !Array.isArray(e)) {
+    const obj = e as { message?: string; root?: { message?: string } };
+    return obj.message ?? obj.root?.message;
+  }
+  return undefined;
+}
+
+function CheckpointFormModal({
+  lecture,
+  existing,
+  onClose,
+}: {
+  /** Parent lecture — needed for the duration-bound pre-check. */
+  lecture: Lecture;
+  existing?: LectureCheckpoint;
+  onClose: () => void;
+}) {
+  const lectureId = lecture.id;
+  const create = useCreateCheckpoint(lectureId);
+  const update = useUpdateCheckpoint();
+  const isEdit = Boolean(existing);
+  const pending = create.isPending || update.isPending;
+  const error = create.error ?? update.error;
+
+  const form = useForm<CheckpointFormValues>({
+    resolver: zodResolver(checkpointFormSchema),
+    defaultValues: {
+      question: existing?.question ?? '',
+      trigger: existing ? formatSec(existing.triggerSec) : '',
+      options: existing?.options?.length
+        ? existing.options.map((o) => ({ value: o }))
+        : [{ value: '' }, { value: '' }],
+      // Edit mode: the real correctIndex is never sent to the client —
+      // start "unchanged" and only send what the teacher actively picks.
+      correctIndex: isEdit ? CORRECT_INDEX_UNCHANGED : 0,
+    },
+  });
+  const options = useFieldArray({ control: form.control, name: 'options' });
+  const err = form.formState.errors;
+  const correctIndex = form.watch('correctIndex');
+
+  // Unsaved-edits guard: Esc / X / cancel / overlay-click route through a
+  // blocking discard-confirm instead of silently dropping the draft.
+  const { requestClose, escapeLocked, guard } = useDiscardGuard({
+    dirty: form.formState.isDirty,
+    pending,
+    onClose,
+  });
+
+  /** Remove an option while keeping the correct-answer mark honest:
+   *  shift the mark when an earlier option disappears, reset it (with a
+   *  visible nudge) when the marked option itself is deleted — never let
+   *  the mark silently re-point at whichever option shifted into the
+   *  deleted slot (audit 11-f P1-7). */
+  const removeOption = (index: number) => {
+    const next = adjustCorrectIndexOnRemove(correctIndex, index);
+    options.remove(index);
+    if (next === correctIndex) return;
+    form.setValue('correctIndex', next);
+    if (next === CORRECT_INDEX_UNCHANGED) {
+      form.setError('correctIndex', {
+        message: 'حُذِف الخيار المحدَّد كإجابة صحيحة — حدِّد الإجابة الصحيحة من جديد',
+      });
+    }
+  };
+
+  const questionId = useFieldId('cp-question');
+  const triggerId = useFieldId('cp-trigger');
+  const optionsLabelId = useFieldId('cp-options');
+
+  const onSubmit = form.handleSubmit(async (values) => {
+    const triggerSec = parseTimeToSec(values.trigger)!;
+    const flatOptions = checkpointFormOptions(values);
+
+    if (lecture.durationSec > 0 && !withinDuration(triggerSec, lecture.durationSec)) {
+      form.setError('trigger', {
+        message: `موضع السؤال خارج مدة المحاضرة (${formatSec(lecture.durationSec)})`,
+      });
+      return;
+    }
+    if (!isEdit && values.correctIndex === CORRECT_INDEX_UNCHANGED) {
+      form.setError('correctIndex', { message: 'حدِّد الإجابة الصحيحة قبل الحفظ' });
+      return;
+    }
+
+    try {
+      if (existing) {
+        const optionsChanged =
+          flatOptions.length !== existing.options.length ||
+          flatOptions.some((o, i) => o !== existing.options[i]);
+        const patch: {
+          checkpointId: string;
+          question?: string;
+          triggerSec?: number;
+          options?: string[];
+          correctIndex?: number;
+        } = { checkpointId: existing.id };
+        if (values.question.trim() !== existing.question) patch.question = values.question.trim();
+        if (triggerSec !== existing.triggerSec) patch.triggerSec = triggerSec;
+        if (optionsChanged) patch.options = flatOptions;
+        // Only send the answer when actively picked — otherwise the server
+        // keeps the existing one (and re-validates it against new options).
+        if (values.correctIndex !== CORRECT_INDEX_UNCHANGED) patch.correctIndex = values.correctIndex;
+        await update.mutateAsync(patch);
+      } else {
+        await create.mutateAsync({
+          question: values.question.trim(),
+          triggerSec,
+          options: flatOptions,
+          correctIndex: values.correctIndex,
+        });
+      }
+      onClose();
+    } catch {
+      /* surfaced inline below */
+    }
+  });
+
+  return (
+    <AuthoringModal
+      title={isEdit ? 'تعديل سؤال التفاعل' : 'سؤال تفاعلي جديد'}
+      onClose={requestClose}
+      closeOnOverlayClick={!pending}
+      closeOnEscape={!escapeLocked && !pending}
+      pending={pending}
+    >
+      <form onSubmit={onSubmit} noValidate>
+        <div className="cur-form">
+          <FormField label="نص السؤال" htmlFor={questionId} error={err.question?.message}>
+            <textarea
+              id={questionId}
+              rows={3}
+              className="auth-input"
+              style={{ blockSize: 'auto', paddingInlineStart: 'var(--sp-4)', resize: 'vertical' }}
+              placeholder="سؤال يظهر للطالب عند نقطة زمنية داخل المحاضرة"
+              {...form.register('question')}
+            />
+          </FormField>
+
+          <FormField
+            label="موضع السؤال (يظهر عند هذه اللحظة)"
+            htmlFor={triggerId}
+            error={err.trigger?.message}
+            hint="بصيغة دقائق:ثوانٍ مثل 08:30"
+          >
+            <TimeInput
+              id={triggerId}
+              ariaLabel="موضع السؤال"
+              value={form.watch('trigger')}
+              onChange={(v) => form.setValue('trigger', v, { shouldValidate: form.formState.isSubmitted })}
+              onBlur={() => form.trigger('trigger')}
+            />
+          </FormField>
+
+          <div className="cur-options">
+            <label id={optionsLabelId} className="text-sm cur-options-label">
+              الخيارات ({options.fields.length}/{MAX_CHECKPOINT_OPTIONS})
+            </label>
+            <div role="group" aria-labelledby={optionsLabelId} className="cur-options-rows">
+              {options.fields.map((field, index) => {
+                const optionError = optionErrorAt(err, index);
+                return (
+                  <div key={field.id} className="cur-opt-row">
+                    <label className="text-xs cur-opt-correct">
+                      <input
+                        type="radio"
+                        name="correct-option"
+                        checked={correctIndex === index}
+                        onChange={() => form.setValue('correctIndex', index, { shouldValidate: true })}
+                        aria-label={`تعيين الخيار ${index + 1} إجابةً صحيحة`}
+                      />
+                      صحيحة
+                    </label>
+                    <div className="cur-opt-field">
+                      <input
+                        type="text"
+                        className="auth-input"
+                        aria-label={`نص الخيار ${index + 1}`}
+                        placeholder={`الخيار ${index + 1}`}
+                        style={optionError ? { borderColor: 'var(--danger)' } : undefined}
+                        {...form.register(`options.${index}.value` as const)}
+                      />
+                      {optionError && (
+                        <span className="auth-field-error cur-opt-error" role="alert">
+                          {optionError}
+                        </span>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      className="btn ghost sm cur-opt-remove"
+                      disabled={options.fields.length <= MIN_CHECKPOINT_OPTIONS}
+                      onClick={() => removeOption(index)}
+                      aria-label={`إزالة الخيار ${index + 1}`}
+                      title={options.fields.length <= MIN_CHECKPOINT_OPTIONS ? 'خياران على الأقل' : undefined}
+                    >
+                      <Icon icon={Trash2} size={12} />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+            {(optionsRootError(err) || err.correctIndex?.message) && (
+              <span className="auth-field-error" role="alert">
+                {err.correctIndex?.message ?? optionsRootError(err)}
+              </span>
+            )}
+            <div>
+              <button
+                type="button"
+                className="btn ghost sm"
+                disabled={options.fields.length >= MAX_CHECKPOINT_OPTIONS}
+                onClick={() => options.append({ value: '' })}
+              >
+                <Icon icon={Plus} size={12} /> إضافة خيار
+              </button>
+            </div>
+            {isEdit && (
+              <p className="text-xs text-muted">
+                الإجابة الصحيحة الحالية محفوظة ولا تظهر هنا — اختر خياراً فقط إن أردت تغييرها،
+                وأعِد تحديدها إذا عدّلت قائمة الخيارات.
+              </p>
+            )}
+          </div>
+
+          <MutationError error={error} fallback="تعذَّر حفظ السؤال التفاعلي — تحقّق من البيانات وحاول مرة أخرى." />
+
+          <ModalActions
+            pending={pending}
+            submitLabel={isEdit ? 'حفظ التعديلات' : 'إضافة السؤال'}
+            onCancel={requestClose}
+          />
+        </div>
+      </form>
+      {guard}
+    </AuthoringModal>
+  );
+}
+
+/* ── List rows ─────────────────────────────────────────────────── */
+
+export function CheckpointList({
+  lecture,
+  checkpoints,
+}: {
+  lecture: Lecture;
+  checkpoints: LectureCheckpoint[];
+}) {
+  const del = useDeleteCheckpoint();
+  const [editing, setEditing] = useState<LectureCheckpoint | null>(null);
+  const [adding, setAdding] = useState(false);
+  const [deleting, setDeleting] = useState<LectureCheckpoint | null>(null);
+
+  const confirmDelete = async () => {
+    if (!deleting) return;
+    try {
+      await del.mutateAsync(deleting.id);
+    } catch (error) {
+      // Close the dialog on failure so the error is never trapped behind
+      // the overlay — the toast (z-index above the modal) reports it and
+      // the inline list banner below persists the context (audit 11-f P1-2).
+      toast.error(apiErrorMessage(error, 'تعذَّر حذف السؤال — حاول مرة أخرى.'), {
+        title: 'تعذّر حذف السؤال',
+      });
+    } finally {
+      setDeleting(null);
+    }
+  };
+
+  return (
+    <div className="cur-list">
+      {checkpoints.length === 0 && (
+        <p className="text-sm text-muted">
+          لا توجد أسئلة تفاعلية بعد — أضِف سؤالاً يقيس فهم الطالب أثناء المشاهدة.
+        </p>
+      )}
+      {checkpoints.map((checkpoint) => (
+        <div
+          key={checkpoint.id}
+          className="cur-row"
+        >
+          <Badge color="purple">
+            <span dir="ltr" className="font-mono">{formatSec(checkpoint.triggerSec)}</span>
+          </Badge>
+          <span className="text-sm cur-row-title">
+            {checkpoint.question}
+          </span>
+          <span className="text-xs text-muted cur-row-count">
+            {/* 5-B6 (A7 P2-4) family grammar — the raw «N خيارات» was
+             * broken Arabic for 1 and 2 (counted nouns via countAr). */}
+            <Icon icon={CircleHelp} size={11} /> {countAr(checkpoint.options?.length ?? 0, ['خيار واحد', 'خياران', 'خيارات', 'خياراً'])}
+          </span>
+          <button type="button" className="btn ghost sm" onClick={() => setEditing(checkpoint)} aria-label={`تعديل السؤال عند ${formatSec(checkpoint.triggerSec)}`}>
+            <Icon icon={Pencil} size={12} />
+          </button>
+          <button
+            type="button"
+            className="btn ghost sm cur-row-danger"
+            onClick={() => setDeleting(checkpoint)}
+            aria-label={`حذف السؤال عند ${formatSec(checkpoint.triggerSec)}`}
+          >
+            <Icon icon={Trash2} size={12} />
+          </button>
+        </div>
+      ))}
+
+      <div>
+        <button type="button" className="btn ghost sm" onClick={() => setAdding(true)}>
+          <Icon icon={Plus} size={12} /> إضافة سؤال تفاعلي
+        </button>
+      </div>
+
+      {deleting && (
+        <ConfirmDialog
+          open
+          title="حذف السؤال التفاعلي"
+          message={`سيتم حذف السؤال "${deleting.question}" نهائياً.`}
+          confirmLabel="حذف نهائي"
+          danger
+          onConfirm={confirmDelete}
+          onCancel={() => setDeleting(null)}
+        />
+      )}
+
+      {del.isError && (
+        <div className="auth-error" role="alert">
+          {apiErrorMessage(del.error, 'تعذَّر حذف السؤال — حاول مرة أخرى.')}
+        </div>
+      )}
+
+      {adding && <CheckpointFormModal lecture={lecture} onClose={() => setAdding(false)} />}
+      {editing && <CheckpointFormModal lecture={lecture} existing={editing} onClose={() => setEditing(null)} />}
+    </div>
+  );
+}

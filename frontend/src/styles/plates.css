@@ -1,0 +1,251 @@
+/* plates.css — R344 C-4: the /__plates product-plate stage.
+ *
+ * The stage is the CAPTURE WINDOW for scripts/art/render-plates.mjs:
+ * fixed 720×450 px (the Roles/Product img contract), the reference paper
+ * ground (--neutral-50 light / --neutral-900 dark — the tokens flip
+ * with [data-theme]), the 1px hairline frame (--neutral-300), zero
+ * radius, zero shadow, LTR mono numerals ([nn]-style values ride
+ * --font-mono), and EVERY Arabic string at ≥14px effective (the C-4
+ * contract; the R333 captures measured 11px and were retired).
+ * The fragment inset follows the sheet's own margins. No animation
+ * anywhere on the stage — the captures are byte-stable by
+ * construction (fixed DOM, fixed fonts, fixed geometry). */
+
+.plates-root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-9);
+  padding: var(--sp-9);
+  background: var(--neutral-100);
+  min-block-size: 100vh;
+}
+
+.plate {
+  display: block;
+}
+
+.plate-stage {
+  position: relative;
+  inline-size: 720px;
+  block-size: 450px;
+  background: var(--neutral-50);
+  color: var(--neutral-900);
+  padding: 44px 52px; /* spacing-gate: allow — fixed 720×450 capture-window inset (render contract geometry, not app rhythm) */
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+[data-theme='dark'] .plate-stage {
+  background: var(--neutral-900);
+  color: var(--neutral-50);
+}
+
+.plate-hairline {
+  position: absolute;
+  inset: 10px;
+  border: 1px solid var(--neutral-300);
+  pointer-events: none;
+}
+
+/* the fragment fills the stage's content box */
+/* the fragment fills the stage's content box (ONE selector: the
+ * display/gap inherit down .plate-frag's own tree) */
+.plate-frag {
+  display: flex;
+  flex-direction: column;
+  gap: 22px; /* spacing-gate: allow — plate fragment rhythm: off-ladder print-specimen grade for the isolated stage */
+  block-size: 100%;
+  justify-content: center;
+}
+.plate-row { display: flex; gap: var(--sp-4); align-items: center; }
+.plate-cards { gap: var(--sp-5); }
+.plate-cards > * { flex: 1; }
+.plate-cards .metric { font-size: 14px; } /* type-gate: allow — C-4 plate floor: fixed ≥14px effective Arabic on the byte-stable capture stage */
+
+/* ≥14px Arabic everywhere (the C-4 contract) — the floor rides the
+ * single .plate-frag selector above via the shared font properties */
+.plate-stage .plate-frag { font-size: 15px; line-height: 1.5; letter-spacing: 0; } /* type-gate: allow — C-4 plate floor: fixed ≥14px effective Arabic on the byte-stable capture stage */
+.plate-muted { color: var(--text-muted); font-size: 14px; } /* type-gate: allow — C-4 plate floor: fixed ≥14px effective Arabic on the byte-stable capture stage */
+.plate-strong { color: var(--neutral-900); font-weight: 600; }
+[data-theme='dark'] .plate-strong { color: var(--neutral-50); }
+.plate-mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  direction: ltr;
+  font-size: 15px; /* type-gate: allow — ≥14px effective at print scale (C-4 plate floor) */
+}
+
+/* the search/input seat */
+.plate-inputrow {
+  border: 1px solid var(--neutral-300);
+  padding: var(--sp-3) var(--sp-4);
+  gap: var(--sp-3);
+  background: transparent;
+}
+.plate-searchglyph { font-size: 16px; opacity: 0.6; } /* type-gate: allow — C-4 plate floor: fixed ≥14px effective Arabic on the byte-stable capture stage */
+.plate-searchtext { flex: 1; font-size: 15px; } /* type-gate: allow — C-4 plate floor: fixed ≥14px effective Arabic on the byte-stable capture stage */
+.plate-note { font-size: 14px; } /* type-gate: allow — C-4 plate floor: fixed ≥14px effective Arabic on the byte-stable capture stage */
+
+/* the hairline table (the .table register's own grammar, plate-scoped) */
+.plate-table { border-block: 1px solid var(--neutral-300); }
+.plate-tr {
+  display: grid;
+  grid-template-columns: 2fr 1.4fr 0.7fr;
+  gap: var(--sp-3);
+  padding: var(--sp-2-5) var(--sp-0-5);
+  border-block-start: 1px solid var(--border-faint);
+  font-size: 14px; /* type-gate: allow — C-4 plate floor: fixed ≥14px effective Arabic on the byte-stable capture stage */
+}
+.plate-tr:first-child { border-block-start: 0; }
+.plate-th { font-size: 14px; color: var(--text-muted); } /* type-gate: allow — C-4 plate floor: fixed ≥14px effective Arabic on the byte-stable capture stage */
+.plate-tr > *:last-child { text-align: end; }
+.plate-table[role='table'][aria-label='درجات الطلاب'] .plate-tr { grid-template-columns: 1.8fr 0.8fr 0.8fr 0.9fr; }
+
+/* the player bar */
+.plate-player {
+  border: 1px solid var(--neutral-300);
+  padding: 18px; /* spacing-gate: allow — plate fragment rhythm: off-ladder print-specimen grade for the isolated stage */
+}
+.plate-playerbar {
+  display: flex;
+  align-items: center;
+  gap: 14px; /* spacing-gate: allow — plate fragment rhythm: off-ladder print-specimen grade for the isolated stage */
+}
+.plate-track {
+  flex: 1;
+  block-size: 2px;
+  background: var(--neutral-300);
+  position: relative;
+}
+.plate-knob {
+  position: absolute;
+  inset-block-start: -3px;
+  inline-size: 8px;
+  block-size: 8px;
+  background: var(--accent);
+  border-radius: 0;
+}
+
+/* the matrix rows */
+.plate-matrix { display: flex; flex-direction: column; gap: 14px; } /* spacing-gate: allow — plate fragment rhythm: off-ladder print-specimen grade for the isolated stage */
+.plate-mxrow { display: flex; align-items: center; gap: 14px; } /* spacing-gate: allow — plate fragment rhythm: off-ladder print-specimen grade for the isolated stage */
+.plate-mxlabel { inline-size: 220px; font-size: 14px; } /* type-gate: allow — C-4 plate floor: fixed ≥14px effective Arabic on the byte-stable capture stage */
+.plate-mxrow .progress { flex: 1; }
+.plate-mxval { inline-size: 48px; text-align: end; }
+
+/* the chip rows */
+.plate-chiprow { display: flex; gap: var(--sp-2-5); }
+.plate-chiprow .pill { font-size: 14px; } /* type-gate: allow — C-4 plate floor: fixed ≥14px effective Arabic on the byte-stable capture stage */
+
+/* the chat */
+.plate-chat { display: flex; flex-direction: column; gap: var(--sp-3); }
+.plate-bubble {
+  max-inline-size: 86%;
+  padding: 14px 18px; /* spacing-gate: allow — plate fragment rhythm: off-ladder print-specimen grade for the isolated stage */
+  font-size: 15px; /* type-gate: allow — C-4 plate floor: fixed ≥14px effective Arabic on the byte-stable capture stage */
+  line-height: 1.55;
+  border: 1px solid var(--neutral-300);
+  background: transparent;
+}
+.plate-user {
+  align-self: flex-start;
+  border-inline-start: 2px solid var(--accent);
+}
+.plate-bot { align-self: flex-end; }
+
+/* the exam taker */
+.plate-examtop { justify-content: space-between; }
+.plate-examtop .plate-mono { font-size: 22px; font-weight: 600; } /* type-gate: allow — exam timer emphasis seat on the fixed capture stage */
+.plate-dots { display: flex; gap: var(--sp-2); }
+.plate-dot {
+  inline-size: 12px;
+  block-size: 12px;
+  border: 1px solid var(--neutral-300);
+  background: transparent;
+}
+.plate-dot.is-on { background: var(--accent); border-color: var(--accent); }
+.plate-q { display: flex; flex-direction: column; gap: var(--sp-1-5); }
+.plate-qtext { font-size: 16px; font-weight: 600; } /* type-gate: allow — C-4 plate floor: fixed ≥14px effective Arabic on the byte-stable capture stage */
+.plate-opts { gap: var(--sp-2-5); }
+.plate-opt {
+  border: 1px solid var(--neutral-300);
+  padding: var(--sp-2-5) var(--sp-4);
+  font-size: 15px; /* type-gate: allow — C-4 plate floor: fixed ≥14px effective Arabic on the byte-stable capture stage */
+}
+.plate-opt.plate-strong { border-color: var(--accent); border-inline-start-width: 2px; }
+
+/* the checkpoint card */
+.plate-cp {
+  border: 1px solid var(--neutral-300);
+  padding: 18px 20px; /* spacing-gate: allow — plate fragment rhythm: off-ladder print-specimen grade for the isolated stage */
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+.plate-cpkicker {
+  font-size: 15px; /* type-gate: allow — the VLM measured 14px mono at ~13px effective — the C-4 floor is ≥14px effective */
+  color: var(--accent);
+  font-family: var(--font-mono);
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+.plate-cpq { font-size: 16px; font-weight: 600; } /* type-gate: allow — C-4 plate floor: fixed ≥14px effective Arabic on the byte-stable capture stage */
+
+/* the alert rows + stats inherit the shipped primitives; the plate
+ * font floor keeps them ≥14px */
+.plate-stage .pf-statline { font-size: 14px; } /* type-gate: allow — C-4 plate floor: fixed ≥14px effective Arabic on the byte-stable capture stage */
+.plate-stage .alert-row { font-size: 14px; } /* type-gate: allow — C-4 plate floor: fixed ≥14px effective Arabic on the byte-stable capture stage */
+
+/* R344 C-sheet VLM review: the reference law is radius 0 + no glow ANYWHERE —
+ * the plate stage renders the primitives in their drafting-table voice:
+ * square pills/badges/dots/chips, zero box-shadow (the app's own
+ * rounded interactive states stay interactive-only; the plate is the
+ * printed specimen). */
+.plate-stage .pill,
+.plate-stage .badge,
+.plate-stage .plate-dot,
+.plate-stage .plate-opt,
+.plate-stage .plate-bubble,
+.plate-stage .plate-inputrow,
+.plate-stage .plate-table,
+.plate-stage .metric,
+.plate-stage .alert-row,
+.plate-stage .plate-vignette {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+
+/* R344 C-sheet re-review: the plate renders the printed specimen — the
+ * StatLine tone families (positive/warning/danger/signal) recolor the
+ * VALUE digits in the live app, but the plate voice is the reference mono
+ * rule: ink digits, the accent orange alone carries signal. Toned
+ * values read as off-voice colored numerals at print scale. */
+/* the strong-scoped mutes (the app's light-mode tone belt sits at
+ * (0,5,0) specificity — the plate chain ties it and the later sheet
+ * wins, plates.css loading after patterns.css in main.tsx) */
+.plate .plate-stage .pf-stat.positive .pf-stat-value,
+.plate .plate-stage .pf-stat.warning .pf-stat-value,
+.plate .plate-stage .pf-stat.danger .pf-stat-value,
+.plate .plate-stage .pf-stat.signal .pf-stat-value { color: inherit; }
+/* the badge tones ride ink outlines at print voice (no tinted fills) */
+.plate .plate-stage .badge,
+.plate .plate-stage .badge.green,
+.plate .plate-stage .badge.amber { background: transparent; border: 1px solid currentColor; color: inherit; }
+/* the metric card tone accents flatten to the ink voice on the plate */
+.plate .plate-stage .metric.green,
+.plate .plate-stage .metric.amber { border-color: var(--neutral-300); }
+.plate .plate-stage .metric.green .metric-value,
+.plate .plate-stage .metric.amber .metric-value { color: inherit; }
+.plate .plate-stage .metric.green .metric-change,
+.plate .plate-stage .metric.amber .metric-change { color: var(--text-muted); }
+
+/* R344 C-sheet final re-review: the plate's ON pills speak the outline
+ * voice (the accent as a hairline signal — the filled interactive block
+ * is the live app's affordance; the printed specimen signs with the
+ * orange ring alone, per the reference sparing-accent law). */
+.plate .plate-stage .pill.on {
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent-ink);
+}

@@ -1,0 +1,758 @@
+# Ulara Design System — the ds canon (R306)
+
+> **أُلارا** — منصّة تعليم ذكي مستقلّة عربية-أولًا · the design canon as it ships in code.
+>
+> **The single active authority.** One visual system across the whole product — the public
+> landing sheet, the authenticated shell, and every role page family. The grammar of the
+> retired reference site was reverse-engineered LIVE — every value measured from the DOM and the
+> shipped CSS bundle — and adapted for an Arabic-first, RTL, two-theme educational platform.
+> Full measured evidence: the retired r305 reference spec (purged with the match program) ·
+> the R306 exclusivity decisions + rebuild plan: the retired r306 exclusivity spec.
+> Historical eras (Orbit Ink, Superlist/OPTIKKA, ultramarine, the editorial poster) are
+> The design history is retired with the archived eras — the canon in THIS file is the only truth.
+> instructions.
+
+---
+
+## 0. R313 — reference parity canon (owner override)
+
+**The authority statement.** In round R313 the owner ordered **full visual and
+behavioural identity with the retired reference site**. That order supersedes every prior
+adaptation decision — the r306 «adapted, not copied» stance, the r308 §G/§H
+non-adoptions, and any earlier canon text that contradicts the parity system below.
+It does **not** supersede the hard contracts: accessibility, honest copy, CSP, the
+funnel pins, and the no-proprietary-assets rule stand exactly as before. Measured
+basis: `audits/evidence/r313/` (live reference census + production baseline; 3 match /
+55 mismatch at base). The complete per-item ledger with commits and evidence:
+[`docs/redesign/r313/OVERRIDE-LEDGER.md`](docs/redesign/r313/OVERRIDE-LEDGER.md).
+
+**The override ledger** (old → new, one line per item):
+
+- **D1** paper `#F6F8FA` → `#F6F6EE` (re-pinned at every seat: tokens, metas, boot
+  plate, theme.ts, tests, parity gate).
+- **D2** radius ladder 2–20px + pill → **0** (`--r-full` kept for circles/dots).
+- **D3** elevation shadows (elev-1..5) → **none** (focus rings + forced-colors
+  fallbacks kept; zero exceptions).
+- **D4** button grammar (oklab brighten + lift + glow) → **fill-wipe + dual-label
+  roll** (white-on-accent is a documented AA exception: Arabic labels ride weight
+  ≥600); inputs 1px `#B3B3AF` → focus `#ED4C1F` → filled `#FA3600`.
+- **D5** fixed px type ladder (root 16px) → **fluid rem root** (`html
+  0.5787037037vw` + ≤991/≤767 bands; the 13px Arabic floor kept as a minimum) +
+  the **Geist Mono** voice (self-hosted OFL).
+- **D6** native scroll → **Lenis 1.1.5, guest pages only** (lerp 0.1,
+  conductor-driven, scrollbar hidden while live, `.content` stays native; RM never
+  inits).
+- **D7** landing 12 sections → **9 reference sections** (the map/journey pin ≈51% of
+  the page; the documentary media band + capability ledger moved to `/campus` +
+  `/capabilities`).
+- **D8** header 57px sticky no-hide → **56px fixed at the 7px inset** with the
+  measured `on-scroll`/`on-hide` states + MENU button <992px.
+- **D9** partial sheet-frame marks → the **full fixed page frame** (1px `#B3B3AF`
+  at the 7px inset, plus marks + rulers; scales 6/7 by viewport).
+- **D10** loader session-gated with a cut-short exit → **asset-gated curve + 10
+  log lines + a real 835ms two-band exit, on every full load**.
+- **D11** route transition 721ms sweep + 500ms reveal → **1.6s four-edge inset
+  wipe**.
+- **D12** cursor — already at parity since R310/R311; kept (only the paper fallback
+  re-pinned).
+- **D13** scrub/plateau choreography re-based onto the new 9-section set.
+- **D14** footer → **3 columns + inspection lens** (r 99.09 / pulse 104.04).
+- **D15** cookie banner — **intentionally omitted** (Ulara sets no tracking
+  cookies; a consent banner would be dishonest copy — see
+  [`docs/redesign/r313/NOTES-D15.md`](docs/redesign/r313/NOTES-D15.md)).
+- **D16** all authenticated app surfaces re-skinned to the ds grammar (square
+  chips/controls, hairline row rules `#E0E0DA`, structural seams `#B3B3AF`, flat
+  tiles, mono headers).
+- **D17** dark theme re-derived from the new canon (the shadow-removal policy is
+  theme-wide; dark depth = surface step + hairline).
+
+**The permanent exceptions** (owner-ratified — never «fixed» for parity):
+
+1. **BT Grotesk is proprietary** — Alexandria + IBM Plex Sans Arabic stay (OFL,
+   Arabic-correct); Geist Mono (OFL) is adopted.
+2. **Arabic glyph metrics** — there is no uppercase; hierarchy transfers through
+   weight + size, never letter-spacing (joins).
+3. **Honest-copy rules unchanged** — «مساحة عمل أُلارا التجريبية» disclosure, banned
+   marketing wording, real numbers only.
+4. **Funnel pins unchanged** — 5 register CTAs + 5 login affordances + the pinned
+   section ids (`statement/chapters/live/roles/colleges/vision`), exactly as r306
+   froze them.
+
+## 1. The system in one paragraph
+
+An architect's drawing sheet: warm-neutral **paper** grounds, graphite **ink**, fine
+**hairlines** and ruled matrices, near-square corners, a drafting voice of **mono
+bracketed indices** (`[01]`, coordinates, metadata rows), generous but controlled negative
+space, and exactly ONE **orange signal** — spent with restraint on the active interaction,
+the key annotation, and the primary CTA. Charcoal slabs carry the primary actions (the
+reference's own recipe); dark theme is the charcoal itself as ground — a coherent
+complementary system, not an inversion. Original flat SVG line work for illustration;
+no 3D canvases, no poster displays, no competing art direction anywhere.
+
+## 2. Color — the token contract (tokens.css)
+
+| Token | Light | Dark | Register |
+|---|---|---|---|
+| `--bg` | blueprint paper `#F6F8FA` | charcoal `#282828` | the grounds |
+| `--surface` | `#FFFFFF` | `#2E2E2E` | 1.06/1.09 elevation step |
+| `--text` | graphite `#282828` (13.85 AAA) | paper `#F6F8FA` | primary ink |
+| `--text-secondary` / `--text-muted` / `--text-faint` | `#414140` / `#626260` / `#72726F` | `#C9C9C5` / `#B4B4B0` / `#A2A29D` | the ink ramp (9.6 → 4.5) |
+| `--accent` | `#FA3600` (3.53 — UI/large only) | `#FF5A1F` | the signal fill |
+| `--accent-ink` | `#C72E00` (**5.16 AA text**) | `#FF5A1F` | signal TEXT (links, numerals, emphasis) |
+| `--accent-soft` / `--accent-strong` | `#FCE3D9` / `#A32400` | `#432015` / `#FFC5AE` | tint wells / deep ink |
+| `--accent-fg` (labels ON the fill) | `--warm-ink #191918` (4.69 — white 3.76 banned) | `--warm-ink` | the fill-label law |
+| `--primary` / `--primary-fg` | charcoal slab `#282828` + white (14.74) | white slab + warm-ink | PRIMARY CTAs (the reference recipe) |
+| `--border` / `--rule` / `--grid-line` | `#E0E0DA` / `#C8C8C8` / `#B3B3AF` | `#4A4A48` / `#4A4A48` / `#5C5C5A` | the hairline tiers (`--grid-line` decorative on light) |
+| `--gold` / `--gold-ink` / `--gold-soft` | `#B57438` / `#8F5A28` / yellow-bg | `#E0A067` / `#F2B782` | **achievements/status gold ONLY** — never a second accent |
+| `--state-focus-ring-color` | `#C72E00` (≥3:1 every adjacent surface) | `#FF6B33` | the ONE focus ring (base.css) |
+
+Status families `--c-{mint,yellow,rose,sky,lavender,copper/coral,grey,…}-{bg,ink,deep}`:
+computed triads, deep-vs-bg ≥4.5 both themes; danger rhymes with the coral `#F15534`.
+`--c-copper-*` is the documented **ember/orange compatibility seat** (it carries the accent
+values under a legacy name — brand consumers prefer the `--accent-*` semantic aliases;
+**gold semantics use the gold role**, never the copper seat). Role accents (student → owner)
+all ≥3.0 vs `--bg`. Charts: series 1 = the signal; square markers; gold = achievement series.
+
+**Forbidden:** retired spellings are FORBIDDEN needles in the parity gate (ultramarine,
+teal, warm-paper, the retired night ramp, **`--poster-*`** — the r306 retirement).
+
+## 3. Typography
+
+Self-hosted OFL trio (fonts.css — the reference's proprietary BT Grotesk is NOT reused;
+Geist Mono adds no gain over Plex Mono):
+
+| Voice | Face | Use |
+|---|---|---|
+| Display | **Alexandria** 600/700 | headlines, page titles, the sheet's Arabic display |
+| Body | **IBM Plex Sans Arabic** 400–700 | everything readable, incl. Latin runs |
+| Technical | **IBM Plex Mono** 400/500 | the drafting voice: `[NN]` indices, coordinates, numerals, Latin micro-labels (`dir="ltr"`, tabular) |
+
+Ladder (`--fs-*`): `xxs/xs/sm 13` · `chrome 14` · `body 16` · `body-lg 18` · `h3 18` ·
+`h2 24` · `h1 30` · `display-md clamp(24,3.2vw,38)` · `display-lg clamp(32,5vw,48)` ·
+`display-xl clamp(40,6.5vw,64)`. **Arabic floor 13px** (nothing smaller in reading copy —
+SVG micro-labels drop in narrow flows rather than shrink). **Zero letter-spacing** on
+Arabic (joins; the reference's −0.02em is Latin-only and stays banned). Western digits
+(`ar-LY latn`) via `utils/numbers.ts`. UPPERCASE has no Arabic equivalent — hierarchy
+transfers through Alexandria weights + the size ladder.
+
+## 4. Motion — the measured register
+
+`--t-micro 80 · --t-fast 200 · --t-base 400 · --t-slow 500 · --t-slower 650 (720 cinema)
+on --ease cubic-bezier(.23,1,.32,1)` (the reference's own census: 0.4s ×174) and the roll/
+exit curve `--ease-in (.625,.05,0,1)`. Semantic page 400 / reveal 480/520. **Block-level
+reveals only** (RevealCssClass / the shared IO belt — per-line splits break Arabic shaping)
+with ONE r308 amendment: **word-boundary reveals** (`WordReveal`) split on spaces only —
+joining is intra-word in Arabic, so per-WORD masks are shaping-safe where per-LINE masks
+are not (the pinned split-integrity contract lives in `tests/unit/r308-interaction.test.ts`).
+Imperative scroll chrome writes CSS vars/`classList` on rAF — zero React re-renders per
+tick. `prefers-reduced-motion` collapses every duration to 0 (motion.css + base.css belts)
+and the content stands complete static. No scrolljacking.
+**R308 amendment — the interaction layer** (`docs/redesign/r308/parity-matrix.md`): the
+landing sheet carries the reference's connected instrument system — the once-per-session
+entrance loader (honest progress, session-gated, skipped under RM), the canvas pointer
+instrument (9px signal square, velocity trail, press reticle — fine pointers only, never
+under RM), the hero's local inspection instrument (guides + scene-relative readout +
+drag-to-inspect with viewBox-remapped stations), the pinned walkthrough (CSS sticky —
+still no JS pinning), the ink-mask drawing→photo reveal, the capabilities ticker, the
+footer inspection lens, and the landing-exit sweep. All of it rides ONE shared clock
+(`lib/motion/sheetConductor.ts`) that unsubscribes when idle — an idle page holds zero
+awake frames — and every continuous instrument is a whitelisted `@keyframes` that the
+RM belt collapses (`tests/unit/r306-landing-sheet.test.ts` pins the whitelist). The
+authenticated app keeps the native cursor and no transitions on task routes.
+
+## 5. The landing sheet — «لوحة أُلارا» (r306 → r307)
+
+`LandingPage.tsx` + `landing.css` compose the drawing sheet: the fixed corner registration
+marks (desktop, decorative) → the 56px hairline header (nav cells wash to charcoal on
+hover) → the hero (the original **SVG blueprint** of the learning system with five
+keyboard-operable hotspots + a polite live-region panel, beside the copy column; below
+them the **documentary media band** — three Commons-licensed university photographs,
+baseline-aligned — then the title-block metadata grid) → the statement → **الحياة
+الجامعية** (the documentary rail: a full-width panorama band + an asymmetric mosaic,
+every frame carrying institution + author + licence deed) → the six capability **ledger
+rows** (flat honest interface fragments — hairline frames, no elevation, no browser
+chrome) → **المنصّة فعليًا** (real captures from the running platform, demo data
+disclosed on every frame) → **مشاهد جامعية** (official-channel documentaries behind
+click-to-load facades — zero third-party bytes until intent) → the capability matrix
+(a ruled hairline table) → the interactive **role selector** (aria-pressed chips over
+the five roles' REAL dashboards, a polite live-region panel) → the interactive college
+registry → the honest status pairs → the coordinates-row CTA → the hairline colophon
+footer. The funnel (5 register CTAs / 5 login affordances — exact counts, pinned), the
+honest numbers, the integrity strings, and the a11y contracts are pinned by
+`landing-funnel` / `r306-landing-sheet` / `landing-scrollspy-grain` / `guest-landing.e2e`
+/ the r188-brand gates.
+
+## 6. Components & patterns
+
+Buttons: `.btn.primary` charcoal slab (the default primary — the auth submit joined it in
+r307), `.btn.accent` the signal
+fill with `--warm-ink` labels, ghosts hairline; 44px landing floor; loading states never
+double-submit. Inputs/tables/dialogs/overlays: the shared primitives
+(`components/primitives/`) + `patterns.css` (`PageFrame · PageHeader · RowList ·
+SplitView · FilterBar…` — the normative signatures in `components/patterns/CONTRACT.md`).
+Empty/loading/error states use the **mk-ill illustration kit** (original two-tone SVG,
+gold in achievement pieces only). Data tables rule with hairlines, sticky headers where
+needed, scoped horizontal scroll on phones. `--gold` = achievements ONLY.
+
+### 6a. MediaFrame — the documentary photo seat (r307)
+
+`components/landing/MediaFrame.tsx` + `.mf-*` in `landing.css`: a flat hairline frame
+(radius 0→2, zero elevation) around a Commons-licensed university photograph. The
+caption bar carries the Arabic institution + name, the mono credit row (author ·
+licence deed link). Engineering: explicit intrinsic dimensions (CLS 0 by construction),
+responsive srcset from the manifest derivative widths, deliberate `object-position`
+per photo, lazy by default — the hero lead is the ONE eager seat (fetchpriority high).
+Provenance: `frontend/public/media/manifest.json` (machine-readable rights + verification
+per asset); the display registry mirrors it in `src/data/university-media.ts`; the
+derivative pipeline: `scripts/media/build-media-derivatives.mjs` (ffmpeg + libwebp,
+zero repo dependencies).
+
+### 6b. VideoCard — the official-channel documentary seat (r307)
+
+`components/landing/VideoCard.tsx` + `.vc-*`: a designed 16:9 facade (drafting marks,
+pure CSS — no thumbnails, no third-party bytes) that mounts the youtube-nocookie iframe
+ONLY after an explicit click; Escape/close returns focus to the trigger. The kind label
+(«فيديو توثيقي من القناة الرسمية للجامعة») tells the truth: a university documentary is
+never presented as a product demo. CSP: `frame-src` admits exactly the two embed hosts
+(`backend/src/app.ts`); `img-src` stays self-only (no i.ytimg.com hotlinks).
+
+### 6c. ProductFrame — the real-capture seat (r307)
+
+`components/landing/ProductFrame.tsx` + `.prf-*`: a flat frame around an authentic
+capture of the running application (seeded demo environment — fully synthetic «جامعة
+أُلارا التجريبية» data). Every frame carries the mono `real-ui` tag + the demo-data
+disclosure; the CTA scrolls to the conversion row (never an extra funnel link — the
+5+5 counts stay exact). Captures are re-derivable from the committed
+`.r308-capture-archive/` via the pipeline script — never re-fabricated.
+**R308 re-capture** (§1.1 defect A): every capture was re-taken with the onboarding
+completed through its real supported flow before the shot (method recorded per asset in
+`manifest.json` `source.method`) — no welcome modal, no blur, ever.
+
+**Verified facts ledger** (doc-accuracy pins, r177):
+
+- CI census — **9 jobs: lint · typecheck · build · frontend tests · backend tests · db-integration · e2e · design gates** (+ the surface-drift job rides the same pipeline's tail).
+- Spinner — 22px · 2px · top arc neutral-900 (light) / accent (dark) · 700ms linear.
+- The overrides layer ships as the **Polish Bundle (consolidated v6 → v21)** (`polish.css`).
+
+## 7. RTL & accessibility
+
+Logical properties everywhere (`inline-start/end`, `margin-inline`…); direction-aware
+icons flip only when semantics demand (`ArrowLeft` = forward in RTL). `dir="ltr"`
+isolation for URLs/emails/IDs/coordinates/commands. WCAG-aligned contrast per the token
+ledger above; ONE focus language (base.css universal outline consuming
+`--state-focus-ring-color` — no private focus rules in page sheets); 44px touch targets;
+semantic landmarks; live regions for async state; the reduced-motion belt. The full a11y
+contract is enforced by `r170*`/`r305a7-a11y` test belts + axe in dev.
+
+## 8. Rules for evolving the system
+
+1. **No raw values** — colors/motion/spacing/radii ride `tokens.css`/`motion.css` (CI
+   gates: `check-colors` / `check-motion-tokens` / `check-raw-css` — strict).
+2. **No new namespaces** — a `--poster-*`-style divergence layer is exactly the failure
+   mode R306 removed; extend the canonical tokens instead (the parity gate's FORBIDDEN
+   list guards the retired spellings).
+3. **Icons**: Lucide via `Icon.tsx` only.
+4. **`frontend/index.html` inline script changes** → refresh the CSP pin
+   (`scripts/check-csp-hash.sh` + `backend/src/app.ts`).
+5. **Token contract changes** → re-pin `verify-parity-export.mjs` in the SAME change.
+6. **The illustration voice**: original flat SVG line work on the token system — no
+   3D dependencies, no reference assets. **r307 amendment:** exactly three sanctioned
+   raster seats exist (the §6a documentary photo, the §6b facade poster composed in CSS,
+   the §6c real product capture) — every one of them flat, hairline-framed, honestly
+   labelled, and rights-verified in the media manifest. Generic stock imagery, unlicensed
+   rehosts, and decorative raster remain banned.
+7. Honest copy is permanent («مساحة عمل أُلارا التجريبية» synthetic-data disclosure, banned
+   marketing wording — r168b/r177/r188 gates).
+
+## 9. Architecture (as it ships)
+
+`main.tsx` cascade: `fonts → tokens → motion → base → components → layout → patterns →
+auth → notifications → student → polish` (landing.css rides the LandingPage chunk;
+pdf/owner/training/colleges ride their lazy consumers). One token source (tokens.css) +
+the synchronized export (unified-parity.css, verified by the parity gate). The patterns
+contract owns the page grammar; polish.css remains the overrides layer for the shared
+library. No unlayered bolt-on sheets.
+
+## 10. Gates & history
+
+CI design gates: `check-icons` · `check-motion-tokens` · `check-csp-hash` ·
+`verify-parity-export` · `check-colors --strict` · `check-raw-css --strict` (+ its
+self-test) · `check-bundle-size`. (The era-history file is retired with the archived eras
+R305 copy), `CHANGELOG.md`, the release reports in `docs/releases/`.
+
+
+---
+
+## R314 «الحقيقة البصرية» — قانون التجاوزات (cycle 1)
+
+أمر المالك يعلو: التطابق البصري مع المرجع (الشكل/الإحساس/التركيب/الحركة)
+يتجاوز قواعد r306/r308/r313 أدناه في هذه المقاعد فقط:
+
+1. **البطل**: مقعد raster واحد (رسم حبري مشتق من صورة مرخّصة —
+   `manifest.json → renders[]`، ShareAlike محفوظ). مسار إعادة الإنتاج:
+   `scripts/r314/ink-render.mjs`.
+2. **لافتة الموافقة**: مبنية (عكس تعطيل r313) — بوابة تخزين محلي
+   صادقة، `window.UlaraConsent`.
+3. **min-block-size للأقسام**: مُقاعد على ≤760px (الأقسام محتوى-القياس
+   كالمرجع).
+4. **STAGES/bp-panel**: أُقعدا مع الرسم الخطّي؛ النسخة الصادقة في
+   محطات `HeroInspect`.
+5. **اختبارات r306/assets/funnel**: أُعيد تثبيتها بملاحظات
+   `R314 override` في نفس الـ commits (45f8c32…ae70a16).
+
+القضاة (`scripts/r314/*` + `audits/evidence/r314/`) هم وحدهم من يغلق
+الصفوف — لا إغلاق ذاتيًا. النتيجة الجارية: `PARITY.md`.
+
+---
+
+## R322 — design director edition (tokens + scale)
+
+> Round R322's additive system layer (owner brief:
+> `docs/redesign/r322/BRIEF.md` §4 — round docs r312–r330 are archived in
+> `docs/history/redesign-rounds.tar.gz` and their evidence binaries in the
+> `evidence-r331` GitHub Release since the R331 hygiene pass). Nothing above
+> is rewritten — this section
+> documents OVERRIDES that later packages apply: the grid, the spacing scale,
+> the ONE display type scale, and the confirmed material. The tokens land
+> ADDITIVELY in `tokens.css` (`--fs-d1/d2/d3` + `--fs-st` · `--space-*` ·
+> `--grid-*`); the type rungs are FINAL (re-pinned by the 1-d migration off
+> the reference extraction's own ladder) and the landing display seats consume
+> them now. Measured basis: `audits/evidence/r322/dsys/`
+> (`type-census.md` — the live landing type sweep; `font-vote.md` — the
+> blind 3-reviewer display-face election; `type-census-after.md` — the
+> post-migration sweep).
+
+### 4.a Grid — 12 columns, rem on the fluid root, logical-only
+
+- **12 columns** (`--grid-cols: 12`); margins and gutter expressed in **rem on
+  the fluid root** so the grid breathes with the type exactly like the
+  reference: `--grid-margin: 4rem` (≈33px @1440 / ≈40px @390) ·
+  `--grid-gutter: 1.5rem` (≈12.5px @1440). **PROVISIONAL — re-pin after the
+  reference extraction lands** (task 1-c; the brief's measured header cells
+  137px/166.67px @1440 and the 4-up/3-up hairline grids are the derivation
+  source, not these first values).
+- **Logical properties only** (`inline-start/end`, `margin-inline`, …) — RTL
+  is native; no physical left/right in any new rule. Every section's edges
+  land on the ONE shared grid (the V8 fix is structural, per-section grids
+  are forbidden once migration starts).
+
+### 4.b Spacing scale (rem) — the ONLY allowed values
+
+`0.25 · 0.5 · 0.75 · 1 · 1.5 · 2 · 3 · 4 · 6 · 8 · 12` — eleven rungs, rem on
+the fluid root (≈px @1440: 2 · 4 · 6 · 8 · 12.5 · 17 · 25 · 33 · 50 · 67 ·
+100). Tokens `--space-xs … --space-12xl`. **A stylelint rule will enforce this
+list** (planned with the migration package — noted here as the contract). The
+px `--sp-*` ladder stays untouched for the hundreds of legacy consumers; new
+R322 code consumes `--space-*` only. No vertical gap may exceed 1.5× its
+section's own padding unless it is a pinned-scroll runway with visible motion
+(the V4 law, carried into the scale's contract).
+
+### 4.c Type scale — ONE display scale (the V5 fix)
+
+**Chosen display face: IBM Plex Sans Arabic** — the blind 3-reviewer election
+(Arabic typographer / Swiss-minimalist director / RTL accessibility
+specialist; tally 26.5/30, two #1 ranks) sits in
+`audits/evidence/r322/dsys/font-vote.md`. **Display weights 400/500/600 ONLY**
+(the 800/900 era ends; 700 remains the body-emphasis weight, never display).
+Alexandria 600/700 stays self-hosted and untouched for legacy consumers until
+1-d migrates the display seats — Plex 400/500/600 (arabic + latin subsets)
+already ships self-hosted, so this layer adds ZERO font bytes. Hierarchy
+transfers through SIZE + the 500/600 rungs (no uppercase, no letter-spacing —
+permanent exceptions 2).
+
+| Rung | Role (one per…) | Token | clamp() — FINAL (1-d) | @1440 | @390 | weight | leading |
+|---|---|---|---|---|---|---|---|
+| **D1** | page (the H1) | `--fs-d1` | `clamp(31.74px, 4.8vw, 5.6rem)` | 46.7px | 31.74px | 600 | 1.05 |
+| **D2** | section (the statement) | `--fs-d2` | `clamp(31.74px, 4.8vw, 4.8rem)` | 40px | 31.74px | 600 | 1.10 |
+| **D3** | card (the title) | `--fs-d3` | `clamp(23.33px, 2.8vw, 2.8rem)` | 23.33px | 23.33px | 500 | 1.15 |
+| **ST** | the statement-band scrub title | `--fs-st` | `clamp(22.1px, 2.87vw, 4rem)` | 33.33px | 22.1px | 600 | 1.10 |
+
+- **Derivation (FINAL — the 1-d re-pin):** the rungs ARE the reference
+  extraction's own display ladder (task 1-c; roots 8.33px @1440 · 9.21
+  @768 · 9.92 @390 · 11.88 @991 · 19.52 @767-band): h1 5.6rem/46.67px ·
+  h2 4.8rem/40px · statement title 4rem/33.33px · card title
+  2.8rem/23.33px @1440, phone sizes 3.2rem/31.76px (H1/H2) · 2.4rem
+  (statement) · 2.4rem (cards) @390. px FLOORS are band-independent
+  (the 767-band root spike — 19.52px — can never touch them; the
+  provisional rem floors would have resolved 2.5rem → 48.8px @767,
+  the V5 blowup reborn), rem CAPS ride the desktop root like the R313
+  ladder, and the 4.8vw mid-terms reproduce the reference's 768/991 values
+  EXACTLY (36.9px @768 · 47.6px @991 — its own tablet behavior, never
+  the 85.55px amplification the census caught). The census
+  (`type-census.md`) proved the pre-R322 tier ran 60–85.55px at five
+  to six ad-hoc sizes, all weight 700; the after sweep
+  (`type-census-after.md`) shows the migrated sheet at four rung
+  values. Weights: D1/D2/ST 600 · D3 500 (the brief caps display at
+  400–600; the reference itself uses 600 below desktop).
+- **`text-wrap: balance`** on every display rung; zero tashkeel in display
+  copy; zero letter-spacing on Arabic (joins).
+- **Body:** 15–17px at leading ≈1.7 — the existing `--fs-body-lg`
+  (`max(13px, 1.8rem)` = 15px @1440) is the correct R322 body rung; 1-d
+  re-pins `--fs-body` onto it during migration (the 13.33px `txt-16` parity
+  rung is superseded by the brief's 15–17px body band).
+- **Mono labels:** 11–12px, Latin-only, uppercase, short, `dir="ltr"` —
+  `--fs-mono-md` (11.67px @1440) is the rung; Arabic never rides the mono
+  stack (per-script fallback unchanged).
+
+### 4.d Material — confirmed (R313 pins hold; zero drift in the tokens)
+
+paper `#F6F6EE` (`--bg`/`--neutral-50`) · ink `#282828` (`--text`/
+`--neutral-900`) · orange `#FA3600` (`--accent`) · hairline `#B3B3AF`
+(`--rule`/`--neutral-300`) · guides `#E0E0DA` (`--border`/`--neutral-200`) ·
+radius 0 · no shadows · grain · dashed inner frame — every value verified
+against `tokens.css` live (light theme; the dark pair swaps paper↔ink, orange
+constant). **Drift notes found (documentation, not tokens):** (1) the §2 table
+above still prints the pre-R313 light ground `#F6F8FA` — §0/D1 is the
+authority (`#F6F6EE`); (2) the TYPE had drifted (census: 5–6 display sizes,
+100% weight 700) — §4.c is the repair. Orange stays an accent ≤5% of area per
+screen except designed full-bleed moments; `--accent-ink` `#C72E00` carries
+accent TEXT (5.16:1 AA).
+
+## R324 — FINISH THE BEAUTY (the ONE type system, every page)
+
+### §R324.a The ladder is whole-product (X9 closed)
+
+The §4.c display ladder (D1/D2/D3/ST — 46.7/40/23.3/33.3 px @1440 ·
+31.74 @390 · weights 500/600 ONLY) is now the law for **every H1/H2/H3
+on every page** — public sheets, auth doors, error pages, the
+document viewer, settings — not just the landing. The inner-page
+bolt-ons (`--fs-display-md/lg` seats, `--fw-bold` headings) are
+retired: /404's five-line 70px run at 390 was the «ugliness» the
+owner flagged, not a style.
+
+- **H1 = `--fs-d1` at 600** everywhere (error sheets, legal sheets,
+  campus sheets, auth doors — 46.7px @1440 · 31.74px @390, max
+  3 lines at 390).
+- **App-density ladder (dashboards, unchanged):** H1 28/24, H2 20,
+  H3 16, body 15–16, mono label 11–12 (the r319-student masthead —
+  data surfaces keep their density; the display ladder is for
+  narrative pages).
+- **Line length 35–65 Arabic chars** (the `.lg-p`/`.nf-sub` measure);
+  **no weight > 600 anywhere** except numerals inside gauges.
+- **Gate:** `tests/unit/r324-type-gate.test.ts` pins every public H1
+  rule to a ladder token at weight ≤ 600 (fails `npm test` on
+  regression); `scripts/r324/type-probe.mjs` is the headless census
+  (every route × 1440/390) whose evidence lands in
+  `audits/evidence/r324/type-probe.json`.
+
+## R325 — THE APP GRAMMAR (P2.1 — ds material, no reference counterpart)
+
+The authenticated app has no reference page to trace: its grammar is
+**The reference's MATERIAL (§1, §4.d) applied with discipline to authenticated
+density** — paper, ink, hairlines, radius 0, no elevation, the ONE
+orange signal — plus the drafting voice the landing already speaks
+(`[NN]` indices, mono micro-labels, ruled fields). The section pins the
+registers; the consumable seats land ADDITIVELY in
+`frontend/src/styles/r325-app.css` (`--app-*` + the `.pat-*` state
+primitives — nothing upstream re-keyed, the R322 precedent). P2.2
+(gallery: every component × state × 390/768/1440 × Paper/Ink) and P2.3
+(shell) consume these names. **Ink parity is structural:** every
+`--app-*` colour is a var() alias into the §2 pairs (or a color-mix()
+on currentColor) — zero app-local hex, both themes resolve for free,
+and P2.6's «no light-paper islands» is a property of the tokens, not a
+re-skin. Smoke contract: `tests/unit/r325-app-css-contract.test.ts`
+(gates + pins, sibling of the r305 shell contract).
+
+### §R325.a App grid + shell chrome
+
+- **12 columns** (`--app-grid-cols` = `--grid-cols`); content gutters
+  **24px desktop (≥921) / 16px phone (≤920)** — `--app-gutter` /
+  `--app-gutter-phone` (the `--sp-6`/`--sp-4` rungs); content
+  max-width **1280** (`--app-content-max` = `--content-max-w`).
+- **Shell:** sidebar **264px** expanded / **72px** rail
+  (`--app-sidebar-w` / `--app-sidebar-rail`); top bar **56px**
+  (`--app-topbar-h` — §0/D8's chrome height). *As-shipped delta:*
+  `--sidebar-w` 256 · `--sidebar-w-collapsed` 64 · `--topbar-h` 60 —
+  **P2.3 re-points the shell onto the R325 trio and retires the old
+  values** (the additive-token rule: one migration, no silent re-key).
+- **Bands:** desktop ≥921 (rail/expanded sidebar); phone ≤920 —
+  sidebar becomes a drawer (`--z-menu-drawer` 530) over a backdrop,
+  bottom-nav carries the role's five destinations, top bar persists.
+- **Z-order** rides the shipped scale (dropdown 100 → … → splash 800);
+  no new rungs.
+
+### §R325.b Page header — `[NN] TITLE`
+
+One opening header per route (the `PageHeader` pattern is normative):
+breadcrumbs → optional eyebrow (13px `--accent-ink`, a real
+classification, never decoration) → **the mono index bar + H1** →
+description → meta → **actions row** → tabs.
+
+- **Index bar:** `[01]`-style gutter index, mono `--fs-mono-md`,
+  `dir="ltr"`, `aria-hidden`, `--text-muted`, opened INLINE before the
+  H1 (`PageHeader index` prop — r319's `.page-index`; the r324/X10
+  `SHEET S-01` identity line stays retired — coordinates are not
+  content, the index is wayfinding).
+- **H1 = `--fs-app-h1` at 600** (28/24 — the §R324 app-density rung);
+  H2 20, H3 16; lead 15–16; exactly one H1 per route.
+- **Actions row:** 44px targets, hairline-joined, wraps under the title
+  at ≤920.
+- **Breadcrumbs:** 13px `--text-muted`; separator = `ChevronLeft`
+  (RTL-forward), `aria-hidden`; last crumb = `aria-current="page"` at
+  `--text` 600; 44px block targets on every crumb.
+
+### §R325.c Cards / cells
+
+1px `--app-line-soft` hairline, **radius 0**, no elevation (D3);
+padding **16** (`--app-card-pad`) / **24** for feature cards ≥921
+(`--app-card-pad-lg`); **hover = hatch tint only** — the `.pat-hatch`
+field at the element's own ink, 120ms. No lift, no shadow, no accent
+preview on hover (the signal is spent on active state, not browsing).
+
+### §R325.d Tables
+
+- **Header row:** mono `--fs-mono-md` (11–12px), 500, `--text-muted`,
+  Latin micro-labels `dir="ltr"`, **sticky** within the scroll scope,
+  underlined by the structural hairline `--app-line`.
+- **Rows:** min-height **44px** (`--app-row-min-h` — the touch floor is
+  the row floor); cells padded 10/16 (`--app-cell-pad-block/inline`);
+  row rules 1px `--app-line-soft`; **no static zebra — the hover row
+  wears the hatch** (`.pat-hatch`, 120ms); outer frame `--app-line`;
+  phones get scoped horizontal scroll.
+- **Numerals:** mono, tabular, **Western digits only** (the §3
+  `ar-LY latn` pin, `utils/numbers.ts`) — Arabic-Indic never renders in
+  numeric columns; numeric cells are end-aligned with `dir="ltr"`
+  isolation so the digits read LTR inside the RTL row.
+- **Long names:** one line, ellipsis-clipped **inside `<bdi>`** (Arabic
+  names never reverse in a clipped run); a tooltip only when actually
+  truncated.
+- **Empty:** the `.pat-hatch` field + one honest line (§R325.g).
+
+### §R325.e Forms
+
+- **Label above** the field — 13px, 500, `--text-secondary`; never
+  placeholder-as-label.
+- **Inputs:** `--fs-body` (16px), radius 0, **1px `--app-input-line`**
+  (`--rule-strong` — D4's measured `#B3B3AF` rest edge), `--app-surface`
+  ground, 44px targets, helper text 13px `--text-muted`.
+- **Focus:** the border re-keys **1px ink → 2px signal**
+  (`--app-input-focus` = `--accent`, `--app-input-focus-w` 2px; D4's
+  measured `#ED4C1F` mid-rung harmonizes onto the canonical seats — no
+  third orange). The universal ring (`--state-focus-ring-*`) stays the
+  fallback belt.
+- **Error = the signal, not rose:** rule → `--accent`
+  (`--app-input-error-line`), message below in `--accent-ink`
+  (`--app-input-error-ink`, 13px, `aria-describedby`). The danger
+  family stays on destructive buttons (§2), never field borders.
+- **Disabled = hatch:** the `.pat-hatch` field at `--app-ink-3` +
+  `--text-faint` label — the pattern IS the disabled register; no
+  opacity tricks.
+
+### §R325.f Status chips
+
+Hairline chip (1px `--app-line-soft`, radius 0, padding `--sp-1`/`--sp-2`),
+mono `--fs-mono-md` label, **6px dot** (`--app-chip-dot`, `--r-full`) —
+**ink/orange only, no new colours**. The dot's three states carry the
+axis: **hollow** = dormant (draft · archived · locked) · **ink** =
+settled (published · graded · active) · **signal** = awaiting action
+(pending · needs-review · overdue). Locked things additionally earn the
+`.pat-cross` at cell level. The §2 status families keep their seated
+consumers as the legacy inventory until P2.2 re-pins the chip set on
+this grammar — no NEW chip colour is ever minted.
+
+### §R325.g Empty / loading / error / forbidden
+
+- **`.pat-hatch`** — empty tables/lists/cards: the ruled field at the
+  element's own ink + one honest Arabic line + the primary action.
+- **`.pat-dots`** — media placeholders (photos, previews, document
+  facades) before load.
+- **`.pat-cross`** — locked cells and the forbidden panel (403 keeps
+  the shell's role-deny toast, A4).
+- **Skeleton = `.pat-skeleton`** — hatch + one sheen sweep on
+  `--motion-duration-skeleton`, transform-only; **RM: sweep dies, the
+  static hatch remains** (same-sheet kill, contract-pinned).
+- **Error:** a 2px `--accent` rule, `--accent-ink` copy, a 44px retry —
+  the same orange discipline as field errors.
+
+### §R325.h Dialogs / sheets / drawers
+
+Radius 0, 1px `--app-line`, `--app-surface` ground — **hairline depth,
+no shadow**. Backdrop = **`--app-backdrop`** (`--overlay-veil`: ink 40%
+light / black 62% night); the command palette takes `--overlay-veil-max`.
+At ≤920 the dialog becomes a **full-width bottom sheet** (radius 0, top
+hairline; drawers keep `--z-menu-drawer` 530). Focus trap, Escape, and
+focus-return are the existing overlayStack contracts (11-e) — not
+re-invented. Entrance 200ms (`--t-fast`); exits ride the shared
+accelerate register; RM = instant.
+
+### §R325.i Charts
+
+Hairline axes (`--app-line-soft`), mono tick labels `--fs-mono-md`
+`dir="ltr"`, **square markers** (r313). **Series discipline: series 1 =
+the signal (`--accent`), further series ride the ink ramp**
+(`--neutral-900/700/500`). No gradients, no shadows, no fills beyond a
+hairline outline. Gold remains achievement-series only (§2 law). The
+§2 `--chart-1..8` palette stays the legacy seat for shipped dashboards
+until P2.2 re-pins the chart theme on this register.
+
+### §R325.j Icons
+
+ONE family: **Lucide via `Icon.tsx` only** (§8.3). Register: **20px
+grid, 1.5px stroke, `currentColor`, decorative by default**
+(`aria-hidden`). *As-shipped delta:* the wrapper defaults (16px / 1.8)
+re-pin onto the grammar in P2.2 — call sites follow the wrapper, never
+raw Lucide. Directional glyphs flip only when semantics demand (§7).
+
+### §R325.k Motion
+
+- **Row/card hover & press: 120ms** (`--app-t-hover`) · **dialogs,
+  sheets, popovers: 200ms** (`--t-fast`) · **page transitions ≤350ms**
+  (`--app-t-page` 320 — P2.3 retimes `PageTransition` off
+  `--motion-duration-page` 400).
+- Easings: `--ease` only (the §4 register); layout-property transitions
+  stay banned (the motion gate enforces).
+- **Reduced motion = instant:** the RM belt collapses `--app-t-*` to
+  0ms and the skeleton sweep dies — content stands complete, static.
+
+### §R325.l Ink variants — one table, both themes
+
+Every seat resolves through a §2 pair; the hexes are quoted here for
+census work, never re-authored:
+
+| `--app-*` seat | Light (Paper) | Dark (Ink) |
+|---|---|---|
+| `--app-bg` | `#F6F6EE` paper | `#282828` charcoal |
+| `--app-surface` | `#FFFFFF` | `#2E2E2E` |
+| `--app-ink` / `-2` / `-3` | `#282828` / `#414140` / `#626260` | `#F6F6EE` / `#C9C9C5` / `#B4B4B0` |
+| `--app-line` (seams) | `#B3B3AF` | `#4A4A48` |
+| `--app-line-soft` (rows/cards) | `#E0E0DA` | `#4A4A48` |
+| `--app-signal` / `-ink` / `-wash` | `#FA3600` / `#C72E00` / `#FCE3D9` | `#FF5A1F` / `#FF6B33` / `#432015` |
+| `--app-backdrop` | ink 40% | black 62% |
+
+Patterns are theme-free by construction (currentColor mixes); the
+skeleton sheen derives from `--app-surface`. **P2.6 consumes the same
+names — an Ink audit is a var() read, not a screenshot hunt.**
+
+### §R325.m Role identity — pattern + glyph + mono code, no new colours
+
+A role is recognizable **with colour off**: the identity mark is a
+pattern seat (`--app-role-pat-*`, ink at the element's own currentColor)
++ the mono code + the signal glyph where an affordance needs one. The
+seven `RoleAccentKey` values map 1:1; the §2 role-accent washes keep
+their seated consumers but the identity system itself mints no hue —
+the owner alone carries the signal:
+
+| Key | Code | Pattern (`--app-role-pat-*`) |
+|---|---|---|
+| `student` | `STU` | dots (`--app-dots`) |
+| `faculty` | `FAC` | hatch (`--app-hatch`) |
+| `department-head` | `DPT` | vertical rules (`--app-rules-v`) |
+| `dean` | `DEA` | cross-hatch (`--app-cross`) |
+| `admin` | `ADM` | horizontal rules (`--app-rules-h`) |
+| `quality` | `QUA` | square grid (`--app-grid-pat`) |
+| `owner` | `OWN` | **signal hatch** (the one orange mark) |
+
+Codes ride `--fs-mono-md`, `dir="ltr"` — sidebar footer, the gallery,
+print headers. Patterns reuse the §R325.g state recipes; nothing new is
+drawn.
+
+### §R325.n Consumption + gates
+
+`r325-app.css` is imported ONLY by `AppShell.tsx` (right after
+`r319-shell.css` — the r305 house contract: unlayered, shell-owned, no
+`!important`). The sheet is gate-clean by construction (colors → §2
+vars, type/radius → var()/0, spacing → the ladders, durations → the
+token seats); `check-raw-css --strict` / `check-colors` /
+`check-motion-tokens` verified at P2.1. The smoke contract
+(`r325-app-css-contract.test.ts`) pins the §R325 values so a drift
+fails `npm test`, and P2.2's gallery mounts every state primitive at
+390/768/1440 × Paper/Ink before any page consumes them.
+
+## R327 — THE APP SCROLL RULES (P3 — proven live, not asserted)
+
+> Measured 2026-10-31 on the running stack by
+> `scripts/r327/scroll-rules-probe.mjs` (22 hard rules, 0 failed, 6 soft
+> rows recorded honestly) and `scripts/r327/scroll-screencast.mjs` (the
+> reference↔landing screencast + glide curves). Evidence:
+> `audits/evidence/r327/p3/` — `scroll-rules.json` · `scroll-curve.json` ·
+> the two 1440×900 screencasts (reference + landing, recorded under the
+> retired name). The rules below quote their own
+> probe IDs; a rule without a passing probe is not a rule.
+
+### §R327.a Who scrolls — the D6 boundary, route by route
+
+- **Guest window-scrolled surfaces mount the Lenis engine** (lerp 0.1,
+  `data-lenis-on` on `<html>`): `/` `/auth` `/help` `/about` `/contact`
+  and `/colleges` for guests — probes `A:/ · A:/auth · A:/help ·
+  A:/about · A:/contact · A:/colleges`, all pass. `/colleges` behind a
+  session is AppShell — native (the App.tsx route set, unchanged).
+- **Document sheets stay native** (R320 §D): `/legal/*` — probes
+  `A:/legal/privacy · A:/legal/terms`, pass: no engine attribute.
+- **The authenticated shell NEVER inits the engine** (the owner
+  decision, §0 D6): probe `C1` — no `data-lenis-on`, `.content` is the
+  one scroller (`overflow: clip auto` computed `hidden auto`,
+  `overscroll-behavior: contain`, thin token scrollbar
+  `rgba(40,40,40,.16)`), and probe `C4`: the window itself never
+  scrolls on shell routes (`window.scrollY` stays 0, document not
+  scrollable).
+- **The scrollbar disappears while the engine is live** (§6 D6's
+  «scrollbar hidden» clause): probe `B1` — `html[data-lenis-on]` hides
+  the gutter; native surfaces get it back.
+
+### §R327.b Navigation — reset and restore
+
+- **PUSH resets `.content` to top**: probe `C5` — arriving at
+  `/student/dashboard` after a PUSH reads `scrollTop 0` (one
+  scroll-restoration entry in session storage).
+- **POP restores the outgoing entry's offset**: probe `C6` (soft,
+  measured) — back to `/student/library` returns to ≈600px, the
+  `useScrollRestoration` contract.
+
+### §R327.c Input & focus
+
+- **The scroller is keyboard-operable**: probe `D1` — `.content` carries
+  `tabindex=0` (`scrollable-region-focusable`), ArrowDown ×6 → 240px,
+  PageDown → 658px, Home → 0.
+- **Focus scrolls into view**: probe `D2` (soft) — `el.focus()` on a
+  below-fold control scrolls `.content` (480px measured).
+
+### §R327.d Sticky geometry
+
+- **Sticky seats inside `.content` pin against the scroller, not the
+  window**: probe `E1` — the panel clamps at its `--top 16px` while
+  `.content` scrolls 209px.
+- **The sticky thead pins inside its own capped scrollport**: probe
+  `E2` — thead rect.top unchanged (±0px) while the wrap scrolls 140px.
+
+### §R327.e RTL geometry
+
+- **No horizontal overflow anywhere**: probe `F1` — vertical scroller
+  rests at `scrollLeft 0`, `scrollWidth == clientWidth`, zero layout
+  cost from the bar (overlay in headless — side unverifiable there,
+  soft row `F2` records it honestly).
+- **Horizontal strips move toward NEGATIVE `scrollLeft`** (the CSSOM
+  inline-start convention): probe `F3` (soft) — rest 0 · −80 sticks ·
+  +80 clamps to 0. Test writers: assert negative, never positive.
+
+### §R327.f Reduced motion & the frame budget
+
+- **RM: the engine never inits** (probe `G1`) and the wheel scrolls
+  natively — no glide (probe `G2`: 400px at +40ms, unchanged at
+  +640ms). Reveal seats stand complete at rest — opacity 1, identity
+  transform (soft row `G3`, 37 seats sampled).
+- **Zero React commits per scroll tick** (the imperative-chrome
+  contract, §4): probe `H` — commit delta **0** across a 14-tick wheel
+  run, counted through a pre-boot DevTools hook.
+- **An idle page holds zero awake frames** (the conductor sleep
+  contract): probe `I` — conductor `running === false`, 0 subscribers,
+  **0 new rAF requests** in the idle second (pre-boot rAF census).
+
+### §R327.g Parity with the reference — the screencast verdict
+
+One viewport (1440×900), one scroll program (wheel 320px/120ms down,
+pause, up to 35%), both sites recorded on the same machine:
+
+| Glide, one 720px impulse | first motion | t63 | t98.6 | settle |
+|---|---|---|---|---|
+| **the retired reference site** (wrapper-Lenis + gsap ticker) | 179 ms | 562 ms | 806 ms | **887 ms** |
+| **Ulara landing** (window-Lenis, lerp 0.1) | 107 ms | 278 ms | 810 ms | **868 ms** |
+
+Same exponential ease-out family, settle within **19 ms (2.2%)** on the
+same machine; both videos sit in the evidence folder for the eyeball
+verdict. Honest differences, recorded not hidden: the reference replays its
+entrance loader on every full load and scrolls an inner
+`.main-inner.lenis` wrapper (`window.scrollY` stays 0); Ulara's intro
+is hermetically skipped for the recording (the subject is scroll feel,
+not the entrance) and the window itself scrolls (the D6 owner
+decision). No scrolljacking anywhere: RM collapses everything to
+static, and an authenticated route never feels the engine.

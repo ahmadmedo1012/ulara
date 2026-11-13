@@ -1,0 +1,783 @@
+/**
+ * Backend unit test — pure logic from
+ * `backend/src/http/routes/learning.routes.ts`.
+ *
+ * Mirrors the DB-free style of `tests/modules/curriculum-logic.test.ts`:
+ * zod acceptance/rejection envelopes + the watch-progress completion rule
+ * (decision D9) + the high-water clamp + snippet building + decimal
+ * conversion + quality-alert thresholds + the research-paper state machine
+ * (gradeable / scannable / publishable claim sets — audit 15-b P1-3 —
+ * plus the deterministic scan values and the upload dedupe lookup, 15-b
+ * P2-5). Integration coverage (auth gate, the watch transaction with its
+ * row lock, attendance upserts, ownership guards, the conditional
+ * updateMany claims themselves) needs a DB harness the project does not
+ * have yet.
+ *
+ * 5-B1 additions (audit 5-A8 §5 row 11, minimal backend ask #2): the
+ * /quality/courses?metric= drill-down — the query envelope, the two
+ * per-offering metric rollups (attendance via the canonical
+ * attendancePctFromStatusCounts formula; completion via the
+ * /quality/engagement watch-time ratio) and the worst-first sort.
+ *
+ * r183-B5 additions (A8 wave-A P2-2 recurrence — the silent-capped
+ * quality rosters): the /quality/courses + /quality/professors search
+ * envelopes (`q`, the admin-courses contract) and the two pure
+ * WHERE-builders the routes now share — the search filter + the
+ * institution scope compose, pinned DB-free.
+ */
+import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { AttendanceStatus, Role } from '@prisma/client';
+import {
+  ATTENDANCE_ALERT_MIN_RECORDS,
+  attendanceRateByOffering,
+  answeredCheckpointsByLecture,
+  completionRateByOffering,
+  GRADEABLE_PAPER_STATUSES,
+  PUBLISHABLE_PAPER_STATUSES,
+  qualityCoursesQuerySchema,
+  qualityOfferingsWhere,
+  qualityProfessorsQuerySchema,
+  qualityProfessorsWhere,
+  RESEARCH_DEDUPE_WINDOW_MS,
+  RESEARCH_QUEUE_STATUSES,
+  SCANNABLE_PAPER_STATUSES,
+  attendanceAlertSeverity,
+  buildSnippet,
+  clampWatchedSec,
+  decToNum,
+  gradePaperSchema,
+  isPaperGradeable,
+  isPaperPublishable,
+  isPaperScannable,
+  recentDuplicatePaperWhere,
+  researchQueueWhere,
+  scanResultsFor,
+  stableSeed,
+  watchProgressCompletes,
+  watchSchema,
+  worstFirstMetricSort,
+} from '../../src/http/routes/learning.routes';
+
+describe('watchSchema', () => {
+  it('accepts a well-formed progress tick', () => {
+    expect(watchSchema.safeParse({ watchedSec: 120, totalSec: 600, completed: true }).success).toBe(true);
+  });
+
+  it('accepts progress without the completed flag', () => {
+    expect(watchSchema.safeParse({ watchedSec: 120, totalSec: 600 }).success).toBe(true);
+  });
+
+  it('rejects negative or fractional seconds', () => {
+    expect(watchSchema.safeParse({ watchedSec: -1, totalSec: 600 }).success).toBe(false);
+    expect(watchSchema.safeParse({ watchedSec: 1.5, totalSec: 600 }).success).toBe(false);
+    expect(watchSchema.safeParse({ watchedSec: 10, totalSec: 0.5 }).success).toBe(false);
+  });
+
+  it('rejects unknown keys (strict)', () => {
+    expect(watchSchema.safeParse({ watchedSec: 1, totalSec: 2, isAdmin: true }).success).toBe(false);
+  });
+});
+
+describe('watchProgressCompletes (decision D9 — server decides completion)', () => {
+  it('accepts exactly 95% of the effective length (r180: aligned with the player UI + docs/02 promise)', () => {
+    expect(watchProgressCompletes(950, 1000, 1000)).toBe(true);
+  });
+
+  it('rejects just under 95%', () => {
+    expect(watchProgressCompletes(949, 1000, 1000)).toBe(false);
+  });
+
+  it('handles non-round boundaries without float drift', () => {
+    // 95% of 599 is 569.05 — 569 must fail, 570 must pass.
+    expect(watchProgressCompletes(569, 599, 599)).toBe(false);
+    expect(watchProgressCompletes(570, 599, 599)).toBe(true);
+  });
+
+  it('rejects a zero-duration lecture (the client cannot claim completion)', () => {
+    expect(watchProgressCompletes(600, 600, 0)).toBe(false);
+  });
+
+  it('rejects a zero totalSec report', () => {
+    expect(watchProgressCompletes(600, 0, 600)).toBe(false);
+  });
+
+  it('uses min(totalSec, durationSec) as the effective length', () => {
+    // Client under-reports the length: 95% of 800, not of 1000.
+    expect(watchProgressCompletes(760, 800, 1000)).toBe(true);
+    expect(watchProgressCompletes(759, 800, 1000)).toBe(false);
+    // Client over-reports: the lecture's real duration caps it.
+    expect(watchProgressCompletes(950, 1200, 1000)).toBe(true);
+    expect(watchProgressCompletes(949, 1200, 1000)).toBe(false);
+  });
+
+  it('never completes on zero watched seconds (tiny-video fraud)', () => {
+    expect(watchProgressCompletes(0, 1, 1)).toBe(false);
+    expect(watchProgressCompletes(0, 100, 100)).toBe(false);
+    // Watching the whole (tiny) video does complete it.
+    expect(watchProgressCompletes(1, 1, 1)).toBe(true);
+  });
+});
+
+describe('clampWatchedSec (high-water mark)', () => {
+  it('keeps the higher of prior vs incoming progress', () => {
+    expect(clampWatchedSec(500, 60, 600)).toBe(500);
+    expect(clampWatchedSec(50, 100, 600)).toBe(100);
+  });
+
+  it('treats a missing prior as zero', () => {
+    expect(clampWatchedSec(undefined, 100, 600)).toBe(100);
+    expect(clampWatchedSec(undefined, 0, 600)).toBe(0);
+  });
+
+  it('bounds a single tick by the reported total length', () => {
+    expect(clampWatchedSec(0, 700, 600)).toBe(600);
+  });
+
+  it('keeps the high-water mark even when the new total is smaller', () => {
+    expect(clampWatchedSec(500, 100, 400)).toBe(500);
+  });
+
+  it('does not bound against an unknown total (totalSec 0)', () => {
+    expect(clampWatchedSec(undefined, 300, 0)).toBe(300);
+  });
+});
+
+describe('buildSnippet', () => {
+  it('returns null when the term is not present', () => {
+    expect(buildSnippet('لا يحتوي المصطلح', 'كلمة')).toBeNull();
+  });
+
+  it('wraps a mid-text hit with ellipses on both sides', () => {
+    const text = `${'x'.repeat(200)}needle${'y'.repeat(200)}`;
+    const s = buildSnippet(text, 'needle')!;
+    expect(s.startsWith('…')).toBe(true);
+    expect(s.endsWith('…')).toBe(true);
+    expect(s).toContain('<mark>needle</mark>');
+  });
+
+  it('omits the leading ellipsis when the hit is at the start', () => {
+    const s = buildSnippet('needle at the very start of the text', 'needle')!;
+    expect(s.startsWith('…')).toBe(false);
+  });
+
+  it('matches case-insensitively and keeps the original casing', () => {
+    const s = buildSnippet('The Needle Here', 'needle')!;
+    expect(s).toContain('<mark>Needle</mark>');
+  });
+
+  it('escapes regex metacharacters in the query', () => {
+    // "a.b" must NOT match "axb" — the dot is literal.
+    expect(buildSnippet('axb something', 'a.b')).toBeNull();
+    const s = buildSnippet('value: a.b found here', 'a.b')!;
+    expect(s).toContain('<mark>a.b</mark>');
+  });
+
+  it('highlights every occurrence inside the slice', () => {
+    const s = buildSnippet('cat dog cat dog cat', 'cat')!;
+    expect(s.match(/<mark>cat<\/mark>/g)?.length).toBe(3);
+  });
+});
+
+describe('decToNum', () => {
+  it('passes primitives and null/undefined through', () => {
+    expect(decToNum(5)).toBe(5);
+    expect(decToNum('x')).toBe('x');
+    expect(decToNum(null)).toBeNull();
+    expect(decToNum(undefined)).toBeUndefined();
+  });
+
+  it('passes Dates through untouched', () => {
+    const d = new Date('2026-01-01T00:00:00Z');
+    expect(decToNum(d)).toBe(d);
+  });
+
+  it('converts Decimal-shaped objects via toNumber', () => {
+    expect(decToNum({ toNumber: () => 12.5 })).toBe(12.5);
+  });
+
+  it('maps arrays and traverses nested objects', () => {
+    expect(decToNum([1, { toNumber: () => 3 }])).toEqual([1, 3]);
+    expect(decToNum({ a: { toNumber: () => 1 }, b: 'keep' })).toEqual({ a: 1, b: 'keep' });
+  });
+});
+
+describe('attendanceAlertSeverity', () => {
+  it('stays silent below the minimum record count', () => {
+    expect(attendanceAlertSeverity(1, ATTENDANCE_ALERT_MIN_RECORDS - 1)).toBeNull();
+    expect(attendanceAlertSeverity(1, 0)).toBeNull();
+  });
+
+  it('flags critical at 40% absence or more', () => {
+    expect(attendanceAlertSeverity(0.4, 10)).toBe('critical');
+    expect(attendanceAlertSeverity(0.9, 100)).toBe('critical');
+  });
+
+  it('flags warning between 25% and 40%', () => {
+    expect(attendanceAlertSeverity(0.25, 10)).toBe('warning');
+    expect(attendanceAlertSeverity(0.39, 100)).toBe('warning');
+  });
+
+  it('stays silent below 25%', () => {
+    expect(attendanceAlertSeverity(0.24, 100)).toBeNull();
+    expect(attendanceAlertSeverity(0, 100)).toBeNull();
+  });
+});
+
+describe('isPaperGradeable (research pipeline precondition)', () => {
+  it('allows exactly the post-scan states (incl. re-grades)', () => {
+    expect(GRADEABLE_PAPER_STATUSES).toEqual(['CHECKS_PASSED', 'CHECKS_FAILED', 'GRADED']);
+    for (const s of GRADEABLE_PAPER_STATUSES) {
+      expect(isPaperGradeable(s)).toBe(true);
+    }
+  });
+
+  it('blocks pre-scan and terminal states', () => {
+    expect(isPaperGradeable('UPLOADED')).toBe(false);
+    expect(isPaperGradeable('SCANNING')).toBe(false);
+    expect(isPaperGradeable('PUBLISHED')).toBe(false);
+  });
+});
+
+describe('gradePaperSchema', () => {
+  it('accepts grades on the 0–20 scale with optional feedback', () => {
+    expect(gradePaperSchema.safeParse({ grade: 18.5, feedback: 'عمل جيد' }).success).toBe(true);
+    expect(gradePaperSchema.safeParse({ grade: 0 }).success).toBe(true);
+    expect(gradePaperSchema.safeParse({ grade: 20 }).success).toBe(true);
+  });
+
+  it('rejects out-of-scale grades and unknown keys', () => {
+    expect(gradePaperSchema.safeParse({ grade: 20.1 }).success).toBe(false);
+    expect(gradePaperSchema.safeParse({ grade: -1 }).success).toBe(false);
+    expect(gradePaperSchema.safeParse({ grade: 10, reviewerId: 'x' }).success).toBe(false);
+  });
+});
+
+describe('isPaperScannable (scan-step claim set — 15-b P1-3)', () => {
+  it('claims exactly UPLOADED and the CHECKS_* states (re-scan stays allowed)', () => {
+    expect([...SCANNABLE_PAPER_STATUSES]).toEqual(['UPLOADED', 'CHECKS_PASSED', 'CHECKS_FAILED']);
+    expect(isPaperScannable('UPLOADED')).toBe(true);
+    expect(isPaperScannable('CHECKS_PASSED')).toBe(true);
+    expect(isPaperScannable('CHECKS_FAILED')).toBe(true);
+  });
+
+  it('never claims GRADED or PUBLISHED — a scan cannot revert them to CHECKS_*', () => {
+    expect(isPaperScannable('GRADED')).toBe(false);
+    expect(isPaperScannable('PUBLISHED')).toBe(false);
+  });
+
+  it('excludes the never-written SCANNING value (a mid-flight paper must not re-scan)', () => {
+    // Verified by rg: no code path ever writes SCANNING — excluding it is
+    // behaviorally identical to the old "not GRADED/PUBLISHED" check.
+    expect(isPaperScannable('SCANNING')).toBe(false);
+  });
+});
+
+describe('isPaperPublishable (publish-step claim set — 15-b P1-3)', () => {
+  it('claims exactly GRADED', () => {
+    expect([...PUBLISHABLE_PAPER_STATUSES]).toEqual(['GRADED']);
+    expect(isPaperPublishable('GRADED')).toBe(true);
+  });
+
+  it('rejects every other state — publishing is one-way, PUBLISHED is terminal', () => {
+    for (const s of ['UPLOADED', 'SCANNING', 'CHECKS_PASSED', 'CHECKS_FAILED', 'PUBLISHED']) {
+      expect(isPaperPublishable(s)).toBe(false);
+    }
+  });
+});
+
+describe('research pipeline step × status acceptance matrix (terminal-state regression pins)', () => {
+  // The single table the conditional updateMany claims enforce. The 15-b
+  // P1-3 regressions are impossible by construction: a scan finishing
+  // after a grade/publish can never match GRADED/PUBLISHED (no
+  // PUBLISHED → CHECKS_* revert), a re-grade can never match PUBLISHED
+  // (no un-publish), a re-publish can never match PUBLISHED (publishedAt
+  // is immutable once set).
+  const ALL = ['UPLOADED', 'SCANNING', 'CHECKS_PASSED', 'CHECKS_FAILED', 'GRADED', 'PUBLISHED'] as const;
+
+  it('pins which steps accept which status — PUBLISHED is accepted by none', () => {
+    for (const s of ALL) {
+      expect(isPaperScannable(s)).toBe(s === 'UPLOADED' || s === 'CHECKS_PASSED' || s === 'CHECKS_FAILED');
+      expect(isPaperGradeable(s)).toBe(s === 'CHECKS_PASSED' || s === 'CHECKS_FAILED' || s === 'GRADED');
+      expect(isPaperPublishable(s)).toBe(s === 'GRADED');
+    }
+  });
+
+  it('no step dead-ends the pipeline — CHECKS_* and GRADED stay gradeable, GRADED publishable', () => {
+    expect(isPaperGradeable('CHECKS_PASSED')).toBe(true);
+    expect(isPaperGradeable('CHECKS_FAILED')).toBe(true);
+    expect(isPaperGradeable('GRADED')).toBe(true); // re-grade before publish
+    expect(isPaperPublishable('GRADED')).toBe(true);
+  });
+});
+
+// ─── r157 / 6A8 — the review queue includes GRADED (the publish loop) ──────
+
+/* The live route source, scanned for the wiring pin (the checkpoint-
+ * attempts technique — the file is the contract). */
+const learningRouteSource = readFileSync(
+  new URL('../../src/http/routes/learning.routes.ts', import.meta.url),
+  'utf8',
+);
+
+describe('researchQueueWhere (r157 / 6A8 — the review-queue scope)', () => {
+  it('RESEARCH_QUEUE_STATUSES carries GRADED — the graded paper stays in the queue until published', () => {
+    // THE regression: the queue used to filter CHECKS_* only, so the
+    // graded paper vanished from the teacher's own queue and the
+    // publish affordance pointed at a row the queue never showed.
+    expect([...RESEARCH_QUEUE_STATUSES]).toEqual(['CHECKS_PASSED', 'CHECKS_FAILED', 'GRADED']);
+    // UPLOADED/SCANNING stay out (nothing actionable yet), PUBLISHED is
+    // out (it lives in the public archive feed, not the review queue).
+    expect(RESEARCH_QUEUE_STATUSES).not.toContain('PUBLISHED');
+    expect(RESEARCH_QUEUE_STATUSES).not.toContain('UPLOADED');
+  });
+
+  it('TEACHER → papers tied to offerings they teach (the same ownership the grade/publish steps enforce)', () => {
+    expect(researchQueueWhere(Role.TEACHER, 'teacher_1')).toEqual({
+      status: { in: ['CHECKS_PASSED', 'CHECKS_FAILED', 'GRADED'] },
+      offering: { teacherId: 'teacher_1' },
+    });
+  });
+
+  it('ADMIN/OWNER without an institution → the oversight view (no per-row ownership)', () => {
+    expect(researchQueueWhere(Role.ADMIN, 'admin_1')).toEqual({
+      status: { in: ['CHECKS_PASSED', 'CHECKS_FAILED', 'GRADED'] },
+    });
+    expect(researchQueueWhere(Role.OWNER, 'owner_1')).toEqual({
+      status: { in: ['CHECKS_PASSED', 'CHECKS_FAILED', 'GRADED'] },
+    });
+    // A QUALITY/STUDENT caller never reaches the route (requireRole
+    // TEACHER|ADMIN|OWNER), but the branch is safe by construction:
+    // no `offering` key leaks for oversight roles.
+    expect(researchQueueWhere(Role.QUALITY, 'q_1')).not.toHaveProperty('offering');
+  });
+
+  it('r179: an institutional ADMIN passes the DB-verified institution → the queue is pinned to it', () => {
+    expect(researchQueueWhere(Role.ADMIN, 'admin_1', 'inst-r179-queue')).toEqual({
+      status: { in: ['CHECKS_PASSED', 'CHECKS_FAILED', 'GRADED'] },
+      institutionId: 'inst-r179-queue',
+    });
+    // TEACHER rows stay ownership-pinned regardless of the institution.
+    expect(researchQueueWhere(Role.TEACHER, 'teacher_1', 'inst-r179-queue')).toEqual({
+      status: { in: ['CHECKS_PASSED', 'CHECKS_FAILED', 'GRADED'] },
+      offering: { teacherId: 'teacher_1' },
+    });
+  });
+});
+
+describe('research queue wiring (source-scan pin — the route must CONSUME the helper)', () => {
+  it('GET /research/queue consumes researchQueueWhere — never a re-inlined GRADED-less twin', () => {
+    // The exact drift class the r155a round hit: a function can pass
+    // its pure tests while the live route re-inlines the old filter.
+    // This pin fails the moment the route stops routing its where
+    // through the exported helper.
+    expect(learningRouteSource).toMatch(
+      /router\.get\('\/research\/queue',[\s\S]*?where: researchQueueWhere\(req\.user!\.role, req\.user!\.id, queueInstitution\),/,
+    );
+    // And the GRADED-less inline twin is gone from the file entirely.
+    expect(learningRouteSource).not.toContain(
+      "{ status: { in: ['CHECKS_PASSED', 'CHECKS_FAILED'] }, offering: { teacherId: req.user!.id } }",
+    );
+  });
+});
+
+describe('scanResultsFor (deterministic simulated scan values)', () => {
+  it('is deterministic for the same paper id', () => {
+    expect(scanResultsFor('cku5c2x9p0000abcd')).toEqual(scanResultsFor('cku5c2x9p0000abcd'));
+  });
+
+  it('pins the hash-derived values for concrete ids (seed = charCodeAt(0) + charCodeAt(2))', () => {
+    expect(scanResultsFor('cku5c2x9p0000abcd')).toEqual({ plagiarismPct: 3, aiContentPct: 4, passed: true });
+    expect(scanResultsFor('cm3xq7z2w0001paper')).toEqual({ plagiarismPct: 9, aiContentPct: 4, passed: true });
+    // plagiarism 15 fails the < 15 rule → not passed.
+    expect(scanResultsFor('cz9a1b8d0002univ')).toEqual({ plagiarismPct: 15, aiContentPct: 4, passed: false });
+  });
+
+  it('keeps plagiarism within 3–20 and AI content within 4–25, at most one decimal', () => {
+    for (let i = 0; i < 300; i++) {
+      // Vary the chars at index 0 and 2 — the only positions the hash reads.
+      const id = `${String.fromCharCode(33 + (i % 90))}x${String.fromCharCode(33 + ((i * 37) % 90))}cuid-tail-${i}`;
+      const r = scanResultsFor(id);
+      expect(r.plagiarismPct).toBeGreaterThanOrEqual(3);
+      expect(r.plagiarismPct).toBeLessThanOrEqual(20);
+      expect(r.aiContentPct).toBeGreaterThanOrEqual(4);
+      expect(r.aiContentPct).toBeLessThanOrEqual(25);
+      expect(r.plagiarismPct).toBe(Math.round(r.plagiarismPct * 10) / 10);
+      expect(r.aiContentPct).toBe(Math.round(r.aiContentPct * 10) / 10);
+    }
+  });
+
+  it('passed is exactly plagiarism < 15 AND aiContent < 25', () => {
+    for (let i = 0; i < 300; i++) {
+      const id = `${String.fromCharCode(33 + (i % 90))}x${String.fromCharCode(33 + ((i * 37) % 90))}cuid-${i}`;
+      const r = scanResultsFor(id);
+      expect(r.passed).toBe(r.plagiarismPct < 15 && r.aiContentPct < 25);
+    }
+  });
+});
+
+describe('recentDuplicatePaperWhere (upload double-submit dedupe — 15-b P2-5)', () => {
+  it('matches the identical (student, title, fileUrl) triple inside the window', () => {
+    const now = new Date('2026-03-01T12:00:00Z');
+    expect(recentDuplicatePaperWhere('stu1', 'بحث مشترك', '/api/v1/files/papers/a.pdf', now)).toEqual({
+      studentId: 'stu1',
+      title: 'بحث مشترك',
+      fileUrl: '/api/v1/files/papers/a.pdf',
+      uploadedAt: { gte: new Date('2026-03-01T11:55:00.000Z') },
+    });
+  });
+
+  it('maps a missing file to null so Prisma matches file-less rows (IS NULL) — never undefined', () => {
+    // An undefined fileUrl would silently drop the filter and dedupe the
+    // student's entire recent upload history.
+    const where = recentDuplicatePaperWhere('stu1', 'title', null, new Date('2026-03-01T12:00:00Z'));
+    expect(where.fileUrl).toBeNull();
+    expect(where.fileUrl).not.toBeUndefined();
+  });
+
+  it('pins the 5-minute window', () => {
+    expect(RESEARCH_DEDUPE_WINDOW_MS).toBe(5 * 60 * 1000);
+    const now = new Date('2026-03-01T12:00:00Z');
+    const where = recentDuplicatePaperWhere('s', 't', null, now);
+    expect((where.uploadedAt as { gte: Date }).gte).toEqual(new Date(now.getTime() - RESEARCH_DEDUPE_WINDOW_MS));
+  });
+});
+
+describe('stableSeed (estimated-metric determinism)', () => {
+  it('is deterministic for the same id', () => {
+    expect(stableSeed('cku5c2x9p0000abcd')).toBe(stableSeed('cku5c2x9p0000abcd'));
+  });
+
+  it('spreads across different ids', () => {
+    const seeds = new Set(Array.from({ length: 50 }, (_, i) => stableSeed(`teacher-${i}`)));
+    expect(seeds.size).toBeGreaterThan(40);
+  });
+
+  it('returns a non-negative integer', () => {
+    for (const id of ['a', 'abc', 'z9f2k1']) {
+      const s = stableSeed(id);
+      expect(Number.isInteger(s)).toBe(true);
+      expect(s).toBeGreaterThanOrEqual(0);
+    }
+  });
+
+  it('spreads across the estimated-metric ranges used by /quality/professors', () => {
+    // 3.5 + (seed % 14) / 10 must stay within 3.5 – 4.8 and vary;
+    // 2 + (seed % 23) must stay within 2 – 24 and vary.
+    const satisfaction = new Set<number>();
+    const responseHours = new Set<number>();
+    for (let i = 0; i < 50; i++) {
+      const seed = stableSeed(`teacher-${i}`);
+      const sat = 3.5 + (seed % 14) / 10;
+      const hrs = 2 + (seed % 23);
+      expect(sat).toBeGreaterThanOrEqual(3.5);
+      expect(sat).toBeLessThanOrEqual(4.8);
+      expect(hrs).toBeGreaterThanOrEqual(2);
+      expect(hrs).toBeLessThanOrEqual(24);
+      satisfaction.add(sat);
+      responseHours.add(hrs);
+    }
+    expect(satisfaction.size).toBeGreaterThan(5);
+    expect(responseHours.size).toBeGreaterThan(10);
+  });
+});
+
+// ── /quality/courses?metric= drill-down (5-A8 §5 row 11) ──────────
+
+describe('qualityCoursesQuerySchema (5-A8 §5 row 11)', () => {
+  it('accepts an empty query (the historical unfiltered shape)', () => {
+    const r = qualityCoursesQuerySchema.safeParse({});
+    expect(r.success).toBe(true);
+    if (r.success) expect(r.data.metric).toBeUndefined();
+  });
+
+  it('accepts exactly the two drill-down metrics', () => {
+    expect(qualityCoursesQuerySchema.safeParse({ metric: 'attendance' }).success).toBe(true);
+    expect(qualityCoursesQuerySchema.safeParse({ metric: 'completion' }).success).toBe(true);
+  });
+
+  it('rejects unknown metrics and unknown keys (strict)', () => {
+    expect(qualityCoursesQuerySchema.safeParse({ metric: 'grades' }).success).toBe(false);
+    expect(qualityCoursesQuerySchema.safeParse({ metric: 'ATTENDANCE' }).success).toBe(false);
+    expect(qualityCoursesQuerySchema.safeParse({ level: 300 }).success).toBe(false);
+  });
+
+  /* r183-B5: the server-side search envelope — `q` joins the metric. */
+  it('accepts and trims the search term q (r183-B5)', () => {
+    const r = qualityCoursesQuerySchema.safeParse({ q: '  مقدمة  ' });
+    expect(r.success).toBe(true);
+    if (r.success) expect(r.data.q).toBe('مقدمة');
+  });
+
+  it('rejects an over-long q (the paginationSchema 120 cap)', () => {
+    expect(qualityCoursesQuerySchema.safeParse({ q: 'x'.repeat(121) }).success).toBe(false);
+  });
+
+  it('composes metric + q (the dashboard drill-down with a search)', () => {
+    const r = qualityCoursesQuerySchema.safeParse({ metric: 'attendance', q: 'CS101' });
+    expect(r.success).toBe(true);
+  });
+});
+
+// ── /quality/* roster search + honest totals (r183-B5) ───────────
+
+describe('qualityProfessorsQuerySchema (r183-B5)', () => {
+  it('accepts an empty query (the historical bare call)', () => {
+    const r = qualityProfessorsQuerySchema.safeParse({});
+    expect(r.success).toBe(true);
+    if (r.success) expect(r.data.q).toBeUndefined();
+  });
+
+  it('accepts and trims the search term q', () => {
+    const r = qualityProfessorsQuerySchema.safeParse({ q: '  سالم  ' });
+    expect(r.success).toBe(true);
+    if (r.success) expect(r.data.q).toBe('سالم');
+  });
+
+  it('rejects unknown keys (strict) and over-long q', () => {
+    expect(qualityProfessorsQuerySchema.safeParse({ metric: 'attendance' }).success).toBe(false);
+    expect(qualityProfessorsQuerySchema.safeParse({ q: 'x'.repeat(121) }).success).toBe(false);
+  });
+});
+
+describe('qualityOfferingsWhere (r183-B5 — the /quality/courses WHERE)', () => {
+  it('empty inputs → the historical unfiltered shape', () => {
+    expect(qualityOfferingsWhere(null, undefined)).toEqual({});
+    expect(qualityOfferingsWhere(null, '   ')).toEqual({});
+  });
+
+  it('institution scope only — the r179 shape, unchanged', () => {
+    expect(qualityOfferingsWhere('inst-1', undefined)).toEqual({
+      course: { institutionId: 'inst-1' },
+    });
+  });
+
+  it('search only — name/code OR, case-insensitive (the admin-courses grammar)', () => {
+    expect(qualityOfferingsWhere(null, 'مقدمة')).toEqual({
+      course: {
+        OR: [
+          { name: { contains: 'مقدمة', mode: 'insensitive' } },
+          { code: { contains: 'مقدمة', mode: 'insensitive' } },
+        ],
+      },
+    });
+  });
+
+  it('institution + search compose inside ONE course filter (AND)', () => {
+    expect(qualityOfferingsWhere('inst-1', 'CS101')).toEqual({
+      course: {
+        institutionId: 'inst-1',
+        OR: [
+          { name: { contains: 'CS101', mode: 'insensitive' } },
+          { code: { contains: 'CS101', mode: 'insensitive' } },
+        ],
+      },
+    });
+  });
+});
+
+describe('qualityProfessorsWhere (r183-B5 — the /quality/professors WHERE)', () => {
+  it('role TEACHER always; institution scope composes with the r179 membership clause', () => {
+    expect(qualityProfessorsWhere(null, undefined)).toEqual({ role: Role.TEACHER });
+    expect(qualityProfessorsWhere('inst-1', undefined)).toEqual({
+      role: Role.TEACHER,
+      memberships: { some: { institutionId: 'inst-1', isActive: true } },
+    });
+  });
+
+  it('search only — first/last name OR, case-insensitive', () => {
+    expect(qualityProfessorsWhere(null, 'سالم')).toEqual({
+      role: Role.TEACHER,
+      OR: [
+        { firstName: { contains: 'سالم', mode: 'insensitive' } },
+        { lastName: { contains: 'سالم', mode: 'insensitive' } },
+      ],
+    });
+  });
+
+  it('institution + search compose (AND — scope never widens with a term)', () => {
+    expect(qualityProfessorsWhere('inst-1', 'سالم')).toEqual({
+      role: Role.TEACHER,
+      memberships: { some: { institutionId: 'inst-1', isActive: true } },
+      OR: [
+        { firstName: { contains: 'سالم', mode: 'insensitive' } },
+        { lastName: { contains: 'سالم', mode: 'insensitive' } },
+      ],
+    });
+  });
+});
+
+describe('attendanceRateByOffering (canonical formula, per offering)', () => {
+  const sessions = [
+    { id: 'ses1', offeringId: 'off1' },
+    { id: 'ses2', offeringId: 'off1' },
+    { id: 'ses3', offeringId: 'off2' },
+  ];
+
+  it('aggregates across sessions: LATE earns half credit, EXCUSED excluded', () => {
+    const rates = attendanceRateByOffering(sessions, [
+      // off1 via ses1: 3 PRESENT + 1 LATE + 1 ABSENT
+      { sessionId: 'ses1', status: AttendanceStatus.PRESENT, count: 3 },
+      { sessionId: 'ses1', status: AttendanceStatus.LATE, count: 1 },
+      { sessionId: 'ses1', status: AttendanceStatus.ABSENT, count: 1 },
+      // off1 via ses2: 2 PRESENT + 2 EXCUSED (excused never dilutes)
+      { sessionId: 'ses2', status: AttendanceStatus.PRESENT, count: 2 },
+      { sessionId: 'ses2', status: AttendanceStatus.EXCUSED, count: 2 },
+    ]);
+    // Summed per status across BOTH sessions: (5 + 0.5·1) / (5+1+1) = 78.6 → 79.
+    // The accumulation itself is the pin: passing the rows through
+    // un-summed would overwrite PRESENT (3 ← 2) and answer 63.
+    expect(rates.get('off1')).toBe(79);
+    expect(rates.has('off2')).toBe(false);
+  });
+
+  it('an offering with only EXCUSED marks has no countable data → null, not a fabricated score', () => {
+    const rates = attendanceRateByOffering(sessions, [
+      { sessionId: 'ses3', status: AttendanceStatus.EXCUSED, count: 4 },
+    ]);
+    expect(rates.get('off2')).toBeNull();
+  });
+
+  it('counts for sessions outside the offering map are ignored (defensive)', () => {
+    const rates = attendanceRateByOffering(
+      [{ id: 'ses1', offeringId: 'off1' }],
+      [
+        { sessionId: 'ses1', status: AttendanceStatus.PRESENT, count: 2 },
+        { sessionId: 'ses-elsewhere', status: AttendanceStatus.ABSENT, count: 50 },
+      ],
+    );
+    expect(rates.get('off1')).toBe(100);
+    expect(rates.size).toBe(1);
+  });
+
+  it('no sessions at all → empty map (every row renders the honest «—»)', () => {
+    expect(attendanceRateByOffering([], [
+      { sessionId: 'ses1', status: AttendanceStatus.PRESENT, count: 1 },
+    ]).size).toBe(0);
+  });
+});
+
+describe('completionRateByOffering (watch-time ratio, per offering)', () => {
+  const lectures = [
+    { id: 'lec1', offeringId: 'off1' },
+    { id: 'lec2', offeringId: 'off1' },
+    { id: 'lec3', offeringId: 'off2' },
+  ];
+
+  it('sums watch time across an offering lectures: round(100·Σwatched/Σtotal)', () => {
+    const rates = completionRateByOffering(lectures, [
+      { lectureId: 'lec1', watchedSec: 500, totalSec: 1000 },
+      { lectureId: 'lec2', watchedSec: 250, totalSec: 1000 },
+    ]);
+    expect(rates.get('off1')).toBe(38); // 750/2000
+  });
+
+  it('zero watchable time → null (no fabricated 0% or 100%)', () => {
+    const rates = completionRateByOffering(lectures, [
+      { lectureId: 'lec3', watchedSec: 0, totalSec: 0 },
+    ]);
+    expect(rates.get('off2')).toBeNull();
+  });
+
+  it('sums for lectures outside the offering map are ignored (defensive)', () => {
+    const rates = completionRateByOffering(
+      [{ id: 'lec1', offeringId: 'off1' }],
+      [
+        { lectureId: 'lec1', watchedSec: 100, totalSec: 200 },
+        { lectureId: 'lec-elsewhere', watchedSec: 9999, totalSec: 10000 },
+      ],
+    );
+    expect(rates.get('off1')).toBe(50);
+    expect(rates.size).toBe(1);
+  });
+});
+
+describe('worstFirstMetricSort (drill-down order)', () => {
+  it('ascending — the neediest course first', () => {
+    expect(worstFirstMetricSort(80, 40)).toBeGreaterThan(0);
+    expect(worstFirstMetricSort(10, 90)).toBeLessThan(0);
+    expect(worstFirstMetricSort(50, 50)).toBe(0);
+  });
+
+  it('nulls (no data) sort last against every value and against each other', () => {
+    expect(worstFirstMetricSort(null, 5)).toBeGreaterThan(0);
+    expect(worstFirstMetricSort(100, null)).toBeLessThan(0);
+    expect(worstFirstMetricSort(null, null)).toBe(0);
+  });
+
+  it('a stable sort keeps the deterministic query order for equal values', () => {
+    const rows = [
+      { id: 'a', m: 50 as number | null },
+      { id: 'b', m: 20 as number | null },
+      { id: 'c', m: 50 as number | null },
+      { id: 'd', m: null as number | null },
+    ];
+    const sorted = [...rows].sort((x, y) => worstFirstMetricSort(x.m, y.m));
+    expect(sorted.map((r) => r.id)).toEqual(['b', 'a', 'c', 'd']);
+  });
+});
+
+/* ── r152b (A5 P3): watch-report clock ceilings ─────────────────── */
+
+describe('watchSchema ceilings (r152b)', () => {
+  it('rejects a crafted totalSec beyond the 900_000 cap', () => {
+    expect(
+      watchSchema.safeParse({ watchedSec: 100, totalSec: 1e15, completed: true }).success,
+    ).toBe(false);
+  });
+
+  it('rejects a watchedSec beyond the cap', () => {
+    expect(
+      watchSchema.safeParse({ watchedSec: 900_001, totalSec: 900_001 }).success,
+    ).toBe(false);
+  });
+
+  it('accepts the cap boundary itself', () => {
+    expect(
+      watchSchema.safeParse({ watchedSec: 900_000, totalSec: 900_000 }).success,
+    ).toBe(true);
+  });
+});
+
+/* ── r164d (course flow): STUDENT checkpoint-pending projection ──────
+ * GET /offerings/:id/full needs per-lecture "answered checkpoints"
+ * counts so the course home can aim its «التالي» CTA and badge rows at
+ * lectures whose watch is complete but whose checkpoints are still
+ * open (r155a caps attempts — an unanswered checkpoint stays an open
+ * loop, never an inflatable one). */
+describe('answeredCheckpointsByLecture (r164d — checkpoint-pending projection)', () => {
+  it('groups answer rows into per-lecture counts', () => {
+    const counts = answeredCheckpointsByLecture([
+      { checkpoint: { lectureId: 'lec1' } },
+      { checkpoint: { lectureId: 'lec1' } },
+      { checkpoint: { lectureId: 'lec2' } },
+    ]);
+    expect(counts.get('lec1')).toBe(2);
+    expect(counts.get('lec2')).toBe(1);
+    expect(counts.get('lec3')).toBeUndefined();
+  });
+
+  it('no rows → empty map (a lecture with no answers then merges as 0 answered)', () => {
+    expect(answeredCheckpointsByLecture([]).size).toBe(0);
+  });
+
+  it('wiring pin: /offerings/:id/full projects answeredCheckpoints THROUGH the helper, STUDENT-gated', () => {
+    // The drift class the researchQueueWhere pin guards against: a
+    // helper can pass its pure tests while the live route re-inlines
+    // (or drops) the merge. The pin fails the moment the route stops
+    // routing its projection through the exported helper.
+    expect(learningRouteSource).toMatch(
+      /router\.get\('\/offerings\/:id\/full',[\s\S]*?answeredCheckpointsByLecture\(await prisma\.checkpointAnswer\.findMany\(/,
+    );
+    // STUDENT-only: staff tokens keep the lean payload (no answers
+    // exist for them — the answer route is STUDENT-gated).
+    expect(learningRouteSource).toMatch(
+      /req\.user!\.role === Role\.STUDENT && offering\.lectures\.length > 0\s*\?\s*answeredCheckpointsByLecture/,
+    );
+    // The field is additive: every lecture row carries a NUMBER
+    // (missing key would read as "unknown" on the wire, not 0).
+    expect(learningRouteSource).toMatch(
+      /answeredCheckpoints: answeredByLecture\.get\(l\.id\) \?\? 0/,
+    );
+  });
+});

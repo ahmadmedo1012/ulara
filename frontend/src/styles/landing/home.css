@@ -1,0 +1,95 @@
+/* ════════════════════════════════════════════════════════════════════
+   r330-home.css — R330 · A-Web-Home — the homepage's reference-composition
+   pass (hero · statement · pains). Imported from LandingPage.tsx AFTER
+   landing.css, so these rules win by cascade order: same-or-higher
+   specificity, zero !important, zero edits to any other stylesheet
+   (the R330 file-ownership contract). Class names added here are
+   namespaced mrk330-*; everything else re-seats the sheet's own
+   selectors.
+
+   The owner's verdict: the homepage read 25% reference despite a lenient
+   75% metric. The deltas are COMPOSITION deltas — visible from 1 metre
+   in 1 second, not 2px tweaks:
+
+   · HERO — RETIRED to R331: the hero's whole block (stage cap, ink
+     weights, H1 clamp, CTA mass, work-strip voice, reveal seat) moved
+     to styles/r331/hero.css with the A-Web-Hero rebuild (imported by
+     components/landing/hero/Hero.tsx); the old hero rules were deleted
+     from landing.css and this file.
+   · STATEMENT — the band loses its vertical padding (the cells ARE
+     the band — the reference's home-intro anatomy), the art cell goes SQUARE
+     (the measured 85.64×86.73rem cell) and drives the band height,
+     the scrub title lifts to the 44px display rung, the partner
+     strip tightens to the label register.
+   · PAINS — the 3rem-gap column row becomes the reference's ruled table:
+     zero gap, shared 1px hairlines between the columns, each column
+     with its own top rule, generous cell padding, the meta dot tied
+     to the reveal (the reference's opacity-0 dot), the H2's em
+     demoted from the accent — ONE accent per section (the dots +
+     the honest answer lines).
+   · MOTION — the shared RevealCssClass belt stays the ONE engine;
+     these sections' reveals deepen to the reference's 24px rise
+     (600–800ms register, once-only), with the reduced-motion guard.
+
+   Every color rides a token (dark-mode safe), every box uses logical
+   properties (RTL-safe), copy + CTA routes + section anchors stay
+   byte-identical.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ═══ [2] STATEMENT — the cells ARE the band; the square art rules ══ */
+
+/* the reference's home-intro has NO section padding — the 6+6 cells run
+ * edge-to-edge between the hero's closing strip and the pains' top
+ * rule (the r320 docH ratchet re-lands within its ±1.5% band: the
+ * removed padding returns as the square art cell's height below). */
+.st-section {
+  padding-block: 0;
+}
+
+/* The square art cell — the measured 85.64×86.73rem seat. The 59:50
+ * band-height compromise is retired: the square cell now DRIVES the
+ * band height (the drawing's own 59:50 ink centers on the square
+ * paper exactly like the reference's contained 1766×1766 render),
+ * and the ink thickens one step so the massing study carries the
+ * half from 1 metre. */.st-section .st-art-svg .bp-ink {
+  stroke-width: 3;
+}
+.st-section .st-art-svg .bp-ink-2 {
+  stroke-width: 4;
+}
+
+/* The statement title — the scrub manifesto lifts from the 33px
+ * statement seat to the 44px display rung (the reference sizes the
+ * intro statement a rung under its section H2s — this IS that H2
+ * scale for our band), keeping lh 1.1 headroom for the scrub spans. */
+
+/* The partner strip — the label row tightens to the mono register
+ * (the desc stays the honest disclosure at its own rung). */
+
+/* ═══ [3] PAINS — R337 A-problem: the ruled ledger owns its sheet now
+   (styles/landing/pains.css, the frozen-spec rebuild). The old
+   open-column transplant rules here are retired. ═══ */
+
+/* the RM belt keeps the reveal family collapsed (the .pm-col reveal
+   rides the reveals.css card rung) */
+@media (prefers-reduced-motion: reduce) {
+  .pm-section .reveal-up {
+    transform: none;
+  }
+}
+
+/* ═══ [4] MOTION — the shared belt, deepened for these three bands ══ */
+
+/* The RevealCssClass/.reveal-up engine stays the ONE reveal system
+ * (shared observer, fling-hardened, once-only). These sections'
+ * reveals rise the reference's full yPercent feel — 24px instead of
+ * the global 14px — on the same token register (--t-slower,
+ * --ease-out; the delays stay the existing reveal-d-* ladder). */
+/* the RM belt (landing.css neutralises .reveal-up globally; this
+ * deeper seat must die with it). */
+@media (prefers-reduced-motion: reduce) {
+  .st-section .reveal-up,
+  .pm-section .reveal-up {
+    transform: none;
+  }
+}

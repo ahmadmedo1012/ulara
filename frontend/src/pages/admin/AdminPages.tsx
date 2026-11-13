@@ -1,0 +1,2102 @@
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { Building2, BookOpen, BarChart3, FileText, TrendingUp, ClipboardCheck, AlertTriangle, Search, X, ChevronDown, ArrowLeft, Plus, Trash2, GraduationCap, RefreshCw, Activity } from 'lucide-react';
+import { Card, Badge, Tabs, UserAvatar, AlertRow, FormField } from '../../components/primitives';
+import { StatStrip, LedgerPanel, LedgerRow } from '../../components/primitives/Ledger';
+/* R304 (workstream 4D): the admin family rides the shell patterns —
+ * the patterns PageHeader opens every route (breadcrumbs back to the
+ * dashboard, one semantic h1) and the FilterBar is the one control
+ * rail above the rosters (search → filter → action, the family
+ * order). The local header twin this page carried since 5-A8 retired
+ * with the r288 anatomy fold. */
+import { PageHeader as PatternsPageHeader, FilterBar } from '../../components/patterns';
+import {
+  EmptyState, ErrorState,
+  CardSkeleton, TableSkeleton, StripSkeleton, Skeleton,
+} from '../../components/primitives/States';
+import { ChartFrame } from '../../components/charts';
+import { PAPER_STATUS_TONE } from '../../lib/paperStatus';
+import { Icon } from '../../components/Icon';
+import { EmojiIcon } from '../../components/EmojiIcon';
+import { useReducedMotion } from '../../components/motion';
+import { Modal } from '../../components/overlays';
+import { ConfirmDialog } from '../../components/owner/ConfirmDialog';
+/* P2.2 dedup: the file carried a byte-identical copy of the canonical
+ * owner StatStripSkeleton (components/owner/StripSkeletons.tsx, r299);
+ * the copy is retired and the shared one re-pointed here + for
+ * AdminExtraPages' import. */
+import { StatStripSkeleton } from '../../components/owner/StripSkeletons';
+import { toast } from '../../lib/toast';
+import {
+  useAdminStats, useAdminFaculties, useAdminReports, useAdminCourses, useAdminPapers,
+  useFaculties,
+  useCurrentInstitutionSlug,
+  RESEARCH_STATUSES,
+  type ResearchStatus, type AdminPaper, type AdminFaculty, type AdminCourse, type CourseFormInput,
+  useCreateCourse, useUpdateCourse, useDeleteCourse,
+  useCreateFaculty, useCreateDepartment, useCreateOffering, useAdminTeachers,
+  type FacultyFormInput, type DepartmentFormInput, type OfferingFormInput,
+  apiErrorMessage,
+} from '../../hooks/useResources';
+/* T-24: pageList + TablePaginationFooter live in their own leaf module
+ * now (was AdminGovernancePages ↔ AdminPages cycle — deadcode baseline). */
+import { TablePaginationFooter, PAPER_UNIT } from './TablePaginationFooter';
+import { api, unwrap } from '../../lib/api';
+import { useInstitutionScope } from '../../stores/auth.store';
+import { withInstitutionScope } from '../../lib/queryClient';
+import { countAr, formatPct, formatRelativeArShort } from '../../lib/format';
+import { formatNum } from '../../utils/numbers';
+// R320 §B (c1-RENAME): the ADMIN dashboard's title/breadcrumb root is
+// «لوحة المسجل العام» — consumed from the ONE shared role-label source
+// (lib/roleLabels.ts + backend twin), never a literal that can drift.
+import { roleDashboardLabel } from '../../lib/roleLabels';
+import { Bar, Line } from 'react-chartjs-2';
+import {
+  Chart as ChartJS, CategoryScale, LinearScale, BarElement,
+  PointElement, LineElement, Filler, Tooltip,
+} from 'chart.js';
+import { cartesianOptions, valueLabels, chartColors, useChartThemeKey } from '../../lib/chartTheme';
+// 5-B4: the admin roster chrome lives in colleges.css since "Sub-project D"
+// (its ownership banner) — the students-toolbar/pagination/trend-table
+// families the courses page + papers register now consume too.
+import '../../styles/admin.css'; // r150e: the roster chrome left colleges.css
+/* R305-A8: the reference admin/owner grammar — imported directly AFTER
+ * admin.css so it wins the @layer pages tie. Every rule in the sheet
+ * is scoped under the .r305ao page-root marker class, so teacher /
+ * quality / community screens are untouched. */
+import '../../styles/shared/ds-admin-owner.css';
+/* R332 W11 — the dashboard grammar bridge (styles/landing/inner.css §W11):
+ * the [nn] section-index chips (.w11-idx) the dashboard's cards mount +
+ * the .w11-quick metric lift on the «مؤشرات سريعة» stat rows — marker-
+ * scoped, so the other admin pages in this file render untouched. */
+import '../../styles/landing/inner.css';
+import { formatDate } from '../../utils/numbers';
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, PointElement, LineElement, Filler, Tooltip);
+
+/* ════════════════════════════════════════════════════════════════
+   Shared helpers
+   ════════════════════════════════════════════════════════════════ */
+
+/* R304: the local PageHeader retired onto the patterns PageHeader —
+ * the contract header carries breadcrumbs + meta + actions, and the
+ * r288 anatomy fold made the two pixel-equal. The AdminGovernance
+ * permissions page keeps the primitives PageHeader (ReactNode title
+ * — the pattern's title is string-only). */
+
+/**
+ * ≤1024px compact-roster band (r183-B5, port of the QualityPages
+ * 5-A8 P2-2 pattern): .tbl-stack only arms at ≤640, so the 8-column
+ * admin rosters sideways-scrolled at 768 (courses 162px, students
+ * 57px — A8 wave-A evidence). At ≤1024 the column-diet folds the
+ * lowest-priority columns into the row's meta line instead (see
+ * AdminCoursesPage / AdminStudentsPage). One copy serves the whole
+ * admin family — AdminExtraPages imports it (same contract as
+ * TablePaginationFooter above). QualityPages keeps its own copy
+ * (file-scope wave rule — the CountIn precedent); promote both into
+ * a shared hooks module in a lib-owning wave. jsdom's matchMedia stub
+ * returns matches:false, so unit tests keep exercising the desktop
+ * path (same contract as GlobalSearch's band hook).
+ */
+export function useCompactRosterBand(): boolean {
+  const [compact, setCompact] = useState(
+    () => typeof window !== 'undefined'
+      && typeof window.matchMedia === 'function'
+      && window.matchMedia('(max-width: 1024px)').matches,
+  );
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return;
+    const mq = window.matchMedia('(max-width: 1024px)');
+    const onChange = () => setCompact(mq.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+  return compact;
+}
+
+/** Quick-stat row — 5-B4 (5-A8 P1-3/§5 row 6): optionally navigable.
+ *  The whole row is the target; the arrow names the direction (RTL
+ *  forward = ArrowLeft). */
+function Stat({
+  label, value, to, hint,
+}: { label: string; value: string; to?: string; hint?: string }) {
+  if (to !== undefined) {
+    return (
+      <Link to={to} className="admin-stat-row" title={hint} style={{ textDecoration: 'none' }}>
+        <span className="text-sm text-muted">{label}</span>
+        <span
+          className="text-sm admin-stat-value"
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--sp-1)' }}
+        >
+          {value}
+          <Icon icon={ArrowLeft} size={13} style={{ color: 'var(--accent-ink, var(--accent))' }} />
+        </span>
+      </Link>
+    );
+  }
+  return (
+    <div className="admin-stat-row">
+      <span className="text-sm text-muted">{label}</span>
+      {/* A8 P3-3: no font-mono — the value is often a full Arabic faculty
+          name («أكبر كلّيّة»); mono only ever wraps codes/emails/numbers
+          (digits keep tabular-nums via tokens). */}
+      <span className="text-sm admin-stat-value">{value}</span>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════
+   Action strip (5-A8 §6 step 1 — «يحتاج انتباهك»)
+   ════════════════════════════════════════════════════════════════ */
+
+interface ActionRow {
+  key: string;
+  title: string;
+  desc: string;
+  to: string;
+  hint: string;
+}
+
+/**
+ * The dashboard's "what needs a decision" list. Every row is built from
+ * a count the ADMIN role can actually fetch — the audit's original
+ * sketch named moderation-queue and dean-less-faculties rows too, but
+ * RBAC gates /exams/moderation-queue and /quality/courses behind
+ * QUALITY_VIEW/EXAMS_MODERATE (admins hold neither) and the faculties
+ * payload carries no dean field, so those rows land elsewhere (see the
+ * 5-B4 worklog). Rows appear only when their count > 0 — a healthy
+ * university sees no strip, not a wall of zeros.
+ */
+function ActionStrip() {
+  // Zero-content courses: within the first 100 (the /admin/courses
+  // limit ceiling). The row's copy names the window when it binds.
+  const courses = useAdminCourses({ limit: 100 });
+  const sync = useQuery({
+    // Separate key from the sync page's polled ['admin','sync'] — this
+    // summary must never inherit the 30s background poll.
+    /* r180: /admin/sync summary is institution-scoped server-side — scoped key. */
+    queryKey: withInstitutionScope(['admin', 'sync', 'summary'], useInstitutionScope()),
+    queryFn: () => unwrap<{ staleCount: number }>(api.get('/admin/sync')),
+    staleTime: 60_000,
+  });
+  // limit:1 — the register only needs meta.total for the count.
+  const gradedPapers = useAdminPapers({ status: 'GRADED', limit: 1 });
+
+  // r172b (loading closure): the strip's own pending state. It used to
+  // render null until all three background reads answered, so the strip
+  // mounted LATE above the KPI row and pushed every section below it
+  // down (measured 217px insertion → CLS 0.066 in the delayed-API lab).
+  // StripSkeleton rides the same Card anatomy with the static title +
+  // row placeholders, so the page-skeleton slot and this pending state
+  // hand off to the resolved strip at identical heights.
+  if (courses.isPending || sync.isPending || gradedPapers.isPending) {
+    return <StripSkeleton title="يحتاج انتباهك" subtitle="جارٍ التحقق من حالات تحتاج انتباهك…" />;
+  }
+
+  const rows: ActionRow[] = [];
+  if (courses.data && courses.data.data.length > 0) {
+    const zeroContent = courses.data.data
+      .filter((c) => c.totalLectures === 0 && c.totalMaterials === 0);
+    const capped = courses.data.meta.total > courses.data.data.length;
+    if (zeroContent.length > 0) {
+      rows.push({
+        key: 'zero-content',
+        title: 'مقرّرات بلا محتوى تعليميّ',
+        desc: `${countAr(zeroContent.length, ['مقرّر واحد', 'مقرّران', 'مقرّرات', 'مقرّراً'])} لم تُرفع لها محاضرات أو ملفات بعد${capped ? ' (ضمن أول 100 مقرّر)' : ''}`,
+        to: '/admin/courses',
+        hint: 'فتح إدارة المقرّرات', // R320 §B KEEP: management-function name
+      });
+    }
+  }
+  if (sync.data && sync.data.staleCount > 0) {
+    rows.push({
+      key: 'stale-sync',
+      title: 'حقول بيانات جامعية قديمة',
+      desc: `${countAr(sync.data.staleCount, ['حقل واحد', 'حقلان', 'حقول', 'حقلاً'])} يحتاج مزامنة جديدة مع المصدر الرسميّ`,
+      /* r190-D3: the drill deep-links with ?stale=1 — the sync page's
+       * URL effect opens the first stale category on landing (the
+       * question arrives with its answer open). */
+      to: '/admin/sync?stale=1',
+      hint: 'فتح صفحة المزامنة مع الحقول القديمة',
+    });
+  }
+  if (gradedPapers.data && gradedPapers.data.meta.total > 0) {
+    rows.push({
+      key: 'graded-papers',
+      title: 'بحوث مقيَّمة بانتظار النشر',
+      desc: `${countAr(gradedPapers.data.meta.total, ['بحث واحد', 'بحثان', 'بحوث', 'بحثاً'])} جاهزة للنشر في مكتبة الجامعة`,
+      to: '/admin/reports?status=GRADED',
+      hint: 'فتح سجلّ البحوث',
+    });
+  }
+
+  if (rows.length === 0) return null;
+  return (
+    <LedgerPanel
+      title="يحتاج انتباهك"
+      zone="rose"
+      tag={countAr(rows.length, ['بند واحد', 'بندان', 'بنود', 'بنداً'])}
+      ariaLabel="حالات تحتاج انتباهك"
+    >
+      {rows.map((r) => (
+        <LedgerRow
+          key={r.key}
+          to={r.to}
+          title={r.title}
+          subtitle={r.desc}
+        />
+      ))}
+    </LedgerPanel>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════
+   Admin: Dashboard
+   ════════════════════════════════════════════════════════════════ */
+export function AdminDashboardPage() {
+  const stats = useAdminStats();
+  const facs = useAdminFaculties();
+  const reports = useAdminReports();
+  const navigate = useNavigate();
+  const c = chartColors();
+  // Remounts each chart canvas when the light/dark theme flips.
+  const themeKey = useChartThemeKey();
+
+  if (stats.isPending || facs.isPending || reports.isPending) {
+    /* r172b (loading closure): a MIRROR skeleton, not the generic
+       PageSkeleton — the resolved page leads with the real header
+       (h1+subtitle, 96px vs the generic 86px bars), then ActionStrip,
+       then the KPI row, then the charts row. The generic skeleton had
+       no strip slot (a 217px late insertion, CLS 0.066) and no charts
+       slot. Every section below renders its shape-matched placeholder
+       so the pending → resolved handoff moves nothing. */
+    return (
+      <div className="page r305ao" aria-busy="true" aria-live="polite">
+        <PatternsPageHeader title={roleDashboardLabel('ADMIN')} description="إحصائيات حيّة عن طلاب وأساتذة المنصّة." />
+        <StripSkeleton title="يحتاج انتباهك" subtitle="جارٍ التحقق من حالات تحتاج انتباهك…" />
+        <div className="stat-strip" aria-busy="true">
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="stat-cell">
+              <Skeleton width={70} height={11} />
+              <div style={{ marginBlock: 'var(--sp-1)' }}>
+                <Skeleton width={90} height={28} />
+              </div>
+              <Skeleton width={120} height={11} />
+            </div>
+          ))}
+        </div>
+        <div className="grid-2-1" style={{ marginBlockStart: 'var(--sp-9)' }}>
+          <Card title="توزّع الطلاب حسب الكلّيّة">
+            <Skeleton width="100%" height={174} rounded="var(--r-lg)" />
+          </Card>
+          <Card title="مؤشرات سريعة">
+            <Skeleton width="100%" height={174} rounded="var(--r-lg)" />
+          </Card>
+        </div>
+      </div>
+    );
+  }
+  if (stats.isError || facs.isError || reports.isError) {
+    // r157 (6A9 #5): the early-error return keeps the page chrome
+    // (.page + header + h1) — the retry used to land on a chrome-less
+    // wall, so an API blip stripped the admin's bearings (which page
+    // am I on?) before offering the retry.
+    return (
+      <div className="page r305ao">
+        <PatternsPageHeader title={roleDashboardLabel('ADMIN')} description="إحصائيات حيّة عن طلاب وأساتذة المنصّة." />
+        <Card>
+          <ErrorState
+            error={stats.error ?? facs.error ?? reports.error}
+            onRetry={() => { stats.refetch(); facs.refetch(); reports.refetch(); }}
+          />
+        </Card>
+      </div>
+    );
+  }
+  const s = stats.data!;
+  const f = facs.data!;
+  const r = reports.data!;
+
+  // Real top-8 by student count.
+  const topByStudents = [...f]
+    .sort((a, b) => b.studentCount - a.studentCount)
+    .slice(0, 8)
+    .filter((x) => x.studentCount > 0 || f.length <= 8);
+
+  // Distinct cities — replaces the "9 cities" placeholder.
+  const cityCount = new Set(f.map((x) => x.city)).size;
+  const facultyCount = f.length;
+
+  // Highest-density faculty for "مؤشرات سريعة".
+  const topFaculty = topByStudents[0];
+  const topByCourses = [...f].sort((a, b) => b.courseCount - a.courseCount)[0];
+  const studentTeacherRatio = s.totalTeachers > 0
+    ? Math.round((s.totalStudents / s.totalTeachers) * 10) / 10
+    : null;
+
+  return (
+    <div className="page r305ao">
+      <PatternsPageHeader
+        title={roleDashboardLabel('ADMIN')}
+        description="إحصائيات حيّة عن طلاب وأساتذة المنصّة."
+        index="01"
+        meta={<>{formatDate(new Date(), { weekday: 'long', day: 'numeric', month: 'long' })} · حساب لحظيّ</>}
+        actions={(
+          /* R342-09 (D11 header-CTA precedent): the registrar's two live
+                   * rosters ride the header action slot — the students register
+                   * (primary) + the university sync (the standing operational
+                   * duty). The StatStrip cells keep the full drill set; this pair
+                   * is the phone band's honest affordance (the admin topbar hides
+                   * «اسأل AI» entirely, so without it the first viewport at 390
+                   * carries no primary action at all). */
+                  <>
+            <Link to="/admin/students" className="btn primary sm">
+              <Icon icon={GraduationCap} size={13} />
+              سجلّ الطلاب
+            </Link>
+            <Link to="/admin/sync" className="btn ghost sm">
+              <Icon icon={RefreshCw} size={13} />
+              مزامنة الجامعة
+            </Link>
+          </>
+        )}
+      />
+
+      {/* 5-A8 §6 step 1: the action list sits above the KPI row — the
+          dashboard answers "what needs me" before "how big are we". */}
+      <ActionStrip />
+
+      {/* R189 — the typographic stat strip (was the grid-4 KPI tiles);
+          every cell still answers its follow-up in one click. */}
+      <StatStrip
+        ariaLabel="إحصائيات المؤسّسة"
+        cells={[
+          {
+            label: 'الكلّيّات',
+            value: formatNum(facultyCount),
+            trend: `موزّعة على ${countAr(cityCount, ['مدينة واحدة', 'مدينتين', 'مدن', 'مدينة'])}`,
+            trendTone: 'flat',
+            to: '/admin/faculties',
+          },
+          {
+            label: 'الطلاب',
+            value: formatNum(s.totalStudents),
+            trend: 'مسجَّل في النظام',
+            trendTone: 'flat',
+            to: '/admin/students',
+          },
+          {
+            label: 'هيئة التدريس',
+            value: formatNum(s.totalTeachers),
+            trend: 'عضو',
+            trendTone: 'flat',
+            to: '/admin/teachers',
+          },
+          {
+            label: 'المقرّرات',
+            value: formatNum(s.totalCourses),
+            trend: countAr(s.totalEnrollments, ['تسجيل واحد', 'تسجيلان', 'تسجيلات', 'تسجيلاً']),
+            trendTone: 'flat',
+            to: '/admin/courses',
+          },
+        ]}
+      />
+
+      {/* 5-A8 §6 step 6 (rhythm): the charts row is the page's breathing
+          section — 88px above it vs the KPI strip's 40px (taste.md:
+          rhythm = contrast between tight and generous, never uniform). */}
+      <div className="grid-2-1" style={{ marginBlockStart: 'var(--sp-9)' }}>
+        <Card
+          title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[01]</span>توزّع الطلاب حسب الكلّيّة</>}
+          icon={BarChart3}
+          subtitle={topByStudents.length > 1
+            ? `أعلى ${countAr(topByStudents.length, ['كلّيّة', 'كلّيّتين', 'كلّيّات', 'كلّيّة'])} عدداً · انقر عموداً لعرض طلابها`
+            : undefined}
+        >
+          {/* 5-A8 §6 step 5 (chart honesty): a single bar in a chart box
+              carries no distribution signal — degrade to the stat + its
+              drill link instead of the lonely-bar form. */}
+          {topByStudents.length === 0 ? (
+            <EmptyState illustration="empty-list"
+              icon={BarChart3}
+              title="لا توجد بيانات طلاب بعد"
+              description="ستظهر التوزيعة هنا فور تسجيل الطلاب في الكلّيّات."
+            />
+          ) : topByStudents.length === 1 && topFaculty ? (
+            <div className="flex-col gap-3">
+              <p className="text-sm text-muted">
+                كلّيّة واحدة فقط لديها طلاب مسجَّلون حالياً؛ يظهر المخطط التفصيليّ عند تعدُّد الكلّيّات.
+              </p>
+              <Stat
+                label="أعلى كلّيّة عدداً للطلاب"
+                value={`${topFaculty.name} (${countAr(topFaculty.studentCount, ['طالب واحد', 'طالبين', 'طلاب', 'طالباً'])})`}
+              />
+              <Link
+                to={`/admin/students?facultyId=${topFaculty.id}`}
+                className="btn ghost sm"
+                style={{ alignSelf: 'flex-start' }}
+              >
+                <Icon icon={ArrowLeft} size={13} />
+                عرض طلاب الكلّيّة
+              </Link>
+            </div>
+          ) : (
+            <ChartFrame
+              ariaLabel={`توزيع الطلاب حسب الكلّيّة — أعلى ${countAr(topByStudents.length, ['كلّيّة', 'كلّيّتين', 'كلّيّات', 'كلّيّة'])} عددًا`}
+              summary={topFaculty ? `أعلى كلّيّة عددًا للطلاب: ${topFaculty.name} بـ${countAr(topFaculty.studentCount, ['طالب واحد', 'طالبين', 'طلاب', 'طالباً'])}.` : undefined}
+              height={Math.max(180, topByStudents.length * 36)}
+              table={{
+                caption: 'توزيع الطلاب حسب الكلّيّة',
+                columns: ['الكلّيّة', 'عدد الطلاب'],
+                rows: topByStudents.map((row) => [row.name, row.studentCount]),
+              }}
+            >
+              <Bar
+                key={themeKey}
+                aria-hidden="true"
+                data={{
+                  labels: topByStudents.map((row) => row.name),
+                  datasets: [{
+                    label: 'عدد الطلاب',
+                    data: topByStudents.map((row) => row.studentCount),
+                    backgroundColor: `color-mix(in srgb, ${c.accent} 55%, transparent)`,
+                    borderColor: c.accent,
+                    borderWidth: 1,
+                    borderRadius: 6,
+                    maxBarThickness: 22,
+                  }],
+                }}
+                plugins={[valueLabels]}
+                options={{
+                  ...cartesianOptions({ horizontal: true }),
+                  indexAxis: 'y' as const,
+                  // 5-A8 §5 row 5: a bar is a question — "who are this
+                  // faculty's students?" The answer lands pre-filtered.
+                  onClick: (_e, elements) => {
+                    const el = elements[0];
+                    const fac = el ? topByStudents[el.index] : undefined;
+                    if (fac) navigate(`/admin/students?facultyId=${fac.id}`);
+                  },
+                }}
+              />
+            </ChartFrame>
+          )}
+        </Card>
+
+        {/* W11: .w11-quick — the quick-stat values lift from the uniform
+            --fs-sm body rung to the metric rung (inner.css §W11); the
+            same .admin-stat classes elsewhere are untouched. */}
+        <Card
+          title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[02]</span>مؤشرات سريعة</>}
+          icon={TrendingUp}
+          className="w11-quick"
+        >
+          <div className="flex-col gap-2">
+            {/* 5-A8 §5 row 6 + P3-2: the rows navigate where a route
+                answers them; the papers PAIR collapsed into one drill
+                stat (the same two numbers lived on three routes).
+                (r299: «أكبر كلّيّة» died — the sorted bar chart beside
+                this card IS that fact, and its hidden ChartFrame
+                summary announces it; one owner per datum.) */}
+            <Stat
+              label="أعلى عدد مقرّرات"
+              value={topByCourses ? `${topByCourses.name} (${topByCourses.courseCount})` : '—'}
+              to={topByCourses ? '/admin/faculties' : undefined}
+              hint="عرض الكلّيّات والأقسام"
+            />
+            <Stat
+              label="نسبة طالب/أستاذ"
+              value={studentTeacherRatio !== null ? `${studentTeacherRatio}` : '—'}
+            />
+            <Stat
+              label="بحوث منشورة"
+              value={formatNum(r.headline.publishedPapers)}
+              to="/admin/reports?status=PUBLISHED"
+              hint="فتح سجلّ البحوث المنشورة"
+            />
+          </div>
+        </Card>
+      </div>
+
+      <Card title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[03]</span>نشاط الإنتاج العلميّ — آخر 6 أشهر</>} icon={TrendingUp} subtitle="أبحاث مقدَّمة، مقيَّمة، ومنشورة شهرياً">
+        {r.paperTrend.length === 0 || r.paperTrend.every((m) => m.submitted + m.graded + m.published === 0) ? (
+          <EmptyState illustration="empty-research"
+            icon={TrendingUp}
+            title="لا توجد بيانات أبحاث بعد"
+            description="ستظهر حركة النشر هنا بعد رفع أول بحث إلى المنصة."
+          />
+        ) : (
+          <ChartFrame
+            ariaLabel="نشاط الإنتاج العلمي في الأشهر الستة الأخيرة — أبحاث مقدَّمة ومقيَّمة ومنشورة شهرياً"
+            summary="مقارنة حركة البحوث المرفوعة والمقيَّمة والمنشورة على مدى الأشهر الستة الأخيرة."
+            height={240}
+            table={{
+              caption: 'نشاط الإنتاج العلمي شهرياً',
+              columns: ['الشهر', 'مقدَّم', 'مقيَّم', 'منشور'],
+              rows: r.paperTrend.map((m) => [m.month, m.submitted, m.graded, m.published]),
+            }}
+          >
+            <Line
+              key={themeKey}
+              aria-hidden="true"
+              data={{
+                labels: r.paperTrend.map((m) => m.month),
+                datasets: [
+                  {
+                    label: 'مقدَّم',
+                    data: r.paperTrend.map((m) => m.submitted),
+                    borderColor: c.accent,
+                    fill: true, tension: 0.4, pointRadius: 4, borderWidth: 2,
+                    pointBackgroundColor: c.accent,
+                  },
+                  {
+                    label: 'مقيَّم',
+                    data: r.paperTrend.map((m) => m.graded),
+                    borderColor: c.gold,
+                    fill: true, tension: 0.4, pointRadius: 4, borderWidth: 2,
+                    pointBackgroundColor: c.gold,
+                  },
+                  {
+                    label: 'منشور',
+                    data: r.paperTrend.map((m) => m.published),
+                    borderColor: c.success,
+                    fill: true, tension: 0.4, pointRadius: 4, borderWidth: 2,
+                    pointBackgroundColor: c.success,
+                  },
+                ],
+              }}
+              options={cartesianOptions({ legend: true, gradientFill: true })}
+            />
+          </ChartFrame>
+        )}
+      </Card>
+    </div>
+  );
+}
+
+/* ─── Admin: Faculties ────────────────────────────────────── */
+
+/** A faculty row whose departments collapse behind the header (5-A8
+ *  P2-3 — the 3388px monolithic wall becomes a directory). */
+function FacultyRow({
+  faculty, open, onToggle, onAddDepartment,
+}: {
+  faculty: AdminFaculty;
+  open: boolean;
+  onToggle: () => void;
+  /** r180: opens the «إضافة قسم» modal bound to THIS faculty (the
+   * card-level create action — a fresh faculty starts with zero
+   * departments, so the action must not hide behind the collapsible
+   * departments list). */
+  onAddDepartment: () => void;
+}) {
+  const hasDepts = faculty.departments.length > 0;
+  const head = (
+    <>
+      <span className="admin-faculty-icon">
+        <EmojiIcon emoji={faculty.iconEmoji ?? undefined} fallback={Building2} size={22} />
+      </span>
+      <div className="admin-faculty-body">
+        <div className="admin-faculty-titles">
+          <span className="admin-faculty-name">{faculty.name}</span>
+          {faculty.nameEn && (
+            <span className="admin-faculty-name-en font-mono text-xs text-subtle">
+              · <bdi>{faculty.nameEn}</bdi>
+            </span>
+          )}
+        </div>
+        <div className="admin-faculty-meta">
+          {/* A8 P3-3: counted Arabic phrases — mono is a costume
+              here (IBM Plex Mono has no Arabic); plain text. */}
+          <span>{countAr(faculty.departmentCount, ['قسم واحد', 'قسمان', 'أقسام', 'قسماً'])}</span>
+          <span>{countAr(faculty.courseCount, ['مقرّر واحد', 'مقرّران', 'مقرّرات', 'مقرّراً'])}</span>
+          <span>{countAr(faculty.studentCount, ['طالب واحد', 'طالبان', 'طلاب', 'طالباً'])}</span>
+          <span>{countAr(faculty.teacherCount, ['عضو هيئة تدريس واحد', 'عضوا هيئة تدريس', 'أعضاء هيئة تدريس', 'عضواً هيئة تدريس'])}</span>
+        </div>
+      </div>
+      {hasDepts && (
+        <Icon
+          icon={ChevronDown}
+          size={16}
+          style={{
+            color: 'var(--text-muted)',
+            marginInlineStart: 'auto',
+            flexShrink: 0,
+            transition: 'transform var(--t-base) var(--ease)',
+            transform: open ? 'rotate(180deg)' : 'none',
+          }}
+        />
+      )}
+    </>
+  );
+  return (
+    <div className="admin-faculty-card">
+      {hasDepts ? (
+        <button
+          type="button"
+          className={`admin-faculty-head${open ? ' has-depts' : ''}`}
+          aria-expanded={open}
+          aria-controls={`faculty-depts-${faculty.id}`}
+          onClick={onToggle}
+          title={open ? 'طيّ الأقسام' : 'توسيع الأقسام'}
+          style={{ width: '100%', textAlign: 'start', padding: 0 }}
+        >
+          {head}
+        </button>
+      ) : (
+        <div className="admin-faculty-head">{head}</div>
+      )}
+      {hasDepts && open && (
+        <div className="admin-faculty-depts" id={`faculty-depts-${faculty.id}`}>
+          {faculty.departments.map((d) => (
+            <div key={d.id} className="admin-faculty-dept">
+              <span className="admin-faculty-dept-name">{d.name}</span>
+              <span className="admin-faculty-dept-meta">
+                {countAr(d.students, ['طالب واحد', 'طالبان', 'طلاب', 'طالباً'])} · {countAr(d.teachers, ['مدرّس واحد', 'مدرّسان', 'مدرّسون', 'مدرّساً'])} · {countAr(d.courses, ['مقرّر واحد', 'مقرّران', 'مقرّرات', 'مقرّراً'])}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+      {/* r180: the department create action lives on EVERY card — the
+          head is itself a <button> whenever it has departments, so a
+          trailing action can never ride inside it (nested interactive
+          controls); a plain footer row (the table actions-cell pattern:
+          ghost sm + Plus icon) works for both fresh and full faculties
+          alike. No new class — flex utilities + the sp token. The
+          visible «إضافة قسم» label IS the accessible name (like the
+          row head itself): the button rides inside the faculty's own
+          card, one per card, so the grouping already names the target. */}
+      <div className="flex items-center" style={{ marginBlockStart: 'var(--sp-3)' }}>
+        <button
+          type="button"
+          className="btn ghost sm"
+          onClick={onAddDepartment}
+        >
+          <Icon icon={Plus} size={13} />
+          إضافة قسم
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export function AdminFacultiesPage() {
+  const { data, isPending, isError, error, refetch } = useAdminFaculties();
+  // 5-A8 P2-3: retrieval affordances — search (name/nameEn/dept) + city
+  // filter + collapsed departments. Every sibling roster had search; this
+  // page was a 3388px wall.
+  const [q, setQ] = useState('');
+  const [city, setCity] = useState('');
+  const [openDepts, setOpenDepts] = useState<ReadonlySet<string>>(new Set());
+
+  // ── Structure writes (r180 — the new-institution bootstrap) ──────
+  /* The AdminCoursesPage create-course pattern: the modal stays open
+   * until the mutation SETTLES (r153i — a failed save must render the
+   * in-modal error, never look like a silent success), the per-call
+   * onSuccess closes + toasts, and the hook-level invalidations
+   * refresh both faculty lists. */
+  const createFaculty = useCreateFaculty();
+  const createDepartment = useCreateDepartment();
+  const [facultyFormOpen, setFacultyFormOpen] = useState(false);
+  const [facultyForm, setFacultyForm] = useState<FacultyFormInput>({
+    name: '', nameEn: '', iconEmoji: '', city: '',
+  });
+  /* Which faculty the «إضافة قسم» modal targets (null = closed) —
+   * the r153i formMode twin: an honest tri-state instead of a sentinel
+   * object, so the modal remounts its draft per target. */
+  const [deptTarget, setDeptTarget] = useState<AdminFaculty | null>(null);
+  const [deptForm, setDeptForm] = useState<DepartmentFormInput>({
+    name: '', nameEn: '', facultyId: '',
+  });
+  const closeFacultyForm = () => setFacultyFormOpen(false);
+  const openFacultyForm = () => {
+    setFacultyForm({ name: '', nameEn: '', iconEmoji: '', city: '' });
+    setFacultyFormOpen(true);
+  };
+  const closeDeptForm = () => setDeptTarget(null);
+  const openDeptForm = (f: AdminFaculty) => {
+    setDeptForm({ name: '', nameEn: '', facultyId: f.id });
+    setDeptTarget(f);
+  };
+  const submitFaculty = () => {
+    createFaculty.mutate(facultyForm, {
+      onSuccess: () => {
+        toast.success(`أُضيفت كلّيّة «${facultyForm.name.trim()}».`, { title: 'تمّت الإضافة' });
+        closeFacultyForm();
+      },
+    });
+  };
+  const submitDepartment = () => {
+    if (!deptTarget) return;
+    createDepartment.mutate(deptForm, {
+      onSuccess: () => {
+        toast.success(
+          `أُضيف قسم «${deptForm.name.trim()}» إلى «${deptTarget.name}».`,
+          { title: 'تمّت الإضافة' },
+        );
+        closeDeptForm();
+      },
+    });
+  };
+
+  if (isPending) {
+    return (
+      <div className="page r305ao">
+        <PatternsPageHeader
+          title="الكلّيّات والأقسام"
+          description="جميع كلّيّات الجامعة وأقسامها مع إحصائيات حية."
+          breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'الكلّيّات والأقسام' }]}
+        />
+        <StatStripSkeleton />
+        <CardSkeleton lines={7} />
+      </div>
+    );
+  }
+  if (isError || !data) {
+    return (
+      <div className="page r305ao">
+        <PatternsPageHeader
+          title="الكلّيّات والأقسام"
+          description="جميع كلّيّات الجامعة وأقسامها مع إحصائيات حية."
+          breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'الكلّيّات والأقسام' }]}
+        />
+        <Card><ErrorState error={error} onRetry={() => refetch()} /></Card>
+      </div>
+    );
+  }
+
+  const totalDepts = data.reduce((s, f) => s + f.departmentCount, 0);
+  const totalCourses = data.reduce((s, f) => s + f.courseCount, 0);
+  const totalStudents = data.reduce((s, f) => s + f.studentCount, 0);
+  const totalTeachers = data.reduce((s, f) => s + f.teacherCount, 0);
+
+  const cities = Array.from(new Set(data.map((f) => f.city))).sort();
+  const needle = q.trim();
+  const visible = data.filter((f) => {
+    if (city !== '' && f.city !== city) return false;
+    if (needle === '') return true;
+    return f.name.includes(needle)
+      || (f.nameEn ?? '').toLowerCase().includes(needle.toLowerCase())
+      || f.departments.some((d) => d.name.includes(needle));
+  });
+  const hasFilters = needle !== '' || city !== '';
+  const toggleDepts = (id: string) => {
+    setOpenDepts((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  return (
+    <div className="page r305ao">
+      <PatternsPageHeader
+        title="الكلّيّات والأقسام"
+        description="جميع كلّيّات الجامعة وأقسامها مع إحصائيات حية."
+        index="03"
+        breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'الكلّيّات والأقسام' }]}
+        actions={(
+          /* R342-09 (the students-page family contract): the page's ONE
+                   * create action rides the header action slot on the accent
+                   * register — the first viewport at every width keeps the
+                   * affordance (the admin topbar hides «اسأل AI» entirely). The
+                   * FilterBar trailing seat returns to filters-only. */
+                  <button
+            type="button"
+            className="btn accent sm"
+            onClick={openFacultyForm}
+            aria-label="إضافة كلّيّة جديدة"
+          >
+            <Icon icon={Plus} size={14} />
+            إضافة كلّيّة
+          </button>
+        )}
+      />
+
+      <StatStrip
+        ariaLabel="إحصائيات الكلّيّات والأقسام"
+        cells={[
+          { label: 'الكلّيّات', value: formatNum(data.length), trend: 'في هذه المؤسّسة', trendTone: 'flat' },
+          { label: 'الأقسام', value: formatNum(totalDepts), trend: 'عبر الكلّيّات', trendTone: 'flat' },
+          { label: 'إجمالي الطلاب', value: formatNum(totalStudents), trend: 'مسجَّلون', trendTone: 'flat' },
+          { label: 'هيئة التدريس', value: formatNum(totalTeachers), trend: 'أعضاء', trendTone: 'flat' },
+        ]}
+      />
+
+      {/* 5-A8 §6 step 6 (rhythm): the directory is the page's primary
+          section — it takes the breath after the KPI band. */}
+      <Card
+        style={{ marginBlockStart: 'var(--sp-9)' }}
+        title={`الكلّيّات (${visible.length})`}
+        icon={Building2}
+        subtitle={hasFilters
+          ? `من أصل ${countAr(data.length, ['كلّيّة واحدة', 'كلّيّتين', 'كلّيّات', 'كلّيّة'])} · بعد التصفيّة`
+          : `${countAr(totalDepts, ['قسم واحد', 'قسمان', 'أقسام', 'قسماً'])} · ${countAr(totalCourses, ['مقرّر واحد', 'مقرّران', 'مقرّرات', 'مقرّراً'])}`}
+      >
+        {/* R304: the directory's control rail rides the patterns FilterBar —
+            search → city filter → the create action, the family order.
+            The labeled pill keeps its explicit aria-label (the students
+            roster's deep-link labels stay). */}
+        <FilterBar
+          filters={(
+            <>
+              <div className="admin-students-search">
+                <Icon icon={Search} size={14} />
+                <input
+                  type="search"
+                  placeholder="ابحث باسم الكلّيّة أو القسم…"
+                  value={q}
+                  onChange={(e) => setQ(e.target.value)}
+                  className="admin-students-input"
+                  aria-label="البحث في الكلّيّات"
+                />
+              </div>
+              <select
+                className="admin-students-input"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                aria-label="تصفية حسب المدينة"
+              >
+                <option value="">كلّ المدن</option>
+                {cities.map((cty) => <option key={cty} value={cty}>{cty}</option>)}
+              </select>
+            </>
+          )}
+        />
+
+        <div className="flex-col gap-3">
+          {visible.map((f) => (
+            <FacultyRow
+              key={f.id}
+              faculty={f}
+              open={openDepts.has(f.id)}
+              onToggle={() => toggleDepts(f.id)}
+              onAddDepartment={() => openDeptForm(f)}
+            />
+          ))}
+          {visible.length === 0 && (
+            <EmptyState
+              illustration="empty-search"
+              icon={Building2}
+              title="لا توجد نتائج مطابقة"
+              description="جرّب تعديل البحث أو اختيار مدينة أخرى."
+              action={hasFilters ? (
+                <button
+                  type="button"
+                  className="btn ghost sm"
+                  onClick={() => { setQ(''); setCity(''); }}
+                >
+                  <Icon icon={X} size={13} />
+                  مسح البحث والتصفيّة
+                </button>
+              ) : undefined}
+            />
+          )}
+        </div>
+      </Card>
+
+      {/* r180: «إضافة كلّيّة» — the AdminCoursesPage create-course modal
+          pattern verbatim (Modal + FormField canon + footer buttons +
+          the settle-time AlertRow). city is REQUIRED here: the backend's
+          uniqueness key is (institution, name, city), so the hint names
+          it — the 409 copy the server answers with does too. */}
+      <Modal
+        open={facultyFormOpen}
+        onClose={closeFacultyForm}
+        ariaLabel="إضافة كلّيّة جديدة"
+      >
+        <div className="modal-header">
+          <h3 className="modal-title">إضافة كلّيّة جديدة</h3>
+          <button type="button" className="icon-btn" onClick={closeFacultyForm} aria-label="إغلاق">
+            <Icon icon={X} size={18} />
+          </button>
+        </div>
+        <div className="modal-body" style={{ maxWidth: 480 }}>
+          <FormField label="اسم الكلّيّة" id="faculty-name">
+            <input
+              className="input"
+              value={facultyForm.name}
+              onChange={(e) => setFacultyForm({ ...facultyForm, name: e.target.value })}
+              placeholder="كلية العلوم"
+            />
+          </FormField>
+          <FormField label="الاسم بالإنجليزية (اختياري)" id="faculty-name-en" hint="يظهر بجانب الاسم العربي في السجلّ">
+            <input
+              className="input"
+              value={facultyForm.nameEn}
+              onChange={(e) => setFacultyForm({ ...facultyForm, nameEn: e.target.value })}
+              placeholder="Faculty of Science"
+            />
+          </FormField>
+          <FormField
+            label="المدينة"
+            id="faculty-city"
+            hint="الكلّيّات تتميّز بالاسم داخل كل مدينة — الاسم نفسه في مدينة أخرى لا يُعدّ تكرارًا"
+          >
+            <input
+              className="input"
+              value={facultyForm.city}
+              onChange={(e) => setFacultyForm({ ...facultyForm, city: e.target.value })}
+              placeholder="كلية العلوم"
+            />
+          </FormField>
+          <FormField label="رمز تعبيري (اختياري)" id="faculty-icon" hint="يظهر مكان الأيقونة الافتراضية بجانب اسم الكلّيّة">
+            <input
+              className="input"
+              value={facultyForm.iconEmoji}
+              onChange={(e) => setFacultyForm({ ...facultyForm, iconEmoji: e.target.value })}
+              placeholder="رمز تعبيري قصير (اختياري)"
+              maxLength={10}
+            />
+          </FormField>
+        </div>
+        <div className="modal-footer">
+          <button type="button" className="btn ghost" onClick={closeFacultyForm}>
+            إلغاء
+          </button>
+          <button
+            type="button"
+            className="btn primary"
+            onClick={submitFaculty}
+            disabled={!facultyForm.name.trim() || !facultyForm.city.trim()
+              || createFaculty.isPending}
+          >
+            {createFaculty.isPending ? 'جارٍ الإضافة…' : 'إضافة الكلّيّة'}
+          </button>
+        </div>
+        {createFaculty.isError && (
+          <AlertRow
+            color="red"
+            icon={AlertTriangle}
+            title="تعذّر إضافة الكلّيّة"
+            description={apiErrorMessage(
+              createFaculty.error,
+              'لم يستجب الخادم للطلب. إعادة المحاولة.',
+            )}
+          />
+        )}
+      </Modal>
+
+      {/* r180: «إضافة قسم» — same modal grammar, bound to the card the
+          button rode on (the target faculty is named in the body line so
+          the operator never wonders which faculty the new department
+          lands in). */}
+      <Modal
+        open={deptTarget !== null}
+        onClose={closeDeptForm}
+        ariaLabel="إضافة قسم"
+      >
+        <div className="modal-header">
+          <h3 className="modal-title">إضافة قسم</h3>
+          <button type="button" className="icon-btn" onClick={closeDeptForm} aria-label="إغلاق">
+            <Icon icon={X} size={18} />
+          </button>
+        </div>
+        <div className="modal-body" style={{ maxWidth: 480 }}>
+          {deptTarget && (
+            <p className="text-sm text-muted" style={{ marginBlockEnd: 'var(--sp-3)' }}>
+              سيُضاف القسم إلى «{deptTarget.name}».
+            </p>
+          )}
+          <FormField label="اسم القسم" id="dept-name">
+            <input
+              className="input"
+              value={deptForm.name}
+              onChange={(e) => setDeptForm({ ...deptForm, name: e.target.value })}
+              placeholder="قسم الحاسوب"
+            />
+          </FormField>
+          <FormField label="الاسم بالإنجليزية (اختياري)" id="dept-name-en" hint="يظهر بجانب الاسم العربي في السجلّ">
+            <input
+              className="input"
+              value={deptForm.nameEn}
+              onChange={(e) => setDeptForm({ ...deptForm, nameEn: e.target.value })}
+              placeholder="Computer Science"
+            />
+          </FormField>
+        </div>
+        <div className="modal-footer">
+          <button type="button" className="btn ghost" onClick={closeDeptForm}>
+            إلغاء
+          </button>
+          <button
+            type="button"
+            className="btn primary"
+            onClick={submitDepartment}
+            disabled={!deptForm.name.trim() || createDepartment.isPending}
+          >
+            {createDepartment.isPending ? 'جارٍ الإضافة…' : 'إضافة القسم'}
+          </button>
+        </div>
+        {createDepartment.isError && (
+          <AlertRow
+            color="red"
+            icon={AlertTriangle}
+            title="تعذّر إضافة القسم"
+            description={apiErrorMessage(
+              createDepartment.error,
+              'لم يستجب الخادم للطلب. إعادة المحاولة.',
+            )}
+          />
+        )}
+      </Modal>
+    </div>
+  );
+}
+
+/* ─── Admin: Reports (institutional hub — the analysis page folds in here) ── */
+
+function LegendDot({ color, label }: { color: string; label: string }) {
+  return (
+    <span className="trend-legend-item">
+      <span className="trend-legend-dot" style={{ background: color }} />
+      {label}
+    </span>
+  );
+}
+
+/** Arabic labels + badge tones for the research lifecycle (raw enums
+ *  never reach the UI — platform ruling). */
+const PAPER_STATUS_LABEL: Record<ResearchStatus, string> = {
+  UPLOADED: 'مرفوعة',
+  SCANNING: 'قيد الفحص',
+  CHECKS_PASSED: 'اجتازت الفحص',
+  CHECKS_FAILED: 'لم تجتز الفحص',
+  GRADED: 'مقيَّمة',
+  PUBLISHED: 'منشورة',
+};
+/* r149 (R3-A1 #1): انتقل التعريف إلى lib/paperStatus.ts — سلّم واحد
+ * للطالب والمسجل العام (هذه كانت النسخة الأغنى فاعتُمدت كما هي — R320 §B: الإداري = المسجل العام). */
+
+/** One register row — status badge + the moderation-relevant numbers.
+ *  R304: the paper's title is the row's identity cell (ws-id) — its
+ *  offering context rides the ws-meta line under it. */
+function PaperRow({ p }: { p: AdminPaper }) {
+  return (
+    <tr>
+      <td data-label="البحث" className="ws-id">
+        <div className="font-semibold" style={{ color: 'var(--text)' }}>{p.title}</div>
+        {p.offering && (
+          <div className="ws-meta">{p.offering.course.name} · <bdi>{p.offering.course.code}</bdi></div>
+        )}
+      </td>
+      <td data-label="الطالب">
+        <div className="admin-students-name">
+          <UserAvatar
+            initials={p.student.avatarInitials ?? `${p.student.firstName[0]}${p.student.lastName[0]}`}
+            color={p.student.avatarColor ?? undefined}
+            size={28}
+          />
+          <div>{p.student.firstName} {p.student.lastName}</div>
+        </div>
+      </td>
+      <td data-label="الحالة">
+        <Badge color={PAPER_STATUS_TONE[p.status]}>{PAPER_STATUS_LABEL[p.status]}</Badge>
+      </td>
+      <td className="admin-table-num font-mono" data-label="نسبة الاقتباس (محاكاة)">
+        {/* r148 (VLM-C VC-1): تنسيق دفاعي — عشري JS الخام (4.1999…)
+             وصل الجدول حرفيًا من حاصل ضرب عائم في الواجهة الخلفية. */}
+        {p.plagiarismPct != null ? <bdi>{formatPct(p.plagiarismPct)}%</bdi> : '—'}
+      </td>
+      <td data-label="تاريخ الرفع">{formatRelativeArShort(p.uploadedAt)}</td>
+    </tr>
+  );
+}
+
+export function AdminReportsPage() {
+  const { data, isPending, isError, error, refetch } = useAdminReports();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const reducedMotion = useReducedMotion();
+
+  // URL-driven views: ?trend=table is the folded analysis view;
+  // ?status=<ResearchStatus> lands the papers register pre-filtered
+  // (5-A8 §5 landing craft — the target arrives with its pill pressed).
+  const trendView = searchParams.get('trend') === 'table' ? 'table' : 'bars';
+  const statusParam = searchParams.get('status');
+  const status: ResearchStatus | undefined = RESEARCH_STATUSES.includes(statusParam as ResearchStatus)
+    ? (statusParam as ResearchStatus)
+    : undefined;
+
+  // Papers register state — page stays local (pagination noise in the
+  // URL buys nothing); the status filter IS the URL.
+  const [papersPage, setPapersPage] = useState(1);
+  const papers = useAdminPapers({ page: papersPage, limit: 20, status });
+
+  const registerRef = useRef<HTMLDivElement | null>(null);
+  // Landing with ?status= (from the dashboard strip / quick stats) or
+  // changing it (from the KPI row) scrolls the register into view.
+  // `data` gates the scroll: on a cold deep link the page is still the
+  // PageSkeleton when the effect first fires (registerRef null), so the
+  // scroll must re-arm once the reports bundle actually resolves.
+  useEffect(() => {
+    if (!status || !data) return;
+    registerRef.current?.scrollIntoView({
+      block: 'start',
+      behavior: reducedMotion ? 'auto' : 'smooth',
+    });
+  }, [status, data, reducedMotion]);
+
+  const setTrendView = (v: 'bars' | 'table') => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      if (v === 'table') next.set('trend', 'table');
+      else next.delete('trend');
+      return next;
+    });
+  };
+  const setStatusFilter = (s: ResearchStatus | undefined) => {
+    setPapersPage(1);
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      if (s) next.set('status', s);
+      else next.delete('status');
+      return next;
+    });
+  };
+
+  if (isPending) {
+    return (
+      <div className="page r305ao">
+        <PatternsPageHeader
+          title="التقارير المؤسسية"
+          description="مؤشرات أداء الجامعة على مستوى المخرجات الأكاديمية."
+          breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'التقارير المؤسسية' }]}
+        />
+        <StatStripSkeleton />
+        <CardSkeleton lines={6} />
+      </div>
+    );
+  }
+  if (isError || !data) {
+    return (
+      <div className="page r305ao">
+        <PatternsPageHeader
+          title="التقارير المؤسسية"
+          description="مؤشرات أداء الجامعة على مستوى المخرجات الأكاديمية."
+          breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'التقارير المؤسسية' }]}
+        />
+        <Card><ErrorState error={error} onRetry={() => refetch()} /></Card>
+      </div>
+    );
+  }
+
+  const maxBucket = Math.max(1, ...data.paperTrend.map((b) => Math.max(b.submitted, b.graded, b.published)));
+  const months = data.paperTrend.map((b) => b.month);
+  const periodLabel = months.length >= 2 ? `من ${months[0]} إلى ${months[months.length - 1]}` : undefined;
+  const papersMeta = papers.data?.meta;
+
+  return (
+    <div className="page r305ao">
+      <PatternsPageHeader
+        title="التقارير المؤسسية"
+        description="مؤشرات أداء الجامعة على مستوى المخرجات الأكاديمية."
+        index="07"
+        breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'التقارير المؤسسية' }]}
+        actions={(
+          /* R342-09 (D11 sub-page CTA precedent): a read-only ledger still
+                   * names its ONE honest next surface — the adoption view is the
+                   * reports' analytical sibling (the same institutional audience
+                   * reads both). The phone band keeps a primary action in the
+                   * first viewport (the admin topbar hides «اسأل AI»). */
+                  <Link to="/admin/digital" className="btn accent sm">
+            <Icon icon={Activity} size={13} />
+            التحوّل الرقميّ
+          </Link>
+        )}
+      />
+
+      {/* §5 row 8: the papers KPIs land on the register — the URL is
+          the action: ?status=PUBLISHED lands the register pre-filtered
+          (the page's own landing effect scrolls to it), the students
+          cell crosses pages. R190: the typographic stat line replaces
+          the icon-box MetricCard grid (the r189-prerelease pattern). */}
+      <StatStrip
+        ariaLabel="مؤشّرات التقارير المؤسسية"
+        cells={[
+          {
+            label: 'إجمالي البحوث',
+            value: formatNum(data.headline.totalPapers),
+            trend: periodLabel ? `آخر 6 أشهر · ${periodLabel}` : 'في النظام',
+            to: status ? '/admin/reports' : undefined,
+          },
+          {
+            label: 'بحوث منشورة',
+            value: formatNum(data.headline.publishedPapers),
+            trend: 'جاهزة في مكتبة الجامعة',
+            to: '/admin/reports?status=PUBLISHED',
+          },
+          {
+            label: 'طلاب نشطون',
+            value: formatNum(data.headline.activeStudents),
+            trend: 'حسابات تعمل الآن',
+            to: '/admin/students',
+          },
+          {
+            label: 'إجمالي المستخدمين',
+            value: formatNum(data.headline.totalUsers),
+            trend: 'كل الأدوار',
+          },
+        ]}
+      />
+
+      {/* 5-A8 §6 step 2: the analysis page folds in as the trend's table
+          view — one bundle, two presentations, no third arrangement.
+          5-A8 §6 step 6 (rhythm): this is the page's primary section —
+          it breathes after the tight KPI band (the dashboards' charts
+          row carries the same break). */}
+      <Card
+        style={{ marginBlockStart: 'var(--sp-9)' }}
+        title="حركة البحوث العلمية"
+        icon={TrendingUp}
+        subtitle={periodLabel ? `آخر 6 أشهر (${periodLabel}) · مرفوعة، مقيَّمة، منشورة` : 'مرفوعة · مقيَّمة · منشورة'}
+        actions={(
+          <Tabs
+            value={trendView}
+            onChange={setTrendView}
+            items={[
+              { value: 'bars', label: 'أعمدة' },
+              { value: 'table', label: 'جدول' },
+            ]}
+          />
+        )}
+      >
+        {data.paperTrend.length === 0 ? (
+          <EmptyState illustration="empty-research"
+            icon={TrendingUp}
+            title="لا توجد بيانات نشر بعد"
+            description="ستظهر حركة البحوث هنا بعد رفع أول بحث."
+          />
+        ) : trendView === 'table' ? (
+          <div className="table-wrap">
+            {/* r157 (6A9 #6): the shared .table-wrap — the local
+                .trend-table-wrap rule (overflow-x only) is deleted from
+                admin.css; the canonical wrap adds the framed surface +
+                radius every sibling table already sits in. */}
+            <table className="table tbl-stack">
+              <thead>
+                <tr>
+                  <th scope="col">الشهر</th>
+                  <th scope="col">مُقدَّم</th>
+                  <th scope="col">تمّ تقييمه</th>
+                  <th scope="col">منشور</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.paperTrend.map((row, i) => (
+                  <tr key={i}>
+                    {/* r151b (R5-A4): labels restored — the r150d retirement
+                        onto .table+tbl-stack left these four tds bare on
+                        phones («12 / 8 / 5» with no column names). */}
+                    <td data-label="الشهر">{row.month}</td>
+                    <td className="font-mono" data-label="مُقدَّم">{row.submitted}</td>
+                    <td className="font-mono" data-label="تمّ تقييمه">{row.graded}</td>
+                    <td className="font-mono" data-label="منشور">{row.published}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <>
+            <div className="flex-col gap-2">
+              {data.paperTrend.map((b) => (
+                <div key={b.month} className="trend-row">
+                  <span className="trend-label">{b.month}</span>
+                  <div className="trend-bars">
+                    <div
+                      className="trend-bar trend-submitted"
+                      title={`مرفوعة: ${b.submitted}`}
+                      /* 5-C1 (A2 §1c #28): the value rides --trend-scale (0..1)
+                         consumed by a clip-path wipe in components.css —
+                         paint-only, no per-frame reflow. The 0.004 floor
+                         keeps the old 2px min-inline-size sliver for
+                         zero-buckets (≈2px on the trend track). */
+                      style={{ '--trend-scale': Math.max(b.submitted / maxBucket, 0.004) } as CSSProperties}
+                    >
+                      {b.submitted > 0 && <span className="trend-bar-val">{b.submitted}</span>}
+                    </div>
+                    <div
+                      className="trend-bar trend-graded"
+                      title={`مقيَّمة: ${b.graded}`}
+                      style={{ '--trend-scale': Math.max(b.graded / maxBucket, 0.004) } as CSSProperties}
+                    >
+                      {b.graded > 0 && <span className="trend-bar-val">{b.graded}</span>}
+                    </div>
+                    <div
+                      className="trend-bar trend-published"
+                      title={`منشورة: ${b.published}`}
+                      style={{ '--trend-scale': Math.max(b.published / maxBucket, 0.004) } as CSSProperties}
+                    >
+                      {b.published > 0 && <span className="trend-bar-val">{b.published}</span>}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="trend-legend">
+              <LegendDot color="var(--accent)" label="مرفوعة" />
+              {/* 5-D1 (A11 P2-4): matches .trend-graded — the amber series
+                  tier (--chart-6), not --gold (2.30:1 on the white card in
+                  light; collapses onto the accent bar in dark). */}
+              <LegendDot color="var(--chart-6)" label="مقيَّمة" />
+              <LegendDot color="var(--success)" label="منشورة" />
+            </div>
+          </>
+        )}
+      </Card>
+
+      {/* Papers register — 5-B4 consuming GET /admin/papers (5-B1):
+          status pills + pagination, the §5 row 8 drill-down landing. */}
+      <div ref={registerRef} style={{ scrollMarginBlockStart: 'var(--sp-4)' }}>
+        <Card
+          title="سجلّ البحوث"
+          icon={FileText}
+          subtitle={papersMeta
+            ? `${countAr(papersMeta.total, ['ورقة واحدة', 'ورقتان', 'أوراق', 'ورقة'])}${status ? ` · ${PAPER_STATUS_LABEL[status]}` : ' · جميع الحالات'}`
+            : 'سجلّ مؤسّسيّ لبحوث الطلاب عبر دورة حياتها'}
+        >
+          <div className="filter-bar" role="group" aria-label="تصفية البحوث حسب الحالة">
+            <button
+              type="button"
+              className={`pill${status === undefined ? ' on' : ''}`}
+              aria-pressed={status === undefined}
+              onClick={() => setStatusFilter(undefined)}
+            >
+              الكل
+            </button>
+            {RESEARCH_STATUSES.map((st) => (
+              <button
+                key={st}
+                type="button"
+                className={`pill${status === st ? ' on' : ''}`}
+                aria-pressed={status === st}
+                onClick={() => setStatusFilter(st)}
+              >
+                {PAPER_STATUS_LABEL[st]}
+              </button>
+            ))}
+          </div>
+
+          {papers.isPending ? (
+            <TableSkeleton rows={5} cols={5} />
+          ) : papers.isError ? (
+            <ErrorState
+              error={papers.error}
+              message="تعذّر تحميل سجلّ البحوث"
+              onRetry={() => papers.refetch()}
+            />
+          ) : papers.data && papers.data.data.length === 0 ? (
+            <EmptyState
+              icon={FileText}
+              title={status ? `لا توجد بحوث بحالة «${PAPER_STATUS_LABEL[status]}»` : 'لا توجد بحوث بعد'}
+              description={status
+                ? 'جرّب حالة أخرى أو اعرض جميع الحالات.'
+                : 'ستظهر البحوث هنا فور رفع أول بحث إلى المنصة.'}
+              action={status ? (
+                <button type="button" className="btn ghost sm" onClick={() => setStatusFilter(undefined)}>
+                  <Icon icon={X} size={13} />
+                  عرض جميع الحالات
+                </button>
+              ) : undefined}
+            />
+          ) : papers.data ? (
+            <div className="table-wrap">
+              {/* R304: the register rides the workspace table family —
+                  identity-first cells, quiet 13px header voice. */}
+              <table className="table tbl-stack ws-table">
+                <thead>
+                  <tr>
+                    <th scope="col">البحث</th>
+                    <th scope="col">الطالب</th>
+                    <th scope="col">الحالة</th>
+                    <th scope="col" className="admin-table-num" style={{ width: 110 }} title="قيمة محاكاة تجريبية — ليست قياساً فعلياً حتى تفعيل كشف حقيقي">نسبة الاقتباس <span className="text-xxs text-subtle">محاكاة</span></th>
+                    <th scope="col" style={{ width: 130 }}>تاريخ الرفع</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {papers.data.data.map((p) => <PaperRow key={p.id} p={p} />)}
+                </tbody>
+              </table>
+              {papersMeta && papersMeta.totalPages > 1 && (
+                <TablePaginationFooter
+                  page={papersMeta.page}
+                  totalPages={papersMeta.totalPages}
+                  total={papersMeta.total}
+                  unit={PAPER_UNIT}
+                  onPage={setPapersPage}
+                />
+              )}
+            </div>
+          ) : null}
+        </Card>
+      </div>
+
+      {/* Top courses */}
+      <Card title="أكثر المقرّرات تسجيلاً" icon={ClipboardCheck} subtitle={data.topCourses.length > 0 ? `أعلى ${countAr(data.topCourses.length, ['مقرّر', 'مقرّرين', 'مقرّرات', 'مقرّراً'])} بناءً على عدد الطلاب` : undefined}>
+        {data.topCourses.length === 0 ? (
+          <EmptyState illustration="empty-list"
+            icon={ClipboardCheck}
+            title="لا توجد تسجيلات بعد"
+            description="ستظهر المقرّرات الأعلى تسجيلاً هنا فور تسجيل الطلاب في مقرّراتهم."
+          />
+        ) : (
+          <div className="table-wrap">
+            <table className="table tbl-stack ws-table">
+              <thead>
+                <tr>
+                  <th scope="col" style={{ width: 110 }}>الكود</th>
+                  <th scope="col">اسم المقرّر</th>
+                  <th scope="col" className="admin-table-num" style={{ width: 130 }}>طلاب مسجَّلون</th>
+                  <th scope="col" className="admin-table-num" style={{ width: 110 }}>المحاضرات</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.topCourses.map((c) => (
+                  <tr key={c.code}>
+                    <td className="font-mono text-subtle" data-label="الكود"><bdi>{c.code}</bdi></td>
+                    <td className="ws-id" data-label="اسم المقرّر">{c.name}</td>
+                    <td className="admin-table-num font-mono" data-label="طلاب مسجَّلون">{c.enrollments}</td>
+                    <td className="admin-table-num font-mono" data-label="المحاضرات">{c.lectures}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Card>
+    </div>
+  );
+}
+
+/* ─── Admin: Courses ─────────────────────────────────────── */
+export function AdminCoursesPage() {
+  // 5-A8 P2-1 (the silent 20-row cap): server-side search + faculty
+  // filter + pagination (5-B1's params), the students-roster pattern.
+  // The KPI row is gone on purpose — its aggregates were computed over
+  // a capped page (the bug itself); the header's count now reads the
+  // server meta, and the roster owns the page.
+  const [page, setPage] = useState(1);
+  const [q, setQ] = useState('');
+  const [debouncedQ, setDebouncedQ] = useState('');
+  const [facultyId, setFacultyId] = useState('');
+  const facQ = useFaculties(useCurrentInstitutionSlug()); // r180: caller-institution scoping
+
+  // ── Course CRUD (16-decisions #5: the page was display-only) ──────
+  /* r153i: formMode replaces the old `{} as AdminCourse` fake-object
+   * cast — three honest states instead of a sentinel object. */
+  const [formMode, setFormMode] = useState<'create' | 'edit' | null>(null);
+  const [editing, setEditing] = useState<AdminCourse | null>(null);
+  const [form, setForm] = useState<CourseFormInput>({
+    code: '', name: '', credits: 3, departmentId: '',
+  });
+  const [confirmingDelete, setConfirmingDelete] = useState<AdminCourse | null>(null);
+  const createCourse = useCreateCourse();
+  const updateCourse = useUpdateCourse(editing?.id ?? '');
+  const deleteCourse = useDeleteCourse();
+  const closeForm = () => { setFormMode(null); setEditing(null); };
+
+  const openCreate = () => {
+    setForm({ code: '', name: '', credits: 3, departmentId: '' });
+    setEditing(null);
+    setFormMode('create');
+  };
+  const openEdit = (c: AdminCourse) => {
+    // r153i: resolve by id — department names are only unique per
+    // faculty, and the seed really has two same-named science
+    // departments (the projection ships departmentId for this).
+    setForm({
+      code: c.code,
+      name: c.name,
+      credits: c.credits,
+      departmentId: c.departmentId ?? '',
+    });
+    setEditing(c);
+    setFormMode('edit');
+  };
+  /* r153i: the modal stays open until the mutation SETTLES — the old
+   * code closed it immediately, so the in-modal error AlertRow below
+   * could never render and a failed save looked like a silent
+   * success. Per-call onSuccess composes with the hook-level cache
+   * invalidations (React Query v5 runs both). */
+  const submit = () => {
+    if (formMode === 'edit' && editing) {
+      updateCourse.mutate(form as Partial<CourseFormInput>, {
+        onSuccess: () => {
+          toast.success(`حُفظت تعديلات «${form.name}».`, { title: 'تمّ الحفظ' });
+          closeForm();
+        },
+      });
+    } else {
+      createCourse.mutate(form, {
+        onSuccess: () => {
+          toast.success(`أُضيف مقرّر «${form.name}» إلى السجلّ.`, { title: 'تمّت الإضافة' });
+          closeForm();
+        },
+      });
+    }
+  };
+  /* r153i: destructive action through the platform's accessible
+   * ConfirmDialog (focus trap +Escape + aria) — the old native
+   * confirm() had none of that — with toast feedback on both ends. */
+  const remove = (c: AdminCourse) => setConfirmingDelete(c);
+
+  // ── Offering create (r180 — «فتح شعبة», the r168 dead-end closed) ──
+  /* Which course the offering modal targets (null = closed) — the same
+   * honest target-object pattern as confirmingDelete above. The teacher
+   * picker query is `enabled` only while the modal is open, so the
+   * roster page fires no idle /admin/users round-trips. */
+  const [offeringCourse, setOfferingCourse] = useState<AdminCourse | null>(null);
+  const [offeringForm, setOfferingForm] = useState<OfferingFormInput>({
+    courseId: '', teacherId: '', term: '', room: '', capacity: 40,
+  });
+  const createOffering = useCreateOffering();
+  const teachersQ = useAdminTeachers(offeringCourse !== null);
+  const closeOfferingForm = () => setOfferingCourse(null);
+  const openOfferingForm = (c: AdminCourse) => {
+    // capacity 40 = the backend schema's own default (offeringCreateSchema).
+    setOfferingForm({ courseId: c.id, teacherId: '', term: '', room: '', capacity: 40 });
+    setOfferingCourse(c);
+  };
+  const submitOffering = () => {
+    if (!offeringCourse) return;
+    const room = offeringForm.room?.trim() ?? '';
+    createOffering.mutate(
+      {
+        courseId: offeringCourse.id,
+        teacherId: offeringForm.teacherId,
+        term: offeringForm.term.trim(),
+        // Room is optional on the wire (zod: nullable().optional()) —
+        // an empty input sends nothing, not ''.
+        ...(room ? { room } : {}),
+        capacity: offeringForm.capacity,
+      },
+      {
+        onSuccess: () => {
+          toast.success(
+            `فُتحت شعبة «${offeringCourse.name}» للفصل «${offeringForm.term.trim()}».`,
+            { title: 'تمّ فتح الشعبة' },
+          );
+          closeOfferingForm();
+        },
+      },
+    );
+  };
+
+  // ── End of CRUD ────────────────────────────────────────────────
+  const appliedQ = useRef(debouncedQ);
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const next = q.trim();
+      if (next === appliedQ.current) return;
+      appliedQ.current = next;
+      setDebouncedQ(next);
+      setPage(1);
+    }, 300);
+    return () => clearTimeout(t);
+  }, [q]);
+
+  // r183-B5 (A8 wave-A P2): the 8-column roster scrolled 162px sideways
+  // at 768 — the compact band folds «تسجيلات»+«الفصول» into the row's
+  // meta line at ≤1024 (8 → 6 columns, the QualityPages column-diet
+  // pattern). ≤640 keeps the .tbl-stack card collapse; the folded counts
+  // stay visible in the meta line there too.
+  const compact = useCompactRosterBand();
+  const courseCols = compact ? 6 : 8;
+
+  const coursesQ = useAdminCourses({
+    page,
+    limit: 20,
+    q: debouncedQ || undefined,
+    facultyId: facultyId || undefined,
+  });
+  const hasFilters = debouncedQ !== '' || facultyId !== '';
+  const clearFilters = () => {
+    setQ('');
+    setDebouncedQ('');
+    setFacultyId('');
+    setPage(1);
+  };
+
+  const meta = coursesQ.data?.meta;
+  const courses = coursesQ.data?.data;
+
+  return (
+    <div className="page r305ao">
+      <PatternsPageHeader
+        title="إدارة المقرّرات"
+        description={meta
+          ? `${countAr(meta.total, ['مقرّر واحد', 'مقرّران', 'مقرّرات', 'مقرّراً'])}${hasFilters ? ' مطابقة للبحث والتصفيّة' : ' في الجامعة'}`
+          : 'جميع المقرّرات الجامعية مع إحصائيات حيّة.'}
+        index="04"
+        breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'المقرّرات' }]}
+        actions={(
+          /* R342-09 (the students-page family contract): the page's ONE
+                   * create action rides the header action slot on the accent
+                   * register — the first viewport at every width keeps the
+                   * affordance (the admin topbar hides «اسأل AI» entirely). The
+                   * FilterBar trailing seat returns to filters-only. */
+                  <button
+            type="button"
+            className="btn accent sm"
+            onClick={openCreate}
+            aria-label="إضافة مقرّر جديد"
+          >
+            <Icon icon={Plus} size={14} />
+            إضافة مقرّر
+          </button>
+        )}
+      />
+
+      <Card>
+        {/* R304: the roster's control rail rides the patterns FilterBar —
+            both filters run server-side (R342-09: the create action moved
+            up to the page header's action slot, the students-page family
+            contract). The old capped-KPI header copy retired — the count
+            reads the server meta in the header description. */}
+        <FilterBar
+          filters={(
+            <>
+              <div className="admin-students-search">
+                <Icon icon={Search} size={14} />
+                <input
+                  type="search"
+                  placeholder="ابحث بالاسم أو الكود…"
+                  value={q}
+                  onChange={(e) => setQ(e.target.value)}
+                  className="admin-students-input"
+                  aria-label="البحث في المقرّرات"
+                />
+              </div>
+              <select
+                className="admin-students-input"
+                value={facultyId}
+                onChange={(e) => { setFacultyId(e.target.value); setPage(1); }}
+                disabled={facQ.isPending}
+                aria-label="تصفية حسب الكلّيّة"
+              >
+                <option value="">{facQ.isPending ? 'جارٍ تحميل الكلّيّات…' : 'كلّ الكلّيّات'}</option>
+                {facQ.data?.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
+              </select>
+              {facQ.isError && (
+                <button type="button" className="btn ghost sm" onClick={() => facQ.refetch()}>
+                  إعادة تحميل الكلّيّات
+                </button>
+              )}
+            </>
+          )}
+        />
+
+        {/* 8 columns now — the r155c actions header made the skeleton's
+            cols={7} under-advertise the table it stands in for.
+            r183-B5: the compact diet renders 6. */}
+        {coursesQ.isPending && <TableSkeleton rows={6} cols={courseCols} />}
+        {coursesQ.isError && (
+          <ErrorState
+            error={coursesQ.error}
+            message="تعذّر تحميل قائمة المقرّرات"
+            onRetry={() => coursesQ.refetch()}
+          />
+        )}
+        {courses && (
+          <div className="table-wrap">
+            {/* R304: the roster rides the workspace table family —
+                identity-first name cell, quiet header voice, and on
+                phones the name becomes the summary card's title. */}
+            <table className="table tbl-stack ws-table">
+              <thead>
+                <tr>
+                  <th scope="col" style={{ width: 100 }}>الكود</th>
+                  <th scope="col">اسم المقرّر</th>
+                  <th scope="col">الكلّيّة / القسم</th>
+                  <th scope="col" className="admin-table-num" style={{ width: 70 }}>س.م</th>
+                  {/* r183-B5: folded into the name cell's meta line at
+                      ≤1024 (the compact band) — counts stay on the row. */}
+                  {!compact && <th scope="col" className="admin-table-num" style={{ width: 110 }}>تسجيلات</th>}
+                  <th scope="col" className="admin-table-num" style={{ width: 100 }}>محاضرات</th>
+                  {!compact && <th scope="col" className="admin-table-num" style={{ width: 100 }}>الفصول</th>}
+                  {/* r155c: the rows already carried an 8th data-label cell
+                      (الإجراءات — تعديل/حذف) with no matching header, and the
+                      empty-state row spanned 7 of 8 columns. Follows the
+                      established actions-header pattern (AdminExtraPages
+                      students table / OwnerUsersPage).
+                      r166e: dropped r166b's end-alignment class —
+                      its text-align: end moved the header to the
+                      column's opposite edge while the cluster's
+                      justify-end had no CSS rule anywhere (dead
+                      utility, computed justify-content: normal).
+                      Plain th = the family pattern: header and
+                      buttons share the START edge (right in RTL),
+                      like the students table. */}
+                  <th scope="col">إجراءات</th>
+                </tr>
+              </thead>
+              <tbody>
+                {courses.length === 0 && (
+                  <tr>
+                    <td colSpan={courseCols}>
+                      <EmptyState illustration="empty-search"
+                        title="لا توجد نتائج"
+                        description="جرّب تعديل البحث أو الفلتر لعرض نتائج أوسع."
+                        action={hasFilters ? (
+                          <button type="button" className="btn ghost sm" onClick={clearFilters}>
+                            <Icon icon={X} size={13} />
+                            مسح البحث والفلتر
+                          </button>
+                        ) : undefined}
+                      />
+                    </td>
+                  </tr>
+                )}
+                {courses.map((c) => (
+                  <tr key={c.id}>
+                    <td className="font-mono text-subtle" data-label="الكود"><bdi>{c.code}</bdi></td>
+                    <td data-label="اسم المقرّر" className="ws-id">
+                      <div className="flex items-center gap-2">
+                        {c.themeColor && (
+                          <span className="admin-course-tint" style={{ background: c.themeColor }} aria-hidden />
+                        )}
+                        <div>
+                          <span className="font-semibold" style={{ color: 'var(--text)' }}>{c.name}</span>
+                          {compact && (
+                            <div className="ws-meta">
+                              {countAr(c.totalEnrollments, ['تسجيل واحد', 'تسجيلان', 'تسجيلات', 'تسجيلاً'])}
+                              {' · '}
+                              {countAr(c.offeringCount, ['فصل واحد', 'فصلان', 'فصول', 'فصلاً'])}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </td>
+                    <td data-label="الكلّيّة / القسم">
+                      {c.faculty ? (
+                        <div className="flex items-center gap-1">
+                          <EmojiIcon emoji={c.facultyEmoji} fallback={BookOpen} size={16} className="text-subtle" />
+                          <span className="text-xs text-muted">{c.faculty}</span>
+                          {c.department && <span className="text-xxs text-subtle">· {c.department}</span>}
+                        </div>
+                      ) : (
+                        <span className="text-xxs text-subtle">—</span>
+                      )}
+                    </td>
+                    <td className="admin-table-num font-mono" data-label="ساعات معتمدة">{c.credits}</td>
+                    {!compact && <td className="admin-table-num font-mono" data-label="تسجيلات">{c.totalEnrollments}</td>}
+                    <td className="admin-table-num font-mono" data-label="محاضرات">{c.totalLectures}</td>
+                    {!compact && <td className="admin-table-num font-mono" data-label="الفصول">{c.offeringCount}</td>}
+                    {/* r157 (6A9 #9): font-mono dropped — the actions cell
+                        carries Arabic button labels, not figures; the mono
+                        face was a copy-paste from the numeric neighbors.
+                        r166e: the r166b alignment class is gone and
+                        the dead justify-end utility dropped with it
+                        (no rule exists — it computed
+                        justify-content: normal, so the end-aligned
+                        header sat opposite the start-packed buttons).
+                        Plain td/cluster packs from the START edge
+                        like the students table. */}
+                    <td data-label="الإجراءات">
+                      <div className="flex items-center gap-2">
+                        {/* r180: «فتح شعبة» leads the cluster — the section
+                            create is this round's headline action, and the
+                            ghost sm + Plus grammar matches the siblings
+                            (the toolbar's «إضافة مقرّر» is its primary
+                            twin). */}
+                        <button
+                          type="button"
+                          className="btn ghost sm"
+                          onClick={() => openOfferingForm(c)}
+                          aria-label={`فتح شعبة لمقرّر ${c.name}`}
+                        >
+                          <Icon icon={Plus} size={13} />
+                          فتح شعبة
+                        </button>
+                        <button
+                          type="button"
+                          className="btn ghost sm"
+                          onClick={() => openEdit(c)}
+                          aria-label={`تعديل ${c.name}`}
+                        >
+                          <Icon icon={ArrowLeft} size={13} />
+                          تعديل
+                        </button>
+                        {/* R305-A8: the destructive verb stands apart —
+                            the reference danger fill rides the standalone
+                            .r305ao-btn-danger class (the scoped sheet's
+                            §9 hierarchy) while the ghost danger variant
+                            stays for non-scoped surfaces. The confirm
+                            flow below is untouched. */}
+                        <button
+                          type="button"
+                          className="btn ghost sm danger r305ao-btn-danger"
+                          onClick={() => remove(c)}
+                          aria-label={`حذف ${c.name}`}
+                        >
+                          <Icon icon={Trash2} size={13} />
+                          حذف
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {meta && meta.totalPages > 1 && (
+              <TablePaginationFooter
+                page={meta.page}
+                totalPages={meta.totalPages}
+                total={meta.total}
+                unit={['مقرّر واحد', 'مقرّران', 'مقرّرات', 'مقرّراً']}
+                onPage={setPage}
+              />
+            )}
+          </div>
+        )}
+      </Card>
+
+      {/* Course create/edit form — 16-decisions #5. Keyed off formMode:
+          switching between create and edit remounts the modal and resets
+          the local draft (the same per-item pattern the governance cards
+          use). r153i: the four fields joined the FormField canon
+          (r152c) — the retired .comp-form-field class was a regression
+          the unaudited merge reintroduced. */}
+      <Modal
+        open={formMode !== null}
+        onClose={closeForm}
+        ariaLabel={formMode === 'edit' ? 'تعديل المقرّر' : 'إضافة مقرّر جديد'}
+      >
+        <div className="modal-header">
+          <h3 className="modal-title">
+            {formMode === 'edit' ? 'تعديل المقرّر' : 'إضافة مقرّر جديد'}
+          </h3>
+          <button type="button" className="icon-btn" onClick={closeForm} aria-label="إغلاق">
+            <Icon icon={X} size={18} />
+          </button>
+        </div>
+        <div className="modal-body" style={{ maxWidth: 480 }}>
+          <FormField label="كود المقرّر" id="course-code" hint="مثال: CS101 — يظهر بخط أحادي في السجلّ">
+            <input
+              className="input"
+              value={form.code}
+              onChange={(e) => setForm({ ...form, code: e.target.value })}
+              placeholder="CS101"
+            />
+          </FormField>
+          <FormField label="اسم المقرّر" id="course-name">
+            <input
+              className="input"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              placeholder="مقدمة في علوم الحاسب"
+            />
+          </FormField>
+          <FormField label="القسم" id="course-dept" hint="الكلّيّة تحدّدها القسم الذي تختاره">
+            <select
+              className="input"
+              value={form.departmentId}
+              onChange={(e) => setForm({ ...form, departmentId: e.target.value })}
+              disabled={facQ.isPending}
+            >
+              <option value="">اختر القسم…</option>
+              {facQ.data?.flatMap((f) =>
+                f.departments.map((d) => (
+                  <option key={d.id} value={d.id}>{f.name} · {d.name}</option>
+                )),
+              )}
+            </select>
+          </FormField>
+          <FormField
+            label="الساعات المعتمدة"
+            id="course-credits"
+            hint="بين 1 و10 — الحدّ الذي يقبله الخادم؛ الزرّ يبقى معطّلًا خارجه"
+          >
+            <input
+              className="input"
+              type="number"
+              min={1}
+              max={10}
+              value={form.credits}
+              onChange={(e) => setForm({ ...form, credits: Number(e.target.value) })}
+            />
+          </FormField>
+        </div>
+        <div className="modal-footer">
+          <button type="button" className="btn ghost" onClick={closeForm}>
+            إلغاء
+          </button>
+          <button
+            type="button"
+            className="btn primary"
+            onClick={submit}
+            disabled={!form.code || !form.name || !form.departmentId ||
+              !(form.credits >= 1) ||
+              createCourse.isPending || updateCourse.isPending}
+          >
+            {createCourse.isPending || updateCourse.isPending
+              ? 'جارٍ الحفظ…'
+              : formMode === 'edit' ? 'حفظ التعديلات' : 'إضافة المقرّر'}
+          </button>
+        </div>
+        {(createCourse.isError || updateCourse.isError) && (
+          <AlertRow
+            color="red"
+            icon={AlertTriangle}
+            title="تعذّر حفظ المقرّر"
+            description={apiErrorMessage(
+              createCourse.isError ? createCourse.error : updateCourse.error,
+              'لم يستجب الخادم للطلب. إعادة المحاولة.',
+            )}
+          />
+        )}
+      </Modal>
+
+      {/* r180: «فتح شعبة» — the offering create modal (POST /offerings,
+          the r168 endpoint that had ZERO frontend consumers). Same modal
+          grammar as the course form; the teacher select reads the
+          institution's TEACHER roster (useAdminTeachers — enabled only
+          while this modal is open) because the backend rejects any
+          teacher who is not an ACTIVE TEACHER member of the course's
+          institution. The term is free text 1..50 (placeholder carries
+          the platform's convention) and capacity defaults to the
+          backend schema's own 40. */}
+      <Modal
+        open={offeringCourse !== null}
+        onClose={closeOfferingForm}
+        ariaLabel="فتح شعبة"
+      >
+        <div className="modal-header">
+          <h3 className="modal-title">فتح شعبة</h3>
+          <button type="button" className="icon-btn" onClick={closeOfferingForm} aria-label="إغلاق">
+            <Icon icon={X} size={18} />
+          </button>
+        </div>
+        <div className="modal-body" style={{ maxWidth: 480 }}>
+          {offeringCourse && (
+            <p className="text-sm text-muted" style={{ marginBlockEnd: 'var(--sp-3)' }}>
+              سيُدرَّس مقرّر «{offeringCourse.name}» (<bdi>{offeringCourse.code}</bdi>) في الشعبة الجديدة.
+            </p>
+          )}
+          <FormField label="الفصل الدراسي" id="offering-term" hint="نص حرّ من 1 إلى 50 حرفًا — مثال: 2024-FALL">
+            <input
+              className="input"
+              value={offeringForm.term}
+              onChange={(e) => setOfferingForm({ ...offeringForm, term: e.target.value })}
+              placeholder="2024-FALL"
+              maxLength={50}
+            />
+          </FormField>
+          <FormField
+            label="الأستاذ"
+            id="offering-teacher"
+            hint="أساتذة مؤسستك فقط — لا تُسند الشُّعب إلا لعضو هيئة تدريس نشط فيها"
+          >
+            <select
+              className="input"
+              value={offeringForm.teacherId}
+              onChange={(e) => setOfferingForm({ ...offeringForm, teacherId: e.target.value })}
+              disabled={teachersQ.isPending}
+            >
+              <option value="">
+                {teachersQ.isPending ? 'جارٍ تحميل الأساتذة…' : 'اختر الأستاذ…'}
+              </option>
+              {teachersQ.data?.map((t) => (
+                <option key={t.id} value={t.id}>{t.name}</option>
+              ))}
+            </select>
+          </FormField>
+          <FormField label="القاعة (اختياري)" id="offering-room">
+            <input
+              className="input"
+              value={offeringForm.room}
+              onChange={(e) => setOfferingForm({ ...offeringForm, room: e.target.value })}
+              placeholder="قاعة A12"
+            />
+          </FormField>
+          <FormField label="السعة" id="offering-capacity" hint="أقصى عدد طلاب يمكن تسجيلهم في الشعبة">
+            <input
+              className="input"
+              type="number"
+              min={1}
+              max={10000}
+              value={offeringForm.capacity}
+              onChange={(e) => setOfferingForm({ ...offeringForm, capacity: Number(e.target.value) })}
+            />
+          </FormField>
+          {teachersQ.isError && (
+            <AlertRow
+              color="red"
+              icon={AlertTriangle}
+              title="تعذّر تحميل قائمة الأساتذة"
+              description={apiErrorMessage(
+                teachersQ.error,
+                'لم يستجب الخادم للطلب. إعادة المحاولة.',
+              )}
+              actions={
+                <button
+                  type="button"
+                  className="btn ghost sm"
+                  onClick={() => teachersQ.refetch()}
+                  disabled={teachersQ.isPending}
+                >
+                  إعادة المحاولة
+                </button>
+              }
+            />
+          )}
+        </div>
+        <div className="modal-footer">
+          <button type="button" className="btn ghost" onClick={closeOfferingForm}>
+            إلغاء
+          </button>
+          <button
+            type="button"
+            className="btn primary"
+            onClick={submitOffering}
+            disabled={!offeringForm.term.trim() || !offeringForm.teacherId
+              || !(offeringForm.capacity >= 1) || createOffering.isPending}
+          >
+            {createOffering.isPending ? 'جارٍ الفتح…' : 'فتح الشعبة'}
+          </button>
+        </div>
+        {createOffering.isError && (
+          <AlertRow
+            color="red"
+            icon={AlertTriangle}
+            title="تعذّر فتح الشعبة"
+            description={apiErrorMessage(
+              createOffering.error,
+              'لم يستجب الخادم للطلب. إعادة المحاولة.',
+            )}
+          />
+        )}
+      </Modal>
+
+      {/* r153i: destructive confirm — the accessible ConfirmDialog
+          (focus trap + Escape + aria) replaces the old native
+          confirm(); toast feedback closes the loop on both ends. */}
+      <ConfirmDialog
+        open={confirmingDelete !== null}
+        title="حذف المقرّر"
+        message={confirmingDelete
+          ? `سيُحذف «${confirmingDelete.name}» نهائيًا من السجلّ الجامعي. لا يمكن التراجع عن هذا الإجراء.`
+          : ''}
+        confirmLabel="حذف نهائي"
+        danger
+        onCancel={() => setConfirmingDelete(null)}
+        onConfirm={async () => {
+          if (!confirmingDelete) return;
+          const target = confirmingDelete;
+          setConfirmingDelete(null);
+          try {
+            await deleteCourse.mutateAsync(target.id);
+            toast.success(`حُذف «${target.name}» من السجلّ.`, { title: 'تمّ الحذف' });
+          } catch (err) {
+            toast.error(apiErrorMessage(err, 'تعذّر حذف المقرّر — قد تكون له شُعب أو مفاهيم مرتبطة.'), {
+              title: 'فشل الحذف',
+            });
+          }
+        }}
+      />
+    </div>
+  );
+}

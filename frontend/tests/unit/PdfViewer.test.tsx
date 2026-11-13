@@ -1,0 +1,371 @@
+/**
+ * 12-12 — PdfViewer behavior tests (audit 11-f batch B / P2-14).
+ *
+ * Pins the load/search lifecycle contracts that previously had zero
+ * coverage:
+ *   1. password-protected PDFs get the friendly message and NO retry
+ *      affordance — re-running the same no-credential load cannot
+ *      succeed (audit 11-f P2-8),
+ *   2. corrupt PDFs keep the generic retryable error, and the retry
+ *      button really re-runs the load,
+ *   3. search collects hits across pages and jumps to the first hit,
+ *   4. a document switch mid-search discards the stale walk — no stale
+ *      hits, no page jump into the wrong document (audit 11-f P1-3),
+ *   5. an unmount mid-search swallows the destroy rejection instead of
+ *      surfacing an unhandled promise rejection (audit 11-f P1-3).
+ *
+ * pdfjs-dist is fully mocked (getDocument + TextLayer + the `?url`
+ * worker import), and the canvas 2d context is stubbed to null so the
+ * render path early-returns — each test drives only the behavior it
+ * asserts (load, search walk, error classification).
+ */
+import { describe, expect, it, vi, beforeAll, afterAll, afterEach } from 'vitest';
+import { render, screen, fireEvent, act } from '@testing-library/react';
+import PdfViewer from '../../src/components/pdf/PdfViewer';
+import { useAuthStore } from '../../src/stores/auth.store';
+
+const getDocumentMock = vi.hoisted(() => vi.fn());
+// NOTE: the factory must not use class FIELDS (only methods) — vitest's
+// mock hoisting rewrites factory references, and a field initializer
+// trips the rewritten import bindings with a TDZ error.
+vi.mock('pdfjs-dist', () => ({
+  GlobalWorkerOptions: { workerSrc: '' },
+  getDocument: (...args: unknown[]) => getDocumentMock(...args),
+  TextLayer: class {
+    async render() { return undefined; }
+  },
+}));
+
+/** Manual promise — lets a test park the component mid-async-operation. */
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  let reject!: (reason?: unknown) => void;
+  const promise = new Promise<T>((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+  return { promise, resolve, reject };
+}
+
+/** A fake PDFDocumentProxy whose page n carries pageTexts[n-1]. */
+function makeDoc(pageTexts: string[]) {
+  return {
+    numPages: pageTexts.length,
+    getPage: vi.fn(async (n: number) => ({
+      getViewport: () => ({ width: 612, height: 792 }),
+      getTextContent: async () => ({ items: [{ str: pageTexts[n - 1] ?? '' }] }),
+    })),
+    destroy: vi.fn(),
+  };
+}
+
+/** A fake PDFDocumentLoadingTask resolved with `doc`. */
+function taskFor(doc: unknown) {
+  return { promise: Promise.resolve(doc), destroy: vi.fn() };
+}
+
+beforeAll(() => {
+  // jsdom has no canvas implementation — renderPage gracefully early-
+  // returns on a null 2d context, keeping these tests on the load and
+  // search paths only.
+  vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockImplementation(() => null);
+});
+
+afterAll(() => {
+  vi.restoreAllMocks();
+});
+
+afterEach(() => {
+  getDocumentMock.mockReset();
+});
+
+async function openSearchAndType(term: string) {
+  fireEvent.click(screen.getByRole('button', { name: 'بحث في المستند' }));
+  fireEvent.change(screen.getByLabelText('البحث في المستند'), { target: { value: term } });
+}
+
+describe('PdfViewer — document load errors', () => {
+  it('shows the password message without a retry button for password-protected PDFs', async () => {
+    getDocumentMock.mockReturnValueOnce({
+      promise: Promise.reject({ name: 'PasswordException', message: 'No password given' }),
+      destroy: vi.fn(),
+    });
+
+    render(<PdfViewer src="/papers/locked.pdf" />);
+
+    expect(await screen.findByText('هذا المستند محمي بكلمة مرور')).toBeInTheDocument();
+    // Retry re-runs the same no-credential load — it must not be offered.
+    expect(screen.queryByRole('button', { name: 'إعادة المحاولة' })).toBeNull();
+  });
+
+  it('keeps the retryable generic error for corrupt PDFs and retries the load', async () => {
+    getDocumentMock
+      .mockReturnValueOnce({
+        promise: Promise.reject(new Error('Invalid PDF structure')),
+        destroy: vi.fn(),
+      })
+      .mockReturnValueOnce(taskFor(makeDoc(['صفحة أولى'])));
+
+    render(<PdfViewer src="/papers/broken.pdf" />);
+
+    expect(await screen.findByText('تعذّر تحميل المستند')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'إعادة المحاولة' }));
+
+    // The retry re-runs the load effect — the second task resolves and
+    // the toolbar reflects the loaded document's page count.
+    expect(await screen.findByText('من 1')).toBeInTheDocument();
+    expect(getDocumentMock).toHaveBeenCalledTimes(2);
+  });
+});
+
+/* ── r164f — HTTP gate classification (components/pdf/loadError.ts) ──
+ * pdf.js folds non-2xx answers into MissingPDFException (404) /
+ * UnexpectedResponseException (status). The viewer must NOT render one
+ * generic «تعذّر تحميل المستند» + retry for them: a 404 (orphan bytes)
+ * or 403 (gate refusal) can never succeed on retry — the honest state
+ * names the real cause and drops the dead action; a 401 (raw fetch
+ * bypasses the axios refresh interceptor) keeps retry because the
+ * retry re-reads the store's post-login token. */
+describe('PdfViewer — HTTP gate classification (r164f)', () => {
+  it('404 → «الملف غير موجود» with the Arabic hint and NO retry button', async () => {
+    getDocumentMock.mockReturnValueOnce({
+      promise: Promise.reject({ name: 'MissingPDFException', message: 'Missing PDF "/papers/gone.pdf".' }),
+      destroy: vi.fn(),
+    });
+
+    render(<PdfViewer src="/papers/gone.pdf" />);
+
+    expect(await screen.findByText('الملف غير موجود')).toBeInTheDocument();
+    // The classified Arabic hint rides the detail line (pdf.js's English
+    // prose must not leak into the RTL page).
+    expect(screen.getByText(/ربما حُذف البحث أو لم يعد ملفه متاحاً/)).toBeInTheDocument();
+    // Re-running the same load cannot conjure the bytes back.
+    expect(screen.queryByRole('button', { name: 'إعادة المحاولة' })).toBeNull();
+  });
+
+  it('403 → «ليس لديك صلاحية الوصول إلى هذا المستند» with NO retry button', async () => {
+    getDocumentMock.mockReturnValueOnce({
+      promise: Promise.reject({
+        name: 'UnexpectedResponseException',
+        message: 'Unexpected server response (403) while retrieving PDF "/papers/x.pdf".',
+        status: 403,
+      }),
+      destroy: vi.fn(),
+    });
+
+    render(<PdfViewer src="/papers/x.pdf" />);
+
+    expect(await screen.findByText('ليس لديك صلاحية الوصول إلى هذا المستند')).toBeInTheDocument();
+    // Authorization is not transient — retrying cannot fix it.
+    expect(screen.queryByRole('button', { name: 'إعادة المحاولة' })).toBeNull();
+  });
+
+  it('401 → «انتهت صلاحية جلسة الدخول» WITH the retry affordance (post-login retry works)', async () => {
+    getDocumentMock
+      .mockReturnValueOnce({
+        promise: Promise.reject({
+          name: 'UnexpectedResponseException',
+          message: 'Unexpected server response (401) while retrieving PDF "/papers/x.pdf".',
+          status: 401,
+        }),
+        destroy: vi.fn(),
+      })
+      .mockReturnValueOnce(taskFor(makeDoc(['صفحة'])));
+
+    render(<PdfViewer src="/papers/x.pdf" />);
+
+    expect(await screen.findByText('انتهت صلاحية جلسة الدخول')).toBeInTheDocument();
+    expect(screen.getByText('سجّل الدخول من جديد ثم أعد المحاولة.')).toBeInTheDocument();
+    // The retry is honest: a fresh login re-reads the store's token.
+    fireEvent.click(screen.getByRole('button', { name: 'إعادة المحاولة' }));
+    expect(await screen.findByText('من 1')).toBeInTheDocument();
+    expect(getDocumentMock).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('PdfViewer — search', () => {
+  it('collects hits across pages and jumps to the first hit', async () => {
+    getDocumentMock.mockReturnValueOnce(
+      taskFor(makeDoc(['مقدمة عامة في المنهج', 'أنواع الشبكات المحلية'])),
+    );
+
+    render(<PdfViewer src="/papers/net.pdf" />);
+    await screen.findByText('من 2');
+
+    await openSearchAndType('الشبكات');
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'بحث' }));
+    });
+
+    expect(await screen.findByText('1 / 1')).toBeInTheDocument();
+    expect(screen.getByRole('spinbutton')).toHaveValue(2);
+  });
+
+  it('discards a stale walk when the document switches mid-search (no stale hits, no jump)', async () => {
+    // Document A: the walk parks on page 1's text extraction (deferred)
+    // while the src changes underneath it. Page 2 holds a real hit.
+    const page1Text = deferred<{ items: Array<{ str: string }> }>();
+    const docA = {
+      numPages: 2,
+      getPage: vi.fn(async (n: number) => ({
+        getViewport: () => ({ width: 612, height: 792 }),
+        getTextContent: () =>
+          n === 1
+            ? page1Text.promise
+            : Promise.resolve({ items: [{ str: 'الشبكات المحلية' }] }),
+      })),
+      destroy: vi.fn(),
+    };
+    const docB = makeDoc(['صفحة جديدة تماماً']);
+    const loadB = deferred<unknown>();
+    getDocumentMock
+      .mockReturnValueOnce(taskFor(docA))
+      .mockReturnValueOnce({ promise: loadB.promise, destroy: vi.fn() });
+
+    const view = render(<PdfViewer src="/papers/a.pdf" />);
+    await view.findByText('من 2');
+
+    // Start the search — it walks page 1 and parks on the deferred text.
+    await openSearchAndType('الشبكات');
+    await act(async () => {
+      fireEvent.click(view.getByRole('button', { name: 'بحث' }));
+    });
+    expect(view.getByText('جارٍ البحث…')).toBeInTheDocument();
+
+    // Switch documents while the walk is parked.
+    view.rerender(<PdfViewer src="/papers/b.pdf" />);
+
+    // The stale walk wakes up holding a hit for the OLD document…
+    await act(async () => {
+      await page1Text.resolve({ items: [{ str: 'مقدمة عن الشبكات المختلفة' }] });
+      await new Promise((r) => setTimeout(r, 0));
+    });
+    // …and the new document lands.
+    await act(async () => {
+      await loadB.resolve(docB);
+    });
+    await view.findByText('من 1');
+
+    // The stale hit must not survive: no count, no search-in-progress
+    // chip, and the viewer stays on page 1 of the NEW document.
+    expect(view.queryByText('1 / 1')).toBeNull();
+    expect(view.queryByText('جارٍ البحث…')).toBeNull();
+    expect(view.getByRole('spinbutton')).toHaveValue(1);
+  });
+
+  it('swallows the destroy rejection when unmounted mid-search (no unhandled rejection)', async () => {
+    const page1Text = deferred<{ items: Array<{ str: string }> }>();
+    const docA = {
+      numPages: 2,
+      getPage: vi.fn(async () => ({
+        getViewport: () => ({ width: 612, height: 792 }),
+        getTextContent: () => page1Text.promise,
+      })),
+      destroy: vi.fn(),
+    };
+    getDocumentMock.mockReturnValueOnce(taskFor(docA));
+
+    const view = render(<PdfViewer src="/papers/a.pdf" />);
+    await view.findByText('من 2');
+
+    await openSearchAndType('الشبكات');
+    await act(async () => {
+      fireEvent.click(view.getByRole('button', { name: 'بحث' }));
+    });
+
+    // Unmount — the load effect destroys the document underneath the
+    // parked walk.
+    view.unmount();
+
+    // The destroyed document rejects the in-flight text extraction.
+    // runSearch must absorb it; an unhandled rejection would both fire
+    // this listener and fail the vitest run.
+    const unhandled = vi.fn();
+    process.on('unhandledRejection', unhandled);
+    try {
+      await act(async () => {
+        page1Text.reject(new Error('Worker was destroyed'));
+        await new Promise((r) => setTimeout(r, 0));
+      });
+      expect(unhandled).not.toHaveBeenCalled();
+    } finally {
+      process.off('unhandledRejection', unhandled);
+    }
+  });
+});
+
+describe('PdfViewer — authorized document access (A9 P0-1)', () => {
+  afterEach(() => {
+    // The auth store is module-global — never leak a token into other
+    // test files through the persisted sessionStorage entry.
+    useAuthStore.getState().clear();
+  });
+
+  it('passes the access token to pdf.js as an Authorization header', async () => {
+    useAuthStore.getState().setAccessToken('unit-access-token');
+    getDocumentMock.mockReturnValueOnce(taskFor(makeDoc(['صفحة'])));
+
+    render(<PdfViewer src="/papers/x.pdf" />);
+    await screen.findByText('من 1');
+
+    expect(getDocumentMock).toHaveBeenCalledTimes(1);
+    const args = getDocumentMock.mock.calls[0]![0] as { httpHeaders?: Record<string, string> };
+    expect(args.httpHeaders?.Authorization).toBe('Bearer unit-access-token');
+  });
+
+  it('omits the header when no session token exists (public documents)', async () => {
+    getDocumentMock.mockReturnValueOnce(taskFor(makeDoc(['صفحة'])));
+
+    render(<PdfViewer src="/papers/x.pdf" />);
+    await screen.findByText('من 1');
+
+    const args = getDocumentMock.mock.calls[0]![0] as { httpHeaders?: Record<string, string> };
+    expect(args.httpHeaders).toBeUndefined();
+  });
+
+  it('downloads through an authorized fetch → blob → object URL, not a bare <a href>', async () => {
+    useAuthStore.getState().setAccessToken('unit-access-token');
+    getDocumentMock.mockReturnValueOnce(taskFor(makeDoc(['صفحة'])));
+
+    const view = render(<PdfViewer src="/api/v1/files/papers/%D8%A8%D8%AD%D8%AB.pdf" />);
+    await screen.findByText('من 1');
+
+    // jsdom implements neither URL.createObjectURL nor a real fetch —
+    // stub both, plus the programmatic anchor click.
+    const createObjectURL = vi.fn(() => 'blob:unit');
+    const revokeObjectURL = vi.fn();
+    vi.stubGlobal('URL', { createObjectURL, revokeObjectURL });
+    const fetchMock = vi.fn(async () => ({ ok: true, blob: async () => new Blob(['%PDF-1.4']) }));
+    vi.stubGlobal('fetch', fetchMock);
+    const clickedAnchors: HTMLAnchorElement[] = [];
+    const clickSpy = vi
+      .spyOn(HTMLAnchorElement.prototype, 'click')
+      .mockImplementation(function (this: HTMLAnchorElement) { clickedAnchors.push(this); });
+
+    try {
+      // The affordance must be a button now — the old bare
+      // <a href={src} download> 401'd without the header.
+      fireEvent.click(view.getByRole('button', { name: 'تحميل المستند' }));
+      // Two awaited hops (fetch → blob) — flush a macrotask so every
+      // microtask in the handler chain settles inside act().
+      await act(async () => { await new Promise((r) => setTimeout(r, 0)); });
+
+      expect(fetchMock).toHaveBeenCalledWith(
+        '/api/v1/files/papers/%D8%A8%D8%AD%D8%AB.pdf',
+        { headers: { Authorization: 'Bearer unit-access-token' } },
+      );
+      expect(createObjectURL).toHaveBeenCalledTimes(1);
+      expect(clickedAnchors).toHaveLength(1);
+      expect(clickedAnchors[0]!.download).toBe('بحث.pdf'); // decoded Arabic filename
+      expect(clickedAnchors[0]!.href).toBe('blob:unit');
+      expect(view.container.querySelector('a[download]')).toBeNull();
+    } finally {
+      // Unmount while the URL stub is still active (the cleanup effect
+      // revokes the object URL), then restore the real globals.
+      view.unmount();
+      expect(revokeObjectURL).toHaveBeenCalledWith('blob:unit');
+      clickSpy.mockRestore();
+      vi.unstubAllGlobals();
+    }
+  });
+});

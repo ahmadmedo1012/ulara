@@ -1,0 +1,909 @@
+/* R332 — split VERBATIM from src/styles/landing.css · cta = R313 D7 cta band (1762-1901)
+   full map + proof: docs/redesign/r332/css-split-landing.md
+   R338 T-10b — REWRITE: the band closes on the reference's RULED LEDGER (the
+   drafting-table cta): top ledger band (3 mono cells, h 9.6rem) · title
+   band (kicker rail + centered resolve, h 27.6rem) · sketch band (authored
+   line-art, desktop 1fr of the 83.75rem floor / tablet 21.6rem) joined by
+   1px column rules at the rail/mid and mid/side boundaries. All rungs in
+   OUR rem (root 8.33 @1440 · 11.11 @1920 · 5.92 @1024 · 9.2 @768 · 9.92
+   @390) — the tablet trio 9.6+27.6+21.6 = 58.8rem holds the reference's 541 @768;
+   the desktop floor 83.75rem holds 698 @1440. */
+
+.fo-cta {
+  --cta-ink: rgb(40, 40, 40, 0.72); /* color-gate: allow — measured reference cta ink wash (r338 ADDENDUM 9 pattern; T-25 owns unification) */
+  border-block-start: 1px solid var(--rule-strong);
+  /* R338 T-10c: the section voice — the reference's cta scaffold rides the body
+     root (fs 17.78/13.33/9.48/14.73/15.88, lh 1.3) and speaks one 72%
+     ink; the Arabic transform floors every line at 1.35×fs. */
+  line-height: 1.35;
+  color: var(--cta-ink);
+}
+
+html[data-theme='dark'] .fo-cta {
+  /* dark: re-point the ink at the flipping house tokens — the light spec
+   * is never re-pinned; the dark pass measures internal consistency
+   * (token-flip census + contrast floor), per the platform pattern. */
+  --cta-ink: color-mix(in srgb, var(--text) 72%, transparent);
+  /* r339 T-12 — the resolve button's night seat: the frozen light pair
+   * (white ink on the light copper #C43E16) reads 3.76:1 — under the
+   * 4.5:1 text floor on all 13 census spans (label lines + icon cells
+   * @1440 and their 390 twins). The house night signal discipline
+   * (r305): the fill is the luminous ember --accent (#FF6B3D) with the
+   * theme-fixed --warm-ink labels — 5.6:1 (the ink re-seat rides the
+   * rbtn rule below: the <a> is a TRANSPARENT shell over the section
+   * ground, so the white literal ink stays correct for its own seat —
+   * 13:1 on #262019). Light keeps the frozen measured literals
+   * (spec law). */
+  --cta-resolve-bg: var(--accent);
+}
+
+.fo-cta-frame,
+.fo-cta-sheet {
+  display: block;
+}
+
+/* T-10c: the measured anchor→frame seat — the reference's cta frame sits
+   350px below the wrap anchor at 390 (we held 21): the missing 329px
+   on our 9.92 root = 33.17rem. One rule per belt below (768/991 and
+   ≥992) steps it to the reference's 289/380-506-270 ladder; the whole subtree
+   rides the same shift, so every internal y re-seats with it. */
+.fo-cta-frame {
+  margin-block-start: 33.17rem;
+  /* T-10d: the reference's band runs nearly full-bleed — frame w 374/753/1015/
+     1427/1902 vs our container 342/720/981/1380/1840: symmetric negative
+     margins re-seat the ruled ledger to the measured rects per belt
+     (the sheet/ledger/bands/hrules ride the frame edge). */
+  margin-inline: -1.61rem;
+}
+
+/* the 1px rules are real nodes (the reference measures them as elements):
+   zero-size boxes + a 1px border = w/h 1 without raw px sizing. */
+.fo-cta-vrule {
+  inline-size: 0;
+  border-inline-start: 1px solid var(--rule);
+}
+
+.fo-cta-hrule {
+  /* R344 (item 0) — the census records these CTA rule seats as PAINTED
+   * hairlines (a real background-color rgb(179,179,175) — the same
+   * convention as the footer's c1rule/col3rule/legalbot fo-rule-solid
+   * seats; 10 bg seats at 390/768). The 1px painted line replaces the
+   * border-box model — visually identical, computed bg now spec-true. */
+  block-size: 1px;
+  background-color: var(--rule-strong);
+}
+
+.fo-cta-sheet-rule {
+  block-size: 1px;
+  background-color: var(--rule-strong);
+}
+
+
+.fo-cta-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  text-wrap: balance;
+  color: var(--cta-ink);
+}
+
+.fo-cta-lede {
+  color: var(--cta-ink);
+  /* base.css p{--lh-base} would retype the lede — the section voice
+     owns it (the reference lh 1.3 → Arabic floor 1.35). */
+  line-height: 1.35;
+}
+
+.fo-cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.fo-cta-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1-5);
+  font-size: inherit;
+  color: var(--cta-ink);
+  margin-block-start: var(--sp-4);
+}
+
+/* the reference's resolve buttons speak the body root (fs 17.78/13.33/9.48/
+   14.73/15.88, lh floor 1.35) — the shared .btn 13px scale re-seats
+   on the section voice. */
+.fo-cta .btn.accent,
+.fo-cta .btn.ghost,
+.fo-cta .btn.ghost.sm {
+  font-size: inherit;
+  line-height: inherit;
+}
+
+/* ── T-10f: the reference's resolve-button INTERNALS — the measured tree
+   (frozen spec, all 5 bps): the <a> is a transparent interactive shell
+   (no transition, radius 0, pad 0); the orange wash + the border-color/
+   color 0.3s voice ride the inner bg div; the label is a fixed column
+   of two masked line wrappers (transform 0.48s tween) and the icon box
+   stages a dual chevron swap behind an overflow clip. Rungs per belt
+   ride the html root (9.92/9.2/5.92/8.33/11.11): label col 80/80/50/
+   70/90, icon pad 12.4/11.51/7.41/10.42/13.89 = 1.25rem, chevron cell
+   16/18/12/17/22 ≈ 2rem. Arabic transform: label fs 1.4rem with the lh
+   floor (1.35 phone / 1.4 up), the chevron mirrors to point with the
+   RTL reading direction. ── */
+.fo-cta {
+  --cta-resolve-ink: rgb(255, 255, 255); /* color-gate: allow — measured reference resolve ink */
+  --cta-resolve-bg: rgb(250, 54, 0); /* color-gate: allow — measured reference resolve wash (ADDENDUM 9 scoped-var pattern; T-25 owns unification) */
+}
+
+.fo-cta .btn.accent.lg {
+  display: block;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--cta-resolve-ink);
+  cursor: pointer;
+  transition: none;
+  inline-size: 15.32rem;
+  block-size: 4.33rem;
+}
+
+.fo-cta-rbtn {
+  display: flex;
+  inline-size: 100%;
+  block-size: 100%;
+  padding-inline-start: 1.6rem;
+  gap: 1.6rem;
+  background: var(--cta-resolve-bg);
+  transition:
+    border-color 0.3s ease,
+    color 0.3s cubic-bezier(0.625, 0.05, 0, 1);
+}
+
+/* r339 T-12 — the frozen-flip seat (the platform lesson, same class):
+ * the inner wash carries the resolve ink for everything inside the fill
+ * (labels + currentColor chevrons inherit it), and a `color` transition
+ * leg + this re-point can latch the LIGHT literal in Chromium — white
+ * on the night ember, under the census floor. The dark arm re-seats the
+ * label tier at --warm-ink (#17130E on the #FF6B3D ember = 5.6:1) with
+ * the same measured voice (0.3s/ease first leg; the bezier second leg —
+ * aTransition asserts duration+easing only) MINUS the color leg, so the
+ * night ink and the ember fill snap with the theme. Light keeps the
+ * frozen measured pair (spec law). */
+html[data-theme='dark'] .fo-cta .fo-cta-rbtn {
+  color: var(--warm-ink);
+  transition:
+    border-color 0.3s ease,
+    opacity 0.3s cubic-bezier(0.625, 0.05, 0, 1);
+}
+
+/* r339 T-12 — the ghost/text-link anchors' frozen-flip seats (the
+ * platform lesson, same class): the shared .btn voice (polish.css)
+ * and the base `a { transition: color … }` carry a color leg, and a
+ * reveal-settled anchor can latch the LIGHT ink literal when the theme
+ * flip re-points --text/--accent-ink — rgb(40,40,40) and #C72E00 on
+ * the #262019 ground = 1:1 / 2.68:1 (the census's 10 cta rows across
+ * the belts). The dark arm re-seats the same measured voice MINUS the
+ * color leg (d/e preserved per leg — aTransition asserts
+ * duration+easing only), so the night ink snaps with the theme.
+ * Light keeps the frozen transitions (spec law); hover never touched
+ * color here (transform + border only), so no feel change. */
+html[data-theme='dark'] .fo-cta .btn.ghost {
+  /* r342-06 — the `background` leg is DROPPED from the dark arm: the
+   * element's own background only ever changes at the theme flip (the
+   * hover wipe rides the ::before layer), so the leg had one effect —
+   * tweening the flip through the light paper literal while the label
+   * ink snaps: a cream-on-cream window the dark ink census recorded
+   * (cta.secondary at 1:1, bps 1920/768/390). Border-color + transform
+   * keep their legs (the L1-d drift + sweep arms), per the platform
+   * frozen-flip lesson (aTransition asserts duration+easing per leg). */
+  transition:
+    border-color var(--t-base) var(--ease),
+    transform var(--motion-duration-micro) var(--ease);
+}
+html[data-theme='dark'] .fo-cta .fo-text-link {
+  transition: opacity var(--t-fast) var(--ease);
+}
+
+.fo-cta-rlabel {
+  position: relative;
+  flex: none;
+  inline-size: 8.06rem;
+  block-size: 1.9rem;
+  margin-block-start: 1.4rem;
+}
+
+.fo-cta-rline {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  inline-size: 100%;
+  block-size: 1.9rem;
+  transition: transform 0.48s cubic-bezier(0.625, 0.05, 0, 1);
+}
+
+.fo-cta-rline2 {
+  inset-block-start: 1.9rem;
+}
+
+.fo-cta-rtext {
+  font-size: 1.4rem;
+  line-height: 1.35;
+  block-size: 1.9rem;
+  text-align: start;
+}
+
+.fo-cta-ricons {
+  position: relative;
+  flex: none;
+  inline-size: 4.13rem;
+  block-size: 100%;
+  overflow: hidden;
+}
+
+.fo-cta-ricon {
+  position: absolute;
+  inset-block-start: 0.12rem;
+  inset-inline-start: 0;
+  padding: 1.25rem;
+  transition: transform 0.48s cubic-bezier(0.625, 0.05, 0, 1);
+}
+
+/* the staged swap twin — parked one chevron-width up the inline axis,
+   clipped by the icon box until the hover slide (the reference's dual-chevron
+   swap, mirrored for RTL). */
+.fo-cta-ricon2 {
+  inset-inline-start: -100%;
+}
+
+.fo-cta-ricell {
+  inline-size: 2rem;
+  block-size: 2rem;
+}
+
+.fo-cta-ricore,
+.fo-cta-rsvg {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+/* the recorded hover seat: both chevrons slide one cell along the
+   inline axis — the lead chevron exits the clip, the twin lands in
+   its seat (.probe-hover is the conformance probe's hover class).
+   L1-d (R341): the slide — the resolve's SECONDARY affordance (the
+   arrow nudge) — rides the :focus-within arm too: keyboard parity
+   with the wash flip below (r172a §3: zero :focus-visible rules in
+   the landing family — the seat itself holding focus matches). */
+.fo-cta .btn.accent:is(:hover, :focus-within) .fo-cta-ricon,
+.fo-cta .btn.accent.probe-hover .fo-cta-ricon {
+  transform: translateX(-100%);
+}
+
+@media (min-width: 768px) {
+  .fo-cta .btn.accent.lg {
+    inline-size: 16.4rem;
+    block-size: 4.78rem;
+  }
+
+  .fo-cta-rlabel {
+    inline-size: 8.7rem;
+  }
+
+  .fo-cta-ricons {
+    inline-size: 4.46rem;
+  }
+
+  .fo-cta-rtext {
+    line-height: 1.4;
+  }
+}
+
+@media (min-width: 992px) {
+  .fo-cta .btn.accent.lg {
+    inline-size: 16rem;
+    block-size: 4.77rem;
+  }
+
+  .fo-cta-rlabel {
+    inline-size: 8.4rem;
+  }
+
+  .fo-cta-ricons {
+    inline-size: 4.44rem;
+  }
+}
+
+.fo-cta-sketch-wrap,
+.fo-cta-sketch-frame,
+.fo-cta-sketch-holder,
+.fo-cta-sketch-veil,
+.fo-cta-sketch-matte {
+  display: grid;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.fo-cta-sketch-frame,
+.fo-cta-sketch-matte {
+  grid-area: 1 / 1;
+}
+
+.fo-cta-sketch-holder,
+.fo-cta-sketch-veil {
+  grid-area: 1 / 1;
+}
+
+.fo-cta-sketch-art {
+  inline-size: 100%;
+  block-size: 100%;
+  color: var(--text-faint);
+}
+
+/* r321 §A6 — the decorative registration mark: the glyph renders from
+   CSS ::before content (out of the DOM's innerText); the span itself
+   carries NO text. Re-seated T-10c per the r321 contract. */
+.fo-cta-sketch-mark {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  inline-size: 0;
+  block-size: 0;
+}
+
+.fo-cta-sketch-mark::before {
+  content: '+';
+  font-family: var(--font-mono);
+  color: var(--text-faint);
+}
+
+/* ── base (phone ≤767): the ledger stacks its bands full-width; the
+   rail/side cells collapse to gutters, the rules stay. ── */
+.fo-cta-ledger {
+  display: grid;
+  /* T-10d2: the reference's phone rungs — 60/302/138 on the 9.92 root
+     (band-top 6.05rem · title band 30.44rem · sketch 13.91rem). */
+  grid-template-rows: 6.05rem 30.44rem 13.91rem;
+}
+
+.fo-cta-band {
+  display: grid;
+  /* T-10d2: the reference seats 60-wide rail/side cells at 390 (mid 254)
+     on the 9.92 root = 6.05rem gutters. */
+  grid-template-columns: 6.05rem minmax(0, 1fr) 6.05rem;
+  position: relative;
+}
+
+/* T-10d2: the reference collapses the title band's rail/side cells at 390 —
+   the resolve runs full-bleed (374) while the rails park as 0×0 seats
+   at the wrap top-centre (x-mirror 195, y 0), the same parking
+   pattern the sketch veil uses from 768 up. PHONE ONLY: from 768 up
+   the rails are live measured cells (kick-wrap x-mirror 345 @768). */
+@media (max-width: 767px) {
+  .fo-cta-band-title {
+    /* the parked rails leave the flow — one full-bleed track takes
+       the resolve (374) directly. */
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .fo-cta-band-title > .fo-cta-rail,
+  .fo-cta-band-title > .fo-cta-side {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline-start: 50%;
+    inline-size: 0;
+    block-size: 0;
+    overflow: hidden;
+  }
+
+  /* T-10d2: the reference parks the sketch CONTENT at 390 — the cell keeps its
+     255×138 seat (the gradient veil paints it) while frame/holder/art
+     measure 0×0 at the wrap top-centre, the veil's own ≥768 pattern. */
+  .fo-cta-sketch-frame {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline-start: 50%;
+    inline-size: 0;
+    block-size: 0;
+    overflow: hidden;
+  }
+
+  /* T-10e: the reference parks the band-top kick-wraps at 390 as well — 0×0
+     seats at the wrap top-centre (x-mirror 195, y 0); the ruled gutters
+     and the 6.05rem cells stay (the labels are desktop-only matter). */
+  .fo-cta-band-top .fo-cta-kick {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline-start: 50%;
+    inline-size: 0;
+    block-size: 0;
+    overflow: hidden;
+  }
+
+  /* T-10e: the phone belt re-seat — the resolve column narrows to the
+     measured rects (copy 298 · lede 278 · primary 152) and the stack
+     anchors at the band top on the 9.92 root: title y479 · lede y540 ·
+     btn y600 (9.07rem lead rung, −2.12rem on the actions, 3.83rem inner
+     pads a side); the actions hold the reference's single 43px row. */
+  .fo-cta-inner {
+    align-content: start;
+    padding-inline: 3.83rem;
+  }
+
+  .fo-cta-copy {
+    margin-block-start: 9.07rem;
+    color: var(--text); /* r339 T-18 gate: the measured rgb(40,40,40) IS the light --text ink (#262019) — token-native, and the seat now follows the theme flip instead of latching the light literal */
+  }
+
+  .fo-cta-title {
+    color: var(--text); /* r339 T-18 gate — same measured-ink tokenization */
+  }
+
+  .fo-cta-lede-wrap {
+    inline-size: 28.02rem;
+  }
+
+  .fo-cta-actions {
+    margin-block-start: 1.12rem;
+  }
+
+  .fo-cta .btn.accent.lg {
+    inline-size: 15.32rem;
+    /* L1-d: the phone resolve holds the legacy measured 152×43 seat (the
+       nowrap squeeze shrank it to 92 and clipped the chevron affordance
+       off-canvas); the ghost wraps to its own centred row — the actions
+       belt re-finds the reference's single-seat rows. */
+    flex: none;
+  }
+}
+
+/* T-10e: the phone title seat speaks the reference's solid ink (rgb(40,40,40))
+   at 390; the dark arm restores the flipping wash — the light spec is
+   never re-pinned and the dark pass keeps its contrast floor. */
+@media (max-width: 767px) {
+  html[data-theme='dark'] .fo-cta-copy,
+  html[data-theme='dark'] .fo-cta-title {
+    color: var(--cta-ink);
+  }
+}
+
+.fo-cta-cell {
+  position: relative;
+  min-block-size: 0;
+}
+
+.fo-cta-band .fo-cta-hrule {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+}
+
+.fo-cta-vrule {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  block-size: calc(100% - 1px);
+}
+
+.fo-cta-rail {
+  display: flex;
+  align-items: flex-end;
+  padding: var(--sp-1);
+}
+
+.fo-cta-band-top .fo-cta-mid,
+.fo-cta-band-top .fo-cta-side {
+  display: flex;
+  align-items: flex-start;
+  padding: var(--sp-1);
+}
+
+.lp-kicker {
+  font-size: 1.05rem;
+}
+
+/* T-10d: the mono kickers re-voice on the section ladder — the reference seats
+   them at 1.2rem from 768 up (11.05/7.11/10/13.33px) with the Arabic
+   lh floor 1.35; the (0,2,0) hook out-specifies the shared mono voice. */
+.fo-cta .lp-kicker {
+  line-height: 1.35;
+}
+
+.fo-cta .fo-cta-lede {
+  line-height: 1.35;
+}
+
+.fo-cta-title {
+  font-size: 2.4rem;
+  line-height: 1.35;
+}
+
+.fo-cta-lede {
+  font-size: 1.4rem;
+  text-align: center;
+}
+
+.fo-cta-copy {
+  inline-size: min(60rem, 100%);
+  text-align: center;
+}
+
+.fo-cta-lede-wrap {
+  inline-size: min(79.4rem, 100%);
+  margin-inline: auto;
+  margin-block-start: 1.68rem;
+  text-align: center;
+}
+
+.fo-cta-actions {
+  justify-content: center;
+  margin-block-start: 3.24rem;
+}
+
+.fo-cta-inner {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  padding-inline: 1.62rem;
+}
+
+/* ── tablet (768–991): the 58.8rem trio holds the reference's 541 @768 ── */
+@media (min-width: 768px) and (max-width: 991px) {
+  .fo-cta {
+    min-block-size: 58.8rem;
+  }
+
+  .fo-cta-frame {
+    /* the reference anchor→frame 289 @768, we held 1: +288 on the 9.21 root. */
+    margin-block-start: 31.27rem;
+    margin-inline: -1.79rem;
+  }
+
+  .fo-cta-ledger {
+    grid-template-rows: 9.6rem 27.6rem 21.6rem;
+    /* T-10d2: the reference's tablet ledger is a centered 753 column
+       (81.85rem on the 9.2 root) inside the 777 full-bleed sheet. */
+    inline-size: 81.85rem;
+    margin-inline: auto;
+  }
+
+  /* the reference splits the tablet bands on the desktop ratios —
+     sketch-mid 378 / side 189 / rail 186 of the 753 ledger. */
+  .fo-cta-band {
+    grid-template-columns: minmax(0, 24.7%) minmax(0, 50.2%) minmax(0, 25.1%);
+  }
+
+  .fo-cta-copy {
+    /* the reference's title box: 276×88 @768 — the narrow column wraps the
+       resolve to two lines; the floor holds the measured 9.56rem. */
+    inline-size: 30rem;
+    min-block-size: 9.56rem;
+  }
+
+  .fo-cta-lede-wrap {
+    inline-size: 36.3rem;
+  }
+
+  .fo-cta-title {
+    /* the reference steps the cta voice DOWN at tablet — 3.2rem on the 9.2 root
+     * = 29.47px @768 (its ladder 4.8rem ≥992 → 3.2rem → 2.4rem ≤767). */
+    font-size: 3.2rem;
+    line-height: 1.35;
+  }
+
+  .fo-cta .lp-kicker {
+    font-size: 1.2rem;
+    line-height: 1.35;
+  }
+
+  .fo-cta-lede {
+    font-size: 1.6rem;
+  }
+
+  .cg-strip {
+    margin-block-start: 0;
+  }
+}
+
+/* ── desktop (≥992): the 83.75rem floor — 9.6 + 27.6 + 1fr(46.55) ── */
+@media (min-width: 992px) {
+  .fo-cta {
+    min-block-size: 83.75rem;
+  }
+
+  .fo-cta-frame {
+    /* the reference anchor→frame 506/380/270 @1920/1440/1024 (we held
+       134/101/72): the fluid root scales the gap with the viewport —
+       +33.47rem of it lands all three rungs within a px. */
+    margin-block-start: 33.47rem;
+    margin-inline: -2.82rem;
+  }
+
+  .fo-cta-ledger {
+    grid-template-rows: 9.6rem 27.6rem minmax(46.5rem, 1fr);
+  }
+
+  .fo-cta-band {
+    grid-template-columns: minmax(0, 25.3%) minmax(0, 50.1%) minmax(0, 24.6%);
+  }
+
+  .fo-cta-title {
+    font-size: 4.8rem;
+    line-height: 1.35;
+  }
+
+  .fo-cta .lp-kicker {
+    font-size: 1.2rem;
+    line-height: 1.35;
+  }
+
+  .fo-cta-lede {
+    font-size: 1.6rem;
+  }
+
+  .fo-cta-copy {
+    inline-size: 60rem;
+  }
+
+  .fo-cta-lede-wrap {
+    inline-size: min(79.4rem, 100%);
+    margin-block-start: 1.68rem;
+  }
+
+  .fo-cta-actions {
+    margin-block-start: 3.24rem;
+  }
+
+  /* the flank rule — the reference seats it 11px outside the centered 60rem
+     title box (x460 @1440): 50% − 30rem − 1.32rem from the mid edge. */
+  .fo-cta-flank {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: calc(50% - 31.32rem);
+    inline-size: 0;
+    border-inline-start: 1px solid var(--rule);
+  }
+
+  .cg-strip {
+    margin-block-start: 0;
+    padding-block-start: 1.92rem;
+  }
+}
+/* ── T-10c: the 1024 belt — the reference's cta scaffold reads the body root
+   DOWN at 9.48px there (its own ladder); our fluid body root holds 13px
+   at 1024, so the section voice re-seats on 1.6rem of the 5.92 html
+   root = 9.47px. Rem rungs above are untouched (they ride html root). ── */
+@media (min-width: 992px) and (max-width: 1279px) {
+  .fo-cta {
+    font-size: 1.6rem;
+  }
+
+  .fo-cta-frame {
+    margin-inline: -2.87rem;
+  }
+}
+
+/* ── T-13 interaction states — the recorded cta hover/focus-visible
+   deltas (the reference ordinals 1/4/6/9: ≥769px bd/tr micro-drift on the
+   resolve seats; ≤768 color+bd on every seat). .probe-hover is the
+   conformance probe's hover-equivalent class — never real. ── */
+/* L1-d (R341, T-16 #8 + top-5 #5) — the resolve wash's INVERT-TO-INK
+   seat: the T-18 A5 fix deepened the wash #C43E16 → --accent-ink
+   (#C72E00) — a one-step orange drift the panel read as a dead
+   low-contrast fill with no secondary affordance. The fix rides the
+   canonical .btn.accent wipe language itself (components.css: hover
+   swaps to the INK wipe): the wash flips to --primary with the
+   --primary-fg label — light #262019 + white (14.74:1) · dark the
+   white slab + warm ink — ONE token pair, both themes, no frozen-flip
+   arm needed (the hover label never crosses themes: light stays
+   white, dark stays --warm-ink, so the rbtn's color-leg latch concern
+   is void; the recorded transitions stay untouched — the wash snaps,
+   the 0.48s chevron slide carries the motion). The :focus-within arm
+   rides the same seat — keyboard parity: the base.css 2px solid
+   rgb(199,46,0) ring draws on top of the inverted slab. */
+.fo-cta .btn.accent:is(:hover, :focus-within) .fo-cta-rbtn,
+.fo-cta .btn.accent.probe-hover .fo-cta-rbtn {
+  background: var(--primary);
+  color: var(--primary-fg);
+}
+
+/* L1-d: the micro-drift belt grows :focus-within arms — the probe's
+   focus walk (interact.mjs) reads the same bd/tr channels on the
+   keyboard pass, and the seats nudge under the ring exactly as they
+   drift under the cursor (the hero's ungated focus-arm pattern). */
+@media (min-width: 769px) {
+  .fo-cta .btn.accent:is(:hover, :focus-within),
+  .fo-cta .btn.accent.probe-hover {
+    transform: translateX(-0.1875rem);
+    border-block-end-color: var(--accent-strong);
+  }
+
+  .fo-cta .btn.ghost:is(:hover, :focus-within),
+  .fo-cta .btn.ghost.probe-hover,
+  .fo-cta .fo-text-link:is(:hover, :focus-within),
+  .fo-cta .fo-text-link.probe-hover {
+    transform: translateX(-0.1875rem);
+    border-block-end-color: var(--accent);
+  }
+}
+
+/* ── L1-d — the underline SWEEP (the legacy measured secondary
+   affordance): the ghost/text seats already invert on hover (the .btn
+   ink wipe / the accent underline); the sweep draws a 1px --accent
+   rule across the seat's block-end edge, 0 → 100% from the reading
+   start edge (RTL: the physical right). It rides the same
+   hover/focus/probe arms as the drift; the RM belt is inherited — the
+   motion tokens zero --t-base under prefers-reduced-motion, so the
+   draw collapses to the resolved line. The ghost's ::after parks
+   INSIDE the padding box (the .btn clip) directly above its 1px
+   border; the text-link's ::after overlays its own faint rest
+   underline at the border seat. ── */
+.fo-cta .fo-text-link {
+  /* the sweep's containing block — no layout shift (relative, no
+     offsets; the rest geometry is pinned by the spec mapping). */
+  position: relative;
+}
+
+.fo-cta .btn.ghost::after,
+.fo-cta .fo-text-link::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  block-size: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: 100% 50%;
+  transition: transform var(--t-base) var(--ease);
+  pointer-events: none;
+}
+
+.fo-cta .fo-text-link::after {
+  inset-block-end: -1px; /* overlay the 1px rest underline exactly */
+}
+
+.fo-cta .btn.ghost:is(:hover, :focus-within)::after,
+.fo-cta .btn.ghost.probe-hover::after,
+.fo-cta .fo-text-link:is(:hover, :focus-within)::after,
+.fo-cta .fo-text-link.probe-hover::after {
+  transform: scaleX(1);
+}
+
+@media (max-width: 768px) {
+  .fo-cta .btn.accent:is(:hover, :focus-within),
+  .fo-cta .btn.accent.probe-hover {
+    border-block-end-color: var(--accent-ink);
+  }
+
+  .fo-cta .btn.ghost:is(:hover, :focus-within),
+  .fo-cta .btn.ghost.probe-hover,
+  .fo-cta .fo-text-link:is(:hover, :focus-within),
+  .fo-cta .fo-text-link.probe-hover {
+    color: var(--rule-strong);
+    border-block-end-color: var(--rule-strong);
+  }
+}
+
+/* ── L2-e (R341, panel-1-judge-1 #2/#4) — the footer account pair's
+   phone affordance + hit slop. At ≤768 the funnel pair (register
+   primary + login ghost — Footer.tsx) read as bare 13.33px transparent
+   text links with no visible affordance; the desktop footer keeps
+   the reference's plain-link spec verbatim, so the re-seat rides ONLY the
+   phone belt and borrows the house text-CTA grammar (the .fo-text-link
+   underline voice): a 1px accent rule, faint at rest → full --accent
+   under the pointer/focus, drawn on ::before so the spec-pinned link
+   boxes and the lglinks container geometry never move (the frozen
+   footer spec pins the container h 74 @390 — growing the 17px links
+   to the 44px floor is geometrically incompatible with it, so the
+   ::after SLOP reclaims the one free band instead: the 11px
+   non-interactive mono label directly above the pair's row @≤767
+   (the 2-col link grid seats both funnel links under it), ~28px
+   effective — zero visual bloat, zero neighbour theft). The color arm
+   carries the recorded channel for the probe + keyboard (the footer's
+   own :hover ink; r172a §3 — zero :focus-visible rules, base.css owns
+   the 2px solid rgb(199,46,0) ring). ── */
+.fo-link-account {
+  /* the underline's + the slop's containing block — no layout shift. */
+  position: relative;
+}
+
+.fo-link-account:is(:hover, :focus-within),
+.fo-link-account.probe-hover {
+  color: var(--accent);
+}
+
+@media (max-width: 768px) {
+  .fo-link-account::before {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 0;
+    block-size: 1px;
+    background: color-mix(in srgb, var(--accent) 35%, transparent);
+    transition: background var(--t-base) var(--ease);
+    pointer-events: none;
+  }
+
+  .fo-link-account:is(:hover, :focus-within)::before,
+  .fo-link-account.probe-hover::before {
+    background: var(--accent);
+  }
+}
+
+@media (max-width: 767px) {
+  .fo-link-account::after {
+    content: '';
+    position: absolute;
+    /* the free label band above the pair's row — measured 11px @390
+       (spacing-gate: allow — the slop rung is the measured seat's own
+       band, held a half-pixel clear of the group above it); the band
+       + the link's own box ≈ 28px of hit area. */
+    inset-block: -10.5px 0;
+    inset-inline: 0;
+  }
+}
+
+/* L1-d — the registry cloud's keyboard-parity arm (focus-only: the
+   hover arms stay per-record — [14] tr @≥769, the color+bd phone
+   belt below, [2] the exact 1440 no-change mirror): the underline
+   draws + the seat drifts under the ring, the same voice as the
+   resolve seats. */
+.cg-cloud-link[data-spec-hover]:focus-within {
+  color: var(--accent-ink);
+  border-block-end-color: var(--accent);
+  transform: translateX(-0.1875rem);
+}
+/* ── T-13 registry cloud — the recorded cta seats beyond the button
+   pair (the reference ordinals 2·3·5·7·8·10–13·14·15–18). The frozen spec's
+   ≤768 records give every registry seat a color+bd hover; at ≥769 only
+   the [14] seat moves (tr) and the [2] seat shifts its fill at the
+   wide (≥1500) and narrow (≤1100) desktop belts — the 1440 record for
+   [2] is a NO-change, mirrored exactly. ── */
+.cg-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem 1.25rem;
+  padding-block-start: 0.75rem;
+}
+
+.cg-cloud-link {
+  font-size: 1.4rem;
+  color: var(--cta-ink);
+  text-decoration: none;
+  border-block-end: 1px solid transparent;
+}
+
+@media (max-width: 768px) {
+  .cg-cloud-link:hover,
+  .cg-cloud-link.probe-hover {
+    color: var(--accent-ink);
+    border-block-end-color: var(--accent);
+  }
+}
+
+@media (min-width: 769px) {
+  .cg-cloud-link[data-spec-hover="14"]:hover,
+  .cg-cloud-link[data-spec-hover="14"].probe-hover {
+    transform: translateX(-0.1875rem);
+  }
+}
+
+@media (min-width: 1500px), (max-width: 1100px) {
+  .cg-cloud-link[data-spec-hover="2"]:hover,
+  .cg-cloud-link[data-spec-hover="2"].probe-hover {
+    background-color: var(--rule-strong);
+  }
+}
+
+/* ── T-10d: the sketch veil parks from 768 up — the reference measures it as a
+   0×0 seat at the wrap top-centre (x 384/512/720/960, y 0); only the
+   phone belt shows the gradient over the sketch (255×138 @390). ── */
+@media (min-width: 768px) {
+  .fo-cta-sketch-veil {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline-start: 50%;
+    inline-size: 0;
+    block-size: 0;
+  }
+}

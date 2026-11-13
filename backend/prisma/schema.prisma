@@ -1,0 +1,2218 @@
+// ════════════════════════════════════════════════════════════════
+//  ULARA — Prisma schema (PostgreSQL)
+// ════════════════════════════════════════════════════════════════
+//  Models the full domain extracted from the prototype:
+//  users + role profiles, faculties, departments, courses,
+//  offerings, enrollments, schedule, attendance, grades,
+//  assignments, materials, messages, notifications, posts,
+//  library/loans, MOOCs, jobs, achievements, skills,
+//  virtual labs, AR experiences, AI conversations, audit log.
+// ────────────────────────────────────────────────────────────────
+//  r178 — MULTI-INSTITUTION FOUNDATION:
+//  · NEW Institution + Membership models: one product/brand (أُلارا)
+//    serving multiple institutions as CONTEXT labels (no per-university
+//    logos/themes/domains). Membership is the per-user, per-institution
+//    standing — the effective institutional role ALWAYS comes from
+//    Membership.role; User.role stays the platform-level role
+//    (OWNER = platform owner; STUDENT/TEACHER/ADMIN/QUALITY = legacy
+//    demo default).
+//  · Scoped uniqueness: Faculty (institutionId, name, city); student
+//    reg-number universityId (institutionId, universityId); course code
+//    (institutionId, code). Email stays globally unique.
+//  · StudentProfile/TeacherProfile become per-MEMBERSHIP rows with their
+//    own cuid PKs (userId keeps FK + index for legacy reads).
+//  · UserPermission/AuditLog gain nullable institutionId (NULL =
+//    platform scope).
+//  · Deliberately untouched (Phase 5): UniversityFact/SyncRun (the
+//    primary showcase source), Announcement/PlatformSetting/FeatureFlag
+//    (platform-global), offerings/enrollments/grades (ownership via
+//    the verified parent chain).
+// ────────────────────────────────────────────────────────────────
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // Note: providers like Neon support pooled & direct connection strings.
+  // For this project we use a single Neon "pooler" URL that works for both
+  // runtime queries and `prisma migrate`. If you ever need to split them,
+  // re-enable directUrl below and set DIRECT_DATABASE_URL to the unpooled host.
+  // directUrl = env("DIRECT_DATABASE_URL")
+}
+
+// ────────────────────────────────────────────────────────────────
+//  Enums
+// ────────────────────────────────────────────────────────────────
+enum Role {
+  STUDENT
+  TEACHER
+  ADMIN
+  QUALITY
+  OWNER
+}
+
+// r178 — مؤسسات متعددة: حالة المؤسسة (تعليق المؤسسة يمنع كل وصول
+// متعلق بها عبر حرّاس السياق في الخلفية).
+enum InstitutionStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+enum AcademicRank {
+  LECTURER
+  ASSISTANT_PROFESSOR
+  ASSOCIATE_PROFESSOR
+  PROFESSOR
+}
+
+enum AcademicPosition {
+  DEAN
+  ASSOCIATE_DEAN
+  DEPARTMENT_HEAD
+}
+
+enum AttendanceStatus {
+  PRESENT
+  LATE
+  ABSENT
+  EXCUSED
+}
+
+enum AssignmentType {
+  HOMEWORK
+  QUIZ
+  PROJECT
+  EXAM
+}
+
+enum GradeKind {
+  HOMEWORK
+  QUIZ_1
+  QUIZ_2
+  MIDTERM
+  PROJECT
+  FINAL
+}
+
+enum SubmissionStatus {
+  DRAFT
+  SUBMITTED
+  GRADED
+  RETURNED
+  LATE
+}
+
+enum NotificationType {
+  URGENT
+  ACADEMIC
+  SYSTEM
+  SOCIAL
+}
+
+enum MaterialType {
+  PDF
+  PPT
+  VIDEO
+  DOC
+  ZIP
+  IMAGE
+  OTHER
+}
+
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  INTERNSHIP
+  FREELANCE
+  REMOTE
+}
+
+enum JobApplicationStatus {
+  APPLIED
+  REVIEWED
+  SHORTLISTED
+  REJECTED
+  HIRED
+}
+
+enum CertificateStatus {
+  ONGOING
+  COMPLETED
+  EXPIRED
+}
+
+enum LoanStatus {
+  ACTIVE
+  RETURNED
+  OVERDUE
+}
+
+enum ArExperienceType {
+  AR
+  VR
+}
+
+enum AiMessageRole {
+  USER
+  ASSISTANT
+  SYSTEM
+}
+
+// ─── Phase: governance + exams + social ─────────────────────────
+enum DegreeLevel {
+  BACHELORS
+  MASTERS
+  PHD
+}
+
+enum Capability {
+  // Research
+  RESEARCH_GRADE_OWN // grade papers in offerings I teach
+  RESEARCH_GRADE_ANY // grade any paper (admin override)
+  RESEARCH_PUBLISH // publish to library
+  // Exams
+  EXAMS_AUTHOR // create exam templates + questions
+  EXAMS_MODERATE // approve / reject exam templates
+  EXAMS_TAKE // take exams (default for students)
+  // Curriculum
+  CURRICULUM_EDIT_OWN // edit lectures/chapters in my offerings
+  CURRICULUM_EDIT_ANY // edit any course curriculum
+  // Governance
+  USERS_MANAGE // create/disable user accounts
+  ROLES_ASSIGN // assign role + capabilities
+  TEACHERS_VERIFY // verify teacher profiles for onboarding
+  // Quality
+  QUALITY_VIEW // read quality dashboards
+  QUALITY_REPORT // file quality reports
+  // Communications
+  ANNOUNCE_PLATFORM // platform-wide announcements
+  ANNOUNCE_FACULTY // faculty/department/course announcements
+  COMPETITIONS_RUN // create competitions
+  EVENTS_RUN // create campus events
+}
+
+enum QuestionType {
+  MCQ
+  TRUE_FALSE
+  SHORT
+  ESSAY
+}
+
+enum DifficultyLevel {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum ExamKind {
+  QUIZ
+  MIDTERM
+  FINAL
+  PRACTICE
+}
+
+enum ExamStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+  PUBLISHED
+  CLOSED
+}
+
+enum AttemptStatus {
+  IN_PROGRESS
+  SUBMITTED
+  GRADED
+  EXPIRED
+}
+
+enum AnnouncementScope {
+  PLATFORM
+  FACULTY
+  DEPARTMENT
+  OFFERING
+}
+
+enum CompetitionStatus {
+  OPEN
+  CLOSED
+  JUDGED
+}
+
+enum RsvpStatus {
+  GOING
+  MAYBE
+  NO
+}
+
+// ────────────────────────────────────────────────────────────────
+//  012-design-graphics-uplift — theme preference enum
+// ────────────────────────────────────────────────────────────────
+enum ThemePreference {
+  LIGHT
+  DARK
+  SYSTEM
+}
+
+// ────────────────────────────────────────────────────────────────
+//  r178 — Institutions & memberships (أساس المؤسسات المتعددة)
+// ────────────────────────────────────────────────────────────────
+
+// المؤسسة سياق تعليمي داخل أُلارا (ليست هوية بصرية — لا شعارات ولا
+// نطاقات). Phase Ω: المنصّة مستقلة متعددة المستأجرين ولا تنتمي لأي
+// جامعة؛ مساحتا العرض الموسومتان (ulara-demo و ulara-demo-2)
+// تحملان البيانات التجريبية وتثبتان تفرد رموز المقررات وأرقام
+// التسجيل على مستوى المؤسسة لا المنصة.
+model Institution {
+  id        String            @id @default(cuid())
+  name      String
+  nameEn    String?
+  slug      String            @unique
+  status    InstitutionStatus @default(ACTIVE)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  memberships      Membership[]
+  faculties        Faculty[]
+  students         StudentProfile[]
+  courses          Course[]
+  permissionGrants UserPermission[]
+  auditLogs        AuditLog[]
+  posts            Post[]
+  studyRooms       StudyRoom[]
+  campusEvents     CampusEvent[]
+  competitions     Competition[]
+  researchPapers   ResearchPaper[]
+  aiConversations  AiConversation[]
+  universityFacts  UniversityFact[]
+  syncRuns         SyncRun[]
+  aiKnowledgeChunks AiKnowledgeChunk[]
+
+  @@index([status])
+}
+
+// عضوية المستخدم داخل مؤسسة واحدة — مصدر الدور الفعلي داخل المؤسسة.
+// التفرد (userId, institutionId) يضمن صفًّا واحدًا لكل زوج، وisActive=false
+// هو مقبض سحب الصلاحية (يُلغى/يُستعاد دون حذف التاريخ).
+//
+// ⚠ role يعيد استخدام enum المسمى Role — قيمة OWNER محظورة هنا على
+// مستوى التطبيق (Zod DTOs + حرّاس الخدمة): Prisma 5.22 لا يدعم قيود
+// CHECK. ملكية المنصة تُعبَّر عنها فقط بـ User.role == OWNER ولا يكون
+// للمالك عضوية مؤسسة إطلاقًا.
+model Membership {
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  institutionId String
+  institution   Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  role          Role
+  isActive      Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  studentProfiles StudentProfile[]
+  teacherProfiles TeacherProfile[]
+
+  @@unique([userId, institutionId])
+  @@index([institutionId, role])
+  @@index([institutionId, isActive])
+  @@index([userId, isActive])
+}
+
+// ────────────────────────────────────────────────────────────────
+//  Identity & access
+// ────────────────────────────────────────────────────────────────
+model User {
+  id                       String          @id @default(cuid())
+  email                    String          @unique
+  passwordHash             String
+  role                     Role
+  firstName                String
+  lastName                 String
+  avatarColor              String? // hex like "#4F8EF7"
+  avatarInitials           String? // computed Arabic 2-letter initials
+  emailVerifiedAt          DateTime?
+  isActive                 Boolean         @default(true)
+  tokenVersion             Int             @default(0) // incremented to revoke all refresh tokens
+  failedLoginCount         Int             @default(0)
+  lockedUntil              DateTime?
+  // Governance scope — for ADMIN/QUALITY users.
+  // NULL = university-wide; set = scoped to that faculty only.
+  scopeFacultyId           String?
+  scopeFaculty             Faculty?        @relation("FacultyScopedAdmins", fields: [scopeFacultyId], references: [id])
+  // 012-design-graphics-uplift — presentation preferences (no PII).
+  // See specs/012-design-graphics-uplift/data-model.md.
+  themePreference          ThemePreference @default(SYSTEM)
+  themePreferenceUpdatedAt DateTime        @default(now())
+  onboardingCompletedAt    DateTime?
+  firedMilestones          String[]        @default([])
+  createdAt                DateTime        @default(now())
+  updatedAt                DateTime        @updatedAt
+
+  // r178: profiles are per-MEMBERSHIP now (a user can study in one
+  // institution and teach in another) — hence plural reverse relations.
+  // Legacy single-profile surfaces resolve via the membership context.
+  memberships     Membership[]
+  studentProfiles StudentProfile[]
+  teacherProfiles TeacherProfile[]
+
+  enrollments         Enrollment[]         @relation("StudentEnrollments")
+  taughtOfferings     CourseOffering[]     @relation("TeacherOfferings")
+  submissions         Submission[]
+  grades              Grade[]              @relation("StudentGrades")
+  attendanceRecords   AttendanceRecord[]
+  uploadedMaterials   Material[]           @relation("MaterialUploader")
+  notifications       Notification[]
+  sentMessages        Message[]            @relation("MessageSender")
+  receivedMessages    Message[]            @relation("MessageReceiver")
+  posts               Post[]
+  postComments        PostComment[]
+  postReactions       PostReaction[]
+  studyRoomMembers    StudyRoomMember[]
+  studyRoomsOwned     StudyRoom[]          @relation("StudyRoomOwner")
+  loans               Loan[]
+  moocEnrollments     MoocEnrollment[]
+  jobApplications     JobApplication[]
+  achievements        UserAchievement[]
+  skills              UserSkill[]
+  certificates        Certificate[]
+  labSessions         LabSession[]
+  aiConversations     AiConversation[]
+  auditLogs           AuditLog[]
+  watchEvents         WatchEvent[]         @relation("StudentWatchEvents")
+  checkpointAnswers   CheckpointAnswer[]   @relation("StudentCheckpointAnswers")
+  masteries           StudentMastery[]     @relation("StudentMasteries")
+  researchPapers      ResearchPaper[]      @relation("StudentPapers")
+  reviewedPapers      ResearchPaper[]      @relation("ProfessorReviewedPapers")
+  paperAnnotations    PaperAnnotation[]
+  trainingEnrollments TrainingEnrollment[]
+  badges              UserBadge[]
+  pointsLedger        PointsLedger[]
+  // Governance
+  permissionGrants    UserPermission[]     @relation("UserPermissionUser")
+  permissionGrantedBy UserPermission[]     @relation("UserPermissionGranter")
+  verifiedTeachers    TeacherProfile[]     @relation("TeacherProfileVerifier")
+  // Exams
+  authoredQuestions   Question[]           @relation("QuestionAuthor")
+  moderatedQuestions  Question[]           @relation("QuestionModerator")
+  authoredExams       ExamTemplate[]       @relation("ExamAuthor")
+  moderatedExams      ExamTemplate[]       @relation("ExamModerator")
+  examAttempts        ExamAttempt[]
+  liveSessions        LiveSession[]        @relation("LiveSessionTeacher")
+  // Social
+  announcements       Announcement[]
+  competitionsRun     Competition[]        @relation("CompetitionOrganizer")
+  competitionEntries  CompetitionEntry[]
+  eventsRun           CampusEvent[]        @relation("EventOrganizer")
+  eventRsvps          EventRSVP[]
+  // R320 §D (P0-3/P0-4) — the forgot-password flow's single-use tokens.
+  passwordResetTokens PasswordResetToken[]
+
+  @@index([role])
+  @@index([email])
+  @@index([scopeFacultyId])
+
+  // r323 B3.1 — the invite codes this user issued / consumed.
+  issuedInvites  InviteCode[] @relation("InviteCodeCreator")
+  inviteUses     InviteUse[]  @relation("InviteUseUser")
+
+  // r323 B3.6 — the pilot feedback loop the user filed.
+  feedbackSent   PilotFeedback[]
+
+  // r326 M1.1 — the client-error telemetry the user's devices sent
+  // (optional userId — anonymous crash reports are accepted).
+  clientErrors   ClientError[]
+
+  // r326 M2.6 — the push devices registered by this user's installs.
+  pushDevices    PushDevice[]
+}
+
+model StudentProfile {
+  // r178 restructure: the profile is per-MEMBERSHIP, not per-user — the
+  // same user may hold student profiles in different institutions. New
+  // cuid PK; the legacy userId PK is gone (userId keeps FK + index for
+  // legacy single-context reads).
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  membershipId  String      @unique
+  membership    Membership  @relation(fields: [membershipId], references: [id], onDelete: Cascade)
+  // Denormalized on purpose: institution-scoped uniqueness of the
+  // reg-number + institution-scoped queries avoid the membership hop.
+  institutionId String
+  institution   Institution @relation(fields: [institutionId], references: [id])
+  universityId  String
+  facultyId     String
+  faculty       Faculty     @relation(fields: [facultyId], references: [id])
+  departmentId  String
+  department    Department  @relation(fields: [departmentId], references: [id])
+  year          Int         @default(1)
+  gpa           Decimal     @default(0) @db.Decimal(3, 2)
+  totalXp       Int         @default(0)
+  level         Int         @default(1)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  // رقم التسجيل الجامعي مُتفرّد لكل مؤسسة — نفس الرقم قد يوجد في
+  // مؤسسة أخرى (r178).
+  @@unique([institutionId, universityId])
+  @@index([userId])
+  @@index([institutionId])
+  @@index([facultyId])
+  @@index([departmentId])
+}
+
+model TeacherProfile {
+  // r178 restructure: per-membership profile with its own cuid PK (the
+  // institution is reached through membership — no denormalized column
+  // here; teacher queries resolve membership.institutionId).
+  id                   String            @id @default(cuid())
+  userId               String
+  user                 User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  membershipId         String            @unique
+  membership           Membership        @relation(fields: [membershipId], references: [id], onDelete: Cascade)
+  specialty            String
+  rank                 AcademicRank      @default(LECTURER)
+  departmentId         String
+  department           Department        @relation("TeacherHomeDepartment", fields: [departmentId], references: [id])
+  bio                  String?
+  // Onboarding / suitability detection
+  degreeLevel          DegreeLevel       @default(MASTERS)
+  yearsExperience      Int               @default(0)
+  certifications       Json? // [{ title, issuer, year }]
+  publications         Json? // [{ title, venue, year, url? }]
+  awards               Json? // [{ title, year, issuer? }]
+  profileImageUrl      String?
+  officeLocation       String? // e.g. "مبنى الكلية - مكتب 305"
+  officeHours          String? // e.g. "الأحد والثلاثاء 10-12"
+  websiteUrl           String?
+  subjectKeywords      String[]          @default([]) // ["AI", "Machine Learning", "Statistics"]
+  verifiedAt           DateTime?
+  verifiedById         String?
+  verifiedBy           User?             @relation("TeacherProfileVerifier", fields: [verifiedById], references: [id])
+  // Academic leadership appointment, layered on top of teaching.
+  // Nullable: a TeacherProfile without a position is just a regular professor.
+  position             AcademicPosition?
+  positionFacultyId    String?
+  positionFaculty      Faculty?          @relation("FacultyLeadership", fields: [positionFacultyId], references: [id])
+  positionDepartmentId String?
+  positionDepartment   Department?       @relation("DepartmentLeadership", fields: [positionDepartmentId], references: [id])
+  appointedAt          DateTime?
+  termEndsAt           DateTime?
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+
+  @@index([userId])
+  @@index([departmentId])
+  @@index([verifiedById])
+  @@index([positionFacultyId])
+  @@index([positionDepartmentId])
+}
+
+// ────────────────────────────────────────────────────────────────
+//  Academic structure
+// ────────────────────────────────────────────────────────────────
+model Faculty {
+  id                 String             @id @default(cuid())
+  // The same faculty name can exist in multiple cities (e.g. "كلية الاقتصاد"
+  // in two different cities are distinct campuses). Since r178 the institution
+  // carries the scoping — uniqueness is on (institutionId, name, city).
+  name               String
+  nameEn             String?
+  iconEmoji          String?
+  // City the faculty is located in. r178: no column default — the
+  // institution now carries the scoping and new faculties are created
+  // with an explicit city.
+  city               String
+  institutionId      String
+  institution        Institution        @relation(fields: [institutionId], references: [id])
+  createdAt          DateTime           @default(now())
+  departments        Department[]
+  students           StudentProfile[]
+  questionCategories QuestionCategory[]
+  examTemplates      ExamTemplate[]
+  // Reverse relations for governance scoping (ADR — sub-project A)
+  scopedAdmins       User[]             @relation("FacultyScopedAdmins")
+  leadership         TeacherProfile[]   @relation("FacultyLeadership")
+
+  @@unique([institutionId, name, city])
+  @@index([city])
+  @@index([institutionId])
+
+  // r323 B3.1
+  inviteCodes InviteCode[]
+}
+
+model Department {
+  id                 String             @id @default(cuid())
+  name               String
+  nameEn             String?
+  facultyId          String
+  faculty            Faculty            @relation(fields: [facultyId], references: [id])
+  courses            Course[]
+  students           StudentProfile[]
+  teachers           TeacherProfile[]   @relation("TeacherHomeDepartment")
+  createdAt          DateTime           @default(now())
+  questionCategories QuestionCategory[]
+  // Reverse relation for department-head appointments
+  leadership         TeacherProfile[]   @relation("DepartmentLeadership")
+
+  @@unique([facultyId, name])
+  @@index([facultyId])
+
+  // r323 B3.1
+  inviteCodes InviteCode[]
+}
+
+model Course {
+  id            String             @id @default(cuid())
+  code          String
+  name          String
+  nameEn        String?
+  description   String?
+  credits       Int                @default(3)
+  iconEmoji     String?
+  themeColor    String?
+  // r178: denormalized from department.faculty.institutionId — derived
+  // and validated by app code on every create/update (app-level
+  // invariant) so course codes stay unique per institution.
+  institutionId String
+  institution   Institution        @relation(fields: [institutionId], references: [id])
+  departmentId  String
+  department    Department         @relation(fields: [departmentId], references: [id])
+  offerings     CourseOffering[]
+  concepts      KnowledgeConcept[]
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  @@unique([institutionId, code])
+  @@index([institutionId])
+  @@index([departmentId])
+}
+
+model CourseOffering {
+  id        String   @id @default(cuid())
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id])
+  teacherId String
+  teacher   User     @relation("TeacherOfferings", fields: [teacherId], references: [id])
+  term      String // e.g. "2024-FALL"
+  room      String?
+  capacity  Int      @default(40)
+  createdAt DateTime @default(now())
+
+  enrollments    Enrollment[]
+  schedule       ScheduleSlot[]
+  materials      Material[]
+  assignments    Assignment[]
+  attendance     AttendanceSession[]
+  grades         Grade[]
+  lectures       Lecture[]
+  researchPapers ResearchPaper[]
+  examTemplates  ExamTemplate[]
+  liveSessions   LiveSession[]
+
+  @@unique([courseId, term, teacherId])
+  @@index([teacherId])
+  @@index([term])
+
+  // r323 B3.1
+  inviteCodes InviteCode[]
+}
+
+model Enrollment {
+  id          String         @id @default(cuid())
+  studentId   String
+  student     User           @relation("StudentEnrollments", fields: [studentId], references: [id])
+  offeringId  String
+  offering    CourseOffering @relation(fields: [offeringId], references: [id])
+  status      String         @default("active")
+  progressPct Int            @default(0)
+  enrolledAt  DateTime       @default(now())
+
+  @@unique([studentId, offeringId])
+  @@index([offeringId])
+}
+
+model ScheduleSlot {
+  id         String         @id @default(cuid())
+  offeringId String
+  offering   CourseOffering @relation(fields: [offeringId], references: [id], onDelete: Cascade)
+  dayOfWeek  Int // 0=Sunday … 6=Saturday (Arabic week starts Sunday)
+  startTime  String // "08:00"
+  endTime    String // "09:30"
+  room       String?
+
+  @@index([offeringId])
+}
+
+// ────────────────────────────────────────────────────────────────
+//  Materials & uploads
+// ────────────────────────────────────────────────────────────────
+model Material {
+  id          String         @id @default(cuid())
+  offeringId  String
+  offering    CourseOffering @relation(fields: [offeringId], references: [id])
+  uploaderId  String
+  uploader    User           @relation("MaterialUploader", fields: [uploaderId], references: [id])
+  name        String
+  description String?
+  type        MaterialType
+  sizeBytes   BigInt         @default(0)
+  url         String
+  views       Int            @default(0)
+  downloads   Int            @default(0)
+  createdAt   DateTime       @default(now())
+
+  @@index([offeringId])
+  @@index([type])
+  @@index([uploaderId])
+}
+
+// ────────────────────────────────────────────────────────────────
+//  Assignments & submissions
+// ────────────────────────────────────────────────────────────────
+model Assignment {
+  id          String         @id @default(cuid())
+  offeringId  String
+  offering    CourseOffering @relation(fields: [offeringId], references: [id])
+  title       String
+  description String?
+  type        AssignmentType
+  dueAt       DateTime
+  weight      Int            @default(10)
+  maxScore    Int            @default(100)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  submissions Submission[]
+
+  @@index([offeringId])
+  @@index([dueAt])
+}
+
+model Submission {
+  id           String           @id @default(cuid())
+  assignmentId String
+  assignment   Assignment       @relation(fields: [assignmentId], references: [id])
+  studentId    String
+  student      User             @relation(fields: [studentId], references: [id])
+  fileUrl      String?
+  textAnswer   String?
+  status       SubmissionStatus @default(SUBMITTED)
+  grade        Decimal?         @db.Decimal(5, 2)
+  feedback     String?
+  submittedAt  DateTime         @default(now())
+  gradedAt     DateTime?
+
+  @@unique([assignmentId, studentId])
+  @@index([studentId])
+}
+
+// ────────────────────────────────────────────────────────────────
+//  Grades & attendance
+// ────────────────────────────────────────────────────────────────
+model Grade {
+  id         String         @id @default(cuid())
+  offeringId String
+  offering   CourseOffering @relation(fields: [offeringId], references: [id])
+  studentId  String
+  student    User           @relation("StudentGrades", fields: [studentId], references: [id])
+  kind       GradeKind
+  score      Decimal        @db.Decimal(5, 2)
+  maxScore   Int            @default(100)
+  weight     Int            @default(10)
+  feedback   String?
+  recordedAt DateTime       @default(now())
+
+  @@unique([offeringId, studentId, kind])
+  @@index([studentId])
+}
+
+model AttendanceSession {
+  id         String             @id @default(cuid())
+  offeringId String
+  offering   CourseOffering     @relation(fields: [offeringId], references: [id])
+  date       DateTime
+  topic      String?
+  records    AttendanceRecord[]
+  createdAt  DateTime           @default(now())
+
+  @@unique([offeringId, date])
+}
+
+model AttendanceRecord {
+  id        String            @id @default(cuid())
+  sessionId String
+  session   AttendanceSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  studentId String
+  student   User              @relation(fields: [studentId], references: [id])
+  status    AttendanceStatus
+  notes     String?
+
+  @@unique([sessionId, studentId])
+  @@index([studentId])
+}
+
+// ────────────────────────────────────────────────────────────────
+//  Notifications & messaging
+// ────────────────────────────────────────────────────────────────
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id])
+  type      NotificationType
+  icon      String?
+  title     String
+  body      String?
+  link      String?
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  @@index([userId, readAt])
+  // r146 (T1-c F5): the notifications list (GET /me/notifications — the
+  // most-polled route) sorts by createdAt desc per user; (userId, readAt)
+  // serves only the unread counter — this turns the sort into an index
+  // range scan instead of a sort step.
+  @@index([userId, createdAt])
+  @@index([createdAt])
+}
+
+model Message {
+  id         String    @id @default(cuid())
+  fromUserId String
+  fromUser   User      @relation("MessageSender", fields: [fromUserId], references: [id])
+  toUserId   String
+  toUser     User      @relation("MessageReceiver", fields: [toUserId], references: [id])
+  body       String
+  readAt     DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([toUserId, readAt])
+  @@index([fromUserId])
+}
+
+// ────────────────────────────────────────────────────────────────
+//  Social: posts, comments, study rooms
+// ────────────────────────────────────────────────────────────────
+model Post {
+  id            String      @id @default(cuid())
+  authorId      String
+  author        User        @relation(fields: [authorId], references: [id])
+  institutionId String
+  institution   Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  body          String
+  hashtags      String[]
+  imageUrl      String?
+  createdAt     DateTime    @default(now())
+
+  comments  PostComment[]
+  reactions PostReaction[]
+
+  @@index([authorId])
+  @@index([createdAt])
+  // r179 (phase-5): the community feed is institution-scoped — the
+  // feed query filters (institutionId, createdAt desc).
+  @@index([institutionId, createdAt])
+}
+
+model PostComment {
+  id        String   @id @default(cuid())
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  body      String
+  createdAt DateTime @default(now())
+
+  @@index([postId])
+  @@index([authorId])
+}
+
+model PostReaction {
+  id     String @id @default(cuid())
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+  kind   String // "like" | "save"
+
+  @@unique([postId, userId, kind])
+  @@index([userId])
+}
+
+model StudyRoom {
+  id            String            @id @default(cuid())
+  name          String
+  topic         String?
+  ownerId       String
+  owner         User              @relation("StudyRoomOwner", fields: [ownerId], references: [id])
+  institutionId String
+  institution   Institution       @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  createdAt     DateTime          @default(now())
+  members       StudyRoomMember[]
+
+  @@index([ownerId])
+  @@index([institutionId])
+}
+
+model StudyRoomMember {
+  roomId   String
+  room     StudyRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  userId   String
+  user     User      @relation(fields: [userId], references: [id])
+  joinedAt DateTime  @default(now())
+
+  @@id([roomId, userId])
+  @@index([userId])
+}
+
+// ────────────────────────────────────────────────────────────────
+//  Library
+// ────────────────────────────────────────────────────────────────
+model Book {
+  id              String   @id @default(cuid())
+  title           String
+  author          String
+  category        String // prog | net | db | ai | sec
+  iconEmoji       String?
+  themeColor      String?
+  rating          Decimal? @db.Decimal(2, 1)
+  totalCopies     Int      @default(1)
+  availableCopies Int      @default(1)
+  createdAt       DateTime @default(now())
+  loans           Loan[]
+
+  @@index([category])
+}
+
+model Loan {
+  id         String     @id @default(cuid())
+  bookId     String
+  book       Book       @relation(fields: [bookId], references: [id])
+  userId     String
+  user       User       @relation(fields: [userId], references: [id])
+  borrowedAt DateTime   @default(now())
+  dueAt      DateTime
+  returnedAt DateTime?
+  status     LoanStatus @default(ACTIVE)
+
+  @@index([userId])
+  @@index([bookId])
+}
+
+// ────────────────────────────────────────────────────────────────
+//  Gamification
+// ────────────────────────────────────────────────────────────────
+model Achievement {
+  id          String            @id @default(cuid())
+  code        String            @unique
+  name        String
+  description String?
+  icon        String?
+  xp          Int               @default(50)
+  users       UserAchievement[]
+}
+
+model UserAchievement {
+  userId        String
+  user          User        @relation(fields: [userId], references: [id])
+  achievementId String
+  achievement   Achievement @relation(fields: [achievementId], references: [id])
+  unlockedAt    DateTime    @default(now())
+
+  @@id([userId, achievementId])
+  @@index([achievementId])
+}
+
+// ────────────────────────────────────────────────────────────────
+//  Skills & certificates
+// ────────────────────────────────────────────────────────────────
+model Skill {
+  id       String      @id @default(cuid())
+  name     String      @unique
+  category String?
+  icon     String?
+  users    UserSkill[]
+}
+
+model UserSkill {
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  skillId     String
+  skill       Skill    @relation(fields: [skillId], references: [id])
+  level       Int      @default(1) // 1..5
+  progressPct Int      @default(0)
+  updatedAt   DateTime @updatedAt
+
+  @@id([userId, skillId])
+  @@index([skillId])
+}
+
+model Certificate {
+  id          String            @id @default(cuid())
+  userId      String
+  user        User              @relation(fields: [userId], references: [id])
+  title       String
+  issuer      String
+  issuedAt    DateTime?
+  hours       Int               @default(0)
+  status      CertificateStatus @default(ONGOING)
+  externalUrl String?
+  fileUrl     String?
+  trackId     String?
+  track       TrainingTrack?    @relation(fields: [trackId], references: [id])
+  createdAt   DateTime          @default(now())
+
+  @@index([userId])
+  @@index([trackId])
+}
+
+// ────────────────────────────────────────────────────────────────
+//  External courses (MOOCs)
+// ────────────────────────────────────────────────────────────────
+model MoocCourse {
+  id             String           @id @default(cuid())
+  title          String
+  organization   String
+  iconEmoji      String?
+  category       String
+  durationHours  Int
+  level          String
+  rating         Decimal          @db.Decimal(2, 1)
+  enrolled       Int              @default(0)
+  hasCertificate Boolean          @default(true)
+  jobReady       Boolean          @default(true)
+  externalUrl    String?
+  createdAt      DateTime         @default(now())
+  enrollments    MoocEnrollment[]
+
+  @@index([category])
+}
+
+model MoocEnrollment {
+  id          String     @id @default(cuid())
+  moocId      String
+  mooc        MoocCourse @relation(fields: [moocId], references: [id])
+  userId      String
+  user        User       @relation(fields: [userId], references: [id])
+  progressPct Int        @default(0)
+  status      String     @default("active")
+  enrolledAt  DateTime   @default(now())
+
+  @@unique([moocId, userId])
+  @@index([userId])
+}
+
+// ────────────────────────────────────────────────────────────────
+//  Jobs
+// ────────────────────────────────────────────────────────────────
+model Job {
+  id           String           @id @default(cuid())
+  title        String
+  company      String
+  location     String
+  type         JobType
+  salary       String?
+  description  String?
+  iconEmoji    String?
+  category     String // tech | intern | remote
+  postedAt     DateTime         @default(now())
+  expiresAt    DateTime?
+  applications JobApplication[]
+
+  @@index([category])
+  @@index([type])
+}
+
+model JobApplication {
+  id         String               @id @default(cuid())
+  jobId      String
+  job        Job                  @relation(fields: [jobId], references: [id])
+  userId     String
+  user       User                 @relation(fields: [userId], references: [id])
+  status     JobApplicationStatus @default(APPLIED)
+  matchScore Int?
+  appliedAt  DateTime             @default(now())
+
+  @@unique([jobId, userId])
+  @@index([userId])
+}
+
+// ────────────────────────────────────────────────────────────────
+//  Virtual labs & AR/VR
+// ────────────────────────────────────────────────────────────────
+model VirtualLab {
+  id               String       @id @default(cuid())
+  name             String
+  platform         String? // "Cisco Packet Tracer", "Arduino Sim"…
+  category         String
+  iconEmoji        String?
+  totalExperiments Int          @default(0)
+  themeColor       String?
+  sessions         LabSession[]
+  createdAt        DateTime     @default(now())
+}
+
+model LabSession {
+  id             String     @id @default(cuid())
+  labId          String
+  lab            VirtualLab @relation(fields: [labId], references: [id])
+  userId         String
+  user           User       @relation(fields: [userId], references: [id])
+  experimentName String
+  progressPct    Int        @default(0)
+  score          Decimal?   @db.Decimal(5, 2)
+  startedAt      DateTime   @default(now())
+  completedAt    DateTime?
+
+  @@index([userId])
+  @@index([labId])
+}
+
+model ArExperience {
+  id          String           @id @default(cuid())
+  title       String
+  subject     String
+  type        ArExperienceType
+  description String?
+  iconEmoji   String?
+  themeColor  String?
+  contentUrl  String?
+  createdAt   DateTime         @default(now())
+}
+
+// ────────────────────────────────────────────────────────────────
+//  AI conversations
+// ────────────────────────────────────────────────────────────────
+model AiConversation {
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id])
+  institutionId String
+  institution   Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  title         String?
+  createdAt     DateTime    @default(now())
+  messages      AiMessage[]
+
+  @@index([userId])
+  // r179 (phase-5): conversations are institution-scoped — history,
+  // append, and delete all filter by the caller's verified context.
+  @@index([userId, institutionId])
+}
+
+model AiMessage {
+  id             String         @id @default(cuid())
+  conversationId String
+  conversation   AiConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           AiMessageRole
+  content        String
+  tokens         Int            @default(0)
+  createdAt      DateTime       @default(now())
+
+  @@index([conversationId, createdAt])
+}
+
+// ────────────────────────────────────────────────────────────────
+//  Audit log
+// ────────────────────────────────────────────────────────────────
+model AuditLog {
+  id            String       @id @default(cuid())
+  userId        String?
+  user          User?        @relation(fields: [userId], references: [id])
+  // r178: NULL = platform-scope entry; non-null = institution-scope
+  // (owner mutations on institutions carry it).
+  institutionId String?
+  institution   Institution? @relation(fields: [institutionId], references: [id])
+  action        String
+  resourceType  String?
+  resourceId    String?
+  ip            String?
+  userAgent     String?
+  metadata      Json?
+  createdAt     DateTime     @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+  @@index([resourceType, resourceId])
+  @@index([institutionId])
+}
+
+// ════════════════════════════════════════════════════════════════
+//  Flipped Classroom — Lectures, Chapters, Checkpoints
+//  Each lecture is a video + chaptered transcript + mid-video
+//  checkpoints. Watch events feed the knowledge-tracing model.
+// ════════════════════════════════════════════════════════════════
+
+model Lecture {
+  id            String         @id @default(cuid())
+  offeringId    String
+  offering      CourseOffering @relation(fields: [offeringId], references: [id])
+  title         String
+  description   String?
+  ordinal       Int            @default(0)
+  durationSec   Int            @default(0)
+  videoUrl      String
+  posterUrl     String?
+  transcriptUrl String?
+  // r323 B2.3 — the STT job ledger (the upload path writes DONE directly;
+  // the generation path walks QUEUED → RUNNING → DONE|FAILED).
+  transcriptStatus TranscriptStatus @default(NONE)
+  transcriptError  String?
+  createdAt     DateTime       @default(now())
+
+  chapters    LectureChapter[]
+  checkpoints LectureCheckpoint[]
+  watchEvents WatchEvent[]
+
+  @@index([offeringId, ordinal])
+}
+
+model LectureChapter {
+  id        String            @id @default(cuid())
+  lectureId String
+  lecture   Lecture           @relation(fields: [lectureId], references: [id], onDelete: Cascade)
+  title     String
+  startSec  Int
+  endSec    Int
+  ordinal   Int               @default(0)
+  conceptId String?
+  concept   KnowledgeConcept? @relation(fields: [conceptId], references: [id])
+
+  @@index([lectureId])
+  @@index([conceptId])
+}
+
+model LectureCheckpoint {
+  id           String             @id @default(cuid())
+  lectureId    String
+  lecture      Lecture            @relation(fields: [lectureId], references: [id], onDelete: Cascade)
+  conceptId    String?
+  concept      KnowledgeConcept?  @relation(fields: [conceptId], references: [id])
+  triggerSec   Int
+  question     String
+  options      Json
+  correctIndex Int
+  explanation  String?
+  // r157 (W2-F7 / audit 6A5): the student's per-checkpoint answer memory
+  // (one row per student+checkpoint). Cascade — deleting a checkpoint
+  // (or its lecture) takes its answers with it.
+  answers      CheckpointAnswer[]
+
+  @@index([lectureId])
+  @@index([conceptId])
+}
+
+// r157 (W2-F7 / audit 6A5): server memory for checkpoint answers.
+// Checkpoints had NO persisted answer: every page reload re-fired every
+// quiz, and re-answering burned the r155a MASTERY_ATTEMPT_CAP (a
+// student who reloaded 4 times could no longer move their mastery
+// while the checkpoints kept quizzing). One row per (student,
+// checkpoint) — unique below — upserted by the answer route (last
+// answer wins) and projected back as bare checkpointIds by
+// GET /lectures/:id so the player can seed answeredCheckpointIds.
+// answerIndex/correct never travel to the wire (privacy of attempts).
+model CheckpointAnswer {
+  id           String            @id @default(cuid())
+  checkpointId String
+  checkpoint   LectureCheckpoint @relation(fields: [checkpointId], references: [id], onDelete: Cascade)
+  studentId    String
+  student      User              @relation("StudentCheckpointAnswers", fields: [studentId], references: [id], onDelete: Cascade)
+  // The LAST answer (upsert semantics — a re-answer overwrites).
+  answerIndex  Int
+  correct      Boolean
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  @@unique([checkpointId, studentId])
+  @@index([studentId])
+}
+
+model WatchEvent {
+  id         String   @id @default(cuid())
+  lectureId  String
+  lecture    Lecture  @relation(fields: [lectureId], references: [id])
+  studentId  String
+  student    User     @relation("StudentWatchEvents", fields: [studentId], references: [id])
+  watchedSec Int
+  totalSec   Int
+  completed  Boolean  @default(false)
+  replays    Int      @default(0)
+  lastSeenAt DateTime @default(now())
+
+  @@unique([lectureId, studentId])
+  @@index([studentId])
+}
+
+// ════════════════════════════════════════════════════════════════
+//  Educational Matrix — concepts, mastery, gap-detection
+// ════════════════════════════════════════════════════════════════
+
+model KnowledgeConcept {
+  id       String             @id @default(cuid())
+  courseId String
+  course   Course             @relation(fields: [courseId], references: [id])
+  name     String
+  parentId String?
+  parent   KnowledgeConcept?  @relation("ConceptTree", fields: [parentId], references: [id])
+  children KnowledgeConcept[] @relation("ConceptTree")
+  ordinal  Int                @default(0)
+
+  chapters    LectureChapter[]
+  checkpoints LectureCheckpoint[]
+  masteries   StudentMastery[]
+
+  @@index([courseId])
+  @@index([parentId])
+}
+
+model StudentMastery {
+  id            String           @id @default(cuid())
+  studentId     String
+  student       User             @relation("StudentMasteries", fields: [studentId], references: [id])
+  conceptId     String
+  concept       KnowledgeConcept @relation(fields: [conceptId], references: [id])
+  level         Decimal          @db.Decimal(4, 3) // 0.000 — 1.000
+  attempts      Int              @default(0)
+  correct       Int              @default(0)
+  lastUpdatedAt DateTime         @default(now())
+
+  @@unique([studentId, conceptId])
+  @@index([conceptId])
+}
+
+// ════════════════════════════════════════════════════════════════
+//  Research Papers workflow
+//  Upload → simulated plagiarism + AI-detection → professor grade
+// ════════════════════════════════════════════════════════════════
+
+enum ResearchPaperStatus {
+  UPLOADED
+  SCANNING
+  CHECKS_PASSED
+  CHECKS_FAILED
+  GRADED
+  PUBLISHED
+}
+
+model ResearchPaper {
+  id            String              @id @default(cuid())
+  studentId     String
+  student       User                @relation("StudentPapers", fields: [studentId], references: [id])
+  reviewerId    String?
+  reviewer      User?               @relation("ProfessorReviewedPapers", fields: [reviewerId], references: [id])
+  offeringId    String?
+  offering      CourseOffering?     @relation(fields: [offeringId], references: [id])
+  /// r179 (phase-5): the institution the paper was submitted under —
+  /// the membership context of the submission (a user may hold student
+  /// profiles in several institutions).
+  institutionId String
+  institution   Institution         @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  title         String
+  abstract      String?
+  fileUrl       String?
+  status        ResearchPaperStatus @default(UPLOADED)
+  plagiarismPct Decimal?            @db.Decimal(4, 1)
+  aiContentPct  Decimal?            @db.Decimal(4, 1)
+  grade         Decimal?            @db.Decimal(4, 1)
+  feedback      String?
+  uploadedAt    DateTime            @default(now())
+  scannedAt     DateTime?
+  gradedAt      DateTime?
+  publishedAt   DateTime?
+  extractedText String?             @db.Text
+  annotations   PaperAnnotation[]
+
+  @@index([studentId])
+  @@index([reviewerId])
+  @@index([status])
+  @@index([offeringId])
+  // r180: the phase-5 migration already created this index in SQL
+  // (20261018000000: ResearchPaper_institutionId_idx) — the model
+  // declaration was missing, so the next `prisma migrate dev` would
+  // have generated a DROP of the exact index the institution-scoped
+  // paper queues/lists rely on (schema↔DB drift closed, no migration
+  // needed — the database already has it).
+  @@index([institutionId])
+}
+
+// Inline feedback on a research paper. Teachers/reviewers leave page-anchored
+// comments; the student sees them when reading the graded paper.
+model PaperAnnotation {
+  id        String        @id @default(cuid())
+  paperId   String
+  paper     ResearchPaper @relation(fields: [paperId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User          @relation(fields: [authorId], references: [id])
+  page      Int // 1-indexed PDF page
+  comment   String        @db.Text
+  color     String? // hex like "#F5A623" — UI tint; null → default
+  createdAt DateTime      @default(now())
+
+  @@index([paperId])
+  @@index([authorId])
+}
+
+// ────────────────────────────────────────────────────────────────
+//  Training tracks & rewards (Self-Development module)
+// ────────────────────────────────────────────────────────────────
+//  TrainingTrack       a self-contained learning path (e.g. "Research Skills")
+//  TrainingLesson      ordered lessons inside a track, optional check-question
+//  TrainingEnrollment  student joins a track
+//  LessonProgress      one row per completed lesson per enrollment
+//  Badge / UserBadge   visual milestones (per-track + cross-cutting)
+//  PointsLedger        append-only audit of every point award
+// ────────────────────────────────────────────────────────────────
+
+enum TrainingTrackCategory {
+  ONBOARDING
+  ACADEMIC
+  FLIPPED
+  STUDY_SKILLS
+  RESEARCH
+  CAREER
+  COMMUNICATION
+  ENGLISH
+  PROGRAMMING
+  PRODUCTIVITY
+  VISION
+}
+
+model TrainingTrack {
+  id          String                @id @default(cuid())
+  slug        String                @unique
+  title       String
+  titleEn     String?
+  summary     String                @db.Text
+  category    TrainingTrackCategory
+  level       String                @default("BEGINNER") // BEGINNER | INTERMEDIATE | ADVANCED
+  iconEmoji   String?
+  themeColor  String?
+  estMinutes  Int                   @default(60)
+  pointsAward Int                   @default(200)
+  order       Int                   @default(0)
+  isPublished Boolean               @default(true)
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+
+  lessons      TrainingLesson[]
+  enrollments  TrainingEnrollment[]
+  badges       Badge[]
+  certificates Certificate[]
+
+  @@index([category])
+  @@index([order])
+}
+
+model TrainingLesson {
+  id              String        @id @default(cuid())
+  trackId         String
+  track           TrainingTrack @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  order           Int
+  title           String
+  summary         String?
+  contentMarkdown String        @db.Text
+  estMinutes      Int           @default(8)
+  pointsAward     Int           @default(5)
+  quizQuestion    String?
+  quizAnswer      String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  progresses LessonProgress[]
+
+  @@unique([trackId, order])
+  @@index([trackId])
+}
+
+model TrainingEnrollment {
+  id          String        @id @default(cuid())
+  userId      String
+  user        User          @relation(fields: [userId], references: [id])
+  trackId     String
+  track       TrainingTrack @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  startedAt   DateTime      @default(now())
+  completedAt DateTime?
+
+  progresses LessonProgress[]
+
+  @@unique([userId, trackId])
+  @@index([trackId])
+}
+
+model LessonProgress {
+  id            String             @id @default(cuid())
+  enrollmentId  String
+  enrollment    TrainingEnrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  lessonId      String
+  lesson        TrainingLesson     @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  completedAt   DateTime           @default(now())
+  pointsAwarded Int                @default(0)
+
+  @@unique([enrollmentId, lessonId])
+  @@index([lessonId])
+}
+
+model Badge {
+  id          String         @id @default(cuid())
+  slug        String         @unique
+  title       String
+  description String
+  iconEmoji   String
+  themeColor  String?
+  rarity      String         @default("COMMON") // COMMON | RARE | EPIC | LEGENDARY
+  trackId     String?
+  track       TrainingTrack? @relation(fields: [trackId], references: [id])
+  createdAt   DateTime       @default(now())
+
+  users UserBadge[]
+
+  @@index([trackId])
+}
+
+model UserBadge {
+  userId   String
+  user     User     @relation(fields: [userId], references: [id])
+  badgeId  String
+  badge    Badge    @relation(fields: [badgeId], references: [id])
+  earnedAt DateTime @default(now())
+
+  @@id([userId, badgeId])
+  // r146 (T1-c F3): FK badgeId is ON DELETE RESTRICT with no index —
+  // deleting a Badge scan-joins UserBadge; the PK (userId, badgeId)
+  // does NOT cover badgeId. Same gap class the 20260924000000
+  // hardening round closed for the sibling FKs.
+  @@index([badgeId])
+}
+
+model PointsLedger {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  points    Int
+  reason    String
+  refType   String?
+  refId     String?
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
+
+// ════════════════════════════════════════════════════════════════
+//  Governance: capabilities + role/user permissions
+// ════════════════════════════════════════════════════════════════
+//  Two-layer model:
+//    1. RolePermission — defaults granted by Role
+//    2. UserPermission — explicit overrides per user (grant or revoke)
+//
+//  Effective caps = (RolePermission for user.role) ∪ (UserPermission grants)
+//                   ∖ (UserPermission revokes)
+// ────────────────────────────────────────────────────────────────
+
+model RolePermission {
+  role       Role
+  capability Capability
+
+  @@id([role, capability])
+}
+
+model UserPermission {
+  id            String       @id @default(cuid())
+  userId        String
+  user          User         @relation("UserPermissionUser", fields: [userId], references: [id], onDelete: Cascade)
+  capability    Capability
+  // r178: NULL = platform-global grant (applies in every institution);
+  // non-null = institution-scoped grant. Postgres treats NULLs as
+  // distinct in the composite unique below — app code upserts on the
+  // triple.
+  institutionId String?
+  institution   Institution? @relation(fields: [institutionId], references: [id])
+  // grant=true means this cap is explicitly given even if role doesn't have it.
+  // grant=false means this cap is explicitly revoked even if role has it.
+  grant         Boolean      @default(true)
+  grantedAt     DateTime     @default(now())
+  grantedById   String?
+  grantedBy     User?        @relation("UserPermissionGranter", fields: [grantedById], references: [id])
+  reason        String?
+
+  @@unique([userId, capability, institutionId])
+  // r146 (T1-c F3): FK grantedById is ON DELETE SET NULL with no index
+  // — deleting a granter User scan-joins this table; the unique
+  // (userId, capability, institutionId) does not cover grantedById.
+  @@index([grantedById])
+}
+
+// ════════════════════════════════════════════════════════════════
+//  Unified exams + question bank
+// ════════════════════════════════════════════════════════════════
+
+model QuestionCategory {
+  id           String      @id @default(cuid())
+  slug         String      @unique
+  title        String
+  description  String?
+  facultyId    String?
+  faculty      Faculty?    @relation(fields: [facultyId], references: [id])
+  departmentId String?
+  department   Department? @relation(fields: [departmentId], references: [id])
+  isShared     Boolean     @default(false) // visible across faculties
+  iconEmoji    String?
+  createdAt    DateTime    @default(now())
+
+  questions Question[]
+
+  @@index([facultyId])
+  @@index([departmentId])
+}
+
+model Question {
+  id             String           @id @default(cuid())
+  categoryId     String
+  category       QuestionCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  type           QuestionType
+  prompt         String           @db.Text
+  // For MCQ/TF: array of choice strings. For SHORT/ESSAY: null.
+  choices        Json?
+  // For MCQ: index into choices. For TF: 0=true, 1=false. For SHORT: model answer string. For ESSAY: rubric.
+  correctAnswer  Json?
+  difficulty     DifficultyLevel  @default(MEDIUM)
+  points         Int              @default(1)
+  tags           String[]         @default([])
+  authorId       String
+  author         User             @relation("QuestionAuthor", fields: [authorId], references: [id])
+  isApproved     Boolean          @default(false)
+  moderatedById  String?
+  moderatedBy    User?            @relation("QuestionModerator", fields: [moderatedById], references: [id])
+  moderationNote String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  templateLinks ExamTemplateQuestion[]
+  examAnswers   ExamAnswer[]
+
+  @@index([categoryId])
+  @@index([authorId])
+  @@index([difficulty])
+  @@index([isApproved])
+  @@index([moderatedById])
+}
+
+model ExamTemplate {
+  id             String          @id @default(cuid())
+  offeringId     String?
+  offering       CourseOffering? @relation(fields: [offeringId], references: [id])
+  facultyId      String? // faculty-wide unified exam
+  faculty        Faculty?        @relation(fields: [facultyId], references: [id])
+  title          String
+  kind           ExamKind        @default(QUIZ)
+  description    String?         @db.Text
+  durationMin    Int             @default(45)
+  passingScore   Int             @default(50)
+  randomized     Boolean         @default(true)
+  status         ExamStatus      @default(DRAFT)
+  authorId       String
+  author         User            @relation("ExamAuthor", fields: [authorId], references: [id])
+  moderatedById  String?
+  moderatedBy    User?           @relation("ExamModerator", fields: [moderatedById], references: [id])
+  moderationNote String?
+  openAt         DateTime?
+  closeAt        DateTime?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  questions ExamTemplateQuestion[]
+  attempts  ExamAttempt[]
+
+  @@index([offeringId])
+  @@index([facultyId])
+  @@index([authorId])
+  @@index([status])
+  @@index([moderatedById])
+}
+
+model ExamTemplateQuestion {
+  id             String       @id @default(cuid())
+  templateId     String
+  template       ExamTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  questionId     String
+  question       Question     @relation(fields: [questionId], references: [id])
+  order          Int
+  pointsOverride Int? // override the question's default points
+
+  @@unique([templateId, questionId])
+  @@unique([templateId, order])
+  @@index([questionId])
+}
+
+model ExamAttempt {
+  id          String        @id @default(cuid())
+  templateId  String
+  template    ExamTemplate  @relation(fields: [templateId], references: [id])
+  studentId   String
+  student     User          @relation(fields: [studentId], references: [id])
+  startedAt   DateTime      @default(now())
+  submittedAt DateTime?
+  expiresAt   DateTime
+  status      AttemptStatus @default(IN_PROGRESS)
+  score       Decimal?      @db.Decimal(6, 2)
+  maxScore    Decimal       @db.Decimal(6, 2)
+
+  answers ExamAnswer[]
+
+  @@index([templateId])
+  @@index([studentId])
+  // r146 (T1-c F4): the standalone [status] index is dropped — fully
+  // covered by the [status, expiresAt] prefix (same redundant-prefix
+  // class the 20260924050000 orphan-index round removed); one less
+  // btree write per exam attempt.
+  @@index([status, expiresAt])
+}
+
+model ExamAnswer {
+  id            String      @id @default(cuid())
+  attemptId     String
+  attempt       ExamAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  questionId    String
+  question      Question    @relation(fields: [questionId], references: [id])
+  // Student input — interpreted per question type
+  answerText    String?     @db.Text
+  choiceIndex   Int?
+  isCorrect     Boolean? // null = pending manual review
+  awardedPoints Decimal?    @db.Decimal(6, 2)
+  feedback      String?
+  answeredAt    DateTime    @default(now())
+
+  @@unique([attemptId, questionId])
+  @@index([questionId])
+}
+
+// ════════════════════════════════════════════════════════════════
+//  Social / community
+// ════════════════════════════════════════════════════════════════
+
+model Announcement {
+  id          String            @id @default(cuid())
+  authorId    String
+  author      User              @relation(fields: [authorId], references: [id])
+  scope       AnnouncementScope
+  scopeId     String? // facultyId / departmentId / offeringId
+  title       String
+  body        String            @db.Text
+  pinned      Boolean           @default(false)
+  publishedAt DateTime          @default(now())
+  expiresAt   DateTime?
+  iconEmoji   String?
+
+  @@index([scope, scopeId])
+  @@index([publishedAt])
+  @@index([authorId])
+}
+
+model Competition {
+  id            String            @id @default(cuid())
+  title         String
+  description   String            @db.Text
+  category      String // "بحث" | "برمجة" | "ابتكار" | "محاضرة" | "تصميم" ...
+  prize         String?
+  deadline      DateTime
+  organizerId   String
+  organizer     User              @relation("CompetitionOrganizer", fields: [organizerId], references: [id])
+  institutionId String
+  institution   Institution       @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  status        CompetitionStatus @default(OPEN)
+  iconEmoji     String?
+  themeColor    String?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  entries CompetitionEntry[]
+
+  @@index([status])
+  @@index([deadline])
+  @@index([organizerId])
+  @@index([institutionId, deadline])
+}
+
+model CompetitionEntry {
+  id            String      @id @default(cuid())
+  competitionId String
+  competition   Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User        @relation(fields: [userId], references: [id])
+  title         String
+  body          String      @db.Text
+  fileUrl       String?
+  submittedAt   DateTime    @default(now())
+  score         Int? // judging score, null until judged
+
+  @@unique([competitionId, userId])
+  @@index([userId])
+}
+
+model CampusEvent {
+  id            String      @id @default(cuid())
+  title         String
+  description   String      @db.Text
+  location      String
+  startsAt      DateTime
+  endsAt        DateTime
+  capacity      Int         @default(100)
+  organizerId   String
+  organizer     User        @relation("EventOrganizer", fields: [organizerId], references: [id])
+  institutionId String
+  institution   Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  iconEmoji     String?
+  themeColor    String?
+  createdAt     DateTime    @default(now())
+
+  rsvps EventRSVP[]
+
+  @@index([startsAt])
+  @@index([organizerId])
+  @@index([institutionId, startsAt])
+}
+
+model EventRSVP {
+  eventId  String
+  event    CampusEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId   String
+  user     User        @relation(fields: [userId], references: [id])
+  status   RsvpStatus  @default(GOING)
+  rsvpedAt DateTime    @default(now())
+
+  @@id([eventId, userId])
+  @@index([userId])
+}
+
+// ════════════════════════════════════════════════════════════════
+//  University data synchronization (PRD: daily sync from zu.edu.ly)
+// ════════════════════════════════════════════════════════════════
+//  UniversityFact   key/value store of public institutional facts
+//                   (vision, mission, contact, grade scale, etc.)
+//  SyncRun          audit log of every sync attempt
+// ────────────────────────────────────────────────────────────────
+
+enum SyncRunStatus {
+  RUNNING
+  SUCCESS
+  PARTIAL
+  FAILED
+}
+
+model UniversityFact {
+  /// Stable key — e.g. "name", "foundingYear", "phone.primary",
+  /// "address", "vision", "mission", "grade.scale.excellent".
+  key           String
+  institutionId String
+  institution   Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  /// Localized display value (Arabic by default; English-tagged keys for English).
+  value         String      @db.Text
+  /// Group: general | identity | contact | strategic | grading | colleges | calendar | other
+  category      String      @default("general")
+  /// Where the value came from: "zu.edu.ly:about" | "zu.edu.ly:faculty" | "manual"
+  source        String      @default("zu.edu.ly")
+  syncedAt      DateTime    @default(now())
+  /// Marked stale if a sync run could not refresh it.
+  isStale       Boolean     @default(false)
+
+  @@id([institutionId, key])
+  @@index([institutionId, category])
+}
+
+model SyncRun {
+  id            String        @id @default(cuid())
+  startedAt     DateTime      @default(now())
+  completedAt   DateTime?
+  status        SyncRunStatus @default(RUNNING)
+  source        String        @default("static-markdown")
+  /// r179 (phase-5): the institution this run synced — a run for one
+  /// institution never marks another's facts stale or overwrites its data.
+  institutionId String
+  institution   Institution   @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  factsAdded    Int           @default(0)
+  factsUpdated  Int           @default(0)
+  errorMsg      String?       @db.Text
+  durationMs    Int?
+  /// Free-form notes / fields the run could not resolve.
+  notes         String?       @db.Text
+
+  @@index([startedAt])
+  @@index([status])
+  @@index([institutionId, startedAt])
+}
+
+// ════════════════════════════════════════════════════════════════
+//  Live streaming sessions (PRD: teacher controls, students watch)
+// ════════════════════════════════════════════════════════════════
+//  A LiveSession is created by a teacher tied to one of their offerings.
+//  Students enrolled in that offering see the session in their watch
+//  list. The teacher controls lifecycle: SCHEDULED → LIVE → ENDED.
+// ────────────────────────────────────────────────────────────────
+
+enum LiveSessionStatus {
+  SCHEDULED
+  LIVE
+  ENDED
+  CANCELLED
+}
+
+// r323 B2.3 — the STT generation job state for a lecture's transcript.
+enum TranscriptStatus {
+  NONE
+  QUEUED
+  RUNNING
+  DONE
+  FAILED
+}
+
+model LiveSession {
+  id           String            @id @default(cuid())
+  offeringId   String
+  offering     CourseOffering    @relation(fields: [offeringId], references: [id])
+  teacherId    String
+  teacher      User              @relation("LiveSessionTeacher", fields: [teacherId], references: [id])
+  title        String
+  description  String?           @db.Text
+  topic        String? // optional sub-topic (e.g. "OOP — Polymorphism")
+  scheduledAt  DateTime
+  startedAt    DateTime?
+  endedAt      DateTime?
+  status       LiveSessionStatus @default(SCHEDULED)
+  // Provider URL — could be Zoom, BigBlueButton, Jitsi link, etc.
+  joinUrl      String?
+  // Recording reference (post-session)
+  recordingUrl String?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  @@index([offeringId])
+  @@index([teacherId])
+  @@index([status, scheduledAt])
+}
+
+// ════════════════════════════════════════════════════════════════
+//  Owner Enterprise: platform settings, feature flags, telemetry,
+//  operational alerts, and login events
+// ════════════════════════════════════════════════════════════════
+
+model PlatformSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   @db.Text
+  category  String   @default("general")
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+
+  @@index([category])
+}
+
+model FeatureFlag {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String?
+  enabled     Boolean  @default(true)
+  category    String   @default("platform")
+  updatedAt   DateTime @updatedAt
+  updatedBy   String?
+
+  @@index([category])
+  @@index([enabled])
+}
+
+model AiTelemetry {
+  id           String   @id @default(cuid())
+  userId       String?
+  feature      String
+  model        String?
+  inputTokens  Int      @default(0)
+  outputTokens Int      @default(0)
+  latencyMs    Int      @default(0)
+  success      Boolean  @default(true)
+  errorMessage String?
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
+  @@index([feature])
+  @@index([createdAt])
+  @@index([success])
+}
+
+// r323 B1.2 — the RAG store. One row = one retrievable chunk of course
+// truth (a lecture-transcript window, a checkpoint's question+answer,
+// a course description, a material abstract). Lexical retrieval rides
+// pg_trgm (the migration adds the GIN index); embeddings stay OFF
+// until a pgvector-capable database actually exists (honest scope).
+// The citation fields are denormalized ON PURPOSE: the chat route
+// renders «المصدر: …» straight from the hit row, one read, no joins.
+model AiKnowledgeChunk {
+  id            String      @id @default(cuid())
+  institutionId String
+  institution   Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  // Where the chunk came from — 'lecture' (transcript window),
+  // 'checkpoint', 'course', 'material'.
+  sourceType    String
+  sourceId      String
+  // Citation display: title + human locator («الدقيقة 14:20», «ص 5»)
+  // + the deep link that opens the player at the timestamp / PDF page.
+  title         String
+  locator       String?
+  url           String?
+  // The chunk body, as written (Arabic normalization happens at QUERY
+  // time so the stored text stays human-readable/printable).
+  content       String
+  createdAt     DateTime    @default(now())
+
+  @@index([institutionId])
+  @@index([sourceType, sourceId])
+}
+
+model OperationalAlert {
+  id         String    @id @default(cuid())
+  severity   String
+  category   String
+  title      String
+  message    String    @db.Text
+  metadata   Json?
+  resolvedAt DateTime?
+  resolvedBy String?
+  createdAt  DateTime  @default(now())
+
+  @@index([severity])
+  @@index([category])
+  @@index([resolvedAt])
+  @@index([createdAt])
+}
+
+model LoginEvent {
+  id        String   @id @default(cuid())
+  userId    String?
+  email     String
+  success   Boolean
+  ip        String?
+  userAgent String?
+  reason    String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([success])
+  @@index([createdAt])
+  @@index([email])
+}
+
+// ────────────────────────────────────────────────────────────────
+//  R320 §D — forgot-password reset tokens (PAGES-GAP.md §5)
+// ────────────────────────────────────────────────────────────────
+// One single-use token per request: 32 random bytes handed to the user
+// as base64url (43 chars), stored ONLY as its sha-256 hex digest — a
+// FAST hash on purpose (unlike argon2 for passwords): the token is
+// 128-bit random + 30-min TTL, so pre-image cost is irrelevant while
+// lookup cost must stay cheap per reset attempt.
+//
+// · expiresAt = mint + 30 min; usedAt != null marks the token spent
+//   (claimed atomically via updateMany CAS on usedAt = null — no
+//   read-then-write double-spend window).
+// · ONE live token per user is enforced at MINT time (the service marks
+//   any prior outstanding token used before creating the new one); the
+//   unique tokenHash additionally makes digest collisions impossible.
+// · userId cascades: deleting a user deletes their tokens.
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique // sha-256 hex of the base64url token — NEVER the raw token
+  expiresAt DateTime // mint + 30 min (the spec's TTL)
+  usedAt    DateTime? // null = outstanding; set = claimed (single use)
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ────────────────────────────────────────────────────────────────
+//  Durable binary storage (r175 — pilot persistence on Render Free)
+// ────────────────────────────────────────────────────────────────
+
+// Uploaded PDFs stored as BYTEA rows when STORAGE_DRIVER=postgres
+// (backend/src/lib/storage.ts PostgresDriver). The `key` is the SAME
+// canonical storage key the local/S3 drivers use
+// (`<papers|materials>/<cuid>.pdf`) — namespace semantics, access
+// gates and serving routes are unchanged; only the byte sink differs.
+// Rows are bounded by the 20 MB upload cap and the per-user quota.
+// Honest scope: a bounded pilot trade-off (bytes live in the app's
+// own Neon database) — see docs/16-decisions-and-limitations.md.
+model BinaryObject {
+  key       String   @id
+  bytes     Bytes
+  size      Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ────────────────────────────────────────────────────────────────
+//  AI cost control + answer feedback (r323 B1.1)
+// ────────────────────────────────────────────────────────────────
+// Additive to the AiTelemetry family: quota and budget counters keep
+// the SAME honesty ruling (tokens come from the provider's usage block
+// only — local mode writes 0, never an estimate). Rows are keyed by
+// the bare userId string (the AiTelemetry precedent — no FK), so these
+// tables never touch the User model and the migration stays purely
+// additive.
+
+// One row per USER: the CURRENT UTC day's ask counter. `dayKey`
+// ('YYYY-MM-DD') tells which day `used` belongs to; the route resets
+// stale rows via an updateMany CAS where dayKey ≠ today (the day
+// roll-over never read-modify-writes across statements).
+model AiQuota {
+  id     String @id @default(cuid())
+  userId String @unique
+  dayKey String
+  used   Int    @default(0)
+
+  @@index([dayKey])
+}
+
+// One row per MONTH: the platform-wide token budget counter.
+// `monthKey` ('YYYY-MM') is unique — the month roll-over starts a fresh
+// row. usedTokens accumulates REAL provider usage (input + output from
+// the usage block); estimatedCostMicros stays 0 until a real price
+// table exists (an honest zero, never a fabricated estimate).
+model AiBudget {
+  id                  String @id @default(cuid())
+  monthKey            String @unique
+  usedTokens          Int    @default(0)
+  estimatedCostMicros Int    @default(0)
+}
+
+// One rating per user per assistant answer (upsert — the last rating
+// wins). rating: 1 (helpful) / -1 (not helpful), SMALLINT on the wire.
+// The (messageId, userId) unique pair is both the idempotency key and
+// the ownership guarantee's complement: the route verifies the message
+// belongs to the caller's conversation before the upsert.
+model AiFeedback {
+  id        String   @id @default(cuid())
+  userId    String
+  messageId String
+  rating    Int      @db.SmallInt
+  createdAt DateTime @default(now())
+
+  @@unique([messageId, userId])
+  @@index([messageId])
+  @@index([userId])
+}
+
+// ────────────────────────────────────────────────────────────────
+// r323 B3.1 — invite codes (single-use/expiring, scoped self-registration)
+// ────────────────────────────────────────────────────────────────
+model InviteCode {
+  id           String   @id @default(cuid())
+  code         String   @unique
+  role         Role
+  // The scope the code enrolls into: exactly one of offering/department/
+  // faculty (a code may target a course section, a department, or a whole
+  // faculty — the register flow shows the target honestly before submit).
+  offeringId   String?
+  offering     CourseOffering? @relation(fields: [offeringId], references: [id])
+  departmentId String?
+  department   Department?     @relation(fields: [departmentId], references: [id])
+  facultyId    String?
+  faculty      Faculty?        @relation(fields: [facultyId], references: [id])
+  createdById  String
+  createdBy    User     @relation("InviteCodeCreator", fields: [createdById], references: [id])
+  expiresAt    DateTime
+  maxUses      Int      @default(1)
+  usedCount    Int      @default(0)
+  uses         InviteUse[]
+  createdAt    DateTime @default(now())
+
+  @@index([createdById])
+}
+
+model InviteUse {
+  id     String     @id @default(cuid())
+  codeId String
+  code   InviteCode @relation(fields: [codeId], references: [id], onDelete: Cascade)
+  userId String
+  user   User       @relation("InviteUseUser", fields: [userId], references: [id])
+  usedAt DateTime   @default(now())
+
+  @@unique([codeId, userId])
+}
+
+// ────────────────────────────────────────────────────────────────
+// r323 B3.6 — the pilot feedback loop: the floating «أبلغ عن مشكلة /
+// اقتراح» lands here — route, role, browser, the last ~20 console
+// errors, an optional (downscaled) screenshot — and the registrar/
+// owner inbox works the status. Weekly digest reads the same rows.
+// ────────────────────────────────────────────────────────────────
+model PilotFeedback {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  kind      String // BUG | IDEA
+  role      String? // the sender's role at send time
+  route     String? // the SPA path it was filed from
+  userAgent String?
+  console   Json? // [{ t, text }] — the consoleTape ring (≤ 20 rows)
+  note      String   @db.Text
+  // The optional screenshot: a client-downscaled JPEG data URL
+  // (≤ 1280px wide, ≤ 600 KB) — a pilot-scale convenience, not a
+  // storage product; the inbox renders it inline.
+  screenshot String?
+  status    String   @default("open") // open → triage → fixed | dismissed
+  createdAt DateTime @default(now())
+
+  @@index([status, createdAt])
+  @@index([userId])
+}
+
+// r326 M1.1 — native client crash/error telemetry (additive). Written by
+// the mobile app's telemetry layer (fire-and-forget POST /client-errors,
+// unauthenticated so login-time crashes still report; strict rate limit +
+// zod validation at the route). The OWNER inbox reads it.
+model ClientError {
+  id             String    @id @default(cuid())
+  userId         String?
+  user           User?     @relation(fields: [userId], references: [id])
+  kind           String // crash | js_error | unhandled_rejection | api_error | render
+  message        String    @db.Text
+  stack          String?   @db.Text
+  route          String?
+  role           String?
+  breadcrumbs    Json? // [{ t, text }] ring (≤ 30 rows)
+  appVersion     String?
+  updateId       String? // expo-updates id — which OTA the user runs
+  runtimeVersion String?
+  deviceModel    String?
+  osName         String?
+  osVersion      String?
+  userAgent      String?
+  reviewedAt     DateTime?
+  createdAt      DateTime  @default(now())
+
+  @@index([kind, createdAt])
+  @@index([reviewedAt, createdAt])
+  @@index([userId])
+}
+
+// r326 M2.6 — Expo push device registration (additive; per the mobile
+// proposal apps/mobile/docs/push-backend-proposal.md). Upserted by token;
+// pruned when Expo reports DeviceNotRegistered or after 180 idle days.
+model PushDevice {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  platform   String // ANDROID | IOS | WEB
+  expoToken  String   @unique
+  appVersion String?
+  lastSeenAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([lastSeenAt])
+}

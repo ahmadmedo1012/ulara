@@ -1,0 +1,587 @@
+# Backend — API, middleware, auth & operations
+
+Express 4.22.3 (TypeScript, ESM) + Prisma 5.22 over Neon PostgreSQL.
+All endpoints are mounted under the base path **`/api/v1`** and return a
+`{ data: T }` envelope (errors return `{ error: { code, message } }`).
+The complete, code-accurate endpoint table (196 endpoints — 191 route
+registrations in the 25 route files + 4 module-router endpoints + `GET
+/health`) lives in
+[`docs/API-REFERENCE.md`](docs/API-REFERENCE.md) — the tables below are a
+condensed overview.
+
+---
+
+## 1. Source layout (`backend/src/`)
+
+| Path | Responsibility |
+|------|----------------|
+| `index.ts` | Entry point — boots server, connects DB, starts scheduler |
+| `app.ts` | Express app factory — middleware + route mounting + SPA fallback |
+| `env.ts` | Zod‑validated environment config |
+| `db.ts` | Prisma singleton + `withRetry()` for Neon transient errors |
+| `logger.ts` | Pino logger |
+| `scheduler.ts` | In‑process daily university‑sync ticker |
+| `http/validate.ts` | Generic Zod validation middleware factory |
+| `http/middleware/*` | `auth`, `requireRole`, `requireCapability`, `rateLimit`, `errorHandler` |
+| `http/routes/*` | 25 route modules (incl. `submissions.routes.ts` + `curriculum.routes.ts`) |
+| `lib/*` | `jwt`, `password`, `errors`, `pagination`, `pdf`, `permissions`, `governance`, `grading`, `risk`, `dates`, `compression`, `storage` (upload drivers: local fs / S3-compatible SigV4), `operational-alerts`, `zu-sync/` |
+| `modules/auth/*` | `auth.service.ts`, `auth.dto.ts`, `password-policy`, `lockout`, `rotation` |
+| `modules/search/*` | Arabic-aware search normalization (`normalize.ts`) backing `/search/global` |
+| `modules/theme/*` | `router.ts` — `GET/PUT /me/theme` (handler inline; the separate service module was folded in wave 16) |
+| `modules/onboarding/*` | `router.ts` + `service.ts` — `POST /me/onboarding/complete` (idempotent, race-safe) |
+| `modules/milestones/*` | `router.ts` + `service.ts` — `POST /me/milestones/:id/fire` (service-token auth only) |
+
+---
+
+## 2. Middleware chain (order in `app.ts`)
+
+1. `app.disable('x-powered-by')`
+2. `app.set('trust proxy', 1)` (Vercel-style reverse proxy)
+3. **Helmet** — CSP **enabled** (D7 allow-list: `default-src 'self'`, plus a sha256 pin for the inline theme-bootstrap script), `crossOriginResourcePolicy: cross-origin`
+4. **CORS** — allow-list from `CORS_ORIGINS` env (default: `https://ulara.vercel.app`, `http://localhost:5173`), `credentials: true`
+5. **gzip compression** middleware (≥1 KB, text/JSON/JS/SVG; `Vary: Accept-Encoding` on all responses)
+6. `express.json({ limit: '1mb' })` + `express.urlencoded({ limit: '1mb' })` — the two PDF upload routes add route-level `express.raw({ type: 'application/pdf', limit: MAX_UPLOAD_PDF_BYTES })` (JSON/URLENCODED parsers skip non-matching content types, so the raw bodies pass through untouched). The limit is HOST-HONEST (lib/pdf-limits.ts): 20 MiB self-hosted, 4 MiB on Vercel — Vercel Functions cap any body at 4.5 MB (verified live 2026-11-11), so the app's own 4 MiB gate answers oversize uploads with the Arabic envelope BEFORE the platform's opaque 413. Advertised at `/api/v1/status` → `data.maxPdfUploadBytes`
+7. `cookieParser()`
+8. **Global rate limit** on `/api/v1` — **1000 req / 15 min / IP** (raised from 300 — campus users behind shared NAT)
+9. **Auth rate limit** on `/auth/login` + `/auth/register` + `/auth/refresh` + `/auth/change-password` — 10 req / 15 min / IP (skips successes)
+10. Route‑level guards: `authMiddleware`, `optionalAuthMiddleware`,
+   `requireRole(...)`, `requireCapability(...)`, `validate(schema, source)`
+11. **Error handler** (registered last) — maps `AppError`, `ZodError` (→400),
+    body‑parser rejects (→400/413/415 with our own message, never the raw parser
+    error), Prisma `P2002` (→409), `P2025` (→404), `P2003` (→400); unknown → 500
+    (no leak, raises an OperationalAlert). Unknown `/api/*` paths get a JSON 404
+    envelope — never Express HTML
+
+---
+
+## 3. Authentication
+
+| Aspect | Detail |
+|--------|--------|
+| Access token | JWT HS256, TTL 15m, payload `{ sub, role, type:'access' }`, `Authorization: Bearer` |
+| Refresh token | JWT, TTL 7d, payload `{ sub, ver, type:'refresh' }`, http‑only cookie `ulara_refresh`, `sameSite:strict`, path `/api/v1/auth` |
+| Rotation | **Sliding session** — a normal refresh re‑issues tokens at the SAME `tokenVersion` (multi‑device survives). `tokenVersion` is bumped only on explicit revocation events (logout, password change, role change, deactivation), each an atomic conditional write |
+| Passwords | Argon2id — memoryCost ≈19 MiB, timeCost 2, parallelism 1 + common‑password blocklist (8–72 chars) |
+| Lockout | 5 failed logins → 15‑min lock (atomic increment + read‑back); reset on success |
+| Login id | Email (`@`) **or** university registration number |
+| Secrets | `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET` (≥32 chars, Zod‑validated) |
+
+---
+
+## 4. Permissions model
+
+- **Roles:** `STUDENT`, `TEACHER`, `ADMIN`, `QUALITY`, `OWNER`.
+- **Capabilities:** fine‑grained enum (e.g. `RESEARCH_GRADE_OWN/ANY`,
+  `EXAMS_AUTHOR/MODERATE`, `CURRICULUM_EDIT_OWN/ANY`, `USERS_MANAGE`,
+  `ROLES_ASSIGN`, `TEACHERS_VERIFY`, `QUALITY_VIEW`, `ANNOUNCE_*`,
+  `COMPETITIONS_RUN`, `EVENTS_RUN`).
+- **Resolution:** `getEffectiveCapabilities()` = role defaults + per‑user grants
+  − revokes (stored in `UserPermission`). `OWNER` holds all capabilities.
+- Guards: `requireRole(...)` (role membership) and `requireCapability(...)`
+  (any‑of capability check).
+
+---
+
+## 5. API reference
+
+> Auth column: **Bearer** = any logged‑in user; a role/capability name = guarded.
+
+### Health
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/health` | none | DB connectivity + latency + env |
+
+### Auth — `/auth`
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/auth/register` | rate‑limited | Create account |
+| POST | `/auth/login` | rate‑limited | Login (email or university id) |
+| POST | `/auth/change-password` | Bearer + rate‑limited | Change own password (verifies current; other devices revoked) |
+| POST | `/auth/refresh` | cookie | Sliding refresh (no tokenVersion bump) |
+| POST | `/auth/logout` | Bearer **or** cookie | Revoke refresh tokens |
+| GET | `/auth/me` | Bearer | Current user profile |
+
+### Users — `/users`
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/users` | ADMIN/OWNER | List users (paginated `{data,meta}`, role filter, q) |
+| GET | `/users/:id` | self/ADMIN | User detail (allow‑list select — no security metadata leak) |
+| PATCH | `/users/:id` | self/ADMIN | Update profile fields / isActive (last‑owner guard, audited) |
+
+### Governance — `/admin/users/*`, `/admin/teachers/*`
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/admin/users` | USERS_MANAGE | Paginated governance user list |
+| GET/POST | `/admin/users/:id/permissions` | ROLES_ASSIGN | Inspect / grant‑revoke capability overrides |
+| POST | `/admin/users/:id/role` | ROLES_ASSIGN | Change role (self 403, promote‑to‑OWNER 403, last‑owner 409, TEACHER provisioning) |
+| POST | `/admin/users/:id/scope` | ROLES_ASSIGN | Set faculty governance scope (self 403, scoped‑actor 403) |
+| GET | `/admin/teachers/:id/suggestions` | TEACHERS_VERIFY | Review suggestions |
+| POST | `/admin/teachers/:id/verify` | TEACHERS_VERIFY | Verify teacher |
+| POST | `/admin/teachers/:id/position` | ROLES_ASSIGN | Assign leadership position |
+
+### Courses — `/courses`
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/courses` | Bearer | List (paginated, filter by department) |
+| GET | `/courses/:id` | Bearer | Detail with offerings |
+| POST | `/courses` | ADMIN/OWNER | Create |
+| PATCH | `/courses/:id` | ADMIN/OWNER | Update |
+| DELETE | `/courses/:id` | ADMIN/OWNER | Delete — 200 `{ok:true}`; 409 while offerings/concepts exist |
+
+### Enrollments — `/enrollments`
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/enrollments/me` | STUDENT | My enrollments |
+| POST | `/enrollments` | ADMIN/OWNER | Enroll student (audited; clean 404/400/409) |
+| DELETE | `/enrollments/:id` | ADMIN/OWNER | Remove enrollment (audited) |
+
+### Offerings — `/offerings`
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/offerings/:id` | access‑checked | Offering detail |
+| GET/POST | `/offerings/:id/materials` | access / TEACHER+ADMIN+OWNER | List / create material record (by link — no bytes) |
+| POST | `/offerings/:id/materials/file?name=…&type=PDF` | TEACHER+ADMIN+OWNER (20/min) | Upload a real material PDF (raw `application/pdf` ≤20 MB, magic bytes; row first, bytes via storage driver, row deleted on put failure) — served from `/files/materials/<id>.pdf` |
+| GET/POST | `/offerings/:id/assignments` | access / TEACHER+ADMIN+OWNER | List / create assignments |
+| GET/POST | `/offerings/:id/grades` | access / TEACHER+ADMIN+OWNER | List / upsert grades (score ≤ maxScore enforced) |
+| GET/POST | `/offerings/:id/attendance` | access / TEACHER+ADMIN+OWNER | Sessions / record |
+| POST | `/offerings/:offeringId/assignments/:assignmentId/submit` | STUDENT | Submit assignment (`{textAnswer?, fileUrl?}`) |
+| POST | `/submissions/:id/grade` | TEACHER+ADMIN+OWNER | Grade submission (`{grade, feedback?}`) |
+
+### Me — notifications & messages (`/api/v1`)
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/notifications` | Bearer | Paginated + unread count |
+| PATCH | `/notifications/:id/read` | Bearer | Mark one read |
+| POST | `/notifications/read-all` | Bearer | Mark all read |
+| GET | `/messages` | Bearer | DM list + `meta.unread` |
+| POST | `/messages` | Bearer (30/min) | Send DM (recipient + notification atomic) |
+| PATCH | `/messages/:id/read` | Bearer | Mark one incoming DM read |
+| POST | `/messages/read-all` | Bearer | Bulk mark read (optional `{fromUserId}`) |
+
+### Learning (`/api/v1`)
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/offerings/:id/full` | Bearer | Full offering (lectures, schedule…) |
+| GET | `/offerings/:id/lectures` | Bearer | Lectures |
+| GET | `/lectures/:id` | Bearer | Lecture detail |
+| POST | `/lectures/:id/watch` | Bearer | Watch progress (auto‑attendance) |
+| POST | `/lectures/:lid/checkpoints/:cid/answer` | Bearer | Answer checkpoint |
+| GET | `/me/profile` `/me/resume` `/me/matrix` `/me/gaps` | Bearer | Learning profile / resume / mastery matrix / gaps |
+| GET/POST | `/me/research` | Bearer | My papers / create |
+| POST | `/research/:id/scan` | Bearer (10/min) | Plagiarism + AI scan |
+| POST | `/research/:id/grade` | RESEARCH_GRADE_* | Grade |
+| GET | `/research/queue` | TEACHER/ADMIN/OWNER | Review queue (PII-stripped) |
+| POST | `/research/:id/publish` | TEACHER/ADMIN/OWNER | Publish to library |
+| GET | `/research/published` `/research/search` | Bearer | Library / full‑text search |
+| GET/POST | `/research/:id/annotations` | Bearer / TEACHER+ADMIN+OWNER | Annotations |
+| DELETE | `/research/annotations/:id` | Bearer (author) / ADMIN+OWNER | Delete annotation |
+| GET | `/quality/alerts` `/overview` `/courses` `/professors` `/engagement` `/curriculum` | QUALITY_VIEW | Quality analytics |
+
+### Training (`/api/v1`)
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/training/catalog` | Bearer | Published tracks |
+| GET | `/training/tracks/:slug` | Bearer | Track + lessons |
+| POST | `/training/tracks/:slug/enroll` | Bearer | Enroll |
+| POST | `/training/lessons/:lessonId/complete` | Bearer | Complete + award points |
+| GET | `/training/me` `/me/badges` `/me/certificates` `/leaderboard` | Bearer | Progress / badges / certs / top 20 |
+
+### Teacher (`/api/v1`)
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/teacher/me/offerings` | TEACHER/OWNER | My offerings |
+| GET | `/teacher/offerings/:id/students` `/analytics` | TEACHER/ADMIN/OWNER | Students / analytics |
+| GET | `/teacher/risks` | TEACHER/ADMIN/OWNER | At‑risk students |
+| POST | `/teacher/offerings/:id/attendance` | TEACHER/ADMIN/OWNER | Record attendance |
+| POST | `/teacher/offerings/:id/curriculum/suggest` | CURRICULUM_EDIT_* | Suggest changes |
+| GET | `/teacher/dashboard` `/teacher/me/materials` `/teacher/me/assignments` | TEACHER/ADMIN/OWNER | Teacher dashboard aggregate |
+
+### Teacher profile & live (`/api/v1`)
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET/PATCH | `/me/teacher-profile` | TEACHER/OWNER | Get / update profile |
+| GET/POST | `/live/sessions` | Bearer / TEACHER+ADMIN+OWNER | List / create live session |
+| POST | `/live/sessions/:id/lifecycle` | TEACHER+ADMIN+OWNER | Start / end / cancel (invalid transitions 409) |
+
+### Exams (`/api/v1`)
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/question-bank` `/question-bank/categories` | Bearer | Questions / categories |
+| POST | `/question-bank` | EXAMS_AUTHOR | Create question |
+| POST | `/question-bank/:id/moderate` | EXAMS_MODERATE | Approve/reject |
+| POST/GET | `/exams/templates` | EXAMS_AUTHOR / Bearer | Create / list |
+| GET | `/exams/templates/:id` | Bearer | Detail |
+| POST | `/exams/templates/:id/moderate` `/publish` | EXAMS_MODERATE / EXAMS_AUTHOR | Moderate / publish |
+| GET | `/exams/me` | STUDENT | My attempts |
+| POST | `/exams/templates/:id/start` | STUDENT | Start attempt — **resumes** a live IN_PROGRESS attempt (`resumed:true` + saved answers) |
+| POST | `/exams/attempts/:id/answer` `/submit` | STUDENT | Answer / submit (`passed` null while manual grading pending) |
+| POST | `/exams/attempts/:attemptId/grade` | TEACHER+ADMIN+OWNER | Manual grading → finalizes GRADED |
+| GET | `/exams/moderation-queue` | EXAMS_MODERATE | Pending items |
+
+### Social & community (`/api/v1`)
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET/POST | `/announcements/feed` `/announcements` | Bearer / ANNOUNCE_* | Feed (expiry-filtered) / create |
+| GET/POST | `/competitions` `/competitions/:id` … `/enter` `/close` `/entries/:entryId/score` `/judge` | Bearer / COMPETITIONS_RUN | Competitions (score locked once JUDGED → 409) |
+| GET/POST | `/events` … `/rsvp` | Bearer / EVENTS_RUN | Events (capacity row-locked) |
+| GET/POST | `/posts` … `/react` | Bearer | Social feed (no comment endpoint) |
+
+### Catalog (`/api/v1`)
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/library/books` | Bearer | Book catalog (paginated) |
+| POST | `/library/loans` | Bearer | Borrow (`{bookId}`; no‑copy 409) |
+| POST | `/library/loans/:id/return` | Bearer | Return (already-closed 409) |
+| GET | `/mooc` `/jobs` `/labs` `/ar-experiences` `/faculties` `/leaderboard` | Bearer | MOOCs / jobs / labs / AR‑VR / faculties / leaderboard |
+| POST | `/mooc/:id/enroll` `/jobs/:id/apply` | Bearer | Enroll / apply |
+| GET | `/me/achievements` `/me/skills` `/me/certificates` `/me/loans` | Bearer | Gamification + loans |
+| GET | `/admin/stats` `/admin/faculties` `/admin/reports` `/admin/courses` | ADMIN/OWNER | Admin data |
+| GET | `/admin/students` `/admin/digital` | ADMIN/OWNER | Admin extras (students: 400 on malformed page/limit/facultyId) |
+
+### Search / Sync / AI / Files
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/search/global?q=` | Bearer | Cross‑entity autocomplete |
+| GET/POST | `/admin/sync` `/admin/sync/trigger` | USERS_MANAGE/QUALITY_VIEW | Sync status / trigger |
+| GET | `/university/facts` | Bearer | Institutional facts |
+| POST/GET | `/ai/chat` `/ai/conversations` `/ai/conversations/:id/messages` | Bearer (chat rate‑limited 20/min) | AI chat + history (messages capped at newest 200). `POST /ai/chat` serves BOTH transports: the JSON envelope (additive `X-Ai-Quota-Remaining` header) and SSE streaming (`?stream=1` or `Accept: text/event-stream` — `token`/`done`/`error` frames). Daily ask quota (default 25/user/day via `AI_DAILY_LIMIT_DEFAULT`) → honest Arabic 429 |
+| GET | `/ai/config` | Bearer | The honest-surface badge — `{ provider, model }` (`local` + `null` in local mode; never a fake model name) |
+| POST | `/ai/feedback` | Bearer | Per-answer thumbs ±1 (one rating per user per answer, upsert) |
+| POST | `/ai/knowledge/reindex` | ADMIN/OWNER | (Re)index the institution's course truth (course descriptions, lecture checkpoints, platform-hosted SRT/VTT transcripts) into `AiKnowledgeChunk` — idempotent per source, reports skips honestly |
+| DELETE | `/ai/conversations/:id` | Bearer | Conversation clear (messages cascade) |
+| POST | `/files/papers` | STUDENT (10/min per user) | Upload research‑paper PDF (raw `application/pdf` ≤20 MB, `%PDF-` magic bytes) → `{ data: { fileUrl } }`; no paper row here — `POST /me/research` consumes the fileUrl (an orphan 404s on serve) |
+| GET | `/files/papers/:filename` | Bearer | Serve PDF via the storage abstraction (access‑gated: PUBLISHED / owner / reviewer / oversight; path‑traversal protected, `.pdf` only, single‑range 206/416) |
+| GET | `/files/materials/:filename` | Bearer | Serve material PDF (access‑gated: offering’s teacher / active enrollment / oversight) |
+
+### Theme / onboarding / milestones (`/api/v1/me/*`)
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET/PUT | `/me/theme` | Bearer | Theme preference sync |
+| POST | `/me/onboarding/complete` | Bearer | Idempotent, race-safe completion |
+| POST | `/me/milestones/:id/fire` | **service token** (`x-internal-service-token`) | Server-to-server milestone fire (fail-closed; user JWTs always 403) |
+
+### Owner — master control (`/api/v1/owner`)
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/owner/stats` `/realtime` `/ai-metrics` `/alerts` `/login-analytics` `/governance` `/education` `/system` | OWNER | Platform metrics (SQL-aggregated) |
+| GET/POST/PATCH | `/owner/users` … `/role` `/status` | OWNER | User management (last‑owner guard 409; self‑deactivation 403) |
+| GET | `/owner/activity` | OWNER | Activity log |
+| GET/PUT | `/owner/settings` … `/:key` | OWNER | Platform settings (value ≤2000 chars, category ≤40) |
+| GET/PUT | `/owner/feature-flags` … `/:slug` | OWNER | Feature flags |
+| POST | `/owner/alerts/:id/resolve` | OWNER | Resolve alert (already-resolved 409) |
+
+---
+
+## 6. Environment variables (`src/env.ts`)
+
+| Variable | Required | Default | Notes |
+|----------|----------|---------|-------|
+| `DATABASE_URL` | ✅ | — | Neon pooler connection string |
+| `JWT_ACCESS_SECRET` | ✅ | — | ≥32 chars |
+| `JWT_REFRESH_SECRET` | ✅ | — | ≥32 chars |
+| `NODE_ENV` | ❌ | `development` | `production` enables static serving + secure cookies |
+| `PORT` | ❌ | `4000` | listen port |
+| `CORS_ORIGINS` | ❌ | ulara.vercel.app + localhost:5173 | Comma-separated CORS allow-list (no wildcards — credentials are on) |
+| `INTERNAL_SERVICE_TOKEN` | ❌ | — | Service-to-service auth for `POST /api/v1/me/milestones/:id/fire` (≥16 chars; fail-closed when unset; constant-time compare) |
+| `DIRECT_DATABASE_URL` | ❌ | derived | Neon **direct** (non-pooled) URL for `prisma migrate deploy`; when unset, the deploy script derives it from `DATABASE_URL` (strips `-pooler` + pooling params) |
+| `STORAGE_DRIVER` | ❌ | `local` | Upload storage driver (`lib/storage.ts`): `local` filesystem or `s3` (any S3-compatible store). `s3` without the four `S3_*` vars → boot fails closed naming them; `local` in production logs a one-time ephemeral-disk warning |
+| `STORAGE_DIR` | ❌ | `backend/storage` | Local driver root (absolute path); ignored for `s3` |
+| `S3_ENDPOINT` / `S3_REGION` / `S3_BUCKET` / `S3_ACCESS_KEY_ID` / `S3_SECRET_ACCESS_KEY` | with `STORAGE_DRIVER=s3` | `S3_REGION=auto` | Object-store config (path-style addressing; AWS S3 / Cloudflare R2 / MinIO). Secrets only via the environment — never in code/docs |
+| `AI_PROVIDER` / `AI_BASE_URL` / `AI_API_KEY` / `AI_MODEL` | with `AI_PROVIDER=openai` | `AI_PROVIDER=local`, `AI_BASE_URL=https://api.openai.com/v1` | AI chat provider (`lib/ai.ts`): `local` in-process composer, or `openai` = any OpenAI-compatible LLM. `openai` without key+model → boot fails closed naming them. Secrets only via the environment — never in code/docs |
+
+---
+
+## 7. Scripts
+
+**Root:** `build` (frontend + backend + `db:deploy`), `start`, `dev`, `dev:web`,
+`test` (both workspaces), `typecheck` (src + tests, both workspaces),
+`db:migrate`, `db:deploy`, `db:seed`, `validate:colleges`,
+`check:motion-tokens` / `check:icons` / `check:csp-hash`
+(the suspended `check:i18n` gate was deleted at r137 — Arabic-only per D17-3).
+**Backend:** `dev` (tsx watch), `build` (tsc → `dist/`), `start`, `typecheck`,
+`prisma:generate|migrate|deploy|seed`, `postinstall` (prisma generate).
+
+---
+
+## 8. Auxiliary systems
+
+- **Scheduler** (`scheduler.ts`): runs `runSync()` 5 s after boot, then every 24 h
+  (overlap-guarded); results recorded in `SyncRun`. Also prunes `LoginEvent`
+  rows older than 180 days in bounded batches (never rejects, capped per day).
+- **Timezone model** (`lib/dates.ts` — 15-h, campaign 3): the server runs with
+  `TZ=UTC` (the Vercel serverless runtime is UTC); every stored instant is UTC. Date-only
+  *data* concepts (attendance day-keys, `@@unique(offeringId, date)` buckets)
+  use UTC day-keys via `utcDayKey()` — stable regardless of who computes them;
+  *display* labels («اليوم»/«غداً», agenda weekdays, month buckets) use
+  Africa/Tripoli civil days via `tripoliDayKey()`/`tripoliDayDow()` (Libya is
+  UTC+2 with no DST since 2013 — always use the tz name, never a hardcoded
+  offset, so a DST return widens nothing silently).
+- **University sync** (`lib/zu-sync/`): pulls institutional facts from a static
+  source into `UniversityFact`.
+- **PDF** (`lib/pdf.ts`): `extractPaperText()` via `pdf-parse` for library
+  full-text search; best-effort, never throws; reads bytes through the
+  storage abstraction (same `backend/storage/papers/` layout locally).
+- **File storage** (`lib/storage.ts`, P3-BE): the upload/serve backend —
+  `LocalDriver` (fs/promises under `STORAGE_DIR`, default `backend/storage`)
+  and `S3Driver` (fetch + hand-rolled AWS SigV4, node:crypto only,
+  path-style, works with R2/MinIO); memoized `getStorage()`; keys are
+  `papers/<cuid>.pdf` / `materials/<cuid>.pdf` (validated + dir-pinned).
+  Serving always flows through the gated `/files/*` routes — objects are
+  never public.
+- **AI provider** (`lib/ai.ts`, P4): the chat-assistant engine switch —
+  `local` (default; the route's mastery-aware composer answers) or
+  `openai` (any OpenAI-compatible chat-completions endpoint: OpenAI,
+  Groq, OpenRouter, DeepSeek, vLLM, Ollama; global fetch + AbortSignal,
+  zero new deps). Pure helpers (windowing, message assembly, completion
+  parsing, Arabic system prompts with anti-fabrication guardrails) are
+  test-pinned; `getAiProvider()` is boot-frozen; provider failures map
+  to one honest Arabic error (no silent template fallback) and
+  telemetry records the real model + token usage verbatim.
+
+---
+
+## 9. AI assistant — coverage, evaluation & grounding (r327 P4b)
+
+> Proven on the local stack (`http://localhost:4000`, provider = `local`)
+> on 2026‑10‑31. Evidence: `audits/evidence/r327/p4/` (retrieval check,
+> 61‑case eval + as‑run console log). What needs a real LLM key is marked
+> «يتطلب نموذجًا لغويًا» and stays owner‑runnable — never faked.
+
+### 9.1 Coverage map — where AI lives (and where it deliberately does not)
+
+| Surface | Route | Who | State |
+|---|---|---|---|
+| Student assistant (SSE streaming + JSON fallback, quota card, thumbs, conversations sidebar) | `/student/ai` → `POST /ai/chat` | STUDENT | live — mastery‑aware composer locally; real LLM when `AI_PROVIDER=openai` |
+| Teacher assistant (same page, generic persona + the caller's teaching context lines) | `/teacher/ai` → `POST /ai/chat` | TEACHER | live |
+| Owner AI metrics (telemetry aggregates: success rate, latency, models) | `/owner/ai` → `GET /owner/ai-metrics` | OWNER | live — now carries 71 real telemetry rows from the r327 eval run |
+| Knowledge (re)index (the grounding source of truth) | `POST /ai/knowledge/reindex` | ADMIN/OWNER | live — 25 checkpoint chunks indexed from the showcase institution on 2026‑10‑31 |
+| Lecture transcript ingest (SRT/VTT paste → stored as VTT → player `<track>` + knowledge index read the same bytes) | `PUT /lectures/:id/transcript` | TEACHER/ADMIN/OWNER | live |
+| Lecture transcript generation (STT, OpenAI‑compatible `/audio/transcriptions`) | `POST /lectures/:id/transcript/generate` | TEACHER/ADMIN/OWNER | refuses honestly (409, Arabic) while `STT_*` is unset — the local stack has no STT key; the manual ingest path is the fallback |
+| Registrar / quality / dean consoles | — | — | **no AI surface by design** — `/ai/chat` serves every authenticated role, but the UI exposes it only where it has student‑facing value |
+
+### 9.2 Grounded answers w/ citations — the mechanism, measured
+
+The grounding chain (r323 B1.2 + the r327 fixes): `POST
+/ai/knowledge/reindex` indexes course truth (descriptions, checkpoints,
+platform‑hosted transcripts) into `AiKnowledgeChunk` → every chat turn
+runs `searchKnowledge()` (lexical retrieval: pg_trgm prefilter →
+per‑token ILIKE → Arabic‑aware re‑ranker) → hits ride the system prompt
+as a numbered «السياق من مقرراتك» block → the envelope returns
+`citations[]` (title + «الدقيقة م:ث» locator + player deep link +
+snippet) on BOTH transports.
+
+**Two defects found and fixed live (commit `bdc792ed`):**
+
+1. *pg_trgm is blind to Arabic.* `similarity('الذاكرة الافتراضية',
+   'الذاكرة الافتراضية')` = **0.000** on the local PG16 build — the
+   trigram prefilter passed only 2/10 natural Arabic questions (the two
+   carrying Latin SQL terms). With the per‑token ILIKE branch (content
+   OR title — the re‑ranker scores both, so the prefilter must see
+   both), the same 10 questions retrieve **10/10** through the real
+   `searchKnowledge()` (evidence: `ai-retrieval-check.txt`).
+2. *The JSON envelope leaked citations in local mode.* The SSE path
+   (and the route's own comment) pinned «local mode never cites» — the
+   template composer never read the sources, so a citation dressed a
+   template reply. Local mode now returns `citations: []` on both
+   transports; citations flow in provider mode only, where the reply is
+   actually grounded.
+
+**Honest gaps:** the frontend does not yet render the `citations[]` the
+backend returns — neither `frontend/src/lib/ai-stream.ts`'s
+`AiStreamDone` nor `hooks/resources/ai.ts`'s chat types carry it, and
+the chat page renders no «المصدر» chip — that UI is the remaining
+owner‑side work. And a live provider‑mode citation is «يتطلب نموذجًا
+لغويًا» (no LLM key in this sandbox); the mechanism is proven locally
+end‑to‑end through `searchKnowledge()`, the citation objects it
+returns, and the reindex that feeds it.
+
+### 9.3 The 61‑case Arabic evaluation (≥60 required)
+
+`scripts/r327/ai-eval-60.mjs` — owner‑runnable against any stack
+(`BASE_URL=… node scripts/r327/ai-eval-60.mjs [out.json]`, credentials
+via `EVAL_*_EMAIL`/`EVAL_PASSWORD`, defaults = the documented demo
+accounts). 61 Arabic cases across 6 domains (grounded course content
+24, teaching 10, advisory 8, missing‑data honesty 9, behavioral 7,
+injection 3), spread 20/21/20 over the three documented test accounts
+(every account under its 25/day quota), paced 3.5 s (under the 20/60 s
+chat rate limiter), then one account is deliberately walked into the
+daily wall.
+
+| Metric | Result (local stack, engine `local`) |
+|---|---|
+| ok | **61/61** — median 15 ms, max 92 ms, `engine=local` on every turn |
+| Structural checks | **57/57** — Arabic script, injection resistance (ar/en + system‑prompt‑leak probe), envelope honesty, follow‑up threads, 1‑char & 3999‑char bounds, plain‑text rule |
+| LLM‑only probes | 0/4 (worked‑example numerals ×2, language switch ×2) — expected 0 in local mode; these are the provider‑mode acceptance items, reported separately, never faked |
+| Citations | 0 on all 61 turns — the local never‑cites rule held |
+| Daily quota wall | **proven live** — day‑ask 26 → HTTP 429 «وصلتَ حدَّ الأسئلة اليوميّ للمساعد الذكيّ (25 سؤالًا) — عُد غدًا أو تابع من محادثاتك السابقة.» |
+
+The 4 LLM‑only probes and citation presence on grounded cases are the
+production‑mode acceptance bar for the owner's rerun
+(`BASE_URL=https://ulara.vercel.app` + eval creds; the bounded r176
+harness `scripts/ai-eval-live.mjs` stays the free‑tier‑respectful
+12‑turn production probe).
+
+
+---
+
+## 10. Uploads & transcripts — the storage chain, environment by environment (r327 P4d B2)
+
+> The B2 row asked where files go and whether the chain is real. The
+> whole chain was proven live on the local stack on 2026‑10‑31
+> (`scripts/r327/b2-storage-roundtrip.mjs` — the as‑run log and the
+> pre‑fix failure it uncovered are in `audits/evidence/r327/p4/b2/`).
+
+### 10.1 The storage abstraction — one contract, three drivers
+
+`backend/src/lib/storage.ts` exposes one `StorageDriver` contract
+(`put`/`get`/`getRange`/`stat`) with three drivers selected by
+`STORAGE_DRIVER` (fail‑closed at boot, `env.ts`):
+
+| Driver | Bytes land in | Where it is the right choice |
+|---|---|---|
+| `local` (default) | `backend/storage/<namespace>/<file>` via fs/promises | dev only — the serverless filesystem is EPHEMERAL (a boot log warns in prod); files vanish on every invocation |
+| `s3` | any S3‑compatible store (AWS S3 / Cloudflare R2 / MinIO), path‑style, hand‑rolled SigV4 (no new npm deps) | production persistence — requires `S3_ENDPOINT`+`S3_REGION`+`S3_BUCKET`+`S3_ACCESS_KEY_ID`+`S3_SECRET_ACCESS_KEY`, otherwise boot refuses |
+| `postgres` | BYTEA rows in the app's own PostgreSQL (`BinaryObject`) | the bounded serverless pilot mode (durable, no new infra — explicitly a 5–10‑student trade‑off, not an object‑store architecture) |
+
+Namespaces: `papers/` (research PDFs), `materials/` (course PDFs),
+`lectures/` (r323: videos + `.vtt` transcript sidecars). Every driver
+method runs `storageKeyIsValid` — the driver‑side belt (traversal,
+control bytes, namespace + extension shape) — and `LocalDriver` adds a
+resolved‑path pin inside its root.
+
+### 10.2 The research‑paper chain (student)
+
+1. `POST /api/v1/files/papers` — STUDENT only (10/min/user), RAW
+   `application/pdf` body ≤20 MB (no multipart). Gates in order: role →
+   Buffer → size 413 → `%PDF-` magic bytes → active‑content heuristic
+   (`/JavaScript` `/OpenAction` `/Launch` → 400) → verified institution
+   context (fail‑closed) → per‑user quota (200 MB ≈ 10 stored papers;
+   external‑URL papers store zero bytes and don't count). Stores the
+   bytes, mints `<uuid>.pdf`, answers **201 `{ data: { fileUrl } }` —
+   no paper row here**.
+2. `POST /api/v1/me/research` — STUDENT (10/min), consumes that
+   `fileUrl` (or an external https URL), mints the **institution‑bound**
+   `ResearchPaper` row (status `UPLOADED`) with a 5‑min double‑submit
+   guard (`FOR UPDATE` row lock). Until this row exists the uploaded
+   bytes are an inert orphan — the serving gate 404s any filename
+   without an authorizing row.
+3. `GET /api/v1/files/papers/:filename` — Bearer, access‑gated
+   (PUBLISHED / owner / reviewer / oversight), path‑traversal protected,
+   single‑range 206/416.
+
+**Proven live (local, `local` driver):** 612‑byte valid PDF (real
+`%PDF-1.4` header + xref) → 201 in 9–14 ms → paper row 201
+(institution bound) → GET back **200, sha256 identical**,
+`application/pdf`, `Range: bytes=0-15` → 206. Negative: no `%PDF-`
+magic → **400 Arabic** «الملف المرفق ليس ملف PDF صالحاً» (never a
+silent save). Roundtrip log: `audits/evidence/r327/p4/b2/roundtrip.txt`.
+
+### 10.3 The lecture‑video chain (teacher)
+
+Platform‑hosted video uses **presigned direct upload** (r323 B2.1):
+`POST /api/v1/files/uploads/presign` (TEACHER+, 30/min) mints a
+server‑generated key `lectures/c<32hex>.<mp4|webm|m4v|ogv|ogg>` and a
+≤15‑min SigV4‑query‑presigned PUT URL — the browser uploads straight
+to the store (single ≤100 MB or multipart ≤4 GB), the serverless disk and
+the backend's memory never see a lecture‑sized payload;
+`POST /files/uploads/complete` verifies and stamps `Lecture.videoUrl`.
+**This path requires `STORAGE_DRIVER=s3`** — on local/postgres the
+presign route answers an honest Arabic 503 («الرفع المباشر للفيديو
+يتطلب تخزينًا متوافقًا مع S3…»). Serving: `GET /files/lectures/:filename`
+— S3 → 302 to a 10‑min presigned GET (range support from the store);
+local/postgres → streamed through the backend, range‑aware.
+
+### 10.4 The transcript story — generation vs. ingest
+
+Two ways a lecture gets captions, one storage seat:
+
+- **STT generation** (`POST /lectures/:id/transcript/generate`,
+  TEACHER/ADMIN/OWNER, owns the offering): 202 fire‑and‑forget job —
+  storage get → 25 MB gate → multipart POST to an OpenAI‑compatible
+  `/audio/transcriptions` (`STT_API_URL`/`STT_API_KEY`/`STT_MODEL` —
+  Groq Whisper / OpenAI / self‑hosted Whisper) → VTT → same storage
+  seat, `transcriptStatus` QUEUED→RUNNING→DONE|FAILED. **Without
+  `STT_*` the route refuses honestly (409, Arabic) — proven live**;
+  it never fabricates a transcript.
+- **Manual ingest (the fallback)**: `PUT /lectures/:id/transcript` —
+  the owning teacher pastes SRT/VTT (≤2 MiB), the platform
+  SRT→VTT‑normalizes, validates ≥1 cue, stores
+  `lectures/<lectureId>.vtt` in the same abstraction, stamps
+  `Lecture.transcriptUrl`. The player's `<track>` and the AI knowledge
+  indexer read the same bytes (`readPlatformText`).
+
+**Proven live:** generate → 409 Arabic (STT unset, the honest refusal);
+ingest of a 2‑cue Arabic SRT → 201 → `GET /files/lectures/<id>.vtt` →
+200 `text/vtt` with both cues and SRT→VTT timestamps normalized.
+
+### 10.5 The defect the roundtrip uncovered (and the fix)
+
+The first run of the roundtrip caught a real r323 regression: the
+`lectures` namespace was added to `buildStorageKey` but **not** to the
+driver‑side key gate — `storageKeyIsValid` admitted only
+`<papers|materials>/*.pdf`, so **every** lectures key (transcript
+sidecar, video stat/serve, the presign paths) threw at the driver on
+all three drivers: `PUT /lectures/:id/transcript` answered a 500
+(`invalid storage key: "lectures/<id>.vtt"` — server log in the
+evidence), and the STT job's landing put / video serve / presigned
+upload were dead the same way. Fixed in the same row by teaching the
+gate the lectures shapes (video extensions + `.vtt`, same
+belt: flat, no traversal, no control bytes) — unit tests pin both the
+accepted mint shapes and the hostile ones (`storage-sigv4.test.ts`),
+and the roundtrip above then passed end‑to‑end.
+
+---
+
+## 11. Bulk onboarding — the honest answer (r327 P4d B3)
+
+> The r325 row said «B3 bulk import proven». The finding, stated
+> plainly: **there is no CSV/file‑upload bulk import of students in
+> this codebase — and never was.** The r323 "B3.1 bulk‑import
+> remainder" shipped as **invite codes** (self‑serve bulk onboarding),
+> and the `admin/sync` path (SyncRun) syncs **university facts**, not
+> users. Both statements below are backed by a live run on the seeded
+> stack (`audits/evidence/r327/p4/b3/invite-bulk-proof.txt`).
+
+### 11.1 What exists — invite codes (r323 B3.1)
+
+| Route | Who | What |
+|---|---|---|
+| `POST /invites` | TEACHER (own offering) / ADMIN / OWNER | Mint a code: role STUDENT or TEACHER, **exactly one** scope (offering \| department \| faculty), expiry 1–90 d, `maxUses` 1–500 |
+| `GET /invites` | creator | Their codes + live `usedCount` |
+| `DELETE /invites/:id` | creator (OWNER bypasses) | Revoke |
+| `GET /invites/:code/validate` | **public** | Pre‑submit verdict for the register page (Arabic scope label + honest refusal reasons) |
+| `POST /auth/register` + `inviteCode` | public | The bulk path: each student self‑registers; the code is validated **before** the user row, then consumed **inside the registration transaction** (counted claim under the cap — a racing over‑consume loses the `updateMany` and the account rolls back), the use is ledgered (`InviteUse`, unique per user), and the student is **enrolled into the scoped offering** automatically |
+
+The registrar's bulk story is therefore: mint one code per cohort with
+`maxUses = N`, share it, and every registration lands enrolled + counted.
+`DELETE /users/demo-cohort` (ADMIN/OWNER) is the counterpart bulk
+**removal** — the one‑transaction sweep of the `@demo.ulara.ly`
+pilot sample (30 seeded users on the showcase institution).
+
+### 11.2 What was proven live (seeded DB, real API)
+
+`scripts/r327/b3-invite-bulk-proof.mjs` — teacher@test.ly mints a
+STUDENT code scoped to their SE301 offering (`maxUses` 3, 7 d) →
+**201**; public validate → **200** `مقرر SE301 — هندسة البرمجيات`
+(role mismatch → **400** «هذا الكود مخصص لنوع حساب آخر.»); three
+throwaway students register with the code → **201 each**, and throwaway
+#1's `GET /enrollments/me` shows the scoped offering **active**; the
+teacher's `GET /invites` shows `usedCount 3/3`; a 4th registration with
+the same code → **400** «استُنفد هذا الكود (بلغ أقصى عدد للاستخدام).»
+Throwaways registered under the demo‑cohort pilot domain (recorded
+under its retired spelling at the time) and were removed
+immediately after by id (ordered delete mirroring `removeDemoCohort`;
+the seed's own 30 demo users untouched — recorded in the evidence log).
+
+### 11.3 What is owner‑only / out of scope here
+
+- **CSV import by the registrar does not exist** — if the mission's
+  r325 row meant a CSV uploader, that is a feature gap, not an unproven
+  feature. (The invite‑code design was the deliberate r323 decision:
+  self‑serve, no password handling by staff, no CSV parsing attack
+  surface.)
+- `POST /admin/sync/trigger` (ADMIN with institution context / OWNER)
+  re‑syncs an institution's **UniversityFact** rows from its configured
+  source — institutional statistics, not user import. It ran on this
+  stack only as the scheduler's boot tick (`initial: SUCCESS,
+  factsAdded: 0`); no user rows are touched.

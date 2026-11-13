@@ -1,0 +1,268 @@
+/* ════════════════════════════════════════════════════════════════════
+   R333 P-D → r335 (W-chrome) → r339 (T-11c) — the entry preloader sheet,
+   conformed to the FROZEN r335 reference motion spec (the retired
+   r335 captures: _motion.1440.json + _motion.390.json, targets `.loading-*`):
+
+     · the loading CONTENT fades out first — recorded
+       `to { duration:0.4, ease:power2.out, opacity:0 }` on
+       .loading-content/.loading-content-title/.loading-progress-text
+       → here: .pl-inner opacity→0 on var(--motion-duration-page)
+       (400ms) with the house decel token (--ease-out, the register's
+       power2.out-equivalent);
+     · the paper OPENS ON THE RECORDED SLIT — the .loading-main clip
+       polygons (49.944%/50.056% hairline → the quads collapsed to the
+       top/bottom edges) → here: .pl-sheet carries the same polygon pair
+       as a real clip-path transition across var(--motion-duration-sheet-exit)
+       (835ms — the R313-measured rung of this same reference exit) on the
+       recorded cubic-bezier(1,0,0.44,1);
+     · the band pair FLIES THE RECORDED FLIGHT — the .loading-progress-item
+       top/bot `to { duration:0.8, ease:cubic-bezier(1,0,0.44,1),
+       y:∓387.5px/+310.5px @1440 (∓150.6px/+263.9px @390),
+       backgroundColor:#b3b3af }` → here: two REAL .pl-band halves (the
+       flight must be a live element, not a ::before paint — the exit
+       params read from the computed style the moment the class lands)
+       translating the recorded per-breakpoint distances and tinting to
+       the recorded #b3b3af on the same rung/ease, DECLARED ON THE BASE
+       CLASS from mount so the legs are armed before the exit fires;
+     · the overlay itself hides INSTANTLY and unmounts — recorded
+       `to { duration:0, ease:power2.out, autoAlpha:0 }` on the
+       loading-wrap seat; here the unmount is Preloader's
+       transitionend (guarded to the paper's clip-path leg) + cap twin,
+       so the overlay vanishes with the split's last frame. Zero JS
+       animation, zero @keyframes — the whole exit is CSS transitions
+       on the .pl--exit class.
+
+   Every duration is a token; the raw easings and distances carry their
+   recorded provenance. The mark/wordmark stroke-draw stays the brand
+   system's own <Logo animated> (its bespoke timing is the documented
+   brand spec). Reduced motion never mounts this sheet (the introGate
+   refuses); the belt below still pins the exit to an instant hide.
+   ════════════════════════════════════════════════════════════════════ */
+
+.pl {
+  position: fixed;
+  inset: 0;
+  z-index: 320; /* above the nav/cursor chrome (250/251) while it plays */
+  display: grid;
+  place-items: center;
+  /* the paper ground lives on the .pl-sheet/.pl-band pair below — the
+     root stays clear so the bands can fly without dragging the content's
+     paint with them (the recorded .loading-main split geometry) */
+  background: transparent;
+}
+
+/* the paper — the recorded .loading-main seat: at rest the clip is the
+   recorded hairline slit (the 49.944%/50.056% polygon pair — the two
+   quads cover the sheet minus a 1px centreline gap that rides the
+   instrument crosshair); on exit the quads collapse to the top/bottom
+   edges and the sheet opens. Declared from mount so the leg is armed. */
+.pl-sheet {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  clip-path: polygon(0% 0%, 100% 0%, 100% 50.056%, 0% 50.056%, 0% 49.944%, 100% 49.944%, 100% 100%, 0% 100%);
+  transition: clip-path var(--motion-duration-sheet-exit) var(--motion-ease-band-exit); /* r339 T-18 — the recorded .loading-main slit curve, seated as the canonical --motion-ease-band-exit token (resolves on the landing sheet) */
+}
+
+/* the band pair — the recorded .loading-progress-item top/bot seats:
+   the two paper halves, meeting flush at the centreline at rest; on
+   exit they fly the recorded per-breakpoint distances and tint to the
+   recorded #b3b3af ground (the chrome cell-grammar grey). */
+.pl-band {
+  position: absolute;
+  inset-inline: 0;
+  background: var(--bg); /* the ONE paper ground — the entry sheet is
+                            the same material as the page it reveals */
+  pointer-events: none;
+  transition:
+    transform var(--motion-duration-sheet-exit) var(--motion-ease-band-exit), /* r339 T-18 — the recorded .loading-progress-item exit curve, tokened */
+    background-color var(--motion-duration-sheet-exit) var(--motion-ease-band-exit); /* r339 T-18 — same recorded curve, tokened */
+}
+
+.pl-band--top {
+  inset-block: 0 50%; /* the top band */
+}
+
+.pl-band--bot {
+  inset-block: 50% 0; /* the bottom band */
+}
+
+/* ── THE EXIT (the .pl--exit class; Preloader adds it after the 100%
+ * hold beat) — the recorded choreography, simultaneous:
+ *   content fade 0.4s · slit opens 0.835s · bands fly+tint 0.835s ·
+ *   instant hide+unmount. transitionend lands on the root from the
+ *   paper's own clip-path leg (the longest transition), so the unmount
+ *   waits for the split's last frame — never for the content fade. ══ */
+.pl--exit .pl-sheet {
+  clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%, 0% 100%, 100% 100%, 100% 100%, 0% 100%); /* the recorded end polygons — the quads collapsed to the edges */
+}
+
+/* the recorded item flight (r335 _motion.1440: y −387.547/+310.5;
+   _motion.390: y −150.562/+263.891) + the recorded #b3b3af tint */
+.pl--exit .pl-band--top {
+  transform: translateY(-387.5px);
+  background-color: var(--preloader-exit-ground); /* the recorded exit ground — tokened (canonical --preloader-exit-ground) */
+}
+
+.pl--exit .pl-band--bot {
+  transform: translateY(310.5px);
+  background-color: var(--preloader-exit-ground); /* the recorded exit ground — tokened (canonical --preloader-exit-ground) */
+}
+
+@media (max-width: 991px) {
+  .pl--exit .pl-band--top { transform: translateY(-150.6px); }
+  .pl--exit .pl-band--bot { transform: translateY(263.9px); }
+}
+
+.pl--exit .pl-inner {
+  opacity: 0;
+}
+
+.pl-inner {
+  position: relative;
+  z-index: 1; /* the content rides above its own paper bands */
+  display: grid;
+  justify-items: center;
+  gap: var(--sp-3);
+  text-align: center;
+  transition: opacity var(--motion-duration-page) var(--ease-out); /* power2.out-equivalent — the house decel rung; armed from mount so the exit leg reads in computed style */
+}
+
+.pl-mark,
+.pl-wordmark {
+  color: var(--text); /* the outlined letterforms stroke currentColor */
+  line-height: 0;
+}
+
+.pl-mark svg,
+.pl-wordmark svg {
+  display: block;
+  inline-size: auto;
+  block-size: auto;
+}
+
+.pl-counter {
+  direction: ltr; /* the mono readout is Latin-mono, like the reference */
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent); /* the ONE signal — the reference's mono counter */
+}
+
+.pl-rail {
+  position: relative;
+  inline-size: min(16rem, 56vw);
+  block-size: 1px; /* the hairline rail — blueprint drawing weight */
+}
+
+.pl-rail-track {
+  position: absolute;
+  inset: 0;
+  background: var(--text-muted);
+  opacity: 0.35;
+}
+
+/* the fill grows right→left (the RTL reading direction) */
+.pl-rail-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform-origin: right;
+}
+
+/* the R313 skip contract — a real control (button), paper-styled,
+ * hairline-drawn; ends the entrance immediately (the exit still plays) */
+.pl-skip {
+  appearance: none;
+  margin: 0;
+  padding: 0.5rem 1rem;
+  background: none;
+  border: 1px solid var(--text-muted);
+  border-radius: 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color var(--t-fast), border-color var(--t-fast);
+}
+
+.pl-skip:hover,
+.pl-skip:focus-visible {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.pl-skip:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ── the instrument chrome (r309/r311 contract): the measuring
+   crosshairs (the retired craft sheet row 6 — the overlay is an instrument, not
+   a splash), the progress seat and the mono meta row. ── */
+.pl-cross-h,
+.pl-cross-v {
+  position: absolute;
+  background: var(--text);
+  mix-blend-mode: difference;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.pl-cross-h {
+  inset-inline: 0;
+  top: 50%;
+  block-size: 1px;
+}
+
+.pl-cross-v {
+  inset-block: 0;
+  inset-inline-start: 50%;
+  inline-size: 1px;
+}
+
+.pl-progress {
+  display: grid;
+  justify-items: center;
+}
+
+.pl-meta {
+  display: grid;
+  justify-items: center;
+}
+
+.pl-meta-row {
+  display: flex;
+  gap: var(--sp-3);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+/* ── Reduced motion — the sheet never plays under RM (the introGate
+   refuses to mount it; the component belt-and-braces exits instantly).
+   This belt pins the exit to an instant hide should the class ever
+   land under RM: the bands stand open, the content stands hidden. ── */
+@media (prefers-reduced-motion: reduce) {
+  .pl-sheet,
+  .pl-band,
+  .pl-inner,
+  .pl-skip {
+    transition: none;
+  }
+}
+
+/* r339 (T-18) resolution — the raw cubic-bezier literals are RETIRED:
+   the recorded exit curve now lives in the canonical tokens.css motion
+   block as --motion-ease-band-exit (cubic-bezier(1,0,0.44,1)) and the
+   recorded exit ground as --preloader-exit-ground (#b3b3af); both
+   resolve on the landing sheet (tokens.css canonical :root — verified
+   by computed-style read), closing the r339 T-11c finding that the
+   unified-parity --motion-ease-band seat silently fell back to
+   `all 0s ease` there. --motion-duration-sheet-exit (835ms) was
+   already canonical and untouched. */

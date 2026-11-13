@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <!-- r172b (loading closure): html{min-height:100%} in a parse-time
+         inline style. The CLS lab's first-paint entry (0.00775, source
+         attributed to <html>) previously recorded the document element
+         growing 1270x8 → 1270x800 as the stylesheet applied and the app
+         shell mounted. With this rule the document element is
+         full-height from the first layout pass (the lab now records
+         html 1270x800 → 1270x800 — stable). The 0.00775 first-paint
+         ENTRY itself still appears (Chrome attributes the initial
+         contentful layout to the html node even when its own rect is
+         unchanged) — the entry is below budget on every route and the
+         document element no longer participates. base.css can't do
+         this: it arrives after first layout (vite dev injects CSS via
+         JS; prod loads it as a link — both after this inline rule
+         applies with the parsed HTML). CSP allows inline styles
+         (style-src 'unsafe-inline'). -->
+    <style>html{min-height:100%}</style>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- R320 §D (PAGES-GAP P2-8): the web-app identity — the manifest
+         (أُلارا · ar · rtl · standalone · the paper ground #F5F1E8) with
+         the maskable PNG icons rendered from the one brand mark, and
+         the apple-touch-icon seat (iOS ignores the manifest's icons
+         and reads this link directly; 180 is its exact recommendation
+         for the current devices). -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/brand/icon-180.png" />
+    <meta name="theme-color" content="#262019" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#F5F1E8" media="(prefers-color-scheme: light)" />
+    <meta name="description" content="أُلارا — نظام تشغيل الجامعة: منظومة متكاملة، عربية أولًا، لإدارة المؤسّسة الأكاديمية والتعلّم والبحث — كليات وأقسام ومقرّرات ومحاضرات واختبارات ومصفوفة إتقان وبحوث" />
+    <title>أُلارا · نظام تشغيل الجامعة</title>
+    <!-- 8-a (0-b P2-17) — canonical + Open Graph / Twitter card. og:image
+         is the ULARA social card (public/brand/ulara-og.jpg, 1200×630 jpg) —
+         a paper-ground plate with the U-vessel mark and the wordmark
+         (the kit source shared/brand/ulara/og-1200x630.svg). jpg
+         survives every crawler (webp still doesn't), and the URLs are
+         absolute because social scrapers don't resolve relative
+         paths. -->
+    <link rel="canonical" href="https://ulara.vercel.app/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="أُلارا — نظام تشغيل الجامعة" />
+    <meta property="og:title" content="أُلارا · نظام تشغيل الجامعة" />
+    <meta property="og:description" content="أُلارا — نظام تشغيل الجامعة: منظومة متكاملة، عربية أولًا، لإدارة المؤسّسة الأكاديمية والتعلّم والبحث — كليات وأقسام ومقرّرات ومحاضرات واختبارات ومصفوفة إتقان وبحوث" />
+    <meta property="og:url" content="https://ulara.vercel.app/" />
+    <meta property="og:image" content="https://ulara.vercel.app/brand/ulara-og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="شعار منصّة أُلارا" />
+    <meta property="og:locale" content="ar_AR" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="أُلارا · نظام تشغيل الجامعة" />
+    <meta name="twitter:description" content="أُلارا — نظام تشغيل الجامعة: منظومة متكاملة، عربية أولًا، لإدارة المؤسّسة الأكاديمية والتعلّم والبحث — كليات وأقسام ومقرّرات ومحاضرات واختبارات ومصفوفة إتقان وبحوث" />
+    <meta name="twitter:image" content="https://ulara.vercel.app/brand/ulara-og.jpg" />
+    <!-- 8-a — structured data. r188: the site node describes the
+         INDEPENDENT ULARA platform alone. The retired pre-ULARA demo
+         `about` node is gone — the only demo-data story is the
+         explicitly-fictional «مساحة عمل أُلارا التجريبية», mentioned
+         in the description as synthetic data, never as affiliation. -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "أُلارا",
+      "alternateName": ["Ulara", "أُلارا — نظام تشغيل الجامعة"],
+      "url": "https://ulara.vercel.app/",
+      "logo": "https://ulara.vercel.app/brand/ulara-mark.svg",
+      "description": "أُلارا — نظام تشغيل الجامعة: منظومة متكاملة عربية أولًا. بيانات العرض داخل المنصّة تخصّ «مساحة عمل أُلارا التجريبية» — مساحة اصطناعية بالكامل لأغراض العرض، لا تحاكي أي جامعة.",
+      "inLanguage": "ar"
+    }
+    </script>
+    <!-- Self-hosted IBM Plex (src/styles/fonts.css) — preload the two most
+         critical arabic subsets: body 400 + display 600. crossorigin is
+         required because fonts are always fetched in CORS mode.
+         R322 (3-b · perf-baseline §7-4): the preload re-pin 700 → 600 —
+         the R322 C1 type system renders 400/500/600 ONLY (the 700 face
+         is dead weight competing with the LCP face's preload slot: at
+         Fast-3G the display font queued behind the dead 700 while the
+         LCP h1 waited — the single cheapest LCP cut on first visit). -->
+    <link rel="preload" href="/fonts/plex-sans-arabic-400-normal-arabic.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/plex-sans-arabic-600-normal-arabic.woff2" as="font" type="font/woff2" crossorigin />
+    <script>
+      (function () {
+        try {
+          /* 23-a (A5 P2-5): resolve the theme BEFORE first paint from
+             BOTH localStorage signals —
+               1. the theme store ('ulara-theme', zustand persist):
+                  the device's own choice + its timestamp, and
+               2. 'ula-theme-profile': the profile preference cached
+                  by useThemeProfileSync on every `me` observation.
+             Same rules as the hook: an explicit profile wins over the
+             local default ('system'), and a strictly NEWER profile
+             wins over a stale stored local choice (the old bootstrap
+             painted light and flipped to dark ~1–2s later once `me`
+             resolved). A cached 'SYSTEM' means the profile made no
+             explicit choice — the local mode governs. */
+          /* r309 (§4.2): the default is 'light' — ALIGNED with the theme
+             store's actual default (r302). The r148 script default
+             ('dark') went stale when the store flipped: a first-visit
+             pre-React paint was a dark empty viewport that flashed to
+             light once React mounted — the production audit's
+             «initially dark blank interval». One default on both
+             sides = the correct background from the first frame. */
+          var mode = 'light', modeUpdatedAt = 0;
+          try {
+            var stored = JSON.parse(localStorage.getItem('ulara-theme'));
+            if (stored && stored.state) {
+              var st = stored.state;
+              if (st.mode === 'dark' || st.mode === 'light' || st.mode === 'system') {
+                mode = st.mode;
+              }
+              if (typeof st.modeUpdatedAt === 'number') modeUpdatedAt = st.modeUpdatedAt;
+            }
+          } catch (_) {}
+          try {
+            var prof = JSON.parse(localStorage.getItem('ula-theme-profile'));
+            if (prof && (prof.pref === 'DARK' || prof.pref === 'LIGHT')
+                && (mode === 'system'
+                    || (typeof prof.ts === 'number' && prof.ts > modeUpdatedAt))) {
+              mode = prof.pref === 'DARK' ? 'dark' : 'light';
+            }
+          } catch (_) {}
+          var resolved = mode === 'dark' || mode === 'light'
+            ? mode
+            : matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', resolved);
+        } catch (_) {
+          document.documentElement.setAttribute('data-theme', 'light'); /* r309 (§4.2): the store's actual default */
+        }
+        /* r172a — the r162 (R1) landing-boot heuristic (pathname `/` +
+           no persisted session → html[data-landing-boot]) is RETIRED:
+           the landing no longer paints a private ink ground — it is a
+           first-class two-theme surface grounded on the canonical
+           var(--bg) in BOTH data-themes (tokens.css --ln-* remap), so
+           body/splash/landing all paint the same ground from the FIRST
+           styled frame and there is no world-crossing flash to paper
+           over. The #252A3E theme-color override went with it: the
+           browser chrome follows the resolved theme, exactly like the
+           rest of the product. */
+        /* wave 2-a — theme-color follows the RESOLVED theme (stored
+             preference + runtime toggles via useThemeSync), not just the
+             OS scheme. The two media-query metas above remain as the
+             pre-JS / no-JS baseline; once this script runs they are
+             unified to the app's actual theme and kept in sync on every
+             data-theme change. */
+        var syncThemeColor = function () {
+          var color =
+            document.documentElement.getAttribute('data-theme') === 'dark'
+              ? '#262019'
+              : '#F5F1E8';
+          var metas = document.querySelectorAll('meta[name="theme-color"]');
+          for (var i = 0; i < metas.length; i++) {
+            metas[i].removeAttribute('media');
+            metas[i].setAttribute('content', color);
+          }
+        };
+        syncThemeColor();
+        new MutationObserver(syncThemeColor).observe(
+          document.documentElement,
+          /* r172a: data-landing-boot retired with the boot-hack — the
+             observer watches the theme attribute alone again. */
+          { attributes: true, attributeFilter: ['data-theme'] },
+        );
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root">
+      <!-- r309 (§4.2): the boot plate — a meaningful static first frame
+           inside #root for the window between first paint and the React
+           mount (production loads the bundle over the network; the old
+           empty shell painted as an unexplained blank viewport). The
+           plate is opaque, fixed (zero CLS), follows the resolved
+           data-theme, and is REPLACED by React's first commit. No CSP
+           impact: style-src already allows inline styles. -->
+      <div class="ula-boot-plate" aria-hidden="true"><span>أُلارا</span></div>
+    </div>
+    <style>
+      .ula-boot-plate {
+        position: fixed;
+        inset: 0;
+        z-index: 2147483000;
+        display: grid;
+        place-items: center;
+        background: #F5F1E8;
+        color: #262019;
+        font-family: system-ui, sans-serif;
+        font-size: 22px;
+        font-weight: 700;
+        letter-spacing: 0; /* R323 V-ζ — Arabic is never letter-spaced (AUDIT.md §V-ζ) */
+      }
+      html[data-theme="dark"] .ula-boot-plate {
+        background: #262019;
+        color: #F5F1E8;
+      }
+    </style>
+    <!-- r176f (E-09): JS-off visitors previously got a themed, forever-
+         empty canvas (base.css paints var(--bg) pre-paint). One honest
+         Arabic line explains the requirement instead. No CSP impact:
+         noscript content is not a script source, and style-src already
+         allows inline styles. -->
+    <noscript>
+      <div dir="rtl" lang="ar" style="max-width: 560px; margin: 20vh auto 0; padding: 24px; text-align: center; font-family: system-ui, sans-serif; line-height: 1.8;">
+        منصّة أُلارا تحتاج تشغيل الجافاسكربت في المتصفح لتعمل.
+        فضلاً فعّل الجافاسكربت ثم أعد تحميل الصفحة.
+      </div>
+    </noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

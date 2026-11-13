@@ -1,0 +1,67 @@
+{
+  "name": "ulara",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "أُلارا — نظام تشغيل الجامعة: منصّة أكاديمية متكاملة مستقلّة، عربية-أولًا · Ulara — the independent Arabic-first University Operating System.",
+  "engines": {
+    "node": ">=20 <25"
+  },
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "preinstall": "node scripts/warn-node-env.mjs",
+    "build": "npm run build -w frontend && npm run build -w backend && npm run db:deploy && npm run db:seed",
+    "start": "node backend/dist/index.js",
+    "dev": "npm run dev -w backend",
+    "dev:web": "npm run dev -w frontend",
+    "test": "npm run test -w frontend && npm run test -w backend",
+    "test:integration": "npm run test:integration -w backend",
+    "lint": "eslint frontend/src backend/src",
+    "typecheck": "npm run typecheck -w backend && npm run typecheck -w frontend && npm run typecheck:tests -w backend && npm run typecheck:tests -w frontend",
+    "db:migrate": "npm run prisma:migrate -w backend",
+    "db:deploy": "npm run prisma:deploy -w backend",
+    "db:seed": "npm run prisma:seed -w backend",
+    "db:seed:force": "ULARA_SEED_FORCE=1 npm run db:seed",
+    "db:rotate-password": "npm run rotate:password -w backend --",
+    "db:provision-owner": "npm run provision:owner -w backend --",
+    "db:backup": "node scripts/db-backup.mjs",
+    "db:restore": "node scripts/db-restore.mjs",
+    "api:openapi": "tsx backend/scripts/generate-openapi.ts",
+    "tokens:build": "node scripts/tokens/build.mjs",
+    "tokens:check": "node scripts/tokens/build.mjs --check",
+    "smoke": "node scripts/smoke-deploy.mjs",
+    "check:motion-tokens": "bash scripts/check-motion-tokens.sh",
+    "check:icons": "bash scripts/check-icons.sh",
+    "check:colors": "bash scripts/check-colors.sh",
+    "check:raw-css": "bash scripts/check-raw-css.sh",
+    "check:csp-hash": "bash scripts/check-csp-hash.sh",
+    "db:verify": "node scripts/db-verify.mjs",
+    "gate:size": "bash scripts/gates/size-gate.sh",
+    "db:ensure-test-accounts": "npm run ensure:accounts -w backend --"
+  },
+  "prepare": "node scripts/setup-hooks.mjs",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "clipper-lib": "^6.4.2",
+    "embedded-postgres": "^16.14.0-beta.17",
+    "eslint": "^10.12.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "harfbuzzjs": "^1.6.4",
+    "opentype.js": "^2.0.0",
+    "pixelmatch": "^8.0.0",
+    "pngjs": "^7.0.0",
+    "tsx": "^4.22.4",
+    "typescript-eslint": "^8.71.1"
+  },
+  "allowScripts": {
+    "@prisma/client": true,
+    "@prisma/engines": true,
+    "prisma": true,
+    "argon2": true,
+    "esbuild": true,
+    "@embedded-postgres/linux-x64": true
+  }
+}

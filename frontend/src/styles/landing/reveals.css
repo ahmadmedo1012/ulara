@@ -1,0 +1,52 @@
+/* R333 (P-C) — the reveal card rung + the arm seam + reduced-motion
+   belts. The module (src/lib/reveals.ts) owns ALL hiding classes
+   (`.reveal-up` comes from shared.css's house contract; `.reveal-card`
+   is defined here) — nothing in any sheet hides content by default,
+   so content is visible without JS by construction. No @keyframes
+   here (the motion-tokens gate scans keyframes; this grammar is
+   class + transition only, tokens throughout, zero !important). */
+
+/* the armed root class is observability, not hiding — a hook point for
+   harnesses asserting the reveal grammar is live. */
+.js-reveal-armed {
+  --ula-reveals: on;
+}
+
+/* ── The card rung — the retired craft sheet row 13's imgCardReveal, re-keyed to
+   the r305 house register (the reference's 1.6s expo.out compressed
+   per the same re-key that took its 1s blockRise to --t-slower).
+   R344 (item 0 — the frozen-census conformance law): the reference's own
+   signature completes BEFORE the census measurement — every recorded
+   seat is opacity 1 at the top-of-page state, so the pre-state fade
+   (opacity 0 → 1) is conformance debt the whole reveal family fails
+   against the frozen spec (intro/problem/usecase/footer/why — 8 seats
+   × every bp). The honest fix keeps the motion (scale 0.8 → 1 rise)
+   and drops only the opacity-0 pre-state: the census law (the measured
+   state IS opacity 1) wins over the fade. ── */
+.reveal-card {
+  opacity: 1;
+  scale: 0.8;
+  transition:
+    opacity var(--motion-duration-card) var(--ease-out),
+    scale var(--motion-duration-card) var(--ease-out);
+}
+
+.reveal-card.in-view {
+  opacity: 1;
+  scale: 1;
+}
+
+/* ── Reduced motion: the complete static sheet. Scoped one level
+   deeper than the base contract (.js-reveal-armed .reveal-*) so it
+   wins the cascade WITHOUT !important — the module bails under RM
+   before arming, so this belt is defense in depth against stale
+   classes only. ── */
+@media (prefers-reduced-motion: reduce) {
+  .js-reveal-armed .reveal-up,
+  .js-reveal-armed .reveal-card {
+    opacity: 1;
+    transform: none;
+    scale: 1;
+    transition: none;
+  }
+}

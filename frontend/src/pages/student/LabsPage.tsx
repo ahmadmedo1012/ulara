@@ -1,0 +1,585 @@
+import { useEffect, useRef, useState } from 'react';
+import type { CSSProperties } from 'react';
+import {
+  FlaskConical, Network, Cpu, Atom, Zap, Bot as BotIcon, Microscope,
+  CheckCircle2, ChevronRight, ChevronLeft, Play, Award, Check,
+  AlertCircle, Box, Radio,
+  type LucideIcon,
+} from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Card, ProgressBar } from '../../components/primitives';
+import { Skeleton, ErrorState, EmptyState } from '../../components/primitives/States';
+import { PageFrame, PageHeader, StatLine } from '../../components/patterns';
+/* R319 (c3-S1) — the §B2 kit: the mono-indexed section title bar + the
+ * hatched empty cell (the DashboardPage conversion's components). */
+import { SectionBar, BarCount, EmptyCell } from '../../components/student';
+import { Icon } from '../../components/Icon';
+import { useReducedMotion } from '../../components/motion/useReducedMotion';
+import { useLabs, useMyLabSessions, useCompleteLabSession, type VirtualLab } from '../../hooks/useResources';
+import { courseTint } from '../../lib/courseMeta';
+import { countAr } from '../../lib/format';
+import { formatNum } from '../../utils/numbers';
+/* R305 DS: the shared student vocabulary + this family's refinements.
+   The labs catalog rides the FOUNDATION classes only (kicker section
+   register, meta-row separators, status chips) — the family sheet adds
+   no page-scoped rules for this page. */
+import '../../styles/student/ds-core.css';
+import '../../styles/student/ds-supplemental.css';
+/* R319 (c3-S1): the sheet system — the §B2 component anatomy + the
+ * academic family's harmonics (the lab thumb-cards' hairline re-seat). */
+import '../../styles/student/pages.css';
+import '../../styles/student/academic-pages.css';
+
+interface LabExperiment {
+  title: string;
+  description: string;
+  steps: Array<{ title: string; instructions: string; output: string }>;
+}
+
+/** Built-in experiment scripts per lab category — simulation only. */
+const EXPERIMENT_LIBRARY: Record<string, LabExperiment> = {
+  net: {
+    title: 'إعداد شبكة LAN مع VLAN',
+    description: 'تكوين راوتر وسويتش، إعداد VLANs، اختبار الاتصال بين الأجهزة.',
+    steps: [
+      {
+        title: 'تكوين الراوتر',
+        instructions: 'أدخل الأوامر التالية لتفعيل الواجهات وتعيين IP.',
+        output: [
+          '$ enable',
+          'Router# configure terminal',
+          'Router(config)# interface gigabitEthernet 0/0',
+          'Router(config-if)# ip address 192.168.10.1 255.255.255.0',
+          'Router(config-if)# no shutdown',
+          '%LINK-3-UPDOWN: Interface GigabitEthernet0/0, changed state to up',
+          '✔ تم تفعيل الواجهة بنجاح.', // allow-emoji: simulated terminal content
+        ].join('\n'),
+      },
+      {
+        title: 'إعداد السويتش',
+        instructions: 'أنشئ VLAN وعيّن المنافذ.',
+        output: [
+          '$ Switch# configure terminal',
+          'Switch(config)# vlan 10',
+          'Switch(config-vlan)# name STAFF',
+          'Switch(config)# interface fastEthernet 0/1',
+          'Switch(config-if)# switchport mode access',
+          'Switch(config-if)# switchport access vlan 10',
+          '✔ تم إعداد VLAN 10 على المنفذ FastEthernet0/1.', // allow-emoji: simulated terminal content
+        ].join('\n'),
+      },
+      {
+        title: 'اختبار الاتصال',
+        instructions: 'استخدم ping للتحقق من الاتصال بين الأجهزة.',
+        output: [
+          '$ PC1> ping 192.168.10.1',
+          'Pinging 192.168.10.1 with 32 bytes of data:',
+          'Reply from 192.168.10.1: bytes=32 time=2ms TTL=255',
+          'Reply from 192.168.10.1: bytes=32 time=1ms TTL=255',
+          'Reply from 192.168.10.1: bytes=32 time=2ms TTL=255',
+          'Reply from 192.168.10.1: bytes=32 time=1ms TTL=255',
+          'Packets: Sent = 4, Received = 4, Lost = 0 (0% loss)',
+          '✔ الاتصال يعمل بنجاح.', // allow-emoji: simulated terminal content
+        ].join('\n'),
+      },
+      {
+        title: 'تأكيد الإعدادات',
+        instructions: 'احفظ الإعدادات إلى الذاكرة الدائمة.',
+        output: [
+          '$ Switch# write memory',
+          'Building configuration...',
+          '[OK]',
+          '✔ تم حفظ الإعدادات في NVRAM.', // allow-emoji: simulated terminal content
+        ].join('\n'),
+      },
+    ],
+  },
+  chem: {
+    title: 'تجربة تفاعل حمض-قاعدة',
+    description: 'محاكاة تفاعل HCl مع NaOH وقياس درجة الحموضة.',
+    steps: [
+      { title: 'تجهيز المواد', instructions: 'حضّر 50 مل من HCl تركيز 0.1M و 50 مل من NaOH.', output: '> beaker.add(\'HCl\', 50, 0.1);\n> beaker.add(\'NaOH\', 50, 0.1);\n✔ تم تحضير المواد بأمان.' }, // allow-emoji: simulated terminal content
+      { title: 'القياس الابتدائي', instructions: 'اقرأ pH قبل الخلط.', output: '> ph.measure(beaker_A);\nHCl pH = 1.0\n> ph.measure(beaker_B);\nNaOH pH = 13.0' },
+      { title: 'الخلط والتفاعل', instructions: 'اخلط الكميتين تدريجياً.', output: '> mix(beaker_A, beaker_B);\nReaction: HCl + NaOH → NaCl + H₂O\nTemperature rise: +5°C (exothermic)\n✔ التفاعل مكتمل.' }, // allow-emoji: simulated terminal content
+      { title: 'القياس النهائي', instructions: 'اقرأ pH بعد التفاعل.', output: '> ph.measure(mix);\npH = 7.0 (متعادل)\n✔ النتيجة المتوقعة: تفاعل تعادل تام.' }, // allow-emoji: simulated terminal content
+    ],
+  },
+  eng: {
+    title: 'دائرة كهربائية بسيطة',
+    description: 'بناء دائرة بقاعدة ومقاوم ومصباح، حساب التيار.',
+    steps: [
+      { title: 'تجميع المكونات', instructions: 'اختر بطارية 9V، مقاوم 470Ω، ومصباح LED.', output: '+ Battery: 9V\n+ Resistor: 470Ω\n+ LED: Red, Vf=2.0V\n✔ المكونات جاهزة.' }, // allow-emoji: simulated terminal content
+      { title: 'حساب التيار', instructions: 'استخدم قانون أوم: I = (Vbat - Vled) / R.', output: 'I = (9 - 2) / 470\nI = 14.89 mA\n✔ ضمن النطاق الآمن للـ LED (Imax = 20 mA).' }, // allow-emoji: simulated terminal content
+      { title: 'إغلاق الدائرة', instructions: 'وصّل المكونات على متوازي.', output: '> circuit.close();\nCurrent flowing: 14.9 mA\nLED brightness: 75%\n✔ المصباح يعمل.' }, // allow-emoji: simulated terminal content
+      { title: 'قياس الجهد', instructions: 'استخدم الفولتميتر لقياس الجهد على المقاوم.', output: '> voltmeter.read(R1);\nVR = 7.0V\nVerification: Vbat = VR + VLED = 7 + 2 = 9V ✔' }, // allow-emoji: simulated terminal content
+    ],
+  },
+};
+
+const labIcon = (cat: string): LucideIcon => {
+  if (cat === 'net') return Network;
+  if (cat === 'chem') return Atom;
+  if (cat === 'eng') return Zap;
+  if (cat === 'bio') return Microscope;
+  if (cat === 'robot') return BotIcon;
+  if (cat === 'phys') return Cpu;
+  return FlaskConical;
+};
+
+const inferCategory = (lab: VirtualLab): string => {
+  const n = lab.name.toLowerCase();
+  if (lab.category === 'net' || n.includes('شبك')) return 'net';
+  if (lab.category === 'chem' || n.includes('كيمياء')) return 'chem';
+  if (lab.category === 'eng' || n.includes('كهرب') || n.includes('دوائر')) return 'eng';
+  return lab.category;
+};
+
+/** Shape-matched StatLine skeleton (3 stat cells — R304 mirror of the
+ *  resolved strip, same pending→resolved handoff contract as the
+ *  dashboard's loading mirror). */
+function LabsStatsSkeleton() {
+  return (
+    <div className="pf-statline" aria-busy="true" aria-live="polite">
+      {[0, 1, 2].map((i) => (
+        <div key={i} className="pf-stat">
+          <Skeleton width={90} height={13} />
+          <Skeleton width={56} height={24} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* Typing cadence for the simulator terminal — a JS timer, not a CSS
+   motion value (there is no JS-readable duration token); under
+   prefers-reduced-motion the step prints instantly instead. */
+const TYPE_INTERVAL_MS = 220;
+
+export default function LabsPage() {
+  const labs = useLabs();
+  const labStats = useMyLabSessions();
+  const [activeLab, setActiveLab] = useState<VirtualLab | null>(null);
+
+  return (
+    <div className="r319s-page">
+    <PageFrame width="default">
+      {!activeLab ? (
+        <>
+          <PageHeader
+            title="المعامل الافتراضية"
+            description={
+              'تجارب علمية تفاعلية بدون الحاجة لمعدات حقيقية — شغّل التجربة خطوة بخطوة وراقب النتائج في طرفية المحاكاة.'
+            }
+            /* R342-08 — the header CTA pair (the D11/D8 measured
+               seat; the phone band hides the topbar «اسأل AI» ≤920,
+               D6): the immersive trio's honest siblings —
+               «تجارب AR/VR» and «البث المباشر» (navigation-only;
+               the experiment runner keeps its own controls). */
+            actions={(
+              <>
+                <Link to="/student/ar" className="btn primary sm">
+                  <Icon icon={Box} size={13} />
+                  تجارب AR/VR
+                </Link>
+                <Link to="/student/live" className="btn ghost sm">
+                  <Icon icon={Radio} size={13} />
+                  البث المباشر
+                </Link>
+              </>
+            )}
+          />
+
+          {/* R304: the metric-card wall folds into ONE StatLine — same
+              three facts, same honest sources (pending → '…', error →
+              '—'); the tone recolors the value only where it means
+              something (live session = signal, earned completion =
+              positive). */}
+          {labs.isPending ? <LabsStatsSkeleton /> : (
+            <StatLine
+              items={[
+                {
+                  label: 'معامل متاحة',
+                  value: labs.isError ? '—' : formatNum(labs.data?.length ?? 0),
+                  hint: 'مسجَّلة في دليل المنصّة',
+                },
+                {
+                  label: 'جلسات نشطة',
+                  value: labStats.isPending ? '…' : labStats.isError || !labStats.data ? '—' : formatNum(labStats.data.active),
+                  /* 22-c (A4 P3-3): with zero lab sessions ever the hint
+                     would read «من أصل 0 جلسة» — dead copy. Only surface
+                     the denominator once one exists. */
+                  hint:
+                    labStats.data && labStats.data.total > 0
+                      ? `من أصل ${countAr(labStats.data.total, ['جلسة واحدة', 'جلستين', 'جلسات', 'جلسة'])}`
+                      : undefined,
+                  tone: labStats.data && labStats.data.active > 0 ? 'signal' : undefined,
+                },
+                {
+                  label: 'تجارب مكتملة',
+                  value: labStats.isPending ? '…' : labStats.isError || !labStats.data ? '—' : formatNum(labStats.data.completed),
+                  hint:
+                    labStats.data && labStats.data.completed === 0
+                      ? 'لم تُسجَّل تجربة مكتملة بعد'
+                      : undefined,
+                  tone: labStats.data && labStats.data.completed > 0 ? 'positive' : undefined,
+                },
+              ]}
+            />
+          )}
+
+          {/* R305 DS: the catalog is ONE editorial section — every
+              honest state (loading/error/empty/resolved) lives inside it.
+              R319 (c3-S1): the section heading joins the §B2 title-bar
+              register — [01] + the resolved labs count as quiet mono meta
+              (countAr for assistive tech). */}
+          <section aria-label="دليل المعامل">
+            <SectionBar
+              index="01"
+              title="دليل المعامل"
+              meta={
+                !labs.isPending && !labs.isError && (labs.data?.length ?? 0) > 0 ? (
+                  <BarCount
+                    n={labs.data!.length}
+                    srLabel={countAr(labs.data!.length, ['معمل واحد متاح', 'معملان متاحان', 'معامل متاحة', 'معملاً متاحاً'])}
+                  />
+                ) : undefined
+              }
+            />
+
+          {labs.isPending ? (
+            <div className="grid-3" aria-busy="true" aria-live="polite">
+              {[0, 1, 2].map((i) => (
+                <div key={i} className="lib-skel-tile">
+                  <Skeleton width="100%" height={96} />
+                  <div style={{ padding: 'var(--sp-5)', display: 'flex', flexDirection: 'column', gap: 'var(--sp-2)' }}>
+                    <Skeleton width="70%" height={15} />
+                    <Skeleton width="45%" height={11} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) :
+           labs.isError ? <Card><ErrorState error={labs.error} onRetry={() => labs.refetch()} /></Card> :
+           !labs.data?.length ? (
+             /* R319 (c3-S1): the empty catalog is the hatched EmptyCell —
+                the sheet's reserved-but-empty region. */
+             <EmptyCell
+               label="لا معامل متاحة"
+               note="لم تُسجّل معامل في دليل المنصّة بعد — ستظهر هنا فور إضافتها."
+             />
+           ) : (
+            <div className="grid-3">
+              {labs.data.map((l) => {
+                const cat = inferCategory(l);
+                const Cmp = labIcon(cat);
+                // Shared default tint: lib/courseMeta.ts (wave 9-a).
+                const tint = courseTint(l.themeColor);
+                const hasExperiment = !!EXPERIMENT_LIBRARY[cat];
+                return (
+                  <div key={l.id} className="thumb-card glass">
+                    <div
+                      className="thumb-card-image"
+                      style={{ background: `color-mix(in srgb, ${tint} 10%, transparent)`, height: 96 }}
+                    >
+                      <span style={{ color: `color-mix(in srgb, ${tint} 70%, var(--text))` }}>
+                        <Icon icon={Cmp} size={32} strokeWidth={1.6} />
+                      </span>
+                    </div>
+                    <div className="thumb-card-body">
+                      <div className="thumb-card-title" title={l.name}>{l.name}</div>
+                      {/* R305 DS: the row's metadata rides the meta-row
+                          register — hairline separators instead of bare
+                          middots; the counted noun follows D17-2. */}
+                      <div className="r305s-meta-row">
+                        <bdi>{l.platform ?? '—'}</bdi>
+                        <span className="r305s-meta-sep" aria-hidden />
+                        <span>{countAr(l.totalExperiments, ['تجربة واحدة', 'تجربتان', 'تجارب', 'تجربة'])}</span>
+                      </div>
+                      <button
+                        type="button"
+                        className={`btn ${hasExperiment ? 'primary' : 'outline'}`}
+                        style={{ marginTop: 'var(--sp-3)' }}
+                        onClick={() => setActiveLab(l)}
+                        disabled={!hasExperiment}
+                      >
+                        <Icon icon={Play} size={13} />
+                        {hasExperiment ? 'ابدأ تجربة' : 'قريباً'}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          </section>
+        </>
+      ) : (
+        <LabRunner lab={activeLab} onExit={() => setActiveLab(null)} />
+      )}
+    </PageFrame>
+    </div>
+  );
+}
+
+/* ─── Lab runner ────────────────────────────────────────── */
+function LabRunner({ lab, onExit }: { lab: VirtualLab; onExit: () => void }) {
+  const cat = inferCategory(lab);
+  const exp = EXPERIMENT_LIBRARY[cat];
+  const [stepIndex, setStepIndex] = useState(0);
+  const [terminalLines, setTerminalLines] = useState<string[]>([]);
+  const [running, setRunning] = useState(false);
+  const [done, setDone] = useState(false);
+  const reducedMotion = useReducedMotion();
+  // r154d: persist the completion. The runner used to setDone(true) on the
+  // last step and show «أحسنت!» without ever writing a row — the KPI stayed
+  // at 0. Now the session is created on the server; the success screen
+  // renders only after the mutation lands, and a network failure shows an
+  // honest error state instead of a false «بنجاح».
+  const completeSession = useCompleteLabSession();
+  // r154g: focus management for the outcome screens. When the done/error
+  // screen mounts, the focused «إنهاء التجربة» button is removed from the
+  // DOM — focus falls to <body> and screen readers never announce the
+  // outcome. Move focus to the outcome container + give it an aria-live
+  // role so SR users hear the success/error immediately.
+  const outcomeRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (done || completeSession.isError) {
+      outcomeRef.current?.focus();
+    }
+  }, [done, completeSession.isError]);
+
+  // Animate terminal output line by line. Declared BEFORE the !exp early
+  // return below — hooks must never be conditional (audit 0-d P2).
+  useEffect(() => {
+    const step = exp?.steps[stepIndex];
+    if (!running || !step) return;
+    const lines = step.output.split('\n');
+    if (reducedMotion) {
+      // Reduced motion: print the step instantly, no typewriter.
+      setTerminalLines(lines);
+      setRunning(false);
+      return;
+    }
+    let i = 0;
+    setTerminalLines([]);
+    const id = setInterval(() => {
+      if (i >= lines.length) {
+        clearInterval(id);
+        setRunning(false);
+        return;
+      }
+      /* 22-c (A4 P1-1): capture the line BEFORE the updater. Reading the
+         mutable closure `i` inside setTerminalLines is an impure updater —
+         React's eager-state pass invoked it once at call time (i = current)
+         and the render queue invoked it AGAIN after `i += 1`, so the
+         render-time result committed lines[i+1]: the FIRST line of every
+         step was dropped (incl. the Ohm's-law formula the instructions
+         tell the student to verify) and the last guard-passing tick
+         committed lines[n] ?? '' = a phantom blank line. Freezing the
+         value makes the updater pure — verified with the audit's
+         MutationObserver probe (.agents/tmp/a4-probe7.mjs). */
+      const line = lines[i] ?? '';
+      setTerminalLines((prev) => [...prev, line]);
+      i += 1;
+    }, TYPE_INTERVAL_MS);
+    return () => clearInterval(id);
+  }, [running, stepIndex, exp, reducedMotion]);
+
+  if (!exp) {
+    return (
+      <Card>
+        <EmptyState icon={FlaskConical} title="هذه التجربة قيد البناء" description="سيتم إضافتها قريباً." />
+      </Card>
+    );
+  }
+
+  const currentStep = exp.steps[stepIndex];
+
+  const runStep = () => {
+    setTerminalLines([]);
+    setRunning(true);
+  };
+
+  const nextStep = () => {
+    if (stepIndex < exp.steps.length - 1) {
+      setStepIndex(stepIndex + 1);
+      setTerminalLines([]);
+      setRunning(false);
+    } else {
+      // r154d: final step — persist the completion. The success screen
+      // renders only after the mutation lands; a failure shows an error
+      // state with a retry instead of a false «بنجاح».
+      if (!exp || completeSession.isPending) return;
+      completeSession.mutate(
+        { labId: lab.id, experimentName: exp.title },
+        { onSuccess: () => setDone(true) },
+      );
+    }
+  };
+
+  if (done) {
+    return (
+      <Card>
+        <div className="state" ref={outcomeRef} tabIndex={-1} role="status" aria-live="polite" aria-label="اكتملت التجربة بنجاح">
+          <div className="state-icon state-icon-success">
+            <Icon icon={CheckCircle2} size={28} />
+          </div>
+          <div className="text-2xl font-bold" style={{ color: 'var(--text)', marginTop: 'var(--sp-3)' }}>أحسنت!</div>
+          <div className="text-sm text-muted" style={{ maxWidth: 460, marginTop: 'var(--sp-2)' }}>
+            أكملت «<bdi>{exp.title}</bdi>» بنجاح — أُحتسبت في إحصائيّاتك.
+          </div>
+          <div className="lab-done-chip" style={{ marginTop: 'var(--sp-5)' }}>
+            <Icon icon={Award} size={18} />
+            تجربة منجزة
+          </div>
+          <div className="flex gap-2" style={{ marginTop: 'var(--sp-5)' }}>
+            <button type="button" className="btn" onClick={onExit}>
+              <Icon icon={ChevronRight} size={13} />
+              العودة للمعامل
+            </button>
+            <button type="button" className="btn primary" onClick={() => { setDone(false); setStepIndex(0); setTerminalLines([]); }}>
+              إعادة التجربة
+            </button>
+          </div>
+        </div>
+      </Card>
+    );
+  }
+
+  if (completeSession.isError) {
+    return (
+      <Card>
+        <div className="state state-error" ref={outcomeRef} tabIndex={-1} role="alert" aria-live="assertive" aria-label="تعذَّر تسجيل إكمال التجربة">
+          <div className="state-icon">
+            <Icon icon={AlertCircle} size={28} />
+          </div>
+          <div className="text-lg font-bold" style={{ color: 'var(--text)', marginTop: 'var(--sp-3)' }}>
+            تعذَّر تسجيل الإكمال
+          </div>
+          <div className="text-sm text-muted" style={{ maxWidth: 460, marginTop: 'var(--sp-2)' }}>
+            وصلت إلى نهاية التجربة لكن لم يُسجَّل الإكمال على الخادم. يمكنك إعادة المحاولة أو العودة لاحقاً.
+          </div>
+          <div className="flex gap-2" style={{ marginTop: 'var(--sp-5)' }}>
+            <button type="button" className="btn" onClick={onExit}>
+              <Icon icon={ChevronRight} size={13} />
+              العودة للمعامل
+            </button>
+            <button
+              type="button"
+              className="btn primary"
+              onClick={() => completeSession.reset()}
+              disabled={completeSession.isPending}
+            >
+              <Icon icon={Play} size={13} />
+              إعادة المحاولة
+            </button>
+          </div>
+        </div>
+      </Card>
+    );
+  }
+
+  return (
+    <>
+      <button type="button" className="btn ghost sm" onClick={onExit} style={{ alignSelf: 'flex-start' }}>
+        <Icon icon={ChevronRight} size={13} />
+        العودة للمعامل
+      </button>
+
+      <div
+        className="lab-hero"
+        style={{ '--lab-accent': lab.themeColor ?? 'var(--accent)' } as CSSProperties}
+      >
+        <div className="lab-hero-head">
+          {/* R305 DS: the shared chip register carries the session
+              status (semantic success dot + neutral well) — the same
+              anatomy the courses family uses for its state chips. */}
+          <span className="r305s-chip r305s-chip--success">
+            <span className="r305s-chip-dot" aria-hidden />
+            جلسة نشطة
+          </span>
+          <span className="text-xs text-subtle">{lab.name}</span>
+        </div>
+        <h2 className="lab-hero-title">{exp.title}</h2>
+        <p className="text-sm text-muted" style={{ marginBottom: 'var(--sp-4)' }}>{exp.description}</p>
+        <ProgressBar
+          value={(stepIndex / exp.steps.length) * 100}
+          label={<bdi>الخطوة {stepIndex + 1} من {exp.steps.length}</bdi>}
+        />
+      </div>
+
+      <div className="grid-2-1">
+        <Card title={`الخطوة ${stepIndex + 1} · ${currentStep?.title}`} icon={Play}>
+          <p className="text-sm text-muted" style={{ lineHeight: 'var(--lh-base)', marginBottom: 'var(--sp-4)' }}>
+            {currentStep?.instructions}
+          </p>
+          <div className="terminal">
+            <div className="terminal-head">
+              <div className="terminal-dots" aria-hidden>
+                <span className="terminal-dot r" />
+                <span className="terminal-dot y" />
+                <span className="terminal-dot g" />
+              </div>
+              <div className="terminal-title"><bdi>{lab.platform ?? 'simulator'}</bdi></div>
+            </div>
+            {/* tabIndex (r152a A6 P2-2): zero focusable children inside
+                the scroller — a tab stop is the only keyboard path to
+                arrow-scroll the simulation output. */}
+            <div className="terminal-body" role="log" tabIndex={0} aria-live="polite" aria-label="مخرجات المحاكاة">
+              {terminalLines.length === 0 && !running ? (
+                <div className="terminal-hint">— اضغط "تشغيل الخطوة" لتنفيذ الأوامر —</div>
+              ) : (
+                terminalLines.map((line, i) => (
+                  <div key={i} className={`terminal-line ${
+                    line.startsWith('✔') ? 'terminal-prompt' : // allow-emoji: simulated terminal content
+                    line.startsWith('%') || line.startsWith('Verification') ? 'terminal-info' :
+                    ''
+                  }`}>
+                    {line}
+                    {running && i === terminalLines.length - 1 && <span className="terminal-cursor" aria-hidden />}
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
+          <div className="flex gap-2" style={{ marginTop: 'var(--sp-4)' }}>
+            {!running && terminalLines.length === 0 && (
+              <button type="button" className="btn primary" onClick={runStep}>
+                <Icon icon={Play} size={13} /> تشغيل الخطوة
+              </button>
+            )}
+            {!running && terminalLines.length > 0 && (
+              <button type="button" className="btn primary" onClick={nextStep} disabled={completeSession.isPending}>
+                {completeSession.isPending
+                  ? 'جارٍ التسجيل…'
+                  : stepIndex < exp.steps.length - 1 ? 'الخطوة التالية' : 'إنهاء التجربة'}
+                <Icon icon={ChevronLeft} size={13} />
+              </button>
+            )}
+          </div>
+        </Card>
+
+        <Card title="الخطوات">
+          <ol className="steps">
+            {exp.steps.map((s, i) => (
+              <li
+                key={i}
+                className={`step ${i === stepIndex ? 'on' : i < stepIndex ? 'done' : ''}`}
+                aria-current={i === stepIndex ? 'step' : undefined}
+              >
+                <div className="step-num">
+                  {i < stepIndex ? <Icon icon={Check} size={14} aria-hidden /> : i + 1}
+                </div>
+                <div className="step-body">
+                  <div className="step-title">{s.title}</div>
+                  <div className="step-desc">{s.instructions}</div>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </Card>
+      </div>
+    </>
+  );
+}

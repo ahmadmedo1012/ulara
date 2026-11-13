@@ -1,0 +1,531 @@
+/* ═════════════════════════════════════════════════════════════════════
+   Footer.css — the landing colophon, REBUILT (ULARA Ω task 1-C).
+   ─────────────────────────────────────────────────────────────────────
+   The R338→R343 the reference spec-mirror is retired by program decision: the
+   --fu fluid unit (83 usages), the fixed-height ink band with its
+   negative margin, the position:absolute chrome and the 88 data-spec
+   conformance seats are GONE. The rebuild's mechanics:
+
+     · CSS Grid columns — 1 column <768px · 2 columns 768–1023px ·
+       3 columns ≥1024px (minmax(0, …) tracks: no content can blow a
+       track out of the sheet).
+     · Flex with wrap for the link groups and the policy row —
+       content wraps INSIDE its box instead of escaping it.
+     · Normal flow everywhere: ZERO position:absolute, zero fixed
+       container heights, zero negative margins. The ink band's
+       height rides its art's own aspect ratio; every other seat
+       sizes from its content.
+     · Height is content-driven and stable — the retired strata.css
+       rem-law floors (103.1rem/124.9rem) are neutralized below at
+       (0,1,1) so the colophon never balloons to 1239px on a phone.
+
+   CONTENT and IDENTITY are the R338 folio's own, unchanged: paper
+   --bg / ink --text / orange --accent through the theme tokens (both
+   themes flip via the tokens themselves — no raw colors anywhere in
+   this sheet), the 44px touch floor on the policy links (a CONTRACT,
+   not a measure), Arabic letter-spacing 0 + line-height ≥ 1.35×fs.
+
+   Cascade notes: this sheet loads before shared/platform/strata/nav.
+   The strata floors are beaten by the footer.fo-footer type selector
+   below; the nav sheet's own .fo-brand family never reaches in (the
+   colophon's brand block rides .fo-brand-block — the ONE pinned
+   .fo-brand-sub seat is scoped .fo-footer .fo-brand-sub so the mast-
+   head's brand rules cannot drift it). The six reveal blocks the
+   landing's reveal engine targets (.fo-c1-top/.fo-c2-top/.fo-c2-
+   bottom/.fo-c1-sub/.fo-fstrip/.fo-footer-bottom) keep their names.
+   ═════════════════════════════════════════════════════════════════════ */
+
+/* ── the landmark ────────────────────────────────────────────────────
+   footer.fo-footer (0,1,1) — deliberately outranks the later-loading
+   strata.css .fo-footer law floors (min-block-size 103.1/124.9rem +
+   the 480–767 display:grid twin) so the rebuilt colophon is
+   content-sized at every width. */
+footer.fo-footer {
+  display: block;
+  min-block-size: auto;
+  /* the sheet frame's own fixed 7px inset (chrome.css .sheet-frame) */
+  margin-inline: 7px;
+  padding: 0;
+  border-block-start: 1px solid var(--rule-strong);
+  background: transparent;
+  /* the colophon's default voice is the soft ink; interactive seats
+     re-ink solid via their own rules */
+  color: var(--text-secondary);
+  font-size: var(--fs-body);
+  line-height: var(--lh-base);
+  font-weight: 500;
+  letter-spacing: 0; /* Arabic joins — tracking is banned on the cursive */
+}
+
+/* the phones' safe-area belt — the frame inset grows to the notch so
+   the policy row never butts the home indicator */
+@media (max-width: 767px) {
+  footer.fo-footer {
+    margin-inline: max(8px, env(safe-area-inset-left, 0px))
+      max(8px, env(safe-area-inset-right, 0px));
+  }
+}
+
+/* ── the plain-flow hairline (the ADDRESS group's divider) ─────────── */
+.fo-rule {
+  block-size: 1px;
+  inline-size: 100%;
+  background: var(--rule-strong);
+}
+
+/* ═══ the column band — CSS Grid ═══════════════════════════════════ */
+.fo-grid {
+  display: grid;
+  /* <768: one column, everything stacks */
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--sp-6);
+  padding: var(--sp-7) 2.4rem var(--sp-5);
+}
+.fo-col { min-inline-size: 0; }
+
+/* 768–1023: col1 | col2 side by side, the mark spans below */
+@media (min-width: 768px) {
+  .fo-grid {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    column-gap: 2.4rem;
+  }
+  .fo-col2 {
+    border-inline-start: 1px solid var(--rule);
+    padding-inline-start: 2.4rem;
+  }
+  .fo-col3 {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ≥1024: the three-column colophon — col1 1fr · col2 2fr · col3 1fr,
+   hairline-ruled at both col2 boundaries (the gap keeps the air on
+   each side of the rule, the newspaper column grammar) */
+@media (min-width: 1024px) {
+  .fo-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
+  }
+  .fo-col2 {
+    border-inline: 1px solid var(--rule);
+    padding-inline: 2.4rem;
+  }
+  .fo-col3 {
+    grid-column: auto;
+  }
+}
+
+/* ── col1: the brand block + the small-link rows + the subscribe ──── */
+.fo-c1-top {
+  display: grid;
+  row-gap: var(--sp-4);
+}
+.fo-brand-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  row-gap: var(--sp-3);
+  color: var(--text);
+}
+/* the stacked identity (mark / «أُلارا» / ULARA) — the <Logo>
+   component's own geometry; the CSS width rides the clamp and the
+   height follows the viewBox ratio. 32px floor (the chrome scale),
+   3.6vw line (the fluid root's own gear), 56px cap. */
+.fo-brand-logo {
+  inline-size: clamp(32px, 3.6vw, 56px);
+  block-size: auto;
+}
+/* the descriptor seat — scoped (0,2,0) so the masthead sheet's own
+   .fo-brand-sub rule can never drift the colophon's copy */
+.fo-footer .fo-brand-sub {
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+/* the independence paragraph — VERBATIM the About page's own
+   sentence; the muted-ink legal voice of the colophon */
+.fo-footer-about {
+  margin: 0;
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+.fo-brow {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--sp-4);
+  row-gap: var(--sp-1);
+}
+.fo-ilink {
+  display: inline-flex;
+  align-items: center;
+  padding-block: var(--sp-1-5);
+  text-decoration: none;
+  color: var(--text);
+  transition: color var(--t-fast) var(--ease);
+}
+.fo-ilink:hover { color: var(--accent); }
+
+/* the drafting-label voice — every mono seat in the colophon */
+.fo-mono-label {
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-md);
+  line-height: 1.4;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+/* ── the subscribe seat — a quiet ruled panel on the paper ────────── */
+.fo-c1-sub {
+  display: grid;
+  row-gap: var(--sp-3);
+  margin-block-start: var(--sp-2);
+  padding: var(--sp-5);
+  background: var(--surface-2);
+  border: 1px solid var(--rule);
+}
+.fo-form-zone {
+  display: grid;
+  row-gap: var(--sp-2);
+}
+.fo-form {
+  display: grid;
+  row-gap: var(--sp-3);
+}
+.fo-form-copy {
+  display: grid;
+  row-gap: var(--sp-1);
+}
+.fo-form-line {
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+.fo-form-row {
+  display: flex;
+  align-items: stretch;
+}
+.fo-input {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  min-block-size: 44px; /* the touch floor — an a11y contract, not a measure */
+  padding-inline: var(--sp-3);
+  border: 1px solid var(--rule-strong);
+  border-inline-end: 0; /* the go button continues the rule */
+  background: transparent;
+  font: inherit;
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  color: var(--text);
+  transition: border-color var(--t-fast) var(--ease);
+}
+.fo-input::placeholder { color: var(--text-muted); }
+.fo-go {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  inline-size: 44px;   /* the touch floor — an a11y contract */
+  min-block-size: 44px;
+  border: 1px solid var(--rule-strong);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    color var(--t-fast) var(--ease),
+    border-color var(--t-fast) var(--ease);
+}
+.fo-go svg {
+  inline-size: 17px;
+  block-size: 17px;
+  display: block;
+}
+.fo-go path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  vector-effect: non-scaling-stroke;
+}
+.fo-go:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+/* (the go button's focus ring delegates to base.css — r172a §3) */
+
+/* ── col2: the link index + the contact groups ───────────────────────
+   auto-fit groups with a FIXED 176px floor: the families re-flow
+   1→2→3 up as col2's own width grows — never a track narrower than a
+   readable link, no per-belt forks, no fixed seats. The column is a
+   flex stack with space-between so the contact groups pin to the
+   band's foot when col1 drives the row height (desktop), and the
+   margin keeps the gap when the column is content-sized (phones). */
+.fo-col2 {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.fo-c2-top,
+.fo-c2-bottom {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(176px, 1fr));
+  column-gap: 2.4rem;
+  row-gap: var(--sp-6);
+}
+.fo-c2-bottom {
+  margin-block-start: var(--sp-7);
+}
+.fo-lgroup {
+  display: grid;
+  row-gap: var(--sp-2);
+  align-content: start;
+  min-inline-size: 0;
+}
+.fo-lg-links {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--sp-4);
+  row-gap: var(--sp-1);
+}
+.fo-link {
+  display: inline-flex;
+  align-items: center;
+  padding-block: var(--sp-1-5);
+  text-decoration: none;
+  color: var(--text);
+  font-size: var(--fs-body);
+  font-weight: 500;
+  transition: color var(--t-fast) var(--ease);
+}
+.fo-link:hover { color: var(--accent); }
+/* the first PLATFORM link carries the accent ink (the folio's own
+   orange door) */
+.fo-link-accent { color: var(--accent); }
+/* the funnel pair's affordance seat — cta.css owns the underline +
+   hit-slop grammar; this sheet adds no box of its own */
+
+/* the contact cell */
+.fo-contact-h {
+  margin: 0;
+  font-size: var(--fs-body-lg);
+  line-height: 1.4;
+  font-weight: var(--fw-semibold);
+  color: var(--text);
+}
+.fo-biglink {
+  display: inline-block;
+  margin-block-start: var(--sp-2);
+  padding: var(--sp-2);
+  text-decoration: none;
+  color: var(--text);
+  font-size: var(--fs-body-lg);
+  line-height: 1.5;
+  font-weight: var(--fw-semibold);
+  transition: color var(--t-fast) var(--ease);
+}
+.fo-biglink:hover { color: var(--accent); }
+
+/* the channels — single-line door links, flex-wrap */
+.fo-socials {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--sp-4);
+  row-gap: var(--sp-1);
+}
+.fo-social {
+  display: inline-flex;
+  align-items: center;
+  padding-block: var(--sp-1-5);
+  text-decoration: none;
+  color: var(--text);
+  font-size: var(--fs-body);
+  font-weight: 500;
+  transition: color var(--t-fast) var(--ease);
+}
+.fo-social:hover { color: var(--accent); }
+
+/* ── col3: the drawn construction mark (our OWN geometry) ───────────
+   normal flow, sized container: the clamp walks 96px (the phone
+   floor) → 15vw (the fluid line) → 288px; square by viewBox */
+.fo-col3 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.fo-mark {
+  inline-size: clamp(96px, 15vw, 288px);
+  aspect-ratio: 1;
+}
+.fo-mark-svg {
+  inline-size: 100%;
+  block-size: 100%;
+  display: block;
+  color: var(--text);
+}
+.fo-mark-p {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  vector-effect: non-scaling-stroke;
+  transition: opacity var(--t-slow) var(--ease-out);
+}
+/* the veil class is written by the component's IntersectionObserver
+   (house grammar — JS writes the class, CSS owns the tween; RM and
+   no-JS ship the mark fully visible) */
+.fo-mark-veiled { opacity: 0; }
+
+/* ═══ the ink strip band — normal flow, art-driven height ══════════
+   The two licensed skyline renders (light + dark twins) stack in ONE
+   grid cell; each carries the band's own 1440:314 proportion (the
+   folio's ink-band measure) and object-fit: cover center-crops the
+   1440×384 sheet into it at every width — the same crop the retired
+   fixed-height band painted, now proportional instead of fixed. No
+   fixed heights, no overflow:hidden, no negative margins. */
+.fo-fstrip {
+  margin-block-start: var(--sp-2);
+}
+.fo-strip-media {
+  display: grid;
+}
+.fo-strip-img {
+  grid-area: 1 / 1;
+  inline-size: 100%;
+  block-size: auto;
+  /* the band's own proportion (the folio's 1440:314 ink band): the
+     render covers the box, center-cropped exactly like the retired
+     fixed-height band — but the box scales with the sheet's width */
+  aspect-ratio: 1440 / 314;
+  object-fit: cover;
+  display: block;
+}
+/* the theme swap — the wy-cycle grammar: one render paints, its twin
+   holds the box (visibility keeps the layout seat) */
+.fo-strip-img.is-dark { visibility: hidden; }
+[data-theme='dark'] .fo-strip-img.is-light { visibility: hidden; }
+[data-theme='dark'] .fo-strip-img.is-dark { visibility: visible; }
+
+/* ═══ the © bar + the policy row — one ruled line (R321 §A2) ═══════ */
+.fo-footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: var(--sp-6);
+  row-gap: var(--sp-2);
+  padding: var(--sp-3) 2.4rem var(--sp-5);
+  border-block-start: 1px solid var(--rule);
+}
+.fo-legal-l {
+  min-inline-size: 0;
+}
+/* the © line — the mono rung on the soft ink; the western-digit year
+   rides the tabular .fo-mono span */
+.fo-legal-p {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-md);
+  line-height: 1.5;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+.fo-mono {
+  font-size: var(--fs-mono-md);
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+}
+.fo-legal-a {
+  color: var(--text);
+  text-decoration: none;
+  transition: color var(--t-fast) var(--ease);
+}
+.fo-legal-a:hover { color: var(--accent); }
+
+/* the policy row — NINE policy links + the app door, flex-wrap: the
+   row wraps INSIDE the bar at every width (the retired fixed-height
+   bar shipped its wrapped links BELOW the footer's box — the 104-cell
+   clipping defect this rebuild kills) */
+.fo-legal-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  column-gap: var(--sp-1);
+  min-inline-size: 0;
+}
+.fo-legal-link {
+  display: inline-flex;
+  align-items: center;
+  padding-inline: var(--sp-2-5);
+  text-decoration: none;
+  color: var(--text);
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  font-weight: 500;
+  /* the 44px touch floor (the footer link ladder) — a CONTRACT, not a
+     the reference measure: stays fixed px at every bp */
+  min-block-size: 44px;
+  transition: color var(--t-fast) var(--ease);
+}
+.fo-legal-link:hover { color: var(--accent); }
+/* the separator — §A6 law: the span ships EMPTY, the glyph is CSS
+   content (out of innerText, out of the a11y tree) */
+.fo-legal-sep {
+  display: inline-flex;
+  align-items: center;
+  color: var(--rule-strong);
+  font-size: var(--fs-mono-md);
+}
+.fo-legal-sep::after { content: '·'; }
+/* the separator's night seat — --rule-strong flips to #85857F in
+   dark, under the 4.5:1 text floor on the charcoal ground; the
+   muted text token clears 7.0:1 (the r339 T-12 fix, kept) */
+[data-theme='dark'] .fo-legal-sep { color: var(--text-muted); }
+
+/* the phones' centered colophon tail — the © line centers under the
+   wrapped policy row */
+@media (max-width: 767px) {
+  .fo-footer-bottom {
+    justify-content: center;
+  }
+  .fo-legal-l {
+    text-align: center;
+  }
+  .fo-legal-row {
+    justify-content: center;
+  }
+}
+
+/* ═══ the wy verb-snap protective collapses (r306/r308 family belt) ═══
+   This sheet carries the why-strip's RM seats per section-file
+   ownership (parked here since the R313 split): the r313 wy-snap
+   contract's animated selectors, collapsed verbatim — under
+   prefers-reduced-motion every stage verb stands at its authored
+   static state (the raw-ladder kill already zeroes the --t-* rungs;
+   this belt pins the wy-snap keyframes themselves). */
+@media (prefers-reduced-motion: reduce) {
+  .wy[data-wy-stage='0'] .wy-rail .wy-stage:nth-child(1) .wy-stage-verb,
+  .wy[data-wy-stage='1'] .wy-rail .wy-stage:nth-child(2) .wy-stage-verb,
+  .wy[data-wy-stage='2'] .wy-rail .wy-stage:nth-child(3) .wy-stage-verb,
+  .wy[data-wy-stage='3'] .wy-rail .wy-stage:nth-child(4) .wy-stage-verb {
+    animation: none;
+  }
+}
+
+/* ═══ the registration-mark family law (R321 §A6) ═══════════════════
+   The rebuilt colophon renders no registration seats, but the family
+   contract stays on this sheet: any future .fo-wordmark-reg element
+   paints its '+' glyph from CSS content, never from DOM text — and
+   its box is sized at the glyph's own rung (the retired 8px seats
+   clipped their glyphs by 2px at every phone width; a mark box may
+   never be smaller than the glyph it carries). */
+.fo-wordmark-reg {
+  display: grid;
+  place-items: center;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  color: var(--text);
+  font-family: var(--font-mono);
+}
+.fo-wordmark-reg::before { content: '+'; }

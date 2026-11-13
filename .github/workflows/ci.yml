@@ -1,0 +1,420 @@
+name: CI
+
+on:
+  # r325 (widening): every push on ANY branch + every PR — supersedes the
+  # main-only filters. The repo is public (free Actions minutes) and the
+  # per-ref concurrency group already collapses rapid pushes to the same
+  # ref. All nine jobs (lint, typecheck, build, unit x2, db-integration,
+  # e2e, ios-webkit, design-gates, surface-drift) run unchanged — a
+  # regression on any branch is caught at the push itself. The
+  # ios-webkit job keeps its push-only condition (documented cost choice).
+  push:
+  pull_request:
+  workflow_dispatch:
+
+# Least privilege — this pipeline never needs write scopes.
+permissions:
+  contents: read
+
+# Cancel in-flight runs for the same ref when a new commit lands.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Node 22 is the LTS line in support (Node 20 reached EOL in April 2026);
+# engines fields pin the workspace range to >=20 <25.
+env:
+  NODE_VERSION: '22'
+
+jobs:
+  zero-trace:
+    # The ZERO-TRACE gate (2026-11-13): the retired identities may not
+    # exist anywhere in the repository — content, file/dir names, or the
+    # git log. No whitelists; the ONE documented lockfile-integrity
+    # exclusion (npm registry digest coincidences, proven in the script
+    # header) lives inside the gate itself. The DATABASE half of the
+    # policy rides the post-deploy smoke.
+    name: Zero-trace (retired identities)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The git-history check needs the full ref set.
+          fetch-depth: 0
+      - run: bash scripts/brand/zero-trace.sh
+
+  lint:
+    name: Lint (eslint, src trees)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      - run: npm ci
+      # r134 (audit R134-W1-M P1): the repo shipped with no ESLint
+      # anywhere. Flat config at the root (eslint.config.mjs) covers
+      # frontend/src + backend/src; tests are excluded for the initial
+      # adoption (documented TODO in the config). Warnings are allowed —
+      # the documented exhaustive-deps exemptions — errors fail here.
+      - run: npm run lint
+
+  typecheck:
+    name: Typecheck (src + tests)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      - run: npm ci
+      # Generate the Prisma client so backend types resolve.
+      - run: npm --prefix backend run prisma:generate
+      - run: npm --prefix backend run typecheck
+      - run: npm --prefix frontend run typecheck
+      # The base tsconfigs only include src/**, so test files are never
+      # typechecked by the scripts above. tsconfig.test.json extends the
+      # base config and adds the tests/ trees (no emit).
+      - run: npm --prefix backend run typecheck:tests
+      - run: npm --prefix frontend run typecheck:tests
+
+  build:
+    name: Build (DB-free)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    needs: typecheck
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      - run: npm ci
+      # We call the workspace builds directly instead of the root
+      # `npm run build` because the root script chains `db:deploy`
+      # (prisma migrate deploy), which requires a live DATABASE_URL.
+      # Neither workspace build needs a DB:
+      #   backend  = tsc emit (needs prisma generate for client types)
+      #   frontend = tsc -b && vite build
+      - run: npm --prefix backend run prisma:generate
+      - run: npm --prefix backend run build
+      - run: npm --prefix frontend run build
+      # r183-B8 (A11 finding 1): the bundle-size gate. The pipeline
+      # ships four strict design gates (icons/motion/colors/parity) but
+      # NOTHING watched JS weight — 123 chunks / ~600KB gz total were
+      # shipping silently. Dependency-free (node:fs/path/url/zlib — the
+      # verify-parity-export.mjs pattern), so no extra install step: it
+      # walks the dist the step above just produced and fails this job
+      # when a pinned ceiling breaks (total gz ≤ 700KB · entry
+      # index-*.js ≤ 80KB · pdf-*.js ≤ 110KB — A11's LAB measurements
+      # plus ~8-10% headroom, pinned in the script header).
+      - run: node scripts/check-bundle-size.mjs
+
+  test-frontend:
+    name: Test (frontend)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    needs: typecheck
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      - run: npm ci
+      # Unit tests are DB-free (jsdom + vitest).
+      - run: npm --prefix frontend run test
+
+  test-backend:
+    name: Test (backend)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    needs: typecheck
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      - run: npm ci
+      - run: npm --prefix backend run prisma:generate
+      # Unit tests are DB-free: NODE_ENV=test (set in vitest.config.ts)
+      # makes env.ts fall back to placeholder secrets.
+      - run: npm --prefix backend run test
+
+  # r171b: the DB integration suite (transactions / locks / unique
+  # constraints) on a DISPOSABLE service Postgres. Deliberately a
+  # SEPARATE job from test-backend: `npm test` stays DB-free
+  # (AGENTS.md §5.2) — this suite runs only here and locally via
+  # `npm run test:integration` with an explicit DATABASE_URL.
+  db-integration:
+    name: DB integration (transactions + locks, disposable Postgres)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    needs: typecheck
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        # Service containers ship pg tooling, unlike the embedded dev PG.
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      # The service database is disposable by construction: the suite's
+      # guard (backend/tests/integration/guard.setup.ts) verifies the
+      # host is local, and truncateAll wipes every table (except
+      # _prisma_migrations) between tests.
+      INT_DB_URL: postgresql://postgres:postgres@localhost:5432/postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      - run: npm ci
+      - run: npm --prefix backend run prisma:generate
+      # Migrations via the repo's OWN deploy script — the same path
+      # production uses. Verified against a plain localhost URL (local
+      # embedded Postgres): DNS resolve + TCP probe + SELECT 1 all
+      # succeed, and the "pooler fallback" candidate it appends
+      # (pgbouncer=true, connection_limit=1) is harmless on a plain
+      # Postgres, so `prisma migrate deploy` applies all 18 migrations.
+      # (npx prisma migrate deploy --schema prisma/schema.prisma would
+      # also work; keeping the production script exercised is worth more.)
+      - name: Apply migrations to the disposable service DB
+        working-directory: backend
+        env:
+          DATABASE_URL: ${{ env.INT_DB_URL }}
+        run: node scripts/migrate-deploy.mjs
+      # The fail-closed guard rejects a missing/non-local/production-
+      # looking DATABASE_URL before any test connects; the suite fails
+      # the job if any transaction/lock/constraint pin breaks.
+      - name: Run the DB integration suite
+        env:
+          DATABASE_URL: ${{ env.INT_DB_URL }}
+        run: npm run test:integration
+
+  e2e:
+    name: E2E (hermetic browser journeys)
+    # R320 CI fix: ubuntu-latest rolled to 26.04 on 2026-10-27 and the
+    # workspace's @playwright/test 1.60 browsers.json has no
+    # ubuntu26.04-x64 builds (install fails: "Playwright does not
+    # support chromium on ubuntu26.04-x64"). Pinned to 24.04 — the
+    # exact image these suites ran green on for every prior push —
+    # until the Playwright bump round (Cycle 6 dep refresh).
+    # R320 CI fix #3: timeout 12→20 — the job measured 13.4min on
+    # 2026-10-27 (e2e 5.0m + r305 2.1m + install/npm ci + runner
+    # variance); 12 was borderline before the §C/§D suites grew it.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      - run: npm ci
+      # r164-k: the hermetic journey suite (frontend/tests/e2e/*.e2e.ts).
+      # No backend, no database, no network: Playwright's webServer boots
+      # the Vite dev server (:5173) and every /api/ call is fulfilled by
+      # the fixture transport (tests/e2e/fixtures/mock-transport.ts) at
+      # the page.route layer. Install the browser from the workspace's
+      # own @playwright/test (^1.60) — run npx inside frontend/ so it
+      # resolves that copy, not a registry download.
+      - name: Install Playwright chromium
+        working-directory: frontend
+        run: npx playwright install chromium
+      - run: npm --prefix frontend run test:e2e
+      # r305-final: the A9 cross-route QA belt (frontend/tests/r305/*.e2e.ts,
+      # 73 specs) — same hermetic model (own qa-transport page.route mocks,
+      # no backend/DB/network), added to CI so the R305 release's QA gates
+      # stay green on every push instead of being local-only. Verified
+      # 73/73 locally (~3m) inside this job's 12-minute budget.
+      - run: npm --prefix frontend run test:r305
+      # ULARA Ω §7 — the axe a11y gate (scripts/brand/a11y-gate.mjs):
+      # real axe-core serious/critical on the rendered public pages
+      # (/ · /auth · /404) × light/dark × 390/1280, RTL, ratcheted
+      # against the committed baseline (scripts/brand/a11y-baseline.json
+      # — the floor only tightens; exit 2 = infra). Rides THIS job —
+      # not the dependency-free design-gates job — because it needs
+      # node_modules (playwright + the hoisted axe-core bundle) and a
+      # browser, both provided by the install steps above. Self-
+      # contained: boots its own Vite on :5182, kills it on exit.
+      - run: node scripts/brand/a11y-gate.mjs
+      # Traces / screenshots / videos are retained-on-failure by
+      # playwright.config.ts — publish them for post-mortem only then.
+      - name: Upload failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-e2e-failures
+          path: frontend/test-results/
+          retention-days: 7
+
+  # r319-c2-g3 (§C6 / §H-3 "WebKit-iPhone run included"): REAL-WebKit
+  # iPhone verification. The dev sandbox worktrees cannot launch
+  # Playwright WebKit (missing system libs — libgtk/libgraphene/
+  # gstreamer; no root to install), so the webkit-iphone Playwright
+  # project skips there (ULARA_IOS_SKIP_UNSUPPORTED=1 or launch
+  # failure → test.skip) and runs HERE instead — ubuntu runners install
+  # WebKit with --with-deps exactly like the e2e job's chromium.
+  # Same hermetic model as the e2e job: ULARA_E2E_BASE_URL stays
+  # unset so Playwright's webServer boots the Vite dev server and every
+  # /api/ call rides the fixture transport (page.route mocks) — no
+  # backend, no database, no network. The specs (tests/e2e/
+  # r319-ios-contracts.ios.e2e.ts) drive the light/dark theme matrix
+  # themselves at 390 on the iPhone 13 device descriptor.
+  # Push-only: the WebKit download is the heaviest browser install in
+  # the pipeline, so PRs ride the lighter lanes (the chromium-iphone
+  # project covers the shared contracts on every push and PR via the
+  # e2e job's `npm run test:e2e` collection).
+  ios-webkit:
+    name: E2E iOS (real WebKit, iPhone 13)
+    if: github.event_name == 'push'
+    # R320 CI fix: same ubuntu-latest → 26.04 roll — webkit builds for
+    # 26.04 don't exist in @playwright/test 1.60. Pinned to 24.04.
+    # R320 CI fix #3: timeout 12→20 (same measured overage as e2e).
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      - run: npm ci
+      - name: Install Playwright webkit
+        working-directory: frontend
+        run: npx playwright install webkit --with-deps
+      - name: Run the iOS contracts suite (webkit-iphone project)
+        working-directory: frontend
+        run: npx playwright test --project=webkit-iphone
+      # Same retention policy as the e2e job: traces / screenshots /
+      # videos are retained-on-failure; publish for post-mortem then.
+      - name: Upload failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-ios-webkit-failures
+          path: frontend/test-results/
+          retention-days: 7
+
+  design-gates:
+    name: Design gates (icons + motion + colors + raw-css type/radius/spacing + parity + CSP)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      # bash/grep/python3 gates plus the node parity gate — none of them
+      # need node_modules (verify-parity-export.mjs is dependency-free:
+      # node:fs / node:path / node:url only), so no install step here.
+      # r134 (audit R134-W1-M P1): the flagship parity gate
+      # (verify-parity-export.mjs) was missing from CI — it only ran
+      # locally. It reads the working tree from the repo root, so the
+      # default working-directory is correct.
+      # R326 M0.4 — generated-token drift gate (dependency-free): the
+      # committed generated halves (web CSS + mobile TS) and the RN
+      # brand port must match shared/design-tokens.json byte-for-byte.
+      - run: node scripts/tokens/build.mjs --check
+      - run: bash scripts/check-icons.sh
+      - run: bash scripts/brand/logo-gate.sh
+      - run: bash scripts/check-motion-tokens.sh
+      # CSP pin drift guard (dependency-free): r133 changed the inline
+      # theme-bootstrap script without refreshing its sha256 pin and
+      # nothing caught it; r136 wired the local-only guard into CI;
+      # r147 removed the literal duplicate step a merge had left behind.
+      - run: bash scripts/check-csp-hash.sh
+      - run: node scripts/verify-parity-export.mjs
+      # r149 (R3-A8): بوابة الألوان الساكنة — جرد تقرير أولًا، ثم r150a
+      # فرز الـ 269 مخالفة إلى tokens/color-mix + تعليقات سماح موثقة،
+      # فصار الجرد صفرًا — البوابة الآن صارمة (--strict) كما خططت r149.
+      - run: bash scripts/check-colors.sh --strict
+      # r184 (Phase I — عقد A3 T1/R1): بوابات الخط/نصف القطر الخام —
+      # كل font-size/border-radius خارج نظام التوكنات يفشل CI إلا في
+      # المناطق المعفاة (tokens/fonts/parity/landing/colleges) أو بسطر
+      # سماح موثق. r185 أضافت محور الفراغات إلى نفس البوابة الصارمة
+      # (مسار r150a الكامل: جرد 160 ← ترحيل 192 + 3 درجات calc +
+      # 37 استثناءً مُعلَّلًا ← صفر) بمحرّك هيكلي جديد على مستوى
+      # الإعلان، ونطاق فراغات مستقلًا: 17 ورقة (تطبيق + colleges +
+      # زوج parity)، وlanding جردُ إيقاعٍ مرئيًا.
+      - run: bash scripts/check-raw-css.sh --strict
+      # r185-B2: حصن البوابة نفسها — 31 حالة طفرية على تركيبات
+      # اصطناعية تثبت أن كل فئة عمياء تُكتشف وأن العلامات المعيبة
+      # تُرفض وأن الفشل يُغلق مغلقًا. تعمل بلا node_modules.
+      - run: bash scripts/test-raw-css-gate.sh
+
+  surface-drift:
+    name: Surface drift
+    # R320 CI fix: same ubuntu-latest → 26.04 roll — the audit sweep's
+    # chromium install fails on 26.04 under @playwright/test 1.60.
+    # Pinned to 24.04.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    needs: [test-frontend, test-backend]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      # r164: the baseline is now REAL (72 captures of the production
+      # build via the hermetic fixture transport — see routes.ts
+      # BASELINE_ROUTES for the honest selection rule). This job became
+      # a hard gate: it re-captures the SAME slice fresh on every push
+      # (vite preview over the production build + page.route mock
+      # transport, no backend/DB needed) and runs the drift detector
+      # against the committed baseline.
+      #   - baseline has captures → build + sweep + drift (hard gate)
+      #   - baseline is empty     → skip with an explicit message
+      - name: Count baseline captures
+        id: baseline
+        run: |
+          count=$(node -e "const b=require('./frontend/tests/audit/surface-baseline.json');console.log(Array.isArray(b.captures)?b.captures.length:0)")
+          echo "captures=$count" >> "$GITHUB_OUTPUT"
+      - name: Install dependencies
+        if: steps.baseline.outputs.captures != '0'
+        run: npm ci
+      - name: Build the production surfaces
+        if: steps.baseline.outputs.captures != '0'
+        run: npm --prefix frontend run build
+      - name: Install chromium (audit sweep browser)
+        if: steps.baseline.outputs.captures != '0'
+        working-directory: frontend
+        run: npx playwright install chromium
+      - name: Fresh capture + drift detection (hard gate)
+        if: steps.baseline.outputs.captures != '0'
+        working-directory: frontend
+        env:
+          ULARA_E2E_BASE_URL: http://localhost:4173
+          AUDIT_API_MOCK: '1'
+          AUDIT_BASELINE_SLICE: '1'
+          # FCP is the one hardware-dependent axis — the deterministic
+          # findings (off-token colors, ad-hoc motion/shadows, contrast,
+          # CLS, illustration size, bundle bytes) gate at strict
+          # defaults; cross-runner FCP gets explicit documented
+          # headroom (observed same-machine run-to-run noise reaches
+          # ~2.8x under load).
+          AUDIT_FCP_RATIO: '4'
+        run: |
+          npx vite preview --port 4173 --strictPort &
+          PREVIEW_PID=$!
+          sleep 5
+          AUDIT_BASELINE=1 npx playwright test tests/audit/surface-inventory.spec.ts
+          kill $PREVIEW_PID || true
+          npx tsx tests/audit/run-drift.ts
+      - name: Baseline not yet captured — skipping
+        if: steps.baseline.outputs.captures == '0'
+        run: |
+          echo "::notice::surface-baseline.json has no captures yet — drift gate skipped."
+          echo "Capture a real baseline via 'npm --prefix frontend run audit:baseline', then this job becomes a hard gate."

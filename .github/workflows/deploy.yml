@@ -1,0 +1,81 @@
+# Deploy (Vercel — production) — Phase Ω infrastructure completion.
+#
+# The web platform deploys to Vercel (ulara.vercel.app, fra1) from
+# THIS repository's main branch. Until now that deploy was a manual
+# owner command (`npx vercel deploy --prod --regions fra1`).
+# This workflow automates it on every
+# production-affecting push.
+#
+# Credential gate (the repo's honest-skip pattern): the deploy needs
+# THREE repository secrets —
+#   VERCEL_TOKEN      an access token (vercel.com → Settings → Tokens)
+#   VERCEL_ORG_ID     from .vercel/project.json on the owner's machine
+#   VERCEL_PROJECT_ID same file (the EXISTING "ulara" project — the
+#                     ids pin the deploy to it; without them vercel
+#                     would create a duplicate project)
+# Until all three are set the job skips with a notice and stays green —
+# the manual deploy path keeps working unchanged.
+name: Deploy (Vercel)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - 'frontend/**'
+      - 'api/**'
+      - 'shared/**'
+      - 'vercel.json'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Queue deploys (never cancel a mid-flight production deploy).
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Vercel production deploy
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Credential gate (VERCEL_TOKEN + VERCEL_ORG_ID + VERCEL_PROJECT_ID)
+        id: cred
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          MISSING=""
+          [ -z "$VERCEL_TOKEN" ] && MISSING="$MISSING VERCEL_TOKEN"
+          [ -z "$VERCEL_ORG_ID" ] && MISSING="$MISSING VERCEL_ORG_ID"
+          [ -z "$VERCEL_PROJECT_ID" ] && MISSING="$MISSING VERCEL_PROJECT_ID"
+          if [ -n "$MISSING" ]; then
+            echo "::notice::deploy skipped — set the repository secrets:$MISSING (RELEASE.md §deploy automation). The manual deploy path is unchanged."
+            echo "has_token=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_token=true" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.cred.outputs.has_token == 'true'
+        uses: actions/checkout@v4
+      - if: steps.cred.outputs.has_token == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Deploy to production (fra1)
+        if: steps.cred.outputs.has_token == 'true'
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          npx vercel@latest deploy --prod --yes --regions fra1
+          echo "## Production deploy" >> "$GITHUB_STEP_SUMMARY"
+          echo "https://ulara.vercel.app" >> "$GITHUB_STEP_SUMMARY"
+      # deploy-smoke.yml then polls the live buildId (it waits until the
+      # deployed buildId == the pushed SHA) — the same belt as the manual
+      # deploy path; no duplication here.

@@ -1,0 +1,28 @@
+#!/bin/sh
+# .githooks/pre-push — fast pre-push gate (~15s).
+#
+# Runs ONLY the fast static checks; the full browser gates are the
+# foreman's pre-merge ratchet (CI + scripts/verify.sh) and take
+# minutes — they are deliberately NOT in the push path.
+#
+# Wave 2/4 (zero-trace): the r319/r320 ratchet lints were deleted with
+# their scripts/r319 + scripts/r320 homes — this hook now runs the
+# surviving fast check only. Rotting allowlists still block in every
+# mode.
+#
+# Wiring: root package.json "prepare": "git config core.hooksPath .githooks"
+# (idempotent — runs on every npm install/ci).
+set -u
+
+echo "[pre-push] fast checks…"
+
+# Static color gate — default mode is the fast report; a nonzero exit
+# (harness failure) blocks.
+echo "[pre-push] check-colors…"
+if ! bash scripts/check-colors.sh; then
+  echo "[pre-push] BLOCKED: scripts/check-colors.sh exited nonzero"
+  exit 1
+fi
+
+echo "[pre-push] fast checks green"
+exit 0

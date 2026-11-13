@@ -1,0 +1,148 @@
+/**
+ * Lightbox primitive unit tests.
+ *
+ * Coverage:
+ *   - renders only when open
+ *   - portal mount + role=dialog + aria-modal + aria-label
+ *   - initial focus lands on the dialog surface (A10 P2-1: the close
+ *     button is a dismiss affordance, not the opening context); the
+ *     close button stays the first Tab stop
+ *   - Esc dismisses (default) + opt-out
+ *   - overlay click dismisses (default) + opt-out
+ *   - clicks inside the content do NOT dismiss
+ *   - close button calls onClose
+ *   - close button has accessible label
+ *   - body scroll lock + release (the ref-counted scrollLock class,
+ *     wave 12-14)
+ */
+import { describe, expect, it, vi } from 'vitest';
+import { act, render, screen, fireEvent } from '@testing-library/react';
+import { Lightbox } from '../../src/components/overlays/Lightbox';
+import { SCROLL_LOCK_BODY_CLASS } from '../../src/lib/scrollLock';
+
+const flush = () => act(() => new Promise((r) => setTimeout(r, 0)));
+
+describe('Lightbox', () => {
+  it('renders nothing when open=false', () => {
+    render(
+      <Lightbox open={false} onClose={() => {}} ariaLabel="Image">
+        <img alt="" src="" />
+      </Lightbox>,
+    );
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  it('renders with role=dialog and aria-label', () => {
+    render(
+      <Lightbox open onClose={() => {}} ariaLabel="Image">
+        <img alt="" src="" data-testid="img" />
+      </Lightbox>,
+    );
+    expect(screen.getByRole('dialog', { name: 'Image' })).toBeInTheDocument();
+    expect(screen.getByTestId('img')).toBeInTheDocument();
+  });
+
+  it('focuses the dialog surface on open — the close button is a Tab stop, not the context (A10 P2-1)', async () => {
+    render(
+      <Lightbox open onClose={() => {}} ariaLabel="Image" closeLabel="dismiss">
+        <img alt="" src="" />
+      </Lightbox>,
+    );
+    await flush();
+    // The lightbox has no field controls and no content focusables —
+    // the trap's fallback focuses the dialog surface (tabIndex -1).
+    expect(document.activeElement).toBe(screen.getByRole('dialog', { name: 'Image' }));
+    // The close affordance stays reachable: a Tab from <body> (a click
+    // on the media chrome parks focus there) is reclaimed into the
+    // cycle — onto the close button, the only focusable inside.
+    (document.activeElement as HTMLElement | null)?.blur();
+    expect(document.activeElement).toBe(document.body);
+    fireEvent.keyDown(document, { key: 'Tab' });
+    expect(document.activeElement).toBe(
+      screen.getByRole('button', { name: 'dismiss' }),
+    );
+  });
+
+  it('Esc dismisses by default', () => {
+    const onClose = vi.fn();
+    render(
+      <Lightbox open onClose={onClose} ariaLabel="X">
+        <p>x</p>
+      </Lightbox>,
+    );
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('Esc is suppressed when closeOnEscape=false', () => {
+    const onClose = vi.fn();
+    render(
+      <Lightbox open onClose={onClose} ariaLabel="X" closeOnEscape={false}>
+        <p>x</p>
+      </Lightbox>,
+    );
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
+  it('overlay click dismisses by default', () => {
+    const onClose = vi.fn();
+    render(
+      <Lightbox open onClose={onClose} ariaLabel="X">
+        <p>x</p>
+      </Lightbox>,
+    );
+    const overlay = screen.getByRole('dialog').parentElement!;
+    fireEvent.click(overlay);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('overlay click is suppressed when closeOnOverlayClick=false', () => {
+    const onClose = vi.fn();
+    render(
+      <Lightbox open onClose={onClose} ariaLabel="X" closeOnOverlayClick={false}>
+        <p>x</p>
+      </Lightbox>,
+    );
+    const overlay = screen.getByRole('dialog').parentElement!;
+    fireEvent.click(overlay);
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
+  it('clicks inside the content do NOT dismiss', () => {
+    const onClose = vi.fn();
+    render(
+      <Lightbox open onClose={onClose} ariaLabel="X">
+        <p data-testid="inside">x</p>
+      </Lightbox>,
+    );
+    fireEvent.click(screen.getByTestId('inside'));
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
+  it('close button calls onClose', () => {
+    const onClose = vi.fn();
+    render(
+      <Lightbox open onClose={onClose} ariaLabel="X" closeLabel="dismiss">
+        <p>x</p>
+      </Lightbox>,
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'dismiss' }));
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('locks body scroll while open and releases on close (ref-counted class)', () => {
+    const { rerender } = render(
+      <Lightbox open onClose={() => {}} ariaLabel="X">
+        <p>x</p>
+      </Lightbox>,
+    );
+    expect(document.body.classList.contains(SCROLL_LOCK_BODY_CLASS)).toBe(true);
+    rerender(
+      <Lightbox open={false} onClose={() => {}} ariaLabel="X">
+        <p>x</p>
+      </Lightbox>,
+    );
+    expect(document.body.classList.contains(SCROLL_LOCK_BODY_CLASS)).toBe(false);
+  });
+});

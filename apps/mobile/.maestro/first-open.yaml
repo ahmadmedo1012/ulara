@@ -1,0 +1,16 @@
+# first-open — أولاً: يفتح التطبيق بارداً ولا ينهار.
+# The very first proof: cold launch reaches the Welcome sheet.
+# The asserts match the CURRENT Welcome (app/auth/index.tsx): the CTA
+# «ابدأ الآن» sits below the fold on the emulator profile → scrollUntil-
+# Visible (spec §4), then the always-rendered display title «رحلة تعلم
+# واحدة» proves the sheet itself painted.
+appId: ly.ulara.app
+name: "01 — أول فتح (بدون انهيار)"
+---
+- launchApp
+- scrollUntilVisible:
+    element:
+      text: "ابدأ الآن"
+    direction: DOWN
+    timeout: 60000
+- assertVisible: "رحلة تعلم واحدة"

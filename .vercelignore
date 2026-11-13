@@ -1,0 +1,29 @@
+# .vercelignore — the serverless build context is the WEB platform only:
+# backend + frontend + shared + api + the install/build toolchain files.
+# Everything else (mobile app, docs, specs, engineering history, local
+# test artifacts) builds and ships through its own pipelines and must
+# not enter the upload. Patterns are gitignore-style; the negated line
+# below re-includes the ONE script the root preinstall hook runs.
+node_modules
+backend/node_modules
+frontend/node_modules
+.git
+frontend/test-results
+frontend/tests
+backend/tests
+docs
+apps
+scripts/*
+!scripts/warn-node-env.mjs
+!scripts/setup-hooks.mjs
+.github
+.githooks
+.eas
+specs
+tools
+*.har
+*.md
+!README.md
+.size-gate-allowlist
+commitlint.config.mjs
+eslint.config.mjs

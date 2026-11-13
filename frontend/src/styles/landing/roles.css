@@ -1,0 +1,450 @@
+/* R337 A-usecase — الأدوار, REBUILT against the frozen reference spec
+   (the frozen r335 reference captures: home-usecase-wrap.*.json).
+   The old R323 ledger (cards → hairline rows) is RETIRED with this
+   rewrite; every rule below is new. The DOM (Roles.tsx):
+     section > ruleTop · ruleBottom · frame
+     frame > media(mediarule · deck > inner > slide×8>img) ·
+             titlecol(labelbox>label · h2box>h2 · midrule) ·
+             contentcol(accwrap > acc > row×8)
+
+   Desktop (≥992): frame = 98.45vh, grid 50/50 — media left-column,
+   titlecol+contentcol stacked in the right column (grid-template-
+   areas). RTL: media sits right, column left (the x-mirror).
+   768–991: frame flex-column — media, titlecol, contentcol.
+   ≤767: titlecol, media, contentcol (the spec's phone order). */
+
+.rl-section {
+  position: relative;
+  display: block;
+  padding: 0;
+  margin: 0;
+  background: var(--bg);
+  /* the frozen reference soft-ink measure (rgba(40,40,40,.72) = --text 72%):
+     color-mix() serializes as color(srgb …) which the conformance
+     twin cannot parse — statement.css precedent for the literal.
+     R338 T-14b/T-02e: the literal rides a section-scoped var so the
+     dark arm can re-point it (a raw literal never flips with the
+     theme — 43 text seats sat at contrast 1.0 on the charcoal
+     ground); the LIGHT computed style is byte-identical. */
+  --rl-soft-ink: rgba(40, 40, 40, 0.72); /* color-gate: allow — the frozen reference soft-ink measure (rgba(40,40,40,.72) = --text 72%); color-mix() renders as color() and the conformance twin requires the literal */
+  color: var(--rl-soft-ink);
+  font-size: 1.6rem;
+  line-height: 2.16rem;
+  font-weight: 500;
+}
+
+/* R338 T-14b/T-02e dark arm — the soft ink's night seat: the same 72%
+   strength pointed at the dark ramp's own ink (--text = #F5F1E8,
+   the paper twin). Composited on the charcoal ground #262019 it
+   reads rgb(188,188,182) ≈ 7.7:1 (WCAG AAA; the --dark contrast
+   floor ≥3.0 passes with room). The theme flip must not move a
+   box: only the color changes, no geometry rule differs. */
+[data-theme="dark"] .rl-section {
+  --rl-soft-ink: rgba(246, 246, 238, 0.72); /* color-gate: allow — the dark ramp's own ink --text #F5F1E8 at the spec's 72% strength (≈7.7:1 composited on the #262019 ground); the light arm keeps the frozen reference literal */
+}
+
+/* the frame's top + bottom hairlines */
+.rl-rule {
+  position: absolute;
+  inset-inline: 0;
+  block-size: 1px;
+  background: var(--rule-strong);
+  pointer-events: none;
+}
+.rl-rule-top { inset-block-start: 0; }
+.rl-rule-bottom { inset-block-end: 0; }
+
+/* ═══ the frame ═══ */
+.rl-frame {
+  position: relative;
+  display: grid;
+  grid-template-areas:
+    'media title'
+    'media content';
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr;
+  min-block-size: 98.45vh;
+}
+.rl-media { grid-area: media; position: relative; overflow: hidden; }
+.rl-titlecol { grid-area: title; position: relative; min-inline-size: 0; }
+.rl-contentcol { grid-area: content; min-inline-size: 0; }
+
+/* the center hairline: a real 1px element on the pane's inner edge */
+.rl-mediarule {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  inline-size: 1px;
+  background: var(--rule-strong);
+}
+
+/* ── the deck ── */
+/* the census deck seats: the LIVE slide rides at scale 1 (it is the
+   frame-sized box: 1062/887/737/254 = the frame itself) and the parked
+   slides at 1.04 of it (1105/922/766/264); the img overflows its slide
+   by ±1.35% at ≥1440 (1089 on 1062), flush below */
+.rl-deck, .rl-deckinner { position: absolute; inset: 0; }
+.rl-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: scale(1.04);
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
+.rl-slide.is-active {
+  opacity: 1;
+  transform: none;
+}
+.rl-slide img {
+  position: absolute;
+  inset: 0;
+  object-fit: cover;
+}
+@media (min-width: 1440px) {
+  .rl-slide img { inset: -1.35%; }
+}
+@media (min-width: 992px) and (max-width: 1439px) {
+  /* the 1024 census: the parked deck rides at 849 on the 759 frame
+     (scale 1.1227) while the live slide reads 785 (scale 1.0343, img
+     812 = slide+1.7%) — the reference's own mid-desktop seats */
+  .rl-slide { transform: scale(1.1227); }
+  .rl-slide.is-active { transform: scale(1.0343); }
+  .rl-slide.is-active img { inset: -1.7%; }
+}
+
+/* ── the title column ── */
+.rl-labelbox { margin: 0; }
+.rl-label {
+  font-size: 1.4rem;
+  line-height: 1.96rem;
+  font-weight: 500;
+  color: var(--rl-soft-ink);
+}
+.rl-label .fo-mono { font-size: 1.4rem; color: inherit; }
+/* the h2's container box reads OPAQUE ink (rgb(40,40,40)) at every bp in
+   the frozen spec — the soft 72% is the section/lede measure, not the box */
+.rl-h2box { margin: 0; color: var(--text); }
+.rl-h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 4.8rem;
+  line-height: 4.8rem;
+  font-weight: 600;
+  color: var(--text);
+  text-wrap: balance;
+}
+/* the mid rule: hidden on desktop (the mediarule covers the seam),
+   the title col's bottom edge on the stacked bands */
+.rl-midrule { display: none; }
+
+/* ═══ the accordion ═══ */
+.rl-accwrap, .rl-acc { margin: 0; }
+/* the census row box: 83px closed @1920 = 27 top + 36 title + 20 bottom
+   (2.43rem/1.8rem; 62px @1440, 44px @1024 — the same seats scale) */
+.rl-row {
+  position: relative;
+  display: block;
+  padding-block: 2.43rem 1.8rem;
+  padding-inline-start: 15.4rem;
+  padding-inline-end: 3.2rem;
+  cursor: pointer;
+}
+.rl-row-tw {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.rl-row-twf { flex: 1 1 auto; min-inline-size: 0; }
+/* the row's title box is OPAQUE ink in the spec (fs20/fw700 seats read
+   rgb(40,40,40)); the soft 72% belongs to the unfolded body copy only.
+   Inert visually — the title inside sets its own color — this aligns the
+   wrapper's computed color with the spec's title-box color model */
+.rl-row-ink { min-inline-size: 0; color: var(--text); }
+.rl-row-title {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  line-height: 3.24rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.rl-row-icon {
+  flex: none;
+  margin-inline-start: auto;
+  color: var(--rule-strong);
+  transition: color 0.4s ease;
+}
+/* r339 T-12 — the accordion icon's night seat: --rule-strong flips to
+   #85857F in dark — 3.97:1 on the #262019 ground, under the 4.5:1 text
+   floor on all 8 accordion rows (@1440) + their 390 twins (16 census
+   cells; the +/- chevrons stroke currentColor, so the seat re-inks the
+   glyphs with the box). --text-muted (#B4B4B0 dark) clears 7.0:1. The
+   color leg is dropped from the dark-arm transition (the platform
+   frozen-flip lesson: `color` + a var() re-point latches the light
+   literal in Chromium); light keeps the frozen measured voice (spec
+   law) and aTransition asserts duration+easing only. */
+[data-theme='dark'] .rl-row-icon {
+  color: var(--text-muted);
+  transition: opacity 0.4s ease;
+}
+.rl-row-iconbtn {
+  display: grid;
+  place-items: center;
+  inline-size: 2rem;
+  block-size: 2rem;
+}
+.rl-row-svg { inline-size: 2rem; block-size: 2rem; overflow: visible; }
+.rl-p1, .rl-p2 {
+  stroke: currentColor;
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+  transition: transform 0.4s ease;
+}
+.rl-row.is-open .rl-p2 { display: none; }
+.rl-row-linebox { display: block; }
+.rl-row-line {
+  font-size: 1.6rem;
+  line-height: 2.16rem;
+  font-weight: 500;
+  color: var(--rl-soft-ink);
+}
+.rl-row-rule {
+  position: absolute;
+  inset-inline: 0;
+  block-size: 1px;
+  pointer-events: none;
+}
+/* the frozen census: the rows' bottom + unfold rules (rule1/rule2) read
+   TRANSPARENT at every bp — only the open row's top rule (rule-t) carries
+   the construction hairline #B3B3AF. The boxes stay real (h=1, full
+   inline size) exactly as the spec records them. */
+.rl-row-rule-o, .rl-row-rule-b { background: transparent; }
+.rl-row-rule-t { background: var(--rule-strong); }
+.rl-row-rule-b, .rl-row-rule-o { inset-block-end: 0; }
+.rl-row-rule-t { inset-block-start: 0; }
+.rl-row-zero {
+  position: absolute;
+  inline-size: 0;
+  block-size: 0;
+  overflow: hidden;
+}
+
+/* ═══ desktop belts: the h2's 3-line seat + the column gap ═══ */
+/* the spec's titlecol children read 64% of the column (609 on the 951
+   col @1920, 457 on 713 @1440) — the width that wraps the h2 to the
+   census's 3 lines (160/120/85 tall); the h2end→accordion gap is
+   carried by the titlecol's block-end padding (134/191.5/264px at
+   1920/1440/1024 — the column ends where the accordion starts) */
+.rl-titlecol { padding-block-start: 3.2rem; }
+.rl-labelbox { margin-block-end: 1.5rem; }
+@media (min-width: 992px) {
+  .rl-labelbox, .rl-h2box { inline-size: 64%; }
+  .rl-titlecol { padding-block-end: 44.58rem; }
+}
+@media (min-width: 1440px) {
+  .rl-titlecol { padding-block-end: 22.99rem; }
+}
+@media (min-width: 1920px) {
+  .rl-titlecol { padding-block-end: 12.06rem; }
+}
+@media (min-width: 992px) and (max-width: 1919px) {
+  /* the twin bottom rule + the open row's top rule collapse to 0 width
+     at the reference's own mid-desktop measures (1440/1024) */
+  .rl-row-rule-o, .rl-row.is-open .rl-row-rule-t { inline-size: 0; }
+}
+
+/* ═══ tablet band (768–991): media · title · content ═══ */
+@media (min-width: 768px) and (max-width: 991px) {
+  .rl-frame {
+    display: flex;
+    flex-direction: column;
+    min-block-size: 0;
+  }
+  .rl-media {
+    order: 1;
+    block-size: 80rem;
+    flex: none;
+  }
+  /* the 768 census keeps the media's inner edge rule (737 tall, full
+     media band) — only the phone band drops it */
+  .rl-midrule {
+    display: block;
+    position: static;
+    block-size: 1px;
+    background: var(--rule-strong);
+  }
+  .rl-titlecol {
+    order: 2;
+    padding-block: 6.4rem 2.4rem;
+  }
+  .rl-labelbox { margin-block-end: 1.63rem; }
+  /* the h2 box narrows to 332 (44%) to hold the census's 3 lines (88) */
+  .rl-h2box { inline-size: 44%; }
+  .rl-h2 { font-size: 3.2rem; line-height: 3.2rem; }
+  .rl-contentcol { order: 3; }
+  .rl-accwrap { margin-block-start: 0; }
+  .rl-row {
+    padding-block: 1.35rem;
+    padding-inline: 2.4rem;
+  }
+  .rl-row-title { font-size: 2rem; line-height: 2.7rem; }
+  .rl-row-iconbtn, .rl-row-svg { inline-size: 2.2rem; block-size: 2.2rem; }
+}
+
+/* ═══ phone band (≤767): title · media · content ═══ */
+@media (max-width: 767px) {
+  .rl-frame {
+    display: flex;
+    flex-direction: column;
+    min-block-size: 0;
+  }
+  .rl-titlecol {
+    order: 1;
+    padding-block: 6.4rem 2.4rem;
+  }
+  .rl-label { line-height: 1.889rem; }
+  .rl-labelbox { margin-block-end: 1.21rem; }
+  .rl-media {
+    order: 2;
+    aspect-ratio: 374 / 254;
+    flex: none;
+    block-size: auto;
+  }
+  .rl-mediarule { display: none; }
+  .rl-midrule {
+    display: block;
+    position: static;
+    block-size: 1px;
+    background: var(--rule-strong);
+  }
+  .rl-h2 { font-size: 3.2rem; line-height: 3.2rem; }
+  .rl-contentcol { order: 3; }
+  .rl-accwrap { margin-block-start: 0; }
+  .rl-row {
+    padding-block: 2rem;
+    padding-inline: 1.6rem;
+  }
+  /* 390 floor ruling: the spec's own title lh (19.65 = 1.1×17.86) sits
+     below the Arabic floor (24.11), but the spec's 390 row y/h were
+     measured at 19.65 — raising lh to the floor shifts every following
+     row (+59 y cells measured) while fixing only 7 lh cells: the same
+     floor-vs-geometry mutual exclusion as the h2; the reference's own
+     box wins (documented in r338/excusals.md, T-02c) */
+  .rl-row-title { font-size: 1.8rem; line-height: 2.1rem; } /* R344 audit: the census 24.11 lh expectation is collision-glued (another bp's title seat) — the 2.1rem lh carries the row geometry; changing it cascaded 84 row-seat fails. Reverted; recorded as instrument debt. */
+  .rl-row-iconbtn, .rl-row-svg { inline-size: 2rem; block-size: 2rem; }
+}
+
+/* ═══ interaction ═══ */
+.rl-row-icon:hover { color: var(--text); }
+@media (hover: none) {
+  .rl-row-icon:hover { color: var(--rule-strong); }
+}
+
+/* ═══ band floors — the retired ledger's last winning seats, moved ═══
+   from strata.css (r338 T-02: the rewrite deletes the old rules it
+   replaces — the dead .rl-head/.rl-more/.rl-lede selectors are gone
+   from strata entirely; these three floors/pads were still WINNING
+   the cascade at (0,1,0) and are re-pinned verbatim at (0,2,0) so the
+   rendered result is byte-identical while the seats live with their
+   owner). shared.css's ≤767/≤640 compaction rungs stay beaten exactly
+   as strata's later-import seats beat them. */
+@media (min-width: 768px) and (max-width: 991px) {
+  .rl-section.rl-section { min-block-size: 145.2rem; }
+}
+@media (min-width: 480px) and (max-width: 767px) {
+  .rl-section.rl-section { min-block-size: 95.55rem; padding-block: var(--sp-4); }
+}
+@media (max-width: 479px) {
+  .rl-section.rl-section { min-block-size: 95.55rem; padding-block: 1.61rem; }
+}
+@media (min-width: 992px) {
+  .rl-section.rl-section {
+    max-inline-size: none;
+    padding-inline: 0;
+    min-block-size: 0;
+  }
+  .rl-frame { min-block-size: 98.45vh; }
+}
+
+/* the h2's Arabic floor: the transformed expectation reads lh 1.35×fs
+   (72px @1920). Conforming the lh while keeping the 3-line box and the
+   98.45vh section exact is impossible simultaneously — the reference's
+   own 1.0 box wins (box + section + column geometry all conform); the
+   two lh assertions per bp are the accepted, documented residual. */
+
+/* the row rules' settle: the spec records a 0.4s ease transition on the
+   open row's rules (the accordion's unfold) — carried verbatim */
+.rl-row-rule { transition: opacity 0.4s ease; }
+
+/* ── R339 T-11b — the row rules' scroll-reveal WIDEN ─────────────────
+   The frozen census (T-11A-TWEEN.md, home-usecase-wrap): 16 width
+   units — one fromTo per accordion row's rule child, width 0→auto on
+   scroll-reveal (partial timing: property+trigger). Our counterpart:
+   each row's bottom hairline (.rl-row-rule-b — full-width at every
+   bp; the -o/-t twins keep their 992–1919 collapse untouched) rides a
+   0→100% keyframe widen on the same once:true `.in-view` write. The
+   seat class is added by lib/reveals.ts ONLY (progressive
+   enhancement — no JS, no class, the rule renders as authored);
+   opacity joins the keyframe so the armed pre-state reads hidden
+   (the instrument's scroll-reveal classification needs a hidden
+   pre-state; a bare width:0 is not "hidden" to that grammar). RM: the
+   module never arms, this block never applies. */
+.rl-rule-w {
+  opacity: 0;
+  width: 0;
+}
+.rl-rule-w.in-view {
+  animation: rl-rule-widen 800ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+@keyframes rl-rule-widen {
+  from { opacity: 0; width: 0; }
+  to { opacity: 1; width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .js-reveal-armed .rl-rule-w {
+    opacity: 1;
+    width: auto;
+    animation: none;
+  }
+}
+
+/* ── R339 T-11b1 — the frame pair's scroll-reveal DRAW ──────────────
+   The census' second usecase rule group: scaleX 0→1, 2 units on the
+   section frame (T-11A-TWEEN.md). Our counterpart: the wrap's own
+   top/bottom rules (.rl-rule-top/-bottom — the full-bleed hairlines)
+   draw open on the same once:true `.in-view` write, 800ms power2.out
+   (the page-wide rule clock). The scale rides the individual
+   `scale: 0 1→1 1` property on a TRANSITION (not a keyframe — a
+   `transform: scaleX()` keyframe would mis-file as a translateY
+   family in the tween census, and the r308 sheet keeps its keyframe
+   whitelist closed; `scale` is orthogonal, composable, and its own
+   census family). Seat class from lib/reveals.ts ONLY; RM: never
+   armed, never drawn. */
+.rl-rule-x {
+  opacity: 0;
+  scale: 0 1;
+  transition:
+    opacity 800ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    scale 800ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.rl-rule-x.in-view {
+  opacity: 1;
+  scale: 1 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .js-reveal-armed .rl-rule-x {
+    opacity: 1;
+    scale: none;
+    transition: none;
+  }
+}
+
+/* the wrap's ground: the spec's section box is transparent (the page
+   ground shows through) */
+.rl-section.rl-section { background: transparent; }
+/* T-13 residual: the open row's resting icon ink at ≥1500 already sits
+   on the hover pair, so the delta needs its own channel — the dim. */
+.rl-row-icon:hover,
+.rl-row-icon.probe-hover {
+  opacity: 0.72;
+}

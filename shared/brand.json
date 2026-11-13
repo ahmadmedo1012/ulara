@@ -1,0 +1,18 @@
+{
+  "$doc": "ULARA Omega takeover — the ONE source of truth for the product name and its identity primitives. The owner's takeover directive opened the old Gate A: the product surface NOW consumes this file. Regen: node scripts/brand/ulara-kit.mjs · verify: node --test scripts/brand/ulara-kit.test.mjs. Name rules (test-enforced): name_ar is the logo form WITH damma — the damma-less spelling is forbidden anywhere in the kit; name_en is the running-text form — all-caps ULARA is allowed ONLY inside logo lockups; colours are the ULARA «Parchment & Sienna» palette, pinned to shared/design-tokens.json color.brand.",
+  "name_ar": "أُلارا",
+  "name_en": "Ulara",
+  "slug": "ulara",
+  "domain": "ulara.ly",
+  "scheme": "ulara://",
+  "bundle_id": "ly.ulara.app",
+  "storage_prefix": "ula-",
+  "npm_scope": "@ulara",
+  "env_prefix": "ULARA_",
+  "colors": {
+    "$doc": "The only three brand colours — the ULARA «Parchment & Sienna» palette (paper #F5F1E8 · ink #262019 · burnt sienna #C43E16), pinned to shared/design-tokens.json color.brand. The deliberate Ω-takeover evolution away from the retired palette; the generator cross-checks this trio against design-tokens.json on every run.",
+    "paper": "#F5F1E8",
+    "ink": "#262019",
+    "accent": "#C43E16"
+  }
+}

@@ -1,0 +1,27 @@
+/* ═══ campus-media.css — the /campus page-scoped capture grid (Phase Ω) ═══
+   The retired page-scoped devices (the vc-poster hatch, the vc-actions
+   scrim, the inkm drafting grid — all gradient-bearing, kept OUT of the
+   shared sheet by the r341 D9 flat-paper law) are retired with their
+   surfaces: the page is no longer a video/photo gallery. What lives
+   here now is the capture-grid layout for the platform's own product
+   frames (ProductFrame owns its component css; this sheet only lays
+   out the page rows). Unlayered, page-scoped — imported by
+   CampusPages.tsx only. ═════════════════════════════════════════════ */
+
+.cw-band {
+  display: grid;
+  grid-template-columns: minmax(0, 46fr) minmax(0, 30fr) minmax(0, 24fr);
+  gap: var(--sp-4);
+  align-items: end;
+}
+
+.cw-rail {
+  display: grid;
+  gap: var(--sp-4);
+}
+
+@media (max-width: 991px) {
+  .cw-band {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

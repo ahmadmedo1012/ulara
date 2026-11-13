@@ -1,0 +1,1423 @@
+/* R332 — split from src/styles/landing.css · journey = the chapters
+   band (the R308/R322 jt scroll story) + wr reveals.
+   R342-04 — THE MEASURED-SEAT REBUILD: every geometry below is the
+   frozen reference map spec re-expressed on the band's own em ladder
+   (the scaffold rung: 17.78@1920 · 13.33@1440 · 9.48@1024 · the
+   mobile roots), so one rule holds every desktop breakpoint. The
+   em constants, where they are constants, are the measurements:
+   window inset 1.2rem(root) · stack seat 0.5em · rails 0.5em thick
+   at 1.2em inset · marks 0.75em · intro card 17.5em × 2em insets ·
+   closing col clamp(280px, 32.3vw, 464px) · chip 8.1em × 2.63em ·
+   h2 9em box @3em rung · cms rows 4em, icons 2em · ledger texts 1em.
+   Full map + proof: the frozen r335 reference captures: home-map-wrap.*.json */
+
+/* ═══ الفصول — the pinned map band ═══
+   The section height is the TRACK height exactly (the measured
+   section heights: 7560@1920 · 6300@1440 · 5376@1024 — the track
+   IS 700dvh); the band rhythm lives in the neighbouring sections'
+   own padding, and the track's own 10px settle (the measured div[1]
+   offset) opens the frame. */
+section.chapters {
+  padding-block: 0;
+  /* the map band is full-bleed at its own measured track gutters (the
+   * .jt margin-inline below) — the shared section inline padding
+   * retires for this band (the frame IS the measure). */
+  padding-inline: 0;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   jt — the journey map (R322 3-b transplant · R342-04 measured seats)
+   ════════════════════════════════════════════════════════════════════ */
+.jt {
+  position: relative;
+  /* T-09d — the band's measured ink model: #262019 at 72% alpha on
+     every structural node, as a section-scoped var (the r338
+     ADDENDUM 9 pattern; flips with the theme for the dark census). */
+  --jt-ink: rgb(40 40 40 / 72%); /* color-gate: allow — measured reference map ink, scoped var not a global token mutation (r338 ADDENDUM 9 pattern). The computed value must serialise rgba(40,40,40,0.72); the dark twin below carries the same allowance. */
+  color: var(--jt-ink);
+  line-height: 18px; /* 1440 measured */
+  block-size: 700dvh;
+  margin-block: 0;
+  margin-inline: 0.78rem; /* spacing-gate: allow — the measured track gutters (6.5@1440 · 9@1920 on the fluid root) */
+
+  --jt-t-art: 0.4s; /* measured — the reference home-map band art tween */
+  --jt-e-art: ease; /* measured — the reference home-map band art tween */
+  --jt-cap: var(--neutral-400); /* R342-11 — the measured reference caption ink (rgb(180,180,176)) rides the palette scale's own rung (light --neutral-400 IS #B4B4B0, tokens.generated.css); the dark twin re-points at the dark ramp's readable caption seat. The css rawHex ratchet stays at its frozen baseline — the two plan-artifact hexes below are the tokens' own documented unavoidable class (theme-pinned values var() cannot express) */
+}
+
+
+/* r339 T-12 — the map ink's night seat (unchanged). */
+[data-theme='dark'] .jt {
+  --jt-cap: var(--text-muted);
+  --jt-ink: rgba(246, 246, 238, 0.72); /* color-gate: allow — the dark ramp's own ink #F5F1E8 at the spec's 72% strength; the light arm keeps the frozen reference literal */
+
+  --jt-cap: var(--text-muted);
+}
+
+
+/* T-09d — measured container rhythm per bp, AFTER the .jt base. */
+@media (min-width: 1920px) {
+  .jt { line-height: 24px; } /* measured @1920 */
+}
+
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .jt {
+    line-height: 12.8px; /* measured @1024 */
+    font-size: 9.48px;   /* measured @1024 scaffold root */
+  }
+}
+
+@media (max-width: 1023px) {
+  .jt {
+    line-height: 19.89px; /* measured @768 */
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .jt { font-size: 14.73px; } /* measured @768 scaffold rung (the tablet root's own 1.6×) */
+
+  .jt-close-title {
+    font-size: 3.2rem; /* the measured tablet h2 rung (29.47px @768) */
+  }
+}
+
+@media (max-width: 767px) {
+  .jt { line-height: 21.44px; } /* measured @390 */
+}
+
+
+
+/* the measured desktop section heights — the wrap IS the track
+   (7560@1920 · 6300@1440 · 5376@1024); the stacked ≤991 flow sizes
+   itself against the pinned docH ladder. */
+@media (min-width: 992px) {
+  section.chapters {
+    block-size: 700dvh;
+  }
+}
+
+/* the FRAME — sticky top 0, the measured column grid:
+   [plan column 1fr][1px rule][closing column fixed]. The frame's
+   own top hairline (the measured 1902×1 @ y0) rides a pseudo —
+   paint chrome, intentionally not a census node. */
+.jt-pin {
+  position: sticky;
+  top: 0;
+  block-size: calc(100dvh - 1.56rem); /* the measured frame heights (887@1440 · 1062@1920 · 759@1024) */
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  padding-inline: 0.78rem; /* spacing-gate: allow — the measured frame gutters (6.5@1440 · 9@1920 · 4@1024 on the fluid root) */
+  z-index: 1;
+}
+
+.jt-pin::before {
+  content: '';
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  block-size: 1px;
+  background: var(--grid-line);
+}
+
+/* the frame's vertical seam — the measured 1×887 divider between
+   the plan and closing columns (bg #B3B3AF = the guide grey). */
+.jt-close-vrule {
+  flex: 0 0 1px;
+  align-self: stretch;
+  background: var(--grid-line);
+}
+
+/* R322 3-b-fix: the persistent orange FURNITURE spot on the frame's
+   rail (10px square, block centre, ≈0.01% of frame; decorative —
+   pseudo-element construction keeps it out of innerText). */
+.jt-pin::after {
+  content: '';
+  position: absolute;
+  inset-block-start: calc(50% - 5px);
+  inset-inline-end: calc((var(--page-gutter) - 10px) / 2);
+  block-size: 10px;
+  inline-size: 10px;
+  background: var(--accent);
+  z-index: 5;
+}
+
+@media (max-width: 991px) {
+  .jt-pin::after {
+    display: none;
+  }
+}
+
+/* the PLAN COLUMN — flex:1 of the frame; the scroll track @≤991.
+   contain bounds the plan subtree's invalidations + clips the
+   entrance descent. */
+.jt-map-col {
+  position: relative;
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  contain: layout paint;
+}
+
+/* the stack seat @≥992 (the window's chrome container anchor);
+   the STICKY WINDOW @≤991. */
+.jt-map-in {
+  position: relative;
+  block-size: 100%;
+  inline-size: 100%;
+}
+
+/* the plan box — the measured window: inset 1.2rem of the map
+   column (10@1440 · 13@1920 · 7@1024), carrying the four
+   registration rails + the four corner marks + the drifting stack.
+   will-change kept (the compositor set — perf-baseline §7). */
+.jt-window {
+  position: absolute;
+  inset: 1.2rem;
+  will-change: transform;
+}
+
+/* the four registration rails — the measured window chrome: 0.5em
+   thick, 1.2em inset from the corners (invisible layout spacers
+   exactly like the reference's — the plan's own sheet frame draws
+   the visible lines). */
+.jt-rail {
+  position: absolute;
+}
+
+.jt-rail-t,
+.jt-rail-b {
+  inset-inline: 1.2em;
+  block-size: 0.5em;
+}
+
+.jt-rail-t { inset-block-start: 0; }
+.jt-rail-b { inset-block-end: 0; }
+
+.jt-rail-s,
+.jt-rail-e {
+  inset-block: 1.2em;
+  inline-size: 0.5em;
+}
+
+.jt-rail-s { inset-inline-start: 0; }
+.jt-rail-e { inset-inline-end: 0; }
+
+/* the four corner marks — crosshair registration svgs, 0.75em
+   square, seated just outside the window's corners (−0.1em). Solid
+   ink (the measured mark colour — not the 72% scaffold wash). */
+.jt-mark {
+  position: absolute;
+  inline-size: 0.75em;
+  block-size: 0.75em;
+  color: var(--text);
+  line-height: 0;
+}
+
+.jt-mark-a { inset-block-start: -0.1em; inset-inline-start: -0.1em; }
+.jt-mark-b { inset-block-start: -0.1em; inset-inline-end: -0.1em; }
+.jt-mark-c { inset-block-end: -0.1em; inset-inline-start: -0.1em; }
+.jt-mark-d { inset-block-end: -0.1em; inset-inline-end: -0.1em; }
+
+.jt-mark-in {
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.jt-mark-svg {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: visible;
+}
+
+.jt-mark-svg path {
+  stroke: currentColor;
+  stroke-width: 1;
+  fill: none;
+  transition: transform var(--jt-t-art) var(--jt-e-art); /* the measured 0.4s/ease register */
+}
+
+/* the drifting plan stack — the entrance descent's target. The
+   measured rest transform: one frame height minus the scaffold
+   rung (−(100dvh − 1em-of-the-band-font)), written by the driver;
+   the seat itself: 0.5em inside the window, spanning the map
+   column's full width (the measured 963 vs the window's 943). */
+.jt-stack {
+  position: absolute;
+  inset-block: 0.5em;
+  inset-inline: -1.2rem;
+  will-change: transform;
+}
+
+/* the plan sheet — the svg element fills the stack box; the
+   1200×760 viewBox letterboxes (meet) inside it exactly like the
+   reference's plan area. */
+.jt-stack .bp-svg {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  min-block-size: 0;
+}
+
+/* ═══ the six progressive layers (the crossfade stack — unchanged) ═══ */
+.jt .jt-plan [data-xl] {
+  opacity: 0.18;
+  will-change: opacity;
+}
+
+.jt .jt-plan .pl-l-frame .bp-drawable {
+  stroke-dashoffset: 0;
+  fill-opacity: 1;
+}
+
+/* ═══ T-09e — the measured motion register (the vars live on .jt above) ═══ */
+.jt .jt-plan path {
+  transition: transform var(--jt-t-art) var(--jt-e-art);
+}
+
+.jt .jt-plan .pl-l-frame > g {
+  transition: opacity var(--jt-t-art) var(--jt-e-art);
+}
+
+.jt .jt-plan .pl-l-frame .bp-gridline {
+  opacity: 1;
+}
+
+/* the door chips resolve with the wash (unchanged). */
+.jt .jt-plan .pl-chip {
+  opacity: 0;
+  transition: none;
+}
+
+.jt[data-wash='lecture'] .jt-plan .pl-chip[data-station='0'],
+.jt[data-wash='checkpoint'] .jt-plan .pl-chip[data-station='1'],
+.jt[data-wash='exam'] .jt-plan .pl-chip[data-station='2'],
+.jt[data-wash='library'] .jt-plan .pl-chip[data-station='3'],
+.jt[data-wash='mastery'] .jt-plan .pl-chip[data-station='4'] {
+  opacity: 1;
+}
+
+/* ── the plan's label scale (R332 W4 ladder — the drawing's own
+   rungs, unchanged; the stack box is the @≥992 measure) ────────── */
+.jt .jt-plan .pl-name {
+  font-family: var(--font-mono);
+  font-size: 32px;
+  font-weight: 500;
+  fill: var(--text-secondary);
+}
+
+@media (min-width: 1152px) {
+  .jt .jt-plan .pl-name { font-size: 23px; }
+}
+
+@media (min-width: 1352px) {
+  .jt .jt-plan .pl-name { font-size: 20px; }
+}
+
+@media (min-width: 1520px) {
+  .jt .jt-plan .pl-name { font-size: 17px; }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .jt .jt-plan .pl-name { font-size: 16px; }
+}
+
+@media (max-width: 767px) {
+  .jt .jt-plan .pl-name { font-size: 22px; }
+}
+
+.jt .jt-plan .bp-micro {
+  font-size: 22px;
+}
+
+@media (min-width: 1152px) {
+  .jt .jt-plan .bp-micro { font-size: 17px; }
+}
+
+@media (min-width: 1352px) {
+  .jt .jt-plan .bp-micro { font-size: 16px; }
+}
+
+@media (min-width: 1520px) {
+  .jt .jt-plan .bp-micro { font-size: 13px; }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .jt .jt-plan .bp-micro { font-size: 12px; }
+}
+
+@media (max-width: 767px) {
+  .jt .jt-plan .bp-micro { font-size: 17px; }
+}
+
+/* the labels' paper halo (R318 §A4 → R319 §D3 — unchanged). */
+.jt .jt-plan .pl-name,
+.jt .jt-plan .bp-micro,
+.jt .jt-plan .pl-station {
+  paint-order: stroke fill;
+  stroke: var(--bg);
+  stroke-width: 1.4px;
+  stroke-linejoin: round;
+}
+
+.jt[data-wash='lecture'] .jt-plan .pl-l-lecture .pl-name,
+.jt[data-wash='lecture'] .jt-plan .pl-l-lecture .bp-micro,
+.jt[data-wash='checkpoint'] .jt-plan .pl-l-checkpoint .pl-name,
+.jt[data-wash='checkpoint'] .jt-plan .pl-l-checkpoint .bp-micro,
+.jt[data-wash='exam'] .jt-plan .pl-l-exam .pl-name,
+.jt[data-wash='exam'] .jt-plan .pl-l-exam .bp-micro,
+.jt[data-wash='library'] .jt-plan .pl-l-library .pl-name,
+.jt[data-wash='library'] .jt-plan .pl-l-library .bp-micro,
+.jt[data-wash='mastery'] .jt-plan .pl-l-mastery .pl-name,
+.jt[data-wash='mastery'] .jt-plan .pl-l-mastery .bp-micro,
+.jt[data-wash='lecture'] .jt-plan .pl-station[data-station='0'],
+.jt[data-wash='checkpoint'] .jt-plan .pl-station[data-station='1'],
+.jt[data-wash='exam'] .jt-plan .pl-station[data-station='2'],
+.jt[data-wash='library'] .jt-plan .pl-station[data-station='3'],
+.jt[data-wash='mastery'] .jt-plan .pl-station[data-station='4'] {
+  stroke: none;
+}
+
+.pl-station {
+  fill: var(--accent-ink);
+  font-weight: 500;
+}
+
+/* the zone wash — the bounded room highlight (unchanged). */
+.pl-zone {
+  fill: var(--accent);
+  fill-opacity: 0;
+  stroke: var(--accent);
+  stroke-width: 0;
+  transition:
+    fill-opacity var(--t-fast) var(--ease),
+    stroke-width var(--t-fast) var(--ease);
+}
+
+.jt[data-wash='lecture'] .pl-zone[data-zone='lecture'],
+.jt[data-wash='checkpoint'] .pl-zone[data-zone='checkpoint'],
+.jt[data-wash='exam'] .pl-zone[data-zone='exam'],
+.jt[data-wash='library'] .pl-zone[data-zone='library'],
+.jt[data-wash='mastery'] .pl-zone[data-zone='mastery'] {
+  fill-opacity: 0.035;
+  stroke-width: 1.5;
+}
+
+.jt[data-stage='5'] .pl-zone[data-zone='mastery'] {
+  fill-opacity: 0.15;
+  stroke-width: 1.5;
+}
+
+@media (min-width: 992px) {
+  .jt[data-stage='5'] .pl-zone[data-zone='lecture'] {
+    fill-opacity: 0.12;
+    stroke-width: 1.5;
+  }
+}
+
+.jt[data-wash='lecture'] .pl-l-lecture .pl-name,
+.jt[data-wash='checkpoint'] .pl-l-checkpoint .pl-name,
+.jt[data-wash='exam'] .pl-l-exam .pl-name,
+.jt[data-wash='library'] .pl-l-library .pl-name,
+.jt[data-wash='mastery'] .pl-l-mastery .pl-name {
+  fill: var(--accent-ink);
+}
+
+/* ── the [nn/05] counter rows — our mono furniture (the reference
+   carries its counters inside the svg art; unbound by design) ──── */
+.jt-idx {
+  position: absolute;
+  inset-block-start: 12px;
+  inset-inline-start: 12px;
+  display: grid;
+  overflow: hidden;
+  background: var(--bg);
+  padding: 3px 10px; /* spacing-gate: allow — the reference's own chip seat */
+  z-index: 2;
+}
+
+.jt-idx > span {
+  grid-area: 1 / 1;
+  white-space: nowrap;
+  color: var(--text-muted);
+  font-size: var(--fs-xxs);
+  letter-spacing: 0.04em;
+  opacity: 0;
+  transition: opacity var(--t-fast) var(--ease);
+}
+
+.jt[data-finding='1'] .jt-idx > span:nth-child(1),
+.jt[data-finding='2'] .jt-idx > span:nth-child(2),
+.jt[data-finding='3'] .jt-idx > span:nth-child(3),
+.jt[data-finding='4'] .jt-idx > span:nth-child(4),
+.jt[data-finding='5'] .jt-idx > span:nth-child(5),
+.jt[data-finding='done'] .jt-idx > span:nth-child(5) {
+  opacity: 1;
+}
+
+.jt[data-finding='all'] .jt-idx > span {
+  grid-area: auto;
+  opacity: 1;
+}
+
+/* ── the two statement plaques — the measured overlay band ────────
+   The plaques ride the drifting stack OVER the plan (the reference's
+   own seat: centered horizontally, at the stack's mid-height), one
+   grid cell — the two statements crossfade in the SAME seat. Plaque 1
+   rests VISIBLE (the spec's captured state — it is the entry
+   statement over the ghost plan); plaque 2 rests hidden. The D1
+   display rung; the Arabic metric floor (lh 1.35) per the
+   transformed expectation. */
+.jt-cards {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.jt-card {
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding-inline: 0;
+  text-align: center;
+  color: var(--text); /* the measured outer-box ink — solid, not the 72% scaffold wash */
+  pointer-events: none;
+}
+
+/* the measured rest states: plaque 1 stands in the band; plaque 2's
+ * WRAPPER carries the hiding (opacity 0 — the measured gsap from-state
+ * seat, one notch larger than the stack), its own boxes resting at
+ * opacity 1 exactly as the frozen spec records them. */
+.jt-card1 {
+  opacity: 1;
+  visibility: visible;
+}
+
+.jt-card2w {
+  position: absolute;
+  inset-block: -1.13em -1.4em;
+  inset-inline: -1.43em;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  visibility: hidden;
+  will-change: opacity, transform;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.jt-card-plate {
+  display: inline-block;
+  max-inline-size: 100%;
+  overflow-wrap: break-word;
+  font-family: var(--font-display);
+  font-size: var(--fs-d1);
+  font-weight: var(--fw-bold);
+  line-height: 1.35;
+  text-wrap: balance;
+  color: var(--text);
+  /* the plaque rungs: the D1 clamp @≥992; the measured mobile bands
+   * below (44.2 @768 · 39.69 @390) */
+  @media (max-width: 991px) {
+    font-size: 4.8rem;
+  }
+  /* the paper halo — the glyphs cross the plan's ghost line-work
+     (a whisper stroke keeps the statement readable over ink). */
+  paint-order: stroke fill;
+  stroke: var(--bg);
+  stroke-width: 6px;
+  stroke-linejoin: round;
+}
+
+/* ── the three annotation cards — the measured plan callouts ──────
+   Orange-ruled (1px #C43E16), the mono title in the accent voice +
+   one honest line. Seated at the measured percentages of the stack;
+   revealed with the annotation era (the layer-6 window). */
+.jt-anno {
+  position: absolute;
+  inline-size: 14.7em;
+  padding: 0.8em 0.85em; /* spacing-gate: allow — the measured 196→174 content inset */
+  border: 1px solid var(--accent);
+  color: var(--text);
+  opacity: 0;
+  transition: width var(--jt-t-art) var(--jt-e-art), transform var(--jt-t-art) var(--jt-e-art); /* the measured register (width/transform — opacity stays a direct write) */
+  pointer-events: none;
+  z-index: 2;
+}
+
+.jt-anno-1 { inset-inline-start: 26.9%; inset-block-start: 32.8%; }
+.jt-anno-2 { inset-inline-start: 40.4%; inset-block-start: 68.2%; }
+.jt-anno-3 { inset-inline-start: 31.6%; inset-block-start: 59.1%; }
+
+/* the 1024 rung — the measured tablet boxes run wider than the em
+   ladder (216 vs 196@1440): the band's own override. */
+@media (min-width: 992px) and (max-width: 1439px) {
+  .jt-anno {
+    inline-size: 22.8em;
+  }
+}
+
+.jt-anno-t {
+  font-family: var(--font-mono);
+  font-size: 0.75em;
+  font-weight: var(--fw-medium);
+  line-height: 1.3;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.jt-anno-b {
+  font-size: 1em;
+  font-weight: var(--fw-medium);
+  line-height: 1.35;
+  color: var(--text);
+  margin-block-start: 0.15em;
+  /* the paper halo — the callout's line rides over the ghost plan */
+  paint-order: stroke fill;
+  stroke: var(--bg);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+
+/* the annotation era reveal (the layer-6 window): stages 4–5 + RM. */
+.jt[data-stage='4'] .jt-anno,
+.jt[data-stage='5'] .jt-anno,
+.jt[data-rm='on'] .jt-anno {
+  opacity: 1;
+}
+
+/* ── the INTRODUCTION card — the measured corner card ─────────────
+   17.5em wide, 2em from the map column's block-end + inline-start
+   edges (the reference's bottom-left mirrored to bottom-right in RTL,
+   opposite the closing column). Paper ground, 1px hairline, the
+   DARK head chip with the white mono label; rests at opacity 0
+   (the spec's captured state) and flips on with the card era. */
+.jt-intro {
+  position: absolute;
+  inset-block-end: 2em;
+  inset-inline-start: 2em;
+  inline-size: 17.5em;
+  margin: 0;
+  border: 1px solid var(--grid-line);
+  background: var(--bg);
+  color: var(--jt-ink); /* the card's scaffold rides the 72% wash (the measured chain) */
+  pointer-events: none;
+  opacity: 0;
+  z-index: 3;
+  transition: opacity var(--t-fast) var(--ease);
+}
+
+.jt[data-stage='2'] .jt-intro,
+.jt[data-stage='3'] .jt-intro,
+.jt[data-stage='4'] .jt-intro,
+.jt[data-stage='5'] .jt-intro,
+.jt[data-rm='on'] .jt-intro {
+  opacity: 1;
+}
+
+/* the dark head chip — the measured rgb(40,40,40) INTRODUCTION head
+   (231×26 — 1.95em tall, flush inside the card's 1px border). */
+.jt-intro-headchip {
+  margin: 1px;
+  block-size: 1.95em;
+  /* the paper-artifact ink — the measured INTRODUCTION head chip stays
+   * dark in BOTH themes (the plan's own pigment ruling: the drawing is
+   * a dark-ink-on-paper artifact; the theme tokens flip the PAGE, not
+   * the artifact). */
+  background: #262019; /* color-gate: allow — the measured head-chip ink, theme-pinned (the plan-artifact law) */
+}
+
+.jt-intro-labelw {
+  margin-block-start: 0.45em;
+  margin-inline-start: 0.75em;
+  inline-size: 5.4em;
+  block-size: 1em;
+  color: #FFFFFF; /* color-gate: allow — the measured label ink (pure white on the dark chip) */
+}
+
+.jt-intro-head {
+  font-family: var(--font-mono);
+  font-size: 0.75em;
+  font-weight: var(--fw-medium);
+  line-height: 1.35;
+  letter-spacing: 0;
+  color: inherit; /* the labelw's measured white */
+  white-space: nowrap;
+}
+
+/* the findings — the collapsed body (clip) opens with the card era;
+   the per-finding containers rotate, the bodies themselves always
+   carry their own ink (the measured body opacity 1). Each container
+   is absolutely seated at the same origin with its OWN natural
+   height (the measured per-finding boxes); the wrapper holds the
+   measured 10.2em min-height. */
+.jt-intro-body {
+  display: block;
+  block-size: 2.5em;
+  overflow: hidden;
+  clip-path: inset(50%);
+  transition: height var(--jt-t-art) var(--jt-e-art); /* the measured height tween — the card grows upward */
+}
+
+.jt[data-stage='2'] .jt-intro-body,
+.jt[data-stage='3'] .jt-intro-body,
+.jt[data-stage='4'] .jt-intro-body {
+  block-size: auto;
+  overflow: visible;
+  clip-path: none;
+  padding: var(--sp-2);
+}
+
+.jt-intro-findings {
+  position: relative;
+  min-block-size: 10.2em;
+  opacity: 0;
+}
+
+.jt[data-stage='3'] .jt-intro-findings,
+.jt[data-stage='4'] .jt-intro-findings {
+  opacity: 1;
+}
+
+.jt-intro-finding {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  color: var(--jt-ink);
+  opacity: 0;
+  transition: opacity var(--jt-t-art) var(--jt-e-art); /* the measured 0.4s/ease register */
+}
+
+/* the measured per-finding container boxes (136/115/128/128 @1440 —
+ * the em ladder holds at every desktop bp). */
+.jt-intro-finding:nth-child(1) { min-block-size: 10.2em; }
+.jt-intro-finding:nth-child(2) { min-block-size: 8.63em; }
+.jt-intro-finding:nth-child(3) { min-block-size: 9.6em; }
+.jt-intro-finding:nth-child(4) { min-block-size: 9.6em; }
+
+.jt[data-finding='1'] .jt-intro-finding:nth-child(1),
+.jt[data-finding='2'] .jt-intro-finding:nth-child(2),
+.jt[data-finding='3'] .jt-intro-finding:nth-child(3),
+.jt[data-finding='4'] .jt-intro-finding:nth-child(4),
+.jt[data-finding='5'] .jt-intro-finding:nth-child(5) {
+  opacity: 1;
+}
+
+/* the finding ladder — the measured per-finding rungs: finding 1 at
+   the body voice, findings 2–4 at the label voice, finding 5 (the
+   assistant note) at the micro voice. */
+.jt-f-b {
+  font-size: 1em;
+  line-height: 1.35;
+  color: var(--jt-ink);
+}
+
+/* the measured per-finding rungs: f1 at the body voice (lh floor 18),
+ * f2–f4 at the label voice (the measured 16.33 box = 1.4), f5 at the
+ * micro voice — each body holding its measured box (87/65/82/82). */
+.jt-intro-finding:nth-child(n + 2) .jt-f-b {
+  font-size: 0.875em;
+  line-height: 1.4;
+}
+
+.jt-intro-finding:nth-child(5) .jt-f-b {
+  font-size: 0.75em;
+  line-height: 1.35;
+}
+
+.jt-intro-finding:nth-child(1) .jt-f-b { min-block-size: 6.53em; } /* 87px — the body's own rung */
+.jt-intro-finding:nth-child(2) .jt-f-b { min-block-size: 5.57em; } /* 65px */
+.jt-intro-finding:nth-child(3) .jt-f-b { min-block-size: 7.03em; } /* 82px */
+.jt-intro-finding:nth-child(4) .jt-f-b { min-block-size: 7.03em; } /* 82px */
+
+.jt-f-fw {
+  margin-block-start: 1em; /* the measured body→foot gap (13px @1440) */
+  color: var(--jt-cap); /* the caption ink lives on the wrap (the measured wrapper colour) */
+}
+
+.jt-f-f {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  line-height: 1.4;
+}
+
+.jt-intro-finding:nth-child(n + 3) .jt-f-f {
+  font-size: 0.75em;
+  line-height: 1.35;
+}
+
+/* the muted mono caption ink — the spec's rgb(180,180,176) in
+   light; the dark arm re-points at the dark ramp's own readable
+   caption seat (the all-nodes ink census floor 4.5:1). */
+/* the reduced-motion static page: the card stands OPEN with every
+   finding readable in flow. */
+.jt[data-finding='all'] .jt-intro-body,
+.jt[data-rm='on'] .jt-intro-body {
+  block-size: auto;
+  overflow: visible;
+  clip-path: none;
+  padding: var(--sp-2);
+}
+
+.jt[data-finding='all'] .jt-intro-findings,
+.jt[data-rm='on'] .jt-intro-findings {
+  min-block-size: 0;
+  opacity: 1;
+}
+
+.jt[data-finding='all'] .jt-intro-finding,
+.jt[data-rm='on'] .jt-intro-finding {
+  position: static;
+  inset: auto;
+  opacity: 1;
+  margin-block-end: var(--sp-2);
+}
+
+/* ── the CLOSING COLUMN — the section's own head + ledger ─────────
+   The measured column: clamp(280px, 32.3vw, 464px) wide, its
+   content inset 2em, VISIBLE from frame one (every column element
+   records opacity 1 at rest in the frozen spec). Chip row (4.64em)
+   → hairline → main (chip/h2/copy bottom-anchored) → the cms
+   ledger (16em: four 4em rows). */
+.jt-close {
+  position: static;
+  flex: 0 0 auto;
+  align-self: stretch;
+  inline-size: clamp(280px, 32.3vw, 464px); /* the reference's exact 464px @1440 (55.7rem) — 32.3vw clears the cap at 1436+ */
+  display: flex;
+  flex-direction: column;
+  contain: layout paint;
+}
+
+/* the wide-band column ladder: the measured widths keep growing on
+   the same line past the base clamp's cap (618 @1920). */
+@media (min-width: 1600px) {
+  .jt-close {
+    inline-size: max(464px, 32.25vw);
+  }
+}
+
+
+.jt-close-inner {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  transition: width var(--jt-t-art) var(--jt-e-art); /* the measured register */
+}
+
+/* the text seats' measured content inset (27px @1440 = 2em). */
+.jt-close-chip,
+.jt-close-titlew,
+.jt-close-copyw {
+  margin-inline: 2em;
+}
+
+/* the chip row — the label chip («الفصول / [04]») at the measured
+   seat: 8.1em × 2.63em, 1em down, the two-line mono voice. */
+.jt-close-chiprow {
+  block-size: 4.64em;
+  flex: none;
+}
+
+.jt-close-chip {
+  margin-block-start: 1em;
+  inline-size: 8.1em;
+  block-size: 2.63em;
+}
+
+.jt-close-chip-in {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  font-weight: var(--fw-medium);
+  line-height: 1.35;
+  color: var(--jt-ink);
+  text-wrap: balance;
+}
+
+/* the chip row's hairline — the measured 464×1 @ the row's end. */
+.jt-close-chiprule {
+  display: block;
+  block-size: 1px;
+  background: var(--grid-line);
+  flex: none;
+  margin-inline: 0;
+}
+
+/* the main block — chip/h2/copy, bottom-anchored (the measured
+   composition: the h2 sits at the plan's midline, the copy under
+   it, 2em above the ledger). */
+.jt-close-main {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-block-size: 0;
+}
+
+/* the h2 — the D2 display rung (3em) in its measured 9em box
+   (3 lines of the reference's own lh; ours wraps 2 at the Arabic
+   metric floor 1.35 — the box keeps the seat, and may grow if the
+   copy ever wraps deeper: the seat is a floor, never a clip). */
+.jt-close-titlew {
+  min-block-size: 9em;
+  margin-block-start: 2em;
+  margin-inline: 2em;
+  color: var(--text); /* the measured wrapper ink — solid */
+}
+
+.jt-close-title {
+  margin: 0;
+  block-size: 100%;
+  font-family: var(--font-display);
+  font-size: var(--fs-d2);
+  font-weight: var(--fw-semibold);
+  line-height: 1.35;
+  text-wrap: balance;
+  color: var(--text);
+}
+
+/* the copy — the honest ledger summary at the body voice. */
+.jt-close-copyw {
+  margin-block-start: 1.5em;
+  margin-block-end: 2em;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+}
+
+.jt-close-copy {
+  font-size: 1em;
+  line-height: 1.35;
+  color: var(--jt-ink);
+  text-wrap: pretty;
+  max-inline-size: 26.9em; /* the measured copy measure (359px @1440) */
+}
+
+/* the cms ledger — the four-station rows: each = full-width
+   hairline + [text cell 1fr][1px vrule][icon 4em]. The icon svg
+   rides the measured 2em box. */
+.jt-close-cms {
+  flex: none;
+}
+
+.jt-close-cms-in {
+  display: flex;
+  flex-direction: column;
+}
+
+.jt-cms-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 1px 4em;
+  grid-template-rows: 1px minmax(0, 1fr);
+  block-size: 4em;
+}
+
+.jt-cms-rule {
+  grid-area: 1 / 1 / 2 / -1;
+  background: var(--grid-line);
+}
+
+.jt-cms-textcell {
+  grid-area: 2 / 1;
+  display: grid;
+  align-content: center;
+  min-inline-size: 0;
+  padding-inline-start: 2em; /* the measured text seat (col + 27px @1440) */
+  color: var(--text); /* the measured cell ink — solid */
+}
+
+.jt-cms-text {
+  font-size: 1em;
+  font-weight: var(--fw-medium);
+  line-height: 1.35;
+  color: var(--text);
+  justify-self: start;
+  max-inline-size: 100%;
+}
+
+.jt-cms-vrule {
+  grid-area: 2 / 2;
+  background: var(--grid-line);
+  color: var(--text); /* the measured rule ink — solid */
+}
+
+.jt-cms-ico {
+  grid-area: 2 / 3;
+  display: grid;
+  place-items: center;
+}
+
+.jt-cms-ico-in,
+.jt-cms-ico-in2 {
+  display: grid;
+  place-items: center;
+  inline-size: 2em;
+  block-size: 2em;
+}
+
+.jt-cms-ico svg {
+  inline-size: 2em;
+  block-size: 2em;
+}
+
+/* ═══ the ≤991 architecture: the sticky moves INSIDE the plan
+   column (the reference's own mobile architecture) ═══ */
+@media (max-width: 991px) {
+  .jt {
+    block-size: auto;
+    display: flex;
+    flex-direction: column;
+    margin-block-start: 0;
+  }
+
+  .jt-pin {
+    position: static;
+    block-size: auto;
+    flex-direction: column;
+    align-items: stretch;
+    padding-inline: 0;
+    gap: 0;
+  }
+
+  .jt-pin::before {
+    display: none;
+  }
+
+  .jt-close-vrule {
+    display: none;
+  }
+
+  /* the plan column = the scroll track (the pinned ladder — the
+   * test-pinned rungs; see the R322 derivation). */
+  .jt-map-col {
+    flex: none;
+    display: block;
+    block-size: 466dvh;
+    padding-inline: 8px; /* spacing-gate: allow — the A8 sheet-frame inset seat (the reference's own mobile plan inset) */
+  }
+
+  /* the sticky window — FULL VIEWPORT HEIGHT below the fixed
+   * header (57px = the header's 56px inner + 1px hairline). */
+  .jt-map-in {
+    position: sticky;
+    inset-block-start: calc(57px + env(safe-area-inset-top, 0px));
+    block-size: calc(100dvh - 57px - env(safe-area-inset-top, 0px));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--sp-3);
+  }
+
+  /* the window — the chrome box (rails + marks + the in-flow
+   * stack); the camera's aspect families pin the plan element. */
+  .jt-window {
+    position: relative;
+    inset: auto;
+    flex: none;
+    max-inline-size: none;
+    will-change: auto;
+  }
+
+  .jt-stack {
+    position: relative;
+    inset: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .jt-stack .bp-svg {
+    block-size: auto;
+    max-block-size: calc(100dvh - 57px - 25rem);
+    inline-size: auto;
+    max-inline-size: 100%;
+    margin-inline: auto;
+  }
+
+  /* the R331 blank-pin repair — the sticky window's heavy children
+   * keep their own composited layers (translateZ(0)). */
+  .jt-intro,
+  .jt-window .bp-svg {
+    transform: translateZ(0);
+  }
+
+  /* the plaques — the measured mobile seat: over the plan at the
+   * stack's mid-band (334×79 @ (20,377) @390), the same overlay
+   * grammar as desktop. R342-11: the plates cap at the ≥16px safe
+   * gutters (the reference's own mobile plaque insets — 21/28px) and
+   * center in the band; the pre-fix full-width plate let the second
+   * statement span x=7.7–382.3 @390 (r325 gutter belt). */
+  .jt-cards,
+  .jt-card2w {
+    position: absolute;
+    inset: 0;
+    place-items: center;
+  }
+
+  .jt-card-plate {
+    max-inline-size: calc(100% - 2 * var(--sp-4));
+    margin-inline: auto;
+    stroke-width: 4px;
+  }
+
+  .jt-card {
+    padding-inline: 0;
+  }
+
+  /* the annotation cards — RETIRED at ≤991 (R342-11): the frozen
+   * spec's mobile capture has NO annotation cards (the 390 census:
+   * drawing + the mono intro card + the closing column only), and
+   * the in-flow recomposition made the sticky box (100dvh − 57px)
+   * uncontainable (drawing 489 + three 67px callouts + the card =
+   * ~943px — the card's tail painted over the closing column at the
+   * track end, r312 sweep +39px after the compact-card fix). The
+   * desktop keeps its measured overlay callouts; the mobile story
+   * reads through the findings + the closing ledger. */
+  .jt-anno {
+    display: none;
+  }
+
+  .jt-anno-t {
+    white-space: normal;
+  }
+
+  /* the INTRODUCTION card in flow below the plan: full-width, the
+   * stacked-readable contract. */
+  .jt-intro {
+    position: static;
+    inset: auto;
+    inline-size: auto;
+    margin-block-start: 0;
+    pointer-events: none;
+    flex: none;
+    opacity: 1;
+    transition: none;
+  }
+
+  .jt-intro-body {
+    position: static;
+    inset: auto;
+    block-size: auto;
+    overflow: visible;
+    clip-path: none;
+    padding: var(--sp-2);
+  }
+
+  .jt-intro-findings {
+    position: static;
+    /* R342-11: the measured finding box (10.2em) — the card stays
+     * COMPACT during the story (one finding at a time, the reference's
+     * own mobile furniture: its 390 card measures ~230px total). The
+     * pre-fix min-block-size 0 + static stacking rendered the card at
+     * the full five-finding ladder height (~693px) with four findings
+     * invisible — the sticky box (100dvh − 57px) could never contain
+     * plan + card, and the card's tail painted over the closing
+     * column at the track end (r312 sweep: +276px cover). */
+    min-block-size: 10.2em;
+    opacity: 1;
+  }
+
+  .jt-intro-finding {
+    /* the compact crossfade seat during the story (opacity keyed by
+     * data-finding, exactly the desktop grammar); the 'all'/RM
+     * stacked ladder wins by specificity/media order when the driver
+     * opens the card (`.jt[data-finding='all'] .jt-intro-finding` and
+     * the prefers-reduced-motion belt both override this seat). */
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: 0;
+  }
+
+  /* the phone's statement-era orange furniture (8px corner spot). */
+  .jt-map-in::after {
+    content: '';
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    block-size: 8px;
+    inline-size: 8px;
+    background: var(--accent);
+  }
+
+  /* the closing column — stacked BELOW the track, full width,
+   * always open: the section head + ledger scroll into view. */
+  .jt-close {
+    position: static;
+    inset: auto;
+    inline-size: auto;
+    align-self: auto;
+    margin-block-start: var(--sp-5);
+    padding-block-start: 2.6em; /* +38px @768 — the measured track-end → closing band */
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .jt-close-inner {
+    padding-inline: 0;
+  }
+
+  .jt-close-titlew {
+    margin-block-start: var(--sp-4);
+    block-size: auto;
+  }
+
+  .jt-close-title {
+    block-size: auto;
+  }
+
+  /* the desktop data-open reveal is desktop-only business: the stacked
+   * column's content reads immediately in flow (the measured mobile
+   * closing — every column element at opacity 1 at rest). */
+  .jt-close[data-open='off'] .jt-close-title,
+  .jt-close[data-open='off'] .jt-close-copy {
+    opacity: 1;
+  }
+
+  .jt-close-copyw {
+    margin-block-start: var(--sp-3);
+    margin-block-end: var(--sp-4);
+  }
+
+  .jt-cms-row {
+    grid-template-columns: minmax(0, 1fr) 1px 4em;
+    grid-template-rows: 1px minmax(0, 1fr);
+    block-size: auto;
+    min-block-size: 4em;
+  }
+}
+
+/* the ladder's phone rungs (the pinned derivation). */
+@media (max-width: 767px) {
+  .jt-map-col {
+    block-size: 380dvh;
+    padding-inline: 0;
+  }
+
+  .jt-close {
+    padding-block-start: 5.3em; /* +84px @390 — the measured phone band */
+  }
+
+  .jt-window .bp-svg {
+    aspect-ratio: 460 / 600;
+  }
+
+  .jt-card-plate {
+    font-size: 4rem; /* the measured phone plaque rung (39.69px @390) */
+  }
+}
+
+@media (max-width: 399px) {
+  .jt-map-col {
+    block-size: 473dvh;
+  }
+}
+
+/* R342-11 — the complete static sheet at ≤991 under reduced motion:
+ * the sticky unpins (the pin is scroll-driven choreography; RM
+ * visitors get the sheet in flow — drawing, the full stacked
+ * findings ladder, then the closing column, everything readable in
+ * order, nothing riding over anything). The fixed sticky box could
+ * never contain the ~724px card ladder anyway. */
+@media (max-width: 991px) and (prefers-reduced-motion: reduce) {
+  .jt-map-in {
+    position: static;
+    block-size: auto;
+  }
+}
+
+/* the tablet plan element keeps the sheet's landscape aspect. */
+@media (min-width: 768px) and (max-width: 991px) {
+  .jt-window .bp-svg {
+    aspect-ratio: 1200 / 760;
+  }
+}
+
+/* the short-landscape guard (≤991 ∧ ≤500px height). */
+@media (max-width: 991px) and (max-height: 500px) {
+  .jt-map-in {
+    inset-block-start: calc(57px + env(safe-area-inset-top, 0px));
+    block-size: calc(100dvh - 57px - env(safe-area-inset-top, 0px));
+    gap: var(--sp-2);
+  }
+
+  .jt-window {
+    max-inline-size: min(100%, calc((100dvh - 250px) * 0.767));
+    margin-inline: auto;
+    overflow: hidden;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px) and (max-height: 500px) {
+  .jt-window {
+    max-inline-size: min(100%, calc((100dvh - 250px) * 1.5789));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wr-i,
+  .wr-scrub .wr-i {
+    transform: none;
+    transition: none;
+  }
+
+  .pm-art .pm-draw {
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+    transition: none;
+  }
+
+  .wy-capture {
+    grid-area: auto;
+    opacity: 1;
+    transition: none;
+  }
+
+  .jt-plan .bp-drawable {
+    transition: none;
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+    fill-opacity: 1;
+  }
+
+  .jt-plan text {
+    transition: none;
+    opacity: 1;
+  }
+
+  .pl-zone {
+    transition: none;
+  }
+
+  /* the map's RM belt: the complete static sheet. */
+  .jt .jt-plan [data-xl] {
+    opacity: 1;
+  }
+
+  .jt-stack {
+    transform: none;
+  }
+
+  .jt-idx > span,
+  .jt-intro-finding,
+  .jt-anno {
+    transition: none;
+  }
+
+  .jt-intro-body {
+    display: block;
+    block-size: auto;
+    overflow: visible;
+    clip-path: none;
+    padding: var(--sp-2);
+  }
+
+  .jt-intro-findings {
+    position: static;
+    min-block-size: 0;
+  }
+
+  .jt-intro-finding {
+    position: static;
+    inset: auto;
+    opacity: 1;
+    margin-block-end: var(--sp-2);
+  }
+}
+
+/* ══ the ≤767 overview beats (stage 0/1 + RM) show CAM_FULL — the
+   element rides the SHEET aspect; the label floor follows. ══ */
+@media (max-width: 767px) {
+  .jt[data-stage='0'] .jt-window .bp-svg,
+  .jt[data-stage='1'] .jt-window .bp-svg,
+  .jt[data-rm='on'] .jt-window .bp-svg {
+    aspect-ratio: 1200 / 760;
+  }
+
+  .jt[data-stage='0'] .jt-plan .pl-name,
+  .jt[data-stage='1'] .jt-plan .pl-name,
+  .jt[data-rm='on'] .jt-plan .pl-name {
+    font-size: 46px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .jt[data-stage='0'] .jt-plan .pl-name,
+  .jt[data-stage='1'] .jt-plan .pl-name {
+    font-size: 24px;
+  }
+}
+
+/* ══ T-11b2 — the stacked closing head's SCROLL-SCRUBBED entrance ══
+ * The measured map-content-title/label scrub (the r339 T-11A
+ * census), re-seated on the stacked ≤991 column's own entry
+ * traversal: the h2 scrubs in (a full element-height rise,
+ * yPercent 100 → 0, 0.8s power2.out — the recorded from-state) as
+ * the closing column crosses the fold. @supports-gated so browsers
+ * without view() keep the static sheet; the no-preference belt
+ * keeps reduced-motion visitors static. Zero WAAPI, zero JS. */
+@keyframes jt-head-scrub {
+  from {
+    opacity: 0;
+    transform: translateY(100%); /* the recorded yPercent 100 — a full element-height rise */
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 991px) and (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .jt-close .jt-close-titlew {
+      animation: jt-head-scrub var(--t-cinema) var(--ease) both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 40%;
+    }
+  }
+}
+
+/* ═══ wr — the Arabic-safe word reveals (shared, unchanged) ═══ */
+.wr {
+  display: inline;
+}
+
+.wr-w {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+
+.wr-i {
+  display: inline-block;
+  transform: translateY(115%);
+  transition: transform 480ms var(--ease);
+  transition-delay: calc(var(--wr-i, 0) * 40ms);
+}
+
+.wr.in-view .wr-i {
+  transform: translateY(0);
+}
+
+.wr-scrub .wr-w {
+  overflow: visible;
+}
+
+.wr-scrub .wr-i {
+  --wr-k: clamp(0, (var(--wr-p, 0) * var(--wr-n, 1)) - var(--wr-i, 0), 1);
+  transform: none;
+  transition: none;
+  color: color-mix(in srgb, var(--text) calc(var(--wr-k) * 100%), var(--text-secondary));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wr-scrub .wr-i {
+    color: var(--text);
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "name": "@ulara/frontend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20 <25"
+  },
+  "scripts": {
+    "dev": "vite",
+    "gate:css-coverage": "tsx ../scripts/gates/css-coverage.mjs",
+    "lint:css": "npx -y stylelint@16 \"src/styles/**/*.css\"",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b --noEmit",
+    "typecheck:tests": "tsc --noEmit -p tsconfig.test.json",
+    "test": "TZ=UTC vitest run",
+    "test:watch": "vitest",
+    "test:audit": "playwright test tests/audit",
+    "test:audit:drift": "tsx tests/audit/run-drift.ts",
+    "audit:baseline": "tsx tests/audit/promote-baseline.ts",
+    "test:e2e": "playwright test tests/e2e",
+    "test:r305": "playwright test tests/r305",
+    "audit:capture:mock": "AUDIT_BASELINE=1 AUDIT_API_MOCK=1 playwright test tests/audit/surface-inventory.spec.ts",
+    "build:report": "BUNDLE_REPORT=1 vite build --mode production"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "3.10.0",
+    "@tanstack/react-query": "5.62.7",
+    "axios": "1.20.0",
+    "chart.js": "4.4.7",
+    "lenis": "1.1.5",
+    "lucide-react": "^0.469.0",
+    "pdfjs-dist": "^4.10.38",
+    "react": "18.3.1",
+    "react-chartjs-2": "5.2.0",
+    "react-dom": "18.3.1",
+    "react-hook-form": "7.54.2",
+    "react-router-dom": "6.30.6",
+    "zod": "3.23.8",
+    "zustand": "5.0.2"
+  },
+  "devDependencies": {
+    "@axe-core/react": "4.10.2",
+    "@playwright/test": "^1.60.0",
+    "@testing-library/jest-dom": "6.6.3",
+    "@testing-library/react": "16.1.0",
+    "@types/react": "18.3.18",
+    "@types/react-dom": "18.3.5",
+    "@vitejs/plugin-react": "4.3.4",
+    "jsdom": "26.0.0",
+    "rollup-plugin-visualizer": "5.13.1",
+    "tsx": "^4.22.4",
+    "typescript": "5.7.2",
+    "vite": "5.4.21",
+    "vitest": "^2.1.9"
+  }
+}

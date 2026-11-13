@@ -1,0 +1,250 @@
+/**
+ * lib/api session-boundary tests (audit P0-1 frontend half + single-
+ * flight refresh pinning).
+ *
+ * Network responses are simulated with a transport adapter installed on
+ * the `api` client's test seam (`api.defaults.adapter`) — the refresh
+ * call deliberately bypasses the pipeline (no auth header, no 401
+ * retry) but shares the same seam, so one handler simulates both.
+ */
+import { beforeEach, describe, expect, it } from 'vitest';
+import { api, unwrap, ApiError, type ApiRequestConfig, type ApiResponse } from '../../src/lib/api';
+import { queryClient } from '../../src/lib/queryClient';
+import { useAuthStore, type AuthUser } from '../../src/stores/auth.store';
+
+const USER_A: AuthUser = {
+  id: 'u1',
+  email: 'a@zu.edu.ly',
+  firstName: 'أحمد',
+  lastName: 'المبروك',
+  role: 'STUDENT',
+};
+
+function respond<T>(config: ApiRequestConfig, status: number, data: T): ApiResponse<T> {
+  return { data, status, statusText: String(status), headers: {}, config };
+}
+
+function rejectWith(config: ApiRequestConfig, status: number, data: unknown): never {
+  throw new ApiError('Request failed', config, 'ERR_BAD_REQUEST', respond(config, status, data));
+}
+
+function installAdapter(
+  handler: (config: ApiRequestConfig) => ApiResponse | Promise<ApiResponse>,
+): void {
+  api.defaults.adapter = (config) => Promise.resolve().then(() => handler(config));
+}
+
+const authHeaderOf = (config: ApiRequestConfig): string => config.headers?.Authorization ?? '';
+
+beforeEach(() => {
+  useAuthStore.setState({ user: null, accessToken: null });
+  queryClient.clear();
+  localStorage.removeItem('ula-auth');
+});
+
+describe('failed refresh ends the session cleanly (P0-1)', () => {
+  it('clears the auth store AND the query cache, and rejects the original request', async () => {
+    let refreshCalls = 0;
+    installAdapter((config) => {
+      if ((config.url ?? '').includes('/auth/refresh')) {
+        refreshCalls += 1;
+        rejectWith(config, 401, { error: { code: 'REFRESH_INVALID' } });
+      }
+      rejectWith(config, 401, { error: { code: 'TOKEN_EXPIRED' } });
+    });
+
+    useAuthStore.getState().setSession(USER_A, 'expired-token');
+    queryClient.setQueryData(['auth', 'me'], { id: 'u1', role: 'STUDENT' });
+    queryClient.setQueryData(['me', 'dashboard'], { grade: 97 });
+
+    // The caller sees the original 401 — not the refresh failure.
+    await expect(unwrap(api.get('/me/dashboard'))).rejects.toMatchObject({
+      response: { status: 401, data: { error: { code: 'TOKEN_EXPIRED' } } },
+    });
+
+    expect(refreshCalls).toBe(1);
+    expect(useAuthStore.getState().user).toBeNull();
+    expect(useAuthStore.getState().accessToken).toBeNull();
+    // The leak this test pins: the NEXT visitor on this tab must not
+    // find account A's cached queries.
+    expect(queryClient.getQueryData(['auth', 'me'])).toBeUndefined();
+    expect(queryClient.getQueryData(['me', 'dashboard'])).toBeUndefined();
+  });
+});
+
+describe('single-flight refresh', () => {
+  it('refreshes once for concurrent expired requests and retries both with the new token', async () => {
+    let refreshCalls = 0;
+    const retriedAuthHeaders: string[] = [];
+    installAdapter((config) => {
+      if ((config.url ?? '').includes('/auth/refresh')) {
+        refreshCalls += 1;
+        return new Promise<ApiResponse>((resolve) => {
+          // Delay so both 401s reach the interceptor while the refresh
+          // is still in flight.
+          setTimeout(() => {
+            resolve(respond(config, 200, { data: { accessToken: 'fresh-token', user: USER_A } }));
+          }, 20);
+        });
+      }
+      if (authHeaderOf(config) === 'Bearer expired-token') {
+        rejectWith(config, 401, { error: { code: 'TOKEN_EXPIRED' } });
+      }
+      retriedAuthHeaders.push(authHeaderOf(config));
+      return respond(config, 200, { data: { ok: true } });
+    });
+
+    useAuthStore.getState().setSession(USER_A, 'expired-token');
+
+    const [a, b] = await Promise.all([
+      unwrap<{ ok: boolean }>(api.get('/me/dashboard')),
+      unwrap<{ ok: boolean }>(api.get('/notifications')),
+    ]);
+
+    expect(refreshCalls).toBe(1); // single-flight
+    expect(a.ok).toBe(true);
+    expect(b.ok).toBe(true);
+    expect(retriedAuthHeaders).toHaveLength(2);
+    expect(retriedAuthHeaders.every((h) => h === 'Bearer fresh-token')).toBe(true);
+    expect(useAuthStore.getState().accessToken).toBe('fresh-token');
+    expect(useAuthStore.getState().user?.id).toBe('u1');
+  });
+
+  it('does not refresh for non-401 errors', async () => {
+    let refreshCalls = 0;
+    installAdapter((config) => {
+      if ((config.url ?? '').includes('/auth/refresh')) {
+        refreshCalls += 1;
+      }
+      rejectWith(config, 500, { error: { code: 'INTERNAL' } });
+    });
+
+    useAuthStore.getState().setSession(USER_A, 'tok');
+
+    await expect(unwrap(api.get('/anything'))).rejects.toMatchObject({ response: { status: 500 } });
+    expect(refreshCalls).toBe(0);
+    expect(useAuthStore.getState().accessToken).toBe('tok');
+  });
+
+  it('attempts ONE refresh on any non-auth 401 (r152a A4 P3): a structurally-invalid token (UNAUTHENTICATED) used to strand the session forever', async () => {
+    let refreshCalls = 0;
+    installAdapter((config) => {
+      if ((config.url ?? '').includes('/auth/refresh')) {
+        refreshCalls += 1;
+      }
+      rejectWith(config, 401, { error: { code: 'UNAUTHENTICATED' } });
+    });
+
+    useAuthStore.getState().setSession(USER_A, 'tok');
+
+    // Refresh is attempted once (the __retried guard), it also 401s,
+    // the session clears and the original request rejects — the user
+    // is never left in a zombie-error state with a valid refresh cookie.
+    await expect(unwrap(api.get('/anything'))).rejects.toMatchObject({ response: { status: 401 } });
+    expect(refreshCalls).toBe(1);
+  });
+
+  it('never refreshes for auth-endpoint 401s (a wrong password is an answer, not a session failure)', async () => {
+    let refreshCalls = 0;
+    installAdapter((config) => {
+      if ((config.url ?? '').includes('/auth/refresh')) {
+        refreshCalls += 1;
+      }
+      rejectWith(config, 401, { error: { code: 'INVALID_CREDENTIALS' } });
+    });
+
+    useAuthStore.getState().setSession(USER_A, 'tok');
+
+    await expect(unwrap(api.post('/auth/login', {}))).rejects.toMatchObject({ response: { status: 401 } });
+    expect(refreshCalls).toBe(0);
+    expect(useAuthStore.getState().accessToken).toBe('tok');
+  });
+
+  it('retries a request at most once (no refresh loop)', async () => {
+    let refreshCalls = 0;
+    let protectedAttempts = 0;
+    installAdapter((config) => {
+      if ((config.url ?? '').includes('/auth/refresh')) {
+        refreshCalls += 1;
+        return respond(config, 200, { data: { accessToken: 'fresh-token', user: USER_A } });
+      }
+      protectedAttempts += 1;
+      // Every attempt 401s with TOKEN_EXPIRED — the __retried guard
+      // must stop after one retry.
+      rejectWith(config, 401, { error: { code: 'TOKEN_EXPIRED' } });
+    });
+
+    useAuthStore.getState().setSession(USER_A, 'expired-token');
+
+    await expect(unwrap(api.get('/flaky'))).rejects.toMatchObject({ response: { status: 401 } });
+    expect(protectedAttempts).toBe(2); // original + single retry
+    expect(refreshCalls).toBe(1);
+  });
+});
+
+describe('refresh request hardening (15-d P2-6)', () => {
+  it('sends the refresh POST with an explicit 15s timeout', async () => {
+    let refreshTimeout: number | undefined;
+    installAdapter((config) => {
+      if ((config.url ?? '').includes('/auth/refresh')) {
+        refreshTimeout = config.timeout;
+        return respond(config, 200, { data: { accessToken: 'fresh-token', user: USER_A } });
+      }
+      // The retried request 401s again; the __retried guard stops the
+      // loop — what matters here is the refresh call's config.
+      rejectWith(config, 401, { error: { code: 'TOKEN_EXPIRED' } });
+    });
+
+    useAuthStore.getState().setSession(USER_A, 'expired-token');
+
+    await expect(unwrap(api.get('/anything'))).rejects.toMatchObject({ response: { status: 401 } });
+    // The refresh deliberately bypasses the pipeline (and its 20s
+    // timeout) — without an explicit timeout, a hung endpoint pinned
+    // the refreshPromise singleton for the browser default.
+    expect(refreshTimeout).toBe(15_000);
+  });
+});
+
+describe('search term honours the backend q contract (≤ 120 chars)', () => {
+  it('clamps an over-long q at the transport boundary without mutating the caller params', async () => {
+    const seen: Array<Record<string, unknown> | undefined> = [];
+    installAdapter((config) => {
+      seen.push(config.params as Record<string, unknown> | undefined);
+      return respond(config, 200, { data: [] });
+    });
+
+    // The unfixed path: a pasted paragraph / a deep-linked ?q= reached
+    // paginationSchema's `.max(120)` and every roster page answered
+    // 400 VALIDATION_ERROR — a permanently retryable error state.
+    const callerParams = { page: 1, limit: 20, q: 'x'.repeat(150) };
+    await api.get('/admin/users', { params: callerParams });
+    expect(String(seen[0]?.q)).toHaveLength(120);
+    // The caller's own object (often a literal a query key reads) stays intact.
+    expect(callerParams.q).toHaveLength(150);
+
+    // Sane terms and absent terms pass through untouched.
+    await api.get('/admin/users', { params: { page: 1, limit: 20, q: 'سالم' } });
+    expect(seen[1]?.q).toBe('سالم');
+
+    await api.get('/admin/users', { params: { page: 2, limit: 20 } });
+    expect(seen[2]).toEqual({ page: 2, limit: 20 });
+    expect(seen[2]).not.toHaveProperty('q');
+  });
+
+  it('never rewrites non-plain params (URLSearchParams must arrive intact)', async () => {
+    const seen: unknown[] = [];
+    installAdapter((config) => {
+      seen.push(config.params);
+      return respond(config, 200, { data: [] });
+    });
+
+    // The clamp copies with `{ ...params }`, which would spread a
+    // URLSearchParams into `{}` and silently drop every parameter —
+    // so that shape is skipped. No current caller sends one, and none
+    // sends an over-long `q` in that shape either.
+    const search = new URLSearchParams({ q: 'hello' });
+    await api.get('/search/global', { params: search });
+    expect(seen[0]).toBe(search);
+    expect((seen[0] as URLSearchParams).get('q')).toBe('hello');
+  });
+});

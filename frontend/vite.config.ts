@@ -1,0 +1,108 @@
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { visualizer } from 'rollup-plugin-visualizer';
+import path from 'node:path';
+
+// Opt-in bundle analysis: `BUNDLE_REPORT=1 npm run build` (or
+// `npm run build:report`, which sets the flag) writes
+// dist/bundle-report.html. Zero cost when the flag is absent.
+const enableBundleReport = !!process.env.BUNDLE_REPORT;
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [
+    react(),
+    ...(enableBundleReport
+      ? [visualizer({ filename: 'dist/bundle-report.html', template: 'sunburst', gzipSize: true })]
+      : []),
+  ],
+  // The `@/` alias mirrors vitest.config.ts so the two runners agree:
+  // `@/…` imports resolve identically in tests and in the build (the
+  // doc-comments in lib/scrollLock.ts + lib/overlayStack.ts instruct
+  // contributors to use it). The `@shared/` alias points at the
+  // REPO-ROOT shared/ directory (R320 §C — shared/testAccounts.ts is
+  // the consumer entry for the test-account table); it is mirrored in
+  // vitest.config.ts and the tsconfig paths — keep the three in sync.
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+      '@shared': path.resolve(__dirname, '..', 'shared'),
+    },
+  },
+  server: {
+    port: 5173,
+    proxy: {
+      '/api': {
+        // Dev-only override: VITE_API_TARGET lets a local UI iterate
+        // against a remote API (e.g. the production deployment) without
+        // booting the backend. Unset → the canonical localhost:4000.
+        target: process.env.VITE_API_TARGET || 'http://localhost:4000',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
+  // r292: the audit protocol (DESIGN.md §9d / the surface-inventory
+  // header) captures its baseline against the BUILT app via
+  // `vite preview` — never the dev server — but the proxy lived only
+  // under `server`, so preview runs could not reach the API at all
+  // (role-guarded routes would all render error states). `preview`
+  // mirrors the dev proxy exactly; the same VITE_API_TARGET override
+  // applies.
+  preview: {
+    port: 4173,
+    proxy: {
+      '/api': {
+        target: process.env.VITE_API_TARGET || 'http://localhost:4000',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
+  build: {
+    outDir: 'dist',
+    // Render free tier = 512 MB RAM: skip the gzip-size pass (it holds every
+    // chunk in memory) and keep minify on esbuild — both keep peak RSS low.
+    reportCompressedSize: false,
+    // No production sourcemaps: the repo has no error-tracking consumer
+    // (no sentry/bugsnag), so public .map files only added ~5.9 MB to the
+    // deploy and exposed the full client source. Local debugging can
+    // flip this to true (or 'hidden' for unreferenced maps).
+    sourcemap: false,
+    target: 'es2022',
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        // Static manualChunks — the previous function form was over-eager:
+        // grouping every node_module into named chunks (vendor / vendor-icons
+        // / vendor-charts) ended up putting modules with mutual dependencies
+        // into different output chunks, producing a TDZ error at runtime
+        // ("Cannot access 'de' before initialization"). The static list only
+        // pins the explicit packages we list; everything else stays in the
+        // page chunks where Rollup can resolve init order on its own.
+        manualChunks: {
+          react: ['react', 'react-dom', 'react-router-dom'],
+          query: ['@tanstack/react-query'],
+          charts: ['chart.js', 'react-chartjs-2'],
+          // R341 bundle trim: lucide-react's ~30 shared icons each split
+          // into a per-icon chunk (rollup's granular splitting for shared
+          // leaf modules), duplicating the 183-char ISC license banner +
+          // per-chunk bootstrap overhead ~30×. One vendor chunk carries
+          // the license once. Module graph is one-way (app → icons → the
+          // internal createElement helper), so the static-list TDZ risk
+          // documented above does not apply — verified by the r305 E2E
+          // suite after the change.
+          lucide: ['lucide-react'],
+          // NOTE: the v4 cinematic kit (gsap/@gsap/react/lenis/three/@react-three/fiber)
+          // was listed here without ever being added to frontend/package.json —
+          // Rollup treats manualChunks entries as entry modules, so their mere
+          // presence broke the production build on Render ("Could not resolve
+          // entry module gsap"). The «أطلس المعرفة» landing ships its own
+          // zero-dependency canvas/motion kit, so these chunks are removed.
+          // If a cinematic lib is ever adopted: add it to package.json FIRST,
+          // then re-add its chunk entry in the same commit.
+        },
+      },
+    },
+  },
+});

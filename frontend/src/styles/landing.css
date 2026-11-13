@@ -1,0 +1,12 @@
+/* ════════════════════════════════════════════════════════════════════
+   أُلارا — LANDING (r306) — RETIRED AS A RULESHEET (R332 · A-CSS-Exec).
+   The 7,920-line monolith was split VERBATIM into the per-section
+   sheets under styles/landing/ (imported by pages/LandingPage.tsx in
+   the original cascade order):
+     chrome · hero · statement · journey · pains · roles · colleges ·
+     cta · why · footer · shared · platform · strata
+   Map + proof: docs/redesign/r332/css-split-landing.md.
+   This stub is kept EMPTY because repo gates enumerate this path
+   (scripts/check-motion-tokens.sh, scripts/check-raw-css.sh, the
+   token-snapshot contract) — it must stay rule-free.
+   ════════════════════════════════════════════════════════════════════ */

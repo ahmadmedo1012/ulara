@@ -1,0 +1,252 @@
+/**
+ * Teacher virtual-labs management.
+ *
+ * Path: /teacher/labs
+ * Restricted: TEACHER role.
+ *
+ * Scope (intentionally narrow — full lab orchestration is a bigger
+ * product decision; this page surfaces what exists and frames it as
+ * "labs you can recommend to your students"):
+ *  - List of available virtual labs (DB-backed)
+ *  - Per-lab: short description, platform, category, "open student view"
+ *  - «معاينة كطالب» opens the student labs explorer at /student/labs —
+ *    mounted role-permissively (STUDENT+TEACHER) since 22-a; the old
+ *    STUDENT-only guard made this CTA silently bounce every teacher
+ *    back to their dashboard (A6 P1).
+ *
+ * The simulation logic itself lives in the student page — teachers
+ * don't drive a state machine inside the lab; they curate which
+ * labs make sense per course.
+ */
+import { Link } from 'react-router-dom';
+import {
+  FlaskConical, Network, Cpu, Atom, Zap, Microscope, Bot as BotIcon,
+  ExternalLink, ChevronLeft, AlertCircle, type LucideIcon,
+} from 'lucide-react';
+import { Card } from '../../components/primitives';
+import { StatStrip } from '../../components/primitives/Ledger';
+import { ErrorState, Skeleton, EmptyState } from '../../components/primitives/States';
+import { Icon } from '../../components/Icon';
+import { useLabs, type VirtualLab } from '../../hooks/useResources';
+import { countAr } from '../../lib/format';
+import { formatNum } from '../../utils/numbers';
+import '../../styles/teacher/ds-core.css'; // R305 DS: §0 primitives + §E tax- composition
+/* R342-09 — the [nn] section-index register (.w11-idx, inner.css §W11):
+ * the same gutter grammar the done teacher pages speak, so the labs
+ * directory's section head reads on the numeral axis. */
+import '../../styles/landing/inner.css';
+
+const CATEGORY_ICON: Record<string, LucideIcon> = {
+  net: Network,
+  computer: Cpu,
+  physics: Atom,
+  electronics: Zap,
+  ai: BotIcon,
+  bio: Microscope,
+};
+
+/* Arabic labels for the raw English category enum (audit 0-e D — raw
+ * enums never render). Unknown values fall back to the raw code inside
+ * a bdi so future categories stay readable until mapped. */
+const CATEGORY_LABEL: Record<string, string> = {
+  net: 'شبكات',
+  computer: 'حاسوب',
+  physics: 'فيزياء',
+  electronics: 'إلكترونيات',
+  ai: 'ذكاء اصطناعي',
+  bio: 'أحياء',
+};
+
+function iconFor(category: string): LucideIcon {
+  return CATEGORY_ICON[category.toLowerCase()] ?? FlaskConical;
+}
+
+function categoryLabel(category: string): React.ReactNode {
+  const label = CATEGORY_LABEL[category.toLowerCase()];
+  if (label) return label;
+  return <bdi>{category}</bdi>;
+}
+
+/** Shape-matched skeleton for the stat strip + row list (r241: rows,
+ * not thumb-card tiles — mirrors the .tq-rows anatomy). */
+function LabsSkeleton() {
+  return (
+    <>
+      <div className="stat-strip" aria-busy="true" aria-live="polite">
+        {[0, 1, 2].map((i) => (
+          <div key={i} className="stat-cell" aria-hidden>
+            <Skeleton width={70} height={11} />
+            <div style={{ marginBlock: 'var(--sp-1)' }}>
+              <Skeleton width={60} height={28} />
+            </div>
+            <Skeleton width={110} height={11} />
+          </div>
+        ))}
+      </div>
+      <Card>
+        <div className="tq-rows" aria-hidden>
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="tq-row">
+              <Skeleton width={44} height={44} rounded="var(--r-lg)" />
+              <div className="tq-row-body">
+                <Skeleton width="38%" height={10} />
+                <Skeleton width="72%" height={16} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
+    </>
+  );
+}
+
+export default function TeacherLabsPage() {
+  const { data: labs, isPending, isError, error, refetch } = useLabs();
+
+  const categories = labs ? new Set(labs.map((l) => l.category.toLowerCase())).size : 0;
+  const platforms = labs ? new Set(labs.map((l) => l.platform).filter(Boolean)).size : 0;
+
+  return (
+    <div className="hr-scope">
+    <div className="page page-labs">
+      <header className="page-header">
+        <div className="page-title-block">
+          <span className="hr-brow">التعلّم العملي</span>
+          <h1 className="page-title">المعامل الافتراضية</h1>
+          <p className="page-subtitle">
+            استعرض المعامل الافتراضية المتاحة على المنصة. يمكنك توجيه طلابك لها كمكمّل عملي
+            للمحاضرات. الطلاب يدخلون المعمل كمشاركين، بينما تبقى أنت المسؤول عن سياق التعلّم.
+          </p>
+        </div>
+        {/* R342-09 (D8 header-CTA law — the schedule-page precedent for a
+         * read-only ledger): the directory's ONE honest next action on the
+         * accent register — the same student-eye preview every row carries,
+         * surfaced at page level so the first viewport at 390 keeps a
+         * primary action (the topbar «اسأل AI» hides ≤920px). */}
+        <Link to="/student/labs" className="btn accent sm hr-cta">
+          <Icon icon={ExternalLink} size={13} /> معاينة كطالب
+        </Link>
+      </header>
+
+      {isPending ? (
+        <LabsSkeleton />
+      ) : isError ? (
+        <>
+          <StatStrip
+            ariaLabel="إحصاءات المعامل"
+            cells={[
+              { label: 'معامل متاحة', value: '—' },
+              { label: 'فئات المعامل', value: '—' },
+              { label: 'منصّات التدريب', value: '—' },
+            ]}
+          />
+          <Card>
+            <ErrorState
+              message="تعذَّر تحميل المعامل الافتراضية"
+              error={error}
+              onRetry={() => refetch()}
+            />
+          </Card>
+        </>
+      ) : (
+        <>
+          <StatStrip
+            ariaLabel="إحصاءات المعامل"
+            cells={[
+              {
+                label: 'معامل متاحة',
+                value: formatNum(labs?.length ?? 0),
+                trend: 'جاهزة للتجربة',
+                trendTone: 'flat',
+              },
+              {
+                label: 'فئات المعامل',
+                value: formatNum(categories),
+                trend: 'شبكات، علوم، ذكاء اصطناعي…',
+                trendTone: 'flat',
+              },
+              {
+                label: 'منصّات التدريب',
+                value: formatNum(platforms),
+                trend: 'منصّات مختلفة داخل المعامل',
+                trendTone: 'flat',
+              },
+            ]}
+          />
+
+          {/* R305: the disclaimer rides the shared .hr-note primitive —
+              quiet ink, structured, no ad-hoc card. */}
+          <div className="hr-note">
+            <Icon icon={AlertCircle} size={16} />
+            <div className="text-xs">
+              <strong>تنويه أكاديمي:</strong> المعامل الافتراضية هي بيئات محاكاة معتمدة في الجامعة.
+              استخدمها لتعزيز فهم الطلاب للمحتوى النظري — ليست بديلاً عن المختبر الواقعي.
+            </div>
+          </div>
+
+          {labs && labs.length === 0 ? (
+            <Card>
+              {/* r149 (R3-A1 #6): EmptyState الكنونية — كانت يدوية بعلامة مزدوجة. */}
+              <EmptyState
+                illustration="empty-list"
+                title="لم تُضف معامل بعد"
+                description="تواصل مع إدارة المنصة لإضافة معامل لكليتك."
+              />
+            </Card>
+          ) : (
+            <Card
+              title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[01]</span>المعامل المتاحة</>}
+              icon={FlaskConical}
+              subtitle={labs && labs.length > 0
+                ? countAr(labs.length, ['معمل واحد متاح', 'معملان متاحان', 'معامل متاحة', 'معملاً متاحاً'])
+                : undefined}
+            >
+              {/* r241 (Superlist): a LIST of labs, not a card wall — each
+                  row keeps the category/platform kicker, the honest
+                  experiment count, and its own معاينة action. */}
+              <div className="tq-rows" role="list">
+                {labs?.map((lab) => <LabRow key={lab.id} lab={lab} />)}
+              </div>
+            </Card>
+          )}
+        </>
+      )}
+    </div>
+    </div>
+  );
+}
+
+/** r241 (Superlist): one lab = one row — icon well leading, category·
+ * platform kicker, name prominent, honest experiment count, and the
+ * معاينة كطالب action trailing (44px zone). R305: the count rides the
+ * shared the reference chip (tabular digits stay .tq-num). */
+function LabRow({ lab }: { lab: VirtualLab }) {
+  const Ico = iconFor(lab.category);
+  // --tq-accent feeds the color-mix tint owned by patterns.css §11;
+  // the previous inline `${accent}1a` alpha was invalid CSS whenever the
+  // fallback fired (audit 0-e P1-15).
+  const accent = lab.themeColor ?? 'var(--accent)';
+  return (
+    <div className="tq-row" role="listitem" style={{ ['--tq-accent' as never]: accent }}>
+      <span className="tq-row-icon">
+        <Icon icon={Ico} size={22} />
+      </span>
+      <span className="tq-row-body">
+        <span className="tq-row-kicker">
+          {categoryLabel(lab.category)}
+          {lab.platform ? <> · <bdi>{lab.platform}</bdi></> : ''}
+        </span>
+        <span className="tq-row-title" title={lab.name}>{lab.name}</span>
+        <span className="tq-row-meta">
+          <span className="hr-chip"><span className="tq-num">{formatNum(lab.totalExperiments ?? 0)}</span> تجربة معدّة</span>
+        </span>
+      </span>
+      <span className="tq-row-actions">
+        <Link to="/student/labs" className="btn ghost sm">
+          <Icon icon={ExternalLink} size={12} /> معاينة كطالب
+          <Icon icon={ChevronLeft} size={12} />
+        </Link>
+      </span>
+    </div>
+  );
+}

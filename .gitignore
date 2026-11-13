@@ -1,0 +1,167 @@
+# Dependencies (no trailing slash: also matches symlinked installs in worktrees)
+node_modules
+.pnp/
+.pnp.js
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+.cache/
+*.tsbuildinfo
+
+# Env — ignore ALL .env variants (.env.production, .env.staging, …)
+# but keep the committed example template.
+.env
+.env.*
+!.env.example
+
+# Database dumps (scripts/db-backup.mjs default output, r166c) —
+# a dump contains user data; it never commits.
+backups/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Testing
+coverage/
+.nyc_output/
+playwright-report/
+
+# Prisma
+backend/prisma/migrations/dev/
+backend/prisma/*.db
+backend/prisma/*.db-journal
+
+# Render local artifacts
+.render/
+
+# Misc
+*.local
+.eslintcache
+stitch*.zip
+"stitch (1).zip"
+
+# UI/UX Pro Max skill (installed via uipro CLI, not app code)
+.kiro/
+
+# Visual audit artifacts (Playwright snapshots — not committed)
+audit-out/
+
+# Local agent / vector DB tooling artifacts (Ruflo / RVF)
+ruvector.db
+**/ruvector.db
+agentdb.rvf
+agentdb.rvf.lock
+**/agentdb.rvf
+**/agentdb.rvf.lock
+
+# Stray nested copy of the repo (created by some tooling)
+/ulara/
+
+# Secrets (contains credentials, never committed)
+secrets.txt
+
+# Playwright surface-inventory audit artifacts (WS-F6) —
+# only the committed surface-baseline.json is tracked; screenshots +
+# generated inventories are local-only
+frontend/tests/audit/surface-inventory.json
+frontend/tests/audit/screenshots/
+
+# audit working dir
+.audit-shots/
+
+# local agent/tooling workspaces (kept on disk, not tracked)
+.agents/
+.claude-flow/
+.swarm/
+.specify/
+.claude/
+test-results/
+.gstack/
+
+# r319-c2-g3: iOS suite runtime screenshots (unpinned artifacts — the
+# committed evidence copies live in audits/evidence/r319/ios/)
+frontend/tests/e2e/__screenshots__/
+
+# portable dev PG runtime artifacts (tools/boot-pg.sh)
+# NOTE: tools/package.json is intentionally TRACKED (boot-pg.sh needs it to
+# install @embedded-postgres on a fresh clone); only its generated lockfile
+# is local-only.
+tools/pgdata/
+tools/pgsock/
+tools/pg.log
+tools/node_modules/
+tools/package-lock.json
+
+# Runtime uploads (P3 storage abstraction) — never commit user content.
+# sample.pdf stays tracked (seed fixture); every other runtime upload
+# under backend/storage/ is local-driver output and stays untracked.
+backend/storage/papers/*
+!backend/storage/papers/sample.pdf
+backend/storage/materials/
+# r188: the dev-stack local-driver root (STORAGE_DIR override in the
+# gitignored backend/.env) — never commit dev upload artifacts.
+backend/storage-dev/
+
+# r288 agent working captures (never ship)
+.zshots/
+
+# vitest blob reports (local artifact)
+.vitest-reports/
+
+# R310: reference-site captures stay local (r308 convention — never committed)
+audits/evidence/r310/reference/
+
+# R314 — judge harness: local captures/artifacts stay out of git (CI artifact only)
+audits/evidence/r314/_local/
+scripts/r314/tools/node_modules/
+scripts/r314/out/
+scripts/r314/tools/
+
+# R315 — agent working captures (fresh per cycle, never committed)
+_local/
+
+# R319 — the local embedded-postgres runtime (scripts/r319/local-db.mjs):
+# data dir, server log. (backend/.env.local with the local-only JWT
+# secrets is already covered by `.env.*` + `*.local` above.)
+.local/
+
+# ── Mobile (apps/mobile) — Expo/RN build state never commits ──────────
+apps/mobile/.expo/
+apps/mobile/dist/
+apps/mobile/dist-*/
+apps/mobile/web-output/
+apps/mobile/ios/
+apps/mobile/android/
+apps/mobile/*.orig
+
+# ── R331 repo hygiene — evidence binaries live in the GitHub Release ────
+# audits/evidence/ (271MB, rounds r304–r327) was moved OUT of the tree in
+# R331 pass 1 to /evidence staging → Release `evidence-r331`; recoverable
+# from git history or the Release. These patterns keep re-adds out.
+# Round harnesses (scripts/r3xx) still WRITE here when re-run locally —
+# output stays local-only now.
+/audits/
+# Network captures (local-only).
+*.har
+
+# Vercel CLI local link (per-machine project binding)
+.vercel/
+.env*

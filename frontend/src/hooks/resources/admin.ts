@@ -1,0 +1,591 @@
+// admin.ts — r153c domain split of ../useResources.ts (admin domain: stats · course CRUD · papers register · smart professor onboarding.)
+// VERBATIM move: every query key, staleTime, enabled condition,
+// placeholderData and invalidation is byte-identical to the
+// original sections; the public surface is frozen by the barrel.
+
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { api, unwrap } from '../../lib/api';
+import { useInstitutionScope } from '../../stores/auth.store';
+import { withInstitutionScope } from '../../lib/queryClient';
+
+// ── Admin stats ───────────────────────────────────────────────
+export interface AdminStats {
+  totalStudents: number;
+  totalTeachers: number;
+  totalCourses: number;
+  totalEnrollments: number;
+}
+export function useAdminStats() {
+  const inst = useInstitutionScope();
+  return useQuery({
+    queryKey: withInstitutionScope(['admin', 'stats'], inst),
+    queryFn: () => unwrap<AdminStats>(api.get('/admin/stats')),
+  });
+}
+
+export interface AdminFaculty {
+  id: string;
+  name: string;
+  nameEn: string | null;
+  iconEmoji: string | null;
+  city: string;
+  departmentCount: number;
+  studentCount: number;
+  teacherCount: number;
+  courseCount: number;
+  departments: Array<{ id: string; name: string; students: number; teachers: number; courses: number }>;
+}
+export function useAdminFaculties(
+  /** r181 (phase-8 owner setup): the OWNER console passes the selected
+   * institution's slug — GET /admin/faculties?institutionSlug= narrows
+   * the listing server-side (unknown/suspended slug matches nothing).
+   * ADMIN callers keep the no-arg shape: their scope resolves from
+   * the verified membership context. The slug rides the query KEY so
+   * the owner's per-institution listings cache separately. */
+  institutionSlug?: string,
+) {
+  const inst = useInstitutionScope();
+  return useQuery({
+    queryKey: withInstitutionScope(
+      ['admin', 'faculties', { institutionSlug: institutionSlug ?? null }],
+      inst,
+    ),
+    queryFn: () =>
+      unwrap<AdminFaculty[]>(
+        api.get('/admin/faculties', {
+          params: institutionSlug ? { institutionSlug } : undefined,
+        }),
+      ),
+  });
+}
+
+export interface AdminReports {
+  headline: { totalPapers: number; publishedPapers: number; totalUsers: number; activeStudents: number };
+  paperTrend: Array<{ month: string; submitted: number; graded: number; published: number }>;
+  topCourses: Array<{ code: string; name: string; enrollments: number; lectures: number }>;
+}
+export function useAdminReports() {
+  const inst = useInstitutionScope();
+  return useQuery({
+    queryKey: withInstitutionScope(['admin', 'reports'], inst),
+    queryFn: () => unwrap<AdminReports>(api.get('/admin/reports')),
+  });
+}
+
+export interface AdminCourse {
+  id: string;
+  code: string;
+  name: string;
+  credits: number;
+  themeColor: string | null;
+  faculty: string | null;
+  facultyEmoji: string | null;
+  department: string | null;
+  /** r153i: the edit form resolves by id — names are only unique per
+   * faculty (see the projection note in catalog.routes.ts). */
+  departmentId?: string | null;
+  offeringCount: number;
+  conceptCount: number;
+  totalEnrollments: number;
+  totalLectures: number;
+  totalMaterials: number;
+  recentOfferings: Array<{ id: string; term: string; enrollments: number; lectures: number; teacher: string | null }>;
+}
+/** GET /admin/courses meta (5-B1: server-side page/limit/q/facultyId). */
+export interface AdminCoursesMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+/**
+ * 5-B4 (audit 5-A8 P2-1 — the silent 20-row cap): /admin/courses is
+ * consumed as a PAGINATED list now. Server-side filters (q,
+ * facultyId — both shipped by 5-B1) + page/limit; the KPI total and
+ * the pagination footer read `meta`, never `data.length`. Keyed on
+ * the params object so every parameterized page caches separately;
+ * the ['admin','courses'] prefix still matches prefix invalidations.
+ */
+export function useAdminCourses(
+  params: {
+    page?: number;
+    limit?: number;
+    q?: string;
+    facultyId?: string;
+    /** r181 (phase-8 owner setup): the OWNER console's institution-
+     * scoped view — GET /admin/courses?institutionSlug=… (an unknown/
+     * suspended slug matches nothing server-side). Rides the query
+     * KEY so per-institution listings cache separately; ADMIN callers
+     * never send it (their scope resolves from the verified
+     * membership context). */
+    institutionSlug?: string;
+  } = {},
+) {
+  const { page = 1, limit = 20, q, facultyId, institutionSlug } = params;
+  const inst = useInstitutionScope();
+  return useQuery({
+    queryKey: withInstitutionScope(
+      [
+        'admin',
+        'courses',
+        { page, limit, q: q ?? null, facultyId: facultyId ?? null, institutionSlug: institutionSlug ?? null },
+      ],
+      inst,
+    ),
+    queryFn: async () => {
+      const res = await api.get<{ data: AdminCourse[]; meta: AdminCoursesMeta }>('/admin/courses', {
+        params: {
+          page,
+          limit,
+          ...(q ? { q } : {}),
+          ...(facultyId ? { facultyId } : {}),
+          ...(institutionSlug ? { institutionSlug } : {}),
+        },
+      });
+      return { data: res.data.data, meta: res.data.meta };
+    },
+    // Keeps the roster on screen while the next page/filter loads
+    // (AdminStudentsPage pattern) — no skeleton flash mid-browse.
+    placeholderData: (prev) => prev,
+  });
+}
+
+// ── Course CRUD (16-decisions #5: API existed, page was read-only) ──
+// The backend already routes POST/PATCH/DELETE with role + FK guards
+// (courses.routes.ts); these are the frontend half — the hooks the
+// /admin/courses page never had.
+export interface CourseFormInput {
+  code: string;
+  name: string;
+  nameEn?: string;
+  description?: string;
+  credits: number;
+  iconEmoji?: string;
+  themeColor?: string;
+  departmentId: string;
+}
+function invalidateCourses(qc: ReturnType<typeof useQueryClient>) {
+  qc.invalidateQueries({ queryKey: ['admin', 'courses'] });
+  /* r153i: catalogue writes change the dashboard's KPIs and reports —
+   * the same cross-surface freshness class r153g closed for jobs /
+   * offerings-full / admin papers. */
+  qc.invalidateQueries({ queryKey: ['admin', 'stats'] });
+  qc.invalidateQueries({ queryKey: ['admin', 'reports'] });
+}
+/** POST /courses — create (16-decisions #5; the write router lives at
+ * /courses — courses.routes.ts — only the GET list is /admin/courses).
+ *
+ * r181 (phase-8 owner setup): the optional `institutionId` argument is
+ * the OWNER console's explicit scope — the backend's createCourseSchema
+ * carries the OWNER-only institutionId wire field (verified to exist
+ * and be ACTIVE server-side; ADMIN callers sending it are 403'd).
+ * ADMIN construction sites keep the no-arg shape. */
+export function useCreateCourse(institutionId?: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (body: CourseFormInput) =>
+      unwrap(
+        api.post('/courses', {
+          ...body,
+          ...(institutionId ? { institutionId } : {}),
+        }),
+      ),
+    onSuccess: () => invalidateCourses(qc),
+  });
+}
+/** PATCH /courses/:id — edit (the list had no edit path). */
+export function useUpdateCourse(id: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationKey: ['course', id],
+    mutationFn: (body: Partial<CourseFormInput>) => unwrap(api.patch(`/courses/${id}`, body)),
+    onSuccess: () => invalidateCourses(qc),
+  });
+}
+/** DELETE /courses/:id — delete with the FK-conflict guard. */
+export function useDeleteCourse() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => unwrap(api.delete(`/courses/${id}`)),
+    onSuccess: () => invalidateCourses(qc),
+  });
+}
+
+// ── Academic structure writes (r180 — the new-institution bootstrap) ──
+/* POST /admin/faculties + POST /admin/departments landed r180-B with
+ * the exact write guards the old read-only FE never exercised: zod
+ * .strict() bodies, institution-scoped creates (ADMIN via the token's
+ * verified membership context; OWNER via an explicit ?institutionSlug=
+ * query param), 403 for a foreign faculty, 409 for the
+ * (institutionId, name, city) / (facultyId, name) unique keys.
+ *
+ * The /admin/* PAGES stay ADMIN-only in the SPA routing (App.tsx:
+ * allow={['ADMIN']}) — the ADMIN construction sites resolve their
+ * membership context server-side and send NO institutionSlug. r181
+ * (phase-8 owner setup) finally gives the OWNER+slug half of the
+ * contract its honest consumer: the owner console's institution
+ * detail page (/owner/institutions/:slug) constructs these hooks
+ * WITH the selected institution's slug, so every write names its
+ * target institution explicitly — the frontend is never an
+ * authorization boundary, the backend re-verifies each one. */
+function invalidateFaculties(qc: ReturnType<typeof useQueryClient>) {
+  /* The admin faculties page list… (the ['admin','faculties'] prefix
+   * still matches the r181 slug-parameterized owner keys) */
+  qc.invalidateQueries({ queryKey: ['admin', 'faculties'] });
+  /* …and the public catalogue rows (the ['faculties'] prefix also
+   * reaches the register page's ['faculties','institution',slug]
+   * entries — the department picker in AdminCoursesPage and the
+   * register form read the same rows). */
+  qc.invalidateQueries({ queryKey: ['faculties'] });
+}
+
+/** Body of POST /admin/faculties — a faculty is (name, city) inside one
+ * institution; nameEn/iconEmoji are the optional dressing. */
+export interface FacultyFormInput {
+  name: string;
+  nameEn?: string;
+  iconEmoji?: string;
+  city: string;
+}
+/**
+ * r181 (phase-8 owner setup): the optional `institutionSlug` binds the
+ * write to ONE institution for OWNER callers — POST
+ * /admin/faculties?institutionSlug=… (the backend 400s when an owner
+ * console sends no slug: it never auto-selects). ADMIN construction
+ * sites keep the no-arg shape; their scope resolves server-side from
+ * the verified membership context.
+ */
+export function useCreateFaculty(institutionSlug?: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (body: FacultyFormInput) =>
+      unwrap<{ id: string }>(
+        api.post('/admin/faculties', body, {
+          params: institutionSlug ? { institutionSlug } : undefined,
+        }),
+      ),
+    onSuccess: () => invalidateFaculties(qc),
+  });
+}
+
+/** Body of POST /admin/departments — a department is (name) inside one
+ * faculty; the faculty's own chain (→ institution) carries the scoping. */
+export interface DepartmentFormInput {
+  name: string;
+  nameEn?: string;
+  facultyId: string;
+}
+/**
+ * r181 (phase-8 owner setup): the OWNER-console twin of the slug
+ * binding above — the department's faculty already carries the
+ * institution, but the backend still requires the explicit
+ * ?institutionSlug= for OWNER callers and re-verifies the faculty
+ * chain against it (403 for a foreign faculty).
+ */
+export function useCreateDepartment(institutionSlug?: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (body: DepartmentFormInput) =>
+      unwrap<{ id: string }>(
+        api.post('/admin/departments', body, {
+          params: institutionSlug ? { institutionSlug } : undefined,
+        }),
+      ),
+    onSuccess: () => invalidateFaculties(qc),
+  });
+}
+
+// ── Offering create (r180 — the r168 zero-consumer dead-end closed) ──
+/** Body of POST /offerings (offerings.routes.ts): term is free text
+ * 1..50 (e.g. "2024-FALL"), the teacher must hold an ACTIVE TEACHER
+ * membership in the course's institution (400 otherwise) and the
+ * (courseId, term, teacherId) triple must be new (409 otherwise). */
+export interface OfferingFormInput {
+  courseId: string;
+  teacherId: string;
+  term: string;
+  room?: string;
+  capacity: number;
+}
+/** The teacher picker's row (GET /admin/users?role=TEACHER) — the same
+ * wire the governance roster reads; name is the joined display string
+ * the <select> options render. */
+export interface AdminTeacherOption {
+  id: string;
+  name: string;
+  email: string;
+}
+export function useCreateOffering() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (body: OfferingFormInput) =>
+      unwrap<{ id: string }>(api.post('/offerings', body)),
+    onSuccess: () => {
+      /* The admin courses table (offeringCount + recentOfferings
+       * columns) and the dashboard KPIs — the invalidateCourses
+       * freshness class, minus the reports key (a new section changes
+       * no published-paper aggregate). */
+      qc.invalidateQueries({ queryKey: ['admin', 'courses'] });
+      qc.invalidateQueries({ queryKey: ['admin', 'stats'] });
+      /* The enrollment modal's offering picker (live seat counts). */
+      qc.invalidateQueries({ queryKey: ['enrollments', 'offerings'] });
+    },
+  });
+}
+/**
+ * The offering modal's teacher picker — GET /admin/users?role=TEACHER,
+ * the SAME endpoint + wire the AdminGovernancePages teachers roster
+ * consumes (ADMIN-scoped to the caller's institution server-side;
+ * requires the USERS_MANAGE capability every ADMIN holds). This is a
+ * deliberate mirror of that page's module-local `useAdminUsers`, not a
+ * new data source: the roster hook is not exported (pages must not
+ * import each other's local hooks), so the shared-hooks home carries
+ * the picker-shaped twin under the SAME ['admin','users', …] key
+ * family — governance invalidations (useAssignUserScope) reach it, and
+ * the picker window (page 1, limit 200 = the endpoint's hard cap)
+ * stays cached across modal opens via `enabled`.
+ */
+export function useAdminTeachers(enabled: boolean) {
+  return useQuery({
+    queryKey: ['admin', 'users', { page: 1, limit: 200, q: null, role: 'TEACHER' }],
+    queryFn: async () => {
+      const res = await api.get<{
+        data: Array<{ id: string; email: string; firstName: string; lastName: string }>;
+      }>('/admin/users', { params: { page: 1, limit: 200, role: 'TEACHER' } });
+      return res.data.data.map<AdminTeacherOption>((t) => ({
+        id: t.id,
+        name: `${t.firstName} ${t.lastName}`.trim(),
+        email: t.email,
+      }));
+    },
+    enabled,
+    staleTime: 60_000,
+  });
+}
+/**
+ * r181 (phase-8 owner setup) — the OWNER console's offering-modal teacher
+ * picker: GET /owner/users?role=TEACHER&institutionSlug=… (the r181
+ * membership-scoped roster — ACTIVE TEACHER memberships in the selected
+ * institution, exactly the population POST /offerings accepts as
+ * teacherId). The ADMIN twin above reads /admin/users (their verified
+ * context scopes it); the OWNER holds no membership context, so the
+ * slug rides both the URL and the query KEY — per-institution pickers
+ * cache separately and an institution switch never renders the previous
+ * institution's teachers.
+ */
+export function useOwnerInstitutionTeachers(institutionSlug: string | null, enabled: boolean) {
+  return useQuery({
+    queryKey: ['owner', 'users', { page: 1, limit: 200, q: null, role: 'TEACHER', institutionSlug }],
+    queryFn: async () => {
+      const res = await api.get<{
+        data: Array<{ id: string; email: string; firstName: string; lastName: string }>;
+      }>('/owner/users', {
+        params: { page: 1, limit: 200, role: 'TEACHER', institutionSlug: institutionSlug! },
+      });
+      return res.data.data.map<AdminTeacherOption>((t) => ({
+        id: t.id,
+        name: `${t.firstName} ${t.lastName}`.trim(),
+        email: t.email,
+      }));
+    },
+    // null slug = no institution selected — never fetch a wrong roster.
+    enabled: enabled && institutionSlug !== null,
+    staleTime: 60_000,
+  });
+}
+
+// ── Admin papers (institution-wide research register) ──────────
+// 5-B4 (audit 5-A8 §5 row 8): the admin research drill-down. The
+// backend endpoint (5-B1) is a projection of the research routes —
+// no extractedText, no student email — paginated with the standard
+// { data, meta } envelope.
+export const RESEARCH_STATUSES = [
+  'UPLOADED', 'SCANNING', 'CHECKS_PASSED', 'CHECKS_FAILED', 'GRADED', 'PUBLISHED',
+] as const;
+export type ResearchStatus = (typeof RESEARCH_STATUSES)[number];
+
+export interface AdminPaper {
+  id: string;
+  title: string;
+  status: ResearchStatus;
+  plagiarismPct: number | null;
+  aiContentPct: number | null;
+  uploadedAt: string;
+  student: { id: string; firstName: string; lastName: string; avatarInitials: string | null; avatarColor: string | null };
+  reviewer: { id: string; firstName: string; lastName: string } | null;
+  offering: { course: { name: string; code: string } } | null;
+}
+export interface AdminPapersMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+export function useAdminPapers(
+  params: { page?: number; limit?: number; q?: string; status?: ResearchStatus } = {},
+) {
+  const { page = 1, limit = 20, q, status } = params;
+  const inst = useInstitutionScope();
+  return useQuery({
+    queryKey: withInstitutionScope(['admin', 'papers', { page, limit, q: q ?? null, status: status ?? null }], inst),
+    queryFn: async () => {
+      const res = await api.get<{ data: AdminPaper[]; meta: AdminPapersMeta }>('/admin/papers', {
+        params: {
+          page,
+          limit,
+          ...(q ? { q } : {}),
+          ...(status ? { status } : {}),
+        },
+      });
+      return { data: res.data.data, meta: res.data.meta };
+    },
+    placeholderData: (prev) => prev,
+  });
+}
+
+// ── Smart professor onboarding (admin) ────────────────────────
+export interface TeacherSuggestionResponse {
+  teacher: {
+    id: string;
+    name: string;
+    email: string;
+    specialty: string;
+    rank: string;
+    degreeLevel: 'BACHELORS' | 'MASTERS' | 'PHD';
+    yearsExperience: number;
+    certifications: Array<{ title: string; issuer: string; year: number }>;
+    subjectKeywords: string[];
+    department: string;
+    departmentId: string;
+    faculty: string;
+    facultyId: string;
+    verified: boolean;
+    position: 'DEAN' | 'ASSOCIATE_DEAN' | 'DEPARTMENT_HEAD' | null;
+    positionFacultyId: string | null;
+    positionDepartmentId: string | null;
+    appointedAt: string | null;
+  };
+  eligibilityNote: string;
+  suggestedCourses: Array<{
+    id: string; code: string; name: string;
+    iconEmoji: string | null;
+    departmentName: string; facultyName: string;
+    matchScore: number; reason: string;
+  }>;
+}
+export function useTeacherSuggestions(teacherId: string | undefined) {
+  const inst = useInstitutionScope();
+  return useQuery({
+    queryKey: withInstitutionScope(['admin', 'teachers', teacherId, 'suggestions'], inst),
+    enabled: !!teacherId,
+    queryFn: () => unwrap<TeacherSuggestionResponse>(api.get(`/admin/teachers/${teacherId}/suggestions`)),
+  });
+}
+
+export type AcademicPositionInput =
+  | { position: 'DEAN'; positionFacultyId: string }
+  | { position: 'ASSOCIATE_DEAN'; positionFacultyId: string }
+  | { position: 'DEPARTMENT_HEAD'; positionDepartmentId: string }
+  | { position: null };
+
+export function useAssignTeacherPosition(teacherId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (input: AcademicPositionInput) =>
+      unwrap(api.post(`/admin/teachers/${teacherId}/position`, input)),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['admin', 'teachers', teacherId, 'suggestions'] });
+      qc.invalidateQueries({ queryKey: ['auth', 'me'] });
+      qc.invalidateQueries({ queryKey: ['colleges'] });
+    },
+  });
+}
+
+export function useAssignUserScope(userId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (scopeFacultyId: string | null) =>
+      unwrap(api.post(`/admin/users/${userId}/scope`, { scopeFacultyId })),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['admin', 'users'] });
+      qc.invalidateQueries({ queryKey: ['auth', 'me'] });
+    },
+  });
+}
+
+// ── Enrollment CRUD (r154e.2: API existed, page was browse-only — docs/16 §د5) ──
+// The backend already routes POST/DELETE with capacity + dedupe + audit
+// (enrollments.routes.ts); these are the frontend half — the hooks the
+// /admin/students page never had.
+
+export interface StudentEnrollment {
+  id: string;
+  progressPct: number;
+  status: string;
+  enrolledAt: string;
+  offering: {
+    id: string; term: string; room: string | null; capacity: number;
+    course: { id: string; name: string; code: string; iconEmoji: string | null };
+    teacher: { id: string; firstName: string; lastName: string };
+  };
+}
+
+/** Admin-side list of a student's enrollments (GET /enrollments?studentId). */
+export function useStudentEnrollments(studentId: string | null) {
+  const inst = useInstitutionScope();
+  return useQuery({
+    /* r180: institution-scoped server-side — the key carries the scope
+     * segment so an institution switch re-keys instead of flashing the
+     * previous institution's rows. */
+    queryKey: withInstitutionScope(['enrollments', 'student', studentId], inst),
+    queryFn: () => unwrap<StudentEnrollment[]>(api.get('/enrollments', { params: { studentId } })),
+    enabled: !!studentId,
+  });
+}
+
+export interface EnrollmentOffering {
+  id: string; term: string; room: string | null; capacity: number;
+  course: { id: string; name: string; code: string; iconEmoji: string | null };
+  teacher: { id: string; firstName: string; lastName: string };
+  _count: { enrollments: number };
+}
+
+/** Picker list of offerings with live seat counts (GET /enrollments/offerings). */
+export function useEnrollmentOfferings() {
+  const inst = useInstitutionScope();
+  return useQuery({
+    /* r180: institution-scoped server-side — scoped key (same reason as
+     * useStudentEnrollments above). */
+    queryKey: withInstitutionScope(['enrollments', 'offerings'], inst),
+    queryFn: () => unwrap<EnrollmentOffering[]>(api.get('/enrollments/offerings')),
+    staleTime: 60_000,
+  });
+}
+
+/** Enroll a student in an offering (POST /enrollments). Backend enforces
+ *  capacity (FOR UPDATE lock) + dedupe (@@unique) + audit log. */
+export function useEnrollStudent() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (input: { studentId: string; offeringId: string }) =>
+      unwrap<{ id: string }>(api.post('/enrollments', input)),
+    onSuccess: (_d, { studentId }) => {
+      qc.invalidateQueries({ queryKey: ['enrollments', 'student', studentId] });
+      qc.invalidateQueries({ queryKey: ['enrollments', 'offerings'] });
+    },
+  });
+}
+
+/** Drop a student's enrollment (DELETE /enrollments/:id). studentId is
+ *  carried for invalidation (the DELETE response is { ok: true }). */
+export function useDropEnrollment() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ enrollmentId }: { enrollmentId: string; studentId: string }) =>
+      unwrap<{ ok: boolean }>(api.delete(`/enrollments/${enrollmentId}`)),
+    onSuccess: (_d, { studentId }) => {
+      qc.invalidateQueries({ queryKey: ['enrollments', 'student', studentId] });
+      qc.invalidateQueries({ queryKey: ['enrollments', 'offerings'] });
+    },
+  });
+}

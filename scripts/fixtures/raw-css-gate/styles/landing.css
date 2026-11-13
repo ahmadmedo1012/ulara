@@ -1,0 +1,6 @@
+/* fixture landing.css — since r198 this sheet is FULLY ENFORCED
+   (the poster rebuild shipped zero raw spacing literals and left the
+   census; SPACING_EXTRA is empty). The harness asserts strict passes
+   on the clean token recipe and that any raw literal here is a
+   FINDING, not a census entry. */
+.world-hero { padding: var(--sp-4); margin-block-start: var(--sp-2); gap: var(--sp-3); }

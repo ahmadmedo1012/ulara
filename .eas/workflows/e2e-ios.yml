@@ -1,0 +1,38 @@
+# EAS Workflow — Maestro e2e on iOS (R327 A1).
+#
+# build (preview profile = iOS simulator build) → maestro job boots a
+# simulator, installs the build, and runs every flow in
+# apps/mobile/.maestro/ (first open + login for all five roles → tabs →
+# logout). Screen recording ON = video evidence for the owner.
+#
+# Triggers: manual (workflow_dispatch) or when the flows/workflow change.
+# (Every-push e2e would burn build minutes; the mobile.yml CI gates stay
+# the per-push net — this is the device proof layer on top.)
+name: e2e-ios
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/mobile/.maestro/**'
+      - '.eas/workflows/e2e-ios.yml'
+  workflow_dispatch: {}
+
+jobs:
+  build-ios-sim:
+    name: Build (preview — iOS simulator)
+    type: build
+    params:
+      platform: ios
+      profile: preview
+      message: "R327 e2e-ios — Maestro flows"
+
+  maestro-ios:
+    name: Maestro e2e — iOS simulator
+    type: maestro
+    needs: [build-ios-sim]
+    params:
+      build_id: ${{ needs.build-ios-sim.outputs.build_id }}
+      flow_path: apps/mobile/.maestro
+      record_screen: true
+      retries: 1
+      output_format: junit

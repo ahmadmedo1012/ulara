@@ -1,0 +1,83 @@
+# R327 D2: the build ledger — records what EAS actually built.
+#
+# Manual-only (never triggers builds): dispatched after a Mobile run's
+# builds finish, it asks EAS for the account's recent builds and prints
+# the JSON (build IDs, profiles, platforms, statuses, artifact URLs) to
+# the job log — the durable record RELEASE.md and /app quote. No
+# checkout, no gates, no builds: a pure read.
+#
+#   gh workflow run mobile-builds-log.yml
+#   # or: POST /repos/…/actions/workflows/mobile-builds-log.yml/dispatches
+name: Mobile builds ledger
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mobile-builds-ledger
+  cancel-in-progress: false
+
+jobs:
+  ledger:
+    name: eas build:list (the recent cuts)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    defaults:
+      run:
+        # the EAS CLI needs the project context (app.config.ts lives here)
+        working-directory: apps/mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: List recent builds (id · profile · platform · status · artifact)
+        run: |
+          set -o pipefail
+          npx eas-cli@latest build:list --limit 12 --json --non-interactive 2>&1 | tee build-list.json
+          # the durable one-line summary for RELEASE.md / the /app page
+          echo "## Recent EAS builds" >> "$GITHUB_STEP_SUMMARY"
+          node -e '
+            const fs = require("fs");
+            const raw = fs.readFileSync("build-list.json", "utf8");
+            const json = raw.slice(raw.indexOf("["), raw.lastIndexOf("]") + 1);
+            for (const b of JSON.parse(json)) {
+              console.log(`| ${b.id} | ${b.platform} | ${b.profile} | ${b.status} | ${b.artifacts?.buildUrl ?? "—"} |`);
+            }
+          ' >> "$GITHUB_STEP_SUMMARY" || true
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      # R327 D4: the OTA half of the ledger — the update branches with
+      # their runtimeVersions, so a build's runtimeVersion can be matched
+      # against the updates that build will fetch (the fingerprint policy).
+      - name: List update branches (channel · runtimeVersion · updates)
+        run: |
+          set -o pipefail
+          for BRANCH in production preview; do
+            echo "── branch: $BRANCH"
+            npx eas-cli@latest update:list --branch "$BRANCH" --limit 6 --json --non-interactive 2>&1 | tee "updates-$BRANCH.json" | tail -5
+          done
+          {
+            echo "## EAS Update branches"
+            for BRANCH in production preview; do
+              echo "### $BRANCH"
+              echo '| update id | runtimeVersion | message | createdAt |'
+              echo '|---|---|---|---|'
+              node -e '
+                const fs = require("fs");
+                const raw = fs.readFileSync(process.argv[1], "utf8");
+                const start = raw.indexOf("["); const end = raw.lastIndexOf("]");
+                if (start === -1 || end === -1) { console.log("| — | — | (no json parsed) | — |"); process.exit(0); }
+                const rows = JSON.parse(raw.slice(start, end + 1));
+                const flat = Array.isArray(rows) ? rows : (rows.updates ?? rows.channels ?? []);
+                for (const u of (flat.length ? flat : [rows])) {
+                  console.log(`| ${u.id ?? u.updateId ?? "—"} | ${u.runtimeVersion ?? u.runtimeVersionId ?? "—"} | ${String(u.message ?? "—").slice(0, 60)} | ${u.createdAt ?? "—"} |`);
+                }
+              ' "updates-$BRANCH.json" || echo "| — | — | parse failed | — |"
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
