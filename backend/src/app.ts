@@ -14,7 +14,7 @@ import { compression } from './lib/compression.js';
 import { buildIdFromEnv } from './lib/build-id.js';
 
 import { errorHandler } from './http/middleware/errorHandler.js';
-import { globalRateLimiter } from './http/middleware/rateLimit.js';
+import { createRouteLimiter, globalRateLimiter } from './http/middleware/rateLimit.js';
 
 import authRoutes from './http/routes/auth.routes.js';
 import usersRoutes from './http/routes/users.routes.js';
@@ -192,7 +192,7 @@ export function createApp() {
   app.use(express.urlencoded({ extended: true, limit: '1mb' }));
   app.use(cookieParser());
 
-  // ── Health (no rate limit, no auth) ──────────────────────────
+  // ── Health (no auth; scoped rate limit) ──────────────────────
   // buildId is DERIVED from the platform's deployed-commit env var
   // (Render injects RENDER_GIT_COMMIT on every git-connected build) —
   // never a hand-bumped constant. Curl /api/v1/health and compare the
@@ -201,7 +201,18 @@ export function createApp() {
   // while production was actually serving r183 — a rot the derived id
   // makes structurally impossible. See lib/build-id.ts.)
   const BUILD_ID = buildIdFromEnv(env.RENDER_GIT_COMMIT ?? env.VERCEL_GIT_COMMIT_SHA ?? env.GIT_SHA);
-  app.get('/api/v1/health', async (_req, res) => {
+  // r341 (INV-3 t07): 30 req / 60 s / IP, mounted on THIS route only
+  // (the createRouteLimiter factory, lib pattern of rateLimit.ts —
+  // its per-user-then-IP keying degrades to pure per-IP here: no auth
+  // middleware runs before this route). The ping is an UNAUTHENTICATED
+  // DB round trip that used to sit entirely OUTSIDE the global API
+  // limit (mounted below), so a /health flood was a free way to keep
+  // a cold Neon awake. Every request counts — the SELECT 1 itself is
+  // the expensive action — and 30/min still absorbs every honest
+  // prober: the deploy-smoke workflow (1 req), platform healthchecks,
+  // and the settings/admin pages' 30s-stale probes.
+  const healthRateLimiter = createRouteLimiter({ max: 30, windowMs: 60_000 });
+  app.get('/api/v1/health', healthRateLimiter, async (_req, res) => {
     const start = Date.now();
     // Race the DB ping against a 5s timeout so a sleepy Neon
     // (cold-start wake-up can take 2-4s) doesn't cause Render to
@@ -217,16 +228,37 @@ export function createApp() {
           timer = setTimeout(() => reject(new Error('healthcheck timeout')), 5_000);
         }),
       ]);
-      res.json({
+      // r341 (INV-3 t07): answer in the platform's standard envelope —
+      // `{ data: … }` — like every other success on this service. The
+      // legacy TOP-LEVEL keys ride ALONGSIDE (additive-only) because
+      // real consumers still read them raw and the committed contract
+      // snapshot pins them:
+      //   · scripts/smoke-deploy.mjs checkHealth — body.ok /
+      //     dbLatencyMs / env (the ops smoke tool, outside this fix)
+      //   · frontend AdminSettingsPage — raw body read
+      //     (`api.get('/health')` → res.data.ok — the web «البنية
+      //     التشغيليّة» card)
+      //   · tests/contract/snapshot.json — additive-only: REMOVING
+      //     top-level fields fails the contract suite
+      // Envelope parsers are unaffected either way: the mobile client
+      // (apps/mobile/src/api/client.ts parseEnvelope) unwraps by
+      // "data"-key PRESENCE and resolves the same payload, and the
+      // deploy-smoke workflow's `grep '"ok":true'` still matches the
+      // top-level copy. Once the two legacy readers migrate to `data`,
+      // the top-level keys can retire.
+      const payload = {
         ok: true,
         dbLatencyMs: Date.now() - start,
         env: env.NODE_ENV,
         buildId: BUILD_ID,
-      });
+      };
+      res.json({ ...payload, data: payload });
     } catch (err) {
       logger.error({ err, latencyMs: Date.now() - start }, 'Healthcheck DB failure');
       // Use the global error shape so clients can parse uniformly.
-      // Render will retry before restarting the service.
+      // Render will retry before restarting the service. DB_UNAVAILABLE
+      // is a first-class ErrorCode (lib/errors.ts, r341) — no client
+      // needs to special-case health anymore.
       res.status(503).json({
         error: {
           code: 'DB_UNAVAILABLE',

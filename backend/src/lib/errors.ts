@@ -17,6 +17,11 @@ export type ErrorCode =
   | 'INSTITUTION_CONTEXT_REQUIRED'
   | 'INSTITUTION_CONTEXT_INVALID'
   | 'REG_NUMBER_AMBIGUOUS'
+  // r341 (INV-3 t07): /api/v1/health's 503 DB-failure body predates this
+  // union — the code existed only as a string literal. First-class member
+  // now, so client error mappers (the mobile ApiError switch, the FE
+  // support-code chip) can parse it like every other code.
+  | 'DB_UNAVAILABLE'
   | 'INTERNAL';
 
 export class AppError extends Error {
