@@ -932,19 +932,15 @@ export function QualityProfessorsPage() {
     return (
       <div className="page">
         <div className="hr-scope">
-        <header className="page-header">
-          <div className="page-title-block">
-            {/* R305 DS (§D): the sector brow. */}
-            <QualityBrow />
-            <h1 className="page-title">
-              {/* R341 D10: [03] nav-order index register. */}
-              <span className="page-index" aria-hidden="true" dir="ltr">[03]</span>
-              تقييم الأساتذة
-            </h1>
-            <p className="page-subtitle">رضا الطلاب، معدل الاستجابة، الالتزام بمعايير المنصة.</p>
-          </div>
-          <div className="qlt-header-badges"><ReadOnlyBadge /></div>
-        </header>
+        {/* R341 t06: migrated onto the shared patterns PageHeader — the
+            sector brow rides the eyebrow slot, [03] the index register. */}
+        <PageHeader
+          index="03"
+          eyebrow="قطاع ضمان الجودة"
+          title="تقييم الأساتذة"
+          description="رضا الطلاب، معدل الاستجابة، الالتزام بمعايير المنصة."
+          actions={<ReadOnlyBadge />}
+        />
         <StatStripSkeleton cells={3} />
         <Card title="هيئة التدريس" icon={School}><TableSkeleton rows={5} cols={8} /></Card>
         </div>
@@ -960,19 +956,15 @@ export function QualityProfessorsPage() {
     return (
       <div className="page">
         <div className="hr-scope">
-        <header className="page-header">
-          <div className="page-title-block">
-            {/* R305 DS (§D): the sector brow. */}
-            <QualityBrow />
-            <h1 className="page-title">
-              {/* R341 D10: [03] nav-order index register. */}
-              <span className="page-index" aria-hidden="true" dir="ltr">[03]</span>
-              تقييم الأساتذة
-            </h1>
-            <p className="page-subtitle">رضا الطلاب، معدل الاستجابة، الالتزام بمعايير المنصة.</p>
-          </div>
-          <div className="qlt-header-badges"><ReadOnlyBadge /></div>
-        </header>
+        {/* R341 t06: migrated onto the shared patterns PageHeader — the
+            sector brow rides the eyebrow slot, [03] the index register. */}
+        <PageHeader
+          index="03"
+          eyebrow="قطاع ضمان الجودة"
+          title="تقييم الأساتذة"
+          description="رضا الطلاب، معدل الاستجابة، الالتزام بمعايير المنصة."
+          actions={<ReadOnlyBadge />}
+        />
         <ErrorState message="تعذّر تحميل قائمة الأساتذة" error={p.error} onRetry={() => p.refetch()} />
         </div>
       </div>
@@ -990,29 +982,32 @@ export function QualityProfessorsPage() {
   return (
     <div className="page">
       <div className="hr-scope">
-      <header className="page-header">
-        <div className="page-title-block">
-          {/* R305 DS (§D): the sector brow. */}
-          <QualityBrow />
-          <h1 className="page-title">
-            {/* R341 D10: [03] nav-order index register. */}
-            <span className="page-index" aria-hidden="true" dir="ltr">[03]</span>
-            تقييم الأساتذة
-          </h1>
-          <p className="page-subtitle">
+      {/* R341 t06: migrated onto the shared patterns PageHeader — the
+          sector brow rides the eyebrow slot, [03] the index register.
+          The estimated-metrics honesty note stays description-only
+          (it needs the resolved payload, so pending/error keep the
+          plain line — the per-state copy is unchanged). */}
+      <PageHeader
+        index="03"
+        eyebrow="قطاع ضمان الجودة"
+        title="تقييم الأساتذة"
+        description={
+          <>
             رضا الطلاب، معدل الاستجابة، الالتزام بمعايير المنصة.
             {p.data.data.some((t) => t.satisfactionEstimated || t.responseHoursEstimated)
               ? ' رضا الطلاب وزمن الاستجابة قيم تقديرية حتى تفعيل قياسها الفعلي.'
               : ''}
-          </p>
-        </div>
-        {/* R341 D10: the header CTA pair (navigation-only, the D8 grammar). */}
-        <div className="qlt-header-badges">
-          <ReadOnlyBadge />
-          <Link to="/quality/courses" className="btn accent sm">جودة المقرّرات</Link>
-          <Link to="/quality/dashboard" className="btn ghost sm">لوحة الجودة</Link>
-        </div>
-      </header>
+          </>
+        }
+        /* R341 D10: the header CTA pair (navigation-only, the D8 grammar). */
+        actions={(
+          <>
+            <ReadOnlyBadge />
+            <Link to="/quality/courses" className="btn accent sm">جودة المقرّرات</Link>
+            <Link to="/quality/dashboard" className="btn ghost sm">لوحة الجودة</Link>
+          </>
+        )}
+      />
 
       {/* R190 (D4): the typographic stat strip — was the grid-3
           icon-tile band (the audit's "identical icon-box grid" read).
