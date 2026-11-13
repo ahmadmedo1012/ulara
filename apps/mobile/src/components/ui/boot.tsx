@@ -30,13 +30,7 @@ import {
   type StyleProp,
   type ViewStyle,
 } from "react-native";
-import Svg, { G, Path, Rect } from "react-native-svg";
-import {
-  MARK_CORNERSTONE,
-  MARK_VESSEL_PATH,
-  MARK_VIEWBOX,
-  markStrokePx,
-} from "@/brand/mark";
+import { MarkCornerstoneLayer, MarkVesselLayer } from "@/brand";
 import { usePalette } from "@/design/theme";
 import { sp } from "@/design/tokens";
 import { dsEase } from "@/design/tokens.generated";
@@ -112,11 +106,12 @@ function useDelayedPulseLoop(
 /* ── BootMark — the vessel + the cornerstone, converging ────────────── */
 
 /**
- * The canonical ULAra mark as a live loader — the REAL 32-grid
- * construction imported from @/brand/mark (MARK_VESSEL_PATH +
- * MARK_CORNERSTONE: the same constants <Logo variant="mark"> renders and
- * the native splash/app icons are generated from): the ink vessel eases
- * in while the sienna cornerstone counter-scales out and breathes —
+ * The canonical ULAra mark as a live loader — rendered through the brand
+ * system's own MarkLayers exports (MarkVesselLayer + MarkCornerstoneLayer,
+ * the same constants <Logo variant="mark"> renders and the native
+ * splash/app icons are generated from; the logo-gate law: geometry lives
+ * in the brand system, seats consume components): the ink vessel eases in
+ * while the sienna cornerstone counter-scales out and breathes —
  * «الإناء يمتلئ» — one loader vocabulary, one mark. `size` 120 = the
  * splash icon size → the IDENTICAL figure at the same seat, so the
  * splash → app handoff is a pure cross-fade (the hand-drawn two-squares
@@ -128,48 +123,22 @@ export function BootMark({ size = 120 }: { size?: number }) {
   const p = usePalette();
   const reduced = useReduceMotion();
 
-  // the same optical hairline <Logo> renders (the X11 ramp): the mark's
-  // non-scaling screen stroke expressed in viewBox units.
-  const strokeUnits = +((markStrokePx(size) * 32) / size).toFixed(3);
-
   // counter-phase: the ink vessel eases in while the stone eases out
   const vesselScale = usePulseLoop(1, 0.88, CYCLE, EASE, !reduced);
   const stoneScale = usePulseLoop(1, 1.09, CYCLE, EASE, !reduced);
   const stoneOpacity = usePulseLoop(1, 0.35, CYCLE, EASE, !reduced);
 
   // both layers share the mark's own canvas — stacked, they compose the
-  // exact figure <Logo variant="mark"> renders (same source constants).
+  // exact figure <Logo variant="mark"> renders (same brand source).
   const seat = { position: "absolute" as const, width: size, height: size };
 
-  /* the vessel — ONE round-capped ink stroke, the same primitives and
-     stroke math as Logo's markShape */
-  const vessel = (
-    <Svg viewBox={MARK_VIEWBOX} width={size} height={size}>
-      <G
-        stroke={p.text}
-        fill="none"
-        strokeWidth={strokeUnits}
-        strokeLinejoin="round"
-        strokeLinecap="round"
-      >
-        <Path d={MARK_VESSEL_PATH} />
-      </G>
-    </Svg>
-  );
+  /* the vessel — the brand system's own single-layer render (the same
+     optical hairline and stroke math <Logo> rides, authored in-brand) */
+  const vessel = <MarkVesselLayer size={size} color={p.text} />;
 
-  /* the cornerstone — the solid sienna 4×4 at the right stem's top */
-  const cornerstone = (
-    <Svg viewBox={MARK_VIEWBOX} width={size} height={size}>
-      <Rect
-        x={MARK_CORNERSTONE.x}
-        y={MARK_CORNERSTONE.y}
-        width={MARK_CORNERSTONE.size}
-        height={MARK_CORNERSTONE.size}
-        fill={p.accent}
-        stroke="none"
-      />
-    </Svg>
-  );
+  /* the cornerstone — the brand system's own single-layer render (the
+     solid sienna 4×4 at the right stem's top) */
+  const cornerstone = <MarkCornerstoneLayer size={size} color={p.accent} />;
 
   if (reduced) {
     return (

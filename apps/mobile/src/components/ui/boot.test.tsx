@@ -7,16 +7,24 @@
  * U-vessel + cornerstone, so every cold start cross-faded the canonical
  * splash icon into a DIFFERENT figure at the same ~120px seat (the same
  * competing-construction defect class retired from the web footer in
- * acef177). This suite pins the fix three ways:
+ * acef177).
  *
- *   · SOURCE CONTRACT (the CountUp.test.tsx pattern): boot.tsx's source
- *     must import the geometry from the brand source of truth (@/brand/mark)
- *     and must NOT contain the retired hand-drawn construction's data —
- *     and it must keep the ds converging rhythm + reduced-motion branch.
- *   · RENDER NET (the Logo/RingProgress pattern): the REAL react-native-svg
- *     subtree (no mock — it is in the jest transform allowlist) serializes
- *     the exact MARK_VESSEL_PATH, the MARK_CORNERSTONE rect, the X11
- *     optical hairline, and the palette's ink/accent seats.
+ * R341 LEAD REVISION (logo-gate §3 reconciliation): the geometry constants
+ * are consumed ONLY inside the brand system — boot.tsx renders through the
+ * brand barrel's MarkVesselLayer / MarkCornerstoneLayer exports (never the
+ * deep geometry module, never the raw svg primitives). This suite pins
+ * THAT contract (the exact-geometry pins live in the brand system's own
+ * layers.test.tsx, where the constants are legal):
+ *
+ *   · SOURCE CONTRACT (the CountUp.test.tsx pattern): boot.tsx consumes
+ *     the brand barrel's layer components, imports no geometry module and
+ *     no svg primitives, and carries no retired hand-drawn construction
+ *     data — and keeps the ds converging rhythm + reduced-motion branch.
+ *   · RENDER NET (the Logo/RingProgress pattern): the real svg subtree
+ *     (no mock) renders one inked round-capped stroke + one accent rect on
+ *     the 32-grid canvas at the requested seat, themed through the live
+ *     palette — the composed figure IS the canonical mark (exact-constant
+ *     pins: src/brand/layers.test.tsx).
  *   · the Boot seat: the full-screen loader mounts the canonical figure
  *     with its honest Arabic label.
  *
@@ -27,11 +35,6 @@ import { describe, expect, it, beforeEach } from "@jest/globals";
 import { render } from "@testing-library/react-native";
 import { readFileSync } from "node:fs";
 import { useReduceMotion } from "@/hooks/useReduceMotion";
-import {
-  MARK_CORNERSTONE,
-  MARK_VESSEL_PATH,
-  markStrokePx,
-} from "@/brand/mark";
 import { Boot, BootMark } from "./boot";
 
 jest.mock("@/hooks/useReduceMotion", () => ({
@@ -96,14 +99,17 @@ const SEAT = 120;
 describe("BootMark — canonical geometry (source contract, the CountUp pattern)", () => {
   const source = readFileSync(new URL("./boot.tsx", import.meta.url), "utf8");
 
-  it("imports the geometry from the brand source of truth (@/brand/mark), never hand-drawn", () => {
-    expect(source).toContain('from "@/brand/mark"');
-    // the canonical constants the figure is built from
-    expect(source).toContain("MARK_VESSEL_PATH");
-    expect(source).toContain("MARK_CORNERSTONE");
-    expect(source).toContain("MARK_VIEWBOX");
-    // the same optical hairline <Logo> rides (no retyped stroke math)
-    expect(source).toContain("markStrokePx");
+  it("consumes the brand system's layer exports — never the geometry module (logo-gate §3)", () => {
+    // the barrel import of the sanctioned single-layer renderers
+    expect(source).toContain('from "@/brand"');
+    expect(source).toContain("MarkVesselLayer");
+    expect(source).toContain("MarkCornerstoneLayer");
+    // the deep geometry module, the constants, and the stroke math stay
+    // inside the brand system — a seat never touches them
+    expect(source).not.toContain('from "@/brand/mark"');
+    expect(source).not.toContain("markStrokePx");
+    // no raw svg primitives here either — the render is fully delegated
+    expect(source).not.toContain('from "react-native-svg"');
   });
 
   it("carries NO hand-drawn path data — the retired two-squares construction is gone", () => {
@@ -124,24 +130,27 @@ describe("BootMark — canonical geometry (source contract, the CountUp pattern)
   });
 });
 
-describe("BootMark — render net (real react-native-svg subtree, the Logo pattern)", () => {
-  it("renders the canonical vessel path on the mark's own 32-grid viewBox", async () => {
+describe("BootMark — render net (real svg subtree, the Logo pattern)", () => {
+  it("renders the canonical figure on the mark's own 32-grid canvas at the seat size", async () => {
     const { toJSON } = await render(<BootMark size={SEAT} />);
     expect(toJSON()).not.toBeNull();
-    // the vessel is EXACTLY the shared source constant — no hand-retyped path
-    expect(collectProp(toJSON(), "d")).toContain(MARK_VESSEL_PATH);
-    // the mark's own canvas (MARK_VIEWBOX '0 0 32 32') at the splash seat
-    expect(collectProp(toJSON(), "vbWidth")).toContain(32);
-    expect(collectProp(toJSON(), "vbHeight")).toContain(32);
-    expect(collectProp(toJSON(), "width")).toContain(SEAT);
-    expect(collectProp(toJSON(), "height")).toContain(SEAT);
+    // the mark's own canvas ('0 0 32 32') at the splash seat — twice
+    // (vessel layer + cornerstone layer), never any other viewBox.
+    // Collect from the Svg canvas nodes only (the cornerstone Rect also
+    // carries width/height props of its own — 4×4 — which are pinned in
+    // src/brand/layers.test.tsx).
+    const canvases = collectNodes(toJSON(), (props) => props.vbWidth !== undefined);
+    expect(canvases).toHaveLength(2);
+    for (const c of canvases) {
+      expect(c.vbWidth).toBe(32);
+      expect(c.vbHeight).toBe(32);
+      expect(c.width).toBe(SEAT);
+      expect(c.height).toBe(SEAT);
+    }
   });
 
-  it("rides the same optical hairline as <Logo> (X11 ramp, viewBox units)", async () => {
+  it("rides the same optical hairline as <Logo> — ONE round-capped ink stroke", async () => {
     const { toJSON } = await render(<BootMark size={SEAT} />);
-    expect(collectProp(toJSON(), "strokeWidth")).toContain(
-      +((markStrokePx(SEAT) * 32) / SEAT).toFixed(3),
-    );
     // round caps and joins — the vessel is ONE continuous stroke (mark.ts).
     // react-native-svg serializes the string enums numerically: round = 1
     // (caps: butt/square = 0 · joins: miter/bevel = 0).
@@ -149,6 +158,8 @@ describe("BootMark — render net (real react-native-svg subtree, the Logo patte
     expect(inked).toHaveLength(1); // ONE inked stroke — the vessel
     expect(inked[0].strokeLinecap).toBe(1);
     expect(inked[0].strokeLinejoin).toBe(1);
+    // the stroke math is <Logo>'s own X11 ramp (asserted exact in
+    // src/brand/layers.test.tsx — the brand system owns the constants)
   });
 
   it("themes through the live palette — ink vessel stroke, sienna cornerstone fill", async () => {
@@ -157,32 +168,24 @@ describe("BootMark — render net (real react-native-svg subtree, the Logo patte
     expect(collectProp(toJSON(), "fill")).toContainEqual(processed("#C43E16")); // the light palette accent
   });
 
-  it("seats the cornerstone at MARK_CORNERSTONE — the 4×4 at the right stem's top", async () => {
+  it("composes exactly one cornerstone rect — the solid accent 4×4", async () => {
     const { toJSON } = await render(<BootMark size={64} />);
     const stones = collectNodes(
       toJSON(),
-      (props) =>
-        props.x === MARK_CORNERSTONE.x &&
-        props.y === MARK_CORNERSTONE.y &&
-        props.width === MARK_CORNERSTONE.size,
+      (props) => props.fill !== undefined && props.x !== undefined,
     );
-    expect(stones).toHaveLength(1); // exactly one cornerstone, from the shared constant
-    expect(stones[0].height).toBe(MARK_CORNERSTONE.size);
-    expect(stones[0].fill).toEqual(processed("#C43E16"));
+    expect(stones).toHaveLength(1); // exactly one filled rect — the cornerstone
   });
 
   it("reduced motion renders the SAME canonical figure, statically (no loops started)", async () => {
     mockReduced.mockReturnValue(true);
     const { toJSON } = await render(<BootMark size={SEAT} />);
-    expect(collectProp(toJSON(), "d")).toContain(MARK_VESSEL_PATH);
+    // the same two-layer canvas figure, unanimated
+    expect(collectProp(toJSON(), "vbWidth")).toEqual([32, 32]);
+    const inked = collectNodes(toJSON(), (props) => props.strokeLinecap !== undefined);
+    expect(inked).toHaveLength(1);
     expect(
-      collectNodes(
-        toJSON(),
-        (props) =>
-          props.x === MARK_CORNERSTONE.x &&
-          props.y === MARK_CORNERSTONE.y &&
-          props.width === MARK_CORNERSTONE.size,
-      ),
+      collectNodes(toJSON(), (props) => props.fill !== undefined && props.x !== undefined),
     ).toHaveLength(1);
   });
 });
@@ -191,6 +194,9 @@ describe("Boot — the full-screen seat", () => {
   it("mounts the canonical mark with its honest Arabic label", async () => {
     const { getByText, toJSON } = await render(<Boot label="جارٍ التحميل…" />);
     expect(getByText("جارٍ التحميل…")).toBeTruthy();
-    expect(collectProp(toJSON(), "d")).toContain(MARK_VESSEL_PATH);
+    // the composed two-layer figure is present on the 32-grid canvas
+    expect(collectProp(toJSON(), "vbWidth")).toEqual([32, 32]);
+    const inked = collectNodes(toJSON(), (props) => props.strokeLinecap !== undefined);
+    expect(inked).toHaveLength(1);
   });
 });
