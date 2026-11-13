@@ -40,8 +40,9 @@
 #
 # RESILIENCE: this runs a RELEASE bundle against a cold backend on an
 # emulator — every transition uses extendedWaitUntil with generous
-# timeouts, and the one flaky tap (the submit button can lose the race
-# with the keyboard-dismiss animation) rides a retry.
+# timeouts. The login submit taps the form's sticky primary action with
+# the keyboard open (R336 E — see the annotated step 2 for the retired
+# pressKey/hideKeyboard mechanisms and their forensics).
 name: smoke-role (Ω 1-B — five-role login journey)
 appId: ly.ulara.app
 ---
@@ -89,21 +90,24 @@ appId: ly.ulara.app
 - tapOn:
     id: "login-password"
 - inputText: "${PASSWORD}"
-# Submit via the keyboard's OWN DONE action: the last field carries
-# returnKeyType=done + onSubmitEditing → the form's primary action
-# (ui/fields.tsx autoSubmit). IMMUNE to the pixel_6 forensics failure:
-# the coordinate tap on «دخول» (y≈2074) was swallowed by the IME that
-# hideKeyboard had not fully dismissed (run 43348648092 — the tap
-# landed, "something changed", and the resting form stayed: no request,
-# no error, no loading state).
-- pressKey: enter
-- hideKeyboard
-# Belt: if the IME action did not submit, the button is now uncovered —
-# tap it. OPTIONAL so an already-submitted (navigated-away) form does
-# not fail the journey.
+# R336 E — submit by tapping the form's OWN sticky primary action
+# («دخول», FormScreen's KeyboardStickyView actionBar) with the keyboard
+# OPEN and settled. Both previous mechanisms are retired with forensics:
+#   · pressKey: enter (runs ≤ d8d769d): the hardware ENTER degenerates
+#     into a system BACK once the IME hides (logcat: AutofillManager-
+#     Service "onBackKeyPressed" at the pressKey window, then WindowManager
+#     CLOSE → launcher) — BACK at the auth root FINISHES the activity, the
+#     login never submits ("topEndEditing will be dropped"), and the
+#     dashboard assert times out ON THE LAUNCHER. No crash — that is why
+#     the logcat gate stayed clean while all five roles failed identically.
+#   · hideKeyboard + tap (run 43348648092): the tap raced the IME-dismiss
+#     animation (the sticky bar slides down WITH the dying IME) and was
+#     swallowed — no request, no error, the resting form stayed.
+# Tapping the sticky button with the IME open avoids BOTH: no hardware
+# key (no stray BACK), no dismissal animation (the button is settled
+# above the keyboard by construction — that is KeyboardStickyView's job).
 - tapOn:
     text: "دخول"               # FormScreen submitLabel (app/auth/login.tsx)
-    optional: true
 
 # 3 ── the role's dashboard landed (always-rendered heading per role:
 #      STUDENT → student/(tabs)/dashboard.tsx SectionBar «أرقامك هذا الفصل»;
