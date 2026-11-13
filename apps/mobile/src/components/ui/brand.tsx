@@ -1,57 +1,24 @@
-import Svg, { Path, Rect } from "react-native-svg";
 import { StyleSheet, View } from "react-native";
 import { usePalette } from "@/design/theme";
-import { MARK_VESSEL_PATH, MARK_CORNERSTONE, markStrokePx } from "@/brand/mark";
+import { Logo } from "@/brand";
 import { T } from "./text";
 
 /**
- * The Ulara brand mark — geometry from src/brand/mark.ts (the U-vessel):
- * ONE round-capped ink stroke (two stems + the quadratic bowl) and the
- * sienna cornerstone square at the right stem's top.
+ * brand.tsx — the mobile brand SEAT components.
+ *
+ * R336 B1 (brand unification): the competing <BrandMark>/<BrandLockup>
+ * renderers are RETIRED. They duplicated the canonical Logo's geometry
+ * (hardcoded viewBox, a second copy of the X11 stroke-ramp math, a
+ * divergent a11y label, raw-hex color overrides) while the canonical
+ * RN <Logo> (src/brand/Logo.tsx — byte-identical geometry to the web,
+ * enforced by tokens:check) had zero production call-sites.
+ *
+ * Every former BrandMark seat now renders <Logo variant="mark"> — ONE
+ * renderer per platform, from the ONE geometry source. What remains
+ * here are legitimate CHROME seats (not logo renderers):
+ *  · LaunchSheet — the transition/splash sheet: Logo mark + drafting
+ *    frame corners + label. The drafting ticks are chrome, not a mark.
  */
-export function BrandMark({ size = 32, ink, orange }: { size?: number; ink?: string; orange?: string }) {
-  const p = usePalette();
-  const stroke = ink ?? p.text;
-  const accent = orange ?? p.accent;
-  // The web's non-scaling hairline (X11 optical ramp), reproduced in
-  // viewBox units — same rendered px weight at every size.
-  const sw = +((markStrokePx(size) * 32) / size).toFixed(3);
-  return (
-    <View style={{ width: size, height: size }} accessibilityLabel="شعار أُلارا">
-      <Svg width={size} height={size} viewBox="0 0 32 32">
-        <Path
-          d={MARK_VESSEL_PATH}
-          fill="none"
-          stroke={stroke}
-          strokeWidth={sw}
-          strokeLinejoin="round"
-          strokeLinecap="round"
-        />
-        <Rect
-          x={MARK_CORNERSTONE.x}
-          y={MARK_CORNERSTONE.y}
-          width={MARK_CORNERSTONE.size}
-          height={MARK_CORNERSTONE.size}
-          fill={accent}
-        />
-      </Svg>
-    </View>
-  );
-}
-
-/** Wordmark row — mark + أُلارا word in display weight. */
-export function BrandLockup({ size = 28 }: { size?: number }) {
-  return (
-    <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-      <BrandMark size={size} />
-      <T variant="h3" weight="bold">
-        أُلارا
-      </T>
-    </View>
-  );
-}
-
-/** Launch sheet: paper ground, mark, and the drafting frame corners. */
 export function LaunchSheet({ label }: { label?: string }) {
   const p = usePalette();
   return (
@@ -64,7 +31,7 @@ export function LaunchSheet({ label }: { label?: string }) {
           position: "relative",
         }}
       >
-        <BrandMark size={72} />
+        <Logo variant="mark" size={72} testID="launch-sheet-mark" />
         <View style={{ position: "absolute", top: -1, right: -1, width: 8, height: 8, backgroundColor: p.accent }} />
         <View style={{ position: "absolute", bottom: -1, left: -1, width: 8, height: 8, backgroundColor: p.accent }} />
       </View>

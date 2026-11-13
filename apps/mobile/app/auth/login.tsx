@@ -10,7 +10,7 @@ import { FormScreen, useFormValidation } from "@/components/ui/form";
 import { T, MonoLabel } from "@/components/ui/text";
 import { Field, SecretField } from "@/components/ui/fields";
 import { Hairline, Card } from "@/components/ui/surfaces";
-import { BrandMark } from "@/components/ui/brand";
+import { Logo } from "@/brand";
 import { resolveEntryDestination } from "@/components/ui/boot";
 import { humanizeError } from "@/lib/errors";
 import { haptics } from "@/haptics";
@@ -112,7 +112,7 @@ export default function SignIn() {
         }
       >
         <View style={{ alignItems: "center", gap: sp[8], paddingTop: sp[16] }}>
-          <BrandMark size={48} />
+          <Logo variant="mark" size={48} />
           <T variant="h2" weight="bold">تسجيل الدخول</T>
           <T variant="sm" color="muted">أُلارا — نظام تشغيل الجامعة</T>
         </View>

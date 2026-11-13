@@ -7,13 +7,13 @@ import { StackHeader } from "@/components/shell/AppTopBar";
 import { Screen, PageHeader, SectionBar } from "@/components/ui";
 import { T, MonoLabel } from "@/components/ui/text";
 import { Button } from "@/components/ui/pressables";
-import { BrandMark } from "@/components/ui/brand";
+import { Logo } from "@/brand";
 import { Card, Badge } from "@/components/ui/surfaces";
 import { RowList, LedgerRow } from "@/components/ui/data";
 import { usePalette } from "@/design/theme";
 
 /** The brand asset register (frontend/public/brand) — SVG sources named
- *  verbatim; the mobile app draws its own vector BrandMark twin. */
+ *  verbatim; the mobile app renders the canonical <Logo> mark. */
 const BRAND_ASSETS: { file: string; label: string }[] = [
   { file: "mark.svg", label: "الرمز القياسي — الإناء (شبكة 32)" },
   { file: "ulara-mark.svg", label: "الرمز المستقلّ للويب" },
@@ -39,7 +39,7 @@ export default function OwnerContent() {
 
         <Card>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
-            <BrandMark size={44} />
+            <Logo variant="mark" size={44} />
             <View style={{ flex: 1, gap: 2 }}>
               <T variant="body" weight="bold">
                 علامة أُلارا

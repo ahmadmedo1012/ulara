@@ -53,7 +53,7 @@ inside your own `src/features/<area>/components.tsx`.
 - `RowList` + `LedgerRow onPress last` — bordered ledgers; `RowList > LedgerRow` for lists.
 - `SkeletonList rows` + `EmptyState title message actionLabel onAction icon` + `ErrorState message onRetry compact` + `LoadingScreen` + `OfflineBanner visible`.
 - `toast.info/success/error(message, title?)` — global feedback.
-- `BrandMark size` — logo geometry.
+- `<Logo variant="mark" size>` (from `@/brand`) — the ONE logo geometry; the retired `BrandMark`/`BrandLockup` seats were consolidated onto it (R336 B1).
 - `StackHeader title kicker right onBack` (from `@/components/shell/AppTopBar`) — back header for pushed screens.
 - `AppTopBar alertsPath` (from `@/components/shell/AppTopBar`) — top chrome on TAB screens (dashboard of your role).
 - `Markdown source` — minimal markdown renderer (training lessons).

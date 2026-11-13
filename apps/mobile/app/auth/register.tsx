@@ -13,7 +13,7 @@ import { FormScreen } from "@/components/ui/form";
 import { SectionBar } from "@/components/ui/screen";
 import { T } from "@/components/ui/text";
 import { Field, SecretField, SelectField } from "@/components/ui/fields";
-import { BrandMark } from "@/components/ui/brand";
+import { Logo } from "@/brand";
 import { humanizeError } from "@/lib/errors";
 import { haptics } from "@/haptics";
 
@@ -171,7 +171,7 @@ export default function Register() {
           }
         >
           <View style={{ alignItems: "center", gap: sp[8], paddingTop: sp[16] }}>
-            <BrandMark size={40} />
+            <Logo variant="mark" size={40} />
             <T variant="h2" weight="bold">إنشاء حساب</T>
             <T variant="sm" color="muted">خطوة 1 من 2 — اختر صفة حسابك</T>
           </View>

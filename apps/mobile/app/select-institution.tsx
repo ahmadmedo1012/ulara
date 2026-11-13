@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/pressables";
 import { Badge } from "@/components/ui/surfaces";
 import { Field } from "@/components/ui/fields";
 import { EmptyState, ErrorState, SkeletonList } from "@/components/ui/states";
-import { BrandMark } from "@/components/ui/brand";
+import { Logo } from "@/brand";
 import { PressableScale } from "@/motion";
 import { haptics } from "@/haptics";
 import { humanizeError } from "@/lib/errors";
@@ -70,7 +70,7 @@ export default function SelectInstitution() {
   };
 
   /* Session hydrating — skeleton rows with the picker's real geometry
-     (the same 72px BrandMark row), never a bare spinner. */
+     (the same 72px Logo mark row), never a bare spinner. */
   if (!user) {
     return (
       <Screen scroll>
@@ -126,7 +126,7 @@ export default function SelectInstitution() {
                 opacity: busyId && busyId !== m.institutionId ? 0.5 : 1,
               }}
             >
-              <BrandMark size={32} />
+              <Logo variant="mark" size={32} />
               <View style={{ flex: 1, gap: 2 }}>
                 <T variant="body" weight="bold" numberOfLines={1}>
                   {m.name}

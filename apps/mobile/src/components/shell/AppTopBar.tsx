@@ -6,7 +6,7 @@ import Search from "lucide-react-native/icons/search";
 import { usePalette } from "@/design/theme";
 import { sp } from "@/design/tokens";
 import { T } from "@/components/ui/text";
-import { BrandMark } from "@/components/ui/brand";
+import { Logo } from "@/brand";
 import { latn } from "@/lib/format";
 import { useUnreadCount } from "@/hooks/useNotifications";
 
@@ -43,7 +43,7 @@ export function AppTopBar({ alertsPath }: { alertsPath: string }) {
         minHeight: 52,
       }}
     >
-      <BrandMark size={26} />
+      <Logo variant="mark" size={26} />
       <T variant="h4" weight="bold" numberOfLines={1} style={{ flex: 1 }}>
         أُلارا
       </T>

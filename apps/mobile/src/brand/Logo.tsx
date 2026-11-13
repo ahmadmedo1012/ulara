@@ -33,7 +33,10 @@ import { LOCKUP, STACKED, WORDMARK_STROKE_SHEET } from "./lockups";
 import { WORDMARK_AR, WORDMARK_LATIN } from "./wordmark.generated";
 
 export type LogoVariant = "lockup" | "mark" | "wordmark" | "stacked";
-export type LogoTone = "auto" | "ink" | "paper" | "orange";
+/** R336 B1: 'sienna' is the web's spelling of the accent tone — accepted
+ * here as an alias so both platforms speak the SAME tone vocabulary
+ * ('orange' stays accepted; same #C43E16, one meaning). */
+export type LogoTone = "auto" | "ink" | "paper" | "orange" | "sienna";
 
 export function Logo({
   variant = "lockup",
@@ -56,7 +59,7 @@ export function Logo({
   const ink =
     tone === "paper"
       ? "#F5F1E8"
-      : tone === "orange"
+      : tone === "orange" || tone === "sienna"
         ? "#C43E16"
         : tone === "ink"
           ? "#262019"

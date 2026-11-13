@@ -23,7 +23,9 @@
 # seats (spec §3 + the takeover instruction):
 #   · frontend/src/brand/**           the web source (mark.ts) + renderers
 #   · apps/mobile/src/brand/**        the RN port (byte-identical, tokens:check)
-#   · apps/mobile/src/components/ui/brand.tsx  the RN <BrandMark> renderer
+#                                     (R336 B1: the competing ui/brand.tsx
+#                                     BrandMark was consolidated onto <Logo> —
+#                                     the RN port is the ONE mobile renderer)
 #   · frontend/tests/**               the pin tests (r323-brand-system.test.ts)
 #   · scripts/brand/build-app-icons.mjs     the shared-mark/icon builder
 #   · scripts/brand/ulara-kit.mjs    the owner-approved staged-geometry kit
@@ -104,7 +106,6 @@ CONSTViol=$(
     | grep -v '^frontend/src/pages/BrandPage.tsx' \
     | grep -v '^frontend/tests/' \
     | grep -v '^apps/mobile/src/brand/' \
-    | grep -v '^apps/mobile/src/components/ui/brand.tsx' \
     | grep -v 'node_modules' \
     || true
 )

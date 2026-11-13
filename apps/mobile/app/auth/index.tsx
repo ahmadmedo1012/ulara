@@ -8,7 +8,7 @@ import { sp } from "@/design/tokens";
 import { Screen } from "@/components/ui/screen";
 import { T } from "@/components/ui/text";
 import { Button } from "@/components/ui/pressables";
-import { BrandMark } from "@/components/ui/brand";
+import { Logo } from "@/brand";
 import { Hairline } from "@/components/ui/surfaces";
 import { useStaggerEntrance } from "@/motion";
 import { PlanBuilding } from "@/brand/plan";
@@ -51,7 +51,7 @@ export default function Welcome() {
         <View style={{ paddingHorizontal: sp[24], paddingTop: sp[40], paddingBottom: sp[16], flexGrow: 1 }}>
           {/* quiet mark row — the drawing carries the brand from here */}
           <Animated.View entering={enter(0)} style={{ flexDirection: "row", alignItems: "center", gap: sp[8] }}>
-            <BrandMark size={20} />
+            <Logo variant="mark" size={20} />
             <T variant="bodyLg" weight="bold">أُلارا</T>
           </Animated.View>
 
