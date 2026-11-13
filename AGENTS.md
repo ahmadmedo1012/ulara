@@ -19,7 +19,7 @@ docs/modules/) are Arabic; generated references (docs/*-REFERENCE.md) are Englis
 | `shared/` | `design-tokens.json` (source of generated tokens), `brand/`, `testAccounts.ts` |
 | `specs/` | SpeckKit feature specs (001–012); live status is `docs/SPECS-REFERENCE.md`, **not** `specs/*/spec.md` |
 | `tools/` | `boot-pg.sh` (local postgres), `daemon.js` |
-| `docs/` | Arabic platform docs 01–16 + `modules/` + `architecture/` + `redesign/` (round history r305…r341; `redesign/r341/` = current program: QUEUE/HANDOFF/OWNERSHIP/tasks/arsenal; r338–r340 = closed rounds still on disk — r333/r335/r337 docs already under `docs/archive/redesign/`) |
+| `docs/` | Arabic platform docs 01–16 + `modules/` + `architecture/` + `redesign/` (round history r305…r342; `redesign/r342/` = current program: QUEUE/HANDOFF/OWNERSHIP/BACKLOG; r341 = closed (runtime verdict run 43465697203); r338–r340 = closed rounds still on disk — r333/r335/r337 docs already under `docs/archive/redesign/`) |
 | `.github/workflows/` | `ci.yml` (full gate matrix), `size-gate.yml`, `mobile.yml`, `android-apk.yml`, `deploy.yml` (Vercel), `deploy-smoke.yml`, `build-ios-sidestore.yml`, `mobile-builds-ledger.yml`, `deadcode.yml` — runners pinned to `ubuntu-24.04` |
 
 Sources of truth (don't guess, read): endpoints → `backend/src/app.ts` + `http/routes/`
@@ -107,7 +107,7 @@ these local gates — all runners pinned `ubuntu-24.04`:
 
 ## 4. Ownership (current wave)
 
-Binding: `docs/redesign/r341/OWNERSHIP.md` + `scripts/conformance/mapping/*.json`.
+Binding: `docs/redesign/r342/OWNERSHIP.md` + `scripts/conformance/mapping/*.json`.
 Own ONLY the files your task names; everything else is a merge block. Historical seat
 map (the R338 rulings; each wave's OWNERSHIP.md supersedes it per-task):
 
@@ -129,8 +129,8 @@ dedicated owner; `apps/mobile/**` + mobile workflows belong to the mobile track;
 `scripts/conformance/run.mjs` is the **lead-controlled shared instrument** — section
 agents never edit it; `.github/workflows`, ceilings and baselines are lead-only.
 Cross-dependency: problem's copy-driven line-counts live in platform-owned `Live.tsx`.
-Current round state (wave log, merges, rulings): `docs/redesign/r341/HANDOFF.md` + task
-briefs in `docs/redesign/r341/tasks/`.
+Current round state (wave log, merges, rulings): `docs/redesign/r342/HANDOFF.md` + the
+queue/ownership in the same directory.
 
 ## 5. Adding a section / page / mobile screen
 

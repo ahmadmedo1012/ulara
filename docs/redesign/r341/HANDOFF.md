@@ -74,3 +74,32 @@ the t01 mounting-contract source test keeps its teeth.
 tests PASS · lint 0 errors with warning sites byte-identical to main.
 The android-smoke journey re-dispatched on 28df896 for the empirical
 verdict (pending at doc time — recorded below when it lands).
+
+## Iteration 3 — the empirical verdict + round closure (r342 lead, 2026-11-13)
+
+**The re-dispatched run PASSED.** Mobile run **43465697203**
+(`wip/r341-integration` @ `28df896`, completed 2026-11-13T17:24:14Z):
+
+- mobile-gates: PASS (tsc · lint · contract · drift · render net · both
+  exports · bundle budget)
+- EAS Build: skipped (native=false — a JS+docs change; no cloud build
+  queued)
+- **android-smoke: PASS** — emulator + Maestro five-role journey: every
+  role completed login → dashboard → three tabs → settings deep-link →
+  **scroll to «تسجيل الخروج» (the exact step that died in run
+  43455712122) → the ConfirmSheet «خروج» → confirmed → back at /auth**;
+  logcat crash gate clean; forensics artifact uploaded.
+- EAS Update: skipped (dispatch context).
+
+The t01 regression story is closed end-to-end: the first cut (per-sheet
+hosts hoisted to screen level) broke the settings scroller (run
+43455712122, root-caused); the root-provider fix (28df896) is verified
+at runtime on the emulator for all five roles. R341's Android runtime
+acceptance — the one item keeping the round open — is satisfied.
+The verification-classification matrix lives in QUEUE.md's closure
+section. Physical-device and iOS rows stay honest (NOT TESTED /
+BLOCKED).
+
+R341 is CLOSED. The follow-up round (r342 — CI lanes + connectivity
+dimensions + the wider product work) is documented under
+`docs/redesign/r342/` and rides the same integration line (PR #1).

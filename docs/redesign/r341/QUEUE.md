@@ -42,3 +42,33 @@ All seven tasks staffed, implemented, lead-reviewed, merged into
 gate record). Integration PR: ahmadmedo1012/ulara#1. Mobile workflow
 (incl. android-smoke five-role emulator journey) dispatched on the
 branch for journey-level evidence before merge.
+
+## Round closure (2026-11-13, iteration 3 — the r342 lead records it)
+
+R341 is **CLOSED** — the last open acceptance item (the Android runtime
+verdict for the 28df896 root-provider fix, pending at iteration-2 doc
+time) landed:
+
+- **Mobile run 43465697203** (dispatched on `wip/r341-integration` @
+  `28df896`, completed 2026-11-13T17:24:14Z): **ALL JOBS PASS** —
+  mobile-gates ✓, android-smoke (emulator · five-role journey · logcat
+  gate) ✓ — the full sequence every role survived: login → dashboard →
+  three tabs → settings deep-link → **scroll to «تسجيل الخروج» → the
+  ConfirmSheet «خروج» → confirmed → back at /auth** — crash gate clean.
+  This is the empirical post-fix runtime evidence the iteration-2
+  record was waiting for.
+- Follow-up r342 work (the mission's next round) rides the same
+  integration line: `docs/redesign/r342/` — see its QUEUE/HANDOFF.
+
+Verification classification (the honest matrix, §2.4 of the mission):
+
+| Level | Result |
+|---|---|
+| Source contract (t01 mounting test) | PASS |
+| Jest rendering (mocked natives) | PASS |
+| Android emulator runtime (release APK, five roles) | **PASS — run 43465697203** |
+| Android release-variant behavior | PASS (the smoke APK IS a release-variant build with a throwaway keystore; store-signing behavior lives in android-apk.yml's own lanes) |
+| Physical Android device | NOT TESTED |
+| iOS runtime | BLOCKED (no simulator/device in the fleet) |
+| Physical iPhone | NOT TESTED |
+
