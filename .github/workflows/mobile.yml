@@ -1,30 +1,63 @@
-# Mobile — R326 M0.6: the app updates when the project updates.
+# Mobile — R326 M0.6 → R342 t09: THE LANE CONTRACT.
 #
-# ONE branch (main). This workflow runs ONLY when the push touches the
-# mobile app or the shared package; every other push never queues it.
+# ONE branch (main) on push; manual dispatch selects a lane. The owner's
+# r342 rule: an ordinary JS/TS/UI change must NEVER queue an hour-long
+# native build. Four explicit lanes (the default dispatch is `fast`):
 #
-#   mobile-gates   → typecheck · expo lint · contract-check · generated-
-#                     drift (tokens/brand/OpenAPI) · expo export (both
-#                     platforms) — fast, additive, must be green
-#   eas-ota        → after gates: `eas update --auto` to the production
-#                     AND preview branches (JS/asset changes reach every
-#                     installed build whose fingerprint matches)
-#   eas-build      → after gates, ONLY when the change is native-affecting
-#                     (package.json/lock, app.config.ts, eas.json, plugin
-#                     config, icons/splash): a preview-profile build for
-#                     both platforms (internal APK + iOS simulator),
-#                     --no-wait, links in the summary.
-#   android-smoke  → Ω 1-B (D1): the crash-diagnosis machine. After gates,
-#                     on push AND manual dispatch: boots the REAL stack
-#                     (embedded PG :5433 + migrated/seeded backend :4000
-#                     with the @test.ly accounts), builds the release APK
-#                     pointed at the emulator host (10.0.2.2), runs it on
-#                     an API-34 emulator, drives the five-role login
-#                     journey with Maestro, and FORENSICALLY GATES on the
-#                     logcat — the first workflow in the repo that can
-#                     ever OBSERVE a crash instead of guessing at one.
+#   Lane A — fast (DEFAULT dispatch; runs on EVERY push too):
+#     mobile-gates → typecheck · expo lint · contract-check · generated-
+#     drift (tokens/brand/OpenAPI) · jest render net · expo export (both
+#     platforms) · bundle budget. NEVER: EAS Build, Gradle, an APK, an
+#     emulator, a release build.
+#
+#   Lane B — smoke-prebuilt (push default smoke + dispatchable):
+#     the android-smoke-prebuilt job — the five-role Maestro journey on
+#     the API-34 emulator against the REAL local stack (embedded PG +
+#     migrate + seed + backend :4000), running on a PREBUILT dev-client
+#     APK whose native fingerprint matches the current tree, with the
+#     CURRENT JavaScript served live from THIS checkout by Metro (a
+#     debug build embeds NO app JS — staleness is structurally
+#     impossible: the bundle the journey exercises is the checkout's).
+#     NO Gradle in this lane. No compatible artifact → the job reports
+#     BLOCKED (loud, red, with the exact missing fingerprint) — it
+#     NEVER silently falls back to compiling a native app. Produce the
+#     artifact once via the native-build lane (see below).
+#
+#   Lane C — native-build (dispatch, or automatically on a native-
+#     affecting push): builds + records the reusable artifacts —
+#     (a) native-build-devclient: the local Gradle dev-client APK,
+#     saved fingerprint-keyed (actions/cache) + uploaded per-run, for
+#     Lane B's future runs; (b) eas-build: the EAS cloud cut (preview
+#     internal APK + iOS sim, or production per the dispatch inputs).
+#     Fingerprint inputs: package(-lock).json, app.config.ts, eas.json,
+#     assets/, plugins/, shared/, the build recipe, and this workflow —
+#     a JS-only change NEVER changes the fingerprint.
+#
+#   Lane D — full (EXPLICIT dispatch only — never the default):
+#     fast gates + the original android-smoke machine — the full local
+#     RELEASE-APK Gradle build (throwaway keystore) + emulator + five-
+#     role Maestro journey + logcat crash gate + EAS cloud build.
+#     This is the release-oriented end-to-end lane; it must remain a
+#     deliberate choice, not a default loop.
+#
+#   eas-ota (push-only, unchanged): `eas update --auto` to the
+#   production AND preview branches after green gates.
+#
+# Dispatch matrix (what each lane runs — and what it must NOT):
+#   fast           → mobile-gates ONLY.
+#   smoke-prebuilt → mobile-gates + android-smoke-prebuilt (no Gradle).
+#   native-build   → mobile-gates + native-build-devclient + eas-build.
+#   full           → mobile-gates + native-build-devclient + eas-build +
+#                    android-smoke (the release Gradle machine).
+#   push (JS-only) → mobile-gates + eas-ota + android-smoke-prebuilt
+#                    (cached artifact; miss → BLOCKED, no rebuild).
+#   push (native)  → the same + native-build-devclient + eas-build
+#                    (the fingerprint moved — the artifacts are re-cut
+#                    once, then reused).
 #
 # Production (store) builds stay manual: workflow_dispatch → RELEASE.md.
+# A skipped/missing native artifact is BLOCKED, never a pass (no fake
+# build success — see each job's honest reporting).
 name: Mobile
 
 on:
@@ -34,21 +67,30 @@ on:
       - 'apps/mobile/**'
       - 'shared/**'
       - '.github/workflows/mobile.yml'
-  # R327 D2: the owner's manual build trigger — e.g. when the Android
-  # free-plan quota is spent but iOS still has headroom, or to re-cut
-  # preview builds after a quota reset without waiting for a push.
-  # R327 D2b: profile joins the trigger — preview (default: internal APK
-  # + iOS simulator) or production (the store cut: Android AAB via the
-  # EAS-managed upload key; iOS production needs the owner's Apple
-  # credentials and will refuse honestly without them).
+  # R327 D2 + R342 t09: the owner's manual trigger. The DEFAULT lane is
+  # `fast` — an ordinary validation dispatch must not queue EAS or
+  # Gradle (the r341-era behavior: every dispatch ran eas-build AND the
+  # full Gradle android-smoke). `native-build`/`full` are the lanes that
+  # actually build; `profile` rides them (preview default; production =
+  # the store cut).
   workflow_dispatch:
     inputs:
+      lane:
+        description: 'Execution lane (fast | smoke-prebuilt | native-build | full)'
+        required: false
+        default: 'fast'
+        type: choice
+        options:
+          - fast
+          - smoke-prebuilt
+          - native-build
+          - full
       platforms:
-        description: 'EAS platforms (all | ios | android)'
+        description: 'EAS platforms (all | ios | android) — native-build/full lanes only'
         required: false
         default: 'all'
       profile:
-        description: 'EAS build profile (preview | production)'
+        description: 'EAS build profile (preview | production) — native-build/full lanes only'
         required: false
         default: 'preview'
 
@@ -64,6 +106,101 @@ env:
   EAS_NO_VCS: '1'
 
 jobs:
+  # ═══════════════════════════════════════════════════════════════════
+  # Lane dispatch — the plan job: normalizes the lane, decides which
+  # native-affecting inputs moved (push only), computes the stable
+  # native fingerprint, and publishes the per-lane job gates. Every
+  # lane-affecting decision is ONE place, testable, and readable in the
+  # run summary.
+  # ═══════════════════════════════════════════════════════════════════
+  detect:
+    name: Lane dispatch (event → lane · native inputs · fingerprint)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    outputs:
+      lane: ${{ steps.lane.outputs.lane }}
+      nativeChanged: ${{ steps.native.outputs.changed }}
+      fingerprint: ${{ steps.fp.outputs.fingerprint }}
+      runEasBuild: ${{ steps.plan.outputs.eas }}
+      runDevclientBuild: ${{ steps.plan.outputs.devclient }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Normalize the lane (push | fast | smoke-prebuilt | native-build | full)
+        id: lane
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            echo "lane=push" >> "$GITHUB_OUTPUT"
+          else
+            echo "lane=${{ github.event.inputs.lane || 'fast' }}" >> "$GITHUB_OUTPUT"
+          fi
+      # The NATIVE FINGERPRINT — every input that can change runtime-
+      # compatibility of a locally-built binary. Conservative by
+      # design: over-inclusion costs a rebuild, under-inclusion risks a
+      # stale artifact (the dangerous direction). A JS-only change never
+      # moves it. (Expo SDK / RN versions ride package(-lock).json; the
+      # gradle template rides the same + app.config.ts; icons ride
+      # assets/ + shared/; the devclient recipe itself is this
+      # workflow's own steps — hence the self-hash.)
+      - name: Native fingerprint (hash of native-affecting inputs)
+        id: fp
+        run: |
+          FP='${{ hashFiles('apps/mobile/package.json', 'apps/mobile/package-lock.json', 'apps/mobile/app.config.ts', 'apps/mobile/eas.json', 'apps/mobile/assets/**', 'apps/mobile/plugins/**', 'shared/**', 'scripts/build-android-local.sh', '.github/workflows/mobile.yml') }}'
+          if [ -z "$FP" ]; then
+            echo "::error::native fingerprint hashed to EMPTY — native inputs missing from the tree?"
+            exit 1
+          fi
+          echo "fingerprint=$FP" >> "$GITHUB_OUTPUT"
+          echo "## Lane dispatch" >> "$GITHUB_STEP_SUMMARY"
+          echo "native fingerprint: \`$FP\`" >> "$GITHUB_STEP_SUMMARY"
+      # Push only: did native-affecting inputs move (HEAD~1..HEAD)?
+      # Dispatch: the owner pressed a build button — that IS native
+      # intent for the build lanes (lane decides which jobs consume it).
+      - name: Detect native-affecting changes (push path only)
+        id: native
+        run: |
+          if [ "${{ github.event_name }}" != "push" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "dispatch — native intent assumed for the build lanes" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          CHANGED=$(git diff --name-only HEAD~1 HEAD || echo "")
+          NATIVE=$(echo "$CHANGED" | grep -E '^apps/mobile/(package(-lock)?\.json|app\.config\.ts|eas\.json|assets/|plugins?/)|^shared/|^scripts/build-android-local\.sh|^\.github/workflows/mobile\.yml' || true)
+          if [ -n "$NATIVE" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            {
+              echo "native-affecting changes detected (push):"
+              echo '```'
+              echo "$NATIVE"
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "JS-only change — no native build will run (fast gates + prebuilt smoke + OTA only)" >> "$GITHUB_STEP_SUMMARY"
+          fi
+      # THE plan: which lanes queue native work. eas-build and
+      # native-build-devclient run ONLY on a native-affecting push or
+      # the explicit native-build/full lanes — a fast dispatch or a
+      # JS-only push can never queue them.
+      - name: Plan the lane jobs
+        id: plan
+        run: |
+          LANE='${{ steps.lane.outputs.lane }}'
+          NAT='${{ steps.native.outputs.changed }}'
+          EAS=false
+          DEVCLIENT=false
+          if [ "$LANE" = "push" ] && [ "$NAT" = "true" ]; then EAS=true; DEVCLIENT=true; fi
+          if [ "$LANE" = "native-build" ] || [ "$LANE" = "full" ]; then EAS=true; DEVCLIENT=true; fi
+          echo "eas=$EAS" >> "$GITHUB_OUTPUT"
+          echo "devclient=$DEVCLIENT" >> "$GITHUB_OUTPUT"
+          {
+            echo "lane: **$LANE** · native-changed: **$NAT** · eas-build: **$EAS** · devclient-build: **$DEVCLIENT**"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # ═══════════════════════════════════════════════════════════════════
+  # Lane A (always): the fast source-level gates.
+  # ═══════════════════════════════════════════════════════════════════
   mobile-gates:
     name: Mobile gates (typecheck · lint · contract · export)
     runs-on: ubuntu-24.04
@@ -127,6 +264,10 @@ jobs:
             fi
           done
 
+  # ═══════════════════════════════════════════════════════════════════
+  # eas-ota (push-only, unchanged): JS/asset changes reach every
+  # installed build whose fingerprint matches.
+  # ═══════════════════════════════════════════════════════════════════
   eas-ota:
     name: EAS Update (OTA to production + preview)
     needs: mobile-gates
@@ -171,14 +312,146 @@ jobs:
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
+  # ═══════════════════════════════════════════════════════════════════
+  # Lane C(a) — native-build-devclient: build + RECORD the reusable
+  # dev-client APK (the prebuilt binary Lane B consumes). Runs ONLY on
+  # a native-affecting push or the native-build/full lanes.
+  # ═══════════════════════════════════════════════════════════════════
+  native-build-devclient:
+    name: Native build (dev-client APK · fingerprint-keyed)
+    needs: [mobile-gates, detect]
+    if: needs.detect.outputs.runDevclientBuild == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    outputs:
+      built: ${{ steps.record.outputs.built }}
+    env:
+      EXPO_NO_TELEMETRY: '1'
+      CI: 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: apps/mobile/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Android SDK components (platform 37 · build-tools 37 · NDK 27.1)
+        # Byte-mirror of the android-apk.yml step — the repo's ONE build
+        # recipe (Expo SDK 58 / RN 0.88 exact pins). Same components for
+        # the debug dev-client build.
+        run: |
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          [ -x "$SDKMANAGER" ] || SDKMANAGER="$(command -v sdkmanager)"
+          [ -n "$SDKMANAGER" ] || { echo "::error::sdkmanager not found under ANDROID_HOME=$ANDROID_HOME"; exit 1; }
+          yes | "$SDKMANAGER" --licenses > /dev/null || true
+          "$SDKMANAGER" --install \
+            "platform-tools" \
+            "platforms;android-37.0" \
+            "build-tools;37.0.0" \
+            "ndk;27.1.12297006"
+          [ -d "$ANDROID_HOME/platforms/android-37" ] || \
+            ln -s "$ANDROID_HOME/platforms/android-37.0" "$ANDROID_HOME/platforms/android-37"
+
+      - name: Gradle + NDK cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            /usr/local/lib/android/sdk/ndk
+          key: android-devclient-${{ hashFiles('apps/mobile/package-lock.json', 'apps/mobile/app.config.ts') }}
+          restore-keys: |
+            android-smoke-
+            android-apk-
+
+      - name: Mobile dependencies
+        working-directory: apps/mobile
+        run: npm ci --no-audit --no-fund
+
+      - name: Build the dev-client APK (prebuild → gradlew assembleDebug)
+        # The DEBUG variant: embeds the expo-dev-launcher (the package is
+        # in dependencies — autolinked, no plugin entry needed) and NO
+        # release JS — the binary ALWAYS loads its JavaScript from a
+        # Metro server at runtime, which is exactly what Lane B needs
+        # (the checkout's JS, not a stale embedded bundle). Signing is
+        # the default DEBUG keystore — a dev-client artifact is NEVER a
+        # release artifact (android-apk.yml owns the signed release cut).
+        working-directory: apps/mobile
+        run: |
+          npx expo prebuild -p android --no-install
+          cd android && ./gradlew assembleDebug
+          APK="app/build/outputs/apk/debug/app-debug.apk"
+          [ -f "$APK" ] || { echo "::error::dev-client APK not found at android/$APK"; exit 1; }
+          du -h "$APK"
+
+      - name: Record the artifact (manifest + fingerprint-keyed cache + run artifact)
+        id: record
+        working-directory: apps/mobile
+        run: |
+          mkdir -p ../prebuilt
+          cp android/app/build/outputs/apk/debug/app-debug.apk ../prebuilt/dev-client.apk
+          {
+            echo "fingerprint: ${{ needs.detect.outputs.fingerprint }}"
+            echo "expo: $(node -p "require('./package.json').dependencies.expo")"
+            echo "react-native: $(node -p "require('./package.json').dependencies['react-native']")"
+            echo "built-at: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "built-from: ${{ github.sha }}"
+            echo "kind: dev-client (DEBUG-signed — never a release artifact)"
+          } > ../prebuilt/MANIFEST.txt
+          cat ../prebuilt/MANIFEST.txt
+          echo "built=true" >> "$GITHUB_OUTPUT"
+          {
+            echo "## Native artifact recorded"
+            echo ""
+            echo "| field | value |"
+            echo "|---|---|"
+            echo "| fingerprint | \`${{ needs.detect.outputs.fingerprint }}\` |"
+            echo "| kind | dev-client APK (debug-signed, Metro-loading) |"
+            echo "| reuse | subsequent smoke-prebuilt runs restore it by fingerprint |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # The FINGERPRINT-KEYED persistence: actions/cache scoped to
+      # `prebuilt/` under a key derived from every native input (the
+      # detect job's fingerprint). NOTE: caches created on non-default
+      # branches are branch-scoped — run the native-build lane on main
+      # (or the default branch) to make an artifact globally reusable;
+      # within THIS run the artifact also rides the upload below.
+      - name: Persist the artifact (fingerprint-keyed cache)
+        uses: actions/cache@v4
+        with:
+          path: prebuilt
+          key: mobile-devclient-v1-${{ needs.detect.outputs.fingerprint }}
+
+      # Same-run handoff (the smoke-prebuilt lane on a native push
+      # consumes THIS artifact; cross-run reuse rides the cache above).
+      - name: Upload the run artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: prebuilt-devclient
+          path: prebuilt
+          if-no-files-found: error
+          retention-days: 14
+
+  # ═══════════════════════════════════════════════════════════════════
+  # Lane C(b) — eas-build: the EAS cloud cut. R342 t09 gating: ONLY on
+  # a native-affecting push or the native-build/full lanes — a fast
+  # dispatch or a JS-only push can never queue it (the r341 behavior
+  # queued EAS on EVERY manual dispatch).
+  # ═══════════════════════════════════════════════════════════════════
   eas-build:
     name: EAS Build (preview — native change detected)
-    needs: mobile-gates
-    # push: only native-affecting changes; manual dispatch: always (the
-    # human pressed the button — that IS the intent). The EXPO_TOKEN
-    # credential gate runs as the first STEP (secrets are not usable in
-    # a job-level if) and skips the build with a notice when absent.
-    if: github.event_name == 'workflow_dispatch' || github.event_name == 'push'
+    needs: [mobile-gates, detect]
+    # The EXPO_TOKEN credential gate runs as the first STEP (secrets are
+    # not usable in a job-level if) and skips the build with a notice
+    # when absent.
+    if: needs.detect.outputs.runEasBuild == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 12
     defaults:
@@ -219,26 +492,8 @@ jobs:
       # icons gate from B1 to C5), so the gap only surfaced now.
       - if: steps.build-cred.outputs.has_token == 'true'
         run: npm ci --no-audit --no-fund
-      - name: Detect native-affecting changes (fingerprint inputs)
-        if: steps.build-cred.outputs.has_token == 'true' && github.event_name == 'push'
-        id: native
-        run: |
-          CHANGED=$(git diff --name-only HEAD~1 HEAD || echo "")
-          NATIVE=$(echo "$CHANGED" | grep -E '^apps/mobile/(package(-lock)?\.json|app\.config\.ts|eas\.json|assets/|plugins?/)|^\.github/workflows/mobile\.yml' || true)
-          SHARED=$(echo "$CHANGED" | grep -E '^shared/' || true)
-          # shared/** feeds tokens/brand → generated files land in the app;
-          # a regenerated token file is JS-only, but shared BRAND assets can
-          # change icons → treat shared changes as native-affecting (safe).
-          if [ -n "$NATIVE" ] || [ -n "$SHARED" ]; then
-            echo "native=true" >> "$GITHUB_OUTPUT"
-            echo "Native-affecting files:"
-            echo "$NATIVE $SHARED"
-          else
-            echo "native=false" >> "$GITHUB_OUTPUT"
-            echo "JS-only change — OTA suffices, no build needed."
-          fi
       - name: "Build (preview = internal APK + iOS sim, production = the store cut)"
-        if: steps.build-cred.outputs.has_token == 'true' && (github.event_name == 'workflow_dispatch' || steps.native.outputs.native == 'true')
+        if: steps.build-cred.outputs.has_token == 'true'
         # R327 D2: the old `|| cat build-out.txt` swallowed EAS failures —
         # the job went green while NO build was queued (that is exactly how
         # the missing-npm_ci gap hid). The step now fails loudly.
@@ -261,16 +516,292 @@ jobs:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
   # ═══════════════════════════════════════════════════════════════════
-  # Ω 1-B (D1) — android-smoke: the crash-diagnosis machine.
+  # Lane B — android-smoke-prebuilt: the five-role Maestro journey on
+  # the API-34 emulator against the REAL local stack, running on the
+  # PREBUILT dev-client APK (fingerprint-matched) with the CURRENT
+  # JavaScript served live from THIS checkout by Metro.
+  #
+  # Why this lane exists (r342 t09): the r341 default had every push
+  # AND every manual dispatch build a fresh RELEASE APK via Gradle
+  # (~21 min) before the journey could run — an hour-scale loop for
+  # ordinary JS-only changes. This lane runs the SAME five-role journey
+  # with ZERO Gradle work, and — because a debug dev-client embeds NO
+  # release JavaScript — the bundle under test is structurally
+  # guaranteed to be the checkout's current source (Metro compiles and
+  # serves it live over adb-reverse).
+  #
+  # The staleness question ("is the APK's code the current code?") is
+  # answered by construction: the native side is guarded by the
+  # fingerprint cache key (a native-input change = new fingerprint =
+  # BLOCKED until the native-build lane re-cuts the artifact), and the
+  # JS side cannot be stale at all. metro.log is captured as evidence of
+  # the live bundle request from the device.
+  #
+  # HONEST LIMITS of this lane (never silently broader than stated):
+  #   · a dev-client journey is NOT a release-variant journey — the
+  #     release-specific manifest/signing behavior stays Lane D (full)
+  #     and android-apk.yml's release cut;
+  #   · if no compatible artifact exists, the job reports BLOCKED (red,
+  #     explicit) — it NEVER silently rebuilds the native app.
+  # ═══════════════════════════════════════════════════════════════════
+  android-smoke-prebuilt:
+    name: Android smoke (prebuilt dev-client · Metro JS · five-role journey)
+    needs: [mobile-gates, detect, native-build-devclient]
+    if: >-
+      needs.detect.outputs.lane == 'push' ||
+      needs.detect.outputs.lane == 'smoke-prebuilt'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    env:
+      DATABASE_URL: postgresql://ulara@localhost:5433/ulara
+      EXPO_NO_TELEMETRY: '1'
+      CI: 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: apps/mobile/package-lock.json
+
+      - name: Download the in-run artifact (native-affecting push)
+        if: needs.native-build-devclient.outputs.built == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: prebuilt-devclient
+          path: prebuilt
+
+      - name: Restore the fingerprint-keyed artifact (cross-run reuse)
+        if: needs.native-build-devclient.outputs.built != 'true'
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: prebuilt
+          key: mobile-devclient-v1-${{ needs.detect.outputs.fingerprint }}
+          lookup-only: false
+
+      - name: HONEST BLOCKED gate (missing artifact ≠ pass — and NEVER a silent rebuild)
+        if: needs.native-build-devclient.outputs.built != 'true' && steps.cache.outputs.cache-hit != 'true'
+        run: |
+          {
+            echo "## android-smoke-prebuilt: BLOCKED"
+            echo ""
+            echo "No compatible prebuilt dev-client artifact exists for native fingerprint:"
+            echo "\`${{ needs.detect.outputs.fingerprint }}\`"
+            echo ""
+            echo "This runtime verification is **BLOCKED** — not skipped, not passed."
+            echo "The lane refuses to compile a native app silently (r342 t09 lane contract)."
+            echo ""
+            echo "Produce the artifact ONCE by dispatching the **native-build** lane"
+            echo "(on the default branch, so the cache is globally reusable), then re-run."
+            echo "The fast source gates in this same run remain the merge-relevant signal."
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "::error::BLOCKED — no prebuilt dev-client artifact for fingerprint ${{ needs.detect.outputs.fingerprint }}. Dispatch the native-build lane to cut one (then this lane reuses it). The lane contract forbids a silent Gradle fallback."
+          exit 1
+
+      - name: Verify the artifact (manifest + APK present)
+        run: |
+          cat prebuilt/MANIFEST.txt
+          [ -f prebuilt/dev-client.apk ] || { echo "::error::artifact restored but prebuilt/dev-client.apk missing — corrupt cache?"; exit 1; }
+          if [ "${{ needs.native-build-devclient.outputs.built }}" != "true" ]; then
+            # cross-run reuse: the manifest's fingerprint must match the tree's
+            grep -q "fingerprint: ${{ needs.detect.outputs.fingerprint }}" prebuilt/MANIFEST.txt || {
+              echo "::error::artifact fingerprint mismatch — refusing to run a stale binary"
+              exit 1
+            }
+          fi
+          du -h prebuilt/dev-client.apk
+
+      # ── the real stack: embedded PG → migrate → seed → backend :4000 ──
+      - name: Boot embedded PostgreSQL (tools/boot-pg.sh, :5433)
+        run: |
+          cd tools
+          npm install --no-audit --no-fund
+          bash boot-pg.sh
+
+      - name: Create the ulara database
+        run: |
+          cd tools
+          node -e '
+            const { Client } = require("pg");
+            (async () => {
+              const c = new Client({ host: "127.0.0.1", port: 5433, user: "ulara", database: "postgres" });
+              await c.connect();
+              const r = await c.query("SELECT 1 FROM pg_database WHERE datname = $1", ["ulara"]);
+              if (r.rows.length === 0) await c.query("CREATE DATABASE ulara");
+              await c.end();
+              console.log("db ulara ready");
+            })().catch((e) => { console.error(e.message); process.exit(1); });
+          '
+
+      - name: Root workspace install (backend + frontend)
+        run: npm ci --no-audit --no-fund
+
+      - name: Migrate + seed (db:deploy + db:seed)
+        run: |
+          npm run db:deploy
+          npm run db:seed
+
+      - name: Boot backend (:4000, test accounts on) + wait for /api/v1/status
+        run: |
+          export JWT_ACCESS_SECRET="$(openssl rand -hex 48)"
+          export JWT_REFRESH_SECRET="$(openssl rand -hex 48)"
+          export ULARA_TEST_ACCOUNTS=1
+          export PORT=4000
+          nohup npm run dev -w backend > backend.log 2>&1 &
+          for i in $(seq 1 40); do
+            if curl -sf http://127.0.0.1:4000/api/v1/status >/dev/null 2>&1; then
+              echo "backend up (poll $i)"
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "::error::backend never answered /api/v1/status within 120s"
+          tail -40 backend.log
+          exit 1
+
+      # ── Metro: the CURRENT JavaScript, served live from THIS checkout ──
+      - name: Mobile dependencies
+        working-directory: apps/mobile
+        run: npm ci --no-audit --no-fund
+
+      - name: Start Metro (dev-client server · current JS · host loopback API)
+        # EXPO_PUBLIC_API_BASE_URL is inlined by Metro at bundle-serve
+        # time — the dev-client build gets the emulator-host backend
+        # (10.0.2.2:4000) without any rebuild. Metro must be up BEFORE
+        # the app launches (the dev launcher connects to
+        # localhost:8081 — adb reverse maps the device's 8081 to THIS
+        # host's Metro).
+        working-directory: apps/mobile
+        run: |
+          EXPO_PUBLIC_API_BASE_URL=http://10.0.2.2:4000/api/v1 \
+          nohup npx expo start --dev-client --port 8081 > ../../metro.log 2>&1 &
+          for i in $(seq 1 40); do
+            if curl -sf http://127.0.0.1:8081/status >/dev/null 2>&1; then
+              echo "metro up (poll $i)"
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "::error::metro never answered /status within 120s"
+          tail -40 ../../metro.log
+          exit 1
+
+      # ── pre-emulator preparation (normal steps — full bash, fail fast) ──
+      - name: Unblock KVM for the emulator (ubuntu-24.04 image quirk)
+        # Run #10 hard evidence: the runner image ships /dev/kvm without
+        # the runner user in the kvm group — chmod re-enables hardware
+        # acceleration. Ephemeral single-tenant CI VM.
+        run: sudo chmod 666 /dev/kvm || true
+
+      - name: Install Maestro CLI (before the emulator — fail fast, ~15s)
+        env:
+          MAESTRO_CLI_NO_ANALYTICS: 1
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          "$HOME/.maestro/bin/maestro" --version
+
+      # ── the emulator + the five-role journey ─────────────────────
+      # Same line-by-line standalone-script discipline as android-smoke
+      # (the action executes EACH line as its own /usr/bin/sh -c):
+      # absolute paths, failure state in the fail.flag FILE, the
+      # five-role loop single-lined, forensics BEFORE the only line
+      # allowed to exit non-zero. The dev-client differences:
+      #   · `adb reverse tcp:8081 tcp:8081` — the device's Metro URL
+      #     (localhost:8081) reaches THIS host's Metro server;
+      #   · the APK installs from prebuilt/ (built this run, or the
+      #     fingerprint-matched cache — never Gradle);
+      #   · metro.log rides the forensics artifact (the live-bundle
+      #     evidence).
+      - name: Emulator + Maestro five-role journey
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          profile: pixel_6
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot-save -memory 4096 -cores 2
+          emulator-boot-timeout: 720
+          script: |
+            adb shell settings put global window_animation_scale 0
+            adb shell settings put global transition_animation_scale 0
+            adb shell settings put global animator_duration_scale 0
+            sleep 20
+            adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
+            adb reverse tcp:8081 tcp:8081 || touch fail.flag
+            adb install -r prebuilt/dev-client.apk || touch fail.flag
+            "$HOME/.maestro/bin/maestro" --version || touch fail.flag
+            for entry in student@test.ly:STUDENT teacher@test.ly:TEACHER registrar@test.ly:ADMIN quality@test.ly:QUALITY owner@test.ly:OWNER; do EMAIL="${entry%%:*}"; ROLE="${entry##*:}"; echo "── android-smoke-prebuilt: $EMAIL ($ROLE)"; "$HOME/.maestro/bin/maestro" test apps/mobile/.maestro/smoke-role.yaml -e EMAIL="$EMAIL" -e PASSWORD=12345678 -e ROLE="$ROLE" || { echo "::error::maestro journey failed for $EMAIL ($ROLE) — see logcat + metro.log in the artifacts"; touch fail.flag; }; done
+            "$ANDROID_HOME/platform-tools/adb" devices > adb-devices.txt 2>&1 || true
+            timeout 60 "$ANDROID_HOME/platform-tools/adb" logcat -d > logcat.txt 2>&1; [ -s logcat.txt ] || echo "(logcat capture failed — adb device state follows:)" >> logcat.txt
+            cat adb-devices.txt >> logcat.txt 2>/dev/null || true
+            wc -c logcat.txt || true
+            cp -r "$HOME/.maestro/tests" maestro-debug 2>/dev/null || echo "(maestro debug output not found under \$HOME/.maestro/tests — no flow produced output)" > maestro-debug.txt || true
+            grep -c . metro.log >> metro-summary.txt 2>/dev/null || echo "(metro.log empty — did the device ever request the bundle?)" > metro-summary.txt
+            if [ -f fail.flag ]; then echo "::error::android-smoke-prebuilt stages failed — forensics are in the artifact"; exit 1; fi
+      - name: Crash gate (logcat forensics — fails the job on signatures)
+        # Deliberately OUTSIDE the emulator-runner script so it always
+        # runs, whatever happened on the emulator. The grep redirect form
+        # (not a pipe) keeps grep's own exit status the branch condition.
+        if: always()
+        run: |
+          if [ ! -s logcat.txt ]; then
+            echo "::error::logcat is empty — the emulator produced no trace (did it boot?)"
+            exit 1
+          fi
+          if grep -nE -B2 -A15 'FATAL EXCEPTION|ReactNativeJS.*Error|SIGABRT|Invariant Violation' logcat.txt > crash-report.txt; then
+            cat crash-report.txt
+            {
+              echo "## android-smoke-prebuilt logcat gate"
+              echo ""
+              echo "CRASH SIGNATURES FOUND (FATAL EXCEPTION | ReactNativeJS Error | SIGABRT | Invariant Violation) — the full trace with context is in the android-smoke-prebuilt-forensics artifact."
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "::error::logcat crash signatures — full context in the android-smoke-prebuilt-forensics artifact"
+            exit 1
+          fi
+          echo "clean — no crash signatures (FATAL EXCEPTION | ReactNativeJS.*Error | SIGABRT | Invariant Violation)" > crash-report.txt
+          {
+            echo "## android-smoke-prebuilt logcat gate"
+            echo ""
+            echo "logcat clean — no crash signatures. The five-role journeys either passed or failed on assertions; the trace is attached either way."
+            echo ""
+            echo "Verification level: **dev-client runtime** (Metro-served current JS; the release-variant journey remains the full lane / android-apk.yml)."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload forensics (logcat + metro.log + backend.log + crash report + Maestro debug output)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-smoke-prebuilt-forensics
+          path: |
+            logcat.txt
+            adb-devices.txt
+            crash-report.txt
+            backend.log
+            metro.log
+            metro-summary.txt
+            maestro-debug
+            maestro-debug.txt
+            prebuilt/MANIFEST.txt
+          if-no-files-found: error
+          retention-days: 14
+
+  # ═══════════════════════════════════════════════════════════════════
+  # Lane D — android-smoke: the ORIGINAL crash-diagnosis machine (the
+  # full release-variant journey). R342 t09 gating: EXPLICIT dispatch of
+  # the full lane only — never the default loop (push smoke moved to
+  # the prebuilt lane above; ordinary JS changes must not pay the
+  # ~21-minute Gradle release-APK toll).
   #
   # NOBODY has ever observed the post-login crash: no emulator run, no
   # logcat, exists anywhere in this repo's CI. This job is the machine
   # that produces the trace: the REAL release APK (expo prebuild →
   # signing patch → gradlew assembleRelease, the repo's one recipe,
   # scripts/build-android-local.sh) running against the REAL backend
-  # (embedded PG + migrate + seed + :4000), driven through the five-role
-  # login journey by Maestro, with logcat captured ALWAYS and gated for
-  # crash signatures afterwards.
+  # (embedded PG + migrate + seed + :4000), driven through the
+  # five-role login journey by Maestro, with logcat captured ALWAYS and
+  # gated for crash signatures afterwards.
   #
   # Build-time wiring: EXPO_PUBLIC_API_BASE_URL=http://10.0.2.2:4000/api/v1
   # — 10.0.2.2 is the Android emulator's alias for the host loopback
@@ -292,13 +823,14 @@ jobs:
   # → 127.0.0.1, and a full db:deploy run passes against the localhost form).
   # The `ulara` database itself must be CREATED after boot — boot-pg.sh
   # only initdb's (postgres/template0/template1 exist; the app DB does not).
+  # ═══════════════════════════════════════════════════════════════════
   android-smoke:
-    name: Android smoke (emulator · five-role journey · logcat gate)
-    needs: mobile-gates
-    # push (workflow-paths filtered) AND manual dispatch — the dispatch
-    # makes the trace machine runnable on demand (the on: block already
-    # declares workflow_dispatch with its inputs).
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    name: Android smoke (release APK · five-role journey · logcat gate)
+    needs: [mobile-gates, detect]
+    # Lane D ONLY: an explicit `full` dispatch (the owner's deliberate
+    # release-oriented verification — the expense is the point, so it
+    # must never ride a default path).
+    if: needs.detect.outputs.lane == 'full'
     runs-on: ubuntu-24.04
     # 65 not 50: the release APK build alone takes ~21 min (throwaway
     # keystore, no cache hits); the journey adds ~10–15. The 50-min ceiling
