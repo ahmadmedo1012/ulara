@@ -297,6 +297,17 @@
 [data-theme="dark"] .landing {
   background: var(--bg);
   color: var(--text);
+  --bg: #1c1c1a; /* color-gate: allow — the landing reference palette */
+  --text: #F3F2EC; /* color-gate: allow — the landing reference palette */
+  --text-primary: #F3F2EC; /* color-gate: allow — the landing reference palette */
+  --text-secondary: #B3B3AF; /* color-gate: allow — the landing reference palette */
+  --text-muted: #B3B3AF; /* color-gate: allow — the landing reference palette */
+  --rule: #4A4A48; /* color-gate: allow — the landing reference palette */
+  --border: #4A4A48; /* color-gate: allow — the landing reference palette */
+  --border-strong: #5C5C5A; /* color-gate: allow — the landing reference palette */
+  --accent: #F15534; /* color-gate: allow — the landing reference palette */
+  --accent-ink: #F15534; /* color-gate: allow — the landing reference palette */
+  --preloader-exit-ground: #4A4A48; /* color-gate: allow — the landing reference palette */
 }
 
 [data-theme="dark"] .bp-fill {

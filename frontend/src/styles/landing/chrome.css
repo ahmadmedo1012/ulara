@@ -81,20 +81,6 @@
   --font-display: var(--font-sans);
 }
 
-[data-theme="dark"] .landing {
-  --bg: #1c1c1a; /* color-gate: allow — the landing reference palette */
-  --text: #F3F2EC; /* color-gate: allow — the landing reference palette */
-  --text-primary: #F3F2EC; /* color-gate: allow — the landing reference palette */
-  --text-secondary: #B3B3AF; /* color-gate: allow — the landing reference palette */
-  --text-muted: #B3B3AF; /* color-gate: allow — the landing reference palette */
-  --rule: #4A4A48; /* color-gate: allow — the landing reference palette */
-  --border: #4A4A48; /* color-gate: allow — the landing reference palette */
-  --border-strong: #5C5C5A; /* color-gate: allow — the landing reference palette */
-  --accent: #F15534; /* color-gate: allow — the landing reference palette */
-  --accent-ink: #F15534; /* color-gate: allow — the landing reference palette */
-  --preloader-exit-ground: #4A4A48; /* color-gate: allow — the landing reference palette */
-}
-
 /* ── The sheet frame (R313 · D9) — the FULL-PAGE drafting frame: a
  * 1px hairline at the 7px inset (the reference's fixed .main-deco
  * layer — measured 7px @1440/768/390, 6px @1280; the fixed 7px keeps

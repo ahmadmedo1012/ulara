@@ -200,12 +200,7 @@ section.chapters {
   block-size: 7px;
   background: var(--accent);
   flex-shrink: 0;
-  animation: jt-pulse 1.8s infinite ease-in-out;
-}
-
-@keyframes jt-pulse {
-  0%, 100% { opacity: 0.4; transform: scale(0.9); }
-  50% { opacity: 1; transform: scale(1.15); box-shadow: 0 0 8px var(--accent); }
+  animation: hi-pulse 2s var(--ease) infinite;
 }
 
 .jt-agent-tag {
@@ -1465,5 +1460,8 @@ section.chapters {
 @media (prefers-reduced-motion: reduce) {
   .wr-scrub .wr-i {
     color: var(--text);
+  }
+  .jt-agent-dot {
+    animation: none;
   }
 }

@@ -45,12 +45,11 @@ import '../../../styles/landing/preloader.css';
  * introGate V14): the counter is ASSET-GATED — 100% lands between
  * ~2.75s (assets resolved early) and the 4.9s fallback cap, then the
  * 700ms completed-state hold, then the 835ms sheet-exit wipe. */
-const RELEASE_FLOOR_MS = 2750; /* the counter never resolves before 2.5s —
- * r333: 2600→2750; the r309 spec's tMount starts AFTER waitForSelector
- * ('.pl') resolves, so the ~120-150ms mount→visible latency ate the
- * 100ms floor margin (CI runners measured doneAt 2471/2481ms < the
- * spec's 2500ms floor). 2750 keeps the release inside the r309
- * 2.5-4.9s window with runner-latency margin. */
+const RELEASE_FLOOR_MS = 2950; /* the counter never resolves before 2.95s —
+ * r333/r342: 2750→2950; the r309 spec's tMount starts AFTER waitForSelector
+ * ('.pl') resolves, so the ~120-800ms mount→visible latency can eat the
+ * floor margin. 2950 keeps the release strictly ≥2000ms in Playwright while
+ * remaining well within the 4.9s cap. */
 const MAX_RUN_MS = 4900; /* the hard cap — readiness races this timer */
 const EXIT_HOLD_MS = 700; /* the 100% beat before the wipe opens */
 const ENTRY_DONE_EVENT = 'ula:entry-done';
