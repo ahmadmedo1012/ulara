@@ -587,6 +587,33 @@
   display: block;
 }
 
+.hi-box-handle {
+  position: absolute;
+  inline-size: 5px;
+  block-size: 5px;
+  background: var(--accent);
+}
+.hi-box-handle-tl { inset-block-start: -3px; inset-inline-start: -3px; }
+.hi-box-handle-tr { inset-block-start: -3px; inset-inline-end: -3px; }
+.hi-box-handle-bl { inset-block-end: -3px; inset-inline-start: -3px; }
+.hi-box-handle-br { inset-block-end: -3px; inset-inline-end: -3px; }
+
+.hi-leaders-svg {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.hi-leader-path {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+}
+
 .bp-stage[data-dragging] {
   user-select: none;
   -webkit-user-select: none;
@@ -677,14 +704,15 @@
   align-content: center;
   gap: var(--sp-0-5);
   padding: var(--sp-2) var(--sp-3);
-  background: var(--accent);
-  border: 1px solid var(--accent-strong);
-  border-radius: var(--r-xs);
+  background: var(--bg);
+  border: 1px solid var(--accent);
+  box-shadow: 0 4px 20px color-mix(in srgb, var(--text) 8%, transparent);
+  border-radius: 0;
   text-align: start;
   pointer-events: none;
   opacity: 0;
-  scale: 0.12;
-  z-index: 4;
+  scale: 0.85;
+  z-index: 6;
   transition:
     opacity var(--t-base) var(--ease),
     scale var(--t-base) var(--ease);
@@ -696,9 +724,10 @@
 }
 
 .hi-marker-code {
-  color: var(--text-on-accent);
+  color: var(--accent);
   font-size: var(--fs-xxs);
-  opacity: 0.82;
+  font-weight: 700;
+  opacity: 1;
 }
 
 /* R321 §A6 — the code renders from attr(): the marker's mono code
@@ -711,16 +740,16 @@
 .hi-marker-body::before { content: attr(data-body); }
 
 .hi-marker-label {
-  color: var(--text-on-accent);
+  color: var(--text);
   font-size: var(--fs-sm);
   font-weight: 700;
 }
 
 .hi-marker-body {
-  color: var(--text-on-accent);
+  color: var(--text-secondary);
   font-size: var(--fs-xs);
   line-height: 1.55;
-  opacity: 0.92;
+  opacity: 0.95;
 }
 
 /* ── the flow rail — the affordance row + the mobile cards ──────

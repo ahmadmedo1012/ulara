@@ -23,7 +23,7 @@
  */
 import { useSheetScroll } from '../../lib/motion/useSheetScroll';
 import { RevealCssClass } from '../../hooks/useReveal';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import {
   CAPTURE_LECTURE_CHECKPOINT_2X,
@@ -276,6 +276,54 @@ function CycleFigure() {
 
 export function WhyScene() {
   const stageRef = useRef<HTMLDivElement>(null);
+  const guideLineRef = useRef<HTMLDivElement>(null);
+
+  /* R342 — the pointer-tracking vertical guide:
+   * an orange horizontal line follows the pointer vertically, closing
+   * a fifth of the distance each frame (lerp 0.2), with a monospace badge. */
+  useEffect(() => {
+    const stage = stageRef.current;
+    const guide = guideLineRef.current;
+    if (!stage || !guide) return undefined;
+
+    let targetY = 0;
+    let currentY = 0;
+    let active = false;
+    let rafId = 0;
+
+    const onPointerMove = (e: PointerEvent) => {
+      const rect = stage.getBoundingClientRect();
+      targetY = e.clientY - rect.top;
+      if (!active) {
+        active = true;
+        guide.style.opacity = '1';
+      }
+    };
+
+    const onPointerLeave = () => {
+      active = false;
+      guide.style.opacity = '0';
+    };
+
+    const tick = () => {
+      if (active) {
+        currentY += (targetY - currentY) * 0.2;
+        guide.style.transform = `translateY(${currentY.toFixed(1)}px)`;
+      }
+      rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+
+    stage.addEventListener('pointermove', onPointerMove, { passive: true });
+    stage.addEventListener('pointerleave', onPointerLeave, { passive: true });
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      stage.removeEventListener('pointermove', onPointerMove);
+      stage.removeEventListener('pointerleave', onPointerLeave);
+    };
+  }, []);
+
   /* L1-a (r341) — the ≤767 deck belt: .wy-track IS the snap scroller
    * (why.css ≤767: overflow-x auto + scroll-snap x mandatory); the
    * arrows/dots chrome reads + drives its scroll seat. ≥768 the belt
@@ -346,6 +394,12 @@ export function WhyScene() {
   return (
     <>
     <div className="wy-stage" data-spec="why.stage" ref={stageRef} data-wy-stage="0">
+      {/* The pointer-tracking horizontal orange line (the landing signature accent) */}
+      <div ref={guideLineRef} className="wy-pointer-guide" aria-hidden="true">
+        <span className="wy-pointer-line" />
+        <span className="wy-pointer-badge fo-mono" dir="ltr">GUIDE // TRACK</span>
+      </div>
+
       <div className="wy-axis" aria-hidden="true" data-spec="why.axis" />
       <div className="wy-stage-in" data-spec="why.stagein">
         <div className="wy-fade" aria-hidden="true" data-spec="why.fade" />

@@ -302,6 +302,29 @@ export function Footer({ year }: { year: number }) {
           </div>
         </div>
 
+        {/* ── The Grand Outline Wordmark & Back to Top (the landing signature closing) ── */}
+        <div className="fo-top-anchor-row">
+          <button
+            type="button"
+            className="fo-back-to-top"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            aria-label="العودة إلى أعلى الصفحة"
+          >
+            <svg viewBox="0 0 16 16" className="fo-top-arrow" aria-hidden="true">
+              <path d="M8 13V3M3 8l5-5 5 5" fill="none" stroke="currentColor" strokeWidth="1.5" />
+            </svg>
+            <span className="fo-mono" dir="ltr">[ العودة للأعلى // BACK TO TOP ]</span>
+          </button>
+        </div>
+
+        <div className="fo-giant-banner" aria-hidden="true">
+          <span className="fo-giant-plus fo-giant-plus-tl">+</span>
+          <span className="fo-giant-plus fo-giant-plus-tr">+</span>
+          <div className="fo-giant-text">ULARA // أُلارا</div>
+          <span className="fo-giant-plus fo-giant-plus-bl">+</span>
+          <span className="fo-giant-plus fo-giant-plus-br">+</span>
+        </div>
+
         {/* ── the © bar + the policy row — one ruled line (R321 §A2):
             the ten public-door links ride the © bar's own row as a
             flex-wrap nav, hairline-separated via CSS ::after glyphs

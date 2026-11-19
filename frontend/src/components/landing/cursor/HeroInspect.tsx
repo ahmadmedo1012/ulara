@@ -170,6 +170,7 @@ export function HeroInspect() {
 
   const [openIds, setOpenIds] = useState<string[]>([]);
   const [instrumentOn, setInstrumentOn] = useState(false);
+  const [leaderPaths, setLeaderPaths] = useState<Record<string, string>>({});
 
   /* ── The displayed-box mapping (viewBox → frame coordinates). ──── */
   const markerRects = useRef<Map<string, Rect>>(new Map());
@@ -261,14 +262,21 @@ export function HeroInspect() {
         return { id: m.id, x: c.x, y: c.y, w: Math.max(w, m.w), h: Math.max(h, m.h) };
       }),
     );
+    const paths: Record<string, string> = {};
     for (const m of MARKERS) {
       const el = layer.querySelector<HTMLElement>(`.hi-card[data-marker="${m.id}"]`);
       const p = placement.get(m.id);
+      const c = viewBoxPointToContainer(fit, m.vx, m.vy);
       if (el && p) {
         el.style.setProperty('--c-x', `${p.left}px`);
         el.style.setProperty('--c-y', `${p.top}px`);
+        const cardMidY = p.top + m.h / 2;
+        const cardEdgeX = p.left > c.x ? p.left : p.left + m.w;
+        const midX = (c.x + cardEdgeX) / 2;
+        paths[m.id] = `M ${c.x.toFixed(1)} ${c.y.toFixed(1)} L ${midX.toFixed(1)} ${c.y.toFixed(1)} L ${midX.toFixed(1)} ${cardMidY.toFixed(1)} L ${cardEdgeX.toFixed(1)} ${cardMidY.toFixed(1)}`;
       }
     }
+    setLeaderPaths(paths);
   }, []);
 
   useEffect(() => {
@@ -571,7 +579,28 @@ export function HeroInspect() {
 
         {/* the drag selection box — driven imperatively via CSS vars
             (R309: the CSS finally consumes them — a visible box) */}
-        <div ref={boxRef} className="hi-box" data-on="off" aria-hidden="true" />
+        <div ref={boxRef} className="hi-box" data-on="off" aria-hidden="true">
+          <span className="hi-box-handle hi-box-handle-tl" />
+          <span className="hi-box-handle hi-box-handle-tr" />
+          <span className="hi-box-handle hi-box-handle-bl" />
+          <span className="hi-box-handle hi-box-handle-br" />
+        </div>
+
+        {/* SVG elbowed leader lines */}
+        <svg className="hi-leaders-svg" aria-hidden="true">
+          {MARKERS.map((m) => {
+            const open = openIds.includes(m.id);
+            const d = leaderPaths[m.id];
+            if (!open || !d) return null;
+            return (
+              <path
+                key={m.id}
+                d={d}
+                className="hi-leader-path"
+              />
+            );
+          })}
+        </svg>
 
         {/* the inspection stations — real buttons (the universal
             path: tap, click, Enter/Space); 44px dot targets glued to
