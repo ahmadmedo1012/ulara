@@ -139,7 +139,7 @@ JS-only included — the owner's complaint). The r342 contract:
 - `/admin/sync` + `/admin/sync/trigger` → 500; the AdminPages dashboard ActionStrip also queried `/admin/sync` (a hidden fourth consumer found by the frontend agent's search).
 - The nightly Vercel cron (`/api/v1/jobs/daily`) sync sub-job failed silently every night (the never-reject contract swallowed the P2021).
 
-Root cause: the shared Neon production DB dropped `SyncRun`/`UniversityFact` upstream (madarek r349 — "the dead pre-tick sync system", data exported before the drop) while ULARA's code still carried the full feature. Column-level drift audit: those two tables were the ONLY ulara-expected structures absent from the live DB (no column-level gaps anywhere else; the DB's 14 extra madarek-era tables are never queried by ulara — harmless).
+Root cause: the shared Neon production DB dropped `SyncRun`/`UniversityFact` upstream (pre-ULARA r349 — "the dead pre-tick sync system", data exported before the drop) while ULARA's code still carried the full feature. Column-level drift audit: those two tables were the ONLY ulara-expected structures absent from the live DB (no column-level gaps anywhere else; the DB's 14 extra pre-ULARA-era tables are never queried by ulara — harmless).
 
 ### Lead verification (the smallest sufficient gates; full suites at integration)
 
@@ -156,5 +156,33 @@ Root cause: the shared Neon production DB dropped `SyncRun`/`UniversityFact` ups
 
 ### The live-DB ledger reconciliation (non-destructive, recorded in the wave commit)
 
-- `_prisma_migrations` had the madarek lineage's 49 granular rows and NO row for `0001_ulara_baseline` (the baseline's own doc note expected a ledger swap that never ran). A naive `prisma migrate deploy` from this repo would have tried to apply 0001 against existing tables.
-- Action: `prisma migrate resolve --applied 0001_ulara_baseline` (records the baseline; madarek's 49 rows PRESERVED) then `prisma migrate deploy` (applies `0002_retire_zu_sync` — a verified no-op on the established DB). `prisma migrate deploy` from this repo is now a clean no-op going forward.
+- `_prisma_migrations` had the pre-ULARA lineage's 49 granular rows and NO row for `0001_ulara_baseline` (the baseline's own doc note expected a ledger swap that never ran). A naive `prisma migrate deploy` from this repo would have tried to apply 0001 against existing tables.
+- Action: `prisma migrate resolve --applied 0001_ulara_baseline` (records the baseline; the lineage's 49 rows PRESERVED) then `prisma migrate deploy` (applies `0002_retire_zu_sync` — a verified no-op on the established DB). `prisma migrate deploy` from this repo is now a clean no-op going forward.
+
+## Wave 3 — the security sweep t14 (2026-11-19, lead-verified)
+
+| Task | Agent type | Branch | Commits | State |
+|------|-----------|--------|---------|-------|
+| t14 backend/API security fixes (devInbox gate · research archive isolation · invite institution boundary · serverless JWT seatbelt) | lead (audit by an isolated adversarial-review subagent) | wip/r341-integration | (this wave's commit) | MERGED |
+
+### Findings fixed (each verified at the code level; the first verified LIVE on production before fixing)
+
+1. **CRITICAL — the forgot-password reset-token oracle (verified live)**: `POST /api/v1/auth/forgot-password` with a documented `@test.ly` address returned `data.devInbox.url` containing the RAW reset token — unauthenticated, owner@test.ly included, under mailProvider=none. Fixed: the devInbox link is now gated to `NODE_ENV !== 'production'` (local dev keeps the honest dev-inbox). The exposed token was rotated immediately after verification.
+2. **HIGH — the research archive's cross-institution PII**: `/research/published`, `/research/search` and the `/search/global` paper candidates listed every tenant's published papers — student names, grades, reviewer feedback, plagiarism/AI scores, and extracted-text snippets — while the file-bytes gate already 404s foreign papers (incoherent listing + PII). Fixed: all three surfaces are institution-scoped to the caller's VERIFIED context (resolveCallerInstitutionScope; OWNER keeps the platform-wide oversight view; a contextless caller gets no paper rows — fail-closed).
+3. **MEDIUM — the invite family's institution boundary**: an ADMIN could mint a code scoped to a FOREIGN institution's offering; register + redeem created ACTIVE enrollments with no institution-relationship check (unlocking the foreign institution's content). Fixed: ADMIN create now verifies offering-institution ownership (existence-hidden 404 for foreign ids); registerUser rejects codes whose offering belongs to another institution than the one being registered into; consumeInvite requires the redeemer to hold an ACTIVE membership in the offering's institution.
+4. **LOW — the JWT identical-secrets seatbelt** now also runs on the serverless entry (api/index.ts), not just the long-process entry.
+
+### Honest backlog (NOT fixed this wave — the audit's remaining findings)
+
+- Lecture-video serving route authorization (unguessable server-minted cuid filenames mitigate; the proper gate mirrors the materials route — next wave candidate).
+- Feedback inbox is platform-wide for institution-scoped ADMIN/QUALITY (needs an additive `institutionId` column + migration — schema change deliberately deferred out of this wave).
+- Access-token claims stay trusted up to 15 min after role change/deactivation (the standard short-TTL JWT tradeoff — documented as accepted).
+- The XFF limiter trust-topology probe should be re-run against the Vercel deployment (rate-limit bypass requires a topology that forwards client XFF verbatim).
+
+### Gates
+
+| Gate | Result |
+|------|--------|
+| Backend `tsc --noEmit` | PASS (0 errors) |
+| Backend vitest (FULL suite) | **92 files / 1955 tests PASS** |
+| eslint (frontend/src + backend/src) | **0 errors** (14 pre-existing warnings) |

@@ -5,6 +5,10 @@ import { authMiddleware } from '../middleware/auth.js';
 import { requireRole } from '../middleware/requireRole.js';
 import { validate } from '../validate.js';
 import { consumeInvite, createInvite, listInvites, revokeInvite, validateInvitePublic } from '../../modules/invites/service.js';
+import { prisma } from '../../db.js';
+import { resolveCallerInstitutionScope } from '../../lib/profile-scoping.js';
+import { institutionContextRequiredError } from '../../lib/profile-scoping.js';
+import { AppError } from '../../lib/errors.js';
 
 /**
  * r323 B3.1 — invite codes (the B3.1 bulk-import remainder).
@@ -39,6 +43,26 @@ router.post(
   validate(createBody),
   async (req, res, next) => {
     try {
+      /* r342 t14 (security sweep — the institution boundary): an
+       * ADMIN's verified institution must OWN the target offering —
+       * pre-fix, an ADMIN could mint a code scoped to a FOREIGN
+       * institution's offering (the service checked TEACHER ownership
+       * only), a cross-tenant write primitive whose redeemed code then
+       * enrolled foreign-institution students. TEACHER rows stay
+       * ownership-pinned by the service; OWNER mints platform-wide. */
+      if (req.user!.role === Role.ADMIN && (req.body as { offeringId?: string }).offeringId) {
+        const scope = await resolveCallerInstitutionScope(req.user!.id, req.user!.institutionId);
+        if (!scope) throw institutionContextRequiredError();
+        const offering = await prisma.courseOffering.findUnique({
+          where: { id: (req.body as { offeringId: string }).offeringId },
+          select: { course: { select: { institutionId: true } } },
+        });
+        // Existence-hidden 404 — the platform-wide convention for
+        // cross-tenant ids (foreign offering == does not exist FOR YOU).
+        if (!offering || offering.course.institutionId !== scope) {
+          throw AppError.notFound('المقرر غير موجود');
+        }
+      }
       const invite = await createInvite(req.user!.id, req.body as never);
       res.status(201).json({ data: invite });
     } catch (e) { next(e); }

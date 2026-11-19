@@ -24,4 +24,14 @@
  */
 import { createApp } from '../backend/dist/app.js';
 
+/* r342 t14 (security sweep): the identical-secrets seatbelt from the
+ * long-process entry (backend/src/index.ts 11-a P2-16b) runs here too —
+ * the serverless platform never executes that entry, so the warning
+ * previously only existed on classic deployments. */
+import { env } from '../backend/dist/env.js';
+import { logger } from '../backend/dist/logger.js';
+if (env.JWT_ACCESS_SECRET === env.JWT_REFRESH_SECRET) {
+  logger.warn('JWT_ACCESS_SECRET and JWT_REFRESH_SECRET are identical — generate two different secrets');
+}
+
 export default createApp();

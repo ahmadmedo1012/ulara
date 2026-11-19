@@ -4,6 +4,7 @@ import { prisma } from '../../db.js';
 import { authMiddleware } from '../middleware/auth.js';
 import { normalizeArabicSearch, matchesNormalizedQuery } from '../../modules/search/normalize.js';
 import { offeringVisibilityFilter } from './courses.routes.js';
+import { resolveCallerInstitutionScope } from '../../lib/profile-scoping.js';
 
 const router = Router();
 router.use(authMiddleware);
@@ -150,6 +151,15 @@ router.get('/search/global', async (req, res, next) => {
     // count (lib/permissions.ts).
     const offeringFilter = offeringVisibilityFilter(role, userId);
 
+    /* r342 t14 (security sweep — cross-institution PII): paper hits
+     * are institution-scoped to the caller's VERIFIED context. The
+     * pre-fix scan listed every tenant's published papers (student
+     * names ride the subtitle) while the bytes gate 404s foreign
+     * files — the archive's own law (learning.routes r342 t14).
+     * Fail-closed: no verified context → NO paper rows at all (the
+     * courses/lectures/tracks sections are context-free and stay). */
+    const paperScope = await resolveCallerInstitutionScope(userId, req.user!.institutionId);
+
     // Query both the raw and the normalized form so hamza/alif-variant
     // queries still hit the DB's raw-text contains index.
     const variants = qN && qN !== q ? [q, qN] : [q];
@@ -205,25 +215,29 @@ router.get('/search/global', async (req, res, next) => {
         take: CANDIDATE_TAKE,
       }),
 
-      // Published research papers (anyone authenticated can search the
-      // library) — publishedAt desc, like /research/library. Only rows
-      // with a fileUrl: the hit's href opens the document viewer, and
-      // consumers without a file have no linkable destination (r155c).
-      prisma.researchPaper.findMany({
-        where: {
-          status: 'PUBLISHED',
-          fileUrl: { not: null },
-          OR: [
-            ...variants.map((v) => ({ title: ic(v) })),
-            { abstract: ic(q) },
-          ],
-        },
-        include: {
-          student: { select: { firstName: true, lastName: true } },
-        },
-        orderBy: { publishedAt: 'desc' },
-        take: CANDIDATE_TAKE,
-      }),
+      // Published research papers — institution-scoped (r342 t14, see
+      // paperScope above) — publishedAt desc, like /research/library.
+      // Only rows with a fileUrl: the hit's href opens the document
+      // viewer, and consumers without a file have no linkable
+      // destination (r155c).
+      paperScope
+        ? prisma.researchPaper.findMany({
+            where: {
+              status: 'PUBLISHED',
+              institutionId: paperScope,
+              fileUrl: { not: null },
+              OR: [
+                ...variants.map((v) => ({ title: ic(v) })),
+                { abstract: ic(q) },
+              ],
+            },
+            include: {
+              student: { select: { firstName: true, lastName: true } },
+            },
+            orderBy: { publishedAt: 'desc' },
+            take: CANDIDATE_TAKE,
+          })
+        : Promise.resolve([]),
 
       // Training tracks — catalog order, like /training.
       prisma.trainingTrack.findMany({

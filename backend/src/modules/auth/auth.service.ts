@@ -258,11 +258,19 @@ export const registerUser = async (input: RegisterInput) => {
     // written (the register page surfaced the same verdict pre-submit
     // via the public validate endpoint — this is the authoritative one).
     const code = input.inviteCode?.trim().toUpperCase();
-    let invite: { id: string; offeringId: string | null; maxUses: number } | null = null;
+    let invite: {
+      id: string;
+      offeringId: string | null;
+      maxUses: number;
+      offeringInstitutionId: string | null;
+    } | null = null;
     if (code) {
       const row = await tx.inviteCode.findUnique({
         where: { code },
-        select: { id: true, code: true, role: true, offeringId: true, expiresAt: true, maxUses: true, usedCount: true },
+        select: {
+          id: true, code: true, role: true, offeringId: true, expiresAt: true, maxUses: true, usedCount: true,
+          offering: { select: { course: { select: { institutionId: true } } } },
+        },
       });
       const verdict = evaluateInvite(
         row
@@ -271,7 +279,20 @@ export const registerUser = async (input: RegisterInput) => {
         input.role,
       );
       if (!verdict.ok) throw AppError.badRequest(verdict.reason);
-      invite = row;
+      /* r342 t14 (security sweep — the institution boundary): an
+       * offering-scoped code may only enroll into the institution the
+       * account is REGISTERING into. Pre-fix the code alone decided —
+       * a foreign institution's code created an enrollment unrelated
+       * to the new account's own membership institution. */
+      if (row?.offeringId) {
+        const offeringInstitutionId = row.offering?.course.institutionId ?? null;
+        if (offeringInstitutionId !== input.institutionId) {
+          throw AppError.badRequest('هذا الكود مخصص لمؤسسة أخرى غير التي تسجّل فيها');
+        }
+        invite = { id: row.id, offeringId: row.offeringId, maxUses: row.maxUses, offeringInstitutionId };
+      } else if (row) {
+        invite = { id: row.id, offeringId: null, maxUses: row.maxUses, offeringInstitutionId: null };
+      }
     }
 
     const createdUser = await tx.user.create({

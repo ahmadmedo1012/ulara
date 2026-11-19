@@ -19,7 +19,7 @@
 --     tables so the physical schema matches the Prisma schema exactly.
 --
 -- Nothing else is touched. Non-destructive to every other table (the
--- established database's extra madarek-era tables — AiTelemetry,
+-- established database's extra pre-ULARA-era tables — AiTelemetry,
 -- StudentDocument, MailOutbox, etc. — are NOT dropped: they are absent
 -- from ULARA's Prisma schema but present in the shared database; Prisma
 -- simply does not query them).

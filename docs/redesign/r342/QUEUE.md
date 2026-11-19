@@ -31,7 +31,7 @@
 - [x] t13 — fix(backend+web): PRODUCTION schema-drift retirement — the
       zu-sync system (SyncRun/UniversityFact) lived in ULARA's code
       while the shared Neon production DB had DROPPED its tables
-      upstream (r349, madarek lineage): every code path touching them
+      upstream (r349, the pre-ULARA lineage): every code path touching them
       answered P2021 (empirically: PUBLIC `GET /university/facts` →
       HTTP 500; `GET /owner/system` → HTTP 500 — the owner System page;
       `/admin/sync` family → 500; the nightly `/jobs/daily` sync
@@ -57,9 +57,42 @@ CI lanes t09 is validated at YAML + lane-matrix level; the lanes'
 first live CI exercise happens on the next dispatch/push (the honest
 runtime confirmation — recorded here when it lands).
 
+## Round state (2026-11-19, wave 3 — the security sweep t14)
+
+t14 (backend/API security sweep + targeted fixes) implemented from the
+adversarial audit's prioritized findings — all fixes verified
+empirically against production where possible:
+
+- CRITICAL (verified live): the forgot-password devInbox returned the
+  RAW reset token for documented @test.ly addresses (owner@test.ly
+  included) to any UNAUTHENTICATED caller — a platform-takeover
+  primitive under mailProvider=none. Fixed: devInbox is now
+  dev/test-only (NODE_ENV!=production).
+- HIGH: /research/published + /research/search + /search/global paper
+  hits listed every tenant's published papers (student names, grades,
+  reviewer feedback, plagiarism scores) while the bytes gate 404s
+  foreign files — incoherent AND a cross-institution PII leak. Fixed:
+  institution-scoped to the caller's VERIFIED context (OWNER
+  platform-wide).
+- MEDIUM: invite codes minted for foreign institutions' offerings
+  (ADMIN path), register/redeem enrolling regardless of institution
+  relationship — a cross-tenant write primitive. Fixed: institution
+  boundary on create (ADMIN scope check), register (offering must
+  match the registering institution), and redeem (redeemer must hold
+  an ACTIVE membership in the offering's institution).
+- LOW: the JWT identical-secrets seatbelt now also runs on the
+  serverless entry (api/index.ts).
+
+Gates: backend tsc 0 errors · backend vitest 92 files/1955 PASS ·
+eslint 0 errors. Findings NOT fixed this wave (honest backlog):
+lecture-video serving gate (unguessable-cuid mitigated), feedback
+inbox platform-wide for ADMIN/QUALITY (needs an additive
+institutionId column + migration), access-token 15-min claim staleness
+(accepted JWT tradeoff), XFF trust-topology re-probe on Vercel.
+
 ## Round state (2026-11-19, wave 2 — the takeover mission)
 
-The full-project takeover mission (Madarek suspended — see the
+The full-project takeover mission (the sibling product line suspended — see the
 mission record) resumed this round on `wip/r341-integration`. t13
 (the production P2021 family) implemented + verified: backend
 tsc PASS · backend vitest **92 files / 1955 tests PASS** · frontend
