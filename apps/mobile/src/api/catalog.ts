@@ -5,10 +5,10 @@ import type { Book, Faculty, Institution, JobPost, MoocCourse, Paginated } from 
 export const catalogApi = {
   institutions: () => get<Institution[]>("/institutions"),
   faculties: (institutionSlug?: string) => get<(Faculty & { departments: { id: string; name: string }[] })[]>("/faculties", institutionSlug ? { institutionSlug } : undefined),
-  /* r342 t13 — zu-sync retirement: universityFacts (GET /university/facts)
-     left with the backend route; the /student/university screen went with
-     it (it had no other consumer — the one raw `get("/university/facts")`
-     call site was deleted with the screen). */
+  /* r342 t13 — zu-sync retirement: universityFacts (the facts-feed
+     route) left with the backend route; the /student/university screen
+     went with it (it had no other consumer — its raw call site to the
+     facts route was deleted with the screen). */
   libraryBooks: (q?: { page?: number; limit?: number; q?: string }) => get<Paginated<Book>>("/library/books", q),
   borrow: (bookId: string) => post<unknown>("/library/loans", { bookId }),
   returnBook: (loanId: string) => post<unknown>(`/library/loans/${loanId}/return`),
