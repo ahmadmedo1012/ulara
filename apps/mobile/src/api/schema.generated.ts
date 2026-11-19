@@ -14866,6 +14866,81 @@ export interface paths {
         };
         trace?: never;
     };
+    "/api/v1/ping": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/ping
+         * @description Declared in `backend/src/http/routes/status.routes.ts` (mounted at `/api/v1`).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/posts": {
         parameters: {
             query?: never;
@@ -19108,7 +19183,7 @@ export interface components {
         };
         ErrorEnvelope: {
             error: {
-                /** @description UPPER_SNAKE machine code. Known values: BAD_REQUEST, VALIDATION_ERROR, UNAUTHENTICATED, TOKEN_EXPIRED, INVALID_CREDENTIALS, FORBIDDEN, NOT_FOUND, CONFLICT, PAYLOAD_TOO_LARGE, UNSUPPORTED_MEDIA_TYPE, TOO_MANY_REQUESTS, INSTITUTION_CONTEXT_REQUIRED, INSTITUTION_CONTEXT_INVALID, REG_NUMBER_AMBIGUOUS */
+                /** @description UPPER_SNAKE machine code. Known values: BAD_REQUEST, VALIDATION_ERROR, UNAUTHENTICATED, TOKEN_EXPIRED, INVALID_CREDENTIALS, FORBIDDEN, NOT_FOUND, CONFLICT, PAYLOAD_TOO_LARGE, UNSUPPORTED_MEDIA_TYPE, TOO_MANY_REQUESTS, INSTITUTION_CONTEXT_REQUIRED, INSTITUTION_CONTEXT_INVALID, REG_NUMBER_AMBIGUOUS, DB_UNAVAILABLE */
                 code: string;
                 /** @description Human message (Arabic — D17-3); render verbatim in toasts. */
                 message: string;
