@@ -3,9 +3,8 @@
 Express 4.22.3 (TypeScript, ESM) + Prisma 5.22 over Neon PostgreSQL.
 All endpoints are mounted under the base path **`/api/v1`** and return a
 `{ data: T }` envelope (errors return `{ error: { code, message } }`).
-The complete, code-accurate endpoint contract (196 endpoints — 191 route
-registrations in the 25 route files + 4 module-router endpoints + `GET
-/health`) lives in
+The complete, code-accurate endpoint contract (255 operations over 218
+paths, measured from the generated spec) lives in
 [`docs/api/openapi.json`](docs/api/openapi.json) (regenerated from the code
 with `npm run api:openapi`) — the tables below are a
 condensed overview.
