@@ -17,6 +17,14 @@
  *
  * The `contract-check` gate (consumed paths vs registered routes) is
  * unaffected — it reads call sites, not types.
+ *
+ * r342 t13 — zu-sync retirement: the `/api/v1/admin/sync`,
+ * `/api/v1/admin/sync/trigger` and `/api/v1/university/facts` path blocks
+ * were removed SURGICALLY from schema.generated.ts (matching
+ * docs/api/openapi.json, which dropped them with the backend routes —
+ * the openapi-typescript CLI could not run in that sandbox). The next
+ * `npm run api:types` regen should produce a no-op diff; if it does not,
+ * the drift is a regeneration detail, not a contract change.
  */
 import type { components, paths } from "./schema.generated";
 

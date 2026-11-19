@@ -140,11 +140,10 @@ export default function OwnerSystem() {
                   value={sys.isError ? "تعذّر الاتصال" : s ? "متصل" : null}
                   hint="من حالة الاستعلام الحيّ"
                 />
-                <StatLine
-                  label="آخر مزامنة"
-                  value={s?.sync?.lastRunAt ? fromNow(s.sync.lastRunAt) : null}
-                  hint="مع المصدر الرسميّ"
-                />
+                {/* r342 t13 — «آخر مزامنة» (last zu-sync run) left with the
+                    retirement: GET /owner/system dropped its `sync` block
+                    (the SyncRun table went away upstream), so the row was
+                    removed — no permanently-empty stat stays. */}
                 <StatLine
                   label="تنبيهات حرجة مفتوحة"
                   value={numOf(s?.alerts?.criticalCount)}

@@ -81,8 +81,9 @@ export const adminApi = {
   enrollmentOfferings: () => get<unknown[]>("/enrollments/offerings"),
   enroll: (payload: { studentId: string; offeringId: string }) => post<unknown>("/enrollments", payload),
   unenroll: (enrollmentId: string) => del<void>(`/enrollments/${enrollmentId}`),
-  syncStatus: () => get<unknown>("/admin/sync"),
-  syncTrigger: () => post<unknown>("/admin/sync/trigger"),
+  /* r342 t13 — zu-sync retirement: syncStatus/syncTrigger (GET /admin/sync,
+     POST /admin/sync/trigger) left with the backend routes; the admin sync
+     console screen went with them. */
   digital: () => get<unknown>("/admin/digital"),
   bulkPreview: (csv: string, institutionId?: string) => post<unknown>("/users/bulk-import/preview", { csv, institutionId }),
   bulkCommit: (csv: string, institutionId?: string) => post<unknown>("/users/bulk-import/commit", { csv, institutionId }),
