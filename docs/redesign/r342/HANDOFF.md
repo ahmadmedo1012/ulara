@@ -125,3 +125,36 @@ JS-only included — the owner's complaint). The r342 contract:
   per role, web + mobile).
 - Wave 5–6: cross-platform visual consistency; backend/security sweep.
 - Wave 8: independent adversarial review of everything above.
+
+## Wave 2 — the takeover mission: production schema-drift retirement (2026-11-19, lead-verified)
+
+| Task | Agent type | Branch | Commits | State |
+|------|-----------|--------|---------|-------|
+| t13 zu-sync retirement (backend: routes/scheduler/lib/prisma + migration 0002; web: admin sync console + owner System sync card + nav/route/tests) | lead + isolated subagent (frontend half) | wip/r341-integration | (this wave's commit) | MERGED (single atomic integration commit — the change crosses schema/routes/web/tests) |
+
+### The defect (empirical, production)
+
+- `GET https://ulara.vercel.app/api/v1/university/facts` → **HTTP 500** (`{"code":"INTERNAL"}`) — a PUBLIC endpoint.
+- Authenticated `owner@test.ly` → `GET /api/v1/owner/system` → **HTTP 500** — the OWNER System page's data path.
+- `/admin/sync` + `/admin/sync/trigger` → 500; the AdminPages dashboard ActionStrip also queried `/admin/sync` (a hidden fourth consumer found by the frontend agent's search).
+- The nightly Vercel cron (`/api/v1/jobs/daily`) sync sub-job failed silently every night (the never-reject contract swallowed the P2021).
+
+Root cause: the shared Neon production DB dropped `SyncRun`/`UniversityFact` upstream (madarek r349 — "the dead pre-tick sync system", data exported before the drop) while ULARA's code still carried the full feature. Column-level drift audit: those two tables were the ONLY ulara-expected structures absent from the live DB (no column-level gaps anywhere else; the DB's 14 extra madarek-era tables are never queried by ulara — harmless).
+
+### Lead verification (the smallest sufficient gates; full suites at integration)
+
+| Gate | Result |
+|------|--------|
+| Backend `tsc --noEmit` | PASS (0 errors) |
+| Backend vitest (FULL suite) | **92 files / 1955 tests PASS** (deleted 5 pure-zu-sync suites: scheduler-guard, scheduler-institution, sync-routes-scope, zu-sync-run, sync-institution-isolation; updated owner-schemas/owner-system-storage/owner-alerts-counts/scheduler-retention + two-institution-regression header) |
+| Prisma validate + generate (schema without the two models) | PASS |
+| Frontend agent: `tsc -b` + `tsc -p tsconfig.test.json` | 0 errors |
+| Frontend vitest (FULL suite, agent-run) | **224 files / 2834 tests PASS** |
+| stylelint gate | green (errors 45 → 36, ratchet down — consistent with removing a dead surface) |
+| OpenAPI regeneration | 253 operations (the three retired paths gone from the generated table) |
+| Backend lint (eslint backend/src) | 0 errors |
+
+### The live-DB ledger reconciliation (non-destructive, recorded in the wave commit)
+
+- `_prisma_migrations` had the madarek lineage's 49 granular rows and NO row for `0001_ulara_baseline` (the baseline's own doc note expected a ledger swap that never ran). A naive `prisma migrate deploy` from this repo would have tried to apply 0001 against existing tables.
+- Action: `prisma migrate resolve --applied 0001_ulara_baseline` (records the baseline; madarek's 49 rows PRESERVED) then `prisma migrate deploy` (applies `0002_retire_zu_sync` — a verified no-op on the established DB). `prisma migrate deploy` from this repo is now a clean no-op going forward.

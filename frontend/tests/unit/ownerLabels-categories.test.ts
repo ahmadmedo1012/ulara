@@ -8,7 +8,11 @@
  *
  *   errorHandler  → APP_*   → 'app'   (5xx AppError paths)
  *   errorHandler  → HTTP_500 → 'http' (unhandled errors)
- *   zu-sync reaper → SYNC_* → 'sync'  (stale-run reap warnings)
+ *   (r342 t13: the zu-sync stale-run reaper's SYNC_* writer retired
+ *    with the zu-sync system, dropped upstream — 'sync' is no longer a
+ *    live writer category, but the label stays pinned below so the
+ *    HISTORICAL SYNC_* alerts already on the ops board keep their
+ *    Arabic badge instead of leaking a raw Latin run.)
  *
  * CATEGORY_LABELS in lib/ownerLabels.ts must cover every category a
  * writer can emit, or the badge falls back to a raw Latin run inside
@@ -25,7 +29,7 @@ import { describe, expect, it } from 'vitest';
 import { CATEGORY_LABELS, SEVERITY_LABELS } from '../../src/lib/ownerLabels';
 
 /** Categories the production writers emit today (code prefixes). */
-const WRITER_CATEGORIES = ['app', 'http', 'sync'] as const;
+const WRITER_CATEGORIES = ['app', 'http'] as const;
 
 describe('ownerLabels — operational-alert category vocabulary (r151a)', () => {
   it.each(WRITER_CATEGORIES)(
@@ -38,7 +42,10 @@ describe('ownerLabels — operational-alert category vocabulary (r151a)', () => 
   it('keeps the historical/static categories labelled too', () => {
     // The pre-existing vocabulary — kept because the schema allows
     // manual alert creation (owner.routes.ts category field) and the
-    // ops board has always rendered these.
+    // ops board has always rendered these. 'sync' joins them in r342
+    // t13: its writer (the zu-sync reaper) retired with the zu-sync
+    // system, but historical SYNC_* alerts must keep their Arabic
+    // badge on the board.
     for (const category of [
       'infrastructure',
       'security',
@@ -47,6 +54,7 @@ describe('ownerLabels — operational-alert category vocabulary (r151a)', () => 
       'storage',
       'database',
       'api',
+      'sync',
     ] satisfies Array<keyof typeof CATEGORY_LABELS>) {
       expect(CATEGORY_LABELS[category]).toBeTruthy();
     }

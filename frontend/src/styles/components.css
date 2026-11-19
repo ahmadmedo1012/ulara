@@ -1694,7 +1694,9 @@
      (physical borderRight) until waves 5-6 normalize it to a logical
      1px rule (ruling #4); this chrome reads correctly either way. ── */
 
-  /* ── Run rows — live sessions (TeacherLive) + sync history (AdminSync) ── */
+  /* ── Run rows — live sessions (TeacherLive). r342 t13: the second
+     consumer (the zu-sync run-history table) retired with the zu-sync
+     system; TeacherLive keeps the family. ── */
   .run-row {
     display: flex;
     align-items: center;
@@ -1709,7 +1711,7 @@
   }
   /* 13-17 dead-selector sweep (11-g P2-7): .run-row-status (the 32px
      status puck) deleted — zero TSX consumers; .run-row stays
-     (TeacherLive + AdminSync render it). */
+     (TeacherLive renders it; the AdminSync consumer retired r342 t13). */
   /* Icon+text meta lines inside a run row: the global svg{display:block}
      stacks Lucide glyphs above their text — flex the utility-styled
      lines so the clock glyph sits inline with the date. */
@@ -1737,10 +1739,6 @@
      rule together with the TSX re-parent in waves 5-6. */
   /* text-safe status inks (guardrail #3): deep shades clear AA on the
      neutral cell ground in both themes */
-
-  /* ── Category + fact rows — sync data preview (AdminSync) ───────── */
-  @media (hover: hover) and (pointer: fine) {
-  }
 
   /* ── Trend rows — paper pipeline bars (AdminReports). Counts smaller
      than the bar stay clipped; the TSX title attribute carries them
@@ -1934,7 +1932,8 @@
 
   /* ╔═══════════════════════════════════════════════════════════════╗
      ║  wave 5-b: admin pages (dashboard / faculties / reports /     ║
-     ║  courses / sync / governance)                                 ║
+     ║  courses / governance — r342 t13: the sync page's families   ║
+     ║  retired with the zu-sync system, dropped upstream)           ║
      ║  TSX-side adoption of the wave 3-c families + the classes     ║
      ║  that replace the pages' inline styles (audit 0-e P2-49).     ║
      ║  Token-first so both themes resolve; logical properties       ║
@@ -1989,15 +1988,6 @@
       background: var(--surface);
       box-shadow: 0 0 0 8px transparent;
     }
-  }
-
-  /* ── Sync run-history stagger — the sync page's authored moment:
-     the runs stream in top-to-bottom on first mount (one-shot; the
-     30s poll refetches without remounting, so it never re-plays).
-     Delay rides --run-i capped at --motion-stagger-cap. ───────────── */
-  @keyframes ulara-sync-run-in {
-    from { opacity: 0; transform: translateY(var(--motion-distance-small)); } /* r153h: 6px → --motion-distance-small */
-    to { opacity: 1; transform: none; }
   }
 
   /* (r151d: the governance mobile .btn floor block deleted — polish's

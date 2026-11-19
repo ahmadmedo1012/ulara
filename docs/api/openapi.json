@@ -14,7 +14,7 @@
   "tags": [
     {
       "name": "admin",
-      "description": "19 operation(s) under /api/v1/admin"
+      "description": "17 operation(s) under /api/v1/admin"
     },
     {
       "name": "ai",
@@ -141,6 +141,10 @@
       "description": "23 operation(s) under /api/v1/owner"
     },
     {
+      "name": "ping",
+      "description": "1 operation(s) under /api/v1/ping"
+    },
+    {
       "name": "posts",
       "description": "4 operation(s) under /api/v1/posts"
     },
@@ -179,10 +183,6 @@
     {
       "name": "training",
       "description": "8 operation(s) under /api/v1/training"
-    },
-    {
-      "name": "university",
-      "description": "1 operation(s) under /api/v1/university"
     },
     {
       "name": "users",
@@ -911,132 +911,6 @@
             }
           }
         ]
-      }
-    },
-    "/api/v1/admin/sync": {
-      "get": {
-        "tags": [
-          "admin"
-        ],
-        "summary": "GET /api/v1/admin/sync",
-        "description": "Declared in `backend/src/http/routes/sync.routes.ts` (mounted at `/api/v1`).",
-        "x-mounted-at": "/api/v1",
-        "responses": {
-          "200": {
-            "description": "Success envelope `{ data }`",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SuccessEnvelope"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation / bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorEnvelope"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorEnvelope"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorEnvelope"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Unexpected server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorEnvelope"
-                }
-              }
-            }
-          }
-        },
-        "security": []
-      }
-    },
-    "/api/v1/admin/sync/trigger": {
-      "post": {
-        "tags": [
-          "admin"
-        ],
-        "summary": "POST /api/v1/admin/sync/trigger",
-        "description": "Declared in `backend/src/http/routes/sync.routes.ts` (mounted at `/api/v1`).",
-        "x-mounted-at": "/api/v1",
-        "responses": {
-          "200": {
-            "description": "Success envelope `{ data }`",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SuccessEnvelope"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation / bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorEnvelope"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorEnvelope"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorEnvelope"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Unexpected server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorEnvelope"
-                }
-              }
-            }
-          }
-        },
-        "security": []
       }
     },
     "/api/v1/admin/teachers/{id}/position": {
@@ -14697,6 +14571,69 @@
         }
       }
     },
+    "/api/v1/ping": {
+      "get": {
+        "tags": [
+          "ping"
+        ],
+        "summary": "GET /api/v1/ping",
+        "description": "Declared in `backend/src/http/routes/status.routes.ts` (mounted at `/api/v1`).",
+        "x-mounted-at": "/api/v1",
+        "responses": {
+          "200": {
+            "description": "Success envelope `{ data }`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessEnvelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation / bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
     "/api/v1/posts": {
       "get": {
         "tags": [
@@ -18074,69 +18011,6 @@
         "security": []
       }
     },
-    "/api/v1/university/facts": {
-      "get": {
-        "tags": [
-          "university"
-        ],
-        "summary": "GET /api/v1/university/facts",
-        "description": "Declared in `backend/src/http/routes/sync.routes.ts` (mounted at `/api/v1`).",
-        "x-mounted-at": "/api/v1",
-        "responses": {
-          "200": {
-            "description": "Success envelope `{ data }`",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SuccessEnvelope"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation / bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorEnvelope"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorEnvelope"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorEnvelope"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Unexpected server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorEnvelope"
-                }
-              }
-            }
-          }
-        },
-        "security": []
-      }
-    },
     "/api/v1/users": {
       "get": {
         "tags": [
@@ -18750,7 +18624,7 @@
             "properties": {
               "code": {
                 "type": "string",
-                "description": "UPPER_SNAKE machine code. Known values: BAD_REQUEST, VALIDATION_ERROR, UNAUTHENTICATED, TOKEN_EXPIRED, INVALID_CREDENTIALS, FORBIDDEN, NOT_FOUND, CONFLICT, PAYLOAD_TOO_LARGE, UNSUPPORTED_MEDIA_TYPE, TOO_MANY_REQUESTS, INSTITUTION_CONTEXT_REQUIRED, INSTITUTION_CONTEXT_INVALID, REG_NUMBER_AMBIGUOUS"
+                "description": "UPPER_SNAKE machine code. Known values: BAD_REQUEST, VALIDATION_ERROR, UNAUTHENTICATED, TOKEN_EXPIRED, INVALID_CREDENTIALS, FORBIDDEN, NOT_FOUND, CONFLICT, PAYLOAD_TOO_LARGE, UNSUPPORTED_MEDIA_TYPE, TOO_MANY_REQUESTS, INSTITUTION_CONTEXT_REQUIRED, INSTITUTION_CONTEXT_INVALID, REG_NUMBER_AMBIGUOUS, DB_UNAVAILABLE"
               },
               "message": {
                 "type": "string",
@@ -21259,9 +21133,9 @@
   },
   "x-generator": {
     "tool": "backend/scripts/generate-openapi.ts (hand-rolled: express-stack walk + zod-v3 walker)",
-    "generatedAt": "2026-11-12T22:35:39.101Z",
-    "operationCount": 255,
-    "pathCount": 218,
+    "generatedAt": "2026-11-19T22:31:22.308Z",
+    "operationCount": 253,
+    "pathCount": 216,
     "contractSnapshotCovered": 13,
     "snapshotCoveredRoutes": [
       "GET /api/v1/ai/config",

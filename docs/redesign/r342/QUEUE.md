@@ -28,10 +28,26 @@
 - [x] t09 — ci(mobile): the lane contract (fast / smoke-prebuilt /
       native-build / full; fingerprint-keyed dev-client artifact; honest
       BLOCKED). Branch `wip/t09`, merged after lead review.
+- [x] t13 — fix(backend+web): PRODUCTION schema-drift retirement — the
+      zu-sync system (SyncRun/UniversityFact) lived in ULARA's code
+      while the shared Neon production DB had DROPPED its tables
+      upstream (r349, madarek lineage): every code path touching them
+      answered P2021 (empirically: PUBLIC `GET /university/facts` →
+      HTTP 500; `GET /owner/system` → HTTP 500 — the owner System page;
+      `/admin/sync` family → 500; the nightly `/jobs/daily` sync
+      sub-job failing silently). Retired the whole feature family —
+      routes, scheduler job, lib, prisma models, admin/owner web
+      surfaces — with idempotent migration `0002_retire_zu_sync`
+      (DROP IF EXISTS: no-op on the established DB, consistent on fresh
+      ones). Directly on `wip/r341-integration` (lead-owned; frontend
+      half executed by an isolated subagent, lead-integrated).
 
 Tasks are created as `docs/redesign/r342/tasks/tNN-*.md` when staffed.
 One worktree per task: `/home/z/wt/tNN`, branch `wip/tNN` (the r341
-law continues — tNN numbering continues from r341's t01..t07).
+law continues — tNN numbering continues from r341's t01..t07; t13
+ran directly on the integration line under the lead's ownership —
+the change crosses schema/routes/web/tests and was integrated as
+one atomic unit).
 
 ## Round state (2026-11-13, wave 1 closed)
 
@@ -40,3 +56,14 @@ gates per the validation budget), merged into `wip/r341-integration`.
 CI lanes t09 is validated at YAML + lane-matrix level; the lanes'
 first live CI exercise happens on the next dispatch/push (the honest
 runtime confirmation — recorded here when it lands).
+
+## Round state (2026-11-19, wave 2 — the takeover mission)
+
+The full-project takeover mission (Madarek suspended — see the
+mission record) resumed this round on `wip/r341-integration`. t13
+(the production P2021 family) implemented + verified: backend
+tsc PASS · backend vitest **92 files / 1955 tests PASS** · frontend
+agent verification: tsc (app + tests) 0 errors · frontend vitest
+**224 files / 2834 tests PASS** · stylelint ratchet green. The live-DB
+ledger reconciliation (baseline 0001 resolve + deploy) is recorded
+in HANDOFF (wave 2).

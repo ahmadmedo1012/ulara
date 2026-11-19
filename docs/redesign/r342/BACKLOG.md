@@ -59,6 +59,17 @@ supplied the inventory; every finding below carries its evidence.
   dependencies: []
   acceptance: "No unmitigated critical/high finding in changed surfaces; documented evidence per area"
   state: OPEN
+- id: t13
+  finding: "PRODUCTION schema drift (the shared Neon DB): ULARA's baseline/code carried the zu-sync system (SyncRun/UniversityFact tables, SyncRunStatus enum) while the shared production database DROPPED them upstream (madarek r349, 2026-11-11) — every ULARA code path touching them answered P2021/HTTP 500."
+  evidence: "empirical (2026-11-19): curl https://ulara.vercel.app/api/v1/university/facts → 500 INTERNAL (PUBLIC endpoint); authenticated owner@test.ly GET /api/v1/owner/system → 500 (the owner System page); /admin/sync family → 500; the nightly cron /jobs/daily sync sub-job failing silently (never-reject contract). Column-level diff: ulara schema expects SyncRun(11 cols)+UniversityFact(7 cols) — absent in DB; DB carries 14 extra madarek-era tables ulara never queries (harmless)."
+  severity: critical
+  user_impact: "Public 500s on the facts feed; the OWNER System page fully broken; the admin sync console broken; nightly cron sync sub-job silently failing"
+  root_cause: "ULARA was squashed at the r336-era state (which still had the tables); the shared production DB continued with the madarek lineage which retired them (r349, data exported); the zu-sync feature is dead upstream — ULARA's copy is unconditionally broken against production"
+  owner: lead (+ isolated subagent for the frontend half)
+  dependencies: []
+  acceptance: "The zu-sync family removed end-to-end (backend routes/scheduler/lib/prisma models + web admin/owner surfaces + nav/tests/docs); idempotent migration 0002 (DROP IF EXISTS — no-op on the established DB, consistent on fresh ones); no new dead buttons; backend + frontend suites green; the live DB's _prisma_migrations ledger reconciled with the baseline (resolve + deploy, non-destructive — madarek's 49-row history preserved)"
+  state: DONE
+  closure: "wip/r341-integration (t13): backend vitest 92 files/1955 PASS, tsc PASS; frontend vitest 224 files/2834 PASS, tsc 0 errors; stylelint ratchet green; openapi regenerated (253 ops); BACKEND.md/AGENTS.md-adjacent docs updated; live-DB ledger reconcile recorded in HANDOFF wave 2"
 ```
 
 ## Orchestration decision (recorded honestly)

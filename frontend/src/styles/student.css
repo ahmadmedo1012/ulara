@@ -975,7 +975,9 @@
      name collided with components.css's AdminSync `.fact-row`
      (flex row, gap sp-1/sp-3, transparent) and the pages layer won
      globally, silently restyling AdminSyncPage's rows. Same recipe,
-     new collision-free name. ═══ */
+     new collision-free name. (r342 t13: the AdminSync surface — and
+     with it the colliding .fact-row family — retired; the rename
+     stays, collision history and all.) ═══ */
   /* inline variant — leading icon + label/value column (ProfilePage) */
   /* quiet supplementary-data failure note (audit 0-d P2: never a
      silent dash — but not a full alarm either; the page still works) */

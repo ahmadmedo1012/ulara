@@ -28,7 +28,6 @@ import { Role } from '@prisma/client';
 vi.mock('../../src/db.js', () => ({
   prisma: {
     operationalAlert: { findMany: vi.fn(), count: vi.fn() },
-    syncRun: { findMany: vi.fn() },
     auditLog: { count: vi.fn() },
     $transaction: vi.fn(),
   },
@@ -58,11 +57,10 @@ afterAll(async () => {
 
 const alertFindMany = vi.mocked(prisma.operationalAlert.findMany);
 const alertCount = vi.mocked(prisma.operationalAlert.count);
-const syncRunFindMany = vi.mocked(prisma.syncRun.findMany);
 const auditLogCount = vi.mocked(prisma.auditLog.count);
 
-/** Prisma delegates return PrismaPromise — one cast, the zu-sync-run
- *  pattern (see enrollments-scope.test.ts). */
+/** Prisma delegates return PrismaPromise — one cast, the
+ *  enrollments-scope.test.ts pattern. */
 type CountImpl = NonNullable<Parameters<typeof alertCount.mockImplementation>[0]>;
 type FindManyImpl = NonNullable<Parameters<typeof alertFindMany.mockImplementation>[0]>;
 
@@ -105,7 +103,6 @@ beforeEach(() => {
   criticalTotal = 0;
   warningTotal = 0;
   feedRows = [];
-  syncRunFindMany.mockResolvedValue([] as never);
   auditLogCount.mockResolvedValue(0 as never);
 });
 

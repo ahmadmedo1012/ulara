@@ -16,15 +16,15 @@
    §3  The permission-matrix domain groups (.govx-*) + the
        SplitView row-select plate (r250/r251/r299) — PRESERVED.
    §4  The settings rows (.settings-*) — PRESERVED.
-   §5  .spin — the sync in-flight motion (r299, contract-pinned:
-       motion-spin + duration token + --ease-linear).
+   §5  (r342 t13: the .spin section retired — its only consumers lived on
+       the retired /admin/sync console; the keyframes stay in motion.css.)
    §6  Workspace refinements: the faculty card's decorative hover
        lift quiets to a surface step (an admin console lists, it
        does not bounce), scoped to the pages this sheet serves.
 
    Consumers: AdminPages (faculties/courses/reports), AdminExtraPages
    (students/digital/settings), AdminGovernancePages (teachers +
-   permissions matrix), AdminSyncPage, QualityPages (toolbar only),
+   permissions matrix), QualityPages (toolbar only),
    OwnerInstitutionDetailPage + OwnerInstitutionsPage (R304 — the
    workspace tables ride the same family).
    Layer: pages (same as every page-scoped sheet).
@@ -376,19 +376,6 @@
 }
 @media (hover: hover) and (pointer: fine) {
   .settings-links a:hover { background: var(--surface-2); }
-}
-
-/* ════════════════════════════════════════════════════════════════
-   §5 · .spin — the sync in-flight motion (contract-pinned)
-   ════════════════════════════════════════════════════════════════
-   The trigger button's RefreshCw while a run pends + the RUNNING
-   badge in the history. The keyframes (motion-spin) are global/eager
-   (motion.css), the duration/easing ride the motion tokens, and
-   base.css's reduced-motion belt kills it under RM. */
-
-.spin {
-  display: inline-block;
-  animation: motion-spin var(--motion-duration-stat) var(--ease-linear) infinite;
 }
 
 /* ════════════════════════════════════════════════════════════════

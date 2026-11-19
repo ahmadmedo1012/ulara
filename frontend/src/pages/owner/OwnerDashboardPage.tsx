@@ -55,7 +55,9 @@ const ACTION_LABEL: Record<string, string> = {
   'paper.published': 'نشر بحث',
   'announcement.created': 'بثّ إعلان',
   'competition.created': 'إنشاء مسابقة',
-  'sync.run': 'مزامنة بيانات الجامعة',
+  // r342 t13: 'sync.run' (مزامنة بيانات الجامعة) retired — the zu-sync
+  // audit writer went with the zu-sync system; a historical row falls to
+  // the neutral «عملية نظام» fallback below.
   // Real backend audit actions (owner/permissions/teacher routes) —
   // without these the feed shows raw English enums.
   ROLE_CHANGE: 'تغيير صلاحيات مستخدم',
