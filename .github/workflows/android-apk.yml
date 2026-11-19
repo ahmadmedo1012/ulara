@@ -425,7 +425,7 @@ jobs:
             echo "- Releases page: https://github.com/ahmadmedo1012/ulara/releases"
             echo "- App version: ${{ steps.meta.outputs.version }}"
             echo "- Commit: \`${GITHUB_SHA}\`"
-            echo "- APK SHA-256: \`${GITHUB_SHA}\` recorded in SHA256SUMS.txt on the release"
+            echo "- APK SHA-256: \`$(cut -d' ' -f1 apk.sha256)\` recorded in SHA256SUMS.txt on the release"
             echo "- Signature: verified against the direct-channel keystore certificate"
           } >> "$GITHUB_STEP_SUMMARY"
 
