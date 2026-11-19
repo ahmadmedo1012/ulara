@@ -45,14 +45,8 @@
   "prepare": "node scripts/setup-hooks.mjs",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "clipper-lib": "^6.4.2",
-    "embedded-postgres": "^16.14.0-beta.17",
     "eslint": "^10.12.0",
     "eslint-plugin-react-hooks": "^7.1.1",
-    "harfbuzzjs": "^1.6.4",
-    "opentype.js": "^2.0.0",
-    "pixelmatch": "^8.0.0",
-    "pngjs": "^7.0.0",
     "tsx": "^4.22.4",
     "typescript-eslint": "^8.71.1"
   },
@@ -61,7 +55,6 @@
     "@prisma/engines": true,
     "prisma": true,
     "argon2": true,
-    "esbuild": true,
-    "@embedded-postgres/linux-x64": true
+    "esbuild": true
   }
 }
