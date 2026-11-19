@@ -44,26 +44,25 @@ cron).
 
 | Item | State |
 |---|---|
-| Core features, all five roles | **Shipped** — 1970 frontend + 1783 backend unit tests green + 116 DB integration tests + 28 e2e journeys (2026-10-19, rounds r141–r189) |
+| Core features, all five roles | **Shipped** — 2,989 frontend + 2,010 backend unit tests green (local measurement r343 on the current tree) + 116 DB integration tests + 28 e2e journeys |
 | Design system | Documented in `DESIGN.md` — parity gate 190/190 green |
-| AI assistant | **Mastery-aware chat with per-response engine attribution** — runs the in-process local engine by default (zero external calls); an OpenAI-compatible/OpenRouter provider activates only when `AI_PROVIDER`/`AI_API_KEY` are set in the deployment (the current production deployment has them unset → local engine; `/api/v1/ai/config` reports the live truth). The plagiarism scan stays a deterministic simulation, openly labeled; see `docs/02-features.md` |
-| English i18n | Not implemented. Real E2E (28 Playwright journeys) and PDF file uploads (durable postgres storage, r175) **are shipped** — full list in `docs/16-decisions-and-limitations.md` |
+| AI assistant | **Mastery-aware chat with per-response engine attribution** — runs the in-process local engine by default (zero external calls); an OpenAI-compatible/OpenRouter provider activates only when `AI_PROVIDER`/`AI_API_KEY` are set in the deployment (the current production deployment has them unset → local engine; `/api/v1/ai/config` reports the live truth). The plagiarism scan stays a deterministic simulation, openly labeled; honesty and limits: `docs/architecture.md` §8 |
+| English i18n | Not implemented. Real E2E (28 Playwright journeys) and PDF file uploads (durable postgres storage, r175) **are shipped** — full list in `docs/testing.md` and `docs/architecture.md` §8 |
 
 ## Documentation hub
 
-The Arabic documentation hub: [`docs/README.md`](docs/README.md)
-(numbered guides 01–16 + per-sector modules). Key references (English,
-generated from code): [`docs/API-REFERENCE.md`](docs/API-REFERENCE.md)
-(222 endpoints), [`docs/DATABASE-REFERENCE.md`](docs/DATABASE-REFERENCE.md)
-(79 models / 31 enums), [`docs/FRONTEND-REFERENCE.md`](docs/FRONTEND-REFERENCE.md),
-[`docs/PROJECT-REFERENCE.md`](docs/PROJECT-REFERENCE.md),
-[`docs/SECRETS-REFERENCE.md`](docs/SECRETS-REFERENCE.md).
+The Arabic documentation hub: [`docs/README.md`](docs/README.md) —
+one living topic file per domain. Key references: the generated API
+contract [`docs/api/openapi.json`](docs/api/openapi.json) (218 paths /
+255 operations; regenerate with `npm run api:openapi`), the data model
+in `backend/prisma/schema.prisma` (89 models / 32 enums), and
+[`BACKEND.md`](BACKEND.md) for the API conventions.
 AI agents must read [`AGENTS.md`](AGENTS.md) first.
 
 ## Quick start
 
 Prereqs: **Node `>=20 <25`**, **npm**, a PostgreSQL (free Neon works).
-Full guide: `docs/05-setup.md`.
+Reading paths: `docs/README.md`.
 
 ```bash
 git clone https://github.com/ahmadmedo1012/ulara && cd ulara
@@ -95,7 +94,7 @@ isolation): `teacher2@test.ly` · `admin2@test.ly` (same password).
 Log in as `student@test.ly` then `student2@test.ly` — the two
 students share reg-number `UZ-2024-00001` on purpose and each sees only
 their institution's courses (a foreign offering answers 403). Seeding is
-an explicit operator step from `backend/` (see `docs/12-deployment.md`),
+an explicit operator step from `backend/` (see `docs/deployment.md`),
 non-destructive on an established database (r180) — the one documented
 exception being these `@test.ly` accounts (R320 §C; the boot-time ensure
 can be enabled with `ULARA_TEST_ACCOUNTS=1` in the Vercel project
@@ -106,7 +105,7 @@ environment).
 ```bash
 npm run lint                          # ESLint — 0 errors
 npm run typecheck                     # tsc — src + tests, both sides (no DB)
-npm test                              # 1970 FE + 1783 BE (no DB; incl. 7 live S3 tests against s3rver) — npm run test:integration adds 116 DB tests on a local disposable database (14 cross-institution r179 isolation tests + 2 seed repeat-safety r182 tests among them)
+npm test                              # 2,989 FE + 2,010 BE (local measurement r343; no DB; incl. 7 live S3 tests against s3rver) — npm run test:integration adds 116 DB tests on a local disposable database (14 cross-institution r179 isolation tests + 2 seed repeat-safety r182 tests among them)
 node scripts/verify-parity-export.mjs # design-parity gate 190/190
 bash scripts/check-csp-hash.sh        # CSP pin drift guard (now in CI)
 # (validate:colleges retired with the fixed college catalogue in Phase Ω)
@@ -137,7 +136,7 @@ npx vercel deploy --prod --regions fra1
 
 Deploys ride the Vercel CLI today — GitHub auto-deploy needs the GitHub
 login connection added to the Vercel account (the known manual step).
-Details: `docs/12-deployment.md`.
+Details: `docs/deployment.md`.
 
 ## Environment variables (required only)
 
@@ -149,7 +148,7 @@ Details: `docs/12-deployment.md`.
 
 Optional vars (`CORS_ORIGINS` — *replaces* the default list when set,
 `INTERNAL_SERVICE_TOKEN`, `DIRECT_DATABASE_URL`, `PORT`): full table and
-exact behavior in `docs/06-configuration.md`.
+exact behavior in `docs/deployment.md` §3 and `.env.example`.
 
 ## License
 

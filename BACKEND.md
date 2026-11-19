@@ -3,10 +3,11 @@
 Express 4.22.3 (TypeScript, ESM) + Prisma 5.22 over Neon PostgreSQL.
 All endpoints are mounted under the base path **`/api/v1`** and return a
 `{ data: T }` envelope (errors return `{ error: { code, message } }`).
-The complete, code-accurate endpoint table (196 endpoints — 191 route
+The complete, code-accurate endpoint contract (196 endpoints — 191 route
 registrations in the 25 route files + 4 module-router endpoints + `GET
 /health`) lives in
-[`docs/API-REFERENCE.md`](docs/API-REFERENCE.md) — the tables below are a
+[`docs/api/openapi.json`](docs/api/openapi.json) (regenerated from the code
+with `npm run api:openapi`) — the tables below are a
 condensed overview.
 
 ---
@@ -294,10 +295,14 @@ condensed overview.
 ## 7. Scripts
 
 **Root:** `build` (frontend + backend + `db:deploy`), `start`, `dev`, `dev:web`,
-`test` (both workspaces), `typecheck` (src + tests, both workspaces),
-`db:migrate`, `db:deploy`, `db:seed`, `validate:colleges`,
-`check:motion-tokens` / `check:icons` / `check:csp-hash`
-(the suspended `check:i18n` gate was deleted at r137 — Arabic-only per D17-3).
+`test` (both workspaces), `test:integration`, `lint`, `typecheck` (src + tests,
+both workspaces), the `db:*` family (`db:migrate`, `db:deploy`, `db:seed`,
+`db:backup`/`db:restore`/`db:verify`, owner/password ops), `api:openapi`,
+`tokens:build|check`, `smoke`, `gate:size`, and the `check:*` design gates
+(`check:motion-tokens` / `check:icons` / `check:colors` / `check:raw-css` /
+`check:csp-hash`) — `validate:colleges` was retired with the fixed college
+catalogue (Phase Ω), and the suspended `check:i18n` gate was deleted at
+r137 — Arabic-only per D17-3.
 **Backend:** `dev` (tsx watch), `build` (tsc → `dist/`), `start`, `typecheck`,
 `prisma:generate|migrate|deploy|seed`, `postinstall` (prisma generate).
 
