@@ -186,3 +186,32 @@ Root cause: the shared Neon production DB dropped `SyncRun`/`UniversityFact` ups
 | Backend `tsc --noEmit` | PASS (0 errors) |
 | Backend vitest (FULL suite) | **92 files / 1955 tests PASS** |
 | eslint (frontend/src + backend/src) | **0 errors** (14 pre-existing warnings) |
+
+## Wave 4 — mobile parity for t13 + the gates record (2026-11-19, lead-verified)
+
+| Task | Agent type | Branch | Commits | State |
+|------|-----------|--------|---------|-------|
+| t13-mobile: the zu-sync retirement on the app (dead admin sync console + student university-facts screen deleted; client functions + governance label kit removed; generated schema reconciled) | isolated subagent (no local mobile deps — CI-verified) | wip/r341-integration | f80d644 · 69ab892 · a59a310 | MERGED |
+
+### What the mobile wave found beyond the brief
+
+- A THIRD consumer of the removed `/owner/system` `sync` block: the mobile owner System screen's «آخر مزامنة» row (removed).
+- The mobile `/student/university` screen called the retired facts route RAW (bypassing the typed client) — deleted with its profile menu row.
+- The contract-check consumer regex also parses retirement COMMENTS — a note quoting the removed call verbatim drifted the gate (reworded).
+- The canonical `openapi-typescript@7.13.0` regen ALSO surfaced pre-existing drift from wave 1: the t08 `/ping` path had never been regen'd into the mobile schema (now reconciled: three retired paths out, `/ping` in).
+
+### CI evidence (the takeover session)
+
+| Run | Result |
+|------|--------|
+| Size gate + deadcode (every pushed SHA incl. a59a310) | **success** |
+| Mobile `fast` lane on a59a310 (typecheck · expo lint · contract-check · generated-drift · jest render net · expo export ×2 · bundle budget) | **success** (after the two honest gate catches above — the lanes did their job) |
+| Zero-trace (brand gate) | **PASS locally + in CI** — the first t13 push leaked retired identity names into docs/comments; CI caught it, the tree was scrubbed and the two commits rewritten (history clean) |
+| Full CI matrix on the final SHA | recorded at close (the run in flight at doc-commit time) |
+
+### Live verification (local stack against the REAL production Neon DB)
+
+- Backend booted on :4000 against Neon: `/api/v1/health` → `{"ok":true,"dbLatencyMs":369}`.
+- Owner journey (browser): quick-login → dashboard → System page **renders with real data** (service status, alerts, activity, storage truth — the page that answered HTTP 500 in production before t13).
+- Student journey (browser): quick-login → honest contextless states (institution chooser + the server's Arabic «حدّد المؤسسة أولًا») → institution selection (`POST /auth/select-institution` 200) → library papers tab shows **3 published papers, institution-scoped** — exactly the three rows the t14-scoped API returns.
+- API-level: `/research/published` with verified context → 200 + 3 papers; contextless → honest 403; `/admin/sync` → 404; `/university/facts` → auth-gated; production-code-path devInbox → absent in production mode, present in development mode.
