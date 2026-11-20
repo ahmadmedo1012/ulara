@@ -41,6 +41,7 @@
 import { Fragment, type ReactNode, type RefObject } from 'react';
 import { Link } from 'react-router-dom';
 import { ScrubReveal } from '../journey/WordReveal';
+import { RevealCssClass } from '../../../hooks/useReveal';
 
 /* ── The statement (the scrub manifesto). Same voice/length class as
  * the reference's 127-char intro statement; honest — the four clauses
@@ -112,6 +113,48 @@ function ArrowIcon({ spec }: { spec: string }) {
   );
 }
 
+/* R344-LS1 — the statement's own drafting underlay (the section-furniture
+ * layer): a faint drafting grid + the arch arcs + a measure dimension +
+ * the corner registration marks, all riding the SAME scrub clock the
+ * composer writes (--wr-p on the section). The choreography is pure CSS
+ * (calc over the inherited var) — no second scroll handler. The whole
+ * layer mounts aria-hidden (chrome, never content) and only ever HIDES
+ * under .js-reveal-armed (the reveals module's root class), so no-JS and
+ * reduced-motion visitors read the settled sheet (the house law). */
+function StatementDraft() {
+  return (
+    <div className="st-draft" aria-hidden="true">
+      {/* the grid patch — the drafting sheet's reference field behind the title */}
+      <svg className="st-draft-svg st-draft-grid" viewBox="0 0 320 320" fill="none" preserveAspectRatio="xMinYMin meet">
+        {[1, 2, 3, 4, 5, 6, 7].map((n) => (
+          <line key={`v${n}`} className="st-draft-g" x1={n * 40} y1="0" x2={n * 40} y2="320" />
+        ))}
+        {[1, 2, 3, 4, 5, 6, 7].map((n) => (
+          <line key={`h${n}`} className="st-draft-g" x1="0" y1={n * 40} x2="320" y2={n * 40} />
+        ))}
+      </svg>
+      {/* the arcs — the courtyard's arch rhythm echoed behind the statement */}
+      <svg className="st-draft-svg st-draft-arcs" viewBox="0 0 320 200" fill="none" preserveAspectRatio="xMaxYMax meet">
+        <path className="st-draw st-draw-a" pathLength={1} d="M40 200 A 120 120 0 0 1 280 200" />
+        <path className="st-draw st-draw-b" pathLength={1} d="M80 200 A 80 80 0 0 1 240 200" />
+        <path className="st-draw st-draw-c" pathLength={1} d="M120 200 A 40 40 0 0 1 200 200" />
+      </svg>
+      {/* the dimension — the measure line under the title block */}
+      <svg className="st-draft-svg st-draft-dim" viewBox="0 0 320 24" fill="none" preserveAspectRatio="none">
+        <line className="st-draw st-draw-d" pathLength={1} x1="0" y1="12" x2="320" y2="12" />
+        <line className="st-draw st-draw-e" pathLength={1} x1="0" y1="4" x2="0" y2="20" />
+        <line className="st-draw st-draw-f" pathLength={1} x1="320" y1="4" x2="320" y2="20" />
+      </svg>
+      {/* the technical metadata — mono sheet furniture over the statement cell */}
+      <div className="st-meta">
+        <span className="st-meta-cell fo-mono" dir="ltr">SEC. A-02</span>
+        <span className="st-meta-cell fo-mono" dir="ltr">SCALE 1:100</span>
+        <span className="st-meta-cell fo-mono">البيان — مسقط التحرير</span>
+      </div>
+    </div>
+  );
+}
+
 interface StatementProps {
   /* the section element — the composer's scrub driver writes --wr-p on it */
   sectionRef: RefObject<HTMLElement>;
@@ -125,6 +168,18 @@ export function Statement({ sectionRef, titleRef }: StatementProps) {
      * census records home-intro-wrap > div[1]; the section role moves to
      * the band — the inner <section> below IS the record's section[1]) */
     <div id="statement" className="st-section" ref={sectionRef as RefObject<HTMLDivElement>} aria-labelledby="statement-title" data-spec="intro.wrap">
+      {/* R344-LS1 — the hero handoff splice: the drafting language continues
+          straight out of the hero's frame into this band. One hairline rail
+          with the sheet plate ([02] · STATEMENT) + registration marks; each
+          seat rides the house reveal rung (staggered, RM-safe, JS-off-safe
+          — the classes are added by the belt, content ships visible). */}
+      <div className="st-splice" aria-hidden="true">
+        <RevealCssClass as="span" className="st-splice-mark st-splice-mark-a" delay={1}>{' '}</RevealCssClass>
+        <RevealCssClass as="span" className="st-splice-rule" delay={2}>{' '}</RevealCssClass>
+        <RevealCssClass as="span" className="st-splice-plate fo-mono" delay={2}>[02] · STATEMENT</RevealCssClass>
+        <RevealCssClass as="span" className="st-splice-tick" delay={3}>{' '}</RevealCssClass>
+        <RevealCssClass as="span" className="st-splice-mark st-splice-mark-b" delay={4}>{' '}</RevealCssClass>
+      </div>
       <section className="st-band" aria-hidden="false" data-spec="intro.section">
         <div className="st-grid" data-spec="intro.grid">
           {/* ── the media cell — R343 C-1: the ORIGINAL courtyard
@@ -167,6 +222,7 @@ export function Statement({ sectionRef, titleRef }: StatementProps) {
               own line containers are full-width boxes. */}
           <div className="st-stmt" data-spec="intro.stmt">
             <div className="lp-hairline lp-hairline--v" aria-hidden="true" data-spec="intro.stmtrule" />
+            <StatementDraft />
             <div className="st-stmt-in" data-spec="intro.stmtin">
               <div className="st-titlebox" data-spec="intro.titlebox">
                 <h2 id="statement-title" className="st-title" ref={titleRef} data-spec="intro.h2">

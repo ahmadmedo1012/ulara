@@ -1520,3 +1520,63 @@
 }
 
 /* R342A-END */
+
+/* ═══ R344-LS5 — the capbar's live gate, descendant-proof.
+   visibility:hidden does NOT bind descendants that re-declare
+   `visible` — the per-stage caption swap (.wy-cap visibility seats)
+   beat the parked bar's hidden state, so the stage chip floated over
+   the WHOLE sheet at viewport y48 (measured on every scroll seat).
+   display:none leaves the box tree entirely — the parked bar is gone
+   for real, the active swap still works. ═══ */
+.wy-capbar:not([data-wy-live="1"]) {
+  display: none;
+}
+
+/* ═══ R344-LS5b — the route map draws at the final stage: the dashed
+   route paths fade in sequentially (stagger ladder on the transition
+   delays) and the point reveals pop after them — the closing beat of
+   the four-stage story. Stage-driven (scroll state), RM collapses the
+   transitions to instant. ═══ */
+.wy-map-path {
+  opacity: 0;
+  transition: opacity var(--t-slow) var(--ease-out);
+}
+.wy-map-path:nth-of-type(1) { transition-delay: 40ms; }
+.wy-map-path:nth-of-type(2) { transition-delay: 120ms; }
+.wy-map-path:nth-of-type(3) { transition-delay: 200ms; }
+.wy-map-path:nth-of-type(4) { transition-delay: 280ms; }
+.wy-map-path:nth-of-type(5) { transition-delay: 360ms; }
+.wy-map-path:nth-of-type(6) { transition-delay: 440ms; }
+.wy-map-path:nth-of-type(7) { transition-delay: 520ms; }
+.wy-map-path:nth-of-type(8) { transition-delay: 600ms; }
+.wy-map-path:nth-of-type(9) { transition-delay: 680ms; }
+.wy-map-path:nth-of-type(10) { transition-delay: 760ms; }
+.wy-map-path:nth-of-type(11) { transition-delay: 840ms; }
+.wy-map-path:nth-of-type(12) { transition-delay: 920ms; }
+.wy-map-path:nth-of-type(13) { transition-delay: 1000ms; }
+.wy-map-path:nth-of-type(14) { transition-delay: 1080ms; }
+.wy-map-path:nth-of-type(15) { transition-delay: 1160ms; }
+.wy-map-path:nth-of-type(16) { transition-delay: 1240ms; }
+.wy-stage[data-wy-stage="3"] .wy-map-path,
+.wy-capbar[data-wy-stage="3"] .wy-map-path {
+  opacity: 1;
+}
+.wy-pt {
+  opacity: 0;
+  transition: opacity var(--t-fast) var(--ease-out);
+}
+.wy-stage[data-wy-stage="3"] .wy-pt {
+  opacity: 1;
+}
+.wy-stage[data-wy-stage="3"] .wy-pt:nth-of-type(1) { transition-delay: 300ms; }
+.wy-stage[data-wy-stage="3"] .wy-pt:nth-of-type(2) { transition-delay: 380ms; }
+.wy-stage[data-wy-stage="3"] .wy-pt:nth-of-type(3) { transition-delay: 460ms; }
+.wy-stage[data-wy-stage="3"] .wy-pt:nth-of-type(4) { transition-delay: 540ms; }
+.wy-stage[data-wy-stage="3"] .wy-pt:nth-of-type(5) { transition-delay: 620ms; }
+.wy-stage[data-wy-stage="3"] .wy-pt:nth-of-type(6) { transition-delay: 700ms; }
+.wy-stage[data-wy-stage="3"] .wy-pt:nth-of-type(7) { transition-delay: 780ms; }
+.wy-stage[data-wy-stage="3"] .wy-pt:nth-of-type(8) { transition-delay: 860ms; }
+.wy-stage[data-wy-stage="3"] .wy-pt:nth-of-type(9) { transition-delay: 940ms; }
+.wy-stage[data-wy-stage="3"] .wy-pt:nth-of-type(10) { transition-delay: 1020ms; }
+.wy-stage[data-wy-stage="3"] .wy-pt:nth-of-type(11) { transition-delay: 1100ms; }
+.wy-stage[data-wy-stage="3"] .wy-pt:nth-of-type(12) { transition-delay: 1180ms; }

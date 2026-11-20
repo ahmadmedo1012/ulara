@@ -735,3 +735,147 @@ html[data-theme='dark'] .pr-section .pr-cta {
   background: var(--bg);
   border-color: var(--rule);
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   R344-LS4 — the captures' annotation overlays: mono chips naming the
+   capability in view, leader lines drawn chip→target, and a one-shot
+   accent sweep. The group arms on the house reveal rung (.in-view);
+   the callout ladder rides --pd (delays are the gate's documented
+   exemption). Nothing loops; RM lands the complete furniture. ═══ */
+.pr-img,
+.pr-rowimg {
+  position: relative;
+}
+.pr-callouts {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+.pr-co {
+  position: absolute;
+  left: var(--co-x, 60%);
+  top: var(--co-y, 40%);
+  display: flex;
+  flex-direction: row;
+  direction: ltr;
+  align-items: center;
+  gap: 0;
+  opacity: 0;
+  /* the dot (the row's last cell) lands ON the anchor: the row's right
+     edge is pulled back onto --co-x, the chip hangs leftward */
+  transform: translate(-100%, -50%) translateY(6px);
+}
+.pr-co--trail {
+  /* the flipped seat: the dot stays on the anchor, the chip hangs
+     rightward (row-reverse puts the dot first/leftmost) */
+  flex-direction: row-reverse;
+  transform: translateY(-50%) translateY(6px);
+}
+.in-view .pr-co {
+  animation: pr-co-in var(--t-slow) var(--ease-out) forwards;
+  animation-delay: var(--pd, 300ms);
+}
+.in-view .pr-co--trail {
+  animation-name: pr-co-in-trail;
+}
+@keyframes pr-co-in {
+  from { opacity: 0; transform: translate(-100%, -50%) translateY(9px); }
+  to { opacity: 1; transform: translate(-100%, -50%) translateY(0); }
+}
+@keyframes pr-co-in-trail {
+  from { opacity: 0; transform: translateY(-50%) translateY(9px); }
+  to { opacity: 1; transform: translateY(-50%) translateY(0); }
+}
+.pr-co-t {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 1.2rem;
+  line-height: 1.7rem;
+  white-space: nowrap;
+  color: var(--text);
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  border: 1px solid var(--rule-strong);
+  border-inline-start: 2px solid var(--accent);
+  padding: 0.3rem 1rem;
+}
+.pr-co-l {
+  inline-size: 4.8rem;
+  block-size: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: 100% 50%;
+  flex: none;
+}
+.in-view .pr-co-l {
+  animation: pr-co-line var(--t-slow) var(--ease-out) forwards;
+  animation-delay: calc(var(--pd, 300ms) + 140ms);
+  transform-origin: 100% 50%;
+}
+.pr-co--trail .pr-co-l {
+  transform-origin: 0% 50%;
+}
+@keyframes pr-co-line {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.pr-co-d {
+  inline-size: 7px;
+  block-size: 7px;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  transform: rotate(45deg);
+  flex: none;
+  opacity: 0;
+}
+.in-view .pr-co-d {
+  animation: pr-co-dot var(--t-fast) var(--ease-spring) forwards;
+  animation-delay: calc(var(--pd, 300ms) + 420ms);
+}
+@keyframes pr-co-dot {
+  from { opacity: 0; transform: rotate(45deg) scale(0.4); }
+  to { opacity: 1; transform: rotate(45deg) scale(1); }
+}
+
+/* the one-shot sweep — a narrow accent wash crossing the frame once */
+.pr-sweep {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: -18%;
+  inline-size: 14%;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 9%, transparent), transparent);
+  transform: translateX(-30rem);
+  opacity: 0;
+}
+.in-view .pr-sweep {
+  animation: pr-sweep var(--t-cinema) var(--ease-soft) forwards;
+  animation-delay: 200ms;
+}
+@keyframes pr-sweep {
+  0% { opacity: 0; transform: translateX(-30rem); }
+  12% { opacity: 1; }
+  88% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(120rem); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pr-co-l,
+  .pr-co-d,
+  .pr-sweep {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .pr-co {
+    animation: none;
+    opacity: 1;
+    transform: translate(-100%, -50%);
+  }
+  .pr-co--trail {
+    transform: translateY(-50%);
+  }
+  .pr-co-d { transform: rotate(45deg); }
+}
+@media (max-width: 767px) {
+  .pr-co-l { inline-size: 2.6rem; }
+  .pr-co-t { font-size: 1.1rem; padding: 0.2rem 0.7rem; }
+}

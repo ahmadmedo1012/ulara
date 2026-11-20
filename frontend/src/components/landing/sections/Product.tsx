@@ -27,6 +27,7 @@ import { RevealCssClass } from '../../../hooks/useReveal';
 import { Hairline, Numeral } from '../patterns';
 import examShot from '../../../assets/product/exam-active.webp';
 import aiTutorShot from '../../../assets/product/ai-tutor.webp';
+import { PrCallouts } from './PrCallouts';
 
 /* the two platform items — copy-driven, mirroring the reference's two
  * carousel items (label/title/long-text/two CTA lines each).
@@ -88,6 +89,7 @@ export function Product() {
           <div className="pr-imgs-vrule" data-spec="platform.imgsvruleA" aria-hidden="true" />
           <div className="pr-img" data-spec="platform.img1">
             <img src={PLATFORM_ITEMS[0].img} data-spec="platform.img1img" alt="" loading="lazy" decoding="async" width={1440} height={870} />
+            <PrCallouts kind="exam" />
             {/* r340 T-P1y — the drafting chrome every product capture
                 carries (the blind panel's "two design languages" finding:
                 the screenshots read generic light-SaaS; the frame now
@@ -101,6 +103,7 @@ export function Product() {
           <div className="pr-imgs-hrule" data-spec="platform.imghruleA" aria-hidden="true" />
           <div className="pr-img" data-spec="platform.img2">
             <img src={PLATFORM_ITEMS[1].img} data-spec="platform.img2img" alt="" loading="lazy" decoding="async" width={1440} height={870} />
+            <PrCallouts kind="tutor" />
             <div className="pr-frame-chrome" aria-hidden="true">
               <Hairline variant="border" />
               <span className="pr-frame-tag"><Numeral n={2} /></span>
@@ -184,6 +187,8 @@ function PlatformRow({ item, idx, hidden, clone }: { item: typeof PLATFORM_ITEMS
           to the reference's own 0×0 census state) */}
       <div className="pr-rowimg" data-spec={ds('rowimg')}>
         <img src={item.img} data-spec={ds('rowimgimg')} alt={item.alt} loading="lazy" decoding="async" width={1440} height={870} />
+        {idx === 1 && <PrCallouts kind="exam" />}
+        {idx === 2 && <PrCallouts kind="tutor" />}
         <div className="pr-rowimg-rule" data-spec={ds('rowimgrule')} aria-hidden="true" />
         {/* r340 T-P1y — the same drafting chrome on the phone-band
             captures (one design language at every width) */}

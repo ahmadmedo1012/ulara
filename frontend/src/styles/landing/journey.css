@@ -1421,3 +1421,34 @@ section.chapters {
     color: var(--text);
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   R344-LS3 — the plan ASSEMBLES: each progressive layer's strokes draw
+   on across the layer's own build window. The JourneyScene driver
+   writes --jt-draw-1…6 (0..1, the same measured windows the opacity
+   crossfade rides); the dash ramp turns the layer's ink on like a
+   pen pass — walls first, detail completing as the window closes.
+   The vars come from JS: unset (no-JS) or reduced motion → the 1
+   fallbacks keep every layer fully drawn. Dashed strokes (.bp-dash)
+   keep their own dash pattern and stay on the opacity crossfade. ═══ */
+.jt .jt-plan [data-xl] .bp-drawable:not(.bp-dash) {
+  stroke-dasharray: 1000;
+}
+.jt .jt-plan [data-xl='1'] .bp-drawable:not(.bp-dash) {
+  stroke-dashoffset: calc(1000 * (1 - var(--jt-draw-1, 1)));
+}
+.jt .jt-plan [data-xl='2'] .bp-drawable:not(.bp-dash) {
+  stroke-dashoffset: calc(1000 * (1 - var(--jt-draw-2, 1)));
+}
+.jt .jt-plan [data-xl='3'] .bp-drawable:not(.bp-dash) {
+  stroke-dashoffset: calc(1000 * (1 - var(--jt-draw-3, 1)));
+}
+.jt .jt-plan [data-xl='4'] .bp-drawable:not(.bp-dash) {
+  stroke-dashoffset: calc(1000 * (1 - var(--jt-draw-4, 1)));
+}
+.jt .jt-plan [data-xl='5'] .bp-drawable:not(.bp-dash) {
+  stroke-dashoffset: calc(1000 * (1 - var(--jt-draw-5, 1)));
+}
+.jt .jt-plan [data-xl='6'] .bp-drawable:not(.bp-dash) {
+  stroke-dashoffset: calc(1000 * (1 - var(--jt-draw-6, 1)));
+}

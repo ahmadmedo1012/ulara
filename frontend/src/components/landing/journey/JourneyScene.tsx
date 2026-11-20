@@ -419,6 +419,9 @@ export function JourneyScene() {
 
       /* the static end-state under reduced motion. */
       if (reduced) {
+        for (let i = 0; i < LAYER_WINDOWS.length; i += 1) {
+          track.style.setProperty(`--jt-draw-${i + 1}`, '1');
+        }
         for (const group of resolveLayers(track)) {
           for (const el of group) setSheetVar(el.style, 'opacity', '1');
         }
@@ -459,11 +462,17 @@ export function JourneyScene() {
       const seqU = clamp01((pRaw - SEQ_START_PIN) / SEQ_SPAN_PIN);
       const t = mobile ? SEQ_DUR_S * Math.pow(seqU, 0.55) : SEQ_DUR_S * seqU;
 
-      /* 3 · the six progressive layers — ghost→full crossfades. */
+      /* 3 · the six progressive layers — ghost→full crossfades, each
+       * build now STROKE-DRAWN: the layer's own --jt-draw-N (0..1, the
+       * same window) drives the dash-offset ramp that inks the layer's
+       * strokes on (journey.css). Six var writes per tick — the walls
+       * assemble, they do not merely fade. */
       const groups = resolveLayers(track);
       for (let i = 0; i < LAYER_WINDOWS.length; i += 1) {
         const [a, b] = LAYER_WINDOWS[i]!;
-        const o = XL_GHOST + (1 - XL_GHOST) * p2o((t - a) / (b - a));
+        const u = p2o((t - a) / (b - a));
+        const o = XL_GHOST + (1 - XL_GHOST) * u;
+        track.style.setProperty(`--jt-draw-${i + 1}`, u.toFixed(4));
         for (const el of groups[i] ?? []) {
           setSheetVar(el.style, 'opacity', o.toFixed(3));
         }

@@ -32,6 +32,12 @@
 import type { RefObject } from 'react';
 import { Link } from 'react-router-dom';
 import { PainArt } from '../PainArt';
+/* R344-LS2 — the measurement furniture rides beside the census motif:
+ * the art seat (problem.artsvg.N) keeps binding PainArt's svg; PainSim
+ * mounts the SECOND decorative svg (rulers, rails, stamps, tags) that
+ * turns each motif into its measured simulation. Choreography: pains.css
+ * keyed on the column's reveal state. */
+import { PainSim } from './PainSim';
 
 /* ── The four pains — the honest inverse of the live ledger: each
  * pain names a real gap in Libyan higher-ed today and is answered by
@@ -171,6 +177,7 @@ export function Live({ colsRef, dotsRef }: LiveProps) {
                             window (the drawing inside is Ulara's own motif);
                             the container hooks stay on the boxes around it. */}
                         <PainArt kind={p.num} data-spec={`problem.artsvg.${i + 1}`} />
+                        <PainSim kind={p.num} />
                       </div>
                     </div>
                   </div>

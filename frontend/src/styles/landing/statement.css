@@ -682,3 +682,202 @@
 .st-pill-t {
   transition: transform 0.48s cubic-bezier(0.625, 0.05, 0, 1);
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   R344-LS1 — the drafting underlay + the hero handoff splice.
+   The choreography reads the composer's scrub var (--wr-p, inherited
+   from .st-section) — ONE clock, zero new scroll handlers. Every hide
+   state is gated under html.js-reveal-armed (the reveals module's root
+   class): reduced motion never arms it (initReveals bails), and no-JS
+   visitors read the settled sheet. Content ships visible. ═══ */
+
+/* ── the splice — the statement band opens with the sheet's own rail ── */
+.st-splice {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+  padding: 2.4rem 15rem 0;
+}
+.st-splice .st-splice-mark {
+  inline-size: 11px;
+  block-size: 11px;
+  flex: none;
+  position: relative;
+}
+.st-splice .st-splice-mark::before,
+.st-splice .st-splice-mark::after {
+  content: '';
+  position: absolute;
+  background: var(--rule-strong);
+}
+.st-splice .st-splice-mark::before {
+  inset-inline-start: 5px;
+  inset-block: 0;
+  inline-size: 1px;
+}
+.st-splice .st-splice-mark::after {
+  inset-block-start: 5px;
+  inset-inline: 0;
+  block-size: 1px;
+}
+.st-splice .st-splice-rule {
+  flex: 1;
+  block-size: 1px;
+  background: var(--rule-strong);
+  opacity: 0.72;
+}
+.st-splice .st-splice-plate {
+  flex: none;
+  font-size: 1.3rem;
+  line-height: 1.82rem;
+  letter-spacing: 0.08em;
+  color: var(--neutral-500);
+  white-space: nowrap;
+}
+.st-splice .st-splice-tick {
+  flex: none;
+  inline-size: 1.6rem;
+  block-size: 1px;
+  background: var(--accent);
+  position: relative;
+}
+.st-splice .st-splice-tick::after {
+  content: '';
+  position: absolute;
+  inset-block-start: -3px;
+  inset-inline-start: 50%;
+  inline-size: 7px;
+  block-size: 7px;
+  transform: translateX(50%) rotate(45deg);
+  border: 1px solid var(--accent);
+}
+
+/* ── the draft layer — behind the statement cell's content ── */
+.st-stmt-in {
+  position: relative;
+  z-index: 1;
+}
+.st-draft {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  color: var(--rule-strong);
+}
+.st-draft-svg {
+  position: absolute;
+  overflow: visible;
+}
+.st-draft-grid {
+  inset-block-start: 0;
+  inset-inline-start: 15rem;
+  inline-size: 32rem;
+  block-size: 32rem;
+}
+.st-draft-arcs {
+  inset-block-end: 4.6rem;
+  inset-inline-end: 2.4rem;
+  inline-size: 30rem;
+  block-size: 18.75rem;
+}
+.st-draft-dim {
+  inset-block-end: 1.2rem;
+  inset-inline: 15rem 2.4rem;
+  inline-size: auto;
+  block-size: 2.4rem;
+}
+.st-draft-g {
+  stroke: var(--rule);
+  stroke-width: 1;
+}
+.st-draft .st-draw {
+  stroke: currentColor;
+  stroke-width: 1.4;
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+.st-draft .st-draw-a,
+.st-draft .st-draw-b,
+.st-draft .st-draw-c {
+  stroke: var(--rule-strong);
+  opacity: 0.85;
+}
+.st-draft .st-draw-d {
+  stroke: var(--rule-strong);
+}
+.st-draft .st-draw-e,
+.st-draft .st-draw-f {
+  stroke: var(--accent);
+}
+.st-draw {
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 0;
+}
+
+/* the metadata chips — mono sheet furniture at the cell's top edge */
+.st-meta {
+  position: absolute;
+  inset-block-start: 2.2rem;
+  inset-inline-end: 15rem;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  pointer-events: none;
+}
+.st-meta-cell {
+  font-size: 1.2rem;
+  line-height: 1.68rem;
+  color: var(--neutral-500);
+  border: 1px solid var(--rule);
+  padding: 0.3rem 1rem;
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
+}
+
+/* ── the scrub choreography — armed sessions only ──
+   The statements ink over --wr-p's own curve; the furniture draws in
+   measured stages around it (grid first, arcs mid, dim late). */
+.js-reveal-armed .st-section .st-draft-grid {
+  opacity: calc(var(--wr-p, 0) * 0.55);
+}
+.js-reveal-armed .st-section .st-draft .st-draw-a {
+  stroke-dashoffset: calc(1 - clamp(0, (var(--wr-p, 0) - 0.12) / 0.3, 1));
+}
+.js-reveal-armed .st-section .st-draft .st-draw-b {
+  stroke-dashoffset: calc(1 - clamp(0, (var(--wr-p, 0) - 0.2) / 0.32, 1));
+}
+.js-reveal-armed .st-section .st-draft .st-draw-c {
+  stroke-dashoffset: calc(1 - clamp(0, (var(--wr-p, 0) - 0.28) / 0.34, 1));
+}
+.js-reveal-armed .st-section .st-draft .st-draw-d {
+  stroke-dashoffset: calc(1 - clamp(0, (var(--wr-p, 0) - 0.5) / 0.3, 1));
+}
+.js-reveal-armed .st-section .st-draft .st-draw-e,
+.js-reveal-armed .st-section .st-draft .st-draw-f {
+  stroke-dashoffset: calc(1 - clamp(0, (var(--wr-p, 0) - 0.66) / 0.28, 1));
+}
+.js-reveal-armed .st-section .st-meta {
+  opacity: clamp(0, (var(--wr-p, 0) - 0.08) * 14, 1);
+  transform: translateY(calc((1 - clamp(0, (var(--wr-p, 0) - 0.08) * 14, 1)) * 8px));
+}
+/* the media cell — the courtyard wipes down in step with the words,
+   settling from a whisper of over-scale */
+.js-reveal-armed .st-section .st-media-img {
+  clip-path: inset(calc((1 - clamp(0, var(--wr-p, 0) / 0.72, 1)) * 100%) 0 0 0);
+  transform: scale(calc(1.045 - 0.045 * clamp(0, var(--wr-p, 0) / 0.72, 1)));
+  transform-origin: 50% 0;
+}
+
+@media (max-width: 991px) {
+  .st-splice { padding-inline: 2.4rem; }
+  .st-meta { inset-inline-end: 2.4rem; }
+  .st-draft-grid { inset-inline-start: 2.4rem; inline-size: 24rem; block-size: 24rem; }
+  .st-draft-dim { inset-inline: 2.4rem; }
+  .st-draft-arcs { inset-inline-end: 1.6rem; }
+}
+@media (max-width: 767px) {
+  .st-splice { gap: 1rem; padding-block-start: 1.6rem; }
+  .st-splice .st-splice-plate { font-size: 1.2rem; }
+  .st-meta-cell:nth-child(2) { display: none; }
+  .st-draft-grid { inline-size: 18rem; block-size: 18rem; inset-block-start: 3rem; }
+  .st-draft-arcs { block-size: 12rem; inset-block-end: 10rem; }
+}
