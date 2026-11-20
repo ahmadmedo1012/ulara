@@ -93,6 +93,31 @@
   transition: background-color var(--motion-duration-sheet-exit) var(--motion-ease-band-exit);
 }
 
+/* the registration cross — the sheet's datum hairlines (static centred
+   marks; the r311 loader-owns-the-pointer contract reads these seats).
+   Full-span 1px rules at the exact centreline, quiet ink, never in the
+   pointer's way. */
+.pl-cross-h,
+.pl-cross-v {
+  position: absolute;
+  background: var(--text);
+  mix-blend-mode: difference;
+  opacity: 0.32;
+  pointer-events: none;
+}
+
+.pl-cross-h {
+  inset-inline: 0;
+  top: 50%;
+  block-size: 1px;
+}
+
+.pl-cross-v {
+  inset-block: 0;
+  inset-inline-start: 50%;
+  inline-size: 1px;
+}
+
 /* the content seat — declared before the exit block so the exit's
    scoped rule wins by cascade order (stylelint order discipline) */
 .pl-inner {

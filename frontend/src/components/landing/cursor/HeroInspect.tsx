@@ -26,7 +26,13 @@ import { PREFERS_REDUCED_MOTION } from '../../../lib/motion-media';
  *  · Markers live in the PLATE's viewBox coordinates (CAMPUS_FRAME —
  *    the artwork and the stations author against the SAME space, so
  *    the dots stay glued to the drawn features at every crop/size;
- *    never hard-coded px against the container).
+ *    never hard-coded px against the container). The 44×44 touch
+ *    TARGET is clamped into the drawing's VISIBLE window (the stage's
+ *    clip box ∩ the SVG box) — the phone band's deliberate edge-bleed
+ *    crop must never push a tappable station off-sheet (the R342
+ *    integration contract, measured at 360/375/390/430); where the
+ *    window is wider than the drawing itself (desktop, tablet) the
+ *    clamp is a no-op and the seat IS the feature.
  *  · Drag: 2px threshold → a selection box (normalized rect, hairline
  *    accent border, direction-tinted fill — the CSS consumes
  *    --bx/--by/--bw/--bh, so the box is VISIBLE while dragging).
@@ -206,6 +212,32 @@ export function HeroInspect() {
 
     /* the letterbox transform inside the SVG element itself */
     const fit = fitViewBox(svgRect.width, svgRect.height, VB_W, VB_H);
+
+    /* the VISIBLE window — where the stage's own clip (overflow:
+     * hidden edge-bleed crops at the phone band) cuts the drawing.
+     * Seat math clamps every station's 44px target into this window
+     * so no tappable dot can sit off-sheet; uncropped seats (svg box
+     * fully inside the stage) make the clamp an exact no-op. */
+    const vis = {
+      left: Math.max(0, stageRect.left - svgRect.left),
+      top: Math.max(0, stageRect.top - svgRect.top),
+      right: Math.min(svgRect.width, stageRect.right - svgRect.left),
+      bottom: Math.min(svgRect.height, stageRect.bottom - svgRect.top),
+    };
+    const halfT = DOT_TARGET_PX / 2;
+    const midX = (vis.left + vis.right) / 2;
+    const midY = (vis.top + vis.bottom) / 2;
+    const loX = Math.min(vis.left + halfT, midX);
+    const hiX = Math.max(vis.right - halfT, midX);
+    const loY = Math.min(vis.top + halfT, midY);
+    const hiY = Math.max(vis.bottom - halfT, midY);
+    const seatInViewBoxFrame = (vx: number, vy: number) => {
+      const p = viewBoxPointToContainer(fit, vx, vy);
+      return {
+        x: Math.min(Math.max(p.x, loX), hiX),
+        y: Math.min(Math.max(p.y, loY), hiY),
+      };
+    };
     const next = new Map<string, Rect>();
     for (const m of MARKERS) {
       next.set(m.id, viewBoxRectToContainer(fit, m.ex, m.ey, m.w, m.h));
@@ -226,10 +258,11 @@ export function HeroInspect() {
       readout.textContent = prevText ?? 'X:0PX Y:0PX';
     }
 
-    /* dots — glued to the artwork through the real transform */
+    /* dots — glued to the artwork through the real transform, the 44px
+     * target seated inside the visible window (see seatInViewBoxFrame) */
     for (const m of MARKERS) {
       const el = layer.querySelector<HTMLElement>(`[data-marker="${m.id}"]`);
-      const c = viewBoxPointToContainer(fit, m.ex, m.ey);
+      const c = seatInViewBoxFrame(m.ex, m.ey);
       if (el) {
         el.style.setProperty('--mk-x', `${c.x}px`);
         el.style.setProperty('--mk-y', `${c.y}px`);
@@ -241,7 +274,7 @@ export function HeroInspect() {
     const placement = layoutAnnotationCards(
       { width: svgRect.width, height: svgRect.height },
       MARKERS.map((m) => {
-        const c = viewBoxPointToContainer(fit, m.ex, m.ey);
+        const c = seatInViewBoxFrame(m.ex, m.ey);
         const el = layer.querySelector<HTMLElement>(`.hi-card[data-marker="${m.id}"]`);
         /* measured when rendered; the authored box is the floor */
         const w = el ? Math.max(el.offsetWidth, 0) || m.w : m.w;
@@ -253,7 +286,7 @@ export function HeroInspect() {
     for (const m of MARKERS) {
       const el = layer.querySelector<HTMLElement>(`.hi-card[data-marker="${m.id}"]`);
       const p = placement.get(m.id);
-      const c = viewBoxPointToContainer(fit, m.ex, m.ey);
+      const c = seatInViewBoxFrame(m.ex, m.ey);
       if (el && p) {
         el.style.setProperty('--c-x', `${p.left}px`);
         el.style.setProperty('--c-y', `${p.top}px`);

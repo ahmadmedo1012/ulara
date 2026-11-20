@@ -18,8 +18,15 @@ const HERO_READY = 'رحلة تعلم واحدة';
 
 const VW = { desktop: { width: 1440, height: 900 }, tablet: { width: 768, height: 1024 } };
 
+/* R342-final: the campus plate seats FIVE inspection stations — the
+ * three R309 identities (cp/mg/rr) PLUS lc (المحاضرات التفاعلية, the
+ * auditorium portal) and ex (الاختبارات, the exam pavilion) — every
+ * station a real capability anchored to its drawn feature, every one
+ * equally asserted: selection, touch, keyboard, geometry, layout. */
+const STATION_IDS = ['cp', 'ex', 'lc', 'mg', 'rr'] as const;
+
 async function openAllStations(page: import('@playwright/test').Page) {
-  for (const id of ['cp', 'rr', 'mg']) {
+  for (const id of STATION_IDS) {
     await page.locator(`.hi-marker[data-marker="${id}"]`).dispatchEvent('click');
   }
   await page.waitForTimeout(600); /* the open transition settles */
@@ -37,7 +44,7 @@ async function waitForMapping(page: import('@playwright/test').Page) {
 
 interface Box { left: number; top: number; right: number; bottom: number }
 
-/** Live marker geometry — the centers of the three station dots in
+/** Live marker geometry — the centers of the station dots in
  *  absolute page coordinates. R329 (CI red): the R312 belt hardening
  *  hard-coded the waypoint fractions it measured against the R322
  *  uncapped stage; the R328 H2 stage cap (56svh) moved every dot's
@@ -96,7 +103,7 @@ test.describe('R309 hero — drag-reveal geometry (the audit failures)', () => {
      * every dot under the R328 H2 56svh cap. */
     await waitForMapping(page);
     const centers = await markerCenters(page);
-    expect(Object.keys(centers).sort()).toEqual(['cp', 'mg', 'rr']);
+    expect(Object.keys(centers).sort()).toEqual([...STATION_IDS]);
     const sweep = Object.values(centers).sort((a, b) => b.x - a.x); /* right → left */
     await page.mouse.move(sweep[0]!.x + sb!.width * 0.2, sweep[0]!.y);
     await page.mouse.down();
@@ -108,18 +115,22 @@ test.describe('R309 hero — drag-reveal geometry (the audit failures)', () => {
     await page.mouse.up();
     await page.waitForTimeout(700);
 
-    /* all three stations opened by the drag */
-    await expect(page.locator('.hi-marker[data-open="on"]')).toHaveCount(3);
+    /* all five stations opened by the drag */
+    await expect(page.locator('.hi-marker[data-open="on"]')).toHaveCount(5);
 
     /* the open cards: inside the viewport, pairwise non-overlapping */
     const vw = VW.desktop.width;
     const cards = await boxesOf(page, '.hi-card[data-open="on"]');
-    expect(Object.keys(cards).sort()).toEqual(['cp', 'mg', 'rr']);
+    expect(Object.keys(cards).sort()).toEqual([...STATION_IDS]);
     for (const [id, c] of Object.entries(cards)) {
       expect(c.left, `${id} clips the left viewport edge`).toBeGreaterThanOrEqual(0);
       expect(c.right, `${id} clips the right viewport edge`).toBeLessThanOrEqual(vw);
     }
-    const pairs: Array<[string, string]> = [['cp', 'rr'], ['cp', 'mg'], ['rr', 'mg']];
+    const pairs: Array<[string, string]> = [
+      ['cp', 'ex'], ['cp', 'lc'], ['cp', 'mg'], ['cp', 'rr'],
+      ['ex', 'lc'], ['ex', 'mg'], ['ex', 'rr'],
+      ['lc', 'mg'], ['lc', 'rr'], ['mg', 'rr'],
+    ];
     for (const [a, b] of pairs) {
       const A = cards[a];
       const B = cards[b];
@@ -256,9 +267,10 @@ test.describe('R309 hero — drag-reveal geometry (the audit failures)', () => {
     }
   });
 
-  test('the keyboard path works: focus + Enter toggles a station', async ({ page }) => {
+  test('the keyboard path works: focus + Enter toggles a station (incl. the new seats)', async ({ page }) => {
     await page.setViewportSize(VW.desktop);
     await page.goto('/');
+    /* the R309 identity … */
     const cp = page.locator('.hi-marker[data-marker="cp"]');
     await cp.focus();
     await expect(cp).toBeFocused();
@@ -268,13 +280,25 @@ test.describe('R309 hero — drag-reveal geometry (the audit failures)', () => {
     await expect(page.locator('.hi-card[data-marker="cp"][data-open="on"]')).toHaveCount(1);
     await page.keyboard.press('Enter');
     await expect(cp).toHaveAttribute('aria-pressed', 'false');
+    /* … and the R342-final additions (ex/lc) hold the same keyboard
+     * contract — no station is a visual-only addition */
+    for (const id of ['ex', 'lc'] as const) {
+      const m = page.locator(`.hi-marker[data-marker="${id}"]`);
+      await m.focus();
+      await expect(m).toBeFocused();
+      await page.keyboard.press('Enter');
+      await expect(m).toHaveAttribute('aria-pressed', 'true');
+      await expect(page.locator(`.hi-card[data-marker="${id}"][data-open="on"]`)).toHaveCount(1);
+      await page.keyboard.press('Enter');
+      await expect(m).toHaveAttribute('aria-pressed', 'false');
+    }
   });
 
   test('the reset control clears every station', async ({ page }) => {
     await page.setViewportSize(VW.desktop);
     await page.goto('/');
     await openAllStations(page);
-    await expect(page.locator('.hi-card[data-open="on"]')).toHaveCount(3);
+    await expect(page.locator('.hi-card[data-open="on"]')).toHaveCount(5);
     await page.locator('.hi-reset').click();
     await expect(page.locator('.hi-card[data-open="on"]')).toHaveCount(0);
     await expect(page.locator('.hi-marker[data-open="on"]')).toHaveCount(0);
@@ -282,7 +306,12 @@ test.describe('R309 hero — drag-reveal geometry (the audit failures)', () => {
 });
 
 test.describe('R309 hero — the mobile contract (≤760px flow presentation)', () => {
-  for (const w of [360, 390, 430]) {
+  /* R342-final: the four phone-band laps — 360/375/390/430 — after the
+   * measured lc clipping (0.17–0.44px past the edge at 360/390 on the
+   * pre-fix crop). The plate's edge-bleed crop is symmetric ±10% and
+   * the 44px touch targets are clamped into the visible window by the
+   * mapping itself — every lap below asserts the real geometry. */
+  for (const w of [360, 375, 390, 430]) {
     test(`mobile ${w}px: cards inside the viewport before AND after interaction`, async ({ page }) => {
       await page.setViewportSize({ width: w, height: 800 });
       await page.goto('/');
@@ -296,7 +325,7 @@ test.describe('R309 hero — the mobile contract (≤760px flow presentation)', 
       /* open everything by tap — REAL clicks on the 44px targets (the
        * one retry tolerates a reflow race under parallel-suite load:
        * the final assertion stays strict — an unclickable dot fails) */
-      for (const id of ['cp', 'rr', 'mg']) {
+      for (const id of STATION_IDS) {
         const btn = page.locator(`.hi-marker[data-marker="${id}"]`);
         for (let attempt = 0; attempt < 2; attempt += 1) {
           await btn.click();
@@ -310,13 +339,13 @@ test.describe('R309 hero — the mobile contract (≤760px flow presentation)', 
       await expect(page.locator('.hi-card').first()).toBeHidden();
       /* …and the flow cards are readable blocks inside the viewport */
       const flow = await boxesOf(page, '.hi-flow-card[data-open="on"]');
-      expect(Object.keys(flow).sort()).toEqual(['cp', 'mg', 'rr']);
+      expect(Object.keys(flow).sort()).toEqual([...STATION_IDS]);
       for (const [id, c] of Object.entries(flow)) {
         expect(c.left, `${id} flow card clips left at ${w}`).toBeGreaterThanOrEqual(0);
         expect(c.right, `${id} flow card clips right at ${w}`).toBeLessThanOrEqual(w);
       }
       /* the same real station state (aria-pressed mirrors the flow) */
-      await expect(page.locator('.hi-marker[data-open="on"]')).toHaveCount(3);
+      await expect(page.locator('.hi-marker[data-open="on"]')).toHaveCount(5);
     });
   }
 
@@ -325,7 +354,7 @@ test.describe('R309 hero — the mobile contract (≤760px flow presentation)', 
     await page.goto('/');
     await waitForMapping(page);
     await openAllStations(page);
-    await expect(page.locator('.hi-card[data-open="on"]')).toHaveCount(3);
+    await expect(page.locator('.hi-card[data-open="on"]')).toHaveCount(5);
     const cards = await boxesOf(page, '.hi-card[data-open="on"]');
     for (const [id, c] of Object.entries(cards)) {
       expect(c.left, `${id} clips at 768`).toBeGreaterThanOrEqual(0);

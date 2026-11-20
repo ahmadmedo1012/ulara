@@ -46,13 +46,14 @@ test('prod · desktop drag reveals [CP] unclipped, no RR/MG overlap, guides conf
   const sb = await page.locator('div.bp-stage').boundingBox();
   expect(sb).not.toBeNull();
 
-  /* the wide drag (the audit's reproduced gesture) */
+  /* the wide drag (the audit's reproduced gesture) — R342-final: the
+   * plate's FIVE stations all open to the sweep */
   await page.mouse.move(sb!.x + sb!.width * 0.9, sb!.y + sb!.height * 0.55);
   await page.mouse.down();
   await page.mouse.move(sb!.x + sb!.width * 0.08, sb!.y + sb!.height * 0.45, { steps: 12 });
   await page.mouse.up();
   await page.waitForTimeout(800);
-  await expect(page.locator('.hi-marker[data-open="on"]')).toHaveCount(3);
+  await expect(page.locator('.hi-marker[data-open="on"]')).toHaveCount(5);
   await page.screenshot({ path: `${SHOTS}/prod-drag-1440.png` });
 
   const m = await page.evaluate(() => {
@@ -76,10 +77,17 @@ test('prod · desktop drag reveals [CP] unclipped, no RR/MG overlap, guides conf
     expect(c.l, `${id} escapes frame`).toBeGreaterThanOrEqual(m.layer.left - 1);
     expect(c.r, `${id} escapes frame`).toBeLessThanOrEqual(m.layer.right + 1);
   }
-  const { cp, rr, mg } = m.cards as Record<string, { l: number; r: number; t: number; b: number }>;
-  expect(cp && rr && mg).toBeTruthy();
-  expect(cp!.l < rr!.r && rr!.l < cp!.r && cp!.t < rr!.b && rr!.t < cp!.b, 'cp/rr overlap').toBe(false);
-  expect(rr!.l < mg!.r && mg!.l < rr!.r && rr!.t < mg!.b && mg!.t < rr!.b, 'rr/mg overlap').toBe(false);
+  const ids = Object.keys(m.cards).sort();
+  expect(ids).toEqual(['cp', 'ex', 'lc', 'mg', 'rr']);
+  const overlaps: string[] = [];
+  for (let i = 0; i < ids.length; i += 1) {
+    for (let j = i + 1; j < ids.length; j += 1) {
+      const a = (m.cards as Record<string, { l: number; r: number; t: number; b: number }>)[ids[i]!]!;
+      const b = (m.cards as Record<string, { l: number; r: number; t: number; b: number }>)[ids[j]!]!;
+      if (a.l < b.r && b.l < a.r && a.t < b.b && b.t < a.b) overlaps.push(`${ids[i]}/${ids[j]}`);
+    }
+  }
+  expect(overlaps, `card overlaps on production: ${overlaps.join(', ')}`).toEqual([]);
 
   /* guides sweep — confined to the frame, never in the copy */
   for (let fx = 0; fx <= 1.001; fx += 0.25) {
@@ -114,7 +122,7 @@ test('prod · mobile 390 — flow cards inside the viewport; menu owns the scrol
     const el = document.querySelector('.hi-marker[data-marker="mg"]') as HTMLElement | null;
     return !!el && el.style.getPropertyValue('--mk-x') !== '';
   });
-  for (const id of ['cp', 'rr', 'mg']) {
+  for (const id of ['cp', 'ex', 'lc', 'rr', 'mg'] as const) {
     const btn = page.locator(`.hi-marker[data-marker="${id}"]`);
     for (let attempt = 0; attempt < 2; attempt += 1) {
       await btn.click();
@@ -133,7 +141,7 @@ test('prod · mobile 390 — flow cards inside the viewport; menu owns the scrol
     });
     return out;
   });
-  expect(Object.keys(flow).sort()).toEqual(['cp', 'mg', 'rr']);
+  expect(Object.keys(flow).sort()).toEqual(['cp', 'ex', 'lc', 'mg', 'rr']);
   for (const [id, c] of Object.entries(flow)) {
     expect(c.l, `${id} clips left at 390 (prod)`).toBeGreaterThanOrEqual(0);
     expect(c.r, `${id} clips right at 390 (prod)`).toBeLessThanOrEqual(390);

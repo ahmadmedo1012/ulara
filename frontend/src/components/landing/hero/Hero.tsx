@@ -34,14 +34,16 @@
  *   · block/work rise — y 3.2rem→0, 1s power3.out.
  *
  * The motion engine is CSS transitions + the landing's OWN gates —
- * NO GSAP in the Ulara stack. The choreography hangs on the
- * `.landing.intro-draw → .landing.intro-done` flip (R308's entrance
- * gate: the loader plays once per session; on its exit slit the hero
- * timeline begins). The GSAP ease curves are translated to
- * cubic-bezier(·) equivalents (documented in hero-mechanics.css).
- * prefers-reduced-motion collapses the whole timeline to the settled
- * sheet (RM belt inside hero-mechanics.css); the intro gate never
- * plays under RM.
+ * the hero itself carries no GSAP (the whole stack's ONE gsap seat is
+ * the journey's scrubbed scene, lib/motion/engine.ts, which keeps its
+ * own ticker parked; the hero never touches it). The choreography
+ * hangs on the `.landing.intro-draw → .landing.intro-done` flip
+ * (R308's entrance gate: the loader plays once per session; on its
+ * exit slit the hero timeline begins). The GSAP ease curves are
+ * translated to cubic-bezier(·) equivalents (documented in
+ * hero-mechanics.css). prefers-reduced-motion collapses the whole
+ * timeline to the settled sheet (RM belt inside hero-mechanics.css);
+ * the intro gate never plays under RM.
  *
  * Stable hooks kept for the platform's contracts (tests/scripts —
  * see tests/unit/landing-funnel.test.tsx, tests/e2e/r312-*):

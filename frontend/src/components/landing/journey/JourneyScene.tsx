@@ -43,9 +43,11 @@ import { LECTURE_INTERACTIVE, MASTERY_SCORE_LINE } from '../copy';
  * arbitrary 700dvh block. ScrollTrigger's functional start/end derive
  * from the same box, so the sticky release and the scrub end coincide
  * exactly — no dead zones, no trapped scrolling; reverse scrolling
- * follows the real scroll position both ways. Lenis is driven by the
- * ONE gsap.ticker and ScrollTrigger.update rides Lenis's scroll
- * events (lib/motion/sheetLenis.ts — the engine contract).
+ * follows the real scroll position both ways. The frame clock is the
+ * ONE shared conductor: sheetLenis drives Lenis on the conductor's
+ * rAF (never gsap's ticker — engine.ts parks it) and every Lenis
+ * scroll event syncs the scrubber (ScrollTrigger.update via
+ * engineSync — the engine contract, lib/motion/sheetLenis.ts).
  *
  * THE STATE MACHINE (kept — the R322 semantics): `data-stage` 0..5,
  * `data-finding` 1..5/done, `data-wash` the bounded room highlight,

@@ -168,7 +168,10 @@ test.describe('R308 — the static belt', () => {
     /* R315 (B1·A.2) re-pin: the static belt's complete-sheet proof
      * anchors on the current display H1 (was «أُلارا») */
     await expect(page.locator('.fo-hero-title')).toContainText('رحلة تعلم واحدة');
-    /* the drawing is complete, not dash-hidden */
-    await expect(page.locator('.hi-marker')).toHaveCount(3);
+    /* the drawing is complete, not dash-hidden — R342-final: the plate
+     * seats FIVE inspection stations (cp/ex/lc/mg/rr — see
+     * r309-recovery's STATION_IDS); under RM they stand open-free but
+     * present and readable as the static sheet's own furniture */
+    await expect(page.locator('.hi-marker')).toHaveCount(5);
   });
 });

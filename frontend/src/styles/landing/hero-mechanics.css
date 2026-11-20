@@ -8,11 +8,12 @@
    file replaces were deleted from landing.css / r330-home.css (the
    R330 file-ownership contract, inverted: this file owns the hero now).
 
-   THE MOTION REGISTER — GSAP values → CSS translations. The Ulara
-   stack carries NO GSAP (Lenis 1.1.5 on window + the shared
-   sheetConductor rAF clock + CSS transitions are the landing's whole
-   engine), so the reference's eases ride their canonical cubic-bezier
-   equivalents:
+   THE MOTION REGISTER — GSAP values → CSS translations. The hero
+   itself carries no GSAP (Lenis 1.1.5 on window + the shared
+   sheetConductor rAF clock + CSS transitions are the hero band's
+   whole engine; the stack's ONE gsap seat is the journey's scrubbed
+   scene — lib/motion/engine.ts, its own ticker parked), so the
+   reference's eases ride their canonical cubic-bezier equivalents:
      power2.out  → cubic-bezier(0.215, 0.61, 0.355, 1)   (mask lines)
      power3.out  → cubic-bezier(0.165, 0.84, 0.44, 1)    (fades, rises)
      expo.out    → cubic-bezier(0.19, 1, 0.22, 1)        (img cards)
@@ -962,13 +963,26 @@
     aspect-ratio: auto;
   }
 
-  /* the drawing at 140% of the sheet — the elevation's presence on the
-     phone fold (the 2.77:1 sheet at 100% read only 122px tall; the
-     reference's own phone crop is 342×388). The outermost trees break
-     the edge (the R332 W1 language, measured into the phone band). */
+  /* the drawing breaks the sheet's edges at the phone fold — the
+     R342-final integration fix: the R341 140% crop never actually
+     rendered. TWO caps defeated it: base.css's responsive-media guard
+     (img,svg,video { max-width: 100% }) clamped the inline axis, and
+     the base .hro .hro-art .bp-svg seat's max-block-size: 100% the
+     block axis — leaving the -20% margins to shove the still-100%-wide
+     drawing ~62px past the reading-start edge (an asymmetric right-crop
+     with dead paper on the left, measured at 360/375/390; the lc
+     station's 44px target clipped the viewport, CI red). The crop is
+     re-measured at 120% with BOTH caps lifted: symmetric ±10% bleed
+     (the outermost trees still break the edge), the drawing gains
+     height (165px @360 vs 137px), and every inspection station's
+     anchor stays inside the stage's crop window — the HeroInspect
+     mapping clamps the 44px touch targets into that window by
+     construction. */
   .hro .hro-art .bp-svg {
-    inline-size: 140%;
-    margin-inline: -20%;
+    inline-size: 120%;
+    margin-inline: -10%;
+    max-inline-size: none; /* lifts base.css's media guard — the ONE deliberate bleed seat */
+    max-block-size: none; /* lifts the base hero seat's own height cap */
   }
 
   .hro-content {

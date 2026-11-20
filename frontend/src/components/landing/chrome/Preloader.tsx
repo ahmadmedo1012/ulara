@@ -18,7 +18,15 @@ import { PREFERS_REDUCED_MOTION } from '../../../lib/motion-media';
  *     sheet's exact centreline (the slit seat), growing from the
  *     reading-start edge with the eased counter; the mono percentage
  *     sits at the origin edge, tabular-nums, aria-hidden (the live
- *     value lives on the root's progressbar semantics).
+ *     value lives on the root's progressbar semantics). The two rule
+ *     halves carry the stable `pl-progress` selector (the r309/r313
+ *     chrome contract — the loader's progress chrome is assertable
+ *     from the first frame).
+ *   · the registration cross — the two centred hairlines (pl-cross-h /
+ *     pl-cross-v) that marked the sheet's datum in every earlier seat
+ *     are kept: the r311 loader-owns-the-pointer contract reads them,
+ *     and the drawing sheet's own centreline datum is where they
+ *     belong (static registration marks, not a pointer follower).
  *   · the boot ledger — «أهلاً بك في أُلارا» + the mono metadata rows
  *     (النوع / المنصّة / اللغة) light up on the reading-end column while
  *     the drawing traces; the page-truthful boot list counts the
@@ -37,8 +45,10 @@ import { PREFERS_REDUCED_MOTION } from '../../../lib/motion-media';
  * Honest-timing contract (the usability bar — never the reference's
  * five-second stall):
  *   · the counter is ASSET-GATED (document load + fonts.ready) bounded
- *     to min 1.9s / hard cap 2.6s, then a 500ms completed beat, then
- *     the 835ms slit — worst case ≈ 3.9s, best ≈ 3.2s;
+ *     to min 2.0s / hard cap 2.6s, then a 500ms completed beat, then
+ *     the 835ms slit — worst case ≈ 4.0s, best ≈ 3.3s. The 2.0s floor
+ *     is the r309 belt's re-measured seat: the R338 pin (≥2000ms from
+ *     mount, absorbing the measured mount→visible skew) stays law;
  *   · the skip control (تخطّي) ends the entrance immediately (the exit
  *     still plays, never a hard cut);
  *   · the intro plays ONCE per session (the introGate flag is stamped
@@ -56,10 +66,11 @@ import { CampusPlate } from '../hero/CampusPlate';
 import { markIntroSeen } from '../../../lib/motion/introGate';
 import '../../../styles/landing/preloader.css';
 
-/* the honest window: the counter never resolves before 1.9s (the trace
- * needs its spread) and never holds past 2.6s (the hard cap readiness
- * races), then the completed beat, then the slit. */
-const RELEASE_FLOOR_MS = 1900;
+/* the honest window: the counter never resolves before 2.0s (the trace
+ * needs its spread AND the r309 belt's ≥2000ms mount-skew pin is law)
+ * and never holds past 2.6s (the hard cap readiness races), then the
+ * completed beat, then the slit. */
+const RELEASE_FLOOR_MS = 2000;
 const MAX_RUN_MS = 2600;
 const EXIT_HOLD_MS = 500;
 const ENTRY_DONE_EVENT = 'ula:entry-done';
@@ -256,16 +267,24 @@ export function Preloader({ onExitStart, onDone }: PreloaderProps) {
        * progress rule, so the exit's flight IS the line's split. */}
       <div className="pl-sheet" aria-hidden="true">
         <div className="pl-band pl-band--top">
-          <span className="pl-line" aria-hidden="true">
+          {/* pl-progress — the stable progress-chrome selector (the r309
+              early-frame contract); the element IS the rule's top half */}
+          <span className="pl-line pl-progress" aria-hidden="true">
             <span className="pl-line-fill" />
           </span>
         </div>
         <div className="pl-band pl-band--bot">
-          <span className="pl-line" aria-hidden="true">
+          <span className="pl-line pl-progress" aria-hidden="true">
             <span className="pl-line-fill" />
           </span>
         </div>
       </div>
+
+      {/* the registration cross — the sheet's datum hairlines (the r311
+          loader-owns-the-pointer contract reads these seats; static
+          centred marks in the drawing-sheet language) */}
+      <span className="pl-cross-h" aria-hidden="true" />
+      <span className="pl-cross-v" aria-hidden="true" />
 
       <div className="pl-inner pl-main">
         {/* the sheet frame — 4 hairlines at the paper's own inset */}

@@ -8,9 +8,10 @@
    clusters, the pinned dark caption bars; row 3 = the lecture-player
    seat, row 4 = the dashed route map). All geometry is rem on the
    shared fluid root (8.333px @1440 — bp-exact @1024/1440/1920 by
-   construction); ≤991px re-seats the same DOM stacked. Motion is CSS
-   only (house law — no gsap); the reveal engine drives the intro and
-   the ONE scrub var --wy-p drives the accent progress rule. ═══ */
+   construction); ≤991px re-seats the same DOM stacked. This strip's
+   motion is CSS only (its own scope — the stack's one gsap seat is the
+   journey scene's scrubber, never here); the reveal engine drives the
+   intro and the ONE scrub var --wy-p drives the accent progress rule. ═══ */
 
 /* ── the section shell — the reference: fluid 171.24rem wide (1427 @1440 ·
    1902 @1920 · 1015 @1024), centred, ZERO padding — the head, the
