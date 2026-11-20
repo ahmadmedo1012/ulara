@@ -907,3 +907,124 @@ html[data-theme='dark'] .fo-cta .fo-text-link {
     block-size: 0;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   R344-LS7 — the closing plate + the sketch that draws itself. The
+   plate sits in the measured anchor→frame breathing space (the void
+   T-10c documents) and wears the ACTUAL wordmark: the display face's
+   «أُلارا» outlined (transparent fill, 1px ink stroke) over the sheet
+   paper — the page's large typographic finish ahead of the resolve.
+   The sketch's strokes run one dash pass on the reveal rung. ═══ */
+.fo-cta {
+  position: relative;
+}
+/* the plate owns the anchor void IN PLACE: absolute over the section's
+   own top band (the frame's measured margin below stays untouched), so
+   the composition fills the breathing space without crossing the
+   section boundary above it. */
+.fo-cta-platezone {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 1.6rem;
+  display: grid;
+  justify-items: center;
+  gap: 1.2rem;
+  pointer-events: none;
+}
+.fo-cta-plate {
+  display: flex;
+  align-items: center;
+  gap: 2.8rem;
+  max-inline-size: 94%;
+}
+.fo-cta-plate-word {
+  font-family: var(--font-display);
+  font-size: clamp(4.8rem, 8.6vw, 11.5rem);
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--rule-strong);
+  white-space: nowrap;
+}
+.fo-cta-plate-latin {
+  font-size: 1.4rem;
+  line-height: 1;
+  letter-spacing: 0.5em;
+  color: var(--neutral-500);
+}
+.fo-cta-plate-mark {
+  inline-size: clamp(3rem, 7vw, 9rem);
+  block-size: 1px;
+  background: var(--rule-strong);
+  position: relative;
+  flex: none;
+}
+.fo-cta-plate-mark::after {
+  content: '';
+  position: absolute;
+  inset-block-start: -3.5px;
+  inline-size: 8px;
+  block-size: 8px;
+  border: 1px solid var(--accent);
+  transform: rotate(45deg);
+}
+.fo-cta-plate-mark::after { inset-inline-start: -4px; }
+.fo-cta-plate-mark--b::after { inset-inline-start: auto; inset-inline-end: -4px; }
+.fo-cta-plate-meta {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+  font-size: 1.2rem;
+  line-height: 1.68rem;
+  color: var(--neutral-500);
+  letter-spacing: 0.05em;
+}
+.fo-cta-plate-rule {
+  inline-size: 4.8rem;
+  block-size: 1px;
+  background: var(--rule);
+}
+/* the plate's wipe — one clip pass on the reveal rung */
+.js-reveal-armed .fo-cta-platezone .fo-cta-plate.in-view {
+  animation: fo-plate-wipe var(--t-cinema) var(--ease-out) both;
+}
+@keyframes fo-plate-wipe {
+  from { clip-path: inset(0 0 100% 0); transform: translateY(1.2rem); }
+  to { clip-path: inset(0 0 -8% 0); transform: translateY(0); }
+}
+
+/* the sketch's draw pass — the belt arms .fo-cta-sketch; the ladder
+   rides each stroke's inline --pd */
+.fo-cta-sketch .fo-cta-sketch-line {
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 0;
+}
+.js-reveal-armed .fo-cta-sketch.in-view .fo-cta-sketch-line {
+  animation: fo-sketch-draw var(--t-slower) var(--ease-out) both;
+  animation-delay: var(--pd, 200ms);
+}
+@keyframes fo-sketch-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js-reveal-armed .fo-cta-platezone .fo-cta-plate.in-view {
+    animation: none;
+    clip-path: none;
+    transform: none;
+  }
+  .js-reveal-armed .fo-cta-sketch.in-view .fo-cta-sketch-line {
+    animation: none;
+  }
+}
+@media (max-width: 767px) {
+  .fo-cta-platezone {
+    inset-block-start: 1.2rem;
+    gap: 1rem;
+  }
+  .fo-cta-plate { gap: 1.6rem; }
+  .fo-cta-plate-latin { display: none; }
+  .fo-cta-plate-meta { display: none; }
+}

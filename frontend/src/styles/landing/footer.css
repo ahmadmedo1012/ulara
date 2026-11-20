@@ -499,3 +499,98 @@ footer.fo-footer {
   font-family: var(--font-mono);
 }
 .fo-wordmark-reg::before { content: '+'; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   R344-LS8 — the drawing-sheet title block + the large typographic
+   finish + the ink strip's controlled wipe. The plate row opens the
+   colophon (identity · sheet · scale · year over hairline cells); the
+   finish wears the wordmark outlined at display scale as the page's
+   last stroke; the skyline reveals through one bottom-up clip pass on
+   the strip's own reveal seat (.fo-fstrip rides the belt's RISE_TY
+   family — .in-view is its arm). Reduced motion: animations collapse
+   via the global belt; every element ships visible without JS. ═══ */
+
+.fo-plate {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  border-block-end: 1px solid var(--rule);
+}
+.fo-plate-cell {
+  flex: 1 1 auto;
+  font-size: 1.2rem;
+  line-height: 1.68rem;
+  letter-spacing: 0.05em;
+  color: var(--neutral-500);
+  padding: 0.9rem 1.6rem;
+  border-inline-start: 1px solid var(--rule);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fo-plate-cell:first-child {
+  border-inline-start: 0;
+  padding-inline-start: 0;
+}
+
+.fo-finish {
+  display: grid;
+  justify-items: center;
+  gap: 1.2rem;
+  padding-block: 4rem 2rem;
+  overflow: hidden;
+}
+.fo-finish-word {
+  font-family: var(--font-display);
+  font-size: clamp(5.6rem, 13vw, 17rem);
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--rule-strong);
+  white-space: nowrap;
+}
+.fo-finish-latin {
+  font-size: 1.3rem;
+  line-height: 1;
+  letter-spacing: 0.44em;
+  color: var(--neutral-500);
+}
+.js-reveal-armed .fo-finish.in-view {
+  animation: fo-finish-wipe var(--t-cinema) var(--ease-out) both;
+}
+@keyframes fo-finish-wipe {
+  from { clip-path: inset(0 0 100% 0); transform: translateY(1.6rem); }
+  to { clip-path: inset(0 0 -6% 0); transform: translateY(0); }
+}
+
+/* the ink strip's one bottom-up wipe */
+.js-reveal-armed .fo-fstrip.in-view .fo-strip-img {
+  animation: fo-strip-wipe var(--t-cinema) var(--ease-out) both;
+}
+@keyframes fo-strip-wipe {
+  from { clip-path: inset(100% 0 0 0); }
+  to { clip-path: inset(-4% 0 0 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js-reveal-armed .fo-finish.in-view,
+  .js-reveal-armed .fo-fstrip.in-view .fo-strip-img {
+    animation: none;
+    clip-path: none;
+    transform: none;
+  }
+}
+@media (max-width: 767px) {
+  .fo-plate { border-block-end: 0; }
+  .fo-plate-cell {
+    flex-basis: 50%;
+    border-block-end: 1px solid var(--rule);
+    padding: 0.7rem 1rem;
+  }
+  .fo-plate-cell:nth-child(3) {
+    border-inline-start: 0;
+    padding-inline-start: 0;
+  }
+  .fo-finish { padding-block: 2.4rem 1.2rem; }
+}

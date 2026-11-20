@@ -25,6 +25,7 @@
  */
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
+import { RevealCssClass } from '../../../hooks/useReveal';
 import { Logo } from '../../../brand';
 import { BRAND_LABEL, LOGIN } from '../copy';
 
@@ -105,6 +106,16 @@ export function Footer({ year }: { year: number }) {
   return (
     <footer className="fo-footer" data-spec="footer.root" aria-label={BRAND_LABEL}>
       <div className="fo-in" data-spec="footer.in">
+        {/* R344-LS8 — the drawing-sheet title block: the colophon opens
+            with its own plate row (identity · sheet · scale · year),
+            the footer reading as the SET'S CLOSING SHEET. Decorative
+            chrome riding the house reveal rung. */}
+        <RevealCssClass as="div" className="fo-plate" aria-hidden="true">
+          <span className="fo-plate-cell fo-mono" dir="ltr">PLATE · 09</span>
+          <span className="fo-plate-cell">لوحة الهبوط — نظام تشغيل الجامعة</span>
+          <span className="fo-plate-cell">ورقة واحدة · مقياس 1:1 · يعمل اليوم</span>
+          <span className="fo-plate-cell fo-mono" dir="ltr">ULARA · {year}</span>
+        </RevealCssClass>
         {/* ── the column band — CSS Grid: 1 col <768 · 2 cols ≥768
             (col1 brand+links+subscribe · col2 the link index + contact
             groups). The retired col3 construction mark is gone (R336 B2):
@@ -301,6 +312,16 @@ export function Footer({ year }: { year: number }) {
             />
           </div>
         </div>
+
+        {/* R344-LS8 — the large typographic finish: the wordmark outlined
+            at display scale (transparent fill, 1px ink stroke), revealed
+            by one clip wipe — the sheet's final stroke before the law
+            row. Decorative chrome (the <Logo> stays the ONE identity in
+            col1; this is the finish type, not a second mark). */}
+        <RevealCssClass as="div" className="fo-finish" aria-hidden="true">
+          <span className="fo-finish-word">أُلارا</span>
+          <span className="fo-finish-latin fo-mono" dir="ltr">U L A R A — UNIVERSITY OS</span>
+        </RevealCssClass>
 
         {/* ── the © bar + the policy row — one ruled line (R321 §A2):
             the ten public-door links ride the © bar's own row as a

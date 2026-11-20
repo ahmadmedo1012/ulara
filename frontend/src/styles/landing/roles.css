@@ -448,3 +448,96 @@
 .rl-row-icon.probe-hover {
   opacity: 0.72;
 }
+/* ═══════════════════════════════════════════════════════════════════
+   R344-LS6 — the roles ledger's entrance ladder + the deck's drafting
+   chrome. The rows already ride the house reveal rung (the belt arms
+   them individually); the ladder spreads the rise across the ledger so
+   the rows land in sequence, and the open row's title wears the accent
+   ink bar. The media deck gains its sheet furniture (hairline frame +
+   corner marks + the mono surface counter). No hover dependency
+   anywhere: the ladder is entrance-only, the deck counter follows the
+   click/keyboard-driven open row. ═══ */
+.rl-row.reveal-up {
+  transition-delay: calc(var(--rl-i, 0) * 55ms);
+}
+.rl-row-ink {
+  position: relative;
+  padding-inline-start: 0;
+  transition: padding var(--t-base) var(--ease-out);
+}
+.rl-row.is-open .rl-row-ink {
+  padding-inline-start: 1.7rem;
+}
+.rl-row-ink::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block: 0.4rem;
+  inline-size: 2px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transform-origin: 50% 0;
+  transition: transform var(--t-base) var(--ease-out);
+}
+.rl-row.is-open .rl-row-ink::before {
+  transform: scaleY(1);
+}
+
+/* the deck's sheet furniture — the counter chip + corner marks */
+.rl-deck-meta {
+  position: absolute;
+  inset-block-end: 1.2rem;
+  inset-inline-start: 1.6rem;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  z-index: 2;
+  pointer-events: none;
+}
+.rl-deck-count {
+  font-size: 1.3rem;
+  line-height: 1.8rem;
+  letter-spacing: 0.06em;
+  color: var(--bg);
+  background: var(--text);
+  padding: 0.25rem 1rem;
+}
+.rl-deck-note {
+  font-size: 1.2rem;
+  line-height: 1.68rem;
+  color: var(--neutral-500);
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+  border: 1px solid var(--rule);
+  padding: 0.25rem 0.9rem;
+}
+.rl-deck-mark {
+  position: absolute;
+  inline-size: 11px;
+  block-size: 11px;
+  z-index: 2;
+  pointer-events: none;
+}
+.rl-deck-mark::before,
+.rl-deck-mark::after {
+  content: '';
+  position: absolute;
+  background: var(--rule-strong);
+}
+.rl-deck-mark::before {
+  inset-inline-start: 5px;
+  inset-block: 0;
+  inline-size: 1px;
+}
+.rl-deck-mark::after {
+  inset-block-start: 5px;
+  inset-inline: 0;
+  block-size: 1px;
+}
+.rl-deck-mark-a { inset-block-start: 1.2rem; inset-inline-start: 1.6rem; }
+.rl-deck-mark-b { inset-block-start: 1.2rem; inset-inline-end: 1.6rem; }
+
+@media (max-width: 767px) {
+  .rl-row.reveal-up { transition-delay: calc(var(--rl-i, 0) * 40ms); }
+  .rl-deck-meta { inset-inline-start: 1rem; inset-block-end: 0.8rem; }
+  .rl-deck-note { display: none; }
+}
