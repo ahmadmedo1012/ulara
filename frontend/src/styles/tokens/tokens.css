@@ -1373,3 +1373,61 @@
      under every dropdown in the app. See the mapping table above. */
   --z-header: 90;
 }
+
+/* ═════════════════════════════════════════════════════════════════════
+   ── The landing reference palette (r342 integration) — scoped ────────
+   ═════════════════════════════════════════════════════════════════════
+   The homepage rebuild re-keys the landing sheet onto its own measured
+   reference palette: a cooler paper ground, the near-black ink, the
+   coral signal — a deliberate sibling of the app canon, not a re-key
+   of it. The re-point rides THE SAME semantic names (--bg, --text,
+   --rule …) scoped to .landing, the narrowest level that re-points the
+   whole sheet without touching a single authenticated consumer.
+
+   WHY THE VALUES LIVE HERE: this file is the one sanctioned raw-value
+   home (check-colors.sh's own documented remedy for custom properties
+   defined with raw colors — "move it into the tokens.css theme
+   blocks"; css-counts.mjs's rawHex ratchet counts hex literals outside
+   this home). The homepage rebuild first shipped these definitions in
+   landing/chrome.css + landing/shared.css as scoped blocks — +24 raw
+   hex literals, breaching the frozen rawHex baseline (36). The move
+   is value-verbatim and cascade-verbatim: unlayered, appended, exactly
+   the seat those blocks held in the landing sheets (a normal
+   declaration outranks every @layer rule, and the landing sheets stay
+   literal-free). landing/chrome.css keeps the .landing base block
+   (background/color/overflow-x/font-family/--font-display) and
+   landing/shared.css keeps the dark block's own declarations —
+   r306's "exactly one [data-theme=dark] .landing" pin in the sheet
+   family still holds. */
+.landing {
+  --bg: #F3F2EC;
+  --text: #282828;
+  --text-primary: #282828;
+  --text-secondary: #72726F;
+  --text-muted: #72726F;
+  --rule: #B3B3AF;
+  --border: #B3B3AF;
+  --border-strong: #B3B3AF;
+  --accent: #F15534;
+  --accent-ink: #F15534;
+  --accent-strong: #E04422;
+  --c-coral-ink: #F15534;
+  --preloader-exit-ground: #B3B3AF;
+}
+
+/* The dark arm — one block, the whole re-point (the same shape the
+   landing sheet shipped): the paper becomes the charcoal ground, the
+   raised surface steps cool, and the signal warms to the night coral. */
+[data-theme="dark"] .landing {
+  --bg: #1c1c1a;
+  --text: #F3F2EC;
+  --text-primary: #F3F2EC;
+  --text-secondary: #B3B3AF;
+  --text-muted: #B3B3AF;
+  --rule: #4A4A48;
+  --border: #4A4A48;
+  --border-strong: #5C5C5A;
+  --accent: #F15534;
+  --accent-ink: #F15534;
+  --preloader-exit-ground: #4A4A48;
+}

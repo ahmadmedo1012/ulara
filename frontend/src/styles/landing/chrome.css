@@ -53,19 +53,14 @@
    ════════════════════════════════════════════════════════════════════ */
 
 .landing {
-  --bg: #F3F2EC; /* color-gate: allow — the landing reference palette */
-  --text: #282828; /* color-gate: allow — the landing reference palette */
-  --text-primary: #282828; /* color-gate: allow — the landing reference palette */
-  --text-secondary: #72726F; /* color-gate: allow — the landing reference palette */
-  --text-muted: #72726F; /* color-gate: allow — the landing reference palette */
-  --rule: #B3B3AF; /* color-gate: allow — the landing reference palette */
-  --border: #B3B3AF; /* color-gate: allow — the landing reference palette */
-  --border-strong: #B3B3AF; /* color-gate: allow — the landing reference palette */
-  --accent: #F15534; /* color-gate: allow — the landing reference palette */
-  --accent-ink: #F15534; /* color-gate: allow — the landing reference palette */
-  --accent-strong: #E04422; /* color-gate: allow — the landing reference palette */
-  --c-coral-ink: #F15534; /* color-gate: allow — the landing reference palette */
-  --preloader-exit-ground: #B3B3AF; /* color-gate: allow — the landing reference palette */
+  /* R342 integration — the landing reference palette (the homepage
+     rebuild's own measured paper/ink/coral) rides the canonical token
+     home now: the scoped .landing / [data-theme="dark"] .landing token
+     blocks live in tokens/tokens.css (the one sanctioned raw-value
+     home — check-colors.sh's own documented remedy for token
+     definitions; the css rawHex ratchet stays at its frozen baseline
+     instead of growing +24). This block keeps only the seats it held
+     before the rebuild — the cascade relationships are unchanged. */
   background: var(--bg);
   color: var(--text);
   overflow-x: clip;
