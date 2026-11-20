@@ -743,3 +743,150 @@ html[data-theme='dark'] .pr-section .pr-cta {
   background: var(--bg);
   border-color: var(--rule);
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   R345-ED (feat/home-editorial-scenes) — the captures' annotation
+   callouts + the honest demo-data tag. The capture frames keep their
+   measured chrome; this layer adds:
+   · .pr-frame-demo — the demo-data disclosure chip on every capture
+     (the workspace truth rides the frame, never a tooltip);
+   · .pr-callouts — the capability callouts (accent plate → leader →
+     diamond dot), drawn on the --pd ladder once the group's reveal
+     rung fires (.in-view), armed only under .js-reveal-armed.
+
+   Geometry is PHYSICAL (the overlay is decorative chrome, aria-hidden):
+   --co-x/--co-y are percent seats of the capture box; the dot pins to
+   the anchor and the plate extends toward the nearer edge (lead =
+   plate toward the box's left edge · trail = toward the right edge).
+   ═══════════════════════════════════════════════════════════════════ */
+
+.pr-frame-demo {
+  position: absolute;
+  inset-block-start: var(--sp-1-5);
+  inset-inline-end: var(--sp-1-5);
+  padding: 2px var(--sp-1-5);
+  border: 1px solid var(--rule);
+  background: var(--bg);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-xs);
+  line-height: 1.4;
+}
+
+.pr-callouts {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.pr-co {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  top: var(--co-y, 50%);
+  /* lead: the box's right edge pins to the anchor; the plate extends
+     leftward (row-reverse under RTL: last DOM child at the right end) */
+  right: calc(100% - var(--co-x, 50%));
+  flex-direction: row-reverse;
+}
+
+.pr-co--trail {
+  /* trail: the box's left edge pins to the anchor; the plate extends
+     rightward (row under RTL: last DOM child at the left end) */
+  right: auto;
+  left: var(--co-x, 50%);
+  flex-direction: row;
+}
+
+.pr-co-t {
+  flex: 0 0 auto;
+  padding: 3px 8px; /* spacing-gate: allow — the annotation plate's measured inset (4/8px) */
+  /* the AA chip seat (the pr-frame-tag contract): paper ground + the
+     text-safe accent ink — the accent stays on the leader + diamond */
+  background: var(--bg);
+  border: 1px solid var(--accent);
+  color: var(--accent-ink);
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-sm);
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.pr-co-l {
+  flex: 0 0 auto;
+  inline-size: 3.4rem;
+  block-size: 1px;
+  background: var(--accent);
+}
+
+.pr-co--trail .pr-co-l {
+  inline-size: 4.6rem;
+}
+
+.pr-co-d {
+  flex: 0 0 auto;
+  inline-size: 8px;
+  block-size: 8px;
+  background: var(--bg);
+  border: 1.5px solid var(--accent);
+  transform: rotate(45deg); /* the diamond anchor */
+}
+
+/* the draw choreography — armed by the reveals module's root class */
+.js-reveal-armed .pr-co {
+  opacity: 0;
+}
+
+.js-reveal-armed .pr-co-t {
+  transform: translateX(calc(var(--motion-direction, 1) * 6px));
+}
+
+.js-reveal-armed .pr-co-l {
+  transform: scaleX(0);
+  transform-origin: right; /* the arm grows away from the plate */
+}
+
+.js-reveal-armed .pr-co--trail .pr-co-l {
+  transform-origin: left;
+}
+
+.js-reveal-armed .pr-callouts.in-view .pr-co {
+  opacity: 1;
+  transition: opacity var(--t-base) var(--ease-out) var(--pd, 0ms);
+}
+
+.js-reveal-armed .pr-callouts.in-view .pr-co-t {
+  transform: translateX(0);
+  transition: transform var(--t-base) var(--ease-out) var(--pd, 0ms);
+}
+
+.js-reveal-armed .pr-callouts.in-view .pr-co-l {
+  transform: scaleX(1);
+  transition: transform var(--t-base) var(--ease-out) var(--pd, 0ms);
+}
+
+/* the phone band: the annotations tighten (the same story, smaller) */
+@media (max-width: 767px) {
+  .pr-co-t { padding: 2px 6px; } /* spacing-gate: allow — the phone plate inset step */
+  .pr-co-l { inline-size: 2.2rem; }
+  .pr-co--trail .pr-co-l { inline-size: 3rem; }
+}
+
+/* ═══ reduced motion: the complete annotations stand ═══ */
+@media (prefers-reduced-motion: reduce) {
+  .js-reveal-armed .pr-co,
+  .js-reveal-armed .pr-callouts.in-view .pr-co {
+    opacity: 1;
+    transition: none;
+  }
+  .js-reveal-armed .pr-co-t,
+  .js-reveal-armed .pr-callouts.in-view .pr-co-t {
+    transform: none;
+    transition: none;
+  }
+  .js-reveal-armed .pr-co-l,
+  .js-reveal-armed .pr-callouts.in-view .pr-co-l {
+    transform: none;
+    transition: none;
+  }
+}
