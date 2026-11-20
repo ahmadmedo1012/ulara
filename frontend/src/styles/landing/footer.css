@@ -506,8 +506,7 @@ footer.fo-footer {
   transition: color var(--t-fast) ease, border-color var(--t-fast) ease;
 }
 
-.fo-back-to-top:hover,
-.fo-back-to-top:focus-visible {
+.fo-back-to-top:hover {
   color: var(--accent);
   border-color: var(--accent);
 }

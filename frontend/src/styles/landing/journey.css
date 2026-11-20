@@ -215,9 +215,9 @@ section.chapters {
   font-size: 0.72rem;
   color: var(--text-secondary);
   font-family: var(--font-sans);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  min-inline-size: 0;
+  flex: 1 1 auto;
+  line-height: 1.45;
 }
 
 /* the four registration rails — the measured window chrome: 0.5em
