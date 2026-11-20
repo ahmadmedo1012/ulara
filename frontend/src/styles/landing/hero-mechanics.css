@@ -443,13 +443,16 @@
 /* the seats — the reference's item1/item2 mirrored for RTL (reading
    start side, over the drawing's lower band) */
 .hro-deco-1 {
-  inset-block-end: 22%;
-  inset-inline-start: 10%;
+  /* r346: the iso plate's seat is square-ish and centered — the deco
+     cards re-seat into the paper's breathing margins BESIDE the
+     drawing (never over its leader labels / scale bar) */
+  inset-block-end: 30%;
+  inset-inline-start: 6%;
 }
 
 .hro-deco-2 {
-  inset-block-end: 14%;
-  inset-inline-start: 44%;
+  inset-block-end: 10%;
+  inset-inline-start: 22%;
 }
 
 .hro-deco-sq {

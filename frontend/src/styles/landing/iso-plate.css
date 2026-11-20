@@ -1,0 +1,106 @@
+/* ============================================================================
+   iso-plate.css — r346 · the isometric plate grammar (the phase-4 art system)
+   ============================================================================
+   THE DIRECTIVE (r346): the landing's flat 2D elevations and plans retire —
+   every drawing becomes an ISOMETRIC 3D plate in the reference's language:
+   geometric volumes on a diamond plinth, dashed data routes, drafting
+   furniture, leader labels. This sheet is the ONE painting system for all
+   of it (the kernel: components/landing/kernel/Iso.tsx; the plates mount
+   from components/landing/{hero,plates}/).
+
+   Token law: every colour flows through the --iso-* seats below, which
+   reference the repo's own ladder (the r313 paper/ink/copper canon) —
+   so the plates re-theme with the app (the dark block re-keys the same
+   neutrals; no raw literal anywhere in this sheet, per the color gate).
+   ========================================================================== */
+
+/* ── the plate palette — mapped onto the repo ladder ─────────────────── */
+:root {
+  /* the three iso faces: the paper's own neutral rungs give the
+     top/east/west shading (top catches the light, west is deepest) */
+  --iso-top:        var(--neutral-0);
+  --iso-east:       var(--neutral-100);
+  --iso-west:       var(--neutral-150);
+  --iso-mid:        var(--neutral-200);
+  /* the ink family */
+  --iso-ink:        var(--neutral-900);
+  --iso-ink-soft:   color-mix(in srgb, var(--neutral-900) 55%, transparent);
+  --iso-muted:      var(--text-muted);
+  --iso-hair:       var(--neutral-300);
+  /* the ONE signal family (the copper canon — never a second hue) */
+  --iso-sienna:     var(--c-copper-ink);
+  --iso-signal:     var(--c-copper-ink);
+  /* the grounds */
+  --iso-paper:      var(--neutral-50);
+  --iso-paper-hi:   var(--neutral-0);
+  /* labels on ink fills */
+  --iso-label-on-ink: var(--text-on-dark);
+  /* the plate's own voices (the sheet's Arabic + mono pairing) */
+  --font-iso-arabic: var(--font-sans);
+  --font-iso-mono:   var(--font-mono);
+}
+
+/* ── the scene frame ────────────────────────────────────────────────────
+   The plates letterbox inside their seat (preserveAspectRatio meet);
+   overflow visible lets the furniture + leader labels breathe past the
+   viewBox's inner margin (the drafting sheet's own whitespace rule). */
+.cp-svg,
+.iso-scene {
+  display: block;
+}
+
+/* the HERO seat — the iso sheet window is square-ish (184×168), so it
+   caps by the fold's height (never the old wide elevation's
+   width-first grammar): the drawing centers as the band's centerpiece
+   at the reference's own order (~46% of a 1440 fold), the paper
+   breathing around it. The trace variant (the preloader's seat) keeps
+   the pl-plate width grammar preloader.css owns. */
+.hro .hro-art .cp-svg[data-variant='ink'] {
+  inline-size: min(72svh, 100%, 880px);
+  block-size: auto;
+  margin-inline: auto;
+}
+
+/* the plate's text voices paint through the ink seats (the svg <text>
+   elements carry no fill literals — the kernel sets var() references) */
+
+/* ── the ink belt — the hero plate's staged entrance ────────────────────
+   The SAME .landing.intro-draw → .intro-done gate the sheet's belt rides
+   (hero-mechanics.css): each data-ink layer (the drafting order — ground,
+   masses, connectors, furniture, labels) resolves on the authored cascade
+   while the frame wipes and the title masks lift. Under reduced motion
+   the gate never arms (the composer pins the settled state) and a dead
+   JS pass renders every layer visible (the classes below only ever HIDE
+   during the armed intro-draw state). */
+.landing.intro-draw .hro-stage .cp-svg [data-ink] {
+  opacity: 0;
+}
+
+.landing.intro-done .hro-stage .cp-svg [data-ink] {
+  opacity: 1;
+  transition: opacity var(--motion-duration-long) var(--ease);
+}
+
+/* the drafting-order schedule (each layer begins as its predecessor is
+   still resolving — the authored cascade) */
+.landing.intro-done .hro-stage .cp-svg [data-ink='1'] { transition-delay: 250ms; }
+.landing.intro-done .hro-stage .cp-svg [data-ink='2'] { transition-delay: 340ms; }
+.landing.intro-done .hro-stage .cp-svg [data-ink='3'] { transition-delay: 440ms; }
+.landing.intro-done .hro-stage .cp-svg [data-ink='4'] { transition-delay: 570ms; }
+.landing.intro-done .hro-stage .cp-svg [data-ink='5'] { transition-delay: 700ms; }
+.landing.intro-done .hro-stage .cp-svg [data-ink='6'] { transition-delay: 850ms; }
+
+/* reduced motion: the belt collapses to the settled plate (the house
+   law — every mover pins to its authored end state) */
+@media (prefers-reduced-motion: reduce) {
+  .landing.intro-draw .hro-stage .cp-svg [data-ink],
+  .landing.intro-done .hro-stage .cp-svg [data-ink] {
+    opacity: 1;
+    transition: none;
+  }
+}
+
+/* ── the trace seat's paint (structure silhouettes) ─────────────────────
+   The stroke ladder rides the .cp-2/.cp-15 rungs hero.css already owns
+   (the ink weights); the draw-in animation + duration live in
+   preloader.css (.cp-draw + the canonical brand-draw token). */
