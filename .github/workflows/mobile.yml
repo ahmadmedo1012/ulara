@@ -7,7 +7,7 @@
 #   Lane A — fast (DEFAULT dispatch; runs on EVERY push too):
 #     mobile-gates → typecheck · expo lint · contract-check · generated-
 #     drift (tokens/brand/OpenAPI) · jest render net · expo export (both
-#     platforms) · bundle budget. NEVER: EAS Build, Gradle, an APK, an
+#     platforms) · bundle budget. NEVER: Gradle, an APK, an
 #     emulator, a release build.
 #
 #   Lane B — smoke-prebuilt (push default smoke + dispatchable):
@@ -24,11 +24,10 @@
 #     artifact once via the native-build lane (see below).
 #
 #   Lane C — native-build (dispatch, or automatically on a native-
-#     affecting push): builds + records the reusable artifacts —
-#     (a) native-build-devclient: the local Gradle dev-client APK,
-#     saved fingerprint-keyed (actions/cache) + uploaded per-run, for
-#     Lane B's future runs; (b) eas-build: the EAS cloud cut (preview
-#     internal APK + iOS sim, or production per the dispatch inputs).
+#     affecting push): builds + records the reusable artifact —
+#     native-build-devclient: the local Gradle dev-client APK (expo
+#     prebuild + Gradle on an Actions runner), saved fingerprint-keyed
+#     (actions/cache) + uploaded per-run, for Lane B's future runs.
 #     Fingerprint inputs: package(-lock).json, app.config.ts, eas.json,
 #     assets/, plugins/, shared/, the build recipe, and this workflow —
 #     a JS-only change NEVER changes the fingerprint.
@@ -36,7 +35,7 @@
 #   Lane D — full (EXPLICIT dispatch only — never the default):
 #     fast gates + the original android-smoke machine — the full local
 #     RELEASE-APK Gradle build (throwaway keystore) + emulator + five-
-#     role Maestro journey + logcat crash gate + EAS cloud build.
+#     role Maestro journey + logcat crash gate.
 #     This is the release-oriented end-to-end lane; it must remain a
 #     deliberate choice, not a default loop.
 #
@@ -46,16 +45,25 @@
 # Dispatch matrix (what each lane runs — and what it must NOT):
 #   fast           → mobile-gates ONLY.
 #   smoke-prebuilt → mobile-gates + android-smoke-prebuilt (no Gradle).
-#   native-build   → mobile-gates + native-build-devclient + eas-build.
-#   full           → mobile-gates + native-build-devclient + eas-build +
+#   native-build   → mobile-gates + native-build-devclient.
+#   full           → mobile-gates + native-build-devclient +
 #                    android-smoke (the release Gradle machine).
 #   push (JS-only) → mobile-gates + eas-ota + android-smoke-prebuilt
 #                    (cached artifact; miss → BLOCKED, no rebuild).
-#   push (native)  → the same + native-build-devclient + eas-build
-#                    (the fingerprint moved — the artifacts are re-cut
+#   push (native)  → the same + native-build-devclient
+#                    (the fingerprint moved — the artifact is re-cut
 #                    once, then reused).
 #
-# Production (store) builds stay manual: workflow_dispatch → RELEASE.md.
+# BINDING REQUIREMENT (the owner's contract): GitHub Actions is the
+# authoritative platform for actual Android/iOS native builds and
+# artifact delivery — EAS Build is RETIRED from this repo's pipeline
+# (the eas-build job, its detect plan output, and its dispatch inputs
+# are gone). EAS remains ONLY as the OTA (JS update) channel (the
+# eas-ota job above); Expo CLI keeps its allowed seat — configuration,
+# export, and prebuild tooling. Store/release builds are manual and
+# Actions-native: android-apk.yml (QA APK + the signed rolling-latest
+# release APK) and build-ios-sidestore.yml (unsigned sidestore IPA on
+# macOS runners).
 # A skipped/missing native artifact is BLOCKED, never a pass (no fake
 # build success — see each job's honest reporting).
 name: Mobile
@@ -68,11 +76,11 @@ on:
       - 'shared/**'
       - '.github/workflows/mobile.yml'
   # R327 D2 + R342 t09: the owner's manual trigger. The DEFAULT lane is
-  # `fast` — an ordinary validation dispatch must not queue EAS or
-  # Gradle (the r341-era behavior: every dispatch ran eas-build AND the
-  # full Gradle android-smoke). `native-build`/`full` are the lanes that
-  # actually build; `profile` rides them (preview default; production =
-  # the store cut).
+  # `fast` — an ordinary validation dispatch must not queue any native
+  # build (the r341-era behavior: every dispatch ran an EAS cloud build
+  # AND the full Gradle android-smoke). `native-build`/`full` are the
+  # lanes that actually build — Actions runners only (EAS Build is
+  # retired; there is no platforms/profile pair feeding it anymore).
   workflow_dispatch:
     inputs:
       lane:
@@ -85,14 +93,6 @@ on:
           - smoke-prebuilt
           - native-build
           - full
-      platforms:
-        description: 'EAS platforms (all | ios | android) — native-build/full lanes only'
-        required: false
-        default: 'all'
-      profile:
-        description: 'EAS build profile (preview | production) — native-build/full lanes only'
-        required: false
-        default: 'preview'
 
 permissions:
   contents: read
@@ -103,7 +103,6 @@ concurrency:
 
 env:
   NODE_VERSION: '22'
-  EAS_NO_VCS: '1'
 
 jobs:
   # ═══════════════════════════════════════════════════════════════════
@@ -121,7 +120,6 @@ jobs:
       lane: ${{ steps.lane.outputs.lane }}
       nativeChanged: ${{ steps.native.outputs.changed }}
       fingerprint: ${{ steps.fp.outputs.fingerprint }}
-      runEasBuild: ${{ steps.plan.outputs.eas }}
       runDevclientBuild: ${{ steps.plan.outputs.devclient }}
     steps:
       - uses: actions/checkout@v4
@@ -179,23 +177,21 @@ jobs:
             echo "changed=false" >> "$GITHUB_OUTPUT"
             echo "JS-only change — no native build will run (fast gates + prebuilt smoke + OTA only)" >> "$GITHUB_STEP_SUMMARY"
           fi
-      # THE plan: which lanes queue native work. eas-build and
-      # native-build-devclient run ONLY on a native-affecting push or
-      # the explicit native-build/full lanes — a fast dispatch or a
-      # JS-only push can never queue them.
+      # THE plan: which lanes queue native work. native-build-devclient
+      # runs ONLY on a native-affecting push or the explicit
+      # native-build/full lanes — a fast dispatch or a JS-only push can
+      # never queue it.
       - name: Plan the lane jobs
         id: plan
         run: |
           LANE='${{ steps.lane.outputs.lane }}'
           NAT='${{ steps.native.outputs.changed }}'
-          EAS=false
           DEVCLIENT=false
-          if [ "$LANE" = "push" ] && [ "$NAT" = "true" ]; then EAS=true; DEVCLIENT=true; fi
-          if [ "$LANE" = "native-build" ] || [ "$LANE" = "full" ]; then EAS=true; DEVCLIENT=true; fi
-          echo "eas=$EAS" >> "$GITHUB_OUTPUT"
+          if [ "$LANE" = "push" ] && [ "$NAT" = "true" ]; then DEVCLIENT=true; fi
+          if [ "$LANE" = "native-build" ] || [ "$LANE" = "full" ]; then DEVCLIENT=true; fi
           echo "devclient=$DEVCLIENT" >> "$GITHUB_OUTPUT"
           {
-            echo "lane: **$LANE** · native-changed: **$NAT** · eas-build: **$EAS** · devclient-build: **$DEVCLIENT**"
+            echo "lane: **$LANE** · native-changed: **$NAT** · devclient-build: **$DEVCLIENT**"
           } >> "$GITHUB_STEP_SUMMARY"
 
   # ═══════════════════════════════════════════════════════════════════
@@ -313,7 +309,7 @@ jobs:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
   # ═══════════════════════════════════════════════════════════════════
-  # Lane C(a) — native-build-devclient: build + RECORD the reusable
+  # Lane C — native-build-devclient: build + RECORD the reusable
   # dev-client APK (the prebuilt binary Lane B consumes). Runs ONLY on
   # a native-affecting push or the native-build/full lanes.
   # ═══════════════════════════════════════════════════════════════════
@@ -438,82 +434,6 @@ jobs:
           path: prebuilt
           if-no-files-found: error
           retention-days: 14
-
-  # ═══════════════════════════════════════════════════════════════════
-  # Lane C(b) — eas-build: the EAS cloud cut. R342 t09 gating: ONLY on
-  # a native-affecting push or the native-build/full lanes — a fast
-  # dispatch or a JS-only push can never queue it (the r341 behavior
-  # queued EAS on EVERY manual dispatch).
-  # ═══════════════════════════════════════════════════════════════════
-  eas-build:
-    name: EAS Build (preview — native change detected)
-    needs: [mobile-gates, detect]
-    # The EXPO_TOKEN credential gate runs as the first STEP (secrets are
-    # not usable in a job-level if) and skips the build with a notice
-    # when absent.
-    if: needs.detect.outputs.runEasBuild == 'true'
-    runs-on: ubuntu-24.04
-    timeout-minutes: 12
-    defaults:
-      run:
-        working-directory: apps/mobile
-    steps:
-      # The gate runs BEFORE checkout — it only inspects the secret, never
-      # the tree — so it must not inherit the job's apps/mobile default
-      # (the directory does not exist until checkout; bash then dies with
-      # "working directory … No such file or directory" and the whole job
-      # goes red before the intended honest skip). Pin it to the workspace
-      # root, which always exists.
-      - name: Credential gate (EXPO_TOKEN)
-        id: build-cred
-        working-directory: .
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: |
-          if [ -z "$EXPO_TOKEN" ]; then
-            echo "::notice::EXPO_TOKEN is not configured — EAS build skipped (set the repository secret to enable)"
-            echo "has_token=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "has_token=true" >> "$GITHUB_OUTPUT"
-          fi
-      - if: steps.build-cred.outputs.has_token == 'true'
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-      - if: steps.build-cred.outputs.has_token == 'true'
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      # R327 D2/Z14: the EAS CLI resolves the app's config plugins
-      # (expo-router, splash, notifications, local-authentication…)
-      # LOCALLY before queueing — without apps/mobile's node_modules it
-      # dies with «Failed to resolve plugin for module "expo-router"».
-      # This job had never actually run (it was skipped behind the red
-      # icons gate from B1 to C5), so the gap only surfaced now.
-      - if: steps.build-cred.outputs.has_token == 'true'
-        run: npm ci --no-audit --no-fund
-      - name: "Build (preview = internal APK + iOS sim, production = the store cut)"
-        if: steps.build-cred.outputs.has_token == 'true'
-        # R327 D2: the old `|| cat build-out.txt` swallowed EAS failures —
-        # the job went green while NO build was queued (that is exactly how
-        # the missing-npm_ci gap hid). The step now fails loudly.
-        # R327 D2b: the profile rides the dispatch input (preview default);
-        # production = the AAB store cut with the EAS-managed upload key.
-        run: |
-          set +e
-          PROFILE="${{ github.event.inputs.profile || 'preview' }}"
-          npx eas-cli@latest build --profile "$PROFILE" --platform "${{ github.event.inputs.platforms || 'all' }}" --non-interactive --no-wait > build-out.txt 2>&1
-          STATUS=$?
-          set -e
-          cat build-out.txt
-          if [ "$STATUS" -ne 0 ]; then
-            echo "::error::EAS build queueing failed (exit $STATUS — see output above)"
-            exit "$STATUS"
-          fi
-          grep -oE 'https://expo\.dev/artifacts/[^ )]+' build-out.txt >> "$GITHUB_STEP_SUMMARY" || true
-          echo "## EAS $PROFILE builds queued" >> "$GITHUB_STEP_SUMMARY"
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
   # ═══════════════════════════════════════════════════════════════════
   # Lane B — android-smoke-prebuilt: the five-role Maestro journey on

@@ -143,7 +143,10 @@ queue/ownership in the same directory.
   (`App.tsx`, `GlobalSearch` are eager; prefer lazy routes); light+dark themes, RTL and
   a11y are contract, and `check-csp-hash.sh` must stay green.
 - **Mobile screen**: `apps/mobile/app/**` (Expo ~58, expo-router, own lockfile) — start
-  from `apps/mobile/README.md`; builds go through the `mobile.yml` / EAS workflows.
+  from `apps/mobile/README.md`; native builds go through the GitHub-Actions native
+  lanes (`mobile.yml` devclient/full lanes; `android-apk.yml` QA + signed release;
+  `build-ios-sidestore.yml` sidestore IPA) — EAS Build is retired; EAS remains only
+  the OTA (JS update) channel.
 - **Backend route**: `backend/src/http/routes/*.ts` following the envelope + error-code
   conventions (`BACKEND.md`, `docs/08-api-reference.md`); keep decision logic in pure
   DB-free functions (tests mock `../../src/db.js`); schema change = edit
