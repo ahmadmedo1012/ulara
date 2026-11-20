@@ -25,6 +25,7 @@
  */
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
+import { RevealCssClass } from '../../../hooks/useReveal';
 import { Logo } from '../../../brand';
 import { BRAND_LABEL, LOGIN } from '../copy';
 
@@ -105,6 +106,16 @@ export function Footer({ year }: { year: number }) {
   return (
     <footer className="fo-footer" data-spec="footer.root" aria-label={BRAND_LABEL}>
       <div className="fo-in" data-spec="footer.in">
+        {/* R345-ED — the drawing-sheet title block: the colophon opens
+            with its own plate row (identity · sheet · scale · year),
+            the footer reading as the SET'S CLOSING SHEET. Decorative
+            chrome riding the house reveal rung. */}
+        <RevealCssClass as="div" className="fo-plate" aria-hidden="true">
+          <span className="fo-plate-cell fo-mono" dir="ltr">PLATE · 09</span>
+          <span className="fo-plate-cell">لوحة الهبوط — نظام تشغيل الجامعة</span>
+          <span className="fo-plate-cell">ورقة واحدة · مقياس 1:1 · يعمل اليوم</span>
+          <span className="fo-plate-cell fo-mono" dir="ltr">ULARA · {year}</span>
+        </RevealCssClass>
         {/* ── the column band — CSS Grid: 1 col <768 · 2 cols ≥768
             (col1 brand+links+subscribe · col2 the link index + contact
             groups). The retired col3 construction mark is gone (R336 B2):

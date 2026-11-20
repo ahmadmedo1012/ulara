@@ -75,22 +75,16 @@ export const PRODUCT_CAPTURES: [
   },
 ];
 
-/* ── P-A2 R333 (INV-08 · the retired craft sheet row 13) — the 2× capture seats ──
- * The same seeded surfaces re-captured @2880×1740 (the reference platform
- * frame's 1440×870 @1× — docs/redesign/r333/media-capture.md). These
- * ride the Vite asset pipeline (src/assets/product/*.webp → hashed
- * dist assets) through ProductFrame's `twoXSrc` override; the public
- * /media/product ladder above keeps serving the 1280×800 seats.
- * widths[0] states the 1× intrinsic width (the CLS box is 1440×870). */
-export const CAPTURE_LECTURE_CHECKPOINT_2X: ProductCapture = {
-  id: 'lecture-checkpoint',
-  titleAr: 'المحاضرة التفاعلية',
-  captionAr: 'مشغّل المحاضرة مع نقطة فحص تُصحَّح فورًا',
-  altAr: 'لقطة حقيقية من مشغّل المحاضرة في أُلارا أثناء محاضرة «هندسة البرمجيات»، مع بطاقة نقطة فحص مدمجة في الفيديو — بيانات العرض التجريبية',
-  route: '/student/courses',
-  widths: [1440],
-  sizes: '(min-width: 992px) 30rem, 100vw',
-};
+/* ── P-A2 R333 (INV-08) → R342-final — the 2× capture seats ──
+ * The 2× surfaces (@2880×1740 re-captures, docs/redesign/r333/
+ * media-capture.md) ride the Vite asset pipeline (src/assets/product/
+ * *.webp → hashed dist assets). The R342 editorial-scenes rebuild
+ * consumes them DIRECTLY (sections/Product.tsx: exam-active +
+ * ai-tutor; WhyScene.tsx: lecture-checkpoint as the lecture-player
+ * row's twoXSrc) — the old exported CAPTURE_LECTURE_CHECKPOINT_2X
+ * data constant (a metadata twin of the direct import) retired with
+ * that rewire; the public /media/product ladder above keeps serving
+ * the 1280×800 seats through ProductFrame's twoXSrc override. */
 
 export type RoleKey = 'STUDENT' | 'TEACHER' | 'ADMIN' | 'QUALITY' | 'OWNER';
 

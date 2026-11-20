@@ -140,6 +140,16 @@ export function Roles() {
             center hairline (a real 1px element — the spec's mid rule). */}
         <div className="rl-media" aria-hidden="true" data-spec="roles.media">
           <div className="rl-mediarule" data-spec="roles.mediarule" />
+          {/* R345-ED — the deck's sheet furniture: the corner registration
+              marks + the mono surface counter following the open row
+              (click/keyboard-driven, never hover-dependent) + the honest
+              demo-data note. */}
+          <div className="rl-deck-meta">
+            <span className="lp-tag rl-deck-count fo-mono" data-tone="accent" dir="ltr">[{String(open + 1).padStart(2, '0')}/08]</span>
+            <span className="rl-deck-note">سطح حقيقي من أسطح المنصّة — بيانات العرض التجريبية</span>
+          </div>
+          <span className="rl-deck-mark rl-deck-mark-a" aria-hidden="true" />
+          <span className="rl-deck-mark rl-deck-mark-b" aria-hidden="true" />
           <div className="rl-deck" data-spec="roles.mediadeck">
             <div className="rl-deckinner" data-spec="roles.mediainner">
               {ROLE_ROWS.map((r, i) => (
@@ -200,6 +210,7 @@ export function Roles() {
                     key={r.num}
                     className={`rl-row${isOpen ? ' is-open' : ''}`}
                     data-spec={`roles.row.${i + 1}`}
+                    style={{ ['--rl-i' as string]: i }}
                   >
                     <div className="rl-row-tw" data-spec={`roles.rowtw.${i + 1}`}>
                       <div className="rl-row-twf" data-spec={`roles.rowtwf.${i + 1}`}>

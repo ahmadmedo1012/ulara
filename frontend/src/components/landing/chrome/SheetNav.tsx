@@ -104,6 +104,19 @@ function RollLabel({ text }: { text: string }) {
   );
 }
 
+/* ── the corner glyph — the reference's .header-menu-item-ic: a drawn
+ * 7×7 corner bracket (top-right corner, mirrored per cell edge) that
+ * travels diagonally on hover — the .bot mark exits, the .top mark
+ * arrives. Drawn SVG, never a unicode glyph (the decor-innertext
+ * contract: empty spans, the glyph lives in the path). */
+function CornerGlyph() {
+  return (
+    <svg viewBox="0 0 7 7" fill="none" aria-hidden="true" focusable="false">
+      <path d="M6 6.5V0.5H0" stroke="currentColor" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 /* The desktop nav — the seat register over the bar's ruled cells. The
  * current page (the landing itself) carries the reference's 0.6rem
  * signal square + the primary ink (w--current), and — exactly like the
@@ -123,9 +136,22 @@ function HeaderNav() {
           i % 2 === 0 ? 'is-btn-seat' : '',
           current ? 'is-current' : '',
         ].filter(Boolean).join(' ');
+        const inner = (
+          <>
+            <RollLabel text={seat.label} />
+            {/* the corner-glyph instrument — the pair travels
+                diagonally on hover (nav.css); decorative chrome */}
+            <span className="fo-nav-ic fo-nav-ic--top" aria-hidden="true">
+              <CornerGlyph />
+            </span>
+            <span className="fo-nav-ic fo-nav-ic--bot" aria-hidden="true">
+              <CornerGlyph />
+            </span>
+          </>
+        );
         return seat.anchor ? (
           <a key={seat.href} href={seat.href} className={cls} data-spec={`nav.link.${i}`}>
-            <RollLabel text={seat.label} />
+            {inner}
           </a>
         ) : (
           <Link
@@ -135,7 +161,7 @@ function HeaderNav() {
             data-spec={`nav.link.${i}`}
             aria-current={current ? 'page' : undefined}
           >
-            <RollLabel text={seat.label} />
+            {inner}
           </Link>
         );
       })}
@@ -383,6 +409,9 @@ export function SheetNav() {
               <span className="fo-cta-main" data-spec="nav.cta.main">
                 <RollLabel text={START_NOW} />
                 <Icon icon={ArrowLeft} size={14} className="fo-actions-cta-arrow" aria-hidden />
+              </span>
+              <span className="fo-nav-ic fo-nav-ic--cta" aria-hidden="true">
+                <CornerGlyph />
               </span>
             </Link>
           </div>

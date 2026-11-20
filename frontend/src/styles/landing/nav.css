@@ -304,6 +304,10 @@ html[data-theme='dark'] .fo-header {
   min-block-size: 44px;
   block-size: 100%;
   font: inherit;
+  /* AFTER the shorthand: the reference's txt-font-mono nav register —
+     Latin runs ride Geist Mono, Arabic runs fall back to IBM Plex Sans
+     Arabic (fonts.css) */
+  font-family: var(--font-mono);
   /* r339 (T-10) — the measured seat register: her nav CELL carries the
    * page-root size/row (13.33px/17.33px @1440 — the cell is the measured
    * a/button box); her txt-14 mono LABEL spans inside are 0.875 × the
@@ -502,8 +506,12 @@ html[data-theme='dark'] .fo-header {
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
+  /* the reference's CTA anatomy: the label and the arrow pull apart
+     across the cell (btn-bg-txt-inner space-between), the arrow seated
+     at the reading-end edge */
+  justify-content: space-between;
   gap: var(--sp-1-5);
+  padding-inline: var(--sp-3);
   inline-size: 100%;
   block-size: 100%;
   overflow: clip;
@@ -518,6 +526,46 @@ html[data-theme='dark'] .fo-header {
   transition: transform 0.5s var(--ease); /* the measured bg-hover wipe */
   pointer-events: none;
   z-index: -1;
+}
+
+/* ── the corner-glyph instrument — the reference's .header-menu-item-ic:
+ * a drawn 7×7 corner bracket riding each ruled cell; the .bot mark sits
+ * inside the cell's reading-end corner at rest, the .top mark is parked
+ * one seat outside it, and the hover swaps them along the diagonal
+ * (transform 0.5s cubic-bezier(.23,1,.32,1) — the reference's own
+ * item-ic curve). The CTA cell carries one static bracket (its arrow
+ * already plays the arrival). Empty spans + the drawn path — the glyph
+ * never enters innerText (the §A6 contract). */
+.fo-nav-ic {
+  position: absolute;
+  inline-size: 0.6rem;
+  block-size: 0.6rem;
+  flex: none;
+  color: currentColor;
+  pointer-events: none;
+}
+
+.fo-nav-ic svg {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.fo-nav-ic--bot {
+  inset-block-end: 0.6rem;
+  inset-inline-end: 0.6rem;
+}
+
+.fo-nav-ic--top {
+  inset-block-start: 0.6rem;
+  inset-inline-end: 0.6rem;
+  transform: translate(150%, -150%);
+}
+
+.fo-nav-ic--cta {
+  inset-block-end: 0.5rem;
+  inset-inline-end: 0.8rem;
+  opacity: 0.9;
 }
 
 /* ── <992px: the bar collapses to [logo | «القائمة» + the burger] —
@@ -792,6 +840,28 @@ html[data-theme='dark'] .fo-header {
 
   .fo-mb-row:hover {
     color: var(--accent-ink);
+  }
+}
+
+/* the corner-glyph travel (the reference's .header-menu-item-ic): the
+ * .bot mark exits along the diagonal, the parked .top mark arrives;
+ * transform 0.5s cubic-bezier(.23,1,.32,1) — the reference's own
+ * item-ic curve. Placed AFTER the wipe block so the extractor's
+ * first-match contract keeps reading the original nav wash. */
+@media (hover: hover) and (pointer: fine) {
+  .fo-nav-link:hover .fo-nav-ic,
+  .fo-nav-link:focus-visible .fo-nav-ic {
+    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1); /* easing-gate: allow — the reference's own item-ic curve */
+  }
+
+  .fo-nav-link:hover .fo-nav-ic--bot,
+  .fo-nav-link:focus-visible .fo-nav-ic--bot {
+    transform: translate(150%, 150%);
+  }
+
+  .fo-nav-link:hover .fo-nav-ic--top,
+  .fo-nav-link:focus-visible .fo-nav-ic--top {
+    transform: translate(0, 0);
   }
 }
 

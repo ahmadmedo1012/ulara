@@ -1,23 +1,30 @@
 /**
- * Hero — R331 (A-Web-Hero) — the reference-mechanics rebuild of the landing
- * hero, Ulara's own content on the reference's construction.
+ * Hero — the drawing-sheet recomposition (the visual art direction pass).
  *
- * Port source of record: the retired r331 program doc (§4 hero
- * recipe + §7 motion values) / the program digest (`imagery.hero`).
- * The reference's hero anatomy, mirrored for RTL:
+ * The reference's hero anatomy, mirrored for RTL — ONE calm sheet:
  *
- *   .home-hero (full-bleed band, 100svh-class height)
- *   ├─ the art layer stack — interact (cursor crosshair — Ulara's
- *   │  own HeroInspect instrument) → the img (OUR ink elevation,
- *   │  HeroInkWindow, FULL-BLEED — R332 W1: the paper runs edge-to-edge
- *   │  and the ink breaks the viewport edge) → ruler (dashed ticks +
- *   │  measure graticule, inset 3.2rem) → deco cards ×2
- *   ├─ the content grid (title-wrap ‖ sub-wrap) + the work strip
- *   └─ the bg-border FRAME on the section itself — 4 edge strips +
- *      4 corner plus marks, inset 1.2rem from the viewport edges
- *      (R332 W1: the run-001 «window inside a window» kill — one
- *      viewport frame over the full-bleed drawing, never a box
- *      hugging an inner window)
+ *   .hro (full-bleed band, 100svh-class height)
+ *   ├─ the art band — the CAMPUS PLATE centered on bare paper
+ *   │  (CampusPlate 'ink': the SAME elevation the preloader traces,
+ *   │  completing between the exit lines — the loader→hero handoff);
+ *   │  the inspection instrument (HeroInspect) + the ruler chrome
+ *   │  (dashed tick strips, corner plus marks) over the one frame;
+ *   │  the deco cards reseat as sheet labels in the plate's whitespace.
+ *   ├─ the content grid (title cell ‖ sub cell ‖ alt cell)
+ *   └─ the work strip + the section frame (4 wiping edges + plus marks).
+ *
+ * RETIRED with this pass (R342-final integration: the dead files are
+ * DELETED — git history is the rollback; the census contracts keep
+ * their records in the round docs and the frozen captures):
+ *   · the ~95-div survey grid (HeroGrid) — the live sheet reads as ONE
+ *     calm drawing over paper, not a survey document;
+ *   · the 103-node vector-chrome census layer (HeroChrome);
+ *   · the quadrant graticule + the red measure rules (the plate carries
+ *     its own dimension chain, alignment crosses and datum ticks —
+ *     quieter, authored inside the artwork);
+ *   · the HeroInkWindow/ElevationArt hero seat (the CampusPlate is the
+ *     one drawing object now; ElevationArt stays module-internal to
+ *     ElevationDrawing for the SheetLoader's entrance variant).
  *
  * Mechanics (the reveal grammar, exact reference values):
  *   · hairline wipes — the frame's 4 edges scaleX/scaleY 0→1,
@@ -26,21 +33,21 @@
  *   · title mask-lines — each display line rides its own
  *     overflow-hidden mask, translateY(103%)→0, 0.8s power2.out,
  *     0.02s stagger (y is direction-neutral — no RTL mirror);
- *   · img/frame/deco fades — 1s power3.out;
- *   · the ink itself DRAWS (the staged ink-in belt — Ulara's
- *     superior substitute for the reference's static img fade);
+ *   · plate/frame/deco fades — 1s power3.out; the ink itself DRAWS
+ *     (the staged ink-in belt — the plate's data-ink layers);
  *   · block/work rise — y 3.2rem→0, 1s power3.out.
  *
  * The motion engine is CSS transitions + the landing's OWN gates —
- * NO GSAP in the Ulara stack. The choreography hangs on the
- * `.landing.intro-draw → .landing.intro-done` flip (R308's entrance
- * gate: the loader plays once per session; on its exit slit the hero
- * timeline begins, exactly like the belt it replaces). The GSAP ease
- * curves are translated to cubic-bezier(·) equivalents (documented in
- * r331/hero.css — power2.out ≈ [.215,.61,.355,1], power3.out ≈
- * [.165,.84,.44,1], expo.out ≈ [.19,1,.22,1]). prefers-reduced-motion
- * collapses the whole timeline to the settled sheet (RM belt inside
- * hero.css); the intro gate never plays under RM.
+ * the hero itself carries no GSAP (the whole stack's ONE gsap seat is
+ * the journey's scrubbed scene, lib/motion/engine.ts, which keeps its
+ * own ticker parked; the hero never touches it). The choreography
+ * hangs on the `.landing.intro-draw → .landing.intro-done` flip
+ * (R308's entrance gate: the loader plays once per session; on its
+ * exit slit the hero timeline begins). The GSAP ease curves are
+ * translated to cubic-bezier(·) equivalents (documented in
+ * hero-mechanics.css). prefers-reduced-motion collapses the whole
+ * timeline to the settled sheet (RM belt inside hero-mechanics.css);
+ * the intro gate never plays under RM.
  *
  * Stable hooks kept for the platform's contracts (tests/scripts —
  * see tests/unit/landing-funnel.test.tsx, tests/e2e/r312-*):
@@ -53,15 +60,13 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { Icon } from '../../Icon';
 import { HERO_WORK_ITEMS } from '../../../data/landing-ledger';
-import { HeroInkWindow } from '../HeroInkWindow';
-import { HeroGrid } from './HeroGrid';
-import { HeroChrome } from './HeroChrome';
+import { CampusPlate } from './CampusPlate';
 import { HeroInspect } from '../cursor/HeroInspect';
 import { useIsNarrowLayout } from '../../../hooks/useIsNarrowLayout';
 import '../../../styles/landing/hero-mechanics.css';
 import { BRAND_LABEL, LOGIN, REGISTER, LECTURE_INTERACTIVE, MASTERY_MATRIX} from '../copy';
 
-/* The display title — R342-02: TWO authored lines (the frozen spec's own
+/* The display title — TWO authored lines (the frozen spec's own
  * h1 box is the 2-line seat at 1440/1920/1024: 772×93 · 1029×124 ·
  * 549×66 — lh = fs exactly, 2 lines). UNVOCALISED (zero tashkeel — the
  * display canon), no tracking; the second line carries the whole
@@ -95,10 +100,10 @@ const DECO_CARDS = [
  * and the hover/focus twins live in hero.css. Ordinals whose records
  * are NOCHANGE at every bp (10) carry no seat at all.
  *   0 login · 3 register · 1/2/5/7/4/6 the work strip · 8/9 the deco
- *   cards · 11–14 the ± registration marks · 15–20 the graticule. */
+ *   cards · 11–14 the ± registration marks (the graticule twins 15–20
+ *   retire with the survey pass — their records resolve not-found). */
 const WORK_SEAT_ORD = ['1', '2', '5', '7', '4', '6'] as const;
 const DMARK_SEAT: Record<string, string> = { tl: '11', tr: '12', bl: '13', br: '14' };
-const MEASURE_SEAT: Record<string, string> = { m1: '15', m2: '16', h1: '17', h2: '18', v1: '19', v2: '20' };
 
 export function Hero() {
   /* r338 T-13b — the deco cards are ≥992 chrome (hero.css hides them
@@ -114,37 +119,38 @@ export function Hero() {
     <section className="fo-hero hro" aria-label={BRAND_LABEL}>
       {/* ══ [1] THE ART BAND — the drafting stage (the reference's
           home-hero-img layer stack, ONE physical frame for the ink,
-          the inspection instrument and the drafting chrome). ══ */}
+          the inspection instrument and the drafting chrome). The plate
+          sits CENTERED at its own composed width — the drawing reads as
+          the sheet's centerpiece with paper breathing around it, never
+          a full-bleed scan. ══ */}
       <div className="hro-art">
         <div className="bp-stage hro-stage" data-cursor="none">
-          {/* the ink — the whole frontal elevation on transparent
-              paper (the reference's img-inner seat, drawn in by the
-              staged ink-in belt). */}
-          <HeroInkWindow />
+          {/* the ink — the whole campus elevation on transparent
+              paper (drawn in by the staged ink-in belt; the SAME
+              plate the preloader traces, completing between the
+              exit lines). */}
+          <div className="hro-plate">
+            <CampusPlate variant="ink" />
+          </div>
           {/* the cursor instrument — crosshair guides + coordinate
               readout + the drag-to-inspect stations (fine pointers,
               ≥992 — the reference's interact-wrap, Ulara's own). */}
           <HeroInspect />
-          {/* the ruler chrome — dashed ticks, corner plus marks,
-              registration marks and the measure graticule (the
-              reference's ruler layer, visible at rest). */}
+          {/* the ruler chrome — dashed tick strips on the frame's four
+              inner edges (the reference's ruler layer, visible at rest;
+              the quadrant graticule + red datum rules retire with the
+              survey pass — the plate carries its own dimension chain). */}
           <div className="bp-rulers" aria-hidden="true">
             <span className="bp-ruler bp-ruler-t" />
             <span className="bp-ruler bp-ruler-b" />
             <span className="bp-ruler bp-ruler-s" />
             <span className="bp-ruler bp-ruler-e" />
-            <span className="bp-measure bp-measure-h bp-measure-h1" data-spec-hover={MEASURE_SEAT.h1} />
-            <span className="bp-measure bp-measure-h bp-measure-h2" data-spec-hover={MEASURE_SEAT.h2} />
-            <span className="bp-measure bp-measure-v bp-measure-v1" data-spec-hover={MEASURE_SEAT.v1} />
-            <span className="bp-measure bp-measure-v bp-measure-v2" data-spec-hover={MEASURE_SEAT.v2} />
-            <span className="bp-measure bp-measure-marker bp-measure-m1" data-spec-hover={MEASURE_SEAT.m1} />
-            <span className="bp-measure bp-measure-marker bp-measure-m2" data-spec-hover={MEASURE_SEAT.m2} />
           </div>
 
           {/* the ± registration marks — the dashed inner frame's corner
-              chrome (R315 B1 · A.3); direct stage children so their 11px
-              seats track the frame's own 16px inset. Hover-revealed with
-              the frame they annotate (R332 W1 — clean corners at rest). */}
+              chrome (R315 B1 · A.3); direct stage children so their
+              seats track the frame's own inset. Hover-revealed with
+              the frame they annotate (clean corners at rest). */}
           <span data-spec-hover={DMARK_SEAT.tl} className="bp-dmark bp-dmark-tl" aria-hidden="true" />
           <span data-spec-hover={DMARK_SEAT.tr} className="bp-dmark bp-dmark-tr" aria-hidden="true" />
           <span data-spec-hover={DMARK_SEAT.bl} className="bp-dmark bp-dmark-bl" aria-hidden="true" />
@@ -175,7 +181,7 @@ export function Hero() {
         </div>
       </div>
 
-      {/* ══ [2] THE CONTENT BAND — R342-02: the measured closing collage of
+      {/* ══ [2] THE CONTENT BAND — the measured closing collage of
           the fold — title cell (the 2-line H1, reading-start) ‖ sub cell
           (the lead paragraph + the register CTA under it) ‖ alt cell (the
           login secondary, accent ink); the work strip closes the band as
@@ -267,7 +273,7 @@ export function Hero() {
       {/* ══ [4] THE FRAME — the reference's bg-border frame (R332 W1):
           4 wiping edge strips (1.2s linear; origin mirrored for RTL)
           + 4 corner plus marks, seated on the SECTION — inset 1.2rem
-          from the viewport edges over the full-bleed drawing, never
+          from the viewport edges over the full-bleed sheet, never
           hugging an inner window (the run-001 kill). ══ */}
       <span className="hro-edge hro-edge-t" aria-hidden="true" />
       <span className="hro-edge hro-edge-b" aria-hidden="true" />
@@ -278,16 +284,13 @@ export function Hero() {
       <span className="bp-plus bp-plus-bl" aria-hidden="true" />
       <span className="bp-plus bp-plus-br" aria-hidden="true" />
 
-      {/* ══ [5] THE DRAFTING GRID — R341 H1-a: the per-div hairline layer
-          (the reference's ~95 grid divs, measured seats; appended LAST so
-          no existing census ordinal shifts). ══ */}
-      <HeroGrid />
-
-      {/* ══ [6] THE VECTOR CHROME — R341 H1-b: the per-node chrome layer
-          (the reference's plus-marks/marquee icons/social arrows/pin
-          dots, measured seats; appended after the grid so no existing
-          census ordinal shifts). ══ */}
-      <HeroChrome />
+      {/* [5]/[6] RETIRED — the ~95-div survey grid and the 103-node
+          vector-chrome census layer: the live sheet reads as ONE calm
+          drawing over paper, not a survey document. The drafting
+          furniture lives INSIDE the plate (dimension chain, alignment
+          crosses, datum ticks) and the section carries only the frame
+          (edges + plus corners) and the ruler ticks. The two census
+          modules stay in the tree untouched for rollback. */}
     </section>
   );
 }

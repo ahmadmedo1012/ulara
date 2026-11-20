@@ -687,3 +687,130 @@
     color: var(--text-muted);
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   R345-ED (feat/home-editorial-scenes) — the pains' measurement
+   furniture. Each column mounts its own instrument story (the ruler /
+   day rail / axis map / index tabs — sections/Live.tsx) as decorative
+   chrome above the motif drawing. Choreography is TRANSITION-only
+   (no keyframes): strokes draw on a dash ramp, tags fade on the
+   --pd ladder, both keyed on the column's reveal state (.in-view from
+   the house reveals belt) and armed ONLY under .js-reveal-armed —
+   no-JS and reduced-motion visitors read the complete furniture.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.pm-artzone {
+  position: relative;
+}
+
+.pm-furniture {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.pm-fx {
+  stroke: currentColor;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  fill: none;
+}
+
+.pm-fx-dash {
+  stroke-dasharray: 3 3;
+  opacity: 0.75;
+}
+
+.pm-fx-a {
+  stroke: var(--accent);
+}
+
+.pm-fx-t {
+  fill: currentColor;
+  stroke: none;
+  font-family: var(--font-mono);
+  font-size: 7.5px;
+  letter-spacing: 0;
+}
+
+.pm-fx-t-a {
+  fill: var(--accent);
+}
+
+.pm-fx-q {
+  fill: var(--accent);
+  stroke: none;
+  font-family: var(--font-display);
+  font-size: 34px;
+}
+
+.pm-fx-tag {
+  opacity: 1;
+}
+
+/* the draw choreography — armed by the reveals module's root class only */
+.js-reveal-armed .pm-fx {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset var(--t-slow) var(--ease-out) var(--pd, 0ms);
+}
+
+/* the dashed texture strokes keep their broken rhythm — they fade in
+   (a dash-phase tween reads as a glitch, not a draw) */
+.js-reveal-armed .pm-fx-dash {
+  stroke-dasharray: 3 3;
+  opacity: 0;
+  transition:
+    opacity var(--t-slow) var(--ease-out) var(--pd, 0ms);
+}
+
+.js-reveal-armed .pm-fx-tag {
+  opacity: 0;
+  transform: translateY(3px);
+  transition:
+    opacity var(--t-base) var(--ease-out) var(--pd, 0ms),
+    transform var(--t-base) var(--ease-out) var(--pd, 0ms);
+}
+
+.js-reveal-armed .pm-col.in-view .pm-fx {
+  stroke-dashoffset: 0;
+}
+
+.js-reveal-armed .pm-col.in-view .pm-fx-dash {
+  opacity: 0.75;
+}
+
+.js-reveal-armed .pm-col.in-view .pm-fx-tag {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* the stamp takes one firmer beat (the deadline lands) */
+.js-reveal-armed .pm-col.in-view .pm-fx-tag-stamp {
+  transform: translateY(0) rotate(0deg);
+}
+
+/* the phone band: the furniture rides the carousel cell (the art zone
+   keeps its square; the instruments stay inside it) */
+@media (max-width: 767px) {
+  .pm-furniture { inset: 0; }
+}
+
+/* ═══ reduced motion: the complete furniture stands — every stroke
+   drawn, every tag landed (the house law) ═══ */
+@media (prefers-reduced-motion: reduce) {
+  .js-reveal-armed .pm-fx,
+  .js-reveal-armed .pm-col.in-view .pm-fx {
+    stroke-dashoffset: 0;
+    transition: none;
+  }
+  .js-reveal-armed .pm-fx-tag,
+  .js-reveal-armed .pm-col.in-view .pm-fx-tag {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

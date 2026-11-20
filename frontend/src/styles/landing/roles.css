@@ -448,3 +448,90 @@
 .rl-row-icon.probe-hover {
   opacity: 0.72;
 }
+/* ═══════════════════════════════════════════════════════════════════
+   R345-ED (feat/home-editorial-scenes) — the ledger's editorial layer.
+   · the deck's sheet furniture: corner registration marks + the mono
+     surface counter ([NN/08]) following the open row + the honest
+     demo-data note;
+   · the open row's accent ink bar (a real 1px seat on the row's
+     inline-start edge — the focus the click/keyboard drives);
+   · the rows' entrance ladder (transition-delay off --rl-i, armed only
+     under .js-reveal-armed — no-JS and RM read the settled ledger).
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* the deck furniture */
+.rl-deck-meta {
+  position: absolute;
+  inset-block-start: var(--sp-2);
+  inset-inline-start: var(--sp-3);
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+/* the deck's surface counter — the shared .lp-tag furniture
+   (patterns.css, accent tone) in the meta row's flow seat */
+.rl-deck-count {
+  flex: none;
+}
+
+.rl-deck-note {
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-xs);
+  line-height: 1.4;
+}
+
+.rl-deck-mark {
+  position: absolute;
+  inline-size: 1.1rem;
+  block-size: 1.1rem;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.rl-deck-mark::before {
+  content: '+';
+  position: absolute;
+  inset: 0;
+  color: inherit;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-md);
+  line-height: 1.1;
+  text-align: center;
+}
+
+.rl-deck-mark-a {
+  inset-block-end: var(--sp-2);
+  inset-inline-start: var(--sp-3);
+}
+
+.rl-deck-mark-b {
+  inset-block-end: var(--sp-2);
+  inset-inline-end: var(--sp-3);
+}
+
+/* the open row's accent ink bar — the keyboard/click focus seat */
+.rl-row {
+  position: relative;
+}
+
+.rl-row::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block: 0;
+  inline-size: 2px;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity var(--t-base) var(--ease-out);
+}
+
+.rl-row.is-open::before {
+  opacity: 1;
+}
+
+/* the rows' stagger rides the house belt (reveals.ts assigns the
+   .reveal-d-N ladder at intersect time — no second ladder here). */
+

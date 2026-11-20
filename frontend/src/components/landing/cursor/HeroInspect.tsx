@@ -1,59 +1,65 @@
 import { PREFERS_REDUCED_MOTION } from '../../../lib/motion-media';
 /**
- * HeroInspect — R308 «محطات الفحص» · R309 the corrected frame.
+ * HeroInspect — «محطات الفحص» · the corrected frame.
  *
  * The reference replaces the global cursor over its hero drawing with
  * a LOCAL drafting instrument (reference-observations.md §3.3–3.4):
  * full-span guide lines + an 8×8 plus + a scene-relative coordinate
  * readout, and a drag-to-inspect gesture whose selection box reveals
  * annotation markers by AABB overlap. This is Ulara's original
- * implementation of that grammar over «مخطط أُلارا»:
+ * implementation of that grammar over the campus plate:
  *
  *  · Guides + plus + readout: `(hover:hover) and (min-width:992px)`
  *    only (the reference's own gate); eased follow on the shared
  *    clock; readout is SCENE-relative (origin = the drawing frame),
  *    mono, `dir="ltr"`, decorative (aria-hidden), and clamped inside
  *    the frame.
- *  · ONE PHYSICAL FRAME (R309 §2.2): the interaction layer is sized
- *    in JS to the SVG's own box, and every positioned child — guides,
- *    plus, readout, drag box, dots, cards — anchors with PHYSICAL
- *    left/top against that box. The R308 defect used logical
- *    `inset-inline-start` inside the RTL document, which mirrors
- *    every element against its left-based coordinate math (cards
- *    clipped the viewport, the vertical guide crossed into the hero
- *    copy). Physical anchoring keeps the visible instrument and the
- *    logical geometry in the same frame at every size and direction.
- *  · Markers live in the ARTWORK's viewBox coordinates and are remapped
- *    through the real letterbox transform of the rendered SVG
- *    (`fitViewBox` — preserveAspectRatio "xMidYMid meet"), so they stay
- *    glued to the drawing at every crop/size (never hard-coded px).
+ *  · ONE PHYSICAL FRAME: the interaction layer is sized in JS to the
+ *    SVG's own box, and every positioned child — guides, plus,
+ *    readout, drag box, dots, cards — anchors with PHYSICAL left/top
+ *    against that box. Logical `inset-inline-*` inside the RTL
+ *    document would mirror every element against its left-based
+ *    coordinate math (cards clipped the viewport, the vertical guide
+ *    crossed into the hero copy). Physical anchoring keeps the visible
+ *    instrument and the logical geometry in the same frame at every
+ *    size and direction.
+ *  · Markers live in the PLATE's viewBox coordinates (CAMPUS_FRAME —
+ *    the artwork and the stations author against the SAME space, so
+ *    the dots stay glued to the drawn features at every crop/size;
+ *    never hard-coded px against the container). The 44×44 touch
+ *    TARGET is clamped into the drawing's VISIBLE window (the stage's
+ *    clip box ∩ the SVG box) — the phone band's deliberate edge-bleed
+ *    crop must never push a tappable station off-sheet (the R342
+ *    integration contract, measured at 360/375/390/430); where the
+ *    window is wider than the drawing itself (desktop, tablet) the
+ *    clamp is a no-op and the seat IS the feature.
  *  · Drag: 2px threshold → a selection box (normalized rect, hairline
- *    coral border, direction-tinted fill — R309 makes the CSS actually
- *    consume --bx/--by/--bw/--bh, so the box is VISIBLE while
- *    dragging). Markers whose box intersects the live selection open;
- *    the box is removed on release and open markers PERSIST (the
- *    reference's release semantics) until the visitor resets them.
- *  · The revealed cards (R309 §2.4): anchored to their dot, clamped
- *    inside the frame, and laid out by `layoutAnnotationCards` — a
- *    pure collision-aware pass, independent of open state, so cards
- *    never clip, never overlap, and never jump when a sibling opens.
+ *    accent border, direction-tinted fill — the CSS consumes
+ *    --bx/--by/--bw/--bh, so the box is VISIBLE while dragging).
+ *    Markers whose box intersects the live selection open; the box is
+ *    removed on release and open markers PERSIST (the reference's
+ *    release semantics) until the visitor resets them.
+ *  · The revealed cards: anchored to their dot, clamped inside the
+ *    frame, and laid out by `layoutAnnotationCards` — a pure
+ *    collision-aware pass, independent of open state, so cards never
+ *    clip, never overlap, and never jump when a sibling opens.
  *    ≤760px the cards leave the overlay and flow as readable blocks
  *    under the drawing (the same breakpoint where the hotspot pins
- *    already flow — R309 §2.5's separate mobile contract).
+ *    already flow — the separate mobile contract).
  *  · Every marker is a real <button> (44×44 dot target) — tap/click/
  *    Enter/Space open it (touch parity: the drag system is
  *    pointer-fine only, the buttons are the universal path,
  *    aria-pressed carries the state).
- *  · State contract (R309 §6): selection opens; release persists;
- *    re-tap toggles; the reset control clears; navigating away
- *    unmounts; RETURNING TO THE TOP after leaving the hero resets the
- *    stations to their clean initial state (the audit's confusing
- *    persistent card after the footer return-to-top link).
+ *  · State contract: selection opens; release persists; re-tap
+ *    toggles; the reset control clears; navigating away unmounts;
+ *    RETURNING TO THE TOP after leaving the hero resets the stations
+ *    to their clean initial state (the audit's confusing persistent
+ *    card after the footer return-to-top link).
  *  · All per-frame work is imperative on the shared conductor clock —
  *    zero React renders per pointermove (the r172 pattern).
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { HERO_FRAME, HERO_SEAT } from '../HeroInkWindow';
+import { CAMPUS_FRAME } from '../hero/CampusPlate';
 import {
   subscribeSheetFrame,
   wakeSheet,
@@ -70,17 +76,11 @@ import {
   type Rect,
 } from '../../../lib/motion/sheetGeometry';
 
-
-/* The hero window's viewBox — the SINGLE shared frame (R310 §6 → R314
- * → R315 → R322 2-b): the TIGHT window around the elevation's ink
- * (HERO_FRAME in HeroInkWindow). The elevation artwork renders in the
- * sheet's own 1440×640 space through HeroInkWindow's HERO_SEAT
- * transform (scale 0.882, offset 58/114), so every station authored
- * in the ARTWORK's sheet space remaps through that seat and then into
- * the viewBox window's own coordinates — the dots stay glued to the
- * drawn features at every size (R315 A.1 re-seat, re-windowed). */
-const VB_W = HERO_FRAME.w;
-const VB_H = HERO_FRAME.h;
+/* The plate window's viewBox — the SINGLE shared frame: the artwork
+ * AND the stations author against CAMPUS_FRAME directly (no remap
+ * pass, no drift between the drawing and its stations). */
+const VB_W = CAMPUS_FRAME.w;
+const VB_H = CAMPUS_FRAME.h;
 
 /* Drag semantics (measured reference constants). */
 const DRAG_THRESHOLD_PX = 2;
@@ -91,15 +91,16 @@ const GUIDE_LERP = 0.12;
 const DOT_TARGET_PX = 44;
 
 /* ── The inspection stations — REAL capabilities, placed in the
- * ARTWORK's own coordinate space at each drawn feature's annotation
- * spot (R310: anchored to the elevation's real geometry — the
- * checkpoint pulse square on the bridge glass, the library's
- * reading-room glazing, the tower's rising mastery line). Codes
- * ride the mono voice; copy is the honest current capability. */
+ * PLATE's own coordinate space at each drawn feature's annotation
+ * spot (anchored to the elevation's real geometry: the checkpoint
+ * pennant on the bridge glass, the library's reading-room fins, the
+ * mastery tower's course lines, the exam pavilion's dial, the
+ * auditorium's grand portal). Codes ride the mono voice; copy is the
+ * honest current capability. */
 interface MarkerDef {
   id: string;
   code: string;
-  /** the feature's anchor in the ARTWORK's own 1440×640 space */
+  /** the feature's anchor in the PLATE's own 1440×640 space */
   ex: number;
   ey: number;
   /** display box size, px (the reference's fixed 200×80 grammar) */
@@ -107,53 +108,67 @@ interface MarkerDef {
   h: number;
   labelAr: string;
   bodyAr: string;
-  /** the same anchor remapped into the hero viewBox window through
-   *  HERO_SEAT − HERO_FRAME origin (computed once — applyMapping
-   *  consumes vx/vy in viewBox coordinates) */
-  vx: number;
-  vy: number;
 }
 
+/* CAMPUS_FRAME is the identity window (0,0,1440,640) — the authored
+ * ex/ey ARE the viewBox coordinates; the field pair stays so the
+ * geometry helpers keep one signature. */
 const MARKERS: MarkerDef[] = [
+  {
+    id: 'lc',
+    code: 'LC',
+    ex: 1170,
+    ey: 430,
+    w: 210,
+    h: 92,
+    labelAr: 'المحاضرات التفاعلية',
+    bodyAr: 'المحاضرة تعمل داخل المتصفح: شرائح، مؤقّت، أسئلة تُصحَّح فورًا.',
+  },
   {
     id: 'cp',
     code: 'CP',
-    ex: 970,
-    ey: 452,
+    ex: 953,
+    ey: 388,
     w: 204,
     h: 88,
     labelAr: 'نقطة فحص',
     bodyAr: 'سؤال قصير داخل المحاضرة يُصحَّح فورًا قبل المتابعة.',
   },
   {
+    id: 'mg',
+    code: 'MG',
+    ex: 130,
+    ey: 380,
+    w: 204,
+    h: 88,
+    labelAr: 'فجوة إتقان',
+    bodyAr: 'المصفوفة تكشف الفجوة وتربطها بالدرس المناسب لك.',
+  },
+  {
     id: 'rr',
     code: 'RR',
-    ex: 585,
-    ey: 440,
+    ex: 320,
+    ey: 445,
     w: 212,
     h: 88,
     labelAr: 'مراجعة بحث',
     bodyAr: 'بحث PDF بملاحظات معلَّمة من الأستاذ ثم فهرسة في المكتبة.',
   },
   {
-    id: 'mg',
-    code: 'MG',
-    ex: 340,
-    ey: 360,
+    id: 'ex',
+    code: 'EX',
+    ex: 545,
+    ey: 310,
     w: 204,
     h: 88,
-    labelAr: 'فجوة إتقان',
-    bodyAr: 'المصفوفة تكشف الفجوة وتربطها بالدرس المناسب لك.',
+    labelAr: 'اختبارات',
+    bodyAr: 'موضوعية ومقالية بتصحيح تلقائي وتقارير للأستاذ.',
   },
-].map((m) => ({
-  ...m,
-  vx: HERO_SEAT.x + m.ex * HERO_SEAT.s - HERO_FRAME.x,
-  vy: HERO_SEAT.y + m.ey * HERO_SEAT.s - HERO_FRAME.y,
-}));
+];
 
-/* The return-to-top reset contract (R309 §6): once the visitor has
- * left the hero (scrolled past half a viewport), returning to the top
- * band resets the stations — the hero presents its clean initial state
+/* The return-to-top reset contract: once the visitor has left the
+ * hero (scrolled past half a viewport), returning to the top band
+ * resets the stations — the hero presents its clean initial state
  * instead of a stale card. The band is 120px: the footer's
  * return-to-top anchor (#main) lands at scrollY ≈ 57 under the smooth
  * scroll, and the band absorbs header offsets and rounding. */
@@ -185,7 +200,7 @@ export function HeroInspect() {
     if (!layer || !stage || !svg) return;
     const stageRect = stage.getBoundingClientRect();
     const svgRect = svg.getBoundingClientRect();
-    /* R309: the interaction layer IS the drawing frame — the SVG's own
+    /* the interaction layer IS the drawing frame — the SVG's own
      * box, expressed against the stage in PHYSICAL coordinates. Every
      * child then shares one left/top-based frame with the geometry
      * math (no logical-property mirroring in the RTL document). */
@@ -197,9 +212,35 @@ export function HeroInspect() {
 
     /* the letterbox transform inside the SVG element itself */
     const fit = fitViewBox(svgRect.width, svgRect.height, VB_W, VB_H);
+
+    /* the VISIBLE window — where the stage's own clip (overflow:
+     * hidden edge-bleed crops at the phone band) cuts the drawing.
+     * Seat math clamps every station's 44px target into this window
+     * so no tappable dot can sit off-sheet; uncropped seats (svg box
+     * fully inside the stage) make the clamp an exact no-op. */
+    const vis = {
+      left: Math.max(0, stageRect.left - svgRect.left),
+      top: Math.max(0, stageRect.top - svgRect.top),
+      right: Math.min(svgRect.width, stageRect.right - svgRect.left),
+      bottom: Math.min(svgRect.height, stageRect.bottom - svgRect.top),
+    };
+    const halfT = DOT_TARGET_PX / 2;
+    const midX = (vis.left + vis.right) / 2;
+    const midY = (vis.top + vis.bottom) / 2;
+    const loX = Math.min(vis.left + halfT, midX);
+    const hiX = Math.max(vis.right - halfT, midX);
+    const loY = Math.min(vis.top + halfT, midY);
+    const hiY = Math.max(vis.bottom - halfT, midY);
+    const seatInViewBoxFrame = (vx: number, vy: number) => {
+      const p = viewBoxPointToContainer(fit, vx, vy);
+      return {
+        x: Math.min(Math.max(p.x, loX), hiX),
+        y: Math.min(Math.max(p.y, loY), hiY),
+      };
+    };
     const next = new Map<string, Rect>();
     for (const m of MARKERS) {
-      next.set(m.id, viewBoxRectToContainer(fit, m.vx, m.vy, m.w, m.h));
+      next.set(m.id, viewBoxRectToContainer(fit, m.ex, m.ey, m.w, m.h));
     }
     markerRects.current = next;
 
@@ -217,35 +258,14 @@ export function HeroInspect() {
       readout.textContent = prevText ?? 'X:0PX Y:0PX';
     }
 
-    /* dots — glued to the artwork through the real transform */
+    /* dots — glued to the artwork through the real transform, the 44px
+     * target seated inside the visible window (see seatInViewBoxFrame) */
     for (const m of MARKERS) {
       const el = layer.querySelector<HTMLElement>(`[data-marker="${m.id}"]`);
-      const c = viewBoxPointToContainer(fit, m.vx, m.vy);
+      const c = seatInViewBoxFrame(m.ex, m.ey);
       if (el) {
         el.style.setProperty('--mk-x', `${c.x}px`);
         el.style.setProperty('--mk-y', `${c.y}px`);
-      }
-    }
-
-    /* R310 §6 — the [NN] pins join the SAME frame: the hotspots
-     * container is sized to the SVG box (like the layer), and each
-     * pin's data-vx/data-vy remaps through the same letterbox
-     * transform. Pins, stations, guides, and drag math now share one
-     * measured mapping at every size. (≤760px the flow-mode CSS
-     * resets the container to the document flow — the vars go inert.) */
-    const pins = stage.querySelector<HTMLElement>('.bp-hotspots');
-    if (pins) {
-      pins.style.left = `${svgRect.left - stageRect.left}px`;
-      pins.style.top = `${svgRect.top - stageRect.top}px`;
-      pins.style.width = `${svgRect.width}px`;
-      pins.style.height = `${svgRect.height}px`;
-      for (const pin of Array.from(pins.querySelectorAll<HTMLElement>('.bp-hotspot'))) {
-        const vx = Number(pin.dataset.vx);
-        const vy = Number(pin.dataset.vy);
-        if (!Number.isFinite(vx) || !Number.isFinite(vy)) continue;
-        const c = viewBoxPointToContainer(fit, vx, vy);
-        pin.style.setProperty('--hot-x', `${c.x}px`);
-        pin.style.setProperty('--hot-y', `${c.y}px`);
       }
     }
 
@@ -254,7 +274,7 @@ export function HeroInspect() {
     const placement = layoutAnnotationCards(
       { width: svgRect.width, height: svgRect.height },
       MARKERS.map((m) => {
-        const c = viewBoxPointToContainer(fit, m.vx, m.vy);
+        const c = seatInViewBoxFrame(m.ex, m.ey);
         const el = layer.querySelector<HTMLElement>(`.hi-card[data-marker="${m.id}"]`);
         /* measured when rendered; the authored box is the floor */
         const w = el ? Math.max(el.offsetWidth, 0) || m.w : m.w;
@@ -266,7 +286,7 @@ export function HeroInspect() {
     for (const m of MARKERS) {
       const el = layer.querySelector<HTMLElement>(`.hi-card[data-marker="${m.id}"]`);
       const p = placement.get(m.id);
-      const c = viewBoxPointToContainer(fit, m.vx, m.vy);
+      const c = seatInViewBoxFrame(m.ex, m.ey);
       if (el && p) {
         el.style.setProperty('--c-x', `${p.left}px`);
         el.style.setProperty('--c-y', `${p.top}px`);
@@ -309,7 +329,7 @@ export function HeroInspect() {
     };
   }, []);
 
-  /* ── The return-to-top reset contract (R309 §6). ───────────────── */
+  /* ── The return-to-top reset contract. ──────────────────────────── */
   useEffect(() => {
     if (typeof window === 'undefined') return undefined;
     let scrolledAway = false;
@@ -401,11 +421,10 @@ export function HeroInspect() {
       pos.x = lerp(pos.x, target.x, GUIDE_LERP);
       pos.y = lerp(pos.y, target.y, GUIDE_LERP);
       const { w: fw, h: fh } = frameSize.current;
-      /* the instrument is CONFINED to the frame (R309 §2.2/§5.1):
-       * the eased position is clamped to the drawing box before any
-       * write — the guides can never leave the drawing region. The
-       * plus clamps one half-width further in so its whole 8×8 body
-       * stays inside the frame. */
+      /* the instrument is CONFINED to the frame: the eased position
+       * is clamped to the drawing box before any write — the guides
+       * can never leave the drawing region. The plus clamps one
+       * half-width further in so its whole 8×8 body stays inside. */
       const cx = Math.min(Math.max(pos.x, 0), fw);
       const cy = Math.min(Math.max(pos.y, 0), fh);
       const px = Math.min(Math.max(pos.x, 4), Math.max(4, fw - 4));
@@ -455,10 +474,9 @@ export function HeroInspect() {
     };
 
     /* scene-relative point: the FRAME is the drawing (the SVG box) —
-     * R309 §2.2 ("scene-relative X/Y computed from the active frame's
-     * actual bounding rectangle"). Events are captured on the STAGE
-     * (the layer stays pointer-transparent so the hotspot pins keep
-     * their clicks); the coordinates are rebased to the frame. */
+     * events are captured on the STAGE (the layer stays
+     * pointer-transparent so the station dots keep their clicks); the
+     * coordinates are rebased to the frame. */
     const localPoint = (e: PointerEvent) => {
       const r = layerRect();
       return { x: e.clientX - r.left, y: e.clientY - r.top };
@@ -578,7 +596,7 @@ export function HeroInspect() {
         )}
 
         {/* the drag selection box — driven imperatively via CSS vars
-            (R309: the CSS finally consumes them — a visible box) */}
+            (the CSS consumes them — a visible box) */}
         <div ref={boxRef} className="hi-box" data-on="off" aria-hidden="true">
           <span className="hi-box-handle hi-box-handle-tl" />
           <span className="hi-box-handle hi-box-handle-tr" />
@@ -653,12 +671,10 @@ export function HeroInspect() {
 
       {/* the flow rail — the affordance row + (≤760px) the revealed
           cards as readable blocks under the drawing. Above 760px the
-          rail is a transparent overlay (the hint chip keeps its R308
-          stage-bottom position WITHOUT growing the stage, so the
-          percentage-positioned hotspot pins never drift); at ≤760px —
-          the same breakpoint where the pins already flow — the rail
-          enters the document flow. The dots above carry the same
-          real station state (R309 §2.5). */}
+          rail is a transparent overlay (the hint chip keeps its stage
+          -bottom position WITHOUT growing the stage); at ≤760px the
+          rail enters the document flow. The dots above carry the same
+          real station state. */}
       <div className="hi-flow" data-any-open={openIds.length > 0 ? 'on' : 'off'}>
         <div className="hi-hint">
           <span className="hi-hint-text fo-mono">

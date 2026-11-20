@@ -28,6 +28,64 @@ import { Hairline, Numeral } from '../patterns';
 import examShot from '../../../assets/product/exam-active.webp';
 import aiTutorShot from '../../../assets/product/ai-tutor.webp';
 
+/* ── R345-ED (feat/home-editorial-scenes) — the captures' annotation
+ * callouts. Each real capture carries its drafting callouts: an accent
+ * plate naming the capability VISIBLE IN THAT SCREEN (never a feature
+ * the capture does not show — the honesty law), a 1px leader line drawn
+ * plate→target, and a diamond dot seated ON the target region. The
+ * overlay mounts inside the capture frames (.pr-img / .pr-rowimg) as
+ * decorative chrome; the captures keep their own data-spec seats.
+ *
+ * Choreography: the group rides the house reveal rung (.in-view); the
+ * plates/leaders draw on a --pd delay ladder; armed only under
+ * .js-reveal-armed — no-JS and reduced-motion visitors read the
+ * complete annotations. */
+interface Callout {
+  /* physical percent seats of the capture box (the dot's anchor) */
+  x: string;
+  y: string;
+  text: string;
+  /* lead = plate hangs inline-endward off the dot · trail = the long arm */
+  mode: 'lead' | 'trail';
+  pd: string;
+}
+
+const CALLOUTS: Record<'exam' | 'tutor', Callout[]> = {
+  exam: [
+    { x: '82%', y: '30%', text: 'المؤقّت', mode: 'lead', pd: '260ms' },
+    { x: '74%', y: '62%', text: 'تصحيح تلقائي للموضوعي', mode: 'lead', pd: '560ms' },
+    { x: '24%', y: '46%', text: 'المقالية تصل إلى الأستاذ', mode: 'trail', pd: '860ms' },
+  ],
+  tutor: [
+    { x: '50%', y: '26%', text: 'سؤال الطالب', mode: 'lead', pd: '260ms' },
+    { x: '58%', y: '64%', text: 'شروحات مخصَّصة', mode: 'lead', pd: '560ms' },
+    { x: '64%', y: '86%', text: 'خطط مراجعة حسب الأداء', mode: 'trail', pd: '860ms' },
+  ],
+};
+
+function CalloutRow({ c }: { c: Callout }) {
+  return (
+    <div
+      className={`pr-co${c.mode === 'trail' ? ' pr-co--trail' : ''}`}
+      style={{ ['--co-x' as string]: c.x, ['--co-y' as string]: c.y, ['--pd' as string]: c.pd }}
+    >
+      <span className="pr-co-t">{c.text}</span>
+      <span className="pr-co-l" aria-hidden="true" />
+      <span className="pr-co-d" aria-hidden="true" />
+    </div>
+  );
+}
+
+function PrCallouts({ kind }: { kind: 'exam' | 'tutor' }) {
+  return (
+    <RevealCssClass as="div" className="pr-callouts" aria-hidden="true">
+      {CALLOUTS[kind].map((c) => (
+        <CalloutRow key={c.text} c={c} />
+      ))}
+    </RevealCssClass>
+  );
+}
+
 /* the two platform items — copy-driven, mirroring the reference's two
  * carousel items (label/title/long-text/two CTA lines each).
  * r342-06 — the capture pair is capability-disjoint from the
@@ -96,7 +154,11 @@ export function Product() {
             <div className="pr-frame-chrome" aria-hidden="true">
               <Hairline variant="border" />
               <span className="pr-frame-tag"><Numeral n={1} /></span>
+              <span className="lp-tag pr-frame-demo" data-tone="ghost">بيانات العرض التجريبية</span>
             </div>
+            {/* R345-ED — the capture's capability callouts (the honest
+                annotations over the real screen) */}
+            <PrCallouts kind="exam" />
           </div>
           <div className="pr-imgs-hrule" data-spec="platform.imghruleA" aria-hidden="true" />
           <div className="pr-img" data-spec="platform.img2">
@@ -104,7 +166,9 @@ export function Product() {
             <div className="pr-frame-chrome" aria-hidden="true">
               <Hairline variant="border" />
               <span className="pr-frame-tag"><Numeral n={2} /></span>
+              <span className="lp-tag pr-frame-demo" data-tone="ghost">بيانات العرض التجريبية</span>
             </div>
+            <PrCallouts kind="tutor" />
           </div>
           <div className="pr-imgs-vrule" data-spec="platform.imgsvruleB" aria-hidden="true" />
         </div>
@@ -190,7 +254,11 @@ function PlatformRow({ item, idx, hidden, clone }: { item: typeof PLATFORM_ITEMS
         <div className="pr-frame-chrome" aria-hidden="true">
           <Hairline variant="border" />
           <span className="pr-frame-tag"><Numeral n={idx} /></span>
+          <span className="lp-tag pr-frame-demo" data-tone="ghost">بيانات العرض التجريبية</span>
         </div>
+        {/* R345-ED — the same capability callouts on the stacked-band
+            capture (one composition at every width) */}
+        <PrCallouts kind={idx === 1 ? 'exam' : 'tutor'} />
       </div>
     </div>
   );

@@ -10,6 +10,7 @@
 import { Link } from 'react-router-dom';
 import { Check } from 'lucide-react';
 import { Icon } from '../../Icon';
+import { RevealCssClass } from '../../../hooks/useReveal';
 import { LIVE_COUNT } from '../../../data/landing-ledger';
 import { LOGIN, REGISTER } from '../copy';
 
@@ -25,7 +26,24 @@ const REGISTER_L1 = REGISTER_WORDS.slice(0, 2).join(' ') + ' ';
 const REGISTER_L2 = REGISTER_WORDS.slice(2).join(' ');
 
 /* The sketch band's authored line-art: ruled baselines, the three-step
- * registration path, the account mark — pure stroke work. */
+ * registration path, the account mark — pure stroke work.
+ * R345-ED — the sketch draws itself: every stroke carries pathLength=1
+ * + a --pd ladder seat, and the in-view ramp (cta.css) runs the draw
+ * ONCE on the reveal rung (.fo-cta-sketch.in-view), armed only under
+ * .js-reveal-armed — no-JS and RM read the complete sketch. */
+const SKETCH_STROKES: Array<{ d: string; pd: string; op?: number }> = [
+  { d: 'M0 .5h713M0 385.5h713', pd: '0ms' },
+  { d: 'M.5 0v386M712.5 0v386', pd: '80ms', op: 0.35 },
+  { d: 'M64 322c88-42 148-118 256-118s168 58 256 58', pd: '200ms' },
+  { d: 'M64 322m-10 0a10 10 0 1 0 20 0a10 10 0 1 0-20 0', pd: '420ms' },
+  { d: 'M576 262m-10 0a10 10 0 1 0 20 0a10 10 0 1 0-20 0', pd: '480ms' },
+  { d: 'M576 262l32-22-8 30M576 262l34 10', pd: '540ms' },
+  { d: 'M118 64h176M118 64v44M294 64v44', pd: '300ms' },
+  { d: 'M470 96h124M470 96l16 16M594 96l-16 16', pd: '380ms' },
+  { d: 'M198 156h168v64H198z', pd: '620ms' },
+  { d: 'M198 156l-14-10M366 220l14 10', pd: '700ms' },
+];
+
 function SketchArt() {
   return (
     <svg
@@ -37,16 +55,16 @@ function SketchArt() {
       aria-label="رسم تخطيطي لمسار إنشاء الحساب الجامعي"
     >
       <g stroke="currentColor" strokeWidth="1" vectorEffect="non-scaling-stroke">
-        <path d="M0 .5h713M0 385.5h713" />
-        <path d="M.5 0v386M712.5 0v386" opacity=".35" />
-        <path d="M64 322c88-42 148-118 256-118s168 58 256 58" />
-        <circle cx="64" cy="322" r="10" />
-        <circle cx="576" cy="262" r="10" />
-        <path d="M576 262l32-22-8 30M576 262l34 10" />
-        <path d="M118 64h176M118 64v44M294 64v44" />
-        <path d="M470 96h124M470 96l16 16M594 96l-16 16" />
-        <path d="M198 156h168v64H198z" />
-        <path d="M198 156l-14-10M366 220l14 10" />
+        {SKETCH_STROKES.map((k, i) => (
+          <path
+            key={i}
+            className="fo-cta-sketch-line"
+            pathLength={1}
+            d={k.d}
+            opacity={k.op}
+            style={{ ['--pd' as string]: k.pd }}
+          />
+        ))}
       </g>
     </svg>
   );
@@ -81,6 +99,24 @@ const CLOUD_ITEMS: readonly string[] = [
 export function Vision({ year }: { year: number }) {
   return (
     <section className="fo-cta" id="vision" data-spec="cta.section" aria-label="ابدأ رحلتك — أنشئ حسابك">
+      {/* R345-ED — the closing plate: the page's LAST composition opens
+          with the outlined wordmark in the anchor's breathing space —
+          the drafting climax the void was holding. Decorative chrome
+          (the resolve below carries the conversion); the wipe runs once
+          on the reveal rung, RM collapses it. */}
+      <div className="fo-cta-platezone" aria-hidden="true">
+        <RevealCssClass as="div" className="fo-cta-plate">
+          <span className="fo-cta-plate-mark" />
+          <span className="fo-cta-plate-word">أُلارا</span>
+          <span className="fo-cta-plate-mark fo-cta-plate-mark--b" />
+        </RevealCssClass>
+        <span className="fo-cta-plate-latin fo-mono" dir="ltr">U L A R A</span>
+        <RevealCssClass as="div" className="fo-cta-plate-meta fo-mono" delay={2}>
+          <span dir="ltr">SEC. FIN-01</span>
+          <span className="fo-cta-plate-rule" />
+          <span>مسقط الخاتمة — يعمل اليوم</span>
+        </RevealCssClass>
+      </div>
       <div className="fo-cta-frame" data-spec="cta.frame">
         <section className="fo-cta-sheet" data-spec="cta.sheet" aria-label="الخاتمة">
           <div className="fo-cta-ledger" data-spec="cta.ledger">
@@ -180,7 +216,7 @@ export function Vision({ year }: { year: number }) {
               <div className="fo-cta-hrule" data-spec="cta.band-sketch-hrule" aria-hidden="true" />
               <div className="fo-cta-cell fo-cta-rail" data-spec="cta.sketch-rail" aria-hidden="true" />
               <div className="fo-cta-cell fo-cta-mid" data-spec="cta.sketch-mid">
-                <div className="fo-cta-sketch-wrap" data-spec="cta.sketch-wrap">
+                <div className="fo-cta-sketch-wrap fo-cta-sketch" data-spec="cta.sketch-wrap">
                   <div className="fo-cta-sketch-frame" data-spec="cta.sketch-frame">
                     <div className="fo-cta-sketch-holder" data-spec="cta.sketch-holder">
                       <SketchArt />

@@ -907,3 +907,129 @@ html[data-theme='dark'] .fo-cta .fo-text-link {
     block-size: 0;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   R345-ED (feat/home-editorial-scenes) — the closing plate + the sketch
+   draw-in. The band keeps its ruled ledger; the platezone above it
+   holds the outlined wordmark (transparent fill, 1px ink stroke, the
+   construction marks flanking) and the plate meta row. The sketch's
+   strokes carry pathLength=1 + a --pd ladder: the draw runs ONCE when
+   the sketch's reveal rung fires (.fo-cta-sketch.in-view — the element
+   now carries the shared CARD_SEL class, which also restores the
+   ≤767 phone-hide shared.css has owned since R314), armed only under
+   .js-reveal-armed. No keyframes — dashoffset transitions only.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.fo-cta-platezone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.6rem;
+  padding-block: var(--sp-9) var(--sp-7);
+  pointer-events: none;
+}
+
+.fo-cta-plate {
+  display: flex;
+  align-items: center;
+  gap: 3.2rem;
+}
+
+.fo-cta-plate-word {
+  font-family: var(--font-display);
+  font-size: clamp(4.8rem, 9vw, 12rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: 0;
+  color: var(--text);
+  /* the outlined treatment: transparent fill over the 1px ink stroke
+     (guarded — engines without text-stroke keep the solid ink) */
+}
+
+@supports (-webkit-text-stroke: 1px black) {
+  .fo-cta-plate-word {
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--text);
+  }
+}
+
+.fo-cta-plate-mark {
+  position: relative;
+  inline-size: 1.4rem;
+  block-size: 1.4rem;
+  color: var(--text-muted);
+}
+
+.fo-cta-plate-mark::before {
+  content: '+';
+  position: absolute;
+  inset: 0;
+  color: inherit;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-md);
+  line-height: 1.4;
+  text-align: center;
+}
+
+.fo-cta-plate-mark--b {
+  align-self: flex-end;
+}
+
+.fo-cta-plate-latin {
+  font-size: var(--fs-mono-md);
+  color: var(--text-muted);
+}
+
+.fo-cta-plate-meta {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+  font-size: var(--fs-mono-sm);
+  color: var(--text-muted);
+}
+
+.fo-cta-plate-rule {
+  inline-size: 4.8rem;
+  block-size: 1px;
+  background: var(--rule-strong);
+}
+
+/* ── the sketch draw-in ──────────────────────────────────────────── */
+.fo-cta-sketch-line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+.js-reveal-armed .fo-cta-sketch-line {
+  stroke-dashoffset: 1;
+}
+
+.js-reveal-armed .fo-cta-sketch.in-view .fo-cta-sketch-line {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 900ms var(--ease-out) var(--pd, 0ms);
+}
+
+/* the plate wipes in on its reveal rung (the house .reveal-up seat
+   already rises it; the word draws its outline with a one-pass clip) */
+.js-reveal-armed .fo-cta-plate-word {
+  clip-path: inset(0 0 0 100%); /* RTL: the wipe starts at the reading edge */
+}
+
+.js-reveal-armed .fo-cta-plate.in-view .fo-cta-plate-word {
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 1100ms var(--ease-out) 150ms;
+}
+
+/* ═══ reduced motion: the complete plate + the complete sketch ═══ */
+@media (prefers-reduced-motion: reduce) {
+  .js-reveal-armed .fo-cta-sketch-line,
+  .js-reveal-armed .fo-cta-sketch.in-view .fo-cta-sketch-line {
+    stroke-dashoffset: 0;
+    transition: none;
+  }
+  .js-reveal-armed .fo-cta-plate-word,
+  .js-reveal-armed .fo-cta-plate.in-view .fo-cta-plate-word {
+    clip-path: none;
+    transition: none;
+  }
+}
