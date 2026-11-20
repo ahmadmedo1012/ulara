@@ -1,22 +1,28 @@
-/* r338 T-08c — [5] المنصّة فعليًا — pass-3 REWRITE on the frozen reference
- * spec (the frozen r335 reference captures: home-platform-wrap.<bp>.json).
- * The DOM mirrors the legacy measured tree one-to-one (every element
- * below has a spec counterpart; geometry/type/colour live in
- * platform.css as MEASURED rem-exact values — see that header).
+/* r338 T-08c → r347 — [5] المنصّة فعليًا. The band's DOM mirrors the
+ * frozen reference spec (the r335 reference captures: home-platform-
+ * wrap.<bp>.json) — the measured tree is intact one-to-one below; the
+ * ONE change is the r347 phase-4 art law: the two real captures
+ * (exam-active.webp · ai-tutor.webp) RETIRE from the landing — the
+ * image seats become the isometric machines (plates/ProductPlates.tsx:
+ * the exam runner + the academic assistant, the same plate grammar as
+ * the hero campus plate and the why panels). The owner's directive:
+ * the landing's pictures explain the project as 3D drawings, never as
+ * screenshots; the capture assets stay in the tree for the inner pages
+ * (CampusPages keeps its own ProductFrame mounts).
  *
  *   · the band: top/bottom sheet rules + a 3-col row grid ≥992
- *     (head | two stacked real captures | side) — the two platform
- *     items cross-fade on the SAME measured rects (the reference's marquee
+ *     (head | two stacked plates | side) — the two platform items
+ *     cross-fade on the SAME measured rects (the reference's marquee
  *     row pair); ≤991 each item takes its own row (768 two-col,
- *     390 stacked) with its own capture.
+ *     390 stacked) with its own plate.
  *   · head cell: label (1.4rem/lh1.4 muted) + title (3.2rem/lh1)
  *     on the reference's body-voice wrappers, ruled top/end.
  *   · side cell: the long text, then the CTA strip — rule + two
- *     short lines + the reference's DUAL circular 50×50 arrow rings (22×22
- *     line-art, authored via the house Icon) — and the dark hover
- *     menu (624×156, the المساعد الأكاديمي panel) on the measured
+ *     short lines + the reference's DUAL circular 50×50 arrow rings
+ *     (22×22 line-art, authored via the house Icon) — and the dark
+ *     hover menu (624×156, the المساعد الأكاديمي panel) on the measured
  *     rect. The anchor carries the measured orange rgb(250,54,0).
- *   · ≥992 the per-row image and ≤991 the central image column
+ *   · ≥992 the per-row plate and ≤991 the central plate column
  *     collapse to 0×0 — the reference's own census state at those bps.
  *   · entrance = the reference's own reveal voice (opacity/y → power2.out,
  *     stagger 0.02) via the house RevealCssClass rung.
@@ -25,76 +31,16 @@ import { ChevronLeft } from 'lucide-react';
 import { Icon } from '../../Icon';
 import { RevealCssClass } from '../../../hooks/useReveal';
 import { Hairline, Numeral } from '../patterns';
-import examShot from '../../../assets/product/exam-active.webp';
-import aiTutorShot from '../../../assets/product/ai-tutor.webp';
-
-/* ── R345-ED (feat/home-editorial-scenes) — the captures' annotation
- * callouts. Each real capture carries its drafting callouts: an accent
- * plate naming the capability VISIBLE IN THAT SCREEN (never a feature
- * the capture does not show — the honesty law), a 1px leader line drawn
- * plate→target, and a diamond dot seated ON the target region. The
- * overlay mounts inside the capture frames (.pr-img / .pr-rowimg) as
- * decorative chrome; the captures keep their own data-spec seats.
- *
- * Choreography: the group rides the house reveal rung (.in-view); the
- * plates/leaders draw on a --pd delay ladder; armed only under
- * .js-reveal-armed — no-JS and reduced-motion visitors read the
- * complete annotations. */
-interface Callout {
-  /* physical percent seats of the capture box (the dot's anchor) */
-  x: string;
-  y: string;
-  text: string;
-  /* lead = plate hangs inline-endward off the dot · trail = the long arm */
-  mode: 'lead' | 'trail';
-  pd: string;
-}
-
-const CALLOUTS: Record<'exam' | 'tutor', Callout[]> = {
-  exam: [
-    { x: '82%', y: '30%', text: 'المؤقّت', mode: 'lead', pd: '260ms' },
-    { x: '74%', y: '62%', text: 'تصحيح تلقائي للموضوعي', mode: 'lead', pd: '560ms' },
-    { x: '24%', y: '46%', text: 'المقالية تصل إلى الأستاذ', mode: 'trail', pd: '860ms' },
-  ],
-  tutor: [
-    { x: '50%', y: '26%', text: 'سؤال الطالب', mode: 'lead', pd: '260ms' },
-    { x: '58%', y: '64%', text: 'شروحات مخصَّصة', mode: 'lead', pd: '560ms' },
-    { x: '64%', y: '86%', text: 'خطط مراجعة حسب الأداء', mode: 'trail', pd: '860ms' },
-  ],
-};
-
-function CalloutRow({ c }: { c: Callout }) {
-  return (
-    <div
-      className={`pr-co${c.mode === 'trail' ? ' pr-co--trail' : ''}`}
-      style={{ ['--co-x' as string]: c.x, ['--co-y' as string]: c.y, ['--pd' as string]: c.pd }}
-    >
-      <span className="pr-co-t">{c.text}</span>
-      <span className="pr-co-l" aria-hidden="true" />
-      <span className="pr-co-d" aria-hidden="true" />
-    </div>
-  );
-}
-
-function PrCallouts({ kind }: { kind: 'exam' | 'tutor' }) {
-  return (
-    <RevealCssClass as="div" className="pr-callouts" aria-hidden="true">
-      {CALLOUTS[kind].map((c) => (
-        <CalloutRow key={c.text} c={c} />
-      ))}
-    </RevealCssClass>
-  );
-}
+import { ExamRunnerPlate, AssistantPlate } from '../plates/ProductPlates';
 
 /* the two platform items — copy-driven, mirroring the reference's two
  * carousel items (label/title/long-text/two CTA lines each).
- * r342-06 — the capture pair is capability-disjoint from the
- * neighbouring sections: Why's gallery owns the lecture-player
- * screen (its row-1 card + row-3 video seat) and the roles deck
- * rides its own slide, so the platform band proves the two
- * capabilities no other landing seat shows — the exam runner
- * (timer + auto-graded objective + essay to the teacher) and the
- * academic assistant — each capture a real seeded-demo screen. */
+ * r342-06 — the plate pair is capability-disjoint from the neighbouring
+ * sections: Why's gallery owns the lecture-player loop (its row-1
+ * machine) and the roles deck rides its own machines, so the platform
+ * band draws the two capabilities no other landing seat draws — the
+ * exam runner (timer + auto-graded objective + essay to the teacher)
+ * and the academic assistant. */
 const PLATFORM_ITEMS = [
   {
     label: '[05] المنصّة فعليًا',
@@ -102,8 +48,7 @@ const PLATFORM_ITEMS = [
     text: 'اختبار إلكتروني يعمل اليوم: مؤقّت، وأسئلة موضوعية بتصحيح تلقائي، ومقالية تصل إلى الأستاذ — على بيانات الطالب نفسها.',
     cta1: 'أنشئ حسابك',
     cta2: 'لتجربتها حيّة الآن',
-    img: examShot,
-    alt: 'اختبار إلكتروني في أُلارا: مؤقّت وأسئلة مختارة ومقالية مفتوحة — بيانات العرض التجريبية',
+    alt: 'رسم تخطيطي لآلية الاختبار الإلكتروني في أُلارا: مؤقّت يقيس، وموضوعية تُصحَّح تلقائيًا، ومقالية تصل إلى الأستاذ',
   },
   {
     label: '[05] المنصّة فعليًا',
@@ -111,8 +56,7 @@ const PLATFORM_ITEMS = [
     text: 'من نقطة الفحص داخل المحاضرة إلى خطة المراجعة: كل أداة تعمل على بيانات الطالب نفسها، فلا ينتقل الفهم بين أنظمة متفرّقة.',
     cta1: 'ابدأ بجلسة',
     cta2: 'محاضرة حيّة الآن',
-    img: aiTutorShot,
-    alt: 'المساعد الأكاديمي في أُلارا يجيب عن سؤال الطالب داخل الواجهة — بيانات العرض التجريبية',
+    alt: 'رسم تخطيطي للمساعد الأكاديمي في أُلارا: سؤال الطالب يصل النواة، والجواب يعود بخطوات وخطة مراجعة',
   },
 ] as const;
 
@@ -139,36 +83,30 @@ export function Product() {
           <PlatformRow item={PLATFORM_ITEMS[0]} idx={5} clone />
         </div>
 
-        {/* ≥992 the central image column — two stacked captures
+        {/* ≥992 the central plate column — two stacked machines
             (473+473 @1920) flanked by hairlines; ≤991 display:none
             (the reference's own 0×0 census at 768/390) */}
-        <div className="pr-imgs" data-spec="platform.imgs" aria-hidden="true">
+        <div className="pr-imgs" aria-hidden="true">
           <div className="pr-imgs-vrule" data-spec="platform.imgsvruleA" aria-hidden="true" />
           <div className="pr-img" data-spec="platform.img1">
-            <img src={PLATFORM_ITEMS[0].img} data-spec="platform.img1img" alt="" loading="lazy" decoding="async" width={1440} height={870} />
-            {/* r340 T-P1y — the drafting chrome every product capture
-                carries (the blind panel's "two design languages" finding:
-                the screenshots read generic light-SaaS; the frame now
-                speaks the sheet's own language — hairline + [nn] tag on
-                a paper chip, from the pattern library). */}
+            <ExamRunnerPlate label={PLATFORM_ITEMS[0].alt} dataSpec="platform.img1img" />
+            {/* r340 T-P1y — the drafting chrome every plate carries
+                (the frame now speaks the sheet's own language —
+                hairline + [nn] tag on a paper chip) */}
             <div className="pr-frame-chrome" aria-hidden="true">
               <Hairline variant="border" />
               <span className="pr-frame-tag"><Numeral n={1} /></span>
-              <span className="lp-tag pr-frame-demo" data-tone="ghost">بيانات العرض التجريبية</span>
+              <span className="lp-tag pr-frame-demo" data-tone="ghost">رسم تخطيطي توضيحي</span>
             </div>
-            {/* R345-ED — the capture's capability callouts (the honest
-                annotations over the real screen) */}
-            <PrCallouts kind="exam" />
           </div>
           <div className="pr-imgs-hrule" data-spec="platform.imghruleA" aria-hidden="true" />
           <div className="pr-img" data-spec="platform.img2">
-            <img src={PLATFORM_ITEMS[1].img} data-spec="platform.img2img" alt="" loading="lazy" decoding="async" width={1440} height={870} />
+            <AssistantPlate label={PLATFORM_ITEMS[1].alt} dataSpec="platform.img2img" />
             <div className="pr-frame-chrome" aria-hidden="true">
               <Hairline variant="border" />
               <span className="pr-frame-tag"><Numeral n={2} /></span>
-              <span className="lp-tag pr-frame-demo" data-tone="ghost">بيانات العرض التجريبية</span>
+              <span className="lp-tag pr-frame-demo" data-tone="ghost">رسم تخطيطي توضيحي</span>
             </div>
-            <PrCallouts kind="tutor" />
           </div>
           <div className="pr-imgs-vrule" data-spec="platform.imgsvruleB" aria-hidden="true" />
         </div>
@@ -183,7 +121,7 @@ export function Product() {
 /* one platform item — the reference's row copy: head cell (label · title on
  * the body-voice wrappers, ruled top/end), side cell (the text box +
  * the CTA strip with its dual circular arrows and the dark hover
- * menu), and the ≤991 per-row image with its flanking rule. */
+ * menu), and the ≤991 per-row plate with its flanking rule. */
 function PlatformRow({ item, idx, hidden, clone }: { item: typeof PLATFORM_ITEMS[number]; idx: 1 | 2 | 3 | 4 | 5; hidden?: boolean; clone?: boolean }) {
   const ds = (k: string) => `platform.${k}${idx}`;
   return (
@@ -244,21 +182,22 @@ function PlatformRow({ item, idx, hidden, clone }: { item: typeof PLATFORM_ITEMS
         <div className="pr-cell-rule is-end" data-spec={ds('sideruleB')} aria-hidden="true" />
       </div>
 
-      {/* the ≤991 per-row image (the reference row div[3]; ≥992 it collapses
-          to the reference's own 0×0 census state) */}
+      {/* the ≤991 per-row plate (the reference row div[3]; ≥992 it
+          collapses to the reference's own 0×0 census state) */}
       <div className="pr-rowimg" data-spec={ds('rowimg')}>
-        <img src={item.img} data-spec={ds('rowimgimg')} alt={item.alt} loading="lazy" decoding="async" width={1440} height={870} />
+        {idx % 2 === 1 ? (
+          <ExamRunnerPlate label={item.alt} dataSpec={ds('rowimgimg')} />
+        ) : (
+          <AssistantPlate label={item.alt} dataSpec={ds('rowimgimg')} />
+        )}
         <div className="pr-rowimg-rule" data-spec={ds('rowimgrule')} aria-hidden="true" />
         {/* r340 T-P1y — the same drafting chrome on the phone-band
-            captures (one design language at every width) */}
+            plates (one design language at every width) */}
         <div className="pr-frame-chrome" aria-hidden="true">
           <Hairline variant="border" />
           <span className="pr-frame-tag"><Numeral n={idx} /></span>
-          <span className="lp-tag pr-frame-demo" data-tone="ghost">بيانات العرض التجريبية</span>
+          <span className="lp-tag pr-frame-demo" data-tone="ghost">رسم تخطيطي توضيحي</span>
         </div>
-        {/* R345-ED — the same capability callouts on the stacked-band
-            capture (one composition at every width) */}
-        <PrCallouts kind={idx === 1 ? 'exam' : 'tutor'} />
       </div>
     </div>
   );

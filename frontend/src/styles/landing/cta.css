@@ -745,6 +745,11 @@ html[data-theme='dark'] .fo-cta .fo-text-link {
   position: relative;
   isolation: isolate;
   background: transparent;
+  /* ═══ R347 — the resolve button's pixel-dissolve stack (css-counts:
+     raw z-index literals live on scoped rungs, never raw) ═══ */
+  --z-cta-resolve-under: -1; /* the accent underlay behind the mask fill */
+  --z-cta-resolve-fill: 0;   /* the masked primary fill */
+  --z-cta-resolve-face: 1;   /* the label + icons above the fill */
 }
 
 .fo-cta .btn.accent.btn--pixel .fo-cta-rbtn::before {
@@ -752,7 +757,7 @@ html[data-theme='dark'] .fo-cta .fo-text-link {
   position: absolute;
   inset: 0;
   background: var(--cta-resolve-bg);
-  z-index: -1;
+  z-index: var(--z-cta-resolve-under);
 }
 
 .fo-cta .btn.accent.btn--pixel .fo-cta-rbtn::after {
@@ -765,12 +770,12 @@ html[data-theme='dark'] .fo-cta .fo-text-link {
   transition:
     -webkit-mask-position var(--t-slow) var(--ease-pixel),
     mask-position var(--t-slow) var(--ease-pixel);
-  z-index: 0;
+  z-index: var(--z-cta-resolve-fill);
 }
 
 .fo-cta .btn.accent.btn--pixel .fo-cta-rlabel,
 .fo-cta .btn.accent.btn--pixel .fo-cta-ricons {
-  z-index: 1;
+  z-index: var(--z-cta-resolve-face);
 }
 
 .fo-cta .btn.accent.btn--pixel:is(:hover, :focus-within) .fo-cta-rbtn::after,

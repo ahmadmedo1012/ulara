@@ -161,7 +161,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: 1;
+  z-index: var(--z-hro-rulers);
   opacity: 0.64;
   transition: opacity var(--t-slow) var(--ease);
 }
@@ -461,7 +461,7 @@
 .hi-layer {
   position: absolute;
   pointer-events: none;
-  z-index: 3;
+  z-index: var(--z-hro-layer);
 }
 
 .hi-instrument {
@@ -572,7 +572,7 @@
   left: 0;
   top: 0;
   display: none;
-  z-index: 4;
+  z-index: var(--z-hro-box);
   inline-size: var(--bw, 0px);
   block-size: var(--bh, 0px);
   transform: translate(var(--bx, 0px), var(--by, 0px));
@@ -606,7 +606,7 @@
   inline-size: 100%;
   block-size: 100%;
   pointer-events: none;
-  z-index: 4;
+  z-index: var(--z-hro-box);
 }
 
 .hi-leader-path {
@@ -638,7 +638,7 @@
   border: 0;
   padding: 0;
   cursor: pointer;
-  z-index: 5;
+  z-index: var(--z-hro-station);
   /* R313 (D2/D12): square station (the reference's inspection stations
      are square plus-marks, never circles) — the 44×44 target stays. */
 }
@@ -718,7 +718,7 @@
   pointer-events: none;
   opacity: 0;
   scale: 0.85;
-  z-index: 6;
+  z-index: var(--z-hro-card);
   transition:
     opacity var(--t-base) var(--ease),
     scale var(--t-base) var(--ease);
@@ -737,7 +737,7 @@
 
 .hi-card > * {
   position: relative;
-  z-index: 1;
+  z-index: var(--z-hro-card-child);
 }
 
 .hi-card[data-open='on'] {
@@ -784,7 +784,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: 3;
+  z-index: var(--z-hro-flow);
 }
 
 .hi-flow-card {
@@ -807,7 +807,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  z-index: -1;
+  z-index: var(--z-hro-flow-under);
   background: var(--accent);
   opacity: 0.72;
 }
@@ -973,6 +973,17 @@
  *   0 login · 3 register · 1/2/5/7/4/6 work strip · 8/9 deco ·
  *   11–14 ± dmarks · 15–20 the graticule measures. */
 .hro {
+  /* ═══ R347 — the hero sheet's stacking rungs (css-counts: raw z-index
+     literals live on scoped custom properties, never raw in the sheets —
+     the --z-hero-grid precedent) ═══ */
+  --z-hro-rulers: 1;      /* the dashed ruler overlay over the art band */
+  --z-hro-layer: 3;       /* the inspection instrument's frame layer */
+  --z-hro-box: 4;         /* the drag box + the leaders sheet */
+  --z-hro-station: 5;     /* the clickable inspection stations */
+  --z-hro-card: 6;        /* the readout card (tops the stations) */
+  --z-hro-card-child: 1;  /* a card's children over its accent ::before */
+  --z-hro-flow: 3;        /* the reduced-motion flow rail */
+  --z-hro-flow-under: -1; /* the flow card's accent underlay */
   --hro-seat-ink: rgb(250, 54, 0); /* color-gate: allow — measured reference hover ink (the login twin's recorded after-color); ADDENDUM 9 scoped-var pattern, T-25 owns the global token unification */
   --hro-seat-ghost: rgb(255, 243, 239); /* color-gate: allow — measured reference register-hover wash-off (the primary's ghost after-state: fill → transparent, ink → rgb(255,243,239)) */
   --hro-seat-lift: translateY(-0.12rem);
