@@ -1,11 +1,14 @@
-/** Catalog: institutions, faculties, courses, library, mooc, jobs, labs, leaderboard, facts. */
+/** Catalog: institutions, faculties, courses, library, mooc, jobs, labs, leaderboard. */
 import { get, post } from "./client";
 import type { Book, Faculty, Institution, JobPost, MoocCourse, Paginated } from "./types";
 
 export const catalogApi = {
   institutions: () => get<Institution[]>("/institutions"),
   faculties: (institutionSlug?: string) => get<(Faculty & { departments: { id: string; name: string }[] })[]>("/faculties", institutionSlug ? { institutionSlug } : undefined),
-  universityFacts: () => get<unknown>("/university/facts"),
+  /* r342 t13 — zu-sync retirement: universityFacts (the facts-feed
+     route) left with the backend route; the /student/university screen
+     went with it (it had no other consumer — its raw call site to the
+     facts route was deleted with the screen). */
   libraryBooks: (q?: { page?: number; limit?: number; q?: string }) => get<Paginated<Book>>("/library/books", q),
   borrow: (bookId: string) => post<unknown>("/library/loans", { bookId }),
   returnBook: (loanId: string) => post<unknown>(`/library/loans/${loanId}/return`),

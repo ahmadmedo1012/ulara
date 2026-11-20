@@ -95,8 +95,8 @@ const queryRaw = vi.mocked(prisma.$queryRaw);
 /**
  * Prisma delegates return PrismaPromise (branded via Symbol.toStringTag)
  * — a plain async function can never satisfy that structurally, so mock
- * implementations need one cast (the zu-sync-run.test.ts pattern).
- * Everything inside the impl stays fully type-checked.
+ * implementations need one cast (the scheduler-retention.test.ts
+ * pattern). Everything inside the impl stays fully type-checked.
  */
 type UserFindUniqueImpl = NonNullable<Parameters<typeof userFindUnique.mockImplementation>[0]>;
 type TransactionImpl = NonNullable<Parameters<typeof transaction.mockImplementation>[0]>;

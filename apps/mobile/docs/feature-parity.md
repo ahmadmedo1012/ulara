@@ -70,7 +70,7 @@
 | Webinars | `webinars` | `GET /live/sessions` (upcoming) | ✅ |
 | Virtual labs index | `labs` | `GET /labs`, `POST /me/lab-sessions` | ⚠️ index real; experiment runner stays client-side script (web parity, disclosed) |
 | Downloads/materials | `materials` | `GET /me/materials` | ✅ |
-| University info | `university` | `GET /university/facts` | ✅ |
+| University info | ~~`university`~~ (removed) | ~~`GET /university/facts`~~ | 🚫 r342 t13 — zu-sync retirement: route left the backend; `app/student/university` screen + Profile «عن الجامعة» link deleted |
 | Campus map (by city) | `map` | `GET /faculties` | ✅ |
 | Payment/fees | `payment` | — | 🚫 no fee entities in backend — honest «قيد التطوير» |
 | AR/VR index | `ar` | `GET /ar-experiences` | ✅ index only (parity) |
@@ -111,7 +111,7 @@
 | Permissions & scope | `permissions/[id]` | `GET/POST /admin/users/:id/permissions` (payload carries the full target user row — no separate `GET /admin/users/:id` exists), `POST /admin/users/:id/scope` | ✅ |
 | Reports | `(tabs)/reports` | `GET /admin/reports` | ✅ |
 | Digital metrics | `digital` | `GET /admin/digital`, `GET /health` | ✅ |
-| Sync console | `sync` | `GET /admin/sync`, `POST /admin/sync/trigger` | ✅ «وضع محدود» disclosed |
+| Sync console | ~~`sync`~~ (removed) | ~~`GET /admin/sync`, `POST /admin/sync/trigger`~~ | 🚫 r342 t13 — zu-sync retirement: routes left the backend; `app/admin/sync` console screen + dashboard quick-action row deleted |
 | Invites | `invites` | `GET/POST /invites`, `DELETE /invites/:id` | ✅ |
 | Bulk import | `bulk-import` | `POST /users/bulk-import/preview|commit` | ✅ CSV picker |
 | Feedback inbox | `feedback` | `GET /feedback`, `PATCH /feedback/:id` | ✅ |

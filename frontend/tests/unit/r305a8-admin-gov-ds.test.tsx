@@ -1,7 +1,10 @@
 /**
- * R305-A8 (task 2-b) — «the reference» transformation pins for the three admin
- * governance/extras/sync page modules (AdminGovernancePages,
- * AdminExtraPages, AdminSyncPage).
+ * R305-A8 (task 2-b) — «the reference» transformation pins for the two admin
+ * governance/extras page modules (AdminGovernancePages,
+ * AdminExtraPages).
+ *
+ * (r342 t13: the third module — AdminSyncPage — retired with the zu-sync
+ * system, dropped upstream; its marker/import pins went with it.)
  *
  * Every pin binds to the scoping/danger contracts of the pass, never to
  * a styling accident:
@@ -9,9 +12,8 @@
  *  1. MARKER — every exported page component's root carries .r305ao so
  *     the scoped sheet (frontend/src/styles/r305-admin-owner.css) can
  *     reach the page. Includes the early-return branches: the
- *     permissions editor's pending + error roots, and the sync page's
- *     pending / error / never-run roots — a scoped sheet that misses a
- *     branch is a half-styled route.
+ *     permissions editor's pending + error roots — a scoped sheet that
+ *     misses a branch is a half-styled route.
  *  2. DANGER HIERARCHY — the destructive verbs ride the new vocabulary:
  *     the permissions matrix's «سحب» (instant access removal, the one
  *     confirm-less destructive direction in the matrix) renders with
@@ -22,7 +24,7 @@
  *     confirm dialogs themselves are NOT re-pinned here —
  *     AdminStudents-enrollment.test.tsx owns that contract; this file
  *     only proves the zone did not break it.
- *  3. IMPORT WIRING — all three modules import the scoped sheet, and
+ *  3. IMPORT WIRING — both modules import the scoped sheet, and
  *     the import lands AFTER the admin.css import (same @layer pages;
  *     later source order wins the equal-specificity ties).
  *
@@ -50,7 +52,6 @@ vi.mock('../../src/lib/api', () => {
 
 import { AdminTeachersPage, AdminPermissionsPage } from '../../src/pages/admin/AdminGovernancePages';
 import { AdminStudentsPage, AdminDigitalPage, AdminSettingsPage } from '../../src/pages/admin/AdminExtraPages';
-import { AdminSyncPage } from '../../src/pages/admin/AdminSyncPage';
 import { api } from '../../src/lib/api';
 
 const getMock = api.get as unknown as Mock;
@@ -168,28 +169,8 @@ const DIGITAL = {
   materialsUploaded: 210,
 };
 
-const SYNC_PAYLOAD = {
-  latestRun: {
-    id: 'run-1', startedAt: '2026-10-01T10:00:00.000Z', completedAt: '2026-10-01T10:00:02.000Z',
-    status: 'SUCCESS', source: 'static-markdown', factsAdded: 4, factsUpdated: 2,
-    durationMs: 2100, errorMsg: null, notes: null,
-  },
-  runHistory: [
-    {
-      id: 'run-1', startedAt: '2026-10-01T10:00:00.000Z', completedAt: '2026-10-01T10:00:02.000Z',
-      status: 'SUCCESS', source: 'static-markdown', factsAdded: 4, factsUpdated: 2,
-      durationMs: 2100, errorMsg: null, notes: null,
-    },
-  ],
-  factCount: 6,
-  staleCount: 0,
-  categories: [
-    {
-      category: 'identity', count: 2,
-      items: [{ key: 'name', value: 'الجامعة', source: 'static-markdown', isStale: false, syncedAt: '2026-10-01T10:00:00.000Z' }],
-    },
-  ],
-};
+/* (r342 t13: SYNC_PAYLOAD retired with the zu-sync system, dropped
+   upstream — the /admin/sync console and its payload are gone.) */
 
 /** The permissions payload for the matrix pin: USERS_MANAGE rides the
  *  role (effective + fromRole → the «سحب» verb), everything else stays
@@ -295,46 +276,9 @@ describe('R305-A8 marker — extras module roots', () => {
   });
 });
 
-describe('R305-A8 marker — sync module roots (every branch)', () => {
-  it('pending branch keeps the marker on the aria-busy root', () => {
-    getMock.mockImplementation(() => new Promise(() => {})); // /admin/sync never settles
-    const { container } = renderWithProviders(<AdminSyncPage />);
-    const root = container.querySelector('.page.r305ao');
-    expect(root).not.toBeNull();
-    expect(root).toHaveAttribute('aria-busy', 'true');
-  });
-
-  it('error branch keeps the marker + the retry chrome', async () => {
-    getMock.mockRejectedValue(new Error('network down'));
-    renderWithProviders(<AdminSyncPage />);
-    expect(await screen.findByRole('heading', { level: 1, name: 'المزامنة مع البيانات الرسمية' })).toBeInTheDocument();
-    expect(document.querySelector('.page.r305ao')).not.toBeNull();
-  });
-
-  it('never-run branch keeps the marker on the honest empty state', async () => {
-    // A resolved payload with nothing in it → the !data guard branch.
-    // unwrap reads r.data.data — a null body (no run has ever landed)
-    // resolves to null, and TanStack v5 treats a void body as an error,
-    // so null is the honest shape that reaches the guard.
-    getMock.mockResolvedValue({ data: { data: null } });
-    renderWithProviders(<AdminSyncPage />);
-    expect(await screen.findByText('لم تُنفَّذ أي مزامنة بعد')).toBeInTheDocument();
-    expect(document.querySelector('.page.r305ao')).not.toBeNull();
-  });
-
-  it('resolved branch keeps the marker + the run-history table', async () => {
-    getMock.mockImplementation(async (url: string) => {
-      if (url === '/admin/sync') return { data: { data: SYNC_PAYLOAD } };
-      throw new Error(`unexpected GET ${url}`);
-    });
-    renderWithProviders(<AdminSyncPage />);
-    expect(await screen.findByText('سجلّ المزامنات')).toBeInTheDocument();
-    expect(scopedRoot()).toContainElement(screen.getByText('سجلّ المزامنات'));
-    // The real API stays the only source of truth — the resolved run's
-    // status badge renders from the payload, never faked.
-    expect(screen.getAllByText('ناجحة').length).toBeGreaterThan(0);
-  });
-});
+/* ═══ (r342 t13: the sync module's marker pins — pending / error /
+   never-run / resolved branches — retired with the zu-sync system,
+   dropped upstream; the module, its page and its payload are gone.) ═══ */
 
 /* ═══ 2. The danger hierarchy — the destructive verbs stand apart ═ */
 
@@ -411,11 +355,10 @@ describe('R305-A8 danger hierarchy — destructive verbs ride the new vocabulary
 
 /* ═══ 3. Import wiring — the scoped sheet rides last ═════════════ */
 
-describe('R305-A8 import wiring — the scoped the reference sheet in all three modules', () => {
+describe('R305-A8 import wiring — the scoped the reference sheet in both modules', () => {
   const MODULES = [
     'AdminGovernancePages.tsx',
     'AdminExtraPages.tsx',
-    'AdminSyncPage.tsx',
   ];
 
   it('each module imports ds-admin-owner.css AFTER its admin.css import', () => {

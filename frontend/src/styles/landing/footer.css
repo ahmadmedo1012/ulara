@@ -297,8 +297,12 @@ footer.fo-footer {
 }
 .fo-link:hover { color: var(--accent); }
 /* the first PLATFORM link carries the accent ink (the folio's own
-   orange door) */
-.fo-link-accent { color: var(--accent); }
+   orange door). R342 integration (a11y): the link is 13px body text —
+   the AA body floor (4.5) applies and the raw coral reads 3.07:1 on
+   the paper. The seat resolves the token contract's TEXT-safe accent
+   (--accent-ink — #A33312 on the light arm, the luminous coral on the
+   dark arm), the same law the canon's own orange text seats ride. */
+.fo-link-accent { color: var(--accent-ink); }
 /* the funnel pair's affordance seat — cta.css owns the underline +
    hit-slop grammar; this sheet adds no box of its own */
 
@@ -482,6 +486,84 @@ footer.fo-footer {
     animation: none;
   }
 }
+
+/* ═══ The Grand Outline Wordmark & Back to Top ═══════════════════════ */
+.fo-top-anchor-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--sp-4);
+  margin-bottom: var(--sp-2);
+}
+
+.fo-back-to-top {
+  appearance: none;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 8px 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color var(--t-fast) ease, border-color var(--t-fast) ease;
+}
+
+.fo-back-to-top:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.fo-top-arrow {
+  inline-size: 14px;
+  block-size: 14px;
+}
+
+.fo-giant-banner {
+  position: relative;
+  inline-size: 100%;
+  margin: var(--sp-5) 0 var(--sp-4);
+  padding: var(--sp-3) 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.fo-giant-text {
+  font-family: var(--font-sans);
+  font-size: clamp(3rem, 10vw, 11rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--text);
+  text-stroke: 1.5px var(--text);
+  white-space: nowrap;
+  user-select: none;
+  opacity: 0.88;
+  line-height: 0.95;
+  transition: opacity var(--t-fast) ease, -webkit-text-stroke var(--t-fast) ease;
+}
+
+.fo-giant-banner:hover .fo-giant-text {
+  opacity: 1;
+  -webkit-text-stroke: 1.5px var(--accent);
+}
+
+.fo-giant-plus {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  user-select: none;
+}
+.fo-giant-plus-tl { inset-block-start: 4px; inset-inline-start: 4px; }
+.fo-giant-plus-tr { inset-block-start: 4px; inset-inline-end: 4px; }
+.fo-giant-plus-bl { inset-block-end: 4px; inset-inline-start: 4px; }
+.fo-giant-plus-br { inset-block-end: 4px; inset-inline-end: 4px; }
 
 /* ═══ the registration-mark family law (R321 §A6) ═══════════════════
    The rebuilt colophon renders no registration seats, but the family

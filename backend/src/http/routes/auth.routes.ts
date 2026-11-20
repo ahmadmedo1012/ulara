@@ -254,7 +254,16 @@ router.post(
       const data: { message: string; devInbox?: { mode: 'test'; url: string } } = {
         message: 'إذا كان البريد مسجلًا فستصلك رسالة خلال دقائق',
       };
-      if (token && isTestAccountEmail(email)) {
+      /* r342 t14 (security sweep — the empirically verified leak):
+       * the devInbox reset link is DEV/TEST-ONLY. In production this
+       * response handed the RAW reset token to any unauthenticated
+       * caller who knew a documented @test.ly address (owner@test.ly
+       * included — a full platform-takeover primitive while
+       * mailProvider=none). NODE_ENV=production (every real deploy)
+       * now gets the same generic envelope as every other address;
+       * local dev (NODE_ENV=development/test) keeps the honest
+       * dev-inbox link the demo workflow relies on. */
+      if (token && isTestAccountEmail(email) && env.NODE_ENV !== 'production') {
         // Test-mode link — @test.ly demo accounts only (reasoning in the
         // route docblock above). Origin comes from the requesting web
         // app itself (the browser always sends Origin on cross-origin

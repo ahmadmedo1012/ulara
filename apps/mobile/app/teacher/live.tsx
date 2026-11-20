@@ -240,99 +240,104 @@ export default function TeacherLive() {
   };
 
   return (
-    <Screen scroll>
-      <StackHeader title="إدارة البث المباشر" />
-      <PageHeader
-        title="إدارة البث المباشر"
-        kicker="جدولة المحاضرات الحية وتشغيلها وإيقافها. الطلاب يرون فقط الجلسات الخاصة بمقرّراتهم."
-      />
-      <SectionBar
-        index={1}
-        title="حالة الجلسات"
-        action={
-          <Button label="جلسة جديدة" kind="accent" small onPress={() => setCreating(true)} />
-        }
-      />
-      {sessions.isLoading ? (
-        <SkeletonList rows={4} />
-      ) : sessions.isError ? (
-        <ErrorState message={humanizeError(sessions.error)} onRetry={() => sessions.refetch()} />
-      ) : (
-        <>
-          <View style={{ flexDirection: "row", gap: sp[8] }}>
-            <KpiCard label="مباشرة الآن" value={live.length} tone={live.length > 0 ? "accent" : undefined} />
-            <KpiCard label="مجدولة" value={scheduled.length} />
-            <KpiCard label="منتهية" value={past.length} />
-          </View>
+    <View style={{ flex: 1 }}>
+      <Screen scroll>
+        <StackHeader title="إدارة البث المباشر" />
+        <PageHeader
+          title="إدارة البث المباشر"
+          kicker="جدولة المحاضرات الحية وتشغيلها وإيقافها. الطلاب يرون فقط الجلسات الخاصة بمقرّراتهم."
+        />
+        <SectionBar
+          index={1}
+          title="حالة الجلسات"
+          action={
+            <Button label="جلسة جديدة" kind="accent" small onPress={() => setCreating(true)} />
+          }
+        />
+        {sessions.isLoading ? (
+          <SkeletonList rows={4} />
+        ) : sessions.isError ? (
+          <ErrorState message={humanizeError(sessions.error)} onRetry={() => sessions.refetch()} />
+        ) : (
+          <>
+            <View style={{ flexDirection: "row", gap: sp[8] }}>
+              <KpiCard label="مباشرة الآن" value={live.length} tone={live.length > 0 ? "accent" : undefined} />
+              <KpiCard label="مجدولة" value={scheduled.length} />
+              <KpiCard label="منتهية" value={past.length} />
+            </View>
 
-          {live.length > 0 ? (
-            <>
-              <SectionBar index={2} title="مباشرة الآن" />
+            {live.length > 0 ? (
+              <>
+                <SectionBar index={2} title="مباشرة الآن" />
+                <RowList>
+                  {live.map((s) => (
+                    <SessionRow
+                      key={s.id}
+                      session={s}
+                      onEnd={() => setConfirmAction({ id: s.id, action: "END", title: s.title })}
+                    />
+                  ))}
+                </RowList>
+                <T variant="xs" color="faint">
+                  تحدَّث الحالة تلقائيًا كل {latn(30)} ثانية.
+                </T>
+              </>
+            ) : (
+              <T variant="sm" color="muted">
+                لا يوجد بث مباشر الآن — ابدأ جلسة مجدولة أو أنشئ جلسة جديدة.
+              </T>
+            )}
+
+            <SectionBar
+              index={3}
+              title="جلسات قادمة"
+              action={
+                scheduled.length > 0 ? (
+                  <Badge
+                    label={arCount(scheduled.length, ["جلسة مجدولة واحدة", "جلستان مجدولتان", "جلسات مجدولة", "جلسة مجدولة"])}
+                    tone="yellow"
+                  />
+                ) : undefined
+              }
+            />
+            {scheduled.length === 0 ? (
+              <EmptyState fill title="لا توجد جلسات قادمة" message="أنشئ جلسة جديدة لتظهر هنا." actionLabel="جلسة جديدة" onAction={() => setCreating(true)} />
+            ) : (
               <RowList>
-                {live.map((s) => (
+                {scheduled.map((s) => (
                   <SessionRow
                     key={s.id}
                     session={s}
-                    onEnd={() => setConfirmAction({ id: s.id, action: "END", title: s.title })}
+                    onStart={() => lifecycle.mutate({ id: s.id, action: "START" })}
+                    onCancel={() => setConfirmAction({ id: s.id, action: "CANCEL", title: s.title })}
                   />
                 ))}
               </RowList>
-              <T variant="xs" color="faint">
-                تحدَّث الحالة تلقائيًا كل {latn(30)} ثانية.
-              </T>
-            </>
-          ) : (
-            <T variant="sm" color="muted">
-              لا يوجد بث مباشر الآن — ابدأ جلسة مجدولة أو أنشئ جلسة جديدة.
-            </T>
-          )}
+            )}
 
-          <SectionBar
-            index={3}
-            title="جلسات قادمة"
-            action={
-              scheduled.length > 0 ? (
-                <Badge
-                  label={arCount(scheduled.length, ["جلسة مجدولة واحدة", "جلستان مجدولتان", "جلسات مجدولة", "جلسة مجدولة"])}
-                  tone="yellow"
-                />
-              ) : undefined
-            }
-          />
-          {scheduled.length === 0 ? (
-            <EmptyState fill title="لا توجد جلسات قادمة" message="أنشئ جلسة جديدة لتظهر هنا." actionLabel="جلسة جديدة" onAction={() => setCreating(true)} />
-          ) : (
-            <RowList>
-              {scheduled.map((s) => (
-                <SessionRow
-                  key={s.id}
-                  session={s}
-                  onStart={() => lifecycle.mutate({ id: s.id, action: "START" })}
-                  onCancel={() => setConfirmAction({ id: s.id, action: "CANCEL", title: s.title })}
-                />
-              ))}
-            </RowList>
-          )}
+            {past.length > 0 ? (
+              <>
+                <SectionBar index={4} title="جلسات سابقة" />
+                <RowList>
+                  {past.slice(0, 10).map((s) => (
+                    <SessionRow key={s.id} session={s} />
+                  ))}
+                </RowList>
+                {past.length > 10 ? (
+                  <T variant="xs" color="faint">
+                    أحدث {latn(10)} جلسات من أصل {latn(past.length)}
+                  </T>
+                ) : null}
+              </>
+            ) : null}
+          </>
+        )}
+      </Screen>
 
-          {past.length > 0 ? (
-            <>
-              <SectionBar index={4} title="جلسات سابقة" />
-              <RowList>
-                {past.slice(0, 10).map((s) => (
-                  <SessionRow key={s.id} session={s} />
-                ))}
-              </RowList>
-              {past.length > 10 ? (
-                <T variant="xs" color="faint">
-                  أحدث {latn(10)} جلسات من أصل {latn(past.length)}
-                </T>
-              ) : null}
-            </>
-          ) : null}
-        </>
-      )}
-
-      {/* جلسة جديدة — AppSheet (keyboard-aware SheetTextInput fields). */}
+      {/* جلسة جديدة — AppSheet (keyboard-aware SheetTextInput fields).
+          Hoisted out of the Screen scroller (r341 t01): the sheet mounts its
+          own absolute-fill host, which must cover the full screen from the
+          screen root, not live in the scroll content's coordinate space. */}
       {createSheetMounted ? (
       <AppSheet
         open={creating}
@@ -419,7 +424,8 @@ export default function TeacherLive() {
       </AppSheet>
       ) : null}
 
-      {/* Lifecycle confirms — END and CANCEL are destructive (ConfirmSheet). */}
+      {/* Lifecycle confirms — END and CANCEL are destructive (ConfirmSheet).
+          Same r341 t01 hoist: sibling of the scroller, never scroll content. */}
       {confirmSheetMounted ? (
       <ConfirmSheet
         open={confirmAction !== null}
@@ -436,6 +442,6 @@ export default function TeacherLive() {
         onConfirm={() => confirmAction && lifecycle.mutate(confirmAction)}
       />
       ) : null}
-    </Screen>
+    </View>
   );
 }

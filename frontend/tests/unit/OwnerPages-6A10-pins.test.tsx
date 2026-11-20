@@ -130,8 +130,9 @@ function resetFixtures() {
     weeklyGrowth: GROWTH_8W,
   };
   FIXTURES['/owner/login-analytics'] = { ...LOGIN_ANALYTICS_EMPTY };
+  // r342 t13: the `sync` block is gone — GET /owner/system no longer
+  // ships it (the zu-sync system was dropped upstream).
   FIXTURES['/owner/system'] = {
-    sync: { lastRunAt: null, recent: [] },
     alerts: { open: [], openCount: 0, criticalCount: 0 },
     activity: { recentEventsLast7Days: 0 },
   };

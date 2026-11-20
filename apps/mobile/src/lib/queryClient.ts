@@ -1,5 +1,6 @@
-import { QueryClient } from "@tanstack/react-query";
+import { QueryCache, QueryClient } from "@tanstack/react-query";
 import { ApiError, NETWORK_ERROR } from "@/api/client";
+import { reportDbHealth } from "@/lib/resilience/network";
 
 /**
  * Server-state defaults — mirrors frontend/src/lib/queryClient.ts:
@@ -11,6 +12,17 @@ import { ApiError, NETWORK_ERROR } from "@/api/client";
  * ZERO retries (writes are owned by the offline queue / explicit user
  * retry — silent mutation retries would double-send). Everything else
  * (staleTime, gcTime, refetchOnWindowFocus) is unchanged.
+ *
+ * R342 t08 — the db-health line: the query cache is the ONE place real
+ * API responses pass through, so it feeds the connectivity layer's
+ * dimension 4 (reportDbHealth):
+ *   · a DB_UNAVAILABLE error (503, backend's honest degraded state)
+ *     marks the db degraded — the banner re-words to «الخدمة متاحة
+ *     جزئياً، وبعض البيانات غير متوفرة» while queries KEEP running;
+ *   · any successful query read is the health signal itself and clears
+ *     the degraded mark. NO extra probing: the signal rides responses
+ *     the app already makes (the /ping liveness probe can never see
+ *     the database).
  */
 
 /** Max query retries (i.e. 4 total attempts: initial + 3). */
@@ -36,7 +48,22 @@ export function queryRetryDelay(attemptIndex: number): number {
   return base + jitter;
 }
 
+/** DB-degraded marker (r342 t08): the backend's honest 503 union code. */
+const DB_UNAVAILABLE = "DB_UNAVAILABLE";
+
 export const queryClient = new QueryClient({
+  queryCache: new QueryCache({
+    onError: (error) => {
+      if (error instanceof ApiError && error.code === DB_UNAVAILABLE) {
+        reportDbHealth(false);
+      }
+    },
+    onSuccess: () => {
+      // A successful read IS the health signal — cheap no-op when
+      // already healthy (reportDbHealth is referentially stable).
+      reportDbHealth(true);
+    },
+  }),
   defaultOptions: {
     queries: {
       staleTime: 30_000,

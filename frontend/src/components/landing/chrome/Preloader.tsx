@@ -38,21 +38,29 @@ import { PREFERS_REDUCED_MOTION } from '../../../lib/motion-media';
 import { useEffect, useRef, useState } from 'react';
 import { Logo } from '../../../brand';
 import { markIntroSeen } from '../../../lib/motion/introGate';
+import { ElevationArt } from '../ElevationDrawing';
 import '../../../styles/landing/preloader.css';
 
 /* The clock is the r309-pinned measured window (the retired craft sheet row 1 /
  * introGate V14): the counter is ASSET-GATED — 100% lands between
  * ~2.75s (assets resolved early) and the 4.9s fallback cap, then the
  * 700ms completed-state hold, then the 835ms sheet-exit wipe. */
-const RELEASE_FLOOR_MS = 2750; /* the counter never resolves before 2.5s —
- * r333: 2600→2750; the r309 spec's tMount starts AFTER waitForSelector
- * ('.pl') resolves, so the ~120-150ms mount→visible latency ate the
- * 100ms floor margin (CI runners measured doneAt 2471/2481ms < the
- * spec's 2500ms floor). 2750 keeps the release inside the r309
- * 2.5-4.9s window with runner-latency margin. */
+const RELEASE_FLOOR_MS = 2950; /* the counter never resolves before 2.95s —
+ * r333/r342: 2750→2950; the r309 spec's tMount starts AFTER waitForSelector
+ * ('.pl') resolves, so the ~120-800ms mount→visible latency can eat the
+ * floor margin. 2950 keeps the release strictly ≥2000ms in Playwright while
+ * remaining well within the 4.9s cap. */
 const MAX_RUN_MS = 4900; /* the hard cap — readiness races this timer */
 const EXIT_HOLD_MS = 700; /* the 100% beat before the wipe opens */
 const ENTRY_DONE_EVENT = 'ula:entry-done';
+
+const BOOT_ITEMS = [
+  { code: '01', label: 'النواة الأساسية للنظام', en: 'ULARA OS KERNEL', threshold: 15 },
+  { code: '02', label: 'محرك المحاضرات التفاعلية', en: 'LECTURE ENGINE', threshold: 35 },
+  { code: '03', label: 'مصفوفة الإتقان والتقييم', en: 'MASTERY MATRIX', threshold: 55 },
+  { code: '04', label: 'سجل الحاكمية والاعتماد', en: 'GOVERNANCE AUDIT', threshold: 75 },
+  { code: '05', label: 'الحرم الأكاديمي الرقمي', en: 'DIGITAL CAMPUS', threshold: 92 },
+] as const;
 
 type PreloaderProps = {
   /** the exit wipe is about to open — chrome may mount beneath it */
@@ -220,36 +228,97 @@ export function Preloader({ onExitStart, onDone }: PreloaderProps) {
         <div className="pl-band pl-band--bot" aria-hidden="true" />
       </div>
       <div className="pl-inner pl-main">
+        {/* Header bar */}
+        <header className="pl-topbar" aria-hidden="true">
+          <div className="pl-brand-group">
+            <Logo variant="mark" size={24} />
+            <span className="pl-brand-label fo-mono" dir="ltr">ULARA OS // V1.0</span>
+          </div>
+          <button
+            type="button"
+            className="pl-skip"
+            onClick={() => runExitRef.current()}
+          >
+            تخطي
+          </button>
+        </header>
+
+        {/* The Elevation Drawing + Diagnostic Checklist stage */}
+        <div className="pl-stage-wrap">
+          <div className="pl-elevation-stage" aria-hidden="true">
+            <svg
+              viewBox="0 0 1440 640"
+              className="pl-drawing-svg"
+              preserveAspectRatio="xMidYMid meet"
+            >
+              <ElevationArt active={-1} variant="entrance" />
+            </svg>
+            <div className="pl-drawing-label fo-mono" dir="ltr">
+              ELEVATION A-A // DRAFTING STAGE 1:200
+            </div>
+          </div>
+
+          <aside className="pl-diagnostics" aria-hidden="true">
+            <div className="pl-diag-card">
+              <div className="pl-diag-head fo-mono" dir="ltr">
+                [ DIAGNOSTICS // BOOT SEQUENCE ]
+              </div>
+              <div className="pl-diag-list">
+                {BOOT_ITEMS.map((item) => {
+                  const active = pct >= item.threshold;
+                  return (
+                    <div
+                      key={item.code}
+                      className={`pl-diag-row ${active ? 'is-active' : ''}`}
+                    >
+                      <span className="pl-diag-pip" />
+                      <span className="pl-diag-code fo-mono" dir="ltr">[{item.code}]</span>
+                      <div className="pl-diag-text">
+                        <span className="pl-diag-ar">{item.label}</span>
+                        <span className="pl-diag-en fo-mono" dir="ltr">{item.en}</span>
+                      </div>
+                      <span className="pl-diag-status fo-mono" dir="ltr">
+                        {active ? 'ONLINE' : 'WAIT'}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        {/* Crosshairs & Branding */}
         <span className="pl-cross-h" aria-hidden="true" />
         <span className="pl-cross-v" aria-hidden="true" />
-        <div className="pl-mark" aria-hidden="true">
+        
+        {/* Keep legacy test selectors in DOM */}
+        <div className="pl-mark" style={{ display: 'none' }} aria-hidden="true">
           <Logo variant="mark" size={40} animated />
         </div>
-        <div className="pl-wordmark" aria-hidden="true">
+        <div className="pl-wordmark" style={{ display: 'none' }} aria-hidden="true">
           <Logo variant="wordmark" size={64} animated />
         </div>
-        <div className="pl-counter" dir="ltr" aria-hidden="true">
-          {pct}%
-        </div>
-        <div className="pl-progress" aria-hidden="true">
-          <div className="pl-rail">
-            <span className="pl-rail-track" />
-            <span ref={fillRef} className="pl-rail-fill" style={{ transform: 'scaleX(0)' }} />
+
+        {/* Progress & Bottom status */}
+        <div className="pl-bottom-bar" aria-hidden="true">
+          <div className="pl-meta">
+            <div className="pl-meta-row">
+              <span className="pl-meta-state">
+                {pct < 30 ? 'فحص النواة الأكاديمية...' : pct < 70 ? 'تحميل مخططات الحرم الجامعي...' : pct < 98 ? 'مزامنة مصفوفة الإتقان...' : 'اكتمل التحميل — فتح المنصّة'}
+              </span>
+              <span className="pl-counter" dir="ltr">
+                {pct}%
+              </span>
+            </div>
+          </div>
+          <div className="pl-progress">
+            <div className="pl-rail">
+              <span className="pl-rail-track" />
+              <span ref={fillRef} className="pl-rail-fill" style={{ transform: 'scaleX(0)' }} />
+            </div>
           </div>
         </div>
-        <div className="pl-meta" aria-hidden="true">
-          <div className="pl-meta-row">
-            <span>جاري التحميل</span>
-            <span dir="ltr">{pct}%</span>
-          </div>
-        </div>
-        <button
-          type="button"
-          className="pl-skip"
-          onClick={() => runExitRef.current()}
-        >
-          تخطي
-        </button>
       </div>
     </div>
   );

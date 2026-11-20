@@ -677,6 +677,13 @@ export function JourneyScene() {
                   </span>
                 ))}
               </div>
+
+              {/* The live agent diagnostic status line */}
+              <div className="jt-agent-status" aria-hidden="true">
+                <span className="jt-agent-dot" />
+                <span className="jt-agent-tag fo-mono" dir="ltr">[ULARA AGENT]</span>
+                <span className="jt-agent-msg">مسح الهيكل الإنشائي للحرم وقاعات التعلم المعتمدة...</span>
+              </div>
             </div>
 
             {/* the INTRODUCTION card — the measured corner card:
@@ -783,4 +790,18 @@ function writeAttrs(
   if (track.dataset.rm !== rm) track.dataset.rm = rm;
   const close = track.querySelector<HTMLElement>('.jt-close');
   if (close && close.dataset.open !== open) close.dataset.open = open;
+  
+  const statusMsg = track.querySelector<HTMLElement>('.jt-agent-msg');
+  if (statusMsg) {
+    const msgs: Record<string, string> = {
+      none: 'مسح الهيكل الإنشائي للحرم وقاعات التعلم المعتمدة...',
+      lecture: 'تدقيق قاعة المحاضرات: ضبط الحضور التلقائي ومزامنة نقاط الفحص التفاعلية...',
+      checkpoint: 'معايرة نقاط الفحص: التحقق من سرعة التصحيح الفوري وتثبيت المفاهيم...',
+      exam: 'فحص قاعة الاختبارات: معايرة بنك الأسئلة والتصحيح الآلي للأسئلة الموضوعية...',
+      library: 'فهرسة جناح المكتبة: ربط المصادر الأكاديمية ونظام مراجعة البحوث...',
+      mastery: 'اكتمال الربط الأكاديمي: مصفوفة الإتقان نشطة ومتاحة لجميع مسارات التعلم.',
+    };
+    const text = msgs[wash] ?? msgs.none ?? '';
+    if (statusMsg.textContent !== text) statusMsg.textContent = text;
+  }
 }

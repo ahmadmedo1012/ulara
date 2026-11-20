@@ -49,9 +49,9 @@ async function main() {
     logger.info(`🚀 ULARA Platform API listening on http://0.0.0.0:${env.PORT} (${env.NODE_ENV})`);
   });
 
-  // Start the daily university-data sync ticker
+  // Start the daily ticker (r342 t13: login-event retention only — the zu-sync job was retired)
   startScheduler();
-  logger.info('🗓️  Scheduler started (daily sync)');
+  logger.info('🗓️  Scheduler started (daily login-event retention sweep — r342 t13: the zu-sync job was retired)');
 
   let shutdownStarted = false;
   const shutdown = (signal: string) => {

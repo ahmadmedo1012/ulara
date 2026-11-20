@@ -44,7 +44,7 @@ cron).
 
 | Item | State |
 |---|---|
-| Core features, all five roles | **Shipped** — 2,989 frontend + 2,010 backend unit tests green (local measurement r343 on the current tree) + 116 DB integration tests + 28 e2e journeys |
+| Core features, all five roles | **Shipped** — 2,977 frontend + 1,955 backend unit tests green (measured on the final tree, CI run 44650411057) + 103 DB integration tests + 28 e2e journeys |
 | Design system | Documented in `DESIGN.md` — parity gate 190/190 green |
 | AI assistant | **Mastery-aware chat with per-response engine attribution** — runs the in-process local engine by default (zero external calls); an OpenAI-compatible/OpenRouter provider activates only when `AI_PROVIDER`/`AI_API_KEY` are set in the deployment (the current production deployment has them unset → local engine; `/api/v1/ai/config` reports the live truth). The plagiarism scan stays a deterministic simulation, openly labeled; honesty and limits: `docs/architecture.md` §8 |
 | English i18n | Not implemented. Real E2E (28 Playwright journeys) and PDF file uploads (durable postgres storage, r175) **are shipped** — full list in `docs/testing.md` and `docs/architecture.md` §8 |
@@ -53,9 +53,9 @@ cron).
 
 The Arabic documentation hub: [`docs/README.md`](docs/README.md) —
 one living topic file per domain. Key references: the generated API
-contract [`docs/api/openapi.json`](docs/api/openapi.json) (218 paths /
-255 operations; regenerate with `npm run api:openapi`), the data model
-in `backend/prisma/schema.prisma` (89 models / 32 enums), and
+contract [`docs/api/openapi.json`](docs/api/openapi.json) (216 paths /
+253 operations; regenerate with `npm run api:openapi`), the data model
+in `backend/prisma/schema.prisma` (87 models / 31 enums), and
 [`BACKEND.md`](BACKEND.md) for the API conventions.
 AI agents must read [`AGENTS.md`](AGENTS.md) first.
 
@@ -105,7 +105,7 @@ environment).
 ```bash
 npm run lint                          # ESLint — 0 errors
 npm run typecheck                     # tsc — src + tests, both sides (no DB)
-npm test                              # 2,989 FE + 2,010 BE (local measurement r343; no DB; incl. 7 live S3 tests against s3rver) — npm run test:integration adds 116 DB tests on a local disposable database (14 cross-institution r179 isolation tests + 2 seed repeat-safety r182 tests among them)
+npm test                              # 2,977 FE + 1,955 BE (measured on the final tree, CI run 44650411057; no DB; incl. 7 live S3 tests against s3rver) — npm run test:integration adds 103 DB tests on a local disposable database (14 cross-institution r179 isolation tests + 2 seed repeat-safety r182 tests among them)
 node scripts/verify-parity-export.mjs # design-parity gate 190/190
 bash scripts/check-csp-hash.sh        # CSP pin drift guard (now in CI)
 # (validate:colleges retired with the fixed college catalogue in Phase Ω)

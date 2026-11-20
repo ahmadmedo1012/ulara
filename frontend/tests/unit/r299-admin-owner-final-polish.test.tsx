@@ -3,42 +3,35 @@
  * pins for the defects this round fixed. Every pin binds to a semantic
  * contract (role/name/ARIA/behavior), never to a styling accident.
  *
- *  1. AdminSyncPage honesty: the subtitle never again carries the
- *     fabricated `demo-source` slug (r164i's dead-data family) — the
- *     page's own source map names the real curated source.
- *  2. AdminSyncPage freshness-first: the KPI strip answers "how
- *     fresh are we?" before "how big are we".
- *  3. AdminSyncPage stale affordance: a category head carries its
- *     own stale count — the operator sees WHICH category is stale
- *     without opening each accordion.
- *  4. admin.css owns the .spin rule: the sync-in-flight motion had
- *     zero stylesheet rules anywhere, so «جارٍ المزامنة…» and RUNNING
- *     history rows lost their motion signal entirely.
- *  5. Admin modal close buttons ride the .icon-btn chip: the
+ * (r342 t13: pins 1–4 — the three AdminSyncPage honesty/freshness/
+ * stale-affordance pins + the admin.css .spin rule pin — retired with
+ * the zu-sync system, dropped upstream: the /admin/sync console, its
+ * in-flight .spin motion and its labels are all gone.)
+ *
+ *  1. Admin modal close buttons ride the .icon-btn chip: the
  *     `modal-close` class had zero CSS rules (a naked X, no 44px
  *     floor, no hover) in every admin/owner modal born from that
  *     grammar.
- *  6. OwnerAlertsPage: an 'error'-severity card reads urgent (the
+ *  2. OwnerAlertsPage: an 'error'-severity card reads urgent (the
  *     .owner-alert-card.error rule existed for critical/warning/info
  *     but not for the pair's second member).
- *  7. OwnerUsersPage honesty: «الفئة الأكبر» only prints where it is
+ *  3. OwnerUsersPage honesty: «الفئة الأكبر» only prints where it is
  *     TRUE (the old «أكبر شريحة» asserted students were the largest
  *     segment unconditionally).
- *  8. OwnerUsersPage suspended chip: a SUSPENDED institution chip
+ *  4. OwnerUsersPage suspended chip: a SUSPENDED institution chip
  *     reads red like every other suspended-institution surface.
- *  9. OwnerActivityPage: the audit log's footer rides the canonical
+ *  5. OwnerActivityPage: the audit log's footer rides the canonical
  *     windowed .table-pagination grammar (the prev/next-only footer
  *     forced linear clicking through 50-row pages).
  */
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import type { Mock } from 'vitest';
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { readFileSync } from 'node:fs';
 import { resolve as resolvePath } from 'node:path';
 import { AdminCoursesPage } from '../../src/pages/admin/AdminPages';
-import { AdminSyncPage } from '../../src/pages/admin/AdminSyncPage';
 import { OwnerAlertsPage } from '../../src/pages/owner/OwnerAlertsPage';
 import { OwnerUsersPage } from '../../src/pages/owner/OwnerUsersPage';
 import { OwnerActivityPage } from '../../src/pages/owner/OwnerActivityPage';
@@ -107,7 +100,11 @@ const usersMocks = vi.hoisted(() => ({
     data: {
       data: [
         { id: 'ev-1', action: 'user.login', createdAt: '2026-10-01T10:00:00.000Z', user: { firstName: 'سالم', lastName: 'الفيتوري', email: 'salim@zu.edu.ly' }, resourceType: 'User', resourceId: 'u-1', metadata: null },
-        { id: 'ev-2', action: 'sync.run', createdAt: '2026-10-01T11:00:00.000Z', user: null, resourceType: null, resourceId: null, metadata: null },
+        /* r342 t13: the second row was 'sync.run' — the zu-sync audit
+         * writer retired with the zu-sync system; a still-live system
+         * action keeps the two-event shape (the pagination pin below
+         * only counts rows). */
+        { id: 'ev-2', action: 'SETTING_UPDATED', createdAt: '2026-10-01T11:00:00.000Z', user: null, resourceType: 'PlatformSetting', resourceId: null, metadata: null },
       ],
       meta: { total: 75, page: 1, limit: 50, totalPages: 2 },
     },
@@ -129,93 +126,12 @@ vi.mock('../../src/hooks/useOwner', async (importOriginal) => {
   };
 });
 
-/* ═══ 1–3. AdminSyncPage (honesty · freshness · stale affordance) ═══ */
+/* ═══ (r342 t13: pins 1–4 — the AdminSyncPage honesty/freshness/stale
+   affordance pins + the admin.css .spin rule pin — retired with the
+   zu-sync system, dropped upstream. The SYNC_FIXTURE + the page import
+   went with them.) ═══ */
 
-const SYNC_FIXTURE = {
-  staleCount: 1,
-  factCount: 6,
-  latestRun: {
-    id: 'run-1', startedAt: '2026-10-01T10:00:00.000Z', completedAt: '2026-10-01T10:00:02.000Z',
-    status: 'SUCCESS', source: 'static-markdown', factsAdded: 4, factsUpdated: 2,
-    durationMs: 2100, errorMsg: null, notes: 'مزامنة أولية',
-  },
-  runHistory: [
-    {
-      id: 'run-1', startedAt: '2026-10-01T10:00:00.000Z', completedAt: '2026-10-01T10:00:02.000Z',
-      status: 'SUCCESS', source: 'static-markdown', factsAdded: 4, factsUpdated: 2,
-      durationMs: 2100, errorMsg: null, notes: 'مزامنة أولية',
-    },
-  ],
-  categories: [
-    {
-      category: 'identity', count: 2,
-      items: [{ key: 'name', value: 'الجامعة', source: 'static-markdown', isStale: false, syncedAt: '2026-10-01T10:00:00.000Z' }],
-    },
-    {
-      category: 'contact', count: 2,
-      items: [{ key: 'email', value: 'info@zu.edu.ly', source: 'static-markdown', isStale: true, syncedAt: '2026-01-01T00:00:00.000Z' }],
-    },
-  ],
-};
-
-describe('AdminSyncPage — r299 honesty + freshness pins', () => {
-  beforeEach(() => {
-    getMock.mockReset();
-    // useSyncStatus unwraps (res.data.data) — the backend body carries
-    // the sync payload under .data.
-    installAdminApi({ '/admin/sync': { data: SYNC_FIXTURE } });
-  });
-
-  it('never renders the fabricated «demo-source» slug — the real source labels stay', async () => {
-    const { container } = renderWithProviders(<AdminSyncPage />);
-    await screen.findByText('حقول مُزامنة');
-
-    expect(container.textContent).not.toContain('demo-source');
-    // The page's own source map still names the curated source — on
-    // the strip's trend note AND the history rows' source column.
-    expect(screen.getAllByText('بيانات جامعية موثّقة').length).toBeGreaterThan(0);
-  });
-
-  it('answers freshness before size — «آخر مزامنة ناجحة» leads the strip', async () => {
-    renderWithProviders(<AdminSyncPage />);
-    const firstCell = await screen.findByText('آخر مزامنة ناجحة');
-    const strip = firstCell.closest('.stat-strip');
-    expect(strip).not.toBeNull();
-    const labels = Array.from(strip!.querySelectorAll('.stat-label'))
-      .map((l) => l.textContent ?? '');
-    // Freshness (last success + last run) before size (fact count) —
-    // the page's question is «how fresh are we?».
-    expect(labels.indexOf('آخر مزامنة ناجحة')).toBeLessThan(labels.indexOf('حقول مُزامنة'));
-    expect(labels.indexOf('حالة آخر تشغيل')).toBeLessThan(labels.indexOf('حقول مُزامنة'));
-  });
-
-  it('a category head carries its own stale count — no opening each accordion to find it', async () => {
-    renderWithProviders(<AdminSyncPage />);
-    const contactHead = (await screen.findByRole('button', { name: /بيانات التواصل/ }));
-    expect(within(contactHead).getByText(/حقل قديم واحد/)).toBeInTheDocument();
-    // The fresh category carries no stale badge.
-    const identityHead = screen.getByRole('button', { name: /هوية الجامعة/ });
-    expect(within(identityHead).queryByText(/قديم/)).toBeNull();
-  });
-});
-
-/* ═══ 4. admin.css owns the .spin motion rule ══════════════════════ */
-
-describe('admin.css — the .spin rule exists (r299)', () => {
-  it('binds the global motion-spin keyframes through motion tokens', () => {
-    const sheet = readFileSync(
-      resolvePath(__dirname, '../../src/styles/admin.css'),
-      'utf8',
-    );
-    const match = sheet.match(/\.spin\s*\{[^}]*\}/);
-    expect(match, 'admin.css must define .spin').toBeTruthy();
-    expect(match![0]).toContain('motion-spin');
-    expect(match![0]).toContain('var(--motion-duration-');
-    expect(match![0]).toContain('var(--ease-linear)');
-  });
-});
-
-/* ═══ 5. Admin modal close buttons ride the .icon-btn chip ═════════ */
+/* ═══ 1. Admin modal close buttons ride the .icon-btn chip ═══════ */
 
 describe('AdminCoursesPage — modal close contract (r299)', () => {
   beforeEach(() => {
@@ -238,7 +154,7 @@ describe('AdminCoursesPage — modal close contract (r299)', () => {
   });
 });
 
-/* ═══ 6. OwnerAlertsPage — error severity reads urgent ═════════════ */
+/* ═══ 2. OwnerAlertsPage — error severity reads urgent ═══════════ */
 
 const ALERT_ERROR = {
   id: 'alert-err-1',
@@ -281,7 +197,7 @@ describe('OwnerAlertsPage — error-severity cards read urgent (r299)', () => {
   });
 });
 
-/* ═══ 7–8. OwnerUsersPage — honest «الفئة الأكبر» + red suspended chip */
+/* ═══ 3–4. OwnerUsersPage — honest «الفئة الأكبر» + red suspended chip */
 
 const USER_ROW = {
   id: 'u-1', firstName: 'سالم', lastName: 'الفيتوري', email: 'salim@zu.edu.ly',
@@ -329,7 +245,7 @@ describe('OwnerUsersPage — «الفئة الأكبر» honesty + suspended chi
   });
 });
 
-/* ═══ 9. OwnerActivityPage — windowed canonical pagination ══════════ */
+/* ═══ 5. OwnerActivityPage — windowed canonical pagination ══════════ */
 
 describe('OwnerActivityPage — the canonical windowed pagination (r299)', () => {
   it('renders page numbers + aria-current — the audit log is navigable beyond linear prev/next', async () => {

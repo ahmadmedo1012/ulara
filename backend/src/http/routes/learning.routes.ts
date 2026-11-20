@@ -1303,10 +1303,24 @@ router.post('/research/:id/publish', requireRole(Role.TEACHER, Role.ADMIN, Role.
 });
 
 // Public archive of published student papers — surfaces them in the library.
-router.get('/research/published', async (_req, res, next) => {
+router.get('/research/published', async (req, res, next) => {
   try {
+    /* r342 t14 (security sweep — cross-institution PII): the archive is
+     * institution-scoped for every institutional role. The bytes gate
+     * (files.routes accessiblePaperWhere) already pins even PUBLISHED
+     * papers to the caller's institution — the listing must agree,
+     * or it enumerates foreign tenants' papers (student names, grades,
+     * reviewer feedback, plagiarism scores) whose PDFs then 404.
+     * OWNER keeps the platform-wide oversight view (the queue's rule). */
+    const archiveScope =
+      req.user!.role === Role.OWNER
+        ? null
+        : await resolveCallerInstitutionScope(req.user!.id, req.user!.institutionId);
+    if (req.user!.role !== Role.OWNER && !archiveScope) {
+      throw institutionContextRequiredError();
+    }
     const data = await withRetry(() => prisma.researchPaper.findMany({
-      where: { status: 'PUBLISHED' },
+      where: { status: 'PUBLISHED', ...(archiveScope ? { institutionId: archiveScope } : {}) },
       // Explicit select: NEVER ship extractedText (full PDF text — huge).
       select: {
         id: true, studentId: true, reviewerId: true, offeringId: true,
@@ -1349,6 +1363,16 @@ export function buildSnippet(text: string, q: string): string | null {
 
 router.get('/research/search', async (req, res, next) => {
   try {
+    // r342 t14: the search shares the archive's institution scope (see
+    // /research/published above) — the snippet text of a foreign
+    // institution's paper is extractedText, byte-for-byte cross-tenant.
+    const searchScope =
+      req.user!.role === Role.OWNER
+        ? null
+        : await resolveCallerInstitutionScope(req.user!.id, req.user!.institutionId);
+    if (req.user!.role !== Role.OWNER && !searchScope) {
+      throw institutionContextRequiredError();
+    }
     // Cap the query at 120 chars — unbounded q flows straight into ILIKE
     // and into the highlight RegExp below.
     const q = String(req.query.q ?? '').trim().slice(0, 120);
@@ -1366,6 +1390,7 @@ router.get('/research/search', async (req, res, next) => {
     // if the dataset grows.
     const where: Prisma.ResearchPaperWhereInput = {
       status: 'PUBLISHED',
+      ...(searchScope ? { institutionId: searchScope } : {}),
       OR: [
         { title:         { contains: q, mode: 'insensitive' } },
         { abstract:      { contains: q, mode: 'insensitive' } },

@@ -141,195 +141,200 @@ export default function Settings() {
   const themeLabel = user?.themePreference ? `الخادم: ${user.themePreference === "LIGHT" ? "فاتح" : user.themePreference === "DARK" ? "داكن" : "النظام"}` : "الخادم: —";
 
   return (
-    <Screen scroll>
-      <PageHeader title="الإعدادات" kicker="أُلارا" />
+    <View style={{ flex: 1 }}>
+      <Screen scroll>
+        <PageHeader title="الإعدادات" kicker="أُلارا" />
 
-      {/* [01] التفضيلات — مظهرك وأرقامك وملمس التفاعل، مقاعد متطابقة مع الملف */}
-      <View style={{ gap: sp[8] }}>
-        <GroupHeader index={1} title="التفضيلات" />
-        <RowList>
-          <LedgerRow>
-            <View style={{ flexDirection: "row", alignItems: "center", gap: sp[10] }}>
-              <Moon size={20} color={p.textMuted} />
-              <T variant="body" weight="medium" style={{ flex: 1 }}>
-                المظهر
-              </T>
-              <T variant="sm" color="secondary">
-                {themeOptions.find((o) => o.id === preference)?.label ?? "—"}
-              </T>
-            </View>
-            <Segmented
-              options={themeOptions}
-              selectedId={preference}
-              onSelect={(id) => {
-                haptics.selection();
-                void applyTheme(id as ThemePreference);
-              }}
-            />
-            <T variant="xs" color="faint">{themeLabel}</T>
-          </LedgerRow>
-          <LedgerRow>
-            <View style={{ flexDirection: "row", alignItems: "center", gap: sp[10] }}>
-              <Hash size={20} color={p.textMuted} />
-              <T variant="body" weight="medium" style={{ flex: 1 }}>
-                الأرقام
-              </T>
-              <T variant="sm" color="secondary">
-                {numerals === "arabic-indic" ? "١٢٣" : "123"}
-              </T>
-            </View>
-            <Segmented options={NUMERALS_OPTIONS} selectedId={numerals} onSelect={changeNumerals} />
-            <T variant="xs" color="faint">
-              طريقة عرض الأرقام في لوحتك ونتائجك — {`١٢٣`} بالخط العربي أو {`123`} باللاتيني.
-            </T>
-          </LedgerRow>
-          <LedgerRow last>
-            <View style={{ flexDirection: "row", alignItems: "center", gap: sp[10] }}>
-              <Vibrate size={20} color={p.textMuted} />
-              <View style={{ flex: 1 }}>
-                <T variant="body" weight="medium">ردود اللمس</T>
-                <T variant="xs" color="muted">
-                  اهتزاز خفيف عند التفاعلات الرئيسة — يعمل على الجوال فقط.
+        {/* [01] التفضيلات — مظهرك وأرقامك وملمس التفاعل، مقاعد متطابقة مع الملف */}
+        <View style={{ gap: sp[8] }}>
+          <GroupHeader index={1} title="التفضيلات" />
+          <RowList>
+            <LedgerRow>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: sp[10] }}>
+                <Moon size={20} color={p.textMuted} />
+                <T variant="body" weight="medium" style={{ flex: 1 }}>
+                  المظهر
+                </T>
+                <T variant="sm" color="secondary">
+                  {themeOptions.find((o) => o.id === preference)?.label ?? "—"}
                 </T>
               </View>
-              <Button
-                label={hapticsOn ? "إلغاء" : "تفعيل"}
-                kind={hapticsOn ? "ghost" : "primary"}
-                small
-                onPress={() => toggleHaptics(!hapticsOn)}
+              <Segmented
+                options={themeOptions}
+                selectedId={preference}
+                onSelect={(id) => {
+                  haptics.selection();
+                  void applyTheme(id as ThemePreference);
+                }}
               />
-            </View>
-          </LedgerRow>
-        </RowList>
-      </View>
-
-      {/* [02] الحساب — الهويّة والحقائق كما تقرؤها الخدمة الآن */}
-      <View style={{ gap: sp[8] }}>
-        <GroupHeader index={2} title="الحساب" />
-        <RowList>
-          <LedgerRow>
-            <View style={{ flexDirection: "row", alignItems: "center", gap: sp[8] }}>
-              <View style={{ flex: 1 }}>
-                <T variant="body" weight="bold">
-                  {user ? `${user.firstName} ${user.lastName}` : "—"}
+              <T variant="xs" color="faint">{themeLabel}</T>
+            </LedgerRow>
+            <LedgerRow>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: sp[10] }}>
+                <Hash size={20} color={p.textMuted} />
+                <T variant="body" weight="medium" style={{ flex: 1 }}>
+                  الأرقام
                 </T>
-                <T variant="sm" color="muted">
-                  {user?.email}
+                <T variant="sm" color="secondary">
+                  {numerals === "arabic-indic" ? "١٢٣" : "123"}
                 </T>
               </View>
-              {user ? <Badge label={ROLE_LABELS[user.role] ?? user.role} tone="sky" /> : null}
-            </View>
-          </LedgerRow>
-          <FactRow label="المؤسّسة الحالية" value={user?.currentInstitution?.name ?? "—"} />
-          <FactRow
-            label="نطاق العمل"
-            value={user?.scopeFaculty ? `كلية ${user.scopeFaculty.name}` : user?.scopeFacultyId ? "كلية محددة" : "على مستوى الجامعة"}
-          />
-          {user?.teacherProfile?.position ? (
-            <FactRow
-              label="المنصب الأكاديمي"
-              value={`${POSITION_LABELS[user.teacherProfile.position] ?? user.teacherProfile.position}${
-                user.teacherProfile.positionFaculty ? ` — ${user.teacherProfile.positionFaculty.name}` : ""
-              }`}
-            />
-          ) : null}
-          {user?.teacherProfile?.rank ? (
-            <FactRow label="الرتبة" value={RANK_LABELS[user.teacherProfile.rank] ?? user.teacherProfile.rank} />
-          ) : null}
-          <FactRow
-            last
-            label="العضويات"
-            value={(user?.memberships ?? []).map((m) => `${m.name} (${ROLE_LABELS[m.role] ?? m.role})`).join(" · ") || "—"}
-          />
-        </RowList>
-      </View>
-
-      {/* [03] الأمان — قفل التطبيق وكلمة المرور في مقعد واحد */}
-      <View style={{ gap: sp[8] }}>
-        <GroupHeader index={3} title="الأمان" />
-        <RowList>
-          {bioAvail ? (
+              <Segmented options={NUMERALS_OPTIONS} selectedId={numerals} onSelect={changeNumerals} />
+              <T variant="xs" color="faint">
+                طريقة عرض الأرقام في لوحتك ونتائجك — {`١٢٣`} بالخط العربي أو {`123`} باللاتيني.
+              </T>
+            </LedgerRow>
             <LedgerRow last>
               <View style={{ flexDirection: "row", alignItems: "center", gap: sp[10] }}>
-                <Fingerprint size={20} color={p.textMuted} />
+                <Vibrate size={20} color={p.textMuted} />
                 <View style={{ flex: 1 }}>
-                  <T variant="body" weight="medium">قفل التطبيق بالبصمة</T>
+                  <T variant="body" weight="medium">ردود اللمس</T>
                   <T variant="xs" color="muted">
-                    عند التفعيل، يُطلب فتح القفل عند كل فتح بارد للتطبيق قبل عرض أي بيانات — مع رمز الجهاز كبديل دائمًا.
+                    اهتزاز خفيف عند التفاعلات الرئيسة — يعمل على الجوال فقط.
                   </T>
                 </View>
                 <Button
-                  label={bioBusy ? "…" : bioOn ? "إلغاء" : "تفعيل"}
-                  kind={bioOn ? "ghost" : "primary"}
+                  label={hapticsOn ? "إلغاء" : "تفعيل"}
+                  kind={hapticsOn ? "ghost" : "primary"}
                   small
-                  disabled={bioBusy}
-                  onPress={() => void toggleBio(!bioOn)}
+                  onPress={() => toggleHaptics(!hapticsOn)}
                 />
               </View>
             </LedgerRow>
-          ) : (
-            <LedgerRow last>
-              <T variant="sm" color="muted">
-                قفل التطبيق بالبصمة متاح على الأجهزة المزوّدة بمستشعر بصمة أو تعرّف على الوجه — جهازك الحالي لا يوفّره (أو لم تُسجّل بصمة في النظام).
-              </T>
+          </RowList>
+        </View>
+
+        {/* [02] الحساب — الهويّة والحقائق كما تقرؤها الخدمة الآن */}
+        <View style={{ gap: sp[8] }}>
+          <GroupHeader index={2} title="الحساب" />
+          <RowList>
+            <LedgerRow>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: sp[8] }}>
+                <View style={{ flex: 1 }}>
+                  <T variant="body" weight="bold">
+                    {user ? `${user.firstName} ${user.lastName}` : "—"}
+                  </T>
+                  <T variant="sm" color="muted">
+                    {user?.email}
+                  </T>
+                </View>
+                {user ? <Badge label={ROLE_LABELS[user.role] ?? user.role} tone="sky" /> : null}
+              </View>
             </LedgerRow>
-          )}
-        </RowList>
-        <Card style={{ gap: sp[10] }}>
-          <Field label="كلمة المرور الحالية" value={currentPassword} onChangeText={setCurrentPassword} secureTextEntry autoCorrect={false} />
-          <SecretField label="كلمة المرور الجديدة" value={newPassword} onChangeText={setNewPassword} hint="12 حرفًا على الأقل." />
-          <SecretField label="تأكيد كلمة المرور الجديدة" value={confirm} onChangeText={setConfirm} onSubmitEditing={changePassword} />
-          {pwError ? <T variant="sm" color="danger">{pwError}</T> : null}
-          <T variant="xs" color="faint">
-            تغيير كلمة المرور ينهي جلساتك على جميع الأجهزة الأخرى.
-          </T>
-          <Button label={busy ? "جارٍ الحفظ…" : "حفظ كلمة المرور"} onPress={changePassword} loading={busy} />
-        </Card>
-      </View>
+            <FactRow label="المؤسّسة الحالية" value={user?.currentInstitution?.name ?? "—"} />
+            <FactRow
+              label="نطاق العمل"
+              value={user?.scopeFaculty ? `كلية ${user.scopeFaculty.name}` : user?.scopeFacultyId ? "كلية محددة" : "على مستوى الجامعة"}
+            />
+            {user?.teacherProfile?.position ? (
+              <FactRow
+                label="المنصب الأكاديمي"
+                value={`${POSITION_LABELS[user.teacherProfile.position] ?? user.teacherProfile.position}${
+                  user.teacherProfile.positionFaculty ? ` — ${user.teacherProfile.positionFaculty.name}` : ""
+                }`}
+              />
+            ) : null}
+            {user?.teacherProfile?.rank ? (
+              <FactRow label="الرتبة" value={RANK_LABELS[user.teacherProfile.rank] ?? user.teacherProfile.rank} />
+            ) : null}
+            <FactRow
+              last
+              label="العضويات"
+              value={(user?.memberships ?? []).map((m) => `${m.name} (${ROLE_LABELS[m.role] ?? m.role})`).join(" · ") || "—"}
+            />
+          </RowList>
+        </View>
 
-      {/* [04] الدعم — R331 A-App-Shell: the report loop entry for EVERY
-          role (student & teacher carry it in their Profile menus;
-          admin/quality/owner reach it here). Replaces the removed
-          floating feedback FAB. */}
-      <View style={{ gap: sp[8] }}>
-        <GroupHeader index={4} title="الدعم" />
-        <RowList>
-          <LedgerRow
-            last
+        {/* [03] الأمان — قفل التطبيق وكلمة المرور في مقعد واحد */}
+        <View style={{ gap: sp[8] }}>
+          <GroupHeader index={3} title="الأمان" />
+          <RowList>
+            {bioAvail ? (
+              <LedgerRow last>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: sp[10] }}>
+                  <Fingerprint size={20} color={p.textMuted} />
+                  <View style={{ flex: 1 }}>
+                    <T variant="body" weight="medium">قفل التطبيق بالبصمة</T>
+                    <T variant="xs" color="muted">
+                      عند التفعيل، يُطلب فتح القفل عند كل فتح بارد للتطبيق قبل عرض أي بيانات — مع رمز الجهاز كبديل دائمًا.
+                    </T>
+                  </View>
+                  <Button
+                    label={bioBusy ? "…" : bioOn ? "إلغاء" : "تفعيل"}
+                    kind={bioOn ? "ghost" : "primary"}
+                    small
+                    disabled={bioBusy}
+                    onPress={() => void toggleBio(!bioOn)}
+                  />
+                </View>
+              </LedgerRow>
+            ) : (
+              <LedgerRow last>
+                <T variant="sm" color="muted">
+                  قفل التطبيق بالبصمة متاح على الأجهزة المزوّدة بمستشعر بصمة أو تعرّف على الوجه — جهازك الحالي لا يوفّره (أو لم تُسجّل بصمة في النظام).
+                </T>
+              </LedgerRow>
+            )}
+          </RowList>
+          <Card style={{ gap: sp[10] }}>
+            <Field label="كلمة المرور الحالية" value={currentPassword} onChangeText={setCurrentPassword} secureTextEntry autoCorrect={false} />
+            <SecretField label="كلمة المرور الجديدة" value={newPassword} onChangeText={setNewPassword} hint="12 حرفًا على الأقل." />
+            <SecretField label="تأكيد كلمة المرور الجديدة" value={confirm} onChangeText={setConfirm} onSubmitEditing={changePassword} />
+            {pwError ? <T variant="sm" color="danger">{pwError}</T> : null}
+            <T variant="xs" color="faint">
+              تغيير كلمة المرور ينهي جلساتك على جميع الأجهزة الأخرى.
+            </T>
+            <Button label={busy ? "جارٍ الحفظ…" : "حفظ كلمة المرور"} onPress={changePassword} loading={busy} />
+          </Card>
+        </View>
+
+        {/* [04] الدعم — R331 A-App-Shell: the report loop entry for EVERY
+            role (student & teacher carry it in their Profile menus;
+            admin/quality/owner reach it here). Replaces the removed
+            floating feedback FAB. */}
+        <View style={{ gap: sp[8] }}>
+          <GroupHeader index={4} title="الدعم" />
+          <RowList>
+            <LedgerRow
+              last
+              onPress={() => {
+                haptics.selection();
+                router.push("/report");
+              }}
+              accessibilityLabel="الإبلاغ عن مشكلة"
+            >
+              <View style={{ flexDirection: "row", alignItems: "center", gap: sp[10] }}>
+                <Flag size={20} color={p.textMuted} />
+                <T variant="body" weight="medium" style={{ flex: 1 }}>
+                  الإبلاغ عن مشكلة
+                </T>
+              </View>
+            </LedgerRow>
+          </RowList>
+        </View>
+
+        {/* [05] الجلسة — الخروج وتذييل الإصدار */}
+        <View style={{ gap: sp[8] }}>
+          <GroupHeader index={5} title="الجلسة" />
+          <Button
+            label="تسجيل الخروج"
+            kind="danger"
             onPress={() => {
-              haptics.selection();
-              router.push("/report");
+              haptics.notify("warning");
+              setConfirmLogout(true);
             }}
-            accessibilityLabel="الإبلاغ عن مشكلة"
-          >
-            <View style={{ flexDirection: "row", alignItems: "center", gap: sp[10] }}>
-              <Flag size={20} color={p.textMuted} />
-              <T variant="body" weight="medium" style={{ flex: 1 }}>
-                الإبلاغ عن مشكلة
-              </T>
-            </View>
-          </LedgerRow>
-        </RowList>
-      </View>
-
-      {/* [05] الجلسة — الخروج وتذييل الإصدار */}
-      <View style={{ gap: sp[8] }}>
-        <GroupHeader index={5} title="الجلسة" />
-        <Button
-          label="تسجيل الخروج"
-          kind="danger"
-          onPress={() => {
-            haptics.notify("warning");
-            setConfirmLogout(true);
-          }}
-        />
-      </View>
-      <T variant="xs" color="faint" style={{ textAlign: "center" }}>
-        أُلارا موبايل {Constants.expoConfig?.version ?? "1.0.0"} — Expo SDK {Constants.expoConfig?.sdkVersion ?? "58"}
-      </T>
+          />
+        </View>
+        <T variant="xs" color="faint" style={{ textAlign: "center" }}>
+          أُلارا موبايل {Constants.expoConfig?.version ?? "1.0.0"} — Expo SDK {Constants.expoConfig?.sdkVersion ?? "58"}
+        </T>
+      </Screen>
 
       {/* Same destructive ConfirmSheet as the student Profile — one
-          confirmation pattern for logout across the app. */}
+          confirmation pattern for logout across the app. A SIBLING of the
+          scroller, never scroll content: the sheet mounts its own
+          absolute-fill host, which must live in the screen root's
+          coordinate space or it never presents on Android (r341 t01). */}
       <ConfirmSheet
         open={confirmLogout}
         onClose={() => setConfirmLogout(false)}
@@ -346,7 +351,7 @@ export default function Settings() {
           router.replace("/");
         }}
       />
-    </Screen>
+    </View>
   );
 }
 

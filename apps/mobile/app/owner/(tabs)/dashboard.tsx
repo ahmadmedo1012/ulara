@@ -14,7 +14,7 @@ import { AppTopBar } from "@/components/shell/AppTopBar";
 import { Screen, SectionBar } from "@/components/ui";
 import { T } from "@/components/ui/text";
 import { Button } from "@/components/ui/pressables";
-import { DataList, LedgerRow, makeRow, RowList } from "@/components/ui/data";
+import { LedgerRow, makeRow, RowList } from "@/components/ui/data";
 import { SkeletonList, EmptyState, ErrorState, Skeleton } from "@/components/ui/states";
 import { useStaggerEntrance } from "@/motion";
 import { haptics } from "@/haptics";
@@ -43,9 +43,12 @@ interface OwnerAlert {
   resolvedAt?: string | null;
 }
 
-/** memo-stable event row (module scope — DataList/makeRow contract). */
-const EventRow = makeRow<AuditRow>(({ item }) => (
-  <LedgerRow accessibilityLabel={auditActionLabel(item.action)}>
+/** memo-stable event row (module scope — makeRow contract). `last` is an
+ *  extra prop (r341): the events peek renders STATICALLY inside a RowList
+ *  now, so the row owns its own closing hairline like every other
+ *  RowList row (the DataList idiom hairlined every row). */
+const EventRow = makeRow<AuditRow, { last?: boolean }>(({ item, last }) => (
+  <LedgerRow last={last} accessibilityLabel={auditActionLabel(item.action)}>
     <T variant="body" weight="medium">
       {auditActionLabel(item.action)}
     </T>
@@ -59,7 +62,10 @@ const EventRow = makeRow<AuditRow>(({ item }) => (
 /** (tabs) Owner dashboard — «لوحة التحكم الرئيسية» (web OwnerDashboardPage parity).
  *  R334 review-panel fixes: staggered entrance, haptics.selection on the
  *  menu rows, Arabic a11y labels on the alert rows, and the true-empty
- *  alerts state renders a kit EmptyState room (never plain muted text). */
+ *  alerts state renders a kit EmptyState room (never plain muted text).
+ *  R341 iOS nested-scroll fix: «الأحداث الأخيرة» renders statically in a
+ *  RowList (same EventRow) — no fixed-height DataList nested in the screen
+ *  ScrollView (the inner list trapped the gesture on iOS). */
 export default function OwnerDashboard() {
   const p = usePalette();
   /* Entrance stagger — base 40, step 60 → 5th block lands at 280ms (cap 400). */
@@ -190,15 +196,17 @@ export default function OwnerDashboard() {
             <EmptyState title="لا توجد أحداث بعد" message="ستظهر أحدث العمليّات هنا فور حدوثها." />
           ) : (
             <View style={{ gap: 12 }}>
-              <DataList
-                data={events}
-                renderItem={({ item }) => <EventRow item={item} />}
-                keyExtractor={(ev) => ev.id}
-                loadingSlot={<SkeletonList rows={3} />}
-                contentPadding={{ bottom: 8 }}
-                style={{ maxHeight: 5 * 76 }}
-                scrollProps={{ nestedScrollEnabled: true }}
-              />
+              {/* r341: STATIC render of the 5 most recent events (the fetch
+                  itself is the slice — activity(1, 5)). The old maxHeight
+                  DataList + nestedScrollEnabled trapped the scroll gesture
+                  inside its box on iOS (nested chaining is Android-only);
+                  the outer Screen ScrollView now owns the gesture, and the
+                  full log lives one tap away on /owner/activity. */}
+              <RowList>
+                {events.map((ev, i) => (
+                  <EventRow key={ev.id} item={ev} last={i === events.length - 1} />
+                ))}
+              </RowList>
               <Button
                 label="سجلّ النشاط الكامل"
                 kind="ghost"

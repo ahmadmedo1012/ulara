@@ -20,7 +20,7 @@
 #   secrets ANDROID_KEYSTORE_B64 / ANDROID_KEYSTORE_PASSWORD /
 #   ANDROID_KEY_ALIAS / ANDROID_KEY_PASSWORD). It is deliberately
 #   SEPARATE from any future Play upload key (that one stays in EAS
-#   credentials — RELEASE.md §store-prep). A stable signature means a
+#   credentials — docs/mobile.md §8). A stable signature means a
 #   new APK installs as an UPDATE over previous direct installs — the
 #   key is NEVER replaced silently.
 #
@@ -399,9 +399,9 @@ jobs:
 
           **ملاحظات:**
           - هذه قناة التوزيع المباشر؛ نسخة متجر Google Play (AAB) قيد الإعداد
-            وتتخطّى خطوة واحدة من المالك (RELEASE.md).
+            وتتخطّى خطوة واحدة من المالك (docs/mobile.md §8).
           - التحديثات التلقائية (OTA) عبر EAS لم تُفعَّل بعد (يتطلب تهيئة مشروع
-            EAS الجديد — RELEASE.md).
+            EAS الجديد — docs/mobile.md §8).
           - حزمة الويب (PWA) بديل فوري للمتصفح: ulara.vercel.app.
           EOF
           # The rolling release: delete + recreate the fixed `latest` tag so

@@ -35,9 +35,13 @@ export class ApiError extends Error {
   }
 }
 
-/** Offline / DNS / server-unreachable normalization with an Arabic message. */
+/** Offline / DNS / server-unreachable normalization with an Arabic message.
+ * r342 t08 — the message claims ONLY what a transport failure proves:
+ * the ULARA API could not be reached (never «تحقّق من اتصالك بالإنترنت» —
+ * the evidence cannot distinguish a dead server from a dead network;
+ * the connectivity layer owns that classification). */
 export const NETWORK_ERROR = "NETWORK";
-const networkMessage = "تعذّر الاتصال بالخادم — تحقّق من اتصالك بالإنترنت ثم أعد المحاولة.";
+const networkMessage = "تعذّر الاتصال بخادم أُلارا حالياً — أعد المحاولة.";
 
 export interface ApiAuthBridge {
   getAccessToken(): string | null;
@@ -194,7 +198,7 @@ export async function api<T>(path: string, opts: RequestOptions = {}): Promise<T
   } catch (err) {
     if (err instanceof ApiError) throw err;
     if ((err as { name?: string })?.name === "AbortError") {
-      throw new ApiError("TIMEOUT", "انتهت مهلة الطلب — الخادم بطيء، أعد المحاولة", 0);
+      throw new ApiError("TIMEOUT", "انتهت مهلة الطلب — حاول مجدداً", 0);
     }
     throw new ApiError(NETWORK_ERROR, networkMessage, 0);
   } finally {
@@ -237,7 +241,7 @@ export async function apiWithCookieCapture<T>(path: string, opts: RequestOptions
   } catch (err) {
     if (err instanceof ApiError) throw err;
     if ((err as { name?: string })?.name === "AbortError") {
-      throw new ApiError("TIMEOUT", "انتهت مهلة الطلب — الخادم بطيء، أعد المحاولة", 0);
+      throw new ApiError("TIMEOUT", "انتهت مهلة الطلب — حاول مجدداً", 0);
     }
     throw new ApiError(NETWORK_ERROR, networkMessage, 0);
   } finally {

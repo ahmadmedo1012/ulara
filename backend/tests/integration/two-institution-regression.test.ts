@@ -18,14 +18,13 @@
  *     context pins live in ai-chat-provider-path.test.ts).
  *  8. Social feeds, messaging restrictions, and announcements stay
  *     scoped.
- *  9. Sync/background isolation lives in
- *     sync-institution-isolation.test.ts.
+ *  9. (r342 t13) the zu-sync isolation suite was retired with the
+ *     zu-sync system itself.
  * 10. Switching institution changes the data the SAME user sees (the
  *     backend half of the frontend cache contract).
  *
- * Files/materials byte-level isolation and the zu-sync isolation have
- * their dedicated suites (files-institution-isolation,
- * sync-institution-isolation) — this file pins the CROSS-CUTTING
+ * Files/materials byte-level isolation has its dedicated suite
+ * (files-institution-isolation) — this file pins the CROSS-CUTTING
  * behavior those suites don't reach: governance, catalog, social,
  * messaging, the switch itself.
  */

@@ -36,7 +36,7 @@
 
 | البند | الحالة |
 |---|---|
-| ميزات الأدوار الخمسة | **منفَّذة ومشحَنة** — 2,989 اختبار واجهة + 2,010 خلفية خضراء (قياس محلي r343 على الشجرة الحالية) + 116 اختبار تكامل قاعدة بيانات + 28 رحلة e2e |
+| ميزات الأدوار الخمسة | **منفَّذة ومشحَنة** — 2,977 اختبار واجهة + 1,955 خلفية خضراء (قياس على الشجرة النهائية، CI run 44650411057) + 103 اختبار تكامل قاعدة بيانات + 28 رحلة e2e |
 | نظام التصميم | موثّق في [`DESIGN.md`](DESIGN.md) — بوابة تكافؤ 190/190 خضراء |
 | مساعد «Oasis» الذكي | **محرّك محلي حتمي معلن (gap-aware-composer) افتراضيًا + مزوّد LLM حقيقي اختياري** عبر `AI_PROVIDER` — الحدود والأمانة: [`docs/architecture.md`](docs/architecture.md) §8 |
 | فحص الانتحال | **محاكاة حتمية معلنة** (بلا خدمات خارجية) — الحدود: [`docs/architecture.md`](docs/architecture.md) §8 |
@@ -128,7 +128,7 @@ npm run dev:web                    # الواجهة :5173 (proxy ‏/api → :40
 ```bash
 npm run lint                         # ESLint — 0 أخطاء إلزامية
 npm run typecheck                    # tsc — src + tests، الجهتان (بلا DB)
-npm test                             # 2,989 واجهة + 2,010 خلفية (قياس محلي r343؛ بلا DB؛ يشمل 7 اختبارات S3 حيّة ضد s3rver) — و npm run test:integration يضيف 116 اختبار تكامل على قاعدة محلية معزولة (منها 14 عابرة للمؤسستين لعزل r179 و 2 لأمان إعادة تشغيل البذرة r182)
+npm test                             # 2,977 واجهة + 1,955 خلفية (قياس على الشجرة النهائية، CI run 44650411057؛ بلا DB؛ يشمل 7 اختبارات S3 حيّة ضد s3rver) — و npm run test:integration يضيف 103 اختبار تكامل على قاعدة محلية معزولة (منها 14 عابرة للمؤسستين لعزل r179 و 2 لأمان إعادة تشغيل البذرة r182)
 node scripts/verify-parity-export.mjs  # بوابة التكافؤ 190/190
 bash scripts/check-icons.sh            # انضباط Lucide
 bash scripts/check-motion-tokens.sh    # رموز الحركة
@@ -171,7 +171,7 @@ bash scripts/check-csp-hash.sh         # بصمات CSP
 
 ```text
 ulara/
-├── backend/          Express + TS · Prisma (89 نموذجًا/32 enum — المصدر `schema.prisma`) · العقد المولّد 218 مسارًا/255 عملية · storage/papers/
+├── backend/          Express + TS · Prisma (87 نموذجًا/31 enum — المصدر `schema.prisma`) · العقد المولّد 216 مسارًا/253 عملية · storage/papers/
 ├── frontend/         React 18 + Vite · src/styles/ سلسلة الرموز (30 ورقة + 27 للهبوط) · tests/ (vitest)
 ├── apps/mobile/      تطبيق Expo/React Native (قفل خاص) — الدليل: docs/mobile.md
 ├── docs/             الدليل العربي الحي (architecture/deployment/mobile/testing/design-system/runbook/…) + api/openapi.json المولّد

@@ -185,7 +185,9 @@ describe('r172b §3 — StripSkeleton (the action-strip slot)', () => {
 
 describe('r172b §4 — admin dashboard pending mirror', () => {
   beforeEach(() => {
-    pendingUrls('/admin/stats', '/admin/faculties', '/admin/reports', '/admin/courses', '/admin/sync', '/admin/papers');
+    // r342 t13: /admin/sync left the strip's pending set — the zu-sync
+    // summary query retired with the zu-sync system (dropped upstream).
+    pendingUrls('/admin/stats', '/admin/faculties', '/admin/reports', '/admin/courses', '/admin/papers');
   });
 
   it('renders the real header + strip slot + KPI + charts-row slots (no generic PageSkeleton shape)', () => {
@@ -210,10 +212,10 @@ describe('r172b §4 — admin dashboard pending mirror', () => {
   });
 
   it("§5 — the ActionStrip's own pending state is the same StripSkeleton (never a silent null)", () => {
-    // Page-level queries ANSWER; only the strip's three background
-    // reads pend — the resolved page must render the strip skeleton in
-    // the slot the page skeleton reserved.
-    pendingUrls('/admin/courses', '/admin/sync', '/admin/papers');
+    // Page-level queries ANSWER; only the strip's background reads pend
+    // — the resolved page must render the strip skeleton in the slot the
+    // page skeleton reserved.
+    pendingUrls('/admin/courses', '/admin/papers');
     setFixtures({
       '/admin/stats': { totalStudents: 420, totalTeachers: 28, totalCourses: 12, totalEnrollments: 860 },
       '/admin/faculties': [],

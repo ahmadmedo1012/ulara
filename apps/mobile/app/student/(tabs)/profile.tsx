@@ -32,7 +32,6 @@ import Fingerprint from "lucide-react-native/icons/fingerprint-pattern";
 import Gauge from "lucide-react-native/icons/gauge";
 import Globe from "lucide-react-native/icons/globe";
 import Grid3x3 from "lucide-react-native/icons/grid-3x3";
-import Landmark from "lucide-react-native/icons/landmark";
 import Library from "lucide-react-native/icons/library";
 import Mail from "lucide-react-native/icons/mail";
 import Map from "lucide-react-native/icons/map";
@@ -123,8 +122,10 @@ const MENU_GROUPS: { title: string; items: { icon: LucideIcon; label: string; to
   {
     title: "الجامعة",
     items: [
+      /* r342 t13 — the «عن الجامعة» row (→ /student/university, powered by
+         GET /university/facts) left with the zu-sync retirement: the backend
+         route is gone and the screen was deleted (no dead link stays). */
       { icon: Library, label: "المكتبة", to: "/student/library" },
-      { icon: Landmark, label: "عن الجامعة", to: "/student/university" },
       { icon: Map, label: "خريطة الكليات", to: "/student/map" },
     ],
   },
@@ -428,24 +429,28 @@ export default function StudentProfile() {
             setConfirmLogout(true);
           }}
         />
-
-        <ConfirmSheet
-          open={confirmLogout}
-          onClose={() => setConfirmLogout(false)}
-          title="تسجيل الخروج؟"
-          message="ستنتهي جلستك على هذا الجهاز فقط — تُحفظ جلسات أجهزتك الأخرى."
-          confirmLabel="خروج"
-          destructive
-          onConfirm={async () => {
-            setConfirmLogout(false);
-            // R327 C3 — a handed-over phone must not keep pushing.
-            await unregisterPushDevices().catch(() => undefined);
-            await logout();
-            qc.clear();
-            router.replace("/");
-          }}
-        />
       </ScrollBody>
+
+      {/* Destructive logout confirm — a SIBLING of ScrollBody, never inside
+          it: the sheet mounts its own absolute-fill host, which must cover
+          the full screen from the screen root, not ride the scroll content
+          (r341 t01). */}
+      <ConfirmSheet
+        open={confirmLogout}
+        onClose={() => setConfirmLogout(false)}
+        title="تسجيل الخروج؟"
+        message="ستنتهي جلستك على هذا الجهاز فقط — تُحفظ جلسات أجهزتك الأخرى."
+        confirmLabel="خروج"
+        destructive
+        onConfirm={async () => {
+          setConfirmLogout(false);
+          // R327 C3 — a handed-over phone must not keep pushing.
+          await unregisterPushDevices().catch(() => undefined);
+          await logout();
+          qc.clear();
+          router.replace("/");
+        }}
+      />
     </Screen>
   );
 }

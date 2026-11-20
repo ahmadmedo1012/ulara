@@ -93,7 +93,8 @@ export const AUDIT_ROUTES = [
   '/admin/students',
   '/admin/teachers',
   '/admin/permissions/:id',
-  '/admin/sync',
+  // (r342 t13: '/admin/sync' retired — the zu-sync console was dropped
+  // upstream with the zu-sync system.)
   '/admin/community',
   '/admin/faculties',
   '/admin/courses',

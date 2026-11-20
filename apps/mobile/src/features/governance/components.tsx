@@ -621,39 +621,12 @@ export function loginReasonLabel(reason?: string | null): string {
   return LOGIN_REASON_LABEL[reason] ?? "سبب آخر";
 }
 
-/** Sync run statuses (AdminSyncPage parity). */
-export const SYNC_STATUS_LABEL: Record<string, string> = {
-  RUNNING: "قيد التنفيذ",
-  SUCCESS: "ناجحة",
-  PARTIAL: "جزئية",
-  FAILED: "فاشلة",
-};
-/** Semantic tone per sync status (ok/warn/error → mint/yellow/rose). */
-export const SYNC_STATUS_TONE: Record<string, StatusToneName> = {
-  RUNNING: "yellow",
-  SUCCESS: "mint",
-  PARTIAL: "yellow",
-  FAILED: "rose",
-};
-/** The one sync-status renderer — unknown enums render «غير معروفة»,
- *  never the raw `SYNC_*`-style code (R334 audit P0 strings fix). */
-export function syncStatusLabel(status?: string | null): string {
-  if (!status) return "—";
-  return SYNC_STATUS_LABEL[status] ?? "غير معروفة";
-}
-export function SyncStatusChip({ status }: { status?: string | null }) {
-  return <Badge label={syncStatusLabel(status)} tone={SYNC_STATUS_TONE[status ?? ""] ?? "grey"} />;
-}
-export const SYNC_CATEGORY_LABEL: Record<string, string> = {
-  identity: "هوية الجامعة",
-  contact: "بيانات التواصل",
-  strategic: "الخطة الاستراتيجية",
-  grading: "نظام التقييم",
-  programs: "الدراسة والشهادات",
-  memberships: "العضويات",
-  colleges: "الكلّيّات",
-  general: "عام",
-};
+/* r342 t13 — zu-sync retirement: the sync-run status kit (SYNC_STATUS_LABEL,
+ * SYNC_STATUS_TONE, syncStatusLabel, SyncStatusChip, SYNC_CATEGORY_LABEL)
+ * rendered only the /admin/sync console payload, and that route left the
+ * backend — the kit went with the screen. Historical audit rows keep their
+ * "sync.run" label in AUDIT_ACTION_LABEL above; live alert categories keep
+ * their "sync" entry in ALERT_CATEGORY_LABEL. */
 
 /** Institution statuses. */
 export const INST_STATUS_LABEL: Record<string, string> = {
@@ -1210,7 +1183,9 @@ export interface EducationRow {
 }
 export interface SystemRow {
   storage?: { driver?: string; persistent?: boolean; reachable?: boolean; checkedAt?: string | null } | null;
-  sync?: { lastRunAt?: string | null; recent?: { id?: string; at?: string; action?: string; actor?: string; metadata?: unknown }[] } | null;
+  /* r342 t13 — the `sync` block (lastRunAt + recent SyncRun feed) left
+     GET /owner/system with the zu-sync retirement; the System page's
+     «آخر مزامنة» row went with it. */
   alerts?: {
     openCount?: number;
     criticalCount?: number;

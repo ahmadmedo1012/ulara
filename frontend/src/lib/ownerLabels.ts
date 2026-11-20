@@ -58,11 +58,14 @@ export const CATEGORY_LABELS: Record<string, string> = {
   storage: 'التخزين',
   database: 'قاعدة البيانات',
   api: 'واجهة البرمجة',
-  // r151a (R5-A5 P3): these three are the categories the production
-  // writers ACTUALLY emit — raiseOperationalAlert derives the category
-  // from the alert-code prefix (operational-alerts.ts), and the only
-  // live callers write APP_* (errorHandler 5xx paths), HTTP_500
-  // (errorHandler unhandled) and SYNC_* (zu-sync stale-run reaper).
+  // r151a (R5-A5 P3): these are the categories the production writers
+  // ACTUALLY emit — raiseOperationalAlert derives the category from the
+  // alert-code prefix (operational-alerts.ts), and the live callers
+  // write APP_* (errorHandler 5xx paths) and HTTP_500 (errorHandler
+  // unhandled). (r342 t13: the third writer — the zu-sync stale-run
+  // reaper's SYNC_* — retired with the zu-sync system, dropped upstream;
+  // the 'sync' label below stays so HISTORICAL SYNC_* alerts on the ops
+  // board keep their Arabic badge instead of leaking a raw Latin run.)
   // Without these entries every real server-fault alert rendered a raw
   // Latin «http»/«app»/«sync» badge — the exact leak this map exists
   // to prevent. The seed writes no alerts, so demo data never showed it.

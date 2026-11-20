@@ -76,7 +76,7 @@ npx expo export --platform android   # ضمن سقف 8MB JS للمنصة (بوا
 
 - **وسم الأمانة إلزامي**: لم يكن هناك محاكي/جهاز في بيئة التطوير — كل
   ادعاء يحمل ملصقه (`tsc`-verified · jest-verified · device-UNVERIFIED).
-  ما لم يُشغَّل لا يُدَّعى؛ الجهاز يمر عبر EAS/المالك.
+  ما لم يُشغَّل لا يُدَّعى؛ الجهاز يمر عبر مسارات Actions/المالك.
 - **خط تدقيق RN-web** (لقطات/مراجعة بصرية): `expo export --platform web`
   إلى مجلد مؤقت ← خادم SPA صغير (404←index.html) على ‎:8899 ← وكيل
   CORS مفتوح على ‎:8900 ← المتصفح الحقيقي. لاحظ: قائمة CORS الإنتاجية
@@ -123,20 +123,21 @@ export ULARA_ANDROID_KEYSTORE_ALIAS=ulara
 export ULARA_ANDROID_KEYSTORE_PASSWORD='…'        # بعيدًا عن سجل الشل
 ```
 
-**المسارات الثلاثة**:
+**المساران** (عقد المالك المُلزم: البناء native على GitHub Actions
+حصرًا — أوامر `eas build` (سحابة أو `--local`) مُحالة من مسار هذا
+المستودع؛ Expo CLI يبقى أداة تكوين/تصدير/prebuild فقط):
 
-| | أ. gradle محلي | ب. `eas build --local` | ج. سحابة EAS |
-|---|---|---|---|
-| الأمر | `scripts/build-android-local.sh` | `eas build --profile preview --local` | `eas build --profile preview --no-wait` |
-| الحصة | لا تستهلك | لا تستهلك | تستهلك حصة الحساب |
-| يحتاج | JDK+SDK+مفتاح (بيئة) | Docker (لينكس) + بيانات EAS | `EXPO_TOKEN` |
+| | أ. gradle محلي | ب. GitHub Actions |
+|---|---|---|
+| الأمر | `scripts/build-android-local.sh` | `android-apk.yml` (QA + إصدار موقَّع) · `mobile.yml` (مسارا devclient/full) |
+| الحصة | لا تستهلك | runners عامة — لا حصة EAS |
+| يحتاج | JDK+SDK+مفتاح (بيئة) | dispatch يدوي فقط |
 
 - الناتج: `apps/mobile/android/app/build/outputs/apk/release/app-release.apk`
   (للمتجر: `./gradlew bundleRelease` ← AAB). المسار ذاته يقوده CI في
   `android-apk.yml` وينشر لإصدار `latest` (§7).
-- `versionCode`: البناء المحلي يقرأه من `app.config.ts` (اضبطه صراحة
-  لكل إصدار)؛ سحابة EAS بـ`appVersionSource:"remote"` تزيده تلقائيًا —
-  لا تُشحن ثنائيتين برقم واحد أبدًا.
+- `versionCode`: كل بناء يقرأه من `app.config.ts` (اضبطه صراحة
+  لكل إصدار) — لا تُشحن ثنائيتين برقم واحد أبدًا.
 - استكشاف سريع: «Unsupported class file» = JDK قديم؛ «target android-37»
   = مكونات/تراخيص SDK ناقصة؛ exit «template drift» = تحديث مرساة
   المُرقِّع في السكربت بعد تغيّر قالب prebuild؛ OOM على أجهزة 4GB =
@@ -147,9 +148,9 @@ export ULARA_ANDROID_KEYSTORE_PASSWORD='…'        # بعيدًا عن سجل �
 
 ## 7. القنوات والنشر
 
-- **القنوات** (`eas.json`): `development` (dev-client) · `preview`
-  (APK داخلي/محاكي iOS) · `production` (app-bundle). كلها تحمل
-  `EXPO_PUBLIC_API_BASE_URL=https://ulara.vercel.app/api/v1`.
+- **القنوات** (`eas.json`): قنوات OTA الآن — `development`/`preview`/
+  `production` تحمل `EXPO_PUBLIC_API_BASE_URL=https://ulara.vercel.app/api/v1`
+  وتخدم `eas update`؛ لا بناء native عبر EAS (محال).
 - **سياسة fingerprint**: تغيير JS يصل عبر `eas update` لكل بناء مطابق
   للبصمة؛ أي تغيير native (تبعية/إضافة/مفاتيح `app.config.ts`) يغيّر
   البصمة ⇒ بناء ثنائي جديد مرة واحدة، والتحديثات فوقه. المثال الحي:
@@ -164,22 +165,24 @@ export ULARA_ANDROID_KEYSTORE_PASSWORD='…'        # بعيدًا عن سجل �
   (توقيع مستقر = تحديث في المكان)؛ صفحة `/app` هي الواجهة. التثبيتات
   المتقطعة من مشروع EAS القديم ترفض أندرويد التحديث العابر للتوقيع:
   إزالة تثبيت واحدة ثم `/app`.
-- **أوامر الإصدار اليدوية**:
-  `npx eas-cli build --profile production --platform android --non-interactive`
-  (أو `--profile preview --platform all --no-wait`).
+- **أوامر الإصدار اليدوية** (Actions-native — لا أوامر `eas build`
+  في هذا المستودع): dispatch `android-apk.yml` بمسار `release` (APK
+  موقَّع يُنشر لإصدار `latest` المتدحرج) أو `build-ios-sidestore.yml`
+  (IPA جانبي غير موقَّع على macOS runners).
 
-## 8. المتجر (خطوات المالك فقط)
+## 8. المتجر (خطوات المالك فقط — لم تُعد بعد)
 
-1. **Android/Play**: حساب خدمة Play (JSON) يُرفع إلى EAS credentials،
-   ثم `npx eas submit --platform android --profile production`.
-   انسخ مفتاح الرفع احتياطيًا مرة بعد أول بناء production — فقده يعني
-   هوية جديدة في المتجر (لا يعيد Google المفاتيح بسهولة).
-2. **iOS/Apple**: تسجيل مطور ($99/سنة) ثم إحدى: `eas credentials -p
-   ios` بتسجيل الدخول إلى Apple، أو مفاتيح ASC
-   (`ASC_KEY_ID/ASC_ISSUER_ID/ASC_KEY_CONTENT`) في EAS. أول بناء جهاز:
-   `eas build --profile production --platform ios`؛ TestFlight:
-   `eas submit --platform ios`. استبيان الخصوصية: بلا تحليلات طرف
-   ثالث؛ Face ID وإشعارات وتقرير أعطال إلى خلفيتنا فقط.
+عقد المالك المُلزم: GitHub Actions هو منصّة البناء native والتسليم —
+لا `eas build` ولا `eas submit` في مسار هذا المستودع. البنيات
+المسلَّمة اليوم كلها Actions-native: APK المباشر الموقَّع
+(`android-apk.yml` ← إصدار `latest`) وIPA الجانبي غير الموقَّع
+(`build-ios-sidestore.yml`). رفع المتاجر (Play/ASC) عند فتحه لاحقًا:
+يبني الأصل بمسارات Actions نفسها ثم يرفعه المالك يدويًا أو بأداة
+رفع مستقلة بوعيه — EAS credentials ليست جزءًا من المسار. انسخ مفتاح
+التوقيع احتياطيًا خارج الجهاز (أسرار Actions + نسخة المالك) — فقده
+يعني هوية جديدة في المتجر (لا يعيد Google المفاتيح بسهولة). استبيان
+الخصوصية: بلا تحليلات طرف ثالث؛ Face ID وإشعارات وتقرير أعطال إلى
+خلفيتنا فقط.
 
 ## 9. الأسرار — أين يعيش ماذا
 
@@ -189,6 +192,6 @@ export ULARA_ANDROID_KEYSTORE_PASSWORD='…'        # بعيدًا عن سجل �
 | كوكي `ulara_refresh` | `expo-secure-store` (`lib/tokenStorage`) | اعتماد 7 أيام — لا يُخزَّن في AsyncStorage أبدًا |
 | تفضيلات غير سرية (سمة/أرقام/لمس/كاش) | AsyncStorage بمفاتيح `ula-mobile-*` | قاعدة العائلة: أسرار SecureStore فقط؛ غير السرّي في المفاتيح الموحدة |
 | `EXPO_PUBLIC_API_BASE_URL` | `eas.json` | **تكوين عام لا سر** — يُضمَّن في الحزمة؛ لا أسرار في `app.config.ts` أو الحزمة أبدًا |
-| `EXPO_TOKEN` | أسرار GitHub Actions | لـOTA والبناء السحابي — دوّره إن لامسه أحد |
+| `EXPO_TOKEN` | أسرار GitHub Actions | لـOTA فقط (لا بناء سحابي بعد إحالة EAS Build) — دوّره إن لامسه أحد |
 | مفتاح التوقيع | `~/.ulara/ulara-release.keystore` محليًا، أو أسرار Actions (`ANDROID_KEYSTORE_B64`…) لقناة CI | انسخه احتياطيًا خارج الجهاز |
-| مفاتيح ASC/Play | EAS credentials | عند الخطوة §8 |
+| مفاتيح ASC/Play | خارج المستودع — خطوة مالك مستقبلية | §8 — لا EAS credentials بعد الإحالة |

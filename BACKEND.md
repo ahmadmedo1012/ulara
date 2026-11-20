@@ -3,7 +3,7 @@
 Express 4.22.3 (TypeScript, ESM) + Prisma 5.22 over Neon PostgreSQL.
 All endpoints are mounted under the base path **`/api/v1`** and return a
 `{ data: T }` envelope (errors return `{ error: { code, message } }`).
-The complete, code-accurate endpoint contract (255 operations over 218
+The complete, code-accurate endpoint contract (253 operations over 216
 paths, measured from the generated spec) lives in
 [`docs/api/openapi.json`](docs/api/openapi.json) (regenerated from the code
 with `npm run api:openapi`) — the tables below are a
@@ -20,11 +20,11 @@ condensed overview.
 | `env.ts` | Zod‑validated environment config |
 | `db.ts` | Prisma singleton + `withRetry()` for Neon transient errors |
 | `logger.ts` | Pino logger |
-| `scheduler.ts` | In‑process daily university‑sync ticker |
+| `scheduler.ts` | In‑process daily LoginEvent‑retention ticker (the zu‑sync university‑facts job was retired r342 t13) |
 | `http/validate.ts` | Generic Zod validation middleware factory |
 | `http/middleware/*` | `auth`, `requireRole`, `requireCapability`, `rateLimit`, `errorHandler` |
-| `http/routes/*` | 25 route modules (incl. `submissions.routes.ts` + `curriculum.routes.ts`) |
-| `lib/*` | `jwt`, `password`, `errors`, `pagination`, `pdf`, `permissions`, `governance`, `grading`, `risk`, `dates`, `compression`, `storage` (upload drivers: local fs / S3-compatible SigV4), `operational-alerts`, `zu-sync/` |
+| `http/routes/*` | 24 route modules (incl. `submissions.routes.ts` + `curriculum.routes.ts`; `sync.routes.ts` retired r342 t13) |
+| `lib/*` | `jwt`, `password`, `errors`, `pagination`, `pdf`, `permissions`, `governance`, `grading`, `risk`, `dates`, `compression`, `storage` (upload drivers: local fs / S3-compatible SigV4), `operational-alerts` (`zu-sync/` retired r342 t13 — the shared production DB dropped its tables upstream; every code path touching them P2021'd) |
 | `modules/auth/*` | `auth.service.ts`, `auth.dto.ts`, `password-policy`, `lockout`, `rotation` |
 | `modules/search/*` | Arabic-aware search normalization (`normalize.ts`) backing `/search/global` |
 | `modules/theme/*` | `router.ts` — `GET/PUT /me/theme` (handler inline; the separate service module was folded in wave 16) |
@@ -238,12 +238,11 @@ condensed overview.
 | GET | `/admin/stats` `/admin/faculties` `/admin/reports` `/admin/courses` | ADMIN/OWNER | Admin data |
 | GET | `/admin/students` `/admin/digital` | ADMIN/OWNER | Admin extras (students: 400 on malformed page/limit/facultyId) |
 
-### Search / Sync / AI / Files
+### Search / AI / Files
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
 | GET | `/search/global?q=` | Bearer | Cross‑entity autocomplete |
-| GET/POST | `/admin/sync` `/admin/sync/trigger` | USERS_MANAGE/QUALITY_VIEW | Sync status / trigger |
-| GET | `/university/facts` | Bearer | Institutional facts |
+| — | *(r342 t13 retired: `/admin/sync`, `/admin/sync/trigger`, `/university/facts` — the zu-sync system's tables were dropped from the shared production DB upstream)* | | |
 | POST/GET | `/ai/chat` `/ai/conversations` `/ai/conversations/:id/messages` | Bearer (chat rate‑limited 20/min) | AI chat + history (messages capped at newest 200). `POST /ai/chat` serves BOTH transports: the JSON envelope (additive `X-Ai-Quota-Remaining` header) and SSE streaming (`?stream=1` or `Accept: text/event-stream` — `token`/`done`/`error` frames). Daily ask quota (default 25/user/day via `AI_DAILY_LIMIT_DEFAULT`) → honest Arabic 429 |
 | GET | `/ai/config` | Bearer | The honest-surface badge — `{ provider, model }` (`local` + `null` in local mode; never a fake model name) |
 | POST | `/ai/feedback` | Bearer | Per-answer thumbs ±1 (one rating per user per answer, upsert) |
@@ -309,9 +308,10 @@ r137 — Arabic-only per D17-3.
 
 ## 8. Auxiliary systems
 
-- **Scheduler** (`scheduler.ts`): runs `runSync()` 5 s after boot, then every 24 h
-  (overlap-guarded); results recorded in `SyncRun`. Also prunes `LoginEvent`
-  rows older than 180 days in bounded batches (never rejects, capped per day).
+- **Scheduler** (`scheduler.ts`): in-process daily `LoginEvent`-retention ticker —
+  prunes rows older than 180 days in bounded batches (never rejects, capped per
+  day). The zu-sync university-facts sync job it once ran was retired r342 t13
+  (see the retirement note below); no `SyncRun` recording remains.
 - **Timezone model** (`lib/dates.ts` — 15-h, campaign 3): the server runs with
   `TZ=UTC` (the Vercel serverless runtime is UTC); every stored instant is UTC. Date-only
   *data* concepts (attendance day-keys, `@@unique(offeringId, date)` buckets)
@@ -320,8 +320,11 @@ r137 — Arabic-only per D17-3.
   Africa/Tripoli civil days via `tripoliDayKey()`/`tripoliDayDow()` (Libya is
   UTC+2 with no DST since 2013 — always use the tz name, never a hardcoded
   offset, so a DST return widens nothing silently).
-- **University sync** (`lib/zu-sync/`): pulls institutional facts from a static
-  source into `UniversityFact`.
+- **University sync — RETIRED (r342 t13)**: the `lib/zu-sync/` engine, the
+  `SyncRun`/`UniversityFact` models, the scheduler's sync job, and the
+  `/admin/sync` + `/university/facts` routes were removed 2026-11-19 —
+  the shared production database dropped the tables upstream (r349),
+  so every remaining code path failed with P2021.
 - **PDF** (`lib/pdf.ts`): `extractPaperText()` via `pdf-parse` for library
   full-text search; best-effort, never throws; reads bytes through the
   storage abstraction (same `backend/storage/papers/` layout locally).
@@ -541,9 +544,10 @@ and the roundtrip above then passed end‑to‑end.
 > The r325 row said «B3 bulk import proven». The finding, stated
 > plainly: **there is no CSV/file‑upload bulk import of students in
 > this codebase — and never was.** The r323 "B3.1 bulk‑import
-> remainder" shipped as **invite codes** (self‑serve bulk onboarding),
-> and the `admin/sync` path (SyncRun) syncs **university facts**, not
-> users. Both statements below are backed by a live run on the seeded
+> remainder" shipped as **invite codes** (self‑serve bulk onboarding).
+> (r342 t13: the `admin/sync` path this note leaned on for contrast was
+> retired with the zu-sync system — university facts, never users.)
+> Both statements below are backed by a live run on the seeded
 > stack (`audits/evidence/r327/p4/b3/invite-bulk-proof.txt`).
 
 ### 11.1 What exists — invite codes (r323 B3.1)
@@ -584,8 +588,5 @@ the seed's own 30 demo users untouched — recorded in the evidence log).
   feature. (The invite‑code design was the deliberate r323 decision:
   self‑serve, no password handling by staff, no CSV parsing attack
   surface.)
-- `POST /admin/sync/trigger` (ADMIN with institution context / OWNER)
-  re‑syncs an institution's **UniversityFact** rows from its configured
-  source — institutional statistics, not user import. It ran on this
-  stack only as the scheduler's boot tick (`initial: SUCCESS,
-  factsAdded: 0`); no user rows are touched.
+- `POST /admin/sync/trigger` — RETIRED r342 t13 (with the whole zu-sync
+  system; the tables no longer exist in the shared production DB).

@@ -67,23 +67,33 @@ run (notifications path, theme verb, chapter mutations, a nonexistent
 `GET /admin/users/:id`) — run it in CI or before any merge touching
 `src/api/**` or `backend/src/http/routes/**`.
 
-## EAS — build, update, and what needs a rebuild
+## Builds & updates — Actions-native native builds; EAS is OTA only
 
-`eas.json` (authoritative): profiles `development` (dev-client APK),
-`preview` (internal-distribution **APK**, channel `preview`), and
-`production` (AAB, channel `production`). All embed
-`EXPO_PUBLIC_API_BASE_URL` from the profile env.
+Native builds are GitHub-Actions-only (the owner's binding requirement —
+`eas build` is retired from this repo's pipeline):
+
+- **QA APK + signed release APK** → `.github/workflows/android-apk.yml`
+  (the signed rolling-`latest` release APK:
+  https://github.com/ahmadmedo1012/ulara/releases/latest/download/ulara.apk)
+- **iOS sidestore IPA (unsigned)** → `.github/workflows/build-ios-sidestore.yml`
+- **dev-client / smoke lanes** → `.github/workflows/mobile.yml`
+  (expo prebuild + Gradle on Actions runners)
+
+EAS remains ONLY as the OTA (JS update) channel — `eas update` delivers
+JS/asset changes to installed builds whose fingerprint matches:
 
 ```bash
-npx eas build -p android --profile preview   # installable APK
 npx eas update --channel preview             # OTA (JS-only changes)
 ```
+
+`eas.json` still declares the channels (`preview`/`production`) and embeds
+`EXPO_PUBLIC_API_BASE_URL` from the profile env.
 
 | Change | Delivery |
 |---|---|
 | JS/TS screens, styles, API wiring | EAS Update (OTA) is sufficient |
-| New native module / `app.config.ts` plugin, icon, splash, permissions | **requires a new build** |
-| `expo-notifications` wiring (still gated on the backend proposal) | **requires a new build** |
+| New native module / `app.config.ts` plugin, icon, splash, permissions | **requires a new build — run the Actions workflows above** |
+| `expo-notifications` wiring (still gated on the backend proposal) | **requires a new build — run the Actions workflows above** |
 
 Never put `EXPO_TOKEN` (or any secret) in `EXPO_PUBLIC_*` — it is injected by
 the CI/CLI environment, not the bundle.
@@ -102,8 +112,9 @@ The website evolves continuously. Isolation rules:
    update statuses honestly (✅ / 🧩 / 🔗 / ⚠️ / 🚫 — never upgrade a status
    without evidence).
 4. When a reconciliation needs a JS change only, ship it via
-   `eas update --channel preview`; native-affecting changes need a preview
-   rebuild before the production channel moves.
+   `eas update --channel preview`; native-affecting changes need a rebuild
+   via the GitHub-Actions workflows (android-apk.yml) before the production
+   channel moves.
 
 ## Honest limits (current)
 

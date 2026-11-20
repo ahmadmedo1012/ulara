@@ -627,15 +627,9 @@ export function AdminSettingsPage() {
         description="إعدادات تشغيليّة على مستوى الجامعة. تفعيل المعدِّلات الفرديّة قيد التطوير."
         index="09"
         breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'إعدادات المنصّة' }]}
-        actions={(
-          /* R342-09 (D11 sub-page CTA precedent): the settings ledger's ONE
-           * honest next surface — the university sync is the standing
-           * operational duty the settings page's own facts describe. */
-          <Link to="/admin/sync" className="btn accent sm">
-            <Icon icon={RefreshCw} size={13} />
-            مزامنة الجامعة
-          </Link>
-        )}
+        /* r342 t13: the header's «مزامنة الجامعة» CTA retired with the
+         * zu-sync system (dropped upstream — /admin/sync gone); the
+         * settings ledger states its own facts, no external CTA. */
       />
 
       <div className="grid-2">
@@ -698,8 +692,10 @@ export function AdminSettingsPage() {
             {/* r155c: أُزيل زر «مزامنة بيانات الجامعة» المعطَّل — كانت
                 بطاقة «الموارد المرتبطة» أدناه تصل مباشرة إلى ‎/admin/sync
                 المتاح فعلياً للمسجل العام، فيكون الزر المعطَّل مع تعليته
-                «لوحة المالك» تضليلاً. بقية الأزرار (التصدير/البثّ/فحص
-                الصحّة) ما تزال ملك لوحة المالك — التعليقة صادقة بشأنها. */}
+                «لوحة المالك» تضليلاً. (r342 t13: رابط ‎/admin/sync نفسه
+                أُحيل أيضاً — سُقِط نظام zu-sync من المنبع فلم يعد وجهةً.)
+                بقية الأزرار (التصدير/البثّ/فحص الصحّة) ما تزال ملك لوحة
+                المالك — التعليقة صادقة بشأنها. */}
             <button type="button" className="btn ghost sm" disabled>
               <Icon icon={Download} size={14} />
               تصدير سجلّ النشاط
@@ -717,7 +713,8 @@ export function AdminSettingsPage() {
 
         <Card title="الموارد المرتبطة" icon={ShieldCheck}>
           <ul className="settings-links">
-            <li><Link to="/admin/sync">مزامنة الكلّيّات والأقسام</Link></li>
+            {/* r342 t13: بند «مزامنة الكلّيّات والأقسام» (/admin/sync)
+                أُحيل — سُقِط نظام zu-sync من المنبع. */}
             <li><Link to="/admin/teachers">صلاحيات أعضاء هيئة التدريس</Link></li>
             <li><Link to="/admin/reports">تقارير المسجل العام</Link></li>
             {/* 5-B5 hand-off (one-name-per-surface): the surface's own

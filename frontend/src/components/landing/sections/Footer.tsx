@@ -126,9 +126,18 @@ export function Footer({ year }: { year: number }) {
               </div>
               {BRAND_ROWS.map((row, i) => (
                 <div className="fo-brow" key={i}>
-                  {row.map(([to, label]) => (
-                    <a key={to} href={to} className="fo-ilink">{label}</a>
-                  ))}
+                  {/* r341 (t05 · SPA links): route rows are router <Link>
+                      seats (no full document reload); in-page #fragment
+                      rows stay raw anchors — the browser's own scroll
+                      grammar, same convention as Statement's #chapters /
+                      Product's #cta pills. */}
+                  {row.map(([to, label]) =>
+                    to.startsWith('#') ? (
+                      <a key={to} href={to} className="fo-ilink">{label}</a>
+                    ) : (
+                      <Link key={to} to={to} className="fo-ilink">{label}</Link>
+                    ),
+                  )}
                 </div>
               ))}
             </div>
@@ -203,15 +212,28 @@ export function Footer({ year }: { year: number }) {
                         <Link to="/auth" className="fo-link fo-link-account">{LOGIN}</Link>
                       </>
                     )}
-                    {g.links.map(([to, label], li) => (
-                      <a
-                        key={to}
-                        href={to}
-                        className={gi || li ? 'fo-link' : 'fo-link fo-link-accent'}
-                      >
-                        {label}
-                      </a>
-                    ))}
+                    {g.links.map(([to, label], li) =>
+                      /* r341 (t05 · SPA links): same split as the brand
+                         rows — routes ride <Link>, #fragments stay raw
+                         anchors (keys/classes/labels unchanged). */
+                      to.startsWith('#') ? (
+                        <a
+                          key={to}
+                          href={to}
+                          className={gi || li ? 'fo-link' : 'fo-link fo-link-accent'}
+                        >
+                          {label}
+                        </a>
+                      ) : (
+                        <Link
+                          key={to}
+                          to={to}
+                          className={gi || li ? 'fo-link' : 'fo-link fo-link-accent'}
+                        >
+                          {label}
+                        </Link>
+                      ),
+                    )}
                   </div>
                 </div>
               ))}
@@ -231,16 +253,19 @@ export function Footer({ year }: { year: number }) {
               </div>
               <div className="fo-lgroup">
                 <div className="fo-mono-label">ADDRESS</div>
-                <a href="/about" className="fo-link">مساحة عمل أُلارا التجريبية</a>
+                <Link to="/about" className="fo-link">مساحة عمل أُلارا التجريبية</Link>
                 <div className="fo-rule" aria-hidden="true" />
                 <div className="fo-mono-label">REGION</div>
-                <a href="/about" className="fo-link">منصّة مستقلّة — لا تنتمي لأي جهة</a>
+                <Link to="/about" className="fo-link">منصّة مستقلّة — لا تنتمي لأي جهة</Link>
               </div>
               <div className="fo-lgroup">
                 <div className="fo-mono-label">CHANNELS</div>
                 <div className="fo-socials">
+                  {/* r341 (t05 · SPA links): every channels door is a
+                      real public route — router <Link>, same
+                      keys/classes/labels. */}
                   {CHANNEL_LINKS.map(([to, label]) => (
-                    <a key={to} href={to} className="fo-social">{label}</a>
+                    <Link key={to} to={to} className="fo-social">{label}</Link>
                   ))}
                 </div>
               </div>
@@ -277,6 +302,29 @@ export function Footer({ year }: { year: number }) {
           </div>
         </div>
 
+        {/* ── The Grand Outline Wordmark & Back to Top (the landing signature closing) ── */}
+        <div className="fo-top-anchor-row">
+          <button
+            type="button"
+            className="fo-back-to-top"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            aria-label="العودة إلى أعلى الصفحة"
+          >
+            <svg viewBox="0 0 16 16" className="fo-top-arrow" aria-hidden="true">
+              <path d="M8 13V3M3 8l5-5 5 5" fill="none" stroke="currentColor" strokeWidth="1.5" />
+            </svg>
+            <span className="fo-mono" dir="ltr">[ العودة للأعلى // BACK TO TOP ]</span>
+          </button>
+        </div>
+
+        <div className="fo-giant-banner" aria-hidden="true">
+          <span className="fo-giant-plus fo-giant-plus-tl">+</span>
+          <span className="fo-giant-plus fo-giant-plus-tr">+</span>
+          <div className="fo-giant-text">ULARA // أُلارا</div>
+          <span className="fo-giant-plus fo-giant-plus-bl">+</span>
+          <span className="fo-giant-plus fo-giant-plus-br">+</span>
+        </div>
+
         {/* ── the © bar + the policy row — one ruled line (R321 §A2):
             the ten public-door links ride the © bar's own row as a
             flex-wrap nav, hairline-separated via CSS ::after glyphs
@@ -287,9 +335,11 @@ export function Footer({ year }: { year: number }) {
             <p className="fo-legal-p">
               <span className="fo-mono">© {year} أُلارا</span>
               {' '}— منصّة مستقلّة · عربية أولًا · بيانات العرض اصطناعية بالكامل —{' '}
-              <a className="fo-legal-a" href="/about">
+              {/* r341 (t05 · SPA links): the © line's /about door rides
+                  the router too (same class, same visible text). */}
+              <Link className="fo-legal-a" to="/about">
                 عن المنصّة
-              </a>
+              </Link>
             </p>
           </div>
           <nav className="fo-legal-row" aria-label="سياسات المنصّة وصفحاتها العامة">

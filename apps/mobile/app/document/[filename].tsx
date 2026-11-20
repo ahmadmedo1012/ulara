@@ -177,87 +177,92 @@ export default function DocumentViewer() {
   const annArmed = useArmOnOpen(annOpen);
 
   return (
-    <Screen scroll>
-      <AppStatusBar />
-      <View style={{ gap: sp[12] }}>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: sp[8] }}>
-          <View style={{ flex: 1, gap: 0 }}>
-            <T variant="xs" color="muted">
-              {ns === "papers" ? "بحوث · ملفات PDF" : "مواد تدريسية · ملفات PDF"}
-            </T>
-            <T variant="h4" weight="bold" numberOfLines={2}>
-              {title}
-            </T>
+    <View style={{ flex: 1 }}>
+      <Screen scroll>
+        <AppStatusBar />
+        <View style={{ gap: sp[12] }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: sp[8] }}>
+            <View style={{ flex: 1, gap: 0 }}>
+              <T variant="xs" color="muted">
+                {ns === "papers" ? "بحوث · ملفات PDF" : "مواد تدريسية · ملفات PDF"}
+              </T>
+              <T variant="h4" weight="bold" numberOfLines={2}>
+                {title}
+              </T>
+            </View>
+            <Badge label="PDF" tone="grey" mono />
           </View>
-          <Badge label="PDF" tone="grey" mono />
-        </View>
-        <Hairline />
+          <Hairline />
 
-        <Card style={{ gap: sp[8], alignItems: "flex-start" }}>
-          <T variant="body" color="secondary">
-            يُنزَّل المستند إلى مساحة التطبيق المؤقتة عبر جلسة موثّقة، ثم يُفتح في العارض الأصلي لجهازك — دعم كامل للبحث والتكبير والصفحات.
-          </T>
-          {downloading ? (
-            /* Honest indeterminate progress — byte-level progress is not
-             * available through downloadAuthenticated (see the header). */
-            <View style={{ flexDirection: "row", alignItems: "center", gap: sp[12] }}>
-              <RingProgress size={28} thickness={3} progress={0} indeterminate color={p.accent} accessibilityLabel="جارٍ التنزيل" />
-              <View style={{ gap: sp[6], flex: 1 }}>
-                <T variant="body" color="muted">جارٍ التنزيل…</T>
-                <SkeletonText lines={1} lastLineRatio={0.6} />
+          <Card style={{ gap: sp[8], alignItems: "flex-start" }}>
+            <T variant="body" color="secondary">
+              يُنزَّل المستند إلى مساحة التطبيق المؤقتة عبر جلسة موثّقة، ثم يُفتح في العارض الأصلي لجهازك — دعم كامل للبحث والتكبير والصفحات.
+            </T>
+            {downloading ? (
+              /* Honest indeterminate progress — byte-level progress is not
+               * available through downloadAuthenticated (see the header). */
+              <View style={{ flexDirection: "row", alignItems: "center", gap: sp[12] }}>
+                <RingProgress size={28} thickness={3} progress={0} indeterminate color={p.accent} accessibilityLabel="جارٍ التنزيل" />
+                <View style={{ gap: sp[6], flex: 1 }}>
+                  <T variant="body" color="muted">جارٍ التنزيل…</T>
+                  <SkeletonText lines={1} lastLineRatio={0.6} />
+                </View>
               </View>
-            </View>
-          ) : downloadError ? (
-            <ErrorState message={downloadError} compact onRetry={retry} />
-          ) : (
-            <View style={{ flexDirection: "row", gap: sp[8], alignSelf: "stretch" }}>
-              <View style={{ flex: 1 }}>
-                <Button label="فتح في العارض" kind="primary" onPress={openViewer} icon={<ExternalLink size={16} color={p.primaryFg} />} />
+            ) : downloadError ? (
+              <ErrorState message={downloadError} compact onRetry={retry} />
+            ) : (
+              <View style={{ flexDirection: "row", gap: sp[8], alignSelf: "stretch" }}>
+                <View style={{ flex: 1 }}>
+                  <Button label="فتح في العارض" kind="primary" onPress={openViewer} icon={<ExternalLink size={16} color={p.primaryFg} />} />
+                </View>
+                <Button
+                  label="مشاركة"
+                  kind="ghost"
+                  onPress={() => {
+                    haptics.impact("light");
+                    setShareOpen(true);
+                  }}
+                  icon={<Share2 size={16} color={p.text} />}
+                  small
+                />
               </View>
-              <Button
-                label="مشاركة"
-                kind="ghost"
-                onPress={() => {
-                  haptics.impact("light");
-                  setShareOpen(true);
-                }}
-                icon={<Share2 size={16} color={p.text} />}
-                small
-              />
-            </View>
-          )}
-          {typeof globalThis.window !== "undefined" ? (
-            <Pressable accessibilityRole="button" accessibilityLabel="فتح في المتصفح" onPress={openWeb}>
-              <T variant="sm" color="accentInk">فتح في المتصفح</T>
-            </Pressable>
-          ) : null}
-        </Card>
-
-        {paperId ? (
-          <Card style={{ gap: sp[8] }}>
-            <View style={{ flexDirection: "row", alignItems: "center", gap: sp[8] }}>
-              <View style={{ flex: 1 }}>
-                <T variant="body" weight="bold">تعليقات المراجعة</T>
-                <T variant="sm" color="muted">
-                  {annotations.data ? `${latn(annotations.data.length)} تعليقًا مرتبطًا بصفحات البحث` : "مراجعة الأستاذ على الصفحات"}
-                </T>
-              </View>
-              <Button label="إدارة" kind="ghost" small onPress={() => setAnnOpen(true)} />
-            </View>
-            <Hairline />
-            {annotations.isLoading ? (
-              <Skeleton width="100%" height={56} />
-            ) : null}
-            {(annotations.data ?? []).slice(0, 4).map((a) => (
-              <AnnotationRow key={a.id} a={a} onDelete={() => delAnn.mutate(a.id)} />
-            ))}
-            {annotations.data?.length === 0 ? (
-              <T variant="sm" color="faint">لا تعليقات بعد.</T>
+            )}
+            {typeof globalThis.window !== "undefined" ? (
+              <Pressable accessibilityRole="button" accessibilityLabel="فتح في المتصفح" onPress={openWeb}>
+                <T variant="sm" color="accentInk">فتح في المتصفح</T>
+              </Pressable>
             ) : null}
           </Card>
-        ) : null}
-      </View>
 
+          {paperId ? (
+            <Card style={{ gap: sp[8] }}>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: sp[8] }}>
+                <View style={{ flex: 1 }}>
+                  <T variant="body" weight="bold">تعليقات المراجعة</T>
+                  <T variant="sm" color="muted">
+                    {annotations.data ? `${latn(annotations.data.length)} تعليقًا مرتبطًا بصفحات البحث` : "مراجعة الأستاذ على الصفحات"}
+                  </T>
+                </View>
+                <Button label="إدارة" kind="ghost" small onPress={() => setAnnOpen(true)} />
+              </View>
+              <Hairline />
+              {annotations.isLoading ? (
+                <Skeleton width="100%" height={56} />
+              ) : null}
+              {(annotations.data ?? []).slice(0, 4).map((a) => (
+                <AnnotationRow key={a.id} a={a} onDelete={() => delAnn.mutate(a.id)} />
+              ))}
+              {annotations.data?.length === 0 ? (
+                <T variant="sm" color="faint">لا تعليقات بعد.</T>
+              ) : null}
+            </Card>
+          ) : null}
+        </View>
+      </Screen>
+
+      {/* Both sheets sit AFTER the scroller as siblings at the screen root
+          (r341 t01): each sheet mounts its own absolute-fill host, which must
+          never live in the scroll content's coordinate space. */}
       {shareArmed ? (
         <ActionSheet
           open={shareOpen}
@@ -282,6 +287,7 @@ export default function DocumentViewer() {
         />
       ) : null}
 
+      {/* Annotations panel — same r341 t01 rule: sibling of the scroller. */}
       {annArmed ? (
         <AppSheet
           open={annOpen}
@@ -330,7 +336,7 @@ export default function DocumentViewer() {
           </View>
         </AppSheet>
       ) : null}
-    </Screen>
+    </View>
   );
 }
 

@@ -58,7 +58,6 @@ import {
   AdminCoursesPage,
 } from '../../src/pages/admin/AdminPages';
 import { AdminAnalysisPage, AdminDigitalPage } from '../../src/pages/admin/AdminExtraPages';
-import { AdminSyncPage } from '../../src/pages/admin/AdminSyncPage';
 import { api } from '../../src/lib/api';
 
 const getMock = api.get as unknown as Mock;
@@ -170,18 +169,11 @@ function installApi(over: {
   courses?: (params: Record<string, unknown>) => { data: unknown[]; meta: unknown };
   papers?: (params: Record<string, unknown>) => { data: unknown[]; meta: unknown };
   zeroContentCourses?: boolean;
-  staleCount?: number;
   gradedTotal?: number;
-  sync?: {
-    staleCount: number; latestRun: unknown; runHistory: unknown[]; factCount: number;
-    categories: Array<{ category: string; count: number; items: Array<{ key: string; value: string; source: string; isStale: boolean; syncedAt: string }> }>;
-  };
 } = {}) {
   const {
     zeroContentCourses = true,
-    staleCount = 0,
     gradedTotal = 2,
-    sync,
   } = over;
   const allCourses = [
     courseRow('c1', 'CS101', 'مقدمة في الحاسوب', zeroContentCourses ? { totalLectures: 0, totalMaterials: 0 } : {}),
@@ -229,21 +221,6 @@ function installApi(over: {
         return { data: coursesHandler(params) };
       case '/admin/papers':
         return { data: papersHandler(params) };
-      case '/admin/sync':
-        return {
-          data: {
-            data: sync ?? {
-              staleCount,
-              latestRun: null,
-              runHistory: [],
-              factCount: 8,
-              categories: [
-                { category: 'identity', count: 2, items: [{ key: 'name', value: 'الجامعة', source: 'static-markdown', isStale: false, syncedAt: '2025-05-01T00:00:00.000Z' }] },
-                { category: 'contact', count: 2, items: [{ key: 'email', value: 'info@zu.edu.ly', source: 'static-markdown', isStale: true, syncedAt: '2025-01-01T00:00:00.000Z' }] },
-              ],
-            },
-          },
-        };
       case '/admin/digital':
         return {
           data: {
@@ -328,16 +305,14 @@ const kpiLinkByLabel = (label: string) => {
 
 describe('AdminDashboardPage — action strip + navigable KPIs (§6 steps 1/3)', () => {
   it('renders the action strip rows from real counts, each linking to its surface', async () => {
-    installApi({ zeroContentCourses: true, staleCount: 3, gradedTotal: 2 });
+    installApi({ zeroContentCourses: true, gradedTotal: 2 });
     renderPage(<AdminDashboardPage />);
 
     // Zero-content courses row → /admin/courses
     const coursesRow = await screen.findByText('مقرّرات بلا محتوى تعليميّ');
     expect(coursesRow.closest('a')!.getAttribute('href')).toBe('/admin/courses');
-    // Stale sync fields row → the sync drill, pre-armed (?stale=1 opens
-    // the first stale category on landing — r190-D3: the URL is the action)
-    const syncRow = screen.getByText('حقول بيانات جامعية قديمة');
-    expect(syncRow.closest('a')!.getAttribute('href')).toBe('/admin/sync?stale=1');
+    // (r342 t13: the stale-sync row + its /admin/sync drill retired — the
+    // zu-sync system was dropped upstream; no /admin/sync GET fires.)
     // Graded-papers row → the register, pre-filtered (§5 landing craft)
     const papersRow = screen.getByText('بحوث مقيَّمة بانتظار النشر');
     expect(papersRow.closest('a')!.getAttribute('href')).toBe('/admin/reports?status=GRADED');
@@ -345,11 +320,11 @@ describe('AdminDashboardPage — action strip + navigable KPIs (§6 steps 1/3)',
   });
 
   it('hides the strip entirely when nothing needs attention', async () => {
-    installApi({ zeroContentCourses: false, staleCount: 0, gradedTotal: 0 });
+    installApi({ zeroContentCourses: false, gradedTotal: 0 });
     renderPage(<AdminDashboardPage />);
 
     // Wait for the page itself (KPIs + quick stats) — then the strip,
-    // whose three sources all resolve to zero counts, must be absent.
+    // whose two sources both resolve to zero counts, must be absent.
     await screen.findByText('مؤشرات سريعة');
     await waitFor(() => {
       expect(screen.queryByText('يحتاج انتباهك')).toBeNull();
@@ -703,40 +678,9 @@ describe('AdminFacultiesPage — retrieval affordances (P2-3)', () => {
   });
 });
 
-/* ── 7. AdminSyncPage (§5 row 10 — client-side drill) ──────────── */
-
-describe('AdminSyncPage — «حقول قديمة» drills into the first stale category', () => {
-  it('the stale KPI opens the FIRST stale category (skipping fresh ones)', async () => {
-    installApi({
-      sync: {
-        staleCount: 1,
-        latestRun: null,
-        runHistory: [],
-        factCount: 4,
-        categories: [
-          { category: 'identity', count: 2, items: [{ key: 'name', value: 'الجامعة', source: 'static-markdown', isStale: false, syncedAt: '2025-05-01T00:00:00.000Z' }] },
-          { category: 'contact', count: 2, items: [{ key: 'email', value: 'info@zu.edu.ly', source: 'static-markdown', isStale: true, syncedAt: '2025-01-01T00:00:00.000Z' }] },
-        ],
-      },
-    });
-    renderPage(<AdminSyncPage />);
-
-    // r190-D3: the stale tile is a deep link now (?stale=1) — clicking
-    // it arms the URL, and the page's landing effect opens the first
-    // STALE category (bookmarkable; the param strips itself after).
-    const tile = await screen.findByRole('link', { name: /حقول مُزامنة/ });
-    fireEvent.click(tile);
-    const heads = Array.from(document.querySelectorAll('.category-row-head'));
-    const contact = heads.find((h) => (h.textContent ?? '').includes('بيانات التواصل'));
-    expect(contact!.getAttribute('aria-expanded')).toBe('true');
-    const identity = heads.find((h) => (h.textContent ?? '').includes('هوية الجامعة'));
-    expect(identity!.getAttribute('aria-expanded')).toBe('false');
-    // The stale fact row carries its «قديم» badge.
-    expect(await screen.findByText('قديم')).toBeInTheDocument();
-  });
-});
-
-/* ── 8. AdminDigitalPage (§6 step 4) ───────────────────────────── */
+/* ── 7. AdminDigitalPage (§6 step 4) ───────────────────────── */
+/* (r342 t13: the former §7 — the AdminSyncPage ?stale=1 drill — retired
+   with the zu-sync system; the dashboard's stale-sync row went with it.) */
 
 describe('AdminDigitalPage — one adoption register (§6 step 4)', () => {
   it('folds the four single-stat cards into one «تبنّي المكوّنات» table', async () => {

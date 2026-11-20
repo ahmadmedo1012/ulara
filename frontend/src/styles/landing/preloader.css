@@ -122,31 +122,206 @@
 .pl-inner {
   position: relative;
   z-index: 1; /* the content rides above its own paper bands */
+  width: 100%;
+  max-width: 1360px;
+  height: 100vh;
+  padding: var(--sp-4) var(--sp-5);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+  text-align: start;
+  transition: opacity var(--motion-duration-page) var(--ease-out);
+}
+
+.pl-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: var(--sp-2);
+}
+
+.pl-brand-group {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.pl-brand-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+.pl-stage-wrap {
+  flex: 1;
   display: grid;
-  justify-items: center;
-  gap: var(--sp-3);
-  text-align: center;
-  transition: opacity var(--motion-duration-page) var(--ease-out); /* power2.out-equivalent — the house decel rung; armed from mount so the exit leg reads in computed style */
+  grid-template-columns: 1fr 320px;
+  gap: var(--sp-5);
+  align-items: center;
+  min-height: 0;
+  padding: var(--sp-2) 0;
 }
 
-.pl-mark,
-.pl-wordmark {
-  color: var(--text); /* the outlined letterforms stroke currentColor */
-  line-height: 0;
+@media (max-width: 991px) {
+  .pl-stage-wrap {
+    grid-template-columns: 1fr;
+  }
+  .pl-diagnostics {
+    display: none;
+  }
 }
 
-.pl-mark svg,
-.pl-wordmark svg {
-  display: block;
-  inline-size: auto;
-  block-size: auto;
+.pl-elevation-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-height: 460px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.pl-drawing-svg {
+  width: 100%;
+  height: 100%;
+  max-height: 420px;
+  overflow: visible;
+}
+
+.pl-drawing-svg .bp-drawable {
+  stroke: var(--text);
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+  animation: pl-draw-path var(--t-cinema) var(--ease-out) forwards;
+}
+
+.pl-drawing-svg [data-ink='1'] .bp-drawable { animation-delay: 0.1s; }
+.pl-drawing-svg [data-ink='2'] .bp-drawable { animation-delay: 0.3s; }
+.pl-drawing-svg [data-ink='3'] .bp-drawable { animation-delay: 0.5s; }
+.pl-drawing-svg [data-ink='4'] .bp-drawable { animation-delay: 0.8s; }
+.pl-drawing-svg [data-ink='5'] .bp-drawable { animation-delay: 1.1s; }
+.pl-drawing-svg [data-ink='6'] .bp-drawable { animation-delay: 1.4s; }
+.pl-drawing-svg [data-ink='7'] .bp-drawable { animation-delay: 1.7s; }
+.pl-drawing-svg [data-ink='8'] .bp-drawable { animation-delay: 2.0s; }
+.pl-drawing-svg [data-ink='9'] .bp-drawable { animation-delay: 2.2s; }
+.pl-drawing-svg [data-ink='10'] .bp-drawable { animation-delay: 2.4s; }
+
+@keyframes pl-draw-path {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.pl-drawing-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-top: var(--sp-2);
+  align-self: flex-start;
+}
+
+.pl-diagnostics {
+  align-self: center;
+}
+
+.pl-diag-card {
+  border: 1px solid var(--border);
+  background: var(--bg);
+  padding: var(--sp-3);
+  text-align: start;
+}
+
+.pl-diag-head {
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: var(--sp-1);
+  margin-bottom: var(--sp-2);
+}
+
+.pl-diag-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pl-diag-row {
+  display: grid;
+  grid-template-columns: 8px auto 1fr auto;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 4px 0;
+  opacity: 0.3;
+  transition: opacity var(--t-fast) var(--ease);
+}
+
+.pl-diag-row.is-active {
+  opacity: 1;
+}
+
+.pl-diag-pip {
+  width: 6px;
+  height: 6px;
+  background: var(--text-muted);
+  transition: background-color var(--t-micro) var(--ease), box-shadow var(--t-micro) var(--ease);
+}
+
+.pl-diag-row.is-active .pl-diag-pip {
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
+}
+
+.pl-diag-code {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+.pl-diag-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.pl-diag-ar {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.pl-diag-en {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.pl-diag-status {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+.pl-diag-row.is-active .pl-diag-status {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.pl-bottom-bar {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  border-top: 1px solid var(--border);
+  padding-top: var(--sp-3);
 }
 
 .pl-counter {
   direction: ltr; /* the mono readout is Latin-mono, like the reference */
   font-family: var(--font-mono);
-  font-size: 0.75rem;
-  font-weight: 500;
+  font-size: 0.88rem;
+  font-weight: 600;
   letter-spacing: 0.08em;
   font-variant-numeric: tabular-nums;
   color: var(--accent); /* the ONE signal — the reference's mono counter */
@@ -154,15 +329,15 @@
 
 .pl-rail {
   position: relative;
-  inline-size: min(16rem, 56vw);
-  block-size: 1px; /* the hairline rail — blueprint drawing weight */
+  inline-size: 100%;
+  block-size: 2px; /* the hairline rail — blueprint drawing weight */
 }
 
 .pl-rail-track {
   position: absolute;
   inset: 0;
-  background: var(--text-muted);
-  opacity: 0.35;
+  background: var(--border);
+  opacity: 0.6;
 }
 
 /* the fill grows right→left (the RTL reading direction) */
@@ -171,6 +346,22 @@
   inset: 0;
   background: var(--accent);
   transform-origin: right;
+  transition: transform var(--t-micro) var(--ease-linear);
+}
+
+.pl-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.pl-meta-state {
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-weight: 500;
 }
 
 /* the R313 skip contract — a real control (button), paper-styled,

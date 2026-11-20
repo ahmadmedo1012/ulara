@@ -10,8 +10,9 @@
    هناك، ثم إعادة وصل Vercel والأسرار والتحقق.
 3. **إعادة تفعيل OTA** وتفعيل الأسطح الخارجية: `eas init` + سر
    `EXPO_TOKEN` (خطوتا المالك في [mobile.md](mobile.md) §7).
-4. **المتاجر**: حساب Apple Developer + مفاتيح ASC، وحساب خدمة Play
-   في EAS (الخطوات في [mobile.md](mobile.md) §8).
+4. **المتاجر**: حساب Apple Developer + مفاتيح ASC، وحساب خدمة Play —
+   الرفع بوعي المالك خارج EAS (لا EAS Build/submit بعد الإحالة؛
+   الخطوات في [mobile.md](mobile.md) §8).
 5. **فتح 20 MiB+ للملفات على Vercel**: `STORAGE_DRIVER=s3` + مدّ
    التوقيع المسبق لمساحات PDF (خطة Ω+2.7 — [deployment.md](deployment.md) §7).
 6. **نقل النسخ الاحتياطية خارج الموقع** — الخطوة الوحيدة الباقية على
