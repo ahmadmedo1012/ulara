@@ -12,12 +12,14 @@
  * x-internal-service-token header operators use). Fail-closed when the
  * token is unset: exactly the milestones service-token contract.
  *
- * The two jobs are the SAME pair the in-process scheduler runs daily:
- *   1. runScheduledSyncs — the configured institutions' fact sync
- *      (today only the demo tenant; unconfigured institutions plan
- *      nothing — an honest no-op on fresh databases);
- *   2. runLoginEventRetentionSweep — LoginEvent telemetry pruning.
- * Both are idempotent and never reject by contract; the route always
+ * r342 t13 (2026-11-19): the zu-sync university-facts sub-job was
+ * RETIRED — the shared production database dropped the
+ * SyncRun/UniversityFact tables upstream, so every nightly run of
+ * that sub-job failed against a missing table (P2021, swallowed by the
+ * never-reject contract). The daily job set is now ONE DB job, the
+ * SAME one the in-process scheduler runs daily:
+ *   1. runLoginEventRetentionSweep — LoginEvent telemetry pruning.
+ * It is idempotent and never rejects by contract; the route always
  * answers with an honest per-job summary (200 — job failures are part
  * of the payload, not transport errors).
  *
@@ -36,7 +38,7 @@ import { Router } from 'express';
 import { env } from '../../env.js';
 import { logger } from '../../logger.js';
 import { prisma } from '../../db.js';
-import { runLoginEventRetentionSweep, runScheduledSyncs } from '../../scheduler.js';
+import { runLoginEventRetentionSweep } from '../../scheduler.js';
 import { AppError } from '../../lib/errors.js';
 
 const router = Router();
@@ -110,20 +112,19 @@ async function runTestAccountsEnsure(source: 'cron' | 'operator'): Promise<{
 router.get('/daily', cronAuthMiddleware as import('express').RequestHandler, async (_req, res, next) => {
   try {
     const startedAt = Date.now();
-    // The two jobs touch DISJOINT tables (UniversityFact syncs vs
-    // LoginEvent pruning) and never reject by contract — running them
-    // concurrently halves the cold-start wall time, which matters on
-    // platforms whose function budget is capped (a cold first query can
-    // wake the database compute: 2–4s before the first row moves).
-    const [syncPlan, retention, testAccounts] = await Promise.all([
-      runScheduledSyncs('cron'),
+    // r342 t13: the sync sub-job was retired (the SyncRun table it wrote
+    // no longer exists upstream); the retention sweep is the sole DB job.
+    // The remaining pair still never rejects by contract — a failing
+    // sweep reports { ran: false, reason: 'error' } inside the summary
+    // while the route answers 200 (the route family's honest-summary
+    // contract).
+    const [retention, testAccounts] = await Promise.all([
       runLoginEventRetentionSweep('cron'),
       runTestAccountsEnsure('cron'),
     ]);
     const summary = {
       ranAt: new Date().toISOString(),
       durationMs: Date.now() - startedAt,
-      sync: { planned: syncPlan.length, institutions: syncPlan.map((p) => p.institutionId) },
       retention: { ran: retention.ran, reason: retention.ran ? undefined : retention.reason },
       testAccounts,
     };

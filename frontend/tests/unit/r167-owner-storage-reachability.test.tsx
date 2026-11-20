@@ -45,7 +45,8 @@ vi.mock('../../src/lib/api', () => ({
 /* ── Shared fixtures ─────────────────────────────────────────── */
 
 const SYSTEM_BASE = {
-  sync: { lastRunAt: null, recent: [] },
+  // r342 t13: the `sync` block is gone — GET /owner/system no longer
+  // ships it (the zu-sync system was dropped upstream).
   alerts: { open: [], openCount: 0, criticalCount: 0 },
   activity: { recentEventsLast7Days: 0 },
 };

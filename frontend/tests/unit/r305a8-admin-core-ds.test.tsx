@@ -149,8 +149,6 @@ function installApi() {
           },
         };
       }
-      case '/admin/sync':
-        return { data: { data: { staleCount: 0, latestRun: null, runHistory: [], factCount: 0, categories: [] } } };
       default:
         return { data: {} };
     }

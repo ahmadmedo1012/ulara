@@ -19,10 +19,14 @@
  *    Arabic option marks أ ب ج د هـ و, haptic verdict on the reveal,
  *    server-verdict reveal + explanation, honest «تخطّي» (session-local),
  *    gaps/matrix invalidation,
- *  - chapters + searchable transcript (VTT) with click-to-seek — cues
- *    render through a nested DataList (virtualized; the audit flagged
- *    the old 200-cue .map) — + prev/next lecture bar + materials card.
- * The video is pinned above the scrollable sheet (sticky at top).
+ *  - chapters + searchable transcript (VTT) with click-to-seek — the
+ *    cue DataList is the SHEET's scroller below the pinned video (r341:
+ *    the old fixed-height list nested inside the player ScrollView
+ *    trapped the gesture on iOS — nestedScrollEnabled chains on Android
+ *    only; the static sheet blocks now ride the list header) — full data
+ *    in, windowed views out (the old 200-cue .map audit finding stays
+ *    fixed) — + prev/next lecture bar + materials card.
+ * The video is pinned above the sheet (sticky at top).
  *
  * Honesty labels (no emulator in this sandbox): seek-bar scrubbing
  * smoothness, buffered-tint accuracy, fullscreen hand-off, haptic feel,
@@ -87,6 +91,11 @@ import {
 } from "@/features/student/components";
 
 const NO_CUES: Awaited<ReturnType<typeof parseVttCues>> = [];
+
+/** Sentinel cue for the transcript's no-match search state (r341). A real
+ *  cue never carries a negative start; renderItem paints the EmptyState
+ *  row for this item instead of a seek row — see transcriptRows. */
+const NO_MATCH_CUE: VttCue = { start: -1, end: -1, text: "" };
 
 type CheckpointWithAnswers = LectureCheckpoint & { answers?: { checkpointId: string }[] };
 
@@ -572,6 +581,12 @@ function LectureBody({ lecture, scope }: { lecture: Lecture; scope: string | nul
   const [cueQuery, setCueQuery] = useState("");
   const cues = transcript.data ?? NO_CUES;
   const filteredCues = useMemo(() => filterCues(cues, cueQuery), [cues, cueQuery]);
+  /* r341: the sentinel keeps the no-match search state INSIDE the list.
+   *  DataList's built-in empty branch early-returns WITHOUT its
+   *  ListHeaderComponent — which now carries the whole static sheet — so
+   *  an empty `data` would unmount the sheet; the sentinel row renders
+   *  the honest «لا نتائج مطابقة» panel in the transcript's seat instead. */
+  const transcriptRows: readonly VttCue[] = filteredCues.length > 0 ? filteredCues : [NO_MATCH_CUE];
 
   /* ── Siblings (prev/next) + offering materials ───────────────────── */
   const siblings = useQuery({
@@ -609,48 +624,20 @@ function LectureBody({ lecture, scope }: { lecture: Lecture; scope: string | nul
 
   const checkpointArmed = useArmOnOpen(!!activeCp);
 
-  return (
-    <Screen scroll={false} padded={false}>
-      <AppStatusBar />
-      <StackHeader
-        title={lecture.title}
-        kicker={course ? `${course.code} · ${course.name}` : undefined}
-        right={completed ? <Badge label="مكتملة" tone="mint" /> : undefined}
-      />
-
-      {/* The video — pinned above the sheet, always in view */}
-      <View>
-        <VideoView
-          ref={videoRef}
-          player={player}
-          style={{ width: "100%", aspectRatio: 16 / 9 }}
-          contentFit="contain"
-          nativeControls={false}
-          fullscreenOptions={{ enable: true }}
-        />
-        <VideoStage
-          player={player}
-          durationSec={totalSec}
-          cues={cues}
-          captionsOn={captionsOn}
-          onToggleCaptions={toggleCaptions}
-          onOpenSpeed={() => {
-            haptics.impact("light");
-            setSpeedOpen(true);
-          }}
-          onEnterFullscreen={() => {
-            haptics.impact("light");
-            void videoRef.current?.enterFullscreen();
-          }}
-          rateLabel={`${fmt(rate)}×`}
-        />
-      </View>
-
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{ flexGrow: 1, gap: sp[16], paddingHorizontal: sp[20], paddingBottom: sp[24] }}
-      >
+  /* ── The sheet below the pinned player (r341 restructure) ────────────
+   *  ONE vertical scroller, never a nested pair. The static blocks (error
+   *  card, meta band, watch progress, checkpoint continuity, prev/next,
+   *  description, checkpoints, chapters) are shared by both shapes below:
+   *  with transcript cues the DataList IS the scroller and they ride its
+   *  ListHeaderComponent (the house list grammar — cf. library/materials),
+   *  with the cues flowing as its rows. The old shape wrapped a
+   *  fixed-height DataList inside the player ScrollView, and
+   *  `nestedScrollEnabled` chains gestures on Android ONLY — on iOS the
+   *  inner list trapped the scroll inside its 360px box (the owner's
+   *  "awkward scrolling on iPhone" report). Without cues the plain
+   *  ScrollView stays (nothing virtualized nested inside it). */
+  const sheetBlocks = (
+    <>
         {loadError ? (
           <Card style={{ gap: sp[8] }}>
             <T variant="body" color="danger">
@@ -853,94 +840,166 @@ function LectureBody({ lecture, scope }: { lecture: Lecture; scope: string | nul
           )}
         </View>
 
-        {/* النص المكتوب */}
-        {(cues.length > 0 || transcriptPending || (!!lecture.transcriptUrl && transcript.isError)) && (
-          <View style={{ gap: sp[8] }}>
-            <SectionBar
-              index={3}
-              title="النص المكتوب"
-              action={transcriptPending ? <Badge label="جارٍ توليد النص" tone="yellow" /> : undefined}
-            />
-            {transcript.isError ? (
-              <T variant="sm" color="muted">
-                {humanizeError(transcript.error)}
-              </T>
-            ) : cues.length === 0 ? (
-              <T variant="sm" color="muted">
-                {transcriptPending ? "يُولَّد نص هذه المحاضرة الآن — عد بعد قليل." : "لا مقاطع في هذا النص."}
-              </T>
-            ) : (
-              <>
-                <SearchBar
-                  value={cueQuery}
-                  onChange={setCueQuery}
-                  placeholder="ابحث في النص المكتوب…"
-                />
-                {/* M5 — virtualized cue list (nested, height-capped):
-                    FULL data in, windowed views out. The old shape mounted
-                    200 rows via .map (audit §3); the FlatList fallback now
-                    mounts only the initial window (see data.test.tsx
-                    "windowing" — 10 of 1000 rows) and native FlashList v2
-                    recycles. */}
-                <DataList
-                  data={filteredCues}
-                  renderItem={({ item }) => (
-                    <LedgerRow
-                      accessibilityLabel={`انتقل إلى ${cueClock(item.start)}: ${item.text.slice(0, 80)}`}
-                      onPress={() => seekTo(item.start)}
-                    >
-                      <View style={{ flexDirection: "row", alignItems: "flex-start", gap: sp[8] }}>
-                        <MonoLabel>{cueClock(item.start)}</MonoLabel>
-                        <T variant="sm" color="secondary" style={{ flex: 1 }}>
-                          {item.text}
-                        </T>
-                      </View>
-                    </LedgerRow>
-                  )}
-                  keyExtractor={(c, i) => `${c.start}-${i}`}
-                  style={{ height: 360 }}
-                  contentPadding={{ bottom: 4 }}
-                  windowing={{ initialNumToRender: 8, maxToRenderPerBatch: 8, windowSize: 9 }}
-                  scrollProps={{ nestedScrollEnabled: true, showsVerticalScrollIndicator: true }}
-                  emptyTitle="لا نتائج مطابقة في هذا النص."
-                  emptyMessage="جرّب كلمة أخرى."
-                />
-              </>
-            )}
-          </View>
-        )}
+    </>
+  );
 
-        {/* مواد المقرّر — one scroll away from the video */}
-        {offeringFull.data && offeringFull.data.materials.length > 0 ? (
-          <Card style={{ gap: sp[8] }}>
+  /* مواد المقرّر — one scroll away from the video. DataList exposes no
+   *  footer passthrough (its ListFooter is the pagination loader), so in
+   *  the list shape this card rides the header directly above the
+   *  transcript section; in the no-transcript ScrollView shape it stays
+   *  the sheet's last block (the pre-r341 order). */
+  const materialsCard =
+    offeringFull.data && offeringFull.data.materials.length > 0 ? (
+      <Card style={{ gap: sp[8] }}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: sp[8] }}>
+          <T variant="body" weight="bold" style={{ flex: 1 }}>
+            مواد المقرّر
+          </T>
+          <T variant="xs" color="muted">
+            {fmt(offeringFull.data.materials.length)}
+          </T>
+        </View>
+        {(offeringFull.data.materials ?? []).slice(0, 6).map((m, mi, mArr) => (
+          <LedgerRow
+            key={m.id}
+            last={mi === mArr.length - 1}
+            accessibilityLabel={`مادة: ${m.name}`}
+            onPress={() => openMaterial(m.url, m.name)}
+          >
             <View style={{ flexDirection: "row", alignItems: "center", gap: sp[8] }}>
-              <T variant="body" weight="bold" style={{ flex: 1 }}>
-                مواد المقرّر
+              <T variant="sm" weight="medium" style={{ flex: 1 }} numberOfLines={1}>
+                {m.name}
               </T>
               <T variant="xs" color="muted">
-                {fmt(offeringFull.data.materials.length)}
+                {sizeLabel(m.sizeBytes)}
               </T>
             </View>
-            {(offeringFull.data.materials ?? []).slice(0, 6).map((m, mi, mArr) => (
+          </LedgerRow>
+        ))}
+      </Card>
+    ) : null;
+
+  return (
+    <Screen scroll={false} padded={false}>
+      <AppStatusBar />
+      <StackHeader
+        title={lecture.title}
+        kicker={course ? `${course.code} · ${course.name}` : undefined}
+        right={completed ? <Badge label="مكتملة" tone="mint" /> : undefined}
+      />
+
+      {/* The video — pinned above the sheet, always in view */}
+      <View>
+        <VideoView
+          ref={videoRef}
+          player={player}
+          style={{ width: "100%", aspectRatio: 16 / 9 }}
+          contentFit="contain"
+          nativeControls={false}
+          fullscreenOptions={{ enable: true }}
+        />
+        <VideoStage
+          player={player}
+          durationSec={totalSec}
+          cues={cues}
+          captionsOn={captionsOn}
+          onToggleCaptions={toggleCaptions}
+          onOpenSpeed={() => {
+            haptics.impact("light");
+            setSpeedOpen(true);
+          }}
+          onEnterFullscreen={() => {
+            haptics.impact("light");
+            void videoRef.current?.enterFullscreen();
+          }}
+          rateLabel={`${fmt(rate)}×`}
+        />
+      </View>
+
+      {cues.length > 0 && !transcript.isError ? (
+        /* THE sheet scroller: full cue data in, windowed views out (M5 —
+            the old 200-cue .map stays dead; the FlatList web fallback
+            mounts only the initial window — see data.test.tsx
+            "windowing" — and native FlashList v2 recycles). */
+        <View style={{ flex: 1 }}>
+          <DataList
+            data={transcriptRows}
+            renderItem={({ item }) =>
+              item === NO_MATCH_CUE ? (
+                <View style={{ paddingVertical: sp[8] }}>
+                  <EmptyState title="لا نتائج مطابقة في هذا النص." message="جرّب كلمة أخرى." />
+                </View>
+              ) : (
                 <LedgerRow
-                  key={m.id}
-                  last={mi === mArr.length - 1}
-                  accessibilityLabel={`مادة: ${m.name}`}
-                  onPress={() => openMaterial(m.url, m.name)}
+                  accessibilityLabel={`انتقل إلى ${cueClock(item.start)}: ${item.text.slice(0, 80)}`}
+                  onPress={() => seekTo(item.start)}
                 >
-                  <View style={{ flexDirection: "row", alignItems: "center", gap: sp[8] }}>
-                    <T variant="sm" weight="medium" style={{ flex: 1 }} numberOfLines={1}>
-                      {m.name}
-                    </T>
-                    <T variant="xs" color="muted">
-                      {sizeLabel(m.sizeBytes)}
+                  <View style={{ flexDirection: "row", alignItems: "flex-start", gap: sp[8] }}>
+                    <MonoLabel>{cueClock(item.start)}</MonoLabel>
+                    <T variant="sm" color="secondary" style={{ flex: 1 }}>
+                      {item.text}
                     </T>
                   </View>
                 </LedgerRow>
-              ))}
-          </Card>
-        ) : null}
-      </ScrollView>
+              )
+            }
+            keyExtractor={(c, i) => `${c.start}-${i}`}
+            contentPadding={{ horizontal: 20, bottom: 24 }}
+            windowing={{ initialNumToRender: 8, maxToRenderPerBatch: 8, windowSize: 9 }}
+            scrollProps={{ keyboardShouldPersistTaps: "handled", showsVerticalScrollIndicator: false }}
+            ListHeaderComponent={
+              <View style={{ gap: sp[16], paddingBottom: sp[16] }}>
+                {sheetBlocks}
+                {materialsCard}
+                <View style={{ gap: sp[8] }}>
+                  <SectionBar
+                    index={3}
+                    title="النص المكتوب"
+                    action={transcriptPending ? <Badge label="جارٍ توليد النص" tone="yellow" /> : undefined}
+                  />
+                  <SearchBar
+                    value={cueQuery}
+                    onChange={setCueQuery}
+                    placeholder="ابحث في النص المكتوب…"
+                  />
+                </View>
+              </View>
+            }
+          />
+        </View>
+      ) : (
+        /* No transcript (none authored / pending / failed): the plain
+            ScrollView keeps the pre-r341 shape — nothing virtualized is
+            nested inside it. */
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ flexGrow: 1, paddingHorizontal: sp[20], paddingBottom: sp[24] }}
+        >
+          <View style={{ gap: sp[16] }}>
+            {sheetBlocks}
+            {(transcriptPending || (!!lecture.transcriptUrl && transcript.isError)) ? (
+              <View style={{ gap: sp[8] }}>
+                <SectionBar
+                  index={3}
+                  title="النص المكتوب"
+                  action={transcriptPending ? <Badge label="جارٍ توليد النص" tone="yellow" /> : undefined}
+                />
+                {transcript.isError ? (
+                  <T variant="sm" color="muted">
+                    {humanizeError(transcript.error)}
+                  </T>
+                ) : (
+                  <T variant="sm" color="muted">
+                    {transcriptPending ? "يُولَّد نص هذه المحاضرة الآن — عد بعد قليل." : "لا مقاطع في هذا النص."}
+                  </T>
+                )}
+              </View>
+            ) : null}
+            {materialsCard}
+          </View>
+        </ScrollView>
+      )}
 
       {/* Speed sheet — ٠٫٧٥× … ٢× (armed on first open: jest-safe) */}
       {speedArmed ? (

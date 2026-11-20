@@ -1373,3 +1373,82 @@
      under every dropdown in the app. See the mapping table above. */
   --z-header: 90;
 }
+
+/* ═════════════════════════════════════════════════════════════════════
+   ── The landing reference palette (r342 integration) — scoped ────────
+   ═════════════════════════════════════════════════════════════════════
+   The homepage rebuild re-keys the landing sheet onto its own measured
+   reference palette: a cooler paper ground, the near-black ink, the
+   coral signal — a deliberate sibling of the app canon, not a re-key
+   of it. The re-point rides THE SAME semantic names (--bg, --text,
+   --rule …) scoped to .landing, the narrowest level that re-points the
+   whole sheet without touching a single authenticated consumer.
+
+   WHY THE VALUES LIVE HERE: this file is the one sanctioned raw-value
+   home (check-colors.sh's own documented remedy for custom properties
+   defined with raw colors — "move it into the tokens.css theme
+   blocks"; css-counts.mjs's rawHex ratchet counts hex literals outside
+   this home). The homepage rebuild first shipped these definitions in
+   landing/chrome.css + landing/shared.css as scoped blocks — +24 raw
+   hex literals, breaching the frozen rawHex baseline (36). The move
+   is value-verbatim and cascade-verbatim: unlayered, appended, exactly
+   the seat those blocks held in the landing sheets (a normal
+   declaration outranks every @layer rule, and the landing sheets stay
+   literal-free). landing/chrome.css keeps the .landing base block
+   (background/color/overflow-x/font-family/--font-display) and
+   landing/shared.css keeps the dark block's own declarations —
+   r306's "exactly one [data-theme=dark] .landing" pin in the sheet
+   family still holds. */
+.landing {
+  --bg: #F3F2EC;
+  --text: #282828;
+  --text-primary: #282828;
+  /* R342 integration (a11y fix) — the rebuild's measured secondary
+     #72726F reads 4.3:1 on the landing paper #F3F2EC: under the AA body
+     floor (4.5) and 0.2 short of passing. The reference's own warm-grey
+     character is kept, one step down the family's own ladder: #62625F —
+     the app canon's own --text-muted seat (5.63:1 on the app paper;
+     5.46:1 on the landing's cooler paper, 5.13:1 on the footer's raised
+     --surface-2). The axe a11y gate (serious tier, 4.5 floor) drove
+     this: every muted consumer (footer mono labels, legal paragraphs,
+     journey indexes, the compact consent sentence) sits in the 4.0–4.3
+     band on the rebuild's palette; the dark arm was already AA
+     (#B3B3AF on #1c1c1a ≈ 8:1) and is untouched. */
+  --text-secondary: #62625F;
+  --text-muted: #62625F;
+  --rule: #B3B3AF;
+  --border: #B3B3AF;
+  --border-strong: #B3B3AF;
+  --accent: #F15534;
+  /* R342 integration (a11y fix) — the token contract's TEXT-safe
+     accent: small accent TEXT routes through the AA ink, never the raw
+     coral (#F15534 is a 3.07:1 large-text/UI tone on the landing paper
+     — same law as the canon's orange #C43E16, whose text seats route
+     through this very #A33312 at 5.06:1 on the app paper; 6.16:1 on
+     the landing's). The rebuild had pointed --accent-ink at the raw
+     coral; the small coral seats (footer accent link, journey agent
+     tag, the platform frame tags) now resolve the AA ink again. The
+     dark arm keeps the luminous coral (4.95:1 on the charcoal — AA).
+     Fills keep the coral: --accent is untouched. */
+  --accent-ink: #A33312;
+  --accent-strong: #E04422;
+  --c-coral-ink: #F15534;
+  --preloader-exit-ground: #B3B3AF;
+}
+
+/* The dark arm — one block, the whole re-point (the same shape the
+   landing sheet shipped): the paper becomes the charcoal ground, the
+   raised surface steps cool, and the signal warms to the night coral. */
+[data-theme="dark"] .landing {
+  --bg: #1c1c1a;
+  --text: #F3F2EC;
+  --text-primary: #F3F2EC;
+  --text-secondary: #B3B3AF;
+  --text-muted: #B3B3AF;
+  --rule: #4A4A48;
+  --border: #4A4A48;
+  --border-strong: #5C5C5A;
+  --accent: #F15534;
+  --accent-ink: #F15534;
+  --preloader-exit-ground: #4A4A48;
+}

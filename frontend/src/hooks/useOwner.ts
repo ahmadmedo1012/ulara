@@ -244,10 +244,10 @@ export function useOwnerEducation() {
 }
 
 export interface OwnerSystem {
-  sync: {
-    lastRunAt: string | null;
-    recent: Array<{ id: string; action: string; at: string; actor: string; metadata: unknown }>;
-  };
+  /* r342 t13: the `sync` block (lastRunAt + recent runs) is retired —
+   * the zu-sync system was dropped upstream (SyncRun gone from the
+   * DB; GET /owner/system no longer ships a sync feed). The System
+   * page's «سجلّ المزامنة» card + «آخر مزامنة» KPI cell went with it. */
   alerts: {
     open: Array<{
       id: string;
@@ -297,7 +297,9 @@ export function useOwnerSystem() {
      * E2E sweep, a hidden tab and a phone in a pocket all stop the
      * churn; the backend's reachability memo is built for exactly this
      * rhythm: STORAGE_PROBE_TTL_MS 60s ≥ 2× this interval). Explicit
-     * like the sibling polls (useOwnerRealtime, AdminSyncPage). */
+     * like the sibling poll useOwnerRealtime (r342 t13: the second
+     * sibling — the AdminSyncPage poll — retired with the zu-sync
+     * system). */
     refetchInterval: 30_000,
     refetchIntervalInBackground: false,
   });

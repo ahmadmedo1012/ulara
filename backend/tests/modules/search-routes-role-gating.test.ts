@@ -21,6 +21,11 @@
  *  2. the route's trackHitHref is DB-free testable — its pure 5-role
  *     pins live beside courseHitHref/lectureHitHref in
  *     tests/modules/visibility-logic.test.ts.
+ *
+ * r342 t14: paper hits are now institution-scoped (the caller's VERIFIED
+ * context) — the fixtures carry an inst_1 context so the paper family
+ * keeps rendering; every signer passes the inst_1 claim and the mocked
+ * membership resolves it.
  */
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { AddressInfo } from 'node:net';
@@ -32,6 +37,9 @@ vi.mock('../../src/db.js', () => ({
     lecture: { findMany: vi.fn() },
     researchPaper: { findMany: vi.fn() },
     trainingTrack: { findMany: vi.fn() },
+    // r342 t14: the search route resolves the caller's institution
+    // context before the paper scan (cross-institution PII scoping).
+    membership: { findFirst: vi.fn() },
   },
   // Defensive: other modules in the app graph import withRetry from db.js.
   withRetry: vi.fn(),
@@ -66,9 +74,15 @@ const offeringFindMany = vi.mocked(prisma.courseOffering.findMany);
 const lectureFindMany = vi.mocked(prisma.lecture.findMany);
 const paperFindMany = vi.mocked(prisma.researchPaper.findMany);
 const trackFindMany = vi.mocked(prisma.trainingTrack.findMany);
+const membershipFindFirst = vi.mocked(prisma.membership.findFirst);
 
 beforeEach(() => {
   vi.clearAllMocks();
+  // r342 t14: every caller carries a VERIFIED institution context in
+  // this suite (membership → 'inst_1'), so the paper family renders —
+  // the suite's subject is the per-role href mapping, not the context
+  // gate (that lives in the scoping tests).
+  membershipFindFirst.mockResolvedValue({ institutionId: 'inst_1' } as never);
   offeringFindMany.mockResolvedValue([
     {
       id: 'off_1',
@@ -111,7 +125,7 @@ beforeEach(() => {
 
 const get = (userId: string, role: Role) =>
   fetch(`${baseUrl}/api/v1${PATH}`, {
-    headers: { authorization: `Bearer ${signAccessToken(userId, role, null)}` },
+    headers: { authorization: `Bearer ${signAccessToken(userId, role, 'inst_1')}` },
   });
 
 type SearchBody = {

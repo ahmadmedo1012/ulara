@@ -50,7 +50,7 @@ const routes: RouteCase[] = walk(APP)
     file,
   }));
 
-expect(routes.length).toBeGreaterThan(100); // the app has 123 route files
+expect(routes.length).toBeGreaterThan(100); // 111 route files as of r342 t13 (zu-sync retirement: −2 — admin/sync + student/university deleted)
 
 /* ── the harness ────────────────────────────────────────────────────── */
 
@@ -78,7 +78,7 @@ describe("every route screen renders without crashing (the render net)", () => {
     const mod = require(route.file) as { default?: unknown };
     const Component = mod.default;
     expect(typeof Component).toBe("function");
-    // Suppress the console noise a first-render of 123 screens produces
+    // Suppress the console noise a first-render of 100+ screens produces
     // (virtualized-list warnings, etc.) — failures still throw loudly.
     const spy = jest.spyOn(console, "error").mockImplementation(() => undefined);
     const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => undefined);

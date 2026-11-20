@@ -19,7 +19,7 @@ docs/modules/) are Arabic; generated references (docs/*-REFERENCE.md) are Englis
 | `shared/` | `design-tokens.json` (source of generated tokens), `brand/`, `testAccounts.ts` |
 | `specs/` | SpeckKit feature specs (001–012); live status is `docs/SPECS-REFERENCE.md`, **not** `specs/*/spec.md` |
 | `tools/` | `boot-pg.sh` (local postgres), `daemon.js` |
-| `docs/` | Arabic platform docs 01–16 + `modules/` + `architecture/` + `redesign/` (round history r305…r341; `redesign/r341/` = current program: QUEUE/HANDOFF/OWNERSHIP/tasks/arsenal; r338–r340 = closed rounds still on disk — r333/r335/r337 docs already under `docs/archive/redesign/`) |
+| `docs/` | Arabic platform docs 01–16 + `modules/` + `architecture/` + `redesign/` (round history r305…r342; `redesign/r342/` = current program: QUEUE/HANDOFF/OWNERSHIP/BACKLOG; r341 = closed (runtime verdict run 43465697203); r338–r340 = closed rounds still on disk — r333/r335/r337 docs already under `docs/archive/redesign/`) |
 | `.github/workflows/` | `ci.yml` (full gate matrix), `size-gate.yml`, `mobile.yml`, `android-apk.yml`, `deploy.yml` (Vercel), `deploy-smoke.yml`, `build-ios-sidestore.yml`, `mobile-builds-ledger.yml`, `deadcode.yml` — runners pinned to `ubuntu-24.04` |
 
 Sources of truth (don't guess, read): endpoints → `backend/src/app.ts` + `http/routes/`
@@ -107,7 +107,7 @@ these local gates — all runners pinned `ubuntu-24.04`:
 
 ## 4. Ownership (current wave)
 
-Binding: `docs/redesign/r341/OWNERSHIP.md` + `scripts/conformance/mapping/*.json`.
+Binding: `docs/redesign/r342/OWNERSHIP.md` + `scripts/conformance/mapping/*.json`.
 Own ONLY the files your task names; everything else is a merge block. Historical seat
 map (the R338 rulings; each wave's OWNERSHIP.md supersedes it per-task):
 
@@ -129,8 +129,8 @@ dedicated owner; `apps/mobile/**` + mobile workflows belong to the mobile track;
 `scripts/conformance/run.mjs` is the **lead-controlled shared instrument** — section
 agents never edit it; `.github/workflows`, ceilings and baselines are lead-only.
 Cross-dependency: problem's copy-driven line-counts live in platform-owned `Live.tsx`.
-Current round state (wave log, merges, rulings): `docs/redesign/r341/HANDOFF.md` + task
-briefs in `docs/redesign/r341/tasks/`.
+Current round state (wave log, merges, rulings): `docs/redesign/r342/HANDOFF.md` + the
+queue/ownership in the same directory.
 
 ## 5. Adding a section / page / mobile screen
 
@@ -143,7 +143,10 @@ briefs in `docs/redesign/r341/tasks/`.
   (`App.tsx`, `GlobalSearch` are eager; prefer lazy routes); light+dark themes, RTL and
   a11y are contract, and `check-csp-hash.sh` must stay green.
 - **Mobile screen**: `apps/mobile/app/**` (Expo ~58, expo-router, own lockfile) — start
-  from `apps/mobile/README.md`; builds go through the `mobile.yml` / EAS workflows.
+  from `apps/mobile/README.md`; native builds go through the GitHub-Actions native
+  lanes (`mobile.yml` devclient/full lanes; `android-apk.yml` QA + signed release;
+  `build-ios-sidestore.yml` sidestore IPA) — EAS Build is retired; EAS remains only
+  the OTA (JS update) channel.
 - **Backend route**: `backend/src/http/routes/*.ts` following the envelope + error-code
   conventions (`BACKEND.md`, `docs/08-api-reference.md`); keep decision logic in pure
   DB-free functions (tests mock `../../src/db.js`); schema change = edit

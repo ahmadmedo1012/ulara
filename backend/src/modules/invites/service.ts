@@ -122,6 +122,33 @@ export async function consumeInvite(code: string, userId: string) {
   );
   if (!verdict.ok) throw AppError.badRequest(verdict.reason);
 
+  /* r342 t14 (security sweep — the institution boundary): an
+   * offering-scoped code may only enroll a user who holds an ACTIVE
+   * membership in the offering's OWN institution. Pre-fix, the code
+   * alone decided — a redeemed foreign-institution code became an
+   * ACTIVE enrollment (unlocks that institution's materials/lectures/
+   * exams) with no relationship to the redeemer's memberships. */
+  if (row!.offeringId) {
+    const offering = await prisma.courseOffering.findUnique({
+      where: { id: row!.offeringId },
+      select: { course: { select: { institutionId: true } } },
+    });
+    // A dangling offering (deleted between mint and redeem) fails honestly.
+    if (!offering) throw AppError.badRequest('المقرر غير موجود بعد الآن');
+    const membership = await prisma.membership.findFirst({
+      where: {
+        userId,
+        institutionId: offering.course.institutionId,
+        isActive: true,
+        institution: { status: 'ACTIVE' },
+      },
+      select: { id: true },
+    });
+    if (!membership) {
+      throw AppError.forbidden('هذا الكود مخصص لمؤسسة أخرى — لست عضوًا فيها');
+    }
+  }
+
   return prisma.$transaction(async (tx) => {
     // the counted claim: only when under the cap (the where-guard makes
     // a concurrent over-consume lose the update and 409 honestly).

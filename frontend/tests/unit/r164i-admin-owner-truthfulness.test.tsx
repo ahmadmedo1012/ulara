@@ -13,16 +13,15 @@
  *    (GET /ai/config) names the REAL model when one answers and says
  *    «محليّ» when the local composer does; a failed config probe
  *    renders NO badge (fail-soft — the metrics still render).
- * 3. AdminSyncPage freshness: each synced fact carries its own
- *    «آخر تحديث» from the payload's syncedAt (a real field
- *    sync.routes.ts ships), and the facts card is labelled as what it
- *    is — a fixed zu-sync snapshot («مصدر: المزامنة»).
- * 4. OwnerUsersPage table coherence: the pagination footer renders
+ * (r342 t13: pin 3 — AdminSyncPage freshness — retired with the zu-sync
+ *    system, dropped upstream; the page and its /admin/sync endpoint
+ *    are gone.)
+ * 3. OwnerUsersPage table coherence: the pagination footer renders
  *    whenever rows exist (single page included — the roster's total
  *    stays visible, matching the AdminStudentsPage family footer), and
  *    a failing query surfaces the honest error state, never the empty
  *    state.
- * 5. AdminPermissionsPage self-edit guard: opening YOUR OWN permission
+ * 4. AdminPermissionsPage self-edit guard: opening YOUR OWN permission
  *    profile explains the block up front (the backend answers every
  *    self-edit with 403) and disables the row actions; another user's
  *    profile keeps them enabled.
@@ -32,14 +31,13 @@
  * QueryClient, and react-chartjs-2 stubbed (jsdom has no canvas).
  */
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { ReactElement } from 'react';
 import { OwnerSystemPage } from '../../src/pages/owner/OwnerSystemPage';
 import { OwnerAiPage } from '../../src/pages/owner/OwnerAiPage';
 import { OwnerUsersPage } from '../../src/pages/owner/OwnerUsersPage';
-import { AdminSyncPage } from '../../src/pages/admin/AdminSyncPage';
 import { AdminPermissionsPage } from '../../src/pages/admin/AdminGovernancePages';
 import { useAuthStore, type AuthUser } from '../../src/stores/auth.store';
 
@@ -78,7 +76,8 @@ vi.mock('../../src/lib/api', () => ({
 /* ── Shared fixtures ─────────────────────────────────────────── */
 
 const SYSTEM_BASE = {
-  sync: { lastRunAt: null, recent: [] },
+  // r342 t13: the `sync` block is gone — GET /owner/system no longer
+  // ships it (the zu-sync system was dropped upstream).
   alerts: { open: [], openCount: 0, criticalCount: 0 },
   activity: { recentEventsLast7Days: 0 },
 };
@@ -223,53 +222,13 @@ describe('OwnerAiPage — AI provider state (local vs real model)', () => {
 });
 
 /* ════════════════════════════════════════════════════════════════
-   3. AdminSyncPage — zu-sync snapshot freshness labels
+   3. (r342 t13: the AdminSyncPage freshness pins — a zu-sync snapshot
+   label + per-fact «آخر تحديث» — retired with the zu-sync system; the
+   page, its payload and its /admin/sync endpoint are all gone.)
    ════════════════════════════════════════════════════════════════ */
 
-describe('AdminSyncPage — freshness semantics', () => {
-  const SYNCED_AT = new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString();
-
-  const syncPayload = () => ({
-    latestRun: {
-      id: 'run1', startedAt: SYNCED_AT, completedAt: SYNCED_AT, status: 'SUCCESS',
-      source: 'static-markdown', factsAdded: 2, factsUpdated: 1, durationMs: 400,
-      errorMsg: null, notes: null,
-    },
-    runHistory: [],
-    factCount: 1,
-    staleCount: 0,
-    categories: [
-      {
-        category: 'identity',
-        count: 1,
-        items: [
-          { key: 'name.ar', value: 'مساحة عمل أُلارا التجريبية', source: 'zu.edu.ly:about', isStale: false, syncedAt: SYNCED_AT },
-        ],
-      },
-    ],
-  });
-
-  it('labels the facts card as a zu-sync snapshot («مصدر: المزامنة»)', async () => {
-    FIXTURES['/admin/sync'] = syncPayload();
-    renderPage(<AdminSyncPage />);
-    expect(await screen.findByText(/مصدر: المزامنة \(zu-sync\)/)).toBeInTheDocument();
-  });
-
-  it('shows each fact its own «آخر تحديث» from the payload\'s syncedAt', async () => {
-    FIXTURES['/admin/sync'] = syncPayload();
-    renderPage(<AdminSyncPage />);
-    // Open the only category — facts render on disclosure.
-    fireEvent.click(await screen.findByRole('button', { name: /هوية الجامعة/ }));
-    const value = await screen.findByText('مساحة عمل أُلارا التجريبية');
-    const row = value.closest('.fact-row') as HTMLElement;
-    expect(within(row).getByText(/آخر تحديث/)).toBeInTheDocument();
-    // 5h ago → the counted-plural hour form (ساعات), not a fabricated instant.
-    expect(within(row).getByText(/منذ \d+ ساع/)).toBeInTheDocument();
-  });
-});
-
 /* ════════════════════════════════════════════════════════════════
-   4. OwnerUsersPage — table coherence (count + honest error state)
+   3. OwnerUsersPage — table coherence (count + honest error state)
    ════════════════════════════════════════════════════════════════ */
 
 describe('OwnerUsersPage — footer count + error state', () => {
@@ -290,7 +249,7 @@ describe('OwnerUsersPage — footer count + error state', () => {
 });
 
 /* ════════════════════════════════════════════════════════════════
-   5. AdminPermissionsPage — self-edit guard explanation
+   4. AdminPermissionsPage — self-edit guard explanation
    ════════════════════════════════════════════════════════════════ */
 
 const ME: AuthUser = {

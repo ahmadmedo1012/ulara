@@ -11,7 +11,7 @@
 | `backend/**` | ✅ نشر (workflow `deploy.yml` بأسراره الثلاثة، أو `vercel deploy` يدويًا) | CI + **deploy-smoke** (ينتظر `buildId == SHA` ثم صحة + 12 دخولًا + لوحة + مقارنة OpenAPI حي/مُلتزَم additive؛ الفشل يفتح issue) | — |
 | `frontend/**`, `shared/**` | ✅ نشر | CI | — |
 | `apps/mobile/**` أو `shared/**` | ❌ أبدًا (`.vercelignore` يستثني التطبيق) | **Mobile**: بوابات (typecheck · lint · contract-check · export · bundle) + **android-smoke** + **Android APK** | EAS Update لقناتي `production`/`preview` — **خامل** حتى خطوات إعادة التفعيل (§5) |
-| تغيير native (تبعية/إضافة/`app.config.ts`/أصول) | ❌ | نفس البوابات + APK جديد | + EAS Build (preview) |
+| تغيير native (تبعية/إضافة/`app.config.ts`/أصول) | ❌ | نفس البوابات + APK جديد | — (EAS Build مُحال — لا بناء native عبر EAS) |
 | `docs/**`, `*.md` | ❌ | CI فقط | — |
 
 ## 2. المنصة (Vercel + Neon) — الإعداد المنجز
@@ -75,7 +75,9 @@
   لم يُنشأ بعد (`eas init` معلّق) و`EXPO_TOKEN` غير مضبوط. خطوتا
   المالك (~5 دقائق): (1) `npx eas-cli init` من `apps/mobile` وتثبيت
   المعرف الحقيقي في `app.config.ts`؛ (2) إنشاء token في expo.dev ←
-  سر Actions `EXPO_TOKEN`. التفصيل: [mobile.md](mobile.md).
+  سر Actions `EXPO_TOKEN`. التفصيل: [mobile.md](mobile.md). EAS تبقى
+  قناة OTA (JS) فقط — عقد المالك المُلزم: البناء native عبر GitHub
+  Actions حصرًا و`eas build` مُحال.
 - **حقيقة التثبيتات المتقطعة**: البناء من مشروع EAS القديم لا يستقبل
   تحديثات المشروع الجديد (بصمة مختلفة) — طريق ترقيته: إزالة تثبيت
   واحدة ثم تثبيت APK من `/app`؛ بعدها التحديثات في مكانها. الحد الأدنى

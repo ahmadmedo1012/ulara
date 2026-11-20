@@ -83,7 +83,9 @@ const ACTION_LABEL: Record<string, string> = {
   'paper.published': 'نشر بحث',
   'announcement.created': 'بثّ إعلان',
   'competition.created': 'إنشاء مسابقة',
-  'sync.run': 'تشغيل المزامنة',
+  // r342 t13: 'sync.run' (تشغيل المزامنة) retired — the zu-sync audit
+  // writer went with the zu-sync system; a historical row falls to the
+  // neutral «تشغيل نظام» fallback via classifyAction's 'sync.' branch.
   ROLE_CHANGE: 'تغيير صلاحيات مستخدم',
   STATUS_CHANGE: 'تعديل حالة الحساب',
   CAPABILITY_OVERRIDE: 'تجاوز صلاحية',

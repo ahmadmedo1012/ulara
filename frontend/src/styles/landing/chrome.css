@@ -53,6 +53,14 @@
    ════════════════════════════════════════════════════════════════════ */
 
 .landing {
+  /* R342 integration — the landing reference palette (the homepage
+     rebuild's own measured paper/ink/coral) rides the canonical token
+     home now: the scoped .landing / [data-theme="dark"] .landing token
+     blocks live in tokens/tokens.css (the one sanctioned raw-value
+     home — check-colors.sh's own documented remedy for token
+     definitions; the css rawHex ratchet stays at its frozen baseline
+     instead of growing +24). This block keeps only the seats it held
+     before the rebuild — the cascade relationships are unchanged. */
   background: var(--bg);
   color: var(--text);
   overflow-x: clip;

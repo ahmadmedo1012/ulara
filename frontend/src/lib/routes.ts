@@ -19,7 +19,8 @@ export const ROUTES = {
   adminReports: '/admin/reports',
   adminSettings: '/admin/settings',
   adminStudents: '/admin/students',
-  adminSync: '/admin/sync',
+  // r342 t13: adminSync — '/admin/sync' — retired; the zu-sync system
+  // was dropped upstream, so the route, nav entry and page all went.
   adminTeachers: '/admin/teachers',
   auth: '/auth',
   authRegister: '/auth/register',

@@ -295,6 +295,10 @@
  * night accent. The accent-ink tier keeps every text seat AA on both
  * grounds; fills stay on the app recipes (the r197/r305 contracts). */
 [data-theme="dark"] .landing {
+  /* R342 integration — the dark arm of the landing reference palette
+     moved to tokens/tokens.css with the light arm (one sanctioned
+     home); this block keeps the seats it held before the rebuild —
+     r306's "exactly one [data-theme=dark] .landing" pin still holds. */
   background: var(--bg);
   color: var(--text);
 }

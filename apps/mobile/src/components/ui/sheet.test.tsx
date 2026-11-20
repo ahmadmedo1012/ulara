@@ -21,6 +21,8 @@
  * (see docs/mobile/foundations/sheets.md).
  */
 import { fireEvent, render, waitFor } from "@testing-library/react-native";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import {
   ActionSheet,
   ConfirmSheet,
@@ -234,5 +236,68 @@ describe("SHEET_ANIMATION (reduced-motion fast path)", () => {
   test("exposes the ds cadence + a faster reduced path", () => {
     expect(SHEET_ANIMATION.durationMs).toBeGreaterThan(SHEET_ANIMATION.reducedDurationMs);
     expect(SHEET_ANIMATION.easing).toBeTruthy();
+  });
+});
+
+/* ══ AppSheet mounting contract (r341 t01) ═══════════════════════ */
+/*
+ * CI forensics (GitHub Actions run 43426779345, android-smoke job):
+ * Maestro taps «تسجيل الخروج» (COMPLETED), then the confirm «خروج» is
+ * never found for ALL FIVE roles — the captured screen hierarchy shows
+ * the settings page with NO sheet. The Mobile workflow has never passed.
+ *
+ * Root cause: every AppSheet-family sheet mounts its own
+ * absolutely-positioned host (GestureHandlerRootView, sheet.tsx
+ * styles.host = absolute fill). Mounted INSIDE a ScrollView (Screen
+ * scroll / ScrollBody), the host lives in the scroll content's
+ * coordinate space and the sheet fails to present on Android release
+ * builds — violating the sheet's own docblock (sheet.tsx:50-52: "Mount
+ * AppSheet at the ROOT of the screen it serves … a sibling of the
+ * screen content, not nested inside a card/row").
+ *
+ * The r341 t01 fix restructures four screens so every sheet sits AFTER
+ * the scroller it serves. The real sheet engine cannot boot under jest
+ * (see the module header), so these cases pin the contract the way
+ * CountUp.test.tsx pins its worklet contract: by reading the screen
+ * SOURCE and asserting the mounting order — the closing scroller tag
+ * must come BEFORE the sheet element, i.e. the sheet is a sibling of
+ * the scroller, never its scroll content.
+ */
+describe("AppSheet mounting contract (r341 t01)", () => {
+  const read = (...rel: string[]) => readFileSync(join(__dirname, "..", "..", "..", "app", ...rel), "utf8");
+
+  const settings = read("settings.tsx");
+  const profile = read("student", "(tabs)", "profile.tsx");
+  const live = read("teacher", "live.tsx");
+  const document = read("document", "[filename].tsx");
+
+  /** The closing scroller tag must exist and sit strictly BEFORE the sheet
+   *  element — otherwise the sheet is (back) inside the scroller. The guard
+   *  matters: a missing tag is -1, and -1 < x would silently pass. */
+  const assertSibling = (source: string, closer: string, sheetTag: string, file: string) => {
+    const close = source.lastIndexOf(closer);
+    const sheet = source.indexOf(sheetTag);
+    if (close < 0 || sheet < 0) {
+      throw new Error(`${file}: ${closer} @${close}, ${sheetTag} @${sheet} — both must exist in the screen source`);
+    }
+    expect(close).toBeLessThan(sheet);
+  };
+
+  test("settings.tsx: the logout ConfirmSheet mounts after the Screen scroller", () => {
+    assertSibling(settings, "</Screen>", "<ConfirmSheet", "settings.tsx");
+  });
+
+  test("profile.tsx: the logout ConfirmSheet mounts after the ScrollBody scroller", () => {
+    assertSibling(profile, "</ScrollBody>", "<ConfirmSheet", "profile.tsx");
+  });
+
+  test("teacher/live.tsx: the create AppSheet and the lifecycle ConfirmSheet both mount after the Screen scroller", () => {
+    assertSibling(live, "</Screen>", "<AppSheet", "teacher/live.tsx");
+    assertSibling(live, "</Screen>", "<ConfirmSheet", "teacher/live.tsx");
+  });
+
+  test("document/[filename].tsx: the share ActionSheet and the annotations AppSheet both mount after the Screen scroller", () => {
+    assertSibling(document, "</Screen>", "<ActionSheet", "document/[filename].tsx");
+    assertSibling(document, "</Screen>", "<AppSheet", "document/[filename].tsx");
   });
 });

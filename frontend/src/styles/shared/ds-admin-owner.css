@@ -25,8 +25,10 @@
      still outranks this sheet by design: platform belts (focus halo,
      cursor pointer, RM kills) keep winning.
 
-   ── CONSUMERS (the 17 admin/owner page modules) ────────────────────
-   AdminPages · AdminGovernancePages · AdminExtraPages · AdminSyncPage
+   ── CONSUMERS (the 16 admin/owner page modules) ────────────────────
+   AdminPages · AdminGovernancePages · AdminExtraPages
+   (r342 t13: AdminSyncPage retired — the zu-sync console was dropped
+   upstream with the zu-sync system)
    OwnerPages (barrel) → Dashboard, Institutions, InstitutionDetail,
    Users, System, Activity, Education, Ai, Alerts, Content, Realtime,
    Governance.
@@ -71,7 +73,7 @@
                   .owner-empty-rollup* .owner-timeline* .owner-swatch*
                   .owner-share/-track/-fill .owner-meter .owner-workload
                   .owner-chart-container .owner-ai-chart-grid
-                  .admin-sync-runs .fact-* .category-row* .cert-row
+                  .cert-row
                   .suggested-course-* .owner-detail-toggle/-chevron/-scope
      dialogs      .modal-overlay .modal-card .modal-header/-title/-body
                   /-footer .owner-confirm-title/-message/-actions
@@ -554,7 +556,8 @@ body:has(.r305ao) .owner-confirm-actions .btn.danger {
    ════════════════════════════════════════════════════════════════ */
 
 /* The zone panel — a visible, quiet fence around destructive groups
-   (delete institution, role transfer, owner demotion, sync resets). */
+   (delete institution, role transfer, owner demotion; r342 t13: the
+   sync-reset example retired with the zu-sync system). */
 .r305ao .r305ao-danger-zone {
   background: color-mix(in srgb, var(--danger-soft) 40%, var(--surface));
   border: 1px solid color-mix(in srgb, var(--danger) 35%, transparent);
@@ -605,9 +608,11 @@ body:has(.r305ao) .owner-confirm-actions .btn.danger {
 
 /* ════════════════════════════════════════════════════════════════
    §10 · Operational panels
-   Scope: the NEW panel primitives + sync runs, error entries, activity
-   timeline, empty rollups, fact rows, category rows, certificates,
-   suggested courses, swatches, chart containers.
+   Scope: the NEW panel primitives + error entries, activity
+   timeline, empty rollups, certificates, suggested courses, swatches,
+   chart containers. (r342 t13: the sync-runs / fact / category-row
+   families retired with the zu-sync console — zero TSX consumers
+   remain.)
    Grammar: logs/keys/ids in --font-mono with tabular figures; data
    rows on hairlines; wells are surface-2, never colored.
    ════════════════════════════════════════════════════════════════ */
@@ -620,9 +625,6 @@ body:has(.r305ao) .owner-confirm-actions .btn.danger {
 .r305ao .r305ao-panel > .r305ao-panel-title + :is(p, ul, ol) {
   margin: 0;
 }
-
-/* Sync runs table — rides the §4 ws-table density ride; the .font-mono
-   utility already carries tabular figures — no extra rules. */
 
 /* Error entries (system page) — one change: the faint divider. The
    danger-ink message, tabular timestamp and mono stack well are
@@ -647,12 +649,15 @@ body:has(.r305ao) .owner-confirm-actions .btn.danger {
 /* Empty rollups (realtime ops honesty) — dashed frame reads "no data
    yet", not "broken". Names/metas keep owner.css voices. */
 
-/* Fact rows (reports/analysis) — the mono accent keys and faint mono
-   sources are canonical (components.css); this sheet adds the row
-   hairline and the semibold tabular value voice. */
+/* (r342 t13: the fact-rows comment stub retired — the .fact-* family
+   had exactly one consumer, the zu-sync console's synced-facts preview,
+   and went with it. Reports/analysis surfaces render .gov-fact-value
+   (governance) — a different, still-live family.) */
 
 /* Category expansion rows + certificates + suggested courses — the
-   quiet hairline rows; the head keeps its canonical hover. */
+   quiet hairline rows; the head keeps its canonical hover. (r342 t13:
+   the category-row family itself retired with the zu-sync console;
+   certificates + suggested courses keep their consumers.) */
 
 /* Brand swatches (content page) — documented data: hairline chips,
    mono hex stepped down to the muted tier. */

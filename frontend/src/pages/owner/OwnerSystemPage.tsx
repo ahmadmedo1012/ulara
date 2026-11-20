@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { AlertTriangle, RefreshCw, Settings, CheckCircle2, ChevronDown, HardDrive } from 'lucide-react';
 import { Card, Badge, AlertRow } from '../../components/primitives';
 import { StatStrip } from '../../components/primitives/Ledger';
-import { EmptyState, ErrorState, TableSkeleton, ListSkeleton } from '../../components/primitives/States';
+import { EmptyState, ErrorState, ListSkeleton } from '../../components/primitives/States';
 import { Icon } from '../../components/Icon';
 import { ToggleSwitch } from '../../components/owner/ToggleSwitch';
 import { ConfirmDialog } from '../../components/owner/ConfirmDialog';
@@ -28,24 +28,13 @@ function formatRelative(iso: string | null): string {
 }
 
 /* formatDateTime is lib/format.formatDateTimeAr (13-14 hand-off, 13-15
- * fold): the local copy was byte-identical to the shared helper. */
-
-const SYNC_ACTION_LABEL: Record<string, string> = {
-  'sync.run': 'مزامنة كاملة',
-  'sync.partial': 'مزامنة جزئية',
-  'sync.failed': 'مزامنة فاشلة',
-};
-
-/** Sync-run outcome metadata as written by the backend since 16-B6 —
- *  the feed action carries no in-flight state (RUNNING maps to
- *  'sync.partial'), so the status field is the honest source. */
-function syncRunStatus(metadata: unknown): string | null {
-  if (metadata && typeof metadata === 'object' && 'status' in metadata) {
-    const status = (metadata as { status?: unknown }).status;
-    if (typeof status === 'string') return status;
-  }
-  return null;
-}
+ * fold): the local copy was byte-identical to the shared helper.
+ *
+ * r342 t13: the sync-run feed (سجلّ المزامنة + «آخر مزامنة» KPI cell +
+ * the SYNC_ACTION_LABEL/syncRunStatus helpers) is retired — the zu-sync
+ * system was dropped upstream (GET /owner/system no longer ships a
+ * `sync` block; SyncRun/UniversityFact gone from the DB). The System
+ * page keeps storage, alerts, activity, flags and settings intact. */
 
 /** Counted plural for failed setting saves (the toast names the damage). */
 function failedSavesLabel(n: number): string {
@@ -147,9 +136,9 @@ export function OwnerSystemPage() {
   /* r176e (D-03): a failed flag flip used to leave the switch at its
    * old server position with NO error and NO retry — the owner either
    * believed the flip landed or never noticed. The house rule every
-   * sibling owner mutation follows (settings save above, sync page,
-   * notifications) now applies: name the failed flag, offer the retry,
-   * and re-fire the SAME payload. */
+   * sibling owner mutation follows (settings save above, notifications)
+   * now applies: name the failed flag, offer the retry, and re-fire the
+   * SAME payload. */
   const retryFlagToggle = () => {
     const vars = toggleFlag.variables;
     if (vars) toggleFlag.mutate(vars);
@@ -245,12 +234,6 @@ export function OwnerSystemPage() {
             trendTone: sysData ? (sysData.alerts.criticalCount > 0 ? 'down' : 'up') : 'flat',
           },
           {
-            label: 'آخر مزامنة',
-            value: sysData ? formatRelative(sysData.sync.lastRunAt) : unknownValue,
-            trend: 'مع المصدر الرسميّ',
-            trendTone: 'flat',
-          },
-          {
             label: 'تنبيهات حرجة مفتوحة',
             value: sysData ? formatNum(sysData.alerts.criticalCount) : unknownValue,
             trend: sysData ? (sysData.alerts.criticalCount > 0 ? 'تستوجب قرارًا' : 'لا شيء حرجًا') : 'بانتظار البيانات',
@@ -292,8 +275,12 @@ export function OwnerSystemPage() {
               </span>
             </div>
             <p className="text-xs text-subtle" style={{ marginBlockStart: 'var(--sp-2)' }}>
+              {/* r342 t13: the sync-log card this line used to point at is
+                  retired — the header's «تحديث» button above (and the alerts
+                  card below, which carries its own retry) are the live
+                  retry affordances. */}
               {sys.isError
-                ? 'تعذّر جلب حالة النظام — أعد المحاولة من بطاقة سجلّ المزامنة أدناه.'
+                ? 'تعذّر جلب حالة النظام — أعد المحاولة من زرّ «تحديث» أعلى الصفحة.'
                 : 'نسخة الخادم الحاليّة لا تُصرّح عن حالة تخزين الرفعات بعد.'}
             </p>
           </div>
@@ -360,83 +347,19 @@ export function OwnerSystemPage() {
         )}
       </Card>
 
-      {/* Sync history — real audit log. No "مزامنة الآن" button: the
-          owner API surface exposes no sync-trigger mutation, so the
-          old control was dead (audit 0-e P0-10) and has been removed
-          rather than left unwired. */}
-      <Card title="سجلّ المزامنة" icon={RefreshCw}>
-        {sys.isPending ? (
-          /* Shape-matched (4-A7 P2-5): a 3-col table skeleton, not a
-           * bare spinner — the shape this card fills is known (r299:
-           * one time column now — absolute + relative in one cell). */
-          <TableSkeleton rows={4} cols={3} />
-        ) : sys.isError ? (
-          <ErrorState
-            message="تعذّر جلب سجلّ المزامنة"
-            error={sys.error}
-            onRetry={() => sys.refetch()}
-          />
-        ) : !sysData || sysData.sync.recent.length === 0 ? (
-          <EmptyState illustration="empty-list"
-            title="لا توجد عمليّات مزامنة بعد"
-            description="ستظهر آخر عمليّات المزامنة هنا فور تشغيلها."
-          />
-        ) : (
-          /* 22-b (4-A7 P1-5): migrated to the shared .table.tbl-stack
-           * pattern (the users page's reference migration) — the bare
-           * .owner-table clipped its 4 columns inside the card at
-           * 390px; the stack pattern turns every row into a labelled
-           * card on phones instead. (6A10-7: the trailing
-           * owner-sync-table class was dead — no rule in owner.css
-           * ever matched it after the tbl-stack migration; the shared
-           * classes carry the whole contract.) */
-          <div className="table-wrap">
-            <table className="table tbl-stack">
-              <thead>
-                <tr>
-                  {/* r299: «التاريخ» + «منذ» folded into ONE column — the
-                      absolute date carries the relative age beside it
-                      (and in the title), freeing a column the tbl-stack
-                      cards spent on restating the same moment. */}
-                  <th scope="col">آخر تشغيل</th>
-                  <th scope="col">النوع</th>
-                  <th scope="col">المنفِّذ</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sysData.sync.recent.map((run) => {
-                  const running = syncRunStatus(run.metadata) === 'RUNNING';
-                  return (
-                    <tr key={run.id}>
-                      <td className="owner-cell-muted" data-label="آخر تشغيل" title={formatRelative(run.at)}>
-                        {formatDateTimeAr(run.at)}{' '}
-                        <span className="text-xxs text-subtle">({formatRelative(run.at)})</span>
-                      </td>
-                      <td data-label="النوع">
-                        {/* 16-B6 hand-off: a RUNNING row reads as in-flight
-                            (amber), not «مزامنة جزئية» — matches
-                            AdminSyncPage's STATUS_LABEL vocabulary. */}
-                        <Badge color={run.action.includes('failed') ? 'red' : running || run.action.includes('partial') ? 'amber' : 'green'}>
-                          {running ? 'قيد التنفيذ' : SYNC_ACTION_LABEL[run.action] ?? <bdi>{run.action}</bdi>}
-                        </Badge>
-                      </td>
-                      <td className="owner-cell-muted" data-label="المنفِّذ">{run.actor}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Card>
+      {/* r342 t13: «سجلّ المزامنة» — the whole sync-run feed card is retired
+          with the zu-sync system (dropped upstream): GET /owner/system no
+          longer ships a `sync` block, so the card had no honest data left.
+          The storage, alerts, activity, flags and settings cards below are
+          untouched. */}
 
       {/* Feature Flags — real data */}
       <Card title="أعلام الميزات (Feature Flags)" icon={Settings}>
         <div className="owner-list-pad">
           {/* 6A10-1: the error branch sits BEFORE the length check — a
               failing flags query must never masquerade as "no flags
-              defined" (ruling #14, error ≠ empty; the sync + alerts
-              cards above already follow this order). */}
+              defined" (ruling #14, error ≠ empty; the alerts card above
+              follows this order). */}
           {flagsQuery.isPending ? (
             <ListSkeleton rows={3} />
           ) : flagsQuery.isError ? (

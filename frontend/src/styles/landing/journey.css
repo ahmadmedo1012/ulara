@@ -179,6 +179,52 @@ section.chapters {
   will-change: transform;
 }
 
+/* The live agent diagnostic status bar */
+.jt-agent-status {
+  position: absolute;
+  inset-inline: 1.5rem;
+  inset-block-end: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 6px 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--text) 5%, transparent);
+  z-index: 5;
+  pointer-events: none;
+}
+
+.jt-agent-dot {
+  inline-size: 7px;
+  block-size: 7px;
+  background: var(--accent);
+  flex-shrink: 0;
+  animation: hi-pulse 2s var(--ease) infinite;
+}
+
+.jt-agent-tag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  /* R342 integration (a11y): the tag is 10.4px/700 mono text — the AA
+     body floor (4.5) applies, and the raw coral rides only 3.07:1 on the
+     band ground. TEXT routes through --accent-ink (the token contract's
+     TEXT-safe accent, #A33312 on the light arm, the luminous coral on
+     the dark arm) — the dot keeps the coral fill. */
+  color: var(--accent-ink);
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+}
+
+.jt-agent-msg {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  min-inline-size: 0;
+  flex: 1 1 auto;
+  line-height: 1.45;
+}
+
 /* the four registration rails — the measured window chrome: 0.5em
    thick, 1.2em inset from the corners (invisible layout spacers
    exactly like the reference's — the plan's own sheet frame draws
@@ -1419,5 +1465,8 @@ section.chapters {
 @media (prefers-reduced-motion: reduce) {
   .wr-scrub .wr-i {
     color: var(--text);
+  }
+  .jt-agent-dot {
+    animation: none;
   }
 }
