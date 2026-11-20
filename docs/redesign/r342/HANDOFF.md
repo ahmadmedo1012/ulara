@@ -215,3 +215,62 @@ Root cause: the shared Neon production DB dropped `SyncRun`/`UniversityFact` ups
 - Owner journey (browser): quick-login → dashboard → System page **renders with real data** (service status, alerts, activity, storage truth — the page that answered HTTP 500 in production before t13).
 - Student journey (browser): quick-login → honest contextless states (institution chooser + the server's Arabic «حدّد المؤسسة أولًا») → institution selection (`POST /auth/select-institution` 200) → library papers tab shows **3 published papers, institution-scoped** — exactly the three rows the t14-scoped API returns.
 - API-level: `/research/published` with verified context → 200 + 3 papers; contextless → honest 403; `/admin/sync` → 404; `/university/facts` → auth-gated; production-code-path devInbox → absent in production mode, present in development mode.
+
+## Wave 5 — R342-final: the homepage integration (the composite release)
+
+| Task | Agent type | Branch | State |
+|------|-----------|--------|-------|
+| t15 the homepage composite: PRs #7 (art direction) + #8 (editorial scenes) + #9 (scroll choreography) integrated, repaired, refined, released | lead (integration owner) | wip/homepage-final | the composite PR |
+
+### The integration decisions
+
+- The three branches were file-disjoint (verified: zero path overlap) —
+  merged whole into `wip/homepage-final` off `origin/main` @161e88f,
+  one integration merge commit per branch with the decisions recorded
+  in each message. The original PRs stay open until the composite
+  lands, then close as superseded.
+- The five-station HeroInspect contract is the product law (cp/ex/lc/
+  mg/rr — real capabilities anchored to the plate's drawn features);
+  the r309/r308/r309-prod belts re-pinned deliberately with STRONGER
+  assertions (all-10-pairs card layout, keyboard parity for the new
+  seats, four phone laps 360/375/390/430).
+- The motion architecture is ONE system again: the shared conductor
+  clock drives Lenis, the house scrubTimeline (new,
+  `lib/motion/scrubTimeline.ts`) drives the journey scrub, and GSAP is
+  RETIRED from the stack (−45.2 KB gz measured; the 770 KB ceiling
+  restored at 753.6). The engine/engineSync seams are deleted.
+- AGENTS.md's conformance-instrument sections are corrected to the
+  truth: `scripts/conformance/` never landed in this repo (verified
+  across full git history). No conformance numbers exist to cite.
+
+### The repaired regressions (all three PRs' CI reds)
+
+| Gate | The failure | The fix |
+|---|---|---|
+| size-gate | header-onhide evidence 823KB > 500KB | 256-color quantization → 405KB (visually lossless; no allowlist entry) |
+| knip | 66/50/227 vs 63/48/226 | HeroInkWindow + HeroChrome + HeroGrid deleted (superseded, zero consumers) with their 467-line census CSS tail; ElevationArt/CampusVariant un-exported; CAPTURE_LECTURE_CHECKPOINT_2X removed (consumed directly now) — 63/48/226 exact |
+| E2E r309/r308/r311 | 5-station contract, lc clipping at 360/390, .pl-progress/.pl-cross missing | the phone crop's root cause fixed (TWO caps defeated the authored crop: base.css's media guard + the hero seat's block cap → symmetric ±10% bleed at 120%); the 44px targets clamped into the visible window by the mapping; loader chrome + registration cross re-seated; RELEASE_FLOOR re-pinned 2.0s |
+| bundle | 800.0 KB > 770 | the house scrub engine replaces GSAP → 753.6 KB |
+| jscpd | 261 → 266 combined | preloader mono-row merge + the .lp-tag pattern extraction → 260 (re-pinned) |
+
+### The lead's verification (the merged tree, this branch)
+
+| Gate | Result |
+|---|---|
+| `bash scripts/verify.sh` | ALL GREEN (tsc · vitest **2977 passed** · build+bundle **753.6/770** · css ratchet · logo · a11y 0-over-floor · 7 design gates · lint · e2e 29/29) |
+| Full e2e (`tests/e2e`, e2e + chromium-iphone projects) | **158 passed** |
+| r305 suite | **76 passed** |
+| Backend vitest (full) | PASS (exit 0) |
+| Typechecks (both sides, src + tests) | PASS |
+| Surface drift (mock mode, CI's env) | **clean across 72 captures** |
+| size-gate / zero-trace / deadcode | GREEN / PASS / baseline (jscpd improved) |
+| Journey scrub live probe | forward+reverse state-EXACT at 1440 + 390 (stage machine, ghosts, plaques, camera) |
+| Visual QA (20-plate evidence set) | `docs/redesign/r342/integration-evidence/` — one real defect found+fixed (the statement twin mask); tashkeel verified intact |
+
+### Honest limits
+
+- WebKit + DB-integration lanes run in CI only (not installable/available
+  in this sandbox); production Neon was never touched.
+- The five-station decision, the GSAP retirement and the AGENTS.md
+  conformance correction are documented product/architecture changes —
+  each with its measured evidence in the composite PR.

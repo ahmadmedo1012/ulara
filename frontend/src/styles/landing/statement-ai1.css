@@ -13,6 +13,17 @@
 
 .st-title .wr-scrub .wr-w {
   position: relative;
+  /* R342-final — the twin's MASK: the shared scrub belt opens the
+   * word mask (journey.css `.wr-scrub .wr-w { overflow: visible }` —
+   * the color-mix ink grammar needs no clipping), but THIS title's
+   * ink-roll twin parks at translateY(100%) below its word and MUST
+   * be clipped inside the cell — with the belt's visible mask the
+   * parked twins escaped onto the following line (measured live at
+   * rest: every twin rendered 45px below its word, overlapping the
+   * next statement line — the "doubled text" the visual audit
+   * caught). The statement's own 1.35× leading (5.4rem on the 4rem
+   * display voice) keeps the tashkeel clear of the clip edge. */
+  overflow: hidden;
 }
 
 .st-title .wr-scrub .wr-i2 {

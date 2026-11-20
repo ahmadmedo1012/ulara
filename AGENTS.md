@@ -17,7 +17,7 @@ runbook, roadmap); the generated English reference is `docs/api/openapi.json`
 | `backend/` | Express + TS + Prisma workspace: `src/app.ts`, `src/http/routes/*.ts` (API), `src/modules/*`, `src/lib/` (permissions, governance, storage), `prisma/schema.prisma` + `migrations/` + `seed.ts` |
 | `apps/mobile/` | Expo ~58 (React Native) app with its own lockfile — see `apps/mobile/README.md` |
 | `scripts/` | `verify.sh` (the ONE gate set) + gates: `check-bundle-size.mjs`, `check-{icons,colors,raw-css,motion-tokens,csp-hash}.sh`, `tokens/build.mjs`, `verify-parity-export.mjs`, `gates/` (stylelint ratchet + css-counts/coverage), `deadcode/` (knip/jscpd ratchet) |
-| `scripts/conformance/` | visual conformance instrument: `run.mjs`, `pages.mjs` (per-page ≥90 gate), `panel.mjs` (blind panel judging), `scroll.mjs`, `interact.mjs`, `tween.mjs`, `mapping/*.json` (section→DOM binding), `ratchet.json` (monotonic floor — 93.8), `results.json` |
+| `scripts/conformance/` | NOT PRESENT in this repository (R342-final audit: never landed — no trace in git history; earlier AGENTS text described it aspirationally). The visual-verification instruments of record are the pixel-exact E2E belts (`tests/e2e/r309-*, r308-*, r311-*, r312-*`) + the r305/audit suites. Do not cite conformance percentages. |
 | `shared/` | `design-tokens.json` (source of generated tokens), `brand/`, `testAccounts.ts` |
 | `tools/` | `boot-pg.sh` (local postgres), `daemon.js` |
 | `docs/` | Arabic topic files (`architecture`, `deployment`, `mobile`, `testing`, `design-system`, `runbook`, `roadmap`) + `api/openapi.json` (generated) + `ops/` + `redesign/` (`redesign/r342/` = current program: QUEUE/HANDOFF/OWNERSHIP/BACKLOG; r341 = closed — runtime verdict run 43465697203; rounds r305–r340 predate the 1.0 squash and are not on disk) |
@@ -57,25 +57,16 @@ Verification — the ONE local gate set (run before every push):
 ```bash
 bash scripts/verify.sh                       # full set = what CI runs (~8 min)
 bash scripts/verify.sh --fast                # tsc + vitest + bundle + stylelint/CSS-ratchet gate (~4 min)
-bash scripts/verify.sh --sections home-why-wrap   # scope conformance by section keys
+# (the retired --sections/--specs conformance scoping flags died with the phantom
+# conformance instrument — R342-final)
 bash scripts/verify.sh --specs r305-shell-ds   # scope e2e by spec file stem
 ```
 
-Conformance instrument (`scripts/conformance/run.mjs`) — always point it at YOUR OWN dev
-server, never a shared one:
-
-```bash
-cd frontend && npx vite --port 5320 --strictPort &        # your own port
-node scripts/conformance/run.mjs --url http://localhost:5320 \
-     --sections home-why-wrap,footer --bps 1440,390        # default: all 9 sections × 5 bps
-```
-
-Flags: `--url <base>` (default `:5173`) · `--sections <keys>` · `--bps <list>` ·
-`--gate` (check vs `ratchet.json`) · `--ratchet` (raise floor to current — NEVER lower) ·
-`--dark` (re-assert the same pairs under the site's own `html[data-theme=dark]` flip +
-token-flip census + WCAG contrast ≥3.0) · `--scroll` / `--interact` (scroll-feel curves,
-hover/focus-visible deltas). Section keys: `home-{hero,intro,problem,why,platform,map,
-usecase,cta}-wrap`, `footer` (+ `_chrome` for chrome specs).
+Conformance instrument — RETIRED (R342-final): the `scripts/conformance/` tree this
+section once described never existed in this repository (verified across the full git
+history; the text was aspirational). Visual conformance rides the pixel-exact E2E belts
+(`tests/e2e/r309-recovery`, `r308-landing-instruments`, `r311-cursor-ownership`,
+`r312-*`, `r305/*`) + `tests/audit/` (surface drift) — measured, never self-reported.
 
 CSS: `npm run lint:css -w frontend` (stylelint 16), `npm run gate:css-coverage -w frontend`.
 
@@ -90,11 +81,9 @@ these local gates — all runners pinned `ubuntu-24.04`:
   bloat; measured 764.1 at the re-pin), entry ≤ 92, pdf ≤ 110. It
   sums ALL js chunks **including async chunks** — lazy-splitting only moves weight; the
   honest lever is real code cuts (e.g. the axios→native-fetch diet, −17.9 KB).
-- **Conformance ratchet** — `scripts/conformance/ratchet.json` is monotonic: `--gate`
-  checks, `--ratchet` raises, never lower. Section target = ≥90% on ALL 5 breakpoints +
-  dark (+ WebKit where available). No-counterpart = FAIL. Skipped plumbing (defs/mask/
-  filter scaffolding) must be declared in the mapping's `plumbing: [{section, reference,
-  skip, reason}]` — skipped cells are counted, never silent.
+- **Visual conformance** — rides the pixel-exact E2E belts (the retired
+  `scripts/conformance/` ratchet never landed in this repo — see §1). Section
+  regressions are caught by the geometry/a11y assertions in the e2e + r305 suites.
 - **Design gates** — `check-icons.sh` (Lucide icons only, via `Icon.tsx`),
   `check-colors.sh --strict` (no raw hex/rgb), `check-raw-css.sh --strict` (no raw
   type/radius/spacing), `check-motion-tokens.sh`, `check-csp-hash.sh` (update the CSP
