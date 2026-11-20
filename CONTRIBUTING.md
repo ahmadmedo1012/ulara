@@ -80,7 +80,6 @@ package.json — يعاد ضبطه مع كل `npm install`). | Wired via core.ho
 | lint | `npm run lint` |
 | typecheck | `npm run typecheck` |
 | tests | `npm test` |
-| colleges parity | `npm run validate:colleges` |
 | icons (Lucide فقط) | `bash scripts/check-icons.sh` |
 | motion tokens (لا قيم خام) | `bash scripts/check-motion-tokens.sh` |
 | بصمات CSP | `bash scripts/check-csp-hash.sh` |
@@ -88,7 +87,7 @@ package.json — يعاد ضبطه مع كل `npm install`). | Wired via core.ho
 | dead-code ratchet | `bash scripts/deadcode/check.sh` |
 | build | `npm run build -w backend && npm run build -w frontend` |
 
-(القائمة الكاملة بأوامرها في AGENTS.md §4.) البوابات خضراء قبل كل دفعة،
+(القائمة الكاملة بأوامرها في AGENTS.md §3.) البوابات خضراء قبل كل دفعة،
 والـ CI يفرضها على كل PR. | All gates green before every push; CI enforces
 them on every PR.
 

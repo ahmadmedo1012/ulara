@@ -36,11 +36,11 @@
 
 | البند | الحالة |
 |---|---|
-| ميزات الأدوار الخمسة | **منفَّذة ومشحَنة** — 1970 اختبار واجهة + 1783 خلفية خضراء + 116 اختبار تكامل قاعدة بيانات + 28 رحلة e2e (جولات r141–r191) |
+| ميزات الأدوار الخمسة | **منفَّذة ومشحَنة** — 2,977 اختبار واجهة + 1,955 خلفية خضراء (قياس على الشجرة النهائية، CI run 44650411057) + 103 اختبار تكامل قاعدة بيانات + 28 رحلة e2e |
 | نظام التصميم | موثّق في [`DESIGN.md`](DESIGN.md) — بوابة تكافؤ 190/190 خضراء |
-| مساعد «Oasis» الذكي | **محرّك محلي حتمي معلن (gap-aware-composer) افتراضيًا + مزوّد LLM حقيقي اختياري** عبر `AI_PROVIDER` — التفصيل: [docs/02](docs/02-features.md) |
-| فحص الانتحال | **محاكاة حتمية معلنة** (بلا خدمات خارجية) — التفصيل: [docs/02](docs/02-features.md) |
-| رفع PDF ورحلات E2E | **منفَّذة** — رفع PDF خام خلف تجريد التخزين (محلي/S3/**postgres لوضع الطيار r175**) + 28 رحلة متصفّح محكمّة؛ i18n الإنجليزي وحده غير منفَّذ — [docs/02](docs/02-features.md) و[docs/11](docs/11-testing.md) و[docs/16](docs/16-decisions-and-limitations.md) |
+| مساعد «Oasis» الذكي | **محرّك محلي حتمي معلن (gap-aware-composer) افتراضيًا + مزوّد LLM حقيقي اختياري** عبر `AI_PROVIDER` — الحدود والأمانة: [`docs/architecture.md`](docs/architecture.md) §8 |
+| فحص الانتحال | **محاكاة حتمية معلنة** (بلا خدمات خارجية) — الحدود: [`docs/architecture.md`](docs/architecture.md) §8 |
+| رفع PDF ورحلات E2E | **منفَّذة** — رفع PDF خام خلف تجريد التخزين (محلي/S3/**postgres لوضع الطيار r175**) + 28 رحلة متصفّح محكمّة؛ i18n الإنجليزي وحده غير منفَّذ — [docs/testing.md](docs/testing.md) و[docs/architecture.md](docs/architecture.md) §8 |
 
 ## أبرز الميزات
 
@@ -61,46 +61,31 @@
   بلا اعتماديات.
 - **اختبارات إلكترونية** — بنك أسئلة وقوالب ومحاولات بتصحيح مطابقة صارم.
 
-لقطات الشاشة (1440×900 من التطبيق الحي — النمطان):
-
-| | |
-|---|---|
-| **الهبوط — Orbit Ink** | ![Landing hero](docs/screenshots/landing-hero.png) |
-| **شريط السجل (كيف تُبنى الكليات)** | ![Landing colleges](docs/screenshots/landing-colleges.png) |
-| **الدخول — فاتح (كريمي/نحاسي)** | ![Auth light](docs/screenshots/auth-light.png) |
-| **الدخول — داكن (ليلي/ذهبي)** | ![Auth dark](docs/screenshots/auth-dark.png) |
-| **لوحة المالك — فاتح** | ![Owner light](docs/screenshots/owner-dashboard-light.png) |
-| **لوحة المالك — داكن** | ![Owner dark](docs/screenshots/owner-dashboard-dark.png) |
-
-*التعليقات الكاملة وملاحظات الالتقاط: [`docs/screenshots/README.md`](docs/screenshots/README.md).*
-
 ## مركز التوثيق
 
-الدليل العربي الكامل في [`docs/`](docs/README.md) — وثائق مرقمة 01–16
-+ وثائق قطاعات. أسرع الروابط:
+الدليل العربي الحي في [`docs/`](docs/README.md) — ملف موضوعي واحد لكل مجال. أسرع الروابط:
 
 | أريد… | اذهب إلى |
 |---|---|
-| فهم المشروع وميزاته | [`docs/01-overview.md`](docs/01-overview.md) · [`docs/02-features.md`](docs/02-features.md) |
-| فهم المعمارية والمخططات | [`docs/03-architecture.md`](docs/03-architecture.md) |
-| خريطة المستودع و«أين أعدّل» | [`docs/04-repository-map.md`](docs/04-repository-map.md) |
-| التشغيل محليًا | [`docs/05-setup.md`](docs/05-setup.md) |
-| متغيرات البيئة | [`docs/06-configuration.md`](docs/06-configuration.md) |
-| قاعدة البيانات | [`docs/07-database.md`](docs/07-database.md) + [`docs/DATABASE-REFERENCE.md`](docs/DATABASE-REFERENCE.md) |
-| واجهات API | [`docs/08-api-reference.md`](docs/08-api-reference.md) + [`docs/API-REFERENCE.md`](docs/API-REFERENCE.md) |
-| رحلات المستخدمين | [`docs/09-user-journeys.md`](docs/09-user-journeys.md) |
-| الأمان | [`docs/10-security.md`](docs/10-security.md) + [`SECURITY.md`](SECURITY.md) |
-| الاختبارات والفحوص | [`docs/11-testing.md`](docs/11-testing.md) |
-| النشر | [`docs/12-deployment.md`](docs/12-deployment.md) |
-| الصيانة/استكشاف الأخطاء | [`docs/13-maintenance.md`](docs/13-maintenance.md) · [`docs/14-troubleshooting.md`](docs/14-troubleshooting.md) |
-| دليل التطوير والقرارات | [`docs/15-development-guide.md`](docs/15-development-guide.md) · [`docs/16-decisions-and-limitations.md`](docs/16-decisions-and-limitations.md) |
+| فهم المشروع وميزاته | هذا `README.md` + [`docs/architecture.md`](docs/architecture.md) |
+| المعمارية والقرارات الحيّة | [`docs/architecture.md`](docs/architecture.md) |
+| خريطة المستودع و«أين أعدّل» | [`AGENTS.md`](AGENTS.md) §1 |
+| التشغيل محليًا | قسم «البدء السريع» أدناه + [`docs/README.md`](docs/README.md) (مسارات القراءة) |
+| متغيرات البيئة | [`docs/deployment.md`](docs/deployment.md) §3 + [`.env.example`](.env.example) (عقد `backend/src/env.ts`) |
+| قاعدة البيانات | [`backend/prisma/schema.prisma`](backend/prisma/schema.prisma) (المصدر) + [`docs/architecture.md`](docs/architecture.md) |
+| واجهات API | [`docs/api/openapi.json`](docs/api/openapi.json) (مولّد: `npm run api:openapi`) + [`BACKEND.md`](BACKEND.md) |
+| الاختبارات والفحوص | [`docs/testing.md`](docs/testing.md) |
+| النشر والتشغيل اليومي | [`docs/deployment.md`](docs/deployment.md) |
+| الصيانة واستكشاف الأخطاء | [`docs/runbook.md`](docs/runbook.md) |
+| الجوال | [`docs/mobile.md`](docs/mobile.md) |
+| نظام التصميم | [`docs/design-system.md`](docs/design-system.md) + [`DESIGN.md`](DESIGN.md) |
 | وكلاء الذكاء الاصطناعي | [`AGENTS.md`](AGENTS.md) |
-| مرجع التصميم | [`DESIGN.md`](DESIGN.md) |
+| خارطة الطريق | [`docs/roadmap.md`](docs/roadmap.md) |
 
 ## البدء السريع
 
 المتطلبات: **Node.js `>=20 <25`** و**npm** وقاعدة PostgreSQL (Neon مجاني
-يكفي). التفصيل الكامل: [`docs/05-setup.md`](docs/05-setup.md).
+يكفي). مسارات القراءة: [`docs/README.md`](docs/README.md).
 
 ```bash
 git clone https://github.com/ahmadmedo1012/ulara && cd ulara
@@ -143,7 +128,7 @@ npm run dev:web                    # الواجهة :5173 (proxy ‏/api → :40
 ```bash
 npm run lint                         # ESLint — 0 أخطاء إلزامية
 npm run typecheck                    # tsc — src + tests، الجهتان (بلا DB)
-npm test                             # 1975 واجهة + 1775 خلفية (بلا DB؛ يشمل 7 اختبارات S3 حيّة ضد s3rver) — و npm run test:integration يضيف 116 اختبار تكامل على قاعدة محلية معزولة (منها 14 عابرة للمؤسستين لعزل r179 و 2 لأمان إعادة تشغيل البذرة r182)
+npm test                             # 2,977 واجهة + 1,955 خلفية (قياس على الشجرة النهائية، CI run 44650411057؛ بلا DB؛ يشمل 7 اختبارات S3 حيّة ضد s3rver) — و npm run test:integration يضيف 103 اختبار تكامل على قاعدة محلية معزولة (منها 14 عابرة للمؤسستين لعزل r179 و 2 لأمان إعادة تشغيل البذرة r182)
 node scripts/verify-parity-export.mjs  # بوابة التكافؤ 190/190
 bash scripts/check-icons.sh            # انضباط Lucide
 bash scripts/check-motion-tokens.sh    # رموز الحركة
@@ -152,7 +137,7 @@ bash scripts/check-csp-hash.sh         # بصمات CSP
 ```
 
 الأرقام أعلاه نتائج تشغيل فعلي موثق — منهجية وحدود التغطية:
-[`docs/11-testing.md`](docs/11-testing.md).
+[`docs/testing.md`](docs/testing.md).
 
 ## متغيرات البيئة (الإلزامية فقط)
 
@@ -164,7 +149,7 @@ bash scripts/check-csp-hash.sh         # بصمات CSP
 
 الاختيارية (`CORS_ORIGINS` — تستبدل الافتراضي عند ضبطها، `INTERNAL_SERVICE_TOKEN`,
 `DIRECT_DATABASE_URL`, `PORT`): الجدول الكامل وسلوك كل متغير في
-[`docs/06-configuration.md`](docs/06-configuration.md). لا تضع أسرارًا حقيقية
+[`docs/deployment.md`](docs/deployment.md) §3 و[`.env.example`](.env.example). لا تضع أسرارًا حقيقية
 في أي ملف متتبع.
 
 ## النشر على Vercel + Neon
@@ -180,23 +165,23 @@ bash scripts/check-csp-hash.sh         # بصمات CSP
    البناء يولّد عميل Prisma ويبني الواجهة والخلفية، والصحة على
    `/api/v1/health` تعرض SHA المنشور.
 
-التفصيل والتحقق بعد النشر والتراجع: [`docs/12-deployment.md`](docs/12-deployment.md).
+التفصيل والتحقق بعد النشر والتراجع: [`docs/deployment.md`](docs/deployment.md).
 
 ## بنية المستودع (مختصرة)
 
 ```text
 ulara/
-├── backend/          Express + TS · Prisma (79 نموذجًا/31 enum) · 222 endpoint · storage/papers/
-├── frontend/         React 18 + Vite · src/styles/ سلسلة الرموز · 18 CSS · tests/ (vitest)
-├── docs/             الدليل العربي 01–16 + modules/ + المراجع المولّدة + archive/
-├── specs/            مواصفات الميزات (نية زمنية — الحالة في SPECS-REFERENCE)
-├── audits/           تقارير تدقيق بصري تاريخية (جولتا 4 و5)
-├── scripts/          بوابات الجودة + أدوات المشغِّل (db:backup/db:restore/smoke) + لقطات محلية
+├── backend/          Express + TS · Prisma (87 نموذجًا/31 enum — المصدر `schema.prisma`) · العقد المولّد 216 مسارًا/253 عملية · storage/papers/
+├── frontend/         React 18 + Vite · src/styles/ سلسلة الرموز (30 ورقة + 27 للهبوط) · tests/ (vitest)
+├── apps/mobile/      تطبيق Expo/React Native (قفل خاص) — الدليل: docs/mobile.md
+├── docs/             الدليل العربي الحي (architecture/deployment/mobile/testing/design-system/runbook/…) + api/openapi.json المولّد
+├── scripts/          بوابات الجودة (verify.sh) + أدوات المشغِّل (db:backup/db:restore/smoke)
+├── shared/           brand/ + design-tokens.json + testAccounts.ts
 ├── tools/            boot-pg.sh — PostgreSQL مدمج للتطوير
 └── vercel.json      مخطط النشر (Vercel — دوال + ثوابت + cron)
 ```
 
-الخريطة المفصلة «أين أعدّل ماذا»: [`docs/04-repository-map.md`](docs/04-repository-map.md).
+الخريطة المفصلة «أين أعدّل ماذا»: [`AGENTS.md`](AGENTS.md) §1.
 
 ## المساهمة والإبلاغ
 

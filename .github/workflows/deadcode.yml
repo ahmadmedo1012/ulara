@@ -10,6 +10,17 @@ on:
   pull_request:
   workflow_dispatch:
 
+# Least privilege — analysis only; this workflow never needs write scopes
+# (the same posture as ci.yml / size-gate.yml).
+permissions:
+  contents: read
+
+# Same per-ref policy as CI: a rapid push series to one branch cancels
+# the superseded analysis runs instead of burning Actions minutes.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   deadcode-ratchet:
     runs-on: ubuntu-24.04
