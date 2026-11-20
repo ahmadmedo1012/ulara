@@ -106,7 +106,7 @@ jobs:
           assert d["error"]["code"] == "INSTITUTION_CONTEXT_REQUIRED", d
           print("honest 403 confirmed:", d["error"]["message"])
           EOF
-          INST=$(echo "$RESP" | python3 -c 'import json,sys; u=json.load(sys.stdin)["data"]["user"]; m=(u.get("memberships") or []); print(u["institutionId"] or (m[0]["institutionId"] if m else ""))')
+          INST=$(echo "$RESP" | python3 -c 'import json,sys; u=json.load(sys.stdin)["data"]["user"]; m=[x for x in (u.get("memberships") or []) if x.get("isActive", True)]; print(u.get("institutionId") or (m[0]["institutionId"] if m else ""))')
           [ -n "$INST" ] || { echo "no ACTIVE membership — cannot walk the chooser"; exit 1; }
           echo "select-institution: $INST"
           TOK2=$(curl -sf --max-time 30 -X POST -H "Authorization: Bearer $TOK" -H 'Content-Type: application/json' \
