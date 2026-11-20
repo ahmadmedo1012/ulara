@@ -81,14 +81,41 @@ jobs:
             echo "$who@test.ly: token ${TOK:0:16}…"
             [ -n "$TOK" ] || exit 1
           done
-      - name: One app-critical endpoint (student dashboard)
+      - name: One app-critical endpoint — the REAL student journey (r344)
+        # The t14 fail-closed context guard (INSTITUTION_CONTEXT_REQUIRED
+        # on a contextless call) is the DESIGNED behavior since r341 —
+        # the multi-membership accounts log in contextless and the UI
+        # walks the chooser. The 1.0-era smoke expected a bare 200 and
+        # false-alarmed issues #5/#6/#11 on the green production build.
+        # The honest smoke walks the REAL journey: login → pick the
+        # first ACTIVE membership from the login payload (exactly what
+        # the chooser offers) → select-institution → dashboard 200 —
+        # and first asserts the contextless 403 IS the honest shape.
         run: |
-          TOK=$(curl -sf --max-time 60 -X POST "$BASE/auth/login" -H 'Content-Type: application/json' \
-            -d '{"email":"student@test.ly","password":"12345678"}' \
-            | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["accessToken"])')
-          CODE=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 \
+          RESP=$(curl -sf --max-time 60 -X POST "$BASE/auth/login" \
+            -H 'Content-Type: application/json' \
+            -d '{"email":"student@test.ly","password":"12345678"}')
+          TOK=$(echo "$RESP" | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["accessToken"])')
+          [ -n "$TOK" ] || { echo "login failed"; exit 1; }
+          CODE=$(curl -s -o /tmp/ctx.json -w '%{http_code}' --max-time 30 \
             -H "Authorization: Bearer $TOK" "$BASE/me/dashboard")
-          echo "GET /me/dashboard → $CODE"
+          echo "contextless GET /me/dashboard → $CODE (the designed fail-closed shape)"
+          python3 - <<'EOF' || exit 1
+          import json
+          d = json.load(open('/tmp/ctx.json'))
+          assert d["error"]["code"] == "INSTITUTION_CONTEXT_REQUIRED", d
+          print("honest 403 confirmed:", d["error"]["message"])
+          EOF
+          INST=$(echo "$RESP" | python3 -c 'import json,sys; u=json.load(sys.stdin)["data"]["user"]; m=(u.get("memberships") or []); print(u["institutionId"] or (m[0]["institutionId"] if m else ""))')
+          [ -n "$INST" ] || { echo "no ACTIVE membership — cannot walk the chooser"; exit 1; }
+          echo "select-institution: $INST"
+          TOK2=$(curl -sf --max-time 30 -X POST -H "Authorization: Bearer $TOK" -H 'Content-Type: application/json' \
+            "$BASE/auth/select-institution" -d "{\"institutionId\":\"$INST\"}" \
+            | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["accessToken"])')
+          [ -n "$TOK2" ] || { echo "select-institution failed"; exit 1; }
+          CODE=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 \
+            -H "Authorization: Bearer $TOK2" "$BASE/me/dashboard")
+          echo "post-select GET /me/dashboard → $CODE"
           [ "$CODE" = "200" ] || exit 1
       - name: Zero-trace DB scan (every text column + the migrations ledger)
         # The DATABASE half of the zero-trace policy (the repository half

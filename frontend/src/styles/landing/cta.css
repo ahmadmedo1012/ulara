@@ -700,11 +700,73 @@ html[data-theme='dark'] .fo-cta .fo-text-link {
    is void; the recorded transitions stay untouched — the wash snaps,
    the 0.48s chevron slide carries the motion). The :focus-within arm
    rides the same seat — keyboard parity: the base.css 2px solid
-   rgb(199,46,0) ring draws on top of the inverted slab. */
+   rgb(199,46,0) ring draws on top of the inverted slab.
+   r344 A2 AMENDMENT — «the wash snaps» is re-seated: on the
+   .btn--pixel variant the wash RIDES THE DITHER (the dissolve block
+   below); the final pair and every contrast law here are unchanged. */
 .fo-cta .btn.accent:is(:hover, :focus-within) .fo-cta-rbtn,
 .fo-cta .btn.accent.probe-hover .fo-cta-rbtn {
   background: var(--primary);
   color: var(--primary-fg);
+}
+
+/* r344 A2 — the finale's DISSOLVE seat (the recorded T-13 wash, re-
+   seated on the correct layer). Anatomy truth first: the rbtn IS the
+   permanent visible slab (both rest AND hover) — masking it would
+   hide the button entirely (measured on the dev build). So the
+   dissolve rides THREE scoped layers:
+     · rbtn: transparent bg + isolation — its rest orange moves to
+       ::before (z:-1, the recorded --cta-resolve-bg, untouched color),
+     · rbtn::after (z:0): the ink slab (the recorded hover ground,
+       --primary) painting through OUR dithered 20-slice mask
+       (public/brand/pixel-mask.svg) walking 0%→100% in steps(19, end)
+       — the temporal density dissolve, direction-neutral, RTL-safe;
+     · the label + icons children lift to z:1 so the ink layer paints
+       BETWEEN the two slabs and the content.
+   The FINAL pairs are exactly the recorded seats (light: ink+white ·
+   dark: white slab+warm ink — the hover arms above are unchanged and
+   their color legs stay cosmetic). NO color transition is added on
+   any masked layer (paint-only legs — the r339 T-12 latch concern is
+   structurally void). The button's own .btn--pixel ::before rides the
+   same mechanic but stays covered by the rbtn slab — one dissolve to
+   the eye. Reduced motion: the global belt zeroes the duration → the
+   ink pops to the identical recorded final state. */
+.fo-cta .btn.accent.btn--pixel .fo-cta-rbtn {
+  position: relative;
+  isolation: isolate;
+  background: transparent;
+}
+
+.fo-cta .btn.accent.btn--pixel .fo-cta-rbtn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--cta-resolve-bg);
+  z-index: -1;
+}
+
+.fo-cta .btn.accent.btn--pixel .fo-cta-rbtn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--primary);
+  /* the mask grammar rides the shared pattern (patterns.css) — this
+     seat adds only the walk + its own layer seat */
+  transition:
+    -webkit-mask-position var(--t-slow) var(--ease-pixel),
+    mask-position var(--t-slow) var(--ease-pixel);
+  z-index: 0;
+}
+
+.fo-cta .btn.accent.btn--pixel .fo-cta-rlabel,
+.fo-cta .btn.accent.btn--pixel .fo-cta-ricons {
+  z-index: 1;
+}
+
+.fo-cta .btn.accent.btn--pixel:is(:hover, :focus-within) .fo-cta-rbtn::after,
+.fo-cta .btn.accent.btn--pixel.probe-hover .fo-cta-rbtn::after {
+  -webkit-mask-position: 100% 50%;
+  mask-position: 100% 50%;
 }
 
 /* L1-d: the micro-drift belt grows :focus-within arms — the probe's

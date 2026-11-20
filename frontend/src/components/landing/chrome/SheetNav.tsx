@@ -528,7 +528,7 @@ export function SheetNav() {
           </Link>
           {/* the CTA row — the reference's own early seat: delay 0.2,
               BEFORE the link rows (measured), the 51px register row. */}
-          <Link to="/auth/register" className="btn primary fo-mb-cta">
+          <Link to="/auth/register" className="btn primary fo-mb-cta btn--pixel">
             <span className="fo-mb-txt">
               {START_NOW}
               <Icon icon={ArrowLeft} size={14} className="fo-mb-cta-arrow" aria-hidden />

@@ -326,6 +326,38 @@
       transition: none;
     }
   }
+
+  /* ── r344 A2 — .btn--pixel: the pixel-dissolve fill (the signature) ──
+     The ::before slab parks IN the button (transform: none — it never
+     slides) and is revealed by OUR dithered 20-slice mask (the shared
+     grammar lives in the pattern library — patterns.css) walking
+     0%→100% in steps(19, end) — a temporal density dissolve,
+     direction-neutral (RTL-safe), zero layout properties in the
+     transition list. The colour/contrast seats are UNCHANGED (accent
+     still wipes to its AA pair; light #DB3A00 law intact) — only the
+     reveal mechanic differs. Rest = slice 0 (fill fully hidden);
+     hover/focus-visible = slice 19 (the slab seated); unhover reverses
+     through the same dither. Reduced motion: the global belt zeroes
+     the duration → the slab pops to the identical final state the
+     wipe gives every button (no dissolve, no loss). */
+  .btn--pixel::before {
+    transform: none;
+    transition:
+      -webkit-mask-position var(--t-slow) var(--ease-pixel),
+      mask-position var(--t-slow) var(--ease-pixel);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .btn--pixel:hover:not(:disabled):not([data-loading='true'])::before {
+      transform: none;
+      -webkit-mask-position: 100% 50%;
+      mask-position: 100% 50%;
+    }
+  }
+  .btn--pixel:focus-visible:not(:disabled):not([data-loading='true'])::before {
+    transform: none;
+    -webkit-mask-position: 100% 50%;
+    mask-position: 100% 50%;
+  }
   .btn:active { transform: scale(var(--press-scale)); }
   /* r148 (AUDIT-2 H3): pointer-events:auto keeps the not-allowed cursor
      reachable; the hover/focus rules above are :not(:disabled)-gated so
