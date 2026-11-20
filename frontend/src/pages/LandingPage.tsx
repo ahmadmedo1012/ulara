@@ -129,7 +129,8 @@ import { SheetNav } from '../components/landing/chrome/SheetNav';
  * sheet is byte-identical.
  *
  * Composition (the 9 sections, reading RTL — the reference measured @1440×900,
- * total 12355px):
+ * total 12355px; the map band re-seats to the DELIBERATE choreography
+ * duration — see journey.css --jt-scrub):
  *   [1] hero (~887px · 7.2%): the copy band + the drafted elevation
  *       with its inspection instruments + the capabilities ticker —
  *       tightened to ~100vh-frame (was 1807px);
@@ -138,12 +139,13 @@ import { SheetNav } from '../components/landing/chrome/SheetNav';
  *   [3] live (~743px · 6.0%): the four pains of Libyan higher-ed as
  *       numbered cards with draw-in line art (each answered by a live
  *       capability — the full matrix lives on /capabilities);
- *   [4] chapters (~6300px · 51.0%): the pinned «رحلة التعلّم»
+ *   [4] chapters (~5739px · 46.4% @1440): the pinned «رحلة التعلّم»
  *       walkthrough — the learning-floor plan, the opening statement,
  *       the INTRODUCTION card, the four findings stations and the
- *       closing column; the map is HALF the page, the reference's
- *       proportion (R315 K-E: the chapters 05–06 demo rows are gone —
- *       their honest content lives on /capabilities);
+ *       closing column; the track = the sticky frame + --jt-scrub
+ *       (540dvh, derived from the reference's measured 574vh pin
+ *       scrub and this scene's beat count — no arbitrary 6300px
+ *       block);
  *   [5] product (~710px · 5.7%): two real-capture blocks;
  *   [6] why (~698px · 5.6%): the شاهد/تحقّق/اختبر/أتقن stage strip
  *       with the four student-surface captures cross-fading;
@@ -153,10 +155,17 @@ import { SheetNav } from '../components/landing/chrome/SheetNav';
  *       block + the resolve + the colleges registry strip;
  *   [9] footer: the inspection strip (FooterLens) + the colophon.
  *
- * Motion: RevealCssClass block reveals + the imperative scroll chrome
- * (the .scrolled header + the --p progress ribbon) + the scroll-scrubbed
- * instruments (statement words, journey plan, why cross-fade) — all on
- * the shared sheet clock, all collapsed under reduced motion.
+ * Motion: ONE engine (lib/motion/engine.ts — the gsap.ticker clock,
+ * Lenis driven from it, ScrollTrigger synced from Lenis's scroll
+ * events). The chapters scene is ONE scrubbed timeline
+ * (journey/sceneChoreography.ts — walls assemble → furniture →
+ * dimensions/labels → violations + annotation cards, staggered,
+ * reversible) scrubbed by ONE ScrollTrigger over the measured pin
+ * window; the statement words, the why cross-fade and the other
+ * scroll-linked instruments ride useSheetScroll on the same clock.
+ * RevealCssClass block reveals + the imperative scroll chrome (the
+ * .scrolled header + the --p progress ribbon) — all collapsed under
+ * reduced motion.
  */
 
 /* R338 (T-07 · scroll.mjs scrub-curve conformance) — the measured

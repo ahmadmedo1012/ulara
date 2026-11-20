@@ -12,11 +12,25 @@
    Full map + proof: the frozen r335 reference captures: home-map-wrap.*.json */
 
 /* ═══ الفصول — the pinned map band ═══
-   The section height is the TRACK height exactly (the measured
-   section heights: 7560@1920 · 6300@1440 · 5376@1024 — the track
-   IS 700dvh); the band rhythm lives in the neighbouring sections'
-   own padding, and the track's own 10px settle (the measured div[1]
-   offset) opens the frame. */
+   The section height IS the choreography's deliberate duration (the
+   home-scroll-choreography re-seat — no arbitrary 700dvh block):
+
+   · the reference's measured pin scrub @1440×900 = 5164px ≈ 574vh
+     (the sticky frame pins from map-wrap top −242px to −5442px —
+     measured live, choreo record in the PR); the sequence inside the
+     pin occupies essentially the whole scrub;
+   · this scene's beat count is HIGHER than the reference's (two
+     plaque exchanges + six build batches + five findings + three
+     annotation cards + the ≤991 camera era vs the reference's two
+     sentences + one wall flight + one card + five items), so the
+     sequence keeps ~97% of the reference's measured scrub instead of
+     cloning it;
+   · --jt-scrub is that deliberate scrub length: pin span =
+     (100dvh − 1.56rem + scrub) − 100dvh = 540dvh − 1.56rem
+     ≈ 4846px @900 → sequence ≈ 5011px ≈ 97% of the reference's
+     measured 5164px. The ScrollTrigger windows derive from the SAME
+     box (functional start/end), so the sticky release and the scrub
+     end coincide exactly — CSS is the duration's single source. */
 section.chapters {
   padding-block: 0;
   /* the map band is full-bleed at its own measured track gutters (the
@@ -36,7 +50,12 @@ section.chapters {
   --jt-ink: rgb(40 40 40 / 72%); /* color-gate: allow — measured reference map ink, scoped var not a global token mutation (r338 ADDENDUM 9 pattern). The computed value must serialise rgba(40,40,40,0.72); the dark twin below carries the same allowance. */
   color: var(--jt-ink);
   line-height: 18px; /* 1440 measured */
-  block-size: 700dvh;
+  /* the DELIBERATE track: the sticky frame + the choreography's scrub
+     length (see the section.chapters note above — the derivation and
+     the ScrollTrigger contract). --jt-scrub is the single source the
+     start/end functions read. */
+  --jt-scrub: 540dvh; /* the measured deliberate scrub (574vh reference pin − the drift/release margins; see above) */
+  block-size: calc(100dvh - 1.56rem + var(--jt-scrub));
   margin-block: 0;
   margin-inline: 0.78rem; /* spacing-gate: allow — the measured track gutters (6.5@1440 · 9@1920 on the fluid root) */
 
@@ -87,12 +106,11 @@ section.chapters {
 
 
 
-/* the measured desktop section heights — the wrap IS the track
-   (7560@1920 · 6300@1440 · 5376@1024); the stacked ≤991 flow sizes
-   itself against the pinned docH ladder. */
+/* the deliberate desktop track — the wrap IS the track (the frame +
+   the scrub; the derivation lives on the .jt block above). */
 @media (min-width: 992px) {
   section.chapters {
-    block-size: 700dvh;
+    block-size: calc(100dvh - 1.56rem + var(--jt-scrub, 540dvh));
   }
 }
 
