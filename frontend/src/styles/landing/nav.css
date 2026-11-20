@@ -818,10 +818,13 @@ html[data-theme='dark'] .fo-header {
   mask-image: url('/brand/pixel-mask.svg');
   -webkit-mask-size: 2000% 100%;
   mask-size: 2000% 100%;
+  -webkit-mask-mode: alpha;
+  mask-mode: alpha;
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
   -webkit-mask-position: 0% 50%;
   mask-position: 0% 50%;
+  will-change: -webkit-mask-position, mask-position;
   transition:
     -webkit-mask-position var(--t-slow) var(--ease-pixel),
     mask-position var(--t-slow) var(--ease-pixel),

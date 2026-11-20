@@ -42,6 +42,12 @@ describe('r344 A1 — the sprite', () => {
     expect(svg).toContain('scripts/art/pixel-mask.mjs');
     expect(svg).toContain('viewBox="0 0 800 40"');
     expect(svg).toContain('shape-rendering="crispEdges"');
+    // preserveAspectRatio="none" is LOAD-BEARING: without it the 20:1
+    // intrinsic ratio letterboxes inside the 2000%-scaled mask box and
+    // the position-100% window lands on EMPTY padding (measured on the
+    // dev build — the dissolve never fired). The reference sprite
+    // carries the same attribute.
+    expect(svg).toContain('preserveAspectRatio="none"');
   });
 
   it('slice 0 is EMPTY (rest = fill hidden) and the last slice is FULL', () => {
@@ -75,6 +81,8 @@ describe('r344 A2 — the seats', () => {
     expect(block).toContain('-webkit-mask-image');
     expect(block).toContain(sprite);
     expect(block).toContain('mask-size: 2000% 100%');
+    expect(block).toContain('mask-mode: alpha');
+    expect(block).toContain('will-change');
     expect(block).toContain('transform: none');
     expect(block).toMatch(walk);
     // the pointer arm + the keyboard arm both walk to slice 19
@@ -86,20 +94,40 @@ describe('r344 A2 — the seats', () => {
     expect(components).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*\.btn::before,/);
   });
 
-  it('cta.css: the finale wash rides the dither, the dark T-12 arm keeps its color-leg-free structure', () => {
-    expect(cta).toContain('.fo-cta .btn.accent.btn--pixel .fo-cta-rbtn');
-    expect(cta).toMatch(/\.fo-cta \.btn\.accent\.btn--pixel \.fo-cta-rbtn \{[^}]*mask-image/s);
-    expect(cta).toMatch(walk);
+  it('cta.css: the finale rides the THREE-layer dissolve — rest slab kept, ink masked, children lifted', () => {
+    // anatomy truth: the rbtn is the permanent slab — masking it would hide
+    // the button (measured on the dev build). The rbtn goes transparent over
+    // an isolated ::before rest slab; the ink dissolve is the ::after.
+    expect(cta).toContain('.fo-cta .btn.accent.btn--pixel .fo-cta-rbtn {');
+    expect(cta).toMatch(
+      /\.fo-cta \.btn\.accent\.btn--pixel \.fo-cta-rbtn \{[^}]*position: relative;[^}]*isolation: isolate;[^}]*background: transparent;/s,
+    );
+    expect(cta).toMatch(
+      /\.fo-cta \.btn\.accent\.btn--pixel \.fo-cta-rbtn::before \{[^}]*background: var\(--cta-resolve-bg\);[^}]*z-index: -1;/s,
+    );
+    const after = cta.slice(cta.indexOf('.fo-cta .btn.accent.btn--pixel .fo-cta-rbtn::after'));
+    const afterBlock = after.slice(0, after.indexOf('}'));
+    expect(afterBlock).toContain('background: var(--primary)');
+    expect(afterBlock).toContain(sprite);
+    expect(afterBlock).toContain('mask-size: 2000% 100%');
+    expect(afterBlock).toMatch(walk);
     // the recorded T-13 final pair is untouched above the dissolve block
     expect(cta).toMatch(
       /\.fo-cta \.btn\.accent:is\(:hover, :focus-within\) \.fo-cta-rbtn,\s*\n\.fo-cta \.btn\.accent\.probe-hover \.fo-cta-rbtn \{\s*\n  background: var\(--primary\);\s*\n  color: var\(--primary-fg\);/,
     );
-    // dark arm: mask legs + the T-12 opacity leg, NO color leg
-    const dark = cta.slice(cta.indexOf("html[data-theme='dark'] .fo-cta .btn.accent.btn--pixel"));
-    const darkBlock = dark.slice(0, dark.indexOf('}'));
-    expect(darkBlock).toContain('mask-position');
-    expect(darkBlock).toContain('opacity 0.3s');
-    expect(darkBlock).not.toMatch(/(^|\s)color\s+0\.3s/);
+    // the children lift above the ink layer; hover/focus/probe arms walk it
+    expect(cta).toMatch(
+      /\.fo-cta \.btn\.accent\.btn--pixel \.fo-cta-rlabel,\s*\n\.fo-cta \.btn\.accent\.btn--pixel \.fo-cta-ricons \{\s*\n  z-index: 1;/,
+    );
+    expect(cta).toMatch(
+      /\.fo-cta \.btn\.accent\.btn--pixel:is\(:hover, :focus-within\) \.fo-cta-rbtn::after,\s*\n\.fo-cta \.btn\.accent\.btn--pixel\.probe-hover \.fo-cta-rbtn::after \{\s*\n  -webkit-mask-position: 100% 50%;\s*\n  mask-position: 100% 50%;/,
+    );
+    // the masked layer's transition is PAINT-ONLY: no color leg anywhere near
+    // the mask (the r339 T-12 frozen-flip latch concern is structurally void)
+    const lists = [...afterBlock.matchAll(/transition:\s*([^;]*);/g)].map((m) => m[1]);
+    for (const list of lists) {
+      expect(list).not.toMatch(/(^|[\s,])color\s/);
+    }
   });
 
   it('nav.css: the desktop cell base is pointer-ungated, focus parity exists, the #DB3A00 law stands', () => {
