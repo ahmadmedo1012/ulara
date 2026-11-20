@@ -210,7 +210,17 @@ html[data-theme='dark'] .fo-cta .fo-text-link {
   flex: none;
   inline-size: 8.06rem;
   block-size: 1.9rem;
-  margin-block-start: 1.4rem;
+  /* r345 defect fix — the measured clip: the two-line stack (the T-10f
+     masked pair) needs margin + 2×1.9rem inside the measured button box
+     (4.33/4.78/4.77rem across the tiers). The old 1.4rem margin put the
+     second line's glyphs past the button's bottom edge at EVERY desktop
+     tier (live @1440: line2 bottom 837 > button bottom 834 — «الجامعي،»
+     read as a half-clipped row). 0.4rem seats the stack optically
+     centred (31.7px ink in a 40px box → 3.3px top / 5px slack) and
+     clears the clip at every tier. The hover swap geometry (the ±1.9rem
+     mask slide) is untouched — it derives from the line rungs, not the
+     margin. */
+  margin-block-start: 0.4rem;
 }
 
 .fo-cta-rline {
