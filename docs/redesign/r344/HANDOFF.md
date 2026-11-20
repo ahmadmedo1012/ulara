@@ -81,3 +81,43 @@ Verification trail (all measured):
   verifies a domain at resend.com (dashboard-only action with the current
   send-only key).
 - WebKit + DB-integration lanes run in CI only (sandbox limits, unchanged).
+
+## Wave B addendum — the production data repair (the DB half of zero-trace, measured)
+
+The smoke's zero-trace DB scan ran for the first time ever on this round (every
+earlier smoke died at the dashboard step BEFORE reaching it) and exposed that
+the PRODUCTION DATA itself carried the retired identities — the repo was
+scrubbed at 1.0 but the pre-1.0 lineage's demo tenants, mail log and audit rows
+remained in Neon. Repair executed 2026-11-20, everything in one transaction,
+every affected row exported first to the round's evidence (the local
+r344-db-backup JSON, 1.9MB). The retired names are never spelled here — the
+gate's own law; «الأول/الثاني/الثالث» map to the gate's assembled pattern list
+in order.
+
+| Repair | Rows |
+|---|---|
+| the FIRST retired demo tenant renamed to «مؤسسة أُلارا النموذجية» (a clean id + the measured name/nameEn/slug seats) — ON UPDATE CASCADE swept the FK graph (AiConversation · AiInstitutionQuota · AuditLog · Faculty · Membership · StudentProfile) | 1 + 39 |
+| the SECOND retired demo tenant renamed to «مؤسسة أُلارا التعليمية» (its cuid id was already clean) | 1 |
+| the orphan quota FK re-pointed (a column without a DB-level FK — the cascade's blind spot, caught by the re-scan) | 1 |
+| pre-1.0 login audit rows on the retired demo mail domain deleted | 29 |
+| rate-limit keys carrying the retired demo emails deleted | 2 |
+| the legacy mail log (written until the pre-1.0 deployment retired on 11-19; ZERO references in the current repo — schema/src/scripts) deleted | 360 |
+| the `_prisma_migrations` ledger row whose NAME carried the THIRD retired pattern re-pointed to a neutral name (inert bookkeeping; `migrate deploy` knows only 0001/0002, both applied) | 1 |
+| the seed-pilot demo AI conversations carrying the old persona («the assistant of the FIRST retired identity») deleted | 7 convs / 14 msgs |
+
+Post-surgery: the full scan (every text column of every table + the ledger)
+**GREEN**. The dispatched smoke run proved the whole lane:
+**[run 44751459943](https://github.com/ahmadmedo1012/ulara/actions/runs/44751459943)
+success** — health · 12 logins · the honest-403 assert → the chooser →
+dashboard 200 · the zero-trace DB scan · the OpenAPI contract.
+
+**The measured residual (a future lead decision)**: the scan's free-text
+column sweep false-positives on common Arabic nouns — the demo AI's study
+advice legitimately used a common word (the corner of the desk) that collides
+with the THIRD retired pattern. Today resolved by demo-data curation; a
+per-column identity-context refinement is the honest long-term shape if real
+user content ever collides.
+
+**The one CI flake of the round**: r305-shell-ds's scroll-restore
+`waitForFunction` timed out on c370e9b (zero frontend diff from the green
+c1ae1d0 run — infra class), re-run green. Recorded, not pinned against.
