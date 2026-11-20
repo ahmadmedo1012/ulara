@@ -869,7 +869,10 @@
 
 @media (max-width: 991px) {
   .st-splice { padding-inline: 2.4rem; }
-  .st-meta { inset-inline-end: 2.4rem; }
+  /* the tablet band: the stacked grid wraps the title tight under the
+     media cell — the chips collide with the display lines there, so
+     the splice plate carries the sheet identity alone (measured 768) */
+  .st-meta { display: none; }
   .st-draft-grid { inset-inline-start: 2.4rem; inline-size: 24rem; block-size: 24rem; }
   .st-draft-dim { inset-inline: 2.4rem; }
   .st-draft-arcs { inset-inline-end: 1.6rem; }
