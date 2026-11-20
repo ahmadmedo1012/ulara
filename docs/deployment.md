@@ -33,9 +33,27 @@
 | تشغيل داخلية | `INTERNAL_SERVICE_TOKEN` = `CRON_SECRET` (سر واحد بنقلتين: Bearer للـcron وheader للمشغّل) · `ULARA_TEST_ACCOUNTS=1` (مفعّل على الإنتاج: يفعّل تمريرة ensure — §6) · `CORS_ORIGINS` | مغلقًا عند الغياب |
 | تخزين | `STORAGE_DRIVER` (local/postgres/s3) + عند s3: `S3_ENDPOINT/REGION/BUCKET/ACCESS_KEY_ID/SECRET_ACCESS_KEY` | s3 يفشل مغلقًا بدونها |
 | ذكاء | `AI_PROVIDER` (local/openai) + `AI_BASE_URL/API_KEY/MODEL` + `AI_DAILY_LIMIT_DEFAULT` | openai يفشل مغلقًا بدون مفاتيحه |
-| بريد | `MAIL_API_KEY`, `MAIL_FROM` | اختياري |
+| بريد | `MAIL_PROVIDER` (none/resend/brevo) + عند resend/brevo: `MAIL_API_KEY`, `MAIL_FROM` — نصف الإعداد يمنع الإقلاع · `APP_ORIGIN` (روابط التذييل) | اختياري — الصدق: `none` يسجل ويسقط، لا انتحال |
 | تطبيق | `MIN_APP_VERSION` (semver) · `APP_DOWNLOAD_URL` (افتراضي `/app`) · `STT_*` | بوابة الحد الأدنى: أدنى من القيمة ⇒ شاشة «يلزم تحديث التطبيق» |
 | buildId | `VERCEL_GIT_COMMIT_SHA` أو `GIT_SHA` | مشتق منه `buildId` في `/status` (يستقصيه فحص الدخان) |
+
+### 3.1 — حالة البريد الحية (r344، مقاسة لا مزعومة)
+
+النقل يعمل فعليًا على الإنتاج منذ r344: `MAIL_PROVIDER=resend` +
+`MAIL_API_KEY` + `MAIL_FROM=«أُلارا <onboarding@resend.dev>»` +
+`APP_ORIGIN=https://ulara.vercel.app` (all production+preview, encrypted).
+تم قبول رسالة إرسال حية من مفتاح resend المحصور بالإرسال (`id` أُعيد
+من API الرسائل) — أي أن مسار الطاقة للبريد **مشتعل**.
+
+**الحد الصادق المتبقي**: حساب resend بلا نطاق موثّق —
+`onboarding@resend.dev` يوصل إلى بريد المالك فقط
+(ahmadmedo1012@gmail.com)، وأي مستلم آخر = رفض 403 من المزوّد يتكفل به
+طبقة `sendMail` بصدقها المكتوب (200 عام على forgot + warn بالسجل، لا
+تسريب). لتفعيل كل المستلمين: توثيق نطاق في resend.com/domains
+(فعل لوحة تحكم للمالك فقط — لا يمكن للمفتاح المحصور بالإرسال إنشاء
+نطاقات)، ثم قلب `MAIL_FROM` إلى `no-reply@<النطاق>` في Vercel.
+القاعدة قبلها لا تنكسر: نصف إعداد = منع إقلاع، ورفض المزوّد لا يُكذب
+على المستخدم أبدًا.
 
 ## 4. cron والوظائف اليومية
 
