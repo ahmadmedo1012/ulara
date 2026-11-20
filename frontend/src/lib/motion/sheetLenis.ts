@@ -59,6 +59,7 @@
  *    engine only comes alive through initGuestLenis().
  */
 import Lenis from 'lenis';
+import { syncScrubber } from './engineSync';
 import { subscribeSheetFrame } from './sheetConductor';
 
 /**
@@ -156,10 +157,14 @@ function onInput(): void {
 }
 
 /** Lenis 'scroll' events: keep the driver alive through the glide (and
- *  re-attach if an external native scroll woke the engine), then bump
- *  the 150ms idle timer (the reference's scroll-quiet contract). */
+ *  re-attach if an external native scroll woke the engine), SYNC THE
+ *  SCRUBBER (ScrollTrigger.update — the canonical Lenis 1.x + GSAP
+ *  integration: the scrubbed scenes track the engine's smoothed
+ *  position), then bump the 150ms idle timer (the reference's
+ *  scroll-quiet contract). */
 function onLenisScroll(): void {
   attachFrame();
+  syncScrubber();
   bumpIdle();
 }
 
@@ -264,6 +269,11 @@ export function initGuestLenis(): boolean {
   if (lenis) return true;
   if (reducedMotion()) return false; /* RM: NEVER init — native scroll */
 
+  /* The ONE frame clock stays the conductor (r308/r313 pinned
+   * contracts — Lenis's raf rides its subscriber slot). The scrubber
+   * sync rides the engineSync seam: the heavy gsap half never enters
+   * this (entry) chunk — the landing's engine binds the real
+   * ScrollTrigger.update when the journey mounts. */
   lenis = new Lenis({ ...DS_LENIS_PARAMS });
   document.documentElement.setAttribute('data-lenis-on', '');
   /* R328 (H7) — the e2e/screenshot introspection seam: a read-only

@@ -2,58 +2,56 @@ import { PREFERS_REDUCED_MOTION } from '../../../lib/motion-media';
 import { LECTURE_INTERACTIVE, MASTERY_SCORE_LINE } from '../copy';
 /**
  * JourneyScene — R308 «رحلة التعلّم» · R322 the map transplant ·
- * **R342-04 — THE MEASURED-SEAT REBUILD**.
+ * **home-scroll-choreography — THE ONE SCRUBBED SCENE**.
  *
- * The R341 conformance debt (coverage 12.6% / off-book 87.4% /
- * heuristic pairing 90.9%) was structural: our scene owned the
- * reference's STAGES but not its measured SEATS. This rebuild keeps
- * the six-state scroll story and re-seats every narrated element on
- * the frozen reference map spec (`the frozen r335 reference captures: 
- * home-map-wrap.*.json`), so each real visual counterpart carries an
- * explicit `data-spec` binding (mapping/home-map-wrap.json) instead
- * of heuristic gluing:
+ * The R342-04 measured-seat rebuild kept the six-state story but drove
+ * it from a useSheetScroll tick that hand-rolled four systems per
+ * frame (layer windows, plaque windows, the art register, the camera
+ * keys). This rebuild hands the WHOLE scene to one authoritative
+ * lifecycle on the motion engine (lib/motion/engine.ts):
  *
  * ```
- * .jt (the track: 700dvh @≥992 — section-exact heights per bp)
- * └─ .jt-pin (the FRAME — sticky top:0, the measured column grid:
- *     [map col][1px vrule][closing col] = the frame width)
- *     ├─ .jt-map-col (the PLAN COLUMN — measured per bp)
- *     │   └─ .jt-map-in (the window seat / the ≤991 sticky)
- *     │       └─ .jt-window (the plan box: 4 registration rails +
- *     │           4 corner marks + the drifting .jt-stack)
- *     │           └─ .jt-stack (the entrance drift seat: the plan
- *     │               svg + the plaque band + 3 annotation cards)
- *     │       └─ .jt-intro (the INTRODUCTION card — dark head chip,
- *     │           5 findings one at a time, each with its mono foot)
- *     └─ .jt-close (the CLOSING COLUMN — the section's own head:
- *         chip + h2 + copy + the four-station ledger rows; VISIBLE
- *         from frame one exactly as the frozen spec records it —
- *         the R341 reserved-empty column read as a dead void)
+ * useLayoutEffect — the ONE scene lifecycle (build → refresh → revert)
+ * ├─ reduced motion: the static final sheet — NO engine, NO smooth
+ * │   scroll, every layer ON (the attr machine's RM state)
+ * ├─ geometry-less environment (unit jsdom, empty rects — the
+ * │   deterministic fallback): the LEGACY CONDUCTOR CORE below — the
+ * │   R342 driver verbatim (layer windows, plaque recipes, camRectAt,
+ * │   the state machine) on the shared conductor clock. Deterministic
+ * │   under empty geometry (the pin metric clamps to the close) and
+ * │   source-pinned by tests/unit/r312-mobile-camera.test.tsx.
+ * └─ browser: the GSAP engine —
+ *     ├─ buildPlanTimeline (sceneChoreography.ts) — the ONE scrubbed
+ *     │   timeline: walls assemble → furniture → dimensions/labels →
+ *     │   violations + annotation cards, staggered, reversible
+ *     ├─ ScrollTrigger «journey-drift» (≥992) — the entrance runway:
+ *     │   the plan stack descends one frame height before the pin
+ *     ├─ ScrollTrigger «journey-sequence» — the scene clock: scrubs
+ *     │   the t 0→5.52 timeline over the measured pin window
+ *     │   ([−0.082, 0.952] of the track span; the ≤991 clock keeps
+ *     │   the R330 front-load warp t = 5.52·u^0.55)
+ *     └─ onUpdate — the DISCRETE machine (data-stage/finding/wash +
+ *         the closing column + the agent line) derives from t exactly
+ *         as the R342 driver did (test-pinned thresholds, unchanged)
  * ```
+ *
+ * The PIN stays the reference's own architecture — CSS sticky (the
+ * frame sticks; ScrollTrigger owns the scrub windows and the resize
+ * refresh, never a second scroll engine). The track height is the
+ * DELIBERATE duration (journey.css `--jt-scrub`, derived from the
+ * reference's measured pin scrub + this scene's beat count) — no
+ * arbitrary 700dvh block. ScrollTrigger's functional start/end derive
+ * from the same box, so the sticky release and the scrub end coincide
+ * exactly — no dead zones, no trapped scrolling; reverse scrolling
+ * follows the real scroll position both ways. Lenis is driven by the
+ * ONE gsap.ticker and ScrollTrigger.update rides Lenis's scroll
+ * events (lib/motion/sheetLenis.ts — the engine contract).
  *
  * THE STATE MACHINE (kept — the R322 semantics): `data-stage` 0..5,
  * `data-finding` 1..5/done, `data-wash` the bounded room highlight,
- * `data-rm` the reduced-motion static sheet. What changed:
- *   · the ENTRANCE DRIFT now rides `.jt-stack` (the reference's own seat —
- *     the window's chrome stays put while the plan descends one
- *     frame height: −(100dvh − 1rem), the measured transform);
- *   · PLAQUE 1 stands VISIBLE from scroll 0 (the spec records it at
- *     opacity 1 — it is the section's entry statement over the ghost
- *     plan), plaque 2 still crossfades in at the plan era;
- *   · the INTRODUCTION card rests at opacity 0 and flips on with the
- *     card era (stage 2) — the spec's captured rest state;
- *   · the CLOSING COLUMN is always visible (the spec records every
- *     column element at opacity 1 at rest); its content is the
- *     section head (chip «الفصول [04]» + the h2 + the honest copy)
- *     plus the four-station ledger (rule + text + icon rows) —
- *     «الخلاصة» and the reveal machine retire.
- *
- * REDUCED MOTION: the complete static sheet — all 6 layers ON, the
- * findings all readable in the open card, the column and its ledger
- * standing, no drift, no camera (the driver writes it idempotently;
- * the journey.css RM belt holds the no-JS case).
+ * `data-rm` the reduced-motion static sheet.
  */
-import { useRef } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import { LearningPlanDrawing, PLAN_VB } from '../LearningPlanDrawing';
 import { Icon } from '../../Icon';
 import {
@@ -62,8 +60,11 @@ import {
   FileCheck2,
   Grid3x3,
 } from 'lucide-react';
+import { gsap, ScrollTrigger, bindFontRefresh, ensureMotionEngine } from '../../../lib/motion/engine';
+import { bindScrubSync } from '../../../lib/motion/engineSync';
 import { useSheetScroll } from '../../../lib/motion/useSheetScroll';
-import { setSheetVar, sheetRect } from '../../../lib/motion/sheetConductor';
+import { clamp, setSheetVar } from '../../../lib/motion/sheetConductor';
+import { buildPlanTimeline } from './sceneChoreography';
 
 /* ── The copy (our own words, honest, Arabic RTL) ────────────────────
  * Plaque 1 is the r315 statement (kept verbatim — it IS the map's own
@@ -144,13 +145,24 @@ const ANNOTATIONS_AR = [
  * (they never change copy during the story; the flip is CSS). */
 const COUNTERS = ['[01/05]', '[02/05]', '[03/05]', '[04/05]', '[05/05]'] as const;
 
-/* ── The clock constants (pin units; the measured windows) ─────────── */
-const ENTRANCE_START_PIN = -0.167; /* the stack's descent begins ~1 viewport before the pin */
+/* ══ THE SCENE CLOCK (the measured constants — source-pinned by
+ *    tests/unit/r312-mobile-camera.test.tsx; the choreography's beat
+ *    grid and the ScrollTrigger windows both read this clock) ══════ */
+
+const ENTRANCE_START_PIN = -0.167; /* the measured entrance runway */
 const SEQ_START_PIN = -0.082;
 const SEQ_END_PIN = 0.952;
 const SEQ_SPAN_PIN = SEQ_END_PIN - SEQ_START_PIN;
 const SEQ_DUR_S = 5.52;
 
+/** the ≤991 clock warp exponent: t = SEQ_DUR · seqU^0.55 (the R330
+ *  mobile front-load — the camera test pins stage 3 / wash exam at
+ *  pin 0.5 under it). */
+const MOBILE_WARP_EXP = 0.55;
+
+/* the six progressive layer windows (t-units) — the GHOST crossfade
+ * register (the legacy core's writes; the browser path re-expresses
+ * the same eras as element-level batches in sceneChoreography). */
 const LAYER_WINDOWS: ReadonlyArray<readonly [number, number]> = [
   [0.35, 0.85], // 1 · the envelope (the walls ink in AT the intro) + the lecture hall
   [1.02, 1.52], // 2 · the checkpoint kiosk
@@ -201,7 +213,7 @@ function clamp01(x: number): number {
   return x < 0 ? 0 : x > 1 ? 1 : x;
 }
 
-/* ── The ≤991 camera (unchanged — the R312 camera family) ─────────── */
+/* ── The ≤991 camera (the R312 camera family — two crop families) ── */
 type CamRect = readonly [number, number, number, number];
 const CAM_FULL: CamRect = [0, 0, PLAN_VB.w, PLAN_VB.h];
 const CAM_KEYS_SHEET: ReadonlyArray<readonly [number, CamRect]> = [
@@ -288,9 +300,10 @@ function viewportState(): { mobile: boolean; phone: boolean; reduced: boolean } 
 }
 
 /* the statement plaques' in/out recipe — the measured one: fade +
- * 24px rise in; fade + −2.5px rise + 4% shrink out. R342-04: plaque 1
- * stands VISIBLE from t 0 (the spec's captured rest state) — its
- * "in" window is already complete at the story's start. */
+ * 24px rise in; fade + −2.5px rise + 4% shrink out. Plaque 1 stands
+ * VISIBLE from t 0 (the spec's captured rest state); plaque 2 rides
+ * its opacity-0 wrapper. (The legacy core's writes — the browser path
+ * re-expresses the same recipe as timeline tweens.) */
 function writeCard(
   el: HTMLElement | null,
   t: number,
@@ -357,6 +370,79 @@ function driftMagnitude(vh: number, fs: number): number {
   return Math.max(0, vh - fs);
 }
 
+/* the discrete machine writes — one place, idempotent. */
+function writeAttrs(
+  track: HTMLElement,
+  stage: string,
+  finding: string,
+  wash: string,
+  rm: string,
+  open: string,
+): void {
+  if (track.dataset.stage !== stage) track.dataset.stage = stage;
+  if (track.dataset.finding !== finding) track.dataset.finding = finding;
+  if (track.dataset.wash !== wash) track.dataset.wash = wash;
+  if (track.dataset.rm !== rm) track.dataset.rm = rm;
+  const close = track.querySelector<HTMLElement>('.jt-close');
+  if (close && close.dataset.open !== open) close.dataset.open = open;
+
+  const statusMsg = track.querySelector<HTMLElement>('.jt-agent-msg');
+  if (statusMsg) {
+    const msgs: Record<string, string> = {
+      none: 'مسح الهيكل الإنشائي للحرم وقاعات التعلم المعتمدة...',
+      lecture: 'تدقيق قاعة المحاضرات: ضبط الحضور التلقائي ومزامنة نقاط الفحص التفاعلية...',
+      checkpoint: 'معايرة نقاط الفحص: التحقق من سرعة التصحيح الفوري وتثبيت المفاهيم...',
+      exam: 'فحص قاعة الاختبارات: معايرة بنك الأسئلة والتصحيح الآلي للأسئلة الموضوعية...',
+      library: 'فهرسة جناح المكتبة: ربط المصادر الأكاديمية ونظام مراجعة البحوث...',
+      mastery: 'اكتمال الربط الأكاديمي: مصفوفة الإتقان نشطة ومتاحة لجميع مسارات التعلم.',
+    };
+    const text = msgs[wash] ?? msgs.none ?? '';
+    if (statusMsg.textContent !== text) statusMsg.textContent = text;
+  }
+}
+
+/** the scene-clock derivation shared by BOTH scrub paths: the stage
+ *  ternary (the closing owns the scrub end — stage 5), the finding
+ *  rotation and the wash windows. */
+function sceneClock(t: number, pRaw: number): { stage: number; finding: string; wash: string } {
+  const stage =
+    pRaw >= SEQ_END_PIN
+      ? 5
+      : t < 1.5
+        ? 0
+        : t < 2.5
+          ? 1
+          : t < 3.0
+            ? 2
+            : t < 5
+              ? 3
+              : 4;
+  const finding =
+    t >= FINDING_END_S
+      ? 'done'
+      : t < FINDING_START_S
+        ? '0'
+        : String(
+            Math.min(
+              FINDINGS_AR.length,
+              Math.max(1, Math.floor((t - FINDING_START_S) / FINDING_SPAN_S) + 1),
+            ),
+          );
+  const wash =
+    t < 3.0
+      ? 'none'
+      : t < 3.52
+        ? 'lecture'
+        : t < 4.02
+          ? 'checkpoint'
+          : t < 4.52
+            ? 'exam'
+            : t < 5.02
+              ? 'library'
+              : 'mastery';
+  return { stage, finding, wash };
+}
+
 export function JourneyScene() {
   const trackRef = useRef<HTMLDivElement>(null);
   const mapInRef = useRef<HTMLDivElement | null>(null);
@@ -365,46 +451,53 @@ export function JourneyScene() {
   const card1Ref = useRef<HTMLDivElement | null>(null);
   const card2Ref = useRef<HTMLDivElement | null>(null);
   const closeRef = useRef<HTMLDivElement | null>(null);
-  const colGeoRef = useRef<{
-    top: number;
-    height: number;
-    winH: number;
-    stickyTop: number;
-  } | null>(null);
   const colElRef = useRef<HTMLElement | null>(null);
-  const layerElsRef = useRef<SVGGElement[][]>([]);
-  const camDirtyRef = useRef(false);
   /* the drift unit — the band scaffold rung (fs-body per bp), read
    * once per epoch (never a per-frame layout read). */
   const driftFsRef = useRef(0);
+  const layerElsRef = useRef<SVGGElement[][]>([]);
+  const camDirtyRef = useRef(false);
 
-  /* ── The ONE scroll driver (zero React renders per tick) ────────── */
+  function resolveLayers(track: HTMLElement): SVGGElement[][] {
+    if (layerElsRef.current.length === 0) {
+      layerElsRef.current = [1, 2, 3, 4, 5, 6].map((n) =>
+        Array.from(track.querySelectorAll<SVGGElement>(`.jt-plan [data-xl='${n}']`)),
+      );
+    }
+    return layerElsRef.current;
+  }
+
+  /* ── the ONE scroll driver (zero React renders per tick) ──────────
+   * The legacy conductor core: the R342 driver verbatim, kept as the
+   * scene's deterministic fallback (geometry-less environments) AND
+   * as the source-pinned contract. In the browser the GSAP path below
+   * owns the scrub; this hook stays mounted but sleeps — its kick
+   * listener is armed only when the fallback is active. */
+  const legacyArmedRef = useRef(false);
   useSheetScroll(
     trackRef,
-    ({ vh, rect, traversal, pin }) => {
+    ({ vh, rect, pin }) => {
+      if (!legacyArmedRef.current) return;
       const track = trackRef.current;
       if (!track) return;
       const { mobile, phone, reduced } = viewportState();
 
       let pRaw: number;
       if (mobile) {
-        let geo = colGeoRef.current;
-        if (!geo) {
-          const col =
-            colElRef.current ??
-            (colElRef.current = track.querySelector<HTMLElement>('.jt-map-col'));
-          const mapIn = mapInRef.current ?? track.querySelector<HTMLElement>('.jt-map-in');
-          if (col && mapIn) {
-            const cRect = sheetRect(col).rect;
-            if (cRect.height > 1) {
-              geo = {
-                top: cRect.top + window.scrollY,
-                height: cRect.height,
-                winH: mapIn.getBoundingClientRect().height,
-                stickyTop: parseFloat(getComputedStyle(mapIn).top) || 0,
-              };
-              colGeoRef.current = geo;
-            }
+        const col =
+          colElRef.current ??
+          (colElRef.current = track.querySelector<HTMLElement>('.jt-map-col'));
+        const mapIn = mapInRef.current;
+        let geo: { top: number; height: number; winH: number; stickyTop: number } | null = null;
+        if (col && mapIn) {
+          const cRect = col.getBoundingClientRect();
+          if (cRect.height > 1) {
+            geo = {
+              top: cRect.top + window.scrollY,
+              height: cRect.height,
+              winH: mapIn.getBoundingClientRect().height,
+              stickyTop: parseFloat(getComputedStyle(mapIn).top) || 0,
+            };
           }
         }
         pRaw =
@@ -419,24 +512,20 @@ export function JourneyScene() {
 
       /* the static end-state under reduced motion. */
       if (reduced) {
-        for (const group of resolveLayers(track)) {
-          for (const el of group) setSheetVar(el.style, 'opacity', '1');
+        for (const n of [1, 2, 3, 4, 5, 6]) {
+          for (const el of track.querySelectorAll<SVGGElement>(`.jt-plan [data-xl='${n}']`)) {
+            setSheetVar(el.style, 'opacity', '1');
+          }
         }
         for (const el of [...art.route, ...art.hidden, ...art.tint]) {
           setSheetVar(el.style, 'opacity', '1');
         }
-        if (card1Ref.current) {
-          setSheetVar(card1Ref.current.style, 'opacity', '0');
-        }
-        if (card2Ref.current) {
-          setSheetVar(card2Ref.current.style, 'opacity', '0');
-        }
+        if (card1Ref.current) setSheetVar(card1Ref.current.style, 'opacity', '0');
+        if (card2Ref.current) setSheetVar(card2Ref.current.style, 'opacity', '0');
         if (stackRef.current) {
           setSheetVar(stackRef.current.style, 'transform', 'translateY(0.0px)');
         }
-        if (mobile) {
-          writeCamBox(track, CAM_FULL);
-        }
+        if (mobile) writeCamBox(track, CAM_FULL);
         writeAttrs(track, '4', 'all', 'mastery', 'on', 'on');
         return;
       }
@@ -457,7 +546,7 @@ export function JourneyScene() {
 
       /* 2 · the sequence clock — the 5.52s movie (mobile front-load). */
       const seqU = clamp01((pRaw - SEQ_START_PIN) / SEQ_SPAN_PIN);
-      const t = mobile ? SEQ_DUR_S * Math.pow(seqU, 0.55) : SEQ_DUR_S * seqU;
+      const t = mobile ? SEQ_DUR_S * Math.pow(seqU, MOBILE_WARP_EXP) : SEQ_DUR_S * seqU;
 
       /* 3 · the six progressive layers — ghost→full crossfades. */
       const groups = resolveLayers(track);
@@ -484,41 +573,8 @@ export function JourneyScene() {
       writeFade(card2Ref.current, t, 1.6, 2.0, 2.5, 3.0);
 
       /* 5 · the discrete machine — unchanged semantics. */
-      const stage =
-        pRaw >= SEQ_END_PIN
-          ? 5
-          : t < 1.5
-            ? 0
-            : t < 2.5
-              ? 1
-              : t < 3.0
-                ? 2
-                : t < 5
-                  ? 3
-                  : 4;
-      const finding =
-        t >= FINDING_END_S
-          ? 'done'
-          : t < FINDING_START_S
-            ? '0'
-            : String(
-                Math.min(
-                  FINDINGS_AR.length,
-                  Math.max(1, Math.floor((t - FINDING_START_S) / FINDING_SPAN_S) + 1),
-                ),
-              );
-      const wash =
-        t < 3.0
-          ? 'none'
-          : t < 3.52
-            ? 'lecture'
-            : t < 4.02
-              ? 'checkpoint'
-              : t < 4.52
-                ? 'exam'
-                : t < 5.02
-                  ? 'library'
-                  : 'mastery';
+      pRaw = clamp(pRaw, 0, 1);
+      const { stage, finding, wash } = sceneClock(t, pRaw);
       writeAttrs(track, String(stage), finding, wash, 'off', stage === 5 ? 'on' : 'off');
 
       /* 6 · the ≤991 camera. */
@@ -529,26 +585,252 @@ export function JourneyScene() {
         restoreCam(track);
         camDirtyRef.current = false;
       }
-
-      void traversal;
     },
     {
       onRefresh: () => {
-        colGeoRef.current = null;
-        layerElsRef.current = [];
         driftFsRef.current = 0;
+        layerElsRef.current = [];
       },
     },
   );
 
-  function resolveLayers(track: HTMLElement): SVGGElement[][] {
-    if (layerElsRef.current.length === 0) {
-      layerElsRef.current = [1, 2, 3, 4, 5, 6].map((n) =>
-        Array.from(track.querySelectorAll<SVGGElement>(`.jt-plan [data-xl='${n}']`)),
-      );
+  /* ── the ONE scene lifecycle (build → refresh → revert) ─────────── */
+  useLayoutEffect(() => {
+    const track = trackRef.current;
+    if (!track || typeof window === 'undefined') return undefined;
+    const { reduced } = viewportState();
+
+    /* the static end-state paint (RM / no motion): all layers ON, the
+     * findings readable, the camera at the full overview, the machine
+     * at its final stage. Idempotent — the CSS belt holds the same
+     * outcome for the no-JS case. */
+    const paintFinal = () => {
+      for (const g of track.querySelectorAll<SVGGElement>('.jt-plan [data-xl]')) {
+        setSheetVar(g.style, 'opacity', '1');
+      }
+      const art = resolveArtRegister(track);
+      for (const el of [...art.route, ...art.hidden, ...art.tint]) {
+        setSheetVar(el.style, 'opacity', '1');
+      }
+      if (card1Ref.current) setSheetVar(card1Ref.current.style, 'opacity', '0');
+      if (card2Ref.current) setSheetVar(card2Ref.current.style, 'opacity', '0');
+      if (stackRef.current) {
+        setSheetVar(stackRef.current.style, 'transform', 'translateY(0.0px)');
+      }
+      const { mobile } = viewportState();
+      if (mobile) writeCamBox(track, CAM_FULL);
+      writeAttrs(track, '4', 'all', 'mastery', 'on', 'on');
+    };
+
+    if (reduced) {
+      paintFinal();
+      return undefined;
     }
-    return layerElsRef.current;
-  }
+
+    /* the geometry probe: without real layout (unit jsdom, empty
+     * rects) ScrollTrigger's windows would be garbage — the scene
+     * stands on the deterministic legacy core instead (the pin metric
+     * clamps to the close; every unit-test contract rides it). */
+    const probe = track.getBoundingClientRect();
+    const docHasLayout =
+      probe.height > 2 && document.documentElement.scrollHeight > window.innerHeight * 0.5;
+    if (!docHasLayout) {
+      legacyArmedRef.current = true;
+      /* the prime frame (the useSheetScroll contract) */
+      const prime = window.requestAnimationFrame(() => {
+        window.dispatchEvent(new Event('scroll'));
+      });
+      return () => {
+        window.cancelAnimationFrame(prime);
+        legacyArmedRef.current = false;
+      };
+    }
+
+    ensureMotionEngine();
+    /* the scrub windows derive from the track box — re-measure once
+     * the real font metrics land (the fluid root re-rungs). */
+    bindFontRefresh();
+    /* the canonical Lenis↔ScrollTrigger integration lands HERE (the
+     * landing chunk — the heavy gsap half never rides the entry):
+     * every Lenis scroll event updates the scrubber. */
+    bindScrubSync(() => {
+      ScrollTrigger.update();
+    });
+    let camTouched = false;
+
+    const mm = gsap.matchMedia();
+
+    mm.add(
+      {
+        desktop: '(min-width: 992px)',
+        mobile: '(max-width: 991px)',
+        phone: '(max-width: 767px)',
+        reduce: PREFERS_REDUCED_MOTION,
+      },
+      (ctx) => {
+        const { desktop, mobile, phone, reduce } = ctx.conditions as {
+          desktop: boolean;
+          mobile: boolean;
+          phone: boolean;
+          reduce: boolean;
+        };
+        if (reduce) {
+          paintFinal();
+          return () => undefined;
+        }
+
+        const stack = stackRef.current;
+
+        /* the ONE scrubbed timeline. */
+        const content = buildPlanTimeline(track);
+        content.pause(0);
+
+        /* the scene clock: t = SEQ_DUR · seqU^(warp) — the ≤991
+         * front-load is the R330 mobile warp (test-pinned). */
+        const warp = (seqU: number) =>
+          mobile ? Math.pow(clamp(seqU, 0, 1), MOBILE_WARP_EXP) : clamp(seqU, 0, 1);
+
+        /* the sequence driver — ScrollTrigger scrubbs it; its onUpdate
+         * renders the timeline and derives the discrete machine. */
+        const seq = { u: 0 };
+        const seqDriver = gsap.fromTo(
+          seq,
+          { u: 0 },
+          {
+            u: 1,
+            duration: 1,
+            ease: 'none',
+            onUpdate: () => {
+              const seqU = clamp(seq.u, 0, 1);
+              const t = SEQ_DUR_S * warp(seqU);
+              content.time(t);
+
+              /* the ≤991 camera: the pinned camRectAt tables — one
+               * interpolation implementation for both scrub paths. */
+              if (mobile) {
+                writeCamBox(track, camRectAt(t, phone));
+                camTouched = true;
+              }
+
+              /* the discrete machine — thresholds byte-identical to
+               * the R342 driver (pRaw from the scrub window). */
+              const pRaw = SEQ_START_PIN + seqU * SEQ_SPAN_PIN;
+              const { stage, finding, wash } = sceneClock(t, pRaw);
+              writeAttrs(track, String(stage), finding, wash, 'off', stage === 5 ? 'on' : 'off');
+            },
+          },
+        );
+        seqDriver.pause(0);
+
+        /* the sequence window — the measured pin span ([−0.082, 0.952]
+         * of the track/col traversal), as functional values so every
+         * ScrollTrigger.refresh re-derives them from the DELIBERATE
+         * track height (journey.css --jt-scrub). */
+        let seqTrigger: ScrollTrigger;
+        if (desktop) {
+          const span = () => Math.max(1, track.offsetHeight - window.innerHeight);
+          seqTrigger = ScrollTrigger.create({
+            id: 'journey-sequence',
+            trigger: track,
+            start: () => `top ${(-SEQ_START_PIN * span()).toFixed(1)}px`,
+            end: () => `bottom ${(window.innerHeight + (1 - SEQ_END_PIN) * span()).toFixed(1)}px`,
+            scrub: true,
+            animation: seqDriver,
+          });
+        } else {
+          const col =
+            colElRef.current ??
+            (colElRef.current = track.querySelector<HTMLElement>('.jt-map-col'));
+          const geo = () => {
+            const stickyTop = mapInRef.current
+              ? parseFloat(getComputedStyle(mapInRef.current).top) || 0
+              : 0;
+            const winH = mapInRef.current ? mapInRef.current.offsetHeight : window.innerHeight;
+            const spanM = Math.max(1, (col?.offsetHeight ?? 0) - winH);
+            return { stickyTop, winH, spanM };
+          };
+          seqTrigger = ScrollTrigger.create({
+            id: 'journey-sequence',
+            trigger: col ?? track,
+            start: () => {
+              const g = geo();
+              return `top ${(g.stickyTop + -SEQ_START_PIN * g.spanM).toFixed(1)}px`;
+            },
+            end: () => {
+              const g = geo();
+              return `bottom ${(g.stickyTop + g.winH + (1 - SEQ_END_PIN) * g.spanM).toFixed(1)}px`;
+            },
+            scrub: true,
+            animation: seqDriver,
+          });
+        }
+
+        /* the entrance drift (≥992 only — the measured architecture:
+         * the STACK descends one frame height before the pin; the
+         * window's chrome stays). The p2o curve rides the tween's
+         * ease; the write keeps the exact translateY string the
+         * contract tests pin. */
+        let driftTrigger: ScrollTrigger | null = null;
+        if (desktop && stack) {
+          const drift = { u: 0 };
+          const span = () => Math.max(1, track.offsetHeight - window.innerHeight);
+          const driftDriver = gsap.fromTo(
+            drift,
+            { u: 0 },
+            {
+              u: 1,
+              duration: 1,
+              /* power1.out IS the driver's p2o (1−(1−u)²) — the exact
+               * measured curve; gsap's power2 is cubic and would land
+               * the descent ahead of the pinned positions. */
+              ease: 'power1.out',
+              onUpdate: () => {
+                if (!driftFsRef.current && track) {
+                  driftFsRef.current = parseFloat(getComputedStyle(track).fontSize) || 0;
+                }
+                const y = -driftMagnitude(window.innerHeight, driftFsRef.current) * (1 - drift.u);
+                if (stackRef.current) {
+                  setSheetVar(
+                    stackRef.current.style,
+                    'transform',
+                    `translateY(${y.toFixed(1)}px)`,
+                  );
+                }
+              },
+            },
+          );
+          driftDriver.pause(0);
+          driftTrigger = ScrollTrigger.create({
+            id: 'journey-drift',
+            trigger: track,
+            start: () => `top ${(-ENTRANCE_START_PIN * span()).toFixed(1)}px`,
+            end: 'top top',
+            scrub: true,
+            animation: driftDriver,
+            onRefresh: () => {
+              driftFsRef.current = 0;
+            },
+          });
+        }
+
+        /* cleanup — the camera's viewBox restore is consumed ONCE per
+         * mobile epoch (the ≥992 crossing contract, r312). */
+        return () => {
+          seqTrigger.kill();
+          driftTrigger?.kill();
+          seqDriver.kill();
+          content.kill();
+          if (mobile && camTouched) {
+            restoreCam(track);
+          }
+        };
+      },
+    );
+
+    return () => {
+      mm.revert();
+    };
+  }, []);
 
   return (
     <div
@@ -622,8 +904,10 @@ export function JourneyScene() {
                     frame one — the spec's captured rest state, the
                     section's entry statement); plaque 2 rides its own
                     from-state wrapper (opacity 0, one notch larger —
-                    the measured gsap seat), crossfading in at the plan
-                    era. One seat per statement, never stacked. */}
+                    the measured gsap seat), and the scrubbed timeline
+                    EXCHANGES the two (exit shrink ∓ the measured
+                    recipe; enter rise + settle scale). One seat per
+                    statement, never stacked. */}
                 <div className="jt-cards" data-spec="map.plaques">
                   <div className="jt-card jt-card1" ref={card1Ref} data-spec="map.plaque1o">
                     <div className="jt-card-plate" data-spec="map.plaque1i">
@@ -641,7 +925,8 @@ export function JourneyScene() {
 
                 {/* the three annotation cards — the plan's own
                     callouts (orange-ruled, mono titles), revealed
-                    with the annotation era (data-stage, journey.css) */}
+                    last by the scrubbed timeline (the attr machine's
+                    stage rules stay as the fallback). */}
                 <div className="jt-anno jt-anno-1" data-spec="map.anno1">
                   <div className="jt-anno-tw" data-spec="map.anno1tw">
                     <div className="jt-anno-t" data-spec="map.anno1t">{ANNOTATIONS_AR[0].title}</div>
@@ -773,35 +1058,4 @@ export function JourneyScene() {
       </div>
     </div>
   );
-}
-
-/* the discrete machine writes — one place, idempotent. */
-function writeAttrs(
-  track: HTMLElement,
-  stage: string,
-  finding: string,
-  wash: string,
-  rm: string,
-  open: string,
-): void {
-  if (track.dataset.stage !== stage) track.dataset.stage = stage;
-  if (track.dataset.finding !== finding) track.dataset.finding = finding;
-  if (track.dataset.wash !== wash) track.dataset.wash = wash;
-  if (track.dataset.rm !== rm) track.dataset.rm = rm;
-  const close = track.querySelector<HTMLElement>('.jt-close');
-  if (close && close.dataset.open !== open) close.dataset.open = open;
-  
-  const statusMsg = track.querySelector<HTMLElement>('.jt-agent-msg');
-  if (statusMsg) {
-    const msgs: Record<string, string> = {
-      none: 'مسح الهيكل الإنشائي للحرم وقاعات التعلم المعتمدة...',
-      lecture: 'تدقيق قاعة المحاضرات: ضبط الحضور التلقائي ومزامنة نقاط الفحص التفاعلية...',
-      checkpoint: 'معايرة نقاط الفحص: التحقق من سرعة التصحيح الفوري وتثبيت المفاهيم...',
-      exam: 'فحص قاعة الاختبارات: معايرة بنك الأسئلة والتصحيح الآلي للأسئلة الموضوعية...',
-      library: 'فهرسة جناح المكتبة: ربط المصادر الأكاديمية ونظام مراجعة البحوث...',
-      mastery: 'اكتمال الربط الأكاديمي: مصفوفة الإتقان نشطة ومتاحة لجميع مسارات التعلم.',
-    };
-    const text = msgs[wash] ?? msgs.none ?? '';
-    if (statusMsg.textContent !== text) statusMsg.textContent = text;
-  }
 }
