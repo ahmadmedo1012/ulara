@@ -1,19 +1,20 @@
-# ULARA Motion Engine — the contract (home-scroll-choreography)
+# ULARA Motion Engine — the contract (R342-final)
 
 The guest sheet's motion runs on ONE system. Other agents never
 implement a scroll engine, a ticker, or a pin — they consume the
-surfaces below. Nothing here requires GSAP knowledge.
+surfaces below. The stack carries no GSAP (the one scene that briefly
+shipped it — the journey scrub — runs on the house engine below;
+measured: −45.2 KB gz, the 770 KB bundle ceiling restored).
 
 ## The one clock
 
 `lib/motion/sheetConductor.ts` («الناظم») is the single rAF loop for
 the whole landing. It sleeps when idle (zero awake frames — the r313
 contract) and batches geometry reads per frame. The guest smooth
-scroll (`lib/motion/sheetLenis.ts`, Lenis 1.1.5) rides the SAME clock;
-the GSAP engine (`lib/motion/engine.ts`, gsap 3.15.1 + ScrollTrigger)
-is registered once at engine init and its scrubber is synced from
-Lenis's own scroll events (`ScrollTrigger.update`). There are no
-competing rAF loops and no second smooth-scroll implementation.
+scroll (`lib/motion/sheetLenis.ts`, Lenis 1.1.5) rides the SAME clock
+(on the conductor's subscriber slot, never a ticker of its own).
+There are no competing rAF loops and no second smooth-scroll
+implementation.
 
 ## For other agents — the three sanctioned surfaces
 
@@ -38,9 +39,12 @@ add new hiding classes to stylesheets — content ships visible.
 ### 3. The pinned scene: the journey (owned — do not re-drive it)
 
 `components/landing/journey/JourneyScene.tsx` + `journey/sceneChoreography.ts`
-run the chapters walkthrough on ONE scrubbed GSAP timeline, scrubbed
-by ONE ScrollTrigger (`journey-sequence`; the entrance runway is
-`journey-drift`) over the CSS-sticky pin. The scene clock:
+run the chapters walkthrough on ONE scrubbed timeline
+(`lib/motion/scrubTimeline.ts` — the house seekable keyframe engine:
+set/fromTo/keyframes/stagger/eases, reversible, immediateRender ghost
+contract), seeked by the same useSheetScroll frame that measures the
+pin metric (desktop: the track span; ≤991: the sticky column's own
+span) over the CSS-sticky pin. The scene clock:
 `t = 5.52 · seqU^(1|0.55)`; the discrete machine derives
 `data-stage` (0..5), `data-finding` (0..5/done), `data-wash`
 (none/lecture/checkpoint/exam/library/mastery) from it.
@@ -62,22 +66,22 @@ by ONE ScrollTrigger (`journey-sequence`; the entrance runway is
 ## Reduced motion (non-negotiable)
 
 Under `prefers-reduced-motion: reduce`: no Lenis (`initGuestLenis`
-returns false — native scroll), no ScrollTrigger, no timeline — the
-journey paints its final sheet (`data-rm='on'`), reveals bail, the
-progress rule never mounts. Motion code must treat `0ms` durations as
-"play instant" (the tokens contract).
+returns false — native scroll), no timeline — the journey paints its
+final sheet (`data-rm='on'`), reveals bail, the progress rule never
+mounts. Motion code must treat `0ms` durations as "play instant"
+(the tokens contract).
 
 ## The deliberate duration
 
 The map band's track height = sticky frame + `--jt-scrub` (journey.css,
 540dvh) — derived from the reference's measured 574vh pin scrub and
-this scene's beat count. The ScrollTrigger windows re-derive from the
-same box on every refresh; the sticky release and the scrub end
-coincide by construction. **Do not hardcode track heights** — the CSS
-var is the duration's single source.
+this scene's beat count. The driver's refresh epochs (settle/prime/
+resize/fonts) re-derive the pin metric from the same box; the sticky
+release and the scrub end coincide by construction. **Do not
+hardcode track heights** — the CSS var is the duration's single
+source.
 
 ## Engine seam (introspection only)
 
-`window.__ulaMotionEngine` — read-only versions + the live
-ScrollTrigger list (`triggers()`). `window.__ulaLenis` — the e2e
-scroll-seating handle (r328 H7). Neither is a UI dependency.
+`window.__ulaLenis` — the e2e scroll-seating handle (r328 H7). Never a
+UI dependency.

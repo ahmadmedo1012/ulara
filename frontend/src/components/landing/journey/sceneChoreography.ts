@@ -1,13 +1,18 @@
 /**
  * sceneChoreography — the journey's ONE scrubbed timeline (the
- * home-scroll-choreography round).
+ * home-scroll-choreography round → R342-final: the house scrub engine).
  *
  * The R342-04 scene drove its choreography from fragmented per-element
  * opacity writes inside a useSheetScroll tick (layer windows, plaque
  * windows, art register, camera keys — four hand-rolled systems on
- * one driver). This module rebuilds the WHOLE floor-plan choreography
- * as ONE GSAP timeline in scrub units (t 0→5.52), scrubbed by ONE
- * ScrollTrigger (JourneyScene wires it), reversible by construction:
+ * one driver). The home-scroll-choreography round rebuilt the WHOLE
+ * floor-plan choreography as ONE timeline in scrub units (t 0→5.52),
+ * scrubbed by ONE window over the CSS-sticky pin. R342-final swaps the
+ * gsap engine for the house scrubTimeline (lib/motion/scrubTimeline.ts
+ * — the same set/fromTo/keyframes/stagger/ease semantics on ~200
+ * lines instead of a 45.2 KB gz tweening engine; JourneyScene wires
+ * it to the shared conductor through useSheetScroll), reversible by
+ * construction:
  *
  *   0.00  the statement plaque 1 stands over the ghost plan (rest)
  *   0.35  THE WALLS ASSEMBLE — the wall masses solidify out of the
@@ -53,7 +58,7 @@
  *    base states — fill-opacity 0 / opacity 0 — are invisible in the
  *    ghost, so excluding them cannot pop).
  */
-import { gsap } from '../../../lib/motion/engine';
+import { createScrubTimeline, type ScrubTimeline, type ScrubToVars } from '../../../lib/motion/scrubTimeline';
 
 /* ── the choreography beats (t-units of the scene clock — JourneyScene
  *    owns the clock constants (SEQ_DUR_S 5.52, the pin windows and the
@@ -91,11 +96,11 @@ function all<T extends Element>(scope: HTMLElement, sel: string): T[] {
  *  while lifting a breath and landing (starts AT rest — no boundary
  *  jump; `immediateRender: false` keeps the pre-beat state the CSS
  *  ghost). */
-function inkSettleVars(lift: number, ink: number): gsap.TweenVars {
+function inkSettleVars(lift: number, ink: number): ScrubToVars {
   return {
     keyframes: [
-      { opacity: ink, y: lift, duration: 0.16, ease: 'power2.out' },
-      { opacity: 1, y: 0, duration: 0.22, ease: 'power2.in' },
+      { vars: { opacity: ink, y: lift }, duration: 0.16, ease: 'power2.out' },
+      { vars: { opacity: 1, y: 0 }, duration: 0.22, ease: 'power2.in' },
     ],
     immediateRender: false,
   };
@@ -106,8 +111,8 @@ function inkSettleVars(lift: number, ink: number): gsap.TweenVars {
  *  timeline: the viewBox writes stay on the test-pinned camRectAt
  *  tables (JourneyScene) — one interpolation implementation for both
  *  scrub paths. */
-export function buildPlanTimeline(scope: HTMLElement): gsap.core.Timeline {
-  const tl = gsap.timeline({ paused: true, defaults: { ease: 'power2.out' } });
+export function buildPlanTimeline(scope: HTMLElement): ScrubTimeline {
+  const tl = createScrubTimeline();
 
   /* ── the batch inventory (fresh queries per context build) ─────── */
 
@@ -235,8 +240,11 @@ export function buildPlanTimeline(scope: HTMLElement): gsap.core.Timeline {
   const card2w = scope.querySelector<HTMLElement>('.jt-card2w');
   const plate2 = scope.querySelector<HTMLElement>('.jt-card2 .jt-card-plate');
   if (card1) {
-    tl.to(
+    /* plaque 1 STANDS from rest (the spec's captured state) — the
+     * from-seat is explicit (the house timeline has no implicit to) */
+    tl.fromTo(
       card1,
+      { autoAlpha: 1, y: 0, scale: 1 },
       { autoAlpha: 0, y: -2.5, scale: 0.96, duration: 0.4, ease: 'power2.in', immediateRender: false },
       1.0,
     );
@@ -248,7 +256,12 @@ export function buildPlanTimeline(scope: HTMLElement): gsap.core.Timeline {
       { autoAlpha: 1, duration: 0.4, ease: 'power2.out', immediateRender: false },
       1.6,
     );
-    tl.to(card2w, { autoAlpha: 0, duration: 0.5, ease: 'power2.in', immediateRender: false }, 2.5);
+    tl.fromTo(
+      card2w,
+      { autoAlpha: 1 },
+      { autoAlpha: 0, duration: 0.5, ease: 'power2.in', immediateRender: false },
+      2.5,
+    );
   }
   if (plate2) {
     tl.fromTo(
@@ -257,8 +270,9 @@ export function buildPlanTimeline(scope: HTMLElement): gsap.core.Timeline {
       { y: 0, scale: 1, duration: 0.4, ease: 'power2.out', immediateRender: false },
       1.6,
     );
-    tl.to(
+    tl.fromTo(
       plate2,
+      { y: 0, scale: 1 },
       { y: -2.5, scale: 0.96, duration: 0.5, ease: 'power2.in', immediateRender: false },
       2.5,
     );

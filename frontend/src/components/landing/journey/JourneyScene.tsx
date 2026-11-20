@@ -2,52 +2,54 @@ import { PREFERS_REDUCED_MOTION } from '../../../lib/motion-media';
 import { LECTURE_INTERACTIVE, MASTERY_SCORE_LINE } from '../copy';
 /**
  * JourneyScene — R308 «رحلة التعلّم» · R322 the map transplant ·
- * **home-scroll-choreography — THE ONE SCRUBBED SCENE**.
+ * **R342-final — THE ONE SCRUBBED SCENE on the house engine**.
  *
  * The R342-04 measured-seat rebuild kept the six-state story but drove
  * it from a useSheetScroll tick that hand-rolled four systems per
  * frame (layer windows, plaque windows, the art register, the camera
- * keys). This rebuild hands the WHOLE scene to one authoritative
- * lifecycle on the motion engine (lib/motion/engine.ts):
+ * keys). The home-scroll-choreography round rebuilt the element-level
+ * choreography as ONE timeline but shipped GSAP + ScrollTrigger for it
+ * (45.2 KB gz — the bundle gate went red). R342-final keeps that
+ * timeline (journey/sceneChoreography.ts, now on the house
+ * scrubTimeline engine) and drives the WHOLE scene from the ONE
+ * shared conductor clock — no second frame system, no parked ticker:
  *
  * ```
- * useLayoutEffect — the ONE scene lifecycle (build → refresh → revert)
+ * useLayoutEffect — the ONE scene lifecycle (build → prime → revert)
  * ├─ reduced motion: the static final sheet — NO engine, NO smooth
  * │   scroll, every layer ON (the attr machine's RM state)
  * ├─ geometry-less environment (unit jsdom, empty rects — the
- * │   deterministic fallback): the LEGACY CONDUCTOR CORE below — the
+ * │   deterministic fallback): the LEGACY CONDUCTOR CORE — the
  * │   R342 driver verbatim (layer windows, plaque recipes, camRectAt,
- * │   the state machine) on the shared conductor clock. Deterministic
- * │   under empty geometry (the pin metric clamps to the close) and
- * │   source-pinned by tests/unit/r312-mobile-camera.test.tsx.
- * └─ browser: the GSAP engine —
+ * │   the state machine) inside the same useSheetScroll frame.
+ * │   Deterministic under empty geometry (the pin metric clamps to
+ * │   the close) and source-pinned by tests/unit/r312-mobile-camera.
+ * └─ browser: the house scrub —
  *     ├─ buildPlanTimeline (sceneChoreography.ts) — the ONE scrubbed
  *     │   timeline: walls assemble → furniture → dimensions/labels →
  *     │   violations + annotation cards, staggered, reversible
- *     ├─ ScrollTrigger «journey-drift» (≥992) — the entrance runway:
- *     │   the plan stack descends one frame height before the pin
- *     ├─ ScrollTrigger «journey-sequence» — the scene clock: scrubs
- *     │   the t 0→5.52 timeline over the measured pin window
- *     │   ([−0.082, 0.952] of the track span; the ≤991 clock keeps
- *     │   the R330 front-load warp t = 5.52·u^0.55)
- *     └─ onUpdate — the DISCRETE machine (data-stage/finding/wash +
- *         the closing column + the agent line) derives from t exactly
- *         as the R342 driver did (test-pinned thresholds, unchanged)
+ *     ├─ the driver frame (useSheetScroll — the shared conductor):
+ *     │   the pin metric (desktop: the track span; ≤991: the sticky
+ *     │   column's own span) → t = 5.52·u^(1|0.55) → timeline.seek(t)
+ *     ├─ the entrance runway (≥992): the stack descends one frame
+ *     │   height (power2.out, the measured drift)
+ *     └─ the DISCRETE machine (data-stage/finding/wash + the closing
+ *         column + the agent line) derives from t exactly as the
+ *         R342 driver did (test-pinned thresholds, unchanged)
  * ```
  *
  * The PIN stays the reference's own architecture — CSS sticky (the
- * frame sticks; ScrollTrigger owns the scrub windows and the resize
- * refresh, never a second scroll engine). The track height is the
- * DELIBERATE duration (journey.css `--jt-scrub`, derived from the
- * reference's measured pin scrub + this scene's beat count) — no
- * arbitrary 700dvh block. ScrollTrigger's functional start/end derive
- * from the same box, so the sticky release and the scrub end coincide
- * exactly — no dead zones, no trapped scrolling; reverse scrolling
- * follows the real scroll position both ways. The frame clock is the
- * ONE shared conductor: sheetLenis drives Lenis on the conductor's
- * rAF (never gsap's ticker — engine.ts parks it) and every Lenis
- * scroll event syncs the scrubber (ScrollTrigger.update via
- * engineSync — the engine contract, lib/motion/sheetLenis.ts).
+ * frame sticks; the scrub windows re-derive from the same measured
+ * boxes on every refresh epoch — resize, fonts, settle — via
+ * useSheetScroll's onRefresh). The track height is the DELIBERATE
+ * duration (journey.css `--jt-scrub`, derived from the reference's
+ * measured pin scrub + this scene's beat count) — no arbitrary
+ * 700dvh block. The sticky release and the scrub end coincide by
+ * construction — no dead zones, no trapped scrolling; reverse
+ * scrolling follows the real scroll position both ways. The frame
+ * clock is the ONE shared conductor: sheetLenis drives Lenis on the
+ * conductor's rAF and the scrub rides the driver's own scroll-kicked
+ * frames (no ticker beside the conductor, no second scroll engine).
  *
  * THE STATE MACHINE (kept — the R322 semantics): `data-stage` 0..5,
  * `data-finding` 1..5/done, `data-wash` the bounded room highlight,
@@ -62,11 +64,10 @@ import {
   FileCheck2,
   Grid3x3,
 } from 'lucide-react';
-import { gsap, ScrollTrigger, bindFontRefresh, ensureMotionEngine } from '../../../lib/motion/engine';
-import { bindScrubSync } from '../../../lib/motion/engineSync';
 import { useSheetScroll } from '../../../lib/motion/useSheetScroll';
 import { clamp, setSheetVar } from '../../../lib/motion/sheetConductor';
 import { buildPlanTimeline } from './sceneChoreography';
+import type { ScrubTimeline } from '../../../lib/motion/scrubTimeline';
 
 /* ── The copy (our own words, honest, Arabic RTL) ────────────────────
  * Plaque 1 is the r315 statement (kept verbatim — it IS the map's own
@@ -459,6 +460,15 @@ export function JourneyScene() {
   const driftFsRef = useRef(0);
   const layerElsRef = useRef<SVGGElement[][]>([]);
   const camDirtyRef = useRef(false);
+  /* the ≤991 sticky-column geometry cache — re-measured only on the
+   * refresh epochs (settle/prime/resize); steady frames derive from
+   * scrollY (free). */
+  const colGeoRef = useRef<{ top: number; height: number; winH: number; stickyTop: number } | null>(null);
+  /* the scrub mode: 'legacy' (geometry-less fallback — the R342
+   * driver's writes, source-pinned by the unit belt) | 'timeline'
+   * (the browser scrub — the house timeline). */
+  const scrubModeRef = useRef<'legacy' | 'timeline'>('legacy');
+  const timelineRef = useRef<ScrubTimeline | null>(null);
 
   function resolveLayers(track: HTMLElement): SVGGElement[][] {
     if (layerElsRef.current.length === 0) {
@@ -470,36 +480,38 @@ export function JourneyScene() {
   }
 
   /* ── the ONE scroll driver (zero React renders per tick) ──────────
-   * The legacy conductor core: the R342 driver verbatim, kept as the
-   * scene's deterministic fallback (geometry-less environments) AND
-   * as the source-pinned contract. In the browser the GSAP path below
-   * owns the scrub; this hook stays mounted but sleeps — its kick
-   * listener is armed only when the fallback is active. */
-  const legacyArmedRef = useRef(false);
+   * BOTH scrub paths ride this single useSheetScroll frame on the
+   * shared conductor clock: the legacy core (geometry-less fallback,
+   * source-pinned by the unit belt) and the house timeline scrub
+   * (the browser path — the lifecycle below arms it once real layout
+   * exists). The pin metric, the drift, the discrete machine and the
+   * camera are shared verbatim; only the plan-render step differs. */
   useSheetScroll(
     trackRef,
     ({ vh, rect, pin }) => {
-      if (!legacyArmedRef.current) return;
       const track = trackRef.current;
       if (!track) return;
       const { mobile, phone, reduced } = viewportState();
 
       let pRaw: number;
       if (mobile) {
-        const col =
-          colElRef.current ??
-          (colElRef.current = track.querySelector<HTMLElement>('.jt-map-col'));
-        const mapIn = mapInRef.current;
-        let geo: { top: number; height: number; winH: number; stickyTop: number } | null = null;
-        if (col && mapIn) {
-          const cRect = col.getBoundingClientRect();
-          if (cRect.height > 1) {
-            geo = {
-              top: cRect.top + window.scrollY,
-              height: cRect.height,
-              winH: mapIn.getBoundingClientRect().height,
-              stickyTop: parseFloat(getComputedStyle(mapIn).top) || 0,
-            };
+        let geo = colGeoRef.current;
+        if (!geo) {
+          const col =
+            colElRef.current ??
+            (colElRef.current = track.querySelector<HTMLElement>('.jt-map-col'));
+          const mapIn = mapInRef.current ?? track.querySelector<HTMLElement>('.jt-map-in');
+          if (col && mapIn) {
+            const cRect = col.getBoundingClientRect();
+            if (cRect.height > 1) {
+              geo = {
+                top: cRect.top + window.scrollY,
+                height: cRect.height,
+                winH: mapIn.getBoundingClientRect().height,
+                stickyTop: parseFloat(getComputedStyle(mapIn).top) || 0,
+              };
+              colGeoRef.current = geo;
+            }
           }
         }
         pRaw =
@@ -510,10 +522,9 @@ export function JourneyScene() {
         pRaw = rect.height > vh + 1 ? -rect.top / (rect.height - vh) : pin;
       }
 
-      const art = resolveArtRegister(track);
-
       /* the static end-state under reduced motion. */
       if (reduced) {
+        const art = resolveArtRegister(track);
         for (const n of [1, 2, 3, 4, 5, 6]) {
           for (const el of track.querySelectorAll<SVGGElement>(`.jt-plan [data-xl='${n}']`)) {
             setSheetVar(el.style, 'opacity', '1');
@@ -550,29 +561,37 @@ export function JourneyScene() {
       const seqU = clamp01((pRaw - SEQ_START_PIN) / SEQ_SPAN_PIN);
       const t = mobile ? SEQ_DUR_S * Math.pow(seqU, MOBILE_WARP_EXP) : SEQ_DUR_S * seqU;
 
-      /* 3 · the six progressive layers — ghost→full crossfades. */
-      const groups = resolveLayers(track);
-      for (let i = 0; i < LAYER_WINDOWS.length; i += 1) {
-        const [a, b] = LAYER_WINDOWS[i]!;
-        const o = XL_GHOST + (1 - XL_GHOST) * p2o((t - a) / (b - a));
-        for (const el of groups[i] ?? []) {
-          setSheetVar(el.style, 'opacity', o.toFixed(3));
+      /* 3 · the plan render — the ONE branch between the two scrub
+       * paths: the house timeline (browser, real geometry) or the
+       * legacy windows (the deterministic fallback). */
+      if (scrubModeRef.current === 'timeline' && timelineRef.current) {
+        timelineRef.current.seek(t);
+      } else {
+        /* 3a · the six progressive layers — ghost→full crossfades. */
+        const groups = resolveLayers(track);
+        for (let i = 0; i < LAYER_WINDOWS.length; i += 1) {
+          const [a, b] = LAYER_WINDOWS[i]!;
+          const o = XL_GHOST + (1 - XL_GHOST) * p2o((t - a) / (b - a));
+          for (const el of groups[i] ?? []) {
+            setSheetVar(el.style, 'opacity', o.toFixed(3));
+          }
         }
-      }
 
-      /* 3b · the measured art register reveal. */
-      const artRev = p2o((t - ART_REVEAL[0]) / (ART_REVEAL[1] - ART_REVEAL[0]));
-      for (const el of art.route) setSheetVar(el.style, 'opacity', artRev.toFixed(3));
-      for (const el of art.hidden) setSheetVar(el.style, 'opacity', artRev.toFixed(3));
-      for (const el of art.tint) {
-        setSheetVar(el.style, 'opacity', (ART_TINT + (1 - ART_TINT) * artRev).toFixed(3));
-      }
+        /* 3b · the measured art register reveal. */
+        const art = resolveArtRegister(track);
+        const artRev = p2o((t - ART_REVEAL[0]) / (ART_REVEAL[1] - ART_REVEAL[0]));
+        for (const el of art.route) setSheetVar(el.style, 'opacity', artRev.toFixed(3));
+        for (const el of art.hidden) setSheetVar(el.style, 'opacity', artRev.toFixed(3));
+        for (const el of art.tint) {
+          setSheetVar(el.style, 'opacity', (ART_TINT + (1 - ART_TINT) * artRev).toFixed(3));
+        }
 
-      /* 4 · the statement plaques — plaque 1 VISIBLE from t 0 (the
-       * spec's rest state), out at 1.0–1.4; plaque 2 in 1.6–2.0 (the
-       * 0.2s dead gap keeps one voice at a time), out 2.5–3.0. */
-      writeCard(card1Ref.current, t, -1, -1, 1.0, 1.4);
-      writeFade(card2Ref.current, t, 1.6, 2.0, 2.5, 3.0);
+        /* 4 · the statement plaques — plaque 1 VISIBLE from t 0 (the
+         * spec's rest state), out at 1.0–1.4; plaque 2 in 1.6–2.0 (the
+         * 0.2s dead gap keeps one voice at a time), out 2.5–3.0. */
+        writeCard(card1Ref.current, t, -1, -1, 1.0, 1.4);
+        writeFade(card2Ref.current, t, 1.6, 2.0, 2.5, 3.0);
+      }
 
       /* 5 · the discrete machine — unchanged semantics. */
       pRaw = clamp(pRaw, 0, 1);
@@ -590,6 +609,7 @@ export function JourneyScene() {
     },
     {
       onRefresh: () => {
+        colGeoRef.current = null;
         driftFsRef.current = 0;
         layerElsRef.current = [];
       },
@@ -630,207 +650,79 @@ export function JourneyScene() {
     }
 
     /* the geometry probe: without real layout (unit jsdom, empty
-     * rects) ScrollTrigger's windows would be garbage — the scene
-     * stands on the deterministic legacy core instead (the pin metric
-     * clamps to the close; every unit-test contract rides it). */
+     * rects) the scrub windows would be garbage — the scene stands on
+     * the deterministic legacy core instead (the pin metric clamps to
+     * the close; every unit-test contract rides it). */
     const probe = track.getBoundingClientRect();
     const docHasLayout =
       probe.height > 2 && document.documentElement.scrollHeight > window.innerHeight * 0.5;
     if (!docHasLayout) {
-      legacyArmedRef.current = true;
+      scrubModeRef.current = 'legacy';
       /* the prime frame (the useSheetScroll contract) */
       const prime = window.requestAnimationFrame(() => {
         window.dispatchEvent(new Event('scroll'));
       });
       return () => {
         window.cancelAnimationFrame(prime);
-        legacyArmedRef.current = false;
       };
     }
 
-    ensureMotionEngine();
-    /* the scrub windows derive from the track box — re-measure once
-     * the real font metrics land (the fluid root re-rungs). */
-    bindFontRefresh();
-    /* the canonical Lenis↔ScrollTrigger integration lands HERE (the
-     * landing chunk — the heavy gsap half never rides the entry):
-     * every Lenis scroll event updates the scrubber. */
-    bindScrubSync(() => {
-      ScrollTrigger.update();
+    /* ── the browser scrub — the ONE house timeline on the shared
+     * conductor. The useSheetScroll frame above owns every scrub
+     * tick (pin metric → clock → seek); this lifecycle owns the
+     * timeline's build/revert and the reading-environment epochs. */
+    const timeline = buildPlanTimeline(track);
+    timelineRef.current = timeline;
+    scrubModeRef.current = 'timeline';
+
+    /* the prime frame — the driver's prime pass renders the rest
+     * state (seek(0) writes nothing by contract: the CSS ghost
+     * stands) and paints the discrete machine's floor. */
+    const prime = window.requestAnimationFrame(() => {
+      window.dispatchEvent(new Event('scroll'));
     });
-    let camTouched = false;
 
-    const mm = gsap.matchMedia();
+    /* fonts reflow the sheet (the fluid root re-rungs; the sticky
+     * column's span and the drift rung re-derive) — one fresh
+     * measurement pass once the real metrics land. The driver's
+     * settle epoch re-measures every cache through onRefresh. */
+    const fonts = (document as Document & { fonts?: FontFaceSet }).fonts;
+    fonts?.ready
+      .then(() => {
+        window.dispatchEvent(new Event('scroll'));
+      })
+      .catch(() => undefined);
 
-    mm.add(
-      {
-        desktop: '(min-width: 992px)',
-        mobile: '(max-width: 991px)',
-        phone: '(max-width: 767px)',
-        reduce: PREFERS_REDUCED_MOTION,
-      },
-      (ctx) => {
-        const { desktop, mobile, phone, reduce } = ctx.conditions as {
-          desktop: boolean;
-          mobile: boolean;
-          phone: boolean;
-          reduce: boolean;
-        };
-        if (reduce) {
-          paintFinal();
-          return () => undefined;
-        }
-
-        const stack = stackRef.current;
-
-        /* the ONE scrubbed timeline. */
-        const content = buildPlanTimeline(track);
-        content.pause(0);
-
-        /* the scene clock: t = SEQ_DUR · seqU^(warp) — the ≤991
-         * front-load is the R330 mobile warp (test-pinned). */
-        const warp = (seqU: number) =>
-          mobile ? Math.pow(clamp(seqU, 0, 1), MOBILE_WARP_EXP) : clamp(seqU, 0, 1);
-
-        /* the sequence driver — ScrollTrigger scrubbs it; its onUpdate
-         * renders the timeline and derives the discrete machine. */
-        const seq = { u: 0 };
-        const seqDriver = gsap.fromTo(
-          seq,
-          { u: 0 },
-          {
-            u: 1,
-            duration: 1,
-            ease: 'none',
-            onUpdate: () => {
-              const seqU = clamp(seq.u, 0, 1);
-              const t = SEQ_DUR_S * warp(seqU);
-              content.time(t);
-
-              /* the ≤991 camera: the pinned camRectAt tables — one
-               * interpolation implementation for both scrub paths. */
-              if (mobile) {
-                writeCamBox(track, camRectAt(t, phone));
-                camTouched = true;
-              }
-
-              /* the discrete machine — thresholds byte-identical to
-               * the R342 driver (pRaw from the scrub window). */
-              const pRaw = SEQ_START_PIN + seqU * SEQ_SPAN_PIN;
-              const { stage, finding, wash } = sceneClock(t, pRaw);
-              writeAttrs(track, String(stage), finding, wash, 'off', stage === 5 ? 'on' : 'off');
-            },
-          },
-        );
-        seqDriver.pause(0);
-
-        /* the sequence window — the measured pin span ([−0.082, 0.952]
-         * of the track/col traversal), as functional values so every
-         * ScrollTrigger.refresh re-derives them from the DELIBERATE
-         * track height (journey.css --jt-scrub). */
-        let seqTrigger: ScrollTrigger;
-        if (desktop) {
-          const span = () => Math.max(1, track.offsetHeight - window.innerHeight);
-          seqTrigger = ScrollTrigger.create({
-            id: 'journey-sequence',
-            trigger: track,
-            start: () => `top ${(-SEQ_START_PIN * span()).toFixed(1)}px`,
-            end: () => `bottom ${(window.innerHeight + (1 - SEQ_END_PIN) * span()).toFixed(1)}px`,
-            scrub: true,
-            animation: seqDriver,
-          });
-        } else {
-          const col =
-            colElRef.current ??
-            (colElRef.current = track.querySelector<HTMLElement>('.jt-map-col'));
-          const geo = () => {
-            const stickyTop = mapInRef.current
-              ? parseFloat(getComputedStyle(mapInRef.current).top) || 0
-              : 0;
-            const winH = mapInRef.current ? mapInRef.current.offsetHeight : window.innerHeight;
-            const spanM = Math.max(1, (col?.offsetHeight ?? 0) - winH);
-            return { stickyTop, winH, spanM };
-          };
-          seqTrigger = ScrollTrigger.create({
-            id: 'journey-sequence',
-            trigger: col ?? track,
-            start: () => {
-              const g = geo();
-              return `top ${(g.stickyTop + -SEQ_START_PIN * g.spanM).toFixed(1)}px`;
-            },
-            end: () => {
-              const g = geo();
-              return `bottom ${(g.stickyTop + g.winH + (1 - SEQ_END_PIN) * g.spanM).toFixed(1)}px`;
-            },
-            scrub: true,
-            animation: seqDriver,
-          });
-        }
-
-        /* the entrance drift (≥992 only — the measured architecture:
-         * the STACK descends one frame height before the pin; the
-         * window's chrome stays). The p2o curve rides the tween's
-         * ease; the write keeps the exact translateY string the
-         * contract tests pin. */
-        let driftTrigger: ScrollTrigger | null = null;
-        if (desktop && stack) {
-          const drift = { u: 0 };
-          const span = () => Math.max(1, track.offsetHeight - window.innerHeight);
-          const driftDriver = gsap.fromTo(
-            drift,
-            { u: 0 },
-            {
-              u: 1,
-              duration: 1,
-              /* power1.out IS the driver's p2o (1−(1−u)²) — the exact
-               * measured curve; gsap's power2 is cubic and would land
-               * the descent ahead of the pinned positions. */
-              ease: 'power1.out',
-              onUpdate: () => {
-                if (!driftFsRef.current && track) {
-                  driftFsRef.current = parseFloat(getComputedStyle(track).fontSize) || 0;
-                }
-                const y = -driftMagnitude(window.innerHeight, driftFsRef.current) * (1 - drift.u);
-                if (stackRef.current) {
-                  setSheetVar(
-                    stackRef.current.style,
-                    'transform',
-                    `translateY(${y.toFixed(1)}px)`,
-                  );
-                }
-              },
-            },
-          );
-          driftDriver.pause(0);
-          driftTrigger = ScrollTrigger.create({
-            id: 'journey-drift',
-            trigger: track,
-            start: () => `top ${(-ENTRANCE_START_PIN * span()).toFixed(1)}px`,
-            end: 'top top',
-            scrub: true,
-            animation: driftDriver,
-            onRefresh: () => {
-              driftFsRef.current = 0;
-            },
-          });
-        }
-
-        /* cleanup — the camera's viewBox restore is consumed ONCE per
-         * mobile epoch (the ≥992 crossing contract, r312). */
-        return () => {
-          seqTrigger.kill();
-          driftTrigger?.kill();
-          seqDriver.kill();
-          content.kill();
-          if (mobile && camTouched) {
-            restoreCam(track);
-          }
-        };
-      },
-    );
+    /* a mid-flight reduced-motion flip collapses the scene to the
+     * static final sheet (the driver's own RM branch paints it from
+     * then on); flipping back re-arms the scrub — the timeline's
+     * priors were rolled back, the next scroll re-captures them. */
+    const reducedMq =
+      typeof window.matchMedia === 'function' ? window.matchMedia(PREFERS_REDUCED_MOTION) : null;
+    const onReduceFlip = (e: MediaQueryListEvent) => {
+      if (e.matches) {
+        timeline.revert();
+        paintFinal();
+        scrubModeRef.current = 'legacy';
+      } else {
+        scrubModeRef.current = 'timeline';
+        window.dispatchEvent(new Event('scroll'));
+      }
+    };
+    reducedMq?.addEventListener('change', onReduceFlip);
 
     return () => {
-      mm.revert();
+      window.cancelAnimationFrame(prime);
+      reducedMq?.removeEventListener('change', onReduceFlip);
+      timeline.revert();
+      timelineRef.current = null;
+      scrubModeRef.current = 'legacy';
+      /* the camera's viewBox restore — the crossing contract (r312):
+       * consumed ONCE if the mobile camera ever wrote. */
+      if (camDirtyRef.current) {
+        restoreCam(track);
+        camDirtyRef.current = false;
+      }
     };
   }, []);
 

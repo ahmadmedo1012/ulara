@@ -155,14 +155,14 @@ import { SheetNav } from '../components/landing/chrome/SheetNav';
  *       block + the resolve + the colleges registry strip;
  *   [9] footer: the inspection strip (FooterLens) + the colophon.
  *
- * Motion: ONE engine (lib/motion/engine.ts — the gsap.ticker clock,
- * Lenis driven from it, ScrollTrigger synced from Lenis's scroll
- * events). The chapters scene is ONE scrubbed timeline
- * (journey/sceneChoreography.ts — walls assemble → furniture →
- * dimensions/labels → violations + annotation cards, staggered,
- * reversible) scrubbed by ONE ScrollTrigger over the measured pin
- * window; the statement words, the why cross-fade and the other
- * scroll-linked instruments ride useSheetScroll on the same clock.
+ * Motion: ONE engine — the shared sheetConductor clock (lib/motion/).
+ * Lenis rides the conductor's rAF; the chapters scene is ONE scrubbed
+ * timeline (journey/sceneChoreography.ts on the house scrubTimeline
+ * engine — walls assemble → furniture → dimensions/labels →
+ * violations + annotation cards, staggered, reversible) seeked by the
+ * same useSheetScroll driver that runs the statement words, the why
+ * cross-fade and the other scroll-linked instruments — one clock, one
+ * driver family, no second frame system.
  * RevealCssClass block reveals + the imperative scroll chrome (the
  * .scrolled header + the --p progress ribbon) — all collapsed under
  * reduced motion.

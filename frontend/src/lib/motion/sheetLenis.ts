@@ -3,9 +3,8 @@
  *
  * the legacy measured engine (audits/evidence/r313/reference/digest.json →
  * `scroll`): Lenis 1.1.5 driven by the single ticker — `lenis.raf(time)`
- * per frame, a ScrollTrigger.update on every lenis scroll event, an
- * 'idle' class after 150ms of scroll-quiet, and NO visible scrollbar.
- * Ulara's translation keeps the platform's own single clock:
+ * per frame, an 'idle' class after 150ms of scroll-quiet, and NO visible
+ * scrollbar. Ulara's translation keeps the platform's own single clock:
  *
  *  · ONE Lenis instance on the WINDOW (owner decision, r313 4-b): the
  *    whole guest stack reads window scroll — useSheetScroll, the
@@ -59,7 +58,6 @@
  *    engine only comes alive through initGuestLenis().
  */
 import Lenis from 'lenis';
-import { syncScrubber } from './engineSync';
 import { subscribeSheetFrame } from './sheetConductor';
 
 /**
@@ -157,14 +155,12 @@ function onInput(): void {
 }
 
 /** Lenis 'scroll' events: keep the driver alive through the glide (and
- *  re-attach if an external native scroll woke the engine), SYNC THE
- *  SCRUBBER (ScrollTrigger.update — the canonical Lenis 1.x + GSAP
- *  integration: the scrubbed scenes track the engine's smoothed
- *  position), then bump the 150ms idle timer (the reference's
- *  scroll-quiet contract). */
+ *  re-attach if an external native scroll woke the engine), then bump
+ *  the 150ms idle timer (the reference's scroll-quiet contract — the
+ *  scrub consumers ride their own useSheetScroll kick listeners, which
+ *  Lenis's own scroll events fire exactly like native ones). */
 function onLenisScroll(): void {
   attachFrame();
-  syncScrubber();
   bumpIdle();
 }
 
@@ -270,10 +266,10 @@ export function initGuestLenis(): boolean {
   if (reducedMotion()) return false; /* RM: NEVER init — native scroll */
 
   /* The ONE frame clock stays the conductor (r308/r313 pinned
-   * contracts — Lenis's raf rides its subscriber slot). The scrubber
-   * sync rides the engineSync seam: the heavy gsap half never enters
-   * this (entry) chunk — the landing's engine binds the real
-   * ScrollTrigger.update when the journey mounts. */
+   * contracts — Lenis's raf rides its subscriber slot). R342-final:
+   * the scrubbed journey rides the same clock through useSheetScroll
+   * (its scroll-kick listeners fire under Lenis's own scroll events) —
+   * no second engine, no sync seam. */
   lenis = new Lenis({ ...DS_LENIS_PARAMS });
   document.documentElement.setAttribute('data-lenis-on', '');
   /* R328 (H7) — the e2e/screenshot introspection seam: a read-only

@@ -9,12 +9,12 @@
  * section's own head (the reference's home-map content column —
  * chip + h2 + copy + the ledger), visible from frame one.
  *
- * home-scroll-choreography — the walkthrough runs on the ONE
- * scrubbed timeline (journey/sceneChoreography.ts) scrubbed by ONE
- * ScrollTrigger inside JourneyScene (the CSS sticky pin stays — the
- * reference's own architecture; the track height is the deliberate
- * --jt-scrub duration, not an arbitrary 700dvh block). This section
- * is a pure mount, no composer refs. */
+ * R342-final — the walkthrough runs on the ONE scrubbed timeline
+ * (journey/sceneChoreography.ts) on the house scrub engine (the
+ * shared conductor via useSheetScroll inside JourneyScene; the CSS
+ * sticky pin stays — the reference's own architecture; the track
+ * height is the deliberate --jt-scrub duration, not an arbitrary
+ * 700dvh block). This section is a pure mount, no composer refs. */
 import { JourneyScene } from '../journey/JourneyScene';
 
 export function Chapters() {
