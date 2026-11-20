@@ -190,23 +190,30 @@ describe('r306 → r310 — the elevation illustration (the honest interactive)'
     // cover-crop, no white box). The R314 raster stays in the manifest
     // (licence chain intact) but leaves the hero seat. The r306/r310
     // «no raster» canon is restored on the hero.
-    expect(liveTsx).toContain('<HeroInkWindow />');
-    const ink = read('src/components/landing/HeroInkWindow.tsx');
-    expect(ink).toContain('className="bp-svg"');
-    // R322 override (2-b · the measured transplant): the viewBox is
-    // now the TIGHT frame around the elevation's ink (HERO_FRAME —
-    // exported, single source) instead of the fixed 1440×720 window:
-    // the ink owns the FULL art-band width (the measured img-inner
-    // grammar — 96.3% of band width at the reference). The exported
-    // frame is the contract; the literal 1440×720 pin retires.
-    expect(ink).toContain('export const HERO_FRAME');
-    expect(ink).toMatch(/viewBox=\{`\$\{HERO_FRAME\.x\} \$\{HERO_FRAME\.y\}/);
-    // the elevation seats through the exported HERO_SEAT transform (one
-    // artwork, one coordinate story — HeroInspect remaps through it)
-    expect(ink).toContain('HERO_SEAT');
-    expect(ink).toContain('ElevationArt');
-    expect(ink).toContain('variant="hero"');
-    // transparent paper: no raster <image> in the hero window
+    /* feat/home-art-direction re-seat (evidence: the branch diff +
+       the PR body's loader→hero handoff section): the hero's ink seat
+       moved OFF the HeroInkWindow/ElevationDrawing pair ONTO the
+       CampusPlate ('ink' variant) — the SAME plate the preloader
+       traces ('trace' variant), so the loader's drawing IS the hero's
+       drawing (one object; the exit slit hands the ink version over).
+       The pin's SEMANTICS are unchanged and re-pinned on the new seat:
+       the whole frontal elevation SVG, transparent paper, the shared
+       .bp-svg frame contract, an exported single-source frame
+       (CAMPUS_FRAME) driving the viewBox, no raster. HeroInkWindow
+       stays in the tree untouched for rollback. */
+    expect(liveTsx).toContain('<CampusPlate variant="ink" />');
+    const ink = read('src/components/landing/hero/CampusPlate.tsx');
+    expect(ink).toContain('className="bp-svg cp-svg"');
+    // the viewBox is the plate's own frame (CAMPUS_FRAME — exported,
+    // single source) — the frame is the contract; the literal window
+    // pin retires with the seat.
+    expect(ink).toContain('export const CAMPUS_FRAME');
+    expect(ink).toMatch(/viewBox=\{`\$\{CAMPUS_FRAME\.x\} \$\{CAMPUS_FRAME\.y\}/);
+    // the loader mounts the SAME plate in its trace variant (one
+    // object across the handoff — HeroInspect authors against the
+    // same exported frame)
+    expect(read('src/components/landing/chrome/Preloader.tsx')).toContain('<CampusPlate variant="trace" />');
+    // transparent paper: no raster <image> in the plate
     expect(ink).not.toContain('<image');
     // the loader keeps its own original line drawing (SheetLoader)
     expect(art).toContain('export const ELEVATION_VB');
