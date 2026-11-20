@@ -341,6 +341,70 @@ export function PlateLabel({
 
 /* ————————————————— drafting furniture ————————————————— */
 
+/** The mono instrument chip — a paper (or ink) ground rect measured to
+ * its text, the plate grammar's INSTRUMENT name voice (ATTEND · NOTE ·
+ * PLAN…). One kernel primitive: every plate's chips render identically
+ * (the r347 dedupe — per-plate copies were a jscpd clone source). */
+export function PlateTag({
+  x,
+  y,
+  text,
+  dark = false,
+}: {
+  x: number;
+  y: number;
+  text: string;
+  dark?: boolean;
+}) {
+  const w = text.length * 5.6 + 8;
+  return (
+    <g>
+      <rect x={x - w / 2} y={y - 8} width={w} height={13} fill={dark ? PLATE.ink : PLATE.paperHi} stroke={PLATE.ink} strokeWidth={0.8} />
+      <text x={x} y={y + 1.5} textAnchor="middle" fontSize={8} fontFamily="var(--font-iso-mono), monospace" fontWeight={500} fill={dark ? 'var(--iso-label-on-ink)' : PLATE.ink} style={{ direction: 'ltr' }}>
+        {text}
+      </text>
+    </g>
+  );
+}
+
+/** The concept label — a copper dot seated ON the target, a dashed
+ * hairline, and the Arabic word at the line's far end (the plate
+ * grammar's CONCEPT voice: المؤقّت · السؤال · النواة…). The word
+ * anchors MIDDLE above the line's end (ty-6 keeps the glyphs clear of
+ * the stroke). */
+export function SeatLabel({
+  x,
+  y,
+  tx,
+  ty,
+  text,
+}: {
+  x: number;
+  y: number;
+  tx: number;
+  ty: number;
+  text: string;
+}) {
+  return (
+    <g>
+      <circle cx={x} cy={y} r={1.9} fill={PLATE.sienna} stroke={PLATE.ink} strokeWidth={0.6} />
+      <line x1={x} y1={y} x2={tx} y2={ty} stroke={PLATE.muted} strokeWidth={0.9} strokeDasharray="4 3" />
+      <text
+        x={tx}
+        y={ty - 6}
+        textAnchor="middle"
+        fontSize={9.5}
+        fontFamily="var(--font-iso-arabic), sans-serif"
+        fontWeight={600}
+        fill={PLATE.ink}
+        style={{ direction: 'rtl' }}
+      >
+        {text}
+      </text>
+    </g>
+  );
+}
+
 /** Corner registration mark for plate frames. */
 export function RegMark({ x, y, s = 10 }: { x: number; y: number; s?: number }) {
   return (

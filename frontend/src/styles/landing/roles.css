@@ -95,13 +95,16 @@
   opacity: 1;
   transform: none;
 }
-.rl-slide img {
+.rl-slide svg,
+.rl-slide .rlp-svg {
   position: absolute;
   inset: 0;
-  object-fit: cover;
+  inline-size: 100%;
+  block-size: 100%;
+  display: block;
 }
 @media (min-width: 1440px) {
-  .rl-slide img { inset: -1.35%; }
+  .rl-slide svg, .rl-slide .rlp-svg { inset: -1.35%; }
 }
 @media (min-width: 992px) and (max-width: 1439px) {
   /* the 1024 census: the parked deck rides at 849 on the 759 frame
@@ -109,7 +112,7 @@
      812 = slide+1.7%) — the reference's own mid-desktop seats */
   .rl-slide { transform: scale(1.1227); }
   .rl-slide.is-active { transform: scale(1.0343); }
-  .rl-slide.is-active img { inset: -1.7%; }
+  .rl-slide.is-active svg, .rl-slide.is-active .rlp-svg { inset: -1.7%; }
 }
 
 /* ── the title column ── */

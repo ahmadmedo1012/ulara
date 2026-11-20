@@ -49,6 +49,7 @@ import {
   IsoBox,
   IsoNode,
   PlateLabel,
+  PlateTag,
   Route,
 } from '../kernel/Iso';
 import { RevealCssClass } from '../../../hooks/useReveal';
@@ -71,19 +72,6 @@ function PanelFrame({ label, children }: { label: string; children: ReactNode })
         {children}
       </svg>
     </div>
-  );
-}
-
-/** a flat mono chip label (the instrument caption), measured to its text. */
-function Tag({ x, y, text, dark = false }: { x: number; y: number; text: string; dark?: boolean }) {
-  const w = text.length * 5.6 + 8;
-  return (
-    <g>
-      <rect x={x - w / 2} y={y - 8} width={w} height={13} fill={dark ? PLATE.ink : PLATE.paperHi} stroke={PLATE.ink} strokeWidth={0.8} />
-      <text x={x} y={y + 1.5} textAnchor="middle" fontSize={8} fontFamily="var(--font-iso-mono), monospace" fontWeight={500} fill={dark ? 'var(--iso-label-on-ink)' : PLATE.ink} style={{ direction: 'ltr' }}>
-        {text}
-      </text>
-    </g>
   );
 }
 
@@ -127,7 +115,7 @@ function LoopFlipped() {
         <g className="iso-loop-box" style={ld('2.2s')}>
           <IsoBox x={26} y={-12} w={18} d={18} h={10} />
           <polyline points={`${towerTop.sx - 4.4},${towerTop.sy + 0.5} ${towerTop.sx - 1.1},${towerTop.sy + 4} ${towerTop.sx + 4.6},${towerTop.sy - 3}`} fill="none" stroke={PLATE.sienna} strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" />
-          <Tag x={towerTop.sx} y={towerTop.sy - 16} text="ATTEND" dark />
+          <PlateTag x={towerTop.sx} y={towerTop.sy - 16} text="ATTEND" dark />
         </g>
         {/* the attendance beacon — a node orbiting the tower's top */}
         <g transform={`translate(${towerTop.sx} ${towerTop.sy})`}>
@@ -193,7 +181,7 @@ function LoopMastery() {
               strokeWidth={1.4}
             />
           ))}
-          <Tag x={iso(33.5, -3.5, 5).sx} y={iso(33.5, -3.5, 5).sy - 12} text="NEXT STEP" dark />
+          <PlateTag x={iso(33.5, -3.5, 5).sx} y={iso(33.5, -3.5, 5).sy - 12} text="NEXT STEP" dark />
         </g>
       </g>
       <Caption ar="خلايا تمتلئ بالإتقان، الفجوة تُعلَّم، والتوصية جاهزة" mono="MATRIX 4x6 / GAP:FLAGGED" />
@@ -255,7 +243,7 @@ function LoopResearch() {
               strokeWidth={1.2}
             />
           ))}
-          <Tag x={iso(0.5, -6.5, 6).sx} y={iso(0.5, -6.5, 6).sy - 10} text="NOTE" dark />
+          <PlateTag x={iso(0.5, -6.5, 6).sx} y={iso(0.5, -6.5, 6).sy - 10} text="NOTE" dark />
         </g>
         {/* the library — the shelf the research lands on */}
         <g className="iso-loop-box" style={ld('2.7s')}>
@@ -276,7 +264,7 @@ function LoopResearch() {
             stroke={PLATE.sienna}
             strokeWidth={1.6}
           />
-          <Tag x={iso(30.5, 6, 0).sx} y={iso(30.5, 6, 0).sy + 10} text="LIB" />
+          <PlateTag x={iso(30.5, 6, 0).sx} y={iso(30.5, 6, 0).sy + 10} text="LIB" />
         </g>
         {/* the pipeline — flowing dashes between the stages */}
         <g className="iso-loop-line" style={ld('0.5s')}>

@@ -46,6 +46,8 @@ import {
   IsoBox,
   IsoNode,
   PlateLabel,
+  PlateTag,
+  SeatLabel,
   Route,
   Coord,
 } from '../kernel/Iso';
@@ -61,55 +63,6 @@ const ld = (s: string) => ({ ['--ild' as string]: s }) as CSSProperties;
  * root — both scale with the viewport), so the plate authors at 480×283
  * and meets the box near-edge-to-edge at every tier. */
 const FRAME = '0 0 480 283';
-
-/** a flat mono chip label (the instrument caption), measured to its text. */
-function Tag({ x, y, text, dark = false }: { x: number; y: number; text: string; dark?: boolean }) {
-  const w = text.length * 5.6 + 8;
-  return (
-    <g>
-      <rect x={x - w / 2} y={y - 8} width={w} height={13} fill={dark ? PLATE.ink : PLATE.paperHi} stroke={PLATE.ink} strokeWidth={0.8} />
-      <text x={x} y={y + 1.5} textAnchor="middle" fontSize={8} fontFamily="var(--font-iso-mono), monospace" fontWeight={500} fill={dark ? 'var(--iso-label-on-ink)' : PLATE.ink} style={{ direction: 'ltr' }}>
-        {text}
-      </text>
-    </g>
-  );
-}
-
-/** the concept label — a copper dot seated ON the target, a dashed
- * hairline, and the Arabic word at the line's far end (the retired
- * DOM callouts re-drawn in the plate's own voice). */
-function SeatLabel({
-  x,
-  y,
-  tx,
-  ty,
-  text,
-}: {
-  x: number;
-  y: number;
-  tx: number;
-  ty: number;
-  text: string;
-}) {
-  return (
-    <g>
-      <circle cx={x} cy={y} r={1.9} fill={PLATE.sienna} stroke={PLATE.ink} strokeWidth={0.6} />
-      <line x1={x} y1={y} x2={tx} y2={ty} stroke={PLATE.muted} strokeWidth={0.9} strokeDasharray="4 3" />
-      <text
-        x={tx}
-        y={ty - 6}
-        textAnchor="middle"
-        fontSize={9.5}
-        fontFamily="var(--font-iso-arabic), sans-serif"
-        fontWeight={600}
-        fill={PLATE.ink}
-        style={{ direction: 'rtl' }}
-      >
-        {text}
-      </text>
-    </g>
-  );
-}
 
 /* ────────── P1 · قاعة الاختبار — the exam runner machine ────────── */
 
@@ -212,7 +165,7 @@ export function ExamRunnerPlate({ label, dataSpec }: { label: string; dataSpec?:
           <IsoBox x={19} y={-19} w={16} d={11} h={0.7} top={PLATE.paperHi} />
         </g>
         <g className="iso-loop-dot" style={ld('2.9s')}>
-          <Tag x={26} y={26} text="PROFESSOR" dark />
+          <PlateTag x={26} y={26} text="PROFESSOR" dark />
         </g>
       </g>
 
@@ -303,7 +256,7 @@ export function AssistantPlate({ label, dataSpec }: { label: string; dataSpec?: 
           ))}
         </g>
         <g className="iso-loop-dot" style={ld('2.8s')}>
-          <Tag x={iso(30.5, 7, 5).sx} y={iso(30.5, 7, 5).sy + 13} text="PLAN" dark />
+          <PlateTag x={iso(30.5, 7, 5).sx} y={iso(30.5, 7, 5).sy + 13} text="PLAN" dark />
         </g>
         {/* the plan's concept label — dot on the chip's crown */}
         <SeatLabel x={iso(28, 3, 5).sx} y={iso(28, 3, 5).sy} tx={64} ty={-14} text="خطة مراجعة" />
