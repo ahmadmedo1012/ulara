@@ -729,7 +729,15 @@ html[data-theme='dark'] .pr-section .pr-cta {
   font-size: var(--fs-mono-sm);
   line-height: 1.4;
   font-weight: 500;
-  color: var(--accent);
+  /* R342 integration (a11y): the tag is small mono text (10.4px @390 ·
+     8.8px @1440) — the AA body floor (4.5) applies. The seat rode
+     --accent and passed on the pre-rebuild canon orange (4.62:1); the
+     homepage rebuild's coral re-key dropped it to 3.07:1 and the axe
+     gate flagged the four frame-tag numerals. TEXT routes through the
+     token contract's TEXT-safe accent --accent-ink (the AA ink on the
+     light arm; the luminous coral on the dark arm, which was already
+     passing). */
+  color: var(--accent-ink);
 }
 [data-theme='dark'] .pr-frame-tag {
   background: var(--bg);

@@ -297,8 +297,12 @@ footer.fo-footer {
 }
 .fo-link:hover { color: var(--accent); }
 /* the first PLATFORM link carries the accent ink (the folio's own
-   orange door) */
-.fo-link-accent { color: var(--accent); }
+   orange door). R342 integration (a11y): the link is 13px body text —
+   the AA body floor (4.5) applies and the raw coral reads 3.07:1 on
+   the paper. The seat resolves the token contract's TEXT-safe accent
+   (--accent-ink — #A33312 on the light arm, the luminous coral on the
+   dark arm), the same law the canon's own orange text seats ride. */
+.fo-link-accent { color: var(--accent-ink); }
 /* the funnel pair's affordance seat — cta.css owns the underline +
    hit-slop grammar; this sheet adds no box of its own */
 

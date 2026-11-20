@@ -206,7 +206,12 @@ section.chapters {
 .jt-agent-tag {
   font-size: 0.65rem;
   font-weight: 700;
-  color: var(--accent);
+  /* R342 integration (a11y): the tag is 10.4px/700 mono text — the AA
+     body floor (4.5) applies, and the raw coral rides only 3.07:1 on the
+     band ground. TEXT routes through --accent-ink (the token contract's
+     TEXT-safe accent, #A33312 on the light arm, the luminous coral on
+     the dark arm) — the dot keeps the coral fill. */
+  color: var(--accent-ink);
   letter-spacing: 0.06em;
   flex-shrink: 0;
 }

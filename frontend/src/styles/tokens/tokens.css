@@ -1403,13 +1403,34 @@
   --bg: #F3F2EC;
   --text: #282828;
   --text-primary: #282828;
-  --text-secondary: #72726F;
-  --text-muted: #72726F;
+  /* R342 integration (a11y fix) — the rebuild's measured secondary
+     #72726F reads 4.3:1 on the landing paper #F3F2EC: under the AA body
+     floor (4.5) and 0.2 short of passing. The reference's own warm-grey
+     character is kept, one step down the family's own ladder: #62625F —
+     the app canon's own --text-muted seat (5.63:1 on the app paper;
+     5.46:1 on the landing's cooler paper, 5.13:1 on the footer's raised
+     --surface-2). The axe a11y gate (serious tier, 4.5 floor) drove
+     this: every muted consumer (footer mono labels, legal paragraphs,
+     journey indexes, the compact consent sentence) sits in the 4.0–4.3
+     band on the rebuild's palette; the dark arm was already AA
+     (#B3B3AF on #1c1c1a ≈ 8:1) and is untouched. */
+  --text-secondary: #62625F;
+  --text-muted: #62625F;
   --rule: #B3B3AF;
   --border: #B3B3AF;
   --border-strong: #B3B3AF;
   --accent: #F15534;
-  --accent-ink: #F15534;
+  /* R342 integration (a11y fix) — the token contract's TEXT-safe
+     accent: small accent TEXT routes through the AA ink, never the raw
+     coral (#F15534 is a 3.07:1 large-text/UI tone on the landing paper
+     — same law as the canon's orange #C43E16, whose text seats route
+     through this very #A33312 at 5.06:1 on the app paper; 6.16:1 on
+     the landing's). The rebuild had pointed --accent-ink at the raw
+     coral; the small coral seats (footer accent link, journey agent
+     tag, the platform frame tags) now resolve the AA ink again. The
+     dark arm keeps the luminous coral (4.95:1 on the charcoal — AA).
+     Fills keep the coral: --accent is untouched. */
+  --accent-ink: #A33312;
   --accent-strong: #E04422;
   --c-coral-ink: #F15534;
   --preloader-exit-ground: #B3B3AF;
