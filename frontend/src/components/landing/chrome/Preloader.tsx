@@ -206,7 +206,12 @@ export function Preloader({ onExitStart, onDone }: PreloaderProps) {
       const t = now - start;
       /* the crawl: a calm synthetic ramp toward 92% while the real
        * gate is pending; the tail 92→100 belongs to the real release */
-      const target = solved
+      /* the counter tail is TRACE-AWARE: the 92→100 rung may only open
+       * once the drawing sequence has had its spread (the reference's
+       * own beat — 100% lands WITH the completed trace, never before
+       * the plate finished tracing). */
+      const tailOpen = MAX_RUN_MS * 0.55;
+      const target = solved && t >= tailOpen
         ? 100
         : Math.min(92, (t / (MAX_RUN_MS * 0.75)) * 92);
       shown += (target - shown) * 0.14;

@@ -325,3 +325,34 @@ html[data-theme='dark'] body.ula-grain::before {
   }
 }
 
+
+/* ══ the phone belt — the scroll-rule instrument retires ≤767 ══
+   The reference carries no ruler overlay at the phone band (the hero's
+   own r313 note: «@390 the hero carries no ruler overlay»), and the
+   50vh centreline seat lands mid-headline on the stacked fold — the
+   collision reads as an accident, not chrome. The split pair + readout
+   + tick rail stay ≥768 (the desktop's own drafting progress). */
+@media (max-width: 767px) {
+  .landing .scr-rule,
+  .landing .scr-pct,
+  .landing .scr-ticks {
+    display: none;
+  }
+}
+
+/* ══ the phone belt (2) — the edge tab retires ≤767 ══
+   The vertical «منصّة مستقلّة» rail seats on the frame edge ≥768 (the
+   reference's own edge-badge grammar); on the stacked phone fold its
+   column crosses the lead's inline-end gutter (measured at 390), so it
+   yields to the content exactly like the scroll rule above. */
+@media (max-width: 767px) {
+  .landing .et-tab {
+    display: none;
+  }
+
+  /* the boot-log strip: same collision, same law — the stage counter
+     seats on the frame edge ≥768 and yields to the content below. */
+  .landing .bl {
+    display: none;
+  }
+}

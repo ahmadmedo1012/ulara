@@ -1049,12 +1049,17 @@
   display: block;
 }
 
-/* the stroke ladder — three ink weights, the drafting hierarchy */
+/* the stroke ladder — three ink weights, the drafting hierarchy.
+   Non-scaling strokes: the ink keeps its authored weight at every
+   render size (the reference's ink reads equally confident at the
+   phone plate as at the desktop band; without it the 0.23-scale phone
+   plate renders hairlines). */
 .hro-plate .cp-2,
 .pl-plate .cp-2 {
   stroke: var(--text);
   stroke-width: 2.25;
   fill: none;
+  vector-effect: non-scaling-stroke;
 }
 
 .hro-plate .cp-15,
@@ -1062,6 +1067,7 @@
   stroke: var(--text);
   stroke-width: 1.5;
   fill: none;
+  vector-effect: non-scaling-stroke;
 }
 
 .hro-plate .cp-1,
@@ -1070,6 +1076,7 @@
   stroke-width: 1;
   fill: none;
   opacity: 0.8;
+  vector-effect: non-scaling-stroke;
 }
 
 /* the grey furniture — dims, crosses, ticks, hatch (quiet drafting
@@ -1079,6 +1086,7 @@
   stroke: var(--grid-line);
   stroke-width: 1;
   fill: none;
+  vector-effect: non-scaling-stroke;
 }
 
 /* the fills' fade seat — the intro belt's fill-opacity rung does not
