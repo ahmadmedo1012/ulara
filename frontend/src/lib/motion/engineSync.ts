@@ -18,7 +18,7 @@
  * sync is a no-op — the scrubber doesn't exist yet, exactly right.
  * No global state beyond the one function slot; nothing to clean up.
  */
-export type ScrubSync = () => void;
+type ScrubSync = () => void;
 
 let sync: ScrubSync | null = null;
 

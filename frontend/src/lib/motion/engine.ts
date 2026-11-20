@@ -32,8 +32,9 @@ export { gsap, ScrollTrigger };
 
 /** The exact dependency versions this engine's contract is pinned to
  *  (package.json carries the same pins — a bump re-measures the whole
- *  choreography before landing). */
-export const MOTION_ENGINE_VERSIONS = {
+ *  choreography before landing). Module-local: the introspection seam
+ *  reads it directly, no consumer imports it. */
+const MOTION_ENGINE_VERSIONS = {
   gsap: '3.15.1',
   lenis: '1.1.5',
 } as const;
