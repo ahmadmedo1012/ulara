@@ -466,9 +466,13 @@ export function HeroInspect() {
       if (readoutRef.current) {
         /* the readout follows the pointer but stays INSIDE the frame
          * on every edge (left flip, floor of 6, top clamp, and the
-         * bottom seat measured from the chip's own height) */
+         * bottom seat measured from the chip's own height). r346: the
+         * width is read LIVE (the frozen minInlineSize makes the read
+         * stable; the cached readoutW went stale across the font-load
+         * boundary and seated the chip past the right edge). */
+        const rw = readoutRef.current.offsetWidth || readoutW || 108;
         let rx = cx + 12;
-        if (rx + readoutW > fw - 6) rx = cx - readoutW - 12;
+        if (rx + rw > fw - 6) rx = cx - rw - 12;
         const ry = Math.min(Math.max(6, cy - 28), Math.max(6, fh - readoutH - 6));
         readoutRef.current.textContent = `X:${Math.max(0, Math.round(target.x))}PX Y:${Math.max(0, Math.round(target.y))}PX`;
         readoutRef.current.style.transform = `translate3d(${Math.max(6, rx)}px, ${ry}px, 0)`;
