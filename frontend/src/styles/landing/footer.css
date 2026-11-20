@@ -581,3 +581,59 @@ footer.fo-footer {
   font-family: var(--font-mono);
 }
 .fo-wordmark-reg::before { content: '+'; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   R345-ED (feat/home-editorial-scenes) — the architectural colophon
+   layer. The drawing-sheet title block plate opens the footer (PLATE ·
+   09 · identity · scale · year), the giant banner restages as the
+   outlined construction wordmark (transparent fill over the 1px ink
+   stroke, the corner + marks kept), and the skyline strip wipes in
+   once on its house rise rung. Armed movers run only under
+   .js-reveal-armed; no-JS and RM read the settled colophon.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.fo-plate {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.2rem 2.4rem;
+  padding-block: var(--sp-3) var(--sp-4);
+  border-block: 1px solid var(--rule);
+  color: var(--text-muted);
+}
+
+.fo-plate-cell {
+  font-size: var(--fs-mono-sm);
+  line-height: 1.5;
+}
+
+/* the outlined construction wordmark (the sheet's final stroke) */
+.fo-giant-banner .fo-giant-text {
+  color: var(--text);
+}
+
+@supports (-webkit-text-stroke: 1px black) {
+  .fo-giant-banner .fo-giant-text {
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--text);
+  }
+}
+
+/* the skyline strip's one bottom-up clip wipe on the house rise rung */
+.js-reveal-armed .fo-strip-media {
+  clip-path: inset(100% 0 0 0);
+}
+
+.js-reveal-armed .fo-fstrip.in-view .fo-strip-media {
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 1100ms var(--ease-out) 120ms;
+}
+
+/* ═══ reduced motion: the settled colophon ═══ */
+@media (prefers-reduced-motion: reduce) {
+  .js-reveal-armed .fo-strip-media,
+  .js-reveal-armed .fo-fstrip.in-view .fo-strip-media {
+    clip-path: none;
+    transition: none;
+  }
+}
