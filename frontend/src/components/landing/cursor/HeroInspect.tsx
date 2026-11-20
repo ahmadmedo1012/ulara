@@ -97,6 +97,22 @@ const DOT_TARGET_PX = 44;
  * mastery tower's course lines, the exam pavilion's dial, the
  * auditorium's grand portal). Codes ride the mono voice; copy is the
  * honest current capability. */
+/* the readout chip's width FROZEN at the worst-case coordinate text
+ * for a frame size (the flip math in the frame loop must never work
+ * with a stale width — the text grows as the pointer moves and the
+ * chip used to escape the frame's right edge). r346: lifted to a
+ * helper so the fonts.ready re-freeze can reuse the exact measure. */
+function freezeReadoutWidth(layer: HTMLElement, svgRect: DOMRect): void {
+  const readout = layer.querySelector<HTMLElement>('.hi-readout');
+  if (!readout) return;
+  const dx = String(Math.max(1, Math.ceil(svgRect.width))).length;
+  const dy = String(Math.max(1, Math.ceil(svgRect.height))).length;
+  const prevText = readout.textContent;
+  readout.textContent = `X:${'9'.repeat(dx)}PX Y:${'9'.repeat(dy)}PX`;
+  readout.style.minInlineSize = `${Math.ceil(readout.offsetWidth)}px`;
+  readout.textContent = prevText ?? 'X:0PX Y:0PX';
+}
+
 interface MarkerDef {
   id: string;
   code: string;
@@ -110,7 +126,8 @@ interface MarkerDef {
   bodyAr: string;
 }
 
-/* CAMPUS_FRAME is the identity window (0,0,1440,640) — the authored
+/* CAMPUS_FRAME is the iso sheet window (r346: -92,-58,184,168; stations
+ * author in the shifted 0..184 x 0..168 space) — the authored
  * ex/ey ARE the viewBox coordinates; the field pair stays so the
  * geometry helpers keep one signature. */
 const MARKERS: MarkerDef[] = [
@@ -248,15 +265,19 @@ export function HeroInspect() {
      * text for this frame size (the flip math in the frame loop must
      * never work with a stale width — the text grows as the pointer
      * moves and the chip used to escape the frame's right edge). */
-    const readout = layer.querySelector<HTMLElement>('.hi-readout');
-    if (readout) {
-      const dx = String(Math.max(1, Math.ceil(svgRect.width))).length;
-      const dy = String(Math.max(1, Math.ceil(svgRect.height))).length;
-      const prevText = readout.textContent;
-      readout.textContent = `X:${'9'.repeat(dx)}PX Y:${'9'.repeat(dy)}PX`;
-      readout.style.minInlineSize = `${Math.ceil(readout.offsetWidth)}px`;
-      readout.textContent = prevText ?? 'X:0PX Y:0PX';
-    }
+    freezeReadoutWidth(layer, svgRect);
+    /* r346 hardening — the font-load race: the freeze above measures
+     * with whatever face is live at mapping time; on a cold runner the
+     * mono face lands AFTER the first mapping and the chip's real
+     * rendered width outgrows the frozen floor (the right-edge clamp
+     * then seats it past the frame — the CI escape flake). Re-freeze
+     * once the fonts settle. */
+    const fonts = (document as Document & { fonts?: FontFaceSet }).fonts;
+    fonts?.ready
+      .then(() => {
+        if (layerRef.current) freezeReadoutWidth(layerRef.current, svgRect);
+      })
+      .catch(() => undefined);
 
     /* dots — glued to the artwork through the real transform, the 44px
      * target seated inside the visible window (see seatInViewBoxFrame) */
