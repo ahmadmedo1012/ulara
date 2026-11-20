@@ -446,8 +446,12 @@ export function HeroInspect() {
        * is clamped to the drawing box before any write — the guides
        * can never leave the drawing region. The plus clamps one
        * half-width further in so its whole 8×8 body stays inside. */
-      const cx = Math.min(Math.max(pos.x, 0), fw);
-      const cy = Math.min(Math.max(pos.y, 0), fh);
+      /* r346: the guides are 1px boxes — the clamp seats their LEFT/TOP
+       * edge, so the axis clamp is fw-1/fh-1 (a guide seated exactly at
+       * the far edge poked its own 1px body 0.5px past the frame at the
+       * sweep's extreme column — the audit escape). */
+      const cx = Math.min(Math.max(pos.x, 0), Math.max(0, fw - 1));
+      const cy = Math.min(Math.max(pos.y, 0), Math.max(0, fh - 1));
       const px = Math.min(Math.max(pos.x, 4), Math.max(4, fw - 4));
       const py = Math.min(Math.max(pos.y, 4), Math.max(4, fh - 4));
       if (!shown) {
