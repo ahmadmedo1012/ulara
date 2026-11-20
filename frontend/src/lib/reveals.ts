@@ -8,8 +8,12 @@ import { PREFERS_REDUCED_MOTION } from '../lib/motion-media';
  * ── The house contract (shared.css `.reveal-up` / `.reveal-d-N`) ─────
  *   `.reveal-up`          opacity 0 + translateY(14px)
  *   `.reveal-up.in-view`  opacity 1 + translateY(0)
- *   transition            var(--t-slower) var(--ease-out)  ← the r305
- *                         reference-register re-key (expo-family curve)
+ *   transition            800ms cubic-bezier(.25,.46,.45,.94)
+ *                         ← r345 §B2: the landing reveal register re-seats
+ *                         to the freshly measured canonical (0.8s
+ *                         power2.out — the live tween census, 40/60);
+ *                         same register .reveal-rise-h already carries.
+ *                         Hover/press micro-motions keep the house rungs.
  *   `.reveal-d-1..5`      transition-delay 80/160/240/320/400ms
  *   `.reveal-card`        this sheet's card rung (below): scale
  *                         0.8→1 + fade on var(--motion-duration-card)

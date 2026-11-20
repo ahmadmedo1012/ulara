@@ -331,11 +331,19 @@
   /* R344 (item 0): the frozen census measures the top-of-page state at
      opacity 1 (the reference's own signature completes pre-measurement) — the
      pre-state fade is conformance debt; the 14px rise keeps the motion. */
+  /* r345 §A3/B2 — the register re-seats to the FRESHLY measured canonical
+     reveal (census r339 T-11A + this round's live tween census: 0.8s,
+     power2.out family — 40 of 60 reference reveals). The r305 650ms-expo
+     compression is retired here for the SAME law that already seats
+     .reveal-rise-h at 800ms/quad (the sheet's own conformance register):
+     duration±150ms is the census match edge, ease-family expo≠quad was a
+     live FAIL. Hover/press micro-motions keep the house register — they
+     are not the reveal family. */
   opacity: 1;
   transform: translateY(14px);
   transition:
-    opacity var(--t-slower) var(--ease-out),
-    transform var(--t-slower) var(--ease-out);
+    opacity 800ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform 800ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 .reveal-up.in-view {
   opacity: 1;

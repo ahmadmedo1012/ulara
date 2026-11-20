@@ -8,8 +8,9 @@ import { PREFERS_REDUCED_MOTION } from '../../../lib/motion-media';
  *
  *  · Canvas 2D layer (fixed, viewport-sized, DPR-capped at 2): a 10px
  *    square in the ONE signal color, eased toward the pointer
- *    (lerp 0.18), with a velocity trail that appears ONLY above a
- *    speed threshold and vanishes on the first still frame — per-
+ *    (lerp 0.10 — r345 §A4 re-measure, below), with a velocity trail
+ *    that appears ONLY above a speed threshold and vanishes on the
+ *    first still frame — per-
  *    segment alpha ramps quadratically from 0 (oldest) to ≈1 (newest).
  *    (V15 · R314 cycle-2: the square is the reference's measured
  *    geometry — a true 10×10px bbox with exactly 100 opaque pixels,
@@ -46,9 +47,21 @@ import '../../../styles/landing/cursor.css';
 /* Measured reference constants (see reference-observations.md §4/§5;
  * V15 · R314 cycle-2: the square re-pinned to the r313 pixel-read
  * measurement — 10×10 bbox, 100 opaque pixels — superseding the
- * r308 case-study "9px" figure). */
+ * r308 case-study "9px" figure).
+ *
+ * r345 §A4 — the follow constant re-measured BEHAVIORALLY on the live
+ * reference (fresh this round, not carried from the r313 digest): the
+ * dot's gap to the pointer decays at a constant ratio ≈ 0.55 per
+ * 100ms → exponential decay → per-frame lerp ≈ 0.10 (settle ≈ 1.1s).
+ * The r313 figure (0.18) was read off the reference's JS; the LIVE
+ * feel is slower because the reference's DOM dot ALSO carries a CSS
+ * `transition: 0.4s` on its transform — a second smoothing stage the
+ * digest didn't account for. Ulara's dot is canvas-drawn (no CSS
+ * transition), so the measured EFFECTIVE glide is reproduced with the
+ * single lerp alone: 0.10. The interactive ring keeps its own
+ * data-state transitions (cursor.css) — untouched. */
 const DOT_SIZE = 10;
-const LERP_K = 0.18;
+const LERP_K = 0.10;
 const SPEED_SMOOTHING = 0.2;
 const TRAIL_SPEED_THRESHOLD = 1.5; /* px/frame — trail only when fast */
 const TRAIL_LINE_WIDTH = 1.4;

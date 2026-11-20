@@ -327,9 +327,12 @@
     --motion-duration-page:     400ms;
     --motion-duration-reveal:   480ms;
     /* R333 (P-C) — the drawn-card reveal rung: the retired craft sheet row 13's
-       imgCardReveal (1.6s expo.out) re-keyed to the r305 house
-       register, one step above the 480ms block rise. */
-    --motion-duration-card:     900ms;
+       imgCardReveal. r345 §A3/B2 — the r305 compression (900ms) is retired:
+       the token returns to the MEASURED 1.6s expo.out (the live tween census,
+       6 of 60 reference reveals — the drawn-frame art family). The curve
+       already rides --ease-out (easeOutExpo = the measured expo family);
+       only the duration was drifted. */
+    --motion-duration-card:     1600ms;
     --motion-duration-stat:     700ms;
     --motion-duration-skeleton: 1200ms;
     --motion-duration-scene-reveal: 2200ms;
