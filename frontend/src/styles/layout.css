@@ -787,6 +787,17 @@
 
   .topbar-actions { display: flex; align-items: center; gap: var(--sp-2); }
 
+  /* r347 — the ONE cluster height law: every topbar control rides the
+   * §R325.b 44px target floor TOGETHER. The icon chrome (theme · bell ·
+   * user trigger) already renders 44px (min-* grows the box), and the
+   * search input is 44 — but the two TEXT buttons (.btn.sm, height 32
+   * from components.css) sat a head shorter inside the same row, the
+   * live-measured cluster defect (32 vs 44 mismatch at 1440). The
+   * .topbar-actions scope lifts the sm seats to the same floor WITHOUT
+   * touching the global .btn.sm recipe — the topbar band is 56px, and
+   * 44 + 2×6 of breathing room is the exact seat. */
+  .topbar-actions > .btn.sm { min-inline-size: 44px; min-block-size: 44px; }
+
   /* r178 (multi-institution): the institution switcher's menu rows.
      The trigger is the chrome's existing .btn ghost; each row is a
      .dropdown-item (components.css) — the name grows, the role label

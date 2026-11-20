@@ -231,6 +231,8 @@ const PlatesPage = lazy(() => import('./pages/PlatesPage'));
 function HomeRedirect() {
   const user = useAuthStore((s) => s.user);
   const isHydrated = useAuthStore((s) => s.isHydrated);
+  const memberships = useAuthStore((s) => s.memberships);
+  const currentInstitution = useAuthStore((s) => s.currentInstitution);
   /* R323 §A2 foreman integration: the boot Splash (app-root mount)
    * owns the pre-hydration window — rendering the legacy
    * HydrationSplash HERE as well put TWO logos on screen at boot
@@ -243,6 +245,13 @@ function HomeRedirect() {
         <LandingPage />
       </GuestReveal>
     );
+  /* r347 — the same mid-selection carve-out GuestRoute owns: a
+   * context-less MULTI-membership session must land on the auth
+   * chooser (the only in-shell re-selection path), never at the role
+   * home where every institution call 403s. */
+  if (memberships.length > 1 && !currentInstitution) {
+    return <Navigate to="/auth" replace />;
+  }
   return <Navigate to={ROLE_HOME[user.role]} replace />;
 }
 
@@ -266,14 +275,37 @@ function ParamRedirect({ build }: { build: (params: Record<string, string | unde
  *  Same discipline as ProtectedRoute: HydrationSplash first (the store
  *  decides after rehydrate, never mid-hydration), then a `replace`
  *  bounce to the role home. No loops: every ROLE_HOME target is an
- *  authed route that ProtectedRoute happily serves back. */
+ *  authed route that ProtectedRoute happily serves back.
+ *
+ *  r347 — the mid-selection carve-out (the multi-membership chooser
+ *  bypass): the bounce used to fire the INSTANT setSession stored the
+ *  user — unmounting AuthPage's institution chooser (r178) before it
+ *  could render. A multi-membership visitor with no auto-selected
+ *  context was thrown at the role home context-less, where every
+ *  institution-scoped call 403s (the «لا تملك صلاحية الوصول» dead end,
+ *  live-reproduced with student@test.ly — 2 memberships, no context).
+ *  The r178 contract is explicit: "the institution selection step owns
+ *  the navigation from here." The guard now honors it — a context-less
+ *  MULTI-membership session stays on the guest sheet (the chooser);
+ *  every other authed shape bounces exactly as before (single/no
+ *  memberships resolve their context server-side at every mint, and a
+ *  lost multi-context refresh ALSO re-lands on the chooser — the only
+ *  in-shell re-selection path). */
 function GuestRoute() {
   const isHydrated = useAuthStore((s) => s.isHydrated);
   const user = useAuthStore((s) => s.user);
+  const memberships = useAuthStore((s) => s.memberships);
+  const currentInstitution = useAuthStore((s) => s.currentInstitution);
   /* R323 §A2 foreman integration: the boot Splash owns this window
    * (see HomeRedirect) — null, never a second branded surface. */
   if (!isHydrated) return null;
-  if (user) return <Navigate to={ROLE_HOME[user.role]} replace />;
+  /* the mid-selection carve-out: multi-membership + no context = the
+   * chooser is (or is about to be) mounted — the sheet stays. */
+  const selectionPending =
+    !!user && memberships.length > 1 && !currentInstitution;
+  if (user && !selectionPending) {
+    return <Navigate to={ROLE_HOME[user.role]} replace />;
+  }
   return (
     <GuestReveal>
       <Outlet />
