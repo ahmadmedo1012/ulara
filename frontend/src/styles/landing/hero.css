@@ -128,22 +128,16 @@
  * retired with the R310 fig composition (dead since R315). */
 .bp-stage {
   position: relative;
-  border: 1px solid var(--rule);
-  background: var(--surface);
-  padding: var(--sp-4);
-  /* R313 (D7 §1): the window caps at the drawing's own proportion —
-     the hero band holds ~100vh-frame; the 108rem cap keeps the
-     elevation centered and legible (≈900px @1440, scaling with the
-     fluid root exactly like the reference's rem-authored window).
-     R313-int (5-int · failures 5+6): inline-size, NOT max-inline-size
-     — with auto margins a max- cap left the box shrink-to-fit at the
-     SVG's 300px intrinsic width (a 300×133 drawing inside a 1160px
-     track), so the annotation cards could not seat without overlap
-     and the drag box fell under its own visibility floor. An explicit
-     inline-size makes the window actually reach min(track, 108rem).
-     (R333 PI-B1: the old art-band scoped seat retired with the band.) */
-  inline-size: min(100%, 108rem);
-  margin-inline: auto;
+  /* R332-W1: NO box — the drawing sheet is the PAGE's own paper: the
+   * stage carries no border and no surface fill, so the plate reads as
+   * drawn ON the sheet (the reference's grammar: the ink sits on the
+   * bare paper between the frame edges, never inside a white card). */
+  background: transparent;
+  border: none;
+  padding: 0;
+  inline-size: 100%;
+  min-inline-size: 0;
+  margin-inline: 0;
 }
 
 /* ── R313 (D9) → R322 (2-b) — the ruler ticks + corner plus marks +
@@ -1027,4 +1021,163 @@
     color: var(--hro-seat-ink);
     transform: var(--hro-seat-lift);
   }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   THE PLATE — CampusPlate's drawing language (the hero's centerpiece
+   AND, in its trace variant, the preloader's self-drawing sheet). The
+   colour ladder rides the tokens: ink on --text, furniture on
+   --grid-line, the ONE signal family on --accent. Zero raw values.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* the plate seat — centered at its own composed width: the drawing
+ * reads as the sheet's centerpiece with paper breathing around it
+ * (the reference's illustration spans ~64% of the viewport; ours sits
+ * at the same order of magnitude and never full-bleeds). */
+.hro-plate {
+  /* the absolute cap is px on purpose: the fluid rem root (~8.33px @1440)
+     makes large rem values collapse — the plate caps at ~69% of the
+     1440 band and grows with the band below that */
+  inline-size: min(100%, 1000px);
+  margin-inline: auto;
+  display: block;
+}
+
+.cp-svg {
+  inline-size: 100%;
+  block-size: auto;
+  display: block;
+}
+
+/* the stroke ladder — three ink weights, the drafting hierarchy */
+.hro-plate .cp-2,
+.pl-plate .cp-2 {
+  stroke: var(--text);
+  stroke-width: 2.25;
+  fill: none;
+}
+
+.hro-plate .cp-15,
+.pl-plate .cp-15 {
+  stroke: var(--text);
+  stroke-width: 1.5;
+  fill: none;
+}
+
+.hro-plate .cp-1,
+.pl-plate .cp-1 {
+  stroke: var(--text);
+  stroke-width: 1;
+  fill: none;
+  opacity: 0.8;
+}
+
+/* the grey furniture — dims, crosses, ticks, hatch (quiet drafting
+ * chrome, never competing with the ink) */
+.hro-plate .cp-f,
+.pl-plate .cp-f {
+  stroke: var(--grid-line);
+  stroke-width: 1;
+  fill: none;
+}
+
+/* the fills' fade seat — the intro belt's fill-opacity rung does not
+ * touch these (no bp-drawable class): the whole seat fades in with the
+ * fifth layer's delay so the washes resolve as the masses draw */
+.landing.intro-draw .hro-stage .cp-plate-fills {
+  opacity: 0;
+}
+
+.landing.intro-done .hro-stage .cp-plate-fills {
+  opacity: 1;
+  transition: opacity var(--t-base) var(--ease);
+  transition-delay: 710ms;
+}
+
+/* the fills — paper knockouts + the restrained grey washes */
+.hro-plate .cp-fill-paper {
+  fill: var(--bg);
+  stroke: none;
+}
+
+.hro-plate .cp-fill-wash {
+  fill: var(--grid-line);
+  fill-opacity: 0.16;
+  stroke: none;
+}
+
+.hro-plate .cp-fill-wash-soft {
+  fill: var(--grid-line);
+  fill-opacity: 0.09;
+  stroke: none;
+}
+
+/* the signals — the plate's ONLY orange (the pennant + the beacon) */
+.hro-plate .cp-signal {
+  fill: var(--accent);
+  stroke: none;
+}
+
+/* the mono dimension notes — the 11px-rendered floor through the
+ * inverse-scale var the plate measures live */
+.hro-plate .cp-dim {
+  font-family: var(--font-mono);
+  font-size: var(--cp-label-fs, 12px);
+  fill: var(--text-muted);
+  stroke: none;
+  letter-spacing: 0.04em;
+}
+
+/* the trace seat (the preloader) — the strokes draw via preloader.css's
+ * pl-trace; here only the stroke joins are capped round so the hand-
+ * drafted character reads */
+.pl-plate .cp-draw {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hro-plate .cp-2,
+.hro-plate .cp-15,
+.hro-plate .cp-1 {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* the plate's intro belt — layers ride hero-mechanics.css's data-ink
+ * delays; the groups themselves need no extra rule (the .bp-drawable
+ * arming keys on the class, which every stroke carries). */
+
+/* ═══ the deco cards — the drafting annotations: reseated into the
+   plate's whitespace (the tower's start side + the auditorium's end
+   side) and dressed as sheet labels (hairline + paper ground), so
+   they read as marginal notes, never floating chips. ══ */
+.hro-deco {
+  border: 1px solid var(--rule);
+  background: var(--bg);
+  box-shadow: none;
+}
+
+/* [01] lectures — the auditorium's side (inline-start in RTL) */
+.hro-deco-1 {
+  inset-block-end: auto;
+  inset-block-start: 24%;
+  inset-inline-start: 2%;
+  inset-inline-end: auto;
+}
+
+/* [03] mastery — the tower's side (inline-end in RTL) */
+.hro-deco-2 {
+  inset-block-end: auto;
+  inset-block-start: 34%;
+  inset-inline-start: auto;
+  inset-inline-end: 2.5%;
+}
+
+/* the annotation voices — legible ink, not ghost grey */
+.hro .hro-deco .hro-deco-text {
+  color: var(--text);
+}
+
+.hro .hro-deco .hro-deco-label {
+  color: var(--accent);
 }

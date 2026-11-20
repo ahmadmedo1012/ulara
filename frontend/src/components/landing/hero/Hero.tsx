@@ -53,9 +53,7 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { Icon } from '../../Icon';
 import { HERO_WORK_ITEMS } from '../../../data/landing-ledger';
-import { HeroInkWindow } from '../HeroInkWindow';
-import { HeroGrid } from './HeroGrid';
-import { HeroChrome } from './HeroChrome';
+import { CampusPlate } from './CampusPlate';
 import { HeroInspect } from '../cursor/HeroInspect';
 import { useIsNarrowLayout } from '../../../hooks/useIsNarrowLayout';
 import '../../../styles/landing/hero-mechanics.css';
@@ -98,7 +96,6 @@ const DECO_CARDS = [
  *   cards · 11–14 the ± registration marks · 15–20 the graticule. */
 const WORK_SEAT_ORD = ['1', '2', '5', '7', '4', '6'] as const;
 const DMARK_SEAT: Record<string, string> = { tl: '11', tr: '12', bl: '13', br: '14' };
-const MEASURE_SEAT: Record<string, string> = { m1: '15', m2: '16', h1: '17', h2: '18', v1: '19', v2: '20' };
 
 export function Hero() {
   /* r338 T-13b — the deco cards are ≥992 chrome (hero.css hides them
@@ -114,31 +111,32 @@ export function Hero() {
     <section className="fo-hero hro" aria-label={BRAND_LABEL}>
       {/* ══ [1] THE ART BAND — the drafting stage (the reference's
           home-hero-img layer stack, ONE physical frame for the ink,
-          the inspection instrument and the drafting chrome). ══ */}
+          the inspection instrument and the drafting chrome). The plate
+          sits CENTERED at its own composed width — the drawing reads as
+          the sheet's centerpiece with paper breathing around it, never
+          a full-bleed scan. ══ */}
       <div className="hro-art">
         <div className="bp-stage hro-stage" data-cursor="none">
-          {/* the ink — the whole frontal elevation on transparent
-              paper (the reference's img-inner seat, drawn in by the
-              staged ink-in belt). */}
-          <HeroInkWindow />
+          {/* the ink — the whole campus elevation on transparent
+              paper (drawn in by the staged ink-in belt; the SAME
+              plate the preloader traces, completing between the
+              exit lines). */}
+          <div className="hro-plate">
+            <CampusPlate variant="ink" />
+          </div>
           {/* the cursor instrument — crosshair guides + coordinate
               readout + the drag-to-inspect stations (fine pointers,
               ≥992 — the reference's interact-wrap, Ulara's own). */}
           <HeroInspect />
-          {/* the ruler chrome — dashed ticks, corner plus marks,
-              registration marks and the measure graticule (the
-              reference's ruler layer, visible at rest). */}
+          {/* the ruler chrome — dashed tick strips on the frame's four
+              inner edges (the reference's ruler layer, visible at rest;
+              the quadrant graticule + red datum markers retire with the
+              survey pass — the plate carries its own dimension chain). */}
           <div className="bp-rulers" aria-hidden="true">
             <span className="bp-ruler bp-ruler-t" />
             <span className="bp-ruler bp-ruler-b" />
             <span className="bp-ruler bp-ruler-s" />
             <span className="bp-ruler bp-ruler-e" />
-            <span className="bp-measure bp-measure-h bp-measure-h1" data-spec-hover={MEASURE_SEAT.h1} />
-            <span className="bp-measure bp-measure-h bp-measure-h2" data-spec-hover={MEASURE_SEAT.h2} />
-            <span className="bp-measure bp-measure-v bp-measure-v1" data-spec-hover={MEASURE_SEAT.v1} />
-            <span className="bp-measure bp-measure-v bp-measure-v2" data-spec-hover={MEASURE_SEAT.v2} />
-            <span className="bp-measure bp-measure-marker bp-measure-m1" data-spec-hover={MEASURE_SEAT.m1} />
-            <span className="bp-measure bp-measure-marker bp-measure-m2" data-spec-hover={MEASURE_SEAT.m2} />
           </div>
 
           {/* the ± registration marks — the dashed inner frame's corner
@@ -278,16 +276,13 @@ export function Hero() {
       <span className="bp-plus bp-plus-bl" aria-hidden="true" />
       <span className="bp-plus bp-plus-br" aria-hidden="true" />
 
-      {/* ══ [5] THE DRAFTING GRID — R341 H1-a: the per-div hairline layer
-          (the reference's ~95 grid divs, measured seats; appended LAST so
-          no existing census ordinal shifts). ══ */}
-      <HeroGrid />
-
-      {/* ══ [6] THE VECTOR CHROME — R341 H1-b: the per-node chrome layer
-          (the reference's plus-marks/marquee icons/social arrows/pin
-          dots, measured seats; appended after the grid so no existing
-          census ordinal shifts). ══ */}
-      <HeroChrome />
+      {/* [5]/[6] RETIRED — the ~95-div survey grid and the 103-node
+          vector-chrome census layer: the live sheet reads as ONE calm
+          drawing over paper, not a survey document. The drafting
+          furniture lives INSIDE the plate (dimension chain, alignment
+          crosses, datum ticks) and the section carries only the frame
+          (edges + plus corners) and the ruler ticks. The two census
+          modules stay in the tree untouched for rollback. */}
     </section>
   );
 }

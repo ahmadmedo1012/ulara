@@ -53,7 +53,7 @@ import { PREFERS_REDUCED_MOTION } from '../../../lib/motion-media';
  *    zero React renders per pointermove (the r172 pattern).
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { HERO_FRAME, HERO_SEAT } from '../HeroInkWindow';
+import { CAMPUS_FRAME } from '../hero/CampusPlate';
 import {
   subscribeSheetFrame,
   wakeSheet,
@@ -71,16 +71,12 @@ import {
 } from '../../../lib/motion/sheetGeometry';
 
 
-/* The hero window's viewBox — the SINGLE shared frame (R310 §6 → R314
- * → R315 → R322 2-b): the TIGHT window around the elevation's ink
- * (HERO_FRAME in HeroInkWindow). The elevation artwork renders in the
- * sheet's own 1440×640 space through HeroInkWindow's HERO_SEAT
- * transform (scale 0.882, offset 58/114), so every station authored
- * in the ARTWORK's sheet space remaps through that seat and then into
- * the viewBox window's own coordinates — the dots stay glued to the
- * drawn features at every size (R315 A.1 re-seat, re-windowed). */
-const VB_W = HERO_FRAME.w;
-const VB_H = HERO_FRAME.h;
+/* The hero window's viewBox — the SINGLE shared frame: the CampusPlate's
+ * own tight frame (CAMPUS_FRAME in hero/CampusPlate). The plate renders
+ * at its own authored geometry, so every station is authored DIRECTLY
+ * in the artwork's space (no seat transform — the plate IS the frame). */
+const VB_W = CAMPUS_FRAME.w;
+const VB_H = CAMPUS_FRAME.h;
 
 /* Drag semantics (measured reference constants). */
 const DRAG_THRESHOLD_PX = 2;
@@ -107,19 +103,23 @@ interface MarkerDef {
   h: number;
   labelAr: string;
   bodyAr: string;
-  /** the same anchor remapped into the hero viewBox window through
-   *  HERO_SEAT − HERO_FRAME origin (computed once — applyMapping
-   *  consumes vx/vy in viewBox coordinates) */
+  /** the anchor in the plate's own space (the frame IS the plate —
+   *  applyMapping consumes vx/vy in viewBox coordinates) */
   vx: number;
   vy: number;
 }
 
+/* The inspection stations — REAL capabilities, pinned to the CampusPlate's
+ * drawn features (the checkpoint bridge's pennant mast, the mastery
+ * tower's beacon tier, the library's reading-room glazing, the exam
+ * pavilion's dial). Codes ride the mono voice; copy is the honest
+ * current capability. */
 const MARKERS: MarkerDef[] = [
   {
     id: 'cp',
     code: 'CP',
-    ex: 970,
-    ey: 452,
+    ex: 945,
+    ey: 430,
     w: 204,
     h: 88,
     labelAr: 'نقطة فحص',
@@ -128,18 +128,28 @@ const MARKERS: MarkerDef[] = [
   {
     id: 'rr',
     code: 'RR',
-    ex: 585,
-    ey: 440,
+    ex: 320,
+    ey: 428,
     w: 212,
     h: 88,
     labelAr: 'مراجعة بحث',
     bodyAr: 'بحث PDF بملاحظات معلَّمة من الأستاذ ثم فهرسة في المكتبة.',
   },
   {
+    id: 'ex',
+    code: 'EX',
+    ex: 545,
+    ey: 388,
+    w: 204,
+    h: 88,
+    labelAr: 'الاختبارات',
+    bodyAr: 'اختبارات مراقَبة بترتيب أسئلة عشوائي وضبط زمن دقيق.',
+  },
+  {
     id: 'mg',
     code: 'MG',
-    ex: 340,
-    ey: 360,
+    ex: 130,
+    ey: 200,
     w: 204,
     h: 88,
     labelAr: 'فجوة إتقان',
@@ -147,8 +157,9 @@ const MARKERS: MarkerDef[] = [
   },
 ].map((m) => ({
   ...m,
-  vx: HERO_SEAT.x + m.ex * HERO_SEAT.s - HERO_FRAME.x,
-  vy: HERO_SEAT.y + m.ey * HERO_SEAT.s - HERO_FRAME.y,
+  /* the plate frame is the artwork space itself — identity mapping */
+  vx: m.ex,
+  vy: m.ey,
 }));
 
 /* The return-to-top reset contract (R309 §6): once the visitor has
