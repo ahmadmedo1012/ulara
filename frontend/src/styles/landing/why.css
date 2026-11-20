@@ -684,3 +684,265 @@
     transition: none;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   R346 (phase-4 art) — the isometric loop panels + the FAQ.
+   The R345-ED workflow scene (the rail/spine/track capture machine —
+   WhyScene.tsx) is RETIRED from the mount (the file stays for
+   rollback; sections/Why.tsx documents the swap): the band's four
+   pillars are now ISOMETRIC self-running plates
+   (plates/WhyPanels.tsx — the r346 sandbox rebuild's WhyPanels
+   recipe) on the r346 kernel, in the sandbox's own alternating grid,
+   closing on the sandbox's FAQ. This section carries ONLY the band's
+   layout: the panels grid + the caption seats + the FAQ. The loops'
+   keyframes + their .iso-loop-* classes live in iso-plate.css (the
+   ONE painting system — deliberately not here: the r306 keyframes
+   census whitelists this sheet's instrument set); the entrances ride
+   the house reveal belt (RevealCssClass), colors ride the --iso-*
+   seats and the band's own tokens.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── the panels grid — two columns, the even rows pushed to the far
+   column with a cascade offset (the sandbox's own composition) ── */
+.wy-panels {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6.4rem 0;
+  padding-block: 6.4rem 8rem;
+  padding-inline: 3.2rem;
+  max-inline-size: 150rem;
+  margin-inline: auto;
+}
+
+@media (min-width: 992px) {
+  .wy-panels {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 7rem;
+    row-gap: 6rem;
+  }
+
+  .wy-panel:nth-child(even) {
+    grid-column: 2;
+    margin-block-start: 9rem; /* the cascade offset — the even pillar drops a step */
+  }
+}
+
+/* the panel frame — the drafting plate's own border + paper wash */
+.wyp-frame {
+  border: 1px solid var(--rule-strong);
+  background: color-mix(in srgb, var(--iso-paper-hi) 55%, transparent);
+}
+
+.wyp-svg {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+}
+
+/* the caption seat — the pillar's index + title + body under the plate */
+.wyp-cap {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.8rem;
+  margin-block-start: 2.4rem;
+}
+
+.wyp-idx {
+  margin-block-start: 0.5rem;
+  font-size: 1.4rem;
+  line-height: 1.96rem;
+  color: var(--iso-sienna);
+}
+
+.wyp-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  line-height: 1.35; /* the ar-floor rung */
+  font-weight: 600;
+  color: var(--text);
+}
+
+.wyp-body {
+  margin: 1rem 0 0;
+  max-inline-size: 44rem;
+  line-height: 2.16rem; /* the band's own ar-floor register (1.35 × 1.6rem) */
+  font-weight: 400;
+  color: var(--wy-soft-ink);
+}
+
+/* ── the FAQ — the sandbox's five questions closing the band ── */
+.wy-faq {
+  padding-block: 2rem 10rem;
+  padding-inline: 3.2rem;
+  max-inline-size: 100rem;
+  margin-inline: auto;
+}
+
+.wy-faq-head {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+  margin-block-end: 1.2rem;
+}
+
+.wy-faq-kicker {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 1.4rem;
+  line-height: 1.96rem;
+  color: var(--text);
+}
+
+.wy-faq-dash {
+  flex: 1;
+  block-size: 1px;
+  background-image: repeating-linear-gradient(
+    to inline-end,
+    var(--rule-strong) 0 6px,
+    transparent 6px 12px
+  );
+}
+
+.wy-faq-count {
+  font-size: 1.1rem;
+  line-height: 1.96rem;
+  color: var(--text-muted);
+}
+
+/* the question row — a real button (the whole row is the hit target) */
+.wy-faq-q {
+  appearance: none;
+  display: block;
+  inline-size: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.wy-faq-qrow {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+  padding-block: 2.2rem;
+}
+
+/* the plus marker — two bars, rotating to its open × state */
+.wy-faq-plus {
+  position: relative;
+  flex: none;
+  inline-size: 1.2rem;
+  block-size: 1.2rem;
+}
+
+.wy-faq-plus::before,
+.wy-faq-plus::after {
+  content: '';
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 0;
+  inline-size: 100%;
+  block-size: 1px;
+  background: var(--iso-sienna);
+  transition: transform var(--t-base) var(--ease);
+}
+
+.wy-faq-plus::after {
+  transform: rotate(90deg);
+}
+
+.wy-faq-item.is-open .wy-faq-plus::before {
+  transform: rotate(45deg);
+}
+
+.wy-faq-item.is-open .wy-faq-plus::after {
+  transform: rotate(135deg);
+}
+
+.wy-faq-qtext {
+  font-size: 1.7rem;
+  line-height: 2.3rem;
+  font-weight: 600;
+  color: var(--text);
+  transition: color var(--t-base) var(--ease);
+}
+
+.wy-faq-mark {
+  font-size: 1.1rem;
+  line-height: 2.3rem;
+  color: var(--text-muted);
+  transition: transform var(--t-base) var(--ease);
+}
+
+.wy-faq-item.is-open .wy-faq-mark {
+  transform: rotate(45deg);
+}
+
+/* the answer — collapsing on the grid-rows axis (the modern accordion
+   pattern; a state change, never a content reveal) */
+.wy-faq-a {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--t-base) var(--ease);
+}
+
+.wy-faq-item.is-open .wy-faq-a {
+  grid-template-rows: 1fr;
+}
+
+.wy-faq-a-in {
+  overflow: hidden;
+}
+
+.wy-faq-atext {
+  margin: 0;
+  padding-block-end: 2.4rem;
+  padding-inline-start: 3.4rem;
+  max-inline-size: 64rem;
+  line-height: 2.16rem; /* the band's ar-floor register */
+  color: var(--wy-soft-ink);
+}
+
+.wy-faq-item {
+  border-block-end: 1px solid var(--rule-strong);
+}
+
+/* the hover register — guarded to fine pointers (the r283 convention) */
+@media (hover: hover) and (pointer: fine) {
+  .wy-faq-q:hover .wy-faq-qtext {
+    color: var(--iso-sienna);
+  }
+}
+
+/* ≤767 — the panels stack single-column, the FAQ's inset breathes */
+@media (max-width: 767px) {
+  .wy-panels {
+    padding-inline: 1.6rem;
+    gap: 4.8rem;
+  }
+
+  .wy-faq {
+    padding-inline: 1.6rem;
+  }
+
+  .wy-faq-atext {
+    padding-inline-start: 2.8rem;
+  }
+}
+
+/* ═══ reduced motion: the accordion snaps (the base.css universal
+   clamp already bounds every transition; this belt pins the authored
+   outcome — the answer opens instantly, the markers snap) ═══ */
+@media (prefers-reduced-motion: reduce) {
+  .wy-faq-a,
+  .wy-faq-item.is-open .wy-faq-a,
+  .wy-faq-plus::before,
+  .wy-faq-plus::after,
+  .wy-faq-mark,
+  .wy-faq-qtext {
+    transition: none;
+  }
+}

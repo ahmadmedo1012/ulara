@@ -264,6 +264,10 @@
 }
 
 .pm-artzone {
+  /* r346: position:relative folded in from the retired R345 furniture
+     sheet (its duplicate seat was the stylelint error) — the art cell
+     stays an anchoring context for any absolutely-seated chrome */
+  position: relative;
   display: grid;
   place-items: center;
   padding-block: 2.4rem;
@@ -465,19 +469,9 @@
   .pm-textzone {
     padding: 2.4rem 1.6rem; /* census 23.82/15.88px ✓ */
   }
-  .pm-closerule {
-    display: block;
-    position: absolute;
-    inset-inline: 0;
-    inset-block-end: 0;
-    block-size: 1px;
-    background: var(--rule-strong);
-  }
-  .pm-bottomrule {
-    display: block;
-    block-size: 1px;
-    background: var(--rule-strong);
-  }
+  /* the closer/bottom rules: the ≤991 closers above already seat
+     them (identical declarations — the duplicate block retired with
+     the r346 dedupe wave) */
   .pm-item-title {
     font-size: 2rem;
     line-height: 1.35;
@@ -688,127 +682,121 @@
   }
 }
 
+
 /* ═══════════════════════════════════════════════════════════════════
-   R345-ED (feat/home-editorial-scenes) — the pains' measurement
-   furniture. Each column mounts its own instrument story (the ruler /
-   day rail / axis map / index tabs — sections/Live.tsx) as decorative
-   chrome above the motif drawing. Choreography is TRANSITION-only
-   (no keyframes): strokes draw on a dash ramp, tags fade on the
-   --pd ladder, both keyed on the column's reveal state (.in-view from
-   the house reveals belt) and armed ONLY under .js-reveal-armed —
-   no-JS and reduced-motion visitors read the complete furniture.
+   R346 (phase-4 art) — the pains' isometric self-drawing plates.
+   The retired R345 furniture sheet (.pm-furniture/.pm-fx — the flat
+   measurement chrome over PainArt's flat motifs) is DELETED with its
+   mount (sections/Live.tsx now mounts pains/IsoPains.tsx: each pain
+   a small isometric plate on the r346 kernel — lib/iso.ts — that
+   DRAWS ITSELF when its column enters view; the .pm-artzone
+   position:relative seat was folded into the primary block above).
+
+   Choreography is TRANSITION-only (no keyframes — the r306 census
+   whitelists this sheet's instrument set; the plate grammar's loops
+   live in iso-plate.css): every stroke carries pathLength={1} and
+   draws on a normalised dash ramp, face fills fade on the same rung,
+   dashed routes/markers fade (a dash-phase tween reads as a glitch,
+   not a draw), and the mono instrument tags land with a tiny rise.
+   All of it is armed ONLY under .js-reveal-armed (the house reveals
+   module's root class) and keyed on the column's own .in-view state —
+   the same belt the retired furniture rode — so no-JS and
+   reduced-motion visitors read the complete inked plate. Durations
+   ride the --t rungs + the --ease family; the per-stroke ladder rides
+   the exempt inline --ipd delay slot.
    ═══════════════════════════════════════════════════════════════════ */
 
-.pm-artzone {
-  position: relative;
-}
-
-.pm-furniture {
-  position: absolute;
-  inset: 0;
-  inline-size: 100%;
-  block-size: 100%;
-  color: var(--text-muted);
-  pointer-events: none;
-}
-
-.pm-fx {
-  stroke: currentColor;
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
-  fill: none;
-}
-
-.pm-fx-dash {
-  stroke-dasharray: 3 3;
-  opacity: 0.75;
-}
-
-.pm-fx-a {
-  stroke: var(--accent);
-}
-
-.pm-fx-t {
-  fill: currentColor;
-  stroke: none;
-  font-family: var(--font-mono);
-  font-size: 7.5px;
-  letter-spacing: 0;
-}
-
-.pm-fx-t-a {
-  fill: var(--accent);
-}
-
-.pm-fx-q {
-  fill: var(--accent);
-  stroke: none;
-  font-family: var(--font-display);
-  font-size: 34px;
-}
-
-.pm-fx-tag {
-  opacity: 1;
-}
-
-/* the draw choreography — armed by the reveals module's root class only */
-.js-reveal-armed .pm-fx {
+/* the strokes — hidden only once the reveals module has armed */
+.js-reveal-armed .pm-col .ip-draw {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
-  transition: stroke-dashoffset var(--t-slow) var(--ease-out) var(--pd, 0ms);
+  transition: stroke-dashoffset var(--t-slow) var(--ease-out) var(--ipd, 0ms);
 }
 
-/* the dashed texture strokes keep their broken rhythm — they fade in
-   (a dash-phase tween reads as a glitch, not a draw) */
-.js-reveal-armed .pm-fx-dash {
-  stroke-dasharray: 3 3;
+/* the face fills — the ink of the volumes fades in on the same ladder */
+.js-reveal-armed .pm-col .ip-fill {
+  fill-opacity: 0;
+  transition: fill-opacity var(--t-base) var(--ease-out) var(--ipd, 0ms);
+}
+
+/* the dashed routes/markers — they keep their broken rhythm and fade */
+.js-reveal-armed .pm-col .ip-dash {
   opacity: 0;
-  transition:
-    opacity var(--t-slow) var(--ease-out) var(--pd, 0ms);
+  transition: opacity var(--t-slow) var(--ease-out) var(--ipd, 0ms);
 }
 
-.js-reveal-armed .pm-fx-tag {
+/* the mono instrument tags — a tiny rise as they land */
+.js-reveal-armed .pm-col .ip-tag {
   opacity: 0;
   transform: translateY(3px);
   transition:
-    opacity var(--t-base) var(--ease-out) var(--pd, 0ms),
-    transform var(--t-base) var(--ease-out) var(--pd, 0ms);
+    opacity var(--t-base) var(--ease-out) var(--ipd, 0ms),
+    transform var(--t-base) var(--ease-out) var(--ipd, 0ms);
 }
 
-.js-reveal-armed .pm-col.in-view .pm-fx {
+/* the draw itself — the column's reveal state is the single write */
+.js-reveal-armed .pm-col.in-view .ip-draw {
   stroke-dashoffset: 0;
 }
 
-.js-reveal-armed .pm-col.in-view .pm-fx-dash {
-  opacity: 0.75;
+.js-reveal-armed .pm-col.in-view .ip-fill {
+  fill-opacity: 1;
 }
 
-.js-reveal-armed .pm-col.in-view .pm-fx-tag {
+.js-reveal-armed .pm-col.in-view .ip-dash {
+  opacity: 1;
+}
+
+.js-reveal-armed .pm-col.in-view .ip-tag {
   opacity: 1;
   transform: translateY(0);
 }
 
-/* the stamp takes one firmer beat (the deadline lands) */
-.js-reveal-armed .pm-col.in-view .pm-fx-tag-stamp {
-  transform: translateY(0) rotate(0deg);
-}
+/* the plates' paint layers: the hair furniture rides currentColor
+   (the column's own ghost/active tint grammar — the band's mobile
+   swiper + hover registers keep working); the signal routes and the
+   volume faces paint the --iso-* seats through their attributes. */
 
-/* the phone band: the furniture rides the carousel cell (the art zone
-   keeps its square; the instruments stay inside it) */
+/* the ≤767 swiper's ghost/active register extends to the plate: the
+   off-stage slides' whole plate dims with the tint (the census's own
+   ghost ink), the snapped one stands at full ink */
 @media (max-width: 767px) {
-  .pm-furniture { inset: 0; }
+  .pm-section .pm-artin .ip-svg {
+    opacity: 0.6;
+    transition: opacity var(--t-base) var(--ease);
+  }
+
+  .pm-band:has(.pm-dot-btn.is-active[data-pm-num='01']) .pm-col:nth-child(1) .pm-artin .ip-svg,
+  .pm-band:has(.pm-dot-btn.is-active[data-pm-num='02']) .pm-col:nth-child(2) .pm-artin .ip-svg,
+  .pm-band:has(.pm-dot-btn.is-active[data-pm-num='03']) .pm-col:nth-child(3) .pm-artin .ip-svg,
+  .pm-band:has(.pm-dot-btn.is-active[data-pm-num='04']) .pm-col:nth-child(4) .pm-artin .ip-svg {
+    opacity: 1;
+  }
 }
 
-/* ═══ reduced motion: the complete furniture stands — every stroke
-   drawn, every tag landed (the house law) ═══ */
+/* ═══ reduced motion: the complete plate stands — every stroke drawn,
+   every fill inked, every tag landed (the house law) ═══ */
 @media (prefers-reduced-motion: reduce) {
-  .js-reveal-armed .pm-fx,
-  .js-reveal-armed .pm-col.in-view .pm-fx {
+  .js-reveal-armed .pm-col .ip-draw,
+  .js-reveal-armed .pm-col.in-view .ip-draw {
     stroke-dashoffset: 0;
     transition: none;
   }
-  .js-reveal-armed .pm-fx-tag,
-  .js-reveal-armed .pm-col.in-view .pm-fx-tag {
+
+  .js-reveal-armed .pm-col .ip-fill,
+  .js-reveal-armed .pm-col.in-view .ip-fill {
+    fill-opacity: 1;
+    transition: none;
+  }
+
+  .js-reveal-armed .pm-col .ip-dash,
+  .js-reveal-armed .pm-col.in-view .ip-dash {
+    opacity: 1;
+    transition: none;
+  }
+
+  .js-reveal-armed .pm-col .ip-tag,
+  .js-reveal-armed .pm-col.in-view .ip-tag {
     opacity: 1;
     transform: none;
     transition: none;

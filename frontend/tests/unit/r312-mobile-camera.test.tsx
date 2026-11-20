@@ -48,7 +48,7 @@ import { PLAN_VB } from '../../src/components/landing/LearningPlanDrawing';
 
 /* ── the sources under pin ──────────────────────────────────────── */
 const HERE = dirname(new URL(import.meta.url).pathname);
-const JOURNEY_SRC = readFileSync(join(HERE, '../../src/components/landing/journey/JourneyScene.tsx'), 'utf8');
+const JOURNEY_SRC = readFileSync(join(HERE, '../../src/components/landing/journey/IsoJourneyScene.tsx'), 'utf8');
 /* R332 split: landing.css is now the per-section family under
  * styles/landing/ (imported in the original cascade order); the stub
  * landing.css is rule-free. The aggregated family text is unchanged. */
@@ -201,7 +201,7 @@ describe('R312 mobile camera — the source contracts (R322 map override)', () =
     expect(JOURNEY_SRC).toMatch(/<div className="jt-window" ref=\{windowRef\}>/);
     /* ONE plan SVG instance — the twin is retired (the display:none
      * discipline is now "no twin at all"). */
-    expect(JOURNEY_LIVE.match(/<LearningPlanDrawing/g)).toHaveLength(1);
+    expect(JOURNEY_LIVE.match(/<IsoCampusSheet/g)).toHaveLength(1);
     expect(JOURNEY_LIVE).not.toContain('PlanWindow');
     expect(JOURNEY_LIVE).not.toContain('jt-cam');
     expect(JOURNEY_LIVE).not.toContain('jt-flow');

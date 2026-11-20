@@ -104,3 +104,191 @@
    The stroke ladder rides the .cp-2/.cp-15 rungs hero.css already owns
    (the ink weights); the draw-in animation + duration live in
    preloader.css (.cp-draw + the canonical brand-draw token). */
+
+/* ═══════════════════════════════════════════════════════════════════
+   r346 — THE PLATE LOOP GRAMMAR (the self-running diagrams)
+   ═══════════════════════════════════════════════════════════════════
+   The why band's isometric panels (plates/WhyPanels.tsx, ported from
+   the r346 sandbox rebuild's WhyPanels) RUN THEMSELVES: pure-CSS
+   loops — staged pops, sequential dots, crawling dashes, pulsing
+   rings, a sweeping gauge needle, an orbiting scanner beam — zero JS
+   ticks. The classes live HERE, in the ONE painting system (not in
+   why.css: the r306 keyframes census whitelists that sheet's own
+   instrument set; the plate grammar's loops belong to the plate
+   sheet — same ownership as the hero ink belt above).
+
+   Token law (this sheet is NOT wholesale-exempt in the motion gate):
+   every duration rides the --motion-duration-ambient rungs, every
+   curve the --ease family (constant-speed crawls consume
+   --ease-linear, per the tokens' own loop ruling); the per-element
+   choreography rides the exempt inline --ild delay slot (seconds —
+   the staged sequence each panel is authored around).
+
+   Cycle semantics (the sandbox's own): one ambient-drift cycle per
+   beat — each element pops in at its --ild offset, holds, wraps, and
+   re-pops; the offsets keep the stage's sequence alive across every
+   cycle. The pop/dot seats hide only while the animation runs (their
+   opacity:0 base is the pre-iteration state); a dead JS pass still
+   runs everything (CSS-authored, never class-armed).
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* the staged pop — a volume landing (scale + fade, then holding) */
+@keyframes iso-loop-pop {
+  0% {
+    transform: scale(0.001);
+    opacity: 0;
+  }
+
+  8% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* the node appear — a diamond or cell snapping in (softer entry) */
+@keyframes iso-loop-dot {
+  0%,
+  4% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+
+  10%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* the dash crawl — a route's dashes flowing along their line */
+@keyframes iso-loop-dash {
+  from {
+    stroke-dashoffset: 0;
+  }
+
+  to {
+    stroke-dashoffset: -8;
+  }
+}
+
+/* the pulse — a marker ringing outward (the flagged gap) */
+@keyframes iso-loop-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+
+  70%,
+  100% {
+    transform: scale(1.7);
+    opacity: 0;
+  }
+}
+
+/* the sweep — the gauge needle's wobble across its dial */
+@keyframes iso-loop-sweep {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  22% {
+    transform: rotate(-52deg);
+  }
+
+  60% {
+    transform: rotate(14deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+/* the orbit — a beam or node circling its centre, full turn */
+@keyframes iso-loop-orbit {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* the loop seats — transform-box keeps every scale/rotate anchored to
+   the element's own centre (the sweep/orbit groups are authored with
+   geometry SYMMETRIC about their pivot, so fill-box centre = pivot) */
+.iso-loop-box {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  animation: iso-loop-pop var(--motion-duration-ambient-drift) var(--ease-soft) infinite;
+  animation-delay: var(--ild, 0s);
+}
+
+.iso-loop-dot {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  animation: iso-loop-dot var(--motion-duration-ambient-drift) var(--ease-soft) infinite;
+  animation-delay: var(--ild, 0s);
+}
+
+/* the crawling route — dashoffset animates on the group and inherits
+   to the route path (dasharray/dashoffset are inherited properties) */
+.iso-loop-line {
+  stroke-dasharray: 4 4;
+  animation: iso-loop-dash var(--motion-duration-ambient) var(--ease-linear) infinite;
+  animation-delay: var(--ild, 0s);
+}
+
+.iso-loop-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: iso-loop-pulse var(--motion-duration-ambient) var(--ease-out) infinite;
+  animation-delay: var(--ild, 0s);
+}
+
+.iso-loop-sweep {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: iso-loop-sweep var(--motion-duration-ambient-drift) var(--ease) infinite;
+  animation-delay: var(--ild, 0s);
+}
+
+.iso-loop-orbit {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: iso-loop-orbit var(--motion-duration-ambient-scene) var(--ease-linear) infinite;
+  animation-delay: var(--ild, 0s);
+}
+
+/* ── reduced motion: every loop collapses to its settled plate — the
+   popped volumes stand (the opacity:0 pre-iteration state is a MOTION
+   state, not content: under reduce it must never hold), the dashes
+   stop, the needle rests at its authored angle (the house law —
+   base.css's universal clamp already bounds every animation; this
+   belt pins the authored outcome). ── */
+@media (prefers-reduced-motion: reduce) {
+  .iso-loop-box,
+  .iso-loop-dot,
+  .iso-loop-pulse {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .iso-loop-sweep,
+  .iso-loop-orbit {
+    animation: none;
+  }
+
+  .iso-loop-line {
+    animation: none;
+  }
+}

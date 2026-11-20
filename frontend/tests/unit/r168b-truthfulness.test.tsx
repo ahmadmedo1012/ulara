@@ -50,7 +50,7 @@ describe('r168b — landing copy claims only what ships', () => {
      * (JourneyScene) — the honesty contract reads the whole sheet. */
     const page =
       stripJsx(read('src/pages/LandingPage.tsx')) +
-      stripJsx(read('src/components/landing/journey/JourneyScene.tsx'));
+      stripJsx(read('src/components/landing/journey/IsoJourneyScene.tsx'));
     expect(page).not.toContain('تلخيصات للفصول الطويلة');
     // r191 copy: the الذكاء الأكاديمي product card — honest local-composer
     // scope, carried over verbatim from the r190/r168b wording contract.

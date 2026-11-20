@@ -18,26 +18,17 @@
  * r313 canon keyed), so the plates re-theme with the app for free.
  */
 
-export const ISO_COS = Math.cos(Math.PI / 6); // 0.8660
-export const ISO_SIN = Math.sin(Math.PI / 6); // 0.5
-
-export type IsoPoint = { x: number; y: number; z: number };
-export type SheetPoint = { sx: number; sy: number };
-
-/** Project an iso-space point onto the 2D sheet. */
-export function iso(x: number, y: number, z = 0): SheetPoint {
+/** Project an iso-space point onto the 2D sheet (true 30° isometric:
+ * +x to the lower-right, +y to the lower-left, +z up). */
+export function iso(x: number, y: number, z = 0): { sx: number; sy: number } {
   return {
-    sx: (x - y) * ISO_COS,
-    sy: (x + y) * ISO_SIN - z,
+    sx: (x - y) * Math.cos(Math.PI / 6), // 0.8660
+    sy: (x + y) * Math.sin(Math.PI / 6) - z, // 0.5
   };
 }
 
-export function isoP(p: IsoPoint): SheetPoint {
-  return iso(p.x, p.y, p.z);
-}
-
 /** Polygon string for a list of iso points. */
-export function poly(...pts: IsoPoint[]): string {
+export function poly(...pts: { x: number; y: number; z: number }[]): string {
   return pts.map((p) => {
     const s = iso(p.x, p.y, p.z);
     return `${round(s.sx)},${round(s.sy)}`;
@@ -105,15 +96,6 @@ export function diamond(x: number, y: number, z: number, s: number): string {
 /** A flat diamond on the sheet (for ground markers / decorations). */
 export function sheetDiamond(cx: number, cy: number, s: number): string {
   return `${cx},${cy - s} ${cx + s},${cy} ${cx},${cy + s} ${cx - s},${cy}`;
-}
-
-/** Deterministic pseudo-random (stable plates across renders). */
-export function seeded(seed: number): () => number {
-  let s = seed >>> 0;
-  return () => {
-    s = (s * 1664525 + 1013904223) >>> 0;
-    return s / 0xffffffff;
-  };
 }
 
 /**

@@ -1488,3 +1488,359 @@ section.chapters {
     animation: none;
   }
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   r346 — THE ISOMETRIC JOURNEY (the plate assembly port)
+   ════════════════════════════════════════════════════════════════════
+   The band's 2D floor-plan artwork retires FROM THE MOUNT
+   (JourneyScene.tsx + its .jt-anno callouts stay on disk for
+   rollback — the rules above retire with them, kept the same way).
+   The window now carries the ISOMETRIC CAMPUS SHEET
+   (journey/IsoCampusSheet.tsx — the e4c84e7 plate grammar on the
+   same 1200×760 sheet seat), and this section seats the r346
+   assembly furniture: the caption, the three numbered markers, the
+   capability panel. Every seat is scrub-driven per-frame DIRECT
+   writes (the scene's ONE useSheetScroll frame — the §7-1 law: no
+   custom property is written during scroll); the CSS authors only
+   the SETTLED states and the armed pre-states.
+
+   THE JS-OFF LAW (r346): every new seat below is AUTHORED at its
+   settled state — the plate assembled, the markers popped, the
+   panel open, the caption standing. The scrub-only hidden states
+   live under the `.jt-live` armed class (the scene's layout effect
+   adds it before the first paint and owns its lifetime); a dead JS
+   pass renders the settled band, and under reduced motion the class
+   is never armed at all.
+   ────────────────────────────────────────────────────────────────── */
+
+/* the sheet's own seat: the panel-era yield transform (the plate
+   drifts aside and breathes down-scale when the panel unfolds)
+   rides the svg element itself — a composited transform, never
+   layout; the window's own will-change seat above is untouched. */
+.jt .jt-stack .iso-sheet {
+  will-change: transform;
+}
+
+/* ── the assembly caption — the band's opening statement ──────────
+   «الرحلة — المنظومة تتجمع»: over the sheet's top band, centered.
+   It rides the entrance descent with the stack (it is the sheet's
+   own statement, not the frame's chrome) and exits over the first
+   10% of the scrub (the driver's inline writes; the authoring here
+   IS the opening state, so no armed seat is needed). */
+.jt-caption {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 9%;
+  display: grid;
+  justify-items: center;
+  gap: var(--sp-2);
+  text-align: center;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.jt-caption-kicker {
+  margin: 0;
+  letter-spacing: 0.14em;
+  color: var(--accent-ink);
+}
+
+.jt-caption-line {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--fs-d2);
+  font-weight: var(--fw-semibold);
+  line-height: 1.35;
+  text-wrap: balance;
+  color: var(--text);
+  max-inline-size: calc(100% - 2 * var(--sp-5));
+}
+
+.jt-caption-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+}
+
+.jt-caption-rule {
+  inline-size: 8rem;
+  border-block-start: 1px dashed var(--grid-line);
+}
+
+/* ── the three numbered markers — the r346 system annotations ────
+   (الكليات / المقرّرات / البحوث) — absolutely-seated buttons over
+   the assembled plate: the plate grammar's own node (a rotated
+   square on the paper ground) + a hover tag chip + a hover/focus
+   detail card. Desktop only — the ≤991 camera era retires them (a
+   cropped, panning window is no place for fixed pins). Authored
+   POPPED (the JS-off law); the armed class holds the pre-pop state
+   and the driver's visibility writes gate the tab order. */
+.jt-mk {
+  position: absolute;
+  z-index: 6;
+}
+
+.jt-mk-a { inset-block-start: 15%; inset-inline-start: 28%; }
+.jt-mk-b { inset-block-start: 40%; inset-inline-start: 68%; }
+.jt-mk-c { inset-block-start: 72%; inset-inline-start: 40%; }
+
+.jt-mk-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.jt-mk-dot {
+  inline-size: 3.4em;
+  block-size: 3.4em;
+  display: grid;
+  place-items: center;
+  transform: rotate(45deg);
+  background: var(--iso-paper-hi);
+  border: 1px solid var(--iso-ink);
+  transition: background-color var(--t-fast) var(--ease);
+}
+
+.jt-mk-num {
+  transform: rotate(-45deg);
+  color: var(--iso-sienna);
+  transition: color var(--t-fast) var(--ease);
+}
+
+.jt-mk-tag {
+  padding: 0.3em 0.8em;
+  font-size: 0.85rem;
+  font-weight: var(--fw-bold);
+  color: var(--text);
+  background: var(--iso-paper-hi);
+  border: 1px solid var(--iso-hair);
+  opacity: 0;
+  transition: opacity var(--t-fast) var(--ease);
+}
+
+/* the hover washes are guarded to real pointers (the r283
+   convention); focus visibility rides base.css's universal ring
+   (the r162 zero-private-focus law). The hovered
+   diamond INVERTS to the ink seat (the sandbox hovered to sienna —
+   our token ladder's text-safe accents do not read on copper at
+   AA, and ink-on-paper is the plate's own inversion). */
+.jt-mk-btn:hover .jt-mk-dot {
+  background: var(--iso-ink);
+}
+
+.jt-mk-btn:hover .jt-mk-num {
+  color: var(--iso-paper-hi);
+}
+
+.jt-mk-btn:hover .jt-mk-tag {
+  opacity: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .jt-mk-btn:hover {
+    cursor: pointer;
+  }
+}
+
+/* the detail card — hover/focus only: the ink head bar, the honest
+   line, the sienna foot. opacity+translate gated (never display). */
+.jt-mk-card {
+  position: absolute;
+  inset-block-start: calc(100% + 1.2em);
+  inset-inline-start: 0;
+  inline-size: 24em;
+  background: var(--iso-paper-hi);
+  border: 1px solid var(--iso-ink);
+  box-shadow: 0.35em 0.35em 0 color-mix(in srgb, var(--iso-ink) 85%, transparent);
+  opacity: 0;
+  visibility: hidden;
+  translate: 0 0.5em;
+  transition:
+    opacity var(--t-fast) var(--ease),
+    translate var(--t-fast) var(--ease),
+    visibility var(--t-fast);
+  pointer-events: none;
+}
+
+.jt-mk.on .jt-mk-card {
+  opacity: 1;
+  visibility: visible;
+  translate: 0 0;
+  pointer-events: auto;
+}
+
+.jt-mk-card-head {
+  padding: 0.6em 1.2em;
+  background: var(--iso-ink);
+  color: var(--iso-paper-hi);
+}
+
+.jt-mk-card-body {
+  margin: 0;
+  padding: 1.1em 1.2em;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+.jt-mk-card-foot {
+  block-size: 0.5em;
+  background: var(--iso-sienna);
+  margin-inline-start: 0.4em;
+}
+
+/* ── the capability panel — the r346 system ledger ────────────────
+   مساحة لكل مؤسسة · خلية إتقان لكل مفهوم · سجلّ لكل فعل · مقعد لكل
+   دور. The SEAT (the positioned box) never animates; the CLIP box
+   carries the unfolding width (the driver's per-frame px write — a
+   direct idempotent write, no custom property); the INNER keeps the
+   seat's own width via container-query units so nothing reflows
+   while the frame unfolds, and the header + rows settle only after
+   the clip stands full (the r325 clip gate: no text line may ride
+   the unfolding edge — their visibility writes inherit to the text
+   spans). The mono header carries the live progress readout. */
+.map-panel {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 3em;
+  translate: 0 -50%;
+  inline-size: min(38em, 92%);
+  container-type: inline-size;
+  z-index: 4;
+}
+
+.map-panel-clip {
+  overflow: hidden;
+  inline-size: 100%;
+}
+
+.map-panel-in {
+  inline-size: 100cqw;
+  background: var(--iso-paper-hi);
+  border: 1px solid var(--iso-ink);
+  box-shadow: 0.4em 0.4em 0 color-mix(in srgb, var(--iso-ink) 85%, transparent);
+}
+
+.map-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding: 0.9em 1.6em;
+  background: var(--iso-ink);
+}
+
+.map-panel .map-panel-title {
+  letter-spacing: 0.1em;
+  color: color-mix(in srgb, var(--iso-paper-hi) 78%, transparent);
+}
+
+.map-panel .map-panel-pct {
+  letter-spacing: 0.08em;
+  color: var(--iso-paper-hi);
+}
+
+.map-panel-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--sp-3);
+  align-items: start;
+  padding: 1.2em 1.6em;
+  border-block-start: 1px solid var(--iso-hair);
+}
+
+.map-panel .map-panel-n {
+  color: var(--iso-sienna);
+  margin-block-start: 0.2em;
+}
+
+.map-panel-rt {
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: var(--fw-bold);
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.map-panel-rb {
+  margin: 0;
+  margin-block-start: 0.35em;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+/* ── the armed pre-states (the JS-off law's other half) ───────────
+   The markers + the panel rest at their settled states in CSS;
+   under the .jt-live armed class they hold their pre-window states
+   until the driver's inline writes open them. The plate fragments
+   and the caption need no armed seat — the fragments rest assembled
+   (the flights are pure functions of progress) and the caption's
+   authored state IS its opening state. */
+.jt.jt-live .jt-mk {
+  opacity: 0;
+}
+
+.jt.jt-live .map-panel {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* ── the ≤991 seats: the camera era ────────────────────────────────
+   The markers retire (fixed pins over a panning crop read as
+   noise); the panel becomes the bottom sheet above the agent bar,
+   compact enough to clear the counter chip at the window's head. */
+@media (max-width: 991px) {
+  .jt-mk {
+    display: none;
+  }
+
+  .map-panel {
+    inset-block-start: auto;
+    inset-block-end: 3.6em;
+    inset-inline: 1.6rem;
+    translate: none;
+    inline-size: auto;
+  }
+
+  .map-panel-head {
+    padding: 0.7em 1.2em;
+  }
+
+  .map-panel-row {
+    gap: var(--sp-2);
+    padding: 0.8em 1.2em;
+  }
+
+  .map-panel-rt {
+    font-size: 0.92rem;
+  }
+
+  .map-panel-rb {
+    font-size: 0.78rem;
+  }
+}
+
+/* the r346 seats under reduced motion: the armed class never arms
+   (the CSS-authored states ARE the settled states) — this belt only
+   dims the caption to its resting whisper for the no-JS RM pass and
+   collapses the interaction transitions. */
+@media (prefers-reduced-motion: reduce) {
+  .jt .jt-caption {
+    opacity: 0.25;
+  }
+
+  .jt-mk-dot,
+  .jt-mk-num,
+  .jt-mk-tag,
+  .jt-mk-card {
+    transition: none;
+  }
+}

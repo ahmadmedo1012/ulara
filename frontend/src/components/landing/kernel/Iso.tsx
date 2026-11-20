@@ -25,53 +25,34 @@ import {
 
 /* ————————————————— scene ————————————————— */
 
-export function IsoScene({
-  viewBox,
-  children,
-  className,
-  label,
-  role,
-  variant,
-}: {
-  viewBox: string;
-  children: ReactNode;
-  className?: string;
-  label?: string;
-  role?: string;
-  variant?: 'ink' | 'trace';
-}) {
+/* The grammar's shared pattern definitions — the hatch (shadows /
+ * hatched faces) + the iso ground lattice. ONE definition site: every
+ * plate that mounts fills (`url(#ulara-hatch)` / `url(#ulara-ground)`)
+ * resolves these; identical definitions duplicated per-plate were a
+ * jscpd clone source (r346 dedupe), and a second mount on the same
+ * sheet resolves the same paint either way. */
+export function IsoDefs() {
   return (
-    <svg
-      viewBox={viewBox}
-      className={className}
-      role={role ?? 'img'}
-      aria-label={label}
-      preserveAspectRatio="xMidYMid meet"
-      data-variant={variant ?? 'ink'}
-      style={{ overflow: 'visible' }}
-    >
-      <defs>
-        <pattern
-          id="ulara-hatch"
-          width="6"
-          height="6"
-          patternUnits="userSpaceOnUse"
-          patternTransform="rotate(45)"
-        >
-          <line x1="0" y1="0" x2="0" y2="6" stroke={PLATE.ink} strokeWidth="0.7" opacity="0.35" />
-        </pattern>
-        <pattern
-          id="ulara-ground"
-          width="16"
-          height="16"
-          patternUnits="userSpaceOnUse"
-          patternTransform="matrix(1,0.5,-1,0.5,0,0)"
-        >
-          <path d="M0 0 H16 M0 0 V16" stroke={PLATE.hair} strokeWidth="0.5" fill="none" opacity="0.55" />
-        </pattern>
-      </defs>
-      {children}
-    </svg>
+    <defs>
+      <pattern
+        id="ulara-hatch"
+        width="6"
+        height="6"
+        patternUnits="userSpaceOnUse"
+        patternTransform="rotate(45)"
+      >
+        <line x1="0" y1="0" x2="0" y2="6" stroke={PLATE.ink} strokeWidth="0.7" opacity="0.35" />
+      </pattern>
+      <pattern
+        id="ulara-ground"
+        width="16"
+        height="16"
+        patternUnits="userSpaceOnUse"
+        patternTransform="matrix(1,0.5,-1,0.5,0,0)"
+      >
+        <path d="M0 0 H16 M0 0 V16" stroke={PLATE.hair} strokeWidth="0.5" fill="none" opacity="0.55" />
+      </pattern>
+    </defs>
   );
 }
 
@@ -324,52 +305,6 @@ export function Leader({
   );
 }
 
-/* ————————————————— mono tag ————————————————— */
-
-export function MonoTag({
-  x,
-  y,
-  children,
-  anchor = 'middle',
-  dark = false,
-}: {
-  x: number;
-  y: number;
-  children: ReactNode;
-  anchor?: 'start' | 'middle' | 'end';
-  dark?: boolean;
-}) {
-  const w = 26;
-  const h = 16;
-  const bx =
-    anchor === 'middle' ? x - w / 2 : anchor === 'start' ? x : x - w;
-  return (
-    <g>
-      <rect
-        x={bx}
-        y={y - h / 2}
-        width={w}
-        height={h}
-        fill={dark ? PLATE.ink : PLATE.paperHi}
-        stroke={PLATE.ink}
-        strokeWidth="0.9"
-      />
-      <text
-        x={bx + w / 2}
-        y={y + 4}
-        textAnchor="middle"
-        fontSize="11"
-        fontFamily="var(--font-iso-mono), monospace"
-        fontWeight="500"
-        fill={dark ? 'var(--iso-label-on-ink)' : PLATE.sienna}
-        style={{ direction: 'ltr' }}
-      >
-        {children}
-      </text>
-    </g>
-  );
-}
-
 /** Arabic capability label — flat on the sheet, always readable. */
 export function PlateLabel({
   x,
@@ -405,37 +340,6 @@ export function PlateLabel({
 }
 
 /* ————————————————— drafting furniture ————————————————— */
-
-/** Ruler tick strip (top/bottom of drafting frames). */
-export function RulerTicks({
-  width,
-  y = 0,
-  count = 48,
-  stroke = PLATE.hair,
-}: {
-  width: number;
-  y?: number;
-  count?: number;
-  stroke?: string;
-}) {
-  const step = width / count;
-  const ticks = [];
-  for (let i = 0; i <= count; i++) {
-    const tall = i % 5 === 0;
-    ticks.push(
-      <line
-        key={i}
-        x1={round2(i * step)}
-        x2={round2(i * step)}
-        y1={y}
-        y2={y + (tall ? 8 : 4)}
-        stroke={stroke}
-        strokeWidth="1"
-      />,
-    );
-  }
-  return <g shapeRendering="crispEdges">{ticks}</g>;
-}
 
 /** Corner registration mark for plate frames. */
 export function RegMark({ x, y, s = 10 }: { x: number; y: number; s?: number }) {

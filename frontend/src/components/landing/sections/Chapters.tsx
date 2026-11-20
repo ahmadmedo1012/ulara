@@ -11,11 +11,17 @@
  *
  * R342-final — the walkthrough runs on the ONE scrubbed timeline
  * (journey/sceneChoreography.ts) on the house scrub engine (the
- * shared conductor via useSheetScroll inside JourneyScene; the CSS
+ * shared conductor via useSheetScroll inside the scene; the CSS
  * sticky pin stays — the reference's own architecture; the track
  * height is the deliberate --jt-scrub duration, not an arbitrary
- * 700dvh block). This section is a pure mount, no composer refs. */
-import { JourneyScene } from '../journey/JourneyScene';
+ * 700dvh block). This section is a pure mount, no composer refs.
+ *
+ * R346 — the isometric port: the 2D floor-plan scene retires FROM
+ * THE MOUNT (JourneyScene.tsx stays on disk for rollback — its r312
+ * source pins keep reading it); the window now carries the ISO
+ * CAMPUS SHEET + the r346 assembly choreography (see
+ * journey/IsoJourneyScene.tsx). */
+import { IsoJourneyScene } from '../journey/IsoJourneyScene';
 
 export function Chapters() {
   return (
@@ -24,13 +30,12 @@ export function Chapters() {
       {/* r308 — «رحلة التعلّم»: the pinned walkthrough. Chapters
           01–04 play out across one persistent drawing while the
           scroll is the timeline (CSS sticky pin; stacked readable
-          sequence ≤991px). The walkthrough reproduces the
-          reference's map states — the entry statement over the
-          ghost plan → the plan builds → the INTRODUCTION card →
-          the findings stations → the room reveals → the closing
-          column's ledger. The h2 (id=chapters-title) lives inside
-          the closing column. */}
-      <JourneyScene />
+          sequence ≤991px). R346: the walkthrough's drawing is the
+          ISOMETRIC campus — the plate's fragments assemble as the
+          scroll advances, the numbered system markers pop, the
+          capability panel unfolds. The h2 (id=chapters-title)
+          lives inside the closing column. */}
+      <IsoJourneyScene />
     </section>
   );
 }

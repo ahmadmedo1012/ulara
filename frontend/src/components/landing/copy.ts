@@ -27,4 +27,6 @@ export const MASTERY_MATRIX = 'مصفوفة الإتقان';
  *  ladder keeps the chunk from paying them every line). */
 export const BP_DRAWABLE_HAIR = 'bp-drawable bp-hair';
 export const BP_DRAWABLE = 'bp-drawable';
-export const BP_HAIR_PM_DRAW = 'bp-hair pm-draw';
+/* r346 cleanup: BP_HAIR_PM_DRAW ('bp-hair pm-draw') — zero live
+ * consumers since the r335 pains rebuild; retired with the r346
+ * dedupe wave (the deadcode ratchet's pay-down). */

@@ -506,7 +506,7 @@ export default function LandingPage() {
 
         {/* ═══ [4] chapters — the pinned map (the reference's 51%
             walkthrough): the walkthrough's own pin driver lives in
-            JourneyScene. */}
+            the IsoJourneyScene (r346). */}
         <Chapters />
 
         {/* ═══ [5] product — the ONE drawn product frame + the real

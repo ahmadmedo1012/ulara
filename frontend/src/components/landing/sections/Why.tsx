@@ -1,30 +1,91 @@
 /* T-05 (r338) — [06] لماذا أُلارا — REWRITTEN from the frozen reference
  * home-why-wrap spec (the frozen r335 reference captures: home-why-wrap.*.json).
  *
- * The reference's why strip: a ruled editorial head (eyebrow + display
- * h2 | vertical rule + lede + muted note), a full-width hairline, then
- * a TALL pinned stage (2.76 viewport-heights @1440) — a centred axis
- * with two svg way-markers, a scrubbed accent progress rule, and four
- * 464px capture rows (the alternating big card + small-capture + icon
- * cluster + the pinned dark caption bar grammar), closing on the
- * dashed route-map row. This file is the pure mount: head copy + the
- * scene; every measured geometry value lives in WhyScene + why.css. */
+ * R346 (phase-4 art) — the band's CONTENT is the r346 sandbox rebuild's
+ * why band, ported: the ruled editorial head keeps its measured seats
+ * (the frozen spec's head grid — eyebrow + display h2 | the side rail's
+ * vertical rule + lede + mono note) but carries the sandbox's authored
+ * copy («مبنيّة لتعمل كما تعمل جامعتك» — the four pillars, not the
+ * retired capture-tour); the STAGE is the isometric loop panels
+ * (plates/WhyPanels.tsx — the sandbox WhyPanels recipe: four
+ * self-running pure-CSS diagrams, one per pillar) in the sandbox's own
+ * alternating grid; the FAQ (the sandbox's five questions, verbatim)
+ * closes the band. WhyScene.tsx — the R345-ED capture-track workflow
+ * scene (the rail/spine/track machine + the real student-surface
+ * screenshots) — is RETIRED from the mount; the file stays in the tree
+ * for rollback, and the head's note seat now tells the truth about the
+ * diagrams instead of claiming screenshots. */
+import { useState } from 'react';
 import { RevealCssClass } from '../../../hooks/useReveal';
-import { WhyScene } from '../WhyScene';
+import { WhyPanels } from '../plates/WhyPanels';
+
+/* the five questions — the sandbox's authored copy, ported verbatim
+ * (one fix: «اللLM» → «الـLM» — the broken lam-alef ligature). */
+const FAQ = [
+  {
+    q: 'هل بياناتنا معزولة فعلًا؟',
+    a: 'نعم — كل مؤسسة في مساحة عمل مستقلة بقاعدة بياناتها. لا تشارك مؤسسة بياناتها مع أخرى إطلاقًا، وسجلّ التدقيق يوثّق كل وصول.',
+  },
+  {
+    q: 'ماذا يعني «عربية-أولًا»؟',
+    a: 'الواجهة والبحث والأرقام والتصميم كلها مبنية للعربية أولًا (RTL أصيل)، مع دعم كامل للأرقام العربية واللاتينية — لا ترجمة ملحقة.',
+  },
+  {
+    q: 'هل المساعد الذكي إلزامي؟',
+    a: 'لا. المحرّك الافتراضي محلي حتمي معلن، ومزوّد الـLM اختياري يُفعّله مالك المنصّة بنفسه — والحدود موثّقة بوضوح.',
+  },
+  {
+    q: 'كيف تُحسب مصفوفة الإتقان؟',
+    a: 'لكل مفهوم في كل مقرّر خلية إتقان تُبنى من الإجابات والإدماجيات والاختبارات — لا من الحضور وحده. الفجوة تُعلَّم بالسيينا وتقود التوصية.',
+  },
+  {
+    q: 'هل يمكن تجربة المنصّة قبل الالتزام؟',
+    a: 'نعم — «مساحة عمل أُلارا التجريبية» متاحة: بيانات عرض اصطناعية موسومة بوضوح، لا تحاكي أي جامعة، لتجربة كل الأدوار كاملة.',
+  },
+] as const;
+
+function FaqItem({ q, a }: { q: string; a: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className={`wy-faq-item${open ? ' is-open' : ''}`}>
+      <button
+        type="button"
+        className="wy-faq-q"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+      >
+        <span className="wy-faq-qrow">
+          <span className="wy-faq-plus" aria-hidden="true" />
+          <span className="wy-faq-qtext">{q}</span>
+        </span>
+        <span className="wy-faq-mark fo-mono" aria-hidden="true" dir="ltr">
+          +
+        </span>
+      </button>
+      {/* the answer collapses on the grid-rows axis (the modern
+          accordion pattern) — a state change, never a hidden-content
+          reveal: the reveal law does not apply to interactive state */}
+      <div className="wy-faq-a">
+        <div className="wy-faq-a-in">
+          <p className="wy-faq-atext">{a}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function Why() {
   return (
     <section className="wy-section" aria-labelledby="wy-title">
-      {/* the ruled editorial head — eyebrow + display title (left lane)
-       * + the side rail (vertical rule + lede + muted note) seated in the
-       * head grid's right lane, mirrored RTL — spec: head w962 + side w464
-       * share the top band (side lede sr.y = eyebrow sr.y). */}
+      {/* the ruled editorial head — the measured seats carry the
+       * sandbox's authored copy (r346): the pillars, not the retired
+       * capture-tour. */}
       <div className="wy-head" data-spec="why.head">
         <div className="wy-eyebrow" data-spec="why.eyebrow">
           <div className="wy-eyebrow-t" data-spec="why.eyebrowt">[06] لماذا أُلارا</div>
         </div>
         <RevealCssClass as="div" className="wy-h2w" data-spec="why.h2w" delay={1}>
-          <h2 className="wy-title" id="wy-title" data-spec="why.title">الرحلة في أربع مراحل</h2>
+          <h2 className="wy-title" id="wy-title" data-spec="why.title">مبنيّة لتعمل كما تعمل جامعتك</h2>
         </RevealCssClass>
 
         {/* the side rail — vertical rule + lede + muted note (mirrored RTL) */}
@@ -32,19 +93,37 @@ export function Why() {
           <div className="wy-rule-v" aria-hidden="true" data-spec="why.rulev" />
           <div className="wy-lede" data-spec="why.lede">
             <div className="wy-lede-t" data-spec="why.ledet">
-              شاهد، تحقّق، اختبر، أتقن — المراحل الأربع التي تعبرها في كل مقرّر داخل
-              أُلارا، ولكل مرحلة سطح حقيقي من أسطح الطالب نعرضه هنا كما هو تمامًا.
+              أُلارا تنسجم مع عملياتك بدل أن تستبدلها — أربعة أعمدة تجعلها
+              جزءًا من اليوم، لا نظامًا إضافيًا فوقه.
             </div>
           </div>
           <div className="wy-note" data-spec="why.note">
-            <div className="wy-note-t" data-spec="why.notet">اللقطات من بيئة العرض التجريبية</div>
+            <div className="wy-note-t" data-spec="why.notet">حلقات تخطيطية ذاتية الحركة</div>
           </div>
         </div>
       </div>
 
       <div className="wy-hrule" aria-hidden="true" data-spec="why.hrule" />
 
-      <WhyScene />
+      {/* R346 — the isometric loop panels (the retired WhyScene's mount;
+          see the file head + plates/WhyPanels.tsx) */}
+      <WhyPanels />
+
+      {/* the FAQ — the sandbox's five questions, closing the band */}
+      <div id="faq" className="wy-faq">
+        <div className="wy-faq-head">
+          <RevealCssClass as="div" className="wy-faq-kick">
+            <p className="wy-faq-kicker">الأسئلة الشائعة</p>
+          </RevealCssClass>
+          <span className="wy-faq-dash" aria-hidden="true" />
+          <span className="wy-faq-count fo-mono" dir="ltr">FAQ/05</span>
+        </div>
+        <RevealCssClass as="div" className="wy-faq-list" delay={1}>
+          {FAQ.map((f) => (
+            <FaqItem key={f.q} q={f.q} a={f.a} />
+          ))}
+        </RevealCssClass>
+      </div>
     </section>
   );
 }
