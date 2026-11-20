@@ -238,8 +238,8 @@ export function WhyScene() {
                     />
                   )}
                   <span className="wy-frame-rule" aria-hidden="true" />
-                  <span className="wy-frame-tag fo-mono" dir="ltr">{`[${s.num}]`}</span>
-                  <span className="wy-frame-demo">بيانات العرض التجريبية</span>
+                  <span className="lp-tag wy-frame-tag fo-mono" data-tone="accent" dir="ltr">{`[${s.num}]`}</span>
+                  <span className="lp-tag wy-frame-demo" data-tone="ghost">بيانات العرض التجريبية</span>
                   <span className="wy-chip">{s.chip}</span>
                 </div>
                 <figcaption className="wy-cap" data-spec={`why.cap${i + 1}`}>

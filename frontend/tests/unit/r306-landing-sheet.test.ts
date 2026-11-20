@@ -199,8 +199,9 @@ describe('r306 → r310 — the elevation illustration (the honest interactive)'
        The pin's SEMANTICS are unchanged and re-pinned on the new seat:
        the whole frontal elevation SVG, transparent paper, the shared
        .bp-svg frame contract, an exported single-source frame
-       (CAMPUS_FRAME) driving the viewBox, no raster. HeroInkWindow
-       stays in the tree untouched for rollback. */
+       (CAMPUS_FRAME) driving the viewBox, no raster. The R342-final
+       integration DELETED HeroInkWindow (superseded by the plate,
+       zero consumers — git history is the rollback). */
     expect(liveTsx).toContain('<CampusPlate variant="ink" />');
     const ink = read('src/components/landing/hero/CampusPlate.tsx');
     expect(ink).toContain('className="bp-svg cp-svg"');

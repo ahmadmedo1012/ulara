@@ -145,7 +145,7 @@ export function Roles() {
               (click/keyboard-driven, never hover-dependent) + the honest
               demo-data note. */}
           <div className="rl-deck-meta">
-            <span className="rl-deck-count fo-mono" dir="ltr">[{String(open + 1).padStart(2, '0')}/08]</span>
+            <span className="lp-tag rl-deck-count fo-mono" data-tone="accent" dir="ltr">[{String(open + 1).padStart(2, '0')}/08]</span>
             <span className="rl-deck-note">سطح حقيقي من أسطح المنصّة — بيانات العرض التجريبية</span>
           </div>
           <span className="rl-deck-mark rl-deck-mark-a" aria-hidden="true" />

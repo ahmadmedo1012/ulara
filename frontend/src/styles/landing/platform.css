@@ -760,17 +760,12 @@ html[data-theme='dark'] .pr-section .pr-cta {
    plate toward the box's left edge · trail = toward the right edge).
    ═══════════════════════════════════════════════════════════════════ */
 
+/* the honest demo-data disclosure on a capture — the shared .lp-tag
+   furniture (patterns.css, ghost tone) at the plate's far corner */
 .pr-frame-demo {
   position: absolute;
   inset-block-start: var(--sp-1-5);
   inset-inline-end: var(--sp-1-5);
-  padding: 2px var(--sp-1-5);
-  border: 1px solid var(--rule);
-  background: var(--bg);
-  color: var(--text-muted);
-  font-family: var(--font-mono);
-  font-size: var(--fs-mono-xs);
-  line-height: 1.4;
 }
 
 .pr-callouts {

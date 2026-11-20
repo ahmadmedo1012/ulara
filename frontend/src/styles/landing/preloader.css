@@ -300,7 +300,11 @@
   border-block-end: 1px dashed var(--text-muted);
 }
 
-.pl-meta-row {
+/* the ledger's two mono rows (meta + boot) share one grammar — one
+ * rule, both selectors (the R342-final dedupe; the boot list's own
+ * rhythm lives on .pl-boot above) */
+.pl-meta-row,
+.pl-boot-item {
   display: flex;
   gap: var(--sp-2);
   font-family: var(--font-mono);
@@ -336,15 +340,6 @@
   display: grid;
   gap: var(--sp-1);
   min-inline-size: 196px;
-}
-
-.pl-boot-item {
-  display: flex;
-  gap: var(--sp-2);
-  font-family: var(--font-mono);
-  font-size: var(--fs-mono-xs);
-  letter-spacing: 0.04em;
-  animation: pl-light var(--motion-duration-base) var(--ease-out) both;
 }
 
 .pl-boot-num {

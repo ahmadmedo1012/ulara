@@ -20,7 +20,7 @@ import { initReveals } from '../lib/reveals';
 /* R331 (A-Web-Hero) — the hero JSX block lives in its own folder
  * (components/landing/hero/Hero.tsx): the reference-mechanics rebuild
  * (mask-line title reveal · wiping frame edges · staged ink-in ·
- * deco cards · work-card rise). HeroInkWindow/HeroInspect mount from
+ * deco cards · work-card rise). CampusPlate/HeroInspect mount from
  * there; the r331/hero.css import rides the component. The sections/
  * seat re-exports it (P2-0 split) so the composer mounts every band
  * from one directory. */

@@ -112,8 +112,10 @@ describe('r188 brand reset — campus photography retired (no real-university im
        pair ONTO the CampusPlate 'ink' variant — the SAME plate the
        preloader traces (one object across the loader→hero handoff).
        The pin's semantics (whole drafted elevation, transparent paper,
-       no raster) re-pin on the new seat; HeroInkWindow stays untouched
-       in the tree for rollback. */
+       no raster) re-pin on the new seat; the R342-final integration
+       DELETED HeroInkWindow (superseded, zero consumers — git history
+       keeps the rollback; ElevationArt survives module-internal to
+       ElevationDrawing for the SheetLoader's entrance variant). */
     expect(src).toContain('<CampusPlate variant="ink" />');
     const ink = read('src/components/landing/hero/CampusPlate.tsx');
     expect(ink).toContain('variant === \'ink\'');

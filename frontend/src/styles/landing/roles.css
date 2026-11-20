@@ -471,13 +471,10 @@
   pointer-events: none;
 }
 
+/* the deck's surface counter — the shared .lp-tag furniture
+   (patterns.css, accent tone) in the meta row's flow seat */
 .rl-deck-count {
-  padding: 2px var(--sp-1-5);
-  border: 1px solid var(--rule);
-  background: var(--bg);
-  color: var(--accent-ink);
-  font-size: var(--fs-mono-sm);
-  line-height: 1.4;
+  flex: none;
 }
 
 .rl-deck-note {

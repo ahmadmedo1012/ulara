@@ -336,7 +336,7 @@ function TraceStrokes() {
   );
 }
 
-export type CampusVariant = 'trace' | 'ink';
+type CampusVariant = 'trace' | 'ink';
 
 export function CampusPlate({ variant }: { variant: CampusVariant }) {
   const svgRef = useRef<SVGSVGElement | null>(null);

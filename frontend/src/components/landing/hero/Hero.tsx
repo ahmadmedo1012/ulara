@@ -13,14 +13,18 @@
  *   ├─ the content grid (title cell ‖ sub cell ‖ alt cell)
  *   └─ the work strip + the section frame (4 wiping edges + plus marks).
  *
- * RETIRED with this pass (the files stay untouched for rollback —
- * the mounts leave the tree, the census contracts keep their records):
+ * RETIRED with this pass (R342-final integration: the dead files are
+ * DELETED — git history is the rollback; the census contracts keep
+ * their records in the round docs and the frozen captures):
  *   · the ~95-div survey grid (HeroGrid) — the live sheet reads as ONE
  *     calm drawing over paper, not a survey document;
  *   · the 103-node vector-chrome census layer (HeroChrome);
  *   · the quadrant graticule + the red measure rules (the plate carries
  *     its own dimension chain, alignment crosses and datum ticks —
- *     quieter, authored inside the artwork).
+ *     quieter, authored inside the artwork);
+ *   · the HeroInkWindow/ElevationArt hero seat (the CampusPlate is the
+ *     one drawing object now; ElevationArt stays module-internal to
+ *     ElevationDrawing for the SheetLoader's entrance variant).
  *
  * Mechanics (the reveal grammar, exact reference values):
  *   · hairline wipes — the frame's 4 edges scaleX/scaleY 0→1,

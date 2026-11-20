@@ -67,7 +67,8 @@ import { BP_DRAWABLE, BP_DRAWABLE_HAIR } from './copy';
  *  · One coordinate frame: the artwork's own 1440×640 space is the
  *    frame the hotspot pins and the inspection stations are authored
  *    in (LandingPage STAGES / HeroInspect MARKERS) — the hero remaps
- *    it through the HERO_SEAT transform in HeroInkWindow.
+ *    it through the frame's own letterbox transform (the hero seat
+ *    retired with HeroInkWindow's R342-final deletion).
  */
 
 /* The drawing's own frame — shared with HeroInspect + LandingPage. */
@@ -107,7 +108,7 @@ function DimTick({ x, y }: { x: number; y: number }) {
  * through the HERO_SEAT transform (one artwork, two frames, one
  * coordinate story).
  */
-export function ElevationArt({
+function ElevationArt({
   active,
   variant = 'sheet',
 }: {

@@ -317,9 +317,11 @@
  * viewport, so at 390 the 12-unit labels render ~3.2px tall (measured
  * 2×4px ink — the panel's "unreadably small" finding, worse than
  * scored). calc() cannot express the inverse scale (division by a
- * length is invalid CSS), so HeroInkWindow measures the live svg
- * width and sets --bp-label-fs (user units) for an 11px RENDERED
- * floor; the belt applies it ≤991 (≥992 keeps the 12px spec seat). */
+ * length is invalid CSS). R342-final: the old measurer (HeroInkWindow)
+ * is deleted — the belt keeps the 12px fallback for the belt's
+ * remaining bp-micro seats (ElevationDrawing via SheetLoader, the
+ * journey's plan labels), and the LIVE plate (CampusPlate) carries its
+ * own measured --cp-label-fs seat below (the 11px rendered floor). */
 @media (max-width: 991px) {
   .hro .bp-micro {
     font-size: var(--bp-label-fs, 12px);

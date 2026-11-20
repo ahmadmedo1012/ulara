@@ -142,3 +142,29 @@
   block-size: 100dvh;
   padding-inline: var(--page-gutter);
 }
+
+/* ── Sheet-furniture tag (R342-final · the editorial scenes' shared
+ * mono corner tag): the ruled chip that marks a capture's index or its
+ * demo-data disclosure. ONE base grammar here — the why frames
+ * (.wy-frame-tag/.wy-frame-demo), the roles deck (.rl-deck-count) and
+ * the product captures (.pr-frame-demo) seat it; section sheets own
+ * ONLY the seats (position/insets) and spec-locked overrides. The
+ * tone variants carry the two measured voices (accent index · ghost
+ * disclosure). ──────────────────────────────────────────────────── */
+.lp-tag {
+  padding: 2px var(--sp-1-5); /* spacing-gate: allow — the measured furniture chip's 2px vertical mat (moved verbatim from the section sheets) */
+  border: 1px solid var(--rule);
+  background: var(--bg);
+  line-height: 1.4;
+}
+
+.lp-tag[data-tone='accent'] {
+  color: var(--accent-ink);
+  font-size: var(--fs-mono-sm);
+}
+
+.lp-tag[data-tone='ghost'] {
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-xs);
+}

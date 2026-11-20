@@ -154,7 +154,7 @@ export function Product() {
             <div className="pr-frame-chrome" aria-hidden="true">
               <Hairline variant="border" />
               <span className="pr-frame-tag"><Numeral n={1} /></span>
-              <span className="pr-frame-demo">بيانات العرض التجريبية</span>
+              <span className="lp-tag pr-frame-demo" data-tone="ghost">بيانات العرض التجريبية</span>
             </div>
             {/* R345-ED — the capture's capability callouts (the honest
                 annotations over the real screen) */}
@@ -166,7 +166,7 @@ export function Product() {
             <div className="pr-frame-chrome" aria-hidden="true">
               <Hairline variant="border" />
               <span className="pr-frame-tag"><Numeral n={2} /></span>
-              <span className="pr-frame-demo">بيانات العرض التجريبية</span>
+              <span className="lp-tag pr-frame-demo" data-tone="ghost">بيانات العرض التجريبية</span>
             </div>
             <PrCallouts kind="tutor" />
           </div>
@@ -254,7 +254,7 @@ function PlatformRow({ item, idx, hidden, clone }: { item: typeof PLATFORM_ITEMS
         <div className="pr-frame-chrome" aria-hidden="true">
           <Hairline variant="border" />
           <span className="pr-frame-tag"><Numeral n={idx} /></span>
-          <span className="pr-frame-demo">بيانات العرض التجريبية</span>
+          <span className="lp-tag pr-frame-demo" data-tone="ghost">بيانات العرض التجريبية</span>
         </div>
         {/* R345-ED — the same capability callouts on the stacked-band
             capture (one composition at every width) */}

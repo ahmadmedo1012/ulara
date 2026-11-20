@@ -425,29 +425,19 @@
   pointer-events: none;
 }
 
+/* the index tag — the shared .lp-tag furniture (patterns.css) seated
+   at the capture's near corner; the accent tone is the base's own */
 .wy-frame-tag {
   position: absolute;
   inset-block-start: var(--sp-1-5);
   inset-inline-start: var(--sp-1-5);
-  padding: 2px var(--sp-1-5);
-  border: 1px solid var(--rule);
-  background: var(--bg);
-  color: var(--accent-ink);
-  font-size: var(--fs-mono-sm);
-  line-height: 1.4;
 }
 
+/* the honest demo-data disclosure — the shared .lp-tag ghost tone */
 .wy-frame-demo {
   position: absolute;
   inset-block-start: var(--sp-1-5);
   inset-inline-end: var(--sp-1-5);
-  padding: 2px var(--sp-1-5);
-  border: 1px solid var(--rule);
-  background: var(--bg);
-  color: var(--text-muted);
-  font-family: var(--font-mono);
-  font-size: var(--fs-mono-xs);
-  line-height: 1.4;
 }
 
 /* the honest capability chip — the ONE accent seat per capture (the
