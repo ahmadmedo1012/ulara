@@ -149,7 +149,16 @@ export function Preloader({ onExitStart, onDone }: PreloaderProps) {
       return undefined;
     }
 
-    const start = performance.now();
+    /* r344 — the release clock is stamped on the FIRST rAF, not at
+     * effect time: the belt (r309) measures from its own tMount — the
+     * moment `.pl` is layout-observable — and layout observation can
+     * precede the effect's clock by the paint delay (~50-80ms on fast
+     * runners; CI measured doneAt 1918/1951 vs the 2000 floor). rAF
+     * callbacks run AFTER layout in the same frame, so a first-rAF
+     * stamp can never precede tMount: doneAt ≥ the floor holds BY
+     * CONSTRUCTION on every runner class — the r338 skew lesson
+     * closed structurally (the floor stays 2000; no test touched). */
+    let start = 0;
     let solved = false; /* real assets are in */
     let exited = false;
     let raf = 0;
@@ -241,7 +250,14 @@ export function Preloader({ onExitStart, onDone }: PreloaderProps) {
       }
       raf = requestAnimationFrame(frame);
     };
-    raf = requestAnimationFrame(frame);
+    /* the first rAF only STAMPS the clock (its timestamp is the frame
+     * the loader first animates on — layout-observable since the
+     * previous frame); the crawl starts on the next frame. */
+    const stampClock = (now: number) => {
+      start = now;
+      raf = requestAnimationFrame(frame);
+    };
+    raf = requestAnimationFrame(stampClock);
     cleanups.push(() => cancelAnimationFrame(raf));
 
     return () => {

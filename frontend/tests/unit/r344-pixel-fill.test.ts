@@ -71,18 +71,33 @@ describe('r344 A2 — the seats', () => {
   const components = read('src/styles/components.css');
   const cta = read('src/styles/landing/cta.css');
   const nav = read('src/styles/landing/nav.css');
+  const patterns = read('src/styles/landing/patterns.css');
   const sprite = "url('/brand/pixel-mask.svg')";
   const walk = /mask-position\s+var\(--t-slow\)\s+var\(--ease-pixel\)/;
+
+  it('patterns.css: the shared mask grammar exists ONCE for the three seats', () => {
+    expect(patterns).toMatch(
+      /\.btn--pixel::before,\s*\n\.fo-cta \.btn\.accent\.btn--pixel \.fo-cta-rbtn::after,\s*\n\.fo-actions-cta::before \{/,
+    );
+    const block = patterns.slice(patterns.indexOf('.btn--pixel::before,'));
+    const seat = block.slice(0, block.indexOf('}'));
+    expect(seat).toContain(sprite);
+    expect(seat).toContain('mask-size: 2000% 100%');
+    expect(seat).toContain('mask-mode: alpha');
+    expect(seat).toContain('will-change');
+    expect(seat).toContain('mask-position: 0% 50%');
+    expect(patterns).toContain('preserveAspectRatio'); /* documented as load-bearing in the grammar comment */
+    // ONE grammar occurrence across the landing family (the jscpd lesson)
+    const occurrences = [
+      components, cta, nav,
+    ].filter((s) => s.includes("url('/brand/pixel-mask.svg')")).length;
+    expect(occurrences).toBe(0);
+  });
 
   it('components.css: the .btn--pixel base + both arms, no transform slide', () => {
     expect(components).toContain('.btn--pixel::before');
     const base = components.slice(components.indexOf('.btn--pixel::before'));
     const block = base.slice(0, base.indexOf('}', base.indexOf('mask-position')));
-    expect(block).toContain('-webkit-mask-image');
-    expect(block).toContain(sprite);
-    expect(block).toContain('mask-size: 2000% 100%');
-    expect(block).toContain('mask-mode: alpha');
-    expect(block).toContain('will-change');
     expect(block).toContain('transform: none');
     expect(block).toMatch(walk);
     // the pointer arm + the keyboard arm both walk to slice 19
@@ -108,8 +123,6 @@ describe('r344 A2 — the seats', () => {
     const after = cta.slice(cta.indexOf('.fo-cta .btn.accent.btn--pixel .fo-cta-rbtn::after'));
     const afterBlock = after.slice(0, after.indexOf('}'));
     expect(afterBlock).toContain('background: var(--primary)');
-    expect(afterBlock).toContain(sprite);
-    expect(afterBlock).toContain('mask-size: 2000% 100%');
     expect(afterBlock).toMatch(walk);
     // the recorded T-13 final pair is untouched above the dissolve block
     expect(cta).toMatch(
@@ -133,7 +146,6 @@ describe('r344 A2 — the seats', () => {
   it('nav.css: the desktop cell base is pointer-ungated, focus parity exists, the #DB3A00 law stands', () => {
     const base = nav.slice(nav.indexOf('.fo-actions-cta::before'));
     const baseBlock = base.slice(0, base.indexOf('}', base.indexOf('mask-position')));
-    expect(baseBlock).toContain(sprite);
     expect(baseBlock).toContain('transform: none');
     expect(baseBlock).toMatch(walk);
     expect(nav).toMatch(/\.fo-actions-cta:focus-visible::before \{[^}]*mask-position: 100% 50%/s);
@@ -145,9 +157,10 @@ describe('r344 A2 — the seats', () => {
       ['components.css', components],
       ['cta.css', cta],
       ['nav.css', nav],
+      ['patterns.css', patterns],
     ] as const) {
       const lists = [...src.matchAll(/transition:\s*([^;]*mask-position[^;]*);/g)].map((m) => m[1]);
-      expect(lists.length, name).toBeGreaterThan(0);
+      if (lists.length === 0) continue;
       for (const list of lists) {
         expect(list, name).not.toMatch(
           /\b(width|height|inline-size|block-size|inset|margin|padding|gap|top|left|right|bottom)\b/,

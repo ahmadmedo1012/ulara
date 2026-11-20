@@ -168,3 +168,31 @@
   font-family: var(--font-mono);
   font-size: var(--fs-mono-xs);
 }
+
+/* ── r344 — the pixel-dissolve mask grammar (the 8th canonical pattern):
+ * ONE occurrence of the mask seat, shared by the three signature
+ * pseudo-layers (the components .btn--pixel slab · the cta finale's
+ * ink ::after · the nav masthead cell's slab). The per-seat arms
+ * (transform park, transition lists, grounds, z-lifts, hover/focus
+ * walks) stay in their own sheets — only the mask grammar is shared.
+ * preserveAspectRatio="none" is baked into the sprite itself
+ * (scripts/art/pixel-mask.mjs) — LOAD-BEARING: without it the 20:1
+ * intrinsic ratio letterboxes inside the 2000%-scaled mask box and
+ * the position-100% window lands on empty padding (the dev-build
+ * finding). The sprite carries mask-mode alpha semantics; the seat
+ * pins it explicitly (the reference's own paint hints). */
+.btn--pixel::before,
+.fo-cta .btn.accent.btn--pixel .fo-cta-rbtn::after,
+.fo-actions-cta::before {
+  -webkit-mask-image: url('/brand/pixel-mask.svg');
+  mask-image: url('/brand/pixel-mask.svg');
+  -webkit-mask-size: 2000% 100%;
+  mask-size: 2000% 100%;
+  -webkit-mask-mode: alpha;
+  mask-mode: alpha;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: 0% 50%;
+  mask-position: 0% 50%;
+  will-change: -webkit-mask-position, mask-position;
+}

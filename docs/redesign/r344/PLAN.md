@@ -1,7 +1,9 @@
 # R344 — «التطوير الفائق»: مطابقة المرجع بالتفصيل + صدق الخدمات + تنظيف المستودع
 
 The owner's mandate (2026-11-20): enter the super-development phase — match the
-retired reference (heronaiapp.com) in its fine details (scroll method, geometric
+retired reference (the design-agency landing measured fresh this round; its
+name is retired from tracked content per the zero-trace law) in its fine
+details (scroll method, geometric
 shapes, their appearance, overlap, motion), inspect/research/compare, write the
 plan, execute with commits as we go, clean the repository to ONE branch (`main`),
 and fix the services (mail via Resend, the failing production smoke, env hygiene).
