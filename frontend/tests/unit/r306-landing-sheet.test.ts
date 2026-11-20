@@ -451,6 +451,32 @@ describe('r306 hygiene — the sheet stays clean', () => {
       // belt below still collapses every ambient instrument).
       'jt-head-scrub', // r339 T-11b2: the chapters head's scrubbed entrance (journey.css)
       'pr-title-scrub', // r339 T-11b2: the platform band's title flourish (platform.css)
+      // R344-LS2 (the pains' measured simulations): four ONE-PASS ladders
+      // armed by the column reveal (.pm-col.in-view) — the furniture draws
+      // (pm-x-draw), the tags rise, the LATE stamp slams, the lost traces
+      // dissolve. No loops; collapsed by the pains RM belt below.
+      'pm-x-draw',
+      'pm-x-rise',
+      'pm-x-stamp',
+      'pm-x-dissolve',
+      // R344-LS4 (the product captures' annotations): the callout ladder
+      // (rise / line draw / dot pop, lead + trail seats) + the one-shot
+      // accent sweep — armed by the group's .in-view, collapsed by the
+      // platform RM belt below.
+      'pr-co-in',
+      'pr-co-in-trail',
+      'pr-co-line',
+      'pr-co-dot',
+      'pr-sweep',
+      // R344-LS7 (the cta closing plate + sketch draw): one clip wipe on
+      // the plate + one dash pass on the sketch strokes — collapsed by
+      // the cta RM belt below.
+      'fo-plate-wipe',
+      'fo-sketch-draw',
+      // R344-LS8 (the footer sheet): the wordmark finish's clip wipe + the
+      // skyline strip's bottom-up reveal — collapsed by the footer RM belt.
+      'fo-finish-wipe',
+      'fo-strip-wipe',
       // r335 W-chrome: 'sl-scan' retired with the R313 SheetLoader sheet
       // (dead .sl-* rules deleted; the preloader's own RM gates are JS-side).
     ]);
@@ -472,6 +498,19 @@ describe('r306 hygiene — the sheet stays clean', () => {
       '.pr-row', // r338 T-08: pr-item-fade collapses to the first row (the pairmate stays hidden)
       '.rl-rule-w', // r339 T-11b1: the row-rule widen collapses to the authored full-width rule
       '.rl-rule-x', // r339 T-11b1: the frame-pair draw collapses to the authored unscaled hairlines
+      // R344 additions — every new instrument carries its own collapse:
+      '.pm-col .pm-x', // pm-x-draw collapses to the drawn furniture
+      '.pm-col .pm-x-tag', // pm-x-rise collapses to the risen tags
+      '.pm-col .pm-x-stamp', // pm-x-stamp collapses to the landed stamp
+      '.pm-col.in-view .pm-art .bp-dash', // pm-x-dissolve collapses (the trace keeps its ink)
+      '.pr-co', // pr-co-in/-in-trail collapse to the seated callouts
+      '.pr-co-l', // pr-co-line collapses to the drawn leader
+      '.pr-co-d', // pr-co-dot collapses to the seated diamond
+      '.pr-sweep', // pr-sweep collapses to the static sheet (no sweep)
+      '.fo-cta-platezone .fo-cta-plate.in-view', // fo-plate-wipe collapses to the unwiped plate
+      '.fo-cta-sketch.in-view .fo-cta-sketch-line', // fo-sketch-draw collapses to the complete sketch
+      '.fo-finish.in-view', // fo-finish-wipe collapses to the unwiped finish
+      '.fo-fstrip.in-view .fo-strip-img', // fo-strip-wipe collapses to the unwiped skyline
     ];
     for (const sel of RM_COLLAPSED) {
       expect(rmBelt, `RM belt must collapse ${sel}`).toContain(sel);

@@ -1,5 +1,5 @@
 {
-  "_comment": "a11y ratchet floor (ULARA Ω §7 axe gate) — per-cell serious/critical node counts keyed route|viewport|theme|dir. The floor only tightens (same philosophy as scripts/gates/stylelint-baseline.json): edit DOWN as violations are burned down (§4 loop), NEVER up to force green. A missing cell key means floor 0. Regenerate deliberately with: node scripts/brand/a11y-gate.mjs --write-baseline",
+  "_comment": "a11y ratchet floor (ULARA Ω §7 axe gate) — per-cell serious/critical node counts keyed route|viewport|theme|dir. The floor only tightens (same philosophy as scripts/gates/stylelint-baseline.json): edit DOWN as violations are burned down (§4 loop), NEVER up to force green. A missing cell key means floor 0. Regenerate deliberately with: node scripts/brand/a11y-gate.mjs --write-baseline R344-LSx: the /|1280 light floor tightens 7→6 — the landing annotation inks re-keyed to the AA muted token removed one serious contrast fail (the ratchet only tightens).",
   "generatedAt": "2026-11-12T14:27:33.736Z",
   "axe": "4.10.3",
   "cells": {
@@ -8,7 +8,7 @@
       "critical": 0
     },
     "/|1280x800|light|rtl": {
-      "serious": 7,
+      "serious": 6,
       "critical": 0
     },
     "/|390x844|dark|rtl": {

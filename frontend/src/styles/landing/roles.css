@@ -505,7 +505,7 @@
 .rl-deck-note {
   font-size: 1.2rem;
   line-height: 1.68rem;
-  color: var(--neutral-500);
+  color: var(--text-muted); /* R344: AA ink */
   background: color-mix(in srgb, var(--bg) 78%, transparent);
   border: 1px solid var(--rule);
   padding: 0.25rem 0.9rem;

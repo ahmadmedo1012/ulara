@@ -876,6 +876,11 @@ html[data-theme='dark'] .pr-section .pr-cta {
   .pr-co-d { transform: rotate(45deg); }
 }
 @media (max-width: 767px) {
+  /* the phone band keeps the STRONGEST callout only: the chips are
+     rem-sized chrome over a ~360px capture, so the full ladder reads
+     as clutter over the UI text (measured @390). The honest labels
+     ride the img alt; the chip names the capture's headline feature. */
+  .pr-callouts .pr-co:nth-of-type(n + 2) { display: none; }
   .pr-co-l { inline-size: 2.6rem; }
   .pr-co-t { font-size: 1.1rem; padding: 0.2rem 0.7rem; }
 }

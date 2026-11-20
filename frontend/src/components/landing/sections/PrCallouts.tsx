@@ -57,7 +57,7 @@ export function PrCallouts({ kind }: { kind: 'exam' | 'tutor' }) {
           { x: '62%', y: '88%', text: 'خطط مراجعة حسب الأداء', mode: 'trail', pd: '820ms' },
         ];
   return (
-    <RevealCssClass as="div" className="pr-callouts">
+    <RevealCssClass as="div" className="pr-callouts" aria-hidden="true">
       {callouts.map((c) => (
         <CalloutRow key={c.text} c={c} />
       ))}

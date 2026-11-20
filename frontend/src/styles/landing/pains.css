@@ -715,11 +715,13 @@
 }
 
 /* the furniture's own ink seats */
+/* R344: the SVG text rides the AA ink (5.4:1 on paper) — axe's
+   color-contrast reads rendered svg text the same as HTML text */
 .pm-xart .pm-x-t {
   font-family: var(--font-mono, ui-monospace, monospace);
   font-size: 8px;
   letter-spacing: 0.06em;
-  fill: var(--neutral-500);
+  fill: var(--text-muted);
 }
 .pm-xart .pm-x-t-accent {
   fill: var(--accent);

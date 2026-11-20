@@ -731,7 +731,7 @@
   font-size: 1.3rem;
   line-height: 1.82rem;
   letter-spacing: 0.08em;
-  color: var(--neutral-500);
+  color: var(--text-muted); /* R344: AA ink (5.4:1 on paper) — the muted-label seat */
   white-space: nowrap;
 }
 .st-splice .st-splice-tick {
@@ -827,7 +827,7 @@
 .st-meta-cell {
   font-size: 1.2rem;
   line-height: 1.68rem;
-  color: var(--neutral-500);
+  color: var(--text-muted); /* R344: AA ink on the paper chip */
   border: 1px solid var(--rule);
   padding: 0.3rem 1rem;
   background: color-mix(in srgb, var(--bg) 72%, transparent);
@@ -877,7 +877,10 @@
 @media (max-width: 767px) {
   .st-splice { gap: 1rem; padding-block-start: 1.6rem; }
   .st-splice .st-splice-plate { font-size: 1.2rem; }
-  .st-meta-cell:nth-child(2) { display: none; }
-  .st-draft-grid { inline-size: 18rem; block-size: 18rem; inset-block-start: 3rem; }
+  /* the phone band: the chips sit in the title's wrap zone — the
+     splice plate already carries the sheet identity, so the meta row
+     steps aside entirely (no overlap with the display lines) */
+  .st-meta { display: none; }
+  .st-draft-grid { inline-size: 18rem; block-size: 18rem; inset-block-start: 3rem; opacity: 0.4; }
   .st-draft-arcs { block-size: 12rem; inset-block-end: 10rem; }
 }

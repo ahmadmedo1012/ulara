@@ -304,9 +304,15 @@ describe('R312 mobile camera — the source contracts (R322 map override)', () =
     // frame one») and the build is one crossfade, so the old tone-jump
     // defect (a wall jumping pale-grey→black) cannot recur. The direct
     // style.opacity write architecture is unchanged: still per-frame
-    // direct writes, zero custom properties.
+    // direct writes on the ELEMENTS (opacity does not inherit).
+    // R344-LS3 delta: the loop additionally writes SIX TRACK-SCOPED
+    // vars (--jt-draw-1..6, one per layer, the same build window) that
+    // the dash ramp consumes (journey.css) — the plan's strokes
+    // assemble instead of only crossfading. The element-level walk
+    // stays dead: six writes per tick, never per element; opacity
+    // keeps its direct write.
     expect(JOURNEY_SRC).toMatch(
-      /const o = XL_GHOST \+ \(1 - XL_GHOST\) \* p2o\(\(t - a\) \/ \(b - a\)\);\s*\n\s*for \(const el of groups\[i\] \?\? \[\]\) \{\s*setSheetVar\(el\.style, 'opacity', o\.toFixed\(3\)\);\s*\}/,
+      /const u = p2o\(\(t - a\) \/ \(b - a\)\);\s*\n\s*const o = XL_GHOST \+ \(1 - XL_GHOST\) \* u;\s*\n\s*track\.style\.setProperty\(`--jt-draw-\$\{i \+ 1\}`, u\.toFixed\(4\)\);\s*\n\s*for \(const el of groups\[i\] \?\? \[\]\) \{\s*setSheetVar\(el\.style, 'opacity', o\.toFixed\(3\)\);\s*\}/,
     );
     /* landing.css: the six crossfade groups are opacity-only roots
      * with the will-change budget; the GHOST base (0.18, not 0) keeps

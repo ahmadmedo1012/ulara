@@ -521,7 +521,7 @@ footer.fo-footer {
   font-size: 1.2rem;
   line-height: 1.68rem;
   letter-spacing: 0.05em;
-  color: var(--neutral-500);
+  color: var(--text-muted); /* R344: AA ink */
   padding: 0.9rem 1.6rem;
   border-inline-start: 1px solid var(--rule);
   white-space: nowrap;
@@ -537,13 +537,13 @@ footer.fo-footer {
   display: grid;
   justify-items: center;
   gap: 1.2rem;
-  padding-block: 4rem 2rem;
+  padding-block: 5.2rem 2rem;
   overflow: hidden;
 }
 .fo-finish-word {
   font-family: var(--font-display);
   font-size: clamp(5.6rem, 13vw, 17rem);
-  line-height: 1.1;
+  line-height: 1.28;
   font-weight: 700;
   letter-spacing: 0.02em;
   color: transparent;
@@ -554,7 +554,7 @@ footer.fo-footer {
   font-size: 1.3rem;
   line-height: 1;
   letter-spacing: 0.44em;
-  color: var(--neutral-500);
+  color: var(--text-muted); /* R344: AA ink */
 }
 .js-reveal-armed .fo-finish.in-view {
   animation: fo-finish-wipe var(--t-cinema) var(--ease-out) both;
@@ -592,5 +592,5 @@ footer.fo-footer {
     border-inline-start: 0;
     padding-inline-start: 0;
   }
-  .fo-finish { padding-block: 2.4rem 1.2rem; }
+  .fo-finish { padding-block: 3.2rem 1.4rem; }
 }
