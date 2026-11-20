@@ -170,7 +170,7 @@ export function Vision({ year }: { year: number }) {
                       masked two-line wrappers, transform tween) + icon box
                       (dual swap chevrons, transform tween). The arrow is our
                       own authored line-art, mirrored for RTL. */}
-                  <Link to="/auth/register" className="btn accent lg" data-spec="cta.primary" data-spec-hover="1">
+                  <Link to="/auth/register" className="btn accent lg btn--pixel" data-spec="cta.primary" data-spec-hover="1">
                     <div className="fo-cta-rbtn" data-spec="cta.primary-bg">
                       <div className="fo-cta-rlabel" data-spec="cta.primary-label">
                         <div className="fo-cta-rline" data-spec="cta.primary-l1">
