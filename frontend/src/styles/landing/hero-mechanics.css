@@ -1272,9 +1272,15 @@ section.fo-hero .hro-alt {
   .hro .hro-work-item:nth-of-type(3n) { inline-size: 117px; }
 }
 
-/* [D] the deco captions — measured paper ink on the ink cards */
+/* [D] the deco captions — r345 defect fix: the old seat carried the
+   measured paper ink on the assumption of ink cards under the captions
+   (the reference's item1/item2 plates). The rebuilt plate seats the
+   cards DIRECTLY on the drawing sheet (no plate — .hro-deco carries no
+   background), so the paper ink read as invisible white-on-paper (the
+   live capture: «المُعمل التعليمي» at ~0 contrast). The captions ride
+   the drawing's ink voice; the faint mono label keeps its own rung. */
 .hro .hro-deco-text {
-  color: var(--hro-paper);
+  color: var(--text-secondary);
   font-size: 12.89px;
   line-height: 1.4;
 }

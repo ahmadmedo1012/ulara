@@ -19,7 +19,18 @@
 .bl {
   --lz-boot-log: 45; /* the ScrollRule's own decorative-chrome rung */
   position: fixed;
-  inset-block-start: 50%;
+  /* r345 defect fix — the measured collision: the EdgeTab (.et-tab, z 55)
+     owns the mid-edge band (y 368→532 @1440×900 — half-extent 81.5px
+     around the 50% centre, opaque paper rail), and the old 50% seat put
+     this cell UNDER it: the tab's band painted over the counter's
+     leading glyph (the «0» of 01/09 clipped at x20). The cell yields —
+     the tab keeps the mid-edge seat it shares with the reference's own
+     badge. The seat math (translateY(-50%) seats the CENTRE): the
+     cell's top = 50% + offset − 65 (its own half-height) must clear the
+     tab's bottom (50% + 82) with a 24px gap → offset = 82 + 65 + 24 ≈
+     171px. Same edge, zero overlap at every tier (the ≤767 tab is
+     shorter — the offset only clears it further). */
+  inset-block-start: calc(50% + 171px);
   inset-inline-end: 20px; /* 13px inside the 7px frame — the readout's mirror seat */
   transform: translateY(-50%);
   z-index: var(--lz-boot-log);
