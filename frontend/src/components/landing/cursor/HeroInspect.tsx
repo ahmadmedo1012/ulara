@@ -487,6 +487,25 @@ export function HeroInspect() {
     };
 
     const wake = () => {
+      /* r346 hardening — the stale-frame guard: on a cold dev server
+       * the landing's CSS chunk can land AFTER the first mapping (the
+       * plate then shrinks — e.g. 1400→648px — and every clamp in the
+       * frame loop would seat the guides/plus/readout past the real
+       * frame until the ResizeObserver's own pass catches up). Re-map
+       * synchronously on wake when the cached frame no longer matches
+       * the live svg box — the instrument can never wake on stale
+       * geometry. */
+      const layer = layerRef.current;
+      const svg = layer?.closest<HTMLElement>('.bp-stage')?.querySelector('svg');
+      if (layer && svg) {
+        const live = svg.getBoundingClientRect();
+        if (
+          Math.abs(live.width - frameSize.current.w) > 1 ||
+          Math.abs(live.height - frameSize.current.h) > 1
+        ) {
+          applyMapping();
+        }
+      }
       if (!unsubFrame) {
         unsubFrame = subscribeSheetFrame(frame);
       } else {
