@@ -41,6 +41,57 @@
 import { Fragment, type ReactNode, type RefObject } from 'react';
 import { Link } from 'react-router-dom';
 import { ScrubReveal } from '../journey/WordReveal';
+import { RevealCssClass } from '../../../hooks/useReveal';
+
+/* ── R345-ED (feat/home-editorial-scenes) — the statement's own drafting
+ * underlay (the section-furniture layer): the faint drafting field, the
+ * courtyard arch arcs echoed behind the declaration, a measure dimension
+ * under the title block, corner registration marks, and the mono sheet
+ * metadata. Every stroke rides the SAME scrub clock the composer writes
+ * (--wr-p on the section, the measured inkEase ramp) — pure calc over the
+ * inherited var, zero new scroll handlers. The whole layer mounts
+ * aria-hidden (chrome, never content); CSS defaults --wr-p to 1, so no-JS
+ * visitors read the SETTLED sheet, and the reduced-motion belt pins every
+ * mover to its authored end state (the house law). */
+function StatementDraft() {
+  return (
+    <div className="st-draft" aria-hidden="true">
+      {/* the drafting field — the sheet's reference grid behind the title */}
+      <svg className="st-draft-svg st-draft-grid" viewBox="0 0 320 320" fill="none" preserveAspectRatio="xMinYMin meet">
+        {[1, 2, 3, 4, 5, 6, 7].map((n) => (
+          <line key={`v${n}`} className="st-draft-g" x1={n * 40} y1="0" x2={n * 40} y2="320" />
+        ))}
+        {[1, 2, 3, 4, 5, 6, 7].map((n) => (
+          <line key={`h${n}`} className="st-draft-g" x1="0" y1={n * 40} x2="320" y2={n * 40} />
+        ))}
+      </svg>
+      {/* the arch arcs — the courtyard's arcade rhythm behind the statement,
+          inking in WITH the words (each arc takes a later slice of --wr-p) */}
+      <svg className="st-draft-svg st-draft-arcs" viewBox="0 0 320 200" fill="none" preserveAspectRatio="xMaxYMax meet">
+        <path className="st-draw st-draw-a" pathLength={1} d="M40 200 A 120 120 0 0 1 280 200" />
+        <path className="st-draw st-draw-b" pathLength={1} d="M80 200 A 80 80 0 0 1 240 200" />
+        <path className="st-draw st-draw-c" pathLength={1} d="M120 200 A 40 40 0 0 1 200 200" />
+        {/* the centre keystone tick — the one accent the band carries */}
+        <line className="st-draw st-draw-k" pathLength={1} x1="160" y1="106" x2="160" y2="86" />
+      </svg>
+      {/* the measure dimension — the title block's own width ruler
+          (rides .st-titlebox::before/::after — see statement.css) */}
+      {/* the corner registration marks (the drafting sheet's ± seats) */}
+      <span className="st-draft-mark st-draft-mark-a" aria-hidden="true" />
+      <span className="st-draft-mark st-draft-mark-b" aria-hidden="true" />
+      {/* the mono sheet metadata — SEC plate + scale + the section name
+          (r324 law: the metadata voice stays Arabic-first — the banned
+          Latin `SCALE 1:100` jargon never renders as content) */}
+      <div className="st-meta">
+        <span className="st-meta-cell fo-mono" dir="ltr">SEC. A-02</span>
+        <span className="st-meta-cell st-meta-rule" aria-hidden="true" />
+        <span className="st-meta-cell">مقياس 1:100</span>
+        <span className="st-meta-cell st-meta-rule" aria-hidden="true" />
+        <span className="st-meta-cell">البيان — مسقط التحرير</span>
+      </div>
+    </div>
+  );
+}
 
 /* ── The statement (the scrub manifesto). Same voice/length class as
  * the reference's 127-char intro statement; honest — the four clauses
@@ -125,6 +176,18 @@ export function Statement({ sectionRef, titleRef }: StatementProps) {
      * census records home-intro-wrap > div[1]; the section role moves to
      * the band — the inner <section> below IS the record's section[1]) */
     <div id="statement" className="st-section" ref={sectionRef as RefObject<HTMLDivElement>} aria-labelledby="statement-title" data-spec="intro.wrap">
+      {/* R345-ED — the hero handoff splice: the drafting language continues
+          straight out of the hero's frame into this band — one hairline rail
+          with the sheet plate ([02] · STATEMENT) and registration marks; each
+          seat rides the house reveal rung (staggered, RM-safe, JS-off-safe —
+          the classes are added by the belt, content ships visible). */}
+      <div className="st-splice" aria-hidden="true">
+        <RevealCssClass as="span" className="st-splice-mark st-splice-mark-a" delay={1}>{' '}</RevealCssClass>
+        <RevealCssClass as="span" className="st-splice-rule" delay={2}>{' '}</RevealCssClass>
+        <RevealCssClass as="span" className="st-splice-plate fo-mono" delay={2}>[02] · STATEMENT</RevealCssClass>
+        <RevealCssClass as="span" className="st-splice-tick" delay={3}>{' '}</RevealCssClass>
+        <RevealCssClass as="span" className="st-splice-mark st-splice-mark-b" delay={4}>{' '}</RevealCssClass>
+      </div>
       <section className="st-band" aria-hidden="false" data-spec="intro.section">
         <div className="st-grid" data-spec="intro.grid">
           {/* ── the media cell — R343 C-1: the ORIGINAL courtyard
@@ -167,6 +230,8 @@ export function Statement({ sectionRef, titleRef }: StatementProps) {
               own line containers are full-width boxes. */}
           <div className="st-stmt" data-spec="intro.stmt">
             <div className="lp-hairline lp-hairline--v" aria-hidden="true" data-spec="intro.stmtrule" />
+            {/* R345-ED — the drafting underlay seats behind the padded cell */}
+            <StatementDraft />
             <div className="st-stmt-in" data-spec="intro.stmtin">
               <div className="st-titlebox" data-spec="intro.titlebox">
                 <h2 id="statement-title" className="st-title" ref={titleRef} data-spec="intro.h2">

@@ -682,3 +682,249 @@
 .st-pill-t {
   transition: transform 0.48s cubic-bezier(0.625, 0.05, 0, 1);
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   R345-ED (feat/home-editorial-scenes) — the editorial drafting layer.
+   The band keeps its measured census cells; this layer adds the
+   section furniture around them:
+
+   · .st-splice — the hero handoff rail (hairline + [02] plate + the
+     registration marks) opening the band out of the hero's frame;
+   · .st-draft — the statement cell's drafting underlay: the faint
+     reference grid, the courtyard's arch arcs, the title measure
+     dimension, the corner marks, the mono sheet metadata — every
+     stroke riding the composer's own scrub clock (--wr-p on the
+     section; calc-only choreography, zero new scroll handlers).
+
+   The scrub var defaults to 1 (the SETTLED sheet) so no-JS visitors
+   read the complete band; the reduced-motion belt below pins every
+   mover to its authored end state. No keyframes: dash offsets and
+   the ink rule are pure calc over the inherited var.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.st-section {
+  /* the scrub clock's CSS default (JS writes the live ramp on the same
+     property; no-JS = the settled sheet) */
+  --wr-p: 1;
+  /* the underlay's own gutter key — re-keyed per band with the cell's
+     real padding (15rem desktop · 2.4rem tablet · 1.7rem phone) */
+  --st-gutter-x: 15rem;
+}
+
+/* ── the hero handoff splice ─────────────────────────────────────── */
+.st-splice {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  block-size: 3.2rem;
+  margin: 0;
+  padding-inline: var(--sp-5);
+  border-block: 1px solid var(--rule);
+  background: transparent;
+}
+
+.st-splice-rule {
+  flex: 1 1 auto;
+  block-size: 1px;
+  background: var(--rule);
+}
+
+.st-splice-plate {
+  flex: 0 0 auto;
+  inline-size: fit-content;
+  padding: 0.25rem 0.8rem;
+  border: 1px solid var(--rule-strong);
+  background: var(--bg);
+  color: var(--text-muted);
+  font-size: var(--fs-mono-sm);
+  line-height: 1.2;
+}
+
+.st-splice-mark {
+  flex: 0 0 auto;
+  position: relative;
+  inline-size: 1.1rem;
+  block-size: 1.1rem;
+  color: var(--text-muted);
+}
+
+.st-splice-mark::before {
+  content: '+';
+  position: absolute;
+  inset: 0;
+  color: inherit;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-md);
+  line-height: 1.1;
+  text-align: center;
+}
+
+.st-splice-tick {
+  flex: 0 0 auto;
+  inline-size: 1px;
+  block-size: 1.1rem;
+  background: var(--rule-strong);
+}
+
+/* ── the statement cell's drafting underlay ──────────────────────── */
+.st-draft {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.st-draft-svg {
+  position: absolute;
+  color: var(--rule);
+  fill: none;
+}
+
+.st-draft-grid {
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  inline-size: 46%;
+  max-inline-size: 34rem;
+  aspect-ratio: 1;
+  opacity: 0.55;
+}
+
+.st-draft-g {
+  stroke: currentColor;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.st-draft-arcs {
+  inset-block-end: 11.2rem;
+  inset-inline-end: 1.6rem;
+  inline-size: 44%;
+  max-inline-size: 24rem;
+  color: var(--rule-strong);
+  opacity: 0.8;
+}
+
+/* the scrub-driven ink: dashoffset = (1 − p) · k — every stroke takes a
+   later slice of the same clock (k > 1 delays its start; all resolve at
+   the ramp's end, in step with the words' own ink) */
+.st-draw {
+  stroke: currentColor;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc((1 - var(--wr-p, 1)) * 1.0);
+}
+
+.st-draw-b { stroke-dashoffset: calc((1 - var(--wr-p, 1)) * 1.4); }
+.st-draw-c { stroke-dashoffset: calc((1 - var(--wr-p, 1)) * 1.8); }
+.st-draw-k {
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-dashoffset: calc((1 - var(--wr-p, 1)) * 2.2);
+}
+.st-draw-d { stroke-dashoffset: calc((1 - var(--wr-p, 1)) * 1.3); }
+.st-draw-e,
+.st-draw-f { stroke-dashoffset: calc((1 - var(--wr-p, 1)) * 1.6); }
+
+.st-draft-mark {
+  position: absolute;
+  inline-size: 1.1rem;
+  block-size: 1.1rem;
+  color: var(--text-muted);
+}
+
+.st-draft-mark::before {
+  content: '+';
+  position: absolute;
+  inset: 0;
+  color: inherit;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-md);
+  line-height: 1.1;
+  text-align: center;
+}
+
+.st-draft-mark-a {
+  inset-block-start: 0.8rem;
+  inset-inline-end: 0.8rem;
+}
+
+.st-draft-mark-b {
+  inset-block-start: 0.8rem;
+  inset-inline-end: calc(100% - var(--st-gutter-x) - 1.6rem);
+}
+
+/* the mono sheet metadata row (SEC · SCALE · section name) */
+.st-meta {
+  position: absolute;
+  inset-block-start: 0.8rem;
+  inset-inline-start: var(--st-gutter-x);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: var(--text-muted);
+}
+
+.st-meta-cell {
+  font-size: var(--fs-mono-xs);
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.st-meta-rule {
+  inline-size: 2.4rem;
+  block-size: 1px;
+  background: var(--rule);
+}
+
+/* the band's gutter key re-keys with the cell's own padding ladder */
+@media (min-width: 768px) and (max-width: 991px) {
+  .st-section { --st-gutter-x: 2.4rem; }
+  .st-draft-grid { inline-size: 56%; }
+  .st-draft-arcs { inset-block-end: 7.2rem; }
+}
+
+@media (max-width: 767px) {
+  .st-section { --st-gutter-x: 1.7rem; }
+  .st-splice { block-size: 2.8rem; padding-inline: var(--sp-3); }
+  .st-draft-grid { inline-size: 62%; opacity: 0.4; }
+  .st-draft-arcs { inline-size: 52%; inset-block-end: 8.4rem; opacity: 0.6; }
+  .st-meta { inset-block-start: 0.6rem; gap: 0.8rem; }
+  .st-meta-cell:nth-child(n + 4) { display: none; } /* phone keeps SEC + the section name readable */
+}
+
+/* ═══ reduced motion: the underlay stands complete — every stroke at
+   its authored drawn state, the ink rule full (the house law: RM
+   visitors receive the settled sheet, never a half-inked ramp) ═══ */
+@media (prefers-reduced-motion: reduce) {
+  .st-draw { stroke-dashoffset: 0; }
+  .st-titlebox::after { inline-size: 100%; }
+}
+
+/* ── R345-ED — the title block's measure pair: the faint dimension
+   rule under the last title line (::before) and the scrub's own accent
+   progress riding it (::after, width = --wr-p). Pure CSS — the pair
+   inherits the titlebox's full width, so it stays glued to the title
+   at every band without a single geometry hook. */
+.st-titlebox {
+  position: relative;
+}
+
+.st-titlebox::before {
+  content: '';
+  display: block;
+  margin-block-start: 2.8rem; /* clears the tight-pitch glyph bleed (lh > pitch) */
+  block-size: 1px;
+  background: var(--rule-strong);
+  opacity: 0.7;
+}
+
+.st-titlebox::after {
+  content: '';
+  display: block;
+  margin-block-start: -1px;
+  block-size: 2px;
+  background: var(--accent);
+  inline-size: calc(var(--wr-p, 1) * 100%);
+}
