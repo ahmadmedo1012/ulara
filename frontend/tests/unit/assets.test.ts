@@ -107,11 +107,17 @@ describe('r188 brand reset — campus photography retired (no real-university im
     // the hero seat; the r188 intent is kept: no real-university
     // BRANDING, no orbit ring, no vision backdrop, no AI scenes, no
     // text inside images. The loader keeps its original line drawing.
-    expect(src).toContain('<HeroInkWindow />');
-    const ink = read('src/components/landing/HeroInkWindow.tsx');
-    expect(ink).toContain('ElevationArt');
-    expect(ink).toContain('variant="hero"');
-    // transparent paper — the raster <image> is gone from the window
+    /* feat/home-art-direction re-seat (same evidence as the r306 pin):
+       the hero's ink seat moved OFF the HeroInkWindow/ElevationDrawing
+       pair ONTO the CampusPlate 'ink' variant — the SAME plate the
+       preloader traces (one object across the loader→hero handoff).
+       The pin's semantics (whole drafted elevation, transparent paper,
+       no raster) re-pin on the new seat; HeroInkWindow stays untouched
+       in the tree for rollback. */
+    expect(src).toContain('<CampusPlate variant="ink" />');
+    const ink = read('src/components/landing/hero/CampusPlate.tsx');
+    expect(ink).toContain('variant === \'ink\'');
+    // transparent paper — the raster <image> is gone from the plate
     expect(ink).not.toContain('<image');
     // …and the r188 provenance strings survive (brand gates below
     // still pin مساحة عمل أُلارا التجريبية as synthetic data).

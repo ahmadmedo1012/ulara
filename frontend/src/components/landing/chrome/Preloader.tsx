@@ -1,66 +1,92 @@
 import { PREFERS_REDUCED_MOTION } from '../../../lib/motion-media';
 /**
- * Preloader — R333 «تتابع الدخول» — the entry overlay (the retired craft sheet row 1).
+ * Preloader — «تتابع الدخول» — the architectural drawing sequence.
  *
- * A full-screen paper overlay on the page ground (var(--bg)): the brand
- * mark + the «أُلارا» outlined wordmark draw in via the ONE brand
- * system's own stroke-draw (<Logo animated> — hairlines first, the
- * orange point last, complete-and-static under reduced motion), with a
- * mono percentage counter (0→100) tied to REAL asset readiness
- * (document load + document.fonts.ready) bounded to min 900 ms /
- * max 2.2 s — the counter never lies and never stalls.
+ * The loading screen IS the site's opening drawing sheet (the visual
+ * direction's signature moment, rebuilt honestly):
  *
- * Exit (r335 W-chrome — the FROZEN _motion spec's recorded choreography;
- * r339 T-11c upgrades it to the full recorded flight): the content fades
- * 0.4s (power2.out-equivalent house decel) while the paper opens on the
- * recorded TWO-BAND choreography — the .pl-sheet clip slit (the recorded
- * .loading-main polygon pair) widens to the edges across the R313
- * sheet-exit rung (835ms) on the recorded cubic-bezier(1,0,0.44,1) WHILE
- * the two real band halves (the recorded .loading-progress-item pair) fly
- * the recorded ∓387.5px/+310.5px @≥992 (∓150.6px/+263.9px below) and tint
- * to the recorded #b3b3af ground — then the overlay hides instantly (the
- * recorded autoAlpha:0 set) and unmounts: the transitionend guard counts
- * only the PAPER's clip-path leg (the longest flight), so the unmount
- * lands on the split's last frame. No JS animation library — the
- * .pl--exit class carries the whole choreography; the legs are declared
- * on the base classes from mount so the exit params are live in the
- * computed style the moment the class lands. At exit START the component
- * dispatches the `ula:entry-done` custom event AND calls onExitStart, so
- * downstream chrome (the consent banner) mounts under the reveal and
- * never overlaps the overlay.
+ *   · the plate — the SAME CampusPlate the hero mounts, in its 'trace'
+ *     variant: the campus elevation traces itself stroke by stroke
+ *     (per-path dash animation, the sequence spread across the honest
+ *     counter window, each stroke's DURATION riding the canonical
+ *     brand-draw token). No separate loader artwork exists — the
+ *     preloader's drawing and the hero's drawing are one object, and
+ *     the exit slit hands the ink version over exactly like the
+ *     reference's line-art→ink completion. The loader never shows an
+ *     unrelated splash: what finishes tracing IS what the hero seats.
+ *   · the progress line — the ONE orange signal: a 1px rule on the
+ *     sheet's exact centreline (the slit seat), growing from the
+ *     reading-start edge with the eased counter; the mono percentage
+ *     sits at the origin edge, tabular-nums, aria-hidden (the live
+ *     value lives on the root's progressbar semantics).
+ *   · the boot ledger — «أهلاً بك في أُلارا» + the mono metadata rows
+ *     (النوع / المنصّة / اللغة) light up on the reading-end column while
+ *     the drawing traces; the page-truthful boot list counts the
+ *     sheet's OWN steps — nothing claims a backend state.
+ *   · the headline — the display promise at the reading-start corner:
+ *     «الجامعة، من المحاضرة إلى الإتقان.» — the hero's own sentence,
+ *     three authored lines.
+ *   · the exit — the recorded two-band choreography (unchanged): the
+ *     content fades 0.4s, the paper's clip slit opens 835ms on
+ *     cubic-bezier(1,0,0.44,1) while the two real band halves fly
+ *     apart and tint grey — AND the orange centreline splits with them
+ *     (each half rides its band, tinting to the same grey), so the
+ *     line literally becomes the sheet's opening edges. The overlay
+ *     unmounts on the clip-path leg's transitionend.
  *
- * Gating (owned by the parent through the introGate decision):
- * plays once per session (the `ulara-intro-seen` sessionStorage flag
- * is stamped here on play), never under prefers-reduced-motion (the
- * parent never mounts it; a defensive in-component guard completes
- * instantly), never for save-data/slow-device visitors.
+ * Honest-timing contract (the usability bar — never the reference's
+ * five-second stall):
+ *   · the counter is ASSET-GATED (document load + fonts.ready) bounded
+ *     to min 1.9s / hard cap 2.6s, then a 500ms completed beat, then
+ *     the 835ms slit — worst case ≈ 3.9s, best ≈ 3.2s;
+ *   · the skip control (تخطّي) ends the entrance immediately (the exit
+ *     still plays, never a hard cut);
+ *   · the intro plays ONCE per session (the introGate flag is stamped
+ *     here), never under prefers-reduced-motion, never for save-data/
+ *     slow-device visitors (the parent owns the decision; the
+ *     in-component RM guard is belt-and-braces).
+ *
+ * At exit START the component dispatches the `ula:entry-done` custom
+ * event AND calls onExitStart, so downstream chrome (the consent
+ * banner) mounts under the reveal and never overlaps the overlay, and
+ * the hero's staged ink-in begins while the slit opens.
  */
 import { useEffect, useRef, useState } from 'react';
-import { Logo } from '../../../brand';
+import { CampusPlate } from '../hero/CampusPlate';
 import { markIntroSeen } from '../../../lib/motion/introGate';
-import { ElevationArt } from '../ElevationDrawing';
 import '../../../styles/landing/preloader.css';
 
-/* The clock is the r309-pinned measured window (the retired craft sheet row 1 /
- * introGate V14): the counter is ASSET-GATED — 100% lands between
- * ~2.75s (assets resolved early) and the 4.9s fallback cap, then the
- * 700ms completed-state hold, then the 835ms sheet-exit wipe. */
-const RELEASE_FLOOR_MS = 2950; /* the counter never resolves before 2.95s —
- * r333/r342: 2750→2950; the r309 spec's tMount starts AFTER waitForSelector
- * ('.pl') resolves, so the ~120-800ms mount→visible latency can eat the
- * floor margin. 2950 keeps the release strictly ≥2000ms in Playwright while
- * remaining well within the 4.9s cap. */
-const MAX_RUN_MS = 4900; /* the hard cap — readiness races this timer */
-const EXIT_HOLD_MS = 700; /* the 100% beat before the wipe opens */
+/* the honest window: the counter never resolves before 1.9s (the trace
+ * needs its spread) and never holds past 2.6s (the hard cap readiness
+ * races), then the completed beat, then the slit. */
+const RELEASE_FLOOR_MS = 1900;
+const MAX_RUN_MS = 2600;
+const EXIT_HOLD_MS = 500;
 const ENTRY_DONE_EVENT = 'ula:entry-done';
 
-const BOOT_ITEMS = [
-  { code: '01', label: 'النواة الأساسية للنظام', en: 'ULARA OS KERNEL', threshold: 15 },
-  { code: '02', label: 'محرك المحاضرات التفاعلية', en: 'LECTURE ENGINE', threshold: 35 },
-  { code: '03', label: 'مصفوفة الإتقان والتقييم', en: 'MASTERY MATRIX', threshold: 55 },
-  { code: '04', label: 'سجل الحاكمية والاعتماد', en: 'GOVERNANCE AUDIT', threshold: 75 },
-  { code: '05', label: 'الحرم الأكاديمي الرقمي', en: 'DIGITAL CAMPUS', threshold: 92 },
+/* the boot ledger — the sheet's own steps, in tracing order. Decorative
+ * (aria-hidden): the real progress lives on the root progressbar. */
+const BOOT_LINES = [
+  'تهيئة لوحة الرسم',
+  'تحميل الخطوط العربية',
+  'تتبّع مسارات الواجهة',
+  'معايرة المساطر والمحاور',
+  'تجهيز محطات الفحص',
+  'تركيب بطاقات التشخيص',
+  'تسوية خط الأرض',
+  'بدء التنفيذ',
 ] as const;
+
+/* the metadata rows — the brand's own facts (the repo description's
+ * wording; no invented credentials). */
+const META_ROWS = [
+  { k: 'النوع', v: 'نظام تشغيل الجامعة' },
+  { k: 'المنصّة', v: 'محاضرات · فحوصات · بحوث · رسائل' },
+  { k: 'اللغة', v: 'العربية أولًا' },
+] as const;
+
+/* the headline — the hero's own promise, three authored lines. */
+const HEADLINE = ['الجامعة،', 'من المحاضرة', 'إلى الإتقان.'] as const;
 
 type PreloaderProps = {
   /** the exit wipe is about to open — chrome may mount beneath it */
@@ -71,12 +97,11 @@ type PreloaderProps = {
 
 export function Preloader({ onExitStart, onDone }: PreloaderProps) {
   const rootRef = useRef<HTMLDivElement>(null);
-  const fillRef = useRef<HTMLSpanElement>(null);
   const [pct, setPct] = useState(0);
 
-  /* the R313 skip contract: the skip control ends the entrance
-   * immediately — but the EXIT must PLAY (the 0.88s hold+wipe), not
-   * cut. runExit is hoisted here via ref set in the effect below. */
+  /* the skip contract: the skip control ends the entrance
+   * immediately — but the EXIT must PLAY (the hold + slit), not cut.
+   * runExit is hoisted here via ref set in the effect below. */
   const runExitRef = useRef<() => void>(() => {});
 
   /* the callbacks ride refs so the instrument below owns its clock
@@ -95,9 +120,8 @@ export function Preloader({ onExitStart, onDone }: PreloaderProps) {
      * navigations never replay the sequence. */
     markIntroSeen();
 
-    /* lock the sheet while the entrance owns the viewport (the r309
-     * lock contract: restored on EVERY exit path — timed, skip, RM,
-     * unmount) */
+    /* lock the sheet while the entrance owns the viewport (the lock
+     * contract: restored on EVERY exit path — timed, skip, RM, unmount) */
     const doc = document.documentElement;
     const prevOverflow = doc.style.overflow;
     doc.style.overflow = 'hidden';
@@ -126,18 +150,19 @@ export function Preloader({ onExitStart, onDone }: PreloaderProps) {
       exited = true;
       cancelAnimationFrame(raf);
       setPct(100);
-      if (fillRef.current) fillRef.current.style.transform = 'scaleX(1)';
+      root.style.setProperty('--pl-p', '1');
       /* the scroll lock releases as the reveal starts (the page is
-       * scrollable under the opening wipe — the r309 cleanup contract) */
+       * scrollable under the opening slit — the cleanup contract) */
       doc.style.overflow = prevOverflow;
       /* the consent banner (and any late chrome) mounts under the
        * reveal, never on top of the overlay */
       document.dispatchEvent(new CustomEvent(ENTRY_DONE_EVENT));
       cbsRef.current.onExitStart?.();
-      /* the wipe: the RIGHT cut grows — the paper collapses toward the
-       * left edge and the page reveals right-first (RTL reading side).
-       * The .pl--exit transition rides the R313 sheet-exit rung; the
-       * hold beat delays the class, then onDone lands on transitionend
+      /* the slit: the paper clip opens WHILE the band halves fly and
+       * tint grey — the orange centreline rides the bands (each half
+       * is a band child), so the split needs no extra choreography.
+       * The .pl--exit transition rides the sheet-exit rung; the hold
+       * beat delays the class, then onDone lands on transitionend
        * (with a cap-timeout twin so a dropped event can never strand
        * the overlay). */
       const doneTwice = { done: false };
@@ -149,8 +174,7 @@ export function Preloader({ onExitStart, onDone }: PreloaderProps) {
       /* the unmount waits for the PAPER SPLIT's last frame: only the
        * .pl-sheet clip-path leg finishes the exit — the shorter
        * content-fade and band-flight transitionends bubble past
-       * uncounted (r335 conformance: the recorded autoAlpha:0 hide
-       * lands AFTER the 0.8s flight, never mid-split). */
+       * uncounted (the overlay vanishes with the split's last frame). */
       const onBandEnd = (e: TransitionEvent) => {
         if (e.propertyName !== 'clip-path') return;
         root.removeEventListener('transitionend', onBandEnd);
@@ -172,7 +196,7 @@ export function Preloader({ onExitStart, onDone }: PreloaderProps) {
     }
     document.fonts?.ready.then(release).catch(() => undefined);
 
-    /* the hard cap: readiness never holds the entry past 2.2 s */
+    /* the hard cap: readiness never holds the entry past 2.6s */
     const cap = window.setTimeout(runExit, MAX_RUN_MS);
     cleanups.push(() => window.clearTimeout(cap));
     runExitRef.current = runExit;
@@ -181,21 +205,25 @@ export function Preloader({ onExitStart, onDone }: PreloaderProps) {
       if (exited) return;
       const t = now - start;
       /* the crawl: a calm synthetic ramp toward 92% while the real
-       * gate is pending; the tail 92→100 belongs to the real release */
-      const target = solved
+       * gate is pending; the tail 92→100 belongs to the real release.
+       * The counter tail is TRACE-AWARE: the 92→100 rung may only open
+       * once the drawing sequence has had its spread (the reference's
+       * own beat — 100% lands WITH the completed trace, never before
+       * the plate finished tracing). */
+      const tailOpen = MAX_RUN_MS * 0.55;
+      const target = solved && t >= tailOpen
         ? 100
-        : Math.min(92, (t / (MAX_RUN_MS * 0.72)) * 92);
+        : Math.min(92, (t / (MAX_RUN_MS * 0.75)) * 92);
       shown += (target - shown) * 0.14;
       if (Math.abs(target - shown) < 0.4) shown = target;
-      /* the DISPLAY never rounds to 100 before the measured release
-       * floor (r309: 100% lands between ~2.75s and 4.9s) — the eased
-       * value crawls at 99 until the floor opens, then the exit's own
-       * setPct(100) lands the terminal readout. */
+      /* the DISPLAY never rounds to 100 before the release floor —
+       * the eased value crawls at 99 until the floor opens, then the
+       * exit's own setPct(100) lands the terminal readout. */
       const next = t < RELEASE_FLOOR_MS ? Math.min(99, Math.round(shown)) : Math.round(shown);
       setPct(next);
-      if (fillRef.current) {
-        fillRef.current.style.transform = `scaleX(${(shown / 100).toFixed(4)})`;
-      }
+      /* the progress var drives BOTH centreline halves (the root is the
+       * one shared writer — the two band children read the same value) */
+      root.style.setProperty('--pl-p', (shown / 100).toFixed(4));
       if (solved && t >= RELEASE_FLOOR_MS && shown >= 99.5) {
         runExit();
         return;
@@ -223,102 +251,79 @@ export function Preloader({ onExitStart, onDone }: PreloaderProps) {
       aria-valuemax={100}
       aria-valuenow={pct}
     >
+      {/* the paper — the recorded split seat: two real band halves meet
+       * flush at the centreline; each carries its half of the orange
+       * progress rule, so the exit's flight IS the line's split. */}
       <div className="pl-sheet" aria-hidden="true">
-        <div className="pl-band pl-band--top" aria-hidden="true" />
-        <div className="pl-band pl-band--bot" aria-hidden="true" />
+        <div className="pl-band pl-band--top">
+          <span className="pl-line" aria-hidden="true">
+            <span className="pl-line-fill" />
+          </span>
+        </div>
+        <div className="pl-band pl-band--bot">
+          <span className="pl-line" aria-hidden="true">
+            <span className="pl-line-fill" />
+          </span>
+        </div>
       </div>
+
       <div className="pl-inner pl-main">
-        {/* Header bar */}
-        <header className="pl-topbar" aria-hidden="true">
-          <div className="pl-brand-group">
-            <Logo variant="mark" size={24} />
-            <span className="pl-brand-label fo-mono" dir="ltr">ULARA OS // V1.0</span>
-          </div>
-          <button
-            type="button"
-            className="pl-skip"
-            onClick={() => runExitRef.current()}
-          >
-            تخطي
-          </button>
-        </header>
+        {/* the sheet frame — 4 hairlines at the paper's own inset */}
+        <span className="pl-fr pl-fr-t" aria-hidden="true" />
+        <span className="pl-fr pl-fr-b" aria-hidden="true" />
+        <span className="pl-fr pl-fr-s" aria-hidden="true" />
+        <span className="pl-fr pl-fr-e" aria-hidden="true" />
 
-        {/* The Elevation Drawing + Diagnostic Checklist stage */}
-        <div className="pl-stage-wrap">
-          <div className="pl-elevation-stage" aria-hidden="true">
-            <svg
-              viewBox="0 0 1440 640"
-              className="pl-drawing-svg"
-              preserveAspectRatio="xMidYMid meet"
-            >
-              <ElevationArt active={-1} variant="entrance" />
-            </svg>
-            <div className="pl-drawing-label fo-mono" dir="ltr">
-              ELEVATION A-A // DRAFTING STAGE 1:200
-            </div>
-          </div>
-
-          <aside className="pl-diagnostics" aria-hidden="true">
-            <div className="pl-diag-card">
-              <div className="pl-diag-head fo-mono" dir="ltr">
-                [ DIAGNOSTICS // BOOT SEQUENCE ]
-              </div>
-              <div className="pl-diag-list">
-                {BOOT_ITEMS.map((item) => {
-                  const active = pct >= item.threshold;
-                  return (
-                    <div
-                      key={item.code}
-                      className={`pl-diag-row ${active ? 'is-active' : ''}`}
-                    >
-                      <span className="pl-diag-pip" />
-                      <span className="pl-diag-code fo-mono" dir="ltr">[{item.code}]</span>
-                      <div className="pl-diag-text">
-                        <span className="pl-diag-ar">{item.label}</span>
-                        <span className="pl-diag-en fo-mono" dir="ltr">{item.en}</span>
-                      </div>
-                      <span className="pl-diag-status fo-mono" dir="ltr">
-                        {active ? 'ONLINE' : 'WAIT'}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </aside>
+        {/* the plate — the campus traces itself (the hero's drawing,
+            arriving first as pure linework) */}
+        <div className="pl-plate" aria-hidden="true">
+          <CampusPlate variant="trace" />
         </div>
 
-        {/* Crosshairs & Branding */}
-        <span className="pl-cross-h" aria-hidden="true" />
-        <span className="pl-cross-v" aria-hidden="true" />
-        
-        {/* Keep legacy test selectors in DOM */}
-        <div className="pl-mark" style={{ display: 'none' }} aria-hidden="true">
-          <Logo variant="mark" size={40} animated />
-        </div>
-        <div className="pl-wordmark" style={{ display: 'none' }} aria-hidden="true">
-          <Logo variant="wordmark" size={64} animated />
+        {/* the reading — the percentage at the rule's origin edge (the
+            container positions in the sheet's own RTL logic; the numerals
+            stay Latin-mono via the inner span's dir) */}
+        <div className="pl-read" aria-hidden="true">
+          <span className="pl-counter" dir="ltr">{pct}%</span>
         </div>
 
-        {/* Progress & Bottom status */}
-        <div className="pl-bottom-bar" aria-hidden="true">
+        {/* the headline — the display promise, reading-start corner */}
+        <div className="pl-headline" aria-hidden="true">
+          {HEADLINE.map((line, i) => (
+            <span key={line} className="pl-headline-line" style={{ animationDelay: `${900 + i * 140}ms` }}>
+              {line}
+            </span>
+          ))}
+        </div>
+
+        {/* the reading-end column — the welcome card + the boot ledger */}
+        <div className="pl-col" aria-hidden="true">
           <div className="pl-meta">
-            <div className="pl-meta-row">
-              <span className="pl-meta-state">
-                {pct < 30 ? 'فحص النواة الأكاديمية...' : pct < 70 ? 'تحميل مخططات الحرم الجامعي...' : pct < 98 ? 'مزامنة مصفوفة الإتقان...' : 'اكتمل التحميل — فتح المنصّة'}
-              </span>
-              <span className="pl-counter" dir="ltr">
-                {pct}%
-              </span>
-            </div>
+            <div className="pl-meta-welcome">أهلاً بك في أُلارا</div>
+            {META_ROWS.map((row, i) => (
+              <div key={row.k} className="pl-meta-row" style={{ animationDelay: `${700 + i * 260}ms` }}>
+                <span className="pl-meta-k">{row.k}</span>
+                <span className="pl-meta-v">{row.v}</span>
+              </div>
+            ))}
           </div>
-          <div className="pl-progress">
-            <div className="pl-rail">
-              <span className="pl-rail-track" />
-              <span ref={fillRef} className="pl-rail-fill" style={{ transform: 'scaleX(0)' }} />
-            </div>
-          </div>
+          <ol className="pl-boot">
+            {BOOT_LINES.map((line, i) => (
+              <li key={line} className="pl-boot-item" style={{ animationDelay: `${520 + i * 260}ms` }}>
+                <span className="pl-boot-num" dir="ltr">{String(i + 1).padStart(3, '0')}</span>
+                <span className="pl-boot-txt">{line}</span>
+              </li>
+            ))}
+          </ol>
         </div>
+
+        <button
+          type="button"
+          className="pl-skip"
+          onClick={() => runExitRef.current()}
+        >
+          تخطّي
+        </button>
       </div>
     </div>
   );
