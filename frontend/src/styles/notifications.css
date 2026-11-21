@@ -83,11 +83,29 @@
 
 .notif-panel-list {
   /* S-1b: max-height → max-block-size (logical twin; horizontal-tb identical,
-     and the gate prefers the logical form — layout.css same idiom). */
-  max-block-size: 420px;
+     and the gate prefers the logical form — layout.css same idiom).
+     R349 (Agent 02): the fixed 420px/60vh caps retire — the restored
+     container geometry (components.css §R349) is a capped flex column
+     whose maxHeight rides the anchored engine's roomBelow measure, so
+     the list now fills the space the container actually has (flex: 1 +
+     min-block-size: 0) instead of fighting it. The old pair produced a
+     nested scroll trap: a 60vh list inside a 540px-capped container
+     pushed the footer below the fold and BOTH boxes scrolled. ONE
+     scroller now — the list; the header and footer stay pinned. */
+  flex: 1;
+  min-block-size: 0;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   padding: var(--sp-1); /* r157: 4px → --sp-1 */
+}
+
+/* R349 (Agent 02): the panel body shim (NotificationDropdown's flex
+   wrapper) joins the container's flex column — it takes the remaining
+   height so the list's flex: 1 resolves against the container cap, not
+   against the content's own height. */
+.notif-panel-body {
+  flex: 1;
+  min-block-size: 0;
 }
 
 .notif-empty {
@@ -221,10 +239,9 @@
 /* RTL: chevron direction natural via inline-flex; the icon itself
    is ChevronLeft which is correct for RTL "view all → " indicator. */
 
-/* Mobile sizing — keep within viewport */
-@media (max-width: 480px) {
-  .notif-panel-list { max-block-size: 60vh; }
-}
+/* Mobile sizing — keep within viewport
+   (R349: the 60vh twin retired with the fixed caps — see the list rule
+   above; the container's engine-computed cap governs at every width.) */
 
 /* r164-j (WCAG 2.2 §2.5.8 / NN/g touch floor — audit residual): the
    panel opens on every viewport anchored to the bell, but its chrome

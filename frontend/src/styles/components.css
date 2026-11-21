@@ -2211,6 +2211,59 @@
     transform-origin: center top;
   }
 
+  /* ── R349 (Agent 02) — the notification panel's CONTAINER GEOMETRY,
+     restored. The R313 D16 glass retirement deleted the panel's whole
+     @supports block — which carried not just the glass but the
+     geometry (position: fixed · z-index · surface · hairline · width ·
+     entrance) — and the WS-D2 orphan sweeps then removed the
+     notifications.css/polish.css backups as "dead" (they were dead
+     because the owner rule was already gone). Since the 1.0 squash
+     the panel has rendered as an UNPOSITIONED static block appended
+     to document.body: the anchored engine's inline top/left were
+     inert, the panel pushed the page down and appeared mid-content,
+     and on a 390×844 phone the last rows + «عرض جميع الإشعارات» sat
+     below the fold, unreachable. Live in production (the deployed
+     bundle ships only the two re-skin rules). Restored on the
+     Dropdown/Popover family grammar (the primitive's own docblock
+     contract: anchored, --z-popover, solid --surface + hairline — the
+     R313 D16 law), with ONE deliberate upgrade over the old block:
+     the container is a flex column with overflow hidden so the
+     header + footer stay pinned and ONLY the list scrolls (the old
+     container could scroll under the fixed-cap list — a nested scroll
+     trap; the list's caps retire in notifications.css §R349).
+     The [data-closing] exit restores the exit pass the component's
+     onAnimationEnd ('ulara-popover-out') has waited for all along —
+     without it the panel vanished mid-frame via the 240ms safety
+     net instead of playing the scale-out. */
+  .notification-panel {
+    position: fixed;
+    z-index: var(--z-popover, 200);
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    inline-size: min(420px, calc(100vw - var(--sp-4) * 2));
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    overscroll-behavior: contain;
+    animation: ulara-popover-in var(--motion-duration-short) var(--motion-ease-decelerate) both;
+  }
+  .notification-panel[data-closing="true"] {
+    animation: ulara-popover-out var(--motion-duration-short) var(--motion-ease-decelerate) both;
+  }
+
+  /* R349 (Agent 02) — the anchored family's exit pass, restored for
+     the siblings too: Dropdown.tsx and Popover.tsx both wire
+     onAnimationEnd('ulara-popover-out') + useDelayedUnmount, but no
+     [data-closing] rule ever applied the keyframes (the wave 13-17
+     comment says "every overlay family but this one had a data-closing
+     rule" — the anchored pair's rules were already gone). The menus
+     have been vanishing via the 240ms safety-net timeout instead of
+     playing the documented scale-out. */
+  .dropdown[data-closing="true"],
+  .popover[data-closing="true"] {
+    animation: ulara-popover-out var(--motion-duration-short) var(--motion-ease-decelerate) both;
+  }
+
   /* ── Anchored-panel exit: scale-out fade. The component stays
      mounted (data-closing, useDelayedUnmount) until this ends.
      Duration is the token nearest the requested ~120ms — guardrail #1
