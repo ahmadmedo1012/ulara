@@ -240,3 +240,13 @@ raw/wrapped boundary. Substantive findings, ALL fixed here:
    documented as a single-shape dashboard seat (journey specs must override).
 5. The committed role-shots-results.json was the last 2-cell run — regenerated
    as the full 5-role × 2-viewport matrix; dead `countWords` helper removed.
+
+## CI follow-up — theme-persistence (this session)
+
+The full CI run on `f4a2834` caught one real regression the local gates missed:
+`theme-persistence.e2e.ts` clicked the sidebar's 3-way «داكن» seat — which the
+one-title law (4cccf40) removed from the COLLAPSED rail (the expanded sidebar
+and mobile drawer keep it). The spec rode the collapsed default at 1280×800 and
+timed out (CI + locally reproduced). Fix: the journey expands the rail first
+(«توسعة القائمة»), then drives the labeled 3-way — the same hands' order a
+user takes. Local: 1 passed (5.7s).

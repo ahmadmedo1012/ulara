@@ -21,7 +21,11 @@ test.describe('ثبات السمة', () => {
     /* مفتاح الشريط الجانبي — «داكن»
      * (R326: the R325 P2.3 app shell added a SECOND theme toggle in the
      * topbar with the same accessible name — scope to the sidebar's
-     * three-state switch, the surface this contract has always driven.) */
+     * three-state switch, the surface this contract has always driven.
+     * r350 B1 (the single-toggle law): the 3-way control is the
+     * EXPANDED sidebar's — the collapsed rail owns no theme seat, so
+     * the journey expands the rail first (the same hands' order).) */
+    await page.locator('.sidebar').getByRole('button', { name: 'توسعة القائمة' }).click();
     await page.locator('.sidebar').getByRole('button', { name: 'داكن' }).click();
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 
