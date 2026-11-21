@@ -518,12 +518,12 @@ export function providerFailureMessage(kind: AiFailureKind, status?: number): st
   }
   switch (kind) {
     case 'timeout':
-      return 'استغرق النموذج وقتًا أطول من المتاح — أعد المحاولة الآن وسيُختار نموذج آخر غالبًا';
+      return 'استغرق النموذج وقتًا أطول من المتاح — أعد المحاولة';
     case 'rate_limited':
       return 'تجاوزنا حدّ الاستخدام مؤقتًا — انتظر دقيقة ثم أعد المحاولة';
     case 'provider_rejected':
       return status === 400
-        ? 'رفض مزوّد خدمة الذكاء الاصطناعي الطلب — يُراجَع ضبط النموذج'
+        ? 'رفض مزوّد خدمة الذكاء الاصطناعي الطلب — يلزم مراجعة ضبط النموذج'
         : 'رفض مزوّد خدمة الذكاء الاصطناعي الطلب — جرّب تغيير صيغة السؤال';
     case 'invalid_response':
       return 'وصل ردّ غير صالح من النموذج — أعد المحاولة';
@@ -593,17 +593,21 @@ export function resolveModelChain(cfg: AiProviderConfig): string[] {
 /**
  * r351 AI-1 — the Gemini fall-through policy. For Google's compat
  * endpoint the ordered chain (AI_MODELS) falls through to the next
- * model ONLY on the capacity classes — 429 (rate_limited) and 5xx
- * (provider_error) — where a second model genuinely has a different
+ * model ONLY on 429 (rate_limited) and 503 (overloaded) — the two
+ * capacity classes where a second model genuinely has a different
  * chance. Everything else (a bad key 401/403, a nonexistent model 404,
- * a rejected payload 400, a timeout that already burned the ceiling)
- * surfaces immediately: retrying the same mistake on the same key
- * against the next model would only double the bill and the wait.
+ * a rejected payload 400, a timeout that already burned the ceiling,
+ * and the non-503 5xx codes, which surface for an honest manual retry
+ * instead of billing a second model) is NOT fall-through matter:
+ * retrying the same mistake on the same key against the next model
+ * would only double the bill and the wait.
  * Non-Gemini providers keep the r323 behavior (fall through on any
  * exhausted model) — their chains were measured under that policy. */
-function geminiFallThroughAllowed(baseUrl: string, kind: AiFailureKind): boolean {
+function geminiFallThroughAllowed(baseUrl: string, err: unknown): boolean {
   if (!isGeminiBaseUrl(baseUrl)) return true;
-  return kind === 'rate_limited' || kind === 'provider_error';
+  const kind = classifyProviderFailure(err);
+  if (kind === 'rate_limited') return true;
+  return kind === 'provider_error' && err instanceof AiProviderError && err.status === 503;
 }
 
 /**
@@ -658,10 +662,10 @@ async function runModelChain<T>(
           await sleep(delay);
           continue;
         }
-        // r351 AI-1: Gemini capacity-only fall-through — a non-capacity
-        // failure on Google's endpoint surfaces instead of re-asking
-        // the same key with the next model.
-        if (!geminiFallThroughAllowed(cfg.baseUrl, kind)) throw err;
+        // r351 AI-1: Gemini capacity-only fall-through (429/503) — a
+        // non-capacity failure on Google's endpoint surfaces instead of
+        // re-asking the same key with the next model.
+        if (!geminiFallThroughAllowed(cfg.baseUrl, err)) throw err;
         break; // exhausted (or non-transient) → next model
       }
     }

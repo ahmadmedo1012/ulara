@@ -22,17 +22,24 @@ export type ReplyBlock =
 
 /** Strip inline emphasis + heading markers from one line. `**bold**`,
  * `__underline__`, `*em*`/`_em_` pairs collapse to their inner text;
- * 1–6 leading `#`/`##`… heading markers (with their following space)
- * are removed. Everything else passes VERBATIM (no interpretation of
- * links, code fences, or HTML — they render as the inert text they
- * are). */
+ * 1–6 leading `#`/`##`… heading markers (with their following space),
+ * and inline `code` backtick pairs are removed. Everything else passes
+ * VERBATIM (no interpretation of links, code fences, or HTML — they
+ * render as the inert text they are). */
 export function stripInlineMarkdown(line: string): string {
   return line
     .replace(/^#{1,6}\s+/, '')
     .replace(/\*\*(.+?)\*\*/g, '$1')
     .replace(/__(.+?)__/g, '$1')
     .replace(/(?<!\*)\*([^*\n]+?)\*(?!\*)/g, '$1')
-    .replace(/(?<!_)_([^_\n]+?)_(?!_)/g, '$1');
+    .replace(/(?<!_)_([^_\n]+?)_(?!_)/g, '$1')
+    /* r351 AI-2 follow-up (review finding): the rewritten prompt now
+     * allows bounded markdown incl. `code` — the web bubble renders
+     * de-marked text (inert, never HTML), so the backtick fences must
+     * collapse to their inner text too (the mobile Markdown component
+     * renders real code; the two surfaces stay visually consistent:
+     * the CODE stays, its markup does not). */
+    .replace(/`([^`\n]+?)`/g, '$1');
 }
 
 /** A list line: optional leading spaces, then `-` or `*` or `•`, then

@@ -15,8 +15,9 @@
  *  · Gemini's extra delta fields (reasoning/extra content, thought
  *    signatures) never leak into the student's content;
  *  · the ordered model-chain fallback runs on 429/503 ONLY — auth
- *    (401/403), model id (404), payload (400) and timeout surface
- *    immediately without burning the second model's quota;
+ *    (401/403), model id (404), payload (400), timeout and the
+ *    non-503 5xx (500/502) surface immediately without burning the
+ *    second model's quota;
  *  · per-response model attribution survives the fallback (the second
  *    model's own `model` field is the truth, never the configured id).
  *
@@ -329,6 +330,28 @@ describe('the ordered fallback (429/503 ONLY, attribution preserved)', () => {
     const out = await callProviderWithRetry(CFG_CHAIN, buildChatMessages('s', [], 'q'), log, noSleep);
     expect(calls[calls.length - 1]).toBe('gemini-4-hydrogen');
     expect(out.model).toBe('gemini-4-hydrogen');
+  });
+
+  it('non-503 5xx (500/502) SURFACES — only 429/503 fall through, other 5xx keep the honest manual retry', async () => {
+    for (const status of [500, 502]) {
+      const calls: string[] = [];
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async (_url: string, init: RequestInit) => {
+          calls.push((JSON.parse(init.body as string) as { model: string }).model);
+          return new Response('boom', { status });
+        }),
+      );
+      const err = await callProviderWithRetry(CFG_CHAIN, buildChatMessages('s', [], 'q'), log, noSleep).catch(
+        (e: unknown) => e,
+      );
+      // model 1 retried once on itself (the r176a transient policy), then
+      // surfaced — model 2 is never billed for a non-capacity 5xx.
+      expect(calls, `status ${status}`).toEqual(['gemini-3.1-flash-lite', 'gemini-3.1-flash-lite']);
+      expect(err).toBeInstanceOf(AiProviderError);
+      expect((err as AiProviderError).kind).toBe('provider_error');
+      expect((err as AiProviderError).status).toBe(status);
+    }
   });
 
   it('401 (bad key) on model 1 SURFACES immediately — no second model is billed for the same mistake', async () => {

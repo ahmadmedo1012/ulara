@@ -460,9 +460,11 @@ describe('POST /api/v1/ai/chat — OPENAI mode (provider wire stubbed)', () => {
     });
     expect(res.status).toBe(500);
     const body = (await res.json()) as { error: { message: string } };
-    expect(body.error.message).toBe(
-      'استغرق النموذج وقتًا أطول من المتاح — أعد المحاولة الآن وسيُختار نموذج آخر غالبًا',
-    );
+    // r351 AI-1 hardening: a timeout never falls through (the ceiling
+    // is burned) — the promise of «سيُختار نموذج آخر غالبًا» was not
+    // honest under the 429/503-only policy, so the line now invites a
+    // plain retry (which re-routes the chain from the top).
+    expect(body.error.message).toBe('استغرق النموذج وقتًا أطول من المتاح — أعد المحاولة');
     expect(telemetryCreate).toHaveBeenCalledWith({
       data: expect.objectContaining({ success: false, errorMessage: 'timeout' }),
     });
@@ -484,7 +486,9 @@ describe('POST /api/v1/ai/chat — OPENAI mode (provider wire stubbed)', () => {
     // r351 AI-1: a 400 param rejection is a configuration matter — the
     // status-aware message points at the model setup, not at re-phrasing
     // the question (the old non-status default). Pinned in ai-gemini too.
-    expect(body.error.message).toBe('رفض مزوّد خدمة الذكاء الاصطناعي الطلب — يُراجَع ضبط النموذج');
+    // r351 hardening: «يُراجَع» → «يلزم مراجعة» (an owner-matter, stated
+    // as such — copy review finding).
+    expect(body.error.message).toBe('رفض مزوّد خدمة الذكاء الاصطناعي الطلب — يلزم مراجعة ضبط النموذج');
     // Exactly one wire call — a non-transient 400 must never be retried.
     expect(calls).toHaveLength(1);
     expect(telemetryCreate).toHaveBeenCalledWith({

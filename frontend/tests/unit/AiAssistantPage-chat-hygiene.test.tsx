@@ -98,6 +98,13 @@ describe('aiReplyFormat (the markdown-lite formatter)', () => {
     expect(stripInlineMarkdown('متغير _x_ في المعادلة')).toBe('متغير x في المعادلة');
   });
 
+  it('strips inline `code` backtick pairs (r351 AI-2: the prompt allows them)', () => {
+    expect(stripInlineMarkdown('نفّذ `SELECT * FROM t` ثم')).toBe('نفّذ SELECT * FROM t ثم');
+    expect(stripInlineMarkdown('متغير `x` في المعادلة')).toBe('متغير x في المعادلة');
+    // An unpaired backtick stays (not a code shape).
+    expect(stripInlineMarkdown('علامة ` مفردة')).toBe('علامة ` مفردة');
+  });
+
   it('strips 1–6 leading # heading markers with their space', () => {
     expect(stripInlineMarkdown('## خطوات الحل')).toBe('خطوات الحل');
     expect(stripInlineMarkdown('#### عنوان عميق')).toBe('عنوان عميق');
