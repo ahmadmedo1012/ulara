@@ -157,7 +157,7 @@ describe('R320 cycle-3 — SettingsPage (any-authed)', () => {
     expect(screen.queryByRole('switch')).toBeNull();
     expect(screen.queryByRole('checkbox')).toBeNull();
     // The data seat's channels are real routes.
-    expect(screen.getByRole('link', { name: /صفحة التواصل/ })).toHaveAttribute(
+    expect(screen.getAllByRole('link', { name: /قناة التواصل/ })[0]).toHaveAttribute(
       'href',
       '/contact',
     );

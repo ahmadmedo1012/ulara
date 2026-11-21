@@ -200,7 +200,7 @@ export function OwnerSystemPage() {
               </span>
             )}
           </h1>
-          <p className="page-subtitle">إدارة البنية التحتية وحالة الخدمات</p>
+          {/* r351 A2 (Q3): page subtitle retired — the KPI strip explains the page. */}
         </div>
         {/* D11 (D8/D10 header-CTA precedent): the console's sibling
             board — the operational alerts the health KPI counts
@@ -227,22 +227,22 @@ export function OwnerSystemPage() {
       <StatStrip
         ariaLabel="مؤشرات حالة النظام"
         cells={[
+          /* r351 A2 (Q3): source-restating trend notes retired — the
+           * values themselves are the live query state. */
           {
             label: 'حالة الخدمة',
             value: serviceValue,
-            trend: 'من حالة الاستعلام الحيّ',
             trendTone: sysData ? (sysData.alerts.criticalCount > 0 ? 'down' : 'up') : 'flat',
           },
           {
             label: 'تنبيهات حرجة مفتوحة',
             value: sysData ? formatNum(sysData.alerts.criticalCount) : unknownValue,
-            trend: sysData ? (sysData.alerts.criticalCount > 0 ? 'تستوجب قرارًا' : 'لا شيء حرجًا') : 'بانتظار البيانات',
+            trend: sysData ? (sysData.alerts.criticalCount > 0 ? 'تستوجب قرارًا' : 'لا شيء حرجًا') : undefined,
             trendTone: sysData ? (sysData.alerts.criticalCount > 0 ? 'down' : 'up') : 'flat',
           },
           {
             label: 'أحداث آخر 7 أيام',
             value: sysData ? formatNum(sysData.activity.recentEventsLast7Days) : unknownValue,
-            trend: 'سجلّ تشغيليّ',
             trendTone: 'flat',
           },
         ]}
@@ -274,15 +274,20 @@ export function OwnerSystemPage() {
                 {sys.isError ? '—' : 'غير متوفر'}
               </span>
             </div>
-            <p className="text-xs text-subtle" style={{ marginBlockStart: 'var(--sp-2)' }}>
-              {/* r342 t13: the sync-log card this line used to point at is
-                  retired — the header's «تحديث» button above (and the alerts
-                  card below, which carries its own retry) are the live
-                  retry affordances. */}
-              {sys.isError
-                ? 'تعذّر جلب حالة النظام — أعد المحاولة من زرّ «تحديث» أعلى الصفحة.'
-                : 'نسخة الخادم الحاليّة لا تُصرّح عن حالة تخزين الرفعات بعد.'}
-            </p>
+            {/* r351 A2 (Q3): the error hint trimmed to one short
+                actionable line; the old-backend explainer note STAYS —
+                the r164-i truthfulness pin owns it («لا تُصرّح عن حالة
+                تخزين» — why «غير متوفر», never a guess). */}
+            {!sys.isError && (
+              <p className="text-xs text-subtle" style={{ marginBlockStart: 'var(--sp-2)' }}>
+                نسخة الخادم الحاليّة لا تُصرّح عن حالة تخزين الرفعات بعد.
+              </p>
+            )}
+            {sys.isError && (
+              <p className="text-xs text-subtle" style={{ marginBlockStart: 'var(--sp-2)' }}>
+                تعذّر جلب حالة النظام — أعد المحاولة من «تحديث».
+              </p>
+            )}
           </div>
         ) : (
           <div className="owner-health-list">
@@ -308,6 +313,9 @@ export function OwnerSystemPage() {
                 المخزن متاح — آخر تحقّق: {formatRelative(sysData.storage.checkedAt ?? null)}
               </p>
             )}
+            {/* r351 A2 (Q3) revert: the not-yet-probed note STAYS — the
+                r167 reachability pin owns it (the amber unknown state
+                carries its explaining note, never a guessed green). */}
             {sysData.storage.driver === 's3' && sysData.storage.reachable === undefined && (
               <p className="text-xs text-subtle" style={{ marginBlockStart: 'var(--sp-2)' }}>
                 لم يتحقّق الخادم من اتصال المخزن بعد — تظهر الحالة هنا بعد أوّل فحص.
@@ -375,8 +383,8 @@ export function OwnerSystemPage() {
                * as the creation path — no such affordance exists on this
                * page (the settings editor only edits existing keys), so
                * the empty state names the real state instead of a dead
-               * end. */
-              description="لم تُعرَّف أعلام ميزات بعد؛ تُدار حالياً مباشرةً من قاعدة بيانات المنصّة."
+               * end. r351 A2 (Q3): trimmed to the honest core. */
+              description="تُدار مباشرةً من قاعدة بيانات المنصّة."
             />
           ) : (
             <>
@@ -453,7 +461,9 @@ export function OwnerSystemPage() {
             <EmptyState illustration="empty-list"
               icon={CheckCircle2}
               title="لا توجد تنبيهات مفتوحة"
-              description="كل أنظمة المنصّة في حالة طبيعيّة الآن."
+              /* r351 A2 (Q3): the "all systems normal" inference
+                 retired — the title states the honest fact. */
+              description=""
             />
           ) : (
             sysData.alerts.open.map((alert) => (
@@ -517,7 +527,8 @@ export function OwnerSystemPage() {
           ) : settings.length === 0 ? (
             <EmptyState illustration="empty-list"
               title="لا توجد إعدادات مُعرَّفة"
-              description="لا توجد إعدادات مخصّصة بعد؛ القيم الافتراضية تعمل."
+              /* r351 A2 (Q3): trimmed to the honest operative fact. */
+              description="القيم الافتراضية تعمل."
             />
           ) : (
             <>

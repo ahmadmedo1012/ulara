@@ -174,11 +174,9 @@ export default function SettingsPage() {
         <EmptyCell
           label="عبر الطلب"
           note={
-            <>
-              لطلب نسخة من بياناتك أو حذف حسابك استخدم <Link to="/contact">صفحة التواصل</Link> —
-              تُنفيذ يدويًا في هذه المرحلة التجريبية؛ ما نجمعه موثّق في{' '}
-              <Link to="/legal/privacy">سياسة الخصوصية</Link>.
-            </>
+            /* r351 A2 (Q3): the privacy-policy link rides the legal nav;
+               one line + one action. */
+            <>استخدم <Link to="/contact">قناة التواصل</Link> — تُنفَّذ يدويًا في هذه المرحلة.</>
           }
           action={<Link to="/contact" className="btn lg"><Icon icon={Bell} size={16} />فتح قناة التواصل</Link>}
         />

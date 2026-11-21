@@ -164,7 +164,9 @@ export default function TeacherProfilePage() {
           <EmptyState illustration="empty-list"
             icon={AlertCircle}
             title="لا يوجد ملف أستاذ مرتبط بهذا الحساب"
-            description="تواصل مع المسجل العام لربط ملفك الأكاديمي بهذا الحساب."
+            /* r351 A2 (Q3): trimmed to the one action — the registrar is
+             * the only one who can link the profile. */
+            description="تواصل مع المسجل العام."
           />
         </Card>
       </div>
@@ -215,9 +217,9 @@ export default function TeacherProfilePage() {
         <div className="page-title-block">
           <span className="hr-brow">هيئة التدريس</span>
           <h1 className="page-title">الملف الأكاديمي</h1>
-          <p className="page-subtitle">
-            ملفك الأكاديمي كما يظهر للمسجل العام، مكتب الجودة، والطلاب. حدّثه باستمرار ليعكس نشاطك العلمي.
-          </p>
+          {/* r351 A2 (Q3): subtitle trimmed to the audience fact (who sees
+              it); the keep-it-updated advice retired. */}
+          <p className="page-subtitle">يظهر للمسجل العام ومكتب الجودة والطلاب.</p>
         </div>
         {!editing ? (
           /* R305 → R342-09: the surface's one primary action rides the
@@ -308,7 +310,8 @@ export default function TeacherProfilePage() {
           {
             label: 'إجمالي الطلاب',
             value: profile.workload.totalEnrolled.toString(),
-            trend: 'مسجَّلون في مقرّراتك',
+            /* r351 A2 (Q3): the teacher-scoped trend note retired — the
+             * whole strip is the teacher's own workload. */
             trendTone: 'flat',
           },
           {
@@ -338,7 +341,8 @@ export default function TeacherProfilePage() {
         ) : profile.bio ? (
           <p className="profile-bio">{profile.bio}</p>
         ) : (
-          <div className="text-sm text-muted">لم تُضف نبذة بعد. اضغط «تعديل» لإضافة وصف عن خلفيتك الأكاديمية.</div>
+          /* r351 A2 (Q3): trimmed — the edit button sits in the header. */
+          <div className="text-sm text-muted">لم تُضف نبذة بعد.</div>
         )}
       </Card>
 
@@ -457,7 +461,9 @@ export default function TeacherProfilePage() {
           <EmptyState illustration="empty-research"
             icon={FileText}
             title="لم تُضف منشورات بعد"
-            description="تُدار منشوراتك من ملفك الأكاديمي لدى المسجل العام."
+            /* r351 A2 (Q3): trimmed to the honest manager fact — this
+             * card has no add affordance by design. */
+            description="تُدار من قِبَل المسجل العام."
           />
         ) : (
           <div className="flex-col gap-2">
@@ -487,10 +493,13 @@ export default function TeacherProfilePage() {
           : countAr(profile.awards.length, ['جائزة واحدة', 'جائزتان', 'جوائز', 'جائزة'])}
       >
         {profile.awards.length === 0 ? (
+          /* r351 A2 (Q3): the managed-by note retired — the publications
+             * card directly above already states the registrar manages
+             * these sections. */
           <EmptyState illustration="achievement"
             icon={Award}
             title="لم تُضف جوائز بعد"
-            description="تُدار تكريماتك وجوائزك من ملفك الأكاديمي لدى المسجل العام."
+            description=""
           />
         ) : (
           <div className="flex-col gap-2">
@@ -512,10 +521,12 @@ export default function TeacherProfilePage() {
       {/* Courses currently teaching */}
       <Card title={<>المقرّرات الحالية</>} icon={BookOpen} subtitle={countAr(profile.courses.length, ['مقرّر واحد هذا الفصل', 'مقرّران هذا الفصل', 'مقرّرات هذا الفصل', 'مقرّراً هذا الفصل'])}>
         {profile.courses.length === 0 ? (
+          /* r351 A2 (Q3): empty-state prose retired — the title states
+             * the assignment fact. */
           <EmptyState illustration="empty-courses"
             icon={BookOpen}
             title="لم يُسند إليك أي مقرّر بعد"
-            description="ستظهر مقرّراتك هنا فور إسنادها من قِبَل المسجل العام."
+            description=""
           />
         ) : (
           /* r241 (Superlist): the current courses are a LIST — one row

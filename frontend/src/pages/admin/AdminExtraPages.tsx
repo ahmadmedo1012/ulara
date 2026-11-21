@@ -151,7 +151,7 @@ export function AdminStudentsPage() {
     <PageFrame width="default">
       <PatternsPageHeader
         title="إدارة الطلاب"
-        description="قائمة الطلاب المسجَّلين في الجامعة، مع البحث والتصفية حسب الكلّيّة."
+        /* r351 A2 (Q3): header description retired — the roster explains itself. */
         breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'الطلاب' }]}
         meta={studentsQ.data
           ? `${countAr(studentsQ.data.meta.total, ['طالب واحد مسجَّل', 'طالبان مسجَّلان', 'طلاب مسجَّلون', 'طالباً مسجَّلاً'])} · بحث الخادم`
@@ -211,7 +211,8 @@ export function AdminStudentsPage() {
         {studentsQ.data && (
           <>
             <RowList aria-label="قائمة الطلاب" empty={(
-              <EmptyState illustration="empty-search" title="لا توجد نتائج" description="جرّب تعديل البحث أو الفلتر لعرض نتائج أوسع." action={hasActiveFilters ? (
+              /* r351 A2 (Q3): empty-state prose retired — the title + reset action suffice. */
+              <EmptyState illustration="empty-search" title="لا توجد نتائج" description="" action={hasActiveFilters ? (
                 <button type="button" className="btn ghost sm" onClick={clearSearch}>
                   <Icon icon={X} size={13} />
                   مسح البحث
@@ -492,7 +493,7 @@ export function AdminDigitalPage() {
     <div className="page r305ao">
       <PatternsPageHeader
         title="التحوّل الرقميّ"
-        description="مؤشّرات تبنّي المنصّة الرقميّة عبر مكوّنات الجامعة."
+        /* r351 A2 (Q3): header description retired — the metric labels explain the page. */
         breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'التحوّل الرقميّ' }]}
         actions={(
           /* R342-09 (D11 sub-page CTA precedent): a read-only metrics ledger
@@ -520,9 +521,11 @@ export function AdminDigitalPage() {
           <StatStrip
             ariaLabel="مؤشّرات التبنّي العامّة"
             cells={[
-              { label: 'إجمالي الحسابات', value: formatNum(q.data.totalUsers), trend: 'كل الأدوار في الجامعة' },
-              { label: 'حسابات نشطة', value: formatNum(q.data.activeUsers), trend: 'من إجمالي الحسابات' },
-              { label: 'نسبة التبنّي', value: `${formatNum(q.data.adoptionPct)}٪`, trend: 'حصة الحسابات النشطة' },
+              /* r351 A2 (Q3): trend notes retired — each restated the
+               * cell label; the numbers sit side by side in the strip. */
+              { label: 'إجمالي الحسابات', value: formatNum(q.data.totalUsers) },
+              { label: 'حسابات نشطة', value: formatNum(q.data.activeUsers) },
+              { label: 'نسبة التبنّي', value: `${formatNum(q.data.adoptionPct)}٪` },
               { label: 'ملفات تعليمية مرفوعة', value: formatNum(q.data.materialsUploaded) },
             ]}
           />
@@ -537,7 +540,7 @@ export function AdminDigitalPage() {
             style={{ marginBlockStart: 'var(--sp-9)' }}
             title="تبنّي المكوّنات"
             icon={ShieldCheck}
-            subtitle="ما يجري فعلاً عبر المنصّة في كل مكوّن"
+            /* r351 A2 (Q3): card subtitle retired — the register's rows explain it. */
           >
             <div className="table-wrap">
               <table className="table tbl-stack ws-table">
@@ -622,7 +625,10 @@ export function AdminSettingsPage() {
     <div className="page r305ao">
       <PatternsPageHeader
         title="إعدادات المنصّة"
-        description="إعدادات تشغيليّة على مستوى الجامعة. تفعيل المعدِّلات الفرديّة قيد التطوير."
+        /* r351 A2 (Q3): header description trimmed to the one honest
+         * sentence (individual toggles are WIP); the explanatory first
+         * sentence retired. */
+        description="تفعيل المعدِّلات الفرديّة قيد التطوير."
         breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'إعدادات المنصّة' }]}
         /* r342 t13: the header's «مزامنة الجامعة» CTA retired with the
          * zu-sync system (dropped upstream — /admin/sync gone); the
@@ -682,8 +688,11 @@ export function AdminSettingsPage() {
         </Card>
 
         <Card title="عمليّات النظام" icon={RefreshCw}>
+          {/* r351 A2 (Q3): helper paragraph trimmed to the one honest
+           * sentence (the verbs live in the owner panel); the restating
+           * first sentence retired. */}
           <p className="text-sm text-muted" style={{ marginBlockEnd: 'var(--sp-3)' }}>
-            عمليّات تنفيذيّة على مستوى المنصّة. للتنفيذ الفعليّ، استخدم لوحة المالك.
+            التنفيذ الفعليّ من لوحة المالك.
           </p>
           <div className="settings-actions">
             {/* r155c: أُزيل زر «مزامنة بيانات الجامعة» المعطَّل — كانت

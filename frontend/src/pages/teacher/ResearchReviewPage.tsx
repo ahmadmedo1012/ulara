@@ -338,7 +338,8 @@ export default function ResearchReviewPage() {
            * review surface reads on the same [nn] grammar the done
            * teacher pages speak. */
           eyebrow="التدريس · البحث العلمي"
-          description="قائمة بحوث الطلاب للمراجعة، ومنشوراتك العلمية."
+          /* r351 A2 (Q3): header description retired — the two tabs name
+           * the page's halves. */
           actions={
             /* R342-09 (D8 header-CTA law): the queue's ONE honest next
              * action on the accent register — open the OLDEST waiting
@@ -396,14 +397,18 @@ export default function ResearchReviewPage() {
                   <section className="flex-col gap-2" aria-label="بانتظار التقييم">
                     <SectionHeader
                       title="بانتظار تقييمك"
-                      description="بحوث اجتازت الفحص التجريبي (محاكاة) — مرتّبة بالأقدم انتظاراً"
+                      /* r351 A2 (Q3): trimmed — the honest simulated-check
+                       * qualifier + the queue's sort order stay. */
+                      description="فحص تجريبي (محاكاة) · الأقدم أولاً"
                       as="h2"
                     />
                     {passed.length === 0 ? (
+                      /* r351 A2 (Q3): empty-state prose retired — the title
+                       * speaks. */
                       <EmptyState illustration="empty-research"
                         icon={CheckCircle2}
                         title="لا بحوث في الانتظار"
-                        description="ستظهر هنا بحوث الطلاب فور اجتيازها الفحص التجريبي (محاكاة) للانتحال والمحتوى الآلي."
+                        description=""
                       />
                     ) : (
                       <div className="r305rp-rev-queue">
@@ -418,7 +423,8 @@ export default function ResearchReviewPage() {
                     <section className="flex-col gap-2" aria-label="بحوث رفضها الفحص">
                       <SectionHeader
                         title="رفضها الفحص التجريبي (محاكاة)"
-                        description="بحوث تجاوزت الحدود التجريبية — لا تحتاج تقييماً"
+                        /* r351 A2 (Q3): description retired — the title
+                         * states the verdict; no action exists here. */
                         as="h2"
                       />
                       <div className="r305rp-rev-queue">
@@ -436,7 +442,8 @@ export default function ResearchReviewPage() {
                     <section className="flex-col gap-2" aria-label="بحوث جاهزة للنشر">
                       <SectionHeader
                         title="مُقيَّمة — جاهزة للنشر"
-                        description="بحوث قُيِّمت ويمكن نشرها في مكتبة الجامعة"
+                        /* r351 A2 (Q3): description retired — the title
+                         * states both the state and the action. */
                         as="h2"
                       />
                       <div className="r305rp-rev-queue">
@@ -459,8 +466,10 @@ export default function ResearchReviewPage() {
                         <Icon icon={ClipboardCheck} size={13} /> لوحة المراجعة
                       </span>
                       <p className="r305rp-rev-empty-title">اختر بحثاً من القائمة</p>
+                      {/* r351 A2 (Q3): trimmed to the short what-appears
+                          line. */}
                       <p className="r305rp-rev-empty-sub">
-                        تظهر نتائج الفحص ونموذج التقييم وملاحظاتك على المستند هنا.
+                        نتائج الفحص والتقييم والملاحظات تظهر هنا.
                       </p>
                     </div>
                   )}
@@ -937,7 +946,9 @@ function MyPublications() {
           {
             label: 'منشورات في ملفّك',
             value: formatInt(publications.length),
-            hint: publications.length === 0 ? 'لم تُسجَّل بعد' : 'في ملفك الأكاديمي',
+            /* r351 A2 (Q3): the restating hint retired — the label says
+             * where the count lives. */
+            hint: publications.length === 0 ? 'لم تُسجَّل بعد' : undefined,
           },
           {
             label: 'شهادات وجوائز',
@@ -952,10 +963,12 @@ function MyPublications() {
       <section className="flex-col gap-2" aria-label="منشوراتي">
         <SectionHeader title="منشوراتي" as="h2" />
         {publications.length === 0 ? (
+          /* r351 A2 (Q3): empty-state prose retired — the action button
+           * below states the path. */
           <EmptyState illustration="empty-research"
             icon={Microscope}
             title="لم تُسجَّل منشورات بعد"
-            description="حدِّث ملفك الأكاديميّ لإضافة بحوثك المنشورة."
+            description=""
             action={
               <RouterLink to="/teacher/profile" className="btn outline sm">
                 <Icon icon={FileText} size={13} />

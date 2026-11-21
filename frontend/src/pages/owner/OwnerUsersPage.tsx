@@ -300,7 +300,7 @@ export function OwnerUsersPage() {
       <PageFrame width="default">
         <PatternsPageHeader
           title="إدارة المستخدمين"
-          description="عرض جميع حسابات المنصّة والبحث فيها وإدارتها"
+          /* r351 A2 (Q3): header description retired — the directory explains itself. */
           breadcrumbs={[{ label: 'لوحة المالك', to: '/owner/dashboard' }, { label: 'المستخدمون' }]}
           /* R341 D11: the [03] nav-order gutter numeral (OWNER_NAV
            * register — the D10 quality precedent). */
@@ -321,7 +321,10 @@ export function OwnerUsersPage() {
             (never a fake zero). r252: the patterns StatLine. */}
         <StatLine
           items={[
-            { label: 'إجمالي المستخدمين', value: kpiValue(statData?.totalUsers ?? 0), hint: 'حسابات مسجَّلة' },
+            /* r351 A2 (Q3): the «حسابات مسجَّلة» restating hint retired;
+             * the «الفئة الأكبر» honesty claim + neutral fallbacks stay
+             * (r299 pins). */
+            { label: 'إجمالي المستخدمين', value: kpiValue(statData?.totalUsers ?? 0) },
             { label: 'الطلاب', value: kpiValue(statData?.students ?? 0), hint: topSegmentKey === 'students' ? 'الفئة الأكبر' : 'حسابات الطلاب' },
             { label: 'الأساتذة', value: kpiValue(statData?.teachers ?? 0), hint: topSegmentKey === 'teachers' ? 'الفئة الأكبر' : 'هيئة التدريس' },
             { label: 'مسجلون عامّون وجودة', value: kpiValue((statData?.admins ?? 0) + (statData?.quality ?? 0)), hint: topSegmentKey === 'staff' ? 'الفئة الأكبر' : 'إدارة ومتابعة' },
@@ -388,13 +391,13 @@ export function OwnerUsersPage() {
           ) : ownerUsers.isError ? (
             <ErrorState error={ownerUsers.error} onRetry={() => ownerUsers.refetch()} />
           ) : users.length === 0 ? (
+            /* r351 A2 (Q3): empty-state prose retired — the title + reset
+             * action suffice. */
             <EmptyState
               icon={Users}
               illustration="empty-list"
               title={hasActiveFilters ? 'لا نتائج مطابقة' : 'لا يوجد مستخدمون بعد'}
-              description={hasActiveFilters
-                ? 'لم نجد حسابات تطابق البحث أو الدور المحدّد.'
-                : 'ستظهر الحسابات هنا فور تسجيل أوّل مستخدم في المنصّة.'}
+              description=""
               action={hasActiveFilters ? (
                 <button type="button" className="btn ghost sm" onClick={clearFilters}>
                   <Icon icon={X} size={13} />

@@ -177,7 +177,8 @@ export default function CommunityPage() {
       <PageHeader
         eyebrow="الحياة الأكاديمية"
         title="المجتمع الجامعي"
-        description="إعلانات الجامعة · مسابقات وفعاليات · أنشطة طلابية. المساحة الرسمية للحياة الأكاديمية اليومية."
+        /* r351 A2 (Q3): header description retired — it restated the tab
+         * labels directly below. */
         actions={
           /* R342-11: the ALWAYS-ON header pair (the D7d/D11 measured
            * seat) — the hover axis + every role's phone-band primary.

@@ -284,7 +284,10 @@ export function CollegesIndexPage() {
       <div className="inx-head">
         <PageHeader
           title="مؤسستك، كلياتك… على أُلارا"
-          description="أُلارا منصّة مستقلة متعددة المستأجرين: كل مؤسسة تبني هيكلها الأكاديمي بنفسها — من لوحة المسجّل تُنشأ الكلية، ثم القسم، ثم المقرّرات — وتمتلك المؤسسة بياناتها بعزل كامل. ما تراه هنا هيكل مساحة العرض الموسومة، لا كتالوج جامعات."
+          /* r351 A2 (Q3): the multi-tenancy explainer description trimmed
+           * to the honest showcase note — the «كيف تُبنى» section below
+           * carries the how. */
+          description="ما تراه هنا هيكل مساحة العرض الموسومة — لا كتالوج جامعات."
           actions={isGuest ? <GuestJoinRow /> : undefined}
         />
       </div>
@@ -315,10 +318,11 @@ export function CollegesIndexPage() {
       )}
       {q.isError && <ErrorState error={q.error} onRetry={() => q.refetch()} />}
       {q.data && q.data.length === 0 && (
+        /* r351 A2 (Q3): trimmed to the honest where-creation-happens fact. */
         <EmptyState
           illustration="empty-list"
           title="لا توجد كليات بعد"
-          description="كل مؤسسة تبني كلياتها بعد انضمامها — يضيفها المسجّل العام من «الهيكل الأكاديمي» في لوحة المسجل العام."
+          description="يضيفها المسجّل العام من «الهيكل الأكاديمي»."
         />
       )}
 
@@ -344,9 +348,11 @@ export function CollegesIndexPage() {
           </div>
 
           {result.total === 0 ? (
+            /* r351 A2 (Q3): empty-state prose retired — the reset action
+             * beside it is the affordance. */
             <EmptyState
               title="لم نعثر على نتائج"
-              description="جرّب كلمة بحث مختلفة."
+              description=""
               action={
                 <button type="button" className="btn primary" onClick={clear}>
                   <Icon icon={X} size={14} />
@@ -584,7 +590,9 @@ export function CollegeDetailPage() {
       <div className="college-grid-2">
         {/* Leadership */}
         {showLeadership && (
-        <Card title="القيادة الأكاديميّة" subtitle="المعيَّنون لهذه الكلّيّة" style={soloPair1 ? soloSpan : undefined}>
+        /* r351 A2 (Q3): the restating «المعيَّنون لهذه الكلّيّة» subtitle
+         * retired — the card title says it. */
+        <Card title="القيادة الأكاديميّة" style={soloPair1 ? soloSpan : undefined}>
           {c.leadership.length === 0 ? (
             <p className="text-muted text-sm">لم يتمّ تعيين قيادة لهذه الكلّيّة بعد.</p>
           ) : (
@@ -645,7 +653,9 @@ export function CollegeDetailPage() {
       <div className="college-grid-2">
         {/* Top students */}
         {showTopStudents && (
-        <Card title="الطلّاب المتميّزون" subtitle="حسب نقاط الخبرة" icon={Trophy} style={soloPair2 ? soloSpan : undefined}>
+        /* r351 A2 (Q3): the restating «حسب نقاط الخبرة» subtitle retired —
+         * the XP column beside each name says it. */
+        <Card title="الطلّاب المتميّزون" icon={Trophy} style={soloPair2 ? soloSpan : undefined}>
           {c.topStudents.length === 0 ? (
             <EmptyState
               illustration="empty-list"
@@ -678,7 +688,8 @@ export function CollegeDetailPage() {
 
         {/* Announcements */}
         {showAnnouncements && (
-        <Card title="الإعلانات" subtitle="آخر التحديثات" icon={Megaphone} style={soloPair2 ? soloSpan : undefined}>
+        /* r351 A2 (Q3): the restating «آخر التحديثات» subtitle retired. */
+        <Card title="الإعلانات" icon={Megaphone} style={soloPair2 ? soloSpan : undefined}>
           {c.announcements.length === 0 ? (
             <EmptyState
               illustration="empty-community"
@@ -775,7 +786,8 @@ export function CollegeDetailPage() {
           — for a guest that's the register wall with return-to, for
           everyone else it's the competition itself). */}
       {showCompetitions && (
-      <Card title="مسابقات نشطة" subtitle="على مستوى الجامعة" icon={Trophy}>
+      /* r351 A2 (Q3): the restating «على مستوى الجامعة» subtitle retired. */
+      <Card title="مسابقات نشطة" icon={Trophy}>
         {/* Guests only see this card when a competition exists; the
             empty branch is the authed (internal) view. */}
         {c.activeCompetitions.length === 0 ? (
@@ -935,7 +947,8 @@ export function CollegesLeaderboardPage() {
       <div className="inx-head">
         <PageHeader
           title="منافسة الكلّيّات"
-          description="مقارنة الكلّيّات على مؤشّرات الأداء الأكاديميّ والنشاط الرقميّ."
+          /* r351 A2 (Q3): header description retired — the metric columns
+           * name themselves. */
           actions={isGuest ? <GuestJoinRow /> : undefined}
         />
       </div>
@@ -950,9 +963,10 @@ export function CollegesLeaderboardPage() {
       )}
       {q.isError && <ErrorState error={q.error} onRetry={() => q.refetch()} />}
       {q.data && q.data.colleges.length === 0 && (
+        /* r351 A2 (Q3): trimmed to the honest scoring source. */
         <EmptyState
           title="لوحة منافسة الكلّيّات فارغة"
-          description="تُحتسب النقاط من نشاط الطلاب المسجّل؛ ستظهر أولى النتائج مع بداية النشاط هذا الفصل."
+          description="النقاط من نشاط الطلاب المسجّل — أول نشاط هذا الفصل يفتح الترتيب."
         />
       )}
 

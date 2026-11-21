@@ -720,7 +720,7 @@ export function AdminFacultiesPage() {
       <div className="page r305ao">
         <PatternsPageHeader
           title="الكلّيّات والأقسام"
-          description="جميع كلّيّات الجامعة وأقسامها مع إحصائيات حية."
+          /* r351 A2 (Q3): header description retired — the roster explains itself. */
           breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'الكلّيّات والأقسام' }]}
         />
         <StatStripSkeleton />
@@ -733,7 +733,7 @@ export function AdminFacultiesPage() {
       <div className="page r305ao">
         <PatternsPageHeader
           title="الكلّيّات والأقسام"
-          description="جميع كلّيّات الجامعة وأقسامها مع إحصائيات حية."
+          /* r351 A2 (Q3): header description retired — the roster explains itself. */
           breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'الكلّيّات والأقسام' }]}
         />
         <Card><ErrorState error={error} onRetry={() => refetch()} /></Card>
@@ -769,7 +769,7 @@ export function AdminFacultiesPage() {
     <div className="page r305ao">
       <PatternsPageHeader
         title="الكلّيّات والأقسام"
-        description="جميع كلّيّات الجامعة وأقسامها مع إحصائيات حية."
+        /* r351 A2 (Q3): header description retired — the roster explains itself. */
         breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'الكلّيّات والأقسام' }]}
         actions={(
           /* R342-09 (the students-page family contract): the page's ONE
@@ -792,10 +792,12 @@ export function AdminFacultiesPage() {
       <StatStrip
         ariaLabel="إحصائيات الكلّيّات والأقسام"
         cells={[
-          { label: 'الكلّيّات', value: formatNum(data.length), trend: 'في هذه المؤسّسة', trendTone: 'flat' },
-          { label: 'الأقسام', value: formatNum(totalDepts), trend: 'عبر الكلّيّات', trendTone: 'flat' },
-          { label: 'إجمالي الطلاب', value: formatNum(totalStudents), trend: 'مسجَّلون', trendTone: 'flat' },
-          { label: 'هيئة التدريس', value: formatNum(totalTeachers), trend: 'أعضاء', trendTone: 'flat' },
+          /* r351 A2 (Q3): trend notes retired — each restated its cell
+           * label; the counts speak for themselves. */
+          { label: 'الكلّيّات', value: formatNum(data.length) },
+          { label: 'الأقسام', value: formatNum(totalDepts) },
+          { label: 'إجمالي الطلاب', value: formatNum(totalStudents) },
+          { label: 'هيئة التدريس', value: formatNum(totalTeachers) },
         ]}
       />
 
@@ -851,11 +853,12 @@ export function AdminFacultiesPage() {
             />
           ))}
           {visible.length === 0 && (
+            /* r351 A2 (Q3): empty-state prose retired — the title + reset action suffice. */
             <EmptyState
               illustration="empty-search"
               icon={Building2}
               title="لا توجد نتائج مطابقة"
-              description="جرّب تعديل البحث أو اختيار مدينة أخرى."
+              description=""
               action={hasFilters ? (
                 <button
                   type="button"
@@ -896,7 +899,8 @@ export function AdminFacultiesPage() {
               placeholder="كلية العلوم"
             />
           </FormField>
-          <FormField label="الاسم بالإنجليزية (اختياري)" id="faculty-name-en" hint="يظهر بجانب الاسم العربي في السجلّ">
+          <FormField label="الاسم بالإنجليزية (اختياري)" id="faculty-name-en">
+            {/* r351 A2 (Q3): where-shown hint retired — the field explains itself. */}
             <input
               className="input"
               value={facultyForm.nameEn}
@@ -907,7 +911,8 @@ export function AdminFacultiesPage() {
           <FormField
             label="المدينة"
             id="faculty-city"
-            hint="الكلّيّات تتميّز بالاسم داخل كل مدينة — الاسم نفسه في مدينة أخرى لا يُعدّ تكرارًا"
+            /* r351 A2 (Q3): uniqueness-rule hint retired — the server's
+             * 409 copy already names it. */
           >
             <input
               className="input"
@@ -916,7 +921,8 @@ export function AdminFacultiesPage() {
               placeholder="كلية العلوم"
             />
           </FormField>
-          <FormField label="رمز تعبيري (اختياري)" id="faculty-icon" hint="يظهر مكان الأيقونة الافتراضية بجانب اسم الكلّيّة">
+          {/* r351 A2 (Q3): icon hint retired — decorative explanation. */}
+          <FormField label="رمز تعبيري (اختياري)" id="faculty-icon">
             <input
               className="input"
               value={facultyForm.iconEmoji}
@@ -982,7 +988,8 @@ export function AdminFacultiesPage() {
               placeholder="قسم الحاسوب"
             />
           </FormField>
-          <FormField label="الاسم بالإنجليزية (اختياري)" id="dept-name-en" hint="يظهر بجانب الاسم العربي في السجلّ">
+          {/* r351 A2 (Q3): where-shown hint retired — the field explains itself. */}
+          <FormField label="الاسم بالإنجليزية (اختياري)" id="dept-name-en">
             <input
               className="input"
               value={deptForm.nameEn}
@@ -1135,7 +1142,7 @@ export function AdminReportsPage() {
       <div className="page r305ao">
         <PatternsPageHeader
           title="التقارير المؤسسية"
-          description="مؤشرات أداء الجامعة على مستوى المخرجات الأكاديمية."
+          /* r351 A2 (Q3): header description retired — the KPI band explains the page. */
           breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'التقارير المؤسسية' }]}
         />
         <StatStripSkeleton />
@@ -1148,7 +1155,7 @@ export function AdminReportsPage() {
       <div className="page r305ao">
         <PatternsPageHeader
           title="التقارير المؤسسية"
-          description="مؤشرات أداء الجامعة على مستوى المخرجات الأكاديمية."
+          /* r351 A2 (Q3): header description retired — the KPI band explains the page. */
           breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'التقارير المؤسسية' }]}
         />
         <Card><ErrorState error={error} onRetry={() => refetch()} /></Card>
@@ -1165,7 +1172,7 @@ export function AdminReportsPage() {
     <div className="page r305ao">
       <PatternsPageHeader
         title="التقارير المؤسسية"
-        description="مؤشرات أداء الجامعة على مستوى المخرجات الأكاديمية."
+        /* r351 A2 (Q3): header description retired — the KPI band explains the page. */
         breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'التقارير المؤسسية' }]}
         actions={(
           /* R342-09 (D11 sub-page CTA precedent): a read-only ledger still
@@ -1188,28 +1195,27 @@ export function AdminReportsPage() {
       <StatStrip
         ariaLabel="مؤشّرات التقارير المؤسسية"
         cells={[
+          /* r351 A2 (Q3): explanatory trend notes retired — the period
+           * (real month range) stays; the restated labels go. */
           {
             label: 'إجمالي البحوث',
             value: formatNum(data.headline.totalPapers),
-            trend: periodLabel ? `آخر 6 أشهر · ${periodLabel}` : 'في النظام',
+            trend: periodLabel,
             to: status ? '/admin/reports' : undefined,
           },
           {
             label: 'بحوث منشورة',
             value: formatNum(data.headline.publishedPapers),
-            trend: 'جاهزة في مكتبة الجامعة',
             to: '/admin/reports?status=PUBLISHED',
           },
           {
             label: 'طلاب نشطون',
             value: formatNum(data.headline.activeStudents),
-            trend: 'حسابات تعمل الآن',
             to: '/admin/students',
           },
           {
             label: 'إجمالي المستخدمين',
             value: formatNum(data.headline.totalUsers),
-            trend: 'كل الأدوار',
           },
         ]}
       />
@@ -1223,7 +1229,9 @@ export function AdminReportsPage() {
         style={{ marginBlockStart: 'var(--sp-9)' }}
         title="حركة البحوث العلمية"
         icon={TrendingUp}
-        subtitle={periodLabel ? `آخر 6 أشهر (${periodLabel}) · مرفوعة، مقيَّمة، منشورة` : 'مرفوعة · مقيَّمة · منشورة'}
+        /* r351 A2 (Q3): subtitle trimmed to the period (real month
+         * range); the series legend below already names the three states. */
+        subtitle={periodLabel}
         actions={(
           <Tabs
             value={trendView}
@@ -1236,10 +1244,11 @@ export function AdminReportsPage() {
         )}
       >
         {data.paperTrend.length === 0 ? (
+          /* r351 A2 (Q3): empty-state prose retired — the title speaks. */
           <EmptyState illustration="empty-research"
             icon={TrendingUp}
             title="لا توجد بيانات نشر بعد"
-            description="ستظهر حركة البحوث هنا بعد رفع أول بحث."
+            description=""
           />
         ) : trendView === 'table' ? (
           <div className="table-wrap">
@@ -1326,9 +1335,11 @@ export function AdminReportsPage() {
         <Card
           title="سجلّ البحوث"
           icon={FileText}
+          /* r351 A2 (Q3): the no-meta prose fallback retired — the
+           * counted total + status label (real data) stay. */
           subtitle={papersMeta
             ? `${countAr(papersMeta.total, ['ورقة واحدة', 'ورقتان', 'أوراق', 'ورقة'])}${status ? ` · ${PAPER_STATUS_LABEL[status]}` : ' · جميع الحالات'}`
-            : 'سجلّ مؤسّسيّ لبحوث الطلاب عبر دورة حياتها'}
+            : undefined}
         >
           <div className="filter-bar" role="group" aria-label="تصفية البحوث حسب الحالة">
             <button
@@ -1361,12 +1372,12 @@ export function AdminReportsPage() {
               onRetry={() => papers.refetch()}
             />
           ) : papers.data && papers.data.data.length === 0 ? (
+            /* r351 A2 (Q3): empty-state prose retired — the title +
+             * «عرض جميع الحالات» action suffice. */
             <EmptyState
               icon={FileText}
               title={status ? `لا توجد بحوث بحالة «${PAPER_STATUS_LABEL[status]}»` : 'لا توجد بحوث بعد'}
-              description={status
-                ? 'جرّب حالة أخرى أو اعرض جميع الحالات.'
-                : 'ستظهر البحوث هنا فور رفع أول بحث إلى المنصة.'}
+              description=""
               action={status ? (
                 <button type="button" className="btn ghost sm" onClick={() => setStatusFilter(undefined)}>
                   <Icon icon={X} size={13} />
@@ -1407,12 +1418,14 @@ export function AdminReportsPage() {
       </div>
 
       {/* Top courses */}
-      <Card title="أكثر المقرّرات تسجيلاً" icon={ClipboardCheck} subtitle={data.topCourses.length > 0 ? `أعلى ${countAr(data.topCourses.length, ['مقرّر', 'مقرّرين', 'مقرّرات', 'مقرّراً'])} بناءً على عدد الطلاب` : undefined}>
+      {/* r351 A2 (Q3): «بناءً على عدد الطلاب» subtitle retired — the
+          title + enrollments column already say the sort key. */}
+      <Card title="أكثر المقرّرات تسجيلاً" icon={ClipboardCheck}>
         {data.topCourses.length === 0 ? (
           <EmptyState illustration="empty-list"
             icon={ClipboardCheck}
             title="لا توجد تسجيلات بعد"
-            description="ستظهر المقرّرات الأعلى تسجيلاً هنا فور تسجيل الطلاب في مقرّراتهم."
+            description=""
           />
         ) : (
           <div className="table-wrap">
@@ -1599,9 +1612,12 @@ export function AdminCoursesPage() {
     <div className="page r305ao">
       <PatternsPageHeader
         title="إدارة المقرّرات"
+        /* r351 A2 (Q3): header description trimmed — the counted total
+         * (meta.total — the pinned data read) stays; the filtered-state
+         * suffix and the pending prose fallback retired. */
         description={meta
-          ? `${countAr(meta.total, ['مقرّر واحد', 'مقرّران', 'مقرّرات', 'مقرّراً'])}${hasFilters ? ' مطابقة للبحث والتصفيّة' : ' في الجامعة'}`
-          : 'جميع المقرّرات الجامعية مع إحصائيات حيّة.'}
+          ? `${countAr(meta.total, ['مقرّر واحد', 'مقرّران', 'مقرّرات', 'مقرّراً'])}${hasFilters ? '' : ' في الجامعة'}`
+          : undefined}
         breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'المقرّرات' }]}
         actions={(
           /* R342-09 (the students-page family contract): the page's ONE
@@ -1708,9 +1724,10 @@ export function AdminCoursesPage() {
                 {courses.length === 0 && (
                   <tr>
                     <td colSpan={courseCols}>
+                      {/* r351 A2 (Q3): empty-state prose retired — the title + reset action suffice. */}
                       <EmptyState illustration="empty-search"
                         title="لا توجد نتائج"
-                        description="جرّب تعديل البحث أو الفلتر لعرض نتائج أوسع."
+                        description=""
                         action={hasFilters ? (
                           <button type="button" className="btn ghost sm" onClick={clearFilters}>
                             <Icon icon={X} size={13} />
@@ -1845,7 +1862,8 @@ export function AdminCoursesPage() {
           </button>
         </div>
         <div className="modal-body" style={{ maxWidth: 480 }}>
-          <FormField label="كود المقرّر" id="course-code" hint="مثال: CS101 — يظهر بخط أحادي في السجلّ">
+          {/* r351 A2 (Q3): mono-face aside retired — the placeholder carries the example. */}
+          <FormField label="كود المقرّر" id="course-code" hint="مثال: CS101">
             <input
               className="input"
               value={form.code}
@@ -1861,7 +1879,8 @@ export function AdminCoursesPage() {
               placeholder="مقدمة في علوم الحاسب"
             />
           </FormField>
-          <FormField label="القسم" id="course-dept" hint="الكلّيّة تحدّدها القسم الذي تختاره">
+          {/* r351 A2 (Q3): faculty-derivation hint retired — the select labels say it. */}
+          <FormField label="القسم" id="course-dept">
             <select
               className="input"
               value={form.departmentId}
@@ -1879,7 +1898,9 @@ export function AdminCoursesPage() {
           <FormField
             label="الساعات المعتمدة"
             id="course-credits"
-            hint="بين 1 و10 — الحدّ الذي يقبله الخادم؛ الزرّ يبقى معطّلًا خارجه"
+            /* r351 A2 (Q3): hint trimmed to the constraint — the
+             * button-behavior aside retired. */
+            hint="بين 1 و10"
           >
             <input
               className="input"
@@ -1943,11 +1964,14 @@ export function AdminCoursesPage() {
         </div>
         <div className="modal-body" style={{ maxWidth: 480 }}>
           {offeringCourse && (
+            /* r351 A2 (Q3): framing sentence retired — the target
+             * course (name + code, real data) stands alone. */
             <p className="text-sm text-muted" style={{ marginBlockEnd: 'var(--sp-3)' }}>
-              سيُدرَّس مقرّر «{offeringCourse.name}» (<bdi>{offeringCourse.code}</bdi>) في الشعبة الجديدة.
+              {offeringCourse.name} (<bdi>{offeringCourse.code}</bdi>)
             </p>
           )}
-          <FormField label="الفصل الدراسي" id="offering-term" hint="نص حرّ من 1 إلى 50 حرفًا — مثال: 2024-FALL">
+          {/* r351 A2 (Q3): length-rule hint retired — the placeholder carries the example. */}
+          <FormField label="الفصل الدراسي" id="offering-term">
             <input
               className="input"
               value={offeringForm.term}
@@ -1959,7 +1983,8 @@ export function AdminCoursesPage() {
           <FormField
             label="الأستاذ"
             id="offering-teacher"
-            hint="أساتذة مؤسستك فقط — لا تُسند الشُّعب إلا لعضو هيئة تدريس نشط فيها"
+            /* r351 A2 (Q3): hint trimmed to the honest constraint core. */
+            hint="أساتذة مؤسستك فقط"
           >
             <select
               className="input"
@@ -1983,7 +2008,8 @@ export function AdminCoursesPage() {
               placeholder="قاعة A12"
             />
           </FormField>
-          <FormField label="السعة" id="offering-capacity" hint="أقصى عدد طلاب يمكن تسجيلهم في الشعبة">
+          {/* r351 A2 (Q3): «السعة» definition hint retired — the label says it. */}
+          <FormField label="السعة" id="offering-capacity">
             <input
               className="input"
               type="number"
