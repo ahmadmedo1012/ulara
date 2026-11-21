@@ -99,3 +99,10 @@
 - The completion haptic (`haptics.selection()` when a turn completes — both grammars; send already had impact-light, stop medium, quota warning, error error).
 - `providerBadgeLabel` + `LOCAL_PROVIDER_NOTE` extracted to logic.ts (was inline) with 4 new pins — gemini rides the named-provider rail verbatim (r351 AI-1 parity).
 **Gates (N6 set, all green):** tsc 0 · expo lint 0 errors/16 pre-existing warnings · contract-check no drift · tokens:check byte-identical · api:types regenerated + `git diff --exit-code` clean · jest `1237/1237` (1233 base + 4 new) · expo export android + ios OK.
+
+## Session 1 — Track NATIVE (N0/N1/N4)
+
+**N0 audit** (committed instrument `apps/mobile/scripts/capture-web.mjs` + corpus-backed pass): 46 cells at 390×844 + 820×1180, 0 overflow, 0 capture errors. Full table in NATIVE_AUDIT.md. Verdict: the >80-word screens (admin dashboard/reports 136, student results 95, quality engagement 92) are DATA-bound, not explanation-bound — the r350 copy sweep holds.
+**N4 cuts**: admin hero hint removed (label suffices), results kicker 9→4 words. Zero screens carry >80 words of explanation.
+**N1 boot sequence (BootStrip, boot.tsx)**: mono counter 0→100% on the ds ease (900ms ≤ the 1.2s ceiling) + the mark's own X:120 Y:120 coordinate readout + the hairline ruler — cold boot only (module flag, warm remounts skip), reduced-motion static-complete. 4 new pins (cold frame / static-complete / warm-skip / ceiling source-pin).
+**Gates (N6)**: tsc 0 · expo lint 0/16 pre-existing · contract no drift · tokens byte-identical · jest `1241/1241` (1237+4) with clean exit · expo export android + ios OK.

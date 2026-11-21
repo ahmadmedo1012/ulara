@@ -103,11 +103,7 @@ export default function AdminDashboard() {
           </Animated.View>
         ) : s ? (
           <Animated.View entering={entering(1)} style={{ gap: 8 }}>
-            <MetricHero
-              label="الطلاب المسجَّلون"
-              value={s.totalStudents ?? null}
-              hint="إجمالي حسابات الطلاب في هذه المؤسّسة"
-            />
+            <MetricHero label="الطلاب المسجَّلون" value={s.totalStudents ?? null} />
             <View style={{ flexDirection: "row", gap: 8 }}>
               <MetricTile label="الأساتذة" value={s.totalTeachers ?? null} />
               <MetricTile label="المقرّرات" value={s.totalCourses ?? null} />

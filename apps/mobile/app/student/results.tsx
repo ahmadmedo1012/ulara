@@ -74,7 +74,7 @@ export default function ResultsScreen() {
   return (
     <PushFrame
       title="النتائج"
-      kicker="تفاصيل درجاتك وتحليل أدائك بناءً على بياناتك الفعليّة"
+      kicker="درجاتك وتحليل أدائك"
       refreshing={feed.isFetching && !feed.isLoading}
       onRefresh={() => void feed.refetch()}
     >
