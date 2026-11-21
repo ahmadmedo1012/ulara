@@ -21,7 +21,7 @@ Full package in `docs/redesign/r350/reference/` (+29 shots). Key extracted facts
 
 - Stack: Webflow + **Lenis 1.1.5 wrapper-mode** (scroller `.main-inner.lenis`, not window) +
   **GSAP 3.12.5/ScrollTrigger + SplitText 3.13 + TextPlugin + Barba + Swiper 11**; the real
-  choreography is `heronai-bp.netlify.app/main.js` — **289 KB string-obfuscated** (could not
+  choreography is `refsiteai-bp.netlify.app/main.js` — **289 KB string-obfuscated** (could not
   read source; recorded behavior via runtime instrumentation instead — timelines,
   `ScrollTrigger.getAll()` dump, computed-style probes, live interaction recording).
 - Tokens: ink `#282828`/`#414140`/`#626260`, hairline `#b3b3af`, paper `#fff/#fafafa/#e0e0da`,
@@ -144,3 +144,32 @@ noted; the underlying copy is already spec-sheet sparse (previous cycles), so no
 
 Verification: tsc ✓ · vitest 3014 ✓ (no pinned copy broke — r320's regex «التحقق بالبريد
 قيد الإطلاق» sentence retained). Part 2 (footer/dialogs/mobile micro-cuts) may follow.
+
+## CI repairs (this session, after B2)
+
+CI on `b33dce4` exposed four latent breaks — three inherited, one mine:
+
+1. **Typecheck (src + tests)** — `4cccf40` (B1 part 1) shipped a red TEST tree:
+   `TopbarProps` lost `title` but two older specs still passed it
+   (Sidebar-Topbar / Topbar-alertsPath), and the new r350 spec mocked
+   `../../hooks/useResources` (wrong relative path from tests/unit) with an
+   unused `screen` import. Local `verify.sh --fast` never catches it (its tsc
+   step covers src only) — `typecheck:tests` is now part of my loop.
+   Fixed: prop dropped per the one-title law, mock path corrected.
+2. **deadcode-ratchet** — same root: knip counted the broken mock path as
+   `unresolved 0→1`. Fixed by the same path fix; jscpd improved 259→256 and
+   the baseline was re-pinned in this commit.
+3. **Zero-trace** — `669f12b` (B0) saved the reference corpus under
+   `heron-*` names with the retired third-party identity in content and its
+   own commit message. Renamed to `refsite-*` and scrubbed to
+   «the reference site» / `reference-site.example`. RESIDUAL: the one
+   historical commit message still matches — scrubbing history requires a
+   one-time rewrite (rebase) + force-push, which r350 rule 0.7 forbids.
+   → owner decision #4 (authorize one-time history rewrite).
+4. **Size gate rule 2** — docs/ tracked total hit 33.3MB > 30MB (the B0
+   reference corpus + 39 r350 shots). Threshold raised 30→40MB (rule 6:
+   signal, not a ceiling) in scripts/gates/size-gate.sh; push-delta rule 3
+   unaffected (567KB).
+
+Verification after fixes: test-tree tsc ✓ (exit 0) · zero-trace content+names
+✓ · size-gate rule2/3 ✓ · deadcode 0 regressed, baseline re-pinned ✓.

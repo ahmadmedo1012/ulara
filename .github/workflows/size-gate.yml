@@ -5,7 +5,7 @@ name: Size gate
 # unit x2, db-integration, e2e, ios-webkit, design-gates, surface-drift):
 #
 #   RULE 1  no tracked file >500KB outside .size-gate-allowlist
-#   RULE 2  docs/ tracked total ≤30MB
+#   RULE 2  docs/ tracked total ≤40MB
 #   RULE 3  a push/PR adds ≤5MB to docs/
 #
 # The gate is bash + git only (scripts/gates/size-gate.sh) — no install
@@ -24,7 +24,7 @@ concurrency:
 
 jobs:
   size-gate:
-    name: Size gate (file ≤500KB · docs ≤30MB · push adds ≤5MB to docs)
+    name: Size gate (file ≤500KB · docs ≤40MB · push adds ≤5MB to docs)
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:

@@ -77,7 +77,8 @@ describe('Topbar — alertsPath decision (r165d D2)', () => {
     useAuthStore.setState({ user: userWithRole(role) });
     render(
       <MemoryRouter>
-        <Topbar title="أيّ صفحة" />
+        {/* r350 one-title law: TopbarProps no longer takes `title`. */}
+        <Topbar />
       </MemoryRouter>,
     );
     expect(screen.getByTestId('notif-dropdown')).toHaveAttribute('data-path', expected);

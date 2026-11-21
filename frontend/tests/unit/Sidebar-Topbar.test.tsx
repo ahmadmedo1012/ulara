@@ -87,7 +87,9 @@ function renderSidebar() {
 function renderTopbar() {
   return render(
     <MemoryRouter>
-      <Topbar title="لوحة التحكم" />
+      {/* r350 one-title law: TopbarProps no longer takes `title` — the
+          PageHeader h1 is the single visible title. */}
+      <Topbar />
     </MemoryRouter>,
   );
 }

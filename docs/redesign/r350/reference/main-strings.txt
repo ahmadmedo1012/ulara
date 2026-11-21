@@ -300,10 +300,10 @@ C2vHCMnO
 C1zzufy
 w2rHDgeTy29VA2LLlwfJy2vWDc1HBgXD
 oYbnyxGTqwDLpq
-heron_cookie_consent
+refsite_cookie_consent
 consent
 granted
-heron-cookie-root
+refsite-cookie-root
 ontouchstart
 background-position:center
 transform-origin:center

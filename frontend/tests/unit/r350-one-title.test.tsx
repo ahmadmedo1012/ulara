@@ -21,7 +21,7 @@
  *     labeled 3-way.
  */
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { cleanup, render, screen, within } from '@testing-library/react';
+import { cleanup, render, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Topbar } from '../../src/components/layout/Topbar';
@@ -42,9 +42,9 @@ vi.mock('../../hooks/useAuth', () => ({
   useSelectInstitution: () => ({ mutate: vi.fn(), isPending: false }),
 }));
 
-vi.mock('../../hooks/useResources', async (importOriginal) => {
+vi.mock('../../src/hooks/useResources', async (importOriginal) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const real = await importOriginal<typeof import('../../hooks/useResources')>();
+  const real = await importOriginal<typeof import('../../src/hooks/useResources')>();
   return { ...real, useMyProfile: () => ({ data: undefined }) };
 });
 

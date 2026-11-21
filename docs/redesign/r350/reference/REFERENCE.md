@@ -1,4 +1,4 @@
-# B0 — heronaiapp.com reference extraction (r350)
+# B0 — reference-site.example reference extraction (r350)
 
 Extracted **live** on 2026-11-21 with Playwright (chromium 148 / pw 1.60) at 1440×1000 and
 390×844 (dpr 2). Everything below is measured from the real site; nothing is assumed.
@@ -7,7 +7,7 @@ Raw artifacts sit next to this file (HTML, CSS, obfuscated JS, JSON timelines, 2
 ## 0. What the site IS (stack)
 
 A **Webflow** site (`w-mod-js`, webflow.io runtime, jQuery 3.5.1) whose real engine is a
-separate, **string-obfuscated** bundle: `https://heronai-bp.netlify.app/main.js` (289 KB,
+separate, **string-obfuscated** bundle: `https://refsiteai-bp.netlify.app/main.js` (289 KB,
 javascript-obfuscator string-array + base64-shift). Library stack, in load order:
 
 | library | version | role |
@@ -20,7 +20,7 @@ javascript-obfuscator string-array + base64-shift). Library stack, in load order
 | @barba/core + prefetch | latest | SPA page transitions via `.main { clip-path: inset(var(--mask-percent)) }` |
 | Swiper | 11 | logo carousel + use-case gallery |
 
-`config.js` probes `localhost:3000/@vite/client` → the agency dev overlay (`heron-dev-mode`);
+`config.js` probes `localhost:3000/@vite/client` → the agency dev overlay (`refsite-dev-mode`);
 production just loads `main.js`. Analytics (Clarity/Mixpanel/GA) are irrelevant to visuals.
 
 **Could NOT extract:** readable source of `main.js` (obfuscated). Compensated with runtime
@@ -68,7 +68,7 @@ Anatomy (`.loading`, 5 children):
 - `.loading-ruler` — full-bleed horizontal + vertical hairlines with `+` plus marks and
   mono coordinate labels (`txt-font-mono txt-10`).
 - `.loading-main` → `.loading-content`:
-  - Title **“WELCOME TO HERON AI”** as 4 `.bp-mask-line-mask > .bp-line` rows (SplitText
+  - Title **“WELCOME TO REFSITE AI”** as 4 `.bp-mask-line-mask > .bp-line` rows (SplitText
     lines, masked line-by-line reveal).
   - Spec sheet (mono, `10px`): `TYPE : Technology/AI Software Company` · `FOUNDED : 2026`
     · `FOCUS : AI-powered building code compliance…` · `LOCATION : 1801 California St…`

@@ -6,8 +6,8 @@
 {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  "name": "Heron AI",
-  "description": "An AI agent that works inside your design tools. Heron sees your model, spots problems, and suggests fixes as you design. When you approve, it makes the edit itself, all without leaving the software you already use.",
+  "name": "Refsite AI",
+  "description": "An AI agent that works inside your design tools. Refsite sees your model, spots problems, and suggests fixes as you design. When you approve, it makes the edit itself, all without leaving the software you already use.",
   "url": "/",
   "inLanguage": "en",
   "applicationCategory": "DesignApplication",
@@ -25,7 +25,7 @@
   ],
   "provider": {
     "@type": "Organization",
-    "name": "Heron AI",
+    "name": "Refsite AI",
     "url": "/",
     "logo": {
       "@type": "ImageObject",
@@ -40,7 +40,7 @@
       "addressCountry": "US"
     },
     "telephone": "303-569-8261",
-    "email": "hello@heron-ai.com",
+    "email": "hello@refsite-ai.com",
     "sameAs": [
       "https://www.instagram.com/kestrellabs/",
       "https://www.linkedin.com/company/kestrellabs"

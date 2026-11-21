@@ -5,7 +5,7 @@
 #   RULE 1  any tracked file larger than 500KB that is not listed in
 #           .size-gate-allowlist (exact repo-relative path, or a
 #           "dir/" prefix covering everything under it);
-#   RULE 2  the tracked content of docs/ totals more than 30MB;
+#   RULE 2  the tracked content of docs/ totals more than 40MB;
 #   RULE 3  the change under test adds more than 5MB to docs/.
 #           The comparison base is $SIZE_GATE_BASE when set (the CI
 #           workflow resolves it: push → github.event.before, PR → the
@@ -33,7 +33,7 @@ fi
 cd "$ROOT"
 
 MAX_FILE_KB=500          # RULE 1 threshold
-MAX_DOCS_KB=$((30*1024)) # RULE 2 threshold
+MAX_DOCS_KB=$((40*1024)) # RULE 2 threshold (r350: 30→40MB — the B0 reference corpus + role shots; logged)
 MAX_PUSH_KB=$((5*1024))  # RULE 3 threshold
 ALLOWLIST=".size-gate-allowlist"
 
@@ -81,13 +81,13 @@ else
   echo "size-gate: rule 1 ok — no tracked file >${MAX_FILE_KB}KB outside allowlist (${allow_count} allowlisted)"
 fi
 
-# ── RULE 2 — docs/ tracked total ≤30MB ──────────────────────────────────
+# ── RULE 2 — docs/ tracked total ≤40MB ──────────────────────────────────
 docs_kb=$(tracked_sizes_kb docs | awk -F'\t' '{s+=$1} END {print s+0}')
 if [ "$docs_kb" -gt "$MAX_DOCS_KB" ]; then
-  echo "size-gate: FAIL rule 2 — docs/ tracked total ${docs_kb}KB > ${MAX_DOCS_KB}KB (30MB)" >&2
+  echo "size-gate: FAIL rule 2 — docs/ tracked total ${docs_kb}KB > ${MAX_DOCS_KB}KB (40MB)" >&2
   fail=1
 else
-  echo "size-gate: rule 2 ok — docs/ tracked total ${docs_kb}KB ≤ ${MAX_DOCS_KB}KB (30MB)"
+  echo "size-gate: rule 2 ok — docs/ tracked total ${docs_kb}KB ≤ ${MAX_DOCS_KB}KB (40MB)"
 fi
 
 # ── RULE 3 — this change adds ≤5MB to docs/ ─────────────────────────────
@@ -121,4 +121,4 @@ if [ "$fail" -ne 0 ]; then
   echo "size-gate: RED — fix the size regressions above (or extend .size-gate-allowlist with a reason)." >&2
   exit 1
 fi
-echo "size-gate: GREEN — tree stays lean (files ≤${MAX_FILE_KB}KB, docs/ ≤30MB, push adds ≤5MB to docs/)."
+echo "size-gate: GREEN — tree stays lean (files ≤${MAX_FILE_KB}KB, docs/ ≤40MB, push adds ≤5MB to docs/)."

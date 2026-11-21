@@ -1,6 +1,6 @@
 const LOCAL_ORIGIN = 'http://localhost:3000';
-const PRODUCTION_MAIN_URL = 'https://heronai-bp.netlify.app/main.js';
-const DEV_SESSION_KEY = 'heron-dev-mode';
+const PRODUCTION_MAIN_URL = 'https://refsiteai-bp.netlify.app/main.js';
+const DEV_SESSION_KEY = 'refsite-dev-mode';
 
 async function canConnectToDevServer() {
     const controller = new AbortController();
@@ -36,6 +36,6 @@ async function loadApp() {
     await import(PRODUCTION_MAIN_URL);
 }
 
-window.__HERON_APP_LOADER__ ??= loadApp().catch((error) => {
-    console.error('[Heron] Failed to load application bundle.', error);
+window.__REFSITE_APP_LOADER__ ??= loadApp().catch((error) => {
+    console.error('[Refsite] Failed to load application bundle.', error);
 });
