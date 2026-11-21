@@ -32,10 +32,8 @@ import type { ReactNode } from 'react';
  *   - RTL correctness is inherited: the CSS family uses logical
  *     properties only; no direction-aware code belongs here.
  *
- * R319 (C2-G2 · the reference title bar, additive):
- *   - `index` — the optional mono `[01]` gutter label rendered INSIDE
- *     the h1 (aria-hidden; the accessible name stays the title alone).
- *     Default: none. Sections opt in per G1/Cycle-3.
+ * r351 A2 (Q2): the mono `[01]` gutter index is RETIRED (it rendered
+ * out of DOM order on several pages; the h1 is the name, alone).
  *
  * r324 X10 — the `SHEET S-01 · STUDENT` identity line is RETIRED
  * (coordinates/revision tags are not content): the `sheetCode` prop,
@@ -47,7 +45,6 @@ export function PageHeader({
   subtitle,
   meta,
   actions,
-  index,
 }: {
   /** Page title — rendered as the route's single semantic h1. */
   title: ReactNode;
@@ -59,17 +56,11 @@ export function PageHeader({
   meta?: ReactNode;
   /** Optional header actions — rendered as a direct flex child, as-is. */
   actions?: ReactNode;
-  /** R319: optional mono gutter index (`01` renders as `[01]` inside the
-   *  h1, aria-hidden). */
-  index?: string;
 }) {
   return (
     <header className="page-header">
       <div className="page-title-block">
         <h1 className="page-title">
-          {index !== undefined && index !== '' && (
-            <span className="page-index" aria-hidden="true" dir="ltr">{`[${index}]`}</span>
-          )}
           {title}
         </h1>
         {subtitle !== undefined && <p className="page-subtitle">{subtitle}</p>}

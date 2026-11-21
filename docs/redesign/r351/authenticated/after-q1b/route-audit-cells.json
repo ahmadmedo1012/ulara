@@ -1,0 +1,510 @@
+[
+  {
+    "cell": "STUDENT·/student/dashboard·light·1440",
+    "role": "STUDENT",
+    "route": "/student/dashboard",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 289,
+    "scrollHeight": 1776,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "إعادة عرض الجولة",
+        "w": 55,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "تطبيق الجوال",
+        "w": 66,
+        "h": 19
+      },
+      {
+        "tag": "a",
+        "name": "واجب الأسبوع الثالث (CS-201)",
+        "w": 944,
+        "h": 16
+      },
+      {
+        "tag": "a",
+        "name": "مقدمة في الخوارزميات — قاعة A2",
+        "w": 959,
+        "h": 16
+      }
+    ],
+    "smallTargetCount": 4,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/student/dashboard·light·390",
+    "role": "STUDENT",
+    "route": "/student/dashboard",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 283,
+    "scrollHeight": 2728,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "تطبيق الجوال",
+        "w": 66,
+        "h": 19
+      }
+    ],
+    "smallTargetCount": 1,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "ind-mono ind-sched-date",
+        "text": "15",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 145
+          }
+        ]
+      },
+      {
+        "el": "ind-mono ind-sched-code",
+        "text": "CS-201",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 1389
+          }
+        ]
+      },
+      {
+        "el": "ind-mono ind-sched-date",
+        "text": "16",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 145
+          }
+        ]
+      },
+      {
+        "el": "ind-mono ind-sched-date",
+        "text": "17",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 145
+          }
+        ]
+      },
+      {
+        "el": "ind-mono ind-sched-code",
+        "text": "CS-310",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 1356
+          }
+        ]
+      },
+      {
+        "el": "ind-mono ind-sched-date",
+        "text": "18",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 145
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "TEACHER·/teacher/dashboard·light·1440",
+    "role": "TEACHER",
+    "route": "/teacher/dashboard",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 269,
+    "scrollHeight": 1619,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "إعادة عرض الجولة",
+        "w": 55,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "ابدأ التصحيح",
+        "w": 113,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "الجدول الأسبوعيّ",
+        "w": 135,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "القائمة الكاملة",
+        "w": 121,
+        "h": 32
+      }
+    ],
+    "smallTargetCount": 4,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "TEACHER·/teacher/dashboard·light·390",
+    "role": "TEACHER",
+    "route": "/teacher/dashboard",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 270,
+    "scrollHeight": 2795,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 5,
+    "overlaps": [
+      {
+        "el": "pf-row-line pf-row-link",
+        "text": "44 تسليماتاختبار قصير — التعقي",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 26856
+          }
+        ]
+      },
+      {
+        "el": "pf-row-title",
+        "text": "اختبار قصير — التعقيد الزمني",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 3905
+          }
+        ]
+      },
+      {
+        "el": "pf-row-meta",
+        "text": "مقدمة في الخوارزميات · CS-201 ",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 8226
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "CS-201",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 855
+          }
+        ]
+      },
+      {
+        "el": "hr-chip",
+        "text": "بانتظارك",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 2002
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "ADMIN·/admin/dashboard·light·1440",
+    "role": "ADMIN",
+    "route": "/admin/dashboard",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 165,
+    "scrollHeight": 1428,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "إعادة عرض الجولة",
+        "w": 55,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "سجلّ الطلاب",
+        "w": 113,
+        "h": 32
+      }
+    ],
+    "smallTargetCount": 2,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "ADMIN·/admin/dashboard·light·390",
+    "role": "ADMIN",
+    "route": "/admin/dashboard",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 166,
+    "scrollHeight": 2098,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 5,
+    "overlaps": [
+      {
+        "el": "stat-cell stat-cell-link",
+        "text": "هيئة التدريس137عضو",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 6371
+          }
+        ]
+      },
+      {
+        "el": "stat-cell stat-cell-link",
+        "text": "المقرّرات3425231 تسجيلاً",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 27262
+          }
+        ]
+      },
+      {
+        "el": "stat-label",
+        "text": "المقرّرات",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 9166
+          }
+        ]
+      },
+      {
+        "el": "stat-value",
+        "text": "342",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 9166
+          }
+        ]
+      },
+      {
+        "el": "stat-trend flat",
+        "text": "5231 تسجيلاً",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 6344
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "QUALITY·/quality/dashboard·light·1440",
+    "role": "QUALITY",
+    "route": "/quality/dashboard",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 203,
+    "scrollHeight": 1945,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "إعادة عرض الجولة",
+        "w": 55,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "تقارير الجودة",
+        "w": 90,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "تنبيهات الجودة",
+        "w": 100,
+        "h": 32
+      }
+    ],
+    "smallTargetCount": 3,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "QUALITY·/quality/dashboard·light·390",
+    "role": "QUALITY",
+    "route": "/quality/dashboard",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 203,
+    "scrollHeight": 2545,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 1,
+    "overlaps": [
+      {
+        "el": "SPAN",
+        "text": "النشاط الأسبوعي",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 18036
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/dashboard·light·1440",
+    "role": "OWNER",
+    "route": "/owner/dashboard",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 216,
+    "scrollHeight": 1822,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "إعادة عرض الجولة",
+        "w": 55,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحيّة",
+        "w": 116,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "التنبيهات",
+        "w": 91,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "تنبيهات تشغيليّة مفتوحة",
+        "w": 998,
+        "h": 16
+      },
+      {
+        "tag": "a",
+        "name": "أساتذة بلا حصص تدريس هذا الفصل",
+        "w": 998,
+        "h": 16
+      }
+    ],
+    "smallTargetCount": 5,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/dashboard·light·390",
+    "role": "OWNER",
+    "route": "/owner/dashboard",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 217,
+    "scrollHeight": 2598,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "تنبيهات تشغيليّة مفتوحة",
+        "w": 268,
+        "h": 19
+      },
+      {
+        "tag": "a",
+        "name": "أساتذة بلا حصص تدريس هذا الفصل",
+        "w": 268,
+        "h": 19
+      }
+    ],
+    "smallTargetCount": 2,
+    "overlapCount": 2,
+    "overlaps": [
+      {
+        "el": "SPAN",
+        "text": "[01]توزيع المستخدمين",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 3692
+          }
+        ]
+      },
+      {
+        "el": "w11-idx",
+        "text": "[01]",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 448
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  }
+]

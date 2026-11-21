@@ -173,7 +173,7 @@ function OwnerActionStrip({ alerts }: { alerts: OperationalAlert[] }) {
   // slot, this pending state, and the resolved strip all occupy the
   // same box.
   if (education.isPending) {
-    return <StripSkeleton title="يحتاج انتباهك" subtitle="جارٍ التحقق من حالات تحتاج انتباهك…" />;
+    return <StripSkeleton title="انتباه" subtitle="جارٍ التحقق من حالات تحتاج انتباهك…" />;
   }
 
   const rows: OwnerActionRow[] = [];
@@ -183,7 +183,7 @@ function OwnerActionStrip({ alerts }: { alerts: OperationalAlert[] }) {
       key: 'open-alerts',
       tone: critical > 0 ? 'amber' : 'brand',
       icon: AlertTriangle,
-      title: 'تنبيهات تشغيليّة مفتوحة',
+      title: 'تنبيهات تشغيليّة',
       desc: critical > 0
         ? `${countAr(alerts.length, OPEN_ALERT_FORMS)} — منها ${countAr(critical, CRITICAL_ALERT_FORMS)}`
         : countAr(alerts.length, OPEN_ALERT_FORMS),
@@ -197,8 +197,8 @@ function OwnerActionStrip({ alerts }: { alerts: OperationalAlert[] }) {
       key: 'idle-teachers',
       tone: 'brand',
       icon: GraduationCap,
-      title: 'أساتذة بلا حصص تدريس هذا الفصل',
-      desc: `${countAr(idle, IDLE_TEACHER_FORMS)} لم تُسند إليهم مقرّرات — راجع أعباء التدريس من لوحة التعليم`,
+      title: 'أساتذة بلا حصص',
+      desc: `${countAr(idle, IDLE_TEACHER_FORMS)} بلا مقرّرات مسندة`,
       to: '/owner/education',
       hint: 'فتح لوحة التعليم',
     });
@@ -211,7 +211,7 @@ function OwnerActionStrip({ alerts }: { alerts: OperationalAlert[] }) {
    * pending StripSkeleton above is untouched (same Card anatomy). */
   return (
     <TodayList
-      title="يحتاج انتباهك"
+      title="انتباه"
       items={rows.map((r) => ({
         id: r.key,
         title: r.title,
@@ -309,7 +309,6 @@ export function OwnerDashboardPage() {
       <OwnerFrame>
         <PatternsPageHeader
           title="لوحة التحكم الرئيسية"
-          description="نظرة شاملة وإحصائيات حيّة عن المنصة"
         />
         <div className="owner-live-status is-pending" aria-busy="true" aria-live="polite">
           <div className="owner-live-pulse" />
@@ -331,10 +330,10 @@ export function OwnerDashboardPage() {
           ))}
         </div>
         <div className="grid-2-1">
-          <Card title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[01]</span>توزيع المستخدمين</>}>
+          <Card title={<>توزيع المستخدمين</>}>
             <Skeleton width="100%" height={348} rounded="var(--r-lg)" />
           </Card>
-          <Card title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[02]</span>الحالة التشغيليّة</>}>
+          <Card title={<>الحالة التشغيليّة</>}>
             <Skeleton width="100%" height={348} rounded="var(--r-lg)" />
           </Card>
         </div>
@@ -387,7 +386,7 @@ export function OwnerDashboardPage() {
   const topSegment = segments.reduce((a, b) => (b.value > a.value ? b : a), segments[0] ?? { label: '', value: 0 });
   const chartSummary = data.totalUsers === 0
     ? 'لا مستخدمين مسجَّلين بعد.'
-    : `${topSegment.label} الفئة الأكبر من مستخدمي المنصّة.`;
+    : `${topSegment.label}`;
 
   const alertBand = alertsQuery.isError ? (
     <div className="owner-live-status is-degraded" role="alert">
@@ -435,28 +434,11 @@ export function OwnerDashboardPage() {
          * governance [13]). The card-level w11-idx [01] on توزيع
          * المستخدمين below is a different register (card order) and
          * stays. */
-        index="01"
-        description="نظرة شاملة وإحصائيات حيّة عن المنصة"
         meta={formatDate(new Date(), { weekday: 'long', day: 'numeric', month: 'long' })}
-        /* D11 (D8/D10 header-CTA precedent): the console's two live
-         * surfaces ride the header action slot — the realtime monitor
-         * (primary) + the operational alerts board. The quick-actions
-         * card [04] keeps the full set; this pair is the phone-band's
-         * honest affordance (the topbar «اسأل AI» hides ≤920 since D6,
-         * so without it the first viewport at 390 carries no primary
-         * action at all). */
-        actions={(
-          <>
-            <Link to="/owner/realtime" className="btn primary sm">
-              <Icon icon={Radio} size={13} />
-              المراقبة الحيّة
-            </Link>
-            <Link to="/owner/alerts" className="btn ghost sm">
-              <Icon icon={AlertTriangle} size={13} />
-              التنبيهات
-            </Link>
-          </>
-        )}
+        /* r351 A2 (Q3): the header action pair retired — both routes
+           ride the sidebar (first group) + the quick-actions card; the
+           first viewport keeps its primary action (the live monitor is
+           the nav's second item). */
       />
 
       {/* Live Status — never claims "normal" unless the alerts query
@@ -479,39 +461,38 @@ export function OwnerDashboardPage() {
           {
             label: 'الجلسات النشطة',
             value: <bdi>{formatNum(realtimeData.activeSessions)}</bdi>,
-            hint: 'في هذه اللحظة',
+            hint: 'الآن',
           },
           {
             label: 'المقرّرات الدراسية',
             value: <bdi>{formatNum(data.totalCourses)}</bdi>,
-            hint: `${formatNum(data.totalOfferings)} شعبة تدريس فاعلة`,
+            hint: `${formatNum(data.totalOfferings)} شعبة فاعلة`,
           },
           {
             label: 'إجمالي التسجيلات',
             value: <bdi>{formatNum(data.totalEnrollments)}</bdi>,
-            hint: 'تسجيلات مقرّرات تراكمية',
+            hint: 'تراكمية',
           },
         ]}
       />
 
       {/* Chart + Operational status */}
       <div className="grid-2-1">
-        <Card title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[01]</span>توزيع المستخدمين</>}>
+        <Card title={<>توزيع المستخدمين</>}>
           <ChartFrame
             className="owner-chart-container"
             ariaLabel="مخطط دائري يوزّع مستخدمي المنصّة على الأدوار: طلاب وأساتذة وإداريّون وفريق جودة"
             summary={chartSummary}
-            table={{
-              caption: 'توزيع المستخدمين حسب الدور',
-              columns: ['الدور', 'العدد'],
-              rows: segments.map((s) => [s.label, s.value]),
-            }}
+            /* r351 A2 (Q3): the sr-only distribution table retired —
+               the chart keeps role=img + aria-label + the summary (the
+               top-two counts stay in the KPI hint); a data alternative
+               was judged duplicative for the budget. */
           >
             <Doughnut key={themeKey} data={chartData} options={chartOptions} />
           </ChartFrame>
         </Card>
 
-        <Card title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[02]</span>الحالة التشغيليّة</>}>
+        <Card title={<>الحالة التشغيليّة</>}>
           <div className="owner-health-list">
             {/* r299: the «حالة المنصة» row died — the live-status band
                 directly above OWNS alert status (same query, same
@@ -549,7 +530,7 @@ export function OwnerDashboardPage() {
             </div>
             <div className="owner-health-row">
               <div className={`owner-health-dot ${realtimeData.aiRequestsPerMin > 0 ? 'green' : 'neutral'}`} />
-              <span className="owner-health-label">طلبات الذكاء الاصطناعيّ / دقيقة</span>
+              <span className="owner-health-label">طلبات AI / دقيقة</span>
               <span className="owner-health-value">
                 <bdi>{formatNum(realtimeData.aiRequestsPerMin)}</bdi>
               </span>
@@ -581,7 +562,7 @@ export function OwnerDashboardPage() {
           r253: the 4-column table becomes dense RowList rows — one row
           per event (action · actor · resource · relative time), the
           same facts without the grid. */}
-      <Card title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[03]</span>الأحداث الأخيرة</>} icon={Clock} subtitle="آخر العمليّات على المنصّة">
+      <Card title="الأحداث الأخيرة" icon={Clock}>
         {activity.isPending ? (
           <ListSkeleton rows={6} />
         ) : activity.isError ? (
@@ -615,7 +596,7 @@ export function OwnerDashboardPage() {
 
       {/* Quick Actions — WS-F6: wired to real /owner/* routes (the old
           four buttons had no onClick and no destination). */}
-      <Card title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[04]</span>إجراءات سريعة</>} icon={ShieldCheck}>
+      <Card title={<>إجراءات سريعة</>} icon={ShieldCheck}>
         <div className="owner-action-bar">
           <Link to="/owner/realtime" className="btn primary">
             <Icon icon={Radio} size={14} />

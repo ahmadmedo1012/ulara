@@ -386,7 +386,13 @@
     .has-shell > .main { grid-column: 1; }
     .content-inner {
       padding: var(--page-gutter-mobile);
-      padding-block-end: calc(var(--sp-13) + env(safe-area-inset-bottom));
+      /* r351 A2 (Q1f): the mobile pad must clear the FIXED dock so the
+         page's LAST row can scroll fully above it (the dock's own
+         height + its safe-area growth + gutter daylight). 78px is the
+         measured dock height (r350 B1) — a fixed instrument value the
+         dock family itself owns (chrome.css). */
+      padding-block-end: calc(78px + env(safe-area-inset-bottom) + var(--sp-4)); /* spacing-gate: allow — the measured fixed-dock height clearance, r350 B1 instrument value */
+
     }
     /* R325 P2.3: was a raw 60px — the phone band re-joins the token so
        the §R325 56px chrome height holds at every band (--topbar-h now

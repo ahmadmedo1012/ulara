@@ -32,21 +32,16 @@ const LEAK_RE = /\br\d{2,3}\b|قسم اختبار|كلية اختبار|undefine
 test.use({ e2eRole: 'STUDENT' });
 
 test.describe('R319 — سطر التسريب في لوحة الطالب (leak-proof header)', () => {
-  test('the identity line leaks no codes / placeholder names / junk — and keeps the honest segments', async ({ page }) => {
-    await page.goto('/student/dashboard');
+  test('the identity surfaces leak no codes / placeholder names / junk — and keep the honest segments', async ({ page }) => {
+    /* r351 A2 (Q3): the dashboard header's identity line retired — the
+       sanitizer's live consumer is the PROFILE page's FactRows (the
+       same sanitizeInstitutionName law). */
+    await page.goto('/student/profile');
 
-    const desc = page.locator('.pf-page-desc').first();
-    // Readiness: the resolved description greets the seeded student
-    // (the pending mirror says «جارٍ تحضير لوحتك…»).
-    await expect(desc).toContainText('أحمد');
-    const text = await desc.innerText();
-    expect(text, `header must not leak — got: ${text}`).not.toMatch(LEAK_RE);
-
-    // The honest identity survives sanitization: real faculty,
-    // department and year from the standard fixture payload.
-    await expect(desc).toContainText('كلية الهندسة');
-    await expect(desc).toContainText('قسم علوم الحاسوب');
-    await expect(desc).toContainText('السنة 3');
+    const factBlock = page.locator('main');
+    await expect(factBlock).toContainText('كلية الهندسة');
+    const text = await factBlock.innerText();
+    expect(text, `profile must not leak — got: ${text}`).not.toMatch(LEAK_RE);
   });
 
   test('the meta line renders real ar-LY term dates + one numeral system', async ({ page }) => {
@@ -54,17 +49,17 @@ test.describe('R319 — سطر التسريب في لوحة الطالب (leak-p
 
     const meta = page.locator('.pf-page-meta').first();
     await expect(meta).toBeVisible();
-    // FIXED_NOW 2026-03-15T10:00Z → startsAt 2026-02-01, endsAt
-    // 2026-05-24: real Intl.DateTimeFormat('ar-LY') day + long month.
-    await expect(meta).toContainText('1 فبراير');
-    await expect(meta).toContainText('24 مايو');
+    /* r351 A2 (Q3): the meta line is the DATE alone — the term dates
+       live in the semester ruler's own meta (they were printed twice
+       on one screen). */
+    await expect(meta).toContainText('15 مارس');
     /* R319 override (c2-G1): the semester's «45% من الفصل» prose moved
      * from the masthead meta into the [01] section's RulerGauge — the
      * same datum as the instrument's quiet mono meta (§B2). The pin
      * follows the datum to its new home. */
     const rulerMeta = page.locator('.r319s-ruler-meta').first();
     await expect(rulerMeta).toContainText('45%');
-    await expect(rulerMeta).toContainText('من الفصل مضى');
+    // r351 A2 (Q3): the prose caption retired — the % carries it.
 
     const text = await meta.innerText();
     const rulerText = await rulerMeta.innerText();
@@ -97,30 +92,21 @@ test.describe('R319 — the poisoned /me/dashboard proves the sanitizer kills th
     }],
   });
 
-  test('«قسم اختبار r180» omits BOTH — no dangling separator, clean segments stay', async ({ page }) => {
+  test('the poisoned payload never leaks — the dashboard renders clean', async ({ page }) => {
+    /* r351 A2 (Q3): the identity line retired; the poisoned profile
+       datum now proves itself by NOT appearing anywhere on the page
+       (the sanitizer's FactRow consumer is pinned on /student/profile
+       by the first test; this one pins the whole dashboard DOM). */
     await page.goto('/student/dashboard');
 
-    const desc = page.locator('.pf-page-desc').first();
-    // Readiness: the clean faculty segment renders (the poisoned
-    // department drops out entirely).
-    await expect(desc).toContainText('كلية الهندسة');
-
-    const text = await desc.innerText();
-    // The sanitizer killed the placeholder name AND the code…
-    expect(text, `poisoned header must not leak — got: ${text}`).not.toMatch(LEAK_RE);
+    const main = page.locator('main');
+    await expect(page.locator('h1.pf-page-title')).toBeVisible({ timeout: 15_000 });
+    const text = await main.innerText();
+    expect(text, `poisoned page must not leak — got: ${text}`).not.toMatch(LEAK_RE);
     expect(text).not.toContain('قسم اختبار');
     expect(text).not.toContain('r180');
-    // …while the honest segments survive the poisoned payload.
-    expect(text).toContain('السنة 3');
-    // And no dangling «·» where the dropped segment used to sit
-    // (listwise join — never a doubled or edge separator).
-    expect(text).not.toMatch(/·\s*·/);
-    expect(text).not.toMatch(/·\s*$/);
-
-    // The rest of the poisoned page stays leak-free too: the meta line
-    // still renders the real ar-LY term dates.
+    // The honest surfaces keep rendering (the date meta + the KPI row).
     const meta = page.locator('.pf-page-meta').first();
-    await expect(meta).toContainText('1 فبراير');
-    await expect(meta).toContainText('24 مايو');
+    await expect(meta).toBeVisible();
   });
 });

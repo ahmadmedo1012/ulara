@@ -84,7 +84,7 @@ export default function PaymentPage() {
       {/* R319 (c3-S2): every region below the masthead opens with the
           §B2 mono-indexed title bar — the sheet's table of contents
           ([01]…[06]); the Cards keep their hairline regions. */}
-      <SectionBar index="01" title="بياناتك" />
+      <SectionBar title="بياناتك" />
       <Card>
         <div className="grid-3" style={{ gap: 'var(--sp-3)' }}>
           <FactRow label="الاسم" value={fullName} />
@@ -105,7 +105,7 @@ export default function PaymentPage() {
       {/* The page's one authored moment: the fees-status card lifts in
           once (small distance) — money-path restraint, no confetti. */}
       <Reveal distance="small">
-        <SectionBar index="02" title="حالة الرسوم" />
+        <SectionBar title="حالة الرسوم" />
         <Card>
           {/* R305 DS: the honest fees disclosure is the page's ONE
               emphasized region — the copper rail (.r305s-next) instead of
@@ -127,7 +127,7 @@ export default function PaymentPage() {
           below and your own wallet — no invented checkout, no fake
           deep links. */}
       <section aria-label="خطواتك اليوم">
-        <SectionBar index="03" title="خطواتك اليوم" />
+        <SectionBar title="خطواتك اليوم" />
         <RowList aria-label="خطوات السداد اليوم">
           <RowItem
             leading={
@@ -162,7 +162,7 @@ export default function PaymentPage() {
 
       <div className="grid-2">
         <div>
-        <SectionBar index="04" title="مكتب الشؤون الماليّة بالجامعة" />
+        <SectionBar title="مكتب الشؤون الماليّة بالجامعة" />
         <Card>
           <div className="flex-col gap-3">
             <ContactRow icon={Phone} label="الهاتف" value="+218 23 762659" mono />
@@ -173,7 +173,7 @@ export default function PaymentPage() {
         </Card>
         </div>
         <div>
-        <SectionBar index="05" title="ساعات العمل" />
+        <SectionBar title="ساعات العمل" />
         <Card>
           <div className="flex-col gap-2">
             <div className="list-row">
@@ -196,7 +196,7 @@ export default function PaymentPage() {
         </div>
       </div>
 
-      <SectionBar index="06" title="إعلانات الإدارة الماليّة" />
+      <SectionBar title="إعلانات الإدارة الماليّة" />
       <Card>
         <p className="text-sm text-muted" style={{ padding: 'var(--sp-3) 0' }}>
           الإعلانات الرسميّة الخاصّة بالرسوم والمواعيد تُنشر على لوحة المجتمع الجامعيّ.

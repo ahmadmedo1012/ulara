@@ -1,15 +1,14 @@
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { LogOut, ChevronsLeft, ChevronsRight, ChevronDown, X, Compass } from 'lucide-react';
+import { ChevronsLeft, ChevronsRight, ChevronDown, X, Compass } from 'lucide-react';
 import { Icon } from '../Icon';
 import { Logo } from '../../brand';
-import { UserAvatar } from '../primitives';
 import { Tooltip } from '../overlays';
 import { useOverlayRegistration } from '../overlays/useOverlayRegistration';
 import { FOCUSABLE_SELECTOR } from '../overlays/useFocusTrap';
 import { ThemeToggle } from './ThemeToggle';
 import { useAuthStore } from '../../stores/auth.store';
-import { useLogout, useMe } from '../../hooks/useAuth';
+import { useMe } from '../../hooks/useAuth';
 // R325 §R325.m (P2.3): the sidebar footer's role-identity seat — the
 // same accent key AppShell stamps on <body data-role> (useRoleAccent)
 // + the mono code table (STU/FAC/DPT/DEA/ADM/QUA/OWN). The PATTERN
@@ -29,8 +28,6 @@ export function Sidebar() {
   const closeSidebar = useUiStore((s) => s.closeSidebar);
   const sidebarCollapsed = useUiStore((s) => s.sidebarCollapsed);
   const toggleSidebarCollapsed = useUiStore((s) => s.toggleSidebarCollapsed);
-  const logout = useLogout();
-  const navigate = useNavigate();
   // R325 §R325.m: the identity key (pattern + mono code) for the
   // footer's role seat. Shared cache with AppShell's own useRoleAccent
   // call — no second /auth/me request (react-query dedupes).
@@ -234,7 +231,6 @@ export function Sidebar() {
 
   if (!user) return null;
   const groups = NAV_BY_ROLE[user.role];
-  const initials = user.avatarInitials ?? `${user.firstName[0] ?? ''}${user.lastName[0] ?? ''}`;
 
   // Composite role label that surfaces leadership appointments inline.
   const position = me.data?.teacherProfile?.position ?? null;
@@ -504,74 +500,7 @@ export function Sidebar() {
             <span>عرض الجولة</span>
           </button>
           )}
-          <div className="sidebar-user" title={sidebarCollapsed ? `${user.firstName} ${user.lastName}` : undefined}>
-            {/* R319 (c1-A · B1b): the shell avatar never forwards the
-                un-gated DB avatarColor — the authenticated chrome wears
-                the ONE square ink-cell grammar (mono initials on paper
-                + hairline, radius 0). The `color` prop stays on the
-                primitive for callers that still pass one. */}
-            <UserAvatar
-              initials={initials}
-              size={32}
-            />
-            <div className="sidebar-user-info">
-              <div className="sidebar-user-name" title={`${user.firstName} ${user.lastName}`}>
-                {user.firstName} {user.lastName}
-              </div>
-              {/* Grammar §4: ellipsis clamps carry `title` tooltips —
-                  the composite role line («أستاذ · عميد كلّيّة …») is the
-                  longest clamp candidate in the account cluster. */}
-              <div className="sidebar-user-role" title={roleLabel}>{roleLabel}</div>
-            </div>
-            {sidebarCollapsed && !drawerBand ? (
-              <Tooltip content="تسجيل الخروج">
-                <button
-                  type="button"
-                  className="sidebar-logout"
-                  onClick={() => {
-                    logout.mutate(undefined, {
-                      onSettled: () => navigate('/auth', { replace: true }),
-                    });
-                  }}
-                  disabled={logout.isPending}
-                  aria-busy={logout.isPending}
-                  aria-label="تسجيل الخروج"
-                >
-                  <Icon icon={LogOut} size={14} />
-                </button>
-              </Tooltip>
-            ) : (
-            <button
-              type="button"
-              className="sidebar-logout"
-              /* r157 (6A4-4): the redirect rides the mutation's
-                 onSettled, NOT the click — useLogout's hook-level
-                 onSettled clears the auth store + query cache first
-                 (react-query v5 runs hook callbacks before per-mutate
-                 ones), so the /auth frame can never render on top of
-                 a still-authed store (no dashboard flash, no
-                 auth-page-while-signed-in). The navigate() used to
-                 fire on click, racing the async POST /auth/logout —
-                 a slow network left the shell unmounted mid-flight. */
-              onClick={() => {
-                logout.mutate(undefined, {
-                  onSettled: () => navigate('/auth', { replace: true }),
-                });
-              }}
-              /* r176e (D-07): pending guard — a double-click used to
-                 fire a second POST /auth/logout (idempotent, but a
-                 flash of a still-active button and a wasted round
-                 trip). */
-              disabled={logout.isPending}
-              aria-busy={logout.isPending}
-              title="تسجيل الخروج"
-              aria-label="تسجيل الخروج"
-            >
-              <Icon icon={LogOut} size={14} />
-            </button>
-            )}
-          </div>
-        </div>
+                  </div>
       </nav>
 
       <div

@@ -206,11 +206,10 @@ export function OwnerActivityPage() {
       <PageFrame width="default">
         <PatternsPageHeader
           title="سجل النشاط والمراقبة"
-          description="جميع العمليّات المنفَّذة على المنصّة — حيّة من سجلّ التدقيق"
+          /* r351 A2 (Q3): header description retired — the timeline is self-evident. */
           breadcrumbs={[{ label: 'لوحة المالك', to: '/owner/dashboard' }, { label: 'سجلّ النشاط' }]}
           /* R341 D11: the [05] nav-order gutter numeral (OWNER_NAV
            * register — the D10 quality precedent). */
-          index="05"
           /* D11 (D8/D10 header-CTA precedent): the log's sibling
            * surfaces — the governance metrics that aggregate this feed
            * (primary) + the accounts directory the events name (ghost).
@@ -227,10 +226,12 @@ export function OwnerActivityPage() {
             same honest '…'/'—' unknowns, same real per-page counts. */}
         <StatLine
           items={[
+            /* r351 A2 (Q3): the «المسجَّلة على المنصّة» restating hint
+             * retired; the per-page scope hints stay (they qualify the
+             * numbers — honest, not decorative). */
             {
               label: 'إجمالي الأحداث',
               value: kpiValue(activity.data?.meta.total ?? kpi.total),
-              hint: 'المسجَّلة على المنصّة',
             },
             {
               label: 'تسجيلات دخول',
@@ -262,11 +263,11 @@ export function OwnerActivityPage() {
           ) : activity.isError ? (
             <ErrorState error={activity.error} onRetry={() => activity.refetch()} />
           ) : filtered.length === 0 ? (
+            /* r351 A2 (Q3): empty-state prose retired — the title (+ the
+             * all-tab refresh action) suffice. */
             <EmptyState illustration="empty-list"
               title={filter === 'all' ? 'لا توجد أحداث مسجَّلة بعد' : 'لا أحداث في هذا التبويب'}
-              description={filter === 'all'
-                ? 'تُسجَّل الأحداث تلقائياً فور أول عمليّة على المنصّة.'
-                : 'جرِّب تبويباً آخر لمتابعة أنواع مختلفة من الأحداث.'}
+              description=""
               action={filter === 'all' && (
                 <button type="button" className="btn ghost sm" onClick={() => activity.refetch()}>
                   <Icon icon={RefreshCw} size={12} />

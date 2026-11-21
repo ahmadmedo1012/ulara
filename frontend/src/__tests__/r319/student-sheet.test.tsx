@@ -3,7 +3,8 @@
  * material, one describe per component.
  *
  * The §B2 contract each block holds:
- *  · SectionBar — `[02] اليوم ─── 03`: mono gutter index (aria-hidden,
+ *  · SectionBar — `اليوم ─── 03`: h2 + hairline + mono data meta (r351: the
+ *    [0N] gutter index is retired,
  *    LTR), the section's semantic h2, the hairline rule, quiet meta.
  *  · RulerGauge — the semester ruler's WEEK MATH (W09/15 from the
  *    term's own start/end), one tick per week, the API % clamped and
@@ -26,17 +27,17 @@ import {
 
 /* ── SectionBar ─────────────────────────────────────────────────── */
 
-describe('R319 · SectionBar — the mono-indexed title bar', () => {
-  it('renders the [02] gutter index (LTR, aria-hidden) + the section h2 + rule + meta', () => {
+describe('R319 · SectionBar — the section title bar (r351: the [0N] gutter index is retired)', () => {
+  it('renders the section h2 + rule + meta, and NO [0N] gutter index', () => {
     const { container } = render(
-      <SectionBar index="02" title="اليوم" meta={<BarCount n={3} srLabel="3 التزامات اليوم" />} />,
+      <SectionBar title="اليوم" meta={<BarCount n={3} srLabel="3 التزامات اليوم" />} />,
     );
     const bar = container.querySelector('.r319s-bar');
     expect(bar).not.toBeNull();
-    const index = bar?.querySelector('.r319s-bar-index');
-    expect(index?.textContent).toBe('[02]');
-    expect(index?.getAttribute('dir')).toBe('ltr');
-    expect(index?.getAttribute('aria-hidden')).toBe('true');
+    // r351 A2 (Q2): the numerals rendered out of DOM order on several
+    // dashboards — the register is retired; the h2 + hairline + meta
+    // carry the grammar alone.
+    expect(bar?.querySelector('.r319s-bar-index')).toBeNull();
     // The section stays the semantic h2 (the PageHeader contract: one
     // h1 per route, sections answer with h2s).
     const h2 = bar?.querySelector('h2.r319s-bar-title');
@@ -78,7 +79,9 @@ describe('R319 · RulerGauge — the semester week math (W09/15)', () => {
     expect(meter?.getAttribute('aria-valuetext')).toBe('W09/15 · 60%');
     expect(meter?.getAttribute('aria-valuenow')).toBe('60');
     expect(container.querySelector('.r319s-ruler-pct')?.textContent).toBe('60%');
-    expect(container.querySelector('.r319s-ruler-meta')?.textContent).toContain('من الفصل مضى');
+    /* r351 A2 (Q3): the prose caption retired — the % + W head carry
+       the whole reading. */
+    expect(container.querySelector('.r319s-ruler-meta')?.textContent).toContain('60%');
   });
 
   it('clamps honestly: before the term → W01, past the end → the last week, degenerate → a 1-week ruler', () => {

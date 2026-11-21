@@ -296,7 +296,6 @@ export function MessagesInbox({
           rows de-box onto the page surface (the AlertsPage precedent). */}
       <section className="r319s-page" aria-label="سجل الرسائل">
         <SectionBar
-          index="01"
           title="سجلّ الرسائل"
           meta={meta && meta.total > 0 ? (
             <span className="r319s-bar-meta">

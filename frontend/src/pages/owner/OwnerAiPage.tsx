@@ -116,7 +116,6 @@ export function OwnerAiPage() {
         breadcrumbs={[{ label: 'لوحة المالك', to: '/owner/dashboard' }, { label: 'مركز الذكاء الاصطناعيّ' }]}
         /* R341 D11: the [09] nav-order gutter numeral (OWNER_NAV
          * register — the D10 quality precedent). */
-        index="09"
         /* The r160 honesty contract on the monitoring side too: the
             badge names the real model when one answers, and says
             «محليّ» — not an LLM name — when the local composer does.

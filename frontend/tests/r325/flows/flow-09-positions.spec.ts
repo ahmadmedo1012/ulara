@@ -40,9 +40,14 @@ test.describe('F9 · positions see only their scope', () => {
         await expect(page.locator('h1').first()).toContainText('لوحة الأستاذ');
 
         // 2 — the composite role label (the appointment IS the job).
-        const roleLabel = page.locator('.sidebar-user-role');
+        // r351 A2 (Q1a): the label moved from the retired sidebar
+        // identity block into the ONE identity seat — the topbar user
+        // menu's role line.
+        await page.locator('.topbar-user-trigger').click();
+        const roleLabel = page.locator('.topbar-user-role');
         await expect(roleLabel).toContainText('أستاذ');
         await expect(roleLabel).toContainText(positionWord);
+        await page.keyboard.press('Escape');
 
         // 3 — the scope: their own roster is the honest empty state —
         //     no offering of their own, and nobody else's students leak.

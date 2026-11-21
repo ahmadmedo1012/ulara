@@ -34,6 +34,8 @@ export type ThemeColor = 'green' | 'amber' | 'red' | 'purple' | 'gold' | 'brand'
 export { Button, Input, FormField } from './Form';
 export type { ButtonVariant, ButtonSize } from './Form';
 export { PageHeader } from './PageHeader';
+// r351 A2 (Q2): the one bidi-isolate helper for numbers + units/percent.
+export { Num } from './Num';
 /* R189 «سجلّ أُلارا» — the ledger product language (see Ledger.tsx). */
 export {
   StatStrip, Sparkline, ProgressRing, LedgerPanel, LedgerRow,

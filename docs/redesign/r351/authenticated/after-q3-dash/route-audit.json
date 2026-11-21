@@ -1,0 +1,143 @@
+{
+  "generatedAt": "2026-11-21T18:14:55.529Z",
+  "base": "http://localhost:5302",
+  "matrix": "dashboards",
+  "visitedCells": 5,
+  "hardFailures": 0,
+  "wordiest": [
+    {
+      "role": "STUDENT",
+      "route": "/student/dashboard",
+      "words": 239,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "TEACHER",
+      "route": "/teacher/dashboard",
+      "words": 237,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "OWNER",
+      "route": "/owner/dashboard",
+      "words": 189,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "QUALITY",
+      "route": "/quality/dashboard",
+      "words": 174,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "ADMIN",
+      "route": "/admin/dashboard",
+      "words": 165,
+      "viewport": "1440x900"
+    }
+  ],
+  "defects": {
+    "overflows": [],
+    "smallTargets": [
+      {
+        "cell": "STUDENT·/student/dashboard·light·1440",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "واجب الأسبوع الثالث (CS-201)",
+            "w": 944,
+            "h": 16
+          },
+          {
+            "tag": "a",
+            "name": "مقدمة في الخوارزميات — قاعة A2",
+            "w": 959,
+            "h": 16
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/dashboard·light·1440",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "ابدأ التصحيح",
+            "w": 113,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "الجدول الأسبوعيّ",
+            "w": 135,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "القائمة الكاملة",
+            "w": 121,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·light·1440",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "سجلّ الطلاب",
+            "w": 113,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/dashboard·light·1440",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "تقارير الجودة",
+            "w": 90,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "تنبيهات الجودة",
+            "w": 100,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/dashboard·light·1440",
+        "count": 4,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "المراقبة الحيّة",
+            "w": 116,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "التنبيهات",
+            "w": 91,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "تنبيهات تشغيليّة مفتوحة",
+            "w": 998,
+            "h": 16
+          }
+        ]
+      }
+    ],
+    "overlaps": [],
+    "runtimeErrors": [],
+    "notImplemented": []
+  }
+}

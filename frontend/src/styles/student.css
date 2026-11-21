@@ -1316,18 +1316,6 @@
      the link — the agenda-row contract). */
   /* The visual action chips riding list rows (never the only link). */
   /* The week ledger day bands inside the pattern RowList. */
-  .dash-week-group {
-    display: flex;
-    flex-direction: column;
-  }
-  .dash-week-day {
-    display: flex;
-    align-items: baseline;
-    gap: var(--sp-2);
-    padding: var(--sp-3) var(--sp-4) var(--sp-1);
-    font-size: var(--fs-sm);
-    color: var(--text-secondary);
-  }
   .dash-week-day .font-mono {
     font-size: var(--fs-xs);
     color: var(--text-muted);

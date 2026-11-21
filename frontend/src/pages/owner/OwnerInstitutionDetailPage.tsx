@@ -473,7 +473,6 @@ export function OwnerInstitutionDetailPage() {
          * register's own index — this is its detail surface) + the
          * sector eyebrow (the surface family this page belongs to).
          * D10 quality precedent. */
-        index="04"
         eyebrow="المؤسسات"
         description={
           /* r299: the Latin nameEn is bidi-isolated like the list

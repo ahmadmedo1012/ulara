@@ -298,8 +298,10 @@ describe('Sidebar — drawer focus containment (5-B5, A4 P2-5)', () => {
     await waitFor(() =>
       expect(screen.getByRole('button', { name: 'إغلاق القائمة' })).toHaveFocus(),
     );
-    const logout = screen.getByRole('button', { name: 'تسجيل الخروج' });
-    logout.focus();
+    // r351 A2 (Q1a): the identity block (avatar + logout) is retired —
+    // the drawer's LAST focusable is now the tour replay button.
+    const tour = screen.getByRole('button', { name: 'إعادة عرض الجولة' });
+    tour.focus();
     fireEvent.keyDown(document, { key: 'Tab' });
     // Wrapped to the first focusable inside the aside.
     expect(screen.getByRole('button', { name: 'طيّ القائمة' })).toHaveFocus();
@@ -316,7 +318,7 @@ describe('Sidebar — drawer focus containment (5-B5, A4 P2-5)', () => {
     );
     collapse.focus();
     fireEvent.keyDown(document, { key: 'Tab', shiftKey: true });
-    expect(screen.getByRole('button', { name: 'تسجيل الخروج' })).toHaveFocus();
+    expect(screen.getByRole('button', { name: 'إعادة عرض الجولة' })).toHaveFocus();
   });
 
   it('reclaims focus when a click parks it on <body> behind the scrim', async () => {
@@ -342,12 +344,13 @@ describe('Sidebar — drawer focus containment (5-B5, A4 P2-5)', () => {
       expect(screen.getByRole('button', { name: 'إغلاق القائمة' })).toHaveFocus(),
     );
     overlayStack.register('test-layer-above-drawer', 'dropdown');
-    const logout = screen.getByRole('button', { name: 'تسجيل الخروج' });
-    logout.focus();
+    // r351 A2 (Q1a): the tour button is the drawer's last focusable now.
+    const tour = screen.getByRole('button', { name: 'إعادة عرض الجولة' });
+    tour.focus();
     // The anchored layer above owns Tab: the drawer's cycle stays
     // silent and focus is not yanked (jsdom applies no native move).
     fireEvent.keyDown(document, { key: 'Tab' });
-    expect(logout).toHaveFocus();
+    expect(tour).toHaveFocus();
     overlayStack.unregister('test-layer-above-drawer');
   });
 });

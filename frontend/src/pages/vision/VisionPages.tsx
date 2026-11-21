@@ -94,15 +94,17 @@ export function VisionGalleryPage() {
           contract every recomposed index rides (community/competitions/
           colleges); the authored vision statement stays the h1. */}
       <PageHeader
-        title={`${formatNum(total)} ابتكاراً قادماً، نبني التعليم في يدك خطوة بخطوة.`}
-        description="هذه نظرة على المسار التقني للمنصة — من الذكاء الاصطناعي والميتافيرس إلى البلوكشين والترجمة الفورية."
+        title="الابتكارات القادمة"
+        /* r351 A2 (Q3): header description retired — the concept rows
+         * carry their own subjects. */
       />
 
       {total === 0 ? (
+        /* r351 A2 (Q3): empty-state prose retired — the title speaks. */
         <EmptyState illustration="empty-list"
           icon={Sparkles}
           title="لا توجد ابتكارات معروضة بعد"
-          description="ستظهر خارطة الطريق التقنية للمنصة هنا حين تُنشر."
+          description=""
         />
       ) : (
         <>
@@ -161,14 +163,15 @@ export function VisionGalleryPage() {
           {/* Bottom note — honest framing (A8 P2-5): the old copy
               promised «موارد مخصّصة، تواريخ إطلاق متوقّعة، ومؤشرات قياس
               واضحة» for every concept — none of which exists. The cards
-              now carry design facts and real stages only (A8 P1-1). */}
+              now carry design facts and real stages only (A8 P1-1).
+              r351 A2 (Q3): trimmed to the honest core — no measured
+              results, no launch dates. */}
           <Card>
             <div className="flex items-center gap-3">
               <Icon icon={Sparkles} size={20} className="text-accent" />
               <p className="text-sm text-muted flex-1 vision-note-copy">
-                هذه خارطة طريق لا وعود تسويقية: كل بطاقة تصف مرحلتها الفعلية من
-                التطوير، وتُحدَّث حالتها هنا فور تغيّرها. لا نتائج مقيسة ولا
-                مواعيد إطلاق متوقّعة — حقائق تصميم ومراحل عمل فقط.
+                خارطة طريق لا وعود: كل بطاقة تصف مرحلتها الفعلية — لا نتائج
+                مقيسة ولا مواعيد إطلاق.
               </p>
             </div>
           </Card>

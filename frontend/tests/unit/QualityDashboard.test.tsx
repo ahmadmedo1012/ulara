@@ -184,7 +184,9 @@ describe('QualityDashboardPage — real payload, no fabricated KPIs', () => {
 
     // The subtitle equals the resolved header's copy — nothing moves on
     // the pending → resolved handoff.
-    expect(screen.getByText(/بناء نظام تعليمي فعّال/)).toBeInTheDocument();
+    /* r351 A2 (Q3): the mission-statement description retired — the
+       h1 + date meta carry the header. */
+    expect(screen.queryByText(/بناء نظام تعليمي فعّال/)).toBeNull();
     expect(screen.queryByText(/رؤية لحظية لسير العملية التعليمية/)).toBeNull();
   });
 });

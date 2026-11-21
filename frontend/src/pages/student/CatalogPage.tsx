@@ -246,7 +246,6 @@ export default function CatalogPage() {
               mono-indexed title bar — [01] + the server's honest total
               as quiet mono meta (countAr for assistive tech). */}
           <SectionBar
-            index="01"
             title="مقرّرات المؤسسة"
             meta={
               <BarCount

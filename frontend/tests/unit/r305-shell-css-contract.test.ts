@@ -541,9 +541,12 @@ describe('r305 shell CSS contract — 2-a/2-b hook grammar', () => {
     );
   });
 
-  it('the role line clamps (2-a title hook)', () => {
+  it('the role line clamps (2-a title hook) — r351: moved to the topbar user menu', () => {
+    // r351 A2 (Q1a): the sidebar footer identity block (avatar + name +
+    // role) is RETIRED — the ONE identity seat is the topbar user menu.
+    // Its role line clamps the same way (chrome.css).
     expect(shell.stripped).toMatch(
-      /\.sidebar-user-role\s*\{[^}]*text-overflow:\s*ellipsis/,
+      /\.topbar-user-role\s*\{[^}]*text-overflow:\s*ellipsis/,
     );
   });
 

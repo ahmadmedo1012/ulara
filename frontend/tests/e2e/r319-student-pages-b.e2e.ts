@@ -75,11 +75,9 @@ test.describe('student pages B — §B2 sheet grammar (chromium · light)', () =
 
     const bars = await readBars(page);
     expect(bars.map((b) => b.title)).toEqual(['المعلومات الأكاديمية', 'تغيير كلمة المرور']);
-    expect(bars.map((b) => b.index)).toEqual(['[01]', '[04]']);
+    /* r351 A2 (Q2): the [0N] register retired. */
+    expect(bars.every((b) => b.index === '')).toBe(true);
     for (const b of bars) {
-      expect(b.indexDir).toBe('ltr');
-      expect(b.indexHidden).toBe('true');
-      expect(b.indexMono).toContain('Geist Mono');
       expect(b.hasRule).toBe(true);
     }
 
@@ -146,9 +144,8 @@ test.describe('student pages B — §B2 sheet grammar (chromium · light)', () =
 
     const bars = await readBars(page);
     expect(bars[0]!.title).toBe('سجلّ الرسائل');
-    expect(bars[0]!.index).toBe('[01]');
-    expect(bars[0]!.indexMono).toContain('Geist Mono');
-    expect(bars[0]!.indexDir).toBe('ltr');
+    /* r351 A2 (Q2): the [01] gutter index retired. */
+    expect(bars[0]!.index).toBe('');
 
     /* The bar's mono meta — the honest total (02) + the UNREAD 1
      * summary chip (the same register the rows ride). */
@@ -220,13 +217,8 @@ test.describe('student pages B — §B2 sheet grammar (chromium · light)', () =
 
     const bars = await readBars(page);
     expect(bars.map((b) => b.title)).toEqual(['بناءً على أدائك', 'محادثاتك', 'أسئلة مقترحة']);
-    expect(bars.map((b) => b.index)).toEqual(['[01]', '[02]', '[03]']);
-    for (const b of bars) {
-      expect(b.index).toMatch(/^\[\d{2}\]$/);
-      expect(b.indexMono).toContain('Geist Mono');
-      expect(b.indexDir).toBe('ltr');
-      expect(b.indexHidden).toBe('true');
-    }
+    /* r351 A2 (Q2): the [0N] register retired. */
+    expect(bars.every((b) => b.index === '')).toBe(true);
 
     /* The honest counts as the bars' mono meta — 02 measured gaps /
      * 02 stored conversations / 05 authored suggestions. R320 CI fix:
@@ -269,11 +261,8 @@ test.describe('student pages B — §B2 sheet grammar (chromium · light)', () =
     await expect(page.locator('.r319s-bar')).toHaveCount(2, { timeout: 15000 });
     const bars = await readBars(page);
     expect(bars.map((b) => b.title)).toEqual(['الأحد', 'الثلاثاء']);
-    expect(bars.map((b) => b.index)).toEqual(['[01]', '[02]']);
-    for (const b of bars) {
-      expect(b.indexMono).toContain('Geist Mono');
-      expect(b.indexDir).toBe('ltr');
-    }
+    /* r351 A2 (Q2): the [0N] index register retired. */
+    expect(bars.every((b) => b.index === '')).toBe(true);
     const counts = await page.locator('.r319s-bar .r319s-count').allTextContents();
     expect(counts).toEqual(['01', '01']);
 

@@ -301,7 +301,7 @@ describe('OwnerDashboardPage — error-as-critical strip (6A10-2)', () => {
 
     /* r253 re-pin: the urgency dot carries the tone — error severity
      * IS the critical pair (isCriticalAlert), so the dot is «now». */
-    const row = (await screen.findByText('تنبيهات تشغيليّة مفتوحة')).closest('a');
+    const row = (await screen.findByText('تنبيهات تشغيليّة')).closest('a');
     expect(row).not.toBeNull();
     expect(row).toHaveClass('pf-today-link');
     expect(row!.closest('.pf-today-item')!.querySelector('.pf-today-urgency')).toHaveClass('now');

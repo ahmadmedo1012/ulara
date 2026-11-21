@@ -261,7 +261,6 @@ export default function StudentCoursesPage() {
               assistive tech). The summary line + filter + list below
               keep their own rhythm. */}
           <SectionBar
-            index="01"
             title="مقرّراتك"
             meta={
               <BarCount
@@ -333,7 +332,6 @@ export default function StudentCoursesPage() {
             old description line survives as the quiet note under the
             bar (honest copy, unchanged). */}
         <SectionBar
-          index="02"
           title="الواجبات القادمة"
           meta={
             !dashboard.isPending && !dashboard.isError && upcoming.length > 0 ? (

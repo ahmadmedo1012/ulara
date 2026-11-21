@@ -29,10 +29,8 @@ import { cartesianOptions, chartColors, useChartThemeKey } from '../../lib/chart
 import {
   useTeacherDashboard,
   useTeacherOfferings,
-  useTeacherRisks,
   type TeacherDashboard,
   type TeacherOffering,
-  type TeacherRiskRow,
 } from '../../hooks/useResources';
 import { countAr, formatRelativeAr, WEEKDAY_NAMES_AR } from '../../lib/format';
 import { formatDate, formatNum, formatPct1 } from '../../utils/numbers';
@@ -171,30 +169,15 @@ export function slotPhase(slot: TodaySlot, now: Date = new Date()): 'done' | 'on
 /** The top at-risk students for the home shortcuts — the /teacher/risks
  * endpoint already returns worst-first (riskScore ascending: 100=OK,
  * 0=CRITICAL), so this is the honest take cap. Pure + exported for tests. */
-export const AT_RISK_SHORTCUT_TAKE = 3;
-export function topRisks(rows: ReadonlyArray<TeacherRiskRow>): TeacherRiskRow[] {
-  return rows.slice(0, AT_RISK_SHORTCUT_TAKE);
-}
+/* r351 A2 (Q3): AT_RISK_SHORTCUT_TAKE + topRisks retired with the
+   shortcuts section (the intelligence page owns the risk board). */
 
 /* Same labels as TeacherIntelligencePage's risk rows (the intelligence
  * page keeps its own edge/ink maps local — the label vocabulary is the
  * shared contract, mirrored here rather than coupled). */
-const RISK_LABEL: Record<TeacherRiskRow['riskLevel'], string> = {
-  OK: 'مستقر',
-  WATCH: 'تحت المراقبة',
-  AT_RISK: 'في خطر',
-  CRITICAL: 'حرج',
-};
-/* R305 DS: the risk chip rides the ONE status vocabulary of the
- * round (.hr-chip[data-tone]) — green→ok, gold→info, amber→warn,
- * red→danger — so a risk level reads identically here and on the
- * students roster. */
-const RISK_TONE: Record<TeacherRiskRow['riskLevel'], 'ok' | 'info' | 'warn' | 'danger'> = {
-  OK: 'ok',
-  WATCH: 'info',
-  AT_RISK: 'warn',
-  CRITICAL: 'danger',
-};
+/* r351 A2 (Q3): RISK_LABEL/RISK_TONE retired with the at-risk
+   shortcuts section (the feed + the intelligence page own the signals;
+   the roster keeps its own risk chips). */
 
 export function TeacherDashboardPage() {
   const [filter, setFilter] = useState<FeedFilter>('all');
@@ -241,7 +224,6 @@ export function TeacherDashboardPage() {
           <PageHeader title="لوحة الأستاذ" description="جارٍ تحضير لوحتك…" />
           <RowList loading aria-label="ملخص نشاط التدريس" />
           <RowList loading aria-label="طابور التصحيح" />
-          <RowList loading aria-label="طلاب يحتاجون متابعة" />
           <Card title="اتجاه الأداء والحضور">
             <ChartSkeleton height={240} />
           </Card>
@@ -274,15 +256,6 @@ export function TeacherDashboardPage() {
   // grammar — a lone dot on an empty grid read as a rendering bug, not
   // as "not enough data yet". The sr-only data table feeds both branches.
   const coverage = trendCoverage(d.trend);
-  const trendTable = {
-    caption: 'اتجاه الأداء والحضور — آخر ستة أسابيع',
-    columns: ['الأسبوع', 'متوسط الأداء', 'الحضور'],
-    rows: d.trend.map((t) => [
-      t.week,
-      t.avgGradePct === null ? '—' : `${formatPct1(t.avgGradePct)}%`,
-      t.attendancePct === null ? '—' : `${formatPct1(t.attendancePct)}%`,
-    ]),
-  } as const;
 
   return (
     /* r242 — the Superlist composition (patterns contract, r210):
@@ -296,8 +269,7 @@ export function TeacherDashboardPage() {
     <PageFrame>
       <PageHeader
         title="لوحة الأستاذ"
-        eyebrow="التدريس · متابعات اليوم"
-        description="كل ما يحتاج تدخّلك اليوم — في تيار واحد، مرتّب حسب الأولوية."
+        eyebrow="متابعات"
         meta={
           <>
             {WEEKDAY_NAMES_AR[new Date().getDay()]} · {formatDate(new Date(), { day: 'numeric', month: 'long' })}
@@ -322,9 +294,8 @@ export function TeacherDashboardPage() {
               </span>
             )}
             <span className="hr-chip" data-tone={visible.length === 0 ? 'ok' : 'ember'}>
-              {visible.length === 0
-                ? 'لا عناصر تحتاج متابعة'
-                : countAr(visible.length, ['عنصر يحتاج متابعة', 'عنصران يحتاجان متابعة', 'عناصر تحتاج متابعة', 'عنصراً يحتاج متابعة'])}
+              <bdi className="font-mono" dir="ltr">{visible.length}</bdi>
+              <span className="sr-only">{countAr(visible.length, ['عنصر يحتاج متابعة', 'عنصران يحتاجان متابعة', 'عناصر تحتاج متابعة', 'عنصراً يحتاج متابعة'])}</span>
             </span>
           </>
         }
@@ -342,26 +313,26 @@ export function TeacherDashboardPage() {
           {
             label: 'طلابك',
             value: formatNum(d.kpi.studentCount),
-            hint: 'عبر مقرّراتك',
+            hint: 'مقرّراتك',
           },
           {
             label: 'متوسط الأداء',
             value: d.kpi.avgGradePct !== null ? `${formatPct1(d.kpi.avgGradePct)}%` : '—',
-            hint: d.kpi.avgGradePct === null ? 'لا تقييمات بعد' : 'كل التقييمات المعتمدة',
+            hint: d.kpi.avgGradePct === null ? 'لا تقييمات' : 'تقييمات معتمدة',
             tone: d.kpi.avgGradePct === null || d.kpi.avgGradePct >= 70 ? 'neutral' : 'warning',
             empty: d.kpi.avgGradePct === null,
           },
           {
             label: 'الحضور',
             value: d.kpi.attendancePct !== null ? `${formatPct1(d.kpi.attendancePct)}%` : '—',
-            hint: d.kpi.attendancePct === null ? 'لا جلسات حضور بعد' : 'كل الجلسات المسجّلة',
+            hint: d.kpi.attendancePct === null ? 'لا سجلات' : 'الجلسات المسجّلة',
             tone: d.kpi.attendancePct === null || d.kpi.attendancePct >= 75 ? 'neutral' : 'warning',
             empty: d.kpi.attendancePct === null,
           },
           {
             label: 'بحاجة تقييم',
             value: formatNum(d.kpi.needsReview),
-            hint: 'واجبات + بحوث',
+            hint: 'واجبات وبحوث',
             tone: d.kpi.needsReview === 0 ? 'positive' : 'warning',
             to: '/teacher/assignments',
           },
@@ -378,18 +349,21 @@ export function TeacherDashboardPage() {
         <section aria-label="طابور التصحيح">
           {/* W11: the [nn] index chips ride the section titles — the same
               gutter grammar the student dashboard's SectionBar speaks. */}
-          <PendingGradingQueue index="01" entries={d.pendingGrading} />
+          <PendingGradingQueue entries={d.pendingGrading} />
         </section>
-        <TodayLectures index="02" />
+        <TodayLectures />
       </div>
 
-      <AtRiskShortcuts index="03" />
+      {/* r351 A2 (Q3): the at-risk shortcuts section is RETIRED — its
+          signals ride the follow-ups feed above (absence rows) and the
+          intelligence page owns the full board. One actionable surface
+          per signal. */}
 
       {/* Performance + attendance trend — real 6-week data, wrapped for
           screen readers (aria-label + sr-only data table, audit 0-f). */}
       <Card
-        title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[04]</span>اتجاه الأداء والحضور</>}
-        icon={Activity} subtitle="متوسط أداء وحضور طلابك خلال الأسابيع الستة الماضية">
+        title={<>الأداء والحضور</>}
+        icon={Activity} subtitle="آخر ستة أسابيع">
         {!coverage.drawable ? (
           <>
             <EmptyState
@@ -401,35 +375,19 @@ export function TeacherDashboardPage() {
                   : `${countAr(coverage.weeksRecorded, ['أسبوع واحد مسجَّل', 'أسبوعان مسجَّلان', 'أسابيع مسجَّلة', 'أسبوعاً مسجَّلاً'])} حتى الآن — يُرسم المخطط تلقائياً بعد اكتمال أسبوعين على الأقل.`
               }
             />
-            {/* The real data points stay available to screen readers
-                even while the canvas is withheld. */}
+            {/* r351 A2 (Q3): the not-enough-data fallback keeps its
+                one honest line — the sr table retired with the chart's
+                own table above. */}
             <div className="visually-hidden">
               <p>لا تتوفّر بيانات كافية بعد لرسم المخطط الخطي.</p>
-              <table>
-                <caption>{trendTable.caption}</caption>
-                <thead>
-                  <tr>
-                    {trendTable.columns.map((column, i) => (
-                      <th key={`${column}-${i}`} scope="col">{column}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {trendTable.rows.map((row, i) => (
-                    <tr key={i}>
-                      {row.map((cell, j) => <td key={j}>{cell}</td>)}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
             </div>
           </>
         ) : (
           <ChartFrame
             ariaLabel="مخطط خطي لمتوسط الأداء ونسبة الحضور خلال الأسابيع الستة الماضية"
-            summary="مقارنة أسبوعية بين متوسط درجات الطلاب ونسبة الحضور."
+            summary="الأداء مقابل الحضور."
             height={240}
-            table={trendTable}
+            
           >
             <Line
               key={themeKey}
@@ -471,7 +429,7 @@ export function TeacherDashboardPage() {
         trailing={
           <Link to="/teacher/alerts" className="btn ghost sm">
             <Icon icon={Bell} size={13} />
-            الإشعارات الكاملة
+            الإشعارات
           </Link>
         }
       />
@@ -484,7 +442,6 @@ export function TeacherDashboardPage() {
           <EmptyState
             icon={CheckCircle2}
             title="لا متطلبات الآن — أحسنت!"
-            description="سيظهر هنا أي عنصر جديد فور وصوله."
             action={
               <Link to="/teacher/intelligence" className="btn outline sm">
                 <Icon icon={Users} size={13} />
@@ -581,13 +538,13 @@ function FeedRow({ item }: { item: TeacherDashboard['feed'][number] }) {
  * Empty state names the win, not the void: «لا انتظار — كل التسليمات
  * مُقيَّمة».
  */
-function PendingGradingQueue({ index, entries }: { index: string; entries: TeacherDashboard['pendingGrading'] }) {
+function PendingGradingQueue({ entries }: { entries: TeacherDashboard['pendingGrading'] }) {
   const total = entries.reduce((sum, e) => sum + e.count, 0);
   return (
     <>
       <SectionHeader
-        title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[{index}]</span>طابور التصحيح</>}
-        description={total === 0 ? undefined : countAr(total, ['تسليم بانتظار درجتك', 'تسليمان بانتظار درجتك', 'تسليمات بانتظار درجتك', 'تسليماً بانتظار درجتك'])}
+        title={<>طابور التصحيح</>}
+        description={undefined}
         actions={total > 0 ? (
           /* R305 DS: the ONE ember-flavored primary action of the
            * home — the queue is the day's first decision surface. */
@@ -627,8 +584,8 @@ function PendingGradingQueue({ index, entries }: { index: string; entries: Teach
               title={e.title}
               meta={
                 <>
-                  {e.course.name} · <bdi>{e.course.code}</bdi>
-                  {e.oldestSubmittedAt && <> · أقدم تسليم {formatRelativeAr(e.oldestSubmittedAt)}</>}
+                  <bdi>{e.course.code}</bdi>
+                  {e.oldestSubmittedAt && <> · أقدم {formatRelativeAr(e.oldestSubmittedAt)}</>}
                 </>
               }
               trailing={<span className="hr-chip" data-tone="warn">بانتظارك</span>}
@@ -647,7 +604,7 @@ function PendingGradingQueue({ index, entries }: { index: string; entries: Teach
  * marks its phase relative to now (urgency dot + sr-only label), and
  * the phase chip rides the row's trailing slot.
  */
-function TodayLectures({ index }: { index: string }) {
+function TodayLectures() {
   const offsQ = useTeacherOfferings();
   // Compose once per render — `new Date()` decides the weekday + phases.
   const now = new Date();
@@ -657,7 +614,7 @@ function TodayLectures({ index }: { index: string }) {
   return (
     <section aria-label="محاضرات اليوم">
       <SectionHeader
-        title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[{index}]</span>محاضرات اليوم</>}
+        title={<>محاضرات اليوم</>}
         description={WEEKDAY_NAMES_AR[todayDow]}
         actions={
           <Link to="/teacher/schedule" className="btn ghost sm">
@@ -673,7 +630,6 @@ function TodayLectures({ index }: { index: string }) {
         <TodayList
           items={slots.map((slot) => {
             const phase = slotPhase(slot, now);
-            const phaseLabel = phase === 'done' ? 'انتهت' : phase === 'ongoing' ? 'جارٍ الآن' : 'قادمة';
             return {
               id: slot.key,
               to: '/teacher/schedule',
@@ -682,7 +638,6 @@ function TodayLectures({ index }: { index: string }) {
                 <>
                   <bdi>{slot.startTime} — {slot.endTime}</bdi>
                   {slot.room ? <> · {slot.room}</> : null}
-                  {' · '}{phaseLabel}
                 </>
               ),
               urgency: phase === 'ongoing' ? 'now' : phase === 'upcoming' ? 'soon' : 'later',
@@ -697,8 +652,8 @@ function TodayLectures({ index }: { index: string }) {
           emptyState={
             <RowItem
               title="لا محاضرات اليوم"
-              meta="جدول اليوم فارغ — استرح أو راجع الجدول الأسبوعيّ."
-              trailing={<span className="hr-chip" data-tone="ok">يوم مفتوح</span>}
+              meta=""
+              trailing={null}
             />
           }
         />
@@ -707,56 +662,4 @@ function TodayLectures({ index }: { index: string }) {
   );
 }
 
-/**
- * The at-risk shortcuts — the top rows of /teacher/risks (worst-first,
- * green students never ride the endpoint), each row ONE tap from the
- * offering's intelligence deep dive. The full list lives on
- * /teacher/intelligence; this section is the ≤1-tap door to it.
- */
-function AtRiskShortcuts({ index }: { index: string }) {
-  const risks = useTeacherRisks();
-  const top = risks.data ? topRisks(risks.data) : [];
-
-  return (
-    <section aria-label="طلاب يحتاجون متابعة">
-      <SectionHeader
-        title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[{index}]</span>طلاب يحتاجون متابعة</>}
-        description={risks.data && risks.data.length > 0
-          ? countAr(risks.data.length, ['طالب تحت المتابعة', 'طالبان تحت المتابعة', 'طلاب تحت المتابعة', 'طالباً تحت المتابعة'])
-          : undefined}
-        actions={risks.data && risks.data.length > 0 ? (
-          <Link to="/teacher/intelligence" className="btn ghost sm">
-            <Icon icon={Users} size={13} /> القائمة الكاملة
-          </Link>
-        ) : undefined}
-      />
-      {risks.isPending ? (
-        <ListSkeleton rows={3} />
-      ) : risks.isError ? (
-        <ErrorState message="تعذَّر تحميل قائمة المتابعة" error={risks.error} onRetry={() => risks.refetch()} />
-      ) : (
-        <RowList aria-label="طلاب يحتاجون متابعة">
-          {top.length === 0 ? (
-            <RowItem
-              title="جميع طلابك في وضع جيد"
-              meta="لا مؤشّرات خطر حاليّاً — ستظهر هنا أقصر طرق المتابعة فور رصدها."
-              trailing={<span className="hr-chip" data-tone="ok">مستقر</span>}
-            />
-          ) : (
-            top.map((r) => (
-              /* r289: الصف كله الوصلة — قائمة مؤشّرات الخطر تنقّلية. */
-              <RowItem
-                key={`${r.studentId}:${r.offeringId}`}
-                to={`/teacher/intelligence/${r.offeringId}`}
-                leading={<bdi className="tq-num">{formatPct1(r.riskScore)}%</bdi>}
-                title={r.name}
-                meta={<>{r.courseIcon} {r.courseName}</>}
-                trailing={<span className="hr-chip" data-tone={RISK_TONE[r.riskLevel]}>{RISK_LABEL[r.riskLevel]}</span>}
-              />
-            ))
-          )}
-        </RowList>
-      )}
-    </section>
-  );
-}
+/* r351 A2 (Q3): AtRiskShortcuts retired with its section. */

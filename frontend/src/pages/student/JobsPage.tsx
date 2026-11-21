@@ -201,7 +201,6 @@ export default function JobsPage() {
           فرص العمل, the honest open-jobs count as mono meta (countAr for
           assistive tech). */}
       <SectionBar
-        index="01"
         title="فرص العمل"
         meta={
           !isPending && !isError && jobs.length > 0 ? (

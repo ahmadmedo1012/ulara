@@ -160,7 +160,8 @@ export function CompetitionsIndexPage() {
       <div className="inx-head">
         <PageHeader
           title="المسابقات الأكاديمية"
-          description="شارك في تحديات المعرفة والابتكار، أو نظِّم مسابقتك الخاصّة."
+          /* r351 A2 (Q3): header tagline retired — the rows + KPI strip
+             * explain the page. */
           actions={
             canRun ? (
               <button type="button" className="btn primary" onClick={() => setCreating(true)}>
@@ -169,7 +170,6 @@ export function CompetitionsIndexPage() {
               </button>
             ) : undefined
           }
-          index="01"
         />
       </div>
 
@@ -214,11 +214,12 @@ export function CompetitionsIndexPage() {
        q.isError ? <ErrorState error={q.error} onRetry={() => q.refetch()} /> :
        visible.length === 0 ? (
         filter === 'all' ? (
+          /* r351 A2 (Q3): empty-state prose retired — the create action
+             * below is the affordance (organizers) / the title speaks
+             * (everyone else). */
           <EmptyState illustration="empty-community"
             title="لا توجد مسابقات بعد"
-            description={canRun
-              ? 'ابدأ أوّل تحدٍّ للمعرفة على المنصّة وادعُ الطلاب للمشاركة.'
-              : 'ستظهر المسابقات المتاحة هنا فور إطلاقها من منظّميها.'}
+            description=""
             action={canRun ? (
               <button type="button" className="btn primary sm" onClick={() => setCreating(true)}>
                 <Icon icon={Plus} size={14} />
@@ -227,9 +228,11 @@ export function CompetitionsIndexPage() {
             ) : undefined}
           />
         ) : (
+          /* r351 A2 (Q3): empty-state prose retired — the reset action
+             * below is the affordance. */
           <EmptyState illustration="empty-community"
             title="لا توجد مسابقات في هذه الفئة"
-            description="جرّب فئة أخرى أو اعرض كل المسابقات."
+            description=""
             action={(
               <button type="button" className="btn ghost sm" onClick={() => setFilter('all')}>
                 عرض كل المسابقات
@@ -460,9 +463,12 @@ export function CompetitionDetailPage() {
           the organizer scoring affordances. */}
       <Card title="المشاركات" subtitle={`${countAr(entries.length, ['مشاركة واحدة', 'مشاركتان', 'مشاركات', 'مشاركة'])}${isOrganizer ? '' : c.status === 'JUDGED' ? ' · مرتَّبة حسب النتيجة' : ' (يظهر العنوان فقط حتى يتمّ التحكيم)'}`}>
         {entries.length === 0 ? (
+          /* r351 A2 (Q3): the invitation prose retired — the entry
+             * action below is the affordance; the deadline state
+             * trimmed to the fact. */
           <EmptyState illustration="empty-list"
             title="لم يشارك أحد بعد"
-            description={canEnter ? 'كن أوّل من يشارك!' : 'انتهت مهلة التقديم على هذه المسابقة.'}
+            description={canEnter ? '' : 'انتهت مهلة التقديم.'}
             action={canEnter ? (
               <button type="button" className="btn primary sm" onClick={() => setEntering(true)}>
                 <Icon icon={Send} size={13} />

@@ -131,9 +131,10 @@ describe('r325 shell CSS contract — §R325.m/.b/.a/.k seats', () => {
     expect(shell).toMatch(/\.topbar-notif\s*\{[^}]*min-block-size:\s*44px/);
     expect(shell).toMatch(/\.topbar-user-trigger\s*\{[^}]*min-block-size:\s*44px/);
     expect(shell).toMatch(/\.topbar-search input\s*\{[^}]*block-size:\s*44px/);
-    expect(shell).toMatch(/\.topbar-theme\s*\{[^}]*min-block-size:\s*44px/);
-    // The theme toggle is square chrome: radius 0, flat rest.
-    expect(shell).toMatch(/\.topbar-theme\s*\{[^}]*border-radius:\s*0/);
+    // r351 A2 (Q1a): the standalone .topbar-theme toggle is RETIRED —
+    // the one-tap flip lives in the user menu; the shell no longer
+    // carries its CSS seat (two toggles on one screen was the r350
+    // defect). The remaining cluster: search · bell · user.
   });
 
   it('the phone bottom nav: --app-bg ground, --app-signal marker, --app-t-page pop', () => {

@@ -6,30 +6,30 @@ import type { ReactNode } from 'react';
  * The owner's second iPhone screenshot read «لوحة التحكم / اليوم /
  * مقرّراتك» as three giant equal-weight words in one screen. R319 seats
  * the page into the reference drafting-sheet grammar: every section below
- * the masthead opens with a MONO-INDEXED TITLE BAR —
+ * the masthead opens with a section title bar —
  *
- *      [02] اليوم ───────────────────────────── 03
+ *      اليوم ───────────────────────── 03
  *
- * — the mono index in the gutter start (dir=ltr Latin, the landing's
- * `[01]`…`[05]` station indices / the drawer's `[01]` gutter grammar),
- * the Arabic title at the section register, a hairline rule filling
+ * — the Arabic title at the section register, a hairline rule filling
  * the remainder (the r305s-kicker's heading-and-divider-as-one-object
  * idea, carried forward), and quiet mono metadata at the end (counts
  * as data — the reference's `ALL [16]` register — never decoration).
  *
+ * r351 A2 (Q2): the `[0N]` gutter index is RETIRED — the numerals
+ * rendered out of DOM order on several dashboards (teacher 02→01→03,
+ * the AI pages 02, 05, 03) and sequential-in-DOM could not be kept
+ * honest across filtered states. The h2 + hairline + meta carry the
+ * grammar alone.
+ *
  * The h2 stays the section's semantic heading (the PageHeader contract:
- * one h1 per route, sections answer with h2s). Rendered by
- * DashboardPage for [01] الفصل الدراسي … [06] أسبوعك القادم.
+ * one h1 per route, sections answer with h2s).
  */
 export function SectionBar({
-  index,
   title,
   meta,
   action,
   id,
 }: {
-  /** Zero-padded Latin index — '01'…'06' (rendered as [01]). */
-  index: string;
   /** The Arabic section title (the section's h2). */
   title: string;
   /** Quiet trailing metadata — a mono count, a code. Data only. */
@@ -41,9 +41,6 @@ export function SectionBar({
 }) {
   return (
     <div className="r319s-bar">
-      <span className="r319s-bar-index" dir="ltr" aria-hidden="true">
-        [{index}]
-      </span>
       <h2 className="r319s-bar-title" id={id}>
         {title}
       </h2>
