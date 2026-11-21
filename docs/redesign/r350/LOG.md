@@ -195,3 +195,22 @@ photo-displacement filter (0.045/0.055 · octaves 4 · seed 5 · scale 100 · bl
 1.8 · slope 2.2) for the dormant `.inkm` photo reveals; the journey scrub
 deltas vs the recorded 13,255px choreography; barba-style inset-curve
 verification against the recorded 0.6s/0.7s sample.
+
+## B3 — the route audit (this session, evidence-led)
+
+- 125 `<Route>` seats · 92 ROUTES entries — **every entry resolves**: 136 symbolic
+  seats + 45 literals; the one apparent orphan (`ROUTES.document`) is the URL-builder
+  base of the registered `/document/:filename` seat (materialHref.ts builds it; never
+  navigated bare). Legacy paths all redirect: /login→/auth, /register→/auth/register,
+  /universities→/colleges, /features→/capabilities, /student/exams→/student/online-exams.
+- nav.ts `to:` fields are typed `ROUTES.*` members — TS guarantees existence.
+- Verdict: no dead routes, redirects disciplined. Near-duplicate page merge is a
+  content-level review (next session, HANDOFF).
+
+## §9 sweep — dark + reduced-motion captures (this session)
+
+The role-shots instrument grew a reduced-motion flag (R350_RM=1). Captured:
+5 roles dark @1440 (student/teacher/admin/quality/owner — all 0 runtime errs,
+0 failed reqs, word counts identical to light: the theme swaps surfaces, never
+content) + student light RM @1440/390 (the reduced-motion static sheet renders
+complete, no loader). Shots: `r350-role-*-dark-1440.png`, `r350-role-student-light-*-rm.png`.

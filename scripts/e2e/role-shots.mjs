@@ -100,14 +100,15 @@ for (const role of ROLES) {
   if (!user) { console.error(`role ${role}: no fixture user`); failed++; continue; }
   for (const theme of THEMES) {
     for (const vp of VPS) {
-      const cell = `${role}-${theme}-${vp.width}`;
-      const shotPath = resolve(OUT, `r350-role-${role.toLowerCase()}-${theme}-${vp.width}.png`);
+      const cell = `${role}-${theme}-${vp.width}${process.env.R350_RM === '1' ? '-rm' : ''}`;
+      const shotPath = resolve(OUT, `r350-role-${role.toLowerCase()}-${theme}-${vp.width}${process.env.R350_RM === '1' ? '-rm' : ''}.png`);
       const context = await browser.newContext({
         locale: 'ar-LY',
         timezoneId: 'UTC',
         viewport: vp,
         deviceScaleFactor: 2,
         colorScheme: theme === 'dark' ? 'dark' : 'light',
+        reducedMotion: process.env.R350_RM === '1' ? 'reduce' : 'no-preference',
       });
       const page = await context.newPage();
       const consoleErrors = [];
