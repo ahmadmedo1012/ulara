@@ -11,3 +11,4 @@
 edits; r350 docs — not mine). A1 adds zero new traces; every A1 push re-runs the gate and
 compares against the base state.
 | 2 | P1 hero rebuild | `vite build` + Playwright 1440/390/dark/RM shots | H1 **95px @1440** (was 46.7) leading the fold · lead 1 sentence (was 2) · ONE CTA (roll+fill wipe; login secondary retired to masthead) · stage decluttered (labels/coords/scalebar hidden, deco cards removed) · hero 915px · 390 overflow 0 | pending |
+| 3 | P2 preloader | `node pl-probe.mjs` (in-page sampler) + shots/p2/ | counter curve fast→45 @~1.0s · slow→60 @~1.5s · fast→92 → 100 @~2.4s · exit ~3.75s (honest window intact — r309 belt 27✓ + r323 27✓) · X:/Y: readout live · ruler+4 plus marks · boot ledger 10 rows progress-locked | pending |

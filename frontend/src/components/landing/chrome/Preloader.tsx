@@ -75,16 +75,21 @@ const MAX_RUN_MS = 2600;
 const EXIT_HOLD_MS = 500;
 const ENTRY_DONE_EVENT = 'ula:entry-done';
 
-/* the boot ledger — the sheet's own steps, in tracing order. Decorative
- * (aria-hidden): the real progress lives on the root progressbar. */
+/* the boot ledger — the sheet's own steps, in tracing order (r351 P2:
+ * TEN lines — the measured reference ledger carries ≥10 typed rows).
+ * Decorative (aria-hidden): the real progress lives on the root
+ * progressbar. Each row is PROGRESS-LOCKED (lights when the counter
+ * crosses its threshold — the measured TextPlugin behavior). */
 const BOOT_LINES = [
   'تهيئة لوحة الرسم',
   'تحميل الخطوط العربية',
   'تتبّع مسارات الواجهة',
   'معايرة المساطر والمحاور',
+  'تركيب علامات التسجيل',
   'تجهيز محطات الفحص',
   'تركيب بطاقات التشخيص',
   'تسوية خط الأرض',
+  'فتح مساحة العمل',
   'بدء التنفيذ',
 ] as const;
 
@@ -109,6 +114,16 @@ type PreloaderProps = {
 export function Preloader({ onExitStart, onDone }: PreloaderProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const [pct, setPct] = useState(0);
+  /* r351 P2 — the sheet's own px space (the X:/Y: readout sweeps the
+   * live viewport once, at mount — the readout is decorative). */
+  const [sheet, setSheet] = useState({ w: 0, h: 0 });
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    const read = () => setSheet({ w: window.innerWidth, h: window.innerHeight });
+    read();
+    window.addEventListener('resize', read);
+    return () => window.removeEventListener('resize', read);
+  }, []);
 
   /* the skip contract: the skip control ends the entrance
    * immediately — but the EXIT must PLAY (the hold + slit), not cut.
@@ -224,16 +239,25 @@ export function Preloader({ onExitStart, onDone }: PreloaderProps) {
     const frame = (now: number) => {
       if (exited) return;
       const t = now - start;
-      /* the crawl: a calm synthetic ramp toward 92% while the real
-       * gate is pending; the tail 92→100 belongs to the real release.
+      /* r351 P2 — the crawl rides the MEASURED counter curve (the B0
+       * preloader timeline: fast to 45% by 0.9s, slow 45→60% to ~2.4s,
+       * fast to the tail), compressed into the honest window (the
+       * ≥2000ms floor law and the 2.6s cap stay untouched — the r309
+       * belt pins them). The tail 92→100 belongs to the real release.
        * The counter tail is TRACE-AWARE: the 92→100 rung may only open
-       * once the drawing sequence has had its spread (the reference's
-       * own beat — 100% lands WITH the completed trace, never before
-       * the plate finished tracing). */
-      const tailOpen = MAX_RUN_MS * 0.55;
-      const target = solved && t >= tailOpen
-        ? 100
-        : Math.min(92, (t / (MAX_RUN_MS * 0.75)) * 92);
+       * once the drawing sequence has had its spread. */
+      const w = MAX_RUN_MS; /* the honest window the curve maps onto */
+      const c1 = w * 0.207; /* 0.9/4.35 — the fast leg's measured seat */
+      const c2 = w * 0.552; /* 2.4/4.35 — the slow leg's measured seat */
+      const tailOpen = c2; /* the 92→100 rung opens at the slow leg's end */
+      const target =
+        solved && t >= tailOpen
+          ? 100
+          : t < c1
+            ? (t / c1) * 45
+            : t < c2
+              ? 45 + ((t - c1) / (c2 - c1)) * 15
+              : Math.min(92, 60 + ((t - c2) / (w - c2)) * 32);
       shown += (target - shown) * 0.14;
       if (Math.abs(target - shown) < 0.4) shown = target;
       /* the DISPLAY never rounds to 100 before the release floor —
@@ -317,9 +341,28 @@ export function Preloader({ onExitStart, onDone }: PreloaderProps) {
 
         {/* the reading — the percentage at the rule's origin edge (the
             container positions in the sheet's own RTL logic; the numerals
-            stay Latin-mono via the inner span's dir) */}
+            stay Latin-mono via the inner span's dir) + the X:/Y: px
+            readout sweeping the sheet (r351 P2 — the measured
+            coordinate-readout grammar, our own sweep). */}
         <div className="pl-read" aria-hidden="true">
           <span className="pl-counter" dir="ltr">{pct}%</span>
+          <span className="pl-coords" dir="ltr">
+            {'X:'}
+            {Math.round((sheet.w * pct) / 100)}PX {'Y:'}
+            {Math.round((sheet.h * pct) / 100)}PX
+          </span>
+        </div>
+
+        {/* the survey ruler — the drafting sheet's own tick grid (r351
+            P2): two dashed tick rules + plus marks at the crossings,
+            static chrome (aria-hidden), retired on the phone sheet. */}
+        <div className="pl-rulers" aria-hidden="true">
+          <span className="pl-ruler pl-ruler-h" />
+          <span className="pl-ruler pl-ruler-v" />
+          <span className="pl-rplus pl-rplus-1" />
+          <span className="pl-rplus pl-rplus-2" />
+          <span className="pl-rplus pl-rplus-3" />
+          <span className="pl-rplus pl-rplus-4" />
         </div>
 
         {/* the headline — the display promise, reading-start corner */}
@@ -343,12 +386,20 @@ export function Preloader({ onExitStart, onDone }: PreloaderProps) {
             ))}
           </div>
           <ol className="pl-boot">
-            {BOOT_LINES.map((line, i) => (
-              <li key={line} className="pl-boot-item" style={{ animationDelay: `${520 + i * 260}ms` }}>
-                <span className="pl-boot-num" dir="ltr">{String(i + 1).padStart(3, '0')}</span>
-                <span className="pl-boot-txt">{line}</span>
-              </li>
-            ))}
+            {BOOT_LINES.map((line, i) => {
+              /* progress-locked (r351 P2 — the measured behavior: a row
+               * lights only when the counter crosses its threshold) */
+              const lit = pct >= ((i + 1) / BOOT_LINES.length) * 100 - 0.4;
+              return (
+                <li
+                  key={line}
+                  className={lit ? 'pl-boot-item pl-boot-item--lit' : 'pl-boot-item'}
+                >
+                  <span className="pl-boot-num" dir="ltr">{String(i + 1).padStart(3, '0')}</span>
+                  <span className="pl-boot-txt">{line}</span>
+                </li>
+              );
+            })}
           </ol>
         </div>
 
