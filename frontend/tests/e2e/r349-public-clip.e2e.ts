@@ -420,3 +420,150 @@ test.describe('R349 — the resolve sheet retires the parked phone band + the ch
     expect(await page.locator('.fo-legal-row .fo-legal-link').count()).toBeGreaterThanOrEqual(9);
   });
 });
+
+/* ═══════════════════════════════════════════════════════════════════
+   R349 (wave 3) — the re-verification sweep's two confirmed defects:
+     · THE LABEL'S INK-ON-INK SEATS — the wave-1 end-anchor closed the
+       frame clip but landed «ساحة المجتمع» on the scale bar's solid
+       segment (the alif of «ساحة» merged with the bar's left end at
+       every width) while the leader's vertical drop at x=−56 crossed
+       «ميدان التدريب»'s letterforms. The re-seat drops the phrase
+       into the clear band (baseline 80, reading rightward from
+       x=−12); this belt proves the label's ink clears BOTH the bar
+       and its neighbour's text by ≥2 sheet units, and the leader's
+       path clears «ميدان التدريب» — measured in SVG user units
+       (getBBox), so the pin holds at EVERY viewport scale.
+     · THE QR'S HONEST EXTENSION — the app sheet's QR asset shipped
+       since ULARA 1.0 as .svg while carrying PNG bytes: servers
+       answer image/svg+xml, the SVG parser refuses the binary magic,
+       and the code rendered as a broken image on every environment.
+       The file keeps its PNG identity; this belt proves the image
+       actually decodes on the /app sheet.
+   ═══════════════════════════════════════════════════════════════════ */
+
+test.describe('R349 — the hero label ink clears the sheet furniture (the ink-on-ink belt)', () => {
+  test('«ساحة المجتمع» clears the scale bar, «ميدان التدريب» and the leader path', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.goto('/');
+    await page.locator('.fo-hero').scrollIntoViewIfNeeded();
+    await settleReveals(page, 1800); /* the staged ink-in belt */
+
+    /* every seat is measured through getScreenCTM — the label texts
+     * live in the svg's root user space while the scale bar rides a
+     * translate(40,104) group, so raw getBBox would compare DIFFERENT
+     * coordinate spaces (a local-space bar box can pass while the
+     * transformed box collides). Mapping every box to screen space and
+     * normalising by the CTM scale yields true SHEET-UNIT boxes that
+     * hold at every viewport. */
+    const seats = await page.evaluate(() => {
+      const svg = document.querySelector('.fo-hero .bp-svg') as SVGSVGElement | null;
+      if (!svg) return { missing: true } as const;
+      const labels = Array.from(svg.querySelectorAll('.iso-leader text')) as SVGTextElement[];
+      const find = (needle: string) => labels.find((t) => (t.textContent ?? '').includes(needle));
+      const plaza = find('ساحة المجتمع');
+      const field = find('ميدان التدريب');
+      /* the scale bar: the furniture group's solid rect */
+      const barRects = Array.from(svg.querySelectorAll('.iso-furn rect')) as SVGRectElement[];
+      const bar = barRects.find((r) => r.getAttribute('fill') !== 'none');
+      /* the plaza label's own leader path (the g wraps path + dot + text) */
+      const plazaLeader = plaza?.closest('g')?.querySelector('path');
+      const sheet = (el: SVGGraphicsElement | null | undefined) => {
+        if (!el) return null;
+        const b = el.getBBox();
+        /* getCTM maps the element's LOCAL space to the svg's user
+         * space (the viewBox units every seat shares) — the bar's
+         * translate(40,104) is folded in, the label texts' identity
+         * passes through: one shared coordinate space, no screen
+         * dependence. */
+        const m = el.getCTM();
+        if (!m) return null;
+        const pts: ReadonlyArray<readonly [number, number]> = [
+          [b.x, b.y],
+          [b.x + b.width, b.y],
+          [b.x, b.y + b.height],
+          [b.x + b.width, b.y + b.height],
+        ];
+        const corners = pts.map(
+          ([x, y]) => ({ x: m.a * x + m.c * y + m.e, y: m.b * x + m.d * y + m.f }),
+        );
+        const xs = corners.map((c) => c.x);
+        const ys = corners.map((c) => c.y);
+        /* divide by the CTM's uniform scale (px per sheet unit) — the
+         * shared screen offset cancels in every edge-to-edge
+         * comparison, so the boxes compare in TRUE sheet units at
+         * any viewport the belt runs at. */
+        const a = Math.abs(m.a) || 1;
+        return {
+          l: Math.min(...xs) / a,
+          r: Math.max(...xs) / a,
+          t: Math.min(...ys) / a,
+          b: Math.max(...ys) / a,
+        };
+      };
+      return {
+        missing: false,
+        plaza: sheet(plaza),
+        field: sheet(field),
+        bar: sheet(bar ?? null),
+        leader: sheet(plazaLeader ?? null),
+      } as const;
+    });
+
+    expect(seats.missing, 'the hero plate must mount').toBe(false);
+    if (seats.missing) return;
+    expect(seats.plaza, '«ساحة المجتمع» must exist').not.toBeNull();
+    expect(seats.field, '«ميدان التدريب» must exist').not.toBeNull();
+    expect(seats.bar, 'the scale bar must exist').not.toBeNull();
+    expect(seats.leader, 'the plaza leader path must exist').not.toBeNull();
+    if (!seats.plaza || !seats.field || !seats.bar || !seats.leader) return;
+
+    /* the clearance floor: 2 sheet units (≈8px at the 1440 hero seat,
+     * proportionally identical at every scale) — ink-on-ink can never
+     * recur while the phrase keeps its authored grammar. */
+    const GAP = 2;
+    const separated = (a: { l: number; r: number; t: number; b: number }, b: typeof a) =>
+      a.r + GAP <= b.l || b.r + GAP <= a.l || a.b + GAP <= b.t || b.b + GAP <= a.t;
+
+    expect(
+      separated(seats.plaza, seats.bar),
+      `«ساحة المجتمع» (${JSON.stringify(seats.plaza)}) must clear the scale bar (${JSON.stringify(seats.bar)}) by ≥${GAP} sheet units`,
+    ).toBe(true);
+    expect(
+      separated(seats.plaza, seats.field),
+      `«ساحة المجتمع» (${JSON.stringify(seats.plaza)}) must clear «ميدان التدريب» (${JSON.stringify(seats.field)}) by ≥${GAP} sheet units`,
+    ).toBe(true);
+    expect(
+      separated(seats.leader, seats.field),
+      `the plaza leader (${JSON.stringify(seats.leader)}) must clear the «ميدان التدريب» letterforms (${JSON.stringify(seats.field)}) by ≥${GAP} sheet units`,
+    ).toBe(true);
+  });
+});
+
+test.describe('R349 — the app sheet QR decodes (the honest-extension belt)', () => {
+  test('the QR image loads with real pixels on /app', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.goto('/app');
+    await settleReveals(page);
+
+    const qr = await page.evaluate(() => {
+      const img = document.querySelector<HTMLImageElement>('.ap-qr img');
+      if (!img) return { missing: true } as const;
+      return {
+        missing: false,
+        src: img.getAttribute('src'),
+        complete: img.complete,
+        naturalWidth: img.naturalWidth,
+        naturalHeight: img.naturalHeight,
+      } as const;
+    });
+
+    expect(qr.missing, 'the QR seat must exist on the app sheet').toBe(false);
+    if (qr.missing) return;
+    /* the extension is honest: a PNG asset under a PNG URL decodes —
+     * the retired .svg-with-PNG-bytes always broke (naturalWidth 0) */
+    expect(qr.src?.endsWith('.png'), `the QR must load its true PNG identity (got ${qr.src})`).toBe(true);
+    expect(qr.complete, 'the QR image must finish loading').toBe(true);
+    expect(qr.naturalWidth, 'the QR must decode to real pixels (not a broken icon)').toBeGreaterThanOrEqual(300);
+    expect(qr.naturalHeight).toBeGreaterThanOrEqual(300);
+  });
+});
