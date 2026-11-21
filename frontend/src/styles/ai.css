@@ -335,3 +335,37 @@
 @media (pointer: coarse) {
   .ai-surface .ai-conv-open { min-block-size: 44px; }
 }
+
+/* ── r351 AI-4 — the owner provider card ────────────────────────── */
+.owner-ai-provider-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--sp-4);
+  align-items: start;
+}
+.owner-ai-provider-grid > div > span {
+  display: block;
+  margin-block-end: var(--sp-1);
+}
+.owner-ai-provider-grid p {
+  margin: 0;
+  font-weight: var(--fw-semibold);
+}
+.owner-ai-provider-check {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+}
+.owner-ai-provider-local {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.owner-ai-provider-local code {
+  font-family: var(--font-mono, monospace);
+  font-size: var(--fs-xs);
+  direction: ltr;
+  unicode-bidi: embed;
+}

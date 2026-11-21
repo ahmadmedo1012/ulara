@@ -116,3 +116,42 @@ export function useDeleteAiConversation() {
     },
   });
 }
+
+/* ── r351 AI-4 — the OWNER provider console ───────────────────── */
+
+/** GET /ai/status — the honest service card (OWNER only). */
+export interface AiServiceStatus {
+  provider: string;
+  model: string | null;
+  /** Key presence as a BOOLEAN — the console never sees the key. */
+  keyPresent: boolean;
+  lastError: { kind: string | null; at: string } | null;
+  todayTokens: number;
+  local: boolean;
+}
+
+export function useAiServiceStatus() {
+  return useQuery({
+    queryKey: ['ai', 'status'],
+    queryFn: () => unwrap<AiServiceStatus>(api.get('/ai/status')),
+    staleTime: 30_000,
+    retry: 1,
+  });
+}
+
+/** POST /ai/status/check — ONE minimal live round trip (OWNER only). */
+export interface AiConnectionCheck {
+  ok: boolean;
+  latencyMs?: number;
+  model?: string | null;
+  kind?: string;
+  status?: number;
+  local: boolean;
+  message: string;
+}
+
+export function useAiConnectionCheck() {
+  return useMutation({
+    mutationFn: () => unwrap<AiConnectionCheck>(api.post('/ai/status/check', {})),
+  });
+}

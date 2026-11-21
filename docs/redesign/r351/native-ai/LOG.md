@@ -67,3 +67,14 @@
 - `npx tsc --noEmit -p tsconfig.json` clean · `typecheck:tests` clean.
 - e2e ai-assistant journey → passed (hermetic, dev 5303).
 - `bash scripts/verify.sh --fast` → **FAST PASS** (tsc/vitest/bundle/css-ratchet/logo/a11y floor S25/C0 unchanged).
+
+## Session 1 — AI-4 owner console
+
+**Backend** (`lib/ai.ts` + `ai.routes.ts`):
+- `providerHealthCheck(cfg)`: ONE minimal round trip (one-word ask, max_tokens 16, 15s ceiling, NO retry chain — a probe is a measurement). Returns ok/latencyMs/model or kind+status. Key never in body/result.
+- `GET /ai/status` (OWNER): provider label, route, **keyPresent boolean** (never the key/prefix/length), last failure class from telemetry (kind only), today's tokens (UTC-day aggregate).
+- `POST /ai/status/check` (OWNER): the live probe + the client-safe Arabic line (AI-1's status-aware messages). Local mode answers honestly with the setup-recipe pointer.
+**Frontend**: `useAiServiceStatus`/`useAiConnectionCheck` (hooks/resources/ai.ts — my file), the «حالة المزوّد» card on OwnerAiPage (provider/route/key/today-tokens/last-error + فحص الاتصال button with live result; local mode shows the env recipe), provider-card CSS in ai.css.
+
+**Gates:** backend `Tests 1990 passed (19 skipped)` incl. 4 new health-check pins (31/31 in ai-gemini) · typecheck + typecheck:tests clean both sides · frontend unit `3015/3015` (after fixing a tests-tree TS6133 my earlier edit introduced) · zero-trace: only the 5 pre-existing main-inherited hits.
+**Env note (sandbox):** a workspace-scoped `npm ci` wipes siblings — the correct install is the ROOT `npm ci` (all workspaces; documented here for resume).

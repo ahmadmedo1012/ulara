@@ -327,7 +327,7 @@ describe('AiAssistantPage — conversation management (r164g)', () => {
     mocks.conversations = { data: [CONV1], isPending: false, isError: false, refetch: () => undefined };
     const rejection = { response: { data: { error: { message: 'لا يمكن إتمام الحذف الآن' } } } };
     mocks.delConversation.mutateAsync.mockRejectedValueOnce(rejection);
-    const { rerender, container } = renderPage();
+    const { rerender } = renderPage();
     fireEvent.click(screen.getByRole('button', { name: 'حذف محادثة: عنوان أول محادثة' }));
     fireEvent.click(screen.getByRole('button', { name: 'تأكيد' }));
     await waitFor(() => expect(mocks.delConversation.mutateAsync).toHaveBeenCalledWith('c1'));

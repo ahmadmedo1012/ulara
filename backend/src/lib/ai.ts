@@ -800,6 +800,65 @@ export async function callOpenAiCompatible(
 }
 
 /**
+ * r351 AI-4 — the OWNER connection check: ONE minimal provider round
+ * trip (a one-word ask, a tiny output ceiling, no retry chain — a
+ * probe is a measurement, not a recovery). Reuses the shared URL join
+ * + headers so what it measures is exactly what the chat path sends.
+ * Never retries (the point is the CURRENT state), never estimates —
+ * latency is wall-clock around the single call, model is the
+ * provider-reported id, and a failure carries the classified kind +
+ * HTTP status. The API key NEVER appears in the result (or anywhere).
+ */
+export interface AiHealthCheckResult {
+  ok: boolean;
+  latencyMs: number;
+  model: string | null;
+  kind?: AiFailureKind;
+  status?: number;
+}
+
+export async function providerHealthCheck(
+  cfg: AiProviderConfig,
+): Promise<AiHealthCheckResult> {
+  const headers = buildProviderHeaders(cfg);
+  const startedAt = Date.now();
+  try {
+    const res = await fetch(`${cfg.baseUrl.replace(/\/+$/, '')}/chat/completions`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        model: cfg.models[0] ?? cfg.model,
+        messages: [{ role: 'user', content: 'أجب بكلمة واحدة: جاهز' }],
+        temperature: 0,
+        max_tokens: 16,
+      }),
+      signal: AbortSignal.timeout(Math.min(cfg.timeoutMs, 15_000)),
+    });
+    const latencyMs = Date.now() - startedAt;
+    if (!res.ok) {
+      const kind: AiFailureKind =
+        res.status === 429 ? 'rate_limited' : res.status >= 500 ? 'provider_error' : 'provider_rejected';
+      return { ok: false, latencyMs, model: null, kind, status: res.status };
+    }
+    const payload = (await res.json().catch(() => null)) as
+      | { choices?: Array<{ message?: { content?: unknown } }>; model?: unknown }
+      | null;
+    if (!payload || typeof payload.choices?.[0]?.message?.content !== 'string') {
+      return { ok: false, latencyMs, model: null, kind: 'invalid_response' };
+    }
+    return { ok: true, latencyMs, model: parseModelId(payload.model) };
+  } catch (err) {
+    const name = (err as { name?: string })?.name;
+    return {
+      ok: false,
+      latencyMs: Date.now() - startedAt,
+      model: null,
+      kind: name === 'TimeoutError' ? 'timeout' : 'transport',
+    };
+  }
+}
+
+/**
  * Boot-time provider resolution (memoized — env is frozen at boot).
  * Returns null when AI_PROVIDER !== 'openai' (the local composer mode),
  * so the route's `if (provider)` reads as the mode switch. The env

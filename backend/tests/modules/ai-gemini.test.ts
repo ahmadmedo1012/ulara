@@ -37,6 +37,7 @@ import {
   providerFailureMessage,
   streamOpenAiCompatible,
   streamProviderWithChain,
+  providerHealthCheck,
   type AiProviderConfig,
 } from '../../src/lib/ai.js';
 
@@ -447,5 +448,60 @@ describe('non-Gemini chains keep the r323 behavior (zero drift)', () => {
     const out = await callProviderWithRetry(cfg, buildChatMessages('s', [], 'q'), () => undefined, () => Promise.resolve());
     expect(calls).toEqual(['first-model', 'second-model']);
     expect(out.model).toBe('second-model');
+  });
+});
+
+describe('providerHealthCheck (r351 AI-4 — the owner connection probe)', () => {
+  it('a healthy provider: ok + latency + the provider-reported model; the key NEVER appears', async () => {
+    const bodies: string[] = [];
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (url: string, init: RequestInit) => {
+        bodies.push(init.body as string);
+        expect(url).toBe(GEMINI_URL);
+        return jsonRes({
+          model: 'gemini-3.1-flash-lite',
+          choices: [{ message: { content: 'جاهز' } }],
+        });
+      }),
+    );
+    const out = await providerHealthCheck(CFG);
+    expect(out.ok).toBe(true);
+    expect(out.model).toBe('gemini-3.1-flash-lite');
+    expect(out.latencyMs).toBeGreaterThanOrEqual(0);
+    // The probe is a measurement, not a chat: tiny ceiling, no stream,
+    // no retry chain — and the key rides only the header, never a body.
+    const body = JSON.parse(bodies[0]!) as Record<string, unknown>;
+    expect(body.max_tokens).toBe(16);
+    expect(JSON.stringify(body)).not.toContain('test-key-placeholder');
+  });
+
+  it('a 401 provider failure carries kind + status (the owner sees the honest class)', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => new Response('unauthorized', { status: 401 })));
+    const out = await providerHealthCheck(CFG);
+    expect(out.ok).toBe(false);
+    expect(out.kind).toBe('provider_rejected');
+    expect(out.status).toBe(401);
+  });
+
+  it('a timeout classifies as timeout (the probe has its own 15s ceiling)', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => {
+        const e = new Error('timed out');
+        e.name = 'TimeoutError';
+        throw e;
+      }),
+    );
+    const out = await providerHealthCheck(CFG);
+    expect(out.ok).toBe(false);
+    expect(out.kind).toBe('timeout');
+  });
+
+  it('a 200 with no usable content is invalid_response (never a fake ok)', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => jsonRes({ choices: [] })));
+    const out = await providerHealthCheck(CFG);
+    expect(out.ok).toBe(false);
+    expect(out.kind).toBe('invalid_response');
   });
 });

@@ -26,6 +26,7 @@ import {
   sseFrame,
   chunkLocalReply,
   AiProviderError,
+  providerHealthCheck,
   AI_HISTORY_TURNS,
   AI_HISTORY_CHAR_CAP,
   type AiChatMessage,
@@ -1337,6 +1338,102 @@ router.get('/config', (_req, res) => {
         : null,
     },
   });
+});
+
+/* ── r351 AI-4 — the OWNER provider console ──────────────────────
+ *
+ * GET /ai/status: the honest service card — the provider label, the
+ * configured route, KEY PRESENCE as a boolean (never the key, never
+ * a prefix, never a length), the LAST failure class from telemetry
+ * (metadata only), and today's measured tokens. Local mode says so
+ * plainly with the setup recipe pointer.
+ *
+ * POST /ai/status/check: ONE minimal live round trip (lib/ai.ts
+ * providerHealthCheck — no retry chain, 15s ceiling, one-word ask).
+ * The result is the measurement: ok/latency/model, or the classified
+ * failure kind + HTTP status. The API key never appears anywhere. */
+router.get('/status', requireRole(Role.OWNER), async (_req, res, next) => {
+  try {
+    if (!aiProvider) {
+      res.json({
+        data: {
+          provider: 'local' as const,
+          model: null,
+          keyPresent: false,
+          lastError: null,
+          todayTokens: 0,
+          local: true,
+        },
+      });
+      return;
+    }
+    /* The last FAILURE row (metadata only — the classified kind, not
+     * the body excerpt): the owner's "why did it fail yesterday" in
+     * one glance. errorMessage stores `kind (HTTP nnn)` — the kind is
+     * the part before the paren. */
+    const lastFailure = await prisma.aiTelemetry.findFirst({
+      where: { success: false },
+      orderBy: { createdAt: 'desc' },
+      select: { errorMessage: true, createdAt: true },
+    });
+    const kindMatch = lastFailure?.errorMessage?.match(/^([a-z_]+)/);
+    const todayStart = new Date();
+    todayStart.setUTCHours(0, 0, 0, 0);
+    const todayAgg = await prisma.aiTelemetry.aggregate({
+      where: { createdAt: { gte: todayStart } },
+      _sum: { inputTokens: true, outputTokens: true },
+    });
+    res.json({
+      data: {
+        provider: aiProviderLabel,
+        model:
+          aiProvider.models.length > 0
+            ? `${aiProvider.models[0]}${aiProvider.models.length > 1 ? ` +${aiProvider.models.length - 1}` : ''}`
+            : aiProvider.model,
+        /* Boolean only — the console never echoes, prefixes, or
+         * measures the key (r351 AI-4 contract). */
+        keyPresent: true,
+        lastError: kindMatch
+          ? { kind: kindMatch[1] ?? null, at: lastFailure!.createdAt }
+          : null,
+        todayTokens: (todayAgg._sum.inputTokens ?? 0) + (todayAgg._sum.outputTokens ?? 0),
+        local: false,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post('/status/check', requireRole(Role.OWNER), async (_req, res, next) => {
+  try {
+    if (!aiProvider) {
+      /* Honest refusal: the local composer has no provider to probe —
+       * the recipe (docs/deployment.md §3.2) is the fix, not a retry. */
+      res.json({
+        data: {
+          ok: false as const,
+          local: true,
+          message: 'الوضع المحليّ — لا يوجد مزوّد لفحصه. راجع وصفة الإعداد في docs/deployment.md §3.2.',
+        },
+      });
+      return;
+    }
+    const result = await providerHealthCheck(aiProvider);
+    res.json({
+      data: {
+        ...result,
+        local: false,
+        /* The client-safe Arabic line per failure kind (with the HTTP
+         * status refinement from r351 AI-1). */
+        message: result.ok
+          ? `الاتصال سليم — ${result.latencyMs}ms`
+          : providerFailureMessage(result.kind ?? 'transport', result.status),
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 /* r179 (phase-5): the conversation family is institution-scoped —
