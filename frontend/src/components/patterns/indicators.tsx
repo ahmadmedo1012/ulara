@@ -215,12 +215,21 @@ export function RulerGauge({
           <bdi
             key={n}
             className="ind-mono ind-ruler-num"
-            dir="ltr"
             style={{
               insetInlineStart: `${n}%`,
-              /* RTL anchoring: the numeral's inline-start edge rides the
-                 tick — center the middle numerals on their tick and fold
-                 the two edge numerals inward so they never overflow. */
+              /* RTL anchoring (r348 fix): the numerals inherit the
+                 sheet's RTL so their logical inset maps to the SAME
+                 physical side the ticks map to — the numeral's
+                 inline-start (right) edge rides its tick, the middle
+                 numerals center on it (translateX +50%) and the two
+                 edge numerals fold inward. The old dir="ltr" flipped
+                 the ELEMENT's OWN logical-inset mapping (logical
+                 properties resolve against the element's own writing
+                 mode, not the container's): the numerals ran mirrored
+                 against the ticks and «100» overflowed its band by a
+                 full label-width (measured x=1237 vs band edge 1224,
+                 r347 audit). Latin digits are bidi-neutral — the text
+                 order never needed the isolation. */
               transform: n === 0 ? undefined : n === 100 ? 'translateX(100%)' : 'translateX(50%)',
             }}
           >

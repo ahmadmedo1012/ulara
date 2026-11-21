@@ -281,6 +281,13 @@ a.pf-row-link {
   flex-wrap: wrap;
   gap: var(--sp-2) var(--sp-6);
 }
+/* r348 (the dashboards audit): opt-in distribution — the stats ride the
+   sheet's FULL line on the desktop band instead of hugging the
+   inline-start edge (four narrow stats on a 1080px frame left ~440px of
+   dead paper at the inline-end). Mobile keeps the calm wrap flow. */
+@media (min-width: 921px) {
+  .pf-statline[data-spread='true'] { justify-content: space-between; }
+}
 .pf-stat {
   display: flex;
   flex-direction: column;
@@ -298,6 +305,15 @@ a.pf-row-link {
   line-height: var(--lh-snug);
   color: var(--text);
   font-variant-numeric: tabular-nums;
+}
+/* r348: the honest-empty register — a not-yet datum («—») must not wear
+   the bold display numeral: it drops to the hint's own body size and
+   faint ink, so the line reads «no datum yet», never a broken number.
+   The hint line carries the why («لا تقييمات بعد»). */
+.pf-stat-value--empty {
+  font-size: var(--fs-body);
+  font-weight: var(--fw-normal);
+  color: var(--text-faint);
 }
 .pf-stat-hint { font-size: var(--fs-sm); color: var(--text-faint); }
 .pf-stat.positive .pf-stat-value { color: var(--success-ink); }

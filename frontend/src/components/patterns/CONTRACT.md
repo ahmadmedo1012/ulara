@@ -44,8 +44,11 @@ SplitView { list: ReactNode; detail: ReactNode | null; detailOpen: boolean;
 
 StatLine { items: { label: string; value: ReactNode; hint?: string;
                     tone?: 'neutral'|'positive'|'warning'|'danger'|'signal';
-                    to?: string }[] }
+                    to?: string; empty?: boolean }[]; spread?: boolean }
 // بلا آبار أيقونات. tone يلوّن القيمة فقط. to تجعل الإحصاء رابطًا 44px+.
+// r348: spread يوزّع الإحصاءات على عرض السطر كاملاً (سطح المكتب) —
+// empty يجعل القيمة «—» تسجل السجل الفارغ الصادق (حجم النص الخافت)
+// بدل الرقم العريض الذي يُقرأ كرقم مكسور.
 
 FilterBar { search?: { value: string; onChange(v: string): void; placeholder?: string };
             filters?: ReactNode; sort?: ReactNode; trailing?: ReactNode;

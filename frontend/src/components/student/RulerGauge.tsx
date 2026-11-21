@@ -97,9 +97,19 @@ export function RulerGauge({
           ))}
         </div>
         <div className="r319s-ruler-fill" style={{ inlineSize: `${pct}%` }} />
+        {/* r348 fix: no dir="ltr" on the ABSOLUTE head — logical insets
+            resolve against the element's OWN writing mode, and the
+            dir="ltr" flipped this head's mapping to the physical LEFT
+            while the fill/ticks run RTL (origin at the inline-start
+            right edge): the head seated mirrored off the fill's end.
+            Inheriting the sheet's RTL seats its inline-START (right)
+            edge at pct% from the right — ON the fill end — and the
+            clamp's 52px reservation keeps the label inside at high pct
+            (it grows leftward into the filled zone). «W11/19» is
+            L-strong + neutral digits: one LTR run, bidi order intact
+            without the isolation. */}
         <span
           className="r319s-ruler-head r319s-mono"
-          dir="ltr"
           style={{ insetInlineStart: `clamp(0px, ${pct}%, calc(100% - 52px))` }}
         >
           {head}
