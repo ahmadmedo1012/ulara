@@ -40,15 +40,30 @@ bundle budget: android hbc 7.5MB (was ~7.11MB at r350 base; signal ceiling 8MB
 
 ## Deployment notes (owner)
 
-- The Gemini env contract is in `docs/deployment.md` §3.2 and `.env.example`
-  (no secret values anywhere). `AI_MODELS` = the ordered pair
-  `gemini-3.1-flash-lite` (daily driver) + `gemini-4-hydrogen` (fallback);
-  fall-through happens on 429/503 ONLY.
-- The owner's pasted chat key must never enter any file — it is the
-  deployment secret `AI_API_KEY` (and should be rotated).
-- Live Gemini smoke: `NOT MEASURED` (no `GEMINI_API_KEY` in the sandbox;
-  mocked pins cover URL join, headers, usage, every error class, fallback
-  attribution).
+- **2026-11-21: Gemini is LIVE on production** (the owner's key, set as
+  the encrypted Vercel env `AI_API_KEY`): `AI_BASE_URL` =
+  generativelanguage.googleapis.com/v1beta/openai/, `AI_MODEL` =
+  gemini-3.1-flash-lite, `AI_MODELS` = the ordered
+  flash-lite+hydrogen pair (429/503 fallback), `AI_PROVIDER` =
+  openai (the compat transport). Measured live through
+  ulara.vercel.app: **8/8 eval probes ok on gemini-3.1-flash-lite**
+  (reports in `live/`), median 6.9s vs the degraded OpenRouter-free
+  baseline's 9.7s (which had been falling back to the local composer).
+  The full recipe stays documented in `docs/deployment.md` §3.2 and
+  `.env.example` (no secret values anywhere).
+- `AI_DAILY_LIMIT_DEFAULT` = **8** on production — the owner's own
+  setting, untouched (code default 25; one word from him changes it).
+- The owner's pasted chat keys must never enter any file — the Gemini
+  one lives ONLY as the Vercel env var; the replaced OpenRouter key
+  appeared in a session readout and should be rotated (it is unused
+  by the app now).
+- After PR #32 merges: the engine label becomes the clean `gemini`,
+  the owner console gains the provider-status card + the one-click
+  connection check (AI-4) — until then `/ai/status`* does not exist
+  on production (main lacks it).
+- Sandbox note: direct Gemini calls from THIS sandbox are geo-blocked
+  (key validated, location refused) — live verification ran through
+  the production path instead (the real user journey).
 
 ## Known device-UNVERIFIED (no emulator in the sandbox)
 

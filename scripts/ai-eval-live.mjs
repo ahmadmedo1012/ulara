@@ -37,6 +37,14 @@ const SMOKE_EMAIL = process.env.SMOKE_EMAIL;
 const SMOKE_PASSWORD = process.env.SMOKE_PASSWORD;
 const OUT = process.argv[2] ?? 'ai-eval-report.json';
 const TIMEOUT_MS = 60_000;
+/* r351 A3: CASES=comma-separated-ids runs a SUBSET of the fixed set
+ * (same probes, selectable) — for bounded re-runs when a daily quota
+ * died mid-matrix. Unknown ids → hard BLOCK (a typo must never
+ * silently run nothing or the wrong thing). Computed AFTER the CASES
+ * table below (module-level order). */
+const CASES_FILTER = process.env.CASES
+  ? new Set(process.env.CASES.split(',').map((s) => s.trim()).filter(Boolean))
+  : null;
 
 if (!SMOKE_EMAIL || !SMOKE_PASSWORD) {
   console.error('BLOCKED: SMOKE_EMAIL / SMOKE_PASSWORD are required runtime inputs.');
@@ -121,6 +129,19 @@ const CASES = [
   },
 ];
 
+/* The runnable subset (see CASES_FILTER above): unknown ids BLOCK. */
+const RUN_CASES = CASES_FILTER
+  ? CASES.filter((c) => {
+      if (!CASES_FILTER.has(c.id)) return false;
+      CASES_FILTER.delete(c.id);
+      return true;
+    })
+  : CASES;
+if (CASES_FILTER && CASES_FILTER.size > 0) {
+  console.error(`BLOCKED: unknown CASES id(s): ${[...CASES_FILTER].join(', ')}`);
+  process.exit(2);
+}
+
 async function main() {
   const loginStarted = Date.now();
   const loginRes = await fetch(`${BASE_URL}/api/v1/auth/login`, {
@@ -166,7 +187,7 @@ async function main() {
   const turns = [];
   let conversationId;
   let engine = null;
-  for (const c of CASES) {
+  for (const c of RUN_CASES) {
     const started = Date.now();
     let outcome = 'ok';
     let httpStatus = 200;

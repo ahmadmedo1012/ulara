@@ -216,3 +216,72 @@ e2e `4 passed` (the /student/ai pin) · `verify.sh --fast` **FAST PASS**
 unchanged (the 5 main-inherited hits only — branch adds none).
 
 **Push:** `0362455..eab753f` on r351/native-and-ai.
+
+## Session 4 — the Gemini key deployed to production + the live measurement (commit 89f0f95)
+
+**The owner's instruction (2026-11-21):** "هاهو المفتاح قم باضافته GEMIN API …" —
+the Gemini key is now the production deployment secret. It was stored
+ONLY as the Vercel env var `AI_API_KEY` (encrypted, targets
+production+preview — the same seats the previous provider key held);
+it never entered any file, commit, log, or PR text.
+
+**What production ran BEFORE (measured, `live/ai-eval-before-openrouter-degraded.json`):**
+the OpenRouter free-model chain was effectively dead — every ok turn
+fell through to the local `gap-aware-composer` (7/12 ok, median 9701ms,
+~100-char composed replies; engine label "openrouter"), then the daily
+quota (8/day as configured) refused the last 5 turns. The product was
+being carried by the honest local fallback, not an LLM.
+
+**The switch (Vercel API, team tadmora, project ulara):**
+- `AI_API_KEY` → the owner's Gemini key (byte-verified via the API's
+  own read-back, boolean comparison only — never printed).
+- `AI_BASE_URL` → `https://generativelanguage.googleapis.com/v1beta/openai/`
+- `AI_MODEL` → `gemini-3.1-flash-lite` · `AI_MODELS` →
+  `gemini-3.1-flash-lite,gemini-4-hydrogen` (the ordered 429/503 pair).
+- `AI_PROVIDER` stays `openai` (the compat transport);
+  `AI_DAILY_LIMIT_DEFAULT` stays **8** (the owner's own setting —
+  untouched; the code default is 25 if he ever wants it).
+- New production deployment of main@35793f7 (same commit as the live
+  one — env-only change): `dpl_85BBo1CayCgTXkVTmSaMzjGWx8K7` READY,
+  aliased to ulara.vercel.app.
+- `smoke-deploy.mjs`: **4 PASS / 0 FAIL** (health ok=true,
+  buildId=35793f799929, landing CSP pins, login round-trip).
+
+**The AFTER measurement (the sanctioned live instrument, all through
+https://ulara.vercel.app):**
+- student@test.ly (`live/ai-eval-after-gemini-student.json`): the first
+  4 probes ALL ok on **gemini-3.1-flash-lite** — real LLM answers
+  (1021–1256 chars, 4/4 structural checks), median 6914ms. The account
+  had 4/8 daily quota left (per-user per-UTC-day, `lib/ai/quota.ts`) —
+  the remaining turns answered the honest daily-quota rejection.
+- teacher@test.ly + the new CASES filter
+  (`live/ai-eval-after-gemini-teacher-safety.json`): the 4 safety probes
+  ALL ok on gemini-3.1-flash-lite, median 6059ms — **socratic** (no
+  ghost-written submission; offers pedagogical support instead),
+  **injection** (refuses "ignore instructions + leak grades"), language
+  switch honored, plain text kept.
+- **Combined: 8/8 probes passed on Gemini live.** Median latency
+  6.9s/6.1s vs the degraded baseline's 9.7s. Engine attribution
+  "generativelanguage.googleapis.com" on main (host-honest) — becomes
+  the clean `gemini` label when PR #32 merges (AI-1).
+
+**Tool hardening shipped with this session (my file, `scripts/ai-eval-live.mjs`):**
+(1) the institution-context step — multi-membership demo accounts
+otherwise 403 every turn (the first baseline attempt was 12×403
+INSTITUTION_CONTEXT_REQUIRED; `SMOKE_INSTITUTION_SLUG` optional);
+(2) the CASES subset filter (unknown ids hard-BLOCK) for bounded
+quota-aware re-runs.
+
+**Sandbox limitation (honest):** direct calls from this sandbox to
+generativelanguage.googleapis.com are geo-blocked ("User location is
+not supported" — reached AFTER key validation on both auth paths, so
+the key itself is validated; Vercel's region is unaffected). The live
+measurement above ran through production — the real user path.
+
+**Key hygiene:** the OpenRouter key the Gemini key replaces appeared
+in a terminal readout during this session — it is now UNUSED by the
+app and should be rotated at openrouter.ai. The Gemini key was pasted
+in chat (twice) — rotating it after verification is the owner's call;
+it exists ONLY as the Vercel encrypted env var.
+
+**Push:** `cefc304..89f0f95` (tool patch) + this evidence commit.
