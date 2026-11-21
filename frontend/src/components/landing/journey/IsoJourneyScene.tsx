@@ -79,32 +79,33 @@ const FINDINGS_AR = [
   {
     key: 'lecture',
     title: LECTURE_INTERACTIVE,
-    text: 'محاضرة مسجَّلة بنقاط فحص تُثبِّت الفهم، وحضور يُحتسب تلقائيًا عند الإكمال.',
-    foot: 'الباب [01] — قاعة المحاضرات',
+    text: 'محاضرة مسجَّلة بنقاط فحص وحضور تلقائي.',
+    foot: 'الباب [01]',
   },
   {
     key: 'checkpoint',
     title: 'نقاط الفحص',
-    text: 'سؤال قصير داخل المحاضرة يُصحَّح فورًا، فيثبُت الفهم قبل الانتقال.',
-    foot: 'الباب [02] — نقطة الفحص',
+    text: 'سؤال داخل المحاضرة يُصحَّح فورًا.',
+    foot: 'الباب [02]',
   },
   {
     key: 'exam',
     title: 'الاختبارات الإلكترونية',
-    text: 'بنك أسئلة بأربعة أنواع وقوالب جاهزة، وتصحيح تلقائي للأسئلة الموضوعية.',
-    foot: 'الباب [03] — قاعة الاختبارات',
+    text: 'بنك أسئلة وتصحيح تلقائي للموضوعي.',
+    foot: 'الباب [03]',
   },
   {
     key: 'mastery',
     title: 'مصفوفة الإتقان',
     text: MASTERY_SCORE_LINE,
-    foot: 'الباب [05] — غرفة الإتقان',
+    foot: 'الباب [05]',
   },
   {
     key: 'assistant',
     title: 'المساعد الأكاديمي',
-    text: 'يعمل الآن داخل المنصّة، ويقترح شروحات مخصَّصة وخطط مراجعة حسب أدائك الفعلي.',
-    foot: 'المساعد — يعمل اليوم داخل المنصّة',
+    /* r168b/r191 pin: the honest local-completion wording rides VERBATIM */
+    text: 'يعمل اليوم داخل المنصّة — شروحات مخصَّصة وخطط مراجعة حسب أدائك الفعلي.',
+    foot: 'يعمل اليوم',
   },
 ] as const;
 
@@ -120,14 +121,15 @@ const CLOSE_TITLE_AR = 'الرحلة — أربعة فصول تتحرك أمام
  * section's truth (no prettified captures · every room works today)
  * stay, in half the words. */
 const CLOSE_COPY_AR =
-  'مرّر لتشاهد الرحلة تُبنى على مسطح واحد — لا لقطات مُجمّلة ولا وعودًا قادمة: كل غرفة ميزة تعمل اليوم داخل المنصّة، والغرف تتّسع مع كل فصل جديد.';
+  'مرّر لتشاهد الرحلة تُبنى على مسطح واحد — كل غرفة ميزة تعمل اليوم.';
 
-/* the four-station ledger rows (the cms block — kept verbatim). */
+/* the four-station ledger rows (the cms block — the truth set keeps,
+ * the sentence length rides the r351 copy cut). */
 const LEDGER_AR = [
-  { key: 'lecture', text: 'المحاضرة التفاعلية — شرح مسجَّل بنقاط فحص وحضور يُحتسب', icon: Presentation },
-  { key: 'checkpoint', text: 'نقاط الفحص داخل المحاضرة تصحّح الفهم فورًا', icon: CircleCheck },
-  { key: 'exam', text: 'الاختبارات الإلكترونية بأنواعها وقوالبها الجاهزة', icon: FileCheck2 },
-  { key: 'mastery', text: 'مصفوفة الإتقان والمراجعة حسب أدائك الفعلي', icon: Grid3x3 },
+  { key: 'lecture', text: 'المحاضرة التفاعلية بنقاط الفحص', icon: Presentation },
+  { key: 'checkpoint', text: 'تصحيح فوري داخل المحاضرة', icon: CircleCheck },
+  { key: 'exam', text: 'اختبارات وقوالب جاهزة', icon: FileCheck2 },
+  { key: 'mastery', text: 'المراجعة حسب أدائك الفعلي', icon: Grid3x3 },
 ] as const;
 
 /* the [nn/05] counter rows — static text, opacity-only progression. */
@@ -144,19 +146,19 @@ const MARKERS_AR = [
   {
     n: '01',
     label: 'الكليات',
-    detail: 'كل مؤسسة تبني كلياتها وأقسامها من بياناتها هي — في مساحتها المعزولة.',
+    detail: 'كليات كل مؤسسة من بياناتها هي.',
     seat: 'a',
   },
   {
     n: '02',
     label: 'المقرّرات',
-    detail: 'فصول مقلوبة بإدماجيات مصحّحة فوريًا، وتتبّع مشاهدة وحضور تلقائي.',
+    detail: 'فصول مقلوبة بإدماجيات وتتبّع حضور.',
     seat: 'b',
   },
   {
     n: '03',
     label: 'البحوث',
-    detail: 'من الإرسال إلى فحص الانتحال إلى شروح الأستاذ — ثم النشر في المكتبة.',
+    detail: 'من الإرسال إلى النشر في المكتبة.',
     seat: 'c',
   },
 ] as const;
@@ -164,10 +166,10 @@ const MARKERS_AR = [
 const PANEL_ARIA_AR = 'قدرات المنظومة';
 const PANEL_TITLE_LBL = 'SYSTEM/CAPABILITIES';
 const PANEL_ROWS_AR = [
-  { n: '01', title: 'مساحة لكل مؤسسة', body: 'عزل كامل: بيانات كل جامعة في قاعدتها، لا خلط ولا مشاركة.' },
-  { n: '02', title: 'خلية إتقان لكل مفهوم', body: 'القياس على مستوى المفهوم، لا على مستوى الدرجة فقط.' },
-  { n: '03', title: 'سجلّ لكل فعل', body: 'حاكمية كاملة: كل تغيير له أثر في سجلّ التدقيق.' },
-  { n: '04', title: 'مقعد لكل دور', body: 'الطالب والأستاذ والباحث والإدارة والجودة والمالك — منظومة واحدة.' },
+  { n: '01', title: 'مساحة معزولة لكل مؤسسة' },
+  { n: '02', title: 'خلية إتقان لكل مفهوم' },
+  { n: '03', title: 'سجلّ لكل فعل' },
+  { n: '04', title: 'مقعد لكل دور' },
 ] as const;
 
 /* ══ THE SCENE CLOCK (the measured constants — r312's source pins
@@ -1074,9 +1076,10 @@ export function IsoJourneyScene() {
                     {PANEL_ROWS_AR.map((r) => (
                       <div key={r.n} className="map-panel-row">
                         <span className="map-panel-n fo-mono" dir="ltr">[{r.n}]</span>
+                        {/* r351 P6 — the row's one line is the title (the
+                            body sentence retired with the copy cut) */}
                         <div className="map-panel-rc">
                           <h3 className="map-panel-rt">{r.title}</h3>
-                          <p className="map-panel-rb">{r.body}</p>
                         </div>
                       </div>
                     ))}

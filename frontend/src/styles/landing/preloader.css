@@ -227,11 +227,15 @@
 }
 
 /* the reading — the mono percentage at the rule's origin (reading-start)
-   edge, slightly above the rule like a drafted dimension note */
+   edge, slightly above the rule like a drafted dimension note; the X:/Y:
+   px readout rides under it (r351 P2 — the measured coordinate-readout
+   grammar sweeping the sheet). */
 .pl-read {
   position: absolute;
   inset-inline-start: 26px;
   inset-block-start: calc(50% - 26px);
+  display: grid;
+  gap: 3px; /* spacing-gate: allow — the mono rows' own seam */
   font-family: var(--font-mono);
   font-size: var(--fs-mono-xs);
   letter-spacing: 0.08em;
@@ -239,6 +243,58 @@
   color: var(--accent);
   pointer-events: none;
 }
+
+.pl-coords {
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+}
+
+/* the survey ruler — two dashed tick rules + four plus marks at the
+   crossings (r351 P2 — the drafting sheet's own tick grid, static
+   chrome; retired on the phone sheet where the reference carries no
+   ruler overlay) */
+.pl-rulers {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.pl-ruler {
+  position: absolute;
+  color: var(--text-muted);
+}
+
+.pl-ruler-h {
+  inset-inline: 64px;
+  inset-block-start: 24%;
+  block-size: 7px;
+  background-image: repeating-linear-gradient(to left, var(--grid-line) 0 1px, transparent 1px 9px);
+}
+
+.pl-ruler-v {
+  inset-block: 64px;
+  inset-inline-end: 24%;
+  inline-size: 7px;
+  background-image: repeating-linear-gradient(to bottom, var(--grid-line) 0 1px, transparent 1px 9px);
+}
+
+.pl-rplus {
+  position: absolute;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-md);
+  line-height: 1;
+}
+
+.pl-rplus::before {
+  content: '+';
+}
+
+.pl-rplus-1 { inset-block-start: calc(24% - 0.55rem); inset-inline-end: calc(24% - 0.35rem); }
+.pl-rplus-2 { inset-block-start: calc(24% - 0.55rem); inset-inline-start: 64px; }
+.pl-rplus-3 { inset-block-end: calc(24% - 0.55rem); inset-inline-end: calc(24% - 0.35rem); }
+.pl-rplus-4 { inset-block-end: calc(24% - 0.55rem); inset-inline-start: 64px; }
 
 /* the headline — the display promise at the reading-start corner */
 .pl-headline {
@@ -301,8 +357,9 @@
 }
 
 /* the ledger's two mono rows (meta + boot) share one grammar — one
- * rule, both selectors (the R342-final dedupe; the boot list's own
- * rhythm lives on .pl-boot above) */
+ * rule for the voice; the boot list's own rhythm is PROGRESS-LOCKED
+ * below (r351 P2 — the measured TextPlugin behavior, no time-based
+ * animation on the boot rows) */
 .pl-meta-row,
 .pl-boot-item {
   display: flex;
@@ -310,6 +367,9 @@
   font-family: var(--font-mono);
   font-size: var(--fs-mono-xs);
   letter-spacing: 0.04em;
+}
+
+.pl-meta-row {
   animation: pl-light var(--motion-duration-base) var(--ease-out) both;
 }
 
@@ -332,7 +392,9 @@
   }
 }
 
-/* the boot ledger — the sheet's own steps, lighting in sequence */
+/* the boot ledger — the sheet's own steps, lighting in sequence
+   (r351 P2: each row is PROGRESS-LOCKED — unlit rows sit at the
+   ledger's quiet ink until the counter crosses their threshold) */
 .pl-boot {
   list-style: none;
   margin: 0;
@@ -340,6 +402,15 @@
   display: grid;
   gap: var(--sp-1);
   min-inline-size: 196px;
+}
+
+.pl-boot-item {
+  opacity: 0.22;
+  transition: opacity var(--t-base) var(--ease-out);
+}
+
+.pl-boot-item--lit {
+  opacity: 1;
 }
 
 .pl-boot-num {
@@ -414,6 +485,12 @@
     inset-inline-start: 16px;
     inset-block-start: calc(50% - 22px);
   }
+
+  /* the survey ruler retires on the phone sheet (the reference's own
+   * mobile simplification — no ruler overlay at the phone belts) */
+  .pl-rulers {
+    display: none;
+  }
 }
 
 @media (max-width: 640px) {
@@ -474,7 +551,8 @@
 
   .pl-headline-line,
   .pl-meta-row,
-  .pl-boot-item {
+  .pl-boot-item,
+  .pl-boot-item--lit {
     opacity: 1;
   }
 }

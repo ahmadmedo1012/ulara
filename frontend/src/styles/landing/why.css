@@ -787,13 +787,13 @@
   .wy-panels {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: 7rem;
-    row-gap: 4.8rem;
-    padding-block: 4.8rem 5.6rem;
+    row-gap: 3.2rem;
+    padding-block: 3.6rem 4.2rem;
   }
 
   .wy-panel:nth-child(even) {
     grid-column: 2;
-    margin-block-start: 4.5rem; /* the cascade — a step, not a drop */
+    margin-block-start: 3rem; /* the cascade — a step, not a drop */
   }
 }
 
@@ -812,6 +812,68 @@
   display: block;
   inline-size: 100%;
   block-size: auto;
+}
+
+/* r351 P3 — the pillar plates ride a cap (the 300:170 sheet letterboxes
+ * at 46rem on the desktop grid: the four diagrams keep their seats, the
+ * band stops carrying two rows of full-width drawings) */
+@media (min-width: 992px) {
+  .wyp-frame {
+    max-inline-size: 46rem;
+  }
+}
+
+/* r351 P8 — the phone why band rides the reference's own 806px economy:
+   the head's air halves, the pillar plates cap, the FAQ rows
+   keep ≥44px tap seats while their air steps down. */
+@media (max-width: 767px) {
+  .wy-eyebrow {
+    padding-block-start: 2.4rem;
+  }
+
+  .wy-h2w {
+    margin-block-start: 0.8rem;
+  }
+
+  .wy-side {
+    padding-block-start: 0.8rem;
+  }
+
+  .wy-panels {
+    row-gap: 1.6rem;
+    padding-block: 1.6rem 2.4rem;
+  }
+
+  .wyp-cap {
+    margin-block-start: 1.2rem;
+  }
+
+  .wy-faq {
+    padding-block: 1.6rem 3.2rem;
+    padding-inline: 1.6rem;
+  }
+
+  .wy-faq-qrow {
+    padding-block: 1.5rem; /* ≥44px seat with the question's own line */
+  }
+
+  .wy-faq-atext {
+    padding-block-end: 1.2rem;
+    padding-inline-start: 2.6rem;
+  }
+}
+
+/* ≤991 (tablet/phone stack): the pillar plates cap while the sequence
+   stays readable */
+@media (max-width: 991px) and (min-width: 768px) {
+  .wyp-frame {
+    max-inline-size: 26rem;
+  }
+
+  .wy-panels {
+    row-gap: 3.2rem;
+    padding-block: 2.4rem 3.2rem;
+  }
 }
 
 /* the caption seat — the pillar's index + title + body under the plate */

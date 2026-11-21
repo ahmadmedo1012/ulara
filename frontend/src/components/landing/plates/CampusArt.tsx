@@ -284,8 +284,9 @@ export function CampusFrag({ name }: { name: CampusFragName }) {
             <RegMark x={-84} y={-14} s={7} />
             <RegMark x={84} y={-14} s={7} />
           </g>
-          {/* scale bar */}
-          <g transform="translate(40,104)">
+          {/* scale bar — carries iso-scalebar so a seat can retire it
+              (r351 P1: the hero stage hides it; the journey keeps it) */}
+          <g className="iso-scalebar" transform="translate(40,104)">
             <rect x="-34" y="-6" width="34" height="3" fill={PLATE.ink} />
             <rect x="0" y="-6" width="34" height="3" fill="none" stroke={PLATE.ink} strokeWidth="0.8" />
             <g className="iso-coord">

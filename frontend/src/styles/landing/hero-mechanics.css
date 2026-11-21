@@ -36,6 +36,7 @@
 
 /* ── the motion register (scoped to the hero, token-clean) ────────── */
 .hro {
+  --z-hro-cta-fill: -1; /* the fill sits under its own label (isolation: isolate scopes it) */
   --hro-p2-out: cubic-bezier(0.215, 0.61, 0.355, 1); /* GSAP power2.out */
   --hro-p3-out: cubic-bezier(0.165, 0.84, 0.44, 1);  /* GSAP power3.out */
   --hro-expo-out: cubic-bezier(0.19, 1, 0.22, 1);    /* GSAP expo.out   */
@@ -47,16 +48,16 @@
   --hro-rise-dur: 1s;        /* rise duration             */
 }
 
-/* ══ [1] THE BAND — grid rows [art 1fr | content auto | work auto],
-   the measured 100svh-class fold (887px @1440×900) + the consent
-   card's bottom-stack reserve (R328 H1 — unchanged contract).
+/* ══ [1] THE BAND — grid rows [content auto | art 1fr | work auto]
+   (r351 P1 — the reference's own order: the giant headline LEADS the
+   fold), the measured 100svh-class fold (887px @1440×900).
    R332 W1: position:relative — the band is the bg-border frame's
    containing block (the reference's bgBorderFrame is inset 1.2rem of the hero
    wrap, over the full-bleed drawing — never around an inner box). ═════ */
 .fo-hero.hro {
   position: relative;
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
   min-block-size: calc(100svh - 13px); /* the measured reference band (887 = 900 − 13) */
   align-content: stretch;
   padding-block: 0;
@@ -73,12 +74,13 @@
 
 /* ══ [2] THE ART BAND — the drafting stage, FULL-BLEED (R332 W1 —
    the run-001 «window inside a window» kill): the paper is the page's
-   own and runs edge-to-edge; the only vertical seat is the 63px header
-   chrome + the sheet-frame breathing room below. ═════ */
+   own and runs edge-to-edge; the content band leads above it, the work
+   strip closes the fold (absolute ≥1024 — the art band keeps a
+   clearing pad so the plate never sits under the strip). ═════ */
 .hro-art {
   display: grid;
-  padding-block-start: 63px; /* 56px header + 7px frame chrome (the measured seat) */
-  padding-block-end: var(--sp-2);
+  padding-block-start: 12px; /* the sheet-frame breathing seat under the headline */
+  padding-block-end: 4.2rem; /* the work strip's absolute zone (its own band height + seam) */
   padding-inline: 0; /* R332 W1: the old 7px sheet inset trapped the ink inside an inner window — the paper has no side inset */
   align-items: stretch;
 }
@@ -108,6 +110,18 @@
    the content band (the 1fr row — the 62svh cap era ends: the reference's
    art band owns ~87% of the fold's height at 1440, the ink centered on
    the paper with the ruler chrome spanning the whole field). ═══ */
+
+/* r351 P1 — the HERO STAGE IS DECLUTTERED: the static zone-name leader
+   labels and the corner coordinate readouts retire from the hero seat
+   (the same fragments keep their seat on the journey plate —
+   journey/IsoCampusSheet renders them there). The inspection
+   instrument (HeroInspect) carries the hero's OWN labels: the live
+   X/Y readout + the drag-revealed stations. */
+.hro-stage [data-frag='labels'],
+.hro-stage .iso-coord,
+.hro-stage .iso-scalebar {
+  display: none;
+}
 
 /* the ink — fills the frame's content width (the measured img-inner
    grammar); height from the viewBox's own aspect, capped honest. */
@@ -487,22 +501,18 @@
   }
 }
 
-/* ══ [6] THE CONTENT BAND — R342-02: the measured closing collage of the
-   fold (the frozen spec's own content band): title cell ‖ sub cell ‖ alt
-   cell on the reference's fluid-rem proportions — 92.64rem · 51.8rem ·
-   17.16rem with 4.8rem/1.68rem seams (the measured 772·432·143 boxes at
-   1440 scale exactly with the root at 1920/1024). The band rides at the
-   fold's foot: the h1's box-bottom is the section's last line (the
-   100svh−13 belt pins the fold; the art band's 1fr takes everything
-   above). The work strip is seated absolutely inside the band's lower
-   zone (the spec's own overlap — [7] below). */
+/* ══ [6] THE CONTENT BAND — r351 P1: the giant headline leads the fold
+   (the reference's own order — title, lead, CTA, then the art band).
+   ONE column: the H1 full-width, the sub cell (lead + ONE primary CTA)
+   under it at the reading-start edge. The login secondary retired to
+   the masthead; the band margins keep the measured reading-start
+   gutter (3.96rem ≈ the spec's 33px h1 gutter @1440 riding the root;
+   the top pad seats the headline under the 56px header chrome). */
 .hro-content {
   display: grid;
-  grid-template-columns: minmax(0, 92.64rem) minmax(0, 51.8rem) minmax(0, 17.16rem);
-  column-gap: 1.68rem;
-  /* the mirrored measured band margins (RTL: inline-start = the reading
-     edge/right — 3.96rem ≈ the spec's 33px h1 gutter @1440 riding the
-     root; inline-end = 0.72rem ≈ the 6px login-edge gutter) */
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: 0;
+  padding-block-start: 74px; /* the 56px header + the headline's breathing seat */
   margin-inline: 3.96rem 0.72rem;
   align-items: start;
 }
@@ -579,22 +589,20 @@
 .landing.intro-done .hro-title .hro-lmask:nth-child(2) .hro-line { transition-delay: 0.07s; }
 .landing.intro-done .hro-title .hro-lmask:nth-child(3) .hro-line { transition-delay: 0.09s; }
 
-/* the sub cell — the measured 51.8rem column: the lead paragraph with
-   the register CTA under it (the reference's own sub-wrap stack), riding
-   the band's measured offset from the row head (the 2.28rem seat lands
-   the lead at the spec's own y at 1440 and rides the root at the other
-   desktop belts) */
+/* the sub cell — the lead sentence + the register CTA under it (the
+   reference's own sub-wrap stack), riding the band's row gap */
 .hro-sub-cell {
   min-inline-size: 0;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding-block-start: 2.28rem;
+  padding-block-start: 1.6rem;
 }
 
 /* the lead — the spec's body rung (1.6rem) at the Arabic metric floor;
    full ink (the reference's rgb(40,40,40) seat — the muted ramp ends);
-   the 51.8rem column IS the measured 432px box (no ch clamp) */
+   r351 P1: ONE sentence — the column is no longer the measured 432px
+   box (the giant title owns the width). */
 .hro-lead {
   font-size: var(--fs-body); /* 1.6rem — the reference txt-16 on the shared root */
   font-weight: 400; /* the spec's own lead weight */
@@ -602,6 +610,7 @@
   color: var(--text);
   margin: 0;
   inline-size: 100%;
+  max-inline-size: 46rem; /* the lead reads as one measure, never a full-width band */
 }
 
 .landing.intro-done .hro-lead .hro-lmask:nth-child(1) .hro-line { transition-delay: 0.16s; }
@@ -633,31 +642,90 @@
     transform var(--hro-rise-dur) var(--hro-p3-out) 0.3s;
 }
 
-/* the primary CTA — the measured link seat: 1.6rem/600, full ink, the
-   0.4s/ease color register, the underline sweep + arrow nudge on hover
-   (two affordance channels), focus-visible parity (r162 law) */
+/* the primary CTA — r351 P1: the reference's btn-fill seat — a boxed
+   label with the ONE accent fill wiping from the reading-end edge on
+   hover/focus while the label rolls one line up (top line out, bottom
+   twin in — the bottom twin is aria-hidden, the accessible name stays
+   the ONE real label). Zero-radius law, 1px ink frame. */
 .hro-cta {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.7rem;
+  padding: 1.1rem 1.9rem;
+  border: 1px solid var(--text);
+  background-color: transparent;
+  overflow: hidden;
   font-size: var(--fs-body);
   font-weight: 600;
   line-height: 1.35;
   color: var(--text);
-  text-decoration: underline transparent;
-  text-underline-offset: 0.35em;
-  transition: color 0.4s ease, text-decoration-color 0.4s ease;
+  text-decoration: none;
+  isolation: isolate;
+  transition: transform 0.4s var(--hro-p2-out);
+}
+
+.hro-cta-fill {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-hro-cta-fill); /* the scoped-var law (review finding 2) */
+  background: var(--accent);
+  transform: scaleY(0);
+  transform-origin: 50% 100%;
+  transition: transform 0.45s var(--hro-p2-out);
+}
+
+.hro-cta-roll {
+  position: relative;
+  display: block;
+  overflow: hidden;
+}
+
+.hro-cta-top {
+  display: block;
+  transition: transform 0.45s var(--hro-p2-out);
+}
+
+.hro-cta-bot {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 100%;
+  display: block;
+  color: var(--warm-ink);
+  transition: transform 0.45s var(--hro-p2-out);
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .hro-cta:hover {
-    color: var(--text);
-    text-decoration-color: var(--accent);
+  .hro-cta:hover .hro-cta-fill,
+  .hro-cta:focus-visible .hro-cta-fill {
+    transform: scaleY(1);
+  }
+
+  .hro-cta:hover .hro-cta-top,
+  .hro-cta:focus-visible .hro-cta-top {
+    transform: translateY(-100%);
+  }
+
+  .hro-cta:hover .hro-cta-bot,
+  .hro-cta:focus-visible .hro-cta-bot {
+    transform: translateY(-100%);
   }
 
   .hro-cta:hover :is(svg, .icon) {
     transform: translateX(-0.25rem); /* the RTL reading-forward nudge */
   }
+}
+
+.hro-cta:is(:focus-visible) .hro-cta-fill {
+  transform: scaleY(1);
+}
+
+.hro-cta:is(:focus-visible) .hro-cta-top {
+  transform: translateY(-100%);
+}
+
+.hro-cta:is(:focus-visible) .hro-cta-bot {
+  transform: translateY(-100%);
 }
 
 .hro-cta :is(svg, .icon) {
@@ -990,8 +1058,9 @@
 
   .hro-content {
     grid-template-columns: minmax(0, 1fr);
-    margin-inline: 14px;
     padding-inline: 0;
+    /* the band margins ride the r351 P1 seat below (the r339 14px
+       gutter seat retired with the leading-headline composition) */
   }
 
   .hro-title-cell {
@@ -1018,10 +1087,15 @@
   }
 
   /* the CTA — the spec's own 390 seat: flush at the reading edge
-     (mirrored x=24), never a full-width bar (the text-link voice) */
+     (mirrored x=24), never a full-width bar */
   .hro-actions {
-    margin-block-start: var(--sp-7); /* the brief's 32px ladder gap */
+    margin-block-start: var(--sp-6); /* the brief's ladder gap under the lead */
     row-gap: var(--sp-4);
+  }
+
+  .hro-content {
+    padding-block-start: 64px; /* the 56px header + breathing */
+    margin-inline: 1.6rem 1rem;
   }
 
   .hro-actions .hro-cta {
@@ -1092,6 +1166,15 @@
     transition: none;
   }
 
+  /* r351 P1 — the fill/roll seat collapses to an instant state flip
+     (hover/focus still answer; no animated wipe under RM). */
+  .hro-cta,
+  .hro-cta-fill,
+  .hro-cta-top,
+  .hro-cta-bot {
+    transition: none;
+  }
+
   .hro-deco,
   .landing.intro-draw .hro-deco,
   .landing.intro-done .hro-deco {
@@ -1143,41 +1226,37 @@
 @media (min-width: 1440px) and (max-width: 1919px) { .hro.fo-hero { min-block-size: calc(100svh - 13px); } }
 @media (min-width: 1920px) { .hro.fo-hero { min-block-size: calc(100svh - 17px); } }
 
-/* [T] the display title — measured fs (31.76/36.83px, 3.241vw ≥1024)
-   with the Arabic line-height floor max(dsLh, 1.35×fs) */
-section.fo-hero .hro-title.fo-hero-title { font-size: 31.76px; line-height: 1.35; }
-@media (min-width: 768px) and (max-width: 1023px) {
-  section.fo-hero .hro-title.fo-hero-title { font-size: 36.83px; }
+/* [T] the display title — r351 P1: the GIANT display rung (the
+   reference's 7.2rem-class scale, section-scoped — the global --fs-d1
+   rung is never mutated). Arabic floor leading (1.24 — tight but above
+   the mask's clipping floor; verified visually at every belt). */
+.hro {
+  --hro-d1: clamp(30px, 6.6vw, 118px);
 }
-@media (min-width: 1024px) {
-  section.fo-hero .hro-title.fo-hero-title { font-size: 3.241vw; }
+section.fo-hero .hro-title.fo-hero-title { font-size: var(--hro-d1); line-height: 1.24; }
+@media (min-width: 768px) and (max-width: 1023px) {
+  section.fo-hero .hro-title.fo-hero-title { font-size: clamp(38px, 7.2vw, 72px); }
+}
+@media (max-width: 767px) {
+  section.fo-hero .hro-title.fo-hero-title { font-size: clamp(29px, 8.2vw, 44px); line-height: 1.3; }
 }
 
-/* [C] the primary CTA — the reference's measured TEXT-LINK voice:
-   ink rgb(40,40,40) on a transparent ground, zero chrome, single
-   color 0.4s/ease token. The funnel contract classes stay on the
-   markup; only the skin follows the measured box. R342-02: the 600
-   weight (the spec's own) + the underline-sweep affordance. */
+/* [C] the primary CTA — r351 P1: the boxed fill-wipe seat on the
+   shared vw rung (the funnel classes stay on the markup; the skin is
+   the reference's own btn-fill grammar). */
 section.fo-hero .hro-actions .hro-cta {
   display: inline-flex;
   align-items: center;
-  gap: 0.5em;
-  min-block-size: 0;
-  padding: 0;
-  border: 0;
+  gap: 0.7rem;
+  padding: 1.1rem 1.9rem;
+  border: 1px solid var(--text);
   background-color: transparent;
+  overflow: hidden;
   color: var(--text);
-  font-size: 15.88px;
+  font-size: var(--fs-body);
   line-height: 1.35;
   font-weight: 600;
-  text-decoration: underline transparent;
-  text-underline-offset: 0.35em;
-  transition: color 0.4s ease, text-decoration-color 0.4s ease;
-}
-@media (hover: hover) and (pointer: fine) {
-  section.fo-hero .hro-actions .hro-cta:hover {
-    text-decoration-color: var(--accent);
-  }
+  text-decoration: none;
 }
 @media (min-width: 768px) and (max-width: 1023px) {
   section.fo-hero .hro-actions .hro-cta { font-size: 14.73px; }

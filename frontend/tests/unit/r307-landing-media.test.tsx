@@ -137,9 +137,9 @@ describe('Ω — the CSP admits nothing external (the embed programme is retired
 });
 
 describe('Ω — the media rework added ZERO new funnel links', () => {
-  it('the 5+6 register/login counts survive untouched (R331: login 6 — the hero secondary joined the register)', () => {
+  it('the 5+5 register/login counts survive untouched (r351 P1: the hero login secondary retired — the hero carries ONE primary like the reference)', () => {
     expect((liveTsx.match(/to="\/auth\/register"/g) ?? []).length).toBe(5);
-    expect((liveTsx.match(/to="\/auth"/g) ?? []).length).toBe(6);
+    expect((liveTsx.match(/to="\/auth"/g) ?? []).length).toBe(5);
   });
 
   it('the sections route to anchors and app routes only', () => {

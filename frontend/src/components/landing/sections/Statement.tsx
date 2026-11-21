@@ -39,7 +39,6 @@
  * composer (pages/LandingPage.tsx) on the shared sheet clock — this
  * component receives the section + title refs it measures. */
 import { Fragment, type ReactNode, type RefObject } from 'react';
-import { Link } from 'react-router-dom';
 import { ScrubReveal } from '../journey/WordReveal';
 import { RevealCssClass } from '../../../hooks/useReveal';
 
@@ -56,6 +55,26 @@ import { RevealCssClass } from '../../../hooks/useReveal';
 function StatementDraft() {
   return (
     <div className="st-draft" aria-hidden="true">
+      {/* r351 P4 — the shared displacement-ink filter (the B0 extraction's
+          §5 constants, verbatim: fractalNoise 0.045/0.055 · octaves 4 ·
+          seed 5 · scale 100 on R/G · blur 1.8 · contrast 2.2/−0.6),
+          mounted once per band; the media img consumes it via
+          `filter: url(#st-ink-displace)` — the courtyard drawing reads
+          as surveyed-on-paper, its reveal carrying the ink's own edge.
+          STATIC displacement (no motion) — the reduced-motion belt has
+          nothing to collapse. */}
+      <svg className="st-draft-defs" width="0" height="0" focusable="false" aria-hidden="true">
+        <defs>
+          <filter id="st-ink-displace" x="-5%" y="-5%" width="110%" height="110%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.045 0.055" numOctaves="4" seed="5" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="100" xChannelSelector="R" yChannelSelector="G" />
+            <feGaussianBlur stdDeviation="1.8" result="blurred" />
+            <feComponentTransfer in="blurred" result="contrast">
+              <feFuncA type="linear" slope="2.2" intercept="-0.6" />
+            </feComponentTransfer>
+          </filter>
+        </defs>
+      </svg>
       {/* the drafting field — the sheet's reference grid behind the title */}
       <svg className="st-draft-svg st-draft-grid" viewBox="0 0 320 320" fill="none" preserveAspectRatio="xMinYMin meet">
         {[1, 2, 3, 4, 5, 6, 7].map((n) => (
@@ -93,37 +112,18 @@ function StatementDraft() {
   );
 }
 
-/* ── The statement (the scrub manifesto). Same voice/length class as
- * the reference's 127-char intro statement; honest — the four clauses
- * name the four live capabilities (lecture · grading · mastery ·
- * research), the closing pair the honest registry claim. The eight
- * authored lines mirror the spec's own line census (one div per line,
- * each stretched to the full padded cell width; the scrub indices stay
- * global across them). */
+/* ── The statement (the scrub manifesto). r351 P6 — ONE sentence
+ * (≤18 words): the four capability clauses stay (the honest four: lecture
+ * · grading · mastery · research); the registry tail sentence retires
+ * (its honest claim — one ledger per institution — the plates and the
+ * vision strip already carry it). Four authored lines, one per clause. */
 const STATEMENT_TEXT =
-  'منصّة واحدة تدير الرحلة كلها: المحاضرة تُبنى وتُقاس، والواجب يُصحّح ويُعاد، ' +
-  'والإتقان يُرسَم مفهومًا مفهومًا، والبحث يُفهرَس ويبقى. سجلّ واحد للقسم والكلية — يعمل اليوم، ويكبر مع كل فصل.';
+  'المحاضرة تُبنى وتُقاس، والواجب يُصحّح ويُعاد، والإتقان يُرسَم مفهومًا مفهومًا، والبحث يُفهرَس ويبقى.';
 const STATEMENT_LINES = [
-  'منصّة واحدة تدير الرحلة',
-  'كلها: المحاضرة تُبنى وتُقاس،',
+  'المحاضرة تُبنى وتُقاس،',
   'والواجب يُصحّح ويُعاد،',
   'والإتقان يُرسَم مفهومًا مفهومًا،',
   'والبحث يُفهرَس ويبقى.',
-  'سجلّ واحد للقسم والكلية —',
-  'يعمل اليوم، ويكبر',
-  'مع كل فصل.',
-] as const;
-
-/* R338 T-03d — the reference's per-word char-scaffold census (frozen spec,
- * identical at 768/1024/1440/1920): its split-text tween leaves one empty
- * tc-none overflow box per CHARACTER inside every word cell — 26 words,
- * 127 char boxes (3,10,5,… chars per word in document order). Our
- * ScrubReveal mirrors that scaffold grammar with empty aria-hidden boxes
- * (intro.wchar.N.M) so every reference char box has an explicit 1:1
- * counterpart; the shaped Arabic text itself stays whole per word — the
- * joining law (per-word splits only) is never broken. */
-const DS_CHAR_COUNTS = [
-  3, 10, 5, 2, 9, 9, 3, 4, 4, 5, 7, 3, 7, 6, 4, 2, 3, 3, 4, 7, 2, 3, 7, 3, 3, 9,
 ] as const;
 
 /* Phase Ω — the crawl's value clauses (typographic cards, type-first):
@@ -240,23 +240,18 @@ export function Statement({ sectionRef, titleRef }: StatementProps) {
                     lines={STATEMENT_LINES}
                     className="st-scrub"
                     /* R338 T-03c: per-word census bindings — every word mask
-                     * carries intro.word.N (its text box intro.wordin.N), so
-                     * the mapping binds the reference's split-text word
-                     * cells explicitly instead of heuristic-gluing them. */
+                     * carries intro.word.N (its text box intro.wordin.N). */
                     wordSpec={(gi: number) => `intro.word.${gi + 1}`}
-                    /* R338 T-03d: the reference's per-char tween scaffold,
-                     * mirrored 1:1 — every the reference char box (h2 > line > box >
-                     * mask > word > char) binds its own intro.wchar.N.M box
-                     * explicitly; typography + color asserted per char box
-                     * (it inherits the title's own type), geometry rides the
-                     * word/line level (English↔Arabic char runs differ). */
-                    charCounts={DS_CHAR_COUNTS}
-                    charSpec={(gi: number, ci: number) => `intro.wchar.${gi + 1}.${ci + 1}`}
+                    /* r351 P6 — the R338 T-03d per-char scaffold census
+                     * retires with the copy cut: the 26-word/127-box mirror
+                     * bound EMPTY boxes to the reference's frozen word
+                     * lengths; with our own one-sentence copy the mirror
+                     * cannot stay 1:1 (and its conformance consumer is
+                     * long retired) — the word census + the ink-roll twin
+                     * below carry the reveal grammar. */
                     /* R343 A-I1: the ink-roll twin census — the reference's
                      * split-text tween parks a second masked word copy per
-                     * word (its recorded word-wrapper windows); the twin
-                     * rides the same scrub and binds those windows
-                     * explicitly (mapping/home-intro-wrap-A-I1.json). */
+                     * word; the twin rides the same scrub. */
                     twinSpec={(gi: number) => `intro.wtwin.${gi + 1}`}
                     renderLine={(line: ReactNode, key: string, index: number) => (
                       /* the reference's own line nest: line group > line box
@@ -374,17 +369,9 @@ export function Statement({ sectionRef, titleRef }: StatementProps) {
               </div>
             </div>
 
-            {/* R342-02 — the desc row rides BELOW the ticker-in box (the
-                frozen spec's own nest: tickerin = labelrow + crawl; the
-                disclosure desc is the band's own closing row, inside the
-                ticker cell) */}
-            <div className="st-desc" data-spec="intro.desc">
-              <div className="st-desc-text" data-spec="intro.desctext">
-                قيم نعمل بها — مؤسستك تملك بياناتها، وكلياتك أنت من يبنيها. لقطات حقيقية من المنصّة في
-                <Link to="/campus" className="fo-text-link">صفحة بيئة العمل الرقمية</Link>.
-              </div>
-              <div className="st-desc-rule lp-hairline lp-hairline--h" aria-hidden="true" data-spec="intro.descrule" />
-            </div>
+            {/* r351 P6 — the desc row retires with the copy cut (the
+                disclosure's honest claim — real captures on /campus —
+                the campus page itself and the footer carry it). */}
           </div>
         </div>
       </section>

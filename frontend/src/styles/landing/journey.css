@@ -391,6 +391,14 @@ section.chapters {
 
 @media (max-width: 767px) {
   .jt .jt-plan .pl-name { font-size: 22px; }
+  /* r351 P5 — the phone walkthrough retires the plate's zone-name
+   * labels (the audit belt found «ميدان التدريب» colliding with the
+   * capabilities panel's row titles at 390/360): the reference's own
+   * mobile simplification — the labels' clearance law holds on the
+   * desktop window (the r349 belt pins it there). */
+  .jt .jt-plan .iso-leader {
+    display: none;
+  }
 }
 
 .jt .jt-plan .bp-micro {
@@ -1425,13 +1433,21 @@ section.chapters {
   }
 }
 
-/* ══ the ≤767 overview beats (stage 0/1 + RM) show CAM_FULL — the
-   element rides the SHEET aspect; the label floor follows. ══ */
+/* ══ the ≤767 camera seat — ONE constant portrait box (the 460/600
+   family) at EVERY beat: the sheet-family overview beats (stage 0/1
+   + RM) letterbox inside it via xMidYMid meet — the same drawn size,
+   the same camera moves, the same viewBox contract (r312 untouched).
+   The r351 CLS belt caught the old stage 1→2 aspect swap re-flowing
+   the whole window cluster (0.1225 @390 — the jt-window/intro/status
+   rects all jumping); a seat that never changes size kills that
+   class. Width-capped so the portrait seat + the intro card always
+   fit the sticky viewport (the 556–767 bands keep the sheet in
+   view); @390/430 the min() picks 100% — pixel-identical to the
+   stage-2+ seat that already shipped. The label floor follows. ══ */
 @media (max-width: 767px) {
-  .jt[data-stage='0'] .jt-window .bp-svg,
-  .jt[data-stage='1'] .jt-window .bp-svg,
-  .jt[data-rm='on'] .jt-window .bp-svg {
-    aspect-ratio: 1200 / 760;
+  .jt-window .bp-svg {
+    inline-size: min(100%, calc((100dvh - 57px - 14.5rem) * (460 / 600)));
+    aspect-ratio: 460 / 600;
   }
 
   .jt[data-stage='0'] .jt-plan .pl-name,

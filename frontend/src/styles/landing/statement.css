@@ -95,6 +95,16 @@
   inline-size: 100%;
   block-size: 100%;
   object-fit: cover;
+  /* r351 P4 — the shared displacement-ink filter (the B0 §5 constants;
+     the defs ride StatementDraft's svg seat). STATIC displacement — no
+     motion, nothing for the RM belt to collapse. */
+  filter: url('#st-ink-displace');
+}
+
+.st-draft-defs {
+  position: absolute;
+  inline-size: 0;
+  block-size: 0;
 }
 /* the tonal veil the reference draws as a filtered svg — ours is a
    transparent-background svg whose rect carries the ink (the record's
@@ -582,7 +592,7 @@
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto auto auto;
   }
-  .st-media { aspect-ratio: 1 / 1; }
+  .st-media { aspect-ratio: 4 / 3; } /* r351 P8 — the phone media reads as a framed plate, not a square plate (the courtyard stays the band's own image) */
   /* R338 T-03i — the phone band's own measures: the wrap carries the
      record's 8px gutters (374px inside the 390 viewport), the title
      pitch is the record's own 26.2px (2.62rem), the pill sits 1.92rem
