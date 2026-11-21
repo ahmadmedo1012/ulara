@@ -27,3 +27,16 @@
 **Zero-trace:** `bash scripts/brand/zero-trace.sh` → FAIL on 5 PRE-EXISTING hits inherited from main (CHANGELOG.md + docs/redesign/r350/{HANDOFF,LOG}.md content — files identical to main, `git diff origin/main -- <files>` empty; plus 2 r350 commit messages already in main's history). r350's own session-2 row documented this as "the one documented red". **Zero hits in my files/commits.** History rewrite is forbidden and CHANGELOG is NOBODY-edits → reported in HANDOFF for the 4th agent.
 
 **Live smoke:** no `GEMINI_API_KEY` in this sandbox env (`env | grep -i gemini` empty) → live behavior `NOT MEASURED` (per-task contract; the owner sets `AI_API_KEY` as a deployment secret and should rotate the chat-pasted key).
+
+## Session 1 — AI-2 prompt rewrite
+
+**Implementation** (`backend/src/lib/ai.ts`):
+- `buildStudentSystemPrompt` (r351 AI-2): brevity-first («الإيجاز أصلٌ… أقصر إجابة مفيدة أولًا»), bounded markdown allowed (the raw-text mandate retired — both surfaces render markdown now), grounded citations rule («المصدر: [رقم]» from the numbered materials context ONLY — citing outside it is fabrication), Socratic-before-solutions on graded work, no-pretended-abilities clause, injection hardening extended to the retrieved materials block, mastery summary explicitly names+percentages only.
+- `buildGenericSystemPrompt`: same brevity/markdown/honesty clauses + the teacher work patterns (feedback drafts, lecture outlines, question banks) + no-fabricated-citations + no-pretended-abilities.
+- Telemetry verified metadata-only (userId/feature/model/tokens/latency/success/errorClass — no content) — pinned by a source-slice test; MasteryFact verified PII-free structurally (4 fields: concept/course/level/lectureTitle) — pinned.
+
+**Gate outputs:**
+- AI test files: `Tests 212 passed (212)`.
+- Full backend: `Test Files 93 passed | 1 skipped (94)` · `Tests 1986 passed | 19 skipped (2005)`.
+- `npm run typecheck` + `typecheck:tests` → clean.
+- 2 stale pins updated (the retired plain-text mandate — intended behavior change, documented in-test); 4 new pins added (student contract, teacher patterns, telemetry metadata-only, mastery no-PII).
