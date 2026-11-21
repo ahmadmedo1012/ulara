@@ -326,7 +326,10 @@ footer.fo-footer {
 .fo-link {
   display: inline-flex;
   align-items: center;
-  padding-block: var(--sp-1-5);
+  /* r351 P8 — the ≥44px tap seat (an absolute floor — the fluid root
+     scales rem against it) */
+  padding-block: 0.66rem;
+  min-block-size: 44px;
   text-decoration: none;
   color: var(--text);
   font-size: var(--fs-body);
@@ -356,6 +359,7 @@ footer.fo-footer {
   display: inline-block;
   margin-block-start: var(--sp-2);
   padding: var(--sp-2);
+  min-block-size: 44px; /* r351 P8 — the tap seat */
   text-decoration: none;
   color: var(--text);
   font-size: var(--fs-body-lg);
@@ -451,6 +455,11 @@ footer.fo-footer {
 .fo-legal-a {
   color: var(--text);
   text-decoration: none;
+  /* r351 P8 — the inline door's 44px hit seat (padding + negative
+     margin: the line box never moves, the click area does) */
+  padding-block: 13.5px;
+  margin-block: -13.5px;
+  display: inline-block;
   transition: color var(--t-fast) var(--ease);
 }
 .fo-legal-a:hover { color: var(--accent); }
@@ -600,6 +609,7 @@ footer.fo-footer {
 
 .fo-back-to-top {
   appearance: none;
+  min-block-size: 44px; /* r351 P8 — the tap seat */
   background: var(--bg);
   border: 1px solid var(--border);
   padding: 8px 16px;

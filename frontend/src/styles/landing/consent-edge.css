@@ -169,6 +169,10 @@
   margin-inline-start: var(--sp-1-5);
   text-decoration-line: none;
   text-underline-offset: 0.3rem;
+  /* r351 P8 — the inline door's 44px hit seat (the line box holds) */
+  padding-block: 15px;
+  margin-block: -15px;
+  display: inline-block;
   transition: color var(--t-fast) var(--ease);
 }
 @media (hover: hover) and (pointer: fine) {
@@ -219,7 +223,7 @@
   align-items: center;
   justify-content: center;
   inline-size: 9.44rem;            /* 78.67px @1440 — measured (kept) */
-  min-block-size: 3.36rem;         /* 28px @1440 — measured (kept) */
+  min-block-size: 44px;            /* r351 P8 — the tap floor (was 28px) */
   padding-inline: var(--sp-2);
   background: var(--text);         /* ink fill — the real primary slab */
   border: 1px solid var(--text);   /* the 1px ink rule, inside the box */
@@ -288,7 +292,7 @@
   align-items: center;
   justify-content: center;
   inline-size: 9.68rem;            /* 80.67px @1440 — measured */
-  min-block-size: 3.4rem;          /* 28.33px @1440 — measured */
+  min-block-size: 44px;            /* r351 P8 — the tap floor (was 28.33px) */
   padding-inline: var(--sp-2);
   background: transparent;
   border: 0;
