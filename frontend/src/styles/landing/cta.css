@@ -368,12 +368,31 @@ html[data-theme='dark'] .fo-cta .fo-text-link {
 }
 
 /* ── base (phone ≤767): the ledger stacks its bands full-width; the
-   rail/side cells collapse to gutters, the rules stay. ── */
+   rail/side cells collapse to gutters, the rules stay.
+   R349 (C2 · the parked-sketch retirement): the sketch band's phone
+   seat is RETIRED — the T-10d2 pattern parked the sketch CONTENT
+   (frame/holder/art at 0×0) and kept a 13.91rem paper row painted
+   only by the gradient veil, which read on-device as an EMPTY BOX on
+   the conversion screen (the audit's worst mobile finding). The
+   resolve now hands the registry strip the band directly; the sketch
+   itself still draws ≥768 where it holds real ink. The DOM seat
+   stays (the r321 §A6 decor-family sweep reads it) — CSS retires
+   the row. ── */
 .fo-cta-ledger {
   display: grid;
-  /* T-10d2: the reference's phone rungs — 60/302/138 on the 9.92 root
-     (band-top 6.05rem · title band 30.44rem · sketch 13.91rem). */
-  grid-template-rows: 6.05rem 30.44rem 13.91rem;
+  /* T-10d2: the reference's phone rungs — 60/302 on the 9.92 root
+     (band-top 6.05rem · title band 30.44rem; the sketch's 13.91rem
+     row retired with the parked content — R349 C2). */
+  grid-template-rows: 6.05rem 30.44rem;
+}
+
+@media (max-width: 767px) {
+  /* the compound selector out-specifies the later `.fo-cta-band`
+   * base (the element carries both classes — a bare
+   * `.fo-cta-band-sketch` rule would lose the cascade to it). */
+  .fo-cta-band.fo-cta-band-sketch {
+    display: none;
+  }
 }
 
 .fo-cta-band {

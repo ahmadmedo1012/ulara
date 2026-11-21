@@ -744,11 +744,6 @@ section.chapters {
   opacity: 0;
 }
 
-.jt[data-stage='3'] .jt-intro-findings,
-.jt[data-stage='4'] .jt-intro-findings {
-  opacity: 1;
-}
-
 .jt-intro-finding {
   position: absolute;
   inset-block-start: 0;
@@ -756,6 +751,19 @@ section.chapters {
   color: var(--jt-ink);
   opacity: 0;
   transition: opacity var(--jt-t-art) var(--jt-e-art); /* the measured 0.4s/ease register */
+}
+
+/* R349 (the desktop blank-card belt): the body opens with stage 2
+ * (t 2.5 — the SAME beat the findings machine starts), so the
+ * wrapper must open with it. The retired stage-3-only seat held a
+ * ~0.5s blank paper card over the plan at pRaw ≈ 0.39–0.48 on every
+ * desktop width (the audit's blank-box family, desktop arm); the
+ * findings crossfade itself (data-finding, below) still owns which
+ * finding reads — the wrapper only ever gated the whole ladder. */
+.jt[data-stage='2'] .jt-intro-findings,
+.jt[data-stage='3'] .jt-intro-findings,
+.jt[data-stage='4'] .jt-intro-findings {
+  opacity: 1;
 }
 
 /* the measured per-finding container boxes (136/115/128/128 @1440 —
@@ -1173,7 +1181,15 @@ section.chapters {
   }
 
   .jt-intro-findings {
-    position: static;
+    /* R349 (the mis-seat fix): RELATIVE, never static — the finding
+     * containers are absolutely seated (`inset-block-start: 0`) and
+     * need THIS wrapper as their containing block. The R342-11
+     * re-seat's `position: static` let every finding escape to the
+     * sticky window's origin — its first text line rendered UNDER
+     * the card's own dark «مقدمة» chip at every story beat (the
+     * audit's clipped-text-on-black-box defect). The relative seat
+     * restores the authored origin: chip, then the finding body. */
+    position: relative;
     /* R342-11: the measured finding box (10.2em) — the card stays
      * COMPACT during the story (one finding at a time, the reference's
      * own mobile furniture: its 390 card measures ~230px total). The
@@ -1195,6 +1211,20 @@ section.chapters {
     position: absolute;
     inset-block-start: 0;
     inset-inline: 0;
+  }
+
+  /* R349 (the blank-card belt): at ≤991 the card is forced open from
+   * frame one (`.jt-intro-body { block-size: auto }` above), but the
+   * findings machine keeps EVERY finding at opacity 0 until
+   * data-finding='1' (t 2.5 — ~25% of the phone track under the
+   * R330 warp) — the card rendered its dark «مقدمة» head over a
+   * ~10.2em EMPTY paper box through the whole caption era (the
+   * audit's blank-card defect). The phone pre-story beat now reads
+   * finding 1 — the machine for findings 1–5 is untouched, and the
+   * driver's own opacity writes still own every beat after the story
+   * starts (this seat only ever applies while data-finding='0'). */
+  .jt[data-finding='0'] .jt-intro-finding:nth-child(1) {
+    opacity: 1;
   }
 
   /* the phone's statement-era orange furniture (8px corner spot). */

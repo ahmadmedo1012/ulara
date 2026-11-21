@@ -71,16 +71,14 @@ const INDEX_TOP: { label: string; links: [string, string][] }[] = [
   },
 ];
 
-/* the col2 bottom CHANNELS group: single-line door links — [to, label],
- * all real public routes */
-const CHANNEL_LINKS: [string, string][] = [
-  ['/contact', 'التواصل'],
-  ['/about', 'عن أُلارا'],
-  ['/help', 'المساعدة'],
-  ['/legal/data', 'البيانات'],
-  ['/legal/privacy', 'الخصوصية'],
-  ['/legal/terms', 'الشروط'],
-];
+/* R349 (D3 · the channels retirement): the col2 CHANNELS group is
+ * RETIRED — every one of its six doors (التواصل/عن أُلارا/
+ * المساعدة/البيانات/الخصوصية/الشروط) already lives verbatim in the
+ * pinned ten-door legal row under the © bar. The audit's «repeated
+ * navigation strings» finding read the pair as a second sitemap;
+ * ONE index (col2's ruled groups) + ONE policy row (the r321 §A2
+ * contract) carry every public door now — no information lost, one
+ * full link row saved at every width. */
 
 /* R336 B2 (brand unification): the col3 hand-authored "construction
  * mark" (the MARK_PATHS orbit drawing — a SECOND visual identity that
@@ -241,17 +239,6 @@ export function Footer({ year }: { year: number }) {
                     claim lives verbatim in col1's paragraph; the address
                     keeps its one honest door. */}
                 <Link to="/about" className="fo-link">مساحة عمل أُلارا التجريبية</Link>
-              </div>
-              <div className="fo-lgroup">
-                <div className="fo-mono-label">CHANNELS</div>
-                <div className="fo-socials">
-                  {/* r341 (t05 · SPA links): every channels door is a
-                      real public route — router <Link>, same
-                      keys/classes/labels. */}
-                  {CHANNEL_LINKS.map(([to, label]) => (
-                    <Link key={to} to={to} className="fo-social">{label}</Link>
-                  ))}
-                </div>
               </div>
             </div>
           </div>

@@ -113,8 +113,14 @@ const FINDINGS_AR = [
 const CLOSE_CHIP_L1_AR = 'الفصول';
 const CLOSE_CHIP_L2_AR = '[04]';
 const CLOSE_TITLE_AR = 'الرحلة — أربعة فصول تتحرك أمامك';
+/* R349 (D5 · the closing copy's diet): the retired three-sentence
+ * block restated the funnel hint («وإنشاء الحساب في نهاية الصفحة» —
+ * the register CTA already rides five pinned surfaces) and the
+ * artwork-provenance aside; the two honest claims that carry the
+ * section's truth (no prettified captures · every room works today)
+ * stay, in half the words. */
 const CLOSE_COPY_AR =
-  'مرّر لتشاهد الرحلة تُبنى على مسطح واحد: لا لقطات مُجمّلة ولا وعودًا قادمة. كل غرفة في هذا المسطح ميزة تعمل اليوم داخل المنصّة — من قاعة المحاضرات إلى غرفة الإتقان — وإنشاء الحساب في نهاية الصفحة. المسطح رسم أصلي لأُلارا، والغرف تتّسع مع كل فصل جديد.';
+  'مرّر لتشاهد الرحلة تُبنى على مسطح واحد — لا لقطات مُجمّلة ولا وعودًا قادمة: كل غرفة ميزة تعمل اليوم داخل المنصّة، والغرف تتّسع مع كل فصل جديد.';
 
 /* the four-station ledger rows (the cms block — kept verbatim). */
 const LEDGER_AR = [
@@ -447,8 +453,14 @@ function sceneClock(t: number, pRaw: number): { stage: number; finding: string; 
  *    progress units; every write a pure function of pRaw, so the
  *    whole choreography scrubs both ways) ═════════════════════════ */
 
-/* the caption exits over the first 10% of the band. */
+/* the caption exits over the first 10% of the band — 2.5% ≤991
+ * (R349: the R330 mobile clock front-loads the plaque era into the
+ * first ~8% of the band, so the caption's exit and plaque 2's
+ * entrance read as ONE stacked collision on the short phone window;
+ * the phone exits the caption in the first quarter of that span,
+ * clearing the band for the plaque before it enters). */
 const CAPTION_EXIT_SPAN = 0.1;
+const CAPTION_EXIT_SPAN_MOBILE = 0.025;
 /* the thirteen fragments: start = 0.04 + (i/13)·0.42, dur 0.16 — the
  * last flight settles at ~0.59 (the first ~55–60% of the band). */
 const FRAG_START = 0.04;
@@ -463,14 +475,20 @@ const MARKER_STEP = 0.035;
 const MARKER_DUR = 0.05;
 /* the plate yields to the panel over 0.62→0.80. */
 const YIELD_AT: readonly [number, number] = [0.62, 0.18];
-/* the panel: the frame appears 0.62→0.66, unfolds 0.62→0.85, then
- * the header 0.85→0.90 and the rows stagger 0.86+ (the r325 clip
- * gate: no visible text ever rides the unfolding clip). */
+/* the panel: the frame appears 0.62→0.66, unfolds 0.62→0.74, then
+ * the header 0.76→0.82 and the rows stagger 0.78+ (the r325 clip
+ * gate: no visible text ever rides the unfolding clip).
+ * R349 (the blank-box belt): the retired 0.62→0.85 clip held a
+ * near-empty paper box over the yielding plate for ~23% of the
+ * band (~1,115px @1440 · ~918px @390) while the header waited at
+ * 0.85 — the audit's «blank white media box». The unfold now
+ * completes by 74% and every row settles by ~0.92, so the seat
+ * carries INK through its own growth instead of dead paper. */
 const PANEL_BOX_AT: readonly [number, number] = [0.62, 0.04];
-const PANEL_W_AT: readonly [number, number] = [0.62, 0.23];
-const PANEL_HEAD_AT: readonly [number, number] = [0.85, 0.05];
-const PANEL_ROW_AT = 0.86;
-const PANEL_ROW_STEP = 0.035;
+const PANEL_W_AT: readonly [number, number] = [0.62, 0.12];
+const PANEL_HEAD_AT: readonly [number, number] = [0.76, 0.06];
+const PANEL_ROW_AT = 0.78;
+const PANEL_ROW_STEP = 0.03;
 const PANEL_ROW_DUR = 0.05;
 
 export function IsoJourneyScene() {
@@ -542,11 +560,12 @@ export function IsoJourneyScene() {
    *    re-expressed as direct writes on the ONE driver frame (band
    *    progress windows; power2.out flights, back.out(2) pops). ── */
   function writeAssembly(track: HTMLElement, pRaw: number, mobile: boolean): void {
-    /* a · the caption exits over the first 10% (fade + an 18%-of-self
-     *     rise — the sandbox's yPercent −18). */
+    /* a · the caption exits over the first 10% of the band (2.5% ≤991 —
+     *     the front-loaded phone clock, see CAPTION_EXIT_SPAN_MOBILE);
+     *     fade + an 18%-of-self rise — the sandbox's yPercent −18). */
     const cap = captionRef.current;
     if (cap) {
-      const u = clamp01(pRaw / CAPTION_EXIT_SPAN);
+      const u = clamp01(pRaw / (mobile ? CAPTION_EXIT_SPAN_MOBILE : CAPTION_EXIT_SPAN));
       const o = 1 - u;
       setSheetVar(cap.style, 'opacity', o.toFixed(3));
       setSheetVar(cap.style, 'translate', `0 ${(-18 * u).toFixed(2)}%`);
@@ -780,9 +799,18 @@ export function IsoJourneyScene() {
       /* 4 · the statement plaques — plaque 1 stands from t 0 (the
        *     spec's rest state), out 1.0–1.4; plaque 2 in 1.6–2.0
        *     (the 0.2s dead gap keeps one voice at a time), out
-       *     2.5–3.0. */
+       *     2.5–3.0 at ≥992 / 2.2–2.6 ≤991 — R349: the phone camera
+       *     begins its portrait pan at t 2.2 (CAM_KEYS_PHONE), and the
+       *     held statement rode the panning drawing through the whole
+       *     2.2–3.0 span (ink-on-ink). The mobile exit now completes
+       *     BEFORE the pan sweeps under the seat; the desktop keeps
+       *     the measured window (its camera is the static overview). */
       writeCard(card1Ref.current, t, -1, -1, 1.0, 1.4);
-      writeFade(card2Ref.current, t, 1.6, 2.0, 2.5, 3.0);
+      if (mobile) {
+        writeFade(card2Ref.current, t, 1.6, 2.0, 2.2, 2.6);
+      } else {
+        writeFade(card2Ref.current, t, 1.6, 2.0, 2.5, 3.0);
+      }
 
       /* 5 · the r346 ASSEMBLY — the band-progress windows (the
        *     caption exit, the fragment flights, the marker pops, the
@@ -957,8 +985,14 @@ export function IsoJourneyScene() {
                     with the sheet and exits over the first 10% of the
                     scrub (the r346 sandbox's own exit). Authored
                     VISIBLE — the JS-off law keeps the statement
-                    readable; the driver hides it past its window. */}
-                <div className="jt-caption">
+                    readable; the driver hides it past its window.
+                    R349 (the dead-ref fix): the caption's ref seat was
+                    NEVER attached — the exit window (assembly step a)
+                    was dead code and the statement rode the drawing
+                    for the band's whole scrub (the audit's
+                    heading-over-artwork defect at every width). The
+                    ref lands; the exit breathes again. */}
+                <div className="jt-caption" ref={captionRef}>
                   <p className="jt-caption-kicker fo-mono">{CAPTION_KICKER_AR}</p>
                   <p className="jt-caption-line">{CAPTION_LINE_AR}</p>
                   <div className="jt-caption-meta" aria-hidden="true">
