@@ -129,3 +129,32 @@ verify.sh --fast ALL GREEN (3009 tests, bundle 752.9/770).
   scrollable content at ≤390 only (inherent to any fixed dock; the
   78px+safe-area content pad guarantees the last row scrolls above it —
   the r351 e2e pins encode desktop=0 + mobile=clearance).
+
+## Review fixes (commit 11) — the independent sub-agent review, addressed
+
+Findings (agent-8444, all substantive ones fixed):
+1. HIGH: six stale e2e specs → all updated (student-dashboard greeting/
+   week/AVG/ruler pins, r319-dashboard-material 4-bar contract + strip
+   geometry, r319-leaks repointed at the profile page + the poisoned
+   DOM sweep, r319-student-pages-a/b index retirements, teacher-grading
+   queue card). Re-run green.
+2. HIGH: ScheduleStrip empty-day removal broke the 7-track grid — every
+   day keeps its pinned track (gridColumn), empty days render their
+   muted mono date only (name rides today + active days), today keeps
+   its dash.
+3. MEDIUM a11y: sr counted nouns restored (countAr) — the visible mono
+   counts are aria-hidden, so the spoken noun carries the number.
+4. MEDIUM: the chart sr-table retirement comments now honest (kept
+   retired — labeled chart + summary carry the alternative; documented
+   tradeoff vs the 180-word owner target).
+5. MEDIUM: AdminPages EmptyStates got description="" (the omitted prop
+   fell back to the generic default prose — the opposite of the cut);
+   both ternaries' structure repaired from HEAD.
+6. MEDIUM: the upcoming-commitment information loss — the retired week
+   section's data joins the ONE TodayList (one lookahead row, DUE chip
+   carries the deadline); the student dashboard stays at exactly 180.
+7. LOW: dead later/weekGroups block, the loading frame's third RowList,
+   11 orphaned CSS rules (.sidebar-logout/.week-item/.dash-week-*/
+   .r319s-bar-index), stale comments — swept.
+Final: verify.sh ALL GREEN (3009 unit, 16/16 r351 e2e + the full
+affected fleet, bundle 747.8/770, a11y 19 ≤ floor).

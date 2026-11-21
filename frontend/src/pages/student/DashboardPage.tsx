@@ -689,22 +689,16 @@ export default function StudentDashboardPage() {
   endOfToday.setHours(23, 59, 59, 999);
   const today = agenda.filter((it) => it.whenMs <= endOfToday.getTime());
   const exams = agenda.filter((it) => it.kind === 'exam');
-  const later = agenda.filter((it) => it.whenMs > endOfToday.getTime() && it.kind !== 'exam');
-
-  // Week ledger grouping — by the row's own calendar day (day name +
-  // mono date), preserving the chronological order.
-  const weekGroups: Array<{ key: string; day: string; date: string; items: AgendaItem[] }> = [];
-  for (const it of later) {
-    const dt = it.whenMs === Number.MAX_SAFE_INTEGER ? null : new Date(it.whenMs);
-    const day = dt
-      ? formatDate(dt, { weekday: 'long' })
-      : 'موعد غير محدّد';
-    const date = dt ? formatDate(dt, { day: 'numeric', month: 'numeric' }) : '';
-    const key = `${day}-${date}`;
-    const last = weekGroups[weekGroups.length - 1];
-    if (last && key === last.key) last.items.push(it);
-    else weekGroups.push({ key, day, date, items: [it] });
-  }
+  /* r351 A2 (Q3, review fix): the «أسبوعك القادم» SECTION retired
+     (three time surfaces on one screen) — but its information stays:
+     the beyond-today, non-exam remainder joins the ONE TodayList after
+     today's rows, at the calm `later` urgency with its honest DUE chip
+     (the week strip carries the glance; the calendar owns the rest). */
+  /* Classes stay in the week strip + the schedule page (their compact
+     home); the deadline commitments join the list — they need action. */
+  const upcoming = agenda.filter(
+    (it) => it.whenMs > endOfToday.getTime() && it.kind !== 'exam' && it.kind !== 'class',
+  ).slice(0, 1); // r351: ONE lookahead row — the calendar owns the rest
 
   const now = new Date();
   const dateLine = formatDate(now, { weekday: 'long', day: 'numeric', month: 'long' });
@@ -870,6 +864,18 @@ export default function StudentDashboardPage() {
                 meta: item.meta,
                 to: item.to,
                 urgency: (item.tone === 'red' ? 'now' : item.tone === 'accent' ? 'now' : 'soon') as 'now' | 'soon',
+                action: <StatusChip label={chip.label} tone={chip.tone} />,
+              };
+            }),
+            ...upcoming.map((item) => {
+              const chip = agendaChip(item, now.getTime());
+              return {
+                id: item.id,
+                title: nodeText(item.title),
+                /* r351 A2 (Q3): the DUE chip carries the deadline — the
+                   relative-date meta stays on TODAY's rows only. */
+                to: item.to,
+                urgency: 'later' as const,
                 action: <StatusChip label={chip.label} tone={chip.tone} />,
               };
             }),

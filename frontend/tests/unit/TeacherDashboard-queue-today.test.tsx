@@ -318,9 +318,9 @@ describe('TeacherDashboardPage — feed action hierarchy + spoken queue counts (
     const visual = document.querySelector('.tq-num');
     expect(visual).not.toBeNull();
     expect(visual).toHaveAttribute('aria-hidden', 'true');
-    /* r351 A2 (Q3): the sr noun is the bare word («تسليمات») — the
-       visible mono count sits right beside it, so SR reads the pair
-       without the number being spoken twice. */
-    expect(screen.getAllByText('تسليمات').some((el) => el.classList.contains('visually-hidden'))).toBe(true);
+    /* r351 review fix 3: the sr noun is the FULL counted form again
+       (countAr) — the visible mono count is aria-hidden, so the number
+       must ride the spoken noun. */
+    expect(screen.getByText('تسليمان')).toHaveClass('visually-hidden');
   });
 });

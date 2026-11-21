@@ -484,8 +484,9 @@ export function OwnerDashboardPage() {
             ariaLabel="مخطط دائري يوزّع مستخدمي المنصّة على الأدوار: طلاب وأساتذة وإداريّون وفريق جودة"
             summary={chartSummary}
             /* r351 A2 (Q3): the sr-only distribution table retired —
-               the KPI row prints the same counts; the chart keeps
-               role=img + aria-label + summary. */
+               the chart keeps role=img + aria-label + the summary (the
+               top-two counts stay in the KPI hint); a data alternative
+               was judged duplicative for the budget. */
           >
             <Doughnut key={themeKey} data={chartData} options={chartOptions} />
           </ChartFrame>

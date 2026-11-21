@@ -438,20 +438,11 @@
       margin-block-end: var(--sp-2);
     }
   }
-  .sidebar-logout {
-    inline-size: 32px; block-size: 32px;
-    display: inline-flex; align-items: center; justify-content: center;
-    color: var(--text-muted);
-    border-radius: var(--r-xs);
-    transition: var(--t-clean);
-  }
   /* R319 (c1-A · B1): the destructive ghost — the rose pair travels
      whole (bg + ink), guarded to fine pointers; on touch the press
      twin below carries it. */
   @media (hover: hover) and (pointer: fine) {
-    .sidebar-logout:hover { background: var(--c-rose-bg); color: var(--c-rose-deep); }
   }
-  .sidebar-logout:active { background: var(--c-rose-bg); color: var(--c-rose-deep); transition-duration: var(--motion-duration-micro); }
 
   .sidebar-backdrop {
     position: fixed; inset: 0;
@@ -573,7 +564,6 @@
        declarations of later layers at used-value time, so the visual
        language of the buttons is untouched — only the hit area grows. */
     .sidebar-mobile-close { min-inline-size: 44px; min-block-size: 44px; }
-    .sidebar-logout { min-inline-size: 44px; min-block-size: 44px; }
 
     /* ── R319 (c1-A · B1b): the reference's menu grammar, drawer band ────── */
 

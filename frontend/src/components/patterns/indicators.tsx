@@ -406,19 +406,25 @@ export function ScheduleStrip({
       {WEEKDAY_NAMES_AR.map((name, i) => {
         const slots = columns[i] ?? [];
         const date = new Date(weekStart.getTime() + i * DAY_MS);
-        /* r351 A2 (Q3): an EMPTY day renders nothing — the strip shows
-           the week's commitments, not seven dashes of absence (today
-           stays even when empty: the ink-filled header is the strip's
-           anchor). */
-        if (slots.length === 0 && i !== todayDow) return null;
+        /* r351 A2 (Q3, review fix 2): an EMPTY day keeps its GRID TRACK
+           (the strip is repeat(7, 1fr) — dropping children would shift
+           later days into the wrong weekday columns) but renders only
+           its muted header: no dash, no slots. Today stays full even
+           when empty (the ink-filled header is the strip's anchor). */
         return (
           <div
             key={name}
-            className={`ind-sched-day${i === todayDow ? ' ind-sched-day--today' : ''}`}
+            className={`ind-sched-day${i === todayDow ? ' ind-sched-day--today' : ''}${slots.length === 0 && i !== todayDow ? ' ind-sched-day--empty' : ''}`}
             aria-current={i === todayDow ? 'date' : undefined}
+            style={{ gridColumn: `${i + 1}` }}
           >
             <span className="ind-sched-head">
-              <span className="ind-sched-dayname">{name}</span>
+              {/* r351 A2 (Q3): the day NAME rides today's column alone
+                  (the reference calendar register: mono dates everywhere,
+                  the name only where you are). */}
+              {(i === todayDow || slots.length > 0) && (
+                <span className="ind-sched-dayname">{name}</span>
+              )}
               <bdi className="ind-mono ind-sched-date" dir="ltr" aria-hidden="true">
                 {date.getDate()}
               </bdi>
@@ -426,7 +432,10 @@ export function ScheduleStrip({
             </span>
             <span className="ind-sched-slots">
               {slots.length === 0 ? (
-                <span className="ind-sched-free" aria-hidden="true">—</span>
+                /* r351: only TODAY renders its honest empty dash; the
+                   other empty days carry nothing (word budget + the
+                   muted header already says «free»). */
+                i === todayDow ? <span className="ind-sched-free" aria-hidden="true">—</span> : null
               ) : (
                 slots.map((slot) => (
                   <span key={slot.id} className="ind-sched-slot">

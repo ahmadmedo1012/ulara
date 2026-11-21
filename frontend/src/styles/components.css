@@ -2926,24 +2926,7 @@
   /* ── 8 · Ledger internals: week items + empty + link cells ──────
      (r189 follow-up: the week ledger's inner rows — smaller than
      ledger rows, they ride INSIDE a WeekRow's content column) */
-  .week-rows { display: flex; flex-direction: column; min-inline-size: 0; }
-  .week-item {
-    display: flex;
-    align-items: baseline;
-    gap: var(--sp-2);
-    padding: var(--sp-1) 0;
-    color: inherit;
-    text-decoration: none;
-    min-inline-size: 0;
-  }
   @media (hover: hover) and (pointer: fine) {
-    .week-item:hover .week-item-title { color: var(--accent-strong); }
-  }
-  .week-item-title {
-    font-size: var(--fs-sm);
-    font-weight: var(--fw-medium);
-    min-inline-size: 0;
-    transition: color var(--t-fast) var(--ease);
   }
   .week-item-meta {
     font-size: var(--fs-xs);

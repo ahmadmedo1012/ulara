@@ -224,7 +224,6 @@ export function TeacherDashboardPage() {
           <PageHeader title="لوحة الأستاذ" description="جارٍ تحضير لوحتك…" />
           <RowList loading aria-label="ملخص نشاط التدريس" />
           <RowList loading aria-label="طابور التصحيح" />
-          <RowList loading aria-label="طلاب يحتاجون متابعة" />
           <Card title="اتجاه الأداء والحضور">
             <ChartSkeleton height={240} />
           </Card>
@@ -296,7 +295,7 @@ export function TeacherDashboardPage() {
             )}
             <span className="hr-chip" data-tone={visible.length === 0 ? 'ok' : 'ember'}>
               <bdi className="font-mono" dir="ltr">{visible.length}</bdi>
-              <span className="sr-only">متابعات</span>
+              <span className="sr-only">{countAr(visible.length, ['عنصر يحتاج متابعة', 'عنصران يحتاجان متابعة', 'عناصر تحتاج متابعة', 'عنصراً يحتاج متابعة'])}</span>
             </span>
           </>
         }
@@ -578,7 +577,7 @@ function PendingGradingQueue({ entries }: { entries: TeacherDashboard['pendingGr
                       hear the per-row submission count. */}
                   <span className="tq-num tqd-count" aria-hidden="true">{formatNum(e.count)}</span>
                   <span className="visually-hidden">
-                    {'تسليمات'}
+                    {countAr(e.count, ['تسليم واحد', 'تسليمان', 'تسليمات', 'تسليماً'])}
                   </span>
                 </>
               }
@@ -631,7 +630,6 @@ function TodayLectures() {
         <TodayList
           items={slots.map((slot) => {
             const phase = slotPhase(slot, now);
-            const phaseLabel = phase === 'done' ? 'انتهت' : phase === 'ongoing' ? 'جارٍ الآن' : 'قادمة';
             return {
               id: slot.key,
               to: '/teacher/schedule',
@@ -640,7 +638,6 @@ function TodayLectures() {
                 <>
                   <bdi>{slot.startTime} — {slot.endTime}</bdi>
                   {slot.room ? <> · {slot.room}</> : null}
-                  {' · '}{phaseLabel}
                 </>
               ),
               urgency: phase === 'ongoing' ? 'now' : phase === 'upcoming' ? 'soon' : 'later',

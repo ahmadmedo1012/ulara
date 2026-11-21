@@ -392,10 +392,10 @@ export function AdminDashboardPage() {
               carries no distribution signal — degrade to the stat + its
               drill link instead of the lonely-bar form. */}
           {topByStudents.length === 0 ? (
-            <EmptyState illustration="empty-list"
+            <EmptyState
               icon={BarChart3}
               title="لا توجد بيانات طلاب بعد"
-              
+              description=""
             />
           ) : topByStudents.length === 1 && topFaculty ? (
             <div className="flex-col gap-3">
@@ -495,10 +495,10 @@ export function AdminDashboardPage() {
 
       <Card title={<>نشاط الإنتاج العلميّ — آخر 6 أشهر</>} icon={TrendingUp} subtitle="أبحاث مقدَّمة، مقيَّمة، ومنشورة شهرياً">
         {r.paperTrend.length === 0 || r.paperTrend.every((m) => m.submitted + m.graded + m.published === 0) ? (
-          <EmptyState illustration="empty-research"
+          <EmptyState
             icon={TrendingUp}
             title="لا توجد بيانات أبحاث بعد"
-            
+            description=""
           />
         ) : (
           <ChartFrame
