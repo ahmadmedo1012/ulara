@@ -95,6 +95,16 @@
   inline-size: 100%;
   block-size: 100%;
   object-fit: cover;
+  /* r351 P4 — the shared displacement-ink filter (the B0 §5 constants;
+     the defs ride StatementDraft's svg seat). STATIC displacement — no
+     motion, nothing for the RM belt to collapse. */
+  filter: url('#st-ink-displace');
+}
+
+.st-draft-defs {
+  position: absolute;
+  inline-size: 0;
+  block-size: 0;
 }
 /* the tonal veil the reference draws as a filtered svg — ours is a
    transparent-background svg whose rect carries the ink (the record's

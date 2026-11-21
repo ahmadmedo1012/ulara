@@ -24,7 +24,7 @@
  * styles/landing/footer.css — the geometry lives there, in tokens.
  */
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { RevealCssClass } from '../../../hooks/useReveal';
 import { Logo } from '../../../brand';
 import { BRAND_LABEL, LOGIN } from '../copy';
@@ -89,6 +89,24 @@ const INDEX_TOP: { label: string; links: [string, string][] }[] = [
 
 export function Footer({ year }: { year: number }) {
   const [email, setEmail] = useState('');
+
+  /* r351 P4 — the pointer-lens tracker (fine pointers only): the lens
+   * vars ride the banner imperatively (no React state, no re-render);
+   * the fill twin's visibility is CSS-gated (hover + no-RM). */
+  const lensRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = lensRef.current;
+    if (!el || typeof window.matchMedia !== 'function') return undefined;
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return undefined;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    const onMove = (e: PointerEvent) => {
+      const r = el.getBoundingClientRect();
+      el.style.setProperty('--lens-x', `${Math.round(e.clientX - r.left)}px`);
+      el.style.setProperty('--lens-y', `${Math.round(e.clientY - r.top)}px`);
+    };
+    el.addEventListener('pointermove', onMove, { passive: true });
+    return () => el.removeEventListener('pointermove', onMove);
+  }, []);
 
   return (
     <footer className="fo-footer" data-spec="footer.root" aria-label={BRAND_LABEL}>
@@ -287,10 +305,18 @@ export function Footer({ year }: { year: number }) {
           </button>
         </div>
 
-        <div className="fo-giant-banner" aria-hidden="true">
+        {/* ── the closing banner — the outline wordmark with OUR OWN
+            pointer-lens reveal (r351 P4): the accent fill twin sits in
+            the same grid cell behind the stroked outline, revealed
+            through a pointer-following radial mask (fine pointers, CSS
+            media-gated; the lens vars are written imperatively — zero
+            React state). The reference's own lens was never extracted;
+            this is Ulara's own design in the same register. ── */}
+        <div className="fo-giant-banner" aria-hidden="true" ref={lensRef}>
           <span className="fo-giant-plus fo-giant-plus-tl">+</span>
           <span className="fo-giant-plus fo-giant-plus-tr">+</span>
           <div className="fo-giant-text">ULARA // أُلارا</div>
+          <div className="fo-giant-text fo-giant-fill">ULARA // أُلارا</div>
           <span className="fo-giant-plus fo-giant-plus-bl">+</span>
           <span className="fo-giant-plus fo-giant-plus-br">+</span>
         </div>

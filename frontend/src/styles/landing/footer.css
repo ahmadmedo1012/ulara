@@ -630,13 +630,14 @@ footer.fo-footer {
   padding: var(--sp-2) 0;
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
-  display: flex;
+  display: grid;
   justify-content: center;
   align-items: center;
   overflow: hidden;
 }
 
 .fo-giant-text {
+  grid-area: 1 / 1;
   font-family: var(--font-sans);
   /* r351 P3 — the closing outline steps down one rung (the colophon
      is the footer's voice; the banner is its signature, not its bulk) */
@@ -656,6 +657,29 @@ footer.fo-footer {
 .fo-giant-banner:hover .fo-giant-text {
   opacity: 1;
   -webkit-text-stroke: 1.5px var(--accent);
+}
+
+/* r351 P4 — the pointer-lens fill twin: the accent fill revealed
+   through the pointer-following radial mask (the vars ride the banner
+   imperatively; fine pointers only, never under RM). */
+.fo-giant-fill {
+  color: var(--accent);
+  -webkit-text-stroke: 0;
+  opacity: 0;
+  transition: opacity var(--t-base) var(--ease);
+  mask-image: radial-gradient(circle 11rem at var(--lens-x, 50%) var(--lens-y, 50%), var(--text) 0 62%, transparent 82%);
+  mask-repeat: no-repeat;
+  pointer-events: none;
+}
+
+.fo-giant-banner:hover .fo-giant-fill {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fo-giant-fill {
+    display: none;
+  }
 }
 
 .fo-giant-plus {
@@ -721,6 +745,21 @@ footer.fo-footer {
   .fo-giant-banner .fo-giant-text {
     color: transparent;
     -webkit-text-stroke: 1.5px var(--text);
+  }
+}
+
+/* r351 P4 — the lens fill's own seat: (0,2,0) AFTER the stroke block
+   so the twin keeps its solid accent fill inside the mask circle */
+.fo-giant-banner .fo-giant-fill {
+  color: var(--accent);
+  -webkit-text-stroke: 0;
+  text-stroke: 0;
+}
+
+@supports (-webkit-text-stroke: 1px black) {
+  .fo-giant-banner .fo-giant-fill {
+    color: var(--accent);
+    -webkit-text-stroke: 0;
   }
 }
 

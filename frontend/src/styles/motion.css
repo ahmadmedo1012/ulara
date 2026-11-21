@@ -571,3 +571,51 @@
     }
   }
 }
+
+/* ═══ r351 P4 — the route transition: the measured reference arc ═══
+   The keyed remount inside PageTransition replays the OPEN leg on every
+   route change: the content grows from the sheet's centreline
+   (clip-path inset 50% → 0, 0.7s power2.out — the B0-measured curve:
+   50→44.2→21.9→13.3→6.8→2.2→0.3→0%). The CLOSE leg (inset 0 → 50%,
+   0.6s power2.in) needs the shell's own pending-navigation state — its
+   CSS seat is ready below (.is-route-leaving); A2 owns the class flip.
+   API untouched: { children, className }. */
+
+.page-transition {
+  position: relative;
+}
+
+.page-transition-inner {
+  /* backwards, not both: the held `to` clip (inset 0) would keep a live
+     clip-path — and a containing block for fixed descendants — on the
+     shell forever; after the wipe the box returns to clip-path: none */
+  animation: pt-open 0.7s cubic-bezier(0.215, 0.61, 0.355, 1) backwards;
+}
+
+@keyframes pt-open {
+  from {
+    clip-path: inset(50% 0%);
+  }
+  to {
+    clip-path: inset(0% 0%);
+  }
+}
+
+/* the close leg's seat — inert until the shell flips the class */
+.page-transition.is-route-leaving .page-transition-inner {
+  animation: pt-close 0.6s cubic-bezier(0.55, 0.055, 0.675, 0.19) both;
+}
+
+@keyframes pt-close {
+  to {
+    clip-path: inset(50% 0%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-transition-inner,
+  .page-transition.is-route-leaving .page-transition-inner {
+    animation: none;
+    clip-path: none;
+  }
+}
