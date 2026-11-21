@@ -390,7 +390,7 @@
   display: inline-flex;
   align-items: baseline;
   gap: var(--sp-1);
-  padding: 2px var(--sp-2);
+  padding: var(--sp-0-5) var(--sp-2);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm, 2px);
   font-size: var(--fs-xs);
@@ -416,5 +416,9 @@ a.ai-cite-chip:focus-visible {
   .ai-cite-chip { min-block-size: 44px; align-items: center; }
 }
 @media (prefers-reduced-motion: no-preference) {
-  a.ai-cite-chip { transition: border-color 120ms ease, color 120ms ease; }
+  a.ai-cite-chip {
+    transition:
+      border-color var(--motion-duration-micro) var(--motion-ease-standard),
+      color var(--motion-duration-micro) var(--motion-ease-standard);
+  }
 }
