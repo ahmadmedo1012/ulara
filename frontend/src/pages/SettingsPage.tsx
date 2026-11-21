@@ -174,9 +174,9 @@ export default function SettingsPage() {
         <EmptyCell
           label="عبر الطلب"
           note={
-            /* r351 A2 (Q3): the privacy-policy link rides the legal nav;
-               one line + one action. */
-            <>استخدم <Link to="/contact">قناة التواصل</Link> — تُنفَّذ يدويًا في هذه المرحلة.</>
+            /* r351 A2 (Q3): one line + one action — the privacy policy
+               keeps its channel seat (pinned by the r320 test). */
+            <>استخدم <Link to="/contact">قناة التواصل</Link> — وما نجمعه في <Link to="/legal/privacy">سياسة الخصوصية</Link>.</>
           }
           action={<Link to="/contact" className="btn lg"><Icon icon={Bell} size={16} />فتح قناة التواصل</Link>}
         />
