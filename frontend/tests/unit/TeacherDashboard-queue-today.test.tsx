@@ -20,7 +20,7 @@
  * even mounts).
  */
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import {
   TeacherDashboardPage,
@@ -248,8 +248,14 @@ describe('TeacherDashboardPage — the daily-work trio (r164-h)', () => {
     renderDashboard();
 
     expect(screen.getByText('محاضرات اليوم')).toBeInTheDocument();
-    // The today slot's time range rides the row (bdi).
-    expect(screen.getByText('08:00 — 09:30')).toBeInTheDocument();
+    // The today slot's time range rides the row (bdi) — scoped INSIDE
+    // the strip's own section (r348: the header's next-commitment block
+    // legitimately renders the same range, so the page-level query
+    // would match twice; the section-scoped query is the stronger pin —
+    // the range must live IN the strip).
+    const stripSection = document.querySelector('section[aria-label="محاضرات اليوم"]');
+    expect(stripSection).not.toBeNull();
+    expect(within(stripSection as HTMLElement).getByText('08:00 — 09:30')).toBeInTheDocument();
     // A slot on another weekday never leaks into today's strip.
     expect(screen.queryByText('14:00 — 15:30')).toBeNull();
     // The slot row + the «الجدول الأسبوعيّ» action both link to the

@@ -201,6 +201,12 @@ export function TeacherDashboardPage() {
   const dash = useTeacherDashboard();
   // Remounts the chart canvas when the light/dark theme flips.
   const themeKey = useChartThemeKey();
+  // r348 (the dead-left-half fix): the header's inline-end status strip
+  // seats the ONE next commitment of today beside the follow-up chip.
+  // The offerings query is shared with TodayLectures below (react-query
+  // dedupes — one request), and the hook rides BEFORE the early returns
+  // so the mirror frames keep one hook order.
+  const offsQ = useTeacherOfferings();
 
   const visible = useMemo(() => {
     if (!dash.data) return [];
@@ -216,6 +222,15 @@ export function TeacherDashboardPage() {
       attendance: feed.filter((f) => f.kind === 'attendance').length,
     } as Record<FeedFilter, number>;
   }, [dash.data]);
+
+  // The header's next-commitment block (r348): the first slot whose
+  // phase isn't «done» — an ongoing lecture reads «جارٍ الآن», an
+  // upcoming one reads «التالية». Composed from the SAME schedule the
+  // [02] strip renders; nothing here is fabricated, and an empty day
+  // renders no block at all (the chip keeps the strip alone).
+  const now = new Date();
+  const allSlots = offsQ.data ? todaySlots(offsQ.data, now) : [];
+  const nextSlot = allSlots.find((s) => slotPhase(s, now) !== 'done') ?? null;
 
   if (dash.isPending) {
     /* r242 (Superlist composition): the loading frame mirrors what lands —
@@ -289,13 +304,29 @@ export function TeacherDashboardPage() {
           </>
         }
         actions={
-          /* R305 DS: the follow-ups count rides the status-chip
-           * vocabulary — ember when work waits, green when clear. */
-          <span className="hr-chip" data-tone={visible.length === 0 ? 'ok' : 'ember'}>
-            {visible.length === 0
-              ? 'لا عناصر تحتاج متابعة'
-              : countAr(visible.length, ['عنصر يحتاج متابعة', 'عنصران يحتاجان متابعة', 'عناصر تحتاج متابعة', 'عنصراً يحتاج متابعة'])}
-          </span>
+          /* r348 — the header's inline-end status strip (the dead-left-
+           * half fix, measured x=144..283 chip vs x=918 text at 1440):
+           * the ONE next commitment of today + the follow-up chip give
+           * the far half real data to hold. An empty day keeps the chip
+           * alone — nothing is fabricated. */
+          <>
+            {nextSlot && (
+              <span className={`td-hero-next${slotPhase(nextSlot, now) === 'ongoing' ? ' td-hero-next--live' : ''}`}>
+                <span className="td-hero-next-label">
+                  {slotPhase(nextSlot, now) === 'ongoing' ? 'جارٍ الآن' : 'التالية اليوم'}
+                </span>
+                <span className="td-hero-next-course">{nextSlot.courseName}</span>
+                <bdi className="td-hero-next-time">
+                  {nextSlot.startTime} — {nextSlot.endTime}
+                </bdi>
+              </span>
+            )}
+            <span className="hr-chip" data-tone={visible.length === 0 ? 'ok' : 'ember'}>
+              {visible.length === 0
+                ? 'لا عناصر تحتاج متابعة'
+                : countAr(visible.length, ['عنصر يحتاج متابعة', 'عنصران يحتاجان متابعة', 'عناصر تحتاج متابعة', 'عنصراً يحتاج متابعة'])}
+            </span>
+          </>
         }
       />
 
@@ -303,6 +334,10 @@ export function TeacherDashboardPage() {
           Tones are semantic only: work waiting reads amber, healthy
           numbers stay neutral. */}
       <StatLine
+        /* r348: spread seats the four stats across the sheet's full line
+         * (the inline-end half held ~440px of dead paper at 1440); the
+         * two not-yet data wear the honest-empty register. */
+        spread
         items={[
           {
             label: 'طلابك',
@@ -314,12 +349,14 @@ export function TeacherDashboardPage() {
             value: d.kpi.avgGradePct !== null ? `${formatPct1(d.kpi.avgGradePct)}%` : '—',
             hint: d.kpi.avgGradePct === null ? 'لا تقييمات بعد' : 'كل التقييمات المعتمدة',
             tone: d.kpi.avgGradePct === null || d.kpi.avgGradePct >= 70 ? 'neutral' : 'warning',
+            empty: d.kpi.avgGradePct === null,
           },
           {
             label: 'الحضور',
             value: d.kpi.attendancePct !== null ? `${formatPct1(d.kpi.attendancePct)}%` : '—',
             hint: d.kpi.attendancePct === null ? 'لا جلسات حضور بعد' : 'كل الجلسات المسجّلة',
             tone: d.kpi.attendancePct === null || d.kpi.attendancePct >= 75 ? 'neutral' : 'warning',
+            empty: d.kpi.attendancePct === null,
           },
           {
             label: 'بحاجة تقييم',

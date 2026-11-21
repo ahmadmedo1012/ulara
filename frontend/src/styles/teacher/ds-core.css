@@ -686,6 +686,56 @@
    ink so the sentence — not the glyph — carries the caution. */
 .hr-scope .hr-note > svg { flex: none; color: var(--text-muted); }
 
+/* ── r348 · the header's next-commitment strip (§A tqd- family) ──────
+   The teacher hero's dead-left-half fix (r347 audit, measured at 1440:
+   the actions slot held ONE chip at x=144..283 while the text block sat
+   at x=918..1224 — ~600px of paper between). The header's inline-end
+   zone now carries the ONE next commitment of today beside the
+   follow-up chip: a quiet data cluster (micro-label · course name ·
+   mono time run) in the chrome register — data, never decoration; an
+   empty day renders no block at all. The live phase (جارٍ الآن) gets
+   the ember voice — the ONE signal this sheet already speaks. */
+.td-hero-next {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+  padding-inline-start: var(--sp-3);
+  border-inline-start: 1px solid var(--rule);
+  min-inline-size: 0;
+}
+.td-hero-next-label {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.td-hero-next--live .td-hero-next-label { color: var(--hr-ember); }
+.td-hero-next-course {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--text);
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.td-hero-next-time {
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-sm);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+@media (max-width: 920px) {
+  /* The phone band: the strip drops below the title as its own row
+     (the header-main's flex-wrap) and loses the separator — it reads
+     as a meta line there, not a side cluster. */
+  .td-hero-next {
+    border-inline-start: 0;
+    padding-inline-start: 0;
+    flex-wrap: wrap;
+  }
+}
+
 /* [§E-END] */
 
 }
