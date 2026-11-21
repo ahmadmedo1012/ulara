@@ -879,17 +879,93 @@
   /* R313 (D16): the zebra-on-hover wash is RETIRED — paper + hairlines
      only; hover affordance stays with the row-action reveal below. */
 
+  /* r349 (wave 3) — the family RESTORED. The 1.0 squash shipped this
+     section as comment shells: every §TABLE rule body was stripped by
+     a pre-squash orphan sweep while 15 consumer pages kept emitting
+     the classes (live-measured: .table-wrap computed overflow-x
+     visible; .tbl-stack tables kept table layout at 320px —
+     /student/downloads' 397px grid clipped 122px past .content's
+     overflow-x:clip, unreachable). Anatomy rebuilt from the family's
+     own surviving contracts: admin.css §1 ("the canonical .table
+     already owns the surface: hairline rows, surface-2 header band,
+     hover tint"), the ds-admin-owner density deltas that presuppose
+     this base, legal.css's sibling card recipe, and the §TABLE ladder
+     docblock above. Values token-only; radius rides the r313 flat
+     ladder (all zero) so the wrap frame is the hairline itself. */
+
+  /* The wrap — the scroll contract: the table scrolls in place, the
+     page never drags. Fine outline + the (flat) r-lg corner. */
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--rule);
+    border-radius: var(--r-lg);
+  }
+
+  /* The base anatomy. border-separate (spacing 0) — with collapse,
+     a sticky thead's hairline does not travel with the pinned cell
+     while the wrap scrolls; separate keeps every block-end rule
+     painted by its own cell, pixel-identical at spacing 0. */
+  .table {
+    inline-size: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: var(--fs-sm);
+  }
+  .table thead th {
+    text-align: start;
+    padding: var(--sp-3) var(--sp-4);
+    font-size: var(--fs-xxs);
+    font-weight: var(--fw-semibold);
+    color: var(--text-muted);
+    background: var(--surface-2);
+    border-block-end: 1px solid var(--rule);
+    white-space: nowrap;
+  }
+  .table tbody td {
+    padding: var(--sp-3) var(--sp-4);
+    text-align: start;
+    border-block-end: 1px solid var(--rule);
+  }
+  .table tbody tr:last-child td { border-block-end: 0; }
+  @media (hover: hover) and (pointer: fine) {
+    .table tbody tr:hover { background: var(--surface-2); }
+  }
+
   /* Emphasized cell — the leading name/title column of the tables
      (9 live usages; was referenced but undefined → silent no-op). */
+  .table .tbl-strong {
+    font-weight: var(--fw-semibold);
+    color: var(--text-strong);
+  }
 
   /* Opt-in sticky header: the wrap becomes the capped scroll container
-     so the pinned header never slides under the sticky topbar. */
+     so the pinned header never slides under the sticky topbar. The
+     cap retires ≤640 — rung 1 stacks to cards there and a capped
+     card list would be a nested scroll trap (the r349 notification
+     lesson), and the stack hides the thead anyway. */
+  .table-wrap.sticky thead th {
+    position: sticky;
+    inset-block-start: 0;
+    background: var(--surface-2);
+  }
+  @media (min-width: 641px) {
+    .table-wrap.sticky {
+      max-block-size: min(60vh, 30rem);
+      overflow-y: auto;
+    }
+  }
 
   /* CSS-only action reveal: actions parked in the last cell (e.g. a
      .table-row-actions cluster of icon buttons) stay hidden until the
      row is hovered — or focused, so keyboard paths stay visible.
      Touch devices (hover: none) show them persistently. */
   @media (hover: hover) and (pointer: fine) {
+    .table-row-actions {
+      opacity: 0;
+      transition: opacity var(--app-t-hover) var(--ease);
+    }
+    .table-row-actions:focus-within,
+    .table tbody tr:hover .table-row-actions { opacity: 1; }
   }
 
   /* ╔═══════════════════════════════════════════════════════════════╗
@@ -913,24 +989,110 @@
   @media (max-width: 640px) {
     /* r304 fold (ex «final-visual-system»): phones get the tighter
        r-md container corner on the same box the desktop gives r-lg. */
-    /* Cards don't zebra — parity with the old overrides-layer home
-       (the wrap-scroller's hover never applied to stacked cards). */
+    .table-wrap { border-radius: var(--r-md); }
+
+    /* r349 (wave 3) — rung 1 STACK restored per the docblock: legal's
+       sibling card recipe (§A4) is the grammar — hairline cards, one
+       per row, each field a labelled line. Cards don't zebra — parity
+       with the old overrides-layer home (the wrap-scroller's hover
+       never applied to stacked cards). */
+    .table.tbl-stack,
+    .table.tbl-stack tbody { display: block; }
+    .table.tbl-stack thead { display: none; }
+    .table.tbl-stack tr {
+      display: block;
+      border: 1px solid var(--rule);
+      border-radius: var(--r-sm);
+      padding: var(--sp-3) var(--sp-4);
+    }
+    .table.tbl-stack tr + tr { margin-block-start: var(--sp-3); }
+    .table.tbl-stack td {
+      display: block;
+      padding: var(--sp-1) 0;
+      text-align: start;
+      border-block-end: 0;
+    }
+    .table.tbl-stack td[data-label]::before {
+      content: attr(data-label);
+      display: block;
+      font-family: var(--font-mono);
+      font-size: var(--fs-xxs);
+      color: var(--text-faint);
+      padding-block-end: var(--sp-0-5);
+    }
+    /* Stacked cards keep the identity cell readable first: the ws
+       variants (admin.css / ds-admin-owner.css) re-order their .ws-id
+       on top; the shared recipe only guarantees the label/value line
+       rhythm above. No hover on cards (see note above). */
     @media (hover: hover) and (pointer: fine) {
+      .table.tbl-stack tbody tr:hover { background: transparent; }
     }
   }
 
   /* Pagination footer of the table system. NOTE (13-17): OwnerUsersPage
      finished the ruling-#5 migration — it renders .table-pagination with
      ChevronLeft/ChevronRight icons, and the legacy .owner-pagination
-     block (owner.css) was deleted with the rest of the dead sweep. */
+     block (owner.css) was deleted with the rest of the dead sweep.
+     r349 (wave 3): the footer's anatomy restored — the count line rides
+     the start edge, the cluster trails; the actions cluster's buttons
+     are bare <button>s (TablePaginationFooter), so the floor keys on
+     the cluster, not .btn. */
+  .table-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    padding: var(--sp-3) var(--sp-4);
+    border-block-start: 1px solid var(--rule);
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+  }
+  .table-pagination-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-1);
+    flex-wrap: wrap;
+  }
+  .table-pagination-actions button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-1);
+    min-block-size: 32px;
+    min-inline-size: 32px;
+    padding-inline: var(--sp-2);
+    border: 1px solid var(--rule);
+    border-radius: var(--r-sm);
+    background: transparent;
+    color: var(--text);
+    font-size: var(--fs-xs);
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .table-pagination-actions button[aria-current='page'] {
+    background: var(--surface-2);
+    font-weight: var(--fw-semibold);
+  }
+  .table-pagination-actions button:disabled {
+    color: var(--text-faint);
+    cursor: default;
+  }
   @media (hover: hover) and (pointer: fine) {
+    .table-pagination-actions button:not(:disabled):hover {
+      background: var(--surface-2);
+    }
   }
   @media (max-width: 640px) {
     /* 44px touch targets on phones (craft floor). */
+    .table-pagination-actions button {
+      min-block-size: 44px;
+      min-inline-size: 44px;
+    }
     /* r151b (R5-A4 probe): the 7×44px button cluster (25 pages of the
        papers roster) measured 329px wide inside a 274px wrap at 360 —
        «التالي» was cut off the RTL leading edge. Wrap the cluster so
        the buttons reflow onto a second line instead of overflowing. */
+    .table-pagination { justify-content: center; }
   }
 
   /* ╔═══════════════════════════════════════════════════════════════╗
@@ -1008,10 +1170,85 @@
   /* ╔═══════════════════════════════════════════════════════════════╗
      ║  LIST ROW                                                      ║
      ╚═══════════════════════════════════════════════════════════════╝ */
+  /* r349 (wave 6) — the family RESTORED. Like §TABLE, this section
+     shipped as comment shells from the 1.0 squash while 21 consumers
+     across 12 files kept emitting the classes (messages inbox, course
+     materials, payment hours, AI assistant sources, exam attempts):
+     rows rendered as stacked block divs — the icon, the title and the
+     sub-line all full-width lines, the trailing stamps dropped under
+     the body. Anatomy per the family's own surviving contracts: the
+     documented `min-inline-size: 0` on the body (the §5-B6 clamp
+     below depends on it), the patterns sibling (.pf-row: 44px floor,
+     body column, trailing cluster) and the r148 interactive-only
+     hover note directly below. Rows are BARE (no frame): their
+     containers own the rhythm (flex-col gap-2 inside a Card, or the
+     grading-queue group frame). */
+  .list-row {
+    display: flex;
+    align-items: center;
+    /* wrap, not crush: a trailing cluster (the lecture rows carry up to
+       two badges ≈224px at 390) must never squeeze .list-row-body to a
+       sliver — measured 54px wide × 225px tall before this line. On
+       narrow widths the trailing element folds under the body; the
+       single-gap rhythm holds on both lines. */
+    flex-wrap: wrap;
+    gap: var(--sp-2) var(--sp-3);
+    min-block-size: 44px;
+    padding: var(--sp-2) 0;
+  }
+  a.list-row {
+    color: inherit;
+    text-decoration: none;
+  }
+  .list-row-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-0-5);
+    /* The floor the §5-B6 clamp contract needs to co-exist with: the
+       documented shrink-below-content behavior (min-inline-size: 0 for
+       the ellipsis) let a non-shrinking trailing cluster squeeze this
+       body to a 54px sliver (measured: lecture rows carrying two
+       badges at 390px). A 208px BASIS makes the body claim its seat
+       BEFORE the trailing badges take theirs — the row's flex-wrap
+       then folds the cluster under instead of crushing the prose.
+       Literal px on purpose: the sheet scales rem with the viewport
+       (1rem ≈ 9.9px at 390 — a 13rem basis measured 129px and changed
+       nothing), and the sp- spacing ladder the family rides is px
+       already; shrink keeps the ellipsis path alive below the floor. */
+    flex: 1 1 208px;
+    min-inline-size: 0;
+  }
+  .list-row-title {
+    font-size: var(--fs-body);
+    font-weight: var(--fw-semibold);
+    color: var(--text);
+    line-height: var(--lh-snug);
+  }
+  .list-row-sub,
+  .list-row-meta {
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+    line-height: var(--lh-snug);
+  }
   /* r148 (AUDIT-2 L3): التمييز التفاعلي للصفوف القابلة للنقر فقط
      (label/button/a داخل ExamAuthorPages) — الصفوف الساكنة
      (TemplateRow/QuestionBankRow/المحاولات) لا تُضاء كاذبة. */
   @media (hover: hover) and (pointer: fine) {
+    a.list-row:hover { background: var(--surface-2); }
+    a.list-row:hover .list-row-title { color: var(--accent-strong); }
+    /* 5-B6 messages craft (A7 «messages 7.5»): the read-only log clamps
+       each body to one line — 30 rows of arbitrary prose otherwise rag
+       the rhythm — while the full text rides the row's title attribute
+       (no truncation without a tooltip). Gated to hover-capable pointers
+       ONLY: a title tooltip never opens on touch, so on phones the body
+       keeps wrapping in full (VLM 5-B6 frame-4 finding, re-measured
+       valid — a clamp with no touch-readable path is a regression).
+       Works because .list-row-body is min-inline-size: 0. */
+    .list-row-sub.msg-body {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 
   /* ╔═══════════════════════════════════════════════════════════════╗
@@ -1249,6 +1486,17 @@
        so the dotted-leader scan line rendered stretch-aligned. */
   .gap-2 { gap: var(--sp-2); }
   .gap-3 { gap: var(--sp-3); }
+  /* r349 (wave 4) — three more ladder rungs revived: .gap-1 (12 uses)
+     and .gap-4 (15 uses) were referenced across pages but never
+     defined (every consumer silently rendered gap: 0), and .flex-wrap
+     (25 uses) left every "flex flex-wrap" cluster on ONE line — the
+     teacher profile's keyword badges overflowed .content by 541px at
+     320px (measured sw 845 vs cw 304). .items-start joins its
+     items-center sibling (3 uses). Same register as the neighbors. */
+  .gap-1 { gap: var(--sp-1); }
+  .gap-4 { gap: var(--sp-4); }
+  .flex-wrap { flex-wrap: wrap; }
+  .items-start { align-items: flex-start; }
   .font-mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
   /* Tabular numerals — apply to KPIs, table number columns, counters,
      percentages, dates with shifting digits. Lining figures keep
@@ -2082,7 +2330,57 @@
 
   /* ── Form feedback banner — save success/failure shared by the profile
      save, attendance save, live form errors, lifecycle errors and the
-     grading done state (replaces 4 different inline style blocks). */
+     grading done state (replaces 4 different inline style blocks).
+     r349 (wave 5) — RESTORED. The banner's rule body was lost with the
+     §TABLE-family sweep; 26 consumers (10 files) kept emitting
+     .form-feedback with role=status/alert while it rendered as a bare
+     div — a failed save read like plain body text with no signal at
+     all. Anatomy per the surviving consumers (icon 13/14 + .flex-1
+     prose + optional .btn.ghost.sm retry) and the semantic wash
+     grammar the att-toggle family below documents (-soft ground +
+     -ink text, transparent border). */
+  .form-feedback,
+  .form-error {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    padding: var(--sp-2-5) var(--sp-3);
+    border: 1px solid transparent;
+    border-radius: var(--r-sm);
+    font-size: var(--fs-xs);
+  }
+  .form-feedback .flex-1,
+  .form-error-msg {
+    flex: 1;
+    min-inline-size: 0;
+  }
+  .form-feedback.fail,
+  .form-error {
+    background: var(--danger-soft);
+    color: var(--danger-ink);
+  }
+  .form-feedback.ok {
+    background: var(--success-soft);
+    color: var(--success-ink);
+  }
+  /* The inline retry row (ResearchReview / ExamAuthor bank / Teacher
+     Intelligence): muted prose + the ghost retry button, one line. */
+  .inline-retry {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    padding: var(--sp-2) 0;
+  }
+  /* Exam authoring's error prose line (12 uses) — the same danger ink
+     as .form-error, bare (no wash): it sits inside already-framed
+     authoring rows where a second surface would double-box. */
+  .exa-error-line {
+    display: block;
+    color: var(--danger-ink);
+  }
+  .exa-error-center { text-align: center; }
 
   /* ── Attendance toggles — class-based selected state (was an inline
      style block with no aria-pressed, audit 0-e P1-32). Text uses the
@@ -2209,6 +2507,59 @@
   .popover,
   .notification-panel {
     transform-origin: center top;
+  }
+
+  /* ── R349 (Agent 02) — the notification panel's CONTAINER GEOMETRY,
+     restored. The R313 D16 glass retirement deleted the panel's whole
+     @supports block — which carried not just the glass but the
+     geometry (position: fixed · z-index · surface · hairline · width ·
+     entrance) — and the WS-D2 orphan sweeps then removed the
+     notifications.css/polish.css backups as "dead" (they were dead
+     because the owner rule was already gone). Since the 1.0 squash
+     the panel has rendered as an UNPOSITIONED static block appended
+     to document.body: the anchored engine's inline top/left were
+     inert, the panel pushed the page down and appeared mid-content,
+     and on a 390×844 phone the last rows + «عرض جميع الإشعارات» sat
+     below the fold, unreachable. Live in production (the deployed
+     bundle ships only the two re-skin rules). Restored on the
+     Dropdown/Popover family grammar (the primitive's own docblock
+     contract: anchored, --z-popover, solid --surface + hairline — the
+     R313 D16 law), with ONE deliberate upgrade over the old block:
+     the container is a flex column with overflow hidden so the
+     header + footer stay pinned and ONLY the list scrolls (the old
+     container could scroll under the fixed-cap list — a nested scroll
+     trap; the list's caps retire in notifications.css §R349).
+     The [data-closing] exit restores the exit pass the component's
+     onAnimationEnd ('ulara-popover-out') has waited for all along —
+     without it the panel vanished mid-frame via the 240ms safety
+     net instead of playing the scale-out. */
+  .notification-panel {
+    position: fixed;
+    z-index: var(--z-popover, 200);
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    inline-size: min(420px, calc(100vw - var(--sp-4) * 2));
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    overscroll-behavior: contain;
+    animation: ulara-popover-in var(--motion-duration-short) var(--motion-ease-decelerate) both;
+  }
+  .notification-panel[data-closing="true"] {
+    animation: ulara-popover-out var(--motion-duration-short) var(--motion-ease-decelerate) both;
+  }
+
+  /* R349 (Agent 02) — the anchored family's exit pass, restored for
+     the siblings too: Dropdown.tsx and Popover.tsx both wire
+     onAnimationEnd('ulara-popover-out') + useDelayedUnmount, but no
+     [data-closing] rule ever applied the keyframes (the wave 13-17
+     comment says "every overlay family but this one had a data-closing
+     rule" — the anchored pair's rules were already gone). The menus
+     have been vanishing via the 240ms safety-net timeout instead of
+     playing the documented scale-out. */
+  .dropdown[data-closing="true"],
+  .popover[data-closing="true"] {
+    animation: ulara-popover-out var(--motion-duration-short) var(--motion-ease-decelerate) both;
   }
 
   /* ── Anchored-panel exit: scale-out fade. The component stays
