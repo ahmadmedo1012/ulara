@@ -269,8 +269,8 @@ describe('R305 gamification — the level statement is the ONE deep band', () =>
        same titles, same heading level. */
     const barTitles = Array.from(container.querySelectorAll('.r319s-bar h2.r319s-bar-title')).map((h) => h.textContent);
     expect(barTitles).toEqual(['الإنجازات المحققة', 'لوحة المتصدرين']);
-    const barIndexes = Array.from(container.querySelectorAll('.r319s-bar-index')).map((i) => i.textContent?.trim());
-    expect(barIndexes).toEqual(['[01]', '[02]']);
+    // r351 A2 (Q2): the [0N] gutter register is retired.
+    expect(container.querySelectorAll('.r319s-bar-index')).toHaveLength(0);
   });
 
   it('the empty-training state is honest inside the same band (no fabricated tier)', () => {
@@ -365,7 +365,8 @@ describe('R305 alerts — the notification list de-boxes onto the page surface (
        register — [01] آخر الإشعارات (the mono-indexed SectionBar), still
        inside the same role-neutral .r305p-alerts section. */
     expect(section!.querySelector('.r319s-bar h2.r319s-bar-title')!.textContent).toBe('آخر الإشعارات');
-    expect(section!.querySelector('.r319s-bar-index')!.textContent).toBe('[01]');
+    // r351 A2 (Q2): the [0N] gutter register is retired.
+    expect(section!.querySelector('.r319s-bar-index')).toBeNull();
     // The hairline rows sit DIRECTLY on the page surface — the np-row's
     // ancestors contain no .card box any more.
     const row = section!.querySelector('.np-row');
@@ -412,7 +413,8 @@ describe('R305 labs — the catalog is ONE editorial section with honest states'
        heading, same section contract; the labs count rides the bar's
        quiet mono meta (countAr for assistive tech). */
     expect(section!.querySelector('.r319s-bar h2.r319s-bar-title')!.textContent).toBe('دليل المعامل');
-    expect(section!.querySelector('.r319s-bar-index')!.textContent).toBe('[01]');
+    // r351 A2 (Q2): the [0N] gutter register is retired.
+    expect(section!.querySelector('.r319s-bar-index')).toBeNull();
     expect(section!.querySelector('.r319s-count')!.textContent).toBe('02');
 
     // Card metadata: platform + counted noun ride .r305s-meta-row with the

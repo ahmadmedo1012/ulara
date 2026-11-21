@@ -169,7 +169,6 @@ export function CompetitionsIndexPage() {
               </button>
             ) : undefined
           }
-          index="01"
         />
       </div>
 

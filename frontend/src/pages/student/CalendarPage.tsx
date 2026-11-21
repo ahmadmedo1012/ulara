@@ -238,7 +238,7 @@ export default function StudentCalendarPage() {
             context (the grid's today cell anchors on it). r341 D7a: the
             [01] bar opens the month instrument in the pending mirror
             too — the settled handoff moves nothing (the r172b law). */}
-        <SectionBar index="01" title="مواعيد الشهر" />
+        <SectionBar title="مواعيد الشهر" />
         <WeekStrip />
         <div aria-busy="true" aria-live="polite">
           <CalendarSkeleton />
@@ -253,7 +253,7 @@ export default function StudentCalendarPage() {
       <div className="r319s-page">
       <PageFrame width="default">
         <PageHeader title="التقويم الأكاديمي" />
-        <SectionBar index="01" title="مواعيد الشهر" />
+        <SectionBar title="مواعيد الشهر" />
         <ErrorState
           message="تعذَّر تحميل التقويم الأكاديمي"
           error={failed.error}
@@ -302,7 +302,6 @@ export default function StudentCalendarPage() {
           family's mono-indexed register) with the honest days-with-
           events count as its quiet mono meta (countAr for AT). */}
       <SectionBar
-        index="01"
         title="مواعيد الشهر"
         meta={
           monthEventCount > 0 ? (

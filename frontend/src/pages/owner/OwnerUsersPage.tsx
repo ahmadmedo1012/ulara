@@ -304,7 +304,6 @@ export function OwnerUsersPage() {
           breadcrumbs={[{ label: 'لوحة المالك', to: '/owner/dashboard' }, { label: 'المستخدمون' }]}
           /* R341 D11: the [03] nav-order gutter numeral (OWNER_NAV
            * register — the D10 quality precedent). */
-          index="03"
           /* D11 (D8/D10 header-CTA precedent): the directory's two
            * sibling surfaces — every role/status change lands in the
            * activity log (primary) and the governance metrics track

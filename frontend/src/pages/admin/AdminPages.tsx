@@ -320,7 +320,6 @@ export function AdminDashboardPage() {
       <PatternsPageHeader
         title={roleDashboardLabel('ADMIN')}
         description="إحصائيات حيّة عن طلاب وأساتذة المنصّة."
-        index="01"
         meta={<>{formatDate(new Date(), { weekday: 'long', day: 'numeric', month: 'long' })} · حساب لحظيّ</>}
         actions={(
           /* R342-09 (D11 header-CTA precedent): the registrar's live
@@ -383,7 +382,7 @@ export function AdminDashboardPage() {
           rhythm = contrast between tight and generous, never uniform). */}
       <div className="grid-2-1" style={{ marginBlockStart: 'var(--sp-9)' }}>
         <Card
-          title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[01]</span>توزّع الطلاب حسب الكلّيّة</>}
+          title={<>توزّع الطلاب حسب الكلّيّة</>}
           icon={BarChart3}
           subtitle={topByStudents.length > 1
             ? `أعلى ${countAr(topByStudents.length, ['كلّيّة', 'كلّيّتين', 'كلّيّات', 'كلّيّة'])} عدداً · انقر عموداً لعرض طلابها`
@@ -463,7 +462,7 @@ export function AdminDashboardPage() {
             --fs-sm body rung to the metric rung (inner.css §W11); the
             same .admin-stat classes elsewhere are untouched. */}
         <Card
-          title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[02]</span>مؤشرات سريعة</>}
+          title={<>مؤشرات سريعة</>}
           icon={TrendingUp}
           className="w11-quick"
         >
@@ -494,7 +493,7 @@ export function AdminDashboardPage() {
         </Card>
       </div>
 
-      <Card title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[03]</span>نشاط الإنتاج العلميّ — آخر 6 أشهر</>} icon={TrendingUp} subtitle="أبحاث مقدَّمة، مقيَّمة، ومنشورة شهرياً">
+      <Card title={<>نشاط الإنتاج العلميّ — آخر 6 أشهر</>} icon={TrendingUp} subtitle="أبحاث مقدَّمة، مقيَّمة، ومنشورة شهرياً">
         {r.paperTrend.length === 0 || r.paperTrend.every((m) => m.submitted + m.graded + m.published === 0) ? (
           <EmptyState illustration="empty-research"
             icon={TrendingUp}
@@ -771,7 +770,6 @@ export function AdminFacultiesPage() {
       <PatternsPageHeader
         title="الكلّيّات والأقسام"
         description="جميع كلّيّات الجامعة وأقسامها مع إحصائيات حية."
-        index="03"
         breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'الكلّيّات والأقسام' }]}
         actions={(
           /* R342-09 (the students-page family contract): the page's ONE
@@ -1168,7 +1166,6 @@ export function AdminReportsPage() {
       <PatternsPageHeader
         title="التقارير المؤسسية"
         description="مؤشرات أداء الجامعة على مستوى المخرجات الأكاديمية."
-        index="07"
         breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'التقارير المؤسسية' }]}
         actions={(
           /* R342-09 (D11 sub-page CTA precedent): a read-only ledger still
@@ -1605,7 +1602,6 @@ export function AdminCoursesPage() {
         description={meta
           ? `${countAr(meta.total, ['مقرّر واحد', 'مقرّران', 'مقرّرات', 'مقرّراً'])}${hasFilters ? ' مطابقة للبحث والتصفيّة' : ' في الجامعة'}`
           : 'جميع المقرّرات الجامعية مع إحصائيات حيّة.'}
-        index="04"
         breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'المقرّرات' }]}
         actions={(
           /* R342-09 (the students-page family contract): the page's ONE

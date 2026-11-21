@@ -99,7 +99,6 @@ export default function WebinarsPage() {
             register — [01] with the honest session count as mono meta;
             the old description survives as the under-bar note. */}
         <SectionBar
-          index="01"
           title="جلسات البثّ المباشر"
           meta={
             !live.isPending && !live.isError && sessions.length > 0 ? (
@@ -188,7 +187,7 @@ export default function WebinarsPage() {
 
       <section aria-label="أين أجد الفعاليّات الحقيقيّة؟">
         {/* R319 (c3-S2): [02] — the honest-destinations section's bar. */}
-        <SectionBar index="02" title="أين أجد الفعاليّات الحقيقيّة؟" />
+        <SectionBar title="أين أجد الفعاليّات الحقيقيّة؟" />
         <p className="r319sp-sec-note">الفعاليّات الرسميّة تُنشر على لوحة المجتمع، وجلسات مقرّراتك تعيش في صفحة البثّ.</p>
         {/* R305 DS: the two destinations fold from card tiles into the
             copper-edged rails (the shared .r305s-next emphasis) — quiet

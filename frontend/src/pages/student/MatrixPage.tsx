@@ -11,6 +11,7 @@ import {
 /* R319 (c3-S1) — the §B2 kit: the mono-indexed section title bar, the
  * per-course mastery bar, the hatched empty cell. */
 import { SectionBar, BarCount, CourseBar, EmptyCell } from '../../components/student';
+import { Num } from '../../components/primitives/Num';
 import { Icon } from '../../components/Icon';
 import { useMatrix, useGaps } from '../../hooks/useResources';
 import { courseIcon, courseTint } from '../../lib/courseMeta';
@@ -198,10 +199,10 @@ export default function MatrixPage() {
       {/* Status key — the words ARE the encoding; the dots only anchor
           the eye. Ranges stated in text so the key never leans on hue. */}
       <div className="matrix-legend" role="group" aria-label="دليل حالات الإتقان">
-        <div className="matrix-legend-item"><span className="matrix-legend-dot" style={{ background: 'var(--success)' }} /> إتقان (80%+)</div>
-        <div className="matrix-legend-item"><span className="matrix-legend-dot" style={{ background: 'var(--accent)' }} /> جيد (60–80%)</div>
-        <div className="matrix-legend-item"><span className="matrix-legend-dot" style={{ background: 'var(--warning)' }} /> يحتاج مراجعة (40–60%)</div>
-        <div className="matrix-legend-item"><span className="matrix-legend-dot" style={{ background: 'var(--danger)' }} /> ضعف (&lt;40%)</div>
+        <div className="matrix-legend-item"><span className="matrix-legend-dot" style={{ background: 'var(--success)' }} /> إتقان (<Num>80%+</Num>)</div>
+        <div className="matrix-legend-item"><span className="matrix-legend-dot" style={{ background: 'var(--accent)' }} /> جيد (<Num>60–80%</Num>)</div>
+        <div className="matrix-legend-item"><span className="matrix-legend-dot" style={{ background: 'var(--warning)' }} /> يحتاج مراجعة (<Num>40–60%</Num>)</div>
+        <div className="matrix-legend-item"><span className="matrix-legend-dot" style={{ background: 'var(--danger)' }} /> ضعف (<Num>&lt;40%</Num>)</div>
         <div className="matrix-legend-item"><span className="matrix-legend-dot" style={{ background: 'var(--text-subtle)' }} /> لم يُختبر</div>
       </div>
 
@@ -216,7 +217,6 @@ export default function MatrixPage() {
           bar (honest copy, unchanged). */}
       <section aria-label="فجوات الإتقان ذات الأولوية">
         <SectionBar
-          index="01"
           title="فجواتك ذات الأولوية"
           meta={
             !gaps.isPending && !gaps.isError && (gaps.data?.length ?? 0) > 0 ? (
@@ -249,7 +249,7 @@ export default function MatrixPage() {
                 key={g.conceptId}
                 leading={<Icon icon={AlertCircle} size={16} style={{ color: 'var(--warning-ink)' }} />}
                 title={g.conceptName}
-                meta={<>{g.courseName} · <bdi className="font-mono">{formatInt(Math.round(g.level * 100))}%</bdi> الآن</>}
+                meta={<>{g.courseName} · <Num className="font-mono">{formatInt(Math.round(g.level * 100))}%</Num> الآن</>}
                 to={g.recommendedLectureId ? `/student/lectures/${g.recommendedLectureId}` : undefined}
                 trailing={g.recommendedLectureId
                   ? <span className="btn outline sm pf-chip"><Icon icon={Play} size={13} />سدّ الفجوة</span>
@@ -285,7 +285,6 @@ export default function MatrixPage() {
               title-bar — [02] + the measured-concepts count as quiet
               mono meta (the PageHeader's meta phrase, as data). */}
           <SectionBar
-            index="02"
             title="مصفوفتك حسب المقرّر"
             meta={
               totalConcepts > 0 ? (

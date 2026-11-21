@@ -234,7 +234,6 @@ export default function LabsPage() {
               (countAr for assistive tech). */}
           <section aria-label="دليل المعامل">
             <SectionBar
-              index="01"
               title="دليل المعامل"
               meta={
                 !labs.isPending && !labs.isError && (labs.data?.length ?? 0) > 0 ? (

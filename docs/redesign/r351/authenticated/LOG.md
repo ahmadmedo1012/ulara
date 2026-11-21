@@ -61,3 +61,25 @@ Measured AFTER (after-q1 dashboards matrix, 40 cells + 10 re-run):
   (one logout seat), shell-logout-race (topbar menuitem query).
 - role-shots.mjs: fleet browser pin (chromium 1200 executablePath —
   symlinks blocked in the sandbox).
+
+## Q2 — hierarchy & typography (commit 4)
+
+- [0N] numeral register RETIRED: 44 `.w11-idx` gutter spans + 90
+  `index="NN"` props (patterns + primitives PageHeader, SectionBar and
+  the teacher dashboard's three local carriers) + the SectionBar prop
+  itself. Reason: teacher dashboard rendered 02→01→03, AI pages
+  02/05/03; sequential-in-DOM cannot be kept honest across filtered
+  states. The legal policy pages' SectionBar TOC numbering stays (a
+  document's own sequential structure, r351 decision).
+- Num helper (components/primitives/Num.tsx): the ONE dir="ltr" bidi
+  isolate for number+unit strings; applied to the matrix legend ranges
+  (the measured «(80%+)» scramble) + the dashboards' gap/progress
+  percents.
+- tabular figures verified in place (118 tabular-nums declarations;
+  .font-mono/.metric-value/.stat-cell families covered).
+- section ladder verified: page 24px → section 18px → body 16px
+  (patterns.css pf-section-title, r304).
+- tests updated with reasons: PageHeader index pin → retirement pin,
+  r319 student-sheet SectionBar, R305 dashboards/courses/supplemental
+  indexes, r176e unused var. verify.sh --fast ALL GREEN (3014 tests,
+  bundle 754.9/770 — the [0N] cut also shaved 0.7KB).

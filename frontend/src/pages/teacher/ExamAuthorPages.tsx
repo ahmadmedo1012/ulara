@@ -707,7 +707,7 @@ function MyTemplatesSection({ onBuild }: { onBuild: () => void }) {
   return (
     <>
       <ExaSectionHead
-        title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[01]</span>قوالب اختباراتي</>}
+        title={<>قوالب اختباراتي</>}
         desc={
           q.isPending
             ? 'جارٍ التحميل…'
@@ -972,7 +972,7 @@ function QuestionBankSection() {
   return (
     <>
       <ExaSectionHead
-        title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[02]</span>بنك الأسئلة المعتمدة</>}
+        title={<>بنك الأسئلة المعتمدة</>}
         desc="الأسئلة التي اعتمدتها الجودة وتصلح لبناء القوالب — إنشاء سؤال جديد يمرّ على المراجعة أولاً."
         actions={
           <Button variant="accent" className="hr-cta" onClick={() => setCreating(true)}>
@@ -2095,7 +2095,7 @@ function ModerationQueueSection() {
   return (
     <>
       <ExaSectionHead
-        title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[03]</span>قوالب بانتظار المراجعة</>}
+        title={<>قوالب بانتظار المراجعة</>}
         desc={
           q.isPending
             ? 'جارٍ التحميل…'
@@ -2239,7 +2239,7 @@ function TemplateDetailBody({ template }: { template: ExamTemplateDetail }) {
         <div className="exa-main">
           <section aria-label="أسئلة القالب">
             <ExaSectionHead
-              title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[01]</span>أسئلة القالب</>}
+              title={<>أسئلة القالب</>}
               count={countAr(template.questions.length, ['سؤال واحد', 'سؤالان', 'أسئلة', 'سؤالاً'])}
               desc={`مجموع النقاط ${countAr(totalPoints, ['نقطة واحدة', 'نقطتان', 'نقاط', 'نقطة'])}`}
             />
@@ -2666,7 +2666,7 @@ function AttemptsSection({ template }: { template: ExamTemplateDetail }) {
   return (
     <section aria-label="التصحيح">
       <ExaSectionHead
-        title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[02]</span>التصحيح</>}
+        title={<>التصحيح</>}
         desc={
           q.isPending
             ? 'جارٍ التحميل…'

@@ -1,0 +1,175 @@
+[
+  {
+    "cell": "STUDENT·/student/dashboard·light·1440",
+    "role": "STUDENT",
+    "route": "/student/dashboard",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 289,
+    "scrollHeight": 1776,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "تطبيق الجوال",
+        "w": 66,
+        "h": 19
+      },
+      {
+        "tag": "a",
+        "name": "واجب الأسبوع الثالث (CS-201)",
+        "w": 944,
+        "h": 16
+      },
+      {
+        "tag": "a",
+        "name": "مقدمة في الخوارزميات — قاعة A2",
+        "w": 959,
+        "h": 16
+      }
+    ],
+    "smallTargetCount": 3,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "TEACHER·/teacher/dashboard·light·1440",
+    "role": "TEACHER",
+    "route": "/teacher/dashboard",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 269,
+    "scrollHeight": 1619,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "ابدأ التصحيح",
+        "w": 113,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "الجدول الأسبوعيّ",
+        "w": 135,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "القائمة الكاملة",
+        "w": 121,
+        "h": 32
+      }
+    ],
+    "smallTargetCount": 3,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "ADMIN·/admin/dashboard·light·1440",
+    "role": "ADMIN",
+    "route": "/admin/dashboard",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 165,
+    "scrollHeight": 1428,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "سجلّ الطلاب",
+        "w": 113,
+        "h": 32
+      }
+    ],
+    "smallTargetCount": 1,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "QUALITY·/quality/dashboard·light·1440",
+    "role": "QUALITY",
+    "route": "/quality/dashboard",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 203,
+    "scrollHeight": 1945,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "تقارير الجودة",
+        "w": 90,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "تنبيهات الجودة",
+        "w": 100,
+        "h": 32
+      }
+    ],
+    "smallTargetCount": 2,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/dashboard·light·1440",
+    "role": "OWNER",
+    "route": "/owner/dashboard",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 216,
+    "scrollHeight": 1822,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "المراقبة الحيّة",
+        "w": 116,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "التنبيهات",
+        "w": 91,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "تنبيهات تشغيليّة مفتوحة",
+        "w": 998,
+        "h": 16
+      },
+      {
+        "tag": "a",
+        "name": "أساتذة بلا حصص تدريس هذا الفصل",
+        "w": 998,
+        "h": 16
+      }
+    ],
+    "smallTargetCount": 4,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  }
+]

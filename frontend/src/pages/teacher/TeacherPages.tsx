@@ -483,7 +483,7 @@ export function AttendancePage() {
         }
       />
 
-      <Card title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[01]</span>الجلسة</>} icon={Calendar} className="tpg-session">
+      <Card title={<>الجلسة</>} icon={Calendar} className="tpg-session">
         <div className="form-row-3">
           <FormField label="المقرّر">
             <select className="input" value={effectiveOfferingId} onChange={(e) => setOfferingId(e.target.value)}>
@@ -533,7 +533,7 @@ export function AttendancePage() {
 
       <div className="grid-2-1">
         <Card
-          title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[02]</span>{offering ? `طلاب ${offering.course.name}` : 'الطلاب'}</>}
+          title={<>{offering ? `طلاب ${offering.course.name}` : 'الطلاب'}</>}
           icon={ClipboardCheck}
         >
           {!effectiveOfferingId ? (
@@ -608,7 +608,7 @@ export function AttendancePage() {
           )}
         </Card>
 
-        <Card title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[03]</span>إحصائيّات الجلسة</>}>
+        <Card title={<>إحصائيّات الجلسة</>}>
           {/* A6 P2 (22-a): the stats card mirrors the roster's state —
               never four fake 0% bars while nothing is loaded. Empty
               buckets dim instead of painting full-weight zero tracks
@@ -734,7 +734,7 @@ export function GradesPage() {
       />
 
       <Card
-        title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[01]</span>{offering ? `${offering.course.name} · ${offering.course.code}` : 'الدرجات'}</>}
+        title={<>{offering ? `${offering.course.name} · ${offering.course.code}` : 'الدرجات'}</>}
         icon={ClipboardList}
         /* The old «قيد التطوير» note's still-true half lives here: the
          * average folds every graded artifact (assignment submissions
@@ -964,7 +964,7 @@ function SemesterGradeEntry({
   return (
     <div id="grade-entry">
     <Card
-      title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[02]</span>إدخال الدرجات الفصليّة</>}
+      title={<>إدخال الدرجات الفصليّة</>}
       icon={ClipboardCheck}
       subtitle={
         dirtyRows.length > 0
@@ -1524,7 +1524,7 @@ export function MaterialsPage() {
           (one card fewer of dead weight above the actual data; the
           header's primary CTA already names the action). */}
       <Card
-        title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[01]</span>ملفاتك</>}
+        title={<>ملفاتك</>}
         icon={FileText}
         subtitle={(
           <span>
@@ -1659,7 +1659,7 @@ export function StudentsListPage() {
       <Card
         title={
           <>
-            <span className="w11-idx" dir="ltr" aria-hidden="true">[01]</span>
+            
             {offering
               ? `${offering.course.name} · ${offering.course.code} · ${
                 /* P2-1: «0 طالباً» is broken Arabic — the zero case names
@@ -1889,7 +1889,7 @@ export function PerformancePage() {
           />
 
           <Card
-            title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[01]</span>{offering ? `توزيع الدرجات — ${offering.course.name}` : 'توزيع الدرجات'}</>}
+            title={<>{offering ? `توزيع الدرجات — ${offering.course.name}` : 'توزيع الدرجات'}</>}
             icon={BarChart3}
           >
             {students.length === 0 ? (
@@ -2220,7 +2220,7 @@ export function AssignmentsPage() {
         onGrade={(target) => setGradeTarget(target)}
       />
 
-      <Card title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[02]</span>جميع الواجبات</>} icon={ClipboardList}>
+      <Card title={<>جميع الواجبات</>} icon={ClipboardList}>
         {q.isPending ? (
           <ListSkeleton rows={5} />
         ) : q.isError ? (
@@ -2405,7 +2405,7 @@ function NeedsReviewCard({
 
   return (
     <Card
-      title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[01]</span>تسليمات بانتظار التقييم</>}
+      title={<>تسليمات بانتظار التقييم</>}
       icon={ClipboardCheck}
       /* P2-1: countAr(0) renders the broken «0 تسليماً…» — the zero case
        * gets its own honest copy (the dashboard-badge pattern). */

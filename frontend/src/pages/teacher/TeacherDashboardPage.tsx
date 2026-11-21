@@ -378,17 +378,17 @@ export function TeacherDashboardPage() {
         <section aria-label="طابور التصحيح">
           {/* W11: the [nn] index chips ride the section titles — the same
               gutter grammar the student dashboard's SectionBar speaks. */}
-          <PendingGradingQueue index="01" entries={d.pendingGrading} />
+          <PendingGradingQueue entries={d.pendingGrading} />
         </section>
-        <TodayLectures index="02" />
+        <TodayLectures />
       </div>
 
-      <AtRiskShortcuts index="03" />
+      <AtRiskShortcuts />
 
       {/* Performance + attendance trend — real 6-week data, wrapped for
           screen readers (aria-label + sr-only data table, audit 0-f). */}
       <Card
-        title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[04]</span>اتجاه الأداء والحضور</>}
+        title={<>اتجاه الأداء والحضور</>}
         icon={Activity} subtitle="متوسط أداء وحضور طلابك خلال الأسابيع الستة الماضية">
         {!coverage.drawable ? (
           <>
@@ -581,12 +581,12 @@ function FeedRow({ item }: { item: TeacherDashboard['feed'][number] }) {
  * Empty state names the win, not the void: «لا انتظار — كل التسليمات
  * مُقيَّمة».
  */
-function PendingGradingQueue({ index, entries }: { index: string; entries: TeacherDashboard['pendingGrading'] }) {
+function PendingGradingQueue({ entries }: { entries: TeacherDashboard['pendingGrading'] }) {
   const total = entries.reduce((sum, e) => sum + e.count, 0);
   return (
     <>
       <SectionHeader
-        title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[{index}]</span>طابور التصحيح</>}
+        title={<>طابور التصحيح</>}
         description={total === 0 ? undefined : countAr(total, ['تسليم بانتظار درجتك', 'تسليمان بانتظار درجتك', 'تسليمات بانتظار درجتك', 'تسليماً بانتظار درجتك'])}
         actions={total > 0 ? (
           /* R305 DS: the ONE ember-flavored primary action of the
@@ -647,7 +647,7 @@ function PendingGradingQueue({ index, entries }: { index: string; entries: Teach
  * marks its phase relative to now (urgency dot + sr-only label), and
  * the phase chip rides the row's trailing slot.
  */
-function TodayLectures({ index }: { index: string }) {
+function TodayLectures() {
   const offsQ = useTeacherOfferings();
   // Compose once per render — `new Date()` decides the weekday + phases.
   const now = new Date();
@@ -657,7 +657,7 @@ function TodayLectures({ index }: { index: string }) {
   return (
     <section aria-label="محاضرات اليوم">
       <SectionHeader
-        title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[{index}]</span>محاضرات اليوم</>}
+        title={<>محاضرات اليوم</>}
         description={WEEKDAY_NAMES_AR[todayDow]}
         actions={
           <Link to="/teacher/schedule" className="btn ghost sm">
@@ -713,14 +713,14 @@ function TodayLectures({ index }: { index: string }) {
  * offering's intelligence deep dive. The full list lives on
  * /teacher/intelligence; this section is the ≤1-tap door to it.
  */
-function AtRiskShortcuts({ index }: { index: string }) {
+function AtRiskShortcuts() {
   const risks = useTeacherRisks();
   const top = risks.data ? topRisks(risks.data) : [];
 
   return (
     <section aria-label="طلاب يحتاجون متابعة">
       <SectionHeader
-        title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[{index}]</span>طلاب يحتاجون متابعة</>}
+        title={<>طلاب يحتاجون متابعة</>}
         description={risks.data && risks.data.length > 0
           ? countAr(risks.data.length, ['طالب تحت المتابعة', 'طالبان تحت المتابعة', 'طلاب تحت المتابعة', 'طالباً تحت المتابعة'])
           : undefined}

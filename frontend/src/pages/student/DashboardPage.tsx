@@ -19,6 +19,7 @@ import {
   ScheduleStrip, GradeBars, groupSlotsByDay, watchState, gradeBands,
 } from '../../components/patterns/indicators';
 import { CountIn } from '../../components/motion/CountIn';
+import { Num } from '../../components/primitives/Num';
 import { Icon } from '../../components/Icon';
 import { useAuthStore } from '../../stores/auth.store';
 import {
@@ -444,7 +445,7 @@ function DashResumeHero({ focus }: { focus: ResumeFocus }) {
         <div className="dash-resume-main">
           <span className="dash-resume-eyebrow r305s-eyebrow">{focus.started ? 'أكمل من حيث توقفت' : 'الخطوة التالية'}</span>
           <span className="dash-resume-course-name">{focus.title}</span>
-          <span className="dash-resume-lecture">مسار التطوير الذاتي · {focus.started ? <>أنجزت <bdi>{formatInt(focus.progressPct)}%</bdi> من دروسه</> : 'سجّلت فيه ولم تبدأه بعد'}</span>
+          <span className="dash-resume-lecture">مسار التطوير الذاتي · {focus.started ? <>أنجزت <Num>{formatInt(focus.progressPct)}%</Num> من دروسه</> : 'سجّلت فيه ولم تبدأه بعد'}</span>
           {/* P2.5 — the same drafting ruler on the training arm (0 stays
               the honest empty register for an unstarted track). */}
           <div className="dash-resume-progress">
@@ -866,7 +867,6 @@ export default function StudentDashboardPage() {
             decoration). */}
         <section aria-label="الفصل الدراسي" className="dash-section">
           <SectionBar
-            index="01"
             title="الفصل الدراسي"
             meta={<bdi className="r319s-mono" dir="ltr">{d.term.code}</bdi>}
           />
@@ -894,7 +894,6 @@ export default function StudentDashboardPage() {
           StatusChip; the pattern list below keeps the urgency dots. */}
       <section aria-label="اليوم" className="dash-section">
         <SectionBar
-          index="02"
           title="اليوم"
           meta={
             today.length + exams.length > 0 ? (
@@ -964,7 +963,6 @@ export default function StudentDashboardPage() {
       <div className="grid-2-1">
         <section aria-label="مقرّراتك الحالية">
           <SectionBar
-            index="03"
             title="مقرّراتك"
             meta={
               !enrollments.isPending && !enrollments.isError && sortedEnrollments.length > 0 ? (
@@ -1003,7 +1001,6 @@ export default function StudentDashboardPage() {
 
         <section aria-label="فجوات الإتقان الموصى بها">
           <SectionBar
-            index="04"
             title="فجوات يُنصح بسدّها"
             action={<Link to="/student/matrix" className="btn ghost sm">المصفوفة الكاملة</Link>}
           />
@@ -1031,7 +1028,7 @@ export default function StudentDashboardPage() {
                     to={`/student/lectures/${g.recommendedLectureId}`}
                     leading={<Icon icon={AlertCircle} size={16} className="text-warning-ink" />}
                     title={g.conceptName}
-                    meta={<>{g.courseName} · <bdi className="dash-gap-pct">{formatInt(Math.round(g.level * 100))}%</bdi> الآن</>}
+                    meta={<>{g.courseName} · <Num className="dash-gap-pct">{formatInt(Math.round(g.level * 100))}%</Num> الآن</>}
                     trailing={
                       <span className="dash-gap-side">
                         <MasteryCells
@@ -1047,7 +1044,7 @@ export default function StudentDashboardPage() {
                     key={g.conceptId}
                     leading={<Icon icon={AlertCircle} size={16} className="text-warning-ink" />}
                     title={g.conceptName}
-                    meta={<>{g.courseName} · <bdi className="dash-gap-pct">{formatInt(Math.round(g.level * 100))}%</bdi> الآن</>}
+                    meta={<>{g.courseName} · <Num className="dash-gap-pct">{formatInt(Math.round(g.level * 100))}%</Num> الآن</>}
                     trailing={
                       <span className="dash-gap-side">
                         {/* P2.5 — the concept's mastery as the 0–4 cell
@@ -1127,7 +1124,6 @@ export default function StudentDashboardPage() {
       {later.length > 0 && (
         <section aria-label="التزامات الأسبوع القادم" className="dash-section">
           <SectionBar
-            index="05"
             title="أسبوعك القادم"
             meta={
               <BarCount

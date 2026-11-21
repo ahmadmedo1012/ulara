@@ -184,7 +184,6 @@ export function OwnerEducationPage() {
         breadcrumbs={[{ label: 'لوحة المالك', to: '/owner/dashboard' }, { label: 'النظرة التعليميّة' }]}
         /* R341 D11: the [08] nav-order gutter numeral (OWNER_NAV
          * register — the D10 quality precedent). */
-        index="08"
         /* D11 (D8/D10 header-CTA precedent): the overview's sibling
          * surfaces — the accounts directory behind the teacher
          * workload buckets (primary) + the institutions whose

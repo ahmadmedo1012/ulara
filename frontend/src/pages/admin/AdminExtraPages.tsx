@@ -152,7 +152,6 @@ export function AdminStudentsPage() {
       <PatternsPageHeader
         title="إدارة الطلاب"
         description="قائمة الطلاب المسجَّلين في الجامعة، مع البحث والتصفية حسب الكلّيّة."
-        index="05"
         breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'الطلاب' }]}
         meta={studentsQ.data
           ? `${countAr(studentsQ.data.meta.total, ['طالب واحد مسجَّل', 'طالبان مسجَّلان', 'طلاب مسجَّلون', 'طالباً مسجَّلاً'])} · بحث الخادم`
@@ -494,7 +493,6 @@ export function AdminDigitalPage() {
       <PatternsPageHeader
         title="التحوّل الرقميّ"
         description="مؤشّرات تبنّي المنصّة الرقميّة عبر مكوّنات الجامعة."
-        index="06"
         breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'التحوّل الرقميّ' }]}
         actions={(
           /* R342-09 (D11 sub-page CTA precedent): a read-only metrics ledger
@@ -625,7 +623,6 @@ export function AdminSettingsPage() {
       <PatternsPageHeader
         title="إعدادات المنصّة"
         description="إعدادات تشغيليّة على مستوى الجامعة. تفعيل المعدِّلات الفرديّة قيد التطوير."
-        index="09"
         breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'إعدادات المنصّة' }]}
         /* r342 t13: the header's «مزامنة الجامعة» CTA retired with the
          * zu-sync system (dropped upstream — /admin/sync gone); the

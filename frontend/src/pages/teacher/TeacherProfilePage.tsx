@@ -321,7 +321,7 @@ export default function TeacherProfilePage() {
       />
 
       {/* Bio + contact (editable) */}
-      <Card title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[01]</span>نبذة شخصية</>} icon={FileText}>
+      <Card title={<>نبذة شخصية</>} icon={FileText}>
         {editing && draft ? (
           /* r152c (A2): the four edit-mode controls were placeholder-ONLY
              — no accessible name at all. FormField gives each a real
@@ -343,7 +343,7 @@ export default function TeacherProfilePage() {
       </Card>
 
       <div className="grid-2">
-        <Card title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[02]</span>المكتب وساعات العمل</>} icon={MapPin}>
+        <Card title={<>المكتب وساعات العمل</>} icon={MapPin}>
           {editing && draft ? (
             <div className="flex-col gap-2">
               <FormField label="موقع المكتب" id="teacher-office-location-field">
@@ -385,7 +385,7 @@ export default function TeacherProfilePage() {
           )}
         </Card>
 
-        <Card title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[03]</span>الموقع الإلكتروني</>} icon={Globe}>
+        <Card title={<>الموقع الإلكتروني</>} icon={Globe}>
           {editing && draft ? (
             <FormField label="الموقع الإلكتروني" id="teacher-website-field">
               <input
@@ -408,7 +408,7 @@ export default function TeacherProfilePage() {
 
       {/* Subject keywords + degree summary */}
       <div className="grid-2">
-        <Card title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[04]</span>مجالات الاهتمام البحثي</>} icon={Sparkles}>
+        <Card title={<>مجالات الاهتمام البحثي</>} icon={Sparkles}>
           {profile.subjectKeywords.length === 0 ? (
             <div className="text-sm text-muted">لم تُسجَّل مجالات بحثية بعد.</div>
           ) : (
@@ -418,7 +418,7 @@ export default function TeacherProfilePage() {
           )}
         </Card>
         <Card
-          title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[05]</span>الشهادات والاعتمادات</>}
+          title={<>الشهادات والاعتمادات</>}
           icon={GraduationCap}
           /* r157 / 6A9 — countAr grammar: «3 شهادات» (the old
            * `${n} شهادة` template broke at 0 and 2); the zero case
@@ -447,7 +447,7 @@ export default function TeacherProfilePage() {
 
       {/* Publications & awards */}
       <Card
-        title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[06]</span>المنشورات العلمية</>}
+        title={<>المنشورات العلمية</>}
         icon={FileText}
         subtitle={profile.publications.length === 0
           ? 'لم تُضف منشورات'
@@ -480,7 +480,7 @@ export default function TeacherProfilePage() {
       </Card>
 
       <Card
-        title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[07]</span>التكريمات والجوائز</>}
+        title={<>التكريمات والجوائز</>}
         icon={Award}
         subtitle={profile.awards.length === 0
           ? 'لم تُضف جائزة'
@@ -510,7 +510,7 @@ export default function TeacherProfilePage() {
       </Card>
 
       {/* Courses currently teaching */}
-      <Card title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[08]</span>المقرّرات الحالية</>} icon={BookOpen} subtitle={countAr(profile.courses.length, ['مقرّر واحد هذا الفصل', 'مقرّران هذا الفصل', 'مقرّرات هذا الفصل', 'مقرّراً هذا الفصل'])}>
+      <Card title={<>المقرّرات الحالية</>} icon={BookOpen} subtitle={countAr(profile.courses.length, ['مقرّر واحد هذا الفصل', 'مقرّران هذا الفصل', 'مقرّرات هذا الفصل', 'مقرّراً هذا الفصل'])}>
         {profile.courses.length === 0 ? (
           <EmptyState illustration="empty-courses"
             icon={BookOpen}

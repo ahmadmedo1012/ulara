@@ -286,7 +286,6 @@ export function CollegesIndexPage() {
           title="مؤسستك، كلياتك… على أُلارا"
           description="أُلارا منصّة مستقلة متعددة المستأجرين: كل مؤسسة تبني هيكلها الأكاديمي بنفسها — من لوحة المسجّل تُنشأ الكلية، ثم القسم، ثم المقرّرات — وتمتلك المؤسسة بياناتها بعزل كامل. ما تراه هنا هيكل مساحة العرض الموسومة، لا كتالوج جامعات."
           actions={isGuest ? <GuestJoinRow /> : undefined}
-          index="01"
         />
       </div>
 
@@ -938,7 +937,6 @@ export function CollegesLeaderboardPage() {
           title="منافسة الكلّيّات"
           description="مقارنة الكلّيّات على مؤشّرات الأداء الأكاديميّ والنشاط الرقميّ."
           actions={isGuest ? <GuestJoinRow /> : undefined}
-          index="01"
         />
       </div>
 

@@ -56,7 +56,6 @@ export function OfferingMaterialsCard({ offeringId }: { offeringId: string | und
   return (
     <section className="lecture-sec" aria-labelledby="lec-sec-mat">
       <SectionBar
-        index="04"
         title="مواد المقرّر"
         id="lec-sec-mat"
         meta={<BarCount n={materials.length} srLabel={countAr(materials.length, ['مادة واحدة', 'مادّتان', 'مواد', 'مادة'])} />}

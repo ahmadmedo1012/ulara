@@ -362,7 +362,7 @@ export default function TeacherLivePage() {
 
           {/* Live now */}
           {live.length > 0 && (
-            <Card title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[01]</span>مباشرة الآن</>} icon={Radio} subtitle="جلسات نشطة — يمكنك إنهاؤها من هنا">
+            <Card title={<>مباشرة الآن</>} icon={Radio} subtitle="جلسات نشطة — يمكنك إنهاؤها من هنا">
               <div className="flex-col gap-2">
                 {live.map((s) => (
                   <SessionRow
@@ -380,7 +380,7 @@ export default function TeacherLivePage() {
               مجدولة` template broke at 0 and 2 — «0 جلسة مجدولة» / «2
               جلسة مجدولة»); the zero case names the reality. */}
           <Card
-            title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[02]</span>جلسات قادمة</>}
+            title={<>جلسات قادمة</>}
             icon={Calendar}
             subtitle={scheduled.length === 0
               ? 'لا جلسات مجدولة'
@@ -413,7 +413,7 @@ export default function TeacherLivePage() {
               names the truncation honestly: «أحدث 10 جلسات من أصل N».
               The old silent .slice(0, 10) hid the rest. */}
           {past.length > 0 && (
-            <Card title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[03]</span>جلسات سابقة</>} icon={CheckCircle2}>
+            <Card title={<>جلسات سابقة</>} icon={CheckCircle2}>
               <div className="flex-col gap-2">
                 {past.slice(0, 10).map((s) => (
                   <SessionRow key={s.id} session={s} />

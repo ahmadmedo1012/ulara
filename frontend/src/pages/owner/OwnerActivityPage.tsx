@@ -210,7 +210,6 @@ export function OwnerActivityPage() {
           breadcrumbs={[{ label: 'لوحة المالك', to: '/owner/dashboard' }, { label: 'سجلّ النشاط' }]}
           /* R341 D11: the [05] nav-order gutter numeral (OWNER_NAV
            * register — the D10 quality precedent). */
-          index="05"
           /* D11 (D8/D10 header-CTA precedent): the log's sibling
            * surfaces — the governance metrics that aggregate this feed
            * (primary) + the accounts directory the events name (ghost).

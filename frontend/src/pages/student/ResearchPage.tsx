@@ -272,7 +272,6 @@ export default function StudentResearchPage() {
               lifecycle band above is the view's metadata band,
               unnumbered like the dashboard's momentum strip). */}
           <SectionBar
-            index="01"
             title="بحوثي"
             meta={
               papers.length > 0 ? (
@@ -542,7 +541,6 @@ function ProcessExplainer() {
       {/* R319 (c3-S1): the explainer's heading joins the §B2 title-bar
           register — [02] + the step count as mono meta. */}
       <SectionBar
-        index="02"
         title="كيف يعمل النظام"
         meta={<BarCount n={STEPS.length} srLabel={countAr(STEPS.length, ['خطوة واحدة', 'خطوتان', 'خطوات', 'خطوة'])} />}
       />

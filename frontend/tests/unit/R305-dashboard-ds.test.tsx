@@ -272,11 +272,10 @@ describe('R305 — the section kicker register', () => {
       expect(h.className).toContain('r319s-bar-title');
       const bar = h.closest('.r319s-bar');
       expect(bar).not.toBeNull();
-      // The mono gutter index rides every titled section (aria-hidden,
-      // LTR Latin).
-      const idx = bar?.querySelector('.r319s-bar-index');
-      expect(idx?.textContent).toMatch(/^\[\d{2}\]$/);
-      expect(idx?.getAttribute('aria-hidden')).toBe('true');
+      // r351 A2 (Q2): the [0N] gutter index is RETIRED (it rendered out
+      // of DOM order on several dashboards) — the h2 + hairline + meta
+      // carry the grammar alone.
+      expect(bar?.querySelector('.r319s-bar-index')).toBeNull();
     }
     // The masthead stays the page's only h1 (the PageHeader contract).
     const h1s = container.querySelectorAll('h1');

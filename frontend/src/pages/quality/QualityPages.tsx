@@ -347,7 +347,6 @@ export function QualityDashboardPage() {
        §A1) and the [01] gutter numeral rides the R319 index register
        (the same .page-index span, byte-identical, aria-hidden). */
     <PageHeader
-      index="01"
       eyebrow="قطاع ضمان الجودة"
       title="لوحة الجودة"
       description="بناء نظام تعليمي فعّال عبر تطوير الأداء الأكاديمي والإداري والتقني — وفقاً لمتطلبات الاعتماد المحلية والدولية."
@@ -712,7 +711,6 @@ export function QualityCoursesPage() {
       {/* R341 t06: migrated onto the shared patterns PageHeader — the
           sector brow rides the eyebrow slot, [02] the index register. */}
       <PageHeader
-        index="02"
         eyebrow="قطاع ضمان الجودة"
         title="جودة المقرّرات"
         description={metric
@@ -931,7 +929,6 @@ export function QualityProfessorsPage() {
         {/* R341 t06: migrated onto the shared patterns PageHeader — the
             sector brow rides the eyebrow slot, [03] the index register. */}
         <PageHeader
-          index="03"
           eyebrow="قطاع ضمان الجودة"
           title="تقييم الأساتذة"
           description="رضا الطلاب، معدل الاستجابة، الالتزام بمعايير المنصة."
@@ -955,7 +952,6 @@ export function QualityProfessorsPage() {
         {/* R341 t06: migrated onto the shared patterns PageHeader — the
             sector brow rides the eyebrow slot, [03] the index register. */}
         <PageHeader
-          index="03"
           eyebrow="قطاع ضمان الجودة"
           title="تقييم الأساتذة"
           description="رضا الطلاب، معدل الاستجابة، الالتزام بمعايير المنصة."
@@ -984,7 +980,6 @@ export function QualityProfessorsPage() {
           (it needs the resolved payload, so pending/error keep the
           plain line — the per-state copy is unchanged). */}
       <PageHeader
-        index="03"
         eyebrow="قطاع ضمان الجودة"
         title="تقييم الأساتذة"
         description={
@@ -1224,7 +1219,6 @@ export function QualityEngagementPage() {
     /* R341 t06: migrated onto the shared patterns PageHeader — the
        sector brow rides the eyebrow slot, [04] the index register. */
     <PageHeader
-      index="04"
       eyebrow="قطاع ضمان الجودة"
       title="الانخراط والحضور"
       description="نسب الحضور، إكمال المحاضرات، النقاط المتفاعلة."
@@ -1411,7 +1405,6 @@ export function QualityCurriculumPage() {
        seat — kept in the comment register, the numeral itself never
        rendered here). */
     <PageHeader
-      index="06"
       eyebrow="قطاع ضمان الجودة"
       title="مراجعة المناهج"
       description="شجرة الكلّيّات والأقسام والمقرّرات، مع مؤشرات اكتمال المحتوى."
@@ -1645,7 +1638,6 @@ export function QualityReportsPage() {
       {/* R341 t06: migrated onto the shared patterns PageHeader — the
           sector brow rides the eyebrow slot, [07] the index register. */}
       <PageHeader
-        index="07"
         eyebrow="قطاع ضمان الجودة"
         title="تقارير الجودة"
         description="لوحات حيّة بدلاً من تقارير ثابتة — تُحدَّث مع كل عمليّة على المنصّة."
@@ -1730,7 +1722,6 @@ export function QualityAlertsPage() {
           (leading, before the read-only cue — the sector's one
           data-driven header signal). */}
       <PageHeader
-        index="09"
         eyebrow="قطاع ضمان الجودة"
         title="تنبيهات الجودة"
         description="أحداث تستوجب تدخّل فريق ضمان الجودة — مُستخرجة فوريّاً من بيانات المنصّة."

@@ -337,7 +337,6 @@ export default function ResearchReviewPage() {
            * index seat) + the workflow classification eyebrow: the
            * review surface reads on the same [nn] grammar the done
            * teacher pages speak. */
-          index="01"
           eyebrow="التدريس · البحث العلمي"
           description="قائمة بحوث الطلاب للمراجعة، ومنشوراتك العلمية."
           actions={

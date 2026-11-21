@@ -792,7 +792,7 @@ export default function AiAssistantPage() {
                 title-bar register — [01] with the honest gap count as
                 mono meta once resolved; the old hint line survives as
                 the quiet note under the bar (honest copy, verbatim). */}
-            <SectionBar index="01" title="بناءً على أدائك" />
+            <SectionBar title="بناءً على أدائك" />
             <p className="r319sp-sec-note">مفاهيم تحتاج إلى توضيح — اضغط على أيٍّ منها لطرح سؤال مباشر على المساعد</p>
             <div className="ai-gaps-row">
               {[0, 1, 2].map((i) => (
@@ -822,7 +822,6 @@ export default function AiAssistantPage() {
             {/* R319 (c3-S2): the resolved strip's bar carries the honest
                 measured-gaps count (countAr for assistive tech). */}
             <SectionBar
-              index="01"
               title="بناءً على أدائك"
               meta={(
                 <BarCount
@@ -1221,7 +1220,6 @@ export default function AiAssistantPage() {
                 slot) and [03] أسئلة مقترحة. The Card bodies keep their
                 hairline regions. */}
             <SectionBar
-              index="02"
               title="محادثاتك"
               meta={
                 !conversations.isPending && !conversations.isError && convList.length > 0 ? (
@@ -1348,7 +1346,6 @@ export default function AiAssistantPage() {
             </Card>
 
             <SectionBar
-              index="03"
               title="أسئلة مقترحة"
               meta={<BarCount n={suggestions.length} srLabel={countAr(suggestions.length, ['سؤال مقترح واحد', 'سؤالان مقترحان', 'أسئلة مقترحة', 'سؤالاً مقترحاً'])} />}
             />

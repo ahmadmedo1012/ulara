@@ -78,7 +78,6 @@ describe('D-02 — the document viewer back fallback is role-aware', () => {
 
 describe('D-03/D-07/D-08 — source pins', () => {
   const ownerSource = read('src/pages/owner/OwnerSystemPage.tsx');
-  const sidebarSource = read('src/components/layout/Sidebar.tsx');
   const topbarSource = read('src/components/layout/Topbar.tsx');
   const studentHooksSource = read('src/hooks/resources/student.ts');
 

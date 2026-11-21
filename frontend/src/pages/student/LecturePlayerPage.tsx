@@ -872,7 +872,6 @@ export default function LecturePlayerPage() {
             {data.checkpoints.length > 0 && (
               <section className="lecture-sec" aria-labelledby="lec-sec-cp">
                 <SectionBar
-                  index="02"
                   title="نقاط التفاعل"
                   id="lec-sec-cp"
                   meta={<BarCount n={checkpointsTotal} srLabel={countAr(checkpointsTotal, ['نقطة تفاعل واحدة', 'نقطتا تفاعل', 'نقاط تفاعل', 'نقطة تفاعل'])} />}
@@ -910,7 +909,6 @@ export default function LecturePlayerPage() {
 
             <section className="lecture-sec" aria-labelledby="lec-sec-ch">
               <SectionBar
-                index="03"
                 title="فصول المحاضرة"
                 id="lec-sec-ch"
                 meta={<BarCount n={data.chapters.length} srLabel={countAr(data.chapters.length, ['فصل واحد', 'فصلان', 'فصول', 'فصلاً'])} />}
@@ -959,7 +957,6 @@ export default function LecturePlayerPage() {
             {cues !== null && cues.length > 0 && (
               <section className="lecture-sec" aria-labelledby="lec-sec-tr">
                 <SectionBar
-                  index="04"
                   title="النص المكتوب"
                   id="lec-sec-tr"
                   meta={<BarCount n={cues.length} srLabel={countAr(cues.length, ['مقطع واحد', 'مقطعان', 'مقاطع', 'مقطع'])} />}

@@ -579,7 +579,6 @@ export function OwnerInstitutionsPage() {
          * register — the D10 quality precedent). The page's primary
          * action (the create form's submit) is already the first
          * in-viewport CTA at both bands. */
-        index="04"
       />
 
       <CreateInstitutionCard

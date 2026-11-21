@@ -331,10 +331,10 @@ export function OwnerDashboardPage() {
           ))}
         </div>
         <div className="grid-2-1">
-          <Card title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[01]</span>توزيع المستخدمين</>}>
+          <Card title={<>توزيع المستخدمين</>}>
             <Skeleton width="100%" height={348} rounded="var(--r-lg)" />
           </Card>
-          <Card title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[02]</span>الحالة التشغيليّة</>}>
+          <Card title={<>الحالة التشغيليّة</>}>
             <Skeleton width="100%" height={348} rounded="var(--r-lg)" />
           </Card>
         </div>
@@ -435,7 +435,6 @@ export function OwnerDashboardPage() {
          * governance [13]). The card-level w11-idx [01] on توزيع
          * المستخدمين below is a different register (card order) and
          * stays. */
-        index="01"
         description="نظرة شاملة وإحصائيات حيّة عن المنصة"
         meta={formatDate(new Date(), { weekday: 'long', day: 'numeric', month: 'long' })}
         /* D11 (D8/D10 header-CTA precedent): the console's two live
@@ -496,7 +495,7 @@ export function OwnerDashboardPage() {
 
       {/* Chart + Operational status */}
       <div className="grid-2-1">
-        <Card title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[01]</span>توزيع المستخدمين</>}>
+        <Card title={<>توزيع المستخدمين</>}>
           <ChartFrame
             className="owner-chart-container"
             ariaLabel="مخطط دائري يوزّع مستخدمي المنصّة على الأدوار: طلاب وأساتذة وإداريّون وفريق جودة"
@@ -511,7 +510,7 @@ export function OwnerDashboardPage() {
           </ChartFrame>
         </Card>
 
-        <Card title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[02]</span>الحالة التشغيليّة</>}>
+        <Card title={<>الحالة التشغيليّة</>}>
           <div className="owner-health-list">
             {/* r299: the «حالة المنصة» row died — the live-status band
                 directly above OWNS alert status (same query, same
@@ -581,7 +580,7 @@ export function OwnerDashboardPage() {
           r253: the 4-column table becomes dense RowList rows — one row
           per event (action · actor · resource · relative time), the
           same facts without the grid. */}
-      <Card title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[03]</span>الأحداث الأخيرة</>} icon={Clock} subtitle="آخر العمليّات على المنصّة">
+      <Card title={<>الأحداث الأخيرة</>} icon={Clock} subtitle="آخر العمليّات على المنصّة">
         {activity.isPending ? (
           <ListSkeleton rows={6} />
         ) : activity.isError ? (
@@ -615,7 +614,7 @@ export function OwnerDashboardPage() {
 
       {/* Quick Actions — WS-F6: wired to real /owner/* routes (the old
           four buttons had no onClick and no destination). */}
-      <Card title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[04]</span>إجراءات سريعة</>} icon={ShieldCheck}>
+      <Card title={<>إجراءات سريعة</>} icon={ShieldCheck}>
         <div className="owner-action-bar">
           <Link to="/owner/realtime" className="btn primary">
             <Icon icon={Radio} size={14} />

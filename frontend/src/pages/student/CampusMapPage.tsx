@@ -56,7 +56,6 @@ export default function CampusMapPage() {
     <div className="r321m-page">
     <PageFrame width="default">
       <PageHeader
-        index="01"
         eyebrow="خدمات المؤسّسة"
         title="دليل كليات مؤسستك"
         description={
@@ -84,7 +83,6 @@ export default function CampusMapPage() {
           R321 B2: the §B2 title bar + the note on the page paper. */}
       <section className="ml-sec" aria-labelledby="map-sec-built">
         <SectionBar
-          index="02"
           title="الخريطة تُبنى من بيانات مؤسستك"
           id="map-sec-built"
           meta={
@@ -109,7 +107,6 @@ export default function CampusMapPage() {
       {facs.isError ? null : (
         <section className="ml-sec" aria-labelledby="map-sec-directory">
           <SectionBar
-            index="03"
             title="كليات مؤسستك"
             id="map-sec-directory"
             meta={
@@ -158,7 +155,7 @@ export default function CampusMapPage() {
           mono LTR values); the obviously-synthetic demo details, clearly
           labeled (the r307 demo-contact contract). */}
       <section className="ml-sec" aria-labelledby="map-sec-contact">
-        <SectionBar index="04" title="معلومات التواصل" id="map-sec-contact" />
+        <SectionBar title="معلومات التواصل" id="map-sec-contact" />
         <div className="ml-facts">
           <div className="ml-fact">
             <span className="ml-fact-label">الهاتف</span>

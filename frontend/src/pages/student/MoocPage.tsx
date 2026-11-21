@@ -163,7 +163,6 @@ export default function MoocPage() {
               mono-indexed title bar — [01] + the honest course count as
               quiet mono meta (countAr for assistive tech). */}
           <SectionBar
-            index="01"
             title="الدورات المتاحة"
             meta={
               <BarCount
