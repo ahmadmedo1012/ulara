@@ -5,5 +5,3 @@ export { AiMessage } from './AiMessage';
 export { AiComposer } from './AiComposer';
 export { AiSidebar } from './AiSidebar';
 export { AiGaps, AiGapsSkeleton } from './AiGaps';
-export type { AiGap } from './AiGaps';
-export type { ChatMsg } from './chat';

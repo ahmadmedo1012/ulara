@@ -10,7 +10,10 @@ import { AlertCircle } from 'lucide-react';
 import { Icon } from '../Icon';
 import { Skeleton } from '../primitives/States';
 
-export interface AiGap {
+/* r351 A3 debt-pay: the gap row shape stays file-local (no importer
+ * anywhere — src or tests; the knip ratchet pinned it as unused debt
+ * the day it shipped). */
+interface AiGap {
   conceptId: string;
   conceptName: string;
   courseName: string;
@@ -36,7 +39,7 @@ export function AiGapsSkeleton() {
   );
 }
 
-export interface AiGapsProps {
+interface AiGapsProps {
   gaps: AiGap[];
   busy: boolean;
   onAsk: (conceptName: string) => void;

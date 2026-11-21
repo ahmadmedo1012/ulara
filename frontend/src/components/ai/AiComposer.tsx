@@ -9,7 +9,9 @@
 import { Clock3, Send, Square } from 'lucide-react';
 import { Icon } from '../Icon';
 
-export interface AiComposerProps {
+/* Local (de-exported in the r351 A3 debt-pay): no importer anywhere —
+ * the component is consumed as JSX via the barrel, never as a type. */
+interface AiComposerProps {
   busy: boolean;
   streaming: boolean;
   input: string;

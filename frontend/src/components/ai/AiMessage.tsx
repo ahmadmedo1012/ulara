@@ -99,7 +99,9 @@ function CitationChips({ citations }: { citations: AiCitation[] }) {
   );
 }
 
-export interface AiMessageProps {
+/* Local (de-exported in the r351 A3 debt-pay): no importer anywhere —
+ * the component is consumed as JSX via the barrel, never as a type. */
+interface AiMessageProps {
   msg: ChatMsg;
   index: number;
   /** No affordances on the greeting placeholder (no turn behind it). */

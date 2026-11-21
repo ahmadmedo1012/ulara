@@ -14,6 +14,9 @@
  *  · aiChatSseReply()   — the POST /ai/chat?stream=1 SSE body
  *    factory (token frames + the done frame — the r323 wire grammar,
  *    citations included since AI-2's inline «المصدر: [رقم]»);
+ *    consumed by the ai-assistant e2e journeys and pinned round-trip
+ *    (factory output → the production createAiSseParser) by
+ *    tests/unit/ai-fixtures-roundtrip.test.ts;
  *  · OWNER_AI_METRICS / AI_SERVICE_STATUS_LOCAL /
  *    AI_CONNECTION_CHECK_LOCAL — the owner console's
  *    GET /owner/ai-metrics + GET /ai/status + POST /ai/status/check
@@ -59,11 +62,16 @@ export const AI_CITATIONS = [
   },
 ] as const;
 
-/** The persisted turn both transports converge on. */
-export function aiChatDone(opts: { reply?: string; model?: string } = {}) {
+/** The persisted turn both transports converge on. The ids ride the
+ * opts so a journey can name its own conversation (the defaults are
+ * the static corpus's ids) — consumed by the ai-assistant journeys
+ * and pinned round-trip by tests/unit/ai-fixtures-roundtrip.test.ts. */
+export function aiChatDone(
+  opts: { reply?: string; model?: string; conversationId?: string; messageId?: string } = {},
+) {
   return {
-    conversationId: 'conv_fix_1',
-    messageId: 'msg_fix_1',
+    conversationId: opts.conversationId ?? 'conv_fix_1',
+    messageId: opts.messageId ?? 'msg_fix_1',
     reply: opts.reply ?? 'جواب المساعد التجريبي',
     engine: 'local',
     model: opts.model ?? 'gap-aware-composer',
@@ -71,13 +79,20 @@ export function aiChatDone(opts: { reply?: string; model?: string } = {}) {
   };
 }
 
-/** The JSON grammar's full envelope (the r166d/r323 additive shape). */
-export function aiChatJsonReply(opts: { reply?: string } = {}) {
+/** The JSON grammar's full envelope (the r166d/r323 additive shape) —
+ * same opts pass-through as the SSE factory (minus remaining, which
+ * is stream-telemetry only). */
+export function aiChatJsonReply(
+  opts: { reply?: string; model?: string; conversationId?: string; messageId?: string } = {},
+) {
   return aiChatDone(opts);
 }
 
-/** The SSE grammar (token frames + done + quota telemetry). */
-export function aiChatSseReply(opts: { reply?: string; remaining?: number } = {}) {
+/** The SSE grammar (token frames + done + quota telemetry). Ids and
+ * remaining ride the opts through to the done frame. */
+export function aiChatSseReply(
+  opts: { reply?: string; remaining?: number; conversationId?: string; messageId?: string } = {},
+) {
   const done = aiChatDone(opts);
   const doneFrame = { ...done, ...(opts.remaining !== undefined ? { remaining: opts.remaining } : {}) };
   return [

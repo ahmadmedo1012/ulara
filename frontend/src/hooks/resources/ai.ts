@@ -125,7 +125,9 @@ export function useDeleteAiConversation() {
 /* ── r351 AI-4 — the OWNER provider console ───────────────────── */
 
 /** GET /ai/status — the honest service card (OWNER only). */
-export interface AiServiceStatus {
+/* Local (de-exported in the r351 A3 debt-pay): the response shape is
+ * consumed structurally by the owner console — no importer anywhere. */
+interface AiServiceStatus {
   provider: string;
   model: string | null;
   /** Key presence as a BOOLEAN — the console never sees the key. */
@@ -144,8 +146,9 @@ export function useAiServiceStatus() {
   });
 }
 
-/** POST /ai/status/check — ONE minimal live round trip (OWNER only). */
-export interface AiConnectionCheck {
+/** POST /ai/status/check — ONE minimal live round trip (OWNER only).
+ * Local (de-exported in the r351 A3 debt-pay — no importer anywhere). */
+interface AiConnectionCheck {
   ok: boolean;
   latencyMs?: number;
   model?: string | null;

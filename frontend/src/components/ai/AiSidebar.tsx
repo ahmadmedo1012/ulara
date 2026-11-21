@@ -12,7 +12,9 @@ import { Icon } from '../Icon';
 import { formatRelativeAr } from '../../lib/format';
 import type { AiConversation } from '../../hooks/resources/ai';
 
-export interface AiSidebarProps {
+/* Local (de-exported in the r351 A3 debt-pay): no importer anywhere —
+ * the component is consumed as JSX via the barrel, never as a type. */
+interface AiSidebarProps {
   conversations: AiConversation[];
   isPending: boolean;
   isError: boolean;

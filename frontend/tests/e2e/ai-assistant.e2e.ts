@@ -13,6 +13,11 @@
 import { test, expect } from './fixtures/e2e';
 import { FIXED_NOW_ISO } from './fixtures/api-fixtures';
 import { installStatefulApi, statefulOk } from './fixtures/mock-transport';
+/* r351 A3 debt-pay: the SSE/JSON wire bodies come from the corpus's
+ * own factories (ai-fixtures.ts) — ONE source of the r323 grammar
+ * (round-trip-pinned against the production parser by
+ * tests/unit/ai-fixtures-roundtrip.test.ts), not three inline copies. */
+import { aiChatJsonReply, aiChatSseReply } from './fixtures/ai-fixtures';
 
 test.use({ e2eRole: 'STUDENT' });
 
@@ -64,29 +69,11 @@ test.describe('المساعد الذكيّ — رحلة محادثة كاملة'
           const conversation = { id: 'conv_e2e_ai_1', title: QUESTION.slice(0, 60), createdAt: FIXED_NOW_ISO };
           conversations.push(conversation);
           if (url.searchParams.get('stream') === '1') {
-            const done = {
+            const sse = aiChatSseReply({
+              reply: REPLY,
               conversationId: conversation.id,
               messageId: 'msg_e2e_ai_1',
-              reply: REPLY,
-              engine: 'local',
-              model: 'gap-aware-composer',
-              /* r351 AI-2/AI-3: the grounded answer's citations ride the
-               * done frame — the chips are their referent (mobile parity). */
-              citations: [
-                {
-                  index: 1,
-                  title: 'محاضرة الاستعلامات المركّبة',
-                  locator: 'محاضرة 7',
-                  url: 'https://example.invalid/materials/lecture-7',
-                  snippet: 'شرح الاستعلامات.',
-                },
-                { index: 2, title: 'ورقة عمل الفهارس', locator: null, url: null, snippet: 'تدريبات.' },
-              ],
-            };
-            const sse = [
-              `event: token\ndata: ${JSON.stringify({ t: REPLY })}\n\n`,
-              `event: done\ndata: ${JSON.stringify(done)}\n\n`,
-            ].join('');
+            });
             await route.fulfill({
               status: 200,
               headers: { 'Content-Type': 'text/event-stream; charset=utf-8' },
@@ -94,12 +81,10 @@ test.describe('المساعد الذكيّ — رحلة محادثة كاملة'
             });
             return;
           }
-          await statefulOk(route, {
-            conversationId: conversation.id,
-            reply: REPLY,
-            engine: 'local',
-            model: 'gap-aware-composer',
-          });
+          await statefulOk(
+            route,
+            aiChatJsonReply({ reply: REPLY, conversationId: conversation.id, messageId: 'msg_e2e_ai_1' }),
+          );
         },
       },
     ]);
@@ -246,7 +231,7 @@ test.describe('المساعد الذكيّ — التدفّق والتحكّم (
           await route.fulfill({
             status: 200,
             contentType: 'text/event-stream; charset=utf-8',
-            body: `event: token\ndata: ${JSON.stringify({ t: 'نجحت المحاولة' })}\n\nevent: done\ndata: ${JSON.stringify({ conversationId: 'conv_r2', messageId: 'm_r2', reply: 'نجحت المحاولة', engine: 'local', model: 'gap-aware-composer' })}\n\n`,
+            body: aiChatSseReply({ reply: 'نجحت المحاولة', conversationId: 'conv_r2', messageId: 'm_r2' }),
           });
         },
       },
@@ -290,7 +275,7 @@ test.describe('المساعد الذكيّ — التدفّق والتحكّم (
             contentType: 'text/event-stream; charset=utf-8',
             // A done frame with remaining = 0 arms the card; the NEXT
             // ask would be the server's own 429 sentence.
-            body: `event: token\ndata: ${JSON.stringify({ t: 'آخر جواب' })}\n\nevent: done\ndata: ${JSON.stringify({ conversationId: 'conv_q', messageId: 'm_q', reply: 'آخر جواب', engine: 'local', model: 'gap-aware-composer', remaining: 0 })}\n\n`,
+            body: aiChatSseReply({ reply: 'آخر جواب', remaining: 0, conversationId: 'conv_q', messageId: 'm_q' }),
           });
         },
       },
