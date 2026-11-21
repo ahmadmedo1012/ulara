@@ -273,6 +273,44 @@ footer.fo-footer {
 .fo-c2-bottom {
   margin-block-start: var(--sp-7);
 }
+/* R349 (D3 · the phone colophon): the index groups pair up in two
+ * columns ≤767 — the reference's own mobile footer compacts its link
+ * families side by side instead of stacking five mono-headed groups
+ * into a 800px ledger (measured col2: 803px @390 → ~530). The last
+ * group of each band spans the full row when odd. */
+@media (max-width: 767px) {
+  .fo-c2-top,
+  .fo-c2-bottom {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 1.6rem;
+    row-gap: var(--sp-5);
+  }
+
+  .fo-c2-top .fo-lgroup:nth-child(3),
+  .fo-c2-bottom .fo-lgroup:nth-child(3) {
+    grid-column: 1 / -1;
+  }
+
+  /* R349 (D3b): the contact door takes the full row — its one-line
+   * biglink never wraps against the half-column (the audited
+   * unbalanced pair), and the channels ride the reference's own
+   * mobile social grammar: a ruled two-column list, each door its
+   * own row — no ambiguous inline run-ons. */
+  .fo-c2-bottom .fo-lgroup:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .fo-socials {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 1.6rem;
+    row-gap: var(--sp-1);
+  }
+
+  .fo-c2-bottom {
+    margin-block-start: var(--sp-5);
+  }
+}
 .fo-lgroup {
   display: grid;
   row-gap: var(--sp-2);
