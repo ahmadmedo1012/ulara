@@ -8,7 +8,7 @@ import { catalogApi } from "@/api/catalog";
 import { trainingApi } from "@/api/training";
 import { useInstitutionScope } from "@/hooks/useInstitutionScope";
 import { usePalette } from "@/design/theme";
-import { ds, sp, tierColors  } from "@/design/tokens";
+import { ds, sp, tierColors } from "@/design/tokens";
 import { T } from "@/components/ui/text";
 import { Badge, Card, Hairline } from "@/components/ui/surfaces";
 import { Avatar, LedgerRow, RowList } from "@/components/ui/data";

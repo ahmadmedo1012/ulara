@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View , StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { router } from "expo-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSession, ROLE_HOME, ROLE_LABELS } from "@/auth/session";

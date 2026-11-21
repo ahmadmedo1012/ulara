@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View , StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { humanizeError } from "@/lib/errors";
 import { StackHeader } from "@/components/shell/AppTopBar";
 import { Screen } from "@/components/ui";
