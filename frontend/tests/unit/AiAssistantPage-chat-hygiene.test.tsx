@@ -124,7 +124,7 @@ describe('aiReplyFormat (the markdown-lite formatter)', () => {
     // The real-LLM greeting bubble renders through ReplyText — its
     // plain text has no markup to begin with; the formatter tests above
     // pin the transformation itself.
-    expect(screen.getByText(/مرحبًا! أنا مساعدك الدراسيّ/)).toBeTruthy();
+    expect(screen.getByText(/مرحبًا! أرى إتقانك/)).toBeTruthy();
   });
 });
 
@@ -151,14 +151,16 @@ describe('the chat input bound (4000, mirrored from chatSchema)', () => {
 describe('the privacy disclosure (real-LLM mode only)', () => {
   it('renders the honest external-provider line when a real provider answers', () => {
     renderPage();
-    expect(screen.getByText(/إشعار الخصوصيّة/)).toBeTruthy();
-    expect(screen.getByText(/مزوّد ذكاء اصطناعيّ خارجيّ/)).toBeTruthy();
+    // r351 AI-3: the disclosure kept its substance, shortened to ONE
+    // quiet line above the log (no band, no «إشعار الخصوصيّة» label).
+    expect(screen.getByText(/تُرسَل رسائلك وبيانات إتقانك/)).toBeTruthy();
+    expect(screen.getByText(/مزوّد الذكاء الخارجيّ/)).toBeTruthy();
   });
 
   it('never renders in LOCAL mode (nothing leaves the platform)', () => {
     mocks.config = { data: { provider: 'local', model: null }, isPending: false, isError: false };
     renderPage();
-    expect(screen.queryByText(/إشعار الخصوصيّة/)).toBeNull();
+    expect(screen.queryByText(/تُرسَل رسائلك/)).toBeNull();
   });
 });
 

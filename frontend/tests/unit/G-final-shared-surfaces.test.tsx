@@ -265,14 +265,15 @@ describe('G · AiAssistantPage — the header rides the family patterns contract
         <AiAssistantPage />
       </MemoryRouter>,
     );
-    expect(screen.getByText('لا توجد محادثات سابقة بعد')).toBeInTheDocument();
-    expect(screen.getByText('ابدأ بأول سؤال وستظهر محادثاتك هنا.')).toBeInTheDocument();
+    // r351 AI-3: the SHORT copy (content law) on the same kit cell.
+    expect(screen.getByText('لا محادثات بعد')).toBeInTheDocument();
+    expect(screen.getByText('ابدأ بسؤال وستظهر هنا.')).toBeInTheDocument();
     // The kit contract: the §B2 hatched cell (hatch + label + note).
     const cell = container.querySelector('.r319s-empty');
     expect(cell).not.toBeNull();
     expect(container.querySelector('.r319s-empty-hatch')).not.toBeNull();
-    expect(cell?.querySelector('.r319s-empty-label')?.textContent).toBe('لا توجد محادثات سابقة بعد');
-    expect(cell?.querySelector('.r319s-empty-note')?.textContent).toBe('ابدأ بأول سؤال وستظهر محادثاتك هنا.');
+    expect(cell?.querySelector('.r319s-empty-label')?.textContent).toBe('لا محادثات بعد');
+    expect(cell?.querySelector('.r319s-empty-note')?.textContent).toBe('ابدأ بسؤال وستظهر هنا.');
   });
 });
 

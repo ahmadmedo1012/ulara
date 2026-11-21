@@ -37,10 +37,12 @@ const stripJsx = (src: string) => stripComments(src);
 
 describe('r168b — Oasis chips are engine-gated in source', () => {
   it('the chip block branches on isRealLlm', () => {
-    const page = stripJsx(read('src/pages/student/AiAssistantPage.tsx'));
-    expect(page).toMatch(/\{isRealLlm\s*\?\s*\(/);
-    expect(page).toContain("send('لخّص لي الفصل الأخير من المقرّر')");
-    expect(page).toContain("send('ما المفاهيم التي أحتاج إلى مراجعتها؟')");
+    // r351 AI-3: the quick-chip rail moved to components/ai/AiComposer
+    // (the page is orchestration only) — the honesty gate follows it.
+    const composer = stripJsx(read('src/components/ai/AiComposer.tsx'));
+    expect(composer).toMatch(/\{isRealLlm\s*\?\s*\(/);
+    expect(composer).toContain("onQuick('لخّص لي الفصل الأخير من المقرّر')");
+    expect(composer).toContain("onQuick('ما المفاهيم التي أحتاج إلى مراجعتها؟')");
   });
 });
 

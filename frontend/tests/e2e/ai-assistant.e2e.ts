@@ -98,17 +98,16 @@ test.describe('المساعد الذكيّ — رحلة محادثة كاملة'
     // now, so the h1 carries the family's pf-page-title class.)
     await expect(page.locator('h1.pf-page-title')).toHaveText('المساعد الذكيّ');
 
-    /* السطح الصادق للنمط المحليّ: العنوان الفرعي + شارة AI العامة
-     * (لا اسم نموذج يُدَّعى)، وتحية الملحّن المحليّ. */
+    /* السطح الصادق للنمط المحليّ (r351 AI-3): سطر واحد + شارة AI
+     * العامة + تحية الملحّن المحليّ المختصرة. */
     await expect(
-      page.getByText('يحلّل بيانات إتقانك محليّاً ويقترح خطوة مذاكرة تالية — مساعد تحليليّ محليّ، لا نموذج لغويّ خارجيّ.'),
+      page.getByText('مساعد تحليليّ محليّ بلا نموذج خارجيّ.'),
     ).toBeVisible();
     await expect(page.locator('.badge', { hasText: 'AI' })).toBeVisible();
-    await expect(page.getByText(/أحلّل بيانات إتقانك محليّاً/)).toBeVisible();
-    /* لا بطاقات فجوات (قائمة فارغة صادقة) ولا محادثات سابقة —
-     * (G: الحالة الفارغة على عقد EmptyState؛ النص نفسه عنوان + وصف). */
-    await expect(page.getByText('لا توجد محادثات سابقة بعد')).toBeVisible();
-    await expect(page.getByText('ابدأ بأول سؤال وستظهر محادثاتك هنا.')).toBeVisible();
+    await expect(page.getByText(/أحلّل إتقانك محليًّا/)).toBeVisible();
+    /* لا محادثات سابقة — سطر واحد هادئ. */
+    await expect(page.getByText('لا محادثات بعد')).toBeVisible();
+    await expect(page.getByText('ابدأ بسؤال وستظهر هنا.')).toBeVisible();
 
     /* الإرسال — فقّة السؤال تظهر فورًا، ثم الردّ بفقّته. */
     await page.getByLabel('اكتب سؤالك للمساعد').fill(QUESTION);
@@ -125,9 +124,8 @@ test.describe('المساعد الذكيّ — رحلة محادثة كاملة'
      * الجلب الحقيقيين (لا إعادة تحميل صفحة). */
     const convRow = page.locator('.ai-conv-row', { hasText: QUESTION });
     await expect(convRow).toBeVisible();
-    // R319 override (c3-S2 §B2): the current-conversation marker rides the
-    // mono StatusChip (CURRENT) — the brand Badge «الحالية» was retired.
-    await expect(convRow.locator('.r319s-chip', { hasText: 'CURRENT' })).toBeVisible();
+    await expect(convRow).toHaveAttribute('aria-current', 'true');
+    await expect(convRow.locator('.ai-current-dot')).toBeVisible();
 
     /* الشكل على السلك حرفيًّا: أول دورٍ بلا conversationId — { message }
      * فقط، عقد chatSchema الصارم. */

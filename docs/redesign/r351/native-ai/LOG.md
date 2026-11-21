@@ -40,3 +40,30 @@
 - Full backend: `Test Files 93 passed | 1 skipped (94)` · `Tests 1986 passed | 19 skipped (2005)`.
 - `npm run typecheck` + `typecheck:tests` → clean.
 - 2 stale pins updated (the retired plain-text mandate — intended behavior change, documented in-test); 4 new pins added (student contract, teacher patterns, telemetry metadata-only, mastery no-PII).
+
+## Session 1 — AI-3 web assistant redesign
+
+**Structure** (1,376-line page → orchestration + components):
+- NEW `frontend/src/components/ai/`: `chat.ts` (types/copy/tables), `AiMessage.tsx`, `AiComposer.tsx`, `AiSidebar.tsx`, `AiGaps.tsx` (+`AiGapsSkeleton`), `index.ts` barrel.
+- Page rewritten: 583 lines (was 1,376, −58%), keeps EVERY behavior (SSE streaming/stop/retry/regenerate/copy/thumbs/quota/a11y focus-restore/auto-scroll guard/IME-safe Enter).
+- The r305rp wrapper + ds-research.css/pages.css imports RESTORED (the `r305ai-*` bubble styles + EmptyCell live there — §0 contract intact).
+
+**Defects fixed (the owner's §0 list):**
+- Section numerals 01/02/03: RETIRED (quiet labels — a chat page is one surface, not a numbered report).
+- Wrapped header chips line («مساعد محلّي / واعٍ بمستوى إتقانك»): the banded head retired; ONE disclosure line (privacy, real mode) + header description.
+- bidi «%200»: `.ai-gap-pct` now `dir="ltr"` (digits+percent are one unit).
+- Gaps strip: title+hint one row; card CTA line removed (the card IS the button; a11y label carries it).
+- Current-conversation marker: sienna dot + aria-current (was the CURRENT mono chip).
+
+**Copy cuts** (measured via the temporary Playwright harness `__measure-ai.e2e.ts`, deleted before commit):
+- Greetings: 3-line → 1-line each; suggestions 5→3; quick chips real-mode 4→2; error/empty rows one line + one action.
+- BEFORE/AFTER (`.pf-page` textContent words, hermetic, same fixtures): 1440 light 114→**44** (−61%) · 390 light 114→**44** · dark same · reduced-motion same. Target was −40%.
+- overflowX 0→0 · scrollH 900/844 stable · console errors 0→0 · screenshots in `shots/` (before+after × light/dark × 1440/390 + reduced-motion).
+
+**Test updates (all intended behavior changes, in-test documented):** 6 test files re-pinned (config, conversations, chat-hygiene, engine-tag, r305a7 §2 deep-band→quiet-disclosures, G-final empty copy). e2e re-pinned (short copy, EmptyCell two-line, dot marker). 2 diacritic-order byte alignments (test-canonical NFC).
+
+**Gates:**
+- `TZ=UTC npx vitest run` → `Test Files 243 passed (243)` · `Tests 3015 passed (3015)`.
+- `npx tsc --noEmit -p tsconfig.json` clean · `typecheck:tests` clean.
+- e2e ai-assistant journey → passed (hermetic, dev 5303).
+- `bash scripts/verify.sh --fast` → **FAST PASS** (tsc/vitest/bundle/css-ratchet/logo/a11y floor S25/C0 unchanged).
