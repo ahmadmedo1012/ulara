@@ -9,15 +9,15 @@ language — with far less text.
 
 | WP | scope | status |
 |---|---|---|
-| Q0 | route-audit instrument + BASELINE.md + zero 501s (non-AI) | PENDING |
-| Q1 | shell: topbar ≤4 controls, single identity, sidebar tooltips, BottomNav ≤5, one overlay motion, FAB never covers content | PENDING |
-| Q2 | hierarchy: one SectionHeader pattern, [0N] decision, bidi percent fix, tabular figures | PENDING |
-| Q3 | copy cut: ≥35% fewer words on >120-word screens, dashboards ≤180w | PENDING |
+| Q0 | route-audit instrument + BASELINE.md + zero 501s (non-AI) | DONE (430 cells, 58 fixtures) |
+| Q1 | shell: topbar ≤4 controls, single identity, sidebar tooltips, BottomNav ≤5, one overlay motion, FAB never covers content | DONE (controls 6→3, identity 2→1, FAB retired, 44px floors) |
+| Q2 | hierarchy: one SectionHeader pattern, [0N] decision, bidi percent fix, tabular figures | DONE ([0N] retired; Num isolate; tabular verified) |
+| Q3 | copy cut: ≥35% fewer words on >120-word screens, dashboards ≤180w | DONE for dashboards (180/177/180/173/165 frozen-clock) + university/vision (−35/−39%); partial on the long tail (settings −12%) — see HANDOFF |
 | Q4 | one skeleton system (Skeleton/States/StripSkeletons/RouteProgress unified), CLS≈0 | DONE (Stage 1: PageSkeleton system unified) |
-| Q5 | per-role polish to one grammar (PageFrame, RowList, StatLine…) | PENDING |
-| Q6 | small screens: 360–430 + 768/1024, no h-overflow, tap ≥44 | PENDING |
-| Q7 | route/nav organization | PENDING |
-| Q8 | a11y + r351-shell e2e pins | PENDING |
+| Q5 | per-role polish to one grammar | PARTIAL (dashboards + the 44px row floor; the long tail rides Q3) — see HANDOFF |
+| Q6 | small screens: 360–430 + 768/1024, no h-overflow, tap ≥44 | DONE (0 overflow @360–1440; 0 sub-44 on dashboards) |
+| Q7 | route/nav organization | DEFERRED with reason (see note) |
+| Q8 | a11y + r351-shell e2e pins | DONE (10/10 green; axe 19 ≤ floor S25/C0) |
 
 ## Q7 note
 To be audited when Q7 starts: candidates for merging are near-duplicate hub

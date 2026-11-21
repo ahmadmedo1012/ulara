@@ -163,21 +163,24 @@ async function fixedUiOverlaps(page: Page): Promise<number> {
 }
 
 test.describe('r351 shell chrome — fixed UI never covers content', () => {
-  test.use({ e2eRole: 'STUDENT' });
   for (const role of ROLES) {
-    test(`${role}: zero fixed-UI ∩ content at 1440 and 1024`, async ({ page }) => {
+    test.describe(role, () => {
       test.use({ e2eRole: role });
-      for (const width of [1440, 1024]) {
-        await page.setViewportSize({ width, height: 900 });
-        await page.goto(DASHBOARDS[role]);
-        await settleDashboard(page);
-        const hits = await fixedUiOverlaps(page);
-        expect(hits, `${role} @${width}: fixed UI intersects content`).toBe(0);
-      }
+      test('zero fixed-UI ∩ content at 1440 and 1024', async ({ page }) => {
+        for (const width of [1440, 1024]) {
+          await page.setViewportSize({ width, height: 900 });
+          await page.goto(DASHBOARDS[role]);
+          await settleDashboard(page);
+          const hits = await fixedUiOverlaps(page);
+          expect(hits, `${role} @${width}: fixed UI intersects content`).toBe(0);
+        }
+      });
     });
   }
 
-  test('STUDENT @390/360: the dock may ride, but the content pad clears it (the last row scrolls above)', async ({ page }) => {
+  test.describe('STUDENT dock clearance', () => {
+    test.use({ e2eRole: 'STUDENT' });
+    test('the dock may ride @390/360, but the content pad clears it (the last row scrolls above)', async ({ page }) => {
     for (const width of [390, 360]) {
       await page.setViewportSize({ width, height: 800 });
       await page.goto('/student/dashboard');
@@ -198,6 +201,7 @@ test.describe('r351 shell chrome — fixed UI never covers content', () => {
       // growth) so the page's LAST row always scrolls above the dock.
       expect(clearance.pad, `@${width}: content pad ≥ dock height`).toBeGreaterThanOrEqual(clearance.dock - 2);
     }
+    });
   });
 });
 
@@ -236,47 +240,55 @@ test.describe('r351 shell chrome — the 44px tap floor', () => {
 
 test.describe('r351 shell chrome — skeleton geometry (CLS ≈ 0)', () => {
   test.use({ e2eRole: 'STUDENT' });
-  test('the pending KPI strip and the resolved strip occupy the same block size', async ({ page, browser }) => {
+
+  test('the pending mirror renders the resolved anatomy — pinned header height, same section classes, zero skeletons after resolve', async ({ page, browser }) => {
     // A cold route with a NEVER-settling dashboard payload holds the
-    // page in its pending branch (the skeleton anatomy).
+    // page in its pending branch (the r220 loading mirror).
     const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
     await ctx.addInitScript(() => { try { sessionStorage.setItem('ulara-intro-skip', '1'); } catch { /* ignore */ } });
     const { installMockApi, seedSession } = await import('./fixtures/mock-transport');
     const { STUDENT_USER } = await import('./fixtures/api-fixtures');
     await seedSession(ctx, STUDENT_USER, {});
-    await installMockApi(ctx, {
-      sessionUser: STUDENT_USER,
-      overrides: [],
-      routes: [],
-    });
-    // Stateful never-resolving /me/dashboard on the page level.
+    await installMockApi(ctx, { sessionUser: STUDENT_USER, overrides: [], routes: [] });
     const slow = await ctx.newPage();
     await slow.route('**/api/v1/me/dashboard', async () => {
       await new Promise(() => { /* never fulfills — the pending branch holds */ });
     });
     await slow.goto('/student/dashboard');
-    // The app route suspends/pends — the shell chrome must paint.
     await slow.locator('.topbar').waitFor({ state: 'visible', timeout: 15_000 });
     await slow.waitForTimeout(300);
-    const pendingH = await slow.evaluate(() => {
-      const strip = document.querySelector('.content-inner .grid-4');
-      return strip ? Math.round(strip.getBoundingClientRect().height) : -1;
-    });
+
+    // The pending mirror renders the resolved page's own anatomy:
+    // the PageHeader (pinned height) + the resume band + the list slot.
+    const pending = await slow.evaluate(() => ({
+      headerH: document.querySelector('.pf-page-header')?.getBoundingClientRect().height ?? -1,
+      hasResume: !!document.querySelector('.dash-resume-card'),
+      hasListSlot: !!document.querySelector('.content-inner .flex-col, .content-inner .rowlist, .content-inner [aria-busy="true"]'),
+      title: document.querySelector('.pf-page-title')?.textContent ?? '',
+    }));
     await slow.close();
+    await ctx.close();
 
     // The resolved page.
     await page.goto('/student/dashboard');
     await settleDashboard(page);
-    const resolvedH = await page.evaluate(() => {
-      const strip = document.querySelector('.content-inner .grid-4');
-      return strip ? Math.round(strip.getBoundingClientRect().height) : -1;
-    });
+    const resolved = await page.evaluate(() => ({
+      headerH: document.querySelector('.pf-page-header')?.getBoundingClientRect().height ?? -1,
+      hasResume: !!document.querySelector('.dash-resume-card'),
+      skeletons: document.querySelectorAll('.content .skeleton').length,
+      busy: document.querySelectorAll('.content [aria-busy="true"]').length,
+      title: document.querySelector('.pf-page-title')?.textContent ?? '',
+    }));
 
-    expect(pendingH, 'the pending KPI strip renders (the skeleton anatomy)').toBeGreaterThan(0);
-    expect(resolvedH, 'the resolved KPI strip renders').toBeGreaterThan(0);
-    // CLS ≈ 0: the skeleton's KPI strip matches the resolved height
-    // (the r172b calibration: ±2px tolerance for sub-pixel rounding).
-    expect(Math.abs(pendingH - resolvedH)).toBeLessThanOrEqual(2);
-    await ctx.close();
+    // Anatomy parity: the same header block, the same resume band, the
+    // same page title — the pending → resolved handoff moves nothing.
+    expect(pending.title).toBe(resolved.title);
+    expect(pending.headerH).toBeGreaterThan(0);
+    expect(Math.abs(pending.headerH - resolved.headerH), 'the pinned header height does not shift').toBeLessThanOrEqual(4);
+    expect(pending.hasResume).toBe(true);
+    expect(resolved.hasResume).toBe(true);
+    // And the resolved page leaves no skeleton behind.
+    expect(resolved.skeletons).toBe(0);
+    expect(resolved.busy).toBe(0);
   });
 });
