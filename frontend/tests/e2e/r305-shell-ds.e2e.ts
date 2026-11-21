@@ -328,15 +328,19 @@ test.describe('المسار النشط واستعادة التمرير', () => {
     // R337: نافذة 4000ms كانت تحدّ قدَم المراقب نفسه — المسار قاس 4.3s
     // في CI خضراء سابقًا، ووصل الحد مرة أخرى في 5327cb3f (كلا المحاولتين
     // انتهتا بالتايم-آوت على waitForFunction فقط، والاختبار يمر محليًا
-    // 3/3 تحت حمل عاملَين). النافذة 8000ms تُبقي التثبيت كما هو (±60px)
-    // وتفصل بين «الاستعادة بطيئة تحت الحمل» و«الاستعادة مفقودة».
+    // 3/3 تحت حمل عاملَين). النافذة 15000ms تُبقي التثبيت كما هو (±60px)
+    // وتفصل بين «الاستعادة بطيئة تحت الحمل» و«الاستعادة مفقودة»: على صندوق
+    // 2-CPU تمرّ منفردة 4/4 وتفشل داخل الحزمة الكاملة، وفي CI سقطت مرتين
+    // على waitForFunction وحده دون أن يفشل التأكيد نفسه — الرصد يُعيد
+    // التطبيق حتى ~60 إطارًا، وإطار واحد بطيء يبتلع النافذة القديمة.
+    // السقف الفعلي هو timeouts.playwright (45s) لا هذه النافذة.
     await page.waitForFunction(
       (expected) => {
         const el = document.querySelector<HTMLElement>('.content');
         return el != null && Math.abs(el.scrollTop - (expected as number)) < 60;
       },
       y,
-      { timeout: 8000 },
+      { timeout: 15000 },
     );
     const restored = await page.evaluate(() => document.querySelector<HTMLElement>('.content')?.scrollTop ?? -1);
     expect(Math.abs(restored - y), `التمرير استُعيد (${restored} ≈ ${y})`).toBeLessThanOrEqual(60);

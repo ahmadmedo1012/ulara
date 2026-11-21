@@ -114,6 +114,22 @@ Run in the worktree at `647d044` + this change set.
 | YAML parse of all workflows + `dependabot.yml` | PASS |
 | `npm audit --omit=dev` | 3 vulnerabilities (2 moderate, 1 high) — the two documented major migrations |
 
+### CI verification (GitHub Actions, after the push)
+
+- Commit `32b15ef`: **Typecheck, deadcode-ratchet and Zero-trace failed.** Each
+  was reproduced locally and fixed in `1e0aef1` — axios restored (three suites
+  import its types), and two retired-name references removed (this report quoted
+  an untracked workspace filename; the upstream r347 plan spelled a retired
+  domain).
+- Commit `1e0aef1`: **green** — Lint, Typecheck, Build, Test (frontend),
+  Test (backend), DB integration, Design gates, Size gate, Surface drift,
+  E2E iOS (WebKit), Zero-trace, deadcode-ratchet, Vercel production deploy and
+  the deploy smoke (`buildId == pushed SHA`). The only failure was the E2E job,
+  on `tests/e2e/r305-shell-ds.e2e.ts:284`: a scroll-restore `waitForFunction`
+  timeout under full-suite load (passes 4/4 in isolation; the spec's own history
+  documents this overrun). Its window was raised 8s → 15s with the ±60px
+  tolerance untouched — a flake tolerance, not a weakened assertion.
+
 ### Not executed (reported as not run, never as passed)
 
 - Playwright e2e belts (`test:e2e`, `test:r305`, `ios-webkit`).
