@@ -4404,6 +4404,16 @@ button.tq-row:focus-visible {
     align-items: center;
     gap: var(--sp-2);
     flex-shrink: 0;
+    /* r349: the shared .list-row now wraps (its body owns a 208px
+       basis — a trailing cluster that cannot fit beside it folds
+       UNDER, and on that second line the side is measured alone).
+       shrink:0 kept the whole cluster rigid, so at 320px it overhung
+       the row's inline-end edge by ~24px into .content's clip. The
+       r169a .tabs cap turns that rigidity into folding: clamped to
+       the parent width, the cluster's own children wrap inside — the
+       due chip keeps its line, the count + ratio follow. */
+    max-inline-size: 100%;
+    flex-wrap: wrap;
   }
 
   /* ── 6 · Performance — the distribution ledger ─────────────────────
