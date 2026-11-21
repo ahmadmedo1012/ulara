@@ -212,29 +212,32 @@ export function RulerGauge({
       </span>
       <span className="ind-ruler-numerals" aria-hidden="true">
         {[0, 25, 50, 75, 100].map((n) => (
-          <bdi
+          /* r348: a PLAIN span, not a bdi — the seat law. Logical
+             insets resolve against the ELEMENT'S OWN writing mode, and
+             a bdi auto-resolves its direction from content: digit-only
+             text has no strong character, so the isolate falls back to
+             LTR — the numeral's inset-inline-start then maps to the
+             physical LEFT while the ticks/fill map to the RIGHT: the
+             numerals ran mirrored against the ticks and «100»
+             overflowed its band by a full label-width (measured x=1237
+             vs band edge 1224, r347 audit — and STILL x=1237 after the
+             first dir-drop attempt, measured live). A plain span
+             inherits the sheet's RTL, so its inset maps to the SAME
+             side the ticks map to: the numeral's inline-start (right)
+             edge rides its tick, middles center on it (+50%), edges
+             fold inward (+100%). Latin digits are bidi-neutral —
+             «100» renders in digit order inside the RTL run with no
+             isolation needed. */
+          <span
             key={n}
             className="ind-mono ind-ruler-num"
             style={{
               insetInlineStart: `${n}%`,
-              /* RTL anchoring (r348 fix): the numerals inherit the
-                 sheet's RTL so their logical inset maps to the SAME
-                 physical side the ticks map to — the numeral's
-                 inline-start (right) edge rides its tick, the middle
-                 numerals center on it (translateX +50%) and the two
-                 edge numerals fold inward. The old dir="ltr" flipped
-                 the ELEMENT's OWN logical-inset mapping (logical
-                 properties resolve against the element's own writing
-                 mode, not the container's): the numerals ran mirrored
-                 against the ticks and «100» overflowed its band by a
-                 full label-width (measured x=1237 vs band edge 1224,
-                 r347 audit). Latin digits are bidi-neutral — the text
-                 order never needed the isolation. */
               transform: n === 0 ? undefined : n === 100 ? 'translateX(100%)' : 'translateX(50%)',
             }}
           >
             {n}
-          </bdi>
+          </span>
         ))}
       </span>
     </span>
