@@ -173,3 +173,8 @@ CI on `b33dce4` exposed four latent breaks — three inherited, one mine:
 
 Verification after fixes: test-tree tsc ✓ (exit 0) · zero-trace content+names
 ✓ · size-gate rule2/3 ✓ · deadcode 0 regressed, baseline re-pinned ✓.
+
+Follow-up: the 27 DSF-2 evidence shots (>500KB each) quantized to 128–160-color
+palettes — docs/ total drops 33.3MB → 19.0MB. Rule 1 (file ≤500KB) now green
+everywhere; the 30→40MB raise stays (headroom for the §9 screenshot sweep),
+and the compressed shots remain people-facing DSF-2 evidence.
