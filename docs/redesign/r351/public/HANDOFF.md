@@ -40,6 +40,15 @@ Branch `r351/public-experience` (base `main`@`35793f7`). PLAN + GAP + LOG in thi
   biglink, back-to-top, consent pair + learn-more); zero overflow at
   360/375/390/430/768; reduced-motion = the complete static sheet.
 
+
+- **CLS (the final row)** — the final capture found and fixed the last
+  layout-instability source: the ≤767 journey's stage 1→2 aspect swap
+  re-flowed the whole window cluster (0.1225 CLS @390). The camera seat
+  is now ONE constant 460/600 portrait box at every ≤767 beat (the
+  overview letterboxes inside it — the viewBox contract r312 untouched);
+  CLS 0.1226 → 0.0118 @390 (the remainder = the Lenis init micro-shift,
+  on base and @1440 too). `journey.css` ≤767 block only.
+
 ## REQUESTS TO OTHER SLICES
 
 - **A2 (authenticated)**: the route transition's CLOSE leg (0.6s power2.in,
