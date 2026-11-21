@@ -753,7 +753,7 @@ export function GradesPage() {
          * r351 A2 (Q3): trimmed to the one honest sentence — the
          * drill-down plug retired (the intelligence link lives on the
          * students + performance seats). */
-        subtitle="المتوسّط يجمع درجات الواجبات المُقيَّمة والدرجات الفصليّة المسجَّلة."
+        
       >
         {!effectiveOfferingId ? (
           /* r351 A2 (Q3): empty-state prose retired — the picker sits
@@ -2857,7 +2857,7 @@ export function MessagesPage() {
         title="الرسائل"
         /* r351 A2 (Q3): subtitle trimmed to the honest recipient scope —
          * the compose/reply instructions retired (the buttons exist). */
-        subtitle="المستلمون المتاحون: طلاب مقرّراتك ومن راسلك سابقاً."
+        subtitle="طلاب مقرّراتك ومن راسلك سابقاً."
         renderCompose={(args) => <TeacherMessageCompose {...args} />}
       />
     </div>

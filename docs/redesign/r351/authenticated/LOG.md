@@ -110,3 +110,22 @@ TeacherDashboard-queue-today (topRisks describe + 2 render tests retired),
 OwnerDashboard-action-strip + OwnerPages-6A10-pins (copy), r183 pins,
 r166a greeting pin, QualityDashboard header pin, student-sheet ruler meta.
 verify.sh --fast ALL GREEN (3009 tests, bundle 752.9/770).
+
+## Q3 phase 3 + Q5/Q6 floors (commit 8)
+
+- university 259→169 (−35% ✓: the demo-workspace disclosure lives ONCE in
+  the header; eight per-row repeats shrank to their data word), vision
+  254→156 (−39% ✓: 2–4-word subtitles, h1 = the page's name), settings
+  245→216 (−12%: seven form sections' notes cut; the privacy-policy
+  channel link RESTORED after the r320 pin caught its removal — tests
+  are law), research 196→186, teacher grades/messages subtitles, admin
+  empty descriptions.
+- Q5/Q6: the 44px floor reaches CONTENT targets — .pf-today-link fills
+  its row (was a 16px text link inside a 44px row), .btn.sm grows its
+  hit area to 44px over the 32px visual (the topbar min-* pattern).
+  Dashboards @1440/390/**360**: smallTap **0** (was 16–29/screen),
+  h-overflow **0** at every width incl. 360×800.
+- The remaining fixed-UI∩content cells are the bottom-nav dock over
+  scrollable content at ≤390 only (inherent to any fixed dock; the
+  78px+safe-area content pad guarantees the last row scrolls above it —
+  the r351 e2e pins encode desktop=0 + mobile=clearance).

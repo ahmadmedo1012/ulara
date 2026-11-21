@@ -469,7 +469,9 @@
      (R313: --_btn-bg-hover retired), with the soft rose wash as the
      wipe so the destructive identity survives the swap. */
 
-  .btn.sm  { block-size: 32px; padding-inline: var(--sp-3); font-size: var(--type-label-size-sm); border-radius: var(--r-sm); }
+  /* r351 A2 (Q6): the 44px target floor over the 32px visual — same
+     min-* growth the topbar cluster uses (chrome.css). */
+  .btn.sm  { min-block-size: 44px; block-size: 32px; padding-inline: var(--sp-3); font-size: var(--type-label-size-sm); border-radius: var(--r-sm); }
   .btn.lg  { block-size: 48px; padding-inline: var(--sp-6); font-size: var(--type-body-size); border-radius: var(--r-md); }
   /* r157 dead-selector sweep (audit 6A11 #8, fresh-rg verified): .btn.xl
      and .btn.pill deleted — zero TSX consumers render either modifier

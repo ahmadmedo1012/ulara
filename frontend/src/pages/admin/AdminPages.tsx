@@ -395,7 +395,7 @@ export function AdminDashboardPage() {
             <EmptyState illustration="empty-list"
               icon={BarChart3}
               title="لا توجد بيانات طلاب بعد"
-              description="ستظهر التوزيعة هنا فور تسجيل الطلاب في الكلّيّات."
+              
             />
           ) : topByStudents.length === 1 && topFaculty ? (
             <div className="flex-col gap-3">
@@ -498,7 +498,7 @@ export function AdminDashboardPage() {
           <EmptyState illustration="empty-research"
             icon={TrendingUp}
             title="لا توجد بيانات أبحاث بعد"
-            description="ستظهر حركة النشر هنا بعد رفع أول بحث إلى المنصة."
+            
           />
         ) : (
           <ChartFrame

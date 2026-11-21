@@ -508,6 +508,12 @@ a.pf-row-link {
   line-height: var(--lh-snug);
   text-decoration: none;
   border-radius: var(--r-sm);
+  /* r351 A2 (Q6): the anchor fills the row's 44px target — the audit
+     measured the bare text link at 16px tall inside a 44px row. */
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  min-block-size: 44px;
 }
 @media (hover: hover) and (pointer: fine) {
   .pf-today-link:hover { color: var(--accent-ink); }

@@ -383,7 +383,7 @@ function EmptyUpload({ onOpen }: { onOpen: () => void }) {
     <EmptyState
       icon={BookMarked}
       title="لم ترفع أي بحث بعد"
-      description="ابدأ برفع أول بحث لك ليتم فحصه ثم تقييمه من قبل الأستاذ."
+      
       illustration="empty-research"
       action={
         <button type="button" className="btn primary" onClick={onOpen}>

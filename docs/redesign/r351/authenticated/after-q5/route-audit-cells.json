@@ -1,0 +1,551 @@
+[
+  {
+    "cell": "STUDENT·/student/dashboard·light·1440",
+    "role": "STUDENT",
+    "route": "/student/dashboard",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 180,
+    "scrollHeight": 1513,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/student/dashboard·light·390",
+    "role": "STUDENT",
+    "route": "/student/dashboard",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 174,
+    "scrollHeight": 2281,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 3,
+    "overlaps": [
+      {
+        "el": "pf-today-link",
+        "text": "واجب الأسبوع الثالث (CS-201)",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 8877
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "فات الموعد · 18 مارس",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 2166
+          }
+        ]
+      },
+      {
+        "el": "r319s-chip r319s-chip--due",
+        "text": "OVERDUE",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 1792
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/student/dashboard·light·360",
+    "role": "STUDENT",
+    "route": "/student/dashboard",
+    "theme": "light",
+    "viewport": "360x800",
+    "words": 174,
+    "scrollHeight": 2304,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 4,
+    "overlaps": [
+      {
+        "el": "ind-mono ind-sched-code",
+        "text": "CS-201",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 282
+          }
+        ]
+      },
+      {
+        "el": "ind-mono ind-sched-code",
+        "text": "CS-310",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 275
+          }
+        ]
+      },
+      {
+        "el": "pf-today-link",
+        "text": "واجب الأسبوع الثالث (CS-201)",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 8092
+          }
+        ]
+      },
+      {
+        "el": "r319s-chip r319s-chip--due",
+        "text": "OVERDUE",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 1703
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "TEACHER·/teacher/dashboard·light·1440",
+    "role": "TEACHER",
+    "route": "/teacher/dashboard",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 180,
+    "scrollHeight": 1335,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "TEACHER·/teacher/dashboard·light·390",
+    "role": "TEACHER",
+    "route": "/teacher/dashboard",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 181,
+    "scrollHeight": 2159,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 2,
+    "overlaps": [
+      {
+        "el": "pf-section-desc",
+        "text": "السبت",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 7306
+          }
+        ]
+      },
+      {
+        "el": "btn ghost sm",
+        "text": "الجدول الأسبوعيّ",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 5113
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "TEACHER·/teacher/dashboard·light·360",
+    "role": "TEACHER",
+    "route": "/teacher/dashboard",
+    "theme": "light",
+    "viewport": "360x800",
+    "words": 181,
+    "scrollHeight": 2192,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 3,
+    "overlaps": [
+      {
+        "el": "pf-section-title",
+        "text": "محاضرات اليوم",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 5324
+          }
+        ]
+      },
+      {
+        "el": "pf-section-desc",
+        "text": "السبت",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 6188
+          }
+        ]
+      },
+      {
+        "el": "btn ghost sm",
+        "text": "الجدول الأسبوعيّ",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 2014
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "ADMIN·/admin/dashboard·light·1440",
+    "role": "ADMIN",
+    "route": "/admin/dashboard",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 165,
+    "scrollHeight": 1428,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "ADMIN·/admin/dashboard·light·390",
+    "role": "ADMIN",
+    "route": "/admin/dashboard",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 166,
+    "scrollHeight": 2098,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 5,
+    "overlaps": [
+      {
+        "el": "stat-cell stat-cell-link",
+        "text": "هيئة التدريس137عضو",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 6371
+          }
+        ]
+      },
+      {
+        "el": "stat-cell stat-cell-link",
+        "text": "المقرّرات3425231 تسجيلاً",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 27262
+          }
+        ]
+      },
+      {
+        "el": "stat-label",
+        "text": "المقرّرات",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 9166
+          }
+        ]
+      },
+      {
+        "el": "stat-value",
+        "text": "342",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 9166
+          }
+        ]
+      },
+      {
+        "el": "stat-trend flat",
+        "text": "5231 تسجيلاً",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 6344
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "ADMIN·/admin/dashboard·light·360",
+    "role": "ADMIN",
+    "route": "/admin/dashboard",
+    "theme": "light",
+    "viewport": "360x800",
+    "words": 166,
+    "scrollHeight": 2051,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 5,
+    "overlaps": [
+      {
+        "el": "stat-cell stat-cell-link",
+        "text": "هيئة التدريس137عضو",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 8305
+          }
+        ]
+      },
+      {
+        "el": "stat-cell stat-cell-link",
+        "text": "المقرّرات3425231 تسجيلاً",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 24285
+          }
+        ]
+      },
+      {
+        "el": "stat-label",
+        "text": "المقرّرات",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 7735
+          }
+        ]
+      },
+      {
+        "el": "stat-value",
+        "text": "342",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 7735
+          }
+        ]
+      },
+      {
+        "el": "stat-trend flat",
+        "text": "5231 تسجيلاً",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 3975
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "QUALITY·/quality/dashboard·light·1440",
+    "role": "QUALITY",
+    "route": "/quality/dashboard",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 174,
+    "scrollHeight": 1931,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "QUALITY·/quality/dashboard·light·390",
+    "role": "QUALITY",
+    "route": "/quality/dashboard",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 174,
+    "scrollHeight": 2489,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 2,
+    "overlaps": [
+      {
+        "el": "SPAN",
+        "text": "النشاط الأسبوعي",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 18378
+          }
+        ]
+      },
+      {
+        "el": "card-subtitle",
+        "text": "جلسات يومية نشطة",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 3461
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "QUALITY·/quality/dashboard·light·360",
+    "role": "QUALITY",
+    "route": "/quality/dashboard",
+    "theme": "light",
+    "viewport": "360x800",
+    "words": 174,
+    "scrollHeight": 2446,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 2,
+    "overlaps": [
+      {
+        "el": "SPAN",
+        "text": "النشاط الأسبوعي",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 16436
+          }
+        ]
+      },
+      {
+        "el": "card-subtitle",
+        "text": "جلسات يومية نشطة",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 2619
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/dashboard·light·1440",
+    "role": "OWNER",
+    "route": "/owner/dashboard",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 180,
+    "scrollHeight": 1826,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/dashboard·light·390",
+    "role": "OWNER",
+    "route": "/owner/dashboard",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 181,
+    "scrollHeight": 2511,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/dashboard·light·360",
+    "role": "OWNER",
+    "route": "/owner/dashboard",
+    "theme": "light",
+    "viewport": "360x800",
+    "words": 181,
+    "scrollHeight": 2537,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 1,
+    "overlaps": [
+      {
+        "el": "SPAN",
+        "text": "توزيع المستخدمين",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 2106
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  }
+]
