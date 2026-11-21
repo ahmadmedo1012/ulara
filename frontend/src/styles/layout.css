@@ -1356,10 +1356,34 @@
       flex-direction: column;
       align-items: stretch;
       inline-size: 100%;
+      /* r348 (the icon-rail's rhythm — the r347 audit's «grouping
+         consistency» residual): the tinted well retires on the rail.
+         The track's --surface-2 ground + hairline border read as a
+         foreign group INSIDE the icon stream — the loudest block in
+         the 72px rail, seated between the nav groups' hairline
+         grammar and the flat footer controls (tour trigger, avatar).
+         Flat + gapless-track: the options sit like the nav icons
+         above them (one ground, one register), the ACTIVE option's
+         inset ring still carries the state, and the topbar's own
+         theme seat (.topbar-theme, r325-shell §5) keeps the control
+         reachable everywhere the rail isn't. */
+      background: transparent;
+      border: 0;
+      padding: 0;
+      gap: var(--sp-1);
     }
     .sidebar.collapsed .theme-toggle-option {
       inline-size: 100%;
       block-size: 30px;
+    }
+    /* The collapsed rail's is-active thumb loses the well's track
+       context — a boxed cell among borderless icons reads as a fourth
+       nav group. The state's whole voice on the rail = the ink step
+       (muted → text) on the flat ground, the same register the active
+       nav row speaks since R313 retired its surface pill. */
+    .sidebar.collapsed .theme-toggle-option.is-active {
+      --_bg: transparent;
+      box-shadow: none;
     }
   }
 
