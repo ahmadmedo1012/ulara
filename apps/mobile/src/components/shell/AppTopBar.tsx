@@ -1,4 +1,5 @@
 import { Pressable, StyleSheet, View } from "react-native";
+import Animated, { useAnimatedStyle, type SharedValue } from "react-native-reanimated";
 import { router } from "expo-router";
 import ArrowRight from "lucide-react-native/icons/arrow-right";
 import Bell from "lucide-react-native/icons/bell";
@@ -9,6 +10,7 @@ import { T } from "@/components/ui/text";
 import { Logo } from "@/brand";
 import { latn } from "@/lib/format";
 import { useUnreadCount } from "@/hooks/useNotifications";
+import { COLLAPSE } from "./collapse";
 
 /**
  * AppTopBar — the compact role-shell header (R334 3-a policy):
@@ -23,10 +25,53 @@ import { useUnreadCount } from "@/hooks/useNotifications";
  *
  * "back/menu" seat: there is no drawer in this app (the shell is
  * tab-based); pushed screens get their back affordance from StackHeader.
+ *
+ * r351 N2 — the COLLAPSING SEAT (optional, backward-compatible): when a
+ * LargeTitleScreen drives this bar (collapsedTitle + collapseProgress),
+ * the brand-word seat crossfades «أُلارا» → the screen title as the
+ * large title collapses (opacity-only; geometry from shell/collapse.ts).
+ * The ~30 screens that mount AppTopBar bare compile and render unchanged
+ * (no collapsedTitle → the plain brand word, exactly as before). The two
+ * stacked seat labels are BOTH exposed to screen readers at rest — an
+ * honest breadcrumb (app name, then screen name), not hidden chrome; the
+ * in-scroll driven opacity flip cannot be mirrored into a11y traits
+ * without JS-thread work inside the gesture, which the motion contract
+ * forbids.
  */
-export function AppTopBar({ alertsPath }: { alertsPath: string }) {
+export function AppTopBar({
+  alertsPath,
+  collapsedTitle,
+  collapseProgress,
+}: {
+  alertsPath: string;
+  /** r351 N2 — what the seat crossfades to when the large title collapses. */
+  collapsedTitle?: string;
+  /** r351 N2 — the scroll-driven collapse progress (from LargeTitleScreen). */
+  collapseProgress?: SharedValue<number>;
+}) {
   const p = usePalette();
   const { data: unread = 0 } = useUnreadCount();
+
+  /* r351 N2 — the seat crossfade. Plain Math.* over captured CONSTANTS
+   * (worklet-safe; no captured functions — the CountUp R336 rule). At
+   * rest (progress 0) the brand word is fully visible and the collapsed
+   * title fully transparent; the windows come from shell/collapse.ts. */
+  const brandSeatStyle = useAnimatedStyle(() => {
+    const t = (collapseProgress?.value ?? 0) / COLLAPSE.threshold;
+    const opacity = Math.max(
+      0,
+      Math.min(1, (COLLAPSE.seatOut[1] - t) / (COLLAPSE.seatOut[1] - COLLAPSE.seatOut[0])),
+    );
+    return { opacity };
+  });
+  const titleSeatStyle = useAnimatedStyle(() => {
+    const t = (collapseProgress?.value ?? 0) / COLLAPSE.threshold;
+    const opacity = Math.max(
+      0,
+      Math.min(1, (t - COLLAPSE.seatIn[0]) / (COLLAPSE.seatIn[1] - COLLAPSE.seatIn[0])),
+    );
+    return { opacity };
+  });
 
   return (
     <View
@@ -44,9 +89,25 @@ export function AppTopBar({ alertsPath }: { alertsPath: string }) {
       }}
     >
       <Logo variant="mark" size={26} />
-      <T variant="h4" weight="bold" numberOfLines={1} style={{ flex: 1 }}>
-        أُلارا
-      </T>
+      {collapsedTitle ? (
+        /* r351 N2 — the crossfade seat: one slot, two stacked labels. */
+        <View style={{ flex: 1, height: "100%" }}>
+          <Animated.View style={[styles.seatFill, brandSeatStyle]} pointerEvents="none">
+            <T variant="h4" weight="bold" numberOfLines={1}>
+              أُلارا
+            </T>
+          </Animated.View>
+          <Animated.View style={[styles.seatFill, titleSeatStyle]} pointerEvents="none">
+            <T variant="h4" weight="bold" numberOfLines={1}>
+              {collapsedTitle}
+            </T>
+          </Animated.View>
+        </View>
+      ) : (
+        <T variant="h4" weight="bold" numberOfLines={1} style={{ flex: 1 }}>
+          أُلارا
+        </T>
+      )}
       <Pressable
         accessibilityRole="button"
         accessibilityLabel="البحث"
@@ -94,9 +155,9 @@ export function AppTopBar({ alertsPath }: { alertsPath: string }) {
 /**
  * StackHeader — back arrow (RTL: points right) + drafting title.
  * The pushed-screen header (compact policy: back · title · right action).
- * Native large-title collapse is deliberately NOT implemented — these are
- * in-screen headers over a scroll body, not native-stack headers; see
- * docs/mobile/screens/shell.md.
+ * The large-title collapse lives in LargeTitleScreen (r351 N2) — the
+ * in-screen header over a scroll body; pushed screens keep this compact
+ * chrome; see docs/mobile/screens/shell.md.
  */
 export function StackHeader({
   title,
@@ -147,3 +208,15 @@ export function StackHeader({
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  /* r351 N2 — the crossfade seat's two stacked fills (see AppTopBar). */
+  seatFill: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    start: 0,
+    end: 0,
+    justifyContent: "center",
+  },
+});

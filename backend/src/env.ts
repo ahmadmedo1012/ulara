@@ -103,6 +103,11 @@ const schema = z
     // ≤3 ids — the bounds pin exactly that. Unset = the current
     // openrouter/free behavior (zero change). Each id ≤120 chars (a
     // fat-fingered paste must not become a request-body bomb).
+    // r351 AI-1: on a Gemini base URL (AI_BASE_URL ending in
+    // googleapis.com/v1beta/openai/) the SAME list drives the ordered
+    // two-model fallback (429/503 only — lib/ai.ts
+    // geminiFallThroughAllowed); the recommended pair is documented in
+    // docs/deployment.md §3.2.
     // r323 B2.3 — the speech-to-text provider (OpenAI-compatible
     // /audio/transcriptions: Groq Whisper, OpenAI, local Whisper servers).
     // Absent → the generation UI refuses with the honest Arabic message

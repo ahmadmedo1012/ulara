@@ -28,9 +28,11 @@ import { StatStripSkeleton } from '../../components/owner/StripSkeletons';
 import { ChartFrame } from '../../components/charts/ChartFrame';
 import { cartesianOptions, chartColors, useChartThemeKey } from '../../lib/chartTheme';
 import { useOwnerAiMetrics } from '../../hooks/useOwner';
-import { useAiConfig } from '../../hooks/useResources';
+import { useAiConfig, useAiServiceStatus, useAiConnectionCheck } from '../../hooks/useResources';
 import { useReducedMotion } from '../../components/motion';
 import { formatNum } from '../../utils/numbers';
+import { Icon } from '../../components/Icon';
+import { PlugZap, RefreshCw } from 'lucide-react';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend, Filler);
 
@@ -55,6 +57,13 @@ function featureLabel(feature: string) {
 export function OwnerAiPage() {
   const aiMetrics = useOwnerAiMetrics();
   const data = aiMetrics.data;
+  /* r351 AI-4 — the provider console: the honest service card
+   * (GET /ai/status: label, route, key PRESENCE boolean, last failure
+   * class, today's tokens) + the live connection check (ONE minimal
+   * round trip, server-side). The key itself never crosses the wire —
+   * presence only. */
+  const serviceStatus = useAiServiceStatus();
+  const connectionCheck = useAiConnectionCheck();
   /* r164-i: which engine answers — the r160 honest-surface badge
    * (GET /ai/config) landed on the student assistant page only; the
    * OWNER console that MONITORS the AI service never said whether a
@@ -139,6 +148,69 @@ export function OwnerAiPage() {
           </>
         )}
       />
+
+      {/* r351 AI-4 — بطاقة المزوّد: الحالة الصادقة + فحص الاتصال.
+          الوضع المحليّ يحمل تعليمات الإعداد بدل الأرقام. */}
+      <Card title="حالة المزوّد">
+        {serviceStatus.isError ? (
+          <p className="text-sm text-muted">تعذّر جلب حالة المزوّد.</p>
+        ) : serviceStatus.data?.local ? (
+          <div className="owner-ai-provider-local">
+            <p className="text-sm">الوضع المحليّ — الملحّن القالبيّ يجيب، بلا نموذج خارجيّ.</p>
+            <p className="text-xs text-muted">
+              للتفعيل: اضبط <code>AI_PROVIDER=openai</code> و<code>AI_BASE_URL</code> و<code>AI_API_KEY</code> و<code>AI_MODEL</code> — الوصفة الكاملة في docs/deployment.md §3.2.
+            </p>
+          </div>
+        ) : serviceStatus.data ? (
+          <div className="owner-ai-provider-grid">
+            <div>
+              <span className="text-xs text-muted">المزوّد</span>
+              <p className="owner-num"><bdi>{serviceStatus.data.provider}</bdi></p>
+            </div>
+            <div>
+              <span className="text-xs text-muted">المسار</span>
+              <p className="owner-num"><bdi>{serviceStatus.data.model ?? '—'}</bdi></p>
+            </div>
+            <div>
+              <span className="text-xs text-muted">المفتاح</span>
+              <p>{serviceStatus.data.keyPresent ? 'مضبوط' : 'غائب'}</p>
+            </div>
+            <div>
+              <span className="text-xs text-muted">توكنات اليوم</span>
+              <p className="owner-num"><bdi>{formatNum(serviceStatus.data.todayTokens)}</bdi></p>
+            </div>
+            <div>
+              <span className="text-xs text-muted">آخر فشل</span>
+              <p>{serviceStatus.data.lastError ? <bdi>{serviceStatus.data.lastError.kind ?? '—'}</bdi> : 'لا شيء'}</p>
+            </div>
+            <div className="owner-ai-provider-check">
+              <button
+                type="button"
+                className="btn accent sm"
+                onClick={() => connectionCheck.mutate()}
+                disabled={connectionCheck.isPending}
+              >
+                <Icon icon={connectionCheck.isPending ? RefreshCw : PlugZap} size={13} />
+                {connectionCheck.isPending ? 'جارٍ الفحص…' : 'فحص الاتصال'}
+              </button>
+              {connectionCheck.data && (
+                <p
+                  className="text-xs"
+                  role="status"
+                  style={{ color: connectionCheck.data.ok ? 'var(--success)' : 'var(--danger)' }}
+                >
+                  {connectionCheck.data.message}
+                  {connectionCheck.data.ok && connectionCheck.data.model ? (
+                    <> — <bdi>{connectionCheck.data.model}</bdi></>
+                  ) : null}
+                </p>
+              )}
+            </div>
+          </div>
+        ) : (
+          <p className="text-sm text-muted" aria-busy="true">جارٍ الجلب…</p>
+        )}
+      </Card>
 
       {aiMetrics.isPending ? (
         <>

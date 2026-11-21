@@ -9,6 +9,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api, unwrap } from '../../lib/api';
 import { useInstitutionScope } from '../../stores/auth.store';
 import { withInstitutionScope } from '../../lib/queryClient';
+import type { AiCitation } from '../../lib/ai-stream';
 
 // ── AI ─────────────────────────────────────────────────────────
 export function useAiChat() {
@@ -32,6 +33,10 @@ export function useAiChat() {
         reply: string;
         engine?: string;
         model?: string;
+        /** The retrieved materials the answer cited (r351: the AI-2
+         * prompt mandates inline «المصدر: [رقم]» — the chips are the
+         * referent). Same shape as AiStreamDone.citations. */
+        citations?: AiCitation[];
         degraded?: boolean;
         notice?: string;
       }>(
@@ -114,5 +119,47 @@ export function useDeleteAiConversation() {
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ['ai', 'conversations'] });
     },
+  });
+}
+
+/* ── r351 AI-4 — the OWNER provider console ───────────────────── */
+
+/** GET /ai/status — the honest service card (OWNER only). */
+/* Local (de-exported in the r351 A3 debt-pay): the response shape is
+ * consumed structurally by the owner console — no importer anywhere. */
+interface AiServiceStatus {
+  provider: string;
+  model: string | null;
+  /** Key presence as a BOOLEAN — the console never sees the key. */
+  keyPresent: boolean;
+  lastError: { kind: string | null; at: string } | null;
+  todayTokens: number;
+  local: boolean;
+}
+
+export function useAiServiceStatus() {
+  return useQuery({
+    queryKey: ['ai', 'status'],
+    queryFn: () => unwrap<AiServiceStatus>(api.get('/ai/status')),
+    staleTime: 30_000,
+    retry: 1,
+  });
+}
+
+/** POST /ai/status/check — ONE minimal live round trip (OWNER only).
+ * Local (de-exported in the r351 A3 debt-pay — no importer anywhere). */
+interface AiConnectionCheck {
+  ok: boolean;
+  latencyMs?: number;
+  model?: string | null;
+  kind?: string;
+  status?: number;
+  local: boolean;
+  message: string;
+}
+
+export function useAiConnectionCheck() {
+  return useMutation({
+    mutationFn: () => unwrap<AiConnectionCheck>(api.post('/ai/status/check', {})),
   });
 }

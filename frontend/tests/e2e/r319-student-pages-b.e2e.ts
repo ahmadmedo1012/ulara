@@ -66,16 +66,18 @@ async function expectSheetContract(page: import('@playwright/test').Page) {
 test.describe('student pages B — §B2 sheet grammar (chromium · light)', () => {
   test.use({ themeSeed: 'light' });
 
-  test('/student/profile — [01]+[04] SectionBars, UNLINKED mono chips, radius-0 cards', async ({ page }) => {
+  test('/student/profile — SectionBars (Q2: no gutter numeral), UNLINKED mono chips, radius-0 cards', async ({ page }) => {
     await page.goto('/student/profile');
     await expect(page.locator('h1.pf-page-title')).toBeVisible({ timeout: 20000 });
-    /* The default academic tab shows [01]; the account-level password
-     * block below the tabs closes the sheet as [04]. */
+    /* The default academic tab shows its bar; the account-level password
+     * block below the tabs closes the sheet with the second bar. */
     await expect(page.locator('.r319s-bar')).toHaveCount(2, { timeout: 15000 });
 
     const bars = await readBars(page);
     expect(bars.map((b) => b.title)).toEqual(['المعلومات الأكاديمية', 'تغيير كلمة المرور']);
-    /* r351 A2 (Q2): the [0N] register retired. */
+    /* r351 A2 (Q2): the [0N] numeral register retired platform-wide (and
+     * PageHeader/SectionBar no longer accept an index). The invariant the
+     * belt still holds: the bars exist, in order, titled, ruled. */
     expect(bars.every((b) => b.index === '')).toBe(true);
     for (const b of bars) {
       expect(b.hasRule).toBe(true);
@@ -100,7 +102,7 @@ test.describe('student pages B — §B2 sheet grammar (chromium · light)', () =
     await expectSheetContract(page);
   });
 
-  test('/student/messages — [01] سجلّ الرسائل bar, mono total + UNREAD chips', async ({ page }) => {
+  test('/student/messages — سجلّ الرسائل bar, mono total + UNREAD chips', async ({ page }) => {
     /* The standard table carries no messages — the inbox's real wire
      * shape (paginated envelope, meta SIBLING of data, unread count)
      * rides the stateful transport. One unread incoming row (from the
@@ -138,13 +140,14 @@ test.describe('student pages B — §B2 sheet grammar (chromium · light)', () =
 
     await page.goto('/student/messages');
     await expect(page.locator('h1')).toBeVisible({ timeout: 20000 });
-    /* The inbox is ONE log section — its [01] bar (honest: nothing is
+    /* The inbox is ONE log section — its single bar (honest: nothing is
      * fabricated beside the log). */
     await expect(page.locator('.r319s-bar')).toHaveCount(1, { timeout: 15000 });
 
     const bars = await readBars(page);
     expect(bars[0]!.title).toBe('سجلّ الرسائل');
-    /* r351 A2 (Q2): the [01] gutter index retired. */
+    /* r351 A2 (Q2): the gutter numeral is retired — the bar's title and
+     * its mono meta carry the section alone. */
     expect(bars[0]!.index).toBe('');
 
     /* The bar's mono meta — the honest total (02) + the UNREAD 1
@@ -165,7 +168,12 @@ test.describe('student pages B — §B2 sheet grammar (chromium · light)', () =
     await expectSheetContract(page);
   });
 
-  test('/student/ai — [01] gaps + [02] conversations + [03] suggestions bars', async ({ page }) => {
+  /* r351 AI-3 (A3's smallest-hunk update — the page's design changed,
+   * this pin follows it): the numbered §B2 bars retired from /student/ai
+   * (the calm chat surface — one quiet labels row instead of a numbered
+   * report). The gaps strip, the cards' square-radius contract, and the
+   * sheet contract all stay pinned. */
+  test('/student/ai — فجواتك + محادثاتك + أسئلة مقترحة (r351: quiet labels, no numerals)', async ({ page }) => {
     await installStatefulApi(page, [
       {
         method: 'GET',
@@ -213,35 +221,23 @@ test.describe('student pages B — §B2 sheet grammar (chromium · light)', () =
 
     await page.goto('/student/ai');
     await expect(page.locator('h1.pf-page-title')).toBeVisible({ timeout: 20000 });
-    await expect(page.locator('.r319s-bar')).toHaveCount(3, { timeout: 15000 });
-
-    const bars = await readBars(page);
-    expect(bars.map((b) => b.title)).toEqual(['بناءً على أدائك', 'محادثاتك', 'أسئلة مقترحة']);
-    /* r351 A2 (Q2): the [0N] register retired. */
-    expect(bars.every((b) => b.index === '')).toBe(true);
-
-    /* The honest counts as the bars' mono meta — 02 measured gaps /
-     * 02 stored conversations / 05 authored suggestions. R320 CI fix:
-     * the counts are DATA-BOUND (gaps + conversations arrive via the
-     * mock transport after mount), and the one-shot read raced them on
-     * cold runners — the f84e6025 green run failed this exact line on
-     * attempt 1 and passed on retry, and the 2026-10-27 run lost the
-     * retry too. The auto-retrying toHaveCount(3) gate makes the read
-     * deterministic (same discipline as the h1/bar waits above). */
-    const countLoc = page.locator('.r319s-bar .r319s-count');
-    await expect(countLoc).toHaveCount(3, { timeout: 15000 });
-    const counts = await countLoc.allTextContents();
-    expect(counts).toEqual(['02', '02', '05']);
+    /* The numbered bars are GONE (the r351 calm redesign) — the quiet
+     * labels own the sections instead. */
+    await expect(page.locator('.r319s-bar')).toHaveCount(0, { timeout: 15000 });
+    const labels = page.locator('.ai-side-label, .ai-gaps-head .ai-side-label');
+    await expect(labels).toHaveCount(3, { timeout: 15000 });
+    expect(await labels.allTextContents()).toEqual(['فجواتك', 'محادثاتك', 'أسئلة مقترحة']);
+    /* The gaps strip still renders its measured cards (top-3). */
+    await expect(page.locator('.ai-gap-card')).toHaveCount(2, { timeout: 15000 });
 
     // The gap card (the card class sample) computes radius 0.
     const gapCard = page.locator('.ai-gap-card').first();
-    await expect(gapCard).toBeVisible();
     expect(await gapCard.evaluate((el) => getComputedStyle(el).borderRadius)).toBe('0px');
 
     await expectSheetContract(page);
   });
 
-  test('/student/schedule — WeekStrip + [01] الأحد (TODAY) + [02] الثلاثاء day bars', async ({ page }) => {
+  test('/student/schedule — WeekStrip + الأحد (TODAY) + الثلاثاء day bars', async ({ page }) => {
     await page.goto('/student/schedule');
     await expect(page.locator('h1.pf-page-title')).toBeVisible({ timeout: 20000 });
 
@@ -256,12 +252,12 @@ test.describe('student pages B — §B2 sheet grammar (chromium · light)', () =
     await expect(todayCell.locator('.r319s-weekcell-date')).toHaveText('15');
 
     /* The standard enrollments' two slots (Sunday 09:00 + Tuesday
-     * 11:00) — today-first rotation: [01] الأحد (TODAY chip, 01 slot),
-     * [02] الثلاثاء (01 slot). */
+     * 11:00) — today-first rotation: الأحد (TODAY chip, 01 slot) then
+     * الثلاثاء (01 slot). */
     await expect(page.locator('.r319s-bar')).toHaveCount(2, { timeout: 15000 });
     const bars = await readBars(page);
     expect(bars.map((b) => b.title)).toEqual(['الأحد', 'الثلاثاء']);
-    /* r351 A2 (Q2): the [0N] index register retired. */
+    /* r351 A2 (Q2): no gutter numeral on the day bars. */
     expect(bars.every((b) => b.index === '')).toBe(true);
     const counts = await page.locator('.r319s-bar .r319s-count').allTextContents();
     expect(counts).toEqual(['01', '01']);

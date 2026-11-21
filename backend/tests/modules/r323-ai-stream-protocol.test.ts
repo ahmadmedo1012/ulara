@@ -232,7 +232,9 @@ describe('ai.routes.ts — the r323 SSE + quota wiring', () => {
 
   it('the error event is typed: UPPER_SNAKE code + Arabic message + retryable flag', () => {
     expect(aiRouteSource).toContain("code: failureKind === 'rate_limited' ? 'PROVIDER_RATE_LIMITED' : 'PROVIDER_FAILURE'");
-    expect(aiRouteSource).toContain('message: providerFailureMessage(failureKind)');
+    // r351 AI-1: the message threads the provider HTTP status through
+    // (auth/model-id failures point at the admin, not a retry).
+    expect(aiRouteSource).toContain('message: providerFailureMessage(failureKind, e instanceof AiProviderError ? e.status : undefined)');
     expect(aiRouteSource).toContain('retryable: failureKind !== \'invalid_response\'');
   });
 
