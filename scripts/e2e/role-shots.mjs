@@ -87,8 +87,6 @@ async function bootVite() {
   throw new Error(`vite dev server not ready on :${PORT} within 90s`);
 }
 
-const countWords = (t) => t.trim().split(/\s+/).filter(Boolean).length;
-
 await bootVite();
 const browser = await chromium.launch();
 const results = [];
@@ -114,11 +112,12 @@ for (const role of ROLES) {
       const consoleErrors = [];
       const devAuditNotices = [];
       const failedRequests = [];
-      // Dev-mode noise separator: the app runs axe in dev and logs its
-      // findings (plus react-router future-flag warnings) through
-      // console.error — a11y notices, not runtime failures. Both counts
-      // ship; the axe findings are recorded for the LOG, never hidden.
-      const DEV_AUDIT = /(New axe issues|axe|React Router Future Flag|React DevTools|\[vite\]|moderate|serious|critical)/;
+      // Dev-mode noise separator (review-fix T2): only the ANCHORED
+      // signatures — styled logs carry a literal "%c" prefix (axe +
+      // React DevTools), the router warnings and vite overlay announce
+      // themselves. Bare words like "critical" no longer swallow real
+      // runtime errors.
+      const DEV_AUDIT = /^%c|React Router Future Flag|^\[vite\]|dequeuniversity\.com|^Fix any of the following/;
       page.on('console', (m) => {
         if (m.type() !== 'error') return;
         if (DEV_AUDIT.test(m.text())) devAuditNotices.push(m.text());

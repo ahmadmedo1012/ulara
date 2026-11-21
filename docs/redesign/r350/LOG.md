@@ -214,3 +214,29 @@ The role-shots instrument grew a reduced-motion flag (R350_RM=1). Captured:
 0 failed reqs, word counts identical to light: the theme swaps surfaces, never
 content) + student light RM @1440/390 (the reduced-motion static sheet renders
 complete, no loader). Shots: `r350-role-*-dark-1440.png`, `r350-role-student-light-*-rm.png`.
+
+## Independent review — findings fixed (this session)
+
+A review sub-agent audited `f70d6c9..a28d033` blind (no access to my conclusions).
+Verdict: no blocking bugs — the fixture enveloping verified correct at every
+raw/wrapped boundary. Substantive findings, ALL fixed here:
+
+1. `r350-one-title.test.tsx` — 4 of 5 `vi.mock` registrations used the broken
+   `../../hooks/...` convention (never intercepted; the spec passed vacuously).
+   All four fixed to `../../src/...`; the suite now passes WITH real
+   interception (46 tests of the four affected files green).
+2. role-shots DEV_AUDIT regex over-matched generic words (`critical`, `axe`)
+   → re-anchored to the styled-log prefix `%c` + the axe URL/continuation
+   signatures; a re-sweep shows 10/10 cells 0 runtime errs.
+3. The /app copy cut had removed two load-bearing honesty lines (the QR's
+   "no external service" privacy claim + the releases-page "log + checksums"
+   pointer) and softened the OTA native-reinstall caveat; settings lost the
+   "manual processing (beta)" disclosure. All three restored (B2's
+   one-sentence law still holds — each is one clause folded into the
+   surviving sentence).
+4. Fixtures: TEACHER_RISKS shipped 10 fields the TeacherRiskRow type Omits —
+   removed. OWNER_EDUCATION «كلية الهندسة» 96 vs ADMIN_FACULTIES 12
+   contradiction — aligned (12 / 9). Query-param scope of /admin/courses|papers
+   documented as a single-shape dashboard seat (journey specs must override).
+5. The committed role-shots-results.json was the last 2-cell run — regenerated
+   as the full 5-role × 2-viewport matrix; dead `countWords` helper removed.

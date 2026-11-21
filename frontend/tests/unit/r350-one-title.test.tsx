@@ -36,7 +36,7 @@ const mocks = vi.hoisted(() => ({
   me: { data: undefined } as any,
 }));
 
-vi.mock('../../hooks/useAuth', () => ({
+vi.mock('../../src/hooks/useAuth', () => ({
   useLogout: () => ({ mutate: vi.fn(), isPending: false }),
   useMe: () => mocks.me,
   useSelectInstitution: () => ({ mutate: vi.fn(), isPending: false }),
@@ -48,15 +48,15 @@ vi.mock('../../src/hooks/useResources', async (importOriginal) => {
   return { ...real, useMyProfile: () => ({ data: undefined }) };
 });
 
-vi.mock('../../hooks/useOnboardingState', () => ({
+vi.mock('../../src/hooks/useOnboardingState', () => ({
   useOnboardingState: () => ({ shouldAutoStart: false, isOpen: false, open: vi.fn() }),
 }));
 
-vi.mock('../../components/onboarding/OnboardingFlow', () => ({ OnboardingFlow: () => null }));
+vi.mock('../../src/components/onboarding/OnboardingFlow', () => ({ OnboardingFlow: () => null }));
 
 // The tour trigger lives in the sidebar footer — the real hook is
 // covered by its own suites; here it only needs to exist.
-vi.mock('../../lib/onboarding', () => ({ startOnboarding: vi.fn() }));
+vi.mock('../../src/lib/onboarding', () => ({ startOnboarding: vi.fn() }));
 
 const qc = () => new QueryClient({ defaultOptions: { queries: { retry: false } } });
 

@@ -191,7 +191,11 @@ export function standardRoutes(): MockRouteDef[] {
     /* r350 B1 — the last four gaps the sweep measured: the student
      * dashboard's mastery + grades arms, the teacher's at-risk
      * shortcuts, and the admin dashboard's catalog + graded counter.
-     * Paginated bodies ride RAW ({data,meta}), like /owner/activity. */
+     * Paginated bodies ride RAW ({data,meta}), like /owner/activity.
+     * SCOPE NOTE (review D3): these two match ANY query string and
+     * serve the dashboard-shaped page — journey specs that page/filter
+     * beyond this shape must install their own stateful overrides
+     * (installStatefulApi), exactly like any other single-shape seat. */
     { method: 'GET', path: '/me/gaps', json: ok(ME_GAPS) },
     { method: 'GET', path: '/me/results', json: ok(ME_RESULTS) },
     { method: 'GET', path: '/teacher/risks', json: ok(TEACHER_RISKS) },

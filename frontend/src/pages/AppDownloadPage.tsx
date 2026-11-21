@@ -138,7 +138,7 @@ export function AppDownloadPage() {
               <p className="ap-p">
                 الإصدار <span className="ap-mono" dir="ltr">{APP_VERSION}</span> — أحدث بناء
                 مبنيّ وموقّع تلقائيًا من أحدث شيفرة؛ اسمح بـ«التثبيت من مصادر غير معروفة» عند
-                سؤال النظام أول مرة.
+                سؤال النظام أول مرة، وصفحة الإصدارات هي المرجع الدائم (السجل والبصمات).
               </p>
               <p className="ap-p ap-actions">
                 <a className="btn primary sm" href={ANDROID_APK_URL} dir="ltr">
@@ -192,7 +192,8 @@ export function AppDownloadPage() {
                   loading="lazy"
                 />
                 <p className="ap-p ap-p-note">
-                  امسح الرمز بكاميرا هاتفك — تُفتح هذه الصفحة نفسها على الجوال.
+                  امسح الرمز بكاميرا هاتفك — تُفتح هذه الصفحة نفسها على الجوال، ولا يمرّ الرمز بأي
+                  خدمة خارجية.
                 </p>
               </div>
             </div>
@@ -214,7 +215,8 @@ export function AppDownloadPage() {
                 التحديث الفوري داخل التطبيق <span className="ap-mono" dir="ltr">(OTA)</span>
                 مبنيّ لكنه <strong>قيد التفعيل</strong>
                 <AppPendingTag /> — خطوة تهيئة واحدة من المالك؛ وعندها تصل تغيّرات الواجهة
-                <strong> دون إعادة تثبيت</strong>.
+                <strong> دون إعادة تثبيت</strong>، وتبقى التغيّرات الأصلية (الأذونات ومكتبات
+                النظام) ملفّ تثبيت جديدًا من هذه الصفحة.
               </p>
             </div>
           </section>
