@@ -160,8 +160,8 @@ CI on `b33dce4` exposed four latent breaks — three inherited, one mine:
    `unresolved 0→1`. Fixed by the same path fix; jscpd improved 259→256 and
    the baseline was re-pinned in this commit.
 3. **Zero-trace** — `669f12b` (B0) saved the reference corpus under
-   `heron-*` names with the retired third-party identity in content and its
-   own commit message. Renamed to `refsite-*` and scrubbed to
+   the retired fixture prefix — the third-party identity sat in content and
+   in its own commit message. Renamed to `refsite-*` and scrubbed to
    «the reference site» / `reference-site.example`. RESIDUAL: the one
    historical commit message still matches — scrubbing history requires a
    one-time rewrite (rebase) + force-push, which r350 rule 0.7 forbids.

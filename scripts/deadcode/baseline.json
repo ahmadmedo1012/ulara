@@ -11,7 +11,7 @@
     "duplicates": 0
   },
   "jscpd": {
-    "duplicateBlocks": 256
+    "duplicateBlocks": 255
   },
   "depcruise": {
     "circularDependencies": 0
