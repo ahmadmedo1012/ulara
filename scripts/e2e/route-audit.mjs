@@ -158,15 +158,21 @@ const MEASURE = () => {
       smallTargets.push({ tag: el.tagName.toLowerCase(), name, w: Math.round(r.width), h: Math.round(r.height) });
     }
   }
-  // fixed-UI ∩ content overlap: every position:fixed element that is
-  // NOT full-viewport chrome (scrim/sheet frame) intersecting any
-  // visible text node or interactive element in the content flow.
+  // fixed-UI ∩ content overlap: every position:fixed INTERACTIVE
+  // element (r351: aria-hidden decorative chrome — the drafting frame,
+  // the grain film — and pointer-transparent layers are excluded; the
+  // task's law is «fixed UI must never cover content», and a
+  // pointer-transparent frame is not UI) intersecting any visible text
+  // node or interactive element in the content flow.
   const overlaps = [];
   const fixedEls = [];
   for (const el of document.querySelectorAll('body *')) {
     const cs = getComputedStyle(el);
     if (cs.position !== 'fixed') continue;
     if (cs.display === 'none' || cs.visibility === 'hidden' || Number(cs.opacity) === 0) continue;
+    // decorative chrome is not UI (aria-hidden or pointer-transparent)
+    if (el.getAttribute('aria-hidden') === 'true') continue;
+    if (cs.pointerEvents === 'none') continue;
     const r = el.getBoundingClientRect();
     if (r.width < 4 || r.height < 4) continue;
     // full-viewport chrome (scrim, grain, frame) intersects everything

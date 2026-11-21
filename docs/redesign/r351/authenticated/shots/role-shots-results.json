@@ -1,0 +1,63 @@
+{
+  "generatedAt": "2026-11-21T17:35:09.315Z",
+  "base": "http://localhost:5302",
+  "matrix": {
+    "roles": [
+      "STUDENT",
+      "TEACHER"
+    ],
+    "themes": [
+      "light"
+    ],
+    "viewports": [
+      "1440x900",
+      "390x844"
+    ]
+  },
+  "results": [
+    {
+      "cell": "STUDENT-light-1440",
+      "role": "STUDENT",
+      "theme": "light",
+      "viewport": "1440x900",
+      "words": 289,
+      "consoleErrors": 0,
+      "devAuditNotices": 0,
+      "failedRequests": 0,
+      "shot": "/home/z/agent02/ulara-work/docs/redesign/r351/authenticated/shots/r350-role-student-light-1440.png"
+    },
+    {
+      "cell": "STUDENT-light-390",
+      "role": "STUDENT",
+      "theme": "light",
+      "viewport": "390x844",
+      "words": 283,
+      "consoleErrors": 0,
+      "devAuditNotices": 0,
+      "failedRequests": 0,
+      "shot": "/home/z/agent02/ulara-work/docs/redesign/r351/authenticated/shots/r350-role-student-light-390.png"
+    },
+    {
+      "cell": "TEACHER-light-1440",
+      "role": "TEACHER",
+      "theme": "light",
+      "viewport": "1440x900",
+      "words": 269,
+      "consoleErrors": 0,
+      "devAuditNotices": 0,
+      "failedRequests": 0,
+      "shot": "/home/z/agent02/ulara-work/docs/redesign/r351/authenticated/shots/r350-role-teacher-light-1440.png"
+    },
+    {
+      "cell": "TEACHER-light-390",
+      "role": "TEACHER",
+      "theme": "light",
+      "viewport": "390x844",
+      "words": 270,
+      "consoleErrors": 0,
+      "devAuditNotices": 0,
+      "failedRequests": 0,
+      "shot": "/home/z/agent02/ulara-work/docs/redesign/r351/authenticated/shots/r350-role-teacher-light-390.png"
+    }
+  ]
+}
