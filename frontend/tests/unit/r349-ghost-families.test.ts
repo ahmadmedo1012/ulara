@@ -35,10 +35,9 @@
  *      families are load-bearing, not dead selectors a sweep may take.
  */
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { execSync } from 'node:child_process';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const components = readFileSync(path.join(root, 'src/styles/components.css'), 'utf8');
@@ -49,17 +48,29 @@ const strip = (src: string) => src.replace(/\/\*[\s\S]*?\*\//g, '');
 const css = strip(components);
 const pat = strip(patterns);
 
-/** rg -c '<class>' over the TSX tree — the live consumer census. */
+/**
+ * Consumer census — count textual occurrences of a class name across the
+ * TSX tree (src/pages + src/components). Originally `rg -o … | wc -l`,
+ * but the CI ubuntu-24.04 test job has NO ripgrep on PATH (/bin/sh:
+ * "rg: not found"), the execSync threw, and the catch floor (0) failed
+ * all four census pins on main. Same counting semantics, zero external
+ * binaries: recursive readdir + plain-string occurrence counting over
+ * every *.tsx under both roots.
+ */
 const consumerCount = (needle: string): number => {
-  try {
-    const out = execSync(
-      `rg -o "${needle}" src/pages src/components --glob '*.tsx' | wc -l`,
-      { cwd: root, encoding: 'utf8' },
-    ).trim();
-    return Number(out) || 0;
-  } catch {
-    return 0;
+  const walk = (dir: string): string[] =>
+    readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+      const p = path.join(dir, e.name);
+      return e.isDirectory() ? walk(p) : e.name.endsWith('.tsx') ? [p] : [];
+    });
+  const roots = ['src/pages', 'src/components'].map((d) => path.join(root, d));
+  let count = 0;
+  for (const dir of roots) {
+    for (const file of walk(dir)) {
+      count += readFileSync(file, 'utf8').split(needle).length - 1;
+    }
   }
+  return count;
 };
 
 describe('R349 · the ghost families stay restored (§TABLE)', () => {
