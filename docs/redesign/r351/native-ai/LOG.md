@@ -167,3 +167,52 @@ The mandated fresh sub-agent reviewed ONLY the branch diff (110 files, no access
 | 10 (P1) | PLAN claimed "source chips DONE" (they weren't); ai-fixtures header listed nonexistent exports; LOG wording "EmptyState GAINS suppression" overstated a no-op edit | **FIXED**: the chips now EXIST (finding 1) so the claim is true; the header lists the real exports and points to mock-transport for the routes; **correction**: the `??` → `!== undefined` edit in states.tsx was a semantic no-op (`""` was already falsy-suppressed at render) — it stays as explicit documentation of the contract, but no behavior was "gained" (the earlier LOG wording was wrong) |
 
 **Gates after the fixes:** backend tsc + test-tree tsc clean · frontend tsc + test-tree tsc clean · ai-chat-routes 33/33 (30+3 owner-route pins) · the 6 AI frontend unit files 70/70 (incl. the 5 new chip pins) · mobile untouched by this pass.
+
+## Session 3 — the deadcode-ratchet debt pay (commit eab753f)
+
+**The finding (the owner's review ask, 2026-11-21):** the PR head's CI
+showed `deadcode-ratchet` RED while every previously-reported gate was
+green. `verify.sh` does not include the deadcode job (it runs
+knip+jscpd+depcruise only in CI), and the analyzers were never installed
+in this sandbox — the session-2 "full verify ALL GREEN" claim was true
+for what it ran and blind to this job. Reproduced locally after
+installing the pinned analyzers (knip@5.88.1, jscpd@5.4.2,
+dependency-cruiser@18.7.2 — `/home/z/.t22-tools`, the script's own
+fallback path): `48→52 exports, 226→234 types, 2 regressed` — byte-exact
+match with the CI log.
+
+**Root causes + fixes (debt paid, ceiling NOT raised):**
+1. Nine type exports with zero importers anywhere (src + tests): the
+   AI-3 split's `AiMessageProps`/`AiComposerProps`/`AiSidebarProps`/
+   `AiGapsProps`/`AiGap` + the barrel's `AiGap`/`ChatMsg` re-exports +
+   AI-4's `AiServiceStatus`/`AiConnectionCheck`. All de-exported
+   (file-local) — no behavior change; components are consumed as JSX
+   via the barrel, never as types.
+2. The AI-5 wire factories (`aiChatDone`/`aiChatJsonReply`/
+   `aiChatSseReply` + `AI_CITATIONS`) exported-but-unconsumed: the
+   e2e spec duplicated the r323 grammar inline in three SSE sites.
+   The spec now rides the factories (id opts added — each journey
+   names its own conversation), and a NEW round-trip pin
+   (`tests/unit/ai-fixtures-roundtrip.test.ts`, 6 tests) drives the
+   factory output through the PRODUCTION parser
+   (`createAiSseParser`): chunk-split reassembly, done-frame contract
+   (ids/engine/model/citations), remaining pass-through (0 arms the
+   quota card; absent stays absent), id overrides, JSON/SSE
+   convergence. Factory-vs-parser drift now fails a unit test before
+   it can silently degrade every journey.
+
+**Measured after:** knip `48 exports (at baseline) / 225 types`
+(improved — the resolved `AiConversation` debt from main rides along).
+Baseline re-pinned `226→225` via the script's own `--update` protocol
+(sanctioned by check.sh's header; the r350 series re-pinned it the same
+way). `bash scripts/deadcode/check.sh` → `10 at baseline, 0 improved,
+0 regressed`.
+
+**Gates:** `tsc -p tsconfig.json` 0 · `tsc -p tsconfig.test.json` 0 ·
+AI unit suites `6 files / 58 tests` (52 + 6 new round-trip) ·
+ai-assistant e2e `5 passed (23.0s)` on dev 5303 · r319-student-pages-b
+e2e `4 passed` (the /student/ai pin) · `verify.sh --fast` **FAST PASS**
+(a11y floor S25/C0, 19 S/C across 12 cells, 0 above floor) · zero-trace
+unchanged (the 5 main-inherited hits only — branch adds none).
+
+**Push:** `0362455..eab753f` on r351/native-and-ai.

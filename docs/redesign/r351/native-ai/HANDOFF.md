@@ -105,3 +105,17 @@ them through or ask for reverts:
   pins (local shape, honest refusal, OWNER gate).
 - The vacuous r305a7 privacy assertion fixed (regex, partial match).
 - capture-web.mjs docblock honesty (minimal fixtures, always).
+
+## Session 3 — the deadcode-ratchet debt pay (eab753f)
+
+The PR head's CI had `deadcode-ratchet` RED (knip 48→52 exports,
+226→234 types) — a CI job `verify.sh` does not include, so the
+session-2 "ALL GREEN" claim never saw it. Paid down, not ratcheted up:
+9 importer-less type exports de-exported (AI-3 Props/barrel/hook
+types); the AI-5 wire factories now actually consumed (the e2e spec's
+three inline SSE copies + JSON fallback ride them; a 6-test round-trip
+pin drives factory output through the production `createAiSseParser`).
+Baseline re-pinned `226→225` (the script's own `--update` protocol).
+**Merge agent: verify the `deadcode-ratchet` job is green on the head
+before merging** — it is the one job this slice's local loop cannot
+see through verify.sh alone.
