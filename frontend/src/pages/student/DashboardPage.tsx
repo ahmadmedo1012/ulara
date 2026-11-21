@@ -766,7 +766,11 @@ export default function StudentDashboardPage() {
     : null;
 
   /* The momentum StatLine — same facts the old strip carried, printed
-     as one calm line (r183-B3's verdict copy stays pinned here). */
+     as one calm line (r183-B3's verdict copy stays pinned here).
+     r348: spread seats the five stats across the sheet's full line
+     (the inline-end half held ~750px of dead paper at 1440 — the same
+     «dead half» the teacher audit measured); the two not-yet data wear
+     the honest-empty register. */
   const statLineItems: StatLineItem[] = [
     {
       label: 'المعدل التراكمي',
@@ -781,6 +785,7 @@ export default function StudentDashboardPage() {
         ? d.kpi.attendancePct >= 80 ? 'مطمئن هذا الفصل' : d.kpi.attendancePct >= 60 ? 'قريب من الحد' : 'تحت الحد — راجع حضورك'
         : 'لا توجد سجلات بعد',
       tone: d.kpi.attendancePct === null ? 'neutral' : d.kpi.attendancePct >= 80 ? 'positive' : d.kpi.attendancePct >= 60 ? 'warning' : 'danger',
+      empty: d.kpi.attendancePct === null,
     },
     {
       label: 'مهام معلّقة',
@@ -807,6 +812,7 @@ export default function StudentDashboardPage() {
             : 'تحتاج إلى دفعة إضافيّة'}`
         : 'لم تُسجّل في مقرّر بعد',
       tone: d.kpi.courseCount === 0 ? 'warning' : courseProgressPct >= 75 ? 'positive' : courseProgressPct === 0 ? 'warning' : 'neutral',
+      empty: d.kpi.courseCount === 0,
     },
   ];
 
@@ -1074,7 +1080,7 @@ export default function StudentDashboardPage() {
           honest empty register: seven empty ticks, today outlined). */}
       <section aria-label="زخم الفصل" className="dash-momentum">
         <div className="r305s-rule-labeled" aria-hidden="true">زخم الفصل</div>
-        <StatLine items={statLineItems} />
+        <StatLine items={statLineItems} spread />
         {d.kpi.courseCount > 0 && (
           <CourseBar code="AVG" pct={courseProgressPct} ariaLabel="متوسط إنجاز مقرّراتك الحالية" />
         )}

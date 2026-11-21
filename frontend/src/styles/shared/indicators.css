@@ -363,14 +363,18 @@
    new sheet + one component file.)
 
    .dash-resume-progress — the hero's instrument row (the deep band
-   inverts currentColor for free: the ruler's ink is the band's own). */
+   inverts currentColor for free: the ruler's ink is the band's own).
+   r348 (the student-layout audit): the 420px cap retired — the hero
+   band spans the 1080px frame while its instrument hugged a 420px
+   seat, leaving a ~400px ink void between the text column and the CTA;
+   the drafting ruler reads BETTER wide (the [01] semester ruler above
+   it spans the full frame — one instrument grammar, one width law).
+   main's flex:1 + min-inline-size:240px keep the phone band honest. */
 .dash-resume-progress {
   margin-block-start: var(--sp-3);
-  max-inline-size: 420px;
 }
 .dash-resume-segments {
   margin-block-start: var(--sp-3);
-  max-inline-size: 420px;
 }
 .dash-resume-segments-row {
   display: flex;
