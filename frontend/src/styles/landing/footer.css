@@ -677,7 +677,9 @@ footer.fo-footer {
   -webkit-text-stroke: 0;
   opacity: 0;
   transition: opacity var(--t-base) var(--ease);
+  -webkit-mask-image: radial-gradient(circle 11rem at var(--lens-x, 50%) var(--lens-y, 50%), var(--text) 0 62%, transparent 82%);
   mask-image: radial-gradient(circle 11rem at var(--lens-x, 50%) var(--lens-y, 50%), var(--text) 0 62%, transparent 82%);
+  -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
   pointer-events: none;
 }

@@ -36,6 +36,7 @@
 
 /* ── the motion register (scoped to the hero, token-clean) ────────── */
 .hro {
+  --z-hro-cta-fill: -1; /* the fill sits under its own label (isolation: isolate scopes it) */
   --hro-p2-out: cubic-bezier(0.215, 0.61, 0.355, 1); /* GSAP power2.out */
   --hro-p3-out: cubic-bezier(0.165, 0.84, 0.44, 1);  /* GSAP power3.out */
   --hro-expo-out: cubic-bezier(0.19, 1, 0.22, 1);    /* GSAP expo.out   */
@@ -667,7 +668,7 @@
 .hro-cta-fill {
   position: absolute;
   inset: 0;
-  z-index: -1;
+  z-index: var(--z-hro-cta-fill); /* the scoped-var law (review finding 2) */
   background: var(--accent);
   transform: scaleY(0);
   transform-origin: 50% 100%;
@@ -1057,8 +1058,9 @@
 
   .hro-content {
     grid-template-columns: minmax(0, 1fr);
-    margin-inline: 14px;
     padding-inline: 0;
+    /* the band margins ride the r351 P1 seat below (the r339 14px
+       gutter seat retired with the leading-headline composition) */
   }
 
   .hro-title-cell {

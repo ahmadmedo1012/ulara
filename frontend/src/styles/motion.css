@@ -574,48 +574,83 @@
 
 /* ═══ r351 P4 — the route transition: the measured reference arc ═══
    The keyed remount inside PageTransition replays the OPEN leg on every
-   route change: the content grows from the sheet's centreline
-   (clip-path inset 50% → 0, 0.7s power2.out — the B0-measured curve:
-   50→44.2→21.9→13.3→6.8→2.2→0.3→0%). The CLOSE leg (inset 0 → 50%,
-   0.6s power2.in) needs the shell's own pending-navigation state — its
-   CSS seat is ready below (.is-route-leaving); A2 owns the class flip.
-   API untouched: { children, className }. */
+   route change: TWO fixed paper strips (the preloader's own band
+   grammar) cover the viewport and FLY APART from the sheet's centreline
+   — the content grows from the centreline outward exactly as the B0
+   curve records (0.7s power2.out). The strips are transform-only,
+   pointer-events:none, viewport-anchored: unlike a clip-path ON the
+   routed content they can never block hit-testing, never mis-seat on
+   pages taller than the viewport, and never leave a containing block
+   behind (the independent review's finding 1). The CLOSE leg (the same
+   strips flying IN, 0.6s power2.in) needs the shell's own
+   pending-navigation state — its CSS seat is ready below
+   (.is-route-leaving); A2 owns the class flip. API untouched:
+   { children, className }. */
 
 .page-transition {
   position: relative;
+  --pt-z: 240; /* the strips' rung: above routed content, below the shell chrome (the raw-ladder law) */
 }
 
-.page-transition-inner {
-  /* backwards, not both: the held `to` clip (inset 0) would keep a live
-     clip-path — and a containing block for fixed descendants — on the
-     shell forever; after the wipe the box returns to clip-path: none */
-  animation: pt-open 0.7s cubic-bezier(0.215, 0.61, 0.355, 1) backwards;
+.page-transition::before,
+.page-transition::after {
+  content: '';
+  position: fixed;
+  inset-inline: 0;
+  block-size: 50.2%; /* the 0.2 seam kills the subpixel hairline at the centreline */
+  pointer-events: none;
+  background: var(--bg);
+  z-index: var(--pt-z);
+  animation-duration: 0.7s;
+  animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1); /* power2.out */
+  animation-fill-mode: backwards;
 }
 
-@keyframes pt-open {
-  from {
-    clip-path: inset(50% 0%);
-  }
-  to {
-    clip-path: inset(0% 0%);
-  }
+.page-transition::before {
+  top: 0;
+  animation-name: pt-open-top;
 }
 
-/* the close leg's seat — inert until the shell flips the class */
-.page-transition.is-route-leaving .page-transition-inner {
-  animation: pt-close 0.6s cubic-bezier(0.55, 0.055, 0.675, 0.19) both;
+.page-transition::after {
+  bottom: 0;
+  animation-name: pt-open-bot;
 }
 
-@keyframes pt-close {
-  to {
-    clip-path: inset(50% 0%);
-  }
+@keyframes pt-open-top {
+  from { transform: translateY(0); }
+  to { transform: translateY(-101%); }
+}
+
+@keyframes pt-open-bot {
+  from { transform: translateY(0); }
+  to { transform: translateY(101%); }
+}
+
+/* the close leg's seat — inert until the shell flips the class: the
+   strips fly IN over the leaving page (0.6s power2.in), then the keyed
+   swap replays the open leg */
+.page-transition.is-route-leaving::before {
+  animation: pt-close-top 0.6s cubic-bezier(0.55, 0.055, 0.675, 0.19) backwards;
+}
+
+.page-transition.is-route-leaving::after {
+  animation: pt-close-bot 0.6s cubic-bezier(0.55, 0.055, 0.675, 0.19) backwards;
+}
+
+@keyframes pt-close-top {
+  from { transform: translateY(-101%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes pt-close-bot {
+  from { transform: translateY(101%); }
+  to { transform: translateY(0); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .page-transition-inner,
-  .page-transition.is-route-leaving .page-transition-inner {
+  .page-transition::before,
+  .page-transition::after {
+    display: none;
     animation: none;
-    clip-path: none;
   }
 }
