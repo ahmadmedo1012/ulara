@@ -122,11 +122,17 @@
   color: inherit;
 }
 /* السجلّ يملأ المسافة بين الرأس والمرسِل — يلغي سقف student.css
-   (480px) المضبوط لأجرئ بطاقة-داخل-شبكة؛ الخصوصية أعلى (محدّدان). */
+   (480px) المضبوط لأجرئ بطاقة-داخل-شبكة؛ الخصوصية أعلى (محدّدان).
+   r351 AI-5 (the hermetic journey caught it): the log must SCROLL —
+   `overflow-y: auto` was never set anywhere (not on main either), so
+   a transcript taller than the surface's fixed frame was clipped
+   behind the composer, unreachable. This line is the fix. */
 .ai-surface .chat-area {
   flex: 1;
   min-block-size: 0;
   max-block-size: none;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: var(--sp-5) var(--sp-4) var(--sp-3);
 }
 

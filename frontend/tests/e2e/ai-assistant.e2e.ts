@@ -132,3 +132,199 @@ test.describe('المساعد الذكيّ — رحلة محادثة كاملة'
     expect(chatBodies).toEqual([{ message: QUESTION }]);
   });
 });
+
+/* ═══════════════════════════════════════════════════════════════════
+ * r351 AI-5 — the full hermetic journey: stream · stop · retry ·
+ * error · quota · a11y. The fixture corpus (ai-fixtures.ts + the A3
+ * marker block) feeds the read surfaces; each turn's transport is
+ * stateful, exactly like the base journey.
+ * ═══════════════════════════════════════════════════════════════════ */
+
+test.describe('المساعد الذكيّ — التدفّق والتحكّم (r351 AI-5)', () => {
+  test('زر الإيقاف يظهر أثناء الاتصال ويلغي المحاولة بلا صفّ خطأ', async ({ page }) => {
+    await installStatefulApi(page, [
+      {
+        method: 'GET',
+        pattern: '**/api/v1/ai/config',
+        fulfill: async ({ route }) => statefulOk(route, { provider: 'local', model: null }),
+      },
+      {
+        method: 'GET',
+        pattern: '**/api/v1/me/gaps',
+        fulfill: async ({ route }) => statefulOk(route, []),
+      },
+      {
+        method: 'GET',
+        pattern: '**/api/v1/ai/conversations',
+        fulfill: async ({ route }) => statefulOk(route, []),
+      },
+      {
+        method: 'POST',
+        pattern: '**/api/v1/ai/chat*',
+        fulfill: async ({ route }) => {
+          // The response is HELD 3s — the request is genuinely
+          // in-flight (the connecting window the stop button owns).
+          await new Promise((r) => setTimeout(r, 3000));
+          await statefulOk(route, { conversationId: 'never', reply: 'لن يصل' });
+        },
+      },
+    ]);
+
+    await page.goto('/student/ai');
+    await page.getByLabel('اكتب سؤالك للمساعد').fill('سؤال بثّ');
+    await page.getByRole('button', { name: 'إرسال' }).click();
+    // The send slot IS the stop button while the request is in flight.
+    const stop = page.getByRole('button', { name: 'إيقاف التوليد' });
+    await expect(stop).toBeVisible();
+    await stop.click();
+    // A cancellation, not an outage: no error row, the composer
+    // returns, and the held reply never lands.
+    await expect(page.getByRole('button', { name: 'إرسال' })).toBeVisible();
+    await expect(page.locator('.chat-error')).toHaveCount(0);
+    await expect(page.locator('.chat-msg.bot .chat-bubble', { hasText: 'لن يصل' })).toHaveCount(0);
+  });
+
+  test('فشل المزوّد يعرض صفًّا قابلًا لإعادة المحاولة، وإعادة المحاولة تنجح', async ({ page }) => {
+    /* The suite's frozen clock freezes CSS smooth-scrolling mid-flight
+     * (time-based animation) — the auto-scroll to the failed row would
+     * land half-clipped and its retry button under the composer.
+     * Reduced motion is the page's own instant-scroll path (and the
+     * honest condition for a deterministic journey). */
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    let calls = 0;
+    await installStatefulApi(page, [
+      {
+        method: 'GET',
+        pattern: '**/api/v1/ai/config',
+        fulfill: async ({ route }) => statefulOk(route, { provider: 'local', model: null }),
+      },
+      {
+        method: 'GET',
+        pattern: '**/api/v1/me/gaps',
+        fulfill: async ({ route }) => statefulOk(route, []),
+      },
+      {
+        method: 'GET',
+        pattern: '**/api/v1/ai/conversations',
+        fulfill: async ({ route }) => statefulOk(route, []),
+      },
+      {
+        method: 'POST',
+        pattern: '**/api/v1/ai/chat*',
+        fulfill: async ({ route }) => {
+          calls += 1;
+          if (calls === 1) {
+            await route.fulfill({
+              status: 500,
+              contentType: 'application/json',
+              body: JSON.stringify({ error: { code: 'PROVIDER_FAILURE', message: 'تعذَّر الوصول إلى نموذج المساعد الآن — حاول مرة أخرى' } }),
+            });
+            return;
+          }
+          await route.fulfill({
+            status: 200,
+            contentType: 'text/event-stream; charset=utf-8',
+            body: `event: token\ndata: ${JSON.stringify({ t: 'نجحت المحاولة' })}\n\nevent: done\ndata: ${JSON.stringify({ conversationId: 'conv_r2', messageId: 'm_r2', reply: 'نجحت المحاولة', engine: 'local', model: 'gap-aware-composer' })}\n\n`,
+          });
+        },
+      },
+    ]);
+
+    await page.goto('/student/ai');
+    await page.getByLabel('اكتب سؤالك للمساعد').fill('سؤال متعثّر');
+    await page.getByRole('button', { name: 'إرسال' }).click();
+    // The honest recoverable row + the envelope's own code.
+    await expect(page.locator('.chat-error', { hasText: 'تعذَّر الوصول' })).toBeVisible();
+    await expect(page.locator('.r305ai-err-code', { hasText: 'PROVIDER_FAILURE' })).toBeVisible();
+    // Retry in place — the same question, one new wire call.
+    await page.getByRole('button', { name: 'أعد الإرسال' }).click();
+    await expect(page.locator('.chat-msg.bot .chat-bubble', { hasText: 'نجحت المحاولة' })).toBeVisible();
+    expect(calls).toBe(2);
+  });
+
+  test('حصّة اليوم تنتهي: بطاقة «وصلتَ حدَّ اليوم» والعداد الصادق', async ({ page }) => {
+    await installStatefulApi(page, [
+      {
+        method: 'GET',
+        pattern: '**/api/v1/ai/config',
+        fulfill: async ({ route }) => statefulOk(route, { provider: 'local', model: null }),
+      },
+      {
+        method: 'GET',
+        pattern: '**/api/v1/me/gaps',
+        fulfill: async ({ route }) => statefulOk(route, []),
+      },
+      {
+        method: 'GET',
+        pattern: '**/api/v1/ai/conversations',
+        fulfill: async ({ route }) => statefulOk(route, []),
+      },
+      {
+        method: 'POST',
+        pattern: '**/api/v1/ai/chat*',
+        fulfill: async ({ route }) => {
+          await route.fulfill({
+            status: 200,
+            contentType: 'text/event-stream; charset=utf-8',
+            // A done frame with remaining = 0 arms the card; the NEXT
+            // ask would be the server's own 429 sentence.
+            body: `event: token\ndata: ${JSON.stringify({ t: 'آخر جواب' })}\n\nevent: done\ndata: ${JSON.stringify({ conversationId: 'conv_q', messageId: 'm_q', reply: 'آخر جواب', engine: 'local', model: 'gap-aware-composer', remaining: 0 })}\n\n`,
+          });
+        },
+      },
+    ]);
+
+    await page.goto('/student/ai');
+    await page.getByLabel('اكتب سؤالك للمساعد').fill('سؤال أخير');
+    await page.getByRole('button', { name: 'إرسال' }).click();
+    await expect(page.locator('.chat-msg.bot .chat-bubble', { hasText: 'آخر جواب' })).toBeVisible();
+    // The quota state card renders (preemptive honesty: the NEXT ask
+    // will be rejected).
+    await expect(page.locator('.ai-quota-card', { hasText: 'وصلتَ حدَّ اليوم' })).toBeVisible();
+  });
+});
+
+test.describe('المساعد الذكيّ — الوصول (r351 AI-5)', () => {
+  test('axe: لا انتهاكات serious/critical على الصفحة (فاتح وداكن)', async ({ page }) => {
+    const { readFile } = await import('node:fs/promises');
+    const { fileURLToPath } = await import('node:url');
+    const axeSource = await readFile(
+      fileURLToPath(new URL('../../../node_modules/axe-core/axe.min.js', import.meta.url)),
+      'utf8',
+    );
+
+    await installStatefulApi(page, [
+      {
+        method: 'GET',
+        pattern: '**/api/v1/ai/config',
+        fulfill: async ({ route }) => statefulOk(route, { provider: 'local', model: null }),
+      },
+      {
+        method: 'GET',
+        pattern: '**/api/v1/me/gaps',
+        fulfill: async ({ route }) =>
+          statefulOk(route, [
+            { conceptId: 'c1', conceptName: 'الاستعلامات المركّبة', courseName: 'قواعد البيانات', level: 0.22 },
+          ]),
+      },
+      {
+        method: 'GET',
+        pattern: '**/api/v1/ai/conversations',
+        fulfill: async ({ route }) =>
+          statefulOk(route, [{ id: 'conv_axe', title: 'محادثة الفحص', createdAt: FIXED_NOW_ISO }]),
+      },
+    ]);
+
+    for (const scheme of ['light', 'dark'] as const) {
+      await page.emulateMedia({ colorScheme: scheme });
+      await page.goto('/student/ai');
+      await expect(page.locator('h1.pf-page-title')).toBeVisible();
+      await page.evaluate(axeSource);
+      const result = await page.evaluate(async () => {
+        const run = await (window as unknown as { axe: { run: (ctx: unknown) => Promise<{ violations: Array<{ impact: string; id: string }> }> } }).axe.run(document);
+        return run.violations.filter((v) => v.impact === 'serious' || v.impact === 'critical').map((v) => v.id);
+      });
+      expect(result, `axe ${scheme}: ${result.join(', ')}`).toHaveLength(0);
+    }
+  });
+});

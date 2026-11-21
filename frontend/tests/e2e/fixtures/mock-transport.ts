@@ -73,6 +73,15 @@ import {
   meProfile,
   type FixtureUser,
 } from './api-fixtures';
+/* r351 AI-5 — the A3 marker block's corpus (one import, one block). */
+import {
+  AI_SERVICE_CONFIG,
+  AI_CONVERSATIONS,
+  AI_CONVERSATION_MESSAGES,
+  AI_SERVICE_STATUS_LOCAL,
+  AI_CONNECTION_CHECK_LOCAL,
+  OWNER_AI_METRICS,
+} from './ai-fixtures';
 
 /* ── envelope helpers (the real backend's shapes) ──────────────── */
 
@@ -201,6 +210,21 @@ export function standardRoutes(): MockRouteDef[] {
     { method: 'GET', path: '/teacher/risks', json: ok(TEACHER_RISKS) },
     { method: 'GET', path: '/admin/courses', json: ADMIN_COURSES_PAGE },
     { method: 'GET', path: '/admin/papers', json: ADMIN_PAPERS_GRADED_PAGE },
+    /* ── AI fixtures (A3) ─────────────────────────────────────────
+     * r351 AI-5: the assistant family's hermetic corpus (see
+     * ai-fixtures.ts). One delimited block at the end of the route
+     * table — nothing else in this file is A3's. */
+    { method: 'GET', path: '/ai/config', json: ok(AI_SERVICE_CONFIG) },
+    { method: 'GET', path: '/ai/conversations', json: ok(AI_CONVERSATIONS) },
+    { method: 'GET', path: '/ai/conversations/conv_fix_1/messages', json: ok(AI_CONVERSATION_MESSAGES) },
+    { method: 'GET', path: '/ai/status', json: ok(AI_SERVICE_STATUS_LOCAL) },
+    { method: 'GET', path: '/owner/ai-metrics', json: ok(OWNER_AI_METRICS) },
+    { method: 'POST', path: '/ai/status/check', json: ok(AI_CONNECTION_CHECK_LOCAL) },
+    /* POST /ai/chat answers 501 here ON PURPOSE: the chat transport is
+     * per-journey stateful (the wire body and the SSE/JSON grammar are
+     * what the journey pins) — the ai-assistant spec installs its own
+     * stateful handler, exactly like every other mutating journey. */
+    /* ── end AI fixtures (A3) ────────────────────────────────── */
   ];
 }
 

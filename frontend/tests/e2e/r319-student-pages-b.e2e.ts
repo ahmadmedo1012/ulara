@@ -168,7 +168,12 @@ test.describe('student pages B — §B2 sheet grammar (chromium · light)', () =
     await expectSheetContract(page);
   });
 
-  test('/student/ai — [01] gaps + [02] conversations + [03] suggestions bars', async ({ page }) => {
+  /* r351 AI-3 (A3's smallest-hunk update — the page's design changed,
+   * this pin follows it): the numbered §B2 bars retired from /student/ai
+   * (the calm chat surface — one quiet labels row instead of a numbered
+   * report). The gaps strip, the cards' square-radius contract, and the
+   * sheet contract all stay pinned. */
+  test('/student/ai — فجواتك + محادثاتك + أسئلة مقترحة (r351: quiet labels, no numerals)', async ({ page }) => {
     await installStatefulApi(page, [
       {
         method: 'GET',
@@ -216,34 +221,17 @@ test.describe('student pages B — §B2 sheet grammar (chromium · light)', () =
 
     await page.goto('/student/ai');
     await expect(page.locator('h1.pf-page-title')).toBeVisible({ timeout: 20000 });
-    await expect(page.locator('.r319s-bar')).toHaveCount(3, { timeout: 15000 });
-
-    const bars = await readBars(page);
-    expect(bars.map((b) => b.title)).toEqual(['بناءً على أدائك', 'محادثاتك', 'أسئلة مقترحة']);
-    expect(bars.map((b) => b.index)).toEqual(['[01]', '[02]', '[03]']);
-    for (const b of bars) {
-      expect(b.index).toMatch(/^\[\d{2}\]$/);
-      expect(b.indexMono).toContain('Geist Mono');
-      expect(b.indexDir).toBe('ltr');
-      expect(b.indexHidden).toBe('true');
-    }
-
-    /* The honest counts as the bars' mono meta — 02 measured gaps /
-     * 02 stored conversations / 05 authored suggestions. R320 CI fix:
-     * the counts are DATA-BOUND (gaps + conversations arrive via the
-     * mock transport after mount), and the one-shot read raced them on
-     * cold runners — the f84e6025 green run failed this exact line on
-     * attempt 1 and passed on retry, and the 2026-10-27 run lost the
-     * retry too. The auto-retrying toHaveCount(3) gate makes the read
-     * deterministic (same discipline as the h1/bar waits above). */
-    const countLoc = page.locator('.r319s-bar .r319s-count');
-    await expect(countLoc).toHaveCount(3, { timeout: 15000 });
-    const counts = await countLoc.allTextContents();
-    expect(counts).toEqual(['02', '02', '05']);
+    /* The numbered bars are GONE (the r351 calm redesign) — the quiet
+     * labels own the sections instead. */
+    await expect(page.locator('.r319s-bar')).toHaveCount(0, { timeout: 15000 });
+    const labels = page.locator('.ai-side-label, .ai-gaps-head .ai-side-label');
+    await expect(labels).toHaveCount(3, { timeout: 15000 });
+    expect(await labels.allTextContents()).toEqual(['فجواتك', 'محادثاتك', 'أسئلة مقترحة']);
+    /* The gaps strip still renders its measured cards (top-3). */
+    await expect(page.locator('.ai-gap-card')).toHaveCount(2, { timeout: 15000 });
 
     // The gap card (the card class sample) computes radius 0.
     const gapCard = page.locator('.ai-gap-card').first();
-    await expect(gapCard).toBeVisible();
     expect(await gapCard.evaluate((el) => getComputedStyle(el).borderRadius)).toBe('0px');
 
     await expectSheetContract(page);

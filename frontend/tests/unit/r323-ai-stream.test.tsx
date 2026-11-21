@@ -441,7 +441,7 @@ describe('AiAssistantPage — SSE consumption (r323 B1.1)', () => {
     expect(screen.getByText(/وصلتَ حدَّ الأسئلة اليوميّ للمساعد الذكيّ \(25 سؤالًا\)/)).toBeInTheDocument();
     // A quota state is not a retryable failure — no error row, no retry.
     expect(screen.queryByRole('alert')).toBeNull();
-    expect(screen.queryByRole('button', { name: 'أعد إرسال سؤالك' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'أعد الإرسال' })).toBeNull();
   });
 
   it('a MID-STREAM typed error frame surfaces its Arabic message as a recoverable row', async () => {
@@ -456,7 +456,7 @@ describe('AiAssistantPage — SSE consumption (r323 B1.1)', () => {
     // The partial text stays AND the typed error row explains the stop.
     await screen.findByText('بداية حقيقية');
     expect(await screen.findByText('تعذّر الوصول إلى نموذج المساعد الآن — حاول مرة أخرى')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'أعد إرسال سؤالك' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'أعد الإرسال' })).toBeInTheDocument();
   });
 
   it('a mid-stream failure AFTER the done frame is impossible to double-render (done wins)', async () => {
@@ -510,7 +510,8 @@ describe('AiAssistantPage — SSE consumption (r323 B1.1)', () => {
     expect(await screen.findByText('ردّ الملحّن المحليّ الكامل')).toBeInTheDocument();
     // The per-turn tag names the COMPOSER — never an LLM claim.
     expect(screen.getByText('gap-aware-composer', { selector: '.font-mono' })).toBeInTheDocument();
-    // And the boot-level chip stays the honest local label.
-    expect(screen.getByText('مساعد محليّ')).toBeInTheDocument();
+    // r351 AI-3: the banded head chip retired — the honest local label
+    // now rides the header's one-line description.
+    expect(screen.getByText('مساعد تحليليّ محليّ بلا نموذج خارجيّ.')).toBeInTheDocument();
   });
 });

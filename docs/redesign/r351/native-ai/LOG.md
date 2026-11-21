@@ -78,3 +78,16 @@
 
 **Gates:** backend `Tests 1990 passed (19 skipped)` incl. 4 new health-check pins (31/31 in ai-gemini) · typecheck + typecheck:tests clean both sides · frontend unit `3015/3015` (after fixing a tests-tree TS6133 my earlier edit introduced) · zero-trace: only the 5 pre-existing main-inherited hits.
 **Env note (sandbox):** a workspace-scoped `npm ci` wipes siblings — the correct install is the ROOT `npm ci` (all workspaces; documented here for resume).
+
+## Session 1 — AI-5 hermetic coverage
+
+**Corpus** (`frontend/tests/e2e/fixtures/ai-fixtures.ts` + ONE marker block in mock-transport.ts, per §4 protocol): /ai/config, /ai/conversations, /ai/conversations/:id/messages, /ai/status, /ai/status/check, /owner/ai-metrics. POST /ai/chat deliberately 501s in the static table (per-journey stateful, like every mutating journey).
+**New e2e journeys** (ai-assistant.e2e.ts, 4 added): stop-during-connecting (held response → real in-flight cancel, no error row), provider-failure → retry-in-place succeeds (envelope code chip pinned), quota-exhausted card (done.remaining=0), axe serious/critical = 0 light+dark (in-journey axe injection — the standing public gate doesn't cover authed pages).
+**A REAL PRE-EXISTING BUG CAUGHT + FIXED**: `.chat-area` had NO `overflow-y` anywhere (not on main) — the transcript beyond the surface frame was clipped behind the composer, unreachable. Fixed in ai.css (`overflow-y: auto` + `overscroll-behavior: contain`) with the finding documented in-file.
+**One stale pin updated** (smallest hunk, logged): r319-student-pages-b.e2e.ts /student/ai block — the numbered [01]/[02]/[03] bars retired with the r351 calm design; quiet labels + gap-card radius + sheet contract stay pinned. (The AI-3 commit had also missed r323-ai-stream.test.tsx's rename pins — included here.)
+**Infra findings (documented for resume)**: (a) workspace-scoped `npm ci` wipes sibling deps — always install from the ROOT; (b) a stale Vite optimizer cache produced phantom e2e failures (admin/auth specs red on a months-old server, green on a clean `--force` restart — bisected to infra, not code); (c) detached long test runs are reaped by the sandbox — run e2e in ≤10-min chunks.
+
+**Gates:**
+- Full e2e (35 spec files, 4 chunks): `18+67+49+39 = 173 passed, 0 failed`.
+- Frontend unit: `243 files / 3015 tests passed`. typecheck + typecheck:tests clean.
+- `bash scripts/verify.sh --fast` → **FAST PASS** (a11y floor S25/C0 unchanged).
