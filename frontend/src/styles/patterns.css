@@ -1953,8 +1953,23 @@ a.pf-row-link {
      z-index only through the --z-* rungs · @media print collapses to
      one clean column. */
 
-  /* the shell — framed guest paper, one rule for the four roots */
-  .ab, .ap, .hp, .lg {
+  /* the shell — framed guest paper, one rule for the four roots.
+     (R349 · Agent 02 defect fix: the bare `.lg` here collided with the
+     BUTTON SIZE MODIFIER `.btn.lg` (components.css) — the pages layer
+     outranks components, so EVERY large button in the app (the student
+     dashboard's resume CTA, the 404/error sheets' actions, the settings
+     notifications CTA) painted the guest paper ground under its own
+     label: white-on-paper in light (1.08:1), ink-on-ink in dark — the
+     label was invisible in BOTH themes, live-measured at the pixel
+     level on /student/dashboard. The four guest roots are <div>s by
+     construction (LegalSheet.tsx / PublicPages.tsx / AppDownloadPage),
+     so tag-qualifying the selector keeps the guest sheets
+     byte-identical while a.btn.lg / button.btn.lg can never match.
+     Root-cause note for the integration agent: the real long-term fix
+     is renaming the legal root class `.lg` → a non-colliding seat —
+     that rename touches LegalSheet.tsx + legal.css (public-agent
+     files) and is recorded in the PR's integration section.) */
+  div.ab, div.ap, div.hp, div.lg {
     background: var(--bg);
     color: var(--text);
     overflow-x: clip;
