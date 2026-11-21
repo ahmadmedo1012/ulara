@@ -314,7 +314,14 @@ export function CampusFrag({ name }: { name: CampusFragName }) {
           <g className="iso-leader">
             <Leader from={iso(28, 28, 23)} to={{ x: 44, y: -44 }} text="المكتبة البحثية" textAnchor="start" />
             <Leader from={iso(50.5, 29.5, 17)} to={{ x: 90, y: 60 }} text="مرصد الجودة" textAnchor="start" />
-            <Leader from={iso(28, 54, 2)} to={{ x: -56, y: 112 }} text="ساحة المجتمع" textAnchor="start" />
+            {/* R349 (A2 · the hero label clip): ساحة المجتمع anchors END
+             * now — the RTL «start» anchor extended the phrase 74 plate
+             * units LEFT of x=-56, past the frame's -92 edge and the
+             * svg's own bounds (measured L=-44px @390 with overflow
+             * visible bleeding past the hero window). The end anchor
+             * mirrors ميدان التدريب's own grammar: the phrase reads
+             * rightward INTO the frame's clear bottom margin. */}
+            <Leader from={iso(28, 54, 2)} to={{ x: -56, y: 112 }} text="ساحة المجتمع" textAnchor="end" />
             <Leader from={iso(10, 31, 4)} to={{ x: -92, y: 62 }} text="ميدان التدريب" textAnchor="end" />
           </g>
         </g>
