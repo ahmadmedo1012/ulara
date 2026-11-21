@@ -80,8 +80,8 @@ footer.fo-footer {
   display: grid;
   /* <768: one column, everything stacks */
   grid-template-columns: minmax(0, 1fr);
-  row-gap: var(--sp-6);
-  padding: var(--sp-7) 2.4rem var(--sp-5);
+  row-gap: var(--sp-5);
+  padding: var(--sp-6) 2.4rem var(--sp-5);
 }
 .fo-col { min-inline-size: 0; }
 
@@ -405,10 +405,11 @@ footer.fo-footer {
   grid-area: 1 / 1;
   inline-size: 100%;
   block-size: auto;
-  /* the band's own proportion (the folio's 1440:314 ink band): the
-     render covers the box, center-cropped exactly like the retired
-     fixed-height band — but the box scales with the sheet's width */
-  aspect-ratio: 1440 / 314;
+  /* the band's own proportion (r351 P3: the horizon strip — the
+     folio's 1440:314 ink band steps to a 1440:150 crop: the skyline
+     reads as one ground line under the colophon, never a full drawing
+     plate; object-fit cover keeps the center crop honest) */
+  aspect-ratio: 1440 / 150;
   object-fit: cover;
   display: block;
 }
@@ -509,6 +510,70 @@ footer.fo-footer {
   }
 }
 
+/* r351 P8 — the phone colophon rides the compact rhythm (the stacked
+   columns keep their seats; the air between them steps down and the
+   horizon strip stays a line, never a plate). */
+@media (max-width: 767px) {
+  .fo-grid {
+    padding: var(--sp-4) 1.6rem var(--sp-3);
+    row-gap: var(--sp-3);
+  }
+
+  .fo-c1-top,
+  .fo-c1-sub {
+    row-gap: var(--sp-2);
+  }
+
+  .fo-form {
+    row-gap: var(--sp-2);
+  }
+
+  /* the index doors keep ≥44px seats (padding-block + line box) while
+     the group air steps down */
+  .fo-lg-links {
+    row-gap: 0;
+  }
+
+  .fo-lgroup {
+    row-gap: var(--sp-1);
+  }
+
+  .fo-footer-about {
+    font-size: var(--fs-chrome);
+    line-height: 1.5;
+  }
+
+  .fo-legal-row {
+    font-size: var(--fs-xxs);
+    row-gap: 2px;
+  }
+
+  .fo-legal-link {
+    padding-block: 4px; /* the policy doors keep a ≥24px seat (the © tail is a wrap, not a control row) */
+  }
+
+  .fo-fstrip {
+    margin-block-start: 0;
+  }
+
+  .fo-strip-img {
+    aspect-ratio: 1440 / 72;
+  }
+
+  .fo-giant-banner {
+    margin: var(--sp-2) 0;
+    padding: var(--sp-1) 0;
+  }
+
+  .fo-giant-text {
+    font-size: clamp(1.6rem, 8vw, 2.8rem);
+  }
+
+  .fo-top-anchor-row {
+    margin-block-start: 0;
+  }
+}
+
 /* ═══ the wy verb-snap protective collapses (r306/r308 family belt) ═══
    This sheet carries the why-strip's RM seats per section-file
    ownership (parked here since the R313 split): the r313 wy-snap
@@ -561,8 +626,8 @@ footer.fo-footer {
 .fo-giant-banner {
   position: relative;
   inline-size: 100%;
-  margin: var(--sp-5) 0 var(--sp-4);
-  padding: var(--sp-3) 0;
+  margin: var(--sp-4) 0 var(--sp-3);
+  padding: var(--sp-2) 0;
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
   display: flex;
@@ -573,7 +638,9 @@ footer.fo-footer {
 
 .fo-giant-text {
   font-family: var(--font-sans);
-  font-size: clamp(3rem, 10vw, 11rem);
+  /* r351 P3 — the closing outline steps down one rung (the colophon
+     is the footer's voice; the banner is its signature, not its bulk) */
+  font-size: clamp(2.4rem, 6.4vw, 6.8rem);
   font-weight: 800;
   letter-spacing: -0.02em;
   color: transparent;

@@ -72,28 +72,18 @@ function SketchArt() {
 
 /* T-13: the registry cloud's ordinal binding — the frozen spec's cta
  * hover records (ordinals 2·14 + the mobile-only set). Phase Ω: each seat
- * is an honest door — the demo workspace's three faculties + the
- * platform's own value statements, every one a real route. */
-/* R349 (D4 · the cloud's dedupe): the cloud carried FOURTEEN near-
- * identical /colleges doors, five of them the statement crawl's
- * value clauses VERBATIM (the audit's «duplicate statements» row).
- * The cloud now indexes the registry's own subjects ONCE — the
- * three real faculties + the three value statements no other
- * landing band carries; every removed door's fact stays one tap
- * away in the strip text above. */
-const CTA_CLOUD_ORD = [2, 14, 3, 5, 7, 8] as const;
+ * is an honest door — the demo workspace's three faculties, every one a
+ * real route. */
+const CTA_CLOUD_ORD = [2, 14, 3] as const;
 
-/* The honest index — the demo workspace's real faculties first, then
- * the value statements unique to this seat (the crawl's five clauses
- * stay in the crawl; no phrase renders twice on the page). No
- * university names, no invented registry. */
+/* The honest index — the demo workspace's real faculties (r351 P6:
+ * the three value statements retired — the crawl and the strip text
+ * carry them; no phrase renders twice on the page). No university
+ * names, no invented registry. */
 const CLOUD_ITEMS: readonly string[] = [
   'كلية علوم الحاسوب',
   'كلية الهندسة',
   'كلية إدارة الأعمال',
-  'عزل كامل بين المؤسسات',
-  'بيانات موسومة بوضوح',
-  'سجلّ واحد للقسم والكلية',
 ] as const;
 
 export function Vision({ year }: { year: number }) {

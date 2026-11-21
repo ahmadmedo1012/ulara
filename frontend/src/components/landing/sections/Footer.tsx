@@ -99,8 +99,7 @@ export function Footer({ year }: { year: number }) {
             chrome riding the house reveal rung. */}
         <RevealCssClass as="div" className="fo-plate" aria-hidden="true">
           <span className="fo-plate-cell fo-mono" dir="ltr">PLATE · 09</span>
-          <span className="fo-plate-cell">لوحة الهبوط — نظام تشغيل الجامعة</span>
-          <span className="fo-plate-cell">ورقة واحدة · مقياس 1:1 · يعمل اليوم</span>
+          <span className="fo-plate-cell">لوحة الهبوط — يعمل اليوم</span>
           <span className="fo-plate-cell fo-mono" dir="ltr">ULARA · {year}</span>
         </RevealCssClass>
         {/* ── the column band — CSS Grid: 1 col <768 · 2 cols ≥768

@@ -19,29 +19,21 @@ import { useState } from 'react';
 import { RevealCssClass } from '../../../hooks/useReveal';
 import { WhyPanels } from '../plates/WhyPanels';
 
-/* the five questions — the sandbox's authored copy, tightened to the
- * reference's answer economy (R349 B2: one honest sentence each —
- * every claim kept, the repetition around it retired). */
+/* r351 P6 — THREE questions, one honest sentence each (the measured
+ * reference density; the assistant-optional and trial disclosures keep
+ * their seats on /capabilities and /help where they belong). */
 const FAQ = [
   {
     q: 'هل بياناتنا معزولة فعلًا؟',
-    a: 'نعم — مساحة عمل مستقلة بقاعدة بياناتها لكل مؤسسة، وسجلّ تدقيق يوثّق كل وصول.',
+    a: 'نعم — قاعدة بيانات مستقلة لكل مؤسسة، وسجلّ تدقيق يوثّق كل وصول.',
   },
   {
     q: 'ماذا يعني «عربية-أولًا»؟',
-    a: 'الواجهة والبحث والتصميم مبنية للعربية أولًا — RTL أصيل، لا ترجمة ملحقة.',
-  },
-  {
-    q: 'هل المساعد الذكي إلزامي؟',
-    a: 'لا. المحرّك الافتراضي محلي حتمي، والـLM اختياري يفعّله المالك بنفسه.',
+    a: 'الواجهة والبحث والتصميم عربية أولًا — RTL أصيل، لا ترجمة ملحقة.',
   },
   {
     q: 'كيف تُحسب مصفوفة الإتقان؟',
-    a: 'خلية إتقان لكل مفهوم تُبنى من الإجابات والاختبارات — لا من الحضور وحده.',
-  },
-  {
-    q: 'هل يمكن تجربة المنصّة قبل الالتزام؟',
-    a: 'نعم — مساحة تجريبية ببيانات اصطناعية موسومة بوضوح، لتجربة كل الأدوار.',
+    a: 'خلية إتقان لكل مفهوم — من الإجابات والاختبارات، لا من الحضور.',
   },
 ] as const;
 
@@ -94,8 +86,7 @@ export function Why() {
           <div className="wy-rule-v" aria-hidden="true" data-spec="why.rulev" />
           <div className="wy-lede" data-spec="why.lede">
             <div className="wy-lede-t" data-spec="why.ledet">
-              أُلارا تنسجم مع عملياتك بدل أن تستبدلها — أربعة أعمدة تجعلها
-              جزءًا من اليوم، لا نظامًا إضافيًا فوقه.
+              أربعة أعمدة تجعلها جزءًا من يوم جامعتك، لا نظامًا إضافيًا.
             </div>
           </div>
           <div className="wy-note" data-spec="why.note">
@@ -117,7 +108,7 @@ export function Why() {
             <p className="wy-faq-kicker">الأسئلة الشائعة</p>
           </RevealCssClass>
           <span className="wy-faq-dash" aria-hidden="true" />
-          <span className="wy-faq-count fo-mono" dir="ltr">FAQ/05</span>
+          <span className="wy-faq-count fo-mono" dir="ltr">FAQ/03</span>
         </div>
         <RevealCssClass as="div" className="wy-faq-list" delay={1}>
           {FAQ.map((f) => (

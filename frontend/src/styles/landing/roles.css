@@ -324,7 +324,9 @@
   .rl-contentcol { order: 3; }
   .rl-accwrap { margin-block-start: 0; }
   .rl-row {
-    padding-block: 2rem;
+    /* r351 P8 — the phone row air steps down (each row keeps its ≥44px
+       tap seat with the title's own line box) */
+    padding-block: 1.4rem;
     padding-inline: 1.6rem;
   }
   /* 390 floor ruling: the spec's own title lh (19.65 = 1.1×17.86) sits
