@@ -210,6 +210,7 @@ export default function AiAssistantPage() {
           text: done.reply,
           engine: done.engine,
           model: done.model,
+          citations: done.citations,
           notice: done.notice,
           messageId: done.messageId,
         };
@@ -270,6 +271,7 @@ export default function AiAssistantPage() {
           text: res.reply,
           engine: res.engine,
           model: res.model,
+          citations: res.citations,
           notice: res.notice,
           messageId: (res as { messageId?: string }).messageId,
         },

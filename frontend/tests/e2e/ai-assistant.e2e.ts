@@ -70,6 +70,18 @@ test.describe('المساعد الذكيّ — رحلة محادثة كاملة'
               reply: REPLY,
               engine: 'local',
               model: 'gap-aware-composer',
+              /* r351 AI-2/AI-3: the grounded answer's citations ride the
+               * done frame — the chips are their referent (mobile parity). */
+              citations: [
+                {
+                  index: 1,
+                  title: 'محاضرة الاستعلامات المركّبة',
+                  locator: 'محاضرة 7',
+                  url: 'https://example.invalid/materials/lecture-7',
+                  snippet: 'شرح الاستعلامات.',
+                },
+                { index: 2, title: 'ورقة عمل الفهارس', locator: null, url: null, snippet: 'تدريبات.' },
+              ],
             };
             const sse = [
               `event: token\ndata: ${JSON.stringify({ t: REPLY })}\n\n`,
@@ -119,6 +131,16 @@ test.describe('المساعد الذكيّ — رحلة محادثة كاملة'
     /* r166d: وسم المحرّك لكلّ ردّ — نص محوّد خافت داخل الفقّة يسمّي
      * الملحّن المحليّ بصدق (لا يدّعي نموذجًا لغويًّا). */
     await expect(replyBubble.locator('.font-mono')).toHaveText('gap-aware-composer');
+
+    /* r351 AI-2/AI-3: شرائح المصادر — مرجع استشهادات «المصدر: [رقم]»
+     * داخل الردّ؛ ذات الرابط تُفتح، وبلا رابط تبقى معلوماتية. */
+    const citeRow = replyBubble.locator('.ai-cite-row');
+    await expect(citeRow).toBeVisible();
+    await expect(citeRow.locator('.ai-cite-chip')).toHaveCount(2);
+    const citeLink = citeRow.locator('a.ai-cite-chip', { hasText: 'محاضرة الاستعلامات المركّبة' });
+    await expect(citeLink).toHaveAttribute('href', 'https://example.invalid/materials/lecture-7');
+    await expect(citeLink).toHaveAttribute('target', '_blank');
+    await expect(citeRow.locator('.ai-cite-chip--info', { hasText: 'ورقة عمل الفهارس' })).toBeVisible();
 
     /* المحادثة الجديدة دخلت قائمة «محادثاتك» عبر الإبطال وإعادة
      * الجلب الحقيقيين (لا إعادة تحميل صفحة). */

@@ -12,6 +12,7 @@
  *    greeting line, three suggestions, two local-honest quick chips.
  */
 import type { AiMessageRow } from '../../hooks/resources/ai';
+import type { AiCitation } from '../../lib/ai-stream';
 
 export interface ChatMsg {
   role: 'bot' | 'user';
@@ -26,6 +27,10 @@ export interface ChatMsg {
   engine?: string;
   /** Per-RESPONSE model attribution (the provider's own `model` field). */
   model?: string;
+  /** The retrieved materials this answer cited — renders as the
+   * source chips under the bubble (the referent of the reply's inline
+   * «المصدر: [رقم]»; mobile parity). */
+  citations?: AiCitation[];
   /** The honest degraded-turn notice (quota spent → local composer). */
   notice?: string;
   /** Marks the bubble tokens are arriving into. */

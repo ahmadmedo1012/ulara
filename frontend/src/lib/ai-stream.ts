@@ -24,6 +24,18 @@
 import { api, apiBaseURL, unwrap } from './api';
 import { useAuthStore } from '../stores/auth.store';
 
+/** One retrieved-material citation — the backend's KnowledgeCitation
+ * (modules/ai/knowledge.ts), denormalized on the hit row: the numbered
+ * material the reply's inline «المصدر: [رقم]» refers to. `url` present
+ * → an openable chip; absent → an informational chip (mobile parity). */
+export interface AiCitation {
+  index: number;
+  title: string;
+  locator: string | null;
+  url: string | null;
+  snippet: string;
+}
+
 /** The `done` frame — the FINAL turn as the server persisted it. The
  * server's `reply` replaces the client's accumulated buffer (a
  * transport drop can never truncate the answer on screen). `remaining`
@@ -37,6 +49,10 @@ export interface AiStreamDone {
   model?: string;
   inputTokens?: number;
   outputTokens?: number;
+  /** The retrieved materials the answer cited (empty array = none
+   * retrieved — the honest «no sources» state; omitted = the turn
+   * predates the field). */
+  citations?: AiCitation[];
   remaining?: number;
   /** ULARA 3-b (owner rule 2026-11-12): present ONLY on the honest
    * degraded turn — the free-model chain answered 429 and the LOCAL

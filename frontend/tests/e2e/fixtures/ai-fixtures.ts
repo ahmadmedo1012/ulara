@@ -12,11 +12,13 @@
  *  · AI_CONVERSATION_MESSAGES — GET /ai/conversations/:id/messages;
  *  · aiChatJsonReply()  — the POST /ai/chat JSON envelope factory;
  *  · aiChatSseReply()   — the POST /ai/chat?stream=1 SSE body
- *    factory (token frames + the done frame — the r323 wire grammar);
- *  · AI_SERVICE_STATUS / AI_CONNECTION_* — the owner console's
- *    GET /ai/status + POST /ai/status/check (r351 AI-4);
- *  · aiRoutes()         — the route list mock-transport's A3 marker
- *    block appends to the standard table.
+ *    factory (token frames + the done frame — the r323 wire grammar,
+ *    citations included since AI-2's inline «المصدر: [رقم]»);
+ *  · OWNER_AI_METRICS / AI_SERVICE_STATUS_LOCAL /
+ *    AI_CONNECTION_CHECK_LOCAL — the owner console's
+ *    GET /owner/ai-metrics + GET /ai/status + POST /ai/status/check
+ *    (r351 AI-4). The AI ROUTES themselves (the A3 marker block) live
+ *    in mock-transport.ts — this file is data only.
  *
  * Streaming note: MockRouteDef.fulfill is a static body — the SSE
  * reply arrives as one chunk (the parser splits frames; timing
@@ -36,6 +38,27 @@ export const AI_CONVERSATION_MESSAGES = [
   { id: 'm2', role: 'ASSISTANT' as const, content: 'ركّز على الاستعلامات المركّبة أولًا.', createdAt: FIXED_NOW_ISO },
 ];
 
+/** One cited material — the backend's KnowledgeCitation shape (one
+ * openable — a url — and one informational, so the chip grammar's
+ * both branches are exercised by every journey that rides this
+ * corpus). */
+export const AI_CITATIONS = [
+  {
+    index: 1,
+    title: 'محاضرة الاستعلامات المركّبة',
+    locator: 'محاضرة 7 — دقيقة 12:40',
+    url: 'https://example.invalid/materials/lecture-7',
+    snippet: 'شرح الاستعلامات المركّبة مع أمثلة.',
+  },
+  {
+    index: 2,
+    title: 'ورقة عمل الفهارس',
+    locator: null,
+    url: null,
+    snippet: 'تدريبات على الفهارس.',
+  },
+] as const;
+
 /** The persisted turn both transports converge on. */
 export function aiChatDone(opts: { reply?: string; model?: string } = {}) {
   return {
@@ -44,6 +67,7 @@ export function aiChatDone(opts: { reply?: string; model?: string } = {}) {
     reply: opts.reply ?? 'جواب المساعد التجريبي',
     engine: 'local',
     model: opts.model ?? 'gap-aware-composer',
+    citations: [...AI_CITATIONS],
   };
 }
 

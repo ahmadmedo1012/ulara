@@ -1352,7 +1352,14 @@ router.get('/config', (_req, res) => {
  * providerHealthCheck — no retry chain, 15s ceiling, one-word ask).
  * The result is the measurement: ok/latency/model, or the classified
  * failure kind + HTTP status. The API key never appears anywhere. */
-router.get('/status', requireRole(Role.OWNER), async (_req, res, next) => {
+/* r351 review hardening: the owner status routes get their own
+ * per-user limiter — the CHECK is a live provider round trip (a stuck
+ * owner tab must not bill the provider at click speed). Shared factory
+ * defaults: 20 req / 60 s per user — generous for a console, far from
+ * the chat budget's blast radius. */
+const aiStatusLimiter = createRouteLimiter();
+
+router.get('/status', aiStatusLimiter, requireRole(Role.OWNER), async (_req, res, next) => {
   try {
     if (!aiProvider) {
       res.json({
@@ -1405,7 +1412,7 @@ router.get('/status', requireRole(Role.OWNER), async (_req, res, next) => {
   }
 });
 
-router.post('/status/check', requireRole(Role.OWNER), async (_req, res, next) => {
+router.post('/status/check', aiStatusLimiter, requireRole(Role.OWNER), async (_req, res, next) => {
   try {
     if (!aiProvider) {
       /* Honest refusal: the local composer has no provider to probe —

@@ -9,6 +9,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api, unwrap } from '../../lib/api';
 import { useInstitutionScope } from '../../stores/auth.store';
 import { withInstitutionScope } from '../../lib/queryClient';
+import type { AiCitation } from '../../lib/ai-stream';
 
 // ── AI ─────────────────────────────────────────────────────────
 export function useAiChat() {
@@ -32,6 +33,10 @@ export function useAiChat() {
         reply: string;
         engine?: string;
         model?: string;
+        /** The retrieved materials the answer cited (r351: the AI-2
+         * prompt mandates inline «المصدر: [رقم]» — the chips are the
+         * referent). Same shape as AiStreamDone.citations. */
+        citations?: AiCitation[];
         degraded?: boolean;
         notice?: string;
       }>(

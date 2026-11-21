@@ -375,3 +375,46 @@
   direction: ltr;
   unicode-bidi: embed;
 }
+
+/* ── r351 AI-2/AI-3: source chips — the referent of the reply's inline
+      «المصدر: [رقم]» citations (mobile parity). Hairline drafting
+      chips: the mono index carries the [رقم], the title is the
+      material; openable (an <a>) vs informational (—info, muted). */
+.ai-cite-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+  margin-block-start: var(--sp-2);
+}
+.ai-cite-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--sp-1);
+  padding: 2px var(--sp-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm, 2px);
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  text-decoration: none;
+  max-inline-size: 100%;
+}
+a.ai-cite-chip:hover,
+a.ai-cite-chip:focus-visible {
+  border-color: var(--accent);
+  color: var(--text);
+}
+.ai-cite-chip--info {
+  color: var(--text-subtle);
+}
+.ai-cite-index {
+  font-family: var(--font-mono, monospace);
+  font-size: var(--fs-xxs);
+  direction: ltr;
+  unicode-bidi: embed;
+}
+@media (pointer: coarse) {
+  .ai-cite-chip { min-block-size: 44px; align-items: center; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  a.ai-cite-chip { transition: border-color 120ms ease, color 120ms ease; }
+}

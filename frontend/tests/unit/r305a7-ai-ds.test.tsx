@@ -145,7 +145,11 @@ describe('R305-A7 — the status disclosures (r351 AI-3 structure)', () => {
     renderPage();
     expect(screen.getByText('مساعد تحليليّ محليّ بلا نموذج خارجيّ.')).toBeInTheDocument();
     expect(screen.queryByText('نموذج لغويّ يرى إتقانك')).toBeNull();
-    expect(screen.queryByText('.ai-privacy-line')).toBeNull();
+    /* r351 review fix: the privacy line rides REAL-engine mode only —
+     * the old assertion passed a CSS SELECTOR to a text query (vacuous:
+     * a selector string can never equal rendered text). A regex against
+     * the line's own words is the honest pin (partial match). */
+    expect(screen.queryByText(/تُرسَل رسائلك وبيانات إتقانك إلى مزوّد الذكاء الخارجيّ/)).toBeNull();
   });
 
   it('unverifiable mode (pending config) keeps the honest LOCAL description', () => {

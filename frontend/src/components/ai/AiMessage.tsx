@@ -1,9 +1,10 @@
 /**
  * components/ai/AiMessage.tsx — one transcript row (r351 AI-3):
  * the role label, the bubble (markdown-lite reply / verbatim user
- * text), the recoverable error row, the streaming caret, the per-turn
- * engine tags, and the per-answer affordances (copy / thumbs /
- * regenerate). Purely presentational — the page owns every handler.
+ * text), the source chips (the citations' referent), the recoverable
+ * error row, the streaming caret, the per-turn engine tags, and the
+ * per-answer affordances (copy / thumbs / regenerate). Purely
+ * presentational — the page owns every handler.
  */
 import {
   Bot,
@@ -17,6 +18,7 @@ import {
 } from 'lucide-react';
 import { Icon } from '../Icon';
 import { formatReplyBlocks } from '../../pages/student/aiReplyFormat';
+import type { AiCitation } from '../../lib/ai-stream';
 import type { ChatMsg } from './chat';
 
 function RoleLabel({ who }: { who: 'bot' | 'user' }) {
@@ -61,6 +63,39 @@ function ReplyText({ text }: { text: string }) {
         ),
       )}
     </>
+  );
+}
+
+/** The source chips — the referent of the reply's inline «المصدر:
+ * [رقم]» citations (r351 AI-2/AI-3 parity with the mobile chips):
+ * a chip WITH a url is an openable anchor (deep link to the
+ * material); a chip without one is informational (its title carries
+ * the locator). The index rides in mono — the same [رقم] the answer
+ * itself prints. */
+function CitationChips({ citations }: { citations: AiCitation[] }) {
+  return (
+    <div className="ai-cite-row" aria-label="المصادر">
+      {citations.map((c) =>
+        c.url ? (
+          <a
+            key={c.index}
+            className="ai-cite-chip"
+            href={c.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={c.locator ?? c.title}
+          >
+            <span className="ai-cite-index">[{c.index}]</span>
+            {c.title}
+          </a>
+        ) : (
+          <span key={c.index} className="ai-cite-chip ai-cite-chip--info" title={c.locator ?? c.snippet}>
+            <span className="ai-cite-index">[{c.index}]</span>
+            {c.title}
+          </span>
+        ),
+      )}
+    </div>
   );
 }
 
@@ -114,6 +149,9 @@ export function AiMessage({
         <div className="chat-bubble">
           {m.role === 'bot' ? <ReplyText text={m.text} /> : <Multiline>{m.text}</Multiline>}
           {m.streaming && <span className="ai-stream-cursor" aria-hidden />}
+          {!m.streaming && m.role === 'bot' && m.citations && m.citations.length > 0 && (
+            <CitationChips citations={m.citations} />
+          )}
           {m.notice && (
             <div className="font-mono text-xxs ai-engine-tag" role="status">
               {m.notice}

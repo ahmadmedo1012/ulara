@@ -7,11 +7,16 @@
  *
  * Boots the exported web bundle on a local static server, seeds each
  * role's session (AsyncStorage = localStorage on web: ula-mobile-user
- * + ula-mobile-active-institution), mocks the API with the platform's
- * own fixture corpus (the same backend the web e2e suite mocks), then
- * captures every role's key screens at 390×844 and 820×1180 with word
- * counts + overflow + console errors into docs/…/native-ai/shots/ and
- * a JSON the audit doc reads.
+ * + ula-mobile-active-institution), and mocks the API with a minimal
+ * per-role table (empty data — the screens render their STATIC copy +
+ * empty states, which is exactly the N4 surface). A best-effort
+ * dynamic import of the web e2e corpus exists below, but under plain
+ * node it cannot load the .ts fixture module — treat every capture as
+ * MINIMAL fixtures (fixtureCorpus is recorded per cell in the JSON);
+ * the populated-corpus pass is a separate temp-spec exercise (see
+ * NATIVE_AUDIT.md pass B). Captures every role's key screens at
+ * 390×844 and 820×1180 with word counts + overflow + console errors
+ * into docs/…/native-ai/shots/ and a JSON the audit doc reads.
  *
  * Usage: node scripts/capture-web.mjs   (from apps/mobile, after
  * `npx expo export --platform web`)

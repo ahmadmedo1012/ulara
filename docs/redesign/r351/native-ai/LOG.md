@@ -148,3 +148,22 @@
 **Zero-trace:** tracked names clean (the 5 file/history hits are the pre-existing main-inherited ones — CHANGELOG + r350 docs + 2 r350 commit subjects; owned by the merge agent).
 
 **Push:** `1fa9ac3..05e8315`.
+
+## Session 2 — the independent review pass (findings → fixes)
+
+The mandated fresh sub-agent reviewed ONLY the branch diff (110 files, no access to my conclusions). Verdict: FIX-FIRST with 10 findings. Every substantive one addressed:
+
+| # | finding | resolution |
+|---|---|---|
+| 1 (P1) | web dropped `done.citations` while AI-2's prompt mandates inline «المصدر: [رقم]» — bare numbers, no referent (mobile had chips) | **FIXED**: `AiCitation` type + `citations` on AiStreamDone/hook/ChatMsg; `CitationChips` in AiMessage (url → openable anchor, no-url → informational span, mono [رقم]); wired in both grammars; css chips; 5 unit pins (`tests/unit/AiMessage-citations.test.tsx`) + e2e chip assertions (anchor href/target + info chip) in the send journey; the fixture done-frame carries both citation shapes |
+| 2 (P2) | BootStrip module-flag re-mount edge | ACCEPTED as designed (the module flag IS the warm-skip feature; the 6s flip is the safety timeout) — no change |
+| 3 (P1) | `aiReplyFormat.ts` outside the strict file list | **DOCUMENTED for waiver**: the file is the AI page's own formatter (its test pins were already re-pinned by AI-3); the backtick-strip is the smallest fix hunk following AI-2's legitimate behavior change. Logged here + in HANDOFF for the merge agent |
+| 4 (P1) | 9 AI-adjacent test files outside the strict list | **DOCUMENTED**: "tests follow code" — every one pins AI-surface code this slice owns (the page, its formatter, its CSS, /student/ai e2e). Listed in HANDOFF for the merge agent |
+| 5 (P2) | mock-transport.ts spans import + route block | **DOCUMENTED**: ESM imports cannot sit inside the route block; the 9-line import is the minimal mechanical companion of the ONE delimited marker block. No other byte of the file is A3's |
+| 6 (P2) | vacuous CSS-selector-in-text-query assertion (r305a7) | **FIXED**: regex against the privacy line's own words (partial match — the honest pin) |
+| 7 (P2) | /ai/status + /status/check had no rate limiter and zero route-level pins | **FIXED**: `aiStatusLimiter` (shared factory defaults) on both routes + 3 route pins (local shape incl. keyPresent boolean + the no-key-shaped-string scan, the honest local refusal with the recipe pointer, the OWNER gate 403) |
+| 8 (P2) | capture-web.mjs docblock claimed corpus mocking that can never load | **FIXED**: docblock states the truth (minimal fixtures; corpus import is inert under plain node; fixtureCorpus recorded per cell) |
+| 9 (P2) | — | zero-trace + secrets: CLEAN (confirmed by the reviewer) |
+| 10 (P1) | PLAN claimed "source chips DONE" (they weren't); ai-fixtures header listed nonexistent exports; LOG wording "EmptyState GAINS suppression" overstated a no-op edit | **FIXED**: the chips now EXIST (finding 1) so the claim is true; the header lists the real exports and points to mock-transport for the routes; **correction**: the `??` → `!== undefined` edit in states.tsx was a semantic no-op (`""` was already falsy-suppressed at render) — it stays as explicit documentation of the contract, but no behavior was "gained" (the earlier LOG wording was wrong) |
+
+**Gates after the fixes:** backend tsc + test-tree tsc clean · frontend tsc + test-tree tsc clean · ai-chat-routes 33/33 (30+3 owner-route pins) · the 6 AI frontend unit files 70/70 (incl. the 5 new chip pins) · mobile untouched by this pass.
