@@ -1926,8 +1926,7 @@ export function UniversityInfoPage() {
         </Card>
         <Card title="الرسالة" icon={Star}>
           <p style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-muted)', lineHeight: 'var(--lh-loose)', margin: 0 }}>
-            إظهار سير العمل الأكاديمي الكامل — من الهيكل إلى الإتقان — داخل أُلارا:
-            تجربة الطالب، تقييم الأستاذ، عزل المؤسّسات، وجودة قابلة للقياس، كلها كأمثلة حيّة.
+            إظهار سير العمل الأكاديمي الكامل داخل أُلارا — تجربة الطالب، تقييم الأستاذ، وجودة قابلة للقياس.
           </p>
         </Card>
       </div>
@@ -2028,18 +2027,15 @@ export function UniversityInfoPage() {
         </div>
       </Card>
 
-      {/* Strategic plan */}
-      <Card title="الخطّة الاستراتيجيّة 2024–2028" icon={Target} subtitle="خارطة طريق للارتقاء بمكانة الجامعة وتعزيز دورها في خدمة المجتمع">
+      {/* Strategic plan — r350-B2: the eight synthetic bullets trimmed to
+          three representative rows (the demo workspace shows the grammar,
+          not an essay; the full set lives in the seed corpus). */}
+      <Card title="الخطّة الاستراتيجيّة 2024–2028" icon={Target} subtitle="خارطة طريق للارتقاء بمكانة الجامعة وخدمة المجتمع">
         <div className="grid-2 r305u-rows">
           {[
             'تقديم برامج تعليميّة وفق معايير الجودة المحليّة والدوليّة',
             'الارتقاء بمستوى البحث العلميّ',
             'تعزيز دور الجامعة في خدمة المجتمع',
-            'توفير بيئة مناسبة وتحسين مستوى الخدمات',
-            'تأهيل وتطوير الموارد البشريّة',
-            'مواءمة المخرجات مع متطلّبات سوق العمل',
-            'دعم التعاون مع المؤسّسات المحليّة والدوليّة',
-            'تجويد الخدمات التعليميّة والمجتمعيّة',
           ].map((g) => (
             <div key={g} className="r305u-row">
               <Icon icon={CheckCircle2} size={14} style={{ color: 'var(--success)', flexShrink: 0 }} />

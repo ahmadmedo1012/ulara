@@ -120,10 +120,27 @@ student dashboard («Page should contain a level-one heading») — the a11y gat
 public pages and only serious/critical; recorded here, not hidden.
 
 ### B1 remaining (this session)
-- [ ] 5-role × 1440/390 screenshots + word counts (student/teacher/admin/quality/owner) into
-  `docs/redesign/r350/shots/` (owner dashboard is a new capture; student 271 in owner's old
-  instrument).
+- [x] 5-role × 1440/390 screenshots + word counts — done, see part 2 above.
 - [ ] overlay consistency spot-check (SheetFrame/dialogs/notification/GlobalSearch focus, Esc,
   open/close motion) — the overlay-stack contract exists (lib/overlayStack + capture-phase Esc
   + useAnchorFocusReturn); verify by tests, not rebuild.
 
+
+## B2 — the copy cut (part 1, this session)
+
+Instrument: rendered body.innerText word count @1440 (same counter as the baseline table).
+The landing's dual-layer reveal text (each masked word renders twice) inflates its count —
+noted; the underlying copy is already spec-sheet sparse (previous cycles), so no landing cut.
+
+| page | before | after | Δ | edit |
+|---|---|---|---|---|
+| /app | 438 | 210 | −52% | every section = heading + ≤1 operative sentence; ops detail (AAB prep, OTA channel table, simulator note) lives in RELEASE.md; URLs/live-status/honesty markers unchanged |
+| /settings | 316 | 238 | −25% | the four «قريبًا» seats drop their explanation paragraphs; honesty labels stay |
+| /student/university | 298 | 259 | −13% | mission sentence shortened; 8 synthetic strategic bullets → 3 representative rows |
+| /capabilities | 244 | 244 | 0 | already at target (honest status chips, one sentence per section) |
+| /campus | 240 | 240 | 0 | already at target (demo-label grammar) |
+| / | 722 | 722 | 0 | instrument-inflated (dual-layer reveal); underlying copy already sparse |
+| /legal/privacy | 478 | 478 | 0 | legally required text kept (rule: keep legal text) |
+
+Verification: tsc ✓ · vitest 3014 ✓ (no pinned copy broke — r320's regex «التحقق بالبريد
+قيد الإطلاق» sentence retained). Part 2 (footer/dialogs/mobile micro-cuts) may follow.

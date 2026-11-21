@@ -13,8 +13,10 @@ import { apiBaseURL } from '../lib/api';
  * the app sheet's own ap-* grammar (styles/app.css) owns the rest. The
  * page left the lg-* legal-sheet family — zero lg-* seats remain here
  * (grep-proven), so the /app rules in legal.css died with this rebuild.
- * Every word, URL, live-status behaviour and honesty marker is the SAME
- * text the lg sheet carried (tests are law). */
+ * r350-B2: the prose cut to the B2 law — each section = heading + at
+ * most one operative sentence; the ops detail (AAB prep, channel table,
+ * simulator note) lives in RELEASE.md, not on the user-facing sheet.
+ * Every URL, live-status behaviour and honesty marker is UNCHANGED. */
 import '../styles/app.css';
 
 /**
@@ -114,8 +116,7 @@ export function AppDownloadPage() {
               <p className="pf-eyebrow">وثيقة التوزيع</p>
               <h1 className="pf-page-title">تطبيق أُلارا — التنزيل والتحديث</h1>
               <p className="pf-page-desc">
-                صفحة واحدة لكل ما يخصّ تطبيق الجوال: تنزيل أندرويد المباشر، حالة iOS، كيف تصل
-                التحديثات إلى هاتفك، والحد الأدنى للإصدار الذي تفرضه المنصّة الآن — قراءة حيّة من الخادم.
+                تنزيل أندرويد المباشر، حالة iOS، وكيف تصل التحديثات — قراءة حيّة من الخادم.
               </p>
             </div>
             <div className="pf-page-actions">
@@ -135,10 +136,9 @@ export function AppDownloadPage() {
             </div>
             <div className="ap-cell">
               <p className="ap-p">
-                النسخة الحالية <span className="ap-mono" dir="ltr">{APP_VERSION}</span> من قناة
-                التنزيل المباشر — ملفّ APK واحد يُبنى ويُوقَّع تلقائيًا من أحدث شيفرة عبر
-                GitHub Actions، فيقدّم الرابط أدناه دائمًا أحدث بناء (اسمح بـ«التثبيت من
-                مصادر غير معروفة» عند سؤال النظام أول مرة).
+                الإصدار <span className="ap-mono" dir="ltr">{APP_VERSION}</span> — أحدث بناء
+                مبنيّ وموقّع تلقائيًا من أحدث شيفرة؛ اسمح بـ«التثبيت من مصادر غير معروفة» عند
+                سؤال النظام أول مرة.
               </p>
               <p className="ap-p ap-actions">
                 <a className="btn primary sm" href={ANDROID_APK_URL} dir="ltr">
@@ -147,12 +147,6 @@ export function AppDownloadPage() {
                 <a className="btn ghost sm" href={BUILDS_PAGE_URL} target="_blank" rel="noreferrer" dir="ltr">
                   صفحة الإصدارات
                 </a>
-              </p>
-              <p className="ap-p ap-p-note">
-                ملاحظة صادقة: رابط APK أعلاه يتجدّد تلقائيًا مع كلّ دفعة جديدة للفرع الرئيسي —
-                توقيع البناءات ثابت فتُثبَّت التحديثات فوق النسخ السابقة، وصفحة الإصدارات
-                بجانبه هي المرجع الدائم (السجل والبصمات). نسخة متجر Google Play (AAB) قيد
-                الإعداد وتحتاج خطوة واحدة من المالك (مفتاح الخدمة — موثّقة في RELEASE.md).
               </p>
             </div>
           </section>
@@ -166,13 +160,9 @@ export function AppDownloadPage() {
             </div>
             <div className="ap-cell">
               <p className="ap-p">
-                نشر TestFlight يحتاج حساب Apple Developer ومفتاح App Store Connect من المالك
-                <AppPendingTag /> — كلّ ما لا يحتاجه جاهز: البنية، الأيقونات، الأذونات بالعربية،
-                ووصف المتجر. خطوات المالك بالضبط (سطرين لكلّ خطوة) في صفحة الإصدار الداخلية.
-              </p>
-              <p className="ap-p ap-p-note">
-                للمطوّرين فقط: نسخة محاكي iOS تُبنى من نفس الفرع — تجدها في صفحة البناءات أعلاه
-                (توزيع داخلي، تُثبَّت عبر أداة التطوير لا عبر المتجر).
+                نشر TestFlight ينتظر حساب Apple Developer من المالك
+                <AppPendingTag /> — البنية والأيقونات والأذونات بالعربية جاهزة، والخطوات
+                موثّقة في صفحة الإصدار الداخلية.
               </p>
             </div>
           </section>
@@ -202,8 +192,7 @@ export function AppDownloadPage() {
                   loading="lazy"
                 />
                 <p className="ap-p ap-p-note">
-                  امسح الرمز بكاميرا الهاتف — تفتح هذه الصفحة نفسها على الجوال، ومنها رابط APK
-                  مباشرة. الرمز مرسوم بألوان الهوية (حبر على ورق) ولا يمرّ بأي خدمة خارجية.
+                  امسح الرمز بكاميرا هاتفك — تُفتح هذه الصفحة نفسها على الجوال.
                 </p>
               </div>
             </div>
@@ -218,23 +207,14 @@ export function AppDownloadPage() {
             </div>
             <div className="ap-cell">
               <p className="ap-p">
-                اليوم تصل التحديثات عبر هذه الصفحة: كلّ دفعة جديدة للفرع الرئيسي تُبنى
-                وتُوقَّع تلقائيًا وتحلّ محلّ السابقة في الرابط نفسه — والتوقيع ثابت، فتُثبَّت
-                النسخة الجديدة فوق نسختك الحالية مباشرة.
+                كلّ دفعة جديدة للفرع الرئيسي تُبنى وتُوقّع وتحلّ محلّ السابقة في الرابط نفسه —
+                والتوقيع ثابت، فتُثبّت النسخة الجديدة فوق نسختك مباشرة.
               </p>
               <p className="ap-p">
-                أمّا التحديث الفوري داخل التطبيق <span className="ap-mono" dir="ltr">(OTA)</span>
-                فمبنيّ في التطبيق نفسه لكنه <strong>قيد التفعيل</strong>
-                <AppPendingTag /> — خطوة تهيئة واحدة من المالك (مشروع EAS الجديد —
-                موثّقة خطوةً خطوة في RELEASE.md). عند تفعيله ستصل تغيّرات الواجهة والشاشات
-                <strong> دون إعادة تثبيت</strong>، وتبقى التغيّرات الأصلية (أذونات، مكتبات
-                النظام) ملفّ تثبيت جديدًا من هذه الصفحة.
-              </p>
-              <p className="ap-p">
-                قنوات التحديث في التطبيق ثلاث: <span className="ap-mono" dir="ltr">production</span>
-                للنسخة العامة، <span className="ap-mono" dir="ltr">preview</span> للمعاينة قبل النشر،
-                و<span className="ap-mono" dir="ltr">development</span> للتطوير — تحديث كلّ قناة
-                مستقلّ، وجهازك يسحب من قناته فقط، وتُفتَح القنوات مع تفعيل التحديث الفوري أعلاه.
+                التحديث الفوري داخل التطبيق <span className="ap-mono" dir="ltr">(OTA)</span>
+                مبنيّ لكنه <strong>قيد التفعيل</strong>
+                <AppPendingTag /> — خطوة تهيئة واحدة من المالك؛ وعندها تصل تغيّرات الواجهة
+                <strong> دون إعادة تثبيت</strong>.
               </p>
             </div>
           </section>
@@ -260,13 +240,11 @@ export function AppDownloadPage() {
                       <>
                         الخادم يفرض الآن حدًا أدنى{' '}
                         <span className="ap-mono" dir="ltr">{status.minAppVersion}</span> — إن كان
-                        تطبيقك أقدم، يمنعك من المتابعة ويعيدك إلى هذه الصفحة حتى تُحدّث.
+                        تطبيقك أقدم يعيدك إلى هذه الصفحة حتى تُحدّث.
                       </>
                     ) : (
                       <>
-                        لا يوجد حدّ أدنى مفروض حاليًا — كلّ نسخة مثبَّتة تعمل. عند فرض حدٍّ مستقبلًا
-                        تظهر قيمة هنا فورًا (قراءة حيّة من{' '}
-                        <span className="ap-mono" dir="ltr">/api/v1/status</span>).
+                        لا حدّ أدنى مفروض حاليًا — عند فرضه مستقبلًا تظهر قيمته هنا فورًا.
                       </>
                     )}
                   </p>
@@ -293,9 +271,8 @@ export function AppDownloadPage() {
             </div>
             <div className="ap-cell">
               <p className="ap-p">
-                أندرويد 8.0 أو أحدث، وiOS 15 أو أحدث للتطبيق الأصلي. الواجهة عربية بالكامل من
-                اليمين لليسار، وتعمل بالوضعين الفاتح والداكن. للبلاغ عن مشكلة في التطبيق:
-                {' '}<Link to="/contact" className="ap-link">قناة التواصل</Link>.
+                أندرويد 8.0+ وiOS 15+ — عربية بالكامل، بالوضعين الفاتح والداكن. للبلاغ عن
+                مشكلة: <Link to="/contact" className="ap-link">قناة التواصل</Link>.
               </p>
             </div>
           </section>
