@@ -1,0 +1,3962 @@
+[
+ {
+  "t": 0,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "0%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "0%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "0%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "0"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "0%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BIM ",
+  "childCount": 5,
+  "htmlLen": 264117
+ },
+ {
+  "t": 0.15,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "12%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "12%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "12%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "12"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "bp-mask-line-mask",
+    "text": "DESIGNED"
+   },
+   {
+    "cls": "bp-line",
+    "text": "DESIGNED"
+   },
+   {
+    "cls": "bp-mask-line-mask",
+    "text": "BY BEARPLUS,"
+   },
+   {
+    "cls": "bp-line",
+    "text": "BY BEARPLUS,"
+   },
+   {
+    "cls": "bp-mask-line-mask",
+    "text": "THE AWARD-WINNING"
+   },
+   {
+    "cls": "bp-line",
+    "text": "THE AWARD-WINNING"
+   }
+  ],
+  "loadingText": "12%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BIM",
+  "childCount": 5,
+  "htmlLen": 361075
+ },
+ {
+  "t": 0.3,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "25%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "25%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "25%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "25"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "bp-mask-line-mask",
+    "text": "DESIGNED"
+   },
+   {
+    "cls": "bp-line",
+    "text": "DESIGNED"
+   },
+   {
+    "cls": "bp-mask-line-mask",
+    "text": "BY BEARPLUS,"
+   },
+   {
+    "cls": "bp-line",
+    "text": "BY BEARPLUS,"
+   },
+   {
+    "cls": "bp-mask-line-mask",
+    "text": "THE AWARD-WINNING"
+   },
+   {
+    "cls": "bp-line",
+    "text": "THE AWARD-WINNING"
+   }
+  ],
+  "loadingText": "25%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BIM",
+  "childCount": 5,
+  "htmlLen": 361066
+ },
+ {
+  "t": 0.44999999999999996,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "31%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "31%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "31%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "31"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "bp-mask-line-mask",
+    "text": "DESIGNED"
+   },
+   {
+    "cls": "bp-line",
+    "text": "DESIGNED"
+   },
+   {
+    "cls": "bp-mask-line-mask",
+    "text": "BY BEARPLUS,"
+   },
+   {
+    "cls": "bp-line",
+    "text": "BY BEARPLUS,"
+   },
+   {
+    "cls": "bp-mask-line-mask",
+    "text": "THE AWARD-WINNING"
+   },
+   {
+    "cls": "bp-line",
+    "text": "THE AWARD-WINNING"
+   }
+  ],
+  "loadingText": "31%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BIM",
+  "childCount": 5,
+  "htmlLen": 360850
+ },
+ {
+  "t": 0.6,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "36%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "36%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "36%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "36"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "36%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BIM",
+  "childCount": 5,
+  "htmlLen": 358603
+ },
+ {
+  "t": 0.75,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "41%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "41%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "41%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "41"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "41%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BIM",
+  "childCount": 5,
+  "htmlLen": 358599
+ },
+ {
+  "t": 0.8999999999999999,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "45%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "45%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "45%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "45"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "45%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BIM",
+  "childCount": 5,
+  "htmlLen": 358594
+ },
+ {
+  "t": 1.05,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "48%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "48%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "48%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "48"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "48%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BIM",
+  "childCount": 5,
+  "htmlLen": 358586
+ },
+ {
+  "t": 1.2,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "51%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "51%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "51%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "51"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "51%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BIM",
+  "childCount": 5,
+  "htmlLen": 358581
+ },
+ {
+  "t": 1.3499999999999999,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "54%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "54%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "54%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "54"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "54%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BIM",
+  "childCount": 5,
+  "htmlLen": 358573
+ },
+ {
+  "t": 1.5,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "55%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "55%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "55%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "55"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "55%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BIM",
+  "childCount": 5,
+  "htmlLen": 358568
+ },
+ {
+  "t": 1.65,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "57%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "57%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "57%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "57"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "57%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BIM",
+  "childCount": 5,
+  "htmlLen": 358563
+ },
+ {
+  "t": 1.7999999999999998,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "58%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "58%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "58%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "58"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "58%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BIM",
+  "childCount": 5,
+  "htmlLen": 358555
+ },
+ {
+  "t": 1.95,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "59%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "59%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "59%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "59"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "59%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BIM",
+  "childCount": 5,
+  "htmlLen": 358546
+ },
+ {
+  "t": 2.1,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "59%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "59%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "59%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "59"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "59%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BIM",
+  "childCount": 5,
+  "htmlLen": 358532
+ },
+ {
+  "t": 2.25,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "60%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "60%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "60%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "60"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "60%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BIM",
+  "childCount": 5,
+  "htmlLen": 358535
+ },
+ {
+  "t": 2.4,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "60%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "60%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "60%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "60"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "60%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BIM",
+  "childCount": 5,
+  "htmlLen": 358518
+ },
+ {
+  "t": 2.55,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "60%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "60%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "60%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "60"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "60%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BIM",
+  "childCount": 5,
+  "htmlLen": 358519
+ },
+ {
+  "t": 2.6999999999999997,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "60%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "60%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "60%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "60"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "60%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BIM",
+  "childCount": 5,
+  "htmlLen": 358508
+ },
+ {
+  "t": 2.85,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "67%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "67%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "67%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "67"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "67%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BIM",
+  "childCount": 5,
+  "htmlLen": 358505
+ },
+ {
+  "t": 3,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "75%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "75%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "75%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "75"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "75%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BIM",
+  "childCount": 5,
+  "htmlLen": 358597
+ },
+ {
+  "t": 3.15,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "81%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "81%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "81%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "81"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "81%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BIM",
+  "childCount": 5,
+  "htmlLen": 358593
+ },
+ {
+  "t": 3.3,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "86%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "86%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "86%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "86"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "86%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BIM",
+  "childCount": 5,
+  "htmlLen": 358587
+ },
+ {
+  "t": 3.4499999999999997,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "90%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "90%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "90%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "90"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "90%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BIM",
+  "childCount": 5,
+  "htmlLen": 358588
+ },
+ {
+  "t": 3.5999999999999996,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "93%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "93%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "93%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "93"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "93%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BIM",
+  "childCount": 5,
+  "htmlLen": 358605
+ },
+ {
+  "t": 3.75,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "96%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "96%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "96%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "96"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "96%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BIM",
+  "childCount": 5,
+  "htmlLen": 358602
+ },
+ {
+  "t": 3.9,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "97%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "97%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "97%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "97"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "97%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BIM",
+  "childCount": 5,
+  "htmlLen": 358602
+ },
+ {
+  "t": 4.05,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "98%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "98%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "98%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "98"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "98%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BIM",
+  "childCount": 5,
+  "htmlLen": 358601
+ },
+ {
+  "t": 4.2,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "99%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "99%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "99%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "99"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "99%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BIM",
+  "childCount": 5,
+  "htmlLen": 358597
+ },
+ {
+  "t": 4.35,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "100"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "100%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BI",
+  "childCount": 5,
+  "htmlLen": 358599
+ },
+ {
+  "t": 4.5,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "100"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "100%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BI",
+  "childCount": 5,
+  "htmlLen": 358599
+ },
+ {
+  "t": 4.6499999999999995,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "100"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "100%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BI",
+  "childCount": 5,
+  "htmlLen": 358599
+ },
+ {
+  "t": 4.8,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "100"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "100%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BI",
+  "childCount": 5,
+  "htmlLen": 358599
+ },
+ {
+  "t": 4.95,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "100"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "100%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BI",
+  "childCount": 5,
+  "htmlLen": 358599
+ },
+ {
+  "t": 5.1,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "100"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "100%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BI",
+  "childCount": 5,
+  "htmlLen": 358599
+ },
+ {
+  "t": 5.25,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "100"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "100%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BI",
+  "childCount": 5,
+  "htmlLen": 359041
+ },
+ {
+  "t": 5.3999999999999995,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "100"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "100%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BI",
+  "childCount": 5,
+  "htmlLen": 359043
+ },
+ {
+  "t": 5.55,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "100"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "100%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BI",
+  "childCount": 5,
+  "htmlLen": 359030
+ },
+ {
+  "t": 5.7,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "100"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "100%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BI",
+  "childCount": 5,
+  "htmlLen": 359026
+ },
+ {
+  "t": 5.85,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "100"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "100%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BI",
+  "childCount": 5,
+  "htmlLen": 359030
+ },
+ {
+  "t": 6,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "100"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "100%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BI",
+  "childCount": 5,
+  "htmlLen": 359833
+ },
+ {
+  "t": 6.1499999999999995,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "100"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "100%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BI",
+  "childCount": 5,
+  "htmlLen": 360025
+ },
+ {
+  "t": 6.3,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "100"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "100%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BI",
+  "childCount": 5,
+  "htmlLen": 360266
+ },
+ {
+  "t": 6.45,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "100"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "100%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BI",
+  "childCount": 5,
+  "htmlLen": 360543
+ },
+ {
+  "t": 6.6,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "100"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "100%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BI",
+  "childCount": 5,
+  "htmlLen": 360630
+ },
+ {
+  "t": 6.75,
+  "loadingExists": true,
+  "loadingDisplay": "flex",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "100"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "100%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BI",
+  "childCount": 5,
+  "htmlLen": 360957
+ },
+ {
+  "t": 6.8999999999999995,
+  "loadingExists": true,
+  "loadingDisplay": "none",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "100"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "100%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BI",
+  "childCount": 5,
+  "htmlLen": 361293
+ },
+ {
+  "t": 7.05,
+  "loadingExists": true,
+  "loadingDisplay": "none",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "100"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "100%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BI",
+  "childCount": 5,
+  "htmlLen": 361446
+ },
+ {
+  "t": 7.199999999999999,
+  "loadingExists": true,
+  "loadingDisplay": "none",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "100"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "100%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BI",
+  "childCount": 5,
+  "htmlLen": 358145
+ },
+ {
+  "t": 7.35,
+  "loadingExists": true,
+  "loadingDisplay": "none",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "100"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "100%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BI",
+  "childCount": 5,
+  "htmlLen": 357479
+ },
+ {
+  "t": 7.5,
+  "loadingExists": true,
+  "loadingDisplay": "none",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "100"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "100%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BI",
+  "childCount": 5,
+  "htmlLen": 356279
+ },
+ {
+  "t": 7.6499999999999995,
+  "loadingExists": true,
+  "loadingDisplay": "none",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "100"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "100%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BI",
+  "childCount": 5,
+  "htmlLen": 355912
+ },
+ {
+  "t": 7.8,
+  "loadingExists": true,
+  "loadingDisplay": "none",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "100"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "100%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BI",
+  "childCount": 5,
+  "htmlLen": 350476
+ },
+ {
+  "t": 7.949999999999999,
+  "loadingExists": true,
+  "loadingDisplay": "none",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "100"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "100%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BI",
+  "childCount": 5,
+  "htmlLen": 350476
+ },
+ {
+  "t": 8.1,
+  "loadingExists": true,
+  "loadingDisplay": "none",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "100"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "100%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BI",
+  "childCount": 5,
+  "htmlLen": 350476
+ },
+ {
+  "t": 8.25,
+  "loadingExists": true,
+  "loadingDisplay": "none",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "100"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "100%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BI",
+  "childCount": 5,
+  "htmlLen": 350476
+ },
+ {
+  "t": 8.4,
+  "loadingExists": true,
+  "loadingDisplay": "none",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "100"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "100%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BI",
+  "childCount": 5,
+  "htmlLen": 350476
+ },
+ {
+  "t": 8.549999999999999,
+  "loadingExists": true,
+  "loadingDisplay": "none",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "100"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "100%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BI",
+  "childCount": 5,
+  "htmlLen": 350476
+ },
+ {
+  "t": 8.7,
+  "loadingExists": true,
+  "loadingDisplay": "none",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "100"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "100%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BI",
+  "childCount": 5,
+  "htmlLen": 350476
+ },
+ {
+  "t": 8.85,
+  "loadingExists": true,
+  "loadingDisplay": "none",
+  "loadingOpacity": "1",
+  "bodyClasses": "body",
+  "progress": [
+   {
+    "cls": "loading-progress",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-inner",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-item-wrap",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-top",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-item item-bot",
+    "text": ""
+   },
+   {
+    "cls": "loading-progress-text",
+    "text": "100%"
+   },
+   {
+    "cls": "loading-progress-txt-percent",
+    "text": "100"
+   }
+  ],
+  "coords": [
+   "X:1131PXY:1131PX"
+  ],
+  "boot": [
+   {
+    "cls": "line line-horizital left right loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "line line-vertical loading-ruler-line",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-vertical",
+    "text": ""
+   },
+   {
+    "cls": "home-hero-img-plus-line line-horizital",
+    "text": ""
+   },
+   {
+    "cls": "loading-logo",
+    "text": ""
+   }
+  ],
+  "loadingText": "100%X:1131PXY:1131PXDESIGNED BY BEARPLUS, THE AWARD-WINNING DESIGN AGENCYWELCOME TO HERON AITYPE :Technology/AI Software CompanyFOUNDED:2026FOCUS :AI-powered building code compliance for architects(BI",
+  "childCount": 5,
+  "htmlLen": 350476
+ }
+]

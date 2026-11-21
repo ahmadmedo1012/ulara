@@ -1,0 +1,82 @@
+{
+ "document": [
+  "https://heronaiapp.com/"
+ ],
+ "stylesheet": [
+  "https://heronaiapp.com/cdn.prod.website-files.com/6a4b5161f0d11f1602cc3bbf/css/heronai.webflow.shared.9f21166e0.min.css"
+ ],
+ "image": [
+  "https://heronaiapp.com/cdn.prod.website-files.com/68f73a0fbae6fa626a19135c/6900476d411e3ea05889428f_bg.svg",
+  "https://heronaiapp.com/cdn.prod.website-files.com/6a4b5161f0d11f1602cc3bbf/6a6b2e33f9a255a16702aabb_load.svg",
+  "https://heronaiapp.com/cdn.prod.website-files.com/6a4b5161f0d11f1602cc3bbf/6a703ca7b25c47076637c631_4f993b1a199968429382e85294f3e6d1_Full.webp",
+  "https://heronaiapp.com/cdn.prod.website-files.com/6a4b5161f0d11f1602cc3bbf/6a69a23dcc24456128e2afe3_image%20345.avif",
+  "https://heronaiapp.com/cdn.prod.website-files.com/6a4b5161f0d11f1602cc3bbf/6a69a34e15d1eb4aadac9ae6_b03ba3ff201b6aa651aadafe895f2928_Before-1.avif",
+  "https://heronaiapp.com/cdn.prod.website-files.com/6a4b5161f0d11f1602cc3bbf/6a69a34ee521ff1cc6d69306_95fbf6e81134860c2ab2e4e9f5b9c723_Before.avif",
+  "https://heronaiapp.com/cdn.prod.website-files.com/6a4b5161f0d11f1602cc3bbf/6a698acae521ff1cc6cba1f2_3a9b60f8f07a704746b20978dd8d73d1_Frame%20484%20(1).png",
+  "https://heronaiapp.com/cdn.prod.website-files.com/6a4b5161f0d11f1602cc3bbf/6a6ad84d47e6be3956e3a35a_cta-sketch.webp",
+  "https://heronaiapp.com/cdn.prod.website-files.com/6a4b5161f0d11f1602cc3bbf/6a63248e9e2e27200fb0efcf_609974a6d6c317e394b965e56b552669_image%20330.avif",
+  "https://heronaiapp.com/cdn.prod.website-files.com/6a4b5161f0d11f1602cc3bbf/6a8553546e24603c87f64acf_5884414ce5b036db18e0f9b93e96310e_heron_1.jpg",
+  "https://heronaiapp.com/cdn.prod.website-files.com/6a4b5161f0d11f1602cc3bbf/6a4b5161f0d11f1602cc3cc4_615801a3aaf9bfaa3a8ac5c616b665eb_cta%20image.webp",
+  "https://heronaiapp.com/cdn.prod.website-files.com/6a4b5161f0d11f1602cc3bbf/6a8572d56e24603c870c8690_505b3d65554a02469f21b0cccfc9348c_After%20(1).jpg",
+  "https://cdn.prod.website-files.com/6a4b5161f0d11f1602cc3bbf/6a4b5161f0d11f1602cc3c91_bg-border.svg",
+  "https://cdn.prod.website-files.com/6a4b5161f0d11f1602cc3bbf/6a4b5161f0d11f1602cc3c0e_border.svg",
+  "https://cdn.prod.website-files.com/6a4b5161f0d11f1602cc3bbf/6a6ad1c2da777b5f8ae08567_ic-dash.svg",
+  "https://cdn.prod.website-files.com/6a4b5161f0d11f1602cc3bbf/6a4b5161f0d11f1602cc3be0_border2.svg",
+  "https://cdn.prod.website-files.com/68f73a0fbae6fa626a19135c/6900476d411e3ea05889428f_bg.svg",
+  "https://cdn.prod.website-files.com/6a4b5161f0d11f1602cc3bbf/6a4b5161f0d11f1602cc3c93_bg-border-grid.svg",
+  "https://cdn.prod.website-files.com/68f73a0fbae6fa626a19135c/68faf70718094e7433046fcc_bg-deco.svg",
+  "https://cdn.prod.website-files.com/6a4b5161f0d11f1602cc3bbf/6a4b5161f0d11f1602cc3c8e_border-black.svg",
+  "https://heronaiapp.com/cdn.prod.website-files.com/6a4b5161f0d11f1602cc3bbf/6a4b5161f0d11f1602cc3c0a_7a1f4c59a32ecf47588f364258cddcaf_footer1.avif",
+  "https://d3e54v103j8qbb.cloudfront.net/img/webflow-badge-icon-d2.89e12c322e.svg",
+  "https://d3e54v103j8qbb.cloudfront.net/img/webflow-badge-text-d2.c82cec3b78.svg",
+  "https://c.clarity.ms/c.gif",
+  "https://c.bing.com/c.gif?ctsa=mr&CtsSyncId=4824433C858D4C4BAFDEE0687F6F5BCE&RedC=c.clarity.ms&MXFR=248FB67BE3F26002157EAE63E7F26E7D",
+  "https://c.clarity.ms/c.gif?ctsa=mr&CtsSyncId=4824433C858D4C4BAFDEE0687F6F5BCE&MUID=34731085584A6ED832A9089D59AD6FC5",
+  "https://heronai-bp.netlify.app/assets/pixel-mask.svg"
+ ],
+ "font": [
+  "https://cdn.prod.website-files.com/6a4b5161f0d11f1602cc3bbf/6a69a76433bc3835bce3ed52_BTGrotesk-SemiBold.woff2",
+  "https://cdn.prod.website-files.com/6a4b5161f0d11f1602cc3bbf/6a4b5161f0d11f1602cc3c95_GeistMono-Medium.woff2",
+  "https://cdn.prod.website-files.com/6a4b5161f0d11f1602cc3bbf/6a69a764736de82b5ed81ccd_BTGrotesk-Regular.woff2",
+  "https://cdn.prod.website-files.com/6a4b5161f0d11f1602cc3bbf/6a69a764e3c7de325a7f0c08_BTGrotesk-Medium.woff2",
+  "https://cdn.prod.website-files.com/6a4b5161f0d11f1602cc3bbf/6a69a764af469793ef4762c6_BTGrotesk-Bold.woff2"
+ ],
+ "script": [
+  "https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js",
+  "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js",
+  "https://cdn.jsdelivr.net/npm/@barba/prefetch",
+  "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/TextPlugin.min.js",
+  "https://cdn.jsdelivr.net/npm/@barba/core",
+  "https://unpkg.com/lenis@1.1.5/dist/lenis.min.js",
+  "https://d3e54v103j8qbb.cloudfront.net/js/jquery-3.5.1.min.dc5e7f18c8.js?site=6a4b5161f0d11f1602cc3bbf",
+  "https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js",
+  "https://heronaiapp.com/.netlify/scripts/rum",
+  "https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js",
+  "https://heronaiapp.com/cdn.prod.website-files.com/6a4b5161f0d11f1602cc3bbf/js/webflow.a0aa6ca1.b7683852b8a60d8e.js",
+  "https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js",
+  "https://www.googletagmanager.com/gtag/js?id=G-N1KKXK6ZR5",
+  "https://heronai-bp.netlify.app/config.js",
+  "https://www.clarity.ms/tag/xxzxds4q6a",
+  "https://scripts.clarity.ms/0.8.79-beta/clarity.js",
+  "https://heronai-bp.netlify.app/main.js"
+ ],
+ "fetch": [
+  "https://www.google-analytics.com/g/collect?v=2&tid=G-N1KKXK6ZR5&gtm=45je6bh1v9260471690za208zd9260471690xf1&_p=1795261397339&gcd=13l3l3l3l1l1&npa=0&dma=0&are=1&cid=679962977.1795261398&frm=0&ngs=1&pscdl=noapi&rcb=3&sr=1440x1000&uaa=x86&uab=64&uafvl=Chromium%3B148.0.7778.96%7CHeadlessChrome%3B148.0.7778.96%7CNot%252FA)Brand%3B99.0.0.0&uam=&uamb=0&uap=Linux&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115616985~115938465~115938469~120213116~120385422~120469145~120469153~121246026~121246034~123785234~124325908&sid=1795261397&sct=1&seg=0&dl=https%3A%2F%2Fheronaiapp.com%2F&dt=Heron%20AI%20%7C%20Works%20inside%20your%20design%20tools&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=960",
+  "https://www.google-analytics.com/g/collect?v=2&tid=G-N1KKXK6ZR5&gtm=45je6bh1v9260471690za200zd9260471690xf1&_p=1795261397339&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=679962977.1795261398&frm=0&ngs=1&pscdl=noapi&rcb=3&sr=1440x1000&uaa=x86&uab=64&uafvl=Chromium%3B148.0.7778.96%7CHeadlessChrome%3B148.0.7778.96%7CNot%252FA)Brand%3B99.0.0.0&uam=&uamb=0&uap=Linux&uapv=&uaw=0&ul=en-us&_s=2&tag_exp=115616985~115938465~115938469~120213116~120385422~120469145~120469153~121246026~121246034~123785234~124325908&sid=1795261397&sct=1&seg=0&dl=https%3A%2F%2Fheronaiapp.com%2F&dt=Heron%20AI%20%7C%20Works%20inside%20your%20design%20tools&en=scroll&epn.percent_scrolled=90&_et=25&tfd=5992"
+ ],
+ "xhr": [
+  "https://heronaiapp.com/cookie-policy",
+  "https://heronaiapp.com/",
+  "https://heronaiapp.com/heron-chat-widget",
+  "https://heronaiapp.com/pricing",
+  "https://heronaiapp.com/resources?sc=insights",
+  "https://heronaiapp.com/about-us",
+  "https://heronaiapp.com/contact-us",
+  "https://heronaiapp.com/heron-dashboard",
+  "https://h.clarity.ms/collect",
+  "https://h.clarity.ms/collect",
+  "https://h.clarity.ms/collect",
+  "https://api-js.mixpanel.com/track/?verbose=1&ip=1&_=1795261402755",
+  "https://h.clarity.ms/collect"
+ ]
+}

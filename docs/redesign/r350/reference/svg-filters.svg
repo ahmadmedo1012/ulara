@@ -1,0 +1,48 @@
+<filter id="path-filter">
+    <feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood>
+    <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"></feBlend>
+    <feTurbulence type="fractalNoise" baseFrequency="4 4" numOctaves="3" seed="5387"></feTurbulence>
+    <feDisplacementMap in="shape" scale="2" xChannelSelector="R" yChannelSelector="G" result="displacedImage" width="100%" height="100%"></feDisplacementMap>
+    <feMerge result="effect1_texture_1244_2418">
+    <feMergeNode in="displacedImage"></feMergeNode>
+    </feMerge>
+  </filter>
+
+<filter id="sharedDisplacementFilter">
+      <feTurbulence type="fractalNoise" baseFrequency="0.045 0.055" numOctaves="4" seed="5" result="noise"></feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="100" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap>
+      <feGaussianBlur stdDeviation="1.8" result="blurred"></feGaussianBlur>
+      <feComponentTransfer in="blurred" result="contrast">
+        <feFuncA type="linear" slope="2.2" intercept="-0.6"></feFuncA>
+      </feComponentTransfer>
+    </filter>
+
+<filter id="sharedDisplacementFilter"><feTurbulence type="fractalNoise" baseFrequency="0.045 0.055" numOctaves="4" seed="5" result="noise"></feTurbulence><feDisplacementMap in="SourceGraphic" in2="noise" scale="100" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap><feGaussianBlur stdDeviation="1.8" result="blurred"></feGaussianBlur><feComponentTransfer in="blurred" result="contrast"><feFuncA type="linear" slope="2.2" intercept="-0.6"></feFuncA></feComponentTransfer></filter>
+
+<filter id="sharedDisplacementFilter"><feTurbulence type="fractalNoise" baseFrequency="0.045 0.055" numOctaves="4" seed="5" result="noise"></feTurbulence><feDisplacementMap in="SourceGraphic" in2="noise" scale="100" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap><feGaussianBlur stdDeviation="1.8" result="blurred"></feGaussianBlur><feComponentTransfer in="blurred" result="contrast"><feFuncA type="linear" slope="2.2" intercept="-0.6"></feFuncA></feComponentTransfer></filter>
+
+<filter id="sharedDisplacementFilter"><feTurbulence type="fractalNoise" baseFrequency="0.045 0.055" numOctaves="4" seed="5" result="noise"></feTurbulence><feDisplacementMap in="SourceGraphic" in2="noise" scale="100" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap><feGaussianBlur stdDeviation="1.8" result="blurred"></feGaussianBlur><feComponentTransfer in="blurred" result="contrast"><feFuncA type="linear" slope="2.2" intercept="-0.6"></feFuncA></feComponentTransfer></filter>
+
+<filter id="filter0_g_8351_4917" x="-0.731737" y="-0.906542" width="25.2633" height="25.2643" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"></feBlend>
+<feTurbulence type="fractalNoise" baseFrequency="0.99900001287460327 0.99900001287460327" numOctaves="3" seed="5387"></feTurbulence>
+<feDisplacementMap in="shape" scale="1.8130841255187988" xChannelSelector="R" yChannelSelector="G" result="displacedImage" width="100%" height="100%"></feDisplacementMap>
+<feMerge result="effect1_texture_8351_4917">
+<feMergeNode in="displacedImage"></feMergeNode>
+</feMerge>
+</filter>
+
+<filter id="filter0_g_8351_4917" x="-0.731737" y="-0.906542" width="25.2633" height="25.2643" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"></feBlend>
+<feTurbulence type="fractalNoise" baseFrequency="0.99900001287460327 0.99900001287460327" numOctaves="3" seed="5387"></feTurbulence>
+<feDisplacementMap in="shape" scale="1.8130841255187988" xChannelSelector="R" yChannelSelector="G" result="displacedImage" width="100%" height="100%"></feDisplacementMap>
+<feMerge result="effect1_texture_8351_4917">
+<feMergeNode in="displacedImage"></feMergeNode>
+</feMerge>
+</filter>
+
+<filter id="sharedDisplacementFilter"><feTurbulence type="fractalNoise" baseFrequency="0.045 0.055" numOctaves="4" seed="5" result="noise"></feTurbulence><feDisplacementMap in="SourceGraphic" in2="noise" scale="100" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap><feGaussianBlur stdDeviation="1.8" result="blurred"></feGaussianBlur><feComponentTransfer in="blurred" result="contrast"><feFuncA type="linear" slope="2.2" intercept="-0.6"></feFuncA></feComponentTransfer></filter>
+
+<filter id="pointerInkFilter-1" x="-25%" y="-25%" width="150%" height="150%"><feTurbulence type="fractalNoise" baseFrequency="0.028 0.04" numOctaves="3" seed="5" result="noise"></feTurbulence><feDisplacementMap in="SourceGraphic" in2="noise" scale="69.36292548298067" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap><feGaussianBlur stdDeviation="0.55" result="blurred"></feGaussianBlur><feComponentTransfer in="blurred" result="contrast"><feFuncA type="linear" slope="5" intercept="-2.15"></feFuncA></feComponentTransfer></filter>

@@ -1,0 +1,1357 @@
+[
+ {
+  "y": 0,
+  "max": 12268,
+  "sections": {
+   "home-hero": {
+    "top": 7,
+    "bottom": 993,
+    "h": 987
+   },
+   "home-intro": {
+    "top": 993,
+    "bottom": 1716,
+    "h": 723
+   },
+   "home-problem": {
+    "top": 1716,
+    "bottom": 2458,
+    "h": 743
+   },
+   "home-map": {
+    "top": 2458,
+    "bottom": 9458,
+    "h": 7000
+   },
+   "home-platform": {
+    "top": 9458,
+    "bottom": 10168,
+    "h": 710
+   },
+   "home-why": {
+    "top": 10168,
+    "bottom": 10867,
+    "h": 698
+   },
+   "home-usecase": {
+    "top": 10867,
+    "bottom": 11853,
+    "h": 987
+   },
+   "cta": {
+    "top": 11853,
+    "bottom": 12551,
+    "h": 698
+   }
+  },
+  "activeStates": [
+   "home-map-intro-content-item active",
+   "home-platform-content-inner grid active bg-global",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-why-item-img-child bg-global active",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item"
+  ],
+  "ink": {
+   "clip": "none",
+   "transform": null
+  }
+ },
+ {
+  "y": 500,
+  "max": 12268,
+  "sections": {
+   "home-hero": {
+    "top": -493,
+    "bottom": 493,
+    "h": 987
+   },
+   "home-intro": {
+    "top": 493,
+    "bottom": 1216,
+    "h": 723
+   },
+   "home-problem": {
+    "top": 1216,
+    "bottom": 1958,
+    "h": 743
+   },
+   "home-map": {
+    "top": 1958,
+    "bottom": 8958,
+    "h": 7000
+   },
+   "home-platform": {
+    "top": 8958,
+    "bottom": 9668,
+    "h": 710
+   },
+   "home-why": {
+    "top": 9668,
+    "bottom": 10367,
+    "h": 698
+   },
+   "home-usecase": {
+    "top": 10367,
+    "bottom": 11353,
+    "h": 987
+   },
+   "cta": {
+    "top": 11353,
+    "bottom": 12051,
+    "h": 698
+   }
+  },
+  "activeStates": [
+   "home-map-intro-content-item active",
+   "home-platform-content-inner grid active bg-global",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-why-item-img-child bg-global active",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item"
+  ],
+  "ink": {
+   "clip": "none",
+   "transform": null
+  }
+ },
+ {
+  "y": 1000,
+  "max": 12268,
+  "sections": {
+   "home-hero": {
+    "top": -993,
+    "bottom": -7,
+    "h": 987
+   },
+   "home-intro": {
+    "top": -7,
+    "bottom": 716,
+    "h": 723
+   },
+   "home-problem": {
+    "top": 716,
+    "bottom": 1458,
+    "h": 743
+   },
+   "home-map": {
+    "top": 1458,
+    "bottom": 8458,
+    "h": 7000
+   },
+   "home-platform": {
+    "top": 8458,
+    "bottom": 9168,
+    "h": 710
+   },
+   "home-why": {
+    "top": 9168,
+    "bottom": 9867,
+    "h": 698
+   },
+   "home-usecase": {
+    "top": 9867,
+    "bottom": 10853,
+    "h": 987
+   },
+   "cta": {
+    "top": 10853,
+    "bottom": 11551,
+    "h": 698
+   }
+  },
+  "activeStates": [
+   "home-map-intro-content-item active",
+   "home-platform-content-inner grid active bg-global",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-why-item-img-child bg-global active",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item"
+  ],
+  "ink": {
+   "clip": "none",
+   "transform": null
+  }
+ },
+ {
+  "y": 1500,
+  "max": 12268,
+  "sections": {
+   "home-hero": {
+    "top": -1493,
+    "bottom": -507,
+    "h": 987
+   },
+   "home-intro": {
+    "top": -507,
+    "bottom": 216,
+    "h": 723
+   },
+   "home-problem": {
+    "top": 216,
+    "bottom": 958,
+    "h": 743
+   },
+   "home-map": {
+    "top": 958,
+    "bottom": 7958,
+    "h": 7000
+   },
+   "home-platform": {
+    "top": 7958,
+    "bottom": 8668,
+    "h": 710
+   },
+   "home-why": {
+    "top": 8668,
+    "bottom": 9367,
+    "h": 698
+   },
+   "home-usecase": {
+    "top": 9367,
+    "bottom": 10353,
+    "h": 987
+   },
+   "cta": {
+    "top": 10353,
+    "bottom": 11051,
+    "h": 698
+   }
+  },
+  "activeStates": [
+   "home-map-intro-content-item active",
+   "home-platform-content-inner grid active bg-global",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-why-item-img-child bg-global active",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item"
+  ],
+  "ink": {
+   "clip": "none",
+   "transform": null
+  }
+ },
+ {
+  "y": 2000,
+  "max": 12268,
+  "sections": {
+   "home-hero": {
+    "top": -1993,
+    "bottom": -1007,
+    "h": 987
+   },
+   "home-intro": {
+    "top": -1007,
+    "bottom": -284,
+    "h": 723
+   },
+   "home-problem": {
+    "top": -284,
+    "bottom": 458,
+    "h": 743
+   },
+   "home-map": {
+    "top": 458,
+    "bottom": 7458,
+    "h": 7000
+   },
+   "home-platform": {
+    "top": 7458,
+    "bottom": 8168,
+    "h": 710
+   },
+   "home-why": {
+    "top": 8168,
+    "bottom": 8867,
+    "h": 698
+   },
+   "home-usecase": {
+    "top": 8867,
+    "bottom": 9853,
+    "h": 987
+   },
+   "cta": {
+    "top": 9853,
+    "bottom": 10551,
+    "h": 698
+   }
+  },
+  "activeStates": [
+   "home-map-intro-content-item active",
+   "home-platform-content-inner grid active bg-global",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-why-item-img-child bg-global active",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item"
+  ],
+  "ink": {
+   "clip": "none",
+   "transform": null
+  }
+ },
+ {
+  "y": 3000,
+  "max": 12268,
+  "sections": {
+   "home-hero": {
+    "top": -2993,
+    "bottom": -2007,
+    "h": 987
+   },
+   "home-intro": {
+    "top": -2007,
+    "bottom": -1284,
+    "h": 723
+   },
+   "home-problem": {
+    "top": -1284,
+    "bottom": -542,
+    "h": 743
+   },
+   "home-map": {
+    "top": -542,
+    "bottom": 6458,
+    "h": 7000
+   },
+   "home-platform": {
+    "top": 6458,
+    "bottom": 7168,
+    "h": 710
+   },
+   "home-why": {
+    "top": 7168,
+    "bottom": 7867,
+    "h": 698
+   },
+   "home-usecase": {
+    "top": 7867,
+    "bottom": 8853,
+    "h": 987
+   },
+   "cta": {
+    "top": 8853,
+    "bottom": 9551,
+    "h": 698
+   }
+  },
+  "activeStates": [
+   "home-map-intro-content-item active",
+   "home-platform-content-inner grid active bg-global",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-why-item-img-child bg-global active",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item"
+  ],
+  "ink": {
+   "clip": "none",
+   "transform": null
+  }
+ },
+ {
+  "y": 4000,
+  "max": 12268,
+  "sections": {
+   "home-hero": {
+    "top": -3993,
+    "bottom": -3007,
+    "h": 987
+   },
+   "home-intro": {
+    "top": -3007,
+    "bottom": -2284,
+    "h": 723
+   },
+   "home-problem": {
+    "top": -2284,
+    "bottom": -1542,
+    "h": 743
+   },
+   "home-map": {
+    "top": -1542,
+    "bottom": 5458,
+    "h": 7000
+   },
+   "home-platform": {
+    "top": 5458,
+    "bottom": 6168,
+    "h": 710
+   },
+   "home-why": {
+    "top": 6168,
+    "bottom": 6867,
+    "h": 698
+   },
+   "home-usecase": {
+    "top": 6867,
+    "bottom": 7853,
+    "h": 987
+   },
+   "cta": {
+    "top": 7853,
+    "bottom": 8551,
+    "h": 698
+   }
+  },
+  "activeStates": [
+   "home-map-intro-content-item active",
+   "home-platform-content-inner grid active bg-global",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-why-item-img-child bg-global active",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item"
+  ],
+  "ink": {
+   "clip": "none",
+   "transform": null
+  }
+ },
+ {
+  "y": 5000,
+  "max": 12268,
+  "sections": {
+   "home-hero": {
+    "top": -4993,
+    "bottom": -4007,
+    "h": 987
+   },
+   "home-intro": {
+    "top": -4007,
+    "bottom": -3284,
+    "h": 723
+   },
+   "home-problem": {
+    "top": -3284,
+    "bottom": -2542,
+    "h": 743
+   },
+   "home-map": {
+    "top": -2542,
+    "bottom": 4458,
+    "h": 7000
+   },
+   "home-platform": {
+    "top": 4458,
+    "bottom": 5168,
+    "h": 710
+   },
+   "home-why": {
+    "top": 5168,
+    "bottom": 5867,
+    "h": 698
+   },
+   "home-usecase": {
+    "top": 5867,
+    "bottom": 6853,
+    "h": 987
+   },
+   "cta": {
+    "top": 6853,
+    "bottom": 7551,
+    "h": 698
+   }
+  },
+  "activeStates": [
+   "home-map-intro active",
+   "home-map-intro-content-item active",
+   "home-platform-content-inner grid active bg-global",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-why-item-img-child bg-global active",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item"
+  ],
+  "ink": {
+   "clip": "none",
+   "transform": null
+  }
+ },
+ {
+  "y": 6000,
+  "max": 12268,
+  "sections": {
+   "home-hero": {
+    "top": -5993,
+    "bottom": -5007,
+    "h": 987
+   },
+   "home-intro": {
+    "top": -5007,
+    "bottom": -4284,
+    "h": 723
+   },
+   "home-problem": {
+    "top": -4284,
+    "bottom": -3542,
+    "h": 743
+   },
+   "home-map": {
+    "top": -3542,
+    "bottom": 3458,
+    "h": 7000
+   },
+   "home-platform": {
+    "top": 3458,
+    "bottom": 4168,
+    "h": 710
+   },
+   "home-why": {
+    "top": 4168,
+    "bottom": 4867,
+    "h": 698
+   },
+   "home-usecase": {
+    "top": 4867,
+    "bottom": 5853,
+    "h": 987
+   },
+   "cta": {
+    "top": 5853,
+    "bottom": 6551,
+    "h": 698
+   }
+  },
+  "activeStates": [
+   "home-map-intro active",
+   "home-map-intro-content-item active",
+   "home-platform-content-inner grid active bg-global",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-why-item-img-child bg-global active",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item"
+  ],
+  "ink": {
+   "clip": "none",
+   "transform": null
+  }
+ },
+ {
+  "y": 7000,
+  "max": 12268,
+  "sections": {
+   "home-hero": {
+    "top": -6993,
+    "bottom": -6007,
+    "h": 987
+   },
+   "home-intro": {
+    "top": -6007,
+    "bottom": -5284,
+    "h": 723
+   },
+   "home-problem": {
+    "top": -5284,
+    "bottom": -4542,
+    "h": 743
+   },
+   "home-map": {
+    "top": -4542,
+    "bottom": 2458,
+    "h": 7000
+   },
+   "home-platform": {
+    "top": 2458,
+    "bottom": 3168,
+    "h": 710
+   },
+   "home-why": {
+    "top": 3168,
+    "bottom": 3867,
+    "h": 698
+   },
+   "home-usecase": {
+    "top": 3867,
+    "bottom": 4853,
+    "h": 987
+   },
+   "cta": {
+    "top": 4853,
+    "bottom": 5551,
+    "h": 698
+   }
+  },
+  "activeStates": [
+   "home-map-intro active",
+   "home-map-intro-content-item active",
+   "home-platform-content-inner grid active bg-global",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-why-item-img-child bg-global active",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item"
+  ],
+  "ink": {
+   "clip": "none",
+   "transform": null
+  }
+ },
+ {
+  "y": 8000,
+  "max": 12268,
+  "sections": {
+   "home-hero": {
+    "top": -7993,
+    "bottom": -7007,
+    "h": 987
+   },
+   "home-intro": {
+    "top": -7007,
+    "bottom": -6284,
+    "h": 723
+   },
+   "home-problem": {
+    "top": -6284,
+    "bottom": -5542,
+    "h": 743
+   },
+   "home-map": {
+    "top": -5542,
+    "bottom": 1458,
+    "h": 7000
+   },
+   "home-platform": {
+    "top": 1458,
+    "bottom": 2168,
+    "h": 710
+   },
+   "home-why": {
+    "top": 2168,
+    "bottom": 2867,
+    "h": 698
+   },
+   "home-usecase": {
+    "top": 2867,
+    "bottom": 3853,
+    "h": 987
+   },
+   "cta": {
+    "top": 3853,
+    "bottom": 4551,
+    "h": 698
+   }
+  },
+  "activeStates": [
+   "home-map-main-img active",
+   "home-map-intro active",
+   "home-map-intro-content-item active",
+   "home-platform-content-inner grid active bg-global",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-why-item-img-child bg-global active",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item"
+  ],
+  "ink": {
+   "clip": "none",
+   "transform": null
+  }
+ },
+ {
+  "y": 9000,
+  "max": 12268,
+  "sections": {
+   "home-hero": {
+    "top": -8993,
+    "bottom": -8007,
+    "h": 987
+   },
+   "home-intro": {
+    "top": -8007,
+    "bottom": -7284,
+    "h": 723
+   },
+   "home-problem": {
+    "top": -7284,
+    "bottom": -6542,
+    "h": 743
+   },
+   "home-map.expanded": {
+    "top": -6542,
+    "bottom": 458,
+    "h": 7000
+   },
+   "home-platform": {
+    "top": 458,
+    "bottom": 1168,
+    "h": 710
+   },
+   "home-why": {
+    "top": 1168,
+    "bottom": 1867,
+    "h": 698
+   },
+   "home-usecase": {
+    "top": 1867,
+    "bottom": 2853,
+    "h": 987
+   },
+   "cta": {
+    "top": 2853,
+    "bottom": 3551,
+    "h": 698
+   }
+  },
+  "activeStates": [
+   "home-map-main-img active",
+   "home-map-intro active",
+   "home-map-intro-content-item active",
+   "home-platform-content-inner grid active bg-global",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-why-item-img-child bg-global active",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-img-item active w-dyn-item"
+  ],
+  "ink": {
+   "clip": "none",
+   "transform": null
+  }
+ },
+ {
+  "y": 9500,
+  "max": 12268,
+  "sections": {
+   "home-hero": {
+    "top": -9493,
+    "bottom": -8507,
+    "h": 987
+   },
+   "home-intro": {
+    "top": -8507,
+    "bottom": -7784,
+    "h": 723
+   },
+   "home-problem": {
+    "top": -7784,
+    "bottom": -7042,
+    "h": 743
+   },
+   "home-map.expanded": {
+    "top": -7042,
+    "bottom": -42,
+    "h": 7000
+   },
+   "home-platform": {
+    "top": -42,
+    "bottom": 668,
+    "h": 710
+   },
+   "home-why": {
+    "top": 668,
+    "bottom": 1367,
+    "h": 698
+   },
+   "home-usecase": {
+    "top": 1367,
+    "bottom": 2353,
+    "h": 987
+   },
+   "cta": {
+    "top": 2353,
+    "bottom": 3051,
+    "h": 698
+   }
+  },
+  "activeStates": [
+   "home-map-main-img active",
+   "home-map-intro active",
+   "home-map-intro-content-item active",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-platform-content-inner grid bg-global active",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-why-item-img-child bg-global active",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-faq-item w-dyn-item active"
+  ],
+  "ink": {
+   "clip": "none",
+   "transform": null
+  }
+ },
+ {
+  "y": 10000,
+  "max": 14057,
+  "sections": {
+   "home-hero": {
+    "top": -9993,
+    "bottom": -9007,
+    "h": 987
+   },
+   "home-intro": {
+    "top": -9007,
+    "bottom": -8284,
+    "h": 723
+   },
+   "home-problem": {
+    "top": -8284,
+    "bottom": -7542,
+    "h": 743
+   },
+   "home-map.expanded": {
+    "top": -7542,
+    "bottom": -542,
+    "h": 7000
+   },
+   "home-platform": {
+    "top": -542,
+    "bottom": 168,
+    "h": 710
+   },
+   "home-why": {
+    "top": 168,
+    "bottom": 2655,
+    "h": 2487
+   },
+   "home-usecase": {
+    "top": 2655,
+    "bottom": 3642,
+    "h": 987
+   },
+   "cta": {
+    "top": 3642,
+    "bottom": 4340,
+    "h": 698
+   }
+  },
+  "activeStates": [
+   "home-map-main-img active",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-platform-content-inner grid bg-global active",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-why-item-img-child bg-global active",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-faq-item w-dyn-item active"
+  ],
+  "ink": {
+   "clip": "none",
+   "transform": null
+  }
+ },
+ {
+  "y": 10500,
+  "max": 14057,
+  "sections": {
+   "home-hero": {
+    "top": -10493,
+    "bottom": -9507,
+    "h": 987
+   },
+   "home-intro": {
+    "top": -9507,
+    "bottom": -8784,
+    "h": 723
+   },
+   "home-problem": {
+    "top": -8784,
+    "bottom": -8042,
+    "h": 743
+   },
+   "home-map.expanded": {
+    "top": -8042,
+    "bottom": -1042,
+    "h": 7000
+   },
+   "home-platform": {
+    "top": -1042,
+    "bottom": -332,
+    "h": 710
+   },
+   "home-why": {
+    "top": -332,
+    "bottom": 2155,
+    "h": 2487
+   },
+   "home-usecase": {
+    "top": 2155,
+    "bottom": 3142,
+    "h": 987
+   },
+   "cta": {
+    "top": 3142,
+    "bottom": 3840,
+    "h": 698
+   }
+  },
+  "activeStates": [
+   "home-map-main-img active",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-why-item-img-child bg-global active",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-faq-item w-dyn-item active"
+  ],
+  "ink": {
+   "clip": "none",
+   "transform": null
+  }
+ },
+ {
+  "y": 11000,
+  "max": 14057,
+  "sections": {
+   "home-hero": {
+    "top": -10993,
+    "bottom": -10007,
+    "h": 987
+   },
+   "home-intro": {
+    "top": -10007,
+    "bottom": -9284,
+    "h": 723
+   },
+   "home-problem": {
+    "top": -9284,
+    "bottom": -8542,
+    "h": 743
+   },
+   "home-map.expanded": {
+    "top": -8542,
+    "bottom": -1542,
+    "h": 7000
+   },
+   "home-platform": {
+    "top": -1542,
+    "bottom": -832,
+    "h": 710
+   },
+   "home-why": {
+    "top": -832,
+    "bottom": 1655,
+    "h": 2487
+   },
+   "home-usecase": {
+    "top": 1655,
+    "bottom": 2642,
+    "h": 987
+   },
+   "cta": {
+    "top": 2642,
+    "bottom": 3340,
+    "h": 698
+   }
+  },
+  "activeStates": [
+   "home-map-main-img active",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-why-item-img-child bg-global active",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-faq-item w-dyn-item active"
+  ],
+  "ink": {
+   "clip": "none",
+   "transform": null
+  }
+ },
+ {
+  "y": 11500,
+  "max": 14057,
+  "sections": {
+   "home-hero": {
+    "top": -11493,
+    "bottom": -10507,
+    "h": 987
+   },
+   "home-intro": {
+    "top": -10507,
+    "bottom": -9784,
+    "h": 723
+   },
+   "home-problem": {
+    "top": -9784,
+    "bottom": -9042,
+    "h": 743
+   },
+   "home-map.expanded": {
+    "top": -9042,
+    "bottom": -2042,
+    "h": 7000
+   },
+   "home-platform": {
+    "top": -2042,
+    "bottom": -1332,
+    "h": 710
+   },
+   "home-why": {
+    "top": -1332,
+    "bottom": 1155,
+    "h": 2487
+   },
+   "home-usecase": {
+    "top": 1155,
+    "bottom": 2142,
+    "h": 987
+   },
+   "cta": {
+    "top": 2142,
+    "bottom": 2840,
+    "h": 698
+   }
+  },
+  "activeStates": [
+   "home-map-main-img active",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-why-item-img-child bg-global active",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-faq-item w-dyn-item active"
+  ],
+  "ink": {
+   "clip": "none",
+   "transform": null
+  }
+ },
+ {
+  "y": 12000,
+  "max": 14057,
+  "sections": {
+   "home-hero": {
+    "top": -11993,
+    "bottom": -11007,
+    "h": 987
+   },
+   "home-intro": {
+    "top": -11007,
+    "bottom": -10284,
+    "h": 723
+   },
+   "home-problem": {
+    "top": -10284,
+    "bottom": -9542,
+    "h": 743
+   },
+   "home-map.expanded": {
+    "top": -9542,
+    "bottom": -2542,
+    "h": 7000
+   },
+   "home-platform": {
+    "top": -2542,
+    "bottom": -1832,
+    "h": 710
+   },
+   "home-why": {
+    "top": -1832,
+    "bottom": 655,
+    "h": 2487
+   },
+   "home-usecase": {
+    "top": 655,
+    "bottom": 1642,
+    "h": 987
+   },
+   "cta": {
+    "top": 1642,
+    "bottom": 2340,
+    "h": 698
+   }
+  },
+  "activeStates": [
+   "home-map-main-img active",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-why-item-img-child bg-global active",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-faq-item w-dyn-item active"
+  ],
+  "ink": {
+   "clip": "none",
+   "transform": null
+  }
+ },
+ {
+  "y": 12500,
+  "max": 14057,
+  "sections": {
+   "home-hero": {
+    "top": -12493,
+    "bottom": -11507,
+    "h": 987
+   },
+   "home-intro": {
+    "top": -11507,
+    "bottom": -10784,
+    "h": 723
+   },
+   "home-problem": {
+    "top": -10784,
+    "bottom": -10042,
+    "h": 743
+   },
+   "home-map.expanded": {
+    "top": -10042,
+    "bottom": -3042,
+    "h": 7000
+   },
+   "home-platform": {
+    "top": -3042,
+    "bottom": -2332,
+    "h": 710
+   },
+   "home-why": {
+    "top": -2332,
+    "bottom": 155,
+    "h": 2487
+   },
+   "home-usecase": {
+    "top": 155,
+    "bottom": 1142,
+    "h": 987
+   },
+   "cta": {
+    "top": 1142,
+    "bottom": 1840,
+    "h": 698
+   }
+  },
+  "activeStates": [
+   "home-map-main-img active",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-why-item-img-child bg-global active",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-faq-item w-dyn-item active"
+  ],
+  "ink": {
+   "clip": "none",
+   "transform": null
+  }
+ },
+ {
+  "y": 13000,
+  "max": 14057,
+  "sections": {
+   "home-hero": {
+    "top": -12993,
+    "bottom": -12007,
+    "h": 987
+   },
+   "home-intro": {
+    "top": -12007,
+    "bottom": -11284,
+    "h": 723
+   },
+   "home-problem": {
+    "top": -11284,
+    "bottom": -10542,
+    "h": 743
+   },
+   "home-map.expanded": {
+    "top": -10542,
+    "bottom": -3542,
+    "h": 7000
+   },
+   "home-platform": {
+    "top": -3542,
+    "bottom": -2832,
+    "h": 710
+   },
+   "home-why": {
+    "top": -2832,
+    "bottom": -345,
+    "h": 2487
+   },
+   "home-usecase": {
+    "top": -345,
+    "bottom": 642,
+    "h": 987
+   },
+   "cta": {
+    "top": 642,
+    "bottom": 1340,
+    "h": 698
+   }
+  },
+  "activeStates": [
+   "home-map-main-img active",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-why-item-img-child bg-global active",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-faq-item w-dyn-item active"
+  ],
+  "ink": {
+   "clip": "none",
+   "transform": null
+  }
+ },
+ {
+  "y": 13255,
+  "max": 14057,
+  "sections": {
+   "home-hero": {
+    "top": -13248,
+    "bottom": -12262,
+    "h": 987
+   },
+   "home-intro": {
+    "top": -12262,
+    "bottom": -11539,
+    "h": 723
+   },
+   "home-problem": {
+    "top": -11539,
+    "bottom": -10797,
+    "h": 743
+   },
+   "home-map.expanded": {
+    "top": -10797,
+    "bottom": -3797,
+    "h": 7000
+   },
+   "home-platform": {
+    "top": -3797,
+    "bottom": -3087,
+    "h": 710
+   },
+   "home-why": {
+    "top": -3087,
+    "bottom": -600,
+    "h": 2487
+   },
+   "home-usecase": {
+    "top": -600,
+    "bottom": 387,
+    "h": 987
+   },
+   "cta": {
+    "top": 387,
+    "bottom": 1085,
+    "h": 698
+   }
+  },
+  "activeStates": [
+   "home-map-main-img active",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-platform-content-title-wrap active",
+   "home-platform-content-right-item active",
+   "home-why-item-img-child bg-global active",
+   "home-usecase-img-item active w-dyn-item",
+   "home-usecase-faq-item w-dyn-item active"
+  ],
+  "ink": {
+   "clip": "none",
+   "transform": null
+  }
+ }
+]

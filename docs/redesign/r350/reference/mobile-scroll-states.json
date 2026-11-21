@@ -1,0 +1,145 @@
+[
+ {
+  "y": 0,
+  "secs": {
+   "home-hero": 8,
+   "home-intro": 836,
+   "home-problem": 1683,
+   "home-map": 2553,
+   "home-platform": 7372,
+   "home-why": 7930,
+   "home-usecase": 8736,
+   "cta": 9683
+  }
+ },
+ {
+  "y": 700,
+  "secs": {
+   "home-hero": -692,
+   "home-intro": 136,
+   "home-problem": 983,
+   "home-map": 1853,
+   "home-platform": 6672,
+   "home-why": 7230,
+   "home-usecase": 8036,
+   "cta": 8983
+  }
+ },
+ {
+  "y": 1600,
+  "secs": {
+   "home-hero": -1592,
+   "home-intro": -764,
+   "home-problem": 83,
+   "home-map": 953,
+   "home-platform": 5772,
+   "home-why": 6330,
+   "home-usecase": 7136,
+   "cta": 8083
+  }
+ },
+ {
+  "y": 3000,
+  "secs": {
+   "home-hero": -2992,
+   "home-intro": -2164,
+   "home-problem": -1317,
+   "home-map": -447,
+   "home-platform": 4372,
+   "home-why": 4930,
+   "home-usecase": 5736,
+   "cta": 6683
+  }
+ },
+ {
+  "y": 5000,
+  "secs": {
+   "home-hero": -4992,
+   "home-intro": -4164,
+   "home-problem": -3317,
+   "home-map": -2447,
+   "home-platform": 2372,
+   "home-why": 2930,
+   "home-usecase": 3736,
+   "cta": 4683
+  }
+ },
+ {
+  "y": 6600,
+  "secs": {
+   "home-hero": -6592,
+   "home-intro": -5764,
+   "home-problem": -4917,
+   "home-map": -4047,
+   "home-platform": 772,
+   "home-why": 1535,
+   "home-usecase": 2341,
+   "cta": 3289
+  }
+ },
+ {
+  "y": 7200,
+  "secs": {
+   "home-hero": -7192,
+   "home-intro": -6364,
+   "home-problem": -5517,
+   "home-map": -4647,
+   "home-platform": 172,
+   "home-why": 1141,
+   "home-usecase": 1948,
+   "cta": 2896
+  }
+ },
+ {
+  "y": 8000,
+  "secs": {
+   "home-hero": -7992,
+   "home-intro": -7164,
+   "home-problem": -6317,
+   "home-map": -5447,
+   "home-platform": -628,
+   "home-why": 341,
+   "home-usecase": 1148,
+   "cta": 2145
+  }
+ },
+ {
+  "y": 8800,
+  "secs": {
+   "home-hero": -8792,
+   "home-intro": -7964,
+   "home-problem": -7117,
+   "home-map": -6247,
+   "home-platform": -1428,
+   "home-why": -459,
+   "home-usecase": 348,
+   "cta": 1345
+  }
+ },
+ {
+  "y": 9500,
+  "secs": {
+   "home-hero": -9492,
+   "home-intro": -8664,
+   "home-problem": -7817,
+   "home-map": -6947,
+   "home-platform": -2128,
+   "home-why": -1159,
+   "home-usecase": -352,
+   "cta": 645
+  }
+ },
+ {
+  "y": 10563,
+  "secs": {
+   "home-hero": -10555,
+   "home-intro": -9727,
+   "home-problem": -8880,
+   "home-map": -8010,
+   "home-platform": -3191,
+   "home-why": -2222,
+   "home-usecase": -1415,
+   "cta": -418
+  }
+ }
+]
