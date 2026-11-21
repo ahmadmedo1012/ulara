@@ -391,6 +391,14 @@ section.chapters {
 
 @media (max-width: 767px) {
   .jt .jt-plan .pl-name { font-size: 22px; }
+  /* r351 P5 — the phone walkthrough retires the plate's zone-name
+   * labels (the audit belt found «ميدان التدريب» colliding with the
+   * capabilities panel's row titles at 390/360): the reference's own
+   * mobile simplification — the labels' clearance law holds on the
+   * desktop window (the r349 belt pins it there). */
+  .jt .jt-plan .iso-leader {
+    display: none;
+  }
 }
 
 .jt .jt-plan .bp-micro {
