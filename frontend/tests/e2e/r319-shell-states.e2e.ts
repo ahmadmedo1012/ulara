@@ -286,7 +286,9 @@ for (const theme of THEMES) {
         const tour = document.querySelector('.sidebar-tour-trigger')!;
         const scrim = document.querySelector('.sidebar-backdrop.show')!;
         const nav = document.querySelector('.sidebar-nav')!;
-        const avatar = document.querySelector('.sidebar .avatar')!;
+        // r351 A2 (Q1a): the sidebar identity block retired — the ONE
+        // avatar lives in the topbar user trigger.
+        const avatar = document.querySelector('.topbar-user-trigger .avatar')!;
         // start-gutter parity (RTL: the inline-START edge is the RIGHT edge).
         // Two levels: the BOX edges (brand row / heading / row share one
         // container inset) and the CONTENT edges (brand mark glyph vs the
@@ -445,7 +447,8 @@ for (const theme of THEMES) {
       expect(sheet.gutter.boxBrandVsRow).toBeLessThanOrEqual(1);
       expect(sheet.gutter.markVsIcon).toBeLessThanOrEqual(1);
 
-      // the drawer avatar: square ink cell (mono face, no blue)
+      // r351 A2 (Q1a): the ONE avatar (the topbar user trigger) keeps
+      // the square ink cell grammar (mono face, no blue).
       expect(sheet.avatar.radius).toBe('0px');
       expect(sheet.avatar.bg).not.toContain('59, 130, 246');
       expect(sheet.avatar.font.toLowerCase()).toContain('mono');

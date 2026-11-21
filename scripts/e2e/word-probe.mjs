@@ -16,6 +16,10 @@ for (let i = 0; i < 90; i++) { try { const r = await fetch('http://localhost:530
 const exe = process.env.HOME + '/.cache/ms-playwright/chromium_headless_shell-1200/chrome-headless-shell-linux64/chrome-headless-shell';
 const browser = await chromium.launch({ executablePath: existsSync(exe) ? exe : undefined });
 const ctx = await browser.newContext({ locale: 'ar-LY', viewport: { width: 1440, height: 900 } });
+// r351: freeze at FIXED_NOW — the same deterministic instant the e2e
+// harness pins (page.clock.setFixedTime); live-clock probes drift with
+// the relative-date labels.
+await ctx.clock.install({ time: new Date('2026-03-15T10:00:00.000Z') });
 await ctx.addInitScript(() => { try { sessionStorage.setItem('ulara-intro-skip', '1'); Object.defineProperty(Navigator.prototype, 'hardwareConcurrency', { configurable: true, get: () => 8 }); } catch {} });
 await seedSession(ctx, ROLE_USERS[role], {});
 await installMockApi(ctx, { sessionUser: ROLE_USERS[role], overrides: [] });

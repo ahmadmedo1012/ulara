@@ -483,11 +483,9 @@ export function OwnerDashboardPage() {
             className="owner-chart-container"
             ariaLabel="مخطط دائري يوزّع مستخدمي المنصّة على الأدوار: طلاب وأساتذة وإداريّون وفريق جودة"
             summary={chartSummary}
-            table={{
-              caption: 'توزيع المستخدمين حسب الدور',
-              columns: ['الدور', 'العدد'],
-              rows: segments.map((s) => [s.label, s.value]),
-            }}
+            /* r351 A2 (Q3): the sr-only distribution table retired —
+               the KPI row prints the same counts; the chart keeps
+               role=img + aria-label + summary. */
           >
             <Doughnut key={themeKey} data={chartData} options={chartOptions} />
           </ChartFrame>
@@ -531,7 +529,7 @@ export function OwnerDashboardPage() {
             </div>
             <div className="owner-health-row">
               <div className={`owner-health-dot ${realtimeData.aiRequestsPerMin > 0 ? 'green' : 'neutral'}`} />
-              <span className="owner-health-label">طلبات الذكاء الاصطناعيّ / دقيقة</span>
+              <span className="owner-health-label">طلبات AI / دقيقة</span>
               <span className="owner-health-value">
                 <bdi>{formatNum(realtimeData.aiRequestsPerMin)}</bdi>
               </span>

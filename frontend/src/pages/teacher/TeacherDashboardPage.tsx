@@ -257,15 +257,6 @@ export function TeacherDashboardPage() {
   // grammar — a lone dot on an empty grid read as a rendering bug, not
   // as "not enough data yet". The sr-only data table feeds both branches.
   const coverage = trendCoverage(d.trend);
-  const trendTable = {
-    caption: 'الأداء والحضور — آخر ستة أسابيع',
-    columns: ['الأسبوع', 'متوسط الأداء', 'الحضور'],
-    rows: d.trend.map((t, i) => [
-      String(i + 1),
-      t.avgGradePct === null ? '—' : `${formatPct1(t.avgGradePct)}%`,
-      t.attendancePct === null ? '—' : `${formatPct1(t.attendancePct)}%`,
-    ]),
-  } as const;
 
   return (
     /* r242 — the Superlist composition (patterns contract, r210):
@@ -305,7 +296,7 @@ export function TeacherDashboardPage() {
             )}
             <span className="hr-chip" data-tone={visible.length === 0 ? 'ok' : 'ember'}>
               <bdi className="font-mono" dir="ltr">{visible.length}</bdi>
-              <span className="sr-only">عناصر تحتاج متابعة</span>
+              <span className="sr-only">متابعات</span>
             </span>
           </>
         }
@@ -385,27 +376,11 @@ export function TeacherDashboardPage() {
                   : `${countAr(coverage.weeksRecorded, ['أسبوع واحد مسجَّل', 'أسبوعان مسجَّلان', 'أسابيع مسجَّلة', 'أسبوعاً مسجَّلاً'])} حتى الآن — يُرسم المخطط تلقائياً بعد اكتمال أسبوعين على الأقل.`
               }
             />
-            {/* The real data points stay available to screen readers
-                even while the canvas is withheld. */}
+            {/* r351 A2 (Q3): the not-enough-data fallback keeps its
+                one honest line — the sr table retired with the chart's
+                own table above. */}
             <div className="visually-hidden">
               <p>لا تتوفّر بيانات كافية بعد لرسم المخطط الخطي.</p>
-              <table>
-                <caption>{trendTable.caption}</caption>
-                <thead>
-                  <tr>
-                    {trendTable.columns.map((column, i) => (
-                      <th key={`${column}-${i}`} scope="col">{column}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {trendTable.rows.map((row, i) => (
-                    <tr key={i}>
-                      {row.map((cell, j) => <td key={j}>{cell}</td>)}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
             </div>
           </>
         ) : (
@@ -413,7 +388,7 @@ export function TeacherDashboardPage() {
             ariaLabel="مخطط خطي لمتوسط الأداء ونسبة الحضور خلال الأسابيع الستة الماضية"
             summary="الأداء مقابل الحضور."
             height={240}
-            table={trendTable}
+            
           >
             <Line
               key={themeKey}
@@ -603,7 +578,7 @@ function PendingGradingQueue({ entries }: { entries: TeacherDashboard['pendingGr
                       hear the per-row submission count. */}
                   <span className="tq-num tqd-count" aria-hidden="true">{formatNum(e.count)}</span>
                   <span className="visually-hidden">
-                    {countAr(e.count, ['تسليم واحد', 'تسليمان', 'تسليمات', 'تسليماً'])}
+                    {'تسليمات'}
                   </span>
                 </>
               }

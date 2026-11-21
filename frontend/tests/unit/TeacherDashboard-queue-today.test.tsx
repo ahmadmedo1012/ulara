@@ -318,7 +318,9 @@ describe('TeacherDashboardPage — feed action hierarchy + spoken queue counts (
     const visual = document.querySelector('.tq-num');
     expect(visual).not.toBeNull();
     expect(visual).toHaveAttribute('aria-hidden', 'true');
-    // countAr(2) → the digitless dual «تسليمان», invisible but announced.
-    expect(screen.getByText('تسليمان')).toHaveClass('visually-hidden');
+    /* r351 A2 (Q3): the sr noun is the bare word («تسليمات») — the
+       visible mono count sits right beside it, so SR reads the pair
+       without the number being spoken twice. */
+    expect(screen.getAllByText('تسليمات').some((el) => el.classList.contains('visually-hidden'))).toBe(true);
   });
 });
