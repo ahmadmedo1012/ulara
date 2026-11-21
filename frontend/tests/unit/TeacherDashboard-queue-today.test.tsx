@@ -10,7 +10,7 @@
  *    today strip from /me/offerings' schedule (dayOfWeek 0=Sunday, the
  *    Date#getDay() convention), sorted by start time; the card links
  *    into /teacher/schedule.
- * 3. At-risk shortcuts — topRisks() caps the worst-first /teacher/risks
+ * 3. At-risk shortcuts — RETIRED r351 A2 (Q3): the feed + the intelligence
  *    rows at 3; each row is ONE tap from the offering's intelligence
  *    deep dive (/teacher/intelligence/:offeringId).
  *
@@ -26,8 +26,6 @@ import {
   TeacherDashboardPage,
   todaySlots,
   slotPhase,
-  topRisks,
-  AT_RISK_SHORTCUT_TAKE,
   type TodaySlot,
 } from '../../src/pages/teacher/TeacherDashboardPage';
 import type { TeacherOffering, TeacherRiskRow } from '../../src/hooks/useResources';
@@ -188,19 +186,9 @@ describe('slotPhase — the strip\'s now markers', () => {
   });
 });
 
-describe('topRisks — the at-risk shortcut cap', () => {
-  it('takes exactly AT_RISK_SHORTCUT_TAKE worst-first rows (the endpoint already sorts)', () => {
-    const rows = [1, 2, 3, 4, 5].map((i) => riskRow(`s${i}`, 'off1', 'AT_RISK', 60 - i));
-    expect(topRisks(rows)).toHaveLength(AT_RISK_SHORTCUT_TAKE);
-    expect(topRisks(rows).map((r) => r.studentId)).toEqual(['s1', 's2', 's3']);
-  });
+/* r351 A2 (Q3): topRisks retired with the at-risk shortcuts
+   section — the intelligence page owns the risk board. */
 
-  it('fewer rows than the cap pass through untouched (never padded, never null)', () => {
-    const rows = [riskRow('s1', 'off1', 'CRITICAL', 10)];
-    expect(topRisks(rows)).toEqual(rows);
-    expect(topRisks([])).toEqual([]);
-  });
-});
 
 /* ── Render pins ────────────────────────────────────────────── */
 
@@ -274,37 +262,7 @@ describe('TeacherDashboardPage — the daily-work trio (r164-h)', () => {
     expect(screen.getByText('لا محاضرات اليوم')).toBeInTheDocument();
   });
 
-  it('renders at-risk shortcuts: top 3 rows, each ONE tap from the intelligence deep dive', () => {
-    mocks.dashboard.data = DASH([]);
-    mocks.offerings = [offering([])];
-    mocks.risks.data = [
-      riskRow('s1', 'off1', 'CRITICAL', 20),
-      riskRow('s2', 'off2', 'AT_RISK', 40),
-      riskRow('s3', 'off1', 'AT_RISK', 50),
-      riskRow('s4', 'off3', 'WATCH', 70),
-    ];
 
-    renderDashboard();
-
-    // Exactly the worst three — the fourth never renders.
-    expect(document.querySelectorAll('a[href="/teacher/intelligence/off1"]')).toHaveLength(2);
-    expect(document.querySelectorAll('a[href="/teacher/intelligence/off2"]')).toHaveLength(1);
-    expect(screen.queryByText('طالب s4')).toBeNull();
-    // The card's own CTA reaches the full list (not deep-linked).
-    expect(document.querySelector('a[href="/teacher/intelligence"]')).not.toBeNull();
-    // The worst row wears its level chip (the shared vocabulary).
-    expect(screen.getByText('حرج')).toBeInTheDocument();
-  });
-
-  it('no at-risk students → «جميع طلابك في وضع جيد»', () => {
-    mocks.dashboard.data = DASH([]);
-    mocks.offerings = [offering([])];
-    mocks.risks.data = [];
-
-    renderDashboard();
-
-    expect(screen.getByText('جميع طلابك في وضع جيد')).toBeInTheDocument();
-  });
 });
 
 /* ── E (workstream 3-a): the feed's action hierarchy + the queue's

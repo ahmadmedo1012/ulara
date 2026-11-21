@@ -79,7 +79,9 @@ describe('R319 · RulerGauge — the semester week math (W09/15)', () => {
     expect(meter?.getAttribute('aria-valuetext')).toBe('W09/15 · 60%');
     expect(meter?.getAttribute('aria-valuenow')).toBe('60');
     expect(container.querySelector('.r319s-ruler-pct')?.textContent).toBe('60%');
-    expect(container.querySelector('.r319s-ruler-meta')?.textContent).toContain('من الفصل مضى');
+    /* r351 A2 (Q3): the prose caption retired — the % + W head carry
+       the whole reading. */
+    expect(container.querySelector('.r319s-ruler-meta')?.textContent).toContain('60%');
   });
 
   it('clamps honestly: before the term → W01, past the end → the last week, degenerate → a 1-week ruler', () => {

@@ -406,6 +406,11 @@ export function ScheduleStrip({
       {WEEKDAY_NAMES_AR.map((name, i) => {
         const slots = columns[i] ?? [];
         const date = new Date(weekStart.getTime() + i * DAY_MS);
+        /* r351 A2 (Q3): an EMPTY day renders nothing — the strip shows
+           the week's commitments, not seven dashes of absence (today
+           stays even when empty: the ink-filled header is the strip's
+           anchor). */
+        if (slots.length === 0 && i !== todayDow) return null;
         return (
           <div
             key={name}

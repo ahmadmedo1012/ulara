@@ -336,15 +336,16 @@ describe('r183-B3 — Arabic hashtags drop the numeric-mono costume (A6 P3)', ()
 /* ══ 4. the 0% progress note is the directive one (P3) ═════════════ */
 
 describe('r183-B3 — dashboard 0% progress note (A6 P3)', () => {
-  it('R189 re-pin: enrolled + 0% reads «ابدأ أول محاضرة لتتقدّم», the >0% verdict stays for real progress', () => {
+  it('R189 re-pin — r351: the verdict phrases retired; the count alone rides the hint', () => {
     const dash = stripComments(read('src/pages/student/DashboardPage.tsx'));
     /* R189: the verdict moved from the doughnut card's note into the
        stat strip's «إنجاز المقرّرات» trend cell — same ladder, same
        copy, new home. */
-    expect(dash).toContain("courseProgressPct === 0 ? 'ابدأ أول محاضرة لتتقدّم'");
-    // The verdict line survives for genuinely-late progress (1–49%).
-    expect(dash).toContain("'تحتاج إلى دفعة إضافيّة'");
-    // and the reassuring top band survives too.
-    expect(dash).toContain("'متقدّم كثيراً عن المطلوب'");
+    /* r351 A2 (Q3): the KPI hint is the counted course list alone —
+       the verdict phrases («على الطريق الصحيح»…) retired. */
+    expect(dash).toContain("? countAr(d.kpi.courseCount,");
+    // The verdict bands retired with the phrase family.
+    expect(dash).not.toContain("'تحتاج إلى دفعة إضافيّة'");
+    expect(dash).not.toContain("'متقدّم كثيراً عن المطلوب'");
   });
 });

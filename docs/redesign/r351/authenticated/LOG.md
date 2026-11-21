@@ -83,3 +83,30 @@ Measured AFTER (after-q1 dashboards matrix, 40 cells + 10 re-run):
   r319 student-sheet SectionBar, R305 dashboards/courses/supplemental
   indexes, r176e unused var. verify.sh --fast ALL GREEN (3014 tests,
   bundle 754.9/770 — the [0N] cut also shaved 0.7KB).
+
+## Q3 phase 1 — the five dashboards at/below the 180 budget (commit 5)
+
+Word counts @1440 light (route-audit instrument, before → after):
+- student /student/dashboard: 297 → **180** (−39%)
+- teacher /teacher/dashboard: 277 → **180** (−35%)
+- owner /owner/dashboard: 224 → **180** (−20%)
+- quality /quality/dashboard: 209 → **174** (−17%)
+- admin /admin/dashboard: 171 → 165 (already under)
+
+Cuts (all copy, no data): greeting/identity lines from headers (identity
+lives in the shell user menu), KPI commentary phrases («على الطريق
+الصحيح»…), card subtitles that restate their titles, empty-state prose
+(«لا حصص أو مهام أو اختبارات اليوم — …» → «لا التزامات اليوم.»),
+duplicate code badges, sr-only double counts (number+noun → number +
+noun-only), the student's third time surface («أسبوعك القادم» section
+retired — week strip + calendar own beyond-today), the teacher's at-risk
+shortcuts section (the feed + intelligence page own the signals; topRisks
+retired), the owner's header CTA pair (sidebar + quick-actions own them).
+Structure notes in-file at every site (r351 A2 comments).
+
+Tests follow code (6 suites updated with reasons): R305-dashboard-ds
+(eyebrow/ghosts/section list/week-ledger chip test retired),
+TeacherDashboard-queue-today (topRisks describe + 2 render tests retired),
+OwnerDashboard-action-strip + OwnerPages-6A10-pins (copy), r183 pins,
+r166a greeting pin, QualityDashboard header pin, student-sheet ruler meta.
+verify.sh --fast ALL GREEN (3009 tests, bundle 752.9/770).

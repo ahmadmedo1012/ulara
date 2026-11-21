@@ -1,7 +1,6 @@
-import { Fragment, useMemo, type ReactNode } from 'react';
+import { useMemo, type ReactNode } from 'react';
 import { Play, Eye, AlertCircle, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Badge } from '../../components/primitives';
 import {
   ErrorState, EmptyState, ListSkeleton, Skeleton,
 } from '../../components/primitives/States';
@@ -34,7 +33,6 @@ import { formatInt, formatNum, formatDate, formatTime } from '../../utils/number
    no raw revision codes, no placeholder test names, ONE numeral system
    (Latin), real ar-LY dates, <bdi> on every mixed run. */
 import {
-  arDate, sanitizeInstitutionName, sanitizeVisibleText,
 } from '../../utils/display-text';
 /* R305 DS — the shared student vocabulary + this page's family sheet.
  * Page-chunk CSS loads after main.tsx's global sheets, so the family
@@ -74,20 +72,7 @@ import '../../styles/student/pages.css';
    (DashboardPage-agenda / -exams-resume) stay byte-identical.
    ═══════════════════════════════════════════════════════════════════ */
 
-/**
- * Greeting that adapts to the local hour. Calm, conversational.
- */
-function useGreeting(): string {
-  const h = new Date().getHours();
-  /* r166a (E1): the 00:00–06:00 branch said «سهرة سعيدة» — «سهرة» is
-   * an evening party/soirée, wrong register for 2am. «ليلة سعيدة» is
-   * the proper late-night greeting. */
-  if (h < 6)  return 'ليلة سعيدة';
-  if (h < 12) return 'صباح الخير';
-  if (h < 18) return 'مساء النور';
-  return 'مساء الخير';
-}
-
+/* r351 A2 (Q3): useGreeting retired with the header's greeting line. */
 const DAY_LABEL: Record<'today' | 'tomorrow', string> = {
   today: 'اليوم',
   tomorrow: 'غداً',
@@ -277,21 +262,6 @@ function agendaChip(item: AgendaItem, now: number): { label: string; tone: Statu
   return dueChip(Math.round((item.whenMs - now) / 86_400_000));
 }
 
-/* R319 C1-C — listwise join of visible identity segments: empties drop
-   out BEFORE joining, so a sanitized-to-'' segment can never leave a
-   dangling « · » (the photographed header ended «… · السنة 8 · r180»). */
-function joinSegments(segments: Array<string | ReactNode | null | undefined>): ReactNode[] {
-  const kept = segments.filter(
-    (s): s is string | ReactNode => s !== null && s !== undefined && s !== '',
-  );
-  return kept.map((seg, i) => (
-    <Fragment key={i}>
-      {i > 0 ? ' · ' : null}
-      {seg}
-    </Fragment>
-  ));
-}
-
 /* R304 — the next-learning-action decision (the r164-c contract kept:
    the lecture arm answers first, the training arm only when the
    lecture half is empty). Returns null when both arms are empty — the
@@ -394,7 +364,7 @@ function DashResumeHero({ focus }: { focus: ResumeFocus }) {
       <section aria-label="الخطوة التعليمية التالية">
         <div className="dash-resume-card stu-hero r305s-band--deep dash-hero-deep">
           <div className="dash-resume-main">
-            <span className="dash-resume-eyebrow r305s-eyebrow">{focus.continuing ? 'أكمل من حيث توقفت' : 'الخطوة التالية'}</span>
+            <span className="dash-resume-eyebrow r305s-eyebrow">{focus.continuing ? 'تابع' : 'الخطوة التالية'}</span>
             <span className="dash-resume-course-name">{focus.courseName}</span>
             <span className="dash-resume-lecture">
               المحاضرة <bdi>{formatInt(focus.ordinal)}</bdi> · {focus.lectureTitle}
@@ -427,7 +397,7 @@ function DashResumeHero({ focus }: { focus: ResumeFocus }) {
           <div className="dash-resume-cta stu-hero-side">
             <Link to={focus.to} className="btn accent lg">
               <Icon icon={Play} size={16} />
-              {focus.continuing ? 'متابعة المشاهدة' : 'ابدأ المشاهدة'}
+              {focus.continuing ? 'متابعة' : 'ابدأ المشاهدة'}
             </Link>
             <span className="dash-resume-side-note r305s-meta-row">
               <bdi className="font-mono">{focus.courseCode}</bdi>
@@ -443,7 +413,7 @@ function DashResumeHero({ focus }: { focus: ResumeFocus }) {
     <section aria-label="الخطوة التعليمية التالية">
       <div className="dash-resume-card stu-hero r305s-band--deep dash-hero-deep">
         <div className="dash-resume-main">
-          <span className="dash-resume-eyebrow r305s-eyebrow">{focus.started ? 'أكمل من حيث توقفت' : 'الخطوة التالية'}</span>
+          <span className="dash-resume-eyebrow r305s-eyebrow">{focus.started ? 'تابع' : 'الخطوة التالية'}</span>
           <span className="dash-resume-course-name">{focus.title}</span>
           <span className="dash-resume-lecture">مسار التطوير الذاتي · {focus.started ? <>أنجزت <Num>{formatInt(focus.progressPct)}%</Num> من دروسه</> : 'سجّلت فيه ولم تبدأه بعد'}</span>
           {/* P2.5 — the same drafting ruler on the training arm (0 stays
@@ -496,7 +466,7 @@ function DashCourseRow({ e }: { e: MyEnrollment }) {
         </span>
       }
       title={c.name}
-      meta={<><Badge><bdi className="font-mono">{c.code}</bdi></Badge>{' '}{teacher}</>}
+      meta={teacher}
       trailing={
         <span className="stu-course-progress">
           <CourseBar
@@ -516,7 +486,6 @@ function DashCourseRow({ e }: { e: MyEnrollment }) {
 
 export default function StudentDashboardPage() {
   const user = useAuthStore((s) => s.user);
-  const greeting = useGreeting();
   const dash = useStudentDashboard();
   // Independent of the dashboard aggregate — the hero renders (or not)
   // the moment ITS payload lands, and never blocks the strip below.
@@ -679,7 +648,7 @@ export default function StudentDashboardPage() {
       whenMs: safeMs(a.dueAt),
       to: `/student/courses/${a.offeringId}`,
       title: <>{a.title} (<bdi>{a.courseCode}</bdi>)</>,
-      meta: <>تسليم <bdi>{formatDue(a.dueAt)}</bdi></>,
+      meta: <><bdi>{formatDue(a.dueAt)}</bdi></>,
       tone: 'gold',
     })),
     ...d.agenda.live.slice(0, 2).map<AgendaItem>((l) => ({
@@ -783,8 +752,8 @@ export default function StudentDashboardPage() {
       label: 'نسبة الحضور',
       value: d.kpi.attendancePct !== null ? <CountIn value={d.kpi.attendancePct} suffix="%" /> : '—',
       hint: d.kpi.attendancePct !== null
-        ? d.kpi.attendancePct >= 80 ? 'مطمئن هذا الفصل' : d.kpi.attendancePct >= 60 ? 'قريب من الحد' : 'تحت الحد — راجع حضورك'
-        : 'لا توجد سجلات بعد',
+        ? d.kpi.attendancePct >= 80 ? 'فوق الحد' : d.kpi.attendancePct >= 60 ? 'قريب من الحد' : 'تحت الحد'
+        : 'لا سجلات',
       tone: d.kpi.attendancePct === null ? 'neutral' : d.kpi.attendancePct >= 80 ? 'positive' : d.kpi.attendancePct >= 60 ? 'warning' : 'danger',
       empty: d.kpi.attendancePct === null,
     },
@@ -798,7 +767,7 @@ export default function StudentDashboardPage() {
       label: 'نقاط الإنجاز',
       value: <CountIn value={d.kpi.totalXp} />,
       hint: d.kpi.cohortSize > 1
-        ? `المركز ${d.kpi.rank} من ${d.kpi.cohortSize} على دفعتك`
+        ? `المركز ${d.kpi.rank}/${d.kpi.cohortSize}`
         : `مستوى ${d.profile.level}`,
       tone: 'neutral',
     },
@@ -806,12 +775,8 @@ export default function StudentDashboardPage() {
       label: 'إنجاز المقرّرات',
       value: d.kpi.courseCount > 0 ? <CountIn value={courseProgressPct} suffix="%" /> : '—',
       hint: d.kpi.courseCount > 0
-        ? `${countAr(d.kpi.courseCount, ['مقرّر نشط واحد', 'مقرّران نشطان', 'مقرّرات نشطة', 'مقررًا نشطًا'])} · ${
-            courseProgressPct >= 75 ? 'متقدّم كثيراً عن المطلوب'
-            : courseProgressPct >= 50 ? 'على الطريق الصحيح'
-            : courseProgressPct === 0 ? 'ابدأ أول محاضرة لتتقدّم'
-            : 'تحتاج إلى دفعة إضافيّة'}`
-        : 'لم تُسجّل في مقرّر بعد',
+        ? countAr(d.kpi.courseCount, ['مقرّر نشط واحد', 'مقرّران نشطان', 'مقرّرات نشطة', 'مقررًا نشطًا'])
+        : 'لا مقرّرات',
       tone: d.kpi.courseCount === 0 ? 'warning' : courseProgressPct >= 75 ? 'positive' : courseProgressPct === 0 ? 'warning' : 'neutral',
       empty: d.kpi.courseCount === 0,
     },
@@ -824,14 +789,6 @@ export default function StudentDashboardPage() {
      as a finite 1..8 integer (medicine/pharmacy legitimately reach 8 —
      no lower hard cap, just data sanity), and the digit runs inside
      the Arabic sentence are bdi-isolated. */
-  const studentName = sanitizeVisibleText(user?.firstName ?? '');
-  const identitySegments = joinSegments([
-    sanitizeInstitutionName(d.profile.facultyName),
-    sanitizeInstitutionName(d.profile.departmentName),
-    Number.isInteger(d.profile.year) && d.profile.year >= 1 && d.profile.year <= 8
-      ? <>السنة <bdi>{formatInt(d.profile.year)}</bdi></>
-      : null,
-  ]);
   /* R319 C1-C — the meta line: REAL ar-LY term dates (Arabic month
      names + Latin digits — the «01/15 وينتهي 09/10» numeric shape and
      its invisible RLM are gone), every mixed run bdi-isolated.
@@ -842,20 +799,12 @@ export default function StudentDashboardPage() {
   return (
     <div className="r319s-page">
       <PageFrame width="default">
+        {/* r351 A2 (Q3): the header carries the title + date alone —
+            the greeting + identity line retired (identity lives in the
+            shell's user menu; term dates live in the ruler's meta). */}
         <PageHeader
           title="لوحة التحكم"
-          eyebrow="مساحة الطالب"
-          description={
-            <>
-              {greeting}{studentName ? <>، <bdi>{studentName}</bdi></> : null} — {identitySegments.length > 0 ? identitySegments : 'لوحة متابعة تقدّمك الأكاديمي.'}
-            </>
-          }
-          meta={
-            <>
-              <bdi>{dateLine}</bdi> · يبدأ <bdi>{arDate(d.term.startsAt, { day: 'numeric', month: 'long' })}</bdi> وينتهي <bdi>{arDate(d.term.endsAt, { day: 'numeric', month: 'long' })}</bdi>
-              {' '}· <Link to="/app" className="text-link">تطبيق الجوال</Link>
-            </>
-          }
+          meta={<bdi>{dateLine}</bdi>}
         />
 
         {/* [01] الفصل الدراسي — the semester as the sheet's first
@@ -946,7 +895,7 @@ export default function StudentDashboardPage() {
                CELL — the sheet's reserved-but-empty region (§B2). */
             <EmptyCell
               label="راحة"
-              note="لا حصص أو مهام أو اختبارات اليوم — أسبوعك القادم أدناه، ومقرّراتك تنتظرك في الأسفل."
+              note="لا التزامات اليوم."
             />
           }
         />
@@ -972,7 +921,7 @@ export default function StudentDashboardPage() {
                 />
               ) : undefined
             }
-            action={<Link to="/student/courses" className="btn ghost sm">كل المقرّرات</Link>}
+            action={<Link to="/student/courses" className="btn ghost sm">المقرّرات</Link>}
           />
           {enrollments.isPending ? (
             <ListSkeleton rows={2} />
@@ -999,10 +948,10 @@ export default function StudentDashboardPage() {
           )}
         </section>
 
-        <section aria-label="فجوات الإتقان الموصى بها">
+        <section aria-label="فجوات الإتقان">
           <SectionBar
-            title="فجوات يُنصح بسدّها"
-            action={<Link to="/student/matrix" className="btn ghost sm">المصفوفة الكاملة</Link>}
+            title="فجوات الإتقان"
+            action={<Link to="/student/matrix" className="btn ghost sm">المصفوفة</Link>}
           />
           {gaps.isPending ? (
             <ListSkeleton rows={2} />
@@ -1020,7 +969,7 @@ export default function StudentDashboardPage() {
               note="لا فجوات مكتشفة بعد — أجب عن نقاط التفاعل في محاضراتك لترسم خريطة إتقانك."
             />
           ) : (
-            <RowList aria-label="أولوية سدّ الفجوات">
+            <RowList aria-label="فجوات الإتقان">
               {topGaps.map((g) => (
                 g.recommendedLectureId ? (
                   <RowItem
@@ -1028,7 +977,7 @@ export default function StudentDashboardPage() {
                     to={`/student/lectures/${g.recommendedLectureId}`}
                     leading={<Icon icon={AlertCircle} size={16} className="text-warning-ink" />}
                     title={g.conceptName}
-                    meta={<>{g.courseName} · <Num className="dash-gap-pct">{formatInt(Math.round(g.level * 100))}%</Num> الآن</>}
+                    meta={<>{g.courseName} · <Num className="dash-gap-pct">{formatInt(Math.round(g.level * 100))}%</Num></>}
                     trailing={
                       <span className="dash-gap-side">
                         <MasteryCells
@@ -1044,7 +993,7 @@ export default function StudentDashboardPage() {
                     key={g.conceptId}
                     leading={<Icon icon={AlertCircle} size={16} className="text-warning-ink" />}
                     title={g.conceptName}
-                    meta={<>{g.courseName} · <Num className="dash-gap-pct">{formatInt(Math.round(g.level * 100))}%</Num> الآن</>}
+                    meta={<>{g.courseName} · <Num className="dash-gap-pct">{formatInt(Math.round(g.level * 100))}%</Num></>}
                     trailing={
                       <span className="dash-gap-side">
                         {/* P2.5 — the concept's mastery as the 0–4 cell
@@ -1053,7 +1002,7 @@ export default function StudentDashboardPage() {
                           mastery={g.level}
                           ariaLabel={`إتقان ${g.conceptName}: ${formatInt(Math.round(g.level * 100))}%`}
                         />
-                        <span className="r305s-chip"><span className="r305s-chip-dot" aria-hidden="true" />لا توصية بعد</span>
+                        <span className="r305s-chip"><span className="r305s-chip-dot" aria-hidden="true" />بلا توصية</span>
                       </span>
                     }
                   />
@@ -1078,9 +1027,8 @@ export default function StudentDashboardPage() {
       <section aria-label="زخم الفصل" className="dash-momentum">
         <div className="r305s-rule-labeled" aria-hidden="true">زخم الفصل</div>
         <StatLine items={statLineItems} spread />
-        {d.kpi.courseCount > 0 && (
-          <CourseBar code="AVG" pct={courseProgressPct} ariaLabel="متوسط إنجاز مقرّراتك الحالية" />
-        )}
+        {/* r351 A2 (Q3): the AVG CourseBar retired — it re-printed the
+            «إنجاز المقرّرات» KPI's exact datum one section earlier. */}
         <div className="dash-indicators">
           {gradeDist && (
             <div className="dash-indicator">
@@ -1096,7 +1044,7 @@ export default function StudentDashboardPage() {
             <span className="ind-microlabel">أسبوع الدراسة</span>
             <StreakTicks
               todayIndex={now.getDay()}
-              note="يُسجَّل تلقائيًا مع كل محاضرة تشاهدها — سجل الأسبوع يُعرض هنا"
+              note=""
             />
           </div>
         </div>
@@ -1111,54 +1059,15 @@ export default function StudentDashboardPage() {
           <span className="dash-ai-mark" dir="ltr" aria-hidden="true">AI</span>
           <span className="dash-ai-body">
             <b>المساعد الذكي</b>
-            <span>اسأل عن مقرّر، لخّص محاضرة، أو اطلب خطة مراجعة.</span>
           </span>
           <Icon icon={ArrowLeft} size={14} />
         </Link>
       </section>
 
-      {/* [05] الأسبوع — the non-exam remainder grouped by real day.
-          R319 (c2-G1): every row's kind chip is the §B2 mono register
-          ([LIVE] orange only / the honest DUE label / [CLASS] quiet)
-          beside the meta's Arabic sentence. */}
-      {later.length > 0 && (
-        <section aria-label="التزامات الأسبوع القادم" className="dash-section">
-          <SectionBar
-            title="أسبوعك القادم"
-            meta={
-              <BarCount
-                n={later.length}
-                srLabel={countAr(later.length, ['التزام واحد قادم', 'التزامان قادمان', 'التزامات قادمة', 'التزاماً قادماً'])}
-              />
-            }
-            action={<Link to="/student/calendar" className="btn ghost sm">التقويم الكامل</Link>}
-          />
-          <RowList aria-label="التزامات الأسبوع القادم">
-            {weekGroups.map((g) => (
-              <div key={g.key} className="dash-week-group">
-                <div className="dash-week-day" aria-hidden="true">
-                  <b>{g.day}</b>
-                  <span className="font-mono">{g.date}</span>
-                </div>
-                <div className="week-rows">
-                  {g.items.map((item) => {
-                    const chip = agendaChip(item, now.getTime());
-                    return (
-                      <Link key={item.id} to={item.to} className="week-item">
-                        <span className="week-item-title">{item.title}</span>
-                        <span className="week-item-meta">{item.meta}</span>
-                        <span className="r319s-rowchip">
-                          <StatusChip label={chip.label} tone={chip.tone} />
-                        </span>
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-          </RowList>
-        </section>
-      )}
+      {/* r351 A2 (Q3): the «أسبوعك القادم» section is RETIRED — three
+          time surfaces lived on one screen (today's agenda, the week
+          strip, next week's list). The week strip carries the glance;
+          the calendar page owns everything beyond today. */}
       </PageFrame>
     </div>
   );

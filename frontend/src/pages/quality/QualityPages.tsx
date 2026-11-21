@@ -349,10 +349,9 @@ export function QualityDashboardPage() {
     <PageHeader
       eyebrow="قطاع ضمان الجودة"
       title="لوحة الجودة"
-      description="بناء نظام تعليمي فعّال عبر تطوير الأداء الأكاديمي والإداري والتقني — وفقاً لمتطلبات الاعتماد المحلية والدولية."
-      meta={
+            meta={
         <>
-          {formatDate(new Date(), { weekday: 'long', day: 'numeric', month: 'long' })} · قراءة لحظية للمؤشرات
+          {formatDate(new Date(), { weekday: 'long', day: 'numeric', month: 'long' })}
         </>
       }
       /* r299 (E item 1): the sector's own read-only cue — the former
@@ -461,13 +460,13 @@ export function QualityDashboardPage() {
           {
             label: 'الطلاب النشطون',
             value: <CountIn value={d.users.STUDENT ?? 0} />,
-            trend: 'مسجَّل في النظام',
+            trend: 'إجمالي',
             trendTone: 'flat',
           },
           {
             label: 'هيئة التدريس',
             value: <CountIn value={d.users.TEACHER ?? 0} />,
-            trend: 'أعضاء فاعلون',
+            trend: 'فاعلون',
             trendTone: 'flat',
             to: '/quality/professors',
           },
@@ -504,8 +503,8 @@ export function QualityDashboardPage() {
             title="النشاط الأسبوعي"
             subtitle={
               e.weeklyActiveEstimated
-                ? 'عدد الجلسات اليومية النشطة على المنصة — منحنى تقديري لحدّة البيانات'
-                : 'عدد الجلسات اليومية النشطة على المنصة'
+                ? 'جلسات يومية نشطة — منحنى تقديري'
+                : 'جلسات يومية نشطة'
             }
             icon={TrendingUp}
           >
@@ -513,7 +512,7 @@ export function QualityDashboardPage() {
             ariaLabel={`مخطط خطّي للنشاط الأسبوعي — جلسات نشطة يومياً${e.weeklyActiveEstimated ? ' (منحنى تقديري)' : ''}`}
             summary={
               e.weeklyActive.length > 0
-                ? `ذروة النشاط ${countAr(Math.max(...e.weeklyActive), ['جلسة واحدة', 'جلستان', 'جلسات', 'جلسة'])} يوم ${WEEKDAY_NAMES_AR[e.weeklyActive.indexOf(Math.max(...e.weeklyActive))] ?? ''}.`
+                ? `الذروة ${countAr(Math.max(...e.weeklyActive), ['جلسة واحدة', 'جلستان', 'جلسات', 'جلسة'])}`
                 : 'لا بيانات نشاط لهذا الأسبوع.'
             }
             table={{
@@ -1314,7 +1313,7 @@ export function QualityEngagementPage() {
         <Card
           title="النشاط الأسبوعي"
           icon={TrendingUp}
-          subtitle={d.weeklyActiveEstimated ? 'عدد الجلسات اليومية النشطة · بيانات تقديرية لحدّة النشاط المسجَّل' : undefined}
+          subtitle={d.weeklyActiveEstimated ? 'جلسات يومية · تقديرية' : undefined}
         >
           <ChartFrame
             ariaLabel="مخطط أعمدة للنشاط الأسبوعي — عدد الجلسات النشطة يومياً"
