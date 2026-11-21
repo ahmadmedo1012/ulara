@@ -89,45 +89,59 @@ test.describe('R349 — the why head stands inside the phone viewport (the silen
   });
 });
 
-test.describe('R349 — the hero leader labels read inside the frame', () => {
-  for (const w of [390, 320] as const) {
-    test(`every Arabic leader label lands inside @${w}`, async ({ page }) => {
-      await page.setViewportSize({ width: w, height: 844 });
-      await page.goto('/');
-      await page.locator('.fo-hero').scrollIntoViewIfNeeded();
-      await settleReveals(page, 1800); /* the staged ink-in belt */
-
-      const labels = await page.evaluate(
-        ({ w: vw, tol }) => {
-          const svg = document.querySelector('.fo-hero .bp-svg');
-          if (!svg) return [{ txt: '.bp-svg', missing: true, inside: false, left: 0, right: 0 }];
-          return Array.from(svg.querySelectorAll('.iso-leader text')).map((t) => {
-            const r = t.getBoundingClientRect();
-            const txt = (t.textContent ?? '').trim();
-            return {
-              txt,
-              missing: false,
-              left: r.left,
-              right: r.right,
-              /* the leaders are REAL labels (not HUD furniture): each
-                 phrase must read fully inside the viewport */
-              inside: r.left >= -tol && r.right <= vw + tol && r.width > 0,
-            };
-          });
-        },
-        { w, tol: TOLERANCE },
-      );
-
-      expect(labels.length).toBeGreaterThanOrEqual(4);
-      for (const l of labels) {
-        expect(l.missing, `${l.txt} must exist`).toBe(false);
-        expect(
-          l.inside,
-          `«${l.txt}» must read inside the viewport (L=${l.left} R=${l.right} @${w})`,
-        ).toBe(true);
+test.describe('R349 — the plate leader labels read inside the frame (r351: the journey seat)', () => {
+  /* r351 P1 — the HERO STAGE IS DECLUTTERED: the static zone-name leader
+   * labels retired from the hero seat (they now live ONLY on the
+   * journey plate — IsoCampusSheet renders the same labels fragment in
+   * its pinned window). The clip-prevention pin re-targets that seat:
+   * the same labels fragment, the same leader grammar, measured inside
+   * the viewport at the journey's desktop frame (1440 — the sticky
+   * window fills the viewport; ≤991 the walkthrough is a stacked
+   * readable sequence whose seats the r351 audit belt re-pins). */
+  test('every Arabic leader label lands inside @1440', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/');
+    /* the labels are the journey's LAST assembly beat — sit deep in the
+     * scrub so the plate is fully assembled before measuring */
+    await page.evaluate(() => {
+      const el = document.querySelector('#chapters') as HTMLElement | null;
+      if (el) {
+        const top = el.getBoundingClientRect().top + window.scrollY;
+        window.scrollTo(0, top + el.getBoundingClientRect().height * 0.55);
       }
     });
-  }
+    await settleReveals(page, 1500);
+
+    const labels = await page.evaluate(
+      ({ w: vw, tol }) => {
+        const svg = document.querySelector('.jt-plan');
+        if (!svg) return [{ txt: '.jt-plan', missing: true, inside: false, left: 0, right: 0 }];
+        return Array.from(svg.querySelectorAll('.iso-leader text')).map((t) => {
+          const r = t.getBoundingClientRect();
+          const txt = (t.textContent ?? '').trim();
+          return {
+            txt,
+            missing: false,
+            left: r.left,
+            right: r.right,
+            /* the leaders are REAL labels (not HUD furniture): each
+               phrase must read fully inside the viewport */
+            inside: r.left >= -tol && r.right <= vw + tol && r.width > 0,
+          };
+        });
+      },
+      { w: 1440, tol: TOLERANCE },
+    );
+
+    expect(labels.length).toBeGreaterThanOrEqual(4);
+    for (const l of labels) {
+      expect(l.missing, `${l.txt} must exist`).toBe(false);
+      expect(
+        l.inside,
+        `«${l.txt}» must read inside the viewport (L=${l.left} R=${l.right} @1440)`,
+      ).toBe(true);
+    }
+  });
 });
 
 test.describe('R349 — the phone deck and the one sitemap (structure pins)', () => {
@@ -441,12 +455,24 @@ test.describe('R349 — the resolve sheet retires the parked phone band + the ch
        actually decodes on the /app sheet.
    ═══════════════════════════════════════════════════════════════════ */
 
-test.describe('R349 — the hero label ink clears the sheet furniture (the ink-on-ink belt)', () => {
+test.describe('R349 — the plate label ink clears the sheet furniture (the ink-on-ink belt)', () => {
+  /* r351 P1 — the labels fragment retired from the hero seat; the
+   * ink-on-ink clearance law follows the labels to their journey seat
+   * (same fragment, same authored grammar — only the mounting seat
+   * changed). */
   test('«ساحة المجتمع» clears the scale bar, «ميدان التدريب» and the leader path', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 1000 });
     await page.goto('/');
-    await page.locator('.fo-hero').scrollIntoViewIfNeeded();
-    await settleReveals(page, 1800); /* the staged ink-in belt */
+    /* the labels are the journey's LAST assembly beat — sit deep in
+     * the scrub so the plate is fully assembled before measuring */
+    await page.evaluate(() => {
+      const el = document.querySelector('#chapters') as HTMLElement | null;
+      if (el) {
+        const top = el.getBoundingClientRect().top + window.scrollY;
+        window.scrollTo(0, top + el.getBoundingClientRect().height * 0.55);
+      }
+    });
+    await settleReveals(page, 1500);
 
     /* every seat is measured through getScreenCTM — the label texts
      * live in the svg's root user space while the scale bar rides a
@@ -456,7 +482,7 @@ test.describe('R349 — the hero label ink clears the sheet furniture (the ink-o
      * normalising by the CTM scale yields true SHEET-UNIT boxes that
      * hold at every viewport. */
     const seats = await page.evaluate(() => {
-      const svg = document.querySelector('.fo-hero .bp-svg') as SVGSVGElement | null;
+      const svg = document.querySelector('.jt-plan') as SVGSVGElement | null;
       if (!svg) return { missing: true } as const;
       const labels = Array.from(svg.querySelectorAll('.iso-leader text')) as SVGTextElement[];
       const find = (needle: string) => labels.find((t) => (t.textContent ?? '').includes(needle));
@@ -509,7 +535,7 @@ test.describe('R349 — the hero label ink clears the sheet furniture (the ink-o
       } as const;
     });
 
-    expect(seats.missing, 'the hero plate must mount').toBe(false);
+    expect(seats.missing, 'the journey plate must mount').toBe(false);
     if (seats.missing) return;
     expect(seats.plaza, '«ساحة المجتمع» must exist').not.toBeNull();
     expect(seats.field, '«ميدان التدريب» must exist').not.toBeNull();

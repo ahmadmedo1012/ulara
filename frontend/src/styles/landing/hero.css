@@ -25,7 +25,10 @@
  * home-hero-work inside the hero's sub cell). */
 .fo-hero {
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto auto;
+  /* r351 P1 — the reference's order: the giant headline LEADS the fold
+   * (content band first), the art band takes everything under it, the
+   * work strip closes the band. */
+  grid-template-rows: auto minmax(0, 1fr) auto;
   /* the measured reference band (887 = 100svh − 13 @1440×900; the
    * ≥992 twin below re-pins the quartet's 1.6rem form). */
   min-block-size: calc(100svh - 13px); /* spacing-gate: allow — the measured reference band (887 = 900 − 13), an external constant */
@@ -990,7 +993,9 @@
 }
 
 /* 0 — the login secondary (color+bd, every recorded bp):
- * ink rgb(40,40,40) → the measured ember */
+ * ink rgb(40,40,40) → the measured ember. r351 P1: the hero seat has
+ * no login link anymore (it lives in the masthead); the rule is inert
+ * (kept for rollback). */
 .hro .hro-alt:is(:hover, :focus-within),
 .hro .hro-alt.probe-hover {
   color: var(--hro-seat-ink);
@@ -998,14 +1003,13 @@
   transform: var(--hro-seat-lift);
 }
 
-/* 3 — the register primary (color+bg at 1920, bg+bd below, bd at
- * ≤768 — every recorded bp a change): the measured ghost flip —
- * accent fill washes to transparent, ink warms to the paper blush */
+/* 3 — the register primary (r351 P1: the roll-swap + fill-wipe seat).
+ * The hover/focus arms now ride the fill mechanic itself
+ * (.hro-cta-fill scaleY + .hro-cta-roll translate — mechanics [C]);
+ * the twin keeps ONE recorded channel (the lift) and no color/bg/border
+ * fight (the previous ghost-flip belonged to the retired boxed skin). */
 .hro .hro-cta:is(:hover, :focus-within),
 .hro .hro-cta.probe-hover {
-  color: var(--hro-seat-ghost);
-  background-color: transparent;
-  border-color: var(--hro-seat-ink);
   transform: var(--hro-seat-lift);
 }
 

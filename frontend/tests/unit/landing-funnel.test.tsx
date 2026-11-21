@@ -110,14 +110,13 @@ describe('landing funnel — source contract (r164b → r331)', () => {
     expect(live).not.toMatch(/to="\/auth"\s+className="(?:btn primary|btn accent)/);
   });
 
-  it('login affordances ride the R331 register: six surfaces (header, mobile, hero secondary, finale ghost, colleges strip, footer)', () => {
-    /* R331 delta (documented): the rebuilt hero carries its own login
-     * secondary (the reference pattern: ONE orange primary + one quiet alt),
-     * joining the previous five (header, mobile, finale ghost, colleges
-     * strip, footer). The register primary count stays 5; login grows
-     * 5→6 by product decision — the hero alt is a ghost, never a second
-     * primary. */
-    expect((live.match(/to="\/auth"/g) ?? []).length).toBe(6);
+  it('login affordances ride the R331 register: five surfaces (header, mobile, finale ghost, colleges strip, footer)', () => {
+    /* r351 P1 delta (documented): the hero's login secondary RETIRES —
+     * the hero carries ONE primary like the reference (the giant
+     * headline leads; login stays in the masthead pair + mobile menu,
+     * which the header/mobile assertions below pin). Login drops
+     * 6→5: header, mobile menu, finale ghost, colleges strip, footer. */
+    expect((live.match(/to="\/auth"/g) ?? []).length).toBe(5);
   });
 
   it('the finale never shows login copy under a create-account button (label ↔ copy ↔ destination tell one story)', () => {

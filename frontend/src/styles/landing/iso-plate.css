@@ -52,11 +52,12 @@
 /* the HERO seat — the iso sheet window is square-ish (184×168), so it
    caps by the fold's height (never the old wide elevation's
    width-first grammar): the drawing centers as the band's centerpiece
-   at the reference's own order (~46% of a 1440 fold), the paper
-   breathing around it. The trace variant (the preloader's seat) keeps
-   the pl-plate width grammar preloader.css owns. */
+   (r351 P1: the giant headline leads the fold, so the plate shares the
+   band with it — ~34% of a 1440 sheet, the paper breathing around it;
+   the trace variant (the preloader's seat) keeps the pl-plate width
+   grammar preloader.css owns). */
 .hro .hro-art .cp-svg[data-variant='ink'] {
-  inline-size: min(72svh, 100%, 880px);
+  inline-size: min(54svh, 100%, 720px);
   block-size: auto;
   margin-inline: auto;
 }
