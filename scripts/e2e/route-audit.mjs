@@ -251,6 +251,17 @@ async function auditCell({ page, role, theme, vp, route, shot }) {
       .locator('.pf-page-header, .topbar, main')
       .first()
       .waitFor({ state: 'visible', timeout: 30_000 });
+    /* r351 fix: the first visit of a lazy route can catch the
+     * PageSkeleton if the chunk compile outruns the settle window
+     * (measured: ~35 cells at 21–57 words = shell chrome only).
+     * Wait for every skeleton/busy marker inside the content track to
+     * clear (8s cap), THEN settle — the measurement is the resolved
+     * page, never the placeholder. */
+    await page
+      .locator('.content .skeleton, .content [aria-busy="true"]')
+      .first()
+      .waitFor({ state: 'detached', timeout: 8_000 })
+      .catch(() => {});
     await page.waitForTimeout(350); // settle motion (mock transport resolves instantly)
     const m = await page.evaluate(MEASURE);
     if (shot) {

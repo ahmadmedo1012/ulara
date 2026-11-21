@@ -1390,3 +1390,790 @@ export const ADMIN_PAPERS_GRADED_PAGE = {
   ],
   meta: { page: 1, limit: 1, total: 418, totalPages: 418 },
 };
+
+/* ═══════════════════════════════════════════════════════════════════
+   r351 A2 — the authenticated-route corpus closure (Q0).
+   Every endpoint the route-audit sweep measured as a loud 501 on a
+   non-AI authenticated surface, shaped field-for-field from the
+   consuming hooks (the transcription table lives in
+   docs/redesign/r351/authenticated/BASELINE.md). List endpoints carry
+   1–3 realistic rows — enough for the surfaces to render real lists
+   (and for word counts to be honest), never fabricating scale.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── permissions ────────────────────────────────────────────────── */
+
+/** GET /me/permissions — MyPermissions (role-honest capability sets). */
+export function myPermissions(role: AppRole): Record<string, unknown> {
+  const BY_ROLE: Record<AppRole, string[]> = {
+    STUDENT: ['EXAMS_TAKE', 'RESEARCH_PUBLISH'],
+    TEACHER: ['RESEARCH_GRADE_OWN', 'EXAMS_AUTHOR', 'CURRICULUM_EDIT_OWN'],
+    ADMIN: ['USERS_MANAGE', 'ROLES_ASSIGN', 'TEACHERS_VERIFY', 'ANNOUNCE_PLATFORM', 'COMPETITIONS_RUN', 'EVENTS_RUN'],
+    QUALITY: ['QUALITY_VIEW', 'QUALITY_REPORT', 'EXAMS_MODERATE'],
+    OWNER: ['USERS_MANAGE', 'ROLES_ASSIGN', 'TEACHERS_VERIFY', 'QUALITY_VIEW', 'EXAMS_MODERATE', 'ANNOUNCE_PLATFORM'],
+  };
+  return { role, capabilities: BY_ROLE[role], roleDefaults: BY_ROLE[role] };
+}
+
+/* ── community / social ─────────────────────────────────────────── */
+
+/** GET /announcements/feed — AnnouncementRow[] (2 rows). */
+export const ANNOUNCEMENT_FEED = [
+  {
+    id: 'ann_e2e_1',
+    scope: 'PLATFORM' as const,
+    scopeId: null,
+    title: 'فتح باب التقديم لمنافسة الكلّيّات',
+    body: 'التقديم متاح حتى نهاية الشهر عبر صفحة المسابقات.',
+    pinned: true,
+    publishedAt: iso(-5),
+    iconEmoji: null,
+    author: { firstName: 'سالم', lastName: 'القرضابي', avatarColor: null, avatarInitials: null, role: 'ADMIN' },
+  },
+  {
+    id: 'ann_e2e_2',
+    scope: 'FACULTY' as const,
+    scopeId: 'fcl_e2e_1',
+    title: 'ورشة عمل: مراجعة ما قبل الاختبارات',
+    body: 'قاعة ٢، الطابق الأول.',
+    pinned: false,
+    publishedAt: iso(-30),
+    iconEmoji: null,
+    author: { firstName: 'ليلى', lastName: 'الفيتوري', avatarColor: '#8b5cf6', avatarInitials: 'لف', role: 'TEACHER' },
+  },
+];
+
+/** GET /competitions — CompetitionRow[] (2 rows). */
+export const COMPETITION_ROWS = [
+  {
+    id: 'cmp_e2e_1',
+    title: 'تحدي البرمجة التنافسية',
+    description: 'ثلاث مسائل خلال ساعتين.',
+    category: 'برمجة',
+    prize: 'شهادة + نقاط خبرة',
+    deadline: iso(24 * 6),
+    status: 'OPEN' as const,
+    iconEmoji: null,
+    themeColor: '#f15534',
+    organizer: { firstName: 'سالم', lastName: 'القرضابي', role: 'ADMIN' },
+    _count: { entries: 12 },
+  },
+  {
+    id: 'cmp_e2e_2',
+    title: 'مسابقة أفضل بحث قصير',
+    description: 'بحث من أربع صفحات في أي مقرّر.',
+    category: 'بحث',
+    prize: null,
+    deadline: iso(-24 * 3),
+    status: 'JUDGED' as const,
+    iconEmoji: null,
+    themeColor: null,
+    organizer: { firstName: 'ليلى', lastName: 'الفيتوري', role: 'TEACHER' },
+    _count: { entries: 8 },
+  },
+];
+
+/** GET /events — CampusEventRow[] (2 rows). */
+export const CAMPUS_EVENT_ROWS = [
+  {
+    id: 'evt_e2e_1',
+    title: 'لقاء الخريجين',
+    description: 'سؤال وجواب حول سوق العمل.',
+    location: 'قاعة المؤتمرات',
+    startsAt: iso(48),
+    endsAt: iso(51),
+    capacity: 120,
+    iconEmoji: null,
+    themeColor: null,
+    organizer: { firstName: 'سالم', lastName: 'القرضابي', role: 'ADMIN' },
+    _count: { rsvps: 64 },
+    myRsvp: null,
+  },
+  {
+    id: 'evt_e2e_2',
+    title: 'معمل مفتوح: قواعد البيانات',
+    description: 'تدريب عملي.',
+    location: 'المعمل ٣',
+    startsAt: iso(-24),
+    endsAt: iso(-22),
+    capacity: 30,
+    iconEmoji: null,
+    themeColor: null,
+    organizer: { firstName: 'ليلى', lastName: 'الفيتوري', role: 'TEACHER' },
+    _count: { rsvps: 28 },
+    myRsvp: 'GOING' as const,
+  },
+];
+
+/** GET /posts — Post[] (2 rows). */
+export const SOCIAL_POSTS = [
+  {
+    id: 'pst_e2e_1',
+    body: 'أنهيت مسار الخوارزميات الجشعة — المسألة الأخيرة كانت الأصعب.',
+    hashtags: ['خوارزميات'],
+    imageUrl: null,
+    createdAt: iso(-3),
+    author: { id: 'usr_e2e_student', firstName: 'أحمد', lastName: 'الزاوي', avatarColor: '#3b82f6', avatarInitials: 'أز' },
+    _count: { comments: 2, reactions: 5 },
+    viewerReacted: false,
+  },
+  {
+    id: 'pst_e2e_2',
+    body: 'جلسة مراجعة مسائية غدًا في المكتبة.',
+    hashtags: ['مراجعة'],
+    imageUrl: null,
+    createdAt: iso(-9),
+    author: { id: 'usr_e2e_2', firstName: 'مروة', lastName: 'البراني', avatarColor: '#0ea5e9', avatarInitials: 'مر' },
+    _count: { comments: 1, reactions: 3 },
+    viewerReacted: true,
+  },
+];
+
+/** GET /messages — the student/teacher inbox page (paginated + unread). */
+export const MESSAGES_PAGE = {
+  data: [
+    {
+      id: 'msg_e2e_1',
+      body: 'تم تمديد مهلة الواجب الثالث يومًا واحدًا.',
+      createdAt: iso(-2),
+      fromUser: { id: 'usr_e2e_teacher', firstName: 'ليلى', lastName: 'الفيتوري', avatarColor: '#8b5cf6' },
+      toUser: { id: 'usr_e2e_student', firstName: 'أحمد', lastName: 'الزاوي', avatarColor: '#3b82f6' },
+    },
+    {
+      id: 'msg_e2e_2',
+      body: 'شكرًا — وصل الملف وسأراجعه اليوم.',
+      createdAt: iso(-26),
+      fromUser: { id: 'usr_e2e_student', firstName: 'أحمد', lastName: 'الزاوي', avatarColor: '#3b82f6' },
+      toUser: { id: 'usr_e2e_teacher', firstName: 'ليلى', lastName: 'الفيتوري', avatarColor: '#8b5cf6' },
+    },
+  ],
+  meta: { total: 2, page: 1, limit: 30, totalPages: 1, unread: 1 },
+};
+
+/** GET /invites — InviteRow[] (1 row). */
+export const INVITE_ROWS = [
+  {
+    id: 'inv_e2e_1',
+    code: 'ALGO-2026-S',
+    role: 'STUDENT' as const,
+    offeringId: OFFERING_ID,
+    departmentId: null,
+    facultyId: 'fcl_e2e_1',
+    expiresAt: iso(24 * 10),
+    maxUses: 30,
+    usedCount: 12,
+    createdAt: iso(-24 * 5),
+    offering: { course: { code: 'CS-201', name: 'مقدمة في الخوارزميات' } },
+    department: null,
+    faculty: { name: 'كلية الهندسة' },
+  },
+];
+
+/* ── student learning surfaces ──────────────────────────────────── */
+
+/** GET /live/sessions — LiveSessionRow[] (1 LIVE + 1 SCHEDULED). */
+export const LIVE_SESSION_ROWS = [
+  {
+    id: 'liv_e2e_1',
+    offeringId: OFFERING_ID,
+    teacherId: TEACHER_USER.id,
+    title: 'مراجعة الخوارزميات الجشعة',
+    description: null,
+    topic: 'مراجعة قبل الاختبار',
+    scheduledAt: iso(-1),
+    startedAt: iso(-0.5),
+    endedAt: null,
+    status: 'LIVE' as const,
+    joinUrl: '/student/live',
+    recordingUrl: null,
+    offering: { id: OFFERING_ID, course: { name: 'مقدمة في الخوارزميات', code: 'CS-201', iconEmoji: null, themeColor: '#7c3aed' } },
+    teacher: { firstName: 'ليلى', lastName: 'الفيتوري', avatarInitials: 'لف', avatarColor: '#8b5cf6' },
+  },
+  {
+    id: 'liv_e2e_2',
+    offeringId: 'offr_e2e_databases',
+    teacherId: TEACHER_USER.id,
+    title: 'مقدمة في الاستعلامات',
+    description: null,
+    topic: null,
+    scheduledAt: iso(24),
+    startedAt: null,
+    endedAt: null,
+    status: 'SCHEDULED' as const,
+    joinUrl: null,
+    recordingUrl: null,
+    offering: { id: 'offr_e2e_databases', course: { name: 'قواعد البيانات', code: 'CS-210', iconEmoji: null, themeColor: '#0ea5e9' } },
+    teacher: { firstName: 'ليلى', lastName: 'الفيتوري', avatarInitials: 'لف', avatarColor: '#8b5cf6' },
+  },
+];
+
+/** GET /labs — VirtualLab[] (2 rows). */
+export const VIRTUAL_LABS = [
+  { id: 'lab_e2e_1', name: 'معمل الخوارزميات المرئيّ', platform: 'web', category: 'خوارزميات', iconEmoji: null, totalExperiments: 6, themeColor: '#7c3aed' },
+  { id: 'lab_e2e_2', name: 'معمل الشبكات المحاكى', platform: 'web', category: 'شبكات', iconEmoji: null, totalExperiments: 4, themeColor: '#0ea5e9' },
+];
+
+/** GET /ar-experiences — ArExperience[] (2 rows). */
+export const AR_EXPERIENCES = [
+  { id: 'arx_e2e_1', title: 'جولة معمل الدوائر', subject: 'إلكترونيات', type: 'VR' as const, iconEmoji: null, themeColor: null, description: 'تجول في المعمل وافحص المكوّنات.' },
+  { id: 'arx_e2e_2', title: 'تشريح المحرّك الكهربائي', subject: 'آلات كهربائية', type: 'AR' as const, iconEmoji: null, themeColor: null, description: 'طبّق المكوّنات على النموذج الحقيقي.' },
+];
+
+/** GET /me/lab-sessions — MyLabStats. */
+export const MY_LAB_STATS = {
+  active: 1,
+  completed: 2,
+  total: 3,
+  recent: [
+    { id: 'lbs_e2e_1', experimentName: 'أقصر مسار — ديكسترا', progressPct: 60, score: null, startedAt: iso(-24), completedAt: null, lab: { id: 'lab_e2e_1', name: 'معمل الخوارزميات المرئيّ' } },
+  ],
+};
+
+/** GET /me/matrix — MatrixCourse[] (1 course, 3 concepts). */
+export const ME_MATRIX = [
+  {
+    courseId: 'crs_e2e_algorithms',
+    courseCode: 'CS-201',
+    courseName: 'مقدمة في الخوارزميات',
+    themeColor: '#7c3aed',
+    offeringId: OFFERING_ID,
+    concepts: [
+      { id: 'cpt_e2e_1', name: 'تحليل التعقيد', level: 3, attempts: 4 },
+      { id: 'cpt_e2e_2', name: 'الخوارزميات الجشعة', level: 2, attempts: 3 },
+      { id: 'cpt_e2e_3', name: 'البرمجة الديناميكية', level: 0, attempts: 1 },
+    ],
+  },
+];
+
+/** GET /me/skills — UserSkill[] (3 rows). */
+export const USER_SKILLS = [
+  { level: 3, progressPct: 72, skill: { id: 'skl_e2e_1', name: 'تحليل الخوارزميات', category: 'خوارزميات', icon: null } },
+  { level: 2, progressPct: 45, skill: { id: 'skl_e2e_2', name: 'كتابة التقارير الفنية', category: 'تواصل', icon: null } },
+  { level: 1, progressPct: 20, skill: { id: 'skl_e2e_3', name: 'استعلامات SQL', category: 'بيانات', icon: null } },
+];
+
+/** GET /me/research — ResearchPaper[] (2 rows). */
+export const MY_RESEARCH = [
+  {
+    id: 'ppr_e2e_mine_1',
+    title: 'مقارنة استراتيجيات التخزين المؤقت',
+    abstract: 'قياس زمن الاستجابة مع ثلاث استراتيجيات.',
+    fileUrl: null,
+    status: 'GRADED' as const,
+    plagiarismPct: 4,
+    aiContentPct: 1,
+    grade: 17,
+    feedback: 'منهجية واضحة.',
+    uploadedAt: iso(-24 * 12),
+    scannedAt: iso(-24 * 11),
+    gradedAt: iso(-24 * 8),
+    publishedAt: null,
+    student: { id: 'usr_e2e_student', firstName: 'أحمد', lastName: 'الزاوي', avatarInitials: 'أز', avatarColor: '#3b82f6' },
+    reviewer: { id: TEACHER_USER.id, firstName: 'ليلى', lastName: 'الفيتوري' },
+    offering: { id: OFFERING_ID, course: { name: 'مقدمة في الخوارزميات', code: 'CS-201' } },
+  },
+  {
+    id: 'ppr_e2e_mine_2',
+    title: 'أثر الفهرسة على أداء الاستعلام',
+    abstract: null,
+    fileUrl: null,
+    status: 'UPLOADED' as const,
+    plagiarismPct: null,
+    aiContentPct: null,
+    grade: null,
+    feedback: null,
+    uploadedAt: iso(-4),
+    scannedAt: null,
+    gradedAt: null,
+    publishedAt: null,
+    student: { id: 'usr_e2e_student', firstName: 'أحمد', lastName: 'الزاوي', avatarInitials: 'أز', avatarColor: '#3b82f6' },
+    reviewer: null,
+    offering: { id: 'offr_e2e_databases', course: { name: 'قواعد البيانات', code: 'CS-210' } },
+  },
+];
+
+/** GET /me/materials — StudentMaterial[] (2 rows). */
+export const STUDENT_MATERIALS = [
+  { id: 'mat_e2e_1', name: 'شرح الخوارزميات الجشعة.pdf', type: 'PDF' as const, url: '/api/v1/files/materials/greedy-notes.pdf', sizeBytes: 812_544, createdAt: iso(-24 * 3), course: { code: 'CS-201', name: 'مقدمة في الخوارزميات' } },
+  { id: 'mat_e2e_2', name: 'تمارين الوحدة الرابعة.docx', type: 'DOC' as const, url: '/api/v1/files/materials/unit4-exercises.docx', sizeBytes: 41_984, createdAt: iso(-24), course: { code: 'CS-201', name: 'مقدمة في الخوارزميات' } },
+];
+
+/** GET /me/loans — MyLoan[] (1 ACTIVE row). */
+export const MY_LOANS = [
+  {
+    id: 'loan_e2e_1',
+    bookId: 'bok_e2e_c',
+    status: 'ACTIVE' as const,
+    borrowedAt: iso(-24 * 6),
+    dueAt: iso(24 * 8),
+    returnedAt: null,
+    book: { id: 'bok_e2e_c', title: 'البرمجة بلغة C', author: 'د. عبد الرحمن الشريف', category: 'prog' },
+  },
+];
+
+/** GET /mooc — MoocCourse[] (2 rows). */
+export const MOOC_COURSES = [
+  { id: 'moc_e2e_1', title: 'الخوارزميات: التصميم والتحليل', organization: 'جامعة ستانفورد', iconEmoji: null, category: 'خوارزميات', durationHours: 28, level: 'متوسط', rating: '4.8', enrolled: 320, hasCertificate: true, jobReady: false, externalUrl: null },
+  { id: 'moc_e2e_2', title: 'أساسيات علم البيانات', organization: 'منصة مفتوحة', iconEmoji: null, category: 'بيانات', durationHours: 40, level: 'مبتدئ', rating: '4.5', enrolled: 210, hasCertificate: true, jobReady: true, externalUrl: null },
+];
+
+/** GET /jobs — JobsPayload ({data, meta, appliedJobIds}). */
+export const JOBS_PAYLOAD = {
+  data: [
+    { id: 'job_e2e_1', title: 'مطوّر واجهات — تدريب صيفي', company: 'شركة ليبيانا للتقنية', location: 'طرابلس', type: 'INTERNSHIP' as const, salary: null, category: 'تطوير ويب', iconEmoji: null, postedAt: iso(-24 * 2) },
+    { id: 'job_e2e_2', title: 'محلّل بيانات', company: 'مكتب الإحصاء', location: 'بنغازي', type: 'FULL_TIME' as const, salary: 'حسب الخبرة', category: 'بيانات', iconEmoji: null, postedAt: iso(-24 * 6) },
+  ],
+  meta: { page: 1, limit: 50, total: 2, totalPages: 1 },
+  appliedJobIds: ['job_e2e_2'],
+};
+
+/* ── training / gamification ────────────────────────────────────── */
+
+/** GET /training/me — TrainingMeSummary. */
+export const TRAINING_ME_SUMMARY = {
+  points: 1240,
+  level: { level: 4, tier: 'GOLD' as const, toNext: 260, pctIntoLevel: 65 },
+  badgeCount: 6,
+  certificateCount: 1,
+  tracksEnrolled: 1,
+  tracksCompleted: 1,
+  recentBadges: [
+    { slug: 'first-track', title: 'أول مسار مكتمل', iconEmoji: null, rarity: 'COMMON' as const, earnedAt: iso(-24 * 9) },
+  ],
+};
+
+/** GET /training/me/badges — UserBadgeRow[] (3 rows, 2 earned). */
+export const TRAINING_BADGES = [
+  { slug: 'first-track', title: 'أول مسار مكتمل', description: 'أكملت مسارًا تدريبيًا كاملًا.', iconEmoji: null, themeColor: null, rarity: 'COMMON' as const, earnedAt: iso(-24 * 9), isEarned: true },
+  { slug: 'night-owl', title: 'المثابر', description: 'عشر دروس في أسبوع.', iconEmoji: null, themeColor: null, rarity: 'RARE' as const, earnedAt: iso(-24 * 4), isEarned: true },
+  { slug: 'deep-diver', title: 'الغوّاص', description: 'أنجز كل تجارب المعمل.', iconEmoji: null, themeColor: null, rarity: 'EPIC' as const, earnedAt: null, isEarned: false },
+];
+
+/** GET /training/me/certificates — TrainingCertificate[] (1 row). */
+export const TRAINING_CERTIFICATES = [
+  { id: 'crt_e2e_1', title: 'أساسيات الخوارزميات', issuer: 'مركز التطوير', issuedAt: iso(-24 * 9), hours: 12, status: 'COMPLETED' as const, trackSlug: null, iconEmoji: null, themeColor: null },
+];
+
+/** GET /training/leaderboard — LeaderboardRow[] (3 rows). */
+export const TRAINING_LEADERBOARD = [
+  { rank: 1, userId: 'usr_e2e_2', name: 'مروة البراني', avatarColor: '#0ea5e9', avatarInitials: 'مر', points: 1810, level: { level: 5, tier: 'GOLD' as const, toNext: 190, pctIntoLevel: 81 } },
+  { rank: 2, userId: 'usr_e2e_student', name: 'أحمد الزاوي', avatarColor: '#3b82f6', avatarInitials: 'أز', points: 1240, level: { level: 4, tier: 'GOLD' as const, toNext: 260, pctIntoLevel: 65 } },
+  { rank: 3, userId: 'usr_e2e_3', name: 'يوسف الزاوي', avatarColor: '#6d28d9', avatarInitials: 'يز', points: 980, level: { level: 3, tier: 'SILVER' as const, toNext: 320, pctIntoLevel: 36 } },
+];
+
+/** GET /leaderboard — LeaderEntry[] (3 rows, the colleges XP board). */
+export const XP_LEADERBOARD = [
+  { id: 'usr_e2e_2', firstName: 'مروة', lastName: 'البراني', avatarInitials: 'مر', avatarColor: '#0ea5e9', totalXp: 1810, level: 5 },
+  { id: 'usr_e2e_student', firstName: 'أحمد', lastName: 'الزاوي', avatarInitials: 'أز', avatarColor: '#3b82f6', totalXp: 1240, level: 4 },
+  { id: 'usr_e2e_3', firstName: 'يوسف', lastName: 'الزاوي', avatarInitials: 'يز', avatarColor: '#6d28d9', totalXp: 980, level: 3 },
+];
+
+/** GET /me/achievements — UserAchievement[] (2 rows). */
+export const USER_ACHIEVEMENTS = [
+  { unlockedAt: iso(-24 * 9), achievement: { id: 'ach_e2e_1', name: 'أول مسار', description: 'أكملت مسارًا تدريبيًا', icon: null, xp: 50 } },
+  { unlockedAt: iso(-24 * 2), achievement: { id: 'ach_e2e_2', name: 'سلسلة أسبوع', description: 'سبعة أيام متتالية', icon: null, xp: 30 } },
+];
+
+/* ── teacher surfaces ───────────────────────────────────────────── */
+
+/** GET /teacher/me/materials — TeacherMaterial[] (2 rows). */
+export const TEACHER_MATERIALS = [
+  { id: 'tmat_e2e_1', name: 'محاضرة الجشع — الشرائح.pptx', type: 'PPT' as const, url: '/api/v1/files/materials/greedy-slides.pptx', sizeBytes: 1_468_006, downloads: 18, views: 40, createdAt: iso(-24 * 4), course: { code: 'CS-201', name: 'مقدمة في الخوارزميات' } },
+  { id: 'tmat_e2e_2', name: 'ورقة تمارين ٤.pdf', type: 'PDF' as const, url: '/api/v1/files/materials/sheet4.pdf', sizeBytes: 302_080, downloads: 12, views: 33, createdAt: iso(-24 * 2), course: { code: 'CS-201', name: 'مقدمة في الخوارزميات' } },
+];
+
+/** GET /me/teacher-profile — TeacherFullProfile. */
+export const TEACHER_FULL_PROFILE = {
+  userId: TEACHER_USER.id,
+  name: 'ليلى الفيتوري',
+  firstName: 'ليلى',
+  lastName: 'الفيتوري',
+  email: TEACHER_USER.email,
+  avatarColor: TEACHER_USER.avatarColor,
+  avatarInitials: TEACHER_USER.avatarInitials,
+  specialty: 'خوارزميات وهندسة برمجيات',
+  rank: 'أستاذ مشارك',
+  bio: null,
+  degreeLevel: 'PHD' as const,
+  yearsExperience: 12,
+  certifications: [{ title: 'PMP', issuer: 'PMI', year: 2019 }],
+  publications: [{ title: 'جدولة المهام في الأنظمة الموزّعة', venue: 'مجلة الهندسة', year: 2023, url: undefined }],
+  awards: [],
+  profileImageUrl: null,
+  officeLocation: 'مبنى ٤ — مكتب 212',
+  officeHours: 'الأحد والثلاثاء ١٠–١٢',
+  websiteUrl: null,
+  subjectKeywords: ['خوارزميات', 'هندسة برمجيات'],
+  verifiedAt: iso(-24 * 200),
+  department: 'علوم الحاسوب',
+  faculty: 'كلية الهندسة',
+  courses: [
+    { offeringId: OFFERING_ID, code: 'CS-201', name: 'مقدمة في الخوارزميات', iconEmoji: null, themeColor: '#7c3aed', credits: 3, enrolled: 24, term: 'ربيع 2026' },
+  ],
+  workload: { courseCount: 1, totalCredits: 3, totalEnrolled: 24 },
+};
+
+/** GET /teacher/offerings/:id/students — TeacherStudentRow[] (3 rows). */
+export const OFFERING_STUDENTS = [
+  { studentId: 'usr_e2e_student', name: 'أحمد الزاوي', universityId: '2026001', avatarInitials: 'أز', avatarColor: '#3b82f6', attendancePct: 92, absences: 1, lateCount: 1, avgGrade: 84, watchPct: 78, riskScore: 12, riskLevel: 'OK' as const, signals: [], suggestion: 'مستوى ثابت.' },
+  { studentId: 'usr_e2e_2', name: 'مروة البراني', universityId: '2026002', avatarInitials: 'مر', avatarColor: '#0ea5e9', attendancePct: 74, absences: 4, lateCount: 2, avgGrade: 66, watchPct: 41, riskScore: 58, riskLevel: 'WATCH' as const, signals: ['غياب متكرر'], suggestion: 'تنبيه ودّي قبل الاختبار.' },
+  { studentId: 'usr_e2e_3', name: 'يوسف الزاوي', universityId: '2026003', avatarInitials: 'يز', avatarColor: '#6d28d9', attendancePct: 48, absences: 9, lateCount: 4, avgGrade: 41, watchPct: 12, riskScore: 86, riskLevel: 'AT_RISK' as const, signals: ['غياب مرتفع', 'تدني الدرجات'], suggestion: 'خطة علاجية عاجلة.' },
+];
+
+/** GET /teacher/offerings/:id/analytics — OfferingAnalytics. */
+export const OFFERING_ANALYTICS = {
+  enrolled: 24,
+  totalSessions: 12,
+  overallAttendance: 81,
+  avgGrade: 72,
+  passRate: 78,
+  assignmentCount: 4,
+  examCount: 2,
+};
+
+/** GET /offerings/:id/grades — OfferingGradeWireRow[] (score is the
+ *  prisma-Decimal wire string; the hook normalizes to number). */
+export const OFFERING_GRADES = [
+  { id: 'grd_e2e_1', offeringId: OFFERING_ID, studentId: 'usr_e2e_student', kind: 'MIDTERM' as const, score: '17', maxScore: 20, weight: 30, feedback: null, recordedAt: iso(-24 * 10), student: { id: 'usr_e2e_student', firstName: 'أحمد', lastName: 'الزاوي' } },
+  { id: 'grd_e2e_2', offeringId: OFFERING_ID, studentId: 'usr_e2e_2', kind: 'MIDTERM' as const, score: '12', maxScore: 20, weight: 30, feedback: 'راجع الأشجار', recordedAt: iso(-24 * 10), student: { id: 'usr_e2e_2', firstName: 'مروة', lastName: 'البراني' } },
+];
+
+/** GET /research/queue — ResearchPaper[] (2 rows awaiting action). */
+export const RESEARCH_QUEUE = [
+  {
+    id: 'ppr_e2e_q_1',
+    title: 'تحسين جدولة الفصول بالخوارزميات الجشعة',
+    abstract: 'مقارنة ثلاث استراتيجيات جدولة.',
+    fileUrl: null,
+    status: 'CHECKS_PASSED' as const,
+    plagiarismPct: 6,
+    aiContentPct: 2,
+    grade: null,
+    feedback: null,
+    uploadedAt: iso(-24 * 3),
+    scannedAt: iso(-24 * 2),
+    gradedAt: null,
+    publishedAt: null,
+    student: { id: 'usr_e2e_3', firstName: 'يوسف', lastName: 'الزاوي', avatarInitials: 'يز', avatarColor: '#6d28d9', email: 'yusuf@zu.edu.ly' },
+    reviewer: null,
+    offering: { id: OFFERING_ID, course: { name: 'مقدمة في الخوارزميات', code: 'CS-201' } },
+  },
+  {
+    id: 'ppr_e2e_q_2',
+    title: 'قياس زمن الاستجابة في قواعد البيانات الموزّعة',
+    abstract: null,
+    fileUrl: null,
+    status: 'SCANNING' as const,
+    plagiarismPct: null,
+    aiContentPct: null,
+    grade: null,
+    feedback: null,
+    uploadedAt: iso(-6),
+    scannedAt: null,
+    gradedAt: null,
+    publishedAt: null,
+    student: { id: 'usr_e2e_2', firstName: 'مروة', lastName: 'البراني', avatarInitials: 'مر', avatarColor: '#0ea5e9', email: 'marwa@zu.edu.ly' },
+    reviewer: null,
+    offering: { id: 'offr_e2e_databases', course: { name: 'قواعد البيانات', code: 'CS-210' } },
+  },
+];
+
+/* ── admin / registrar ──────────────────────────────────────────── */
+
+/** GET /admin/users — AdminUsersPage (paginated, 3 rows). */
+export const ADMIN_USERS_PAGE = {
+  data: [
+    { id: 'usr_e2e_student', email: 'student@zu.edu.ly', firstName: 'أحمد', lastName: 'الزاوي', role: 'STUDENT' as const, avatarColor: '#3b82f6', avatarInitials: 'أز', isActive: true, createdAt: iso(-24 * 90) },
+    { id: 'usr_e2e_teacher', email: 'teacher@zu.edu.ly', firstName: 'ليلى', lastName: 'الفيتوري', role: 'TEACHER' as const, avatarColor: '#8b5cf6', avatarInitials: 'لف', isActive: true, createdAt: iso(-24 * 400) },
+    { id: 'usr_e2e_9', email: 'former@zu.edu.ly', firstName: 'خالد', lastName: 'المبروك', role: 'STUDENT' as const, avatarColor: null, avatarInitials: 'خم', isActive: false, createdAt: iso(-24 * 600) },
+  ],
+  meta: { page: 1, limit: 20, total: 3, totalPages: 1 },
+};
+
+/** GET /admin/students — AdminStudentsPage (paginated, 2 rows). */
+export const ADMIN_STUDENTS_PAGE = {
+  data: [
+    { id: 'usr_e2e_student', email: 'student@zu.edu.ly', firstName: 'أحمد', lastName: 'الزاوي', isActive: true, avatarColor: '#3b82f6', avatarInitials: 'أز', createdAt: iso(-24 * 90), studentProfile: { universityId: '2026001', year: 2, gpa: '3.4', totalXp: 1240, level: 4, faculty: { id: 'fcl_e2e_1', name: 'كلية الهندسة' }, department: { id: 'dep_e2e_1', name: 'علوم الحاسوب' } } },
+    { id: 'usr_e2e_2', email: 'marwa@zu.edu.ly', firstName: 'مروة', lastName: 'البراني', isActive: true, avatarColor: '#0ea5e9', avatarInitials: 'مر', createdAt: iso(-24 * 120), studentProfile: { universityId: '2026002', year: 3, gpa: 2.9, totalXp: 1810, level: 5, faculty: { id: 'fcl_e2e_1', name: 'كلية الهندسة' }, department: { id: 'dep_e2e_1', name: 'علوم الحاسوب' } } },
+  ],
+  meta: { total: 2, page: 1, limit: 20, totalPages: 1 },
+};
+
+/** GET /admin/digital — DigitalMetrics. */
+export const DIGITAL_METRICS = {
+  totalUsers: 1284,
+  activeUsers: 812,
+  adoptionPct: 63,
+  onlineExams: 46,
+  examAttempts: 1205,
+  labSessions: 310,
+  moocEnrollments: 190,
+  researchPapers: 74,
+  liveSessions: 28,
+  materialsUploaded: 640,
+};
+
+/* ── quality ────────────────────────────────────────────────────── */
+
+/** GET /quality/courses — QualityRosterEnvelope<QualityCourse>. */
+export const QUALITY_COURSES = {
+  data: [
+    { id: 'offr_e2e_algorithms', term: 'ربيع 2026', course: { id: 'crs_e2e_algorithms', name: 'مقدمة في الخوارزميات', code: 'CS-201', themeColor: '#7c3aed' }, teacher: { id: TEACHER_USER.id, firstName: 'ليلى', lastName: 'الفيتوري' }, _count: { enrollments: 24, lectures: 12, materials: 9, assignments: 4 }, metrics: { attendanceRate: 81, completionRate: 74 } },
+    { id: 'offr_e2e_databases', term: 'ربيع 2026', course: { id: 'crs_e2e_databases', name: 'قواعد البيانات', code: 'CS-210', themeColor: '#0ea5e9' }, teacher: { id: TEACHER_USER.id, firstName: 'ليلى', lastName: 'الفيتوري' }, _count: { enrollments: 19, lectures: 10, materials: 7, assignments: 3 }, metrics: { attendanceRate: 69, completionRate: 58 } },
+  ],
+  meta: { total: 2 },
+};
+
+/** GET /quality/professors — QualityRosterEnvelope<ProfessorRow>. */
+export const QUALITY_PROFESSORS = {
+  data: [
+    { id: TEACHER_USER.id, firstName: 'ليلى', lastName: 'الفيتوري', avatarInitials: 'لف', avatarColor: '#8b5cf6', rank: 'أستاذ مشارك', specialty: 'خوارزميات', faculty: 'كلية الهندسة', department: 'علوم الحاسوب', offerings: 2, totals: { enrollments: 43, materials: 16, lectures: 22, assignments: 7, attendance: 76 }, satisfaction: 88, satisfactionEstimated: false, responseHours: 6, responseHoursEstimated: false, compliance: 92 },
+  ],
+  meta: { total: 1 },
+};
+
+/** GET /quality/curriculum — FacultyTree[]. */
+export const QUALITY_CURRICULUM = [
+  {
+    id: 'fcl_e2e_1',
+    name: 'كلية الهندسة',
+    iconEmoji: null,
+    departments: [
+      {
+        id: 'dep_e2e_1',
+        name: 'علوم الحاسوب',
+        courses: [
+          { id: 'crs_e2e_algorithms', name: 'مقدمة في الخوارزميات', code: 'CS-201', themeColor: '#7c3aed', offerings: [{ id: OFFERING_ID, term: 'ربيع 2026', _count: { lectures: 12, materials: 9, assignments: 4, enrollments: 24 } }], _count: { offerings: 1, concepts: 14 } },
+        ],
+      },
+    ],
+  },
+];
+
+/* ── owner ──────────────────────────────────────────────────────── */
+
+/** GET /owner/institutions — OwnerInstitution[] (1 row). */
+export const OWNER_INSTITUTIONS = [
+  {
+    id: 'ins_e2e_1',
+    name: 'مساحة عمل أُلارا التجريبية',
+    nameEn: 'Ulara Demo Workspace',
+    slug: 'ulara-demo',
+    status: 'ACTIVE' as const,
+    createdAt: iso(-24 * 365),
+    updatedAt: iso(-24 * 30),
+    activeMembershipCount: 5,
+    facultyCount: 1,
+    admins: [{ userId: ADMIN_USER.id, email: ADMIN_USER.email, firstName: 'سالم', lastName: 'القرضابي', membershipId: 'mbsh_e2e_1', isActive: true }],
+  },
+];
+
+/** GET /owner/users — OwnerUsersPage (paginated, 3 rows). */
+export const OWNER_USERS_PAGE = {
+  data: [
+    { id: 'usr_e2e_student', email: 'student@zu.edu.ly', firstName: 'أحمد', lastName: 'الزاوي', role: 'STUDENT', avatarColor: '#3b82f6', avatarInitials: 'أز', isActive: true, createdAt: iso(-24 * 90), memberships: [{ institution: { id: 'ins_e2e_1', name: 'مساحة عمل أُلارا التجريبية', slug: 'ulara-demo', status: 'ACTIVE' as const } }] },
+    { id: 'usr_e2e_teacher', email: 'teacher@zu.edu.ly', firstName: 'ليلى', lastName: 'الفيتوري', role: 'TEACHER', avatarColor: '#8b5cf6', avatarInitials: 'لف', isActive: true, createdAt: iso(-24 * 400), memberships: [{ institution: { id: 'ins_e2e_1', name: 'مساحة عمل أُلارا التجريبية', slug: 'ulara-demo', status: 'ACTIVE' as const } }] },
+    { id: 'usr_e2e_quality', email: 'quality@zu.edu.ly', firstName: 'عائشة', lastName: 'الباروني', role: 'QUALITY', avatarColor: '#d97706', avatarInitials: 'عب', isActive: true, createdAt: iso(-24 * 200), memberships: [{ institution: { id: 'ins_e2e_1', name: 'مساحة عمل أُلارا التجريبية', slug: 'ulara-demo', status: 'ACTIVE' as const } }] },
+  ],
+  meta: { page: 1, limit: 20, total: 3, totalPages: 1 },
+};
+
+/** GET /owner/feature-flags — FeatureFlag[] (2 rows). */
+export const OWNER_FEATURE_FLAGS = [
+  { id: 'ffg_e2e_1', slug: 'ai-assistant', name: 'المساعد الذكي', description: null, enabled: true, category: 'ai', updatedAt: iso(-24 * 14), updatedBy: OWNER_USER.id },
+  { id: 'ffg_e2e_2', slug: 'community-posts', name: 'منشورات المجتمع', description: null, enabled: false, category: 'community', updatedAt: iso(-24 * 60), updatedBy: null },
+];
+
+/** GET /owner/settings — PlatformSetting[] (2 rows). */
+export const OWNER_SETTINGS = [
+  { id: 'pst_e2e_1', key: 'platform.name', value: 'أُلارا', category: 'brand', updatedAt: iso(-24 * 90), updatedBy: null },
+  { id: 'pst_e2e_2', key: 'maintenance.enabled', value: 'false', category: 'ops', updatedAt: iso(-24 * 2), updatedBy: OWNER_USER.id },
+];
+
+/** GET /owner/system — OwnerSystem. */
+export const OWNER_SYSTEM = {
+  alerts: {
+    open: [
+      { id: 'alr_e2e_1', severity: 'warning', category: 'storage', title: 'اقتراب سقف التخزين', message: '٧٨٪ من السقف مستخدم.', createdAt: iso(-24), metadata: null },
+    ],
+    openCount: 1,
+    criticalCount: 0,
+  },
+  activity: { recentEventsLast7Days: 214 },
+  storage: { driver: 'local', persistent: false },
+};
+
+/** GET /owner/ai-metrics — AiMetrics. */
+export const OWNER_AI_METRICS = {
+  totalRequests: 1042,
+  totalTokens: 812_400,
+  successRate: 96,
+  avgLatencyMs: 820,
+  byFeature: [
+    { feature: 'assistant', count: 720, tokens: 601_000 },
+    { feature: 'exam-gen', count: 322, tokens: 211_400 },
+  ],
+  trend: [
+    { date: iso(-24 * 6).slice(0, 10), count: 118 },
+    { date: iso(-24 * 5).slice(0, 10), count: 141 },
+    { date: iso(-24 * 4).slice(0, 10), count: 132 },
+    { date: iso(-24 * 3).slice(0, 10), count: 158 },
+    { date: iso(-24 * 2).slice(0, 10), count: 190 },
+    { date: iso(-24).slice(0, 10), count: 165 },
+    { date: FIXED_NOW_ISO.slice(0, 10), count: 138 },
+  ],
+};
+
+/** GET /owner/governance — GovernanceMetrics. */
+export const OWNER_GOVERNANCE = {
+  permissionChanges: 12,
+  roleChanges: 4,
+  newUsersThisMonth: 36,
+  weeklyGrowth: [
+    { week: iso(-24 * 28).slice(0, 10), count: 5 },
+    { week: iso(-24 * 21).slice(0, 10), count: 8 },
+    { week: iso(-24 * 14).slice(0, 10), count: 11 },
+    { week: iso(-24 * 7).slice(0, 10), count: 12 },
+  ],
+};
+
+/** GET /owner/login-analytics — LoginAnalytics. */
+export const OWNER_LOGIN_ANALYTICS = {
+  total: 2140,
+  successCount: 1980,
+  failureCount: 160,
+  daily: [
+    { date: iso(-24 * 2).slice(0, 10), success: 92, failure: 6 },
+    { date: iso(-24).slice(0, 10), success: 104, failure: 9 },
+    { date: FIXED_NOW_ISO.slice(0, 10), success: 88, failure: 5 },
+  ],
+  topReasons: [{ reason: 'INVALID_CREDENTIALS', count: 141 }],
+};
+
+/* ── feedback inbox (r323 B3.6) ─────────────────────────────────── */
+
+/** GET /feedback — the registrar/owner inbox page (paginated). */
+export const FEEDBACK_PAGE = {
+  data: [
+    {
+      id: 'fbk_e2e_1',
+      kind: 'BUG' as const,
+      role: 'STUDENT',
+      route: '/student/matrix',
+      userAgent: 'Chrome/148',
+      console: null,
+      note: 'نسبة الإتقان تظهر معكوسة عند العرض.',
+      screenshot: null,
+      status: 'open' as const,
+      createdAt: iso(-8),
+      user: { id: 'usr_e2e_student', firstName: 'أحمد', lastName: 'الزاوي', role: 'STUDENT' },
+    },
+    {
+      id: 'fbk_e2e_2',
+      kind: 'IDEA' as const,
+      role: 'TEACHER',
+      route: '/teacher/grades',
+      userAgent: null,
+      console: null,
+      note: 'تصدير الدرجات بصيغة جدول.',
+      screenshot: null,
+      status: 'triage' as const,
+      createdAt: iso(-24 * 2),
+      user: { id: 'usr_e2e_teacher', firstName: 'ليلى', lastName: 'الفيتوري', role: 'TEACHER' },
+    },
+  ],
+  meta: { total: 2, totalPages: 1, page: 1 },
+};
+
+/** GET /client-errors — the crash/error half of the inbox. */
+export const CLIENT_ERRORS_PAGE = {
+  data: [
+    {
+      id: 'cer_e2e_1',
+      kind: 'js_error' as const,
+      message: 'Cannot read properties of undefined (reading \'map\')',
+      stack: null,
+      route: '/student/gamification',
+      role: 'STUDENT',
+      breadcrumbs: null,
+      appVersion: null,
+      updateId: null,
+      runtimeVersion: null,
+      deviceModel: null,
+      osName: 'Android',
+      osVersion: '14',
+      reviewedAt: null,
+      createdAt: iso(-30),
+      user: { id: 'usr_e2e_student', firstName: 'أحمد', lastName: 'الزاوي', email: 'student@zu.edu.ly' },
+    },
+  ],
+  meta: { total: 1, totalPages: 1, page: 1, unreviewed: 1 },
+};
+
+/* ── the document viewer's file stream ──────────────────────────── */
+
+/** A minimal, valid one-page PDF built with correct xref offsets so
+ *  pdf.js parses it without recovery mode. The page is blank — the
+ *  viewer fixture needs structure, not content. */
+export function tinyPdfBytes(): Buffer {
+  const objects = [
+    '<< /Type /Catalog /Pages 2 0 R >>',
+    '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
+    '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << >> /Contents 4 0 R >>',
+    '<< /Length 44 >>\nstream\nBT /F1 12 Tf 72 770 Td (ulara fixture) Tj ET\nendstream',
+  ];
+  let out = '%PDF-1.4\n';
+  const offsets: number[] = [];
+  objects.forEach((body, i) => {
+    offsets.push(out.length);
+    out += `${i + 1} 0 obj\n${body}\nendobj\n`;
+  });
+  const xrefStart = out.length;
+  out += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+  for (const off of offsets) out += `${String(off).padStart(10, '0')} 00000 n \n`;
+  out += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefStart}\n%%EOF`;
+  return Buffer.from(out, 'latin1');
+}
+
+/** GET /research/:paperId/annotations — PaperAnnotation[] (1 row). */
+export const PAPER_ANNOTATIONS = [
+  {
+    id: 'ant_e2e_1',
+    paperId: 'ppr_e2e_q_1',
+    page: 2,
+    comment: 'وضّح مقاييس المقارنة هنا.',
+    color: null,
+    createdAt: iso(-20),
+    author: { id: TEACHER_USER.id, firstName: 'ليلى', lastName: 'الفيتوري', role: 'TEACHER' as const, avatarColor: '#8b5cf6', avatarInitials: 'لف' },
+  },
+];
+
+/** GET /exams/templates/:id/attempts — ExamAttemptRow[] (2 rows). */
+export const TEMPLATE_ATTEMPTS = [
+  {
+    id: 'att_e2e_1',
+    studentId: 'usr_e2e_student',
+    studentName: 'أحمد الزاوي',
+    status: 'SUBMITTED' as const,
+    startedAt: iso(-26),
+    submittedAt: iso(-25),
+    score: null,
+    maxScore: 20,
+    pendingReview: 1,
+    pendingAnswers: [
+      { answerId: 'ans_e2e_1', questionId: 'qst_e2e_1', prompt: 'متى يضمن الخيار الجشع الحل الأمثل؟', type: 'SHORT' as const, points: 5, studentAnswer: 'عند تحقّق خاصية الاختيار الجشع والبنية الفرعية المثلى.' },
+    ],
+  },
+  {
+    id: 'att_e2e_2',
+    studentId: 'usr_e2e_2',
+    studentName: 'مروة البراني',
+    status: 'GRADED' as const,
+    startedAt: iso(-50),
+    submittedAt: iso(-49),
+    score: 17,
+    maxScore: 20,
+    pendingReview: 0,
+    pendingAnswers: [],
+  },
+];

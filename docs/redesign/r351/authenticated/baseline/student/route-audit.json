@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-21T16:23:37.872Z",
+  "generatedAt": "2026-11-21T16:56:46.568Z",
   "base": "http://localhost:5302",
   "matrix": "full",
   "visitedCells": 154,
@@ -8,14 +8,14 @@
     {
       "role": "STUDENT",
       "route": "/student/dashboard",
-      "words": 294,
-      "viewport": "1024x768"
+      "words": 297,
+      "viewport": "1440x900"
     },
     {
       "role": "STUDENT",
       "route": "/student/university",
       "words": 259,
-      "viewport": "1024x768"
+      "viewport": "1440x900"
     },
     {
       "role": "STUDENT",
@@ -31,8 +31,20 @@
     },
     {
       "role": "STUDENT",
+      "route": "/student/research",
+      "words": 196,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "STUDENT",
       "route": "/student/payment",
       "words": 182,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "STUDENT",
+      "route": "/student/ai",
+      "words": 177,
       "viewport": "1440x900"
     },
     {
@@ -55,9 +67,15 @@
     },
     {
       "role": "STUDENT",
-      "route": "/student/ai",
-      "words": 161,
-      "viewport": "1024x768"
+      "route": "/student/matrix",
+      "words": 151,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "STUDENT",
+      "route": "/student/webinars",
+      "words": 146,
+      "viewport": "1440x900"
     },
     {
       "role": "STUDENT",
@@ -81,79 +99,61 @@
       "role": "STUDENT",
       "route": "/student/online-exams",
       "words": 138,
-      "viewport": "1024x768"
-    },
-    {
-      "role": "STUDENT",
-      "route": "/student/webinars",
-      "words": 116,
       "viewport": "1440x900"
     },
     {
       "role": "STUDENT",
       "route": "/student/lectures/lec_e2e_greedy",
-      "words": 116,
-      "viewport": "768x900"
+      "words": 118,
+      "viewport": "1440x900"
     },
     {
       "role": "STUDENT",
       "route": "/student/courses",
-      "words": 112,
+      "words": 115,
       "viewport": "1440x900"
     },
     {
       "role": "STUDENT",
-      "route": "/student/research",
-      "words": 105,
-      "viewport": "1024x768"
-    },
-    {
-      "role": "STUDENT",
-      "route": "/student/matrix",
-      "words": 103,
+      "route": "/student/gamification",
+      "words": 115,
       "viewport": "1440x900"
     },
     {
       "role": "STUDENT",
-      "route": "/student/online-exams/exm_e2e_quiz3",
-      "words": 90,
-      "viewport": "1440x900"
-    },
-    {
-      "role": "STUDENT",
-      "route": "/student/alerts",
-      "words": 84,
-      "viewport": "1440x900"
-    },
-    {
-      "role": "STUDENT",
-      "route": "/student/schedule",
-      "words": 83,
-      "viewport": "1024x768"
-    },
-    {
-      "role": "STUDENT",
-      "route": "/student/catalog",
-      "words": 67,
-      "viewport": "1440x900"
-    },
-    {
-      "role": "STUDENT",
-      "route": "/community",
-      "words": 64,
+      "route": "/student/live",
+      "words": 113,
       "viewport": "1440x900"
     },
     {
       "role": "STUDENT",
       "route": "/student/library",
-      "words": 62,
-      "viewport": "1024x768"
+      "words": 105,
+      "viewport": "1440x900"
     },
     {
       "role": "STUDENT",
-      "route": "/student/gamification",
-      "words": 62,
-      "viewport": "1024x768"
+      "route": "/community",
+      "words": 104,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "STUDENT",
+      "route": "/training",
+      "words": 96,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "STUDENT",
+      "route": "/student/skills",
+      "words": 92,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "STUDENT",
+      "route": "/student/messages",
+      "words": 92,
+      "viewport": "1440x900"
     }
   ],
   "defects": {
@@ -161,7 +161,7 @@
     "smallTargets": [
       {
         "cell": "STUDENT·/student/dashboard·light·1440",
-        "count": 22,
+        "count": 25,
         "sample": [
           {
             "tag": "button",
@@ -185,7 +185,7 @@
       },
       {
         "cell": "STUDENT·/student/dashboard·light·1024",
-        "count": 21,
+        "count": 20,
         "sample": [
           {
             "tag": "button",
@@ -245,7 +245,7 @@
       },
       {
         "cell": "STUDENT·/student/schedule·light·1440",
-        "count": 22,
+        "count": 24,
         "sample": [
           {
             "tag": "button",
@@ -431,7 +431,7 @@
       },
       {
         "cell": "STUDENT·/student/courses·light·1024",
-        "count": 18,
+        "count": 19,
         "sample": [
           {
             "tag": "button",
@@ -466,32 +466,8 @@
         ]
       },
       {
-        "cell": "STUDENT·/student/courses·light·390",
-        "count": 3,
-        "sample": [
-          {
-            "tag": "button",
-            "name": "الكل2",
-            "w": 66,
-            "h": 44
-          },
-          {
-            "tag": "button",
-            "name": "قيد التقدّم1",
-            "w": 98,
-            "h": 44
-          },
-          {
-            "tag": "button",
-            "name": "مكتملة1",
-            "w": 80,
-            "h": 44
-          }
-        ]
-      },
-      {
         "cell": "STUDENT·/student/catalog·light·1440",
-        "count": 24,
+        "count": 23,
         "sample": [
           {
             "tag": "button",
@@ -598,8 +574,26 @@
         ]
       },
       {
+        "cell": "STUDENT·/student/results·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "الاختبارات",
+            "w": 96,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "مقرّراتي",
+            "w": 81,
+            "h": 32
+          }
+        ]
+      },
+      {
         "cell": "STUDENT·/student/matrix·light·1440",
-        "count": 24,
+        "count": 25,
         "sample": [
           {
             "tag": "button",
@@ -647,7 +641,7 @@
       },
       {
         "cell": "STUDENT·/student/matrix·light·768",
-        "count": 2,
+        "count": 3,
         "sample": [
           {
             "tag": "a",
@@ -660,12 +654,18 @@
             "name": "الاختبارات الإلكترونية",
             "w": 148,
             "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "افتح المقرّر",
+            "w": 101,
+            "h": 32
           }
         ]
       },
       {
         "cell": "STUDENT·/student/online-exams·light·1440",
-        "count": 24,
+        "count": 25,
         "sample": [
           {
             "tag": "button",
@@ -737,7 +737,7 @@
       },
       {
         "cell": "STUDENT·/student/library·light·1440",
-        "count": 22,
+        "count": 27,
         "sample": [
           {
             "tag": "button",
@@ -761,48 +761,6 @@
       },
       {
         "cell": "STUDENT·/student/library·light·1024",
-        "count": 20,
-        "sample": [
-          {
-            "tag": "button",
-            "name": "توسعة القائمة",
-            "w": 28,
-            "h": 28
-          },
-          {
-            "tag": "a",
-            "name": "لوحة التحكم",
-            "w": 55,
-            "h": 36
-          },
-          {
-            "tag": "a",
-            "name": "الجدول الدراسي",
-            "w": 55,
-            "h": 36
-          }
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/library·light·768",
-        "count": 2,
-        "sample": [
-          {
-            "tag": "a",
-            "name": "بحوثي العلمية",
-            "w": 115,
-            "h": 32
-          },
-          {
-            "tag": "a",
-            "name": "مركز التحميلات",
-            "w": 121,
-            "h": 32
-          }
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/research·light·1440",
         "count": 22,
         "sample": [
           {
@@ -826,8 +784,56 @@
         ]
       },
       {
+        "cell": "STUDENT·/student/library·light·768",
+        "count": 4,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "بحوثي العلمية",
+            "w": 115,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "مركز التحميلات",
+            "w": 121,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "إرجاع البرمجة بلغة C",
+            "w": 74,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/research·light·1440",
+        "count": 25,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة التحكم",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الجدول الدراسي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
         "cell": "STUDENT·/student/research·light·1024",
-        "count": 20,
+        "count": 21,
         "sample": [
           {
             "tag": "button",
@@ -851,7 +857,7 @@
       },
       {
         "cell": "STUDENT·/student/research·light·768",
-        "count": 2,
+        "count": 3,
         "sample": [
           {
             "tag": "a",
@@ -864,12 +870,18 @@
             "name": "مقرّراتي الدراسية",
             "w": 127,
             "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "رفع بحث جديد",
+            "w": 142,
+            "h": 40
           }
         ]
       },
       {
         "cell": "STUDENT·/student/ai·light·1440",
-        "count": 28,
+        "count": 29,
         "sample": [
           {
             "tag": "button",
@@ -893,7 +905,7 @@
       },
       {
         "cell": "STUDENT·/student/ai·light·1024",
-        "count": 23,
+        "count": 24,
         "sample": [
           {
             "tag": "button",
@@ -941,7 +953,7 @@
       },
       {
         "cell": "STUDENT·/student/labs·light·1440",
-        "count": 24,
+        "count": 26,
         "sample": [
           {
             "tag": "button",
@@ -965,7 +977,7 @@
       },
       {
         "cell": "STUDENT·/student/labs·light·1024",
-        "count": 20,
+        "count": 22,
         "sample": [
           {
             "tag": "button",
@@ -989,7 +1001,7 @@
       },
       {
         "cell": "STUDENT·/student/labs·light·768",
-        "count": 2,
+        "count": 4,
         "sample": [
           {
             "tag": "a",
@@ -1002,6 +1014,12 @@
             "name": "البث المباشر",
             "w": 109,
             "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "قريباً",
+            "w": 86,
+            "h": 40
           }
         ]
       },
@@ -1073,7 +1091,7 @@
       },
       {
         "cell": "STUDENT·/student/live·light·1440",
-        "count": 24,
+        "count": 25,
         "sample": [
           {
             "tag": "button",
@@ -1097,7 +1115,7 @@
       },
       {
         "cell": "STUDENT·/student/live·light·1024",
-        "count": 20,
+        "count": 21,
         "sample": [
           {
             "tag": "button",
@@ -1121,7 +1139,7 @@
       },
       {
         "cell": "STUDENT·/student/live·light·768",
-        "count": 2,
+        "count": 3,
         "sample": [
           {
             "tag": "a",
@@ -1134,12 +1152,18 @@
             "name": "المعامل الافتراضية",
             "w": 140,
             "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "انضمام",
+            "w": 85,
+            "h": 32
           }
         ]
       },
       {
         "cell": "STUDENT·/training·light·1440",
-        "count": 22,
+        "count": 24,
         "sample": [
           {
             "tag": "button",
@@ -1163,7 +1187,7 @@
       },
       {
         "cell": "STUDENT·/training·light·1024",
-        "count": 19,
+        "count": 20,
         "sample": [
           {
             "tag": "button",
@@ -1187,8 +1211,14 @@
       },
       {
         "cell": "STUDENT·/training·light·768",
-        "count": 1,
+        "count": 2,
         "sample": [
+          {
+            "tag": "a",
+            "name": "عرض الإنجازات",
+            "w": 124,
+            "h": 32
+          },
           {
             "tag": "button",
             "name": "كل المسارات (0)",
@@ -1427,7 +1457,7 @@
       },
       {
         "cell": "STUDENT·/student/webinars·light·1440",
-        "count": 24,
+        "count": 25,
         "sample": [
           {
             "tag": "button",
@@ -1451,7 +1481,7 @@
       },
       {
         "cell": "STUDENT·/student/webinars·light·1024",
-        "count": 18,
+        "count": 21,
         "sample": [
           {
             "tag": "button",
@@ -1470,6 +1500,30 @@
             "name": "الجدول الدراسي",
             "w": 55,
             "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/webinars·light·768",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "انضمام",
+            "w": 85,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "فتح المجتمع",
+            "w": 113,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "فتح صفحة البثّ",
+            "w": 128,
+            "h": 32
           }
         ]
       },
@@ -1540,8 +1594,26 @@
         ]
       },
       {
+        "cell": "STUDENT·/community·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "عرض نص الإعلان: فتح باب التقديم لمنافسة ",
+            "w": 19,
+            "h": 44
+          },
+          {
+            "tag": "button",
+            "name": "عرض نص الإعلان: ورشة عمل: مراجعة ما قبل ",
+            "w": 36,
+            "h": 44
+          }
+        ]
+      },
+      {
         "cell": "STUDENT·/student/social·light·1440",
-        "count": 23,
+        "count": 25,
         "sample": [
           {
             "tag": "button",
@@ -1565,7 +1637,7 @@
       },
       {
         "cell": "STUDENT·/student/social·light·1024",
-        "count": 19,
+        "count": 21,
         "sample": [
           {
             "tag": "button",
@@ -1589,13 +1661,43 @@
       },
       {
         "cell": "STUDENT·/student/social·light·768",
-        "count": 1,
+        "count": 3,
         "sample": [
           {
             "tag": "button",
             "name": "نشر",
             "w": 44,
             "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "أعجبني بهذا المنشور",
+            "w": 13,
+            "h": 37
+          },
+          {
+            "tag": "button",
+            "name": "إزالة الإعجاب",
+            "w": 13,
+            "h": 37
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/social·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "أعجبني بهذا المنشور",
+            "w": 13,
+            "h": 39
+          },
+          {
+            "tag": "button",
+            "name": "إزالة الإعجاب",
+            "w": 13,
+            "h": 39
           }
         ]
       },
@@ -1673,7 +1775,7 @@
       },
       {
         "cell": "STUDENT·/competitions·light·1024",
-        "count": 22,
+        "count": 18,
         "sample": [
           {
             "tag": "button",
@@ -1697,7 +1799,7 @@
       },
       {
         "cell": "STUDENT·/student/jobs·light·1440",
-        "count": 24,
+        "count": 25,
         "sample": [
           {
             "tag": "button",
@@ -1721,7 +1823,7 @@
       },
       {
         "cell": "STUDENT·/student/jobs·light·1024",
-        "count": 20,
+        "count": 21,
         "sample": [
           {
             "tag": "button",
@@ -1829,7 +1931,7 @@
       },
       {
         "cell": "STUDENT·/student/messages·light·1440",
-        "count": 23,
+        "count": 25,
         "sample": [
           {
             "tag": "button",
@@ -1853,7 +1955,7 @@
       },
       {
         "cell": "STUDENT·/student/messages·light·1024",
-        "count": 19,
+        "count": 21,
         "sample": [
           {
             "tag": "button",
@@ -1877,13 +1979,25 @@
       },
       {
         "cell": "STUDENT·/student/messages·light·768",
-        "count": 1,
+        "count": 3,
         "sample": [
           {
             "tag": "button",
             "name": "رسالة جديدة",
             "w": 131,
             "h": 40
+          },
+          {
+            "tag": "button",
+            "name": "تعليم الكل كمقروء",
+            "w": 137,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "ردّ على رسالة ليلى الفيتوري",
+            "w": 57,
+            "h": 32
           }
         ]
       },
@@ -1961,7 +2075,7 @@
       },
       {
         "cell": "STUDENT·/settings·light·1440",
-        "count": 27,
+        "count": 26,
         "sample": [
           {
             "tag": "button",
@@ -2152,24 +2266,6 @@
         ]
       },
       {
-        "cell": "STUDENT·/student/university·light·390",
-        "count": 2,
-        "sample": [
-          {
-            "tag": "a",
-            "name": "دليل كليات المؤسّسة",
-            "w": 153,
-            "h": 44
-          },
-          {
-            "tag": "a",
-            "name": "الشؤون الماليّة",
-            "w": 123,
-            "h": 44
-          }
-        ]
-      },
-      {
         "cell": "STUDENT·/student/map·light·1440",
         "count": 25,
         "sample": [
@@ -2243,7 +2339,7 @@
       },
       {
         "cell": "STUDENT·/student/downloads·light·1440",
-        "count": 24,
+        "count": 26,
         "sample": [
           {
             "tag": "button",
@@ -2267,7 +2363,7 @@
       },
       {
         "cell": "STUDENT·/student/downloads·light·1024",
-        "count": 20,
+        "count": 22,
         "sample": [
           {
             "tag": "button",
@@ -2291,7 +2387,7 @@
       },
       {
         "cell": "STUDENT·/student/downloads·light·768",
-        "count": 2,
+        "count": 4,
         "sample": [
           {
             "tag": "button",
@@ -2303,6 +2399,12 @@
             "tag": "button",
             "name": "المكتبة الإلكترونية",
             "w": 135,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "فتح",
+            "w": 66,
             "h": 32
           }
         ]
@@ -2465,7 +2567,7 @@
       },
       {
         "cell": "STUDENT·/student/lectures/lec_e2e_greedy·light·768",
-        "count": 12,
+        "count": 5,
         "sample": [
           {
             "tag": "a",
@@ -2475,15 +2577,15 @@
           },
           {
             "tag": "button",
-            "name": "إرجاع 10 ثوانٍ",
-            "w": 44,
-            "h": 44
+            "name": "الفصول ونقاط التفاعل",
+            "w": 160,
+            "h": 32
           },
           {
-            "tag": "button",
-            "name": "تشغيل",
-            "w": 44,
-            "h": 44
+            "tag": "a",
+            "name": "المحاضرة السابقة",
+            "w": 155,
+            "h": 40
           }
         ]
       },
@@ -2567,7 +2669,7 @@
       },
       {
         "cell": "STUDENT·/document/syllabus-sample.pdf·light·1440",
-        "count": 23,
+        "count": 33,
         "sample": [
           {
             "tag": "button",
@@ -2651,7 +2753,7 @@
       },
       {
         "cell": "STUDENT·/student/dashboard·dark·1440",
-        "count": 27,
+        "count": 25,
         "sample": [
           {
             "tag": "button",
@@ -2957,7 +3059,7 @@
             "by": [
               {
                 "fixed": "sheet-frame",
-                "area": 1869
+                "area": 1870
               }
             ]
           },
@@ -2967,7 +3069,7 @@
             "by": [
               {
                 "fixed": "sheet-frame",
-                "area": 1869
+                "area": 1870
               }
             ]
           }
@@ -4613,7 +4715,7 @@
       },
       {
         "cell": "STUDENT·/student/mooc·light·768",
-        "count": 8,
+        "count": 9,
         "sample": [
           {
             "el": "topbar-mobile-toggle",
@@ -4639,7 +4741,7 @@
       },
       {
         "cell": "STUDENT·/student/mooc·light·390",
-        "count": 8,
+        "count": 9,
         "sample": [
           {
             "el": "topbar-mobile-toggle",
@@ -6269,7 +6371,7 @@
             "by": [
               {
                 "fixed": "sheet-frame",
-                "area": 13598
+                "area": 13600
               }
             ]
           }
@@ -6347,7 +6449,7 @@
             "by": [
               {
                 "fixed": "sheet-frame",
-                "area": 13598
+                "area": 13600
               }
             ]
           }
@@ -6451,7 +6553,7 @@
             "by": [
               {
                 "fixed": "sheet-frame",
-                "area": 13599
+                "area": 13600
               }
             ]
           }
@@ -6477,7 +6579,7 @@
             "by": [
               {
                 "fixed": "sheet-frame",
-                "area": 13599
+                "area": 13600
               }
             ]
           }
@@ -6694,81 +6796,8 @@
     ],
     "runtimeErrors": [
       {
-        "cell": "STUDENT·/student/matrix·light·1440",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/matrix·light·1024",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/matrix·light·768",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/matrix·light·390",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/library·light·1024",
-        "count": 4,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/library·light·768",
-        "count": 3,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/library·light·390",
-        "count": 3,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/research·light·1024",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/research·light·768",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/research·light·390",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
         "cell": "STUDENT·/student/ai·light·1440",
-        "count": 2,
+        "count": 4,
         "sample": [
           "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
           "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
@@ -6776,7 +6805,7 @@
       },
       {
         "cell": "STUDENT·/student/ai·light·1024",
-        "count": 2,
+        "count": 4,
         "sample": [
           "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
           "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
@@ -6784,7 +6813,7 @@
       },
       {
         "cell": "STUDENT·/student/ai·light·768",
-        "count": 2,
+        "count": 4,
         "sample": [
           "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
           "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
@@ -6792,981 +6821,13 @@
       },
       {
         "cell": "STUDENT·/student/ai·light·390",
-        "count": 2,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/labs·light·1440",
-        "count": 2,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/labs·light·1024",
-        "count": 2,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/labs·light·768",
-        "count": 2,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/labs·light·390",
-        "count": 2,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/ar·light·1440",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/ar·light·1024",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/ar·light·768",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/ar·light·390",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/live·light·1440",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/live·light·1024",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/live·light·768",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/live·light·390",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/training·light·1024",
-        "count": 3,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/training·light·768",
-        "count": 2,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/training·light·390",
-        "count": 2,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/achievements·light·1440",
         "count": 4,
         "sample": [
           "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/achievements·light·1024",
-        "count": 4,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/achievements·light·768",
-        "count": 4,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/achievements·light·390",
-        "count": 4,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/gamification·light·1440",
-        "count": 3,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/gamification·light·1024",
-        "count": 3,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/gamification·light·768",
-        "count": 3,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/gamification·light·390",
-        "count": 3,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/skills·light·1440",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/skills·light·1024",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/skills·light·768",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/skills·light·390",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/mooc·light·1440",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/mooc·light·1024",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/mooc·light·768",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/mooc·light·390",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/webinars·light·1440",
-        "count": 2,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/webinars·light·1024",
-        "count": 2,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/webinars·light·768",
-        "count": 2,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/webinars·light·390",
-        "count": 2,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/community·light·1440",
-        "count": 4,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/community·light·1024",
-        "count": 4,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/community·light·768",
-        "count": 4,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/community·light·390",
-        "count": 4,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/social·light·1440",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/social·light·1024",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/social·light·768",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/social·light·390",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/competitions·light·1440",
-        "count": 2,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/competitions·light·1024",
-        "count": 2,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/competitions·light·768",
-        "count": 2,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/competitions·light·390",
-        "count": 2,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/jobs·light·1440",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/jobs·light·1024",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/jobs·light·768",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/jobs·light·390",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/profile·light·1440",
-        "count": 2,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/profile·light·1024",
-        "count": 2,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/profile·light·768",
-        "count": 2,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/profile·light·390",
-        "count": 2,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/messages·light·1440",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/messages·light·1024",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/messages·light·768",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/messages·light·390",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/downloads·light·1440",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/downloads·light·1024",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/downloads·light·768",
-        "count": 1,
-        "sample": [
-          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/downloads·light·390",
-        "count": 1,
-        "sample": [
           "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
         ]
       }
     ],
-    "notImplemented": [
-      {
-        "cell": "STUDENT·/student/matrix·light·1440",
-        "endpoints": [
-          "/api/v1/me/matrix"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/matrix·light·1024",
-        "endpoints": [
-          "/api/v1/me/matrix"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/matrix·light·768",
-        "endpoints": [
-          "/api/v1/me/matrix"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/matrix·light·390",
-        "endpoints": [
-          "/api/v1/me/matrix"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/library·light·1024",
-        "endpoints": [
-          "/api/v1/library/books?page=1&limit=24",
-          "/api/v1/research/published",
-          "/api/v1/me/loans"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/library·light·768",
-        "endpoints": [
-          "/api/v1/library/books?page=1&limit=24",
-          "/api/v1/research/published",
-          "/api/v1/me/loans"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/library·light·390",
-        "endpoints": [
-          "/api/v1/library/books?page=1&limit=24",
-          "/api/v1/research/published",
-          "/api/v1/me/loans"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/research·light·1024",
-        "endpoints": [
-          "/api/v1/me/research"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/research·light·768",
-        "endpoints": [
-          "/api/v1/me/research"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/research·light·390",
-        "endpoints": [
-          "/api/v1/me/research"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/labs·light·1440",
-        "endpoints": [
-          "/api/v1/labs",
-          "/api/v1/me/lab-sessions"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/labs·light·1024",
-        "endpoints": [
-          "/api/v1/labs",
-          "/api/v1/me/lab-sessions"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/labs·light·768",
-        "endpoints": [
-          "/api/v1/labs",
-          "/api/v1/me/lab-sessions"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/labs·light·390",
-        "endpoints": [
-          "/api/v1/labs",
-          "/api/v1/me/lab-sessions"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/ar·light·1440",
-        "endpoints": [
-          "/api/v1/ar-experiences"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/ar·light·1024",
-        "endpoints": [
-          "/api/v1/ar-experiences"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/ar·light·768",
-        "endpoints": [
-          "/api/v1/ar-experiences"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/ar·light·390",
-        "endpoints": [
-          "/api/v1/ar-experiences"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/live·light·1440",
-        "endpoints": [
-          "/api/v1/live/sessions"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/live·light·1024",
-        "endpoints": [
-          "/api/v1/live/sessions"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/live·light·768",
-        "endpoints": [
-          "/api/v1/live/sessions"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/live·light·390",
-        "endpoints": [
-          "/api/v1/live/sessions"
-        ]
-      },
-      {
-        "cell": "STUDENT·/training·light·1024",
-        "endpoints": [
-          "/api/v1/training/me",
-          "/api/v1/training/me/badges"
-        ]
-      },
-      {
-        "cell": "STUDENT·/training·light·768",
-        "endpoints": [
-          "/api/v1/training/me",
-          "/api/v1/training/me/badges"
-        ]
-      },
-      {
-        "cell": "STUDENT·/training·light·390",
-        "endpoints": [
-          "/api/v1/training/me",
-          "/api/v1/training/me/badges"
-        ]
-      },
-      {
-        "cell": "STUDENT·/achievements·light·1440",
-        "endpoints": [
-          "/api/v1/training/me",
-          "/api/v1/training/me/badges",
-          "/api/v1/training/me/certificates",
-          "/api/v1/training/leaderboard"
-        ]
-      },
-      {
-        "cell": "STUDENT·/achievements·light·1024",
-        "endpoints": [
-          "/api/v1/training/me",
-          "/api/v1/training/me/badges",
-          "/api/v1/training/me/certificates",
-          "/api/v1/training/leaderboard"
-        ]
-      },
-      {
-        "cell": "STUDENT·/achievements·light·768",
-        "endpoints": [
-          "/api/v1/training/me",
-          "/api/v1/training/me/badges",
-          "/api/v1/training/me/certificates",
-          "/api/v1/training/leaderboard"
-        ]
-      },
-      {
-        "cell": "STUDENT·/achievements·light·390",
-        "endpoints": [
-          "/api/v1/training/me",
-          "/api/v1/training/me/badges",
-          "/api/v1/training/me/certificates",
-          "/api/v1/training/leaderboard"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/gamification·light·1440",
-        "endpoints": [
-          "/api/v1/me/achievements",
-          "/api/v1/leaderboard",
-          "/api/v1/training/me"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/gamification·light·1024",
-        "endpoints": [
-          "/api/v1/me/achievements",
-          "/api/v1/leaderboard",
-          "/api/v1/training/me"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/gamification·light·768",
-        "endpoints": [
-          "/api/v1/me/achievements",
-          "/api/v1/leaderboard",
-          "/api/v1/training/me"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/gamification·light·390",
-        "endpoints": [
-          "/api/v1/me/achievements",
-          "/api/v1/leaderboard",
-          "/api/v1/training/me"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/skills·light·1440",
-        "endpoints": [
-          "/api/v1/me/skills"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/skills·light·1024",
-        "endpoints": [
-          "/api/v1/me/skills"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/skills·light·768",
-        "endpoints": [
-          "/api/v1/me/skills"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/skills·light·390",
-        "endpoints": [
-          "/api/v1/me/skills"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/mooc·light·1440",
-        "endpoints": [
-          "/api/v1/mooc?limit=50"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/mooc·light·1024",
-        "endpoints": [
-          "/api/v1/mooc?limit=50"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/mooc·light·768",
-        "endpoints": [
-          "/api/v1/mooc?limit=50"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/mooc·light·390",
-        "endpoints": [
-          "/api/v1/mooc?limit=50"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/webinars·light·1440",
-        "endpoints": [
-          "/api/v1/events",
-          "/api/v1/live/sessions"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/webinars·light·1024",
-        "endpoints": [
-          "/api/v1/events",
-          "/api/v1/live/sessions"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/webinars·light·768",
-        "endpoints": [
-          "/api/v1/events",
-          "/api/v1/live/sessions"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/webinars·light·390",
-        "endpoints": [
-          "/api/v1/events",
-          "/api/v1/live/sessions"
-        ]
-      },
-      {
-        "cell": "STUDENT·/community·light·1440",
-        "endpoints": [
-          "/api/v1/announcements/feed",
-          "/api/v1/competitions",
-          "/api/v1/events",
-          "/api/v1/me/permissions"
-        ]
-      },
-      {
-        "cell": "STUDENT·/community·light·1024",
-        "endpoints": [
-          "/api/v1/announcements/feed",
-          "/api/v1/competitions",
-          "/api/v1/events",
-          "/api/v1/me/permissions"
-        ]
-      },
-      {
-        "cell": "STUDENT·/community·light·768",
-        "endpoints": [
-          "/api/v1/announcements/feed",
-          "/api/v1/competitions",
-          "/api/v1/events",
-          "/api/v1/me/permissions"
-        ]
-      },
-      {
-        "cell": "STUDENT·/community·light·390",
-        "endpoints": [
-          "/api/v1/announcements/feed",
-          "/api/v1/competitions",
-          "/api/v1/events",
-          "/api/v1/me/permissions"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/social·light·1440",
-        "endpoints": [
-          "/api/v1/posts?limit=20"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/social·light·1024",
-        "endpoints": [
-          "/api/v1/posts?limit=20"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/social·light·768",
-        "endpoints": [
-          "/api/v1/posts?limit=20"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/social·light·390",
-        "endpoints": [
-          "/api/v1/posts?limit=20"
-        ]
-      },
-      {
-        "cell": "STUDENT·/competitions·light·1440",
-        "endpoints": [
-          "/api/v1/competitions",
-          "/api/v1/me/permissions"
-        ]
-      },
-      {
-        "cell": "STUDENT·/competitions·light·1024",
-        "endpoints": [
-          "/api/v1/competitions",
-          "/api/v1/me/permissions"
-        ]
-      },
-      {
-        "cell": "STUDENT·/competitions·light·768",
-        "endpoints": [
-          "/api/v1/competitions",
-          "/api/v1/me/permissions"
-        ]
-      },
-      {
-        "cell": "STUDENT·/competitions·light·390",
-        "endpoints": [
-          "/api/v1/competitions",
-          "/api/v1/me/permissions"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/jobs·light·1440",
-        "endpoints": [
-          "/api/v1/jobs?limit=50"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/jobs·light·1024",
-        "endpoints": [
-          "/api/v1/jobs?limit=50"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/jobs·light·768",
-        "endpoints": [
-          "/api/v1/jobs?limit=50"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/jobs·light·390",
-        "endpoints": [
-          "/api/v1/jobs?limit=50"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/profile·light·1440",
-        "endpoints": [
-          "/api/v1/me/achievements",
-          "/api/v1/me/research"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/profile·light·1024",
-        "endpoints": [
-          "/api/v1/me/achievements",
-          "/api/v1/me/research"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/profile·light·768",
-        "endpoints": [
-          "/api/v1/me/achievements",
-          "/api/v1/me/research"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/profile·light·390",
-        "endpoints": [
-          "/api/v1/me/achievements",
-          "/api/v1/me/research"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/messages·light·1440",
-        "endpoints": [
-          "/api/v1/messages?page=1&limit=30"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/messages·light·1024",
-        "endpoints": [
-          "/api/v1/messages?page=1&limit=30"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/messages·light·768",
-        "endpoints": [
-          "/api/v1/messages?page=1&limit=30"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/messages·light·390",
-        "endpoints": [
-          "/api/v1/messages?page=1&limit=30"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/downloads·light·1440",
-        "endpoints": [
-          "/api/v1/me/materials"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/downloads·light·1024",
-        "endpoints": [
-          "/api/v1/me/materials"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/downloads·light·768",
-        "endpoints": [
-          "/api/v1/me/materials"
-        ]
-      },
-      {
-        "cell": "STUDENT·/student/downloads·light·390",
-        "endpoints": [
-          "/api/v1/me/materials"
-        ]
-      }
-    ]
+    "notImplemented": []
   }
 }

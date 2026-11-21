@@ -5,8 +5,8 @@
     "route": "/student/dashboard",
     "theme": "light",
     "viewport": "1440x900",
-    "words": 24,
-    "scrollHeight": 844,
+    "words": 297,
+    "scrollHeight": 1776,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -83,7 +83,7 @@
         "h": 36
       }
     ],
-    "smallTargetCount": 22,
+    "smallTargetCount": 25,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -132,7 +132,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 4182
+            "area": 3868
           }
         ]
       },
@@ -142,7 +142,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 1102
+            "area": 943
           }
         ]
       }
@@ -157,8 +157,8 @@
     "route": "/student/dashboard",
     "theme": "light",
     "viewport": "1024x768",
-    "words": 294,
-    "scrollHeight": 1947,
+    "words": 297,
+    "scrollHeight": 2010,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -235,7 +235,7 @@
         "h": 36
       }
     ],
-    "smallTargetCount": 21,
+    "smallTargetCount": 20,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -284,7 +284,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 3867
+            "area": 3868
           }
         ]
       },
@@ -499,7 +499,7 @@
     "route": "/student/schedule",
     "theme": "light",
     "viewport": "1440x900",
-    "words": 24,
+    "words": 83,
     "scrollHeight": 844,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
@@ -577,7 +577,7 @@
         "h": 36
       }
     ],
-    "smallTargetCount": 22,
+    "smallTargetCount": 24,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -778,7 +778,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 4182
+            "area": 3868
           }
         ]
       },
@@ -788,7 +788,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 1102
+            "area": 943
           }
         ]
       }
@@ -1253,7 +1253,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 3867
+            "area": 3868
           }
         ]
       },
@@ -1311,7 +1311,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 1869
+            "area": 1870
           }
         ]
       },
@@ -1321,7 +1321,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 1869
+            "area": 1870
           }
         ]
       },
@@ -1331,7 +1331,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 1869
+            "area": 1870
           }
         ]
       },
@@ -1341,7 +1341,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 1869
+            "area": 1870
           }
         ]
       },
@@ -1351,7 +1351,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 1954
+            "area": 1955
           }
         ]
       },
@@ -1528,7 +1528,7 @@
     "route": "/student/courses",
     "theme": "light",
     "viewport": "1440x900",
-    "words": 112,
+    "words": 115,
     "scrollHeight": 844,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
@@ -1680,8 +1680,8 @@
     "route": "/student/courses",
     "theme": "light",
     "viewport": "1024x768",
-    "words": 51,
-    "scrollHeight": 1238,
+    "words": 115,
+    "scrollHeight": 712,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -1758,7 +1758,7 @@
         "h": 36
       }
     ],
-    "smallTargetCount": 18,
+    "smallTargetCount": 19,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -1787,7 +1787,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 13598
+            "area": 13600
           }
         ]
       },
@@ -1807,7 +1807,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 3867
+            "area": 3868
           }
         ]
       },
@@ -1922,27 +1922,8 @@
     "scrollHeight": 1063,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
-    "smallTargets": [
-      {
-        "tag": "button",
-        "name": "الكل2",
-        "w": 66,
-        "h": 44
-      },
-      {
-        "tag": "button",
-        "name": "قيد التقدّم1",
-        "w": 98,
-        "h": 44
-      },
-      {
-        "tag": "button",
-        "name": "مكتملة1",
-        "w": 80,
-        "h": 44
-      }
-    ],
-    "smallTargetCount": 3,
+    "smallTargets": [],
+    "smallTargetCount": 0,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -2094,7 +2075,7 @@
         "h": 36
       }
     ],
-    "smallTargetCount": 24,
+    "smallTargetCount": 23,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -2143,7 +2124,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 3867
+            "area": 3868
           }
         ]
       },
@@ -2275,7 +2256,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 13598
+            "area": 13600
           }
         ]
       },
@@ -2295,7 +2276,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 3867
+            "area": 3868
           }
         ]
       },
@@ -2381,7 +2362,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 1954
+            "area": 1955
           }
         ]
       },
@@ -2592,7 +2573,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 13599
+            "area": 13600
           }
         ]
       },
@@ -2612,7 +2593,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 3867
+            "area": 3868
           }
         ]
       },
@@ -2764,7 +2745,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 3867
+            "area": 3868
           }
         ]
       },
@@ -2789,12 +2770,25 @@
     "route": "/student/results",
     "theme": "light",
     "viewport": "768x900",
-    "words": 28,
-    "scrollHeight": 844,
+    "words": 161,
+    "scrollHeight": 1471,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
-    "smallTargets": [],
-    "smallTargetCount": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "الاختبارات",
+        "w": 96,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "مقرّراتي",
+        "w": 81,
+        "h": 32
+      }
+    ],
+    "smallTargetCount": 2,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -2947,8 +2941,8 @@
     "route": "/student/matrix",
     "theme": "light",
     "viewport": "1440x900",
-    "words": 103,
-    "scrollHeight": 1583,
+    "words": 151,
+    "scrollHeight": 950,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -3025,7 +3019,7 @@
         "h": 36
       }
     ],
-    "smallTargetCount": 24,
+    "smallTargetCount": 25,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -3074,7 +3068,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 3867
+            "area": 3868
           }
         ]
       },
@@ -3089,13 +3083,9 @@
         ]
       }
     ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/me/matrix"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/matrix·light·1024",
@@ -3103,8 +3093,8 @@
     "route": "/student/matrix",
     "theme": "light",
     "viewport": "1024x768",
-    "words": 103,
-    "scrollHeight": 1649,
+    "words": 151,
+    "scrollHeight": 1031,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -3230,7 +3220,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 3867
+            "area": 3868
           }
         ]
       },
@@ -3245,13 +3235,9 @@
         ]
       }
     ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/me/matrix"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/matrix·light·768",
@@ -3259,8 +3245,8 @@
     "route": "/student/matrix",
     "theme": "light",
     "viewport": "768x900",
-    "words": 99,
-    "scrollHeight": 1732,
+    "words": 147,
+    "scrollHeight": 1124,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -3275,9 +3261,15 @@
         "name": "الاختبارات الإلكترونية",
         "w": 148,
         "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "افتح المقرّر",
+        "w": 101,
+        "h": 32
       }
     ],
-    "smallTargetCount": 2,
+    "smallTargetCount": 3,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -3341,13 +3333,9 @@
         ]
       }
     ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/me/matrix"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/matrix·light·390",
@@ -3355,8 +3343,8 @@
     "route": "/student/matrix",
     "theme": "light",
     "viewport": "390x844",
-    "words": 94,
-    "scrollHeight": 1930,
+    "words": 142,
+    "scrollHeight": 1373,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [],
@@ -3424,13 +3412,9 @@
         ]
       }
     ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/me/matrix"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/online-exams·light·1440",
@@ -3438,8 +3422,8 @@
     "route": "/student/online-exams",
     "theme": "light",
     "viewport": "1440x900",
-    "words": 57,
-    "scrollHeight": 844,
+    "words": 138,
+    "scrollHeight": 914,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -3516,7 +3500,7 @@
         "h": 36
       }
     ],
-    "smallTargetCount": 24,
+    "smallTargetCount": 25,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -3717,7 +3701,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 3867
+            "area": 3868
           }
         ]
       },
@@ -3919,654 +3903,6 @@
     "route": "/student/library",
     "theme": "light",
     "viewport": "1440x900",
-    "words": 25,
-    "scrollHeight": 844,
-    "hOverflowDoc": 0,
-    "hOverflowScroller": 0,
-    "smallTargets": [
-      {
-        "tag": "button",
-        "name": "توسعة القائمة",
-        "w": 28,
-        "h": 28
-      },
-      {
-        "tag": "a",
-        "name": "لوحة التحكم",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "الجدول الدراسي",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "التقويم الأكاديمي",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "مقرّراتي الدراسية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "دليل المقررات",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "النتائج والتقييمات",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المصفوفة التعليمية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "الاختبارات الإلكترونية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المكتبة الإلكترونية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "بحوثي العلمية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المساعد الذكي",
-        "w": 55,
-        "h": 36
-      }
-    ],
-    "smallTargetCount": 22,
-    "overlapCount": 9,
-    "overlaps": [
-      {
-        "el": "topbar-kicker",
-        "text": "التعلم الذكي",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1060
-          }
-        ]
-      },
-      {
-        "el": "topbar-scope",
-        "text": "كلية الهندسة",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1982
-          }
-        ]
-      },
-      {
-        "el": "INPUT",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 13600
-          }
-        ]
-      },
-      {
-        "el": "BDI",
-        "text": "Ctrl+K",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1029
-          }
-        ]
-      },
-      {
-        "el": "btn primary sm",
-        "text": "اسأل AI",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 3868
-          }
-        ]
-      },
-      {
-        "el": "hide-on-mobile",
-        "text": "اسأل AI",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 943
-          }
-        ]
-      }
-    ],
-    "consoleErrors": 0,
-    "consoleErrorSample": [],
-    "notImplemented": []
-  },
-  {
-    "cell": "STUDENT·/student/library·light·1024",
-    "role": "STUDENT",
-    "route": "/student/library",
-    "theme": "light",
-    "viewport": "1024x768",
-    "words": 62,
-    "scrollHeight": 1079,
-    "hOverflowDoc": 0,
-    "hOverflowScroller": 0,
-    "smallTargets": [
-      {
-        "tag": "button",
-        "name": "توسعة القائمة",
-        "w": 28,
-        "h": 28
-      },
-      {
-        "tag": "a",
-        "name": "لوحة التحكم",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "الجدول الدراسي",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "التقويم الأكاديمي",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "مقرّراتي الدراسية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "دليل المقررات",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "النتائج والتقييمات",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المصفوفة التعليمية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "الاختبارات الإلكترونية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المكتبة الإلكترونية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "بحوثي العلمية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المساعد الذكي",
-        "w": 55,
-        "h": 36
-      }
-    ],
-    "smallTargetCount": 20,
-    "overlapCount": 9,
-    "overlaps": [
-      {
-        "el": "topbar-kicker",
-        "text": "التعلم الذكي",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1060
-          }
-        ]
-      },
-      {
-        "el": "topbar-scope",
-        "text": "كلية الهندسة",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1982
-          }
-        ]
-      },
-      {
-        "el": "INPUT",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 13600
-          }
-        ]
-      },
-      {
-        "el": "BDI",
-        "text": "Ctrl+K",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1029
-          }
-        ]
-      },
-      {
-        "el": "btn primary sm",
-        "text": "اسأل AI",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 3868
-          }
-        ]
-      },
-      {
-        "el": "hide-on-mobile",
-        "text": "اسأل AI",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 943
-          }
-        ]
-      }
-    ],
-    "consoleErrors": 4,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/library/books?page=1&limit=24",
-      "/api/v1/research/published",
-      "/api/v1/me/loans"
-    ]
-  },
-  {
-    "cell": "STUDENT·/student/library·light·768",
-    "role": "STUDENT",
-    "route": "/student/library",
-    "theme": "light",
-    "viewport": "768x900",
-    "words": 58,
-    "scrollHeight": 1175,
-    "hOverflowDoc": 0,
-    "hOverflowScroller": 0,
-    "smallTargets": [
-      {
-        "tag": "a",
-        "name": "بحوثي العلمية",
-        "w": 115,
-        "h": 32
-      },
-      {
-        "tag": "a",
-        "name": "مركز التحميلات",
-        "w": 121,
-        "h": 32
-      }
-    ],
-    "smallTargetCount": 2,
-    "overlapCount": 9,
-    "overlaps": [
-      {
-        "el": "topbar-mobile-toggle",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-search-toggle",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-theme",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-notif",
-        "text": "2",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-user-trigger",
-        "text": "أزأحمد",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1955
-          }
-        ]
-      },
-      {
-        "el": "avatar",
-        "text": "أز",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 900
-          }
-        ]
-      }
-    ],
-    "consoleErrors": 3,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/library/books?page=1&limit=24",
-      "/api/v1/research/published",
-      "/api/v1/me/loans"
-    ]
-  },
-  {
-    "cell": "STUDENT·/student/library·light·390",
-    "role": "STUDENT",
-    "route": "/student/library",
-    "theme": "light",
-    "viewport": "390x844",
-    "words": 46,
-    "scrollHeight": 1294,
-    "hOverflowDoc": 0,
-    "hOverflowScroller": 0,
-    "smallTargets": [],
-    "smallTargetCount": 0,
-    "overlapCount": 9,
-    "overlaps": [
-      {
-        "el": "topbar-mobile-toggle",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-search-toggle",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-theme",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-notif",
-        "text": "2",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-user-trigger",
-        "text": "أزأحمد",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "avatar",
-        "text": "أز",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 900
-          }
-        ]
-      }
-    ],
-    "consoleErrors": 3,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/library/books?page=1&limit=24",
-      "/api/v1/research/published",
-      "/api/v1/me/loans"
-    ]
-  },
-  {
-    "cell": "STUDENT·/student/research·light·1440",
-    "role": "STUDENT",
-    "route": "/student/research",
-    "theme": "light",
-    "viewport": "1440x900",
-    "words": 25,
-    "scrollHeight": 844,
-    "hOverflowDoc": 0,
-    "hOverflowScroller": 0,
-    "smallTargets": [
-      {
-        "tag": "button",
-        "name": "توسعة القائمة",
-        "w": 28,
-        "h": 28
-      },
-      {
-        "tag": "a",
-        "name": "لوحة التحكم",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "الجدول الدراسي",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "التقويم الأكاديمي",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "مقرّراتي الدراسية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "دليل المقررات",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "النتائج والتقييمات",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المصفوفة التعليمية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "الاختبارات الإلكترونية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المكتبة الإلكترونية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "بحوثي العلمية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المساعد الذكي",
-        "w": 55,
-        "h": 36
-      }
-    ],
-    "smallTargetCount": 22,
-    "overlapCount": 9,
-    "overlaps": [
-      {
-        "el": "topbar-kicker",
-        "text": "التعلم الذكي",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1060
-          }
-        ]
-      },
-      {
-        "el": "topbar-scope",
-        "text": "كلية الهندسة",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1982
-          }
-        ]
-      },
-      {
-        "el": "INPUT",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 13600
-          }
-        ]
-      },
-      {
-        "el": "BDI",
-        "text": "Ctrl+K",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1029
-          }
-        ]
-      },
-      {
-        "el": "btn primary sm",
-        "text": "اسأل AI",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 4182
-          }
-        ]
-      },
-      {
-        "el": "hide-on-mobile",
-        "text": "اسأل AI",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1102
-          }
-        ]
-      }
-    ],
-    "consoleErrors": 0,
-    "consoleErrorSample": [],
-    "notImplemented": []
-  },
-  {
-    "cell": "STUDENT·/student/research·light·1024",
-    "role": "STUDENT",
-    "route": "/student/research",
-    "theme": "light",
-    "viewport": "1024x768",
     "words": 105,
     "scrollHeight": 908,
     "hOverflowDoc": 0,
@@ -4645,7 +3981,7 @@
         "h": 36
       }
     ],
-    "smallTargetCount": 20,
+    "smallTargetCount": 27,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -4674,7 +4010,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 13599
+            "area": 13600
           }
         ]
       },
@@ -4694,7 +4030,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 3867
+            "area": 3868
           }
         ]
       },
@@ -4709,39 +4045,199 @@
         ]
       }
     ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/me/research"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
-    "cell": "STUDENT·/student/research·light·768",
+    "cell": "STUDENT·/student/library·light·1024",
     "role": "STUDENT",
-    "route": "/student/research",
+    "route": "/student/library",
+    "theme": "light",
+    "viewport": "1024x768",
+    "words": 105,
+    "scrollHeight": 944,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الجدول الدراسي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "التقويم الأكاديمي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مقرّراتي الدراسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "دليل المقررات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النتائج والتقييمات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المصفوفة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الاختبارات الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المكتبة الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "بحوثي العلمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المساعد الذكي",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 22,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "التعلم الذكي",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1060
+          }
+        ]
+      },
+      {
+        "el": "topbar-scope",
+        "text": "كلية الهندسة",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1982
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13600
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3868
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/student/library·light·768",
+    "role": "STUDENT",
+    "route": "/student/library",
     "theme": "light",
     "viewport": "768x900",
     "words": 101,
-    "scrollHeight": 992,
+    "scrollHeight": 1036,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
       {
         "tag": "a",
-        "name": "المكتبة الإلكترونية",
-        "w": 135,
+        "name": "بحوثي العلمية",
+        "w": 115,
         "h": 32
       },
       {
         "tag": "a",
-        "name": "مقرّراتي الدراسية",
-        "w": 127,
+        "name": "مركز التحميلات",
+        "w": 121,
+        "h": 32
+      },
+      {
+        "tag": "button",
+        "name": "إرجاع البرمجة بلغة C",
+        "w": 74,
+        "h": 32
+      },
+      {
+        "tag": "button",
+        "name": "استعارة البرمجة بلغة C",
+        "w": 63,
         "h": 32
       }
     ],
-    "smallTargetCount": 2,
+    "smallTargetCount": 4,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -4805,22 +4301,18 @@
         ]
       }
     ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/me/research"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
-    "cell": "STUDENT·/student/research·light·390",
+    "cell": "STUDENT·/student/library·light·390",
     "role": "STUDENT",
-    "route": "/student/research",
+    "route": "/student/library",
     "theme": "light",
     "viewport": "390x844",
-    "words": 96,
-    "scrollHeight": 1242,
+    "words": 89,
+    "scrollHeight": 1478,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [],
@@ -4888,22 +4380,18 @@
         ]
       }
     ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/me/research"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
-    "cell": "STUDENT·/student/ai·light·1440",
+    "cell": "STUDENT·/student/research·light·1440",
     "role": "STUDENT",
-    "route": "/student/ai",
+    "route": "/student/research",
     "theme": "light",
     "viewport": "1440x900",
-    "words": 136,
-    "scrollHeight": 1013,
+    "words": 196,
+    "scrollHeight": 1214,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -4980,7 +4468,488 @@
         "h": 36
       }
     ],
-    "smallTargetCount": 28,
+    "smallTargetCount": 25,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "التعلم الذكي",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1060
+          }
+        ]
+      },
+      {
+        "el": "topbar-scope",
+        "text": "كلية الهندسة",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1982
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13600
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3868
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/student/research·light·1024",
+    "role": "STUDENT",
+    "route": "/student/research",
+    "theme": "light",
+    "viewport": "1024x768",
+    "words": 196,
+    "scrollHeight": 1349,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الجدول الدراسي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "التقويم الأكاديمي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مقرّراتي الدراسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "دليل المقررات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النتائج والتقييمات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المصفوفة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الاختبارات الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المكتبة الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "بحوثي العلمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المساعد الذكي",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 21,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "التعلم الذكي",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1060
+          }
+        ]
+      },
+      {
+        "el": "topbar-scope",
+        "text": "كلية الهندسة",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1982
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13600
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3868
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/student/research·light·768",
+    "role": "STUDENT",
+    "route": "/student/research",
+    "theme": "light",
+    "viewport": "768x900",
+    "words": 192,
+    "scrollHeight": 1481,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "المكتبة الإلكترونية",
+        "w": 135,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "مقرّراتي الدراسية",
+        "w": 127,
+        "h": 32
+      },
+      {
+        "tag": "button",
+        "name": "رفع بحث جديد",
+        "w": 142,
+        "h": 40
+      }
+    ],
+    "smallTargetCount": 3,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "أزأحمد",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1955
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "أز",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/student/research·light·390",
+    "role": "STUDENT",
+    "route": "/student/research",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 187,
+    "scrollHeight": 1995,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "أزأحمد",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "أز",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/student/ai·light·1440",
+    "role": "STUDENT",
+    "route": "/student/ai",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 177,
+    "scrollHeight": 1003,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الجدول الدراسي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "التقويم الأكاديمي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مقرّراتي الدراسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "دليل المقررات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النتائج والتقييمات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المصفوفة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الاختبارات الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المكتبة الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "بحوثي العلمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المساعد الذكي",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 29,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -5044,7 +5013,7 @@
         ]
       }
     ],
-    "consoleErrors": 2,
+    "consoleErrors": 4,
     "consoleErrorSample": [
       "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
       "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
@@ -5060,8 +5029,8 @@
     "route": "/student/ai",
     "theme": "light",
     "viewport": "1024x768",
-    "words": 161,
-    "scrollHeight": 1076,
+    "words": 177,
+    "scrollHeight": 1040,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -5138,7 +5107,7 @@
         "h": 36
       }
     ],
-    "smallTargetCount": 23,
+    "smallTargetCount": 24,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -5202,7 +5171,7 @@
         ]
       }
     ],
-    "consoleErrors": 2,
+    "consoleErrors": 4,
     "consoleErrorSample": [
       "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
       "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
@@ -5218,8 +5187,8 @@
     "route": "/student/ai",
     "theme": "light",
     "viewport": "768x900",
-    "words": 159,
-    "scrollHeight": 1735,
+    "words": 175,
+    "scrollHeight": 1674,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -5312,7 +5281,7 @@
         ]
       }
     ],
-    "consoleErrors": 2,
+    "consoleErrors": 4,
     "consoleErrorSample": [
       "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
       "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
@@ -5328,8 +5297,8 @@
     "route": "/student/ai",
     "theme": "light",
     "viewport": "390x844",
-    "words": 154,
-    "scrollHeight": 1886,
+    "words": 170,
+    "scrollHeight": 1860,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [],
@@ -5397,7 +5366,7 @@
         ]
       }
     ],
-    "consoleErrors": 2,
+    "consoleErrors": 4,
     "consoleErrorSample": [
       "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
       "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
@@ -5413,7 +5382,7 @@
     "route": "/student/labs",
     "theme": "light",
     "viewport": "1440x900",
-    "words": 51,
+    "words": 86,
     "scrollHeight": 844,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
@@ -5491,7 +5460,7 @@
         "h": 36
       }
     ],
-    "smallTargetCount": 24,
+    "smallTargetCount": 26,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -5540,7 +5509,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 3867
+            "area": 3868
           }
         ]
       },
@@ -5555,15 +5524,9 @@
         ]
       }
     ],
-    "consoleErrors": 2,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/labs",
-      "/api/v1/me/lab-sessions"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/labs·light·1024",
@@ -5571,1331 +5534,8 @@
     "route": "/student/labs",
     "theme": "light",
     "viewport": "1024x768",
-    "words": 51,
-    "scrollHeight": 861,
-    "hOverflowDoc": 0,
-    "hOverflowScroller": 0,
-    "smallTargets": [
-      {
-        "tag": "button",
-        "name": "توسعة القائمة",
-        "w": 28,
-        "h": 28
-      },
-      {
-        "tag": "a",
-        "name": "لوحة التحكم",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "الجدول الدراسي",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "التقويم الأكاديمي",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "مقرّراتي الدراسية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "دليل المقررات",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "النتائج والتقييمات",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المصفوفة التعليمية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "الاختبارات الإلكترونية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المكتبة الإلكترونية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "بحوثي العلمية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المساعد الذكي",
-        "w": 55,
-        "h": 36
-      }
-    ],
-    "smallTargetCount": 20,
-    "overlapCount": 9,
-    "overlaps": [
-      {
-        "el": "topbar-kicker",
-        "text": "المعامل والتقنيات",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1544
-          }
-        ]
-      },
-      {
-        "el": "topbar-scope",
-        "text": "كلية الهندسة",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1982
-          }
-        ]
-      },
-      {
-        "el": "INPUT",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 13599
-          }
-        ]
-      },
-      {
-        "el": "BDI",
-        "text": "Ctrl+K",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1029
-          }
-        ]
-      },
-      {
-        "el": "btn primary sm",
-        "text": "اسأل AI",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 3867
-          }
-        ]
-      },
-      {
-        "el": "hide-on-mobile",
-        "text": "اسأل AI",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 943
-          }
-        ]
-      }
-    ],
-    "consoleErrors": 2,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/labs",
-      "/api/v1/me/lab-sessions"
-    ]
-  },
-  {
-    "cell": "STUDENT·/student/labs·light·768",
-    "role": "STUDENT",
-    "route": "/student/labs",
-    "theme": "light",
-    "viewport": "768x900",
-    "words": 47,
-    "scrollHeight": 941,
-    "hOverflowDoc": 0,
-    "hOverflowScroller": 0,
-    "smallTargets": [
-      {
-        "tag": "a",
-        "name": "تجارب AR/VR",
-        "w": 123,
-        "h": 32
-      },
-      {
-        "tag": "a",
-        "name": "البث المباشر",
-        "w": 109,
-        "h": 32
-      }
-    ],
-    "smallTargetCount": 2,
-    "overlapCount": 9,
-    "overlaps": [
-      {
-        "el": "topbar-mobile-toggle",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-search-toggle",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-theme",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-notif",
-        "text": "2",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-user-trigger",
-        "text": "أزأحمد",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1955
-          }
-        ]
-      },
-      {
-        "el": "avatar",
-        "text": "أز",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 900
-          }
-        ]
-      }
-    ],
-    "consoleErrors": 2,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/labs",
-      "/api/v1/me/lab-sessions"
-    ]
-  },
-  {
-    "cell": "STUDENT·/student/labs·light·390",
-    "role": "STUDENT",
-    "route": "/student/labs",
-    "theme": "light",
-    "viewport": "390x844",
-    "words": 42,
-    "scrollHeight": 1053,
-    "hOverflowDoc": 0,
-    "hOverflowScroller": 0,
-    "smallTargets": [],
-    "smallTargetCount": 0,
-    "overlapCount": 9,
-    "overlaps": [
-      {
-        "el": "topbar-mobile-toggle",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-search-toggle",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-theme",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-notif",
-        "text": "2",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-user-trigger",
-        "text": "أزأحمد",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "avatar",
-        "text": "أز",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 900
-          }
-        ]
-      }
-    ],
-    "consoleErrors": 2,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/labs",
-      "/api/v1/me/lab-sessions"
-    ]
-  },
-  {
-    "cell": "STUDENT·/student/ar·light·1440",
-    "role": "STUDENT",
-    "route": "/student/ar",
-    "theme": "light",
-    "viewport": "1440x900",
-    "words": 45,
-    "scrollHeight": 844,
-    "hOverflowDoc": 0,
-    "hOverflowScroller": 0,
-    "smallTargets": [
-      {
-        "tag": "button",
-        "name": "توسعة القائمة",
-        "w": 28,
-        "h": 28
-      },
-      {
-        "tag": "a",
-        "name": "لوحة التحكم",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "الجدول الدراسي",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "التقويم الأكاديمي",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "مقرّراتي الدراسية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "دليل المقررات",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "النتائج والتقييمات",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المصفوفة التعليمية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "الاختبارات الإلكترونية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المكتبة الإلكترونية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "بحوثي العلمية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المساعد الذكي",
-        "w": 55,
-        "h": 36
-      }
-    ],
-    "smallTargetCount": 24,
-    "overlapCount": 9,
-    "overlaps": [
-      {
-        "el": "topbar-kicker",
-        "text": "المعامل والتقنيات",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1544
-          }
-        ]
-      },
-      {
-        "el": "topbar-scope",
-        "text": "كلية الهندسة",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1982
-          }
-        ]
-      },
-      {
-        "el": "INPUT",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 13600
-          }
-        ]
-      },
-      {
-        "el": "BDI",
-        "text": "Ctrl+K",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1029
-          }
-        ]
-      },
-      {
-        "el": "btn primary sm",
-        "text": "اسأل AI",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 3867
-          }
-        ]
-      },
-      {
-        "el": "hide-on-mobile",
-        "text": "اسأل AI",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 943
-          }
-        ]
-      }
-    ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/ar-experiences"
-    ]
-  },
-  {
-    "cell": "STUDENT·/student/ar·light·1024",
-    "role": "STUDENT",
-    "route": "/student/ar",
-    "theme": "light",
-    "viewport": "1024x768",
-    "words": 45,
-    "scrollHeight": 712,
-    "hOverflowDoc": 0,
-    "hOverflowScroller": 0,
-    "smallTargets": [
-      {
-        "tag": "button",
-        "name": "توسعة القائمة",
-        "w": 28,
-        "h": 28
-      },
-      {
-        "tag": "a",
-        "name": "لوحة التحكم",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "الجدول الدراسي",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "التقويم الأكاديمي",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "مقرّراتي الدراسية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "دليل المقررات",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "النتائج والتقييمات",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المصفوفة التعليمية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "الاختبارات الإلكترونية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المكتبة الإلكترونية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "بحوثي العلمية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المساعد الذكي",
-        "w": 55,
-        "h": 36
-      }
-    ],
-    "smallTargetCount": 20,
-    "overlapCount": 9,
-    "overlaps": [
-      {
-        "el": "topbar-kicker",
-        "text": "المعامل والتقنيات",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1544
-          }
-        ]
-      },
-      {
-        "el": "topbar-scope",
-        "text": "كلية الهندسة",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1982
-          }
-        ]
-      },
-      {
-        "el": "INPUT",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 13600
-          }
-        ]
-      },
-      {
-        "el": "BDI",
-        "text": "Ctrl+K",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1029
-          }
-        ]
-      },
-      {
-        "el": "btn primary sm",
-        "text": "اسأل AI",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 3867
-          }
-        ]
-      },
-      {
-        "el": "hide-on-mobile",
-        "text": "اسأل AI",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 943
-          }
-        ]
-      }
-    ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/ar-experiences"
-    ]
-  },
-  {
-    "cell": "STUDENT·/student/ar·light·768",
-    "role": "STUDENT",
-    "route": "/student/ar",
-    "theme": "light",
-    "viewport": "768x900",
-    "words": 41,
-    "scrollHeight": 844,
-    "hOverflowDoc": 0,
-    "hOverflowScroller": 0,
-    "smallTargets": [
-      {
-        "tag": "a",
-        "name": "المعامل الافتراضية",
-        "w": 140,
-        "h": 32
-      },
-      {
-        "tag": "a",
-        "name": "البث المباشر",
-        "w": 109,
-        "h": 32
-      }
-    ],
-    "smallTargetCount": 2,
-    "overlapCount": 9,
-    "overlaps": [
-      {
-        "el": "topbar-mobile-toggle",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-search-toggle",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-theme",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-notif",
-        "text": "2",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-user-trigger",
-        "text": "أزأحمد",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1955
-          }
-        ]
-      },
-      {
-        "el": "avatar",
-        "text": "أز",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 900
-          }
-        ]
-      }
-    ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/ar-experiences"
-    ]
-  },
-  {
-    "cell": "STUDENT·/student/ar·light·390",
-    "role": "STUDENT",
-    "route": "/student/ar",
-    "theme": "light",
-    "viewport": "390x844",
-    "words": 36,
-    "scrollHeight": 788,
-    "hOverflowDoc": 0,
-    "hOverflowScroller": 0,
-    "smallTargets": [],
-    "smallTargetCount": 0,
-    "overlapCount": 9,
-    "overlaps": [
-      {
-        "el": "topbar-mobile-toggle",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-search-toggle",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-theme",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-notif",
-        "text": "2",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-user-trigger",
-        "text": "أزأحمد",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "avatar",
-        "text": "أز",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 900
-          }
-        ]
-      }
-    ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/ar-experiences"
-    ]
-  },
-  {
-    "cell": "STUDENT·/student/live·light·1440",
-    "role": "STUDENT",
-    "route": "/student/live",
-    "theme": "light",
-    "viewport": "1440x900",
-    "words": 49,
-    "scrollHeight": 844,
-    "hOverflowDoc": 0,
-    "hOverflowScroller": 0,
-    "smallTargets": [
-      {
-        "tag": "button",
-        "name": "توسعة القائمة",
-        "w": 28,
-        "h": 28
-      },
-      {
-        "tag": "a",
-        "name": "لوحة التحكم",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "الجدول الدراسي",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "التقويم الأكاديمي",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "مقرّراتي الدراسية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "دليل المقررات",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "النتائج والتقييمات",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المصفوفة التعليمية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "الاختبارات الإلكترونية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المكتبة الإلكترونية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "بحوثي العلمية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المساعد الذكي",
-        "w": 55,
-        "h": 36
-      }
-    ],
-    "smallTargetCount": 24,
-    "overlapCount": 9,
-    "overlaps": [
-      {
-        "el": "topbar-kicker",
-        "text": "المعامل والتقنيات",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1544
-          }
-        ]
-      },
-      {
-        "el": "topbar-scope",
-        "text": "كلية الهندسة",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1982
-          }
-        ]
-      },
-      {
-        "el": "INPUT",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 13598
-          }
-        ]
-      },
-      {
-        "el": "BDI",
-        "text": "Ctrl+K",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1029
-          }
-        ]
-      },
-      {
-        "el": "btn primary sm",
-        "text": "اسأل AI",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 3867
-          }
-        ]
-      },
-      {
-        "el": "hide-on-mobile",
-        "text": "اسأل AI",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 943
-          }
-        ]
-      }
-    ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/live/sessions"
-    ]
-  },
-  {
-    "cell": "STUDENT·/student/live·light·1024",
-    "role": "STUDENT",
-    "route": "/student/live",
-    "theme": "light",
-    "viewport": "1024x768",
-    "words": 49,
-    "scrollHeight": 712,
-    "hOverflowDoc": 0,
-    "hOverflowScroller": 0,
-    "smallTargets": [
-      {
-        "tag": "button",
-        "name": "توسعة القائمة",
-        "w": 28,
-        "h": 28
-      },
-      {
-        "tag": "a",
-        "name": "لوحة التحكم",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "الجدول الدراسي",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "التقويم الأكاديمي",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "مقرّراتي الدراسية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "دليل المقررات",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "النتائج والتقييمات",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المصفوفة التعليمية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "الاختبارات الإلكترونية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المكتبة الإلكترونية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "بحوثي العلمية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المساعد الذكي",
-        "w": 55,
-        "h": 36
-      }
-    ],
-    "smallTargetCount": 20,
-    "overlapCount": 9,
-    "overlaps": [
-      {
-        "el": "topbar-kicker",
-        "text": "المعامل والتقنيات",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1544
-          }
-        ]
-      },
-      {
-        "el": "topbar-scope",
-        "text": "كلية الهندسة",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1982
-          }
-        ]
-      },
-      {
-        "el": "INPUT",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 13599
-          }
-        ]
-      },
-      {
-        "el": "BDI",
-        "text": "Ctrl+K",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1029
-          }
-        ]
-      },
-      {
-        "el": "btn primary sm",
-        "text": "اسأل AI",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 3867
-          }
-        ]
-      },
-      {
-        "el": "hide-on-mobile",
-        "text": "اسأل AI",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 943
-          }
-        ]
-      }
-    ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/live/sessions"
-    ]
-  },
-  {
-    "cell": "STUDENT·/student/live·light·768",
-    "role": "STUDENT",
-    "route": "/student/live",
-    "theme": "light",
-    "viewport": "768x900",
-    "words": 45,
-    "scrollHeight": 844,
-    "hOverflowDoc": 0,
-    "hOverflowScroller": 0,
-    "smallTargets": [
-      {
-        "tag": "a",
-        "name": "الندوات وورش العمل",
-        "w": 153,
-        "h": 32
-      },
-      {
-        "tag": "a",
-        "name": "المعامل الافتراضية",
-        "w": 140,
-        "h": 32
-      }
-    ],
-    "smallTargetCount": 2,
-    "overlapCount": 9,
-    "overlaps": [
-      {
-        "el": "topbar-mobile-toggle",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-search-toggle",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-theme",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-notif",
-        "text": "2",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-user-trigger",
-        "text": "أزأحمد",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1955
-          }
-        ]
-      },
-      {
-        "el": "avatar",
-        "text": "أز",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 900
-          }
-        ]
-      }
-    ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/live/sessions"
-    ]
-  },
-  {
-    "cell": "STUDENT·/student/live·light·390",
-    "role": "STUDENT",
-    "route": "/student/live",
-    "theme": "light",
-    "viewport": "390x844",
-    "words": 40,
-    "scrollHeight": 842,
-    "hOverflowDoc": 0,
-    "hOverflowScroller": 0,
-    "smallTargets": [],
-    "smallTargetCount": 0,
-    "overlapCount": 9,
-    "overlaps": [
-      {
-        "el": "topbar-mobile-toggle",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-search-toggle",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-theme",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-notif",
-        "text": "2",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-user-trigger",
-        "text": "أزأحمد",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "avatar",
-        "text": "أز",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 900
-          }
-        ]
-      }
-    ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/live/sessions"
-    ]
-  },
-  {
-    "cell": "STUDENT·/training·light·1440",
-    "role": "STUDENT",
-    "route": "/training",
-    "theme": "light",
-    "viewport": "1440x900",
-    "words": 25,
-    "scrollHeight": 844,
+    "words": 86,
+    "scrollHeight": 735,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -6977,11 +5617,11 @@
     "overlaps": [
       {
         "el": "topbar-kicker",
-        "text": "التطوير والتقدّم",
+        "text": "المعامل والتقنيات",
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 1325
+            "area": 1544
           }
         ]
       },
@@ -7021,7 +5661,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 4182
+            "area": 3868
           }
         ]
       },
@@ -7031,7 +5671,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 1102
+            "area": 943
           }
         ]
       }
@@ -7041,13 +5681,196 @@
     "notImplemented": []
   },
   {
-    "cell": "STUDENT·/training·light·1024",
+    "cell": "STUDENT·/student/labs·light·768",
     "role": "STUDENT",
-    "route": "/training",
+    "route": "/student/labs",
     "theme": "light",
-    "viewport": "1024x768",
-    "words": 61,
-    "scrollHeight": 1147,
+    "viewport": "768x900",
+    "words": 82,
+    "scrollHeight": 844,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "تجارب AR/VR",
+        "w": 123,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "البث المباشر",
+        "w": 109,
+        "h": 32
+      },
+      {
+        "tag": "button",
+        "name": "قريباً",
+        "w": 86,
+        "h": 40
+      },
+      {
+        "tag": "button",
+        "name": "ابدأ تجربة",
+        "w": 113,
+        "h": 40
+      }
+    ],
+    "smallTargetCount": 4,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "أزأحمد",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1955
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "أز",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/student/labs·light·390",
+    "role": "STUDENT",
+    "route": "/student/labs",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 77,
+    "scrollHeight": 947,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "أزأحمد",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "أز",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/student/ar·light·1440",
+    "role": "STUDENT",
+    "route": "/student/ar",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 64,
+    "scrollHeight": 844,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -7124,16 +5947,16 @@
         "h": 36
       }
     ],
-    "smallTargetCount": 19,
+    "smallTargetCount": 24,
     "overlapCount": 9,
     "overlaps": [
       {
         "el": "topbar-kicker",
-        "text": "التطوير والتقدّم",
+        "text": "المعامل والتقنيات",
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 1325
+            "area": 1544
           }
         ]
       },
@@ -7153,7 +5976,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 13599
+            "area": 13600
           }
         ]
       },
@@ -7173,7 +5996,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 3867
+            "area": 3868
           }
         ]
       },
@@ -7188,35 +6011,187 @@
         ]
       }
     ],
-    "consoleErrors": 3,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/training/me",
-      "/api/v1/training/me/badges"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
-    "cell": "STUDENT·/training·light·768",
+    "cell": "STUDENT·/student/ar·light·1024",
     "role": "STUDENT",
-    "route": "/training",
+    "route": "/student/ar",
     "theme": "light",
-    "viewport": "768x900",
-    "words": 57,
-    "scrollHeight": 1168,
+    "viewport": "1024x768",
+    "words": 64,
+    "scrollHeight": 712,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
       {
         "tag": "button",
-        "name": "كل المسارات (0)",
-        "w": 136,
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الجدول الدراسي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "التقويم الأكاديمي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مقرّراتي الدراسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "دليل المقررات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النتائج والتقييمات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المصفوفة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الاختبارات الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المكتبة الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "بحوثي العلمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المساعد الذكي",
+        "w": 55,
         "h": 36
       }
     ],
-    "smallTargetCount": 1,
+    "smallTargetCount": 20,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "المعامل والتقنيات",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1544
+          }
+        ]
+      },
+      {
+        "el": "topbar-scope",
+        "text": "كلية الهندسة",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1982
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13600
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3868
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/student/ar·light·768",
+    "role": "STUDENT",
+    "route": "/student/ar",
+    "theme": "light",
+    "viewport": "768x900",
+    "words": 60,
+    "scrollHeight": 844,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "المعامل الافتراضية",
+        "w": 140,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "البث المباشر",
+        "w": 109,
+        "h": 32
+      }
+    ],
+    "smallTargetCount": 2,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -7280,24 +6255,18 @@
         ]
       }
     ],
-    "consoleErrors": 2,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/training/me",
-      "/api/v1/training/me/badges"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
-    "cell": "STUDENT·/training·light·390",
+    "cell": "STUDENT·/student/ar·light·390",
     "role": "STUDENT",
-    "route": "/training",
+    "route": "/student/ar",
     "theme": "light",
     "viewport": "390x844",
-    "words": 52,
-    "scrollHeight": 1348,
+    "words": 55,
+    "scrollHeight": 788,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [],
@@ -7365,15 +6334,965 @@
         ]
       }
     ],
-    "consoleErrors": 2,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/student/live·light·1440",
+    "role": "STUDENT",
+    "route": "/student/live",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 113,
+    "scrollHeight": 844,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الجدول الدراسي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "التقويم الأكاديمي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مقرّراتي الدراسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "دليل المقررات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النتائج والتقييمات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المصفوفة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الاختبارات الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المكتبة الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "بحوثي العلمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المساعد الذكي",
+        "w": 55,
+        "h": 36
+      }
     ],
-    "notImplemented": [
-      "/api/v1/training/me",
-      "/api/v1/training/me/badges"
-    ]
+    "smallTargetCount": 25,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "المعامل والتقنيات",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1544
+          }
+        ]
+      },
+      {
+        "el": "topbar-scope",
+        "text": "كلية الهندسة",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1982
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13600
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3868
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/student/live·light·1024",
+    "role": "STUDENT",
+    "route": "/student/live",
+    "theme": "light",
+    "viewport": "1024x768",
+    "words": 113,
+    "scrollHeight": 712,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الجدول الدراسي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "التقويم الأكاديمي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مقرّراتي الدراسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "دليل المقررات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النتائج والتقييمات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المصفوفة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الاختبارات الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المكتبة الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "بحوثي العلمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المساعد الذكي",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 21,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "المعامل والتقنيات",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1544
+          }
+        ]
+      },
+      {
+        "el": "topbar-scope",
+        "text": "كلية الهندسة",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1982
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13600
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3868
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/student/live·light·768",
+    "role": "STUDENT",
+    "route": "/student/live",
+    "theme": "light",
+    "viewport": "768x900",
+    "words": 109,
+    "scrollHeight": 844,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "الندوات وورش العمل",
+        "w": 153,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "المعامل الافتراضية",
+        "w": 140,
+        "h": 32
+      },
+      {
+        "tag": "button",
+        "name": "انضمام",
+        "w": 85,
+        "h": 32
+      }
+    ],
+    "smallTargetCount": 3,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "أزأحمد",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1955
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "أز",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/student/live·light·390",
+    "role": "STUDENT",
+    "route": "/student/live",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 104,
+    "scrollHeight": 1008,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "أزأحمد",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "أز",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/training·light·1440",
+    "role": "STUDENT",
+    "route": "/training",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 96,
+    "scrollHeight": 1085,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الجدول الدراسي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "التقويم الأكاديمي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مقرّراتي الدراسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "دليل المقررات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النتائج والتقييمات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المصفوفة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الاختبارات الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المكتبة الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "بحوثي العلمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المساعد الذكي",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 24,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "التطوير والتقدّم",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1325
+          }
+        ]
+      },
+      {
+        "el": "topbar-scope",
+        "text": "كلية الهندسة",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1982
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13600
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3868
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/training·light·1024",
+    "role": "STUDENT",
+    "route": "/training",
+    "theme": "light",
+    "viewport": "1024x768",
+    "words": 96,
+    "scrollHeight": 1119,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الجدول الدراسي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "التقويم الأكاديمي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مقرّراتي الدراسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "دليل المقررات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النتائج والتقييمات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المصفوفة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الاختبارات الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المكتبة الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "بحوثي العلمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المساعد الذكي",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 20,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "التطوير والتقدّم",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1325
+          }
+        ]
+      },
+      {
+        "el": "topbar-scope",
+        "text": "كلية الهندسة",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1982
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13600
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3868
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/training·light·768",
+    "role": "STUDENT",
+    "route": "/training",
+    "theme": "light",
+    "viewport": "768x900",
+    "words": 92,
+    "scrollHeight": 1174,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "عرض الإنجازات",
+        "w": 124,
+        "h": 32
+      },
+      {
+        "tag": "button",
+        "name": "كل المسارات (0)",
+        "w": 136,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 2,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "أزأحمد",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1955
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "أز",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/training·light·390",
+    "role": "STUDENT",
+    "route": "/training",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 87,
+    "scrollHeight": 1378,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "أزأحمد",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "أز",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/achievements·light·1440",
@@ -7381,8 +7300,8 @@
     "route": "/achievements",
     "theme": "light",
     "viewport": "1440x900",
-    "words": 40,
-    "scrollHeight": 1395,
+    "words": 79,
+    "scrollHeight": 844,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -7523,17 +7442,9 @@
         ]
       }
     ],
-    "consoleErrors": 4,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/training/me",
-      "/api/v1/training/me/badges",
-      "/api/v1/training/me/certificates",
-      "/api/v1/training/leaderboard"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/achievements·light·1024",
@@ -7541,8 +7452,8 @@
     "route": "/achievements",
     "theme": "light",
     "viewport": "1024x768",
-    "words": 40,
-    "scrollHeight": 1429,
+    "words": 79,
+    "scrollHeight": 822,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -7683,17 +7594,9 @@
         ]
       }
     ],
-    "consoleErrors": 4,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/training/me",
-      "/api/v1/training/me/badges",
-      "/api/v1/training/me/certificates",
-      "/api/v1/training/leaderboard"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/achievements·light·768",
@@ -7701,8 +7604,8 @@
     "route": "/achievements",
     "theme": "light",
     "viewport": "768x900",
-    "words": 36,
-    "scrollHeight": 1455,
+    "words": 75,
+    "scrollHeight": 886,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [],
@@ -7755,7 +7658,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 1954
+            "area": 1955
           }
         ]
       },
@@ -7770,17 +7673,9 @@
         ]
       }
     ],
-    "consoleErrors": 4,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/training/me",
-      "/api/v1/training/me/badges",
-      "/api/v1/training/me/certificates",
-      "/api/v1/training/leaderboard"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/achievements·light·390",
@@ -7788,8 +7683,8 @@
     "route": "/achievements",
     "theme": "light",
     "viewport": "390x844",
-    "words": 31,
-    "scrollHeight": 1778,
+    "words": 70,
+    "scrollHeight": 1019,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [],
@@ -7857,17 +7752,9 @@
         ]
       }
     ],
-    "consoleErrors": 4,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/training/me",
-      "/api/v1/training/me/badges",
-      "/api/v1/training/me/certificates",
-      "/api/v1/training/leaderboard"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/gamification·light·1440",
@@ -7875,8 +7762,8 @@
     "route": "/student/gamification",
     "theme": "light",
     "viewport": "1440x900",
-    "words": 61,
-    "scrollHeight": 1136,
+    "words": 115,
+    "scrollHeight": 844,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -8017,16 +7904,9 @@
         ]
       }
     ],
-    "consoleErrors": 3,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/me/achievements",
-      "/api/v1/leaderboard",
-      "/api/v1/training/me"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/gamification·light·1024",
@@ -8034,8 +7914,8 @@
     "route": "/student/gamification",
     "theme": "light",
     "viewport": "1024x768",
-    "words": 62,
-    "scrollHeight": 1158,
+    "words": 115,
+    "scrollHeight": 806,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -8176,16 +8056,9 @@
         ]
       }
     ],
-    "consoleErrors": 3,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/me/achievements",
-      "/api/v1/leaderboard",
-      "/api/v1/training/me"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/gamification·light·768",
@@ -8193,8 +8066,8 @@
     "route": "/student/gamification",
     "theme": "light",
     "viewport": "768x900",
-    "words": 58,
-    "scrollHeight": 1215,
+    "words": 111,
+    "scrollHeight": 856,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -8275,16 +8148,9 @@
         ]
       }
     ],
-    "consoleErrors": 3,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/me/achievements",
-      "/api/v1/leaderboard",
-      "/api/v1/training/me"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/gamification·light·390",
@@ -8292,8 +8158,8 @@
     "route": "/student/gamification",
     "theme": "light",
     "viewport": "390x844",
-    "words": 52,
-    "scrollHeight": 1470,
+    "words": 106,
+    "scrollHeight": 1097,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [],
@@ -8361,16 +8227,9 @@
         ]
       }
     ],
-    "consoleErrors": 3,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/me/achievements",
-      "/api/v1/leaderboard",
-      "/api/v1/training/me"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/skills·light·1440",
@@ -8378,7 +8237,7 @@
     "route": "/student/skills",
     "theme": "light",
     "viewport": "1440x900",
-    "words": 41,
+    "words": 92,
     "scrollHeight": 844,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
@@ -8520,13 +8379,9 @@
         ]
       }
     ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/me/skills"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/skills·light·1024",
@@ -8534,8 +8389,8 @@
     "route": "/student/skills",
     "theme": "light",
     "viewport": "1024x768",
-    "words": 41,
-    "scrollHeight": 780,
+    "words": 92,
+    "scrollHeight": 874,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -8676,13 +8531,9 @@
         ]
       }
     ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/me/skills"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/skills·light·768",
@@ -8690,8 +8541,8 @@
     "route": "/student/skills",
     "theme": "light",
     "viewport": "768x900",
-    "words": 37,
-    "scrollHeight": 844,
+    "words": 88,
+    "scrollHeight": 907,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -8772,13 +8623,9 @@
         ]
       }
     ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/me/skills"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/skills·light·390",
@@ -8786,8 +8633,8 @@
     "route": "/student/skills",
     "theme": "light",
     "viewport": "390x844",
-    "words": 32,
-    "scrollHeight": 923,
+    "words": 83,
+    "scrollHeight": 1023,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [],
@@ -8855,13 +8702,9 @@
         ]
       }
     ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/me/skills"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/mooc·light·1440",
@@ -8869,8 +8712,8 @@
     "route": "/student/mooc",
     "theme": "light",
     "viewport": "1440x900",
-    "words": 42,
-    "scrollHeight": 1311,
+    "words": 70,
+    "scrollHeight": 844,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -9011,13 +8854,9 @@
         ]
       }
     ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/mooc?limit=50"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/mooc·light·1024",
@@ -9025,488 +8864,8 @@
     "route": "/student/mooc",
     "theme": "light",
     "viewport": "1024x768",
-    "words": 42,
-    "scrollHeight": 1336,
-    "hOverflowDoc": 0,
-    "hOverflowScroller": 0,
-    "smallTargets": [
-      {
-        "tag": "button",
-        "name": "توسعة القائمة",
-        "w": 28,
-        "h": 28
-      },
-      {
-        "tag": "a",
-        "name": "لوحة التحكم",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "الجدول الدراسي",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "التقويم الأكاديمي",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "مقرّراتي الدراسية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "دليل المقررات",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "النتائج والتقييمات",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المصفوفة التعليمية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "الاختبارات الإلكترونية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المكتبة الإلكترونية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "بحوثي العلمية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المساعد الذكي",
-        "w": 55,
-        "h": 36
-      }
-    ],
-    "smallTargetCount": 18,
-    "overlapCount": 9,
-    "overlaps": [
-      {
-        "el": "topbar-kicker",
-        "text": "التطوير والتقدّم",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1325
-          }
-        ]
-      },
-      {
-        "el": "topbar-scope",
-        "text": "كلية الهندسة",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1982
-          }
-        ]
-      },
-      {
-        "el": "INPUT",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 13599
-          }
-        ]
-      },
-      {
-        "el": "BDI",
-        "text": "Ctrl+K",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1029
-          }
-        ]
-      },
-      {
-        "el": "btn primary sm",
-        "text": "اسأل AI",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 3867
-          }
-        ]
-      },
-      {
-        "el": "hide-on-mobile",
-        "text": "اسأل AI",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 943
-          }
-        ]
-      }
-    ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/mooc?limit=50"
-    ]
-  },
-  {
-    "cell": "STUDENT·/student/mooc·light·768",
-    "role": "STUDENT",
-    "route": "/student/mooc",
-    "theme": "light",
-    "viewport": "768x900",
-    "words": 38,
-    "scrollHeight": 1412,
-    "hOverflowDoc": 0,
-    "hOverflowScroller": 0,
-    "smallTargets": [],
-    "smallTargetCount": 0,
-    "overlapCount": 8,
-    "overlaps": [
-      {
-        "el": "topbar-mobile-toggle",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-search-toggle",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-theme",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-notif",
-        "text": "2",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-user-trigger",
-        "text": "أزأحمد",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1955
-          }
-        ]
-      },
-      {
-        "el": "avatar",
-        "text": "أز",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 900
-          }
-        ]
-      }
-    ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/mooc?limit=50"
-    ]
-  },
-  {
-    "cell": "STUDENT·/student/mooc·light·390",
-    "role": "STUDENT",
-    "route": "/student/mooc",
-    "theme": "light",
-    "viewport": "390x844",
-    "words": 33,
-    "scrollHeight": 1555,
-    "hOverflowDoc": 0,
-    "hOverflowScroller": 0,
-    "smallTargets": [],
-    "smallTargetCount": 0,
-    "overlapCount": 8,
-    "overlaps": [
-      {
-        "el": "topbar-mobile-toggle",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-search-toggle",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-theme",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-notif",
-        "text": "2",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-user-trigger",
-        "text": "أزأحمد",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "avatar",
-        "text": "أز",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 900
-          }
-        ]
-      }
-    ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/mooc?limit=50"
-    ]
-  },
-  {
-    "cell": "STUDENT·/student/webinars·light·1440",
-    "role": "STUDENT",
-    "route": "/student/webinars",
-    "theme": "light",
-    "viewport": "1440x900",
-    "words": 116,
-    "scrollHeight": 931,
-    "hOverflowDoc": 0,
-    "hOverflowScroller": 0,
-    "smallTargets": [
-      {
-        "tag": "button",
-        "name": "توسعة القائمة",
-        "w": 28,
-        "h": 28
-      },
-      {
-        "tag": "a",
-        "name": "لوحة التحكم",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "الجدول الدراسي",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "التقويم الأكاديمي",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "مقرّراتي الدراسية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "دليل المقررات",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "النتائج والتقييمات",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المصفوفة التعليمية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "الاختبارات الإلكترونية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المكتبة الإلكترونية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "بحوثي العلمية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المساعد الذكي",
-        "w": 55,
-        "h": 36
-      }
-    ],
-    "smallTargetCount": 24,
-    "overlapCount": 9,
-    "overlaps": [
-      {
-        "el": "topbar-kicker",
-        "text": "التطوير والتقدّم",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1325
-          }
-        ]
-      },
-      {
-        "el": "topbar-scope",
-        "text": "كلية الهندسة",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1982
-          }
-        ]
-      },
-      {
-        "el": "INPUT",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 13600
-          }
-        ]
-      },
-      {
-        "el": "BDI",
-        "text": "Ctrl+K",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1029
-          }
-        ]
-      },
-      {
-        "el": "btn primary sm",
-        "text": "اسأل AI",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 3867
-          }
-        ]
-      },
-      {
-        "el": "hide-on-mobile",
-        "text": "اسأل AI",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 943
-          }
-        ]
-      }
-    ],
-    "consoleErrors": 2,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/events",
-      "/api/v1/live/sessions"
-    ]
-  },
-  {
-    "cell": "STUDENT·/student/webinars·light·1024",
-    "role": "STUDENT",
-    "route": "/student/webinars",
-    "theme": "light",
-    "viewport": "1024x768",
-    "words": 116,
-    "scrollHeight": 950,
+    "words": 70,
+    "scrollHeight": 826,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -9647,24 +9006,18 @@
         ]
       }
     ],
-    "consoleErrors": 2,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/events",
-      "/api/v1/live/sessions"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
-    "cell": "STUDENT·/student/webinars·light·768",
+    "cell": "STUDENT·/student/mooc·light·768",
     "role": "STUDENT",
-    "route": "/student/webinars",
+    "route": "/student/mooc",
     "theme": "light",
     "viewport": "768x900",
-    "words": 112,
-    "scrollHeight": 1026,
+    "words": 66,
+    "scrollHeight": 871,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [],
@@ -9732,24 +9085,18 @@
         ]
       }
     ],
-    "consoleErrors": 2,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/events",
-      "/api/v1/live/sessions"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
-    "cell": "STUDENT·/student/webinars·light·390",
+    "cell": "STUDENT·/student/mooc·light·390",
     "role": "STUDENT",
-    "route": "/student/webinars",
+    "route": "/student/mooc",
     "theme": "light",
     "viewport": "390x844",
-    "words": 107,
-    "scrollHeight": 1367,
+    "words": 61,
+    "scrollHeight": 981,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [],
@@ -9817,15 +9164,490 @@
         ]
       }
     ],
-    "consoleErrors": 2,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/student/webinars·light·1440",
+    "role": "STUDENT",
+    "route": "/student/webinars",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 146,
+    "scrollHeight": 844,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الجدول الدراسي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "التقويم الأكاديمي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مقرّراتي الدراسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "دليل المقررات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النتائج والتقييمات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المصفوفة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الاختبارات الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المكتبة الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "بحوثي العلمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المساعد الذكي",
+        "w": 55,
+        "h": 36
+      }
     ],
-    "notImplemented": [
-      "/api/v1/events",
-      "/api/v1/live/sessions"
-    ]
+    "smallTargetCount": 25,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "التطوير والتقدّم",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1325
+          }
+        ]
+      },
+      {
+        "el": "topbar-scope",
+        "text": "كلية الهندسة",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1982
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13600
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3868
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/student/webinars·light·1024",
+    "role": "STUDENT",
+    "route": "/student/webinars",
+    "theme": "light",
+    "viewport": "1024x768",
+    "words": 146,
+    "scrollHeight": 820,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الجدول الدراسي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "التقويم الأكاديمي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مقرّراتي الدراسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "دليل المقررات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النتائج والتقييمات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المصفوفة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الاختبارات الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المكتبة الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "بحوثي العلمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المساعد الذكي",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 21,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "التطوير والتقدّم",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1325
+          }
+        ]
+      },
+      {
+        "el": "topbar-scope",
+        "text": "كلية الهندسة",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1982
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13600
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3868
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/student/webinars·light·768",
+    "role": "STUDENT",
+    "route": "/student/webinars",
+    "theme": "light",
+    "viewport": "768x900",
+    "words": 142,
+    "scrollHeight": 880,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "انضمام",
+        "w": 85,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "فتح المجتمع",
+        "w": 113,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "فتح صفحة البثّ",
+        "w": 128,
+        "h": 32
+      }
+    ],
+    "smallTargetCount": 3,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "أزأحمد",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1955
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "أز",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/student/webinars·light·390",
+    "role": "STUDENT",
+    "route": "/student/webinars",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 137,
+    "scrollHeight": 1223,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "أزأحمد",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "أز",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/community·light·1440",
@@ -9833,7 +9655,7 @@
     "route": "/community",
     "theme": "light",
     "viewport": "1440x900",
-    "words": 64,
+    "words": 104,
     "scrollHeight": 844,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
@@ -9940,7 +9762,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 13596
+            "area": 13600
           }
         ]
       },
@@ -9960,7 +9782,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 3866
+            "area": 3868
           }
         ]
       },
@@ -9975,17 +9797,9 @@
         ]
       }
     ],
-    "consoleErrors": 4,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/announcements/feed",
-      "/api/v1/competitions",
-      "/api/v1/events",
-      "/api/v1/me/permissions"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/community·light·1024",
@@ -9993,8 +9807,8 @@
     "route": "/community",
     "theme": "light",
     "viewport": "1024x768",
-    "words": 64,
-    "scrollHeight": 848,
+    "words": 104,
+    "scrollHeight": 712,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -10135,17 +9949,9 @@
         ]
       }
     ],
-    "consoleErrors": 4,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/announcements/feed",
-      "/api/v1/competitions",
-      "/api/v1/events",
-      "/api/v1/me/permissions"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/community·light·768",
@@ -10153,8 +9959,8 @@
     "route": "/community",
     "theme": "light",
     "viewport": "768x900",
-    "words": 60,
-    "scrollHeight": 929,
+    "words": 100,
+    "scrollHeight": 844,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -10235,17 +10041,9 @@
         ]
       }
     ],
-    "consoleErrors": 4,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/announcements/feed",
-      "/api/v1/competitions",
-      "/api/v1/events",
-      "/api/v1/me/permissions"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/community·light·390",
@@ -10253,12 +10051,25 @@
     "route": "/community",
     "theme": "light",
     "viewport": "390x844",
-    "words": 55,
-    "scrollHeight": 1064,
+    "words": 95,
+    "scrollHeight": 959,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
-    "smallTargets": [],
-    "smallTargetCount": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "عرض نص الإعلان: فتح باب التقديم لمنافسة ",
+        "w": 19,
+        "h": 44
+      },
+      {
+        "tag": "button",
+        "name": "عرض نص الإعلان: ورشة عمل: مراجعة ما قبل ",
+        "w": 36,
+        "h": 44
+      }
+    ],
+    "smallTargetCount": 2,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -10322,17 +10133,9 @@
         ]
       }
     ],
-    "consoleErrors": 4,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/announcements/feed",
-      "/api/v1/competitions",
-      "/api/v1/events",
-      "/api/v1/me/permissions"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/social·light·1440",
@@ -10340,7 +10143,7 @@
     "route": "/student/social",
     "theme": "light",
     "viewport": "1440x900",
-    "words": 39,
+    "words": 84,
     "scrollHeight": 844,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
@@ -10418,7 +10221,7 @@
         "h": 36
       }
     ],
-    "smallTargetCount": 23,
+    "smallTargetCount": 25,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -10482,13 +10285,9 @@
         ]
       }
     ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/posts?limit=20"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/social·light·1024",
@@ -10496,8 +10295,8 @@
     "route": "/student/social",
     "theme": "light",
     "viewport": "1024x768",
-    "words": 39,
-    "scrollHeight": 712,
+    "words": 84,
+    "scrollHeight": 942,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -10574,7 +10373,7 @@
         "h": 36
       }
     ],
-    "smallTargetCount": 19,
+    "smallTargetCount": 21,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -10638,13 +10437,9 @@
         ]
       }
     ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/posts?limit=20"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/social·light·768",
@@ -10652,8 +10447,8 @@
     "route": "/student/social",
     "theme": "light",
     "viewport": "768x900",
-    "words": 35,
-    "scrollHeight": 844,
+    "words": 80,
+    "scrollHeight": 999,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -10662,9 +10457,21 @@
         "name": "نشر",
         "w": 44,
         "h": 32
+      },
+      {
+        "tag": "button",
+        "name": "أعجبني بهذا المنشور",
+        "w": 13,
+        "h": 37
+      },
+      {
+        "tag": "button",
+        "name": "إزالة الإعجاب",
+        "w": 13,
+        "h": 37
       }
     ],
-    "smallTargetCount": 1,
+    "smallTargetCount": 3,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -10728,13 +10535,9 @@
         ]
       }
     ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/posts?limit=20"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/social·light·390",
@@ -10742,12 +10545,25 @@
     "route": "/student/social",
     "theme": "light",
     "viewport": "390x844",
-    "words": 30,
-    "scrollHeight": 788,
+    "words": 75,
+    "scrollHeight": 1090,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
-    "smallTargets": [],
-    "smallTargetCount": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "أعجبني بهذا المنشور",
+        "w": 13,
+        "h": 39
+      },
+      {
+        "tag": "button",
+        "name": "إزالة الإعجاب",
+        "w": 13,
+        "h": 39
+      }
+    ],
+    "smallTargetCount": 2,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -10811,13 +10627,9 @@
         ]
       }
     ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/posts?limit=20"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/colleges·light·1440",
@@ -11287,7 +11099,7 @@
     "route": "/competitions",
     "theme": "light",
     "viewport": "1440x900",
-    "words": 50,
+    "words": 86,
     "scrollHeight": 844,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
@@ -11429,15 +11241,9 @@
         ]
       }
     ],
-    "consoleErrors": 2,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/competitions",
-      "/api/v1/me/permissions"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/competitions·light·1024",
@@ -11445,491 +11251,7 @@
     "route": "/competitions",
     "theme": "light",
     "viewport": "1024x768",
-    "words": 50,
-    "scrollHeight": 725,
-    "hOverflowDoc": 0,
-    "hOverflowScroller": 0,
-    "smallTargets": [
-      {
-        "tag": "button",
-        "name": "توسعة القائمة",
-        "w": 28,
-        "h": 28
-      },
-      {
-        "tag": "a",
-        "name": "لوحة التحكم",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "الجدول الدراسي",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "التقويم الأكاديمي",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "مقرّراتي الدراسية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "دليل المقررات",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "النتائج والتقييمات",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المصفوفة التعليمية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "الاختبارات الإلكترونية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المكتبة الإلكترونية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "بحوثي العلمية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المساعد الذكي",
-        "w": 55,
-        "h": 36
-      }
-    ],
-    "smallTargetCount": 22,
-    "overlapCount": 9,
-    "overlaps": [
-      {
-        "el": "topbar-kicker",
-        "text": "المجتمع والفرص",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1497
-          }
-        ]
-      },
-      {
-        "el": "topbar-scope",
-        "text": "كلية الهندسة",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1982
-          }
-        ]
-      },
-      {
-        "el": "INPUT",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 13599
-          }
-        ]
-      },
-      {
-        "el": "BDI",
-        "text": "Ctrl+K",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1029
-          }
-        ]
-      },
-      {
-        "el": "btn primary sm",
-        "text": "اسأل AI",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 3867
-          }
-        ]
-      },
-      {
-        "el": "hide-on-mobile",
-        "text": "اسأل AI",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 943
-          }
-        ]
-      }
-    ],
-    "consoleErrors": 2,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/competitions",
-      "/api/v1/me/permissions"
-    ]
-  },
-  {
-    "cell": "STUDENT·/competitions·light·768",
-    "role": "STUDENT",
-    "route": "/competitions",
-    "theme": "light",
-    "viewport": "768x900",
-    "words": 46,
-    "scrollHeight": 844,
-    "hOverflowDoc": 0,
-    "hOverflowScroller": 0,
-    "smallTargets": [],
-    "smallTargetCount": 0,
-    "overlapCount": 9,
-    "overlaps": [
-      {
-        "el": "topbar-mobile-toggle",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-search-toggle",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-theme",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-notif",
-        "text": "2",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-user-trigger",
-        "text": "أزأحمد",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1955
-          }
-        ]
-      },
-      {
-        "el": "avatar",
-        "text": "أز",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 900
-          }
-        ]
-      }
-    ],
-    "consoleErrors": 2,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/competitions",
-      "/api/v1/me/permissions"
-    ]
-  },
-  {
-    "cell": "STUDENT·/competitions·light·390",
-    "role": "STUDENT",
-    "route": "/competitions",
-    "theme": "light",
-    "viewport": "390x844",
-    "words": 41,
-    "scrollHeight": 904,
-    "hOverflowDoc": 0,
-    "hOverflowScroller": 0,
-    "smallTargets": [],
-    "smallTargetCount": 0,
-    "overlapCount": 9,
-    "overlaps": [
-      {
-        "el": "topbar-mobile-toggle",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-search-toggle",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-theme",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-notif",
-        "text": "2",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "topbar-user-trigger",
-        "text": "أزأحمد",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1870
-          }
-        ]
-      },
-      {
-        "el": "avatar",
-        "text": "أز",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 900
-          }
-        ]
-      }
-    ],
-    "consoleErrors": 2,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/competitions",
-      "/api/v1/me/permissions"
-    ]
-  },
-  {
-    "cell": "STUDENT·/student/jobs·light·1440",
-    "role": "STUDENT",
-    "route": "/student/jobs",
-    "theme": "light",
-    "viewport": "1440x900",
-    "words": 43,
-    "scrollHeight": 844,
-    "hOverflowDoc": 0,
-    "hOverflowScroller": 0,
-    "smallTargets": [
-      {
-        "tag": "button",
-        "name": "توسعة القائمة",
-        "w": 28,
-        "h": 28
-      },
-      {
-        "tag": "a",
-        "name": "لوحة التحكم",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "الجدول الدراسي",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "التقويم الأكاديمي",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "مقرّراتي الدراسية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "دليل المقررات",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "النتائج والتقييمات",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المصفوفة التعليمية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "الاختبارات الإلكترونية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المكتبة الإلكترونية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "بحوثي العلمية",
-        "w": 55,
-        "h": 36
-      },
-      {
-        "tag": "a",
-        "name": "المساعد الذكي",
-        "w": 55,
-        "h": 36
-      }
-    ],
-    "smallTargetCount": 24,
-    "overlapCount": 9,
-    "overlaps": [
-      {
-        "el": "topbar-kicker",
-        "text": "المجتمع والفرص",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1497
-          }
-        ]
-      },
-      {
-        "el": "topbar-scope",
-        "text": "كلية الهندسة",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1982
-          }
-        ]
-      },
-      {
-        "el": "INPUT",
-        "text": "",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 13600
-          }
-        ]
-      },
-      {
-        "el": "BDI",
-        "text": "Ctrl+K",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 1029
-          }
-        ]
-      },
-      {
-        "el": "btn primary sm",
-        "text": "اسأل AI",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 3867
-          }
-        ]
-      },
-      {
-        "el": "hide-on-mobile",
-        "text": "اسأل AI",
-        "by": [
-          {
-            "fixed": "sheet-frame",
-            "area": 943
-          }
-        ]
-      }
-    ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/jobs?limit=50"
-    ]
-  },
-  {
-    "cell": "STUDENT·/student/jobs·light·1024",
-    "role": "STUDENT",
-    "route": "/student/jobs",
-    "theme": "light",
-    "viewport": "1024x768",
-    "words": 43,
+    "words": 86,
     "scrollHeight": 712,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
@@ -12007,7 +11329,7 @@
         "h": 36
       }
     ],
-    "smallTargetCount": 20,
+    "smallTargetCount": 18,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -12036,7 +11358,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 13599
+            "area": 13600
           }
         ]
       },
@@ -12056,7 +11378,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 3867
+            "area": 3868
           }
         ]
       },
@@ -12071,13 +11393,471 @@
         ]
       }
     ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/competitions·light·768",
+    "role": "STUDENT",
+    "route": "/competitions",
+    "theme": "light",
+    "viewport": "768x900",
+    "words": 82,
+    "scrollHeight": 844,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "أزأحمد",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1955
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "أز",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
     ],
-    "notImplemented": [
-      "/api/v1/jobs?limit=50"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/competitions·light·390",
+    "role": "STUDENT",
+    "route": "/competitions",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 77,
+    "scrollHeight": 895,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "أزأحمد",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "أز",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/student/jobs·light·1440",
+    "role": "STUDENT",
+    "route": "/student/jobs",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 83,
+    "scrollHeight": 844,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الجدول الدراسي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "التقويم الأكاديمي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مقرّراتي الدراسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "دليل المقررات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النتائج والتقييمات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المصفوفة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الاختبارات الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المكتبة الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "بحوثي العلمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المساعد الذكي",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 25,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "المجتمع والفرص",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1497
+          }
+        ]
+      },
+      {
+        "el": "topbar-scope",
+        "text": "كلية الهندسة",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1982
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13600
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3868
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/student/jobs·light·1024",
+    "role": "STUDENT",
+    "route": "/student/jobs",
+    "theme": "light",
+    "viewport": "1024x768",
+    "words": 83,
+    "scrollHeight": 712,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الجدول الدراسي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "التقويم الأكاديمي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مقرّراتي الدراسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "دليل المقررات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النتائج والتقييمات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المصفوفة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الاختبارات الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المكتبة الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "بحوثي العلمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المساعد الذكي",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 21,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "المجتمع والفرص",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1497
+          }
+        ]
+      },
+      {
+        "el": "topbar-scope",
+        "text": "كلية الهندسة",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1982
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13600
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3868
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/jobs·light·768",
@@ -12085,7 +11865,7 @@
     "route": "/student/jobs",
     "theme": "light",
     "viewport": "768x900",
-    "words": 39,
+    "words": 79,
     "scrollHeight": 844,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
@@ -12167,13 +11947,9 @@
         ]
       }
     ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/jobs?limit=50"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/jobs·light·390",
@@ -12181,8 +11957,8 @@
     "route": "/student/jobs",
     "theme": "light",
     "viewport": "390x844",
-    "words": 34,
-    "scrollHeight": 788,
+    "words": 68,
+    "scrollHeight": 1334,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [],
@@ -12250,13 +12026,9 @@
         ]
       }
     ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/jobs?limit=50"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/profile·light·1440",
@@ -12406,15 +12178,9 @@
         ]
       }
     ],
-    "consoleErrors": 2,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/me/achievements",
-      "/api/v1/me/research"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/profile·light·1024",
@@ -12549,7 +12315,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 3867
+            "area": 3868
           }
         ]
       },
@@ -12564,15 +12330,9 @@
         ]
       }
     ],
-    "consoleErrors": 2,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/me/achievements",
-      "/api/v1/me/research"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/profile·light·768",
@@ -12662,15 +12422,9 @@
         ]
       }
     ],
-    "consoleErrors": 2,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/me/achievements",
-      "/api/v1/me/research"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/profile·light·390",
@@ -12747,15 +12501,9 @@
         ]
       }
     ],
-    "consoleErrors": 2,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/me/achievements",
-      "/api/v1/me/research"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/messages·light·1440",
@@ -12763,7 +12511,7 @@
     "route": "/student/messages",
     "theme": "light",
     "viewport": "1440x900",
-    "words": 51,
+    "words": 92,
     "scrollHeight": 844,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
@@ -12841,7 +12589,7 @@
         "h": 36
       }
     ],
-    "smallTargetCount": 23,
+    "smallTargetCount": 25,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -12890,7 +12638,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 3867
+            "area": 3868
           }
         ]
       },
@@ -12905,13 +12653,9 @@
         ]
       }
     ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/messages?page=1&limit=30"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/messages·light·1024",
@@ -12919,7 +12663,7 @@
     "route": "/student/messages",
     "theme": "light",
     "viewport": "1024x768",
-    "words": 51,
+    "words": 92,
     "scrollHeight": 712,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
@@ -12997,7 +12741,7 @@
         "h": 36
       }
     ],
-    "smallTargetCount": 19,
+    "smallTargetCount": 21,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -13026,7 +12770,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 13599
+            "area": 13600
           }
         ]
       },
@@ -13046,7 +12790,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 3867
+            "area": 3868
           }
         ]
       },
@@ -13061,13 +12805,9 @@
         ]
       }
     ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/messages?page=1&limit=30"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/messages·light·768",
@@ -13075,8 +12815,8 @@
     "route": "/student/messages",
     "theme": "light",
     "viewport": "768x900",
-    "words": 48,
-    "scrollHeight": 857,
+    "words": 89,
+    "scrollHeight": 844,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -13085,9 +12825,21 @@
         "name": "رسالة جديدة",
         "w": 131,
         "h": 40
+      },
+      {
+        "tag": "button",
+        "name": "تعليم الكل كمقروء",
+        "w": 137,
+        "h": 32
+      },
+      {
+        "tag": "button",
+        "name": "ردّ على رسالة ليلى الفيتوري",
+        "w": 57,
+        "h": 32
       }
     ],
-    "smallTargetCount": 1,
+    "smallTargetCount": 3,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -13151,13 +12903,9 @@
         ]
       }
     ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/messages?page=1&limit=30"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/messages·light·390",
@@ -13165,8 +12913,8 @@
     "route": "/student/messages",
     "theme": "light",
     "viewport": "390x844",
-    "words": 43,
-    "scrollHeight": 974,
+    "words": 84,
+    "scrollHeight": 847,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [],
@@ -13234,13 +12982,9 @@
         ]
       }
     ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/messages?page=1&limit=30"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/alerts·light·1440",
@@ -13375,7 +13119,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 3867
+            "area": 3868
           }
         ]
       },
@@ -13807,7 +13551,7 @@
         "h": 36
       }
     ],
-    "smallTargetCount": 27,
+    "smallTargetCount": 26,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -13836,7 +13580,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 13599
+            "area": 13600
           }
         ]
       },
@@ -13856,7 +13600,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 3867
+            "area": 3868
           }
         ]
       },
@@ -13988,7 +13732,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 13599
+            "area": 13600
           }
         ]
       },
@@ -14008,7 +13752,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 3867
+            "area": 3868
           }
         ]
       },
@@ -14325,7 +14069,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 3867
+            "area": 3868
           }
         ]
       },
@@ -14477,7 +14221,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 3867
+            "area": 3868
           }
         ]
       },
@@ -14673,8 +14417,8 @@
     "route": "/student/university",
     "theme": "light",
     "viewport": "1440x900",
-    "words": 250,
-    "scrollHeight": 2370,
+    "words": 259,
+    "scrollHeight": 2336,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -14780,7 +14524,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 13596
+            "area": 13600
           }
         ]
       },
@@ -14800,7 +14544,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 4181
+            "area": 3868
           }
         ]
       },
@@ -14810,7 +14554,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 1102
+            "area": 943
           }
         ]
       }
@@ -15073,21 +14817,8 @@
     "scrollHeight": 3407,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
-    "smallTargets": [
-      {
-        "tag": "a",
-        "name": "دليل كليات المؤسّسة",
-        "w": 153,
-        "h": 44
-      },
-      {
-        "tag": "a",
-        "name": "الشؤون الماليّة",
-        "w": 123,
-        "h": 44
-      }
-    ],
-    "smallTargetCount": 2,
+    "smallTargets": [],
+    "smallTargetCount": 0,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -15268,7 +14999,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 13599
+            "area": 13600
           }
         ]
       },
@@ -15288,7 +15019,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 3867
+            "area": 3868
           }
         ]
       },
@@ -15642,7 +15373,7 @@
     "route": "/student/downloads",
     "theme": "light",
     "viewport": "1440x900",
-    "words": 44,
+    "words": 76,
     "scrollHeight": 844,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
@@ -15720,7 +15451,7 @@
         "h": 36
       }
     ],
-    "smallTargetCount": 24,
+    "smallTargetCount": 26,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -15784,13 +15515,9 @@
         ]
       }
     ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/me/materials"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/downloads·light·1024",
@@ -15798,7 +15525,7 @@
     "route": "/student/downloads",
     "theme": "light",
     "viewport": "1024x768",
-    "words": 44,
+    "words": 76,
     "scrollHeight": 712,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
@@ -15876,7 +15603,7 @@
         "h": 36
       }
     ],
-    "smallTargetCount": 20,
+    "smallTargetCount": 22,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -15940,13 +15667,9 @@
         ]
       }
     ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/me/materials"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/downloads·light·768",
@@ -15954,7 +15677,7 @@
     "route": "/student/downloads",
     "theme": "light",
     "viewport": "768x900",
-    "words": 40,
+    "words": 72,
     "scrollHeight": 844,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
@@ -15970,9 +15693,21 @@
         "name": "المكتبة الإلكترونية",
         "w": 135,
         "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "فتح",
+        "w": 66,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "فتح",
+        "w": 66,
+        "h": 32
       }
     ],
-    "smallTargetCount": 2,
+    "smallTargetCount": 4,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -16036,13 +15771,9 @@
         ]
       }
     ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/me/materials"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/student/downloads·light·390",
@@ -16050,8 +15781,8 @@
     "route": "/student/downloads",
     "theme": "light",
     "viewport": "390x844",
-    "words": 35,
-    "scrollHeight": 793,
+    "words": 61,
+    "scrollHeight": 1224,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [],
@@ -16119,13 +15850,9 @@
         ]
       }
     ],
-    "consoleErrors": 1,
-    "consoleErrorSample": [
-      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
-    ],
-    "notImplemented": [
-      "/api/v1/me/materials"
-    ]
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
   },
   {
     "cell": "STUDENT·/vision·light·1440",
@@ -16392,7 +16119,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 13599
+            "area": 13600
           }
         ]
       },
@@ -16412,7 +16139,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 3867
+            "area": 3868
           }
         ]
       },
@@ -16844,7 +16571,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 13598
+            "area": 13600
           }
         ]
       },
@@ -16864,7 +16591,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 3867
+            "area": 3868
           }
         ]
       },
@@ -17064,8 +16791,8 @@
     "route": "/student/lectures/lec_e2e_greedy",
     "theme": "light",
     "viewport": "1440x900",
-    "words": 101,
-    "scrollHeight": 1269,
+    "words": 118,
+    "scrollHeight": 1383,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -17161,7 +16888,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 13598
+            "area": 13600
           }
         ]
       },
@@ -17181,7 +16908,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 3867
+            "area": 3868
           }
         ]
       },
@@ -17216,8 +16943,8 @@
     "route": "/student/lectures/lec_e2e_greedy",
     "theme": "light",
     "viewport": "1024x768",
-    "words": 101,
-    "scrollHeight": 1175,
+    "words": 118,
+    "scrollHeight": 1279,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -17381,48 +17108,6 @@
       },
       {
         "tag": "button",
-        "name": "إرجاع 10 ثوانٍ",
-        "w": 44,
-        "h": 44
-      },
-      {
-        "tag": "button",
-        "name": "تشغيل",
-        "w": 44,
-        "h": 44
-      },
-      {
-        "tag": "button",
-        "name": "تقديم 10 ثوانٍ",
-        "w": 44,
-        "h": 44
-      },
-      {
-        "tag": "button",
-        "name": "سرعة التشغيل",
-        "w": 44,
-        "h": 44
-      },
-      {
-        "tag": "button",
-        "name": "كتم الصوت",
-        "w": 44,
-        "h": 44
-      },
-      {
-        "tag": "button",
-        "name": "نافذة معزولة",
-        "w": 44,
-        "h": 44
-      },
-      {
-        "tag": "button",
-        "name": "ملء الشاشة",
-        "w": 44,
-        "h": 44
-      },
-      {
-        "tag": "button",
         "name": "الفصول ونقاط التفاعل",
         "w": 160,
         "h": 32
@@ -17446,7 +17131,7 @@
         "h": 38
       }
     ],
-    "smallTargetCount": 12,
+    "smallTargetCount": 5,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -17520,8 +17205,8 @@
     "route": "/student/lectures/lec_e2e_greedy",
     "theme": "light",
     "viewport": "390x844",
-    "words": 91,
-    "scrollHeight": 1126,
+    "words": 108,
+    "scrollHeight": 1234,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -17703,7 +17388,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 13599
+            "area": 13600
           }
         ]
       },
@@ -17723,7 +17408,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 3867
+            "area": 3868
           }
         ]
       },
@@ -17855,7 +17540,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 13599
+            "area": 13600
           }
         ]
       },
@@ -17875,7 +17560,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 3867
+            "area": 3868
           }
         ]
       },
@@ -18081,8 +17766,8 @@
     "route": "/document/syllabus-sample.pdf",
     "theme": "light",
     "viewport": "1440x900",
-    "words": 27,
-    "scrollHeight": 1031,
+    "words": 35,
+    "scrollHeight": 1076,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -18159,7 +17844,7 @@
         "h": 36
       }
     ],
-    "smallTargetCount": 23,
+    "smallTargetCount": 33,
     "overlapCount": 9,
     "overlaps": [
       {
@@ -18234,7 +17919,7 @@
     "theme": "light",
     "viewport": "1024x768",
     "words": 35,
-    "scrollHeight": 1083,
+    "scrollHeight": 1079,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -18350,7 +18035,7 @@
         "by": [
           {
             "fixed": "sheet-frame",
-            "area": 3867
+            "area": 3868
           }
         ]
       },
@@ -18386,7 +18071,7 @@
     "theme": "light",
     "viewport": "768x900",
     "words": 33,
-    "scrollHeight": 1052,
+    "scrollHeight": 1050,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -18617,8 +18302,8 @@
     "route": "/student/dashboard",
     "theme": "dark",
     "viewport": "1440x900",
-    "words": 294,
-    "scrollHeight": 1713,
+    "words": 297,
+    "scrollHeight": 1776,
     "hOverflowDoc": 0,
     "hOverflowScroller": 0,
     "smallTargets": [
@@ -18695,7 +18380,7 @@
         "h": 36
       }
     ],
-    "smallTargetCount": 27,
+    "smallTargetCount": 25,
     "overlapCount": 9,
     "overlaps": [
       {
