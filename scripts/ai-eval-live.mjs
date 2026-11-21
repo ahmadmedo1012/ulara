@@ -20,10 +20,15 @@
  *    convention) — NEVER hardcoded, NEVER printed. Missing → exit 2
  *    with zero requests (BLOCKED, not silently skipped).
  *  · BASE_URL env (default https://ulara.vercel.app).
+ *  · SMOKE_INSTITUTION_SLUG env (optional, r351 A3) — for
+ *    multi-membership accounts the eval selects this membership's
+ *    institution context right after login (default: the first ACTIVE
+ *    membership) — fresh login tokens otherwise carry no context and
+ *    every /ai/chat turn 403s INSTITUTION_CONTEXT_REQUIRED.
  *
  * Usage:
- *   SMOKE_EMAIL=… SMOKE_PASSWORD=… node scripts/ai-eval-live.mjs \
- *       [outFile.json]
+ *   SMOKE_EMAIL=… SMOKE_PASSWORD=… [SMOKE_INSTITUTION_SLUG=…]
+ *       node scripts/ai-eval-live.mjs [outFile.json]
  */
 import { writeFileSync } from 'node:fs';
 
@@ -127,8 +132,36 @@ async function main() {
     console.error(`BLOCKED: login failed (HTTP ${loginRes.status}) — no eval requests sent.`);
     process.exit(2);
   }
-  const token = (await loginRes.json()).data.accessToken;
+  const loginBody = (await loginRes.json()).data;
+  let token = loginBody.accessToken;
   console.log(`login ok (${Date.now() - loginStarted}ms)`);
+
+  /* r351 A3 (the Gemini deployment verification): multi-membership
+   * demo accounts carry NO institution context in a fresh login token
+   * (r178: several memberships → the client picks) — /ai/chat would
+   * 403 INSTITUTION_CONTEXT_REQUIRED on every turn. Optional
+   * SMOKE_INSTITUTION_SLUG picks the membership (default: the first
+   * ACTIVE one); zero-membership accounts proceed without a context
+   * and their turns report the honest 403s. */
+  const memberships = Array.isArray(loginBody.user?.memberships) ? loginBody.user.memberships : [];
+  if (!loginBody.user?.currentInstitution && memberships.length > 0) {
+    const wanted = process.env.SMOKE_INSTITUTION_SLUG
+      ? memberships.find((m) => m.slug === process.env.SMOKE_INSTITUTION_SLUG)
+      : (memberships.find((m) => m.isActive !== false) ?? memberships[0]);
+    if (wanted) {
+      const selRes = await fetch(`${BASE_URL}/api/v1/auth/select-institution`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', authorization: `Bearer ${token}` },
+        body: JSON.stringify({ institutionId: wanted.institutionId }),
+      });
+      if (selRes.status === 200) {
+        token = (await selRes.json()).data.accessToken;
+        console.log(`institution context: ${wanted.slug ?? wanted.institutionId}`);
+      } else {
+        console.log(`institution selection failed (HTTP ${selRes.status}) — continuing without context`);
+      }
+    }
+  }
 
   const turns = [];
   let conversationId;
