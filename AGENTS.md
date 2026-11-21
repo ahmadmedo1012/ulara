@@ -165,9 +165,18 @@ queue/ownership in the same directory.
 - Never raise a ceiling (770 / 92 / 110), re-pin the retired reference spec baseline,
   weaken an assertion or test, lower the ratchet, or
   add `continue-on-error`.
-- Never paste the retired reference site's source, text, images or fonts — reproduce MEASURED
-  parameters (geometry, type, colour, durations, easings, triggers) in our own code.
-  Fonts are Alexandria/IBM Plex (BT Grotesk is banned).
+- Never paste the retired reference site's NAME anywhere (files, prose,
+  commits — the zero-trace gate calls it «the reference site»; its artifacts
+  live renamed under `docs/redesign/r350/reference/` as the extraction
+  record). AMENDED r350 (owner rule 4, 2026-11-21): reproducing the
+  reference's presentation and construction — layout, motion, timing,
+  easing, scroll choreography, SVG/canvas/shader techniques, transitions —
+  in our OWN code is explicitly allowed and encouraged, as closely as the
+  extracted measurements allow; implement with our own Arabic content,
+  ULARA brand and fonts (Alexandria/IBM Plex Arabic stay; BT Grotesk stays
+  banned). What remains banned: literal verbatim reuse of the reference's
+  shipped source files inside `frontend/` / `apps/` product code, and any
+  use of its name or personal data.
 - Never commit secrets (`GITHUB_TOKEN`, `EXPO_TOKEN`, `DATABASE_URL`…), never print
   `.git/config` or remote URLs; `.env` stays ignored.
 - Never touch other agents' exclusive files, gates, baselines or `.github/workflows`
