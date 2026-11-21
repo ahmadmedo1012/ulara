@@ -1,6 +1,7 @@
 import { Children, type ReactNode } from "react";
 import {
   Modal,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -8,7 +9,13 @@ import {
   type StyleProp,
   type ViewStyle,
 } from "react-native";
-import { usePalette, useStatusTones } from "@/design/theme";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+// The controller's KeyboardAvoidingView (per-pixel UI-thread tracking — the
+// KeyboardProvider mounted at the app root drives it). The legacy Modal Sheet
+// family seats text inputs too; without it the keyboard covers the lower
+// fields/footer of short (non-scrolling) forms on iOS.
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
+import { usePalette, useStatusTones, useTheme } from "@/design/theme";
 import { sp, type StatusToneName } from "@/design/tokens";
 import { T } from "./text";
 import { Button } from "./pressables";
@@ -89,7 +96,13 @@ export function Badge({
   style?: StyleProp<ViewStyle>;
 }) {
   const tones = useStatusTones();
+  const { name } = useTheme();
   const t = tones[tone];
+  // The semantic contract (design/semantic.ts statusSeat): chip TEXT rides
+  // the AA rung — light = the family `deep`, dark = the luminous `ink`.
+  // (The saturated `ink` rung is for borders/icons/fills, not 12px text:
+  // light-mode rose-on-tint was 2.8:1, mint 3.25:1 — sub-AA.)
+  const textInk = name === "light" ? t.deep : t.ink;
   return (
     <View
       style={[
@@ -104,7 +117,7 @@ export function Badge({
         style,
       ]}
     >
-      <T variant={mono ? "monoSm" : "sm"} weight="bold" style={{ color: t.ink }}>
+      <T variant={mono ? "monoSm" : "sm"} weight="bold" style={{ color: textInk }}>
         {label}
       </T>
     </View>
@@ -133,15 +146,29 @@ export function Sheet({
   footer?: ReactNode;
 }) {
   const p = usePalette();
+  const insets = useSafeAreaInsets();
   return (
     <Modal visible={open} transparent animationType="slide" onRequestClose={onClose}>
-      <Pressable style={styles.backdrop} onPress={onClose} accessibilityLabel="إغلاق" />
-      <View
-        style={[
-          styles.sheet,
-          { backgroundColor: p.surface, borderColor: p.rule, borderTopWidth: StyleSheet.hairlineWidth },
-        ]}
+      {/* The controller's KAV (root KeyboardProvider drives it): on iOS the
+          keyboard no longer covers the lower fields/footer of short forms —
+          the ScrollView can't save them when the content fits the sheet. */}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        style={{ flex: 1 }}
       >
+        <Pressable style={styles.backdrop} onPress={onClose} accessibilityLabel="إغلاق" />
+        <View
+          style={[
+            styles.sheet,
+            {
+              backgroundColor: p.surface,
+              borderColor: p.rule,
+              borderTopWidth: StyleSheet.hairlineWidth,
+              // Home-indicator zone: the footer button stays clear of it.
+              paddingBottom: Math.max(sp[8], insets.bottom),
+            },
+          ]}
+        >
           <View style={[styles.grab, { backgroundColor: p.rule }]} />
           <T variant="h4" weight="bold" style={{ paddingBottom: sp[12] }}>
             {title}
@@ -155,7 +182,8 @@ export function Sheet({
             </View>
           ) : null}
         </View>
-      </Modal>
+      </KeyboardAvoidingView>
+    </Modal>
   );
 }
 
@@ -272,7 +300,10 @@ export function OptionSheet({
 }
 
 const styles = StyleSheet.create({
-  backdrop: { flex: 1, backgroundColor: "rgba(40,40,40,0.45)" },
+  // AppSheet SheetBackdrop parity — the ds scrim is black at 0.45 in BOTH
+  // themes (ui/sheet.tsx renders its backdrop the same way); the retired
+  // rgba(40,40,40,…) literal was the one untokenized color in this family.
+  backdrop: { flex: 1, backgroundColor: "rgba(0,0,0,0.45)" },
   sheet: {
     maxHeight: "82%",
     marginTop: "auto",

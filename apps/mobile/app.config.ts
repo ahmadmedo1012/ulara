@@ -161,7 +161,16 @@ const config: ExpoConfig = {
       "expo-splash-screen",
       {
         backgroundColor: "#F5F1E8",
-        dark: { backgroundColor: "#262019" },
+        // Dark ground: the PAPER-INK mark derivation (splash-icon-dark.png,
+        // generated from the canonical mark.ts by scripts/build-splash-dark.mjs
+        // — same geometry/weight/box as the light asset, ink swapped to the
+        // paper rung). The ink-mark-on-ink-ground variant rendered the
+        // vessel invisible (1:1 against its own ground) on dark cold boots.
+        dark: {
+          backgroundColor: "#262019",
+          image: "./assets/images/splash-icon-dark.png",
+          imageWidth: 120,
+        },
         image: "./assets/images/splash-icon.png",
         imageWidth: 120,
       },

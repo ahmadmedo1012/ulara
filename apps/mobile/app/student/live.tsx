@@ -9,8 +9,6 @@ import { useInstitutionScope } from "@/hooks/useInstitutionScope";
 import { usePalette } from "@/design/theme";
 import { sp } from "@/design/tokens";
 import { T } from "@/components/ui/text";
-import { StackHeader } from "@/components/shell/AppTopBar";
-import { Screen } from "@/components/ui/screen";
 import { Badge } from "@/components/ui/surfaces";
 import { Button } from "@/components/ui/pressables";
 import { LedgerRow, RowList } from "@/components/ui/data";
@@ -19,6 +17,7 @@ import { toast } from "@/components/ui/toast";
 import { dateTime, num } from "@/lib/format";
 import { humanizeError } from "@/lib/errors";
 import { LIVE_STATUS, SectionNote, countAr, fmtClock } from "@/features/student/more";
+import { PushFrame } from "@/features/student/components";
 
 /** The backend opens the join window 10 minutes before the scheduled time. */
 const JOIN_WINDOW_MS = 10 * 60 * 1000;
@@ -73,8 +72,7 @@ export default function LiveScreen() {
   });
 
   return (
-    <Screen scroll>
-      <StackHeader title="الحصص المباشرة" kicker="البث المباشر" />
+    <PushFrame title="الحصص المباشرة" kicker="البث المباشر">
       <SectionNote>
         الجلسات الحيّة لمقرّراتك المسجَّلة — تُفتح الغرفة عبر متصفح خارجي (Jitsi)، ويُسجَّل حضورك تلقائياً.
       </SectionNote>
@@ -112,7 +110,7 @@ export default function LiveScreen() {
       <T variant="xs" color="faint">
         {`مباشرة: ${num(live.length)} · قادمة: ${num(upcoming.length)} · منتهية: ${num(list.filter((s) => s.status === "ENDED").length)}`}
       </T>
-    </Screen>
+    </PushFrame>
   );
 }
 

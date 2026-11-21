@@ -164,7 +164,7 @@ export default function Register() {
             <Pressable
               accessibilityRole="link"
               onPress={() => router.back()}
-              style={{ alignItems: "center", paddingVertical: sp[8] }}
+              style={{ alignItems: "center", paddingVertical: sp[8], minHeight: 44, justifyContent: "center" }}
             >
               <T variant="sm" color="muted">رجوع</T>
             </Pressable>
@@ -227,7 +227,7 @@ export default function Register() {
           <Pressable
             accessibilityRole="link"
             onPress={() => setStep(0)}
-            style={{ alignItems: "center", paddingVertical: sp[8] }}
+            style={{ alignItems: "center", paddingVertical: sp[8], minHeight: 44, justifyContent: "center" }}
           >
             <T variant="sm" color="muted">رجوع — تغيير الصفة</T>
           </Pressable>

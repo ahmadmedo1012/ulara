@@ -42,7 +42,7 @@ export default function TeacherStudents() {
         ) : offs.isError ? (
           <ErrorState message={humanizeError(offs.error)} onRetry={() => offs.refetch()} />
         ) : offerings.length === 0 ? (
-          <EmptyState fill room="library" title="لم تُسند إليك مقرّرات بعد" />
+          <EmptyState fill room="library" title="لم تُسند إليك مقرّرات بعد" message="ستظهر مقرّراتك هنا فور إسنادها." />
         ) : (
           <>
             <OfferingPicker

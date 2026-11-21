@@ -92,7 +92,9 @@ function CodeBlock({ text, lang }: { text: string; lang?: string }) {
       style={[
         {
           backgroundColor: colors.sunken,
-          borderRadius: 8,
+          // Square — the ds radius ruling (the Assistant's own chips went
+          // square in M9; the markdown layer must not disagree with its
+          // host screen).
           padding: sp[12],
           gap: sp[8],
           marginVertical: sp[4],
@@ -162,7 +164,6 @@ export function AssistantMarkdown({
                 style={[
                   {
                     backgroundColor: colors.sunken,
-                    borderRadius: 999,
                     paddingVertical: sp[6],
                     paddingHorizontal: sp[12],
                   },
@@ -179,7 +180,6 @@ export function AssistantMarkdown({
                 style={[
                   {
                     backgroundColor: colors.sunken,
-                    borderRadius: 999,
                     paddingVertical: sp[6],
                     paddingHorizontal: sp[12],
                   },

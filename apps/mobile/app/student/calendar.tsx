@@ -434,6 +434,11 @@ const styles = StyleSheet.create({
   cell: {
     flex: 1,
     aspectRatio: 1,
+    // The 44pt touch floor: at 320–348dp widths, (width − 2×20 padding) ÷ 7
+    // lands at 40–43pt — below the floor. The min dims hold the target;
+    // the row's flex absorbs the hair of extra width.
+    minWidth: 44,
+    minHeight: 44,
     borderWidth: StyleSheet.hairlineWidth,
     alignItems: "center",
     justifyContent: "center",

@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { View } from "react-native";
+import { View , StyleSheet } from "react-native";
 import { humanizeError } from "@/lib/errors";
 import { StackHeader } from "@/components/shell/AppTopBar";
-import { Screen, PageHeader } from "@/components/ui";
+import { Screen } from "@/components/ui";
 import { T } from "@/components/ui/text";
 import { Sheet } from "@/components/ui/surfaces";
 import { DataList, LedgerRow, makeRow, usePagedList } from "@/components/ui/data";
@@ -79,10 +79,7 @@ export default function OwnerActivity() {
 
   return (
     <Screen scroll={false} padded={false}>
-      <StackHeader title="سجلّ النشاط والمراقبة" kicker="لوحة المالك" />
-      <View style={{ paddingHorizontal: sp[20], gap: sp[16], paddingTop: sp[16] }}>
-        <PageHeader title="سجلّ النشاط والمراقبة" kicker="جميع العمليّات المنفَّذة على المنصّة — حيّة من سجلّ التدقيق" />
-      </View>
+      <StackHeader title="سجلّ النشاط والمراقبة" kicker="سجلّ تدقيق حيّ لكل العمليّات" />
       <View style={{ flex: 1 }}>
         <DataList
           data={items}
@@ -119,7 +116,7 @@ function DayHeader({ day }: { day: string }) {
   return (
     <View
       accessibilityRole="header"
-      style={{ paddingVertical: sp[8], borderBottomWidth: 1, borderBottomColor: p.border }}
+      style={{ paddingVertical: sp[8], borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: p.border }}
     >
       <T variant="sm" weight="bold" color="muted">
         {day}

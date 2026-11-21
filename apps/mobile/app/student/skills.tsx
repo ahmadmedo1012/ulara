@@ -6,14 +6,13 @@ import { useInstitutionScope } from "@/hooks/useInstitutionScope";
 import { usePalette } from "@/design/theme";
 import { sp } from "@/design/tokens";
 import { T } from "@/components/ui/text";
-import { StackHeader } from "@/components/shell/AppTopBar";
-import { Screen } from "@/components/ui/screen";
 import { Card } from "@/components/ui/surfaces";
 import { ProgressBar } from "@/components/ui/data";
 import { EmptyState, ErrorState, SkeletonList } from "@/components/ui/states";
 import { clamp01, latn } from "@/lib/format";
 import { humanizeError } from "@/lib/errors";
 import { SectionNote, countAr } from "@/features/student/more";
+import { PushFrame } from "@/features/student/components";
 
 /**
  * /student/skills — مهاراتي (web SkillsPage parity, native voice):
@@ -31,9 +30,8 @@ export default function SkillsScreen() {
   const rows = skills.data ?? [];
 
   return (
-    <Screen scroll>
-      <StackHeader title="مهاراتي" kicker="المهارات والشهادات" />
-      <SectionNote>رصد مهاراتك التقنية وتطوّرها مع الوقت — تُحتسب تلقائياً من إنجازاتك الأكاديمية ومسارات التطوير.</SectionNote>
+    <PushFrame title="مهاراتي" kicker="المهارات والشهادات">
+      <SectionNote>تُحتسب مهاراتك تلقائياً من إنجازاتك الأكاديمية ومسارات التطوير.</SectionNote>
 
       {skills.isLoading ? (
         <SkeletonList rows={4} rowHeight={72} />
@@ -43,7 +41,7 @@ export default function SkillsScreen() {
         <EmptyState
           icon={<Gauge size={24} color={p.textFaint} />}
           title="لم تُسجَّل أي مهارة بعد"
-          message="تُحتسب المهارات تلقائياً من إنجازاتك الأكاديمية ومسارات التطوير."
+          message="ستبدأ بالظهور مع أول إنجاز أكاديمي أو مسار تطوير."
         />
       ) : (
         <View style={{ gap: sp[8] }}>
@@ -55,7 +53,7 @@ export default function SkillsScreen() {
           </T>
         </View>
       )}
-    </Screen>
+    </PushFrame>
   );
 }
 

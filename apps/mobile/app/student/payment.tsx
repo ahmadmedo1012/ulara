@@ -1,10 +1,9 @@
 import { View } from "react-native";
+import { PushFrame } from "@/features/student/components";
 import Wallet from "lucide-react-native/icons/wallet";
 import { usePalette } from "@/design/theme";
 import { sp } from "@/design/tokens";
 import { T } from "@/components/ui/text";
-import { StackHeader } from "@/components/shell/AppTopBar";
-import { Screen } from "@/components/ui/screen";
 import { Card } from "@/components/ui/surfaces";
 import { EmptyState } from "@/components/ui/states";
 
@@ -17,19 +16,16 @@ import { EmptyState } from "@/components/ui/states";
 export default function PaymentScreen() {
   const p = usePalette();
   return (
-    <Screen scroll>
-      <StackHeader title="الشؤون المالية" kicker="حالة رسومك الجامعية" />
+    <PushFrame title="الشؤون المالية" kicker="حالة رسومك الجامعية">
 
       <EmptyState
         icon={<Wallet size={26} color={p.textFaint} />}
-        title="لا توجد رسوم أو بيانات مالية مسجّلة في النظام بعد — هذه الصفحة قيد التطوير."
+        title="لا رسوم مسجّلة بعد"
+        message="تكامل الدفع الإلكترونيّ قيد التطوير — لا تُعرض أيّ مبالغ تقديريّة."
       />
 
       <Card style={{ gap: sp[8] }}>
         <T variant="body" color="secondary">
-          تكامل الدفع الإلكترونيّ مع نظام الخزينة الجامعيّة قيد التطوير، والمنصّة لا تعرض أيّ مبالغ تقديريّة.
-        </T>
-        <T variant="sm" color="muted">
           رصيدك الفعليّ وسجلّ سدادك مصدرهما مكتب الشؤون الماليّة — راجعه في كليّتك عند الحاجة.
         </T>
       </Card>
@@ -39,6 +35,6 @@ export default function PaymentScreen() {
           الإعلانات الرسميّة الخاصّة بالرسوم ومواعيدها تُنشر على لوحة المجتمع الجامعيّ.
         </T>
       </View>
-    </Screen>
+    </PushFrame>
   );
 }

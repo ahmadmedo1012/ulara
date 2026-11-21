@@ -53,9 +53,6 @@ export default function LegalDocScreen() {
       <StackHeader title={data.title} kicker="السياسات" />
 
       <View style={{ gap: sp[8], paddingBottom: sp[4] }}>
-        <T variant="h3" weight="bold">
-          {data.title}
-        </T>
         <T variant="body" color="secondary">
           {data.lede}
         </T>

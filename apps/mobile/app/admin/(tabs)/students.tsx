@@ -235,9 +235,6 @@ function EnrollmentManager({
   return (
     <Sheet open onClose={onClose} title={`تسجيلات ${student.firstName} ${student.lastName}`}>
       <View style={{ gap: 12 }}>
-        <T variant="sm" color="muted">
-          إلغاء التسجيل يحذف تسجيل الطالب في المقرّر وتقدُّمه فيه نهائيًا — يمرّ كل إلغاء على تأكيد صريح قبل التنفيذ.
-        </T>
 
         <T variant="sm" weight="bold">
           التسجيلات الحالية
@@ -313,7 +310,7 @@ function EnrollmentManager({
               value={options.find((o) => o.id === picked) ?? null}
               options={options}
               onSelect={setPicked}
-              placeholder="— اختر مقرًّا —"
+              placeholder="— اختر مقررًا —"
               sheetTitle="المقرّرات المتاحة"
             />
             <Button

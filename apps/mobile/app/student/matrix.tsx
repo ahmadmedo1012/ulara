@@ -7,7 +7,7 @@
  * the words ARE the encoding (never hue alone).
  */
 import { useMemo, useState } from "react";
-import { ScrollView, View } from "react-native";
+import { View } from "react-native";
 import { router } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { studentApi } from "@/api/student";
@@ -18,7 +18,7 @@ import { sp } from "@/design/tokens";
 import { T } from "@/components/ui/text";
 import { SectionBar } from "@/components/ui/screen";
 import { Badge, Card } from "@/components/ui/surfaces";
-import { Segmented } from "@/components/ui/fields";
+import { ChipGroup } from "@/components/ui/fields";
 import { LedgerRow, ProgressBar, RowList } from "@/components/ui/data";
 import { EmptyState, ErrorState, SkeletonList } from "@/components/ui/states";
 import { latn, pct } from "@/lib/format";
@@ -150,17 +150,18 @@ export default function MatrixScreen() {
                 {countAr(totalConcepts, ["مفهوم واحد مُقاس", "مفهومان مُقاسان", "مفاهيم مُقاسة", "مفهوماً مُقاساً"])}
               </T>
             ) : null}
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ minHeight: 44 }}>
-              <Segmented
-                options={LEVEL_FILTERS}
-                selectedId={filter}
-                onSelect={(id) => {
-                  haptics.selection();
-                  setFilter(id);
-                }}
-                style={{ minWidth: 600 }}
-              />
-            </ScrollView>
+            {/* ChipGroup — the retired Segmented-in-nested-horizontal-
+                ScrollView idiom (see schedule.tsx's note) gave six filters
+                ~47px each at 320dp: «يحتاج مراجعة» truncated and the active
+                filter could sit off-screen with no affordance. */}
+            <ChipGroup
+              options={LEVEL_FILTERS}
+              selectedId={filter}
+              onSelect={(id) => {
+                haptics.selection();
+                setFilter(id);
+              }}
+            />
           </View>
 
           {mappedCourses.length === 0 ? (

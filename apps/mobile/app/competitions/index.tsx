@@ -37,9 +37,6 @@ export default function CompetitionsIndex() {
       <StackHeader title="المسابقات" kicker="تحديات المعرفة والابتكار" />
 
       <View style={{ gap: sp[4], paddingBottom: sp[8] }}>
-        <T variant="h3" weight="bold">
-          المسابقات الأكاديمية
-        </T>
         <T variant="body" color="secondary">
           شارك في تحديات المعرفة والابتكار، أو نظِّم مسابقتك الخاصّة.
         </T>

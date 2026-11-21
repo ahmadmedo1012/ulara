@@ -75,10 +75,11 @@
     "export:ios": "expo export --platform ios",
     "export:web": "expo export --platform web",
     "icons": "node ../../scripts/brand/build-app-icons.mjs --png",
+    "splash:dark": "node scripts/build-splash-dark.mjs",
     "contract-check": "node scripts/contract-check.mjs",
     "api:types": "npx --yes openapi-typescript@7.13.0 ../../docs/api/openapi.json --output src/api/schema.generated.ts",
     "tokens:build": "node ../../scripts/tokens/build.mjs",
-    "tokens:check": "node ../../scripts/tokens/build.mjs --check && npm run icons:check",
+    "tokens:check": "node ../../scripts/tokens/build.mjs --check && npm run icons:check && node scripts/build-splash-dark.mjs --check",
     "test": "jest",
     "icons:check": "node ../../scripts/brand/build-app-icons.mjs --check"
   },

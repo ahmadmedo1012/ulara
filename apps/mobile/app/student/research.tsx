@@ -15,8 +15,6 @@ import { useInstitutionScope } from "@/hooks/useInstitutionScope";
 import { usePalette } from "@/design/theme";
 import { sp } from "@/design/tokens";
 import { T } from "@/components/ui/text";
-import { StackHeader } from "@/components/shell/AppTopBar";
-import { Screen } from "@/components/ui/screen";
 import { Badge, Card, SimulatedBadge, Sheet } from "@/components/ui/surfaces";
 import { Button } from "@/components/ui/pressables";
 import { Field, SelectField } from "@/components/ui/fields";
@@ -27,6 +25,7 @@ import { fullDate, latn } from "@/lib/format";
 import { humanizeError } from "@/lib/errors";
 import { haptics } from "@/haptics";
 import { PAPER_STATUS_LABEL, PAPER_STATUS_TONE, SectionNote, scanLine } from "@/features/student/more";
+import { PushFrame } from "@/features/student/components";
 
 /**
  * /student/research — بحوثي (web ResearchPage parity): paper rows with the
@@ -57,8 +56,7 @@ export default function ResearchScreen() {
   });
 
   return (
-    <Screen scroll>
-      <StackHeader title="بحوثي" kicker="البحوث العلمية" />
+    <PushFrame title="بحوثي" kicker="البحوث العلمية">
       <SectionNote>
         ارفع بحوثك، اعرضها على فحص الانتحال وكشف الذكاء الاصطناعي (محاكاة حتى تفعيل كشف حقيقي)، ثم أرسلها لأستاذك للتقييم والنشر في مكتبة الجامعة.
       </SectionNote>
@@ -129,7 +127,7 @@ export default function ResearchScreen() {
           void qc.invalidateQueries({ queryKey: ["research"] });
         }}
       />
-    </Screen>
+    </PushFrame>
   );
 }
 

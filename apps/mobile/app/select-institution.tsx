@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View } from "react-native";
+import { View , StyleSheet } from "react-native";
 import { router } from "expo-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSession, ROLE_HOME, ROLE_LABELS } from "@/auth/session";
@@ -118,7 +118,7 @@ export default function SelectInstitution() {
                 flexDirection: "row",
                 alignItems: "center",
                 gap: sp[12],
-                borderWidth: 1,
+                borderWidth: StyleSheet.hairlineWidth,
                 borderColor: p.border,
                 backgroundColor: p.surface,
                 padding: sp[12],

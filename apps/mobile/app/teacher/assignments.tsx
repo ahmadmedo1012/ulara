@@ -16,7 +16,7 @@ import { useInstitutionScope } from "@/hooks/useInstitutionScope";
 import { fromNow, latn } from "@/lib/format";
 import { sp } from "@/design/tokens";
 import { T } from "@/components/ui/text";
-import { Screen, PageHeader, SectionBar } from "@/components/ui/screen";
+import { Screen, SectionBar } from "@/components/ui/screen";
 import { Badge, Card, Sheet } from "@/components/ui/surfaces";
 import { Avatar, LedgerRow, RowList } from "@/components/ui/data";
 import { Button } from "@/components/ui/pressables";
@@ -182,11 +182,9 @@ export default function Assignments() {
 
   return (
     <Screen scroll>
-      <StackHeader title="الواجبات والاختبارات" />
-      <PageHeader
-        title="الواجبات والاختبارات"
-        kicker="كلّ الواجبات الموزَّعة على مقرّراتك، والتسليمات بانتظار تقييمك."
-      />
+      {/* One title tier: the back bar carries it (the retired PageHeader
+          repeated it back-to-back — ~70px of duplicated viewport). */}
+      <StackHeader title="الواجبات والاختبارات" kicker="التسليمات بانتظار تقييمك" />
       <SectionBar
         index={1}
         title="تسليمات بانتظار التقييم"
@@ -305,7 +303,7 @@ export default function Assignments() {
             ) : null}
             {gradeTarget.fileUrl ? (
               <Button
-                label="فتح الملف في العارض"
+                label="فتح الملف"
                 kind="ghost"
                 small
                 onPress={() => {

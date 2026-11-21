@@ -228,7 +228,13 @@ export default function DocumentViewer() {
               </View>
             )}
             {typeof globalThis.window !== "undefined" ? (
-              <Pressable accessibilityRole="button" accessibilityLabel="فتح في المتصفح" onPress={openWeb}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="فتح في المتصفح"
+                onPress={openWeb}
+                hitSlop={8}
+                style={{ minHeight: 44, justifyContent: "center" }}
+              >
                 <T variant="sm" color="accentInk">فتح في المتصفح</T>
               </Pressable>
             ) : null}
@@ -350,7 +356,13 @@ function AnnotationRow({ a, onDelete }: { a: PaperAnnotation; onDelete: () => vo
           {a.author ? `${a.author.firstName} ${a.author.lastName}` : ""} {a.createdAt ? `· ${dateTime(a.createdAt)}` : ""}
         </T>
         <View style={{ flex: 1 }} />
-        <Pressable accessibilityRole="button" accessibilityLabel="حذف التعليق" onPress={onDelete} hitSlop={10}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="حذف التعليق"
+          onPress={onDelete}
+          hitSlop={14}
+          style={{ width: 44, height: 44, alignItems: "center", justifyContent: "center" }}
+        >
           <Trash2 size={16} color={p.accentInk} />
         </Pressable>
       </View>

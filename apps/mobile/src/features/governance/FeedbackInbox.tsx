@@ -8,7 +8,7 @@ import { T, MonoLabel } from "@/components/ui/text";
 import { Button } from "@/components/ui/pressables";
 import { Badge } from "@/components/ui/surfaces";
 import { RowList, LedgerRow } from "@/components/ui/data";
-import { Segmented } from "@/components/ui/fields";
+import { ChipGroup } from "@/components/ui/fields";
 import { SkeletonList, EmptyState, ErrorState } from "@/components/ui/states";
 import { toast } from "@/components/ui/toast";
 import { socialApi } from "@/api/social";
@@ -63,7 +63,9 @@ export function FeedbackInbox({ kicker }: { kicker: string }) {
           كل «أبلغ عن مشكلة / اقتراح» وصل من مستخدمي المنصّة — مع سياقه الكامل.
         </T>
 
-        <Segmented
+        {/* ChipGroup — «تحت المعالجة» needs ~80px; a 5-way Segmented gave
+            ~40px of text room at 320dp (mid-word truncation). */}
+        <ChipGroup
           options={[
             { id: "all", label: "الكل" },
             { id: "open", label: "مفتوحة" },

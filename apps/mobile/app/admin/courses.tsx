@@ -5,7 +5,7 @@ import { humanizeError } from "@/lib/errors";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Plus from "lucide-react-native/icons/plus";
 import Trash2 from "lucide-react-native/icons/trash";
-import { Screen, PageHeader } from "@/components/ui";
+import { Screen } from "@/components/ui";
 import { StackHeader as NavHeader } from "@/components/shell/AppTopBar";
 import { T, MonoLabel } from "@/components/ui/text";
 import { Button } from "@/components/ui/pressables";
@@ -153,16 +153,16 @@ export default function AdminCourses() {
 
   return (
     <Screen scroll>
-      <NavHeader title="إدارة المقرّرات" kicker="لوحة المسجل العام" />
+      {/* One title tier — the live count rides the back bar's kicker. */}
+      <NavHeader
+        title="إدارة المقرّرات"
+        kicker={
+          courses.data
+            ? countAr(courses.data.meta?.total ?? rows.length, UNIT.course) + " في الجامعة"
+            : "قراءة سجلّ المقرّرات…"
+        }
+      />
       <View style={{ gap: 16, paddingTop: 16 }}>
-        <PageHeader
-          title="إدارة المقرّرات"
-          kicker={
-            courses.data
-              ? countAr(courses.data.meta?.total ?? rows.length, UNIT.course) + " في الجامعة"
-              : "قراءة سجلّ المقرّرات…"
-          }
-        />
 
         <SearchBar
           value={q}

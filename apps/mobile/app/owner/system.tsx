@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient, type UseMutationResult } from "@
 import HardDrive from "lucide-react-native/icons/hard-drive";
 import Settings from "lucide-react-native/icons/settings";
 import { StackHeader } from "@/components/shell/AppTopBar";
-import { Screen, PageHeader, SectionBar } from "@/components/ui";
+import { Screen, SectionBar } from "@/components/ui";
 import { T, MonoLabel } from "@/components/ui/text";
 import { Button } from "@/components/ui/pressables";
 import { Badge, ConfirmDialog, Sheet } from "@/components/ui/surfaces";
@@ -119,7 +119,6 @@ export default function OwnerSystem() {
     <Screen scroll>
       <StackHeader title="النظام والتشغيل" kicker="لوحة المالك" />
       <View style={{ gap: 16, paddingTop: 16 }}>
-        <PageHeader title="النظام والتشغيل" kicker="إدارة البنية التحتية وحالة الخدمات وإعدادات المنصّة" />
 
         {/* [01] حالة الخدمة */}
         <View>
@@ -257,8 +256,7 @@ export default function OwnerSystem() {
             </RowList>
           )}
           <T variant="xs" color="faint">
-            تُحفَظ القيمة في قاعدة البيانات وتُوثَّق في سجلّ النشاط — لا يستهلكها مسار تشغيل بعد؛ سلوك
-            المنصّة يبقى بقيمه المضمّنة في الشيفرة.
+            تُحفَظ القيمة وتُوثَّق في سجلّ النشاط — لا يستهلكها مسار تشغيل بعد.
           </T>
         </View>
 
@@ -307,8 +305,7 @@ export default function OwnerSystem() {
             </RowList>
           )}
           <T variant="xs" color="faint">
-            تُحفَظ حالة كل علم في قاعدة البيانات وتُوثَّق في سجلّ النشاط — لا تستهلكها أيّ بوابة تشغيل
-            بعد، فلا يتغيّر سلوك المنصّة بتغييرها.
+            تُحفَظ حالة كل علم وتُوثَّق في سجلّ النشاط — لا تستهلكها بوابة تشغيل بعد.
           </T>
         </View>
 

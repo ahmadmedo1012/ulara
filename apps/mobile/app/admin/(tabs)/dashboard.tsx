@@ -19,7 +19,7 @@ import { adminApi } from "@/api/admin";
 import { useSession, ROLE_LABELS } from "@/auth/session";
 import { useInstitutionScope } from "@/hooks/useInstitutionScope";
 import { usePalette } from "@/design/theme";
-import { sp } from "@/design/tokens";
+import {  } from "@/design/tokens";
 import { humanizeError } from "@/lib/errors";
 import { latn, fromNow } from "@/lib/format";
 import {
@@ -208,11 +208,6 @@ export default function AdminDashboard() {
           </View>
         </Animated.View>
 
-        <Animated.View entering={entering(4)}>
-          <T variant="xs" color="faint" style={{ paddingBottom: sp[8] }}>
-            الكلّيات والأقسام في تبويب «الكلّيات» · الطلاب والأساتذة والتقارير في تبويبات الشريط السفلي.
-          </T>
-        </Animated.View>
       </View>
     </Screen>
   );

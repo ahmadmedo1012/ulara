@@ -5,7 +5,7 @@ import { humanizeError } from "@/lib/errors";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import CheckCircle2 from "lucide-react-native/icons/circle-check";
 import { StackHeader } from "@/components/shell/AppTopBar";
-import { Screen, PageHeader, SectionBar } from "@/components/ui";
+import { Screen, SectionBar } from "@/components/ui";
 import { T } from "@/components/ui/text";
 import { Button } from "@/components/ui/pressables";
 import { Badge, ConfirmDialog } from "@/components/ui/surfaces";
@@ -62,7 +62,6 @@ export default function OwnerAlerts() {
     <Screen scroll>
       <StackHeader title="التنبيهات التشغيليّة" kicker="لوحة المالك" />
       <View style={{ gap: 16, paddingTop: 16 }}>
-        <PageHeader title="التنبيهات التشغيليّة" kicker="إدارة ومراقبة التنبيهات والحوادث التشغيليّة — مباشرة من سجلّ المنصّة." />
 
         {alerts.isLoading ? (
           <SkeletonList rows={4} />

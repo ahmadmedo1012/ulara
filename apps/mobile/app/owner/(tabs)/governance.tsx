@@ -87,7 +87,9 @@ export default function OwnerGovernance() {
           <SectionBar index={2} title="نموّ المستخدمين الأسبوعيّ" />
           {gov.isLoading ? (
             <SkeletonList rows={3} rowHeight={48} />
-          ) : gov.isError ? null : (g?.weeklyGrowth ?? []).length === 0 ? (
+          ) : gov.isError ? (
+            <ErrorState message={humanizeError(gov.error)} onRetry={() => gov.refetch()} compact />
+          ) : (g?.weeklyGrowth ?? []).length === 0 ? (
             <T variant="body" color="muted">
               لا توجد بيانات نموّ بعد — سيُرسم السجلّ فور تسجيل أوّل مستخدم.
             </T>
@@ -134,7 +136,9 @@ export default function OwnerGovernance() {
           <SectionBar index={4} title="تفاصيل تسجيلات الدخول اليوميّة" />
           {logins.isLoading ? (
             <SkeletonList rows={4} rowHeight={48} />
-          ) : logins.isError ? null : (la?.daily ?? []).length === 0 ? (
+          ) : logins.isError ? (
+            <ErrorState message={humanizeError(logins.error)} onRetry={() => logins.refetch()} compact />
+          ) : (la?.daily ?? []).length === 0 ? (
             <T variant="body" color="muted">
               لا توجد بيانات يوميّة — تُسجَّل المحاولات يوماً بيوم فور حدوثها.
             </T>

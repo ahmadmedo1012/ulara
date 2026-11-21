@@ -29,9 +29,6 @@ export default function Help() {
       <StackHeader title="المساعدة والأسئلة الشائعة" kicker="المساعدة" />
 
       <View style={{ gap: sp[8], paddingBottom: sp[4] }}>
-        <T variant="h3" weight="bold">
-          المساعدة والأسئلة الشائعة
-        </T>
         <T variant="body" color="secondary">
           {HELP_LEDE}
         </T>

@@ -32,7 +32,7 @@ export function resultsShareText(data: {
   avgGradePct: number | null;
   courses: { courseName: string; gradePct: number | null }[];
 }): string {
-  const lines = ["ملخص نتائجي — منصة مدرَك"];
+  const lines = ["ملخص نتائجي — منصة أُلارا"];
   if (data.avgGradePct !== null) lines.push(`المتوسط العام: ${pct(data.avgGradePct)}`);
   const graded = data.courses.filter((c) => c.gradePct !== null);
   for (const c of graded.slice(0, 5)) lines.push(`• ${c.courseName}: ${pct(c.gradePct)}`);

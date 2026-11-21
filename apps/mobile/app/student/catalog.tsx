@@ -250,8 +250,8 @@ export default function CatalogScreen() {
             flexDirection: "row",
             alignItems: "center",
             gap: sp[8],
-            borderWidth: 1,
-            borderColor: p.accentSoft,
+            borderWidth: StyleSheet.hairlineWidth,
+            borderColor: p.accentInk,
             backgroundColor: p.accentSoft,
             padding: sp[12],
           }}

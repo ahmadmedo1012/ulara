@@ -192,7 +192,7 @@ export default function TeacherIntelligence() {
       <Animated.View entering={entering(0)}>
       <PageHeader
         title="الذكاء الأكاديمي"
-        kicker="متابعة أداء طلابك مدعومة بتحليل لحظي للحضور والدرجات والمتابعة، مع توصيات تدخّل ذكية."
+        kicker="تحليل لحظي للحضور والدرجات مع توصيات تدخّل."
       />
 
       {/* طلاب يحتاجون متابعة — the global at-risk panel. */}
@@ -276,9 +276,13 @@ export default function TeacherIntelligence() {
       {/* مؤشّرات المقرّر — per-offering analytics, rendered honestly. */}
       <SectionBar index={2} title="مؤشّرات المقرّر" />
       {offerings.length === 0 ? (
-        <Card>
-          <T variant="body" color="muted">لم تُسند إليك مقرّرات بعد</T>
-        </Card>
+        offs.isLoading ? (
+          <SkeletonList rows={2} rowHeight={48} />
+        ) : offs.isError ? (
+          <ErrorState message={humanizeError(offs.error)} onRetry={() => offs.refetch()} />
+        ) : (
+          <EmptyState title="لم تُسند إليك مقرّرات بعد" message="ستظهر مقرّراتك هنا فور إسنادها." />
+        )
       ) : (
         <>
           <OfferingPicker
@@ -321,7 +325,7 @@ export default function TeacherIntelligence() {
               <SimulatedBadge note="اقتراح قالبيّ" />
             </View>
             <T variant="sm" color="muted" style={{ paddingVertical: sp[4] }}>
-              اقتراح قالبيّ لهيكل منهج بمطابقة اسم المقرّر — لا تحليل ذكيّ للمحتوى (محاكاة حتى نموذج حقيقي).
+              مطابقة بقالب اسم المقرّر — لا تحليل ذكيّ للمحتوى.
             </T>
             <Button
               label={suggest.data ? "إعادة الاقتراح" : "اقتراح هيكل المنهج"}

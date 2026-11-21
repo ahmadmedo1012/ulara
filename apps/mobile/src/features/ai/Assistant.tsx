@@ -67,8 +67,9 @@ import {
  * streaming is unavailable the JSON grammar (aiApi.chat) takes over with
  * the typing shimmer — same engine, no streaming pretense.
  *
- * Provider honesty: the «مزوّد: …» badge stays verbatim (local = the
- * disclosed template composer). Every failure routes through
+ * Provider honesty: the provider badge stays disclosed (local = the
+ * Arabic «مزوّد محلي (قالبيّ)» — owner/ai parity; named providers show
+ * verbatim). Every failure routes through
  * humanizeError (src/lib/errors); a failed turn gets «إعادة المحاولة»
  * (haptics.notify("error") on failure).
  *
@@ -328,7 +329,7 @@ export function Assistant({
               المساعد الأكاديمي
             </T>
             {provider ? (
-              <Badge label={`مزوّد: ${provider}`} tone={provider === "local" ? "yellow" : "mint"} />
+              <Badge label={provider === "local" ? "مزوّد محلي (قالبيّ)" : `مزوّد: ${provider}`} tone={provider === "local" ? "yellow" : "mint"} />
             ) : null}
           </View>
           {provider === "local" ? (

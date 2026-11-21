@@ -72,7 +72,8 @@ export function AppTopBar({ alertsPath }: { alertsPath: string }) {
                 start: 12,
                 minWidth: 16,
                 height: 16,
-                borderRadius: 8,
+                // Square — the ds radius ruling (the tab-bar badge and the
+                // Badge chip are square; this pill was the lone round badge).
                 backgroundColor: p.accent,
                 alignItems: "center",
                 justifyContent: "center",

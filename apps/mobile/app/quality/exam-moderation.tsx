@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import CheckCircle2 from "lucide-react-native/icons/circle-check";
 import ClipboardCheck from "lucide-react-native/icons/clipboard-check";
 import XCircle from "lucide-react-native/icons/circle-x";
-import { Screen, PageHeader, SectionBar } from "@/components/ui";
+import { Screen, SectionBar } from "@/components/ui";
 import { StackHeader } from "@/components/shell/AppTopBar";
 import { T } from "@/components/ui/text";
 import { Button } from "@/components/ui/pressables";
@@ -88,13 +88,8 @@ export default function QualityExamModeration() {
 
   return (
     <Screen scroll>
-      <StackHeader title="مراجعة الاختبارات" kicker="قطاع ضمان الجودة" />
+      <StackHeader title="مراجعة الاختبارات" kicker="قوالب قبل الاعتماد — صلاحية مكتب الجودة" />
       <View style={{ gap: 16, paddingTop: 16 }}>
-        <PageHeader
-          title="مراجعة الاختبارات"
-          kicker="مراجعة قوالب الاختبارات الموحَّدة قبل اعتمادها وإتاحتها للطلاب — صلاحية حصرية لمكتب الجودة."
-        />
-
         <RowList>
           <LedgerRow last>
             <StatLine

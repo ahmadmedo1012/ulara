@@ -23,11 +23,11 @@ import { haptics } from "@/haptics";
 import { latn, pct } from "@/lib/format";
 import { sp } from "@/design/tokens";
 import { T } from "@/components/ui/text";
-import { Screen, PageHeader, SectionBar } from "@/components/ui/screen";
+import { Screen, SectionBar } from "@/components/ui/screen";
 import { Card } from "@/components/ui/surfaces";
 import { DataList, LedgerRow, makeRow } from "@/components/ui/data";
 import { Button } from "@/components/ui/pressables";
-import { Field, Segmented } from "@/components/ui/fields";
+import { ChipGroup, Field } from "@/components/ui/fields";
 import { EmptyState, ErrorState, SkeletonList } from "@/components/ui/states";
 import { toast } from "@/components/ui/toast";
 import {
@@ -237,18 +237,14 @@ export default function Grades() {
 
   return (
     <Screen scroll={false} padded={false}>
-      <StackHeader title="درجات الطلاب" />
+      <StackHeader title="درجات الطلاب" kicker="صحِّح طالبًا تلو الآخر — اسحب للانتقال للتالي" />
       <View style={{ paddingHorizontal: sp[20], gap: sp[12] }}>
-        <PageHeader
-          title="درجات الطلاب"
-          kicker="صحِّح طالبًا بعد طالب — اسحب لانتقال التالي أو اختر من القائمة."
-        />
         {offs.isLoading ? (
           <SkeletonList rows={4} />
         ) : offs.isError ? (
           <ErrorState message={humanizeError(offs.error)} onRetry={() => offs.refetch()} />
         ) : offerings.length === 0 ? (
-          <EmptyState fill title="لا مقرّرات" message="حدّد أحد مقرّراتك لعرض درجات طلابه — ستظهر هنا فور إسناد مقرّر لك." />
+          <EmptyState fill title="لم تُسند إليك مقرّرات بعد" message="ستظهر مقرّراتك هنا فور إسنادها." />
         ) : (
           <OfferingPicker offerings={offerings} value={effectiveId} onChange={setOfferingId} label="المقرّر" />
         )}
@@ -258,7 +254,9 @@ export default function Grades() {
         <View style={{ flex: 1, gap: sp[12] }}>
           {/* التقييم + المقياس — the compact rubric. */}
           <View style={{ paddingHorizontal: sp[20], gap: sp[10] }}>
-            <Segmented
+            {/* ChipGroup — 6 rubric kinds in a Segmented gave ~47px per
+                segment at 320dp («اختبار قصير» truncated mid-word). */}
+            <ChipGroup
               options={GRADE_KINDS.map((k) => ({ id: k, label: GRADE_KIND_LABEL[k] }))}
               selectedId={kind}
               onSelect={(id) => {

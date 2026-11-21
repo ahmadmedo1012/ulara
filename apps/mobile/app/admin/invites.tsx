@@ -4,7 +4,7 @@ import { humanizeError } from "@/lib/errors";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Plus from "lucide-react-native/icons/plus";
 import Trash2 from "lucide-react-native/icons/trash";
-import { Screen, PageHeader } from "@/components/ui";
+import { Screen } from "@/components/ui";
 import { StackHeader } from "@/components/shell/AppTopBar";
 import { T, MonoLabel } from "@/components/ui/text";
 import { Button } from "@/components/ui/pressables";
@@ -114,9 +114,8 @@ const [maxUses, setMaxUses] = useState("1");
 
   return (
     <Screen scroll>
-      <StackHeader title="دعوات التسجيل" kicker="لوحة المسجل العام" />
+      <StackHeader title="دعوات التسجيل" kicker="أكواد انضمام بنطاق واحد وصلاحية محدّدة" />
       <View style={{ gap: 16, paddingTop: 16 }}>
-        <PageHeader title="دعوات التسجيل" kicker="أكواد انضمام للطلاب والأساتذة، بنطاق واحد على الأكثر وصلاحية محدّدة." />
 
         <Button
           label="دعوة جديدة"
@@ -143,7 +142,7 @@ const [maxUses, setMaxUses] = useState("1");
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
                   <MonoLabel>{inv.code}</MonoLabel>
                   <Badge
-                    label={inv.role === "TEACHER" ? "أستاذ" : inv.role === "STUDENT" ? "طالب" : inv.role ?? "—"}
+                    label={inv.role === "TEACHER" ? "أستاذ" : inv.role === "STUDENT" ? "طالب" : "دور غير معروف"}
                     tone={inv.role === "TEACHER" ? "mint" : "copper"}
                   />
                 </View>

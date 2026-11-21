@@ -16,7 +16,7 @@
  *  EmptyState rooms for the true-empty sections.
  */
 import { useMemo, useState } from "react";
-import { ScrollView, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { router } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
@@ -237,7 +237,7 @@ export default function TeacherDashboard() {
                 justifyContent: "center",
                 gap: sp[6],
                 backgroundColor: p.surface,
-                borderWidth: 1,
+                borderWidth: StyleSheet.hairlineWidth,
                 borderColor: p.border,
               }}
             >
@@ -357,7 +357,7 @@ export default function TeacherDashboard() {
                   gap: sp[6],
                   padding: sp[12],
                   backgroundColor: p.surface,
-                  borderWidth: 1,
+                  borderWidth: StyleSheet.hairlineWidth,
                   borderColor: phase === "ongoing" ? p.rule : p.border,
                   opacity: phase === "done" ? 0.55 : 1,
                 }}
@@ -490,11 +490,15 @@ export default function TeacherDashboard() {
       <Animated.View entering={entering(6)} style={{ gap: sp[8] }}>
         <SectionBar index={5} title="مقرّراتي" />
         {offerings.length === 0 ? (
-          <EmptyState
-            room="library"
-            title="لم تُسند إليك مقرّرات بعد"
-            message="ستظهر مقرّراتك وشُعَبك هنا فور إسنادها من إدارة شؤون الأساتذة."
-          />
+          offs.isError ? (
+            <ErrorState message={humanizeError(offs.error)} onRetry={() => offs.refetch()} />
+          ) : (
+            <EmptyState
+              room="library"
+              title="لم تُسند إليك مقرّرات بعد"
+              message="ستظهر مقرّراتك وشُعَبك هنا فور إسنادها."
+            />
+          )
         ) : (
         <RowList>
           {offerings.map((o, i) => (

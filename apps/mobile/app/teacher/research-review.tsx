@@ -17,7 +17,7 @@ import { useInstitutionScope } from "@/hooks/useInstitutionScope";
 import { fromNow, latn } from "@/lib/format";
 import { sp } from "@/design/tokens";
 import { T } from "@/components/ui/text";
-import { Screen, PageHeader, SectionBar } from "@/components/ui/screen";
+import { Screen, SectionBar } from "@/components/ui/screen";
 import { Avatar, Badge, Card, ConfirmDialog, Sheet, SimulatedBadge } from "@/components/ui";
 import { KpiCard, LedgerRow, RowList } from "@/components/ui/data";
 import { Button } from "@/components/ui/pressables";
@@ -122,7 +122,7 @@ export default function ResearchReview() {
       <LedgerRow
         onPress={() => {
           setSelected(paper);
-          setScore(paper.grade !== null && paper.grade !== undefined ? String(paper.grade) : "15");
+          setScore(paper.grade !== null && paper.grade !== undefined ? String(paper.grade) : "");
           setFeedback(paper.feedback ?? "");
           setGradeError(null);
         }}
@@ -159,7 +159,6 @@ export default function ResearchReview() {
   return (
     <Screen scroll>
       <StackHeader title="البحث العلمي" />
-      <PageHeader title="البحث العلمي" kicker="قائمة بحوث الطلاب للمراجعة، ومنشوراتك العلمية." />
 
       {queue.isLoading ? (
         <SkeletonList rows={5} />
@@ -251,7 +250,7 @@ export default function ResearchReview() {
             </Card>
 
             {selected.fileUrl ? (
-              <Button label="قراءة البحث وكتابة ملاحظات" kind="ghost" small onPress={() => openPaper(selected)} />
+              <Button label="قراءة البحث" kind="ghost" small onPress={() => openPaper(selected)} />
             ) : null}
 
             {selected.status !== "GRADED" && selected.status !== "PUBLISHED" ? (
