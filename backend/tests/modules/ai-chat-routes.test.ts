@@ -481,7 +481,10 @@ describe('POST /api/v1/ai/chat — OPENAI mode (provider wire stubbed)', () => {
     });
     expect(res.status).toBe(500);
     const body = (await res.json()) as { error: { message: string } };
-    expect(body.error.message).toBe('رفض مزوّد خدمة الذكاء الاصطناعي الطلب — جرّب تغيير صيغة السؤال');
+    // r351 AI-1: a 400 param rejection is a configuration matter — the
+    // status-aware message points at the model setup, not at re-phrasing
+    // the question (the old non-status default). Pinned in ai-gemini too.
+    expect(body.error.message).toBe('رفض مزوّد خدمة الذكاء الاصطناعي الطلب — يُراجَع ضبط النموذج');
     // Exactly one wire call — a non-transient 400 must never be retried.
     expect(calls).toHaveLength(1);
     expect(telemetryCreate).toHaveBeenCalledWith({

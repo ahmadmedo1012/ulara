@@ -859,7 +859,10 @@ describe('ai.routes.ts — the P4 mode switch', () => {
   it('NO silent fallback: a provider failure maps to ONE classified Arabic AppError — composeReply never runs in the catch', () => {
     expect(aiRouteSource).toContain("e.name === 'AiProviderError'");
     // r176a: the classified message matrix, not one fixed string.
-    expect(aiRouteSource).toContain('providerFailureMessage(failureKind)');
+    // r351 AI-1: the call now threads the provider HTTP status through
+    // (a 401/404 is an admin matter, not a retry hint — see
+    // providerFailureMessage in lib/ai.ts).
+    expect(aiRouteSource).toContain('providerFailureMessage(failureKind, e instanceof AiProviderError ? e.status : undefined)');
     // r323 B1.1: the file now carries several `catch (e) {` blocks
     // (the SSE stream path among them), so the slice anchors on the
     // /chat route's own catch — the nearest `catch (e) {` BEFORE the

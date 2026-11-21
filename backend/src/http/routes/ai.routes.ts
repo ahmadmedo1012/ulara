@@ -688,7 +688,10 @@ async function handleChatStream(args: ChatStreamArgs): Promise<void> {
     logger.warn({ err: e, kind: failureKind }, 'AI stream failed');
     writeEvent('error', {
       code: failureKind === 'rate_limited' ? 'PROVIDER_RATE_LIMITED' : 'PROVIDER_FAILURE',
-      message: providerFailureMessage(failureKind),
+      // r351 AI-1: the provider status (when the failure carried one)
+      // refines the Arabic message — a Gemini 401/404 is an admin
+      // matter, not a retry hint.
+      message: providerFailureMessage(failureKind, e instanceof AiProviderError ? e.status : undefined),
       retryable: failureKind !== 'invalid_response',
     });
   };
@@ -1130,7 +1133,9 @@ router.post('/chat', aiLimiter, validate(chatSchema), async (req, res, next) => 
     // unchanged (the error handler's default Arabic 500).
     if (e instanceof Error && e.name === 'AiProviderError') {
       logger.warn({ err: e, kind: failureKind }, 'AI provider call failed');
-      next(AppError.internal(providerFailureMessage(failureKind)));
+      // r351 AI-1: the provider status refines the Arabic message
+      // (auth/model-id failures point at the admin, not a retry).
+      next(AppError.internal(providerFailureMessage(failureKind, e instanceof AiProviderError ? e.status : undefined)));
       return;
     }
     next(e);

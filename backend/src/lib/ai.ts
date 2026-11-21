@@ -30,11 +30,22 @@
  *    `(unattributed)` fallback, never a claim about the underlying
  *    model. Provider labels stay honest too: routing through
  *    openrouter.ai is labeled `openrouter`, not `openai`.
+ *  · r351 AI-1 (Gemini wiring): Google's OpenAI-compatibility endpoint
+ *    (generativelanguage.googleapis.com/v1beta/openai/) is a first-class
+ *    transport — labeled `gemini` (never `openai`), the OpenRouter-only
+ *    `models` array never rides a Gemini wire, stream usage is requested
+ *    and parsed (0 only when absent — never estimated), Gemini's extra
+ *    delta fields (reasoning/extra content, thought signatures) are
+ *    ignored without leaking, and the ordered model-chain fallback
+ *    falls through on 429/503 ONLY (a bad key or model id must not
+ *    double-bill the owner's quota against a second model that will
+ *    fail the same way).
  *
  * Pure helpers are exported for DB-free test pins
- * (tests/modules/ai-provider.test.ts); the one impure piece is
- * callOpenAiCompatible (global fetch + AbortSignal.timeout — node ≥ 20,
- * no new npm dependencies, same shape as the S3 driver).
+ * (tests/modules/ai-provider.test.ts, tests/modules/ai-gemini.test.ts);
+ * the one impure piece is callOpenAiCompatible (global fetch +
+ * AbortSignal.timeout — node ≥ 20, no new npm dependencies, same shape
+ * as the S3 driver).
  */
 import { env } from '../env.js';
 // R320 §B (c1-RENAME): role names in the teacher-facing prompt share the
@@ -366,6 +377,22 @@ export function isOpenRouterBaseUrl(baseUrl: string): boolean {
   }
 }
 
+/* r351 AI-1 — Google's OpenAI-compatibility endpoint. Base URL:
+ * https://generativelanguage.googleapis.com/v1beta/openai/ (trailing
+ * slash included — read from the official docs at implementation
+ * time, 2026-11-21). Host-scoped like the OpenRouter gate. */
+export const GEMINI_BASE_HOST = 'generativelanguage.googleapis.com';
+
+/** Is this base URL Google's OpenAI-compatibility endpoint? */
+export function isGeminiBaseUrl(baseUrl: string): boolean {
+  try {
+    const host = new URL(baseUrl).hostname.toLowerCase();
+    return host === GEMINI_BASE_HOST || host.endsWith(`.${GEMINI_BASE_HOST}`);
+  } catch {
+    return false;
+  }
+}
+
 /**
  * The HONEST provider label for an OpenAI-compatible base URL (r175):
  * `AI_PROVIDER=openai` is a TRANSPORT mode, not a vendor claim — a
@@ -382,6 +409,7 @@ export function providerLabelFromBaseUrl(baseUrl: string): string {
   }
   if (host === 'api.openai.com') return 'openai';
   if (host === 'openrouter.ai' || host.endsWith('.openrouter.ai')) return 'openrouter';
+  if (host === GEMINI_BASE_HOST || host.endsWith(`.${GEMINI_BASE_HOST}`)) return 'gemini';
   if (host === 'groq.com' || host.endsWith('.groq.com')) return 'groq';
   if (host === 'api.deepseek.com' || host.endsWith('.deepseek.com')) return 'deepseek';
   return host.length > 0 ? host : 'compatible';
@@ -452,15 +480,31 @@ export function classifyProviderFailure(err: unknown): AiFailureKind {
 
 /** Client-safe Arabic message per failure kind (r176a). All stay calm,
  * short and actionable; each names what the student should DO, which
- * is the whole point of splitting the one generic message. */
-export function providerFailureMessage(kind: AiFailureKind): string {
+ * is the whole point of splitting the one generic message.
+ *
+ * r351 AI-1: the optional provider HTTP status refines the message for
+ * the classes a student cannot fix by re-asking — 401/403 (the key is
+ * wrong or lacks permission: an admin matter, not a retry matter), 404
+ * (the configured model id no longer exists), 400 (the request shape
+ * was rejected — usually a configuration issue). Without a status the
+ * per-kind defaults stand unchanged (OpenRouter and other providers
+ * keep their measured behavior). */
+export function providerFailureMessage(kind: AiFailureKind, status?: number): string {
+  if (status === 401 || status === 403) {
+    return 'مفتاح خدمة الذكاء الاصطناعي غير صالح أو لا يملك صلاحية — يلزم مراجعة الإدارة';
+  }
+  if (status === 404) {
+    return 'نموذج المساعد المُعدّ غير متوفر لدى المزوّد — يلزم مراجعة الإدارة';
+  }
   switch (kind) {
     case 'timeout':
       return 'استغرق النموذج وقتًا أطول من المتاح — أعد المحاولة الآن وسيُختار نموذج آخر غالبًا';
     case 'rate_limited':
-      return 'تجاوزنا حدّ الاستخدام المجاني مؤقتًا — انتظر دقيقة ثم أعد المحاولة';
+      return 'تجاوزنا حدّ الاستخدام مؤقتًا — انتظر دقيقة ثم أعد المحاولة';
     case 'provider_rejected':
-      return 'رفض مزوّد خدمة الذكاء الاصطناعي الطلب — جرّب تغيير صيغة السؤال';
+      return status === 400
+        ? 'رفض مزوّد خدمة الذكاء الاصطناعي الطلب — يُراجَع ضبط النموذج'
+        : 'رفض مزوّد خدمة الذكاء الاصطناعي الطلب — جرّب تغيير صيغة السؤال';
     case 'invalid_response':
       return 'وصل ردّ غير صالح من النموذج — أعد المحاولة';
     case 'provider_error':
@@ -527,6 +571,22 @@ export function resolveModelChain(cfg: AiProviderConfig): string[] {
 }
 
 /**
+ * r351 AI-1 — the Gemini fall-through policy. For Google's compat
+ * endpoint the ordered chain (AI_MODELS) falls through to the next
+ * model ONLY on the capacity classes — 429 (rate_limited) and 5xx
+ * (provider_error) — where a second model genuinely has a different
+ * chance. Everything else (a bad key 401/403, a nonexistent model 404,
+ * a rejected payload 400, a timeout that already burned the ceiling)
+ * surfaces immediately: retrying the same mistake on the same key
+ * against the next model would only double the bill and the wait.
+ * Non-Gemini providers keep the r323 behavior (fall through on any
+ * exhausted model) — their chains were measured under that policy. */
+function geminiFallThroughAllowed(baseUrl: string, kind: AiFailureKind): boolean {
+  if (!isGeminiBaseUrl(baseUrl)) return true;
+  return kind === 'rate_limited' || kind === 'provider_error';
+}
+
+/**
  * r323 B1.1 — the shared model-chain driver. Runs `attempt(model)` over
  * the resolved chain IN ORDER; per model the r176a policy applies
  * unchanged (ONE bounded jittered retry for the fast-fail transient
@@ -539,6 +599,10 @@ export function resolveModelChain(cfg: AiProviderConfig): string[] {
  * AiProviderError with its classified kind). A client abort (the SSE
  * stream's controller) short-circuits everything — no retries, no
  * fall-through, the error propagates immediately.
+ *
+ * r351 AI-1: on a Gemini base URL a non-capacity failure (auth, model
+ * id, payload, timeout) throws straight out of the chain — see
+ * geminiFallThroughAllowed.
  *
  * Generic over the attempt's result so BOTH the JSON client
  * (callProviderWithRetry) and the SSE client (streamProviderWithChain)
@@ -574,6 +638,10 @@ async function runModelChain<T>(
           await sleep(delay);
           continue;
         }
+        // r351 AI-1: Gemini capacity-only fall-through — a non-capacity
+        // failure on Google's endpoint surfaces instead of re-asking
+        // the same key with the next model.
+        if (!geminiFallThroughAllowed(cfg.baseUrl, kind)) throw err;
         break; // exhausted (or non-transient) → next model
       }
     }
@@ -898,6 +966,11 @@ export async function streamOpenAiCompatible(
       usage?: { prompt_tokens?: unknown; completion_tokens?: unknown };
       model?: unknown;
     };
+    /* r351 AI-1 — Gemini delta hygiene: Google's compat stream can ride
+     * extra delta fields (reasoning/extra content, thought signatures)
+     * alongside `content`. ONLY `delta.content` is read — everything
+     * else is structurally invisible: no leak into the student's
+     * bubble, no parse failure, no echo. (Pinned in ai-gemini tests.) */
     const delta = chunk?.choices?.[0]?.delta?.content;
     if (typeof delta === 'string' && delta.length > 0) {
       content += delta;
