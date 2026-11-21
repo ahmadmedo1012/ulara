@@ -28,53 +28,6 @@ const TOL = 4; /* px — the AA/rounding floor; real collisions exceed it */
 
 type Leaf = { x1: number; y1: number; x2: number; y2: number; txt: string };
 
-/* the in-page auditor: text-leaf rects inside a root, pairwise overlap +
- * horizontal containment. Runs entirely in the page (no round-trips). */
-const audit = (rootSel: string, vw: number) => {
-  const root = document.querySelector(rootSel);
-  if (!root) return { missing: true as const };
-  const leaves: Leaf[] = [];
-  const walk = (el: Element) => {
-    for (const node of el.childNodes) {
-      if (node.nodeType === 3) {
-        const t = (node.textContent ?? '').trim();
-        if (!t) continue;
-        const range = document.createRange();
-        range.selectNodeContents(node as Text);
-        const r = range.getBoundingClientRect();
-        if (r.width === 0 && r.height === 0) continue;
-        leaves.push({ x1: r.left, y1: r.top, x2: r.right, y2: r.bottom, txt: t.slice(0, 18) });
-      } else if (node.nodeType === 1) {
-        const c = node as Element;
-        const st = getComputedStyle(c);
-        if (st.display === 'none' || st.visibility === 'hidden' || c.getAttribute('aria-hidden') === 'true') continue;
-        walk(c);
-      }
-    }
-  };
-  walk(root);
-  const overlaps: string[] = [];
-  for (let i = 0; i < leaves.length; i++) {
-    for (let j = i + 1; j < leaves.length; j++) {
-      const a = leaves[i]!;
-      const b = leaves[j]!;
-      const ox = Math.min(a.x2, b.x2) - Math.max(a.x1, b.x1);
-      const oy = Math.min(a.y2, b.y2) - Math.max(a.y1, b.y1);
-      /* one contains the other → a parent/child pair, not a collision */
-      const contains =
-        (a.x1 <= b.x1 + 1 && a.x2 >= b.x2 - 1 && a.y1 <= b.y1 + 1 && a.y2 >= b.y2 - 1) ||
-        (b.x1 <= a.x1 + 1 && b.x2 >= a.x2 - 1 && b.y1 <= a.y1 + 1 && b.y2 >= a.y2 - 1);
-      if (!contains && ox > tol && oy > tol) {
-        overlaps.push(`«${a.txt}» × «${b.txt}» (${Math.round(ox)}×${Math.round(oy)}px)`);
-      }
-    }
-  }
-  const clipped = leaves
-    .filter((l) => l.x1 < -TOL || l.x2 > vw + TOL)
-    .map((l) => `«${l.txt}» [${Math.round(l.x1)}…${Math.round(l.x2)}]`);
-  return { missing: false as const, overlaps, clipped, count: leaves.length };
-};
-
 for (const w of WIDTHS) {
   test(`no text-on-text and no clipped captions in the masthead band @${w}`, async ({ page }) => {
     await page.setViewportSize({ width: w, height: w >= 1024 ? 900 : 844 });

@@ -382,7 +382,8 @@ export function ContactPage() {
       <LegalSectionBar index={1} title="القناة المتاحة" id="contact-channel" />
       <LegalCell>
         <p className="lg-p">
-          التسجيل المبكر من صفحة البداية هو القناة المتاحة — لا بريد عام في مرحلة الإطلاق. اطلب من
+          التسجيل المبكر من صفحة البداية هو قناة التواصل المتاحة حاليًا — لا بريد عام في
+          مرحلة الإطلاق. اطلب من
           {' '}<Link to="/auth/register" className="lg-link">نموذج إنشاء الحساب الجامعي</Link>،
           وما يصل عبره هو ما يقرؤه المشغّل.
         </p>
