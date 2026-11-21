@@ -290,8 +290,12 @@ test.describe('المسار النشط واستعادة التمرير', () => {
     await expect(active).toHaveCount(1);
     await expect(active).toContainText('مقرّراتي الدراسية');
 
-    // الترويسة (والتبويب) يتحدثان بلغة nav.ts نفسها — لا انجراف.
-    await expect(page.locator('.topbar-title')).toContainText('مقرّراتي الدراسية');
+    // r350 (B1 — the one-title law): the topbar no longer repeats the
+    // page title; the h1 is the single visible name and the TAB still
+    // reads nav.ts's label. The topbar block may carry the section
+    // kicker, but it must NOT duplicate the page's h1 text.
+    await expect(page.locator('h1.pf-page-title')).toContainText('مقرّراتي الدراسية');
+    await expect(page.locator('.topbar-title')).not.toContainText('مقرّراتي الدراسية');
     await expect(page).toHaveTitle('مقرّراتي الدراسية · أُلارا');
 
     // 2) الرجوع يستعيد التمرير على صفحة طويلة (مراقب POP المحدود ~1s).

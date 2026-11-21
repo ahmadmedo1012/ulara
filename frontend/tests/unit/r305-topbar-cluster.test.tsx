@@ -162,7 +162,7 @@ describe('InstitutionChip — passive pill vs switcher', () => {
       currentInstitution: contextFor(INST_A),
       membershipRole: 'STUDENT',
     });
-    renderShell(<Topbar title="لوحة التحكم" />);
+    renderShell(<Topbar />);
 
     const pill = screen.getByText('مساحة عمل أُلارا التجريبية');
     expect(pill).toHaveClass('topbar-scope');
@@ -177,7 +177,7 @@ describe('InstitutionChip — passive pill vs switcher', () => {
       currentInstitution: contextFor(INST_A),
       membershipRole: 'STUDENT',
     });
-    renderShell(<Topbar title="لوحة التحكم" />);
+    renderShell(<Topbar />);
 
     const trigger = screen.getByRole('button', { name: 'المؤسسة الحالية' });
     // The settled session is not context-lost — no urgency hook.
@@ -201,7 +201,7 @@ describe('InstitutionChip — passive pill vs switcher', () => {
       currentInstitution: contextFor(INST_A),
       membershipRole: 'STUDENT',
     });
-    renderShell(<Topbar title="لوحة التحكم" />);
+    renderShell(<Topbar />);
 
     fireEvent.click(screen.getByRole('button', { name: 'المؤسسة الحالية' }));
     fireEvent.click(screen.getAllByRole('menuitem')[1]!);
@@ -227,7 +227,7 @@ describe('InstitutionChip — passive pill vs switcher', () => {
       currentInstitution: contextFor(INST_A),
       membershipRole: 'STUDENT',
     });
-    renderShell(<Topbar title="لوحة التحكم" />);
+    renderShell(<Topbar />);
 
     fireEvent.click(screen.getByRole('button', { name: 'المؤسسة الحالية' }));
     fireEvent.click(screen.getAllByRole('menuitem')[1]!);
@@ -249,7 +249,7 @@ describe('InstitutionChip — passive pill vs switcher', () => {
       currentInstitution: null,
       membershipRole: null,
     });
-    renderShell(<Topbar title="لوحة التحكم" />);
+    renderShell(<Topbar />);
 
     const trigger = screen.getByRole('button', { name: 'اختيار المؤسسة' });
     expect(trigger).toHaveAttribute('data-context-lost', 'true');
@@ -263,7 +263,7 @@ describe('InstitutionChip — passive pill vs switcher', () => {
 describe('User menu — theme item flips the mode and closes the menu', () => {
   it('light session: «الوضع الداكن» sets mode=dark and aria-expanded returns to false', () => {
     useAuthStore.setState({ user: userWithRole('STUDENT') });
-    renderShell(<Topbar title="لوحة التحكم" />);
+    renderShell(<Topbar />);
 
     const trigger = screen.getByRole('button', { name: 'ملف المستخدم' });
     fireEvent.click(trigger);
@@ -278,7 +278,7 @@ describe('User menu — theme item flips the mode and closes the menu', () => {
   it('dark session: «الوضع الفاتح» sets mode=light (the label names the TARGET)', () => {
     useAuthStore.setState({ user: userWithRole('STUDENT') });
     useThemeStore.setState({ mode: 'dark' });
-    renderShell(<Topbar title="لوحة التحكم" />);
+    renderShell(<Topbar />);
 
     fireEvent.click(screen.getByRole('button', { name: 'ملف المستخدم' }));
     fireEvent.click(screen.getByRole('menuitem', { name: 'الوضع الفاتح' }));
@@ -333,7 +333,7 @@ describe('GlobalSearch — "/" chord guard (cluster-level re-pin)', () => {
 describe('Topbar title block — group-context kicker + scope chips (r305)', () => {
   it('a nav-exact path renders the sidebar-section kicker beside the title', () => {
     useAuthStore.setState({ user: userWithRole('STUDENT') });
-    renderShell(<Topbar title="لوحة التحكم" />, { path: '/student/dashboard' });
+    renderShell(<Topbar />, { path: '/student/dashboard' });
 
     const kicker = document.querySelector('.topbar-kicker');
     expect(kicker).not.toBeNull();
@@ -344,7 +344,7 @@ describe('Topbar title block — group-context kicker + scope chips (r305)', () 
 
   it('a detail/unknown path renders NO kicker — no fabricated context', () => {
     useAuthStore.setState({ user: userWithRole('STUDENT') });
-    renderShell(<Topbar title="استعارة كتاب" />, { path: '/student/library/borrow/42' });
+    renderShell(<Topbar />, { path: '/student/library/borrow/42' });
 
     expect(document.querySelector('.topbar-kicker')).toBeNull();
   });
@@ -352,7 +352,7 @@ describe('Topbar title block — group-context kicker + scope chips (r305)', () 
   it('the student faculty scope chip rides the same title block (PRD scope indicator)', () => {
     state.profile = { student: { faculty: { name: 'كلية الهندسة' } } };
     useAuthStore.setState({ user: userWithRole('STUDENT') });
-    renderShell(<Topbar title="لوحة التحكم" />, { path: '/student/dashboard' });
+    renderShell(<Topbar />, { path: '/student/dashboard' });
 
     const chip = screen.getByText('كلية الهندسة');
     expect(chip).toHaveClass('topbar-scope');
@@ -369,7 +369,7 @@ describe('Topbar title block — group-context kicker + scope chips (r305)', () 
   ] as const)('%s scoped to a faculty renders the governance scope chip + its kicker', (role, chipPrefix, path, kickerLabel, scopeTitle) => {
     state.me = { scopeFaculty: { name: 'كلية الهندسة' } };
     useAuthStore.setState({ user: userWithRole(role) });
-    renderShell(<Topbar title="لوحة التحكم" />, { path });
+    renderShell(<Topbar />, { path });
 
     const chip = document.querySelector('.topbar-scope');
     expect(chip).not.toBeNull();

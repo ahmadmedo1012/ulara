@@ -245,6 +245,9 @@ export function Sidebar() {
     'sidebar',
     sidebarOpen ? 'open' : '',
     sidebarCollapsed ? 'collapsed' : '',
+    /* r350 (B1): the explicit rail flag — the icon-rail state was only
+       inferable from the class list; probes now match .sidebar.rail. */
+    sidebarCollapsed ? 'rail' : '',
   ].filter(Boolean).join(' ');
 
   return (
@@ -459,13 +462,37 @@ export function Sidebar() {
               <span className="sidebar-role-code" dir="ltr">{ROLE_ACCENT_CODES[accentKey]}</span>
             </div>
           )}
-          <ThemeToggle />
+          {/* r350 (B1 — the single-toggle law): the 3-way control is
+              the EXPANDED sidebar's (and the mobile drawer's) full
+              seat; on the COLLAPSED rail it does not render at all —
+              the topbar's compact toggle (R325) is then the one theme
+              control in view, ending the measured "rail + topbar = two
+              toggles" defect. Three cramped 3-way segments in a 64px
+              rail carried no labels and read as mystery icons. */}
+          {(!sidebarCollapsed || drawerBand) && <ThemeToggle />}
           {/* R319 (c1-A · B1b): the tour button's label is only hidden
               on the COLLAPSED DESKTOP RAIL — in the mobile drawer it
               must always read «عرض الجولة». `sidebarCollapsed` persists
               across bands (zustand), so a user who collapsed the
               desktop rail then opened the phone drawer used to get the
               orphan compass icon with no label (owner screenshot). */}
+          {/* r350 (B1): the collapsed-rail footer buttons get the SAME
+              portaled Tooltip the nav items carry — the native title
+              attribute is clipped by the sidebar's overflow context
+              (the nav items' audit 0-c P2-4 finding, applied to the
+              footer cluster the same defect lived in). */}
+          {sidebarCollapsed && !drawerBand ? (
+            <Tooltip content="إعادة عرض الجولة">
+              <button
+                type="button"
+                className="sidebar-tour-trigger"
+                onClick={() => startOnboarding({ replay: true })}
+                aria-label="إعادة عرض الجولة"
+              >
+                <Icon icon={Compass} size={14} />
+              </button>
+            </Tooltip>
+          ) : (
           <button
             type="button"
             className="sidebar-tour-trigger"
@@ -474,8 +501,9 @@ export function Sidebar() {
             aria-label="إعادة عرض الجولة"
           >
             <Icon icon={Compass} size={14} />
-            {(!sidebarCollapsed || drawerBand) && <span>عرض الجولة</span>}
+            <span>عرض الجولة</span>
           </button>
+          )}
           <div className="sidebar-user" title={sidebarCollapsed ? `${user.firstName} ${user.lastName}` : undefined}>
             {/* R319 (c1-A · B1b): the shell avatar never forwards the
                 un-gated DB avatarColor — the authenticated chrome wears
@@ -495,6 +523,24 @@ export function Sidebar() {
                   longest clamp candidate in the account cluster. */}
               <div className="sidebar-user-role" title={roleLabel}>{roleLabel}</div>
             </div>
+            {sidebarCollapsed && !drawerBand ? (
+              <Tooltip content="تسجيل الخروج">
+                <button
+                  type="button"
+                  className="sidebar-logout"
+                  onClick={() => {
+                    logout.mutate(undefined, {
+                      onSettled: () => navigate('/auth', { replace: true }),
+                    });
+                  }}
+                  disabled={logout.isPending}
+                  aria-busy={logout.isPending}
+                  aria-label="تسجيل الخروج"
+                >
+                  <Icon icon={LogOut} size={14} />
+                </button>
+              </Tooltip>
+            ) : (
             <button
               type="button"
               className="sidebar-logout"
@@ -523,6 +569,7 @@ export function Sidebar() {
             >
               <Icon icon={LogOut} size={14} />
             </button>
+            )}
           </div>
         </div>
       </nav>

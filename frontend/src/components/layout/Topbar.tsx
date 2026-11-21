@@ -20,7 +20,6 @@ import { roleLabel } from '../../lib/roleLabels';
 import { toast } from '../../lib/toast';
 
 interface TopbarProps {
-  title: ReactNode;
   rightSlot?: ReactNode;
   scrolled?: boolean;
   /** Opens the ⌘K command palette — the mobile-band search surface
@@ -189,7 +188,7 @@ function InstitutionChip() {
   );
 }
 
-export function Topbar({ title, rightSlot, scrolled = false, onOpenCommandPalette }: TopbarProps) {
+export function Topbar({ rightSlot, scrolled = false, onOpenCommandPalette }: TopbarProps) {
   const toggle = useUiStore((s) => s.toggleSidebar);
   // 15-g P2-7: the burger must REFLECT the drawer state — an
   // always-«فتح» label hid the open/closed state from screen readers.
@@ -276,22 +275,19 @@ export function Topbar({ title, rightSlot, scrolled = false, onOpenCommandPalett
 
       {/* 5-B5: tabIndex=-1 makes this the focus-rescue target after
           route changes that orphan focus (AppShell effect) — programmatic
-          focus only, never a Tab stop. The title attribute carries the
-          full name when the mobile band clamps it to two lines (A4 P3-8:
-          no truncation without a tooltip). */}
-      <div
-        className="topbar-title"
-        tabIndex={-1}
-        title={typeof title === 'string' ? title : undefined}
-      >
-        {/* The quiet group-context kicker rides BESIDE the page title
-            (focus rescue reads «القسم» then the page title as one
-            truthful name); `.topbar-scope` is deliberately NOT reused —
-            that class is the data-scope chip vocabulary with its own
-            semantics. Presentation (separation, the ≤920px band) is
-            r305-shell.css's — see the worklog coordination note. */}
+          focus only, never a Tab stop.
+
+          r350 (B1 — the one-title law): the topbar no longer renders
+          the page title TEXT. It was the second copy of the same name
+          the page's PageHeader h1 already carries (measured live on
+          every role: «لوحة التحكم» twice on one screen), and it was the
+          source of the small-screen clipping. The block now carries the
+          quiet section kicker + the data-scope chips only — the h1 in
+          the content is the single visible title, exactly like the
+          reference chrome (logo + controls, no title). document.title
+          still derives from nav.ts via AppShell's resolveTitle. */}
+      <div className="topbar-title" tabIndex={-1}>
         {navGroupKicker && <span className="topbar-kicker">{navGroupKicker}</span>}
-        {title}
         {role === 'STUDENT' && <StudentScopeChip />}
         {scopeFacultyName && (
           <span

@@ -444,7 +444,11 @@ export function AppShell({ children }: { children?: ReactNode }) {
         <Sidebar />
         <main className="main" id="main" tabIndex={-1}>
           <ScrollProgress />
-          <Topbar title={title} scrolled={scrolled} onOpenCommandPalette={openPalette} />
+          {/* r350 (B1): the topbar no longer renders the page title — the
+              PageHeader h1 is the one visible title (topbar × h1 measured
+              duplicated on every role). resolveTitle() still owns
+              document.title below. */}
+          <Topbar scrolled={scrolled} onOpenCommandPalette={openPalette} />
           {/* WCAG 2.1.1 / axe scrollable-region-focusable: `.content` is
               the app's ONLY scroll container (body never scrolls — see
               layout.css's note on the .content listeners), so keyboard

@@ -3369,7 +3369,11 @@
   display: inline-flex;
   align-items: center;
   gap: 7px; /* spacing-gate: allow — reviewed authored literal (r-round sheet) */
-  min-block-size: 40px;
+  /* r350 (B6 tap floor): the FAB measured 42×40 @390 — under the 44px
+     pointer floor. The pill grows to the floor; the icon carries the
+     same seat it always did. */
+  min-block-size: 44px;
+  min-inline-size: 44px;
   padding: var(--sp-2) 14px; /* spacing-gate: allow — reviewed authored literal (r-round sheet) */
   border: 1px solid var(--border);
   background: var(--surface);
@@ -3396,11 +3400,15 @@
   .fb-fab:hover { border-color: var(--border-strong, var(--border)); }
 }
 @media (max-width: 640px) {
-  /* Y6: the dock clearance (72px) keeps its safe-area growth and now
-     rides on the bottom-stack offset (toasts lift the FAB higher). */
+  /* Y6: the dock clearance keeps its safe-area growth and now
+     rides on the bottom-stack offset (toasts lift the FAB higher).
+     r350 (B1, measured @390): the bottom-nav is 78px tall and the
+     old 72px clearance left the FAB's bottom edge 6px UNDER the
+     nav's top (FAB 732+40=772 > nav 766). 88px = 78px nav + 10px
+     daylight, the same rhythm the desktop seat keeps. */
   .fb-fab {
     inset-block-end: calc(
-      var(--app-bottom-stack, 0px) + 72px + env(safe-area-inset-bottom, 0px)
+      var(--app-bottom-stack, 0px) + 88px + env(safe-area-inset-bottom, 0px)
     );
     padding: var(--sp-2) var(--sp-3);
   }
