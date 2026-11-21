@@ -32,8 +32,7 @@ import { formatInt, formatNum, formatDate, formatTime } from '../../utils/number
 /* R319 C1-C — the visible-text hygiene layer (§B2 seed leaks + §E-10):
    no raw revision codes, no placeholder test names, ONE numeral system
    (Latin), real ar-LY dates, <bdi> on every mixed run. */
-import {
-} from '../../utils/display-text';
+import { sanitizeVisibleText } from '../../utils/display-text';
 /* R305 DS — the shared student vocabulary + this page's family sheet.
  * Page-chunk CSS loads after main.tsx's global sheets, so the family
  * refinements win same-specificity ties over the frozen student.css
@@ -381,7 +380,7 @@ function DashResumeHero({ focus }: { focus: ResumeFocus }) {
             </div>
             {segments && (
               <div className="dash-resume-segments">
-                <span className="ind-microlabel">محاضرات المقرّر</span>
+                <span className="ind-microlabel">المحاضرات</span>
                 <div className="dash-resume-segments-row">
                   <SegmentedProgress
                     segments={segments}
@@ -540,6 +539,12 @@ export default function StudentDashboardPage() {
               <div className="pf-page-header-text">
                 <h1 className="pf-page-title">لوحة التحكم</h1>
                 <p className="pf-page-desc">جارٍ تحضير لوحتك…</p>
+                {/* The resolved header carries title + name-line + date meta
+                    (r351 A2 × r164-k); the mirror holds the SAME three rows or
+                    the header would grow 21px at resolve (the CLS pin). */}
+                <div className="pf-page-meta" aria-hidden="true">
+                  <Skeleton width={132} height={13} />
+                </div>
               </div>
             </div>
           </header>
@@ -702,6 +707,11 @@ export default function StudentDashboardPage() {
 
   const now = new Date();
   const dateLine = formatDate(now, { weekday: 'long', day: 'numeric', month: 'long' });
+  /* r351 A2 × r164-k: the masthead keeps the learner's own name in the
+     description (the auth-login belt's real-data proof). The retired
+     time-of-day greeting and the identity segments stay dropped — the
+     name alone is the honest minimum the contract asks for. */
+  const studentName = sanitizeVisibleText(user?.firstName ?? '');
   const termPct = d.term.progressPct;
 
   /* The gaps ledger: top 3 priority gaps with direct remediation.
@@ -754,7 +764,7 @@ export default function StudentDashboardPage() {
     {
       label: 'مهام معلّقة',
       value: <CountIn value={d.kpi.pendingAssignmentsCount} />,
-      hint: d.agenda.assignments[0] ? `أقربها ${formatDue(d.agenda.assignments[0].dueAt)}` : 'لا مهام قريبة',
+      hint: d.agenda.assignments[0] ? formatDue(d.agenda.assignments[0].dueAt) : 'لا مهام قريبة',
       tone: d.kpi.pendingAssignmentsCount === 0 ? 'positive' : 'neutral',
     },
     {
@@ -798,6 +808,7 @@ export default function StudentDashboardPage() {
             shell's user menu; term dates live in the ruler's meta). */}
         <PageHeader
           title="لوحة التحكم"
+          description={studentName ? <>مرحباً، <bdi>{studentName}</bdi></> : undefined}
           meta={<bdi>{dateLine}</bdi>}
         />
 
