@@ -60,3 +60,31 @@ Full package in `docs/redesign/r350/reference/` (+29 shots). Key extracted facts
 
 (Owner's earlier numbers used a different counter; this table is the instrument for all
 before/after comparisons in r350.)
+
+## B1 — part 1 (commit `4cccf40`, pushed 2026-11-21; entry backfilled on resume)
+
+Session continuity note: this entry was written by the resuming session — the commit landed
+but its LOG row was never appended before the session dropped.
+
+- **The one-title law**: topbar no longer repeats the PageHeader h1 (measured duplicated on
+  all five roles before). The h1 is the single visible title; kicker+chips stay. ≤920px the
+  topbar title folds (`display:none` since 4-A10) — no clipped/oversized label @390.
+- **The rail's single toggle**: collapsed icon rail dropped its unlabeled 3-way theme control
+  (topbar's compact toggle owns the flip); portaled tooltips on tour/logout buttons.
+- **The FAB's honest seat**: feedback FAB clears the 78px bottom-nav (was 6px under it @390),
+  44px tap floor.
+- Files: AppShell/Sidebar/Topbar/components.css + r350-one-title.test.tsx (new, 151 lines) +
+  updated r305-shell-ds.e2e.ts & r305-topbar-cluster.test.tsx.
+- Author's verification: 3014 unit + 29 shell e2e green.
+- Resume re-verification (this sandbox, node 24 / git 2.47): `bash scripts/verify.sh --fast`
+  → **FAST PASS** (tsc ✓ · vitest 3014 ✓ · bundle 756.4/770 ✓ · css ratchet 52 ✓ · logo ✓ ·
+  axe a11y 19 S/C vs floor S25/C0 ✓).
+
+### B1 remaining (this session)
+- [ ] 5-role × 1440/390 screenshots + word counts (student/teacher/admin/quality/owner) into
+  `docs/redesign/r350/shots/` (owner dashboard is a new capture; student 271 in owner's old
+  instrument).
+- [ ] overlay consistency spot-check (SheetFrame/dialogs/notification/GlobalSearch focus, Esc,
+  open/close motion) — the overlay-stack contract exists (lib/overlayStack + capture-phase Esc
+  + useAnchorFocusReturn); verify by tests, not rebuild.
+
