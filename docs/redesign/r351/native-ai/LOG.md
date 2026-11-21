@@ -120,3 +120,31 @@
 **Gates:** backend AI suites 8 files 246/246 + STT 10/10 · tsc clean (backend + frontend) · frontend chat-hygiene 13/13 · `verify.sh --fast` **FAST PASS** (a11y floor S25/C0 unchanged) · zero-trace: tracked paths clean; the 2 history hits are r350-era commits inherited from main (pre-existing, documented — owned by the merge agent).
 
 **Push:** `7214e75..0a3bc61` on r351/native-and-ai.
+
+## Session 2 — N2 the collapsing large-title header + the N4 residuals the corrected instrument exposed (commit 05e8315)
+
+**The gap:** PLAN row N2 overstated ("CollapsibleHeader, useReducedMotion") — `useReduceMotion` existed, stagger/PressableScale/sheets-with-gesture-dismissal (gorhom v5)/tab crossfade (`animation:"fade"`)/pull-to-refresh (DataList) all shipped, but the **large-title collapse was absent** (StackHeader's docblock even said "deliberately NOT implemented" — an r350-era stance the r351 owner directive overrides).
+
+**Built:**
+- `shell/collapse.ts` — the ONE geometry source (threshold 72, drift 24, fade windows) + the pure `collapseProgress` clamp (pinned numerically).
+- `shell/LargeTitleScreen.tsx` — kicker + h1 large title IN the scroll content; ONE scroll handler writes a shared value; `Math.*` worklets (NO captured functions — the CountUp R336 remote-call freeze rule; NO `interpolate` — its jest mock is a NOOP that would hollow the rest-state pins); reduced-motion drops the drift (opacity-only degradation); pull-to-refresh with the accent tint.
+- `AppTopBar` — optional backward-compatible crossfade seat: the brand-word slot crossfades «أُلارا» → the screen title (two stacked absolute fills; both labels stay screen-reader-visible — an honest breadcrumb; a per-frame a11y flip would need JS work inside the gesture, which the motion contract forbids — documented in-file). The ~30 bare AppTopBar screens render byte-identically.
+- Applied to all five role dashboards (student: the greeting IS the large title, institution as the mono kicker, «الرئيسية» as the seat; teacher/admin/quality/owner: explainer subtitles retired with the cut law).
+- 10 new pins: pure clamp, geometry sanity, rest state (title visible / seat transparent), barTitle override, bar actions, reduced-motion rest + source gate, the R336 worklet-discipline source contract (no identifier-calls but Math.*), one-geometry-source.
+
+**The instrument bug (found by evidence, not by claim):** re-measuring AFTER the integration, the student "dashboard" shot was byte-identical to the AI shot (md5 equal). The capture instrument navigated dashboard cells to `/<role>/` — on the exported web bundle that resolves to the manifest's first match (for STUDENT: `/student/ai`, the alphabetically first file). **The first-pass audit's dashboard rows were mislabeled** (the old "admin dashboard 136" was actually reports; the real dashboards were never captured). Fixed: the instrument now uses the explicit `/<role>/dashboard` paths (the deep-link contract). NATIVE_AUDIT.md carries the correction note + the re-measured table.
+
+**The corrected re-measure exposed REAL N4 residuals** (hidden until now):
+- TEACHER dashboard 130 words → **78** (−40%): 5 empty-state explainer sentences («ستظهر هنا…»), the chart subline, and one duplicated empty title cut; titles + CTAs kept.
+- OWNER dashboard 89 → **37** (−58%): 7 menu explainer sublines + the footer hint paragraph cut.
+- `EmptyState` gains explicit-empty suppression: `message=""` overrides the room default (the one-line law needs an opt-out from the «ستظهر هنا…» filler without dropping the room art) — states tests 12/12.
+
+**Final sweep (46 cells × 2 viewports, minimal fixtures): 0 overflowX · 0 capture errors · 0 screens >80 words.** Dashboards: student 26, teacher 78, admin 51, quality 12, owner 37.
+
+**N6 gates (all green, run in full):** `npx tsc --noEmit` 0 · `npx expo lint` 0 errors/16 pre-existing warnings · `npm run contract-check` no drift · `npm run tokens:check` byte-identical · `npm run api:types` + `git diff --exit-code` clean · `npm test -- --ci` **1251/1251** (1241+10) · `npx expo export` android (7.5MB hbc ≤ 8MB budget) + ios OK.
+
+**Honesty:** the collapse's animated values are UI-thread work — device-UNVERIFIED (no emulator; RN-web cannot show native threads). Jest pins the REST state + the pure clamp + the worklet discipline. VLM screenshot check confirmed the large heading + kicker + bar render (Arabic OCR by the VLM is weak; the instrument's numbers are the authority).
+
+**Zero-trace:** tracked names clean (the 5 file/history hits are the pre-existing main-inherited ones — CHANGELOG + r350 docs + 2 r350 commit subjects; owned by the merge agent).
+
+**Push:** `1fa9ac3..05e8315`.
