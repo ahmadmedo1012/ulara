@@ -1,0 +1,132 @@
+{
+  "generatedAt": "2026-11-21T14:09:30.227Z",
+  "base": "http://localhost:5199",
+  "matrix": {
+    "roles": [
+      "STUDENT",
+      "TEACHER",
+      "ADMIN",
+      "QUALITY",
+      "OWNER"
+    ],
+    "themes": [
+      "light"
+    ],
+    "viewports": [
+      "1440x900",
+      "390x844"
+    ]
+  },
+  "results": [
+    {
+      "cell": "STUDENT-light-1440",
+      "role": "STUDENT",
+      "theme": "light",
+      "viewport": "1440x900",
+      "words": 297,
+      "consoleErrors": 0,
+      "devAuditNotices": 0,
+      "failedRequests": 0,
+      "shot": "/home/z/ulara/docs/redesign/r350/shots/r350-role-student-light-1440.png"
+    },
+    {
+      "cell": "STUDENT-light-390",
+      "role": "STUDENT",
+      "theme": "light",
+      "viewport": "390x844",
+      "words": 283,
+      "consoleErrors": 0,
+      "devAuditNotices": 0,
+      "failedRequests": 0,
+      "shot": "/home/z/ulara/docs/redesign/r350/shots/r350-role-student-light-390.png"
+    },
+    {
+      "cell": "TEACHER-light-1440",
+      "role": "TEACHER",
+      "theme": "light",
+      "viewport": "1440x900",
+      "words": 277,
+      "consoleErrors": 0,
+      "devAuditNotices": 0,
+      "failedRequests": 0,
+      "shot": "/home/z/ulara/docs/redesign/r350/shots/r350-role-teacher-light-1440.png"
+    },
+    {
+      "cell": "TEACHER-light-390",
+      "role": "TEACHER",
+      "theme": "light",
+      "viewport": "390x844",
+      "words": 270,
+      "consoleErrors": 0,
+      "devAuditNotices": 0,
+      "failedRequests": 0,
+      "shot": "/home/z/ulara/docs/redesign/r350/shots/r350-role-teacher-light-390.png"
+    },
+    {
+      "cell": "ADMIN-light-1440",
+      "role": "ADMIN",
+      "theme": "light",
+      "viewport": "1440x900",
+      "words": 171,
+      "consoleErrors": 0,
+      "devAuditNotices": 0,
+      "failedRequests": 0,
+      "shot": "/home/z/ulara/docs/redesign/r350/shots/r350-role-admin-light-1440.png"
+    },
+    {
+      "cell": "ADMIN-light-390",
+      "role": "ADMIN",
+      "theme": "light",
+      "viewport": "390x844",
+      "words": 166,
+      "consoleErrors": 0,
+      "devAuditNotices": 0,
+      "failedRequests": 0,
+      "shot": "/home/z/ulara/docs/redesign/r350/shots/r350-role-admin-light-390.png"
+    },
+    {
+      "cell": "QUALITY-light-1440",
+      "role": "QUALITY",
+      "theme": "light",
+      "viewport": "1440x900",
+      "words": 209,
+      "consoleErrors": 0,
+      "devAuditNotices": 0,
+      "failedRequests": 0,
+      "shot": "/home/z/ulara/docs/redesign/r350/shots/r350-role-quality-light-1440.png"
+    },
+    {
+      "cell": "QUALITY-light-390",
+      "role": "QUALITY",
+      "theme": "light",
+      "viewport": "390x844",
+      "words": 203,
+      "consoleErrors": 0,
+      "devAuditNotices": 0,
+      "failedRequests": 0,
+      "shot": "/home/z/ulara/docs/redesign/r350/shots/r350-role-quality-light-390.png"
+    },
+    {
+      "cell": "OWNER-light-1440",
+      "role": "OWNER",
+      "theme": "light",
+      "viewport": "1440x900",
+      "words": 224,
+      "consoleErrors": 0,
+      "devAuditNotices": 0,
+      "failedRequests": 0,
+      "shot": "/home/z/ulara/docs/redesign/r350/shots/r350-role-owner-light-1440.png"
+    },
+    {
+      "cell": "OWNER-light-390",
+      "role": "OWNER",
+      "theme": "light",
+      "viewport": "390x844",
+      "words": 217,
+      "consoleErrors": 0,
+      "devAuditNotices": 0,
+      "failedRequests": 0,
+      "shot": "/home/z/ulara/docs/redesign/r350/shots/r350-role-owner-light-390.png"
+    }
+  ]
+}

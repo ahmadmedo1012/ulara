@@ -1013,3 +1013,390 @@ export const OFFERING_LECTURES_WITH_CHECKPOINT = [
   },
 ];
 
+
+/* ── OWNER: the platform dashboard's five feeds (r350 B1) ────────
+ * The owner dashboard was audit-only in this corpus (no journey spec
+ * rides OWNER), so role-shots hit loud 501s on /owner/* — logged,
+ * not hidden, then closed with the shapes hooks/useOwner.ts declares.
+ * Same FIXED_NOW clock as every other corpus timestamp. */
+
+export const OWNER_STATS = {
+  totalUsers: 1284,
+  students: 1042,
+  teachers: 137,
+  admins: 41,
+  quality: 17,
+  owners: 2,
+  totalCourses: 342,
+  totalOfferings: 486,
+  totalEnrollments: 5231,
+  recentAuditLogs: 87,
+};
+
+export const OWNER_REALTIME = {
+  activeSessions: 96,
+  aiRequestsPerMin: 34,
+  liveBroadcasts: 2,
+  activeExams: 5,
+};
+
+export const OWNER_ALERTS = [
+  {
+    id: 'alr_e2e_queue',
+    severity: 'warning',
+    category: 'system',
+    title: 'طابور البريد متأخّر',
+    message: 'زمن الانتظار في طابور إشعارات البريد تجاوز خمس دقائق مرتين خلال الساعة الأخيرة.',
+    metadata: null,
+    resolvedAt: null,
+    resolvedBy: null,
+    createdAt: iso(-0.05),
+  },
+  {
+    id: 'alr_e2e_storage',
+    severity: 'info',
+    category: 'content',
+    title: 'سعة تخزين المحاضرات',
+    message: 'استهلاك تخزين الوسائط بلغ 71٪ من الحصة الحالية.',
+    metadata: null,
+    resolvedAt: null,
+    resolvedBy: null,
+    createdAt: iso(-9),
+  },
+];
+
+export const OWNER_ACTIVITY = {
+  data: [
+    { id: 'aud_e2e_1', action: 'USER_ROLE_CHANGED', resourceType: 'user', resourceId: 'usr_e2e_9', userId: 'usr_e2e_owner', metadata: { from: 'TEACHER', to: 'ADMIN' }, createdAt: iso(-11 / 60), user: { firstName: 'أمين', lastName: 'المنصّة', email: OWNER_USER.email } },
+    { id: 'aud_e2e_2', action: 'FEATURE_FLAG_TOGGLED', resourceType: 'feature_flag', resourceId: 'flag_e2e_2', userId: 'usr_e2e_owner', metadata: { enabled: true }, createdAt: iso(-2), user: { firstName: 'أمين', lastName: 'المنصّة', email: OWNER_USER.email } },
+    { id: 'aud_e2e_3', action: 'EXAM_PUBLISHED', resourceType: 'exam', resourceId: 'exam_e2e_4', userId: 'usr_e2e_teacher', metadata: null, createdAt: iso(-5), user: { firstName: 'سلمى', lastName: 'الهوني', email: TEACHER_USER.email } },
+    { id: 'aud_e2e_4', action: 'COURSE_ARCHIVED', resourceType: 'course', resourceId: 'crs_e2e_old', userId: 'usr_e2e_admin', metadata: null, createdAt: iso(-26), user: { firstName: 'خالد', lastName: 'الدرسي', email: ADMIN_USER.email } },
+    { id: 'aud_e2e_5', action: 'QUALITY_REVIEW_APPROVED', resourceType: 'course_review', resourceId: 'rev_e2e_7', userId: 'usr_e2e_quality', metadata: null, createdAt: iso(-30), user: { firstName: 'نورا', lastName: 'العابد', email: QUALITY_USER.email } },
+    { id: 'aud_e2e_6', action: 'LOGIN_BACKOFF_CLEARED', resourceType: 'auth', resourceId: 'usr_e2e_9', userId: 'usr_e2e_admin', metadata: null, createdAt: iso(-2 * 24), user: { firstName: 'خالد', lastName: 'الدرسي', email: ADMIN_USER.email } },
+    { id: 'aud_e2e_7', action: 'SETTINGS_UPDATED', resourceType: 'platform_setting', resourceId: 'set_e2e_smtp', userId: 'usr_e2e_owner', metadata: { key: 'smtp.host' }, createdAt: iso(-3 * 24), user: { firstName: 'أمين', lastName: 'المنصّة', email: OWNER_USER.email } },
+    { id: 'aud_e2e_8', action: 'ENROLLMENT_WAVE_OPENED', resourceType: 'term', resourceId: 'term_e2e_2026s', userId: 'usr_e2e_admin', metadata: null, createdAt: iso(-4 * 24), user: { firstName: 'خالد', lastName: 'الدرسي', email: ADMIN_USER.email } },
+  ],
+  meta: { page: 1, limit: 8, total: 87, totalPages: 11 },
+};
+
+export const OWNER_EDUCATION = {
+  totals: { totalCourses: 342, totalOfferings: 486, teachers: 137, avgEnrolment: 41 },
+  byFaculty: [
+    { name: 'كلية الهندسة', courseCount: 96 },
+    { name: 'كلية العلوم', courseCount: 74 },
+    { name: 'كلية الطب البشري', courseCount: 68 },
+    { name: 'كلية الآداب', courseCount: 52 },
+    { name: 'كلية الاقتصاد', courseCount: 52 },
+  ],
+  topCourses: [
+    { code: 'CS-201', name: 'مقدمة في الخوارزميات', facultyName: 'كلية الهندسة', enrolled: 420 },
+    { code: 'CS-101', name: 'أساسيات البرمجة', facultyName: 'كلية الهندسة', enrolled: 388 },
+    { code: 'MED-110', name: 'التشريح العام', facultyName: 'كلية الطب البشري', enrolled: 312 },
+    { code: 'SCI-205', name: 'الفيزياء العامة', facultyName: 'كلية العلوم', enrolled: 274 },
+  ],
+  workloadBuckets: { idle: 9, one: 31, two: 54, three: 29, fourPlus: 14 },
+  attendanceTrend: [
+    { month: 'يناير', attendancePct: 78, samples: 412 },
+    { month: 'فبراير', attendancePct: 81, samples: 396 },
+    { month: 'مارس', attendancePct: 76, samples: 184 },
+  ],
+};
+
+/* ── TEACHER / ADMIN / QUALITY: the staff dashboards' feeds (r350 B1)
+ * Same story as the owner block above: the corpus never covered the
+ * staff dashboards (the journey specs ride student flows), so the
+ * role-shots instrument hit loud 501s on /teacher/* /admin/*
+ * /quality/*. Shapes = hooks/resources/teacher.ts, hooks/resources/
+ * admin.ts, pages/quality/QualityPages.tsx. Numbers stay consistent
+ * with OWNER_STATS (one platform, one truth). */
+
+export const TEACHER_DASHBOARD = {
+  kpi: { studentCount: 128, avgGradePct: 78.4, attendancePct: 83.2, needsReview: 6 },
+  pendingGrading: [
+    {
+      assignmentId: 'asg_e2e_1',
+      title: 'واجب الوحدة الثالثة — الأشجار الثنائية',
+      type: 'HOMEWORK' as const,
+      course: { code: 'CS-201', name: 'مقدمة في الخوارزميات' },
+      count: 9,
+      oldestSubmittedAt: iso(-26),
+      actionTo: '/teacher/assignments',
+    },
+    {
+      assignmentId: 'asg_e2e_2',
+      title: 'اختبار قصير — التعقيد الزمني',
+      type: 'QUIZ' as const,
+      course: { code: 'CS-201', name: 'مقدمة في الخوارزميات' },
+      count: 4,
+      oldestSubmittedAt: iso(-9),
+      actionTo: '/teacher/assignments',
+    },
+  ],
+  trend: [
+    { week: 'الأسبوع 1', avgGradePct: 74.2, attendancePct: 79.1 },
+    { week: 'الأسبوع 2', avgGradePct: 75.8, attendancePct: 80.4 },
+    { week: 'الأسبوع 3', avgGradePct: 77.1, attendancePct: 81.0 },
+    { week: 'الأسبوع 4', avgGradePct: 76.4, attendancePct: 82.3 },
+    { week: 'الأسبوع 5', avgGradePct: 78.0, attendancePct: 82.7 },
+    { week: 'الأسبوع 6', avgGradePct: 78.4, attendancePct: 83.2 },
+  ],
+  feed: [
+    { kind: 'submissions' as const, id: 'sub_e2e_1', author: { firstName: 'مراد', lastName: 'الفيتوري', avatarInitials: 'مف', avatarColor: '#0f766e' }, meta: 'CS-201 · الواجب 3', when: iso(-2), title: 'مراد الفيتوري سلّم «واجب الوحدة الثالثة»', actionTo: '/teacher/assignments', textAnswer: null, fileUrl: null },
+    { kind: 'attendance' as const, id: 'att_e2e_1', author: null, meta: 'محاضرة اليوم 10:00', when: iso(-4), title: 'غياب محمود الشريف في المحاضرة الأخيرة', actionTo: '/teacher/students' },
+    { kind: 'submissions' as const, id: 'sub_e2e_2', author: { firstName: 'أسماء', lastName: 'الورفلي', avatarInitials: 'أو', avatarColor: '#9a3412' }, meta: 'CS-201 · الاختبار القصير', when: iso(-6), title: 'أسماء الورفلي سلّمت «اختبار قصير» متأخرة', actionTo: '/teacher/assignments', late: true, textAnswer: 'الإجابة مرفقة كملف.', fileUrl: '/api/v1/media/lecture.mp4' },
+    { kind: 'research' as const, id: 'res_e2e_1', author: { firstName: 'يوسف', lastName: 'الزاوي', avatarInitials: 'يز', avatarColor: '#6d28d9' }, meta: 'مقترح بحث', when: iso(-30), title: 'يوسف الزاوي قدّم مقترح «تحسين جدولة الفصول»', actionTo: '/teacher/research' },
+  ],
+};
+
+export const TEACHER_OFFERINGS = [
+  {
+    id: 'offr_e2e_algorithms',
+    term: '2026-ربيع',
+    room: 'قاعة ب-204',
+    capacity: 140,
+    course: { id: 'crs_e2e_algorithms', code: 'CS-201', name: 'مقدمة في الخوارزميات', iconEmoji: '🧮', themeColor: '#7c3aed', credits: 3 },
+    _count: { enrollments: 128, assignments: 6, lectures: 14, examTemplates: 2 },
+    schedule: [
+      { id: 'sch_e2e_1', dayOfWeek: 0, startTime: '10:00', endTime: '11:30', room: 'قاعة ب-204' },
+      { id: 'sch_e2e_2', dayOfWeek: 2, startTime: '10:00', endTime: '11:30', room: 'قاعة ب-204' },
+    ],
+  },
+  {
+    id: 'offr_e2e_databases',
+    term: '2026-ربيع',
+    room: 'مختبر الحاسوب 2',
+    capacity: 90,
+    course: { id: 'crs_e2e_db', code: 'CS-310', name: 'قواعد البيانات', iconEmoji: '🗄️', themeColor: '#0f766e', credits: 3 },
+    _count: { enrollments: 84, assignments: 4, lectures: 11, examTemplates: 1 },
+    schedule: [{ id: 'sch_e2e_3', dayOfWeek: 1, startTime: '13:00', endTime: '14:30', room: 'مختبر الحاسوب 2' }],
+  },
+];
+
+export const ADMIN_STATS = { totalStudents: 1042, totalTeachers: 137, totalCourses: 342, totalEnrollments: 5231 };
+
+export const ADMIN_FACULTIES = [
+  {
+    id: 'fac_e2e_eng',
+    name: 'كلية الهندسة',
+    nameEn: 'Engineering',
+    iconEmoji: '⚙️',
+    city: 'طرابلس',
+    departmentCount: 2,
+    studentCount: 420,
+    teacherCount: 28,
+    courseCount: 12,
+    departments: [
+      { id: 'dep_e2e_cs', name: 'قسم علوم الحاسوب', students: 260, teachers: 14, courses: 7 },
+      { id: 'dep_e2e_civil', name: 'قسم الهندسة المدنية', students: 160, teachers: 14, courses: 5 },
+    ],
+  },
+  {
+    id: 'fac_e2e_med',
+    name: 'كلية الطب البشري',
+    nameEn: 'Medicine',
+    iconEmoji: '🩺',
+    city: 'طرابلس',
+    departmentCount: 1,
+    studentCount: 310,
+    teacherCount: 19,
+    courseCount: 9,
+    departments: [{ id: 'dep_e2e_gen', name: 'قسم العلوم الأساسية', students: 310, teachers: 19, courses: 9 }],
+  },
+];
+
+export const ADMIN_REPORTS = {
+  headline: { totalPapers: 1846, publishedPapers: 1204, totalUsers: 1284, activeStudents: 964 },
+  paperTrend: [
+    { month: 'أكتوبر', submitted: 212, graded: 188, published: 154 },
+    { month: 'نوفمبر', submitted: 264, graded: 231, published: 197 },
+    { month: 'ديسمبر', submitted: 241, graded: 226, published: 203 },
+    { month: 'يناير', submitted: 298, graded: 254, published: 221 },
+    { month: 'فبراير', submitted: 312, graded: 268, published: 229 },
+    { month: 'مارس', submitted: 187, graded: 132, published: 96 },
+  ],
+  topCourses: [
+    { code: 'CS-201', name: 'مقدمة في الخوارزميات', enrollments: 420, lectures: 14 },
+    { code: 'CS-101', name: 'أساسيات البرمجة', enrollments: 388, lectures: 16 },
+    { code: 'MED-110', name: 'التشريح العام', enrollments: 312, lectures: 12 },
+  ],
+};
+
+export const QUALITY_OVERVIEW = {
+  users: { STUDENT: 1042, TEACHER: 137, ADMIN: 41, QUALITY: 17 },
+  courses: 342,
+  offerings: 486,
+  lectures: 1904,
+  attendance: { PRESENT: 4210, LATE: 512, ABSENT: 331, EXCUSED: 178 },
+  papers: { UPLOADED: 96, SCANNING: 12, CHECKS_PASSED: 1204, CHECKS_FAILED: 38, GRADED: 418, PUBLISHED: 1204 },
+};
+
+export const QUALITY_ENGAGEMENT = {
+  attendance: { presentRate: 79.7, lateRate: 9.7, absentRate: 6.3, total: 5231 },
+  videos: { totalLectures: 1904, totalEvents: 38211, completionRate: 71.4, completedLectures: 1359 },
+  enrollments: 5231,
+  totalStudents: 1042,
+  papersByStatus: { UPLOADED: 96, SCANNING: 12, CHECKS_PASSED: 1204, CHECKS_FAILED: 38, GRADED: 418, PUBLISHED: 1204 },
+  weeklyActive: [612, 648, 655, 701, 738, 744, 790, 812, 856, 871, 902, 964],
+  weeklyActiveEstimated: false,
+};
+
+export const QUALITY_ALERTS = {
+  alerts: [
+    { id: 'qal_e2e_1', severity: 'warning' as const, category: 'attendance' as const, title: 'انخفاض حضور قسم الهندسة المدنية', description: 'معدّل الحضور في قسم الهندسة المدنية نزل إلى 68٪ خلال أسبوعين.', occurredAt: iso(-5) },
+    { id: 'qal_e2e_2', severity: 'critical' as const, category: 'plagiarism' as const, title: 'تشابه نصوص مرتفع في ورقة CS-310', description: 'فحص الانتحال رصد تشابهًا 61٪ بين ورقتين في قواعد البيانات.', occurredAt: iso(-11 / 60) },
+    { id: 'qal_e2e_3', severity: 'info' as const, category: 'content' as const, title: 'محاضرات بلا ملخص مرفوع', description: 'أربع محاضرات في CS-201 بلا ملخص محاضرة بعد النشر.', occurredAt: iso(-26) },
+    { id: 'qal_e2e_4', severity: 'warning' as const, category: 'content' as const, title: 'تأخر رفع أوراق التصحيح', description: 'أوراق اختبار «التعقيد الزمني» ما زالت بانتظار التصحيح منذ ٦ أيام.', occurredAt: iso(-6 * 24) },
+  ],
+  counts: { critical: 1, warning: 2, info: 1, total: 4 },
+};
+
+/* ── The last four corpus gaps the role-shots sweep measured ─────
+ * /me/gaps + /me/results (student dashboard's mastery + grades arms),
+ * /teacher/risks (the at-risk shortcuts), /admin/courses +
+ * /admin/papers (the admin dashboard's catalog + graded counter).
+ * Same law: shapes verbatim from the source hooks, honest values. */
+
+export const ME_GAPS = [
+  { conceptId: 'cpt_e2e_1', conceptName: 'البرمجة الديناميكية', courseId: 'crs_e2e_algorithms', courseName: 'مقدمة في الخوارزميات', courseColor: '#7c3aed', level: 1, recommendedLectureId: 'lec_e2e_greedy', recommendedLectureTitle: 'الخوارزميات الجشعة' },
+  { conceptId: 'cpt_e2e_2', conceptName: 'التطبيع في قواعد البيانات', courseId: 'crs_e2e_db', courseName: 'قواعد البيانات', courseColor: '#0f766e', level: 2, recommendedLectureId: null, recommendedLectureTitle: null },
+];
+
+export const ME_RESULTS = {
+  headline: {
+    avgGradePct: 81.2,
+    highest: { courseName: 'مقدمة في الخوارزميات', gradePct: 88 },
+    lowest: { courseName: 'قواعد البيانات', gradePct: 74 },
+    courseCount: 2,
+  },
+  courses: [
+    {
+      offeringId: 'offr_e2e_algorithms',
+      term: '2026-ربيع',
+      courseCode: 'CS-201',
+      courseName: 'مقدمة في الخوارزميات',
+      themeColor: '#7c3aed',
+      gradePct: 88,
+      breakdown: [
+        { kind: 'HOMEWORK', score: 92, maxScore: 100, weight: 30, feedback: 'حلّ ممتاز — انتبه لتعقيد الحلول الفرعية.' },
+        { kind: 'QUIZ', score: 84, maxScore: 100, weight: 20, feedback: null },
+        { kind: 'EXAM', score: 86, maxScore: 100, weight: 50, feedback: null },
+      ],
+    },
+    {
+      offeringId: 'offr_e2e_databases',
+      term: '2026-ربيع',
+      courseCode: 'CS-310',
+      courseName: 'قواعد البيانات',
+      themeColor: '#0f766e',
+      gradePct: 74,
+      breakdown: [
+        { kind: 'HOMEWORK', score: 78, maxScore: 100, weight: 30, feedback: 'الاستعلامات جيدة؛ راجع التطبيع.' },
+        { kind: 'PROJECT', score: 70, maxScore: 100, weight: 30, feedback: null },
+        { kind: 'EXAM', score: 74, maxScore: 100, weight: 40, feedback: null },
+      ],
+    },
+  ],
+  recentAssignments: [
+    { id: 'asg_e2e_1', title: 'واجب الوحدة الثالثة — الأشجار الثنائية', type: 'HOMEWORK' as const, offeringId: 'offr_e2e_algorithms', gradePct: 92, gradedAt: iso(-30), grade: 92, maxScore: 100, feedback: 'حلّ ممتاز.', submittedAt: iso(-56) },
+    { id: 'asg_e2e_2', title: 'اختبار قصير — التعقيد الزمني', type: 'QUIZ' as const, offeringId: 'offr_e2e_algorithms', gradePct: 84, gradedAt: iso(-9 * 24), grade: 84, maxScore: 100, feedback: null, submittedAt: iso(-9 * 24 - 2) },
+  ],
+  pendingSubmissions: [],
+};
+
+export const TEACHER_RISKS = [
+  {
+    offeringId: 'offr_e2e_algorithms',
+    courseName: 'مقدمة في الخوارزميات',
+    courseIcon: '🧮',
+    courseColor: '#7c3aed',
+    studentId: 'usr_e2e_1',
+    name: 'محمود الشريف',
+    avatarInitials: 'مش',
+    avatarColor: '#b91c1c',
+    attendancePct: 58,
+    absences: 6,
+    lateCount: 3,
+    avgGrade: 52,
+    watchPct: 41,
+    riskScore: 78,
+    riskLevel: 'CRITICAL' as const,
+    signals: ['غياب متكرر', 'درجات اختبارات منخفضة'],
+    suggestion: 'خطة دعم أسبوعية + مراجعة الوحدتين الأولى والثانية',
+  },
+  {
+    offeringId: 'offr_e2e_algorithms',
+    courseName: 'مقدمة في الخوارزميات',
+    courseIcon: '🧮',
+    courseColor: '#7c3aed',
+    studentId: 'usr_e2e_2',
+    name: 'ليلى بن عيسى',
+    avatarInitials: 'لب',
+    avatarColor: '#9a3412',
+    attendancePct: 71,
+    absences: 3,
+    lateCount: 2,
+    avgGrade: 64,
+    watchPct: 55,
+    riskScore: 52,
+    riskLevel: 'AT_RISK' as const,
+    signals: ['مشاهدة المحاضرات متقطعة'],
+    suggestion: 'تذكير بمواعيد الحجز التعليمي',
+  },
+];
+
+export const ADMIN_COURSES_PAGE = {
+  data: [
+    {
+      id: 'crs_e2e_algorithms',
+      code: 'CS-201',
+      name: 'مقدمة في الخوارزميات',
+      credits: 3,
+      themeColor: '#7c3aed',
+      faculty: 'كلية الهندسة',
+      facultyEmoji: '⚙️',
+      department: 'قسم علوم الحاسوب',
+      departmentId: 'dep_e2e_cs',
+      offeringCount: 3,
+      conceptCount: 42,
+      totalEnrollments: 420,
+      totalLectures: 14,
+      totalMaterials: 26,
+      recentOfferings: [{ id: 'offr_e2e_algorithms', term: '2026-ربيع', enrollments: 128, lectures: 14, teacher: 'د. سلمى الهوني' }],
+    },
+    {
+      id: 'crs_e2e_db',
+      code: 'CS-310',
+      name: 'قواعد البيانات',
+      credits: 3,
+      themeColor: '#0f766e',
+      faculty: 'كلية الهندسة',
+      facultyEmoji: '⚙️',
+      department: 'قسم علوم الحاسوب',
+      departmentId: 'dep_e2e_cs',
+      offeringCount: 2,
+      conceptCount: 31,
+      totalEnrollments: 274,
+      totalLectures: 11,
+      totalMaterials: 18,
+      recentOfferings: [{ id: 'offr_e2e_databases', term: '2026-ربيع', enrollments: 84, lectures: 11, teacher: 'د. سلمى الهوني' }],
+    },
+  ],
+  meta: { page: 1, limit: 100, total: 2, totalPages: 1 },
+};
+
+export const ADMIN_PAPERS_GRADED_PAGE = {
+  data: [
+    {
+      id: 'pap_e2e_1',
+      title: 'تحسين جدولة الفصول بالخوارزميات الجشعة',
+      status: 'GRADED' as const,
+      plagiarismPct: 6,
+      aiContentPct: 2,
+      uploadedAt: iso(-40),
+      student: { id: 'usr_e2e_3', firstName: 'يوسف', lastName: 'الزاوي', avatarInitials: 'يز', avatarColor: '#6d28d9' },
+      reviewer: { id: 'usr_e2e_teacher', firstName: 'سلمى', lastName: 'الهوني' },
+      offering: { course: { name: 'مقدمة في الخوارزميات', code: 'CS-201' } },
+    },
+  ],
+  meta: { page: 1, limit: 1, total: 418, totalPages: 418 },
+};

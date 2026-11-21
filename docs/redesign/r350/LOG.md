@@ -80,6 +80,45 @@ but its LOG row was never appended before the session dropped.
   → **FAST PASS** (tsc ✓ · vitest 3014 ✓ · bundle 756.4/770 ✓ · css ratchet 52 ✓ · logo ✓ ·
   axe a11y 19 S/C vs floor S25/C0 ✓).
 
+### B1 part 2 — the 5-role sweep (this session)
+
+New instrument: `scripts/e2e/role-shots.mjs` (`npx tsx scripts/e2e/role-shots.mjs`) — hermetic
+vite + the fixture corpus + role-seeded contexts, DSF-2 screenshots + the LOG word-count
+instrument per cell. Results live in `docs/redesign/r350/shots/role-shots-results.json`.
+
+**What the sweep found (logged, then closed — the loud-501 discipline):**
+
+- **OWNER dashboard hard-crashed** (error boundary «حدث خطأ غير متوقع»): the corpus was
+  audit-only for OWNER, so /owner/stats|realtime|alerts|activity|education all 501'd AND the
+  activity body shape was never exercised (`events.map is not a function` — the hook returns
+  axios res.data verbatim, so a paginated body must ride RAW {data,meta}, not ok()-wrapped).
+- **TEACHER/ADMIN/QUALITY/STUDENT dashboards all hit corpus 501s** too (none of the five
+  dashboards was ever hermetically exercised): /teacher/dashboard, /teacher/me/offerings,
+  /teacher/risks, /admin/stats|faculties|reports|courses|papers?status=GRADED,
+  /quality/overview|engagement|alerts, /me/gaps, /me/results. All added to
+  `api-fixtures.ts` + `mock-transport.ts` with shapes verbatim from the source hooks.
+
+**After (all 10 cells, light, DSF2):** 0 runtime errors · 0 failed requests · 0 unexplained 501s.
+
+| role @1440 | words | shot |
+|---|---|---|
+| STUDENT | 297 | r350-role-student-light-1440.png |
+| TEACHER | 277 | r350-role-teacher-light-1440.png |
+| ADMIN | 171 | r350-role-admin-light-1440.png |
+| QUALITY | 209 | r350-role-quality-light-1440.png |
+| OWNER | 224 | r350-role-owner-light-1440.png |
+
+(390 counterparts captured alongside; 390 words: student 283 · teacher 270 · admin 166 ·
+quality 203 · owner 217.)
+
+Verification: tsc ✓ · vitest 3014 ✓ · r305-shell-ds + notifications e2e **31 passed**.
+
+Notes: (1) the word counts differ from the owner's old instrument (student 271) — this
+session re-measures with the same body.innerText counter on the CURRENT tree; the B2 copy
+cuts will be judged against THIS table. (2) Dev-mode axe logged one moderate finding on the
+student dashboard («Page should contain a level-one heading») — the a11y gate only covers the
+public pages and only serious/critical; recorded here, not hidden.
+
 ### B1 remaining (this session)
 - [ ] 5-role × 1440/390 screenshots + word counts (student/teacher/admin/quality/owner) into
   `docs/redesign/r350/shots/` (owner dashboard is a new capture; student 271 in owner's old

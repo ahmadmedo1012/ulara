@@ -38,16 +38,34 @@ import {
   LOCKED_EMAIL,
   LOGIN_FAILED_MESSAGE,
   LOGIN_LOCKED_MESSAGE,
+  ADMIN_COURSES_PAGE,
+  ADMIN_FACULTIES,
+  ADMIN_PAPERS_GRADED_PAGE,
+  ADMIN_REPORTS,
+  ADMIN_STATS,
+  ME_GAPS,
+  ME_RESULTS,
   MY_EXAMS,
   MY_PROFILE,
   NOTIFICATIONS,
   OFFERING_FULL,
   OFFERING_ID,
   OFFERING_LECTURES,
+  OWNER_ACTIVITY,
+  OWNER_ALERTS,
+  OWNER_EDUCATION,
+  OWNER_REALTIME,
+  OWNER_STATS,
+  QUALITY_ALERTS,
+  QUALITY_ENGAGEMENT,
+  QUALITY_OVERVIEW,
   RESUME,
   SEARCH_RESULTS,
   STUDENT_DASHBOARD,
   STUDENT_USER,
+  TEACHER_DASHBOARD,
+  TEACHER_OFFERINGS,
+  TEACHER_RISKS,
   TEACHER_USER,
   TRAINING_CATALOG,
   UNREAD_COUNT,
@@ -144,6 +162,41 @@ export function standardRoutes(): MockRouteDef[] {
      * lecture), so the training arm never renders — an empty list is
      * the truthful payload, not a stub. */
     { method: 'GET', path: '/training/catalog', json: ok(TRAINING_CATALOG) },
+
+    /* r350 B1: the owner platform dashboard's five feeds — the corpus
+     * was audit-only for OWNER, so the role-shots instrument hit loud
+     * 501s on /owner/* (logged in the r350 LOG, then closed here with
+     * the shapes hooks/useOwner.ts declares). The activity route rides
+     * the RAW paginated body ({data,meta} — pageOf shape): the hook
+     * returns axios res.data verbatim, so ok() would double-wrap and
+     * the dashboard's events.map would crash (measured). */
+    { method: 'GET', path: '/owner/stats', json: ok(OWNER_STATS) },
+    { method: 'GET', path: '/owner/realtime', json: ok(OWNER_REALTIME) },
+    { method: 'GET', path: '/owner/alerts', json: ok(OWNER_ALERTS) },
+    { method: 'GET', path: '/owner/activity', json: OWNER_ACTIVITY },
+    { method: 'GET', path: '/owner/education', json: ok(OWNER_EDUCATION) },
+
+    /* r350 B1: the staff dashboards (teacher / admin / quality) — same
+     * corpus-gap closure as the owner block, same shapes as the source
+     * hooks. All enveloped (their hooks unwrap). */
+    { method: 'GET', path: '/teacher/dashboard', json: ok(TEACHER_DASHBOARD) },
+    { method: 'GET', path: '/teacher/me/offerings', json: ok(TEACHER_OFFERINGS) },
+    { method: 'GET', path: '/admin/stats', json: ok(ADMIN_STATS) },
+    { method: 'GET', path: '/admin/faculties', json: ok(ADMIN_FACULTIES) },
+    { method: 'GET', path: '/admin/reports', json: ok(ADMIN_REPORTS) },
+    { method: 'GET', path: '/quality/overview', json: ok(QUALITY_OVERVIEW) },
+    { method: 'GET', path: '/quality/engagement', json: ok(QUALITY_ENGAGEMENT) },
+    { method: 'GET', path: '/quality/alerts', json: ok(QUALITY_ALERTS) },
+
+    /* r350 B1 — the last four gaps the sweep measured: the student
+     * dashboard's mastery + grades arms, the teacher's at-risk
+     * shortcuts, and the admin dashboard's catalog + graded counter.
+     * Paginated bodies ride RAW ({data,meta}), like /owner/activity. */
+    { method: 'GET', path: '/me/gaps', json: ok(ME_GAPS) },
+    { method: 'GET', path: '/me/results', json: ok(ME_RESULTS) },
+    { method: 'GET', path: '/teacher/risks', json: ok(TEACHER_RISKS) },
+    { method: 'GET', path: '/admin/courses', json: ADMIN_COURSES_PAGE },
+    { method: 'GET', path: '/admin/papers', json: ADMIN_PAPERS_GRADED_PAGE },
   ];
 }
 
