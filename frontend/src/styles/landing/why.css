@@ -490,6 +490,68 @@
 
 /* ═══ the tablet band (768–991): the rail folds above its capture ══ */
 @media (max-width: 991px) {
+  /* R349 (A1 · the audited mobile clip): the head RE-SEATS to one
+   * column. The ≥992 two-column grid (minmax(0,1fr) 55.68rem) left
+   * the side rail consuming the whole phone width (measured @390:
+   * cols «0px 552px») — the title/lede/note rendered 95–146px off the
+   * inline-start edge (content cut with zero document overflow). The
+   * re-seat stacks eyebrow → title → lede/note in flow, every seat
+   * inside the viewport; the side rail keeps its vertical rule as the
+   * lede's inline-start border (the drafting voice survives). */
+  /* R349 (A1b): the sheet-frame inset belt (shared.css) seats the
+   * phone sections inside 7px margins — but this section's own
+   * `inline-size: min(171.24rem, 100%)` over-constrains the box
+   * (100% + 14px margins > viewport → the RTL over-constrained rule
+   * pushes the block -7px off the start edge). The re-seat adopts the
+   * siblings' own grammar: auto width, the shared belt owns the
+   * inset. The ≥992 centred 171.24rem sheet keeps its own rule. */
+  .wy-section {
+    inline-size: auto;
+  }
+
+  .wy-head {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .wy-eyebrow {
+    padding-block-start: 4.8rem;
+    padding-inline-start: 1.6rem;
+  }
+
+  .wy-h2w {
+    grid-row: auto;
+    margin-block-start: 1.2rem;
+    margin-inline-start: 1.6rem;
+    inline-size: auto;
+    min-block-size: 0;
+  }
+
+  .wy-title {
+    min-block-size: 0;
+  }
+
+  .wy-side {
+    grid-column: 1;
+    grid-row: auto;
+    padding-block-start: 1.6rem;
+    padding-inline: 1.6rem 0;
+    min-block-size: 0;
+  }
+
+  .wy-rule-v {
+    inset-block: 0;
+  }
+
+  .wy-lede-t,
+  .wy-note-t {
+    min-block-size: 0;
+  }
+
+  .wy-note {
+    margin-block-start: 1.2rem;
+    inline-size: auto;
+  }
+
   .wy-scene {
     padding-inline: 2.4rem;
     padding-block: 4.8rem 6.4rem;
