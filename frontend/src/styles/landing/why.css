@@ -776,21 +776,34 @@
   margin-inline: auto;
 }
 
+/* R349 (B1 · the band's desktop rhythm): the four-pillar stage stepped
+ * DOWN to the reference's own why-band economy — the cascade offset
+ * halves (9rem → 4.5rem: the stagger reads, the dead drop beneath the
+ * even pillar retires), the row gap and the band's own padding drop one
+ * rung (measured: the stage carried 1140px @1440 against the reference's
+ * whole 681px section — the four diagrams keep their seats, the air
+ * between them stops explaining nothing). */
 @media (min-width: 992px) {
   .wy-panels {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: 7rem;
-    row-gap: 6rem;
+    row-gap: 4.8rem;
+    padding-block: 4.8rem 5.6rem;
   }
 
   .wy-panel:nth-child(even) {
     grid-column: 2;
-    margin-block-start: 9rem; /* the cascade offset — the even pillar drops a step */
+    margin-block-start: 4.5rem; /* the cascade — a step, not a drop */
   }
 }
 
-/* the panel frame — the drafting plate's own border + paper wash */
+/* the panel frame — the drafting plate's own border + paper wash.
+ * R349 (B1): the plate breathes at 90% of its column, centred — the
+ * 300:170 sheet stops setting the band's whole vertical budget (the
+ * caption keeps the full column's reading measure). */
 .wyp-frame {
+  max-inline-size: 90%;
+  margin-inline: auto;
   border: 1px solid var(--rule-strong);
   background: color-mix(in srgb, var(--iso-paper-hi) 55%, transparent);
 }
@@ -835,7 +848,9 @@
 
 /* ── the FAQ — the sandbox's five questions closing the band ── */
 .wy-faq {
-  padding-block: 2rem 10rem;
+  /* R349 (B2): the closer's tail pad steps down one rung (10rem → 6rem
+   * — the sheet's next band carries its own opening air). */
+  padding-block: 2rem 6rem;
   padding-inline: 3.2rem;
   max-inline-size: 100rem;
   margin-inline: auto;
@@ -981,9 +996,30 @@
 
 /* ≤767 — the panels stack single-column, the FAQ's inset breathes */
 @media (max-width: 767px) {
+  /* R349 (B3 · the phone deck): the four pillars ride a snap deck —
+   * the same swipe grammar the pains band established (83.33vw slides,
+   * butt dividers, mandatory snap). The reference's own mobile why
+   * band carries 806px; the stacked panels carried 2479 — the deck
+   * gives each diagram its full-width slide instead of a shrunken
+   * column, and the band its rhythm back. RevealCssClass's rise
+   * transforms ride the slide's own box (no-clip: the deck's
+   * scroll container owns the overflow). */
   .wy-panels {
+    display: flex;
+    gap: 0;
+    padding-block: 4rem 4.8rem;
+    padding-inline: 0;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+  }
+
+  .wy-panel {
+    flex: 0 0 auto;
+    inline-size: 83.33vw;
+    max-inline-size: 83.33vw;
+    scroll-snap-align: center;
     padding-inline: 1.6rem;
-    gap: 4.8rem;
   }
 
   .wy-faq {
