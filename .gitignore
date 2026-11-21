@@ -87,8 +87,12 @@ frontend/tests/audit/screenshots/
 # audit working dir
 .audit-shots/
 
-# local agent/tooling workspaces (kept on disk, not tracked)
-.agents/
+# local agent/tooling workspaces (kept on disk, not tracked).
+# Exception: shared project skills ARE tracked — see
+# docs/engineering/AGENT-SKILLS-REGISTRY.md §4.
+.agents/*
+!.agents/skills/
+!.agents/skills/**
 .claude-flow/
 .swarm/
 .specify/

@@ -39,7 +39,11 @@ if (cd frontend && npx tsc --noEmit -p tsconfig.json); then ok "tsc"; else fail 
 
 # 2. unit tests
 step "vitest (frontend unit)"
-if (cd frontend && npx vitest run > /tmp/verify-vitest.log 2>&1); then
+# TZ=UTC matches the package.json test script and CI (`npm --prefix
+# frontend run test`): the datetime-local specs are timezone-sensitive, so
+# an unpinned local gate went red on any non-UTC contributor machine while
+# CI stayed green.
+if (cd frontend && TZ=UTC npx vitest run > /tmp/verify-vitest.log 2>&1); then
   ok "vitest $(grep -oE '[0-9]+ passed' /tmp/verify-vitest.log | tail -1)"
 else
   fail "vitest"; grep -E "FAIL|Tests " /tmp/verify-vitest.log | tail -10

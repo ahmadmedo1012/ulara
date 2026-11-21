@@ -42,12 +42,13 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import LandingPage from '../../src/pages/LandingPage';
 import { PLAN_VB } from '../../src/components/landing/LearningPlanDrawing';
 
 /* ── the sources under pin ──────────────────────────────────────── */
-const HERE = dirname(new URL(import.meta.url).pathname);
+const HERE = dirname(fileURLToPath(import.meta.url));
 const JOURNEY_SRC = readFileSync(join(HERE, '../../src/components/landing/journey/IsoJourneyScene.tsx'), 'utf8');
 /* R332 split: landing.css is now the per-section family under
  * styles/landing/ (imported in the original cascade order); the stub

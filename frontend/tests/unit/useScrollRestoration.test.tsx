@@ -34,12 +34,6 @@ const flushFrames = async (n: number) => {
   for (let i = 0; i < n; i += 1) await flushFrame();
 };
 
-const sleep = (ms: number) =>
-  act(
-    async () =>
-      await new Promise<void>((resolve) => setTimeout(resolve, ms)),
-  );
-
 function Harness() {
   const scrollerRef = useRef<HTMLDivElement>(null);
   useScrollRestoration(scrollerRef);
@@ -94,6 +88,7 @@ describe('useScrollRestoration', () => {
   });
 
   afterEach(() => {
+    vi.unstubAllGlobals();
     sessionStorage.clear();
   });
 
@@ -149,16 +144,10 @@ describe('useScrollRestoration', () => {
   });
 
   it('a throwing sessionStorage degrades silently — no crash, POP falls back to top', async () => {
-    const getSpy = vi
-      .spyOn(Storage.prototype, 'getItem')
-      .mockImplementation(() => {
-        throw new Error('SecurityError: opaque origin');
-      });
-    const setSpy = vi
-      .spyOn(Storage.prototype, 'setItem')
-      .mockImplementation(() => {
-        throw new Error('SecurityError: opaque origin');
-      });
+    vi.stubGlobal('sessionStorage', {
+      getItem: () => { throw new Error('SecurityError: opaque origin'); },
+      setItem: () => { throw new Error('SecurityError: opaque origin'); },
+    });
 
     mount();
     scrollToPosition(800);
@@ -174,8 +163,6 @@ describe('useScrollRestoration', () => {
     expect(scrollerOf().textContent).toContain('list page');
     expect(scrollerOf().scrollTop).toBe(0);
 
-    getSpy.mockRestore();
-    setSpy.mockRestore();
   });
 });
 
@@ -197,18 +184,19 @@ describe('useScrollRestoration — POP restores through the late content height 
   /** Shared, mutable "layout": the scroller reads these via getters. */
   function makeLateHarness() {
     const layout = { contentHeight: 100, clientHeight: 600 };
+    let resolveContent = () => {};
 
     // The destination mounts SHORT (Suspense fallback / pre-data state)
-    // and grows once its payload lands (~20ms after mount).
+    // and grows when the test resolves its pending payload.
     function LateHeightPage() {
       const [tall, setTall] = useState(false);
       useEffect(() => {
         layout.contentHeight = 100;
-        const t = setTimeout(() => {
+        resolveContent = () => {
           layout.contentHeight = 2000;
           setTall(true);
-        }, 20);
-        return () => clearTimeout(t);
+        };
+        return () => { resolveContent = () => {}; };
       }, []);
       return <div>{tall ? 'late list tall' : 'late list short'}</div>;
     }
@@ -235,6 +223,7 @@ describe('useScrollRestoration — POP restores through the late content height 
 
     return {
       layout,
+      resolveContent: () => resolveContent(),
       mountLate: () =>
         render(
           <MemoryRouter initialEntries={['/list']}>
@@ -265,12 +254,12 @@ describe('useScrollRestoration — POP restores through the late content height 
   }
 
   it('re-applies the stored offset once the destination height arrives', async () => {
-    const { layout, mountLate } = makeLateHarness();
+    const { layout, mountLate, resolveContent } = makeLateHarness();
     mountLate();
     const remove = installClampingStub(layout);
     try {
-      // Wait out the first mount's short→tall flip, then scroll for real.
-      await sleep(40);
+      // Resolve the first mount, then scroll for real.
+      act(() => resolveContent());
       scrollToPosition(800);
 
       // PUSH to /detail → top; read a bit; then browser-back to /list.
@@ -286,8 +275,8 @@ describe('useScrollRestoration — POP restores through the late content height 
       expect(scrollerOf().textContent).toContain('late list short');
       expect(scrollerOf().scrollTop).toBe(0);
 
-      // The payload lands (~20ms) → the restore completes on its own.
-      await sleep(40);
+      // The payload lands → the restore completes on its own.
+      act(() => resolveContent());
       await flushFrames(6);
       expect(scrollerOf().textContent).toContain('late list tall');
       expect(scrollerOf().scrollTop).toBe(800);
@@ -297,11 +286,11 @@ describe('useScrollRestoration — POP restores through the late content height 
   });
 
   it('stands down the moment the user scrolls the container themselves', async () => {
-    const { layout, mountLate } = makeLateHarness();
+    const { layout, mountLate, resolveContent } = makeLateHarness();
     mountLate();
     const remove = installClampingStub(layout);
     try {
-      await sleep(40);
+      act(() => resolveContent());
       scrollToPosition(800);
       fireEvent.click(document.querySelector<HTMLButtonElement>('button')!);
       await flushFrame();
@@ -316,7 +305,7 @@ describe('useScrollRestoration — POP restores through the late content height 
       el.scrollTop = 120;
       fireEvent.scroll(el);
 
-      await sleep(40);
+      act(() => resolveContent());
       await flushFrames(6);
       expect(scrollerOf().textContent).toContain('late list tall');
       expect(scrollerOf().scrollTop).toBe(120);

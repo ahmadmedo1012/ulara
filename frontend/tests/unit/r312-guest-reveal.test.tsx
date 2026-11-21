@@ -21,12 +21,13 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import App from '../../src/App';
 import LandingPage from '../../src/pages/LandingPage';
 import { GuestReveal } from '../../src/components/motion/GuestReveal';
 
-const HERE = dirname(new URL(import.meta.url).pathname);
+const HERE = dirname(fileURLToPath(import.meta.url));
 const POLISH = readFileSync(join(HERE, '../../src/styles/polish.css'), 'utf8');
 const APP_SRC = readFileSync(join(HERE, '../../src/App.tsx'), 'utf8');
 

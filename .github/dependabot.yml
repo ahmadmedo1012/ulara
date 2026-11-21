@@ -1,0 +1,71 @@
+# Dependabot — controlled dependency maintenance for ULARA.
+#
+# Policy (see docs/engineering/ENGINEERING-STANDARDS.md §Dependencies):
+#   · patch + minor updates are grouped into one PR and reviewed against the
+#     gate set (`bash scripts/verify.sh --fast`);
+#   · majors of the contract-critical packages (React, React Router, Zod,
+#     Prisma, Expo) are NOT opened automatically — they need a migration plan
+#     with its own regression coverage;
+#   · GitHub Actions are updated monthly; workflow files are pinned to commit
+#     SHAs, so Dependabot is the intended path for keeping the pins fresh.
+#
+# This file only opens pull requests. It cannot merge, deploy or change
+# repository settings.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+    groups:
+      npm-minor-patch:
+        patterns:
+          - '*'
+        update-types:
+          - minor
+          - patch
+    ignore:
+      - dependency-name: react
+        update-types: ['version-update:semver-major']
+      - dependency-name: react-dom
+        update-types: ['version-update:semver-major']
+      - dependency-name: react-router-dom
+        update-types: ['version-update:semver-major']
+      - dependency-name: zod
+        update-types: ['version-update:semver-major']
+      - dependency-name: prisma
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@prisma/client'
+        update-types: ['version-update:semver-major']
+
+  - package-ecosystem: npm
+    directory: /apps/mobile
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 3
+    labels:
+      - dependencies
+      - mobile
+    groups:
+      mobile-patch:
+        patterns:
+          - '*'
+        update-types:
+          - patch
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - ci
+    groups:
+      github-actions:
+        patterns:
+          - '*'
