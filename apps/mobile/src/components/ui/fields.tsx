@@ -465,7 +465,13 @@ export function SearchBar({
         style={{ flex: 1, color: p.text, fontSize: 15, textAlign: "right", paddingVertical: 12 }}
       />
       {value.length > 0 ? (
-        <Pressable accessibilityRole="button" accessibilityLabel="مسح البحث" onPress={() => (onClear ? onClear() : onChange(""))} style={{ width: 32, height: 32, alignItems: "center", justifyContent: "center" }}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="مسح البحث"
+          onPress={() => (onClear ? onClear() : onChange(""))}
+          hitSlop={4}
+          style={{ width: touchFloor, height: touchFloor, alignItems: "center", justifyContent: "center" }}
+        >
           <X size={16} color={p.textMuted} />
         </Pressable>
       ) : null}
@@ -515,6 +521,56 @@ export function Segmented({
               borderStartWidth: i > 0 ? StyleSheet.hairlineWidth : 0,
               borderStartColor: p.border,
               paddingHorizontal: sp[8],
+            }}
+          >
+            <T variant="sm" weight="bold" style={{ color: active ? p.primaryFg : p.textSecondary }} numberOfLines={1}>
+              {o.label}
+            </T>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}
+
+/**
+ * ChipGroup — the WRAPPING enum selector for option counts a Segmented
+ * cannot seat (5+ labels, or long labels): a 320dp row gives a 6-way
+ * Segmented ~47px per segment — «اختبار قصير» truncates mid-word. Same
+ * active/inactive grammar as Segmented (primary slab + primaryFg ink on
+ * surface), each chip a 44px touch floor; the row wraps instead of
+ * scrolling (the horizontal-ScrollView idiom is retired — schedule.tsx
+ * documents the smell).
+ */
+export function ChipGroup({
+  options,
+  selectedId,
+  onSelect,
+  style,
+}: {
+  options: { id: string; label: string }[];
+  selectedId: string;
+  onSelect: (id: string) => void;
+  style?: StyleProp<ViewStyle>;
+}) {
+  const p = usePalette();
+  return (
+    <View style={[{ flexDirection: "row", flexWrap: "wrap", gap: sp[8] }, style]}>
+      {options.map((o) => {
+        const active = o.id === selectedId;
+        return (
+          <Pressable
+            key={o.id}
+            accessibilityRole="tab"
+            accessibilityState={{ selected: active }}
+            onPress={() => onSelect(o.id)}
+            style={{
+              minHeight: touchFloor,
+              justifyContent: "center",
+              paddingHorizontal: sp[12],
+              borderWidth: StyleSheet.hairlineWidth,
+              borderColor: active ? p.primary : p.rule,
+              backgroundColor: active ? p.primary : p.surface,
             }}
           >
             <T variant="sm" weight="bold" style={{ color: active ? p.primaryFg : p.textSecondary }} numberOfLines={1}>

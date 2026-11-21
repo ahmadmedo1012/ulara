@@ -18,7 +18,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { teacherApi } from "@/api/teacher";
 import { ApiError } from "@/api/client";
 import type { KnowledgeGap, ResumeCard, Submission } from "@/api/types";
-import type { MaterialRow , ResultCourse, StudentDashboard } from "@/api/student";
+import type { MaterialRow, ResultCourse, StudentDashboard } from "@/api/student";
 import { useInstitutionScope } from "@/hooks/useInstitutionScope";
 import { usePalette, useStatusTones } from "@/design/theme";
 import { sp, type StatusToneName } from "@/design/tokens";

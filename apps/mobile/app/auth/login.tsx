@@ -85,11 +85,18 @@ export default function SignIn() {
         footer={
           <View style={{ gap: sp[12] }}>
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-              <Pressable accessibilityRole="link" onPress={() => router.push("/auth/forgot-password")}>
+              <Pressable
+                accessibilityRole="link"
+                onPress={() => router.push("/auth/forgot-password")}
+                hitSlop={8}
+                style={{ minHeight: 44, justifyContent: "center" }}
+              >
                 <T variant="sm" color="secondary">نسيت كلمة المرور؟</T>
               </Pressable>
               <Pressable
                 accessibilityRole="link"
+                hitSlop={8}
+                style={{ minHeight: 44, justifyContent: "center" }}
                 onPress={() =>
                   router.push(
                     params.continue
@@ -104,7 +111,7 @@ export default function SignIn() {
             <Pressable
               accessibilityRole="link"
               onPress={() => router.replace("/auth")}
-              style={{ alignItems: "center", paddingVertical: sp[8] }}
+              style={{ alignItems: "center", paddingVertical: sp[8], minHeight: 44, justifyContent: "center" }}
             >
               <T variant="sm" color="muted">العودة إلى صفحة البداية</T>
             </Pressable>

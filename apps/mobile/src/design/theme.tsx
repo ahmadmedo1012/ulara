@@ -11,12 +11,22 @@ export type ThemePreference = "light" | "dark" | "system";
 interface ThemeState {
   preference: ThemePreference;
   setPreference: (p: ThemePreference) => void;
+  /**
+   * True once the persisted preference has been read from storage (fires
+   * on success AND on a storage error — hydration must never wedge the
+   * boot). The splash handoff waits on this (app/_layout.tsx): without it,
+   * a dark-preference user sees one or more light-paper Boot frames after
+   * the dark native splash — a theme flash at the exact moment the eye is
+   * watching the handoff.
+   */
+  hasHydrated: boolean;
 }
 
 const useThemeStore = create(
   persist<ThemeState>(
     (set) => ({
       preference: "light",
+      hasHydrated: false,
       setPreference: (preference) => set({ preference }),
     }),
     {
@@ -24,9 +34,21 @@ const useThemeStore = create(
       // pre-ULARA fallback was removed — dev-phase installs re-choose once).
       name: "ula-mobile-theme",
       storage: createJSONStorage(() => AsyncStorage),
+      onRehydrateStorage: () => (state, error) => {
+        // Fires after the rehydration attempt regardless of outcome; the
+        // partial state may be undefined on a cold store — flip the flag
+        // either way so the boot gate always opens.
+        if (error) console.warn("theme store rehydrate failed", error);
+        useThemeStore.setState({ hasHydrated: true });
+      },
     },
   ),
 );
+
+/** True once the persisted theme preference has been restored. */
+export function useThemeHydrated(): boolean {
+  return useThemeStore((s) => s.hasHydrated);
+}
 
 export function useThemePreference(): ThemePreference {
   return useThemeStore((s) => s.preference);

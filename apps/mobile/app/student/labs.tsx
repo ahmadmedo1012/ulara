@@ -9,8 +9,6 @@ import { useInstitutionScope } from "@/hooks/useInstitutionScope";
 import { usePalette } from "@/design/theme";
 import { sp } from "@/design/tokens";
 import { T } from "@/components/ui/text";
-import { StackHeader } from "@/components/shell/AppTopBar";
-import { Screen } from "@/components/ui/screen";
 import { Badge, Card, SimulatedBadge, Sheet } from "@/components/ui/surfaces";
 import { Button } from "@/components/ui/pressables";
 import { Field } from "@/components/ui/fields";
@@ -20,6 +18,7 @@ import { toast } from "@/components/ui/toast";
 import { fromNow, latn, num } from "@/lib/format";
 import { humanizeError } from "@/lib/errors";
 import { SectionNote, countAr } from "@/features/student/more";
+import { PushFrame } from "@/features/student/components";
 
 type LabRow = Awaited<ReturnType<typeof catalogApi.labs>>[number];
 
@@ -60,8 +59,7 @@ export default function LabsScreen() {
   });
 
   return (
-    <Screen scroll>
-      <StackHeader title="المعامل الافتراضية" kicker="المعامل والتقنيات" />
+    <PushFrame title="المعامل الافتراضية" kicker="المعامل والتقنيات">
       <SectionNote>
         تجارب علمية بدون الحاجة لمعدات حقيقية — سجّل جلستك في المعمل، والمشغّل التفاعلي قيد التطوير.
       </SectionNote>
@@ -220,7 +218,7 @@ export default function LabsScreen() {
       <T variant="xs" color="faint">
         {`معامل متاحة: ${num(rows.length)}`}
       </T>
-    </Screen>
+    </PushFrame>
   );
 }
 

@@ -42,6 +42,7 @@ export function Skeleton({ w = "100%", h = 16, style }: { w?: number | string; h
 
 /** SkeletonList — page-shaped placeholder. */
 export function SkeletonList({ rows = 5, rowHeight = 64 }: { rows?: number; rowHeight?: number }) {
+  const p = usePalette();
   return (
     <View style={{ gap: sp[12], paddingTop: sp[8] }}>
       {Array.from({ length: rows }).map((_, i) => (
@@ -50,7 +51,10 @@ export function SkeletonList({ rows = 5, rowHeight = 64 }: { rows?: number; rowH
           style={{
             height: rowHeight,
             borderWidth: StyleSheet.hairlineWidth,
-            borderColor: "rgba(0,0,0,0.08)",
+            // p.border — the frame must survive the dark theme (an 8%-black
+            // literal was invisible on the dark paper; the pulse fill two
+            // lines above was always palette-driven).
+            borderColor: p.border,
             padding: sp[12],
             gap: sp[8],
             justifyContent: "center",

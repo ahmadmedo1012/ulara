@@ -52,16 +52,45 @@ import type { AppNotification, Paginated } from "@/api/types";
 
 const FEED_LIMIT = 30;
 
+/**
+ * Arabic labels for the notification `type` enum — the inbox chip must
+ * never render the raw Latin code (URGENT/ACADEMIC/…) in the Arabic-first
+ * UI; every other enum in the app maps through a label table with a
+ * «غير معروف» floor (the governance kit's rule).
+ */
+export function notificationTypeLabel(type: string): string {
+  switch (type) {
+    case "URGENT":
+      return "عاجل";
+    case "ACADEMIC":
+      return "أكاديمي";
+    case "SOCIAL":
+      return "اجتماعي";
+    case "SYSTEM":
+      return "النظام";
+    default:
+      return "تنبيه";
+  }
+}
+
 export function NotificationsScreen({
   title,
   kicker,
   stacked = false,
   onBack,
+  embedded = false,
 }: {
   title?: string;
   kicker?: string;
   stacked?: boolean;
   onBack?: () => void;
+  /**
+   * Headless seat: renders ONLY the list (+ push-activation card) — the
+   * host screen owns the header, back affordance and safe-area insets
+   * (see /quality/alerts' two-branch shell). No header block, no top
+   * inset, no bottom padding.
+   */
+  embedded?: boolean;
 }) {
   const p = usePalette();
   const insets = useSafeAreaInsets();
@@ -119,9 +148,10 @@ export function NotificationsScreen({
       style={{
         flex: 1,
         backgroundColor: p.bg,
-        paddingBottom: stacked ? Math.max(insets.bottom, 0) : 0,
+        paddingBottom: embedded ? 0 : stacked ? Math.max(insets.bottom, 0) : 0,
       }}
     >
+      {embedded ? null : (
       <View
         style={{
           paddingHorizontal: sp[16],
@@ -176,6 +206,7 @@ export function NotificationsScreen({
           </T>
         ) : null}
       </View>
+      )}
 
       {/* THE LIST — sticky day headers + rows; accumulate pagination. */}
       <DataList
@@ -287,7 +318,7 @@ const NotificationRow = makeRow<
               recyclingKey={iconUrl}
             />
           ) : (
-            <Badge label={n.type} tone={tone} mono />
+            <Badge label={notificationTypeLabel(n.type)} tone={tone} />
           )}
           <View style={{ flex: 1 }} />
           {n.readAt ? null : <Dot size={22} color={p.accent} />}

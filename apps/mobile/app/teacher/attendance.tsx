@@ -14,9 +14,9 @@ import { latn } from "@/lib/format";
 import { usePalette, useStatusTones } from "@/design/theme";
 import { sp, toneForAttendanceStatus } from "@/design/tokens";
 import { T } from "@/components/ui/text";
-import { Screen, PageHeader, SectionBar } from "@/components/ui/screen";
+import { Screen, SectionBar } from "@/components/ui/screen";
 import { Card } from "@/components/ui/surfaces";
-import { RowList } from "@/components/ui/data";
+import { DataList } from "@/components/ui/data";
 import { Button } from "@/components/ui/pressables";
 import { Field } from "@/components/ui/fields";
 import { EmptyState, ErrorState, SkeletonList } from "@/components/ui/states";
@@ -99,14 +99,12 @@ function SummaryBar({ label, ratio, tone }: { label: string; ratio: number; tone
 }
 
 export default function Attendance() {
-  const p = usePalette();
   const scope = useInstitutionScope();
   const qc = useQueryClient();
   const offs = useTeacherOfferings();
   const offerings = offs.data ?? [];
   const [offeringId, setOfferingId] = useState<string>("");
   const effectiveId = offeringId || offerings[0]?.id || "";
-  const offering = offerings.find((o) => o.id === effectiveId) ?? null;
 
   const [date, setDate] = useState<string>(() => localDayKey(new Date()));
   const [dateError, setDateError] = useState<string | null>(null);
@@ -154,143 +152,136 @@ export default function Attendance() {
     onError: (e) => toast.error(humanizeError(e), "تعذَّر الحفظ"),
   });
 
+  /* Offerings gate — the honest tri-state screen (no roster to draw). */
+  if (offs.isLoading || offs.isError || offerings.length === 0) {
+    return (
+      <Screen scroll>
+        <StackHeader title="الحضور والغياب" kicker="سجِّل الحضور لكلّ محاضرة" />
+        <SectionBar index={1} title="الجلسة" />
+        {offs.isLoading ? (
+          <SkeletonList rows={3} />
+        ) : offs.isError ? (
+          <ErrorState message={humanizeError(offs.error)} onRetry={() => offs.refetch()} />
+        ) : (
+          <EmptyState title="لا توجد مقرّرات" message="ستظهر المقرّرات هنا حين تُسنَد إليك." />
+        )}
+      </Screen>
+    );
+  }
+
   return (
-    <Screen scroll>
-      <StackHeader title="الحضور والغياب" />
-      <PageHeader
-        title="الحضور والغياب"
-        kicker="سجِّل الحضور لكلّ محاضرة. يحفظ سجلّاً واحداً لكلّ تاريخ في قاعدة البيانات."
+    <Screen scroll={false} padded={false}>
+      <StackHeader title="الحضور والغياب" kicker="سجِّل الحضور لكلّ محاضرة" />
+      {/* The roll call rides DataList (FlashList v2) — the retired
+          ScrollView+map mounted the WHOLE roster at once (~4 pressables
+          per student; a 200-student class = ~800 live pressables). */}
+      <DataList
+        data={rows}
+        extraData={statusByStudent}
+        renderItem={({ item }) => (
+          <View style={{ paddingHorizontal: sp[16], paddingVertical: sp[12], gap: sp[8] }}>
+            <T variant="body" weight="medium" numberOfLines={1}>
+              {item.name}
+            </T>
+            <T variant="xs" color="muted">
+              {item.universityId}
+            </T>
+            <View style={{ flexDirection: "row", gap: sp[6] }}>
+              {ATT_OPTIONS.map((opt) => (
+                <StatusToggle
+                  key={opt.v}
+                  status={opt.v}
+                  value={statusByStudent[item.id] ?? "PRESENT"}
+                  onPick={(st) => setStatusByStudent((m) => ({ ...m, [item.id]: st }))}
+                  name={item.name}
+                />
+              ))}
+            </View>
+          </View>
+        )}
+        keyExtractor={(r) => r.id}
+        isLoading={roster.isLoading}
+        isError={roster.isError}
+        errorMessage={humanizeError(roster.error)}
+        onRetry={() => roster.refetch()}
+        emptyTitle="لا يوجد طلاب"
+        emptyMessage="لا توجد تسجيلات نشطة في هذا المقرّر بعد."
+        ItemSeparatorComponent={RollSeparator}
+        ListHeaderComponent={
+          /* Session + live summary + save stay ABOVE the roster: on a long
+             roster the retired below-the-list summary/save was a full
+             scroll away mid-roll-call. */
+          <View style={{ gap: sp[16], paddingBottom: sp[16] }}>
+            <SectionBar index={1} title="الجلسة" />
+            <OfferingPicker offerings={offerings} value={effectiveId} onChange={setOfferingId} label="المقرّر" />
+            <Field
+              label="تاريخ الجلسة"
+              value={date}
+              onChangeText={(v) => {
+                setDate(v);
+                setDateError(null);
+              }}
+              hint="بصيغة YYYY-MM-DD — افتراضيًا اليوم"
+              error={dateError}
+              accessibilityLabel="تاريخ الجلسة"
+            />
+            <Field
+              label="الموضوع (اختياريّ)"
+              value={topic}
+              onChangeText={setTopic}
+              placeholder="مثال: مقدّمة في UML"
+              accessibilityLabel="الموضوع"
+            />
+
+            <Card>
+              <T variant="h4" weight="bold">إحصائيّات الجلسة</T>
+              <View style={{ gap: sp[10], paddingTop: sp[8] }}>
+                <SummaryBar
+                  label={`الحضور (${latn(counts.present)})`}
+                  ratio={counts.total > 0 ? counts.present / counts.total : 0}
+                  tone="mint"
+                />
+                <SummaryBar
+                  label={`التأخّر (${latn(counts.late)})`}
+                  ratio={counts.total > 0 ? counts.late / counts.total : 0}
+                  tone="yellow"
+                />
+                <SummaryBar
+                  label={`الغياب (${latn(counts.absent)})`}
+                  ratio={counts.total > 0 ? counts.absent / counts.total : 0}
+                  tone="rose"
+                />
+                <SummaryBar
+                  label={`بعذر (${latn(counts.excused)})`}
+                  ratio={counts.total > 0 ? counts.excused / counts.total : 0}
+                  tone="sky"
+                />
+              </View>
+            </Card>
+
+            <Button
+              label="حفظ السجلّ"
+              kind="accent"
+              loading={save.isPending}
+              disabled={effectiveId === "" || rows.length === 0}
+              onPress={() => {
+                if (!date) {
+                  setDateError("حدّد تاريخ الجلسة قبل الحفظ.");
+                  return;
+                }
+                save.mutate();
+              }}
+            />
+          </View>
+        }
+        contentPadding={{ horizontal: 20, top: 16, bottom: 24 }}
       />
-
-      {/* الجلسة — offering + date + topic. */}
-      <SectionBar index={1} title="الجلسة" />
-      {offs.isLoading ? (
-        <T variant="body" color="muted">جارٍ تحميل مقرّراتك…</T>
-      ) : offs.isError ? (
-        <ErrorState message={humanizeError(offs.error)} onRetry={() => offs.refetch()} compact />
-      ) : offerings.length === 0 ? (
-        <EmptyState title="لا توجد مقرّرات" message="ستظهر المقرّرات هنا حين تُسنَد إليك." />
-      ) : (
-        <>
-          <OfferingPicker offerings={offerings} value={effectiveId} onChange={setOfferingId} label="المقرّر" />
-          <Field
-            label="تاريخ الجلسة"
-            value={date}
-            onChangeText={(v) => {
-              setDate(v);
-              setDateError(null);
-            }}
-            hint="بصيغة YYYY-MM-DD — افتراضيًا اليوم"
-            error={dateError}
-            accessibilityLabel="تاريخ الجلسة"
-          />
-          <Field
-            label="الموضوع (اختياريّ)"
-            value={topic}
-            onChangeText={setTopic}
-            placeholder="مثال: مقدّمة في UML"
-            accessibilityLabel="الموضوع"
-          />
-
-          {/* الطلاب — the roll call. */}
-          <SectionBar
-            index={2}
-            title={offering ? `طلاب ${offering.course.name}` : "الطلاب"}
-            action={
-              <T variant="sm" color="muted">
-                حاضر {latn(counts.present)} · متأخر {latn(counts.late)} · غائب {latn(counts.absent)} · بعذر {latn(counts.excused)}
-              </T>
-            }
-          />
-          {roster.isLoading ? (
-            <SkeletonList rows={4} />
-          ) : roster.isError ? (
-            <ErrorState message={humanizeError(roster.error)} onRetry={() => roster.refetch()} />
-          ) : rows.length === 0 ? (
-            <EmptyState title="لا يوجد طلاب" message="لا توجد تسجيلات نشطة في هذا المقرّر بعد." />
-          ) : (
-            <>
-              <RowList>
-                {rows.map((r, i) => (
-                  <View
-                    key={r.id}
-                    style={{
-                      paddingHorizontal: sp[16],
-                      paddingVertical: sp[12],
-                      gap: sp[8],
-                      borderBottomWidth: i === rows.length - 1 ? 0 : StyleSheet.hairlineWidth,
-                      borderColor: p.border,
-                    }}
-                  >
-                    <View style={{ flexDirection: "row", alignItems: "center", gap: sp[8] }}>
-                      <View style={{ flex: 1 }}>
-                        <T variant="body" weight="medium" numberOfLines={1}>
-                          {r.name}
-                        </T>
-                        <T variant="xs" color="muted">
-                          {r.universityId}
-                        </T>
-                      </View>
-                    </View>
-                    <View style={{ flexDirection: "row", gap: sp[6] }}>
-                      {ATT_OPTIONS.map((opt) => (
-                        <StatusToggle
-                          key={opt.v}
-                          status={opt.v}
-                          value={statusByStudent[r.id] ?? "PRESENT"}
-                          onPick={(s) => setStatusByStudent((m) => ({ ...m, [r.id]: s }))}
-                          name={r.name}
-                        />
-                      ))}
-                    </View>
-                  </View>
-                ))}
-              </RowList>
-
-              {/* إحصائيّات الجلسة — the live summary bars. */}
-              <Card>
-                <T variant="h4" weight="bold">إحصائيّات الجلسة</T>
-                <View style={{ gap: sp[10], paddingTop: sp[8] }}>
-                  <SummaryBar
-                    label={`الحضور (${latn(counts.present)})`}
-                    ratio={counts.total > 0 ? counts.present / counts.total : 0}
-                    tone="mint"
-                  />
-                  <SummaryBar
-                    label={`التأخّر (${latn(counts.late)})`}
-                    ratio={counts.total > 0 ? counts.late / counts.total : 0}
-                    tone="yellow"
-                  />
-                  <SummaryBar
-                    label={`الغياب (${latn(counts.absent)})`}
-                    ratio={counts.total > 0 ? counts.absent / counts.total : 0}
-                    tone="rose"
-                  />
-                  <SummaryBar
-                    label={`بعذر (${latn(counts.excused)})`}
-                    ratio={counts.total > 0 ? counts.excused / counts.total : 0}
-                    tone="sky"
-                  />
-                </View>
-              </Card>
-
-              <Button
-                label="حفظ السجلّ"
-                kind="accent"
-                loading={save.isPending}
-                disabled={effectiveId === "" || rows.length === 0}
-                onPress={() => {
-                  if (!date) {
-                    setDateError("حدّد تاريخ الجلسة قبل الحفظ.");
-                    return;
-                  }
-                  save.mutate();
-                }}
-              />
-            </>
-          )}
-        </>
-      )}
     </Screen>
   );
+}
+
+/** Hairline between roll-call rows (the RowList frame's shared dividers). */
+function RollSeparator() {
+  const p = usePalette();
+  return <View style={{ height: StyleSheet.hairlineWidth, backgroundColor: p.rule }} />;
 }

@@ -1,5 +1,6 @@
 import { useCallback, useState, type ReactNode } from "react";
 import { View } from "react-native";
+import { router } from "expo-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Bookmark from "lucide-react-native/icons/bookmark";
 import CalendarDays from "lucide-react-native/icons/calendar-days";
@@ -432,6 +433,9 @@ function EventsPanel() {
           />
         ))
       )}
+      {/* المسابقات — the header copy promises «مسابقات وفعاليات»; this is
+          the competitions door (the route was deep-link-only). */}
+      <Button label="المسابقات الأكاديمية" kind="ghost" onPress={() => router.push("/competitions")} />
     </View>
   );
 }

@@ -19,7 +19,7 @@ import { useInstitutionScope } from "@/hooks/useInstitutionScope";
 import { dateTime, latn } from "@/lib/format";
 import { sp } from "@/design/tokens";
 import { T } from "@/components/ui/text";
-import { Screen, PageHeader, SectionBar } from "@/components/ui/screen";
+import { Screen, SectionBar } from "@/components/ui/screen";
 import { Badge, ConfirmDialog, Sheet } from "@/components/ui/surfaces";
 import { LedgerRow, RowList } from "@/components/ui/data";
 import { Button } from "@/components/ui/pressables";
@@ -162,15 +162,11 @@ export default function Exams() {
 
   return (
     <Screen scroll>
-      <StackHeader title="بنك الأسئلة والاختبارات" />
+      <StackHeader title="بنك الأسئلة والاختبارات" kicker="تأليف الأسئلة وبناء القوالب واعتماد الجودة" />
       {/* T-50 (review-3 §4.1): exams authoring was a zero-motion seat —
           header + segmented filter take the kit stagger; tab/row presses
           fire selection haptics. */}
       <Animated.View entering={entering(0)}>
-      <PageHeader
-        title="بنك الأسئلة والاختبارات"
-        kicker="تأليف الأسئلة وبناء قوالب الاختبارات الموحَّدة، ومتابعة اعتمادها من الجودة حتى النشر."
-      />
       <Segmented
         options={[
           { id: "templates", label: "القوالب" },

@@ -6,14 +6,12 @@ import { useInstitutionScope } from "@/hooks/useInstitutionScope";
 import { usePalette } from "@/design/theme";
 import { sp } from "@/design/tokens";
 import { T } from "@/components/ui/text";
-import { StackHeader } from "@/components/shell/AppTopBar";
-import { Screen } from "@/components/ui/screen";
 import { Badge, Card } from "@/components/ui/surfaces";
 import { LedgerRow, RowList } from "@/components/ui/data";
 import { EmptyState, ErrorState, SkeletonList } from "@/components/ui/states";
-import { num } from "@/lib/format";
 import { humanizeError } from "@/lib/errors";
 import { SectionNote, countAr } from "@/features/student/more";
+import { PushFrame } from "@/features/student/components";
 
 /**
  * /student/ar — واقع افتراضي ومعزز (web ArVrPage parity): the honest
@@ -31,9 +29,8 @@ export default function ArScreen() {
   const rows = feed.data ?? [];
 
   return (
-    <Screen scroll>
-      <StackHeader title="واقع افتراضي ومعزز" kicker="تجارب AR / VR" />
-      <SectionNote>فهرس تجارب AR/VR للمقرّرات العمليّة — فهرس للاستعراض، والتشغيل غير متاح بعد.</SectionNote>
+    <PushFrame title="واقع افتراضي ومعزز" kicker="تجارب AR / VR">
+      <SectionNote>تجارب المقرّرات العمليّة للاستعراض — التشغيل غير متاح بعد.</SectionNote>
 
       {feed.isLoading ? (
         <SkeletonList rows={3} rowHeight={72} />
@@ -69,13 +66,9 @@ export default function ArScreen() {
 
       <Card style={{ gap: sp[4] }}>
         <T variant="sm" weight="bold">
-          {`التجارب المفهرسة: ${num(rows.length)}`}
-        </T>
-        <T variant="xs" color="muted">
-          {countAr(rows.length, ["تجربة واحدة مفهرسة", "تجربتان مفهرستان", "تجارب مفهرسة", "تجربةً مفهرسة"])} —
-          فهرس للاستعراض فقط حتى إطلاق المشغّل.
+          {countAr(rows.length, ["تجربة واحدة مفهرسة", "تجربتان مفهرستان", "تجارب مفهرسة", "تجربةً مفهرسة"])}
         </T>
       </Card>
-    </Screen>
+    </PushFrame>
   );
 }

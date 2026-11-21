@@ -84,7 +84,9 @@ export function KpiCard({
         style,
       ]}
     >
-      <T variant="sm" color="muted" numberOfLines={1}>
+      {/* 2 lines — 3-up KPI rows at 320dp (~96px/card) truncate long labels
+          like «تعذّر اجتياز الفحص» mid-word at 1 line. */}
+      <T variant="sm" color="muted" numberOfLines={2}>
         {label}
       </T>
       <View style={{ flexDirection: "row", alignItems: "baseline", gap: 2 }}>

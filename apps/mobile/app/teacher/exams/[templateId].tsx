@@ -18,7 +18,7 @@ import { useInstitutionScope } from "@/hooks/useInstitutionScope";
 import { dateTime, latn } from "@/lib/format";
 import { sp } from "@/design/tokens";
 import { T } from "@/components/ui/text";
-import { Screen, PageHeader, SectionBar } from "@/components/ui/screen";
+import { Screen, SectionBar } from "@/components/ui/screen";
 import { Badge, Card, ConfirmDialog, Sheet } from "@/components/ui/surfaces";
 import { LedgerRow, RowList, StatLine } from "@/components/ui/data";
 import { Button } from "@/components/ui/pressables";
@@ -232,66 +232,55 @@ export default function ExamTemplateDetail() {
           the detail block takes the kit stagger; edit/save presses fire
           through the throttled haptics door. */}
       <Animated.View entering={entering(0)}>
-      <PageHeader title={t.title} kicker="دورة حياة القالب: مسودة ← مراجعة الجودة ← الاعتماد ← النشر للطلاب." />
-
       <View style={{ flexDirection: "row", gap: sp[6], flexWrap: "wrap", alignItems: "center" }}>
         <StatusBadge status={t.status} map={EXAM_STATUS_MAP} />
         <Badge label={EXAM_KIND_LABEL[t.kind] ?? "تقييم"} tone="lavender" />
       </View>
 
       {/* تفاصيل القالب. */}
-      <SectionBar
-        index={1}
-        title="تفاصيل القالب"
-        action={
-          <View style={{ flexDirection: "row", gap: sp[6] }}>
-            <Button
-              label="تعديل"
-              kind="ghost"
-              small
-              onPress={() => {
-                haptics.selection();
-                setTitle(t.title);
-                setDurationMin(String(t.durationMin ?? 60));
-                setPassingScore(String(t.passingScore ?? 50));
-                setRandomized(t.randomized ? "yes" : "no");
-                const parseDate = (iso: string | null | undefined) => {
-                  if (!iso) return { date: "", time: "" };
-                  const d = new Date(iso);
-                  const pad = (n: number) => String(n).padStart(2, "0");
-                  return {
-                    date: `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`,
-                    time: `${pad(d.getHours())}:${pad(d.getMinutes())}`,
-                  };
-                };
-                const o = parseDate(t.openAt);
-                const c = parseDate(t.closeAt);
-                setOpenDate(o.date);
-                setOpenTime(o.time);
-                setCloseDate(c.date);
-                setCloseTime(c.time);
-                setEditError(null);
-                setEditing(true);
-              }}
-            />
-            <Button
-              label="استنساخ"
-              kind="ghost"
-              small
-              loading={clone.isPending}
-              onPress={() => clone.mutate()}
-            />
-            <Button
-              label="نشر"
-              kind="accent"
-              small
-              disabled={t.status !== "APPROVED"}
-              loading={publish.isPending}
-              onPress={() => setConfirmPublish(true)}
-            />
-          </View>
-        }
-      />
+      <SectionBar index={1} title="تفاصيل القالب" />
+      {/* Own wrapping row — three buttons inside the SectionBar's action
+          slot (~190px) truncated the title at 320dp. */}
+      <View style={{ flexDirection: "row", gap: sp[6], flexWrap: "wrap" }}>
+        <Button
+          label="تعديل"
+          kind="ghost"
+          small
+          onPress={() => {
+            haptics.selection();
+            setTitle(t.title);
+            setDurationMin(String(t.durationMin ?? 60));
+            setPassingScore(String(t.passingScore ?? 50));
+            setRandomized(t.randomized ? "yes" : "no");
+            const parseDate = (iso: string | null | undefined) => {
+              if (!iso) return { date: "", time: "" };
+              const d = new Date(iso);
+              const pad = (n: number) => String(n).padStart(2, "0");
+              return {
+                date: `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`,
+                time: `${pad(d.getHours())}:${pad(d.getMinutes())}`,
+              };
+            };
+            const o = parseDate(t.openAt);
+            const c = parseDate(t.closeAt);
+            setOpenDate(o.date);
+            setOpenTime(o.time);
+            setCloseDate(c.date);
+            setCloseTime(c.time);
+            setEditError(null);
+            setEditing(true);
+          }}
+        />
+        <Button label="استنساخ" kind="ghost" small loading={clone.isPending} onPress={() => clone.mutate()} />
+        <Button
+          label="نشر"
+          kind="accent"
+          small
+          disabled={t.status !== "APPROVED"}
+          loading={publish.isPending}
+          onPress={() => setConfirmPublish(true)}
+        />
+      </View>
       {t.status !== "APPROVED" ? (
         <T variant="sm" color="muted">
           {t.status === "PENDING_REVIEW"
@@ -551,7 +540,7 @@ export default function ExamTemplateDetail() {
               </T>
             ) : null}
             <Button
-              label={gradeAttempt.isPending ? "جارٍ اعتماد الدرجة…" : "حفظ التصحيح واعتماد الدرجة"}
+              label={gradeAttempt.isPending ? "جارٍ اعتماد الدرجة…" : "اعتماد الدرجة"}
               kind="accent"
               loading={gradeAttempt.isPending}
               onPress={() => {

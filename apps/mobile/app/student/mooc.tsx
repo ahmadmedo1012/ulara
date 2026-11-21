@@ -15,7 +15,6 @@ import { Button } from "@/components/ui/pressables";
 import { DataList, LedgerRow } from "@/components/ui/data";
 import { EmptyState } from "@/components/ui/states";
 import { toast } from "@/components/ui/toast";
-import { num } from "@/lib/format";
 import { humanizeError } from "@/lib/errors";
 import { SectionNote, countAr } from "@/features/student/more";
 
@@ -97,9 +96,8 @@ export default function MoocScreen() {
             </SectionNote>
             {rows.length > 0 ? (
               <Card style={{ gap: sp[4] }}>
-                <T variant="sm" weight="bold">{`الدورات المتاحة: ${num(rows.length)}`}</T>
-                <T variant="xs" color="muted">
-                  {countAr(rows.length, ["دورة خارجية واحدة", "دورتان خارجيتان", "دورات خارجية", "دورة خارجية"])} مرتبطة بالمقرّرات — التسجيل خارج التطبيق.
+                <T variant="sm" weight="bold">
+                  {countAr(rows.length, ["دورة خارجية واحدة", "دورتان خارجيتان", "دورات خارجية", "دورة خارجية"])} مرتبطة بالمقرّرات.
                 </T>
               </Card>
             ) : null}

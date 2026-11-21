@@ -66,11 +66,8 @@ export default function TrainingIndex() {
       <StackHeader title="التطوير الذاتي" kicker="مسارات تدريبية" />
 
       <View style={{ gap: sp[4], paddingBottom: sp[8] }}>
-        <T variant="h3" weight="bold">
-          التطوير الذاتي
-        </T>
         <T variant="body" color="secondary">
-          مسارات تدريبية مصمَّمة بعناية لتناسب احتياجاتك الأكاديمية والمهنية. أكمل مسارًا لتحصل على سجلّ إتمام موثَّق من المنصّة.
+          مسارات تدريبية لاحتياجاتك الأكاديمية والمهنية — أكمل مسارًا لتحصل على سجلّ إتمام موثَّق.
         </T>
       </View>
 

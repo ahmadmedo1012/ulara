@@ -27,6 +27,7 @@
  */
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withTiming } from "react-native-reanimated";
 import { KeyboardToolbar } from "react-native-keyboard-controller";
@@ -34,6 +35,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Check from "lucide-react-native/icons/check";
 import CheckCheck from "lucide-react-native/icons/check-check";
 import Send from "lucide-react-native/icons/send";
+import ArrowRight from "lucide-react-native/icons/arrow-right";
 import { ApiError } from "@/api/client";
 import { studentApi } from "@/api/student";
 import type { Message } from "@/api/types";
@@ -92,8 +94,9 @@ function MutedChip({ label }: { label: string }) {
  *  natively; disk caching is on by default). */
 const GREY_BLURHASH = "LG[[{0000000000000000000000";
 
-export function MessagesUI() {
+export function MessagesUI({ onBack }: { onBack?: () => void } = {}) {
   const p = usePalette();
+  const insets = useSafeAreaInsets();
   const qc = useQueryClient();
   const scope = useInstitutionScope();
   const me = useSession((s) => s.user);
@@ -133,7 +136,17 @@ export function MessagesUI() {
   }, []);
 
   return (
-    <View style={{ flex: 1, backgroundColor: p.bg }}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: p.bg,
+        /* Pushed surface (both call sites are pushed routes): the home-
+           indicator inset belongs HERE — the bare sp[16] header padding sat
+           the «الرسائل» title under the status bar on notched devices and
+           the last row under the gesture bar. */
+        paddingBottom: Math.max(insets.bottom, 0),
+      }}
+    >
       {/* Header chrome — the shared-feature pattern (see Assistant). */}
       <View
         style={{
@@ -142,19 +155,29 @@ export function MessagesUI() {
           gap: sp[8],
           paddingHorizontal: sp[16],
           paddingVertical: sp[8],
-          paddingTop: sp[16],
+          paddingTop: Math.max(insets.top, sp[8]),
           borderBottomWidth: StyleSheet.hairlineWidth,
           borderBottomColor: p.rule,
           backgroundColor: p.surface,
         }}
       >
+        {onBack ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="رجوع"
+            onPress={onBack}
+            style={{ width: 44, height: 44, alignItems: "center", justifyContent: "center" }}
+          >
+            <ArrowRight size={22} color={p.text} />
+          </Pressable>
+        ) : null}
         <View style={{ flex: 1, gap: 0 }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: sp[8] }}>
             <T variant="h4" weight="bold">الرسائل</T>
             {unread > 0 ? <MutedChip label={`${latn(unread > 99 ? 99 : unread)} غير مقروءة`} /> : null}
           </View>
           <T variant="xs" color="muted">
-            كل رسالة وصلتك أو أرسلتها عبر المنصّة — ردّ على الواردة من هنا.
+            رسائلك الخاصة مع الأساتذة والإدارة.
           </T>
         </View>
         {unread > 0 ? (
@@ -191,7 +214,7 @@ export function MessagesUI() {
         loadMoreError={list.loadMoreError}
         onRetryLoadMore={list.retryLoadMore}
         emptyTitle="لا رسائل بعد"
-        emptyMessage="ستظهر هنا الرسائل الواردة فور وصولها — ويمكنك الردّ عليها من هنا."
+        emptyMessage="ستظهر الرسائل الواردة فور وصولها."
         contentPadding={{ horizontal: 16, top: 12, bottom: 24 }}
       />
 

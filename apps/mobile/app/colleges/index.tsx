@@ -23,7 +23,8 @@ import { apiMessage } from "@/features/common/components";
 
 /**
  * /colleges — the public colleges registry (no auth needed; the backend
- * /colleges route is public). Reachable from the welcome screen by guests.
+ * /colleges route is public). Deep-link reachable (ulara://colleges); no
+ * in-app entry point today — web parity surface.
  * Web twin: CollegesIndexPage — quiet rows, name is the row's door,
  * counters as secondary line; guests get the web's public-zeros ruling
  * (a «0 طالب» chip on a thin college reads as a dead campus, so zero

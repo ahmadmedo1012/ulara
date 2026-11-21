@@ -336,8 +336,6 @@ export default function StudentCourses() {
       onRetry={() => feed.refetch()}
       refetch={() => feed.refetch()}
       isRefetching={feed.isRefetching}
-      emptyTitle="لا توجد مقرّرات"
-      emptyMessage="لم تُسجَّل في مقرّرات بعد — الإضافة تتم عبر إدارة شؤون الطلاب وستظهر هنا فور اعتماد تسجيلك."
       emptySlot={
         filteredEmpty ? (
           <EmptyState
@@ -373,8 +371,6 @@ export default function StudentCourses() {
       onRetry={() => feed.refetch()}
       refetch={() => feed.refetch()}
       isRefetching={feed.isRefetching}
-      emptyTitle="لا توجد مقرّرات"
-      emptyMessage="لم تُسجَّل في مقرّرات بعد — الإضافة تتم عبر إدارة شؤون الطلاب وستظهر هنا فور اعتماد تسجيلك."
       emptySlot={
         filteredEmpty ? (
           <EmptyState

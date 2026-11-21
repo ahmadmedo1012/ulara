@@ -227,8 +227,8 @@ export default function AdminFaculties() {
             label="المدينة"
             value={fCity}
             onChangeText={setFCity}
-            placeholder="كلية العلوم"
-            hint="الكلّيّات تتميّز بالاسم داخل كل مدينة — الاسم نفسه في مدينة أخرى لا يُعدّ تكرارًا"
+            placeholder="طرابلس"
+            hint="الاسم نفسه في مدينة أخرى لا يُعدّ تكرارًا"
           />
           <Field
             label="رمز تعبيري (اختياري)"

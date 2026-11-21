@@ -9,7 +9,7 @@
  * (tabs)/students and students/[offeringId], and small chip rows.
  */
 import { useCallback, useMemo, useState } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ApiError } from "@/api/client";
 import { teacherApi, type RosterStudent, type TeacherOffering } from "@/api/teacher";
@@ -17,7 +17,7 @@ import { useInstitutionScope } from "@/hooks/useInstitutionScope";
 import { latn } from "@/lib/format";
 import { humanizeError } from "@/lib/errors";
 import { haptics } from "@/haptics";
-import { usePalette, useStatusTones } from "@/design/theme";
+import { usePalette } from "@/design/theme";
 import { sp, type StatusToneName } from "@/design/tokens";
 import { T } from "@/components/ui/text";
 import { Badge } from "@/components/ui/surfaces";
@@ -728,38 +728,3 @@ export function StatusBadge({
   return <Badge label={info.label} tone={info.tone} />;
 }
 
-/** Small inline action chip (44px floor) — used inside ledger trailing slots. */
-export function ChipAction({
-  label,
-  onPress,
-  tone = "grey",
-  accessibilityLabel,
-}: {
-  label: string;
-  onPress: () => void;
-  tone?: StatusToneName;
-  accessibilityLabel?: string;
-}) {
-  const tones = useStatusTones();
-  const t = tones[tone];
-  return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={accessibilityLabel ?? label}
-      onPress={onPress}
-      style={({ pressed }) => ({
-        minHeight: 44,
-        justifyContent: "center",
-        backgroundColor: pressed ? t.bg : t.bg,
-        borderWidth: StyleSheet.hairlineWidth,
-        borderColor: t.ink,
-        paddingHorizontal: sp[10],
-        opacity: pressed ? 0.6 : 1,
-      })}
-    >
-      <T variant="sm" weight="bold" style={{ color: t.ink }}>
-        {label}
-      </T>
-    </Pressable>
-  );
-}

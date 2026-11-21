@@ -273,7 +273,7 @@ export default function StudentProfile() {
           <EmptyState
             icon={<ScrollText size={22} color={p.textMuted} />}
             title="لا يوجد ملف طالب بعد"
-            message="لم يُربَط ملف طالب بحسابك — تواصل مع شؤون الطلاب لإكمال بياناتك الأكاديمية، وبمجرد اعتماده ستظهر سنتك ومعدّلك وجدولك هنا."
+            message="لم يُربَط ملف طالب بحسابك — تواصل مع شؤون الطلاب، وستظهر بياناتك هنا فور اعتماده."
           />
         ) : (
           <>
@@ -350,7 +350,7 @@ export default function StudentProfile() {
               <View style={{ flex: 1 }}>
                 <T variant="body" weight="bold">قفل التطبيق بالبصمة</T>
                 <T variant="xs" color="muted">
-                  عند التفعيل، يُطلب فتح القفل عند كل فتح بارد للتطبيق قبل عرض أي بيانات — مع رمز الجهاز كبديل دائمًا.
+                  يُطلب فتح القفل عند كل فتح للتطبيق — ورمز الجهاز بديل دائم.
                 </T>
               </View>
               <Button
@@ -374,7 +374,7 @@ export default function StudentProfile() {
           <Card style={{ flexDirection: "row", alignItems: "center", gap: sp[10] }}>
             <Bell size={20} color={p.textMuted} />
             <T variant="sm" color="muted" style={{ flex: 1 }}>
-              الإشعارات معطّلة من إعدادات النظام — فعّلها لتصلك التنبيهات، ويبقى صندوق الوارد داخل التطبيق يعمل دائمًا.
+              فعّل الإشعارات من إعدادات النظام لتصلك التنبيهات.
             </T>
           </Card>
         ) : pushState === "undetermined" ? (
@@ -417,7 +417,7 @@ export default function StudentProfile() {
           ))}
         </RowList>
         <T variant="xs" color="faint">
-          جميع خدمات الطالب متاحة من هنا — تعمل بعضها في وضع الطيار وتُوسَم بذلك داخل صفحاتها.
+          بعض الخدمات تعمل في وضع الطيار وتُوسَم بذلك داخل صفحاتها.
         </T>
 
         {/* الجلسة — last concern on the screen, mirroring settings. */}

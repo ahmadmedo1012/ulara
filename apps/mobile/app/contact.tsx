@@ -27,9 +27,6 @@ export default function Contact() {
       <StackHeader title="التواصل والتسجيل المبكر" kicker="التواصل" />
 
       <View style={{ gap: sp[8], paddingBottom: sp[4] }}>
-        <T variant="h3" weight="bold">
-          التواصل والتسجيل المبكر
-        </T>
         <T variant="body" color="secondary">
           {CONTACT_LEDE}
         </T>
@@ -49,7 +46,8 @@ export default function Contact() {
         </View>
       ))}
 
-      {/* The in-app feedback pointer — the widget ships in the app shell. */}
+      {/* The in-app feedback pointer — a real route (/report), reachable
+          from the Profile menu and /settings (the floating FAB retired). */}
       <Card style={{ gap: sp[8] }}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: sp[8] }}>
           <Bug size={18} color={p.accentInk} />
@@ -58,7 +56,7 @@ export default function Contact() {
           </T>
         </View>
         <T variant="sm" color="secondary">
-          داخل التطبيق زرّ عائم «أبلغ عن مشكلة أو اقتراح» يرسل ملاحظتك مع اسم الصفحة مباشرة — هذا هو طريق الإبلاغ الأسرع، وهو متاح لحسابات مسجّلة.
+          من قائمة «حسابي» أو الإعدادات — «الإبلاغ عن مشكلة» يرسل ملاحظتك مع اسم الصفحة، وهو متاح لحسابات مسجّلة.
         </T>
       </Card>
 

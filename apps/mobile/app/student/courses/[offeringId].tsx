@@ -492,8 +492,6 @@ export default function CourseDetailScreen() {
             keyExtractor={(l) => l.id}
             refetch={() => full.refetch()}
             isRefetching={full.isRefetching}
-            emptyTitle="لا توجد محاضرات"
-            emptyMessage="لم تُرفع محاضرات بعد — سيضيفها الأستاذ تباعاً مع تقدّم الفصل."
             emptySlot={
               <EmptyState
                 room="lecture-hall"
@@ -510,8 +508,6 @@ export default function CourseDetailScreen() {
             keyExtractor={(m) => m.id}
             refetch={() => full.refetch()}
             isRefetching={full.isRefetching}
-            emptyTitle="لا توجد ملفات"
-            emptyMessage="ستظهر مواد المقرّر هنا فور رفع الأستاذ لها."
             emptySlot={
               <EmptyState
                 room="library"
@@ -532,8 +528,6 @@ export default function CourseDetailScreen() {
             onRetry={() => announcements.refetch()}
             refetch={() => announcements.refetch()}
             isRefetching={announcements.isRefetching}
-            emptyTitle="لا توجد إعلانات"
-            emptyMessage="ستظهر إعلانات هذا المقرّر هنا فور نشرها."
             emptySlot={
               <EmptyState
                 room="building"

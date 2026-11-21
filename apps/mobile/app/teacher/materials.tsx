@@ -16,7 +16,7 @@ import { useInstitutionScope } from "@/hooks/useInstitutionScope";
 import { latn, sizeLabel, fromNow } from "@/lib/format";
 import { sp } from "@/design/tokens";
 import { T } from "@/components/ui/text";
-import { Screen, PageHeader, SectionBar } from "@/components/ui/screen";
+import { Screen, SectionBar } from "@/components/ui/screen";
 import { Badge, Sheet } from "@/components/ui/surfaces";
 import { LedgerRow, ProgressBar, RowList } from "@/components/ui/data";
 import { Button } from "@/components/ui/pressables";
@@ -125,11 +125,7 @@ export default function Materials() {
 
   return (
     <Screen scroll>
-      <StackHeader title="الملفات التعليمية" />
-      <PageHeader
-        title="الملفات التعليمية"
-        kicker="ملفّاتك المرفوعة على مقرّراتك — مع عدد المشاهدات والتحميلات الفعليّ."
-      />
+      <StackHeader title="الملفات التعليمية" kicker="ملفّات مقرّراتك وعدد المشاهدات والتحميلات" />
       <SectionBar
         index={1}
         title="ملفاتك"

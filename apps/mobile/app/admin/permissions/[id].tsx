@@ -17,7 +17,7 @@ import { adminApi } from "@/api/admin";
 import { useSession, ROLE_LABELS } from "@/auth/session";
 import { useInstitutionScope } from "@/hooks/useInstitutionScope";
 import { usePalette } from "@/design/theme";
-import { latn, num } from "@/lib/format";
+import { latn } from "@/lib/format";
 import { CAPABILITY_LABEL, type FacultyNode } from "@/features/governance/components";
 
 /**
@@ -57,8 +57,8 @@ export default function AdminPermissions() {
       qc.invalidateQueries({ queryKey: ["admin", "users"] });
       toast.success(
         payload.grant
-          ? `مُنحت صلاحية «${CAPABILITY_LABEL[payload.capability] ?? payload.capability}».`
-          : `سُحبت صلاحية «${CAPABILITY_LABEL[payload.capability] ?? payload.capability}».`,
+          ? `مُنحت صلاحية «${CAPABILITY_LABEL[payload.capability] ?? "صلاحية غير معروفة"}».`
+          : `سُحبت صلاحية «${CAPABILITY_LABEL[payload.capability] ?? "صلاحية غير معروفة"}».`,
       );
     },
     onError: (e) => toast.error(humanizeError(e), "تعذّر تحديث الصلاحية"),
@@ -92,7 +92,7 @@ export default function AdminPermissions() {
       <View style={{ gap: 16, paddingTop: 16 }}>
         {target ? (
           <T variant="body" color="muted">
-            {ROLE_LABELS[target.role] ?? target.role} · {target.email}
+            {ROLE_LABELS[target.role] ?? "دور غير معروف"} · {target.email}
           </T>
         ) : null}
 
@@ -110,7 +110,7 @@ export default function AdminPermissions() {
 
             {isSelf ? (
               <T variant="sm" color="danger">
-                هذه صلاحياتك أنت — حرس الحاكمية يمنع تعديل صلاحياتك بنفسك من الخادم؛ اطلب من مالك أو إداري آخر تطبيق التغيير.
+                هذه صلاحياتك أنت — لا يمكن تعديلها من هنا؛ اطلب من مالك أو إداري آخر تطبيق التغيير.
               </T>
             ) : null}
 
@@ -189,11 +189,6 @@ export default function AdminPermissions() {
               </View>
             </View>
 
-            <StatLine
-              label="قدرات مُعروضة من الخادم"
-              value={num(permissions.data?.effective?.length ?? null)}
-              hint="عدد الصلاحيات الفعّالة التي أجاب عنها الخادم لهذا المستخدم"
-            />
           </>
         )}
       </View>

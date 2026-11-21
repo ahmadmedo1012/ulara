@@ -4,7 +4,7 @@ import ArrowRight from "lucide-react-native/icons/arrow-right";
 import Info from "lucide-react-native/icons/info";
 import Palette from "lucide-react-native/icons/palette";
 import { StackHeader } from "@/components/shell/AppTopBar";
-import { Screen, PageHeader, SectionBar } from "@/components/ui";
+import { Screen, SectionBar } from "@/components/ui";
 import { T, MonoLabel } from "@/components/ui/text";
 import { Button } from "@/components/ui/pressables";
 import { Logo } from "@/brand";
@@ -33,9 +33,8 @@ export default function OwnerContent() {
   const p = usePalette();
   return (
     <Screen scroll>
-      <StackHeader title="المحتوى والعلامة التجاريّة" kicker="لوحة المالك" />
+      <StackHeader title="المحتوى والعلامة التجاريّة" kicker="الهويّة البصريّة وأصول العلامة" />
       <View style={{ gap: 16, paddingTop: 16 }}>
-        <PageHeader title="المحتوى والعلامة التجاريّة" kicker="الهويّة البصريّة وأصول العلامة" />
 
         <Card>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
@@ -65,8 +64,7 @@ export default function OwnerContent() {
             ))}
           </RowList>
           <T variant="xs" color="faint">
-            المصادر الرسميّة تعيش في مستودع الويب (frontend/public/brand) — التطبيق يرسم توأمه
-            المتجهيّ الخاص من الهندسة ذاتها.
+            المصدر الرسميّ للأصول يعيش مع العلامة على الويب — التطبيق يرسم نفس الهندسة.
           </T>
         </View>
 
@@ -79,9 +77,8 @@ export default function OwnerContent() {
               </T>
             </View>
             <T variant="sm" color="muted">
-              تعديل ألوان العلامة التجاريّة (الأساسيّ، الثانويّ، التمييز) ومحتوى الصفحة الرئيسيّة
-              قيد التطوير. حالياً تُعتمَد ألوان علامة أُلارا الرسميّة المعتمدة في نظام التصميم —
-              ومحرّر العنوان والوصف الفرعيّ محدَّد في كود الصفحة الرئيسيّة.
+              تعديل ألوان العلامة ومحتوى الصفحة الرئيسيّة قيد التطوير — تُعتمَد حالياً ألوان
+              أُلارا الرسميّة من نظام التصميم.
             </T>
           </View>
         </Card>
@@ -97,8 +94,7 @@ export default function OwnerContent() {
                 </T>
               </View>
               <T variant="sm" color="muted">
-                إدارة المحتوى التفصيلية (بثّ الإعلانات، أعلام الميزات، صياغة الصفحة الرئيسيّة) تُدار
-                من لوحة الويب — التطبيق يعرض هوية المنصّة كما هي معرَّفة في الشيفرة والتصميم.
+                بثّ الإعلانات وأعلام الميزات وصياغة الصفحة الرئيسيّة تُدار من لوحة الويب.
               </T>
               <Button
                 label="عن أُلارا — الهويّة والمنصّة"

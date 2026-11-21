@@ -22,9 +22,6 @@ export default function About() {
       <StackHeader title="عن أُلارا" kicker="المنصّة" />
 
       <View style={{ gap: sp[8], paddingBottom: sp[4] }}>
-        <T variant="h3" weight="bold">
-          عن أُلارا
-        </T>
         <T variant="body" color="secondary">
           {ABOUT_LEDE}
         </T>

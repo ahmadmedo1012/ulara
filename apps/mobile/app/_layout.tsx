@@ -20,7 +20,7 @@ import { KeyboardProvider } from "react-native-keyboard-controller";
 import * as SplashScreen from "expo-splash-screen";
 import { useFonts } from "expo-font";
 import { queryClient } from "@/lib/queryClient";
-import { ThemeProvider, useTheme } from "@/design/theme";
+import { ThemeProvider, useTheme, useThemeHydrated } from "@/design/theme";
 import { ds } from "@/design/tokens";
 import { fontMap } from "@/design/fonts";
 // R334 2-f — the status bar derives its style from the EFFECTIVE app theme
@@ -122,6 +122,12 @@ export default function RootLayout() {
   // been applied yet (first-ever launch). While the check runs we keep the
   // splash up — no LTR flash, no mirrored screens.
   const [rtlReady, setRtlReady] = useState(false);
+  // The persisted theme preference must land BEFORE the first JS frame —
+  // a dark-preference user otherwise crosses from the dark native splash
+  // into one or more light-paper Boot frames (a theme flash at the exact
+  // moment the eye watches the handoff). The store flips the flag on
+  // rehydrate success AND storage failure, so the gate can never wedge.
+  const themeHydrated = useThemeHydrated();
   // R326 M0.7 — the server-issued minimum-version floor: below it, the
   // blocking gate replaces the app (nothing runs under the floor).
   const gate = useVersionGate();
@@ -150,13 +156,13 @@ export default function RootLayout() {
   }, [hydrate]);
 
   useEffect(() => {
-    if (loaded && rtlReady) {
-      crumb(bootMs("fonts+rtl ready — splash handoff (first frame)"));
+    if (loaded && rtlReady && themeHydrated) {
+      crumb(bootMs("fonts+rtl+theme ready — splash handoff (first frame)"));
       void SplashScreen.hideAsync().catch(() => undefined);
     }
-  }, [loaded, rtlReady]);
+  }, [loaded, rtlReady, themeHydrated]);
 
-  if (!loaded || !rtlReady) {
+  if (!loaded || !rtlReady || !themeHydrated) {
     return null;
   }
 

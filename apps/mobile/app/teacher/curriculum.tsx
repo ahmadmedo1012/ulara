@@ -17,7 +17,7 @@ import { useInstitutionScope } from "@/hooks/useInstitutionScope";
 import { latn } from "@/lib/format";
 import { sp } from "@/design/tokens";
 import { T } from "@/components/ui/text";
-import { Screen, PageHeader, SectionBar } from "@/components/ui/screen";
+import { Screen, SectionBar } from "@/components/ui/screen";
 import { Badge, Card, ConfirmDialog, Sheet } from "@/components/ui/surfaces";
 import { LedgerRow, RowList } from "@/components/ui/data";
 import { Button } from "@/components/ui/pressables";
@@ -149,13 +149,14 @@ export default function Curriculum() {
 
   return (
     <Screen scroll>
-      <StackHeader title="بناء المنهج" />
-      <PageHeader title="بناء المنهج" kicker="محاضرات المقرّر وفصولها ومحطات الفحص والنص المكتوب." />
+      <StackHeader title="بناء المنهج" kicker="محاضرات المقرّر وفصولها ومحطات الفحص" />
       {offerings.length === 0 ? (
         offs.isLoading ? (
           <SkeletonList rows={3} />
+        ) : offs.isError ? (
+          <ErrorState message={humanizeError(offs.error)} onRetry={() => offs.refetch()} />
         ) : (
-          <EmptyState title="لم تُسند إليك مقرّرات بعد" message="ستظهر مقرّراتك هنا فور إسنادها من قِبَل المسجل العام." />
+          <EmptyState title="لم تُسند إليك مقرّرات بعد" message="ستظهر مقرّراتك هنا فور إسنادها." />
         )
       ) : (
         <>

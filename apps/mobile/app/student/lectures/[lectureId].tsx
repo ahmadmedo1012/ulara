@@ -1594,7 +1594,6 @@ const styles = StyleSheet.create({
   captionsBox: {
     paddingHorizontal: sp[12],
     paddingVertical: sp[6],
-    borderRadius: 4,
     maxWidth: "100%",
   },
   chrome: {

@@ -64,7 +64,7 @@ export default function ForgotPassword() {
               color="secondary"
               onPress={() => router.back()}
               accessibilityRole="link"
-              style={{ paddingVertical: sp[8] }}
+              style={{ paddingVertical: sp[8], minHeight: 44 }}
             >
               رجوع إلى تسجيل الدخول
             </T>

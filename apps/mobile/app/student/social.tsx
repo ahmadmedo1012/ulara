@@ -7,6 +7,7 @@ import Plus from "lucide-react-native/icons/plus";
 import type { Post } from "@/api/types";
 import { socialApi } from "@/api/social";
 import { useInstitutionScope } from "@/hooks/useInstitutionScope";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { usePalette, useStatusTones } from "@/design/theme";
 import { sp, touchFloor } from "@/design/tokens";
 import { T } from "@/components/ui/text";
@@ -126,6 +127,7 @@ export default function SocialScreen() {
   const scope = useInstitutionScope();
   const qc = useQueryClient();
   const p = usePalette();
+  const insets = useSafeAreaInsets();
 
   const feed = useQuery({
     queryKey: ["posts", scope],
@@ -237,7 +239,9 @@ export default function SocialScreen() {
         style={({ pressed }) => [
           {
             position: "absolute",
-            bottom: sp[24],
+            // insets.bottom + 24 — Screen's padding doesn't offset absolute
+            // children in Yoga, so the bare 24 grazed the gesture bar.
+            bottom: insets.bottom + sp[24],
             end: sp[20],
             width: 56,
             height: 56,

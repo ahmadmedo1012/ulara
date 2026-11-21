@@ -28,7 +28,7 @@ import { dateTime, latn } from "@/lib/format";
 import { usePalette } from "@/design/theme";
 import { sp } from "@/design/tokens";
 import { T } from "@/components/ui/text";
-import { Screen, PageHeader, SectionBar } from "@/components/ui/screen";
+import { Screen, SectionBar } from "@/components/ui/screen";
 import { Badge } from "@/components/ui/surfaces";
 import { AppSheet, ConfirmSheet, SheetTextInput } from "@/components/ui/sheet";
 import { KpiCard, LedgerRow, RowList } from "@/components/ui/data";
@@ -242,11 +242,7 @@ export default function TeacherLive() {
   return (
     <View style={{ flex: 1 }}>
       <Screen scroll>
-        <StackHeader title="إدارة البث المباشر" />
-        <PageHeader
-          title="إدارة البث المباشر"
-          kicker="جدولة المحاضرات الحية وتشغيلها وإيقافها. الطلاب يرون فقط الجلسات الخاصة بمقرّراتهم."
-        />
+        <StackHeader title="إدارة البث المباشر" kicker="جدولة الجلسات الحية وتشغيلها" />
         <SectionBar
           index={1}
           title="حالة الجلسات"

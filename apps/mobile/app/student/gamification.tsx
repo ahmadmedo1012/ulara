@@ -8,10 +8,8 @@ import { catalogApi } from "@/api/catalog";
 import { trainingApi } from "@/api/training";
 import { useInstitutionScope } from "@/hooks/useInstitutionScope";
 import { usePalette } from "@/design/theme";
-import { sp, tierColors } from "@/design/tokens";
+import { ds, sp, tierColors } from "@/design/tokens";
 import { T } from "@/components/ui/text";
-import { StackHeader } from "@/components/shell/AppTopBar";
-import { Screen } from "@/components/ui/screen";
 import { Badge, Card, Hairline } from "@/components/ui/surfaces";
 import { Avatar, LedgerRow, RowList } from "@/components/ui/data";
 import { EmptyState, ErrorState, SkeletonList } from "@/components/ui/states";
@@ -26,6 +24,7 @@ import {
   pointsAr,
   tierForLevel,
 } from "@/features/student/more";
+import { PushFrame } from "@/features/student/components";
 
 /**
  * /student/gamification — نقاطي وأوسمتي (web GamificationPage parity):
@@ -33,6 +32,26 @@ import {
  * constants), the institutional leaderboard (top 10) and my training
  * badges grid keyed by rarity tones.
  */
+/**
+ * Orb numeral ink — decided by the tier ground's OWN luminance (WCAG
+ * relative luminance of tierColors[tier]): the bright metallics (GOLD
+ * #D4A537 ≈ 0.42, SILVER ≈ 0.36) seat the ink rung; the darker tiers
+ * seat paper. Fixes paper-on-GOLD at 2.27:1 / paper-on-SILVER at 2.48:1
+ * (light mode's old p.surface read). Both inks come from the ds token
+ * data — no literals here.
+ */
+function tierOrbInk(tier: string, fallback: string): string {
+  const hex = tierColors[tier];
+  const m = /^#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$/.exec(hex ?? "");
+  if (!m) return fallback;
+  const lin = (v: string) => {
+    const c = parseInt(v, 16) / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  };
+  const L = 0.2126 * lin(m[1]) + 0.7152 * lin(m[2]) + 0.0722 * lin(m[3]);
+  return L > 0.3 ? ds.light.text : ds.dark.text;
+}
+
 export default function GamificationScreen() {
   const p = usePalette();
   const scope = useInstitutionScope();
@@ -58,8 +77,7 @@ export default function GamificationScreen() {
   const tier = tierForLevel(level);
 
   return (
-    <Screen scroll>
-      <StackHeader title="نقاطي وأوسمتي" kicker="الإنجازات والنقاط" />
+    <PushFrame title="نقاطي وأوسمتي" kicker="الإنجازات والنقاط">
       <SectionNote>تقدّمك ومستواك مقارنة بزملائك في المنصة.</SectionNote>
 
       {profile.isLoading ? (
@@ -80,8 +98,12 @@ export default function GamificationScreen() {
                 justifyContent: "center",
               }}
             >
-              {/* C2b: tier orb is a data color — paper (p.surface) reads best on it, no tierFg token. */}
-              <T variant="h2" weight="bold" style={{ color: p.surface }}>
+              {/* The orb's numeral ink follows the TIER's luminance, not the
+                  theme surface: paper-on-GOLD was 2.27:1 and paper-on-SILVER
+                  2.48:1 in light mode (sub-AA even for large numerals).
+                  Darker tiers keep the paper read; the bright metallics seat
+                  ink. */}
+              <T variant="h2" weight="bold" style={{ color: tierOrbInk(tier, p.surface) }}>
                 {num(level ?? null)}
               </T>
             </View>
@@ -205,6 +227,6 @@ export default function GamificationScreen() {
           </T>
         ) : null}
       </View>
-    </Screen>
+    </PushFrame>
   );
 }
