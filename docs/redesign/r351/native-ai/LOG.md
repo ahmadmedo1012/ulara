@@ -106,3 +106,17 @@
 **N4 cuts**: admin hero hint removed (label suffices), results kicker 9→4 words. Zero screens carry >80 words of explanation.
 **N1 boot sequence (BootStrip, boot.tsx)**: mono counter 0→100% on the ds ease (900ms ≤ the 1.2s ceiling) + the mark's own X:120 Y:120 coordinate readout + the hairline ruler — cold boot only (module flag, warm remounts skip), reduced-motion static-complete. 4 new pins (cold frame / static-complete / warm-skip / ceiling source-pin).
 **Gates (N6)**: tsc 0 · expo lint 0/16 pre-existing · contract no drift · tokens byte-identical · jest `1241/1241` (1237+4) with clean exit · expo export android + ios OK.
+
+## Session 2 — AI-1 hardening (review findings, commit 0a3bc61)
+
+**Finding:** the committed gate (`geminiFallThroughAllowed`) fell through on `rate_limited` + ALL `provider_error` (5xx), while the contract (owner text, test-file header, deployment docs) says **429/503 ONLY**. A mid-flight WIP diff had started re-wording the docs to say 429+5xx — the wrong direction. The code was narrowed instead:
+
+- `geminiFallThroughAllowed(baseUrl, err)` now allows `rate_limited` (429) and `provider_error` **with status 503** only. 500/502 keep the r176a same-model retry then surface honestly (manual retry re-routes the chain from the top).
+- New pin: non-503 5xx (500/502) → exactly 2 wire calls (model-1 retry only), model 2 never billed. ai-gemini 32/32.
+- The timeout client line no longer promises «سيُختار نموذج آخر غالبًا» (a timeout never falls through — that promise was dishonest). ai-chat-routes pin updated with the reason in-test.
+- 400 wording: «يُراجَع» → «يلزم مراجعة» (owner-matter, stated plainly).
+- Web bubble: `stripInlineMarkdown` now collapses inline `code` backtick pairs (AI-2's prompt allows bounded markdown; the web surface renders de-marked inert text while mobile renders real code — the CODE stays, its markup does not). Unpaired backticks pass verbatim. 2 pins in chat-hygiene (13/13).
+
+**Gates:** backend AI suites 8 files 246/246 + STT 10/10 · tsc clean (backend + frontend) · frontend chat-hygiene 13/13 · `verify.sh --fast` **FAST PASS** (a11y floor S25/C0 unchanged) · zero-trace: tracked paths clean; the 2 history hits are r350-era commits inherited from main (pre-existing, documented — owned by the merge agent).
+
+**Push:** `7214e75..0a3bc61` on r351/native-and-ai.
