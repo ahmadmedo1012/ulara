@@ -231,12 +231,12 @@ html[data-theme='dark'] body.ula-grain::before {
   inset-inline-start: var(--sp-2);
   z-index: 100;
   padding: var(--sp-2-5) var(--sp-4);
-  /* R323 A5 §2 (contrast-gate): the raw --accent ground fails AA for the
-     white label (3.76:1) — the skip link rides the same documented R318
-     AA seat as the button system (#DB3A00, white label 4.55:1), in both
-     themes (the link is chrome, not a themed surface). */
-  background: #DB3A00; /* color-gate: allow — R318 AA seat, documented */
-  color: var(--white);
+  /* R323 A5 §2 → 2026: the skip link rides the royal signal pair
+     (var(--accent) + var(--accent-fg) — theme-aware: light #2540D9 +
+     white 7.46:1 AAA · dark #8AA0FF + #262019 6.56:1 AA; the #DB3A00
+     AA seat is retired with the copper era). */
+  background: var(--accent);
+  color: var(--accent-fg);
   border-radius: var(--r-xs);
   font-size: var(--fs-sm);
   font-weight: 600;

@@ -5,7 +5,7 @@
  * against this module):
  *
  *   export type LogoVariant = 'lockup' | 'mark' | 'wordmark' | 'stacked';
- *   export type LogoTone = 'auto' | 'ink' | 'paper' | 'sienna';
+ *   export type LogoTone = 'auto' | 'ink' | 'paper' | 'royal' | 'sienna';
  *   export function Logo(props: {
  *     variant?: LogoVariant;   // default 'lockup' (RTL: mark right, wordmark left)
  *     size?: number;           // mark height in px; lockup scales from it

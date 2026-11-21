@@ -248,6 +248,7 @@ function buildTs() {
       rule: m('rule'),
       gold: m('gold'),
       goldInk: m('goldInk'),
+      dangerFg: m('dangerFg'),
       onSurface: m('text'),
       onSurfaceMuted: m('textMuted'),
     };

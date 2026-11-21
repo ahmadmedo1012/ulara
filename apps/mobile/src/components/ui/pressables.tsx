@@ -7,7 +7,7 @@ import {
   type ViewStyle,
 } from "react-native";
 import { haptics } from "@/haptics";
-import { usePalette } from "@/design/theme";
+import { useTheme } from "@/design/theme";
 import { sp, touchFloor } from "@/design/tokens";
 import { T } from "./text";
 
@@ -27,8 +27,11 @@ export interface ButtonProps {
 }
 
 /**
- * ds buttons: charcoal slab (primary), orange fill (accent),
- * hairline ghost. Loading never double-submits; 44px touch floor.
+ * ds buttons: the royal slab (primary — #2540D9 light / #8AA0FF dark
+ * via the shared tokens), the royal fill (accent), the red destructive
+ * fill (danger — the rose family, NOT the accent: 2026 fixes the
+ * danger ≡ accent coupling of the sienna era), hairline ghost.
+ * Loading never double-submits; 44px touch floor.
  */
 export function Button({
   label,
@@ -41,15 +44,23 @@ export function Button({
   style,
   accessibilityLabel,
 }: ButtonProps) {
-  const p = usePalette();
+  const { name, palette: p, tones } = useTheme();
   const busy = loading || disabled;
   // R327 B2: a busy flash shorter than 300ms reads as a glitch — hold it.
   const showBusy = useStableFlag(loading, 300);
   const height = small ? 36 : 48;
+  /* 2026: danger rides the rose family with its own theme-flip label
+   * (light #C62828 fill + white 5.62:1 · dark #FF7A70 + #262019 6.35:1)
+   * — never the accent, which is the royal signal now. */
   const bg =
-    kind === "primary" ? p.primary : kind === "accent" ? p.accent : kind === "danger" ? p.accent : "transparent";
+    kind === "primary" ? p.primary : kind === "accent" ? p.accent : kind === "danger" ? tones.rose.ink : "transparent";
   const fg =
-    kind === "primary" ? p.primaryFg : kind === "accent" ? p.accentFg : kind === "danger" ? p.accentFg : p.text;
+    kind === "primary" ? p.primaryFg : kind === "accent" ? p.accentFg : kind === "danger" ? p.dangerFg : p.text;
+  /* pressed: the accent deepens to its hover tier; light danger deepens
+   * to the rose deep tier (dark keeps its ink — no deeper night-red rung
+   * exists; the press feedback rides the opacity dip below). */
+  const pressedBg =
+    kind === "danger" ? (name === "light" ? tones.rose.deep : tones.rose.ink) : p.accentHover;
   const border = kind === "ghost" ? p.rule : "transparent";
   return (
     <Pressable
@@ -67,7 +78,7 @@ export function Button({
         styles.base,
         {
           height,
-          backgroundColor: kind === "ghost" ? (pressed ? p.surfaceHover : "transparent") : pressed ? p.accentHover : bg,
+          backgroundColor: kind === "ghost" ? (pressed ? p.surfaceHover : "transparent") : pressed ? pressedBg : bg,
           borderWidth: StyleSheet.hairlineWidth,
           borderColor: border,
           opacity: disabled && !loading ? 0.45 : 1,

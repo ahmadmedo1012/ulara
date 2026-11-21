@@ -129,10 +129,10 @@
   color: var(--text-muted);
 }
 .admin-students-search:focus-within {
-  /* R313 (WP-F · D16): focus = the reference's #ED4C1F signal border,
-     no halo (mirrors components.css's input focus; no token seat
-     exists yet). */
-  border-color: #ED4C1F; /* color-gate: allow — R313 D16: the legacy measured input-focus orange (live digest inputs.focus; no token seat exists yet) */
+  /* R313 (WP-F · D16) → 2026: focus = the royal signal border,
+     no halo (mirrors components.css's input focus; the canonical
+     --accent seat owns the ladder now). */
+  border-color: var(--accent);
 }
 .admin-students-search input {
   /* r294 (polish v8 fold): the bare-input reset comes home — the
@@ -172,10 +172,10 @@
 }
 .admin-students-input:focus {
   outline: none;
-  /* R313 (WP-F · D16): focus = the reference's #ED4C1F signal border,
-     no halo (mirrors components.css's input focus; no token seat
-     exists yet). */
-  border-color: #ED4C1F; /* color-gate: allow — R313 D16: the legacy measured input-focus orange (live digest inputs.focus; no token seat exists yet) */
+  /* R313 (WP-F · D16) → 2026: focus = the royal signal border,
+     no halo (mirrors components.css's input focus; the canonical
+     --accent seat owns the ladder now). */
+  border-color: var(--accent);
 }
 
 /* r299: the -name content class stays (the papers register's cell

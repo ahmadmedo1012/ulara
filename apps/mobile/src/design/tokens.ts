@@ -51,6 +51,9 @@ export interface DsPalette {
   rule: string;
   gold: string;
   goldInk: string;
+  /** Label ink ON a danger fill (white light · #262019 dark — the
+   *  2026 red family; mirrors accentFg's theme-flip pattern). */
+  dangerFg: string;
   onSurface: string;
   onSurfaceMuted: string;
 }

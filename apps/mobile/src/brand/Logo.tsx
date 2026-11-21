@@ -33,10 +33,11 @@ import { LOCKUP, STACKED, WORDMARK_STROKE_SHEET } from "./lockups";
 import { WORDMARK_AR, WORDMARK_LATIN } from "./wordmark.generated";
 
 export type LogoVariant = "lockup" | "mark" | "wordmark" | "stacked";
-/** R336 B1: 'sienna' is the web's spelling of the accent tone — accepted
- * here as an alias so both platforms speak the SAME tone vocabulary
- * ('orange' stays accepted; same #C43E16, one meaning). */
-export type LogoTone = "auto" | "ink" | "paper" | "orange" | "sienna";
+/** 2026 «Parchment & Royal»: 'royal' is the canonical brand tone (the
+ * re-valued accent — #2540D9); 'orange' and 'sienna' are its retired
+ * spellings, kept as accepted aliases so both platforms (and existing
+ * callers) speak the SAME tone vocabulary — one meaning, one colour. */
+export type LogoTone = "auto" | "ink" | "paper" | "royal" | "orange" | "sienna";
 
 export function Logo({
   variant = "lockup",
@@ -49,8 +50,8 @@ export function Logo({
   /** mark height in px; lockup/stacked scale from it. In the 'wordmark'
    * variant it is the wordmark's ink height in px. */
   size?: number;
-  /** 'auto' = the live palette (ink text · sienna cornerstone — themes with
-   * the app); 'ink'/'paper'/'orange' are literal one-colour settings
+  /** 'auto' = the live palette (ink text · royal cornerstone — themes with
+   * the app); 'ink'/'paper'/'royal' are literal one-colour settings
    * for fixed backgrounds (BRAND.md §tones). */
   tone?: LogoTone;
   testID?: string;
@@ -59,10 +60,10 @@ export function Logo({
   const ink =
     tone === "paper"
       ? "#F5F1E8"
-      : tone === "orange" || tone === "sienna"
-        ? "#C43E16"
+      : tone === "royal" || tone === "orange" || tone === "sienna"
+        ? "#2540D9"
         : tone === "ink"
-          ? "#262019"
+          ? "#1A1713"
           : palette.text;
   const cornerstone = tone === "auto" ? palette.accent : ink;
 

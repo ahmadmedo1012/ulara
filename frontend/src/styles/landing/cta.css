@@ -131,8 +131,8 @@ html[data-theme='dark'] .fo-cta {
    floor (1.35 phone / 1.4 up), the chevron mirrors to point with the
    RTL reading direction. ── */
 .fo-cta {
-  --cta-resolve-ink: rgb(255, 255, 255); /* color-gate: allow — measured reference resolve ink */
-  --cta-resolve-bg: rgb(250, 54, 0); /* color-gate: allow — measured reference resolve wash (ADDENDUM 9 scoped-var pattern; T-25 owns unification) */
+  --cta-resolve-ink: rgb(255, 255, 255); /* color-gate: allow — measured reference resolve ink (white on the royal fill: 7.46:1 light) */
+  --cta-resolve-bg: var(--accent); /* 2026 — the resolve wash rides the royal signal token (was the measured rgb(250,54,0); the dark arm at the top already pointed here) */
 }
 
 .fo-cta .btn.accent.lg {
@@ -744,8 +744,8 @@ html[data-theme='dark'] .fo-cta .fo-text-link {
    below); the final pair and every contrast law here are unchanged. */
 .fo-cta .btn.accent:is(:hover, :focus-within) .fo-cta-rbtn,
 .fo-cta .btn.accent.probe-hover .fo-cta-rbtn {
-  background: var(--primary);
-  color: var(--primary-fg);
+  background: var(--neutral-900);
+  color: var(--neutral-50);
 }
 
 /* r344 A2 — the finale's DISSOLVE seat (the recorded T-13 wash, re-
@@ -787,7 +787,7 @@ html[data-theme='dark'] .fo-cta .fo-text-link {
   content: '';
   position: absolute;
   inset: 0;
-  background: var(--primary);
+  background: var(--neutral-900);
   /* the mask grammar rides the shared pattern (patterns.css) — this
      seat adds only the walk + its own layer seat */
   transition:

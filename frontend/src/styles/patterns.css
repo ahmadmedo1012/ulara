@@ -582,8 +582,8 @@ a.pf-row-link {
   }
   @media (hover: hover) and (pointer: fine) {
     .auth-back-home:hover {
-      background: var(--primary);   /* the charcoal ink fill */
-      color: var(--primary-fg);     /* inverted label */
+      background: var(--neutral-900);   /* the ink fill (2026: the quiet hover keeps the INK slab — --primary is the royal signal now) */
+      color: var(--neutral-50);         /* inverted label */
     }
   }
 
@@ -605,8 +605,8 @@ a.pf-row-link {
   }
   @media (hover: hover) and (pointer: fine) {
     a.auth-context:hover {
-      background: var(--primary);
-      color: var(--primary-fg);
+      background: var(--neutral-900);
+      color: var(--neutral-50);
     }
   }
 
@@ -1250,18 +1250,10 @@ a.pf-row-link {
       border-color: var(--accent);
     }
   }
-  /* R323 A5 §2 (contrast-gate): the wipe's raw --accent ground fails AA
-     under the white label in light (3.76:1) — the same documented R318
-     AA seat the button system rides (white on #DB3A00 = 4.55:1). */
-  [data-theme='light'] .auth-submit::before {
-    background: #DB3A00; /* color-gate: allow — R318 AA seat, documented */
-  }
-  @media (hover: hover) and (pointer: fine) {
-    [data-theme='light'] .auth-submit:not(:disabled):hover,
-    [data-theme='light'] .auth-submit:not(:disabled):focus-visible {
-      border-color: #DB3A00; /* color-gate: allow — R318 AA seat, documented */
-    }
-  }
+  /* (2026 — the R323 A5 §2 / R318 AA-seat overrides are RETIRED: the
+     wipe rides var(--accent) = the royal #2540D9, and white on it
+     measures 7.46:1 AAA — no light-theme correction is needed anymore;
+     the base hover rule's var(--accent) border stands as-is.) */
   @media (hover: hover) and (pointer: fine) {
     .auth-submit:not(:disabled):hover::before,
     .auth-submit:not(:disabled):focus-visible::before {
@@ -2180,8 +2172,11 @@ a.pf-row-link {
   }
 
   /* ══ G·CTA · THE PAIR — the sheets' own actions (the pages.mjs hover
-     contract: the primary changes ≥2 measured channels). The ink slab
-     keeps the label AA in BOTH themes; hover wipes to the accent pair.
+     contract: the primary changes ≥2 measured channels). 2026: the
+     REST is the royal signal itself (--primary ≡ the royal blue now:
+     light #2540D9 + white 7.46:1 · dark #8AA0FF + #262019 6.56:1);
+     hover steps to the darker royal tier (--accent-hover + the WHITE
+     hover label --accent-hover-fg: 10.02:1 light · 4.83:1 dark).
      The 44px floor, radius 0, tokens only. ══════════════════════════ */
 
   .ab-cta-primary,
@@ -2268,9 +2263,12 @@ a.pf-row-link {
     .ap-cta-primary:hover,
     .hp-cta-primary:hover,
     .lg-cta-primary:hover {
-      background: var(--accent);
-      color: var(--accent-fg);
-      border-color: var(--accent);
+      /* 2026: rest IS the royal signal — hover steps to the darker
+         royal tier with the WHITE hover label (never the resting
+         --accent-fg, which flips dark in the dark theme). */
+      background: var(--accent-hover);
+      color: var(--accent-hover-fg);
+      border-color: var(--accent-hover);
     }
 
     .ab-cta-ghost:hover,

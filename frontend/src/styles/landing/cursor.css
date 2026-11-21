@@ -34,9 +34,10 @@
   inline-size: 2.8rem;
   block-size: 2.8rem;
   margin: -1.4rem 0 0 -1.4rem; /* spacing-gate: allow — negative half-ring centering (no negative token exists) */
-  /* #FC724D is the reference's measured reticle border rgb(252,114,77) —
-     no token exists (r308 reference-observations §2, live DOM read) */
-  border: 2px solid #FC724D; /* color-gate: allow — measured reference reticle border, no token exists */
+  /* 2026 — the reticle rides the royal signal (was the reference's
+     measured #FC724D coral reticle rgb(252,114,77); the cursor is an
+     interactive brand surface — the canonical --accent seat owns it). */
+  border: 2px solid var(--accent);
   z-index: 251;
   pointer-events: none;
   opacity: 0;

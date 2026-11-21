@@ -1,19 +1,19 @@
 {
   "name": "ulara-ds",
   "version": 1,
-  "$doc": "R326 M0.4 — the ONE source of truth for the shared ds design tokens (web + mobile). Provenance: frontend/src/styles/tokens/tokens.css (R313/R322/R323/R324 canon) and the r325-era apps/mobile/src/design/tokens.ts hand-copy it replaces. Regen: npm run tokens:build (repo root). Outputs: frontend/src/styles/tokens/tokens.generated.css (web CSS vars, imported BEFORE tokens.css, same @layer tokens) + apps/mobile/src/design/tokens.generated.ts (mobile TS). Drift gate: npm run tokens:check (CI-enforced). Reference grammar: 'neutral.50' | 'triad.<family>.<bg|ink|deep>' | 'brand.<key>' | a semantic seat name (another ref, one tier up) | a literal '#hex'. External seat: brand.warmInk emits var(--warm-ink) on web — its definition stays hand-written in tokens.css base :root. NOT shared (deliberately): the web fluid-rem type ladder + font stacks (tokens.css hand section — web-only), the mobile px ladder lives here under typography.mobile; --state-focus-ring-color / --danger-fg / glass / veils / chrome / charts stay hand-written in tokens.css (web-only seats).",
+  "$doc": "R326 M0.4 — the ONE source of truth for the shared ds design tokens (web + mobile). Provenance: frontend/src/styles/tokens/tokens.css (R313/R322/R323/R324 canon) and the r325-era apps/mobile/src/design/tokens.ts hand-copy it replaces. Regen: npm run tokens:build (repo root). Outputs: frontend/src/styles/tokens/tokens.generated.css (web CSS vars, imported BEFORE tokens.css, same @layer tokens) + apps/mobile/src/design/tokens.generated.ts (mobile TS). Drift gate: npm run tokens:check (CI-enforced). Reference grammar: 'neutral.50' | 'triad.<family>.<bg|ink|deep>' | 'brand.<key>' | a semantic seat name (another ref, one tier up) | a literal '#hex'. External seat: brand.warmInk emits var(--warm-ink) on web — its definition stays hand-written in tokens.css base :root. NOT shared (deliberately): the web fluid-rem type ladder + font stacks (tokens.css hand section — web-only), the mobile px ladder lives here under typography.mobile; --state-focus-ring-color / --danger-fg / glass / veils / chrome / charts stay hand-written in tokens.css (web-only seats). 2026 brand takeover (feat/unified-brand-palette-2026): the owner-approved «Parchment & Royal» palette — royal blue #2540D9 (light) / #8AA0FF (dark) becomes THE primary signal via triad.royal; the sienna/ember era is retired (copper re-keys to the warm decorative #F15534 family); success/danger re-key to the approved #17724A/#C62828 (light) and #5FD39A/#FF7A70 (dark).",
   "color": {
     "brand": {
-      "$doc": "The ULARA brand colours — «Parchment & Sienna» (Ω takeover): paper #F5F1E8 · ink #262019 · burnt sienna #C43E16 — plus the dark-theme luminous ember #FF6B3D and the warm label ink #17130E. The deliberate evolution from the retired palette (paper #F6F6EE · ink #282828 · orange #FA3600): a warmer parchment ground, a sepia-black ink, and a sienna accent that clears AA on paper (4.60:1) with white-on-accent at 5.19:1. Consumed by the RN <Logo> tones and the mobile palette; web emits var(--warm-ink) refs only.",
+      "$doc": "The ULARA brand colours — «Parchment & Royal» (the 2026 owner-approved takeover): paper #F5F1E8 · ink #1A1713 · royal blue #2540D9 — plus the dark-theme primary #8AA0FF and the warm label ink #17130E. Supersedes the «Parchment & Sienna» era (ink #262019 · sienna #C43E16 · ember #FF6B3D — #262019 survives ONLY as the dark surface, neutral.dark.50; the sienna/ember hexes are fully retired from the brand seats). White on royal = 7.46:1 AAA; #262019 on the dark primary #8AA0FF = 6.56:1 AA (the owner-verified pair — NEVER white on #8AA0FF, 2.46:1). Consumed by the brand kit (ulara-kit.mjs cross-check) and the semantic seat refs; web emits var(--warm-ink) refs only.",
       "paper": "#F5F1E8",
-      "ink": "#262019",
+      "ink": "#1A1713",
       "warmInk": "#17130E",
-      "orange": "#C43E16",
-      "orangeDark": "#FF6B3D",
+      "primary": "#2540D9",
+      "primaryDark": "#8AA0FF",
       "white": "#FFFFFF"
     },
     "neutral": {
-      "$doc": "The warm vintage-paper ramp (R313). Light: near-white ground #F6F6EE over white surfaces, charcoal ink #282828 (13.57:1 AAA). Dark: the charcoal itself as ground (#282828), surfaces one step up (#2E2E2E), warm hairlines #4A4A48/#5C5C5A, near-white ink. neutral-900 dark is the R324 X22 warm paper twin #F6F6EE (was #F6F8FA — that spelling is on the parity gate's FORBIDDEN list).",
+      "$doc": "The warm vintage-paper ramp (R313). Light: near-white ground #F5F1E8 over white surfaces, the 2026 approved ink #1A1713 (15.84:1 AAA — was #262019, which survives only as the DARK ground). Dark: the charcoal #262019 itself as ground, surfaces one step up (#2E2E2E), warm hairlines, near-white ink #F5F1E8. neutral-900 dark is the R324 X22 warm paper twin #F5F1E8 (was #F6F8FA — that spelling is on the parity gate's FORBIDDEN list).",
       "light": {
         "0": "#FFFFFF",
         "50": "#F5F1E8",
@@ -25,7 +25,7 @@
         "500": "#72726F",
         "700": "#414140",
         "800": "#333330",
-        "900": "#262019"
+        "900": "#1A1713"
       },
       "dark": {
         "0": "#2E2E2E",
@@ -42,7 +42,7 @@
       }
     },
     "triad": {
-      "$doc": "The 9 section families (r305 re-key, engine-verified contrasts): each a soft tinted ground (band fill), a saturated ink for fills/UI accents, a deep shade for text. Badge-rarity pins (yellow/grey/peach deep-vs-bg ≥4.5 both themes) and icon-well pins (light -deep on -bg ≥3:1) verified: mint 7.31 · yellow 7.85 · rose 7.22 · sky 7.74 · peach 6.29 · grey 12.55 · sand 7.62 · lavender 9.24 · copper 6.10. Dark = deep ember-tinted grounds + luminous inks (family ink-on-bg ≥6.5; the ember ink 4.73 AA-large/UI by design).",
+      "$doc": "The 10 families (the 2026 royal takeover + the r305 re-key, engine-verified contrasts): each a soft tinted ground (band fill), a saturated ink for fills/UI accents, a deep shade for text. ROYAL is the brand-primary family (the ONE signal — light #2540D9 6.62:1 on paper AA, dark #8AA0FF 6.56:1 on the night ground AA). MINT re-keys to the approved success #17724A/#5FD39A (ink-on-bg: light 4.87 · dark 6.80). ROSE re-keys to the approved danger #C62828/#FF7A70 (light ink-on-bg 4.56 · deep-on-bg 7.22 kept). COPPER retires from the brand seat and re-keys to the warm decorative #F15534 family (≡ peach; deep-on-bg 6.29 both). Badge-rarity pins (yellow/grey/peach deep-vs-bg ≥4.5 both themes) and icon-well pins (light -deep on -bg ≥3:1) verified: mint 7.31 · yellow 7.85 · rose 7.22 · sky 7.74 · peach 6.29 · grey 12.55 (light-900 re-key #1A1713) · sand 7.62 · lavender 9.24 · copper 6.29.",
       "peach": {
         "light": {
           "bg": "#FCE5DE",
@@ -56,14 +56,15 @@
         }
       },
       "mint": {
+        "$doc": "The success family — re-keyed to the owner-approved green: #17724A light (5.26:1 on paper AA) · #5FD39A dark (8.65:1 AAA). Deep stays the AAA text tier on the tinted grounds (7.31 light / 9.76 dark).",
         "light": {
           "bg": "#E3EBE1",
-          "ink": "#3F8F5C",
+          "ink": "#17724A",
           "deep": "#1B5430"
         },
         "dark": {
           "bg": "#24372B",
-          "ink": "#84D0A0",
+          "ink": "#5FD39A",
           "deep": "#C4EBD2"
         }
       },
@@ -104,15 +105,16 @@
         }
       },
       "rose": {
+        "$doc": "The danger family — re-keyed to the owner-approved red: #C62828 light (4.99:1 on paper AA · 4.56:1 on the tint) · #FF7A70 dark (6.35:1 AA). The retired #F15534 coral ink moves OUT of danger into the warm decorative seat (peach/copper) — danger no longer rhymes with the signal.",
         "light": {
           "bg": "#F9E3DC",
-          "ink": "#F15534",
+          "ink": "#C62828",
           "deep": "#8C230A"
         },
         "dark": {
           "bg": "#43241C",
-          "ink": "#FF8E68",
-          "deep": "#FFC5AE"
+          "ink": "#FF7A70",
+          "deep": "#FFD1CD"
         }
       },
       "sand": {
@@ -139,22 +141,35 @@
           "deep": "#DDD8CB"
         }
       },
-      "copper": {
-        "$doc": "The signal family — the ONE burnt sienna #C43E16 (the brand accent seat). AA on paper at 4.60:1 (normal text); hover/text routing through accentInk #A33312 (6.13:1). Dark ink is the luminous ember #FF6B3D (5.70:1 on the dark ground, AA).",
+      "royal": {
+        "$doc": "THE brand-primary family (the 2026 takeover) — the sole primary signal. Light: royal blue #2540D9 (6.62:1 on paper AA · 6.18:1 on the soft #E4E9FF) with white labels at 7.46:1 AAA; hover/strong tier #1B30B0 (white 10.02:1 AAA · 8.89:1 on paper). Dark: #8AA0FF (6.56:1 on the night ground AA) with the DARK foreground #262019 (6.56:1 — the owner-verified pair; white on it FAILS at 2.46:1 and must never be used); hover #4C63F0 takes WHITE labels (4.83:1 AA); strong text tier #C7D2FF (9.65:1 on the dark soft #232845). The soft grounds: #E4E9FF light (the approved primary subtle background) · #232845 dark (blue-tinted night — NEVER the light value).",
         "light": {
-          "bg": "#F8E3D8",
-          "ink": "#C43E16",
-          "deep": "#8F2F0F"
+          "bg": "#E4E9FF",
+          "ink": "#2540D9",
+          "deep": "#1B30B0"
         },
         "dark": {
-          "bg": "#46221A",
-          "ink": "#FF6B3D",
+          "bg": "#232845",
+          "ink": "#8AA0FF",
+          "deep": "#C7D2FF"
+        }
+      },
+      "copper": {
+        "$doc": "The warm decorative family (retired from the brand seat) — re-keyed to the owner-approved warm accent #F15534, identical to peach (deep-on-bg 6.29 light). Status/chip tones that previously rode the old-brand sienna (#C43E16) keep a warm home here: PUBLISHED/GRADED/LIVE chips, brand badges, illustration hue-1, the iso-plate signal. It is NOT the primary, NOT a link, NOT a button, NOT danger — decorative + independently-semantic warm chips only (ordinary small text never rides the raw ink; chips text routes through deep).",
+        "light": {
+          "bg": "#FCE5DE",
+          "ink": "#F15534",
+          "deep": "#9C2B0F"
+        },
+        "dark": {
+          "bg": "#43241C",
+          "ink": "#FF8E68",
           "deep": "#FFC5AE"
         }
       }
     },
     "semantic": {
-      "$doc": "The role seats components consume. Two-surface rule: bg = PAGE GROUND (paper), surface = CARD GROUND — hierarchy via surface step + hairlines, zero shadows (R313). Light labels on the accent fill read WHITE (AA-large, weight ≥600); body-size accent text routes through accentInk. Dark: luminous ember fills with warm-ink labels; status -ink ≡ the family ink (icon-well no-op).",
+      "$doc": "The role seats components consume. Two-surface rule: bg = PAGE GROUND (paper), surface = CARD GROUND — hierarchy via surface step + hairlines, zero shadows (R313). 2026 «Parchment & Royal»: the accent family routes through triad.royal — light #2540D9 fills with WHITE labels (7.46:1 AAA, no AA exception needed anymore) and #2540D9 accent TEXT (6.62:1 AA — ink ≡ accent now that blue clears AA by itself); dark #8AA0FF fills with the DARK #262019 labels (6.56:1 — white on it fails, never use). primary ≡ the royal blue (primary CTAs/buttons/selected states). Status -ink ≡ the family ink in dark; success/danger ride the re-keyed mint/rose.",
       "light": {
         "bg": "neutral.50",
         "surface": "neutral.0",
@@ -174,12 +189,12 @@
         "borderStrong": "neutral.300",
         "rule": "neutral.300",
         "ruleStrong": "borderStrong",
-        "accent": "triad.copper.ink",
-        "accentHover": "#A83514",
-        "accentSoft": "triad.copper.bg",
-        "accentStrong": "triad.copper.deep",
+        "accent": "triad.royal.ink",
+        "accentHover": "triad.royal.deep",
+        "accentSoft": "triad.royal.bg",
+        "accentStrong": "triad.royal.deep",
         "accentFg": "#FFFFFF",
-        "accentInk": "#A33312",
+        "accentInk": "triad.royal.ink",
         "success": "triad.mint.ink",
         "successSoft": "triad.mint.bg",
         "successInk": "triad.mint.deep",
@@ -189,13 +204,14 @@
         "danger": "triad.rose.ink",
         "dangerSoft": "triad.rose.bg",
         "dangerInk": "triad.rose.deep",
+        "dangerFg": "#FFFFFF",
         "info": "triad.sky.ink",
         "infoSoft": "triad.sky.bg",
         "infoInk": "triad.sky.deep",
         "brand": "accent",
         "gold": "#B57438",
         "goldInk": "#8F5A28",
-        "primary": "neutral.900",
+        "primary": "triad.royal.ink",
         "primaryFg": "#FFFFFF"
       },
       "dark": {
@@ -211,18 +227,18 @@
         "textSecondary": "neutral.700",
         "textMuted": "neutral.500",
         "textFaint": "#A2A29D",
-        "textOnAccent": "brand.warmInk",
+        "textOnAccent": "#262019",
         "textOnDark": "neutral.900",
         "border": "neutral.200",
         "borderStrong": "neutral.300",
         "rule": "neutral.200",
         "ruleStrong": "borderStrong",
-        "accent": "triad.copper.ink",
-        "accentHover": "#FF7E52",
-        "accentSoft": "triad.copper.bg",
-        "accentStrong": "triad.copper.deep",
-        "accentFg": "brand.warmInk",
-        "accentInk": "#FF8A5F",
+        "accent": "triad.royal.ink",
+        "accentHover": "#4C63F0",
+        "accentSoft": "triad.royal.bg",
+        "accentStrong": "triad.royal.deep",
+        "accentFg": "#262019",
+        "accentInk": "triad.royal.ink",
         "success": "triad.mint.ink",
         "successSoft": "triad.mint.bg",
         "successInk": "triad.mint.ink",
@@ -232,14 +248,15 @@
         "danger": "triad.rose.ink",
         "dangerSoft": "triad.rose.bg",
         "dangerInk": "triad.rose.ink",
+        "dangerFg": "#262019",
         "info": "triad.sky.ink",
         "infoSoft": "triad.sky.bg",
         "infoInk": "triad.sky.ink",
         "brand": "accent",
         "gold": "#E0A067",
         "goldInk": "#F2B782",
-        "primary": "#FFFFFF",
-        "primaryFg": "brand.warmInk"
+        "primary": "triad.royal.ink",
+        "primaryFg": "#262019"
       }
     },
     "mobile": {
