@@ -178,3 +178,20 @@ Follow-up: the 27 DSF-2 evidence shots (>500KB each) quantized to 128–160-colo
 palettes — docs/ total drops 33.3MB → 19.0MB. Rule 1 (file ≤500KB) now green
 everywhere; the 30→40MB raise stays (headroom for the §9 screenshot sweep),
 and the compressed shots remain people-facing DSF-2 evidence.
+
+## B4 — first fidelity increment (this session)
+
+The reference's `path-filter` — the B0 extraction's EXACT constants
+(fractalNoise baseFrequency 4/4 · numOctaves 3 · seed 5387 · feDisplacementMap
+scale 2 on R/G) — now roughens the hero's campus elevation ink
+(CampusPlate `ink` seat, one filter seat on the composited group; static
+displacement, so the reduced-motion belt has nothing to collapse).
+Visual: the drawing reads as surveyed-on-paper instead of vector-perfect —
+verified by screenshot. Gates: tsc ✓ · landing unit 20 ✓ · guest-landing +
+r308-landing-instruments e2e **7 passed**.
+
+Remaining B4 deltas (next session, per REFERENCE.md): the shared
+photo-displacement filter (0.045/0.055 · octaves 4 · seed 5 · scale 100 · blur
+1.8 · slope 2.2) for the dormant `.inkm` photo reveals; the journey scrub
+deltas vs the recorded 13,255px choreography; barba-style inset-curve
+verification against the recorded 0.6s/0.7s sample.

@@ -148,24 +148,50 @@ export function CampusPlate({ variant }: { variant: CampusVariant }) {
       <IsoDefs />
       {variant === 'ink' ? (
         <>
+          {/* r350-B4 — the reference's `path-filter` (the B0 extraction's
+           * exact constants: fractalNoise 4/4 · octaves 3 · seed 5387 ·
+           * displacement scale 2 on R/G) roughens the drawn ink so the
+           * elevation reads as surveyed-on-paper, not vector-perfect.
+           * ONE filter seat on the composited group (cheaper than
+           * per-fragment); STATIC displacement — no motion, so the
+           * reduced-motion belt has nothing to collapse. */}
+          <filter id="cp-path-ink" x="-2%" y="-2%" width="104%" height="104%">
+            <feFlood floodOpacity="0" result="BackgroundImageFix" />
+            <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+            <feTurbulence type="fractalNoise" baseFrequency="4 4" numOctaves={3} seed={5387} />
+            <feDisplacementMap
+              in="shape"
+              scale={2}
+              xChannelSelector="R"
+              yChannelSelector="G"
+              result="displacedImage"
+              width="100%"
+              height="100%"
+            />
+            <feMerge result="cp-path-ink-out">
+              <feMergeNode in="displacedImage" />
+            </feMerge>
+          </filter>
           {/* the campus drawing — ONE geometry source (plates/CampusArt),
            * staged on the data-ink belt (the drafting order: ground,
            * masses, connectors, furniture, labels) */}
-          <g data-ink="1" data-frag="plinth"><CampusFrag name="plinth" /></g>
-          <g data-ink="2" data-frag="tower"><CampusFrag name="tower" /></g>
-          <g data-ink="2">
-            <g data-frag="wing-1"><CampusFrag name="wing-1" /></g>
-            <g data-frag="wing-2"><CampusFrag name="wing-2" /></g>
-            <g data-frag="wing-3"><CampusFrag name="wing-3" /></g>
-            <g data-frag="wing-4"><CampusFrag name="wing-4" /></g>
+          <g data-ink-canvas="1" filter="url(#cp-path-ink)">
+            <g data-ink="1" data-frag="plinth"><CampusFrag name="plinth" /></g>
+            <g data-ink="2" data-frag="tower"><CampusFrag name="tower" /></g>
+            <g data-ink="2">
+              <g data-frag="wing-1"><CampusFrag name="wing-1" /></g>
+              <g data-frag="wing-2"><CampusFrag name="wing-2" /></g>
+              <g data-frag="wing-3"><CampusFrag name="wing-3" /></g>
+              <g data-frag="wing-4"><CampusFrag name="wing-4" /></g>
+            </g>
+            <g data-ink="3" data-frag="observatory"><CampusFrag name="observatory" /></g>
+            <g data-ink="3" data-frag="plaza"><CampusFrag name="plaza" /></g>
+            <g data-ink="3" data-frag="field"><CampusFrag name="field" /></g>
+            <g data-ink="4" data-frag="routes"><CampusFrag name="routes" /></g>
+            <g data-ink="4" data-frag="trees"><CampusFrag name="trees" /></g>
+            <g data-ink="5" data-frag="furniture"><CampusFrag name="furniture" /></g>
+            <g data-ink="6" data-frag="labels"><CampusFrag name="labels" /></g>
           </g>
-          <g data-ink="3" data-frag="observatory"><CampusFrag name="observatory" /></g>
-          <g data-ink="3" data-frag="plaza"><CampusFrag name="plaza" /></g>
-          <g data-ink="3" data-frag="field"><CampusFrag name="field" /></g>
-          <g data-ink="4" data-frag="routes"><CampusFrag name="routes" /></g>
-          <g data-ink="4" data-frag="trees"><CampusFrag name="trees" /></g>
-          <g data-ink="5" data-frag="furniture"><CampusFrag name="furniture" /></g>
-          <g data-ink="6" data-frag="labels"><CampusFrag name="labels" /></g>
         </>
       ) : (
         /* the trace seat — the same campus, silhouette by silhouette */
