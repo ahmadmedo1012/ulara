@@ -14,7 +14,7 @@ import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { usePalette } from "@/design/theme";
 import { sp } from "@/design/tokens";
-import { T , MonoLabel } from "./text";
+import { T, MonoLabel } from "./text";
 
 export interface ScreenProps {
   children: ReactNode;

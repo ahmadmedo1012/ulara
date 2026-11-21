@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { View , Linking } from "react-native";
+import { View, Linking } from "react-native";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import ExternalLink from "lucide-react-native/icons/external-link";
 import MonitorPlay from "lucide-react-native/icons/monitor-play";
