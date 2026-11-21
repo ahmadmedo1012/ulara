@@ -91,3 +91,11 @@
 - Full e2e (35 spec files, 4 chunks): `18+67+49+39 = 173 passed, 0 failed`.
 - Frontend unit: `243 files / 3015 tests passed`. typecheck + typecheck:tests clean.
 - `bash scripts/verify.sh --fast` → **FAST PASS** (a11y floor S25/C0 unchanged).
+
+## Session 1 — AI-6 mobile assistant parity
+
+**State found**: the mobile Assistant (763 lines) already carries the full contract — XHR-SSE streaming, stop («أُوقف الردّ» honest label), retry-in-place, copy/share, markdown, citation chips with deep links, quota/error states via humanizeError, keyboard-controller (KeyboardAvoidingView + KeyboardToolbar), safe areas, sheets.
+**Added**:
+- The completion haptic (`haptics.selection()` when a turn completes — both grammars; send already had impact-light, stop medium, quota warning, error error).
+- `providerBadgeLabel` + `LOCAL_PROVIDER_NOTE` extracted to logic.ts (was inline) with 4 new pins — gemini rides the named-provider rail verbatim (r351 AI-1 parity).
+**Gates (N6 set, all green):** tsc 0 · expo lint 0 errors/16 pre-existing warnings · contract-check no drift · tokens:check byte-identical · api:types regenerated + `git diff --exit-code` clean · jest `1237/1237` (1233 base + 4 new) · expo export android + ios OK.

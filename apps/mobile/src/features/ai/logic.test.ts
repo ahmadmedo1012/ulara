@@ -9,6 +9,8 @@
 import { describe, expect, it } from "@jest/globals";
 import { splitCodeFences } from "./Markdown";
 import {
+  LOCAL_PROVIDER_NOTE,
+  providerBadgeLabel,
   appendDelta,
   beginTurn,
   canSend,
@@ -188,5 +190,31 @@ describe("splitCodeFences — streaming-safe markdown fences", () => {
     ]);
     expect(splitCodeFences("")).toEqual([]);
     expect(splitCodeFences("نص عادي فقط")).toEqual([{ kind: "prose", text: "نص عادي فقط" }]);
+  });
+});
+
+/* ── r351 AI-6 — the provider badge (gemini rides the named rail) ───── */
+
+describe("providerBadgeLabel — the honest provenance badge", () => {
+  it("local = the disclosed template composer (never a vendor claim)", () => {
+    expect(providerBadgeLabel("local")).toBe("مزوّد محلي (قالبيّ)");
+    expect(providerBadgeLabel("LOCAL")).not.toBe("مزوّد محلي (قالبيّ)"); // exact match only
+  });
+
+  it("named providers show verbatim — gemini included (r351 AI-1 wiring)", () => {
+    expect(providerBadgeLabel("gemini")).toBe("مزوّد: gemini");
+    expect(providerBadgeLabel("openrouter")).toBe("مزوّد: openrouter");
+    expect(providerBadgeLabel("openai")).toBe("مزوّد: openai");
+  });
+
+  it("absent provider → no badge (never an invented one)", () => {
+    expect(providerBadgeLabel(null)).toBeNull();
+    expect(providerBadgeLabel(undefined)).toBeNull();
+    expect(providerBadgeLabel("")).toBeNull();
+  });
+
+  it("the local-mode note stays the honest setup pointer", () => {
+    expect(LOCAL_PROVIDER_NOTE).toContain("قالبيّة");
+    expect(LOCAL_PROVIDER_NOTE).toContain("حتى تفعيل مزوّد خارجي حقيقي");
   });
 });
