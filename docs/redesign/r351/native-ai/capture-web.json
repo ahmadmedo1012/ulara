@@ -2,9 +2,9 @@
  {
   "role": "STUDENT",
   "screen": "dashboard",
-  "path": "/student/",
+  "path": "/student/dashboard",
   "vp": "390",
-  "words": 64,
+  "words": 26,
   "overflowX": 0,
   "fixtureCorpus": false
  },
@@ -40,7 +40,7 @@
   "screen": "results",
   "path": "/student/results",
   "vp": "390",
-  "words": 9,
+  "words": 4,
   "overflowX": 0,
   "fixtureCorpus": false
  },
@@ -56,9 +56,9 @@
  {
   "role": "STUDENT",
   "screen": "dashboard",
-  "path": "/student/",
+  "path": "/student/dashboard",
   "vp": "820",
-  "words": 64,
+  "words": 26,
   "overflowX": 0,
   "fixtureCorpus": false
  },
@@ -94,7 +94,7 @@
   "screen": "results",
   "path": "/student/results",
   "vp": "820",
-  "words": 9,
+  "words": 4,
   "overflowX": 0,
   "fixtureCorpus": false
  },
@@ -110,9 +110,9 @@
  {
   "role": "TEACHER",
   "screen": "dashboard",
-  "path": "/teacher/",
+  "path": "/teacher/dashboard",
   "vp": "390",
-  "words": 17,
+  "words": 78,
   "overflowX": 0,
   "fixtureCorpus": false
  },
@@ -155,9 +155,9 @@
  {
   "role": "TEACHER",
   "screen": "dashboard",
-  "path": "/teacher/",
+  "path": "/teacher/dashboard",
   "vp": "820",
-  "words": 17,
+  "words": 78,
   "overflowX": 0,
   "fixtureCorpus": false
  },
@@ -200,9 +200,9 @@
  {
   "role": "ADMIN",
   "screen": "dashboard",
-  "path": "/admin/",
+  "path": "/admin/dashboard",
   "vp": "390",
-  "words": 15,
+  "words": 51,
   "overflowX": 0,
   "fixtureCorpus": false
  },
@@ -245,9 +245,9 @@
  {
   "role": "ADMIN",
   "screen": "dashboard",
-  "path": "/admin/",
+  "path": "/admin/dashboard",
   "vp": "820",
-  "words": 15,
+  "words": 51,
   "overflowX": 0,
   "fixtureCorpus": false
  },
@@ -290,9 +290,9 @@
  {
   "role": "QUALITY",
   "screen": "dashboard",
-  "path": "/quality/",
+  "path": "/quality/dashboard",
   "vp": "390",
-  "words": 18,
+  "words": 12,
   "overflowX": 0,
   "fixtureCorpus": false
  },
@@ -317,9 +317,9 @@
  {
   "role": "QUALITY",
   "screen": "dashboard",
-  "path": "/quality/",
+  "path": "/quality/dashboard",
   "vp": "820",
-  "words": 18,
+  "words": 12,
   "overflowX": 0,
   "fixtureCorpus": false
  },
@@ -344,9 +344,9 @@
  {
   "role": "OWNER",
   "screen": "dashboard",
-  "path": "/owner/",
+  "path": "/owner/dashboard",
   "vp": "390",
-  "words": 21,
+  "words": 37,
   "overflowX": 0,
   "fixtureCorpus": false
  },
@@ -380,9 +380,9 @@
  {
   "role": "OWNER",
   "screen": "dashboard",
-  "path": "/owner/",
+  "path": "/owner/dashboard",
   "vp": "820",
-  "words": 21,
+  "words": 37,
   "overflowX": 0,
   "fixtureCorpus": false
  },

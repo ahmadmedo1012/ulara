@@ -47,24 +47,32 @@ const server = createServer(async (req, res) => {
 await new Promise((r) => server.listen(PORT, r));
 
 /* ── the roles' key screens (expo-router paths) ───────────────────── */
+/* r351 correction: the dashboard cells navigate to the EXPLICIT tab
+   path (`/<role>/dashboard`), not the group root `/<role>/`. On the
+   exported web bundle the bare `/<role>/` resolves to the manifest's
+   first match — for STUDENT that was /student/ai (the alphabetically
+   first file), so the audit's first pass silently captured the AI
+   screen twice under two names (byte-identical PNGs — caught in the
+   r351 N2 re-measure). The explicit path is the deep-link contract
+   (ROLE_TABS) and is what the audit table actually claims to measure. */
 const ROLES = [
   { role: 'STUDENT', home: '/student/' , screens: [
-    ['dashboard', '/student/'], ['courses', '/student/courses'], ['ai', '/student/ai'],
+    ['dashboard', '/student/dashboard'], ['courses', '/student/courses'], ['ai', '/student/ai'],
     ['matrix', '/student/matrix'], ['results', '/student/results'], ['library', '/student/library'],
   ]},
   { role: 'TEACHER', home: '/teacher/', screens: [
-    ['dashboard', '/teacher/'], ['schedule', '/teacher/schedule'], ['students', '/teacher/students'],
+    ['dashboard', '/teacher/dashboard'], ['schedule', '/teacher/schedule'], ['students', '/teacher/students'],
     ['grades', '/teacher/grades'], ['attendance', '/teacher/attendance'],
   ]},
   { role: 'ADMIN', home: '/admin/', screens: [
-    ['dashboard', '/admin/'], ['faculties', '/admin/faculties'], ['students', '/admin/students'],
+    ['dashboard', '/admin/dashboard'], ['faculties', '/admin/faculties'], ['students', '/admin/students'],
     ['teachers', '/admin/teachers'], ['reports', '/admin/reports'],
   ]},
   { role: 'QUALITY', home: '/quality/', screens: [
-    ['dashboard', '/quality/'], ['courses', '/quality/courses'], ['engagement', '/quality/engagement'],
+    ['dashboard', '/quality/dashboard'], ['courses', '/quality/courses'], ['engagement', '/quality/engagement'],
   ]},
   { role: 'OWNER', home: '/owner/', screens: [
-    ['dashboard', '/owner/'], ['governance', '/owner/governance'], ['users', '/owner/users'],
+    ['dashboard', '/owner/dashboard'], ['governance', '/owner/governance'], ['users', '/owner/users'],
     ['realtime', '/owner/realtime'],
   ]},
 ];

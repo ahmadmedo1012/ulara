@@ -10,8 +10,8 @@ import Landmark from "lucide-react-native/icons/landmark";
 import Palette from "lucide-react-native/icons/palette";
 import Settings from "lucide-react-native/icons/settings";
 import TriangleAlert from "lucide-react-native/icons/triangle-alert";
-import { AppTopBar } from "@/components/shell/AppTopBar";
-import { Screen, SectionBar } from "@/components/ui";
+import { LargeTitleScreen } from "@/components/shell/LargeTitleScreen";
+import { SectionBar } from "@/components/ui";
 import { T } from "@/components/ui/text";
 import { Button } from "@/components/ui/pressables";
 import { LedgerRow, makeRow, RowList } from "@/components/ui/data";
@@ -86,17 +86,10 @@ export default function OwnerDashboard() {
   const events = activity.data?.rows ?? [];
 
   return (
-    <Screen scroll>
-      <AppTopBar alertsPath="/owner/alerts" />
-      <View style={{ gap: 16, paddingTop: 16 }}>
-        <Animated.View entering={entering(0)}>
-          <T variant="h2" weight="bold">
-            لوحة التحكم الرئيسية
-          </T>
-          <T variant="body" color="muted">
-            نظرة شاملة وإحصائيات حيّة عن المنصة
-          </T>
-        </Animated.View>
+    /* r351 N2 — the collapsing large title («الرئيسية» cut from the
+     * heading — it added nothing; the explainer subtitle is cut). */
+    <LargeTitleScreen title="لوحة التحكم" kicker="إحصاءات حيّة" alertsPath="/owner/alerts">
+      <View style={{ gap: 16 }}>
 
         {stats.isLoading ? (
           <Animated.View entering={entering(1)} style={{ gap: 8 }}>
@@ -233,9 +226,6 @@ export default function OwnerDashboard() {
                   <T variant="body" weight="bold">
                     المؤسسات
                   </T>
-                  <T variant="xs" color="muted">
-                    إدارة المؤسسات التعليمية على المنصّة
-                  </T>
                 </View>
               </View>
             </LedgerRow>
@@ -251,9 +241,6 @@ export default function OwnerDashboard() {
                 <View style={{ flex: 1 }}>
                   <T variant="body" weight="bold">
                     سجلّ النشاط والمراقبة
-                  </T>
-                  <T variant="xs" color="muted">
-                    جميع العمليّات المنفَّذة على المنصّة
                   </T>
                 </View>
               </View>
@@ -271,9 +258,6 @@ export default function OwnerDashboard() {
                   <T variant="body" weight="bold">
                     التنبيهات التشغيليّة
                   </T>
-                  <T variant="xs" color="muted">
-                    إدارة ومراقبة التنبيهات والحوادث
-                  </T>
                 </View>
               </View>
             </LedgerRow>
@@ -289,9 +273,6 @@ export default function OwnerDashboard() {
                 <View style={{ flex: 1 }}>
                   <T variant="body" weight="bold">
                     مركز الذكاء الاصطناعيّ
-                  </T>
-                  <T variant="xs" color="muted">
-                    مراقبة استخدام وأداء خدمات الذكاء الاصطناعيّ
                   </T>
                 </View>
               </View>
@@ -309,9 +290,6 @@ export default function OwnerDashboard() {
                   <T variant="body" weight="bold">
                     النظرة التعليميّة
                   </T>
-                  <T variant="xs" color="muted">
-                    إحصائيات حيّة عن المقرّرات وأعضاء هيئة التدريس
-                  </T>
                 </View>
               </View>
             </LedgerRow>
@@ -327,9 +305,6 @@ export default function OwnerDashboard() {
                 <View style={{ flex: 1 }}>
                   <T variant="body" weight="bold">
                     النظام والتشغيل
-                  </T>
-                  <T variant="xs" color="muted">
-                    البنية التحتية وحالة الخدمات وإعدادات المنصّة
                   </T>
                 </View>
               </View>
@@ -348,18 +323,12 @@ export default function OwnerDashboard() {
                   <T variant="body" weight="bold">
                     المحتوى والعلامة التجاريّة
                   </T>
-                  <T variant="xs" color="muted">
-                    الهويّة البصريّة وأصول العلامة
-                  </T>
                 </View>
               </View>
             </LedgerRow>
           </RowList>
-          <T variant="xs" color="faint">
-            المراقبة الحيّة والمستخدمون والحوكمة في تبويبات الشريط السفلي · صندوق التغذية الراجعة من صفحة «المحتوى».
-          </T>
         </Animated.View>
       </View>
-    </Screen>
+    </LargeTitleScreen>
   );
 }
