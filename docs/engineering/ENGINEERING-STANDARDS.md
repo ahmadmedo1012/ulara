@@ -70,9 +70,10 @@ Arabic characters work.
 
 - Direct dependencies are intentional and few; a new one needs a stated reason
   the codebase cannot satisfy.
-- Unused direct dependencies are removed (this audit removed `axios`, which had
-  zero imports after the native-fetch migration and carried the only
-  `follow-redirects` advisory).
+- A dependency is only "unused" when the whole tree agrees: search `src/` **and**
+  `tests/`. A type-only import keeps it real — this audit removed `axios` on a
+  partial grep, `typecheck:tests` and knip caught it, and it was restored. Prefer
+  patching the transitive advisory over deleting the package.
 - Security fixes inside a semver range are applied via the lockfile; breaking
   majors (React Router 7, Zod 4) need a migration plan with regression coverage.
 - Lockfile changes must be reproducible: verify with `npm ci`, not `npm install`.

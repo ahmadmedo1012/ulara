@@ -12,7 +12,7 @@ authorized by the maintainer) are both recorded here.
 | Integration target (`origin/main` at Phase 2) | `647d044bf5f886fe22da1d23af2176a470baaace` |
 | Worktree | `/home/rh2011/Projects/ULARA - اولارا/ulara-repository-engineering` |
 | Branch | `chore/ulara-repository-engineering` |
-| Main workspace | `/home/rh2011/Projects/ULARA - اولارا/ulara` — untouched; its pre-existing untracked `docs/redesign/r342/HERON-PARITY.md` was preserved |
+| Main workspace | `/home/rh2011/Projects/ULARA - اولارا/ulara` — untouched; its pre-existing untracked file was preserved |
 
 The historical `e89f137…` was an ancestor, not a tip, and was never used as a
 baseline. The remote advanced twice while this work ran; both times the local
@@ -48,10 +48,13 @@ contributor's pre-push gate.
 
 ### 2.3 Dependencies
 
-- Removed the unused direct dependency **`axios`** (zero imports after the
-  native-fetch migration; only comments mention it). `npm install` dropped 5
-  packages, and the `follow-redirects` advisory disappeared with it.
-- Lockfile carries compatible fixes: `body-parser` 1.20.9, `qs` 6.16.2.
+- **`axios` was investigated as an unused dependency and kept.** Three test
+  files import its types (`AxiosError`, `AxiosResponse`); removing it broke
+  `typecheck:tests` (TS2307 in three files) and the deadcode ratchet
+  (`knip.unlisted 0 → 3`). It was removed, caught by CI, and restored — an
+  evidence-based rejection, recorded rather than hidden.
+- Lockfile carries compatible fixes: `body-parser` 1.20.9, `qs` 6.16.2 and
+  `follow-redirects` 1.16.3 (patched instead of removed).
 - `npm audit --omit=dev` after the change: **3 vulnerabilities (2 moderate,
   1 high)** — exactly the two breaking-major migrations (React Router 7, Zod 4)
   documented as scheduled work.
@@ -132,8 +135,9 @@ Run in the worktree at `647d044` + this change set.
 
 ## 5. Change set
 
-Modified: 9 workflow files, `.gitignore`, `CHANGELOG.md`, `frontend/package.json`,
-`package-lock.json`, `scripts/verify.sh`, and 3 frontend unit tests.
+Modified: 9 workflow files, `.gitignore`, `CHANGELOG.md`, `package-lock.json`,
+`scripts/verify.sh`, 3 frontend unit tests, and one upstream plan line (a
+zero-trace leak). `frontend/package.json` is unchanged after the axios round-trip.
 Added: `RELEASE.md`, `.github/dependabot.yml`, `docs/engineering/*` (7 files),
 `.agents/skills/ulara-repo-ops/SKILL.md`.
 

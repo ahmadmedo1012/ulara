@@ -31,7 +31,7 @@ No production credential was rotated, revoked or modified.
 |---|---|---|---|
 | body-parser DoS family | `body-parser` 1.20.8 → 1.20.9 | compatible lockfile bump | resolved |
 | `qs` array-limit DoS | `qs` 6.16.0 → 6.16.2 | compatible lockfile bump | resolved |
-| `follow-redirects` leak | `follow-redirects` 1.16.1 | removed entirely — it existed only as a dependency of the unused `axios` | resolved |
+| `follow-redirects` leak | `follow-redirects` 1.16.1 | patched to 1.16.3 in the lockfile (`axios` stays: three suites import its types) | resolved |
 | React Router open redirect / SSR constructor injection | `react-router-dom` 6.30.6 | **requires React Router 7** (breaking) | open — documented, not applied blindly |
 | Zod memory exhaustion on oversized constrained collections | `zod` 3.23.8 | **requires Zod 4** (breaking across backend and frontend schemas) | open — documented |
 

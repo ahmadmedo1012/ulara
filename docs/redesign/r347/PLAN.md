@@ -5,7 +5,7 @@
 The owner's phase-4 directive (carried from r346, re-affirmed live): the
 homepage's remaining screenshot captures are ugly and do not explain the
 project — every picture on the landing becomes a 3D isometric drawing /
-geometric shape in the reference's plate language (heronaiapp.com: the
+geometric shape in the reference's plate language (the visual reference: the
 drafting-sheet metaphor; the product subject is *something being drawn*,
 never *something being screenshotted* — the live VLM critique of both
 bands, r347).
