@@ -27,6 +27,8 @@
  * Environment:
  *   ULARA_BASE_URL     target origin (default https://ulara.vercel.app)
  *   ULARA_LOGIN_ALL_OUT screenshot dir (default scripts/e2e/artifacts/login-all)
+ *   ULARA_LOGIN_ALL_LIMIT run only the first N accounts (local probing; CI
+ *                      runs the full table)
  *
  * Output: a results table (account · role · result · ms · screenshot)
  * on stdout + login-all-results.json next to the screenshots. Exit 1
@@ -57,11 +59,14 @@ const NAV_TIMEOUT_MS = 120_000;
 
 mkdirSync(OUT, { recursive: true });
 
+const LIMIT = Number(process.env.ULARA_LOGIN_ALL_LIMIT ?? 0);
+const accounts = LIMIT > 0 ? TEST_ACCOUNTS.slice(0, LIMIT) : TEST_ACCOUNTS;
+
 const browser = await chromium.launch();
 const results = [];
 let failed = 0;
 
-for (const account of TEST_ACCOUNTS) {
+for (const account of accounts) {
   const expectedHome = ROLE_HOME[account.role];
   const shot = `${OUT}/${account.role.toLowerCase()}-${account.email.replace(/@.*/, '')}.png`;
   const startedAt = Date.now();
@@ -93,11 +98,46 @@ for (const account of TEST_ACCOUNTS) {
     await page.getByRole('button', { name: 'تسجيل الدخول' }).click();
 
     // The proof: the protected dashboard of THIS role loads (a failed
-    // login would stay on /auth with the Arabic refusal banner).
-    await page.waitForURL(
-      (u) => !u.pathname.startsWith('/auth'),
-      { timeout: NAV_TIMEOUT_MS },
-    );
+    // login stays on /auth with the Arabic refusal banner).
+    //
+    // r178 contract (r347 c433d2b): an account that belongs to MORE THAN
+    // ONE institution is NOT bounced to a role home — the context-less
+    // session stays on the guest sheet until the visitor commits, so the
+    // chooser mounts («اختر مؤسستك»). The owner's own walk clicks it, and
+    // this belt now completes the same journey instead of asserting a
+    // single-membership shortcut. A login that FAILS never renders the
+    // chooser, so the distinction stays honest.
+    let choseInstitution = false;
+    await page
+      .waitForFunction(
+        () =>
+          !location.pathname.startsWith('/auth') ||
+          document.body.innerText.includes('اختر مؤسستك'),
+        undefined,
+        { timeout: NAV_TIMEOUT_MS },
+      )
+      .catch(() => {});
+    if (page.url().includes('/auth')) {
+      const chooser = page.getByText('اختر مؤسستك').first();
+      if ((await chooser.count()) === 0) {
+        throw new Error(`login did not leave /auth (${page.url()})`);
+      }
+      choseInstitution = true;
+      /* The chooser's options are the numbered institution seats ("[01]
+         <institution> · <role>"); the names differ per account (measured:
+         «مساحة عمل أُلارا التجريبية» vs «مساحة عمل تجريبية ثانية»), so the
+         belt commits to the FIRST seat — the same free choice the visitor
+         makes — instead of pinning one institution's label. */
+      const firstSeat = page.getByRole('button').filter({ hasText: /\[01\]/ }).first();
+      if ((await firstSeat.count()) > 0) {
+        await firstSeat.click();
+      } else {
+        await page.getByRole('button').first().click();
+      }
+      await page.waitForURL((u) => !u.pathname.startsWith('/auth'), {
+        timeout: NAV_TIMEOUT_MS,
+      });
+    }
     if (!page.url().startsWith(`${BASE}${expectedHome}`)) {
       throw new Error(`landed on ${page.url()} — expected ${BASE}${expectedHome}`);
     }
@@ -105,7 +145,7 @@ for (const account of TEST_ACCOUNTS) {
     await page.waitForLoadState('networkidle').catch(() => {});
     await page.screenshot({ path: shot, fullPage: false });
     const ms = Date.now() - startedAt;
-    results.push({ email: account.email, job: account.job, role: account.role, ok: true, ms, screenshot: shot });
+    results.push({ email: account.email, job: account.job, role: account.role, ok: true, choseInstitution, ms, screenshot: shot });
     console.log(`✓ ${account.email.padEnd(24)} ${account.role.padEnd(8)} ${String(ms).padStart(6)}ms  ${shot}`);
   } catch (err) {
     failed += 1;

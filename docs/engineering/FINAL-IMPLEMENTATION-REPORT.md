@@ -130,6 +130,16 @@ Run in the worktree at `647d044` + this change set.
   documents this overrun). Its window was raised 8s → 15s with the ±60px
   tolerance untouched — a flake tolerance, not a weakened assertion.
 
+- The Login UI acceptance belt (`scripts/e2e/login-all.mjs`, 12 accounts typed
+  manually against production) had been **cancelled on every earlier commit** by
+  the per-ref concurrency group; on `d6ac9b7` it finally ran to completion and
+  failed. Cause, reproduced locally: login succeeds but a multi-membership
+  account lands on the r178 institution chooser («اختر مؤسستك», the r347
+  `c433d2b` contract), while the belt asserted an immediate dashboard. The belt
+  now commits the first institution seat — the same choice the visitor makes —
+  and records `choseInstitution` per account. Measured locally: **12/12 pass**
+  (~2.5–3.8 s each).
+
 ### Not executed (reported as not run, never as passed)
 
 - Playwright e2e belts (`test:e2e`, `test:r305`, `ios-webkit`).
