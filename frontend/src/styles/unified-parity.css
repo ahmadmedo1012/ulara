@@ -405,7 +405,7 @@
     --neutral-500: #72726F;
     --neutral-700: #414140;          /* ink-secondary (the reference's own) */
     --neutral-800: #333330;
-    --neutral-900: #262019;          /* ink — the charcoal, 13.57:1 on paper (AAA) */
+    --neutral-900: #1A1713;          /* ink — the approved 2026-11-21 ink, 15.84:1 on paper (AAA) */
 
     /* the 9 section-color families — near-neutral grounds + teal-family
        inks (r195 egn re-key; --c-mint-ink IS the brand teal, so the
@@ -454,34 +454,34 @@
        R313: accent-fg is WHITE — the reference's own labels on the
        #C43E16 fill (3.76:1, AA-large; superseded "never white" rule;
        small Arabic accent labels get weight ≥600 + size ≥14px). */
-    --accent:        #C43E16;              /* 3.46:1 paper / 3.76:1 surface — UI/large (AA-large) */
-    --accent-hover:  #A83514;
-    --accent-soft:   #F8E3D8;
-    --accent-strong: #8F2F0F;               /* 7.02:1 on paper — deep tier */
-    --accent-fg:     #FFFFFF;               /* R313: white labels on the vivid fill — the reference's recipe */
-    --accent-ink:    #A33312;  /* text-safe signal ink — 5.06:1 ground / 5.50:1 surface */
+    --accent:        #2540D9;              /* the approved PRIMARY — 6.62:1 paper, AA as text */
+    --accent-hover:  #1B30B0;              /* white label on it 10.02:1 */
+    --accent-soft:   #E4E9FF;              /* primary subtle — the blue reads 6.18:1 on it */
+    --accent-strong: #1B30B0;              /* deep tier */
+    --accent-fg:     #FFFFFF;              /* white labels on the primary — 7.46:1 */
+    --accent-ink:    #2540D9;  /* the primary is its own AA text ink on paper (6.62:1) */
 
     /* the focus ring clears >=3:1 on every adjacent light surface —
        #A33312 (5.16:1 paper); dark resolves the cascade to #FF7E52. */
-    --state-focus-ring-color: #A33312;
+    --state-focus-ring-color: #2540D9;
 
-    --success:      var(--c-mint-ink);     /* #3F8F5C — the success green */
+    --success:      #17724A;               /* approved success green — 5.26:1 paper */
     --success-soft: var(--c-mint-bg);
     --warning:      var(--c-yellow-ink);   /* #A8750F */
     --warning-soft: var(--c-yellow-bg);
-    --danger:       var(--c-rose-ink);     /* #F15534 — the coral */
+    --danger:       #C62828;               /* approved danger red — 4.99:1 paper */
     --danger-soft:  var(--c-rose-bg);
     --info:         var(--c-sky-ink);      /* #4A7FA8 */
     --info-soft:    var(--c-sky-bg);
 
     /* status INKS for text (deep shades — all >=7.2:1 on their tints) */
-    --success-ink: var(--c-mint-deep);     /* #1B5430 */
+    --success-ink: #17724A;                /* 5.26:1 on paper */
     --warning-ink: var(--c-yellow-deep);   /* #5E420C */
-    --danger-ink:  var(--c-rose-deep);     /* #8C230A */
+    --danger-ink:  #C62828;                /* 4.99:1 on paper */
     --info-ink:    var(--c-sky-deep);      /* #1F4968 */
 
-    /* label on a --danger fill (r305: the coral #F15534 + warm-ink 5.10:1) */
-    --danger-fg:   var(--warm-ink);
+    /* label on a --danger fill (white on #C62828 = 5.62:1) */
+    --danger-fg:   #FFFFFF;
 
     /* (r148-d: --brand retired with the canon — zero consumers;
        --brand-purple stays, the one live brand slot) */
@@ -610,7 +610,7 @@
     --text-secondary: var(--neutral-700);
     --text-muted:  var(--neutral-500);
     --text-faint:  #A2A29D;   /* r305: AA tier, one step under muted — 5.75:1 ground */
-    --text-on-accent: var(--warm-ink);   /* r305: ink on the luminous ember fill — 5.64:1 */
+    --text-on-accent: #262019;   /* ink on the night primary #8AA0FF — 6.56:1 */
     --text-on-dark:   var(--neutral-900);
 
     /* R324 X21 (reviewers A+C, round-2 follow-up): the dark hairline at
@@ -631,12 +631,12 @@
     /* night signal discipline — r305: the FILL is the luminous ember
        (4.73:1 bg; warm-ink labels 5.64:1); --accent-strong is the
        light text tier on dark */
-    --accent:        #FF6B3D;            /* fill — the luminous ember */
-    --accent-hover:  #FF7E52;
-    --accent-soft:   #46221A;
-    --accent-strong: #FFC5AE;            /* 9.72:1 bg — text/ring tier */
-    --accent-fg:     var(--warm-ink);
-    --accent-ink:    #FF8A5F;           /* night text tier — 5.20:1 bg (ULARA Parchment & Sienna re-key; raised off the ember fill) */
+    --accent:        #8AA0FF;            /* the approved night PRIMARY — 6.56:1 on the #262019 ground */
+    --accent-hover:  #4C63F0;            /* white label on it 4.83:1 */
+    --accent-soft:   #2A2F4A;            /* subtle — the primary reads 5.33:1 on it */
+    --accent-strong: #A9B8FF;            /* luminous text tier — 6.85:1 on --accent-soft, 8.43:1 on the ground */
+    --accent-fg:     #262019;            /* ink labels on the primary — 6.56:1 */
+    --accent-ink:    #8AA0FF;           /* the night primary as text — 6.56:1 bg */
     /* r305 — the night ring re-keys to the luminous ember hover tier
        (5.20:1 on the night ground). The grouped light block's #A33312
        would inherit here at 3.2:1-class — under the ring rule. */
@@ -644,18 +644,18 @@
 
     /* the -ink family clears AA on the night ground — same values the
        base tokens already resolve to */
-    --success-ink:  var(--c-mint-ink);
+    --success-ink:  #5FD39A;
     --warning-ink:  var(--c-yellow-ink);
-    --danger-ink:   var(--c-rose-ink);
+    --danger-ink:   #FF7A70;
     --info-ink:     var(--c-sky-ink);
 
-    --danger-fg:    var(--warm-ink);
+    --danger-fg:    #262019;             /* ink on the night danger #FF7A70 — 6.35:1 */
 
-    --success:      var(--c-mint-ink);
+    --success:      #5FD39A;             /* 8.65:1 on the ground */
     --success-soft: var(--c-mint-bg);
     --warning:      var(--c-yellow-ink);
     --warning-soft: var(--c-yellow-bg);
-    --danger:       var(--c-rose-ink);
+    --danger:       #FF7A70;             /* 6.35:1 on the ground */
     --danger-soft:  var(--c-rose-bg);
     --info:         var(--c-sky-ink);
     --info-soft:    var(--c-sky-bg);

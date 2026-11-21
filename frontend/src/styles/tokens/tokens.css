@@ -641,14 +641,15 @@
     --surface-border:  rgba(40,40,40,0.07);
     --surface-divider: rgba(40,40,40,0.05);
 
-    /* The ONE signal: the vivid orange #C43E16 (r305 — the reference's
-       --content--brand, verified live). Links, active states, focus,
-       chart-1. Raw orange is a LARGE-TEXT/UI tone on light (3.53:1 bg ·
-       3.76:1 surface — same class as the reference's own usage);
-       body-size text routes through --accent-ink. Fill labels stay
-       --warm-ink (4.69:1). Gold leaves the accent seat for achievements
-       only — and re-claims the retired copper hexes (circular economy:
-       the old signal IS the new gold). */
+    /* The ONE signal — R351-final (OWNER-APPROVED palette, 2026-11-21):
+       PRIMARY BLUE #2540D9 is the action colour for links, active
+       states, focus and chart-1. It is AA as TEXT on the paper
+       (6.62:1) and AA as a fill with WHITE labels (7.46:1), so the
+       retired era's "large-text-only signal + separate AA ink" split is
+       gone: --accent and --accent-ink are the same approved value.
+       The WARM #F15534 is DECORATIVE only (3.06:1 on paper) — drawings,
+       the cursor ink, the coral alias family; it never labels text,
+       never stands for the action and never for danger. */
 
     /* r305 — label ink on the accent fill → R313: WHITE (the reference
        ships white-on-#C43E16 labels on every measured button recipe;
@@ -662,11 +663,10 @@
        floor was #D92F00 at 4.53 — one step darker for margin). The raw
        --accent stays the fill/stroke tone (3.53:1 — UI-large only). */
 
-    /* r305 — the focus ring clears ≥3:1 against every adjacent light
-       surface (#A33312 = 5.16:1 bg · 5.50:1 surface · 4.48:1 on
-       --accent-soft). Dark re-keys the ring to its luminous hover tier
-       (see the night block). */
-    --state-focus-ring-color: #A33312;
+    /* The focus ring clears ≥3:1 against every adjacent light surface
+       (the primary #2540D9 = 6.62:1 bg · 5.5:1-class surface).
+       Dark re-keys the ring to its luminous hover tier (night block). */
+    --state-focus-ring-color: #2540D9;
 
     /* Status INK tokens for TEXT usages — the deep "text-on-pastel"
        shades of the same families (all ≥7.2:1 on their tints and ≥7:1
@@ -674,10 +674,10 @@
        7.22:1, sky-deep 7.74:1. */
 
 
-    /* Label ink ON A --danger FILL: r305 — the danger fill is the coral
-       #F15534 and warm-ink labels read 5.10:1 (white would be 3.45:1).
-       Consumed by .btn.danger + notif-badge via --_btn-fg. */
-    --danger-fg:   var(--warm-ink);
+    /* Label ink ON A --danger FILL: the approved danger is #C62828 and a
+       WHITE label reads 5.62:1 on it. Consumed by .btn.danger +
+       notif-badge via --_btn-fg. */
+    --danger-fg:   #FFFFFF;
 
     --brand-purple:  var(--c-lavender-ink);
     /* r305 — the achievement gold re-claims the retired copper seat
@@ -856,7 +856,29 @@
 
     /* Label ink on the night coral fill (ink #17130E on #FF8E68 =
        7.81:1). Consumed by .btn.danger / notif badge. */
-    --danger-fg:    var(--warm-ink);
+    --danger-fg:    #262019;   /* 6.35:1 on the night danger fill #FF7A70 */
+
+    /* R351-final — the approved night palette: the primary is the
+       luminous blue #8AA0FF (6.56:1 on the #262019 ground; ink labels
+       on it 6.56:1), hover #4C63F0 (white on it 4.83:1), subtle
+       #2A2F4A (the blue reads 5.33:1 against it). Status: success
+       #5FD39A (8.65:1), danger #FF7A70 (6.35:1). The warm #F15534
+       stays decorative. */
+    --accent:        #8AA0FF;
+    --accent-hover:  #4C63F0;
+    --accent-soft:   #2A2F4A;
+    /* the TEXT/icon tier in dark is the LUMINOUS one (the app's
+       --accent-strong carries small text): #A9B8FF reads 6.85:1 on
+       --accent-soft and 8.43:1 on the ground — the dark mirror of the
+       light block's deep tier. */
+    --accent-strong: #A9B8FF;
+    --accent-fg:     #262019;
+    --accent-ink:    #8AA0FF;
+    --text-on-accent:#262019;
+    --success:       #5FD39A;
+    --success-ink:   #5FD39A;
+    --danger:        #FF7A70;
+    --danger-ink:    #FF7A70;
 
     --brand-purple:  var(--c-lavender-ink);
 
@@ -1188,7 +1210,7 @@
       --neutral-500: #72726F;
       --neutral-700: #414140;
       --neutral-800: #333330;
-      --neutral-900: #262019;
+      --neutral-900: #1A1713;
       /* light families (the r305 re-key) */
       --c-peach-bg:     #FCE5DE;  --c-peach-ink:    #F15534;  --c-peach-deep:    #9C2B0F;
       --c-mint-bg:      #E3EBE1;  --c-mint-ink:     #3F8F5C;  --c-mint-deep:     #1B5430;
@@ -1203,12 +1225,16 @@
       --text-muted:     #62625F;
       --text-faint:     #70706A;
       --text-on-accent: #FFFFFF;
-      --accent-hover:   #D92F00;
+      /* R351-final — the OWNER-APPROVED palette: the action colour is
+         PRIMARY BLUE #2540D9 (white labels 7.46:1, 6.62:1 on paper);
+         the warm #F15534 is DECORATIVE only (3.06:1 — never a label,
+         never danger, never the action). */
+      --accent-hover:   #1B30B0;   /* white on it 10.02:1 */
       --accent-fg:      #FFFFFF;
-      /* print rides the orange seat */
-      --accent:          #C43E16;
-      --accent-strong:   #A32400;
-      --state-focus-ring-color: #A33312;
+      --accent:          #2540D9;  /* the primary action */
+      --accent-soft:     #E4E9FF;  /* primary subtle (accent on it 6.18:1) */
+      --accent-strong:   #1B30B0;
+      --state-focus-ring-color: #2540D9;
       --border-faint:   rgba(40,40,40,0.06);
       --surface-border: rgba(40,40,40,0.06);
       --surface-divider: rgba(40,40,40,0.05);
@@ -1216,13 +1242,17 @@
       --gold:           #B57438;
       /* text-safe inks: dark maps them to the -ink shades; light uses
          the deeper -deep shades so status text stays ≥4.5:1 on paper */
-      --accent-ink:  #A33312;
-      --success-ink: var(--c-mint-deep);
+      /* the primary is AA as TEXT on paper (6.62:1) — no darker text
+         tier is needed, unlike the retired 3.46:1 sienna */
+      --accent-ink:  #2540D9;
+      --success:      #17724A;   /* 5.26:1 on paper · white label 5.93:1 */
+      --success-ink: #17724A;
       --warning-ink: var(--c-yellow-deep);
-      --danger-ink:  var(--c-rose-deep);
+      --danger:      #C62828;   /* 4.99:1 on paper · white label 5.62:1 */
+      --danger-ink:  #C62828;
       --info-ink:    var(--c-sky-deep);
       --gold-ink:    #8F5A28;
-      --danger-fg:   var(--warm-ink);
+      --danger-fg:   #FFFFFF;   /* 5.62:1 on the light danger fill */
     }
   }
 }
@@ -1428,7 +1458,11 @@
   --rule: #B3B3AF;
   --border: #B3B3AF;
   --border-strong: #B3B3AF;
-  --accent: #F15534;
+  /* R351-final: the landing's scoped arm no longer re-points the accent
+     at the warm coral — the ONE action colour is the approved primary
+     blue in every arm. #F15534 survives as the DECORATIVE warm accent
+     (--c-coral-ink below, drawings, cursor ink). */
+  --accent: #2540D9;
   /* R342 integration (a11y fix) — the token contract's TEXT-safe
      accent: small accent TEXT routes through the AA ink, never the raw
      coral (#F15534 is a 3.07:1 large-text/UI tone on the landing paper
@@ -1439,8 +1473,8 @@
      tag, the platform frame tags) now resolve the AA ink again. The
      dark arm keeps the luminous coral (4.95:1 on the charcoal — AA).
      Fills keep the coral: --accent is untouched. */
-  --accent-ink: #A33312;
-  --accent-strong: #E04422;
+  --accent-ink: #2540D9;
+  --accent-strong: #1B30B0;
   --c-coral-ink: #F15534;
   --preloader-exit-ground: #B3B3AF;
 }
@@ -1457,7 +1491,7 @@
   --rule: #4A4A48;
   --border: #4A4A48;
   --border-strong: #5C5C5A;
-  --accent: #F15534;
-  --accent-ink: #F15534;
+  --accent: #8AA0FF;
+  --accent-ink: #8AA0FF;
   --preloader-exit-ground: #4A4A48;
 }
