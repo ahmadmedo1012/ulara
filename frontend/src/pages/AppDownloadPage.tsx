@@ -187,7 +187,15 @@ export function AppDownloadPage() {
             <div className="ap-cell">
               <div className="ap-qr">
                 <img
-                  src="/media/app/qr-app-page.svg"
+                  /* R349 (wave 3 · the QR's honest extension): the asset
+                   * shipped since ULARA 1.0 as .svg while carrying PNG
+                   * bytes — servers answer image/svg+xml, the browser's
+                   * SVG parser refuses the binary magic, and the code
+                   * rendered as a broken image on every environment
+                   * (localhost + production alike). The file keeps its
+                   * PNG identity under its true extension; only this
+                   * page mounts it (pinned by the r349 belt's QR pin). */
+                  src="/media/app/qr-app-page.png"
                   alt="رمز QR يؤدي إلى صفحة تنزيل تطبيق أُلارا"
                   width={168}
                   height={168}

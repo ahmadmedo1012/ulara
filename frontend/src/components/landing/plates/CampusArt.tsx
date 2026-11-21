@@ -314,7 +314,25 @@ export function CampusFrag({ name }: { name: CampusFragName }) {
           <g className="iso-leader">
             <Leader from={iso(28, 28, 23)} to={{ x: 44, y: -44 }} text="المكتبة البحثية" textAnchor="start" />
             <Leader from={iso(50.5, 29.5, 17)} to={{ x: 90, y: 60 }} text="مرصد الجودة" textAnchor="start" />
-            <Leader from={iso(28, 54, 2)} to={{ x: -56, y: 112 }} text="ساحة المجتمع" textAnchor="start" />
+            {/* R349 (wave 3 · the label's clear seat): the wave-1
+             * end-anchor closed the frame clip but landed the phrase
+             * on the scale bar's ink (the bar's solid segment starts
+             * at sheet x=+6; the end-anchored phrase ran to +18.5 —
+             * the alif of «ساحة» merged with the bar's left end) and
+             * the leader's vertical drop at x=-56 crossed «ميدان
+             * التدريب»'s letterforms (its text spans −92…−18.9 at the
+             * same y-band the vertical passes through). The re-seat
+             * drops the phrase INTO THE CLEAR BAND between «مرصد
+             * الجودة»'s ink (bottom ≈ y58) and the scale bar's
+             * numerals (ink from ≈ y87): the dot moves to the plaza's
+             * south corner, the leader descends at x=−12 — right of
+             * «ميدان التدريب»'s last glyph by ≈7 sheet units — and
+             * the end-anchored phrase reads rightward from there
+             * (−12…+62.5, baseline 80), mirroring «ميدان»'s own
+             * leader-at-the-left-edge grammar. Every collision is
+             * closed with ≥2 sheet units of clearance; pinned by the
+             * r349 belt's label-clearance pins. */}
+            <Leader from={iso(37, 54, 2)} to={{ x: -12, y: 86 }} text="ساحة المجتمع" textAnchor="end" />
             <Leader from={iso(10, 31, 4)} to={{ x: -92, y: 62 }} text="ميدان التدريب" textAnchor="end" />
           </g>
         </g>

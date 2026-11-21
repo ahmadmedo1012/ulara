@@ -1467,7 +1467,11 @@
      3.84rem group above (roles.css owns the 8rem rung now). */
 
   .fo-cta {
-    padding-block: 12rem 8rem; /* spacing-gate: allow — the closer opens at the scene's rung, closes at the quiet rung */
+    /* R349 (C1): the closer's desktop rungs step down with the band's
+     * own rhythm pass (cta.css) — the platezone above opens the band
+     * and the registry strip closes it; the old 12/8rem voids held
+     * half a screen of air around a one-line resolve. */
+    padding-block: 9rem 4.8rem; /* spacing-gate: allow — the closer's compact rung */
   }
 }
 

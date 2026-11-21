@@ -29,25 +29,14 @@ import { RevealCssClass } from '../../../hooks/useReveal';
 import { Logo } from '../../../brand';
 import { BRAND_LABEL, LOGIN } from '../copy';
 
-/* the small-link rows under the brand block — our honest platform
- * index: [to, label] */
-const BRAND_ROWS: [string, string][][] = [
-  [
-    ['/capabilities', 'ما يعمل اليوم'],
-    ['#product', 'المنصّة'],
-    ['#chapters', 'الفصول'],
-    ['#roles', 'الأدوار'],
-  ],
-  [
-    ['/colleges', 'الكليات'],
-    ['#statement', 'البيان'],
-    ['#live', 'التحديات'],
-  ],
-  [
-    ['#vision', 'الرؤية'],
-    ['/campus', 'الحياة الجامعية'],
-  ],
-];
+/* R349 (D1 · the colophon's dedupe): the four small-link rows that
+ * lived under the brand block are RETIRED — every one of their doors
+ * (المنصّة/الفصول/الأدوار/الكليات/البيان/التحديات/الرؤية/الحياة
+ * الجامعية) already lives in col2's ruled index groups. The audited
+ * defect — «repeated navigation strings» — read as two competing
+ * sitemaps; ONE index (col2) carries the map now, col1 keeps the
+ * identity + the honest independence paragraph + the early-access
+ * door (the reference's own col1 grammar: tagline + subscribe). */
 
 /* the col2 index: three groups of four (top row) — mono label + links,
  * the FIRST link of the first group carries the accent ink */
@@ -82,16 +71,14 @@ const INDEX_TOP: { label: string; links: [string, string][] }[] = [
   },
 ];
 
-/* the col2 bottom CHANNELS group: single-line door links — [to, label],
- * all real public routes */
-const CHANNEL_LINKS: [string, string][] = [
-  ['/contact', 'التواصل'],
-  ['/about', 'عن أُلارا'],
-  ['/help', 'المساعدة'],
-  ['/legal/data', 'البيانات'],
-  ['/legal/privacy', 'الخصوصية'],
-  ['/legal/terms', 'الشروط'],
-];
+/* R349 (D3 · the channels retirement): the col2 CHANNELS group is
+ * RETIRED — every one of its six doors (التواصل/عن أُلارا/
+ * المساعدة/البيانات/الخصوصية/الشروط) already lives verbatim in the
+ * pinned ten-door legal row under the © bar. The audit's «repeated
+ * navigation strings» finding read the pair as a second sitemap;
+ * ONE index (col2's ruled groups) + ONE policy row (the r321 §A2
+ * contract) carry every public door now — no information lost, one
+ * full link row saved at every width. */
 
 /* R336 B2 (brand unification): the col3 hand-authored "construction
  * mark" (the MARK_PATHS orbit drawing — a SECOND visual identity that
@@ -135,22 +122,8 @@ export function Footer({ year }: { year: number }) {
                     gate) */}
                 <p className="fo-footer-about">منصّة تعليمية تقنية مستقلّة، عربية أولًا. لا تنتمي إلى أيّ مؤسّسة تعليمية ولا تمثّلها؛ وبيانات العرض داخلها تخصّ «مساحة عمل أُلارا التجريبية» — مساحة اصطناعية بالكامل لأغراض العرض، لا تحاكي أي جامعة.</p>
               </div>
-              {BRAND_ROWS.map((row, i) => (
-                <div className="fo-brow" key={i}>
-                  {/* r341 (t05 · SPA links): route rows are router <Link>
-                      seats (no full document reload); in-page #fragment
-                      rows stay raw anchors — the browser's own scroll
-                      grammar, same convention as Statement's #chapters /
-                      Product's #cta pills. */}
-                  {row.map(([to, label]) =>
-                    to.startsWith('#') ? (
-                      <a key={to} href={to} className="fo-ilink">{label}</a>
-                    ) : (
-                      <Link key={to} to={to} className="fo-ilink">{label}</Link>
-                    ),
-                  )}
-                </div>
-              ))}
+              {/* R349 (D1): the duplicated small-link rows retired —
+                  col2's ruled index owns the whole sitemap now. */}
             </div>
             <div className="fo-c1-sub">
               <div className="fo-mono-label">[ EARLY ACCESS ]</div>
@@ -172,11 +145,11 @@ export function Footer({ year }: { year: number }) {
                   }}
                 >
                   <div className="fo-form-copy">
+                    {/* R349 (D2): one line — the address rides to the
+                        contact page; the no-mailing-list disclosure
+                        stays (the honest claim, half the words). */}
                     <div className="fo-form-line">
-                      أدخل بريدك الجامعي ليصل بك رابط التسجيل المبكر
-                    </div>
-                    <div className="fo-form-line">
-                      عبر صفحة التواصل — لا قائمة بريدية عامة في الإطلاق التجريبي
+                      أدخل بريدك الجامعي — نوصله بصفحة التواصل، لا قائمة بريدية عامة
                     </div>
                   </div>
                   <div className="fo-form-row">
@@ -254,31 +227,18 @@ export function Footer({ year }: { year: number }) {
                 <div className="fo-mono-label">CONTACT</div>
                 {/* the contact cell — the /contact door under its own
                     التواصل heading (the honest prose lives on the page;
-                    the footer carries the door) */}
+                    the footer carries the door) — R349 (D2): one line */}
                 <h3 className="fo-contact-h">التواصل</h3>
                 <Link to="/contact" className="fo-biglink">
-                  التواصل والتسجيل المبكر
-                  <br />
-                  صفحة واحدة — بلا بريد عام
+                  التواصل والتسجيل المبكر — صفحة واحدة
                 </Link>
               </div>
               <div className="fo-lgroup">
                 <div className="fo-mono-label">ADDRESS</div>
+                {/* R349 (D2): the REGION row retired — the independence
+                    claim lives verbatim in col1's paragraph; the address
+                    keeps its one honest door. */}
                 <Link to="/about" className="fo-link">مساحة عمل أُلارا التجريبية</Link>
-                <div className="fo-rule" aria-hidden="true" />
-                <div className="fo-mono-label">REGION</div>
-                <Link to="/about" className="fo-link">منصّة مستقلّة — لا تنتمي لأي جهة</Link>
-              </div>
-              <div className="fo-lgroup">
-                <div className="fo-mono-label">CHANNELS</div>
-                <div className="fo-socials">
-                  {/* r341 (t05 · SPA links): every channels door is a
-                      real public route — router <Link>, same
-                      keys/classes/labels. */}
-                  {CHANNEL_LINKS.map(([to, label]) => (
-                    <Link key={to} to={to} className="fo-social">{label}</Link>
-                  ))}
-                </div>
               </div>
             </div>
           </div>

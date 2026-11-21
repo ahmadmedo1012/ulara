@@ -368,12 +368,31 @@ html[data-theme='dark'] .fo-cta .fo-text-link {
 }
 
 /* ── base (phone ≤767): the ledger stacks its bands full-width; the
-   rail/side cells collapse to gutters, the rules stay. ── */
+   rail/side cells collapse to gutters, the rules stay.
+   R349 (C2 · the parked-sketch retirement): the sketch band's phone
+   seat is RETIRED — the T-10d2 pattern parked the sketch CONTENT
+   (frame/holder/art at 0×0) and kept a 13.91rem paper row painted
+   only by the gradient veil, which read on-device as an EMPTY BOX on
+   the conversion screen (the audit's worst mobile finding). The
+   resolve now hands the registry strip the band directly; the sketch
+   itself still draws ≥768 where it holds real ink. The DOM seat
+   stays (the r321 §A6 decor-family sweep reads it) — CSS retires
+   the row. ── */
 .fo-cta-ledger {
   display: grid;
-  /* T-10d2: the reference's phone rungs — 60/302/138 on the 9.92 root
-     (band-top 6.05rem · title band 30.44rem · sketch 13.91rem). */
-  grid-template-rows: 6.05rem 30.44rem 13.91rem;
+  /* T-10d2: the reference's phone rungs — 60/302 on the 9.92 root
+     (band-top 6.05rem · title band 30.44rem; the sketch's 13.91rem
+     row retired with the parked content — R349 C2). */
+  grid-template-rows: 6.05rem 30.44rem;
+}
+
+@media (max-width: 767px) {
+  /* the compound selector out-specifies the later `.fo-cta-band`
+   * base (the element carries both classes — a bare
+   * `.fo-cta-band-sketch` rule would lose the cascade to it). */
+  .fo-cta-band.fo-cta-band-sketch {
+    display: none;
+  }
 }
 
 .fo-cta-band {
@@ -615,22 +634,31 @@ html[data-theme='dark'] .fo-cta .fo-text-link {
   }
 }
 
-/* ── desktop (≥992): the 83.75rem floor — 9.6 + 27.6 + 1fr(46.55) ── */
+/* ── desktop (≥992): the 83.75rem floor — 9.6 + 27.6 + 1fr(46.55) ──
+ * R349 (C1 · the resolve's rhythm): the floor and the sketch row step
+ * down — the anchor's breathing space halves (33.47 → 12rem: the
+ * platezone above already opens the band) and the sketch band trades
+ * its 1fr(46.55rem) seat for a 30rem cap (the drawing letterboxes at
+ * its own aspect inside the holder — nothing crops). Measured band:
+ * 1332 → ~950px @1440, the reference's own cta economy approached
+ * without losing a single seat. */
 @media (min-width: 992px) {
   .fo-cta {
-    min-block-size: 83.75rem;
+    min-block-size: 59.6rem;
+    /* R349 (C1): the desktop section pads step to the resolve's own
+     * compact rung — the platezone opens the band, the registry strip
+     * closes it; the old sp-10/sp-8 void retired with the 33.47rem
+     * anchor gap. */
+    padding-block: var(--sp-6) var(--sp-5);
   }
 
   .fo-cta-frame {
-    /* the reference anchor→frame 506/380/270 @1920/1440/1024 (we held
-       134/101/72): the fluid root scales the gap with the viewport —
-       +33.47rem of it lands all three rungs within a px. */
-    margin-block-start: 33.47rem;
+    margin-block-start: 6rem;
     margin-inline: -2.82rem;
   }
 
   .fo-cta-ledger {
-    grid-template-rows: 9.6rem 27.6rem minmax(46.5rem, 1fr);
+    grid-template-rows: 6rem 27.6rem 26rem;
   }
 
   .fo-cta-band {
@@ -997,7 +1025,10 @@ html[data-theme='dark'] .fo-cta .fo-text-link {
   flex-direction: column;
   align-items: center;
   gap: 1.6rem;
-  padding-block: var(--sp-9) var(--sp-7);
+  /* R349 (C1): the platezone's own band pads step down two rungs —
+   * the outlined wordmark keeps its breathing space, the void above
+   * and below it stops holding half a screen. */
+  padding-block: var(--sp-6) var(--sp-4);
   pointer-events: none;
 }
 
@@ -1009,7 +1040,7 @@ html[data-theme='dark'] .fo-cta .fo-text-link {
 
 .fo-cta-plate-word {
   font-family: var(--font-display);
-  font-size: clamp(4.8rem, 9vw, 12rem);
+  font-size: clamp(4.8rem, 9vw, 9rem);
   font-weight: 700;
   line-height: 1.15;
   letter-spacing: 0;
