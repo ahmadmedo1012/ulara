@@ -250,3 +250,31 @@ and mobile drawer keep it). The spec rode the collapsed default at 1280×800 and
 timed out (CI + locally reproduced). Fix: the journey expands the rail first
 («توسعة القائمة»), then drives the labeled 3-way — the same hands' order a
 user takes. Local: 1 passed (5.7s).
+
+## Session 2 — final verification (2026-11-21, HEAD 156772d)
+
+- **Full verify.sh (not --fast): ALL GREEN** locally (tsc src+tests · vitest 3014 ·
+  bundle 756.4/770 · css ratchet · logo · axe a11y · design gates · lint · e2e).
+- **CI on HEAD: 10/11 jobs green** — lint · design gates · E2E iOS (WebKit) ·
+  **E2E hermetic journeys ✓ (after the theme-persistence fix)** · typecheck src+tests ✓ ·
+  backend tests ✓ · frontend tests ✓ · build ✓ · DB integration ✓ · surface drift ✓ ·
+  deadcode ✓ · size gate ✓ · Deploy (Vercel) ✓ · Deploy smoke ✓.
+- **Vercel production READY**; live-site browser health (7 routes): 0 console errors,
+  0 page errors, 0 failed requests.
+- **The one red: Zero-trace (history)** — one B0-era commit message matches the retired
+  pattern; scrubbing it requires a one-time history rewrite + force-push, forbidden by
+  r350 rule 0.7. Owner decision #2. Content and file names are clean (verified).
+
+### Session 2 evidence index
+- Commits: `f70d6c9` (LOG backfill) · `a439ea9` (B1 sweep + corpus) · `b33dce4` (B2 part 1) ·
+  `0227904` (CI repairs + zero-trace rename) · `7870e07` (shots quantized) · `a14f98c`
+  (B7 docs) · `c73a941` (B4 path-filter) · `a28d033` (B3 audit + dark/RM sweep) ·
+  `f4a2834` (review fixes) · `156772d` (theme-persistence fix).
+- NOT MEASURED / not done here, with reasons: EAS workflows health (no Expo MCP /
+  eas session in this sandbox; the brief's EXPO token was not validated); B2 part 2
+  (mobile copy micro-cuts); B4's photo-displacement filter + journey-scrub deltas vs the
+  recorded 13,255px choreography + barba-curve verification; B5/B6 audits; B3's
+  near-duplicate page merge. All handed to the next session in HANDOFF.md.
+- Owner decisions pending: (1) §8 demo panel (patch ready, unpushed);
+  (2) one-time history rewrite authorization (zero-trace); (3) EAS health check;
+  (4) rotate ALL tokens pasted in chat (they transit the conversation).
