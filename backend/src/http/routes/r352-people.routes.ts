@@ -108,6 +108,26 @@ router.post(
             409,
           );
         }
+        // Link integrity (the §3.2 rule the grant surface already enforces):
+        // the account must be an ACTIVE member of THIS institution — never
+        // a foreign user, never a dangling id (this also keeps the FK
+        // violation path unreachable; unknown ids fail as a clean 400).
+        const membership = await prisma.membership.findFirst({
+          where: {
+            userId: input.userId,
+            institutionId,
+            isActive: true,
+            institution: { status: 'ACTIVE' },
+          },
+          select: { id: true },
+        });
+        if (!membership) {
+          throw new AppError(
+            'USER_NOT_MEMBER',
+            'لا يمكن ربط السجل الشخصي بمستخدم ليس عضوًا نشطًا في هذه المؤسسة',
+            400,
+          );
+        }
       }
       const person = await prisma.$transaction(async (tx) => {
         const created = await tx.institutionalPerson.create({

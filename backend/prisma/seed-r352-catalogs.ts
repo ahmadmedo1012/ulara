@@ -64,7 +64,7 @@ const POSITION_TEMPLATES = [
   // 2/2018 م20)؛ الكاتب العام مسمى إداري أوسع دون أساس نصي جامعي محدد.
   { code: 'SECRETARY_GENERAL', titleAr: 'الأمين العام', titleEn: 'Secretary general (university)', category: 'ADMINISTRATIVE_LEADERSHIP' as const, scopeRequirement: null, allowedUnitTypes: [] as string[], eligibleInstitutionTypeCodes: ['UNIVERSITY'], legalBasis: 'قانون 2/2018 م20؛ قانون 4/2020 م19' },
   { code: 'GENERAL_SECRETARY', titleAr: 'الكاتب العام', titleEn: 'General secretary (administrative)', category: 'ADMINISTRATIVE_LEADERSHIP' as const, scopeRequirement: null, allowedUnitTypes: [] as string[], eligibleInstitutionTypeCodes: [], legalBasis: null },
-  { code: 'REGISTRAR_GENERAL', titleAr: 'المسجل العام', titleEn: 'Registrar general', category: 'ADMINISTRATIVE_LEADERSHIP' as const, scopeRequirement: 'REGISTRAR_OFFICE', allowedUnitTypes: ['REGISTRAR_OFFICE'], eligibleInstitutionTypeCodes: [], legalBasis: 'قانون 2/2018 م13، م21؛ قانون 4/2020 م12، م20' },
+  { code: 'REGISTRAR_GENERAL', titleAr: 'المسجل العام', titleEn: 'Registrar general', category: 'ADMINISTRATIVE_LEADERSHIP' as const, scopeRequirement: 'REGISTRAR_OFFICE', allowedUnitTypes: ['REGISTRAR_OFFICE'], eligibleInstitutionTypeCodes: ['UNIVERSITY'], legalBasis: 'قانون 2/2018 م13، م21؛ قانون 4/2020 م12، م20' },
   // Faculty/department leadership.
   { code: 'FACULTY_DEAN', titleAr: 'عميد الكلية', titleEn: 'Dean (university faculty)', category: 'FACULTY_LEADERSHIP' as const, scopeRequirement: 'FACULTY', allowedUnitTypes: ['FACULTY'], eligibleInstitutionTypeCodes: ['UNIVERSITY'], legalBasis: 'قانون 9/2026 م25 (النسخة المعدَّلة لم25 من قانون 4/2020)' },
   // §10.3 (hardening): a technical college represented as a COLLEGE unit

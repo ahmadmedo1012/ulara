@@ -33,7 +33,9 @@ import { requireInstitution } from '../middleware/institution.js';
 import { validate } from '../validate.js';
 import { AppError } from '../../lib/errors.js';
 import { buildMeta } from '../../lib/pagination.js';
-import { MINUTES_TRANSITIONS, RESOLUTION_TRANSITIONS, transitionAllowed } from '../../lib/lifecycle-rules.js';
+import {
+  COUNCIL_TRANSITIONS, MINUTES_TRANSITIONS, RESOLUTION_TRANSITIONS, transitionAllowed,
+} from '../../lib/lifecycle-rules.js';
 import { assertCapabilityForUnit, assertCapabilityIn } from '../../lib/permissions.js';
 import { governanceKeyInstitution } from '../../lib/tenant-guards.js';
 import {
@@ -74,6 +76,21 @@ async function requireMeeting(institutionId: string, meetingId: string) {
     throw AppError.notFound('الاجتماع المطلوب غير موجود');
   }
   return meeting;
+}
+
+/**
+ * §7.2 write floor: memberships and meetings may only be created on an
+ * ACTIVE council — a DISSOLVED organ accepts no new operative records
+ * (its history stays readable), a CANCELLED one is not operating either.
+ */
+function assertCouncilActive(status: string): void {
+  if (status !== 'ACTIVE') {
+    throw new AppError(
+      'COUNCIL_NOT_ACTIVE',
+      'المجلس غير نشط — لا يمكن إضافة أعضاء أو اجتماعات لمجلس محلول أو ملغى',
+      409,
+    );
+  }
 }
 
 async function requirePersonInInstitution(institutionId: string, personId: string) {
@@ -224,6 +241,18 @@ router.patch(
       const institutionId = req.institution!.id;
       const council = await requireCouncil(institutionId, req.params.id!);
       const input = req.body as z.infer<typeof councilUpdateSchema>;
+      // D16 lifecycle: the organ's status rides COUNCIL_TRANSITIONS —
+      // DISSOLVED is terminal (a successor is a new council), CANCELLED
+      // is clerically reversible (the INSPECTION/CORRECTIVE precedent).
+      if (input.status !== undefined && input.status !== council.status) {
+        if (!transitionAllowed(COUNCIL_TRANSITIONS, council.status as 'ACTIVE', input.status)) {
+          throw new AppError(
+            'COUNCIL_INVALID_TRANSITION',
+            'انتقال حالة المجلس غير مسموح',
+            409,
+          );
+        }
+      }
       if (input.orgUnitId) {
         const unit = await prisma.organizationalUnit.findUnique({
           where: { id: input.orgUnitId },
@@ -272,6 +301,7 @@ router.post(
       const council = await requireCouncil(institutionId, req.params.id!);
       await assertCouncilsManageForUnit(req.user!.id, req.user!.role, institutionId, council.orgUnitId);
       const input = req.body as z.infer<typeof councilMembershipCreateSchema>;
+      assertCouncilActive(council.status);
       await requirePersonInInstitution(institutionId, input.personId);
       if (input.startDate && input.endDate && input.endDate < input.startDate) {
         throw new AppError('APPOINTMENT_DATES_INVALID', 'تاريخ نهاية العضوية يسبق تاريخ بدئها', 400);
@@ -372,6 +402,7 @@ router.post(
       const institutionId = req.institution!.id;
       const council = await requireCouncil(institutionId, req.params.id!);
       await assertCouncilsManageForUnit(req.user!.id, req.user!.role, institutionId, council.orgUnitId);
+      assertCouncilActive(council.status);
       const input = req.body as z.infer<typeof meetingCreateSchema>;
       if (input.seqNumber) {
         const clash = await prisma.councilMeeting.findUnique({

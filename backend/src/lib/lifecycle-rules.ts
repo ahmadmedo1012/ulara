@@ -140,6 +140,20 @@ export const RESEARCH_PROJECT_TRANSITIONS: TransitionTable<ResearchProjectState>
 export type ResearchProjectState =
   | 'PROPOSED' | 'APPROVED' | 'ACTIVE' | 'SUSPENDED' | 'COMPLETED' | 'TERMINATED';
 
+/**
+ * Council (the organ) lifecycle — D16. DISSOLVED is the legal terminal
+ * state (a dissolution decision ends the organ; a successor council is
+ * a NEW row, never a reactivation). CANCELLED is the clerical end —
+ * reversible to ACTIVE exactly like the INSPECTION/CORRECTIVE_ACTION
+ * un-cancel precedent; no invented reactivation path for DISSOLVED.
+ */
+export const COUNCIL_TRANSITIONS: TransitionTable<CouncilState> = ({
+  ACTIVE: ['DISSOLVED', 'CANCELLED'],
+  DISSOLVED: [],
+  CANCELLED: ['ACTIVE'],
+});
+export type CouncilState = 'ACTIVE' | 'DISSOLVED' | 'CANCELLED';
+
 /** Generic guard: is `from → to` a legal transition? */
 export function transitionAllowed<S extends string>(
   table: TransitionTable<S>,

@@ -4,8 +4,9 @@
 > directory. This file adds integration notes, permissions, error codes,
 > and known limitations. Backend branch: `r352/institutional-backend`.
 >
-> **Measured state at handoff:** 366 OpenAPI operations (253 before,
-> additive-only); backend unit suite 2102 green + the two twin-belt rows
+> **Measured state at handoff:** 374 OpenAPI operations (253 before,
+> additive-only — the final regeneration in c69361c added the last 8
+> paths); backend unit suite 2102 green + the two twin-belt rows
 > below expected-red; integration suite 150/150 green including the
 > two-institution isolation scenario; OpenAPI + contract snapshot
 > regenerated and committed.
@@ -86,6 +87,12 @@ See API-CONTRACT.md §0. Notables:
   `PROJECT_MEMBER_EXISTS`, `UNIT_ROLE_EXISTS`, `UNIT_ROLE_UNIT_INVALID`,
   `USER_NOT_MEMBER`, `INSTITUTION_KIND_SECTOR_MISMATCH`, `PARENT_CYCLE`,
   `PARENT_SECTOR_MISMATCH`.
+
+Integration round (2026-11-22) additions — council lifecycle guards
+(D16) and the reservation transition split:
+`COUNCIL_INVALID_TRANSITION` (409), `COUNCIL_NOT_ACTIVE` (409),
+`RESERVATION_INVALID_TRANSITION` (409 — previously mis-filed under
+`RESERVATION_OVERLAP`).
 
 ## 4. The ADMIN label change (action needed on your side)
 

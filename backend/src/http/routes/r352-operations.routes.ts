@@ -652,7 +652,7 @@ router.patch(
       const input = req.body as z.infer<typeof reservationUpdateSchema>;
       if (input.status && input.status !== reservation.status) {
         if (!transitionAllowed(RESERVATION_TRANSITIONS, reservation.status as 'REQUESTED', input.status)) {
-          throw new AppError('RESERVATION_OVERLAP', 'انتقال حالة الحجز غير مسموح', 409);
+          throw new AppError('RESERVATION_INVALID_TRANSITION', 'انتقال حالة الحجز غير مسموح', 409);
         }
       }
       const updated = await prisma.$transaction(async (tx) => {

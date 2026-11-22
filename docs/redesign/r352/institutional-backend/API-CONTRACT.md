@@ -34,7 +34,7 @@
 | `QUALITY_INTERNAL_MANAGE` | **nobody by default** — explicit grant only | internal self-assessment writes |
 | `FACILITIES_MANAGE` | ADMIN, OWNER | facilities/equipment/work orders |
 | `RESEARCH_PROJECTS_MANAGE` | ADMIN, OWNER | research projects |
-| `UNIT_ROLES_ASSIGN` | ADMIN (existing `ROLES_ASSIGN` holders also gate the admin surface) | unit-role grants |
+| `UNIT_CAPABILITIES_ASSIGN` | ADMIN (existing `ROLES_ASSIGN` holders also gate the admin surface) | unit-capability grants (one capability per grant — D5) |
 
 Reads are institution-context (any active member) unless noted. QUALITY's
 existing read-only oversight (`QUALITY_VIEW`) applies to the read surfaces.
@@ -126,8 +126,8 @@ Base: `/governance/councils`
 | GET | `/governance/councils?type=&status=&page=&limit=` | paginated |
 | POST | `/governance/councils` | `{ nameAr, nameEn?, type, orgUnitId?, code?, legalBasis?, charterRef?, establishedAt? }` → 201 |
 | GET | `/governance/councils/:id` | + memberships (active) |
-| PATCH | `/governance/councils/:id` | mutable fields incl. status |
-| POST | `/governance/councils/:id/members` | `{ personId, role: CHAIR\|DEPUTY_CHAIR\|SECRETARY\|MEMBER\|OBSERVER, startDate, endDate?, decisionRef? }` — `409 COUNCIL_MEMBERSHIP_ACTIVE_EXISTS` |
+| PATCH | `/governance/councils/:id` | mutable fields incl. status — `status` rides `COUNCIL_TRANSITIONS` (ACTIVE→DISSOLVED\|CANCELLED; CANCELLED→ACTIVE clerical un-cancel; DISSOLVED terminal): `409 COUNCIL_INVALID_TRANSITION` |
+| POST | `/governance/councils/:id/members` | `{ personId, role: CHAIR\|DEPUTY_CHAIR\|SECRETARY\|MEMBER\|OBSERVER, startDate, endDate?, decisionRef? }` — `409 COUNCIL_MEMBERSHIP_ACTIVE_EXISTS`; `409 COUNCIL_NOT_ACTIVE` when the council is not ACTIVE |
 | POST | `/governance/council-memberships/:id/end` | `{ endDate?, reason? }` |
 
 Meetings:
@@ -135,7 +135,7 @@ Meetings:
 | Method | Path | Notes |
 |---|---|---|
 | GET | `/governance/councils/:id/meetings` | list |
-| POST | `/governance/councils/:id/meetings` | `{ scheduledAt, location?, seqNumber?, agendaSummary? }` → 201; `409 MEETING_SEQ_TAKEN` |
+| POST | `/governance/councils/:id/meetings` | `{ scheduledAt, location?, seqNumber?, agendaSummary? }` → 201; `409 MEETING_SEQ_TAKEN`; `409 COUNCIL_NOT_ACTIVE` when the council is not ACTIVE |
 | GET | `/governance/meetings/:id` | + agenda items + attendance + resolutions + minutes (if any) |
 | PATCH | `/governance/meetings/:id` | `{ scheduledAt?, location?, status? }` — `409 MEETING_INVALID_TRANSITION` on illegal status move |
 | POST | `/governance/meetings/:id/attendance` | `{ records: [{ personId, status: PRESENT\|ABSENT\|EXCUSED\|LATE }] }` — bulk upsert, persons validated in-institution |
@@ -234,7 +234,7 @@ Base: `/operations`
 | PATCH | `/operations/work-orders/:id` | `{ status?: OPEN→IN_PROGRESS→COMPLETED\|CANCELLED, completedAt?, cost?, notes? }` |
 | GET | `/operations/reservations?facilityId=&status=&page=&limit=` | paginated |
 | POST | `/operations/reservations` | `{ facilityId, purpose, startsAt, endsAt, orgUnitId? }` — `400 RESERVATION_WINDOW_INVALID` (end ≤ start), `409 RESERVATION_OVERLAP` |
-| PATCH | `/operations/reservations/:id` | `{ status?: REQUESTED→APPROVED\|REJECTED→CANCELLED\|COMPLETED }` |
+| PATCH | `/operations/reservations/:id` | `{ status?: REQUESTED→APPROVED\|REJECTED→CANCELLED\|COMPLETED }` — `409 RESERVATION_INVALID_TRANSITION` on illegal status move |
 | GET | `/operations/safety-incidents?status=&page=&limit=` | paginated |
 | POST | `/operations/safety-incidents` | `{ kind: INCIDENT\|INSPECTION, severity?, titleAr, description?, facilityId?, equipmentId?, occurredAt }` |
 | PATCH | `/operations/safety-incidents/:id` | `{ status?, resolutionNotes?, resolvedAt? }` |
