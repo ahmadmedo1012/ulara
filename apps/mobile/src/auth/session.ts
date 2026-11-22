@@ -288,7 +288,11 @@ export const ROLE_HOME: Record<string, string> = {
 export const ROLE_LABELS: Record<string, string> = {
   STUDENT: "طالب",
   TEACHER: "أستاذ",
-  ADMIN: "المسجل العام",
+  // r352 §D7: the ADMIN access-category label — the job title
+  // «المسجل العام» is a distinct institutional position, never a role
+  // label (belt-locked with backend/src/lib/roleLabels.ts + the web
+  // twin via the roleLabels twin-lock test).
+  ADMIN: "إدارة المؤسسة",
   QUALITY: "أخصائي جودة",
   OWNER: "مالك المنصة",
 };

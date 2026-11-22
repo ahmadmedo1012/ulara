@@ -112,3 +112,50 @@ describe('r352 §D7 — the frontend/backend roleLabels twins match', () => {
     );
   });
 });
+
+describe('r352 §D7 — the mobile twin (apps/mobile session ROLE_LABELS) matches too', () => {
+  // The mobile map is the THIRD twin: same five Arabic values, same
+  // separation of the ADMIN access category from the المسجل العام job
+  // title. It lives in apps/mobile/src/auth/session.ts and is read as
+  // source text (same rationale as the web twin — no cross-workspace
+  // module graph). Its entries use double-quoted strings, hence the
+  // quote-flexible extractor below.
+  const mobileTwinPath = path.join(
+    repoRoot,
+    'apps',
+    'mobile',
+    'src',
+    'auth',
+    'session.ts',
+  );
+  const mobileSource = readFileSync(mobileTwinPath, 'utf8');
+
+  function extractMobileMap(source: string): Map<string, string> {
+    const map = new Map<string, string>();
+    const body =
+      source.match(/export const ROLE_LABELS[^{]*\{([\s\S]*?)\n\};/)?.[1] ?? '';
+    for (const m of body.matchAll(/^\s*([A-Z_]+):\s*"([^"]*)"/gm)) {
+      map.set(m[1]!, m[2]!);
+    }
+    return map;
+  }
+
+  it('the mobile twin was found and parses to five entries', () => {
+    const map = extractMobileMap(mobileSource);
+    expect(map.size).toBe(5);
+    expect([...map.keys()].sort()).toEqual([...Object.keys(ROLE_LABELS)].sort());
+  });
+
+  it('same Arabic values as the backend/web twins — no third drift', () => {
+    const map = extractMobileMap(mobileSource);
+    for (const [role, label] of Object.entries(ROLE_LABELS)) {
+      expect(map.get(role), `mobile twin drift at ${role}`).toBe(label);
+    }
+  });
+
+  it('the mobile twin no longer labels ADMIN as the registrar-general job title', () => {
+    const map = extractMobileMap(mobileSource);
+    expect(map.get('ADMIN')).toBe('إدارة المؤسسة');
+    expect(map.get('ADMIN') ?? '').not.toContain('مسجل');
+  });
+});

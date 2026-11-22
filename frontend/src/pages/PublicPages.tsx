@@ -192,8 +192,8 @@ const faqs = (showPilotAccounts: boolean): ReadonlyArray<{ q: string; a: ReactNo
     q: 'ما الأدوار المتاحة في المنصّة؟',
     a: (
       <>
-        خمسة أدوار: <strong>طالب</strong> و<strong>أستاذ</strong> (ومعه الأدوار القيادية: رئيس قسم وعميد)
-        و<strong>إدارة المؤسسة</strong> (المسجل العام ومسجل كلية) و<strong>أخصائي جودة</strong> و<strong>مالك
+        خمسة أدوار: <strong>طالب</strong> و<strong>أستاذ</strong> (ومعه المناصب القيادية: رئيس قسم وعميد)
+        و<strong>إدارة المؤسسة</strong> (ومناصبها الإدارية: المسجل العام ومسجل كلية) و<strong>أخصائي جودة</strong> و<strong>مالك
         المنصّة</strong> — لكل دور لوحته وصلاحياته المفروضة في الخادم.
       </>
     ),
