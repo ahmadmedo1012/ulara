@@ -4,16 +4,18 @@
  * roles, shared by backend messages/exports so the API's human-facing
  * Arabic can never drift from the UI's role labels.
  *
- * R320 §B: the ADMIN role's previous office label is retired (see
- * docs/redesign/r320/RENAME-LEDGER.md); the role is «المسجل العام» —
- * the registrar general. Technical identifiers (the `Role` enum, DB
- * values, JWT claims, /admin/* URLs) are UNCHANGED.
+ * r352 (institutional core): the ADMIN role's label is CORRECTED from
+ * «المسجل العام» to «إدارة المؤسسة» — the institutional-administration
+ * ACCESS CATEGORY, separated from the actual job title المسجل العام
+ * (which is a PositionTemplate of the university kind now, not a
+ * system role; the role holds broader administrative capabilities than
+ * the registrar-general office). Technical identifiers (the `Role`
+ * enum, DB values, JWT claims, /admin/* URLs) are UNCHANGED.
  *
- * FRONTEND TWIN: `frontend/src/lib/roleLabels.ts` carries the SAME map
- * (plus the dashboard/demo label sets the UI owns). The two maps are
- * belt-locked equal (backend/src/lib/__tests__/roleLabels.test.ts +
- * frontend/tests/unit/r320-rename-belt.test.ts) — change them TOGETHER,
- * and update docs/redesign/r320/RENAME-LEDGER.md when you do.
+ * FRONTEND TWIN: `frontend/src/lib/roleLabels.ts` must carry the SAME
+ * map (the r352 handoff names this as the frontend agent's task). The
+ * twin-belt tests stay ACTIVE and are expected-red until the mirror
+ * lands — that is the designed coordination signal, never a bug.
  */
 import { Role } from '@prisma/client';
 
@@ -21,26 +23,26 @@ import { Role } from '@prisma/client';
 export const ROLE_LABELS: Record<Role, string> = {
   STUDENT: 'طالب',
   TEACHER: 'أستاذ',
-  ADMIN: 'المسجل العام',
+  ADMIN: 'إدارة المؤسسة',
   // A person, not the function — «جودة» read as a role chip under a
   // user's name is not a person (15-j P1-8).
   QUALITY: 'أخصائي جودة',
   OWNER: 'مالك المنصة',
 };
 
-/** Role label lookup (ADMIN → «المسجل العام»). */
+/** Role label lookup (ADMIN → «إدارة المؤسسة»). */
 export function roleLabel(role: Role): string {
   return ROLE_LABELS[role];
 }
 
 /** Indefinite forms for copy that counts or appoints the role's
- * holders (حساب مسجل عام جديد، تعيين مسجل عام). */
+ * holders (حساب إدارة مؤسسة جديد). */
 export const ROLE_LABEL_INDEFINITE: Partial<Record<Role, string>> = {
-  ADMIN: 'مسجل عام',
+  ADMIN: 'إدارة مؤسسة',
 };
 
 /** Plural forms for copy that addresses the role's holders
- * (nominative «المسجلون العامّون» / oblique «المسجلين العامّين»). */
+ * (oblique «إدارات المؤسسات»). */
 export const ROLE_LABEL_PLURAL_OBLIQUE: Partial<Record<Role, string>> = {
-  ADMIN: 'المسجلين العامّين',
+  ADMIN: 'إدارات المؤسسات',
 };

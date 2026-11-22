@@ -64,6 +64,37 @@
 - Final counts and the exact commands are recorded below in
   "Verification receipts".
 
-## Verification receipts (filled at push time)
+## Verification receipts (measured 2026-11-22, isolated local embedded PG16 on 127.0.0.1:5433, disposable DB `ulara_r352_test` + shadow `ulara_r352_shadow`)
 
-See LOG.md §Verification in the pushed revision for the measured numbers.
+| Gate | Command | Result |
+|---|---|---|
+| Prisma validate | `cd backend && DATABASE_URL=… npx prisma validate` | `The schema at prisma/schema.prisma is valid` |
+| Prisma generate | `cd backend && DATABASE_URL=… npx prisma generate` | `✔ Generated Prisma Client (v5.22.0)` |
+| Migrations | `npx prisma migrate deploy` (fresh DB) | 0001 → 0002 → 0003 all applied, zero data-loss statements |
+| Backend typecheck | `npm run typecheck -w backend` (`tsc --noEmit`) | 0 errors |
+| Tests typecheck | `npm run typecheck:tests -w backend` | 0 errors |
+| Unit suite | `npm test -w backend` (`vitest run`) | **2102 passed / 2 failed / 19 skipped (97 files)** — the 2 failures are the roleLabels twin-belt rows that stay expected-red until the frontend agent mirrors the corrected ADMIN label (§D7/HANDOFF §4); nothing else regressed |
+| Integration suite | `DATABASE_URL=postgresql://ulara@127.0.0.1:5433/ulara_r352_test npm run test:integration -w backend` | **150/150 passed (20 files)** — all pre-existing regression suites (two-institution-regression, institutions-flow, uniqueness-constraints, seed-idempotency, governance-lock, files isolation, …) green alongside the 9 new r352 files |
+| Contract suite | `DATABASE_URL=… npx vitest run tests/contract` (against the fully-seeded demo corpus) | **18/18 passed** — the committed additive-only snapshot holds |
+| OpenAPI regen | `npm run api:openapi` | 253 → **366 operations** (216 → 297 paths), **0 removed paths/operations** — additive-only verified programmatically; 3 pre-existing duplicate-live-session warnings, none from r352 |
+| Lint | `npm run lint` (repo root) | **0 errors**, 14 warnings — all pre-existing frontend react-hooks warnings, none in backend files |
+| Seed idempotency | re-run `npx tsx prisma/seed.ts` + `ensureR352Catalogs` twice | zero drift (counts stable; backfill second passes are no-ops) |
+
+The local PostgreSQL is the repo's own `tools/boot-pg.sh` embedded instance —
+the integration guard refuses any non-localhost host; the Neon production
+URL was never contacted by any migration, seed, or test.
+
+## Residual risks (honest)
+
+1. The two twin-belt failures above are the designed cross-agent signal —
+   they turn green the moment `frontend/src/lib/roleLabels.ts` mirrors
+   «إدارة المؤسسة» (frontend agent's task, named in HANDOFF §4).
+2. Governance/compliance documents are metadata + URL references (no new
+   upload byte-path — D12); the files workstream owns storage namespaces.
+3. Sibling-name uniqueness for org units is service-enforced (409) with a
+   DB partial index for non-root units; roots are exempt by design
+   (legacy city-scoped faculty names are legal historical data).
+4. `Enrollment` (course-level) still references User (legacy contract);
+   program-level study rides `ProgramEnrollment` (StudentProfile-based).
+5. Root `npm run build` and `scripts/verify.sh` were NOT run (AGENTS.md:
+   they migrate/seed and are lead-controlled in the shared fleet).

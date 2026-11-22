@@ -10,11 +10,25 @@ import { AppError } from './errors.js';
  *  - QUALITY has oversight (read + report + moderation), not admin power.
  *  - TEACHER acts only on their own offerings (own = grade/curriculum scope).
  *
+ * r352 — the institutional-operations set is added to ADMIN (structure,
+ * people, appointments, councils, programs, credentials, compliance
+ * records, facilities, research projects, unit-role assignment) and to
+ * OWNER (the pinned invariant: OWNER holds the FULL capability set).
+ * QUALITY deliberately gains NONE of the r352 capabilities —
+ * QUALITY_INTERNAL_MANAGE (internal QA-office writes) is an
+ * explicit-grant-only capability so the oversight semantics survive
+ * (DECISIONS.md D8).
+ *
  * Effective capability set =
- *    role-defaults (DEFAULT_ROLE_CAPABILITIES)
- *  + RolePermission rows for the role (DB layer, 30s-cached)
+ *    role-defaults (DEFAULT_ROLE_CAPABILITIES[membership role]
+ *                   ∪ defaults of actively unit-granted roles)   — r352
+ *  + RolePermission rows for those roles (DB layer, 30s-cached)
  *  + UserPermission grants
- *  − UserPermission revokes
+ *  − UserPermission revokes — with DETERMINISTIC DENY PRECEDENCE (r352,
+ *    DECISIONS.md D6): for a given capability, ANY applicable revoke
+ *    denies; grants apply only when no revoke exists. The old row-order
+ *    "last write wins" was non-deterministic when a global grant and a
+ *    scoped revoke coexisted.
  */
 export const DEFAULT_ROLE_CAPABILITIES: Record<Role, Capability[]> = {
   STUDENT: [
@@ -39,9 +53,22 @@ export const DEFAULT_ROLE_CAPABILITIES: Record<Role, Capability[]> = {
     'EVENTS_RUN',
     'CURRICULUM_EDIT_ANY',
     'RESEARCH_PUBLISH',
+    // r352 — institutional operations (documented widening for the NEW
+    // modules only; no existing capability semantics changed).
+    'ORG_STRUCTURE_MANAGE',
+    'PEOPLE_MANAGE',
+    'APPOINTMENTS_MANAGE',
+    'COUNCILS_MANAGE',
+    'PROGRAMS_MANAGE',
+    'CREDENTIALS_MANAGE',
+    'ACCREDITATION_MANAGE',
+    'FACILITIES_MANAGE',
+    'RESEARCH_PROJECTS_MANAGE',
+    'UNIT_ROLES_ASSIGN',
     // NOTE: No RESEARCH_GRADE_OWN/ANY — admins shouldn't grade by default.
     //       No EXAMS_AUTHOR/MODERATE — separate capability grant required.
     //       No QUALITY_VIEW — separate role.
+    //       No QUALITY_INTERNAL_MANAGE — explicit grant only (r352).
   ],
   QUALITY: [
     'QUALITY_VIEW',
@@ -49,6 +76,9 @@ export const DEFAULT_ROLE_CAPABILITIES: Record<Role, Capability[]> = {
     'EXAMS_MODERATE',
     'ANNOUNCE_FACULTY',
     // NOTE: NO USERS_MANAGE, NO ROLES_ASSIGN — quality is oversight, not control.
+    //       r352: NO institutional-management capabilities either — the
+    //       internal QA-office writes ride the explicit
+    //       QUALITY_INTERNAL_MANAGE grant (UserPermission/UnitRoleGrant).
   ],
   OWNER: [
     // Platform owner — Master Control Panel role.
@@ -70,6 +100,18 @@ export const DEFAULT_ROLE_CAPABILITIES: Record<Role, Capability[]> = {
     'ANNOUNCE_FACULTY',
     'COMPETITIONS_RUN',
     'EVENTS_RUN',
+    // r352 — the full-set invariant extends to the new capabilities.
+    'ORG_STRUCTURE_MANAGE',
+    'PEOPLE_MANAGE',
+    'APPOINTMENTS_MANAGE',
+    'COUNCILS_MANAGE',
+    'PROGRAMS_MANAGE',
+    'CREDENTIALS_MANAGE',
+    'ACCREDITATION_MANAGE',
+    'QUALITY_INTERNAL_MANAGE',
+    'FACILITIES_MANAGE',
+    'RESEARCH_PROJECTS_MANAGE',
+    'UNIT_ROLES_ASSIGN',
   ],
 };
 
@@ -132,52 +174,151 @@ async function getRolePermissions(): Promise<RolePermissionRow[]> {
 }
 
 /**
- * Pure merge of the three capability layers. Exported so the merge
- * semantics are unit-testable without a DB.
+ * Pure merge of the capability layers. Exported so the merge semantics
+ * are unit-testable without a DB.
+ *
+ * r352 (DECISIONS.md D5/D6): `unitGrantRoles` are the roles of the
+ * caller's ACTIVE UnitRoleGrant rows considered for this check — their
+ * defaults and RolePermission rows merge into the base set. Overrides
+ * are applied with deterministic deny precedence: for each capability,
+ * ANY revoke denies; grants land only when no revoke exists (order of
+ * rows is irrelevant — the pre-r352 "last write wins" was
+ * non-deterministic under mixed global/scoped rows).
  */
 export function mergeCapabilities(
   role: Role,
   dbRoleRows: RolePermissionRow[],
   userOverrides: ReadonlyArray<{ capability: Capability; grant: boolean }>,
+  unitGrantRoles: readonly Role[] = [],
 ): Set<Capability> {
-  const caps = new Set<Capability>(DEFAULT_ROLE_CAPABILITIES[role]);
-  for (const row of dbRoleRows) {
-    if (row.role === role) caps.add(row.capability);
+  const grantRoles = new Set<Role>([role, ...unitGrantRoles]);
+  const caps = new Set<Capability>();
+  for (const r of grantRoles) {
+    for (const c of DEFAULT_ROLE_CAPABILITIES[r]) caps.add(c);
   }
+  for (const row of dbRoleRows) {
+    if (grantRoles.has(row.role)) caps.add(row.capability);
+  }
+  const denied = new Set<Capability>();
+  const granted = new Set<Capability>();
   for (const o of userOverrides) {
-    if (o.grant) caps.add(o.capability);
-    else caps.delete(o.capability);
+    if (o.grant) granted.add(o.capability);
+    else denied.add(o.capability);
+  }
+  for (const cap of denied) caps.delete(cap); // deny always wins
+  for (const cap of granted) {
+    if (!denied.has(cap)) caps.add(cap);
   }
   return caps;
 }
 
+/** Interface of the unit-grant rows the effective-set computation needs. */
+export interface UnitGrantRow {
+  role: Role;
+  orgUnitId: string | null;
+}
+
 /**
  * Compute the effective capability set for a user.
- * One query per call for user overrides + a 30s-cached role table read.
  *
- * r178 (multi-institution): when an institution context is supplied,
- * BOTH the institution-scoped UserPermission rows AND the global ones
- * (institutionId = null — "applies everywhere") apply; without a
- * context, ONLY global grants apply (an institution-scoped grant must
- * never leak into a contextless session).
+ * r352: ACTIVE UnitRoleGrant rows for the caller in the institution are
+ * part of the base set. Institution-wide grants (orgUnitId = null) merge
+ * unconditionally; unit-scoped grants merge ONLY when `orgUnitId` is
+ * supplied and the grant's unit is the target unit or one of its
+ * ancestors (see assertCapabilityForUnit).
  */
 export async function getEffectiveCapabilities(
   userId: string,
   role: Role,
   institutionId?: string | null,
+  orgUnitId?: string | null,
 ): Promise<Set<Capability>> {
   const overridesWhere =
     typeof institutionId === 'string' && institutionId.length > 0
       ? { userId, OR: [{ institutionId: null }, { institutionId }] }
       : { userId, institutionId: null };
-  const [dbRoleRows, overrides] = await Promise.all([
+  const inInstitution = typeof institutionId === 'string' && institutionId.length > 0;
+  const [dbRoleRows, overrides, unitGrants] = await Promise.all([
     getRolePermissions(),
     prisma.userPermission.findMany({
       where: overridesWhere,
       select: { capability: true, grant: true },
     }),
+    inInstitution
+      ? prisma.unitRoleGrant.findMany({
+          where: { userId, institutionId, isActive: true },
+          select: { role: true, orgUnitId: true },
+        })
+      : Promise.resolve([] as UnitGrantRow[]),
   ]);
-  return mergeCapabilities(role, dbRoleRows, overrides);
+  const applicable = unitGrants.filter(
+    (g) => g.orgUnitId === null || (orgUnitId !== undefined && orgUnitId !== null && g.orgUnitId === orgUnitId),
+  );
+  return mergeCapabilities(
+    role,
+    dbRoleRows,
+    overrides,
+    applicable.map((g) => g.role),
+  );
+}
+
+/**
+ * r352: the ancestor chain of an org unit (the unit itself first, then
+ * parents up to the root) — used to let a faculty-scoped grant cover the
+ * faculty's departments. Bounded walk; the DB trigger guarantees no
+ * cycles and same-institution parents.
+ */
+export async function orgUnitAncestorChain(
+  orgUnitId: string,
+  maxDepth = 32,
+): Promise<string[]> {
+  const chain: string[] = [];
+  let cur: string | null = orgUnitId;
+  for (let i = 0; i < maxDepth && cur !== null; i += 1) {
+    chain.push(cur);
+    const row: { parentId: string | null } | null = await prisma.organizationalUnit.findUnique({
+      where: { id: cur },
+      select: { parentId: true },
+    });
+    cur = row?.parentId ?? null;
+  }
+  return chain;
+}
+
+/**
+ * r352: assert a capability FOR A SPECIFIC ORGANIZATIONAL UNIT — an
+ * institution-wide UnitRoleGrant applies anywhere in the institution;
+ * a unit-scoped grant applies when its unit is the target or an
+ * ancestor of it (a dean's faculty grant covers the faculty's
+ * departments). UserPermission denies always win.
+ */
+export async function assertCapabilityForUnit(
+  userId: string,
+  role: Role,
+  institutionId: string,
+  orgUnitId: string,
+  ...required: Capability[]
+): Promise<void> {
+  const chain = await orgUnitAncestorChain(orgUnitId);
+  const [dbRoleRows, overrides, unitGrants] = await Promise.all([
+    getRolePermissions(),
+    prisma.userPermission.findMany({
+      where: { userId, OR: [{ institutionId: null }, { institutionId }] },
+      select: { capability: true, grant: true },
+    }),
+    prisma.unitRoleGrant.findMany({
+      where: { userId, institutionId, isActive: true, orgUnitId: { in: chain } },
+      select: { role: true },
+    }),
+  ]);
+  const caps = mergeCapabilities(
+    role,
+    dbRoleRows,
+    overrides,
+    unitGrants.map((g) => g.role),
+  );
+  for (const r of required) if (caps.has(r)) return;
+  throw AppError.forbidden(`صلاحية مفقودة: ${required.join(' أو ')}`);
 }
 
 /**

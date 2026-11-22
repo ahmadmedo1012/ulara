@@ -60,6 +60,21 @@ import inviteRoutes from './http/routes/invite.routes.js';
 import feedbackRoutes from './http/routes/feedback.routes.js';
 import clientErrorRoutes from './http/routes/client-error.routes.js';
 import pushRoutes from './http/routes/push.routes.js';
+// r352 — the institutional-core routers. Ordering mirrors the existing
+// law: PUBLIC-then-narrow routers (catalogs, classification) sit BEFORE
+// the broad authed mounts; the context-guarded domain routers mount at
+// their own prefixes after them (no path collisions — boot-verified).
+import r352CatalogRoutes from './http/routes/r352-catalog.routes.js';
+import r352InstitutionRoutes from './http/routes/r352-institution.routes.js';
+import r352OrgUnitsRoutes from './http/routes/r352-org-units.routes.js';
+import r352PeopleRoutes from './http/routes/r352-people.routes.js';
+import r352AppointmentsRoutes from './http/routes/r352-appointments.routes.js';
+import r352CouncilsRoutes from './http/routes/r352-councils.routes.js';
+import r352AcademicRoutes from './http/routes/r352-academic.routes.js';
+import r352ComplianceRoutes from './http/routes/r352-compliance.routes.js';
+import r352OperationsRoutes from './http/routes/r352-operations.routes.js';
+import r352ResearchRoutes from './http/routes/r352-research.routes.js';
+import r352UnitRolesRoutes from './http/routes/r352-unit-roles.routes.js';
 import { themeRouter } from './modules/theme/router.js';
 import { onboardingRouter } from './modules/onboarding/router.js';
 import { milestonesRouter } from './modules/milestones/router.js';
@@ -327,6 +342,13 @@ export function createApp() {
   // /institutions children, so nothing collides (boot-verified). The
   // /owner/* paths carry their own requireRole(OWNER) gate.
   app.use('/api/v1', institutionRoutes);
+  // r352 — institution classification (GET /institutions/me/profile is
+  // context-guarded internally; the OWNER classification PATCH carries
+  // its own requireRole(OWNER) gate). Sits beside institutionRoutes,
+  // before the broad authed mounts — same ordering law.
+  app.use('/api/v1', r352InstitutionRoutes);
+  // r352 — public reference catalogs (Bearer, no institution context).
+  app.use('/api/v1/catalog', r352CatalogRoutes);
   // r342 t13 (2026-11-19): syncRoutes (/admin/sync, /admin/sync/trigger,
   // /university/facts) was RETIRED with the zu-sync system — the shared
   // production database dropped its SyncRun/UniversityFact tables
@@ -367,6 +389,21 @@ export function createApp() {
   app.use('/api/v1/me/theme', themeRouter);
   app.use('/api/v1/me/onboarding', onboardingRouter);
   app.use('/api/v1/me/milestones', milestonesRouter);
+  // r352 — institutional-core domain routers (all internally guarded by
+  // authMiddleware + requireInstitution; writes carry capability gates
+  // and in-transaction audit rows). People and appointments share the
+  // /institutional prefix; unit-roles mounts at the root for its /me
+  // and /admin subpaths; research declares /research-projects +
+  // /research-outputs.
+  app.use('/api/v1/institutional', r352OrgUnitsRoutes);
+  app.use('/api/v1/institutional', r352PeopleRoutes);
+  app.use('/api/v1/institutional', r352AppointmentsRoutes);
+  app.use('/api/v1/governance', r352CouncilsRoutes);
+  app.use('/api/v1/academic', r352AcademicRoutes);
+  app.use('/api/v1/compliance', r352ComplianceRoutes);
+  app.use('/api/v1/operations', r352OperationsRoutes);
+  app.use('/api/v1', r352ResearchRoutes);
+  app.use('/api/v1', r352UnitRolesRoutes);
 
   // 404 for unknown API paths — ANY /api/* path that fell through the
   // routers (including /api/v2/… and /api/ghost) gets the standard JSON

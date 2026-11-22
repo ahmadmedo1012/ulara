@@ -3,6 +3,12 @@
 > The complete, binding API surface is **`API-CONTRACT.md`** in this
 > directory. This file adds integration notes, permissions, error codes,
 > and known limitations. Backend branch: `r352/institutional-backend`.
+>
+> **Measured state at handoff:** 366 OpenAPI operations (253 before,
+> additive-only); backend unit suite 2102 green + the two twin-belt rows
+> below expected-red; integration suite 150/150 green including the
+> two-institution isolation scenario; OpenAPI + contract snapshot
+> regenerated and committed.
 
 ## 1. What the backend now provides
 
