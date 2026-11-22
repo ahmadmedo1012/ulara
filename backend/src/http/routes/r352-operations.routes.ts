@@ -18,6 +18,7 @@ import { AppError } from '../../lib/errors.js';
 import { buildMeta } from '../../lib/pagination.js';
 import { RESERVATION_TRANSITIONS, WORK_ORDER_TRANSITIONS, transitionAllowed } from '../../lib/lifecycle-rules.js';
 import { assertFacilityUnitCompatible } from '../../lib/tenant-guards.js';
+import { isPrismaWriteConflictOrDeadlock } from '../../lib/prisma-errors.js';
 import {
   facilityListSchema, facilityCreateSchema, facilityUpdateSchema,
   equipmentListSchema, equipmentCreateSchema, equipmentUpdateSchema,
@@ -636,15 +637,18 @@ router.post(
       // (SQLSTATE 23P01, surfacing as an UNKNOWN request error in Prisma
       // 5): map it to the same Arabic 409 as the sequential guard.
       // The same race can also deadlock the two racing transactions
-      // (SQLSTATE 40P01 → Prisma P2034 "write conflict or a deadlock"):
-      // each INSERT's exclusion check waits on the other's uncommitted
-      // overlapping range. In this transaction the only contended
-      // resource is the exclusion constraint, so a P2034 here IS the
-      // racing double-booking — the loser gets the same honest 409.
+      // (SQLSTATE 40P01). CI run 45055598165 proved Prisma 5.22 escapes
+      // that as PrismaClientUnknownRequestError carrying the raw
+      // connector dump (NOT Known/P2034, so the first mapping never
+      // fired — the loser answered 500): each INSERT's exclusion check
+      // waits on the other's uncommitted overlapping range. In this
+      // transaction the only contended resource is the exclusion
+      // constraint, so a deadlock here IS the racing double-booking —
+      // the loser gets the same honest 409 either way.
       if (
         (typeof (e as { message?: unknown })?.message === 'string' &&
           (e as { message: string }).message.includes('FacilityReservation_no_overlap_live')) ||
-        (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2034')
+        isPrismaWriteConflictOrDeadlock(e)
       ) {
         return next(new AppError('RESERVATION_OVERLAP', 'توجد حجوزات متداخلة لهذه المنشأة في الفترة المطلوبة', 409));
       }

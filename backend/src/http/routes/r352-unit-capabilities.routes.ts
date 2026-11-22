@@ -41,6 +41,7 @@ import { validate } from '../validate.js';
 import { AppError } from '../../lib/errors.js';
 import { assertCapabilityForUnit, assertCapabilityIn, callerAuthorityCoversUnit } from '../../lib/permissions.js';
 import { assertOrgUnitInInstitution } from '../../lib/tenant-guards.js';
+import { isPrismaWriteConflictOrDeadlock } from '../../lib/prisma-errors.js';
 import { unitCapabilityGrantCreateSchema } from '../../modules/r352/dto.js';
 
 const router = Router();
@@ -279,7 +280,17 @@ router.post(
       });
       res.status(201).json({ data: grant });
     } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
+      // §6.1 — racing grants: the partial unique index
+      // (orgUnitId IS NULL AND isActive) answers P2002, but the same
+      // race can deadlock the two transactions (SQLSTATE 40P01 —
+      // escaped by Prisma 5.22 as UnknownRequestError with the raw
+      // connector dump, see lib/prisma-errors.ts). Here the only
+      // contended resource is that unique index, so the deadlock
+      // loser gets the same Arabic 409, never a 500.
+      if (
+        (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') ||
+        isPrismaWriteConflictOrDeadlock(e)
+      ) {
         return next(AppError.conflict('توجد منحة مطابقة لهذا المستخدم بالفعل'));
       }
       next(e);
