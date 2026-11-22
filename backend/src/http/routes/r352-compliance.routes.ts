@@ -21,6 +21,7 @@ import { requireCapability } from '../middleware/requireCapability.js';
 import { validate } from '../validate.js';
 import { AppError } from '../../lib/errors.js';
 import { buildMeta } from '../../lib/pagination.js';
+import { governanceKeyInstitution } from '../../lib/tenant-guards.js';
 import {
   ACCREDITATION_TRANSITIONS, CORRECTIVE_ACTION_TRANSITIONS, FINDING_TRANSITIONS,
   INSPECTION_TRANSITIONS, LICENSE_TRANSITIONS, SELF_ASSESSMENT_TRANSITIONS,
@@ -33,6 +34,7 @@ import {
   findingListSchema, findingCreateSchema, findingUpdateSchema,
   correctiveActionCreateSchema, correctiveActionUpdateSchema,
   selfAssessmentListSchema, selfAssessmentCreateSchema, selfAssessmentUpdateSchema,
+  selfAssessmentItemUpsertSchema, selfAssessmentCorrectiveActionSchema,
   evidenceListSchema, evidenceCreateSchema,
 } from '../../modules/r352/dto.js';
 
@@ -675,12 +677,22 @@ router.post(
           throw AppError.notFound('الوحدة التنظيمية المحددة غير موجودة في مؤسستك');
         }
       }
+      // §8 — program-scoped assessment: the program belongs to the institution.
+      if (input.programId) {
+        const program = await prisma.program.findUnique({
+          where: { id: input.programId }, select: { institutionId: true },
+        });
+        if (!program || program.institutionId !== institutionId) {
+          throw AppError.notFound('البرنامج المحدد غير موجود في مؤسستك');
+        }
+      }
       const assessment = await prisma.$transaction(async (tx) => {
         const created = await tx.internalSelfAssessment.create({
           data: {
             institutionId,
             periodLabel: input.periodLabel,
             orgUnitId: input.orgUnitId ?? null,
+            programId: input.programId ?? null,
             criteriaSetId: input.criteriaSetId ?? null,
             summary: input.summary ?? null,
             createdById: req.user!.id,
@@ -732,6 +744,181 @@ router.patch(
         return row;
       });
       res.json({ data: updated });
+    } catch (e) {
+      next(e);
+    }
+  },
+);
+
+// ── self-assessment items (§8 — criterion-level responses) ─────────
+router.get('/self-assessments/:id/items', async (req, res, next) => {
+  try {
+    const institutionId = req.institution!.id;
+    const assessment = await prisma.internalSelfAssessment.findUnique({
+      where: { id: req.params.id! },
+      select: { id: true, institutionId: true, status: true },
+    });
+    if (!assessment || assessment.institutionId !== institutionId) {
+      throw AppError.notFound('التقييم الذاتي المطلوب غير موجود');
+    }
+    const data = await prisma.selfAssessmentItem.findMany({
+      where: { assessmentId: assessment.id },
+      include: {
+        criteriaItem: { select: { id: true, code: true, titleAr: true, sortOrder: true } },
+        assessorPerson: { select: { id: true, fullNameAr: true } },
+        correctiveActions: { select: { id: true, status: true, targetDate: true } },
+      },
+      orderBy: { criteriaItem: { sortOrder: 'asc' } },
+    });
+    res.json({ data });
+  } catch (e) {
+    next(e);
+  }
+});
+
+/**
+ * PUT (upsert) one criterion response. The criteria item must belong to
+ * the assessment's criteria set — responses can never mix items from
+ * unrelated versions, authorities, or accreditation types (the FK chain
+ * criteriaItem → criteriaSet is verified server-side).
+ */
+router.put(
+  '/self-assessments/:id/items',
+  requireCapability('QUALITY_INTERNAL_MANAGE'),
+  validate(selfAssessmentItemUpsertSchema),
+  async (req, res, next) => {
+    try {
+      const institutionId = req.institution!.id;
+      const assessment = await prisma.internalSelfAssessment.findUnique({
+        where: { id: req.params.id! },
+        select: { id: true, institutionId: true, status: true, criteriaSetId: true },
+      });
+      if (!assessment || assessment.institutionId !== institutionId) {
+        throw AppError.notFound('التقييم الذاتي المطلوب غير موجود');
+      }
+      if (assessment.status !== 'DRAFT' && assessment.status !== 'UNDER_REVIEW') {
+        throw new AppError(
+          'SELF_ASSESSMENT_INVALID_TRANSITION',
+          'لا يمكن تعديل استجابات المعايير بعد اعتماد التقييم',
+          409,
+        );
+      }
+      if (!assessment.criteriaSetId) {
+        throw AppError.badRequest('التقييم الذاتي غير مرتبط بمجموعة معايير — حدّدها أولًا');
+      }
+      const input = req.body as z.infer<typeof selfAssessmentItemUpsertSchema>;
+      const criteriaItem = await prisma.accreditationCriteriaItem.findUnique({
+        where: { id: input.criteriaItemId },
+        select: { id: true, criteriaSetId: true },
+      });
+      if (!criteriaItem || criteriaItem.criteriaSetId !== assessment.criteriaSetId) {
+        throw AppError.badRequest('بند المعيار المحدد لا ينتمي إلى مجموعة معايير هذا التقييم');
+      }
+      if (input.assessorPersonId) {
+        const person = await prisma.institutionalPerson.findUnique({
+          where: { id: input.assessorPersonId },
+          select: { institutionId: true },
+        });
+        if (!person || person.institutionId !== institutionId) {
+          throw AppError.notFound('المقيّم المحدد غير موجود في مؤسستك');
+        }
+      }
+      const item = await prisma.$transaction(async (tx) => {
+        const row = await tx.selfAssessmentItem.upsert({
+          where: {
+            assessmentId_criteriaItemId: {
+              assessmentId: assessment.id,
+              criteriaItemId: input.criteriaItemId,
+            },
+          },
+          create: {
+            assessmentId: assessment.id,
+            criteriaItemId: input.criteriaItemId,
+            rating: input.rating ?? null,
+            responseAr: input.responseAr ?? null,
+            evidenceRefs: input.evidenceRefs ?? null,
+            findingsAr: input.findingsAr ?? null,
+            assessorPersonId: input.assessorPersonId ?? null,
+          },
+          update: {
+            ...(input.rating !== undefined ? { rating: input.rating } : {}),
+            ...(input.responseAr !== undefined ? { responseAr: input.responseAr } : {}),
+            ...(input.evidenceRefs !== undefined ? { evidenceRefs: input.evidenceRefs } : {}),
+            ...(input.findingsAr !== undefined ? { findingsAr: input.findingsAr } : {}),
+            ...(input.assessorPersonId !== undefined ? { assessorPersonId: input.assessorPersonId } : {}),
+          },
+        });
+        await audit(tx, req.user!.id, institutionId, 'self_assessment.item', 'SelfAssessmentItem', row.id, {
+          assessmentId: assessment.id,
+          criteriaItemId: input.criteriaItemId,
+          rating: input.rating ?? null,
+        });
+        return row;
+      });
+      res.json({ data: item });
+    } catch (e) {
+      next(e);
+    }
+  },
+);
+
+/**
+ * POST a corrective plan originating from one criterion-level issue
+ * (§8 — link criterion-level findings to corrective plans).
+ */
+router.post(
+  '/self-assessments/:id/items/:itemId/corrective-action',
+  requireCapability('QUALITY_INTERNAL_MANAGE'),
+  validate(selfAssessmentCorrectiveActionSchema),
+  async (req, res, next) => {
+    try {
+      const institutionId = req.institution!.id;
+      const assessment = await prisma.internalSelfAssessment.findUnique({
+        where: { id: req.params.id! },
+        select: { id: true, institutionId: true },
+      });
+      if (!assessment || assessment.institutionId !== institutionId) {
+        throw AppError.notFound('التقييم الذاتي المطلوب غير موجود');
+      }
+      const item = await prisma.selfAssessmentItem.findUnique({
+        where: { id: req.params.itemId! },
+        select: { id: true, assessmentId: true },
+      });
+      if (!item || item.assessmentId !== assessment.id) {
+        throw AppError.notFound('استجابة المعيار المحددة لا تنتمي إلى هذا التقييم');
+      }
+      const input = req.body as z.infer<typeof selfAssessmentCorrectiveActionSchema>;
+      const plan = await prisma.$transaction(async (tx) => {
+        const created = await tx.correctiveActionPlan.create({
+          data: {
+            findingId: await (async () => {
+              // CorrectiveActionPlan requires a finding row: a synthetic
+              // internal finding represents the criterion-level issue.
+              const finding = await tx.complianceFinding.create({
+                data: {
+                  institutionId,
+                  severity: 'MINOR',
+                  titleAr: 'ملاحظة تقييم ذاتي على بند معيار',
+                  description: input.planText,
+                  legalReference: 'r352 internal self-assessment',
+                  status: 'OPEN',
+                  createdById: req.user!.id,
+                },
+              });
+              return finding.id;
+            })(),
+            selfAssessmentItemId: item.id,
+            planText: input.planText,
+            targetDate: input.targetDate ?? null,
+          },
+        });
+        await audit(tx, req.user!.id, institutionId, 'self_assessment.corrective_action', 'CorrectiveActionPlan', created.id, {
+          assessmentId: assessment.id,
+          selfAssessmentItemId: item.id,
+        });
+        return created;
+      });
+      res.status(201).json({ data: plan });
     } catch (e) {
       next(e);
     }
@@ -794,6 +981,15 @@ router.post(
       if (!ownerOk) {
         throw new AppError('EVIDENCE_OWNER_INVALID', 'السجل المالك للأدلة غير موجود في مؤسستك', 400);
       }
+      // §9 — a binaryObject reference must be a governance-namespace key
+      // bound to THIS institution — arbitrary URLs are never trusted.
+      if (input.binaryObjectId && governanceKeyInstitution(input.binaryObjectId) !== institutionId) {
+        throw new AppError(
+          'EVIDENCE_OWNER_INVALID',
+          'الملف المرفق لا ينتمي إلى مساحة تخزين مؤسستك',
+          400,
+        );
+      }
       const evidence = await prisma.$transaction(async (tx) => {
         const created = await tx.complianceEvidence.create({
           data: {
@@ -801,6 +997,7 @@ router.post(
             ownerType: input.ownerType,
             ownerId: input.ownerId,
             titleAr: input.titleAr,
+            binaryObjectId: input.binaryObjectId ?? null,
             documentRef: input.documentRef ?? null,
             fileUrl: input.fileUrl ?? null,
             description: input.description ?? null,

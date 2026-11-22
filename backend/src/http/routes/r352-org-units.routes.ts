@@ -33,7 +33,9 @@ import {
 import {
   assertCodeFree,
   assertSiblingNameFree,
+  assertUnitTypeAllowed,
   assertValidParent,
+  mapOrgUnitTriggerError,
   requireOrgUnit,
   syncLegacyMirrors,
 } from '../../modules/r352/org-units.service.js';
@@ -135,6 +137,15 @@ router.post(
         );
       }
       await assertValidParent(prisma, institutionId, null, input.parentId ?? null);
+      // §11 — the controlled type catalog gates the type (global + local
+      // definitions, sector/kind eligibility, parent compatibility).
+      const parentType = input.parentId
+        ? (await prisma.organizationalUnit.findUnique({
+            where: { id: input.parentId },
+            select: { type: true },
+          }))?.type ?? null
+        : null;
+      await assertUnitTypeAllowed(prisma, institutionId, input.type, parentType);
       await assertCodeFree(prisma, institutionId, input.code ?? null);
       await assertSiblingNameFree(prisma, institutionId, input.parentId ?? null, input.nameAr);
       const unit = await prisma.$transaction(async (tx) => {
@@ -172,6 +183,8 @@ router.post(
       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
         return next(AppError.conflict('رمز الوحدة مستخدم مسبقًا في مؤسستك'));
       }
+      const triggerError = mapOrgUnitTriggerError(e);
+      if (triggerError) return next(triggerError);
       next(e);
     }
   },
@@ -251,6 +264,8 @@ router.patch(
       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
         return next(AppError.conflict('رمز الوحدة مستخدم مسبقًا في مؤسستك'));
       }
+      const triggerError = mapOrgUnitTriggerError(e);
+      if (triggerError) return next(triggerError);
       next(e);
     }
   },

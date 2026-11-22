@@ -37,7 +37,13 @@ const INSTITUTION_TYPES = [
   { code: 'UNIVERSITY', sector: 'HIGHER_EDUCATION_RESEARCH' as const, nameAr: 'جامعة', nameEn: 'University', isIndependentLegalPersonality: true, legalBasis: 'قانون 2/2018 بشأن الجامعات (المعدَّل بقانوني 4/2020 و9/2026)', defaultAuthorityCode: 'MINISTRY_HESR' },
   { code: 'GRADUATE_ACADEMY', sector: 'HIGHER_EDUCATION_RESEARCH' as const, nameAr: 'أكاديمية دراسات عليا', nameEn: 'Graduate academy', isIndependentLegalPersonality: true, legalBasis: 'قانون 4/2020 م1', defaultAuthorityCode: 'MINISTRY_HESR' },
   { code: 'RESEARCH_AUTHORITY', sector: 'HIGHER_EDUCATION_RESEARCH' as const, nameAr: 'هيئة بحثية', nameEn: 'Research authority', isIndependentLegalPersonality: true, legalBasis: 'قانون 9/2026 م1', defaultAuthorityCode: 'MINISTRY_HESR' },
-  { code: 'INDEPENDENT_RESEARCH_CENTER', sector: 'HIGHER_EDUCATION_RESEARCH' as const, nameAr: 'مركز أبحاث مستقل', nameEn: 'Independent research center', isIndependentLegalPersonality: true, legalBasis: 'قانون 9/2026 م1', defaultAuthorityCode: 'MINISTRY_HESR' },
+  // §10.1 (hardening): Law 9/2026 Art. 1 speaks of research authorities
+  // and centers AFFILIATED with them/institutions — it does NOT by
+  // itself establish every independent research center as a statutory
+  // institution kind. This code stays as a CONFIGURABLE NON-STATUTORY
+  // extension for separately-established bodies (their own legal
+  // instrument is recorded per institution); no legal basis is claimed.
+  { code: 'INDEPENDENT_RESEARCH_CENTER', sector: 'HIGHER_EDUCATION_RESEARCH' as const, nameAr: 'مركز أبحاث منشأ بشكل مستقل', nameEn: 'Separately-established research center', isIndependentLegalPersonality: true, legalBasis: null, defaultAuthorityCode: 'MINISTRY_HESR' },
   { code: 'MEDICAL_SPECIALIZATIONS_BOARD', sector: 'HIGHER_EDUCATION_RESEARCH' as const, nameAr: 'مجلس التخصصات الطبية', nameEn: 'Medical Specializations Board', isIndependentLegalPersonality: true, legalBasis: 'قانون 9/2026 م33 مكرر', defaultAuthorityCode: 'MINISTRY_HESR' },
   { code: 'TECHNICAL_ACADEMY', sector: 'TECHNICAL_VOCATIONAL_PROFESSIONAL' as const, nameAr: 'أكاديمية التعليم التقني', nameEn: 'Technical education academy', isIndependentLegalPersonality: true, legalBasis: 'قانون 21/2023', defaultAuthorityCode: 'TECHNICAL_ACADEMY' },
   { code: 'TECHNICAL_COLLEGE', sector: 'TECHNICAL_VOCATIONAL_PROFESSIONAL' as const, nameAr: 'كلية تقنية', nameEn: 'Technical college', isIndependentLegalPersonality: true, legalBasis: 'قانون 21/2023 م12، م24', defaultAuthorityCode: 'TECHNICAL_ACADEMY' },
@@ -51,28 +57,38 @@ const INSTITUTION_TYPES = [
 // empty = all kinds.
 const POSITION_TEMPLATES = [
   // University leadership (Law 2/2018 + 4/2020).
-  { code: 'UNIVERSITY_PRESIDENT', titleAr: 'رئيس الجامعة', titleEn: 'University president', category: 'UNIVERSITY_LEADERSHIP' as const, scopeRequirement: null, eligibleInstitutionTypeCodes: ['UNIVERSITY'], legalBasis: 'قانون 2/2018 م16؛ قانون 4/2020 م15' },
-  { code: 'UNIVERSITY_VICE_PRESIDENT', titleAr: 'وكيل الجامعة', titleEn: 'University vice-president', category: 'UNIVERSITY_LEADERSHIP' as const, scopeRequirement: null, eligibleInstitutionTypeCodes: ['UNIVERSITY'], legalBasis: 'قانون 2/2018 م18' },
-  { code: 'SECRETARY_GENERAL', titleAr: 'الأمين العام / الكاتب العام', titleEn: 'Secretary general', category: 'ADMINISTRATIVE_LEADERSHIP' as const, scopeRequirement: null, eligibleInstitutionTypeCodes: [], legalBasis: 'قانون 2/2018 م20؛ قانون 4/2020 م19' },
-  { code: 'REGISTRAR_GENERAL', titleAr: 'المسجل العام', titleEn: 'Registrar general', category: 'ADMINISTRATIVE_LEADERSHIP' as const, scopeRequirement: 'REGISTRAR_OFFICE', eligibleInstitutionTypeCodes: [], legalBasis: 'قانون 2/2018 م13، م21؛ قانون 4/2020 م12، م20' },
+  { code: 'UNIVERSITY_PRESIDENT', titleAr: 'رئيس الجامعة', titleEn: 'University president', category: 'UNIVERSITY_LEADERSHIP' as const, scopeRequirement: null, allowedUnitTypes: [] as string[], eligibleInstitutionTypeCodes: ['UNIVERSITY'], legalBasis: 'قانون 2/2018 م16؛ قانون 4/2020 م15' },
+  { code: 'UNIVERSITY_VICE_PRESIDENT', titleAr: 'وكيل الجامعة', titleEn: 'University vice-president', category: 'UNIVERSITY_LEADERSHIP' as const, scopeRequirement: null, allowedUnitTypes: [] as string[], eligibleInstitutionTypeCodes: ['UNIVERSITY'], legalBasis: 'قانون 2/2018 م18' },
+  // §10.2 (hardening): الأمين العام والكاتب العام مسميان متميزان — لا
+  // يُدمجان في تسمية واحدة غامضة. الأمين العام منصب جامعي (قانون
+  // 2/2018 م20)؛ الكاتب العام مسمى إداري أوسع دون أساس نصي جامعي محدد.
+  { code: 'SECRETARY_GENERAL', titleAr: 'الأمين العام', titleEn: 'Secretary general (university)', category: 'ADMINISTRATIVE_LEADERSHIP' as const, scopeRequirement: null, allowedUnitTypes: [] as string[], eligibleInstitutionTypeCodes: ['UNIVERSITY'], legalBasis: 'قانون 2/2018 م20؛ قانون 4/2020 م19' },
+  { code: 'GENERAL_SECRETARY', titleAr: 'الكاتب العام', titleEn: 'General secretary (administrative)', category: 'ADMINISTRATIVE_LEADERSHIP' as const, scopeRequirement: null, allowedUnitTypes: [] as string[], eligibleInstitutionTypeCodes: [], legalBasis: null },
+  { code: 'REGISTRAR_GENERAL', titleAr: 'المسجل العام', titleEn: 'Registrar general', category: 'ADMINISTRATIVE_LEADERSHIP' as const, scopeRequirement: 'REGISTRAR_OFFICE', allowedUnitTypes: ['REGISTRAR_OFFICE'], eligibleInstitutionTypeCodes: [], legalBasis: 'قانون 2/2018 م13، م21؛ قانون 4/2020 م12، م20' },
   // Faculty/department leadership.
-  { code: 'FACULTY_DEAN', titleAr: 'عميد الكلية', titleEn: 'Dean', category: 'FACULTY_LEADERSHIP' as const, scopeRequirement: 'FACULTY', eligibleInstitutionTypeCodes: [], legalBasis: 'قانون 9/2026 م25 (النسخة المعدَّلة لم25 من قانون 4/2020)' },
-  { code: 'TECHNICAL_COLLEGE_DEAN', titleAr: 'عميد الكلية التقنية', titleEn: 'Technical college dean', category: 'FACULTY_LEADERSHIP' as const, scopeRequirement: 'FACULTY', eligibleInstitutionTypeCodes: ['TECHNICAL_COLLEGE'], legalBasis: 'قانون 21/2023 م19، م22' },
-  { code: 'FACULTY_ASSOCIATE_DEAN', titleAr: 'وكيل الكلية / وكيل الشؤون العلمية', titleEn: 'Associate dean / VP for academic affairs', category: 'FACULTY_LEADERSHIP' as const, scopeRequirement: 'FACULTY', eligibleInstitutionTypeCodes: [], legalBasis: 'قانون 4/2020 م27؛ قانون 21/2023 م19، م27' },
-  { code: 'DEPARTMENT_HEAD', titleAr: 'رئيس القسم العلمي', titleEn: 'Head of scientific department', category: 'DEPARTMENT_LEADERSHIP' as const, scopeRequirement: 'SCIENTIFIC_DEPARTMENT', eligibleInstitutionTypeCodes: [], legalBasis: 'قانون 4/2020 م32' },
+  { code: 'FACULTY_DEAN', titleAr: 'عميد الكلية', titleEn: 'Dean (university faculty)', category: 'FACULTY_LEADERSHIP' as const, scopeRequirement: 'FACULTY', allowedUnitTypes: ['FACULTY'], eligibleInstitutionTypeCodes: ['UNIVERSITY'], legalBasis: 'قانون 9/2026 م25 (النسخة المعدَّلة لم25 من قانون 4/2020)' },
+  // §10.3 (hardening): a technical college represented as a COLLEGE unit
+  // can now seat its dean — allowedUnitTypes covers both spellings.
+  { code: 'TECHNICAL_COLLEGE_DEAN', titleAr: 'عميد الكلية التقنية', titleEn: 'Technical college dean', category: 'FACULTY_LEADERSHIP' as const, scopeRequirement: 'COLLEGE', allowedUnitTypes: ['COLLEGE', 'FACULTY'], eligibleInstitutionTypeCodes: ['TECHNICAL_COLLEGE'], legalBasis: 'قانون 21/2023 م19، م22' },
+  // §10.2 (hardening): وكيل الكلية الجامعية ≠ وكيل الشؤون العلمية
+  // بالكلية التقنية — مسميان منفصلان بأساسين قانونيين مختلفين.
+  { code: 'FACULTY_ASSOCIATE_DEAN', titleAr: 'وكيل الكلية', titleEn: 'Associate dean (university faculty)', category: 'FACULTY_LEADERSHIP' as const, scopeRequirement: 'FACULTY', allowedUnitTypes: ['FACULTY'], eligibleInstitutionTypeCodes: ['UNIVERSITY'], legalBasis: 'قانون 4/2020 م27' },
+  { code: 'TECHNICAL_COLLEGE_ACADEMIC_AFFAIRS', titleAr: 'وكيل الشؤون العلمية بالكلية التقنية', titleEn: 'VP for scientific affairs (technical college)', category: 'FACULTY_LEADERSHIP' as const, scopeRequirement: 'COLLEGE', allowedUnitTypes: ['COLLEGE', 'FACULTY'], eligibleInstitutionTypeCodes: ['TECHNICAL_COLLEGE'], legalBasis: 'قانون 21/2023 م19، م27' },
+  { code: 'DEPARTMENT_HEAD', titleAr: 'رئيس القسم العلمي', titleEn: 'Head of scientific department', category: 'DEPARTMENT_LEADERSHIP' as const, scopeRequirement: 'SCIENTIFIC_DEPARTMENT', allowedUnitTypes: ['SCIENTIFIC_DEPARTMENT'], eligibleInstitutionTypeCodes: [], legalBasis: 'قانون 4/2020 م32' },
   // Institute leadership (Law 21/2023).
-  { code: 'HIGHER_INSTITUTE_DIRECTOR', titleAr: 'مدير المعهد العالي التقني', titleEn: 'Higher technical institute director', category: 'INSTITUTE_LEADERSHIP' as const, scopeRequirement: null, eligibleInstitutionTypeCodes: ['HIGHER_TECHNICAL_INSTITUTE'], legalBasis: 'قانون 21/2023 م27، م30' },
-  { code: 'HIGHER_INSTITUTE_ACADEMIC_AFFAIRS', titleAr: 'وكيل الشؤون العلمية بالمعهد العالي', titleEn: 'Institute VP for academic affairs', category: 'INSTITUTE_LEADERSHIP' as const, scopeRequirement: null, eligibleInstitutionTypeCodes: ['HIGHER_TECHNICAL_INSTITUTE'], legalBasis: 'قانون 21/2023 م27' },
-  { code: 'INTERMEDIATE_INSTITUTE_DIRECTOR', titleAr: 'مدير المعهد المتوسط', titleEn: 'Intermediate institute director', category: 'INSTITUTE_LEADERSHIP' as const, scopeRequirement: null, eligibleInstitutionTypeCodes: ['INTERMEDIATE_TECHNICAL_INSTITUTE'], legalBasis: 'قانون 21/2023 م35، م36' },
-  { code: 'INTERMEDIATE_INSTITUTE_DEPUTY', titleAr: 'نائب مدير المعهد المتوسط', titleEn: 'Intermediate institute deputy director', category: 'INSTITUTE_LEADERSHIP' as const, scopeRequirement: null, eligibleInstitutionTypeCodes: ['INTERMEDIATE_TECHNICAL_INSTITUTE'], legalBasis: 'قانون 21/2023 م35' },
-  // Training centers (Law 21/2023).
-  { code: 'TRAINING_CENTER_DIRECTOR', titleAr: 'مدير المركز', titleEn: 'Training center director', category: 'TRAINING_LEADERSHIP' as const, scopeRequirement: null, eligibleInstitutionTypeCodes: ['VOCATIONAL_TRAINING_CENTER'], legalBasis: 'قانون 21/2023 م39، م40' },
-  { code: 'TRAINING_CENTER_DEPUTY', titleAr: 'نائب مدير المركز', titleEn: 'Training center deputy director', category: 'TRAINING_LEADERSHIP' as const, scopeRequirement: null, eligibleInstitutionTypeCodes: ['VOCATIONAL_TRAINING_CENTER'], legalBasis: 'قانون 21/2023 م39' },
-  { code: 'CHIEF_TECHNICAL_GUIDE', titleAr: 'الموجه الفني الأول', titleEn: 'Chief technical guide', category: 'TRAINING_LEADERSHIP' as const, scopeRequirement: null, eligibleInstitutionTypeCodes: ['INTERMEDIATE_TECHNICAL_INSTITUTE', 'VOCATIONAL_TRAINING_CENTER'], legalBasis: 'قانون 21/2023 م37، م41' },
-  // Research + QA offices.
-  { code: 'RESEARCH_CENTER_DIRECTOR', titleAr: 'مدير مركز البحوث', titleEn: 'Research center director', category: 'CENTER_LEADERSHIP' as const, scopeRequirement: 'RESEARCH_CENTER', eligibleInstitutionTypeCodes: [], legalBasis: 'قانون 9/2026 م1' },
-  { code: 'QA_OFFICE_DIRECTOR', titleAr: 'مدير مكتب ضمان الجودة', titleEn: 'QA office director', category: 'CENTER_LEADERSHIP' as const, scopeRequirement: 'QA_OFFICE', eligibleInstitutionTypeCodes: [], legalBasis: 'قانون 2/2018 م13 (عضوية ضمان الجودة بمجلس الجامعة)' },
-  { code: 'MEDICAL_BOARD_CHAIR', titleAr: 'رئيس مجلس التخصصات الطبية', titleEn: 'Medical board chair', category: 'BOARD_OFFICE' as const, scopeRequirement: null, eligibleInstitutionTypeCodes: ['MEDICAL_SPECIALIZATIONS_BOARD'], legalBasis: 'قانون 9/2026 م33 مكرر' },
+  { code: 'HIGHER_INSTITUTE_DIRECTOR', titleAr: 'مدير المعهد التقني العالي', titleEn: 'Higher technical institute director', category: 'INSTITUTE_LEADERSHIP' as const, scopeRequirement: null, allowedUnitTypes: [] as string[], eligibleInstitutionTypeCodes: ['HIGHER_TECHNICAL_INSTITUTE'], legalBasis: 'قانون 21/2023 م27، م30' },
+  { code: 'HIGHER_INSTITUTE_ACADEMIC_AFFAIRS', titleAr: 'وكيل الشؤون العلمية بالمعهد العالي', titleEn: 'Institute VP for academic affairs', category: 'INSTITUTE_LEADERSHIP' as const, scopeRequirement: null, allowedUnitTypes: [] as string[], eligibleInstitutionTypeCodes: ['HIGHER_TECHNICAL_INSTITUTE'], legalBasis: 'قانون 21/2023 م27' },
+  { code: 'INTERMEDIATE_INSTITUTE_DIRECTOR', titleAr: 'مدير المعهد الفني المتوسط', titleEn: 'Intermediate technical institute director', category: 'INSTITUTE_LEADERSHIP' as const, scopeRequirement: null, allowedUnitTypes: [] as string[], eligibleInstitutionTypeCodes: ['INTERMEDIATE_TECHNICAL_INSTITUTE'], legalBasis: 'قانون 21/2023 م35، م36' },
+  { code: 'INTERMEDIATE_INSTITUTE_DEPUTY', titleAr: 'نائب مدير المعهد الفني المتوسط', titleEn: 'Intermediate institute deputy director', category: 'INSTITUTE_LEADERSHIP' as const, scopeRequirement: null, allowedUnitTypes: [] as string[], eligibleInstitutionTypeCodes: ['INTERMEDIATE_TECHNICAL_INSTITUTE'], legalBasis: 'قانون 21/2023 م35' },
+  // Training centers (Law 21/2023) — the full statutory name, not "المركز".
+  { code: 'TRAINING_CENTER_DIRECTOR', titleAr: 'مدير مركز التكوين والتدريب', titleEn: 'Vocational training center director', category: 'TRAINING_LEADERSHIP' as const, scopeRequirement: null, allowedUnitTypes: [] as string[], eligibleInstitutionTypeCodes: ['VOCATIONAL_TRAINING_CENTER'], legalBasis: 'قانون 21/2023 م39، م40' },
+  { code: 'TRAINING_CENTER_DEPUTY', titleAr: 'نائب مدير مركز التكوين والتدريب', titleEn: 'Vocational training center deputy director', category: 'TRAINING_LEADERSHIP' as const, scopeRequirement: null, allowedUnitTypes: [] as string[], eligibleInstitutionTypeCodes: ['VOCATIONAL_TRAINING_CENTER'], legalBasis: 'قانون 21/2023 م39' },
+  { code: 'CHIEF_TECHNICAL_GUIDE', titleAr: 'الموجه الفني الأول', titleEn: 'Chief technical guide', category: 'TRAINING_LEADERSHIP' as const, scopeRequirement: null, allowedUnitTypes: [] as string[], eligibleInstitutionTypeCodes: ['INTERMEDIATE_TECHNICAL_INSTITUTE', 'VOCATIONAL_TRAINING_CENTER'], legalBasis: 'قانون 21/2023 م37، م41' },
+  // Research + QA offices — §10.2: مدير مركز البحوث ≠ رئيس الهيئة البحثية.
+  { code: 'RESEARCH_AUTHORITY_CHAIR', titleAr: 'رئيس الهيئة البحثية', titleEn: 'Research authority chair', category: 'CENTER_LEADERSHIP' as const, scopeRequirement: null, allowedUnitTypes: [] as string[], eligibleInstitutionTypeCodes: ['RESEARCH_AUTHORITY'], legalBasis: 'قانون 9/2026 م1' },
+  { code: 'RESEARCH_CENTER_DIRECTOR', titleAr: 'مدير مركز البحوث', titleEn: 'Research center director', category: 'CENTER_LEADERSHIP' as const, scopeRequirement: 'RESEARCH_CENTER', allowedUnitTypes: ['RESEARCH_CENTER'], eligibleInstitutionTypeCodes: [], legalBasis: 'قانون 9/2026 م1 (مراكز تابعة لهيئات بحثية/مؤسسات)' },
+  { code: 'QA_OFFICE_DIRECTOR', titleAr: 'مدير مكتب ضمان الجودة', titleEn: 'QA office director', category: 'CENTER_LEADERSHIP' as const, scopeRequirement: 'QA_OFFICE', allowedUnitTypes: ['QA_OFFICE'], eligibleInstitutionTypeCodes: [], legalBasis: 'قانون 2/2018 م13 (عضوية ضمان الجودة بمجلس الجامعة)' },
+  { code: 'MEDICAL_BOARD_CHAIR', titleAr: 'رئيس مجلس التخصصات الطبية', titleEn: 'Medical board chair', category: 'BOARD_OFFICE' as const, scopeRequirement: null, allowedUnitTypes: [] as string[], eligibleInstitutionTypeCodes: ['MEDICAL_SPECIALIZATIONS_BOARD'], legalBasis: 'قانون 9/2026 م33 مكرر' },
 ] as const;
 
 // ── Accreditation criteria sets (National Center, qaa.ly) ─────────
@@ -91,6 +107,44 @@ const PROGRAM_STANDARDS = [
   'الشؤون الطلابية', 'البحث العلمي', 'خدمة المجتمع',
   'ضمان الجودة والتحسين المستمر',
 ];
+
+// ── §11 — the controlled org-unit type catalog (seeded globals) ────
+// Eligibility: eligibleSectors empty = both sectors;
+// eligibleInstitutionTypeCodes empty = all kinds; allowedParentCodes
+// empty = any parent type. Local types ride the same table with
+// isLocal + institutionId.
+const ORG_UNIT_TYPE_DEFINITIONS = [
+  { code: 'FACULTY', nameAr: 'كلية (جامعية)', nameEn: 'Faculty (university)', allowedParentCodes: [] as string[], eligibleSectors: ['HIGHER_EDUCATION_RESEARCH'] as string[], eligibleInstitutionTypeCodes: [] as string[], sortOrder: 1, notes: 'الميراث الجامعي — تُعكس إلى جدول Faculty' },
+  { code: 'COLLEGE', nameAr: 'كلية تقنية', nameEn: 'Technical college', allowedParentCodes: [] as string[], eligibleSectors: ['TECHNICAL_VOCATIONAL_PROFESSIONAL'] as string[], eligibleInstitutionTypeCodes: ['TECHNICAL_COLLEGE'] as string[], sortOrder: 2, notes: '§10.3 — لا تُصنَّف ككلية جامعية ولا تعكس إلى جدول Faculty' },
+  { code: 'SCIENTIFIC_DEPARTMENT', nameAr: 'قسم علمي', nameEn: 'Scientific department', allowedParentCodes: [] as string[], eligibleSectors: [] as string[], eligibleInstitutionTypeCodes: [] as string[], sortOrder: 3, notes: 'الميراث الجامعي — تُعكس إلى جدول Department' },
+  { code: 'INSTITUTE', nameAr: 'معهد', nameEn: 'Institute', allowedParentCodes: [] as string[], eligibleSectors: [] as string[], eligibleInstitutionTypeCodes: [] as string[], sortOrder: 4 },
+  { code: 'RESEARCH_CENTER', nameAr: 'مركز بحوث', nameEn: 'Research center', allowedParentCodes: [] as string[], eligibleSectors: ['HIGHER_EDUCATION_RESEARCH'] as string[], eligibleInstitutionTypeCodes: [] as string[], sortOrder: 5, notes: 'مركز تابع لهيئة بحثية/مؤسسة — ليس مؤسسة مستقلة ما لم يُنشأ كذلك' },
+  { code: 'RESEARCH_UNIT', nameAr: 'وحدة بحثية', nameEn: 'Research unit', allowedParentCodes: ['RESEARCH_CENTER', 'FACULTY', 'COLLEGE', 'INSTITUTE', 'SCIENTIFIC_DEPARTMENT'] as string[], eligibleSectors: ['HIGHER_EDUCATION_RESEARCH'] as string[], eligibleInstitutionTypeCodes: [] as string[], sortOrder: 6 },
+  { code: 'GENERAL_ADMINISTRATION', nameAr: 'إدارة عامة', nameEn: 'General administration', allowedParentCodes: [] as string[], eligibleSectors: [] as string[], eligibleInstitutionTypeCodes: [] as string[], sortOrder: 7 },
+  { code: 'OFFICE', nameAr: 'مكتب', nameEn: 'Office', allowedParentCodes: [] as string[], eligibleSectors: [] as string[], eligibleInstitutionTypeCodes: [] as string[], sortOrder: 8 },
+  { code: 'ADMINISTRATIVE_DEPARTMENT', nameAr: 'قسم إداري', nameEn: 'Administrative department', allowedParentCodes: ['GENERAL_ADMINISTRATION', 'OFFICE'] as string[], eligibleSectors: [] as string[], eligibleInstitutionTypeCodes: [] as string[], sortOrder: 9 },
+  { code: 'BRANCH', nameAr: 'فرع', nameEn: 'Branch', allowedParentCodes: [] as string[], eligibleSectors: [] as string[], eligibleInstitutionTypeCodes: [] as string[], sortOrder: 10 },
+  { code: 'CAMPUS', nameAr: 'حرم جامعي', nameEn: 'Campus', allowedParentCodes: [] as string[], eligibleSectors: [] as string[], eligibleInstitutionTypeCodes: [] as string[], sortOrder: 11 },
+  { code: 'TRAINING_UNIT', nameAr: 'وحدة تدريب', nameEn: 'Training unit', allowedParentCodes: [] as string[], eligibleSectors: ['TECHNICAL_VOCATIONAL_PROFESSIONAL'] as string[], eligibleInstitutionTypeCodes: [] as string[], sortOrder: 12, notes: 'وحدات مركز التكوين والتدريب — بلا كلية/قسم جامعي' },
+  { code: 'LABORATORY', nameAr: 'مختبر', nameEn: 'Laboratory', allowedParentCodes: [] as string[], eligibleSectors: [] as string[], eligibleInstitutionTypeCodes: [] as string[], sortOrder: 13 },
+  { code: 'WORKSHOP', nameAr: 'ورشة', nameEn: 'Workshop', allowedParentCodes: [] as string[], eligibleSectors: [] as string[], eligibleInstitutionTypeCodes: [] as string[], sortOrder: 14, notes: 'ورش التدريب المهني' },
+  { code: 'DEANERY_OFFICE', nameAr: 'مكتب العمادة', nameEn: 'Deanery office', allowedParentCodes: ['FACULTY', 'COLLEGE'] as string[], eligibleSectors: [] as string[], eligibleInstitutionTypeCodes: [] as string[], sortOrder: 15 },
+  { code: 'REGISTRAR_OFFICE', nameAr: 'مكتب التسجيل العام', nameEn: 'Registrar office', allowedParentCodes: [] as string[], eligibleSectors: [] as string[], eligibleInstitutionTypeCodes: [] as string[], sortOrder: 16 },
+  { code: 'QA_OFFICE', nameAr: 'مكتب ضمان الجودة', nameEn: 'QA office', allowedParentCodes: [] as string[], eligibleSectors: [] as string[], eligibleInstitutionTypeCodes: [] as string[], sortOrder: 17, notes: 'مكتب الجودة الداخلي بالمؤسسة — ليس المركز الوطني' },
+  { code: 'OTHER', nameAr: 'أخرى', nameEn: 'Other', allowedParentCodes: [] as string[], eligibleSectors: [] as string[], eligibleInstitutionTypeCodes: [] as string[], sortOrder: 99 },
+] as const;
+
+// ── §12 — the explicit progression rule catalog (Law 21/2023) ──────
+// The absence of a row IS the prohibition (شهادة التدريب المهني
+// والدبلوم المهني التخصصي لا تسمحان بمواصلة الدراسة — م38/م26).
+const CREDENTIAL_PROGRESSION_RULES = [
+  { fromCode: 'BASIC_FORMATION_CERT', toCode: 'INTERMEDIATE_TECHNICAL_DIPLOMA', legalReference: 'قانون 21/2023 م38 (المسار المفتوح)، م4(2)' },
+  { fromCode: 'INTERMEDIATE_TECHNICAL_DIPLOMA', toCode: 'HIGHER_TECHNICAL_DIPLOMA', legalReference: 'قانون 21/2023 م4(2)' },
+  { fromCode: 'INTERMEDIATE_TECHNICAL_DIPLOMA', toCode: 'TECHNICAL_BACHELOR', legalReference: 'قانون 21/2023 م4(2)' },
+  { fromCode: 'HIGHER_TECHNICAL_DIPLOMA', toCode: 'TECHNICAL_BACHELOR', legalReference: 'قانون 21/2023 م4(3)' },
+  { fromCode: 'TECHNICAL_BACHELOR', toCode: 'HIGH_LICENSE_MASTERS', legalReference: 'قانون 21/2023 م4(3) → م4(4)' },
+  { fromCode: 'HIGH_LICENSE_MASTERS', toCode: 'PRECISE_LICENSE_DOCTORATE', legalReference: 'قانون 21/2023 م4(4)' },
+] as const;
 
 /** Seed every r352 catalog — additive upserts, safe to re-run. */
 export async function ensureR352Catalogs(prisma: PrismaClient): Promise<R352CatalogCounts> {
@@ -163,13 +217,16 @@ export async function ensureR352Catalogs(prisma: PrismaClient): Promise<R352Cata
       },
     });
   }
-  // 4. Position templates.
+  // 4. Position templates (§10.2/§10.3 — allowedUnitTypes is the
+  // authoritative multi-type unit scope; scopeRequirement stays as the
+  // deprecated single-type belt).
   for (const t of POSITION_TEMPLATES) {
     await prisma.positionTemplate.upsert({
       where: { code: t.code },
       create: {
         code: t.code, titleAr: t.titleAr, titleEn: t.titleEn, category: t.category,
         scopeRequirement: t.scopeRequirement,
+        allowedUnitTypes: [...t.allowedUnitTypes],
         eligibleInstitutionTypeCodes: [...t.eligibleInstitutionTypeCodes],
         isLocalVariant: false,
         notes: t.legalBasis,
@@ -177,8 +234,64 @@ export async function ensureR352Catalogs(prisma: PrismaClient): Promise<R352Cata
       update: {
         titleAr: t.titleAr, titleEn: t.titleEn, category: t.category,
         scopeRequirement: t.scopeRequirement,
+        allowedUnitTypes: [...t.allowedUnitTypes],
         eligibleInstitutionTypeCodes: [...t.eligibleInstitutionTypeCodes],
         notes: t.legalBasis,
+      },
+    });
+  }
+  // 4b. §11 — the controlled org-unit type catalog (global definitions;
+  // institutions may add LOCAL types through the same table).
+  for (const d of ORG_UNIT_TYPE_DEFINITIONS) {
+    await prisma.orgUnitTypeDefinition.upsert({
+      where: { code: d.code },
+      create: {
+        code: d.code, nameAr: d.nameAr, nameEn: d.nameEn,
+        allowedParentCodes: [...d.allowedParentCodes],
+        eligibleSectors: [...d.eligibleSectors],
+        eligibleInstitutionTypeCodes: [...d.eligibleInstitutionTypeCodes],
+        isLocal: false,
+        isActive: true,
+        notes: d.notes ?? null,
+        sortOrder: d.sortOrder,
+      },
+      update: {
+        nameAr: d.nameAr, nameEn: d.nameEn,
+        allowedParentCodes: [...d.allowedParentCodes],
+        eligibleSectors: [...d.eligibleSectors],
+        eligibleInstitutionTypeCodes: [...d.eligibleInstitutionTypeCodes],
+        isActive: true,
+        notes: d.notes ?? null,
+        sortOrder: d.sortOrder,
+      },
+    });
+  }
+  // 4c. §12 — the explicit credential-progression rule catalog (Law
+  // 21/2023). Numeric levels order DISPLAY only; these rows ARE the law.
+  const credentialIds = new Map(
+    (await prisma.credentialType.findMany({ select: { id: true, code: true } })).map((c) => [c.code, c.id]),
+  );
+  for (const r of CREDENTIAL_PROGRESSION_RULES) {
+    const fromId = credentialIds.get(r.fromCode);
+    const toId = credentialIds.get(r.toCode);
+    if (!fromId || !toId) continue;
+    await prisma.credentialProgressionRule.upsert({
+      where: { fromCredentialTypeId_toCredentialTypeId: { fromCredentialTypeId: fromId, toCredentialTypeId: toId } },
+      create: {
+        fromCredentialTypeId: fromId,
+        toCredentialTypeId: toId,
+        toInstitutionTypeCodes: [...(r.toInstitutionTypeCodes ?? [])],
+        toProgramKinds: [...(r.toProgramKinds ?? [])],
+        admissionConditions: r.admissionConditions ?? null,
+        legalReference: r.legalReference,
+        isActive: true,
+      },
+      update: {
+        toInstitutionTypeCodes: [...(r.toInstitutionTypeCodes ?? [])],
+        toProgramKinds: [...(r.toProgramKinds ?? [])],
+        admissionConditions: r.admissionConditions ?? null,
+        legalReference: r.legalReference,
+        isActive: true,
       },
     });
   }

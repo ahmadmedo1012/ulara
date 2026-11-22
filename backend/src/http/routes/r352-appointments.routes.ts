@@ -26,10 +26,8 @@ import {
   appointmentConflicts,
   appointmentDatesValid,
   positionEligibleForKind,
-  scopeRequirementSatisfied,
   type AppointmentWindow,
 } from '../../lib/appointments-logic.js';
-import type { OrgUnitType } from '../../lib/org-unit-types.js';
 import {
   appointmentListSchema,
   appointmentCreateSchema,
@@ -102,7 +100,8 @@ router.post(
       const position = await prisma.positionTemplate.findUnique({
         where: { code: input.positionCode },
         select: {
-          id: true, code: true, scopeRequirement: true, eligibleInstitutionTypeCodes: true,
+          id: true, code: true, scopeRequirement: true, allowedUnitTypes: true,
+          eligibleInstitutionTypeCodes: true,
           isLocalVariant: true, institutionId: true,
         },
       });
@@ -136,36 +135,51 @@ router.post(
         }
         unitType = unit.type;
       }
-      if (!scopeRequirementSatisfied((position.scopeRequirement as OrgUnitType | null) ?? null, unitType)) {
+      const allowedUnitTypes: readonly string[] =
+        position.allowedUnitTypes.length > 0 ? position.allowedUnitTypes : (
+          position.scopeRequirement ? [position.scopeRequirement] : []
+        );
+      if (allowedUnitTypes.length > 0 && (unitType === null || !allowedUnitTypes.includes(unitType))) {
         throw new AppError(
           'APPOINTMENT_UNIT_TYPE_REQUIRED',
           'هذا المسمى يتطلب وحدة تنظيمية من نوع معين (راجع شرط المسمى)',
           400,
         );
       }
-      // Overlap guard: same position+unit substantive live appointments.
-      const existing = await prisma.positionAppointment.findMany({
-        where: {
-          positionId: position.id,
-          ...(input.orgUnitId ? { orgUnitId: input.orgUnitId } : { orgUnitId: null }),
-          status: { in: ['SCHEDULED', 'ACTIVE'] },
-        },
-        select: { startDate: true, endDate: true, status: true, acting: true },
-      });
       const next: AppointmentWindow = {
         startDate: input.startDate,
         endDate: input.endDate ?? null,
         status: 'ACTIVE',
         acting: input.acting ?? false,
       };
-      if (appointmentConflicts(existing, next)) {
-        throw new AppError(
-          'APPOINTMENT_CONFLICT',
-          'يوجد تعيين قائم لنفس المسمى في نفس الوحدة — أنهِه أولًا أو اجعل الجديد بالنيابة',
-          409,
-        );
-      }
       const appointment = await prisma.$transaction(async (tx) => {
+        // §6.2 — the substantive-seat check runs INSIDE the transaction,
+        // scoped by institutionId (a global position template shared by
+        // two institutions must not block the other's appointment), and
+        // an advisory lock on the seat serializes racing creates.
+        // orgUnitId is nullable so an exclusion constraint cannot express
+        // the institution-wide seat (NULL ≠ NULL in gist) — this lock +
+        // in-transaction re-check is the documented strategy.
+        await tx.$executeRawUnsafe(
+          'SELECT pg_advisory_xact_lock(hashtext($1))',
+          `ulara_appointment_seat:${institutionId}:${position.id}:${input.orgUnitId ?? 'ALL'}`,
+        );
+        const existing = await tx.positionAppointment.findMany({
+          where: {
+            institutionId,
+            positionId: position.id,
+            ...(input.orgUnitId ? { orgUnitId: input.orgUnitId } : { orgUnitId: null }),
+            status: { in: ['SCHEDULED', 'ACTIVE'] },
+          },
+          select: { startDate: true, endDate: true, status: true, acting: true },
+        });
+        if (appointmentConflicts(existing, next)) {
+          throw new AppError(
+            'APPOINTMENT_CONFLICT',
+            'يوجد تعيين قائم لنفس المسمى في نفس الوحدة — أنهِه أولًا أو اجعل الجديد بالنيابة',
+            409,
+          );
+        }
         const created = await tx.positionAppointment.create({
           data: {
             institutionId,

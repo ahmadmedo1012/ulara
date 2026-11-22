@@ -338,8 +338,13 @@ router.patch(
         if (!transitionAllowed(PROGRAM_VERSION_TRANSITIONS, version.status as 'DRAFT', input.status)) {
           throw new AppError('PROGRAM_VERSION_INVALID_TRANSITION', 'انتقال حالة إصدار البرنامج غير مسموح', 409);
         }
-        if (input.status === 'ACTIVE') {
-          const active = await prisma.programVersion.findFirst({
+      }
+      const updated = await prisma.$transaction(async (tx) => {
+        // §6.4 — the single-ACTIVE check runs INSIDE the transaction;
+        // the partial unique index (ProgramVersion_one_active_per_program_key)
+        // is the concurrency invariant of record for racing activations.
+        if (input.status === 'ACTIVE' && version.status !== 'ACTIVE') {
+          const active = await tx.programVersion.findFirst({
             where: { programId: version.programId, status: 'ACTIVE', id: { not: version.id } },
             select: { id: true },
           });
@@ -347,8 +352,6 @@ router.patch(
             throw new AppError('PROGRAM_VERSION_ACTIVE_EXISTS', 'يوجد إصدار نشط آخر للبرنامج — أحله إلى المتقاعد أولًا', 409);
           }
         }
-      }
-      const updated = await prisma.$transaction(async (tx) => {
         const row = await tx.programVersion.update({
           where: { id: version.id },
           data: {
@@ -363,6 +366,15 @@ router.patch(
       });
       res.json({ data: updated });
     } catch (e) {
+      if (
+        e instanceof Prisma.PrismaClientKnownRequestError &&
+        typeof e.message === 'string' &&
+        e.message.includes('ProgramVersion_one_active_per_program_key')
+      ) {
+        return next(
+          new AppError('PROGRAM_VERSION_ACTIVE_EXISTS', 'يوجد إصدار نشط آخر للبرنامج — أحله إلى المتقاعد أولًا', 409),
+        );
+      }
       next(e);
     }
   },

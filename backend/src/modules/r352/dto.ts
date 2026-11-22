@@ -8,14 +8,16 @@
  */
 import { z } from 'zod';
 import { paginationSchema } from '../../lib/pagination.js';
-import { ORG_UNIT_TYPES } from '../../lib/org-unit-types.js';
 
 // ─── shared primitives ─────────────────────────────────────────────
 const id = z.string().cuid();
 const optionalId = z.string().cuid().optional();
 const date = z.coerce.date();
 const optionalDate = z.coerce.date().optional();
-const orgUnitType = z.enum(ORG_UNIT_TYPES);
+// §11 — the type is a catalog code, not a closed DTO enum: the seeded
+// OrgUnitTypeDefinition table (global + institution-local types) is the
+// controlled vocabulary the service validates against.
+const orgUnitType = z.string().trim().min(2).max(64);
 
 // ─── institution classification ────────────────────────────────────
 export const institutionClassificationSchema = z
@@ -662,8 +664,33 @@ export const selfAssessmentCreateSchema = z
   .object({
     periodLabel: z.string().trim().min(1).max(100),
     orgUnitId: optionalId,
+    // r352 hardening §8 — program-scoped assessments.
+    programId: optionalId,
     criteriaSetId: optionalId,
     summary: z.string().trim().max(8000).optional(),
+  })
+  .strict();
+
+// r352 hardening §8 — criterion-level responses. Upsert keyed by the
+// criteria item; the route proves the item belongs to the assessment's
+// criteria set (no mixing versions/authorities/types).
+export const selfAssessmentItemUpsertSchema = z
+  .object({
+    criteriaItemId: id,
+    rating: z
+      .enum(['COMPLIANT', 'PARTIALLY_COMPLIANT', 'NON_COMPLIANT', 'NOT_ASSESSED', 'NOT_APPLICABLE'])
+      .optional(),
+    responseAr: z.string().trim().max(8000).optional(),
+    evidenceRefs: z.string().trim().max(2000).optional(),
+    findingsAr: z.string().trim().max(8000).optional(),
+    assessorPersonId: optionalId,
+  })
+  .strict();
+
+export const selfAssessmentCorrectiveActionSchema = z
+  .object({
+    planText: z.string().trim().min(1).max(8000),
+    targetDate: optionalDate,
   })
   .strict();
 
@@ -687,6 +714,9 @@ export const evidenceCreateSchema = z
     ]),
     ownerId: id,
     titleAr: z.string().trim().min(1).max(300),
+    // r352 hardening §9 — the real storage link (governance namespace,
+    // tenant-bound key); fileUrl stays a deprecated external reference.
+    binaryObjectId: z.string().trim().max(200).optional(),
     documentRef: z.string().trim().max(300).optional(),
     fileUrl: z.string().trim().max(1000).optional(),
     description: z.string().trim().max(2000).optional(),

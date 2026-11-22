@@ -171,6 +171,17 @@ router.patch(
       const institutionId = req.institution!.id;
       const project = await requireProject(institutionId, req.params.id!);
       const input = req.body as z.infer<typeof researchProjectUpdateSchema>;
+      // §4.5 — a newly supplied principal investigator is validated
+      // BEFORE persisting: the person must belong to the same institution.
+      if (input.principalInvestigatorId !== undefined && input.principalInvestigatorId !== null) {
+        const investigator = await prisma.institutionalPerson.findUnique({
+          where: { id: input.principalInvestigatorId },
+          select: { institutionId: true },
+        });
+        if (!investigator || investigator.institutionId !== institutionId) {
+          throw AppError.notFound('الباحث الرئيسي المحدد غير موجود في مؤسستك');
+        }
+      }
       if (input.status && input.status !== project.status) {
         if (!transitionAllowed(RESEARCH_PROJECT_TRANSITIONS, project.status as 'PROPOSED', input.status)) {
           throw new AppError('RESEARCH_PROJECT_INVALID_TRANSITION', 'انتقال حالة المشروع البحثي غير مسموح', 409);

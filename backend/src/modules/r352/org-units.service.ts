@@ -174,6 +174,99 @@ export async function ensureOrgUnitForDepartment(
   return unitId;
 }
 
+/**
+ * §11 — the controlled type-catalog gate. A unit type is valid for the
+ * institution only when an ACTIVE definition exists globally OR as a
+ * local type OF THIS institution, the institution's sector and kind
+ * match the definition's eligibility, and (when creating under a
+ * parent) the parent's type is allowed by the definition.
+ */
+export async function assertUnitTypeAllowed(
+  client: Tx | PrismaClient,
+  institutionId: string,
+  type: string,
+  parentType: string | null,
+): Promise<void> {
+  const institution = await client.institution.findUnique({
+    where: { id: institutionId },
+    select: {
+      sector: true,
+      kind: { select: { code: true } },
+    },
+  });
+  const definition = await client.orgUnitTypeDefinition.findFirst({
+    where: {
+      code: type,
+      isActive: true,
+      OR: [{ isLocal: false }, { isLocal: true, institutionId }],
+    },
+  });
+  if (!definition) {
+    throw new AppError(
+      'ORG_UNIT_TYPE_INVALID',
+      'نوع الوحدة التنظيمية غير معرّف في الفهرس — راجع أنواع الوحدات المتاحة',
+      400,
+    );
+  }
+  if (
+    definition.eligibleSectors.length > 0 &&
+    (!institution?.sector || !definition.eligibleSectors.includes(institution.sector))
+  ) {
+    throw new AppError(
+      'ORG_UNIT_TYPE_INVALID',
+      'نوع الوحدة التنظيمية غير متاح لقطاع مؤسستك',
+      400,
+    );
+  }
+  if (
+    definition.eligibleInstitutionTypeCodes.length > 0 &&
+    (!institution?.kind?.code ||
+      !definition.eligibleInstitutionTypeCodes.includes(institution.kind.code))
+  ) {
+    throw new AppError(
+      'ORG_UNIT_TYPE_INVALID',
+      'نوع الوحدة التنظيمية غير متاح لنوع مؤسستك',
+      400,
+    );
+  }
+  if (definition.allowedParentCodes.length > 0) {
+    if (parentType === null || !definition.allowedParentCodes.includes(parentType)) {
+      throw new AppError(
+        'ORG_UNIT_TYPE_PARENT_INVALID',
+        'نوع الوحدة التنظيمية لا يصلح تحت هذا النوع من الوحدة الأب',
+        400,
+      );
+    }
+  }
+}
+
+/**
+ * §6.5 — map the database trigger's structural exceptions to their clean
+ * Arabic envelopes. The trigger (ulara_org_unit_check_parent) is the
+ * invariant of record; Prisma surfaces its RAISE EXCEPTION text through
+ * the error message, which this mapper interprets.
+ */
+export function mapOrgUnitTriggerError(e: unknown): AppError | null {
+  if (!(e instanceof Error)) return null;
+  const message = e.message;
+  if (message.includes('ORG_UNIT_CYCLE')) {
+    return new AppError('ORG_UNIT_CYCLE', 'لا يمكن ربط الوحدة تحت فرعها التنظيمي — حلقة ممنوعة', 409);
+  }
+  if (message.includes('ORG_UNIT_CORRUPT_CYCLE')) {
+    return new AppError('ORG_UNIT_CYCLE', 'اكتُشفت حلقة فاسدة في الشجرة — راجع بنية الوحدات', 409);
+  }
+  if (message.includes('ORG_UNIT_DEPTH_EXCEEDED')) {
+    return new AppError('ORG_UNIT_DEPTH_EXCEEDED', 'عمق الشجرة التنظيمية تجاوز الحد المقرر (64 مستوى)', 409);
+  }
+  if (message.includes('ORG_UNIT_PARENT_SAME_INSTITUTION')) {
+    return AppError.notFound('الوحدة الأب المحددة غير موجودة في مؤسستك');
+  }
+  if (message.includes('ORG_UNIT_PARENT_MISSING')) {
+    return new AppError('ORG_UNIT_PARENT_MISSING', 'الوحدة الأب المحددة غير موجودة', 400);
+  }
+  return null;
+}
+
 /** Mirror an org-unit create/update into the legacy tables when the
  * type warrants it (FACULTY → Faculty, SCIENTIFIC_DEPARTMENT →
  * Department). Runs INSIDE the caller's transaction. */

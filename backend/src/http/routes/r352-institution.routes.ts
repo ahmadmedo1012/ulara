@@ -120,22 +120,47 @@ router.patch(
         }
         const parent = await prisma.institution.findUnique({
           where: { id: input.parentInstitutionId },
-          select: { id: true, sector: true },
+          select: { id: true, sector: true, kindId: true },
         });
         if (!parent) throw AppError.notFound('المؤسسة الأم المحددة غير موجودة');
+        // §6.6 — an affiliation parent must be a CLASSIFIED institution:
+        // unclassified parents cannot legally host children.
+        if (!parent.sector || !parent.kindId) {
+          throw new AppError(
+            'PARENT_SECTOR_MISMATCH',
+            'المؤسسة الأم غير مصنّفة (قطاع/نوع) — صنّفها قبل ربط التبعية',
+            409,
+          );
+        }
         const newSector = input.sector ?? existing.sector;
-        if (newSector && parent.sector && parent.sector !== newSector) {
+        if (newSector && parent.sector !== newSector) {
           throw new AppError(
             'PARENT_SECTOR_MISMATCH',
             'المؤسسة الأم تنتمي إلى قطاع مختلف — التبعية العابرة للقطاعات ممنوعة',
             409,
           );
         }
-        // Cycle check (bounded walk).
+        // §6.6 — cycle check with visited-set protection AND an explicit
+        // depth bound: reaching 16 levels is a REJECTION, never a silent
+        // accept (the DB trigger is the invariant of record).
+        const visited = new Set<string>();
         let cur: string | null = parent.id;
-        for (let i = 0; i < 32 && cur; i += 1) {
+        let depth = 0;
+        while (cur !== null) {
           if (cur === id) {
             throw new AppError('PARENT_CYCLE', 'لا يمكن ربط المؤسسة تحت سلسلة تعود إليها', 409);
+          }
+          if (visited.has(cur)) {
+            throw new AppError('PARENT_CYCLE', 'اكتُشفت حلقة فاسدة في سلسلة التبعية', 409);
+          }
+          visited.add(cur);
+          depth += 1;
+          if (depth > 16) {
+            throw new AppError(
+              'INSTITUTION_AFFILIATION_DEPTH_EXCEEDED',
+              'سلسلة التبعية أعمق من الحد المقرر (16 مستوى)',
+              409,
+            );
           }
           const row: { parentInstitutionId: string | null } | null = await prisma.institution.findUnique({
             where: { id: cur },
@@ -185,6 +210,29 @@ router.patch(
       });
       res.json({ data: { institution: classified } });
     } catch (e) {
+      // §6.6 — the affiliation trigger (ulara_institution_check_parent)
+      // is the invariant of record; map its exceptions to Arabic 409s.
+      if (e instanceof Error) {
+        const message = e.message;
+        if (message.includes('INSTITUTION_AFFILIATION_CYCLE')) {
+          return next(new AppError('PARENT_CYCLE', 'لا يمكن ربط المؤسسة تحت سلسلة تعود إليها', 409));
+        }
+        if (message.includes('INSTITUTION_AFFILIATION_CORRUPT_CYCLE')) {
+          return next(new AppError('PARENT_CYCLE', 'اكتُشفت حلقة فاسدة في سلسلة التبعية', 409));
+        }
+        if (message.includes('INSTITUTION_AFFILIATION_DEPTH_EXCEEDED')) {
+          return next(new AppError('INSTITUTION_AFFILIATION_DEPTH_EXCEEDED', 'سلسلة التبعية أعمق من الحد المقرر (16 مستوى)', 409));
+        }
+        if (message.includes('INSTITUTION_AFFILIATION_PARENT_UNCLASSIFIED')) {
+          return next(new AppError('PARENT_SECTOR_MISMATCH', 'المؤسسة الأم غير مصنّفة (قطاع/نوع) — صنّفها قبل ربط التبعية', 409));
+        }
+        if (message.includes('INSTITUTION_AFFILIATION_CROSS_SECTOR')) {
+          return next(new AppError('PARENT_SECTOR_MISMATCH', 'المؤسسة الأم تنتمي إلى قطاع مختلف — التبعية العابرة للقطاعات ممنوعة', 409));
+        }
+        if (message.includes('INSTITUTION_AFFILIATION_PARENT_MISSING')) {
+          return next(AppError.notFound('المؤسسة الأم المحددة غير موجودة'));
+        }
+      }
       next(e);
     }
   },

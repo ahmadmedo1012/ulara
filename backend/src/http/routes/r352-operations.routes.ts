@@ -17,6 +17,7 @@ import { validate } from '../validate.js';
 import { AppError } from '../../lib/errors.js';
 import { buildMeta } from '../../lib/pagination.js';
 import { RESERVATION_TRANSITIONS, WORK_ORDER_TRANSITIONS, transitionAllowed } from '../../lib/lifecycle-rules.js';
+import { assertFacilityUnitCompatible } from '../../lib/tenant-guards.js';
 import {
   facilityListSchema, facilityCreateSchema, facilityUpdateSchema,
   equipmentListSchema, equipmentCreateSchema, equipmentUpdateSchema,
@@ -300,6 +301,35 @@ router.patch(
       const institutionId = req.institution!.id;
       const equipment = await requireEquipment(institutionId, req.params.id!);
       const input = req.body as z.infer<typeof equipmentUpdateSchema>;
+      // §4.1 — updates validate newly supplied IDs EXACTLY like creates:
+      // same institution for facility / org unit / responsible person,
+      // plus facility↔unit compatibility on the post-update state.
+      if (input.facilityId !== undefined && input.facilityId !== null) {
+        await requireFacility(institutionId, input.facilityId);
+      }
+      if (input.orgUnitId !== undefined && input.orgUnitId !== null) {
+        const unit = await prisma.organizationalUnit.findUnique({
+          where: { id: input.orgUnitId }, select: { institutionId: true },
+        });
+        if (!unit || unit.institutionId !== institutionId) {
+          throw AppError.notFound('الوحدة التنظيمية المحددة غير موجودة في مؤسستك');
+        }
+      }
+      if (input.responsiblePersonId !== undefined && input.responsiblePersonId !== null) {
+        const person = await prisma.institutionalPerson.findUnique({
+          where: { id: input.responsiblePersonId }, select: { institutionId: true },
+        });
+        if (!person || person.institutionId !== institutionId) {
+          throw AppError.notFound('الفني المسؤول المحدد غير موجود في مؤسستك');
+        }
+      }
+      const nextFacilityId =
+        input.facilityId !== undefined ? (input.facilityId ?? null) : equipment.facilityId;
+      const nextOrgUnitId =
+        input.orgUnitId !== undefined ? (input.orgUnitId ?? null) : equipment.orgUnitId;
+      if (nextFacilityId && nextOrgUnitId) {
+        await assertFacilityUnitCompatible(nextFacilityId, nextOrgUnitId);
+      }
       const updated = await prisma.$transaction(async (tx) => {
         const row = await tx.equipment.update({
           where: { id: equipment.id },
@@ -541,24 +571,38 @@ router.post(
       const institutionId = req.institution!.id;
       const input = req.body as z.infer<typeof reservationCreateSchema>;
       const facility = await requireFacility(institutionId, input.facilityId);
+      // §4.2 — only an operational facility is reservable.
+      if (facility.status !== 'ACTIVE') {
+        throw new AppError('FACILITY_NOT_OPERATIONAL', 'المنشأة غير تشغيلية — لا يمكن حجزها حاليًا', 409);
+      }
       if (input.endsAt.getTime() <= input.startsAt.getTime()) {
         throw new AppError('RESERVATION_WINDOW_INVALID', 'نهاية الحجز يجب أن تكون بعد بدايته', 400);
       }
-      // Overlap guard: any live (REQUESTED/APPROVED) reservation of the
-      // same facility overlapping the requested window.
-      const overlapping = await prisma.facilityReservation.findFirst({
-        where: {
-          facilityId: facility.id,
-          status: { in: ['REQUESTED', 'APPROVED'] },
-          startsAt: { lt: input.endsAt },
-          endsAt: { gt: input.startsAt },
-        },
-        select: { id: true },
-      });
-      if (overlapping) {
-        throw new AppError('RESERVATION_OVERLAP', 'توجد حجوزات متداخلة لهذه المنشأة في الفترة المطلوبة', 409);
+      // §4.2 — the org unit, when supplied, belongs to the institution.
+      if (input.orgUnitId) {
+        const unit = await prisma.organizationalUnit.findUnique({
+          where: { id: input.orgUnitId }, select: { institutionId: true },
+        });
+        if (!unit || unit.institutionId !== institutionId) {
+          throw AppError.notFound('الوحدة التنظيمية المحددة غير موجودة في مؤسستك');
+        }
       }
       const reservation = await prisma.$transaction(async (tx) => {
+        // §6.3 — the overlap guard runs INSIDE the transaction; the
+        // btree_gist exclusion constraint (FacilityReservation_no_overlap_live)
+        // is the concurrency invariant of record for racing requests.
+        const overlapping = await tx.facilityReservation.findFirst({
+          where: {
+            facilityId: facility.id,
+            status: { in: ['REQUESTED', 'APPROVED'] },
+            startsAt: { lt: input.endsAt },
+            endsAt: { gt: input.startsAt },
+          },
+          select: { id: true },
+        });
+        if (overlapping) {
+          throw new AppError('RESERVATION_OVERLAP', 'توجد حجوزات متداخلة لهذه المنشأة في الفترة المطلوبة', 409);
+        }
         const created = await tx.facilityReservation.create({
           data: {
             institutionId,
@@ -577,6 +621,16 @@ router.post(
       });
       res.status(201).json({ data: reservation });
     } catch (e) {
+      // §6.3 — the exclusion constraint fires on the racing double-booking
+      // Prisma cannot name precisely (SQLSTATE 23P01): map it to the same
+      // Arabic 409 as the sequential guard.
+      if (
+        e instanceof Prisma.PrismaClientKnownRequestError &&
+        typeof e.message === 'string' &&
+        e.message.includes('FacilityReservation_no_overlap_live')
+      ) {
+        return next(new AppError('RESERVATION_OVERLAP', 'توجد حجوزات متداخلة لهذه المنشأة في الفترة المطلوبة', 409));
+      }
       next(e);
     }
   },
