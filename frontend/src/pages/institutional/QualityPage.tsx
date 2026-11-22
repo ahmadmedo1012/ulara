@@ -10,16 +10,13 @@
  *  · الأدلة والمستندات (evidence, owner-typed).
  * Never one isAccredited traffic light.
  */
-import { useState } from 'react';
-import { Plus } from 'lucide-react';
-import { PageFrame, PageHeader } from '../../components/patterns';
-import { toast } from '../../lib/toast';
-import { formatDate } from '../../utils/numbers';
-import { serverError,
-  DetailList, EnumChip, InstFilters, InstFormDialog, InstPagedTable, InstSection,
-  InstStates, InstSelect, type InstColumn, type InstField, type InstFormValues,
-} from '../../components/institutional/kit';
-import { Icon } from '../../components/Icon';
+import {
+  useState, Plus, PageFrame, PageHeader,
+  toast, formatDate, Icon, serverError,
+  DetailList, EnumChip, InstFilters, InstFormDialog,
+  InstPagedTable, InstSection, InstStates, InstSelect,
+  type InstColumn, type InstField, type InstFormValues,
+} from './scaffold';
 import {
   useAccreditations, useAuthorities, useCriteriaSets,
   useEvidence, useMyCapabilities, useOrgUnitTree,
@@ -30,7 +27,7 @@ import {
   EVIDENCE_OWNER_LABELS, SELF_ASSESSMENT_STATUS_LABELS,
 } from '../../lib/institutional/labels';
 import type { ExternalAccreditation, InternalSelfAssessment } from '../../lib/institutional/types';
-import { flattenUnits } from './PeoplePage';
+import { flattenUnits } from '../../lib/institutional/orgUnitOptions';
 
 const SA_UNIT: [string, string, string, string] = ['تقييم واحد', 'تقييمان', 'تقييمات', 'تقييم'];
 const ACC_UNIT: [string, string, string, string] = ['اعتماد واحد', 'اعتمادان', 'اعتمادات', 'اعتماد'];

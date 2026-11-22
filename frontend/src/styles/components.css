@@ -500,6 +500,41 @@
   /* ╔═══════════════════════════════════════════════════════════════╗
      ║  BADGES & PILLS                                                ║
      ╚═══════════════════════════════════════════════════════════════╝ */
+  /* r37 deadcode round: the status-chip BASE moved here from its
+     literal twins in teacher/ds-core.css (.hr-chip §R305) and
+     institutional/workspace.css (.inst-chip r352) — jscpd counted
+     the copy. The tone variants ([data-tone]) stay in their feature
+     sheets; this layer (components) sits BELOW @layer pages, so the
+     tone rules keep winning the cascade exactly as before. */
+  .hr-chip,
+  .inst-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-1-5);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold); /* r325 Y4 — 600, the §R324 weight law */
+    line-height: 1.2;
+    color: var(--text-secondary);
+    background: var(--surface-2);
+    /* R313 (WP-F · D16): square chip on the structural hairline. */
+    border: 1px solid var(--rule);
+    border-radius: var(--r-xs);
+    padding-inline: var(--sp-2-5);
+    padding-block: var(--sp-1);
+    min-block-size: 26px;
+    white-space: nowrap;
+  }
+
+  .hr-chip::before,
+  .inst-chip::before {
+    content: '';
+    inline-size: var(--sp-1-5);
+    block-size: var(--sp-1-5);
+    border-radius: var(--r-full);
+    background: var(--text-muted);
+    flex: none;
+  }
+
   .badge {
     display: inline-flex;
     align-items: center;

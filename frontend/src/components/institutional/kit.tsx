@@ -15,6 +15,7 @@ import { Search, X, Loader2, ChevronDown } from 'lucide-react';
 import { EmptyState, ErrorState, ListSkeleton } from '../primitives/States';
 import { TablePaginationFooter } from '../../pages/admin/TablePaginationFooter';
 import { toneOf, type InstTone } from '../../lib/institutional/labels';
+import { cycleFocusTrap } from '../../lib/focusTrap';
 import type { Paged } from '../../lib/institutional/types';
 import { useInstitutionScope } from '../../stores/auth.store';
 import '../../styles/institutional/workspace.css';
@@ -29,7 +30,7 @@ export function serverError(err: unknown, fallback = 'تعذَّر إتمام ا
 
 /* ── StatusChip — ONE chip vocabulary (data-tone) ────────────────── */
 
-export function StatusChip({
+function StatusChip({
   label, tone, title,
 }: { label: string; tone?: InstTone; title?: string }) {
   return (
@@ -51,7 +52,7 @@ export function EnumChip({
 
 /** The honest no-institution-context state (contract §0: reads need
  * a verified membership → select an institution first). */
-export function ContextRequiredState() {
+function ContextRequiredState() {
   return (
     <div className="inst-state">
       <EmptyState
@@ -383,22 +384,7 @@ export function InstFormDialog({
         onCancel();
         return;
       }
-      if (e.key === 'Tab') {
-        const items = dialogRef.current?.querySelectorAll<HTMLElement>(
-          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
-        );
-        if (!items || items.length === 0) return;
-        const first: HTMLElement | undefined = items[0];
-        const last: HTMLElement | undefined = items[items.length - 1];
-        if (!first || !last) return;
-        if (e.shiftKey && document.activeElement === first) {
-          e.preventDefault();
-          last.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        }
-      }
+      cycleFocusTrap(dialogRef.current, e);
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
@@ -610,16 +596,6 @@ export function InstConfirm({
           </button>
         </footer>
       </div>
-    </div>
-  );
-}
-
-/* ── the empty-tab content ──────────────────────────────────────── */
-
-export function InstEmptyRows({ title, description }: { title: string; description?: string }) {
-  return (
-    <div className="inst-state">
-      <EmptyState title={title} description={description} />
     </div>
   );
 }

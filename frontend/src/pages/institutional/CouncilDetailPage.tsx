@@ -12,17 +12,13 @@
  * Server rules are the authority: every illegal transition surfaces
  * the server's own Arabic 409 message.
  */
-import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Plus } from 'lucide-react';
-import { PageFrame, PageHeader } from '../../components/patterns';
-import { toast } from '../../lib/toast';
-import { formatDate } from '../../utils/numbers';
-import { serverError,
-  DetailList, EnumChip, InstFormDialog, InstSection, InstStates,
-  type InstField, type InstFormValues,
-} from '../../components/institutional/kit';
-import { Icon } from '../../components/Icon';
+import {
+  useState, useNavigate, useParams, Plus,
+  PageFrame, PageHeader, toast, formatDate,
+  Icon, serverError, DetailList, EnumChip,
+  InstFormDialog, InstSection, InstStates, type InstField,
+  type InstFormValues,
+} from './scaffold';
 import {
   useCouncil, useMyCapabilities, useMeeting, useMeetings, usePeople, useInstActions} from '../../hooks/institutional/queries';
 
@@ -35,6 +31,30 @@ import {
 import type { AttendanceStatus } from '../../lib/institutional/types';
 
 /* ── council detail (/institution/councils/:id) ─────────────────── */
+
+/** The meeting endpoints map — one home for the council detail (adds
+ *  create) and the meeting detail (the shared tail). Was a literal
+ *  twin, jscpd-counted. */
+const meetingEndpoints = () => ({
+  update: (i: { id: string; input: Parameters<typeof instApi.updateMeeting>[1] }) =>
+    instApi.updateMeeting(i.id, i.input),
+  saveAttendance: (i: { meetingId: string; records: Array<{ personId: string; status: string }> }) =>
+    instApi.saveAttendance(i.meetingId, i.records),
+  addAgendaItem: (i: { meetingId: string; input: Parameters<typeof instApi.addAgendaItem>[1] }) =>
+    instApi.addAgendaItem(i.meetingId, i.input),
+  updateAgendaItem: (i: { itemId: string; input: Parameters<typeof instApi.updateAgendaItem>[1] }) =>
+    instApi.updateAgendaItem(i.itemId, i.input),
+  addResolution: (i: { meetingId: string; input: Parameters<typeof instApi.addResolution>[1] }) =>
+    instApi.addResolution(i.meetingId, i.input),
+  updateResolution: (i: { id: string; input: Parameters<typeof instApi.updateResolution>[1] }) =>
+    instApi.updateResolution(i.id, i.input),
+  saveMinutes: (i: { meetingId: string; contentAr: string }) =>
+    instApi.saveMinutes(i.meetingId, i.contentAr),
+  approveMinutes: (i: { meetingId: string; approvedByPersonId: string }) =>
+    instApi.approveMinutes(i.meetingId, i.approvedByPersonId),
+  signMinutes: (i: { meetingId: string; signedByPersonId: string }) =>
+    instApi.signMinutes(i.meetingId, i.signedByPersonId),
+});
 
 export function InstitutionCouncilDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -56,24 +76,7 @@ export function InstitutionCouncilDetailPage() {
   const meetingMutations = useInstActions(['meetings'], {
     create: (i: { councilId: string; input: Parameters<typeof instApi.createMeeting>[1] }) =>
       instApi.createMeeting(i.councilId, i.input),
-    update: (i: { id: string; input: Parameters<typeof instApi.updateMeeting>[1] }) =>
-      instApi.updateMeeting(i.id, i.input),
-    saveAttendance: (i: { meetingId: string; records: Array<{ personId: string; status: string }> }) =>
-      instApi.saveAttendance(i.meetingId, i.records),
-    addAgendaItem: (i: { meetingId: string; input: Parameters<typeof instApi.addAgendaItem>[1] }) =>
-      instApi.addAgendaItem(i.meetingId, i.input),
-    updateAgendaItem: (i: { itemId: string; input: Parameters<typeof instApi.updateAgendaItem>[1] }) =>
-      instApi.updateAgendaItem(i.itemId, i.input),
-    addResolution: (i: { meetingId: string; input: Parameters<typeof instApi.addResolution>[1] }) =>
-      instApi.addResolution(i.meetingId, i.input),
-    updateResolution: (i: { id: string; input: Parameters<typeof instApi.updateResolution>[1] }) =>
-      instApi.updateResolution(i.id, i.input),
-    saveMinutes: (i: { meetingId: string; contentAr: string }) =>
-      instApi.saveMinutes(i.meetingId, i.contentAr),
-    approveMinutes: (i: { meetingId: string; approvedByPersonId: string }) =>
-      instApi.approveMinutes(i.meetingId, i.approvedByPersonId),
-    signMinutes: (i: { meetingId: string; signedByPersonId: string }) =>
-      instApi.signMinutes(i.meetingId, i.signedByPersonId),
+    ...meetingEndpoints(),
   });
 
   const [memberOpen, setMemberOpen] = useState(false);
@@ -324,26 +327,7 @@ export function InstitutionMeetingDetailPage() {
   const meetingQuery = useMeeting(meetingId ?? null);
   const councilQuery = useCouncil(id ?? null);
   const peopleQuery = usePeople({ limit: 100, status: 'ACTIVE' });
-  const mutations = useInstActions(['meetings'], {
-    update: (i: { id: string; input: Parameters<typeof instApi.updateMeeting>[1] }) =>
-      instApi.updateMeeting(i.id, i.input),
-    saveAttendance: (i: { meetingId: string; records: Array<{ personId: string; status: string }> }) =>
-      instApi.saveAttendance(i.meetingId, i.records),
-    addAgendaItem: (i: { meetingId: string; input: Parameters<typeof instApi.addAgendaItem>[1] }) =>
-      instApi.addAgendaItem(i.meetingId, i.input),
-    updateAgendaItem: (i: { itemId: string; input: Parameters<typeof instApi.updateAgendaItem>[1] }) =>
-      instApi.updateAgendaItem(i.itemId, i.input),
-    addResolution: (i: { meetingId: string; input: Parameters<typeof instApi.addResolution>[1] }) =>
-      instApi.addResolution(i.meetingId, i.input),
-    updateResolution: (i: { id: string; input: Parameters<typeof instApi.updateResolution>[1] }) =>
-      instApi.updateResolution(i.id, i.input),
-    saveMinutes: (i: { meetingId: string; contentAr: string }) =>
-      instApi.saveMinutes(i.meetingId, i.contentAr),
-    approveMinutes: (i: { meetingId: string; approvedByPersonId: string }) =>
-      instApi.approveMinutes(i.meetingId, i.approvedByPersonId),
-    signMinutes: (i: { meetingId: string; signedByPersonId: string }) =>
-      instApi.signMinutes(i.meetingId, i.signedByPersonId),
-  });
+  const mutations = useInstActions(['meetings'], meetingEndpoints());
 
   const [agendaOpen, setAgendaOpen] = useState(false);
   const [resolutionOpen, setResolutionOpen] = useState(false);

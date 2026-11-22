@@ -25,7 +25,7 @@ import {
   APPOINTMENT_STATUS_LABELS, ORG_UNIT_TYPE_LABELS, POSITION_CATEGORY_LABELS,
 } from '../../lib/institutional/labels';
 import type { Appointment, PositionTemplateRow } from '../../lib/institutional/types';
-import { flattenUnits } from './PeoplePage';
+import { flattenUnits } from '../../lib/institutional/orgUnitOptions';
 
 const APPT_UNIT: [string, string, string, string] = ['تعيين واحد', 'تعيينان', 'تعيينات', 'تعيين'];
 

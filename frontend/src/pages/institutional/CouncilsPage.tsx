@@ -5,24 +5,20 @@
  * minutes lifecycle) live in CouncilDetailPage.tsx. This file owns
  * the list + creation flow.
  */
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Plus } from 'lucide-react';
-import { PageFrame, PageHeader } from '../../components/patterns';
-import { toast } from '../../lib/toast';
-import { serverError,
-  EnumChip, InstConfirm, InstFilters, InstFormDialog, InstPagedTable, InstSelect,
-  type InstColumn, type InstField, type InstFormValues,
-} from '../../components/institutional/kit';
-import { Icon } from '../../components/Icon';
+import {
+  useState, useNavigate, Plus, PageFrame,
+  PageHeader, toast, Icon, serverError,
+  EnumChip, InstConfirm, InstFilters, InstFormDialog, InstPagedTable,
+  InstSelect, type InstColumn, type InstField, type InstFormValues,
+} from './scaffold';
 import {
   useCouncils, useMyCapabilities, useOrgUnitTree, useInstActions} from '../../hooks/institutional/queries';
 import * as instApi from '../../lib/institutional/api';
 import {
-  COUNCIL_STATUS_LABELS, COUNCIL_TYPE_LABELS, ORG_UNIT_TYPE_LABELS,
+  COUNCIL_STATUS_LABELS, COUNCIL_TYPE_LABELS,
 } from '../../lib/institutional/labels';
 import type { Council } from '../../lib/institutional/types';
-import { flattenUnits } from './PeoplePage';
+import { activeUnitOptions } from '../../lib/institutional/orgUnitOptions';
 
 const COUNCIL_UNIT: [string, string, string, string] = ['مجلس واحد', 'مجلسان', 'مجالس', 'مجلس'];
 
@@ -49,9 +45,7 @@ export function InstitutionCouncilsPage() {
       instApi.updateCouncil(i.id, { status: i.status }),
   });
 
-  const unitOptions = (treeQuery.data ? flattenUnits(treeQuery.data) : [])
-    .filter((u) => u.status === 'ACTIVE')
-    .map((u) => ({ value: u.id, label: `${ORG_UNIT_TYPE_LABELS[u.type]} — ${u.nameAr}` }));
+  const unitOptions = activeUnitOptions(treeQuery.data);
 
   const fields: InstField[] = [
     { kind: 'text', name: 'nameAr', label: 'اسم المجلس/اللجنة', required: true, maxLength: 160 },

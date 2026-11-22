@@ -11,17 +11,13 @@
  * from it and submit learnerProfileId. The legacy /admin/students
  * platform-profiles surface is NOT this register.
  */
-import { useState } from 'react';
-import { Plus } from 'lucide-react';
-import { PageFrame, PageHeader } from '../../components/patterns';
-import { toast } from '../../lib/toast';
-import { formatDate } from '../../utils/numbers';
-
-import { serverError,
-  DetailList, EnumChip, InstFilters, InstFormDialog, InstPagedTable, InstSection,
-  InstStates, InstSelect, type InstColumn, type InstField, type InstFormValues,
-} from '../../components/institutional/kit';
-import { Icon } from '../../components/Icon';
+import {
+  useState, Plus, PageFrame, PageHeader,
+  toast, formatDate, Icon, serverError,
+  DetailList, EnumChip, InstFilters, InstFormDialog,
+  InstPagedTable, InstSection, InstStates, InstSelect,
+  type InstColumn, type InstField, type InstFormValues,
+} from './scaffold';
 import {
   useCredentialTypes, useCredentials, useEnrollments, useLearners, useMyCapabilities,
   useOrgUnitTree, usePrograms, useInstActions } from '../../hooks/institutional/queries';
@@ -31,7 +27,7 @@ import {
   LEARNER_STATUS_LABELS, ORG_UNIT_TYPE_LABELS,
 } from '../../lib/institutional/labels';
 import type { AwardedCredential, LearnerProfileRow, ProgramEnrollment } from '../../lib/institutional/types';
-import { flattenUnits } from './PeoplePage';
+import { flattenUnits } from '../../lib/institutional/orgUnitOptions';
 
 /** Enrollment transitions (contract §7 — server-enforced). */
 const ENROLLMENT_TRANSITIONS: Record<string, string[]> = {

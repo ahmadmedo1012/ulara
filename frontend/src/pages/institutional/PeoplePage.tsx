@@ -6,34 +6,56 @@
  * institutional responsibilities (appointments + unit grants) kept
  * clearly apart from their platform login role.
  */
-import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Plus } from 'lucide-react';
-import { PageFrame, PageHeader } from '../../components/patterns';
-import { toast } from '../../lib/toast';
-import { formatDate } from '../../utils/numbers';
-import { serverError,
-  DetailList, EnumChip, InstFilters, InstFormDialog, InstPagedTable, InstSection,
-  InstStates, InstSelect, type InstColumn, type InstField, type InstFormValues,
-} from '../../components/institutional/kit';
-import { Icon } from '../../components/Icon';
 import {
-  useMyCapabilities, useOrgUnitTree, usePeople, usePerson, useInstActions} from '../../hooks/institutional/queries';
+  useState, useNavigate, useParams, Plus,
+  PageFrame, PageHeader, toast, formatDate, Icon,
+  serverError, DetailList, EnumChip, InstFilters, InstFormDialog, InstPagedTable,
+  InstSection, InstStates, InstSelect,
+  type InstColumn, type InstField, type InstFormValues,
+} from './scaffold';
+import {
+  useMyCapabilities, useOrgUnitTree, usePeople, usePerson, useInstActions,
+} from '../../hooks/institutional/queries';
 import * as instApi from '../../lib/institutional/api';
 import {
   APPOINTMENT_STATUS_LABELS, ORG_UNIT_TYPE_LABELS,
   CAPABILITY_LABELS, STAFF_CATEGORY_LABELS, STAFF_STATUS_LABELS,
 } from '../../lib/institutional/labels';
-import type { OrgUnit, OrgUnitTreeNode, Person } from '../../lib/institutional/types';
+import { activeUnitOptions } from '../../lib/institutional/orgUnitOptions';
+import type { Person } from '../../lib/institutional/types';
 
-/** Shared: flatten the unit tree for select options. */
-export function flattenUnits(nodes: OrgUnitTreeNode[], out: OrgUnit[] = []): OrgUnit[] {
-  for (const n of nodes) {
-    out.push(n);
-    flattenUnits(n.children, out);
-  }
-  return out;
-}
+/** The person form's field set — one home for the create dialog and
+ *  the person-detail edit dialog (was a literal twin, jscpd-counted).
+ *  The unit options arrive as a parameter: the list page and the
+ *  detail page each own their own tree query. */
+const personFormFields = (
+  unitOptions: Array<{ value: string; label: string }>,
+): InstField[] => [
+  { kind: 'text', name: 'fullNameAr', label: 'الاسم الكامل (بالعربية)', required: true, maxLength: 160 },
+  { kind: 'text', name: 'fullNameEn', label: 'الاسم بالإنجليزية', maxLength: 160 },
+  {
+    kind: 'select', name: 'category', label: 'الفئة', required: true,
+    options: Object.entries(STAFF_CATEGORY_LABELS).map(([value, label]) => ({ value, label })),
+  },
+  { kind: 'text', name: 'staffNumber', label: 'الرقم الوظيفي', maxLength: 40, hint: 'اختياري — يجب أن يكون فريدًا داخل المؤسسة.' },
+  { kind: 'select', name: 'primaryOrgUnitId', label: 'الوحدة الأساسية', options: unitOptions },
+  { kind: 'date', name: 'hiredAt', label: 'تاريخ التعيين' },
+  { kind: 'text', name: 'email', label: 'البريد الإلكتروني', maxLength: 160 },
+  { kind: 'text', name: 'phone', label: 'الهاتف', maxLength: 40 },
+];
+
+/** Form values → the person write input — shared by the create body
+ *  and the update input object (was a literal twin). */
+const personInput = (values: InstFormValues) => ({
+  fullNameAr: values.fullNameAr as string,
+  fullNameEn: values.fullNameEn as string | undefined,
+  category: values.category as never,
+  staffNumber: values.staffNumber as string | undefined,
+  primaryOrgUnitId: (values.primaryOrgUnitId as string | undefined) ?? null,
+  hiredAt: values.hiredAt as string | undefined,
+  email: values.email as string | undefined,
+  phone: values.phone as string | undefined,
+});
 
 /** The statutory families — one filter vocabulary, never one flat table. */
 const CATEGORY_TABS: Array<{ value: string; label: string }> = [
@@ -76,37 +98,14 @@ export function InstitutionPeoplePage() {
   const [formOpen, setFormOpen] = useState(false);
   const [busy, setBusy] = useState(false);
 
-  const unitOptions = (treeQuery.data ? flattenUnits(treeQuery.data) : [])
-    .filter((u) => u.status === 'ACTIVE')
-    .map((u) => ({ value: u.id, label: `${ORG_UNIT_TYPE_LABELS[u.type]} — ${u.nameAr}` }));
+  const unitOptions = activeUnitOptions(treeQuery.data);
 
-  const fields: InstField[] = [
-    { kind: 'text', name: 'fullNameAr', label: 'الاسم الكامل (بالعربية)', required: true, maxLength: 160 },
-    { kind: 'text', name: 'fullNameEn', label: 'الاسم بالإنجليزية', maxLength: 160 },
-    {
-      kind: 'select', name: 'category', label: 'الفئة', required: true,
-      options: Object.entries(STAFF_CATEGORY_LABELS).map(([value, label]) => ({ value, label })),
-    },
-    { kind: 'text', name: 'staffNumber', label: 'الرقم الوظيفي', maxLength: 40, hint: 'اختياري — يجب أن يكون فريدًا داخل المؤسسة.' },
-    { kind: 'select', name: 'primaryOrgUnitId', label: 'الوحدة الأساسية', options: unitOptions },
-    { kind: 'date', name: 'hiredAt', label: 'تاريخ التعيين' },
-    { kind: 'text', name: 'email', label: 'البريد الإلكتروني', maxLength: 160 },
-    { kind: 'text', name: 'phone', label: 'الهاتف', maxLength: 40 },
-  ];
+  const fields: InstField[] = personFormFields(unitOptions);
 
   const submit = async (values: InstFormValues): Promise<string | void> => {
     setBusy(true);
     try {
-      await mutations.create({
-        fullNameAr: values.fullNameAr as string,
-        fullNameEn: values.fullNameEn as string | undefined,
-        category: values.category as never,
-        staffNumber: values.staffNumber as string | undefined,
-        primaryOrgUnitId: (values.primaryOrgUnitId as string | undefined) ?? null,
-        hiredAt: values.hiredAt as string | undefined,
-        email: values.email as string | undefined,
-        phone: values.phone as string | undefined,
-      });
+      await mutations.create(personInput(values));
       toast.success('أُضيف الفرد إلى الدليل');
       setFormOpen(false);
     } catch (err) {
@@ -202,41 +201,15 @@ export function InstitutionPersonDetailPage() {
   const appointments = query.data?.appointments ?? [];
   const grants = query.data?.unitCapabilityGrants ?? [];
 
-  const unitOptions = (treeQuery.data ? flattenUnits(treeQuery.data) : [])
-    .filter((u) => u.status === 'ACTIVE')
-    .map((u) => ({ value: u.id, label: `${ORG_UNIT_TYPE_LABELS[u.type]} — ${u.nameAr}` }));
+  const unitOptions = activeUnitOptions(treeQuery.data);
 
-  const editFields: InstField[] = [
-    { kind: 'text', name: 'fullNameAr', label: 'الاسم الكامل (بالعربية)', required: true, maxLength: 160 },
-    { kind: 'text', name: 'fullNameEn', label: 'الاسم بالإنجليزية', maxLength: 160 },
-    {
-      kind: 'select', name: 'category', label: 'الفئة', required: true,
-      options: Object.entries(STAFF_CATEGORY_LABELS).map(([value, label]) => ({ value, label })),
-    },
-    { kind: 'text', name: 'staffNumber', label: 'الرقم الوظيفي', maxLength: 40, hint: 'اختياري — يجب أن يكون فريدًا داخل المؤسسة.' },
-    { kind: 'select', name: 'primaryOrgUnitId', label: 'الوحدة الأساسية', options: unitOptions },
-    { kind: 'date', name: 'hiredAt', label: 'تاريخ التعيين' },
-    { kind: 'text', name: 'email', label: 'البريد الإلكتروني', maxLength: 160 },
-    { kind: 'text', name: 'phone', label: 'الهاتف', maxLength: 40 },
-  ];
+  const editFields: InstField[] = personFormFields(unitOptions);
 
   const submitEdit = async (values: InstFormValues): Promise<string | void> => {
     if (!person) return 'لا يوجد سجل محمّل.';
     setBusy(true);
     try {
-      await peopleMutations.update({
-        id: person.id,
-        input: {
-          fullNameAr: values.fullNameAr as string,
-          fullNameEn: values.fullNameEn as string | undefined,
-          category: values.category as never,
-          staffNumber: values.staffNumber as string | undefined,
-          primaryOrgUnitId: (values.primaryOrgUnitId as string | undefined) ?? null,
-          hiredAt: values.hiredAt as string | undefined,
-          email: values.email as string | undefined,
-          phone: values.phone as string | undefined,
-        },
-      });
+      await peopleMutations.update({ id: person.id, input: personInput(values) });
       toast.success('حُدِّث سجل الفرد');
       setEditOpen(false);
     } catch (err) {

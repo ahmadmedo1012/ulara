@@ -20,7 +20,7 @@ import {
 import * as instApi from '../../lib/institutional/api';
 import { PLACEMENT_STATUS_LABELS } from '../../lib/institutional/labels';
 import type { TrainingPlacement } from '../../lib/institutional/types';
-import { flattenUnits } from './PeoplePage';
+import { flattenUnits } from '../../lib/institutional/orgUnitOptions';
 
 const PLACE_UNIT: [string, string, string, string] = ['تدريب واحد', 'تدريبان', 'تدريبات', 'تدريب'];
 

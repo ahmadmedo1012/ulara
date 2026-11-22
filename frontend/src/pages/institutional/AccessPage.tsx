@@ -33,7 +33,7 @@ import {
 } from '../../hooks/institutional/queries';
 import { CAPABILITY_LABELS, ORG_UNIT_TYPE_LABELS, PLATFORM_ROLE_LABELS } from '../../lib/institutional/labels';
 import type { InstCapability } from '../../lib/institutional/types';
-import { flattenUnits } from './PeoplePage';
+import { flattenUnits } from '../../lib/institutional/orgUnitOptions';
 import { useAuthStore } from '../../stores/auth.store';
 
 export function InstitutionAccessPage() {

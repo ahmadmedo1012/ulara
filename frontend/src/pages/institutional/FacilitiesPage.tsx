@@ -4,17 +4,14 @@
  * condition/status, maintenance work orders, reservations, and safety
  * incidents — with filters and dedicated detail routes.
  */
-import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Plus } from 'lucide-react';
-import { PageFrame, PageHeader } from '../../components/patterns';
-import { toast } from '../../lib/toast';
-import { formatDate } from '../../utils/numbers';
-import { serverError,
-  DetailList, EnumChip, InstFilters, InstFormDialog, InstPagedTable, InstSection,
-  InstStates, InstSelect, type InstColumn, type InstField, type InstFormValues,
-} from '../../components/institutional/kit';
-import { Icon } from '../../components/Icon';
+import {
+  useState, useNavigate, useParams, Plus,
+  PageFrame, PageHeader, toast, formatDate,
+  Icon, serverError, DetailList, EnumChip,
+  InstFilters, InstFormDialog, InstPagedTable, InstSection,
+  InstStates, InstSelect, type InstColumn, type InstField,
+  type InstFormValues,
+} from './scaffold';
 import {
   useEquipment, useFacilities, useFacility, useMyCapabilities,
   useOrgUnitTree, usePrograms, useReservations, useSafetyIncidents, useWorkOrders, useInstActions } from '../../hooks/institutional/queries';
@@ -25,7 +22,7 @@ import {
   RESERVATION_STATUS_LABELS, WORK_ORDER_KIND_LABELS, WORK_ORDER_STATUS_LABELS,
 } from '../../lib/institutional/labels';
 import type { Equipment, Facility } from '../../lib/institutional/types';
-import { flattenUnits } from './PeoplePage';
+import { flattenUnits } from '../../lib/institutional/orgUnitOptions';
 
 const FAC_UNIT: [string, string, string, string] = ['منشأة واحدة', 'منشأتان', 'منشآت', 'منشأة'];
 const EQ_UNIT: [string, string, string, string] = ['جهازًا واحدًا', 'جهازين', 'أجهزة', 'جهاز'];

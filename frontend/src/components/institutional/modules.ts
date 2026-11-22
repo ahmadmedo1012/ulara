@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 import type { InstCapability, InstitutionProfile } from '../../lib/institutional/types';
 
-export interface InstModule {
+interface InstModule {
   /** The route path under /institution. */
   to: string;
   /** Nav label (Arabic). */

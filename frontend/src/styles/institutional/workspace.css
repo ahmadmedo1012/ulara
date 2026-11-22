@@ -9,8 +9,7 @@
 
    Prefix: inst- (one family, merge-safe).
    Arabic-first: logical properties only, no letter-spacing, ≥44px
-   tap floors, motion via var(--t-*) only.
-   ================================================================== */
+   tap floors, motion via var(--t-*) only. */
 
 @layer pages {
 
@@ -128,32 +127,8 @@
 
 /* ── chips (ONE status vocabulary) ────────────────────────────── */
 
-.inst-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sp-1-5);
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-semibold);
-  line-height: 1.2;
-  color: var(--text-secondary);
-  background: var(--surface-2);
-  border: 1px solid var(--rule);
-  border-radius: var(--r-xs);
-  padding-inline: var(--sp-2-5);
-  padding-block: var(--sp-1);
-  min-block-size: 26px;
-  white-space: nowrap;
-}
-
-.inst-chip::before {
-  content: '';
-  inline-size: var(--sp-1-5);
-  block-size: var(--sp-1-5);
-  border-radius: var(--r-full);
-  background: var(--text-muted);
-  flex: none;
-}
-
+/* .inst-chip base + ::before: shared with .hr-chip — see
+   components.css (BADGES & PILLS). Only the tone family lives here. */
 .inst-chip[data-tone='ok'] {
   color: var(--success-ink);
   background: var(--success-soft);
@@ -312,10 +287,14 @@
   align-items: center;
 }
 
-.inst-select select {
-  appearance: none;
+/* The control surface — one home for select + the form fields
+   (was a twin, jscpd-counted): the shared anatomy rides the grouped
+   selector below; each control keeps only its own deltas. */
+.inst-select select,
+.inst-field input,
+.inst-field textarea,
+.inst-field select {
   min-block-size: 44px;
-  padding-inline: var(--sp-8) var(--sp-3);
   padding-block: var(--sp-1-5);
   border: 1px solid var(--rule);
   border-radius: var(--r-sm);
@@ -323,6 +302,11 @@
   color: var(--text-strong);
   font-size: var(--fs-sm);
   font-family: inherit;
+}
+
+.inst-select select {
+  appearance: none;
+  padding-inline: var(--sp-8) var(--sp-3);
   cursor: pointer;
   max-inline-size: 240px;
 }
@@ -553,15 +537,7 @@
 .inst-field textarea,
 .inst-field select {
   inline-size: 100%;
-  min-block-size: 44px;
   padding-inline: var(--sp-3);
-  padding-block: var(--sp-1-5);
-  border: 1px solid var(--rule);
-  border-radius: var(--r-sm);
-  background: var(--surface);
-  color: var(--text-strong);
-  font-size: var(--fs-sm);
-  font-family: inherit;
 }
 
 .inst-field textarea { min-block-size: 88px; resize: vertical; }

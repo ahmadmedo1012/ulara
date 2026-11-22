@@ -26,7 +26,7 @@ import type { ID, Paged } from '../../lib/institutional/types';
  * passed whole so the seam stays mockable in tests exactly like the
  * rest of the app's hooks).
  */
-export function useInstList<T>(
+function useInstList<T>(
   key: readonly unknown[],
   fetcher: (params: Record<string, unknown>) => Promise<Paged<T>>,
   params: Record<string, unknown> = {},
@@ -41,7 +41,7 @@ export function useInstList<T>(
 }
 
 /** Institution-scoped single-record / aggregate fetch. */
-export function useInstItem<T>(
+function useInstItem<T>(
   key: readonly unknown[],
   fetcher: () => Promise<T>,
   enabled = true,
@@ -51,20 +51,6 @@ export function useInstItem<T>(
     queryKey: withInstitutionScope(['inst', ...key], scope),
     queryFn: fetcher,
     enabled: enabled && scope !== null,
-  });
-}
-
-/** Institution-scoped mutation with family invalidation. */
-export function useInstMutation<TInput, TResult>(
-  family: readonly unknown[],
-  mutationFn: (input: TInput) => Promise<TResult>,
-) {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn,
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['inst', ...family] });
-    },
   });
 }
 
@@ -219,10 +205,6 @@ export function usePerson(id: ID | null) {
   return useInstItem(['people', 'detail', id], () => instApi.getPerson(id!), id !== null);
 }
 
-export function usePersonAppointments(personId: ID | null) {
-  return useInstItem(['people', 'appointments', personId], () =>
-    instApi.listPersonAppointments(personId!), personId !== null);
-}
 
 
 /* ── appointments ───────────────────────────────────────────────── */

@@ -5,17 +5,14 @@
  * existing research-paper lifecycle (the ResearchOutput row carries
  * an optional researchPaperId bridge), never a duplicate paper app.
  */
-import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Plus, Trash2 } from 'lucide-react';
-import { PageFrame, PageHeader } from '../../components/patterns';
-import { toast } from '../../lib/toast';
-import { formatDate } from '../../utils/numbers';
-import { serverError,
-  DetailList, EnumChip, InstFilters, InstFormDialog, InstPagedTable, InstSection,
-  InstStates, InstSelect, type InstColumn, type InstField, type InstFormValues,
-} from '../../components/institutional/kit';
-import { Icon } from '../../components/Icon';
+import {
+  useState, useNavigate, useParams, Plus,
+  Trash2, PageFrame, PageHeader, toast,
+  formatDate, Icon, serverError, DetailList,
+  EnumChip, InstFilters, InstFormDialog, InstPagedTable,
+  InstSection, InstStates, InstSelect, type InstColumn,
+  type InstField, type InstFormValues,
+} from './scaffold';
 import {
   useMyCapabilities, useOrgUnitTree, usePeople, useResearchOutputs, useResearchProject, useResearchProjects, useInstActions } from '../../hooks/institutional/queries';
 import * as instApi from '../../lib/institutional/api';
@@ -23,7 +20,7 @@ import {
   RESEARCH_MEMBER_ROLE_LABELS, RESEARCH_OUTPUT_LABELS, RESEARCH_STATUS_LABELS,
 } from '../../lib/institutional/labels';
 import type { ResearchOutput, ResearchProject } from '../../lib/institutional/types';
-import { flattenUnits } from './PeoplePage';
+import { flattenUnits } from '../../lib/institutional/orgUnitOptions';
 
 const PROJ_UNIT: [string, string, string, string] = ['مشروعًا واحدًا', 'مشروعين', 'مشاريع', 'مشروع'];
 const OUT_UNIT: [string, string, string, string] = ['مخرجًا واحدًا', 'مخرجين', 'مخرجات', 'مخرج'];
@@ -37,6 +34,19 @@ const PROJECT_TRANSITIONS: Record<string, string[]> = {
   TERMINATED: [],
 };
 
+/** The research endpoints map — one home for the list page and the
+ *  project-detail page (was a literal twin, jscpd-counted). */
+const researchEndpoints = () => ({
+  create: (i: Parameters<typeof instApi.createResearchProject>[0]) => instApi.createResearchProject(i),
+  update: (i: { id: string; input: Parameters<typeof instApi.updateResearchProject>[1] }) =>
+    instApi.updateResearchProject(i.id, i.input),
+  addMember: (i: { projectId: string; input: Parameters<typeof instApi.addResearchMember>[1] }) =>
+    instApi.addResearchMember(i.projectId, i.input),
+  removeMember: (i: { projectId: string; personId: string }) =>
+    instApi.removeResearchMember(i.projectId, i.personId),
+  addOutput: (i: Parameters<typeof instApi.createResearchOutput>[0]) => instApi.createResearchOutput(i),
+});
+
 export function InstitutionResearchPage() {
   const navigate = useNavigate();
   const caps = useMyCapabilities();
@@ -49,16 +59,7 @@ export function InstitutionResearchPage() {
   const outputsQuery = useResearchOutputs({ type: outType || undefined, page: 1, limit: 10 });
   const treeQuery = useOrgUnitTree();
   const peopleQuery = usePeople({ limit: 100, status: 'ACTIVE' });
-  const mutations = useInstActions(['research'], {
-    create: (i: Parameters<typeof instApi.createResearchProject>[0]) => instApi.createResearchProject(i),
-    update: (i: { id: string; input: Parameters<typeof instApi.updateResearchProject>[1] }) =>
-      instApi.updateResearchProject(i.id, i.input),
-    addMember: (i: { projectId: string; input: Parameters<typeof instApi.addResearchMember>[1] }) =>
-      instApi.addResearchMember(i.projectId, i.input),
-    removeMember: (i: { projectId: string; personId: string }) =>
-      instApi.removeResearchMember(i.projectId, i.personId),
-    addOutput: (i: Parameters<typeof instApi.createResearchOutput>[0]) => instApi.createResearchOutput(i),
-  });
+  const mutations = useInstActions(['research'], researchEndpoints());
 
   const [projOpen, setProjOpen] = useState(false);
   const [outOpen, setOutOpen] = useState(false);
@@ -223,16 +224,7 @@ export function InstitutionResearchDetailPage() {
 
   const projectQuery = useResearchProject(id ?? null);
   const peopleQuery = usePeople({ limit: 100, status: 'ACTIVE' });
-  const mutations = useInstActions(['research'], {
-    create: (i: Parameters<typeof instApi.createResearchProject>[0]) => instApi.createResearchProject(i),
-    update: (i: { id: string; input: Parameters<typeof instApi.updateResearchProject>[1] }) =>
-      instApi.updateResearchProject(i.id, i.input),
-    addMember: (i: { projectId: string; input: Parameters<typeof instApi.addResearchMember>[1] }) =>
-      instApi.addResearchMember(i.projectId, i.input),
-    removeMember: (i: { projectId: string; personId: string }) =>
-      instApi.removeResearchMember(i.projectId, i.personId),
-    addOutput: (i: Parameters<typeof instApi.createResearchOutput>[0]) => instApi.createResearchOutput(i),
-  });
+  const mutations = useInstActions(['research'], researchEndpoints());
 
   const [memberOpen, setMemberOpen] = useState(false);
   const [busy, setBusy] = useState(false);

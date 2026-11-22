@@ -6,17 +6,13 @@
  * The formal education program is distinct from the platform's
  * self-paced TrainingTrack.
  */
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Plus } from 'lucide-react';
-import { PageFrame, PageHeader } from '../../components/patterns';
-import { toast } from '../../lib/toast';
-import { formatDate } from '../../utils/numbers';
-import { serverError,
-  DetailList, EnumChip, InstFilters, InstFormDialog, InstPagedTable, InstSection,
-  InstStates, InstSelect, type InstColumn, type InstField, type InstFormValues,
-} from '../../components/institutional/kit';
-import { Icon } from '../../components/Icon';
+import {
+  useState, useNavigate, Plus, PageFrame,
+  PageHeader, toast, formatDate, Icon,
+  serverError, DetailList, EnumChip, InstFilters,
+  InstFormDialog, InstPagedTable, InstSection, InstStates,
+  InstSelect, type InstColumn, type InstField, type InstFormValues,
+} from './scaffold';
 import {
   useCredentialTypes, useMyCapabilities, usePrograms, useTerms, useInstActions } from '../../hooks/institutional/queries';
 import * as instApi from '../../lib/institutional/api';

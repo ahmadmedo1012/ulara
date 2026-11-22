@@ -83,7 +83,7 @@ export const updateInstitutionClassification = (id: ID, patchBody: Classificatio
 
 /* ── §3 organizational units ────────────────────────────────────── */
 
-export type UnitQuery = { type?: string; q?: string; parentId?: ID; page?: number; limit?: number };
+type UnitQuery = { type?: string; q?: string; parentId?: ID; page?: number; limit?: number };
 
 export const listOrgUnits = (params: UnitQuery) =>
   getList<OrgUnit>('/institutional/org-units', cleanParams(params));
@@ -104,7 +104,7 @@ export const setOrgUnitStatus = (id: ID, status: string, dissolvedAt?: string) =
 
 /* ── §4 people ──────────────────────────────────────────────────── */
 
-export type PeopleQuery = {
+type PeopleQuery = {
   category?: string; orgUnitId?: ID; q?: string; status?: string; page?: number; limit?: number;
 };
 
@@ -126,7 +126,7 @@ export const listPersonAppointments = (personId: ID) =>
 
 /* ── §5 appointments ────────────────────────────────────────────── */
 
-export type AppointmentQuery = {
+type AppointmentQuery = {
   status?: string; personId?: ID; orgUnitId?: ID; positionId?: ID; page?: number; limit?: number;
 };
 
@@ -147,7 +147,7 @@ export const cancelAppointment = (id: ID, notes?: string) =>
 
 /* ── §6 councils & committees ───────────────────────────────────── */
 
-export type CouncilQuery = { type?: string; status?: string; page?: number; limit?: number };
+type CouncilQuery = { type?: string; status?: string; page?: number; limit?: number };
 
 export const listCouncils = (params: CouncilQuery) =>
   getList<Council>('/governance/councils', cleanParams(params));
@@ -218,11 +218,11 @@ export const listTerms = () => getOne<AcademicTerm[]>('/academic/terms');
 export const createTerm = (input: { code: string; startsAt: string; endsAt?: string; isCurrent?: boolean }) =>
   post<AcademicTerm>('/academic/terms', input);
 
-export type ProgramQuery = { kind?: string; status?: string; orgUnitId?: ID; page?: number; limit?: number };
+type ProgramQuery = { kind?: string; status?: string; orgUnitId?: ID; page?: number; limit?: number };
 
 /* ── the generalized learner domain (r352 hardening §5) ────────── */
 
-export type LearnerQuery = {
+type LearnerQuery = {
   category?: 'STUDENT' | 'TRAINEE'; status?: string; q?: string; orgUnitId?: ID; page?: number; limit?: number;
 };
 
@@ -260,7 +260,7 @@ export const addVersionCourse = (versionId: ID, input: {
 export const removeVersionCourse = (versionId: ID, courseId: ID) =>
   del<{ ok: boolean }>(`/academic/program-versions/${versionId}/courses/${courseId}`);
 
-export type EnrollmentQuery = {
+type EnrollmentQuery = {
   programId?: ID; learnerProfileId?: ID; status?: string; page?: number; limit?: number;
 };
 
@@ -274,7 +274,7 @@ export const createEnrollment = (input: {
 export const setEnrollmentStatus = (id: ID, status: string, completionAt?: string) =>
   post<ProgramEnrollment>(`/academic/program-enrollments/${id}/status`, { status, completionAt });
 
-export type PlacementQuery = { status?: string; studentProfileId?: ID; page?: number; limit?: number };
+type PlacementQuery = { status?: string; studentProfileId?: ID; page?: number; limit?: number };
 
 export const listPlacements = (params: PlacementQuery) =>
   getList<TrainingPlacement>('/academic/training-placements', cleanParams(params));
@@ -290,7 +290,7 @@ export const updatePlacement = (id: ID, input: {
 
 /* ── §8 credentials ─────────────────────────────────────────────── */
 
-export type CredentialQuery = { learnerProfileId?: ID; credentialTypeId?: ID; page?: number; limit?: number };
+type CredentialQuery = { learnerProfileId?: ID; credentialTypeId?: ID; page?: number; limit?: number };
 
 export const listCredentials = (params: CredentialQuery) =>
   getList<AwardedCredential>('/academic/credentials', cleanParams(params));
@@ -305,7 +305,7 @@ export const revokeCredential = (id: ID, notes?: string) =>
 
 /* ── §9 compliance ──────────────────────────────────────────────── */
 
-export type AccreditationQuery = { status?: string; type?: string; page?: number; limit?: number };
+type AccreditationQuery = { status?: string; type?: string; page?: number; limit?: number };
 
 export const listAccreditations = (params: AccreditationQuery) =>
   getList<ExternalAccreditation>('/compliance/accreditations', cleanParams(params));
@@ -319,7 +319,7 @@ export const createAccreditation = (input: {
 export const updateAccreditation = (id: ID, input: { status?: AccreditationStatus; notes?: string }) =>
   patch<ExternalAccreditation>(`/compliance/accreditations/${id}`, input);
 
-export type LicenseQuery = { status?: string; kind?: string; page?: number; limit?: number };
+type LicenseQuery = { status?: string; kind?: string; page?: number; limit?: number };
 
 export const listLicenses = (params: LicenseQuery) =>
   getList<OperationalLicense>('/compliance/licenses', cleanParams(params));
@@ -359,10 +359,6 @@ export const addCorrectiveAction = (findingId: ID, input: {
   planText: string; ownerPersonId?: ID; targetDate?: string;
 }) => post<CorrectiveAction>(`/compliance/findings/${findingId}/corrective-actions`, input);
 
-export const updateCorrectiveAction = (id: ID, input: {
-  status?: string; completedAt?: string; verificationRef?: string;
-}) => patch<CorrectiveAction>(`/compliance/corrective-actions/${id}`, input);
-
 export const listSelfAssessments = (params: { status?: string; page?: number; limit?: number }) =>
   getList<InternalSelfAssessment>('/compliance/self-assessments', cleanParams(params));
 
@@ -392,9 +388,6 @@ export const createFacility = (input: {
 
 export const getFacility = (id: ID) => getOne<Facility>(`/operations/facilities/${id}`);
 
-export const updateFacility = (id: ID, input: Partial<Facility> & { status?: string }) =>
-  patch<Facility>(`/operations/facilities/${id}`, input);
-
 export const listEquipment = (params: { status?: string; facilityId?: ID; page?: number; limit?: number }) =>
   getList<Equipment>('/operations/equipment', cleanParams(params));
 
@@ -403,9 +396,6 @@ export const createEquipment = (input: {
   category?: string; serialNumber?: string; acquiredAt?: string; value?: number;
   condition?: string; status?: string; responsiblePersonId?: ID;
 }) => post<Equipment>('/operations/equipment', input);
-
-export const updateEquipment = (id: ID, input: Partial<Equipment>) =>
-  patch<Equipment>(`/operations/equipment/${id}`, input);
 
 export const linkEquipmentProgram = (equipmentId: ID, input: { programId: ID; criteriaItemId?: ID }) =>
   post<never>(`/operations/equipment/${equipmentId}/programs`, input);
@@ -420,10 +410,6 @@ export const createWorkOrder = (input: {
   titleAr: string; kind: string; facilityId?: ID; equipmentId?: ID;
   description?: string; scheduledDate?: string; assignedPersonId?: ID;
 }) => post<MaintenanceWorkOrder>('/operations/work-orders', input);
-
-export const updateWorkOrder = (id: ID, input: {
-  status?: string; completedAt?: string; cost?: number; notes?: string;
-}) => patch<MaintenanceWorkOrder>(`/operations/work-orders/${id}`, input);
 
 export const listReservations = (params: { facilityId?: ID; status?: string; page?: number; limit?: number }) =>
   getList<FacilityReservation>('/operations/reservations', cleanParams(params));
@@ -442,9 +428,6 @@ export const createSafetyIncident = (input: {
   kind: string; severity?: string; titleAr: string; description?: string;
   facilityId?: ID; equipmentId?: ID; occurredAt: string;
 }) => post<SafetyIncident>('/operations/safety-incidents', input);
-
-export const updateSafetyIncident = (id: ID, input: { status?: string; resolutionNotes?: string; resolvedAt?: string }) =>
-  patch<SafetyIncident>(`/operations/safety-incidents/${id}`, input);
 
 /* ── §11 research ───────────────────────────────────────────────── */
 
