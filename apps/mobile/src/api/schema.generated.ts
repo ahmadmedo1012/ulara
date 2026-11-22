@@ -4,6 +4,1771 @@
  */
 
 export interface paths {
+    "/api/v1/academic/credentials": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/academic/credentials
+         * @description Declared in `backend/src/http/routes/r352-academic.routes.ts` (mounted at `/api/v1/academic`).
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page?: number;
+                    limit?: number;
+                    q?: string;
+                    learnerProfileId?: string;
+                    studentProfileId?: string;
+                    credentialTypeId?: string;
+                    status?: "AWARDED" | "REVOKED" | "SUSPENDED";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/academic/credentials/{id}/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * POST /api/v1/academic/credentials/:id/revoke
+         * @description Declared in `backend/src/http/routes/r352-academic.routes.ts` (mounted at `/api/v1/academic`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352AcademiccredentialRevokeSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/academic/credentials/award": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * POST /api/v1/academic/credentials/award
+         * @description Declared in `backend/src/http/routes/r352-academic.routes.ts` (mounted at `/api/v1/academic`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352AcademiccredentialAwardSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/academic/learners": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/academic/learners
+         * @description Declared in `backend/src/http/routes/r352-academic.routes.ts` (mounted at `/api/v1/academic`).
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page?: number;
+                    limit?: number;
+                    q?: string;
+                    category?: "STUDENT" | "TRAINEE";
+                    status?: "ACTIVE" | "SUSPENDED" | "GRADUATED" | "WITHDRAWN" | "TRANSFERRED";
+                    orgUnitId?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * POST /api/v1/academic/learners
+         * @description Declared in `backend/src/http/routes/r352-academic.routes.ts` (mounted at `/api/v1/academic`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352AcademiclearnerCreateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/academic/learners/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/academic/learners/:id
+         * @description Declared in `backend/src/http/routes/r352-academic.routes.ts` (mounted at `/api/v1/academic`).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * PATCH /api/v1/academic/learners/:id
+         * @description Declared in `backend/src/http/routes/r352-academic.routes.ts` (mounted at `/api/v1/academic`).
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352AcademiclearnerUpdateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v1/academic/program-enrollments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/academic/program-enrollments
+         * @description Declared in `backend/src/http/routes/r352-academic.routes.ts` (mounted at `/api/v1/academic`).
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page?: number;
+                    limit?: number;
+                    q?: string;
+                    programId?: string;
+                    learnerProfileId?: string;
+                    studentProfileId?: string;
+                    status?: "CANDIDATE" | "ACTIVE" | "ON_LEAVE" | "WITHDRAWN" | "SUSPENDED" | "COMPLETED" | "GRADUATED";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * POST /api/v1/academic/program-enrollments
+         * @description Declared in `backend/src/http/routes/r352-academic.routes.ts` (mounted at `/api/v1/academic`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352AcademicprogramEnrollmentCreateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/academic/program-enrollments/{id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * POST /api/v1/academic/program-enrollments/:id/status
+         * @description Declared in `backend/src/http/routes/r352-academic.routes.ts` (mounted at `/api/v1/academic`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352AcademicprogramEnrollmentStatusSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/academic/program-versions/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * PATCH /api/v1/academic/program-versions/:id
+         * @description Declared in `backend/src/http/routes/r352-academic.routes.ts` (mounted at `/api/v1/academic`).
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352AcademicprogramVersionUpdateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v1/academic/program-versions/{id}/courses": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/academic/program-versions/:id/courses
+         * @description Declared in `backend/src/http/routes/r352-academic.routes.ts` (mounted at `/api/v1/academic`).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * POST /api/v1/academic/program-versions/:id/courses
+         * @description Declared in `backend/src/http/routes/r352-academic.routes.ts` (mounted at `/api/v1/academic`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352AcademicprogramCourseCreateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/academic/program-versions/{id}/courses/{courseId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * DELETE /api/v1/academic/program-versions/:id/courses/:courseId
+         * @description Declared in `backend/src/http/routes/r352-academic.routes.ts` (mounted at `/api/v1/academic`).
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/academic/programs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/academic/programs
+         * @description Declared in `backend/src/http/routes/r352-academic.routes.ts` (mounted at `/api/v1/academic`).
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page?: number;
+                    limit?: number;
+                    q?: string;
+                    kind?: "ACADEMIC" | "TECHNICAL" | "PROFESSIONAL" | "VOCATIONAL_TRAINING" | "BASIC_FORMATION";
+                    status?: "DRAFT" | "APPROVED" | "ACTIVE" | "SUSPENDED" | "CLOSED";
+                    orgUnitId?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * POST /api/v1/academic/programs
+         * @description Declared in `backend/src/http/routes/r352-academic.routes.ts` (mounted at `/api/v1/academic`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352AcademicprogramCreateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/academic/programs/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/academic/programs/:id
+         * @description Declared in `backend/src/http/routes/r352-academic.routes.ts` (mounted at `/api/v1/academic`).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * PATCH /api/v1/academic/programs/:id
+         * @description Declared in `backend/src/http/routes/r352-academic.routes.ts` (mounted at `/api/v1/academic`).
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352AcademicprogramUpdateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v1/academic/programs/{id}/versions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * POST /api/v1/academic/programs/:id/versions
+         * @description Declared in `backend/src/http/routes/r352-academic.routes.ts` (mounted at `/api/v1/academic`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352AcademicprogramVersionCreateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/academic/terms": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/academic/terms
+         * @description Declared in `backend/src/http/routes/r352-academic.routes.ts` (mounted at `/api/v1/academic`).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * POST /api/v1/academic/terms
+         * @description Declared in `backend/src/http/routes/r352-academic.routes.ts` (mounted at `/api/v1/academic`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352AcademictermCreateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/academic/training-placements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/academic/training-placements
+         * @description Declared in `backend/src/http/routes/r352-academic.routes.ts` (mounted at `/api/v1/academic`).
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page?: number;
+                    limit?: number;
+                    q?: string;
+                    status?: "PLANNED" | "ACTIVE" | "COMPLETED" | "CANCELLED" | "TERMINATED";
+                    learnerProfileId?: string;
+                    studentProfileId?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * POST /api/v1/academic/training-placements
+         * @description Declared in `backend/src/http/routes/r352-academic.routes.ts` (mounted at `/api/v1/academic`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352AcademicplacementCreateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/academic/training-placements/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * PATCH /api/v1/academic/training-placements/:id
+         * @description Declared in `backend/src/http/routes/r352-academic.routes.ts` (mounted at `/api/v1/academic`).
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352AcademicplacementUpdateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
     "/api/v1/admin/courses": {
         parameters: {
             query?: never;
@@ -920,6 +2685,81 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/unit-capabilities/{id}/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * POST /api/v1/admin/unit-capabilities/:id/revoke
+         * @description Declared in `backend/src/http/routes/r352-unit-capabilities.routes.ts` (mounted at `/api/v1`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/users": {
         parameters: {
             query?: never;
@@ -1240,6 +3080,144 @@ export interface paths {
             requestBody: {
                 content: {
                     "application/json": components["schemas"]["teacherassignScopeSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/users/{id}/unit-capabilities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/admin/users/:id/unit-capabilities
+         * @description Declared in `backend/src/http/routes/r352-unit-capabilities.routes.ts` (mounted at `/api/v1`).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * POST /api/v1/admin/users/:id/unit-capabilities
+         * @description Declared in `backend/src/http/routes/r352-unit-capabilities.routes.ts` (mounted at `/api/v1`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352UnitCapabilitiesunitCapabilityGrantCreateSchema"];
                 };
             };
             responses: {
@@ -1833,6 +3811,156 @@ export interface paths {
         put?: never;
         /**
          * POST /api/v1/ai/knowledge/reindex
+         * @description Declared in `backend/src/http/routes/ai.routes.ts` (mounted at `/api/v1/ai`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ai/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/ai/status
+         * @description Declared in `backend/src/http/routes/ai.routes.ts` (mounted at `/api/v1/ai`).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ai/status/check": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * POST /api/v1/ai/status/check
          * @description Declared in `backend/src/http/routes/ai.routes.ts` (mounted at `/api/v1/ai`).
          */
         post: {
@@ -2923,6 +5051,381 @@ export interface paths {
                 };
             };
         };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/accreditation-criteria-sets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/catalog/accreditation-criteria-sets
+         * @description Declared in `backend/src/http/routes/r352-catalog.routes.ts` (mounted at `/api/v1/catalog`).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/credential-types": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/catalog/credential-types
+         * @description Declared in `backend/src/http/routes/r352-catalog.routes.ts` (mounted at `/api/v1/catalog`).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/institution-types": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/catalog/institution-types
+         * @description Declared in `backend/src/http/routes/r352-catalog.routes.ts` (mounted at `/api/v1/catalog`).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/position-templates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/catalog/position-templates
+         * @description Declared in `backend/src/http/routes/r352-catalog.routes.ts` (mounted at `/api/v1/catalog`).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/regulatory-authorities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/catalog/regulatory-authorities
+         * @description Declared in `backend/src/http/routes/r352-catalog.routes.ts` (mounted at `/api/v1/catalog`).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -4140,6 +6643,1638 @@ export interface paths {
                 cookie?: never;
             };
             requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/compliance/accreditations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/compliance/accreditations
+         * @description Declared in `backend/src/http/routes/r352-compliance.routes.ts` (mounted at `/api/v1/compliance`).
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page?: number;
+                    limit?: number;
+                    q?: string;
+                    status?: "PENDING" | "IN_REVIEW" | "GRANTED" | "CONDITIONAL" | "RENEWED" | "SUSPENDED" | "REVOKED" | "EXPIRED" | "WITHDRAWN";
+                    type?: "INSTITUTIONAL" | "PROGRAM";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * POST /api/v1/compliance/accreditations
+         * @description Declared in `backend/src/http/routes/r352-compliance.routes.ts` (mounted at `/api/v1/compliance`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352ComplianceaccreditationCreateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/compliance/accreditations/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * PATCH /api/v1/compliance/accreditations/:id
+         * @description Declared in `backend/src/http/routes/r352-compliance.routes.ts` (mounted at `/api/v1/compliance`).
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352ComplianceaccreditationUpdateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v1/compliance/corrective-actions/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * PATCH /api/v1/compliance/corrective-actions/:id
+         * @description Declared in `backend/src/http/routes/r352-compliance.routes.ts` (mounted at `/api/v1/compliance`).
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352CompliancecorrectiveActionUpdateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v1/compliance/evidence": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/compliance/evidence
+         * @description Declared in `backend/src/http/routes/r352-compliance.routes.ts` (mounted at `/api/v1/compliance`).
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page?: number;
+                    limit?: number;
+                    q?: string;
+                    ownerType?: string;
+                    ownerId?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * POST /api/v1/compliance/evidence
+         * @description Declared in `backend/src/http/routes/r352-compliance.routes.ts` (mounted at `/api/v1/compliance`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352ComplianceevidenceCreateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/compliance/findings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/compliance/findings
+         * @description Declared in `backend/src/http/routes/r352-compliance.routes.ts` (mounted at `/api/v1/compliance`).
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page?: number;
+                    limit?: number;
+                    q?: string;
+                    status?: "OPEN" | "ACKNOWLEDGED" | "IN_REMEDIATION" | "RESOLVED" | "DISPUTED" | "CLOSED";
+                    severity?: "MINOR" | "MAJOR" | "CRITICAL";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * POST /api/v1/compliance/findings
+         * @description Declared in `backend/src/http/routes/r352-compliance.routes.ts` (mounted at `/api/v1/compliance`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352CompliancefindingCreateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/compliance/findings/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * PATCH /api/v1/compliance/findings/:id
+         * @description Declared in `backend/src/http/routes/r352-compliance.routes.ts` (mounted at `/api/v1/compliance`).
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352CompliancefindingUpdateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v1/compliance/findings/{id}/corrective-actions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * POST /api/v1/compliance/findings/:id/corrective-actions
+         * @description Declared in `backend/src/http/routes/r352-compliance.routes.ts` (mounted at `/api/v1/compliance`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352CompliancecorrectiveActionCreateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/compliance/inspections": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/compliance/inspections
+         * @description Declared in `backend/src/http/routes/r352-compliance.routes.ts` (mounted at `/api/v1/compliance`).
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page?: number;
+                    limit?: number;
+                    q?: string;
+                    status?: "SCHEDULED" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * POST /api/v1/compliance/inspections
+         * @description Declared in `backend/src/http/routes/r352-compliance.routes.ts` (mounted at `/api/v1/compliance`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352ComplianceinspectionCreateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/compliance/inspections/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * PATCH /api/v1/compliance/inspections/:id
+         * @description Declared in `backend/src/http/routes/r352-compliance.routes.ts` (mounted at `/api/v1/compliance`).
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352ComplianceinspectionUpdateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v1/compliance/licenses": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/compliance/licenses
+         * @description Declared in `backend/src/http/routes/r352-compliance.routes.ts` (mounted at `/api/v1/compliance`).
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page?: number;
+                    limit?: number;
+                    q?: string;
+                    status?: "PENDING" | "ACTIVE" | "RENEWED" | "SUSPENDED" | "REVOKED" | "EXPIRED";
+                    kind?: "TECHNICAL_LICENSE" | "OPERATING_PERMIT" | "ESTABLISHMENT_DECISION" | "OTHER";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * POST /api/v1/compliance/licenses
+         * @description Declared in `backend/src/http/routes/r352-compliance.routes.ts` (mounted at `/api/v1/compliance`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352CompliancelicenseCreateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/compliance/licenses/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * PATCH /api/v1/compliance/licenses/:id
+         * @description Declared in `backend/src/http/routes/r352-compliance.routes.ts` (mounted at `/api/v1/compliance`).
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352CompliancelicenseUpdateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v1/compliance/self-assessments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/compliance/self-assessments
+         * @description Declared in `backend/src/http/routes/r352-compliance.routes.ts` (mounted at `/api/v1/compliance`).
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page?: number;
+                    limit?: number;
+                    q?: string;
+                    status?: "DRAFT" | "SUBMITTED" | "UNDER_REVIEW" | "APPROVED" | "ARCHIVED";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * POST /api/v1/compliance/self-assessments
+         * @description Declared in `backend/src/http/routes/r352-compliance.routes.ts` (mounted at `/api/v1/compliance`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352ComplianceselfAssessmentCreateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/compliance/self-assessments/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * PATCH /api/v1/compliance/self-assessments/:id
+         * @description Declared in `backend/src/http/routes/r352-compliance.routes.ts` (mounted at `/api/v1/compliance`).
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352ComplianceselfAssessmentUpdateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v1/compliance/self-assessments/{id}/items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/compliance/self-assessments/:id/items
+         * @description Declared in `backend/src/http/routes/r352-compliance.routes.ts` (mounted at `/api/v1/compliance`).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        /**
+         * PUT /api/v1/compliance/self-assessments/:id/items
+         * @description Declared in `backend/src/http/routes/r352-compliance.routes.ts` (mounted at `/api/v1/compliance`).
+         */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352ComplianceselfAssessmentItemUpsertSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/compliance/self-assessments/{id}/items/{itemId}/corrective-action": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * POST /api/v1/compliance/self-assessments/:id/items/:itemId/corrective-action
+         * @description Declared in `backend/src/http/routes/r352-compliance.routes.ts` (mounted at `/api/v1/compliance`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352ComplianceselfAssessmentCorrectiveActionSchema"];
+                };
+            };
             responses: {
                 /** @description Success envelope `{ data }` */
                 200: {
@@ -7030,6 +11165,1571 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/governance/agenda-items/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * PATCH /api/v1/governance/agenda-items/:id
+         * @description Declared in `backend/src/http/routes/r352-councils.routes.ts` (mounted at `/api/v1/governance`).
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352CouncilsagendaItemUpdateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v1/governance/council-memberships/{id}/end": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * POST /api/v1/governance/council-memberships/:id/end
+         * @description Declared in `backend/src/http/routes/r352-councils.routes.ts` (mounted at `/api/v1/governance`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352CouncilscouncilMembershipEndSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/governance/councils": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/governance/councils
+         * @description Declared in `backend/src/http/routes/r352-councils.routes.ts` (mounted at `/api/v1/governance`).
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page?: number;
+                    limit?: number;
+                    q?: string;
+                    type?: "UNIVERSITY_COUNCIL" | "FACULTY_COUNCIL" | "DEPARTMENT_COUNCIL" | "SCIENTIFIC_COUNCIL" | "INSTITUTE_COUNCIL" | "DISCIPLINARY_COUNCIL" | "STANDING_COMMITTEE" | "OTHER";
+                    status?: "ACTIVE" | "DISSOLVED" | "CANCELLED";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * POST /api/v1/governance/councils
+         * @description Declared in `backend/src/http/routes/r352-councils.routes.ts` (mounted at `/api/v1/governance`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352CouncilscouncilCreateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/governance/councils/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/governance/councils/:id
+         * @description Declared in `backend/src/http/routes/r352-councils.routes.ts` (mounted at `/api/v1/governance`).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * PATCH /api/v1/governance/councils/:id
+         * @description Declared in `backend/src/http/routes/r352-councils.routes.ts` (mounted at `/api/v1/governance`).
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352CouncilscouncilUpdateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v1/governance/councils/{id}/documents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * POST /api/v1/governance/councils/:id/documents
+         * @description Declared in `backend/src/http/routes/r352-councils.routes.ts` (mounted at `/api/v1/governance`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352CouncilscouncilDocumentCreateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/governance/councils/{id}/meetings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/governance/councils/:id/meetings
+         * @description Declared in `backend/src/http/routes/r352-councils.routes.ts` (mounted at `/api/v1/governance`).
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page?: number;
+                    limit?: number;
+                    q?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * POST /api/v1/governance/councils/:id/meetings
+         * @description Declared in `backend/src/http/routes/r352-councils.routes.ts` (mounted at `/api/v1/governance`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352CouncilsmeetingCreateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/governance/councils/{id}/members": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * POST /api/v1/governance/councils/:id/members
+         * @description Declared in `backend/src/http/routes/r352-councils.routes.ts` (mounted at `/api/v1/governance`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352CouncilscouncilMembershipCreateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/governance/meetings/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/governance/meetings/:id
+         * @description Declared in `backend/src/http/routes/r352-councils.routes.ts` (mounted at `/api/v1/governance`).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * PATCH /api/v1/governance/meetings/:id
+         * @description Declared in `backend/src/http/routes/r352-councils.routes.ts` (mounted at `/api/v1/governance`).
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352CouncilsmeetingUpdateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v1/governance/meetings/{id}/agenda-items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * POST /api/v1/governance/meetings/:id/agenda-items
+         * @description Declared in `backend/src/http/routes/r352-councils.routes.ts` (mounted at `/api/v1/governance`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352CouncilsagendaItemCreateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/governance/meetings/{id}/attendance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * POST /api/v1/governance/meetings/:id/attendance
+         * @description Declared in `backend/src/http/routes/r352-councils.routes.ts` (mounted at `/api/v1/governance`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352CouncilsattendanceBulkSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/governance/meetings/{id}/minutes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/governance/meetings/:id/minutes
+         * @description Declared in `backend/src/http/routes/r352-councils.routes.ts` (mounted at `/api/v1/governance`).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        /**
+         * PUT /api/v1/governance/meetings/:id/minutes
+         * @description Declared in `backend/src/http/routes/r352-councils.routes.ts` (mounted at `/api/v1/governance`).
+         */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352CouncilsminutesUpsertSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/governance/meetings/{id}/minutes/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * POST /api/v1/governance/meetings/:id/minutes/approve
+         * @description Declared in `backend/src/http/routes/r352-councils.routes.ts` (mounted at `/api/v1/governance`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352CouncilsminutesApproveSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/governance/meetings/{id}/minutes/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/governance/meetings/:id/minutes/history
+         * @description Declared in `backend/src/http/routes/r352-councils.routes.ts` (mounted at `/api/v1/governance`).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/governance/meetings/{id}/minutes/sign": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * POST /api/v1/governance/meetings/:id/minutes/sign
+         * @description Declared in `backend/src/http/routes/r352-councils.routes.ts` (mounted at `/api/v1/governance`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352CouncilsminutesSignSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/governance/meetings/{id}/resolutions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * POST /api/v1/governance/meetings/:id/resolutions
+         * @description Declared in `backend/src/http/routes/r352-councils.routes.ts` (mounted at `/api/v1/governance`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352CouncilsresolutionCreateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/governance/resolutions/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * PATCH /api/v1/governance/resolutions/:id
+         * @description Declared in `backend/src/http/routes/r352-councils.routes.ts` (mounted at `/api/v1/governance`).
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352CouncilsresolutionUpdateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
     "/api/v1/health": {
         parameters: {
             query?: never;
@@ -7112,6 +12812,1259 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/institutional/appointments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/institutional/appointments
+         * @description Declared in `backend/src/http/routes/r352-appointments.routes.ts` (mounted at `/api/v1/institutional`).
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page?: number;
+                    limit?: number;
+                    q?: string;
+                    status?: "SCHEDULED" | "ACTIVE" | "ENDED" | "CANCELLED";
+                    personId?: string;
+                    orgUnitId?: string;
+                    positionId?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * POST /api/v1/institutional/appointments
+         * @description Declared in `backend/src/http/routes/r352-appointments.routes.ts` (mounted at `/api/v1/institutional`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352AppointmentsappointmentCreateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/institutional/appointments/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/institutional/appointments/:id
+         * @description Declared in `backend/src/http/routes/r352-appointments.routes.ts` (mounted at `/api/v1/institutional`).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/institutional/appointments/{id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * POST /api/v1/institutional/appointments/:id/cancel
+         * @description Declared in `backend/src/http/routes/r352-appointments.routes.ts` (mounted at `/api/v1/institutional`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352AppointmentsappointmentCancelSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/institutional/appointments/{id}/end": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * POST /api/v1/institutional/appointments/:id/end
+         * @description Declared in `backend/src/http/routes/r352-appointments.routes.ts` (mounted at `/api/v1/institutional`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352AppointmentsappointmentEndSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/institutional/org-units": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/institutional/org-units
+         * @description Declared in `backend/src/http/routes/r352-org-units.routes.ts` (mounted at `/api/v1/institutional`).
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page?: number;
+                    limit?: number;
+                    q?: string;
+                    type?: string;
+                    status?: "ACTIVE" | "INACTIVE" | "DISSOLVED";
+                    parentId?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * POST /api/v1/institutional/org-units
+         * @description Declared in `backend/src/http/routes/r352-org-units.routes.ts` (mounted at `/api/v1/institutional`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352OrgUnitsorgUnitCreateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/institutional/org-units/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/institutional/org-units/:id
+         * @description Declared in `backend/src/http/routes/r352-org-units.routes.ts` (mounted at `/api/v1/institutional`).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * PATCH /api/v1/institutional/org-units/:id
+         * @description Declared in `backend/src/http/routes/r352-org-units.routes.ts` (mounted at `/api/v1/institutional`).
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352OrgUnitsorgUnitUpdateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v1/institutional/org-units/{id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * POST /api/v1/institutional/org-units/:id/status
+         * @description Declared in `backend/src/http/routes/r352-org-units.routes.ts` (mounted at `/api/v1/institutional`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352OrgUnitsorgUnitStatusSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/institutional/org-units/tree": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/institutional/org-units/tree
+         * @description Declared in `backend/src/http/routes/r352-org-units.routes.ts` (mounted at `/api/v1/institutional`).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/institutional/people": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/institutional/people
+         * @description Declared in `backend/src/http/routes/r352-people.routes.ts` (mounted at `/api/v1/institutional`).
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page?: number;
+                    limit?: number;
+                    q?: string;
+                    category?: "ACADEMIC_STAFF" | "TEACHING_ASSISTANT" | "TRAINER" | "ASSISTANT_TRAINER" | "TEACHER" | "TECHNICAL_GUIDE" | "ADMINISTRATIVE_STAFF" | "TECHNICIAN" | "PROFESSIONAL" | "OTHER";
+                    status?: "ACTIVE" | "ON_LEAVE" | "SUSPENDED" | "ENDED";
+                    orgUnitId?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * POST /api/v1/institutional/people
+         * @description Declared in `backend/src/http/routes/r352-people.routes.ts` (mounted at `/api/v1/institutional`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352PeoplepersonCreateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/institutional/people/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/institutional/people/:id
+         * @description Declared in `backend/src/http/routes/r352-people.routes.ts` (mounted at `/api/v1/institutional`).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * PATCH /api/v1/institutional/people/:id
+         * @description Declared in `backend/src/http/routes/r352-people.routes.ts` (mounted at `/api/v1/institutional`).
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352PeoplepersonUpdateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v1/institutional/people/{id}/appointments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/institutional/people/:id/appointments
+         * @description Declared in `backend/src/http/routes/r352-appointments.routes.ts` (mounted at `/api/v1/institutional`).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/institutional/people/{id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * POST /api/v1/institutional/people/:id/status
+         * @description Declared in `backend/src/http/routes/r352-people.routes.ts` (mounted at `/api/v1/institutional`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352PeoplepersonStatusSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/institutions": {
         parameters: {
             query?: never;
@@ -7122,6 +14075,81 @@ export interface paths {
         /**
          * GET /api/v1/institutions
          * @description Declared in `backend/src/http/routes/institution.routes.ts` (mounted at `/api/v1`).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/institutions/me/profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/institutions/me/profile
+         * @description Declared in `backend/src/http/routes/r352-institution.routes.ts` (mounted at `/api/v1`).
          */
         get: {
             parameters: {
@@ -11242,6 +18270,81 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/me/unit-capabilities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/me/unit-capabilities
+         * @description Declared in `backend/src/http/routes/r352-unit-capabilities.routes.ts` (mounted at `/api/v1`).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/messages": {
         parameters: {
             query?: never;
@@ -13119,6 +20222,1333 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/operations/equipment": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/operations/equipment
+         * @description Declared in `backend/src/http/routes/r352-operations.routes.ts` (mounted at `/api/v1/operations`).
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page?: number;
+                    limit?: number;
+                    q?: string;
+                    status?: "IN_SERVICE" | "UNDER_MAINTENANCE" | "OUT_OF_SERVICE" | "DECOMMISSIONED" | "LOST";
+                    facilityId?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * POST /api/v1/operations/equipment
+         * @description Declared in `backend/src/http/routes/r352-operations.routes.ts` (mounted at `/api/v1/operations`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352OperationsequipmentCreateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/operations/equipment/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * PATCH /api/v1/operations/equipment/:id
+         * @description Declared in `backend/src/http/routes/r352-operations.routes.ts` (mounted at `/api/v1/operations`).
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352OperationsequipmentUpdateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v1/operations/equipment/{id}/programs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * POST /api/v1/operations/equipment/:id/programs
+         * @description Declared in `backend/src/http/routes/r352-operations.routes.ts` (mounted at `/api/v1/operations`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352OperationsequipmentProgramLinkSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/operations/equipment/{id}/programs/{programId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * DELETE /api/v1/operations/equipment/:id/programs/:programId
+         * @description Declared in `backend/src/http/routes/r352-operations.routes.ts` (mounted at `/api/v1/operations`).
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/operations/facilities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/operations/facilities
+         * @description Declared in `backend/src/http/routes/r352-operations.routes.ts` (mounted at `/api/v1/operations`).
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page?: number;
+                    limit?: number;
+                    q?: string;
+                    type?: "LABORATORY" | "WORKSHOP" | "CLASSROOM" | "PRACTICAL_TRAINING_FACILITY" | "LECTURE_HALL" | "OTHER";
+                    status?: "ACTIVE" | "UNDER_MAINTENANCE" | "CLOSED" | "DECOMMISSIONED";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * POST /api/v1/operations/facilities
+         * @description Declared in `backend/src/http/routes/r352-operations.routes.ts` (mounted at `/api/v1/operations`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352OperationsfacilityCreateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/operations/facilities/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/operations/facilities/:id
+         * @description Declared in `backend/src/http/routes/r352-operations.routes.ts` (mounted at `/api/v1/operations`).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * PATCH /api/v1/operations/facilities/:id
+         * @description Declared in `backend/src/http/routes/r352-operations.routes.ts` (mounted at `/api/v1/operations`).
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352OperationsfacilityUpdateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v1/operations/reservations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/operations/reservations
+         * @description Declared in `backend/src/http/routes/r352-operations.routes.ts` (mounted at `/api/v1/operations`).
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page?: number;
+                    limit?: number;
+                    q?: string;
+                    facilityId?: string;
+                    status?: "REQUESTED" | "APPROVED" | "REJECTED" | "CANCELLED" | "COMPLETED";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * POST /api/v1/operations/reservations
+         * @description Declared in `backend/src/http/routes/r352-operations.routes.ts` (mounted at `/api/v1/operations`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352OperationsreservationCreateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/operations/reservations/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * PATCH /api/v1/operations/reservations/:id
+         * @description Declared in `backend/src/http/routes/r352-operations.routes.ts` (mounted at `/api/v1/operations`).
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352OperationsreservationUpdateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v1/operations/safety-incidents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/operations/safety-incidents
+         * @description Declared in `backend/src/http/routes/r352-operations.routes.ts` (mounted at `/api/v1/operations`).
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page?: number;
+                    limit?: number;
+                    q?: string;
+                    status?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * POST /api/v1/operations/safety-incidents
+         * @description Declared in `backend/src/http/routes/r352-operations.routes.ts` (mounted at `/api/v1/operations`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352OperationssafetyIncidentCreateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/operations/safety-incidents/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * PATCH /api/v1/operations/safety-incidents/:id
+         * @description Declared in `backend/src/http/routes/r352-operations.routes.ts` (mounted at `/api/v1/operations`).
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352OperationssafetyIncidentUpdateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v1/operations/work-orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/operations/work-orders
+         * @description Declared in `backend/src/http/routes/r352-operations.routes.ts` (mounted at `/api/v1/operations`).
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page?: number;
+                    limit?: number;
+                    q?: string;
+                    status?: "OPEN" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
+                    equipmentId?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * POST /api/v1/operations/work-orders
+         * @description Declared in `backend/src/http/routes/r352-operations.routes.ts` (mounted at `/api/v1/operations`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352OperationsworkOrderCreateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/operations/work-orders/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * PATCH /api/v1/operations/work-orders/:id
+         * @description Declared in `backend/src/http/routes/r352-operations.routes.ts` (mounted at `/api/v1/operations`).
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352OperationsworkOrderUpdateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
     "/api/v1/owner/activity": {
         parameters: {
             query?: never;
@@ -14021,6 +22451,85 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/v1/owner/institutions/{id}/classification": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * PATCH /api/v1/owner/institutions/:id/classification
+         * @description Declared in `backend/src/http/routes/r352-institution.routes.ts` (mounted at `/api/v1`).
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352InstitutioninstitutionClassificationSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
         trace?: never;
     };
     "/api/v1/owner/institutions/{id}/memberships/{membershipId}/restore": {
@@ -15967,6 +24476,585 @@ export interface paths {
         put?: never;
         post?: never;
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/research-outputs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/research-outputs
+         * @description Declared in `backend/src/http/routes/r352-research.routes.ts` (mounted at `/api/v1`).
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page?: number;
+                    limit?: number;
+                    q?: string;
+                    projectId?: string;
+                    type?: "PUBLICATION" | "PATENT" | "PROTOTYPE" | "APPLIED_PRODUCT" | "TECHNICAL_REPORT";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * POST /api/v1/research-outputs
+         * @description Declared in `backend/src/http/routes/r352-research.routes.ts` (mounted at `/api/v1`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352ResearchresearchOutputCreateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/research-projects": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/research-projects
+         * @description Declared in `backend/src/http/routes/r352-research.routes.ts` (mounted at `/api/v1`).
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page?: number;
+                    limit?: number;
+                    q?: string;
+                    status?: "PROPOSED" | "APPROVED" | "ACTIVE" | "SUSPENDED" | "COMPLETED" | "TERMINATED";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * POST /api/v1/research-projects
+         * @description Declared in `backend/src/http/routes/r352-research.routes.ts` (mounted at `/api/v1`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352ResearchresearchProjectCreateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/research-projects/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GET /api/v1/research-projects/:id
+         * @description Declared in `backend/src/http/routes/r352-research.routes.ts` (mounted at `/api/v1`).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * PATCH /api/v1/research-projects/:id
+         * @description Declared in `backend/src/http/routes/r352-research.routes.ts` (mounted at `/api/v1`).
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352ResearchresearchProjectUpdateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v1/research-projects/{id}/members": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * POST /api/v1/research-projects/:id/members
+         * @description Declared in `backend/src/http/routes/r352-research.routes.ts` (mounted at `/api/v1`).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["r352ResearchresearchMemberCreateSchema"];
+                };
+            };
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/research-projects/{id}/members/{personId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * DELETE /api/v1/research-projects/:id/members/:personId
+         * @description Declared in `backend/src/http/routes/r352-research.routes.ts` (mounted at `/api/v1`).
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Success envelope `{ data }` */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SuccessEnvelope"];
+                    };
+                };
+                /** @description Validation / bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh) */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP) */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Unexpected server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
         options?: never;
         head?: never;
         patch?: never;
@@ -19183,13 +28271,165 @@ export interface components {
         };
         ErrorEnvelope: {
             error: {
-                /** @description UPPER_SNAKE machine code. Known values: BAD_REQUEST, VALIDATION_ERROR, UNAUTHENTICATED, TOKEN_EXPIRED, INVALID_CREDENTIALS, FORBIDDEN, NOT_FOUND, CONFLICT, PAYLOAD_TOO_LARGE, UNSUPPORTED_MEDIA_TYPE, TOO_MANY_REQUESTS, INSTITUTION_CONTEXT_REQUIRED, INSTITUTION_CONTEXT_INVALID, REG_NUMBER_AMBIGUOUS, DB_UNAVAILABLE */
+                /** @description UPPER_SNAKE machine code. Known values: BAD_REQUEST, VALIDATION_ERROR, UNAUTHENTICATED, TOKEN_EXPIRED, INVALID_CREDENTIALS, FORBIDDEN, NOT_FOUND, CONFLICT, PAYLOAD_TOO_LARGE, UNSUPPORTED_MEDIA_TYPE, TOO_MANY_REQUESTS, INSTITUTION_CONTEXT_REQUIRED, INSTITUTION_CONTEXT_INVALID, REG_NUMBER_AMBIGUOUS, DB_UNAVAILABLE, INSTITUTION_KIND_SECTOR_MISMATCH, PARENT_CYCLE, PARENT_SECTOR_MISMATCH, ORG_UNIT_CODE_TAKEN, ORG_UNIT_DUPLICATE_NAME, ORG_UNIT_PARENT_SAME_INSTITUTION, ORG_UNIT_PARENT_MISSING, ORG_UNIT_CYCLE, ORG_UNIT_HAS_ACTIVE_CHILDREN, ORG_UNIT_CITY_REQUIRED, PERSON_NUMBER_TAKEN, PERSON_USER_ALREADY_LINKED, PERSON_UNIT_NOT_IN_INSTITUTION, APPOINTMENT_CONFLICT, APPOINTMENT_UNIT_TYPE_REQUIRED, APPOINTMENT_DATES_INVALID, APPOINTMENT_POSITION_NOT_ELIGIBLE, COUNCIL_MEMBERSHIP_ACTIVE_EXISTS, COUNCIL_INVALID_TRANSITION, COUNCIL_NOT_ACTIVE, ATTENDEE_NOT_MEMBER, MEETING_SEQ_TAKEN, MEETING_INVALID_TRANSITION, RESOLUTION_INVALID_TRANSITION, MINUTES_INVALID_TRANSITION, TERM_CODE_TAKEN, PROGRAM_CODE_TAKEN, PROGRAM_VERSION_INVALID_TRANSITION, PROGRAM_VERSION_ACTIVE_EXISTS, PROGRAM_COURSE_WRONG_INSTITUTION, PROGRAM_ENROLLMENT_EXISTS, PROGRAM_ENROLLMENT_INVALID_TRANSITION, ENROLLMENT_PROFILE_WRONG_INSTITUTION, CREDENTIAL_SERIAL_TAKEN, ACCREDITATION_SCOPE_INVALID, ACCREDITATION_INVALID_TRANSITION, LICENSE_INVALID_TRANSITION, INSPECTION_INVALID_TRANSITION, FINDING_INVALID_TRANSITION, CORRECTIVE_ACTION_INVALID_TRANSITION, SELF_ASSESSMENT_INVALID_TRANSITION, EVIDENCE_OWNER_INVALID, FACILITY_CODE_TAKEN, EQUIPMENT_CODE_TAKEN, WORK_ORDER_INVALID_TRANSITION, RESERVATION_WINDOW_INVALID, RESERVATION_OVERLAP, RESERVATION_INVALID_TRANSITION, RESEARCH_PROJECT_INVALID_TRANSITION, PROJECT_MEMBER_EXISTS, RESEARCH_NOT_APPLICABLE, UNIT_ROLE_EXISTS, UNIT_ROLE_UNIT_INVALID, USER_NOT_MEMBER, UNIT_GRANT_INSTITUTION_MISMATCH, GRANT_EXCEEDS_AUTHORITY, FACILITY_NOT_OPERATIONAL, EQUIPMENT_FACILITY_UNIT_MISMATCH, EVIDENCE_OWNER_TYPE_INVALID, MINUTES_VERSION_IMMUTABLE, MINUTES_VERSION_REQUIRED, PROGRESSION_NOT_ALLOWED, LEARNER_NUMBER_TAKEN, LEARNER_ENROLLMENT_CATEGORY_MISMATCH, PLACEMENT_ENROLLMENT_MISMATCH, CREDENTIAL_ENROLLMENT_MISMATCH, ORG_UNIT_TYPE_INVALID, ORG_UNIT_TYPE_PARENT_INVALID, ORG_UNIT_DEPTH_EXCEEDED, INSTITUTION_AFFILIATION_DEPTH_EXCEEDED */
                 code: string;
                 /** @description Human message (Arabic — D17-3); render verbatim in toasts. */
                 message: string;
                 /** @description Optional structured details (e.g. zod flatten() for VALIDATION_ERROR). */
                 details?: unknown;
             };
+        };
+        r352AcademiccredentialRevokeSchema: {
+            notes?: string;
+        };
+        r352AcademiccredentialAwardSchema: {
+            learnerProfileId?: string;
+            studentProfileId?: string;
+            credentialTypeCode: string;
+            programId?: string;
+            programEnrollmentId?: string;
+            decisionNumber?: string;
+            /** Format: date-time */
+            decisionDate?: string;
+            /** Format: date-time */
+            conferredAt?: string;
+            serialNumber?: string;
+            notes?: string;
+        };
+        r352AcademiclearnerCreateSchema: {
+            /** @enum {string} */
+            category: "STUDENT" | "TRAINEE";
+            learnerNumber: string;
+            fullNameAr: string;
+            fullNameEn?: string;
+            gender?: string;
+            /** Format: date-time */
+            birthDate?: string;
+            nationality?: string;
+            nationalId?: string;
+            /** Format: email */
+            email?: string;
+            phone?: string;
+            address?: string;
+            orgUnitId?: string;
+            userId?: string;
+            notes?: string;
+        };
+        r352AcademiclearnerUpdateSchema: {
+            fullNameAr?: string;
+            fullNameEn?: string;
+            gender?: string;
+            /** Format: date-time */
+            birthDate?: string;
+            nationality?: string;
+            nationalId?: string;
+            /** Format: email */
+            email?: string;
+            phone?: string;
+            address?: string;
+            orgUnitId?: string;
+            userId?: string;
+            notes?: string;
+            /** @enum {string} */
+            status?: "ACTIVE" | "SUSPENDED" | "GRADUATED" | "WITHDRAWN" | "TRANSFERRED";
+        };
+        r352AcademicprogramEnrollmentCreateSchema: {
+            learnerProfileId?: string;
+            studentProfileId?: string;
+            programId: string;
+            programVersionId?: string;
+            /** Format: date-time */
+            expectedCompletionAt?: string;
+        };
+        r352AcademicprogramEnrollmentStatusSchema: {
+            /** @enum {string} */
+            status: "CANDIDATE" | "ACTIVE" | "ON_LEAVE" | "WITHDRAWN" | "SUSPENDED" | "COMPLETED" | "GRADUATED";
+            /** Format: date-time */
+            completionAt?: string;
+            gpa?: number;
+        };
+        r352AcademicprogramVersionUpdateSchema: {
+            /** @enum {string} */
+            status?: "DRAFT" | "APPROVED" | "ACTIVE" | "RETIRED";
+            /** Format: date-time */
+            effectiveFrom?: string;
+            approvalRef?: string;
+        };
+        r352AcademicprogramCourseCreateSchema: {
+            courseId: string;
+            termNo?: number;
+            /** @enum {string} */
+            kind?: "CORE" | "ELECTIVE" | "PRACTICUM" | "CAPSTONE" | "SUPPORTING";
+            creditHours?: number;
+        };
+        r352AcademicprogramCreateSchema: {
+            code: string;
+            nameAr: string;
+            nameEn?: string;
+            /** @enum {string} */
+            kind: "ACADEMIC" | "TECHNICAL" | "PROFESSIONAL" | "VOCATIONAL_TRAINING" | "BASIC_FORMATION";
+            orgUnitId?: string;
+            credentialTypeCode?: string;
+            approvalRef?: string;
+            durationMonths?: number;
+            totalCreditHours?: number;
+            admissionRequirements?: {
+                [key: string]: unknown;
+            };
+            progressionRules?: {
+                [key: string]: unknown;
+            };
+        };
+        r352AcademicprogramUpdateSchema: {
+            nameAr?: string;
+            nameEn?: string | null;
+            orgUnitId?: string | null;
+            credentialTypeCode?: string | null;
+            approvalRef?: string | null;
+            durationMonths?: number | null;
+            totalCreditHours?: number | null;
+            /** @enum {string} */
+            status?: "DRAFT" | "APPROVED" | "ACTIVE" | "SUSPENDED" | "CLOSED";
+            admissionRequirements?: {
+                [key: string]: unknown;
+            };
+            progressionRules?: {
+                [key: string]: unknown;
+            };
+        };
+        r352AcademicprogramVersionCreateSchema: {
+            label: string;
+            /** Format: date-time */
+            effectiveFrom?: string;
+            approvalRef?: string;
+        };
+        r352AcademictermCreateSchema: {
+            code: string;
+            /** Format: date-time */
+            startsAt: string;
+            /** Format: date-time */
+            endsAt?: string;
+            isCurrent?: boolean;
+        };
+        r352AcademicplacementCreateSchema: {
+            learnerProfileId?: string;
+            studentProfileId?: string;
+            programEnrollmentId?: string;
+            hostOrgUnitId?: string;
+            externalHost?: string;
+            supervisorPersonId?: string;
+            /** Format: date-time */
+            startsAt: string;
+            /** Format: date-time */
+            endsAt?: string;
+        };
+        r352AcademicplacementUpdateSchema: {
+            /** @enum {string} */
+            status?: "PLANNED" | "ACTIVE" | "COMPLETED" | "CANCELLED" | "TERMINATED";
+            /** Format: date-time */
+            endsAt?: string;
+            evaluationSummary?: string;
+            evaluationScore?: number;
         };
         catalogdepartmentCreateSchema: {
             name: string;
@@ -19231,7 +28471,7 @@ export interface components {
         };
         permissionssetOverrideSchema: {
             /** @enum {string} */
-            capability: "RESEARCH_GRADE_OWN" | "RESEARCH_GRADE_ANY" | "RESEARCH_PUBLISH" | "EXAMS_AUTHOR" | "EXAMS_MODERATE" | "EXAMS_TAKE" | "CURRICULUM_EDIT_OWN" | "CURRICULUM_EDIT_ANY" | "USERS_MANAGE" | "ROLES_ASSIGN" | "TEACHERS_VERIFY" | "QUALITY_VIEW" | "QUALITY_REPORT" | "ANNOUNCE_PLATFORM" | "ANNOUNCE_FACULTY" | "COMPETITIONS_RUN" | "EVENTS_RUN";
+            capability: "RESEARCH_GRADE_OWN" | "RESEARCH_GRADE_ANY" | "RESEARCH_PUBLISH" | "EXAMS_AUTHOR" | "EXAMS_MODERATE" | "EXAMS_TAKE" | "CURRICULUM_EDIT_OWN" | "CURRICULUM_EDIT_ANY" | "USERS_MANAGE" | "ROLES_ASSIGN" | "TEACHERS_VERIFY" | "QUALITY_VIEW" | "QUALITY_REPORT" | "ANNOUNCE_PLATFORM" | "ANNOUNCE_FACULTY" | "COMPETITIONS_RUN" | "EVENTS_RUN" | "ORG_STRUCTURE_MANAGE" | "PEOPLE_MANAGE" | "APPOINTMENTS_MANAGE" | "COUNCILS_MANAGE" | "PROGRAMS_MANAGE" | "CREDENTIALS_MANAGE" | "ACCREDITATION_MANAGE" | "QUALITY_INTERNAL_MANAGE" | "FACILITIES_MANAGE" | "RESEARCH_PROJECTS_MANAGE" | "UNIT_CAPABILITIES_ASSIGN";
             grant: boolean | null;
             reason?: string;
         };
@@ -19243,6 +28483,13 @@ export interface components {
         };
         teacherassignScopeSchema: {
             scopeFacultyId: string | null;
+        };
+        r352UnitCapabilitiesunitCapabilityGrantCreateSchema: {
+            institutionId: string;
+            orgUnitId?: string | null;
+            /** @enum {string} */
+            capability: "RESEARCH_GRADE_OWN" | "RESEARCH_GRADE_ANY" | "RESEARCH_PUBLISH" | "EXAMS_AUTHOR" | "EXAMS_MODERATE" | "EXAMS_TAKE" | "CURRICULUM_EDIT_OWN" | "CURRICULUM_EDIT_ANY" | "USERS_MANAGE" | "ROLES_ASSIGN" | "TEACHERS_VERIFY" | "QUALITY_VIEW" | "QUALITY_REPORT" | "ANNOUNCE_PLATFORM" | "ANNOUNCE_FACULTY" | "COMPETITIONS_RUN" | "EVENTS_RUN" | "ORG_STRUCTURE_MANAGE" | "PEOPLE_MANAGE" | "APPOINTMENTS_MANAGE" | "COUNCILS_MANAGE" | "PROGRAMS_MANAGE" | "CREDENTIALS_MANAGE" | "ACCREDITATION_MANAGE" | "QUALITY_INTERNAL_MANAGE" | "FACILITIES_MANAGE" | "RESEARCH_PROJECTS_MANAGE" | "UNIT_CAPABILITIES_ASSIGN";
+            reason?: string;
         };
         aichatSchema: {
             conversationId?: string;
@@ -19349,6 +28596,153 @@ export interface components {
         };
         socialscoreEntrySchema: {
             score: number | null;
+        };
+        r352ComplianceaccreditationCreateSchema: {
+            /** @enum {string} */
+            scopeType?: "INSTITUTION" | "ORGANIZATIONAL_UNIT" | "PROGRAM";
+            orgUnitId?: string;
+            programId?: string;
+            /** @enum {string} */
+            type: "INSTITUTIONAL" | "PROGRAM";
+            authorityCode: string;
+            decisionNumber?: string;
+            /** Format: date-time */
+            decisionDate?: string;
+            /** Format: date-time */
+            effectiveFrom?: string;
+            /** Format: date-time */
+            effectiveTo?: string;
+            criteriaSetId?: string;
+            reportRef?: string;
+            notes?: string;
+        };
+        r352ComplianceaccreditationUpdateSchema: {
+            /** @enum {string} */
+            status?: "PENDING" | "IN_REVIEW" | "GRANTED" | "CONDITIONAL" | "RENEWED" | "SUSPENDED" | "REVOKED" | "EXPIRED" | "WITHDRAWN";
+            decisionNumber?: string;
+            /** Format: date-time */
+            decisionDate?: string;
+            /** Format: date-time */
+            effectiveFrom?: string;
+            /** Format: date-time */
+            effectiveTo?: string;
+            reportRef?: string;
+            notes?: string;
+        };
+        r352CompliancecorrectiveActionUpdateSchema: {
+            /** @enum {string} */
+            status?: "PLANNED" | "IN_PROGRESS" | "COMPLETED" | "VERIFIED" | "CANCELLED";
+            /** Format: date-time */
+            completedAt?: string;
+            verificationRef?: string;
+        };
+        r352ComplianceevidenceCreateSchema: {
+            /** @enum {string} */
+            ownerType: "ExternalAccreditation" | "CorrectiveActionPlan" | "InternalSelfAssessment" | "RegulatoryInspection" | "OperationalLicense";
+            ownerId: string;
+            titleAr: string;
+            binaryObjectId?: string;
+            documentRef?: string;
+            fileUrl?: string;
+            description?: string;
+        };
+        r352CompliancefindingCreateSchema: {
+            /** @enum {string} */
+            severity: "MINOR" | "MAJOR" | "CRITICAL";
+            titleAr: string;
+            description?: string;
+            inspectionId?: string;
+            externalAccreditationId?: string;
+            orgUnitId?: string;
+            programId?: string;
+            legalReference?: string;
+            /** Format: date-time */
+            dueDate?: string;
+        };
+        r352CompliancefindingUpdateSchema: {
+            /** @enum {string} */
+            status?: "OPEN" | "ACKNOWLEDGED" | "IN_REMEDIATION" | "RESOLVED" | "DISPUTED" | "CLOSED";
+            /** Format: date-time */
+            dueDate?: string;
+            description?: string;
+        };
+        r352CompliancecorrectiveActionCreateSchema: {
+            planText: string;
+            ownerPersonId?: string;
+            /** Format: date-time */
+            targetDate?: string;
+        };
+        r352ComplianceinspectionCreateSchema: {
+            authorityCode: string;
+            /** @enum {string} */
+            kind: "MINISTRY" | "REGULATOR" | "SAFETY" | "TECHNICAL" | "OTHER";
+            orgUnitId?: string;
+            /** Format: date-time */
+            scheduledAt?: string;
+            reportRef?: string;
+        };
+        r352ComplianceinspectionUpdateSchema: {
+            /** Format: date-time */
+            scheduledAt?: string;
+            /** Format: date-time */
+            conductedAt?: string;
+            /** @enum {string} */
+            status?: "SCHEDULED" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
+            summary?: string;
+            reportRef?: string;
+        };
+        r352CompliancelicenseCreateSchema: {
+            /** @enum {string} */
+            kind: "TECHNICAL_LICENSE" | "OPERATING_PERMIT" | "ESTABLISHMENT_DECISION" | "OTHER";
+            authorityCode: string;
+            licenseNumber?: string;
+            /** @enum {string} */
+            scopeType?: "INSTITUTION" | "ORGANIZATIONAL_UNIT" | "PROGRAM";
+            orgUnitId?: string;
+            programId?: string;
+            /** Format: date-time */
+            issuedAt?: string;
+            /** Format: date-time */
+            expiresAt?: string;
+            conditions?: string;
+            documentRef?: string;
+        };
+        r352CompliancelicenseUpdateSchema: {
+            /** @enum {string} */
+            status?: "PENDING" | "ACTIVE" | "RENEWED" | "SUSPENDED" | "REVOKED" | "EXPIRED";
+            licenseNumber?: string;
+            /** Format: date-time */
+            issuedAt?: string;
+            /** Format: date-time */
+            expiresAt?: string;
+            conditions?: string;
+            documentRef?: string;
+        };
+        r352ComplianceselfAssessmentCreateSchema: {
+            periodLabel: string;
+            orgUnitId?: string;
+            programId?: string;
+            criteriaSetId?: string;
+            summary?: string;
+        };
+        r352ComplianceselfAssessmentUpdateSchema: {
+            /** @enum {string} */
+            status?: "DRAFT" | "SUBMITTED" | "UNDER_REVIEW" | "APPROVED" | "ARCHIVED";
+            summary?: string;
+        };
+        r352ComplianceselfAssessmentItemUpsertSchema: {
+            criteriaItemId: string;
+            /** @enum {string} */
+            rating?: "COMPLIANT" | "PARTIALLY_COMPLIANT" | "NON_COMPLIANT" | "NOT_ASSESSED" | "NOT_APPLICABLE";
+            responseAr?: string;
+            evidenceRefs?: string;
+            findingsAr?: string;
+            assessorPersonId?: string;
+        };
+        r352ComplianceselfAssessmentCorrectiveActionSchema: {
+            planText: string;
+            /** Format: date-time */
+            targetDate?: string;
         };
         coursescreateCourseSchema: {
             code: string;
@@ -19458,6 +28852,215 @@ export interface components {
         feedbackpatchBody: {
             /** @enum {string} */
             status: "open" | "triage" | "fixed" | "dismissed";
+        };
+        r352CouncilsagendaItemUpdateSchema: {
+            titleAr?: string;
+            description?: string | null;
+            /** @enum {string} */
+            status?: "OPEN" | "DISCUSSED" | "DEFERRED" | "CLOSED";
+            orderNo?: number;
+        };
+        r352CouncilscouncilMembershipEndSchema: {
+            /** Format: date-time */
+            endDate: string;
+            reason?: string;
+        };
+        r352CouncilscouncilCreateSchema: {
+            nameAr: string;
+            nameEn?: string;
+            /** @enum {string} */
+            type: "UNIVERSITY_COUNCIL" | "FACULTY_COUNCIL" | "DEPARTMENT_COUNCIL" | "SCIENTIFIC_COUNCIL" | "INSTITUTE_COUNCIL" | "DISCIPLINARY_COUNCIL" | "STANDING_COMMITTEE" | "OTHER";
+            orgUnitId?: string;
+            code?: string;
+            legalBasis?: string;
+            charterRef?: string;
+            /** Format: date-time */
+            establishedAt?: string;
+        };
+        r352CouncilscouncilUpdateSchema: {
+            nameAr?: string;
+            nameEn?: string;
+            /** @enum {string} */
+            type?: "UNIVERSITY_COUNCIL" | "FACULTY_COUNCIL" | "DEPARTMENT_COUNCIL" | "SCIENTIFIC_COUNCIL" | "INSTITUTE_COUNCIL" | "DISCIPLINARY_COUNCIL" | "STANDING_COMMITTEE" | "OTHER";
+            orgUnitId?: string;
+            code?: string;
+            legalBasis?: string;
+            charterRef?: string;
+            /** Format: date-time */
+            establishedAt?: string;
+            /** @enum {string} */
+            status?: "ACTIVE" | "DISSOLVED" | "CANCELLED";
+        };
+        r352CouncilscouncilDocumentCreateSchema: {
+            titleAr: string;
+            binaryObjectId?: string;
+            fileUrl?: string;
+            kind?: string;
+            meetingId?: string;
+            notes?: string;
+        };
+        r352CouncilsmeetingCreateSchema: {
+            /** Format: date-time */
+            scheduledAt: string;
+            location?: string;
+            seqNumber?: number;
+            agendaSummary?: string;
+        };
+        r352CouncilscouncilMembershipCreateSchema: {
+            personId: string;
+            /** @enum {string} */
+            role: "CHAIR" | "DEPUTY_CHAIR" | "SECRETARY" | "MEMBER" | "OBSERVER";
+            /** Format: date-time */
+            startDate: string;
+            /** Format: date-time */
+            endDate?: string;
+            decisionRef?: string;
+        };
+        r352CouncilsmeetingUpdateSchema: {
+            /** Format: date-time */
+            scheduledAt?: string;
+            location?: string | null;
+            /** @enum {string} */
+            status?: "SCHEDULED" | "HELD" | "CANCELLED";
+            agendaSummary?: string | null;
+            notes?: string | null;
+        };
+        r352CouncilsagendaItemCreateSchema: {
+            orderNo: number;
+            titleAr: string;
+            description?: string;
+        };
+        r352CouncilsattendanceBulkSchema: {
+            records: {
+                personId: string;
+                /** @enum {string} */
+                status: "PRESENT" | "ABSENT" | "EXCUSED" | "LATE";
+                /**
+                 * @default MEMBER
+                 * @enum {string}
+                 */
+                attendeeKind: "MEMBER" | "GUEST";
+            }[];
+        };
+        r352CouncilsminutesUpsertSchema: {
+            contentAr: string;
+        };
+        r352CouncilsminutesApproveSchema: {
+            approvedByPersonId: string;
+        };
+        r352CouncilsminutesSignSchema: {
+            signedByPersonId: string;
+        };
+        r352CouncilsresolutionCreateSchema: {
+            agendaItemId?: string;
+            number?: string;
+            /** @enum {string} */
+            kind: "RESOLUTION" | "RECOMMENDATION" | "FOLLOW_UP_ACTION";
+            textAr: string;
+            /** Format: date-time */
+            dueDate?: string;
+            ownerPersonId?: string;
+        };
+        r352CouncilsresolutionUpdateSchema: {
+            /** @enum {string} */
+            status?: "DRAFT" | "APPROVED" | "REJECTED" | "IMPLEMENTED" | "ARCHIVED";
+            /** Format: date-time */
+            approvedAt?: string;
+            /** Format: date-time */
+            completedAt?: string;
+            completionRef?: string;
+        };
+        r352AppointmentsappointmentCreateSchema: {
+            personId: string;
+            positionCode: string;
+            orgUnitId?: string;
+            appointedByAuthority?: string;
+            decisionNumber?: string;
+            /** Format: date-time */
+            decisionDate?: string;
+            /** Format: date-time */
+            startDate: string;
+            /** Format: date-time */
+            endDate?: string;
+            termMonths?: number;
+            acting?: boolean;
+            notes?: string;
+        };
+        r352AppointmentsappointmentCancelSchema: {
+            notes?: string;
+        };
+        r352AppointmentsappointmentEndSchema: {
+            /** Format: date-time */
+            endDate: string;
+            notes?: string;
+        };
+        r352OrgUnitsorgUnitCreateSchema: {
+            nameAr: string;
+            nameEn?: string;
+            type: string;
+            code?: string;
+            parentId?: string;
+            sortOrder?: number;
+            location?: string;
+            /** Format: email */
+            contactEmail?: string;
+            contactPhone?: string;
+            /** Format: date-time */
+            establishedAt?: string;
+            city?: string;
+        };
+        r352OrgUnitsorgUnitUpdateSchema: {
+            nameAr?: string;
+            nameEn?: string | null;
+            code?: string | null;
+            parentId?: string | null;
+            sortOrder?: number;
+            location?: string | null;
+            contactEmail?: string | null;
+            contactPhone?: string | null;
+            city?: string;
+        };
+        r352OrgUnitsorgUnitStatusSchema: {
+            /** @enum {string} */
+            status: "ACTIVE" | "INACTIVE" | "DISSOLVED";
+            /** Format: date-time */
+            dissolvedAt?: string;
+        };
+        r352PeoplepersonCreateSchema: {
+            fullNameAr: string;
+            fullNameEn?: string;
+            /** @enum {string} */
+            category: "ACADEMIC_STAFF" | "TEACHING_ASSISTANT" | "TRAINER" | "ASSISTANT_TRAINER" | "TEACHER" | "TECHNICAL_GUIDE" | "ADMINISTRATIVE_STAFF" | "TECHNICIAN" | "PROFESSIONAL" | "OTHER";
+            staffNumber?: string;
+            userId?: string;
+            primaryOrgUnitId?: string;
+            /** Format: date-time */
+            hiredAt?: string;
+            /** Format: email */
+            email?: string;
+            phone?: string;
+            notes?: string;
+        };
+        r352PeoplepersonUpdateSchema: {
+            fullNameAr?: string;
+            fullNameEn?: string;
+            /** @enum {string} */
+            category?: "ACADEMIC_STAFF" | "TEACHING_ASSISTANT" | "TRAINER" | "ASSISTANT_TRAINER" | "TEACHER" | "TECHNICAL_GUIDE" | "ADMINISTRATIVE_STAFF" | "TECHNICIAN" | "PROFESSIONAL" | "OTHER";
+            staffNumber?: string;
+            userId?: string;
+            primaryOrgUnitId?: string;
+            /** Format: date-time */
+            hiredAt?: string;
+            /** Format: email */
+            email?: string;
+            phone?: string;
+            notes?: string;
+        };
+        r352PeoplepersonStatusSchema: {
+            /** @enum {string} */
+            status: "ACTIVE" | "ON_LEAVE" | "SUSPENDED" | "ENDED";
+            /** Format: date-time */
+            endedAt?: string;
         };
         invitecreateBody: {
             /** @enum {string} */
@@ -19641,6 +29244,121 @@ export interface components {
             durationSec?: number;
             ordinal?: number;
         };
+        r352OperationsequipmentCreateSchema: {
+            nameAr: string;
+            nameEn?: string;
+            code?: string;
+            facilityId?: string;
+            orgUnitId?: string;
+            category?: string;
+            serialNumber?: string;
+            /** Format: date-time */
+            acquiredAt?: string;
+            value?: number;
+            /** @enum {string} */
+            condition?: "NEW" | "GOOD" | "FAIR" | "POOR" | "BROKEN";
+            /** @enum {string} */
+            status?: "IN_SERVICE" | "UNDER_MAINTENANCE" | "OUT_OF_SERVICE" | "DECOMMISSIONED" | "LOST";
+            responsiblePersonId?: string;
+            notes?: string;
+        };
+        r352OperationsequipmentUpdateSchema: {
+            nameAr?: string;
+            nameEn?: string;
+            code?: string;
+            facilityId?: string;
+            orgUnitId?: string;
+            category?: string;
+            serialNumber?: string;
+            /** Format: date-time */
+            acquiredAt?: string;
+            value?: number;
+            /** @enum {string} */
+            condition?: "NEW" | "GOOD" | "FAIR" | "POOR" | "BROKEN";
+            /** @enum {string} */
+            status?: "IN_SERVICE" | "UNDER_MAINTENANCE" | "OUT_OF_SERVICE" | "DECOMMISSIONED" | "LOST";
+            responsiblePersonId?: string;
+            notes?: string;
+        };
+        r352OperationsequipmentProgramLinkSchema: {
+            programId: string;
+            criteriaItemId?: string;
+        };
+        r352OperationsfacilityCreateSchema: {
+            nameAr: string;
+            nameEn?: string;
+            /** @enum {string} */
+            type: "LABORATORY" | "WORKSHOP" | "CLASSROOM" | "PRACTICAL_TRAINING_FACILITY" | "LECTURE_HALL" | "OTHER";
+            code?: string;
+            orgUnitId?: string;
+            building?: string;
+            room?: string;
+            capacity?: number;
+            safetyNotes?: string;
+        };
+        r352OperationsfacilityUpdateSchema: {
+            nameAr?: string;
+            nameEn?: string | null;
+            code?: string | null;
+            orgUnitId?: string | null;
+            building?: string | null;
+            room?: string | null;
+            capacity?: number | null;
+            safetyNotes?: string | null;
+            /** @enum {string} */
+            status?: "ACTIVE" | "UNDER_MAINTENANCE" | "CLOSED" | "DECOMMISSIONED";
+        };
+        r352OperationsreservationCreateSchema: {
+            facilityId: string;
+            purpose: string;
+            /** Format: date-time */
+            startsAt: string;
+            /** Format: date-time */
+            endsAt: string;
+            orgUnitId?: string;
+        };
+        r352OperationsreservationUpdateSchema: {
+            /** @enum {string} */
+            status?: "REQUESTED" | "APPROVED" | "REJECTED" | "CANCELLED" | "COMPLETED";
+            notes?: string;
+        };
+        r352OperationssafetyIncidentCreateSchema: {
+            /** @enum {string} */
+            kind: "INCIDENT" | "INSPECTION";
+            /** @enum {string} */
+            severity?: "MINOR" | "MAJOR" | "CRITICAL";
+            titleAr: string;
+            description?: string;
+            facilityId?: string;
+            equipmentId?: string;
+            /** Format: date-time */
+            occurredAt: string;
+        };
+        r352OperationssafetyIncidentUpdateSchema: {
+            status?: string;
+            resolutionNotes?: string;
+            /** Format: date-time */
+            resolvedAt?: string;
+        };
+        r352OperationsworkOrderCreateSchema: {
+            titleAr: string;
+            /** @enum {string} */
+            kind: "PREVENTIVE" | "CORRECTIVE" | "SAFETY_INSPECTION" | "INSTALLATION" | "OTHER";
+            facilityId?: string;
+            equipmentId?: string;
+            description?: string;
+            /** Format: date-time */
+            scheduledDate?: string;
+            assignedPersonId?: string;
+        };
+        r352OperationsworkOrderUpdateSchema: {
+            /** @enum {string} */
+            status?: "OPEN" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
+            /** Format: date-time */
+            completedAt?: string;
+            cost?: number;
+            notes?: string;
+        };
         ownertoggleFlagSchema: {
             enabled: boolean;
         };
@@ -19663,6 +29381,18 @@ export interface components {
             firstName?: string;
             lastName?: string;
             password?: string;
+        };
+        r352InstitutioninstitutionClassificationSchema: {
+            /** @enum {string} */
+            sector?: "HIGHER_EDUCATION_RESEARCH" | "TECHNICAL_VOCATIONAL_PROFESSIONAL";
+            kindCode?: string;
+            /** @enum {string} */
+            ownership?: "PUBLIC" | "PRIVATE" | "OPEN" | "MIXED" | "INTERNATIONAL" | "OTHER";
+            supervisingAuthorityCode?: string;
+            establishmentDecisionNumber?: string;
+            /** Format: date-time */
+            establishmentDecisionDate?: string;
+            parentInstitutionId?: string;
         };
         ownerupsertSettingSchema: {
             value: string;
@@ -19703,6 +29433,54 @@ export interface components {
             points: number;
             /** @default [] */
             tags: string[];
+        };
+        r352ResearchresearchOutputCreateSchema: {
+            /** @enum {string} */
+            type: "PUBLICATION" | "PATENT" | "PROTOTYPE" | "APPLIED_PRODUCT" | "TECHNICAL_REPORT";
+            title: string;
+            projectId?: string;
+            personId?: string;
+            referenceUrl?: string;
+            doi?: string;
+            /** Format: date-time */
+            publishedAt?: string;
+            notes?: string;
+            researchPaperId?: string;
+        };
+        r352ResearchresearchProjectCreateSchema: {
+            titleAr: string;
+            titleEn?: string;
+            code?: string;
+            orgUnitId?: string;
+            field?: string;
+            principalInvestigatorId?: string;
+            /** Format: date-time */
+            startsAt?: string;
+            /** Format: date-time */
+            endsAt?: string;
+            fundingSource?: string;
+            budget?: number;
+            ethicsApprovalRef?: string;
+            approvalRef?: string;
+            notes?: string;
+        };
+        r352ResearchresearchProjectUpdateSchema: {
+            /** @enum {string} */
+            status?: "PROPOSED" | "APPROVED" | "ACTIVE" | "SUSPENDED" | "COMPLETED" | "TERMINATED";
+            titleEn?: string | null;
+            field?: string | null;
+            principalInvestigatorId?: string | null;
+            /** Format: date-time */
+            endsAt?: string;
+            fundingSource?: string | null;
+            budget?: number;
+            notes?: string | null;
+        };
+        r352ResearchresearchMemberCreateSchema: {
+            personId: string;
+            /** @enum {string} */
+            role: "PRINCIPAL_INVESTIGATOR" | "CO_INVESTIGATOR" | "RESEARCHER" | "RESEARCH_ASSISTANT" | "COLLABORATOR" | "TECHNICIAN";
+            allocationPct?: number;
         };
         learningannotationCreateSchema: {
             page: number;

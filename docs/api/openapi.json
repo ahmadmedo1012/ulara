@@ -22,7 +22,7 @@
     },
     {
       "name": "ai",
-      "description": "8 operation(s) under /api/v1/ai"
+      "description": "10 operation(s) under /api/v1/ai"
     },
     {
       "name": "announcements",
@@ -4206,6 +4206,132 @@
           "ai"
         ],
         "summary": "POST /api/v1/ai/knowledge/reindex",
+        "description": "Declared in `backend/src/http/routes/ai.routes.ts` (mounted at `/api/v1/ai`).",
+        "x-mounted-at": "/api/v1/ai",
+        "responses": {
+          "200": {
+            "description": "Success envelope `{ data }`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessEnvelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation / bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/v1/ai/status": {
+      "get": {
+        "tags": [
+          "ai"
+        ],
+        "summary": "GET /api/v1/ai/status",
+        "description": "Declared in `backend/src/http/routes/ai.routes.ts` (mounted at `/api/v1/ai`).",
+        "x-mounted-at": "/api/v1/ai",
+        "responses": {
+          "200": {
+            "description": "Success envelope `{ data }`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessEnvelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation / bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/v1/ai/status/check": {
+      "post": {
+        "tags": [
+          "ai"
+        ],
+        "summary": "POST /api/v1/ai/status/check",
         "description": "Declared in `backend/src/http/routes/ai.routes.ts` (mounted at `/api/v1/ai`).",
         "x-mounted-at": "/api/v1/ai",
         "responses": {
@@ -28251,7 +28377,7 @@
             "properties": {
               "code": {
                 "type": "string",
-                "description": "UPPER_SNAKE machine code. Known values: BAD_REQUEST, VALIDATION_ERROR, UNAUTHENTICATED, TOKEN_EXPIRED, INVALID_CREDENTIALS, FORBIDDEN, NOT_FOUND, CONFLICT, PAYLOAD_TOO_LARGE, UNSUPPORTED_MEDIA_TYPE, TOO_MANY_REQUESTS, INSTITUTION_CONTEXT_REQUIRED, INSTITUTION_CONTEXT_INVALID, REG_NUMBER_AMBIGUOUS, DB_UNAVAILABLE, INSTITUTION_KIND_SECTOR_MISMATCH, PARENT_CYCLE, PARENT_SECTOR_MISMATCH, ORG_UNIT_CODE_TAKEN, ORG_UNIT_DUPLICATE_NAME, ORG_UNIT_PARENT_SAME_INSTITUTION, ORG_UNIT_PARENT_MISSING, ORG_UNIT_CYCLE, ORG_UNIT_HAS_ACTIVE_CHILDREN, ORG_UNIT_CITY_REQUIRED, PERSON_NUMBER_TAKEN, PERSON_USER_ALREADY_LINKED, PERSON_UNIT_NOT_IN_INSTITUTION, APPOINTMENT_CONFLICT, APPOINTMENT_UNIT_TYPE_REQUIRED, APPOINTMENT_DATES_INVALID, APPOINTMENT_POSITION_NOT_ELIGIBLE, COUNCIL_MEMBERSHIP_ACTIVE_EXISTS, ATTENDEE_NOT_MEMBER, MEETING_SEQ_TAKEN, MEETING_INVALID_TRANSITION, RESOLUTION_INVALID_TRANSITION, MINUTES_INVALID_TRANSITION, TERM_CODE_TAKEN, PROGRAM_CODE_TAKEN, PROGRAM_VERSION_INVALID_TRANSITION, PROGRAM_VERSION_ACTIVE_EXISTS, PROGRAM_COURSE_WRONG_INSTITUTION, PROGRAM_ENROLLMENT_EXISTS, PROGRAM_ENROLLMENT_INVALID_TRANSITION, ENROLLMENT_PROFILE_WRONG_INSTITUTION, CREDENTIAL_SERIAL_TAKEN, ACCREDITATION_SCOPE_INVALID, ACCREDITATION_INVALID_TRANSITION, LICENSE_INVALID_TRANSITION, INSPECTION_INVALID_TRANSITION, FINDING_INVALID_TRANSITION, CORRECTIVE_ACTION_INVALID_TRANSITION, SELF_ASSESSMENT_INVALID_TRANSITION, EVIDENCE_OWNER_INVALID, FACILITY_CODE_TAKEN, EQUIPMENT_CODE_TAKEN, WORK_ORDER_INVALID_TRANSITION, RESERVATION_WINDOW_INVALID, RESERVATION_OVERLAP, RESEARCH_PROJECT_INVALID_TRANSITION, PROJECT_MEMBER_EXISTS, UNIT_ROLE_EXISTS, UNIT_ROLE_UNIT_INVALID, USER_NOT_MEMBER, UNIT_GRANT_INSTITUTION_MISMATCH, GRANT_EXCEEDS_AUTHORITY, FACILITY_NOT_OPERATIONAL, EQUIPMENT_FACILITY_UNIT_MISMATCH, EVIDENCE_OWNER_TYPE_INVALID, MINUTES_VERSION_IMMUTABLE, MINUTES_VERSION_REQUIRED, PROGRESSION_NOT_ALLOWED, LEARNER_NUMBER_TAKEN, LEARNER_ENROLLMENT_CATEGORY_MISMATCH, PLACEMENT_ENROLLMENT_MISMATCH, CREDENTIAL_ENROLLMENT_MISMATCH, ORG_UNIT_TYPE_INVALID, ORG_UNIT_TYPE_PARENT_INVALID, ORG_UNIT_DEPTH_EXCEEDED, INSTITUTION_AFFILIATION_DEPTH_EXCEEDED"
+                "description": "UPPER_SNAKE machine code. Known values: BAD_REQUEST, VALIDATION_ERROR, UNAUTHENTICATED, TOKEN_EXPIRED, INVALID_CREDENTIALS, FORBIDDEN, NOT_FOUND, CONFLICT, PAYLOAD_TOO_LARGE, UNSUPPORTED_MEDIA_TYPE, TOO_MANY_REQUESTS, INSTITUTION_CONTEXT_REQUIRED, INSTITUTION_CONTEXT_INVALID, REG_NUMBER_AMBIGUOUS, DB_UNAVAILABLE, INSTITUTION_KIND_SECTOR_MISMATCH, PARENT_CYCLE, PARENT_SECTOR_MISMATCH, ORG_UNIT_CODE_TAKEN, ORG_UNIT_DUPLICATE_NAME, ORG_UNIT_PARENT_SAME_INSTITUTION, ORG_UNIT_PARENT_MISSING, ORG_UNIT_CYCLE, ORG_UNIT_HAS_ACTIVE_CHILDREN, ORG_UNIT_CITY_REQUIRED, PERSON_NUMBER_TAKEN, PERSON_USER_ALREADY_LINKED, PERSON_UNIT_NOT_IN_INSTITUTION, APPOINTMENT_CONFLICT, APPOINTMENT_UNIT_TYPE_REQUIRED, APPOINTMENT_DATES_INVALID, APPOINTMENT_POSITION_NOT_ELIGIBLE, COUNCIL_MEMBERSHIP_ACTIVE_EXISTS, COUNCIL_INVALID_TRANSITION, COUNCIL_NOT_ACTIVE, ATTENDEE_NOT_MEMBER, MEETING_SEQ_TAKEN, MEETING_INVALID_TRANSITION, RESOLUTION_INVALID_TRANSITION, MINUTES_INVALID_TRANSITION, TERM_CODE_TAKEN, PROGRAM_CODE_TAKEN, PROGRAM_VERSION_INVALID_TRANSITION, PROGRAM_VERSION_ACTIVE_EXISTS, PROGRAM_COURSE_WRONG_INSTITUTION, PROGRAM_ENROLLMENT_EXISTS, PROGRAM_ENROLLMENT_INVALID_TRANSITION, ENROLLMENT_PROFILE_WRONG_INSTITUTION, CREDENTIAL_SERIAL_TAKEN, ACCREDITATION_SCOPE_INVALID, ACCREDITATION_INVALID_TRANSITION, LICENSE_INVALID_TRANSITION, INSPECTION_INVALID_TRANSITION, FINDING_INVALID_TRANSITION, CORRECTIVE_ACTION_INVALID_TRANSITION, SELF_ASSESSMENT_INVALID_TRANSITION, EVIDENCE_OWNER_INVALID, FACILITY_CODE_TAKEN, EQUIPMENT_CODE_TAKEN, WORK_ORDER_INVALID_TRANSITION, RESERVATION_WINDOW_INVALID, RESERVATION_OVERLAP, RESERVATION_INVALID_TRANSITION, RESEARCH_PROJECT_INVALID_TRANSITION, PROJECT_MEMBER_EXISTS, RESEARCH_NOT_APPLICABLE, UNIT_ROLE_EXISTS, UNIT_ROLE_UNIT_INVALID, USER_NOT_MEMBER, UNIT_GRANT_INSTITUTION_MISMATCH, GRANT_EXCEEDS_AUTHORITY, FACILITY_NOT_OPERATIONAL, EQUIPMENT_FACILITY_UNIT_MISMATCH, EVIDENCE_OWNER_TYPE_INVALID, MINUTES_VERSION_IMMUTABLE, MINUTES_VERSION_REQUIRED, PROGRESSION_NOT_ALLOWED, LEARNER_NUMBER_TAKEN, LEARNER_ENROLLMENT_CATEGORY_MISMATCH, PLACEMENT_ENROLLMENT_MISMATCH, CREDENTIAL_ENROLLMENT_MISMATCH, ORG_UNIT_TYPE_INVALID, ORG_UNIT_TYPE_PARENT_INVALID, ORG_UNIT_DEPTH_EXCEEDED, INSTITUTION_AFFILIATION_DEPTH_EXCEEDED"
               },
               "message": {
                 "type": "string",
@@ -33641,9 +33767,9 @@
   },
   "x-generator": {
     "tool": "backend/scripts/generate-openapi.ts (hand-rolled: express-stack walk + zod-v3 walker)",
-    "generatedAt": "2026-11-22T10:10:39.707Z",
-    "operationCount": 374,
-    "pathCount": 302,
+    "generatedAt": "2026-11-22T22:17:49.161Z",
+    "operationCount": 376,
+    "pathCount": 304,
     "contractSnapshotCovered": 13,
     "snapshotCoveredRoutes": [
       "GET /api/v1/ai/config",
