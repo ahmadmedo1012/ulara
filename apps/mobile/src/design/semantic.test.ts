@@ -92,7 +92,7 @@ describe("status triples — shared-JSON mapping (text ink = the family deep run
 
     const dark = semanticColorsFor("dark");
     expect(dark.success).toEqual({ fill: "#5FD39A", soft: "#1F3A2E", ink: "#5FD39A" });
-    expect(dark.warning).toEqual({ fill: "#EFC87B", soft: "#3B331F", ink: "#EFC87B" });
+    expect(dark.warning).toEqual({ fill: "#EFC87B", soft: "#3B331F", ink: "#F8E3B4" }); /* r351-main: the deep rung is the AAA text tier (mint/rose deep ≡ ink in dark; yellow deep is the lighter amber) */
     expect(dark.danger).toEqual({ fill: "#FF7A70", soft: "#3A2020", ink: "#FF7A70" });
   });
 
