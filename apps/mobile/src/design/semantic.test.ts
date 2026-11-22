@@ -81,6 +81,23 @@ describe("the ONE accent", () => {
     expect(dark.accentInk).toBe(dark.accent);
     expect(dark.accentInk).toBe("#8AA0FF");
   });
+
+  it("the fg pairs ride the shared seats — never white on the dark royal, white on every hover tier (2026)", () => {
+    // resting fills: white on #2540D9 (7.46:1) · the DARK #262019 on #8AA0FF
+    // (6.56:1 — white would fail at 2.46:1 and must never appear).
+    expect(ds.light.accentFg).toBe("#FFFFFF");
+    expect(ds.light.primaryFg).toBe("#FFFFFF");
+    expect(ds.dark.accentFg).toBe("#262019");
+    expect(ds.dark.primaryFg).toBe("#262019");
+    // hover/pressed fills: the tiers are dark in BOTH themes (#1B30B0 ·
+    // #4C63F0), so the hovered label is WHITE everywhere (10.02:1 · 4.83:1)
+    // — the accentHoverFg contract the pressed states consume.
+    expect(ds.light.accentHoverFg).toBe("#FFFFFF");
+    expect(ds.dark.accentHoverFg).toBe("#FFFFFF");
+    // danger fills: white on #C62828 (5.62:1) · #262019 on #FF7A70 (6.35:1).
+    expect(ds.light.dangerFg).toBe("#FFFFFF");
+    expect(ds.dark.dangerFg).toBe("#262019");
+  });
 });
 
 describe("status triples — shared-JSON mapping (text ink = the family deep rung)", () => {

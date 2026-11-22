@@ -670,15 +670,19 @@
     /* Label ink ON A --danger FILL: 2026 — the danger fill is the
        approved red #C62828 and WHITE labels read 5.62:1 (AA; the old
        coral #F15534 needed warm-ink labels — retired with the coral
-       danger era). Consumed by .btn.danger + notif-badge via --_btn-fg. */
-    --danger-fg:   #FFFFFF;
+       danger era). Consumed by .btn.danger + notif-badge via --_btn-fg.
+       2026 fg-seat unification: the DECLARATION lives in
+       tokens.generated.css (the shared source emits --danger-fg to web
+       + mobile alike) — this hand block keeps only the contract prose. */
 
     /* 2026 — the hover-fill label pair: the royal hover tiers are dark
        in BOTH themes (#1B30B0 light · #4C63F0 dark), so the label on a
        HOVERED accent fill is WHITE everywhere (10.02:1 light · 4.83:1
        dark — the owner-verified pair). Resting fills keep --accent-fg
-       (white light · #262019 dark — never assume one fg fits both). */
-    --accent-hover-fg: #FFFFFF;
+       (white light · #262019 dark — never assume one fg fits both).
+       The --accent-hover-fg declaration is generated from
+       shared/design-tokens.json (accentHoverFg) — same seat mobile's
+       pressed states consume. */
 
     --brand-purple:  var(--c-lavender-ink);
     /* r305 — the achievement gold re-claims the retired copper seat
@@ -859,12 +863,11 @@
 
     /* Label ink on the night danger fill (ink #262019 on #FF7A70 =
        6.35:1 — the 2026 red family; the coral needed warm-ink).
-       Consumed by .btn.danger / notif badge. */
-    --danger-fg:    #262019;
+       Consumed by .btn.danger / notif badge. Declaration: generated
+       (design-tokens.json dangerFg) — prose only here. */
 
     /* The hover-fill label (see the light block): WHITE on the #4C63F0
-       hover tier — 4.83:1 AA. */
-    --accent-hover-fg: #FFFFFF;
+       hover tier — 4.83:1 AA. Declaration: generated (accentHoverFg). */
 
     --brand-purple:  var(--c-lavender-ink);
 

@@ -111,6 +111,7 @@
     --rule-strong: var(--border-strong);
     --accent: var(--c-royal-ink);
     --accent-hover: var(--c-royal-deep);
+    --accent-hover-fg: #FFFFFF;
     --accent-soft: var(--c-royal-bg);
     --accent-strong: var(--c-royal-deep);
     --accent-fg: #FFFFFF;
@@ -188,6 +189,7 @@
     --rule-strong: var(--border-strong);
     --accent: var(--c-royal-ink);
     --accent-hover: #4C63F0;
+    --accent-hover-fg: #FFFFFF;
     --accent-soft: var(--c-royal-bg);
     --accent-strong: var(--c-royal-deep);
     --accent-fg: #262019;

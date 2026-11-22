@@ -75,7 +75,7 @@ export interface SemanticColors {
   /** Text-safe accent (AA) — ≡ accent (light #2540D9 · dark #8AA0FF). */
   accentInk: string;
   /** Tinted accent ground — soft washes behind the accent moment
-   *  (light #E4E9FF · dark #232845 — never the light value in dark). */
+   *  (light #E4E9FF · dark #2A2F4A — never the light value in dark). */
   accentSoft: string;
   /** Label ink on an `accent` fill (light #FFFFFF · dark #262019 —
    *  the owner-verified pair; white on #8AA0FF FAILS at 2.46:1). */

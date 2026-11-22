@@ -41,6 +41,12 @@ export interface DsPalette {
   textFaint: string;
   accent: string;
   accentHover: string;
+  /** Label ink ON an `accentHover` fill — WHITE in BOTH themes: the
+   *  hover tiers are dark (#1B30B0 light · #4C63F0 dark), so the
+   *  pressed/hovered royal slab takes its white hover label (10.02:1 ·
+   *  4.83:1 — the --accent-hover-fg contract, generated from the
+   *  shared JSON like every fg seat). */
+  accentHoverFg: string;
   accentInk: string;
   accentSoft: string;
   accentStrong: string;

@@ -61,6 +61,13 @@ export function Button({
    * exists; the press feedback rides the opacity dip below). */
   const pressedBg =
     kind === "danger" ? (name === "light" ? tones.rose.deep : tones.rose.ink) : p.accentHover;
+  /* pressed label (primary/accent): the hover tier is dark in BOTH
+   * themes (#1B30B0 light · #4C63F0 dark), so the pressed royal slab
+   * takes its WHITE hover label — the accentHoverFg contract
+   * (10.02:1 · 4.83:1). The resting dark label #262019 would read
+   * 3.34:1 on the #4C63F0 press fill — the pairing the 2026 audit
+   * fixed for the web hover states, now honored on press here too. */
+  const pressedFg = kind === "primary" || kind === "accent" ? p.accentHoverFg : fg;
   const border = kind === "ghost" ? p.rule : "transparent";
   return (
     <Pressable
@@ -86,20 +93,22 @@ export function Button({
         style,
       ]}
     >
-      {showBusy ? (
-        <InlineBusy size={12} color={kind === "ghost" ? p.text : fg} />
-      ) : (
-        <View style={{ flexDirection: "row", alignItems: "center", gap: sp[8] }}>
-          {icon}
-          <T
-            variant={small ? "sm" : "body"}
-            weight="bold"
-            style={{ color: fg }}
-          >
-            {label}
-          </T>
-        </View>
-      )}
+      {({ pressed }) =>
+        showBusy ? (
+          <InlineBusy size={12} color={kind === "ghost" ? p.text : pressed ? pressedFg : fg} />
+        ) : (
+          <View style={{ flexDirection: "row", alignItems: "center", gap: sp[8] }}>
+            {icon}
+            <T
+              variant={small ? "sm" : "body"}
+              weight="bold"
+              style={{ color: pressed ? pressedFg : fg }}
+            >
+              {label}
+            </T>
+          </View>
+        )
+      }
     </Pressable>
   );
 }
