@@ -254,19 +254,20 @@ trackMedia('(prefers-contrast: more)', (m) => {
  * reference — the same scope ruling the color gate grants palette
  * content — not styling drift. */
 const FALLBACK = {
-  /* R313 (WP-D · charts): the canvas-layer fallbacks re-tint to the
-     the reference paper/signal family — warm neutrals, no blue-grey; series 1
-     IS the #C43E16 signal (mirrors tokens.css --chart-1). */
+  /* 2026 «Parchment & Royal»: the canvas-layer fallbacks mirror the
+     re-keyed token set — warm neutrals, the royal signal; series 1 IS
+     the #2540D9 signal (mirrors tokens.css --chart-1); success/danger
+     mirror the re-keyed mint/rose (#17724A · #C62828). */
   chartText:   '#414140',
   chartGrid:   '#E0E0DA',
-  accent:      '#C43E16',
+  accent:      '#2540D9',
   surface1:    '#111113',
   surface3:    '#EFEFE4',
-  success:     '#3DD68C',
+  success:     '#17724A',
   chart6Warm:  '#F5A623',
-  danger:      '#F55353',
+  danger:      '#C62828',
   chart6Gold:  '#e9c349',
-  chart1:      '#C43E16',
+  chart1:      '#2540D9',
   chart2:      '#4FA66D',
   chart3:      '#5C8FCE',
   chart4:      '#DD6E78',

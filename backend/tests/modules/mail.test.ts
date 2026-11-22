@@ -43,7 +43,7 @@ describe('renderEmailShell (the brand RTL shell)', () => {
     const html = renderEmailShell({ title: 'عنوان', bodyHtml: '<p>نص</p>', ctaLabel: 'زر', ctaUrl: 'https://x.ly' });
     expect(html).toContain('dir="rtl"');
     expect(html).toContain('#F5F1E8');
-    expect(html).toContain('#C43E16');
+    expect(html).toContain('#2540D9');
     expect(html).not.toContain('<style');
     expect(html).not.toContain('<img');
     expect(html.toLowerCase()).not.toContain('linear-gradient');

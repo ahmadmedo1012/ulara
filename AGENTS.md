@@ -155,9 +155,11 @@ queue/ownership in the same directory.
 - Arabic-first rules: letter-spacing 0, RTL mirrors are transformed expectations, Arabic
   line-height floor pattern `max(dsLh, 1.35×fs)`.
 - Measured color deltas vs the frozen spec: define a **section-scoped** CSS var in the
-  section's own sheet set to the MEASURED value (e.g. platform CTA orange
-  `rgb(250,54,0)` in `platform.css`) — never mutate global tokens ad hoc (global token
-  unification is a dedicated task).
+  section's own sheet set to the MEASURED value (e.g. the platform body voice
+  `rgb(40,40,40,0.72)` in `platform.css`) — never mutate global tokens ad hoc (global token
+  unification is a dedicated task). Interactive/branded seats ride the house tokens
+  (the 2026 royal: `platform.css`'s `--pr-cta: var(--accent)`), never a measured
+  literal; retired spellings are enforced by the parity gate's forbidden list.
 - `npm run lint:css -w frontend` (stylelint 16) must pass.
 
 ## 7. Never-do list

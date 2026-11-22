@@ -6,7 +6,8 @@ import path from "node:path";
 /**
  * أُلارا — Ulara mobile (Expo / React Native).
  *
- * Brand: the ULARA system — paper #F5F1E8 · ink #262019 · sienna #C43E16.
+ * Brand: the ULARA system — paper #F5F1E8 · ink #1A1713 · royal #2540D9
+ * (the 2026 «Parchment & Royal» takeover; the sienna era is retired).
  * The API base URL is public configuration (EXPO_PUBLIC_API_BASE_URL);
  * secrets never belong in this file or in the app bundle.
  */
@@ -124,7 +125,7 @@ const config: ExpoConfig = {
   userInterfaceStyle: "automatic",
   description: "أُلارا — نظام تشغيل الجامعة (تطبيق الجوال الرسمي)",
   backgroundColor: "#F5F1E8",
-  primaryColor: "#C43E16",
+  primaryColor: "#2540D9",
   ios: {
     bundleIdentifier: "ly.ulara.app",
     supportsTablet: true,
@@ -177,12 +178,12 @@ const config: ExpoConfig = {
     ],
     ["expo-secure-store", {}],
     // R327 C3 — the push notification icon (the brand's white silhouette)
-    // + the sienna accent for the Android status-bar tint.
+    // + the royal accent for the Android status-bar tint (2026).
     [
       "expo-notifications",
       {
         icon: "./assets/images/notification-icon.png",
-        color: "#C43E16",
+        color: "#2540D9",
       },
     ],
     // R340 T-M5 (LR-001) — expo-navigation-bar for Android gesture-handle

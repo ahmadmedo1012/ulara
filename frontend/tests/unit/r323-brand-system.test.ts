@@ -18,8 +18,8 @@
  *   (c) the regenerated assets are the NEW system: favicon.svg +
  *       brand/*.svg contain no <linearGradient> and no copper hexes,
  *       carry the 32-grid U-vessel geometry (ONE ink stroke, round
- *       caps/joins, M/L/Q commands only) + the one sienna #C43E16
- *       cornerstone — and the static twins stay pinned to
+ *       caps/joins, M/L/Q commands only) + the one royal #2540D9
+ *       cornerstone (the 2026 re-value; was sienna #C43E16) — and the static twins stay pinned to
  *       frontend/src/brand/mark.ts + lockups.ts (the same numbers
  *       scripts/r323/brand-assets.mjs re-states).
  *
@@ -237,24 +237,24 @@ describe('R323 gate (c) — favicon + brand twins are the ULARA system', () => {
     }
   });
 
-  it('favicon.svg: the 32-grid U-vessel, round caps/joins, the 2.25 favicon ratio, one sienna cornerstone', () => {
+  it('favicon.svg: the 32-grid U-vessel, round caps/joins, the 2.25 favicon ratio, one royal cornerstone', () => {
     expect(favicon).toContain(`viewBox="${MARK_VIEWBOX}"`);
     expect(favicon).toContain(MARK_VESSEL_PATH);
     expect(favicon).toContain('stroke-linecap="round"');
     expect(favicon).toContain('stroke-linejoin="round"');
     expect(favicon).toContain('stroke-width="2.25"');
-    expect(favicon).toContain(cornerRect('#C43E16'));
+    expect(favicon).toContain(cornerRect('#2540D9'));
     /* the vessel is ONE continuous stroke — never mitered */
     expect(favicon).not.toMatch(/stroke-linejoin="miter"/);
   });
 
-  it('ulara-mark.svg: same geometry, round joins, the sienna cornerstone, twin of the shared canonical mark', () => {
+  it('ulara-mark.svg: same geometry, round joins, the royal cornerstone, twin of the shared canonical mark', () => {
     expect(ularaMark).toContain(`viewBox="${MARK_VIEWBOX}"`);
     expect(ularaMark).toContain(MARK_VESSEL_PATH);
     expect(ularaMark).toContain('stroke-linecap="round"');
     expect(ularaMark).toContain('stroke-linejoin="round"');
     expect(ularaMark).toContain('stroke-width="1.5"');
-    expect(ularaMark).toContain(cornerRect('#C43E16'));
+    expect(ularaMark).toContain(cornerRect('#2540D9'));
     expect(ularaMark).toContain('<title>أُلارا</title>');
     /* geometry parity with the SHARED canonical mark (the compact RN/
      * kit form scripts/brand/build-app-icons.mjs writes — same numbers,
@@ -262,7 +262,7 @@ describe('R323 gate (c) — favicon + brand twins are the ULARA system', () => {
      * identically stated). */
     const shared = repoRead('shared/brand/mark.svg');
     expect(shared).toContain(MARK_VESSEL_PATH);
-    expect(shared).toContain(cornerRect('#C43E16'));
+    expect(shared).toContain(cornerRect('#2540D9'));
   });
 
   it('every public/brand/*.svg is gradient-free and copper-free', () => {
@@ -355,18 +355,18 @@ describe('R323 contract — <Logo> (frontend/src/brand)', () => {
     expect(svg?.innerHTML).not.toContain('#B57438');
   });
 
-  it('tones: sienna/paper/ink swap BOTH slots to the literal colour', () => {
-    const sienna = render(React.createElement(Logo, { tone: 'sienna' })).container;
+  it('tones: royal/paper/ink swap BOTH slots to the literal colour', () => {
+    const sienna = render(React.createElement(Logo, { tone: 'royal' })).container;
     expect(sienna.querySelector('[fill="var(--accent)"]')).toBeNull();
-    expect(sienna.querySelector('[fill="#C43E16"]')).not.toBeNull();
-    expect(sienna.querySelector('[stroke="#C43E16"]')).not.toBeNull();
+    expect(sienna.querySelector('[fill="#2540D9"]')).not.toBeNull();
+    expect(sienna.querySelector('[stroke="#2540D9"]')).not.toBeNull();
 
     const paper = render(React.createElement(Logo, { tone: 'paper' })).container;
     expect(paper.querySelector('[stroke="#F5F1E8"]')).not.toBeNull();
     expect(paper.querySelector('[fill="var(--accent)"]')).toBeNull();
 
     const ink = render(React.createElement(Logo, { tone: 'ink' })).container;
-    expect(ink.querySelector('[stroke="#262019"]')).not.toBeNull();
+    expect(ink.querySelector('[stroke="#1A1713"]')).not.toBeNull();
   });
 
   it('variants: mark is square; wordmark scales from the ink metrics; stacked is vertical', () => {

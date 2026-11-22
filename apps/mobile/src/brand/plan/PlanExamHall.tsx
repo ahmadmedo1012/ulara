@@ -2,7 +2,7 @@
  * PlanExamHall — the exam hall in PLAN: a disciplined grid of single
  * desks in two banks split by a central aisle (the invigilation
  * sightline), chairs as hairline ticks, the entrance with its swing
- * arc, and the invigilator's table. Exactly ONE orange signal: the
+ * arc, and the invigilator's table. Exactly ONE royal signal: the
  * checkpoint dot on the invigilator's table — محطة الفحص.
  *
  * Draw order: walls → desk grid → chairs → invigilator table → the
@@ -98,7 +98,7 @@ export function PlanExamHall({ color, dotColor, progress, autoplay, width, style
       {/* dimension chain under the sheet */}
       <DimChain draw={draw} x1={24} x2={296} y={200} color={ink} ticks={[144]} label="18.60" />
 
-      {/* the ONE orange signal — the checkpoint dot */}
+      {/* the ONE royal signal — the checkpoint dot */}
       <AnimG opacity={draw.seg(0.84, 1)}>
         <AnimCircle cx={238} cy={43} r={3.2} fill={accent} stroke="none" />
       </AnimG>

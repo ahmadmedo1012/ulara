@@ -82,15 +82,14 @@
   }
   .filter-pill:active { transform: scale(var(--press-scale)); }
   .filter-pill[aria-pressed="true"] {
-    background: var(--neutral-900);
-    border-color: var(--neutral-900);
-    color: var(--neutral-50);
-  }
-  [data-theme="dark"] .filter-pill[aria-pressed="true"] {
     background: var(--accent);
     border-color: var(--accent);
     color: var(--accent-fg);
   }
+  /* (2026: the selected filter unifies on the royal signal in BOTH
+     themes — light rode the ink slab while dark rode the accent; the
+     owner's «selected filters = the primary» rule makes it the accent
+     everywhere.) */
   .filter-pill:disabled {
     opacity: var(--state-btn-disabled-opacity);
     cursor: not-allowed;

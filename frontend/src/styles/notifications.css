@@ -700,9 +700,11 @@
    mixed two tokens from different pairing contracts and measured
    1.98:1 on every page. The tokens' own documented pair (tokens.css
    §danger: "Label ink ON A --danger FILL … consumed by .btn.danger +
-   notif badge") is the coral fill + warm-ink label:
-     light — bg var(--danger) #F15534 + var(--danger-fg) #17130E = 5.10:1
-     dark  — bg var(--danger) #FF8E68 + var(--danger-fg) #17130E = 7.81:1
+   notif badge") is the fill + its own fg seat:
+     light — bg var(--danger) #C62828 + var(--danger-fg) #FFFFFF = 5.62:1
+     dark  — bg var(--danger) #FF7A70 + var(--danger-fg) #262019 = 6.35:1
+   (2026 re-key: the coral #F15534 danger era is retired — the rose
+   family owns danger now, labels flip with the theme.)
    Both re-resolve per theme/contrast block. The unread count itself
    is REAL server truth (meta.unread of GET /notifications?limit=1,
    polled 60s — useUnreadNotifications); digits are Western, ≥13px,

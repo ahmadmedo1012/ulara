@@ -97,15 +97,15 @@ if (EN !== EN[0] + EN.slice(1).toLowerCase() || EN === EN.toUpperCase()) {
 }
 
 /* The palette is pinned to the live design-tokens.json brand trio
- * (paper/ink/orange) on every run. In brand.json the sienna is seated as
- * "accent"; in design-tokens it is the brand.orange seat (accent routes
- * through triad.copper.ink there). */
+ * (paper/ink/primary) on every run. In brand.json the royal is seated as
+ * "accent"; in design-tokens it is the brand.primary seat (accent routes
+ * through triad.royal.ink there — the 2026 rename orange→primary). */
 const tokens = JSON.parse(readFileSync(TOKENS_JSON, "utf8"));
 const tokenBrand = tokens.color.brand;
 for (const [seat, hex, tokenSeat] of [
   ["paper", PAPER, "paper"],
   ["ink", INK, "ink"],
-  ["accent", ACCENT, "orange"],
+  ["accent", ACCENT, "primary"],
 ]) {
   if (tokenBrand[tokenSeat] !== hex) {
     console.error(`ulara-kit: brand.json colors.${seat} (${hex}) has drifted from design-tokens.json color.brand.${tokenSeat} (${tokenBrand[tokenSeat]}) — the two sources must stay pinned together.`);

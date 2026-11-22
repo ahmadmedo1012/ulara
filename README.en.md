@@ -5,9 +5,10 @@
 > **Brand (one line, no image):** the Ulara U-vessel on a 32-unit grid —
 > ONE rounded-cap ink stroke (an open vessel:
 > `M9 7L9 19Q9 27 16 27Q23 27 23 19L23 7`) with exactly ONE solid 4×4
-> sienna cornerstone at (21,3) — «the university in one system»; paper
-> `#F5F1E8`, ink `#262019`, burnt-sienna accent `#C43E16`, dark mode
-> swaps via tokens (luminous ember `#FF6B3D`). Guide:
+> royal-blue cornerstone at (21,3) — «the university in one system»; paper
+> `#F5F1E8`, ink `#1A1713`, royal-blue accent `#2540D9` (the 2026
+> «Parchment & Royal» palette), dark mode swaps via tokens (luminous
+> royal `#8AA0FF`). Guide:
 > `shared/brand.json` + `scripts/brand/ulara-kit.mjs`
 > · spec page: `/__brand`.
 
@@ -31,7 +32,7 @@ PDF annotations, Arabic-normalized cross-document library search, a
 read-only quality-oversight sector, and DB-driven administration with a
 capability-based governance model and a full audit log — all Arabic-RTL,
 with a bespoke two-theme design system driven by one token set
-(paper/ink with the single burnt-sienna signal — no gradients, no copper/gold
+(paper/ink with the single royal-blue signal — no gradients, no copper/gold
 in the brand).
 
 **Stack:** Express + TypeScript + Prisma 5 backend serving `/api/v1/*`

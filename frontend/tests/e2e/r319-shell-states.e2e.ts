@@ -535,8 +535,9 @@ for (const theme of THEMES) {
       expect(dock.cellSep).toBe('1px');
 
       // active = ink label + 2px accent TOP rule + filled ink icon.
-      // The accent is theme-keyed: the approved primary #2540D9 on light,
-      // its luminous night tier #8AA0FF on dark (tokens.css --accent).
+      // The accent is theme-keyed: the royal #2540D9 on light, the
+      // luminous royal #8AA0FF on dark (tokens.css --accent — the 2026
+      // «Parchment & Royal» takeover).
       expect(dock.active.rule.h).toBe('2px');
       const ACCENT = theme === 'light' ? 'rgb(37, 64, 217)' : 'rgb(138, 160, 255)';
       expect(dock.active.rule.bg).toBe(ACCENT);
