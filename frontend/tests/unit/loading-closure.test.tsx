@@ -193,7 +193,7 @@ describe('r172b §4 — admin dashboard pending mirror', () => {
   it('renders the real header + strip slot + KPI + charts-row slots (no generic PageSkeleton shape)', () => {
     const { container } = renderPage(<AdminDashboardPage />);
 
-    expect(screen.getByRole('heading', { level: 1, name: 'لوحة المسجل العام' })).toBeTruthy(); // R320 override: «لوحة الإدارة» → «لوحة المسجل العام» (§B rename)
+    expect(screen.getByRole('heading', { level: 1, name: 'لوحة إدارة المؤسسة' })).toBeTruthy(); // r352 §D7: «لوحة المسجل العام» → «لوحة إدارة المؤسسة»
     // The strip slot carries the real strip identity.
     expect(screen.getByText('يحتاج انتباهك')).toBeTruthy();
     // R189 re-pin: the KPI band is the typographic stat strip.

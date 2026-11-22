@@ -155,7 +155,7 @@ export default function MoocPage() {
            the sheet's reserved-but-empty region. */
         <EmptyCell
           label="لا توجد دورات خارجية مرتبطة"
-          note="يربط المسجل العام دورات Coursera ودورات edX المعتمدة بمقرّراتك؛ راجع المرشد الأكاديمي لمعرفة المعتمد هذا الفصل."
+          note="تربط إدارة المؤسسة دورات Coursera ودورات edX المعتمدة بمقرّراتك؛ راجع المرشد الأكاديمي لمعرفة المعتمد هذا الفصل."
         />
       ) : (
         <>

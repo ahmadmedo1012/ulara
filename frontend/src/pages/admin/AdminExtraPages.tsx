@@ -152,7 +152,7 @@ export function AdminStudentsPage() {
       <PatternsPageHeader
         title="إدارة الطلاب"
         /* r351 A2 (Q3): header description retired — the roster explains itself. */
-        breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'الطلاب' }]}
+        breadcrumbs={[{ label: 'لوحة إدارة المؤسسة', to: '/admin/dashboard' }, { label: 'الطلاب' }]}
         meta={studentsQ.data
           ? `${countAr(studentsQ.data.meta.total, ['طالب واحد مسجَّل', 'طالبان مسجَّلان', 'طلاب مسجَّلون', 'طالباً مسجَّلاً'])} · بحث الخادم`
           : 'قراءة سجلّ الطلاب…'}
@@ -494,7 +494,7 @@ export function AdminDigitalPage() {
       <PatternsPageHeader
         title="التحوّل الرقميّ"
         /* r351 A2 (Q3): header description retired — the metric labels explain the page. */
-        breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'التحوّل الرقميّ' }]}
+        breadcrumbs={[{ label: 'لوحة إدارة المؤسسة', to: '/admin/dashboard' }, { label: 'التحوّل الرقميّ' }]}
         actions={(
           /* R342-09 (D11 sub-page CTA precedent): a read-only metrics ledger
            * names its ONE honest next surface — the institutional reports
@@ -629,7 +629,7 @@ export function AdminSettingsPage() {
          * sentence (individual toggles are WIP); the explanatory first
          * sentence retired. */
         description="تفعيل المعدِّلات الفرديّة قيد التطوير."
-        breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'إعدادات المنصّة' }]}
+        breadcrumbs={[{ label: 'لوحة إدارة المؤسسة', to: '/admin/dashboard' }, { label: 'إعدادات المنصّة' }]}
         /* r342 t13: the header's «مزامنة الجامعة» CTA retired with the
          * zu-sync system (dropped upstream — /admin/sync gone); the
          * settings ledger states its own facts, no external CTA. */
@@ -722,7 +722,7 @@ export function AdminSettingsPage() {
             {/* r342 t13: بند «مزامنة الكلّيّات والأقسام» (/admin/sync)
                 أُحيل — سُقِط نظام zu-sync من المنبع. */}
             <li><Link to="/admin/teachers">صلاحيات أعضاء هيئة التدريس</Link></li>
-            <li><Link to="/admin/reports">تقارير المسجل العام</Link></li>
+            <li><Link to="/admin/reports">تقارير إدارة المؤسسة</Link></li>
             {/* 5-B5 hand-off (one-name-per-surface): the surface's own
                 title is «كلّيّات الجامعة» — the former «صفحات الكلّيّات»
                 label drifted from the folded reality (the public

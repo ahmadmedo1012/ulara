@@ -159,8 +159,8 @@ describe('OwnerUsersPage — role picker (r154e)', () => {
       expect(screen.getByRole('dialog')).toBeTruthy();
     });
     // The confirm dialog for a promotion to ADMIN should carry the danger
-    // flag — the message names the promotion to «المسجل العام» (R320
-    // override: «إداري» → «المسجل العام», §B rename).
-    expect(screen.getByText(/من طالب إلى المسجل العام/)).toBeTruthy();
+    // flag — the message names the promotion to «إدارة المؤسسة» (r352
+    // §D7 override: «إداري» → «المسجل العام» → «إدارة المؤسسة»).
+    expect(screen.getByText(/من طالب إلى إدارة المؤسسة/)).toBeTruthy();
   });
 });

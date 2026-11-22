@@ -19,7 +19,7 @@
  *   02 الأستاذ — the builder desk: the lecture stack rising, the exam
  *      box beside, submissions flowing in on a dashed route, copper
  *      grading ticks landing one by one;
- *   03 المسجل العام — the registry tower: the records column with its
+ *   03 إدارة المؤسسة — the registry tower: the records column with its
  *      cap, college wings filing in around the base, the permissions
  *      key orbiting the crown, the live-reports ledger at the foot;
  *   04 ضمان الجودة — the isolation vaults: three walled compounds —
@@ -216,7 +216,7 @@ function SceneTeacher({ dataSpec }: { dataSpec?: string }) {
   );
 }
 
-/* ═══════════ 03 · المسجل العام — the registry tower ═══════════ */
+/* ═══════════ 03 · إدارة المؤسسة — the registry tower ═══════════ */
 
 function SceneRegistrar({ dataSpec }: { dataSpec?: string }) {
   /* the wings — four college blocks filing in around the tower's base */

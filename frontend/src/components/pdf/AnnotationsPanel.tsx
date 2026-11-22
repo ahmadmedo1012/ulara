@@ -311,7 +311,7 @@ export default function AnnotationsPanel({ paperId, currentPage, numPages, onJum
 function RoleBadge({ role }: { role: AppRole }) {
   // OWNER added 16-E10 (PaperAnnotation.author.role widened to AppRole —
   // 16-E2 hand-off); labels match the ONE shared role-label source
-  // (lib/roleLabels.ts, R320 §B: ADMIN is «المسجل العام») so the same
+  // (lib/roleLabels.ts, r352 §D7: ADMIN is «إدارة المؤسسة») so the same
   // role reads identically in the sidebar and on an annotation author
   // line (17-a2 person-nouns, 15-j P1-8; QUALITY «أخصائي جودة»).
   const label = roleLabel(role);

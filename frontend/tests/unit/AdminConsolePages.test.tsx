@@ -334,8 +334,8 @@ describe('AdminDashboardPage — action strip + navigable KPIs (§6 steps 1/3)',
   it('makes the four KPI tiles navigate (§5 rows 1-4) — no dead ends', async () => {
     installApi();
     renderPage(<AdminDashboardPage />);
-    /* r172b re-pin: 'لوحة المسجل العام' (R320 §B rename — was «لوحة
-     * الإدارة») now renders in the pending mirror
+    /* r172b re-pin (superseded r352 §D7: the h1 is «لوحة إدارة المؤسسة»)
+     * — the heading now renders in the pending mirror
      * too (real identity, stable across the handoff) — await a
      * resolved-only KPI label instead. */
     await screen.findByText('هيئة التدريس');
@@ -349,8 +349,8 @@ describe('AdminDashboardPage — action strip + navigable KPIs (§6 steps 1/3)',
   it('degrades a single-faculty student distribution to the honest stat + drill link (§6 step 5)', async () => {
     installApi();
     renderPage(<AdminDashboardPage />);
-    /* r172b re-pin: 'لوحة المسجل العام' (R320 §B rename — was «لوحة
-     * الإدارة») now renders in the pending mirror
+    /* r172b re-pin (superseded r352 §D7: the h1 is «لوحة إدارة المؤسسة»)
+     * — the heading now renders in the pending mirror
      * too (real identity, stable across the handoff) — await a
      * resolved-only KPI label instead. */
     await screen.findByText('هيئة التدريس');
@@ -364,8 +364,8 @@ describe('AdminDashboardPage — action strip + navigable KPIs (§6 steps 1/3)',
   it('links the quick-stat papers pair to the register pre-filtered (P3-2)', async () => {
     installApi();
     renderPage(<AdminDashboardPage />);
-    /* r172b re-pin: 'لوحة المسجل العام' (R320 §B rename — was «لوحة
-     * الإدارة») now renders in the pending mirror
+    /* r172b re-pin (superseded r352 §D7: the h1 is «لوحة إدارة المؤسسة»)
+     * — the heading now renders in the pending mirror
      * too (real identity, stable across the handoff) — await a
      * resolved-only KPI label instead. */
     await screen.findByText('هيئة التدريس');

@@ -350,8 +350,9 @@ async function main() {
       email: 'registrar@test.ly',
       passwordHash: password,
       role: Role.ADMIN,
-      /* R320 §B (c1-RENAME): the demo ADMIN account's display name is the
-         role's canonical name — «المسجل العام» (the retired office label). */
+      /* The demo ADMIN account's display name is the registrar-general
+         PERSONA (a job title — REGISTRAR_GENERAL PositionTemplate), not
+         the role label; the ROLE label is «إدارة المؤسسة» (r352 §D7). */
       firstName: 'المسجل',
       lastName: 'العام',
       avatarInitials: 'مع',

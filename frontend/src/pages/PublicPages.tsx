@@ -193,7 +193,7 @@ const faqs = (showPilotAccounts: boolean): ReadonlyArray<{ q: string; a: ReactNo
     a: (
       <>
         خمسة أدوار: <strong>طالب</strong> و<strong>أستاذ</strong> (ومعه الأدوار القيادية: رئيس قسم وعميد)
-        و<strong>إدارة</strong> (المسجل العام ومسجل كلية) و<strong>أخصائي جودة</strong> و<strong>مالك
+        و<strong>إدارة المؤسسة</strong> (المسجل العام ومسجل كلية) و<strong>أخصائي جودة</strong> و<strong>مالك
         المنصّة</strong> — لكل دور لوحته وصلاحياته المفروضة في الخادم.
       </>
     ),

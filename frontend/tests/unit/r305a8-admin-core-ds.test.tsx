@@ -230,7 +230,7 @@ describe('R305-A8 — the r305ao marker on every admin core page root', () => {
     // Nothing ever resolves — the page holds its aria-busy mirror.
     getMock.mockImplementation(() => new Promise(() => undefined));
     const { container } = renderPage(<AdminDashboardPage />);
-    expect(screen.getByText('لوحة المسجل العام')).toBeInTheDocument(); // R320 override: «لوحة الإدارة» → «لوحة المسجل العام» (§B rename)
+    expect(screen.getByText('لوحة إدارة المؤسسة')).toBeInTheDocument(); // r352 §D7: «لوحة المسجل العام» → «لوحة إدارة المؤسسة»
     const root = container.querySelector('.r305ao');
     expect(root).not.toBeNull();
     expect(root).toHaveClass('page');

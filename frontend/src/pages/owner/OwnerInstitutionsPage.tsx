@@ -405,14 +405,14 @@ function ProvisionAdminModal({
           </button>
           <button type="submit" className="btn primary" disabled={!canSubmit} aria-busy={isPending}>
             <Icon icon={UserPlus} size={13} />
-            {isPending ? 'جارٍ التعيين…' : 'تعيين المسجل العام'}
+            {isPending ? 'جارٍ التعيين…' : 'تعيين عضو إدارة المؤسسة'}
           </button>
         </div>
         {error != null && (
           <AlertRow
             color="red"
             icon={AlertTriangle}
-            title="تعذّر تعيين المسجل العام"
+            title="تعذّر تعيين عضو إدارة المؤسسة"
             description={apiErrorMessage(error, 'لم يستجب الخادم للطلب. إعادة المحاولة.')}
           />
         )}
@@ -526,7 +526,7 @@ export function OwnerInstitutionsPage() {
   /* ── Membership revoke / restore ────────────────────────── */
   const onRevokeAdmin = (institution: OwnerInstitution, admin: InstitutionAdminRow) => {
     setConfirmConfig({
-      title: 'إلغاء عضوية المسجل العام',
+      title: 'إلغاء عضوية إدارة المؤسسة',
       confirmLabel: 'إلغاء العضوية',
       message: `هل تريد إلغاء عضوية «${admin.firstName} ${admin.lastName}» في «${institution.name}»؟ سيفقد وصوله إلى سياق هذه المؤسسة فورًا.`,
       danger: true,

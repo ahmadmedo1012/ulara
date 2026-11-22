@@ -206,7 +206,7 @@ describe('r305 nav maps — every role map renders (NAV_BY_ROLE ↔ Sidebar DOM)
       const { container } = renderSidebarAt('/', role);
 
       // R320 override (§B rename, c1-RENAME): the ADMIN group label is
-      // «المسجل العام» — the SAME string as the role's account-chip
+      // «إدارة المؤسسة» (r352 §D7) — the SAME string as the role's account-chip
       // label (one name for the role everywhere), so getByText would
       // see two elements. The group labels are asserted as an exact
       // ordered census on their own section-label class instead.
