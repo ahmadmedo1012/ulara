@@ -1,0 +1,1136 @@
+{
+  "generatedAt": "2026-11-21T17:13:54.829Z",
+  "base": "http://localhost:5302",
+  "matrix": "dashboards",
+  "visitedCells": 40,
+  "hardFailures": 0,
+  "wordiest": [
+    {
+      "role": "STUDENT",
+      "route": "/student/dashboard",
+      "words": 289,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "TEACHER",
+      "route": "/teacher/dashboard",
+      "words": 270,
+      "viewport": "768x900"
+    },
+    {
+      "role": "OWNER",
+      "route": "/owner/dashboard",
+      "words": 217,
+      "viewport": "768x900"
+    },
+    {
+      "role": "QUALITY",
+      "route": "/quality/dashboard",
+      "words": 203,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "ADMIN",
+      "route": "/admin/dashboard",
+      "words": 166,
+      "viewport": "768x900"
+    }
+  ],
+  "defects": {
+    "overflows": [],
+    "smallTargets": [
+      {
+        "cell": "STUDENT·/student/dashboard·light·1440",
+        "count": 23,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "لوحة التحكم",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الجدول الدراسي",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "التقويم الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/dashboard·light·1024",
+        "count": 19,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "لوحة التحكم",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الجدول الدراسي",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "التقويم الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/dashboard·light·768",
+        "count": 4,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "تطبيق الجوال",
+            "w": 66,
+            "h": 19
+          },
+          {
+            "tag": "a",
+            "name": "واجب الأسبوع الثالث (CS-201)",
+            "w": 592,
+            "h": 18
+          },
+          {
+            "tag": "a",
+            "name": "مقدمة في الخوارزميات — قاعة A2",
+            "w": 607,
+            "h": 18
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/dashboard·light·390",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "تطبيق الجوال",
+            "w": 66,
+            "h": 19
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/dashboard·dark·1440",
+        "count": 23,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "لوحة التحكم",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الجدول الدراسي",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "التقويم الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/dashboard·dark·1024",
+        "count": 19,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "لوحة التحكم",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الجدول الدراسي",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "التقويم الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/dashboard·dark·768",
+        "count": 4,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "تطبيق الجوال",
+            "w": 66,
+            "h": 19
+          },
+          {
+            "tag": "a",
+            "name": "واجب الأسبوع الثالث (CS-201)",
+            "w": 592,
+            "h": 18
+          },
+          {
+            "tag": "a",
+            "name": "مقدمة في الخوارزميات — قاعة A2",
+            "w": 607,
+            "h": 18
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/dashboard·dark·390",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "تطبيق الجوال",
+            "w": 66,
+            "h": 19
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/dashboard·light·1440",
+        "count": 23,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الأداء والتحليل",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/dashboard·light·1024",
+        "count": 19,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الأداء والتحليل",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/dashboard·light·768",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "ابدأ التصحيح",
+            "w": 113,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "الجدول الأسبوعيّ",
+            "w": 135,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "القائمة الكاملة",
+            "w": 121,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/dashboard·dark·1440",
+        "count": 23,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الأداء والتحليل",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/dashboard·dark·1024",
+        "count": 19,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الأداء والتحليل",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/dashboard·dark·768",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "ابدأ التصحيح",
+            "w": 113,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "الجدول الأسبوعيّ",
+            "w": 135,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "القائمة الكاملة",
+            "w": 121,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·light·1440",
+        "count": 15,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الكلّيّات والأقسام",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·light·1024",
+        "count": 15,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الكلّيّات والأقسام",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "سجلّ الطلاب",
+            "w": 113,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·dark·1440",
+        "count": 15,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الكلّيّات والأقسام",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·dark·1024",
+        "count": 15,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الكلّيّات والأقسام",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·dark·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "سجلّ الطلاب",
+            "w": 113,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/dashboard·light·1440",
+        "count": 16,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "تقييم الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/dashboard·light·1024",
+        "count": 16,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "تقييم الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/dashboard·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "تقارير الجودة",
+            "w": 90,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "تنبيهات الجودة",
+            "w": 100,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/dashboard·dark·1440",
+        "count": 16,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "تقييم الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/dashboard·dark·1024",
+        "count": 16,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "تقييم الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/dashboard·dark·768",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "تقارير الجودة",
+            "w": 90,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "تنبيهات الجودة",
+            "w": 100,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/dashboard·light·1440",
+        "count": 21,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "لوحة التحكم الرئيسية",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "المراقبة الحية",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة المستخدمين",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/dashboard·light·1024",
+        "count": 21,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "لوحة التحكم الرئيسية",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "المراقبة الحية",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة المستخدمين",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/dashboard·light·768",
+        "count": 4,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "المراقبة الحيّة",
+            "w": 116,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "التنبيهات",
+            "w": 91,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "تنبيهات تشغيليّة مفتوحة",
+            "w": 646,
+            "h": 18
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/dashboard·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "تنبيهات تشغيليّة مفتوحة",
+            "w": 268,
+            "h": 19
+          },
+          {
+            "tag": "a",
+            "name": "أساتذة بلا حصص تدريس هذا الفصل",
+            "w": 268,
+            "h": 19
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/dashboard·dark·1440",
+        "count": 21,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "لوحة التحكم الرئيسية",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "المراقبة الحية",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة المستخدمين",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/dashboard·dark·1024",
+        "count": 21,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "لوحة التحكم الرئيسية",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "المراقبة الحية",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة المستخدمين",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/dashboard·dark·768",
+        "count": 4,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "المراقبة الحيّة",
+            "w": 116,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "التنبيهات",
+            "w": 91,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "تنبيهات تشغيليّة مفتوحة",
+            "w": 646,
+            "h": 18
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/dashboard·dark·390",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "تنبيهات تشغيليّة مفتوحة",
+            "w": 268,
+            "h": 19
+          },
+          {
+            "tag": "a",
+            "name": "أساتذة بلا حصص تدريس هذا الفصل",
+            "w": 268,
+            "h": 19
+          }
+        ]
+      }
+    ],
+    "overlaps": [
+      {
+        "cell": "STUDENT·/student/dashboard·light·768",
+        "count": 7,
+        "sample": [
+          {
+            "el": "pf-today-meta",
+            "text": "اليوم · 09:00–10:30",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 11273
+              }
+            ]
+          },
+          {
+            "el": "BDI",
+            "text": "09:00–10:30",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1371
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/dashboard·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "ind-mono ind-sched-date",
+            "text": "15",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 145
+              }
+            ]
+          },
+          {
+            "el": "ind-mono ind-sched-code",
+            "text": "CS-201",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1389
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/dashboard·dark·768",
+        "count": 7,
+        "sample": [
+          {
+            "el": "pf-today-meta",
+            "text": "اليوم · 09:00–10:30",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 11273
+              }
+            ]
+          },
+          {
+            "el": "BDI",
+            "text": "09:00–10:30",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1371
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/dashboard·dark·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "ind-mono ind-sched-date",
+            "text": "15",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 145
+              }
+            ]
+          },
+          {
+            "el": "ind-mono ind-sched-code",
+            "text": "CS-201",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1389
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/dashboard·light·768",
+        "count": 7,
+        "sample": [
+          {
+            "el": "pf-section-desc",
+            "text": "طالبان تحت المتابعة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 5285
+              }
+            ]
+          },
+          {
+            "el": "btn ghost sm",
+            "text": "القائمة الكاملة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1537
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/dashboard·light·390",
+        "count": 5,
+        "sample": [
+          {
+            "el": "pf-row-line pf-row-link",
+            "text": "44 تسليماتاختبار قصير — التعقي",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 26856
+              }
+            ]
+          },
+          {
+            "el": "pf-row-title",
+            "text": "اختبار قصير — التعقيد الزمني",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 3905
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/dashboard·dark·768",
+        "count": 7,
+        "sample": [
+          {
+            "el": "pf-section-desc",
+            "text": "طالبان تحت المتابعة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 5285
+              }
+            ]
+          },
+          {
+            "el": "btn ghost sm",
+            "text": "القائمة الكاملة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1537
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/dashboard·dark·390",
+        "count": 5,
+        "sample": [
+          {
+            "el": "pf-row-line pf-row-link",
+            "text": "44 تسليماتاختبار قصير — التعقي",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 26856
+              }
+            ]
+          },
+          {
+            "el": "pf-row-title",
+            "text": "اختبار قصير — التعقيد الزمني",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 3905
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·light·390",
+        "count": 5,
+        "sample": [
+          {
+            "el": "stat-cell stat-cell-link",
+            "text": "هيئة التدريس137عضو",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 6371
+              }
+            ]
+          },
+          {
+            "el": "stat-cell stat-cell-link",
+            "text": "المقرّرات3425231 تسجيلاً",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 27262
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·dark·390",
+        "count": 5,
+        "sample": [
+          {
+            "el": "stat-cell stat-cell-link",
+            "text": "هيئة التدريس137عضو",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 6371
+              }
+            ]
+          },
+          {
+            "el": "stat-cell stat-cell-link",
+            "text": "المقرّرات3425231 تسجيلاً",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 27262
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/dashboard·light·390",
+        "count": 1,
+        "sample": [
+          {
+            "el": "SPAN",
+            "text": "النشاط الأسبوعي",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 18036
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/dashboard·dark·390",
+        "count": 1,
+        "sample": [
+          {
+            "el": "SPAN",
+            "text": "النشاط الأسبوعي",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 18036
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/dashboard·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "el": "SPAN",
+            "text": "[01]توزيع المستخدمين",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 3692
+              }
+            ]
+          },
+          {
+            "el": "w11-idx",
+            "text": "[01]",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 448
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/dashboard·dark·390",
+        "count": 2,
+        "sample": [
+          {
+            "el": "SPAN",
+            "text": "[01]توزيع المستخدمين",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 3692
+              }
+            ]
+          },
+          {
+            "el": "w11-idx",
+            "text": "[01]",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 448
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "runtimeErrors": [],
+    "notImplemented": []
+  }
+}

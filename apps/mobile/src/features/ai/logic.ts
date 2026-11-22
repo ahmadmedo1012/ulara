@@ -224,3 +224,22 @@ export function citationChipLabel(c: AiCitation): string {
 export function isCitationOpenable(c: AiCitation): boolean {
   return typeof c.url === "string" && c.url.startsWith("http");
 }
+
+/* ── the provider badge (r351 AI-6 — extracted for pins + gemini) ────── */
+
+/**
+ * The honest provider badge label. `local` = the disclosed template
+ * composer; any named provider (openai/openrouter/groq/gemini/…)
+ * shows verbatim — the transport mode is never dressed as a vendor
+ * (r175's honesty rule, mobile side). r351 AI-1: Google's compat
+ * endpoint reports `gemini` and rides the same named-provider rail.
+ */
+export function providerBadgeLabel(provider: string | null | undefined): string | null {
+  if (!provider) return null;
+  return provider === "local" ? "مزوّد محلي (قالبيّ)" : `مزوّد: ${provider}`;
+}
+
+/** The local-mode header subtitle (absent for real providers — the
+ * badge alone carries the provenance there). */
+export const LOCAL_PROVIDER_NOTE =
+  "المزوّد «local» — ردود قالبيّة مركّبة محليًا حتى تفعيل مزوّد خارجي حقيقي.";

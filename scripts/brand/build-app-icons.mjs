@@ -3,7 +3,7 @@
  * scripts/brand/build-app-icons.mjs — R327 B1 «الشعار الواحد».
  *
  * ONE canonical source: apps/mobile/src/brand/mark.ts (the 32-grid
- * ULARA U-vessel — the one ink stroke + the sienna cornerstone).
+ * ULARA U-vessel — the one ink stroke + the royal cornerstone).
  * This script PARSES the
  * constants out of that file (loudly failing if its shape changes), builds
  * EVERY app asset from the same numbers, and byte-verifies the committed
@@ -61,10 +61,10 @@ const STROKE_FAVICON = 2.25;  // mark.ts: the sanctioned small-seat ratio
 /**
  * Render the canonical mark as an SVG string.
  * stroke — stroke width in 32-viewBox units (proportional).
- * ink/orange — colours; canvas — output px; box — fraction of the canvas
+ * ink/royal — colours; canvas — output px; box — fraction of the canvas
  * the full 32-grid box occupies; bg — background fill or null.
  */
-function markSvg({ stroke, ink = "#262019", orange = "#C43E16", canvas = 1024, box = 1, bg = null }) {
+function markSvg({ stroke, ink = "#1A1713", orange = "#2540D9", canvas = 1024, box = 1, bg = null }) {
   // Build in the mark's own 32-unit space; the viewBox carries the box
   // fraction (the mark occupies `box` of the canvas, centred) so the path
   // commands stay literal — never re-scale path numbers by hand.
@@ -130,7 +130,7 @@ const report = (name, ok, note) => {
 console.log(`build-app-icons (${MODE}) — source: apps/mobile/src/brand/mark.ts`);
 
 // The ONE SVG — canonical, committed, byte-checked (viewBox = mark's own).
-const oneSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="${VIEWBOX}"><g fill="none" stroke="#262019" stroke-width="${STROKE_COMPONENT}" stroke-linecap="round" stroke-linejoin="round"><path d="${VESSEL}"/></g><rect x="${KEY[0]}" y="${KEY[1]}" width="${KEY[2]}" height="${KEY[2]}" fill="#C43E16"/></svg>`;
+const oneSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="${VIEWBOX}"><g fill="none" stroke="#1A1713" stroke-width="${STROKE_COMPONENT}" stroke-linecap="round" stroke-linejoin="round"><path d="${VESSEL}"/></g><rect x="${KEY[0]}" y="${KEY[1]}" width="${KEY[2]}" height="${KEY[2]}" fill="#2540D9"/></svg>`;
 
 if (MODE === "png") {
   writeFileSync(join(SHARED_BRAND, "mark.svg"), oneSvg + "\n");

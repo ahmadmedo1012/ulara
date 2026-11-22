@@ -78,7 +78,6 @@ describe('D-02 — the document viewer back fallback is role-aware', () => {
 
 describe('D-03/D-07/D-08 — source pins', () => {
   const ownerSource = read('src/pages/owner/OwnerSystemPage.tsx');
-  const sidebarSource = read('src/components/layout/Sidebar.tsx');
   const topbarSource = read('src/components/layout/Topbar.tsx');
   const studentHooksSource = read('src/hooks/resources/student.ts');
 
@@ -94,9 +93,10 @@ describe('D-03/D-07/D-08 — source pins', () => {
     expect(ownerSource).not.toContain('disabled={toggleFlag.isPending}\n');
   });
 
-  it('D-07: BOTH logout buttons carry the pending guard', () => {
-    expect(sidebarSource).toContain('disabled={logout.isPending}');
-    expect(sidebarSource).toContain('aria-busy={logout.isPending}');
+  it('D-07: the logout button carries the pending guard (r351: the ONE seat is the topbar)', () => {
+    /* r351 A2 (Q1a): the sidebar identity block (avatar + logout) is
+     * retired — the topbar user menu is the one logout seat. The
+     * pending-guard contract is unchanged. */
     expect(topbarSource).toContain('disabled={logoutM.isPending}');
   });
 

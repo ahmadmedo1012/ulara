@@ -188,14 +188,16 @@ export function FormScreen({
             alignItems: "flex-start",
             gap: sp[8],
             borderWidth: StyleSheet.hairlineWidth,
-            borderColor: p.accentInk,
-            backgroundColor: p.accentSoft,
+            /* 2026: errors ride the rose danger family — never the accent
+             * (the royal signal is not an error state). */
+            borderColor: tones.rose.deep,
+            backgroundColor: tones.rose.bg,
             paddingHorizontal: sp[12],
             paddingVertical: sp[10],
           }}
         >
-          <TriangleAlert size={15} color={p.accentInk} />
-          <T variant="sm" style={{ flex: 1, color: p.accentInk }}>
+          <TriangleAlert size={15} color={tones.rose.ink} />
+          <T variant="sm" style={{ flex: 1, color: tones.rose.ink }}>
             {shownError}
           </T>
         </View>

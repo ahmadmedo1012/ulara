@@ -3,9 +3,9 @@
   <!-- Typography note: the system font stack is a staged placeholder — final brand typography is applied at build time. -->
   <rect width="1200" height="630" fill="#F5F1E8"/>
   <g transform="translate(960 238) scale(5)">
-    <path d="M9 7L9 19Q9 27 16 27Q23 27 23 19L23 7" fill="none" stroke="#262019" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-    <rect x="21" y="3" width="4" height="4" fill="#C43E16"/>
+    <path d="M9 7L9 19Q9 27 16 27Q23 27 23 19L23 7" fill="none" stroke="#1A1713" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="21" y="3" width="4" height="4" fill="#2540D9"/>
   </g>
-  <text x="900" y="353" text-anchor="start" direction="rtl" font-family="'Segoe UI', 'Noto Sans Arabic', Tahoma, sans-serif" font-size="128" fill="#262019">أُلارا</text>
-  <text x="900" y="433" text-anchor="start" direction="rtl" font-family="'Segoe UI', 'Noto Sans Arabic', Tahoma, sans-serif" font-size="48" fill="#262019" opacity="0.72">نظام تشغيل الجامعة</text>
+  <text x="900" y="353" text-anchor="start" direction="rtl" font-family="'Segoe UI', 'Noto Sans Arabic', Tahoma, sans-serif" font-size="128" fill="#1A1713">أُلارا</text>
+  <text x="900" y="433" text-anchor="start" direction="rtl" font-family="'Segoe UI', 'Noto Sans Arabic', Tahoma, sans-serif" font-size="48" fill="#1A1713" opacity="0.72">نظام تشغيل الجامعة</text>
 </svg>

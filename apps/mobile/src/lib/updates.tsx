@@ -196,7 +196,13 @@ export function BlockingUpdateGate({ updateUrl }: { updateUrl: string }) {
             { backgroundColor: pressed ? p.accentHover : p.accent },
           ]}
         >
-          <Text style={[styles.buttonText, { color: p.accentFg }]}>تحميل التحديث</Text>
+          {({ pressed }) => (
+            /* pressed label: the #4C63F0 night press fill takes the WHITE
+             * hover label (4.83:1 — accentHoverFg), not the resting #262019. */
+            <Text style={[styles.buttonText, { color: pressed ? p.accentHoverFg : p.accentFg }]}>
+              تحميل التحديث
+            </Text>
+          )}
         </Pressable>
       </View>
     </View>

@@ -35,10 +35,10 @@
 import { test as base, expect } from '@playwright/test';
 import type { ViewportSize } from '@playwright/test';
 
-import { FIXED_NOW_ISO, STUDENT_USER, ADMIN_USER, QUALITY_USER, TEACHER_USER, type FixtureUser } from './api-fixtures';
+import { FIXED_NOW_ISO, STUDENT_USER, ADMIN_USER, QUALITY_USER, TEACHER_USER, OWNER_USER, type FixtureUser } from './api-fixtures';
 import { installMockApi, seedSession, type MockRouteDef } from './mock-transport';
 
-export type E2eRole = 'guest' | 'STUDENT' | 'TEACHER' | 'ADMIN' | 'QUALITY';
+export type E2eRole = 'guest' | 'STUDENT' | 'TEACHER' | 'ADMIN' | 'QUALITY' | 'OWNER';
 
 export interface E2eOptions {
   /** Seeded role boots the app signed-in (localStorage ula-auth). */
@@ -63,13 +63,15 @@ const BASE_URL = process.env.ULARA_E2E_BASE_URL ?? 'http://localhost:5173';
  * the staff roles (TEACHER / ADMIN / QUALITY) so the grading,
  * course-delete and moderation journeys can boot signed-in the exact
  * same reload-style way (same persist substrate, same dynamic
- * /auth/me). OWNER stays audit-sweep-only — no journey spec rides it.
+ * /auth/me). r351 A2: OWNER joins (the shell-chrome pins ride every
+ * role's dashboard).
  */
 function userForRole(role: E2eRole): FixtureUser | null {
   if (role === 'STUDENT') return STUDENT_USER;
   if (role === 'TEACHER') return TEACHER_USER;
   if (role === 'ADMIN') return ADMIN_USER;
   if (role === 'QUALITY') return QUALITY_USER;
+  if (role === 'OWNER') return OWNER_USER;
   return null;
 }
 

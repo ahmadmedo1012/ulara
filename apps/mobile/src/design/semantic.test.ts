@@ -57,7 +57,7 @@ describe("semanticColorsFor — light/dark resolution", () => {
 
   it("text tiers are distinct inks (primary → secondary → tertiary)", () => {
     const light = semanticColorsFor("light");
-    expect(light.textPrimary).toBe("#262019");
+    expect(light.textPrimary).toBe("#1A1713");
     expect(light.textSecondary).toBe("#414140");
     expect(light.textTertiary).toBe("#62625F");
     const dark = semanticColorsFor("dark");
@@ -68,32 +68,49 @@ describe("semanticColorsFor — light/dark resolution", () => {
 });
 
 describe("the ONE accent", () => {
-  it("is the brand sienna in light and the luminous ember in dark", () => {
-    expect(semanticColorsFor("light").accent).toBe("#C43E16");
-    expect(semanticColorsFor("dark").accent).toBe("#FF6B3D");
+  it("is the royal blue in light and the luminous royal in dark (2026)", () => {
+    expect(semanticColorsFor("light").accent).toBe("#2540D9");
+    expect(semanticColorsFor("dark").accent).toBe("#8AA0FF");
   });
 
-  it("body-size accent text has its own AA-safe ink (not the raw fill)", () => {
+  it("the royal clears AA as text itself — ink ≡ accent (the raw/ink split retired)", () => {
     const light = semanticColorsFor("light");
-    expect(light.accentInk).not.toBe(light.accent);
-    expect(light.accentInk).toBe("#A33312");
+    expect(light.accentInk).toBe(light.accent);
+    expect(light.accentInk).toBe("#2540D9");
     const dark = semanticColorsFor("dark");
-    expect(dark.accentInk).not.toBe(dark.accent);
-    expect(dark.accentInk).toBe("#FF8A5F");
+    expect(dark.accentInk).toBe(dark.accent);
+    expect(dark.accentInk).toBe("#8AA0FF");
+  });
+
+  it("the fg pairs ride the shared seats — never white on the dark royal, white on every hover tier (2026)", () => {
+    // resting fills: white on #2540D9 (7.46:1) · the DARK #262019 on #8AA0FF
+    // (6.56:1 — white would fail at 2.46:1 and must never appear).
+    expect(ds.light.accentFg).toBe("#FFFFFF");
+    expect(ds.light.primaryFg).toBe("#FFFFFF");
+    expect(ds.dark.accentFg).toBe("#262019");
+    expect(ds.dark.primaryFg).toBe("#262019");
+    // hover/pressed fills: the tiers are dark in BOTH themes (#1B30B0 ·
+    // #4C63F0), so the hovered label is WHITE everywhere (10.02:1 · 4.83:1)
+    // — the accentHoverFg contract the pressed states consume.
+    expect(ds.light.accentHoverFg).toBe("#FFFFFF");
+    expect(ds.dark.accentHoverFg).toBe("#FFFFFF");
+    // danger fills: white on #C62828 (5.62:1) · #262019 on #FF7A70 (6.35:1).
+    expect(ds.light.dangerFg).toBe("#FFFFFF");
+    expect(ds.dark.dangerFg).toBe("#262019");
   });
 });
 
-describe("status triples — shared-JSON mapping (successInk = deep@light / ink@dark)", () => {
+describe("status triples — shared-JSON mapping (text ink = the family deep rung)", () => {
   it("success/warning/danger resolve fill/soft/ink from the tone families", () => {
     const light = semanticColorsFor("light");
-    expect(light.success).toEqual({ fill: "#3F8F5C", soft: "#E3EBE1", ink: "#1B5430" });
+    expect(light.success).toEqual({ fill: "#17724A", soft: "#E2EFE8", ink: "#0D5433" });
     expect(light.warning).toEqual({ fill: "#A8750F", soft: "#F5EBD6", ink: "#5E420C" });
-    expect(light.danger).toEqual({ fill: "#F15534", soft: "#F9E3DC", ink: "#8C230A" });
+    expect(light.danger).toEqual({ fill: "#C62828", soft: "#FBE4E4", ink: "#9E1A1A" });
 
     const dark = semanticColorsFor("dark");
-    expect(dark.success).toEqual({ fill: "#84D0A0", soft: "#24372B", ink: "#84D0A0" });
-    expect(dark.warning).toEqual({ fill: "#EFC87B", soft: "#3B331F", ink: "#EFC87B" });
-    expect(dark.danger).toEqual({ fill: "#FF8E68", soft: "#43241C", ink: "#FF8E68" });
+    expect(dark.success).toEqual({ fill: "#5FD39A", soft: "#1F3A2E", ink: "#5FD39A" });
+    expect(dark.warning).toEqual({ fill: "#EFC87B", soft: "#3B331F", ink: "#F8E3B4" }); /* r351-main: the deep rung is the AAA text tier (mint/rose deep ≡ ink in dark; yellow deep is the lighter amber) */
+    expect(dark.danger).toEqual({ fill: "#FF7A70", soft: "#3A2020", ink: "#FF7A70" });
   });
 
   it("stays in sync with the tone families it resolves from", () => {
@@ -101,7 +118,7 @@ describe("status triples — shared-JSON mapping (successInk = deep@light / ink@
       const c = semanticColorsFor(name);
       expect(c.success.soft).toBe(statusTones[name].mint.bg);
       expect(c.warning.fill).toBe(statusTones[name].yellow.ink);
-      expect(c.danger.ink).toBe(name === "light" ? statusTones[name].rose.deep : statusTones[name].rose.ink);
+      expect(c.danger.ink).toBe(statusTones[name].rose.deep);
     }
   });
 });

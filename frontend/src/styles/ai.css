@@ -122,11 +122,17 @@
   color: inherit;
 }
 /* السجلّ يملأ المسافة بين الرأس والمرسِل — يلغي سقف student.css
-   (480px) المضبوط لأجرئ بطاقة-داخل-شبكة؛ الخصوصية أعلى (محدّدان). */
+   (480px) المضبوط لأجرئ بطاقة-داخل-شبكة؛ الخصوصية أعلى (محدّدان).
+   r351 AI-5 (the hermetic journey caught it): the log must SCROLL —
+   `overflow-y: auto` was never set anywhere (not on main either), so
+   a transcript taller than the surface's fixed frame was clipped
+   behind the composer, unreachable. This line is the fix. */
 .ai-surface .chat-area {
   flex: 1;
   min-block-size: 0;
   max-block-size: none;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: var(--sp-5) var(--sp-4) var(--sp-3);
 }
 
@@ -276,4 +282,143 @@
   font-size: var(--fs-xs);
   line-height: var(--lh-base);
   color: var(--text-muted);
+}
+
+/* ── r351 AI-3 — the calm chat surface ────────────────────────────
+   The banded head (numerals 01/02/03, wrapped chips) retired with the
+   layer classes that carried it; what remains is one quiet disclosure
+   line, quiet section labels, and the current-conversation dot. */
+
+/* The one honest privacy line (real-engine mode only) — quiet, above
+   the log, never a band. */
+.ai-privacy-line {
+  margin: 0;
+  padding: var(--sp-2) var(--sp-4) 0;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+
+/* Quiet section labels for the side column + the gaps strip. */
+.ai-side-label {
+  margin: 0;
+  padding-inline: var(--sp-1);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--text);
+}
+.ai-side-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+}
+
+/* The current-conversation marker — a sienna dot beside the title
+   (aria-current carries the semantics; the dot is never alone). */
+.ai-current-dot {
+  flex-shrink: 0;
+  inline-size: 7px;
+  block-size: 7px;
+  border-radius: var(--r-full);
+  background: var(--accent);
+}
+.ai-conv-open {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+/* The one-line empty note (conversations). */
+.ai-empty-note {
+  margin: 0;
+  padding: var(--sp-2);
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+
+/* أرضية اللمس 44px لصفوف المحادثات — نفس عقد أدوات المحادثة أعلاه
+   (min-* فقط تُكبّر صندوق النقر). */
+@media (pointer: coarse) {
+  .ai-surface .ai-conv-open { min-block-size: 44px; }
+}
+
+/* ── r351 AI-4 — the owner provider card ────────────────────────── */
+.owner-ai-provider-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--sp-4);
+  align-items: start;
+}
+.owner-ai-provider-grid > div > span {
+  display: block;
+  margin-block-end: var(--sp-1);
+}
+.owner-ai-provider-grid p {
+  margin: 0;
+  font-weight: var(--fw-semibold);
+}
+.owner-ai-provider-check {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+}
+.owner-ai-provider-local {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.owner-ai-provider-local code {
+  font-family: var(--font-mono, monospace);
+  font-size: var(--fs-xs);
+  direction: ltr;
+  unicode-bidi: embed;
+}
+
+/* ── r351 AI-2/AI-3: source chips — the referent of the reply's inline
+      «المصدر: [رقم]» citations (mobile parity). Hairline drafting
+      chips: the mono index carries the [رقم], the title is the
+      material; openable (an <a>) vs informational (—info, muted). */
+.ai-cite-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+  margin-block-start: var(--sp-2);
+}
+.ai-cite-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--sp-1);
+  padding: var(--sp-0-5) var(--sp-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm, 2px);
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  text-decoration: none;
+  max-inline-size: 100%;
+}
+a.ai-cite-chip:hover,
+a.ai-cite-chip:focus-visible {
+  border-color: var(--accent);
+  color: var(--text);
+}
+.ai-cite-chip--info {
+  color: var(--text-subtle);
+}
+.ai-cite-index {
+  font-family: var(--font-mono, monospace);
+  font-size: var(--fs-xxs);
+  direction: ltr;
+  unicode-bidi: embed;
+}
+@media (pointer: coarse) {
+  .ai-cite-chip { min-block-size: 44px; align-items: center; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  a.ai-cite-chip {
+    transition:
+      border-color var(--motion-duration-micro) var(--motion-ease-standard),
+      color var(--motion-duration-micro) var(--motion-ease-standard);
+  }
 }

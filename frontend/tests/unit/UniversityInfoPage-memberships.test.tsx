@@ -47,13 +47,15 @@ describe('UniversityInfoPage — بطاقة تعريف المؤسّسة (Phase �
     renderPage();
 
     // the workspace's own truth, one line — no institutional claims
-    expect(screen.getAllByText('لا عضويّات — مساحة عرض محايدة (بيانات تجريبية)').length).toBeGreaterThan(0);
+    /* r351 A2 (Q3): the honest no-memberships line, shortened. */
+    expect(screen.getAllByText('لا عضويّات').length).toBeGreaterThan(0);
     // the card title states what this is
     expect(screen.getByText('بطاقة تعريف المؤسّسة')).toBeInTheDocument();
   });
 
   it('claims NO accreditation — the ownership note states whose affair it is', () => {
     renderPage();
-    expect(screen.getAllByText('الاعتماد والعضويّات شأن مؤسستك — أُلارا منصّة مستقلّة لا تدّعي أي اعتماد').length).toBeGreaterThan(0);
+    /* r351 A2 (Q3): the ownership note, shortened. */
+    expect(screen.getAllByText(/الاعتماد شأن مؤسستك/).length).toBeGreaterThan(0);
   });
 });

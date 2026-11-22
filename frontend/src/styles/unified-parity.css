@@ -56,9 +56,10 @@
        with the illustration system.
      · Journey scene (r148-d): the node/line/core/ticker family +
        its --ink slab retired with the canon (zero consumers — the
-       ConstellationCanvas scene is gone); only the --journey-glow
-       wash survives (auth card). The r130-W2-7 --journey-core/--ink
-       wrinkle note went with them.
+       ConstellationCanvas scene is gone); the --journey-glow wash
+       went with them in the 2026 paydown (its last consumer, the
+       auth card, dropped it in r305). The r130-W2-7
+       --journey-core/--ink wrinkle note went with them.
    ═════════════════════════════════════════════════════════════════════ */
 
 @layer tokens, base, layout, components, pages, overrides;
@@ -405,20 +406,22 @@
     --neutral-500: #72726F;
     --neutral-700: #414140;          /* ink-secondary (the reference's own) */
     --neutral-800: #333330;
-    --neutral-900: #262019;          /* ink — the charcoal, 13.57:1 on paper (AAA) */
+    --neutral-900: #1A1713;          /* ink — the 2026 approved light ink, 15.84:1 on paper (AAA) */
 
-    /* the 9 section-color families — near-neutral grounds + teal-family
-       inks (r195 egn re-key; --c-mint-ink IS the brand teal, so the
-       primary status reads as the accent, not a second hue) */
+    /* the 9 section-color families — near-neutral grounds + their own
+       inks; mint = the approved success (#17724A) and rose = the approved
+       danger (#C62828) carry the feedback seats; the decorative peach/
+       copper families keep the warm accent, never meaning action or danger */
     --c-peach-bg:     #FCE5DE;   --c-peach-ink:    #F15534;   --c-peach-deep:   #9C2B0F;
-    --c-mint-bg:      #E3EBE1;   --c-mint-ink:     #3F8F5C;   --c-mint-deep:    #1B5430;
+    --c-mint-bg:      #E2EFE8;   --c-mint-ink:     #17724A;   --c-mint-deep:    #0D5433;
     --c-lavender-bg:  #ECE6FA;   --c-lavender-ink: #8A6FE0;   --c-lavender-deep:#3F2D7A;
     --c-sky-bg:       #E1E9F0;   --c-sky-ink:      #4A7FA8;   --c-sky-deep:     #1F4968;
     --c-yellow-bg:    #F5EBD6;   --c-yellow-ink:   #A8750F;   --c-yellow-deep:  #5E420C;
-    --c-rose-bg:      #F9E3DC;   --c-rose-ink:     #F15534;   --c-rose-deep:    #8C230A;
+    --c-rose-bg:      #FBE4E4;   --c-rose-ink:     #C62828;   --c-rose-deep:    #9E1A1A;
     --c-sand-bg:      #F1ECDF;   --c-sand-ink:     #B59868;   --c-sand-deep:    #5A4623;
-    --c-grey-bg:      #ECEDEB;   --c-grey-ink:     #626260;   --c-grey-deep:    #262019;
-    --c-copper-bg:    #F8E3D8;   --c-copper-ink:   #C43E16;   --c-copper-deep:  #8F2F0F;
+    --c-grey-bg:      #ECEDEB;   --c-grey-ink:     #626260;   --c-grey-deep:    #1A1713;
+    --c-royal-bg:     #E4E9FF;   --c-royal-ink:    #2540D9;   --c-royal-deep:   #1B30B0;
+    --c-copper-bg:    #FCE5DE;   --c-copper-ink:   #F15534;   --c-copper-deep:  #9C2B0F;
 
     /* r305 — the coral alias namespace (additive; resolves onto peach) */
     --c-coral-bg:  var(--c-peach-bg);
@@ -437,7 +440,7 @@
     --text-secondary: var(--neutral-700);
     --text-muted:  #62625F;   /* R313: rgba(40,40,40,.72) on #F5F1E8, solid — 5.63:1 ground · 6.12:1 surface */
     --text-faint:  #666660;   /* R341 M6: muted-ink AA audit — #70706A→#666660 (96/96 pairs ≥4.5:1 both themes; tokens regen, this export follows) */
-    --text-on-accent: #FFFFFF;   /* R313: the reference's white-on-#C43E16 labels (AA-large + the weight exception) */
+    --text-on-accent: #FFFFFF;   /* 2026: white on the royal fill — 7.46:1 AAA */
     --text-on-dark:   var(--neutral-50);
 
     --border:        var(--neutral-200);
@@ -449,39 +452,38 @@
     --surface-border:  rgba(40,40,40,0.07);
     --surface-divider: rgba(40,40,40,0.05);
 
-    /* the orange signal family — r305 (the ONE accent; raw orange is
-       UI/large tier; body-size text routes through --accent-ink).
-       R313: accent-fg is WHITE — the reference's own labels on the
-       #C43E16 fill (3.76:1, AA-large; superseded "never white" rule;
-       small Arabic accent labels get weight ≥600 + size ≥14px). */
-    --accent:        #C43E16;              /* 3.46:1 paper / 3.76:1 surface — UI/large (AA-large) */
-    --accent-hover:  #A83514;
-    --accent-soft:   #F8E3D8;
-    --accent-strong: #8F2F0F;               /* 7.02:1 on paper — deep tier */
-    --accent-fg:     #FFFFFF;               /* R313: white labels on the vivid fill — the reference's recipe */
-    --accent-ink:    #A33312;  /* text-safe signal ink — 5.06:1 ground / 5.50:1 surface */
+    /* the royal signal family — 2026 «Parchment & Royal» (the ONE
+       accent; #2540D9 clears AA as text by itself — ink ≡ accent).
+       White labels on the fill read 7.46:1 AAA (the AA-exception era
+       is retired); hover/strong tier #1B30B0 (white 10.02:1). */
+    --accent:        #2540D9;              /* 6.62:1 paper / 7.46:1 surface — AA text + AAA fill labels */
+    --accent-hover:  #1B30B0;
+    --accent-soft:   #E4E9FF;
+    --accent-strong: #1B30B0;               /* 8.30:1 on the soft ground — deep tier */
+    --accent-fg:     #FFFFFF;               /* white labels on the royal fill — 7.46:1 AAA */
+    --accent-ink:    #2540D9;  /* the signal IS the text-safe ink now — 6.62:1 ground / 7.46:1 surface */
 
     /* the focus ring clears >=3:1 on every adjacent light surface —
-       #A33312 (5.16:1 paper); dark resolves the cascade to #FF7E52. */
-    --state-focus-ring-color: #A33312;
+       #2540D9 (6.62:1 paper); dark resolves the cascade to #8AA0FF. */
+    --state-focus-ring-color: #2540D9;
 
-    --success:      var(--c-mint-ink);     /* #3F8F5C — the success green */
+    --success:      var(--c-mint-ink);     /* #17724A — the 2026 approved success green */
     --success-soft: var(--c-mint-bg);
     --warning:      var(--c-yellow-ink);   /* #A8750F */
     --warning-soft: var(--c-yellow-bg);
-    --danger:       var(--c-rose-ink);     /* #F15534 — the coral */
+    --danger:       var(--c-rose-ink);     /* #C62828 — the 2026 approved danger red */
     --danger-soft:  var(--c-rose-bg);
     --info:         var(--c-sky-ink);      /* #4A7FA8 */
     --info-soft:    var(--c-sky-bg);
 
     /* status INKS for text (deep shades — all >=7.2:1 on their tints) */
-    --success-ink: var(--c-mint-deep);     /* #1B5430 */
+    --success-ink: var(--c-mint-deep);     /* 7.99:1 on paper — the AAA text tier */
     --warning-ink: var(--c-yellow-deep);   /* #5E420C */
-    --danger-ink:  var(--c-rose-deep);     /* #8C230A */
+    --danger-ink:  var(--c-rose-deep);     /* 7.12:1 on paper — the AAA text tier */
     --info-ink:    var(--c-sky-deep);      /* #1F4968 */
 
-    /* label on a --danger fill (r305: the coral #F15534 + warm-ink 5.10:1) */
-    --danger-fg:   var(--warm-ink);
+    /* label on a --danger fill (2026: the approved red #C62828 + white 5.62:1) */
+    --danger-fg:   #FFFFFF;
 
     /* (r148-d: --brand retired with the canon — zero consumers;
        --brand-purple stays, the one live brand slot) */
@@ -489,7 +491,7 @@
     --brand-purple:  var(--c-lavender-ink);
     --gold:          #B57438;   /* r305: achievement gold — the demoted r304 copper seat, 3.57:1 large/deco tier */
     --gold-ink:      #8F5A28;   /* r305: gold text ink — 5.39:1 ground */
-    --primary:       var(--neutral-900);   /* charcoal slab CTA — white label 14.74:1 */
+    --primary:       var(--c-royal-ink);   /* 2026: the royal slab CTA — white label 7.46:1 */
     --primary-fg:    #FFFFFF;
 
     /* shadows — R313: the decorative ladder is RETIRED (depth via
@@ -558,8 +560,8 @@
     --chart-7: #2273A0;   /* cyan-blue */
     --chart-8: #A65D8A;   /* mauve */
 
-    /* the auth-card glow wash survives (r305 re-key to the ember) */
-    --journey-glow:        rgba(250, 54, 0, 0.10);
+    /* (the --journey-glow wash retired in the 2026 paydown — zero
+       consumers since r305; the seat is deleted from both sheets.) */
   }
 
   /* ══════════════════════════════════════════════════════════════════
@@ -585,14 +587,15 @@
 
     /* night hue families — ember-tinted deep grounds + luminous inks (r305) */
     --c-peach-bg:     #43241C;   --c-peach-ink:    #FF8E68;   --c-peach-deep:   #FFC5AE;
-    --c-mint-bg:      #24372B;   --c-mint-ink:     #84D0A0;   --c-mint-deep:    #C4EBD2;
+    --c-mint-bg:      #1F3A2E;   --c-mint-ink:     #5FD39A;   --c-mint-deep:    #5FD39A;
     --c-lavender-bg:  #2D2545;   --c-lavender-ink: #B7A0F4;   --c-lavender-deep:#DCD2F9;
     --c-sky-bg:       #23313F;   --c-sky-ink:      #93C2E9;   --c-sky-deep:     #C9E2F5;
     --c-yellow-bg:    #3B331F;   --c-yellow-ink:   #EFC87B;   --c-yellow-deep:  #F8E3B4;
-    --c-rose-bg:      #43241C;   --c-rose-ink:     #FF8E68;   --c-rose-deep:    #FFC5AE;
+    --c-rose-bg:      #3A2020;   --c-rose-ink:     #FF7A70;   --c-rose-deep:    #FF7A70;
     --c-sand-bg:      #2D2820;   --c-sand-ink:     #D9C18C;   --c-sand-deep:    #EFE2C5;
     --c-grey-bg:      #2A2A28;   --c-grey-ink:     #B7B2A6;   --c-grey-deep:    #DDD8CB;
-    --c-copper-bg:    #46221A;   --c-copper-ink:   #FF6B3D;   --c-copper-deep:  #FFC5AE;
+    --c-royal-bg:     #2A2F4A;   --c-royal-ink:    #8AA0FF;   --c-royal-deep:   #A9B8FF;
+    --c-copper-bg:    #43241C;   --c-copper-ink:   #FF8E68;   --c-copper-deep:  #FFC5AE;
 
     /* r305 — the night coral alias namespace (additive) */
     --c-coral-bg:  var(--c-peach-bg);
@@ -610,7 +613,7 @@
     --text-secondary: var(--neutral-700);
     --text-muted:  var(--neutral-500);
     --text-faint:  #A2A29D;   /* r305: AA tier, one step under muted — 5.75:1 ground */
-    --text-on-accent: var(--warm-ink);   /* r305: ink on the luminous ember fill — 5.64:1 */
+    --text-on-accent: #262019;   /* 2026: the dark ground ink on the luminous royal fill — 6.56:1 */
     --text-on-dark:   var(--neutral-900);
 
     /* R324 X21 (reviewers A+C, round-2 follow-up): the dark hairline at
@@ -628,34 +631,36 @@
     --surface-border:  rgba(246,248,250,0.12);
     --surface-divider: rgba(246,248,250,0.07);
 
-    /* night signal discipline — r305: the FILL is the luminous ember
-       (4.73:1 bg; warm-ink labels 5.64:1); --accent-strong is the
-       light text tier on dark */
-    --accent:        #FF6B3D;            /* fill — the luminous ember */
-    --accent-hover:  #FF7E52;
-    --accent-soft:   #46221A;
-    --accent-strong: #FFC5AE;            /* 9.72:1 bg — text/ring tier */
-    --accent-fg:     var(--warm-ink);
-    --accent-ink:    #FF8A5F;           /* night text tier — 5.20:1 bg (ULARA Parchment & Sienna re-key; raised off the ember fill) */
-    /* r305 — the night ring re-keys to the luminous ember hover tier
-       (5.20:1 on the night ground). The grouped light block's #A33312
-       would inherit here at 3.2:1-class — under the ring rule. */
-    --state-focus-ring-color: var(--accent-hover);
+    /* night signal discipline — 2026: the FILL is the luminous royal
+       #8AA0FF (6.56:1 bg) with the DARK #262019 labels (6.56:1 — the
+       owner-verified pair; white would fail at 2.46:1); hover #4C63F0
+       takes WHITE labels (4.83:1); --accent-strong is the light text
+       tier on dark */
+    --accent:        #8AA0FF;            /* fill — the luminous royal */
+    --accent-hover:  #4C63F0;
+    --accent-soft:   #2A2F4A;
+    --accent-strong: #A9B8FF;            /* 6.85:1 on the soft ground · 8.43:1 bg — text tier */
+    --accent-fg:     #262019;
+    --accent-ink:    #8AA0FF;           /* night text tier — 6.56:1 bg (the signal IS the ink now) */
+    /* 2026 — the night ring = the accent itself: the #4C63F0 hover tier
+       reads only 2.81:1 on the raised card (under the ≥3:1 ring rule);
+       #8AA0FF reads 6.56:1 bg · 5.53:1 card. */
+    --state-focus-ring-color: var(--accent);
 
     /* the -ink family clears AA on the night ground — same values the
        base tokens already resolve to */
-    --success-ink:  var(--c-mint-ink);
+    --success-ink:  var(--c-mint-deep);   /* #5FD39A — 8.65:1 night */
     --warning-ink:  var(--c-yellow-ink);
-    --danger-ink:   var(--c-rose-ink);
+    --danger-ink:   var(--c-rose-deep);   /* #FF7A70 — 6.35:1 night */
     --info-ink:     var(--c-sky-ink);
 
-    --danger-fg:    var(--warm-ink);
+    --danger-fg:    #262019;   /* 2026: the dark ground ink on the #FF7A70 fill — 6.35:1 */
 
-    --success:      var(--c-mint-ink);
+    --success:      #5FD39A;             /* 8.65:1 on the ground */
     --success-soft: var(--c-mint-bg);
     --warning:      var(--c-yellow-ink);
     --warning-soft: var(--c-yellow-bg);
-    --danger:       var(--c-rose-ink);
+    --danger:       #FF7A70;             /* 6.35:1 on the ground */
     --danger-soft:  var(--c-rose-bg);
     --info:         var(--c-sky-ink);
     --info-soft:    var(--c-sky-bg);
@@ -666,8 +671,8 @@
     --brand-purple:  var(--c-lavender-ink);
     --gold:          #E0A067;   /* r305: night gold achievement tone (the demoted r304 seat) */
     --gold-ink:      #F2B782;
-    --primary:       #FFFFFF;           /* the night CTA — white slab */
-    --primary-fg:    var(--warm-ink);
+    --primary:       var(--c-royal-ink);/* 2026: the night CTA — the luminous royal slab */
+    --primary-fg:    #262019;
 
     /* shadows — R313: retired with the light set (depth via hairlines) */
     /* R313 override: decorative shadows removed — depth via hairlines only */
@@ -700,7 +705,7 @@
     --sidebar-rule:      var(--neutral-200);
     --sidebar-item:      var(--neutral-700);
     --sidebar-item-hover-bg:    var(--neutral-100);
-    --sidebar-item-active-bg:   rgb(255 90 31 / 0.16);  /* r305: night ember wash */
+    --sidebar-item-active-bg:   rgb(138 160 255 / 0.16);  /* 2026: night royal wash */
     --sidebar-item-active-text: var(--neutral-900);
     /* (r148-d: --sidebar-active-bar retired with the canon) */
 
@@ -717,7 +722,7 @@
 
     --chart-text: var(--neutral-500);
     --chart-grid: rgba(246,248,250,0.08);
-    --chart-1: var(--accent);   /* series 1 = the night ember signal */
+    --chart-1: var(--accent);   /* series 1 = the night royal signal */
     --chart-2: var(--c-mint-ink);
     --chart-3: var(--c-sky-ink);
     --chart-4: var(--c-rose-ink);
@@ -726,8 +731,7 @@
     --chart-7: #6FB3D9;   /* cyan-blue (lifted for dark) */
     --chart-8: #D18AB4;   /* mauve (lifted for dark) */
 
-    /* the auth-card glow wash survives (r305 re-key to the ember) */
-    --journey-glow:        rgba(255, 90, 31, 0.12);
+    /* (the night --journey-glow twin retired with the light one.) */
   }
 
   /* ─── Reduced motion — zero ALL raw --t-* rungs (not just the
@@ -1092,7 +1096,7 @@
 
   .btn.danger {
     --_btn-bg: var(--danger);
-    --_btn-fg: var(--danger-fg);          /* near-black ink — 5.51:1 light / 8.31:1 dark */
+    --_btn-fg: var(--danger-fg);          /* 2026: white light (5.62:1 on #C62828) · #262019 dark (6.35:1 on #FF7A70) */
     --_btn-bd: var(--danger);
     --_btn-bg-hover: color-mix(in oklab, var(--danger) 86%, var(--neutral-0));
     --_btn-bd-hover: color-mix(in oklab, var(--danger) 86%, var(--neutral-0));

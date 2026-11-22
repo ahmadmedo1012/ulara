@@ -218,14 +218,16 @@
      ║  exists (Button primitive — Form.tsx). Variant seats (all       ║
      ║  token-pure, both themes resolve):                              ║
      ║    default/ghost  transparent + hairline → INK wipe (the        ║
-     ║                    reference's nav-item recipe: #262019 fill +  ║
-     ║                    white label)                                  ║
-     ║    primary/accent/  accent rest (#C43E16 + white label — the    ║
-     ║    gold             documented AA exception; small Arabic       ║
-     ║                      labels ride weight ≥600) → INK wipe        ║
-     ║    outline         the SECONDARY seat: --primary ink slab +    ║
-     ║                    white label + 1px #B3B3AF hairline → ACCENT  ║
-     ║                    wipe (the header-cta swap)                    ║
+     ║                    reference's nav-item recipe: the ink fill +   ║
+     ║                    paper label — the 2026 ink pair)             ║
+     ║    primary/accent  the royal signal rest (#2540D9 + white —     ║
+     ║                    AAA 7.46:1, the AA-exception era retired)    ║
+     ║                    → INK wipe                                    ║
+     ║    gold            the achievement seat (gold-ink + white)      ║
+     ║                    → INK wipe                                    ║
+     ║    outline         the SECONDARY seat: ink slab + paper label + ║
+     ║                    1px hairline → ROYAL wipe (the header-cta    ║
+     ║                    swap)                                         ║
      ║  Arabic labels carry hierarchy via weight/size — NO uppercase  ║
      ║  (cursive joins; Latin runs opt into the mono voice at page    ║
      ║  level). Disabled = opacity only, no fill. Focus = the         ║
@@ -236,9 +238,13 @@
     --_btn-bg: transparent;
     --_btn-fg: var(--text);
     --_btn-bd: var(--border-strong);
-    /* R313: the wipe pair replaces the old bg-hover ladder. */
-    --_btn-wipe: var(--primary);
-    --_btn-wipe-fg: var(--primary-fg);
+    /* R313 → 2026: the wipe pair replaces the old bg-hover ladder. The
+       WIPE is the INK slab (neutral-900/neutral-50 — theme-aware), NOT
+       --primary: the primary seat is the royal brand signal now, and a
+       royal-rest button must still invert to INK on hover (the
+       reference's wipe grammar — rest ≠ hover keeps the pair visible). */
+    --_btn-wipe: var(--neutral-900);
+    --_btn-wipe-fg: var(--neutral-50);
     --_btn-shadow: none;
     position: relative;
     overflow: hidden;
@@ -377,17 +383,17 @@
     }
   }
 
-  /* ── PRIMARY — the accent signal slab (R313: the ink slab is      ──
-     retired; #C43E16 + white label is the reference's CTA seat —
-     documented AA exception, small Arabic labels ride weight ≥600).
-     Hover swaps to the INK wipe (--primary/--primary-fg, both themes
-     resolve: light #262019+white · dark white slab + warm ink). */
+  /* ── PRIMARY — the royal signal slab (2026: #2540D9 + white label =
+     7.46:1 AAA — the #DB3A00 AA-exception override is RETIRED with the
+     copper era; the seat needs no light-theme correction anymore).
+     Hover swaps to the INK wipe (neutral-900 + neutral-50, both themes
+     resolve: light #1A1713 + paper · dark paper slab + #262019). */
   .btn.primary {
     --_btn-bg: var(--accent);
     --_btn-fg: var(--accent-fg);
     --_btn-bd: var(--accent);
-    --_btn-wipe: var(--primary);
-    --_btn-wipe-fg: var(--primary-fg);
+    --_btn-wipe: var(--neutral-900);
+    --_btn-wipe-fg: var(--neutral-50);
     --_btn-shadow: none;
   }
 
@@ -396,42 +402,33 @@
      the pseudo on every variant, and the accent seat is theme-pure
      through tokens in both themes.) */
 
-  /* ── ACCENT / GOLD — the same signal slab as primary (R313: the
-     sheen, the light hover-brighten mix and the dark metal gradient
-     are retired — no gradients, no shadows; the ink wipe owns hover). */
-  .btn.accent,
-  .btn.gold {
+  /* ── ACCENT — the same royal signal slab as primary. GOLD splits off
+     (2026): the achievement seat wears its own gold-ink ground
+     (#8F5A28 + white = 5.67:1 AA) so achievements never render as
+     arbitrary brand blue; hover = the INK wipe like every slab. */
+  .btn.accent {
     --_btn-bg: var(--accent);
     --_btn-fg: var(--accent-fg);
     --_btn-bd: var(--accent);
-    --_btn-wipe: var(--primary);
-    --_btn-wipe-fg: var(--primary-fg);
+    --_btn-wipe: var(--neutral-900);
+    --_btn-wipe-fg: var(--neutral-50);
     --_btn-shadow: none;
   }
 
-  /* R318 §B (defect-gate contrast) — the light-theme accent slab
-     deepens to the minimum AA seat: white on #C43E16 measures 3.755:1
-     (gate: «أنشئ حسابك الجامعي» 3.76:1 at every light cell); #DB3A00
-     is the least-shift ground that clears 4.5:1 (4.548:1, computed by
-     scripts/r318/gate-lib.mjs contrastRatio). Dark keeps its own token
-     seat (4.79:1 — passes) untouched.
-     R323 A5 §2 (contrast-gate finding): `.btn.primary` had diverged
-     from `.accent/.gold` and kept the 3.76:1 ground — the two-orange
-     split the round-1 reviewers (R3#3) flagged is now closed for the
-     WHOLE button system: the AA seat covers primary too. */
-  [data-theme='light'] .btn.primary,
-  [data-theme='light'] .btn.accent,
-  [data-theme='light'] .btn.gold {
-    --_btn-bg: #DB3A00; /* spacing-gate/color-gate: allow — R318 AA seat, documented */
-    --_btn-bd: #DB3A00; /* color-gate: allow — R318 AA seat, same documented ground */
+  .btn.gold {
+    --_btn-bg: var(--gold-ink);
+    --_btn-fg: #FFFFFF; /* color-gate: allow — white on gold-ink #8F5A28 = 5.67:1 AA (the gold fill label; gold-ink is the AA tier of the gold family) */
+    --_btn-bd: var(--gold-ink);
+    --_btn-wipe: var(--neutral-900);
+    --_btn-wipe-fg: var(--neutral-50);
+    --_btn-shadow: none;
   }
 
-  /* R323 A5 §2 (contrast-gate): `.btn.outline`'s HOVER WIPE paints the
-     raw accent (#C43E16) under a white label — 3.76:1. The wipe ground
-     takes the same AA seat; --_btn-wipe-fg stays white. */
-  [data-theme='light'] .btn.outline {
-    --_btn-wipe: #DB3A00; /* color-gate: allow — R318 AA seat, documented */
-  }
+  /* (R318 §B — the light-theme #DB3A00 AA seat is RETIRED: royal blue
+     clears AAA with white at rest (7.46:1) and the ink wipe owns hover;
+     the r323 defect-gate findings it closed are superseded by the 2026
+     palette. The .btn.outline hover wipe = var(--accent) — 7.46:1 with
+     its white label — needs no override either.) */
 
   /* r157 (audit 6A11 #3): the in-flight freeze — a busy button never
      wipes/lifts under the cursor (the hover rules above are
@@ -443,18 +440,19 @@
   .btn.ghost {
     --_btn-bg: transparent;
     --_btn-bd: transparent;
-    --_btn-wipe: var(--primary);
-    --_btn-wipe-fg: var(--primary-fg);
+    --_btn-wipe: var(--neutral-900);
+    --_btn-wipe-fg: var(--neutral-50);
     --_btn-shadow: none;
   }
 
-  /* R313 (D4): outline becomes the SECONDARY seat — the reference's
-     #262019 slab + white label + 1px #B3B3AF hairline (--primary /
-     --primary-fg / --border-strong; dark resolves to the white slab +
-     warm ink + dark hairline). Hover = the ACCENT wipe (header-cta). */
+  /* R313 (D4) → 2026: outline stays the SECONDARY seat — the ink slab
+     (neutral-900 + neutral-50 + 1px hairline; dark resolves to the
+     paper slab + #262019 + dark hairline). Hover = the ROYAL wipe
+     (accent + accent-fg — the header-cta swap: light #2540D9 + white
+     7.46:1 · dark #8AA0FF + #262019 6.56:1). */
   .btn.outline {
-    --_btn-bg: var(--primary);
-    --_btn-fg: var(--primary-fg);
+    --_btn-bg: var(--neutral-900);
+    --_btn-fg: var(--neutral-50);
     --_btn-bd: var(--border-strong);
     --_btn-wipe: var(--accent);
     --_btn-wipe-fg: var(--accent-fg);
@@ -469,7 +467,9 @@
      (R313: --_btn-bg-hover retired), with the soft rose wash as the
      wipe so the destructive identity survives the swap. */
 
-  .btn.sm  { block-size: 32px; padding-inline: var(--sp-3); font-size: var(--type-label-size-sm); border-radius: var(--r-sm); }
+  /* r351 A2 (Q6): the 44px target floor over the 32px visual — same
+     min-* growth the topbar cluster uses (chrome.css). */
+  .btn.sm  { min-block-size: 44px; block-size: 32px; padding-inline: var(--sp-3); font-size: var(--type-label-size-sm); border-radius: var(--r-sm); }
   .btn.lg  { block-size: 48px; padding-inline: var(--sp-6); font-size: var(--type-body-size); border-radius: var(--r-md); }
   /* r157 dead-selector sweep (audit 6A11 #8, fresh-rg verified): .btn.xl
      and .btn.pill deleted — zero TSX consumers render either modifier
@@ -596,11 +596,15 @@
     .pill:hover { color: var(--text); border-color: var(--border-strong); background: var(--surface-2); }
   }
   .pill.on {
-    background: var(--neutral-900);
-    color: var(--neutral-50);
-    border-color: var(--neutral-900);
+    background: var(--accent);
+    color: var(--accent-fg);
+    border-color: var(--accent);
   }
-  [data-theme="dark"] .pill.on { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
+  /* (2026: the selected pill unifies on the royal signal in BOTH
+     themes — light rode the ink slab while dark rode the accent; the
+     owner's «selected states = the primary» rule makes it the accent
+     everywhere. Light #2540D9 + white 7.46:1 · dark #8AA0FF + #262019
+     6.56:1.) */
 
 
   /* ╔═══════════════════════════════════════════════════════════════╗
@@ -641,7 +645,7 @@
     inset-inline-start: 0;
     inline-size: 100%;
     block-size: 2px;
-    background: var(--neutral-900);
+    background: var(--accent);
     /* asymmetric tab-corner shape — not a scale radius */
     border-radius: 2px 2px 0 0; /* radius-gate: allow — tab underline bar, block-axis, micro */
     transform: scaleX(0);
@@ -656,16 +660,15 @@
     .tab:hover::after { transform: scaleX(0.45); opacity: 0.4; }
   }
   .tab.on { color: var(--text); }
-  /* R329 (gate:clean): the [aria-selected="true"] color seat is
-     polish.css's accent-ink rule — this components-layer copy was
-     inert; .tab.on keeps its ink here (no cross-file pair). */
+  /* R329 (gate:clean) → 2026: the active underline is the ROYAL signal
+     in both themes (was ink-on-light / accent-on-dark — the selected-tab
+     rule unifies on the primary). polish.css's accent-ink color seat
+     still owns the label. */
   .tab.on::after,
   .tab[aria-selected="true"]::after {
     transform: scaleX(1);
     opacity: 1;
   }
-  [data-theme="dark"] .tab.on::after,
-  [data-theme="dark"] .tab[aria-selected="true"]::after { background: var(--accent); }
 
   /* ╔═══════════════════════════════════════════════════════════════╗
      ║  PROGRESS                                                      ║
@@ -755,13 +758,13 @@
     .input:hover,
     input:hover, textarea:hover, select:hover { border-color: var(--border-strong); }
   }
-  /* R313 (D16): focus = the reference's #ED4C1F signal border (measured
-     live on the footer-subscribe input; the token source is off-limits
-     this round, so this is the one sanctioned literal — see the worklog
-     note for the lead). No halo, no box-shadow — hairline only. */
+  /* R313 (D16) → 2026: focus = the royal signal border (the legacy
+     measured #ED4C1F input-focus orange retired with the copper era;
+     the canonical --accent seat owns the focus ladder now).
+     No halo, no box-shadow — hairline only. */
   .input:focus,
   input:focus, textarea:focus, select:focus {
-    border-color: #ED4C1F; /* color-gate: allow — R313 D16: the legacy measured input-focus orange (live digest inputs.focus; no token seat exists yet) */
+    border-color: var(--accent); /* 2026 — the royal focus border (was the measured #ED4C1F; the token seat now exists) */
     outline: none;
   }
   /* R313 (D16): the FILLED state — autofilled fields carry the accent
@@ -1697,9 +1700,15 @@
      ║  Anchored overlay; --elev-3 + --r-lg + --z-popover, subtle     ║
      ║  glass. NO focus trap, NO scroll lock.                         ║
      ╚═══════════════════════════════════════════════════════════════╝ */
+  /* r351 A2 (Q1d — one overlay motion language): opacity + a 4px
+     translate + a miniature of the reference's inset clip (the barba
+     transition's construction at menu scale — a hairline clip that
+     opens from the anchor edge). 200ms (--motion-duration-short) is
+     inside the ≤220ms budget; reduced motion zeroes it via the
+     duration token (motion.css). */
   @keyframes ulara-popover-in {
-    from { opacity: 0; transform: translateY(-4px); }
-    to   { opacity: 1; transform: none; }
+    from { opacity: 0; transform: translateY(-4px); clip-path: inset(0 0 22% 0); }
+    to   { opacity: 1; transform: none; clip-path: inset(0 0 0 0); }
   }
   /* (R313 D16: the popover @supports glass block is RETIRED — solid
      --surface + 1px --rule hairline, no backdrop-filter.) */
@@ -1818,6 +1827,10 @@
     gap: var(--sp-2);
     inline-size: 100%;
     padding: var(--sp-2) var(--sp-3);
+    /* r351 A2 (Q6): the shell-wide 44px floor — the audit measured the
+       footer trigger at 55×32; the row grows to the floor like every
+       nav item (layout.css). */
+    min-block-size: 44px;
     background: transparent;
     border: 1px solid transparent;
     border-radius: var(--r-md);
@@ -2914,24 +2927,7 @@
   /* ── 8 · Ledger internals: week items + empty + link cells ──────
      (r189 follow-up: the week ledger's inner rows — smaller than
      ledger rows, they ride INSIDE a WeekRow's content column) */
-  .week-rows { display: flex; flex-direction: column; min-inline-size: 0; }
-  .week-item {
-    display: flex;
-    align-items: baseline;
-    gap: var(--sp-2);
-    padding: var(--sp-1) 0;
-    color: inherit;
-    text-decoration: none;
-    min-inline-size: 0;
-  }
   @media (hover: hover) and (pointer: fine) {
-    .week-item:hover .week-item-title { color: var(--accent-strong); }
-  }
-  .week-item-title {
-    font-size: var(--fs-sm);
-    font-weight: var(--fw-medium);
-    min-inline-size: 0;
-    transition: color var(--t-fast) var(--ease);
   }
   .week-item-meta {
     font-size: var(--fs-xs);
@@ -3353,73 +3349,11 @@
      .text-link too steps the static native underline aside. */
 }
 
-/* ── r323 B3.6 — the pilot feedback loop («أبلغ عن مشكلة / اقتراح»)
-   ─────────────────────────────────────────────────────────────── */
-.fb-fab {
-  position: fixed;
-  inset-inline-end: 18px;
-  /* Y6 (R325) — the BOTTOM-STACK top layer: the manager
-     (lib/bottomStack.ts) writes the measured offset of everything
-     below the FAB in the stack (the toast stack, the consent gate)
-     into the inline --app-bottom-stack; 0px fallback = the natural
-     seat with nothing else on screen. The FAB rises above toasts
-     (Material's snackbar+FAB behaviour) instead of being covered. */
-  inset-block-end: calc(var(--app-bottom-stack, 0px) + 18px);
-  z-index: 60; /* under the overlay stack (70+), over page content */
-  display: inline-flex;
-  align-items: center;
-  gap: 7px; /* spacing-gate: allow — reviewed authored literal (r-round sheet) */
-  /* r350 (B6 tap floor): the FAB measured 42×40 @390 — under the 44px
-     pointer floor. The pill grows to the floor; the icon carries the
-     same seat it always did. */
-  min-block-size: 44px;
-  min-inline-size: 44px;
-  padding: var(--sp-2) 14px; /* spacing-gate: allow — reviewed authored literal (r-round sheet) */
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--text);
-  font: inherit;
-  /* R327 F (red team, measured 6.02px @1280): 0.8125rem rides the vw
-     root (0.5787vw — 7.4px at 1280), so the raw rem literal collapsed
-     under every floor. The ladder's own --fs-sm IS the 13px Arabic
-     floor for functional text — the same seat every small label rides. */
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  /* --r-full: the pill token — raw 999px would break the WS-D2
-     token-discipline snapshot (circular primitives only). */
-  border-radius: var(--r-full);
-  cursor: pointer;
-  box-shadow: none;
-  /* Y6 — the seat eases between stack rungs as layers appear/disappear
-     (--t-fast = 200ms; the reduced-motion raw-ladder kill zeroes it). */
-  transition:
-    inset-block-end var(--t-fast) var(--ease),
-    border-color var(--t-fast) var(--ease);
-}
-@media (hover: hover) and (pointer: fine) {
-  .fb-fab:hover { border-color: var(--border-strong, var(--border)); }
-}
-@media (max-width: 640px) {
-  /* Y6: the dock clearance keeps its safe-area growth and now
-     rides on the bottom-stack offset (toasts lift the FAB higher).
-     r350 (B1, measured @390): the bottom-nav is 78px tall and the
-     old 72px clearance left the FAB's bottom edge 6px UNDER the
-     nav's top (FAB 732+40=772 > nav 766). 88px = 78px nav + 10px
-     daylight, the same rhythm the desktop seat keeps. */
-  .fb-fab {
-    inset-block-end: calc(
-      var(--app-bottom-stack, 0px) + 88px + env(safe-area-inset-bottom, 0px)
-    );
-    padding: var(--sp-2) var(--sp-3);
-  }
-  .fb-fab span { display: none; } /* the icon carries the seat on phones */
-}
-@media (prefers-reduced-motion: reduce) {
-  .fb-fab {
-    transition: none;
-  }
-}
-
+/* ── r323 B3.6 — the pilot feedback loop. r351 A2 (Q1f): the
+   floating .fb-fab seat is RETIRED (it intersected content on every
+   measured width); the sheet opens from the topbar user menu + the
+   ⌘K palette (components/feedback/feedbackSeat.ts). Only the modal's
+   own styles remain. ──────────────────────────────────────────── */
 .fb-sheet { display: grid; gap: 14px; /* spacing-gate: allow — reviewed authored literal (r-round sheet) */ min-inline-size: min(560px, 86vw); }
 .fb-head { display: flex; align-items: center; justify-content: space-between; }
 .fb-title { margin: 0; font-size: 1.0625rem; /* type-gate: allow — reviewed authored literal (r-round sheet) */ font-weight: 700; }

@@ -108,8 +108,10 @@ describe('r166a — dashboard greeting + agenda empty state', () => {
   const dash = stripComments(read('src/pages/student/DashboardPage.tsx'));
   const student = stripComments(read('src/styles/student.css'));
 
-  it('the 00:00–06:00 greeting is «ليلة سعيدة» (the soirée word is gone)', () => {
-    expect(dash).toContain("'ليلة سعيدة'");
+  it('the greeting retired with the header identity line (r351 Q3)', () => {
+    // The greeting + identity line left the header; the title + date
+    // meta carry it (the identity lives in the shell's user menu).
+    expect(dash).not.toContain("'ليلة سعيدة'");
     expect(dash).not.toContain('سهرة');
   });
 

@@ -292,7 +292,6 @@ export default function OnlineExamsPage() {
     <div className="r321x-page">
       <PageFrame width="default">
         <PatternPageHeader
-          index="01"
           eyebrow="مركز الاختبارات"
           title="الاختبارات الإلكترونية"
           description="اختبارات معتمدة من مكتب الجودة، موحَّدة عبر الكليات. تنبيه: لا يمكن إعادة المحاولة بعد التسليم إلا في الاختبارات التدريبية."
@@ -322,7 +321,6 @@ export default function OnlineExamsPage() {
             once resolved (the JobsPage honest-meta rule; countAr stays
             the screen-reader phrase). */}
         <SectionBar
-          index="02"
           title="اختبارات متاحة لك الآن"
           id="oex-sec-available"
           meta={
@@ -388,7 +386,6 @@ export default function OnlineExamsPage() {
         {!q.isPending && !q.isError && unavailable.length > 0 && (
           <section className="oex-sec" aria-labelledby="oex-sec-unavailable">
             <SectionBar
-              index="03"
               title="اختبارات غير متاحة الآن"
               id="oex-sec-unavailable"
               meta={(
@@ -407,7 +404,6 @@ export default function OnlineExamsPage() {
         {!q.isPending && !q.isError && taken.length > 0 && (
           <section className="oex-sec" aria-labelledby="oex-sec-taken">
             <SectionBar
-              index="04"
               title="اختبارات أجريتها"
               id="oex-sec-taken"
               meta={(
@@ -1564,7 +1560,6 @@ export function ExamTakerPage() {
           current-question tracker. */}
       <section className="oex-sec" aria-labelledby="oex-sec-questions">
         <SectionBar
-          index="01"
           title="أسئلة الاختبار"
           id="oex-sec-questions"
           meta={(

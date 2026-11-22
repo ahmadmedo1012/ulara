@@ -211,10 +211,10 @@ test("brand.json round-trip: name forms obey the rules, palette pinned", () => {
       npm_scope: "@ulara",
       env_prefix: "ULARA_",
       paper: "#F5F1E8",
-      ink: "#262019",
-      accent: "#C43E16",
+      ink: "#1A1713",
+      accent: "#2540D9",
     },
-    "brand.json: the identity primitives drifted from the ULARA takeover specification",
+    "brand.json: the identity primitives drifted from the ULARA takeover specification (2026 «Parchment & Royal»)",
   );
 
   /* name_ar: the damma is not optional — and the damma-less spelling is
@@ -255,7 +255,7 @@ test("brand.json round-trip: name forms obey the rules, palette pinned", () => {
   const tokens = JSON.parse(readFileSync(TOKENS_JSON, "utf8")).color.brand;
   assert.equal(brand.colors.paper, tokens.paper, "colors.paper must equal design-tokens color.brand.paper");
   assert.equal(brand.colors.ink, tokens.ink, "colors.ink must equal design-tokens color.brand.ink");
-  assert.equal(brand.colors.accent, tokens.orange, "colors.accent must equal design-tokens color.brand.orange");
+  assert.equal(brand.colors.accent, tokens.primary, "colors.accent must equal design-tokens color.brand.primary (the 2026 royal seat)");
 });
 
 /* ── 7. committed kit + non-empty files ──────────────────────────────── */

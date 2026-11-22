@@ -286,7 +286,9 @@ for (const theme of THEMES) {
         const tour = document.querySelector('.sidebar-tour-trigger')!;
         const scrim = document.querySelector('.sidebar-backdrop.show')!;
         const nav = document.querySelector('.sidebar-nav')!;
-        const avatar = document.querySelector('.sidebar .avatar')!;
+        // r351 A2 (Q1a): the sidebar identity block retired — the ONE
+        // avatar lives in the topbar user trigger.
+        const avatar = document.querySelector('.topbar-user-trigger .avatar')!;
         // start-gutter parity (RTL: the inline-START edge is the RIGHT edge).
         // Two levels: the BOX edges (brand row / heading / row share one
         // container inset) and the CONTENT edges (brand mark glyph vs the
@@ -445,7 +447,8 @@ for (const theme of THEMES) {
       expect(sheet.gutter.boxBrandVsRow).toBeLessThanOrEqual(1);
       expect(sheet.gutter.markVsIcon).toBeLessThanOrEqual(1);
 
-      // the drawer avatar: square ink cell (mono face, no blue)
+      // r351 A2 (Q1a): the ONE avatar (the topbar user trigger) keeps
+      // the square ink cell grammar (mono face, no blue).
       expect(sheet.avatar.radius).toBe('0px');
       expect(sheet.avatar.bg).not.toContain('59, 130, 246');
       expect(sheet.avatar.font.toLowerCase()).toContain('mono');
@@ -532,10 +535,11 @@ for (const theme of THEMES) {
       expect(dock.cellSep).toBe('1px');
 
       // active = ink label + 2px accent TOP rule + filled ink icon.
-      // The accent is theme-keyed: #C43E16 on light, the night ember
-      // #FF6B3D on dark (tokens.css --accent).
+      // The accent is theme-keyed: the royal #2540D9 on light, the
+      // luminous royal #8AA0FF on dark (tokens.css --accent — the 2026
+      // «Parchment & Royal» takeover).
       expect(dock.active.rule.h).toBe('2px');
-      const ACCENT = theme === 'light' ? 'rgb(196, 62, 22)' : 'rgb(255, 107, 61)';
+      const ACCENT = theme === 'light' ? 'rgb(37, 64, 217)' : 'rgb(138, 160, 255)';
       expect(dock.active.rule.bg).toBe(ACCENT);
       expect(dock.active.iconBg, 'no pill wash on the icon').toBe('rgba(0, 0, 0, 0)');
       expect(dock.active.iconRadius).toBe('0px');

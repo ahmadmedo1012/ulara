@@ -119,44 +119,43 @@ describe('R305-A7 — the sheet rides the module (§0 scoping contract)', () => 
   });
 });
 
-// ─── 2 · the one deep band ────────────────────────────────────────
+// ─── 2 · the honest disclosures (r351 AI-3: the deep band retired) ─
 
-describe('R305-A7 — the status head is the ONLY deep band', () => {
-  it('exactly one .r305rp-band--deep exists, and it is the surface head', () => {
+describe('R305-A7 — the status disclosures (r351 AI-3 structure)', () => {
+  it('NO deep band exists anymore — the banded head retired with the calm redesign', () => {
     const { container } = renderPage();
-    const bands = container.querySelectorAll('.r305rp-band--deep');
-    expect(bands).toHaveLength(1);
-    expect(bands[0]!.className).toContain('ai-surface-head');
-    expect(bands[0]!.className).toContain('r305ai-head');
+    expect(container.querySelectorAll('.r305rp-band--deep')).toHaveLength(0);
   });
 
-  it('the band carries the engine chip, and the privacy line rides the band itself', () => {
+  it('the privacy line renders above the log in real-LLM mode (one quiet line)', () => {
     const { container } = renderPage();
-    const band = container.querySelector('.r305rp-band--deep')!;
-    // The persistent third-party disclosure lives INSIDE the band —
-    // always visible in real-LLM mode, styled by the band-secondary ink.
-    expect(band.textContent).toContain('إشعار الخصوصيّة');
-    expect(band.querySelector('.r305rp-band-secondary')).not.toBeNull();
-    // The engine chip names the provider label verbatim (the honest
-    // /ai/config surface) — the boot-level model stays on the header badge.
-    expect(band.textContent).toContain('نموذج خارجيّ');
-    expect(screen.getByText('openrouter', { selector: '.r305ai-mono' })).toBeInTheDocument();
-    // The header badge still names the configured route.
+    const line = container.querySelector('.ai-privacy-line');
+    expect(line).not.toBeNull();
+    expect(line!.textContent).toContain('تُرسَل رسائلك وبيانات إتقانك');
+  });
+
+  it('the header description names the real engine; the badge names the configured route', () => {
+    renderPage();
+    expect(screen.getByText('نموذج لغويّ يرى إتقانك ومقرّراتك.')).toBeInTheDocument();
     expect(screen.getByText('openrouter/free')).toBeInTheDocument();
   });
 
-  it('local mode: the chip says مساعد محليّ — no provider, no model claim', () => {
+  it('local mode: the description stays the honest local one — no engine claim', () => {
     mocks.config = { data: { provider: 'local', model: null }, isPending: false, isError: false };
     renderPage();
-    expect(screen.getByText('مساعد محليّ')).toBeInTheDocument();
-    expect(screen.queryByText('نموذج خارجيّ')).toBeNull();
+    expect(screen.getByText('مساعد تحليليّ محليّ بلا نموذج خارجيّ.')).toBeInTheDocument();
+    expect(screen.queryByText('نموذج لغويّ يرى إتقانك')).toBeNull();
+    /* r351 review fix: the privacy line rides REAL-engine mode only —
+     * the old assertion passed a CSS SELECTOR to a text query (vacuous:
+     * a selector string can never equal rendered text). A regex against
+     * the line's own words is the honest pin (partial match). */
+    expect(screen.queryByText(/تُرسَل رسائلك وبيانات إتقانك إلى مزوّد الذكاء الخارجيّ/)).toBeNull();
   });
 
-  it('unverifiable mode (pending config) keeps the honest LOCAL chip — same default as the greeting', () => {
+  it('unverifiable mode (pending config) keeps the honest LOCAL description', () => {
     mocks.config = { data: undefined, isPending: true, isError: false };
     renderPage();
-    expect(screen.getByText('مساعد محليّ')).toBeInTheDocument();
-    expect(screen.queryByText('نموذج خارجيّ')).toBeNull();
+    expect(screen.getByText('مساعد تحليليّ محليّ بلا نموذج خارجيّ.')).toBeInTheDocument();
   });
 });
 
@@ -215,7 +214,7 @@ describe('R305-A7 — error panels disclose the envelope support code', () => {
     expect(code.className).toContain('r305ai-err-code');
     expect(code.closest('.chat-error')).not.toBeNull();
     // And the real retry affordance is still there.
-    expect(screen.getByRole('button', { name: 'أعد إرسال سؤالك' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'أعد الإرسال' })).toBeInTheDocument();
   });
 
   it('a codeless failure renders NO code chip (nothing is invented)', async () => {

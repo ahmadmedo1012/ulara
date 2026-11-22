@@ -6,8 +6,8 @@ import BookOpen from "lucide-react-native/icons/book-open";
 import FileText from "lucide-react-native/icons/file-text";
 import Inbox from "lucide-react-native/icons/inbox";
 import ShieldCheck from "lucide-react-native/icons/shield-check";
-import { AppTopBar } from "@/components/shell/AppTopBar";
-import { Screen, SectionBar } from "@/components/ui";
+import { LargeTitleScreen } from "@/components/shell/LargeTitleScreen";
+import { SectionBar } from "@/components/ui";
 import { T } from "@/components/ui/text";
 import { Button } from "@/components/ui/pressables";
 import { LedgerRow, makeRow, usePagedList } from "@/components/ui/data";
@@ -67,18 +67,14 @@ export default function AdminDashboard() {
   const s = stats.data;
 
   return (
-    <Screen scroll>
-      <AppTopBar alertsPath="/admin/alerts" />
-      <View style={{ gap: 16, paddingTop: 16 }}>
-        <Animated.View entering={entering(0)}>
-          <T variant="h2" weight="bold">
-            لوحة {ROLE_LABELS[user?.role ?? "ADMIN"] ?? "المسجل العام"}
-          </T>
-          <T variant="body" color="muted">
-            إحصائيات حيّة عن طلاب وأساتذة المنصّة.
-          </T>
-        </Animated.View>
-
+    /* r351 N2 — the collapsing large title (the explainer subtitle is cut;
+     * its two honest words ride as the mono kicker). */
+    <LargeTitleScreen
+      title={`لوحة ${ROLE_LABELS[user?.role ?? "ADMIN"] ?? "المسجل العام"}`}
+      kicker="إحصاءات حيّة"
+      alertsPath="/admin/alerts"
+    >
+      <View style={{ gap: 16 }}>
         {stats.isLoading ? (
           /* skeleton with real geometry: hero slab + 2×2 tiles */
           <Animated.View entering={entering(1)} style={{ gap: 8 }}>
@@ -103,11 +99,7 @@ export default function AdminDashboard() {
           </Animated.View>
         ) : s ? (
           <Animated.View entering={entering(1)} style={{ gap: 8 }}>
-            <MetricHero
-              label="الطلاب المسجَّلون"
-              value={s.totalStudents ?? null}
-              hint="إجمالي حسابات الطلاب في هذه المؤسّسة"
-            />
+            <MetricHero label="الطلاب المسجَّلون" value={s.totalStudents ?? null} />
             <View style={{ flexDirection: "row", gap: 8 }}>
               <MetricTile label="الأساتذة" value={s.totalTeachers ?? null} />
               <MetricTile label="المقرّرات" value={s.totalCourses ?? null} />
@@ -208,7 +200,7 @@ export default function AdminDashboard() {
         </Animated.View>
 
       </View>
-    </Screen>
+    </LargeTitleScreen>
   );
 }
 

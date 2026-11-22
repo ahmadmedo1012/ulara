@@ -20,11 +20,19 @@
  * reanimated+worklets runtime (~420kB of mapped JS ≈ 0.95MB of .hbc) was
  * riding the bundle for three pulse loops. Core Animated ships with RN —
  * zero marginal bytes.
+ *
+ * r351 N1 — the boot SEQUENCE (BootStrip): under the mark, a mono
+ * measured strip — a 0→100 counter (900ms, the ds ease) + the mark's own
+ * coordinate readout (X/Y in px — honest: the splash/app mark's real
+ * geometry, never decoration). It rides ONLY the first cold boot of a
+ * process (a module flag; warm remounts skip it), completes within the
+ * 1.2s ceiling, and renders STATIC under reduced motion.
  */
 import { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Easing,
+  StyleSheet,
   View,
   type EasingFunction,
   type StyleProp,
@@ -111,7 +119,7 @@ function useDelayedPulseLoop(
  * the same constants <Logo variant="mark"> renders and the native
  * splash/app icons are generated from; the logo-gate law: geometry lives
  * in the brand system, seats consume components): the ink vessel eases in
- * while the sienna cornerstone counter-scales out and breathes —
+ * while the royal cornerstone counter-scales out and breathes —
  * «الإناء يمتلئ» — one loader vocabulary, one mark. `size` 120 = the
  * splash icon size → the IDENTICAL figure at the same seat, so the
  * splash → app handoff is a pure cross-fade (the hand-drawn two-squares
@@ -137,7 +145,7 @@ export function BootMark({ size = 120 }: { size?: number }) {
   const vessel = <MarkVesselLayer size={size} color={p.text} />;
 
   /* the cornerstone — the brand system's own single-layer render (the
-     solid sienna 4×4 at the right stem's top) */
+     solid royal 4×4 at the right stem's top) */
   const cornerstone = <MarkCornerstoneLayer size={size} color={p.accent} />;
 
   if (reduced) {
@@ -202,6 +210,86 @@ export function resolveEntryDestination(
   return roleHome[user.role] ?? "/student/dashboard";
 }
 
+/* ── r351 N1 — the boot sequence strip (cold boot only) ─────────────── */
+
+/** One completed boot per process — warm remounts skip the strip. */
+let hasBootedOnce = false;
+/** Test seam: restore the cold-boot first-render state. */
+export function __resetBootSequenceForTests(): void {
+  hasBootedOnce = false;
+}
+
+/** The counter's full run (ms) — inside the 1.2s sequence ceiling. */
+export const BOOT_COUNTER_MS = 900;
+
+/**
+ * BootStrip — the mono measured strip under the mark: a 0→100 counter
+ * on the ds ease + the mark's own coordinate readout (`X:120 Y:120` —
+ * the real splash-mark geometry, the survey-sheet flavor of the boot
+ * moment) + the hairline ruler with its + marks (the ds register).
+ * Static under reduced motion (the strip renders complete, no count);
+ * flips hasBootedOnce when the run ends (or on unmount after start).
+ */
+export function BootStrip({ size = 120 }: { size?: number }) {
+  const p = usePalette();
+  const reduced = useReduceMotion();
+  const [pct, setPct] = useState(reduced ? 100 : 0);
+  const doneRef = useRef(false);
+
+  useEffect(() => {
+    if (reduced) {
+      hasBootedOnce = true;
+      return;
+    }
+    const v = new Animated.Value(0);
+    // integer-step updates only (≤100 renders on the whole run, and the
+    // strip is the only thing on screen at this moment).
+    const sub = v.addListener(({ value }) => {
+      setPct(Math.round(value));
+    });
+    const anim = Animated.timing(v, {
+      toValue: 100,
+      duration: BOOT_COUNTER_MS,
+      easing: EASE,
+      useNativeDriver: false, // listener-driven state — JS value
+    });
+    anim.start(({ finished }) => {
+      if (finished) {
+        doneRef.current = true;
+        hasBootedOnce = true;
+      }
+    });
+    return () => {
+      v.removeListener(sub);
+      anim.stop();
+      // An unmount mid-count (the session resolved fast) still counts as
+      // a completed boot: the user SAW the sequence start and end.
+      hasBootedOnce = true;
+    };
+  }, [reduced]);
+
+  return (
+    <View style={{ alignItems: "center", gap: sp[6] }}>
+      {/* the hairline ruler — the ds survey register, full width */}
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          gap: sp[4],
+          width: size * 1.6,
+        }}
+      >
+        <View style={{ flex: 1, height: StyleSheet.hairlineWidth, backgroundColor: p.rule }} />
+        <T variant="monoSm" color="faint">+</T>
+        <View style={{ flex: 1, height: StyleSheet.hairlineWidth, backgroundColor: p.rule }} />
+      </View>
+      <T variant="monoSm" color="faint">
+        {`X:${size} Y:${size} · ${pct}%`}
+      </T>
+    </View>
+  );
+}
+
 /* ── Boot — the full-screen boot/transition state ───────────────────── */
 
 const SLOW_AFTER_MS = 6000;
@@ -236,6 +324,7 @@ export function Boot({
       }}
     >
       <BootMark size={size} />
+      {!hasBootedOnce ? <BootStrip size={size} /> : null}
       <View style={{ alignItems: "center", gap: sp[8], maxWidth: 320 }}>
         <T variant="sm" color="muted" align="center">
           {slow && slowLabel ? slowLabel : label}

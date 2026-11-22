@@ -212,41 +212,11 @@
 .topbar-search input {
   block-size: 44px;
 }
-/* The compact THEME TOGGLE (Topbar.tsx) — the §R325.a chrome
-   inventory's fourth seat (search · notifications · theme · profile).
-   One control recipe: rest flat on the hairline, hover = the surface
-   step (guarded to fine pointers — the R319 stick-guard), radius 0,
-   44px target floor over the 36px visual box (the bell's twin). */
-.topbar-theme {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  inline-size: 36px;
-  block-size: 36px;
-  min-inline-size: 44px;
-  min-block-size: 44px;
-  border: 1px solid transparent;
-  border-radius: 0;
-  background: transparent;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition:
-    background var(--t-fast) var(--ease),
-    color var(--t-fast) var(--ease),
-    border-color var(--t-fast) var(--ease);
-}
-@media (hover: hover) and (pointer: fine) {
-  .topbar-theme:hover {
-    background: var(--surface-2);
-    border-color: var(--border-strong);
-    color: var(--text);
-  }
-}
-.topbar-theme:active {
-  background: var(--surface-3);
-  border-color: var(--border-strong);
-  color: var(--text);
-}
+/* r351 A2 (Q1a): the standalone .topbar-theme seat is RETIRED — the
+   one-tap theme flip lives in the user menu (the §R325.a inventory
+   becomes search · notifications · profile, ≤4 controls at every
+   width). The user menu's role line clamps in shell/shell.css — the
+   same seat family the retired sidebar identity line used. */
 
 /* ═══ §6 — THE PHONE BOTTOM NAV (§R325.a phone band) ══════════════════
    Verified against the mission pins:

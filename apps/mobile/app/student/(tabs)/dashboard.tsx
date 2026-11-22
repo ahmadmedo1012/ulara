@@ -26,9 +26,8 @@ import { studentApi } from "@/api/student";
 import { useSession } from "@/auth/session";
 import { useInstitutionScope } from "@/hooks/useInstitutionScope";
 import { usePalette } from "@/design/theme";
-import { AppStatusBar } from "@/design/statusbar";
 import { sp } from "@/design/tokens";
-import { Screen, SectionBar } from "@/components/ui/screen";
+import { SectionBar } from "@/components/ui/screen";
 import { BidiText, T } from "@/components/ui/text";
 import { LedgerRow, RowList } from "@/components/ui/data";
 import { Badge, Card } from "@/components/ui/surfaces";
@@ -38,10 +37,10 @@ import { CountUp, PressableScale, RingProgress, Skeleton, SkeletonText, useStagg
 import { haptics } from "@/haptics";
 import { dateTime, dueLabel, greeting, latn, pct, useNumerals } from "@/lib/format";
 import { humanizeError } from "@/lib/errors";
-import { AppTopBar } from "@/components/shell/AppTopBar";
+import { LargeTitleScreen } from "@/components/shell/LargeTitleScreen";
 import { useNow } from "@/hooks/useNow";
 import { SectionNote, countAr } from "@/features/student/more";
-import { GapList, ScrollBody, classWhenLabel, nextStep } from "@/features/student/components";
+import { GapList, classWhenLabel, nextStep } from "@/features/student/components";
 
 /** Module-scoped: the idempotent onboarding POST fires once per app run. */
 let onboardingFired = false;
@@ -116,19 +115,18 @@ export default function StudentDashboard() {
   const entering = useStaggerEntrance({ base: 40, step: 60 });
 
   return (
-    <Screen scroll={false} padded={false}>
-      <AppStatusBar />
-      <AppTopBar alertsPath="/student/alerts" />
-      <ScrollBody refreshing={refreshing} onRefresh={onRefresh}>
-        {/* Greeting + current institution context */}
-        <Animated.View entering={entering(0)} style={{ gap: 2 }}>
-          <T variant="h3" weight="bold">
-            {`${greeting()}${user ? `، ${user.firstName}` : ""}`}
-          </T>
-          <T variant="sm" color="muted">
-            {`موقعك الحالي: ${user?.currentInstitution?.name ?? "—"}`}
-          </T>
-        </Animated.View>
+    /* r351 N2 — the collapsing large title: the greeting (+ first name) is
+     * the screen's ONE heading, the institution rides as the mono kicker
+     * (the «موقعك الحالي:» explainer is cut), and the bar seat crossfades
+     * to the stable «الرئيسية» when the greeting scrolls away. */
+    <LargeTitleScreen
+      title={`${greeting()}${user ? `، ${user.firstName}` : ""}`}
+      kicker={user?.currentInstitution?.name}
+      barTitle="الرئيسية"
+      alertsPath="/student/alerts"
+      refreshing={refreshing}
+      onRefresh={onRefresh}
+    >
 
         {/* «الخطوة التالية» — the ONE orange-accented element */}
         <Animated.View entering={entering(1)}>
@@ -520,8 +518,7 @@ export default function StudentDashboard() {
             {countAr(agenda.classes.length, ["حصة واحدة في الأجندة", "حصتان في الأجندة", "حصص في الأجندة", "حصة في الأجندة"])}
           </T>
         ) : null}
-      </ScrollBody>
-    </Screen>
+    </LargeTitleScreen>
   );
 }
 

@@ -106,6 +106,9 @@ function renderPage() {
     </MemoryRouter>,
   );
 }
+// r351 AI-3: the current-conversation marker is the sienna dot +
+// aria-current — the tests reach it through the rendered container.
+let container: HTMLElement;
 
 async function send(text: string) {
   fireEvent.change(screen.getByLabelText('اكتب سؤالك للمساعد'), { target: { value: text } });
@@ -115,17 +118,17 @@ async function send(text: string) {
 describe('AiAssistantPage — failed-turn recovery (r164g)', () => {
   it('renders the SERVER\'s Arabic message in the error bubble (rate limit), with a retry affordance', async () => {
     mocks.chat.mutateAsync.mockRejectedValueOnce(RATE_LIMITED);
-    renderPage();
+    ({ container } = renderPage());
     await send('سؤالي');
     expect(await screen.findByText('طلبات كثيرة — انتظر قليلاً ثم أعد المحاولة')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'أعد إرسال سؤالك' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'أعد الإرسال' })).toBeInTheDocument();
     // The question stays in the log — no silent loss.
     expect(screen.getByText('سؤالي')).toBeInTheDocument();
   });
 
   it('a Latin transport error falls back to the generic Arabic copy (never leaks English prose)', async () => {
     mocks.chat.mutateAsync.mockRejectedValueOnce(NETWORK_ERROR);
-    renderPage();
+    ({ container } = renderPage());
     await send('سؤال شبكة');
     expect(await screen.findByText('تعذَّر الاتصال بالمساعد الآن.')).toBeInTheDocument();
     expect(screen.queryByText('Network Error')).toBeNull();
@@ -135,16 +138,16 @@ describe('AiAssistantPage — failed-turn recovery (r164g)', () => {
     mocks.chat.mutateAsync
       .mockRejectedValueOnce(RATE_LIMITED)
       .mockResolvedValueOnce({ conversationId: 'c1', reply: 'الجواب بعد المحاولة' });
-    renderPage();
+    ({ container } = renderPage());
     await send('سؤالي');
     await screen.findByText('طلبات كثيرة — انتظر قليلاً ثم أعد المحاولة');
 
-    fireEvent.click(screen.getByRole('button', { name: 'أعد إرسال سؤالك' }));
+    fireEvent.click(screen.getByRole('button', { name: 'أعد الإرسال' }));
     expect(await screen.findByText('الجواب بعد المحاولة')).toBeInTheDocument();
 
     // The failed row is gone and the question appears exactly ONCE.
     expect(screen.queryByText('طلبات كثيرة — انتظر قليلاً ثم أعد المحاولة')).toBeNull();
-    expect(screen.queryByRole('button', { name: 'أعد إرسال سؤالك' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'أعد الإرسال' })).toBeNull();
     expect(screen.getAllByText('سؤالي')).toHaveLength(1);
     // The retry went to the server with the same prompt.
     expect(mocks.chat.mutateAsync).toHaveBeenCalledTimes(2);
@@ -155,10 +158,10 @@ describe('AiAssistantPage — failed-turn recovery (r164g)', () => {
     mocks.chat.mutateAsync
       .mockRejectedValueOnce(RATE_LIMITED)
       .mockRejectedValueOnce(RATE_LIMITED);
-    renderPage();
+    ({ container } = renderPage());
     await send('سؤال متعثّر');
     await screen.findByText('طلبات كثيرة — انتظر قليلاً ثم أعد المحاولة');
-    fireEvent.click(screen.getByRole('button', { name: 'أعد إرسال سؤالك' }));
+    fireEvent.click(screen.getByRole('button', { name: 'أعد الإرسال' }));
     await screen.findByText('طلبات كثيرة — انتظر قليلاً ثم أعد المحاولة');
     expect(screen.getAllByText('سؤال متعثّر')).toHaveLength(1);
     // One live error row (the first was removed in place).
@@ -170,10 +173,10 @@ describe('AiAssistantPage — pending-state honesty (r164g)', () => {
   it('while a reply is pending: input/chips/suggestions/rows disable, retry hides, the log is aria-busy', async () => {
     mocks.conversations = { data: [CONV1], isPending: false, isError: false, refetch: () => undefined };
     mocks.chat.mutateAsync.mockRejectedValueOnce(NETWORK_ERROR);
-    const { rerender } = renderPage();
+    const { rerender, container } = renderPage();
     await send('سؤال معلّق');
     await screen.findByText('تعذَّر الاتصال بالمساعد الآن.');
-    expect(screen.getByRole('button', { name: 'أعد إرسال سؤالك' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'أعد الإرسال' })).toBeInTheDocument();
 
     // Flip the shared chat mock to pending and re-render the same tree.
     mocks.chat.isPending = true;
@@ -185,14 +188,14 @@ describe('AiAssistantPage — pending-state honesty (r164g)', () => {
 
     expect(screen.getByLabelText('اكتب سؤالك للمساعد')).toBeDisabled();
     expect(screen.getByRole('button', { name: 'إرسال' })).toBeDisabled();
-    expect(screen.getByRole('button', { name: 'محادثة جديدة' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'جديدة' })).toBeDisabled();
     expect(screen.getByRole('button', { name: 'فتح محادثة: عنوان أول محادثة' })).toBeDisabled();
     expect(screen.getByRole('button', { name: 'حذف محادثة: عنوان أول محادثة' })).toBeDisabled();
     expect(screen.getByRole('button', { name: 'أسوأ فجواتي' })).toBeDisabled();
     expect(screen.getByRole('button', { name: 'ما المفاهيم التي أحتاج إلى مراجعتها؟' })).toBeDisabled();
     // The typing indicator owns the pending moment — retry hides.
-    expect(screen.queryByRole('button', { name: 'أعد إرسال سؤالك' })).toBeNull();
-    expect(screen.getByText('المساعد يجهّز الردّ…')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'أعد الإرسال' })).toBeNull();
+    expect(container.querySelector('.chat-typing')).toBeInTheDocument();
     expect(screen.getByRole('log')).toHaveAttribute('aria-busy', 'true');
   });
 });
@@ -200,19 +203,19 @@ describe('AiAssistantPage — pending-state honesty (r164g)', () => {
 describe('AiAssistantPage — conversation management (r164g)', () => {
   it('lists conversations with titles (null title degrades honestly) and relative dates; none current initially', () => {
     mocks.conversations = { data: [CONV1, CONV2], isPending: false, isError: false, refetch: () => undefined };
-    renderPage();
+    ({ container } = renderPage());
     expect(screen.getByText('عنوان أول محادثة')).toBeInTheDocument();
     expect(screen.getByText('محادثة')).toBeInTheDocument(); // CONV2: title null → honest fallback
     expect(screen.getAllByText('منذ 3 ساعات')).toHaveLength(2);
-    // No current-conversation indicator before any switch — R319
-    // override (c3-S2): the marker rides the §B2 mono chip (CURRENT).
-    expect(screen.queryByText('CURRENT')).toBeNull();
+    // No current-conversation indicator before any switch (r351: the
+    // sienna dot + aria-current).
+    expect(container.querySelector('.ai-current-dot')).toBeNull();
     expect(document.querySelector('.ai-conv-row[aria-current="true"]')).toBeNull();
   });
 
   it('switching loads the stored transcript, marks the row current, and the next send targets it', async () => {
     mocks.conversations = { data: [CONV1], isPending: false, isError: false, refetch: () => undefined };
-    renderPage();
+    ({ container } = renderPage());
 
     // While loading, the transcript is replaced (no stale content
     // pretending to be the conversation).
@@ -221,14 +224,14 @@ describe('AiAssistantPage — conversation management (r164g)', () => {
       () => new Promise<AiMessageRow[]>((res) => { resolveRows = res; }),
     );
     fireEvent.click(screen.getByRole('button', { name: 'فتح محادثة: عنوان أول محادثة' }));
-    await waitFor(() => expect(screen.queryByText(/أحلّل بيانات إتقانك محليّاً/)).toBeNull());
+    await waitFor(() => expect(screen.queryByText(/أحلّل إتقانك محليًّا/)).toBeNull());
     resolveRows(ROWS);
 
     expect(await screen.findByText('سؤال قديم')).toBeInTheDocument();
     expect(screen.getByText('جواب قديم')).toBeInTheDocument();
     // Current-conversation indicator: the §B2 mono chip + aria-current
     // on the row (R319 c3-S2 override — the brand Badge became CURRENT).
-    expect(screen.getByText('CURRENT')).toBeInTheDocument();
+    expect(container.querySelector('.ai-current-dot')).toBeInTheDocument();
     expect(document.querySelector('.ai-conv-row[aria-current="true"]')).not.toBeNull();
 
     // The next send continues THE SAME conversation.
@@ -243,15 +246,15 @@ describe('AiAssistantPage — conversation management (r164g)', () => {
     mocks.fetchMessages
       .mockRejectedValueOnce({ response: { data: { error: { message: 'انقطع الاتصال بالخادم' } } } })
       .mockResolvedValueOnce(ROWS);
-    renderPage();
+    ({ container } = renderPage());
 
     fireEvent.click(screen.getByRole('button', { name: 'فتح محادثة: عنوان أول محادثة' }));
     expect(await screen.findByText('انقطع الاتصال بالخادم')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'أعد فتح المحادثة' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'أعد الفتح' })).toBeInTheDocument();
     // The welcome bubble is untouched — the chat is not dead.
-    expect(screen.getByText(/أحلّل بيانات إتقانك محليّاً/)).toBeInTheDocument();
+    expect(screen.getByText(/أحلّل إتقانك محليًّا/)).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('button', { name: 'أعد فتح المحادثة' }));
+    fireEvent.click(screen.getByRole('button', { name: 'أعد الفتح' }));
     expect(await screen.findByText('سؤال قديم')).toBeInTheDocument();
     expect(screen.queryByText('انقطع الاتصال بالخادم')).toBeNull();
   });
@@ -259,15 +262,15 @@ describe('AiAssistantPage — conversation management (r164g)', () => {
   it('«محادثة جديدة» resets to the greeting and the next send starts a FRESH conversation', async () => {
     mocks.conversations = { data: [CONV1], isPending: false, isError: false, refetch: () => undefined };
     mocks.fetchMessages.mockResolvedValueOnce(ROWS);
-    renderPage();
+    ({ container } = renderPage());
     fireEvent.click(screen.getByRole('button', { name: 'فتح محادثة: عنوان أول محادثة' }));
     await screen.findByText('سؤال قديم');
 
-    fireEvent.click(screen.getByRole('button', { name: 'محادثة جديدة' }));
-    expect(await screen.findByText(/أحلّل بيانات إتقانك محليّاً/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'جديدة' }));
+    expect(await screen.findByText(/أحلّل إتقانك محليًّا/)).toBeInTheDocument();
     expect(screen.queryByText('سؤال قديم')).toBeNull();
     // The row is no longer current.
-    expect(screen.queryByText('CURRENT')).toBeNull();
+    expect(container.querySelector('.ai-current-dot')).toBeNull();
 
     mocks.chat.mutateAsync.mockResolvedValueOnce({ conversationId: 'c9', reply: 'جواب جديد' });
     await send('أول سؤال جديد');
@@ -278,39 +281,39 @@ describe('AiAssistantPage — conversation management (r164g)', () => {
 
   it('delete is a TWO-STEP confirm — the first click only asks; cancel reverts', async () => {
     mocks.conversations = { data: [CONV1], isPending: false, isError: false, refetch: () => undefined };
-    renderPage();
+    ({ container } = renderPage());
 
     fireEvent.click(screen.getByRole('button', { name: 'حذف محادثة: عنوان أول محادثة' }));
-    expect(screen.getByRole('button', { name: 'تأكيد الحذف' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'تأكيد' })).toBeInTheDocument();
     expect(mocks.delConversation.mutateAsync).not.toHaveBeenCalled();
 
     fireEvent.click(screen.getByRole('button', { name: 'إلغاء' }));
-    expect(screen.queryByRole('button', { name: 'تأكيد الحذف' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'تأكيد' })).toBeNull();
     expect(screen.getByRole('button', { name: 'حذف محادثة: عنوان أول محادثة' })).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'حذف محادثة: عنوان أول محادثة' }));
-    fireEvent.click(screen.getByRole('button', { name: 'تأكيد الحذف' }));
+    fireEvent.click(screen.getByRole('button', { name: 'تأكيد' }));
     await waitFor(() => expect(mocks.delConversation.mutateAsync).toHaveBeenCalledWith('c1'));
   });
 
   it('deleting the CURRENT conversation resets the log honestly; another row\'s delete leaves it alone', async () => {
     mocks.conversations = { data: [CONV1, CONV2], isPending: false, isError: false, refetch: () => undefined };
     mocks.fetchMessages.mockResolvedValue(ROWS);
-    renderPage();
+    ({ container } = renderPage());
     fireEvent.click(screen.getByRole('button', { name: 'فتح محادثة: عنوان أول محادثة' }));
     await screen.findByText('سؤال قديم');
 
     // Delete an UNRELATED conversation first: the open transcript stays.
     fireEvent.click(screen.getByRole('button', { name: 'حذف محادثة: محادثة' }));
-    fireEvent.click(screen.getByRole('button', { name: 'تأكيد الحذف' }));
+    fireEvent.click(screen.getByRole('button', { name: 'تأكيد' }));
     await waitFor(() => expect(mocks.delConversation.mutateAsync).toHaveBeenCalledWith('c2'));
     expect(screen.getByText('سؤال قديم')).toBeInTheDocument();
 
     // Now delete the CURRENT one: the log resets to a fresh greeting.
     fireEvent.click(screen.getByRole('button', { name: 'حذف محادثة: عنوان أول محادثة' }));
-    fireEvent.click(screen.getByRole('button', { name: 'تأكيد الحذف' }));
+    fireEvent.click(screen.getByRole('button', { name: 'تأكيد' }));
     await waitFor(() => expect(mocks.delConversation.mutateAsync).toHaveBeenCalledWith('c1'));
-    expect(await screen.findByText(/أحلّل بيانات إتقانك محليّاً/)).toBeInTheDocument();
+    expect(await screen.findByText(/أحلّل إتقانك محليًّا/)).toBeInTheDocument();
     expect(screen.queryByText('سؤال قديم')).toBeNull();
 
     mocks.chat.mutateAsync.mockResolvedValueOnce({ conversationId: 'c9', reply: 'جواب' });
@@ -326,7 +329,7 @@ describe('AiAssistantPage — conversation management (r164g)', () => {
     mocks.delConversation.mutateAsync.mockRejectedValueOnce(rejection);
     const { rerender } = renderPage();
     fireEvent.click(screen.getByRole('button', { name: 'حذف محادثة: عنوان أول محادثة' }));
-    fireEvent.click(screen.getByRole('button', { name: 'تأكيد الحذف' }));
+    fireEvent.click(screen.getByRole('button', { name: 'تأكيد' }));
     await waitFor(() => expect(mocks.delConversation.mutateAsync).toHaveBeenCalledWith('c1'));
     // react-query would flip the shared mutation state to failed —
     // mirror it and re-render the same tree.
@@ -344,13 +347,13 @@ describe('AiAssistantPage — conversation management (r164g)', () => {
   });
 
   it('an empty list renders the honest empty note; a list error renders retry', () => {
-    renderPage();
-    expect(screen.getByText(/لا توجد محادثات سابقة بعد/)).toBeInTheDocument();
+    ({ container } = renderPage());
+    expect(screen.getByText(/لا محادثات بعد/)).toBeInTheDocument();
 
     cleanup();
     mocks.conversations = { data: [], isPending: false, isError: true, refetch: () => undefined };
-    renderPage();
-    expect(screen.getByText('تعذَّر تحميل محادثاتك')).toBeInTheDocument();
+    ({ container } = renderPage());
+    expect(screen.getByText('تعذَّر تحميل المحادثات')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'إعادة المحاولة' })).toBeInTheDocument();
   });
 });
@@ -359,8 +362,8 @@ describe('AiAssistantPage — role-aware suggestions (r164g)', () => {
   it('a teacher sees teaching/assessment starters, not the mastery questions their role has no data for', () => {
     mocks.conversations = { data: [CONV1], isPending: false, isError: false, refetch: () => undefined };
     useAuthStore.setState({ user: { ...STUDENT, role: 'TEACHER' as const } });
-    renderPage();
-    expect(screen.getByText('اقترح طريقة لتقييم فهم الطلاب بعد كل محاضرة')).toBeInTheDocument();
+    ({ container } = renderPage());
+    expect(screen.getByText('اقترح طريقة لتقييم فهم الطلاب بعد المحاضرة')).toBeInTheDocument();
     expect(screen.queryByText('ما المفاهيم التي أحتاج إلى مراجعتها؟')).toBeNull();
     // No mastery-awareness chip either — nothing is invented.
     expect(screen.queryByText('واعٍ بمستوى إتقانك')).toBeNull();
@@ -392,7 +395,7 @@ describe('transcriptFromRows (pure)', () => {
 describe('AiAssistantPage — r168b quick-chip honesty gate', () => {
   it('local mode: only composer-honored chips (explain + worst-gap); summarize/quiz/resources hidden', () => {
     mocks.config = { data: { provider: 'local', model: null }, isPending: false, isError: false };
-    renderPage();
+    ({ container } = renderPage());
     expect(screen.getByRole('button', { name: 'اشرح مفهوماً' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'أسوأ فجواتي' })).toBeInTheDocument();
     // The local composer has no summarize/quiz/resources paths — the
@@ -404,18 +407,19 @@ describe('AiAssistantPage — r168b quick-chip honesty gate', () => {
 
   it('unverifiable mode (pending config) keeps the honest local set', () => {
     mocks.config = { data: undefined, isPending: true, isError: false };
-    renderPage();
+    ({ container } = renderPage());
     expect(screen.getByRole('button', { name: 'اشرح مفهوماً' })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'لخّص الفصل الأخير' })).toBeNull();
   });
 
-  it('real provider mode: the full four-chip set returns', () => {
+  it('real provider mode: the full chip set returns (r351: two real-engine chips)', () => {
     mocks.config = { data: { provider: 'openai', model: 'gpt-4o-mini' }, isPending: false, isError: false };
-    renderPage();
+    ({ container } = renderPage());
     expect(screen.getByRole('button', { name: 'لخّص الفصل الأخير' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'اشرح مفهوماً' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'اختبار قصير' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'موارد إضافيّة' })).toBeInTheDocument();
+    // The local-only chips stay hidden in real mode (the engine-gated
+    // honesty runs both directions).
+    expect(screen.queryByRole('button', { name: 'اشرح مفهوماً' })).toBeNull();
     expect(screen.queryByRole('button', { name: 'أسوأ فجواتي' })).toBeNull();
   });
 });

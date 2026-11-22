@@ -195,7 +195,7 @@ export default function TeacherLabsPage() {
             </Card>
           ) : (
             <Card
-              title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[01]</span>المعامل المتاحة</>}
+              title={<>المعامل المتاحة</>}
               icon={FlaskConical}
               subtitle={labs && labs.length > 0
                 ? countAr(labs.length, ['معمل واحد متاح', 'معملان متاحان', 'معامل متاحة', 'معملاً متاحاً'])

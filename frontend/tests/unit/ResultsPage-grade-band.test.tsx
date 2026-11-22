@@ -139,7 +139,7 @@ describe('ResultsPage — the ONE grade-band ladder (r164-a)', () => {
     // chartColors() resolves CSS custom properties; jsdom has none, so
     // the documented FALLBACK constants ride through (chartTheme.ts).
     // Course order: 55 (PASS) / 68 (GOOD) / 90 (EXCELLENT) / 40 (WEAK).
-    expect(barColors()).toEqual(['#e9c349', '#F5A623', '#3DD68C', '#F55353']);
+    expect(barColors()).toEqual(['#e9c349', '#F5A623', '#17724A', '#C62828']);
   });
 
   it('fills each ProgressBar with the band\'s canonical barColor token', () => {

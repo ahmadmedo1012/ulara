@@ -374,15 +374,16 @@ html[dir="rtl"][data-theme="dark"][data-sidebar-collapsed] .topbar {
   }
 }
 
-/* The 2-a `title` hook on the account cluster's longest line: the
-   composite role label («أستاذ · عميد كلّيّة …») now clamps honestly
-   instead of wrapping the pinned footer. The name line above it
-   already carries the same clamp (layout.css). */
-.sidebar-user-role {
+/* r351 A2 (Q1a): the account cluster's longest line — the composite
+   role label («أستاذ · عميد كلّيّة …») — clamps in its new home: the
+   ONE identity seat (the topbar user menu). The retired sidebar
+   identity block carried the same clamp (2-a title hook). */
+.topbar-user-role {
   min-inline-size: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  max-inline-size: 32ch;
 }
 
 /* ═══════════════════════════════════════════════════════════════════

@@ -1,0 +1,3034 @@
+[
+  {
+    "cell": "STUDENT·/student/dashboard·light·1440",
+    "role": "STUDENT",
+    "route": "/student/dashboard",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 289,
+    "scrollHeight": 1776,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "لوحة التحكم",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الجدول الدراسي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "التقويم الأكاديمي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مقرّراتي الدراسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "دليل المقررات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النتائج والتقييمات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المصفوفة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الاختبارات الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المكتبة الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "بحوثي العلمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المساعد الذكي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المعامل الافتراضية",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 23,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/student/dashboard·light·1024",
+    "role": "STUDENT",
+    "route": "/student/dashboard",
+    "theme": "light",
+    "viewport": "1024x768",
+    "words": 288,
+    "scrollHeight": 2010,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "لوحة التحكم",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الجدول الدراسي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "التقويم الأكاديمي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مقرّراتي الدراسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "دليل المقررات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النتائج والتقييمات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المصفوفة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الاختبارات الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المكتبة الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "بحوثي العلمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المساعد الذكي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المعامل الافتراضية",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 19,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/student/dashboard·light·768",
+    "role": "STUDENT",
+    "route": "/student/dashboard",
+    "theme": "light",
+    "viewport": "768x900",
+    "words": 289,
+    "scrollHeight": 2072,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "تطبيق الجوال",
+        "w": 66,
+        "h": 19
+      },
+      {
+        "tag": "a",
+        "name": "واجب الأسبوع الثالث (CS-201)",
+        "w": 592,
+        "h": 18
+      },
+      {
+        "tag": "a",
+        "name": "مقدمة في الخوارزميات — قاعة A2",
+        "w": 607,
+        "h": 18
+      },
+      {
+        "tag": "a",
+        "name": "كل المقرّرات",
+        "w": 86,
+        "h": 32
+      }
+    ],
+    "smallTargetCount": 4,
+    "overlapCount": 7,
+    "overlaps": [
+      {
+        "el": "pf-today-meta",
+        "text": "اليوم · 09:00–10:30",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 11273
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "09:00–10:30",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 1371
+          }
+        ]
+      },
+      {
+        "el": "r319s-chip r319s-chip--quiet",
+        "text": "CLASS",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 591
+          }
+        ]
+      },
+      {
+        "el": "r319s-bar-index",
+        "text": "[03]",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 424
+          }
+        ]
+      },
+      {
+        "el": "r319s-bar-title",
+        "text": "مقرّراتك",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 1899
+          }
+        ]
+      },
+      {
+        "el": "r319s-mono r319s-count",
+        "text": "02",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 239
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/student/dashboard·light·390",
+    "role": "STUDENT",
+    "route": "/student/dashboard",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 283,
+    "scrollHeight": 2762,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "تطبيق الجوال",
+        "w": 66,
+        "h": 19
+      }
+    ],
+    "smallTargetCount": 1,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "ind-mono ind-sched-date",
+        "text": "15",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 145
+          }
+        ]
+      },
+      {
+        "el": "ind-mono ind-sched-code",
+        "text": "CS-201",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 1389
+          }
+        ]
+      },
+      {
+        "el": "ind-mono ind-sched-date",
+        "text": "16",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 145
+          }
+        ]
+      },
+      {
+        "el": "ind-mono ind-sched-date",
+        "text": "17",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 145
+          }
+        ]
+      },
+      {
+        "el": "ind-mono ind-sched-code",
+        "text": "CS-310",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 1356
+          }
+        ]
+      },
+      {
+        "el": "ind-mono ind-sched-date",
+        "text": "18",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 145
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/student/dashboard·dark·1440",
+    "role": "STUDENT",
+    "route": "/student/dashboard",
+    "theme": "dark",
+    "viewport": "1440x900",
+    "words": 289,
+    "scrollHeight": 1776,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "لوحة التحكم",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الجدول الدراسي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "التقويم الأكاديمي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مقرّراتي الدراسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "دليل المقررات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النتائج والتقييمات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المصفوفة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الاختبارات الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المكتبة الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "بحوثي العلمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المساعد الذكي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المعامل الافتراضية",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 23,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/student/dashboard·dark·1024",
+    "role": "STUDENT",
+    "route": "/student/dashboard",
+    "theme": "dark",
+    "viewport": "1024x768",
+    "words": 288,
+    "scrollHeight": 2010,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "لوحة التحكم",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الجدول الدراسي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "التقويم الأكاديمي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مقرّراتي الدراسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "دليل المقررات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النتائج والتقييمات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المصفوفة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الاختبارات الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المكتبة الإلكترونية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "بحوثي العلمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المساعد الذكي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المعامل الافتراضية",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 19,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/student/dashboard·dark·768",
+    "role": "STUDENT",
+    "route": "/student/dashboard",
+    "theme": "dark",
+    "viewport": "768x900",
+    "words": 289,
+    "scrollHeight": 2072,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "تطبيق الجوال",
+        "w": 66,
+        "h": 19
+      },
+      {
+        "tag": "a",
+        "name": "واجب الأسبوع الثالث (CS-201)",
+        "w": 592,
+        "h": 18
+      },
+      {
+        "tag": "a",
+        "name": "مقدمة في الخوارزميات — قاعة A2",
+        "w": 607,
+        "h": 18
+      },
+      {
+        "tag": "a",
+        "name": "كل المقرّرات",
+        "w": 86,
+        "h": 32
+      }
+    ],
+    "smallTargetCount": 4,
+    "overlapCount": 7,
+    "overlaps": [
+      {
+        "el": "pf-today-meta",
+        "text": "اليوم · 09:00–10:30",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 11273
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "09:00–10:30",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 1371
+          }
+        ]
+      },
+      {
+        "el": "r319s-chip r319s-chip--quiet",
+        "text": "CLASS",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 591
+          }
+        ]
+      },
+      {
+        "el": "r319s-bar-index",
+        "text": "[03]",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 424
+          }
+        ]
+      },
+      {
+        "el": "r319s-bar-title",
+        "text": "مقرّراتك",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 1899
+          }
+        ]
+      },
+      {
+        "el": "r319s-mono r319s-count",
+        "text": "02",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 239
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "STUDENT·/student/dashboard·dark·390",
+    "role": "STUDENT",
+    "route": "/student/dashboard",
+    "theme": "dark",
+    "viewport": "390x844",
+    "words": 283,
+    "scrollHeight": 2762,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "تطبيق الجوال",
+        "w": 66,
+        "h": 19
+      }
+    ],
+    "smallTargetCount": 1,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "ind-mono ind-sched-date",
+        "text": "15",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 145
+          }
+        ]
+      },
+      {
+        "el": "ind-mono ind-sched-code",
+        "text": "CS-201",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 1389
+          }
+        ]
+      },
+      {
+        "el": "ind-mono ind-sched-date",
+        "text": "16",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 145
+          }
+        ]
+      },
+      {
+        "el": "ind-mono ind-sched-date",
+        "text": "17",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 145
+          }
+        ]
+      },
+      {
+        "el": "ind-mono ind-sched-code",
+        "text": "CS-310",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 1356
+          }
+        ]
+      },
+      {
+        "el": "ind-mono ind-sched-date",
+        "text": "18",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 145
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "TEACHER·/teacher/dashboard·light·1440",
+    "role": "TEACHER",
+    "route": "/teacher/dashboard",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 269,
+    "scrollHeight": 1619,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "لوحة الأستاذ",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الذكاء الأكاديمي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الأداء والتحليل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "جدول المحاضرات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الحضور والغياب",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "قائمة الطلاب",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الملفات التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "درجات الطلاب",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الواجبات والاختبارات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "بنك الأسئلة والاختبارات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "البحث العلمي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة البث المباشر",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 23,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "TEACHER·/teacher/dashboard·light·1024",
+    "role": "TEACHER",
+    "route": "/teacher/dashboard",
+    "theme": "light",
+    "viewport": "1024x768",
+    "words": 268,
+    "scrollHeight": 1793,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "لوحة الأستاذ",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الذكاء الأكاديمي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الأداء والتحليل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "جدول المحاضرات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الحضور والغياب",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "قائمة الطلاب",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الملفات التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "درجات الطلاب",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الواجبات والاختبارات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "بنك الأسئلة والاختبارات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "البحث العلمي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة البث المباشر",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 19,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "TEACHER·/teacher/dashboard·light·768",
+    "role": "TEACHER",
+    "route": "/teacher/dashboard",
+    "theme": "light",
+    "viewport": "768x900",
+    "words": 270,
+    "scrollHeight": 1881,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "ابدأ التصحيح",
+        "w": 113,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "الجدول الأسبوعيّ",
+        "w": 135,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "القائمة الكاملة",
+        "w": 121,
+        "h": 32
+      }
+    ],
+    "smallTargetCount": 3,
+    "overlapCount": 7,
+    "overlaps": [
+      {
+        "el": "pf-section-desc",
+        "text": "طالبان تحت المتابعة",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 5285
+          }
+        ]
+      },
+      {
+        "el": "btn ghost sm",
+        "text": "القائمة الكاملة",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 1537
+          }
+        ]
+      },
+      {
+        "el": "pf-row-line pf-row-link",
+        "text": "78%محمود الشريف🧮 مقدمة في الخ",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 29902
+          }
+        ]
+      },
+      {
+        "el": "tq-num",
+        "text": "78%",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 453
+          }
+        ]
+      },
+      {
+        "el": "pf-row-title",
+        "text": "محمود الشريف",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 10373
+          }
+        ]
+      },
+      {
+        "el": "pf-row-meta",
+        "text": "🧮 مقدمة في الخوارزميات",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 3238
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "TEACHER·/teacher/dashboard·light·390",
+    "role": "TEACHER",
+    "route": "/teacher/dashboard",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 270,
+    "scrollHeight": 2829,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 5,
+    "overlaps": [
+      {
+        "el": "pf-row-line pf-row-link",
+        "text": "44 تسليماتاختبار قصير — التعقي",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 26856
+          }
+        ]
+      },
+      {
+        "el": "pf-row-title",
+        "text": "اختبار قصير — التعقيد الزمني",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 3905
+          }
+        ]
+      },
+      {
+        "el": "pf-row-meta",
+        "text": "مقدمة في الخوارزميات · CS-201 ",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 8226
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "CS-201",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 855
+          }
+        ]
+      },
+      {
+        "el": "hr-chip",
+        "text": "بانتظارك",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 2002
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "TEACHER·/teacher/dashboard·dark·1440",
+    "role": "TEACHER",
+    "route": "/teacher/dashboard",
+    "theme": "dark",
+    "viewport": "1440x900",
+    "words": 269,
+    "scrollHeight": 1619,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "لوحة الأستاذ",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الذكاء الأكاديمي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الأداء والتحليل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "جدول المحاضرات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الحضور والغياب",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "قائمة الطلاب",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الملفات التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "درجات الطلاب",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الواجبات والاختبارات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "بنك الأسئلة والاختبارات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "البحث العلمي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة البث المباشر",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 23,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "TEACHER·/teacher/dashboard·dark·1024",
+    "role": "TEACHER",
+    "route": "/teacher/dashboard",
+    "theme": "dark",
+    "viewport": "1024x768",
+    "words": 268,
+    "scrollHeight": 1793,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "لوحة الأستاذ",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الذكاء الأكاديمي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الأداء والتحليل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "جدول المحاضرات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الحضور والغياب",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "قائمة الطلاب",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الملفات التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "درجات الطلاب",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الواجبات والاختبارات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "بنك الأسئلة والاختبارات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "البحث العلمي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة البث المباشر",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 19,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "TEACHER·/teacher/dashboard·dark·768",
+    "role": "TEACHER",
+    "route": "/teacher/dashboard",
+    "theme": "dark",
+    "viewport": "768x900",
+    "words": 270,
+    "scrollHeight": 1881,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "ابدأ التصحيح",
+        "w": 113,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "الجدول الأسبوعيّ",
+        "w": 135,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "القائمة الكاملة",
+        "w": 121,
+        "h": 32
+      }
+    ],
+    "smallTargetCount": 3,
+    "overlapCount": 7,
+    "overlaps": [
+      {
+        "el": "pf-section-desc",
+        "text": "طالبان تحت المتابعة",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 5285
+          }
+        ]
+      },
+      {
+        "el": "btn ghost sm",
+        "text": "القائمة الكاملة",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 1537
+          }
+        ]
+      },
+      {
+        "el": "pf-row-line pf-row-link",
+        "text": "78%محمود الشريف🧮 مقدمة في الخ",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 29902
+          }
+        ]
+      },
+      {
+        "el": "tq-num",
+        "text": "78%",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 453
+          }
+        ]
+      },
+      {
+        "el": "pf-row-title",
+        "text": "محمود الشريف",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 10373
+          }
+        ]
+      },
+      {
+        "el": "pf-row-meta",
+        "text": "🧮 مقدمة في الخوارزميات",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 3238
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "TEACHER·/teacher/dashboard·dark·390",
+    "role": "TEACHER",
+    "route": "/teacher/dashboard",
+    "theme": "dark",
+    "viewport": "390x844",
+    "words": 270,
+    "scrollHeight": 2829,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 5,
+    "overlaps": [
+      {
+        "el": "pf-row-line pf-row-link",
+        "text": "44 تسليماتاختبار قصير — التعقي",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 26856
+          }
+        ]
+      },
+      {
+        "el": "pf-row-title",
+        "text": "اختبار قصير — التعقيد الزمني",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 3905
+          }
+        ]
+      },
+      {
+        "el": "pf-row-meta",
+        "text": "مقدمة في الخوارزميات · CS-201 ",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 8226
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "CS-201",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 855
+          }
+        ]
+      },
+      {
+        "el": "hr-chip",
+        "text": "بانتظارك",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 2002
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "ADMIN·/admin/dashboard·light·1440",
+    "role": "ADMIN",
+    "route": "/admin/dashboard",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 165,
+    "scrollHeight": 1428,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "لوحة المسجل العام",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة الأساتذة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الكلّيّات والأقسام",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المقرّرات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة الطلاب",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "التحوّل الرقميّ",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "التقارير",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إعدادات المنصّة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إعدادات الحساب",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المجتمع الجامعي",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 15,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "ADMIN·/admin/dashboard·light·1024",
+    "role": "ADMIN",
+    "route": "/admin/dashboard",
+    "theme": "light",
+    "viewport": "1024x768",
+    "words": 164,
+    "scrollHeight": 1744,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "لوحة المسجل العام",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة الأساتذة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الكلّيّات والأقسام",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المقرّرات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة الطلاب",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "التحوّل الرقميّ",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "التقارير",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إعدادات المنصّة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إعدادات الحساب",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المجتمع الجامعي",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 15,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "ADMIN·/admin/dashboard·light·768",
+    "role": "ADMIN",
+    "route": "/admin/dashboard",
+    "theme": "light",
+    "viewport": "768x900",
+    "words": 166,
+    "scrollHeight": 1868,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "سجلّ الطلاب",
+        "w": 113,
+        "h": 32
+      }
+    ],
+    "smallTargetCount": 1,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "ADMIN·/admin/dashboard·light·390",
+    "role": "ADMIN",
+    "route": "/admin/dashboard",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 166,
+    "scrollHeight": 2132,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 5,
+    "overlaps": [
+      {
+        "el": "stat-cell stat-cell-link",
+        "text": "هيئة التدريس137عضو",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 6371
+          }
+        ]
+      },
+      {
+        "el": "stat-cell stat-cell-link",
+        "text": "المقرّرات3425231 تسجيلاً",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 27262
+          }
+        ]
+      },
+      {
+        "el": "stat-label",
+        "text": "المقرّرات",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 9166
+          }
+        ]
+      },
+      {
+        "el": "stat-value",
+        "text": "342",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 9166
+          }
+        ]
+      },
+      {
+        "el": "stat-trend flat",
+        "text": "5231 تسجيلاً",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 6344
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "ADMIN·/admin/dashboard·dark·1440",
+    "role": "ADMIN",
+    "route": "/admin/dashboard",
+    "theme": "dark",
+    "viewport": "1440x900",
+    "words": 165,
+    "scrollHeight": 1428,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "لوحة المسجل العام",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة الأساتذة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الكلّيّات والأقسام",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المقرّرات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة الطلاب",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "التحوّل الرقميّ",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "التقارير",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إعدادات المنصّة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إعدادات الحساب",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المجتمع الجامعي",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 15,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "ADMIN·/admin/dashboard·dark·1024",
+    "role": "ADMIN",
+    "route": "/admin/dashboard",
+    "theme": "dark",
+    "viewport": "1024x768",
+    "words": 164,
+    "scrollHeight": 1744,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "لوحة المسجل العام",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة الأساتذة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الكلّيّات والأقسام",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المقرّرات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة الطلاب",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "التحوّل الرقميّ",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "التقارير",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إعدادات المنصّة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إعدادات الحساب",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المجتمع الجامعي",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 15,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "ADMIN·/admin/dashboard·dark·768",
+    "role": "ADMIN",
+    "route": "/admin/dashboard",
+    "theme": "dark",
+    "viewport": "768x900",
+    "words": 166,
+    "scrollHeight": 1868,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "سجلّ الطلاب",
+        "w": 113,
+        "h": 32
+      }
+    ],
+    "smallTargetCount": 1,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "ADMIN·/admin/dashboard·dark·390",
+    "role": "ADMIN",
+    "route": "/admin/dashboard",
+    "theme": "dark",
+    "viewport": "390x844",
+    "words": 166,
+    "scrollHeight": 2132,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 5,
+    "overlaps": [
+      {
+        "el": "stat-cell stat-cell-link",
+        "text": "هيئة التدريس137عضو",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 6371
+          }
+        ]
+      },
+      {
+        "el": "stat-cell stat-cell-link",
+        "text": "المقرّرات3425231 تسجيلاً",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 27262
+          }
+        ]
+      },
+      {
+        "el": "stat-label",
+        "text": "المقرّرات",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 9166
+          }
+        ]
+      },
+      {
+        "el": "stat-value",
+        "text": "342",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 9166
+          }
+        ]
+      },
+      {
+        "el": "stat-trend flat",
+        "text": "5231 تسجيلاً",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 6344
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "QUALITY·/quality/dashboard·light·1440",
+    "role": "QUALITY",
+    "route": "/quality/dashboard",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 203,
+    "scrollHeight": 1945,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "لوحة الجودة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "جودة المقرّرات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "تقييم الأساتذة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الانخراط والحضور",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مراجعة الاختبارات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مراجعة المناهج",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "تقارير الجودة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "تنبيهات الجودة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المجتمع الجامعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إعدادات الحساب",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 16,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "QUALITY·/quality/dashboard·light·1024",
+    "role": "QUALITY",
+    "route": "/quality/dashboard",
+    "theme": "light",
+    "viewport": "1024x768",
+    "words": 202,
+    "scrollHeight": 1934,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "لوحة الجودة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "جودة المقرّرات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "تقييم الأساتذة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الانخراط والحضور",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مراجعة الاختبارات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مراجعة المناهج",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "تقارير الجودة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "تنبيهات الجودة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المجتمع الجامعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إعدادات الحساب",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 16,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "QUALITY·/quality/dashboard·light·768",
+    "role": "QUALITY",
+    "route": "/quality/dashboard",
+    "theme": "light",
+    "viewport": "768x900",
+    "words": 203,
+    "scrollHeight": 2209,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "تقارير الجودة",
+        "w": 90,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "تنبيهات الجودة",
+        "w": 100,
+        "h": 32
+      }
+    ],
+    "smallTargetCount": 2,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "QUALITY·/quality/dashboard·light·390",
+    "role": "QUALITY",
+    "route": "/quality/dashboard",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 203,
+    "scrollHeight": 2579,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 1,
+    "overlaps": [
+      {
+        "el": "SPAN",
+        "text": "النشاط الأسبوعي",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 18036
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "QUALITY·/quality/dashboard·dark·1440",
+    "role": "QUALITY",
+    "route": "/quality/dashboard",
+    "theme": "dark",
+    "viewport": "1440x900",
+    "words": 203,
+    "scrollHeight": 1945,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "لوحة الجودة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "جودة المقرّرات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "تقييم الأساتذة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الانخراط والحضور",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مراجعة الاختبارات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مراجعة المناهج",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "تقارير الجودة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "تنبيهات الجودة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المجتمع الجامعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إعدادات الحساب",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 16,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "QUALITY·/quality/dashboard·dark·1024",
+    "role": "QUALITY",
+    "route": "/quality/dashboard",
+    "theme": "dark",
+    "viewport": "1024x768",
+    "words": 202,
+    "scrollHeight": 1934,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "لوحة الجودة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "جودة المقرّرات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "تقييم الأساتذة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الانخراط والحضور",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مراجعة الاختبارات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مراجعة المناهج",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "تقارير الجودة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "تنبيهات الجودة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المجتمع الجامعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إعدادات الحساب",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 16,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "QUALITY·/quality/dashboard·dark·768",
+    "role": "QUALITY",
+    "route": "/quality/dashboard",
+    "theme": "dark",
+    "viewport": "768x900",
+    "words": 203,
+    "scrollHeight": 2209,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "تقارير الجودة",
+        "w": 90,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "تنبيهات الجودة",
+        "w": 100,
+        "h": 32
+      }
+    ],
+    "smallTargetCount": 2,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "QUALITY·/quality/dashboard·dark·390",
+    "role": "QUALITY",
+    "route": "/quality/dashboard",
+    "theme": "dark",
+    "viewport": "390x844",
+    "words": 203,
+    "scrollHeight": 2579,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 1,
+    "overlaps": [
+      {
+        "el": "SPAN",
+        "text": "النشاط الأسبوعي",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 18036
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/dashboard·light·1440",
+    "role": "OWNER",
+    "route": "/owner/dashboard",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 216,
+    "scrollHeight": 1822,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "التنبيهات التشغيلية",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 21,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/dashboard·light·1024",
+    "role": "OWNER",
+    "route": "/owner/dashboard",
+    "theme": "light",
+    "viewport": "1024x768",
+    "words": 215,
+    "scrollHeight": 2249,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "التنبيهات التشغيلية",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 21,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/dashboard·light·768",
+    "role": "OWNER",
+    "route": "/owner/dashboard",
+    "theme": "light",
+    "viewport": "768x900",
+    "words": 217,
+    "scrollHeight": 2277,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "المراقبة الحيّة",
+        "w": 116,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "التنبيهات",
+        "w": 91,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "تنبيهات تشغيليّة مفتوحة",
+        "w": 646,
+        "h": 18
+      },
+      {
+        "tag": "a",
+        "name": "أساتذة بلا حصص تدريس هذا الفصل",
+        "w": 646,
+        "h": 18
+      }
+    ],
+    "smallTargetCount": 4,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/dashboard·light·390",
+    "role": "OWNER",
+    "route": "/owner/dashboard",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 217,
+    "scrollHeight": 2632,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "تنبيهات تشغيليّة مفتوحة",
+        "w": 268,
+        "h": 19
+      },
+      {
+        "tag": "a",
+        "name": "أساتذة بلا حصص تدريس هذا الفصل",
+        "w": 268,
+        "h": 19
+      }
+    ],
+    "smallTargetCount": 2,
+    "overlapCount": 2,
+    "overlaps": [
+      {
+        "el": "SPAN",
+        "text": "[01]توزيع المستخدمين",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 3692
+          }
+        ]
+      },
+      {
+        "el": "w11-idx",
+        "text": "[01]",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 448
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/dashboard·dark·1440",
+    "role": "OWNER",
+    "route": "/owner/dashboard",
+    "theme": "dark",
+    "viewport": "1440x900",
+    "words": 216,
+    "scrollHeight": 1822,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "التنبيهات التشغيلية",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 21,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/dashboard·dark·1024",
+    "role": "OWNER",
+    "route": "/owner/dashboard",
+    "theme": "dark",
+    "viewport": "1024x768",
+    "words": 215,
+    "scrollHeight": 2249,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "التنبيهات التشغيلية",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 21,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/dashboard·dark·768",
+    "role": "OWNER",
+    "route": "/owner/dashboard",
+    "theme": "dark",
+    "viewport": "768x900",
+    "words": 217,
+    "scrollHeight": 2277,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "المراقبة الحيّة",
+        "w": 116,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "التنبيهات",
+        "w": 91,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "تنبيهات تشغيليّة مفتوحة",
+        "w": 646,
+        "h": 18
+      },
+      {
+        "tag": "a",
+        "name": "أساتذة بلا حصص تدريس هذا الفصل",
+        "w": 646,
+        "h": 18
+      }
+    ],
+    "smallTargetCount": 4,
+    "overlapCount": 0,
+    "overlaps": [],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/dashboard·dark·390",
+    "role": "OWNER",
+    "route": "/owner/dashboard",
+    "theme": "dark",
+    "viewport": "390x844",
+    "words": 217,
+    "scrollHeight": 2632,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "تنبيهات تشغيليّة مفتوحة",
+        "w": 268,
+        "h": 19
+      },
+      {
+        "tag": "a",
+        "name": "أساتذة بلا حصص تدريس هذا الفصل",
+        "w": 268,
+        "h": 19
+      }
+    ],
+    "smallTargetCount": 2,
+    "overlapCount": 2,
+    "overlaps": [
+      {
+        "el": "SPAN",
+        "text": "[01]توزيع المستخدمين",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 3692
+          }
+        ]
+      },
+      {
+        "el": "w11-idx",
+        "text": "[01]",
+        "by": [
+          {
+            "fixed": "bottom-nav",
+            "area": 448
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  }
+]

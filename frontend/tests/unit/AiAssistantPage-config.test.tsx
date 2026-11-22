@@ -87,21 +87,21 @@ describe('AiAssistantPage — the honest-surface config (P4)', () => {
     mocks.config = { data: { provider: 'local', model: null }, isPending: false, isError: false };
     renderPage();
 
-    expect(screen.getByText(/أحلّل بيانات إتقانك محليّاً/)).toBeInTheDocument();
+    expect(screen.getByText(/أحلّل إتقانك محليًّا/)).toBeInTheDocument();
     expect(
-      screen.getByText('يحلّل بيانات إتقانك محليّاً ويقترح خطوة مذاكرة تالية — مساعد تحليليّ محليّ، لا نموذج لغويّ خارجيّ.'),
+      screen.getByText('مساعد تحليليّ محليّ بلا نموذج خارجيّ.'),
     ).toBeInTheDocument();
     // The badge stays generic — no model name to claim.
     expect(screen.getByText('AI')).toBeInTheDocument();
-    expect(screen.queryByText(/نموذج لغويّ حقيقيّ/)).toBeNull();
+    expect(screen.queryByText(/نموذج لغويّ يرى إتقانك/)).toBeNull();
   });
 
   it('openai mode: the LLM greeting + LLM subtitle, and the badge names the real model', () => {
     mocks.config = { data: { provider: 'openai', model: 'test-model-name' }, isPending: false, isError: false };
     renderPage();
 
-    expect(screen.getByText(/المدعوم بنموذج لغويّ حقيقيّ/)).toBeInTheDocument();
-    expect(screen.getByText(/مساعدك الدراسيّ مدعوم بنموذج لغويّ حقيقيّ يرى بيانات إتقانك/)).toBeInTheDocument();
+    expect(screen.getByText(/نموذج لغويّ يرى إتقانك/)).toBeInTheDocument();
+    expect(screen.getByText(/أرى إتقانك ومقرّراتك/)).toBeInTheDocument();
     expect(screen.getByText('test-model-name')).toBeInTheDocument();
     expect(screen.queryByText('AI')).toBeNull();
   });
@@ -109,27 +109,27 @@ describe('AiAssistantPage — the honest-surface config (P4)', () => {
   it('unknown (pending) renders the LOCAL copy — never claims an LLM it cannot verify', () => {
     mocks.config = { data: undefined, isPending: true, isError: false };
     renderPage();
-    expect(screen.getByText(/أحلّل بيانات إتقانك محليّاً/)).toBeInTheDocument();
-    expect(screen.queryByText(/نموذج لغويّ حقيقيّ/)).toBeNull();
+    expect(screen.getByText(/أحلّل إتقانك محليًّا/)).toBeInTheDocument();
+    expect(screen.queryByText(/نموذج لغويّ يرى إتقانك/)).toBeNull();
   });
 
   it('config error also renders the LOCAL copy (honest default)', () => {
     mocks.config = { data: undefined, isPending: false, isError: true };
     renderPage();
-    expect(screen.getByText(/أحلّل بيانات إتقانك محليّاً/)).toBeInTheDocument();
+    expect(screen.getByText(/أحلّل إتقانك محليًّا/)).toBeInTheDocument();
   });
 
   it('the greeting DERIVES with the config — no flash, no state surgery (flips after resolve)', async () => {
     // Start pending, then resolve to openai AFTER mount.
     mocks.config = { data: undefined, isPending: true, isError: false };
     renderPage();
-    expect(screen.getByText(/أحلّل بيانات إتقانك محليّاً/)).toBeInTheDocument();
+    expect(screen.getByText(/أحلّل إتقانك محليًّا/)).toBeInTheDocument();
 
     // The derived transcript flips the greeting the moment the config lands
     // — but only while the user hasn't sent anything.
     mocks.config = { data: { provider: 'openai', model: 'm1' }, isPending: false, isError: false };
     renderPage();
-    expect(screen.getByText(/المدعوم بنموذج لغويّ حقيقيّ/)).toBeInTheDocument();
+    expect(screen.getByText(/نموذج لغويّ يرى إتقانك/)).toBeInTheDocument();
   });
 
   it('once the user sends a message, the transcript is state-owned — a config flip cannot rewrite history', async () => {
@@ -148,29 +148,30 @@ describe('AiAssistantPage — the honest-surface config (P4)', () => {
     // The user turn + the reply are in the log; the greeting stays the
     // local one it rendered with (no retroactive rewrite).
     expect(screen.getByText('سؤالي')).toBeInTheDocument();
-    expect(screen.getByText(/أحلّل بيانات إتقانك محليّاً/)).toBeInTheDocument();
+    expect(screen.getByText(/أحلّل إتقانك محليًّا/)).toBeInTheDocument();
   });
 
   it('a non-student gets the non-student greeting in BOTH modes (no mastery data either way)', () => {
     useAuthStore.setState({ user: { ...STUDENT, role: 'TEACHER' as const } });
     mocks.config = { data: { provider: 'openai', model: 'm' }, isPending: false, isError: false };
     renderPage();
-    expect(screen.getByText(/مساعدك المدعوم بنموذج لغويّ حقيقيّ/)).toBeInTheDocument();
+    expect(screen.getByText(/أساعدك في التدريس والتقييم/)).toBeInTheDocument();
     expect(screen.queryByText(/أرى بيانات إتقانك/)).toBeNull();
   });
 
-  it('r164g context honesty: the «واعٍ بمستوى إتقانك» chip rides the STUDENT contract only', () => {
+  it('r164g context honesty (r351 AI-3): the mastery awareness rides the STUDENT copy only', () => {
     // Students: mastery context IS composed into the prompt (r160) —
-    // the awareness is real, so the chip states it.
+    // the awareness is real, so the greeting states it.
     mocks.config = { data: { provider: 'local', model: null }, isPending: false, isError: false };
     renderPage();
-    expect(screen.getByText('واعٍ بمستوى إتقانك')).toBeInTheDocument();
+    expect(screen.getByText(/أحلّل إتقانك محليًّا/)).toBeInTheDocument();
 
     cleanup();
     // Teachers/other roles: no mastery rows exist, the generic prompt
-    // carries none — no chip (inventing awareness would be a lie).
+    // carries none — the greeting claims none (inventing awareness
+    // would be a lie).
     useAuthStore.setState({ user: { ...STUDENT, role: 'TEACHER' as const } });
     renderPage();
-    expect(screen.queryByText('واعٍ بمستوى إتقانك')).toBeNull();
+    expect(screen.queryByText(/أحلّل إتقانك/)).toBeNull();
   });
 });

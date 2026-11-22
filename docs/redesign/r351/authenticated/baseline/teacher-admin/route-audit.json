@@ -1,0 +1,6849 @@
+{
+  "generatedAt": "2026-11-21T17:01:02.436Z",
+  "base": "http://localhost:5302",
+  "matrix": "full",
+  "visitedCells": 156,
+  "hardFailures": 0,
+  "wordiest": [
+    {
+      "role": "TEACHER",
+      "route": "/teacher/dashboard",
+      "words": 277,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "TEACHER",
+      "route": "/vision",
+      "words": 251,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "ADMIN",
+      "route": "/vision",
+      "words": 250,
+      "viewport": "768x900"
+    },
+    {
+      "role": "TEACHER",
+      "route": "/settings",
+      "words": 243,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "ADMIN",
+      "route": "/settings",
+      "words": 243,
+      "viewport": "768x900"
+    },
+    {
+      "role": "ADMIN",
+      "route": "/admin/reports",
+      "words": 191,
+      "viewport": "768x900"
+    },
+    {
+      "role": "TEACHER",
+      "route": "/teacher/research",
+      "words": 180,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "TEACHER",
+      "route": "/teacher/ai",
+      "words": 175,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "TEACHER",
+      "route": "/teacher/grades",
+      "words": 173,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "ADMIN",
+      "route": "/admin/dashboard",
+      "words": 171,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "TEACHER",
+      "route": "/colleges",
+      "words": 170,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "TEACHER",
+      "route": "/teacher/exams/tpl_e2e_quiz4",
+      "words": 170,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "ADMIN",
+      "route": "/colleges",
+      "words": 169,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "TEACHER",
+      "route": "/teacher/profile",
+      "words": 165,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "TEACHER",
+      "route": "/teacher/intelligence/offr_e2e_algorithms",
+      "words": 145,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "TEACHER",
+      "route": "/teacher/students",
+      "words": 137,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "ADMIN",
+      "route": "/admin/settings",
+      "words": 125,
+      "viewport": "768x900"
+    },
+    {
+      "role": "TEACHER",
+      "route": "/teacher/intelligence",
+      "words": 121,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "TEACHER",
+      "route": "/teacher/labs",
+      "words": 120,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "TEACHER",
+      "route": "/teacher/attendance",
+      "words": 109,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "TEACHER",
+      "route": "/teacher/live",
+      "words": 107,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "ADMIN",
+      "route": "/admin/digital",
+      "words": 107,
+      "viewport": "768x900"
+    },
+    {
+      "role": "TEACHER",
+      "route": "/teacher/library",
+      "words": 103,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "TEACHER",
+      "route": "/teacher/materials",
+      "words": 101,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "TEACHER",
+      "route": "/teacher/community",
+      "words": 101,
+      "viewport": "1440x900"
+    }
+  ],
+  "defects": {
+    "overflows": [],
+    "smallTargets": [
+      {
+        "cell": "TEACHER·/teacher/dashboard·light·1440",
+        "count": 25,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/dashboard·light·1024",
+        "count": 20,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/dashboard·light·768",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "ابدأ التصحيح",
+            "w": 113,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "الجدول الأسبوعيّ",
+            "w": 135,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "القائمة الكاملة",
+            "w": 121,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/intelligence·light·1440",
+        "count": 23,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/intelligence·light·1024",
+        "count": 19,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/intelligence·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "تواصل مع الطلاب",
+            "w": 136,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/performance·light·1440",
+        "count": 23,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/performance·light·1024",
+        "count": 19,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/performance·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "ذكاء المقرّر",
+            "w": 79,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/schedule·light·1440",
+        "count": 23,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/schedule·light·1024",
+        "count": 19,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/schedule·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "تسجيل حضور اليوم",
+            "w": 125,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/attendance·light·1440",
+        "count": 23,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/attendance·light·1024",
+        "count": 19,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/attendance·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "حفظ السجلّ",
+            "w": 106,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/students·light·1440",
+        "count": 29,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/students·light·1024",
+        "count": 23,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/students·light·768",
+        "count": 5,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "تحليل المخاطرة",
+            "w": 106,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "أحمد الزاوي",
+            "w": 61,
+            "h": 19
+          },
+          {
+            "tag": "a",
+            "name": "مروة البراني",
+            "w": 54,
+            "h": 19
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/students·light·390",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "أحمد الزاوي",
+            "w": 61,
+            "h": 19
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/materials·light·1440",
+        "count": 25,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/materials·light·1024",
+        "count": 21,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/materials·light·768",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "إضافة مادة",
+            "w": 122,
+            "h": 40
+          },
+          {
+            "tag": "a",
+            "name": "محاضرة الجشع — الشرائح.pptx",
+            "w": 511,
+            "h": 21
+          },
+          {
+            "tag": "a",
+            "name": "ورقة تمارين ٤.pdf",
+            "w": 511,
+            "h": 21
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/materials·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "محاضرة الجشع — الشرائح.pptx",
+            "w": 149,
+            "h": 43
+          },
+          {
+            "tag": "a",
+            "name": "ورقة تمارين ٤.pdf",
+            "w": 149,
+            "h": 21
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/grades·light·1440",
+        "count": 25,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/grades·light·1024",
+        "count": 21,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/grades·light·768",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "إدخال الدرجات",
+            "w": 102,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "شاهد الذكاء الأكاديميّ",
+            "w": 651,
+            "h": 40
+          },
+          {
+            "tag": "button",
+            "name": "حفظ الدرجات",
+            "w": 112,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/grades·light·390",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "شاهد الذكاء الأكاديميّ",
+            "w": 106,
+            "h": 19
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/assignments·light·1440",
+        "count": 25,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/assignments·light·1024",
+        "count": 21,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/assignments·light·768",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "واجب جديد",
+            "w": 127,
+            "h": 40
+          },
+          {
+            "tag": "button",
+            "name": "تصحيح",
+            "w": 86,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "تصحيح",
+            "w": 86,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/exams·light·1440",
+        "count": 23,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/exams·light·1024",
+        "count": 19,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/exams·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "العودة للوحة التحكم",
+            "w": 141,
+            "h": 30
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/exams·light·390",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "العودة للوحة التحكم",
+            "w": 147,
+            "h": 44
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/research·light·1440",
+        "count": 22,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/research·light·1024",
+        "count": 18,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/research·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "مراجعة أقدم بحث",
+            "w": 156,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/live·light·1440",
+        "count": 25,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/live·light·1024",
+        "count": 21,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/live·light·768",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "جلسة جديدة",
+            "w": 133,
+            "h": 40
+          },
+          {
+            "tag": "a",
+            "name": "رابط الانضمام",
+            "w": 64,
+            "h": 20
+          },
+          {
+            "tag": "button",
+            "name": "إنهاء",
+            "w": 69,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/labs·light·1440",
+        "count": 25,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/labs·light·1024",
+        "count": 20,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/labs·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "معاينة كطالب",
+            "w": 116,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "معاينة كطالب",
+            "w": 135,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/library·light·1440",
+        "count": 27,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/library·light·1024",
+        "count": 22,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/library·light·768",
+        "count": 4,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "بحوثي العلمية",
+            "w": 115,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "مركز التحميلات",
+            "w": 121,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "إرجاع البرمجة بلغة C",
+            "w": 74,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/ai·light·1440",
+        "count": 29,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/ai·light·1024",
+        "count": 24,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/ai·light·768",
+        "count": 4,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "المصفوفة التعليمية",
+            "w": 146,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "المكتبة الإلكترونية",
+            "w": 135,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "اشرح مفهوماً",
+            "w": 70,
+            "h": 24
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/profile·light·1440",
+        "count": 23,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/profile·light·1024",
+        "count": 19,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/profile·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "تعديل البيانات الشخصية",
+            "w": 189,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/messages·light·1440",
+        "count": 25,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/messages·light·1024",
+        "count": 21,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/messages·light·768",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "رسالة جديدة",
+            "w": 131,
+            "h": 40
+          },
+          {
+            "tag": "button",
+            "name": "تعليم الكل كمقروء",
+            "w": 137,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "ردّ على رسالة أحمد الزاوي",
+            "w": 57,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/alerts·light·1440",
+        "count": 25,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/alerts·light·1024",
+        "count": 21,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/alerts·light·768",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "تعليم الكل كمقروء",
+            "w": 137,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "تعليم «تم نشر درجة الواجب الثاني» كمقروء",
+            "w": 112,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "تعليم «تنبيه: اقتراب موعد اختبار نصفي» ك",
+            "w": 112,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/community·light·1440",
+        "count": 24,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/community·light·1024",
+        "count": 20,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/community·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "صفحة المسابقات الكاملة",
+            "w": 155,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "كلّيّات الجامعة",
+            "w": 97,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/community·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "عرض نص الإعلان: فتح باب التقديم لمنافسة ",
+            "w": 19,
+            "h": 44
+          },
+          {
+            "tag": "button",
+            "name": "عرض نص الإعلان: ورشة عمل: مراجعة ما قبل ",
+            "w": 36,
+            "h": 44
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/colleges·light·1440",
+        "count": 22,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/colleges·light·1024",
+        "count": 18,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/competitions·light·1440",
+        "count": 22,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/competitions·light·1024",
+        "count": 18,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/vision·light·1440",
+        "count": 22,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/vision·light·1024",
+        "count": 18,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/settings·light·1440",
+        "count": 26,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/settings·light·1024",
+        "count": 21,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/settings·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "تغيير كلمة المرور",
+            "w": 123,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/exams/tpl_e2e_quiz4·light·1440",
+        "count": 23,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/exams/tpl_e2e_quiz4·light·1024",
+        "count": 19,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/exams/tpl_e2e_quiz4·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "العودة إلى بنك الأسئلة والاختبارات",
+            "w": 740,
+            "h": 40
+          },
+          {
+            "tag": "input",
+            "name": "",
+            "w": 13,
+            "h": 13
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/intelligence/offr_e2e_algorithms·light·1440",
+        "count": 24,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/intelligence/offr_e2e_algorithms·light·1024",
+        "count": 20,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/intelligence/offr_e2e_algorithms·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "العودة إلى كل مقرّراتي",
+            "w": 740,
+            "h": 40
+          },
+          {
+            "tag": "a",
+            "name": "إدخال درجات المقرّر",
+            "w": 146,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/dashboard·dark·1440",
+        "count": 25,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الأستاذ",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "الذكاء الأكاديمي",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·light·1440",
+        "count": 16,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·light·1024",
+        "count": 16,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "سجلّ الطلاب",
+            "w": 113,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/teachers·light·1440",
+        "count": 19,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/teachers·light·1024",
+        "count": 19,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/teachers·light·768",
+        "count": 4,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "إدارة المقرّرات",
+            "w": 115,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "أحمد الزاوي",
+            "w": 71,
+            "h": 18
+          },
+          {
+            "tag": "button",
+            "name": "ليلى الفيتوري",
+            "w": 76,
+            "h": 18
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/teachers·light·390",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "أحمد الزاوي",
+            "w": 74,
+            "h": 19
+          },
+          {
+            "tag": "button",
+            "name": "ليلى الفيتوري",
+            "w": 82,
+            "h": 19
+          },
+          {
+            "tag": "button",
+            "name": "خالد المبروك",
+            "w": 82,
+            "h": 19
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/faculties·light·1440",
+        "count": 17,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/faculties·light·1024",
+        "count": 16,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/faculties·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "إضافة كلّيّة جديدة",
+            "w": 102,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "إضافة قسم",
+            "w": 107,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/colleges·light·1440",
+        "count": 15,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/colleges·light·1024",
+        "count": 15,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/courses·light·1440",
+        "count": 22,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/courses·light·1024",
+        "count": 22,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/courses·light·768",
+        "count": 7,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "إضافة مقرّر جديد",
+            "w": 103,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "فتح شعبة لمقرّر مقدمة في الخوارزميات",
+            "w": 80,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "تعديل مقدمة في الخوارزميات",
+            "w": 66,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/students·light·1440",
+        "count": 19,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/students·light·1024",
+        "count": 19,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/students·light·768",
+        "count": 4,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "استيراد طلاب من ملف",
+            "w": 160,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "الصفحة السابقة",
+            "w": 70,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "الصفحة 1",
+            "w": 32,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/students·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "بيانات وتسجيلات أحمد الزاوي",
+            "w": 20,
+            "h": 44
+          },
+          {
+            "tag": "button",
+            "name": "بيانات وتسجيلات مروة البراني",
+            "w": 20,
+            "h": 44
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/digital·light·1440",
+        "count": 16,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/digital·light·1024",
+        "count": 16,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/digital·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "التقارير المؤسسية",
+            "w": 137,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/reports·light·1440",
+        "count": 16,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/reports·light·1024",
+        "count": 16,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/reports·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "التحوّل الرقميّ",
+            "w": 119,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/alerts·light·1440",
+        "count": 18,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/alerts·light·1024",
+        "count": 18,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/alerts·light·768",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "تعليم الكل كمقروء",
+            "w": 137,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "تعليم «تم نشر درجة الواجب الثاني» كمقروء",
+            "w": 112,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "تعليم «تنبيه: اقتراب موعد اختبار نصفي» ك",
+            "w": 112,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/settings·light·1440",
+        "count": 15,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/settings·light·1024",
+        "count": 15,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/settings·light·1440",
+        "count": 19,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/settings·light·1024",
+        "count": 18,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/settings·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "تغيير كلمة المرور",
+            "w": 123,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/community·light·1440",
+        "count": 17,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/community·light·1024",
+        "count": 17,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/community·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "صفحة المسابقات الكاملة",
+            "w": 155,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "كلّيّات الجامعة",
+            "w": 97,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/community·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "عرض نص الإعلان: فتح باب التقديم لمنافسة ",
+            "w": 19,
+            "h": 44
+          },
+          {
+            "tag": "button",
+            "name": "عرض نص الإعلان: ورشة عمل: مراجعة ما قبل ",
+            "w": 36,
+            "h": 44
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/vision·light·1440",
+        "count": 15,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/vision·light·1024",
+        "count": 15,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·dark·1440",
+        "count": 16,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      }
+    ],
+    "overlaps": [
+      {
+        "cell": "TEACHER·/teacher/dashboard·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "لوحة التدريس",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1248
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/dashboard·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "لوحة التدريس",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1248
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/dashboard·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/dashboard·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/intelligence·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "لوحة التدريس",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1248
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/intelligence·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "لوحة التدريس",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1248
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/intelligence·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/intelligence·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/performance·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "لوحة التدريس",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1248
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/performance·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "لوحة التدريس",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1248
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/performance·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/performance·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/schedule·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "لوحة التدريس",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1248
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/schedule·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "لوحة التدريس",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1248
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/schedule·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/schedule·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/attendance·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "لوحة التدريس",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1248
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/attendance·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "لوحة التدريس",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1248
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/attendance·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/attendance·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/students·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "لوحة التدريس",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1248
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/students·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "لوحة التدريس",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1248
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/students·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/students·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/materials·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "لوحة التدريس",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1248
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/materials·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "لوحة التدريس",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1248
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/materials·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/materials·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/grades·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "التقييم والتصحيح",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1528
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/grades·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "التقييم والتصحيح",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1528
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/grades·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/grades·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/assignments·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "التقييم والتصحيح",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1528
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/assignments·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "التقييم والتصحيح",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1528
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/assignments·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/assignments·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/exams·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "التقييم والتصحيح",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1528
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/exams·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "التقييم والتصحيح",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1528
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/exams·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/exams·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/research·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "البحث والمحاضرة",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1559
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/research·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "البحث والمحاضرة",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1559
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/research·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/research·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/live·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "البحث والمحاضرة",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1559
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/live·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "البحث والمحاضرة",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1559
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/live·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/live·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/labs·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "البحث والمحاضرة",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1559
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/labs·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "البحث والمحاضرة",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1559
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/labs·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/labs·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/library·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "البحث والمحاضرة",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1559
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/library·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "البحث والمحاضرة",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1559
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/library·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/library·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/ai·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "البحث والمحاضرة",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1559
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/ai·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "البحث والمحاضرة",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1559
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/ai·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/ai·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/profile·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "حسابي",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 686
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/profile·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "حسابي",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 686
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/profile·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/profile·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/messages·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "حسابي",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 686
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/messages·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "حسابي",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 686
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/messages·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/messages·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/alerts·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "حسابي",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 686
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/alerts·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "حسابي",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 686
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/alerts·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/alerts·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/community·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "حسابي",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 686
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/community·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "حسابي",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 686
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/community·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/community·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/colleges·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "حسابي",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 686
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/colleges·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "حسابي",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 686
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/colleges·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/colleges·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/competitions·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "حسابي",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 686
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/competitions·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "حسابي",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 686
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/competitions·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/competitions·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/vision·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "حسابي",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 686
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/vision·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "حسابي",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 686
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/vision·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/vision·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/settings·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "حسابي",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 686
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/settings·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "حسابي",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 686
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/settings·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/settings·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/exams/tpl_e2e_quiz4·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          },
+          {
+            "el": "BDI",
+            "text": "Ctrl+K",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1029
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/exams/tpl_e2e_quiz4·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          },
+          {
+            "el": "BDI",
+            "text": "Ctrl+K",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1029
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/exams/tpl_e2e_quiz4·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/exams/tpl_e2e_quiz4·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/intelligence/offr_e2e_algorithms·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          },
+          {
+            "el": "BDI",
+            "text": "Ctrl+K",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1029
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/intelligence/offr_e2e_algorithms·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          },
+          {
+            "el": "BDI",
+            "text": "Ctrl+K",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1029
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/intelligence/offr_e2e_algorithms·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/intelligence/offr_e2e_algorithms·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/dashboard·dark·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "لوحة التدريس",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1248
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/dashboard·dark·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المسجل العام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1279
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المسجل العام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1279
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/teachers·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المسجل العام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1279
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/teachers·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المسجل العام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1279
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/teachers·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/teachers·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/faculties·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المسجل العام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1279
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/faculties·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المسجل العام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1279
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/faculties·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/faculties·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/colleges·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المسجل العام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1279
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/colleges·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المسجل العام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1279
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/colleges·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/colleges·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/courses·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المسجل العام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1279
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/courses·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المسجل العام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1279
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/courses·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/courses·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/students·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/students·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/students·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/students·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/digital·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/digital·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/digital·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/digital·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/reports·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/reports·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/reports·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/reports·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/alerts·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/alerts·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/alerts·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/alerts·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/settings·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/settings·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/settings·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/settings·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/settings·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/settings·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/settings·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/settings·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/community·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/community·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/community·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/community·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/vision·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/vision·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/vision·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/vision·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·dark·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المسجل العام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1279
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·dark·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "runtimeErrors": [
+      {
+        "cell": "TEACHER·/teacher/ai·light·1440",
+        "count": 4,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/ai·light·1024",
+        "count": 4,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/ai·light·768",
+        "count": 4,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/ai·light·390",
+        "count": 4,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      }
+    ],
+    "notImplemented": []
+  }
+}

@@ -14,7 +14,7 @@
  *    bowl dipping to y=27. M/L/Q commands only — the retired arch's arc
  *    signature is structurally impossible in this family (logo-gate);
  *  · stems rise from the bowl to y=7, round caps and joins throughout;
- *  · ONE solid sienna square — the CORNERSTONE — seated at the top-right
+ *  · ONE solid royal square — the CORNERSTONE — seated at the top-right
  *    corner of the right stem: a 4×4 cell at x=21..25, y=3..7, flush
  *    with the stem's round cap — the letter grows out of the stone. The
  *    cornerstone is the person at the opening of the vessel — the
@@ -26,11 +26,13 @@
  *    the vessel is one continuous stroke), no fills except the
  *    cornerstone, no gradients, no shadows.
  *
- * COLOURS (the only three): paper #F5F1E8 · ink #262019 · sienna #C43E16.
- * In the app the ink rides currentColor and the sienna rides var(--accent)
- * (tokens.css re-keys that shared seat per theme: #C43E16 on light, the
- * luminous ember #FF6B3D on dark — the sanctioned dark-theme swap, one
- * var() and the mark themes without props).
+ * COLOURS (the only three): paper #F5F1E8 · ink #1A1713 · royal #2540D9.
+ * In the app the ink rides currentColor and the royal rides var(--accent)
+ * (tokens.css re-keys that shared seat per theme: #2540D9 on light, the
+ * luminous royal #8AA0FF on dark — the sanctioned dark-theme swap, one
+ * var() and the mark themes without props). The 2026 «Parchment &
+ * Royal» takeover re-valued the trio (ink #262019 → #1A1713 · sienna
+ * #C43E16 → royal #2540D9); #262019 survives only as the dark surface.
  */
 
 /** The mark's own viewBox (the 32-unit grid). */
@@ -40,7 +42,7 @@ export const MARK_VIEWBOX = '0 0 32 32';
  * through the bottom, right stem up — round caps and joins everywhere. */
 export const MARK_VESSEL_PATH = 'M9 7L9 19Q9 27 16 27Q23 27 23 19L23 7';
 
-/** The sienna cornerstone: 4×4 square flush with the right stem's top. */
+/** The royal cornerstone: 4×4 square flush with the right stem's top. */
 export const MARK_CORNERSTONE = { x: 21, y: 3, size: 4 } as const;
 
 /** The mark's construction ink bbox inside the 32 viewBox (x9..25, y3..27). */

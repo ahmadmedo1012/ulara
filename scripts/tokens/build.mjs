@@ -238,6 +238,7 @@ function buildTs() {
       textFaint: m('textFaint'),
       accent: m('accent'),
       accentHover: m('accentHover'),
+      accentHoverFg: m('accentHoverFg'),
       accentInk: m('accentInk'),
       accentSoft: m('accentSoft'),
       accentStrong: m('accentStrong'),
@@ -248,6 +249,7 @@ function buildTs() {
       rule: m('rule'),
       gold: m('gold'),
       goldInk: m('goldInk'),
+      dangerFg: m('dangerFg'),
       onSurface: m('text'),
       onSurfaceMuted: m('textMuted'),
     };

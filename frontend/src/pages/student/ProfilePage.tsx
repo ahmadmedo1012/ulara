@@ -293,7 +293,7 @@ export default function ProfilePage() {
               whichever facet is open reads as the sheet's numbered
               section; the account-level password block below closes the
               sheet as [04]. */}
-          <SectionBar index="01" title="المعلومات الأكاديمية" />
+          <SectionBar title="المعلومات الأكاديمية" />
         <Card>
           <div className="grid-2">
             <ProfileField label="الاسم الكامل" value={`${user.firstName} ${user.lastName}`} icon={User} />
@@ -358,7 +358,6 @@ export default function ProfilePage() {
               the old Card subtitle survives verbatim as the under-bar
               note. */}
           <SectionBar
-            index="02"
             title="الحسابات الأكاديمية"
             meta={(
               <span className="r319s-bar-meta">
@@ -470,7 +469,6 @@ export default function ProfilePage() {
               register — the honest resolved count as mono meta (pending /
               error show no count — never a fabricated zero). */}
           <SectionBar
-            index="03"
             title="الإنجازات الأخيرة"
             meta={
               !achievements.isPending && !achievements.isError && (achievements.data?.length ?? 0) > 0 ? (
@@ -532,7 +530,7 @@ export default function ProfilePage() {
           profile's academic facets). R319 (c3-S2): the block's heading
           joins the §B2 title-bar register as the sheet's closing [04]. */}
       <section aria-label="تغيير كلمة المرور">
-        <SectionBar index="04" title="تغيير كلمة المرور" />
+        <SectionBar title="تغيير كلمة المرور" />
         <p className="r319sp-sec-note">عند التغيير تُنهى جلساتك على بقية الأجهزة، وتبقى جلستك الحالية مفتوحة.</p>
         <ChangePasswordCard />
       </section>

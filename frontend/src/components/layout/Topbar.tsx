@@ -1,29 +1,29 @@
-import type { ReactNode } from 'react';
 import { useMemo, useState, useRef } from 'react';
-import { Menu, Sparkles, LogOut, User as UserIcon, Sun, Moon, Search, Building2 } from 'lucide-react';
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { Menu, MessageSquarePlus, LogOut, User as UserIcon, Sun, Moon, Search, Building2 } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Icon } from '../Icon';
 import { UserAvatar } from '../primitives';
 import { GlobalSearch } from './GlobalSearch';
 import { NotificationDropdown } from './NotificationDropdown';
 import { Dropdown, DropdownItem, DropdownSeparator } from '../overlays';
 import { useUiStore } from '../../stores/ui.store';
-import { useIsNarrowLayout } from '../../hooks/useIsNarrowLayout';
 import { useAuthStore, type MembershipInfo, type AppRole } from '../../stores/auth.store';
 import { useThemeStore, resolveTheme } from '../../stores/theme.store';
 import { useLogout, useMe, useSelectInstitution } from '../../hooks/useAuth';
 import { useMyProfile, apiErrorMessage } from '../../hooks/useResources';
-import { NAV_BY_ROLE, ROLE_LABELS } from '../../lib/nav';
+import { NAV_BY_ROLE, ROLE_LABELS, displayRoleLabel } from '../../lib/nav';
 // R320 §B: role display names come from the one source of truth
 // (lib/roleLabels.ts, shared with the backend twin).
 import { roleLabel } from '../../lib/roleLabels';
 import { toast } from '../../lib/toast';
+// r351 A2 (Q1f): the feedback sheet opens from the user menu — the
+// floating FAB is retired.
+import { openFeedback } from '../feedback/feedbackSeat';
 
 interface TopbarProps {
-  rightSlot?: ReactNode;
   scrolled?: boolean;
   /** Opens the ⌘K command palette — the mobile-band search surface
-   *  (4-A2 P1-3): the search pill is display:none ≤920px, so the
+   *  (4-A2 P1-3): the search pill is display:none ≤1200px, so the
    *  topbar's search icon button and the "/" chord both route here. */
   onOpenCommandPalette?: () => void;
 }
@@ -188,7 +188,7 @@ function InstitutionChip() {
   );
 }
 
-export function Topbar({ rightSlot, scrolled = false, onOpenCommandPalette }: TopbarProps) {
+export function Topbar({ scrolled = false, onOpenCommandPalette }: TopbarProps) {
   const toggle = useUiStore((s) => s.toggleSidebar);
   // 15-g P2-7: the burger must REFLECT the drawer state — an
   // always-«فتح» label hid the open/closed state from screen readers.
@@ -217,39 +217,24 @@ export function Topbar({ rightSlot, scrolled = false, onOpenCommandPalette }: To
   const [menuOpen, setMenuOpen] = useState(false);
   const userMenuTriggerRef = useRef<HTMLButtonElement>(null);
 
-  // Role-aware quick actions — OWNER previously fell through to the STUDENT
-  // paths, which are blocked by ProtectedRoute for that role.
-  const aiPath =
-    role === 'TEACHER' ? '/teacher/ai' :
-    role === 'OWNER'   ? '/owner/ai'   :
-    '/student/ai';
-  /* r165d (D2): QUALITY/OWNER now point at their PERSONAL notifications
+  /* r351 A2 (Q1a — the ≤4-control topbar): the visible control set is
+   * search · bell · user (the ONE identity element; theme + feedback
+   * + logout + profile live inside its menu — the r350 «rail + topbar
+   * = two identities / two toggles» defect class dies here). The AI
+   * quick-action left the topbar: the sidebar badge, the bottom-nav
+   * slot and the ⌘K palette all reach it, and the freed seat keeps
+   * the topbar under budget at every width. */
+
+  /* r165d (D2): QUALITY/OWNER point at their PERSONAL notifications
    * inbox (/quality/notifications · /owner/notifications — the shared
    * AlertsPage mounted inside their role shells) instead of the
-   * operational boards. The bell shows the user's own Notification rows
-   * (GET /notifications); clicking one — or «عرض جميع الإشعارات» — used
-   * to land on /quality/alerts (the derived-signal board) or
-   * /owner/alerts (the operational board): a DIFFERENT dataset where the
-   * clicked notification never appears. The boards themselves are
-   * untouched — the sidebar keeps linking them. */
+   * operational boards; the boards keep their sidebar homes. */
   const alertsPath =
     role === 'TEACHER' ? '/teacher/alerts' :
     role === 'ADMIN'   ? '/admin/alerts'   :
     role === 'QUALITY' ? '/quality/notifications' :
     role === 'OWNER'   ? '/owner/notifications'   :
     '/student/alerts';
-  const onAiPage = location.pathname.endsWith('/ai');
-  const showAiButton = role !== 'ADMIN' && role !== 'QUALITY' && !onAiPage;
-  /* r341/D6: the «اسأل AI» quick action is a DESKTOP-band control —
-     CSS has hidden it ≤920px since 4-A10 (freed ~47px for the title;
-     the destination stays reachable via the bottom-nav «المساعد»,
-     the sidebar and the ⌘K palette). The hidden link used to stay in
-     the DOM, which made it the first `a[class*='primary']` match for
-     conformance probes AND assistive tech's link lists — a control
-     that renders nowhere should not exist in the tree. Render it
-     only in the band where it is visible (>920px, the same query
-     Sidebar's drawer band and the CSS hide use). */
-  const desktopBand = !useIsNarrowLayout(920);
 
   // Close menu on outside click is handled by the Dropdown primitive
   // (click-outside + Esc + focus return + arrow-key navigation).
@@ -289,14 +274,18 @@ export function Topbar({ rightSlot, scrolled = false, onOpenCommandPalette }: To
       <div className="topbar-title" tabIndex={-1}>
         {navGroupKicker && <span className="topbar-kicker">{navGroupKicker}</span>}
         {role === 'STUDENT' && <StudentScopeChip />}
+        {/* r351 A2 (Q1a): the institution chip moved from the actions
+            cluster into the title block — it is context, not a control;
+            the multi-membership switcher keeps its one-tap reach here
+            and the actions budget stays ≤4 at every width. */}
+        <InstitutionChip />
         {scopeFacultyName && (
           <span
             className="topbar-scope"
             title={`${role === 'ADMIN' ? 'نطاق المسجل العام' : 'نطاق أخصائي الجودة'}: ${scopeFacultyName}`}
           >
             {/* R320 §B: the scoped ADMIN keeps the role's canonical name
-                («المسجل العام») with the faculty as the scope — was
-                «إداري كلّيّة». QUALITY's established wording unchanged. */}
+                («المسجل العام») with the faculty as the scope. */}
             {role === 'QUALITY' ? 'أخصائي جودة كلّيّة' : roleLabel('ADMIN')} · {scopeFacultyName}
           </span>
         )}
@@ -306,10 +295,10 @@ export function Topbar({ rightSlot, scrolled = false, onOpenCommandPalette }: To
 
       <div className="topbar-actions">
         {/* Mobile-band search entry point (4-A2 P1-3): the pill is
-            display:none ≤920px, so phones had ZERO search access. The
+            display:none ≤1200px (r351 A2: the band moved from 920px —
+            the pill + six controls did not fit 1024 tablets), so the
             button opens the command palette — the same surface ⌘K
-            opens — which carries the full combobox search + quick
-            nav actions. Hidden ≥921px where the pill lives. */}
+            opens. Hidden >1200px where the pill lives. */}
         {onOpenCommandPalette && (
           <button
             type="button"
@@ -327,30 +316,12 @@ export function Topbar({ rightSlot, scrolled = false, onOpenCommandPalette }: To
             <Icon icon={Search} size={18} />
           </button>
         )}
-        {rightSlot ?? (showAiButton && desktopBand && (
-          <NavLink to={aiPath} className="btn primary sm" title="اسأل الذكاء الاصطناعي">
-            <Icon icon={Sparkles} size={13} />
-            <span className="hide-on-mobile">اسأل AI</span>
-          </NavLink>
-        ))}
-        <InstitutionChip />
-        {/* R325 P2.3 — the top bar's THEME TOGGLE (§R325.a chrome
-            inventory: search · notifications · theme · profile). Compact
-            chrome control flipping the RESOLVED theme light↔dark — the
-            exact contract of the user-menu theme item; the 3-way
-            Light/Dark/System segmented control stays the sidebar
-            footer's (System has no one-icon voice here). 44px target
-            floor + the chrome control recipe ride r325-shell.css. */}
-        <button
-          type="button"
-          className="topbar-theme"
-          onClick={() => setThemeMode(resolved === 'dark' ? 'light' : 'dark')}
-          aria-label={resolved === 'dark' ? 'الوضع الفاتح' : 'الوضع الداكن'}
-          aria-pressed={resolved === 'dark'}
-          title={resolved === 'dark' ? 'الوضع الفاتح' : 'الوضع الداكن'}
-        >
-          <Icon icon={resolved === 'dark' ? Sun : Moon} size={16} />
-        </button>
+        {/* r351 A2 (Q1a): the AI quick-action + the standalone theme
+            toggle are retired from the actions cluster — the sidebar
+            badge / bottom-nav / ⌘K palette reach AI, and the theme
+            flip lives in the user menu (the r350 «two toggles on one
+            screen» defect dies). Actions budget: search · bell ·
+            user (+ the burger on mobile). */}
         <NotificationDropdown alertsPath={alertsPath} />
 
         {user && (
@@ -389,6 +360,15 @@ export function Topbar({ rightSlot, scrolled = false, onOpenCommandPalette }: To
                   <div className="text-sm font-semibold" style={{ color: 'var(--text)' }}>
                     {user.firstName} {user.lastName}
                   </div>
+                  {/* r351 A2 (Q1a — the ONE identity): the role line the
+                      sidebar footer used to carry (its avatar + name
+                      block is retired) lives here now — one identity
+                      seat, announced once. Same composite-label source
+                      as the retired sidebar seat (useMe's teacher
+                      profile position). */}
+                  <div className="topbar-user-role text-xxs" style={{ marginTop: 'var(--sp-0-5)', color: 'var(--text-secondary)' }}>
+                    {displayRoleLabel(user.role, meQ.data?.teacherProfile?.position ?? null, meQ.data?.teacherProfile?.positionFaculty?.name ?? null)}
+                  </div>
                   <div className="text-xxs font-mono text-subtle" style={{ marginTop: 'var(--sp-0-5)' }}>
                     {/* r148 (AUDIT-3 M6): البريد بلا bdi قد يعرض بترتيب خاطئ في
                         سياق RTL — نفس عرف ProfilePage/OwnerUsersPage. */}
@@ -409,6 +389,13 @@ export function Topbar({ rightSlot, scrolled = false, onOpenCommandPalette }: To
               <DropdownItem onSelect={() => { setMenuOpen(false); setThemeMode(resolved === 'dark' ? 'light' : 'dark'); }}>
                 <Icon icon={resolved === 'dark' ? Sun : Moon} size={14} />
                 {resolved === 'dark' ? 'الوضع الفاتح' : 'الوضع الداكن'}
+              </DropdownItem>
+              {/* r351 A2 (Q1f): the feedback seat — the floating FAB is
+                  retired; the sheet opens from here and from the ⌘K
+                  palette (feedbackSeat.ts owns the channel). */}
+              <DropdownItem onSelect={() => { setMenuOpen(false); openFeedback(); }}>
+                <Icon icon={MessageSquarePlus} size={14} />
+                أبلغ عن مشكلة
               </DropdownItem>
               <DropdownSeparator />
               {/* r157 (6A4-4): unified with the Sidebar's logout — the

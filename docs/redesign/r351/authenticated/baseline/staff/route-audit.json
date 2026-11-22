@@ -1,0 +1,5161 @@
+{
+  "generatedAt": "2026-11-21T16:28:16.618Z",
+  "base": "http://localhost:5302",
+  "matrix": "full",
+  "visitedCells": 108,
+  "hardFailures": 0,
+  "wordiest": [
+    {
+      "role": "ADMIN",
+      "route": "/vision",
+      "words": 250,
+      "viewport": "768x900"
+    },
+    {
+      "role": "QUALITY",
+      "route": "/vision",
+      "words": 250,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "ADMIN",
+      "route": "/settings",
+      "words": 243,
+      "viewport": "768x900"
+    },
+    {
+      "role": "QUALITY",
+      "route": "/settings",
+      "words": 243,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "QUALITY",
+      "route": "/quality/dashboard",
+      "words": 209,
+      "viewport": "1024x768"
+    },
+    {
+      "role": "ADMIN",
+      "route": "/admin/reports",
+      "words": 191,
+      "viewport": "768x900"
+    },
+    {
+      "role": "ADMIN",
+      "route": "/admin/dashboard",
+      "words": 171,
+      "viewport": "1024x768"
+    },
+    {
+      "role": "ADMIN",
+      "route": "/colleges",
+      "words": 169,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "QUALITY",
+      "route": "/colleges",
+      "words": 169,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "QUALITY",
+      "route": "/quality/alerts",
+      "words": 132,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "ADMIN",
+      "route": "/admin/settings",
+      "words": 125,
+      "viewport": "768x900"
+    },
+    {
+      "role": "QUALITY",
+      "route": "/quality/reports",
+      "words": 114,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "QUALITY",
+      "route": "/quality/engagement",
+      "words": 98,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "ADMIN",
+      "route": "/admin/faculties",
+      "words": 88,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "ADMIN",
+      "route": "/admin/courses",
+      "words": 88,
+      "viewport": "1024x768"
+    },
+    {
+      "role": "ADMIN",
+      "route": "/admin/alerts",
+      "words": 81,
+      "viewport": "768x900"
+    },
+    {
+      "role": "QUALITY",
+      "route": "/quality/notifications",
+      "words": 81,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "QUALITY",
+      "route": "/quality/exam-moderation",
+      "words": 64,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "ADMIN",
+      "route": "/admin/teachers",
+      "words": 61,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "ADMIN",
+      "route": "/admin/community",
+      "words": 60,
+      "viewport": "768x900"
+    },
+    {
+      "role": "QUALITY",
+      "route": "/quality/community",
+      "words": 60,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "ADMIN",
+      "route": "/admin/students",
+      "words": 51,
+      "viewport": "768x900"
+    },
+    {
+      "role": "QUALITY",
+      "route": "/quality/courses",
+      "words": 43,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "QUALITY",
+      "route": "/quality/curriculum",
+      "words": 40,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "QUALITY",
+      "route": "/quality/professors",
+      "words": 38,
+      "viewport": "1440x900"
+    }
+  ],
+  "defects": {
+    "overflows": [],
+    "smallTargets": [
+      {
+        "cell": "ADMIN·/admin/dashboard·light·1440",
+        "count": 15,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·light·1024",
+        "count": 16,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "سجلّ الطلاب",
+            "w": 113,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/teachers·light·1440",
+        "count": 16,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/teachers·light·1024",
+        "count": 16,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/teachers·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "إدارة المقرّرات",
+            "w": 115,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/faculties·light·1440",
+        "count": 17,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/faculties·light·1024",
+        "count": 16,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/faculties·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "إضافة كلّيّة جديدة",
+            "w": 102,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "إضافة قسم",
+            "w": 107,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/colleges·light·1440",
+        "count": 15,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/colleges·light·1024",
+        "count": 16,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/courses·light·1440",
+        "count": 22,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/courses·light·1024",
+        "count": 22,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/courses·light·768",
+        "count": 7,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "إضافة مقرّر جديد",
+            "w": 103,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "فتح شعبة لمقرّر مقدمة في الخوارزميات",
+            "w": 80,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "تعديل مقدمة في الخوارزميات",
+            "w": 66,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/courses·light·390",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "select",
+            "name": "تصفية حسب الكلّيّة",
+            "w": 260,
+            "h": 44
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/students·light·1440",
+        "count": 16,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/students·light·1024",
+        "count": 18,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/students·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "استيراد طلاب من ملف",
+            "w": 160,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/digital·light·1440",
+        "count": 16,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/digital·light·1024",
+        "count": 16,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/digital·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "التقارير المؤسسية",
+            "w": 137,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/reports·light·1440",
+        "count": 16,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/reports·light·1024",
+        "count": 16,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/reports·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "التحوّل الرقميّ",
+            "w": 119,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/alerts·light·1440",
+        "count": 15,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/alerts·light·1024",
+        "count": 18,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/alerts·light·768",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "تعليم الكل كمقروء",
+            "w": 137,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "تعليم «تم نشر درجة الواجب الثاني» كمقروء",
+            "w": 112,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "تعليم «تنبيه: اقتراب موعد اختبار نصفي» ك",
+            "w": 112,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/settings·light·1440",
+        "count": 15,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/settings·light·1024",
+        "count": 15,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/settings·light·1440",
+        "count": 20,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/settings·light·1024",
+        "count": 18,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/settings·light·768",
+        "count": 4,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 44,
+            "h": 44
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 44,
+            "h": 44
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 44,
+            "h": 44
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/community·light·1440",
+        "count": 17,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/community·light·1024",
+        "count": 17,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/community·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "صفحة المسابقات الكاملة",
+            "w": 155,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "كلّيّات الجامعة",
+            "w": 97,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/vision·light·1440",
+        "count": 15,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/vision·light·1024",
+        "count": 15,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·dark·1440",
+        "count": 16,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة المسجل العام",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "إدارة الأساتذة",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/dashboard·light·1440",
+        "count": 17,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/dashboard·light·1024",
+        "count": 17,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/dashboard·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "تقارير الجودة",
+            "w": 90,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "تنبيهات الجودة",
+            "w": 100,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/courses·light·1440",
+        "count": 17,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/courses·light·1024",
+        "count": 17,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/courses·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "تقييم الأساتذة",
+            "w": 98,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "الانخراط والحضور",
+            "w": 113,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/professors·light·1440",
+        "count": 15,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/professors·light·1024",
+        "count": 15,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/engagement·light·1440",
+        "count": 17,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/engagement·light·1024",
+        "count": 17,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/engagement·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 99,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "تقارير الجودة",
+            "w": 90,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/exam-moderation·light·1440",
+        "count": 17,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/exam-moderation·light·1024",
+        "count": 17,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/exam-moderation·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "تقارير الجودة",
+            "w": 90,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "تنبيهات الجودة",
+            "w": 100,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/curriculum·light·1440",
+        "count": 17,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/curriculum·light·1024",
+        "count": 17,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/curriculum·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 99,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "مراجعة الاختبارات",
+            "w": 114,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/reports·light·1440",
+        "count": 17,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/reports·light·1024",
+        "count": 17,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/reports·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 89,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "تنبيهات الجودة",
+            "w": 100,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/notifications·light·1440",
+        "count": 18,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/notifications·light·1024",
+        "count": 18,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/notifications·light·768",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "تعليم الكل كمقروء",
+            "w": 137,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "تعليم «تم نشر درجة الواجب الثاني» كمقروء",
+            "w": 112,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "تعليم «تنبيه: اقتراب موعد اختبار نصفي» ك",
+            "w": 112,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/alerts·light·1440",
+        "count": 21,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/alerts·light·1024",
+        "count": 21,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/alerts·light·768",
+        "count": 6,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 89,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "تقارير الجودة",
+            "w": 90,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "الكل4",
+            "w": 70,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/community·light·1440",
+        "count": 17,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/community·light·1024",
+        "count": 17,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/community·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "صفحة المسابقات الكاملة",
+            "w": 155,
+            "h": 32
+          },
+          {
+            "tag": "a",
+            "name": "كلّيّات الجامعة",
+            "w": 97,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/colleges·light·1440",
+        "count": 15,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/colleges·light·1024",
+        "count": 15,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/settings·light·1440",
+        "count": 19,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/settings·light·1024",
+        "count": 18,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/settings·light·768",
+        "count": 4,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 44,
+            "h": 44
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 44,
+            "h": 44
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 44,
+            "h": 44
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/vision·light·1440",
+        "count": 15,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/vision·light·1024",
+        "count": 15,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/dashboard·dark·1440",
+        "count": 17,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "توسعة القائمة",
+            "w": 28,
+            "h": 28
+          },
+          {
+            "tag": "a",
+            "name": "لوحة الجودة",
+            "w": 55,
+            "h": 36
+          },
+          {
+            "tag": "a",
+            "name": "جودة المقرّرات",
+            "w": 55,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/dashboard·dark·390",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "تقارير الجودة",
+            "w": 90,
+            "h": 44
+          },
+          {
+            "tag": "a",
+            "name": "تنبيهات الجودة",
+            "w": 100,
+            "h": 44
+          }
+        ]
+      }
+    ],
+    "overlaps": [
+      {
+        "cell": "ADMIN·/admin/dashboard·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المسجل العام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1279
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المسجل العام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1279
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13598
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/teachers·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المسجل العام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1279
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13599
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/teachers·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المسجل العام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1279
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13596
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/teachers·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/teachers·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/faculties·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المسجل العام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1279
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/faculties·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المسجل العام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1279
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13596
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/faculties·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/faculties·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/colleges·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المسجل العام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1279
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/colleges·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المسجل العام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1279
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/colleges·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/colleges·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/courses·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المسجل العام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1279
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13577
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/courses·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المسجل العام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1279
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13599
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/courses·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/courses·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/students·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/students·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/students·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/students·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/digital·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13594
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/digital·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/digital·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/digital·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/reports·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/reports·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13598
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/reports·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/reports·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/alerts·light·1440",
+        "count": 8,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/alerts·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13592
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/alerts·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/alerts·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/settings·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13599
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/settings·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13596
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/settings·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/settings·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/settings·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/settings·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/settings·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/settings·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/community·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/community·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13599
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/community·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/community·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/vision·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13599
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/vision·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "النظام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 671
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13598
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/vision·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1869
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1869
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/vision·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·dark·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المسجل العام",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1279
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·dark·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/dashboard·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "مركز ضمان الجودة",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1575
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/dashboard·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "مركز ضمان الجودة",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1575
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13599
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/dashboard·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/dashboard·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/courses·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "مركز ضمان الجودة",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1575
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/courses·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "مركز ضمان الجودة",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1575
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13598
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/courses·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/courses·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/professors·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "مركز ضمان الجودة",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1575
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13598
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/professors·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "مركز ضمان الجودة",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1575
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13599
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/professors·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/professors·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/engagement·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "مركز ضمان الجودة",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1575
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13599
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/engagement·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "مركز ضمان الجودة",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1575
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13599
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/engagement·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/engagement·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/exam-moderation·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المراجعة والتقارير",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1466
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/exam-moderation·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المراجعة والتقارير",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1466
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13596
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/exam-moderation·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/exam-moderation·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/curriculum·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المراجعة والتقارير",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1466
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/curriculum·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المراجعة والتقارير",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1466
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/curriculum·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/curriculum·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/reports·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المراجعة والتقارير",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1466
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/reports·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المراجعة والتقارير",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1466
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13596
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/reports·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/reports·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/notifications·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المراجعة والتقارير",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1466
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/notifications·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المراجعة والتقارير",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1466
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13598
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/notifications·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/notifications·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/alerts·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المراجعة والتقارير",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1466
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/alerts·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المراجعة والتقارير",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1466
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13599
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/alerts·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/alerts·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/community·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المراجعة والتقارير",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1466
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13594
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/community·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المراجعة والتقارير",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1466
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13599
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/community·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/community·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/colleges·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المراجعة والتقارير",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1466
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13599
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/colleges·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المراجعة والتقارير",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1466
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13599
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/colleges·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/colleges·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/settings·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المراجعة والتقارير",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1466
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/settings·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المراجعة والتقارير",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1466
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13599
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/settings·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/settings·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/vision·light·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المراجعة والتقارير",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1466
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/vision·light·1024",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "المراجعة والتقارير",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1466
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13594
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/vision·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/vision·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/dashboard·dark·1440",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-kicker",
+            "text": "مركز ضمان الجودة",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1575
+              }
+            ]
+          },
+          {
+            "el": "INPUT",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 13600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/dashboard·dark·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "topbar-mobile-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          },
+          {
+            "el": "topbar-search-toggle",
+            "text": "",
+            "by": [
+              {
+                "fixed": "sheet-frame",
+                "area": 1870
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "runtimeErrors": [
+      {
+        "cell": "ADMIN·/admin/teachers·light·1440",
+        "count": 2,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/teachers·light·1024",
+        "count": 2,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/teachers·light·768",
+        "count": 2,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/teachers·light·390",
+        "count": 2,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/students·light·1440",
+        "count": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/students·light·1024",
+        "count": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/students·light·768",
+        "count": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/students·light·390",
+        "count": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/digital·light·1440",
+        "count": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/digital·light·1024",
+        "count": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/digital·light·768",
+        "count": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/digital·light·390",
+        "count": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/community·light·1024",
+        "count": 8,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/community·light·768",
+        "count": 4,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/community·light·390",
+        "count": 4,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/courses·light·1440",
+        "count": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/courses·light·1024",
+        "count": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/courses·light·768",
+        "count": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/courses·light·390",
+        "count": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/professors·light·1440",
+        "count": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/professors·light·1024",
+        "count": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/professors·light·768",
+        "count": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/professors·light·390",
+        "count": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/exam-moderation·light·1440",
+        "count": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/exam-moderation·light·1024",
+        "count": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/exam-moderation·light·768",
+        "count": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/exam-moderation·light·390",
+        "count": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/curriculum·light·1440",
+        "count": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/curriculum·light·1024",
+        "count": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/curriculum·light·768",
+        "count": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/curriculum·light·390",
+        "count": 1,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/community·light·1440",
+        "count": 4,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/community·light·1024",
+        "count": 4,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/community·light·768",
+        "count": 4,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/community·light·390",
+        "count": 4,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+          "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+        ]
+      }
+    ],
+    "notImplemented": [
+      {
+        "cell": "ADMIN·/admin/teachers·light·1440",
+        "endpoints": [
+          "/api/v1/admin/users?page=1&limit=1&role=TEACHER",
+          "/api/v1/admin/users?page=1&limit=20&role=TEACHER"
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/teachers·light·1024",
+        "endpoints": [
+          "/api/v1/admin/users?page=1&limit=1&role=TEACHER",
+          "/api/v1/admin/users?page=1&limit=20&role=TEACHER"
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/teachers·light·768",
+        "endpoints": [
+          "/api/v1/admin/users?page=1&limit=1&role=TEACHER",
+          "/api/v1/admin/users?page=1&limit=20&role=TEACHER"
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/teachers·light·390",
+        "endpoints": [
+          "/api/v1/admin/users?page=1&limit=1&role=TEACHER",
+          "/api/v1/admin/users?page=1&limit=20&role=TEACHER"
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/students·light·1440",
+        "endpoints": [
+          "/api/v1/admin/students?page=1&limit=20"
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/students·light·1024",
+        "endpoints": [
+          "/api/v1/admin/students?page=1&limit=20"
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/students·light·768",
+        "endpoints": [
+          "/api/v1/admin/students?page=1&limit=20"
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/students·light·390",
+        "endpoints": [
+          "/api/v1/admin/students?page=1&limit=20"
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/digital·light·1440",
+        "endpoints": [
+          "/api/v1/admin/digital"
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/digital·light·1024",
+        "endpoints": [
+          "/api/v1/admin/digital"
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/digital·light·768",
+        "endpoints": [
+          "/api/v1/admin/digital"
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/digital·light·390",
+        "endpoints": [
+          "/api/v1/admin/digital"
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/community·light·1024",
+        "endpoints": [
+          "/api/v1/announcements/feed",
+          "/api/v1/competitions",
+          "/api/v1/events",
+          "/api/v1/me/permissions"
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/community·light·768",
+        "endpoints": [
+          "/api/v1/announcements/feed",
+          "/api/v1/competitions",
+          "/api/v1/events",
+          "/api/v1/me/permissions"
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/community·light·390",
+        "endpoints": [
+          "/api/v1/announcements/feed",
+          "/api/v1/competitions",
+          "/api/v1/events",
+          "/api/v1/me/permissions"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/courses·light·1440",
+        "endpoints": [
+          "/api/v1/quality/courses"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/courses·light·1024",
+        "endpoints": [
+          "/api/v1/quality/courses"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/courses·light·768",
+        "endpoints": [
+          "/api/v1/quality/courses"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/courses·light·390",
+        "endpoints": [
+          "/api/v1/quality/courses"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/professors·light·1440",
+        "endpoints": [
+          "/api/v1/quality/professors"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/professors·light·1024",
+        "endpoints": [
+          "/api/v1/quality/professors"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/professors·light·768",
+        "endpoints": [
+          "/api/v1/quality/professors"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/professors·light·390",
+        "endpoints": [
+          "/api/v1/quality/professors"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/exam-moderation·light·1440",
+        "endpoints": [
+          "/api/v1/exams/moderation-queue"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/exam-moderation·light·1024",
+        "endpoints": [
+          "/api/v1/exams/moderation-queue"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/exam-moderation·light·768",
+        "endpoints": [
+          "/api/v1/exams/moderation-queue"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/exam-moderation·light·390",
+        "endpoints": [
+          "/api/v1/exams/moderation-queue"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/curriculum·light·1440",
+        "endpoints": [
+          "/api/v1/quality/curriculum"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/curriculum·light·1024",
+        "endpoints": [
+          "/api/v1/quality/curriculum"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/curriculum·light·768",
+        "endpoints": [
+          "/api/v1/quality/curriculum"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/curriculum·light·390",
+        "endpoints": [
+          "/api/v1/quality/curriculum"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/community·light·1440",
+        "endpoints": [
+          "/api/v1/announcements/feed",
+          "/api/v1/competitions",
+          "/api/v1/events",
+          "/api/v1/me/permissions"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/community·light·1024",
+        "endpoints": [
+          "/api/v1/announcements/feed",
+          "/api/v1/competitions",
+          "/api/v1/events",
+          "/api/v1/me/permissions"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/community·light·768",
+        "endpoints": [
+          "/api/v1/announcements/feed",
+          "/api/v1/competitions",
+          "/api/v1/events",
+          "/api/v1/me/permissions"
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/community·light·390",
+        "endpoints": [
+          "/api/v1/announcements/feed",
+          "/api/v1/competitions",
+          "/api/v1/events",
+          "/api/v1/me/permissions"
+        ]
+      }
+    ]
+  }
+}

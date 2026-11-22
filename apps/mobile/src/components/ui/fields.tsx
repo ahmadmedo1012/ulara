@@ -24,7 +24,7 @@ import Eye from "lucide-react-native/icons/eye";
 import EyeOff from "lucide-react-native/icons/eye-off";
 import Search from "lucide-react-native/icons/search";
 import X from "lucide-react-native/icons/x";
-import { usePalette } from "@/design/theme";
+import { usePalette, useStatusTones } from "@/design/theme";
 import { sp, touchFloor } from "@/design/tokens";
 import { T } from "./text";
 import { OptionSheet } from "./surfaces";
@@ -187,6 +187,9 @@ export function Field({
   ...input
 }: FieldProps) {
   const p = usePalette();
+  /* 2026: the error state rides the rose danger family — never the
+   * accent (the royal signal is not an error state). */
+  const tones = useStatusTones();
   const ctx = useContext(FormFieldsContext);
   const [focused, setFocused] = useState(false);
   const [show, setShow] = useState(false);
@@ -261,7 +264,7 @@ export function Field({
             {
               backgroundColor: p.surface,
               borderWidth: focused ? 1 : StyleSheet.hairlineWidth,
-              borderColor: error ? p.accentInk : focused ? p.text : p.rule,
+              borderColor: error ? tones.rose.ink : focused ? p.text : p.rule,
               paddingHorizontal: sp[12],
               paddingLeft: leadingWidth ? leadingWidth + sp[8] : sp[12],
               minHeight: 48,
@@ -376,6 +379,8 @@ export function SelectField({
   emptyLabel?: string;
 }) {
   const p = usePalette();
+  /* 2026: the error state rides the rose danger family (see Field). */
+  const tones = useStatusTones();
   const [open, setOpen] = useState(false);
   return (
     <View style={{ gap: sp[6] }}>
@@ -393,7 +398,7 @@ export function SelectField({
           gap: sp[8],
           backgroundColor: pressed ? p.surfaceHover : p.surface,
           borderWidth: StyleSheet.hairlineWidth,
-          borderColor: error ? p.accentInk : p.rule,
+          borderColor: error ? tones.rose.ink : p.rule,
           paddingHorizontal: sp[12],
           minHeight: 48,
           opacity: disabled ? 0.5 : 1,

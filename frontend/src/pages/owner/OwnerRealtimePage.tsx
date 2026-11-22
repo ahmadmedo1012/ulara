@@ -74,7 +74,6 @@ export function OwnerRealtimePage() {
         breadcrumbs={[{ label: 'لوحة المالك', to: '/owner/dashboard' }, { label: 'المراقبة الحيّة' }]}
         /* R341 D11: the [02] nav-order gutter numeral (OWNER_NAV
          * register — the D10 quality precedent). */
-        index="02"
         /* D11 (D8/D10 header-CTA precedent): the board's sibling
          * surfaces — the operational alerts board the live band
          * counts (primary) + the system console the services readout

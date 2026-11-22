@@ -110,8 +110,8 @@ function CreateInstitutionCard({
   return (
     <Card
       title="إنشاء مؤسسة جديدة"
-      subtitle="أضف مؤسسة تعليمية إلى المنصّة — تُنشأ نشطة ويمكن تعيين مسجلها العام بعد ذلك."
       icon={Plus}
+      /* r351 A2 (Q3): card subtitle retired — the form fields explain it. */
     >
       <form
         className="owner-inst-create-form"
@@ -120,7 +120,8 @@ function CreateInstitutionCard({
           void submit();
         }}
       >
-        <FormField label="اسم المؤسسة" error={nameProblem} hint="مطلوب — كما سيظهر لأعضاء المؤسسة">
+        {/* r351 A2 (Q3): how-it-shows hint trimmed to the requirement. */}
+        <FormField label="اسم المؤسسة" error={nameProblem} hint="مطلوب">
           <input
             className="input"
             type="text"
@@ -143,7 +144,9 @@ function CreateInstitutionCard({
         </FormField>
         <FormField
           label="المعرّف (slug — اختياري)"
-          hint="أحرف لاتينية صغيرة وأرقام وشرطات؛ يُشتق تلقائيًا إن تُرك فارغًا"
+          /* r351 A2 (Q3): hint trimmed — the auto-derive rule stays,
+           * the charset explainer retired (the placeholder shows it). */
+          hint="يُشتق تلقائيًا إن تُرك فارغًا"
         >
           <input
             className="input"
@@ -345,8 +348,8 @@ function ProvisionAdminModal({
               value={draft.mode}
               onChange={(e) => setDraft((d) => ({ ...d, mode: e.target.value as ProvisionMode }))}
             >
-              <option value="new">مستخدم جديد — يُنشأ حساب بكلمة مرور</option>
-              <option value="existing">مستخدم قائم — يُربط بالمؤسسة</option>
+              <option value="new">مستخدم جديد</option>
+              <option value="existing">مستخدم قائم</option>
             </select>
           </FormField>
 
@@ -573,13 +576,12 @@ export function OwnerInstitutionsPage() {
     <div className="page r305ao">
       <PatternsPageHeader
         title="المؤسسات"
-        description="إدارة المؤسسات التعليمية على المنصّة"
+        /* r351 A2 (Q3): header description retired — the register explains the page. */
         breadcrumbs={[{ label: 'لوحة المالك', to: '/owner/dashboard' }, { label: 'المؤسسات' }]}
         /* R341 D11: the [04] nav-order gutter numeral (OWNER_NAV
          * register — the D10 quality precedent). The page's primary
          * action (the create form's submit) is already the first
          * in-viewport CTA at both bands. */
-        index="04"
       />
 
       <CreateInstitutionCard
@@ -597,10 +599,12 @@ export function OwnerInstitutionsPage() {
         ) : listing.isError ? (
           <ErrorState error={listing.error} onRetry={() => listing.refetch()} />
         ) : institutions.length === 0 ? (
+          /* r351 A2 (Q3): empty-state prose retired — the create card
+             * sits directly above. */
           <EmptyState
             icon={Landmark}
             title="لا توجد مؤسسات بعد"
-            description="أنشئ أول مؤسسة تعليمية من النموذج أعلاه لبدء استقبال أعضائها."
+            description=""
           />
         ) : (
           <div className="table-wrap">

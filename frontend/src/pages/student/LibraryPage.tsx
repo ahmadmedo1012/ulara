@@ -700,7 +700,6 @@ export default function LibraryPage() {
               for assistive tech; the due-soon datum stays visible). */}
           <section className="r305rp-panel r305rp-lib-loans" aria-label="استعاراتي النشطة">
             <SectionBar
-              index="01"
               title="استعاراتي"
               meta={
                 !loans.isPending && !loans.isError && openLoans.length > 0 ? (
@@ -807,7 +806,6 @@ export default function LibraryPage() {
               (meta.total, never the page array) as quiet mono meta. The
               filter pills + list below keep their own rhythm. */}
           <SectionBar
-            index="02"
             title="الكتب"
             meta={
               !books.isPending && !books.isError && totalBooks !== null ? (
@@ -898,7 +896,6 @@ export default function LibraryPage() {
               the dashboard's momentum strip) + the honest visible
               count as mono meta. */}
           <SectionBar
-            index="01"
             title="البحوث المنشورة"
             meta={
               !researchInUse && !research.isPending && !research.isError && visibleResearch.length > 0 ? (

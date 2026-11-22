@@ -11,7 +11,7 @@
  *     (.r305s-band--deep + .dash-hero-deep), its micro-label «أكمل من
  *     حيث توقفت» lifts into the .r305s-eyebrow register, and the page
  *     carries EXACTLY ONE accent CTA (the hero's .btn.accent).
- *  2. EDITORIAL SECTIONS — اليوم / مقرّراتك / فجوات يُنصح بسدّها /
+ *  2. EDITORIAL SECTIONS — اليوم / مقرّراتك / فجوات الإتقان /
  *     أسبوعك القادم each open with the .r305s-kicker register (h2 +
  *     hairline); the momentum strip rides the .r305s-rule-labeled
  *     annotated divider (a metadata band, not a boxed section).
@@ -211,7 +211,7 @@ beforeEach(() => {
 describe('R305 — the hero band (the ONE next action)', () => {
   it('rides the deep band with the eyebrow register and the display course name', async () => {
     const { container } = renderPage();
-    const band = await screen.findByText('أكمل من حيث توقفت');
+    const band = await screen.findByText('تابع', { selector: '.dash-resume-eyebrow' });
     // The micro-label lifts into the shared eyebrow register…
     expect(band.className).toContain('r305s-eyebrow');
     // …inside the reference deep band (theme-reactive ink/paper inversion).
@@ -231,22 +231,25 @@ describe('R305 — the hero band (the ONE next action)', () => {
 
   it('carries EXACTLY ONE accent CTA — every other action is ghost/outline/chip', async () => {
     const { container } = renderPage();
-    await screen.findByText('أكمل من حيث توقفت');
+    await screen.findByText('تابع', { selector: '.dash-resume-eyebrow' });
     const accents = container.querySelectorAll('a.btn.accent');
     expect(accents).toHaveLength(1);
     expect(accents[0]?.getAttribute('href')).toBe('/student/lectures/l9');
-    expect(accents[0]?.textContent).toContain('متابعة المشاهدة');
+    expect(accents[0]?.textContent).toContain('متابعة');
     // The section actions stay quiet ghosts.
     /* R319 override (c2-G1): the kicker-action seat became the §B2
        SectionBar's action slot (.r319s-bar-action) — same ghost
        buttons, same quiet register, new title-bar grammar. */
+    /* r351 A2 (Q3): the next-week section retired (three time
+       surfaces on one screen) — its «التقويم الكامل» ghost went with
+       it; the remaining pair: المقرّرات + المصفوفة. */
     const ghosts = container.querySelectorAll('.r319s-bar-action .btn.ghost');
-    expect(ghosts.length).toBeGreaterThanOrEqual(3);
+    expect(ghosts.length).toBeGreaterThanOrEqual(2);
   });
 
   it('the side note is the meta-row register: code + clock from real data', async () => {
     const { container } = renderPage();
-    await screen.findByText('أكمل من حيث توقفت');
+    await screen.findByText('تابع', { selector: '.dash-resume-eyebrow' });
     const row = container.querySelector('.dash-resume-side-note');
     expect(row?.className).toContain('r305s-meta-row');
     // CS301 (mono) + 1140s → 19:00 — the real media duration, bidi-isolated.
@@ -264,19 +267,20 @@ describe('R305 — the section kicker register', () => {
      kicker. The h2 contract (one h1 per route, sections answer with
      h2s) and the title strings are unchanged; the register is the
      sheet's: [nn] gutter index + title + hairline rule. */
-  it('اليوم / مقرّراتك / فجوات يُنصح بسدّها / أسبوعك القادم each open with a SectionBar h2', async () => {
+  it('اليوم / مقرّراتك / فجوات الإتقان / أسبوعك القادم each open with a SectionBar h2', async () => {
     const { container } = renderPage();
-    await screen.findByText('أكمل من حيث توقفت');
-    for (const title of ['اليوم', 'مقرّراتك', 'فجوات يُنصح بسدّها', 'أسبوعك القادم']) {
+    await screen.findByText('تابع', { selector: '.dash-resume-eyebrow' });
+    /* r351 A2 (Q3): «أسبوعك القادم» retired — the week strip + the
+       calendar page own beyond-today. */
+    for (const title of ['اليوم', 'مقرّراتك', 'فجوات الإتقان']) {
       const h = screen.getByRole('heading', { level: 2, name: title });
       expect(h.className).toContain('r319s-bar-title');
       const bar = h.closest('.r319s-bar');
       expect(bar).not.toBeNull();
-      // The mono gutter index rides every titled section (aria-hidden,
-      // LTR Latin).
-      const idx = bar?.querySelector('.r319s-bar-index');
-      expect(idx?.textContent).toMatch(/^\[\d{2}\]$/);
-      expect(idx?.getAttribute('aria-hidden')).toBe('true');
+      // r351 A2 (Q2): the [0N] gutter index is RETIRED (it rendered out
+      // of DOM order on several dashboards) — the h2 + hairline + meta
+      // carry the grammar alone.
+      expect(bar?.querySelector('.r319s-bar-index')).toBeNull();
     }
     // The masthead stays the page's only h1 (the PageHeader contract).
     const h1s = container.querySelectorAll('h1');
@@ -313,25 +317,13 @@ describe('R305 — the chip register on statuses', () => {
      the honest DUE label / [CLASS] quiet — square mono chips beside
      each row's Arabic meta sentence. The tone discipline carries over:
      LIVE is the only orange; deliverables stay neutral ink. */
-  it('the week ledger rides the mono status chips (live→[LIVE] orange, deliverable→DUE nD neutral)', async () => {
-    const { container } = renderPage();
-    await screen.findByText('أكمل من حيث توقفت');
-    // The +50h live broadcast lands in the week ledger → [LIVE], the
-    // one orange (live-tone) state.
-    const liveChip = container.querySelector('.week-item .r319s-chip--live');
-    expect(liveChip?.textContent).toBe('LIVE');
-    expect(liveChip?.getAttribute('dir')).toBe('ltr');
-    // The +26h assignment lands in the week ledger → the honest
-    // deadline label (round(26/24) = 1 day out) in neutral ink.
-    const deliverChip = [...container.querySelectorAll('.week-item .r319s-chip--due')]
-      .find((c) => c.textContent?.startsWith('DUE'));
-    expect(deliverChip?.textContent).toBe('DUE 1D');
-    expect(deliverChip?.className).not.toContain('--live');
-  });
+  /* r351 A2 (Q3): the week-ledger chip test retired with the
+     «أسبوعك القادم» section (its .week-item rows were the subject);
+     the LIVE/DUE mono chips stay pinned by the agenda tests. */
 
   it('a gap with no recommendation renders the honest metadata chip', async () => {
     const { container } = renderPage();
-    const chip = await screen.findByText('لا توصية بعد');
+    const chip = await screen.findByText('بلا توصية');
     expect(chip.className).toContain('r305s-chip');
     // …and the recommended gap's mastery level is the mono register
     // (the same real payload: level 0.35 → 35%, western digits from

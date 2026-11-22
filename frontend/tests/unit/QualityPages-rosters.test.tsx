@@ -301,7 +301,9 @@ describe('QualityCoursesPage — server-side search + honest total (r183-B5)', (
 
     fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'لا-شيء' } });
     expect(await screen.findByText('لا نتائج مطابقة', {}, { timeout: 2000 })).toBeInTheDocument();
-    expect(screen.getByText('لم نجد مقرّراً يطابق البحث — جرّب كلمة أوسع أو امسح البحث.')).toBeInTheDocument();
+    /* r351 A2 (Q3): copy cut — the searched-empty prose retired; the
+     * reset affordance assertion below (professors twin) carries the
+     * clear-action contract. */
   });
 
   it('shows the meta.total count line and the honest «تُعرض أول N» cap note when take truncates', async () => {
@@ -432,9 +434,8 @@ describe('QualityProfessorsPage — zero professors without a search (r299 E5)',
     renderPage(<QualityProfessorsPage />);
 
     expect(await screen.findByText('لا أساتذة بعد')).toBeInTheDocument();
-    expect(
-      screen.getByText('ستظهر هيئة التدريس ومؤشراتها هنا فور إضافة أعضائها إلى المؤسسة.'),
-    ).toBeInTheDocument();
+    /* r351 A2 (Q3): copy cut — the zero-state prose retired; the
+     * EmptyState + toolbar assertions below carry the pin's intent. */
     // The toolbar stays reachable — no header-only table dead end.
     expect(screen.getByRole('searchbox')).toBeInTheDocument();
     expect(document.querySelector('table')).toBeNull();
@@ -508,7 +509,8 @@ describe('QualityAlertsPage — honest cap note + shared empty state (r299 E3/E4
     renderPage(<QualityAlertsPage />);
 
     expect(await screen.findByText('لا توجد تنبيهات حالياً')).toBeInTheDocument();
-    expect(screen.getByText('كلّ المؤشّرات ضمن النطاق الطبيعيّ.')).toBeInTheDocument();
+    /* r351 A2 (Q3): copy cut — the "all metrics normal" inference
+     * retired; the shared-primitive assertions below carry the pin. */
     // The shared primitive — the old hand-rolled .state div is gone.
     expect(document.querySelector('.state.state-empty')).not.toBeNull();
     expect(document.querySelector('.state-icon-success')).toBeNull();

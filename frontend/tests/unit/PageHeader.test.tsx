@@ -105,11 +105,11 @@ describe('PageHeader — the sheet-identity devices are retired (r324 X10)', () 
     expect(document.body.textContent).not.toContain('SHEET');
   });
 
-  it('renders the index as the mono [01] gutter label INSIDE the h1, aria-hidden (the name stays the title)', () => {
-    render(<PageHeader title="المصفوفة التعليمية" index="01" />);
+  it('renders NO mono gutter index — the [0N] register is retired (r351 Q2)', () => {
+    // The numerals rendered out of DOM order on several pages (teacher
+    // dashboard 02→01→03); the h1 is the name, alone.
+    render(<PageHeader title="المصفوفة التعليمية" />);
     const h1 = screen.getByRole('heading', { level: 1, name: 'المصفوفة التعليمية' });
-    expect(h1.querySelector('.page-index')?.textContent).toBe('[01]');
-    expect(h1.querySelector('.page-index')?.getAttribute('aria-hidden')).toBe('true');
-    expect(h1.querySelector('.page-index')?.getAttribute('dir')).toBe('ltr');
+    expect(h1.querySelector('.page-index')).toBeNull();
   });
 });

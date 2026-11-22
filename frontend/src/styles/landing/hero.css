@@ -987,7 +987,7 @@
   --z-hro-card-child: 1;  /* a card's children over its accent ::before */
   --z-hro-flow: 3;        /* the reduced-motion flow rail */
   --z-hro-flow-under: -1; /* the flow card's accent underlay */
-  --hro-seat-ink: rgb(250, 54, 0); /* color-gate: allow — measured reference hover ink (the login twin's recorded after-color); ADDENDUM 9 scoped-var pattern, T-25 owns the global token unification */
+  --hro-seat-ink: var(--accent); /* 2026 — the royal signal owns the seat ink (was the measured rgb(250,54,0) ember; ADDENDUM 9 scoped-var pattern resolved onto the canonical token) */
   --hro-seat-ghost: rgb(255, 243, 239); /* color-gate: allow — measured reference register-hover wash-off (the primary's ghost after-state: fill → transparent, ink → rgb(255,243,239)) */
   --hro-seat-lift: translateY(-0.12rem);
 }
