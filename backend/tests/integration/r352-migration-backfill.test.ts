@@ -57,7 +57,7 @@ describe('r352 migration & seed backfills', () => {
     const teacher = await seedUser({ role: Role.TEACHER });
     const membership = await seedMembership(teacher.id, institution.id, Role.TEACHER);
     const department = await db().department.create({
-      data: { name: `قسم القيادة ${uniqueSuffix()}`, facultyId: (await db().faculty.create({ data: { name: `كلية القيادة ${uniqueSuffix()}`, city: 'الزاوية', institutionId: institution.id } })).id },
+      data: { name: `قسم القيادة ${uniqueSuffix()}`, facultyId: (await db().faculty.create({ data: { name: `كلية القيادة ${uniqueSuffix()}`, city: 'طرابلس', institutionId: institution.id } })).id },
     });
     const profile = await db().teacherProfile.create({
       data: {
