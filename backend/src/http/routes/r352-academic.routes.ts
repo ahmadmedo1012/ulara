@@ -17,6 +17,7 @@ import { requireCapability } from '../middleware/requireCapability.js';
 import { validate } from '../validate.js';
 import { AppError } from '../../lib/errors.js';
 import { buildMeta } from '../../lib/pagination.js';
+import { isPrismaWriteConflictOrDeadlock } from '../../lib/prisma-errors.js';
 import {
   PROGRAM_ENROLLMENT_TRANSITIONS, PROGRAM_TRANSITIONS, PROGRAM_VERSION_TRANSITIONS,
   transitionAllowed,
@@ -379,13 +380,17 @@ router.patch(
     } catch (e) {
       // §6.4 — racing activations: the partial unique index fires as
       // P2002 (constraint name in the message), but the same race can
-      // deadlock the two transactions (40P01 → Prisma P2034) — the
-      // loser then gets the same honest 409 instead of a 500.
+      // deadlock the two transactions (40P01). Prisma 5.22 escapes that
+      // deadlock as PrismaClientUnknownRequestError carrying the raw
+      // connector dump (CI 45055598165 proved the Known/P2034 branch
+      // never fires — see lib/prisma-errors.ts), so both shapes map to
+      // the same honest 409: in this transaction the only contended
+      // resource is the one-active-version unique index.
       if (
-        e instanceof Prisma.PrismaClientKnownRequestError &&
-        ((typeof e.message === 'string' &&
+        (e instanceof Prisma.PrismaClientKnownRequestError &&
+          typeof e.message === 'string' &&
           e.message.includes('ProgramVersion_one_active_per_program_key')) ||
-          e.code === 'P2034')
+        isPrismaWriteConflictOrDeadlock(e)
       ) {
         return next(
           new AppError('PROGRAM_VERSION_ACTIVE_EXISTS', 'يوجد إصدار نشط آخر للبرنامج — أحله إلى المتقاعد أولًا', 409),

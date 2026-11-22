@@ -117,6 +117,75 @@ describe('r352 concurrency belts (§6)', () => {
     expect(live).toBe(1);
   });
 
+  it('§6.3b — a forced SQLSTATE-40P01 deadlock loser still answers the honest 409', async () => {
+    // CI run 45055598165 (post-PR#39) witnessed the §6.3 race resolve
+    // as a genuine deadlock: each INSERT's exclusion-constraint check
+    // waits on the other's uncommitted range → PG aborts one with
+    // 40P01 → Prisma 5.22 escapes it as PrismaClientUnknownRequestError
+    // (NOT Known/P2034) → the first mapping keyed on P2034 never fired
+    // and the loser answered 500. Interleaving that exact race from
+    // outside is timing luck, so this test FORCES the 40P01 shape: a
+    // BEFORE INSERT trigger walks the two requests into a real
+    // advisory-lock cycle (A: L1→L2, B: L2→L1) with a short hold so
+    // both first-locks are taken before either asks for the second.
+    // The loser must still get 409 RESERVATION_OVERLAP — never a 500.
+    const institution = await seedInstitution();
+    await classifyInstitution(institution.id, 'UNIVERSITY');
+    const admin = await seedUser({ role: Role.ADMIN });
+    await seedMembership(admin.id, institution.id, Role.ADMIN);
+    const auth = bearer(admin.id, Role.ADMIN, institution.id);
+    const facility = await api('POST', '/api/v1/operations/facilities', {
+      nameAr: `ورشة الجمود ${uniqueSuffix()}`, type: 'WORKSHOP',
+    }, auth);
+    expect(facility.status).toBe(201);
+
+    await db().$executeRawUnsafe(`
+      CREATE OR REPLACE FUNCTION ulara_deadlock_probe() RETURNS trigger AS $fn$
+      BEGIN
+        IF NEW.purpose = 'probe-40p01-a' THEN
+          PERFORM pg_advisory_xact_lock(990001);
+          PERFORM pg_sleep(0.3);
+          PERFORM pg_advisory_xact_lock(990002);
+        ELSIF NEW.purpose = 'probe-40p01-b' THEN
+          PERFORM pg_advisory_xact_lock(990002);
+          PERFORM pg_sleep(0.3);
+          PERFORM pg_advisory_xact_lock(990001);
+        END IF;
+        RETURN NEW;
+      END
+      $fn$ LANGUAGE plpgsql`);
+    await db().$executeRawUnsafe('DROP TRIGGER IF EXISTS ulara_deadlock_probe ON "FacilityReservation"');
+    await db().$executeRawUnsafe(
+      'CREATE TRIGGER ulara_deadlock_probe BEFORE INSERT ON "FacilityReservation" FOR EACH ROW EXECUTE FUNCTION ulara_deadlock_probe()');
+
+    try {
+      const attempts = await Promise.allSettled([
+        api('POST', '/api/v1/operations/reservations', {
+          facilityId: facility.body.data.id, purpose: 'probe-40p01-a',
+          startsAt: '2026-07-01T09:00:00Z', endsAt: '2026-07-01T11:00:00Z',
+        }, auth),
+        api('POST', '/api/v1/operations/reservations', {
+          facilityId: facility.body.data.id, purpose: 'probe-40p01-b',
+          startsAt: '2026-07-01T10:00:00Z', endsAt: '2026-07-01T12:00:00Z',
+        }, auth),
+      ]);
+      const statuses = fulfilled(attempts).map((r) => r.status);
+      expect(statuses).toHaveLength(2);
+      expect(statuses.filter((s) => s === 201)).toHaveLength(1);
+      const losers = fulfilled(attempts).filter((r) => r.status !== 201);
+      expect(losers).toHaveLength(1);
+      expect(losers[0]!.status).toBe(409);
+      expect(losers[0]!.body.error.code).toBe('RESERVATION_OVERLAP');
+      const live = await db().facilityReservation.count({
+        where: { facilityId: facility.body.data.id, status: { in: ['REQUESTED', 'APPROVED'] } },
+      });
+      expect(live).toBe(1);
+    } finally {
+      await db().$executeRawUnsafe('DROP TRIGGER IF EXISTS ulara_deadlock_probe ON "FacilityReservation"');
+      await db().$executeRawUnsafe('DROP FUNCTION IF EXISTS ulara_deadlock_probe()');
+    }
+  });
+
   it('§6.4 — two simultaneous version activations: exactly one wins', async () => {
     const institution = await seedInstitution();
     await classifyInstitution(institution.id, 'UNIVERSITY');
