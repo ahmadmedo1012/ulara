@@ -35,7 +35,7 @@ section.pr-section {
    * RULING; the global token unification is queued as T-25. */
   --pr-ink: rgb(40, 40, 40);          /* color-gate: allow — measured reference ink (T-25 unifies) */
   --pr-ink-72: rgb(40, 40, 40, 0.72); /* color-gate: allow — measured reference body voice */
-  --pr-label: rgb(180, 180, 176);     /* color-gate: allow — measured reference label muted */
+  --pr-label: var(--text-muted);       /* 2026 a11y — the measured reference muted rgb(180,180,176) reads 1.85:1 on the band (axe color-contrast at the 1.6rem/500 label voice); the label rides the readable muted seat (light #62625F = 5.46:1), same seat the dark arm already used. */
   --pr-rule-ink: rgb(179, 179, 175);  /* color-gate: allow — measured reference hairline */
   --pr-cta: var(--accent);           /* 2026 — ADDENDUM 9 TOKEN RULING resolved: the CTA rides the royal signal token (was the measured rgb(250,54,0) orange) */
   margin-inline: 0.81rem; /* 9px @1920 · 7 @1440 · 8 @390 — measured sheet margins */
