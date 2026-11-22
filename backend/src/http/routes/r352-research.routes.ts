@@ -52,6 +52,30 @@ async function requireProject(institutionId: string, id: string) {
   return project;
 }
 
+// LEGAL-MATRIX §A.3 [M] — Law 21/2023 stage-1/2 institution kinds carry no
+// research mandate (their charter is TVET delivery, stages 1–2). The
+// institutional workspace's module registry hides the research domain for
+// these kinds; the same rule is enforced HERE server-side so the API can
+// never contradict the UI's legal claim. Confidence note: §A.3's stage
+// mapping is medium-confidence (official-summary interpretation); the kind
+// codes are the single place to adjust if the catalog later grows a
+// per-kind research flag.
+const RESEARCH_FOREIGN_KIND_CODES = new Set(['INTERMEDIATE_TECHNICAL_INSTITUTE', 'VOCATIONAL_TRAINING_CENTER']);
+
+async function assertResearchApplicableToKind(institutionId: string): Promise<void> {
+  const institution = await prisma.institution.findUnique({
+    where: { id: institutionId },
+    select: { kind: { select: { code: true } } },
+  });
+  if (institution?.kind && RESEARCH_FOREIGN_KIND_CODES.has(institution.kind.code)) {
+    throw new AppError(
+      'RESEARCH_NOT_APPLICABLE',
+      'النشاط البحثي لا ينطبق على نوع مؤسستك (المعاهد التقنية المتوسطة ومراكز التدريب المهني — قانون 21/2023، المرحلتان 1-2)',
+      403,
+    );
+  }
+}
+
 router.get('/research-projects', validate(researchProjectListSchema, 'query'), async (req, res, next) => {
   try {
     const { page, limit, q, status } = req.query as unknown as z.infer<typeof researchProjectListSchema>;
@@ -90,6 +114,8 @@ router.post(
   async (req, res, next) => {
     try {
       const institutionId = req.institution!.id;
+      // §A.3 kind gate — runs BEFORE any validation/transaction work.
+      await assertResearchApplicableToKind(institutionId);
       const input = req.body as z.infer<typeof researchProjectCreateSchema>;
       if (input.orgUnitId) {
         const unit = await prisma.organizationalUnit.findUnique({
@@ -173,6 +199,7 @@ router.patch(
   async (req, res, next) => {
     try {
       const institutionId = req.institution!.id;
+      await assertResearchApplicableToKind(institutionId);
       const project = await requireProject(institutionId, req.params.id!);
       const input = req.body as z.infer<typeof researchProjectUpdateSchema>;
       // §4.5 — a newly supplied principal investigator is validated
@@ -222,6 +249,7 @@ router.post(
   async (req, res, next) => {
     try {
       const institutionId = req.institution!.id;
+      await assertResearchApplicableToKind(institutionId);
       const project = await requireProject(institutionId, req.params.id!);
       const input = req.body as z.infer<typeof researchMemberCreateSchema>;
       const person = await prisma.institutionalPerson.findUnique({
@@ -257,6 +285,7 @@ router.post(
 router.delete('/research-projects/:id/members/:personId', requireCapability('RESEARCH_PROJECTS_MANAGE'), async (req, res, next) => {
   try {
     const institutionId = req.institution!.id;
+    await assertResearchApplicableToKind(institutionId);
     const project = await requireProject(institutionId, req.params.id!);
     await prisma.$transaction(async (tx) => {
       const removed = await tx.researchProjectMember.deleteMany({
@@ -310,6 +339,7 @@ router.post(
   async (req, res, next) => {
     try {
       const institutionId = req.institution!.id;
+      await assertResearchApplicableToKind(institutionId);
       const input = req.body as z.infer<typeof researchOutputCreateSchema>;
       if (input.projectId) await requireProject(institutionId, input.projectId);
       if (input.personId) {
