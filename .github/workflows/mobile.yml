@@ -391,8 +391,17 @@ jobs:
         id: record
         working-directory: apps/mobile
         run: |
-          mkdir -p ../prebuilt
-          cp android/app/build/outputs/apk/debug/app-debug.apk ../prebuilt/dev-client.apk
+          # The canonical artifact path is the REPO-ROOT prebuilt/ — the
+          # fingerprint cache save, the cross-run restore and the verify
+          # step all read `prebuilt` relative to the workspace root
+          # (actions/cache + upload-artifact never see a step's
+          # working-directory). The historical `../prebuilt` wrote to
+          # apps/prebuilt, so every native-build lane run since the lane
+          # shipped failed at the upload step despite a green Gradle
+          # build — the APK was never persisted and the smoke-prebuilt
+          # lane could never restore a cross-run artifact.
+          mkdir -p "$GITHUB_WORKSPACE/prebuilt"
+          cp android/app/build/outputs/apk/debug/app-debug.apk "$GITHUB_WORKSPACE/prebuilt/dev-client.apk"
           {
             echo "fingerprint: ${{ needs.detect.outputs.fingerprint }}"
             echo "expo: $(node -p "require('./package.json').dependencies.expo")"
@@ -400,8 +409,8 @@ jobs:
             echo "built-at: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
             echo "built-from: ${{ github.sha }}"
             echo "kind: dev-client (DEBUG-signed — never a release artifact)"
-          } > ../prebuilt/MANIFEST.txt
-          cat ../prebuilt/MANIFEST.txt
+          } > "$GITHUB_WORKSPACE/prebuilt/MANIFEST.txt"
+          cat "$GITHUB_WORKSPACE/prebuilt/MANIFEST.txt"
           echo "built=true" >> "$GITHUB_OUTPUT"
           {
             echo "## Native artifact recorded"
