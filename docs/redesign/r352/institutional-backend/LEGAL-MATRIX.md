@@ -108,3 +108,29 @@
 5. Detailed article texts of the MEI internal regulations beyond the
    discipline chapter (scan quality) — leadership facts taken from Law
    21/2023 instead (higher authority).
+
+
+---
+
+# r352 hardening legal corrections
+
+- **INDEPENDENT_RESEARCH_CENTER de-attributed**: Law 9/2026 Art. 1
+  covers research authorities and centers AFFILIATED with them — it does
+  not establish every independent research center as a statutory kind.
+  The code is now a configurable non-statutory extension (legalBasis:
+  null) for separately-established bodies.
+- **Title splits (each with its own legal basis)**: الأمين العام
+  (قانون 2/2018 م20) vs الكاتب العام (no claimed basis); وكيل الكلية
+  (قانون 4/2020 م27) vs وكيل الشؤون العلمية بالكلية التقنية (قانون
+  21/2023 م27); رئيس الهيئة البحثية (قانون 9/2026 م1) vs مدير مركز
+  البحوث. Full statutory names restored: مدير المعهد الفني المتوسط،
+  مدير مركز التكوين والتدريب.
+- **COLLEGE dean seating**: `allowedUnitTypes` lets عميد الكلية
+  التقنية seat on a COLLEGE unit (and FACULTY) — no university-Faculty
+  misclassification; a technical college creates NO legacy Faculty mirror.
+- **Progression catalog (Law 21/2023)**: six explicit transitions (م38 →
+  م4(2) → م4(3) → م4(4)) with legal references; شهادة التدريب المهني
+  (م38 المسار المحدود) and الدبلوم المهني التخصصي (م26) open nothing —
+  the absence of a rule IS the prohibition.
+- **Attendance policy**: MEMBER (active council membership, verified) vs
+  GUEST (documented external participant) — explicit, not assumed.

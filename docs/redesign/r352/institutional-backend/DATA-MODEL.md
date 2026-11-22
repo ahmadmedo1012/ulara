@@ -319,3 +319,65 @@ ResearchPaper (bridge to the existing student-paper workflow).
 - Applied only to the isolated local dev/test DB (embedded PG 5433,
   `ulara_r352_test`); never against Neon (guard + policy).
 - Rollback: forward-safe by design (all additive; no column/type removal).
+
+
+---
+
+# r352 hardening data-model changes (migration 0004)
+
+## New models
+- **`UnitCapabilityGrant`** (replaces the dropped `UnitRoleGrant`): one
+  `Capability` per row, scoped to `orgUnitId` (subtree coverage) or the
+  institution (NULL); `isActive` + `revokedAt` revocation handle;
+  partial unique `(userId, institutionId, capability) WHERE orgUnitId IS
+  NULL AND isActive` is the institution-wide belt.
+- **`LearnerProfile`**: the generalized learner — institution-scoped,
+  optional `userId`, `category` (STUDENT/TRAINEE), unique
+  `(institutionId, learnerNumber)`, optional `orgUnitId` home,
+  `LearnerStatus` lifecycle, identity fields incl. `nationalId` (the
+  cross-institution registry link).
+- **`SelfAssessmentItem`**: criterion-level internal-QA responses —
+  unique per (assessment, criteriaItem), `SelfAssessmentRating`
+  vocabulary, assessor provenance, corrective-plan links.
+- **`CredentialProgressionRule`**: the explicit statutory transition
+  catalog (from/to credential types, destination institution-type and
+  program-kind constraints, legal reference; unique per pair).
+- **`OrgUnitTypeDefinition`**: the controlled unit-type catalog (18
+  seeded globals + institution-local rows) with sector/kind eligibility
+  and parent compatibility.
+
+## Changed models
+- `ProgramEnrollment` / `TrainingPlacement` / `AwardedCredential`:
+  `learnerProfileId` (required, backfilled) is canonical;
+  `studentProfileId` is the optional legacy bridge.
+- `StudentProfile.learnerProfileId` — the 1:1 non-destructive bridge.
+- `Course.orgUnitId` — additive organizational ownership (one Course
+  system; the Department relation stays the legacy bridge).
+- `Council.status` → the `CouncilStatus` enum (ENDED→DISSOLVED,
+  value-preserving).
+- `MeetingMinutes`: the meetingId-only unique dropped; `isCurrent` +
+  partial unique `(meetingId) WHERE isCurrent`; immutability trigger
+  for SIGNED/APPROVED content + provenance (isCurrent flips exempt).
+- `MeetingAttendance.attendeeKind` (MEMBER/GUEST).
+- `CouncilDocument.binaryObjectId` / `ComplianceEvidence.binaryObjectId`
+  → `BinaryObject.key` (the governance namespace,
+  `governance/<institutionId>/<file>.pdf` — tenant-bound keys).
+- `InternalSelfAssessment.programId` (program-scoped assessment).
+- `CorrectiveActionPlan.selfAssessmentItemId` (criterion-origin plans).
+- `PositionTemplate.allowedUnitTypes` (multi-type unit scope — the
+  COLLEGE dean fix; `scopeRequirement` deprecated).
+- `CredentialType.level`/`grantsProgression` are display-only now — the
+  rule table is the law.
+
+## Database-level invariants added
+- `FacilityReservation_no_overlap_live` — btree_gist exclusion
+  (`facilityId` =, `tsrange(startsAt, endsAt)` &&) WHERE live statuses;
+  CHECK startsAt < endsAt.
+- `ProgramVersion_one_active_per_program_key` — partial unique.
+- `PositionAppointment_substantive_seat_idx` — partial scan index;
+  the seat itself is advisory-lock serialized in-transaction.
+- `ulara_org_unit_check_parent` — visited-set cycles, depth ≤ 64,
+  same-institution, per-institution advisory lock.
+- `ulara_institution_check_parent` — classified same-sector parents,
+  cycles, depth ≤ 16, global advisory lock.
+- `ulara_minutes_immutable` — version immutability belt.

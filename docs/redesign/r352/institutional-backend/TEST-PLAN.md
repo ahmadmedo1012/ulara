@@ -61,3 +61,15 @@ Counts are measured from the current tree at verification time and recorded
 in `LOG.md` with the exact commands. No historical numbers copied. The
 roleLabels frontend-twin assertions are expected-red until the frontend
 agent mirrors the ADMIN label — reported explicitly, never hidden.
+
+
+## 5. r352 hardening additions (measured)
+
+| File | Pins |
+|---|---|
+| `tests/modules/learner-logic.test.ts` | Law 21/2023 Art. 2 category/program matrix (STUDENT vs TRAINEE × 5 program kinds); progression decision rules (absence = prohibition; inactive rules; destination credential/type/kind constraints) |
+| `tests/modules/permissions-merge.test.ts` (updated) | a unit grant adds EXACTLY ONE capability (no role-bundle leakage); deny beats unit grants; ADMIN/OWNER capability sets incl. UNIT_CAPABILITIES_ASSIGN |
+| `tests/integration/r352-unit-roles-classification.test.ts` (rewritten) | §3.2 subtree-only coverage + root-unit denial + no-bundle leakage; institution-wide grants; §3.1 cross-institution closure (query-param override, foreign revoke 404, OWNER verified path); authority parity (GRANT_EXCEEDS_AUTHORITY + the positive case); deny precedence end-to-end; immediate revocation; classified affiliation parents |
+| `tests/integration/r352-scenarios.test.ts` | acceptance scenarios B/C/E: COLLEGE dean seating (zero legacy mirrors), the institute diploma pathway + premature-award refusal, the vocational center with ZERO Faculty/Department, and the §12 progression matrix via the nationalId registry (positive + two negatives) |
+| `tests/integration/r352-concurrency.test.ts` | §6 belts under REAL parallel HTTP transactions: racing grants / reservations (clean Arabic 409 from the exclusion constraint) / version activations / appointment seats — exactly one winner each |
+| `tests/integration/r352-councils.test.ts` (updated) | minutes versioning: draft → approve → sign → revise mints v2 with v1 preserved (SIGNED + signatories); history endpoint counts; current-version projection in meeting detail |

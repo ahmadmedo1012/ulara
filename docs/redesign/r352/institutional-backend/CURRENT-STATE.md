@@ -124,3 +124,35 @@ context chain, `pagination.ts` helpers, `governance.ts` guards/patterns,
 `withRetry` (db.ts), AuditLog + in-transaction audit pattern, contract
 snapshot tooling, integration harness (`seedUser`/`seedInstitution`/
 `seedMembership`/`bearer`/`truncateAll`), embedded-PG tooling.
+
+
+---
+
+# r352 hardening state (post-review, this PR)
+
+- Migrations: `0001` + `0002` + `0003_r352_institutional_core` +
+  `0004_r352_backend_hardening` (additive except the documented
+  UnitRoleGrant drop and the replaced uniques; learner bridge backfill
+  verified on fresh AND data-bearing upgrades).
+- Authorization: single-capability scoped grants (`UnitCapabilityGrant`);
+  deterministic deny precedence; unit-aware scope policies on the R352
+  write routes; §3.1 institution-context law enforced end-to-end.
+- Learner domain: `LearnerProfile` is canonical for
+  ProgramEnrollment/TrainingPlacement/AwardedCredential (StudentProfile
+  bridge preserved); `Course.orgUnitId` organizational ownership;
+  `/academic/learners` CRUD.
+- Concurrency: partial unique indexes (institution-wide grants, single
+  ACTIVE program version), btree_gist reservation-overlap exclusion
+  constraint, advisory-lock-serialized appointment seats and structural
+  changes, cycle-safe depth-bounded org-unit + affiliation triggers.
+- Governance: versioned immutable minutes; CouncilStatus; MEMBER/GUEST
+  attendance; paginated meetings; criterion-level self-assessment items
+  with corrective-plan links; governance storage namespace with
+  tenant-bound keys.
+- Legal: honest attribution (INDEPENDENT_RESEARCH_CENTER de-attributed),
+  split statutory titles, COLLEGE dean seating, controlled org-unit type
+  catalog, explicit progression rule catalog (six Law 21/2023
+  transitions; absence = prohibition).
+- Docs: POST-IMPLEMENTATION-AUDIT.md is the definitive findings ledger;
+  all sibling docs updated; OpenAPI regenerated (additive + the three
+  documented renames).

@@ -254,25 +254,58 @@ Base: `/research-projects`
 | GET | `/research-outputs?projectId=&type=&page=&limit=` | paginated |
 | POST | `/research-outputs` | `{ type, title, projectId?, personId?, referenceUrl?, doi?, publishedAt?, notes?, researchPaperId? }` |
 
-## 12. Scoped roles & permissions changes
+## 12. Scoped capability grants (r352 hardening §3.1/§3.2 — replaces the unit-roles surface)
 
 | Method | Path | Auth | Notes |
 |---|---|---|---|
-| GET | `/me/unit-roles` | institution context | caller's active `UnitRoleGrant[]` |
-| GET | `/admin/users/:id/unit-roles?institutionId=` | `ROLES_ASSIGN` | a user's grants (institution required) |
-| POST | `/admin/users/:id/unit-roles` | `ROLES_ASSIGN` | `{ institutionId, orgUnitId?, role, reason? }` — target must hold an ACTIVE membership in the institution (`400 USER_NOT_MEMBER`); grantee unit validated (`400 UNIT_ROLE_UNIT_INVALID`); `409 UNIT_ROLE_EXISTS`; audit `unit_role.grant` |
-| POST | `/admin/unit-roles/:id/revoke` | `ROLES_ASSIGN` | → isActive=false; audit `unit_role.revoke` |
+| GET | `/me/unit-capabilities` | institution context | caller's active `UnitCapabilityGrant[]` |
+| GET | `/admin/users/:id/unit-capabilities` | `UNIT_CAPABILITIES_ASSIGN` (institution-wide) | a user's grants — **the institution is the caller's SERVER-VERIFIED context**; the `?institutionId=` query parameter is honored for OWNER only (target verified to exist + be ACTIVE). A non-OWNER caller passing a foreign institutionId gets THEIR OWN institution's (empty) list — §3.1 |
+| POST | `/admin/users/:id/unit-capabilities` | `UNIT_CAPABILITIES_ASSIGN` at the grant's scope | `{ institutionId, orgUnitId?, capability, reason? }` — target must hold an ACTIVE membership (`400 USER_NOT_MEMBER`); grantee unit same-institution (404-shaped); actor authority parity (`403 GRANT_EXCEEDS_AUTHORITY`); `409` duplicates (partial unique belt incl. racing requests); audit `unit_capability.grant` |
+| POST | `/admin/unit-capabilities/:id/revoke` | `UNIT_CAPABILITIES_ASSIGN` at the grant's scope | → isActive=false + revokedAt (immediately effective — no grant cache); foreign grants read as 404; audit `unit_capability.revoke` |
 
-**Deny precedence (behavioral fix, documented):** effective capability =
-role defaults ∪ active unit-grant role defaults, then UserPermission rows —
-**any applicable revoke (grant=false) denies**, scoped rows considered after
-global ones; grants never override denies. `GET /me/permissions` continues
-to reflect the merged set.
+**The scoped model (DECISIONS.md D5-hardened):** each grant row adds
+EXACTLY ONE capability, scoped to a unit subtree or the institution.
+Institution-wide operations (`assertCapabilityIn`) admit only
+institution-wide grants; unit-targeted operations
+(`assertCapabilityForUnit`) cover the target unit + its ancestors.
+OWNER is a platform identity and can never be granted. Deny precedence:
+membership baseline ∪ RolePermission ∪ UserPermission grants ∪ applicable
+unit grants − UserPermission revokes — **a revoke is never bypassed by any
+grant layer**. `GET /me/permissions` reflects the merged set.
 
 **ADMIN label correction:** the backend `ROLE_LABELS.ADMIN` becomes
 «إدارة المؤسسة» (institutional administration). Technical identifiers
 unchanged. The frontend twin (`frontend/src/lib/roleLabels.ts`) must mirror
 it — see HANDOFF.
+
+## 12b. r352 hardening additions (all additive)
+
+| Method | Path | Auth | Notes |
+|---|---|---|---|
+| GET/POST | `/academic/learners` | `PEOPLE_MANAGE` writes; reads = context | the generalized learner (STUDENT/TRAINEE, no Faculty/Department required) |
+| GET/PATCH | `/academic/learners/:id` | `PEOPLE_MANAGE` writes | status lifecycle ACTIVE/SUSPENDED/GRADUATED/WITHDRAWN/TRANSFERRED |
+| GET | `/governance/meetings/:id/minutes/history` | context | full versioned minutes history |
+| PUT | `/governance/meetings/:id/minutes` | `COUNCILS_MANAGE` at the council's scope | versioning contract: DRAFT updated in place; APPROVED/SIGNED current mints versionNo+1 (signed content + signatories preserved — DB trigger belt) |
+| GET/PUT | `/compliance/self-assessments/:id/items` | `QUALITY_INTERNAL_MANAGE` writes | criterion-level responses; the criteria item must belong to the assessment's OWN criteria set (400 otherwise) |
+| POST | `/compliance/self-assessments/:id/items/:itemId/corrective-action` | `QUALITY_INTERNAL_MANAGE` | corrective plan from a criterion-level issue |
+| POST | `/governance/documents/upload` | `COUNCILS_MANAGE` or `ACCREDITATION_MANAGE` | raw `application/pdf` (magic bytes + 20 MB + active-content gates); returns the tenant-bound `governance/<institutionId>/<file>.pdf` key |
+| GET | `/governance/documents/:id/file` | capability | authorized, institution-scoped PDF download through the storage driver |
+
+**Behavioral gates added (documented, tested):** program enrollment
+requires an APPROVED/ACTIVE program; credentials require a
+COMPLETED/GRADUATED enrollment of the SAME learner (+ the program's
+declared credential type); statutory admission prerequisites are enforced
+via the CredentialProgressionRule catalog (`409 PROGRESSION_NOT_ALLOWED`);
+learner/program category compatibility (`400
+LEARNER_ENROLLMENT_CATEGORY_MISMATCH`, Law 21/2023 Art. 2);
+`Council.status` uses CouncilStatus (DISSOLVED); attendance carries
+`attendeeKind` (MEMBER verified against active memberships; GUEST
+documented); council meetings list is paginated with `meta`; reservations
+require an operational facility and reject overlaps with a DB-level
+exclusion constraint (Arabic 409 under racing requests); equipment PATCH
+validates every newly supplied reference; research-project PATCH validates
+a newly supplied PI; affiliation parents must be classified institutions
+(same sector), 16 levels max.
 
 ## 13. What does NOT change
 

@@ -98,3 +98,39 @@ URL was never contacted by any migration, seed, or test.
    program-level study rides `ProgramEnrollment` (StudentProfile-based).
 5. Root `npm run build` and `scripts/verify.sh` were NOT run (AGENTS.md:
    they migrate/seed and are lead-controlled in the shared fleet).
+
+
+## Session 2 — 2026-11-22 (Africa/Tripoli) — the hardening pass (PR #35 follow-up)
+
+- Fetched the branch; HEAD unchanged at `65bf4eb2` (the previously
+  inspected head). Task: close the independent review's P0/P1 gaps.
+- Migration `0004_r352_backend_hardening` written and verified on BOTH
+  paths: fresh deploy (0001→0004) and a data-bearing upgrade (0001→0003 +
+  legacy StudentProfile/ProgramEnrollment/AwardedCredential/UnitRoleGrant
+  rows → 0004 with the learner bridge backfill inspected row-by-row).
+- Scoped-authorization model rebuilt (UnitCapabilityGrant), the §3.1
+  cross-institution read closed, tenant-integrity sweep across every R352
+  create/update, concurrency belts (partial uniques, btree_gist exclusion
+  constraint, advisory-lock serialization, cycle-safe depth-bounded
+  triggers), minutes versioning, CouncilStatus, attendance policy,
+  pagination, criterion-level self-assessment, governance storage
+  integration, legal catalog corrections (incl. the INDEPENDENT_RESEARCH_
+  CENTER de-attribution and the COLLEGE dean fix), the org-unit type
+  catalog, the progression rule catalog.
+- Two latent cross-router defects found and fixed during the sweep: the
+  research router's root-level institution middleware (mounted at /api/v1
+  root) blocked contextless callers of later-mounted routers; the
+  admin-extras prefix gate swallowed the scope-aware grant routes for
+  delegated non-admin actors.
+- Measured (embedded PG 16, 127.0.0.1:5433):
+  - `npx prisma validate` ✅; `npx prisma generate` ✅.
+  - `npm run typecheck` (all four tsc projects) → 0 errors.
+  - Unit suite: **2111 passed / 2 failed (frontend twin-belt) / 19 skipped**.
+  - Integration suite: **160/160 passed** (150 before; +10 new: scenarios
+    B/C/E, the §12 progression matrix, four §6 concurrency belts, the §3.1
+    cross-institution proofs).
+  - `npm run api:openapi` regenerated; path diff vs HEAD: 8 additions, 3
+    documented unit-roles→unit-capabilities renames, nothing else removed.
+  - Backend production build with a local test DATABASE_URL ✅;
+    `npm run lint` 0 errors.
+- Full findings register: POST-IMPLEMENTATION-AUDIT.md (this directory).

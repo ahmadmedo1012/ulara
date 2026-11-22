@@ -127,3 +127,41 @@ appointments, not from the role label.
   `GET /catalog/credential-types`.
 - Compliance screen: `GET /compliance/accreditations` + `/licenses` +
   `/findings` (+ `/self-assessments` behind `QUALITY_INTERNAL_MANAGE`).
+
+
+---
+
+# r352 hardening handoff (final backend state)
+
+> **Measured state:** OpenAPI regenerated (8 additive paths + the three
+> documented unit-roles → unit-capabilities renames); backend unit suite
+> 2111 green + the two twin-belt rows expected-red; integration suite
+> **160/160**; typecheck 0 errors; lint 0 errors.
+
+## What changed for the frontend
+
+1. **Unit-role surface renamed** `/me/unit-roles` → `/me/unit-capabilities`
+   (same for the admin paths); the payload field `role` became
+   `capability` (one capability per grant — never a role bundle). The
+   grant list item shape is otherwise identical.
+2. **New learner endpoints** `/academic/learners` (CRUD) — the
+   generalized learner; enrollment/placement/award creates accept
+   `learnerProfileId` OR the legacy `studentProfileId` (exactly one).
+3. **Enrollment/award gates** (new 4xx/409s): programs must be
+   APPROVED/ACTIVE to enroll; credentials require a completed enrollment
+   of the same learner; `PROGRESSION_NOT_ALLOWED` (statutory admission
+   prerequisites); `LEARNER_ENROLLMENT_CATEGORY_MISMATCH`.
+4. **Minutes are versioned**: `GET …/minutes` returns
+   `{ data: current, meta: { versions, versionCount } }`; re-drafting a
+   signed/approved version mints a new revision (200, versionNo+1) —
+   history at `GET …/minutes/history`.
+5. **Council status** value `ENDED` → `DISSOLVED`; attendance records
+   carry `attendeeKind` (MEMBER/GUEST); meetings list is paginated.
+6. **Self-assessment items**: `GET/PUT …/self-assessments/:id/items` +
+   corrective-action creation per item.
+7. **Documents**: upload via `POST /governance/documents/upload` (raw
+   PDF) → attach the returned `binaryObjectId`; download at
+   `GET /governance/documents/:id/file`. `fileUrl` is deprecated.
+
+The twin-belt ADMIN-label dependency (2 expected-red unit rows) is
+unchanged and still yours — see POST-IMPLEMENTATION-AUDIT.md §I.

@@ -62,3 +62,26 @@ domain model, no parallel systems.
 - No new file-upload byte path for governance documents (evidence rows carry
   references; upload integration is a residual).
 - No destructive changes to Faculty/Department/TeacherProfile/StudentProfile.
+
+
+---
+
+# r352 hardening plan (executed)
+
+1. ~~P0 authorization & tenant isolation (§3, §4)~~ — FIXED (see
+   POST-IMPLEMENTATION-AUDIT.md A-1..A-4).
+2. ~~P0 generalized learners (§5)~~ — FIXED (B).
+3. ~~P0 concurrency invariants (§6)~~ — FIXED (C-1..C-6).
+4. ~~P1 governance lifecycle (§7)~~ — FIXED (D-1..D-4).
+5. ~~P1 quality workflows (§8)~~ — FIXED (D-5).
+6. ~~P1 document upload integration (§9)~~ — FIXED (D-6, integrated —
+   no second storage system).
+7. ~~P1 legal classifications (§10)~~ — FIXED (E-1..E-4).
+8. ~~P1 org-unit type extensibility (§11)~~ — FIXED (E-5, controlled
+   catalog).
+9. ~~P1 credential progression (§12)~~ — FIXED (E-6, explicit catalog).
+10. ~~P1 faculty/department bridge review (§13)~~ — FIXED (D-7).
+11. ~~API & lifecycle sweep (§14)~~ — FIXED (F, incl. two latent
+    cross-router defects).
+12. ~~Acceptance scenarios A–H (§15)~~ — implemented + measured (G).
+13. Documentation & handoff (§17) — this pass.

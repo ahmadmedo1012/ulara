@@ -176,39 +176,43 @@ export async function assertEvidenceOwnerInInstitution(
       400,
     );
   }
-  let resolved: string | null = null;
-  if (ownerType === 'ExternalAccreditation') {
-    const row = await prisma.externalAccreditation.findUnique({
-      where: { id: ownerId },
-      select: { institutionId: true },
-    });
-    resolved = row?.institutionId ?? null;
-  } else if (ownerType === 'CorrectiveActionPlan') {
-    // No direct institution column — the plan rides its finding.
-    const row = await prisma.correctiveActionPlan.findUnique({
-      where: { id: ownerId },
-      select: { finding: { select: { institutionId: true } } },
-    });
-    resolved = row?.finding.institutionId ?? null;
-  } else if (ownerType === 'InternalSelfAssessment') {
-    const row = await prisma.internalSelfAssessment.findUnique({
-      where: { id: ownerId },
-      select: { institutionId: true },
-    });
-    resolved = row?.institutionId ?? null;
-  } else if (ownerType === 'RegulatoryInspection') {
-    const row = await prisma.regulatoryInspection.findUnique({
-      where: { id: ownerId },
-      select: { institutionId: true },
-    });
-    resolved = row?.institutionId ?? null;
-  } else {
+  const resolveOwnerInstitution = async (): Promise<string | null> => {
+    if (ownerType === 'ExternalAccreditation') {
+      const row = await prisma.externalAccreditation.findUnique({
+        where: { id: ownerId },
+        select: { institutionId: true },
+      });
+      return row?.institutionId ?? null;
+    }
+    if (ownerType === 'CorrectiveActionPlan') {
+      // No direct institution column — the plan rides its finding.
+      const row = await prisma.correctiveActionPlan.findUnique({
+        where: { id: ownerId },
+        select: { finding: { select: { institutionId: true } } },
+      });
+      return row?.finding.institutionId ?? null;
+    }
+    if (ownerType === 'InternalSelfAssessment') {
+      const row = await prisma.internalSelfAssessment.findUnique({
+        where: { id: ownerId },
+        select: { institutionId: true },
+      });
+      return row?.institutionId ?? null;
+    }
+    if (ownerType === 'RegulatoryInspection') {
+      const row = await prisma.regulatoryInspection.findUnique({
+        where: { id: ownerId },
+        select: { institutionId: true },
+      });
+      return row?.institutionId ?? null;
+    }
     const row = await prisma.operationalLicense.findUnique({
       where: { id: ownerId },
       select: { institutionId: true },
     });
-    resolved = row?.institutionId ?? null;
-  }
+    return row?.institutionId ?? null;
+  };
+  const resolved = await resolveOwnerInstitution();
   if (resolved === null || resolved !== institutionId) {
     throw AppError.notFound('كيان الأدلة المطلوب غير موجود');
   }
