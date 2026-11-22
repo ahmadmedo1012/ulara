@@ -56,7 +56,7 @@ export interface StorageDriver {
 // ─── Pure key helpers (tests/modules/storage-sigv4.test.ts) ───────
 
 /** The only namespaces the platform stores under. */
-export const STORAGE_NAMESPACES = ['papers', 'materials', 'lectures'] as const;
+export const STORAGE_NAMESPACES = ['papers', 'materials', 'lectures', 'governance'] as const;
 export type StorageNamespace = (typeof STORAGE_NAMESPACES)[number];
 
 /**
@@ -122,6 +122,19 @@ export function storageKeyIsValid(key: string): boolean {
   if (slash === -1) return false;
   const namespace = key.slice(0, slash);
   const filename = key.slice(slash + 1);
+  if (namespace === 'governance') {
+    // r352 hardening §9: governance/<institutionId>/<filename>.pdf —
+    // exactly three segments, the middle one the owning institution id
+    // (cuid shape), the last a flat .pdf filename. The tenant binding
+    // lives in the key itself; the document rows add the authorization.
+    // (Checked BEFORE the flat-filename rule — governance is the one
+    // namespace whose keys legitimately carry a second segment.)
+    const segments = filename.split('/');
+    if (segments.length !== 2) return false;
+    const [rawInstitution = '', rawFile = ''] = segments;
+    if (!/^[a-z0-9]{20,32}$/i.test(rawInstitution)) return false;
+    return rawFile.toLowerCase().endsWith('.pdf');
+  }
   if (filename.length === 0 || filename.includes('/')) return false;
   if (namespace === 'papers' || namespace === 'materials') {
     return filename.toLowerCase().endsWith('.pdf');

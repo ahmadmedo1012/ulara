@@ -47,7 +47,7 @@ vi.mock('../../src/db.js', () => ({
     userPermission: { findMany: vi.fn() },
     rolePermission: { findMany: vi.fn() },
     // r352 — the scoped-role-grant model the permission merge reads.
-    unitRoleGrant: { findMany: vi.fn(async () => []) },
+    unitCapabilityGrant: { findMany: vi.fn(async () => []) },
     loginEvent: { create: vi.fn(async () => ({})) },
     // Interactive-transaction caller: hand the mock prisma itself as tx
     // so tx.institution.findUnique etc. hit the same spied delegates.

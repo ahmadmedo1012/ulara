@@ -103,28 +103,29 @@ describe('mergeCapabilities', () => {
     expect(grantedThenRevoked.has('EXAMS_AUTHOR')).toBe(false);
   });
 
-  it('r352 D5 — unit-grant roles merge their defaults + DB rows', () => {
-    // A STUDENT membership with an active ADMIN unit-grant gains the
-    // ADMIN defaults (institutional operations) — scoped
-    // responsibilities compose instead of multiplying Role values.
+  it('r352 hardening §3.2 — a unit grant adds EXACTLY ONE capability, never a role bundle', () => {
+    // A STUDENT membership with an active unit grant of USERS_MANAGE
+    // gains that single capability — the pre-hardening design composed
+    // the whole ADMIN bundle; the scoped model must not.
     const caps = mergeCapabilities(
       Role.STUDENT,
       [row(Role.ADMIN, 'TEACHERS_VERIFY')],
       [],
-      [Role.ADMIN],
+      ['USERS_MANAGE'],
     );
     expect(caps.has('EXAMS_TAKE')).toBe(true); // own membership default
-    expect(caps.has('USERS_MANAGE')).toBe(true); // ADMIN default via grant
-    expect(caps.has('TEACHERS_VERIFY')).toBe(true); // DB row for granted role
+    expect(caps.has('USERS_MANAGE')).toBe(true); // the granted capability
+    expect(caps.has('TEACHERS_VERIFY')).toBe(false); // ADMIN DB row NOT merged
+    expect(caps.has('ORG_STRUCTURE_MANAGE')).toBe(false); // no bundle leakage
     expect(caps.has('RESEARCH_GRADE_OWN')).toBe(false); // not in either set
   });
 
-  it('r352 D6 — a deny still wins over unit-grant role defaults', () => {
+  it('r352 D6 — a deny still wins over unit grants', () => {
     const caps = mergeCapabilities(
       Role.STUDENT,
       [],
       [{ capability: 'USERS_MANAGE', grant: false }],
-      [Role.ADMIN],
+      ['USERS_MANAGE'],
     );
     expect(caps.has('USERS_MANAGE')).toBe(false);
   });
@@ -185,7 +186,7 @@ describe('DEFAULT_ROLE_CAPABILITIES — documented governance invariants', () =>
       'ORG_STRUCTURE_MANAGE', 'PEOPLE_MANAGE', 'APPOINTMENTS_MANAGE',
       'COUNCILS_MANAGE', 'PROGRAMS_MANAGE', 'CREDENTIALS_MANAGE',
       'ACCREDITATION_MANAGE', 'QUALITY_INTERNAL_MANAGE',
-      'FACILITIES_MANAGE', 'RESEARCH_PROJECTS_MANAGE', 'UNIT_ROLES_ASSIGN',
+      'FACILITIES_MANAGE', 'RESEARCH_PROJECTS_MANAGE', 'UNIT_CAPABILITIES_ASSIGN',
     ] as const) {
       expect(caps.has(cap), `QUALITY must not default to ${cap}`).toBe(false);
     }
@@ -197,7 +198,7 @@ describe('DEFAULT_ROLE_CAPABILITIES — documented governance invariants', () =>
       'ORG_STRUCTURE_MANAGE', 'PEOPLE_MANAGE', 'APPOINTMENTS_MANAGE',
       'COUNCILS_MANAGE', 'PROGRAMS_MANAGE', 'CREDENTIALS_MANAGE',
       'ACCREDITATION_MANAGE', 'FACILITIES_MANAGE',
-      'RESEARCH_PROJECTS_MANAGE', 'UNIT_ROLES_ASSIGN',
+      'RESEARCH_PROJECTS_MANAGE', 'UNIT_CAPABILITIES_ASSIGN',
     ] as const) {
       expect(caps.has(cap), `ADMIN should default to ${cap}`).toBe(true);
     }

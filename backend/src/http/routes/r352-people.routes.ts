@@ -163,7 +163,7 @@ async function requirePerson(institutionId: string, personId: string) {
 router.get('/people/:id', async (req, res, next) => {
   try {
     const person = await requirePerson(req.institution!.id, req.params.id!);
-    const [appointments, unitRoleGrants] = await Promise.all([
+    const [appointments, unitCapabilityGrants] = await Promise.all([
       prisma.positionAppointment.findMany({
         where: { personId: person.id, status: { in: ['SCHEDULED', 'ACTIVE'] } },
         select: {
@@ -175,13 +175,13 @@ router.get('/people/:id', async (req, res, next) => {
         take: 20,
       }),
       person.userId
-        ? prisma.unitRoleGrant.findMany({
+        ? prisma.unitCapabilityGrant.findMany({
             where: { userId: person.userId, institutionId: person.institutionId, isActive: true },
-            select: { id: true, role: true, orgUnitId: true, reason: true },
+            select: { id: true, capability: true, orgUnitId: true, reason: true },
           })
         : Promise.resolve([]),
     ]);
-    res.json({ data: { person, appointments, unitRoleGrants } });
+    res.json({ data: { person, appointments, unitCapabilityGrants } });
   } catch (e) {
     next(e);
   }

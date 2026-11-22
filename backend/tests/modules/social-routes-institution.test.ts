@@ -48,7 +48,7 @@ vi.mock('../../src/db.js', () => {
     rolePermission: { findMany: vi.fn() },
     userPermission: { findMany: vi.fn() },
     // r352 — the scoped-role-grant model the permission merge reads.
-    unitRoleGrant: { findMany: vi.fn(async () => []) },
+    unitCapabilityGrant: { findMany: vi.fn(async () => []) },
     operationalAlert: { create: vi.fn() },
     $queryRaw: vi.fn(),
   };

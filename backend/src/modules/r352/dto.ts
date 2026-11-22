@@ -162,7 +162,7 @@ export const councilListSchema = paginationSchema.extend({
       'STANDING_COMMITTEE', 'OTHER',
     ])
     .optional(),
-  status: z.enum(['ACTIVE', 'ENDED', 'CANCELLED']).optional(),
+  status: z.enum(['ACTIVE', 'DISSOLVED', 'CANCELLED']).optional(),
 });
 
 export const councilCreateSchema = z
@@ -184,7 +184,7 @@ export const councilCreateSchema = z
 
 export const councilUpdateSchema = councilCreateSchema
   .partial()
-  .extend({ status: z.enum(['ACTIVE', 'ENDED', 'CANCELLED']).optional() })
+  .extend({ status: z.enum(['ACTIVE', 'DISSOLVED', 'CANCELLED']).optional() })
   .strict();
 
 export const councilMembershipCreateSchema = z
@@ -231,6 +231,11 @@ export const attendanceBulkSchema = z
           .object({
             personId: id,
             status: z.enum(['PRESENT', 'ABSENT', 'EXCUSED', 'LATE']),
+            // r352 hardening §7.3 — the guest/participant distinction is
+            // explicit. MEMBER (default) rows are verified against ACTIVE
+            // council memberships; GUEST rows are documented external
+            // participants of the same institution.
+            attendeeKind: z.enum(['MEMBER', 'GUEST']).default('MEMBER'),
           })
           .strict(),
       )
@@ -286,10 +291,51 @@ export const minutesSignSchema = z.object({ signedByPersonId: id }).strict();
 export const councilDocumentCreateSchema = z
   .object({
     titleAr: z.string().trim().min(1).max(300),
+    // r352 hardening §9 — the real storage link (governance namespace).
+    binaryObjectId: z.string().trim().max(200).optional(),
+    // DEPRECATED external reference — never trusted as an upload.
     fileUrl: z.string().trim().max(1000).optional(),
     kind: z.string().trim().max(64).optional(),
     meetingId: optionalId,
     notes: z.string().trim().max(2000).optional(),
+  })
+  .strict();
+
+// r352 hardening §7.4 — paginated council meetings list.
+export const meetingListSchema = paginationSchema.extend({}).strict();
+
+// ─── learners (r352 hardening §5 — the generalized learner) ────────
+export const learnerListSchema = paginationSchema.extend({
+  q: z.string().trim().max(120).optional(),
+  category: z.enum(['STUDENT', 'TRAINEE']).optional(),
+  status: z.enum(['ACTIVE', 'SUSPENDED', 'GRADUATED', 'WITHDRAWN', 'TRANSFERRED']).optional(),
+  orgUnitId: z.string().cuid().optional(),
+});
+
+export const learnerCreateSchema = z
+  .object({
+    category: z.enum(['STUDENT', 'TRAINEE']),
+    learnerNumber: z.string().trim().min(1).max(64),
+    fullNameAr: z.string().trim().min(1).max(200),
+    fullNameEn: z.string().trim().max(200).optional(),
+    gender: z.string().trim().max(30).optional(),
+    birthDate: optionalDate,
+    nationality: z.string().trim().max(80).optional(),
+    nationalId: z.string().trim().max(64).optional(),
+    email: z.string().trim().email().max(200).optional(),
+    phone: z.string().trim().max(40).optional(),
+    address: z.string().trim().max(300).optional(),
+    orgUnitId: optionalId,
+    userId: optionalId,
+    notes: z.string().trim().max(2000).optional(),
+  })
+  .strict();
+
+export const learnerUpdateSchema = learnerCreateSchema
+  .partial()
+  .omit({ category: true, learnerNumber: true })
+  .extend({
+    status: z.enum(['ACTIVE', 'SUSPENDED', 'GRADUATED', 'WITHDRAWN', 'TRANSFERRED']).optional(),
   })
   .strict();
 
@@ -369,20 +415,28 @@ export const programCourseCreateSchema = z
 
 export const programEnrollmentListSchema = paginationSchema.extend({
   programId: z.string().cuid().optional(),
+  learnerProfileId: z.string().cuid().optional(),
   studentProfileId: z.string().cuid().optional(),
   status: z
     .enum(['CANDIDATE', 'ACTIVE', 'ON_LEAVE', 'WITHDRAWN', 'SUSPENDED', 'COMPLETED', 'GRADUATED'])
     .optional(),
 });
 
+// r352 hardening §5 — the generalized learner is the canonical target;
+// exactly ONE of learnerProfileId / studentProfileId (legacy bridge).
 export const programEnrollmentCreateSchema = z
   .object({
-    studentProfileId: id,
+    learnerProfileId: optionalId,
+    studentProfileId: optionalId,
     programId: id,
     programVersionId: optionalId,
     expectedCompletionAt: optionalDate,
   })
-  .strict();
+  .strict()
+  .refine(
+    (v) => (v.learnerProfileId !== undefined) !== (v.studentProfileId !== undefined),
+    { message: 'حدد learnerProfileId أو studentProfileId — لا كليهما ولا أياً منهما' },
+  );
 
 export const programEnrollmentStatusSchema = z
   .object({
@@ -395,12 +449,16 @@ export const programEnrollmentStatusSchema = z
 
 export const placementListSchema = paginationSchema.extend({
   status: z.enum(['PLANNED', 'ACTIVE', 'COMPLETED', 'CANCELLED', 'TERMINATED']).optional(),
+  learnerProfileId: z.string().cuid().optional(),
   studentProfileId: z.string().cuid().optional(),
 });
 
+// r352 hardening §4.3/§5 — placements target the generalized learner;
+// exactly ONE of learnerProfileId / studentProfileId (legacy bridge).
 export const placementCreateSchema = z
   .object({
-    studentProfileId: id,
+    learnerProfileId: optionalId,
+    studentProfileId: optionalId,
     programEnrollmentId: optionalId,
     hostOrgUnitId: optionalId,
     externalHost: z.string().trim().max(300).optional(),
@@ -408,7 +466,11 @@ export const placementCreateSchema = z
     startsAt: date,
     endsAt: optionalDate,
   })
-  .strict();
+  .strict()
+  .refine(
+    (v) => (v.learnerProfileId !== undefined) !== (v.studentProfileId !== undefined),
+    { message: 'حدد learnerProfileId أو studentProfileId — لا كليهما ولا أياً منهما' },
+  );
 
 export const placementUpdateSchema = z
   .object({
@@ -421,14 +483,18 @@ export const placementUpdateSchema = z
 
 // ─── credentials ───────────────────────────────────────────────────
 export const credentialListSchema = paginationSchema.extend({
+  learnerProfileId: z.string().cuid().optional(),
   studentProfileId: z.string().cuid().optional(),
   credentialTypeId: z.string().cuid().optional(),
   status: z.enum(['AWARDED', 'REVOKED', 'SUSPENDED']).optional(),
 });
 
+// r352 hardening §4.4/§5 — awards target the generalized learner;
+// exactly ONE of learnerProfileId / studentProfileId (legacy bridge).
 export const credentialAwardSchema = z
   .object({
-    studentProfileId: id,
+    learnerProfileId: optionalId,
+    studentProfileId: optionalId,
     credentialTypeCode: z.string().trim().min(2).max(64),
     programId: optionalId,
     programEnrollmentId: optionalId,
@@ -438,7 +504,11 @@ export const credentialAwardSchema = z
     serialNumber: z.string().trim().min(1).max(80).optional(),
     notes: z.string().trim().max(2000).optional(),
   })
-  .strict();
+  .strict()
+  .refine(
+    (v) => (v.learnerProfileId !== undefined) !== (v.studentProfileId !== undefined),
+    { message: 'حدد learnerProfileId أو studentProfileId — لا كليهما ولا أياً منهما' },
+  );
 
 export const credentialRevokeSchema = z
   .object({ notes: z.string().trim().max(2000).optional() })
@@ -827,12 +897,46 @@ export const researchOutputCreateSchema = z
   })
   .strict();
 
-// ─── unit roles ────────────────────────────────────────────────────
-export const unitRoleGrantCreateSchema = z
+// ─── unit capability grants (r352 hardening §3.2) ──────────────────
+// ONE explicit capability per grant — never a role bundle. The
+// capability enum excludes nothing: OWNER is a platform identity
+// expressed via User.role, not a Capability, so it can never appear
+// here. institutionId is honored ONLY for the OWNER cross-institution
+// path; every other caller's server-verified context wins.
+export const unitCapabilityGrantCreateSchema = z
   .object({
     institutionId: id,
     orgUnitId: z.string().cuid().nullable().optional(),
-    role: z.enum(['STUDENT', 'TEACHER', 'ADMIN', 'QUALITY']),
+    capability: z.enum([
+      'RESEARCH_GRADE_OWN',
+      'RESEARCH_GRADE_ANY',
+      'RESEARCH_PUBLISH',
+      'EXAMS_AUTHOR',
+      'EXAMS_MODERATE',
+      'EXAMS_TAKE',
+      'CURRICULUM_EDIT_OWN',
+      'CURRICULUM_EDIT_ANY',
+      'USERS_MANAGE',
+      'ROLES_ASSIGN',
+      'TEACHERS_VERIFY',
+      'QUALITY_VIEW',
+      'QUALITY_REPORT',
+      'ANNOUNCE_PLATFORM',
+      'ANNOUNCE_FACULTY',
+      'COMPETITIONS_RUN',
+      'EVENTS_RUN',
+      'ORG_STRUCTURE_MANAGE',
+      'PEOPLE_MANAGE',
+      'APPOINTMENTS_MANAGE',
+      'COUNCILS_MANAGE',
+      'PROGRAMS_MANAGE',
+      'CREDENTIALS_MANAGE',
+      'ACCREDITATION_MANAGE',
+      'QUALITY_INTERNAL_MANAGE',
+      'FACILITIES_MANAGE',
+      'RESEARCH_PROJECTS_MANAGE',
+      'UNIT_CAPABILITIES_ASSIGN',
+    ]),
     reason: z.string().trim().max(500).optional(),
   })
   .strict();

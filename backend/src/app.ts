@@ -74,7 +74,7 @@ import r352AcademicRoutes from './http/routes/r352-academic.routes.js';
 import r352ComplianceRoutes from './http/routes/r352-compliance.routes.js';
 import r352OperationsRoutes from './http/routes/r352-operations.routes.js';
 import r352ResearchRoutes from './http/routes/r352-research.routes.js';
-import r352UnitRolesRoutes from './http/routes/r352-unit-roles.routes.js';
+import r352UnitCapabilitiesRoutes from './http/routes/r352-unit-capabilities.routes.js';
 import { themeRouter } from './modules/theme/router.js';
 import { onboardingRouter } from './modules/onboarding/router.js';
 import { milestonesRouter } from './modules/milestones/router.js';
@@ -392,7 +392,7 @@ export function createApp() {
   // r352 — institutional-core domain routers (all internally guarded by
   // authMiddleware + requireInstitution; writes carry capability gates
   // and in-transaction audit rows). People and appointments share the
-  // /institutional prefix; unit-roles mounts at the root for its /me
+  // /institutional prefix; unit-capabilities mounts at the root for its /me
   // and /admin subpaths; research declares /research-projects +
   // /research-outputs.
   app.use('/api/v1/institutional', r352OrgUnitsRoutes);
@@ -403,7 +403,7 @@ export function createApp() {
   app.use('/api/v1/compliance', r352ComplianceRoutes);
   app.use('/api/v1/operations', r352OperationsRoutes);
   app.use('/api/v1', r352ResearchRoutes);
-  app.use('/api/v1', r352UnitRolesRoutes);
+  app.use('/api/v1', r352UnitCapabilitiesRoutes);
 
   // 404 for unknown API paths — ANY /api/* path that fell through the
   // routers (including /api/v2/… and /api/ghost) gets the standard JSON
