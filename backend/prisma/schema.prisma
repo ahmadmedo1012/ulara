@@ -216,7 +216,7 @@ enum Capability {
   QUALITY_INTERNAL_MANAGE // internal QA-office self-assessment writes (explicit grant only)
   FACILITIES_MANAGE // manage facilities/equipment/work orders/reservations
   RESEARCH_PROJECTS_MANAGE // manage institutional research projects
-  UNIT_ROLES_ASSIGN // grant/revoke unit-scoped role grants
+  UNIT_CAPABILITIES_ASSIGN // grant/revoke unit-scoped capability grants (r352 hardening)
 }
 
 enum QuestionType {
@@ -338,7 +338,8 @@ model Institution {
   organizationalUnits    OrganizationalUnit[]
   people                 InstitutionalPerson[]
   appointments           PositionAppointment[]
-  unitRoleGrants         UnitRoleGrant[]
+  unitCapabilityGrants   UnitCapabilityGrant[]
+  learnerProfiles        LearnerProfile[]
   councils               Council[]
   academicTerms          AcademicTerm[]
   programs               Program[]
@@ -358,6 +359,7 @@ model Institution {
   researchProjects       ResearchProject[]
   researchOutputs        ResearchOutput[]
   localPositionVariants  PositionTemplate[]
+  localOrgUnitTypes      OrgUnitTypeDefinition[] @relation("LocalOrgUnitTypes")
 
   @@index([status])
 }
@@ -462,6 +464,7 @@ model User {
   // Governance
   permissionGrants    UserPermission[]     @relation("UserPermissionUser")
   permissionGrantedBy UserPermission[]     @relation("UserPermissionGranter")
+  unitCapabilityGrants UnitCapabilityGrant[]
   verifiedTeachers    TeacherProfile[]     @relation("TeacherProfileVerifier")
   // Exams
   authoredQuestions   Question[]           @relation("QuestionAuthor")
@@ -497,10 +500,11 @@ model User {
   // r326 M2.6 — the push devices registered by this user's installs.
   pushDevices    PushDevice[]
 
-  // r352 — unified people domain (optional account link) + scoped role
-  // grants (DECISIONS.md D5: responsibilities are grants, not memberships).
+  // r352 — unified people domain (optional account link) + scoped
+  // capability grants (r352 hardening §3.2: single capabilities, never
+  // role bundles).
   institutionalPeople InstitutionalPerson[]
-  unitRoleGrants     UnitRoleGrant[]
+  learnerProfiles    LearnerProfile[]
 }
 
 model StudentProfile {
@@ -529,6 +533,11 @@ model StudentProfile {
   // r352 — الطالب ≠ المتدرب (Law 21/2023 Art. 2): the legal learner
   // category, kept separate from course Enrollment and program context.
   learnerCategory LearnerCategory @default(STUDENT)
+  // r352 hardening §5 — non-destructive bridge to the generalized
+  // learner record (1:1). Set by the migration backfill for existing
+  // rows; new registrations may start from either side.
+  learnerProfileId String? @unique
+  learnerProfile   LearnerProfile? @relation(fields: [learnerProfileId], references: [id])
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 
@@ -681,6 +690,13 @@ model Course {
   institution   Institution        @relation(fields: [institutionId], references: [id])
   departmentId  String
   department    Department         @relation(fields: [departmentId], references: [id])
+  // r352 hardening §5 — additive organizational ownership: technical
+  // programs define courses through their REAL org units without
+  // fabricating faculties/departments. Nullable: the legacy Department
+  // relation stays the required bridge for existing university rows
+  // (one synchronized Course system — never a second one).
+  orgUnitId     String?
+  orgUnit       OrganizationalUnit? @relation(fields: [orgUnitId], references: [id])
   offerings     CourseOffering[]
   concepts      KnowledgeConcept[]
   // r352 — program curriculum links (ProgramCourse → Course).
@@ -691,6 +707,7 @@ model Course {
   @@unique([institutionId, code])
   @@index([institutionId])
   @@index([departmentId])
+  @@index([orgUnitId])
 }
 
 model CourseOffering {
@@ -2104,6 +2121,35 @@ model BinaryObject {
   size      Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  councilDocuments CouncilDocument[]
+  complianceEvidence ComplianceEvidence[]
+}
+
+// ─── r352 hardening §11 — controlled org-unit type catalog ─────────
+
+// فهرس أنواع الوحدات التنظيمية: مرجع مضبوط (seeded) بأهلية القطاع
+// ونوع المؤسسة وقواعد توافق الأب، مع أنواع محلية لكل مؤسسة. إنشاء
+// وحدة بنوع غير موجود هنا (عالمي نشط أو محلي لنفس المؤسسة) يُرفض.
+model OrgUnitTypeDefinition {
+  id                            String    @id @default(cuid())
+  code                          String    @unique
+  nameAr                        String
+  nameEn                        String?
+  allowedParentCodes            String[]  @default([]) // empty = any parent type
+  eligibleSectors               String[]  @default([]) // InstitutionSector codes; empty = both sectors
+  eligibleInstitutionTypeCodes  String[]  @default([]) // empty = all institution kinds
+  isLocal                       Boolean   @default(false)
+  institutionId                 String? // required when isLocal
+  institution                   Institution? @relation("LocalOrgUnitTypes", fields: [institutionId], references: [id])
+  isActive                      Boolean   @default(true)
+  notes                         String?
+  sortOrder                     Int       @default(0)
+  createdAt                     DateTime  @default(now())
+  updatedAt                     DateTime  @updatedAt
+
+  @@index([isLocal, institutionId])
+  @@index([isActive])
 }
 
 // ────────────────────────────────────────────────────────────────
@@ -2374,6 +2420,41 @@ enum CouncilMembershipStatus {
   ACTIVE
   ENDED
   CANCELLED
+}
+
+// r352 hardening (§7.2) — a council is an ORGAN, not a member: it gets
+// its own lifecycle instead of reusing CouncilMembershipStatus.
+enum CouncilStatus {
+  ACTIVE
+  DISSOLVED // حُلّ المجلس
+  CANCELLED
+}
+
+// r352 hardening (§7.3) — attendance policy made explicit: members of
+// the council AND documented guests (participant distinction modeled,
+// not assumed).
+enum MeetingAttendeeKind {
+  MEMBER
+  GUEST
+}
+
+// r352 hardening (§5) — the generalized learner lifecycle.
+enum LearnerStatus {
+  ACTIVE
+  SUSPENDED
+  GRADUATED
+  WITHDRAWN
+  TRANSFERRED
+}
+
+// r352 hardening (§8) — controlled vocabulary for criterion-level
+// self-assessment results.
+enum SelfAssessmentRating {
+  COMPLIANT
+  PARTIALLY_COMPLIANT
+  NON_COMPLIANT
+  NOT_ASSESSED
+  NOT_APPLICABLE
 }
 
 enum MeetingStatus {
@@ -2720,7 +2801,9 @@ model OrganizationalUnit {
   appointments     PositionAppointment[]
   councils         Council[]
   programs         Program[]
-  unitRoleGrants   UnitRoleGrant[]
+  unitCapabilityGrants UnitCapabilityGrant[]
+  learnerProfiles  LearnerProfile[]
+  courses          Course[]
   accreditations   ExternalAccreditation[]
   licenses         OperationalLicense[]
   inspections      RegulatoryInspection[]
@@ -2777,6 +2860,7 @@ model InstitutionalPerson {
   researchProjectsLed   ResearchProject[]
   researchProjectMemberships ResearchProjectMember[]
   researchOutputs       ResearchOutput[]
+  assessedSelfAssessmentItems SelfAssessmentItem[] @relation("SelfAssessmentAssessor")
 
   @@unique([institutionId, userId])
   @@unique([institutionId, staffNumber])
@@ -2795,7 +2879,8 @@ model PositionTemplate {
   titleAr                       String
   titleEn                       String?
   category                      PositionCategory
-  scopeRequirement              String? // OrgUnitType code required for the unit (e.g. FACULTY for a dean)
+  scopeRequirement              String? // DEPRECATED single-type belt — superseded by allowedUnitTypes (kept for compat)
+  allowedUnitTypes              String[]  @default([]) // r352 hardening §10.3 — empty = any unit type; e.g. TECHNICAL_COLLEGE_DEAN → [COLLEGE, FACULTY]
   eligibleInstitutionTypeCodes  String[]  @default([]) // empty = all kinds
   isLocalVariant                Boolean   @default(false)
   institutionId                 String?
@@ -2844,29 +2929,78 @@ model PositionAppointment {
   @@index([orgUnitId])
 }
 
-// ─── r352 — scoped role grants (DECISIONS.md D5) ─────────────────
+// ─── r352 hardening — unit-scoped CAPABILITY grants (§3.2) ──────
 
-// مسؤوليات إضافية بنطاق وحدة تنظيمية (أو المؤسسة كلها): تُدمج
-// قدرات دورها الافتراضية في المجموعة الفعّالة دون إنشاء قيم Role
-// جديدة. العضوية تبقى مصدر دور الجلسة الوحيد.
-model UnitRoleGrant {
-  id            String             @id @default(cuid())
+// منحة قدرة واحدة بنطاق وحدة تنظيمية (أو المؤسسة كلها). التصميم
+// الجديد (بديل UnitRoleGrant الملغاة): كل صف يمنح قدرة واحدة
+// صريحة — لا تكوين حزمة دور كاملة أبدًا. المنحة بنطاق وحدة تسري
+// على الوحدة وكل فروعها فقط، ولا تفوّض أي عملية على مستوى
+// المؤسسة ككل. العضوية تبقى مصدر دور الجلسة الوحيد، وOWNER
+// هوية منصية لا تُمنح هنا أبدًا (القدرة عمود Capability لا Role).
+// الإلغاء الفوري: كل فحص صلاحية يستعلم الصفوف مباشرة بلا كاش.
+model UnitCapabilityGrant {
+  id            String              @id @default(cuid())
   userId        String
-  user          User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   institutionId String
-  institution   Institution        @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  institution   Institution         @relation(fields: [institutionId], references: [id], onDelete: Cascade)
   orgUnitId     String?
   orgUnit       OrganizationalUnit? @relation(fields: [orgUnitId], references: [id])
-  role          Role
-  isActive      Boolean            @default(true)
+  capability    Capability
+  isActive      Boolean             @default(true)
   grantedById   String? // audit provenance (no FK)
   reason        String?
-  createdAt     DateTime           @default(now())
-  updatedAt     DateTime           @updatedAt
+  revokedAt     DateTime?
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
 
-  @@unique([userId, institutionId, orgUnitId, role])
+  @@unique([userId, institutionId, orgUnitId, capability])
   @@index([institutionId, orgUnitId])
   @@index([userId, isActive])
+  @@index([capability])
+}
+
+// ─── r352 hardening — the generalized learner (§5) ─────────────
+
+// ملف متعلم معمم: طالب جامعي أو متدرب — بلا كلية/قسم إجباري.
+// مركز التكوين المهني أو المعهد المتوسط يسجّل متدربيه هنا مباشرة.
+// الحساب (userId) اختياري — يُحفظ السجل مؤسسيًا لمن لا حساب له.
+// الجسر: StudentProfile.learnerProfileId (خريطة 1:1 غير إتلافية).
+model LearnerProfile {
+  id            String        @id @default(cuid())
+  institutionId String
+  institution   Institution   @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  userId        String?
+  user          User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  category      LearnerCategory // STUDENT (طالب) | TRAINEE (متدرب) — Law 21/2023 Art. 2
+  learnerNumber String // رقم التسجيل — متفرّد لكل مؤسسة
+  fullNameAr    String
+  fullNameEn    String?
+  gender        String?
+  birthDate     DateTime?
+  nationality   String?
+  nationalId    String?
+  email         String?
+  phone         String?
+  address       String?
+  orgUnitId     String? // البيت التنظيمي الاختياري (وحدة/قسم/ورشة)
+  orgUnit       OrganizationalUnit? @relation(fields: [orgUnitId], references: [id])
+  status        LearnerStatus @default(ACTIVE)
+  enrolledAt    DateTime      @default(now())
+  notes         String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  studentProfile      StudentProfile? // الجسر العكسي (1:1)
+  programEnrollments  ProgramEnrollment[]
+  trainingPlacements  TrainingPlacement[]
+  awardedCredentials  AwardedCredential[]
+
+  @@unique([institutionId, learnerNumber])
+  @@unique([institutionId, userId]) // at most one learner row per account per institution
+  @@index([institutionId, category, status])
+  @@index([orgUnitId])
+  @@index([userId])
 }
 
 // ─── r352 — councils & committees ─────────────────────────────────
@@ -2885,7 +3019,7 @@ model Council {
   charterRef    String?
   establishedAt DateTime?
   dissolvedAt   DateTime?
-  status        CouncilMembershipStatus @default(ACTIVE) // ACTIVE | ENDED(=dissolved) | CANCELLED
+  status        CouncilStatus         @default(ACTIVE) // r352 hardening §7.2 — own lifecycle (ACTIVE | DISSOLVED | CANCELLED)
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 
@@ -2932,7 +3066,7 @@ model CouncilMeeting {
   attendance MeetingAttendance[]
   agendaItems MeetingAgendaItem[]
   resolutions CouncilResolution[]
-  minutes    MeetingMinutes?
+  minutes    MeetingMinutes[] // r352 hardening §7.1 — versioned history (one row per revision)
   documents  CouncilDocument[]
 
   @@unique([councilId, seqNumber])
@@ -2945,6 +3079,11 @@ model MeetingAttendance {
   meeting       CouncilMeeting      @relation(fields: [meetingId], references: [id], onDelete: Cascade)
   personId      String
   person        InstitutionalPerson @relation(fields: [personId], references: [id], onDelete: Cascade)
+  // r352 hardening §7.3 — the guest/participant distinction is explicit:
+  // MEMBER rows must map to ACTIVE council memberships (route-verified);
+  // GUEST rows are documented external participants of the same
+  // institution (person-institution integrity still applies).
+  attendeeKind  MeetingAttendeeKind @default(MEMBER)
   status        AttendanceOutcome
   recordedById  String? // audit provenance (no FK)
   createdAt     DateTime            @default(now())
@@ -2994,11 +3133,18 @@ model CouncilResolution {
   @@index([ownerPersonId])
 }
 
+// r352 hardening §7.1 — REAL revision history: one row per version.
+// The meetingId-only unique is GONE (a meeting has many versions);
+// isCurrent marks the single live revision (partial unique index in
+// the migration) and SIGNED/APPROVED versions are immutable (route +
+// trigger belt). Re-drafting creates versionNo + 1 and preserves every
+// prior approval and its signatories.
 model MeetingMinutes {
   id                   String              @id @default(cuid())
-  meetingId            String              @unique
+  meetingId            String
   meeting              CouncilMeeting      @relation(fields: [meetingId], references: [id], onDelete: Cascade)
   versionNo            Int                 @default(1)
+  isCurrent            Boolean             @default(true)
   contentAr            String              @db.Text
   status               MinutesStatus       @default(DRAFT)
   approvedAt           DateTime?
@@ -3009,6 +3155,7 @@ model MeetingMinutes {
   updatedAt            DateTime            @updatedAt
 
   @@unique([meetingId, versionNo])
+  @@index([meetingId, isCurrent])
 }
 
 model CouncilDocument {
@@ -3018,6 +3165,13 @@ model CouncilDocument {
   meetingId    String?
   meeting      CouncilMeeting? @relation(fields: [meetingId], references: [id])
   titleAr      String
+  // r352 hardening §9 — REAL storage integration: the bytes live in the
+  // platform BinaryObject store under the governance namespace; the
+  // legacy free-text fileUrl is retained ONLY as a deprecated external
+  // reference (never trusted as an upload) and is ignored when a
+  // binaryObject is attached.
+  binaryObjectId String?
+  binaryObject   BinaryObject?  @relation(fields: [binaryObjectId], references: [key])
   fileUrl      String?
   kind         String?
   notes        String?
@@ -3026,6 +3180,7 @@ model CouncilDocument {
 
   @@index([councilId])
   @@index([meetingId])
+  @@index([binaryObjectId])
 }
 
 // ─── r352 — academic terms & programs ────────────────────────────
@@ -3072,6 +3227,7 @@ model Program {
   accreditations     ExternalAccreditation[]
   licenses           OperationalLicense[]
   findings           ComplianceFinding[]
+  selfAssessments    InternalSelfAssessment[] @relation("SelfAssessmentProgram")
 
   @@unique([institutionId, code])
   @@index([institutionId, kind, status])
@@ -3116,8 +3272,13 @@ model ProgramCourse {
 
 model ProgramEnrollment {
   id                    String                 @id @default(cuid())
-  studentProfileId      String
-  studentProfile        StudentProfile         @relation(fields: [studentProfileId], references: [id], onDelete: Cascade)
+  // r352 hardening §5 — the generalized learner is the canonical target;
+  // the legacy studentProfile link stays as an optional bridge for
+  // pre-hardening rows and the legacy API surface.
+  learnerProfileId      String
+  learnerProfile        LearnerProfile         @relation(fields: [learnerProfileId], references: [id], onDelete: Cascade)
+  studentProfileId      String?
+  studentProfile        StudentProfile?        @relation(fields: [studentProfileId], references: [id], onDelete: Cascade)
   programId             String
   program               Program                @relation(fields: [programId], references: [id], onDelete: Cascade)
   programVersionId      String?
@@ -3134,8 +3295,9 @@ model ProgramEnrollment {
   placements TrainingPlacement[]
   credentials AwardedCredential[]
 
-  @@unique([studentProfileId, programId])
+  @@unique([learnerProfileId, programId])
   @@index([programId, status])
+  @@index([learnerProfileId])
   @@index([studentProfileId])
 }
 
@@ -3145,8 +3307,10 @@ model TrainingPlacement {
   institution         Institution           @relation(fields: [institutionId], references: [id], onDelete: Cascade)
   programEnrollmentId String?
   programEnrollment   ProgramEnrollment?    @relation(fields: [programEnrollmentId], references: [id])
-  studentProfileId    String
-  studentProfile      StudentProfile        @relation(fields: [studentProfileId], references: [id], onDelete: Cascade)
+  learnerProfileId    String
+  learnerProfile      LearnerProfile        @relation(fields: [learnerProfileId], references: [id], onDelete: Cascade)
+  studentProfileId    String?
+  studentProfile      StudentProfile?       @relation(fields: [studentProfileId], references: [id], onDelete: Cascade)
   hostOrgUnitId       String?
   hostOrgUnit         OrganizationalUnit?   @relation(fields: [hostOrgUnitId], references: [id])
   externalHost        String?
@@ -3161,6 +3325,7 @@ model TrainingPlacement {
   updatedAt           DateTime              @updatedAt
 
   @@index([institutionId, status])
+  @@index([learnerProfileId])
   @@index([studentProfileId])
   @@index([programEnrollmentId])
 }
@@ -3172,24 +3337,51 @@ model CredentialType {
   code              String   @unique
   nameAr            String
   nameEn            String?
-  level             Int // ordering for progression comparisons
-  grantsProgression Boolean  @default(false)
+  level             Int // display ordering ONLY — progression is decided by the explicit rule catalog below
+  grantsProgression Boolean  @default(false) // DEPRECATED as a decision input (kept for display); the rule table is the law
   legalBasis        String?
   notes             String?
   createdAt         DateTime @default(now())
 
   programs Program[]
   awarded  AwardedCredential[]
+  progressionFrom CredentialProgressionRule[] @relation("FromCredential")
+  progressionTo   CredentialProgressionRule[] @relation("ToCredential")
 
   @@index([level])
+}
+
+// r352 hardening §12 — قواعد الترقّي الصريحة (Law 21/2023): مصفوفة
+// انتقالات قانونية موثّقة بدل استنباط رقمي من level. لا انتقال
+// إلا بصف قاعدة نشط يربط المؤهل المصدر بالوجهة (مع قيود نوع
+// المؤسسة/البرنامج إن لزم) ومرجعه القانوني.
+model CredentialProgressionRule {
+  id                     String          @id @default(cuid())
+  fromCredentialTypeId   String
+  fromCredentialType     CredentialType  @relation("FromCredential", fields: [fromCredentialTypeId], references: [id], onDelete: Cascade)
+  toCredentialTypeId     String
+  toCredentialType       CredentialType  @relation("ToCredential", fields: [toCredentialTypeId], references: [id], onDelete: Cascade)
+  toInstitutionTypeCodes String[]        @default([]) // empty = any destination kind
+  toProgramKinds         String[]        @default([]) // empty = any destination program kind (ProgramKind codes)
+  admissionConditions    String?         @db.Text // documented extra admission conditions
+  legalReference         String?
+  isActive              Boolean         @default(true)
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @updatedAt
+
+  @@unique([fromCredentialTypeId, toCredentialTypeId])
+  @@index([fromCredentialTypeId, isActive])
+  @@index([toCredentialTypeId])
 }
 
 model AwardedCredential {
   id                  String                  @id @default(cuid())
   institutionId       String
   institution         Institution             @relation(fields: [institutionId], references: [id], onDelete: Cascade)
-  studentProfileId    String
-  studentProfile      StudentProfile          @relation(fields: [studentProfileId], references: [id], onDelete: Cascade)
+  learnerProfileId    String
+  learnerProfile      LearnerProfile          @relation(fields: [learnerProfileId], references: [id], onDelete: Cascade)
+  studentProfileId    String?
+  studentProfile      StudentProfile?         @relation(fields: [studentProfileId], references: [id], onDelete: Cascade)
   credentialTypeId    String
   credentialType      CredentialType          @relation(fields: [credentialTypeId], references: [id])
   programId           String?
@@ -3207,6 +3399,7 @@ model AwardedCredential {
   updatedAt           DateTime                @updatedAt
 
   @@unique([institutionId, serialNumber])
+  @@index([learnerProfileId])
   @@index([studentProfileId])
   @@index([institutionId, credentialTypeId])
 }
@@ -3244,6 +3437,7 @@ model AccreditationCriteriaItem {
   sortOrder     Int                     @default(0)
 
   equipmentLinks EquipmentProgramSupport[]
+  selfAssessmentItems SelfAssessmentItem[]
 
   @@unique([criteriaSetId, code])
 }
@@ -3368,6 +3562,10 @@ model CorrectiveActionPlan {
   id               String                @id @default(cuid())
   findingId        String
   finding          ComplianceFinding     @relation(fields: [findingId], references: [id], onDelete: Cascade)
+  // r352 hardening §8 — a plan may originate from a criterion-level
+  // self-assessment issue instead of an external finding.
+  selfAssessmentItemId String?
+  selfAssessmentItem    SelfAssessmentItem? @relation(fields: [selfAssessmentItemId], references: [id], onDelete: SetNull)
   ownerPersonId    String?
   ownerPerson      InstitutionalPerson?  @relation(fields: [ownerPersonId], references: [id], onDelete: SetNull)
   planText         String                @db.Text
@@ -3380,6 +3578,7 @@ model CorrectiveActionPlan {
   updatedAt        DateTime              @updatedAt
 
   @@index([findingId])
+  @@index([selfAssessmentItemId])
   @@index([status, targetDate])
 }
 
@@ -3392,6 +3591,8 @@ model InternalSelfAssessment {
   institution   Institution             @relation(fields: [institutionId], references: [id], onDelete: Cascade)
   orgUnitId     String?
   orgUnit       OrganizationalUnit?     @relation(fields: [orgUnitId], references: [id])
+  programId     String?
+  program       Program?                @relation("SelfAssessmentProgram", fields: [programId], references: [id])
   periodLabel   String
   criteriaSetId String?
   criteriaSet   AccreditationCriteriaSet? @relation(fields: [criteriaSetId], references: [id])
@@ -3403,27 +3604,61 @@ model InternalSelfAssessment {
   createdAt     DateTime                @default(now())
   updatedAt     DateTime                @updatedAt
 
+  // r352 hardening §8 — criterion-level responses.
+  items         SelfAssessmentItem[]
+
   @@index([institutionId, status])
   @@index([orgUnitId])
+  @@index([programId])
 }
 
-// دليل/مستند مرفق بأي كيان امتثال — مرجع فقط (لا مسار رفع بايتات
-// جديد هذه الجولة — DECISIONS.md D12).
+// r352 hardening §8 — استجابة معيار واحد داخل تقييم ذاتي: مرتبطة
+// ببند حقيقي من نسخة معايير محددة، بمفردات نتيجة مضبوطة، مع
+// تعليقات ومراجع أدلة ومنشأ المقيّم، وربط اختياري بخطة تصحيح.
+model SelfAssessmentItem {
+  id                String                  @id @default(cuid())
+  assessmentId      String
+  assessment        InternalSelfAssessment  @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  criteriaItemId    String
+  criteriaItem      AccreditationCriteriaItem @relation(fields: [criteriaItemId], references: [id])
+  rating            SelfAssessmentRating?
+  responseAr        String?                 @db.Text
+  evidenceRefs      String?
+  findingsAr        String?                 @db.Text
+  assessorPersonId  String?
+  assessorPerson    InstitutionalPerson?    @relation("SelfAssessmentAssessor", fields: [assessorPersonId], references: [id], onDelete: SetNull)
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @updatedAt
+
+  correctiveActions CorrectiveActionPlan[]
+
+  @@unique([assessmentId, criteriaItemId])
+  @@index([criteriaItemId])
+  @@index([assessorPersonId])
+}
+
+// دليل/مستند مرفق بأي كيان امتثال. r352 hardening §9: الملفات
+// الحقيقية عبر binaryObjectId (متجر BinaryObject — بلا ثقة بأي
+// URL خارجي)؛ ownerType/ownerId تبقى مرجعًا متعدد الأشكال لكن
+// يُتحقق من الكيان الأصل ومؤسسته في كل عملية (قائمة مغلقة).
 model ComplianceEvidence {
-  id            String      @id @default(cuid())
-  institutionId String
-  institution   Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
-  ownerType     String // ExternalAccreditation | CorrectiveActionPlan | InternalSelfAssessment | RegulatoryInspection | OperationalLicense
-  ownerId       String
-  titleAr       String
-  documentRef   String?
-  fileUrl       String?
-  description   String?
-  uploadedById  String? // provenance (no FK)
-  createdAt     DateTime    @default(now())
+  id             String      @id @default(cuid())
+  institutionId  String
+  institution    Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  ownerType      String // ExternalAccreditation | CorrectiveActionPlan | InternalSelfAssessment | RegulatoryInspection | OperationalLicense
+  ownerId        String
+  titleAr        String
+  binaryObjectId String?
+  binaryObject   BinaryObject? @relation(fields: [binaryObjectId], references: [key])
+  documentRef    String? // رقم/مرجع مستند ورقي — نص وصفي فقط
+  fileUrl        String? // DEPRECATED — never trusted as an upload; kept for legacy rows only
+  description    String?
+  uploadedById   String? // provenance (no FK)
+  createdAt      DateTime    @default(now())
 
   @@index([ownerType, ownerId])
   @@index([institutionId])
+  @@index([binaryObjectId])
 }
 
 // ─── r352 — physical facilities & equipment ──────────────────────
