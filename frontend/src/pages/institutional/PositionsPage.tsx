@@ -7,6 +7,7 @@
  * separate from academic rank and platform role.
  */
 import { useMemo, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 import { PageFrame, PageHeader } from '../../components/patterns';
 import { toast } from '../../lib/toast';
@@ -17,7 +18,7 @@ import { serverError,
 } from '../../components/institutional/kit';
 import { Icon } from '../../components/Icon';
 import {
-  useAppointments, useMyCapabilities, useMyInstitutionProfile,
+  useAppointment, useAppointments, useMyCapabilities, useMyInstitutionProfile,
   useOrgUnitTree, usePeople, usePositionTemplates, useInstActions} from '../../hooks/institutional/queries';
 import * as instApi from '../../lib/institutional/api';
 import {
@@ -29,6 +30,7 @@ import { flattenUnits } from './PeoplePage';
 const APPT_UNIT: [string, string, string, string] = ['تعيين واحد', 'تعيينان', 'تعيينات', 'تعيين'];
 
 export function InstitutionPositionsPage() {
+  const navigate = useNavigate();
   const caps = useMyCapabilities();
   const canManage = caps.data?.has('APPOINTMENTS_MANAGE') ?? false;
   const profileQuery = useMyInstitutionProfile();
@@ -163,11 +165,12 @@ export function InstitutionPositionsPage() {
       head: 'إجراءات', mobileHidden: true,
       cell: (a) => canManage && (a.status === 'ACTIVE' || a.status === 'SCHEDULED') ? (
         <span className="inst-actions">
-          <button type="button" className="btn ghost sm" onClick={() => setEndTarget(a)}>إنهاء</button>
+          <button type="button" className="btn ghost sm" onClick={(e) => { e.stopPropagation(); setEndTarget(a); }}>إنهاء</button>
           <button
             type="button"
             className="btn ghost sm"
-            onClick={async () => {
+            onClick={async (e) => {
+              e.stopPropagation();
               try {
                 await mutations.cancel({ id: a.id });
                 toast.success('أُلغي التعيين');
@@ -214,6 +217,7 @@ export function InstitutionPositionsPage() {
         unit={APPT_UNIT}
         onPage={setPage}
         empty={null}
+        onRowClick={(a) => navigate(`/institution/appointments/${a.id}`)}
       />
 
       <InstSection
@@ -293,6 +297,60 @@ export function InstitutionPositionsPage() {
           }}
         />
       )}
+    </PageFrame>
+  );
+}
+
+/* ── the standalone appointment record (/institution/appointments/:id) ── */
+
+/** The PR handoff's documented follow-up: a standalone appointment
+ *  detail — the full statutory record (holder, position, unit scope,
+ *  decision refs, term dates, the acting flag) on its own route, so
+ *  the register links from the person file AND the appointments
+ *  table. Read-only here; the lifecycle actions stay on the owning
+ *  surfaces (table end/cancel + the server's guards). */
+export function InstitutionAppointmentDetailPage() {
+  const { id } = useParams<{ id: string }>();
+  const query = useAppointment(id ?? null);
+
+  const a = query.data;
+
+  return (
+    <PageFrame width="default">
+      <PageHeader
+        title={a ? (a.position?.titleAr ?? 'سجل تعيين') : 'سجل تعيين'}
+        eyebrow="المناصب والتعيينات"
+        description="السجل الكامل للتعيين — الحامل، المنصب القانوني، نطاق الوحدة، مراجع القرار، ومدة الشغل."
+        meta={a ? (
+          <span className="inst-actions">
+            <EnumChip value={a.status} labels={APPOINTMENT_STATUS_LABELS} />
+            {a.acting && <EnumChip value="ACTING" labels={{ ACTING: 'بالوكالة' }} />}
+          </span>
+        ) : null}
+      />
+      <InstStates isLoading={query.isLoading} error={query.error} isEmpty={!a}>
+        {a && (
+          <InstSection title="بيانات السجل">
+            <DetailList
+              items={[
+                { label: 'الحامل', value: a.person?.fullNameAr ?? '—' },
+                { label: 'المنصب', value: a.position ? `${a.position.titleAr} (${a.position.code})` : '—' },
+                {
+                  label: 'نطاق الوحدة',
+                  value: a.orgUnit
+                    ? `${a.orgUnit.nameAr} (${ORG_UNIT_TYPE_LABELS[a.orgUnit.type] ?? a.orgUnit.type})`
+                    : 'على مستوى المؤسسة',
+                },
+                { label: 'منذ', value: formatDate(a.startDate) },
+                { label: 'حتى', value: a.endDate ? formatDate(a.endDate) : 'مفتوح' },
+                { label: 'مدة (أشهر)', value: a.termMonths ? String(a.termMonths) : '—' },
+                { label: 'رقم القرار', value: a.decisionNumber ?? '—' },
+                { label: 'تاريخ القرار', value: a.decisionDate ? formatDate(a.decisionDate) : '—' },
+              ]}
+            />
+          </InstSection>
+        )}
+      </InstStates>
     </PageFrame>
   );
 }

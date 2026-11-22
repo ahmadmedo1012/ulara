@@ -141,6 +141,7 @@ const DYNAMIC_TITLES: Array<[RegExp, string]> = [
   [/^\/competitions\/[^/]+$/,                'مسابقة'],
   /* r352 — the institutional detail routes (the page's own h1 carries
      the entity's name; the tab names the section). */
+  [/^\/institution\/appointments\/[^/]+$/,                'سجل تعيين'],
   [/^\/institution\/people\/[^/]+$/,                       'ملف فرد'],
   [/^\/institution\/councils\/[^/]+\/meetings\/[^/]+$/,  'اجتماع مجلس'],
   [/^\/institution\/councils\/[^/]+$/,                    'مجلس أو لجنة'],

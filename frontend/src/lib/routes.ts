@@ -39,6 +39,7 @@ export const ROUTES = {
   institutionPeople: '/institution/people',
   institutionPersonDetail: '/institution/people/:id',
   institutionPositions: '/institution/positions',
+  institutionAppointmentDetail: '/institution/appointments/:id',
   institutionAccess: '/institution/access',
   institutionCouncils: '/institution/councils',
   institutionCouncilDetail: '/institution/councils/:id',

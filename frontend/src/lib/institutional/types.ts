@@ -509,6 +509,41 @@ export interface ProgramEnrollment {
 
 export type PlacementStatus = 'PLANNED' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'TERMINATED';
 
+/* ── the generalized learner domain (r352 hardening §5) ──────────── */
+
+/** Law 21/2023 م2: STUDENT (طالب) and TRAINEE (متدرب) — account
+ * optional, no Faculty/Department required. */
+export type LearnerCategory = 'STUDENT' | 'TRAINEE';
+export type LearnerStatus = 'ACTIVE' | 'SUSPENDED' | 'GRADUATED' | 'WITHDRAWN' | 'TRANSFERRED';
+
+export interface LearnerProfileRow {
+  id: ID;
+  institutionId: ID;
+  category: LearnerCategory;
+  learnerNumber: string;
+  fullNameAr: string;
+  fullNameEn?: string | null;
+  nationalId?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  status: LearnerStatus;
+  orgUnitId?: ID | null;
+  orgUnit?: { id: ID; nameAr: string; type: OrgUnitType } | null;
+  user?: { id: ID; email: string; firstName: string; lastName: string } | null;
+  createdAt: string;
+}
+
+export interface LearnerInput {
+  category: LearnerCategory;
+  learnerNumber: string;
+  fullNameAr: string;
+  fullNameEn?: string;
+  nationalId?: string;
+  email?: string;
+  phone?: string;
+  orgUnitId?: string;
+}
+
 export interface TrainingPlacement {
   id: ID;
   institutionId: ID;
@@ -726,6 +761,10 @@ export interface Equipment {
   responsiblePersonId?: ID | null;
   responsiblePerson?: { id: ID; fullNameAr: string } | null;
   facility?: { id: ID; nameAr: string } | null;
+  orgUnit?: { id: ID; nameAr: string; type: OrgUnitType } | null;
+  /** List-row counts from the wire (the list endpoint's _count map). */
+  programLinkCount?: number;
+  workOrderCount?: number;
 }
 
 export type WorkOrderKind = 'PREVENTIVE' | 'CORRECTIVE' | 'SAFETY_INSPECTION' | 'INSTALLATION' | 'OTHER';

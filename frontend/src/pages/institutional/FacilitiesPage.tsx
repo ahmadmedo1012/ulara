@@ -17,7 +17,7 @@ import { serverError,
 import { Icon } from '../../components/Icon';
 import {
   useEquipment, useFacilities, useFacility, useMyCapabilities,
-  useOrgUnitTree, useReservations, useSafetyIncidents, useWorkOrders, useInstActions } from '../../hooks/institutional/queries';
+  useOrgUnitTree, usePrograms, useReservations, useSafetyIncidents, useWorkOrders, useInstActions } from '../../hooks/institutional/queries';
 import * as instApi from '../../lib/institutional/api';
 import {
   EQUIPMENT_CONDITION_LABELS, EQUIPMENT_STATUS_LABELS, FACILITY_STATUS_LABELS,
@@ -47,8 +47,12 @@ export function InstitutionFacilitiesPage() {
   const mutations = useInstActions(['facilities'], {
     create: (i: Parameters<typeof instApi.createFacility>[0]) => instApi.createFacility(i),
   });
+  const equipmentMutations = useInstActions(['equipment'], {
+    create: (i: Parameters<typeof instApi.createEquipment>[0]) => instApi.createEquipment(i),
+  });
 
   const [facOpen, setFacOpen] = useState(false);
+  const [eqOpen, setEqOpen] = useState(false);
   const [busy, setBusy] = useState(false);
 
   const unitOptions = (treeQuery.data ? flattenUnits(treeQuery.data) : [])
@@ -85,6 +89,44 @@ export function InstitutionFacilitiesPage() {
       setFacOpen(false);
     } catch (err) {
       return serverError(err, 'تعذَّرت الإضافة.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const facilitiesOptions = (facilitiesQuery.data?.data ?? []).map((f) => ({
+    value: f.id, label: f.nameAr,
+  }));
+
+  const eqFields: InstField[] = [
+    { kind: 'text', name: 'nameAr', label: 'اسم الجهاز/المعدة', required: true, maxLength: 160 },
+    { kind: 'text', name: 'code', label: 'الرمز', maxLength: 40 },
+    { kind: 'select', name: 'facilityId', label: 'المنشأة', options: facilitiesOptions, hint: 'اختياري — يمكن ربط الجهاز بوحدة لاحقًا.' },
+    { kind: 'text', name: 'category', label: 'الفئة', maxLength: 120 },
+    { kind: 'text', name: 'serialNumber', label: 'الرقم التسلسلي', maxLength: 120 },
+    {
+      kind: 'select', name: 'condition', label: 'الحالة الفنية', required: true,
+      options: Object.entries(EQUIPMENT_CONDITION_LABELS).map(([value, label]) => ({ value, label })),
+    },
+    { kind: 'number', name: 'value', label: 'القيمة التقديرية', min: 0, max: 1e9 },
+  ];
+
+  const submitEquipment = async (values: InstFormValues): Promise<string | void> => {
+    setBusy(true);
+    try {
+      await equipmentMutations.create({
+        nameAr: values.nameAr as string,
+        code: values.code as string | undefined,
+        facilityId: values.facilityId as string | undefined,
+        category: values.category as string | undefined,
+        serialNumber: values.serialNumber as string | undefined,
+        condition: String(values.condition) as never,
+        value: values.value as number | undefined,
+      });
+      toast.success('أُضيف الجهاز إلى الجرد');
+      setEqOpen(false);
+    } catch (err) {
+      return serverError(err, 'تعذّرت الإضافة.');
     } finally {
       setBusy(false);
     }
@@ -148,7 +190,15 @@ export function InstitutionFacilitiesPage() {
         />
       </InstSection>
 
-      <InstSection title="٢ · الأجهزة والمعدات" description="جرد الأصول وحالتها الفنية ومسؤوليها.">
+      <InstSection
+        title="٢ · الأجهزة والمعدات"
+        description="جرد الأصول وحالتها الفنية ومسؤوليها — وربطها بالبرامج التي تخدمها من صفحة تفاصيل المنشأة."
+        actions={canManage ? (
+          <button type="button" className="btn primary sm" onClick={() => setEqOpen(true)}>
+            <Icon icon={Plus} size={14} /> جهاز جديد
+          </button>
+        ) : null}
+      >
         <InstFilters>
           <InstSelect
             ariaLabel="تصفية بحالة الجهاز"
@@ -169,6 +219,7 @@ export function InstitutionFacilitiesPage() {
       </InstSection>
 
       <InstFormDialog open={facOpen} title="منشأة مادية جديدة" fields={facFields} submitLabel="إضافة" busy={busy} wide onCancel={() => setFacOpen(false)} onSubmit={submit} />
+      <InstFormDialog open={eqOpen} title="جهاز/معدة جديدة" fields={eqFields} submitLabel="إضافة" busy={busy} wide onCancel={() => setEqOpen(false)} onSubmit={submitEquipment} />
     </PageFrame>
   );
 }
@@ -185,6 +236,9 @@ export function InstitutionFacilityDetailPage() {
   const workOrdersQuery = useWorkOrders({ limit: 50 });
   const reservationsQuery = useReservations({ facilityId: id ?? undefined, limit: 20 });
   const incidentsQuery = useSafetyIncidents({ limit: 20 });
+  // Programs for the equipment↔program linkage (the PR handoff's
+  // documented follow-up: TVET equipment serves specific programs).
+  const programsQuery = usePrograms({ page: 1, limit: 100, status: 'ACTIVE' });
 
   const workOrderMutations = useInstActions(['work-orders'], {
     create: (i: Parameters<typeof instApi.createWorkOrder>[0]) => instApi.createWorkOrder(i),
@@ -196,11 +250,62 @@ export function InstitutionFacilityDetailPage() {
   const incidentMutations = useInstActions(['safety-incidents'], {
     create: (i: Parameters<typeof instApi.createSafetyIncident>[0]) => instApi.createSafetyIncident(i),
   });
+  const equipmentProgramMutations = useInstActions(
+    ['equipment'],
+    {
+      linkProgram: (i: { equipmentId: string; programId: string }) =>
+        instApi.linkEquipmentProgram(i.equipmentId, { programId: i.programId }),
+      unlinkProgram: (i: { equipmentId: string; programId: string }) =>
+        instApi.unlinkEquipmentProgram(i.equipmentId, i.programId),
+    },
+  );
 
   const [woOpen, setWoOpen] = useState(false);
   const [resOpen, setResOpen] = useState(false);
   const [incidentOpen, setIncidentOpen] = useState(false);
+  // Equipment↔program linkage: which equipment row, and which mode
+  // (link vs unlink — the DELETE takes the program id the caller
+  // selects; the list endpoint exposes programLinkCount only).
+  const [linkTarget, setLinkTarget] = useState<Equipment | null>(null);
+  const [linkMode, setLinkMode] = useState<'link' | 'unlink'>('link');
   const [busy, setBusy] = useState(false);
+
+  const programOptions = (programsQuery.data?.data ?? []).map((p) => ({
+    value: p.id, label: `${p.nameAr}${p.code ? ` (${p.code})` : ''}`,
+  }));
+
+  const linkFields: InstField[] = [
+    {
+      kind: 'select', name: 'programId', label: 'البرنامج', required: true,
+      options: programOptions,
+      hint: linkMode === 'link'
+        ? 'الربط يوثّق أن هذا الجهاز يخدم البرنامج المحدد (معايير التدريب العملي).'
+        : 'يفصل الجهاز عن البرنامج المحدد — اختر البرنامج الذي تعرفه مربوطًا (الخادم يرفض غير المربوط).',
+    },
+  ];
+
+  const submitLink = async (values: InstFormValues): Promise<string | void> => {
+    if (!linkTarget) return;
+    setBusy(true);
+    try {
+      if (linkMode === 'link') {
+        await equipmentProgramMutations.linkProgram({
+          equipmentId: linkTarget.id, programId: String(values.programId),
+        });
+        toast.success('رُبط الجهاز بالبرنامج');
+      } else {
+        await equipmentProgramMutations.unlinkProgram({
+          equipmentId: linkTarget.id, programId: String(values.programId),
+        });
+        toast.success('فُصل الجهاز عن البرنامج');
+      }
+      setLinkTarget(null);
+    } catch (err) {
+      return serverError(err, linkMode === 'link' ? 'تعذّر الربط.' : 'تعذّر الفصل.');
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const facility = facilityQuery.data;
   const workOrders = (workOrdersQuery.data?.data ?? []).filter(
@@ -335,7 +440,10 @@ export function InstitutionFacilityDetailPage() {
               />
             </InstSection>
 
-            <InstSection title="أجهزة المنشأة">
+            <InstSection
+              title="أجهزة المنشأة"
+              description="جرد المنشأة — كل جهاز يوثّق البرامج التي يخدمها (معايير التدريب العملي)."
+            >
               <InstStates
                 isLoading={equipmentQuery.isLoading}
                 error={equipmentQuery.error}
@@ -343,12 +451,25 @@ export function InstitutionFacilityDetailPage() {
               >
                 <DetailList
                   items={(equipmentQuery.data?.data ?? []).map((e) => ({
-                    label: e.nameAr,
+                    label: (
+                      <span className="inst-actions">
+                        {e.nameAr}
+                        {typeof e.programLinkCount === 'number' && e.programLinkCount > 0 && (
+                          <EnumChip value="LINKED" labels={{ LINKED: `برامج: ${e.programLinkCount}` }} />
+                        )}
+                      </span>
+                    ),
                     value: (
                       <span className="inst-actions">
                         <EnumChip value={e.status} labels={EQUIPMENT_STATUS_LABELS} />
                         <EnumChip value={e.condition} labels={EQUIPMENT_CONDITION_LABELS} />
                         {e.responsiblePerson && <span className="inst-tree-kind">{e.responsiblePerson.fullNameAr}</span>}
+                        {canManage && (
+                          <>
+                            <button type="button" className="btn ghost sm" disabled={busy} onClick={() => { setLinkMode('link'); setLinkTarget(e); }}>ربط ببرنامج</button>
+                            <button type="button" className="btn ghost sm" disabled={busy} onClick={() => { setLinkMode('unlink'); setLinkTarget(e); }}>فصل عن برنامج</button>
+                          </>
+                        )}
                       </span>
                     ),
                   }))}
@@ -448,6 +569,19 @@ export function InstitutionFacilityDetailPage() {
       <InstFormDialog open={woOpen} title="أمر صيانة جديد" fields={woFields} submitLabel="إنشاء" busy={busy} onCancel={() => setWoOpen(false)} onSubmit={submitWo} />
       <InstFormDialog open={resOpen} title="طلب حجز المنشأة" fields={resFields} submitLabel="طلب" busy={busy} onCancel={() => setResOpen(false)} onSubmit={submitRes} />
       <InstFormDialog open={incidentOpen} title="تسجيل حادث/تفتيش سلامة" fields={incidentFields} submitLabel="تسجيل" busy={busy} onCancel={() => setIncidentOpen(false)} onSubmit={submitIncident} />
+
+      {/* Equipment↔program linkage (the documented follow-up). */}
+      <InstFormDialog
+        open={linkTarget !== null}
+        title={linkMode === 'link'
+          ? `ربط «${linkTarget?.nameAr ?? ''}» ببرنامج`
+          : `فصل «${linkTarget?.nameAr ?? ''}» عن برنامج`}
+        fields={linkFields}
+        submitLabel={linkMode === 'link' ? 'ربط' : 'فصل'}
+        busy={busy}
+        onCancel={() => setLinkTarget(null)}
+        onSubmit={submitLink}
+      />
     </PageFrame>
   );
 }

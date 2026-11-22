@@ -185,15 +185,66 @@ export function InstitutionPersonDetailPage() {
   const query = usePerson(id ?? null);
   const caps = useMyCapabilities();
   const canManage = caps.data?.has('PEOPLE_MANAGE') ?? false;
+  const treeQuery = useOrgUnitTree();
+  const [editOpen, setEditOpen] = useState(false);
+  const [busy, setBusy] = useState(false);
   const peopleMutations = useInstActions(['people'], {
     setStatus: (i: { id: string; status: string; endedAt?: string }) =>
       instApi.setPersonStatus(i.id, i.status, i.endedAt),
+    // The people-editing workflow (the PR handoff's documented
+    // follow-up): the directory record is editable — the same field
+    // set the create dialog uses, pre-filled from the loaded row.
+    update: (i: { id: string; input: Parameters<typeof instApi.updatePerson>[1] }) =>
+      instApi.updatePerson(i.id, i.input),
   });
-  const [busy, setBusy] = useState(false);
 
   const person = query.data?.person;
   const appointments = query.data?.appointments ?? [];
   const grants = query.data?.unitCapabilityGrants ?? [];
+
+  const unitOptions = (treeQuery.data ? flattenUnits(treeQuery.data) : [])
+    .filter((u) => u.status === 'ACTIVE')
+    .map((u) => ({ value: u.id, label: `${ORG_UNIT_TYPE_LABELS[u.type]} — ${u.nameAr}` }));
+
+  const editFields: InstField[] = [
+    { kind: 'text', name: 'fullNameAr', label: 'الاسم الكامل (بالعربية)', required: true, maxLength: 160 },
+    { kind: 'text', name: 'fullNameEn', label: 'الاسم بالإنجليزية', maxLength: 160 },
+    {
+      kind: 'select', name: 'category', label: 'الفئة', required: true,
+      options: Object.entries(STAFF_CATEGORY_LABELS).map(([value, label]) => ({ value, label })),
+    },
+    { kind: 'text', name: 'staffNumber', label: 'الرقم الوظيفي', maxLength: 40, hint: 'اختياري — يجب أن يكون فريدًا داخل المؤسسة.' },
+    { kind: 'select', name: 'primaryOrgUnitId', label: 'الوحدة الأساسية', options: unitOptions },
+    { kind: 'date', name: 'hiredAt', label: 'تاريخ التعيين' },
+    { kind: 'text', name: 'email', label: 'البريد الإلكتروني', maxLength: 160 },
+    { kind: 'text', name: 'phone', label: 'الهاتف', maxLength: 40 },
+  ];
+
+  const submitEdit = async (values: InstFormValues): Promise<string | void> => {
+    if (!person) return 'لا يوجد سجل محمّل.';
+    setBusy(true);
+    try {
+      await peopleMutations.update({
+        id: person.id,
+        input: {
+          fullNameAr: values.fullNameAr as string,
+          fullNameEn: values.fullNameEn as string | undefined,
+          category: values.category as never,
+          staffNumber: values.staffNumber as string | undefined,
+          primaryOrgUnitId: (values.primaryOrgUnitId as string | undefined) ?? null,
+          hiredAt: values.hiredAt as string | undefined,
+          email: values.email as string | undefined,
+          phone: values.phone as string | undefined,
+        },
+      });
+      toast.success('حُدِّث سجل الفرد');
+      setEditOpen(false);
+    } catch (err) {
+      return serverError(err, 'تعذَّر تحديث السجل.');
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const setStatus = async (next: string) => {
     if (!person) return;
@@ -227,6 +278,7 @@ export function InstitutionPersonDetailPage() {
               title="البيانات الأساسية"
               actions={canManage ? (
                 <span className="inst-actions">
+                  <button type="button" className="btn ghost sm" disabled={busy} onClick={() => setEditOpen(true)}>تعديل البيانات</button>
                   {person.staffStatus === 'ACTIVE' ? (
                     <>
                       <button type="button" className="btn ghost sm" disabled={busy} onClick={() => setStatus('ON_LEAVE')}>إجازة</button>
@@ -313,6 +365,29 @@ export function InstitutionPersonDetailPage() {
           </>
         )}
       </InstStates>
+
+      {/* The people-editing workflow: pre-filled from the loaded row. */}
+      <InstFormDialog
+        open={editOpen}
+        title={`تعديل سجل: ${person?.fullNameAr ?? ''}`}
+        description="تعديل بيانات الدليل — النقاط الإلزامية كما في الإضافة؛ الأخطاء تصل بنص الخادم."
+        fields={editFields}
+        submitLabel="حفظ التعديلات"
+        busy={busy}
+        wide
+        onCancel={() => setEditOpen(false)}
+        onSubmit={submitEdit}
+        initialValues={person ? {
+          fullNameAr: person.fullNameAr,
+          fullNameEn: person.fullNameEn ?? '',
+          category: person.category,
+          staffNumber: person.staffNumber ?? '',
+          primaryOrgUnitId: person.primaryOrgUnitId ?? '',
+          hiredAt: person.hiredAt ?? '',
+          email: person.email ?? '',
+          phone: person.phone ?? '',
+        } : undefined}
+      />
     </PageFrame>
   );
 }

@@ -11,7 +11,7 @@ import { Plus } from 'lucide-react';
 import { PageFrame, PageHeader } from '../../components/patterns';
 import { toast } from '../../lib/toast';
 import { serverError,
-  EnumChip, InstFilters, InstFormDialog, InstPagedTable, InstSelect,
+  EnumChip, InstConfirm, InstFilters, InstFormDialog, InstPagedTable, InstSelect,
   type InstColumn, type InstField, type InstFormValues,
 } from '../../components/institutional/kit';
 import { Icon } from '../../components/Icon';
@@ -36,12 +36,18 @@ export function InstitutionCouncilsPage() {
   const [page, setPage] = useState(1);
   const councilsQuery = useCouncils({ type: type || undefined, status: status || undefined, page, limit: 20 });
   const treeQuery = useOrgUnitTree();
-  const mutations = useInstActions(['councils'], {
-    create: (i: Parameters<typeof instApi.createCouncil>[0]) => instApi.createCouncil(i),
-  });
-
   const [formOpen, setFormOpen] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [transitionTarget, setTransitionTarget] = useState<Council | null>(null);
+
+  const mutations = useInstActions(['councils'], {
+    create: (i: Parameters<typeof instApi.createCouncil>[0]) => instApi.createCouncil(i),
+    // D16 lifecycle: DISSOLVED is terminal (a successor is a NEW council);
+    // CANCELLED is clerically reversible. The dissolved/cancelled rows stay
+    // in the list — the historical record is the point.
+    setStatus: (i: { id: string; status: 'ACTIVE' | 'DISSOLVED' | 'CANCELLED' }) =>
+      instApi.updateCouncil(i.id, { status: i.status }),
+  });
 
   const unitOptions = (treeQuery.data ? flattenUnits(treeQuery.data) : [])
     .filter((u) => u.status === 'ACTIVE')
@@ -82,11 +88,66 @@ export function InstitutionCouncilsPage() {
     }
   };
 
+  const applyTransition = async () => {
+    if (!transitionTarget) return;
+    setBusy(true);
+    try {
+      await mutations.setStatus({ id: transitionTarget.id, status: transitionStatus });
+      toast.success(transitionStatus === 'DISSOLVED' ? 'حُلّ المجلس — بقي في السجل التاريخي' : transitionStatus === 'CANCELLED' ? 'أُلغي المجلس (إجراء كتابي — قابل للتراجع)' : 'أُعيد تفعيل المجلس');
+      setTransitionTarget(null);
+    } catch (err) {
+      toast.error(serverError(err, 'تعذّر تغيير حالة المجلس.'));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  /** The D16-legal transitions for the row's current state. */
+  const transitionsOf = (c: Council): Array<{ to: 'ACTIVE' | 'DISSOLVED' | 'CANCELLED'; label: string; danger?: boolean }> => {
+    if (c.status === 'ACTIVE') {
+      return [
+        { to: 'DISSOLVED', label: 'حلّ', danger: true },
+        { to: 'CANCELLED', label: 'إلغاء كتابي' },
+      ];
+    }
+    if (c.status === 'CANCELLED') return [{ to: 'ACTIVE', label: 'إعادة تفعيل' }];
+    return []; // DISSOLVED is terminal — the successor is a new council
+  };
+
+  const [transitionStatus, setTransitionStatus] = useState<'ACTIVE' | 'DISSOLVED' | 'CANCELLED'>('DISSOLVED');
+
   const columns: Array<InstColumn<Council>> = [
     { head: 'المجلس', cell: (c) => <span className="inst-tree-name">{c.nameAr}</span> },
     { head: 'النوع', cell: (c) => <span className="inst-tree-kind">{COUNCIL_TYPE_LABELS[c.type]}</span> },
     { head: 'الحالة', cell: (c) => <EnumChip value={c.status} labels={COUNCIL_STATUS_LABELS} /> },
     { head: 'السند القانوني', mobileHidden: true, cell: (c) => c.legalBasis ?? '—' },
+    {
+      head: 'إجراءات',
+      cell: (c) => {
+        const moves = canManage ? transitionsOf(c) : [];
+        return moves.length > 0 ? (
+          <span className="inst-actions">
+            {moves.map((m) => (
+              <button
+                key={m.to}
+                type="button"
+                className={`btn ghost sm${m.danger ? ' danger' : ''}`}
+                disabled={busy}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setTransitionStatus(m.to);
+                  setTransitionTarget(c);
+                }}
+              >
+                {m.label}
+              </button>
+            ))}
+          </span>
+        ) : (
+          <span className="inst-na">—</span>
+        );
+      },
+    },
   ];
 
   return (
@@ -137,6 +198,25 @@ export function InstitutionCouncilsPage() {
         busy={busy}
         onCancel={() => setFormOpen(false)}
         onSubmit={submit}
+      />
+
+      <InstConfirm
+        open={transitionTarget !== null}
+        title={transitionStatus === 'DISSOLVED'
+          ? `حلّ «${transitionTarget?.nameAr ?? ''}»`
+          : transitionStatus === 'CANCELLED'
+            ? `إلغاء «${transitionTarget?.nameAr ?? ''}» (إجراء كتابي)`
+            : `إعادة تفعيل «${transitionTarget?.nameAr ?? ''}»`}
+        description={transitionStatus === 'DISSOLVED'
+          ? 'الحلّ نهائي (D16) — يبقى المجلس في السجل التاريخي؛ الخَلَف مجلسٌ جديد يُنشأ بقرار.'
+          : transitionStatus === 'CANCELLED'
+            ? 'الإلغاء الكتابي قابل للتراجع (إعادة التفعيل)، بعكس الحلّ.'
+            : 'يُعاد المجلس إلى الحالة القائمة.'}
+        danger={transitionStatus === 'DISSOLVED'}
+        confirmLabel={transitionStatus === 'DISSOLVED' ? 'حلّ المجلس' : transitionStatus === 'CANCELLED' ? 'إلغاء' : 'إعادة التفعيل'}
+        busy={busy}
+        onConfirm={applyTransition}
+        onCancel={() => setTransitionTarget(null)}
       />
     </PageFrame>
   );

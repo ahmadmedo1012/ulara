@@ -17,6 +17,7 @@ import type {
   CouncilType, CorrectiveStatus, CredentialStatus, EnrollmentStatus, EquipmentCondition,
   EquipmentStatus, EvidenceOwnerType, FacilityStatus, FacilityType, FindingSeverity,
   FindingStatus, InspectionKind, InspectionStatus, InstitutionSector, InstitutionStatusExt,
+  LearnerCategory, LearnerStatus,
   LicenseKind, LicenseStatus, MeetingStatus, MinutesStatus, OrgUnitStatus, OrgUnitType,
   OwnershipType, PlacementStatus, PlatformRole, ProgramCourseKind, ProgramKind,
   ProgramStatus, ProgramVersionStatus, ResearchMemberRole, ResearchOutputType,
@@ -112,6 +113,21 @@ export const PLATFORM_ROLE_LABELS: L<PlatformRole> = {
   ADMIN: 'إدارة المؤسسة',
   QUALITY: 'أخصائي جودة',
   OWNER: 'مالك المنصة',
+};
+
+/* ── the generalized learner domain (Law 21/2023 م2) ─────────────── */
+
+export const LEARNER_CATEGORY_LABELS: L<LearnerCategory> = {
+  STUDENT: 'طالب',
+  TRAINEE: 'متدرب',
+};
+
+export const LEARNER_STATUS_LABELS: L<LearnerStatus> = {
+  ACTIVE: 'نشط',
+  SUSPENDED: 'موقوف',
+  GRADUATED: 'متخرج',
+  WITHDRAWN: 'منسحب',
+  TRANSFERRED: 'منتقل',
 };
 
 /* ── the r352 capability keys (contract §0) — the grants surface and

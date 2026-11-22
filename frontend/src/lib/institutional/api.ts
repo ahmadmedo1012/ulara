@@ -23,6 +23,7 @@ import type {
   PositionTemplateRow, Program, ProgramCourseRow, ProgramDetail, ProgramEnrollment,
   ProgramInput, ProgramVersion, RegulatoryInspection, ResearchOutput, ResearchProject,
   ResearchProjectDetail, SafetyIncident, TrainingPlacement, UnitCapabilityGrant,
+  LearnerInput, LearnerProfileRow,
 } from './types';
 
 /* ── internal helpers (not exported — keep the surface typed) ────── */
@@ -219,6 +220,20 @@ export const createTerm = (input: { code: string; startsAt: string; endsAt?: str
 
 export type ProgramQuery = { kind?: string; status?: string; orgUnitId?: ID; page?: number; limit?: number };
 
+/* ── the generalized learner domain (r352 hardening §5) ────────── */
+
+export type LearnerQuery = {
+  category?: 'STUDENT' | 'TRAINEE'; status?: string; q?: string; orgUnitId?: ID; page?: number; limit?: number;
+};
+
+/** The canonical learner register (account optional — TRAINEE intake
+ * works without a platform user; no Faculty/Department required). */
+export const listLearners = (params: LearnerQuery) =>
+  getList<LearnerProfileRow>('/academic/learners', cleanParams(params));
+
+export const createLearner = (input: LearnerInput) =>
+  post<LearnerProfileRow>('/academic/learners', input);
+
 export const listPrograms = (params: ProgramQuery) =>
   getList<Program>('/academic/programs', cleanParams(params));
 
@@ -246,14 +261,14 @@ export const removeVersionCourse = (versionId: ID, courseId: ID) =>
   del<{ ok: boolean }>(`/academic/program-versions/${versionId}/courses/${courseId}`);
 
 export type EnrollmentQuery = {
-  programId?: ID; studentProfileId?: ID; status?: string; page?: number; limit?: number;
+  programId?: ID; learnerProfileId?: ID; status?: string; page?: number; limit?: number;
 };
 
 export const listEnrollments = (params: EnrollmentQuery) =>
   getList<ProgramEnrollment>('/academic/program-enrollments', cleanParams(params));
 
 export const createEnrollment = (input: {
-  studentProfileId: ID; programId: ID; programVersionId?: ID; expectedCompletionAt?: string;
+  learnerProfileId: ID; programId: ID; programVersionId?: ID; expectedCompletionAt?: string;
 }) => post<ProgramEnrollment>('/academic/program-enrollments', input);
 
 export const setEnrollmentStatus = (id: ID, status: string, completionAt?: string) =>
@@ -275,13 +290,13 @@ export const updatePlacement = (id: ID, input: {
 
 /* ── §8 credentials ─────────────────────────────────────────────── */
 
-export type CredentialQuery = { studentProfileId?: ID; credentialTypeId?: ID; page?: number; limit?: number };
+export type CredentialQuery = { learnerProfileId?: ID; credentialTypeId?: ID; page?: number; limit?: number };
 
 export const listCredentials = (params: CredentialQuery) =>
   getList<AwardedCredential>('/academic/credentials', cleanParams(params));
 
 export const awardCredential = (input: {
-  studentProfileId: ID; credentialTypeCode: string; programId?: ID; programEnrollmentId?: ID;
+  learnerProfileId: ID; credentialTypeCode: string; programId?: ID; programEnrollmentId?: ID;
   decisionNumber?: string; decisionDate?: string; conferredAt?: string; serialNumber?: string; notes?: string;
 }) => post<AwardedCredential>('/academic/credentials/award', input);
 

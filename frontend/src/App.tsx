@@ -204,6 +204,7 @@ const InstitutionOrganizationPage = lazy(() => import('./pages/institutional/Org
 const InstitutionPeoplePage = lazy(() => import('./pages/institutional/PeoplePage').then((m) => ({ default: m.InstitutionPeoplePage })));
 const InstitutionPersonDetailPage = lazy(() => import('./pages/institutional/PeoplePage').then((m) => ({ default: m.InstitutionPersonDetailPage })));
 const InstitutionPositionsPage = lazy(() => import('./pages/institutional/PositionsPage').then((m) => ({ default: m.InstitutionPositionsPage })));
+const InstitutionAppointmentDetailPage = lazy(() => import('./pages/institutional/PositionsPage').then((m) => ({ default: m.InstitutionAppointmentDetailPage })));
 const InstitutionAccessPage = lazy(() => import('./pages/institutional/AccessPage').then((m) => ({ default: m.InstitutionAccessPage })));
 const InstitutionCouncilsPage = lazy(() => import('./pages/institutional/CouncilsPage').then((m) => ({ default: m.InstitutionCouncilsPage })));
 const InstitutionCouncilDetailPage = lazy(() => import('./pages/institutional/CouncilDetailPage').then((m) => ({ default: m.InstitutionCouncilDetailPage })));
@@ -670,6 +671,7 @@ export function AppRoutes() {
               <Route path={ROUTES.institutionPeople} element={<InstitutionPeoplePage />} />
               <Route path="/institution/people/:id" element={<InstitutionPersonDetailPage />} />
               <Route path={ROUTES.institutionPositions} element={<InstitutionPositionsPage />} />
+              <Route path={ROUTES.institutionAppointmentDetail} element={<InstitutionAppointmentDetailPage />} />
               <Route path={ROUTES.institutionAccess} element={<InstitutionAccessPage />} />
               <Route path={ROUTES.institutionCouncils} element={<InstitutionCouncilsPage />} />
               <Route path="/institution/councils/:id" element={<InstitutionCouncilDetailPage />} />

@@ -231,6 +231,21 @@ export function useAppointments(params: Record<string, unknown>) {
   return useInstList(['appointments'], instApi.listAppointments, params);
 }
 
+/** The standalone appointment record (the detail route): person +
+ * position + unit summary relations from the wire. */
+export function useAppointment(id: ID | null) {
+  return useInstItem(['appointments', 'detail', id], () => instApi.getAppointment(id!), id !== null);
+}
+
+
+/* ── the generalized learner register ───────────────────────────── */
+
+/** The canonical learner register (STUDENT + TRAINEE, account
+ * optional — the enrollment/award pickers source from here, not the
+ * legacy /admin/students platform-profiles surface). */
+export function useLearners(params: Record<string, unknown>) {
+  return useInstList(['learners'], instApi.listLearners, params);
+}
 
 /* ── councils & meetings ────────────────────────────────────────── */
 

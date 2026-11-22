@@ -3,13 +3,17 @@
  * CANDIDATE→ACTIVE→…→GRADUATED lifecycle) + the statutory
  * credentials (award/revoke, rendered from the credential-type
  * catalog — never a hardcoded list) + training placements live in
- * their own section (التدريب العملي). Enrolled learner profiles are
- * the platform's student profiles (learnerCategory STUDENT|TRAINEE).
+ * their own section (التدريب العملي).
+ *
+ * r352 hardening §5: the learner register is the GENERALIZED domain
+ * (GET /academic/learners — STUDENT + TRAINEE, account optional, no
+ * Faculty/Department required); the enrollment/award pickers source
+ * from it and submit learnerProfileId. The legacy /admin/students
+ * platform-profiles surface is NOT this register.
  */
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { PageFrame, PageHeader } from '../../components/patterns';
-import { api, unwrap } from '../../lib/api';
 import { toast } from '../../lib/toast';
 import { formatDate } from '../../utils/numbers';
 
@@ -19,12 +23,15 @@ import { serverError,
 } from '../../components/institutional/kit';
 import { Icon } from '../../components/Icon';
 import {
-  useCredentialTypes, useCredentials, useEnrollments, useMyCapabilities, usePrograms, useInstActions } from '../../hooks/institutional/queries';
+  useCredentialTypes, useCredentials, useEnrollments, useLearners, useMyCapabilities,
+  useOrgUnitTree, usePrograms, useInstActions } from '../../hooks/institutional/queries';
 import * as instApi from '../../lib/institutional/api';
 import {
-  CREDENTIAL_STATUS_LABELS, ENROLLMENT_STATUS_LABELS,
+  CREDENTIAL_STATUS_LABELS, ENROLLMENT_STATUS_LABELS, LEARNER_CATEGORY_LABELS,
+  LEARNER_STATUS_LABELS, ORG_UNIT_TYPE_LABELS,
 } from '../../lib/institutional/labels';
-import type { AwardedCredential, ProgramEnrollment } from '../../lib/institutional/types';
+import type { AwardedCredential, LearnerProfileRow, ProgramEnrollment } from '../../lib/institutional/types';
+import { flattenUnits } from './PeoplePage';
 
 /** Enrollment transitions (contract §7 — server-enforced). */
 const ENROLLMENT_TRANSITIONS: Record<string, string[]> = {
@@ -37,18 +44,20 @@ const ENROLLMENT_TRANSITIONS: Record<string, string[]> = {
   GRADUATED: [],
 };
 
+const LEARNER_UNIT: [string, string, string, string] = ['متعلم واحد', 'متعلمان', 'متعلمون', 'متعلم'];
 const ENROLL_UNIT: [string, string, string, string] = ['تسجيل واحد', 'تسجيلان', 'تسجيلات', 'تسجيل'];
 const CRED_UNIT: [string, string, string, string] = ['شهادة واحدة', 'شهادتان', 'شهادات', 'شهادة'];
 
-/** Minimal student-profile row (the platform's existing shape). */
-interface LearnerOption { id: string; firstName: string; lastName: string }
+
 
 export function InstitutionStudentsPage() {
   const caps = useMyCapabilities();
   const canManagePrograms = caps.data?.has('PROGRAMS_MANAGE') ?? false;
   const canManageCredentials = caps.data?.has('CREDENTIALS_MANAGE') ?? false;
+  // Learner-register writes (intake) are PEOPLE_MANAGE per contract §7.
+  const canManagePeople = caps.data?.has('PEOPLE_MANAGE') ?? false;
 
-  const [tab, setTab] = useState<'enrollments' | 'credentials'>('enrollments');
+  const [tab, setTab] = useState<'register' | 'enrollments' | 'credentials'>('enrollments');
   const [status, setStatus] = useState('');
   const [page, setPage] = useState(1);
 
@@ -67,32 +76,76 @@ export function InstitutionStudentsPage() {
     revoke: (i: { id: string; notes?: string }) => instApi.revokeCredential(i.id, i.notes),
   });
 
+  // The generalized learner register (the pickers' source of truth).
+  const learnersQuery = useLearners({ page: 1, limit: 100, status: 'ACTIVE' });
+  const learnerOptions = (learnersQuery.data?.data ?? []).map((l) => ({
+    value: l.id,
+    label: `${l.fullNameAr} — ${LEARNER_CATEGORY_LABELS[l.category]} (${l.learnerNumber})`,
+  }));
+
   const [enrollOpen, setEnrollOpen] = useState(false);
   const [awardOpen, setAwardOpen] = useState(false);
+  const [intakeOpen, setIntakeOpen] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [learners, setLearners] = useState<LearnerOption[]>([]);
+
+  const treeQuery = useOrgUnitTree();
+  const learnerMutations = useInstActions(['learners'], {
+    create: (i: Parameters<typeof instApi.createLearner>[0]) => instApi.createLearner(i),
+  });
+
+  const intakeFields: InstField[] = [
+    {
+      kind: 'select', name: 'category', label: 'الصنف', required: true,
+      options: [
+        { value: 'STUDENT', label: LEARNER_CATEGORY_LABELS.STUDENT },
+        { value: 'TRAINEE', label: LEARNER_CATEGORY_LABELS.TRAINEE },
+      ],
+      hint: 'قانون 21/2023 م2 — طالب (برامج دراسية) أو متدرب (تكوين/تدريب مهني).',
+    },
+    { kind: 'text', name: 'learnerNumber', label: 'الرقم الأكاديمي', required: true, maxLength: 64, hint: 'فريد داخل المؤسسة.' },
+    { kind: 'text', name: 'fullNameAr', label: 'الاسم الكامل (بالعربية)', required: true, maxLength: 200 },
+    { kind: 'text', name: 'fullNameEn', label: 'الاسم بالإنجليزية', maxLength: 200 },
+    { kind: 'text', name: 'nationalId', label: 'الرقم الوطني', maxLength: 64, hint: 'يربط السجل عبر المؤسسات (نمط السجل الوطني).' },
+    { kind: 'text', name: 'email', label: 'البريد (اختياري)', maxLength: 200 },
+    { kind: 'text', name: 'phone', label: 'الهاتف (اختياري)', maxLength: 40 },
+    {
+      kind: 'select', name: 'orgUnitId', label: 'الوحدة (اختياري)',
+      options: (treeQuery.data ? flattenUnits(treeQuery.data) : []).map((u) => ({
+        value: u.id, label: `${ORG_UNIT_TYPE_LABELS[u.type]} — ${u.nameAr}`,
+      })),
+    },
+  ];
+
+  const submitIntake = async (values: InstFormValues): Promise<string | void> => {
+    setBusy(true);
+    try {
+      await learnerMutations.create({
+        category: values.category as 'STUDENT' | 'TRAINEE',
+        learnerNumber: values.learnerNumber as string,
+        fullNameAr: values.fullNameAr as string,
+        fullNameEn: values.fullNameEn as string | undefined,
+        nationalId: values.nationalId as string | undefined,
+        email: values.email as string | undefined,
+        phone: values.phone as string | undefined,
+        orgUnitId: values.orgUnitId as string | undefined,
+      });
+      toast.success('أُضيف المتعلم إلى السجل العام');
+      setIntakeOpen(false);
+    } catch (err) {
+      return serverError(err, 'تعذّر تسجيل المتعلم.');
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const programOptions = (programsQuery.data?.data ?? []).map((p) => ({ value: p.id, label: `${p.code} — ${p.nameAr}` }));
   const credentialOptions = (credentialTypesQuery.data ?? []).map((c) => ({ value: c.code, label: c.nameAr }));
 
-  const loadLearners = async () => {
-    try {
-      // The platform's existing student-profiles listing (the enrollment
-      // contract takes studentProfileId — the same profiles).
-      const rows = await unwrap<LearnerOption[]>(
-        api.get('/admin/students', { params: { limit: 100 } }),
-      );
-      setLearners(rows);
-    } catch {
-      setLearners([]);
-    }
-  };
-
   const enrollFields: InstField[] = [
     {
-      kind: 'select', name: 'studentProfileId', label: 'الطالب/المتدرب', required: true,
-      options: learners.map((s) => ({ value: s.id, label: `${s.firstName} ${s.lastName}` })),
-      hint: 'ملفات الطلاب/Mتدربين القائمة في منصتك.',
+      kind: 'select', name: 'learnerProfileId', label: 'الطالب/المتدرب', required: true,
+      options: learnerOptions,
+      hint: 'سجل المتعلمين العام (طلاب ومتدربون) — الحساب اختياري والمتدرب بلا كليات/أقسام.',
     },
     { kind: 'select', name: 'programId', label: 'البرنامج', required: true, options: programOptions },
     { kind: 'date', name: 'expectedCompletionAt', label: 'الإنجاز المتوقع' },
@@ -100,8 +153,8 @@ export function InstitutionStudentsPage() {
 
   const awardFields: InstField[] = [
     {
-      kind: 'select', name: 'studentProfileId', label: 'الطالب/المتدرب', required: true,
-      options: learners.map((s) => ({ value: s.id, label: `${s.firstName} ${s.lastName}` })),
+      kind: 'select', name: 'learnerProfileId', label: 'الطالب/المتدرب', required: true,
+      options: learnerOptions,
     },
     {
       kind: 'select', name: 'credentialTypeCode', label: 'نوع الشهادة', required: true,
@@ -119,7 +172,7 @@ export function InstitutionStudentsPage() {
     setBusy(true);
     try {
       await enrollmentMutations.create({
-        studentProfileId: values.studentProfileId as string,
+        learnerProfileId: values.learnerProfileId as string,
         programId: values.programId as string,
         expectedCompletionAt: values.expectedCompletionAt as string | undefined,
       });
@@ -136,7 +189,7 @@ export function InstitutionStudentsPage() {
     setBusy(true);
     try {
       await credentialMutations.award({
-        studentProfileId: values.studentProfileId as string,
+        learnerProfileId: values.learnerProfileId as string,
         credentialTypeCode: values.credentialTypeCode as string,
         programId: values.programId as string | undefined,
         decisionNumber: values.decisionNumber as string | undefined,
@@ -183,6 +236,15 @@ export function InstitutionStudentsPage() {
     }
   };
 
+  const learnerColumns: Array<InstColumn<LearnerProfileRow>> = [
+    { head: 'الاسم', cell: (l) => <span className="inst-tree-name">{l.fullNameAr}</span> },
+    { head: 'الصنف', cell: (l) => <EnumChip value={l.category} labels={LEARNER_CATEGORY_LABELS} /> },
+    { head: 'الرقم', cell: (l) => <span className="font-mono">{l.learnerNumber}</span> },
+    { head: 'الوحدة', mobileHidden: true, cell: (l) => l.orgUnit?.nameAr ?? '—' },
+    { head: 'الحساب', mobileHidden: true, cell: (l) => (l.user ? l.user.email : <EnumChip value="NO_ACCOUNT" labels={{ NO_ACCOUNT: 'بلا حساب' }} />) },
+    { head: 'الحالة', cell: (l) => <EnumChip value={l.status} labels={LEARNER_STATUS_LABELS} /> },
+  ];
+
   const enrollmentColumns: Array<InstColumn<ProgramEnrollment>> = [
     {
       head: 'الطالب/المتدرب',
@@ -228,24 +290,32 @@ export function InstitutionStudentsPage() {
         title="الطلاب والمتدربون"
         eyebrow="مساحة العمل المؤسسية"
         description="التسجيل في البرامج ودورة التقدم (مرشح ← نشط ← مكتمل ← متخرج)، والشهادات القانونية (منحًا وسحبًا) — الطالب وفق قانون 21/2023 غير المتدرب، والملفات من ملفات منصتك القائمة."
-        meta={canManagePrograms || canManageCredentials ? (
+        meta={canManagePrograms || canManageCredentials || canManagePeople ? (
           <span className="inst-actions">
             {canManagePrograms && (
-              <button type="button" className="btn ghost sm" onClick={() => { void loadLearners(); setEnrollOpen(true); }}>
+              <button type="button" className="btn ghost sm" onClick={() => setEnrollOpen(true)}>
                 <Icon icon={Plus} size={14} /> تسجيل بالبرنامج
               </button>
             )}
             {canManageCredentials && (
-              <button type="button" className="btn primary sm" onClick={() => { void loadLearners(); setAwardOpen(true); }}>
+              <button type="button" className="btn primary sm" onClick={() => setAwardOpen(true)}>
                 <Icon icon={Plus} size={14} /> منح شهادة
+              </button>
+            )}
+            {canManagePeople && (
+              <button type="button" className="btn ghost sm" onClick={() => setIntakeOpen(true)}>
+                <Icon icon={Plus} size={14} /> متعلم جديد
               </button>
             )}
           </span>
         ) : null}
       />
 
-      <div className="inst-tabs" role="tablist" aria-label="أقسام الطلاب">
-        <button type="button" role="tab" aria-selected={tab === 'enrollments'} className="inst-tab" onClick={() => { setTab('enrollments'); setPage(1); }}>
+      <div className="inst-tabs" role="tablist" aria-label="أقسام الطلاب والمتعلمين">
+        <button type="button" role="tab" aria-selected={tab === 'register'} className="inst-tab" onClick={() => setTab('register')}>
+          السجل العام للمتعلمين
+        </button>
+                <button type="button" role="tab" aria-selected={tab === 'enrollments'} className="inst-tab" onClick={() => { setTab('enrollments'); setPage(1); }}>
           التسجيل بالبرامج
         </button>
         <button type="button" role="tab" aria-selected={tab === 'credentials'} className="inst-tab" onClick={() => setTab('credentials')}>
@@ -253,7 +323,17 @@ export function InstitutionStudentsPage() {
         </button>
       </div>
 
-      {tab === 'enrollments' ? (
+      {tab === 'register' ? (
+        <InstPagedTable
+          query={learnersQuery}
+          columns={learnerColumns}
+          rowKey={(l) => l.id}
+          ariaLabel="سجل المتعلمين العام"
+          unit={LEARNER_UNIT}
+          onPage={() => undefined}
+          empty={null}
+        />
+      ) : tab === 'enrollments' ? (
         <>
           <InstFilters>
             <InstSelect
@@ -314,6 +394,7 @@ export function InstitutionStudentsPage() {
 
       <InstFormDialog open={enrollOpen} title="تسجيل طالب/متدرب في برنامج" fields={enrollFields} submitLabel="تسجيل" busy={busy} onCancel={() => setEnrollOpen(false)} onSubmit={submitEnroll} />
       <InstFormDialog open={awardOpen} title="منح شهادة" fields={awardFields} submitLabel="منح" busy={busy} wide onCancel={() => setAwardOpen(false)} onSubmit={submitAward} />
+      <InstFormDialog open={intakeOpen} title="متعلم جديد (سجل عام)" description="التسجيل في السجل العام — الحساب اختياري (متدرب بلا حساب منصة)، وبلا كليات/أقسام." fields={intakeFields} submitLabel="إضافة" busy={busy} wide onCancel={() => setIntakeOpen(false)} onSubmit={submitIntake} />
     </PageFrame>
   );
 }
