@@ -98,6 +98,21 @@ const PAGE_TITLES: Record<string, string> = {
   '/500': 'خطأ في الخادم',
   '/403': 'غير مصرّح',
   '/maintenance': 'صيانة دورية',
+  /* r352 — the Institutional Operating Workspace's static sections.
+     The workspace root (/institution) rides NAV_TITLES (the nav entry
+     «مساحة العمل المؤسسية»); these are the rail's own sections. */
+  '/institution/organization': 'الهيكل التنظيمي',
+  '/institution/people': 'الأفراد والكوادر',
+  '/institution/positions': 'المناصب والتعيينات',
+  '/institution/access': 'الصلاحيات والأدوار',
+  '/institution/councils': 'المجالس واللجان',
+  '/institution/programs': 'البرامج والخطط الدراسية',
+  '/institution/training': 'التدريب العملي',
+  '/institution/students': 'الطلاب والمتدربون',
+  '/institution/quality': 'الجودة والاعتماد',
+  '/institution/licenses': 'التراخيص والتفتيش',
+  '/institution/facilities': 'المعامل والموارد',
+  '/institution/research': 'البحث العلمي المؤسسي',
 };
 
 const DYNAMIC_TITLES: Array<[RegExp, string]> = [
@@ -124,6 +139,14 @@ const DYNAMIC_TITLES: Array<[RegExp, string]> = [
   [/^\/owner\/institutions\/[^/]+$/,         'إعداد مؤسسة'],
   [/^\/colleges\/[^/]+$/,                    'كلّيّة'],
   [/^\/competitions\/[^/]+$/,                'مسابقة'],
+  /* r352 — the institutional detail routes (the page's own h1 carries
+     the entity's name; the tab names the section). */
+  [/^\/institution\/people\/[^/]+$/,                       'ملف فرد'],
+  [/^\/institution\/councils\/[^/]+\/meetings\/[^/]+$/,  'اجتماع مجلس'],
+  [/^\/institution\/councils\/[^/]+$/,                    'مجلس أو لجنة'],
+  [/^\/institution\/programs\/[^/]+$/,                    'برنامج'],
+  [/^\/institution\/facilities\/[^/]+$/,                  'منشأة'],
+  [/^\/institution\/research\/[^/]+$/,                    'مشروع بحثي'],
 ];
 
 export function resolveTitle(pathname: string): string {
