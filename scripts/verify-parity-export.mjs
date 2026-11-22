@@ -496,6 +496,7 @@ const CHECKS = [
   ['dark', '--success', '#5fd39a', 'night success green — the 2026 approved dark success'],
   ['dark', '--warning', '#efc87b', 'night warning amber (r305)'],
   ['dark', '--danger', '#ff7a70', 'night danger red — the 2026 approved dark danger'],
+  ['dark', '--danger-ink', '#ff7a70', 'night danger text ink — 6.35:1 (ink ≡ fill on dark); RESTORED 2026: the row was dropped in b2a4175 and the pin must keep biting'],
   ['dark', '--info', '#93c2e9', 'night info slate (r305)'],
   // ── DARK theme — glass, surfaces, charts, motion (r305) ──
   ['dark', '--glass-bg', 'rgba(30,30,30,0.78)', 'night glass (r305 charcoal tint)'],
@@ -597,6 +598,25 @@ const FORBIDDEN_VALUES = [
   // landing rebuild (the spelling guards BOTH export files — a future
   // reintroduction of the alias layer fails the gate)
   '--poster-paper', '--poster-ink', '--poster-signal',
+  // 2026: the copper/ember/sienna accent era retired end-to-end by the
+  // royal takeover (#C43E16 was the r313–r351 primary; #FA3600/#DB3A00
+  // its light AA rungs; #FF6B3D/#FF7E52-class its night fill; #A33312
+  // its AA text ink). The warm decorative #F15534 survives ONLY in the
+  // peach/copper family + brand art — never as an accent seat value.
+  // Comments are stripped before this scan, so tombstone prose quoting
+  // the retired spellings cannot trip it — only live declarations can.
+  '#c43e16', '#C43E16',
+  '#fa3600', '#FA3600',
+  '#db3a00', '#DB3A00',
+  '#ff6b3d', '#FF6B3D',
+  '#a33312', '#A33312',
+  '#a32400', '#A32400',
+  '#ed4c1f', '#ED4C1F',
+  '#fc724d', '#FC724D',
+  '#c72e00', '#C72E00',
+  'rgba(250, 54, 0', 'rgba(255, 90, 31',
+  'rgb(250, 54, 0', 'rgb(255, 90, 31',
+  'rgb(250 54 0', 'rgb(255 90 31',
 ];
 const FORBIDDEN_PARITY_ONLY = [];
 

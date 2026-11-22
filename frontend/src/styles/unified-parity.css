@@ -56,9 +56,10 @@
        with the illustration system.
      · Journey scene (r148-d): the node/line/core/ticker family +
        its --ink slab retired with the canon (zero consumers — the
-       ConstellationCanvas scene is gone); only the --journey-glow
-       wash survives (auth card). The r130-W2-7 --journey-core/--ink
-       wrinkle note went with them.
+       ConstellationCanvas scene is gone); the --journey-glow wash
+       went with them in the 2026 paydown (its last consumer, the
+       auth card, dropped it in r305). The r130-W2-7
+       --journey-core/--ink wrinkle note went with them.
    ═════════════════════════════════════════════════════════════════════ */
 
 @layer tokens, base, layout, components, pages, overrides;
@@ -559,8 +560,8 @@
     --chart-7: #2273A0;   /* cyan-blue */
     --chart-8: #A65D8A;   /* mauve */
 
-    /* the auth-card glow wash survives (r305 re-key to the ember) */
-    --journey-glow:        rgba(250, 54, 0, 0.10);
+    /* (the --journey-glow wash retired in the 2026 paydown — zero
+       consumers since r305; the seat is deleted from both sheets.) */
   }
 
   /* ══════════════════════════════════════════════════════════════════
@@ -730,8 +731,7 @@
     --chart-7: #6FB3D9;   /* cyan-blue (lifted for dark) */
     --chart-8: #D18AB4;   /* mauve (lifted for dark) */
 
-    /* the auth-card glow wash survives (r305 re-key to the ember) */
-    --journey-glow:        rgba(255, 90, 31, 0.12);
+    /* (the night --journey-glow twin retired with the light one.) */
   }
 
   /* ─── Reduced motion — zero ALL raw --t-* rungs (not just the

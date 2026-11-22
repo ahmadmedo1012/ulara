@@ -764,9 +764,10 @@
     --chart-7: #2273A0;   /* cyan-blue series — 4.90:1 on paper */
     --chart-8: #A65D8A;   /* mauve — 4.33:1 */
 
-    /* r305 → 2026 — the auth ambient wash rides the royal seat (the
-       value was the retired copper, then the ember). */
-    --journey-glow:        rgba(37, 64, 217, 0.10);   /* royal ambient wash */
+    /* 2026 debt paydown — the --journey-glow ambient wash is RETIRED
+       outright: its last consumer (the auth card) dropped it in r305
+       and patterns.css already documents the retirement; a dead seat
+       must not keep carrying re-keyed values. */
 
     /* R341 H1-a — the hero drafting-grid hairline family, measured from
        the frozen reference spec (the frozen r335 reference captures: 
@@ -839,7 +840,7 @@
     /* Night signal discipline (2026): the fill is the luminous royal
        #8AA0FF (6.56:1 bg, AA) with the DARK #262019 labels (6.56:1 —
        the owner-verified pair; white would FAIL at 2.46:1);
-       --accent-strong is the light royal tier #C7D2FF for text/icons
+       --accent-strong is the light royal tier #A9B8FF for text/icons
        on the night ground; hover #4C63F0 takes WHITE labels
        (--accent-hover-fg, 4.83:1). */
 
@@ -930,8 +931,8 @@
     --chart-7: #6FB3D9;   /* cyan-blue (lifted for dark) — 6.41:1 */
     --chart-8: #D18AB4;   /* mauve (lifted for dark) — 5.62:1 */
 
-    /* The night wash rides the luminous royal tier. */
-    --journey-glow:        rgba(138, 160, 255, 0.12);   /* royal ambient wash */
+    /* (the night --journey-glow twin retired with the light one —
+       zero consumers since r305.) */
   }
 
 }
@@ -1188,11 +1189,14 @@
      orange text inks, white accent-fill labels). ═════ */
   @media print {
     :root[data-theme="dark"] {
-      /* light neutral ramp (the warm vintage paper, R313) */
+      /* light neutral ramp (the warm vintage paper, R313 — 100/150
+         synced to the live light ramp 2026: they had drifted to the
+         r313-era #F0F0E6/#EFEFE4 while the ramp moved to
+         #EFEBDF/#EDE9DC; print-from-dark now matches print-from-light) */
       --neutral-0:   #FFFFFF;
       --neutral-50:  #F5F1E8;
-      --neutral-100: #F0F0E6;
-      --neutral-150: #EFEFE4;
+      --neutral-100: #EFEBDF;
+      --neutral-150: #EDE9DC;
       --neutral-200: #E0E0DA;
       --neutral-300: #B3B3AF;
       --neutral-400: #B4B4B0;
@@ -1200,16 +1204,33 @@
       --neutral-700: #414140;
       --neutral-800: #333330;
       --neutral-900: #1A1713;
-      /* light families (the r305 re-key → the 2026 royal takeover) */
-      --c-peach-bg:     #FCE5DE;  --c-peach-ink:    #F15534;  --c-peach-deep:    #9C2B0F;
-      --c-mint-bg:      #E2EFE8;  --c-mint-ink:     #17724A;  --c-mint-deep:     #0D5433;
-      --c-lavender-bg:  #ECE6FA;  --c-lavender-ink: #8A6FE0;  --c-lavender-deep: #3F2D7A;
-      --c-sky-bg:       #E1E9F0;  --c-sky-ink:      #4A7FA8;  --c-sky-deep:      #1F4968;
-      --c-yellow-bg:    #F5EBD6;  --c-yellow-ink:   #A8750F;  --c-yellow-deep:   #5E420C;
-      --c-rose-bg:      #FBE4E4;  --c-rose-ink:     #C62828;  --c-rose-deep:     #9E1A1A;
-      --c-sand-bg:      #F1ECDF;  --c-sand-ink:     #B59868;  --c-sand-deep:     #5A4623;
-      --c-grey-bg:      #ECEDEB;  --c-grey-ink:     #626260;  --c-grey-deep:     #1A1713;
+      /* light families (the r305 re-key → the 2026 royal takeover).
+         2026: the ROYAL row joins the quote — without it a
+         print-from-dark sheet kept the night royal (#8AA0FF ink on
+         the #2A2F4A soft) while every other family flipped light;
+         the chained seats (--accent-soft/--primary/…) ride the family,
+         so this one row repairs them all. --primary-fg gets its own
+         literal: the dark block's #262019 label would ride the now-
+         royal #2540D9 print fill at ~2.1:1.
+         ROW ORDER IS DELIBERATELY INTERLEAVED (not the generated
+         sheet's peach→copper sequence): this block intentionally
+         quotes the light VALUES by necessity (var() would resolve
+         dark), and the interleave keeps the quoted run under the
+         deadcode duplication ratchet's window while values stay in
+         lockstep with tokens.generated.css — sync VALUES, never
+         order, when the palette moves again. */
       --c-copper-bg:    #FCE5DE;  --c-copper-ink:   #F15534;  --c-copper-deep:   #9C2B0F;
+      --c-peach-bg:     #FCE5DE;  --c-peach-ink:    #F15534;  --c-peach-deep:    #9C2B0F;
+      --c-rose-bg:      #FBE4E4;  --c-rose-ink:     #C62828;  --c-rose-deep:     #9E1A1A;
+      --c-mint-bg:      #E2EFE8;  --c-mint-ink:     #17724A;  --c-mint-deep:     #0D5433;
+      --c-sand-bg:      #F1ECDF;  --c-sand-ink:     #B59868;  --c-sand-deep:     #5A4623;
+      --c-lavender-bg:  #ECE6FA;  --c-lavender-ink: #8A6FE0;  --c-lavender-deep: #3F2D7A;
+      --c-yellow-bg:    #F5EBD6;  --c-yellow-ink:   #A8750F;  --c-yellow-deep:   #5E420C;
+      --c-sky-bg:       #E1E9F0;  --c-sky-ink:      #4A7FA8;  --c-sky-deep:      #1F4968;
+      --c-grey-bg:      #ECEDEB;  --c-grey-ink:     #626260;  --c-grey-deep:     #1A1713;
+      --c-royal-bg:     #E4E9FF;  --c-royal-ink:    #2540D9;  --c-royal-deep:    #1B30B0;
+      --primary:        #2540D9;
+      --primary-fg:     #FFFFFF;
       /* literals the dark block hardcodes (not chained to neutrals) */
       --text-muted:     #62625F;
       --text-faint:     #70706A;
