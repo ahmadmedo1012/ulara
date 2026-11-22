@@ -98,7 +98,7 @@ function TreeNode({
         )}
       </div>
       {open && hasChildren && (
-        <ul className="inst-tree" role="group">
+        <ul className="inst-tree">
           {node.children.map((c) => (
             <TreeNode
               key={c.id}
@@ -292,11 +292,47 @@ export function InstitutionOrganizationPage() {
         description="الهرم الفعلي لمؤسستك — كليات وأقسام علمية ومعاهد ومراكز بحثية وإدارات عامة ومكاتب وفروع ووحدات تدريب ومعامل وورش."
         meta={
           <span className="inst-actions">
-            <div className="inst-tabs" role="tablist" aria-label="طريقة العرض">
-              <button type="button" role="tab" aria-selected={view === 'tree'} className="inst-tab" onClick={() => setView('tree')}>
+            <div
+              className="inst-tabs"
+              role="tablist"
+              aria-label="طريقة العرض"
+              onKeyDown={(e) => {
+                // The WAI-ARIA tabs keyboard contract (RTL-aware: the
+                // arrows follow the reading direction — in the RTL
+                // document ArrowLeft is "forward"). With two tabs both
+                // directions toggle; focus follows the selection.
+                if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+                e.preventDefault();
+                const next = view === 'tree' ? 'list' : 'tree';
+                setView(next);
+                const target = document.getElementById(
+                  next === 'tree' ? 'org-view-tab-tree' : 'org-view-tab-list',
+                );
+                target?.focus();
+              }}
+            >
+              <button
+                type="button"
+                id="org-view-tab-tree"
+                role="tab"
+                aria-selected={view === 'tree'}
+                aria-controls="org-view-panel"
+                tabIndex={view === 'tree' ? 0 : -1}
+                className="inst-tab"
+                onClick={() => setView('tree')}
+              >
                 <Icon icon={Network} size={14} /> شجرة
               </button>
-              <button type="button" role="tab" aria-selected={view === 'list'} className="inst-tab" onClick={() => setView('list')}>
+              <button
+                type="button"
+                id="org-view-tab-list"
+                role="tab"
+                aria-selected={view === 'list'}
+                aria-controls="org-view-panel"
+                tabIndex={view === 'list' ? 0 : -1}
+                className="inst-tab"
+                onClick={() => setView('list')}
+              >
                 <Icon icon={List} size={14} /> قائمة
               </button>
             </div>
@@ -309,13 +345,19 @@ export function InstitutionOrganizationPage() {
         }
       />
 
+      <div
+        id="org-view-panel"
+        role="tabpanel"
+        aria-labelledby={view === 'tree' ? 'org-view-tab-tree' : 'org-view-tab-list'}
+        tabIndex={0}
+      >
       {view === 'tree' ? (
         <InstStates
           isLoading={treeQuery.isLoading}
           error={treeQuery.error}
           isEmpty={tree.length === 0}
         >
-          <ul className="inst-tree" role="tree" aria-label="شجرة الوحدات التنظيمية">
+          <ul className="inst-tree" aria-label="شجرة الوحدات التنظيمية (قائمة متداخلة — زر الطي لكل وحدة لها فروع)">
             {tree.map((n) => (
               <TreeNode
                 key={n.id}
@@ -359,6 +401,7 @@ export function InstitutionOrganizationPage() {
           />
         </>
       )}
+      </div>
 
       {/* the unit detail panel */}
       {activeId && detailQuery.data ? (

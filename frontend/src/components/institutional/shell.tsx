@@ -60,7 +60,7 @@ export function InstitutionWorkspaceLayout() {
           </NavLink>
         ))}
       </nav>
-      <div className="inst-main">
+      <div>
         {masthead}
         {hiddenReason ? (
           <ModuleHiddenState reason={hiddenReason} />

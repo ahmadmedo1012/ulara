@@ -169,6 +169,7 @@ export const COUNCIL_TYPE_LABELS: L<CouncilType> = {
 export const COUNCIL_STATUS_LABELS: L<CouncilStatus> = {
   ACTIVE: 'قائم',
   DISSOLVED: 'منحل',
+  CANCELLED: 'ملغى',
 };
 
 export const COUNCIL_ROLE_LABELS: L<CouncilRole> = {

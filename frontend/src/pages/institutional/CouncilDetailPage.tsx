@@ -351,6 +351,9 @@ export function InstitutionMeetingDetailPage() {
   const [minutesEditing, setMinutesEditing] = useState(false);
   const [busy, setBusy] = useState(false);
   const [attendanceDraft, setAttendanceDraft] = useState<Record<string, string>>({});
+  // §7.3/D18: عضو (MEMBER — verified against ACTIVE memberships) vs
+  // ضيف (GUEST — documented external participant of the institution).
+  const [attendeeKindDraft, setAttendeeKindDraft] = useState<Record<string, 'MEMBER' | 'GUEST'>>({});
 
   const meeting = meetingQuery.data;
   const council = councilQuery.data;
@@ -432,13 +435,18 @@ export function InstitutionMeetingDetailPage() {
 
   const saveAttendance = async () => {
     if (!meetingId) return;
-    const records = Object.entries(attendanceDraft).map(([personId, status]) => ({ personId, status }));
+    const records = Object.entries(attendanceDraft).map(([personId, status]) => ({
+      personId,
+      status,
+      attendeeKind: attendeeKindDraft[personId] ?? 'MEMBER',
+    }));
     if (records.length === 0) { toast.warning('لم تحدد أي حالة حضور بعد.'); return; }
     setBusy(true);
     try {
       await mutations.saveAttendance({ meetingId, records });
       toast.success('حُفظ الحضور');
       setAttendanceDraft({});
+      setAttendeeKindDraft({});
     } catch (err) {
       toast.error(serverError(err, 'تعذَّر حفظ الحضور.'));
     } finally {
@@ -587,12 +595,17 @@ export function InstitutionMeetingDetailPage() {
             {/* 2 · الانعقاد — الحضور */}
             <InstSection
               title="٢ · الحضور"
-              description="سجل الحضور الدقيق: حاضر، غائب، بعذر، متأخر. يُحفظ دفعة واحدة (upsert)."
+              description="سجل الحضور الدقيق: حاضر، غائب، بعذر، متأخر — لكل مشارك صنفه: عضو (يُتحقق من عضويته) أو ضيف (مشارك خارجي موثّق). يُحفظ دفعة واحدة (upsert)."
             >
               {meeting.attendance.length > 0 && (
                 <DetailList
                   items={meeting.attendance.map((r) => ({
-                    label: r.person?.fullNameAr ?? r.personId,
+                    label: (
+                      <span className="inst-actions">
+                        {r.person?.fullNameAr ?? r.personId}
+                        {r.attendeeKind === 'GUEST' && <EnumChip value="GUEST" labels={{ GUEST: 'ضيف' }} />}
+                      </span>
+                    ),
                     value: <EnumChip value={r.status} labels={ATTENDANCE_LABELS} />,
                   }))}
                 />
@@ -605,6 +618,20 @@ export function InstitutionMeetingDetailPage() {
                   {(peopleQuery.data?.data ?? []).slice(0, 25).map((p) => (
                     <div key={p.id} className="inst-attend-row">
                       <span className="inst-attend-name">{p.fullNameAr}</span>
+                      <span className="inst-attend-opts" role="group" aria-label={`صنف المشاركة: ${p.fullNameAr}`}>
+                        {(['MEMBER', 'GUEST'] as const).map((k) => (
+                          <button
+                            key={k}
+                            type="button"
+                            className="inst-attend-opt"
+                            aria-pressed={(attendeeKindDraft[p.id] ?? 'MEMBER') === k}
+                            onClick={() => setAttendeeKindDraft((prev) => ({ ...prev, [p.id]: k }))}
+                            title={k === 'MEMBER' ? 'عضو — يُتحقق من عضوية نشطة في المجلس' : 'ضيف — مشارك خارجي موثّق من المؤسسة'}
+                          >
+                            {k === 'MEMBER' ? 'عضو' : 'ضيف'}
+                          </button>
+                        ))}
+                      </span>
                       <span className="inst-attend-opts" role="group" aria-label={`حضور ${p.fullNameAr}`}>
                         {ATTENDANCE_OPTIONS.map((o) => (
                           <button

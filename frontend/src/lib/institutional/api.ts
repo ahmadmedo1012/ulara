@@ -177,7 +177,7 @@ export const getMeeting = (id: ID) => getOne<MeetingDetail>(`/governance/meeting
 export const updateMeeting = (id: ID, input: { scheduledAt?: string; location?: string; status?: string }) =>
   patch<CouncilMeeting>(`/governance/meetings/${id}`, input);
 
-export const saveAttendance = (meetingId: ID, records: Array<{ personId: ID; status: string }>) =>
+export const saveAttendance = (meetingId: ID, records: Array<{ personId: ID; status: string; attendeeKind?: 'MEMBER' | 'GUEST' }>) =>
   post<never>(`/governance/meetings/${meetingId}/attendance`, { records });
 
 export const addAgendaItem = (meetingId: ID, input: { orderNo: number; titleAr: string; description?: string }) =>

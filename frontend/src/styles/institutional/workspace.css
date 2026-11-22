@@ -21,6 +21,10 @@
    horizontally scrollable chip strip (the shell already owns the
    outer layout; this only styles the workspace's own columns). */
 .inst-layout {
+  /* Sheet-scoped stacking rungs (the global ladder has no
+     sticky-content-strip seat yet; unifying it is a dedicated
+     token round per the design-system law). */
+  --inst-z-sticky: 2;
   display: grid;
   gap: var(--sp-5);
   grid-template-columns: 1fr;
@@ -41,7 +45,10 @@
   scrollbar-width: thin;
   position: sticky;
   inset-block-start: 0;
-  z-index: var(--z-hero-grid);
+  /* A sticky content strip sits just above flowed content — the
+     hero-grid rung is a different seat. Sheet-scoped (documented),
+     pending a global sticky-strip rung in a dedicated token round. */
+  z-index: var(--inst-z-sticky);
   background: var(--bg);
   /* keep the strip readable over scrolled content on mobile */
   padding-block: var(--sp-2);
@@ -84,11 +91,25 @@
 }
 
 .inst-rail a[aria-current='page'] {
+  position: relative;
   background: var(--surface-2);
   border-color: var(--surface-border);
   color: var(--text-strong);
-  box-shadow: inset 2px 0 0 var(--accent);
   font-weight: var(--fw-semibold);
+}
+
+/* The active marker is a logical-inset pseudo-element (the platform's
+   .nav-item.on pattern): box-shadow x-offsets are PHYSICAL and land on
+   the wrong edge under dir=rtl — the Arabic-first rail reads
+   right-to-left, the marker belongs on the reading-start edge. */
+.inst-rail a[aria-current='page']::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block: var(--sp-1);
+  inline-size: 2px;
+  border-radius: var(--r-full);
+  background: var(--accent);
 }
 
 /* the workspace masthead (institution identity, not product brand) */
@@ -155,11 +176,11 @@
 .inst-chip[data-tone='warn']::before { background: var(--warning, var(--accent)); }
 
 .inst-chip[data-tone='info'] {
-  color: var(--accent-ink);
-  background: var(--accent-soft);
-  border-color: color-mix(in srgb, var(--accent) 32%, transparent);
+  color: var(--info-ink, var(--text-strong));
+  background: var(--info-soft, var(--surface-3));
+  border-color: color-mix(in srgb, var(--info) 32%, transparent);
 }
-.inst-chip[data-tone='info']::before { background: var(--accent); }
+.inst-chip[data-tone='info']::before { background: var(--info); }
 
 .inst-chip[data-tone='muted'] { color: var(--text-muted); }
 
@@ -280,8 +301,8 @@
 }
 
 .inst-search input:focus-visible {
-  outline: 2px solid var(--state-focus-ring-color);
-  outline-offset: 2px;
+  outline: var(--state-focus-ring-width) solid var(--state-focus-ring-color);
+  outline-offset: var(--state-focus-ring-offset);
   border-radius: var(--r-xs);
 }
 
@@ -307,8 +328,8 @@
 }
 
 .inst-select select:focus-visible {
-  outline: 2px solid var(--state-focus-ring-color);
-  outline-offset: 2px;
+  outline: var(--state-focus-ring-width) solid var(--state-focus-ring-color);
+  outline-offset: var(--state-focus-ring-offset);
 }
 
 .inst-select-caret {
@@ -328,8 +349,8 @@
 .inst-row-click { cursor: pointer; }
 .inst-row-click:hover { background: var(--surface-2); }
 .inst-row-click:focus-visible {
-  outline: 2px solid var(--state-focus-ring-color);
-  outline-offset: -2px;
+  outline: var(--state-focus-ring-width) solid var(--state-focus-ring-color);
+  outline-offset: calc(-1 * var(--state-focus-ring-offset));
 }
 
 /* ── the org tree ─────────────────────────────────────────────── */
@@ -346,6 +367,18 @@
   margin-inline-start: var(--sp-4);
   padding-inline-start: var(--sp-3);
   border-inline-start: 1px solid var(--surface-border);
+}
+
+/* The tree row: toggle + node + management actions on ONE line (the
+   component renders .inst-tree-row; without this the 32px toggle,
+   the 100%-wide node and the buttons stack vertically). */
+.inst-tree-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+}
+.inst-tree-row > * {
+  min-inline-size: 0;
 }
 
 .inst-tree-node {
@@ -368,15 +401,26 @@
 .inst-tree-node:hover { background: var(--surface-2); }
 
 .inst-tree-node:focus-visible {
-  outline: 2px solid var(--state-focus-ring-color);
-  outline-offset: 2px;
+  outline: var(--state-focus-ring-width) solid var(--state-focus-ring-color);
+  outline-offset: var(--state-focus-ring-offset);
 }
 
 .inst-tree-node[aria-pressed='true'] {
+  position: relative;
   background: var(--surface-2);
   border-color: var(--surface-border);
-  box-shadow: inset 2px 0 0 var(--accent);
   font-weight: var(--fw-semibold);
+}
+
+/* Same logical-inset active marker as the rail (RTL-correct). */
+.inst-tree-node[aria-pressed='true']::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block: var(--sp-1);
+  inline-size: 2px;
+  border-radius: var(--r-full);
+  background: var(--accent);
 }
 
 .inst-tree-kind {
@@ -395,8 +439,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  block-size: 32px;
-  inline-size: 32px;
+  block-size: 44px;
+  inline-size: 44px;
   border-radius: var(--r-xs);
   border: 1px solid var(--rule);
   background: var(--surface);
@@ -405,16 +449,19 @@
 }
 
 .inst-tree-toggle:focus-visible {
-  outline: 2px solid var(--state-focus-ring-color);
-  outline-offset: 2px;
+  outline: var(--state-focus-ring-width) solid var(--state-focus-ring-color);
+  outline-offset: var(--state-focus-ring-offset);
 }
 
 .inst-tree-toggle svg {
   transition: transform var(--motion-duration-short) var(--ease-out);
 }
 
+/* ChevronLeft (the RTL disclosure twin of ChevronRight): -90° sends
+   the west apex DOWN when open — the disclosure convention; +90° would
+   point it up. */
 .inst-tree-toggle[data-open='true'] svg {
-  transform: rotate(90deg);
+  transform: rotate(-90deg);
 }
 
 /* ── dialogs ──────────────────────────────────────────────────── */
@@ -474,8 +521,8 @@
 
 .inst-dialog-close:hover { background: var(--surface-2); color: var(--text-strong); }
 .inst-dialog-close:focus-visible {
-  outline: 2px solid var(--state-focus-ring-color);
-  outline-offset: 2px;
+  outline: var(--state-focus-ring-width) solid var(--state-focus-ring-color);
+  outline-offset: var(--state-focus-ring-offset);
 }
 
 .inst-dialog-desc {
@@ -522,8 +569,8 @@
 .inst-field input:focus-visible,
 .inst-field textarea:focus-visible,
 .inst-field select:focus-visible {
-  outline: 2px solid var(--state-focus-ring-color);
-  outline-offset: 2px;
+  outline: var(--state-focus-ring-width) solid var(--state-focus-ring-color);
+  outline-offset: var(--state-focus-ring-offset);
   border-color: var(--state-input-focus-border);
 }
 
@@ -601,8 +648,8 @@
 .inst-tab:hover { color: var(--text-strong); }
 
 .inst-tab:focus-visible {
-  outline: 2px solid var(--state-focus-ring-color);
-  outline-offset: -2px;
+  outline: var(--state-focus-ring-width) solid var(--state-focus-ring-color);
+  outline-offset: calc(-1 * var(--state-focus-ring-offset));
 }
 
 .inst-tab[aria-selected='true'] {
@@ -686,7 +733,7 @@
   color: var(--text-muted);
   font-size: var(--fs-xs);
   font-family: inherit;
-  min-block-size: 32px;
+  min-block-size: 44px;
   padding-inline: var(--sp-2-5);
   cursor: pointer;
 }
@@ -699,8 +746,8 @@
 }
 
 .inst-attend-opt:focus-visible {
-  outline: 2px solid var(--state-focus-ring-color);
-  outline-offset: 2px;
+  outline: var(--state-focus-ring-width) solid var(--state-focus-ring-color);
+  outline-offset: var(--state-focus-ring-offset);
 }
 
 /* ── minutes editor ───────────────────────────────────────────── */
@@ -720,8 +767,8 @@
 }
 
 .inst-minutes:focus-visible {
-  outline: 2px solid var(--state-focus-ring-color);
-  outline-offset: 2px;
+  outline: var(--state-focus-ring-width) solid var(--state-focus-ring-color);
+  outline-offset: var(--state-focus-ring-offset);
 }
 
 .inst-minutes-body {

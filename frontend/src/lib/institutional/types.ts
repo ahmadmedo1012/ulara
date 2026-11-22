@@ -281,7 +281,7 @@ export type CouncilType =
   | 'SCIENTIFIC_COUNCIL' | 'INSTITUTE_COUNCIL' | 'DISCIPLINARY_COUNCIL'
   | 'STANDING_COMMITTEE' | 'OTHER';
 
-export type CouncilStatus = 'ACTIVE' | 'DISSOLVED';
+export type CouncilStatus = 'ACTIVE' | 'DISSOLVED' | 'CANCELLED';
 export type CouncilRole = 'CHAIR' | 'DEPUTY_CHAIR' | 'SECRETARY' | 'MEMBER' | 'OBSERVER';
 
 export interface Council {
@@ -360,6 +360,9 @@ export interface AttendanceRecord {
   meetingId: ID;
   personId: ID;
   status: AttendanceStatus;
+  /** D18/§7.3: MEMBER (verified membership) vs GUEST (documented
+   * external participant) — explicit, never assumed. */
+  attendeeKind: 'MEMBER' | 'GUEST';
   person?: { id: ID; fullNameAr: string } | null;
 }
 

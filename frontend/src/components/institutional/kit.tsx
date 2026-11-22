@@ -137,7 +137,6 @@ export function InstTable<Row>({
               onKeyDown={onRowClick ? (e) => {
                 if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onRowClick(row); }
               } : undefined}
-              aria-disabled={undefined}
             >
               {columns.map((c, i) => (
                 <td key={i} data-label={c.mobileHidden ? undefined : c.head}>
@@ -226,7 +225,7 @@ export function InstSection({
 /* ── key/value detail rows ──────────────────────────────────────── */
 
 export function DetailList({ items }: {
-  items: Array<{ label: string; value: ReactNode }>;
+  items: Array<{ label: ReactNode; value: ReactNode }>;
 }) {
   return (
     <dl className="inst-detail">
@@ -352,23 +351,55 @@ export function InstFormDialog({
   const [clientError, setClientError] = useState<string | null>(null);
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const firstInputRef = useRef<HTMLElement | null>(null);
+  // The element that owned focus before the dialog opened — restored
+  // on close (the WAI-ARIA dialog contract; keyboard users land back
+  // where they came from instead of the document start).
+  const restoreFocusRef = useRef<HTMLElement | null>(null);
 
   // Reset whenever the dialog (re)opens with a fresh field set.
   useEffect(() => {
     if (open) {
+      restoreFocusRef.current = document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
       setValues(initial);
       setClientError(null);
       // Focus the first control — keyboard users land inside the dialog.
       const t = setTimeout(() => firstInputRef.current?.focus(), 30);
       return () => clearTimeout(t);
     }
+    const restore = restoreFocusRef.current;
+    if (restore && document.contains(restore)) restore.focus();
+    return undefined;
   }, [open, initial]);
 
-  // Escape closes; focus stays trapped enough for the modal contract
-  // (role=dialog aria-modal, tab cycles the two focusable poles).
+  // Escape closes; Tab is TRAPPED inside the dialog (the platform's
+  // overlay contract — the modal owns the keyboard until it closes).
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onCancel(); };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation();
+        onCancel();
+        return;
+      }
+      if (e.key === 'Tab') {
+        const items = dialogRef.current?.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        );
+        if (!items || items.length === 0) return;
+        const first: HTMLElement | undefined = items[0];
+        const last: HTMLElement | undefined = items[items.length - 1];
+        if (!first || !last) return;
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, [open, onCancel]);
@@ -540,6 +571,20 @@ export function InstConfirm({
   onCancel: () => void;
   busy?: boolean;
 }) {
+  // Focus restore: the opener element re-takes focus on close (the
+  // alertdialog contract; InstFormDialog owns the full Tab trap).
+  const restoreFocusRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    if (open) {
+      restoreFocusRef.current = document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
+      return undefined;
+    }
+    const restore = restoreFocusRef.current;
+    if (restore && document.contains(restore)) restore.focus();
+    return undefined;
+  }, [open]);
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onCancel(); };
