@@ -22,7 +22,7 @@ import {
 import * as instApi from '../../lib/institutional/api';
 import {
   APPOINTMENT_STATUS_LABELS, ORG_UNIT_TYPE_LABELS,
-  PLATFORM_ROLE_LABELS, STAFF_CATEGORY_LABELS, STAFF_STATUS_LABELS,
+  CAPABILITY_LABELS, STAFF_CATEGORY_LABELS, STAFF_STATUS_LABELS,
 } from '../../lib/institutional/labels';
 import type { OrgUnit, OrgUnitTreeNode, Person } from '../../lib/institutional/types';
 
@@ -193,7 +193,7 @@ export function InstitutionPersonDetailPage() {
 
   const person = query.data?.person;
   const appointments = query.data?.appointments ?? [];
-  const grants = query.data?.unitRoleGrants ?? [];
+  const grants = query.data?.unitCapabilityGrants ?? [];
 
   const setStatus = async (next: string) => {
     if (!person) return;
@@ -294,15 +294,15 @@ export function InstitutionPersonDetailPage() {
             </InstSection>
 
             <InstSection
-              title="منح أدوار إضافية على وحدات"
-              description="أدوار نطاقها وحدة تنظيمية أو المؤسسة ككل — تُدار من قسم الصلاحيات."
+              title="منح صلاحيات إضافية على وحدات"
+              description="منح نطاقها وحدة تنظيمية أو المؤسسة ككل — قدرة واحدة لكل منحة؛ تُدار من قسم الصلاحيات."
             >
               {grants.length === 0 ? (
-                <p className="inst-section-desc">لا توجد منح أدوار إضافية.</p>
+                <p className="inst-section-desc">لا توجد منح صلاحيات إضافية.</p>
               ) : (
                 <DetailList
                   items={grants.map((g) => ({
-                    label: PLATFORM_ROLE_LABELS[g.role] ?? g.role,
+                    label: CAPABILITY_LABELS[g.capability] ?? g.capability,
                     value: g.orgUnit
                       ? `${g.orgUnit.nameAr} (${ORG_UNIT_TYPE_LABELS[g.orgUnit.type] ?? g.orgUnit.type})`
                       : 'على مستوى المؤسسة',

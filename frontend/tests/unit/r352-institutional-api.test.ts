@@ -15,7 +15,9 @@ import { cleanParams } from '../../src/lib/institutional/api';
 /** Recorded request + the canned envelope the adapter answers with. */
 const calls: Array<{ method?: string; url: string; params?: unknown; data?: unknown }> = [];
 
-function ok<T>(config: ApiRequestConfig, data: T): ApiResponse<T> {
+// The wire envelope is { data: T } — the helper's claim must match it
+// (TS2322 otherwise: '{ data: T }' is not assignable to bare 'T').
+function ok<T>(config: ApiRequestConfig, data: T): ApiResponse<{ data: T }> {
   return { data: { data }, status: 200, statusText: 'OK', headers: {}, config };
 }
 
@@ -180,24 +182,26 @@ describe('r352 institution-scoped paths (contract §2–§11)', () => {
     ]);
   });
 
-  it('builds the permissions family exactly (contract §12)', async () => {
+  it('builds the permissions family exactly (contract §12 — the hardened capability surface)', async () => {
     await instApi.getMyPermissions();
-    await instApi.getMyUnitRoles();
-    await instApi.listUserUnitRoles('u-1', 'inst-1');
-    await instApi.grantUnitRole('u-1', {
-      institutionId: 'inst-1', role: 'QUALITY',
+    await instApi.getMyUnitCapabilities();
+    await instApi.listUserUnitCapabilities('u-1', 'inst-1');
+    await instApi.grantUnitCapability('u-1', {
+      institutionId: 'inst-1', capability: 'QUALITY_INTERNAL_MANAGE', orgUnitId: 'unit-1', reason: 'تفويض مؤقت',
     });
-    await instApi.revokeUnitRole('g-1');
+    await instApi.revokeUnitCapability('g-1');
 
     expect(calls.map((c) => `${c.method} ${c.url}`)).toEqual([
       'get /me/permissions',
-      'get /me/unit-roles',
-      'get /admin/users/u-1/unit-roles',
-      'post /admin/users/u-1/unit-roles',
-      'post /admin/unit-roles/g-1/revoke',
+      'get /me/unit-capabilities',
+      'get /admin/users/u-1/unit-capabilities',
+      'post /admin/users/u-1/unit-capabilities',
+      'post /admin/unit-capabilities/g-1/revoke',
     ]);
     expect(calls[2]!.params).toEqual({ institutionId: 'inst-1' });
-    expect(calls[3]!.data).toEqual({ institutionId: 'inst-1', role: 'QUALITY' });
+    expect(calls[3]!.data).toEqual({
+      institutionId: 'inst-1', capability: 'QUALITY_INTERNAL_MANAGE', orgUnitId: 'unit-1', reason: 'تفويض مؤقت',
+    });
   });
 });
 

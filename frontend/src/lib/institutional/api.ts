@@ -8,7 +8,8 @@
  * envelope unwrap, same Bearer/refresh pipeline, same error shape the
  * pages' mappers already read. Institution scoping is SERVER-side
  * (verified membership) — the client never sends an institutionId
- * except where the contract itself takes one (admin unit-roles).
+ * except where the contract itself takes one (the admin
+ * unit-capabilities surface, where the server verifies it).
  */
 import { api, unwrap } from '../api';
 import type {
@@ -21,7 +22,7 @@ import type {
   OrgUnitDetail, OrgUnitInput, OrgUnitTreeNode, Paged, Person, PersonDetail, PersonInput,
   PositionTemplateRow, Program, ProgramCourseRow, ProgramDetail, ProgramEnrollment,
   ProgramInput, ProgramVersion, RegulatoryInspection, ResearchOutput, ResearchProject,
-  ResearchProjectDetail, SafetyIncident, TrainingPlacement, UnitRoleGrant,
+  ResearchProjectDetail, SafetyIncident, TrainingPlacement, UnitCapabilityGrant,
 } from './types';
 
 /* ── internal helpers (not exported — keep the surface typed) ────── */
@@ -192,7 +193,7 @@ export const addResolution = (meetingId: ID, input: {
 
 export const updateResolution = (resolutionId: ID, input: {
   status?: string; approvedAt?: string; completedAt?: string; completionRef?: string;
-}) => post<never>(`/governance/resolutions/${resolutionId}`, input);
+}) => patch<never>(`/governance/resolutions/${resolutionId}`, input);
 
 export const getMinutes = (meetingId: ID) =>
   getOne<MeetingDetail['minutes']>(`/governance/meetings/${meetingId}/minutes`);
@@ -461,17 +462,28 @@ export const createResearchOutput = (input: {
   referenceUrl?: string; doi?: string; publishedAt?: string; notes?: string;
 }) => post<ResearchOutput>('/research-outputs', input);
 
-/* ── §12 scoped roles & permissions ─────────────────────────────── */
+/* ── §12 scoped capability grants & permissions (the hardened surface) ── */
 
 export const getMyPermissions = () => getOne<MyPermissions>('/me/permissions');
-export const getMyUnitRoles = () => getOne<UnitRoleGrant[]>('/me/unit-roles');
 
-export const listUserUnitRoles = (userId: ID, institutionId: ID) =>
-  getOne<UnitRoleGrant[]>(`/admin/users/${userId}/unit-roles`, { institutionId });
+/** The caller's ACTIVE scoped-capability grants in the current
+ * institution (contract §12: single-capability rows — never role
+ * bundles; D5). */
+export const getMyUnitCapabilities = () =>
+  getOne<UnitCapabilityGrant[]>('/me/unit-capabilities');
 
-export const grantUnitRole = (userId: ID, input: {
-  institutionId: ID; orgUnitId?: ID; role: string; reason?: string;
-}) => post<UnitRoleGrant>(`/admin/users/${userId}/unit-roles`, input);
+/** A user's grants in an institution (admin surface; the server
+ * ignores the param for non-OWNER and uses the verified context). */
+export const listUserUnitCapabilities = (userId: ID, institutionId: ID) =>
+  getOne<UnitCapabilityGrant[]>(`/admin/users/${userId}/unit-capabilities`, { institutionId });
 
-export const revokeUnitRole = (grantId: ID) =>
-  post<{ ok: boolean }>(`/admin/unit-roles/${grantId}/revoke`);
+/** Grant ONE capability, scoped to a unit subtree or the whole
+ * institution (orgUnitId null). The body carries the SESSION's
+ * institutionId — the contract-sanctioned admin surface (server-side
+ * verification, authority parity enforced). */
+export const grantUnitCapability = (userId: ID, input: {
+  institutionId: ID; orgUnitId?: ID; capability: string; reason?: string;
+}) => post<UnitCapabilityGrant>(`/admin/users/${userId}/unit-capabilities`, input);
+
+export const revokeUnitCapability = (grantId: ID) =>
+  post<UnitCapabilityGrant>(`/admin/unit-capabilities/${grantId}/revoke`);

@@ -44,7 +44,7 @@ export const INST_MODULES: InstModule[] = [
   { to: '/institution/organization', label: 'الهيكل التنظيمي', icon: Network, manage: 'ORG_STRUCTURE_MANAGE' },
   { to: '/institution/people', label: 'الأفراد والكوادر', icon: Users, manage: 'PEOPLE_MANAGE' },
   { to: '/institution/positions', label: 'المناصب والتعيينات', icon: BadgeCheck, manage: 'APPOINTMENTS_MANAGE' },
-  { to: '/institution/access', label: 'الصلاحيات والأدوار', icon: ShieldCheck, manage: 'UNIT_ROLES_ASSIGN' },
+  { to: '/institution/access', label: 'الصلاحيات والأدوار', icon: ShieldCheck, manage: 'UNIT_CAPABILITIES_ASSIGN' },
   { to: '/institution/councils', label: 'المجالس واللجان', icon: Landmark, manage: 'COUNCILS_MANAGE' },
   { to: '/institution/programs', label: 'البرامج والخطط', icon: GraduationCap, manage: 'PROGRAMS_MANAGE' },
   { to: '/institution/training', label: 'التدريب العملي', icon: Wrench, manage: 'PROGRAMS_MANAGE' },

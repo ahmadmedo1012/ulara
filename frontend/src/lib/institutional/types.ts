@@ -218,11 +218,11 @@ export interface PersonInput {
 }
 
 /** GET /institutional/people/:id — person + active appointments +
- * unit-role grants when populated (contract §4). */
+ * unit-capability grants when populated (contract §4 — the hardened surface). */
 export interface PersonDetail {
   person: Person;
   appointments: Appointment[];
-  unitRoleGrants: UnitRoleGrant[];
+  unitCapabilityGrants: UnitCapabilityGrant[];
 }
 
 /* ── §5 appointments ────────────────────────────────────────────── */
@@ -847,7 +847,7 @@ export type InstCapability =
   | 'ORG_STRUCTURE_MANAGE' | 'PEOPLE_MANAGE' | 'APPOINTMENTS_MANAGE'
   | 'COUNCILS_MANAGE' | 'PROGRAMS_MANAGE' | 'CREDENTIALS_MANAGE'
   | 'ACCREDITATION_MANAGE' | 'QUALITY_INTERNAL_MANAGE' | 'FACILITIES_MANAGE'
-  | 'RESEARCH_PROJECTS_MANAGE' | 'UNIT_ROLES_ASSIGN';
+  | 'RESEARCH_PROJECTS_MANAGE' | 'UNIT_CAPABILITIES_ASSIGN';
 
 export interface MyPermissions {
   role: PlatformRole;
@@ -856,14 +856,18 @@ export interface MyPermissions {
   membershipRole: PlatformRole | null;
 }
 
-export interface UnitRoleGrant {
+/** The hardened scoped-grant row (D5): ONE explicit capability per
+ * grant — never a role bundle. The capability is unit-scoped (the
+ * subtree of orgUnitId) or institution-wide when orgUnitId is null. */
+export interface UnitCapabilityGrant {
   id: ID;
   userId: ID;
   institutionId: ID;
   orgUnitId?: ID | null;
-  role: PlatformRole;
+  capability: InstCapability;
   isActive: boolean;
   reason?: string | null;
+  revokedAt?: string | null;
   createdAt: string;
   orgUnit?: { id: ID; nameAr: string; type: OrgUnitType } | null;
   user?: { id: ID; email: string; firstName: string; lastName: string } | null;

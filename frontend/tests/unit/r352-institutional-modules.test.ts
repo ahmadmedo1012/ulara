@@ -45,7 +45,7 @@ describe('r352 module registry — the 13 sections exist with routes + capabilit
     expect(byRoute.get('/institution/organization')).toBe('ORG_STRUCTURE_MANAGE');
     expect(byRoute.get('/institution/people')).toBe('PEOPLE_MANAGE');
     expect(byRoute.get('/institution/positions')).toBe('APPOINTMENTS_MANAGE');
-    expect(byRoute.get('/institution/access')).toBe('UNIT_ROLES_ASSIGN');
+    expect(byRoute.get('/institution/access')).toBe('UNIT_CAPABILITIES_ASSIGN');
     expect(byRoute.get('/institution/councils')).toBe('COUNCILS_MANAGE');
     expect(byRoute.get('/institution/programs')).toBe('PROGRAMS_MANAGE');
     expect(byRoute.get('/institution/quality')).toBe('ACCREDITATION_MANAGE');

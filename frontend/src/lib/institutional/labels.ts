@@ -114,6 +114,23 @@ export const PLATFORM_ROLE_LABELS: L<PlatformRole> = {
   OWNER: 'مالك المنصة',
 };
 
+/* ── the r352 capability keys (contract §0) — the grants surface and
+   the Access page share this ONE vocabulary. */
+
+export const CAPABILITY_LABELS: Record<string, string> = {
+  ORG_STRUCTURE_MANAGE: 'إدارة الهيكل التنظيمي',
+  PEOPLE_MANAGE: 'إدارة الأفراد',
+  APPOINTMENTS_MANAGE: 'إدارة التعيينات',
+  COUNCILS_MANAGE: 'إدارة المجالس واللجان',
+  PROGRAMS_MANAGE: 'إدارة البرامج',
+  CREDENTIALS_MANAGE: 'منح الشهادات وسحبها',
+  ACCREDITATION_MANAGE: 'إدارة الاعتماد والتراخيص الخارجية',
+  QUALITY_INTERNAL_MANAGE: 'إدارة التقييم الذاتي الداخلي',
+  FACILITIES_MANAGE: 'إدارة المعامل والموارد',
+  RESEARCH_PROJECTS_MANAGE: 'إدارة المشاريع البحثية',
+  UNIT_CAPABILITIES_ASSIGN: 'منح صلاحيات النطاق',
+};
+
 /* ── appointments ───────────────────────────────────────────────── */
 
 export const APPOINTMENT_STATUS_LABELS: L<AppointmentStatus> = {

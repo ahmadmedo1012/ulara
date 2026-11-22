@@ -6,7 +6,7 @@
  * select-institution state, while a server 403 renders the shared
  * permission-denied panel.
  */
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -18,8 +18,6 @@ import { InstitutionWorkspaceLayout } from '../../src/components/institutional/s
 const ADMIN_USER: AuthUser = {
   id: 'u-admin', email: 'admin@test.ly', firstName: 'مدير', lastName: 'تجريبي', role: 'ADMIN',
 };
-
-type Envelope = Record<string, unknown>;
 
 /** Installs the hermetic adapter: route table + recording. */
 function installAdapter(routes: Record<string, unknown>, log: string[] = []) {
@@ -54,8 +52,8 @@ beforeEach(() => {
   useAuthStore.setState({
     user: ADMIN_USER,
     accessToken: 'test-token',
-    memberships: [{ id: 'm1', institutionId: 'inst-1', role: 'ADMIN', isActive: true }],
-    currentInstitution: { id: 'inst-1', name: 'المؤسسة التجريبية', slug: 'test', status: 'ACTIVE', createdAt: '', updatedAt: '' },
+    memberships: [{ institutionId: 'inst-1', name: 'المؤسسة التجريبية', slug: 'test', role: 'ADMIN', isActive: true }],
+    currentInstitution: { id: 'inst-1', name: 'المؤسسة التجريبية', slug: 'test' },
     membershipRole: 'ADMIN',
   });
 });

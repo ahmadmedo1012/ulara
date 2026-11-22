@@ -52,8 +52,45 @@ const PROFILE_PAGE = {
   meta: { page: 1, limit: 20, total: 0, totalPages: 0 },
 };
 
-const TREE = [
-  {
+const TREE_PARTS = (() => {
+  // noUncheckedIndexedAccess: the referenced rows are NAMED constants
+  // (byte-identical object graph) so the route fixtures below never
+  // index into possibly-undefined arrays.
+  const CS_UNIT = {
+    id: 'unit-cs',
+    institutionId: 'inst-r352-e2e',
+    parentId: 'unit-deanery',
+    code: 'CS',
+    nameAr: 'قسم تقنية الحاسب',
+    nameEn: null,
+    type: 'SCIENTIFIC_DEPARTMENT',
+    status: 'ACTIVE',
+    sortOrder: 1,
+    location: null,
+    contactEmail: null,
+    contactPhone: null,
+    createdAt: NOW,
+    updatedAt: NOW,
+    children: [],
+  };
+  const LAB_UNIT = {
+    id: 'unit-lab',
+    institutionId: 'inst-r352-e2e',
+    parentId: 'unit-deanery',
+    code: 'LAB1',
+    nameAr: 'معمل الشبكات',
+    nameEn: null,
+    type: 'LABORATORY',
+    status: 'ACTIVE',
+    sortOrder: 2,
+    location: null,
+    contactEmail: null,
+    contactPhone: null,
+    createdAt: NOW,
+    updatedAt: NOW,
+    children: [],
+  };
+  const DEANERY = {
     id: 'unit-deanery',
     institutionId: 'inst-r352-e2e',
     parentId: null,
@@ -68,44 +105,11 @@ const TREE = [
     contactPhone: null,
     createdAt: NOW,
     updatedAt: NOW,
-    children: [
-      {
-        id: 'unit-cs',
-        institutionId: 'inst-r352-e2e',
-        parentId: 'unit-deanery',
-        code: 'CS',
-        nameAr: 'قسم تقنية الحاسب',
-        nameEn: null,
-        type: 'SCIENTIFIC_DEPARTMENT',
-        status: 'ACTIVE',
-        sortOrder: 1,
-        location: null,
-        contactEmail: null,
-        contactPhone: null,
-        createdAt: NOW,
-        updatedAt: NOW,
-        children: [],
-      },
-      {
-        id: 'unit-lab',
-        institutionId: 'inst-r352-e2e',
-        parentId: 'unit-deanery',
-        code: 'LAB1',
-        nameAr: 'معمل الشبكات',
-        nameEn: null,
-        type: 'LABORATORY',
-        status: 'ACTIVE',
-        sortOrder: 2,
-        location: null,
-        contactEmail: null,
-        contactPhone: null,
-        createdAt: NOW,
-        updatedAt: NOW,
-        children: [],
-      },
-    ],
-  },
-];
+    children: [CS_UNIT, LAB_UNIT],
+  };
+  return { TREE: [DEANERY], CS_UNIT, DEANERY };
+})();
+const { TREE, CS_UNIT, DEANERY } = TREE_PARTS;
 
 const COUNCILS_PAGE = {
   data: [
@@ -284,8 +288,8 @@ async function installInstitutionalApi(page: Page, caps: string[]) {
       method: 'GET',
       pattern: '**/api/v1/institutional/org-units/unit-cs',
       fulfill: (ctx) => statefulOk(ctx.route, {
-        unit: TREE[0].children[0],
-        ancestors: [TREE[0]],
+        unit: CS_UNIT,
+        ancestors: [DEANERY],
       }),
     },
     {
@@ -351,7 +355,7 @@ async function installInstitutionalApi(page: Page, caps: string[]) {
     },
     {
       method: 'GET',
-      pattern: '**/api/v1/me/unit-roles',
+      pattern: '**/api/v1/me/unit-capabilities',
       fulfill: (ctx) => statefulOk(ctx.route, []),
     },
     {

@@ -5,16 +5,17 @@
  *
  *  · دور المنصة (platform role — the login role),
  *  · العضوية المؤسسية (institutional membership + its role),
- *  · منح أدوار النطاق (additional scoped UnitRoleGrants — mine and,
- *    for ROLES_ASSIGN holders, any user's),
+ *  · منح صلاحيات النطاق (additional scoped UnitCapabilityGrants —
+ *    single-capability rows, never role bundles: mine and, for
+ *    UNIT_CAPABILITIES_ASSIGN holders, any user's),
  *  · التعيين الوظيفي/الأكاديمي (the appointment record — NOT a
  *    permission source),
  *  · القدرات الفعّالة (the merged effective set + role defaults +
  *    what the role default DOESN'T include).
  *
  * The frontend is never the security authority: everything renders
- * from /me/permissions + /me/unit-roles + the admin grants surface;
- * 403/404/409 stay handled by the shared error states.
+ * from /me/permissions + /me/unit-capabilities + the admin grants
+ * surface; 403/404/409 stay handled by the shared error states.
  */
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
@@ -27,29 +28,13 @@ import { serverError,
 } from '../../components/institutional/kit';
 import { Icon } from '../../components/Icon';
 import {
-  useMyCapabilities, useMyUnitRoles, useOrgUnitTree, useInstActions,
-  useUserUnitRoles,
+  useMyCapabilities, useMyUnitCapabilities, useOrgUnitTree,
+  useUserUnitCapabilities, useUnitCapabilityActions,
 } from '../../hooks/institutional/queries';
-import * as instApi from '../../lib/institutional/api';
-import { ORG_UNIT_TYPE_LABELS, PLATFORM_ROLE_LABELS } from '../../lib/institutional/labels';
+import { CAPABILITY_LABELS, ORG_UNIT_TYPE_LABELS, PLATFORM_ROLE_LABELS } from '../../lib/institutional/labels';
 import type { InstCapability } from '../../lib/institutional/types';
 import { flattenUnits } from './PeoplePage';
 import { useAuthStore } from '../../stores/auth.store';
-
-/** The r352 capability keys with their Arabic names (contract §0). */
-const CAPABILITY_LABELS: Record<InstCapability, string> = {
-  ORG_STRUCTURE_MANAGE: 'إدارة الهيكل التنظيمي',
-  PEOPLE_MANAGE: 'إدارة الأفراد',
-  APPOINTMENTS_MANAGE: 'إدارة التعيينات',
-  COUNCILS_MANAGE: 'إدارة المجالس واللجان',
-  PROGRAMS_MANAGE: 'إدارة البرامج',
-  CREDENTIALS_MANAGE: 'منح الشهادات وسحبها',
-  ACCREDITATION_MANAGE: 'إدارة الاعتماد والتراخيص الخارجية',
-  QUALITY_INTERNAL_MANAGE: 'إدارة التقييم الذاتي الداخلي',
-  FACILITIES_MANAGE: 'إدارة المعامل والموارد',
-  RESEARCH_PROJECTS_MANAGE: 'إدارة المشاريع البحثية',
-  UNIT_ROLES_ASSIGN: 'منح أدوار النطاق',
-};
 
 export function InstitutionAccessPage() {
   const user = useAuthStore((s) => s.user);
@@ -57,19 +42,15 @@ export function InstitutionAccessPage() {
   const membershipRole = useAuthStore((s) => s.membershipRole);
 
   const capsQuery = useMyCapabilities();
-  const myGrantsQuery = useMyUnitRoles();
+  const myGrantsQuery = useMyUnitCapabilities();
   const treeQuery = useOrgUnitTree();
 
-  const canAssign = capsQuery.data?.has('UNIT_ROLES_ASSIGN') ?? false;
+  const canAssign = capsQuery.data?.has('UNIT_CAPABILITIES_ASSIGN') ?? false;
   const [userIdInput, setUserIdInput] = useState('');
   const [grantOpen, setGrantOpen] = useState(false);
   const [busy, setBusy] = useState(false);
-  const unitRoleMutations = useInstActions(['user-unit-roles'], {
-    grant: (i: { userId: string; input: Parameters<typeof instApi.grantUnitRole>[1] }) =>
-      instApi.grantUnitRole(i.userId, i.input),
-    revoke: (i: { id: string }) => instApi.revokeUnitRole(i.id),
-  });
-  const userGrantsQuery = useUserUnitRoles(
+  const unitCapabilityMutations = useUnitCapabilityActions();
+  const userGrantsQuery = useUserUnitCapabilities(
     canAssign && userIdInput.trim() ? userIdInput.trim() : null,
     currentInstitution?.id ?? null,
   );
@@ -86,9 +67,11 @@ export function InstitutionAccessPage() {
   const grantFields: InstField[] = [
     { kind: 'text', name: 'userId', label: 'معرّف المستخدم (ID)', required: true, maxLength: 40, hint: 'يجب أن يكون المستخدم عضوًا نشطًا في مؤسستك.' },
     {
-      kind: 'select', name: 'role', label: 'الدور الممنوح', required: true,
-      options: (['ADMIN', 'QUALITY', 'TEACHER'] as const).map((r) => ({ value: r, label: PLATFORM_ROLE_LABELS[r] })),
-      hint: 'قدرات الدور الممنوح تُدمج مع قدرات العضوية — والنقض يسبق المنح دائمًا.',
+      kind: 'select', name: 'capability', label: 'الصلاحية الممنوحة', required: true,
+      options: (Object.keys(CAPABILITY_LABELS) as InstCapability[]).map((c) => ({
+        value: c, label: CAPABILITY_LABELS[c] ?? c,
+      })),
+      hint: 'منحة واحدة لقدرة واحدة (D5) — نطاقها شجرة الوحدة المحددة أو المؤسسة ككل، وتُدمج مع قدرات العضوية. النقض الصريح يظل أقوى من أي منح.',
     },
     { kind: 'select', name: 'orgUnitId', label: 'نطاق الوحدة', options: unitOptions, placeholder: '— على مستوى المؤسسة —' },
     { kind: 'text', name: 'reason', label: 'سبب المنح', maxLength: 240 },
@@ -98,20 +81,20 @@ export function InstitutionAccessPage() {
     if (!currentInstitution) return 'لا يوجد سياق مؤسسة.';
     setBusy(true);
     try {
-      await unitRoleMutations.grant({
+      await unitCapabilityMutations.grant({
         userId: String(values.userId).trim(),
         input: {
           institutionId: currentInstitution.id,
           orgUnitId: (values.orgUnitId as string | undefined) ?? undefined,
-          role: String(values.role),
+          capability: String(values.capability),
           reason: values.reason as string | undefined,
         },
       });
-      toast.success('مُنح الدور');
+      toast.success('مُنحت الصلاحية');
       setGrantOpen(false);
       setUserIdInput(String(values.userId).trim());
     } catch (err) {
-      return serverError(err, 'تعذَّر منح الدور.');
+      return serverError(err, 'تعذَّر منح الصلاحية.');
     } finally {
       setBusy(false);
     }
@@ -120,10 +103,10 @@ export function InstitutionAccessPage() {
   const revoke = async (grantId: string) => {
     setBusy(true);
     try {
-      await unitRoleMutations.revoke({ id: grantId });
-      toast.success('سُحب الدور');
+      await unitCapabilityMutations.revoke({ id: grantId });
+      toast.success('سُحبت الصلاحية');
     } catch (err) {
-      toast.error(serverError(err, 'تعذَّر سحب الدور.'));
+      toast.error(serverError(err, 'تعذَّر سحب الصلاحية.'));
     } finally {
       setBusy(false);
     }
@@ -137,7 +120,7 @@ export function InstitutionAccessPage() {
         description="من يملك ماذا ولماذا — دور المنصة، العضوية المؤسسية، منح النطاق، والقدرات الفعّالة كما تحسبها الخدمة. التعيين الوظيفي ليس مصدر صلاحية."
         meta={canAssign ? (
           <button type="button" className="btn primary sm" onClick={() => setGrantOpen(true)}>
-            <Icon icon={Plus} size={14} /> منح دور
+            <Icon icon={Plus} size={14} /> منح صلاحية
           </button>
         ) : null}
       />
@@ -178,7 +161,7 @@ export function InstitutionAccessPage() {
                   ? (defaults.has(cap) ? 'من افتراضيات دورك' : 'من منح صريحة أو نطاق')
                   : 'ليست ضمن قدراتك الفعّالة'}
               >
-                {CAPABILITY_LABELS[cap]}
+                {CAPABILITY_LABELS[cap] ?? cap}
               </span>
             ))}
           </div>
@@ -188,8 +171,8 @@ export function InstitutionAccessPage() {
         </InstSection>
 
         <InstSection
-          title="منح أدواري على الوحدات"
-          description="أدوار نطاقها وحدة تنظيمية أو المؤسسة ككل (GET /me/unit-roles)."
+          title="منح صلاحياتي على الوحدات"
+          description="منح نطاقها وحدة تنظيمية أو المؤسسة ككل — قدرة واحدة لكل منحة (GET /me/unit-capabilities)."
         >
           <InstStates
             isLoading={myGrantsQuery.isLoading}
@@ -198,7 +181,7 @@ export function InstitutionAccessPage() {
           >
             <DetailList
               items={(myGrantsQuery.data ?? []).map((g) => ({
-                label: PLATFORM_ROLE_LABELS[g.role] ?? g.role,
+                label: CAPABILITY_LABELS[g.capability] ?? g.capability,
                 value: (
                   <span className="inst-actions">
                     {g.orgUnit
@@ -215,8 +198,8 @@ export function InstitutionAccessPage() {
 
         {canAssign && (
           <InstSection
-            title="منح أدوار المستخدمين"
-            description="أدخل معرّف مستخدم لعرض منحه، أو امنح دورًا جديدًا. يجب أن يكون المستخدم عضوًا نشطًا في المؤسسة (يؤكده الخادم)."
+            title="منح صلاحيات المستخدمين"
+            description="أدخل معرّف مستخدم لعرض منحه، أو امنح صلاحية جديدة. يجب أن يكون المستخدم عضوًا نشطًا في المؤسسة (يؤكده الخادم)."
           >
             <div className="inst-filters">
               <div className="inst-search">
@@ -238,7 +221,7 @@ export function InstitutionAccessPage() {
               >
                 <DetailList
                   items={(userGrantsQuery.data ?? []).map((g) => ({
-                    label: PLATFORM_ROLE_LABELS[g.role] ?? g.role,
+                    label: CAPABILITY_LABELS[g.capability] ?? g.capability,
                     value: (
                       <span className="inst-actions">
                         {g.orgUnit
@@ -263,8 +246,8 @@ export function InstitutionAccessPage() {
 
       <InstFormDialog
         open={grantOpen}
-        title="منح دور نطاق"
-        description="الدور الممنوح يضيف قدراته ضمن النطاق المحدد — النقض الصريح يظل أقوى من أي منح."
+        title="منح صلاحية نطاق"
+        description="منحة واحدة لقدرة واحدة ضمن النطاق المحدد — شجرة الوحدة أو المؤسسة ككل. النقض الصريح يظل أقوى من أي منح."
         fields={grantFields}
         submitLabel="منح"
         busy={busy}

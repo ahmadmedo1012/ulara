@@ -80,12 +80,20 @@ export function useInstMutation<TInput, TResult>(
 export function useInstActions<M extends Record<string, (input: never) => Promise<unknown>>>(
   family: readonly unknown[],
   endpoints: M,
+  /** Sibling ['inst', ...] families invalidated in the same success
+   * transaction (e.g. the capabilities surface also invalidates
+   * 'my-permissions' — a grant to SELF changes the effective set
+   * immediately and the 30s staleTime would otherwise hide it). */
+  extraFamilies: readonly (readonly unknown[])[] = [],
 ): { [K in keyof M]: (input: Parameters<M[K]>[0]) => Promise<Awaited<ReturnType<M[K]>>> } {
   const qc = useQueryClient();
   const mutation = useMutation({
     mutationFn: async (job: { fn: (input: never) => Promise<unknown>; input: never }) => {
       const out = await job.fn(job.input);
       qc.invalidateQueries({ queryKey: ['inst', ...family] });
+      for (const f of extraFamilies) {
+        qc.invalidateQueries({ queryKey: ['inst', ...f] });
+      }
       return out;
     },
   });
@@ -177,11 +185,11 @@ export function useMyInstitutionProfile() {
   });
 }
 
-export function useMyUnitRoles() {
+export function useMyUnitCapabilities() {
   const scope = useInstitutionScope();
   return useQuery({
-    queryKey: withInstitutionScope(['inst', 'my-unit-roles'], scope),
-    queryFn: instApi.getMyUnitRoles,
+    queryKey: withInstitutionScope(['inst', 'my-unit-capabilities'], scope),
+    queryFn: instApi.getMyUnitCapabilities,
     enabled: scope !== null,
   });
 }
@@ -360,13 +368,34 @@ export function useResearchOutputs(params: Record<string, unknown>) {
 }
 
 
-/* ── scoped roles (admin surface) ───────────────────────────────── */
+/* ── scoped capability grants (admin surface) ───────────────────── */
 
-export function useUserUnitRoles(userId: ID | null, institutionId: ID | null) {
+export function useUserUnitCapabilities(userId: ID | null, institutionId: ID | null) {
+  const scope = useInstitutionScope();
   return useQuery({
-    queryKey: ['inst', 'user-unit-roles', userId, institutionId],
-    queryFn: () => instApi.listUserUnitRoles(userId!, institutionId!),
-    enabled: !!userId && !!institutionId,
+    // Scope-keyed like every institutional read — a context switch
+    // re-keys the admin's view of the target user's grants.
+    queryKey: withInstitutionScope(['inst', 'user-unit-capabilities', userId], scope),
+    queryFn: () => instApi.listUserUnitCapabilities(userId!, institutionId!),
+    enabled: scope !== null && !!userId && !!institutionId,
   });
+}
+
+/** Grant/revoke mutations for the admin capabilities surface. Beyond
+ * the target user's grant rows, the success transaction invalidates
+ * the caller's OWN grants and effective capabilities — a grant to
+ * SELF must be visible immediately (the 30s staleTime would otherwise
+ * hide it), and revocations change the effective set on the next
+ * server resolution. */
+export function useUnitCapabilityActions() {
+  return useInstActions(
+    ['user-unit-capabilities'],
+    {
+      grant: (i: { userId: string; input: Parameters<typeof instApi.grantUnitCapability>[1] }) =>
+        instApi.grantUnitCapability(i.userId, i.input),
+      revoke: (i: { id: string }) => instApi.revokeUnitCapability(i.id),
+    },
+    [['my-unit-capabilities'], ['my-permissions']],
+  );
 }
 

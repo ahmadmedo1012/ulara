@@ -33,40 +33,41 @@ const INSTITUTION = {
 
 const EMPTY_PAGED = { data: [], meta: { page: 1, limit: 20, total: 0, totalPages: 0 } };
 
-const TREE = [
-  {
-    id: 'unit-deanery', institutionId: 'i', parentId: null, code: 'DEANERY',
-    nameAr: 'عمادة الكلية التقنية الوسطى', nameEn: null, type: 'OFFICE', status: 'ACTIVE',
-    sortOrder: 1, location: 'طرابلس — المقر الرئيسي', contactEmail: 'deanery@mtc.edu.ly',
-    contactPhone: null, createdAt: NOW, updatedAt: NOW,
-    children: [
-      {
-        id: 'unit-cs', institutionId: 'i', parentId: 'unit-deanery', code: 'CS',
-        nameAr: 'قسم تقنية المعلومات والشبكات', nameEn: 'IT & Networks', type: 'SCIENTIFIC_DEPARTMENT',
-        status: 'ACTIVE', sortOrder: 1, location: 'مبنى ب', contactEmail: null, contactPhone: null,
-        createdAt: NOW, updatedAt: NOW, children: [],
-      },
-      {
-        id: 'unit-admin', institutionId: 'i', parentId: 'unit-deanery', code: 'ADM',
-        nameAr: 'الإدارة العامة للشؤون الإدارية والمالية', nameEn: null,
-        type: 'GENERAL_ADMINISTRATION', status: 'ACTIVE', sortOrder: 2, location: null,
-        contactEmail: null, contactPhone: null, createdAt: NOW, updatedAt: NOW, children: [],
-      },
-      {
-        id: 'unit-lab', institutionId: 'i', parentId: 'unit-deanery', code: 'LAB1',
-        nameAr: 'معمل الشبكات والاتصالات المتقدم', nameEn: null, type: 'LABORATORY',
-        status: 'ACTIVE', sortOrder: 3, location: 'مبنى ج — الطابق الأول', contactEmail: null,
-        contactPhone: null, createdAt: NOW, updatedAt: NOW, children: [],
-      },
-      {
-        id: 'unit-workshop', institutionId: 'i', parentId: 'unit-deanery', code: 'W1',
-        nameAr: 'ورشة التكييف والتبريد', nameEn: null, type: 'WORKSHOP', status: 'ACTIVE',
-        sortOrder: 4, location: null, contactEmail: null, contactPhone: null,
-        createdAt: NOW, updatedAt: NOW, children: [],
-      },
-    ],
-  },
-];
+// noUncheckedIndexedAccess: the referenced rows are NAMED constants
+// (byte-identical object graph) so the route fixtures below never
+// index into possibly-undefined arrays.
+const CS_UNIT = {
+  id: 'unit-cs', institutionId: 'i', parentId: 'unit-deanery', code: 'CS',
+  nameAr: 'قسم تقنية المعلومات والشبكات', nameEn: 'IT & Networks', type: 'SCIENTIFIC_DEPARTMENT',
+  status: 'ACTIVE', sortOrder: 1, location: 'مبنى ب', contactEmail: null, contactPhone: null,
+  createdAt: NOW, updatedAt: NOW, children: [],
+};
+const ADMIN_UNIT = {
+  id: 'unit-admin', institutionId: 'i', parentId: 'unit-deanery', code: 'ADM',
+  nameAr: 'الإدارة العامة للشؤون الإدارية والمالية', nameEn: null,
+  type: 'GENERAL_ADMINISTRATION', status: 'ACTIVE', sortOrder: 2, location: null,
+  contactEmail: null, contactPhone: null, createdAt: NOW, updatedAt: NOW, children: [],
+};
+const LAB_UNIT = {
+  id: 'unit-lab', institutionId: 'i', parentId: 'unit-deanery', code: 'LAB1',
+  nameAr: 'معمل الشبكات والاتصالات المتقدم', nameEn: null, type: 'LABORATORY',
+  status: 'ACTIVE', sortOrder: 3, location: 'مبنى ج — الطابق الأول', contactEmail: null,
+  contactPhone: null, createdAt: NOW, updatedAt: NOW, children: [],
+};
+const WORKSHOP_UNIT = {
+  id: 'unit-workshop', institutionId: 'i', parentId: 'unit-deanery', code: 'W1',
+  nameAr: 'ورشة التكييف والتبريد', nameEn: null, type: 'WORKSHOP', status: 'ACTIVE',
+  sortOrder: 4, location: null, contactEmail: null, contactPhone: null,
+  createdAt: NOW, updatedAt: NOW, children: [],
+};
+const DEANERY = {
+  id: 'unit-deanery', institutionId: 'i', parentId: null, code: 'DEANERY',
+  nameAr: 'عمادة الكلية التقنية الوسطى', nameEn: null, type: 'OFFICE', status: 'ACTIVE',
+  sortOrder: 1, location: 'طرابلس — المقر الرئيسي', contactEmail: 'deanery@mtc.edu.ly',
+  contactPhone: null, createdAt: NOW, updatedAt: NOW,
+  children: [CS_UNIT, ADMIN_UNIT, LAB_UNIT, WORKSHOP_UNIT],
+};
+const TREE = [DEANERY];
 
 const PEOPLE = {
   data: [
@@ -97,7 +98,7 @@ const LICENSES = {
 const CAPS = [
   'ORG_STRUCTURE_MANAGE', 'PEOPLE_MANAGE', 'APPOINTMENTS_MANAGE', 'COUNCILS_MANAGE',
   'PROGRAMS_MANAGE', 'CREDENTIALS_MANAGE', 'ACCREDITATION_MANAGE', 'FACILITIES_MANAGE',
-  'RESEARCH_PROJECTS_MANAGE', 'UNIT_ROLES_ASSIGN',
+  'RESEARCH_PROJECTS_MANAGE', 'UNIT_CAPABILITIES_ASSIGN',
 ];
 
 async function installFullApi(page: import('@playwright/test').Page) {
@@ -130,10 +131,10 @@ async function installFullApi(page: import('@playwright/test').Page) {
     },
     { method: 'GET', pattern: '**/api/v1/institutions/me/profile', fulfill: (ctx) => statefulOk(ctx.route, INSTITUTION) },
     { method: 'GET', pattern: '**/api/v1/me/permissions', fulfill: (ctx) => statefulOk(ctx.route, { role: 'ADMIN', capabilities: CAPS, roleDefaults: CAPS, membershipRole: 'ADMIN' }) },
-    { method: 'GET', pattern: '**/api/v1/me/unit-roles', fulfill: (ctx) => statefulOk(ctx.route, []) },
+    { method: 'GET', pattern: '**/api/v1/me/unit-capabilities', fulfill: (ctx) => statefulOk(ctx.route, []) },
     { method: 'GET', pattern: '**/api/v1/institutional/org-units/tree', fulfill: (ctx) => statefulOk(ctx.route, TREE) },
-    { method: 'GET', pattern: '**/api/v1/institutional/org-units/unit-cs', fulfill: (ctx) => statefulOk(ctx.route, { unit: TREE[0].children[0], ancestors: [TREE[0]] }) },
-    { method: 'GET', pattern: '**/api/v1/institutional/org-units?**', fulfill: (ctx) => statefulJson(ctx.route, 200, { data: TREE[0].children, meta: { page: 1, limit: 20, total: 4, totalPages: 1 } }) },
+    { method: 'GET', pattern: '**/api/v1/institutional/org-units/unit-cs', fulfill: (ctx) => statefulOk(ctx.route, { unit: CS_UNIT, ancestors: [DEANERY] }) },
+    { method: 'GET', pattern: '**/api/v1/institutional/org-units?**', fulfill: (ctx) => statefulJson(ctx.route, 200, { data: DEANERY.children, meta: { page: 1, limit: 20, total: 4, totalPages: 1 } }) },
     { method: 'GET', pattern: '**/api/v1/institutional/people?**', fulfill: (ctx) => statefulJson(ctx.route, 200, PEOPLE) },
     { method: 'GET', pattern: '**/api/v1/governance/councils?**', fulfill: (ctx) => statefulJson(ctx.route, 200, COUNCILS) },
     { method: 'GET', pattern: '**/api/v1/compliance/licenses?**', fulfill: (ctx) => statefulJson(ctx.route, 200, LICENSES) },
