@@ -439,20 +439,28 @@ export async function backfillLegacyAppointments(prisma: PrismaClient): Promise<
  * created OUTSIDE the API write-through (this seed, older deployments).
  * The migration 0003 backfill covers migration-time rows; this pass is
  * the idempotent catch-up — the same guarded SQL, safe to re-run.
+ *
+ * r352 hardening #2 (live visual QA finding): the mirror id IS the
+ * legacy row's id — NO 'ou-f-'/'ou-d-' prefix. The prefixed shape
+ * failed the API's z.string().cuid() params («Invalid cuid» 400 on
+ * every ?orgUnitId= filter and parentId write targeting a mirror).
+ * Migration 0005 rewrites already-prefixed rows to this convention
+ * (ON UPDATE CASCADE rewrites every FK); this catch-up mirrors new
+ * legacy rows with the bare cuid from day one.
  */
 export async function backfillOrgUnitsFromLegacy(prisma: PrismaClient): Promise<{ faculties: number; departments: number }> {
   await prisma.$executeRaw`INSERT INTO "OrganizationalUnit" ("id", "institutionId", "parentId", "code", "nameAr", "nameEn", "type", "status", "sortOrder", "location", "createdAt", "updatedAt")
-    SELECT 'ou-f-' || f."id", f."institutionId", NULL, NULL, f."name", f."nameEn", 'FACULTY', 'ACTIVE', 0, f."city", now(), now()
+    SELECT f."id", f."institutionId", NULL, NULL, f."name", f."nameEn", 'FACULTY', 'ACTIVE', 0, f."city", now(), now()
     FROM "Faculty" f
-    WHERE NOT EXISTS (SELECT 1 FROM "OrganizationalUnit" ou WHERE ou."id" = 'ou-f-' || f."id")`;
-  await prisma.$executeRaw`UPDATE "Faculty" f SET "orgUnitId" = 'ou-f-' || f."id"
-    WHERE f."orgUnitId" IS NULL AND EXISTS (SELECT 1 FROM "OrganizationalUnit" ou WHERE ou."id" = 'ou-f-' || f."id")`;
+    WHERE NOT EXISTS (SELECT 1 FROM "OrganizationalUnit" ou WHERE ou."id" = f."id")`;
+  await prisma.$executeRaw`UPDATE "Faculty" f SET "orgUnitId" = f."id"
+    WHERE f."orgUnitId" IS NULL AND EXISTS (SELECT 1 FROM "OrganizationalUnit" ou WHERE ou."id" = f."id")`;
   await prisma.$executeRaw`INSERT INTO "OrganizationalUnit" ("id", "institutionId", "parentId", "code", "nameAr", "nameEn", "type", "status", "sortOrder", "createdAt", "updatedAt")
-    SELECT 'ou-d-' || d."id", f."institutionId", 'ou-f-' || d."facultyId", NULL, d."name", d."nameEn", 'SCIENTIFIC_DEPARTMENT', 'ACTIVE', 0, now(), now()
+    SELECT d."id", f."institutionId", d."facultyId", NULL, d."name", d."nameEn", 'SCIENTIFIC_DEPARTMENT', 'ACTIVE', 0, now(), now()
     FROM "Department" d JOIN "Faculty" f ON f."id" = d."facultyId"
-    WHERE NOT EXISTS (SELECT 1 FROM "OrganizationalUnit" ou WHERE ou."id" = 'ou-d-' || d."id")`;
-  await prisma.$executeRaw`UPDATE "Department" d SET "orgUnitId" = 'ou-d-' || d."id"
-    WHERE d."orgUnitId" IS NULL AND EXISTS (SELECT 1 FROM "OrganizationalUnit" ou WHERE ou."id" = 'ou-d-' || d."id")`;
+    WHERE NOT EXISTS (SELECT 1 FROM "OrganizationalUnit" ou WHERE ou."id" = d."id")`;
+  await prisma.$executeRaw`UPDATE "Department" d SET "orgUnitId" = d."id"
+    WHERE d."orgUnitId" IS NULL AND EXISTS (SELECT 1 FROM "OrganizationalUnit" ou WHERE ou."id" = d."id")`;
   const faculties = await prisma.faculty.count({ where: { orgUnitId: { not: null } } });
   const departments = await prisma.department.count({ where: { orgUnitId: { not: null } } });
   return { faculties, departments };
