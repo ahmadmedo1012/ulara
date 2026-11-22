@@ -32,7 +32,14 @@ beforeEach(() => {
       params: config.params,
       data: config.data,
     });
-    return Promise.resolve(ok(config, { echoed: true }));
+    // getOrgUnitTree unwraps the REAL wire shape ({ unit, children }
+    // nested — backend lib/org-tree.ts buildTree) at the api seam, so
+    // the tree route answers a minimal real-shape body; every other
+    // route echoes as before.
+    const body = config.url === '/institutional/org-units/tree'
+      ? [{ unit: { id: 'unit-1', nameAr: 'كلية الاختبار' }, children: [] }]
+      : { echoed: true };
+    return Promise.resolve(ok(config, body));
   };
 });
 

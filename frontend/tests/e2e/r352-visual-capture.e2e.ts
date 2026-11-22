@@ -40,34 +40,40 @@ const CS_UNIT = {
   id: 'unit-cs', institutionId: 'i', parentId: 'unit-deanery', code: 'CS',
   nameAr: 'قسم تقنية المعلومات والشبكات', nameEn: 'IT & Networks', type: 'SCIENTIFIC_DEPARTMENT',
   status: 'ACTIVE', sortOrder: 1, location: 'مبنى ب', contactEmail: null, contactPhone: null,
-  createdAt: NOW, updatedAt: NOW, children: [],
+  createdAt: NOW, updatedAt: NOW,
 };
 const ADMIN_UNIT = {
   id: 'unit-admin', institutionId: 'i', parentId: 'unit-deanery', code: 'ADM',
   nameAr: 'الإدارة العامة للشؤون الإدارية والمالية', nameEn: null,
   type: 'GENERAL_ADMINISTRATION', status: 'ACTIVE', sortOrder: 2, location: null,
-  contactEmail: null, contactPhone: null, createdAt: NOW, updatedAt: NOW, children: [],
+  contactEmail: null, contactPhone: null, createdAt: NOW, updatedAt: NOW,
 };
 const LAB_UNIT = {
   id: 'unit-lab', institutionId: 'i', parentId: 'unit-deanery', code: 'LAB1',
   nameAr: 'معمل الشبكات والاتصالات المتقدم', nameEn: null, type: 'LABORATORY',
   status: 'ACTIVE', sortOrder: 3, location: 'مبنى ج — الطابق الأول', contactEmail: null,
-  contactPhone: null, createdAt: NOW, updatedAt: NOW, children: [],
+  contactPhone: null, createdAt: NOW, updatedAt: NOW,
 };
 const WORKSHOP_UNIT = {
   id: 'unit-workshop', institutionId: 'i', parentId: 'unit-deanery', code: 'W1',
   nameAr: 'ورشة التكييف والتبريد', nameEn: null, type: 'WORKSHOP', status: 'ACTIVE',
   sortOrder: 4, location: null, contactEmail: null, contactPhone: null,
-  createdAt: NOW, updatedAt: NOW, children: [],
+  createdAt: NOW, updatedAt: NOW,
 };
 const DEANERY = {
   id: 'unit-deanery', institutionId: 'i', parentId: null, code: 'DEANERY',
   nameAr: 'عمادة الكلية التقنية الوسطى', nameEn: null, type: 'OFFICE', status: 'ACTIVE',
   sortOrder: 1, location: 'طرابلس — المقر الرئيسي', contactEmail: 'deanery@mtc.edu.ly',
   contactPhone: null, createdAt: NOW, updatedAt: NOW,
-  children: [CS_UNIT, ADMIN_UNIT, LAB_UNIT, WORKSHOP_UNIT],
 };
-const TREE = [DEANERY];
+// The REAL wire shape — nested { unit, children } (backend
+// lib/org-tree.ts buildTree); the api layer unwraps it (see
+// lib/institutional/api.ts getOrgUnitTree). This fixture used to
+// mirror the frontend's inline assumption — live QA caught the
+// mismatch (labels read «undefined»).
+const TREE = [
+  { unit: DEANERY, children: [CS_UNIT, ADMIN_UNIT, LAB_UNIT, WORKSHOP_UNIT].map((unit) => ({ unit, children: [] })) },
+];
 
 const PEOPLE = {
   data: [
@@ -134,7 +140,7 @@ async function installFullApi(page: import('@playwright/test').Page) {
     { method: 'GET', pattern: '**/api/v1/me/unit-capabilities', fulfill: (ctx) => statefulOk(ctx.route, []) },
     { method: 'GET', pattern: '**/api/v1/institutional/org-units/tree', fulfill: (ctx) => statefulOk(ctx.route, TREE) },
     { method: 'GET', pattern: '**/api/v1/institutional/org-units/unit-cs', fulfill: (ctx) => statefulOk(ctx.route, { unit: CS_UNIT, ancestors: [DEANERY] }) },
-    { method: 'GET', pattern: '**/api/v1/institutional/org-units?**', fulfill: (ctx) => statefulJson(ctx.route, 200, { data: DEANERY.children, meta: { page: 1, limit: 20, total: 4, totalPages: 1 } }) },
+    { method: 'GET', pattern: '**/api/v1/institutional/org-units?**', fulfill: (ctx) => statefulJson(ctx.route, 200, { data: [CS_UNIT, ADMIN_UNIT, LAB_UNIT, WORKSHOP_UNIT], meta: { page: 1, limit: 20, total: 4, totalPages: 1 } }) },
     { method: 'GET', pattern: '**/api/v1/institutional/people?**', fulfill: (ctx) => statefulJson(ctx.route, 200, PEOPLE) },
     { method: 'GET', pattern: '**/api/v1/governance/councils?**', fulfill: (ctx) => statefulJson(ctx.route, 200, COUNCILS) },
     { method: 'GET', pattern: '**/api/v1/compliance/licenses?**', fulfill: (ctx) => statefulJson(ctx.route, 200, LICENSES) },

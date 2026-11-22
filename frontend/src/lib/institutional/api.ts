@@ -88,8 +88,21 @@ type UnitQuery = { type?: string; q?: string; parentId?: ID; page?: number; limi
 export const listOrgUnits = (params: UnitQuery) =>
   getList<OrgUnit>('/institutional/org-units', cleanParams(params));
 
-export const getOrgUnitTree = () =>
-  getOne<OrgUnitTreeNode[]>('/institutional/org-units/tree');
+/** GET /org-units/tree — the WIRE shape is nested { unit, children }
+ * (backend lib/org-tree.ts buildTree); unwrapped HERE to the
+ * client-side OrgUnitTreeNode (inline fields) so every consumer reads
+ * one shape. The mismatch surfaced in live visual QA against the real
+ * backend (tree labels read «undefined») — the hermetic e2e fixtures
+ * had mirrored the frontend's assumption instead of the contract and
+ * are fixed to the wire shape in the same round. */
+type OrgUnitWireNode = { unit: OrgUnit; children: OrgUnitWireNode[] };
+
+function unwrapTree(nodes: readonly OrgUnitWireNode[]): OrgUnitTreeNode[] {
+  return nodes.map(({ unit, children }) => ({ ...unit, children: unwrapTree(children) }));
+}
+
+export const getOrgUnitTree = async (): Promise<OrgUnitTreeNode[]> =>
+  unwrapTree(await getOne<OrgUnitWireNode[]>('/institutional/org-units/tree'));
 
 export const createOrgUnit = (input: OrgUnitInput) => post<{ unit: OrgUnit }>('/institutional/org-units', input);
 

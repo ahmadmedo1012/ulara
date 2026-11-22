@@ -56,6 +56,11 @@ const TREE_PARTS = (() => {
   // noUncheckedIndexedAccess: the referenced rows are NAMED constants
   // (byte-identical object graph) so the route fixtures below never
   // index into possibly-undefined arrays.
+  // The TREE answers the REAL wire shape — nested { unit, children }
+  // (backend lib/org-tree.ts buildTree). It had mirrored the
+  // frontend's inline assumption and masked the contract mismatch
+  // live QA caught (tree labels read «undefined»); the api layer now
+  // unwraps the wire shape and this fixture exercises the true one.
   const CS_UNIT = {
     id: 'unit-cs',
     institutionId: 'inst-r352-e2e',
@@ -71,7 +76,6 @@ const TREE_PARTS = (() => {
     contactPhone: null,
     createdAt: NOW,
     updatedAt: NOW,
-    children: [],
   };
   const LAB_UNIT = {
     id: 'unit-lab',
@@ -88,7 +92,6 @@ const TREE_PARTS = (() => {
     contactPhone: null,
     createdAt: NOW,
     updatedAt: NOW,
-    children: [],
   };
   const DEANERY = {
     id: 'unit-deanery',
@@ -105,9 +108,11 @@ const TREE_PARTS = (() => {
     contactPhone: null,
     createdAt: NOW,
     updatedAt: NOW,
-    children: [CS_UNIT, LAB_UNIT],
   };
-  return { TREE: [DEANERY], CS_UNIT, DEANERY };
+  const TREE = [
+    { unit: DEANERY, children: [{ unit: CS_UNIT, children: [] }, { unit: LAB_UNIT, children: [] }] },
+  ];
+  return { TREE, CS_UNIT, DEANERY };
 })();
 const { TREE, CS_UNIT, DEANERY } = TREE_PARTS;
 
