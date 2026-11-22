@@ -134,8 +134,8 @@ export function renderEmailShell(opts: { title: string; bodyHtml: string; ctaLab
   return `<!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${opts.title}</title></head>
-<body style="margin:0;padding:0;background:#F1EFE7;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F1EFE7;padding:24px 12px;">
+<body style="margin:0;padding:0;background:#F5F1E8;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F5F1E8;padding:24px 12px;">
 <tr><td align="center">
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#F5F1E8;border:${SHELL_BORDER};">
 <tr><td style="padding:28px 32px 4px;font-weight:700;font-size:18px;color:#1A1713;">أُلارا</td></tr>

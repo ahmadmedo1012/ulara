@@ -164,6 +164,17 @@ router.patch(
       const institutionId = req.institution!.id;
       const facility = await requireFacility(institutionId, req.params.id!);
       const input = req.body as z.infer<typeof facilityUpdateSchema>;
+      // §4.1 — updates validate newly supplied IDs EXACTLY like creates:
+      // a re-homed unit must belong to the same institution (otherwise a
+      // foreign unit's name/type would leak through the detail include).
+      if (input.orgUnitId !== undefined && input.orgUnitId !== null) {
+        const unit = await prisma.organizationalUnit.findUnique({
+          where: { id: input.orgUnitId }, select: { institutionId: true },
+        });
+        if (!unit || unit.institutionId !== institutionId) {
+          throw AppError.notFound('الوحدة التنظيمية المحددة غير موجودة في مؤسستك');
+        }
+      }
       const updated = await prisma.$transaction(async (tx) => {
         const row = await tx.facility.update({
           where: { id: facility.id },
@@ -624,9 +635,16 @@ router.post(
       // §6.3 — the exclusion constraint fires on the racing double-booking
       // (SQLSTATE 23P01, surfacing as an UNKNOWN request error in Prisma
       // 5): map it to the same Arabic 409 as the sequential guard.
+      // The same race can also deadlock the two racing transactions
+      // (SQLSTATE 40P01 → Prisma P2034 "write conflict or a deadlock"):
+      // each INSERT's exclusion check waits on the other's uncommitted
+      // overlapping range. In this transaction the only contended
+      // resource is the exclusion constraint, so a P2034 here IS the
+      // racing double-booking — the loser gets the same honest 409.
       if (
-        typeof (e as { message?: unknown })?.message === 'string' &&
-        (e as { message: string }).message.includes('FacilityReservation_no_overlap_live')
+        (typeof (e as { message?: unknown })?.message === 'string' &&
+          (e as { message: string }).message.includes('FacilityReservation_no_overlap_live')) ||
+        (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2034')
       ) {
         return next(new AppError('RESERVATION_OVERLAP', 'توجد حجوزات متداخلة لهذه المنشأة في الفترة المطلوبة', 409));
       }

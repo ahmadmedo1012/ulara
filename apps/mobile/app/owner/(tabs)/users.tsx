@@ -39,7 +39,7 @@ const ROLE_FILTERS: { id: string; label: string }[] = [
 const ELIGIBLE_ROLES: { id: string; label: string }[] = [
   { id: "STUDENT", label: ROLE_LABELS.STUDENT ?? "طالب" },
   { id: "TEACHER", label: ROLE_LABELS.TEACHER ?? "أستاذ" },
-  { id: "ADMIN", label: ROLE_LABELS.ADMIN ?? "المسجل العام" },
+  { id: "ADMIN", label: ROLE_LABELS.ADMIN ?? "إدارة المؤسسة" },
   { id: "QUALITY", label: ROLE_LABELS.QUALITY ?? "أخصائي جودة" },
 ];
 

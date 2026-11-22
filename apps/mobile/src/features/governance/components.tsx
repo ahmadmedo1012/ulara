@@ -197,7 +197,7 @@ const KNOWN_LABELS: Record<string, string> = {
   totalUsers: "إجمالي المستخدمين",
   users: "المستخدمون",
   activeUsers: "حسابات نشطة",
-  admins: "المسجلون العامّون",
+  admins: "إدارة المؤسسة",
   quality: "فريق الجودة",
   owners: "المالكون",
   lectures: "المحاضرات",

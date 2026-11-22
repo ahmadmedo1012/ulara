@@ -87,7 +87,7 @@ export default function AdminPermissions() {
     <Screen scroll>
       <StackHeader
         title={target ? `${target.firstName} ${target.lastName}` : "إدارة الصلاحيات"}
-        kicker="لوحة المسجل العام"
+        kicker="لوحة إدارة المؤسسة"
       />
       <View style={{ gap: 16, paddingTop: 16 }}>
         {target ? (

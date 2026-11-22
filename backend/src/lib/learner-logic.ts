@@ -18,6 +18,11 @@ export function learnerCategoryCompatible(
   category: LearnerCategory,
   programKind: ProgramKind,
 ): boolean {
+  // [M]-interpretation (LEGAL-MATRIX §C): the statute names STUDENT and
+  // TRAINEE (م2) and ties program kinds to the TVET stages (م4/م38);
+  // the STUDENT↔PROFESSIONAL pairing below is a design reading — the
+  // matrix gives no explicit learner category for Art. 26 professional
+  // diplomas. Documented here so the inference stays visible.
   if (category === 'STUDENT') {
     return programKind === 'ACADEMIC' || programKind === 'TECHNICAL' || programKind === 'PROFESSIONAL';
   }

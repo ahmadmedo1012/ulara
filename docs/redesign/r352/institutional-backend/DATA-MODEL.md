@@ -164,7 +164,7 @@ FACILITIES_MANAGE, RESEARCH_PROJECTS_MANAGE, UNIT_CAPABILITIES_ASSIGN`.
 CouncilType (UNIVERSITY_COUNCIL | FACULTY_COUNCIL | DEPARTMENT_COUNCIL |
 SCIENTIFIC_COUNCIL | INSTITUTE_COUNCIL | DISCIPLINARY_COUNCIL |
 STANDING_COMMITTEE | OTHER), legalBasis?, charterRef?, establishedAt?,
-dissolvedAt?, status (ACTIVE | DISSOLVED), createdAt, updatedAt`;
+dissolvedAt?, status (ACTIVE | DISSOLVED | CANCELLED), createdAt, updatedAt`;
 `@@unique([institutionId, code])`.
 **`CouncilMembership`** — councilId, personId, role CouncilRole (CHAIR |
 DEPUTY_CHAIR | SECRETARY | MEMBER | OBSERVER), startDate, endDate?,

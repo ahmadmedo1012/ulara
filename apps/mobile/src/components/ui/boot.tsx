@@ -192,7 +192,7 @@ export interface EntryUserLike {
  *   3. Everyone else lands on their role home (unknown roles → student).
  *
  * The ADMIN exemption mirrors the login flow's original contract: an
- * ADMIN (المسجل العام) is provisioned institution-bound — when the
+ * ADMIN (إدارة المؤسسة) is provisioned institution-bound — when the
  * context is missing the role home renders and RoleGate re-gates to
  * /select-institution if active memberships exist, which is the same
  * destination without a dead-end when they don't.
