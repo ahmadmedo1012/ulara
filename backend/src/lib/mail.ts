@@ -138,8 +138,8 @@ export function renderEmailShell(opts: { title: string; bodyHtml: string; ctaLab
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F1EFE7;padding:24px 12px;">
 <tr><td align="center">
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#F5F1E8;border:${SHELL_BORDER};">
-<tr><td style="padding:28px 32px 4px;font-weight:700;font-size:18px;color:#262019;">أُلارا</td></tr>
-<tr><td style="padding:4px 32px 8px;font-size:20px;font-weight:600;color:#262019;">${opts.title}</td></tr>
+<tr><td style="padding:28px 32px 4px;font-weight:700;font-size:18px;color:#1A1713;">أُلارا</td></tr>
+<tr><td style="padding:4px 32px 8px;font-size:20px;font-weight:600;color:#1A1713;">${opts.title}</td></tr>
 <tr><td style="padding:0 32px 20px;font-size:14px;color:#4A4A44;line-height:2;">${opts.bodyHtml}</td></tr>
 ${cta}
 ${footer}

@@ -100,7 +100,7 @@ no 3D canvases, no poster displays, no competing art direction anywhere.
 | `--text-secondary` / `--text-muted` / `--text-faint` | `#414140` / `#62625F` / `#666660` | `#C9C9C5` / `#B4B4B0` / `#A2A29D` | the ink ramp (9.6 → 4.5) |
 | `--accent` | royal `#2540D9` (6.62 AA — the signal IS text-safe) | `#8AA0FF` (6.56 AA) | the signal fill (2026 «Parchment & Royal») |
 | `--accent-ink` | `#2540D9` (**6.62 AA text**) | `#8AA0FF` (6.56 AA) | signal TEXT (links, numerals, emphasis) |
-| `--accent-soft` / `--accent-strong` | `#E4E9FF` / `#1B30B0` | `#232845` / `#C7D2FF` | tint wells / deep ink |
+| `--accent-soft` / `--accent-strong` | `#E4E9FF` / `#1B30B0` | `#2A2F4A` / `#A9B8FF` | tint wells / deep ink (dark strong = the r351-main derived tier, 6.85 on the soft · 8.43 on the ground) |
 | `--accent-fg` (labels ON the fill) | `#FFFFFF` (7.46 AAA on royal) | `#262019` (6.56 — white FAILS 2.46, never use) | the fill-label law (2026) |
 | `--primary` / `--primary-fg` | royal slab `#2540D9` + white (7.46 AAA) | `#8AA0FF` + `#262019` (6.56) | PRIMARY CTAs (2026 — the primary joins the brand signal) |
 | `--border` / `--rule` / `--grid-line` | `#E0E0DA` / `#C8C8C8` / `#B3B3AF` | `#4A4A48` / `#4A4A48` / `#5C5C5A` | the hairline tiers (`--grid-line` decorative on light) |
@@ -620,7 +620,7 @@ census work, never re-authored:
 | `--app-ink` / `-2` / `-3` | `#282828` / `#414140` / `#626260` | `#F6F6EE` / `#C9C9C5` / `#B4B4B0` |
 | `--app-line` (seams) | `#B3B3AF` | `#4A4A48` |
 | `--app-line-soft` (rows/cards) | `#E0E0DA` | `#4A4A48` |
-| `--app-signal` / `-ink` / `-wash` | `#2540D9` / `#2540D9` / `#E4E9FF` | `#8AA0FF` / `#8AA0FF` / `#232845` |
+| `--app-signal` / `-ink` / `-wash` | `#2540D9` / `#2540D9` / `#E4E9FF` | `#8AA0FF` / `#8AA0FF` / `#2A2F4A` |
 | `--app-backdrop` | ink 40% | black 62% |
 
 Patterns are theme-free by construction (currentColor mixes); the
