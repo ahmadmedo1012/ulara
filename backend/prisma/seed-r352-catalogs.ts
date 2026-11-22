@@ -113,7 +113,11 @@ const PROGRAM_STANDARDS = [
 // eligibleInstitutionTypeCodes empty = all kinds; allowedParentCodes
 // empty = any parent type. Local types ride the same table with
 // isLocal + institutionId.
-const ORG_UNIT_TYPE_DEFINITIONS = [
+const ORG_UNIT_TYPE_DEFINITIONS: readonly {
+  code: string; nameAr: string; nameEn: string | null;
+  allowedParentCodes: string[]; eligibleSectors: string[]; eligibleInstitutionTypeCodes: string[];
+  sortOrder: number; notes?: string;
+}[] = [
   { code: 'FACULTY', nameAr: 'كلية (جامعية)', nameEn: 'Faculty (university)', allowedParentCodes: [] as string[], eligibleSectors: ['HIGHER_EDUCATION_RESEARCH'] as string[], eligibleInstitutionTypeCodes: [] as string[], sortOrder: 1, notes: 'الميراث الجامعي — تُعكس إلى جدول Faculty' },
   { code: 'COLLEGE', nameAr: 'كلية تقنية', nameEn: 'Technical college', allowedParentCodes: [] as string[], eligibleSectors: ['TECHNICAL_VOCATIONAL_PROFESSIONAL'] as string[], eligibleInstitutionTypeCodes: ['TECHNICAL_COLLEGE'] as string[], sortOrder: 2, notes: '§10.3 — لا تُصنَّف ككلية جامعية ولا تعكس إلى جدول Faculty' },
   { code: 'SCIENTIFIC_DEPARTMENT', nameAr: 'قسم علمي', nameEn: 'Scientific department', allowedParentCodes: [] as string[], eligibleSectors: [] as string[], eligibleInstitutionTypeCodes: [] as string[], sortOrder: 3, notes: 'الميراث الجامعي — تُعكس إلى جدول Department' },
@@ -137,7 +141,11 @@ const ORG_UNIT_TYPE_DEFINITIONS = [
 // ── §12 — the explicit progression rule catalog (Law 21/2023) ──────
 // The absence of a row IS the prohibition (شهادة التدريب المهني
 // والدبلوم المهني التخصصي لا تسمحان بمواصلة الدراسة — م38/م26).
-const CREDENTIAL_PROGRESSION_RULES = [
+const CREDENTIAL_PROGRESSION_RULES: readonly {
+  fromCode: string; toCode: string;
+  toInstitutionTypeCodes?: string[]; toProgramKinds?: string[];
+  admissionConditions?: string; legalReference: string;
+}[] = [
   { fromCode: 'BASIC_FORMATION_CERT', toCode: 'INTERMEDIATE_TECHNICAL_DIPLOMA', legalReference: 'قانون 21/2023 م38 (المسار المفتوح)، م4(2)' },
   { fromCode: 'INTERMEDIATE_TECHNICAL_DIPLOMA', toCode: 'HIGHER_TECHNICAL_DIPLOMA', legalReference: 'قانون 21/2023 م4(2)' },
   { fromCode: 'INTERMEDIATE_TECHNICAL_DIPLOMA', toCode: 'TECHNICAL_BACHELOR', legalReference: 'قانون 21/2023 م4(2)' },

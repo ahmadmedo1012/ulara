@@ -622,12 +622,11 @@ router.post(
       res.status(201).json({ data: reservation });
     } catch (e) {
       // §6.3 — the exclusion constraint fires on the racing double-booking
-      // Prisma cannot name precisely (SQLSTATE 23P01): map it to the same
-      // Arabic 409 as the sequential guard.
+      // (SQLSTATE 23P01, surfacing as an UNKNOWN request error in Prisma
+      // 5): map it to the same Arabic 409 as the sequential guard.
       if (
-        e instanceof Prisma.PrismaClientKnownRequestError &&
-        typeof e.message === 'string' &&
-        e.message.includes('FacilityReservation_no_overlap_live')
+        typeof (e as { message?: unknown })?.message === 'string' &&
+        (e as { message: string }).message.includes('FacilityReservation_no_overlap_live')
       ) {
         return next(new AppError('RESERVATION_OVERLAP', 'توجد حجوزات متداخلة لهذه المنشأة في الفترة المطلوبة', 409));
       }

@@ -780,13 +780,34 @@ router.post(
         // honored). First-time learners have no prior credential to
         // progress from — allowed by definition.
         if (program.credentialTypeId) {
-          const held = await tx.awardedCredential.findMany({
+          // The learner's own credentials first; then the cross-
+          // institution registry link: a learner profile carrying the
+          // SAME national id proves credentials minted elsewhere (the
+          // basic-formation certificate of a training center admits its
+          // holder to an intermediate technical institute — م38 → م4(2)).
+          // Read-only verification: no cross-tenant record is returned,
+          // only the admit/deny decision is affected.
+          const own = await tx.awardedCredential.findMany({
             where: {
               learnerProfileId: learner.id,
               status: { in: ['AWARDED'] },
             },
             select: { credentialTypeId: true },
           });
+          const learnerRow = await tx.learnerProfile.findUnique({
+            where: { id: learner.id },
+            select: { nationalId: true },
+          });
+          const byNationalId = learnerRow?.nationalId
+            ? await tx.awardedCredential.findMany({
+                where: {
+                  status: { in: ['AWARDED'] },
+                  learnerProfile: { nationalId: learnerRow.nationalId },
+                },
+                select: { credentialTypeId: true },
+              })
+            : [];
+          const held = [...own, ...byNationalId];
           if (held.length > 0) {
             const rules = await tx.credentialProgressionRule.findMany({
               where: { fromCredentialTypeId: { in: held.map((h) => h.credentialTypeId) } },
