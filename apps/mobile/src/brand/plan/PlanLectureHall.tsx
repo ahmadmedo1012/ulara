@@ -2,7 +2,7 @@
  * PlanLectureHall — the lecture hall in PLAN (top view): the screen
  * wall on the reading-start side (right), three concentric rows of
  * desks arcing away from it, the entrance with its swing arc, and the
- * double-drafted walls. Exactly ONE orange signal: the dot at the
+ * double-drafted walls. Exactly ONE royal signal: the dot at the
  * screen's centre — where every sightline converges.
  *
  * Draw order: walls → screen wall → the row arcs → the desks → door

@@ -5,7 +5,7 @@
  * structural axis (RTL — A sits at the reading start), three connected
  * volumes (low wing, main block, mastery tower) on a hatched ground
  * datum, parapet double-lines, a window grid, the entrance, and a
- * dimension chain with end ticks. Exactly ONE orange signal: the
+ * dimension chain with end ticks. Exactly ONE royal signal: the
  * mastery pinnacle dot above the tower.
  *
  * Draw order (the way a hand drafts): the axis scaffold exists; the
@@ -121,7 +121,7 @@ export function PlanBuilding({ color, dotColor, progress, autoplay, width, style
       {/* dimension chain under the datum */}
       <DimChain draw={draw} x1={40} x2={280} y={190} color={ink} ticks={[96, 232]} label="64.40" />
 
-      {/* the ONE orange signal — the mastery pinnacle, last to arrive */}
+      {/* the ONE royal signal — the mastery pinnacle, last to arrive */}
       <AnimG opacity={draw.seg(0.82, 1)}>
         <Line x1={256} y1={40} x2={256} y2={30} stroke={ink} strokeWidth={1.2} />
         <AnimCircle cx={256} cy={26.5} r={3.2} fill={accent} stroke="none" />

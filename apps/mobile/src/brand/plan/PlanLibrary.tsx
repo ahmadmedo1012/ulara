@@ -2,7 +2,7 @@
  * PlanLibrary — the library in PLAN: shelf runs along the walls (the
  * double-line racks with spine ticks), two reading tables with chairs,
  * the circulation desk by the entrance, and the double-drafted walls.
- * Exactly ONE orange signal: the dot at the circulation desk — where
+ * Exactly ONE royal signal: the dot at the circulation desk — where
  * every book passes.
  *
  * Draw order: walls → shelf runs → spine ticks → tables & chairs →
@@ -117,7 +117,7 @@ export function PlanLibrary({ color, dotColor, progress, autoplay, width, style,
         <AnimPath d="M 252 162 A 26 26 0 0 1 278 188" />
       </AnimG>
 
-      {/* the ONE orange signal — the circulation dot */}
+      {/* the ONE royal signal — the circulation dot */}
       <AnimG opacity={draw.seg(0.84, 1)}>
         <AnimCircle cx={252} cy={158} r={3.2} fill={accent} stroke="none" />
       </AnimG>

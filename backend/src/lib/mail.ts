@@ -119,13 +119,13 @@ export function brevoSender(from: string): { name?: string; email: string } {
 const SHELL_BORDER = '1px solid #E4E2D8';
 
 /**
- * The shared RTL shell: paper ground, hairline ink frame, the orange
- * accent on the CTA only. 600px measure, table layout, inline styles.
+ * The shared RTL shell: paper ground, hairline ink frame, the royal
+ * accent on the CTA only (the 2026 palette). 600px measure, table layout, inline styles.
  */
 export function renderEmailShell(opts: { title: string; bodyHtml: string; ctaLabel?: string; ctaUrl?: string; footerNote?: string; baseUrl?: string }): string {
   const cta =
     opts.ctaLabel && opts.ctaUrl
-      ? `<tr><td style="padding:8px 32px 24px;"><a href="${opts.ctaUrl}" style="display:inline-block;background:#C43E16;color:#FFFFFF;text-decoration:none;font-weight:600;font-size:15px;padding:12px 28px;border-radius:0;">${opts.ctaLabel}</a></td></tr>`
+      ? `<tr><td style="padding:8px 32px 24px;"><a href="${opts.ctaUrl}" style="display:inline-block;background:#2540D9;color:#FFFFFF;text-decoration:none;font-weight:600;font-size:15px;padding:12px 28px;border-radius:0;">${opts.ctaLabel}</a></td></tr>`
       : '';
   const footer = `<tr><td style="padding:0 32px 28px;font-size:12px;color:#8A887C;line-height:1.8;">${
     opts.footerNote ?? 'إذا لم تكن من طلب هذه الرسالة فتجاهلها — لن يتغير شيء في حسابك.'

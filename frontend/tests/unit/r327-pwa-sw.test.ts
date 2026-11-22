@@ -78,7 +78,7 @@ describe('r327 E2 — the honest pilot service worker contract', () => {
     // the paper/ink palette (no shadows, square corners — the boot plate's
     // exact ground/ink pair)
     expect(html).toContain('background: #F5F1E8');
-    expect(html).toContain('color: #262019');
+    expect(html).toContain('color: #1A1713'); /* the 2026 approved light ink */
     expect(html).toContain('border-radius: 0');
   });
 });

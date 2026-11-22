@@ -69,7 +69,7 @@ export const statusTones = {
     sky: { bg: "#E1E9F0", ink: "#4A7FA8", deep: "#1F4968" },
     lavender: { bg: "#ECE6FA", ink: "#8A6FE0", deep: "#3F2D7A" },
     copper: { bg: "#FCE5DE", ink: "#F15534", deep: "#9C2B0F" },
-    grey: { bg: "#ECEDEB", ink: "#626260", deep: "#262019" },
+    grey: { bg: "#ECEDEB", ink: "#626260", deep: "#1A1713" },
   },
   dark: {
     mint: { bg: "#24372B", ink: "#5FD39A", deep: "#C4EBD2" },

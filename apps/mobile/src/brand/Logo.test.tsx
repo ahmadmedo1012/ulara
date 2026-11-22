@@ -78,15 +78,15 @@ describe("Logo (the R326 M0.4 RN port)", () => {
 
   it("auto tone rides the live palette (light default: sepia ink · the sienna cornerstone)", async () => {
     const { toJSON } = await render(<Logo variant="mark" size={32} />);
-    expect(collectProp(toJSON(), "stroke")).toContainEqual(processed("#262019")); // the light palette ink
-    expect(collectProp(toJSON(), "fill")).toContainEqual(processed("#C43E16")); // the light palette accent — the cornerstone
+    expect(collectProp(toJSON(), "stroke")).toContainEqual(processed("#1A1713")); // the light palette ink (2026)
+    expect(collectProp(toJSON(), "fill")).toContainEqual(processed("#2540D9")); // the light palette accent — the royal cornerstone
   });
 
   it("tone=ink pins BOTH slots to the brand ink (fixed-ground recipe)", async () => {
     const { toJSON } = await render(<Logo variant="mark" size={32} tone="ink" />);
-    expect(collectProp(toJSON(), "stroke")).toContainEqual(processed("#262019"));
+    expect(collectProp(toJSON(), "stroke")).toContainEqual(processed("#1A1713"));
     const fills = collectProp(toJSON(), "fill");
-    expect(fills).toContainEqual(processed("#262019")); // the cornerstone rides the ink too
-    expect(fills).not.toContainEqual(processed("#C43E16"));
+    expect(fills).toContainEqual(processed("#1A1713")); // the cornerstone rides the ink too
+    expect(fills).not.toContainEqual(processed("#2540D9"));
   });
 });

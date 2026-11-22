@@ -7,7 +7,7 @@
  *   · `dash(len, phase)` — dash props that draw a shape of path length
  *     `len` across the clamped sub-range `seg(a, b)` — this is how the
  *     sheet composes (ground first, masses, then windows, then the
- *     orange signal).
+ *     royal signal).
  *   · `seg(a, b)` — also an opacity, for detail layers that FADE in
  *     (hatch, dimension chains, furniture) instead of drawing.
  *   · `t` — the full-range value for whole-sheet fades.

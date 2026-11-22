@@ -39,7 +39,7 @@ export interface RoleTabBarProps {
   hidden?: boolean;
 }
 
-/** The active-tab marker: ONE orange dot, 6dp, on the bar's bottom edge. */
+/** The active-tab marker: ONE royal dot, 6dp, on the bar's bottom edge. */
 const DOT_SIZE = 6;
 
 /** Fallback slide distance before first layout measures the real height. */
@@ -71,7 +71,7 @@ export function indicatorOffset(
  * transitions (pinned by src/test/navigation-stability.test.tsx).
  *
  * R334 3-a upgrades (motion + haptics foundations adopted):
- *  · selection indicator — a single orange dot that springs to the active
+ *  · selection indicator — a single royal dot that springs to the active
  *    tab on the UI THREAD (reanimated, transform-only; reduced-motion =
  *    instant). It retires the old per-tab underline, whose border-bottom
  *    width toggled with the active flag (a layout-property mutation that
@@ -177,7 +177,7 @@ export function RoleTabBar({ state, navigateToTab, insets, role, hidden = false 
             }}
           />
         ))}
-        {/* The single orange dot — start-anchored, springs between slots.
+        {/* The single royal dot — start-anchored, springs between slots.
             Exactly ONE instance (test-pinned); a11y-hidden + untouchable. */}
         <Animated.View
           testID="tab-indicator-dot"

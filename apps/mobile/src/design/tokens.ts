@@ -13,7 +13,7 @@
  *   · dark ink #F6F8FA → #F6F6EE (the web's R324 X22 warm-paper override)
  *   · dark rule #5C5C5A → #4A4A48 (the web's night hairline tier)
  *
- * Paper grounds, graphite ink, hairlines, radius 0, one sienna signal.
+ * Paper grounds, graphite ink, hairlines, radius 0, one royal signal (2026).
  * Zero shadows; emphasis comes from ink weight, hairlines, and the accent.
  */
 import {

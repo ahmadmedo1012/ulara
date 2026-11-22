@@ -305,12 +305,13 @@ describe('r183 — brand-identity closure (the surfaces r177 missed)', () => {
     // r188: the mark is the khatam star (copper→gold) — the retired
     // blue/violet shield gradient and the ZU crest colors are gone.
     // derived from the ulara shield mark palette — NOT the ZU crest palette
-    // R323 override: A1 replaced the copper→gold ramp with the paper/ink/orange
-    // system — the favicon is now hairline ink + one solid orange point
-    // (#C43E16); copper/gold hexes are BANNED from the favicon (r323-brand-system
-    // gate (c) pins this too). The r188 copper assertions are inverted, not deleted.
-    expect(favicon).toContain('#262019');
-    expect(favicon).toContain('#C43E16');
+    // R323 override: A1 replaced the copper→gold ramp with the paper/ink
+    // system — the favicon is hairline ink + one solid royal point; the
+    // 2026 «Parchment & Royal» takeover re-valued the pair (#1A1713 ink ·
+    // #2540D9 royal — was #262019 · #C43E16); copper/gold hexes stay
+    // BANNED from the favicon (r323-brand-system gate (c) pins this too).
+    expect(favicon).toContain('#1A1713');
+    expect(favicon).toContain('#2540D9');
     expect(favicon).not.toContain('#B57438');
     expect(favicon).not.toContain('#E9B44C');
     expect(favicon).not.toContain('#0E3F6C');

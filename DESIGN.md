@@ -35,7 +35,8 @@ basis: `audits/evidence/r313/` (live reference census + production baseline; 3 m
   fallbacks kept; zero exceptions).
 - **D4** button grammar (oklab brighten + lift + glow) → **fill-wipe + dual-label
   roll** (white-on-accent is a documented AA exception: Arabic labels ride weight
-  ≥600); inputs 1px `#B3B3AF` → focus `#ED4C1F` → filled `#FA3600`.
+  ≥600 — retired with the copper era: royal clears AAA at rest); inputs 1px
+  `#B3B3AF` → focus `var(--accent)` (royal) → filled `var(--accent)`.
 - **D5** fixed px type ladder (root 16px) → **fluid rem root** (`html
   0.5787037037vw` + ≤991/≤767 bands; the 13px Arabic floor kept as a minimum) +
   the **Geist Mono** voice (self-hosted OFL).
@@ -93,25 +94,28 @@ no 3D canvases, no poster displays, no competing art direction anywhere.
 
 | Token | Light | Dark | Register |
 |---|---|---|---|
-| `--bg` | blueprint paper `#F6F8FA` | charcoal `#282828` | the grounds |
+| `--bg` | blueprint paper `#F5F1E8` | charcoal `#262019` | the grounds |
 | `--surface` | `#FFFFFF` | `#2E2E2E` | 1.06/1.09 elevation step |
-| `--text` | graphite `#282828` (13.85 AAA) | paper `#F6F8FA` | primary ink |
-| `--text-secondary` / `--text-muted` / `--text-faint` | `#414140` / `#626260` / `#72726F` | `#C9C9C5` / `#B4B4B0` / `#A2A29D` | the ink ramp (9.6 → 4.5) |
-| `--accent` | `#FA3600` (3.53 — UI/large only) | `#FF5A1F` | the signal fill |
-| `--accent-ink` | `#C72E00` (**5.16 AA text**) | `#FF5A1F` | signal TEXT (links, numerals, emphasis) |
-| `--accent-soft` / `--accent-strong` | `#FCE3D9` / `#A32400` | `#432015` / `#FFC5AE` | tint wells / deep ink |
-| `--accent-fg` (labels ON the fill) | `--warm-ink #191918` (4.69 — white 3.76 banned) | `--warm-ink` | the fill-label law |
-| `--primary` / `--primary-fg` | charcoal slab `#282828` + white (14.74) | white slab + warm-ink | PRIMARY CTAs (the reference recipe) |
+| `--text` | the 2026 ink `#1A1713` (15.84 AAA) | paper `#F5F1E8` (14.30 AAA) | primary ink |
+| `--text-secondary` / `--text-muted` / `--text-faint` | `#414140` / `#62625F` / `#666660` | `#C9C9C5` / `#B4B4B0` / `#A2A29D` | the ink ramp (9.6 → 4.5) |
+| `--accent` | royal `#2540D9` (6.62 AA — the signal IS text-safe) | `#8AA0FF` (6.56 AA) | the signal fill (2026 «Parchment & Royal») |
+| `--accent-ink` | `#2540D9` (**6.62 AA text**) | `#8AA0FF` (6.56 AA) | signal TEXT (links, numerals, emphasis) |
+| `--accent-soft` / `--accent-strong` | `#E4E9FF` / `#1B30B0` | `#232845` / `#C7D2FF` | tint wells / deep ink |
+| `--accent-fg` (labels ON the fill) | `#FFFFFF` (7.46 AAA on royal) | `#262019` (6.56 — white FAILS 2.46, never use) | the fill-label law (2026) |
+| `--primary` / `--primary-fg` | royal slab `#2540D9` + white (7.46 AAA) | `#8AA0FF` + `#262019` (6.56) | PRIMARY CTAs (2026 — the primary joins the brand signal) |
 | `--border` / `--rule` / `--grid-line` | `#E0E0DA` / `#C8C8C8` / `#B3B3AF` | `#4A4A48` / `#4A4A48` / `#5C5C5A` | the hairline tiers (`--grid-line` decorative on light) |
 | `--gold` / `--gold-ink` / `--gold-soft` | `#B57438` / `#8F5A28` / yellow-bg | `#E0A067` / `#F2B782` | **achievements/status gold ONLY** — never a second accent |
-| `--state-focus-ring-color` | `#C72E00` (≥3:1 every adjacent surface) | `#FF6B33` | the ONE focus ring (base.css) |
+| `--state-focus-ring-color` | `#2540D9` (6.62 — ≥3:1 every adjacent surface) | `#8AA0FF` (6.56 bg · 5.53 card) | the ONE focus ring (base.css) |
 
-Status families `--c-{mint,yellow,rose,sky,lavender,copper/coral,grey,…}-{bg,ink,deep}`:
-computed triads, deep-vs-bg ≥4.5 both themes; danger rhymes with the coral `#F15534`.
-`--c-copper-*` is the documented **ember/orange compatibility seat** (it carries the accent
-values under a legacy name — brand consumers prefer the `--accent-*` semantic aliases;
-**gold semantics use the gold role**, never the copper seat). Role accents (student → owner)
-all ≥3.0 vs `--bg`. Charts: series 1 = the signal; square markers; gold = achievement series.
+Status families `--c-{royal,mint,yellow,rose,sky,lavender,copper/coral,grey,…}-{bg,ink,deep}`:
+computed triads, deep-vs-bg ≥4.5 both themes. 2026: success = the approved green `#17724A`
+(mint) · danger = the approved red `#C62828` (rose — no longer the coral); `--c-copper-*`
+re-keys to the **warm decorative `#F15534` family** (≡ peach — decorative/legacy-name seat,
+NOT the brand signal; brand consumers use the `--accent-*` semantic aliases on `triad.royal`);
+the warm accent may appear only in small decorative elements, never as a primary button,
+link, active nav, or danger tone. Role accents (student → owner) all ≥3.0 vs `--bg`
+(student rides the royal). Charts: series 1 = the royal signal; square markers; gold =
+achievement series.
 
 **Forbidden:** retired spellings are FORBIDDEN needles in the parity gate (ultramarine,
 teal, warm-paper, the retired night ramp, **`--poster-*`** — the r306 retirement).
@@ -396,12 +400,12 @@ permanent exceptions 2).
 
 ### 4.d Material — confirmed (R313 pins hold; zero drift in the tokens)
 
-paper `#F6F6EE` (`--bg`/`--neutral-50`) · ink `#282828` (`--text`/
-`--neutral-900`) · orange `#FA3600` (`--accent`) · hairline `#B3B3AF`
-(`--rule`/`--neutral-300`) · guides `#E0E0DA` (`--border`/`--neutral-200`) ·
-radius 0 · no shadows · grain · dashed inner frame — every value verified
-against `tokens.css` live (light theme; the dark pair swaps paper↔ink, orange
-constant). **Drift notes found (documentation, not tokens):** (1) the §2 table
+paper `#F5F1E8` (`--bg`/`--neutral-50`) · ink `#1A1713` (`--text`/
+`--neutral-900` — the 2026 approved ink) · royal `#2540D9` (`--accent`) ·
+hairline `#B3B3AF` (`--rule`/`--neutral-300`) · guides `#E0E0DA`
+(`--border`/`--neutral-200`) · radius 0 · no shadows · grain · dashed inner
+frame — every value verified against `tokens.css` live (light theme; the dark
+pair swaps paper↔ink, the accent re-keys to `#8AA0FF`). **Drift notes found (documentation, not tokens):** (1) the §2 table
 above still prints the pre-R313 light ground `#F6F8FA` — §0/D1 is the
 authority (`#F6F6EE`); (2) the TYPE had drifted (census: 5–6 display sizes,
 100% weight 700) — §4.c is the repair. Orange stays an accent ≤5% of area per
@@ -616,7 +620,7 @@ census work, never re-authored:
 | `--app-ink` / `-2` / `-3` | `#282828` / `#414140` / `#626260` | `#F6F6EE` / `#C9C9C5` / `#B4B4B0` |
 | `--app-line` (seams) | `#B3B3AF` | `#4A4A48` |
 | `--app-line-soft` (rows/cards) | `#E0E0DA` | `#4A4A48` |
-| `--app-signal` / `-ink` / `-wash` | `#FA3600` / `#C72E00` / `#FCE3D9` | `#FF5A1F` / `#FF6B33` / `#432015` |
+| `--app-signal` / `-ink` / `-wash` | `#2540D9` / `#2540D9` / `#E4E9FF` | `#8AA0FF` / `#8AA0FF` / `#232845` |
 | `--app-backdrop` | ink 40% | black 62% |
 
 Patterns are theme-free by construction (currentColor mixes); the

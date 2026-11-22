@@ -122,11 +122,14 @@ describe('r344 A2 — the seats', () => {
     );
     const after = cta.slice(cta.indexOf('.fo-cta .btn.accent.btn--pixel .fo-cta-rbtn::after'));
     const afterBlock = after.slice(0, after.indexOf('}'));
-    expect(afterBlock).toContain('background: var(--primary)');
+    expect(afterBlock).toContain('background: var(--neutral-900)'); /* 2026: the dissolve slab is the INK tier — --primary is the royal rest, an invisible hover */
     expect(afterBlock).toMatch(walk);
     // the recorded T-13 final pair is untouched above the dissolve block
+    /* 2026: the final pair re-points to the INK tier (neutral-900 +
+       neutral-50) — --primary is the royal rest seat now, and a
+       royal-rest → royal-hover swap would be invisible. */
     expect(cta).toMatch(
-      /\.fo-cta \.btn\.accent:is\(:hover, :focus-within\) \.fo-cta-rbtn,\s*\n\.fo-cta \.btn\.accent\.probe-hover \.fo-cta-rbtn \{\s*\n  background: var\(--primary\);\s*\n  color: var\(--primary-fg\);/,
+      /\.fo-cta \.btn\.accent:is\(:hover, :focus-within\) \.fo-cta-rbtn,\s*\n\.fo-cta \.btn\.accent\.probe-hover \.fo-cta-rbtn \{\s*\n  background: var\(--neutral-900\);\s*\n  color: var\(--neutral-50\);/,
     );
     // the children lift above the ink layer; hover/focus/probe arms walk it
     expect(cta).toMatch(
@@ -143,13 +146,13 @@ describe('r344 A2 — the seats', () => {
     }
   });
 
-  it('nav.css: the desktop cell base is pointer-ungated, focus parity exists, the #DB3A00 law stands', () => {
+  it('nav.css: the desktop cell base is pointer-ungated, focus parity exists, the accent-token law stands', () => {
     const base = nav.slice(nav.indexOf('.fo-actions-cta::before'));
     const baseBlock = base.slice(0, base.indexOf('}', base.indexOf('mask-position')));
     expect(baseBlock).toContain('transform: none');
     expect(baseBlock).toMatch(walk);
     expect(nav).toMatch(/\.fo-actions-cta:focus-visible::before \{[^}]*mask-position: 100% 50%/s);
-    expect(nav).toMatch(/\.fo-actions-cta:hover::before \{[^}]*background: #DB3A00/s);
+    expect(nav).toMatch(/\.fo-actions-cta:hover::before \{[^}]*background: var\(--accent\)/s);
   });
 
   it('no pixel transition list smuggles a layout property (motion-gate §5)', () => {

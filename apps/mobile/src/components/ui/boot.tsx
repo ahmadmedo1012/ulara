@@ -111,7 +111,7 @@ function useDelayedPulseLoop(
  * the same constants <Logo variant="mark"> renders and the native
  * splash/app icons are generated from; the logo-gate law: geometry lives
  * in the brand system, seats consume components): the ink vessel eases in
- * while the sienna cornerstone counter-scales out and breathes —
+ * while the royal cornerstone counter-scales out and breathes —
  * «الإناء يمتلئ» — one loader vocabulary, one mark. `size` 120 = the
  * splash icon size → the IDENTICAL figure at the same seat, so the
  * splash → app handoff is a pure cross-fade (the hand-drawn two-squares
@@ -137,7 +137,7 @@ export function BootMark({ size = 120 }: { size?: number }) {
   const vessel = <MarkVesselLayer size={size} color={p.text} />;
 
   /* the cornerstone — the brand system's own single-layer render (the
-     solid sienna 4×4 at the right stem's top) */
+     solid royal 4×4 at the right stem's top) */
   const cornerstone = <MarkCornerstoneLayer size={size} color={p.accent} />;
 
   if (reduced) {
