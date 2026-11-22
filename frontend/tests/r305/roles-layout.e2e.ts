@@ -115,9 +115,10 @@ test.describe('الطالب المسجَّل — أسطح الهيكل', () => {
     await expect(page.locator('.pf-rowlist')).toContainText('مسابقة المقالة العلمية');
 
     await page.goto('/vision');
-    // Static roadmap data (lib/vision) — the authored statement is the h1.
-    await expect(page.getByRole('heading', { level: 1 })).toContainText('ابتكاراً قادماً');
-    await expect(page.getByText('المسار التقني للمنصة')).toBeVisible();
+    // Static roadmap data (lib/vision) — the section title is the h1 and
+    // the first concept row still renders its authored subtitle.
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('الابتكارات القادمة');
+    await expect(page.getByText('تنبؤ بمسارك الأكاديمي')).toBeVisible();
   });
 });
 

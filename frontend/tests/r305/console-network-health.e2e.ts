@@ -97,7 +97,7 @@ const STUDENT_ROUTES: HealthRoute[] = [
   {
     path: '/vision',
     ready: async (page) => {
-      await expect(page.getByRole('heading', { level: 1 })).toContainText('ابتكاراً قادماً');
+      await expect(page.getByRole('heading', { level: 1 })).toContainText('الابتكارات القادمة');
     },
   },
 ];
