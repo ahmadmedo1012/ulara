@@ -2,15 +2,20 @@
  * Backend unit test — capability merge logic in
  * `backend/src/lib/permissions.ts` (pure part, injected rows).
  *
- * Verifies the three-layer merge:
- *   effective = DEFAULT_ROLE_CAPABILITIES[role]
- *             ∪ RolePermission rows for that role
+ * r352 semantics (DECISIONS.md D5/D6):
+ *   effective = DEFAULT_ROLE_CAPABILITIES[membership role
+ *               ∪ actively unit-granted roles]
+ *             ∪ RolePermission rows for those roles
  *             + UserPermission grants
- *             − UserPermission revokes
+ *             − UserPermission revokes — with DETERMINISTIC DENY
+ *               PRECEDENCE: any applicable revoke denies; grants land
+ *               only when no revoke exists. (The pre-r352 row-order
+ *               "last write wins" was non-deterministic under mixed
+ *               global/scoped rows — the R352 brief mandates deny-wins.)
  *
  * Plus the documented governance invariants of the role defaults
  * themselves (admin isolation, quality oversight-not-control, owner
- * completeness) and the override-ordering edge cases.
+ * completeness) and the override edge cases.
  *
  * DB-free: only the pure `mergeCapabilities` export and the static
  * DEFAULT_ROLE_CAPABILITIES table are exercised.
@@ -81,18 +86,48 @@ describe('mergeCapabilities', () => {
     expect(caps.has('RESEARCH_GRADE_OWN')).toBe(false);
   });
 
-  it('duplicate overrides for one capability: the last one wins', () => {
+  it('r352 D6 — duplicate overrides: deny wins deterministically (order-independent)', () => {
+    // The R352 mandate: explicit revocation has deterministic
+    // precedence over grants. Both orderings now deny — the pre-r352
+    // row-order "last write wins" was non-deterministic.
     const revokedThenGranted = mergeCapabilities(Role.TEACHER, [], [
       { capability: 'EXAMS_AUTHOR', grant: false },
       { capability: 'EXAMS_AUTHOR', grant: true },
     ]);
-    expect(revokedThenGranted.has('EXAMS_AUTHOR')).toBe(true);
+    expect(revokedThenGranted.has('EXAMS_AUTHOR')).toBe(false);
 
     const grantedThenRevoked = mergeCapabilities(Role.TEACHER, [], [
       { capability: 'EXAMS_AUTHOR', grant: true },
       { capability: 'EXAMS_AUTHOR', grant: false },
     ]);
     expect(grantedThenRevoked.has('EXAMS_AUTHOR')).toBe(false);
+  });
+
+  it('r352 hardening §3.2 — a unit grant adds EXACTLY ONE capability, never a role bundle', () => {
+    // A STUDENT membership with an active unit grant of USERS_MANAGE
+    // gains that single capability — the pre-hardening design composed
+    // the whole ADMIN bundle; the scoped model must not.
+    const caps = mergeCapabilities(
+      Role.STUDENT,
+      [row(Role.ADMIN, 'TEACHERS_VERIFY')],
+      [],
+      ['USERS_MANAGE'],
+    );
+    expect(caps.has('EXAMS_TAKE')).toBe(true); // own membership default
+    expect(caps.has('USERS_MANAGE')).toBe(true); // the granted capability
+    expect(caps.has('TEACHERS_VERIFY')).toBe(false); // ADMIN DB row NOT merged
+    expect(caps.has('ORG_STRUCTURE_MANAGE')).toBe(false); // no bundle leakage
+    expect(caps.has('RESEARCH_GRADE_OWN')).toBe(false); // not in either set
+  });
+
+  it('r352 D6 — a deny still wins over unit grants', () => {
+    const caps = mergeCapabilities(
+      Role.STUDENT,
+      [],
+      [{ capability: 'USERS_MANAGE', grant: false }],
+      ['USERS_MANAGE'],
+    );
+    expect(caps.has('USERS_MANAGE')).toBe(false);
   });
 
   it('revoking a capability the user does not have is a no-op', () => {
@@ -140,6 +175,35 @@ describe('DEFAULT_ROLE_CAPABILITIES — documented governance invariants', () =>
     const caps = new Set(DEFAULT_ROLE_CAPABILITIES.QUALITY);
     expect(caps.has('USERS_MANAGE')).toBe(false);
     expect(caps.has('ROLES_ASSIGN')).toBe(false);
+  });
+
+  it('r352 — QUALITY gains NONE of the institutional-core capabilities by default', () => {
+    // DECISIONS.md D8: QUALITY_INTERNAL_MANAGE (internal QA-office
+    // writes) is an explicit-grant-only capability; the oversight role
+    // keeps its read-only + exam-moderation semantics untouched.
+    const caps = new Set(DEFAULT_ROLE_CAPABILITIES.QUALITY);
+    for (const cap of [
+      'ORG_STRUCTURE_MANAGE', 'PEOPLE_MANAGE', 'APPOINTMENTS_MANAGE',
+      'COUNCILS_MANAGE', 'PROGRAMS_MANAGE', 'CREDENTIALS_MANAGE',
+      'ACCREDITATION_MANAGE', 'QUALITY_INTERNAL_MANAGE',
+      'FACILITIES_MANAGE', 'RESEARCH_PROJECTS_MANAGE', 'UNIT_CAPABILITIES_ASSIGN',
+    ] as const) {
+      expect(caps.has(cap), `QUALITY must not default to ${cap}`).toBe(false);
+    }
+  });
+
+  it('r352 — ADMIN defaults gain exactly the institutional-operations set', () => {
+    const caps = new Set(DEFAULT_ROLE_CAPABILITIES.ADMIN);
+    for (const cap of [
+      'ORG_STRUCTURE_MANAGE', 'PEOPLE_MANAGE', 'APPOINTMENTS_MANAGE',
+      'COUNCILS_MANAGE', 'PROGRAMS_MANAGE', 'CREDENTIALS_MANAGE',
+      'ACCREDITATION_MANAGE', 'FACILITIES_MANAGE',
+      'RESEARCH_PROJECTS_MANAGE', 'UNIT_CAPABILITIES_ASSIGN',
+    ] as const) {
+      expect(caps.has(cap), `ADMIN should default to ${cap}`).toBe(true);
+    }
+    // ...but NOT the explicit-only internal-QA capability.
+    expect(caps.has('QUALITY_INTERNAL_MANAGE')).toBe(false);
   });
 
   it('OWNER holds the full capability set (master control panel role)', () => {

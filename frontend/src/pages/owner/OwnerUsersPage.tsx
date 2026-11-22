@@ -15,7 +15,7 @@ import { useOwnerStats, useOwnerUsers, useChangeUserRole, useToggleUserStatus } 
 import { formatDate, formatNum } from '../../utils/numbers';
 // R320 §B (c1-RENAME): the directory's role chips/pickers consume the ONE
 // shared role-label source (lib/roleLabels.ts + backend twin) — ADMIN is
-// «المسجل العام»; the other roles keep their established wording.
+// «إدارة المؤسسة» (r352 §D7); the other roles keep their established wording.
 import { ROLE_LABELS as SHARED_ROLE_LABELS } from '../../lib/roleLabels';
 
 /**
@@ -55,7 +55,7 @@ interface OwnerUserMembership {
 }
 
 /* R320 §B: the shared map verbatim (lib/roleLabels.ts + backend twin) —
-   ADMIN «إداري» → «المسجل العام»; the person-noun lineage (17-a2 /
+   ADMIN «إداري» → «إدارة المؤسسة» (r352 §D7); the person-noun lineage (17-a2 /
    15-j P1-8) is preserved for the other roles. */
 const ROLE_LABELS: Record<string, string> = { ...SHARED_ROLE_LABELS };
 

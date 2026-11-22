@@ -33,9 +33,14 @@ vi.mock('../../src/db.js', () => {
   const p: Record<string, unknown> = {
     membership: { findFirst: vi.fn() },
     institution: { findUnique: vi.fn() },
-    faculty: { findMany: vi.fn(), findUnique: vi.fn(), create: vi.fn() },
-    department: { create: vi.fn() },
+    faculty: { findMany: vi.fn(), findUnique: vi.fn(), create: vi.fn(), update: vi.fn() },
+    department: { create: vi.fn(), update: vi.fn() },
     auditLog: { create: vi.fn() },
+    // r352 — the org-unit write-through (DECISIONS.md D3): the legacy
+    // faculty/department creates now mirror OrganizationalUnit rows in
+    // the same transaction; the mock models that surface. findUnique
+    // answers null (no unit yet) so the mirror creates one.
+    organizationalUnit: { findUnique: vi.fn(async () => null), create: vi.fn(async () => ({})) },
     // Defensive: the error handler's 5xx alert feed (no 5xx is expected
     // in this suite — a 500 here should FAIL the test, not the mock).
     operationalAlert: { create: vi.fn(async () => ({})) },
@@ -301,9 +306,11 @@ describe('POST /api/v1/admin/departments — faculty-chain-guarded create (r180)
     expect(body.data).toEqual(CREATED_DEPARTMENT);
 
     // The chain guard resolved the faculty first…
+    // r352: the select gained `city` — the org-unit write-through
+    // mirrors the faculty's location into the unit.
     expect(prisma.faculty.findUnique).toHaveBeenCalledWith({
       where: { id: FACULTY_A },
-      select: { id: true, name: true, institutionId: true },
+      select: { id: true, name: true, city: true, institutionId: true },
     });
     // …and the create is a trimmed write inside that faculty.
     expect(prisma.department.create).toHaveBeenCalledWith({

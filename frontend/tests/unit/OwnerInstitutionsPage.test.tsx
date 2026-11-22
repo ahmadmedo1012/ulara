@@ -346,7 +346,7 @@ describe('OwnerInstitutionsPage — keep edits on provision failure (r183-B5)', 
     fireEvent.change(within(dialog).getByLabelText('كلمة المرور'), { target: { value: 'Ulara-2026-Demo' } });
 
     mocks.provision.mutateAsync.mockRejectedValueOnce(new Error('404 UNKNOWN_EMAIL'));
-    fireEvent.click(within(dialog).getByRole('button', { name: 'تعيين المسجل العام' }));
+    fireEvent.click(within(dialog).getByRole('button', { name: 'تعيين عضو إدارة المؤسسة' }));
 
     await waitFor(() => expect(mocks.provision.mutateAsync).toHaveBeenCalledTimes(1));
     // The modal stays open — the old code closed it right after mutate().
@@ -367,7 +367,7 @@ describe('OwnerInstitutionsPage — keep edits on provision failure (r183-B5)', 
     mocks.provision.mutateAsync.mockResolvedValueOnce({
       user: { firstName: 'مسجل', lastName: 'جديد' },
     });
-    fireEvent.click(within(dialog).getByRole('button', { name: 'تعيين المسجل العام' }));
+    fireEvent.click(within(dialog).getByRole('button', { name: 'تعيين عضو إدارة المؤسسة' }));
 
     await waitFor(() => expect(mocks.provision.mutateAsync).toHaveBeenCalledTimes(1));
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
@@ -385,7 +385,7 @@ describe('OwnerInstitutionsPage — keep edits on provision failure (r183-B5)', 
     // Re-open — the error reads from the (still-flagged) mutation state.
     fireEvent.click(screen.getByRole('button', { name: /تعيين مسجل عام/ }));
 
-    expect(screen.getByText('تعذّر تعيين المسجل العام')).toBeInTheDocument();
+    expect(screen.getByText('تعذّر تعيين عضو إدارة المؤسسة')).toBeInTheDocument();
   });
 });
 

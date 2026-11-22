@@ -44,7 +44,7 @@ import { TablePaginationFooter, PAPER_UNIT } from './TablePaginationFooter';
 import { countAr, formatPct, formatRelativeArShort } from '../../lib/format';
 import { formatNum } from '../../utils/numbers';
 // R320 §B (c1-RENAME): the ADMIN dashboard's title/breadcrumb root is
-// «لوحة المسجل العام» — consumed from the ONE shared role-label source
+// «لوحة إدارة المؤسسة» — consumed from the ONE shared role-label source
 // (lib/roleLabels.ts + backend twin), never a literal that can drift.
 import { roleDashboardLabel } from '../../lib/roleLabels';
 import { Bar, Line } from 'react-chartjs-2';
@@ -721,7 +721,7 @@ export function AdminFacultiesPage() {
         <PatternsPageHeader
           title="الكلّيّات والأقسام"
           /* r351 A2 (Q3): header description retired — the roster explains itself. */
-          breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'الكلّيّات والأقسام' }]}
+          breadcrumbs={[{ label: 'لوحة إدارة المؤسسة', to: '/admin/dashboard' }, { label: 'الكلّيّات والأقسام' }]}
         />
         <StatStripSkeleton />
         <CardSkeleton lines={7} />
@@ -734,7 +734,7 @@ export function AdminFacultiesPage() {
         <PatternsPageHeader
           title="الكلّيّات والأقسام"
           /* r351 A2 (Q3): header description retired — the roster explains itself. */
-          breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'الكلّيّات والأقسام' }]}
+          breadcrumbs={[{ label: 'لوحة إدارة المؤسسة', to: '/admin/dashboard' }, { label: 'الكلّيّات والأقسام' }]}
         />
         <Card><ErrorState error={error} onRetry={() => refetch()} /></Card>
       </div>
@@ -770,7 +770,7 @@ export function AdminFacultiesPage() {
       <PatternsPageHeader
         title="الكلّيّات والأقسام"
         /* r351 A2 (Q3): header description retired — the roster explains itself. */
-        breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'الكلّيّات والأقسام' }]}
+        breadcrumbs={[{ label: 'لوحة إدارة المؤسسة', to: '/admin/dashboard' }, { label: 'الكلّيّات والأقسام' }]}
         actions={(
           /* R342-09 (the students-page family contract): the page's ONE
                    * create action rides the header action slot on the accent
@@ -1049,7 +1049,7 @@ const PAPER_STATUS_LABEL: Record<ResearchStatus, string> = {
   PUBLISHED: 'منشورة',
 };
 /* r149 (R3-A1 #1): انتقل التعريف إلى lib/paperStatus.ts — سلّم واحد
- * للطالب والمسجل العام (هذه كانت النسخة الأغنى فاعتُمدت كما هي — R320 §B: الإداري = المسجل العام). */
+ * للطالب وإدارة المؤسسة (هذه كانت النسخة الأغنى فاعتُمدت كما هي — r352 §D7: الإداري = إدارة المؤسسة). */
 
 /** One register row — status badge + the moderation-relevant numbers.
  *  R304: the paper's title is the row's identity cell (ws-id) — its
@@ -1143,7 +1143,7 @@ export function AdminReportsPage() {
         <PatternsPageHeader
           title="التقارير المؤسسية"
           /* r351 A2 (Q3): header description retired — the KPI band explains the page. */
-          breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'التقارير المؤسسية' }]}
+          breadcrumbs={[{ label: 'لوحة إدارة المؤسسة', to: '/admin/dashboard' }, { label: 'التقارير المؤسسية' }]}
         />
         <StatStripSkeleton />
         <CardSkeleton lines={6} />
@@ -1156,7 +1156,7 @@ export function AdminReportsPage() {
         <PatternsPageHeader
           title="التقارير المؤسسية"
           /* r351 A2 (Q3): header description retired — the KPI band explains the page. */
-          breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'التقارير المؤسسية' }]}
+          breadcrumbs={[{ label: 'لوحة إدارة المؤسسة', to: '/admin/dashboard' }, { label: 'التقارير المؤسسية' }]}
         />
         <Card><ErrorState error={error} onRetry={() => refetch()} /></Card>
       </div>
@@ -1173,7 +1173,7 @@ export function AdminReportsPage() {
       <PatternsPageHeader
         title="التقارير المؤسسية"
         /* r351 A2 (Q3): header description retired — the KPI band explains the page. */
-        breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'التقارير المؤسسية' }]}
+        breadcrumbs={[{ label: 'لوحة إدارة المؤسسة', to: '/admin/dashboard' }, { label: 'التقارير المؤسسية' }]}
         actions={(
           /* R342-09 (D11 sub-page CTA precedent): a read-only ledger still
                    * names its ONE honest next surface — the adoption view is the
@@ -1618,7 +1618,7 @@ export function AdminCoursesPage() {
         description={meta
           ? `${countAr(meta.total, ['مقرّر واحد', 'مقرّران', 'مقرّرات', 'مقرّراً'])}${hasFilters ? '' : ' في الجامعة'}`
           : undefined}
-        breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'المقرّرات' }]}
+        breadcrumbs={[{ label: 'لوحة إدارة المؤسسة', to: '/admin/dashboard' }, { label: 'المقرّرات' }]}
         actions={(
           /* R342-09 (the students-page family contract): the page's ONE
                    * create action rides the header action slot on the accent

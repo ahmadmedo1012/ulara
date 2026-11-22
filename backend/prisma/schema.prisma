@@ -55,12 +55,22 @@ enum Role {
 
 // r178 — مؤسسات متعددة: حالة المؤسسة (تعليق المؤسسة يمنع كل وصول
 // متعلق بها عبر حرّاس السياق في الخلفية).
+// r352 — additive lifecycle values (PENDING_APPROVAL / CLOSED / MERGED):
+// only ACTIVE ever admits a session context (requireInstitution), so the
+// new values are invisible to login/switch flows by construction.
 enum InstitutionStatus {
   ACTIVE
   SUSPENDED
+  PENDING_APPROVAL
+  CLOSED
+  MERGED
 }
 
+// r352 — ASSISTANT_LECTURER (محاضر مساعد) added additively: the five
+// statutory university ranks of Law 2/2018 (as amended by 4/2020) Art. 38
+// are now complete. No data rewrite; existing rows keep their values.
 enum AcademicRank {
+  ASSISTANT_LECTURER
   LECTURER
   ASSISTANT_PROFESSOR
   ASSOCIATE_PROFESSOR
@@ -191,6 +201,22 @@ enum Capability {
   ANNOUNCE_FACULTY // faculty/department/course announcements
   COMPETITIONS_RUN // create competitions
   EVENTS_RUN // create campus events
+  // r352 — institutional-core capabilities (new modules). Defaults per
+  // DECISIONS.md: ADMIN gets the institutional-operations set, OWNER keeps
+  // the full set, QUALITY gets NONE of these by default — in particular
+  // QUALITY_INTERNAL_MANAGE is an explicit-grant-only capability so the
+  // QUALITY role's read-only oversight semantics are preserved.
+  ORG_STRUCTURE_MANAGE // manage organizational units (incl. faculty/department mirror)
+  PEOPLE_MANAGE // manage institutional people records
+  APPOINTMENTS_MANAGE // manage position appointments
+  COUNCILS_MANAGE // manage councils/meetings/minutes/resolutions
+  PROGRAMS_MANAGE // manage programs/versions/enrollments/terms
+  CREDENTIALS_MANAGE // award/revoke formal credentials
+  ACCREDITATION_MANAGE // record external accreditation/licenses/inspections/findings
+  QUALITY_INTERNAL_MANAGE // internal QA-office self-assessment writes (explicit grant only)
+  FACILITIES_MANAGE // manage facilities/equipment/work orders/reservations
+  RESEARCH_PROJECTS_MANAGE // manage institutional research projects
+  UNIT_CAPABILITIES_ASSIGN // grant/revoke unit-scoped capability grants (r352 hardening)
 }
 
 enum QuestionType {
@@ -275,6 +301,25 @@ model Institution {
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
 
+  // ── r352 — institutional classification (all nullable: additive, the
+  // legacy demo workspaces stay valid without classification) ──
+  // Sector + kind come from Law 9/2026 (HE & SR) and Law 21/2023 (TVET);
+  // the kind catalog is a seeded table (see LEGAL-MATRIX.md).
+  sector                   InstitutionSector?
+  kindId                   String?
+  kind                     InstitutionType?      @relation(fields: [kindId], references: [id])
+  ownership                OwnershipType?
+  supervisingAuthorityId   String?
+  supervisingAuthority     RegulatoryAuthority?  @relation(fields: [supervisingAuthorityId], references: [id])
+  establishmentDecisionNumber String?
+  establishmentDecisionDate   DateTime?
+  // Legally-justified affiliation only (e.g. a separately-established
+  // research center under a university). Service-level invariants: no
+  // cycles, no cross-sector parents.
+  parentInstitutionId      String?
+  parentInstitution        Institution?           @relation("InstitutionAffiliation", fields: [parentInstitutionId], references: [id])
+  affiliatedInstitutions   Institution[]          @relation("InstitutionAffiliation")
+
   memberships      Membership[]
   faculties        Faculty[]
   students         StudentProfile[]
@@ -288,6 +333,33 @@ model Institution {
   researchPapers   ResearchPaper[]
   aiConversations  AiConversation[]
   aiKnowledgeChunks AiKnowledgeChunk[]
+
+  // r352 reverse relations
+  organizationalUnits    OrganizationalUnit[]
+  people                 InstitutionalPerson[]
+  appointments           PositionAppointment[]
+  unitCapabilityGrants   UnitCapabilityGrant[]
+  learnerProfiles        LearnerProfile[]
+  councils               Council[]
+  academicTerms          AcademicTerm[]
+  programs               Program[]
+  trainingPlacements     TrainingPlacement[]
+  awardedCredentials     AwardedCredential[]
+  externalAccreditations ExternalAccreditation[]
+  operationalLicenses    OperationalLicense[]
+  regulatoryInspections  RegulatoryInspection[]
+  complianceFindings     ComplianceFinding[]
+  internalSelfAssessments InternalSelfAssessment[]
+  complianceEvidence     ComplianceEvidence[]
+  facilities             Facility[]
+  equipment              Equipment[]
+  maintenanceWorkOrders  MaintenanceWorkOrder[]
+  facilityReservations   FacilityReservation[]
+  safetyIncidents        SafetyIncident[]
+  researchProjects       ResearchProject[]
+  researchOutputs        ResearchOutput[]
+  localPositionVariants  PositionTemplate[]
+  localOrgUnitTypes      OrgUnitTypeDefinition[] @relation("LocalOrgUnitTypes")
 
   @@index([status])
 }
@@ -392,6 +464,7 @@ model User {
   // Governance
   permissionGrants    UserPermission[]     @relation("UserPermissionUser")
   permissionGrantedBy UserPermission[]     @relation("UserPermissionGranter")
+  unitCapabilityGrants UnitCapabilityGrant[]
   verifiedTeachers    TeacherProfile[]     @relation("TeacherProfileVerifier")
   // Exams
   authoredQuestions   Question[]           @relation("QuestionAuthor")
@@ -426,6 +499,12 @@ model User {
 
   // r326 M2.6 — the push devices registered by this user's installs.
   pushDevices    PushDevice[]
+
+  // r352 — unified people domain (optional account link) + scoped
+  // capability grants (r352 hardening §3.2: single capabilities, never
+  // role bundles).
+  institutionalPeople InstitutionalPerson[]
+  learnerProfiles    LearnerProfile[]
 }
 
 model StudentProfile {
@@ -451,8 +530,21 @@ model StudentProfile {
   gpa           Decimal     @default(0) @db.Decimal(3, 2)
   totalXp       Int         @default(0)
   level         Int         @default(1)
+  // r352 — الطالب ≠ المتدرب (Law 21/2023 Art. 2): the legal learner
+  // category, kept separate from course Enrollment and program context.
+  learnerCategory LearnerCategory @default(STUDENT)
+  // r352 hardening §5 — non-destructive bridge to the generalized
+  // learner record (1:1). Set by the migration backfill for existing
+  // rows; new registrations may start from either side.
+  learnerProfileId String? @unique
+  learnerProfile   LearnerProfile? @relation(fields: [learnerProfileId], references: [id])
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
+
+  // r352 reverse relations
+  programEnrollments  ProgramEnrollment[]
+  trainingPlacements  TrainingPlacement[]
+  awardedCredentials  AwardedCredential[]
 
   // رقم التسجيل الجامعي مُتفرّد لكل مؤسسة — نفس الرقم قد يوجد في
   // مؤسسة أخرى (r178).
@@ -500,6 +592,12 @@ model TeacherProfile {
   positionDepartment   Department?       @relation("DepartmentLeadership", fields: [positionDepartmentId], references: [id])
   appointedAt          DateTime?
   termEndsAt           DateTime?
+  // r352 — link to the unified people domain (DECISIONS.md: academic
+  // profile stays distinct from the general employment record). The
+  // legacy position columns above are preserved for existing readers;
+  // new leadership history lives in PositionAppointment.
+  personId             String?           @unique
+  person               InstitutionalPerson? @relation(fields: [personId], references: [id], onDelete: SetNull)
   createdAt            DateTime          @default(now())
   updatedAt            DateTime          @updatedAt
 
@@ -536,9 +634,15 @@ model Faculty {
   scopedAdmins       User[]             @relation("FacultyScopedAdmins")
   leadership         TeacherProfile[]   @relation("FacultyLeadership")
 
+  // r352 — the unified organizational-unit mirror (see DECISIONS.md D3:
+  // write-through sync, never two unsynchronized sources of truth).
+  orgUnitId          String?            @unique
+  orgUnit            OrganizationalUnit? @relation(fields: [orgUnitId], references: [id])
+
   @@unique([institutionId, name, city])
   @@index([city])
   @@index([institutionId])
+  @@index([orgUnitId])
 
   // r323 B3.1
   inviteCodes InviteCode[]
@@ -558,8 +662,13 @@ model Department {
   // Reverse relation for department-head appointments
   leadership         TeacherProfile[]   @relation("DepartmentLeadership")
 
+  // r352 — the unified organizational-unit mirror (DECISIONS.md D3).
+  orgUnitId          String?            @unique
+  orgUnit            OrganizationalUnit? @relation(fields: [orgUnitId], references: [id])
+
   @@unique([facultyId, name])
   @@index([facultyId])
+  @@index([orgUnitId])
 
   // r323 B3.1
   inviteCodes InviteCode[]
@@ -581,14 +690,24 @@ model Course {
   institution   Institution        @relation(fields: [institutionId], references: [id])
   departmentId  String
   department    Department         @relation(fields: [departmentId], references: [id])
+  // r352 hardening §5 — additive organizational ownership: technical
+  // programs define courses through their REAL org units without
+  // fabricating faculties/departments. Nullable: the legacy Department
+  // relation stays the required bridge for existing university rows
+  // (one synchronized Course system — never a second one).
+  orgUnitId     String?
+  orgUnit       OrganizationalUnit? @relation(fields: [orgUnitId], references: [id])
   offerings     CourseOffering[]
   concepts      KnowledgeConcept[]
+  // r352 — program curriculum links (ProgramCourse → Course).
+  programLinks  ProgramCourse[]
   createdAt     DateTime           @default(now())
   updatedAt     DateTime           @updatedAt
 
   @@unique([institutionId, code])
   @@index([institutionId])
   @@index([departmentId])
+  @@index([orgUnitId])
 }
 
 model CourseOffering {
@@ -1324,6 +1443,9 @@ model ResearchPaper {
   publishedAt   DateTime?
   extractedText String?             @db.Text
   annotations   PaperAnnotation[]
+  // r352 — institutional research outputs may bridge to this existing
+  // student-paper workflow (researchPaperId on ResearchOutput).
+  linkedResearchOutputs ResearchOutput[]
 
   @@index([studentId])
   @@index([reviewerId])
@@ -1999,6 +2121,35 @@ model BinaryObject {
   size      Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  councilDocuments CouncilDocument[]
+  complianceEvidence ComplianceEvidence[]
+}
+
+// ─── r352 hardening §11 — controlled org-unit type catalog ─────────
+
+// فهرس أنواع الوحدات التنظيمية: مرجع مضبوط (seeded) بأهلية القطاع
+// ونوع المؤسسة وقواعد توافق الأب، مع أنواع محلية لكل مؤسسة. إنشاء
+// وحدة بنوع غير موجود هنا (عالمي نشط أو محلي لنفس المؤسسة) يُرفض.
+model OrgUnitTypeDefinition {
+  id                            String    @id @default(cuid())
+  code                          String    @unique
+  nameAr                        String
+  nameEn                        String?
+  allowedParentCodes            String[]  @default([]) // empty = any parent type
+  eligibleSectors               String[]  @default([]) // InstitutionSector codes; empty = both sectors
+  eligibleInstitutionTypeCodes  String[]  @default([]) // empty = all institution kinds
+  isLocal                       Boolean   @default(false)
+  institutionId                 String? // required when isLocal
+  institution                   Institution? @relation("LocalOrgUnitTypes", fields: [institutionId], references: [id])
+  isActive                      Boolean   @default(true)
+  notes                         String?
+  sortOrder                     Int       @default(0)
+  createdAt                     DateTime  @default(now())
+  updatedAt                     DateTime  @updatedAt
+
+  @@index([isLocal, institutionId])
+  @@index([isActive])
 }
 
 // ────────────────────────────────────────────────────────────────
@@ -2162,4 +2313,1576 @@ model PushDevice {
 
   @@index([userId])
   @@index([lastSeenAt])
+}
+
+// ════════════════════════════════════════════════════════════════
+//  r352 — INSTITUTIONAL CORE
+//  One domain model for every institution kind (universities,
+//  academies, research bodies, technical colleges, institutes,
+//  training centers). Legal grounding: docs/redesign/r352/
+//  institutional-backend/LEGAL-MATRIX.md (Law 9/2026, Law 10/2026,
+//  Law 21/2023, Law 2/2018 + 4/2020, National Center criteria).
+//  All additions are additive; migration 0003_r352_institutional_core.
+// ════════════════════════════════════════════════════════════════
+
+// ─── r352 — classification enums ────────────────────────────────
+
+// Law 9/2026 Art. 1 (HE & SR) vs Law 21/2023 (TVET).
+enum InstitutionSector {
+  HIGHER_EDUCATION_RESEARCH
+  TECHNICAL_VOCATIONAL_PROFESSIONAL
+}
+
+// Ownership per statute (عامة/خاصة/مفتوحة — Law 4/2020 Art. 1) and the
+// National Center's institution lists (private/governmental/international).
+enum OwnershipType {
+  PUBLIC
+  PRIVATE
+  OPEN
+  MIXED
+  INTERNATIONAL
+  OTHER
+}
+
+enum OrgUnitStatus {
+  ACTIVE
+  INACTIVE
+  DISSOLVED
+}
+
+// The statutory staff categories of Law 21/2023 Arts. 2 & 50 (and their
+// university peers) — never collapsed into one "staff" bucket.
+enum StaffCategory {
+  ACADEMIC_STAFF // عضو هيئة التدريس
+  TEACHING_ASSISTANT // معيد
+  TRAINER // مدرب
+  ASSISTANT_TRAINER // مساعد مدرب
+  TEACHER // معلم
+  TECHNICAL_GUIDE // موجه فني
+  ADMINISTRATIVE_STAFF // موظف
+  TECHNICIAN // فني
+  PROFESSIONAL // مهني
+  OTHER
+}
+
+enum StaffStatus {
+  ACTIVE
+  ON_LEAVE
+  SUSPENDED
+  ENDED
+}
+
+// Law 21/2023 Art. 2: الطالب (formal learner) ≠ المتدرب (course trainee).
+enum LearnerCategory {
+  STUDENT
+  TRAINEE
+}
+
+enum PositionCategory {
+  UNIVERSITY_LEADERSHIP
+  FACULTY_LEADERSHIP
+  DEPARTMENT_LEADERSHIP
+  INSTITUTE_LEADERSHIP
+  CENTER_LEADERSHIP
+  ADMINISTRATIVE_LEADERSHIP
+  TRAINING_LEADERSHIP
+  BOARD_OFFICE
+  OTHER
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  ACTIVE
+  ENDED
+  CANCELLED
+}
+
+enum CouncilType {
+  UNIVERSITY_COUNCIL // مجلس الجامعة
+  FACULTY_COUNCIL // مجلس الكلية
+  DEPARTMENT_COUNCIL // الملتقى العلمي للقسم
+  SCIENTIFIC_COUNCIL // المجلس العلمي (كلية/معهد تقني)
+  INSTITUTE_COUNCIL // مجلس المعهد
+  DISCIPLINARY_COUNCIL // مجلس التأديب (لوائح المعاهد)
+  STANDING_COMMITTEE
+  OTHER
+}
+
+enum CouncilRole {
+  CHAIR
+  DEPUTY_CHAIR
+  SECRETARY
+  MEMBER
+  OBSERVER
+}
+
+enum CouncilMembershipStatus {
+  ACTIVE
+  ENDED
+  CANCELLED
+}
+
+// r352 hardening (§7.2) — a council is an ORGAN, not a member: it gets
+// its own lifecycle instead of reusing CouncilMembershipStatus.
+enum CouncilStatus {
+  ACTIVE
+  DISSOLVED // حُلّ المجلس
+  CANCELLED
+}
+
+// r352 hardening (§7.3) — attendance policy made explicit: members of
+// the council AND documented guests (participant distinction modeled,
+// not assumed).
+enum MeetingAttendeeKind {
+  MEMBER
+  GUEST
+}
+
+// r352 hardening (§5) — the generalized learner lifecycle.
+enum LearnerStatus {
+  ACTIVE
+  SUSPENDED
+  GRADUATED
+  WITHDRAWN
+  TRANSFERRED
+}
+
+// r352 hardening (§8) — controlled vocabulary for criterion-level
+// self-assessment results.
+enum SelfAssessmentRating {
+  COMPLIANT
+  PARTIALLY_COMPLIANT
+  NON_COMPLIANT
+  NOT_ASSESSED
+  NOT_APPLICABLE
+}
+
+enum MeetingStatus {
+  SCHEDULED
+  HELD
+  CANCELLED
+}
+
+enum AttendanceOutcome {
+  PRESENT
+  ABSENT
+  EXCUSED
+  LATE
+}
+
+enum AgendaItemStatus {
+  OPEN
+  DISCUSSED
+  DEFERRED
+  CLOSED
+}
+
+enum ResolutionKind {
+  RESOLUTION
+  RECOMMENDATION
+  FOLLOW_UP_ACTION
+}
+
+enum ResolutionStatus {
+  DRAFT
+  APPROVED
+  REJECTED
+  IMPLEMENTED
+  ARCHIVED
+}
+
+enum MinutesStatus {
+  DRAFT
+  APPROVED
+  SIGNED
+}
+
+enum ProgramKind {
+  ACADEMIC
+  TECHNICAL
+  PROFESSIONAL
+  VOCATIONAL_TRAINING // المسار المحدود — Law 21/2023 Art. 38
+  BASIC_FORMATION // المسار المفتوح — Law 21/2023 Art. 38
+}
+
+enum ProgramStatus {
+  DRAFT
+  APPROVED
+  ACTIVE
+  SUSPENDED
+  CLOSED
+}
+
+enum ProgramVersionStatus {
+  DRAFT
+  APPROVED
+  ACTIVE
+  RETIRED
+}
+
+enum ProgramCourseKind {
+  CORE
+  ELECTIVE
+  PRACTICUM
+  CAPSTONE
+  SUPPORTING
+}
+
+enum ProgramEnrollmentStatus {
+  CANDIDATE
+  ACTIVE
+  ON_LEAVE
+  WITHDRAWN
+  SUSPENDED
+  COMPLETED
+  GRADUATED
+}
+
+enum PlacementStatus {
+  PLANNED
+  ACTIVE
+  COMPLETED
+  CANCELLED
+  TERMINATED
+}
+
+enum AwardedCredentialStatus {
+  AWARDED
+  REVOKED
+  SUSPENDED
+}
+
+enum ExternalScopeType {
+  INSTITUTION
+  ORGANIZATIONAL_UNIT
+  PROGRAM
+}
+
+enum AccreditationType {
+  INSTITUTIONAL
+  PROGRAM
+}
+
+enum AccreditationStatus {
+  PENDING
+  IN_REVIEW
+  GRANTED
+  CONDITIONAL
+  RENEWED
+  SUSPENDED
+  REVOKED
+  EXPIRED
+  WITHDRAWN
+}
+
+enum LicenseKind {
+  TECHNICAL_LICENSE // الترخيص الفني
+  OPERATING_PERMIT // إذن المزاولة
+  ESTABLISHMENT_DECISION // قرار الإنشاء
+  OTHER
+}
+
+enum LicenseStatus {
+  PENDING
+  ACTIVE
+  RENEWED
+  SUSPENDED
+  REVOKED
+  EXPIRED
+}
+
+enum InspectionKind {
+  MINISTRY
+  REGULATOR
+  SAFETY
+  TECHNICAL
+  OTHER
+}
+
+enum InspectionStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum FindingSeverity {
+  MINOR
+  MAJOR
+  CRITICAL
+}
+
+enum FindingStatus {
+  OPEN
+  ACKNOWLEDGED
+  IN_REMEDIATION
+  RESOLVED
+  DISPUTED
+  CLOSED
+}
+
+enum CorrectiveActionStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  VERIFIED
+  CANCELLED
+}
+
+enum SelfAssessmentStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  ARCHIVED
+}
+
+enum FacilityType {
+  LABORATORY
+  WORKSHOP
+  CLASSROOM
+  PRACTICAL_TRAINING_FACILITY
+  LECTURE_HALL
+  OTHER
+}
+
+enum FacilityStatus {
+  ACTIVE
+  UNDER_MAINTENANCE
+  CLOSED
+  DECOMMISSIONED
+}
+
+enum EquipmentCondition {
+  NEW
+  GOOD
+  FAIR
+  POOR
+  BROKEN
+}
+
+enum EquipmentStatus {
+  IN_SERVICE
+  UNDER_MAINTENANCE
+  OUT_OF_SERVICE
+  DECOMMISSIONED
+  LOST
+}
+
+enum WorkOrderKind {
+  PREVENTIVE
+  CORRECTIVE
+  SAFETY_INSPECTION
+  INSTALLATION
+  OTHER
+}
+
+enum WorkOrderStatus {
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum ReservationStatus {
+  REQUESTED
+  APPROVED
+  REJECTED
+  CANCELLED
+  COMPLETED
+}
+
+enum SafetyRecordKind {
+  INCIDENT
+  INSPECTION
+}
+
+enum ResearchProjectStatus {
+  PROPOSED
+  APPROVED
+  ACTIVE
+  SUSPENDED
+  COMPLETED
+  TERMINATED
+}
+
+enum ResearchOutputType {
+  PUBLICATION
+  PATENT
+  PROTOTYPE
+  APPLIED_PRODUCT
+  TECHNICAL_REPORT
+}
+
+enum ResearchMemberRole {
+  PRINCIPAL_INVESTIGATOR
+  CO_INVESTIGATOR
+  RESEARCHER
+  RESEARCH_ASSISTANT
+  COLLABORATOR
+  TECHNICIAN
+}
+
+// ─── r352 — seeded catalogs ──────────────────────────────────────
+
+// الجهات الرقابية/المشرفة (وزارة التعليم العالي والبحث العلمي، المركز
+// الوطني لضمان الجودة والاعتماد، الأكاديمية الوطنية للتعليم التقني…).
+model RegulatoryAuthority {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  nameAr    String
+  nameEn    String?
+  kind      String   @default("GOVERNMENTAL") // GOVERNMENTAL | NATIONAL_CENTER | ACADEMY | MINISTRY | OTHER
+  notes     String?
+  createdAt DateTime @default(now())
+
+  supervisedInstitutions Institution[]
+  defaultInstitutionTypes InstitutionType[]
+  // r352 — the accreditation/licensing/inspection records issued or
+  // overseen by this authority.
+  criteriaSets         AccreditationCriteriaSet[]
+  externalAccreditations ExternalAccreditation[]
+  operationalLicenses  OperationalLicense[]
+  regulatoryInspections RegulatoryInspection[]
+
+  @@index([kind])
+}
+
+// كatalog أنواع المؤسسات القانونية (seeded — LEGAL-MATRIX §A).
+model InstitutionType {
+  id                           String   @id @default(cuid())
+  code                         String   @unique
+  sector                       InstitutionSector
+  nameAr                       String
+  nameEn                       String?
+  isIndependentLegalPersonality Boolean @default(true)
+  legalBasis                   String?
+  defaultAuthorityId           String?
+  defaultAuthority             RegulatoryAuthority? @relation(fields: [defaultAuthorityId], references: [id])
+  notes                        String?
+  createdAt                    DateTime @default(now())
+
+  institutions Institution[]
+
+  @@index([sector])
+}
+
+// ─── r352 — unified organizational hierarchy ─────────────────────
+
+// وحدة تنظيمية عامة داخل مؤسسة واحدة: كلية، قسم علمي، معهد، مركز
+// بحوث، إدارة عامة، مكتب، فرع، وحدة تدريب، مختبر، ورشة… (لا هرمية
+// جامعية مفروضة، لا أب عابر للمؤسسات — يُرفض بقيد قاعدة بيانات).
+model OrganizationalUnit {
+  id             String        @id @default(cuid())
+  institutionId  String
+  institution    Institution   @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  parentId       String?
+  parent         OrganizationalUnit?  @relation("OrgUnitTree", fields: [parentId], references: [id])
+  children       OrganizationalUnit[] @relation("OrgUnitTree")
+  code           String?
+  nameAr         String
+  nameEn         String?
+  type           String // OrgUnitType code (see lib/org-unit-types.ts) — kept a plain string so operators can extend unit types without migrations
+  status         OrgUnitStatus @default(ACTIVE)
+  sortOrder      Int           @default(0)
+  location       String?
+  contactEmail   String?
+  contactPhone   String?
+  establishedAt  DateTime?
+  dissolvedAt    DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  // Legacy mirrors (DECISIONS.md D3 — write-through sync).
+  mirroredFaculty    Faculty?
+  mirroredDepartment Department?
+
+  people           InstitutionalPerson[]
+  appointments     PositionAppointment[]
+  councils         Council[]
+  programs         Program[]
+  unitCapabilityGrants UnitCapabilityGrant[]
+  learnerProfiles  LearnerProfile[]
+  courses          Course[]
+  accreditations   ExternalAccreditation[]
+  licenses         OperationalLicense[]
+  inspections      RegulatoryInspection[]
+  findings         ComplianceFinding[]
+  selfAssessments  InternalSelfAssessment[]
+  facilities       Facility[]
+  equipment        Equipment[]
+  reservations     FacilityReservation[]
+  researchProjects ResearchProject[]
+  hostedPlacements TrainingPlacement[]
+
+  @@unique([institutionId, code])
+  @@index([institutionId, type])
+  @@index([institutionId, parentId])
+  @@index([parentId])
+  @@index([institutionId, nameAr])
+}
+
+// ─── r352 — institutional people ─────────────────────────────────
+
+// شخص مؤسسي: قد يملك حساب منصة (userId) أو يُسجَّل مؤسسيًا بلا حساب.
+// الفئة القانونية (عضو هيئة تدريس/معيد/مدرب/…) مستقلة عن الرتبة
+// العلمية وعن دور الوصول.
+model InstitutionalPerson {
+  id               String        @id @default(cuid())
+  institutionId    String
+  institution      Institution   @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  userId           String?
+  user             User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  staffNumber      String?
+  fullNameAr       String
+  fullNameEn       String?
+  category         StaffCategory
+  primaryOrgUnitId String?
+  primaryOrgUnit   OrganizationalUnit? @relation(fields: [primaryOrgUnitId], references: [id])
+  staffStatus      StaffStatus   @default(ACTIVE)
+  hiredAt          DateTime?
+  endedAt          DateTime?
+  email            String?
+  phone            String?
+  notes            String?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  teacherProfile        TeacherProfile?
+  appointments          PositionAppointment[]
+  councilMemberships    CouncilMembership[]
+  meetingAttendance     MeetingAttendance[]
+  resolutionsOwned      CouncilResolution[]
+  correctiveActionsOwned CorrectiveActionPlan[]
+  placementsSupervised  TrainingPlacement[]
+  equipmentResponsible  Equipment[]
+  workOrdersAssigned    MaintenanceWorkOrder[]
+  researchProjectsLed   ResearchProject[]
+  researchProjectMemberships ResearchProjectMember[]
+  researchOutputs       ResearchOutput[]
+  assessedSelfAssessmentItems SelfAssessmentItem[] @relation("SelfAssessmentAssessor")
+
+  @@unique([institutionId, userId])
+  @@unique([institutionId, staffNumber])
+  @@index([institutionId, category])
+  @@index([primaryOrgUnitId])
+  @@index([userId])
+}
+
+// ─── r352 — positions & appointments ─────────────────────────────
+
+// فهرس المسميات القيادية (عالمي + متغيرات محلية لكل مؤسسة) مع أهلية
+// نوع المؤسسة وشرط نوع الوحدة التنظيمية — المسمى ليس دور وصول.
+model PositionTemplate {
+  id                            String    @id @default(cuid())
+  code                          String    @unique
+  titleAr                       String
+  titleEn                       String?
+  category                      PositionCategory
+  scopeRequirement              String? // DEPRECATED single-type belt — superseded by allowedUnitTypes (kept for compat)
+  allowedUnitTypes              String[]  @default([]) // r352 hardening §10.3 — empty = any unit type; e.g. TECHNICAL_COLLEGE_DEAN → [COLLEGE, FACULTY]
+  eligibleInstitutionTypeCodes  String[]  @default([]) // empty = all kinds
+  isLocalVariant                Boolean   @default(false)
+  institutionId                 String?
+  institution                   Institution? @relation(fields: [institutionId], references: [id])
+  notes                         String?
+  createdAt                     DateTime  @default(now())
+  updatedAt                     DateTime  @updatedAt
+
+  appointments PositionAppointment[]
+
+  @@index([category])
+  @@index([institutionId])
+}
+
+// تعيين قيادي بتاريخه الكامل: قرار، مدة، تكليف بالنيابة، إحلال.
+// لا يغيّر الرتبة العلمية ولا دور الوصول أبدًا (قرار معماري).
+model PositionAppointment {
+  id                    String            @id @default(cuid())
+  institutionId         String
+  institution           Institution       @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  personId              String
+  person                InstitutionalPerson @relation(fields: [personId], references: [id], onDelete: Cascade)
+  positionId            String
+  position              PositionTemplate  @relation(fields: [positionId], references: [id])
+  orgUnitId             String?
+  orgUnit               OrganizationalUnit? @relation(fields: [orgUnitId], references: [id])
+  appointedByAuthority  String?
+  decisionNumber        String?
+  decisionDate          DateTime?
+  startDate             DateTime
+  endDate               DateTime?
+  termMonths            Int?
+  status                AppointmentStatus @default(ACTIVE)
+  acting                Boolean           @default(false)
+  supersededById        String?
+  supersededBy          PositionAppointment? @relation("AppointmentSupersession", fields: [supersededById], references: [id])
+  supersedes            PositionAppointment[] @relation("AppointmentSupersession")
+  notes                 String?
+  createdById           String? // audit provenance (AiTelemetry precedent — no FK)
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+
+  @@index([institutionId, status])
+  @@index([personId])
+  @@index([positionId, orgUnitId, status])
+  @@index([orgUnitId])
+}
+
+// ─── r352 hardening — unit-scoped CAPABILITY grants (§3.2) ──────
+
+// منحة قدرة واحدة بنطاق وحدة تنظيمية (أو المؤسسة كلها). التصميم
+// الجديد (بديل UnitRoleGrant الملغاة): كل صف يمنح قدرة واحدة
+// صريحة — لا تكوين حزمة دور كاملة أبدًا. المنحة بنطاق وحدة تسري
+// على الوحدة وكل فروعها فقط، ولا تفوّض أي عملية على مستوى
+// المؤسسة ككل. العضوية تبقى مصدر دور الجلسة الوحيد، وOWNER
+// هوية منصية لا تُمنح هنا أبدًا (القدرة عمود Capability لا Role).
+// الإلغاء الفوري: كل فحص صلاحية يستعلم الصفوف مباشرة بلا كاش.
+model UnitCapabilityGrant {
+  id            String              @id @default(cuid())
+  userId        String
+  user          User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  institutionId String
+  institution   Institution         @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  orgUnitId     String?
+  orgUnit       OrganizationalUnit? @relation(fields: [orgUnitId], references: [id])
+  capability    Capability
+  isActive      Boolean             @default(true)
+  grantedById   String? // audit provenance (no FK)
+  reason        String?
+  revokedAt     DateTime?
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  @@unique([userId, institutionId, orgUnitId, capability])
+  @@index([institutionId, orgUnitId])
+  @@index([userId, isActive])
+  @@index([capability])
+}
+
+// ─── r352 hardening — the generalized learner (§5) ─────────────
+
+// ملف متعلم معمم: طالب جامعي أو متدرب — بلا كلية/قسم إجباري.
+// مركز التكوين المهني أو المعهد المتوسط يسجّل متدربيه هنا مباشرة.
+// الحساب (userId) اختياري — يُحفظ السجل مؤسسيًا لمن لا حساب له.
+// الجسر: StudentProfile.learnerProfileId (خريطة 1:1 غير إتلافية).
+model LearnerProfile {
+  id            String        @id @default(cuid())
+  institutionId String
+  institution   Institution   @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  userId        String?
+  user          User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  category      LearnerCategory // STUDENT (طالب) | TRAINEE (متدرب) — Law 21/2023 Art. 2
+  learnerNumber String // رقم التسجيل — متفرّد لكل مؤسسة
+  fullNameAr    String
+  fullNameEn    String?
+  gender        String?
+  birthDate     DateTime?
+  nationality   String?
+  nationalId    String?
+  email         String?
+  phone         String?
+  address       String?
+  orgUnitId     String? // البيت التنظيمي الاختياري (وحدة/قسم/ورشة)
+  orgUnit       OrganizationalUnit? @relation(fields: [orgUnitId], references: [id])
+  status        LearnerStatus @default(ACTIVE)
+  enrolledAt    DateTime      @default(now())
+  notes         String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  studentProfile      StudentProfile? // الجسر العكسي (1:1)
+  programEnrollments  ProgramEnrollment[]
+  trainingPlacements  TrainingPlacement[]
+  awardedCredentials  AwardedCredential[]
+
+  @@unique([institutionId, learnerNumber])
+  @@unique([institutionId, userId]) // at most one learner row per account per institution
+  @@index([institutionId, category, status])
+  @@index([orgUnitId])
+  @@index([userId])
+}
+
+// ─── r352 — councils & committees ─────────────────────────────────
+
+model Council {
+  id            String         @id @default(cuid())
+  institutionId String
+  institution   Institution    @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  orgUnitId     String?
+  orgUnit       OrganizationalUnit? @relation(fields: [orgUnitId], references: [id])
+  code          String?
+  nameAr        String
+  nameEn        String?
+  type          CouncilType
+  legalBasis    String?
+  charterRef    String?
+  establishedAt DateTime?
+  dissolvedAt   DateTime?
+  status        CouncilStatus         @default(ACTIVE) // r352 hardening §7.2 — own lifecycle (ACTIVE | DISSOLVED | CANCELLED)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  memberships CouncilMembership[]
+  meetings    CouncilMeeting[]
+  documents   CouncilDocument[]
+
+  @@unique([institutionId, code])
+  @@index([institutionId, type])
+  @@index([orgUnitId])
+}
+
+model CouncilMembership {
+  id          String                  @id @default(cuid())
+  councilId   String
+  council     Council                 @relation(fields: [councilId], references: [id], onDelete: Cascade)
+  personId    String
+  person      InstitutionalPerson     @relation(fields: [personId], references: [id], onDelete: Cascade)
+  role        CouncilRole
+  startDate   DateTime                @default(now())
+  endDate     DateTime?
+  decisionRef String?
+  status      CouncilMembershipStatus @default(ACTIVE)
+  createdAt   DateTime                @default(now())
+  updatedAt   DateTime                @updatedAt
+
+  @@index([councilId, status])
+  @@index([personId])
+}
+
+model CouncilMeeting {
+  id            String        @id @default(cuid())
+  councilId     String
+  council       Council       @relation(fields: [councilId], references: [id], onDelete: Cascade)
+  seqNumber     Int?
+  scheduledAt   DateTime
+  location      String?
+  status        MeetingStatus @default(SCHEDULED)
+  agendaSummary String?
+  notes         String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  attendance MeetingAttendance[]
+  agendaItems MeetingAgendaItem[]
+  resolutions CouncilResolution[]
+  minutes    MeetingMinutes[] // r352 hardening §7.1 — versioned history (one row per revision)
+  documents  CouncilDocument[]
+
+  @@unique([councilId, seqNumber])
+  @@index([councilId, scheduledAt])
+}
+
+model MeetingAttendance {
+  id            String              @id @default(cuid())
+  meetingId     String
+  meeting       CouncilMeeting      @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  personId      String
+  person        InstitutionalPerson @relation(fields: [personId], references: [id], onDelete: Cascade)
+  // r352 hardening §7.3 — the guest/participant distinction is explicit:
+  // MEMBER rows must map to ACTIVE council memberships (route-verified);
+  // GUEST rows are documented external participants of the same
+  // institution (person-institution integrity still applies).
+  attendeeKind  MeetingAttendeeKind @default(MEMBER)
+  status        AttendanceOutcome
+  recordedById  String? // audit provenance (no FK)
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  @@unique([meetingId, personId])
+  @@index([personId])
+}
+
+model MeetingAgendaItem {
+  id          String          @id @default(cuid())
+  meetingId   String
+  meeting     CouncilMeeting  @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  orderNo     Int
+  titleAr     String
+  description String?
+  status      AgendaItemStatus @default(OPEN)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  resolutions CouncilResolution[]
+
+  @@unique([meetingId, orderNo])
+}
+
+model CouncilResolution {
+  id             String             @id @default(cuid())
+  meetingId      String
+  meeting        CouncilMeeting     @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  agendaItemId   String?
+  agendaItem     MeetingAgendaItem? @relation(fields: [agendaItemId], references: [id])
+  number         String?
+  kind           ResolutionKind
+  textAr         String             @db.Text
+  status         ResolutionStatus   @default(DRAFT)
+  approvedAt     DateTime?
+  dueDate        DateTime?
+  ownerPersonId  String?
+  ownerPerson    InstitutionalPerson? @relation(fields: [ownerPersonId], references: [id], onDelete: SetNull)
+  completionRef  String?
+  completedAt    DateTime?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+
+  @@index([meetingId])
+  @@index([status, dueDate])
+  @@index([ownerPersonId])
+}
+
+// r352 hardening §7.1 — REAL revision history: one row per version.
+// The meetingId-only unique is GONE (a meeting has many versions);
+// isCurrent marks the single live revision (partial unique index in
+// the migration) and SIGNED/APPROVED versions are immutable (route +
+// trigger belt). Re-drafting creates versionNo + 1 and preserves every
+// prior approval and its signatories.
+model MeetingMinutes {
+  id                   String              @id @default(cuid())
+  meetingId            String
+  meeting              CouncilMeeting      @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  versionNo            Int                 @default(1)
+  isCurrent            Boolean             @default(true)
+  contentAr            String              @db.Text
+  status               MinutesStatus       @default(DRAFT)
+  approvedAt           DateTime?
+  approvedByPersonId   String? // provenance (no FK)
+  signedAt             DateTime?
+  signedByPersonId     String? // provenance (no FK)
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+
+  @@unique([meetingId, versionNo])
+  @@index([meetingId, isCurrent])
+}
+
+model CouncilDocument {
+  id           String         @id @default(cuid())
+  councilId    String
+  council      Council        @relation(fields: [councilId], references: [id], onDelete: Cascade)
+  meetingId    String?
+  meeting      CouncilMeeting? @relation(fields: [meetingId], references: [id])
+  titleAr      String
+  // r352 hardening §9 — REAL storage integration: the bytes live in the
+  // platform BinaryObject store under the governance namespace; the
+  // legacy free-text fileUrl is retained ONLY as a deprecated external
+  // reference (never trusted as an upload) and is ignored when a
+  // binaryObject is attached.
+  binaryObjectId String?
+  binaryObject   BinaryObject?  @relation(fields: [binaryObjectId], references: [key])
+  fileUrl      String?
+  kind         String?
+  notes        String?
+  uploadedById String? // provenance (no FK)
+  createdAt    DateTime       @default(now())
+
+  @@index([councilId])
+  @@index([meetingId])
+  @@index([binaryObjectId])
+}
+
+// ─── r352 — academic terms & programs ────────────────────────────
+
+model AcademicTerm {
+  id            String      @id @default(cuid())
+  institutionId String
+  institution   Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  code          String // e.g. "2026-FALL"
+  startsAt      DateTime
+  endsAt        DateTime?
+  isCurrent     Boolean     @default(false)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([institutionId, code])
+}
+
+model Program {
+  id                     String          @id @default(cuid())
+  institutionId          String
+  institution            Institution     @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  orgUnitId              String?
+  orgUnit                OrganizationalUnit? @relation(fields: [orgUnitId], references: [id])
+  code                   String
+  nameAr                 String
+  nameEn                 String?
+  kind                   ProgramKind
+  credentialTypeId       String?
+  credentialType         CredentialType? @relation(fields: [credentialTypeId], references: [id])
+  status                 ProgramStatus   @default(DRAFT)
+  approvalRef            String?
+  admissionRequirements  Json?
+  progressionRules       Json?
+  durationMonths         Int?
+  totalCreditHours       Int?
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @updatedAt
+
+  versions           ProgramVersion[]
+  enrollments        ProgramEnrollment[]
+  awardedCredentials AwardedCredential[]
+  equipmentLinks     EquipmentProgramSupport[]
+  accreditations     ExternalAccreditation[]
+  licenses           OperationalLicense[]
+  findings           ComplianceFinding[]
+  selfAssessments    InternalSelfAssessment[] @relation("SelfAssessmentProgram")
+
+  @@unique([institutionId, code])
+  @@index([institutionId, kind, status])
+  @@index([orgUnitId])
+  @@index([credentialTypeId])
+}
+
+model ProgramVersion {
+  id            String               @id @default(cuid())
+  programId     String
+  program       Program              @relation(fields: [programId], references: [id], onDelete: Cascade)
+  label         String
+  effectiveFrom DateTime?
+  status        ProgramVersionStatus @default(DRAFT)
+  approvedAt    DateTime?
+  approvalRef   String?
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+
+  courses ProgramCourse[]
+  enrollments ProgramEnrollment[]
+
+  @@unique([programId, label])
+  @@index([status])
+}
+
+model ProgramCourse {
+  id               String          @id @default(cuid())
+  programVersionId String
+  programVersion   ProgramVersion  @relation(fields: [programVersionId], references: [id], onDelete: Cascade)
+  courseId         String
+  course           Course          @relation(fields: [courseId], references: [id])
+  termNo           Int?
+  kind             ProgramCourseKind @default(CORE)
+  creditHours      Int?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  @@unique([programVersionId, courseId])
+  @@index([courseId])
+}
+
+model ProgramEnrollment {
+  id                    String                 @id @default(cuid())
+  // r352 hardening §5 — the generalized learner is the canonical target;
+  // the legacy studentProfile link stays as an optional bridge for
+  // pre-hardening rows and the legacy API surface.
+  learnerProfileId      String
+  learnerProfile        LearnerProfile         @relation(fields: [learnerProfileId], references: [id], onDelete: Cascade)
+  studentProfileId      String?
+  studentProfile        StudentProfile?        @relation(fields: [studentProfileId], references: [id], onDelete: Cascade)
+  programId             String
+  program               Program                @relation(fields: [programId], references: [id], onDelete: Cascade)
+  programVersionId      String?
+  programVersion        ProgramVersion?        @relation(fields: [programVersionId], references: [id])
+  status                ProgramEnrollmentStatus @default(CANDIDATE)
+  entryDate             DateTime               @default(now())
+  expectedCompletionAt  DateTime?
+  completionAt          DateTime?
+  gpa                   Decimal?               @db.Decimal(3, 2)
+  notes                 String?
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+
+  placements TrainingPlacement[]
+  credentials AwardedCredential[]
+
+  @@unique([learnerProfileId, programId])
+  @@index([programId, status])
+  @@index([learnerProfileId])
+  @@index([studentProfileId])
+}
+
+model TrainingPlacement {
+  id                  String                @id @default(cuid())
+  institutionId       String
+  institution         Institution           @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  programEnrollmentId String?
+  programEnrollment   ProgramEnrollment?    @relation(fields: [programEnrollmentId], references: [id])
+  learnerProfileId    String
+  learnerProfile      LearnerProfile        @relation(fields: [learnerProfileId], references: [id], onDelete: Cascade)
+  studentProfileId    String?
+  studentProfile      StudentProfile?       @relation(fields: [studentProfileId], references: [id], onDelete: Cascade)
+  hostOrgUnitId       String?
+  hostOrgUnit         OrganizationalUnit?   @relation(fields: [hostOrgUnitId], references: [id])
+  externalHost        String?
+  supervisorPersonId  String?
+  supervisorPerson    InstitutionalPerson?  @relation(fields: [supervisorPersonId], references: [id], onDelete: SetNull)
+  startsAt            DateTime
+  endsAt              DateTime?
+  status              PlacementStatus       @default(PLANNED)
+  evaluationSummary   String?
+  evaluationScore     Decimal?              @db.Decimal(4, 1)
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+
+  @@index([institutionId, status])
+  @@index([learnerProfileId])
+  @@index([studentProfileId])
+  @@index([programEnrollmentId])
+}
+
+// ─── r352 — statutory credentials (Law 21/2023 Art. 5) ──────────
+
+model CredentialType {
+  id                String   @id @default(cuid())
+  code              String   @unique
+  nameAr            String
+  nameEn            String?
+  level             Int // display ordering ONLY — progression is decided by the explicit rule catalog below
+  grantsProgression Boolean  @default(false) // DEPRECATED as a decision input (kept for display); the rule table is the law
+  legalBasis        String?
+  notes             String?
+  createdAt         DateTime @default(now())
+
+  programs Program[]
+  awarded  AwardedCredential[]
+  progressionFrom CredentialProgressionRule[] @relation("FromCredential")
+  progressionTo   CredentialProgressionRule[] @relation("ToCredential")
+
+  @@index([level])
+}
+
+// r352 hardening §12 — قواعد الترقّي الصريحة (Law 21/2023): مصفوفة
+// انتقالات قانونية موثّقة بدل استنباط رقمي من level. لا انتقال
+// إلا بصف قاعدة نشط يربط المؤهل المصدر بالوجهة (مع قيود نوع
+// المؤسسة/البرنامج إن لزم) ومرجعه القانوني.
+model CredentialProgressionRule {
+  id                     String          @id @default(cuid())
+  fromCredentialTypeId   String
+  fromCredentialType     CredentialType  @relation("FromCredential", fields: [fromCredentialTypeId], references: [id], onDelete: Cascade)
+  toCredentialTypeId     String
+  toCredentialType       CredentialType  @relation("ToCredential", fields: [toCredentialTypeId], references: [id], onDelete: Cascade)
+  toInstitutionTypeCodes String[]        @default([]) // empty = any destination kind
+  toProgramKinds         String[]        @default([]) // empty = any destination program kind (ProgramKind codes)
+  admissionConditions    String?         @db.Text // documented extra admission conditions
+  legalReference         String?
+  isActive              Boolean         @default(true)
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @updatedAt
+
+  @@unique([fromCredentialTypeId, toCredentialTypeId])
+  @@index([fromCredentialTypeId, isActive])
+  @@index([toCredentialTypeId])
+}
+
+model AwardedCredential {
+  id                  String                  @id @default(cuid())
+  institutionId       String
+  institution         Institution             @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  learnerProfileId    String
+  learnerProfile      LearnerProfile          @relation(fields: [learnerProfileId], references: [id], onDelete: Cascade)
+  studentProfileId    String?
+  studentProfile      StudentProfile?         @relation(fields: [studentProfileId], references: [id], onDelete: Cascade)
+  credentialTypeId    String
+  credentialType      CredentialType          @relation(fields: [credentialTypeId], references: [id])
+  programId           String?
+  program             Program?                @relation(fields: [programId], references: [id])
+  programEnrollmentId String?
+  programEnrollment   ProgramEnrollment?      @relation(fields: [programEnrollmentId], references: [id])
+  decisionNumber      String?
+  decisionDate        DateTime?
+  conferredAt         DateTime?
+  serialNumber        String?
+  status              AwardedCredentialStatus @default(AWARDED)
+  notes               String?
+  createdById         String? // provenance (no FK)
+  createdAt           DateTime                @default(now())
+  updatedAt           DateTime                @updatedAt
+
+  @@unique([institutionId, serialNumber])
+  @@index([learnerProfileId])
+  @@index([studentProfileId])
+  @@index([institutionId, credentialTypeId])
+}
+
+// ─── r352 — quality, accreditation, licensing, inspection ────────
+
+model AccreditationCriteriaSet {
+  id            String             @id @default(cuid())
+  code          String
+  version       String
+  nameAr        String
+  nameEn        String?
+  authorityId   String
+  authority     RegulatoryAuthority @relation(fields: [authorityId], references: [id])
+  appliesTo     AccreditationType
+  publishedRef  String?
+  isActive      Boolean            @default(true)
+  notes         String?
+  createdAt     DateTime           @default(now())
+
+  items          AccreditationCriteriaItem[]
+  accreditations ExternalAccreditation[]
+  selfAssessments InternalSelfAssessment[]
+
+  @@unique([code, version])
+}
+
+model AccreditationCriteriaItem {
+  id            String                  @id @default(cuid())
+  criteriaSetId String
+  criteriaSet   AccreditationCriteriaSet @relation(fields: [criteriaSetId], references: [id], onDelete: Cascade)
+  code          String
+  titleAr       String
+  description   String?
+  sortOrder     Int                     @default(0)
+
+  equipmentLinks EquipmentProgramSupport[]
+  selfAssessmentItems SelfAssessmentItem[]
+
+  @@unique([criteriaSetId, code])
+}
+
+model ExternalAccreditation {
+  id                    String               @id @default(cuid())
+  institutionId         String
+  institution           Institution          @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  scopeType             ExternalScopeType    @default(INSTITUTION)
+  orgUnitId             String?
+  orgUnit               OrganizationalUnit?  @relation(fields: [orgUnitId], references: [id])
+  programId             String?
+  program               Program?             @relation(fields: [programId], references: [id])
+  authorityId           String
+  authority             RegulatoryAuthority  @relation(fields: [authorityId], references: [id])
+  type                  AccreditationType
+  decisionNumber        String?
+  decisionDate          DateTime?
+  effectiveFrom         DateTime?
+  effectiveTo           DateTime?
+  status                AccreditationStatus  @default(PENDING)
+  criteriaSetId         String?
+  criteriaSet           AccreditationCriteriaSet? @relation(fields: [criteriaSetId], references: [id])
+  reportRef             String?
+  notes                 String?
+  createdById           String? // provenance (no FK)
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
+
+  findings ComplianceFinding[]
+
+  @@index([institutionId, status])
+  @@index([authorityId])
+  @@index([programId])
+  @@index([orgUnitId])
+}
+
+model OperationalLicense {
+  id             String              @id @default(cuid())
+  institutionId  String
+  institution    Institution         @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  authorityId    String
+  authority      RegulatoryAuthority @relation(fields: [authorityId], references: [id])
+  kind           LicenseKind
+  licenseNumber  String?
+  scopeType      ExternalScopeType?
+  orgUnitId      String?
+  orgUnit        OrganizationalUnit? @relation(fields: [orgUnitId], references: [id])
+  programId      String?
+  program        Program?            @relation(fields: [programId], references: [id])
+  issuedAt       DateTime?
+  expiresAt      DateTime?
+  status         LicenseStatus       @default(PENDING)
+  conditions     String?
+  documentRef    String?
+  notes          String?
+  createdById    String? // provenance (no FK)
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  @@index([institutionId, status])
+  @@index([authorityId])
+  @@index([programId])
+}
+
+model RegulatoryInspection {
+  id            String              @id @default(cuid())
+  institutionId String
+  institution   Institution         @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  orgUnitId     String?
+  orgUnit       OrganizationalUnit? @relation(fields: [orgUnitId], references: [id])
+  authorityId   String
+  authority     RegulatoryAuthority @relation(fields: [authorityId], references: [id])
+  kind          InspectionKind
+  scheduledAt   DateTime?
+  conductedAt   DateTime?
+  status        InspectionStatus    @default(SCHEDULED)
+  summary       String?
+  reportRef     String?
+  createdById   String? // provenance (no FK)
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  findings ComplianceFinding[]
+
+  @@index([institutionId, status])
+  @@index([authorityId])
+}
+
+model ComplianceFinding {
+  id                     String               @id @default(cuid())
+  institutionId          String
+  institution            Institution          @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  inspectionId           String?
+  inspection             RegulatoryInspection? @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+  externalAccreditationId String?
+  externalAccreditation  ExternalAccreditation? @relation(fields: [externalAccreditationId], references: [id])
+  orgUnitId              String?
+  orgUnit                OrganizationalUnit?  @relation(fields: [orgUnitId], references: [id])
+  programId              String?
+  program                Program?             @relation(fields: [programId], references: [id])
+  severity               FindingSeverity
+  titleAr                String
+  description            String?              @db.Text
+  legalReference         String?
+  status                 FindingStatus        @default(OPEN)
+  dueDate                DateTime?
+  resolvedAt             DateTime?
+  closedAt               DateTime?
+  createdById            String? // provenance (no FK)
+  createdAt              DateTime              @default(now())
+  updatedAt              DateTime              @updatedAt
+
+  correctiveActions CorrectiveActionPlan[]
+
+  @@index([institutionId, status])
+  @@index([severity])
+  @@index([dueDate])
+}
+
+model CorrectiveActionPlan {
+  id               String                @id @default(cuid())
+  findingId        String
+  finding          ComplianceFinding     @relation(fields: [findingId], references: [id], onDelete: Cascade)
+  // r352 hardening §8 — a plan may originate from a criterion-level
+  // self-assessment issue instead of an external finding.
+  selfAssessmentItemId String?
+  selfAssessmentItem    SelfAssessmentItem? @relation(fields: [selfAssessmentItemId], references: [id], onDelete: SetNull)
+  ownerPersonId    String?
+  ownerPerson      InstitutionalPerson?  @relation(fields: [ownerPersonId], references: [id], onDelete: SetNull)
+  planText         String                @db.Text
+  targetDate       DateTime?
+  status           CorrectiveActionStatus @default(PLANNED)
+  approvedById     String? // provenance (no FK)
+  completedAt      DateTime?
+  verificationRef  String?
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
+
+  @@index([findingId])
+  @@index([selfAssessmentItemId])
+  @@index([status, targetDate])
+}
+
+// سير العمل الداخلي لمكتب ضمان الجودة بالمؤسسة — ليس المركز الوطني
+// (الاعتماد الخارجي نموذج مستقل أعلاه). الكتابة تتطلب قدرة
+// QUALITY_INTERNAL_MANAGE الصريحة (لا تُمنح افتراضيًا لأحد).
+model InternalSelfAssessment {
+  id            String                  @id @default(cuid())
+  institutionId String
+  institution   Institution             @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  orgUnitId     String?
+  orgUnit       OrganizationalUnit?     @relation(fields: [orgUnitId], references: [id])
+  programId     String?
+  program       Program?                @relation("SelfAssessmentProgram", fields: [programId], references: [id])
+  periodLabel   String
+  criteriaSetId String?
+  criteriaSet   AccreditationCriteriaSet? @relation(fields: [criteriaSetId], references: [id])
+  status        SelfAssessmentStatus    @default(DRAFT)
+  submittedAt   DateTime?
+  approvedAt    DateTime?
+  summary       String?                 @db.Text
+  createdById   String? // provenance (no FK)
+  createdAt     DateTime                @default(now())
+  updatedAt     DateTime                @updatedAt
+
+  // r352 hardening §8 — criterion-level responses.
+  items         SelfAssessmentItem[]
+
+  @@index([institutionId, status])
+  @@index([orgUnitId])
+  @@index([programId])
+}
+
+// r352 hardening §8 — استجابة معيار واحد داخل تقييم ذاتي: مرتبطة
+// ببند حقيقي من نسخة معايير محددة، بمفردات نتيجة مضبوطة، مع
+// تعليقات ومراجع أدلة ومنشأ المقيّم، وربط اختياري بخطة تصحيح.
+model SelfAssessmentItem {
+  id                String                  @id @default(cuid())
+  assessmentId      String
+  assessment        InternalSelfAssessment  @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  criteriaItemId    String
+  criteriaItem      AccreditationCriteriaItem @relation(fields: [criteriaItemId], references: [id])
+  rating            SelfAssessmentRating?
+  responseAr        String?                 @db.Text
+  evidenceRefs      String?
+  findingsAr        String?                 @db.Text
+  assessorPersonId  String?
+  assessorPerson    InstitutionalPerson?    @relation("SelfAssessmentAssessor", fields: [assessorPersonId], references: [id], onDelete: SetNull)
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @updatedAt
+
+  correctiveActions CorrectiveActionPlan[]
+
+  @@unique([assessmentId, criteriaItemId])
+  @@index([criteriaItemId])
+  @@index([assessorPersonId])
+}
+
+// دليل/مستند مرفق بأي كيان امتثال. r352 hardening §9: الملفات
+// الحقيقية عبر binaryObjectId (متجر BinaryObject — بلا ثقة بأي
+// URL خارجي)؛ ownerType/ownerId تبقى مرجعًا متعدد الأشكال لكن
+// يُتحقق من الكيان الأصل ومؤسسته في كل عملية (قائمة مغلقة).
+model ComplianceEvidence {
+  id             String      @id @default(cuid())
+  institutionId  String
+  institution    Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  ownerType      String // ExternalAccreditation | CorrectiveActionPlan | InternalSelfAssessment | RegulatoryInspection | OperationalLicense
+  ownerId        String
+  titleAr        String
+  binaryObjectId String?
+  binaryObject   BinaryObject? @relation(fields: [binaryObjectId], references: [key])
+  documentRef    String? // رقم/مرجع مستند ورقي — نص وصفي فقط
+  fileUrl        String? // DEPRECATED — never trusted as an upload; kept for legacy rows only
+  description    String?
+  uploadedById   String? // provenance (no FK)
+  createdAt      DateTime    @default(now())
+
+  @@index([ownerType, ownerId])
+  @@index([institutionId])
+  @@index([binaryObjectId])
+}
+
+// ─── r352 — physical facilities & equipment ──────────────────────
+
+model Facility {
+  id            String         @id @default(cuid())
+  institutionId String
+  institution   Institution    @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  orgUnitId     String?
+  orgUnit       OrganizationalUnit? @relation(fields: [orgUnitId], references: [id])
+  code          String?
+  nameAr        String
+  nameEn        String?
+  type          FacilityType
+  status        FacilityStatus @default(ACTIVE)
+  building      String?
+  room          String?
+  capacity      Int?
+  safetyNotes   String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  equipment    Equipment[]
+  workOrders   MaintenanceWorkOrder[]
+  reservations FacilityReservation[]
+  incidents    SafetyIncident[]
+
+  @@unique([institutionId, code])
+  @@index([institutionId, type, status])
+  @@index([orgUnitId])
+}
+
+model Equipment {
+  id                    String               @id @default(cuid())
+  institutionId         String
+  institution           Institution          @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  facilityId            String?
+  facility              Facility?            @relation(fields: [facilityId], references: [id])
+  orgUnitId             String?
+  orgUnit               OrganizationalUnit?  @relation(fields: [orgUnitId], references: [id])
+  code                  String?
+  nameAr                String
+  nameEn                String?
+  category              String?
+  serialNumber          String?
+  acquiredAt            DateTime?
+  value                 Decimal?             @db.Decimal(12, 2)
+  condition             EquipmentCondition   @default(GOOD)
+  status                EquipmentStatus      @default(IN_SERVICE)
+  responsiblePersonId   String?
+  responsiblePerson     InstitutionalPerson? @relation(fields: [responsiblePersonId], references: [id], onDelete: SetNull)
+  notes                 String?
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
+
+  programLinks EquipmentProgramSupport[]
+  workOrders   MaintenanceWorkOrder[]
+  incidents    SafetyIncident[]
+
+  @@unique([institutionId, code])
+  @@index([facilityId])
+  @@index([institutionId, status])
+  @@index([orgUnitId])
+}
+
+// ربط المعدة بالبرامج/المعايير التي تخدمها (متطلب الاعتماد التقني).
+model EquipmentProgramSupport {
+  id              String                   @id @default(cuid())
+  equipmentId     String
+  equipment       Equipment                @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+  programId       String
+  program         Program                  @relation(fields: [programId], references: [id], onDelete: Cascade)
+  criteriaItemId  String?
+  criteriaItem    AccreditationCriteriaItem? @relation(fields: [criteriaItemId], references: [id])
+  createdAt       DateTime                 @default(now())
+
+  @@unique([equipmentId, programId])
+  @@index([programId])
+  @@index([criteriaItemId])
+}
+
+model MaintenanceWorkOrder {
+  id                 String               @id @default(cuid())
+  institutionId      String
+  institution        Institution          @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  facilityId         String?
+  facility           Facility?            @relation(fields: [facilityId], references: [id])
+  equipmentId        String?
+  equipment          Equipment?           @relation(fields: [equipmentId], references: [id])
+  kind               WorkOrderKind
+  titleAr            String
+  description        String?
+  scheduledDate      DateTime?
+  completedAt        DateTime?
+  status             WorkOrderStatus      @default(OPEN)
+  assignedPersonId   String?
+  assignedPerson     InstitutionalPerson? @relation(fields: [assignedPersonId], references: [id], onDelete: SetNull)
+  cost               Decimal?             @db.Decimal(12, 2)
+  notes              String?
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+
+  @@index([institutionId, status])
+  @@index([equipmentId])
+  @@index([facilityId])
+}
+
+model FacilityReservation {
+  id            String               @id @default(cuid())
+  institutionId String
+  institution   Institution          @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  facilityId    String
+  facility      Facility             @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  orgUnitId     String?
+  orgUnit       OrganizationalUnit?  @relation(fields: [orgUnitId], references: [id])
+  requestedById String? // provenance (no FK)
+  purpose       String
+  startsAt      DateTime
+  endsAt        DateTime
+  status        ReservationStatus     @default(REQUESTED)
+  decidedById   String? // provenance (no FK)
+  decidedAt     DateTime?
+  notes         String?
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+
+  @@index([facilityId, startsAt])
+  @@index([institutionId, status])
+}
+
+model SafetyIncident {
+  id              String             @id @default(cuid())
+  institutionId   String
+  institution     Institution        @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  facilityId      String?
+  facility        Facility?          @relation(fields: [facilityId], references: [id])
+  equipmentId     String?
+  equipment       Equipment?         @relation(fields: [equipmentId], references: [id])
+  kind            SafetyRecordKind
+  severity        FindingSeverity?
+  titleAr         String
+  description     String?            @db.Text
+  occurredAt      DateTime
+  reportedById    String? // provenance (no FK)
+  status          String             @default("OPEN")
+  resolutionNotes String?
+  resolvedAt      DateTime?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  @@index([institutionId, occurredAt])
+  @@index([status])
+}
+
+// ─── r352 — institutional research ───────────────────────────────
+
+// مراكز البحوث وحدات تنظيمية (OrgUnitType=RESEARCH_CENTER) ما لم تُنشأ
+// بشكل مستقل — عندها فقط تصبح مؤسسة. المشاريع هنا مؤسسية، وسير أوراق
+// الطلبة البحثية القائم (ResearchPaper) لا يُمسّ.
+model ResearchProject {
+  id                      String                @id @default(cuid())
+  institutionId           String
+  institution             Institution           @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  orgUnitId               String?
+  orgUnit                 OrganizationalUnit?   @relation(fields: [orgUnitId], references: [id])
+  code                    String?
+  titleAr                 String
+  titleEn                 String?
+  field                   String?
+  principalInvestigatorId String?
+  principalInvestigator   InstitutionalPerson?  @relation(fields: [principalInvestigatorId], references: [id], onDelete: SetNull)
+  startsAt                DateTime?
+  endsAt                  DateTime?
+  status                  ResearchProjectStatus @default(PROPOSED)
+  fundingSource           String?
+  budget                  Decimal?              @db.Decimal(14, 2)
+  ethicsApprovalRef       String?
+  approvalRef             String?
+  notes                   String?
+  createdAt               DateTime              @default(now())
+  updatedAt               DateTime              @updatedAt
+
+  members ResearchProjectMember[]
+  outputs ResearchOutput[]
+
+  @@unique([institutionId, code])
+  @@index([institutionId, status])
+  @@index([orgUnitId])
+}
+
+model ResearchProjectMember {
+  id            String               @id @default(cuid())
+  projectId     String
+  project       ResearchProject      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  personId      String
+  person        InstitutionalPerson  @relation(fields: [personId], references: [id], onDelete: Cascade)
+  role          ResearchMemberRole
+  allocationPct Int?
+  joinedAt      DateTime             @default(now())
+  leftAt        DateTime?
+
+  @@unique([projectId, personId])
+  @@index([personId])
+}
+
+model ResearchOutput {
+  id              String                @id @default(cuid())
+  institutionId   String
+  institution     Institution           @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  projectId       String?
+  project         ResearchProject?      @relation(fields: [projectId], references: [id])
+  personId        String?
+  person          InstitutionalPerson?  @relation(fields: [personId], references: [id], onDelete: SetNull)
+  type            ResearchOutputType
+  title           String
+  referenceUrl    String?
+  doi             String?
+  publishedAt     DateTime?
+  notes           String?
+  researchPaperId String?
+  researchPaper   ResearchPaper?        @relation(fields: [researchPaperId], references: [id], onDelete: SetNull)
+  createdAt       DateTime              @default(now())
+
+  @@index([institutionId, type])
+  @@index([projectId])
+  @@index([personId])
 }

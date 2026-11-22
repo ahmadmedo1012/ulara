@@ -5,6 +5,11 @@ import { prisma } from '../../db.js';
 import { authMiddleware } from '../middleware/auth.js';
 import { requireRole } from '../middleware/requireRole.js';
 import { validate } from '../validate.js';
+// r352 — legacy Faculty/Department write-through (DECISIONS.md D3).
+import {
+  ensureOrgUnitForDepartment,
+  ensureOrgUnitForFaculty,
+} from '../../modules/r352/org-units.service.js';
 import { paginationSchema, buildMeta } from '../../lib/pagination.js';
 import { AppError } from '../../lib/errors.js';
 import { isSanctionedMediaUrl } from '../../lib/sanctioned-url.js';
@@ -894,6 +899,16 @@ router.post(
           // the FE tables that group faculties by institution.
           include: { institution: { select: facultyInstitutionSelect } },
         });
+        // r352 (DECISIONS.md D3) — write-through: every legacy faculty
+        // create lands its mirrored OrganizationalUnit in the SAME
+        // transaction, so the unified tree never drifts.
+        await ensureOrgUnitForFaculty(tx, {
+          id: created.id,
+          institutionId,
+          name: created.name,
+          nameEn: created.nameEn,
+          city: created.city,
+        });
         await tx.auditLog.create({
           data: {
             userId: req.user!.id,
@@ -947,7 +962,7 @@ router.post(
        * cross-institution write. */
       const faculty = await prisma.faculty.findUnique({
         where: { id: data.facultyId },
-        select: { id: true, name: true, institutionId: true },
+        select: { id: true, name: true, city: true, institutionId: true },
       });
       if (!faculty) throw AppError.notFound('الكلية المحددة غير موجودة');
       if (faculty.institutionId !== institutionId) {
@@ -964,6 +979,22 @@ router.post(
           // into the FE department tables keyed by faculty.
           include: { faculty: { select: { id: true, name: true, city: true } } },
         });
+        // r352 (DECISIONS.md D3) — write-through: mirror the department
+        // as a SCIENTIFIC_DEPARTMENT unit under the faculty's unit, in
+        // the SAME transaction.
+        const facultyUnitId = await ensureOrgUnitForFaculty(tx, {
+          id: faculty.id,
+          institutionId,
+          name: faculty.name,
+          nameEn: null,
+          city: faculty.city ?? 'غير محدد',
+        });
+        await ensureOrgUnitForDepartment(
+          tx,
+          { id: created.id, facultyId: faculty.id, name: created.name, nameEn: created.nameEn },
+          facultyUnitId,
+          institutionId,
+        );
         await tx.auditLog.create({
           data: {
             userId: req.user!.id,

@@ -232,7 +232,7 @@ fell through to the local `gap-aware-composer` (7/12 ok, median 9701ms,
 quota (8/day as configured) refused the last 5 turns. The product was
 being carried by the honest local fallback, not an LLM.
 
-**The switch (Vercel API, team tadmora, project ulara):**
+**The switch (Vercel API, the owner's team, project ulara):**
 - `AI_API_KEY` → the owner's Gemini key (byte-verified via the API's
   own read-back, boolean comparison only — never printed).
 - `AI_BASE_URL` → `https://generativelanguage.googleapis.com/v1beta/openai/`

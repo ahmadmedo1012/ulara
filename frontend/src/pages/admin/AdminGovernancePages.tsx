@@ -40,7 +40,7 @@ import {
 import { Icon } from '../../components/Icon';
 // R320 §B (c1-RENAME): the role chips/pickers consume the ONE shared
 // role-label source (lib/roleLabels.ts + backend twin) — ADMIN is
-// «المسجل العام».
+// «إدارة المؤسسة».
 import { ROLE_LABELS as SHARED_ROLE_LABELS, roleLabel as sharedRoleLabel } from '../../lib/roleLabels';
 import { EmojiIcon } from '../../components/EmojiIcon';
 import {
@@ -92,7 +92,7 @@ const RANK_LABEL: Record<string, string> = {
 };
 /** Arabic labels for user roles — raw enums (TEACHER/QUALITY…) never reach the UI.
  * R320 §B: the shared map verbatim (lib/roleLabels.ts) — ADMIN is
- * «المسجل العام»; the person-noun lineage (17-a2 / 15-j P1-8) is
+ * «إدارة المؤسسة» (r352 §D7); the person-noun lineage (17-a2 / 15-j P1-8) is
  * preserved for the other roles. */
 const ROLE_LABEL: Record<string, string> = { ...SHARED_ROLE_LABELS };
 const CAP_LABEL: Record<AppCapability, string> = {
@@ -312,7 +312,7 @@ export function AdminTeachersPage() {
       <PatternsPageHeader
         title="إدارة الأساتذة"
         description="توثيق الملفات الأكاديمية واقتراح المقرّرات الأنسب لكل أستاذ بناء على تخصصه ودرجته العلمية وشهاداته."
-        breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'الأساتذة' }]}
+        breadcrumbs={[{ label: 'لوحة إدارة المؤسسة', to: '/admin/dashboard' }, { label: 'الأساتذة' }]}
         actions={(
           /* R342-09 (D11 sub-page CTA precedent): the governance roster's
                    * ONE honest next surface — verification exists so courses can
@@ -787,7 +787,7 @@ function ScopeAssignmentCard({
     assign.mutate(scope === 'UNIVERSITY' ? null : facultyId);
   };
 
-  /* R320 §B: the scope card names the role — ADMIN is «المسجل العام»
+  /* r352 §D7: the scope card names the role — ADMIN is «إدارة المؤسسة»
      (was «الإداريّ»); QUALITY's established «مكتب الجودة» unchanged. */
   const roleLabel = role === 'ADMIN' ? sharedRoleLabel('ADMIN') : 'مكتب الجودة';
 
