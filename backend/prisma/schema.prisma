@@ -2400,7 +2400,7 @@ enum AppointmentStatus {
 enum CouncilType {
   UNIVERSITY_COUNCIL // مجلس الجامعة
   FACULTY_COUNCIL // مجلس الكلية
-  DEPARTMENT_COUNCIL // الملتقى العلمي للقسم
+  DEPARTMENT_COUNCIL // مجلس القسم
   SCIENTIFIC_COUNCIL // المجلس العلمي (كلية/معهد تقني)
   INSTITUTE_COUNCIL // مجلس المعهد
   DISCIPLINARY_COUNCIL // مجلس التأديب (لوائح المعاهد)

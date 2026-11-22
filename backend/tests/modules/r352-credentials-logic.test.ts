@@ -1,8 +1,12 @@
 /**
  * r352 — credential progression rules (Law 21/2023 Arts. 4, 5, 26, 38).
+ * The numeric-level helper was retired with the integration-audit
+ * dead-code paydown — the ladder semantics are enforced (and pinned
+ * end-to-end) through the seeded CredentialProgressionRule rows in the
+ * integration suite (tests/integration/r352-scenarios.test.ts §12).
  */
 import { describe, expect, it } from 'vitest';
-import { CREDENTIAL_CATALOG, canProgressTo, credentialFacts } from '../../src/lib/credentials-logic';
+import { CREDENTIAL_CATALOG, credentialFacts } from '../../src/lib/credentials-logic';
 
 const f = (code: string) => {
   const facts = credentialFacts(code);
@@ -27,25 +31,3 @@ describe('the statutory catalog', () => {
   });
 });
 
-describe('canProgressTo (the legal progression matrix)', () => {
-  it('م38: the vocational-training certificate (المسار المحدود) never progresses', () => {
-    expect(canProgressTo(f('VOCATIONAL_TRAINING_CERT'), f('INTERMEDIATE_TECHNICAL_DIPLOMA'))).toBe(false);
-    expect(canProgressTo(f('VOCATIONAL_TRAINING_CERT'), f('BASIC_FORMATION_CERT'))).toBe(false);
-  });
-  it('م38: the basic-formation certificate (المسار المفتوح) may enter intermediate institutes', () => {
-    expect(canProgressTo(f('BASIC_FORMATION_CERT'), f('INTERMEDIATE_TECHNICAL_DIPLOMA'))).toBe(true);
-  });
-  it('م26: the specialized professional diploma never progresses', () => {
-    expect(canProgressTo(f('SPECIALIZED_PROFESSIONAL_DIPLOMA'), f('HIGHER_TECHNICAL_DIPLOMA'))).toBe(false);
-    expect(canProgressTo(f('SPECIALIZED_PROFESSIONAL_DIPLOMA'), f('TECHNICAL_BACHELOR'))).toBe(false);
-  });
-  it('م4: the technical ladder climbs', () => {
-    expect(canProgressTo(f('INTERMEDIATE_TECHNICAL_DIPLOMA'), f('TECHNICAL_BACHELOR'))).toBe(true);
-    expect(canProgressTo(f('INTERMEDIATE_TECHNICAL_DIPLOMA'), f('HIGHER_TECHNICAL_DIPLOMA'))).toBe(true);
-    expect(canProgressTo(f('HIGHER_TECHNICAL_DIPLOMA'), f('HIGH_LICENSE_MASTERS'))).toBe(true);
-  });
-  it('never progresses downward', () => {
-    expect(canProgressTo(f('TECHNICAL_BACHELOR'), f('INTERMEDIATE_TECHNICAL_DIPLOMA'))).toBe(false);
-    expect(canProgressTo(f('HIGH_LICENSE_MASTERS'), f('BASIC_FORMATION_CERT'))).toBe(false);
-  });
-});

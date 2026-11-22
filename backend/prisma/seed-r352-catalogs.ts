@@ -48,6 +48,11 @@ const INSTITUTION_TYPES = [
   { code: 'TECHNICAL_ACADEMY', sector: 'TECHNICAL_VOCATIONAL_PROFESSIONAL' as const, nameAr: 'أكاديمية التعليم التقني', nameEn: 'Technical education academy', isIndependentLegalPersonality: true, legalBasis: 'قانون 21/2023', defaultAuthorityCode: 'TECHNICAL_ACADEMY' },
   { code: 'TECHNICAL_COLLEGE', sector: 'TECHNICAL_VOCATIONAL_PROFESSIONAL' as const, nameAr: 'كلية تقنية', nameEn: 'Technical college', isIndependentLegalPersonality: true, legalBasis: 'قانون 21/2023 م12، م24', defaultAuthorityCode: 'TECHNICAL_ACADEMY' },
   { code: 'HIGHER_TECHNICAL_INSTITUTE', sector: 'TECHNICAL_VOCATIONAL_PROFESSIONAL' as const, nameAr: 'معهد تقني عالٍ', nameEn: 'Higher technical institute', isIndependentLegalPersonality: true, legalBasis: 'قانون 21/2023 م12، م32', defaultAuthorityCode: 'TECHNICAL_ACADEMY' },
+  // LEGAL-MATRIX §A.2 [M]: the statute establishes legal personality
+  // explicitly ONLY for colleges (م24) and higher institutes (م32);
+  // for the two stage-1/2 kinds it is SILENT — the negative flags
+  // below are an inferred default (configurable catalog rows, not
+  // immutable rules; adjust per-instrument when evidence lands).
   { code: 'INTERMEDIATE_TECHNICAL_INSTITUTE', sector: 'TECHNICAL_VOCATIONAL_PROFESSIONAL' as const, nameAr: 'معهد فني متوسط', nameEn: 'Intermediate technical institute', isIndependentLegalPersonality: false, legalBasis: 'قانون 21/2023 م12', defaultAuthorityCode: 'TECHNICAL_ACADEMY' },
   { code: 'VOCATIONAL_TRAINING_CENTER', sector: 'TECHNICAL_VOCATIONAL_PROFESSIONAL' as const, nameAr: 'مركز تكوين وتدريب مهني', nameEn: 'Vocational training center', isIndependentLegalPersonality: false, legalBasis: 'قانون 21/2023 م12، م38-41', defaultAuthorityCode: 'TECHNICAL_ACADEMY' },
 ] as const;
@@ -203,7 +208,7 @@ export async function ensureR352Catalogs(prisma: PrismaClient): Promise<R352Cata
     BASIC_FORMATION_CERT: 'قانون 21/2023 م5، م38 (المسار المفتوح — تؤهل للمعاهد المتوسطة)',
     INTERMEDIATE_TECHNICAL_DIPLOMA: 'قانون 21/2023 م4(2)، م5',
     SPECIALIZED_PROFESSIONAL_DIPLOMA: 'قانون 21/2023 م26 (شهادة مهنية لا تسمح بمواصلة الدراسة)',
-    HIGHER_TECHNICAL_DIPLOMA: 'قانون 21/2023 م26، م4(3)',
+    HIGHER_TECHNICAL_DIPLOMA: 'قانون 21/2023 م4(3)، م5',
     TECHNICAL_BACHELOR: 'قانون 21/2023 م4(3)، م5',
     HIGH_LICENSE_MASTERS: 'قانون 21/2023 م4(4)، م5',
     PRECISE_LICENSE_DOCTORATE: 'قانون 21/2023 م4(4)، م5',
@@ -306,6 +311,9 @@ export async function ensureR352Catalogs(prisma: PrismaClient): Promise<R352Cata
   // 5. Criteria sets (institutional + program standard titles).
   const qaCenter = authorityIds.get('NATIONAL_QA_CENTER')!;
   const ensureSet = async (code: string, nameAr: string, appliesTo: 'INSTITUTIONAL' | 'PROGRAM', titles: string[]) => {
+    // [M]-inference: an edition marker for the titles-only criteria
+    // sets — the underlying NQAC document could not be fetched
+    // (qacc.gov.ly 403, LEGAL-MATRIX §E); not a statutory claim.
     const version = '2024';
     const set = await prisma.accreditationCriteriaSet.upsert({
       where: { code_version: { code, version } },
