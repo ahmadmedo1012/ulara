@@ -412,11 +412,11 @@
        danger (#C62828) carry the feedback seats; the decorative peach/
        copper families keep the warm accent, never meaning action or danger */
     --c-peach-bg:     #FCE5DE;   --c-peach-ink:    #F15534;   --c-peach-deep:   #9C2B0F;
-    --c-mint-bg:      #E2EFE8;   --c-mint-ink:     #17724A;   --c-mint-deep:    #17724A;
+    --c-mint-bg:      #E2EFE8;   --c-mint-ink:     #17724A;   --c-mint-deep:    #0D5433;
     --c-lavender-bg:  #ECE6FA;   --c-lavender-ink: #8A6FE0;   --c-lavender-deep:#3F2D7A;
     --c-sky-bg:       #E1E9F0;   --c-sky-ink:      #4A7FA8;   --c-sky-deep:     #1F4968;
     --c-yellow-bg:    #F5EBD6;   --c-yellow-ink:   #A8750F;   --c-yellow-deep:  #5E420C;
-    --c-rose-bg:      #FBE4E4;   --c-rose-ink:     #C62828;   --c-rose-deep:    #C62828;
+    --c-rose-bg:      #FBE4E4;   --c-rose-ink:     #C62828;   --c-rose-deep:    #9E1A1A;
     --c-sand-bg:      #F1ECDF;   --c-sand-ink:     #B59868;   --c-sand-deep:    #5A4623;
     --c-grey-bg:      #ECEDEB;   --c-grey-ink:     #626260;   --c-grey-deep:    #262019;
     --c-copper-bg:    #F8E3D8;   --c-copper-ink:   #C43E16;   --c-copper-deep:  #8F2F0F;
@@ -476,9 +476,9 @@
     --info-soft:    var(--c-sky-bg);
 
     /* status INKS for text (deep shades — all >=7.2:1 on their tints) */
-    --success-ink: #17724A;                /* 5.26:1 on paper */
+    --success-ink: var(--c-mint-deep);     /* 7.99:1 on paper — the AAA text tier */
     --warning-ink: var(--c-yellow-deep);   /* #5E420C */
-    --danger-ink:  #C62828;                /* 4.99:1 on paper */
+    --danger-ink:  var(--c-rose-deep);     /* 7.12:1 on paper — the AAA text tier */
     --info-ink:    var(--c-sky-deep);      /* #1F4968 */
 
     /* label on a --danger fill (white on #C62828 = 5.62:1) */
@@ -645,9 +645,9 @@
 
     /* the -ink family clears AA on the night ground — same values the
        base tokens already resolve to */
-    --success-ink:  #5FD39A;
+    --success-ink:  var(--c-mint-deep);   /* #5FD39A — 8.65:1 night */
     --warning-ink:  var(--c-yellow-ink);
-    --danger-ink:   #FF7A70;
+    --danger-ink:   var(--c-rose-deep);   /* #FF7A70 — 6.35:1 night */
     --info-ink:     var(--c-sky-ink);
 
     --danger-fg:    #262019;             /* ink on the night danger #FF7A70 — 6.35:1 */

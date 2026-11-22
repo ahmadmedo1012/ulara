@@ -875,10 +875,10 @@
     --accent-fg:     #262019;
     --accent-ink:    #8AA0FF;
     --text-on-accent:#262019;
-    --success:       #5FD39A;
-    --success-ink:   #5FD39A;
-    --danger:        #FF7A70;
-    --danger-ink:    #FF7A70;
+    --success:       #5FD39A;   /* 8.65:1 on the night ground */
+    --success-ink:   #5FD39A;   /* 8.65:1 — dark keeps ink ≡ fill (the icon-well no-op) */
+    --danger:        #FF7A70;   /* 6.35:1 on the night ground */
+    --danger-ink:    #FF7A70;   /* 6.35:1 — dark keeps ink ≡ fill (the icon-well no-op) */
 
     --brand-purple:  var(--c-lavender-ink);
 
@@ -1246,10 +1246,10 @@
          tier is needed, unlike the retired 3.46:1 sienna */
       --accent-ink:  #2540D9;
       --success:      #17724A;   /* 5.26:1 on paper · white label 5.93:1 */
-      --success-ink: #17724A;
+      --success-ink: #0D5433;   /* 7.99:1 on paper — the AAA text tier */
       --warning-ink: var(--c-yellow-deep);
       --danger:      #C62828;   /* 4.99:1 on paper · white label 5.62:1 */
-      --danger-ink:  #C62828;
+      --danger-ink:  #9E1A1A;   /* 7.12:1 on paper — the AAA text tier */
       --info-ink:    var(--c-sky-deep);
       --gold-ink:    #8F5A28;
       --danger-fg:   #FFFFFF;   /* 5.62:1 on the light danger fill */

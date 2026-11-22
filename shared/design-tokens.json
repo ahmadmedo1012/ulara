@@ -62,7 +62,7 @@
         "light": {
           "bg": "#E2EFE8",
           "ink": "#17724A",
-          "deep": "#17724A"
+          "deep": "#0D5433"
         },
         "dark": {
           "bg": "#1F3A2E",
@@ -110,7 +110,7 @@
         "light": {
           "bg": "#FBE4E4",
           "ink": "#C62828",
-          "deep": "#C62828"
+          "deep": "#9E1A1A"
         },
         "dark": {
           "bg": "#3A2020",
@@ -185,13 +185,13 @@
         "accentInk": "#2540D9",
         "success": "#17724A",
         "successSoft": "triad.mint.bg",
-        "successInk": "#17724A",
+        "successInk": "triad.mint.deep",
         "warning": "triad.yellow.ink",
         "warningSoft": "triad.yellow.bg",
         "warningInk": "triad.yellow.deep",
         "danger": "#C62828",
         "dangerSoft": "triad.rose.bg",
-        "dangerInk": "#C62828",
+        "dangerInk": "triad.rose.deep",
         "info": "triad.sky.ink",
         "infoSoft": "triad.sky.bg",
         "infoInk": "triad.sky.deep",

@@ -75,11 +75,11 @@
 
     /* The 9 section families — soft ground · saturated ink · deep text */
     --c-peach-bg: #FCE5DE;  --c-peach-ink: #F15534;  --c-peach-deep: #9C2B0F;
-    --c-mint-bg: #E2EFE8;  --c-mint-ink: #17724A;  --c-mint-deep: #17724A;
+    --c-mint-bg: #E2EFE8;  --c-mint-ink: #17724A;  --c-mint-deep: #0D5433;
     --c-lavender-bg: #ECE6FA;  --c-lavender-ink: #8A6FE0;  --c-lavender-deep: #3F2D7A;
     --c-sky-bg: #E1E9F0;  --c-sky-ink: #4A7FA8;  --c-sky-deep: #1F4968;
     --c-yellow-bg: #F5EBD6;  --c-yellow-ink: #A8750F;  --c-yellow-deep: #5E420C;
-    --c-rose-bg: #FBE4E4;  --c-rose-ink: #C62828;  --c-rose-deep: #C62828;
+    --c-rose-bg: #FBE4E4;  --c-rose-ink: #C62828;  --c-rose-deep: #9E1A1A;
     --c-sand-bg: #F1ECDF;  --c-sand-ink: #B59868;  --c-sand-deep: #5A4623;
     --c-grey-bg: #ECEDEB;  --c-grey-ink: #626260;  --c-grey-deep: #262019;
     --c-copper-bg: #F8E3D8;  --c-copper-ink: #C43E16;  --c-copper-deep: #8F2F0F;
@@ -116,13 +116,13 @@
     --accent-ink: #2540D9;
     --success: #17724A;
     --success-soft: var(--c-mint-bg);
-    --success-ink: #17724A;
+    --success-ink: var(--c-mint-deep);
     --warning: var(--c-yellow-ink);
     --warning-soft: var(--c-yellow-bg);
     --warning-ink: var(--c-yellow-deep);
     --danger: #C62828;
     --danger-soft: var(--c-rose-bg);
-    --danger-ink: #C62828;
+    --danger-ink: var(--c-rose-deep);
     --info: var(--c-sky-ink);
     --info-soft: var(--c-sky-bg);
     --info-ink: var(--c-sky-deep);

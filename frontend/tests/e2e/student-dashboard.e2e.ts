@@ -74,8 +74,10 @@ test.describe('لوحة تحكم الطالب', () => {
     await expect(taskRow.first()).toContainText('واجب الأسبوع الثالث');
     await expect(taskRow.first().locator('.r319s-chip')).toContainText('DUE 3D');
     // صف الأجندة: العنوان نفسه هو الرابط (PP-X2 audit P1-8 — Link على مستوى الصف).
+    // الحصة والواجب كلاهما يقود إلى المقرّر نفسه، فالتحديد على صفّ الحصة
+    // لا على الـhref وحده (r351 A2: الواجب صار صفًّا في القائمة نفسها).
     await expect(
-      page.locator('a.pf-today-link[href="/student/courses/offr_e2e_algorithms"]'),
+      todayRow.locator('a.pf-today-link[href="/student/courses/offr_e2e_algorithms"]'),
     ).toBeVisible();
   });
 });

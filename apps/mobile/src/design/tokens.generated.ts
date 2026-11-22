@@ -61,9 +61,9 @@ export const ds = {
 
 export const statusTones = {
   light: {
-    mint: { bg: "#E2EFE8", ink: "#17724A", deep: "#17724A" },
+    mint: { bg: "#E2EFE8", ink: "#17724A", deep: "#0D5433" },
     yellow: { bg: "#F5EBD6", ink: "#A8750F", deep: "#5E420C" },
-    rose: { bg: "#FBE4E4", ink: "#C62828", deep: "#C62828" },
+    rose: { bg: "#FBE4E4", ink: "#C62828", deep: "#9E1A1A" },
     sky: { bg: "#E1E9F0", ink: "#4A7FA8", deep: "#1F4968" },
     lavender: { bg: "#ECE6FA", ink: "#8A6FE0", deep: "#3F2D7A" },
     copper: { bg: "#F8E3D8", ink: "#C43E16", deep: "#8F2F0F" },

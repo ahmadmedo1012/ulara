@@ -83,16 +83,16 @@ describe("the ONE accent", () => {
   });
 });
 
-describe("status triples — shared-JSON mapping (successInk = deep@light / ink@dark)", () => {
+describe("status triples — shared-JSON mapping (text ink = the family deep rung)", () => {
   it("success/warning/danger resolve fill/soft/ink from the tone families", () => {
     const light = semanticColorsFor("light");
-    expect(light.success).toEqual({ fill: "#17724A", soft: "#E2EFE8", ink: "#17724A" });
+    expect(light.success).toEqual({ fill: "#17724A", soft: "#E2EFE8", ink: "#0D5433" });
     expect(light.warning).toEqual({ fill: "#A8750F", soft: "#F5EBD6", ink: "#5E420C" });
-    expect(light.danger).toEqual({ fill: "#C62828", soft: "#FBE4E4", ink: "#C62828" });
+    expect(light.danger).toEqual({ fill: "#C62828", soft: "#FBE4E4", ink: "#9E1A1A" });
 
     const dark = semanticColorsFor("dark");
     expect(dark.success).toEqual({ fill: "#5FD39A", soft: "#1F3A2E", ink: "#5FD39A" });
-    expect(dark.warning).toEqual({ fill: "#EFC87B", soft: "#3B331F", ink: "#EFC87B" });
+    expect(dark.warning).toEqual({ fill: "#EFC87B", soft: "#3B331F", ink: "#F8E3B4" });
     expect(dark.danger).toEqual({ fill: "#FF7A70", soft: "#3A2020", ink: "#FF7A70" });
   });
 
@@ -101,7 +101,7 @@ describe("status triples — shared-JSON mapping (successInk = deep@light / ink@
       const c = semanticColorsFor(name);
       expect(c.success.soft).toBe(statusTones[name].mint.bg);
       expect(c.warning.fill).toBe(statusTones[name].yellow.ink);
-      expect(c.danger.ink).toBe(name === "light" ? statusTones[name].rose.deep : statusTones[name].rose.ink);
+      expect(c.danger.ink).toBe(statusTones[name].rose.deep);
     }
   });
 });
