@@ -220,7 +220,7 @@ ${prisma.enums.map((m) => `\`${m}\``).join(' · ')}
 |---|---|---|---|
 | STUDENT | \`/student\` | \`(tabs)/dashboard\` (student stack) | \`requireRole(Role.STUDENT)\` |
 | TEACHER | \`/teacher\` | \`(tabs)/dashboard\` (teacher stack) | \`requireRole(Role.TEACHER, …)\` |
-| ADMIN (المسجل العام) | \`/admin\` | \`(tabs)/dashboard\` (admin stack) | institution-scoped admin guards |
+| ADMIN (إدارة المؤسسة) | \`/admin\` | \`(tabs)/dashboard\` (admin stack) | institution-scoped admin guards |
 | QUALITY | \`/quality\` | \`(tabs)/dashboard\` (quality stack) | \`requireRole(Role.QUALITY)\` |
 | OWNER | \`/owner\` | \`(tabs)/dashboard\` (owner stack) | \`requireRole(Role.OWNER)\` |
 

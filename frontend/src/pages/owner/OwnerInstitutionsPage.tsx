@@ -618,7 +618,7 @@ export function OwnerInstitutionsPage() {
                   <th scope="col">الحالة</th>
                   <th scope="col">الأعضاء النشطون</th>
                   <th scope="col">الكليات</th>
-                  <th scope="col">المسجلون العامّون</th>
+                  <th scope="col">إدارة المؤسسة</th>
                   <th scope="col">تاريخ الإنشاء</th>
                   <th scope="col">إجراءات</th>
                 </tr>
@@ -654,9 +654,9 @@ export function OwnerInstitutionsPage() {
                         {formatNum(institution.facultyCount)}
                       </span>
                     </td>
-                    <td data-label="المسجلون العامّون">
+                    <td data-label="إدارة المؤسسة">
                       {institution.admins.length === 0 ? (
-                        <span className="text-xs text-subtle">لا مسجلين عامّين بعد</span>
+                        <span className="text-xs text-subtle">لا أعضاء إدارة بعد</span>
                       ) : (
                         <ul className="owner-inst-admins">
                           {institution.admins.map((admin) => (

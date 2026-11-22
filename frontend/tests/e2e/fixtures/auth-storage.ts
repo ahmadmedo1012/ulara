@@ -59,9 +59,12 @@ export type StorageStateOption = NonNullable<
 
 export type StackRole = 'STUDENT' | 'TEACHER' | 'ADMIN' | 'QUALITY' | 'OWNER';
 
-/** The shared table's job labels for the five stack roles (R320 §C —
- * the labels match frontend/src/lib/nav.ts ROLE_LABELS' established
- * wording: أخصائي جودة / مالك المنصة). */
+/** The shared table's job labels for the five stack roles (R320 §C).
+ * r352 §D7 note: ADMIN here is the TEST-ACCOUNT PERSONA name (the
+ * seeded account carries the job title «المسجل العام» as its display
+ * persona — a position, not a role label); the ROLE label everywhere
+ * else is «إدارة المؤسسة» (frontend/src/lib/roleLabels.ts). The lookup
+ * key wording matches the accounts table, not nav wording. */
 const STACK_JOBS: Record<StackRole, string> = {
   STUDENT: 'طالب',
   TEACHER: 'أستاذ',

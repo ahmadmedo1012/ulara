@@ -7,18 +7,14 @@ export interface CredentialTypeFacts {
   grantsProgression: boolean;
 }
 
-/**
- * May a holder of `from` progress into a program awarding `to`?
- * Law 21/2023: شهادة التكوين الأساسي may enter intermediate technical
- * institutes; الدبلوم الفني المتوسط may enter higher technical
- * education; the vocational-training certificate and the specialized
- * professional diploma explicitly do NOT allow further study; higher
- * tiers ladder by level.
- */
-export function canProgressTo(from: CredentialTypeFacts, to: CredentialTypeFacts): boolean {
-  if (!from.grantsProgression) return false;
-  return to.level > from.level;
-}
+// NOTE (dead-code paydown, integration audit): the former numeric-level
+// helper canProgressTo() was removed — the request path never called it
+// (routes enforce progression through the seeded CredentialProgressionRule
+// rows + progressionAllowed, per D21: "numeric level is display-only"),
+// and its matrix semantics are pinned end-to-end by the integration
+// suite (tests/integration/r352-scenarios.test.ts §12). The ladder facts
+// below remain: levels order the display ladder; legalBasis cites the
+// article.
 
 /** The seeded statutory catalog (single source for seed.ts and tests).
  * Levels order the ladder; legalBasis cites the article. */
@@ -27,7 +23,7 @@ export const CREDENTIAL_CATALOG: readonly CredentialTypeFacts[] = [
   { code: 'BASIC_FORMATION_CERT', level: 1, grantsProgression: true }, // م38 المسار المفتوح → معاهد متوسطة
   { code: 'INTERMEDIATE_TECHNICAL_DIPLOMA', level: 2, grantsProgression: true }, // م4(2) → تقني عالٍ
   { code: 'SPECIALIZED_PROFESSIONAL_DIPLOMA', level: 3, grantsProgression: false }, // م26 — لا تسمح بمواصلة الدراسة
-  { code: 'HIGHER_TECHNICAL_DIPLOMA', level: 3, grantsProgression: true }, // م26/م4(3)
+  { code: 'HIGHER_TECHNICAL_DIPLOMA', level: 3, grantsProgression: true }, // م4(3) — التقني العالي
   { code: 'TECHNICAL_BACHELOR', level: 4, grantsProgression: true }, // م4(3)
   { code: 'HIGH_LICENSE_MASTERS', level: 5, grantsProgression: true }, // م4(4) الإجازة العالية
   { code: 'PRECISE_LICENSE_DOCTORATE', level: 6, grantsProgression: false }, // م4(4) الإجازة الدقيقة

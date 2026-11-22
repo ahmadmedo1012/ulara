@@ -237,6 +237,17 @@ router.patch(
       const institutionId = req.institution!.id;
       const program = await requireProgram(institutionId, req.params.id!);
       const input = req.body as z.infer<typeof programUpdateSchema>;
+      // §4.1 — updates validate newly supplied IDs EXACTLY like creates:
+      // a re-homed unit must belong to the same institution (otherwise a
+      // foreign unit's name/type would leak through the detail include).
+      if (input.orgUnitId !== undefined && input.orgUnitId !== null) {
+        const unit = await prisma.organizationalUnit.findUnique({
+          where: { id: input.orgUnitId }, select: { institutionId: true },
+        });
+        if (!unit || unit.institutionId !== institutionId) {
+          throw AppError.notFound('الوحدة التنظيمية المحددة غير موجودة في مؤسستك');
+        }
+      }
       if (input.status && input.status !== program.status) {
         if (!transitionAllowed(PROGRAM_TRANSITIONS, program.status as 'DRAFT', input.status)) {
           throw new AppError('PROGRAM_VERSION_INVALID_TRANSITION', 'انتقال حالة البرنامج غير مسموح', 409);
@@ -366,10 +377,15 @@ router.patch(
       });
       res.json({ data: updated });
     } catch (e) {
+      // §6.4 — racing activations: the partial unique index fires as
+      // P2002 (constraint name in the message), but the same race can
+      // deadlock the two transactions (40P01 → Prisma P2034) — the
+      // loser then gets the same honest 409 instead of a 500.
       if (
         e instanceof Prisma.PrismaClientKnownRequestError &&
-        typeof e.message === 'string' &&
-        e.message.includes('ProgramVersion_one_active_per_program_key')
+        ((typeof e.message === 'string' &&
+          e.message.includes('ProgramVersion_one_active_per_program_key')) ||
+          e.code === 'P2034')
       ) {
         return next(
           new AppError('PROGRAM_VERSION_ACTIVE_EXISTS', 'يوجد إصدار نشط آخر للبرنامج — أحله إلى المتقاعد أولًا', 409),

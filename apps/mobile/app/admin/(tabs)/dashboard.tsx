@@ -29,7 +29,8 @@ import {
   type PaperRow,
 } from "@/features/governance/components";
 
-/** (tabs) Admin dashboard — «لوحة المسجل العام» (web AdminDashboardPage parity).
+/** (tabs) Admin dashboard — «لوحة إدارة المؤسسة» (web AdminDashboardPage parity;
+ *  r352 §D7: the ADMIN access category, not the المسجل العام job title).
  *  Metric hierarchy: ONE hero (students) + supporting tiles — not a flat grid.
  *  R334 review-panel fixes: staggered entrance, haptics.selection on the
  *  menu rows, and stats failures render ErrorState (never EmptyState).
@@ -70,7 +71,7 @@ export default function AdminDashboard() {
     /* r351 N2 — the collapsing large title (the explainer subtitle is cut;
      * its two honest words ride as the mono kicker). */
     <LargeTitleScreen
-      title={`لوحة ${ROLE_LABELS[user?.role ?? "ADMIN"] ?? "المسجل العام"}`}
+      title={`لوحة ${ROLE_LABELS[user?.role ?? "ADMIN"] ?? "إدارة المؤسسة"}`}
       kicker="إحصاءات حيّة"
       alertsPath="/admin/alerts"
     >
@@ -160,7 +161,7 @@ export default function AdminDashboard() {
         </Animated.View>
 
         <Animated.View entering={entering(3)}>
-          <SectionBar index={2} title="صفحات المسجل العام" />
+          <SectionBar index={2} title="صفحات إدارة المؤسسة" />
           <View style={{ gap: 8 }}>
             {/* r342 t13 — the «المزامنة مع البيانات الرسمية» quick-action row
                 (GET /admin/sync console) left with the zu-sync retirement:

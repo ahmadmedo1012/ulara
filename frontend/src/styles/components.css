@@ -683,6 +683,60 @@
      — marker, not fill, so it never reads as "1% of progress"), with
      the 1px inset --surface cutout the checkpoint marks use. Existing
      tokens only; v>0 renders untouched — the fill owns the track. */
+  /* 23-b (A11 P2-10) — the base anatomy of the shared ProgressBar
+     primitive (frontend/src/components/primitives/index.tsx): head
+     (label + the JSX-owned mono %) over an 8px surface-3 track whose
+     fill paints at full width and scales from the inline-start edge
+     via transform: scaleX() — the compositor-friendly value ride this
+     sheet is the documented definition site of (check-motion-tokens
+     pins it; owner.css's transform-origin note and polish.css's
+     scaleX-transition note both point here). RTL: physical transform
+     origins flip on [dir], the same contract .mdk-route-progress-bar
+     uses (base.css). Callers override the fill hue through the
+     primitive's `color` prop (success/warning/danger/accent) — the
+     default ink is the accent. */
+  .progress {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+    min-inline-size: 0;
+  }
+  .progress-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--sp-2);
+    font-size: var(--fs-xs);
+    color: var(--text-secondary);
+  }
+  .progress-track {
+    position: relative;
+    block-size: 8px;
+    border-radius: var(--r-full);
+    background: var(--surface-3);
+    overflow: hidden;
+  }
+  .progress-fill {
+    position: absolute;
+    inset-block: 0;
+    inset-inline: 0;
+    border-radius: inherit;
+    background: var(--accent);
+    transform-origin: left center;
+    transition: transform var(--t-fast) var(--ease-out);
+  }
+  [dir='rtl'] .progress-fill {
+    transform-origin: right center;
+  }
+  .progress-zero-mark {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    inline-size: 8px;
+    border-radius: var(--r-full);
+    background: var(--text-muted);
+    box-shadow: inset 0 0 0 1px var(--surface);
+  }
 
   /* ╔═══════════════════════════════════════════════════════════════╗
      ║  ALERT ROW                                                     ║

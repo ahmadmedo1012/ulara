@@ -656,9 +656,11 @@ export function AttendancePage() {
               </div>
               {/* بعذر counts out of the session total (same denominator as
                   the other bars) — the analytics KPI keeps its own
-                  EXCUSED-excluded math server-side. */}
+                  EXCUSED-excluded math server-side. The 4th categorical
+                  data color rides the sky info family (brand rule: the
+                  royal accent is the primary signal, not a data series). */}
               <div className={`tpg-att-stat${counts.e === 0 ? ' is-dim' : ''}`}>
-                <ProgressBar value={counts.total > 0 ? Math.round((counts.e / counts.total) * 100) : 0} label={`بعذر (${counts.e})`} color="var(--accent)" />
+                <ProgressBar value={counts.total > 0 ? Math.round((counts.e / counts.total) * 100) : 0} label={`بعذر (${counts.e})`} color="var(--info)" />
               </div>
             </div>
           )}

@@ -89,7 +89,7 @@ Base: `/institutional/people`
 |---|---|---|
 | GET | `/institutional/people?category=&orgUnitId=&q=&status=&page=&limit=` | paginated |
 | POST | `/institutional/people` | `{ fullNameAr, fullNameEn?, category, staffNumber?, userId?, primaryOrgUnitId?, hiredAt?, email?, phone?, notes? }` → 201 |
-| GET | `/institutional/people/:id` | + `appointments` (active) + `unitRoleGrants` when populated |
+| GET | `/institutional/people/:id` | + `appointments` (active) + `unitCapabilityGrants` when populated |
 | PATCH | `/institutional/people/:id` | any of the above mutable fields |
 | POST | `/institutional/people/:id/status` | `{ status: ACTIVE\|ON_LEAVE\|SUSPENDED\|ENDED, endedAt? }` |
 
@@ -288,8 +288,8 @@ it — see HANDOFF.
 | PUT | `/governance/meetings/:id/minutes` | `COUNCILS_MANAGE` at the council's scope | versioning contract: DRAFT updated in place; APPROVED/SIGNED current mints versionNo+1 (signed content + signatories preserved — DB trigger belt) |
 | GET/PUT | `/compliance/self-assessments/:id/items` | `QUALITY_INTERNAL_MANAGE` writes | criterion-level responses; the criteria item must belong to the assessment's OWN criteria set (400 otherwise) |
 | POST | `/compliance/self-assessments/:id/items/:itemId/corrective-action` | `QUALITY_INTERNAL_MANAGE` | corrective plan from a criterion-level issue |
-| POST | `/governance/documents/upload` | `COUNCILS_MANAGE` or `ACCREDITATION_MANAGE` | raw `application/pdf` (magic bytes + 20 MB + active-content gates); returns the tenant-bound `governance/<institutionId>/<file>.pdf` key |
-| GET | `/governance/documents/:id/file` | capability | authorized, institution-scoped PDF download through the storage driver |
+| POST | `/governance/documents/upload` | — | **DEFERRED** (never implemented — the storage rails below exist, the byte routes do not; see the D-6 correction in POST-IMPLEMENTATION-AUDIT.md). No frontend consumer today. Residual: the papers-route raw-PDF pattern (`files.routes.ts`) is the template when a consumer lands | 
+| GET | `/governance/documents/:id/file` | — | **DEFERRED** (same as above — authorized, institution-scoped PDF download through the storage driver when implemented) |
 
 **Behavioral gates added (documented, tested):** program enrollment
 requires an APPROVED/ACTIVE program; credentials require a

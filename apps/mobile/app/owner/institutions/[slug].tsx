@@ -126,11 +126,11 @@ function InstitutionConsole({ inst }: { inst: InstitutionRow }) {
     onSuccess: (_d, payload) => {
       invalidate();
       toast.success(
-        `تمّ ربط «${payload.email}» بدور المسجل العام في «${inst.name}».`,
+        `تمّ ربط «${payload.email}» بدور إدارة المؤسسة في «${inst.name}».`,
         "تمّ التعيين",
       );
     },
-    onError: (e) => toast.error(humanizeError(e), "تعذّر تعيين المسجل العام"),
+    onError: (e) => toast.error(humanizeError(e), "تعذّر تعيين عضو الإدارة"),
   });
 
   const revoke = useMutation({
@@ -219,7 +219,7 @@ function InstitutionConsole({ inst }: { inst: InstitutionRow }) {
             }
           />
           <T variant="body" color="muted">
-            يُمنح دور المسجل العام داخل هذه المؤسسة فقط — يُربط حساب قائم عبر بريده الإلكتروني.
+            يُمنح دور إدارة المؤسسة داخل هذه المؤسسة فقط — يُربط حساب قائم عبر بريده الإلكتروني.
           </T>
         </View>
 
@@ -289,7 +289,7 @@ function InstitutionConsole({ inst }: { inst: InstitutionRow }) {
 
       <ConfirmDialog
         open={revokeTarget !== null}
-        title="إلغاء عضوية المسجل العام"
+        title="إلغاء عضوية إدارة المؤسسة"
         confirmLabel="إلغاء العضوية"
         danger
         loading={revoke.isPending}
@@ -306,7 +306,7 @@ function InstitutionConsole({ inst }: { inst: InstitutionRow }) {
       />
       <ConfirmDialog
         open={restoreTarget !== null}
-        title="استعادة عضوية المسجل العام"
+        title="استعادة عضوية إدارة المؤسسة"
         confirmLabel="استعادة"
         loading={restore.isPending}
         message={

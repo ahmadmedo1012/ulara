@@ -344,4 +344,39 @@ describe('scenario E — vocational training center (§5, §15-E)', () => {
     expect(blocked.status).toBe(409);
     expect(blocked.body.error.code).toBe('PROGRESSION_NOT_ALLOWED');
   });
+
+  it('§A.3 — research writes are foreign to stage-1/2 kinds: the server refuses what the workspace hides', async () => {
+    // A VTC admin holds RESEARCH_PROJECTS_MANAGE by default role
+    // capabilities — the kind gate must still refuse the write, so the
+    // API can never contradict the workspace module registry's legal
+    // claim (Law 21/2023 stages 1-2 carry no research mandate).
+    const vtc = await seedWorld('VOCATIONAL_TRAINING_CENTER');
+    const refused = await api('POST', '/api/v1/research-projects', {
+      titleAr: 'مشروع بحثي في مركز تدريب', code: `VTC-R-${uniqueSuffix()}`,
+    }, vtc.auth);
+    expect(refused.status).toBe(403);
+    expect(refused.body.error.code).toBe('RESEARCH_NOT_APPLICABLE');
+
+    // The same gate covers the other research write families (an
+    // institution-kind rejection, not a per-route accident): outputs
+    // refuse identically.
+    const refusedOutput = await api('POST', '/api/v1/research-outputs', {
+      type: 'TECHNICAL_REPORT', title: 'مخرج بحثي في مركز تدريب',
+    }, vtc.auth);
+    expect(refusedOutput.status).toBe(403);
+    expect(refusedOutput.body.error.code).toBe('RESEARCH_NOT_APPLICABLE');
+
+    // Reads stay honest (empty list, not an error): a stage-1/2 kind's
+    // own research surface is simply empty.
+    const list = await api('GET', '/api/v1/research-projects?page=1&limit=10', undefined, vtc.auth);
+    expect(list.status).toBe(200);
+
+    // Control: a UNIVERSITY (stage-3 kind) with the same default ADMIN
+    // capabilities creates the project normally.
+    const uni = await seedWorld('UNIVERSITY');
+    const created = await api('POST', '/api/v1/research-projects', {
+      titleAr: 'مشروع بحثي جامعي', code: `UNI-R-${uniqueSuffix()}`,
+    }, uni.auth);
+    expect(created.status).toBe(201);
+  });
 });
