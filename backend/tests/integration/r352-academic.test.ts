@@ -132,6 +132,10 @@ describe('r352 academic programs', () => {
       credentialTypeCode: 'VOCATIONAL_TRAINING_CERT', durationMonths: 6,
     }, w.auth);
     expect(program.status).toBe(201);
+    // r352 hardening §14: enrollment requires an APPROVED/ACTIVE program
+    // (a DRAFT program is not a valid enrollment target).
+    await api('PATCH', `/api/v1/academic/programs/${program.body.data.id}`, { status: 'APPROVED' }, w.auth);
+    await api('PATCH', `/api/v1/academic/programs/${program.body.data.id}`, { status: 'ACTIVE' }, w.auth);
     const enrollment = await api('POST', '/api/v1/academic/program-enrollments', {
       studentProfileId: traineeProfile.id, programId: program.body.data.id,
     }, w.auth);

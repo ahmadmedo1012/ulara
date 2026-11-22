@@ -381,6 +381,11 @@ export function createApp() {
   app.use('/api/v1/ai', aiRoutes);
   app.use('/api/v1/files', filesRoutes);
   app.use('/api/v1/owner', ownerRoutes);
+  // r352 unit-capabilities mounts BEFORE /admin (admin-extras' prefix
+  // gate requireRole(ADMIN, OWNER) would otherwise swallow its
+  // scope-aware grant routes for legitimately-delegated non-admin
+  // actors — the router carries its own capability gates).
+  app.use('/api/v1', r352UnitCapabilitiesRoutes);
   app.use('/api/v1/admin', adminExtrasRoutes);
   app.use('/api/v1', studentDashboardRoutes);
   app.use('/api/v1/teacher', teacherDashboardRoutes);
@@ -403,7 +408,6 @@ export function createApp() {
   app.use('/api/v1/compliance', r352ComplianceRoutes);
   app.use('/api/v1/operations', r352OperationsRoutes);
   app.use('/api/v1', r352ResearchRoutes);
-  app.use('/api/v1', r352UnitCapabilitiesRoutes);
 
   // 404 for unknown API paths — ANY /api/* path that fell through the
   // routers (including /api/v2/… and /api/ghost) gets the standard JSON

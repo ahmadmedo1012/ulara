@@ -128,15 +128,27 @@ describe('r352 councils — the governance flow', () => {
     const signed = await api('POST', `/api/v1/governance/meetings/${meetingId}/minutes/sign`, { signedByPersonId: s.a }, s.auth);
     expect(signed.status).toBe(200);
     expect(signed.body.data.status).toBe('SIGNED');
-    // Signed minutes are immutable.
-    const editSigned = await api('PUT', `/api/v1/governance/meetings/${meetingId}/minutes`, { contentAr: 'تعديل بعد التوقيع' }, s.auth);
-    expect(editSigned.status).toBe(409);
+    // r352 hardening §7.1 — re-drafting after signature MINTS a new
+    // version: 200, versionNo 2, DRAFT; the signed v1 keeps its content
+    // and signatories (immutable history, not a 409 dead-end).
+    const revision = await api('PUT', `/api/v1/governance/meetings/${meetingId}/minutes`, { contentAr: 'محضر منقّح بعد الملاحظات' }, s.auth);
+    expect(revision.status).toBe(200);
+    expect(revision.body.data.versionNo).toBe(2);
+    expect(revision.body.data.status).toBe('DRAFT');
+    const history = await api('GET', `/api/v1/governance/meetings/${meetingId}/minutes/history`, undefined, s.auth);
+    expect(history.status).toBe(200);
+    expect(history.body.meta.versionCount).toBe(2);
+    expect(history.body.data[0].status).toBe('DRAFT'); // newest first
+    expect(history.body.data[1].status).toBe('SIGNED'); // v1 preserved
+    expect(history.body.data[1].signedByPersonId).toBe(s.a);
 
-    // Meeting detail carries everything; the flow is audited.
+    // Meeting detail carries the CURRENT minutes version; the flow is audited.
     const detail = await api('GET', `/api/v1/governance/meetings/${meetingId}`, undefined, s.auth);
     expect(detail.status).toBe(200);
     expect(detail.body.data.attendance).toHaveLength(3);
-    expect(detail.body.data.minutes.status).toBe('SIGNED');
+    expect(detail.body.data.minutes).toHaveLength(1); // the current version row
+    expect(detail.body.data.minutes[0].status).toBe('DRAFT');
+    expect(detail.body.data.minutes[0].versionNo).toBe(2);
     const auditCount = await db().auditLog.count({ where: { institutionId: s.institution.id, action: { startsWith: 'meeting.' } } });
     expect(auditCount).toBeGreaterThan(0);
   });

@@ -9,7 +9,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import type { AddressInfo } from 'node:net';
 import { Role } from '@prisma/client';
 import { createApp } from '../../src/app.js';
-import { bearer, db, seedInstitution, seedMembership, seedUser, truncateAll } from './helpers.js';
+import { bearer, classifyInstitution, db, seedInstitution, seedMembership, seedUser, truncateAll } from './helpers.js';
 import { ensureR352Catalogs } from '../../prisma/seed-r352-catalogs.js';
 
 let baseUrl: string;
@@ -43,6 +43,9 @@ describe('r352 tenant isolation — two institutions, same names and codes', () 
     // appointment seat, same evidence owner labels.
     for (const world of ['A', 'B']) {
       const institution = await seedInstitution();
+      // r352 hardening: FACULTY units + FACULTY_DEAN eligibility need a
+      // classified (university) institution.
+      await classifyInstitution(institution.id, 'UNIVERSITY');
       const admin = await seedUser({ role: Role.ADMIN, firstName: `مدير${world}` });
       await seedMembership(admin.id, institution.id, Role.ADMIN);
       const auth = bearer(admin.id, Role.ADMIN, institution.id);
@@ -72,6 +75,9 @@ describe('r352 tenant isolation — two institutions, same names and codes', () 
       const program = await api('POST', '/api/v1/academic/programs', {
         code: 'PROG-1', nameAr: 'البرنامج المتطابق', kind: 'TECHNICAL', credentialTypeCode: 'TECHNICAL_BACHELOR',
       }, auth);
+      // r352 hardening §14: enrollments require an APPROVED/ACTIVE program.
+      await api('PATCH', `/api/v1/academic/programs/${program.body.data.id}`, { status: 'APPROVED' }, auth);
+      await api('PATCH', `/api/v1/academic/programs/${program.body.data.id}`, { status: 'ACTIVE' }, auth);
       await api('POST', '/api/v1/academic/program-enrollments', {
         studentProfileId: profile.id, programId: program.body.data.id,
       }, auth);

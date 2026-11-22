@@ -8,7 +8,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import type { AddressInfo } from 'node:net';
 import { Role } from '@prisma/client';
 import { createApp } from '../../src/app.js';
-import { bearer, db, seedInstitution, seedMembership, seedUser, truncateAll, uniqueSuffix } from './helpers.js';
+import { bearer, classifyInstitution, db, seedInstitution, seedMembership, seedUser, truncateAll, uniqueSuffix } from './helpers.js';
 import { ensureR352Catalogs } from '../../prisma/seed-r352-catalogs.js';
 
 let baseUrl: string;
@@ -33,6 +33,9 @@ beforeEach(async () => {
 /** ADMIN member of a fresh institution (ADMIN defaults carry ORG_STRUCTURE_MANAGE). */
 async function seedAdminInstitution() {
   const institution = await seedInstitution();
+  // r352 hardening §11: unit-type eligibility needs a classified
+  // institution (FACULTY requires the HIGHER_EDUCATION_RESEARCH sector).
+  await classifyInstitution(institution.id, 'UNIVERSITY');
   const admin = await seedUser({ role: Role.ADMIN });
   await seedMembership(admin.id, institution.id, Role.ADMIN);
   const student = await seedUser({ role: Role.STUDENT });

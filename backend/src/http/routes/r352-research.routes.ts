@@ -26,7 +26,11 @@ import {
 
 const router = Router();
 
-router.use(authMiddleware, requireInstitution);
+// Scoped to THIS router's paths: the router mounts at the /api/v1 root
+// (see app.ts), so a path-less use() would run for every later-mounted
+// router's requests too — blocking legitimate contextless callers
+// (e.g. OWNER) from unrelated admin surfaces.
+router.use(['/research-projects', '/research-outputs'], authMiddleware, requireInstitution);
 
 async function audit(
   tx: Prisma.TransactionClient,

@@ -30,7 +30,7 @@
  *   - revocation sets isActive=false + revokedAt immediately — there is
  *     no grant cache, so the next capability check sees the change.
  */
-import { Router } from 'express';
+import { Router, type RequestHandler } from 'express';
 import { Prisma } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../../db.js';
@@ -39,7 +39,7 @@ import { requireInstitution } from '../middleware/institution.js';
 import { requireCapability } from '../middleware/requireCapability.js';
 import { validate } from '../validate.js';
 import { AppError } from '../../lib/errors.js';
-import { callerAuthorityCoversUnit } from '../../lib/permissions.js';
+import { assertCapabilityForUnit, assertCapabilityIn, callerAuthorityCoversUnit } from '../../lib/permissions.js';
 import { assertOrgUnitInInstitution } from '../../lib/tenant-guards.js';
 import { unitCapabilityGrantCreateSchema } from '../../modules/r352/dto.js';
 
@@ -69,7 +69,18 @@ router.get('/me/unit-capabilities', authMiddleware, requireInstitution, async (r
 });
 
 // ── admin surface ──────────────────────────────────────────────────
-router.use('/admin', authMiddleware, requireCapability('UNIT_CAPABILITIES_ASSIGN'));
+// §3.2 scope policy: BROWSING grants is an institution-wide operation
+// (the router-level gate below covers GET). GRANTING/REVOKING is
+// scope-aware — the write routes check UNIT_CAPABILITIES_ASSIGN at the
+// grant's own scope (unit subtree or institution-wide) inside their
+// handlers, so a faculty-scoped grant administrator can operate within
+// their subtree without holding the institution-wide capability.
+const requireInstitutionUnlessOwner: RequestHandler = (req, _res, next) => {
+  if (req.user?.role === 'OWNER') return next();
+  return requireInstitution(req, _res, next);
+};
+
+router.use('/admin', authMiddleware);
 
 /**
  * Resolve the institution the admin request may operate on. For a
@@ -106,7 +117,14 @@ async function assertOwnerTargetInstitution(institutionId: string): Promise<void
   }
 }
 
-router.get('/admin/users/:id/unit-capabilities', requireInstitution, async (req, res, next) => {
+// §3.2 scope policy: BROWSING grants is an institution-wide operation —
+// the router-level capability gate + the verified context apply (OWNER
+// may pass an explicit verified institutionId instead).
+router.get(
+  '/admin/users/:id/unit-capabilities',
+  requireCapability('UNIT_CAPABILITIES_ASSIGN'),
+  requireInstitutionUnlessOwner,
+  async (req, res, next) => {
   try {
     const scope = resolveAdminInstitutionScope(req);
     if (!scope) {
@@ -126,11 +144,12 @@ router.get('/admin/users/:id/unit-capabilities', requireInstitution, async (req,
   } catch (e) {
     next(e);
   }
-});
+  },
+);
 
 router.post(
   '/admin/users/:id/unit-capabilities',
-  requireInstitution,
+  requireInstitutionUnlessOwner,
   validate(unitCapabilityGrantCreateSchema),
   async (req, res, next) => {
     try {
@@ -158,6 +177,18 @@ router.post(
       }
       const institutionId = scope.institutionId;
       if (scope.explicit) await assertOwnerTargetInstitution(institutionId);
+
+      // §3.2 scope policy: the ACTOR must hold UNIT_CAPABILITIES_ASSIGN
+      // at the grant's own scope — a faculty-scoped grant administrator
+      // can grant within their subtree; an institution-wide grant needs
+      // the institution-wide capability.
+      if (actor.role !== 'OWNER') {
+        if (input.orgUnitId) {
+          await assertCapabilityForUnit(actor.id, actor.role, institutionId, input.orgUnitId, 'UNIT_CAPABILITIES_ASSIGN');
+        } else {
+          await assertCapabilityIn(actor.id, actor.role, institutionId, 'UNIT_CAPABILITIES_ASSIGN');
+        }
+      }
 
       // §3.2 rule 11: the target must hold an ACTIVE membership in the
       // institution (a grant rides a real institutional standing).
@@ -256,7 +287,7 @@ router.post(
   },
 );
 
-router.post('/admin/unit-capabilities/:id/revoke', requireInstitution, async (req, res, next) => {
+router.post('/admin/unit-capabilities/:id/revoke', requireInstitutionUnlessOwner, async (req, res, next) => {
   try {
     const actor = req.user!;
     const grant = await prisma.unitCapabilityGrant.findUnique({
@@ -275,6 +306,16 @@ router.post('/admin/unit-capabilities/:id/revoke', requireInstitution, async (re
       }
     }
     if (!grant.isActive) throw AppError.conflict('المنحة ملغاة مسبقًا');
+
+    // §3.2 scope policy mirrored on revoke: UNIT_CAPABILITIES_ASSIGN at
+    // the grant's own scope.
+    if (actor.role !== 'OWNER') {
+      if (grant.orgUnitId) {
+        await assertCapabilityForUnit(actor.id, actor.role, grant.institutionId, grant.orgUnitId, 'UNIT_CAPABILITIES_ASSIGN');
+      } else {
+        await assertCapabilityIn(actor.id, actor.role, grant.institutionId, 'UNIT_CAPABILITIES_ASSIGN');
+      }
+    }
 
     // §3.2 rule 8 mirrored on revoke: the actor must hold the revoked
     // capability's authority over the grant's scope.

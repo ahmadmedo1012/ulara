@@ -806,6 +806,14 @@ router.put(
       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
         return next(AppError.conflict('تعارض في إصدار المحضر — أعد المحاولة'));
       }
+      // The immutability trigger surfacing through Prisma → the clean
+      // Arabic envelope (the route is the deliberate path; this is the
+      // belt for direct-mutation attempts).
+      if (e instanceof Error && e.message.includes('MINUTES_')) {
+        return next(
+          new AppError('MINUTES_VERSION_IMMUTABLE', 'الإصدار المعتمد/الموقّع غير قابل للتعديل — أنشئ إصدارًا جديدًا', 409),
+        );
+      }
       next(e);
     }
   },

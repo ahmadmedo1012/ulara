@@ -7,7 +7,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import type { AddressInfo } from 'node:net';
 import { Role } from '@prisma/client';
 import { createApp } from '../../src/app.js';
-import { bearer, db, seedInstitution, seedMembership, seedUser, truncateAll, uniqueSuffix } from './helpers.js';
+import { bearer, classifyInstitution, db, seedInstitution, seedMembership, seedUser, truncateAll, uniqueSuffix } from './helpers.js';
 import { ensureR352Catalogs } from '../../prisma/seed-r352-catalogs.js';
 
 let baseUrl: string;
@@ -27,6 +27,9 @@ beforeEach(async () => {
 
 async function seedAdminInstitution() {
   const institution = await seedInstitution();
+  // r352 hardening §10: FACULTY_DEAN is university-eligible only — a
+  // classified institution is part of the honest fixture.
+  await classifyInstitution(institution.id, 'UNIVERSITY');
   const admin = await seedUser({ role: Role.ADMIN });
   await seedMembership(admin.id, institution.id, Role.ADMIN);
   return { institution, admin };

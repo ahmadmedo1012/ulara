@@ -339,20 +339,30 @@ CREATE INDEX "MeetingMinutes_meetingId_isCurrent_idx" ON "MeetingMinutes"("meeti
 CREATE UNIQUE INDEX "MeetingMinutes_one_current_version_key"
     ON "MeetingMinutes"("meetingId") WHERE "isCurrent";
 
--- Immutability belt: a SIGNED version never changes; an APPROVED
--- version's content and approval provenance never change (re-drafting
--- MUST create a new version — the route layer enforces it, this is the
--- database invariant of record).
+-- Immutability belt: a SIGNED/APPROVED version's CONTENT, STATUS and
+-- PROVENANCE never change (re-drafting MUST create a new version — the
+-- route layer is the deliberate path, this is the database invariant of
+-- record). The isCurrent flag is deliberately EXEMPT: superseding a
+-- signed version (minting the next revision) flips only that flag.
 CREATE OR REPLACE FUNCTION ulara_minutes_immutable() RETURNS trigger AS $$
 BEGIN
-    IF OLD."status" = 'SIGNED' THEN
-        RAISE EXCEPTION 'MINUTES_SIGNED_IMMUTABLE: a signed minutes version cannot be modified';
-    END IF;
-    IF OLD."status" = 'APPROVED' AND (
+    IF OLD."status" = 'SIGNED' AND (
            NEW."contentAr" IS DISTINCT FROM OLD."contentAr"
         OR NEW."status" IS DISTINCT FROM OLD."status"
         OR NEW."approvedAt" IS DISTINCT FROM OLD."approvedAt"
         OR NEW."approvedByPersonId" IS DISTINCT FROM OLD."approvedByPersonId"
+        OR NEW."signedAt" IS DISTINCT FROM OLD."signedAt"
+        OR NEW."signedByPersonId" IS DISTINCT FROM OLD."signedByPersonId"
+    ) THEN
+        RAISE EXCEPTION 'MINUTES_SIGNED_IMMUTABLE: a signed minutes version cannot be modified';
+    END IF;
+    IF OLD."status" = 'APPROVED' AND (
+           NEW."contentAr" IS DISTINCT FROM OLD."contentAr"
+        OR NEW."approvedAt" IS DISTINCT FROM OLD."approvedAt"
+        OR NEW."approvedByPersonId" IS DISTINCT FROM OLD."approvedByPersonId"
+        -- The APPROVED → SIGNED transition is the legal lifecycle; any
+        -- other status change must mint a new version instead.
+        OR (NEW."status" IS DISTINCT FROM OLD."status" AND NEW."status" <> 'SIGNED')
     ) THEN
         RAISE EXCEPTION 'MINUTES_APPROVED_IMMUTABLE: re-drafting must create a new version';
     END IF;
@@ -633,7 +643,7 @@ BEGIN
     IF parent_sector IS NULL OR parent_kind IS NULL THEN
         RAISE EXCEPTION 'INSTITUTION_AFFILIATION_PARENT_UNCLASSIFIED: parent institution lacks sector/kind classification';
     END IF;
-    IF NEW."sector" IS NOT NULL AND NEW."sector" <> parent_sector THEN
+    IF NEW."sector" IS NOT NULL AND NEW."sector"::text <> parent_sector THEN
         RAISE EXCEPTION 'INSTITUTION_AFFILIATION_CROSS_SECTOR: parent belongs to another sector';
     END IF;
 
