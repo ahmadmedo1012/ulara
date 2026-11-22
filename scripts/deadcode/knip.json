@@ -2,7 +2,13 @@
   "$schema": "https://unpkg.com/knip@5.88.1/schema.json",
   "entry": [
     "src/main.tsx",
-    "src/components/landing/patterns/index.ts"
+    "src/components/landing/patterns/index.ts",
+    "tests/e2e/**/*.ts",
+    "tests/unit/**/*.ts",
+    "tests/audit/**/*.ts",
+    "tests/r305/**/*.ts",
+    "tests/ios/**/*.ts",
+    "tests/motion/**/*.ts"
   ],
   "ignore": [
     "postcss.config.cjs"

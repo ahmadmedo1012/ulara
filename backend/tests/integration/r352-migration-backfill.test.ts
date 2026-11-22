@@ -7,7 +7,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { AcademicPosition, Role } from '@prisma/client';
 import { createApp } from '../../src/app.js';
-import { db, seedInstitution, seedMembership, seedUser, truncateAll, uniqueSuffix } from './helpers.js';
+import { bearer, db, seedInstitution, seedMembership, seedUser, truncateAll, uniqueSuffix } from './helpers.js';
 import { backfillLegacyAppointments, backfillOrgUnitsFromLegacy, ensureR352Catalogs } from '../../prisma/seed-r352-catalogs.js';
 
 let server: ReturnType<ReturnType<typeof createApp>['listen']>;
@@ -50,6 +50,39 @@ describe('r352 migration & seed backfills', () => {
     const count = await db().organizationalUnit.count();
     await backfillOrgUnitsFromLegacy(db());
     expect(await db().organizationalUnit.count()).toBe(count);
+  });
+
+  it('the mirrored unit ids ride the API contract — ?orgUnitId= filters answer 200, never «Invalid cuid» (r352 hardening #2)', async () => {
+    // Live visual QA finding (2026-11-22): the 'ou-f-'/'ou-d-'
+    // prefixed mirror ids failed the zod cuid params, so every
+    // sibling query of the org-unit detail panel answered 400. The
+    // mirror id is the legacy row's cuid now (migration 0005 rewrote
+    // prefixed rows; the catch-up mirrors bare). This test rides the
+    // REAL HTTP surface so the id convention and the validators can
+    // never drift apart again.
+    const institution = await seedInstitution();
+    const admin = await seedUser({ role: Role.ADMIN });
+    await seedMembership(admin.id, institution.id, Role.ADMIN);
+    const auth = bearer(admin.id, Role.ADMIN, institution.id);
+    const faculty = await db().faculty.create({
+      data: { name: `كلية العقد ${uniqueSuffix()}`, city: 'طرابلس', institutionId: institution.id },
+    });
+    await backfillOrgUnitsFromLegacy(db());
+    const linked = await db().faculty.findUniqueOrThrow({ where: { id: faculty.id } });
+    expect(linked.orgUnitId).toBe(faculty.id); // the mirror IS the legacy id
+    const mirror = await db().organizationalUnit.findUniqueOrThrow({ where: { id: faculty.id } });
+    expect(mirror.id).toMatch(/^c[0-9a-z]{8,}$/); // cuid-shaped — the API param space
+
+    const base = `http://127.0.0.1:${(server.address() as { port: number }).port}`;
+    for (const path of [
+      `/api/v1/institutional/people?orgUnitId=${mirror.id}&limit=10`,
+      `/api/v1/institutional/appointments?orgUnitId=${mirror.id}&limit=10`,
+      `/api/v1/academic/programs?orgUnitId=${mirror.id}&limit=10`,
+      `/api/v1/institutional/org-units/${mirror.id}`,
+    ]) {
+      const res = await fetch(`${base}${path}`, { headers: auth });
+      expect(res.status, path).toBe(200);
+    }
   });
 
   it('legacy TeacherProfile leadership backfills to appointments (idempotent)', async () => {

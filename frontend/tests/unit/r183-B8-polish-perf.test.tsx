@@ -231,7 +231,17 @@ describe('r183-B8 — CI bundle-size gate (A11 finding 1)', () => {
     // already moved. The pin is reconciled the 992d520d way: it follows
     // the documented gate ceiling DOWN, never up — 770 is STRICTER than
     // 777, no assertion is weakened.
-    expect(script).toContain('LIMIT_TOTAL_KB = 770');
+    // R352 override (documented, the sanctioned mechanism — the largest
+    // single feature since the gate's inception): the institutional
+    // operating workspace (r352 §C-§S) is +62.7 KB gz of route-level
+    // application code (15 lazy page chunks + the inst kit + the API
+    // clients; main measured 746.9 / 143 chunks, the branch 809.6 / 162;
+    // entry 65.0 ≤ 92 and pdf 95.7 ≤ 110 unchanged; no library fat in
+    // the fingerprints). A statutory feature cannot fit 23 KB of
+    // pre-feature headroom — the gate's documented raise is 770→815
+    // with 0.7% tight headroom; a future bundle-diet round re-pins
+    // DOWN, never up.
+    expect(script).toContain('LIMIT_TOTAL_KB = 815');
     expect(script).toContain('LIMIT_ENTRY_KB = 92');
     expect(script).toContain('LIMIT_PDF_KB = 110');
     // Fail-closed scanner errors are a distinct exit code, so a missing

@@ -123,33 +123,10 @@
 
 /* ─── Status chip: THE status vocabulary of the round ──────────────── */
 
-.hr-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sp-1-5);
-  font-size: var(--fs-xs);
-  font-weight: 600;
-  line-height: 1.2;
-  color: var(--text-secondary);
-  background: var(--surface-2);
-  /* R313 (WP-F · D16): square chip on the structural hairline. */
-  border: 1px solid var(--rule);
-  border-radius: var(--r-xs);
-  padding-inline: var(--sp-2-5);
-  padding-block: var(--sp-1);
-  min-block-size: 26px;
-  white-space: nowrap;
-}
-
-.hr-chip::before {
-  content: '';
-  inline-size: var(--sp-1-5);
-  block-size: var(--sp-1-5);
-  border-radius: var(--r-full);
-  background: var(--text-muted);
-  flex: none;
-}
-
+/* .hr-chip base + ::before: shared with .inst-chip — see
+   components.css (BADGES & PILLS). Only the tone family lives here;
+   the raw 600 became var(--fw-semibold) — the same value via the
+   token (r325 Y4). */
 .hr-chip[data-tone='ok'] {
   color: var(--success-ink);
   background: var(--success-soft);

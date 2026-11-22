@@ -1,9 +1,9 @@
 {
-  "_comment": "T-22 Track B ratchet baseline — measured analyzer output. Counts may only improve; when a count drops, re-pin it here in the SAME commit (scripts/deadcode/check.sh --update). Pinned tools: knip@5.88.1, jscpd@5.4.2, dependency-cruiser@18.7.2 (+ typescript@5.7.2 for depcruise); jscpd minTokens=70.",
+  "_comment": "T-22 Track B ratchet baseline — measured analyzer output. Counts may only improve; when a count drops, re-pin it here in the SAME commit (scripts/deadcode/check.sh --update). Pinned tools: knip@5.88.1, jscpd@5.4.2, dependency-cruiser@18.7.2 (+ typescript@5.7.2 for depcruise); jscpd minTokens=70. r37 re-pin (2026-11-22): knip.json now counts the CI-run test trees (tests/e2e, tests/unit, tests/audit, tests/r305, tests/ios, tests/motion) as ENTRY files — playwright/vitest specs are executed by CI, they were never dead code; the old config's blind spot had pinned 51 test files as 'unused'. The measured counts dropped accordingly and were re-pinned in the same commit, per the ratchet law.",
   "knip": {
-    "unusedFiles": 53,
-    "unusedExports": 41,
-    "unusedExportedTypes": 225,
+    "unusedFiles": 2,
+    "unusedExports": 18,
+    "unusedExportedTypes": 216,
     "unusedDependencies": 0,
     "unusedDevDependencies": 1,
     "unlisted": 0,
@@ -11,7 +11,7 @@
     "duplicates": 0
   },
   "jscpd": {
-    "duplicateBlocks": 253
+    "duplicateBlocks": 252
   },
   "depcruise": {
     "circularDependencies": 0

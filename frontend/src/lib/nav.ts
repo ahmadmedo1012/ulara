@@ -256,6 +256,12 @@ export const ADMIN_NAV: NavGroup[] = [
     label: 'إدارة المؤسسة',
     items: [
       { to: ROUTES.adminDashboard, icon: LayoutDashboard, label: 'لوحة إدارة المؤسسة' },
+      /* r352 — the Institutional Operating Workspace: the institution's
+         own structure/people/governance/programs/compliance/facilities/
+         research surface (its own route namespace + module rail — NOT
+         more admin pages). Landmark icon: the workspace's masthead
+         carries the institution kind. */
+      { to: ROUTES.institutionRoot, icon: Landmark, label: 'مساحة العمل المؤسسية' },
       { to: ROUTES.adminTeachers, icon: School, label: 'إدارة الأساتذة' },
       /* r305 (nav audit, task 2-a): Building2 ×2 dedupe — the A4 P3-4
          unique-icon-per-role rule the student/owner maps already honor
@@ -306,6 +312,10 @@ export const QUALITY_NAV: NavGroup[] = [
   {
     label: 'مركز ضمان الجودة',
     items: [
+      /* r352 — quality reads the institutional compliance surfaces
+         (read-only oversight; internal-QA writes need the explicit
+         QUALITY_INTERNAL_MANAGE grant). */
+      { to: ROUTES.institutionRoot, icon: Landmark, label: 'مساحة العمل المؤسسية' },
       { to: ROUTES.qualityDashboard, icon: ShieldCheck, label: 'لوحة الجودة' },
       { to: ROUTES.qualityCourses, icon: BookOpen, label: 'جودة المقرّرات' },
       { to: ROUTES.qualityProfessors, icon: School, label: 'تقييم الأساتذة' },
@@ -347,6 +357,11 @@ export const OWNER_NAV: NavGroup[] = [
   {
     label: 'لوحة المالك',
     items: [
+      /* r352 — the OWNER enters the same institutional workspace (its
+         classification editor is OWNER-only; everything else gates by
+         capability like any member). Briefcase: Landmark is taken by
+         the institutions console in this role's nav (A4 P3-4). */
+      { to: ROUTES.institutionRoot, icon: Briefcase, label: 'مساحة العمل المؤسسية' },
       { to: ROUTES.ownerDashboard, icon: LayoutDashboard, label: 'لوحة التحكم الرئيسية' },
       { to: ROUTES.ownerRealtime, icon: Radio, label: 'المراقبة الحية', badge: { text: 'LIVE', tone: 'brand' } },
       { to: ROUTES.ownerUsers, icon: Users, label: 'إدارة المستخدمين' },

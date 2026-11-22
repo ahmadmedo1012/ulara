@@ -60,6 +60,7 @@ import { acquireScrollLock, releaseScrollLock } from '../../../lib/scrollLock';
  * file-ownership contract — landing.css keeps nothing header-shaped). */
 import '../../../styles/landing/nav.css';
 import { BRAND_LABEL, LOGIN, START_NOW, WORKS_TODAY } from '../copy';
+import { cycleFocusTrap } from '../../../lib/focusTrap';
 
 /* ── r309 (§3): the mobile menu's scroll-lock holder key — the open menu
  * owns the viewport via the ref-counted body lock (lib/scrollLock). */
@@ -469,22 +470,7 @@ export function SheetNav() {
             }
             /* the open overlay is a focus trap: Tab cycles inside it
                (the burger re-takes focus itself on close). */
-            if (e.key === 'Tab') {
-              const items = menuRef.current?.querySelectorAll<HTMLElement>(
-                'a[href], button:not([disabled])',
-              );
-              if (!items || items.length === 0) return;
-              const first: HTMLElement | undefined = items[0];
-              const last: HTMLElement | undefined = items[items.length - 1];
-              if (!first || !last) return;
-              if (e.shiftKey && document.activeElement === first) {
-                e.preventDefault();
-                last.focus();
-              } else if (!e.shiftKey && document.activeElement === last) {
-                e.preventDefault();
-                first.focus();
-              }
-            }
+            cycleFocusTrap(menuRef.current, e);
           }}
         >
           {/* the seat register as ruled rows — each label mask-reveals

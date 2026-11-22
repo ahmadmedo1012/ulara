@@ -191,6 +191,35 @@ const CollegesLeaderboardPage = lazy(() => import('./pages/colleges/CollegePages
 const CompetitionsIndexPage = lazy(() => import('./pages/competitions/CompetitionsPages').then((m) => ({ default: m.CompetitionsIndexPage })));
 const CompetitionDetailPage = lazy(() => import('./pages/competitions/CompetitionsPages').then((m) => ({ default: m.CompetitionDetailPage })));
 
+/* r352 — the Institutional Operating Workspace (/institution/**): a
+ * dedicated surface for the institution's own structure, people,
+ * governance, programs, compliance, facilities and research. Every
+ * module rides its own lazy chunk; the workspace layout (rail nav +
+ * capability gates) is the shared parent. Mounted for ADMIN, OWNER
+ * and QUALITY members (institution reads are context reads per the
+ * r352 contract; write controls gate per-capability inside). */
+const InstitutionWorkspaceLayout = lazy(() => import('./components/institutional/shell').then((m) => ({ default: m.InstitutionWorkspaceLayout })));
+const InstitutionOverviewPage = lazy(() => import('./pages/institutional/OverviewPage').then((m) => ({ default: m.InstitutionOverviewPage })));
+const InstitutionOrganizationPage = lazy(() => import('./pages/institutional/OrganizationPage').then((m) => ({ default: m.InstitutionOrganizationPage })));
+const InstitutionPeoplePage = lazy(() => import('./pages/institutional/PeoplePage').then((m) => ({ default: m.InstitutionPeoplePage })));
+const InstitutionPersonDetailPage = lazy(() => import('./pages/institutional/PeoplePage').then((m) => ({ default: m.InstitutionPersonDetailPage })));
+const InstitutionPositionsPage = lazy(() => import('./pages/institutional/PositionsPage').then((m) => ({ default: m.InstitutionPositionsPage })));
+const InstitutionAppointmentDetailPage = lazy(() => import('./pages/institutional/PositionsPage').then((m) => ({ default: m.InstitutionAppointmentDetailPage })));
+const InstitutionAccessPage = lazy(() => import('./pages/institutional/AccessPage').then((m) => ({ default: m.InstitutionAccessPage })));
+const InstitutionCouncilsPage = lazy(() => import('./pages/institutional/CouncilsPage').then((m) => ({ default: m.InstitutionCouncilsPage })));
+const InstitutionCouncilDetailPage = lazy(() => import('./pages/institutional/CouncilDetailPage').then((m) => ({ default: m.InstitutionCouncilDetailPage })));
+const InstitutionMeetingDetailPage = lazy(() => import('./pages/institutional/CouncilDetailPage').then((m) => ({ default: m.InstitutionMeetingDetailPage })));
+const InstitutionProgramsPage = lazy(() => import('./pages/institutional/ProgramsPage').then((m) => ({ default: m.InstitutionProgramsPage })));
+const InstitutionProgramDetailPage = lazy(() => import('./pages/institutional/ProgramDetailPage').then((m) => ({ default: m.InstitutionProgramDetailPage })));
+const InstitutionTrainingPage = lazy(() => import('./pages/institutional/TrainingPage').then((m) => ({ default: m.InstitutionTrainingPage })));
+const InstitutionStudentsPage = lazy(() => import('./pages/institutional/StudentsPage').then((m) => ({ default: m.InstitutionStudentsPage })));
+const InstitutionQualityPage = lazy(() => import('./pages/institutional/QualityPage').then((m) => ({ default: m.InstitutionQualityPage })));
+const InstitutionLicensesPage = lazy(() => import('./pages/institutional/LicensesPage').then((m) => ({ default: m.InstitutionLicensesPage })));
+const InstitutionFacilitiesPage = lazy(() => import('./pages/institutional/FacilitiesPage').then((m) => ({ default: m.InstitutionFacilitiesPage })));
+const InstitutionFacilityDetailPage = lazy(() => import('./pages/institutional/FacilitiesPage').then((m) => ({ default: m.InstitutionFacilityDetailPage })));
+const InstitutionResearchPage = lazy(() => import('./pages/institutional/ResearchPage').then((m) => ({ default: m.InstitutionResearchPage })));
+const InstitutionResearchDetailPage = lazy(() => import('./pages/institutional/ResearchPage').then((m) => ({ default: m.InstitutionResearchDetailPage })));
+
 /* R313 (WP-A1 · D7): the landing re-composition moved the documentary
  * media rail + video facades and the capability/status ledgers onto two
  * guest sub-pages — chrome-less public surfaces in the /colleges
@@ -626,6 +655,38 @@ export function AppRoutes() {
             <Route path={ROUTES.ownerGovernance} element={<OwnerGovernancePage />} />
             {/* r323 B3.6 — the pilot feedback loop's inbox. */}
             <Route path={ROUTES.ownerFeedback} element={<FeedbackInboxPage />} />
+          </Route>
+        </Route>
+
+        {/* r352 — the Institutional Operating Workspace: one layout
+            (rail nav + capability gates) under the authed shell for
+            ADMIN, OWNER and QUALITY (institution-context reads);
+            write controls inside each module gate per-capability from
+            the server's effective set. See components/institutional/. */}
+        <Route element={<ProtectedRoute allow={['ADMIN', 'OWNER', 'QUALITY']} />}>
+          <Route element={<AppShell />}>
+            <Route element={<InstitutionWorkspaceLayout />}>
+              <Route path={ROUTES.institutionRoot} element={<InstitutionOverviewPage />} />
+              <Route path={ROUTES.institutionOrganization} element={<InstitutionOrganizationPage />} />
+              <Route path={ROUTES.institutionPeople} element={<InstitutionPeoplePage />} />
+              <Route path="/institution/people/:id" element={<InstitutionPersonDetailPage />} />
+              <Route path={ROUTES.institutionPositions} element={<InstitutionPositionsPage />} />
+              <Route path={ROUTES.institutionAppointmentDetail} element={<InstitutionAppointmentDetailPage />} />
+              <Route path={ROUTES.institutionAccess} element={<InstitutionAccessPage />} />
+              <Route path={ROUTES.institutionCouncils} element={<InstitutionCouncilsPage />} />
+              <Route path="/institution/councils/:id" element={<InstitutionCouncilDetailPage />} />
+              <Route path="/institution/councils/:id/meetings/:meetingId" element={<InstitutionMeetingDetailPage />} />
+              <Route path={ROUTES.institutionPrograms} element={<InstitutionProgramsPage />} />
+              <Route path="/institution/programs/:id" element={<InstitutionProgramDetailPage />} />
+              <Route path={ROUTES.institutionTraining} element={<InstitutionTrainingPage />} />
+              <Route path={ROUTES.institutionStudents} element={<InstitutionStudentsPage />} />
+              <Route path={ROUTES.institutionQuality} element={<InstitutionQualityPage />} />
+              <Route path={ROUTES.institutionLicenses} element={<InstitutionLicensesPage />} />
+              <Route path={ROUTES.institutionFacilities} element={<InstitutionFacilitiesPage />} />
+              <Route path="/institution/facilities/:id" element={<InstitutionFacilityDetailPage />} />
+              <Route path={ROUTES.institutionResearch} element={<InstitutionResearchPage />} />
+              <Route path="/institution/research/:id" element={<InstitutionResearchDetailPage />} />
+            </Route>
           </Route>
         </Route>
 
