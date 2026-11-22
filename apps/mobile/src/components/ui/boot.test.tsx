@@ -162,10 +162,10 @@ describe("BootMark — render net (real svg subtree, the Logo pattern)", () => {
     // src/brand/layers.test.tsx — the brand system owns the constants)
   });
 
-  it("themes through the live palette — ink vessel stroke, sienna cornerstone fill", async () => {
+  it("themes through the live palette — ink vessel stroke, primary cornerstone fill", async () => {
     const { toJSON } = await render(<BootMark size={SEAT} />);
-    expect(collectProp(toJSON(), "stroke")).toContainEqual(processed("#262019")); // the light palette ink
-    expect(collectProp(toJSON(), "fill")).toContainEqual(processed("#C43E16")); // the light palette accent
+    expect(collectProp(toJSON(), "stroke")).toContainEqual(processed("#1A1713")); // the approved light ink
+    expect(collectProp(toJSON(), "fill")).toContainEqual(processed("#2540D9")); // the approved primary
   });
 
   it("composes exactly one cornerstone rect — the solid accent 4×4", async () => {

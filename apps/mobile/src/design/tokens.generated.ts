@@ -61,18 +61,18 @@ export const ds = {
 
 export const statusTones = {
   light: {
-    mint: { bg: "#E3EBE1", ink: "#3F8F5C", deep: "#1B5430" },
+    mint: { bg: "#E2EFE8", ink: "#17724A", deep: "#17724A" },
     yellow: { bg: "#F5EBD6", ink: "#A8750F", deep: "#5E420C" },
-    rose: { bg: "#F9E3DC", ink: "#F15534", deep: "#8C230A" },
+    rose: { bg: "#FBE4E4", ink: "#C62828", deep: "#C62828" },
     sky: { bg: "#E1E9F0", ink: "#4A7FA8", deep: "#1F4968" },
     lavender: { bg: "#ECE6FA", ink: "#8A6FE0", deep: "#3F2D7A" },
     copper: { bg: "#F8E3D8", ink: "#C43E16", deep: "#8F2F0F" },
     grey: { bg: "#ECEDEB", ink: "#626260", deep: "#262019" },
   },
   dark: {
-    mint: { bg: "#24372B", ink: "#84D0A0", deep: "#C4EBD2" },
+    mint: { bg: "#1F3A2E", ink: "#5FD39A", deep: "#5FD39A" },
     yellow: { bg: "#3B331F", ink: "#EFC87B", deep: "#F8E3B4" },
-    rose: { bg: "#43241C", ink: "#FF8E68", deep: "#FFC5AE" },
+    rose: { bg: "#3A2020", ink: "#FF7A70", deep: "#FF7A70" },
     sky: { bg: "#23313F", ink: "#93C2E9", deep: "#C9E2F5" },
     lavender: { bg: "#2D2545", ink: "#B7A0F4", deep: "#DCD2F9" },
     copper: { bg: "#46221A", ink: "#FF6B3D", deep: "#FFC5AE" },

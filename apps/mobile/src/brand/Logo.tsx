@@ -49,9 +49,10 @@ export function Logo({
   /** mark height in px; lockup/stacked scale from it. In the 'wordmark'
    * variant it is the wordmark's ink height in px. */
   size?: number;
-  /** 'auto' = the live palette (ink text · sienna cornerstone — themes with
-   * the app); 'ink'/'paper'/'orange' are literal one-colour settings
-   * for fixed backgrounds (BRAND.md §tones). */
+  /** 'auto' = the live palette (ink text · primary cornerstone — themes
+   * with the app); 'ink'/'paper'/'orange' are literal one-colour settings
+   * for fixed backgrounds (BRAND.md §tones; 'orange' keeps its legacy name
+   * but now carries the approved primary). */
   tone?: LogoTone;
   testID?: string;
 }): ReactNode {
@@ -60,9 +61,9 @@ export function Logo({
     tone === "paper"
       ? "#F5F1E8"
       : tone === "orange" || tone === "sienna"
-        ? "#C43E16"
+        ? "#2540D9"
         : tone === "ink"
-          ? "#262019"
+          ? "#1A1713"
           : palette.text;
   const cornerstone = tone === "auto" ? palette.accent : ink;
 

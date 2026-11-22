@@ -26,11 +26,12 @@
  *    the vessel is one continuous stroke), no fills except the
  *    cornerstone, no gradients, no shadows.
  *
- * COLOURS (the only three): paper #F5F1E8 · ink #262019 · sienna #C43E16.
- * In the app the ink rides currentColor and the sienna rides var(--accent)
- * (tokens.css re-keys that shared seat per theme: #C43E16 on light, the
- * luminous ember #FF6B3D on dark — the sanctioned dark-theme swap, one
- * var() and the mark themes without props).
+ * COLOURS (the only three): paper #F5F1E8 · ink #1A1713 · primary #2540D9.
+ * In the app the ink rides currentColor and the cornerstone rides
+ * var(--accent) (tokens.css re-keys that shared seat per theme: the
+ * approved #2540D9 on light, its luminous night tier #8AA0FF on dark —
+ * the sanctioned dark-theme swap, one var() and the mark themes without
+ * props).
  */
 
 /** The mark's own viewBox (the 32-unit grid). */

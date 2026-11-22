@@ -57,7 +57,7 @@ describe("semanticColorsFor — light/dark resolution", () => {
 
   it("text tiers are distinct inks (primary → secondary → tertiary)", () => {
     const light = semanticColorsFor("light");
-    expect(light.textPrimary).toBe("#262019");
+    expect(light.textPrimary).toBe("#1A1713"); // the approved ink
     expect(light.textSecondary).toBe("#414140");
     expect(light.textTertiary).toBe("#62625F");
     const dark = semanticColorsFor("dark");
@@ -68,32 +68,32 @@ describe("semanticColorsFor — light/dark resolution", () => {
 });
 
 describe("the ONE accent", () => {
-  it("is the brand sienna in light and the luminous ember in dark", () => {
-    expect(semanticColorsFor("light").accent).toBe("#C43E16");
-    expect(semanticColorsFor("dark").accent).toBe("#FF6B3D");
+  it("is the approved primary in both themes (blue by day, luminous blue by night)", () => {
+    expect(semanticColorsFor("light").accent).toBe("#2540D9");
+    expect(semanticColorsFor("dark").accent).toBe("#8AA0FF");
   });
 
-  it("body-size accent text has its own AA-safe ink (not the raw fill)", () => {
+  it("the primary is its own AA-safe text ink (6.62:1 day · 6.56:1 night)", () => {
     const light = semanticColorsFor("light");
-    expect(light.accentInk).not.toBe(light.accent);
-    expect(light.accentInk).toBe("#A33312");
+    expect(light.accentInk).toBe("#2540D9");
+    expect(light.accentInk).toBe(light.accent);
     const dark = semanticColorsFor("dark");
-    expect(dark.accentInk).not.toBe(dark.accent);
-    expect(dark.accentInk).toBe("#FF8A5F");
+    expect(dark.accentInk).toBe("#8AA0FF");
+    expect(dark.accentInk).toBe(dark.accent);
   });
 });
 
 describe("status triples — shared-JSON mapping (successInk = deep@light / ink@dark)", () => {
   it("success/warning/danger resolve fill/soft/ink from the tone families", () => {
     const light = semanticColorsFor("light");
-    expect(light.success).toEqual({ fill: "#3F8F5C", soft: "#E3EBE1", ink: "#1B5430" });
+    expect(light.success).toEqual({ fill: "#17724A", soft: "#E2EFE8", ink: "#17724A" });
     expect(light.warning).toEqual({ fill: "#A8750F", soft: "#F5EBD6", ink: "#5E420C" });
-    expect(light.danger).toEqual({ fill: "#F15534", soft: "#F9E3DC", ink: "#8C230A" });
+    expect(light.danger).toEqual({ fill: "#C62828", soft: "#FBE4E4", ink: "#C62828" });
 
     const dark = semanticColorsFor("dark");
-    expect(dark.success).toEqual({ fill: "#84D0A0", soft: "#24372B", ink: "#84D0A0" });
+    expect(dark.success).toEqual({ fill: "#5FD39A", soft: "#1F3A2E", ink: "#5FD39A" });
     expect(dark.warning).toEqual({ fill: "#EFC87B", soft: "#3B331F", ink: "#EFC87B" });
-    expect(dark.danger).toEqual({ fill: "#FF8E68", soft: "#43241C", ink: "#FF8E68" });
+    expect(dark.danger).toEqual({ fill: "#FF7A70", soft: "#3A2020", ink: "#FF7A70" });
   });
 
   it("stays in sync with the tone families it resolves from", () => {

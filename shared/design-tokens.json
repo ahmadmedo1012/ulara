@@ -45,7 +45,7 @@
       }
     },
     "triad": {
-      "$doc": "The 9 section families (r305 re-key, engine-verified contrasts): each a soft tinted ground (band fill), a saturated ink for fills/UI accents, a deep shade for text. Badge-rarity pins (yellow/grey/peach deep-vs-bg ≥4.5 both themes) and icon-well pins (light -deep on -bg ≥3:1) verified: mint 7.31 · yellow 7.85 · rose 7.22 · sky 7.74 · peach 6.29 · grey 12.55 · sand 7.62 · lavender 9.24 · copper 6.10. Dark = deep ember-tinted grounds + luminous inks (family ink-on-bg ≥6.5; the ember ink 4.73 AA-large/UI by design).",
+      "$doc": "The 9 section families (R351-final re-key: mint = the approved success #17724A/#5FD39A, rose = the approved danger #C62828/#FF7A70; each a soft tinted ground (band fill), a saturated ink for fills/UI accents, a deep shade for text — success/danger are AA as their own text ink, so deep = ink).  pins (yellow/grey/peach deep-vs-bg ≥4.5 both themes) and icon-well pins (light -deep on -bg ≥3:1) verified: mint 7.31 · yellow 7.85 · rose 7.22 · sky 7.74 · peach 6.29 · grey 12.55 · sand 7.62 · lavender 9.24 · copper 6.10. Dark = deep ember-tinted grounds + luminous inks (family ink-on-bg ≥6.5; the ember ink 4.73 AA-large/UI by design).",
       "peach": {
         "light": {
           "bg": "#FCE5DE",
@@ -60,14 +60,14 @@
       },
       "mint": {
         "light": {
-          "bg": "#E3EBE1",
-          "ink": "#3F8F5C",
-          "deep": "#1B5430"
+          "bg": "#E2EFE8",
+          "ink": "#17724A",
+          "deep": "#17724A"
         },
         "dark": {
-          "bg": "#24372B",
-          "ink": "#84D0A0",
-          "deep": "#C4EBD2"
+          "bg": "#1F3A2E",
+          "ink": "#5FD39A",
+          "deep": "#5FD39A"
         }
       },
       "lavender": {
@@ -108,14 +108,14 @@
       },
       "rose": {
         "light": {
-          "bg": "#F9E3DC",
-          "ink": "#F15534",
-          "deep": "#8C230A"
+          "bg": "#FBE4E4",
+          "ink": "#C62828",
+          "deep": "#C62828"
         },
         "dark": {
-          "bg": "#43241C",
-          "ink": "#FF8E68",
-          "deep": "#FFC5AE"
+          "bg": "#3A2020",
+          "ink": "#FF7A70",
+          "deep": "#FF7A70"
         }
       },
       "sand": {
