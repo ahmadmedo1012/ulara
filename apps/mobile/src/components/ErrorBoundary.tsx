@@ -74,7 +74,13 @@ export class ErrorBoundary extends Component<Props, State> {
               { backgroundColor: pressed ? palette.accentHover : palette.accent },
             ]}
           >
-            <Text style={[styles.buttonText, { color: palette.accentFg }]}>إعادة المحاولة</Text>
+            {({ pressed }) => (
+              /* pressed label: the #4C63F0 night press fill takes the WHITE
+               * hover label (4.83:1 — accentHoverFg), not the resting #262019. */
+              <Text style={[styles.buttonText, { color: pressed ? palette.accentHoverFg : palette.accentFg }]}>
+                إعادة المحاولة
+              </Text>
+            )}
           </Pressable>
         </ScrollView>
       </View>

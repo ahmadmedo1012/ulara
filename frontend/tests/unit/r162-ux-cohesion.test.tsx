@@ -324,16 +324,14 @@ describe('r172a §2 → r188 — the landing CTA rides the canonical accent pair
     const at = css.indexOf('.fo-skip-link {');
     expect(at).toBeGreaterThanOrEqual(0);
     const body = css.slice(at, css.indexOf('}', at));
-    /* R323 override (A5 §2, contrast-gate): the raw --accent ground fails
-       AA under the white label (3.76:1); the skip link now rides the
-       same documented R318 AA seat as the button system (#DB3A00, white
-       label 4.55:1) in both themes. The family intent survives: the seat
-       is the accent system's own documented darker rung. */
-    expect(body).toContain('background: #DB3A00');
-    // R323 CI-debt re-pin: the label colour moved to the --white token
-    // (tokens.css — the literal's identical value) to satisfy the
-    // strict colour-token gate; same computed colour, token-routed.
-    expect(body).toContain('color: var(--white)');
+    /* 2026 «Parchment & Royal»: the #DB3A00 AA-exception seat is retired —
+       the royal signal clears AAA with white at rest (7.46:1), so the skip
+       link rides the canonical theme-aware pair var(--accent) +
+       var(--accent-fg) (light #2540D9 + white · dark #8AA0FF + #262019),
+       keeping the a11y-chrome intent: a solid signal ground + a compliant
+       label in BOTH themes. */
+    expect(body).toContain('background: var(--accent)');
+    expect(body).toContain('color: var(--accent-fg)');
   });
 
   it('the landing CTA markup consumes the canonical classes (no private CTA class)', () => {

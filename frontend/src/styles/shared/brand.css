@@ -141,8 +141,8 @@
 
   /* the three literal brand colours live ONLY here, as data */
   .r323b-chip-paper { background: #F5F1E8; } /* color-gate: allow — the /__brand specimen exhibits the literal constant as data */
-  .r323b-chip-ink { background: #262019; } /* color-gate: allow — the /__brand specimen exhibits the literal constant as data */
-  .r323b-chip-sienna { background: #C43E16; } /* color-gate: allow — the /__brand specimen exhibits the literal constant as data */
+  .r323b-chip-ink { background: #1A1713; } /* color-gate: allow — the /__brand specimen exhibits the literal constant as data */
+  .r323b-chip-sienna { background: #2540D9; } /* color-gate: allow — the /__brand specimen exhibits the literal constant as data (the royal cornerstone — class name kept as the compatible seat) */
 
   /* ── 6 · do / don't ─────────────────────────────────────────────── */
   .r323b-dd {

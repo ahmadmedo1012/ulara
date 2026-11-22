@@ -120,13 +120,14 @@ export const ROLE_SHOWCASES: [
   },
   {
     key: 'ADMIN',
-    /* R320 §B: the role showcase names the role — «المسجل العام». The
-       definite form (no leading ل) is deliberate: LandingPage renders
-       the card title as `roleAr.replace(/^ل/, '')`, so a «للمسجل العام»
-       entry would strip to the dangling «لمسجل العام»; this entry
-       renders the clean «المسجل العام» (same clean-noun shape as the
-       «ضمان الجودة» / «مالك المنصّة» entries). */
-    roleAr: 'المسجل العام',
+    /* r352 §D7: the role showcase names the access category —
+       «إدارة المؤسسة». The definite form (no leading ل) is deliberate:
+       LandingPage renders the card title as `roleAr.replace(/^ل/, '')`,
+       so a «لإدارة المؤسسة» entry would strip to the dangling
+       «لإدارة المؤسسة»; this entry renders the clean «إدارة المؤسسة»
+       (same clean-noun shape as the «ضمان الجودة» / «مالك المنصّة»
+       entries). */
+    roleAr: 'إدارة المؤسسة',
     lineAr: 'الكليات والأقسام والمقرّرات والصلاحيات، وتقارير حيّة',
     captureId: 'admin-dashboard',
   },

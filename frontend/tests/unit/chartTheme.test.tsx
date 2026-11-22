@@ -129,10 +129,10 @@ describe('chartColors / chartPalette', () => {
     const c = chartColors();
     // R313 override (WP-D · charts): the fallback family re-tinted to
     // the reference paper/signal palette — surfaceMuted is the warm paper
-    // step #EFEFE4 (was cool #EDEDF0), accent is the #C43E16 signal
+    // step #EFEFE4 (was cool #EDEDF0), accent is the #2540D9 royal signal
     // (was the pre-R313 night default #a3c9ff).
     expect(c.surfaceMuted).toBe('#EFEFE4');
-    expect(c.accent).toBe('#C43E16');
+    expect(c.accent).toBe('#2540D9');
   });
 
   it('exposes an 8-color categorical palette driven by --chart-N tokens', () => {

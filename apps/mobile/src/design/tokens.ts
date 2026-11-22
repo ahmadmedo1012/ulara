@@ -13,7 +13,7 @@
  *   · dark ink #F6F8FA → #F6F6EE (the web's R324 X22 warm-paper override)
  *   · dark rule #5C5C5A → #4A4A48 (the web's night hairline tier)
  *
- * Paper grounds, graphite ink, hairlines, radius 0, one sienna signal.
+ * Paper grounds, graphite ink, hairlines, radius 0, one royal signal (2026).
  * Zero shadows; emphasis comes from ink weight, hairlines, and the accent.
  */
 import {
@@ -41,6 +41,12 @@ export interface DsPalette {
   textFaint: string;
   accent: string;
   accentHover: string;
+  /** Label ink ON an `accentHover` fill — WHITE in BOTH themes: the
+   *  hover tiers are dark (#1B30B0 light · #4C63F0 dark), so the
+   *  pressed/hovered royal slab takes its white hover label (10.02:1 ·
+   *  4.83:1 — the --accent-hover-fg contract, generated from the
+   *  shared JSON like every fg seat). */
+  accentHoverFg: string;
   accentInk: string;
   accentSoft: string;
   accentStrong: string;
@@ -51,6 +57,9 @@ export interface DsPalette {
   rule: string;
   gold: string;
   goldInk: string;
+  /** Label ink ON a danger fill (white light · #262019 dark — the
+   *  2026 red family; mirrors accentFg's theme-flip pattern). */
+  dangerFg: string;
   onSurface: string;
   onSurfaceMuted: string;
 }

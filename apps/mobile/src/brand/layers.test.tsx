@@ -88,7 +88,7 @@ describe("MarkVesselLayer — the canonical vessel, exactly", () => {
 
 describe("MarkCornerstoneLayer — the canonical cornerstone, exactly", () => {
   it("renders EXACTLY the shared 4×4 rect at its canonical seat", async () => {
-    const { toJSON } = await render(<MarkCornerstoneLayer size={120} color="#C43E16" />);
+    const { toJSON } = await render(<MarkCornerstoneLayer size={120} color="#2540D9" />);
     const stones = collectNodes(
       toJSON(),
       (props) => props.x === MARK_CORNERSTONE.x && props.y === MARK_CORNERSTONE.y,

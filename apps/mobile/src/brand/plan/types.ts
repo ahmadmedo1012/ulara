@@ -5,7 +5,7 @@
  * The app's signature is the WEBSITE's drafted-architectural-plan
  * language, translated to native: hairline ink structures (stroke
  * 1–1.5), dashed axis scaffolds, dimension ticks, 45° hatch textures,
- * and exactly ONE orange signal per sheet. Every drawing shares the
+ * and exactly ONE royal signal per sheet. Every drawing shares the
  * same 320×220 drafting sheet and draws itself in progressively
  * (strokeDash reveal) through usePlanDraw.
  */
@@ -49,7 +49,7 @@ export interface PlanDrawHandle {
 export interface PlanArtProps {
   /** Ink — defaults to the theme ink (palette.text). */
   color?: string;
-  /** The ONE orange signal — defaults to palette.accent. */
+  /** The ONE royal signal — defaults to palette.accent. */
   dotColor?: string;
   /** Controlled draw progress 0..1 (static — no animation). */
   progress?: number;

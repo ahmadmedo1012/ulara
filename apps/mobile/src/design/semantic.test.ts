@@ -57,7 +57,7 @@ describe("semanticColorsFor — light/dark resolution", () => {
 
   it("text tiers are distinct inks (primary → secondary → tertiary)", () => {
     const light = semanticColorsFor("light");
-    expect(light.textPrimary).toBe("#1A1713"); // the approved ink
+    expect(light.textPrimary).toBe("#1A1713");
     expect(light.textSecondary).toBe("#414140");
     expect(light.textTertiary).toBe("#62625F");
     const dark = semanticColorsFor("dark");
@@ -68,18 +68,35 @@ describe("semanticColorsFor — light/dark resolution", () => {
 });
 
 describe("the ONE accent", () => {
-  it("is the approved primary in both themes (blue by day, luminous blue by night)", () => {
+  it("is the royal blue in light and the luminous royal in dark (2026)", () => {
     expect(semanticColorsFor("light").accent).toBe("#2540D9");
     expect(semanticColorsFor("dark").accent).toBe("#8AA0FF");
   });
 
-  it("the primary is its own AA-safe text ink (6.62:1 day · 6.56:1 night)", () => {
+  it("the royal clears AA as text itself — ink ≡ accent (the raw/ink split retired)", () => {
     const light = semanticColorsFor("light");
-    expect(light.accentInk).toBe("#2540D9");
     expect(light.accentInk).toBe(light.accent);
+    expect(light.accentInk).toBe("#2540D9");
     const dark = semanticColorsFor("dark");
-    expect(dark.accentInk).toBe("#8AA0FF");
     expect(dark.accentInk).toBe(dark.accent);
+    expect(dark.accentInk).toBe("#8AA0FF");
+  });
+
+  it("the fg pairs ride the shared seats — never white on the dark royal, white on every hover tier (2026)", () => {
+    // resting fills: white on #2540D9 (7.46:1) · the DARK #262019 on #8AA0FF
+    // (6.56:1 — white would fail at 2.46:1 and must never appear).
+    expect(ds.light.accentFg).toBe("#FFFFFF");
+    expect(ds.light.primaryFg).toBe("#FFFFFF");
+    expect(ds.dark.accentFg).toBe("#262019");
+    expect(ds.dark.primaryFg).toBe("#262019");
+    // hover/pressed fills: the tiers are dark in BOTH themes (#1B30B0 ·
+    // #4C63F0), so the hovered label is WHITE everywhere (10.02:1 · 4.83:1)
+    // — the accentHoverFg contract the pressed states consume.
+    expect(ds.light.accentHoverFg).toBe("#FFFFFF");
+    expect(ds.dark.accentHoverFg).toBe("#FFFFFF");
+    // danger fills: white on #C62828 (5.62:1) · #262019 on #FF7A70 (6.35:1).
+    expect(ds.light.dangerFg).toBe("#FFFFFF");
+    expect(ds.dark.dangerFg).toBe("#262019");
   });
 });
 
@@ -92,7 +109,7 @@ describe("status triples — shared-JSON mapping (text ink = the family deep run
 
     const dark = semanticColorsFor("dark");
     expect(dark.success).toEqual({ fill: "#5FD39A", soft: "#1F3A2E", ink: "#5FD39A" });
-    expect(dark.warning).toEqual({ fill: "#EFC87B", soft: "#3B331F", ink: "#F8E3B4" });
+    expect(dark.warning).toEqual({ fill: "#EFC87B", soft: "#3B331F", ink: "#F8E3B4" }); /* r351-main: the deep rung is the AAA text tier (mint/rose deep ≡ ink in dark; yellow deep is the lighter amber) */
     expect(dark.danger).toEqual({ fill: "#FF7A70", soft: "#3A2020", ink: "#FF7A70" });
   });
 

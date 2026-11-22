@@ -10,8 +10,9 @@
  * ds discipline (unchanged, now testable):
  *   · Elevation WITHOUT shadows — cards rise by a surface step + a hairline
  *     frame. The presets below never emit any shadow or elevation key.
- *   · ONE sienna accent per screen — `accent` is the only saturated brand
- *     hue (see the accent block below for the text-safe route).
+ *   · ONE royal accent per screen — `accent` is the only saturated brand
+ *     hue (the 2026 «Parchment & Royal» takeover; see the accent block
+ *     below — the blue now clears AA as text itself).
  *   · success/warning/danger are FEEDBACK tones, never accents.
  *
  * Shared-JSON mapping notes (shared/design-tokens.json — read-only truth):
@@ -65,16 +66,19 @@ export interface SemanticColors {
   /** Tertiary ink — metadata, timestamps. */
   textTertiary: string;
   /**
-   * THE sienna — the single accent seat (light #C43E16 · dark #FF6B3D).
-   * UI/large-text tone only (light 4.60:1, dark 5.70:1); body-size accent
-   * TEXT routes through `accentInk`. One accented element per screen.
+   * THE royal — the single accent seat (light #2540D9 · dark #8AA0FF).
+   * The blue clears AA as text itself (light 6.62:1 · dark 6.56:1), so
+   * `accentInk` ≡ `accent` now (the sienna era's raw/ink split retired).
+   * One accented element per screen.
    */
   accent: string;
-  /** Text-safe accent (AA) — light #A33312 · dark #FF8A5F. */
+  /** Text-safe accent (AA) — ≡ accent (light #2540D9 · dark #8AA0FF). */
   accentInk: string;
-  /** Tinted accent ground — soft washes behind the accent moment. */
+  /** Tinted accent ground — soft washes behind the accent moment
+   *  (light #E4E9FF · dark #2A2F4A — never the light value in dark). */
   accentSoft: string;
-  /** Label ink on an `accent` fill (light #FFFFFF · dark warm ink). */
+  /** Label ink on an `accent` fill (light #FFFFFF · dark #262019 —
+   *  the owner-verified pair; white on #8AA0FF FAILS at 2.46:1). */
   accentFg: string;
   /** Success feedback (mint family). */
   success: StatusSeat;

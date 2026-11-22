@@ -127,13 +127,13 @@ const TONE_ROWS: ReadonlyArray<readonly [string, string, React.JSX.Element]> = [
   ['auto', 'currentColor + var(--accent) — أي أرضية نظام', <Logo key="t1" variant="lockup" size={28} />],
   ['ink', 'حبر صريح على ورق/صور فاتحة', <Logo key="t2" variant="lockup" size={28} tone="ink" />],
   ['paper', 'على الأرضيات الداكنة (صف دركي في الصفحة)', <Logo key="t3" variant="lockup" size={28} tone="paper" />],
-  ['sienna', 'لوحة الإشارة الواحدة — استعمال نادر', <Logo key="t4" variant="mark" size={28} tone="sienna" />],
+  ['royal', 'لوحة الإشارة الواحدة — استعمال نادر', <Logo key="t4" variant="mark" size={28} tone="royal" />],
 ];
 
 const SWATCHES: ReadonlyArray<readonly [string, string, string, string]> = [
   ['الورق · paper', 'r323b-chip-paper', '#F5F1E8', 'الأرضية (فاتح) + النسخ الساكنة'],
-  ['الحبر · ink', 'r323b-chip-ink', '#262019', 'الشعيرات والكلمة — يركب currentColor'],
-  ['السيينا المحروقة · sienna', 'r323b-chip-sienna', '#C43E16', 'حجر الأساس — الإشارة الوحيدة · var(--accent)'],
+  ['الحبر · ink', 'r323b-chip-ink', '#1A1713', 'الشعيرات والكلمة — يركب currentColor'],
+  ['الأزرق الملكي · royal', 'r323b-chip-sienna', '#2540D9', 'حجر الأساس — الإشارة الوحيدة · var(--accent)'],
 ];
 
 export default function BrandPage(): React.JSX.Element {

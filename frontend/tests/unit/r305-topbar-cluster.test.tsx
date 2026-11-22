@@ -191,7 +191,7 @@ describe('InstitutionChip — passive pill vs switcher', () => {
     expect(items[0]).toHaveAttribute('aria-disabled', 'true');
     expect(items[0]!.textContent).toContain('مساحة عمل أُلارا التجريبية');
     // The role label rides the trailing edge (topbar-inst-role).
-    expect(items[1]!.textContent).toContain('المسجل العام'); // R320 override: «إداري» → «المسجل العام» (§B rename)
+    expect(items[1]!.textContent).toContain('إدارة المؤسسة'); // r352 §D7: «المسجل العام» → «إدارة المؤسسة» (the ADMIN access category)
   });
 
   it('choosing another membership fires the mutation and the success toast', () => {
@@ -361,10 +361,10 @@ describe('Topbar title block — group-context kicker + scope chips (r305)', () 
 
   it.each([
     // R320 override (§B rename): the ADMIN scope chip carries the role's
-    // canonical name «المسجل العام» (was «إداري كلّيّة»); the ADMIN kicker is
-    // the nav group label «المسجل العام» (was «الإدارة»). The title tooltip
-    // is role-aware now: «نطاق المسجل العام» / «نطاق أخصائي الجودة».
-    ['ADMIN', 'المسجل العام', '/admin/dashboard', 'المسجل العام', 'نطاق المسجل العام'],
+    // canonical name «إدارة المؤسسة» (was «المسجل العام», earlier «إداري كلّيّة»); the ADMIN kicker is
+    // the nav group label «إدارة المؤسسة» (was «المسجل العام», earlier «الإدارة»). The title tooltip
+    // is role-aware now: «نطاق إدارة المؤسسة» / «نطاق أخصائي الجودة».
+    ['ADMIN', 'إدارة المؤسسة', '/admin/dashboard', 'إدارة المؤسسة', 'نطاق إدارة المؤسسة'],
     ['QUALITY', 'أخصائي جودة كلّيّة', '/quality/dashboard', 'مركز ضمان الجودة', 'نطاق أخصائي الجودة'],
   ] as const)('%s scoped to a faculty renders the governance scope chip + its kicker', (role, chipPrefix, path, kickerLabel, scopeTitle) => {
     state.me = { scopeFaculty: { name: 'كلية الهندسة' } };

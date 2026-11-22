@@ -248,13 +248,14 @@ export const TEACHER_NAV: NavGroup[] = [
 
 export const ADMIN_NAV: NavGroup[] = [
   {
-    /* R320 §B: the ADMIN role's group label is its canonical name
-       «المسجل العام» (the registrar general — never a generalized
-       office construction); one name for the role everywhere (sidebar,
-       drawer, topbar kicker, titles). */
-    label: 'المسجل العام',
+    /* r352 §D7: the ADMIN role's group label is its canonical name
+       «إدارة المؤسسة» (the institutional-administration access
+       category — the registrar-general office is a PositionTemplate,
+       not the role); one name for the role everywhere (sidebar,
+       drawer, topbar kicker, titles), twin-locked with the backend. */
+    label: 'إدارة المؤسسة',
     items: [
-      { to: ROUTES.adminDashboard, icon: LayoutDashboard, label: 'لوحة المسجل العام' },
+      { to: ROUTES.adminDashboard, icon: LayoutDashboard, label: 'لوحة إدارة المؤسسة' },
       /* r352 — the Institutional Operating Workspace: the institution's
          own structure/people/governance/programs/compliance/facilities/
          research surface (its own route namespace + module rail — NOT
@@ -436,8 +437,8 @@ export const ROLE_HOME: Record<AppRole, string> = {
 /* ───────────────────────────────────────────────────────────────────
    ROLE_LABELS — moved to lib/roleLabels.ts (R320 §B, c1-RENAME): the
    one source of truth shared with the backend twin; ADMIN is
-   «المسجل العام» there. Re-exported above for every consumer that
-   imported it from here.
+   «إدارة المؤسسة» there (r352 §D7). Re-exported above for every
+   consumer that imported it from here.
    ─────────────────────────────────────────────────────────────────── */
 
 const POSITION_LABELS: Record<AcademicPosition, string> = {
@@ -452,9 +453,9 @@ const POSITION_LABELS: Record<AcademicPosition, string> = {
  *  - regular teacher → "أستاذ"
  *  - dept head       → "أستاذ · رئيس قسم"
  *  - dean            → "أستاذ · عميد كلّيّة الهندسة"  (when faculty name supplied)
- *  - admin university-wide → "المسجل العام"
- *  - admin scoped to faculty → "المسجل العام" (faculty name shown
- *    separately as the scope chip «المسجل العام · كلية …")
+ *  - admin university-wide → "إدارة المؤسسة"
+ *  - admin scoped to faculty → "إدارة المؤسسة" (faculty name shown
+ *    separately as the scope chip «إدارة المؤسسة · كلية …")
  */
 export function displayRoleLabel(
   role: AppRole,

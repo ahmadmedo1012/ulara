@@ -29,7 +29,7 @@
      spec string); the dark arm re-points at the flipping house token
      (the platform --pr-ink-72 / footer precedent). */
   --wy-soft-ink: rgba(40, 40, 40, 0.72); /* color-gate: allow — measured reference why soft ink (r338 ADDENDUM 9 pattern; T-25 owns unification) */
-  --wy-note-ink: rgb(180, 180, 176); /* color-gate: allow — measured reference muted note ink */
+  --wy-note-ink: var(--text-muted); /* 2026 a11y — the measured reference muted note ink rgb(180,180,176) reads 1.85:1 on the band at the mono note voice (13px/500); rides the readable muted seat (light #62625F = 5.46:1) — the same seat the dark arm re-points at. */
   color: var(--wy-soft-ink);
 }
 

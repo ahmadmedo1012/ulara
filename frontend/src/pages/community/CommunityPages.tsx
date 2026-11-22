@@ -60,7 +60,7 @@ import { arUnit, countAr } from '../../lib/format';
 import { StudyRoomsPanel, PostsFeedPanel, CreateStudyRoomModal } from '../../components/community/CommunitySocialPanels';
 // R320 §B (c1-RENAME): the author role badge consumes the ONE shared
 // role-label source (lib/roleLabels.ts + backend twin) — ADMIN reads
-// «المسجل العام» everywhere. (Was a local map with the retired ADMIN
+// «إدارة المؤسسة» everywhere (r352 §D7). (Was a local map with the retired ADMIN
 // office label.)
 import { roleLabel as sharedRoleLabel } from '../../lib/roleLabels';
 import type { AppRole } from '../../stores/auth.store';

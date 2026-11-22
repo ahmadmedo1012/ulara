@@ -112,7 +112,7 @@ export function SheetCursor() {
 
     /* colours re-read on every wake — theme flips mid-session stay
      * correct because the next pointer movement re-wakes the system. */
-    let ink = '#C43E16';
+    let ink = '#2540D9';
 
     const readColors = () => {
       const styles = getComputedStyle(document.documentElement);

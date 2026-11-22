@@ -5,19 +5,19 @@
  * ONE logo for the whole product (the R323 brief retired the six
  * competing variants; the ULARA takeover re-seats the same system on
  * the U-vessel):
- *   · mark      — the 32-grid hairline U-vessel + the sienna cornerstone
+ *   · mark      — the 32-grid hairline U-vessel + the royal cornerstone
  *   · lockup    — horizontal, RTL: mark right, «أُلارا» left (default)
  *   · stacked   — mark / «أُلارا» / ULARA, the full vertical identity
  *   · wordmark  — the outlined word alone (size = its ink height)
  *
  * Everything is inline SVG (no <img>), inherits currentColor, and the
- * sienna cornerstone rides var(--accent) — the seat tokens.css re-keys
- * per theme (#C43E16 light · luminous ember #FF6B3D dark) — so the mark
+ * royal cornerstone rides var(--accent) — the seat tokens.css re-keys
+ * per theme (#2540D9 light · luminous royal #8AA0FF dark) — so the mark
  * themes without props. The root svg carries data-logo (the
  * loader-orchestrator tests count them) and role="img" + <title>.
  *
  * `animated` draws the construction in 600–900 ms — the hairline
- * vessel first, the sienna cornerstone LAST (a base-visible CSS draw:
+ * vessel first, the royal cornerstone LAST (a base-visible CSS draw:
  * under prefers-reduced-motion the animation never applies and the logo
  * is simply there, complete).
  */
@@ -33,7 +33,10 @@ import { LOCKUP, STACKED, WORDMARK_STROKE_SHEET } from './lockups';
 import { WORDMARK_AR, WORDMARK_LATIN } from './wordmark.generated';
 
 export type LogoVariant = 'lockup' | 'mark' | 'wordmark' | 'stacked';
-export type LogoTone = 'auto' | 'ink' | 'paper' | 'sienna';
+/** 'royal' is the canonical brand tone (the 2026 palette); 'sienna' is
+ *  its retired spelling, kept as an accepted alias so existing callers
+ *  keep rendering the (re-valued) brand tone — one meaning, one colour. */
+export type LogoTone = 'auto' | 'ink' | 'paper' | 'royal' | 'sienna';
 
 export function Logo(props: {
   /** default 'lockup' (horizontal, RTL order: mark right, wordmark left) */
@@ -41,12 +44,12 @@ export function Logo(props: {
   /** mark height in px; lockup/stacked scale from it. In the 'wordmark'
    * variant it is the wordmark's ink height in px. */
   size?: number;
-  /** 'auto' = currentColor + var(--accent) for the sienna cornerstone;
-   * 'ink'/'paper'/'sienna' are literal one-colour settings for fixed
-   * backgrounds (paper #F5F1E8, ink #262019, sienna #C43E16). */
+  /** 'auto' = currentColor + var(--accent) for the royal cornerstone;
+   * 'ink'/'paper'/'royal' are literal one-colour settings for fixed
+   * backgrounds (paper #F5F1E8, ink #1A1713, royal #2540D9). */
   tone?: LogoTone;
   className?: string;
-  /** stroke-draw 600–900 ms, sienna cornerstone LAST */
+  /** stroke-draw 600–900 ms, royal cornerstone LAST */
   animated?: boolean;
 }): React.JSX.Element {
   const {
@@ -59,15 +62,16 @@ export function Logo(props: {
 
   /* the ink slot (strokes + wordmark) and the cornerstone slot, per
    * tone: 'auto' inherits (currentColor + var(--accent)); 'ink'/
-   * 'paper'/'sienna' pin BOTH slots to the literal brand colour for
-   * fixed grounds (documented in BRAND.md §tones). */
+   * 'paper'/'royal' pin BOTH slots to the literal brand colour for
+   * fixed grounds (documented in BRAND.md §tones). 'sienna' is the
+   * deprecated alias of 'royal' (same #2540D9 — the 2026 re-value). */
   const ink =
     tone === 'paper'
       ? '#F5F1E8'
-      : tone === 'sienna'
-        ? '#C43E16'
+      : tone === 'royal' || tone === 'sienna'
+        ? '#2540D9'
         : tone === 'ink'
-          ? '#262019'
+          ? '#1A1713'
           : 'currentColor';
   const cornerstone = tone === 'auto' ? 'var(--accent)' : ink;
 

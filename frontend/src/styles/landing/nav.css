@@ -855,9 +855,10 @@ html[data-theme='dark'] .fo-header {
     color: var(--accent-fg);
   }
 
-  /* R319 §D7 — the hovered wipe darkens one step in LIGHT theme (the
-   * #C43E16 slab under the white label measured 3.76:1; #DB3A00 is the
-   * r318 AA signal ground, white 4.55:1). Dark keeps its own pair.
+  /* R319 §D7 → 2026 — the hovered wipe rides the royal signal in
+   * LIGHT theme too (var(--accent) = #2540D9, white label 7.46:1 AAA —
+   * the #DB3A00 AA seat is retired with the copper era). Dark keeps
+   * its own pair below.
    * r344 A2 — the slab's GROUND swap + the mask walk to slice 19; the
    * dissolve BASE lives above (all pointers), this arm only resolves
    * the recorded end state. */
@@ -865,7 +866,7 @@ html[data-theme='dark'] .fo-header {
     transform: none;
     -webkit-mask-position: 100% 50%;
     mask-position: 100% 50%;
-    background: #DB3A00; /* color-gate: allow — the r318 AA signal ground (white label 4.55:1), light theme only; dark twin below */
+    background: var(--accent);
   }
 
   html[data-theme='dark'] .fo-actions-cta:hover::before {

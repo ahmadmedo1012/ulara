@@ -85,8 +85,8 @@ const GENERIC_FRAMES: FrameCopy[] = [
 const ROLE_FRAME_HEADLINE: Record<string, string> = {
   STUDENT: 'مرحباً يا طالب',
   TEACHER: 'مرحباً بك أستاذنا',
-  // R320 §B: the ADMIN role's greeting names the role — «المسجل العام».
-  ADMIN: 'مرحباً بك أيها المسجل العام',
+  // r352 §D7: the ADMIN role's greeting names the access category.
+  ADMIN: 'مرحباً بك في إدارة المؤسسة',
   QUALITY: 'مرحباً بك في فريق الجودة',
   OWNER: 'مرحباً يا مدير المنصة',
 };

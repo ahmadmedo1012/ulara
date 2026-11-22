@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { FlashList, type FlashListProps, type RenderTarget } from "@shopify/flash-list";
 import { useInfiniteQuery, type InfiniteData, type UseInfiniteQueryResult } from "@tanstack/react-query";
-import { usePalette } from "@/design/theme";
+import { usePalette, useStatusTones } from "@/design/theme";
 import { sp, type Spacing } from "@/design/tokens";
 import { latn, num } from "@/lib/format";
 import type { PageMeta, Paginated } from "@/api/types";
@@ -33,8 +33,10 @@ export function StatLine({
   tone?: "accent" | "danger" | "gold";
 }) {
   const p = usePalette();
+  /* 2026: the danger tone rides the rose family — never the accent. */
+  const dTones = useStatusTones();
   const color =
-    tone === "accent" ? p.accentInk : tone === "gold" ? p.goldInk : tone === "danger" ? p.accentInk : p.text;
+    tone === "accent" ? p.accentInk : tone === "gold" ? p.goldInk : tone === "danger" ? dTones.rose.ink : p.text;
   return (
     <View style={{ minHeight: 44, justifyContent: "center", paddingVertical: sp[6] }}>
       <View style={{ flexDirection: "row", alignItems: "baseline", gap: sp[8] }}>

@@ -33,7 +33,7 @@ test.skip(!ENABLED, 'real-stack smoke — run `npm run dev:full` then set ULARA_
 const DASHBOARDS: Record<StackRole, { route: string; heading: string }> = {
   STUDENT: { route: '/student/dashboard', heading: 'لوحة التحكم' },
   TEACHER: { route: '/teacher/dashboard', heading: 'لوحة الأستاذ' },
-  ADMIN: { route: '/admin/dashboard', heading: 'لوحة المسجل العام' }, // R320 override (§B rename): «لوحة الإدارة» → «لوحة المسجل العام»
+  ADMIN: { route: '/admin/dashboard', heading: 'لوحة إدارة المؤسسة' }, // r352 §D7: «لوحة المسجل العام» → «لوحة إدارة المؤسسة» (the ADMIN access category)
   QUALITY: { route: '/quality/dashboard', heading: 'لوحة الجودة' },
   OWNER: { route: '/owner/dashboard', heading: 'لوحة التحكم الرئيسية' },
 };

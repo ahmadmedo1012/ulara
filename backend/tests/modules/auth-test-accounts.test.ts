@@ -288,8 +288,13 @@ describe('R320 §C — ensureTestAccounts (idempotent upsert)', () => {
   it('renders the registrar as «المسجل العام» — no «إدارة» in ANY test-account name', async () => {
     /* RENAME-LEDGER row prisma/seed.ts:342-356 (c1-RENAME) prescribed
      * «المسجل العام» for the demo ADMIN; this twin table must agree.
-     * The rename mission: «إدارة» never appears as a role-ish label a
-     * human reads — the topbar greeting included. */
+     * r352 §D7 refinement: the demo account's name is the JOB TITLE
+     * (the registrar-general persona, a REGISTRAR_GENERAL
+     * PositionTemplate seat) — deliberately NOT the ADMIN access
+     * category «إدارة المؤسسة», which is a ROLE label (role chips,
+     * nav, dashboards) and never a person's display name. The
+     * persona/job-title and role/access-category vocabularies stay
+     * disjoint; «إدارة» never appears as a test-account NAME. */
     const prisma = makePrisma();
     await ensureTestAccounts(prisma);
 

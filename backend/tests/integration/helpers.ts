@@ -141,6 +141,23 @@ export async function seedMembership(
   });
 }
 
+/**
+ * r352 hardening — classify an institution directly (the OWNER route's
+ * DB equivalent for fixtures): sector + seeded kind code. Many r352
+ * belts (org-unit type eligibility, position kind eligibility,
+ * affiliation parents) require a CLASSIFIED institution.
+ */
+export async function classifyInstitution(
+  institutionId: string,
+  kindCode: string = 'UNIVERSITY',
+): Promise<void> {
+  const kind = await prisma.institutionType.findUniqueOrThrow({ where: { code: kindCode } });
+  await prisma.institution.update({
+    where: { id: institutionId },
+    data: { sector: kind.sector, kindId: kind.id },
+  });
+}
+
 /** Minimal unique seed value (emails, slugs, universityIds…). */
 export function uniqueSuffix(): string {
   return randomUUID().slice(0, 12);

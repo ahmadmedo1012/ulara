@@ -913,7 +913,7 @@
     .btn { min-block-size: 44px; }
     .btn.sm { min-block-size: 44px; }
     /* أزرار التقسيم (36px ثابتة) وصفوف المؤشرات القابلة للنقر في
-       لوحة المسجل العام (37px) — أرضية اللمس على الجهاز اللمسي. */
+       لوحة إدارة المؤسسة (37px) — أرضية اللمس على الجهاز اللمسي. */
   }
 
 
@@ -1611,7 +1611,7 @@
   }
   .input:focus,
   input:focus, textarea:focus, select:focus {
-    border-color: #ED4C1F; /* color-gate: allow — R313 D16: the legacy measured input-focus orange (live digest inputs.focus; token seat pending — worklog note) */
+    border-color: var(--accent); /* 2026 — the royal focus border (was the measured #ED4C1F; the token seat now exists) */
   }
 
 

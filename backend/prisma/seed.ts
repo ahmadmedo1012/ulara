@@ -106,6 +106,12 @@ import {
 import { hashPassword } from '../src/lib/password.js';
 import { utcDayStart } from '../src/lib/dates.js';
 import { ensureTestAccounts } from '../src/modules/auth/test-accounts.js';
+// r352 — seeded reference catalogs + legacy appointment backfill.
+import {
+  ensureR352Catalogs,
+  backfillLegacyAppointments,
+  backfillOrgUnitsFromLegacy,
+} from './seed-r352-catalogs.js';
 // r323 B4 — the pilot cohort pack (8 courses, lectures+chapters+
 // checkpoints per course, 30 demo students — create-once, idempotent).
 import { seedPilotCohort } from './seed-pilot.js';
@@ -128,8 +134,16 @@ async function main() {
     // @test.ly emails (password/lock-state reset + the extra jobs),
     // touching nothing else. See src/modules/auth/test-accounts.ts.
     const ensured = await ensureTestAccounts(prisma);
+    // r352 — the reference catalogs are the SECOND explicit exception:
+    // additive upserts (authorities, institution types, credential
+    // types, position templates, criteria sets) + the guarded mirror
+    // backfills. Established databases gain the new catalogs on their
+    // next deploy without touching any existing row's content.
+    await ensureR352Catalogs(prisma);
+    await backfillOrgUnitsFromLegacy(prisma);
+    await backfillLegacyAppointments(prisma);
     console.log(
-      `ℹ بذرة r183: القاعدة مؤسَّسة (${existingUsers} مستخدمًا) — التشغيل العادي للنشر لا يكتب شيئًا أصلًا، باستثناء حسابات الاختبار الموثقة (${ensured} حسابًا على نطاق test.ly) / seed skipped: established database, zero writes except the documented @test.ly test accounts. إعادة ضبط العرض الواعية: ULARA_SEED_FORCE=1 (npm run db:seed:force).`,
+      `ℹ بذرة r183: القاعدة مؤسَّسة (${existingUsers} مستخدمًا) — التشغيل العادي للنشر لا يكتب شيئًا أصلًا، باستثناء حسابات الاختبار الموثقة (${ensured} حسابًا على نطاق test.ly) وكتالوجات r352 الإضافية / seed skipped: established database, zero writes except the documented @test.ly test accounts and the additive r352 catalogs.`,
     );
     return;
   }
@@ -336,8 +350,9 @@ async function main() {
       email: 'registrar@test.ly',
       passwordHash: password,
       role: Role.ADMIN,
-      /* R320 §B (c1-RENAME): the demo ADMIN account's display name is the
-         role's canonical name — «المسجل العام» (the retired office label). */
+      /* The demo ADMIN account's display name is the registrar-general
+         PERSONA (a job title — REGISTRAR_GENERAL PositionTemplate), not
+         the role label; the ROLE label is «إدارة المؤسسة» (r352 §D7). */
       firstName: 'المسجل',
       lastName: 'العام',
       avatarInitials: 'مع',
@@ -1871,6 +1886,17 @@ async function main() {
   if (pilot.students > 0) {
     console.log(`✅ بذرة العرض التجريبي: ${pilot.students} طالبًا + ${pilot.lectures} محاضرة جديدة (نطاق demo.ulara.ly — قابل للحذف من مسار المسجل).`);
   }
+
+  // r352 — reference catalogs (authorities, institution types, credential
+  // types, position templates, criteria sets) + the catalog-dependent
+  // legacy-appointment backfill. Additive upserts: re-runs are no-ops.
+  const catalogs = await ensureR352Catalogs(prisma);
+  const mirrored = await backfillOrgUnitsFromLegacy(prisma);
+  const backfilled = await backfillLegacyAppointments(prisma);
+  console.log(
+    `✅ كتالوجات r352: ${catalogs.institutionTypes} نوع مؤسسة، ${catalogs.positionTemplates} مسمى قيادي، ${catalogs.credentialTypes} نوع مؤهل، ${catalogs.criteriaItems} معيار اعتماد، ${mirrored.faculties + mirrored.departments} وحدة تنظيمية مرآة` +
+      (backfilled > 0 ? `، ${backfilled} تعيينًا قياديًا مُرحَّلًا من السجل القديم` : ''),
+  );
 
   console.log('✅ Seed complete.');
 }

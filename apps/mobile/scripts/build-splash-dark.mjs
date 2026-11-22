@@ -59,7 +59,7 @@ const STROKE_COMPONENT = 1.5; // mark.ts: hairline at the 32-grid design size
 const BOX = 0.8; // the mark occupies 80% of the canvas, centred
 const CANVAS = 1024;
 const PAPER_INK = "#F5F1E8"; // ds.light.bg / ds.dark.text — the paper rung
-const SIENNA = "#C43E16"; // the cornerstone — unchanged on both grounds
+const ROYAL = "#2540D9"; // the cornerstone — unchanged on both grounds (2026 royal)
 
 const vb = 32 / BOX;
 const off = +((vb - 32) / 2).toFixed(4);
@@ -67,7 +67,7 @@ const svg =
   `<svg xmlns="http://www.w3.org/2000/svg" width="${CANVAS}" height="${CANVAS}" viewBox="${-off} ${-off} ${vb} ${vb}">` +
   `<g fill="none" stroke="${PAPER_INK}" stroke-width="${STROKE_COMPONENT}" stroke-linecap="round" stroke-linejoin="round">` +
   `<path d="${VESSEL}"/></g>` +
-  `<rect x="${KEY[0]}" y="${KEY[1]}" width="${KEY[2]}" height="${KEY[2]}" fill="${SIENNA}"/></svg>`;
+  `<rect x="${KEY[0]}" y="${KEY[1]}" width="${KEY[2]}" height="${KEY[2]}" fill="${ROYAL}"/></svg>`;
 
 /* sharp resolves from apps/mobile's devDependencies (same rule as the root script). */
 const require_ = createRequire(join(MOBILE, "package.json"));

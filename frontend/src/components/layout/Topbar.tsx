@@ -282,10 +282,10 @@ export function Topbar({ scrolled = false, onOpenCommandPalette }: TopbarProps) 
         {scopeFacultyName && (
           <span
             className="topbar-scope"
-            title={`${role === 'ADMIN' ? 'نطاق المسجل العام' : 'نطاق أخصائي الجودة'}: ${scopeFacultyName}`}
+            title={`${role === 'ADMIN' ? 'نطاق إدارة المؤسسة' : 'نطاق أخصائي الجودة'}: ${scopeFacultyName}`}
           >
-            {/* R320 §B: the scoped ADMIN keeps the role's canonical name
-                («المسجل العام») with the faculty as the scope. */}
+            {/* r352 §D7: the scoped ADMIN keeps the role's canonical name
+                («إدارة المؤسسة») with the faculty as the scope. */}
             {role === 'QUALITY' ? 'أخصائي جودة كلّيّة' : roleLabel('ADMIN')} · {scopeFacultyName}
           </span>
         )}
