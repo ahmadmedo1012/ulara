@@ -110,20 +110,17 @@ export function OwnerContentPage() {
     <div className="page r305ao">
       <PatternsPageHeader
         title="المحتوى والعلامة التجاريّة"
-        description="إدارة الإعلانات، أعلام الميزات، والهويّة البصريّة للمنصّة"
+        /* r351 A2 (Q3): header description retired — the cards name themselves. */
         breadcrumbs={[{ label: 'لوحة المالك', to: '/owner/dashboard' }, { label: 'المحتوى والعلامة التجاريّة' }]}
         /* R341 D11: the [06] nav-order gutter numeral (OWNER_NAV
          * register — the D10 quality precedent). The page's body cards
          * already carry their own primary links both bands. */
-        index="06"
       />
 
       <div className="grid-2">
         <Card title="الإعلانات الرسميّة" icon={Bell}>
-          <p className="owner-card-lead">
-            إنشاء وبثّ الإعلانات على مستوى المنصّة أو الكلّيّة أو القسم — مع نطاق محدّد، وأيقونة،
-            وخيار التثبيت في أعلى القائمة.
-          </p>
+          {/* r351 A2 (Q3): capabilities lead retired — the card title +
+              CTA explain the card; the composer page states its own scope. */}
           <Link to="/community" className="btn primary sm">
             <Icon icon={ArrowLeft} size={13} />
             فتح المجتمع الجامعيّ
@@ -131,10 +128,11 @@ export function OwnerContentPage() {
         </Card>
 
         <Card title="ميزات المنصّة" icon={ToggleRight}>
+          {/* r351 A2 (Q3): lead trimmed to the two pinned honesty phrases
+             * (r165g) — the examples list + the restating final clause
+             * retired. */}
           <p className="owner-card-lead">
-            تشغيل وإطفاء الميزات (المعامل الافتراضيّة، البثّ المباشر، الاختبارات...) عبر نظام أعلام
-            الميزات — تُسجَّل الحالة وتُوثَّق في سجلّ النشاط، ولا تستهلكها أيّ بوابة تشغيل بعد:
-            الميزات تعمل بحالاتها المضمّنة في الشيفرة.
+            تُسجَّل الحالة وتُوثَّق في سجلّ النشاط، ولا تستهلكها أيّ بوابة تشغيل بعد.
           </p>
           <Link to="/owner/system" className="btn primary sm">
             <Icon icon={ArrowLeft} size={13} />
@@ -147,15 +145,11 @@ export function OwnerContentPage() {
         <div className="owner-brand-notice">
           <Icon icon={Info} size={14} />
           <span>
-            تعديل ألوان العلامة التجاريّة (الأساسيّ، الثانويّ، التمييز) ومحتوى الصفحة الرئيسيّة قيد
-            التطوير. حالياً تُعتمَد ألوان علامة أُلارا الرسميّة المعتمدة في نظام التصميم — تُقرَأ
-            مباشرةً من رموز نظام التصميم النشطة (فاتح/داكن) عند عرض الصفحة.
-            {/* r299: the one-sentence «محتوى الواجهة الرئيسيّة» card folded
-                in here — a whole bordered box for one sentence that restated
-                this same dev-status note; the «فوراً» honesty contract
-                (r165g) stays intact (no «instant» promises anywhere). */}
-            محرّر العنوان والوصف الفرعيّ ونصّ زرّ «ابدأ الآن» قيد التطوير — النصوص
-            الحاليّة محدّدة في كود الصفحة الرئيسيّة.
+            {/* r351 A2 (Q3): dev-status notice trimmed to one sentence —
+                what's WIP (brand + homepage editing) + what's shown (the
+                live design-system tokens). The «قيد التطوير» honesty stays. */}
+            تعديل الألوان ومحتوى الصفحة الرئيسيّة قيد التطوير — الألوان تُقرأ
+            من رموز نظام التصميم النشطة (فاتح/داكن).
           </span>
         </div>
 

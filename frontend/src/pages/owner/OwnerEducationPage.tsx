@@ -121,7 +121,8 @@ export function OwnerEducationPage() {
       <div className="page r305ao" aria-busy="true">
         <PatternsPageHeader
           title="النظرة التعليميّة"
-          description="جارٍ جمع البيانات…"
+          /* r351 A2 (Q3): loading-status description retired — the
+           * skeletons + aria-busy already say it. */
           breadcrumbs={[{ label: 'لوحة المالك', to: '/owner/dashboard' }, { label: 'النظرة التعليميّة' }]}
         />
         {/* Shape-matched skeletons — one per card the data will fill. */}
@@ -180,11 +181,11 @@ export function OwnerEducationPage() {
     <div className="page r305ao">
       <PatternsPageHeader
         title="النظرة التعليميّة"
-        description="إحصائيات حيّة عن المقرّرات وأعضاء هيئة التدريس والطلاب"
+        /* r351 A2 (Q3): header description retired — the KPI strip
+         * names its own subjects. */
         breadcrumbs={[{ label: 'لوحة المالك', to: '/owner/dashboard' }, { label: 'النظرة التعليميّة' }]}
         /* R341 D11: the [08] nav-order gutter numeral (OWNER_NAV
          * register — the D10 quality precedent). */
-        index="08"
         /* D11 (D8/D10 header-CTA precedent): the overview's sibling
          * surfaces — the accounts directory behind the teacher
          * workload buckets (primary) + the institutions whose
@@ -211,9 +212,11 @@ export function OwnerEducationPage() {
         ]}
       />
 
-      <Card title="المقرّرات حسب الكلّيّة" subtitle="عدد المقرّرات المُدرَّجة في كل كلّيّة">
+      {/* r351 A2 (Q3): card subtitle retired — the title + axis labels say it. */}
+      <Card title="المقرّرات حسب الكلّيّة">
         {byFaculty.length === 0 ? (
-          <EmptyState illustration="empty-courses" title="لا مقرّرات بعد" description="ستظهر هنا حين تُسجَّل مقرّرات على نظام الكلّيّات." />
+          /* r351 A2 (Q3): empty-state prose retired — the title speaks. */
+          <EmptyState illustration="empty-courses" title="لا مقرّرات بعد" description="" />
         ) : (
           <ChartFrame
             ariaLabel="مخطط أعمدة أفقي — عدد المقرّرات في كل كلّيّة"
@@ -232,7 +235,8 @@ export function OwnerEducationPage() {
 
       <Card title="أكثر المقرّرات تسجيلاً">
         {topCourses.length === 0 ? (
-          <EmptyState illustration="empty-list" title="لا تسجيلات بعد" description="ستظهر المقرّرات الأكثر تسجيلاً فور تسجيل الطلاب في العروض." />
+          /* r351 A2 (Q3): empty-state prose retired — the title speaks. */
+          <EmptyState illustration="empty-list" title="لا تسجيلات بعد" description="" />
         ) : (
           <div className="table-wrap">
             <table className="table tbl-stack">
@@ -265,10 +269,12 @@ export function OwnerEducationPage() {
 
       <Card
         title="توزيع حِمل أعضاء هيئة التدريس"
-        subtitle="نسبة الأساتذة حسب عدد العروض التي يُدرِّسونها هذا الفصل"
+        /* r351 A2 (Q3): subtitle retired — the bucket labels below
+         * name the offering counts. */
       >
         {totalTeachers === 0 ? (
-          <EmptyState illustration="empty-list" title="لا يوجد أساتذة بعد" description="يُحسب التوزيع فور إسناد أوّل عرض لمقرّر." />
+          /* r351 A2 (Q3): empty-state prose retired — the title speaks. */
+          <EmptyState illustration="empty-list" title="لا يوجد أساتذة بعد" description="" />
         ) : (
           <div className="owner-workload">
             {buckets.map((b, i) => (
@@ -285,9 +291,12 @@ export function OwnerEducationPage() {
         )}
       </Card>
 
-      <Card title="اتّجاه الحضور" subtitle="آخر 6 أشهر — يُحسب من سجلات الحضور الفعليّة">
+      {/* r351 A2 (Q3): subtitle trimmed to the data window («آخر 6 أشهر»)
+          — the computation-source aside retired. */}
+      <Card title="اتّجاه الحضور" subtitle="آخر 6 أشهر">
         {!trendHasData ? (
-          <EmptyState illustration="empty-list" title="لا توجد سجلّات حضور بعد" description="يبدأ الحساب فور تسجيل أوّل جلسة حضور على المنصّة." />
+          /* r351 A2 (Q3): empty-state prose retired — the title speaks. */
+          <EmptyState illustration="empty-list" title="لا توجد سجلّات حضور بعد" description="" />
         ) : (
           <ChartFrame
             ariaLabel="مخطط خطّي لاتّجاه نسبة الحضور الشهريّة على مدى آخر ستة أشهر"

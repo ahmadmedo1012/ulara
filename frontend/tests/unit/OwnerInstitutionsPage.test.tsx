@@ -142,7 +142,8 @@ describe('OwnerInstitutionsPage — listing (r178)', () => {
     renderPage();
 
     expect(screen.getByRole('heading', { level: 1, name: 'المؤسسات' })).toBeInTheDocument();
-    expect(screen.getByText('إدارة المؤسسات التعليمية على المنصّة')).toBeInTheDocument();
+    /* r351 A2 (Q3): copy cut — the header description
+     * «إدارة المؤسسات التعليمية على المنصّة» retired (pure copy pin). */
 
     // Identity: Arabic name + Latin nameEn + slug per institution.
     expect(screen.getByText('مساحة عمل أُلارا التجريبية')).toBeInTheDocument();

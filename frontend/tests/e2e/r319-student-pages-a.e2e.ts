@@ -113,10 +113,9 @@ test.describe('student pages A — §B2 sheet grammar (chromium · light)', () =
     expect(bars.length).toBeGreaterThanOrEqual(2);
     expect(bars.map((b) => b.title)).toEqual(['مقرّراتك', 'الواجبات القادمة']);
     for (const b of bars) {
-      expect(b.index).toMatch(/^\[\d{2}\]$/);
-      expect(b.indexDir).toBe('ltr');
-      expect(b.indexHidden).toBe('true');
-      expect(b.indexMono).toContain('Geist Mono');
+      /* r351 A2 (Q2): the [0N] index register retired — the title +
+         hairline rule + mono meta carry the bar. */
+      expect(b.index).toBe('');
       expect(b.hasRule).toBe(true);
       expect(b.hasMonoMeta).toBe(true); // the count meta (02 enrollments / 01 assignment)
     }
@@ -150,11 +149,8 @@ test.describe('student pages A — §B2 sheet grammar (chromium · light)', () =
     const bars = await readBars(page);
     expect(bars).toHaveLength(4);
     expect(bars.map((b) => b.title)).toEqual(['المحاضرات', 'المواد المرفقة', 'الجدول الأسبوعي', 'الواجبات']);
-    expect(bars.map((b) => b.index)).toEqual(['[01]', '[02]', '[03]', '[04]']);
-    for (const b of bars) {
-      expect(b.indexMono).toContain('Geist Mono');
-      expect(b.indexDir).toBe('ltr');
-    }
+    /* r351 A2 (Q2): the [0N] index register retired. */
+    expect(bars.every((b) => b.index === '')).toBe(true);
     // The lectures bar's mono meta — the watched/total ratio (1/2).
     expect(bars[0]!.title).toBe('المحاضرات');
 
@@ -200,10 +196,10 @@ test.describe('student pages A — §B2 sheet grammar (chromium · light)', () =
     const bars = await readBars(page);
     expect(bars).toHaveLength(2);
     expect(bars.map((b) => b.title)).toEqual(['فجواتك ذات الأولوية', 'مصفوفتك حسب المقرّر']);
-    expect(bars.map((b) => b.index)).toEqual(['[01]', '[02]']);
+    /* r351 A2 (Q2): the [0N] register retired. */
+    expect(bars.every((b) => b.index === '')).toBe(true);
     for (const b of bars) {
-      expect(b.index).toMatch(/^\[\d{2}\]$/);
-      expect(b.indexMono).toContain('Geist Mono');
+      /* r351 A2 (Q2): retired */
       expect(b.hasMonoMeta).toBe(true); // 01 gap / 03 measured concepts
     }
 
@@ -260,11 +256,8 @@ test.describe('student pages A — §B2 sheet grammar (chromium · light)', () =
     const bars = await readBars(page);
     expect(bars).toHaveLength(2);
     expect(bars.map((b) => b.title)).toEqual(['استعاراتي', 'الكتب']);
-    expect(bars.map((b) => b.index)).toEqual(['[01]', '[02]']);
-    for (const b of bars) {
-      expect(b.index).toMatch(/^\[\d{2}\]$/);
-      expect(b.indexMono).toContain('Geist Mono');
-    }
+    /* r351 A2 (Q2): the [0N] register retired. */
+    expect(bars.every((b) => b.index === '')).toBe(true);
     // The books bar's mono meta — the server's honest total (02).
     const booksBar = page.locator('.r319s-bar', { hasText: 'الكتب' });
     await expect(booksBar.locator('.r319s-count')).toHaveText('02');

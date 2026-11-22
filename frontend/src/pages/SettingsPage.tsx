@@ -51,7 +51,7 @@ export default function SettingsPage() {
 
       {/* ── [01] المظهر ─────────────────────────────────────────── */}
       <section>
-        <SectionBar index="01" title="المظهر" />
+        <SectionBar title="المظهر" />
         <p className="set-note">
           يُطبَّق فورًا ويُحفظ في ملفك الشخصي.
         </p>
@@ -71,7 +71,7 @@ export default function SettingsPage() {
 
       {/* ── [02] تغيير كلمة المرور ──────────────────────────────── */}
       <section>
-        <SectionBar index="02" title="تغيير كلمة المرور" />
+        <SectionBar title="تغيير كلمة المرور" />
         <p className="set-note">
           عند التغيير تُنهى جلساتك على بقية الأجهزة وتبقى جلستك مفتوحة.
         </p>
@@ -80,7 +80,7 @@ export default function SettingsPage() {
 
       {/* ── [03] معلومات الحساب والتحقق ─────────────────────────── */}
       <section>
-        <SectionBar index="03" title="معلومات الحساب والتحقق" />
+        <SectionBar title="معلومات الحساب والتحقق" />
         <p className="set-note">كما تقرؤها الخدمة الآن — لا حاجة لتخمين ما هو محفوظ.</p>
         <Card>
           <div className="set-row">
@@ -131,7 +131,7 @@ export default function SettingsPage() {
 
       {/* ── [04] الإشعارات (مقعد صادق) ──────────────────────────── */}
       <section>
-        <SectionBar index="04" title="الإشعارات" />
+        <SectionBar title="الإشعارات" />
         <p className="set-note">تفضيلات الإشعارات (البريد داخل المنصة وغيرها) غير متاحة بعد.</p>
         <EmptyCell
           label="قريبًا"
@@ -145,7 +145,7 @@ export default function SettingsPage() {
 
       {/* ── [05] اللغة والأرقام (مقعد صادق) ─────────────────────── */}
       <section>
-        <SectionBar index="05" title="اللغة والأرقام" />
+        <SectionBar title="اللغة والأرقام" />
         <p className="set-note">أُلارا عربية-أولًا بلغة واحدة اليوم؛ مقعد اللغة محجوز.</p>
         <EmptyCell
           label="العربية (الوحيدة حاليًا)"
@@ -155,7 +155,7 @@ export default function SettingsPage() {
 
       {/* ── [06] الجلسات والأجهزة (مقعد صادق) ───────────────────── */}
       <section>
-        <SectionBar index="06" title="الجلسات والأجهزة" />
+        <SectionBar title="الجلسات والأجهزة" />
         <p className="set-note">قائمة الأجهزة النشطة غير متاحة بعد — وسيلة إنهائها الفعّالة متاحة الآن.</p>
         <EmptyCell
           label="قريبًا"
@@ -169,16 +169,14 @@ export default function SettingsPage() {
 
       {/* ── [07] بياناتي (مقعد صادق + قناة) ─────────────────────── */}
       <section>
-        <SectionBar index="07" title="بياناتي" />
+        <SectionBar title="بياناتي" />
         <p className="set-note">لا يوجد تصدير ذاتي أو حذف ذاتي بعد — الطلب يصل عبر قناة التواصل.</p>
         <EmptyCell
           label="عبر الطلب"
           note={
-            <>
-              لطلب نسخة من بياناتك أو حذف حسابك استخدم <Link to="/contact">صفحة التواصل</Link> —
-              تُنفيذ يدويًا في هذه المرحلة التجريبية؛ ما نجمعه موثّق في{' '}
-              <Link to="/legal/privacy">سياسة الخصوصية</Link>.
-            </>
+            /* r351 A2 (Q3): one line + one action — the privacy policy
+               keeps its channel seat (pinned by the r320 test). */
+            <>استخدم <Link to="/contact">قناة التواصل</Link> — وما نجمعه في <Link to="/legal/privacy">سياسة الخصوصية</Link>.</>
           }
           action={<Link to="/contact" className="btn lg"><Icon icon={Bell} size={16} />فتح قناة التواصل</Link>}
         />

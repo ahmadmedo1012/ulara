@@ -460,9 +460,11 @@ describe('POST /api/v1/ai/chat — OPENAI mode (provider wire stubbed)', () => {
     });
     expect(res.status).toBe(500);
     const body = (await res.json()) as { error: { message: string } };
-    expect(body.error.message).toBe(
-      'استغرق النموذج وقتًا أطول من المتاح — أعد المحاولة الآن وسيُختار نموذج آخر غالبًا',
-    );
+    // r351 AI-1 hardening: a timeout never falls through (the ceiling
+    // is burned) — the promise of «سيُختار نموذج آخر غالبًا» was not
+    // honest under the 429/503-only policy, so the line now invites a
+    // plain retry (which re-routes the chain from the top).
+    expect(body.error.message).toBe('استغرق النموذج وقتًا أطول من المتاح — أعد المحاولة');
     expect(telemetryCreate).toHaveBeenCalledWith({
       data: expect.objectContaining({ success: false, errorMessage: 'timeout' }),
     });
@@ -481,7 +483,12 @@ describe('POST /api/v1/ai/chat — OPENAI mode (provider wire stubbed)', () => {
     });
     expect(res.status).toBe(500);
     const body = (await res.json()) as { error: { message: string } };
-    expect(body.error.message).toBe('رفض مزوّد خدمة الذكاء الاصطناعي الطلب — جرّب تغيير صيغة السؤال');
+    // r351 AI-1: a 400 param rejection is a configuration matter — the
+    // status-aware message points at the model setup, not at re-phrasing
+    // the question (the old non-status default). Pinned in ai-gemini too.
+    // r351 hardening: «يُراجَع» → «يلزم مراجعة» (an owner-matter, stated
+    // as such — copy review finding).
+    expect(body.error.message).toBe('رفض مزوّد خدمة الذكاء الاصطناعي الطلب — يلزم مراجعة ضبط النموذج');
     // Exactly one wire call — a non-transient 400 must never be retried.
     expect(calls).toHaveLength(1);
     expect(telemetryCreate).toHaveBeenCalledWith({
@@ -1114,5 +1121,63 @@ describe('GET/DELETE /api/v1/ai/conversations* — institution scoping (r179)', 
       where: { id: 'conv-scoped-1', userId: STUDENT_ID, institutionId: INSTITUTION_ID },
     });
     expect(convDelete).toHaveBeenCalledWith({ where: { id: 'conv-scoped-1' } });
+  });
+});
+
+/* ── r351 AI-4 route pins: the OWNER status console (local mode) ────
+ * The 4 health pins in ai-gemini.test.ts cover providerHealthCheck
+ * (the lib). These pin the ROUTES themselves: the local-mode shape
+ * (keyPresent is a BOOLEAN, never the key), the honest local refusal
+ * on the probe, and the OWNER gate. Added in the review-hardening
+ * pass (the routes had zero route-level pins). */
+
+describe('GET /api/v1/ai/status + POST /ai/status/check — OWNER console (LOCAL mode)', () => {
+  let baseUrl: string;
+  let server: ReturnType<ReturnType<typeof createApp>['listen']>;
+
+  const ownerBearer = () => ({
+    authorization: `Bearer ${signAccessToken('owner-1', Role.OWNER, INSTITUTION_ID)}`,
+  });
+
+  beforeAll(() => {
+    ({ server, baseUrl } = startServer(createApp()));
+  });
+
+  afterAll(async () => {
+    await closeServer(server);
+  });
+
+  it('GET /status: local mode answers the honest console shape — keyPresent is a boolean, never the key', async () => {
+    const res = await fetch(`${baseUrl}/api/v1/ai/status`, { headers: ownerBearer() });
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { data: Record<string, unknown> };
+    expect(body.data).toEqual({
+      provider: 'local',
+      model: null,
+      keyPresent: false,
+      lastError: null,
+      todayTokens: 0,
+      local: true,
+    });
+    // The contract: the key's PRESENCE is the only thing reported — the
+    // serialized body can never contain a key-shaped string in local mode.
+    expect(JSON.stringify(body)).not.toMatch(/Bearer|AIza|sk-/);
+  });
+
+  it('POST /status/check: local mode refuses honestly (no provider to probe) with the recipe pointer', async () => {
+    const res = await fetch(`${baseUrl}/api/v1/ai/status/check`, { method: 'POST', headers: ownerBearer() });
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { data: { ok: boolean; local: boolean; message: string } };
+    expect(body.data.ok).toBe(false);
+    expect(body.data.local).toBe(true);
+    expect(body.data.message).toContain('الوضع المحليّ');
+    expect(body.data.message).toContain('docs/deployment.md');
+  });
+
+  it('the console is OWNER-gated — a student token is refused', async () => {
+    const status = await fetch(`${baseUrl}/api/v1/ai/status`, { headers: bearer() });
+    const check = await fetch(`${baseUrl}/api/v1/ai/status/check`, { method: 'POST', headers: bearer() });
+    expect(status.status).toBe(403);
+    expect(check.status).toBe(403);
   });
 });

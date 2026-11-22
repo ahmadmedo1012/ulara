@@ -98,7 +98,7 @@ describe('OwnerDashboardPage — action strip (5-D3)', () => {
       expect(busyStrip).toBeNull();
     });
     // …and no strip card appeared.
-    expect(screen.queryByText('يحتاج انتباهك')).toBeNull();
+    expect(screen.queryByText('انتباه')).toBeNull();
   });
 
   it('renders one amber alert row with the critical pair called out, linking to the alerts page', async () => {
@@ -115,7 +115,7 @@ describe('OwnerDashboardPage — action strip (5-D3)', () => {
     /* r253 re-pin: the strip is the patterns TodayList — the critical
      * pair drives the row's urgency dot (now = danger ink), the row is
      * the link (pf-today-link). */
-    const row = (await screen.findByText('تنبيهات تشغيليّة مفتوحة')).closest('a');
+    const row = (await screen.findByText('تنبيهات تشغيليّة')).closest('a');
     expect(row).not.toBeNull();
     expect(row).toHaveClass('pf-today-link');
     expect(row).toHaveAttribute('href', '/owner/alerts');
@@ -130,7 +130,7 @@ describe('OwnerDashboardPage — action strip (5-D3)', () => {
     ];
     renderDashboard();
 
-    const row = (await screen.findByText('تنبيهات تشغيليّة مفتوحة')).closest('a');
+    const row = (await screen.findByText('تنبيهات تشغيليّة')).closest('a');
     expect(row).toHaveClass('pf-today-link');
     // No critical pair → NOT «الآن» (the «قريبًا» soon dot instead).
     expect(row!.closest('.pf-today-item')!.querySelector('.pf-today-urgency')).not.toHaveClass('now');
@@ -146,10 +146,10 @@ describe('OwnerDashboardPage — action strip (5-D3)', () => {
     };
     renderDashboard();
 
-    const row = (await screen.findByText('أساتذة بلا حصص تدريس هذا الفصل')).closest('a');
+    const row = (await screen.findByText('أساتذة بلا حصص')).closest('a');
     expect(row).not.toBeNull();
     expect(row).toHaveClass('pf-today-link');
     expect(row).toHaveAttribute('href', '/owner/education');
-    expect(screen.getByText(/أستاذان لم تُسند إليهم مقرّرات/)).toBeInTheDocument();
+    expect(screen.getByText(/أستاذان بلا مقرّرات مسندة/)).toBeInTheDocument();
   });
 });

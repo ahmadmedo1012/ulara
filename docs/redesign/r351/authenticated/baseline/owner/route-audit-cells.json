@@ -1,0 +1,8015 @@
+[
+  {
+    "cell": "OWNER·/owner/dashboard·light·1440",
+    "role": "OWNER",
+    "route": "/owner/dashboard",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 23,
+    "scrollHeight": 844,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 18,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "لوحة المالك",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1123
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13600
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3868
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/dashboard·light·1024",
+    "role": "OWNER",
+    "route": "/owner/dashboard",
+    "theme": "light",
+    "viewport": "1024x768",
+    "words": 48,
+    "scrollHeight": 1971,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 18,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "لوحة المالك",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1123
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13600
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3868
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/dashboard·light·768",
+    "role": "OWNER",
+    "route": "/owner/dashboard",
+    "theme": "light",
+    "viewport": "768x900",
+    "words": 46,
+    "scrollHeight": 1986,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1955
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/dashboard·light·390",
+    "role": "OWNER",
+    "route": "/owner/dashboard",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 217,
+    "scrollHeight": 2632,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "تنبيهات تشغيليّة مفتوحة",
+        "w": 268,
+        "h": 19
+      },
+      {
+        "tag": "a",
+        "name": "أساتذة بلا حصص تدريس هذا الفصل",
+        "w": 268,
+        "h": 19
+      }
+    ],
+    "smallTargetCount": 2,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/realtime·light·1440",
+    "role": "OWNER",
+    "route": "/owner/realtime",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 71,
+    "scrollHeight": 844,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 20,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "لوحة المالك",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1123
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13600
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3867
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/realtime·light·1024",
+    "role": "OWNER",
+    "route": "/owner/realtime",
+    "theme": "light",
+    "viewport": "1024x768",
+    "words": 71,
+    "scrollHeight": 712,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 20,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "لوحة المالك",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1123
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13598
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3867
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/realtime·light·768",
+    "role": "OWNER",
+    "route": "/owner/realtime",
+    "theme": "light",
+    "viewport": "768x900",
+    "words": 69,
+    "scrollHeight": 844,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "التنبيهات التشغيليّة",
+        "w": 120,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 108,
+        "h": 32
+      }
+    ],
+    "smallTargetCount": 2,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1955
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/realtime·light·390",
+    "role": "OWNER",
+    "route": "/owner/realtime",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 64,
+    "scrollHeight": 903,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/users·light·1440",
+    "role": "OWNER",
+    "route": "/owner/users",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 23,
+    "scrollHeight": 844,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 18,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "لوحة المالك",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1123
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13599
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 4182
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1102
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/users·light·1024",
+    "role": "OWNER",
+    "route": "/owner/users",
+    "theme": "light",
+    "viewport": "1024x768",
+    "words": 60,
+    "scrollHeight": 873,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 20,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "لوحة المالك",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1123
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13600
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3867
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 2,
+    "consoleErrorSample": [
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+    ],
+    "notImplemented": [
+      "/api/v1/owner/users?page=1&limit=20"
+    ]
+  },
+  {
+    "cell": "OWNER·/owner/users·light·768",
+    "role": "OWNER",
+    "route": "/owner/users",
+    "theme": "light",
+    "viewport": "768x900",
+    "words": 58,
+    "scrollHeight": 888,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "سجلّ النشاط",
+        "w": 93,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "الحوكمة",
+        "w": 68,
+        "h": 32
+      }
+    ],
+    "smallTargetCount": 2,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1955
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 1,
+    "consoleErrorSample": [
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+    ],
+    "notImplemented": [
+      "/api/v1/owner/users?page=1&limit=20"
+    ]
+  },
+  {
+    "cell": "OWNER·/owner/users·light·390",
+    "role": "OWNER",
+    "route": "/owner/users",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 53,
+    "scrollHeight": 1230,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 1,
+    "consoleErrorSample": [
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+    ],
+    "notImplemented": [
+      "/api/v1/owner/users?page=1&limit=20"
+    ]
+  },
+  {
+    "cell": "OWNER·/owner/institutions·light·1440",
+    "role": "OWNER",
+    "route": "/owner/institutions",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 78,
+    "scrollHeight": 926,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 19,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "لوحة المالك",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1123
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13600
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3868
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 1,
+    "consoleErrorSample": [
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+    ],
+    "notImplemented": [
+      "/api/v1/owner/institutions"
+    ]
+  },
+  {
+    "cell": "OWNER·/owner/institutions·light·1024",
+    "role": "OWNER",
+    "route": "/owner/institutions",
+    "theme": "light",
+    "viewport": "1024x768",
+    "words": 78,
+    "scrollHeight": 1005,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 19,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "لوحة المالك",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1123
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13599
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3867
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 1,
+    "consoleErrorSample": [
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+    ],
+    "notImplemented": [
+      "/api/v1/owner/institutions"
+    ]
+  },
+  {
+    "cell": "OWNER·/owner/institutions·light·768",
+    "role": "OWNER",
+    "route": "/owner/institutions",
+    "theme": "light",
+    "viewport": "768x900",
+    "words": 76,
+    "scrollHeight": 1085,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "إنشاء المؤسسة",
+        "w": 127,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 1,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1955
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 1,
+    "consoleErrorSample": [
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+    ],
+    "notImplemented": [
+      "/api/v1/owner/institutions"
+    ]
+  },
+  {
+    "cell": "OWNER·/owner/institutions·light·390",
+    "role": "OWNER",
+    "route": "/owner/institutions",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 71,
+    "scrollHeight": 1338,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 1,
+    "consoleErrorSample": [
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+    ],
+    "notImplemented": [
+      "/api/v1/owner/institutions"
+    ]
+  },
+  {
+    "cell": "OWNER·/owner/activity·light·1440",
+    "role": "OWNER",
+    "route": "/owner/activity",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 178,
+    "scrollHeight": 1225,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 22,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "لوحة المالك",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1123
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13577
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3861
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1867
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/activity·light·1024",
+    "role": "OWNER",
+    "route": "/owner/activity",
+    "theme": "light",
+    "viewport": "1024x768",
+    "words": 178,
+    "scrollHeight": 1270,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 22,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "لوحة المالك",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1123
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13600
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3868
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/activity·light·768",
+    "role": "OWNER",
+    "route": "/owner/activity",
+    "theme": "light",
+    "viewport": "768x900",
+    "words": 176,
+    "scrollHeight": 1287,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "الحوكمة",
+        "w": 68,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "المستخدمون",
+        "w": 95,
+        "h": 32
+      },
+      {
+        "tag": "button",
+        "name": "عرض التفاصيل",
+        "w": 87,
+        "h": 36
+      },
+      {
+        "tag": "button",
+        "name": "عرض التفاصيل",
+        "w": 87,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 4,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1955
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/activity·light·390",
+    "role": "OWNER",
+    "route": "/owner/activity",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 171,
+    "scrollHeight": 2049,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "عرض التفاصيل",
+        "w": 91,
+        "h": 38
+      }
+    ],
+    "smallTargetCount": 1,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/content·light·1440",
+    "role": "OWNER",
+    "route": "/owner/content",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 22,
+    "scrollHeight": 844,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 18,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "المنصة",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 733
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13599
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3867
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/content·light·1024",
+    "role": "OWNER",
+    "route": "/owner/content",
+    "theme": "light",
+    "viewport": "1024x768",
+    "words": 163,
+    "scrollHeight": 965,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 20,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "المنصة",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 733
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13598
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3867
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/content·light·768",
+    "role": "OWNER",
+    "route": "/owner/content",
+    "theme": "light",
+    "viewport": "768x900",
+    "words": 162,
+    "scrollHeight": 1072,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "فتح المجتمع الجامعيّ",
+        "w": 158,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "فتح إعدادات النظام",
+        "w": 145,
+        "h": 32
+      }
+    ],
+    "smallTargetCount": 2,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1955
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/content·light·390",
+    "role": "OWNER",
+    "route": "/owner/content",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 157,
+    "scrollHeight": 1379,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/system·light·1440",
+    "role": "OWNER",
+    "route": "/owner/system",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 113,
+    "scrollHeight": 1679,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 20,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "المنصة",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 733
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13600
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3867
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 3,
+    "consoleErrorSample": [
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+    ],
+    "notImplemented": [
+      "/api/v1/owner/feature-flags",
+      "/api/v1/owner/settings",
+      "/api/v1/owner/system"
+    ]
+  },
+  {
+    "cell": "OWNER·/owner/system·light·1024",
+    "role": "OWNER",
+    "route": "/owner/system",
+    "theme": "light",
+    "viewport": "1024x768",
+    "words": 113,
+    "scrollHeight": 1731,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 20,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "المنصة",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 733
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13599
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3867
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 3,
+    "consoleErrorSample": [
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+    ],
+    "notImplemented": [
+      "/api/v1/owner/feature-flags",
+      "/api/v1/owner/settings",
+      "/api/v1/owner/system"
+    ]
+  },
+  {
+    "cell": "OWNER·/owner/system·light·768",
+    "role": "OWNER",
+    "route": "/owner/system",
+    "theme": "light",
+    "viewport": "768x900",
+    "words": 112,
+    "scrollHeight": 1846,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "التنبيهات التشغيليّة",
+        "w": 120,
+        "h": 32
+      },
+      {
+        "tag": "button",
+        "name": "جارٍ التحديث…",
+        "w": 121,
+        "h": 32
+      }
+    ],
+    "smallTargetCount": 2,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1955
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 3,
+    "consoleErrorSample": [
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+    ],
+    "notImplemented": [
+      "/api/v1/owner/feature-flags",
+      "/api/v1/owner/settings",
+      "/api/v1/owner/system"
+    ]
+  },
+  {
+    "cell": "OWNER·/owner/system·light·390",
+    "role": "OWNER",
+    "route": "/owner/system",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 107,
+    "scrollHeight": 2085,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 3,
+    "consoleErrorSample": [
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+    ],
+    "notImplemented": [
+      "/api/v1/owner/feature-flags",
+      "/api/v1/owner/settings",
+      "/api/v1/owner/system"
+    ]
+  },
+  {
+    "cell": "OWNER·/owner/education·light·1440",
+    "role": "OWNER",
+    "route": "/owner/education",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 44,
+    "scrollHeight": 2302,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 18,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "المنصة",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 733
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13596
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3866
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/education·light·1024",
+    "role": "OWNER",
+    "route": "/owner/education",
+    "theme": "light",
+    "viewport": "1024x768",
+    "words": 44,
+    "scrollHeight": 2348,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 18,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "المنصة",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 733
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13596
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3866
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/education·light·768",
+    "role": "OWNER",
+    "route": "/owner/education",
+    "theme": "light",
+    "viewport": "768x900",
+    "words": 187,
+    "scrollHeight": 2009,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "المستخدمون",
+        "w": 95,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 83,
+        "h": 32
+      }
+    ],
+    "smallTargetCount": 2,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1955
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/education·light·390",
+    "role": "OWNER",
+    "route": "/owner/education",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 177,
+    "scrollHeight": 3178,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/colleges·light·1440",
+    "role": "OWNER",
+    "route": "/colleges",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 170,
+    "scrollHeight": 1138,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 18,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "المنصة",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 733
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13600
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3867
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/colleges·light·1024",
+    "role": "OWNER",
+    "route": "/colleges",
+    "theme": "light",
+    "viewport": "1024x768",
+    "words": 170,
+    "scrollHeight": 1155,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 18,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "المنصة",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 733
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13600
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3867
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/colleges·light·768",
+    "role": "OWNER",
+    "route": "/colleges",
+    "theme": "light",
+    "viewport": "768x900",
+    "words": 169,
+    "scrollHeight": 1171,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1955
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/colleges·light·390",
+    "role": "OWNER",
+    "route": "/colleges",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 164,
+    "scrollHeight": 1701,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1869
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1869
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1869
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1869
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1869
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/ai·light·1440",
+    "role": "OWNER",
+    "route": "/owner/ai",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 50,
+    "scrollHeight": 1385,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 20,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "المراقبة والتحليل",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1466
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13600
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3782
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 2,
+    "consoleErrorSample": [
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+    ],
+    "notImplemented": [
+      "/api/v1/owner/ai-metrics",
+      "/api/v1/ai/config"
+    ]
+  },
+  {
+    "cell": "OWNER·/owner/ai·light·1024",
+    "role": "OWNER",
+    "route": "/owner/ai",
+    "theme": "light",
+    "viewport": "1024x768",
+    "words": 50,
+    "scrollHeight": 1433,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 20,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "المراقبة والتحليل",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1466
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13598
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3782
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 2,
+    "consoleErrorSample": [
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+    ],
+    "notImplemented": [
+      "/api/v1/owner/ai-metrics",
+      "/api/v1/ai/config"
+    ]
+  },
+  {
+    "cell": "OWNER·/owner/ai·light·768",
+    "role": "OWNER",
+    "route": "/owner/ai",
+    "theme": "light",
+    "viewport": "768x900",
+    "words": 50,
+    "scrollHeight": 1897,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 108,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحيّة",
+        "w": 95,
+        "h": 32
+      }
+    ],
+    "smallTargetCount": 2,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1955
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 2,
+    "consoleErrorSample": [
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+    ],
+    "notImplemented": [
+      "/api/v1/owner/ai-metrics",
+      "/api/v1/ai/config"
+    ]
+  },
+  {
+    "cell": "OWNER·/owner/ai·light·390",
+    "role": "OWNER",
+    "route": "/owner/ai",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 45,
+    "scrollHeight": 2100,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 2,
+    "consoleErrorSample": [
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+    ],
+    "notImplemented": [
+      "/api/v1/owner/ai-metrics",
+      "/api/v1/ai/config"
+    ]
+  },
+  {
+    "cell": "OWNER·/owner/notifications·light·1440",
+    "role": "OWNER",
+    "route": "/owner/notifications",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 83,
+    "scrollHeight": 844,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 21,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "المراقبة والتحليل",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1466
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13599
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 4182
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1102
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/notifications·light·1024",
+    "role": "OWNER",
+    "route": "/owner/notifications",
+    "theme": "light",
+    "viewport": "1024x768",
+    "words": 83,
+    "scrollHeight": 712,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 21,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "المراقبة والتحليل",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1466
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13600
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3867
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/notifications·light·768",
+    "role": "OWNER",
+    "route": "/owner/notifications",
+    "theme": "light",
+    "viewport": "768x900",
+    "words": 81,
+    "scrollHeight": 844,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "تعليم الكل كمقروء",
+        "w": 137,
+        "h": 32
+      },
+      {
+        "tag": "button",
+        "name": "تعليم «تم نشر درجة الواجب الثاني» كمقروء",
+        "w": 112,
+        "h": 32
+      },
+      {
+        "tag": "button",
+        "name": "تعليم «تنبيه: اقتراب موعد اختبار نصفي» ك",
+        "w": 112,
+        "h": 32
+      }
+    ],
+    "smallTargetCount": 3,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1955
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/notifications·light·390",
+    "role": "OWNER",
+    "route": "/owner/notifications",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 76,
+    "scrollHeight": 816,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/alerts·light·1440",
+    "role": "OWNER",
+    "route": "/owner/alerts",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 97,
+    "scrollHeight": 844,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 22,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "المراقبة والتحليل",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1466
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13600
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3868
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/alerts·light·1024",
+    "role": "OWNER",
+    "route": "/owner/alerts",
+    "theme": "light",
+    "viewport": "1024x768",
+    "words": 97,
+    "scrollHeight": 800,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 22,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "المراقبة والتحليل",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1466
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13599
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3867
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/alerts·light·768",
+    "role": "OWNER",
+    "route": "/owner/alerts",
+    "theme": "light",
+    "viewport": "768x900",
+    "words": 95,
+    "scrollHeight": 908,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "المراقبة الحيّة",
+        "w": 95,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 108,
+        "h": 32
+      },
+      {
+        "tag": "button",
+        "name": "حلّ التنبيه",
+        "w": 114,
+        "h": 40
+      },
+      {
+        "tag": "button",
+        "name": "حلّ التنبيه",
+        "w": 114,
+        "h": 40
+      }
+    ],
+    "smallTargetCount": 4,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1955
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/alerts·light·390",
+    "role": "OWNER",
+    "route": "/owner/alerts",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 90,
+    "scrollHeight": 1234,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/feedback·light·1440",
+    "role": "OWNER",
+    "route": "/owner/feedback",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 88,
+    "scrollHeight": 981,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 29,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "المراقبة والتحليل",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1466
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13600
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3867
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 2,
+    "consoleErrorSample": [
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+    ],
+    "notImplemented": [
+      "/api/v1/feedback?page=1&limit=20",
+      "/api/v1/client-errors?page=1&limit=20&reviewed=no"
+    ]
+  },
+  {
+    "cell": "OWNER·/owner/feedback·light·1024",
+    "role": "OWNER",
+    "route": "/owner/feedback",
+    "theme": "light",
+    "viewport": "1024x768",
+    "words": 88,
+    "scrollHeight": 1011,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 29,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "المراقبة والتحليل",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1466
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13596
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3866
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 2,
+    "consoleErrorSample": [
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+    ],
+    "notImplemented": [
+      "/api/v1/feedback?page=1&limit=20",
+      "/api/v1/client-errors?page=1&limit=20&reviewed=no"
+    ]
+  },
+  {
+    "cell": "OWNER·/owner/feedback·light·768",
+    "role": "OWNER",
+    "route": "/owner/feedback",
+    "theme": "light",
+    "viewport": "768x900",
+    "words": 86,
+    "scrollHeight": 1128,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "سجلّ النشاط",
+        "w": 93,
+        "h": 32
+      },
+      {
+        "tag": "button",
+        "name": "تحديث",
+        "w": 84,
+        "h": 32
+      },
+      {
+        "tag": "button",
+        "name": "الكل",
+        "w": 48,
+        "h": 32
+      },
+      {
+        "tag": "button",
+        "name": "مفتوح",
+        "w": 57,
+        "h": 32
+      },
+      {
+        "tag": "button",
+        "name": "قيد المراجعة",
+        "w": 91,
+        "h": 32
+      },
+      {
+        "tag": "button",
+        "name": "أُصلح",
+        "w": 53,
+        "h": 32
+      },
+      {
+        "tag": "button",
+        "name": "مُستبعد",
+        "w": 66,
+        "h": 32
+      },
+      {
+        "tag": "button",
+        "name": "الجديدة",
+        "w": 68,
+        "h": 32
+      },
+      {
+        "tag": "button",
+        "name": "المُراجَعة",
+        "w": 70,
+        "h": 32
+      },
+      {
+        "tag": "button",
+        "name": "الكل",
+        "w": 48,
+        "h": 32
+      },
+      {
+        "tag": "button",
+        "name": "تحديث",
+        "w": 84,
+        "h": 32
+      }
+    ],
+    "smallTargetCount": 11,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1955
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 2,
+    "consoleErrorSample": [
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+    ],
+    "notImplemented": [
+      "/api/v1/feedback?page=1&limit=20",
+      "/api/v1/client-errors?page=1&limit=20&reviewed=no"
+    ]
+  },
+  {
+    "cell": "OWNER·/owner/feedback·light·390",
+    "role": "OWNER",
+    "route": "/owner/feedback",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 81,
+    "scrollHeight": 1412,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 2,
+    "consoleErrorSample": [
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+    ],
+    "notImplemented": [
+      "/api/v1/feedback?page=1&limit=20",
+      "/api/v1/client-errors?page=1&limit=20&reviewed=no"
+    ]
+  },
+  {
+    "cell": "OWNER·/settings·light·1440",
+    "role": "OWNER",
+    "route": "/settings",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 245,
+    "scrollHeight": 2142,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 22,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "المراقبة والتحليل",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1466
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13599
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3867
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/settings·light·1024",
+    "role": "OWNER",
+    "route": "/settings",
+    "theme": "light",
+    "viewport": "1024x768",
+    "words": 245,
+    "scrollHeight": 2135,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 21,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "المراقبة والتحليل",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1466
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13600
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3867
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/settings·light·768",
+    "role": "OWNER",
+    "route": "/settings",
+    "theme": "light",
+    "viewport": "768x900",
+    "words": 243,
+    "scrollHeight": 2203,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "تغيير كلمة المرور",
+        "w": 123,
+        "h": 40
+      }
+    ],
+    "smallTargetCount": 1,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1955
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/settings·light·390",
+    "role": "OWNER",
+    "route": "/settings",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 238,
+    "scrollHeight": 2292,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/governance·light·1440",
+    "role": "OWNER",
+    "route": "/owner/governance",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 49,
+    "scrollHeight": 1346,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 20,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "المراقبة والتحليل",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1466
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13594
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3866
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1869
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 2,
+    "consoleErrorSample": [
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+    ],
+    "notImplemented": [
+      "/api/v1/owner/governance",
+      "/api/v1/owner/login-analytics"
+    ]
+  },
+  {
+    "cell": "OWNER·/owner/governance·light·1024",
+    "role": "OWNER",
+    "route": "/owner/governance",
+    "theme": "light",
+    "viewport": "1024x768",
+    "words": 49,
+    "scrollHeight": 1395,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 20,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "المراقبة والتحليل",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1466
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13592
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3865
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1869
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 2,
+    "consoleErrorSample": [
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+    ],
+    "notImplemented": [
+      "/api/v1/owner/governance",
+      "/api/v1/owner/login-analytics"
+    ]
+  },
+  {
+    "cell": "OWNER·/owner/governance·light·768",
+    "role": "OWNER",
+    "route": "/owner/governance",
+    "theme": "light",
+    "viewport": "768x900",
+    "words": 47,
+    "scrollHeight": 1849,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "name": "سجلّ النشاط",
+        "w": 93,
+        "h": 32
+      },
+      {
+        "tag": "a",
+        "name": "المستخدمون",
+        "w": 95,
+        "h": 32
+      }
+    ],
+    "smallTargetCount": 2,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1955
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 2,
+    "consoleErrorSample": [
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+    ],
+    "notImplemented": [
+      "/api/v1/owner/governance",
+      "/api/v1/owner/login-analytics"
+    ]
+  },
+  {
+    "cell": "OWNER·/owner/governance·light·390",
+    "role": "OWNER",
+    "route": "/owner/governance",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 42,
+    "scrollHeight": 2022,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 2,
+    "consoleErrorSample": [
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)",
+      "Failed to load resource: the server responded with a status of 501 (Not Implemented)"
+    ],
+    "notImplemented": [
+      "/api/v1/owner/governance",
+      "/api/v1/owner/login-analytics"
+    ]
+  },
+  {
+    "cell": "OWNER·/vision·light·1440",
+    "role": "OWNER",
+    "route": "/vision",
+    "theme": "light",
+    "viewport": "1440x900",
+    "words": 252,
+    "scrollHeight": 1284,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 18,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "المراقبة والتحليل",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1466
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13600
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3867
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/vision·light·1024",
+    "role": "OWNER",
+    "route": "/vision",
+    "theme": "light",
+    "viewport": "1024x768",
+    "words": 252,
+    "scrollHeight": 1335,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 18,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "المراقبة والتحليل",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1466
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13598
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3867
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/vision·light·768",
+    "role": "OWNER",
+    "route": "/vision",
+    "theme": "light",
+    "viewport": "768x900",
+    "words": 250,
+    "scrollHeight": 1388,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1954
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/vision·light·390",
+    "role": "OWNER",
+    "route": "/vision",
+    "theme": "light",
+    "viewport": "390x844",
+    "words": 245,
+    "scrollHeight": 1903,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1869
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1869
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1869
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1869
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1869
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/dashboard·dark·1440",
+    "role": "OWNER",
+    "route": "/owner/dashboard",
+    "theme": "dark",
+    "viewport": "1440x900",
+    "words": 204,
+    "scrollHeight": 1866,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [
+      {
+        "tag": "button",
+        "name": "توسعة القائمة",
+        "w": 28,
+        "h": 28
+      },
+      {
+        "tag": "a",
+        "name": "لوحة التحكم الرئيسية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المراقبة الحية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "إدارة المستخدمين",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المؤسسات",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "سجل النشاط",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "المحتوى والعلامة التجارية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظام والتشغيل",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "النظرة التعليمية",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "كلّيّات الجامعة",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "مركز الذكاء الاصطناعي",
+        "w": 55,
+        "h": 36
+      },
+      {
+        "tag": "a",
+        "name": "الإشعارات",
+        "w": 55,
+        "h": 36
+      }
+    ],
+    "smallTargetCount": 20,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-kicker",
+        "text": "لوحة المالك",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1123
+          }
+        ]
+      },
+      {
+        "el": "INPUT",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 13600
+          }
+        ]
+      },
+      {
+        "el": "BDI",
+        "text": "Ctrl+K",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1029
+          }
+        ]
+      },
+      {
+        "el": "btn primary sm",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 3868
+          }
+        ]
+      },
+      {
+        "el": "hide-on-mobile",
+        "text": "اسأل AI",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 943
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  },
+  {
+    "cell": "OWNER·/owner/dashboard·dark·390",
+    "role": "OWNER",
+    "route": "/owner/dashboard",
+    "theme": "dark",
+    "viewport": "390x844",
+    "words": 197,
+    "scrollHeight": 2639,
+    "hOverflowDoc": 0,
+    "hOverflowScroller": 0,
+    "smallTargets": [],
+    "smallTargetCount": 0,
+    "overlapCount": 9,
+    "overlaps": [
+      {
+        "el": "topbar-mobile-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-search-toggle",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-theme",
+        "text": "",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-notif",
+        "text": "2",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "topbar-user-trigger",
+        "text": "مأالمدير",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 1870
+          }
+        ]
+      },
+      {
+        "el": "avatar",
+        "text": "مأ",
+        "by": [
+          {
+            "fixed": "sheet-frame",
+            "area": 900
+          }
+        ]
+      }
+    ],
+    "consoleErrors": 0,
+    "consoleErrorSample": [],
+    "notImplemented": []
+  }
+]

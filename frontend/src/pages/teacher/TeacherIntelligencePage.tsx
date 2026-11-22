@@ -106,7 +106,7 @@ export default function TeacherIntelligencePage() {
 
       {/* Global at-risk panel */}
       <Card
-        title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[01]</span>طلاب يحتاجون متابعة</>}
+        title={<>طلاب يحتاجون متابعة</>}
         icon={AlertTriangle}
         subtitle={
           risks.isPending ? 'جارٍ التحميل…'
@@ -170,7 +170,7 @@ export default function TeacherIntelligencePage() {
 
       {/* My offerings */}
       <Card
-        title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[02]</span>مقرّراتي</>}
+        title={<>مقرّراتي</>}
         icon={BookOpen}
         subtitle={
           offerings.isPending ? 'جارٍ التحميل…'
@@ -511,7 +511,7 @@ export function TeacherOfferingDetailPage() {
       />
 
       {tab === 'students' && (
-        <Card title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[01]</span>قائمة الطلاب — تحليل لحظي</>} icon={Users}>
+        <Card title={<>قائمة الطلاب — تحليل لحظي</>} icon={Users}>
           {students.isPending ? (
             <ListSkeleton rows={4} />
           ) : students.isError ? (
@@ -568,7 +568,7 @@ export function TeacherOfferingDetailPage() {
 
       {tab === 'curriculum' && (
         <Card
-          title={<><span className="w11-idx" dir="ltr" aria-hidden="true">[02]</span>اقتراح هيكل منهج (محاكاة قالبية)</>}
+          title={<>اقتراح هيكل منهج (محاكاة قالبية)</>}
           icon={Brain}
           actions={
             /* R305: the tab's one primary action rides the ember-flavored

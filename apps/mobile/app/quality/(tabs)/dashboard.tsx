@@ -2,8 +2,8 @@ import { View } from "react-native";
 import Animated from "react-native-reanimated";
 import { useQuery } from "@tanstack/react-query";
 import Eye from "lucide-react-native/icons/eye";
-import { AppTopBar } from "@/components/shell/AppTopBar";
-import { Screen, SectionBar } from "@/components/ui";
+import { LargeTitleScreen } from "@/components/shell/LargeTitleScreen";
+import { SectionBar } from "@/components/ui";
 import { T } from "@/components/ui/text";
 import { Badge } from "@/components/ui/surfaces";
 import { RowList, LedgerRow, StatLine } from "@/components/ui/data";
@@ -72,23 +72,11 @@ export default function QualityDashboard() {
     Object.keys(users).length + Object.keys(attendance).length + Object.keys(papers).length > 0;
 
   return (
-    <Screen scroll>
-      <AppTopBar alertsPath="/quality/alerts" />
-      <View style={{ gap: 16, paddingTop: 16 }}>
-        <Animated.View
-          entering={entering(0)}
-          style={{ flexDirection: "row", alignItems: "center", gap: 8 }}
-        >
-          <View style={{ flex: 1 }}>
-            <T variant="h2" weight="bold">
-              لوحة الجودة
-            </T>
-            <T variant="body" color="muted">
-              تطوير الأداء الأكاديمي والإداري وفق متطلبات الاعتماد.
-            </T>
-          </View>
-          <Badge label="قراءة فقط" tone="grey" />
-        </Animated.View>
+    /* r351 N2 — the collapsing large title: the «قراءة فقط» honesty rides
+     * as the mono kicker (was a Badge beside the heading); the explainer
+     * subtitle is cut. */
+    <LargeTitleScreen title="لوحة الجودة" kicker="قراءة فقط" alertsPath="/quality/alerts">
+      <View style={{ gap: 16 }}>
 
         {overview.isLoading ? (
           <Animated.View entering={entering(1)} style={{ gap: 8 }}>
@@ -224,6 +212,6 @@ export default function QualityDashboard() {
           </>
         )}
       </View>
-    </Screen>
+    </LargeTitleScreen>
   );
 }

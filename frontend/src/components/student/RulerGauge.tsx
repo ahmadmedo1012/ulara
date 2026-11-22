@@ -117,7 +117,8 @@ export function RulerGauge({
       </div>
       <span className="r319s-ruler-meta">
         <bdi className="r319s-mono r319s-ruler-pct" dir="ltr">{Math.round(pct)}%</bdi>
-        <span>من الفصل مضى</span>
+        {/* r351 A2 (Q3): the % + the W nn/nn mono head carry the whole
+            reading; the prose caption retired. */}
       </span>
     </div>
   );

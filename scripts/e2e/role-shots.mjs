@@ -88,7 +88,14 @@ async function bootVite() {
 }
 
 await bootVite();
-const browser = await chromium.launch();
+// Fleet browser pin (r351, same as route-audit.mjs): the shared cache
+// carries chromium build 1200; this repo's playwright asks for 1223 —
+// point the executable at the shared build (symlinks are blocked).
+const PW_EXECUTABLE = process.env.PW_CHROMIUM_EXECUTABLE
+  ?? `${process.env.HOME}/.cache/ms-playwright/chromium_headless_shell-1200/chrome-headless-shell-linux64/chrome-headless-shell`;
+const browser = await chromium.launch({
+  executablePath: existsSync(PW_EXECUTABLE) ? PW_EXECUTABLE : undefined,
+});
 const results = [];
 let failed = 0;
 

@@ -26,7 +26,7 @@
 import { useEffect, useId, useRef, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Search, X, ArrowLeft, Sun, Moon, CornerDownLeft } from 'lucide-react';
+import { Search, X, ArrowLeft, Sun, Moon, CornerDownLeft, MessageSquarePlus } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Icon } from '../Icon';
 import { EmojiIcon } from '../EmojiIcon';
@@ -37,6 +37,8 @@ import { useAuthStore } from '../../stores/auth.store';
 import { useThemeStore, resolveTheme } from '../../stores/theme.store';
 import { useUiStore } from '../../stores/ui.store';
 import { NAV_BY_ROLE } from '../../lib/nav';
+// r351 A2 (Q1f): the palette's feedback door (the FAB is retired).
+import { openFeedback } from '../feedback/feedbackSeat';
 
 /* ── Focus-trapped overlay guard (11-e P1-6) ─────────────────────
    ⌘K and "/" must never steal focus while a modal / sheet /
@@ -649,7 +651,20 @@ export function CommandPaletteBody({ onClose }: { onClose: () => void }) {
         onClose();
       },
     };
-    return [...navItems, theme];
+    /* r351 A2 (Q1f): the feedback sheet's palette seat — the floating
+     * FAB is retired; this action + the topbar user menu are the two
+     * doors. Opens after close so the modal owns the focus chain. */
+    const feedback: PaletteAction = {
+      id: 'action:feedback',
+      label: 'أبلغ عن مشكلة أو اقترح',
+      icon: MessageSquarePlus,
+      run: () => {
+        pushRecent('action:feedback');
+        onClose();
+        window.setTimeout(() => openFeedback(), 120);
+      },
+    };
+    return [...navItems, theme, feedback];
     // eslint-disable-next-line react-hooks/exhaustive-deps -- goTo closes over navigate only
   }, [role, resolvedTheme, setThemeMode, onClose, navigate, pushRecent]);
 

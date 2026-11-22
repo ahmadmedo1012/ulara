@@ -467,7 +467,9 @@
      (R313: --_btn-bg-hover retired), with the soft rose wash as the
      wipe so the destructive identity survives the swap. */
 
-  .btn.sm  { block-size: 32px; padding-inline: var(--sp-3); font-size: var(--type-label-size-sm); border-radius: var(--r-sm); }
+  /* r351 A2 (Q6): the 44px target floor over the 32px visual — same
+     min-* growth the topbar cluster uses (chrome.css). */
+  .btn.sm  { min-block-size: 44px; block-size: 32px; padding-inline: var(--sp-3); font-size: var(--type-label-size-sm); border-radius: var(--r-sm); }
   .btn.lg  { block-size: 48px; padding-inline: var(--sp-6); font-size: var(--type-body-size); border-radius: var(--r-md); }
   /* r157 dead-selector sweep (audit 6A11 #8, fresh-rg verified): .btn.xl
      and .btn.pill deleted — zero TSX consumers render either modifier
@@ -1698,9 +1700,15 @@
      ║  Anchored overlay; --elev-3 + --r-lg + --z-popover, subtle     ║
      ║  glass. NO focus trap, NO scroll lock.                         ║
      ╚═══════════════════════════════════════════════════════════════╝ */
+  /* r351 A2 (Q1d — one overlay motion language): opacity + a 4px
+     translate + a miniature of the reference's inset clip (the barba
+     transition's construction at menu scale — a hairline clip that
+     opens from the anchor edge). 200ms (--motion-duration-short) is
+     inside the ≤220ms budget; reduced motion zeroes it via the
+     duration token (motion.css). */
   @keyframes ulara-popover-in {
-    from { opacity: 0; transform: translateY(-4px); }
-    to   { opacity: 1; transform: none; }
+    from { opacity: 0; transform: translateY(-4px); clip-path: inset(0 0 22% 0); }
+    to   { opacity: 1; transform: none; clip-path: inset(0 0 0 0); }
   }
   /* (R313 D16: the popover @supports glass block is RETIRED — solid
      --surface + 1px --rule hairline, no backdrop-filter.) */
@@ -1819,6 +1827,10 @@
     gap: var(--sp-2);
     inline-size: 100%;
     padding: var(--sp-2) var(--sp-3);
+    /* r351 A2 (Q6): the shell-wide 44px floor — the audit measured the
+       footer trigger at 55×32; the row grows to the floor like every
+       nav item (layout.css). */
+    min-block-size: 44px;
     background: transparent;
     border: 1px solid transparent;
     border-radius: var(--r-md);
@@ -2915,24 +2927,7 @@
   /* ── 8 · Ledger internals: week items + empty + link cells ──────
      (r189 follow-up: the week ledger's inner rows — smaller than
      ledger rows, they ride INSIDE a WeekRow's content column) */
-  .week-rows { display: flex; flex-direction: column; min-inline-size: 0; }
-  .week-item {
-    display: flex;
-    align-items: baseline;
-    gap: var(--sp-2);
-    padding: var(--sp-1) 0;
-    color: inherit;
-    text-decoration: none;
-    min-inline-size: 0;
-  }
   @media (hover: hover) and (pointer: fine) {
-    .week-item:hover .week-item-title { color: var(--accent-strong); }
-  }
-  .week-item-title {
-    font-size: var(--fs-sm);
-    font-weight: var(--fw-medium);
-    min-inline-size: 0;
-    transition: color var(--t-fast) var(--ease);
   }
   .week-item-meta {
     font-size: var(--fs-xs);
@@ -3354,73 +3349,11 @@
      .text-link too steps the static native underline aside. */
 }
 
-/* ── r323 B3.6 — the pilot feedback loop («أبلغ عن مشكلة / اقتراح»)
-   ─────────────────────────────────────────────────────────────── */
-.fb-fab {
-  position: fixed;
-  inset-inline-end: 18px;
-  /* Y6 (R325) — the BOTTOM-STACK top layer: the manager
-     (lib/bottomStack.ts) writes the measured offset of everything
-     below the FAB in the stack (the toast stack, the consent gate)
-     into the inline --app-bottom-stack; 0px fallback = the natural
-     seat with nothing else on screen. The FAB rises above toasts
-     (Material's snackbar+FAB behaviour) instead of being covered. */
-  inset-block-end: calc(var(--app-bottom-stack, 0px) + 18px);
-  z-index: 60; /* under the overlay stack (70+), over page content */
-  display: inline-flex;
-  align-items: center;
-  gap: 7px; /* spacing-gate: allow — reviewed authored literal (r-round sheet) */
-  /* r350 (B6 tap floor): the FAB measured 42×40 @390 — under the 44px
-     pointer floor. The pill grows to the floor; the icon carries the
-     same seat it always did. */
-  min-block-size: 44px;
-  min-inline-size: 44px;
-  padding: var(--sp-2) 14px; /* spacing-gate: allow — reviewed authored literal (r-round sheet) */
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--text);
-  font: inherit;
-  /* R327 F (red team, measured 6.02px @1280): 0.8125rem rides the vw
-     root (0.5787vw — 7.4px at 1280), so the raw rem literal collapsed
-     under every floor. The ladder's own --fs-sm IS the 13px Arabic
-     floor for functional text — the same seat every small label rides. */
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  /* --r-full: the pill token — raw 999px would break the WS-D2
-     token-discipline snapshot (circular primitives only). */
-  border-radius: var(--r-full);
-  cursor: pointer;
-  box-shadow: none;
-  /* Y6 — the seat eases between stack rungs as layers appear/disappear
-     (--t-fast = 200ms; the reduced-motion raw-ladder kill zeroes it). */
-  transition:
-    inset-block-end var(--t-fast) var(--ease),
-    border-color var(--t-fast) var(--ease);
-}
-@media (hover: hover) and (pointer: fine) {
-  .fb-fab:hover { border-color: var(--border-strong, var(--border)); }
-}
-@media (max-width: 640px) {
-  /* Y6: the dock clearance keeps its safe-area growth and now
-     rides on the bottom-stack offset (toasts lift the FAB higher).
-     r350 (B1, measured @390): the bottom-nav is 78px tall and the
-     old 72px clearance left the FAB's bottom edge 6px UNDER the
-     nav's top (FAB 732+40=772 > nav 766). 88px = 78px nav + 10px
-     daylight, the same rhythm the desktop seat keeps. */
-  .fb-fab {
-    inset-block-end: calc(
-      var(--app-bottom-stack, 0px) + 88px + env(safe-area-inset-bottom, 0px)
-    );
-    padding: var(--sp-2) var(--sp-3);
-  }
-  .fb-fab span { display: none; } /* the icon carries the seat on phones */
-}
-@media (prefers-reduced-motion: reduce) {
-  .fb-fab {
-    transition: none;
-  }
-}
-
+/* ── r323 B3.6 — the pilot feedback loop. r351 A2 (Q1f): the
+   floating .fb-fab seat is RETIRED (it intersected content on every
+   measured width); the sheet opens from the topbar user menu + the
+   ⌘K palette (components/feedback/feedbackSeat.ts). Only the modal's
+   own styles remain. ──────────────────────────────────────────── */
 .fb-sheet { display: grid; gap: 14px; /* spacing-gate: allow — reviewed authored literal (r-round sheet) */ min-inline-size: min(560px, 86vw); }
 .fb-head { display: flex; align-items: center; justify-content: space-between; }
 .fb-title { margin: 0; font-size: 1.0625rem; /* type-gate: allow — reviewed authored literal (r-round sheet) */ font-weight: 700; }

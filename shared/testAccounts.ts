@@ -17,7 +17,7 @@
  *   tsx scripts (r320 login-proof …):  import … from '<rel>/shared/testAccounts'
  *
  *   EXCEPT Playwright-loaded fixtures (tests/e2e/fixtures/*,
- *   tests/r305/fixtures/*, tests/capture/*): Playwright's TS loader
+ *   tests/r305/fixtures/*): Playwright's TS loader
  *   transpiles this re-export shim to CJS and the named exports vanish
  *   (verified empirically) — those files import the PHYSICAL module
  *   backend/src/modules/auth/test-accounts.data directly (same values,

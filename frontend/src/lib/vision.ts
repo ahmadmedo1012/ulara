@@ -24,7 +24,7 @@ export const VISION_CONCEPTS: VisionConcept[] = [
   {
     slug: 'ai-predictor',
     title: 'AI Predictor',
-    subtitle: 'تنبؤ بمسار الطالب الأكاديمي وفرص التخرج مبنيّاً على بياناته',
+    subtitle: 'تنبؤ بمسارك الأكاديمي',
     icon: Sparkles,
     status: 'prototype',
     gradient: ['#3D6BD6', '#5B3CA8'],
@@ -55,7 +55,7 @@ export const VISION_CONCEPTS: VisionConcept[] = [
   {
     slug: 'ai-exam-generator',
     title: 'مولّد الاختبارات الذكي',
-    subtitle: 'يولّد اختبارات شخصية لكل طالب بناءً على فجواته المعرفية',
+    subtitle: 'اختبارات على فجواتك',
     icon: FileQuestion,
     status: 'prototype',
     gradient: ['#3DD68C', '#3D6BD6'],
@@ -86,7 +86,7 @@ export const VISION_CONCEPTS: VisionConcept[] = [
   {
     slug: 'ai-proctoring',
     title: 'الإشراف الذكي على الاختبارات',
-    subtitle: 'مراقبة الاختبارات عن بُعد دون تدخّل بشري مع احترام الخصوصية',
+    subtitle: 'إشراف آلي يحترم الخصوصية',
     icon: Eye,
     status: 'planning',
     gradient: ['#F5A623', '#F55353'],
@@ -117,7 +117,7 @@ export const VISION_CONCEPTS: VisionConcept[] = [
   {
     slug: 'ai-avatar',
     title: 'الأستاذ الافتراضي',
-    subtitle: 'شخصية رقمية ثلاثية الأبعاد تشرح المنهج بصوت طبيعي',
+    subtitle: 'شخصية رقمية تشرح المنهج',
     icon: Bot,
     status: 'prototype',
     gradient: ['#5B3CA8', '#F06292'],
@@ -148,7 +148,7 @@ export const VISION_CONCEPTS: VisionConcept[] = [
   {
     slug: 'voice-assistant',
     title: 'المساعد الصوتي',
-    subtitle: 'تحكّم بالمنصة وأجب على الأسئلة بالصوت العربي',
+    subtitle: 'تحكّم صوتي بالعربية',
     icon: Mic,
     status: 'planning',
     gradient: ['#2EC4B6', '#3D6BD6'],
@@ -179,7 +179,7 @@ export const VISION_CONCEPTS: VisionConcept[] = [
   {
     slug: 'live-translation',
     title: 'الترجمة الفورية',
-    subtitle: 'ترجمة المحاضرات الإنجليزية إلى العربية في الوقت الحقيقي',
+    subtitle: 'ترجمة فورية للمحاضرات',
     icon: Languages,
     // (r157 · F6) خُفِّضت الحالة من «إصدار تجريبي» إلى «نموذج أولي»:
     // لا مسار تشغيل فعليًّا للترجمة الفورية في المنصة اليوم، وعرضها
@@ -245,7 +245,7 @@ export const VISION_CONCEPTS: VisionConcept[] = [
   {
     slug: 'research-assistant',
     title: 'المساعد البحثي',
-    subtitle: 'مرافق ذكي يساعد الطلاب على كتابة البحوث الأكاديمية',
+    subtitle: 'مرافق كتابة البحوث',
     icon: FlaskConical,
     // (r157 · F6) خُفِّضت الحالة من «إصدار تجريبي» إلى «نموذج أولي»:
     // المساعد البحثي لم يُشغَّل خارج المختبر بعد — لا واجهة ولا
@@ -280,7 +280,7 @@ export const VISION_CONCEPTS: VisionConcept[] = [
   {
     slug: 'digital-twin',
     title: 'التوأم الرقمي للجامعة',
-    subtitle: 'نسخة افتراضية ثلاثية الأبعاد للحرم الجامعي بأكمله',
+    subtitle: 'جولة افتراضية في الحرم',
     icon: Boxes,
     status: 'research',
     gradient: ['#3D6BD6', '#2EC4B6'],
@@ -311,7 +311,7 @@ export const VISION_CONCEPTS: VisionConcept[] = [
   {
     slug: 'blockchain-certificates',
     title: 'الشهادات على البلوكشين',
-    subtitle: 'شهادات أكاديمية يمكن التحقّق منها عالمياً ولا يمكن تزويرها',
+    subtitle: 'شهادات موثّقة لا تُزوَّر',
     icon: ShieldCheck,
     status: 'planning',
     gradient: ['#D4A537', '#F55353'],
@@ -342,7 +342,7 @@ export const VISION_CONCEPTS: VisionConcept[] = [
   {
     slug: 'metaverse-university',
     title: 'الجامعة في الميتافيرس',
-    subtitle: 'قاعات افتراضية كاملة للتعلّم التعاوني عن بُعد',
+    subtitle: 'قاعات تعلّم تعاوني',
     icon: Globe,
     status: 'research',
     gradient: ['#5B3CA8', '#3D6BD6'],
@@ -373,7 +373,7 @@ export const VISION_CONCEPTS: VisionConcept[] = [
   {
     slug: 'madrak-os',
     title: 'منظومة Madarak OS',
-    subtitle: 'منصة قابلة للتوسعة عبر تطبيقات صغيرة من مطوّرين خارجيين',
+    subtitle: 'توسعة عبر تطبيقات صغيرة',
     icon: AppWindow,
     status: 'planning',
     gradient: ['#3D6BD6', '#D4A537'],

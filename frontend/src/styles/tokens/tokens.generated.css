@@ -75,11 +75,11 @@
 
     /* The 9 section families — soft ground · saturated ink · deep text */
     --c-peach-bg: #FCE5DE;  --c-peach-ink: #F15534;  --c-peach-deep: #9C2B0F;
-    --c-mint-bg: #E3EBE1;  --c-mint-ink: #17724A;  --c-mint-deep: #1B5430;
+    --c-mint-bg: #E2EFE8;  --c-mint-ink: #17724A;  --c-mint-deep: #0D5433;
     --c-lavender-bg: #ECE6FA;  --c-lavender-ink: #8A6FE0;  --c-lavender-deep: #3F2D7A;
     --c-sky-bg: #E1E9F0;  --c-sky-ink: #4A7FA8;  --c-sky-deep: #1F4968;
     --c-yellow-bg: #F5EBD6;  --c-yellow-ink: #A8750F;  --c-yellow-deep: #5E420C;
-    --c-rose-bg: #F9E3DC;  --c-rose-ink: #C62828;  --c-rose-deep: #8C230A;
+    --c-rose-bg: #FBE4E4;  --c-rose-ink: #C62828;  --c-rose-deep: #9E1A1A;
     --c-sand-bg: #F1ECDF;  --c-sand-ink: #B59868;  --c-sand-deep: #5A4623;
     --c-grey-bg: #ECEDEB;  --c-grey-ink: #626260;  --c-grey-deep: #1A1713;
     --c-royal-bg: #E4E9FF;  --c-royal-ink: #2540D9;  --c-royal-deep: #1B30B0;
@@ -121,7 +121,7 @@
     --warning: var(--c-yellow-ink);
     --warning-soft: var(--c-yellow-bg);
     --warning-ink: var(--c-yellow-deep);
-    --danger: var(--c-rose-ink);
+    --danger: #C62828;
     --danger-soft: var(--c-rose-bg);
     --danger-ink: var(--c-rose-deep);
     --danger-fg: #FFFFFF;
@@ -152,14 +152,14 @@
 
     /* The 9 section families — soft ground · saturated ink · deep text */
     --c-peach-bg: #43241C;  --c-peach-ink: #FF8E68;  --c-peach-deep: #FFC5AE;
-    --c-mint-bg: #24372B;  --c-mint-ink: #5FD39A;  --c-mint-deep: #C4EBD2;
+    --c-mint-bg: #1F3A2E;  --c-mint-ink: #5FD39A;  --c-mint-deep: #5FD39A;
     --c-lavender-bg: #2D2545;  --c-lavender-ink: #B7A0F4;  --c-lavender-deep: #DCD2F9;
     --c-sky-bg: #23313F;  --c-sky-ink: #93C2E9;  --c-sky-deep: #C9E2F5;
     --c-yellow-bg: #3B331F;  --c-yellow-ink: #EFC87B;  --c-yellow-deep: #F8E3B4;
-    --c-rose-bg: #43241C;  --c-rose-ink: #FF7A70;  --c-rose-deep: #FFD1CD;
+    --c-rose-bg: #3A2020;  --c-rose-ink: #FF7A70;  --c-rose-deep: #FF7A70;
     --c-sand-bg: #2D2820;  --c-sand-ink: #D9C18C;  --c-sand-deep: #EFE2C5;
     --c-grey-bg: #2A2A28;  --c-grey-ink: #B7B2A6;  --c-grey-deep: #DDD8CB;
-    --c-royal-bg: #232845;  --c-royal-ink: #8AA0FF;  --c-royal-deep: #C7D2FF;
+    --c-royal-bg: #2A2F4A;  --c-royal-ink: #8AA0FF;  --c-royal-deep: #A9B8FF;
     --c-copper-bg: #43241C;  --c-copper-ink: #FF8E68;  --c-copper-deep: #FFC5AE;
 
     /* r305 — the coral alias namespace (resolves onto the peach seat) */
@@ -194,11 +194,11 @@
     --accent-ink: var(--c-royal-ink);
     --success: var(--c-mint-ink);
     --success-soft: var(--c-mint-bg);
-    --success-ink: var(--c-mint-ink);
+    --success-ink: #5FD39A;
     --warning: var(--c-yellow-ink);
     --warning-soft: var(--c-yellow-bg);
     --warning-ink: var(--c-yellow-ink);
-    --danger: var(--c-rose-ink);
+    --danger: #FF7A70;
     --danger-soft: var(--c-rose-bg);
     --danger-ink: var(--c-rose-ink);
     --danger-fg: #262019;

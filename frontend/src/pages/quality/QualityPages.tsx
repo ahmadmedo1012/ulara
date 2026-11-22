@@ -347,13 +347,11 @@ export function QualityDashboardPage() {
        §A1) and the [01] gutter numeral rides the R319 index register
        (the same .page-index span, byte-identical, aria-hidden). */
     <PageHeader
-      index="01"
       eyebrow="قطاع ضمان الجودة"
       title="لوحة الجودة"
-      description="بناء نظام تعليمي فعّال عبر تطوير الأداء الأكاديمي والإداري والتقني — وفقاً لمتطلبات الاعتماد المحلية والدولية."
-      meta={
+            meta={
         <>
-          {formatDate(new Date(), { weekday: 'long', day: 'numeric', month: 'long' })} · قراءة لحظية للمؤشرات
+          {formatDate(new Date(), { weekday: 'long', day: 'numeric', month: 'long' })}
         </>
       }
       /* r299 (E item 1): the sector's own read-only cue — the former
@@ -462,13 +460,13 @@ export function QualityDashboardPage() {
           {
             label: 'الطلاب النشطون',
             value: <CountIn value={d.users.STUDENT ?? 0} />,
-            trend: 'مسجَّل في النظام',
+            trend: 'إجمالي',
             trendTone: 'flat',
           },
           {
             label: 'هيئة التدريس',
             value: <CountIn value={d.users.TEACHER ?? 0} />,
-            trend: 'أعضاء فاعلون',
+            trend: 'فاعلون',
             trendTone: 'flat',
             to: '/quality/professors',
           },
@@ -505,8 +503,8 @@ export function QualityDashboardPage() {
             title="النشاط الأسبوعي"
             subtitle={
               e.weeklyActiveEstimated
-                ? 'عدد الجلسات اليومية النشطة على المنصة — منحنى تقديري لحدّة البيانات'
-                : 'عدد الجلسات اليومية النشطة على المنصة'
+                ? 'جلسات يومية نشطة — منحنى تقديري'
+                : 'جلسات يومية نشطة'
             }
             icon={TrendingUp}
           >
@@ -514,7 +512,7 @@ export function QualityDashboardPage() {
             ariaLabel={`مخطط خطّي للنشاط الأسبوعي — جلسات نشطة يومياً${e.weeklyActiveEstimated ? ' (منحنى تقديري)' : ''}`}
             summary={
               e.weeklyActive.length > 0
-                ? `ذروة النشاط ${countAr(Math.max(...e.weeklyActive), ['جلسة واحدة', 'جلستان', 'جلسات', 'جلسة'])} يوم ${WEEKDAY_NAMES_AR[e.weeklyActive.indexOf(Math.max(...e.weeklyActive))] ?? ''}.`
+                ? `الذروة ${countAr(Math.max(...e.weeklyActive), ['جلسة واحدة', 'جلستان', 'جلسات', 'جلسة'])}`
                 : 'لا بيانات نشاط لهذا الأسبوع.'
             }
             table={{
@@ -712,12 +710,14 @@ export function QualityCoursesPage() {
       {/* R341 t06: migrated onto the shared patterns PageHeader — the
           sector brow rides the eyebrow slot, [02] the index register. */}
       <PageHeader
-        index="02"
         eyebrow="قطاع ضمان الجودة"
         title="جودة المقرّرات"
+        /* r351 A2 (Q3): the plain-view description retired — the roster
+         * explains itself; the ?metric= drill-down keeps its sort-order
+         * line (pinned, real data). */
         description={metric
           ? `${metricLabel} لكل مقرّر · مرتَّبة من الأدنى أولاً`
-          : 'تتبّع جودة كل مقرّر: المحاضرات، الملفات، الواجبات، التسجيلات.'}
+          : undefined}
         /* 4C-b: the oversight read-only cue (the sector has no
            authoring). R341 D10: the header CTA pair (navigation-only,
            the D8 grammar). */
@@ -737,9 +737,9 @@ export function QualityCoursesPage() {
          illustration="empty-list"
          icon={BookOpen}
          title={debouncedQ ? 'لا نتائج مطابقة' : 'لا توجد مقرّرات نشطة بعد'}
-         description={debouncedQ
-           ? 'لم نجد مقرّراً يطابق البحث — جرّب كلمة أوسع أو امسح البحث.'
-           : 'ستظهر المقرّرات وعروضها الدراسية هنا فور اعتمادها وربطها بالفصل الحاليّ.'}
+         /* r351 A2 (Q3): empty-state prose retired — the title + reset
+          * action suffice. */
+         description=""
          action={debouncedQ ? (
            <button type="button" className="btn ghost sm" onClick={clearSearch}>
              <Icon icon={X} size={13} />
@@ -931,10 +931,10 @@ export function QualityProfessorsPage() {
         {/* R341 t06: migrated onto the shared patterns PageHeader — the
             sector brow rides the eyebrow slot, [03] the index register. */}
         <PageHeader
-          index="03"
           eyebrow="قطاع ضمان الجودة"
           title="تقييم الأساتذة"
-          description="رضا الطلاب، معدل الاستجابة، الالتزام بمعايير المنصة."
+          /* r351 A2 (Q3): the metrics-listing description retired — the
+           * KPI band names its own metrics. */
           actions={<ReadOnlyBadge />}
         />
         <StatStripSkeleton cells={3} />
@@ -955,10 +955,10 @@ export function QualityProfessorsPage() {
         {/* R341 t06: migrated onto the shared patterns PageHeader — the
             sector brow rides the eyebrow slot, [03] the index register. */}
         <PageHeader
-          index="03"
           eyebrow="قطاع ضمان الجودة"
           title="تقييم الأساتذة"
-          description="رضا الطلاب، معدل الاستجابة، الالتزام بمعايير المنصة."
+          /* r351 A2 (Q3): the metrics-listing description retired — the
+           * KPI band names its own metrics. */
           actions={<ReadOnlyBadge />}
         />
         <ErrorState message="تعذّر تحميل قائمة الأساتذة" error={p.error} onRetry={() => p.refetch()} />
@@ -984,16 +984,15 @@ export function QualityProfessorsPage() {
           (it needs the resolved payload, so pending/error keep the
           plain line — the per-state copy is unchanged). */}
       <PageHeader
-        index="03"
         eyebrow="قطاع ضمان الجودة"
         title="تقييم الأساتذة"
+        /* r351 A2 (Q3): the metrics-listing description retired — the
+         * KPI band names its own metrics; the estimated-metrics honesty
+         * note stays (it needs the resolved payload). */
         description={
-          <>
-            رضا الطلاب، معدل الاستجابة، الالتزام بمعايير المنصة.
-            {p.data.data.some((t) => t.satisfactionEstimated || t.responseHoursEstimated)
-              ? ' رضا الطلاب وزمن الاستجابة قيم تقديرية حتى تفعيل قياسها الفعلي.'
-              : ''}
-          </>
+          p.data.data.some((t) => t.satisfactionEstimated || t.responseHoursEstimated)
+            ? 'رضا الطلاب وزمن الاستجابة قيم تقديرية حتى تفعيل قياسها الفعلي.'
+            : undefined
         }
         /* R341 D10: the header CTA pair (navigation-only, the D8 grammar). */
         actions={(
@@ -1093,7 +1092,9 @@ export function QualityProfessorsPage() {
               illustration="empty-search"
               icon={School}
               title="لا نتائج مطابقة"
-              description="لم نجد أستاذاً يطابق البحث — جرّب اسمًا آخر أو امسح البحث."
+              /* r351 A2 (Q3): empty-state prose retired — the title +
+                 * reset action suffice. */
+              description=""
               action={(
                 <button type="button" className="btn ghost sm" onClick={clearSearch}>
                   <Icon icon={X} size={13} />
@@ -1109,7 +1110,8 @@ export function QualityProfessorsPage() {
               illustration="empty-list"
               icon={School}
               title="لا أساتذة بعد"
-              description="ستظهر هيئة التدريس ومؤشراتها هنا فور إضافة أعضائها إلى المؤسسة."
+              /* r351 A2 (Q3): empty-state prose retired — the title speaks. */
+              description=""
             />
           )
         ) : (
@@ -1224,10 +1226,9 @@ export function QualityEngagementPage() {
     /* R341 t06: migrated onto the shared patterns PageHeader — the
        sector brow rides the eyebrow slot, [04] the index register. */
     <PageHeader
-      index="04"
       eyebrow="قطاع ضمان الجودة"
       title="الانخراط والحضور"
-      description="نسب الحضور، إكمال المحاضرات، النقاط المتفاعلة."
+      /* r351 A2 (Q3): header description retired — the KPI band explains the page. */
       /* R341 D10: the header CTA pair (navigation-only, the D8 grammar). */
       actions={(
         <>
@@ -1320,7 +1321,7 @@ export function QualityEngagementPage() {
         <Card
           title="النشاط الأسبوعي"
           icon={TrendingUp}
-          subtitle={d.weeklyActiveEstimated ? 'عدد الجلسات اليومية النشطة · بيانات تقديرية لحدّة النشاط المسجَّل' : undefined}
+          subtitle={d.weeklyActiveEstimated ? 'جلسات يومية · تقديرية' : undefined}
         >
           <ChartFrame
             ariaLabel="مخطط أعمدة للنشاط الأسبوعي — عدد الجلسات النشطة يومياً"
@@ -1411,10 +1412,9 @@ export function QualityCurriculumPage() {
        seat — kept in the comment register, the numeral itself never
        rendered here). */
     <PageHeader
-      index="06"
       eyebrow="قطاع ضمان الجودة"
       title="مراجعة المناهج"
-      description="شجرة الكلّيّات والأقسام والمقرّرات، مع مؤشرات اكتمال المحتوى."
+      /* r351 A2 (Q3): header description retired — the tree explains itself. */
       /* R341 D10: the header CTA pair (navigation-only, the D8 grammar). */
       actions={(
         <>
@@ -1605,36 +1605,33 @@ export function QualityCurriculumPage() {
    ════════════════════════════════════════════════════════════════ */
 /** The reports directory — one link-row list (5-B4 rhythm pass: the old
  *  grid of four identical link-cards was the audit's "identical-grid
- *  read"; the .alert row family gives each entry a full-width target). */
+ *  read"; the .alert row family gives each entry a full-width target).
+ *  r351 A2 (Q3): the one-line descs retired — each target board's own
+ *  header explains it; the row title is the link's whole copy. */
 const QUALITY_DASHBOARDS: Array<{
   to: string;
   icon: LucideIcon;
   title: string;
-  desc: string;
 }> = [
   {
     to: '/quality/courses',
     icon: BookOpen,
     title: 'جودة المقرّرات',
-    desc: 'كل عرض دراسيّ: التسجيلات، المحتوى، اكتمال التقييم.',
   },
   {
     to: '/quality/professors',
     icon: School,
     title: 'تقييم الأساتذة',
-    desc: 'رضا الطلاب، زمن الاستجابة، والالتزام بمعايير المنصة لكل عضو هيئة تدريس.',
   },
   {
     to: '/quality/engagement',
     icon: Activity,
     title: 'الانخراط والحضور',
-    desc: 'نسب الحضور والغياب، إكمال المحاضرات، النشاط الأسبوعي.',
   },
   {
     to: '/quality/curriculum',
     icon: ListChecks,
     title: 'مراجعة المناهج',
-    desc: 'نسبة اكتمال المحتوى الرقميّ عبر الكلّيّات والأقسام.',
   },
 ];
 
@@ -1645,10 +1642,10 @@ export function QualityReportsPage() {
       {/* R341 t06: migrated onto the shared patterns PageHeader — the
           sector brow rides the eyebrow slot, [07] the index register. */}
       <PageHeader
-        index="07"
         eyebrow="قطاع ضمان الجودة"
         title="تقارير الجودة"
-        description="لوحات حيّة بدلاً من تقارير ثابتة — تُحدَّث مع كل عمليّة على المنصّة."
+        /* r351 A2 (Q3): header description retired — the link rows name
+         * the boards. */
         /* R341 D10: the header CTA pair (navigation-only, the D8
            grammar) — the export card below is still pending, so the
            pair points at the live boards it stands in for. */
@@ -1667,7 +1664,9 @@ export function QualityReportsPage() {
           retire with their card-in-card boxes). R305 DS (§D): the
           icon wells ride the ember — these rows are the page's primary
           actions. */}
-      <Card title="اللوحات الحيّة" icon={ListChecks} subtitle="أربع لوحات مرتبطة ببعضها">
+      <Card title="اللوحات الحيّة" icon={ListChecks}>
+        {/* r351 A2 (Q3): the «أربع لوحات مرتبطة ببعضها» subtitle + the
+            per-row descs retired — the row titles are the boards' names. */}
         <div className="qlt-link-rows">
           {QUALITY_DASHBOARDS.map((item) => (
             <Link
@@ -1681,7 +1680,6 @@ export function QualityReportsPage() {
               </span>
               <span className="qlt-link-row-body">
                 <span className="qlt-link-row-title">{item.title}</span>
-                <span className="qlt-link-row-desc">{item.desc}</span>
               </span>
               <Icon icon={ArrowLeft} size={14} className="qlt-link-row-chevron" />
             </Link>
@@ -1693,8 +1691,9 @@ export function QualityReportsPage() {
         {/* R305 DS (§D): the honest pending disclosure rides the §0
             note box (copy unchanged). */}
         <p className="qlt-note hr-note">
-          إصدار التقارير القابلة للتحميل قيد التطوير. حاليّاً يمكنك الاعتماد على اللوحات الحيّة أعلاه — كلّ
-          الأرقام تُحدَّث فوريّاً مع البيانات في قاعدة المنصّة.
+          {/* r351 A2 (Q3): trimmed to the honest pending sentence — the
+           * live-boards plug retired (they sit directly above). */}
+          إصدار التقارير القابلة للتحميل قيد التطوير.
         </p>
       </Card>
       </div>
@@ -1730,10 +1729,10 @@ export function QualityAlertsPage() {
           (leading, before the read-only cue — the sector's one
           data-driven header signal). */}
       <PageHeader
-        index="09"
         eyebrow="قطاع ضمان الجودة"
         title="تنبيهات الجودة"
-        description="أحداث تستوجب تدخّل فريق ضمان الجودة — مُستخرجة فوريّاً من بيانات المنصّة."
+        /* r351 A2 (Q3): header description retired — the feed explains
+         * itself. */
         actions={(
           <>
             {q.data && q.data.counts.critical > 0 && (
@@ -1765,7 +1764,9 @@ export function QualityAlertsPage() {
             illustration="empty-notifications"
             icon={CheckCircle2}
             title="لا توجد تنبيهات حالياً"
-            description="كلّ المؤشّرات ضمن النطاق الطبيعيّ."
+            /* r351 A2 (Q3): the "all metrics normal" inference retired —
+               * the title states the honest fact. */
+            description=""
           />
         </Card>
       ) : (
@@ -1814,7 +1815,9 @@ export function QualityAlertsPage() {
             ))}
           </div>
           {visibleAlerts.length === 0 ? (
-            <p className="qlt-empty-note hr-note">لا تنبيهات بهذه الشدّة حاليّاً — اختر شدّة أخرى أو أعد التصفية إلى «الكل».</p>
+            /* r351 A2 (Q3): trimmed — the severity pills sit directly
+               above; no instruction needed. */
+            <p className="qlt-empty-note hr-note">لا تنبيهات بهذه الشدّة.</p>
           ) : (
             <>
               {/* 4C-b: oversight rows — leading severity edge (2px inline-start:

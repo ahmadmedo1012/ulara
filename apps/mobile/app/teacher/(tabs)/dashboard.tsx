@@ -27,7 +27,7 @@ import LineChart from "lucide-react-native/icons/chart-line";
 import Microscope from "lucide-react-native/icons/microscope";
 import Radio from "lucide-react-native/icons/radio";
 import TriangleAlert from "lucide-react-native/icons/triangle-alert";
-import { AppTopBar } from "@/components/shell/AppTopBar";
+import { LargeTitleScreen } from "@/components/shell/LargeTitleScreen";
 import { teacherApi } from "@/api/teacher";
 import { useInstitutionScope } from "@/hooks/useInstitutionScope";
 import { humanizeError } from "@/lib/errors";
@@ -35,7 +35,7 @@ import { fromNow, latn, pct } from "@/lib/format";
 import { usePalette } from "@/design/theme";
 import { sp } from "@/design/tokens";
 import { T } from "@/components/ui/text";
-import { Screen, PageHeader, SectionBar } from "@/components/ui/screen";
+import { SectionBar } from "@/components/ui/screen";
 import { Badge, Card, Hairline } from "@/components/ui/surfaces";
 import { LedgerRow, RowList, StatLine } from "@/components/ui/data";
 import { EmptyState, ErrorState, SkeletonList } from "@/components/ui/states";
@@ -137,19 +137,16 @@ export default function TeacherDashboard() {
 
   if (dash.isLoading) {
     return (
-      <Screen scroll>
-        <AppTopBar alertsPath="/teacher/alerts" />
+      <LargeTitleScreen title="لوحة الأستاذ" alertsPath="/teacher/alerts">
         <SkeletonList rows={6} />
-      </Screen>
+      </LargeTitleScreen>
     );
   }
   if (dash.isError || !d) {
     return (
-      <Screen scroll>
-        <AppTopBar alertsPath="/teacher/alerts" />
-        <PageHeader title="لوحة الأستاذ" />
+      <LargeTitleScreen title="لوحة الأستاذ" alertsPath="/teacher/alerts">
         <ErrorState message={humanizeError(dash.error)} onRetry={() => dash.refetch()} />
-      </Screen>
+      </LargeTitleScreen>
     );
   }
 
@@ -157,12 +154,9 @@ export default function TeacherDashboard() {
     kpi && (kpi.studentCount ?? 0) === 0 && kpi.avgGradePct == null && kpi.attendancePct == null;
 
   return (
-    <Screen scroll>
-      <AppTopBar alertsPath="/teacher/alerts" />
-      <PageHeader
-        title="لوحة الأستاذ"
-        kicker="كل ما يحتاج تدخّلك اليوم — في تيار واحد، مرتّب حسب الأولوية."
-      />
+    /* r351 N2 — the collapsing large title (the explainer kicker is cut:
+     * the screen's own sections explain the day). */
+    <LargeTitleScreen title="لوحة الأستاذ" kicker="التدريس" alertsPath="/teacher/alerts">
 
       {/* إحصاءات الفصل — hierarchy: one hero card, no card grid.
           The attendance RingProgress carries the screen's ONE accent. */}
@@ -312,8 +306,8 @@ export default function TeacherDashboard() {
       ) : (
         <EmptyState
           room="exam-hall"
-          title="لا انتظار — كل التسليمات مُقيَّمة"
-          message="ستظهر هنا التسليمات الجديدة فور وصولها بانتظار درجتك."
+          title="كل التسليمات مُقيَّمة"
+          message=""
           actionLabel="فتح التكاليف"
           onAction={() => router.push("/teacher/assignments" as never)}
         />
@@ -331,7 +325,6 @@ export default function TeacherDashboard() {
           <EmptyState
             room="lecture-hall"
             title="لا محاضرات اليوم"
-            message="جدول اليوم فارغ — استرح أو راجع الجدول الأسبوعيّ."
             actionLabel="الجدول الأسبوعيّ"
             onAction={() => router.push("/teacher/schedule" as never)}
           />
@@ -389,14 +382,10 @@ export default function TeacherDashboard() {
       <Animated.View entering={entering(4)} style={{ gap: sp[8] }}>
         <SectionBar index={3} title="اتجاه الأداء والحضور" />
         <Card>
-        <T variant="sm" color="muted">
-          متوسط أداء وحضور طلابك خلال الأسابيع الستة الماضية
-        </T>
         {!trendDrawable ? (
           <EmptyState
             icon={<LineChart size={22} color={p.textMuted} />}
-            title="لا تتوفّر بيانات كافية بعد لرسم الاتجاه"
-            message="لم يُسجَّل أي أسبوع حتى الآن — يُرسم المخطط تلقائيًا بعد اكتمال أسبوعين على الأقل."
+            title="لا بيانات كافية بعد"
           />
         ) : (
           <View style={{ gap: sp[10], paddingTop: sp[8] }}>
@@ -447,7 +436,7 @@ export default function TeacherDashboard() {
         <EmptyState
           room="building"
           title="لا متطلبات الآن — أحسنت!"
-          message="سيظهر هنا أي عنصر جديد يحتاج متابعتك فور وصوله."
+          message=""
         />
       ) : (
         <RowList>
@@ -496,7 +485,7 @@ export default function TeacherDashboard() {
             <EmptyState
               room="library"
               title="لم تُسند إليك مقرّرات بعد"
-              message="ستظهر مقرّراتك وشُعَبك هنا فور إسنادها."
+              message=""
             />
           )
         ) : (
@@ -526,7 +515,7 @@ export default function TeacherDashboard() {
       )}
       <Hairline />
       </Animated.View>
-    </Screen>
+    </LargeTitleScreen>
   );
 }
 

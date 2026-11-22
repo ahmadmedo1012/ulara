@@ -161,7 +161,6 @@ export function OwnerGovernancePage() {
         breadcrumbs={[{ label: 'لوحة المالك', to: '/owner/dashboard' }, { label: 'الحوكمة المتقدّمة' }]}
         /* R341 D11: the [13] nav-order gutter numeral (OWNER_NAV
          * register — the D10 quality precedent). */
-        index="13"
         /* D11 (D8/D10 header-CTA precedent): the metrics' sibling
          * surfaces — the audit feed the permission/role counts derive
          * from (primary) + the accounts directory the growth reads

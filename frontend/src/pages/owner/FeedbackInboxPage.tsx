@@ -186,7 +186,6 @@ export default function FeedbackInboxPage() {
         eyebrow="المنصّة · التشغيل"
         /* R341 D11: the [12] nav-order gutter numeral (OWNER_NAV
          * register — the D10 quality precedent). */
-        index="12"
         actions={
           <>
             {/* D11 (D8/D10 header-CTA precedent): the audit feed that

@@ -1,0 +1,416 @@
+[
+ {
+  "role": "STUDENT",
+  "screen": "dashboard",
+  "path": "/student/dashboard",
+  "vp": "390",
+  "words": 26,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "STUDENT",
+  "screen": "courses",
+  "path": "/student/courses",
+  "vp": "390",
+  "words": 16,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "STUDENT",
+  "screen": "ai",
+  "path": "/student/ai",
+  "vp": "390",
+  "words": 64,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "STUDENT",
+  "screen": "matrix",
+  "path": "/student/matrix",
+  "vp": "390",
+  "words": 60,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "STUDENT",
+  "screen": "results",
+  "path": "/student/results",
+  "vp": "390",
+  "words": 4,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "STUDENT",
+  "screen": "library",
+  "path": "/student/library",
+  "vp": "390",
+  "words": 19,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "STUDENT",
+  "screen": "dashboard",
+  "path": "/student/dashboard",
+  "vp": "820",
+  "words": 26,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "STUDENT",
+  "screen": "courses",
+  "path": "/student/courses",
+  "vp": "820",
+  "words": 16,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "STUDENT",
+  "screen": "ai",
+  "path": "/student/ai",
+  "vp": "820",
+  "words": 64,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "STUDENT",
+  "screen": "matrix",
+  "path": "/student/matrix",
+  "vp": "820",
+  "words": 60,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "STUDENT",
+  "screen": "results",
+  "path": "/student/results",
+  "vp": "820",
+  "words": 4,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "STUDENT",
+  "screen": "library",
+  "path": "/student/library",
+  "vp": "820",
+  "words": 19,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "TEACHER",
+  "screen": "dashboard",
+  "path": "/teacher/dashboard",
+  "vp": "390",
+  "words": 78,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "TEACHER",
+  "screen": "schedule",
+  "path": "/teacher/schedule",
+  "vp": "390",
+  "words": 13,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "TEACHER",
+  "screen": "students",
+  "path": "/teacher/students",
+  "vp": "390",
+  "words": 13,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "TEACHER",
+  "screen": "grades",
+  "path": "/teacher/grades",
+  "vp": "390",
+  "words": 10,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "TEACHER",
+  "screen": "attendance",
+  "path": "/teacher/attendance",
+  "vp": "390",
+  "words": 8,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "TEACHER",
+  "screen": "dashboard",
+  "path": "/teacher/dashboard",
+  "vp": "820",
+  "words": 78,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "TEACHER",
+  "screen": "schedule",
+  "path": "/teacher/schedule",
+  "vp": "820",
+  "words": 13,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "TEACHER",
+  "screen": "students",
+  "path": "/teacher/students",
+  "vp": "820",
+  "words": 13,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "TEACHER",
+  "screen": "grades",
+  "path": "/teacher/grades",
+  "vp": "820",
+  "words": 10,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "TEACHER",
+  "screen": "attendance",
+  "path": "/teacher/attendance",
+  "vp": "820",
+  "words": 8,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "ADMIN",
+  "screen": "dashboard",
+  "path": "/admin/dashboard",
+  "vp": "390",
+  "words": 51,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "ADMIN",
+  "screen": "faculties",
+  "path": "/admin/faculties",
+  "vp": "390",
+  "words": 26,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "ADMIN",
+  "screen": "students",
+  "path": "/admin/students",
+  "vp": "390",
+  "words": 17,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "ADMIN",
+  "screen": "teachers",
+  "path": "/admin/teachers",
+  "vp": "390",
+  "words": 22,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "ADMIN",
+  "screen": "reports",
+  "path": "/admin/reports",
+  "vp": "390",
+  "words": 15,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "ADMIN",
+  "screen": "dashboard",
+  "path": "/admin/dashboard",
+  "vp": "820",
+  "words": 51,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "ADMIN",
+  "screen": "faculties",
+  "path": "/admin/faculties",
+  "vp": "820",
+  "words": 26,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "ADMIN",
+  "screen": "students",
+  "path": "/admin/students",
+  "vp": "820",
+  "words": 17,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "ADMIN",
+  "screen": "teachers",
+  "path": "/admin/teachers",
+  "vp": "820",
+  "words": 22,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "ADMIN",
+  "screen": "reports",
+  "path": "/admin/reports",
+  "vp": "820",
+  "words": 15,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "QUALITY",
+  "screen": "dashboard",
+  "path": "/quality/dashboard",
+  "vp": "390",
+  "words": 12,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "QUALITY",
+  "screen": "courses",
+  "path": "/quality/courses",
+  "vp": "390",
+  "words": 18,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "QUALITY",
+  "screen": "engagement",
+  "path": "/quality/engagement",
+  "vp": "390",
+  "words": 16,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "QUALITY",
+  "screen": "dashboard",
+  "path": "/quality/dashboard",
+  "vp": "820",
+  "words": 12,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "QUALITY",
+  "screen": "courses",
+  "path": "/quality/courses",
+  "vp": "820",
+  "words": 18,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "QUALITY",
+  "screen": "engagement",
+  "path": "/quality/engagement",
+  "vp": "820",
+  "words": 16,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "OWNER",
+  "screen": "dashboard",
+  "path": "/owner/dashboard",
+  "vp": "390",
+  "words": 37,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "OWNER",
+  "screen": "governance",
+  "path": "/owner/governance",
+  "vp": "390",
+  "words": 29,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "OWNER",
+  "screen": "users",
+  "path": "/owner/users",
+  "vp": "390",
+  "words": 21,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "OWNER",
+  "screen": "realtime",
+  "path": "/owner/realtime",
+  "vp": "390",
+  "words": 21,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "OWNER",
+  "screen": "dashboard",
+  "path": "/owner/dashboard",
+  "vp": "820",
+  "words": 37,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "OWNER",
+  "screen": "governance",
+  "path": "/owner/governance",
+  "vp": "820",
+  "words": 29,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "OWNER",
+  "screen": "users",
+  "path": "/owner/users",
+  "vp": "820",
+  "words": 21,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ },
+ {
+  "role": "OWNER",
+  "screen": "realtime",
+  "path": "/owner/realtime",
+  "vp": "820",
+  "words": 21,
+  "overflowX": 0,
+  "fixtureCorpus": false
+ }
+]

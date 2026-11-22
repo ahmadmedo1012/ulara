@@ -288,9 +288,8 @@ describe('R305 course detail — the curriculum sections ride the kicker heading
        محاضرتين» stays for assistive tech via sr-only). */
     const titles = Array.from(document.querySelectorAll('h2.r319s-bar-title')).map((h) => h.textContent);
     expect(titles).toEqual(['المحاضرات', 'المواد المرفقة', 'الجدول الأسبوعي', 'الواجبات']);
-    // The mono gutter indexes run [01]…[04], LTR, decorative.
-    const indexes = Array.from(document.querySelectorAll('.r319s-bar-index')).map((el) => el.textContent);
-    expect(indexes).toEqual(['[01]', '[02]', '[03]', '[04]']);
+    // r351 A2 (Q2): the [0N] gutter register is retired.
+    expect(document.querySelectorAll('.r319s-bar-index')).toHaveLength(0);
     // The lectures bar carries the watched/total ratio as quiet mono meta
     // + the counted Arabic phrase for assistive tech (never a bare numeral).
     const lecBar = document.querySelector('.course-lectures .r319s-bar') as HTMLElement;

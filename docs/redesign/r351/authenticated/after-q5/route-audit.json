@@ -1,0 +1,271 @@
+{
+  "generatedAt": "2026-11-21T20:19:50.027Z",
+  "base": "http://localhost:5302",
+  "matrix": "dashboards",
+  "visitedCells": 15,
+  "hardFailures": 0,
+  "wordiest": [
+    {
+      "role": "TEACHER",
+      "route": "/teacher/dashboard",
+      "words": 181,
+      "viewport": "390x844"
+    },
+    {
+      "role": "OWNER",
+      "route": "/owner/dashboard",
+      "words": 181,
+      "viewport": "390x844"
+    },
+    {
+      "role": "STUDENT",
+      "route": "/student/dashboard",
+      "words": 180,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "QUALITY",
+      "route": "/quality/dashboard",
+      "words": 174,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "ADMIN",
+      "route": "/admin/dashboard",
+      "words": 166,
+      "viewport": "390x844"
+    }
+  ],
+  "defects": {
+    "overflows": [],
+    "smallTargets": [],
+    "overlaps": [
+      {
+        "cell": "STUDENT·/student/dashboard·light·390",
+        "count": 3,
+        "sample": [
+          {
+            "el": "pf-today-link",
+            "text": "واجب الأسبوع الثالث (CS-201)",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 8877
+              }
+            ]
+          },
+          {
+            "el": "BDI",
+            "text": "فات الموعد · 18 مارس",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 2166
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/dashboard·light·360",
+        "count": 4,
+        "sample": [
+          {
+            "el": "ind-mono ind-sched-code",
+            "text": "CS-201",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 282
+              }
+            ]
+          },
+          {
+            "el": "ind-mono ind-sched-code",
+            "text": "CS-310",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 275
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/dashboard·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "el": "pf-section-desc",
+            "text": "السبت",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 7306
+              }
+            ]
+          },
+          {
+            "el": "btn ghost sm",
+            "text": "الجدول الأسبوعيّ",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 5113
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/dashboard·light·360",
+        "count": 3,
+        "sample": [
+          {
+            "el": "pf-section-title",
+            "text": "محاضرات اليوم",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 5324
+              }
+            ]
+          },
+          {
+            "el": "pf-section-desc",
+            "text": "السبت",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 6188
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·light·390",
+        "count": 5,
+        "sample": [
+          {
+            "el": "stat-cell stat-cell-link",
+            "text": "هيئة التدريس137عضو",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 6371
+              }
+            ]
+          },
+          {
+            "el": "stat-cell stat-cell-link",
+            "text": "المقرّرات3425231 تسجيلاً",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 27262
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·light·360",
+        "count": 5,
+        "sample": [
+          {
+            "el": "stat-cell stat-cell-link",
+            "text": "هيئة التدريس137عضو",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 8305
+              }
+            ]
+          },
+          {
+            "el": "stat-cell stat-cell-link",
+            "text": "المقرّرات3425231 تسجيلاً",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 24285
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/dashboard·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "el": "SPAN",
+            "text": "النشاط الأسبوعي",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 18378
+              }
+            ]
+          },
+          {
+            "el": "card-subtitle",
+            "text": "جلسات يومية نشطة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 3461
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/dashboard·light·360",
+        "count": 2,
+        "sample": [
+          {
+            "el": "SPAN",
+            "text": "النشاط الأسبوعي",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 16436
+              }
+            ]
+          },
+          {
+            "el": "card-subtitle",
+            "text": "جلسات يومية نشطة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 2619
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/dashboard·light·360",
+        "count": 1,
+        "sample": [
+          {
+            "el": "SPAN",
+            "text": "توزيع المستخدمين",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 2106
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "runtimeErrors": [],
+    "notImplemented": []
+  }
+}

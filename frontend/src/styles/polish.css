@@ -322,8 +322,7 @@
     .sidebar.collapsed .sidebar-collapse-btn,
     .sidebar.collapsed .nav-section-label,
     .sidebar.collapsed .nav-label,
-    .sidebar.collapsed .nav-badge,
-    .sidebar.collapsed .sidebar-user-info {
+    .sidebar.collapsed .nav-badge {
       display: none;
     }
     .sidebar.collapsed .nav-item {
@@ -349,14 +348,6 @@
       border-start-end-radius: 2px; /* radius-gate: allow — sidebar collapsed indicator micro (r184 F8 twin, logical) */
       border-end-end-radius: 2px; /* radius-gate: allow — sidebar collapsed indicator micro (r184 F8 twin, logical) */
     }
-    .sidebar.collapsed .sidebar-user {
-      padding: var(--sp-1-5); /* r153h: 6px → --sp-1-5 */
-      justify-content: center;
-    }
-    .sidebar.collapsed .sidebar-logout {
-      display: none;
-    }
-
     /* Tooltip on hover when collapsed — uses the title attribute via
        a positioned ::after. Lightweight; no JS portal. */
     @media (hover: hover) and (pointer: fine) {

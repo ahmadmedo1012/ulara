@@ -195,7 +195,10 @@ export function EmptyState({
   const p = usePalette();
   const sheet = room ? ROOMS[room] : undefined;
   const resolvedTitle = title ?? sheet?.title ?? "لا يوجد محتوى بعد";
-  const resolvedMessage = message ?? sheet?.message;
+  /* r351 N4: an EXPLICIT empty message (message="") suppresses the room
+   * default — the one-line law (title + action) needs a way to opt out
+   * of the room's «ستظهر هنا…» filler without dropping the room art. */
+  const resolvedMessage = message !== undefined ? message : sheet?.message;
   const resolvedArt = art ?? (sheet ? <sheet.Art width={216} accessibilityLabel={sheet.a11y} /> : null);
   return (
     <View

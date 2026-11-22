@@ -35,7 +35,7 @@ import { describe, expect, it, beforeEach } from "@jest/globals";
 import { render } from "@testing-library/react-native";
 import { readFileSync } from "node:fs";
 import { useReduceMotion } from "@/hooks/useReduceMotion";
-import { Boot, BootMark } from "./boot";
+import { Boot, BootMark, BootStrip, __resetBootSequenceForTests } from "./boot";
 
 jest.mock("@/hooks/useReduceMotion", () => ({
   useReduceMotion: jest.fn(() => false),
@@ -162,7 +162,7 @@ describe("BootMark — render net (real svg subtree, the Logo pattern)", () => {
     // src/brand/layers.test.tsx — the brand system owns the constants)
   });
 
-  it("themes through the live palette — ink vessel stroke, sienna cornerstone fill", async () => {
+  it("themes through the live palette — ink vessel stroke, primary cornerstone fill", async () => {
     const { toJSON } = await render(<BootMark size={SEAT} />);
     expect(collectProp(toJSON(), "stroke")).toContainEqual(processed("#1A1713")); // the light palette ink (2026)
     expect(collectProp(toJSON(), "fill")).toContainEqual(processed("#2540D9")); // the light palette accent — the royal cornerstone
@@ -198,5 +198,43 @@ describe("Boot — the full-screen seat", () => {
     expect(collectProp(toJSON(), "vbWidth")).toEqual([32, 32]);
     const inked = collectNodes(toJSON(), (props) => props.strokeLinecap !== undefined);
     expect(inked).toHaveLength(1);
+  });
+});
+
+/* ── r351 N1 — the boot sequence strip ──────────────────────────────── */
+
+describe("BootStrip — the cold-boot measured strip (r351 N1)", () => {
+  beforeEach(() => {
+    __resetBootSequenceForTests();
+  });
+
+  it("renders the coordinate readout + the counter at 0 on the first cold frame", async () => {
+    const { queryAllByText } = await render(<BootStrip size={120} />);
+    // the honest geometry readout + the counter's static first frame
+    const readout = queryAllByText(/X:120 Y:120 · \d+%/);
+    expect(readout.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("reduced motion renders the strip COMPLETE (100%), statically", async () => {
+    mockReduced.mockReturnValue(true);
+    const { queryAllByText } = await render(<BootStrip size={120} />);
+    expect(queryAllByText("X:120 Y:120 · 100%").length).toBeGreaterThanOrEqual(1);
+    mockReduced.mockReturnValue(false);
+  });
+
+  it("the Boot seat mounts the strip only on the FIRST cold boot (warm remounts skip it)", async () => {
+    __resetBootSequenceForTests();
+    const first = await render(<Boot label="أول إقلاع" />);
+    expect(first.queryAllByText(/X:120 Y:120 · \d+%/).length).toBeGreaterThanOrEqual(1);
+    first.unmount();
+    // the warm remount: the module flag is set — no strip, just the mark + label
+    const second = await render(<Boot label="الإقلاع الثاني" />);
+    expect(second.queryAllByText(/X:120 Y:120/)).toHaveLength(0);
+    expect(second.queryAllByText("الإقلاع الثاني").length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("the counter completes inside the 1.2s sequence ceiling (source pin)", () => {
+    const src = readFileSync(new URL("./boot.tsx", import.meta.url), "utf8");
+    expect(src).toContain("BOOT_COUNTER_MS = 900");
   });
 });

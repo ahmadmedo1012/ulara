@@ -566,19 +566,22 @@ html[data-theme='dark'] .pr-section .pr-cta {
 
   .pr-section .pr-rowimg svg,
   .pr-section .pr-rowimg .prp-svg {
-    block-size: 22.77rem; /* 226px @390 (measured — the retired capture's seat) */
+    /* r351 P8 — the phone frame rides the reference's own platform
+       economy (558px for the whole band): two compact plates, not two
+       half-folds */
+    block-size: 11.09rem;
     aspect-ratio: auto;
   }
 
   .pr-section .pr-head {
     grid-column: 1;
     grid-row: 2;
-    block-size: 8.77rem; /* 87 @390 (measured) */
+    block-size: 6.77rem;
     /* r339 T-13 — the 390 content gutter: the reference seats the label/title
        at x24 inside the 8px sheet (16px inline); the 2.42rem seat read
        x32/w326. Light spec values above stay (comment record: label
        @x24 y7630 measured). */
-    padding: 3.22rem 1.61rem 0;
+    padding: 2rem 1.61rem 0;
   }
 
   .pr-section .pr-cta-line {
@@ -597,13 +600,13 @@ html[data-theme='dark'] .pr-section .pr-cta {
   .pr-section .pr-side {
     grid-column: 1;
     grid-row: 3;
-    block-size: 16.23rem; /* 161 @390 — the measured side-cell seat */
+    block-size: 12.23rem; /* r351 P8 — the compact side seat */
   }
 
   /* r338 T-08c2 — row-2's side cell measures 182 @390 (the deeper
      second fold: img 226 + head 87 + side 182) */
   .pr-section .pr-row:nth-child(2) .pr-side {
-    block-size: 18.34rem;
+    block-size: 13.34rem;
   }
 
   .pr-section .pr-sidebox {

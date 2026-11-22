@@ -42,13 +42,12 @@ html[data-theme='dark'] .fo-cta {
   display: block;
 }
 
-/* T-10c: the measured anchor→frame seat — the reference's cta frame sits
-   350px below the wrap anchor at 390 (we held 21): the missing 329px
-   on our 9.92 root = 33.17rem. One rule per belt below (768/991 and
-   ≥992) steps it to the reference's 289/380-506-270 ladder; the whole subtree
-   rides the same shift, so every internal y re-seats with it. */
+/* T-10c → r351 P3: the anchor→frame seat was the reference's measured
+ * 350px phone void; with the sketch band retired and the copy cut the
+ * band no longer affords half a screen of air — the seat steps down to
+ * the compact rhythm (the platezone opens the band instead). */
 .fo-cta-frame {
-  margin-block-start: 33.17rem;
+  margin-block-start: 8rem;
   /* T-10d: the reference's band runs nearly full-bleed — frame w 374/753/1015/
      1427/1902 vs our container 342/720/981/1380/1840: symmetric negative
      margins re-seat the ruled ledger to the measured rects per belt
@@ -386,13 +385,12 @@ html[data-theme='dark'] .fo-cta .fo-text-link {
   grid-template-rows: 6.05rem 30.44rem;
 }
 
-@media (max-width: 767px) {
-  /* the compound selector out-specifies the later `.fo-cta-band`
-   * base (the element carries both classes — a bare
-   * `.fo-cta-band-sketch` rule would lose the cascade to it). */
-  .fo-cta-band.fo-cta-band-sketch {
-    display: none;
-  }
+/* r351 P3 — the sketch band RETIRES at every width (the reference's
+ * cta economy: title band + actions + registry, no drawing block).
+ * The r349 phone pin (display none + the 2-track ledger) stays valid;
+ * the desktop/tablet ledger rows below drop the sketch rung too. */
+.fo-cta-band.fo-cta-band-sketch {
+  display: none;
 }
 
 .fo-cta-band {
@@ -583,13 +581,15 @@ html[data-theme='dark'] .fo-cta .fo-text-link {
   }
 
   .fo-cta-frame {
-    /* the reference anchor→frame 289 @768, we held 1: +288 on the 9.21 root. */
-    margin-block-start: 31.27rem;
+    /* r351 P3 — the tablet void steps down with the sketch band's
+     * retirement (the measured 289 @768 era ends; the compact rhythm
+     * carries). */
+    margin-block-start: 8rem;
     margin-inline: -1.79rem;
   }
 
   .fo-cta-ledger {
-    grid-template-rows: 9.6rem 27.6rem 21.6rem;
+    grid-template-rows: 9.6rem 27.6rem;
     /* T-10d2: the reference's tablet ledger is a centered 753 column
        (81.85rem on the 9.2 root) inside the 777 full-bleed sheet. */
     inline-size: 81.85rem;
@@ -653,12 +653,14 @@ html[data-theme='dark'] .fo-cta .fo-text-link {
   }
 
   .fo-cta-frame {
-    margin-block-start: 6rem;
+    /* r351 P3 — the anchor's breathing space steps down again (the
+     * sketch band retired; the platezone + ledger carry the band). */
+    margin-block-start: 2.5rem;
     margin-inline: -2.82rem;
   }
 
   .fo-cta-ledger {
-    grid-template-rows: 6rem 27.6rem 26rem;
+    grid-template-rows: 6rem 27.6rem;
   }
 
   .fo-cta-band {
@@ -1035,12 +1037,12 @@ html[data-theme='dark'] .fo-cta .fo-text-link {
 .fo-cta-plate {
   display: flex;
   align-items: center;
-  gap: 3.2rem;
+  gap: 2.2rem;
 }
 
 .fo-cta-plate-word {
   font-family: var(--font-display);
-  font-size: clamp(4.8rem, 9vw, 9rem);
+  font-size: clamp(3.6rem, 6.4vw, 6.4rem);
   font-weight: 700;
   line-height: 1.15;
   letter-spacing: 0;

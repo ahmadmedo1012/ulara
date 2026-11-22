@@ -286,7 +286,6 @@ export default function CourseDetailPage() {
           assistive tech; the visible voice is the tabular numeral). */}
       <section aria-label="محاضرات المقرر" className="course-lectures">
         <SectionBar
-          index="01"
           title="المحاضرات"
           meta={
             data.lectures.length > 0 ? (
@@ -422,7 +421,6 @@ export default function CourseDetailPage() {
         {/* R319 (c3-S1): [02] — the materials count as quiet mono meta
             (countAr for assistive tech); the empty is the hatched cell. */}
         <SectionBar
-          index="02"
           title="المواد المرفقة"
           meta={
             data.materials.length > 0 ? (
@@ -491,7 +489,6 @@ export default function CourseDetailPage() {
         <section aria-label="الجدول الأسبوعي">
         {/* R319 (c3-S1): [03] — the weekly sessions count as mono meta. */}
         <SectionBar
-          index="03"
           title="الجدول الأسبوعي"
           meta={
             data.schedule.length > 0 ? (
@@ -529,7 +526,6 @@ export default function CourseDetailPage() {
       {/* R319 (c3-S1): [04] — the assignments count as mono meta; each
           row's due state rides the §B2 mono chip (dueChip + dueDays). */}
       <SectionBar
-        index="04"
         title="الواجبات"
         meta={
           data.assignments.length > 0 ? (

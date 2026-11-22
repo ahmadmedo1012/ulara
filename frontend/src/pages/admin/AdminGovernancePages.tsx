@@ -312,7 +312,6 @@ export function AdminTeachersPage() {
       <PatternsPageHeader
         title="إدارة الأساتذة"
         description="توثيق الملفات الأكاديمية واقتراح المقرّرات الأنسب لكل أستاذ بناء على تخصصه ودرجته العلمية وشهاداته."
-        index="02"
         breadcrumbs={[{ label: 'لوحة المسجل العام', to: '/admin/dashboard' }, { label: 'الأساتذة' }]}
         actions={(
           /* R342-09 (D11 sub-page CTA precedent): the governance roster's

@@ -407,15 +407,16 @@
     --neutral-800: #333330;
     --neutral-900: #1A1713;          /* ink — the 2026 approved light ink, 15.84:1 on paper (AAA) */
 
-    /* the 9 section-color families — near-neutral grounds + teal-family
-       inks (r195 egn re-key; --c-mint-ink IS the brand teal, so the
-       primary status reads as the accent, not a second hue) */
+    /* the 9 section-color families — near-neutral grounds + their own
+       inks; mint = the approved success (#17724A) and rose = the approved
+       danger (#C62828) carry the feedback seats; the decorative peach/
+       copper families keep the warm accent, never meaning action or danger */
     --c-peach-bg:     #FCE5DE;   --c-peach-ink:    #F15534;   --c-peach-deep:   #9C2B0F;
-    --c-mint-bg:      #E3EBE1;   --c-mint-ink:     #17724A;   --c-mint-deep:    #1B5430;
+    --c-mint-bg:      #E2EFE8;   --c-mint-ink:     #17724A;   --c-mint-deep:    #0D5433;
     --c-lavender-bg:  #ECE6FA;   --c-lavender-ink: #8A6FE0;   --c-lavender-deep:#3F2D7A;
     --c-sky-bg:       #E1E9F0;   --c-sky-ink:      #4A7FA8;   --c-sky-deep:     #1F4968;
     --c-yellow-bg:    #F5EBD6;   --c-yellow-ink:   #A8750F;   --c-yellow-deep:  #5E420C;
-    --c-rose-bg:      #F9E3DC;   --c-rose-ink:     #C62828;   --c-rose-deep:    #8C230A;
+    --c-rose-bg:      #FBE4E4;   --c-rose-ink:     #C62828;   --c-rose-deep:    #9E1A1A;
     --c-sand-bg:      #F1ECDF;   --c-sand-ink:     #B59868;   --c-sand-deep:    #5A4623;
     --c-grey-bg:      #ECEDEB;   --c-grey-ink:     #626260;   --c-grey-deep:    #1A1713;
     --c-royal-bg:     #E4E9FF;   --c-royal-ink:    #2540D9;   --c-royal-deep:   #1B30B0;
@@ -475,9 +476,9 @@
     --info-soft:    var(--c-sky-bg);
 
     /* status INKS for text (deep shades — all >=7.2:1 on their tints) */
-    --success-ink: var(--c-mint-deep);     /* #1B5430 */
+    --success-ink: var(--c-mint-deep);     /* 7.99:1 on paper — the AAA text tier */
     --warning-ink: var(--c-yellow-deep);   /* #5E420C */
-    --danger-ink:  var(--c-rose-deep);     /* #8C230A */
+    --danger-ink:  var(--c-rose-deep);     /* 7.12:1 on paper — the AAA text tier */
     --info-ink:    var(--c-sky-deep);      /* #1F4968 */
 
     /* label on a --danger fill (2026: the approved red #C62828 + white 5.62:1) */
@@ -585,14 +586,14 @@
 
     /* night hue families — ember-tinted deep grounds + luminous inks (r305) */
     --c-peach-bg:     #43241C;   --c-peach-ink:    #FF8E68;   --c-peach-deep:   #FFC5AE;
-    --c-mint-bg:      #24372B;   --c-mint-ink:     #5FD39A;   --c-mint-deep:    #C4EBD2;
+    --c-mint-bg:      #1F3A2E;   --c-mint-ink:     #5FD39A;   --c-mint-deep:    #5FD39A;
     --c-lavender-bg:  #2D2545;   --c-lavender-ink: #B7A0F4;   --c-lavender-deep:#DCD2F9;
     --c-sky-bg:       #23313F;   --c-sky-ink:      #93C2E9;   --c-sky-deep:     #C9E2F5;
     --c-yellow-bg:    #3B331F;   --c-yellow-ink:   #EFC87B;   --c-yellow-deep:  #F8E3B4;
-    --c-rose-bg:      #43241C;   --c-rose-ink:     #FF7A70;   --c-rose-deep:    #FFD1CD;
+    --c-rose-bg:      #3A2020;   --c-rose-ink:     #FF7A70;   --c-rose-deep:    #FF7A70;
     --c-sand-bg:      #2D2820;   --c-sand-ink:     #D9C18C;   --c-sand-deep:    #EFE2C5;
     --c-grey-bg:      #2A2A28;   --c-grey-ink:     #B7B2A6;   --c-grey-deep:    #DDD8CB;
-    --c-royal-bg:     #232845;   --c-royal-ink:    #8AA0FF;   --c-royal-deep:   #C7D2FF;
+    --c-royal-bg:     #2A2F4A;   --c-royal-ink:    #8AA0FF;   --c-royal-deep:   #A9B8FF;
     --c-copper-bg:    #43241C;   --c-copper-ink:   #FF8E68;   --c-copper-deep:  #FFC5AE;
 
     /* r305 — the night coral alias namespace (additive) */
@@ -636,8 +637,8 @@
        tier on dark */
     --accent:        #8AA0FF;            /* fill — the luminous royal */
     --accent-hover:  #4C63F0;
-    --accent-soft:   #232845;
-    --accent-strong: #C7D2FF;            /* 9.65:1 on the soft ground — text tier */
+    --accent-soft:   #2A2F4A;
+    --accent-strong: #A9B8FF;            /* 6.85:1 on the soft ground · 8.43:1 bg — text tier */
     --accent-fg:     #262019;
     --accent-ink:    #8AA0FF;           /* night text tier — 6.56:1 bg (the signal IS the ink now) */
     /* 2026 — the night ring = the accent itself: the #4C63F0 hover tier
@@ -647,18 +648,18 @@
 
     /* the -ink family clears AA on the night ground — same values the
        base tokens already resolve to */
-    --success-ink:  var(--c-mint-ink);
+    --success-ink:  var(--c-mint-deep);   /* #5FD39A — 8.65:1 night */
     --warning-ink:  var(--c-yellow-ink);
-    --danger-ink:   var(--c-rose-ink);
+    --danger-ink:   var(--c-rose-deep);   /* #FF7A70 — 6.35:1 night */
     --info-ink:     var(--c-sky-ink);
 
     --danger-fg:    #262019;   /* 2026: the dark ground ink on the #FF7A70 fill — 6.35:1 */
 
-    --success:      var(--c-mint-ink);
+    --success:      #5FD39A;             /* 8.65:1 on the ground */
     --success-soft: var(--c-mint-bg);
     --warning:      var(--c-yellow-ink);
     --warning-soft: var(--c-yellow-bg);
-    --danger:       var(--c-rose-ink);
+    --danger:       #FF7A70;             /* 6.35:1 on the ground */
     --danger-soft:  var(--c-rose-bg);
     --info:         var(--c-sky-ink);
     --info-soft:    var(--c-sky-bg);

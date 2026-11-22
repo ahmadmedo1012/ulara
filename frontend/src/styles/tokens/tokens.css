@@ -1199,11 +1199,11 @@
       --neutral-900: #1A1713;
       /* light families (the r305 re-key → the 2026 royal takeover) */
       --c-peach-bg:     #FCE5DE;  --c-peach-ink:    #F15534;  --c-peach-deep:    #9C2B0F;
-      --c-mint-bg:      #E3EBE1;  --c-mint-ink:     #17724A;  --c-mint-deep:     #1B5430;
+      --c-mint-bg:      #E2EFE8;  --c-mint-ink:     #17724A;  --c-mint-deep:     #0D5433;
       --c-lavender-bg:  #ECE6FA;  --c-lavender-ink: #8A6FE0;  --c-lavender-deep: #3F2D7A;
       --c-sky-bg:       #E1E9F0;  --c-sky-ink:      #4A7FA8;  --c-sky-deep:      #1F4968;
       --c-yellow-bg:    #F5EBD6;  --c-yellow-ink:   #A8750F;  --c-yellow-deep:   #5E420C;
-      --c-rose-bg:      #F9E3DC;  --c-rose-ink:     #C62828;  --c-rose-deep:     #8C230A;
+      --c-rose-bg:      #FBE4E4;  --c-rose-ink:     #C62828;  --c-rose-deep:     #9E1A1A;
       --c-sand-bg:      #F1ECDF;  --c-sand-ink:     #B59868;  --c-sand-deep:     #5A4623;
       --c-grey-bg:      #ECEDEB;  --c-grey-ink:     #626260;  --c-grey-deep:     #1A1713;
       --c-copper-bg:    #FCE5DE;  --c-copper-ink:   #F15534;  --c-copper-deep:   #9C2B0F;
@@ -1227,7 +1227,8 @@
       --accent-ink:  #2540D9;
       --success-ink: var(--c-mint-deep);
       --warning-ink: var(--c-yellow-deep);
-      --danger-ink:  var(--c-rose-deep);
+      --danger:      #C62828;   /* 4.99:1 on paper · white label 5.62:1 */
+      --danger-ink:  #9E1A1A;   /* 7.12:1 on paper — the AAA text tier */
       --info-ink:    var(--c-sky-deep);
       --gold-ink:    #8F5A28;
       --danger-fg:   #FFFFFF;

@@ -175,10 +175,10 @@ export default function CommunityPage() {
           بلا تغيير في الأسماء/الأدوار. R321 B4: [01] + the inner-page
           display rung via r321-community.css (≤32px at every band). */}
       <PageHeader
-        index="01"
         eyebrow="الحياة الأكاديمية"
         title="المجتمع الجامعي"
-        description="إعلانات الجامعة · مسابقات وفعاليات · أنشطة طلابية. المساحة الرسمية للحياة الأكاديمية اليومية."
+        /* r351 A2 (Q3): header description retired — it restated the tab
+         * labels directly below. */
         actions={
           /* R342-11: the ALWAYS-ON header pair (the D7d/D11 measured
            * seat) — the hover axis + every role's phone-band primary.
@@ -264,7 +264,6 @@ export default function CommunityPage() {
               (pending/error stay quiet, never a fabricated 0), and the
               empty body is the hatched EmptyCell below. */}
           <SectionBar
-            index="02"
             title="الإعلانات"
             meta={!ann.isPending && !ann.isError && (ann.data?.length ?? 0) > 0 ? (
               <BarCount
@@ -294,7 +293,6 @@ export default function CommunityPage() {
               (pending/error stay quiet, never a fabricated 0), and the
               empty body is the hatched EmptyCell below. */}
           <SectionBar
-            index="03"
             title="المسابقات"
             meta={!comps.isPending && !comps.isError && (comps.data?.length ?? 0) > 0 ? (
                 /* The board prints every competition row it shows; the
@@ -326,7 +324,6 @@ export default function CommunityPage() {
               (pending/error stay quiet, never a fabricated 0), and the
               empty body is the hatched EmptyCell below. */}
           <SectionBar
-            index="04"
             title="الفعاليات"
             meta={!events.isPending && !events.isError && (events.data?.length ?? 0) > 0 ? (
                 /* The board prints every scheduled event row it shows; the

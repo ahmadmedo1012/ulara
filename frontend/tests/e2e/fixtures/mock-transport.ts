@@ -31,48 +31,111 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import {
-  DB_OFFERING_LECTURES,
-  ENROLLMENTS,
-  FACULTIES,
-  LECTURE_DETAIL,
-  LOCKED_EMAIL,
-  LOGIN_FAILED_MESSAGE,
-  LOGIN_LOCKED_MESSAGE,
   ADMIN_COURSES_PAGE,
   ADMIN_FACULTIES,
   ADMIN_PAPERS_GRADED_PAGE,
   ADMIN_REPORTS,
   ADMIN_STATS,
+  ADMIN_STUDENTS_PAGE,
+  ADMIN_USERS_PAGE,
+  ANNOUNCEMENT_FEED,
+  AR_EXPERIENCES,
+  CAMPUS_EVENT_ROWS,
+  CLIENT_ERRORS_PAGE,
+  COMPETITION_ROWS,
+  DB_OFFERING_LECTURES,
+  DIGITAL_METRICS,
+  ENROLLMENTS,
+  FACULTIES,
+  FEEDBACK_PAGE,
+  INVITE_ROWS,
+  JOBS_PAYLOAD,
+  LIBRARY_BOOKS,
+  LIBRARY_RESEARCH,
+  LECTURE_DETAIL,
+  LIVE_SESSION_ROWS,
+  LOCKED_EMAIL,
+  LOGIN_FAILED_MESSAGE,
+  LOGIN_LOCKED_MESSAGE,
   ME_GAPS,
+  ME_MATRIX,
   ME_RESULTS,
+  MESSAGES_PAGE,
+  MOOC_COURSES,
+  MODERATION_QUEUE,
+  MODERATION_TEMPLATES,
   MY_EXAMS,
+  MY_LAB_STATS,
+  MY_LOANS,
   MY_PROFILE,
+  MY_RESEARCH,
   NOTIFICATIONS,
+  OFFERING_ANALYTICS,
   OFFERING_FULL,
+  OFFERING_GRADES,
   OFFERING_ID,
   OFFERING_LECTURES,
+  OFFERING_STUDENTS,
   OWNER_ACTIVITY,
   OWNER_ALERTS,
+  OWNER_AI_METRICS,
   OWNER_EDUCATION,
+  OWNER_FEATURE_FLAGS,
+  OWNER_GOVERNANCE,
+  OWNER_INSTITUTIONS,
+  OWNER_LOGIN_ANALYTICS,
   OWNER_REALTIME,
+  OWNER_SETTINGS,
   OWNER_STATS,
+  OWNER_SYSTEM,
+  OWNER_USERS_PAGE,
+  PAPER_ANNOTATIONS,
+  PENDING_SUBMISSIONS,
   QUALITY_ALERTS,
+  QUALITY_COURSES,
+  QUALITY_CURRICULUM,
   QUALITY_ENGAGEMENT,
   QUALITY_OVERVIEW,
+  QUALITY_PROFESSORS,
+  RESEARCH_QUEUE,
   RESUME,
   SEARCH_RESULTS,
+  SOCIAL_POSTS,
   STUDENT_DASHBOARD,
+  STUDENT_MATERIALS,
   STUDENT_USER,
+  TEACHER_ASSIGNMENTS,
   TEACHER_DASHBOARD,
+  TEACHER_FULL_PROFILE,
+  TEACHER_MATERIALS,
   TEACHER_OFFERINGS,
   TEACHER_RISKS,
   TEACHER_USER,
+  TEMPLATE_ATTEMPTS,
+  TRAINING_BADGES,
+  TRAINING_CERTIFICATES,
   TRAINING_CATALOG,
+  TRAINING_LEADERBOARD,
+  TRAINING_ME_SUMMARY,
   UNREAD_COUNT,
+  USER_ACHIEVEMENTS,
+  USER_SKILLS,
   VALID_LOGIN,
+  VIRTUAL_LABS,
+  XP_LEADERBOARD,
   meProfile,
+  myPermissions,
+  tinyPdfBytes,
   type FixtureUser,
 } from './api-fixtures';
+/* r351 AI-5 — the A3 marker block's corpus (one import, one block). */
+import {
+  AI_SERVICE_CONFIG,
+  AI_CONVERSATIONS,
+  AI_CONVERSATION_MESSAGES,
+  AI_SERVICE_STATUS_LOCAL,
+  AI_CONNECTION_CHECK_LOCAL,
+} from './ai-fixtures';
 
 /* ── envelope helpers (the real backend's shapes) ──────────────── */
 
@@ -100,6 +163,9 @@ function pageOf(rows: unknown[], extraMeta: Record<string, number>): Record<stri
 const LECTURE_MP4 = readFileSync(
   resolve(dirname(fileURLToPath(import.meta.url)), 'media/lecture.mp4'),
 );
+/* r351 A2: the same idea for the document viewer — one minimal valid
+ * PDF (built with correct xref offsets), served for /files/*. */
+const TINY_PDF = tinyPdfBytes();
 
 /** A single mock route: method + path pattern + static payload. */
 export interface MockRouteDef {
@@ -111,6 +177,8 @@ export interface MockRouteDef {
   status?: number;
   /** Static JSON body (already enveloped by the caller). */
   json?: unknown;
+  /** r351 A2: serve the tiny fixture PDF bytes (application/pdf). */
+  pdf?: boolean;
 }
 
 /** Build the standard route table for the seeded session role. */
@@ -201,6 +269,101 @@ export function standardRoutes(): MockRouteDef[] {
     { method: 'GET', path: '/teacher/risks', json: ok(TEACHER_RISKS) },
     { method: 'GET', path: '/admin/courses', json: ADMIN_COURSES_PAGE },
     { method: 'GET', path: '/admin/papers', json: ADMIN_PAPERS_GRADED_PAGE },
+
+    /* ═══ r351 A2 (Q0) — the authenticated-route corpus closure ═══
+     * Every endpoint the route-audit sweep measured as a loud 501 on
+     * a non-AI authenticated surface. Shapes transcribed from the
+     * consuming hooks (the table: docs/redesign/r351/authenticated/
+     * BASELINE.md). Paginated bodies ride RAW ({data,meta}) exactly
+     * like /owner/activity; enveloped ones ride ok(). */
+    // permissions + identity
+    { method: 'GET', path: '/me/permissions', json: ok(myPermissions(STUDENT_USER.role)) },
+    // community / social
+    { method: 'GET', path: '/announcements/feed', json: ok(ANNOUNCEMENT_FEED) },
+    { method: 'GET', path: '/competitions', json: ok(COMPETITION_ROWS) },
+    { method: 'GET', path: '/events', json: ok(CAMPUS_EVENT_ROWS) },
+    { method: 'GET', path: '/posts', json: ok(SOCIAL_POSTS) },
+    { method: 'GET', path: '/messages', json: MESSAGES_PAGE },
+    { method: 'GET', path: '/invites', json: ok(INVITE_ROWS) },
+    // student learning surfaces
+    { method: 'GET', path: '/live/sessions', json: ok(LIVE_SESSION_ROWS) },
+    { method: 'GET', path: '/labs', json: ok(VIRTUAL_LABS) },
+    { method: 'GET', path: '/ar-experiences', json: ok(AR_EXPERIENCES) },
+    { method: 'GET', path: '/me/lab-sessions', json: ok(MY_LAB_STATS) },
+    { method: 'GET', path: '/me/matrix', json: ok(ME_MATRIX) },
+    { method: 'GET', path: '/me/skills', json: ok(USER_SKILLS) },
+    { method: 'GET', path: '/me/research', json: ok(MY_RESEARCH) },
+    { method: 'GET', path: '/me/materials', json: ok(STUDENT_MATERIALS) },
+    { method: 'GET', path: '/me/loans', json: ok(MY_LOANS) },
+    { method: 'GET', path: '/library/books', json: { data: LIBRARY_BOOKS, meta: { page: 1, limit: 24, total: LIBRARY_BOOKS.length, totalPages: 1 } } },
+    { method: 'GET', path: '/research/published', json: ok(LIBRARY_RESEARCH) },
+    { method: 'GET', path: '/mooc', json: ok(MOOC_COURSES) },
+    { method: 'GET', path: '/jobs', json: JOBS_PAYLOAD },
+    // training / gamification
+    { method: 'GET', path: '/training/me', json: ok(TRAINING_ME_SUMMARY) },
+    { method: 'GET', path: '/training/me/badges', json: ok(TRAINING_BADGES) },
+    { method: 'GET', path: '/training/me/certificates', json: ok(TRAINING_CERTIFICATES) },
+    { method: 'GET', path: '/training/leaderboard', json: ok(TRAINING_LEADERBOARD) },
+    { method: 'GET', path: '/leaderboard', json: ok(XP_LEADERBOARD) },
+    { method: 'GET', path: '/me/achievements', json: ok(USER_ACHIEVEMENTS) },
+    // teacher surfaces
+    { method: 'GET', path: '/teacher/me/assignments', json: ok(TEACHER_ASSIGNMENTS) },
+    { method: 'GET', path: '/teacher/me/pending-submissions', json: ok(PENDING_SUBMISSIONS) },
+    { method: 'GET', path: '/teacher/me/materials', json: ok(TEACHER_MATERIALS) },
+    { method: 'GET', path: '/me/teacher-profile', json: ok(TEACHER_FULL_PROFILE) },
+    { method: 'GET', path: '/teacher/offerings/:offeringId/students', json: ok(OFFERING_STUDENTS) },
+    { method: 'GET', path: '/teacher/offerings/:offeringId/analytics', json: ok(OFFERING_ANALYTICS) },
+    { method: 'GET', path: '/offerings/:offeringId/grades', json: ok(OFFERING_GRADES) },
+    { method: 'GET', path: '/research/queue', json: ok(RESEARCH_QUEUE) },
+    // exams (moderation + authoring detail)
+    { method: 'GET', path: '/exams/moderation-queue', json: ok(MODERATION_QUEUE) },
+    { method: 'GET', path: '/exams/templates/tpl_e2e_quiz4', json: ok(MODERATION_TEMPLATES.tpl_e2e_quiz4) },
+    { method: 'GET', path: '/exams/templates/tpl_e2e_final_net', json: ok(MODERATION_TEMPLATES.tpl_e2e_final_net) },
+    { method: 'GET', path: '/exams/templates/:templateId/attempts', json: ok(TEMPLATE_ATTEMPTS) },
+    { method: 'GET', path: '/research/:paperId/annotations', json: ok(PAPER_ANNOTATIONS) },
+    // admin / registrar
+    { method: 'GET', path: '/admin/users', json: ADMIN_USERS_PAGE },
+    { method: 'GET', path: '/admin/students', json: ADMIN_STUDENTS_PAGE },
+    { method: 'GET', path: '/admin/digital', json: ok(DIGITAL_METRICS) },
+    // quality
+    { method: 'GET', path: '/quality/courses', json: QUALITY_COURSES },
+    { method: 'GET', path: '/quality/professors', json: QUALITY_PROFESSORS },
+    { method: 'GET', path: '/quality/curriculum', json: ok(QUALITY_CURRICULUM) },
+    // owner
+    { method: 'GET', path: '/owner/institutions', json: ok(OWNER_INSTITUTIONS) },
+    { method: 'GET', path: '/owner/users', json: OWNER_USERS_PAGE },
+    { method: 'GET', path: '/owner/feature-flags', json: ok(OWNER_FEATURE_FLAGS) },
+    { method: 'GET', path: '/owner/settings', json: ok(OWNER_SETTINGS) },
+    { method: 'GET', path: '/owner/system', json: ok(OWNER_SYSTEM) },
+    { method: 'GET', path: '/owner/ai-metrics', json: ok(OWNER_AI_METRICS) },
+    { method: 'GET', path: '/owner/governance', json: ok(OWNER_GOVERNANCE) },
+    { method: 'GET', path: '/owner/login-analytics', json: ok(OWNER_LOGIN_ANALYTICS) },
+    // feedback inbox (r323 B3.6)
+    { method: 'GET', path: '/feedback', json: FEEDBACK_PAGE },
+    { method: 'GET', path: '/client-errors', json: CLIENT_ERRORS_PAGE },
+    // POST write-loops the shell surfaces fire (accepted, stateless)
+    { method: 'POST', path: '/feedback', json: ok({ id: 'fbk_e2e_new', ok: true }) },
+    { method: 'POST', path: '/client-errors', status: 201, json: ok({ ok: true }) },
+    // the document viewer's file stream — a real (tiny) PDF for
+    // /files/papers/* and /files/materials/*
+    { method: 'GET', path: '/files/papers/:filename', pdf: true },
+    { method: 'GET', path: '/files/materials/:filename', pdf: true },
+
+    // ── AI fixtures (A3) ──────────────────────────────────────────
+    /* ── AI fixtures (A3) ─────────────────────────────────────────
+     * r351 AI-5: the assistant family's hermetic corpus (see
+     * ai-fixtures.ts). One delimited block at the end of the route
+     * table — nothing else in this file is A3's. */
+    { method: 'GET', path: '/ai/config', json: ok(AI_SERVICE_CONFIG) },
+    { method: 'GET', path: '/ai/conversations', json: ok(AI_CONVERSATIONS) },
+    { method: 'GET', path: '/ai/conversations/conv_fix_1/messages', json: ok(AI_CONVERSATION_MESSAGES) },
+    { method: 'GET', path: '/ai/status', json: ok(AI_SERVICE_STATUS_LOCAL) },
+    { method: 'POST', path: '/ai/status/check', json: ok(AI_CONNECTION_CHECK_LOCAL) },
+    /* POST /ai/chat answers 501 here ON PURPOSE: the chat transport is
+     * per-journey stateful (the wire body and the SSE/JSON grammar are
+     * what the journey pins) — the ai-assistant spec installs its own
+     * stateful handler, exactly like every other mutating journey. */
+    /* ── end AI fixtures (A3) ────────────────────────────────── */
   ];
 }
 
@@ -349,6 +512,16 @@ export async function installMockApi(
         }
       }
       if (!queryOk) continue;
+      /* r351 A2: the document viewer's file stream — real (tiny) PDF
+       * bytes instead of JSON. */
+      if (def.pdf) {
+        await route.fulfill({
+          status: def.status ?? 200,
+          contentType: 'application/pdf',
+          body: TINY_PDF,
+        });
+        return;
+      }
       await fulfillJson(route, def.status ?? 200, def.json ?? ok(null));
       return;
     }

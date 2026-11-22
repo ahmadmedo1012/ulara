@@ -8,12 +8,12 @@
  * about every field it sends.
  */
 import { useEffect, useRef, useState } from 'react';
-import { Bug, CheckCircle2, Image as ImageIcon, Lightbulb, MessageSquarePlus, X } from 'lucide-react';
+import { Bug, CheckCircle2, Image as ImageIcon, Lightbulb, X } from 'lucide-react';
 import { Modal } from '../overlays/Modal';
 import { Icon } from '../Icon';
 import { useSendFeedback } from '../../hooks/resources/feedback';
 import { consoleTapeEntries } from '../../lib/consoleTape';
-import { useBottomStackLayer } from '../../hooks/useBottomStackLayer';
+import { onOpenFeedback } from './feedbackSeat';
 
 /** Downscale a picked image to ≤ 1280px-wide JPEG (≤ 0.6 quality when
  *  the first pass exceeds the 600 KB ceiling) — a data URL the server's
@@ -47,14 +47,13 @@ async function downscaleScreenshot(file: File): Promise<string | null> {
 
 export function FeedbackWidget() {
   const send = useSendFeedback();
-  /* Y6 (R325) — the FAB is the TOP layer of the bottom stack: it
-   * registers with lib/bottomStack.ts so it rises above the toast stack
-   * (and, should a consent-bearing surface ever host it, the consent
-   * gate too) instead of being covered — Material's snackbar+FAB
-   * behaviour. With nothing else on screen the manager reports offset
-   * 0 and the seat below is untouched (18px / 72px+safe-area). */
-  const fabRef = useBottomStackLayer('fab');
+  /* r351 A2 (Q1f): the floating FAB is RETIRED — it intersected
+   * content on every measured width (r350's bottomStack offset never
+   * cleared the overlaps, and its sentence label sat on every screen).
+   * The sheet opens from the topbar user menu + the ⌘K palette via
+   * the feedbackSeat event channel; nothing mounts here until then. */
   const [open, setOpen] = useState(false);
+  useEffect(() => onOpenFeedback(() => setOpen(true)), []);
   const [kind, setKind] = useState<'BUG' | 'IDEA'>('BUG');
   const [note, setNote] = useState('');
   const [shot, setShot] = useState<string | null>(null);
@@ -112,23 +111,10 @@ export function FeedbackWidget() {
   };
 
   return (
-    <>
-      <button
-        type="button"
-        ref={fabRef}
-        className="fb-fab"
-        onClick={() => setOpen(true)}
-        aria-haspopup="dialog"
-        aria-label="أبلغ عن مشكلة أو اقترح"
-      >
-        <Icon icon={MessageSquarePlus} size={16} />
-        <span>أبلغ عن مشكلة / اقتراح</span>
-      </button>
-
-      <Modal open={open} onClose={() => setOpen(false)} ariaLabel="تغذية راجعة">
+    <Modal open={open} onClose={() => setOpen(false)} ariaLabel="تغذية راجعة">
         <div className="fb-sheet">
           <header className="fb-head">
-            <h2 className="fb-title">أبلغ عن مشكلة / اقتراح</h2>
+            <h2 className="fb-title">أبلغ عن مشكلة أو اقترح</h2>
             <button type="button" className="fb-close" onClick={() => setOpen(false)} aria-label="إغلاق">
               <Icon icon={X} size={16} />
             </button>
@@ -168,14 +154,14 @@ export function FeedbackWidget() {
               </div>
 
               <label className="fb-field">
-                <span>الوصف — ماذا حدث؟ وماذا كنت تتوقّع؟</span>
+                <span>الوصف</span>
                 <textarea
                   className="fb-textarea"
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   rows={5}
                   maxLength={2000}
-                  placeholder="اكتب وصفًا واضحًا — الخطوات التي أدّت إلى المشكلة تساعدنا على إصلاحها أسرع."
+                  placeholder="ماذا حدث؟ وماذا توقّعت؟"
                 />
               </label>
 
@@ -209,8 +195,7 @@ export function FeedbackWidget() {
               </div>
 
               <p className="fb-meta">
-                يُرسل مع تقريرك: الصفحة الحالية، نوع حسابك، نوع المتصفّح، وآخر أخطاء
-                لوحة التطوير (حتى 20) — لتشخيص أسرع. بلا بيانات شخصية.
+                يُرسل مع تقريرك: الصفحة، نوع الحساب، المتصفّح، وآخر أخطاء لوحة التطوير.
               </p>
 
               {error && (
@@ -230,7 +215,6 @@ export function FeedbackWidget() {
             </div>
           )}
         </div>
-      </Modal>
-    </>
+    </Modal>
   );
 }

@@ -231,7 +231,6 @@ export function GamificationPage() {
               register — [01] with the honest earned count as mono meta
               (countAr for assistive tech). */}
           <SectionBar
-            index="01"
             title="الإنجازات المحققة"
             meta={
               !ach.isPending && !ach.isError && (ach.data?.length ?? 0) > 0 ? (
@@ -273,7 +272,6 @@ export function GamificationPage() {
           {/* R319 (c3-S2): [02] لوحة المتصدرين — the honest ranked-student
               count as the bar's mono meta. */}
           <SectionBar
-            index="02"
             title="لوحة المتصدرين"
             meta={
               !lb.isPending && !lb.isError && (lb.data?.length ?? 0) > 0 ? (
@@ -383,7 +381,6 @@ export function SkillsPage() {
           [01] خريطة المهارات التقنية, the honest measured-skill count
           as mono meta (countAr for assistive tech). */}
       <SectionBar
-        index="01"
         title="خريطة المهارات التقنية"
         meta={
           !skills.isPending && !skills.isError && (skills.data?.length ?? 0) > 0 ? (
@@ -614,7 +611,6 @@ export function AlertsPage() {
             [01] آخر الإشعارات, the server's honest total as the bar's
             mono meta (countAr for assistive tech). */}
         <SectionBar
-          index="01"
           title="آخر الإشعارات"
           meta={
             !feed.isPending && !feed.isError && total > 0 ? (
@@ -866,10 +862,9 @@ export function SchedulePage() {
            and today's marker rides the mono chip register. RowList
            rows + separators stay the RowList's own. */
         <div className="flex-col gap-5">
-          {orderedDays.map((d, di) => (
+          {orderedDays.map((d) => (
             <section key={d.dow} className="schedule-day" aria-label={`جدول ${WEEKDAY_NAMES_AR[d.dow]}`}>
               <SectionBar
-                index={String(di + 1).padStart(2, '0')}
                 title={WEEKDAY_NAMES_AR[d.dow] ?? ''}
                 meta={(
                   <BarCount
@@ -1117,7 +1112,6 @@ export function ResultsPage() {
           + RowList/RowItem) — the same day-section anatomy the schedule
           page carries; the graded feed below keeps its AlertRow tones. */}
       <SectionBar
-        index="01"
         title="تسليمات بانتظار التقييم"
         /* R341 (D7c) reconciliation — tests are law: the honest empty
             state keeps its pinned sentence (ResultsPage-timeline ×2)
@@ -1283,7 +1277,6 @@ export function ArVrPage() {
           earlier). The subtitle no longer promises interactive 3D
           content delivery. */}
       <PatternPageHeader
-        index="01"
         eyebrow="المعامل والتقنيات"
         title="تجارب AR / VR"
         description="فهرس تجارب AR/VR للمقرّرات العمليّة — التشغيل غير متاح بعد."
@@ -1541,7 +1534,6 @@ export function SocialPage() {
              start-aligned hug (22-c A5 P2-1). */
           <div style={{ alignSelf: 'start' }}>
             <SectionBar
-              index="01"
               title="الأكثر تداولاً"
               meta={(
                 <BarCount
@@ -1659,7 +1651,6 @@ export function DownloadsPage() {
           [01] ملفّات حديثة, the honest resolved material count as mono
           meta (countAr for assistive tech). */}
       <SectionBar
-        index="01"
         title="ملفّات حديثة"
         meta={
           !q.isPending && !q.isError && (q.data?.length ?? 0) > 0 ? (
@@ -1788,7 +1779,7 @@ export function UniversityInfoPage() {
             icon={Building2}
             label="عدد الكليّات"
             value={facCount}
-            change="تبنيها مؤسستك من بياناتها"
+            change="من بياناتك"
             color="brand"
           />
         </div>
@@ -1800,7 +1791,7 @@ export function UniversityInfoPage() {
           (same heading semantics the r305s-kicker carried, on the
           D7a family grammar). */}
         <section aria-label="بطاقة التعريف">
-          <SectionBar index="01" title="بطاقة تعريف" />
+          <SectionBar title="بطاقة تعريف" />
           <div className="r305s-band r305s-band--deep">
             <div className="r305u-facts">
               <FactRow deep label="الاسم الرسميّ" value={inst.name} />
@@ -1872,7 +1863,7 @@ export function UniversityInfoPage() {
       <PatternPageHeader
         eyebrow="خدمات المؤسّسة"
         title="مساحة عمل أُلارا التجريبية"
-        description="مساحة العرض على منصّة أُلارا — بيئة اصطناعية بالكامل تُظهر سير العمل الأكاديمي ببيانات تجريبية، لا تحاكي أي جامعة ولا تحمل حرَمًا أو فروعًا."
+        description="مساحة عرض تجريبية — بيانات اصطناعية لا تحاكي أي جامعة." /* r351 A2 (Q3): the ONE disclosure; the eight per-row repeats below shrank to their data word. */
         /* R342-08 — the [01] numeral + eyebrow seat this page on the
            family grammar (map/live's header precedent), and the CTA
            pair rides the masthead (the D11/D8 measured seat; the
@@ -1900,7 +1891,7 @@ export function UniversityInfoPage() {
           {
             label: 'عدد الكليّات',
             value: facCount,
-            hint: 'مساحة عمل افتراضية واحدة',
+            hint: 'افتراضية',
             tone: 'signal',
           },
           {
@@ -1910,8 +1901,8 @@ export function UniversityInfoPage() {
           },
           {
             label: 'النطاق',
-            value: 'مساحة عرض اصطناعية',
-            hint: 'لا تحاكي أي مؤسّسة',
+            value: 'اصطناعية',
+            hint: 'عرض فقط',
           },
         ]}
       />
@@ -1921,12 +1912,12 @@ export function UniversityInfoPage() {
       <div className="grid-2">
         <Card title="الرؤية" icon={Target}>
           <p style={{ fontSize: 'var(--fs-md)', color: 'var(--text)', lineHeight: 'var(--lh-loose)', margin: 0 }}>
-            منصّة عرض تُبرهن على تعليم عالي منظَّم رقميًا — ببيانات اصطناعية آمنة.
+            تعليم عالي منظَّم رقميًا — ببيانات اصطناعية آمنة.
           </p>
         </Card>
         <Card title="الرسالة" icon={Star}>
           <p style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-muted)', lineHeight: 'var(--lh-loose)', margin: 0 }}>
-            إظهار سير العمل الأكاديمي الكامل داخل أُلارا — تجربة الطالب، تقييم الأستاذ، وجودة قابلة للقياس.
+            سير العمل الأكاديمي كاملًا: الطالب، الأستاذ، والجودة.
           </p>
         </Card>
       </div>
@@ -1938,15 +1929,15 @@ export function UniversityInfoPage() {
           (same heading semantics the r305s-kicker carried, on the
           D7a family grammar). */}
       <section aria-label="بطاقة التعريف">
-        <SectionBar index="01" title="بطاقة تعريف" />
+        <SectionBar title="بطاقة تعريف" />
         <div className="r305s-band r305s-band--deep">
           <div className="r305u-facts">
             <FactRow deep label="الاسم الرسميّ" value="مساحة عمل أُلارا التجريبية" />
-            <FactRow deep label="النطاق" value="بيانات اصطناعية — لا مؤسّسة حقيقية" />
-            <FactRow deep label="النوع" value="مساحة عرض تجريبية (اصطناعية)" />
+            <FactRow deep label="النطاق" value="اصطناعية" />
+            <FactRow deep label="النوع" value="تجريبية" />
             <FactRow deep label="بريد العرض" value="demo.ulara.ly" mono />
-            <FactRow deep label="الموقع" value="مساحة افتراضية — لا حرَم ولا فروع" />
-            <FactRow deep label="طابع البيانات" value="مولَّدة لأغراض العرض" />
+            <FactRow deep label="الموقع" value="افتراضية" />
+            <FactRow deep label="طابع البيانات" value="عرض فقط" />
           </div>
         </div>
       </section>
@@ -1966,7 +1957,7 @@ export function UniversityInfoPage() {
           <Card
             title="كليّات مساحة العمل"
             icon={Building2}
-            subtitle={facs.isPending ? 'جارٍ التحميل…' : `${countAr(facCountNum, ['كلّيّة واحدة', 'كلّيّتان', 'كليّات', 'كلّيّة'])} — تبنيها مؤسستك من بياناتها`}
+            subtitle={facs.isPending ? 'جارٍ التحميل…' : countAr(facCountNum, ['كلّيّة واحدة', 'كلّيّتان', 'كليّات', 'كلّيّة'])}
           >
             {facs.isPending ? (
               <div className="flex-col gap-2" aria-busy="true">
@@ -2015,7 +2006,7 @@ export function UniversityInfoPage() {
               gold is the ACHIEVEMENTS-only signal on the Ulara canon;
               institutional classifications ride the neutral chip. */}
           <div className="r305u-row">
-            <span className="text-sm r305u-row-main">لا عضويّات — مساحة عرض محايدة (بيانات تجريبية)</span>
+            <span className="text-sm r305u-row-main">لا عضويّات</span>
             <Badge>بيانات تجريبية</Badge>
           </div>
         </div>
@@ -2023,14 +2014,14 @@ export function UniversityInfoPage() {
             as a class): accreditation and memberships belong to each
             institution; أُلارا claims none. */}
         <div className="uni-accredit">
-          الاعتماد والعضويّات شأن مؤسستك — أُلارا منصّة مستقلّة لا تدّعي أي اعتماد
+          الاعتماد شأن مؤسستك — لا اعتماد معروض هنا
         </div>
       </Card>
 
       {/* Strategic plan — r350-B2: the eight synthetic bullets trimmed to
           three representative rows (the demo workspace shows the grammar,
           not an essay; the full set lives in the seed corpus). */}
-      <Card title="الخطّة الاستراتيجيّة 2024–2028" icon={Target} subtitle="خارطة طريق للارتقاء بمكانة الجامعة وخدمة المجتمع">
+      <Card title="الخطّة الاستراتيجيّة 2024–2028" icon={Target}>
         <div className="grid-2 r305u-rows">
           {[
             'تقديم برامج تعليميّة وفق معايير الجودة المحليّة والدوليّة',
@@ -2045,7 +2036,7 @@ export function UniversityInfoPage() {
         </div>
       </Card>
 
-      <Card title="الشهادات والبرامج الأكاديميّة" icon={Microscope} subtitle="درجات أكاديميّة معتمدة على الموقع الرسميّ">
+      <Card title="الشهادات والبرامج الأكاديميّة" icon={Microscope}>
         <div className="grid-3" style={{ gap: 'var(--sp-3)', marginBottom: 'var(--sp-4)' }}>
           {[
             { ar: 'الإجازة الجامعيّة', en: 'Bachelor / Licence' },
@@ -2069,7 +2060,7 @@ export function UniversityInfoPage() {
 
       <Card title="معلومات التواصل" icon={Headset}>
         <div className="grid-2">
-          <FactRow label="العنوان" value="بيانات عرض — بلا عنوان حقيقي (مؤسّسة اصطناعية)" />
+          <FactRow label="العنوان" value="بلا عنوان حقيقي" />
           <FactRow label="الهاتف" value="+218 23 762659" mono />
           <FactRow label="هاتف بديل" value="+218 23 762882" mono />
           <FactRow label="البريد العامّ" value="info@demo.ulara.ly" mono />

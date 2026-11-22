@@ -575,7 +575,6 @@ export default function DesignPage(): React.JSX.Element {
 
         <Section index="10" title="رؤوس الصفحات" note="patterns/PageHeader — تشققات · شارة · فهرس · إجراءات">
           <PatternsPageHeader
-            index="02"
             eyebrow="مسجل الطالب"
             title="مقررات الفصل"
             description="قائمة مسجلك لهذا الفصل — تُحدَّث عند كل تعديل خطة."

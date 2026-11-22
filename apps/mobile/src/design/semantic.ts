@@ -25,8 +25,8 @@
  *   · `sunken`             = wells/tracks/inset fields (shared `bgSoft` =
  *     surface2 = palette.surfaceHover in BOTH themes ✓).
  *   · status seats         = shared successInk/warningInk/dangerInk exactly:
- *     light text-ink = the family `deep` (AA), dark text-ink = the family
- *     `ink` (the luminous rung).
+ *     the text ink is the family `deep` rung in both themes (AAA), while
+ *     the fill rides the family `ink`.
  */
 import { StyleSheet, type ViewStyle } from "react-native";
 import { ds, statusTones, type StatusTone, type ThemeName } from "./tokens";
@@ -43,10 +43,11 @@ export interface StatusSeat {
   ink: string;
 }
 
-function statusSeat(name: ThemeName, tone: StatusTone): StatusSeat {
-  return name === "light"
-    ? { fill: tone.ink, soft: tone.bg, ink: tone.deep }
-    : { fill: tone.ink, soft: tone.bg, ink: tone.ink };
+function statusSeat(tone: StatusTone): StatusSeat {
+  // fill = the saturated family ink; soft = its tinted ground; ink = the
+  // family `deep` rung, which is the AAA text tier in BOTH themes (dark
+  // deep is the light tint, so status text keeps its contrast there too).
+  return { fill: tone.ink, soft: tone.bg, ink: tone.deep };
 }
 
 // ── the semantic color seats ───────────────────────────────────────────────
@@ -101,9 +102,9 @@ export function semanticColorsFor(name: ThemeName): SemanticColors {
     accentInk: p.accentInk,
     accentSoft: p.accentSoft,
     accentFg: p.accentFg,
-    success: statusSeat(name, t.mint),
-    warning: statusSeat(name, t.yellow),
-    danger: statusSeat(name, t.rose),
+    success: statusSeat(t.mint),
+    warning: statusSeat(t.yellow),
+    danger: statusSeat(t.rose),
   };
 }
 

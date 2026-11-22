@@ -4,13 +4,14 @@
   "$doc": "R326 M0.4 — the ONE source of truth for the shared ds design tokens (web + mobile). Provenance: frontend/src/styles/tokens/tokens.css (R313/R322/R323/R324 canon) and the r325-era apps/mobile/src/design/tokens.ts hand-copy it replaces. Regen: npm run tokens:build (repo root). Outputs: frontend/src/styles/tokens/tokens.generated.css (web CSS vars, imported BEFORE tokens.css, same @layer tokens) + apps/mobile/src/design/tokens.generated.ts (mobile TS). Drift gate: npm run tokens:check (CI-enforced). Reference grammar: 'neutral.50' | 'triad.<family>.<bg|ink|deep>' | 'brand.<key>' | a semantic seat name (another ref, one tier up) | a literal '#hex'. External seat: brand.warmInk emits var(--warm-ink) on web — its definition stays hand-written in tokens.css base :root. NOT shared (deliberately): the web fluid-rem type ladder + font stacks (tokens.css hand section — web-only), the mobile px ladder lives here under typography.mobile; --state-focus-ring-color / --danger-fg / glass / veils / chrome / charts stay hand-written in tokens.css (web-only seats). 2026 brand takeover (feat/unified-brand-palette-2026): the owner-approved «Parchment & Royal» palette — royal blue #2540D9 (light) / #8AA0FF (dark) becomes THE primary signal via triad.royal; the sienna/ember era is retired (copper re-keys to the warm decorative #F15534 family); success/danger re-key to the approved #17724A/#C62828 (light) and #5FD39A/#FF7A70 (dark).",
   "color": {
     "brand": {
-      "$doc": "The ULARA brand colours — «Parchment & Royal» (the 2026 owner-approved takeover): paper #F5F1E8 · ink #1A1713 · royal blue #2540D9 — plus the dark-theme primary #8AA0FF and the warm label ink #17130E. Supersedes the «Parchment & Sienna» era (ink #262019 · sienna #C43E16 · ember #FF6B3D — #262019 survives ONLY as the dark surface, neutral.dark.50; the sienna/ember hexes are fully retired from the brand seats). White on royal = 7.46:1 AAA; #262019 on the dark primary #8AA0FF = 6.56:1 AA (the owner-verified pair — NEVER white on #8AA0FF, 2.46:1). Consumed by the brand kit (ulara-kit.mjs cross-check) and the semantic seat refs; web emits var(--warm-ink) refs only.",
+      "$doc": "The ULARA brand colours — the OWNER-APPROVED palette (2026-11-21, the final brand decision): paper #F5F1E8 · ink #1A1713 · PRIMARY #2540D9 (dark #8AA0FF) — the action colour — plus the warm DECORATIVE accent #F15534 (never an action or a danger tone; the retired sienna/ember hexes #C43E16/#FF6B3D are gone from the brand seats — copper re-keys to the warm decorative family) and the warm label ink #17130E. #262019 survives only as the dark surface (neutral.dark.50). Contrast (WCAG 2.2 relative luminance, recomputed): primary on paper 6.62:1 · white on primary 7.46:1 · white on hover 10.02:1 · dark primary on dark ground 6.56:1 · dark ink #262019 on dark primary 6.56:1 (the owner-verified pair — white on it FAILS at 2.46:1 and is never used) · white on dark hover 4.83:1. Consumed by the brand kit (ulara-kit.mjs cross-check: colors.accent ≡ brand.primary) and the semantic seat refs; web emits var(--warm-ink) refs only.",
       "paper": "#F5F1E8",
       "ink": "#1A1713",
       "warmInk": "#17130E",
       "primary": "#2540D9",
       "primaryDark": "#8AA0FF",
-      "white": "#FFFFFF"
+      "white": "#FFFFFF",
+      "warmAccent": "#F15534"
     },
     "neutral": {
       "$doc": "The warm vintage-paper ramp (R313). Light: near-white ground #F5F1E8 over white surfaces, the 2026 approved ink #1A1713 (15.84:1 AAA — was #262019, which survives only as the DARK ground). Dark: the charcoal #262019 itself as ground, surfaces one step up (#2E2E2E), warm hairlines, near-white ink #F5F1E8. neutral-900 dark is the R324 X22 warm paper twin #F5F1E8 (was #F6F8FA — that spelling is on the parity gate's FORBIDDEN list).",
@@ -58,14 +59,14 @@
       "mint": {
         "$doc": "The success family — re-keyed to the owner-approved green: #17724A light (5.26:1 on paper AA) · #5FD39A dark (8.65:1 AAA). Deep stays the AAA text tier on the tinted grounds (7.31 light / 9.76 dark).",
         "light": {
-          "bg": "#E3EBE1",
+          "bg": "#E2EFE8",
           "ink": "#17724A",
-          "deep": "#1B5430"
+          "deep": "#0D5433"
         },
         "dark": {
-          "bg": "#24372B",
+          "bg": "#1F3A2E",
           "ink": "#5FD39A",
-          "deep": "#C4EBD2"
+          "deep": "#5FD39A"
         }
       },
       "lavender": {
@@ -107,14 +108,14 @@
       "rose": {
         "$doc": "The danger family — re-keyed to the owner-approved red: #C62828 light (4.99:1 on paper AA · 4.56:1 on the tint) · #FF7A70 dark (6.35:1 AA). The retired #F15534 coral ink moves OUT of danger into the warm decorative seat (peach/copper) — danger no longer rhymes with the signal.",
         "light": {
-          "bg": "#F9E3DC",
+          "bg": "#FBE4E4",
           "ink": "#C62828",
-          "deep": "#8C230A"
+          "deep": "#9E1A1A"
         },
         "dark": {
-          "bg": "#43241C",
+          "bg": "#3A2020",
           "ink": "#FF7A70",
-          "deep": "#FFD1CD"
+          "deep": "#FF7A70"
         }
       },
       "sand": {
@@ -149,9 +150,9 @@
           "deep": "#1B30B0"
         },
         "dark": {
-          "bg": "#232845",
+          "bg": "#2A2F4A",
           "ink": "#8AA0FF",
-          "deep": "#C7D2FF"
+          "deep": "#A9B8FF"
         }
       },
       "copper": {
@@ -201,7 +202,7 @@
         "warning": "triad.yellow.ink",
         "warningSoft": "triad.yellow.bg",
         "warningInk": "triad.yellow.deep",
-        "danger": "triad.rose.ink",
+        "danger": "#C62828",
         "dangerSoft": "triad.rose.bg",
         "dangerInk": "triad.rose.deep",
         "dangerFg": "#FFFFFF",
@@ -241,11 +242,11 @@
         "accentInk": "triad.royal.ink",
         "success": "triad.mint.ink",
         "successSoft": "triad.mint.bg",
-        "successInk": "triad.mint.ink",
+        "successInk": "#5FD39A",
         "warning": "triad.yellow.ink",
         "warningSoft": "triad.yellow.bg",
         "warningInk": "triad.yellow.ink",
-        "danger": "triad.rose.ink",
+        "danger": "#FF7A70",
         "dangerSoft": "triad.rose.bg",
         "dangerInk": "triad.rose.ink",
         "dangerFg": "#262019",

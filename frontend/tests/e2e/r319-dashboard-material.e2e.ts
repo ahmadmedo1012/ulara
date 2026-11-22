@@ -45,28 +45,17 @@ for (const theme of THEMES) {
       // The five titled sections (the momentum strip stays the R305
       // labeled-rule metadata band by design — not a numbered section).
       const bars = page.locator('.r319s-bar');
-      await expect(bars).toHaveCount(5);
+      await expect(bars).toHaveCount(4);
       const titles = await bars.locator('.r319s-bar-title').allTextContents();
-      expect(titles).toEqual(['الفصل الدراسي', 'اليوم', 'مقرّراتك', 'فجوات يُنصح بسدّها', 'أسبوعك القادم']);
+      /* r351 A2 (Q2/Q3): the [0N] index retired; «أسبوعك القادم»
+         retired (the week strip + calendar own beyond-today); the
+         gaps section renamed. */
+      expect(titles).toEqual(['الفصل الدراسي', 'اليوم', 'مقرّراتك', 'فجوات الإتقان']);
 
-      // The gutter index: [nn] Latin mono, LTR, decorative.
-      const indexes = await bars.locator('.r319s-bar-index').evaluateAll((els) =>
-        els.map((el) => ({
-          text: (el.textContent || '').trim(),
-          dir: el.getAttribute('dir'),
-          hidden: el.getAttribute('aria-hidden'),
-          mono: getComputedStyle(el).fontFamily,
-        })),
-      );
-      expect(indexes.length).toBeGreaterThanOrEqual(2);
-      for (const idx of indexes) {
-        expect(idx.text).toMatch(/^\[\d{2}\]$/);
-        expect(idx.dir).toBe('ltr');
-        expect(idx.hidden).toBe('true');
-        expect(idx.mono).toContain('Geist Mono');
-      }
+      // r351 A2 (Q2): the [nn] gutter index retired everywhere.
+      await expect(bars.locator('.r319s-bar-index')).toHaveCount(0);
       // The hairline rule completes every bar.
-      await expect(bars.locator('.r319s-bar-rule')).toHaveCount(5);
+      await expect(bars.locator('.r319s-bar-rule')).toHaveCount(4);
     });
 
     test('the semester ruler: W07/16 mono head, one tick per week, the 45% quiet meta', async ({ page }) => {
@@ -82,7 +71,8 @@ for (const theme of THEMES) {
       // The API's percentage as quiet mono meta (replaces the old
       // «X% من الفصل مضى» prose line).
       await expect(ruler.locator('.r319s-ruler-meta')).toContainText('45%');
-      await expect(ruler.locator('.r319s-ruler-meta')).toContainText('من الفصل مضى');
+      // r351 A2 (Q3): the prose caption retired — the % + W head
+      // carry the whole reading.
       // The meter contract for assistive tech.
       await expect(ruler).toHaveAttribute('role', 'meter');
       await expect(ruler).toHaveAttribute('aria-valuetext', 'W07/16 · 45%');
@@ -95,16 +85,15 @@ for (const theme of THEMES) {
       await page.goto('/student/dashboard');
       await expect(page.locator('h1.pf-page-title')).toBeVisible({ timeout: 20000 });
 
-      // 2 enrolled courses + the momentum band's AVG bar.
+      /* r351 A2 (Q3): the AVG bar retired — it re-printed the KPI's
+         datum; the 2 enrolled courses' bars remain. */
       const bars = page.locator('.r319s-coursebar');
-      await expect(bars).toHaveCount(3);
+      await expect(bars).toHaveCount(2);
       await expect(bars.filter({ hasText: 'CS-201' })).toHaveCount(1);
       await expect(bars.filter({ hasText: 'CS-310' })).toHaveCount(1);
-      await expect(bars.filter({ hasText: 'AVG' })).toHaveCount(1);
-      // Every bar carries the end-tick (the reading) + mono pct.
-      await expect(bars.locator('.r319s-coursebar-tick')).toHaveCount(3);
+      await expect(bars.locator('.r319s-coursebar-tick')).toHaveCount(2);
       const pcts = (await bars.locator('.r319s-coursebar-pct').allTextContents()).sort();
-      expect(pcts).toEqual(['100%', '58%', '62%']);
+      expect(pcts).toEqual(['100%', '62%']);
       // The meter contract.
       const meters = await bars.evaluateAll((els) => els.map((el) => el.getAttribute('role')));
       expect(meters.every((r) => r === 'meter')).toBe(true);
@@ -119,8 +108,9 @@ for (const theme of THEMES) {
       expect(await chips.count()).toBeGreaterThanOrEqual(2);
       // Today's class row → its quiet CLASS chip in the TodayList.
       await expect(page.locator('.pf-today-item .r319s-chip', { hasText: 'CLASS' })).toBeVisible();
-      // The +3-day assignment → the honest deadline chip in the week ledger.
-      await expect(page.locator('.week-item .r319s-chip', { hasText: 'DUE 3D' })).toBeVisible();
+      // r351 A2 (Q3): the +3-day assignment rides the TODAY list's
+      // upcoming row now (the week ledger retired with its section).
+      await expect(page.locator('.pf-today-list .r319s-chip', { hasText: 'DUE 3D' })).toBeVisible();
       // Square (radius 0), the mono voice, LTR isolation.
       const style = await chips.first().evaluate((el) => ({
         radius: getComputedStyle(el).borderRadius,
@@ -143,6 +133,8 @@ for (const theme of THEMES) {
 
       const strip = page.locator('.ind-sched');
       const cells = strip.locator('.ind-sched-day');
+      /* r351 A2 (Q3, review fix): all 7 tracks stay (grid geometry);
+         empty non-today days render their muted header only. */
       await expect(cells).toHaveCount(7);
       // FIXED_NOW 2026-03-15 is a Sunday → cell 0 (الأحد, inline-start
       // in the RTL row) is the inked one.

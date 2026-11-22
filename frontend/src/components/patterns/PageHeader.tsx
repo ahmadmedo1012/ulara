@@ -15,10 +15,10 @@ import { Icon } from '../Icon';
  * Arabic-first RTL — the forward direction IS left; Icon renders
  * aria-hidden. Breadcrumb links keep a 44px block target via padding.
  *
- * R319 (C2-G2): `index` renders the mono `[01]` gutter label inside
- * the h1 (aria-hidden). r324 X10 — the `SHEET S-01 · STUDENT` identity
- * line is RETIRED everywhere (coordinates/revision tags are not
- * content; the role's name already lives in the shell chrome).
+ * r351 A2 (Q2): the `index` prop + its mono `[01]` gutter label are
+ * RETIRED — the numerals rendered out of DOM order on several pages
+ * (teacher dashboard 02→01→03) and sequential-in-DOM cannot be kept
+ * honest across filtered states. The h1 is the name, alone.
  */
 export type PageBreadcrumb = {
   label: string;
@@ -33,7 +33,6 @@ export function PageHeader({
   actions,
   breadcrumbs,
   tabs,
-  index,
 }: {
   /** Page title — rendered as the route's single semantic h1. */
   title: string;
@@ -48,9 +47,6 @@ export function PageHeader({
   breadcrumbs?: PageBreadcrumb[];
   /** Tab strip under the header block — rendered as-is (consumer owns styling via .tabs). */
   tabs?: ReactNode;
-  /** R319: optional mono gutter index (`01` renders as `[01]` inside the
-   *  h1, aria-hidden). */
-  index?: string;
 }) {
   return (
     <header className="pf-page-header">
@@ -80,12 +76,7 @@ export function PageHeader({
       <div className="pf-page-header-main">
         <div className="pf-page-header-text">
           {eyebrow !== undefined && <p className="pf-eyebrow">{eyebrow}</p>}
-          <h1 className="pf-page-title">
-            {index !== undefined && index !== '' && (
-              <span className="page-index" aria-hidden="true" dir="ltr">{`[${index}]`}</span>
-            )}
-            {title}
-          </h1>
+          <h1 className="pf-page-title">{title}</h1>
           {description !== undefined && <p className="pf-page-desc">{description}</p>}
           {meta !== undefined && <div className="pf-page-meta">{meta}</div>}
         </div>

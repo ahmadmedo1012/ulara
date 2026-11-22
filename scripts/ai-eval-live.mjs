@@ -20,10 +20,15 @@
  *    convention) — NEVER hardcoded, NEVER printed. Missing → exit 2
  *    with zero requests (BLOCKED, not silently skipped).
  *  · BASE_URL env (default https://ulara.vercel.app).
+ *  · SMOKE_INSTITUTION_SLUG env (optional, r351 A3) — for
+ *    multi-membership accounts the eval selects this membership's
+ *    institution context right after login (default: the first ACTIVE
+ *    membership) — fresh login tokens otherwise carry no context and
+ *    every /ai/chat turn 403s INSTITUTION_CONTEXT_REQUIRED.
  *
  * Usage:
- *   SMOKE_EMAIL=… SMOKE_PASSWORD=… node scripts/ai-eval-live.mjs \
- *       [outFile.json]
+ *   SMOKE_EMAIL=… SMOKE_PASSWORD=… [SMOKE_INSTITUTION_SLUG=…]
+ *       node scripts/ai-eval-live.mjs [outFile.json]
  */
 import { writeFileSync } from 'node:fs';
 
@@ -32,6 +37,14 @@ const SMOKE_EMAIL = process.env.SMOKE_EMAIL;
 const SMOKE_PASSWORD = process.env.SMOKE_PASSWORD;
 const OUT = process.argv[2] ?? 'ai-eval-report.json';
 const TIMEOUT_MS = 60_000;
+/* r351 A3: CASES=comma-separated-ids runs a SUBSET of the fixed set
+ * (same probes, selectable) — for bounded re-runs when a daily quota
+ * died mid-matrix. Unknown ids → hard BLOCK (a typo must never
+ * silently run nothing or the wrong thing). Computed AFTER the CASES
+ * table below (module-level order). */
+const CASES_FILTER = process.env.CASES
+  ? new Set(process.env.CASES.split(',').map((s) => s.trim()).filter(Boolean))
+  : null;
 
 if (!SMOKE_EMAIL || !SMOKE_PASSWORD) {
   console.error('BLOCKED: SMOKE_EMAIL / SMOKE_PASSWORD are required runtime inputs.');
@@ -116,6 +129,19 @@ const CASES = [
   },
 ];
 
+/* The runnable subset (see CASES_FILTER above): unknown ids BLOCK. */
+const RUN_CASES = CASES_FILTER
+  ? CASES.filter((c) => {
+      if (!CASES_FILTER.has(c.id)) return false;
+      CASES_FILTER.delete(c.id);
+      return true;
+    })
+  : CASES;
+if (CASES_FILTER && CASES_FILTER.size > 0) {
+  console.error(`BLOCKED: unknown CASES id(s): ${[...CASES_FILTER].join(', ')}`);
+  process.exit(2);
+}
+
 async function main() {
   const loginStarted = Date.now();
   const loginRes = await fetch(`${BASE_URL}/api/v1/auth/login`, {
@@ -127,13 +153,41 @@ async function main() {
     console.error(`BLOCKED: login failed (HTTP ${loginRes.status}) — no eval requests sent.`);
     process.exit(2);
   }
-  const token = (await loginRes.json()).data.accessToken;
+  const loginBody = (await loginRes.json()).data;
+  let token = loginBody.accessToken;
   console.log(`login ok (${Date.now() - loginStarted}ms)`);
+
+  /* r351 A3 (the Gemini deployment verification): multi-membership
+   * demo accounts carry NO institution context in a fresh login token
+   * (r178: several memberships → the client picks) — /ai/chat would
+   * 403 INSTITUTION_CONTEXT_REQUIRED on every turn. Optional
+   * SMOKE_INSTITUTION_SLUG picks the membership (default: the first
+   * ACTIVE one); zero-membership accounts proceed without a context
+   * and their turns report the honest 403s. */
+  const memberships = Array.isArray(loginBody.user?.memberships) ? loginBody.user.memberships : [];
+  if (!loginBody.user?.currentInstitution && memberships.length > 0) {
+    const wanted = process.env.SMOKE_INSTITUTION_SLUG
+      ? memberships.find((m) => m.slug === process.env.SMOKE_INSTITUTION_SLUG)
+      : (memberships.find((m) => m.isActive !== false) ?? memberships[0]);
+    if (wanted) {
+      const selRes = await fetch(`${BASE_URL}/api/v1/auth/select-institution`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', authorization: `Bearer ${token}` },
+        body: JSON.stringify({ institutionId: wanted.institutionId }),
+      });
+      if (selRes.status === 200) {
+        token = (await selRes.json()).data.accessToken;
+        console.log(`institution context: ${wanted.slug ?? wanted.institutionId}`);
+      } else {
+        console.log(`institution selection failed (HTTP ${selRes.status}) — continuing without context`);
+      }
+    }
+  }
 
   const turns = [];
   let conversationId;
   let engine = null;
-  for (const c of CASES) {
+  for (const c of RUN_CASES) {
     const started = Date.now();
     let outcome = 'ok';
     let httpStatus = 200;

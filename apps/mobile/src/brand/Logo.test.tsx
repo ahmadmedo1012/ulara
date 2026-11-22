@@ -76,7 +76,7 @@ describe("Logo (the R326 M0.4 RN port)", () => {
     );
   });
 
-  it("auto tone rides the live palette (light default: sepia ink · the sienna cornerstone)", async () => {
+  it("auto tone rides the live palette (light default: the ink · the primary cornerstone)", async () => {
     const { toJSON } = await render(<Logo variant="mark" size={32} />);
     expect(collectProp(toJSON(), "stroke")).toContainEqual(processed("#1A1713")); // the light palette ink (2026)
     expect(collectProp(toJSON(), "fill")).toContainEqual(processed("#2540D9")); // the light palette accent — the royal cornerstone

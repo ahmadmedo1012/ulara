@@ -146,7 +146,9 @@ test.describe('R308 — رحلة التعلّم (the walkthrough ladder)', () =>
     await expect(close).toBeVisible();
     await expect(close).toContainText('الفصول');
     await expect(close).toContainText('الرحلة — أربعة فصول تتحرك أمامك');
-    await expect(close).toContainText('ميزة تعمل اليوم داخل المنصّة');
+    /* r351 P6 — the close copy's diet: the honesty line rides half the
+     * words (the «كل غرفة ميزة تعمل اليوم» claim kept verbatim) */
+    await expect(close).toContainText('كل غرفة ميزة تعمل اليوم');
     await expect(close.locator('.jt-cms-row')).toHaveCount(4);
   });
 });

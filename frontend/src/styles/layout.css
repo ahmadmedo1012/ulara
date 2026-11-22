@@ -138,6 +138,10 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    /* r351 A2 (Q6): 28 → 44 — the audit's smallest shell target; the
+       min-* form grows the hit area over any later visual write. */
+    min-inline-size: 44px;
+    min-block-size: 44px;
     inline-size: 28px;
     block-size: 28px;
     border-radius: var(--r-sm);
@@ -251,7 +255,11 @@
     position: relative;
     text-decoration: none;
     line-height: 1.4;
-    min-block-size: 36px;
+    /* r351 A2 (Q6): 36 → 44 — the audit measured every sidebar row at
+       55×36 (16–29 sub-44 targets per screen, every role, both bands).
+       The later-in-layer twin at the first .nav-item block is removed;
+       THIS is the one floor. */
+    min-block-size: 44px;
   }
   .nav-icon {
     display: inline-flex; align-items: center; justify-content: center;
@@ -367,27 +375,10 @@
     flex-shrink: 0;
   }
 
-  .sidebar-user {
-    display: flex;
-    align-items: center;
-    gap: var(--sp-2);
-    padding: var(--sp-2) var(--sp-3);
-    border-radius: var(--r-sm);
-    transition: background var(--t-fast) var(--ease);
-  }
-  /* R319 (c1-A · B1): the account row's wash — a fine-pointer
-     affordance only (the row is not a control; hover sticks after a
-     tap on touch, where the row stays flat — the press registers on
-     its buttons). The pair travels whole: surface step + ink together. */
-  @media (hover: hover) and (pointer: fine) {
-    .sidebar-user:hover { background: var(--sidebar-item-hover-bg); color: var(--text); }
-  }
-  .sidebar-user-info { display: flex; flex-direction: column; gap: var(--sp-0-5); flex: 1; min-inline-size: 0; } /* r149 (R3-A2 R6): 1px → 2px */
-  .sidebar-user-name {
-    font-size: var(--fs-sm); font-weight: var(--fw-semibold); color: var(--text);
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  }
-  .sidebar-user-role { font-size: var(--fs-xxs); color: var(--text-muted); }
+  /* r351 A2 (Q1a): the .sidebar-user identity family is RETIRED —
+     the ONE identity seat is the topbar user menu (avatar + name +
+     role + theme + feedback + logout). The footer keeps the role-id
+     chip, the theme control (expanded) and the tour replay. */
 
   /* r294 (polish v8 fold): the mobile drawer's close button + the
      ≤920px sidebar overrides. The X button is drawer-only; the rail
@@ -447,20 +438,11 @@
       margin-block-end: var(--sp-2);
     }
   }
-  .sidebar-logout {
-    inline-size: 32px; block-size: 32px;
-    display: inline-flex; align-items: center; justify-content: center;
-    color: var(--text-muted);
-    border-radius: var(--r-xs);
-    transition: var(--t-clean);
-  }
   /* R319 (c1-A · B1): the destructive ghost — the rose pair travels
      whole (bg + ink), guarded to fine pointers; on touch the press
      twin below carries it. */
   @media (hover: hover) and (pointer: fine) {
-    .sidebar-logout:hover { background: var(--c-rose-bg); color: var(--c-rose-deep); }
   }
-  .sidebar-logout:active { background: var(--c-rose-bg); color: var(--c-rose-deep); transition-duration: var(--motion-duration-micro); }
 
   .sidebar-backdrop {
     position: fixed; inset: 0;
@@ -582,7 +564,6 @@
        declarations of later layers at used-value time, so the visual
        language of the buttons is untouched — only the hit area grows. */
     .sidebar-mobile-close { min-inline-size: 44px; min-block-size: 44px; }
-    .sidebar-logout { min-inline-size: 44px; min-block-size: 44px; }
 
     /* ── R319 (c1-A · B1b): the reference's menu grammar, drawer band ────── */
 
@@ -699,7 +680,9 @@
     .topbar-search-toggle:hover { background: var(--surface-3); color: var(--text); }
   }
   .topbar-search-toggle:active { background: var(--surface-3); color: var(--text); transition-duration: var(--motion-duration-micro); }
-  @media (max-width: 920px) { .topbar-search-toggle { display: inline-flex; } }
+  /* r351 A2 (Q1a): the band moved 920 → 1200 — the pill + the control
+     cluster did not fit 1024 tablets; below 1200 the icon owns search. */
+  @media (max-width: 1200px) { .topbar-search-toggle { display: inline-flex; } }
 
   .topbar-title {
     font-family: var(--font-display);
@@ -753,9 +736,13 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  /* r351 A2 (Q1a): the pill hides below 1200 (the icon takes over) —
+     the ≤920 block below keeps its phone-band joins. */
+  @media (max-width: 1200px) {
+    .topbar .global-search { display: none; }
+  }
   @media (max-width: 920px) {
     .topbar { grid-template-columns: auto 1fr auto; }
-    .topbar .global-search { display: none; }
     .topbar-scope { display: none; }
     .topbar-title { font-size: var(--fs-body); }
     /* Real truncation (4-A10 P2): .topbar-title is a flex row on

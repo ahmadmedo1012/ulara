@@ -271,7 +271,10 @@
   display: grid;
   place-items: center;
   padding-block: 2.4rem;
-  min-block-size: 36rem; /* the spec's own art frame: 400/300/213px at 1920/1440/1024 — the 222px art centers in it with the census slack */
+  /* r351 P3 — the art frame steps down one rung (the 36rem seat was
+     the frozen spec's census slack; the compact band rides the
+     reference's own problem-band height) */
+  min-block-size: 28rem;
 }
 .pm-artcolor {
   transition: color 0.4s ease;
@@ -464,7 +467,9 @@
     block-size: 16.5rem;
   }
   .pm-artzone {
-    min-block-size: 27.8rem; /* census 276px @390 */
+    /* r351 P8 — the phone art frame steps down (the 27.8rem census
+       slack era ends; the drawing stays centered, the band compacts) */
+    min-block-size: 21rem;
   }
   .pm-textzone {
     padding: 2.4rem 1.6rem; /* census 23.82/15.88px ✓ */

@@ -45,8 +45,19 @@ vi.mock('../../src/lib/api', () => ({
   api: { post: vi.fn(), get: vi.fn() },
   unwrap: vi.fn(),
 }));
+/* r351 A2 (Q1a): the test pins the LOGOUT race; the topbar's search +
+   notification seats are the Sidebar-Topbar suite's own territory —
+   same stub pair that suite uses (they need providers this harness
+   does not mount). */
+vi.mock('../../src/components/layout/GlobalSearch', () => ({
+  GlobalSearch: () => <div data-testid="global-search" />,
+}));
+vi.mock('../../src/components/layout/NotificationDropdown', () => ({
+  NotificationDropdown: () => <div data-testid="notif-dropdown" />,
+}));
 
 import { Sidebar } from '../../src/components/layout/Sidebar';
+import { Topbar } from '../../src/components/layout/Topbar';
 import { useAuthStore, type AuthUser } from '../../src/stores/auth.store';
 import { api, unwrap } from '../../src/lib/api';
 
@@ -93,6 +104,9 @@ function renderShell() {
             element={
               <>
                 <Sidebar />
+                {/* r351 A2 (Q1a): the ONE logout seat is the topbar user
+                    menu — the sidebar identity block is retired. */}
+                <Topbar />
                 <div>سطح لوحة التحكم</div>
               </>
             }
@@ -104,7 +118,11 @@ function renderShell() {
 }
 
 async function clickLogoutAndAwaitLanding() {
-  const logout = screen.getByRole('button', { name: 'تسجيل الخروج' });
+  // r351 A2 (Q1a): open the user menu first — the logout item lives in
+  // the topbar dropdown (the sidebar seat is retired).
+  const trigger = screen.getByRole('button', { name: 'ملف المستخدم' });
+  fireEvent.click(trigger);
+  const logout = screen.getByRole('menuitem', { name: 'تسجيل الخروج' });
   const clickIndex = frames.length;
   fireEvent.click(logout);
   // Wait for the full settle: store cleared AND navigation landed.

@@ -112,7 +112,6 @@ export default function LivePage() {
     <div className="r321m-page">
     <PageFrame width="default">
       <PageHeader
-        index="01"
         eyebrow="المعامل والتقنيات"
         title="البث المباشر"
         description="الجلسات الحيّة لمقرّراتك المسجَّلة — انضمّ للبثّ المباشر، وستجد التسجيلات هنا بعد انتهاء كل جلسة."
@@ -227,7 +226,6 @@ export default function LivePage() {
             <>
               <section className="ml-sec" aria-labelledby="live-sec-live">
                 <SectionBar
-                  index="02"
                   title="مباشرة الآن"
                   id="live-sec-live"
                   meta={
@@ -265,7 +263,6 @@ export default function LivePage() {
 
               <section className="ml-sec" aria-labelledby="live-sec-upcoming">
                 <SectionBar
-                  index="03"
                   title="جلسات قادمة"
                   id="live-sec-upcoming"
                   meta={
@@ -293,7 +290,6 @@ export default function LivePage() {
               {recent.length > 0 && (
                 <section className="ml-sec" aria-labelledby="live-sec-ended">
                   <SectionBar
-                    index="04"
                     title="جلسات منتهية"
                     id="live-sec-ended"
                     meta={(

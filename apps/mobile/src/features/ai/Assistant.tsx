@@ -50,6 +50,8 @@ import {
   ROLE_KICKER,
   ROLE_WELCOME_BODY,
   ROLE_WELCOME_TITLE,
+  LOCAL_PROVIDER_NOTE,
+  providerBadgeLabel,
   stopTurn,
   streamingKey,
   type AssistantRole,
@@ -213,6 +215,10 @@ export function Assistant({
               citations: final.citations,
             }),
           );
+          // r351 AI-6: the completion haptic — the reply landed (a
+          // subtle selection tick; success-notify is reserved for
+          // writes the user initiated elsewhere).
+          haptics.selection();
           void qc.invalidateQueries({ queryKey: ["ai", "conversations"] });
           return;
         }
@@ -227,6 +233,8 @@ export function Assistant({
             citations: (res.citations as AiCitation[] | undefined) ?? [],
           }),
         );
+        // r351 AI-6: the JSON grammar completes a turn too — same tick.
+        haptics.selection();
         void qc.invalidateQueries({ queryKey: ["ai", "conversations"] });
       } catch (err) {
         if (isStreamAbortError(err)) {
@@ -329,12 +337,12 @@ export function Assistant({
               المساعد الأكاديمي
             </T>
             {provider ? (
-              <Badge label={provider === "local" ? "مزوّد محلي (قالبيّ)" : `مزوّد: ${provider}`} tone={provider === "local" ? "yellow" : "mint"} />
+              <Badge label={providerBadgeLabel(provider) ?? "مساعد"} tone={provider === "local" ? "yellow" : "mint"} />
             ) : null}
           </View>
           {provider === "local" ? (
             <T variant="xs" color="muted" numberOfLines={1}>
-              المزوّد «local» — ردود قالبيّة مركّبة محليًا حتى تفعيل مزوّد خارجي حقيقي.
+              {LOCAL_PROVIDER_NOTE}
             </T>
           ) : null}
           {/* R334 review fix — the raw model id (e.g. vendor/model-7b) is a

@@ -218,15 +218,12 @@ describe('r305 nav maps — every role map renders (NAV_BY_ROLE ↔ Sidebar DOM)
       // off and every item renders as a link. The brand mark is an <img>,
       // the footer rows are buttons — the links ARE the nav census.
       expect(screen.getAllByRole('link')).toHaveLength(itemsOf(nav).length);
-      // The account chip speaks the ROLE_LABELS contract.
-      // R320 override (§B rename, c1-RENAME): the ADMIN role label is
-      // «المسجل العام» — the SAME string as the ADMIN nav group label
-      // (one name for the role everywhere), so getByText sees two
-      // elements. The chip is asserted on its own class instead; the
-      // group-label census above already pins every g.label.
-      const chips = container.querySelectorAll('.sidebar-user-role');
-      expect(chips, `${role}: one account chip`).toHaveLength(1);
-      expect(chips[0], `${role}: chip speaks ROLE_LABELS`).toHaveTextContent(ROLE_LABELS[role]);
+      // r351 A2 (Q1a): the sidebar's account chip is RETIRED with the
+      // footer identity block — the ONE identity seat is the topbar
+      // user menu (its role line is pinned by Sidebar-Topbar.test.tsx).
+      // The ROLE_LABELS-everywhere contract stays pinned by the
+      // group-label census above (ADMIN's group label IS ROLE_LABELS).
+      expect(container.querySelectorAll('.sidebar-user-role')).toHaveLength(0);
       // The r305 markup pass marks every group for the shell CSS.
       expect(container.querySelectorAll('[data-nav-group]')).toHaveLength(nav.length);
     });

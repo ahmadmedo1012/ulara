@@ -9,7 +9,7 @@
  *
  *   · the landing (guest): [.cb-banner] + [.toast-stack] — the consent
  *     gate owns the bottom seat and the toast stack must sit ABOVE it;
- *   · the authenticated shell (STUDENT): [.toast-stack] + [.fb-fab] +
+ *   · the authenticated shell (STUDENT): [.toast-stack] +
  *     [.bottom-nav] (the phone's sticky dock) — toasts rise above the
  *     dock, the FAB rises above toasts;
  *   · the drop paths: accepting the consent eases the stack back to
@@ -86,10 +86,10 @@ function overlaps(a: Box, b: Box): boolean {
 }
 
 /**
- * The managed layers (lib/bottomStack.ts rank: consent → toast → fab)
+ * The managed layers (lib/bottomStack.ts rank: consent → toast)
  * plus the phone dock — probed explicitly wherever they exist.
  */
-const MANAGED_LAYERS = ['.cb-banner', '.toast-stack', '.fb-fab', '.bottom-nav'] as const;
+const MANAGED_LAYERS = ['.cb-banner', '.toast-stack', '.bottom-nav'] as const;
 
 /**
  * Collect the visible boxes of the bottom-stack layers: the MANAGED
@@ -136,7 +136,7 @@ async function collectBottomBoxes(page: Page): Promise<Array<{ sel: string; box:
 
 /**
  * Assert NO pair of bottom-stack layer boxes intersects. Absent layers
- * (e.g. .bottom-nav on desktop, .fb-fab on the guest landing) are
+ * (e.g. .bottom-nav on desktop — r351: the FAB is retired) are
  * skipped — the probe pins the layers that actually share the screen.
  */
 async function assertBottomStackClear(page: Page): Promise<void> {
@@ -321,7 +321,7 @@ test.describe('Y6 — the bottom stack (consent · toast · FAB)', () => {
     });
   });
 
-  test.describe('the shell: toast stack vs FAB vs sticky dock', () => {
+  test.describe('the shell: toast stack vs sticky dock (r351: the FAB is retired)', () => {
     test.use({ e2eRole: 'STUDENT' });
 
     for (const vp of [
@@ -331,38 +331,25 @@ test.describe('Y6 — the bottom stack (consent · toast · FAB)', () => {
       test.describe(`@${vp.name}`, () => {
         test.use({ viewport: { width: vp.width, height: vp.height } });
 
-        test('toasts rise above the dock, the FAB rises above toasts', async ({ page }) => {
+        /* r351 A2 (Q1f): the floating FAB is retired — it intersected
+         * content on every measured width. The feedback sheet now opens
+         * from the topbar user menu + the ⌘K palette (feedbackSeat.ts).
+         * What stays pinned here: the stack choreography itself (the
+         * dock clears, toasts rise, the toast returns to its seat). */
+        test('toasts rise above the dock and return to their seat', async ({ page }) => {
           await page.goto('/student/dashboard');
-          await expect(page.locator('.fb-fab')).toBeVisible();
           await openToast(page);
 
-          const shot = evidencePath(`shell-${vp.name}-toast-fab.png`);
+          const shot = evidencePath(`shell-${vp.name}-toast-dock.png`);
           if (shot) await page.screenshot({ path: shot, ...SHOT_OPTIONS });
 
-          // the bottom-nav only docks ≤920px; on desktop the pair is toast+FAB
           await assertBottomStackClear(page);
-
-          // the FAB clears the toast stack's REAL height (offset ≥ stack height)
-          const fabOffset = await readInlineStackOffset(page, '.fb-fab');
-          const stackHeight = await page
-            .locator('.toast-stack')
-            .evaluate((el) => el.getBoundingClientRect().height);
-          expect(fabOffset).toBeGreaterThanOrEqual(Math.floor(stackHeight));
-        });
-
-        test('dismissing the toast drops the FAB to its own seat', async ({ page }) => {
-          await page.goto('/student/dashboard');
-          await expect(page.locator('.fb-fab')).toBeVisible();
-          await openToast(page);
           await dismissToast(page);
 
-          const shot = evidencePath(`shell-${vp.name}-fab-dropped.png`);
-          if (shot) await page.screenshot({ path: shot, ...SHOT_OPTIONS });
-
           const vh = await page.evaluate(() => window.innerHeight);
-          const seat = vp.width <= 640 ? 72 : 18; // the authored FAB seats
+          const seat = vp.width <= 640 ? 72 : 18; // the authored toast seats
           const bottom = await page
-            .locator('.fb-fab')
+            .locator('.toast-stack')
             .evaluate((el) => el.getBoundingClientRect().bottom);
           expect(Math.abs(vh - bottom - seat)).toBeLessThanOrEqual(2);
         });
@@ -379,16 +366,11 @@ test.describe('Y6 — the bottom stack (consent · toast · FAB)', () => {
       // (and its FAB) must be mounted, and the route needs the seeded
       // STUDENT session: as a guest this redirects to /auth, where no
       // FAB exists (the first draft's red herring).
-      await expect(page.locator('.fb-fab')).toBeVisible();
       const read = (sel: string) =>
         page.locator(sel).evaluate((el) => {
           const s = getComputedStyle(el);
           return { property: s.transitionProperty, duration: s.transitionDuration };
         });
-
-      const fab = await read('.fb-fab');
-      expect(fab.property).toContain('inset-block-end');
-      expect(fab.duration.split(',').map((d) => d.trim())).toContain('0.2s');
 
       await openToast(page);
       const stack = await read('.toast-stack');

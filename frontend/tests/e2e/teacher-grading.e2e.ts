@@ -69,6 +69,9 @@ test.describe('حلقة تصحيح الأستاذ', () => {
     /* بطاقة الطابور — العدّ العربي المزدوج + رأس المجموعة (العنوان،
      * الكود، سقف الدرجة، موعد الاستحقاق النسبي على الساعة المجمّدة). */
     const queueCard = page.locator('.card', { hasText: 'تسليمات بانتظار التقييم' });
+    /* (r351: this is the ASSIGNMENTS page's own queue card — its title
+       + counted-noun subtitle are intact; the dashboard's copy cuts
+       live on the dashboard page.) */
     await expect(queueCard).toContainText('تسليمان بانتظار درجتك');
     const group = page.locator('.queue-group', { hasText: 'واجب الأسبوع الثالث' });
     await expect(group).toContainText('CS-201');

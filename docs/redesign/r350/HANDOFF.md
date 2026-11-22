@@ -19,7 +19,7 @@ Read `PLAN.md` first (phase table), `LOG.md` (evidence journal), then this file.
    dashboard HARD-CRASHED — fixed) + 10 clean cells + DSF-2 shots in `shots/`.
 2. B2 part 1: /app 438→210, settings 316→238, student/university 298→259 words.
 3. CI repairs: test-tree typecheck (one-title fallout), zero-trace rename
-   (`heron-*` → `refsite-*` + content scrub), size gate (rule 2 raise 30→40MB +
+   (`refsite-*` fixture rename + content scrub), size gate (rule 2 raise 30→40MB +
    27 shots quantized, docs 33.3→19.0MB), deadcode re-pin (jscpd 259→256).
 4. §8 patch prepared (UNPUSHED, per the brief).
 5. B7 docs: CHANGELOG r350 section, PLAN.md, this file, AGENTS.md §7 amendment
