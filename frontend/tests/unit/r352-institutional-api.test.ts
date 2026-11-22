@@ -115,9 +115,12 @@ describe('r352 institution-scoped paths (contract §2–§11)', () => {
     await instApi.removeVersionCourse('v-1', 'c-1');
     await instApi.listEnrollments({ programId: 'pr-1' });
     await instApi.setEnrollmentStatus('e-1', 'GRADUATED', '2026-06-01');
-    await instApi.listCredentials({ studentProfileId: 's-1' });
+    // cf23cc689: the learner register is the generalized profile — the
+    // credential family keys on learnerProfileId (the student profile is
+    // one member), matching the backend contract.
+    await instApi.listCredentials({ learnerProfileId: 's-1' });
     await instApi.awardCredential({
-      studentProfileId: 's-1', credentialTypeCode: 'TECHNICAL_BACHELOR',
+      learnerProfileId: 's-1', credentialTypeCode: 'TECHNICAL_BACHELOR',
     });
     await instApi.revokeCredential('cr-1', 'بقرار');
 

@@ -390,7 +390,12 @@ test.describe('r352 — the institutional workspace journey (hermetic)', () => {
     await page.goto('/institution/organization');
 
     await expect(page.getByRole('heading', { name: 'الهيكل التنظيمي' })).toBeVisible();
-    await expect(page.getByRole('tree', { name: 'شجرة الوحدات التنظيمية' })).toBeVisible();
+    // 4a8df957e: the tree ul dropped the fake role="tree" (a nested list
+    // with collapse buttons is the honest disclosure pattern — role=tree
+    // would demand treeitem roles + arrow-key navigation) and its
+    // aria-label grew the descriptive suffix. The list role + regex
+    // asserts the same landmark with the new contract.
+    await expect(page.getByRole('list', { name: /شجرة الوحدات التنظيمية/ })).toBeVisible();
     await expect(page.getByRole('button', { name: 'طي عمادة الكلية' })).toBeVisible();
 
     // the write affordance is present (the capability IS granted)
@@ -406,7 +411,7 @@ test.describe('r352 — the institutional workspace journey (hermetic)', () => {
     await page.goto('/institution/organization');
 
     await expect(page.getByRole('heading', { name: 'الهيكل التنظيمي' })).toBeVisible();
-    await expect(page.getByRole('tree', { name: 'شجرة الوحدات التنظيمية' })).toBeVisible();
+    await expect(page.getByRole('list', { name: /شجرة الوحدات التنظيمية/ })).toBeVisible();
     // no create button — the server's capability set is the authority
     await expect(page.getByRole('button', { name: /وحدة جديدة/ })).toHaveCount(0);
   });
