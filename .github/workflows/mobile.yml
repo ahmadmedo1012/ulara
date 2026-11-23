@@ -39,16 +39,13 @@
 #     This is the release-oriented end-to-end lane; it must remain a
 #     deliberate choice, not a default loop.
 #
-#   eas-ota (push-only, unchanged): `eas update --auto` to the
-#   production AND preview branches after green gates.
-#
 # Dispatch matrix (what each lane runs — and what it must NOT):
 #   fast           → mobile-gates ONLY.
 #   smoke-prebuilt → mobile-gates + android-smoke-prebuilt (no Gradle).
 #   native-build   → mobile-gates + native-build-devclient.
 #   full           → mobile-gates + native-build-devclient +
 #                    android-smoke (the release Gradle machine).
-#   push (JS-only) → mobile-gates + eas-ota + android-smoke-prebuilt
+#   push (JS-only) → mobile-gates + android-smoke-prebuilt
 #                    (cached artifact; miss → BLOCKED, no rebuild).
 #   push (native)  → the same + native-build-devclient
 #                    (the fingerprint moved — the artifact is re-cut
@@ -56,14 +53,11 @@
 #
 # BINDING REQUIREMENT (the owner's contract): GitHub Actions is the
 # authoritative platform for actual Android/iOS native builds and
-# artifact delivery — EAS Build is RETIRED from this repo's pipeline
-# (the eas-build job, its detect plan output, and its dispatch inputs
-# are gone). EAS remains ONLY as the OTA (JS update) channel (the
-# eas-ota job above); Expo CLI keeps its allowed seat — configuration,
-# export, and prebuild tooling. Store/release builds are manual and
-# Actions-native: android-apk.yml (QA APK + the signed rolling-latest
-# release APK) and build-ios-sidestore.yml (unsigned sidestore IPA on
-# macOS runners).
+# artifact delivery — EAS Build/OTA is RETIRED from this repo's pipeline.
+# Direct distribution rides GitHub Actions: android-apk.yml (QA APK +
+# signed rolling-latest release APK) and build-ios-sidestore.yml (unsigned
+# sidestore IPA on macOS runners). Expo CLI keeps its allowed seat —
+# configuration, export, and prebuild tooling.
 # A skipped/missing native artifact is BLOCKED, never a pass (no fake
 # build success — see each job's honest reporting).
 name: Mobile
@@ -260,53 +254,6 @@ jobs:
             fi
           done
 
-  # ═══════════════════════════════════════════════════════════════════
-  # eas-ota (push-only, unchanged): JS/asset changes reach every
-  # installed build whose fingerprint matches.
-  # ═══════════════════════════════════════════════════════════════════
-  eas-ota:
-    name: EAS Update (OTA to production + preview)
-    needs: mobile-gates
-    # The OTA publish rides the EAS project, which needs the EXPO_TOKEN
-    # repository secret AND the provisioned project id in app.config.ts.
-    # (secrets are not usable in a job-level if — the credential gate
-    # runs as the first STEP and skips the publish steps with a notice
-    # when the token is absent. The mobile quality gates above —
-    # typecheck/lint/contract/export — run unconditionally and remain
-    # the merge-relevant signal.)
-    if: github.event_name == 'push'
-    runs-on: ubuntu-24.04
-    timeout-minutes: 12
-    defaults:
-      run:
-        working-directory: apps/mobile
-    steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - run: npm ci --no-audit --no-fund
-      - name: Credential gate (EXPO_TOKEN)
-        id: ota-cred
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: |
-          if [ -z "$EXPO_TOKEN" ]; then
-            echo "::notice::EXPO_TOKEN is not configured — OTA publish skipped (set the repository secret to enable)"
-            echo "has_token=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "has_token=true" >> "$GITHUB_OUTPUT"
-          fi
-      - name: Publish OTA update (production)
-        if: steps.ota-cred.outputs.has_token == 'true'
-        run: npx eas-cli@latest update --branch production --auto --non-interactive
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-      - name: Publish OTA update (preview)
-        if: steps.ota-cred.outputs.has_token == 'true'
-        run: npx eas-cli@latest update --branch preview --auto --non-interactive
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
   # ═══════════════════════════════════════════════════════════════════
   # Lane C — native-build-devclient: build + RECORD the reusable
