@@ -29,10 +29,20 @@ Under operating rule 6: The visual reference is referred to exclusively as "the 
 | Role | Reference Characteristic | ULARA Token | Hex (Light / Dark) |
 |---|---|---|---|
 | Primary Accent | Royal Electric Blue | `var(--accent)` | `#2540D9` / `#8AA0FF` |
-| Secondary Accent | Warm Sienna (Decorative) | `var(--accent-secondary)` | `#D97706` / `#FBBF24` |
+| Secondary Accent | Warm Coral (Decorative) | `var(--c-copper-ink)` (≡ `--c-peach-ink` / `--c-coral-ink`) | `#F15534` / `#FF8E68` |
 | Surface Background | Crisp Neutral Layer | `var(--bg-canvas)` | `#F8FAFC` / `#0B0F19` |
 | Surface Elevated | Clean Contrast Card | `var(--bg-surface)` | `#FFFFFF` / `#131B2E` |
 | Border / Stroke | Crisp Definition | `var(--border-subtle)` | `rgba(0,0,0,0.08)` / `rgba(255,255,255,0.1)` |
+
+R355 reconciliation (code wins over docs — AGENTS.md §1): the original
+extraction row named the reference's warm sienna `#D97706`/`#FBBF24` under a
+never-implemented `--accent-secondary` seat. The 2026-11-21 owner-approved
+«Parchment & Royal» palette retired the sienna/ember hexes (#C43E16/#FF6B3D)
+from every brand seat; the warm secondary survives strictly as the DECORATIVE
+coral family (`--c-copper-*`/`--c-peach-*`/`--c-coral-*`: bg `#FCE5DE`/`#43241C`,
+ink `#F15534`/`#FF8E68`, deep `#9C2B0F`/`#FFC5AE`) — never a primary, link,
+button, or danger tone. The royal `var(--accent)` remains the ONE primary
+signal in both themes (6.62:1 on paper / 6.56:1 on the night ground, AA).
 
 ## 5. Motion & Choreography
 | Animation | Easing Curve | Duration | Stagger |
