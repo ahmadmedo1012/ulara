@@ -18,6 +18,8 @@
 | [roadmap.md](roadmap.md) | ما تبقّى (بنود قليلة مرتّبة) |
 | [api/openapi.json](api/openapi.json) | عقد الـAPI المولّد من الشيفرة (`npm run api:openapi`) — مولَّد، لا يُحرَّر يدويًا |
 | [ops/LEDGER.md](ops/LEDGER.md) | سجل التقدّم الوحيد للمالك — إضافة فقط، لا يُلمس |
+| [redesign/r352/](redesign/r352/) | البرنامج الحالي: المؤسسة (خلفية + واجهة) — `HANDOFF.md` في كل مسار |
+| [redesign/r354/REPORT.md](redesign/r354/REPORT.md) | الموجة البصرية الأخيرة + [INTEGRATION-LOG.md](redesign/r354/INTEGRATION-LOG.md) (دمج الـPRs الثلاثة) |
 
 ## مسارات قراءة مقترحة
 

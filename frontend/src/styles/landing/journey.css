@@ -622,63 +622,6 @@ section.chapters {
     0 0 0.16em var(--bg), 0 0 0.34em var(--bg);
 }
 
-/* ── the three annotation cards — the measured plan callouts ──────
-   Orange-ruled (1px #C43E16), the mono title in the accent voice +
-   one honest line. Seated at the measured percentages of the stack;
-   revealed with the annotation era (the layer-6 window). */
-.jt-anno {
-  position: absolute;
-  inline-size: 14.7em;
-  padding: 0.8em 0.85em; /* spacing-gate: allow — the measured 196→174 content inset */
-  border: 1px solid var(--accent);
-  color: var(--text);
-  opacity: 0;
-  transition: width var(--jt-t-art) var(--jt-e-art), transform var(--jt-t-art) var(--jt-e-art); /* the measured register (width/transform — opacity stays a direct write) */
-  pointer-events: none;
-  z-index: 2;
-}
-
-.jt-anno-1 { inset-inline-start: 26.9%; inset-block-start: 32.8%; }
-.jt-anno-2 { inset-inline-start: 40.4%; inset-block-start: 68.2%; }
-.jt-anno-3 { inset-inline-start: 31.6%; inset-block-start: 59.1%; }
-
-/* the 1024 rung — the measured tablet boxes run wider than the em
-   ladder (216 vs 196@1440): the band's own override. */
-@media (min-width: 992px) and (max-width: 1439px) {
-  .jt-anno {
-    inline-size: 22.8em;
-  }
-}
-
-.jt-anno-t {
-  font-family: var(--font-mono);
-  font-size: 0.75em;
-  font-weight: var(--fw-medium);
-  line-height: 1.3;
-  color: var(--accent);
-  white-space: nowrap;
-}
-
-.jt-anno-b {
-  font-size: 1em;
-  font-weight: var(--fw-medium);
-  line-height: 1.35;
-  color: var(--text);
-  margin-block-start: 0.15em;
-  /* the paper halo — the callout's line rides over the ghost plan */
-  paint-order: stroke fill;
-  stroke: var(--bg);
-  stroke-width: 4px;
-  stroke-linejoin: round;
-}
-
-/* the annotation era reveal (the layer-6 window): stages 4–5 + RM. */
-.jt[data-stage='4'] .jt-anno,
-.jt[data-stage='5'] .jt-anno,
-.jt[data-rm='on'] .jt-anno {
-  opacity: 1;
-}
-
 /* ── the INTRODUCTION card — the measured corner card ─────────────
    17.5em wide, 2em from the map column's block-end + inline-start
    edges (the reference's bottom-left mirrored to bottom-right in RTL,
@@ -1163,23 +1106,6 @@ section.chapters {
     padding-inline: 0;
   }
 
-  /* the annotation cards — RETIRED at ≤991 (R342-11): the frozen
-   * spec's mobile capture has NO annotation cards (the 390 census:
-   * drawing + the mono intro card + the closing column only), and
-   * the in-flow recomposition made the sticky box (100dvh − 57px)
-   * uncontainable (drawing 489 + three 67px callouts + the card =
-   * ~943px — the card's tail painted over the closing column at the
-   * track end, r312 sweep +39px after the compact-card fix). The
-   * desktop keeps its measured overlay callouts; the mobile story
-   * reads through the findings + the closing ledger. */
-  .jt-anno {
-    display: none;
-  }
-
-  .jt-anno-t {
-    white-space: normal;
-  }
-
   /* the INTRODUCTION card in flow below the plan: full-width, the
    * stacked-readable contract. */
   .jt-intro {
@@ -1421,8 +1347,7 @@ section.chapters {
   }
 
   .jt-idx > span,
-  .jt-intro-finding,
-  .jt-anno {
+  .jt-intro-finding {
     transition: none;
   }
 
@@ -1553,8 +1478,8 @@ section.chapters {
    r346 — THE ISOMETRIC JOURNEY (the plate assembly port)
    ════════════════════════════════════════════════════════════════════
    The band's 2D floor-plan artwork retires FROM THE MOUNT
-   (JourneyScene.tsx + its .jt-anno callouts stay on disk for
-   rollback — the rules above retire with them, kept the same way).
+   (JourneyScene.tsx and its annotation-callout CSS retired with it in
+   r353 — git history keeps both for rollback).
    The window now carries the ISOMETRIC CAMPUS SHEET
    (journey/IsoCampusSheet.tsx — the e4c84e7 plate grammar on the
    same 1200×760 sheet seat), and this section seats the r346
