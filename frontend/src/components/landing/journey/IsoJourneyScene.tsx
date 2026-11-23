@@ -801,18 +801,22 @@ export function IsoJourneyScene() {
       /* 4 · the statement plaques — plaque 1 stands from t 0 (the
        *     spec's rest state), out 1.0–1.4; plaque 2 in 1.6–2.0
        *     (the 0.2s dead gap keeps one voice at a time), out
-       *     2.5–3.0 at ≥992 / 2.2–2.6 ≤991 — R349: the phone camera
-       *     begins its portrait pan at t 2.2 (CAM_KEYS_PHONE), and the
-       *     held statement rode the panning drawing through the whole
-       *     2.2–3.0 span (ink-on-ink). The mobile exit now completes
-       *     BEFORE the pan sweeps under the seat; the desktop keeps
-       *     the measured window (its camera is the static overview). */
+       *     2.2–2.6 on BOTH belts — R349 pulled the mobile exit ahead
+       *     of the camera pan (the held statement rode the panning
+       *     drawing, ink-on-ink); R354 extends the same cure to the
+       *     desktop: the r353 architectural rebuild densified the
+       *     central ink under the statement seat (the tower's
+       *     lantern + both reading-start wings resolve through the
+       *     layer windows 1.02–2.52 — measured overlap: the statement
+       *     rode the assembled campus through band progress
+       *     0.30–0.48, the VLM-flagged destructive beats), and the
+       *     static overview camera never sweeps the seat clear. The
+       *     exit now completes at t 2.6 — before the satellite layer
+       *     (observatory/plaza/field) finishes resolving beneath the
+       *     glyphs; one window for both belts, the R349 precedent
+       *     applied to the seat it was invented for. */
       writeCard(card1Ref.current, t, -1, -1, 1.0, 1.4);
-      if (mobile) {
-        writeFade(card2Ref.current, t, 1.6, 2.0, 2.2, 2.6);
-      } else {
-        writeFade(card2Ref.current, t, 1.6, 2.0, 2.5, 3.0);
-      }
+      writeFade(card2Ref.current, t, 1.6, 2.0, 2.2, 2.6);
 
       /* 5 · the r346 ASSEMBLY — the band-progress windows (the
        *     caption exit, the fragment flights, the marker pops, the

@@ -599,12 +599,26 @@ section.chapters {
   @media (max-width: 991px) {
     font-size: 4.8rem;
   }
-  /* the paper halo — the glyphs cross the plan's ghost line-work
-     (a whisper stroke keeps the statement readable over ink). */
+  /* the paper halo — the glyphs cross the plan's line-work (the
+     statement rides the assembling campus, r325's overlay contract).
+     TWO belt mechanism: the SVG paint stroke (paint-order keeps it
+     behind the fill — Chromium renders it on HTML text) + an
+     em-keyed text-shadow outline (the same halo where the CSS stroke
+     does not paint — Firefox/Safari ignore stroke on HTML). The
+     shadow offsets ride em so the halo scales with the plaque's own
+     rung (D1 @≥992, the 4.8rem mobile band); the two soft outer
+     passes keep the glyphs clear of the r353 rebuild's densified
+     central ink at the mid beats. */
   paint-order: stroke fill;
   stroke: var(--bg);
   stroke-width: 6px;
   stroke-linejoin: round;
+  text-shadow:
+    -0.025em -0.025em 0 var(--bg), 0.025em -0.025em 0 var(--bg),
+    -0.025em 0.025em 0 var(--bg), 0.025em 0.025em 0 var(--bg),
+    -0.03em 0 0 var(--bg), 0.03em 0 0 var(--bg),
+    0 -0.03em 0 var(--bg), 0 0.03em 0 var(--bg),
+    0 0 0.16em var(--bg), 0 0 0.34em var(--bg);
 }
 
 /* ── the three annotation cards — the measured plan callouts ──────
