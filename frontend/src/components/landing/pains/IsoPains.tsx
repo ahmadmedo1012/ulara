@@ -112,21 +112,22 @@ function DrawRoute({
 }
 
 /** a hair furniture line that draws itself (currentColor — the
- *  column's own tint register rides it). */
+ *  column's own tint register rides it; the r353 measurement ticks
+ *  may override to the royal annotation voice). */
 function DrawLine({
-  from, to, delay = 0, strokeWidth = 0.9, dashed = false,
+  from, to, delay = 0, strokeWidth = 0.9, dashed = false, color = 'currentColor',
 }: {
-  from: [number, number, number?]; to: [number, number, number?]; delay?: number; strokeWidth?: number; dashed?: boolean;
+  from: [number, number, number?]; to: [number, number, number?]; delay?: number; strokeWidth?: number; dashed?: boolean; color?: string;
 }) {
   const a = iso(from[0], from[1], from[2] ?? 0);
   const b = iso(to[0], to[1], to[2] ?? 0);
   if (dashed) {
     return (
-      <line className="ip-dash" x1={a.sx} y1={a.sy} x2={b.sx} y2={b.sy} stroke="currentColor" strokeWidth={strokeWidth} strokeDasharray="3 3" style={d(delay)} />
+      <line className="ip-dash" x1={a.sx} y1={a.sy} x2={b.sx} y2={b.sy} stroke={color} strokeWidth={strokeWidth} strokeDasharray="3 3" style={d(delay)} />
     );
   }
   return (
-    <line className="ip-draw" pathLength={1} x1={a.sx} y1={a.sy} x2={b.sx} y2={b.sy} stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" style={d(delay)} />
+    <line className="ip-draw" pathLength={1} x1={a.sx} y1={a.sy} x2={b.sx} y2={b.sy} stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" style={d(delay)} />
   );
 }
 
@@ -185,10 +186,12 @@ function DrawLecture() {
           <DrawBox key={`${i}-${j}`} x={ax} y={ay} w={4} dd={4} h={2} delay={660 + (i * 2 + j) * 90} step={40} />
         )),
       )}
-      {/* the measuring ruler — full height, at the far edge */}
+      {/* the measuring ruler — full height, at the far edge; its ticks
+          read ROYAL (r353: the platform's measurement voice on the
+          wound — the system that would have caught the dead trace) */}
       <DrawBox x={18} y={-8} w={3} dd={4} h={24} delay={1350} />
       {[3, 7, 11, 15, 19, 23].map((tz, i) => (
-        <DrawLine key={tz} from={[21, -7.6, tz]} to={[21, -6.2, tz]} delay={1450 + i * 45} strokeWidth={0.8} />
+        <DrawLine key={tz} from={[21, -7.6, tz]} to={[21, -6.2, tz]} delay={1450 + i * 45} strokeWidth={0.8} color={PLATE.royal} />
       ))}
       {/* the lecture's dashed trace — it dies midway, never arriving */}
       <DrawRoute points={[[-10, -9, 15], [4, -3, 10], [14, -4, 7]]} delay={1700} />
@@ -216,10 +219,12 @@ function DrawGrading() {
       {[-3.5, -1, 1.5].map((ly, i) => (
         <DrawLine key={ly} from={[-14, ly, 6.4]} to={[-7, ly, 6.4]} delay={840 + i * 70} strokeWidth={0.8} />
       ))}
-      {/* the day-count rail — the correction's journey across the weeks */}
+      {/* the day-count rail — the correction's journey across the
+          weeks; the ticks read ROYAL (the platform's clock on the
+          wound — the wait the system would have closed) */}
       <DrawBox x={-8} y={6} w={34} dd={4} h={1} delay={1000} step={60} />
       {[-6, -1.8, 2.4, 6.6, 10.8, 15, 19.2, 23.4].map((tx, i) => (
-        <DrawLine key={tx} from={[tx, 7.2, 1]} to={[tx, 8.8, 1]} delay={1120 + i * 55} strokeWidth={0.8} />
+        <DrawLine key={tx} from={[tx, 7.2, 1]} to={[tx, 8.8, 1]} delay={1120 + i * 55} strokeWidth={0.8} color={PLATE.royal} />
       ))}
       {/* the inked crawl — only the first stretch is ever corrected */}
       <DrawRoute points={[[-6, 8, 1.6], [10, 8, 1.6]]} delay={1600} strokeWidth={1.6} opacity={1} />
@@ -284,11 +289,13 @@ function DrawMastery() {
           style={d(1350 + i * 90)}
         />
       ))}
-      {/* the map's two axes — the measure frame */}
-      <DrawLine from={[-26, -20, 0]} to={[24, -20, 0]} delay={1620} strokeWidth={0.9} />
-      <polyline className="ip-draw" pathLength={1} points={`${iso(24, -20, 0).sx},${iso(24, -20, 0).sy} ${iso(21.4, -19, 0).sx},${iso(21.4, -19, 0).sy} ${iso(21.4, -21, 0).sx},${iso(21.4, -21, 0).sy}`} fill="none" stroke="currentColor" strokeWidth={0.9} strokeLinejoin="round" style={d(1680)} />
-      <DrawLine from={[-26, -20, 0]} to={[-26, 20, 0]} delay={1740} strokeWidth={0.9} />
-      <polyline className="ip-draw" pathLength={1} points={`${iso(-26, 20, 0).sx},${iso(-26, 20, 0).sy} ${iso(-25, 17.4, 0).sx},${iso(-25, 17.4, 0).sy} ${iso(-27, 17.4, 0).sx},${iso(-27, 17.4, 0).sy}`} fill="none" stroke="currentColor" strokeWidth={0.9} strokeLinejoin="round" style={d(1800)} />
+      {/* the map's two axes — the measure frame, in the royal
+          annotation voice (r353: the platform's measure over the
+          unnamed gap) */}
+      <DrawLine from={[-26, -20, 0]} to={[24, -20, 0]} delay={1620} strokeWidth={0.9} color={PLATE.royal} />
+      <polyline className="ip-draw" pathLength={1} points={`${iso(24, -20, 0).sx},${iso(24, -20, 0).sy} ${iso(21.4, -19, 0).sx},${iso(21.4, -19, 0).sy} ${iso(21.4, -21, 0).sx},${iso(21.4, -21, 0).sy}`} fill="none" stroke={PLATE.royal} strokeWidth={0.9} strokeLinejoin="round" style={d(1680)} />
+      <DrawLine from={[-26, -20, 0]} to={[-26, 20, 0]} delay={1740} strokeWidth={0.9} color={PLATE.royal} />
+      <polyline className="ip-draw" pathLength={1} points={`${iso(-26, 20, 0).sx},${iso(-26, 20, 0).sy} ${iso(-25, 17.4, 0).sx},${iso(-25, 17.4, 0).sy} ${iso(-27, 17.4, 0).sx},${iso(-27, 17.4, 0).sy}`} fill="none" stroke={PLATE.royal} strokeWidth={0.9} strokeLinejoin="round" style={d(1800)} />
       {/* the counted-vs-unnamed tag */}
       <DrawTag x={iso(6, -3.5, 2).sx + 14} y={iso(6, -3.5, 2).sy + 2} text="MAP 8/9" delay={1950} />
     </>

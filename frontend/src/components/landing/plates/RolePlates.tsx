@@ -185,7 +185,10 @@ function SceneTeacher({ dataSpec }: { dataSpec?: string }) {
 
         {/* the submissions route — flowing in from the far corner */}
         <g className="iso-loop-line" style={ld('1.6s')}>
-          <Route points={[[38, 8, 2], [16, 2, 3], [2, -4, 5.5]]} />
+          {/* r353 — submissions flowing in read ROYAL: the platform's
+            data route into the desk (the copper grading ticks stay
+            the role's warm focal) */}
+        <Route points={[[38, 8, 2], [16, 2, 3], [2, -4, 5.5]]} stroke={PLATE.royal} />
         </g>
         {/* the submission sheet riding the route's end */}
         <g className="iso-loop-dot" style={ld('2.1s')}>
@@ -402,8 +405,10 @@ function SceneOwner({ dataSpec }: { dataSpec?: string }) {
           </g>
         ))}
         <g className="iso-loop-line" style={ld('1s')}>
-          <Route points={[[-38, -14, 1], [-4, -8, 8]]} />
-          <Route points={[[28, -16, 1], [2, -7, 10]]} />
+          {/* r353 — the seals tie to the governance post on ROYAL data
+              routes (the master audit's own colour) */}
+          <Route points={[[-38, -14, 1], [-4, -8, 8]]} stroke={PLATE.royal} />
+          <Route points={[[28, -16, 1], [2, -7, 10]]} stroke={PLATE.royal} />
         </g>
         <SeatLabel x={iso(-42, -15, 1).sx} y={iso(-42, -15, 1).sy} tx={-72} ty={-50} text="المؤسّسات" />
       </g>
@@ -458,7 +463,7 @@ function SceneResearcher({ dataSpec }: { dataSpec?: string }) {
           <Rune a={iso(33, -16, 4)} b={iso(33, -2, 4)} />
         </g>
         <g className="iso-loop-line" style={ld('1.8s')}>
-          <Route points={[[6, -2, 4], [16, -8, 4]]} />
+          <Route points={[[6, -2, 4], [16, -8, 4]]} stroke={PLATE.royal} />
         </g>
         <SeatLabel x={iso(28, -7, 11).sx} y={iso(28, -7, 11).sy} tx={74} ty={-30} text="المكتبة" />
       </g>
@@ -564,7 +569,7 @@ function SceneGuardian({ dataSpec }: { dataSpec?: string }) {
 
         {/* the report's route — flowing through the gap */}
         <g className="iso-loop-line" style={ld('0.6s')}>
-          <Route points={[[-22, -6, 1.5], [-11.5, -5, 1.5], [10, -6, 1.2]]} />
+          <Route points={[[-22, -6, 1.5], [-11.5, -5, 1.5], [10, -6, 1.2]]} stroke={PLATE.royal} />
         </g>
 
         {/* the guardian's seat — a DASHED outline that breathes but
