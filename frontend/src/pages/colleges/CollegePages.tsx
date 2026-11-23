@@ -260,11 +260,10 @@ export function CollegesIndexPage() {
   });
 
   const { state, setQuery, clear } = useUrlQueryState();
-  const data = q.data ?? [];
 
   const result = useMemo(
-    () => filterColleges(data, state),
-    [data, state],
+    () => filterColleges(q.data ?? [], state),
+    [q.data, state],
   );
 
   const hasActiveFilters = state.query.trim() !== '';

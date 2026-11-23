@@ -395,7 +395,7 @@ export function AttendancePage() {
   const [topic, setTopic] = useState<string>('');
   const [statusByStudent, setStatusByStudent] = useState<Record<string, AttStatus>>({});
 
-  const students = stuQ.data ?? [];
+  const students = useMemo(() => stuQ.data ?? [], [stuQ.data]);
   const offering = offerings.find((o) => o.id === effectiveOfferingId) ?? null;
 
   const counts = useMemo(() => {
@@ -1621,7 +1621,7 @@ const STUDENT_RISK_TONE: Record<TeacherStudentRow['riskLevel'], 'green' | 'gold'
 export function StudentsListPage() {
   const { offsQ, offerings, effectiveOfferingId, setOfferingId, offering } = useOfferingPicker();
   const stuQ = useTeacherStudents(effectiveOfferingId || undefined);
-  const students = stuQ.data ?? [];
+  const students = useMemo(() => stuQ.data ?? [], [stuQ.data]);
   /* R304: the same sortable-header grammar as the grades table — name /
      attendance / average cycle highest-first → lowest-first → default. */
   const [sort, setSort] = useState<RosterSort | null>(null);
@@ -1792,7 +1792,7 @@ export function PerformancePage() {
   const { offsQ, offerings, effectiveOfferingId, setOfferingId, offering } = useOfferingPicker();
   const stuQ = useTeacherStudents(effectiveOfferingId || undefined);
   const analytics = useOfferingAnalytics(effectiveOfferingId || undefined);
-  const students = stuQ.data ?? [];
+  const students = useMemo(() => stuQ.data ?? [], [stuQ.data]);
 
   // Derive the grade distribution from the SAME gradeBand the grades
   // and students tables render (A6 P2, 22-a) — a student at 62 counts

@@ -53,7 +53,10 @@ export function OwnerGovernancePage() {
   // themeKey participates because the colors and option factories resolve
   // CSS custom properties at call time — the remounted canvas must
   // re-resolve them for the new theme.
-  const c = useMemo(() => chartColors(), [themeKey]);
+  const c = useMemo(() => {
+    void themeKey;
+    return chartColors();
+  }, [themeKey]);
 
   const growthChartData = useMemo(() => govData ? {
     labels: govData.weeklyGrowth.map((w) => w.week),
@@ -85,6 +88,8 @@ export function OwnerGovernancePage() {
    * anchored at zero. (chartTheme's cartesianOptions itself stays
    * 4-A9-owned; this is a page-local scale override.) */
   const growthOptions = useMemo(() => {
+    void themeKey;
+    void reducedMotion;
     const base = cartesianOptions();
     return {
       ...base,
@@ -122,12 +127,16 @@ export function OwnerGovernancePage() {
   // The authored moment: the total attempt count lands in the doughnut's
   // center (ularaCenterLabelPlugin, metric type tokens) while the arcs
   // rotate in — the figure was previously invisible behind the legend.
-  const doughnutOptions = useMemo(() => radialOptions({
-    legend: true,
-    centerLabel: loginData
-      ? { value: formatNum(loginData.total), label: 'إجمالي المحاولات' }
-      : undefined,
-  }), [loginData, themeKey, reducedMotion]);
+  const doughnutOptions = useMemo(() => {
+    void themeKey;
+    void reducedMotion;
+    return radialOptions({
+      legend: true,
+      centerLabel: loginData
+        ? { value: formatNum(loginData.total), label: 'إجمالي المحاولات' }
+        : undefined,
+    });
+  }, [loginData, themeKey, reducedMotion]);
 
   /* 22-b (4-A7 P1-4): one week of signups is not a trend — the card
    * title drops its window claim until a second week exists, the lone

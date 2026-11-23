@@ -87,7 +87,10 @@ export function OwnerAiPage() {
   // used to churn on every unrelated re-render. themeKey participates
   // because chartColors()/cartesianOptions() resolve CSS custom properties
   // at call time — the remounted canvas must re-resolve them.
-  const c = useMemo(() => chartColors(), [themeKey]);
+  const c = useMemo(() => {
+    void themeKey;
+    return chartColors();
+  }, [themeKey]);
 
   const barData = useMemo(() => ({
     labels: (data?.byFeature ?? []).map((f) => FEATURE_LABELS[f.feature] ?? f.feature),
@@ -113,7 +116,11 @@ export function OwnerAiPage() {
     }],
   }), [data, c]);
 
-  const chartOptions = useMemo(() => cartesianOptions(), [themeKey, reducedMotion]);
+  const chartOptions = useMemo(() => {
+    void themeKey;
+    void reducedMotion;
+    return cartesianOptions();
+  }, [themeKey, reducedMotion]);
 
   return (
     /* r305-A8 «ds»: page-root marker — the scoped sheet keys every

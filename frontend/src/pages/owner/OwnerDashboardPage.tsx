@@ -271,20 +271,24 @@ export function OwnerDashboardPage() {
     { label: 'فريق جودة', value: statsData.quality },
   ] as Array<{ label: string; value: number }>).sort((a, b) => b.value - a.value) : [], [statsData]);
 
-  const chartData = useMemo(() => ({
-    labels: segments.map((s) => s.label),
-    datasets: [{
-      data: segments.map((s) => s.value),
-      backgroundColor: chartPalette().slice(0, 4),
-      borderWidth: 0,
-      hoverOffset: 6,
-    }],
-  }), [segments, themeKey]);
+  const chartData = useMemo(() => {
+    void themeKey;
+    return {
+      labels: segments.map((s) => s.label),
+      datasets: [{
+        data: segments.map((s) => s.value),
+        backgroundColor: chartPalette().slice(0, 4),
+        borderWidth: 0,
+        hoverOffset: 6,
+      }],
+    };
+  }, [segments, themeKey]);
 
-  const chartOptions = useMemo(
-    () => radialOptions({ legend: true }),
-    [themeKey, reducedMotion],
-  );
+  const chartOptions = useMemo(() => {
+    void themeKey;
+    void reducedMotion;
+    return radialOptions({ legend: true });
+  }, [themeKey, reducedMotion]);
 
   // Don't lie with placeholder numbers. Every value on this page comes
   // from a real query. TanStack Query v5 gating: the page is only ready

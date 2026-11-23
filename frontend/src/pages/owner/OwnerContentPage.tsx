@@ -98,7 +98,10 @@ export function OwnerContentPage() {
   // Swatches resolve per applied theme and refresh when it flips.
   const themeVersion = useAppliedThemeVersion();
   const swatches = useMemo<BrandSwatch[]>(
-    () => BRAND_TOKENS.map((s) => ({ ...s, value: resolveTokenValue(s.token) })),
+    () => {
+      void themeVersion;
+      return BRAND_TOKENS.map((s) => ({ ...s, value: resolveTokenValue(s.token) }));
+    },
     // themeVersion is the re-resolve signal by design (the applied skin
     // changed) — the same intentional-dep shape the chart pages' themeKey
     // memo deps document.

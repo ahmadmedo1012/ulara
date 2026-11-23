@@ -62,7 +62,10 @@ export function OwnerEducationPage() {
   // resolves CSS custom properties at call time — it is resolved once per
   // theme flip and captured by the data memos, while the option factories
   // re-resolve inside their own memos keyed on the same themeKey.
-  const c = useMemo(() => chartColors(), [themeKey]);
+  const c = useMemo(() => {
+    void themeKey;
+    return chartColors();
+  }, [themeKey]);
 
   const barData = useMemo(() => ({
     labels: (edu?.byFaculty ?? []).map((f) => f.name),
@@ -76,10 +79,11 @@ export function OwnerEducationPage() {
     }],
   }), [edu, c]);
 
-  const barOptions = useMemo(
-    () => ({ ...cartesianOptions({ horizontal: true }), indexAxis: 'y' as const }),
-    [themeKey, reducedMotion],
-  );
+  const barOptions = useMemo(() => {
+    void themeKey;
+    void reducedMotion;
+    return { ...cartesianOptions({ horizontal: true }), indexAxis: 'y' as const };
+  }, [themeKey, reducedMotion]);
 
   /* 22-b (4-A7 P3-2): bar-end value labels via the shared theme's
    * valueLabels plugin (the admin pages' convention) — the reader no
@@ -104,6 +108,8 @@ export function OwnerEducationPage() {
   }), [edu, c]);
 
   const lineOptions = useMemo(() => {
+    void themeKey;
+    void reducedMotion;
     const base = cartesianOptions();
     return {
       ...base,
