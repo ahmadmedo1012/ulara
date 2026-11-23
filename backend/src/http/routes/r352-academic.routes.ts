@@ -538,6 +538,26 @@ router.post(
         }
       }
       if (input.userId) {
+        // Link integrity (the §3.2 rule the people surface enforces): the
+        // account must be an ACTIVE member of THIS institution — never a
+        // foreign user, never a dangling id (a learner row carries nationalId
+        // and other PII; binding it to a non-member crosses tenants).
+        const membership = await prisma.membership.findFirst({
+          where: {
+            userId: input.userId,
+            institutionId,
+            isActive: true,
+            institution: { status: 'ACTIVE' },
+          },
+          select: { id: true },
+        });
+        if (!membership) {
+          throw new AppError(
+            'USER_NOT_MEMBER',
+            'لا يمكن ربط ملف المتعلم بمستخدم ليس عضوًا نشطًا في هذه المؤسسة',
+            400,
+          );
+        }
         const linked = await prisma.learnerProfile.findUnique({
           where: { institutionId_userId: { institutionId, userId: input.userId } },
           select: { id: true },
@@ -633,6 +653,24 @@ router.patch(
         }
       }
       if (input.userId) {
+        // Link integrity (same §3.2 rule as the people surface): a
+        // re-link may only target an ACTIVE member of THIS institution.
+        const membership = await prisma.membership.findFirst({
+          where: {
+            userId: input.userId,
+            institutionId,
+            isActive: true,
+            institution: { status: 'ACTIVE' },
+          },
+          select: { id: true },
+        });
+        if (!membership) {
+          throw new AppError(
+            'USER_NOT_MEMBER',
+            'لا يمكن ربط ملف المتعلم بمستخدم ليس عضوًا نشطًا في هذه المؤسسة',
+            400,
+          );
+        }
         const linked = await prisma.learnerProfile.findUnique({
           where: { institutionId_userId: { institutionId, userId: input.userId } },
           select: { id: true },

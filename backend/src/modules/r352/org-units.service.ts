@@ -117,17 +117,29 @@ export async function requireOrgUnit(
 
 // ── Legacy write-through (DECISIONS.md D3) ─────────────────────────
 
+/** The mirror-id convention (r352 hardening #2 — migration 0005):
+ * the mirror unit's id IS the legacy row's id when that id is already
+ * cuid-shaped (Prisma cuid() ids always are); otherwise 'c' + the id
+ * with dashes stripped keeps the shape z.string().cuid()-valid. NEVER
+ * the retired 'ou-f-'/'ou-d-' prefixed shape — it failed every
+ * cuid-validated ?orgUnitId= filter and write («Invalid cuid» 400s).
+ * Same convention as migration 0005 and the seed catch-up
+ * (backfillOrgUnitsFromLegacy) — all three must agree. */
+export function mirrorOrgUnitId(legacyId: string): string {
+  return /^c[0-9a-z]{8,}$/.test(legacyId) ? legacyId : `c${legacyId.replace(/-/g, '')}`;
+}
+
 /** Create the mirror OrganizationalUnit for a legacy Faculty row
  * (inside the caller's transaction) and link both sides. */
 export async function ensureOrgUnitForFaculty(
   tx: Tx,
   faculty: { id: string; institutionId: string; name: string; nameEn: string | null; city: string },
 ): Promise<string> {
+  const unitId = mirrorOrgUnitId(faculty.id);
   const existing = await tx.organizationalUnit.findUnique({
-    where: { id: `ou-f-${faculty.id}` },
+    where: { id: unitId },
     select: { id: true },
   });
-  const unitId = existing?.id ?? `ou-f-${faculty.id}`;
   if (!existing) {
     await tx.organizationalUnit.create({
       data: {
@@ -153,11 +165,11 @@ export async function ensureOrgUnitForDepartment(
   facultyOrgUnitId: string,
   institutionId: string,
 ): Promise<string> {
+  const unitId = mirrorOrgUnitId(department.id);
   const existing = await tx.organizationalUnit.findUnique({
-    where: { id: `ou-d-${department.id}` },
+    where: { id: unitId },
     select: { id: true },
   });
-  const unitId = existing?.id ?? `ou-d-${department.id}`;
   if (!existing) {
     await tx.organizationalUnit.create({
       data: {

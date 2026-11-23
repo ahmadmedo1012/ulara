@@ -117,6 +117,58 @@ jobs:
             -H "Authorization: Bearer $TOK2" "$BASE/me/dashboard")
           echo "post-select GET /me/dashboard → $CODE"
           [ "$CODE" = "200" ] || exit 1
+      - name: The r352 institutional belt (the 2026-11-23 schema-drift regression)
+        # The confirmed production incident: GET /colleges 500 (P2022 —
+        # Faculty.orgUnitId), GET /auth/me 500 (P2022 via Faculty includes),
+        # GET /catalog/* 500 (P2021 — r352 tables absent). Root cause: no
+        # deploy path ran `prisma migrate deploy`, so migrations 0003–0005
+        # never reached production while the code (and CI's fresh DBs)
+        # had them. vercel.json now migrates on production builds; THIS
+        # belt fails loudly if a deploy ever ships code ahead of schema
+        # again, and proves the seeded reference catalogs (a 200 with an
+        # empty catalog is a silent seed regression, not a pass).
+        run: |
+          CODE=$(curl -s -o /tmp/colleges.json -w '%{http_code}' --max-time 30 "$BASE/colleges?institution=ulara-demo")
+          echo "GET /colleges?institution=ulara-demo → $CODE"
+          [ "$CODE" = "200" ] || { echo "::error::the public colleges listing is not answering (schema drift belt)"; exit 1; }
+          TOK=$(curl -sf --max-time 60 -X POST "$BASE/auth/login" -H 'Content-Type: application/json' \
+            -d '{"email":"admin2@test.ly","password":"12345678"}' \
+            | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["accessToken"])')
+          [ -n "$TOK" ] || { echo "login failed"; exit 1; }
+          for path in auth/me me/permissions catalog/institution-types catalog/credential-types catalog/regulatory-authorities catalog/position-templates catalog/accreditation-criteria-sets; do
+            CODE=$(curl -s -o /tmp/r352.json -w '%{http_code}' --max-time 30 -H "Authorization: Bearer $TOK" "$BASE/$path")
+            echo "GET /$path → $CODE"
+            [ "$CODE" = "200" ] || { echo "::error::$path is not 200 (schema drift belt)"; exit 1; }
+          done
+          python3 - <<'EOF' || exit 1
+          import json
+          d = json.load(open('/tmp/r352.json'))
+          assert isinstance(d.get("data"), list) and len(d["data"]) > 0, d
+          print(f"accreditation-criteria-sets seeded: {len(d['data'])} rows")
+          EOF
+          # The institutional surface with a SELECTED context (org-units is
+          # the r352 mirror read: Faculty→OrganizationalUnit backfill +
+          # migration 0005's cuid rewrite must be live and correct). The
+          # institution is derived from admin2's own ACTIVE membership —
+          # exactly what the chooser offers, never a hardcoded id.
+          INST=$(curl -sf --max-time 60 -X POST "$BASE/auth/login" -H 'Content-Type: application/json' \
+            -d '{"email":"admin2@test.ly","password":"12345678"}' \
+            | python3 -c 'import json,sys; u=json.load(sys.stdin)["data"]["user"]; m=[x for x in (u.get("memberships") or []) if x.get("isActive", True)]; print(m[0]["institutionId"] if m else "")')
+          [ -n "$INST" ] || { echo "admin2 has no ACTIVE membership — cannot select an institution"; exit 1; }
+          TOK2=$(curl -sf --max-time 30 -X POST -H "Authorization: Bearer $TOK" -H 'Content-Type: application/json' \
+            "$BASE/auth/select-institution" -d "{\"institutionId\":\"$INST\"}" \
+            | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["accessToken"])')
+          [ -n "$TOK2" ] || { echo "select-institution failed"; exit 1; }
+          CODE=$(curl -s -o /tmp/orgunits.json -w '%{http_code}' --max-time 30 -H "Authorization: Bearer $TOK2" "$BASE/institutional/org-units")
+          echo "GET /institutional/org-units → $CODE"
+          [ "$CODE" = "200" ] || { echo "::error::the institutional org-units surface is not answering"; exit 1; }
+          python3 - <<'EOF' || exit 1
+          import json
+          d = json.load(open('/tmp/orgunits.json'))
+          units = d.get("data")
+          assert isinstance(units, list) and len(units) > 0, d
+          print(f"org-units live: {len(units)} units")
+          EOF
       - name: Zero-trace DB scan (every text column + the migrations ledger)
         # The DATABASE half of the zero-trace policy (the repository half
         # is the CI zero-trace job). psql ships on ubuntu-24.04 runners.

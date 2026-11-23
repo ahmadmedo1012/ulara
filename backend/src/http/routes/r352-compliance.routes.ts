@@ -482,7 +482,17 @@ router.post(
       const input = req.body as z.infer<typeof findingCreateSchema>;
       if (input.inspectionId) await requireInspection(institutionId, input.inspectionId);
       if (input.externalAccreditationId) await requireAccreditation(institutionId, input.externalAccreditationId);
-      await assertScopeTargets(institutionId, input.orgUnitId ? 'ORGANIZATIONAL_UNIT' : null, input.orgUnitId, input.programId);
+      // Tenant isolation: EVERY scope target id must belong to the caller's
+      // institution — checked per-field, never derived from one field's
+      // presence (the pre-fix bug: the passed scopeType was computed from
+      // orgUnitId only, so a foreign institution's programId was stored
+      // unvalidated and then leaked through the list's program include).
+      if (input.orgUnitId) {
+        await assertScopeTargets(institutionId, 'ORGANIZATIONAL_UNIT', input.orgUnitId, null);
+      }
+      if (input.programId) {
+        await assertScopeTargets(institutionId, 'PROGRAM', null, input.programId);
+      }
       const finding = await prisma.$transaction(async (tx) => {
         const created = await tx.complianceFinding.create({
           data: {

@@ -179,8 +179,15 @@ router.get('/admin/users/:id/permissions', requireCapability('ROLES_ASSIGN'), as
     });
     if (!target) throw AppError.notFound('المستخدم غير موجود');
     const caps = await getEffectiveCapabilities(target.id, target.role);
+    // r352 tenant isolation: an institutional caller lists the GLOBAL
+    // rows plus THEIR institution's scoped rows only — the unscoped
+    // listing disclosed other institutions' override rows (capability,
+    // grant, scope id) to any institutional admin. OWNER (platform
+    // governance) keeps the full cross-tenant trail.
     const overrides = await prisma.userPermission.findMany({
-      where: { userId: target.id },
+      where: callerInstitution
+        ? { userId: target.id, OR: [{ institutionId: null }, { institutionId: callerInstitution }] }
+        : { userId: target.id },
       orderBy: { grantedAt: 'desc' },
     });
     res.json({
@@ -263,23 +270,34 @@ router.post(
       // (one transaction — never a grant without an audit row, or vice
       // versa). Capability grants/revokes are security-relevant: they
       // belong in the audit log exactly like role changes (OWNER path).
+      //
+      // r352 tenant-isolation hardening: an institutional ADMIN/QUALITY
+      // caller writes an INSTITUTION-SCOPED override (their DB-verified
+      // context) — it takes effect ONLY inside that institution (the merge
+      // in permissions.ts resolves global + same-institution rows). The
+      // previous unconditional NULL (platform-global) write let
+      // institution A's admin mint capabilities effective in institution
+      // B wherever the target held memberships — a cross-tenant grant.
+      // OWNER (null context) keeps the platform-global row.
+      const overrideInstitutionId = callerInstitution ?? null;
       await prisma.$transaction(async (tx) => {
         if (grant === null) {
-          // r178: this surface stays platform-global — only NULL-
-          // institutionId overrides are removed (an institution-scoped
-          // grant belongs to the institution's own console, Phase 5).
+          // Removal is scope-honest too: an institutional admin removes
+          // THEIR institution's scoped row; the OWNER removes the global
+          // row. Neither can delete the other scope's rows.
           await tx.userPermission.deleteMany({
-            where: { userId, capability, institutionId: null },
+            where: { userId, capability, institutionId: overrideInstitutionId },
           });
         } else {
-          /* r178: the global override (institutionId = NULL) cannot be
+          /* The global override (institutionId = NULL) cannot be
            * addressed through the compound-unique upsert — Prisma types
            * the triple's input institutionId as non-nullable (PG itself
            * treats NULLs as distinct there). The explicit
            * find-then-write pair below is the documented app-level
-           * upsert on the triple. */
+           * upsert on the triple (scoped rows ride the same pair — one
+           * code path, no shape drift). */
           const existing = await tx.userPermission.findFirst({
-            where: { userId, capability, institutionId: null },
+            where: { userId, capability, institutionId: overrideInstitutionId },
             select: { id: true },
           });
           if (existing) {
@@ -289,19 +307,36 @@ router.post(
             });
           } else {
             await tx.userPermission.create({
-              data: { userId, capability, grant, reason: reason ?? null, grantedById: req.user!.id },
+              data: {
+                userId,
+                capability,
+                grant,
+                reason: reason ?? null,
+                grantedById: req.user!.id,
+                institutionId: overrideInstitutionId,
+              },
             });
           }
         }
         // Audit log — capability grants were previously invisible to
-        // governance. Resource + role metadata for the full trail.
+        // governance. Resource + role + scope metadata for the full
+        // trail (institutionId rides the trail row so a scoped grant is
+        // attributable to exactly one tenant; the platform-global row
+        // stays null like the override itself).
         await tx.auditLog.create({
           data: {
             action: 'CAPABILITY_OVERRIDE',
             resourceType: 'UserPermission',
             resourceId: userId,
             userId: req.user!.id,
-            metadata: { capability, grant, reason: reason ?? null, targetRole: target.role },
+            institutionId: overrideInstitutionId,
+            metadata: {
+              capability,
+              grant,
+              reason: reason ?? null,
+              targetRole: target.role,
+              scope: overrideInstitutionId ?? 'PLATFORM',
+            },
           },
         });
       });

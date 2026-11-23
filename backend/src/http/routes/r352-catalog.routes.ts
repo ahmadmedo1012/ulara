@@ -48,9 +48,20 @@ router.get('/credential-types', async (_req, res, next) => {
   }
 });
 
-router.get('/position-templates', async (_req, res, next) => {
+router.get('/position-templates', async (req, res, next) => {
   try {
-    const data = await prisma.positionTemplate.findMany({ orderBy: { code: 'asc' } });
+    // Tenant isolation (r352 backend audit): local variants are
+    // institution-private catalog rows. A caller sees the global
+    // templates PLUS their own institution's variants — never another
+    // institution's (the unfiltered listing leaked foreign rows'
+    // existence to any authenticated user).
+    const callerInstitutionId = req.user?.institutionId ?? null;
+    const data = await prisma.positionTemplate.findMany({
+      where: callerInstitutionId
+        ? { OR: [{ isLocalVariant: false }, { institutionId: callerInstitutionId }] }
+        : { isLocalVariant: false },
+      orderBy: { code: 'asc' },
+    });
     res.json({ data });
   } catch (e) {
     next(e);

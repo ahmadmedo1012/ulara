@@ -278,6 +278,46 @@ function resolvePrismaBinary() {
 // __dirname is backend/scripts/, so backend/ is one level up.
 const BACKEND_ROOT = path.resolve(__dirname, '..');
 
+/** Serialize concurrent migrators with a session-level Postgres advisory
+ * lock held for the WHOLE migrate run. Two production Vercel builds (or a
+ * manual `prisma:deploy` racing an in-flight build) would otherwise
+ * interleave DDL against the same Neon project. The lock rides the SAME
+ * candidate URL the migrate targets, pinned to a single pooled session via
+ * connection_limit=1 so lock_timeout + the advisory lock + the unlock all
+ * land on one session. (Session-level locks are reliable on DIRECT urls;
+ * the transaction-pooled fallback path degrades to best-effort — it is
+ * the last-resort candidate, documented here honestly.) */
+const MIGRATE_ADVISORY_LOCK_KEY = 920240766; // arbitrary stable constant
+
+async function withMigrateLock(targetUrl, label, fn) {
+  const url = new URL(targetUrl);
+  if (url.searchParams.get('connection_limit') !== '1') {
+    url.searchParams.set('connection_limit', '1');
+  }
+  const lockClient = new PrismaClient({
+    datasources: { db: { url: url.toString() } },
+    log: ['error'],
+  });
+  log(`🔒 acquiring migrate advisory lock on ${label} (key ${MIGRATE_ADVISORY_LOCK_KEY})...`);
+  try {
+    // Bound the wait: another build's migrate is normally seconds; a hung
+    // lock older than 5 minutes is a stuck build — fail loudly instead of
+    // queueing forever behind it.
+    await lockClient.$executeRawUnsafe("SET lock_timeout = '300s'");
+    await lockClient.$executeRawUnsafe(`SELECT pg_advisory_lock(${MIGRATE_ADVISORY_LOCK_KEY})`);
+    log('🔒 advisory lock acquired — this build owns the migrate slot.');
+    return await fn();
+  } finally {
+    try {
+      await lockClient.$executeRawUnsafe(`SELECT pg_advisory_unlock(${MIGRATE_ADVISORY_LOCK_KEY})`);
+    } catch {
+      // The session is gone (unlock is best-effort; the server drops the
+      // lock with the session anyway).
+    }
+    await lockClient.$disconnect().catch(() => {});
+  }
+}
+
 async function runMigrate(targetUrl, label, { attempts = 3, delayMs = 5000, stepTimeoutMs = 180_000 } = {}) {
   const prismaBin = resolvePrismaBinary();
   // Always pass --schema explicitly so cwd doesn't matter. This makes
@@ -298,7 +338,7 @@ async function runMigrate(targetUrl, label, { attempts = 3, delayMs = 5000, step
   for (let i = 1; i <= attempts; i++) {
     log(`🚀 migrate deploy via ${label} (attempt ${i}/${attempts})`);
     try {
-      execFileSync(cmd[0], cmd.slice(1), {
+      await withMigrateLock(targetUrl, label, () => execFileSync(cmd[0], cmd.slice(1), {
         stdio: 'inherit',
         timeout: stepTimeoutMs,
         cwd: BACKEND_ROOT,
@@ -307,7 +347,7 @@ async function runMigrate(targetUrl, label, { attempts = 3, delayMs = 5000, step
           DATABASE_URL: targetUrl,
           DIRECT_DATABASE_URL: targetUrl,
         },
-      });
+      }));
       log('✅ migrations applied');
       return;
     } catch (err) {
