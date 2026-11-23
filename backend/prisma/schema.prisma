@@ -323,6 +323,7 @@ model Institution {
   memberships      Membership[]
   faculties        Faculty[]
   students         StudentProfile[]
+  pilotFeedback    PilotFeedback[]
   courses          Course[]
   permissionGrants UserPermission[]
   auditLogs        AuditLog[]
@@ -2262,11 +2263,19 @@ model PilotFeedback {
   // (≤ 1280px wide, ≤ 600 KB) — a pilot-scale convenience, not a
   // storage product; the inbox renders it inline.
   screenshot String?
+  // r352 backend hardening #3 (r342 t14 backlog item — the feedback
+  // inbox institution scope): the submitter's DB-verified institution at
+  // send time. NULL = platform-scope submission (contextless token or an
+  // unverified claim) — visible to the OWNER inbox only; an institutional
+  // ADMIN/QUALITY inbox is pinned to their own institution's rows.
+  institutionId String?
+  institution   Institution? @relation(fields: [institutionId], references: [id])
   status    String   @default("open") // open → triage → fixed | dismissed
   createdAt DateTime @default(now())
 
   @@index([status, createdAt])
   @@index([userId])
+  @@index([institutionId])
 }
 
 // r326 M1.1 — native client crash/error telemetry (additive). Written by

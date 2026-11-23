@@ -465,3 +465,29 @@ export async function backfillOrgUnitsFromLegacy(prisma: PrismaClient): Promise<
   const departments = await prisma.department.count({ where: { orgUnitId: { not: null } } });
   return { faculties, departments };
 }
+
+// ── Standalone runner ─────────────────────────────────────────────
+// `npm run seed:r352 -w backend` / `tsx prisma/seed-r352-catalogs.ts`.
+// The surgical, additive, idempotent path for ESTABLISHED production
+// databases (the full prisma/seed.ts is create-once and skips established
+// databases entirely — except the documented @test.ly accounts, these very
+// catalogs and the guarded backfills — but running it at deploy time stays
+// a conscious operator decision; this runner is the documented one-command
+// path). Only executes when invoked directly (import.meta check) —
+// importing from seed.ts never runs it.
+import { pathToFileURL } from 'node:url';
+
+const invokedDirectly =
+  process.argv[1] !== undefined && import.meta.url === pathToFileURL(process.argv[1]).href;
+
+if (invokedDirectly) {
+  const { PrismaClient: Client } = await import('@prisma/client');
+  const runner = new Client();
+  const catalogs = await ensureR352Catalogs(runner);
+  const mirrored = await backfillOrgUnitsFromLegacy(runner);
+  const backfilled = await backfillLegacyAppointments(runner);
+  console.log(
+    `🌱 r352 catalogs: ${JSON.stringify(catalogs)} · org-unit mirrors: ${JSON.stringify(mirrored)} · backfilled appointments: ${backfilled}`,
+  );
+  await runner.$disconnect();
+}

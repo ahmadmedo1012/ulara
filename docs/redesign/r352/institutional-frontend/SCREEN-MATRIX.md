@@ -29,7 +29,7 @@ its states. All states = loading/empty/error/403/context-required unless noted.
 | Screen | Route | Data | Writes |
 |---|---|---|---|
 | Directory | `/institution/people` | GET /institutional/people?category&status&q (paged); org-unit tree (options) | create dialog (PEOPLE_MANAGE) |
-| Person detail | `/institution/people/:id` | GET /institutional/people/:id (+appointments+unitRoleGrants) | status transitions (PEOPLE_MANAGE) |
+| Person detail | `/institution/people/:id` | GET /institutional/people/:id (+appointments+unitCapabilityGrants) | status transitions (PEOPLE_MANAGE) |
 
 ## D. Positions & appointments
 
@@ -42,8 +42,10 @@ its states. All states = loading/empty/error/403/context-required unless noted.
 
 | Screen | Route | Data | Writes |
 |---|---|---|---|
-| My access | `/institution/access` | GET /me/permissions; GET /me/unit-roles; org tree | — |
-| User grants (ROLES_ASSIGN) | (section) | GET /admin/users/:id/unit-roles?institutionId | POST grant (dialog) / revoke |
+| My access | `/institution/access` | GET /me/permissions; GET /me/unit-capabilities; org tree | — |
+| User grants (UNIT_CAPABILITIES_ASSIGN) | (section) | GET /admin/users/:id/unit-capabilities?institutionId | POST grant (dialog) / revoke |
+
+`?institutionId` on the admin grant list is honored for OWNER only — non-OWNER callers are always scoped to their server-verified institution.
 
 ## F. Councils
 

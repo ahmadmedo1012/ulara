@@ -46,7 +46,7 @@ existing read-only oversight (`QUALITY_VIEW`) applies to the read surfaces.
 | GET | `/catalog/institution-types` | `[{ id, code, sector, nameAr, nameEn, isIndependentLegalPersonality, legalBasis, defaultAuthorityId }]` |
 | GET | `/catalog/regulatory-authorities` | `[{ id, code, nameAr, nameEn, kind }]` |
 | GET | `/catalog/credential-types` | `[{ id, code, nameAr, nameEn, level, grantsProgression, legalBasis }]` |
-| GET | `/catalog/position-templates` | `[{ id, code, titleAr, titleEn, category, scopeRequirement, eligibleInstitutionTypeCodes, isLocalVariant, institutionId }]` |
+| GET | `/catalog/position-templates` | `[{ id, code, titleAr, titleEn, category, scopeRequirement, eligibleInstitutionTypeCodes, isLocalVariant, institutionId }]` — local variants ride the caller's DB-VERIFIED institution context (an unverified `inst` claim is never trusted: contextless → globals only; a claim that does not resolve — revoked membership / suspended institution / forged id — 403 `INSTITUTION_CONTEXT_INVALID`, never silently downgraded) |
 | GET | `/catalog/accreditation-criteria-sets` | `[{ id, code, version, nameAr, appliesTo, authorityId, isActive, items: [{ id, code, titleAr }] }]` |
 
 ## 2. Institution classification
@@ -195,10 +195,10 @@ self-assessments — `QUALITY_INTERNAL_MANAGE`; reads = context)
 | Method | Path | Notes |
 |---|---|---|
 | GET | `/compliance/accreditations?status=&type=&page=&limit=` | paginated |
-| POST | `/compliance/accreditations` | `{ type: INSTITUTIONAL\|PROGRAM, authorityCode, scopeType: INSTITUTION\|ORGANIZATIONAL_UNIT\|PROGRAM, orgUnitId?, programId?, decisionNumber?, decisionDate?, effectiveFrom?, effectiveTo?, criteriaSetId?, reportRef?, notes? }` — scope targets validated in-institution (`400 ACCREDITATION_SCOPE_INVALID`) |
+| POST | `/compliance/accreditations` | `{ type: INSTITUTIONAL\|PROGRAM, authorityCode, scopeType: INSTITUTION\|ORGANIZATIONAL_UNIT\|PROGRAM, orgUnitId?, programId?, decisionNumber?, decisionDate?, effectiveFrom?, effectiveTo?, criteriaSetId?, reportRef?, notes? }` — scope targets validated in-institution (`400 ACCREDITATION_SCOPE_INVALID`). **r352 final closure (§4): the scope-combination invariant is enforced at the DTO boundary (`400 VALIDATION_ERROR`) — `orgUnitId` requires `scopeType=ORGANIZATIONAL_UNIT`, `programId` requires `scopeType=PROGRAM`, both ids together / ids with `INSTITUTION` scope / a declared scope without its id are contradictory and rejected; every non-null id is then validated in-institution INDEPENDENTLY of the other field** |
 | PATCH | `/compliance/accreditations/:id` | status transitions enforced: PENDING→IN_REVIEW→(GRANTED\|CONDITIONAL\|REJECTED?)→RENEWED/SUSPENDED/REVOKED/EXPIRED/WITHDRAWN (`409 ACCREDITATION_INVALID_TRANSITION`) |
 | GET | `/compliance/licenses?status=&kind=&page=&limit=` | paginated |
-| POST | `/compliance/licenses` | `{ kind: TECHNICAL_LICENSE\|OPERATING_PERMIT\|ESTABLISHMENT_DECISION\|OTHER, authorityCode, licenseNumber?, scopeType?, orgUnitId?, programId?, issuedAt?, expiresAt?, conditions?, documentRef? }` |
+| POST | `/compliance/licenses` | `{ kind: TECHNICAL_LICENSE\|OPERATING_PERMIT\|ESTABLISHMENT_DECISION\|OTHER, authorityCode, licenseNumber?, scopeType?, orgUnitId?, programId?, issuedAt?, expiresAt?, conditions?, documentRef? }` — the SAME r352 §4 scope-combination invariant + in-institution per-field validation as accreditation creation (`400 VALIDATION_ERROR` / `400 ACCREDITATION_SCOPE_INVALID`) |
 | PATCH | `/compliance/licenses/:id` | status transitions (PENDING→ACTIVE→RENEWED/SUSPENDED/REVOKED/EXPIRED) |
 | GET | `/compliance/inspections?status=&page=&limit=` | paginated |
 | POST | `/compliance/inspections` | `{ authorityCode, kind, orgUnitId?, scheduledAt?, reportRef? }` |

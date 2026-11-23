@@ -10,12 +10,17 @@ dissolve flow) — recorded as follow-ups, never fake-implemented.
 
 ## 2. Missing operations / contract gaps (for the backend agent)
 
-1. **Learner search** — enrollments/credentials/placements take `studentProfileId`
-   but no institutional learner-list endpoint exists; the UI currently reads the
-   platform's `/admin/students` catalog for options (works, but an
-   institution-scoped `GET /institutional/learners?category=STUDENT|TRAINEE&q=`
-   would be the honest source — Law 21/2023's طالب≠متدرب distinction is in the
-   data model's `learnerCategory` already).
+1. **Learner search** — RESOLVED by the r352 backend hardening: `GET /academic/learners`
+   EXISTS (institution-scoped list; `q`/`category=STUDENT|TRAINEE`/`status`/
+   `orgUnitId` filters — not `/institutional/learners`), and the
+   enrollment/placement/award creates accept `learnerProfileId` OR the legacy
+   `studentProfileId` (exactly one) — the `/admin/students` fallback is no
+   longer the honest source. **2026-11-23 hardening to respect:**
+   POST/PATCH `/academic/learners` now require the linked `userId` to be an
+   ACTIVE member of the caller's institution (`USER_NOT_MEMBER`);
+   POST `/compliance/findings` institution-checks `programId`/`orgUnitId`
+   per-field; and GET `/catalog/position-templates` serves the global
+   templates + the caller's OWN institution local variants only.
 2. **Evidence/minutes byte upload** — metadata only this round (contract's own
    scope); the UI records `documentRef`/`fileUrl` strings.
 3. **Meeting agenda PATCH / resolution transitions** — consumed as contracted;

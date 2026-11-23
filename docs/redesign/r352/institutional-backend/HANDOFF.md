@@ -42,8 +42,11 @@
    safety incidents).
 10. **Research** — `/api/v1/research-projects/*` (+ outputs, bridged to the
     existing student-paper workflow via `researchPaperId`).
-11. **Scoped roles** — `/api/v1/me/unit-roles` (self), admin grant/revoke
-    via `/api/v1/admin/users/:id/unit-roles` + `/api/v1/admin/unit-roles/:id/revoke`.
+
+> Correction (post-audit): the pre-hardening §11 listing — the unit-roles
+> surface (`/me/unit-roles` + the admin grant/revoke paths) — is stale;
+> the shipped surface is the renamed unit-capabilities one (see the
+> hardening handoff below, item 1).
 
 ## 2. Required capabilities per surface
 
@@ -166,9 +169,14 @@ appointments, not from the role label.
    carry `attendeeKind` (MEMBER/GUEST); meetings list is paginated.
 6. **Self-assessment items**: `GET/PUT …/self-assessments/:id/items` +
    corrective-action creation per item.
-7. **Documents**: upload via `POST /governance/documents/upload` (raw
-   PDF) → attach the returned `binaryObjectId`; download at
-   `GET /governance/documents/:id/file`. `fileUrl` is deprecated.
+7. **Documents (correction — DEFERRED)**: the byte routes
+   `POST /governance/documents/upload` and
+   `GET /governance/documents/:id/file` were never implemented. What
+   ships is the metadata route `POST /governance/councils/:id/documents`
+   (optional `binaryObjectId` referencing an already-stored
+   governance-namespace object). The storage rails (governance key
+   namespace + `BinaryObject` sink + `binaryObjectId` FKs) are real;
+   `fileUrl` remains a deprecated external reference.
 
 The twin-belt ADMIN-label dependency (2 expected-red unit rows) is
 unchanged and still yours — see POST-IMPLEMENTATION-AUDIT.md §I.

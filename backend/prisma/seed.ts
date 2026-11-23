@@ -105,7 +105,7 @@ import {
 } from '@prisma/client';
 import { hashPassword } from '../src/lib/password.js';
 import { utcDayStart } from '../src/lib/dates.js';
-import { ensureTestAccounts } from '../src/modules/auth/test-accounts.js';
+import { ensureTestAccounts, testAccountsRuntimePolicy } from '../src/modules/auth/test-accounts.js';
 // r352 — seeded reference catalogs + legacy appointment backfill.
 import {
   ensureR352Catalogs,
@@ -384,20 +384,31 @@ async function main() {
   // owner NEVER receives an institution membership — platform ownership
   // is User.role == OWNER only. The AuthPage OWNER demo button and the
   // snap.mjs owner cohort log in as this user.
-  await prisma.user.upsert({
-    where: { email: 'owner@test.ly' },
-    update: { passwordHash: password },
-    create: {
-      email: 'owner@test.ly',
-      passwordHash: password,
-      role: Role.OWNER,
-      firstName: 'مالك',
-      lastName: 'المنصة',
-      avatarInitials: 'مل',
-      avatarColor: '#6B7280',
-      emailVerifiedAt: new Date(),
-    },
-  });
+  // r352 FINAL CLOSURE (§5): in a PRODUCTION runtime this upsert is
+  // SKIPPED — a public fixed-password identity must never hold
+  // platform-wide OWNER authority in production, and a production
+  // redeploy must never re-activate or password-reset an existing one
+  // (the same policy decision ensureTestAccounts enforces; no flag
+  // overrides it).
+  const accountsPolicy = testAccountsRuntimePolicy();
+  if (accountsPolicy.ownerAllowed) {
+    await prisma.user.upsert({
+      where: { email: 'owner@test.ly' },
+      update: { passwordHash: password },
+      create: {
+        email: 'owner@test.ly',
+        passwordHash: password,
+        role: Role.OWNER,
+        firstName: 'مالك',
+        lastName: 'المنصة',
+        avatarInitials: 'مل',
+        avatarColor: '#6B7280',
+        emailVerifiedAt: new Date(),
+      },
+    });
+  } else {
+    console.log(`ℹ بذرة r352 §5: skip creation/heal of owner@test.ly — ${accountsPolicy.reason}`);
+  }
 
   // ─── Second workspace demo (مساحة عمل تجريبية ثانية) ───
   // One faculty + one department + (later below) one course whose code

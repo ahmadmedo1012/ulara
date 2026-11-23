@@ -74,8 +74,10 @@ domain model, no parallel systems.
 3. ~~P0 concurrency invariants (§6)~~ — FIXED (C-1..C-6).
 4. ~~P1 governance lifecycle (§7)~~ — FIXED (D-1..D-4).
 5. ~~P1 quality workflows (§8)~~ — FIXED (D-5).
-6. ~~P1 document upload integration (§9)~~ — FIXED (D-6, integrated —
-   no second storage system).
+6. P1 document upload integration (§9) — DEFERRED (correction: only the
+   storage rails + `binaryObjectId` FKs are real; the upload/download byte
+   routes were never implemented — `POST /governance/councils/:id/documents`
+   metadata is what ships).
 7. ~~P1 legal classifications (§10)~~ — FIXED (E-1..E-4).
 8. ~~P1 org-unit type extensibility (§11)~~ — FIXED (E-5, controlled
    catalog).

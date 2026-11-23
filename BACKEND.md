@@ -3,11 +3,13 @@
 Express 4.22.3 (TypeScript, ESM) + Prisma 5.22 over Neon PostgreSQL.
 All endpoints are mounted under the base path **`/api/v1`** and return a
 `{ data: T }` envelope (errors return `{ error: { code, message } }`).
-The complete, code-accurate endpoint contract (253 operations over 216
+The complete, code-accurate endpoint contract (376 operations over 304
 paths, measured from the generated spec) lives in
 [`docs/api/openapi.json`](docs/api/openapi.json) (regenerated from the code
 with `npm run api:openapi`) — the tables below are a
-condensed overview.
+condensed overview. The r352 institutional endpoint families ride the spec's
+`institutions` / `institutional` / `governance` / `academic` / `compliance` /
+`operations` / `research-projects` / `research-outputs` / `catalog` tags.
 
 ---
 
@@ -23,8 +25,8 @@ condensed overview.
 | `scheduler.ts` | In‑process daily LoginEvent‑retention ticker (the zu‑sync university‑facts job was retired r342 t13) |
 | `http/validate.ts` | Generic Zod validation middleware factory |
 | `http/middleware/*` | `auth`, `requireRole`, `requireCapability`, `rateLimit`, `errorHandler` |
-| `http/routes/*` | 24 route modules (incl. `submissions.routes.ts` + `curriculum.routes.ts`; `sync.routes.ts` retired r342 t13) |
-| `lib/*` | `jwt`, `password`, `errors`, `pagination`, `pdf`, `permissions`, `governance`, `grading`, `risk`, `dates`, `compression`, `storage` (upload drivers: local fs / S3-compatible SigV4), `operational-alerts` (`zu-sync/` retired r342 t13 — the shared production DB dropped its tables upstream; every code path touching them P2021'd) |
+| `http/routes/*` | 43 route modules (incl. the eleven r352 institutional routers — `r352-institution` / `r352-org-units` / `r352-people` / `r352-appointments` / `r352-councils` / `r352-academic` / `r352-compliance` / `r352-operations` / `r352-research` / `r352-catalog` / `r352-unit-capabilities`; `submissions.routes.ts` + `curriculum.routes.ts`; `sync.routes.ts` retired r342 t13) |
+| `lib/*` | `jwt`, `password`, `errors`, `pagination`, `pdf`, `permissions`, `governance`, `grading`, `risk`, `dates`, `compression`, `storage` (upload drivers: local fs / S3-compatible SigV4 / Postgres BYTEA), `operational-alerts` (`zu-sync/` retired r342 t13 — the shared production DB dropped its tables upstream; every code path touching them P2021'd) |
 | `modules/auth/*` | `auth.service.ts`, `auth.dto.ts`, `password-policy`, `lockout`, `rotation` |
 | `modules/search/*` | Arabic-aware search normalization (`normalize.ts`) backing `/search/global` |
 | `modules/theme/*` | `router.ts` — `GET/PUT /me/theme` (handler inline; the separate service module was folded in wave 16) |
@@ -58,7 +60,7 @@ condensed overview.
 
 | Aspect | Detail |
 |--------|--------|
-| Access token | JWT HS256, TTL 15m, payload `{ sub, role, type:'access' }`, `Authorization: Bearer` |
+| Access token | JWT HS256, TTL 15m, payload `{ sub, role, inst, type:'access' }` (`inst` = the selected institution context hint — re-verified DB-side on every institution-scoped route), `Authorization: Bearer` |
 | Refresh token | JWT, TTL 7d, payload `{ sub, ver, type:'refresh' }`, http‑only cookie `ulara_refresh`, `sameSite:strict`, path `/api/v1/auth` |
 | Rotation | **Sliding session** — a normal refresh re‑issues tokens at the SAME `tokenVersion` (multi‑device survives). `tokenVersion` is bumped only on explicit revocation events (logout, password change, role change, deactivation), each an atomic conditional write |
 | Passwords | Argon2id — memoryCost ≈19 MiB, timeCost 2, parallelism 1 + common‑password blocklist (8–72 chars) |
@@ -118,6 +120,19 @@ condensed overview.
 | GET | `/admin/teachers/:id/suggestions` | TEACHERS_VERIFY | Review suggestions |
 | POST | `/admin/teachers/:id/verify` | TEACHERS_VERIFY | Verify teacher |
 | POST | `/admin/teachers/:id/position` | ROLES_ASSIGN | Assign leadership position |
+
+> **r352 final closure (§3) — the governance-context rule on the four
+> capability-gated rows above:** OWNER is the ONLY platform-wide path
+> (null context by definition — cross-tenant list, full override trail,
+> platform-GLOBAL override writes). EVERY other caller — ADMIN, QUALITY,
+> and TEACHER/STUDENT capability holders via explicit grants included —
+> must hold a DB‑verified ACTIVE institution context: 403
+> `INSTITUTION_CONTEXT_REQUIRED` without one (fail closed), 403
+> `INSTITUTION_CONTEXT_INVALID` on a stale/revoked/suspended/forged
+> claim; the listing is pinned to their institution, override writes
+> land institution‑scoped (never a platform-global row), and
+> cross‑institution targets are 404 on reads (no existence leak) / 403
+> on writes. Full matrix: `docs/redesign/r352/institutional-backend/AUTHORIZATION-MATRIX.md`.
 
 ### Courses — `/courses`
 | Method | Path | Auth | Description |
@@ -226,6 +241,13 @@ condensed overview.
 | GET/POST | `/events` … `/rsvp` | Bearer / EVENTS_RUN | Events (capacity row-locked) |
 | GET/POST | `/posts` … `/react` | Bearer | Social feed (no comment endpoint) |
 
+### Pilot feedback — `/feedback`
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/feedback` | Bearer (5/hour) | The floating widget: file a BUG/IDEA (note, route, console tape, optional screenshot) — the row is stamped with the submitter's DB-verified institution (NULL = platform-scope) |
+| GET | `/feedback` | ADMIN/QUALITY/OWNER | The inbox (status filter + pagination) — **institution-scoped**: an ADMIN/QUALITY caller sees only their institution's rows (contextless 403); OWNER keeps the platform-wide view (platform-scope NULL rows included) |
+| PATCH | `/feedback/:id` | ADMIN/QUALITY/OWNER | Status grammar open → triage → fixed/dismissed; foreign-institution rows fail closed as 404 |
+
 ### Catalog (`/api/v1`)
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
@@ -283,10 +305,14 @@ condensed overview.
 | `CORS_ORIGINS` | ❌ | ulara.vercel.app + localhost:5173 | Comma-separated CORS allow-list (no wildcards — credentials are on) |
 | `INTERNAL_SERVICE_TOKEN` | ❌ | — | Service-to-service auth for `POST /api/v1/me/milestones/:id/fire` (≥16 chars; fail-closed when unset; constant-time compare) |
 | `DIRECT_DATABASE_URL` | ❌ | derived | Neon **direct** (non-pooled) URL for `prisma migrate deploy`; when unset, the deploy script derives it from `DATABASE_URL` (strips `-pooler` + pooling params) |
-| `STORAGE_DRIVER` | ❌ | `local` | Upload storage driver (`lib/storage.ts`): `local` filesystem or `s3` (any S3-compatible store). `s3` without the four `S3_*` vars → boot fails closed naming them; `local` in production logs a one-time ephemeral-disk warning |
-| `STORAGE_DIR` | ❌ | `backend/storage` | Local driver root (absolute path); ignored for `s3` |
+| `STORAGE_DRIVER` | ❌ | `local` | Upload storage driver (`lib/storage.ts`): `local` filesystem, `s3` (any S3-compatible store), or `postgres` (BYTEA rows in the app's own PostgreSQL via `BinaryObject` — the bounded pilot mode). `s3` without the four `S3_*` vars → boot fails closed naming them; `local` in production logs a one-time ephemeral-disk warning |
+| `STORAGE_DIR` | ❌ | `backend/storage` | Local driver root (absolute path); ignored for `s3`/`postgres` |
 | `S3_ENDPOINT` / `S3_REGION` / `S3_BUCKET` / `S3_ACCESS_KEY_ID` / `S3_SECRET_ACCESS_KEY` | with `STORAGE_DRIVER=s3` | `S3_REGION=auto` | Object-store config (path-style addressing; AWS S3 / Cloudflare R2 / MinIO). Secrets only via the environment — never in code/docs |
-| `AI_PROVIDER` / `AI_BASE_URL` / `AI_API_KEY` / `AI_MODEL` | with `AI_PROVIDER=openai` | `AI_PROVIDER=local`, `AI_BASE_URL=https://api.openai.com/v1` | AI chat provider (`lib/ai.ts`): `local` in-process composer, or `openai` = any OpenAI-compatible LLM. `openai` without key+model → boot fails closed naming them. Secrets only via the environment — never in code/docs |
+| `AI_PROVIDER` / `AI_BASE_URL` / `AI_API_KEY` / `AI_MODEL` / `AI_MODELS` | with `AI_PROVIDER=openai` | `AI_PROVIDER=local`, `AI_BASE_URL=https://api.openai.com/v1` | AI chat provider (`lib/ai.ts`): `local` in-process composer, or `openai` = any OpenAI-compatible LLM. `openai` without key+model → boot fails closed naming them. `AI_MODELS` = ordered ≤3 model ids (evidence-based OpenRouter routing; also drives the Gemini two-model fallback — see docs/deployment.md §3.2). Secrets only via the environment — never in code/docs |
+| `MAIL_PROVIDER` / `MAIL_API_KEY` / `MAIL_FROM` | with `MAIL_PROVIDER=resend\|brevo` | `MAIL_PROVIDER=none` | Transactional mail (`lib/mail.ts`): `none` logs-and-drops honestly (each caller decides what that means for its surface); resend/brevo without key+from → boot fails closed naming them. `APP_ORIGIN` (optional) supplies email footer links |
+| `STT_API_URL` / `STT_API_KEY` / `STT_MODEL` | ❌ | — | Speech-to-text provider (OpenAI-compatible `/audio/transcriptions`: Groq Whisper / OpenAI / self-hosted Whisper). Unset → `POST /lectures/:id/transcript/generate` refuses honestly (409, Arabic); manual SRT/VTT ingest is the fallback |
+| `MIN_APP_VERSION` / `APP_DOWNLOAD_URL` | ❌ | — | Mobile minimum-version gate (r326 M0.7): `GET /status` reports them; the native app compares its semver on cold start and shows the blocking update screen when below |
+| `ULARA_TEST_ACCOUNTS` | ❌ | — | Set to `1` to maintain the documented @test.ly test-account table at boot; when set, the daily jobs run also performs the test-account heal (and `POST /jobs/test-accounts` — service token — runs it on demand). Never set on production |
 
 ---
 
