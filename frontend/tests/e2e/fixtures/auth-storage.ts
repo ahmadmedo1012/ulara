@@ -159,6 +159,40 @@ export async function loginRole(role: StackRole): Promise<LoginSession> {
   if (!data?.accessToken || !data?.user) {
     throw new Error(`real-API login returned no session for ${role}`);
   }
+  // r355 — complete the chooser server-side when the login is
+  // CONTEXT-LESS (r178: several active memberships → no auto-selected
+  // context; the seeded student has been multi-membership since the
+  // seed started reproducing the production demo shape). The REAL
+  // browser journey is login → the institution chooser mounts on the
+  // guest sheet → the visitor commits to a seat → the app navigates.
+  // A storageState built from the contextless login would boot the SPA
+  // straight into the chooser (the r178 App guard keeps a context-less
+  // MULTI-membership session on the guest sheet), so this fixture walks
+  // the same select-institution commit the UI's first seat click makes
+  // — the storageState then carries a REAL selected-context token.
+  if (!data.user.currentInstitution && (data.user.memberships ?? []).some((m) => m.isActive)) {
+    const first = (data.user.memberships ?? []).find((m) => m.isActive)!;
+    const sel = await fetch(`${API_BASE}/api/v1/auth/select-institution`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        authorization: `Bearer ${data.accessToken}`,
+      },
+      body: JSON.stringify({ institutionId: first.institutionId }),
+      signal: AbortSignal.timeout(15_000),
+    });
+    if (!sel.ok) {
+      const body = await sel.text().catch(() => '');
+      throw new Error(
+        `select-institution failed for ${role} (${first.institutionId}): HTTP ${sel.status} ${body.slice(0, 200)}`,
+      );
+    }
+    const selected = (await sel.json()) as { data: LoginSession };
+    if (!selected?.data?.accessToken || !selected?.data?.user) {
+      throw new Error(`select-institution returned no session for ${role}`);
+    }
+    return selected.data;
+  }
   return data;
 }
 

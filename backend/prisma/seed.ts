@@ -35,7 +35,13 @@
  * Test accounts (R320 §C — ONE easy account per job; the single source
  * of truth is src/modules/auth/test-accounts.data.ts, re-exported at
  * the repo root as shared/testAccounts.ts):
- *   student@test.ly   → STUDENT (أحمد الزروق) — membership in ulara-demo
+ *   student@test.ly   → STUDENT (أحمد الزروق) — memberships in BOTH
+ *                       workspaces (ulara-demo + ulara-demo-2): the
+ *                       production demo shape since the r344 data
+ *                       surgery — the student logs in CONTEXT-LESS and
+ *                       walks the r178 institution chooser (the t14
+ *                       fail-closed guard + the chooser journey are the
+ *                       designed demo, not an accident of production)
  *   student2@test.ly  → STUDENT (ليلى المهدي) — membership in ulara-demo-2
  *   teacher@test.ly   → TEACHER (د. سالم البوسيفي) — membership in ulara-demo
  *   registrar@test.ly → ADMIN   (المسجل العام) — membership in ulara-demo
@@ -464,6 +470,40 @@ async function main() {
       facultyId: aaFaculty.id,
       departmentId: aaCsDept.id,
       year: 1,
+    },
+  });
+
+  // r355 — the demo student's SECOND membership (the production demo
+  // shape). Production's student@test.ly has been multi-membership
+  // since the r344 data surgery (the FK cascade swept the Membership
+  // graph of the second demo tenant), and the whole demo contract
+  // rides that shape: login resolves NO default context (r178: several
+  // active memberships → null), the t14 fail-closed guard answers
+  // INSTITUTION_CONTEXT_REQUIRED on contextless personal-data calls,
+  // and the UI walks the institution chooser («اختر مؤسستك») — the
+  // journey the deploy-smoke's REAL-student step and the login-all
+  // browser proof assert. A fresh seed MUST reproduce that shape or
+  // every isolated environment silently diverges from production (the
+  // 2026-11-23 smoke regressions #43–#45: single-membership
+  // auto-select made the "contextless" probe contextful). Lives HERE —
+  // after the second workspace's faculty/department exist.
+  const studentMembership2 = await ensureMembership(student.id, secondary.id, Role.STUDENT);
+  // The secondary profile: reg UZ-2025-00001 (free in the second
+  // workspace — DEMO_REG_NUMBER is deliberately held by student2
+  // there, proving the (institutionId, universityId) scoped unique).
+  // The seat is REAL: picking the second workspace in the chooser
+  // lands on a true dashboard, not an empty shell.
+  await prisma.studentProfile.upsert({
+    where: { institutionId_universityId: { institutionId: secondary.id, universityId: 'UZ-2025-00001' } },
+    update: { membershipId: studentMembership2.id, facultyId: aaFaculty.id, departmentId: aaCsDept.id },
+    create: {
+      userId: student.id,
+      membershipId: studentMembership2.id,
+      institutionId: secondary.id,
+      universityId: 'UZ-2025-00001',
+      facultyId: aaFaculty.id,
+      departmentId: aaCsDept.id,
+      year: 3,
     },
   });
 
