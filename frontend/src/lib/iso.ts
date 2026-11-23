@@ -114,6 +114,8 @@ export const PLATE = {
   hair: 'var(--iso-hair)',
   sienna: 'var(--iso-sienna)',
   signal: 'var(--iso-signal)',
+  royal: 'var(--iso-royal)',
+  royalSoft: 'var(--iso-royal-soft)',
   paper: 'var(--iso-paper)',
   paperHi: 'var(--iso-paper-hi)',
 } as const;

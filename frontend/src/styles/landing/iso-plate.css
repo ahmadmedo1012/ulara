@@ -30,6 +30,15 @@
   /* the ONE signal family (the copper canon — never a second hue) */
   --iso-sienna:     var(--c-copper-ink);
   --iso-signal:     var(--c-copper-ink);
+  /* r353 (visual artwork) — the ROYAL annotation layer: the plate
+     grammar's engineering-intelligence voice. Dimensions, data routes,
+     level marks and every SYSTEM line paint royal (the brand's primary
+     signal, #2540D9 light / #8AA0FF dark via the royal family) while
+     the warm sienna stays the FOCAL accent (journey markers, flags,
+     the one hot cell) — the 2026 identity law carried into the
+     drawings: blue = the platform, warm = the learner. */
+  --iso-royal:      var(--c-royal-ink);
+  --iso-royal-soft: var(--c-royal-bg);
   /* the grounds */
   --iso-paper:      var(--neutral-50);
   --iso-paper-hi:   var(--neutral-0);
@@ -38,6 +47,15 @@
   /* the plate's own voices (the sheet's Arabic + mono pairing) */
   --font-iso-arabic: var(--font-sans);
   --font-iso-mono:   var(--font-mono);
+}
+
+/* r353 — the DARK plate's royal lifts to the strong tier: the ink
+   seat (#8AA0FF) is a FILL tone — at the plate's hairline weights
+   (routes, dimension strings, mullions) it muddies against charcoal;
+   the strong text tier (#A9B8FF, 6.85:1 on the dark soft) keeps the
+   system layer's voice at stroke weights. */
+[data-theme='dark'] {
+  --iso-royal: var(--c-royal-deep);
 }
 
 /* ── the scene frame ────────────────────────────────────────────────────
