@@ -98,17 +98,22 @@ fi
 if [ -z "$base" ] || ! git rev-parse --verify -q "$base" >/dev/null 2>&1; then
   echo "size-gate: rule 3 SKIPPED — no resolvable base (set SIZE_GATE_BASE; first commit of a branch is exempt)"
 else
-  # files Added/Modified under docs/ between base and the working tree …
-  changed=$(git diff --name-only --diff-filter=AM "$base" -- docs/ 2>/dev/null)
+  # NET growth of docs/ between base and the index — summing every touched
+  # file instead overstated a shrinking tree: the r354 evidence re-encode
+  # (132 PNG → WebP, −22MB) read as a "+9MB push" because the new WebP
+  # files were added to the sum next to the deleted PNGs.
+  base_docs_kb=$(git ls-tree -r -l "$base" -- docs/ 2>/dev/null | awk '{s+=$4} END {print int((s+0)/1024)}')
+  net_kb=$((docs_kb - ${base_docs_kb:-0}))
+  [ "$net_kb" -gt 0 ] || net_kb=0
   # … plus untracked files under docs/ (counted even before `git add`)
   untracked=$(git ls-files -o --exclude-standard -- docs/)
-  push_kb=0
+  push_kb=$net_kb
   while IFS= read -r p; do
     [ -n "$p" ] || continue
     [ -f "$p" ] || continue
     kb=$(du -k --apparent-size -- "$p" 2>/dev/null | awk -F'\t' '{print $1}')
     push_kb=$((push_kb + ${kb:-0}))
-  done <<< "$changed"$'\n'"$untracked"
+  done <<< "$untracked"
   if [ "$push_kb" -gt "$MAX_PUSH_KB" ]; then
     echo "size-gate: FAIL rule 3 — change adds ${push_kb}KB to docs/ (>${MAX_PUSH_KB}KB / 5MB) vs base $base" >&2
     fail=1
