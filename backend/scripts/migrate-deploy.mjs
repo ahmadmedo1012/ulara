@@ -91,7 +91,11 @@ function looksLikePooledUrl(rawUrl) {
   }
 }
 
-function buildCandidates() {
+/** Exported for the integration belt — the DIRECT-ONLY candidate policy
+ * is safety-critical (a pooler fallback would migrate without a
+ * lock-guaranteed session), so the policy itself is pinned by
+ * tests/integration/migrate-lock.test.ts. */
+export function buildCandidates() {
   const runtimeUrl = process.env.DATABASE_URL?.trim();
   if (!runtimeUrl) {
     throw new Error('DATABASE_URL is required for database deployment.');

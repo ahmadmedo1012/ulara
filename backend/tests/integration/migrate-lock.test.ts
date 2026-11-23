@@ -32,12 +32,13 @@
  * true }]`), so a lock acquired/unlocked through the execute interface
  * could never be observed.
  */
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { db, truncateAll } from './helpers.js';
 import {
+  buildCandidates,
   MIGRATE_ADVISORY_LOCK_KEY,
   MigrateLockTimeoutError,
   withMigrateLock,
@@ -70,6 +71,78 @@ async function maxSimultaneousHolders(durMs: number, sampleMs = 25): Promise<num
   }
   return max;
 }
+
+describe('buildCandidates — the DIRECT-ONLY migration candidate policy', () => {
+  const ORIGINAL_DB = process.env.DATABASE_URL;
+  const ORIGINAL_DIRECT = process.env.DIRECT_DATABASE_URL;
+  afterEach(() => {
+    process.env.DATABASE_URL = ORIGINAL_DB;
+    if (ORIGINAL_DIRECT === undefined) delete process.env.DIRECT_DATABASE_URL;
+    else process.env.DIRECT_DATABASE_URL = ORIGINAL_DIRECT;
+  });
+
+  it('a POOLED runtime URL contributes its stripped direct twin — and NOTHING else', () => {
+    process.env.DATABASE_URL = 'postgresql://u:p@ep-example-pooler.region.aws.neon.tech/db?sslmode=require&pgbouncer=true&connection_limit=5';
+    delete process.env.DIRECT_DATABASE_URL;
+    const { candidates, runtimeIsPooled } = buildCandidates();
+    expect(runtimeIsPooled).toBe(true);
+    expect(candidates.map((c) => c.label)).toEqual(['derived direct (stripped -pooler)']);
+    const url = new URL(candidates[0]!.url);
+    expect(url.hostname).toBe('ep-example.region.aws.neon.tech'); // -pooler stripped
+    expect(url.searchParams.get('pgbouncer')).toBe(null); // pooling params dropped
+    expect(url.searchParams.get('connection_limit')).toBe(null);
+  });
+
+  it('a clean DIRECT_DATABASE_URL is trusted and leads; a POOLER-looking one is REFUSED', () => {
+    process.env.DATABASE_URL = 'postgresql://u:p@ep-example-pooler.region.aws.neon.tech/db?sslmode=require';
+    process.env.DIRECT_DATABASE_URL = 'postgresql://u:p@ep-example.region.aws.neon.tech/db?sslmode=require';
+    expect(buildCandidates().candidates.map((c) => c.label)).toEqual([
+      'DIRECT_DATABASE_URL',
+      'derived direct (stripped -pooler)',
+    ]);
+    // A DIRECT_DATABASE_URL that itself carries a pooler marker contradicts
+    // its own declaration — refused as a migration target, never trusted.
+    process.env.DIRECT_DATABASE_URL = 'postgresql://u:p@ep-other-pooler.region.aws.neon.tech/db?pgbouncer=true';
+    expect(buildCandidates().candidates.map((c) => c.label)).toEqual(['derived direct (stripped -pooler)']);
+  });
+
+  it('an already-DIRECT runtime URL is used as-is (no synthetic pooler params)', () => {
+    process.env.DATABASE_URL = 'postgresql://u:p@db.internal:5432/ulara';
+    delete process.env.DIRECT_DATABASE_URL;
+    const { candidates, runtimeIsPooled } = buildCandidates();
+    expect(runtimeIsPooled).toBe(false);
+    expect(candidates.map((c) => c.label)).toEqual(['DATABASE_URL (already direct)']);
+    const url = new URL(candidates[0]!.url);
+    expect(url.hostname).toBe('db.internal');
+    expect(url.searchParams.get('pgbouncer')).toBe(null);
+  });
+
+  it('NEVER offers a pooler fallback: every candidate URL is session-stable-direct by construction', () => {
+    for (const [runtime, direct] of [
+      ['postgresql://u:p@ep-x-pooler.r.aws.neon.tech/db?sslmode=require', undefined],
+      ['postgresql://u:p@ep-x-pooler.r.aws.neon.tech/db?sslmode=require', 'postgresql://u:p@direct.r.aws.neon.tech/db'],
+      ['postgresql://u:p@plain.example/db', 'postgresql://u:p@d.example/db'],
+    ] as const) {
+      process.env.DATABASE_URL = runtime;
+      if (direct === undefined) delete process.env.DIRECT_DATABASE_URL;
+      else process.env.DIRECT_DATABASE_URL = direct;
+      const { candidates } = buildCandidates();
+      expect(candidates.length).toBeGreaterThan(0);
+      for (const c of candidates) {
+        const url = new URL(c.url);
+        expect(/-pooler\./.test(url.hostname)).toBe(false);
+        expect(url.searchParams.get('pgbouncer')).toBe(null);
+      }
+    }
+    // THE fail-safe shape: a pgbouncer=true runtime URL with no -pooler
+    // marker to strip and no DIRECT_DATABASE_URL yields ZERO candidates —
+    // the script then refuses to migrate at all (exit 1 with the pooler
+    // refusal diagnostics) rather than migrating unprotected.
+    process.env.DATABASE_URL = 'postgresql://u:p@plain.example/db?pgbouncer=true';
+    delete process.env.DIRECT_DATABASE_URL;
+    expect(buildCandidates().candidates).toHaveLength(0);
+  });
+});
 
 describe('withMigrateLock — the advisory-lock contract', () => {
   it('holds exactly one granted advisory lock for the body duration, then releases it', async () => {

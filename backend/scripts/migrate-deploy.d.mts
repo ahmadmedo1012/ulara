@@ -36,3 +36,14 @@ export declare function withMigrateLock(
   fn: () => Promise<unknown> | unknown,
   opts?: { lockTimeoutSeconds?: number; txTimeoutMs?: number },
 ): Promise<unknown>;
+
+/** The DIRECT-ONLY migration candidate list built from the ambient
+ * DATABASE_URL / DIRECT_DATABASE_URL (env is read at call time).
+ * A pooler-looking DIRECT_DATABASE_URL is refused (skipped), a
+ * `-pooler` runtime URL contributes its stripped direct twin, and an
+ * already-direct runtime URL is used as-is. NEVER a pooler fallback. */
+export declare function buildCandidates(): {
+  runtimeUrl: string;
+  candidates: Array<{ url: string; label: string }>;
+  runtimeIsPooled: boolean;
+};
