@@ -590,12 +590,6 @@
     border: 1px solid var(--rule);
     cursor: pointer;
     white-space: nowrap;
-  }
-  /* r294 (polish v6+v8+v13+v15 fold): the pill interaction truth —
-     the v15 overrides-layer transition beat every earlier copy; the
-     v13 4-prop group owned .tab; v6's press-snap duration tweak
-     survives inside the :active states. All polish copies deleted. */
-  .pill {
     transition:
       background var(--motion-duration-short) var(--ease),
       color var(--motion-duration-short) var(--ease),
@@ -604,36 +598,24 @@
       box-shadow var(--motion-duration-medium) var(--ease);
   }
   .pill.on {
+    background: var(--accent);
+    color: var(--accent-fg);
+    border-color: var(--accent);
     /* soft accent selection halo — interaction state, not elevation */
     box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 16%, transparent);
   }
   @media (hover: hover) and (pointer: fine) {
-    .pill:hover { transform: translateY(var(--hover-lift)); }
+    .pill:hover {
+      transform: translateY(var(--hover-lift));
+      color: var(--text);
+      border-color: var(--border-strong);
+      background: var(--surface-2);
+    }
   }
   .pill:active:not(:disabled) { transform: scale(var(--press-scale)); }
   .pill:active:not(.on) {
     /* v6 press-snap: the press hop rides the micro duration */
     transition-duration: var(--motion-duration-micro);
-  }
-  .tab {
-    /* R329 (gate:clean): the transition seat is polish.css's .tab rule
-       (color+background) — this components-layer list was inert. */
-  }
-  /* R319 (C2-G2 · §C3): the .tab.on soft accent selection halo is
-     RETIRED (the old `box-shadow: 0 0 0 4px accent 14%` wash) — the
-     active state is the 2px hairline underline alone (::after below:
-     ink on light, accent on dark — no pill, no wash, the reference tab
-     grammar). */
-  .tab:active {
-    transform: scale(0.96);
-  }
-  @media (hover: hover) and (pointer: fine) {
-    .pill:hover { color: var(--text); border-color: var(--border-strong); background: var(--surface-2); }
-  }
-  .pill.on {
-    background: var(--accent);
-    color: var(--accent-fg);
-    border-color: var(--accent);
   }
   /* (2026: the selected pill unifies on the royal signal in BOTH
      themes — light rode the ink slab while dark rode the accent; the
@@ -1399,29 +1381,24 @@
      unwrapped layout (footer stays pinned above the fold). */
 
   /* ╔═══════════════════════════════════════════════════════════════╗
-     ║  STATES                                                        ║
+     ║  STATES & STATE family (v8 padding-breathe + v11 variants)     ║
      ╚═══════════════════════════════════════════════════════════════╝ */
   .state {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     text-align: center;
-    padding: var(--sp-9) var(--sp-6);
-    gap: var(--sp-2);
-  }
-
-  /* ╔═══════════════════════════════════════════════════════════════╗
-     ║  STATE family — consolidated here since r152f                  ║
-     ║  (v8 padding-breathe + v11 variants + v21 loading skeletons;   ║
-     ║  order preserved so the computed cascade is byte-identical)    ║
-     ╚═══════════════════════════════════════════════════════════════╝ */
-  /* ── Empty states — softer + breathing ──────────────────────── */
-  .state {
     padding-block: var(--sp-7);
+    padding-inline: var(--sp-6);
+    gap: var(--sp-2);
     /* r304 fold (ex «final-visual-system»): boxed states (the banner
        variants and any well-backed instance) take the r-lg container
        corner — same geometry family as tables and RowLists. */
     border-radius: var(--r-lg);
   }
   .state-icon {
+    inline-size: 56px; block-size: 56px;
+    border-radius: var(--r-xl);
+    background: var(--c-grey-bg); color: var(--c-grey-deep);
+    display: inline-flex; align-items: center; justify-content: center;
     transition: transform var(--motion-duration-reveal) var(--ease-out);
   }
   @media (hover: hover) and (pointer: fine) {
@@ -1472,8 +1449,6 @@
      ║  the page hasn't booted yet), don't just spin — also show a   ║
      ║  faint skeleton block so the layout doesn't feel broken.      ║
      ╚═══════════════════════════════════════════════════════════════╝ */
-
-  .state-icon {
     inline-size: 56px; block-size: 56px;
     border-radius: var(--r-xl);
     background: var(--c-grey-bg); color: var(--c-grey-deep);

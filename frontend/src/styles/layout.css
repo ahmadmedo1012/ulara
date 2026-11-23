@@ -655,10 +655,13 @@
     transition-duration: var(--motion-duration-micro);
   }
   @media (max-width: 920px) {
-    .topbar-mobile-toggle { display: inline-flex; }
-    /* 4-A2 P2-6: 44px touch floor — min-* grows the hit area over the
-       38px visual box regardless of source/later-layer width writes. */
-    .topbar-mobile-toggle { min-inline-size: 44px; min-block-size: 44px; }
+    .topbar-mobile-toggle {
+      display: inline-flex;
+      /* 4-A2 P2-6: 44px touch floor — min-* grows the hit area over the
+         38px visual box regardless of source/later-layer width writes. */
+      min-inline-size: 44px;
+      min-block-size: 44px;
+    }
   }
 
   /* Mobile-band search entry point (4-A2 P1-3): opens the command
@@ -744,7 +747,6 @@
   @media (max-width: 920px) {
     .topbar { grid-template-columns: auto 1fr auto; }
     .topbar-scope { display: none; }
-    .topbar-title { font-size: var(--fs-body); }
     /* Real truncation (4-A10 P2): .topbar-title is a flex row on
        desktop (title + scope chips), but text-overflow never applies
        to a flex container — on phones the two-word page names just
@@ -752,6 +754,7 @@
        band, so the flex row buys nothing: become a block so the
        ellipsis actually renders. */
     .topbar-title {
+      font-size: var(--fs-body);
       display: block;
       overflow: hidden;
       text-overflow: ellipsis;

@@ -120,6 +120,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--sp-2);
+  min-block-size: 36px;
   padding: 0 var(--sp-3);
   border-radius: var(--r-md);
   background: var(--surface-2);
@@ -192,7 +193,6 @@
    next to the 36px faculty select. Size the PILL — the wrapper owns
    the surface — and let the bare input fill it (0,2,0 out-specifies
    the polish reset's 0,1,1 across the same layer). */
-.admin-students-search { min-block-size: 36px; }
 .admin-students-search .admin-students-input {
   align-self: stretch;
   padding-inline: 0;
@@ -276,7 +276,6 @@
   color: var(--text);
 }
 .govx-group-count {
-  font-size: var(--fs-xxs);
   color: var(--text-muted);
   /* 13px Arabic floor (1A): the metadata line never drops below the
      floor even though fs-xxs is its nominal step. */
