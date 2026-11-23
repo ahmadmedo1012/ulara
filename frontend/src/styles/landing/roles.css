@@ -66,7 +66,12 @@
   min-block-size: 98.45vh;
 }
 .rl-media { grid-area: media; position: relative; overflow: hidden; }
-.rl-titlecol { grid-area: title; position: relative; min-inline-size: 0; }
+.rl-titlecol {
+  grid-area: title;
+  position: relative;
+  min-inline-size: 0;
+  padding-block-start: 3.2rem;
+}
 .rl-contentcol { grid-area: content; min-inline-size: 0; }
 
 /* the center hairline: a real 1px element on the pane's inner edge */
@@ -116,7 +121,10 @@
 }
 
 /* ── the title column ── */
-.rl-labelbox { margin: 0; }
+.rl-labelbox {
+  margin: 0;
+  margin-block-end: 1.5rem;
+}
 .rl-label {
   font-size: 1.4rem;
   line-height: 1.96rem;
@@ -286,15 +294,20 @@
   inset-inline: 0;
   block-size: 1px;
   pointer-events: none;
+  transition: opacity 0.4s ease;
 }
 /* the frozen census: the rows' bottom + unfold rules (rule1/rule2) read
    TRANSPARENT at every bp — only the open row's top rule (rule-t) carries
    the construction hairline #B3B3AF. The boxes stay real (h=1, full
    inline size) exactly as the spec records them. */
-.rl-row-rule-o, .rl-row-rule-b { background: transparent; }
-.rl-row-rule-t { background: var(--rule-strong); }
-.rl-row-rule-b, .rl-row-rule-o { inset-block-end: 0; }
-.rl-row-rule-t { inset-block-start: 0; }
+.rl-row-rule-o, .rl-row-rule-b {
+  background: transparent;
+  inset-block-end: 0;
+}
+.rl-row-rule-t {
+  background: var(--rule-strong);
+  inset-block-start: 0;
+}
 .rl-row-zero {
   position: absolute;
   inline-size: 0;
@@ -308,8 +321,6 @@
    census's 3 lines (160/120/85 tall); the h2end→accordion gap is
    carried by the titlecol's block-end padding (134/191.5/264px at
    1920/1440/1024 — the column ends where the accordion starts) */
-.rl-titlecol { padding-block-start: 3.2rem; }
-.rl-labelbox { margin-block-end: 1.5rem; }
 @media (min-width: 992px) {
   .rl-labelbox, .rl-h2box { inline-size: 64%; }
   .rl-titlecol { padding-block-end: 44.58rem; }
@@ -448,8 +459,7 @@
    two lh assertions per bp are the accepted, documented residual. */
 
 /* the row rules' settle: the spec records a 0.4s ease transition on the
-   open row's rules (the accordion's unfold) — carried verbatim */
-.rl-row-rule { transition: opacity 0.4s ease; }
+   open row's rules (the accordion's unfold) — carried in .rl-row-rule */
 
 /* ── R339 T-11b — the row rules' scroll-reveal WIDEN ─────────────────
    The frozen census (T-11A-TWEEN.md, home-usecase-wrap): 16 width
@@ -588,9 +598,6 @@
 }
 
 /* the open row's accent ink bar — the keyboard/click focus seat */
-.rl-row {
-  position: relative;
-}
 
 .rl-row::before {
   content: '';
