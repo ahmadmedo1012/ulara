@@ -10,6 +10,7 @@ import { validate } from '../validate.js';
 import { createRouteLimiter } from '../middleware/rateLimit.js';
 import { canTransitionStatus, screenshotOk, type FeedbackStatus } from '../../modules/feedback/core.js';
 import { paginationSchema, buildMeta } from '../../lib/pagination.js';
+import { resolveCallerInstitutionScope, institutionContextRequiredError } from '../../lib/profile-scoping.js';
 
 /**
  * r323 B3.6 — the pilot feedback loop.
@@ -52,9 +53,28 @@ router.post(
   async (req, res, next) => {
     try {
       const body = req.body as z.infer<typeof createBody>;
+      // r352 hardening #3 (r342 t14): stamp the submitter's DB-verified
+      // institution — the token's inst claim is only metadata, so it is
+      // confirmed against an ACTIVE membership before it lands in the
+      // row. A contextless token (or an unverified claim) files a
+      // platform-scope row (NULL) — visible to the OWNER inbox only.
+      let institutionId: string | null = null;
+      if (req.user!.institutionId) {
+        const membership = await prisma.membership.findFirst({
+          where: {
+            userId: req.user!.id,
+            institutionId: req.user!.institutionId,
+            isActive: true,
+            institution: { status: 'ACTIVE' },
+          },
+          select: { id: true },
+        });
+        institutionId = membership ? req.user!.institutionId : null;
+      }
       const created = await prisma.pilotFeedback.create({
         data: {
           userId: req.user!.id,
+          institutionId,
           kind: body.kind,
           role: req.user!.role,
           route: body.route ?? null,
@@ -81,7 +101,22 @@ router.get(
       const page = Number(req.query.page ?? 1);
       const limit = Math.min(Number(req.query.limit ?? 20), 50);
       const status = typeof req.query.status === 'string' ? req.query.status : null;
-      const where = status && ['open', 'triage', 'fixed', 'dismissed'].includes(status) ? { status } : {};
+      // r352 hardening #3 (r342 t14): the institutional inbox is scoped —
+      // an ADMIN/QUALITY caller MUST hold a DB-verified institution
+      // context (403 without one) and sees ONLY their institution's rows;
+      // the platform OWNER keeps the cross-tenant view (the platform-scope
+      // NULL rows included — they have no institution to belong to).
+      const callerInstitution =
+        req.user!.role === Role.ADMIN || req.user!.role === Role.QUALITY
+          ? await resolveCallerInstitutionScope(req.user!.id, req.user!.institutionId)
+          : null;
+      if ((req.user!.role === Role.ADMIN || req.user!.role === Role.QUALITY) && !callerInstitution) {
+        throw institutionContextRequiredError();
+      }
+      const where = {
+        ...(status && ['open', 'triage', 'fixed', 'dismissed'].includes(status) ? { status } : {}),
+        ...(callerInstitution ? { institutionId: callerInstitution } : {}),
+      };
       const [rows, total] = await Promise.all([
         prisma.pilotFeedback.findMany({
           where,
@@ -108,8 +143,26 @@ router.patch(
   validate(patchBody),
   async (req, res, next) => {
     try {
-      const row = await prisma.pilotFeedback.findUnique({ where: { id: req.params.id! }, select: { status: true } });
-      if (!row) throw AppError.notFound('التقرير غير موجود');
+      // r352 hardening #3: the status grammar runs on the caller's OWN
+      // rows — an institutional ADMIN/QUALITY may not touch another
+      // institution's (or the platform-scope) feedback; the platform
+      // OWNER governs all of it. Foreign ids fail closed as 404 (never
+      // leak existence).
+      const callerInstitution =
+        req.user!.role === Role.ADMIN || req.user!.role === Role.QUALITY
+          ? await resolveCallerInstitutionScope(req.user!.id, req.user!.institutionId)
+          : null;
+      if ((req.user!.role === Role.ADMIN || req.user!.role === Role.QUALITY) && !callerInstitution) {
+        throw institutionContextRequiredError();
+      }
+      const row = await prisma.pilotFeedback.findUnique({
+        where: { id: req.params.id! },
+        select: { status: true, institutionId: true },
+      });
+      if (
+        !row ||
+        (callerInstitution ? row.institutionId !== callerInstitution : false)
+      ) throw AppError.notFound('التقرير غير موجود');
       if (!canTransitionStatus(row.status as FeedbackStatus, (req.body as z.infer<typeof patchBody>).status)) {
         throw AppError.conflict('لا يمكن الانتقال إلى هذه الحالة من الحالة الحالية');
       }

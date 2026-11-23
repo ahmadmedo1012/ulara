@@ -21,6 +21,7 @@ import {
 } from '../../lib/storage.js';
 import { MAX_PRESIGN_EXPIRES_SEC } from '../../lib/storage-presign.js';
 import { RUNTIME_PDF_MAX_BYTES, isVercelRuntime } from '../../lib/pdf-limits.js';
+import { assertOfferingAccess } from '../../lib/permissions.js';
 
 const router = Router();
 
@@ -850,9 +851,17 @@ router.post('/uploads/complete', uploadPresignLimiter, requireRole(Role.TEACHER,
 
 /**
  * GET /lectures/:filename — the lecture video serving route.
- * Any authenticated user (course-level visibility stays enforced where it
- * exists today — the same stance the platform's public video URLs took;
- * the route exists so pilot uploads survive the ephemeral disk).
+ * r342 t14 (lecture-video serving gate — closed 2026-11-23): the
+ * stream rides the SAME course-level access matrix as every other
+ * offering content (assertOfferingAccess: ADMIN/OWNER oversight, the
+ * teacher who teaches the offering, actively-enrolled STUDENTs,
+ * QUALITY read-only oversight). Before this gate ANY authenticated
+ * user of ANY institution could stream ANY lecture whose URL they
+ * learned — an unguessable key is not an access control. The lecture
+ * row is resolved by the stored videoUrl (this route's serving path):
+ * a storage object with no owning Lecture row is not streamable at
+ * all — an upload becomes servable exactly when it is attached to an
+ * offering.
  *  - s3 driver → 302 to a 10-minute presigned GET (the browser then
  *    streams WITH range support straight from the store).
  *  - local/postgres → streamed through the backend, single-range aware
@@ -863,6 +872,13 @@ router.get('/lectures/:filename', async (req, res, next) => {
   try {
     const filename = req.params.filename!;
     if (!isServableLectureFile(filename)) throw AppError.badRequest('اسم الملف غير صالح');
+    const servingPath = lectureFilenameToServingPath(filename);
+    const lecture = await prisma.lecture.findFirst({
+      where: { videoUrl: servingPath },
+      select: { offeringId: true },
+    });
+    if (!lecture) throw AppError.notFound(FILE_NOT_FOUND_MESSAGE);
+    await assertOfferingAccess(lecture.offeringId, req.user!.id, req.user!.role);
     const key = buildStorageKey('lectures', filename);
     const storage = getStorage();
 
