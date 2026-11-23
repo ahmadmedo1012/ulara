@@ -947,29 +947,6 @@
      -sub, -arrow, -empty-title, -empty-hint, -empty-tips, -tip-pill,
      -footer) were deleted outright. When v21 migrates home (r151-m3)
      it becomes a pure move.) */
-  .search-dropdown {
-    position: absolute;
-    inset-block-start: calc(100% + var(--sp-1-5)); /* r153h: 6px → --sp-1-5 */
-    inset-inline-start: 0; inset-inline-end: 0;
-    background: var(--surface);
-    max-block-size: 480px;
-    z-index: var(--z-popover);
-    padding: var(--sp-2);
-  }
-  /* R313 (WP-F · D16): the overlay is a solid sheet on the hairline —
-     no shadow, no gradient, radius 0 (the presentation re-spec below
-     keeps its border + flat surface). */
-  .search-section-label {
-    margin-block-end: var(--sp-1);
-  }
-  .search-row {
-    border-radius: var(--r-sm);
-  }
-  .search-row-icon {
-    background: var(--c-grey-bg);
-    color: var(--c-grey-deep);
-  }
-  .search-empty { display: flex; flex-direction: column; gap: var(--sp-2); align-items: center; }
   .search-loading, .search-shimmer { align-items: center; justify-content: center; padding: var(--sp-5); color: var(--text-muted); font-size: var(--fs-sm); }
 
   /* ╔═══════════════════════════════════════════════════════════════╗
@@ -983,6 +960,13 @@
      ║  SEARCH DROPDOWN — richer presentation                         ║
      ╚═══════════════════════════════════════════════════════════════╝ */
   .search-dropdown {
+    position: absolute;
+    inset-block-start: calc(100% + var(--sp-1-5)); /* r153h: 6px → --sp-1-5 */
+    inset-inline-start: 0; inset-inline-end: 0;
+    background: var(--surface);
+    max-block-size: 480px;
+    z-index: var(--z-popover);
+    padding: var(--sp-2);
     border: 1px solid var(--rule);
     border-radius: var(--r-xs);
     overflow: hidden;
@@ -1003,6 +987,7 @@
   }
   .search-section-label {
     padding: var(--sp-2) var(--sp-4);
+    margin-block-end: var(--sp-1);
     font-size: var(--fs-xxs);
     /* 21-c ruling #2: the section labels are Arabic («مقررات»، «محاضرات»…)
        — uppercase is a Latin-only concept here and 0.12em tracking
@@ -1024,6 +1009,7 @@
     inline-size: 100%;
     padding: var(--sp-3) var(--sp-4);
     border: none;
+    border-radius: var(--r-sm);
     /* R319 (c1-A · B1): the row joins the paired-state contract —
        hover/selected flip --_bg and --_fg together (base fg is the
        theme ink; the surface step never strands it). */
@@ -1105,6 +1091,8 @@
     inline-size: 36px;
     block-size: 36px;
     border-radius: var(--r-md);
+    background: var(--c-grey-bg);
+    color: var(--c-grey-deep);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1195,6 +1183,10 @@
      ║  SEARCH EMPTY — bigger, more confident                         ║
      ╚═══════════════════════════════════════════════════════════════╝ */
   .search-empty {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    align-items: center;
     padding: var(--sp-6) var(--sp-4);
     text-align: center;
   }

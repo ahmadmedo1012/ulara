@@ -46,6 +46,10 @@
   --hro-fade-dur: 1s;        /* img/frame/deco fades      */
   --hro-rise: 3.2rem;        /* block/work-card rise      */
   --hro-rise-dur: 1s;        /* rise duration             */
+  --hro-ink-72: var(--grid-ink-72); /* r339 T-18 gate → R342-02: the tokens' own rgba(40,40,40,.72) literal — byte-equal in light AND rgb()-noted */
+  --hro-flare: var(--accent);           /* r339 T-18 gate: the measured secondary flare rgb(250,54,0) IS --accent */
+  --hro-paper: rgb(255, 255, 255); /* color-gate: allow — the measured deco caption ink */
+  --hro-d1: clamp(30px, 6.6vw, 118px);
 }
 
 /* ══ [1] THE BAND — grid rows [content auto | art 1fr | work auto]
@@ -921,9 +925,7 @@
 }
 
 .landing.intro-done .hro-stage .bp-drawable {
-  transition:
-    stroke-dashoffset 0.4s ease,
-    fill-opacity 0.4s ease;
+  transition: stroke-dashoffset 0.4s ease;
   stroke-dashoffset: 0;
   fill-opacity: 1;
 }
@@ -1059,6 +1061,8 @@
   .hro-content {
     grid-template-columns: minmax(0, 1fr);
     padding-inline: 0;
+    padding-block-start: 64px; /* the 56px header + breathing */
+    margin-inline: 1.6rem 1rem;
     /* the band margins ride the r351 P1 seat below (the r339 14px
        gutter seat retired with the leading-headline composition) */
   }
@@ -1091,11 +1095,6 @@
   .hro-actions {
     margin-block-start: var(--sp-6); /* the brief's ladder gap under the lead */
     row-gap: var(--sp-4);
-  }
-
-  .hro-content {
-    padding-block-start: 64px; /* the 56px header + breathing */
-    margin-inline: 1.6rem 1rem;
   }
 
   .hro-actions .hro-cta {
@@ -1196,12 +1195,8 @@
    MEASURED parameter from the frozen reference spec
    (the frozen r335 reference captures: home-hero-wrap.*.json) reproduced in
    Ulara's own construction — never pasted reference styling. Scoped
-   vars carry the measured inks per the r338 wave-9 token ruling. ══ */
-.hro {
-  --hro-ink-72: var(--grid-ink-72); /* r339 T-18 gate → R342-02: the tokens' own rgba(40,40,40,.72) literal — byte-equal in light AND rgb()-noted (the color-mix arm computed to color(srgb …), which the instrument's parser cannot read — the honest token twin of the frozen literal) */
-  --hro-flare: var(--accent);           /* r339 T-18 gate: the measured secondary flare rgb(250,54,0) IS --accent */
-  --hro-paper: rgb(255, 255, 255); /* color-gate: allow — the measured deco caption ink (frozen white; every theme-flipping label token would darken it at night, and no stable-white token exists — documented with the same convention as the dark ink arm below) */
-}
+   vars carry the measured inks per the r338 wave-9 token ruling
+   (declared in .hro above). ══ */
 
 /* R338 T-11d dark arm (T-14b --rl-soft-ink pattern) — the strip ink's
    night seat: the same 72% strength pointed at the dark ramp's own ink
@@ -1228,11 +1223,8 @@
 
 /* [T] the display title — r351 P1: the GIANT display rung (the
    reference's 7.2rem-class scale, section-scoped — the global --fs-d1
-   rung is never mutated). Arabic floor leading (1.24 — tight but above
+   rung is never mutated; --hro-d1 declared in .hro above). Arabic floor leading (1.24 — tight but above
    the mask's clipping floor; verified visually at every belt). */
-.hro {
-  --hro-d1: clamp(30px, 6.6vw, 118px);
-}
 section.fo-hero .hro-title.fo-hero-title { font-size: var(--hro-d1); line-height: 1.24; }
 @media (min-width: 768px) and (max-width: 1023px) {
   section.fo-hero .hro-title.fo-hero-title { font-size: clamp(38px, 7.2vw, 72px); }
@@ -1372,10 +1364,7 @@ section.fo-hero .hro-alt {
 
 /* [X] single-entry measured transitions — the reference's svg paths
    and links carry exactly one 0.4s/ease token (T-11b residual: the
-   2-entry list read as "0.4s/ease, ease") */
-.landing.intro-done .hro-stage .bp-drawable {
-  transition: stroke-dashoffset 0.4s ease;
-}
+   2-entry list read as "0.4s/ease, ease"; consolidated in .landing.intro-done above). */
 
 @media (prefers-reduced-motion: reduce) {
   .landing.intro-done .hro-stage .bp-drawable,

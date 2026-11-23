@@ -34,6 +34,10 @@
 
 /* ═══ the wrap: three same-box shells over the grid ═══ */
 .st-section {
+  /* the scrub clock's CSS default (JS writes the live ramp on the same property) */
+  --wr-p: 1;
+  /* the underlay's own gutter key — re-keyed per band with the cell's real padding */
+  --st-gutter-x: 15rem;
   /* R338 T-03g — the soft 72%-ink as a section-scoped var so the dark arm
      can carry a compliant ink (the light value stays byte-identical to the
      frozen reference measure; under [data-theme=dark] the rgba(40,40,40,.72)
@@ -74,12 +78,10 @@
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   grid-template-rows: auto auto;
 }
-.st-media { grid-area: media; }
-.st-stmt { grid-area: stmt; }
-.st-ticker { grid-area: ticker; }
 
 /* ═══ the media cell ═══ */
 .st-media {
+  grid-area: media;
   position: relative;
   overflow: hidden;
   min-inline-size: 0;
@@ -123,6 +125,7 @@
 
 /* ═══ the statement cell ═══ */
 .st-stmt {
+  grid-area: stmt;
   position: relative;
   min-inline-size: 0;
 }
@@ -139,6 +142,7 @@
 /* the title box: the spec's own margin cell — full padded width (the
    reference's line containers are full-width boxes, one per line) */
 .st-titlebox {
+  position: relative;
   inline-size: 100%;
   /* R338 T-03i — the measured titlebox→pill gap: the reference sits the pill
      3.2rem under the last line (1920: 35px · 1440: 27 · 1024: 19) */
@@ -264,6 +268,7 @@
 .st-pill-t {
   display: block;
   cursor: pointer;
+  transition: transform 0.48s cubic-bezier(0.625, 0.05, 0, 1);
 }
 .st-pill-t-in {
   display: block;
@@ -351,6 +356,7 @@
 
 /* ═══ the ticker cell ═══ */
 .st-ticker {
+  grid-area: ticker;
   position: relative;
 }
 .st-ticker-in {
@@ -687,10 +693,8 @@
 
 /* r338 T-03b: the reference roll token — the pill ink (intro.ctaspanin) and
    the label arrow ins (intro.labelarrowin/2) tween on the reference's own
-   0.48s cubic-bezier(0.625, 0.05, 0, 1) curve (transform, hover roll). */
-.st-pill-t {
-  transition: transform 0.48s cubic-bezier(0.625, 0.05, 0, 1);
-}
+   0.48s cubic-bezier(0.625, 0.05, 0, 1) curve (transform, hover roll;
+   transition consolidated in .st-pill-t above). */
 
 /* ═══════════════════════════════════════════════════════════════════
    R345-ED (feat/home-editorial-scenes) — the editorial drafting layer.
@@ -710,15 +714,6 @@
    mover to its authored end state. No keyframes: dash offsets and
    the ink rule are pure calc over the inherited var.
    ═══════════════════════════════════════════════════════════════════ */
-
-.st-section {
-  /* the scrub clock's CSS default (JS writes the live ramp on the same
-     property; no-JS = the settled sheet) */
-  --wr-p: 1;
-  /* the underlay's own gutter key — re-keyed per band with the cell's
-     real padding (15rem desktop · 2.4rem tablet · 1.7rem phone) */
-  --st-gutter-x: 15rem;
-}
 
 /* ── the hero handoff splice ─────────────────────────────────────── */
 .st-splice {
@@ -916,10 +911,6 @@
    progress riding it (::after, width = --wr-p). Pure CSS — the pair
    inherits the titlebox's full width, so it stays glued to the title
    at every band without a single geometry hook. */
-.st-titlebox {
-  position: relative;
-}
-
 .st-titlebox::before {
   content: '';
   display: block;

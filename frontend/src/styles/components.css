@@ -2352,11 +2352,6 @@
      same-value bang here was belt-and-braces. .teacher-row keeps its
      own 48px min from wave 3-c.) */
 
-  /* ── Reduced-motion off-switches (guardrail #6). ───────────────── */
-  @media (prefers-reduced-motion: reduce) {
-  }
-}
-
 /* ╔═══════════════════════════════════════════════════════════════╗
    ║  wave 5-a: TEACHER PAGES (audit 0-e + wave-5 mission)         ║
    ║  Page-level polish for the seven teacher surfaces: authored   ║
