@@ -566,7 +566,7 @@ test.describe('R349 — the plate label ink clears the sheet furniture (the ink-
 });
 
 test.describe('R349 — the app sheet QR decodes (the honest-extension belt)', () => {
-  test('the QR image loads with real pixels on /app', async ({ page }) => {
+  test('the QR image loads as a true vector on /app', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 1000 });
     await page.goto('/app');
     await settleReveals(page);
@@ -585,11 +585,14 @@ test.describe('R349 — the app sheet QR decodes (the honest-extension belt)', (
 
     expect(qr.missing, 'the QR seat must exist on the app sheet').toBe(false);
     if (qr.missing) return;
-    /* the extension is honest: a PNG asset under a PNG URL decodes —
-     * the retired .svg-with-PNG-bytes always broke (naturalWidth 0) */
-    expect(qr.src?.endsWith('.png'), `the QR must load its true PNG identity (got ${qr.src})`).toBe(true);
+    /* R355: the retired asset shipped PNG bytes — first mislabeled .svg
+     * (broken decode), then honestly renamed .png by r349 — but its
+     * module matrix still encoded a stale pre-rebrand deployment URL.
+     * The code is now a TRUE single-path SVG encoding this page's
+     * canonical production URL; the belt pins the vector identity. */
+    expect(qr.src?.endsWith('.svg'), `the QR must load its true vector identity (got ${qr.src})`).toBe(true);
     expect(qr.complete, 'the QR image must finish loading').toBe(true);
-    expect(qr.naturalWidth, 'the QR must decode to real pixels (not a broken icon)').toBeGreaterThanOrEqual(300);
+    expect(qr.naturalWidth, 'the QR must carry intrinsic dimensions (not a broken icon)').toBeGreaterThanOrEqual(300);
     expect(qr.naturalHeight).toBeGreaterThanOrEqual(300);
   });
 });
