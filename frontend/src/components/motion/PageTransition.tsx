@@ -20,17 +20,29 @@ type PageTransitionProps = {
  * matched anything because no element ever set
  * `view-transition-name: route`).
  *
- * The ONE mechanism that survives is the keyed remount: this component
- * keys its inner wrapper on the pathname, so `.content-inner` (and the
- * page tree under it) remounts on every route change. Since r162 (R3)
- * the `page-enter` fade targets `.content-inner > *` (polish.css r162
- * section) — the content child — so it fires on every content MOUNT:
- * the keyed route remount AND the first-visit Suspense resolve (the
- * PageSkeleton fallback and the resolved page that replaces it enter
- * with the same 160ms fade). Purely declarative: no JS timing, no
- * effect races, interruptible by nature, and scroll restoration
- * (which scrolls the persistent `.content` container, not this
- * subtree) is unaffected.
+ * The TWO mechanisms that survive:
+ *
+ *  1. the keyed remount — this component keys its inner wrapper on
+ *     the pathname, so `.content-inner` (and the page tree under it)
+ *     remounts on every route change. Since r162 (R3) the
+ *     `page-enter` fade targets `.content-inner > *` (polish.css) —
+ *     the content child — so it fires on every content MOUNT: the
+ *     keyed route remount AND the first-visit Suspense resolve.
+ *
+ *  2. the r351 paper strips (r353 repair) — motion.css's
+ *     `.page-transition-inner::before/::after` fixed, transform-only,
+ *     pointer-transparent strips fly apart from the centreline
+ *     (0.7s power2.out) on EVERY remount of this keyed node. r351
+ *     had them on the persistent outer wrapper, so they ran once and
+ *     then — `fill-mode: backwards` holding no end state — sat
+ *     covering the viewport forever: the app rendered blank behind an
+ *     opaque layer while staying DOM-clickable. They now live ON the
+ *     keyed node (re-created per route change) with `fill-mode: both`
+ *     (off-screen at rest) — see the r353 block in motion.css.
+ *
+ * Purely declarative: no JS timing, no effect races, interruptible by
+ * nature, and scroll restoration (which scrolls the persistent
+ * `.content` container, not this subtree) is unaffected.
  *
  * The wrapper div stays mounted across routes (stable data-route-key
  * contract) — only the inner node remounts.

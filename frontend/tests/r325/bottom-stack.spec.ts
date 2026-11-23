@@ -347,7 +347,13 @@ test.describe('Y6 — the bottom stack (consent · toast · FAB)', () => {
           await dismissToast(page);
 
           const vh = await page.evaluate(() => window.innerHeight);
-          const seat = vp.width <= 640 ? 72 : 18; // the authored toast seats
+          /* r353 re-pin: the belt's 72/18 seats were the pre-r299 numbers.
+           * notifications.css r299 authored 72+8 = 80px at ≤920 (the
+           * re-skinned dock measures ~78px @390 — 72 sat 2px inside its
+           * top border) and --sp-5 = 20px above it; the spec never
+           * followed, so the belt failed on main from the day the seat
+           * moved. Pinned to the CURRENT authored seats. */
+          const seat = vp.width <= 920 ? 80 : 20; // the authored toast seats (r299: 72+8 clears the ~78px dock; desktop --sp-5)
           const bottom = await page
             .locator('.toast-stack')
             .evaluate((el) => el.getBoundingClientRect().bottom);
@@ -360,7 +366,7 @@ test.describe('Y6 — the bottom stack (consent · toast · FAB)', () => {
   test.describe('the 200ms seat ease is pinned', () => {
     test.use({ viewport: { width: 1440, height: 900 }, e2eRole: 'STUDENT' });
 
-    test('every stack layer transitions its inset-block-end in 200ms', async ({ page }) => {
+    test('every stack layer eases its seat offset in 200ms (the Y6 translate family)', async ({ page }) => {
       await page.goto('/student/dashboard');
       // settle the route before reading computed styles — the shell
       // (and its FAB) must be mounted, and the route needs the seeded
@@ -374,7 +380,15 @@ test.describe('Y6 — the bottom stack (consent · toast · FAB)', () => {
 
       await openToast(page);
       const stack = await read('.toast-stack');
-      expect(stack.property).toContain('inset-block-end');
+      /* r353 re-pin: Y6 (notifications.css) re-keyed the seat ease off
+       * inset-block-end — a LAYOUT-property transition the motion
+       * token gate bans (the P2.2 gate repair caught it red) — onto the
+       * composite `translate` family: same --t-fast 200ms, same
+       * geometry, gate-legal. The belt still pinned the pre-Y6 spelling
+       * and failed on main from the day the merge re-keyed it. The pin
+       * now names the CURRENT contract: the seat eases on `translate`
+       * at 0.2s. */
+      expect(stack.property).toContain('translate');
       expect(stack.duration.split(',').map((d) => d.trim())).toContain('0.2s');
     });
   });
