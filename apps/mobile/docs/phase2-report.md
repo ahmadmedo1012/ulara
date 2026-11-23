@@ -223,18 +223,36 @@ no-re-fire).
 - Training evaluation keeps the 0–100 score gate (server schema
   agrees); mutations invalidate the whole ['inst'] family.
 
-## 10. Gates
+## 10. Gates — the live Actions runs on the Phase-2 HEAD `7c928b6`
 
-- `apps/mobile`: `tsc --noEmit` clean · `expo lint` 0 errors (16
-  warnings, all pre-existing in files outside this round's diff) ·
-  jest **52 suites / 1434 tests green** (Phase-1 baseline 1388 → +46
-  behavioral tests) · `contract-check` no drift.
-- Repo: size-gate GREEN (§1). `frontend/**` untouched — the
-  PageTransition pixel-proof + reduced-motion suite from Phase 1
-  ride as committed (verified: zero frontend changes in this round's
-  diff).
-- Android/iOS device runs: **Not run** (no emulator/device in the
-  sandbox) — stated as such, never as passed.
+| Workflow | Run | Result |
+|---|---|---|
+| Size gate | [45105617820](https://github.com/ahmadmedo1012/ulara/actions/runs/45105617820) | **success** — file ≤500KB · docs 38,807KB ≤ 40MB · push adds 3,150KB ≤ 5MB (the Phase-1 RED closed; limits untouched) |
+| Mobile (fast lane, dispatched on the branch) | [45106878185](https://github.com/ahmadmedo1012/ulara/actions/runs/45106878185) | **success** — Mobile gates (typecheck · lint · contract · export); native lanes skipped by the fast-lane design |
+| deadcode | [45105617949](https://github.com/ahmadmedo1012/ulara/actions/runs/45105617949) | success |
+| CI | [45105617817](https://github.com/ahmadmedo1012/ulara/actions/runs/45105617817) | every job green EXCEPT Zero-trace — see below |
+
+CI job-by-job: Typecheck ✓ · Lint ✓ · Design gates ✓ · **E2E
+(hermetic browser journeys) ✓ — includes the Phase-1 r353
+route-transition pixel-proof (PageTransition intact, re-proven in
+CI)** · DB integration ✓ · Test (frontend) ✓ · Test (backend) ✓ ·
+Build ✓ · Surface drift ✓ · E2E iOS skipped (lane conditions).
+
+**Zero-trace fails identically on `main` (run set 45097200129) and on
+this branch — it flags a retired brand name inside r350-era git
+history commits (`Z User|z@container`), pre-existing and NOT touched
+by this branch; repairing it would require git history rewrite, out
+of every agent's lane.** Reported for the lead.
+
+Local (the same evidence, pre-push): `apps/mobile` tsc clean ·
+`expo lint` 0 errors (16 warnings, all pre-existing in files outside
+this round's diff) · jest **52 suites / 1434 tests green** (Phase-1
+baseline 1388 → +46 behavioral tests) · `contract-check` no drift ·
+repo size-gate GREEN vs `origin/main`.
+
+Android/iOS device runs: **Not run** (no emulator/device in the
+sandbox; the CI fast lane skips native jobs by design) — stated as
+such, never as passed.
 
 ## 11. What did NOT land (and the honest reasons)
 
