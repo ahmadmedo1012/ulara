@@ -66,6 +66,16 @@ interface RequestOptions {
   /** Auth-refresh retry is internal; guards one retry per request. */
   _isRetry?: boolean;
   _skipAuth?: boolean;
+  /**
+   * R353-2 §4 — paginated reads: return the WHOLE wire body
+   * `{ data: T[], meta }` instead of unwrapping `data`, so `meta`
+   * (total + totalPages) reaches the caller instead of being dropped
+   * at the envelope seam. Default false: the ~90 pre-existing screens
+   * keep the historical unwrap byte-for-byte (no blanket transport
+   * behavior change — the regression boundary is getPaged consumers
+   * only, all new).
+   */
+  paged?: boolean;
 }
 
 function buildUrl(path: string, query?: RequestOptions["query"]): string {
@@ -91,7 +101,7 @@ function extractRefreshCookie(res: Response): string | null {
   return fresh ? fresh[1] : null;
 }
 
-async function parseEnvelope<T>(res: Response): Promise<T> {
+async function parseEnvelope<T>(res: Response, keepPaged = false): Promise<T> {
   if (res.status === 204) return undefined as T;
   const text = await res.text();
   let parsed: unknown = null;
@@ -105,7 +115,7 @@ async function parseEnvelope<T>(res: Response): Promise<T> {
       throw new ApiError("BAD_JSON", "استجابة غير صالحة من الخادم", res.status, text.slice(0, 200));
     }
   }
-  const obj = parsed as { error?: { code?: string; message?: string; details?: unknown }; data?: unknown } | null;
+  const obj = parsed as { error?: { code?: string; message?: string; details?: unknown }; data?: unknown; meta?: unknown } | null;
   if (!res.ok) {
     const code = obj?.error?.code ?? (res.status === 401 ? "UNAUTHENTICATED" : "HTTP_ERROR");
     const message = obj?.error?.message ?? `فشل الطلب (رمز ${res.status})`;
@@ -117,6 +127,13 @@ async function parseEnvelope<T>(res: Response): Promise<T> {
   // screen reading `q.data?.field.sub` crashed with "reading 'sub' of
   // undefined" — the post-login white-screen class on real devices
   // (e.g. /me/resume legitimately returns { data: null } for fresh users).
+  //
+  // R353-2 §4 — `paged: true` keeps a `{ data, meta }` body WHOLE (meta is
+  // the pagination truth); key presence still decides, so `{ data: null }`
+  // resolves to null either way.
+  if (keepPaged && obj !== null && typeof obj === "object" && "data" in obj && "meta" in obj) {
+    return obj as T;
+  }
   if (obj !== null && typeof obj === "object" && "data" in obj) {
     return obj.data as T;
   }
@@ -194,7 +211,7 @@ export async function api<T>(path: string, opts: RequestOptions = {}): Promise<T
       authBridge?.onSessionExpired();
       throw new ApiError("UNAUTHENTICATED", "انتهت صلاحية الجلسة — سجّل الدخول من جديد", 401);
     }
-    return await parseEnvelope<T>(res);
+    return await parseEnvelope<T>(res, opts.paged ?? false);
   } catch (err) {
     if (err instanceof ApiError) throw err;
     if ((err as { name?: string })?.name === "AbortError") {
@@ -256,17 +273,34 @@ export const patch = <T>(path: string, body?: unknown) => api<T>(path, { method:
 export const put = <T>(path: string, body?: unknown) => api<T>(path, { method: "PUT", body });
 export const del = <T>(path: string, body?: unknown) => api<T>(path, { method: "DELETE", body });
 
-/** Paginated GET returning rows + meta. */
+/** R353-2 §4 — the paginated GET the institutional family rides: keeps
+ *  `{ data, meta }` whole (see getPage). */
+export const getPaged = <T>(path: string, query?: RequestOptions["query"]) =>
+  api<Paginated<T>>(path, { method: "GET", query, paged: true });
+
+/** Paginated GET returning rows + meta.
+ *  R353-2 §4 — the honest shape: `paged: true` preserves the wire's
+ *  `{ data, meta }` body, so meta.total/totalPages reach usePagedList
+ *  instead of the old FABRICATED `{ totalPages: 1 }` (the first-page
+ *  cap class — a paginated endpoint answered through the plain
+ *  unwrap looked like a one-page list forever). Non-paginated bodies
+ *  (bare arrays, `{ data: null }`) still normalize to rows + a
+ *  no-more-pages meta. */
 export async function getPage<T>(path: string, query?: RequestOptions["query"]): Promise<Paginated<T>> {
-  const direct = await api<{ data: T[]; meta: PageMeta }>(path, { method: "GET", query });
-  if (direct && Array.isArray((direct as { data?: T[] }).data ?? undefined) && (direct as { meta?: PageMeta }).meta) {
-    return direct as { data: T[]; meta: PageMeta };
+  const body = await api<{ data: T[]; meta: PageMeta }>(path, { method: "GET", query, paged: true });
+  if (
+    body !== null &&
+    typeof body === "object" &&
+    Array.isArray((body as { data?: unknown }).data) &&
+    (body as { meta?: unknown }).meta
+  ) {
+    return body as { data: T[]; meta: PageMeta };
   }
-  // Some endpoints return bare arrays without meta.
-  const rows = direct as unknown as T[];
+  // Some endpoints return bare arrays (or `{ data: null }`) with no meta.
+  const rows = Array.isArray(body) ? body : [];
   return {
-    data: Array.isArray(rows) ? rows : [],
-    meta: { page: 1, limit: 0, total: Array.isArray(rows) ? rows.length : 0, totalPages: 1 },
+    data: rows,
+    meta: { page: 1, limit: 0, total: rows.length, totalPages: 1 },
   };
 }
 

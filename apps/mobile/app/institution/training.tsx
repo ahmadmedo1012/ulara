@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { View } from "react-native";
+import { Screen } from "@/components/ui/screen";
 import { StackHeader } from "@/components/shell/AppTopBar";
+import { DataList, LedgerRow, makeRow } from "@/components/ui/data";
 import { T } from "@/components/ui/text";
 import { Badge } from "@/components/ui/surfaces";
-import { RowList, LedgerRow, StatLine } from "@/components/ui/data";
-import { SkeletonList, ErrorState, EmptyState } from "@/components/ui/states";
 import { ChipGroup, Field } from "@/components/ui/fields";
 import { Button } from "@/components/ui/pressables";
 import { toast } from "@/components/ui/toast";
@@ -12,7 +12,7 @@ import { usePalette } from "@/design/theme";
 import { sp } from "@/design/tokens";
 import { humanizeError } from "@/lib/errors";
 import { latn } from "@/lib/format";
-import { usePlacements, useMyCapabilities, useUpdatePlacement } from "@/features/institutional/queries";
+import { usePlacementsPaged, useMyCapabilities, useUpdatePlacement } from "@/features/institutional/queries";
 import type { TrainingPlacement } from "@/api/institutional";
 import { PLACEMENT_STATUS_LABELS, labelOf, toneOf } from "@/features/institutional/labels";
 
@@ -25,52 +25,11 @@ const STATUS_CHIPS = [
 ];
 
 /**
- * /institution/training — the training placements register (web
- * TrainingPage parity): each placement (learner · host · supervisor ·
- * window) with its evaluation state. The EVALUATION write (score +
- * summary on the placement record) is gated by the server's
- * PROGRAMS_MANAGE capability — the editor never renders without it.
+ * The placement row (the training register's expandable row). Rows
+ * with WRITE affordances re-render on `canEvaluate` changes — the
+ * DataList's extraData carries it.
  */
-export default function InstitutionTraining() {
-  const p = usePalette();
-  const [status, setStatus] = useState("");
-  const placements = usePlacements({ status: status || undefined, limit: 50 });
-  const caps = useMyCapabilities();
-  const canEvaluate = caps.data?.has("PROGRAMS_MANAGE") ?? false;
-
-  const rows = Array.isArray(placements.data) ? placements.data : placements.data?.data ?? [];
-
-  return (
-    <View style={{ flex: 1, backgroundColor: p.bg }}>
-      <StackHeader title="التدريب العملي" kicker="مواقع التدريب والتقييم" />
-      <View style={{ flex: 1, gap: sp[12], padding: sp[16] }}>
-        <ChipGroup options={STATUS_CHIPS} selectedId={status} onSelect={setStatus} />
-        {rows.length > 0 ? (
-          <StatLine
-            label="مواقع التدريب المعروضة"
-            value={`${rows.length}`}
-            hint={`${rows.filter((r) => r.status === "ACTIVE").length} جارٍ`}
-          />
-        ) : null}
-        {placements.isLoading ? (
-          <SkeletonList rows={6} />
-        ) : placements.isError ? (
-          <ErrorState message="تعذّر تحميل مواقع التدريب." onRetry={() => placements.refetch()} />
-        ) : rows.length === 0 ? (
-          <EmptyState title="لا مواقع تدريب بعد" message="سجل التدريب العملي فارغ لهذه المؤسسة." />
-        ) : (
-          <RowList>
-            {rows.map((row, i) => (
-              <PlacementRow key={row.id} row={row} last={i === rows.length - 1} canEvaluate={canEvaluate} />
-            ))}
-          </RowList>
-        )}
-      </View>
-    </View>
-  );
-}
-
-function PlacementRow({ row, last, canEvaluate }: { row: TrainingPlacement; last: boolean; canEvaluate: boolean }) {
+function PlacementRow({ row, canEvaluate }: { row: TrainingPlacement; canEvaluate: boolean }) {
   const [editing, setEditing] = useState(false);
   const [score, setScore] = useState(row.evaluationScore != null ? String(row.evaluationScore) : "");
   const [summary, setSummary] = useState(row.evaluationSummary ?? "");
@@ -96,14 +55,14 @@ function PlacementRow({ row, last, canEvaluate }: { row: TrainingPlacement; last
   };
 
   return (
-    <LedgerRow last={last}>
+    <LedgerRow style={{ backgroundColor: "transparent" }}>
       <View style={{ gap: sp[8] }}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: sp[10] }}>
           <View style={{ flex: 1, gap: 2 }}>
-            <T variant="body" weight="medium">{row.learnerProfile?.displayName ?? "متدرب غير مرتبط"}</T>
+            <T variant="body" weight="medium">{row.learnerProfile?.fullNameAr ?? "متدرب غير مرتبط"}</T>
             <T variant="xs" color="muted">
               {row.hostOrgUnit?.nameAr ?? row.externalHost ?? "موقع خارجي"}
-              {row.supervisor ? ` · بإشراف ${row.supervisor.displayName}` : ""}
+              {row.supervisorPerson ? ` · بإشراف ${row.supervisorPerson.fullNameAr}` : ""}
             </T>
             <T variant="xs" color="faint">
               {row.startsAt.slice(0, 10)} ← {row.endsAt ? row.endsAt.slice(0, 10) : "مستمر"}
@@ -153,5 +112,96 @@ function PlacementRow({ row, last, canEvaluate }: { row: TrainingPlacement; last
         ) : null}
       </View>
     </LedgerRow>
+  );
+}
+
+/** Plain rows ride the memo factory; the evaluation row keeps its own
+ *  component (per-row editor state). */
+const PlacementReadRow = makeRow<TrainingPlacement>(({ item }) => {
+  const p = usePalette();
+  return (
+    <LedgerRow style={{ backgroundColor: p.surface }}>
+      <View style={{ gap: sp[8] }}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: sp[10] }}>
+          <View style={{ flex: 1, gap: 2 }}>
+            <T variant="body" weight="medium">{item.learnerProfile?.fullNameAr ?? "متدرب غير مرتبط"}</T>
+            <T variant="xs" color="muted">
+              {item.hostOrgUnit?.nameAr ?? item.externalHost ?? "موقع خارجي"}
+              {item.supervisorPerson ? ` · بإشراف ${item.supervisorPerson.fullNameAr}` : ""}
+            </T>
+            <T variant="xs" color="faint">
+              {item.startsAt.slice(0, 10)} ← {item.endsAt ? item.endsAt.slice(0, 10) : "مستمر"}
+            </T>
+          </View>
+          <Badge label={labelOf(PLACEMENT_STATUS_LABELS, item.status)} tone={toneOf(item.status)} />
+        </View>
+        {item.evaluationScore != null || item.evaluationSummary ? (
+          <View style={{ gap: 2 }}>
+            {item.evaluationScore != null ? (
+              <T variant="sm" color="muted">التقييم: {latn(item.evaluationScore)} / 100</T>
+            ) : null}
+            {item.evaluationSummary ? (
+              <T variant="xs" color="faint" numberOfLines={3}>{item.evaluationSummary}</T>
+            ) : null}
+          </View>
+        ) : (
+          <T variant="xs" color="faint">بلا تقييم بعد.</T>
+        )}
+      </View>
+    </LedgerRow>
+  );
+});
+
+/**
+ * /institution/training — the training placements register (web
+ * TrainingPage parity): each placement (learner · host · supervisor ·
+ * window) with its evaluation state. The EVALUATION write (score +
+ * summary on the placement record) is gated by the server's
+ * PROGRAMS_MANAGE capability — the editor never renders without it.
+ * DataList + usePagedList — every page reachable.
+ */
+export default function InstitutionTraining() {
+  const [status, setStatus] = useState("");
+  const placements = usePlacementsPaged({ status: status || undefined });
+  const caps = useMyCapabilities();
+  const canEvaluate = caps.data?.has("PROGRAMS_MANAGE") ?? false;
+
+  const total = placements.meta?.total ?? placements.items.length;
+  const activeCount = placements.items.filter((r) => r.status === "ACTIVE").length;
+
+  return (
+    <Screen scroll={false} padded={false}>
+      <StackHeader title="التدريب العملي" kicker="مواقع التدريب والتقييم" />
+      <View style={{ paddingHorizontal: sp[16], paddingTop: sp[12], gap: sp[12] }}>
+        <ChipGroup options={STATUS_CHIPS} selectedId={status} onSelect={setStatus} />
+        <T variant="xs" color="faint">
+          {latn(placements.items.length)} معروضاً{total > placements.items.length ? ` من ${latn(total)} وفق سجل التدريب` : ""}
+          {` · ${latn(activeCount)} جارٍ`}
+        </T>
+      </View>
+      <View style={{ flex: 1, paddingTop: sp[8] }}>
+        <DataList
+          data={placements.items}
+          renderItem={({ item }) =>
+            canEvaluate ? <PlacementRow row={item} canEvaluate /> : <PlacementReadRow item={item} />
+          }
+          keyExtractor={(row) => row.id}
+          extraData={canEvaluate}
+          isLoading={placements.isLoading}
+          isError={placements.isError}
+          emptyTitle="لا مواقع تدريب بعد"
+          emptyMessage="سجل التدريب العملي فارغ لهذه المؤسسة."
+          onRetry={() => placements.refetch()}
+          refetch={placements.refetch}
+          isRefetching={placements.isRefetching}
+          onEndReached={placements.onEndReached}
+          isFetchingNextPage={placements.isFetchingNextPage}
+          hasNextPage={placements.hasNextPage}
+          loadMoreError={placements.loadMoreError}
+          onRetryLoadMore={placements.retryLoadMore}
+          contentPadding={{ horizontal: 16, bottom: 24 }}
+        />
+      </View>
+    </Screen>
   );
 }

@@ -1,9 +1,10 @@
 import { View } from "react-native";
 import { router } from "expo-router";
+import { Screen } from "@/components/ui/screen";
 import { StackHeader } from "@/components/shell/AppTopBar";
+import { RowList, LedgerRow, StatLine } from "@/components/ui/data";
 import { T } from "@/components/ui/text";
 import { Badge } from "@/components/ui/surfaces";
-import { RowList, LedgerRow, StatLine } from "@/components/ui/data";
 import { SkeletonList, ErrorState } from "@/components/ui/states";
 import { usePalette } from "@/design/theme";
 import { sp } from "@/design/tokens";
@@ -23,7 +24,8 @@ import { visibleSections, INST_SECTIONS } from "@/features/institutional/section
  * research mandate, LEGAL-MATRIX.md §A.3). Every section row carries
  * the caller's effective capability mark (the server's word — never
  * role-name inference): «إدارة» when the manage capability is held,
- * «قراءة» for member-level reads.
+ * «قراءة» for member-level reads. The page scrolls (Screen scroll)
+ * — the whole section register is reachable on small screens.
  */
 export default function InstitutionOverview() {
   const p = usePalette();
@@ -36,9 +38,9 @@ export default function InstitutionOverview() {
   const has = (cap: string) => caps.data?.has(cap) ?? false;
 
   return (
-    <View style={{ flex: 1, backgroundColor: p.bg }}>
+    <Screen scroll padded={false}>
       <StackHeader title="مساحة العمل المؤسسية" kicker={inst?.name ?? "المؤسسة التعليمية"} />
-      <View style={{ flex: 1, gap: sp[16], padding: sp[16] }}>
+      <View style={{ gap: sp[16], padding: sp[16] }}>
         {/* the classification masthead — the institution's own words */}
         {profile.isLoading ? (
           <SkeletonList rows={4} />
@@ -126,6 +128,6 @@ export default function InstitutionOverview() {
           {INST_SECTIONS.length} قسماً نظامياً — القسم المخفي لنوع مؤسستك لا يظهر هنا.
         </T>
       </View>
-    </View>
+    </Screen>
   );
 }

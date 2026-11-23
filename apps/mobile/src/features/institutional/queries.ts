@@ -4,27 +4,67 @@
  *
  *  · Query keys live under ['inst', …] and are institution-scoped by
  *    appending the scope segment LAST (withScope) so a membership
- *    switch re-keys everything — no stale institution data survives a
- *    context change.
- *  · Mutations invalidate their own family (and 'my-permissions' — a
- *    grant to SELF changes the effective set immediately).
- *  · Toast feedback stays at PAGE call sites; hooks never toast.
+ *    switch re-keys everything.
+ *  · R353-2 §5 (the privacy law) — the previous data a query shows
+ *    while its NEW key loads is guarded by sameScopePlaceholder: the
+ *    previous page is kept ONLY when its own key's scope segment
+ *    equals the CURRENT scope. A membership switch therefore shows
+ *    the honest loading state, never the previous institution's rows
+ *    (placeholderData crosses keys BY DESIGN — the scope segment in
+ *    the key does NOT protect against it; only the guard does).
+ *  · LIST hooks ride usePagedList + getPaged (R353-2 §4): meta
+ *    (total/totalPages) reaches the pager, so lists page past the
+ *    first page and totals are the server's word.
+ *  · Mutations invalidate the WHOLE ['inst'] family — a grant, an
+ *    evaluation or a reservation written while the user switches
+ *    institution must never miss its invalidation because a stale
+ *    scope was captured in the mutation closure.
  *  · useMyCapabilities is the ONLY write gate (contract §0: the UI
  *    hides/disables what the SERVER's effective set says the caller
  *    lacks — never role-name inference).
+ *  · Toast feedback stays at PAGE call sites; hooks never toast.
  */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useInstitutionScope, withScope } from "@/hooks/useInstitutionScope";
+import { usePagedList } from "@/components/ui/data";
+import { adminApi, type AdminUserRow } from "@/api/admin";
 import { institutionalApi } from "@/api/institutional";
 import type {
-  ID, MyPermissions, UnitCapabilityGrant, OrgUnitTreeNode, Appointment,
-  Council, CouncilMeeting, MeetingDetail, LearnerProfileRow, Program,
-  ProgramEnrollment, TrainingPlacement, AwardedCredential,
-  InternalSelfAssessment, ExternalAccreditation, OperationalLicense,
-  RegulatoryInspection, ComplianceFinding, Facility, Equipment,
-  FacilityReservation, MaintenanceWorkOrder, ResearchProject,
-  ResearchOutput,
+  ID, MyPermissions, UnitCapabilityGrant, OrgUnitTreeNode, OrgUnitDetail,
+  Council, CouncilDetail, CouncilMeeting, MeetingDetail, Appointment, AppointmentDetail,
+  LearnerProfileRow, Program, ProgramDetail, ProgramEnrollment, TrainingPlacement,
+  AwardedCredential, InternalSelfAssessment, ExternalAccreditation, OperationalLicense,
+  RegulatoryInspection, ComplianceFinding, Facility, FacilityDetail, Equipment,
+  FacilityReservation, MaintenanceWorkOrder, SafetyIncident, ResearchProject,
+  ResearchProjectDetail, ResearchOutput,
 } from "@/api/institutional";
+
+/** The list page size the institutional pagers ride (server default
+ *  is 20; getNextPageParam follows meta.totalPages — every page is
+ *  reachable, nothing is capped at «the first 50»). */
+const PAGE_LIMIT = 20;
+
+/* ── §5 the scope guard — ONE exported law, used by every hook below ── */
+
+/**
+ * sameScopePlaceholder — keep-previous-data ONLY within the same
+ * institution scope. withScope appends the scope segment LAST, so the
+ * previous query's LAST key segment IS its scope: when it differs
+ * from the current scope the previous data is dropped (undefined →
+ * the honest loading state) instead of painting the previous
+ * institution's rows under the new context. This is a privacy /
+ * data-isolation rule (R353-2 §5), not a cache-performance taste.
+ */
+export function sameScopePlaceholder<T>(scope: string | null) {
+  return (
+    prev: T | undefined,
+    prevQuery: { queryKey: readonly unknown[] } | undefined,
+  ): T | undefined => {
+    if (!prevQuery) return undefined;
+    const prevScope = prevQuery.queryKey[prevQuery.queryKey.length - 1];
+    return prevScope === scope ? prev : undefined;
+  };
+}
 
 /* ── capabilities & identity (the server's own word) ────────────── */
 
@@ -66,7 +106,7 @@ export function useMyUnitCapabilities() {
   });
 }
 
-/* ── the generic institution-scoped hooks ───────────────────────── */
+/* ── the generic institution-scoped item hook ──────────────────── */
 
 function useInstItem<T>(key: readonly unknown[], fetcher: () => Promise<T>, enabled = true) {
   const scope = useInstitutionScope();
@@ -95,13 +135,13 @@ export function useOrgUnit(id: ID | null) {
 
 /* ── §4 people ─────────────────────────────────────────────────── */
 
-export function usePeople(q: Record<string, unknown> = {}) {
+export function usePeoplePaged(q: { q?: string } = {}) {
   const scope = useInstitutionScope();
-  return useQuery({
-    queryKey: withScope(["inst", "people", q], scope),
-    queryFn: () => institutionalApi.listPeople(q as { q?: string; page?: number; limit?: number }),
+  return usePagedList({
+    queryKey: withScope(["inst", "people", "list", q], scope),
+    fetchPage: (page: number) => institutionalApi.listPeople({ q: q.q, page, limit: PAGE_LIMIT }),
     enabled: scope !== null,
-    placeholderData: (prev: Awaited<ReturnType<typeof institutionalApi.listPeople>> | undefined) => prev,
+    placeholderData: sameScopePlaceholder(scope),
   });
 }
 
@@ -111,13 +151,13 @@ export function usePerson(id: ID | null) {
 
 /* ── §5 appointments ───────────────────────────────────────────── */
 
-export function useAppointments(q: Record<string, unknown> = {}) {
+export function useAppointmentsPaged(q: { status?: string } = {}) {
   const scope = useInstitutionScope();
-  return useQuery({
-    queryKey: withScope(["inst", "appointments", q], scope),
-    queryFn: () => institutionalApi.listAppointments(q as { status?: string; page?: number; limit?: number }),
+  return usePagedList({
+    queryKey: withScope(["inst", "appointments", "list", q], scope),
+    fetchPage: (page: number) => institutionalApi.listAppointments({ status: q.status, page, limit: PAGE_LIMIT }),
     enabled: scope !== null,
-    placeholderData: (prev: Awaited<ReturnType<typeof institutionalApi.listAppointments>> | undefined) => prev,
+    placeholderData: sameScopePlaceholder(scope),
   });
 }
 
@@ -127,13 +167,13 @@ export function useAppointment(id: ID | null) {
 
 /* ── §6 councils & meetings ────────────────────────────────────── */
 
-export function useCouncils(q: Record<string, unknown> = {}) {
+export function useCouncilsPaged(q: { status?: string } = {}) {
   const scope = useInstitutionScope();
-  return useQuery({
-    queryKey: withScope(["inst", "councils", q], scope),
-    queryFn: () => institutionalApi.listCouncils(q as { type?: string; status?: string; page?: number; limit?: number }),
+  return usePagedList({
+    queryKey: withScope(["inst", "councils", "list", q], scope),
+    fetchPage: (page: number) => institutionalApi.listCouncils({ status: q.status, page, limit: PAGE_LIMIT }),
     enabled: scope !== null,
-    placeholderData: (prev: Awaited<ReturnType<typeof institutionalApi.listCouncils>> | undefined) => prev,
+    placeholderData: sameScopePlaceholder(scope),
   });
 }
 
@@ -141,8 +181,14 @@ export function useCouncil(id: ID | null) {
   return useInstItem(["inst", "councils", "detail", id], () => institutionalApi.getCouncil(id!), id !== null);
 }
 
-export function useMeetings(councilId: ID | null) {
-  return useInstItem(["inst", "councils", "meetings", councilId], () => institutionalApi.listMeetings(councilId!), councilId !== null);
+export function useMeetingsPaged(councilId: ID | null) {
+  const scope = useInstitutionScope();
+  return usePagedList({
+    queryKey: withScope(["inst", "councils", "meetings", councilId], scope),
+    fetchPage: (page: number) => institutionalApi.listMeetings({ councilId: councilId!, page, limit: PAGE_LIMIT }),
+    enabled: councilId !== null && scope !== null,
+    placeholderData: sameScopePlaceholder(scope),
+  });
 }
 
 export function useMeeting(id: ID | null) {
@@ -151,13 +197,13 @@ export function useMeeting(id: ID | null) {
 
 /* ── §7 programs, learners, enrollments, placements ─────────────── */
 
-export function usePrograms(q: Record<string, unknown> = {}) {
+export function useProgramsPaged(q: { status?: string } = {}) {
   const scope = useInstitutionScope();
-  return useQuery({
-    queryKey: withScope(["inst", "programs", q], scope),
-    queryFn: () => institutionalApi.listPrograms(q as { kind?: string; status?: string; page?: number; limit?: number }),
+  return usePagedList({
+    queryKey: withScope(["inst", "programs", "list", q], scope),
+    fetchPage: (page: number) => institutionalApi.listPrograms({ status: q.status, page, limit: PAGE_LIMIT }),
     enabled: scope !== null,
-    placeholderData: (prev: Awaited<ReturnType<typeof institutionalApi.listPrograms>> | undefined) => prev,
+    placeholderData: sameScopePlaceholder(scope),
   });
 }
 
@@ -165,123 +211,121 @@ export function useProgram(id: ID | null) {
   return useInstItem(["inst", "programs", "detail", id], () => institutionalApi.getProgram(id!), id !== null);
 }
 
-export function useLearners(q: Record<string, unknown> = {}) {
+export function useLearnersPaged(q: { q?: string } = {}) {
   const scope = useInstitutionScope();
-  return useQuery({
-    queryKey: withScope(["inst", "learners", q], scope),
-    queryFn: () => institutionalApi.listLearners(q as { category?: string; q?: string; page?: number; limit?: number }),
+  return usePagedList({
+    queryKey: withScope(["inst", "learners", "list", q], scope),
+    fetchPage: (page: number) => institutionalApi.listLearners({ q: q.q, page, limit: PAGE_LIMIT }),
     enabled: scope !== null,
-    placeholderData: (prev: Awaited<ReturnType<typeof institutionalApi.listLearners>> | undefined) => prev,
+    placeholderData: sameScopePlaceholder(scope),
   });
 }
 
-export function useEnrollments(q: Record<string, unknown> = {}) {
+export function useEnrollmentsPaged() {
   const scope = useInstitutionScope();
-  return useQuery({
-    queryKey: withScope(["inst", "enrollments", q], scope),
-    queryFn: () => institutionalApi.listEnrollments(q as { programId?: ID; status?: string; page?: number; limit?: number }),
+  return usePagedList({
+    queryKey: withScope(["inst", "enrollments", "list"], scope),
+    fetchPage: (page: number) => institutionalApi.listEnrollments({ page, limit: PAGE_LIMIT }),
     enabled: scope !== null,
-    placeholderData: (prev: Awaited<ReturnType<typeof institutionalApi.listEnrollments>> | undefined) => prev,
+    placeholderData: sameScopePlaceholder(scope),
   });
 }
 
-export function usePlacements(q: Record<string, unknown> = {}) {
+export function useCredentialsPaged() {
   const scope = useInstitutionScope();
-  return useQuery({
-    queryKey: withScope(["inst", "placements", q], scope),
-    queryFn: () => institutionalApi.listPlacements(q as { status?: string; page?: number; limit?: number }),
+  return usePagedList({
+    queryKey: withScope(["inst", "credentials", "list"], scope),
+    fetchPage: (page: number) => institutionalApi.listCredentials({ page, limit: PAGE_LIMIT }),
     enabled: scope !== null,
-    placeholderData: (prev: Awaited<ReturnType<typeof institutionalApi.listPlacements>> | undefined) => prev,
+    placeholderData: sameScopePlaceholder(scope),
   });
 }
 
-/** The evaluation write (training module): invalidates the placements
- *  family on success. */
+export function usePlacementsPaged(q: { status?: string } = {}) {
+  const scope = useInstitutionScope();
+  return usePagedList({
+    queryKey: withScope(["inst", "placements", "list", q], scope),
+    fetchPage: (page: number) => institutionalApi.listPlacements({ status: q.status, page, limit: PAGE_LIMIT }),
+    enabled: scope !== null,
+    placeholderData: sameScopePlaceholder(scope),
+  });
+}
+
+/** The evaluation write (training module): invalidates the whole
+ *  ['inst'] family on success (scope captured at render time must
+ *  never strand the invalidation on a stale institution). */
 export function useUpdatePlacement() {
   const qc = useQueryClient();
-  const scope = useInstitutionScope();
   return useMutation({
     mutationFn: (input: { id: ID; status?: string; evaluationSummary?: string; evaluationScore?: number }) =>
       institutionalApi.updatePlacement(input.id, input),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: withScope(["inst", "placements"], scope) });
+      void qc.invalidateQueries({ queryKey: ["inst"] });
     },
-  });
-}
-
-/* ── §8 credentials ─────────────────────────────────────────────── */
-
-export function useCredentials(q: Record<string, unknown> = {}) {
-  const scope = useInstitutionScope();
-  return useQuery({
-    queryKey: withScope(["inst", "credentials", q], scope),
-    queryFn: () => institutionalApi.listCredentials(q as { learnerProfileId?: ID; page?: number; limit?: number }),
-    enabled: scope !== null,
-    placeholderData: (prev: Awaited<ReturnType<typeof institutionalApi.listCredentials>> | undefined) => prev,
   });
 }
 
 /* ── §9 compliance ──────────────────────────────────────────────── */
 
-export function useSelfAssessments(q: Record<string, unknown> = {}) {
+export function useSelfAssessmentsPaged() {
   const scope = useInstitutionScope();
-  return useQuery({
-    queryKey: withScope(["inst", "self-assessments", q], scope),
-    queryFn: () => institutionalApi.listSelfAssessments(q as { status?: string; page?: number; limit?: number }),
+  return usePagedList({
+    queryKey: withScope(["inst", "self-assessments", "list"], scope),
+    fetchPage: (page: number) => institutionalApi.listSelfAssessments({ page, limit: PAGE_LIMIT }),
     enabled: scope !== null,
-    placeholderData: (prev: Awaited<ReturnType<typeof institutionalApi.listSelfAssessments>> | undefined) => prev,
+    placeholderData: sameScopePlaceholder(scope),
   });
 }
 
-export function useAccreditations(q: Record<string, unknown> = {}) {
+export function useAccreditationsPaged() {
   const scope = useInstitutionScope();
-  return useQuery({
-    queryKey: withScope(["inst", "accreditations", q], scope),
-    queryFn: () => institutionalApi.listAccreditations(q as { status?: string; type?: string; page?: number; limit?: number }),
+  return usePagedList({
+    queryKey: withScope(["inst", "accreditations", "list"], scope),
+    fetchPage: (page: number) => institutionalApi.listAccreditations({ page, limit: PAGE_LIMIT }),
     enabled: scope !== null,
-    placeholderData: (prev: Awaited<ReturnType<typeof institutionalApi.listAccreditations>> | undefined) => prev,
+    placeholderData: sameScopePlaceholder(scope),
   });
 }
 
-export function useLicenses(q: Record<string, unknown> = {}) {
+export function useLicensesPaged() {
   const scope = useInstitutionScope();
-  return useQuery({
-    queryKey: withScope(["inst", "licenses", q], scope),
-    queryFn: () => institutionalApi.listLicenses(q as { status?: string; kind?: string; page?: number; limit?: number }),
+  return usePagedList({
+    queryKey: withScope(["inst", "licenses", "list"], scope),
+    fetchPage: (page: number) => institutionalApi.listLicenses({ page, limit: PAGE_LIMIT }),
     enabled: scope !== null,
-    placeholderData: (prev: Awaited<ReturnType<typeof institutionalApi.listLicenses>> | undefined) => prev,
+    placeholderData: sameScopePlaceholder(scope),
   });
 }
 
-export function useInspections(q: Record<string, unknown> = {}) {
+export function useInspectionsPaged() {
   const scope = useInstitutionScope();
-  return useQuery({
-    queryKey: withScope(["inst", "inspections", q], scope),
-    queryFn: () => institutionalApi.listInspections(q as { status?: string; page?: number; limit?: number }),
+  return usePagedList({
+    queryKey: withScope(["inst", "inspections", "list"], scope),
+    fetchPage: (page: number) => institutionalApi.listInspections({ page, limit: PAGE_LIMIT }),
     enabled: scope !== null,
-    placeholderData: (prev: Awaited<ReturnType<typeof institutionalApi.listInspections>> | undefined) => prev,
+    placeholderData: sameScopePlaceholder(scope),
   });
 }
 
-export function useFindings(q: Record<string, unknown> = {}) {
+export function useFindingsPaged() {
   const scope = useInstitutionScope();
-  return useQuery({
-    queryKey: withScope(["inst", "findings", q], scope),
-    queryFn: () => institutionalApi.listFindings(q as { status?: string; severity?: string; page?: number; limit?: number }),
+  return usePagedList({
+    queryKey: withScope(["inst", "findings", "list"], scope),
+    fetchPage: (page: number) => institutionalApi.listFindings({ page, limit: PAGE_LIMIT }),
     enabled: scope !== null,
-    placeholderData: (prev: Awaited<ReturnType<typeof institutionalApi.listFindings>> | undefined) => prev,
+    placeholderData: sameScopePlaceholder(scope),
   });
 }
 
 /* ── §10 facilities & equipment ─────────────────────────────────── */
 
-export function useFacilities(q: Record<string, unknown> = {}) {
+export function useFacilitiesPaged(q: { type?: string } = {}) {
   const scope = useInstitutionScope();
-  return useQuery({
-    queryKey: withScope(["inst", "facilities", q], scope),
-    queryFn: () => institutionalApi.listFacilities(q as { type?: string; status?: string; page?: number; limit?: number }),
+  return usePagedList({
+    queryKey: withScope(["inst", "facilities", "list", q], scope),
+    fetchPage: (page: number) => institutionalApi.listFacilities({ type: q.type, page, limit: PAGE_LIMIT }),
     enabled: scope !== null,
-    placeholderData: (prev: Awaited<ReturnType<typeof institutionalApi.listFacilities>> | undefined) => prev,
+    placeholderData: sameScopePlaceholder(scope),
   });
 }
 
@@ -289,73 +333,86 @@ export function useFacility(id: ID | null) {
   return useInstItem(["inst", "facilities", "detail", id], () => institutionalApi.getFacility(id!), id !== null);
 }
 
-export function useEquipment(q: Record<string, unknown> = {}) {
+export function useEquipmentPaged(q: { facilityId?: ID } = {}) {
   const scope = useInstitutionScope();
-  return useQuery({
-    queryKey: withScope(["inst", "equipment", q], scope),
-    queryFn: () => institutionalApi.listEquipment(q as { status?: string; facilityId?: ID; page?: number; limit?: number }),
+  return usePagedList({
+    queryKey: withScope(["inst", "equipment", "list", q], scope),
+    fetchPage: (page: number) => institutionalApi.listEquipment({ facilityId: q.facilityId, page, limit: PAGE_LIMIT }),
     enabled: scope !== null,
-    placeholderData: (prev: Awaited<ReturnType<typeof institutionalApi.listEquipment>> | undefined) => prev,
+    placeholderData: sameScopePlaceholder(scope),
   });
 }
 
-export function useReservations(q: Record<string, unknown> = {}) {
+export function useReservationsPaged(q: { facilityId?: ID } = {}) {
   const scope = useInstitutionScope();
-  return useQuery({
-    queryKey: withScope(["inst", "reservations", q], scope),
-    queryFn: () => institutionalApi.listReservations(q as { facilityId?: ID; status?: string; page?: number; limit?: number }),
+  return usePagedList({
+    queryKey: withScope(["inst", "reservations", "list", q], scope),
+    fetchPage: (page: number) => institutionalApi.listReservations({ facilityId: q.facilityId, page, limit: PAGE_LIMIT }),
     enabled: scope !== null,
-    placeholderData: (prev: Awaited<ReturnType<typeof institutionalApi.listReservations>> | undefined) => prev,
+    placeholderData: sameScopePlaceholder(scope),
   });
 }
 
-export function useWorkOrders(q: Record<string, unknown> = {}) {
+export function useWorkOrdersPaged() {
   const scope = useInstitutionScope();
-  return useQuery({
-    queryKey: withScope(["inst", "work-orders", q], scope),
-    queryFn: () => institutionalApi.listWorkOrders(q as { status?: string; page?: number; limit?: number }),
+  return usePagedList({
+    queryKey: withScope(["inst", "work-orders", "list"], scope),
+    fetchPage: (page: number) => institutionalApi.listWorkOrders({ page, limit: PAGE_LIMIT }),
     enabled: scope !== null,
-    placeholderData: (prev: Awaited<ReturnType<typeof institutionalApi.listWorkOrders>> | undefined) => prev,
+    placeholderData: sameScopePlaceholder(scope),
   });
 }
 
-/** The reservation write (facilities module): invalidates the
- *  reservations family on success. */
+export function useSafetyIncidentsPaged() {
+  const scope = useInstitutionScope();
+  return usePagedList({
+    queryKey: withScope(["inst", "safety-incidents", "list"], scope),
+    fetchPage: (page: number) => institutionalApi.listSafetyIncidents({ page, limit: PAGE_LIMIT }),
+    enabled: scope !== null,
+    placeholderData: sameScopePlaceholder(scope),
+  });
+}
+
+/** The reservation write (facilities module): invalidates the whole
+ *  ['inst'] family (see useUpdatePlacement for the scope-capture rule). */
 export function useCreateReservation() {
   const qc = useQueryClient();
-  const scope = useInstitutionScope();
   return useMutation({
     mutationFn: (input: { facilityId: ID; purpose: string; startsAt: string; endsAt: string }) =>
       institutionalApi.createReservation(input),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: withScope(["inst", "reservations"], scope) });
+      void qc.invalidateQueries({ queryKey: ["inst"] });
     },
   });
 }
 
 /* ── §11 research ──────────────────────────────────────────────── */
 
-export function useResearchProjects(q: Record<string, unknown> = {}) {
+export function useResearchProjectsPaged(q: { status?: string } = {}, enabled = true) {
   const scope = useInstitutionScope();
-  return useQuery({
-    queryKey: withScope(["inst", "research", q], scope),
-    queryFn: () => institutionalApi.listResearchProjects(q as { status?: string; page?: number; limit?: number }),
-    enabled: scope !== null,
-    placeholderData: (prev: Awaited<ReturnType<typeof institutionalApi.listResearchProjects>> | undefined) => prev,
+  return usePagedList({
+    queryKey: withScope(["inst", "research", "list", q], scope),
+    fetchPage: (page: number) => institutionalApi.listResearchProjects({ status: q.status, page, limit: PAGE_LIMIT }),
+    enabled: enabled && scope !== null,
+    placeholderData: sameScopePlaceholder(scope),
   });
 }
 
-export function useResearchProject(id: ID | null) {
-  return useInstItem(["inst", "research", "detail", id], () => institutionalApi.getResearchProject(id!), id !== null);
+/** `enabled` gates the deep-link kind rule (§7): the research module
+ *  is structurally foreign to Law 21/2023 stages 1–2 — the screens
+ *  must not fire research reads for a foreign kind, not merely hide
+ *  the nav row. */
+export function useResearchProject(id: ID | null, enabled = true) {
+  return useInstItem(["inst", "research", "detail", id], () => institutionalApi.getResearchProject(id!), id !== null && enabled);
 }
 
-export function useResearchOutputs(q: Record<string, unknown> = {}) {
+export function useResearchOutputsPaged(q: { projectId?: ID } = {}, enabled = true) {
   const scope = useInstitutionScope();
-  return useQuery({
-    queryKey: withScope(["inst", "research-outputs", q], scope),
-    queryFn: () => institutionalApi.listResearchOutputs(q as { projectId?: ID; type?: string; page?: number; limit?: number }),
-    enabled: scope !== null,
-    placeholderData: (prev: Awaited<ReturnType<typeof institutionalApi.listResearchOutputs>> | undefined) => prev,
+  return usePagedList({
+    queryKey: withScope(["inst", "research-outputs", "list", q], scope),
+    fetchPage: (page: number) => institutionalApi.listResearchOutputs({ projectId: q.projectId, page, limit: PAGE_LIMIT }),
+    enabled: enabled && scope !== null,
+    placeholderData: sameScopePlaceholder(scope),
   });
 }
 
@@ -382,29 +439,50 @@ export function useGrantUnitCapability(userId: ID) {
     mutationFn: (input: { orgUnitId?: ID; capability: string; reason?: string }) =>
       institutionalApi.grantUnitCapability(userId, { institutionId: scope!, ...input }),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: withScope(["inst", "user-unit-capabilities"], scope) });
-      qc.invalidateQueries({ queryKey: withScope(["inst", "my-permissions"], scope) });
+      void qc.invalidateQueries({ queryKey: ["inst"] });
     },
   });
 }
 
 export function useRevokeUnitCapability() {
   const qc = useQueryClient();
-  const scope = useInstitutionScope();
   return useMutation({
     mutationFn: (grantId: ID) => institutionalApi.revokeUnitCapability(grantId),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: withScope(["inst", "user-unit-capabilities"], scope) });
-      qc.invalidateQueries({ queryKey: withScope(["inst", "my-permissions"], scope) });
+      void qc.invalidateQueries({ queryKey: ["inst"] });
     },
   });
 }
 
+/* ── the access screen's user search (§5 — institution-scoped) ──── */
+
+/**
+ * The per-user grant management's user search: the platform-wide
+ * /admin/users surface the SERVER authorizes. R353-2 §5: the query
+ * key carries the institution scope + the guard — a membership switch
+ * re-keys the search (results never carry across institutions) and
+ * the previous results are dropped while the new scope loads.
+ */
+export function useUserSearch(appliedQ: string, enabled: boolean) {
+  const scope = useInstitutionScope();
+  const query = useQuery({
+    queryKey: withScope(["inst", "user-search", appliedQ], scope),
+    queryFn: async (): Promise<AdminUserRow[]> => {
+      const res = await adminApi.users({ q: appliedQ || undefined, limit: 10 });
+      return Array.isArray(res) ? res : (res.data ?? []);
+    },
+    enabled: enabled && scope !== null,
+    placeholderData: sameScopePlaceholder(scope),
+  });
+  return { results: query.data ?? [], isLoading: query.isLoading, isError: query.isError, refetch: query.refetch };
+}
+
 /* re-exports the screens' row types (single import surface) */
 export type {
-  Council, CouncilMeeting, MeetingDetail, Appointment, Program, ProgramEnrollment,
-  TrainingPlacement, AwardedCredential, InternalSelfAssessment, ExternalAccreditation,
-  OperationalLicense, RegulatoryInspection, ComplianceFinding, Facility, Equipment,
-  FacilityReservation, MaintenanceWorkOrder, ResearchProject, ResearchOutput,
-  LearnerProfileRow, UnitCapabilityGrant,
+  Council, CouncilDetail, CouncilMeeting, MeetingDetail, Appointment, AppointmentDetail,
+  Program, ProgramDetail, ProgramEnrollment, TrainingPlacement, AwardedCredential,
+  InternalSelfAssessment, ExternalAccreditation, OperationalLicense, RegulatoryInspection,
+  ComplianceFinding, Facility, FacilityDetail, Equipment, FacilityReservation,
+  MaintenanceWorkOrder, SafetyIncident, ResearchProject, ResearchProjectDetail,
+  ResearchOutput, LearnerProfileRow, UnitCapabilityGrant, OrgUnitDetail,
 };

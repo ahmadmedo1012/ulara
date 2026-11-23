@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { View } from "react-native";
 import { router } from "expo-router";
+import { Screen } from "@/components/ui/screen";
 import { StackHeader } from "@/components/shell/AppTopBar";
+import { DataList, LedgerRow, makeRow } from "@/components/ui/data";
 import { T } from "@/components/ui/text";
 import { Badge } from "@/components/ui/surfaces";
-import { RowList, LedgerRow, StatLine } from "@/components/ui/data";
-import { SkeletonList, ErrorState, EmptyState } from "@/components/ui/states";
 import { ChipGroup } from "@/components/ui/fields";
 import { usePalette } from "@/design/theme";
 import { sp } from "@/design/tokens";
-import { useCouncils } from "@/features/institutional/queries";
+import { latn } from "@/lib/format";
+import { useCouncilsPaged } from "@/features/institutional/queries";
+import type { Council } from "@/api/institutional";
 import { COUNCIL_TYPE_LABELS, COUNCIL_STATUS_LABELS, labelOf, toneOf } from "@/features/institutional/labels";
 
 const STATUS_CHIPS = [
@@ -19,60 +21,72 @@ const STATUS_CHIPS = [
   { id: "CANCELLED", label: COUNCIL_STATUS_LABELS.CANCELLED },
 ];
 
+/** The council row — memoized at module scope (FlashList purity). */
+const CouncilRow = makeRow<Council>(({ item }) => {
+  const p = usePalette();
+  return (
+    <LedgerRow
+      accessibilityLabel={item.nameAr}
+      onPress={() => router.push(`/institution/councils/${item.id}` as never)}
+      style={{ backgroundColor: p.surface }}
+    >
+      <View style={{ flexDirection: "row", alignItems: "center", gap: sp[10] }}>
+        <View style={{ flex: 1, gap: 2 }}>
+          <T variant="body" weight="medium">{item.nameAr}</T>
+          <T variant="xs" color="muted">
+            {labelOf(COUNCIL_TYPE_LABELS, item.type)}
+            {typeof item.membershipCount === "number" ? ` · ${item.membershipCount} عضواً` : ""}
+            {typeof item.meetingCount === "number" ? ` · ${item.meetingCount} اجتماعاً` : ""}
+            {item.establishedAt ? ` · ${item.establishedAt.slice(0, 4)}` : ""}
+          </T>
+        </View>
+        <Badge label={labelOf(COUNCIL_STATUS_LABELS, item.status)} tone={toneOf(item.status)} />
+      </View>
+    </LedgerRow>
+  );
+});
+
 /**
  * /institution/councils — the councils register (web CouncilsPage
  * parity, read surface): councils and standing committees with their
  * type/status; tapping opens the council's own record (members +
- * meetings + documents).
+ * meetings + documents). DataList + usePagedList: every page
+ * reachable, the total is the server's word.
  */
 export default function InstitutionCouncils() {
-  const p = usePalette();
   const [status, setStatus] = useState("");
-  const councils = useCouncils({ status: status || undefined, limit: 50 });
-
-  const rows = Array.isArray(councils.data) ? councils.data : councils.data?.data ?? [];
-  const activeCount = rows.filter((c) => c.status === "ACTIVE").length;
+  const councils = useCouncilsPaged({ status: status || undefined });
+  const total = councils.meta?.total ?? councils.items.length;
 
   return (
-    <View style={{ flex: 1, backgroundColor: p.bg }}>
+    <Screen scroll={false} padded={false}>
       <StackHeader title="المجالس واللجان" kicker="سجل الحوكمة" />
-      <View style={{ flex: 1, gap: sp[12], padding: sp[16] }}>
+      <View style={{ paddingHorizontal: sp[16], paddingTop: sp[12], gap: sp[12] }}>
         <ChipGroup options={STATUS_CHIPS} selectedId={status} onSelect={setStatus} />
-        {rows.length > 0 ? (
-          <StatLine label="المجالس المعروضة" value={`${rows.length}`} hint={`${activeCount} قائمة`} />
-        ) : null}
-        {councils.isLoading ? (
-          <SkeletonList rows={8} />
-        ) : councils.isError ? (
-          <ErrorState message="تعذّر تحميل المجالس." onRetry={() => councils.refetch()} />
-        ) : rows.length === 0 ? (
-          <EmptyState title="لا مجالس بعد" message="لم تُشكَّل مجالس أو لجان لهذه المؤسسة بعد — مجلس الجامعة، مجالس الكليات، اللجان الدائمة." />
-        ) : (
-          <RowList>
-            {rows.map((c, i) => (
-              <LedgerRow
-                key={c.id}
-                last={i === rows.length - 1}
-                accessibilityLabel={c.nameAr}
-                onPress={() => router.push(`/institution/councils/${c.id}` as never)}
-              >
-                <View style={{ flexDirection: "row", alignItems: "center", gap: sp[10] }}>
-                  <View style={{ flex: 1, gap: 2 }}>
-                    <T variant="body" weight="medium">{c.nameAr}</T>
-                    <T variant="xs" color="muted">
-                      {labelOf(COUNCIL_TYPE_LABELS, c.type)}
-                      {typeof c.memberCount === "number" ? ` · ${c.memberCount} عضواً` : ""}
-                      {" · "}
-                      {c.formedAt.slice(0, 4)}
-                    </T>
-                  </View>
-                  <Badge label={labelOf(COUNCIL_STATUS_LABELS, c.status)} tone={toneOf(c.status)} />
-                </View>
-              </LedgerRow>
-            ))}
-          </RowList>
-        )}
+        <T variant="xs" color="faint">
+          {latn(councils.items.length)} معروضاً{total > councils.items.length ? ` من ${latn(total)} وفق سجل الحوكمة` : ""}
+        </T>
       </View>
-    </View>
+      <View style={{ flex: 1, paddingTop: sp[8] }}>
+        <DataList
+          data={councils.items}
+          renderItem={({ item }) => <CouncilRow item={item} />}
+          keyExtractor={(c) => c.id}
+          isLoading={councils.isLoading}
+          isError={councils.isError}
+          emptyTitle="لا مجالس بعد"
+          emptyMessage="لم تُشكَّل مجالس أو لجان لهذه المؤسسة بعد — مجلس الجامعة، مجالس الكليات، اللجان الدائمة."
+          onRetry={() => councils.refetch()}
+          refetch={councils.refetch}
+          isRefetching={councils.isRefetching}
+          onEndReached={councils.onEndReached}
+          isFetchingNextPage={councils.isFetchingNextPage}
+          hasNextPage={councils.hasNextPage}
+          loadMoreError={councils.loadMoreError}
+          onRetryLoadMore={councils.retryLoadMore}
+          contentPadding={{ horizontal: 16, bottom: 24 }}
+        />
+      </View>
+    </Screen>
   );
 }

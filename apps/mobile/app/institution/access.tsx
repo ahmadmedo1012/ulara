@@ -1,22 +1,23 @@
 import { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
-import { useQuery } from "@tanstack/react-query";
+import { Screen } from "@/components/ui/screen";
 import { StackHeader } from "@/components/shell/AppTopBar";
+import { RowList, LedgerRow, StatLine } from "@/components/ui/data";
 import { T } from "@/components/ui/text";
 import { Badge } from "@/components/ui/surfaces";
-import { RowList, LedgerRow, StatLine } from "@/components/ui/data";
 import { SkeletonList, ErrorState } from "@/components/ui/states";
 import { SearchBar, SelectField } from "@/components/ui/fields";
 import { Button } from "@/components/ui/pressables";
 import { toast } from "@/components/ui/toast";
-import { usePalette } from "@/design/theme";
 import { sp } from "@/design/tokens";
 import { humanizeError } from "@/lib/errors";
 import { useSession } from "@/auth/session";
 import { useInstitutionScope } from "@/hooks/useInstitutionScope";
-import { adminApi, type AdminUserRow } from "@/api/admin";
-import { useMyCapabilities, useMyUnitCapabilities, useUserUnitCapabilities,
-  useGrantUnitCapability, useRevokeUnitCapability, useOrgUnitTree } from "@/features/institutional/queries";
+import type { AdminUserRow } from "@/api/admin";
+import {
+  useMyCapabilities, useMyUnitCapabilities, useUserUnitCapabilities,
+  useGrantUnitCapability, useRevokeUnitCapability, useOrgUnitTree, useUserSearch,
+} from "@/features/institutional/queries";
 import type { OrgUnitTreeNode } from "@/api/institutional";
 import {
   CAPABILITY_LABELS, ORG_UNIT_TYPE_LABELS, PLATFORM_ROLE_LABELS,
@@ -42,9 +43,14 @@ function unitOptionsOf(nodes: readonly OrgUnitTreeNode[]): { id: string; label: 
  * scoped to a unit subtree or the institution → revoke with a
  * reason). This is the «الصلاحيات والمنح وسحبها» the platform
  * contract §12 defines: single-capability rows, never role bundles.
+ *
+ * R353-2 §5 (institution isolation) — the user search key carries
+ * the scope, AND the whole search/selection state (query, applied
+ * query, the selected user, the capability/unit/reason picks) RESETS
+ * when the scope changes: a target chosen under institution A must
+ * never surface under institution B's management surface.
  */
 export default function InstitutionAccess() {
-  const p = usePalette();
   const scope = useInstitutionScope();
   const myId = useSession((s) => s.user?.id) ?? null;
 
@@ -56,6 +62,28 @@ export default function InstitutionAccess() {
   /* ── the per-user management surface (gated) ─────────────────────── */
   const [q, setQ] = useState("");
   const [appliedQ, setAppliedQ] = useState("");
+  const [selectedUser, setSelectedUser] = useState<AdminUserRow | null>(null);
+  const [capability, setCapability] = useState<{ id: string; label: string } | null>(null);
+  const [orgUnit, setOrgUnit] = useState<{ id: string; label: string; sub?: string } | null>(null);
+  const [reason, setReason] = useState("");
+
+  /* §5: the scope segment changed → the search/selection state dies
+   * with the old context (a picked user or a pending grant belongs to
+   * the institution it was made under). */
+  const scopeRef = useRef(scope);
+  useEffect(() => {
+    if (scopeRef.current !== scope) {
+      scopeRef.current = scope;
+      setQ("");
+      setAppliedQ("");
+      setSelectedUser(null);
+      setCapability(null);
+      setOrgUnit(null);
+      setReason("");
+    }
+  }, [scope]);
+
+  /* the house debounce for the user search. */
   const appliedRef = useRef(appliedQ);
   useEffect(() => {
     const t = setTimeout(() => {
@@ -67,15 +95,11 @@ export default function InstitutionAccess() {
     return () => clearTimeout(t);
   }, [q]);
 
-  const users = useUserSearch(appliedQ, canAssign && scope !== null);
-  const [selectedUser, setSelectedUser] = useState<AdminUserRow | null>(null);
+  const users = useUserSearch(appliedQ, canAssign);
   const targetGrants = useUserUnitCapabilities(selectedUser?.id ?? null);
 
   const tree = useOrgUnitTree();
   const unitOptions = unitOptionsOf(tree.data ?? []);
-  const [capability, setCapability] = useState<{ id: string; label: string } | null>(null);
-  const [orgUnit, setOrgUnit] = useState<{ id: string; label: string; sub?: string } | null>(null);
-  const [reason, setReason] = useState("");
 
   const grant = useGrantUnitCapability(selectedUser?.id ?? "");
   const revoke = useRevokeUnitCapability();
@@ -90,7 +114,10 @@ export default function InstitutionAccess() {
         orgUnitId: orgUnit?.id,
         reason: reason.trim() || undefined,
       });
-      toast.success(`مُنحت «${capability.label}»${orgUnit ? ` على ${orgUnit.label}` : " على المؤسسة"}.`, "منح الصلاحية");
+      toast.success(
+        `مُنحت «${capability.label}»${orgUnit ? ` على ${orgUnit.label} (نطاق الوحدة)` : " على المؤسسة كاملة"}.`,
+        "منح الصلاحية",
+      );
       setCapability(null);
       setOrgUnit(null);
       setReason("");
@@ -113,11 +140,13 @@ export default function InstitutionAccess() {
       cap, label, held: (caps.data?.capabilities ?? []).includes(cap),
     }))
     : [];
+  const activeGrants = (targetGrants.data ?? []).filter((g) => g.isActive);
+  const revokedGrants = (targetGrants.data ?? []).filter((g) => !g.isActive);
 
   return (
-    <View style={{ flex: 1, backgroundColor: p.bg }}>
+    <Screen scroll padded={false}>
       <StackHeader title="الصلاحيات والأدوار" kicker="قدرات الخادم الفعلية" />
-      <View style={{ flex: 1, gap: sp[12], padding: sp[16] }}>
+      <View style={{ gap: sp[12], padding: sp[16] }}>
         {/* ── the caller's own effective set — the server's word ── */}
         {caps.isLoading ? (
           <SkeletonList rows={5} />
@@ -160,7 +189,7 @@ export default function InstitutionAccess() {
                         {labelOf(CAPABILITY_LABELS, g.capability)}
                       </T>
                       <T variant="xs" color="muted">
-                        {g.orgUnit ? `نطاق: ${g.orgUnit.nameAr}` : "نطاق: المؤسسة كاملة"}
+                        {g.orgUnit ? `نطاق: ${g.orgUnit.nameAr} (شجرة الوحدة)` : "نطاق: المؤسسة كاملة"}
                         {g.reason ? ` · ${g.reason}` : ""}
                       </T>
                     </View>
@@ -180,13 +209,13 @@ export default function InstitutionAccess() {
         ) : (
           <>
             <SearchBar value={q} onChange={setQ} placeholder="ابحث عن مستخدم بالاسم أو البريد…" />
-            {users.results && users.results.length > 0 && !selectedUser ? (
+            {users.results.length > 0 && !selectedUser ? (
               <RowList>
                 {users.results.map((u, i) => (
                   <LedgerRow
                     key={u.id}
                     last={i === users.results.length - 1}
-                    onPress={() => { setSelectedUser(u); setQ(""); }}
+                    onPress={() => { setSelectedUser(u); setQ(""); setAppliedQ(""); appliedRef.current = ""; }}
                   >
                     <View style={{ flexDirection: "row", alignItems: "center", gap: sp[10] }}>
                       <View style={{ flex: 1, gap: 2 }}>
@@ -205,7 +234,12 @@ export default function InstitutionAccess() {
                 <View style={{ flexDirection: "row", alignItems: "center", gap: sp[8], flexWrap: "wrap" }}>
                   <T variant="body" weight="bold">{selectedUser.firstName} {selectedUser.lastName}</T>
                   <Badge label={labelOf(PLATFORM_ROLE_LABELS, selectedUser.role)} tone="grey" />
-                  <Button label="تغيير المستخدم" kind="ghost" small onPress={() => { setSelectedUser(null); setCapability(null); setOrgUnit(null); }} />
+                  <Button
+                    label="تغيير المستخدم"
+                    kind="ghost"
+                    small
+                    onPress={() => { setSelectedUser(null); setCapability(null); setOrgUnit(null); }}
+                  />
                 </View>
 
                 {myId === selectedUser.id ? (
@@ -222,21 +256,18 @@ export default function InstitutionAccess() {
                     ) : (targetGrants.data ?? []).length === 0 ? (
                       <T variant="sm" color="muted">لا منح صريحة لهذا المستخدم بعد.</T>
                     ) : (
-                      <RowList>
-                        {(targetGrants.data ?? []).map((g, i, arr) => (
-                          <LedgerRow
-                            key={g.id}
-                            last={i === arr.length - 1 && !g.isActive}
-                          >
-                            <View style={{ flexDirection: "row", alignItems: "center", gap: sp[10] }}>
-                              <View style={{ flex: 1, gap: 2 }}>
-                                <T variant="body" weight="medium">{labelOf(CAPABILITY_LABELS, g.capability)}</T>
-                                <T variant="xs" color="muted">
-                                  {g.orgUnit ? `نطاق: ${g.orgUnit.nameAr}` : "نطاق: المؤسسة كاملة"}
-                                  {g.revokedAt ? " · مسحوبة" : ""}
-                                </T>
-                              </View>
-                              {g.isActive ? (
+                      <>
+                        <RowList>
+                          {activeGrants.map((g, i) => (
+                            <LedgerRow key={g.id} last={i === activeGrants.length - 1}>
+                              <View style={{ flexDirection: "row", alignItems: "center", gap: sp[10] }}>
+                                <View style={{ flex: 1, gap: 2 }}>
+                                  <T variant="body" weight="medium">{labelOf(CAPABILITY_LABELS, g.capability)}</T>
+                                  <T variant="xs" color="muted">
+                                    {g.orgUnit ? `نطاق: ${g.orgUnit.nameAr} (شجرة الوحدة)` : "نطاق: المؤسسة كاملة"}
+                                    {g.reason ? ` · ${g.reason}` : ""}
+                                  </T>
+                                </View>
                                 <Button
                                   label="سحب"
                                   kind="ghost"
@@ -244,13 +275,23 @@ export default function InstitutionAccess() {
                                   disabled={revoke.isPending}
                                   onPress={() => onRevoke(g.id, labelOf(CAPABILITY_LABELS, g.capability))}
                                 />
-                              ) : (
-                                <Badge label="مسحوبة" tone="grey" />
-                              )}
-                            </View>
-                          </LedgerRow>
-                        ))}
-                      </RowList>
+                              </View>
+                            </LedgerRow>
+                          ))}
+                        </RowList>
+                        {revokedGrants.length > 0 ? (
+                          <View style={{ gap: sp[6] }}>
+                            <T variant="xs" color="faint">المنح المسحوبة ({revokedGrants.length}):</T>
+                            {revokedGrants.map((g) => (
+                              <T key={g.id} variant="xs" color="muted">
+                                {labelOf(CAPABILITY_LABELS, g.capability)}
+                                {g.orgUnit ? ` · ${g.orgUnit.nameAr}` : ""}
+                                {g.revokedAt ? ` · سُحبت ${g.revokedAt.slice(0, 10)}` : ""}
+                              </T>
+                            ))}
+                          </View>
+                        ) : null}
+                      </>
                     )}
 
                     {/* ── the grant form: ONE capability + scope ── */}
@@ -271,6 +312,9 @@ export default function InstitutionAccess() {
                       loading={tree.isLoading}
                       placeholder="نطاق الوحدة…"
                     />
+                    <T variant="xs" color="faint">
+                      منح بنطاق وحدة يسري على شجرة تلك الوحدة فقط — ليس على المؤسسة كلها.
+                    </T>
                     <SearchBar value={reason} onChange={setReason} placeholder="سبب المنح (اختياري)…" />
                     <Button
                       label={grant.isPending ? "جارٍ المنح…" : "منح القدرة"}
@@ -284,21 +328,6 @@ export default function InstitutionAccess() {
           </>
         )}
       </View>
-    </View>
+    </Screen>
   );
-}
-
-/* ── the user search (admin surface — the server verifies the caller) ── */
-
-function useUserSearch(appliedQ: string, enabled: boolean) {
-  const query = useQuery({
-    queryKey: ["inst", "user-search", appliedQ],
-    queryFn: async (): Promise<AdminUserRow[]> => {
-      const res = await adminApi.users({ q: appliedQ || undefined, limit: 10 });
-      return Array.isArray(res) ? res : (res.data ?? []);
-    },
-    enabled,
-    placeholderData: (prev: AdminUserRow[] | undefined) => prev,
-  });
-  return { results: query.data ?? [], isLoading: query.isLoading, isError: query.isError, refetch: query.refetch };
 }

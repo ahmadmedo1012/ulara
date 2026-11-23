@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { View } from "react-native";
 import { router } from "expo-router";
+import { Screen } from "@/components/ui/screen";
 import { StackHeader } from "@/components/shell/AppTopBar";
+import { DataList, LedgerRow, makeRow } from "@/components/ui/data";
 import { T } from "@/components/ui/text";
 import { Badge } from "@/components/ui/surfaces";
-import { RowList, LedgerRow, StatLine } from "@/components/ui/data";
-import { SkeletonList, ErrorState, EmptyState } from "@/components/ui/states";
 import { ChipGroup } from "@/components/ui/fields";
 import { usePalette } from "@/design/theme";
 import { sp } from "@/design/tokens";
-import { usePrograms } from "@/features/institutional/queries";
+import { latn } from "@/lib/format";
+import { useProgramsPaged } from "@/features/institutional/queries";
+import type { Program } from "@/api/institutional";
 import { PROGRAM_KIND_LABELS, PROGRAM_STATUS_LABELS, labelOf, toneOf } from "@/features/institutional/labels";
 
 const STATUS_CHIPS = [
@@ -21,59 +23,74 @@ const STATUS_CHIPS = [
   { id: "CLOSED", label: PROGRAM_STATUS_LABELS.CLOSED },
 ];
 
+/** The program row — memoized at module scope (FlashList purity). */
+const ProgramRow = makeRow<Program>(({ item }) => {
+  const p = usePalette();
+  return (
+    <LedgerRow
+      accessibilityLabel={item.nameAr}
+      onPress={() => router.push(`/institution/programs/${item.id}` as never)}
+      style={{ backgroundColor: p.surface }}
+    >
+      <View style={{ flexDirection: "row", alignItems: "center", gap: sp[10] }}>
+        <View style={{ flex: 1, gap: 2 }}>
+          <T variant="body" weight="medium">{item.nameAr}</T>
+          <T variant="xs" color="muted">
+            {labelOf(PROGRAM_KIND_LABELS, item.kind)}
+            {item.code ? ` · ${item.code}` : ""}
+            {item.orgUnit ? ` · ${item.orgUnit.nameAr}` : ""}
+            {item.credentialType ? ` · ${item.credentialType.nameAr}` : ""}
+          </T>
+        </View>
+        <Badge label={labelOf(PROGRAM_STATUS_LABELS, item.status)} tone={toneOf(item.status)} />
+      </View>
+    </LedgerRow>
+  );
+});
+
 /**
  * /institution/programs — the programs register (web ProgramsPage
  * parity, read surface): academic/technical/professional programs
  * with kind + status + the owning unit; tapping opens the program
- * record (versions + credential type).
+ * record (versions + credential type). DataList + usePagedList —
+ * every page reachable, the total is the server's word.
  */
 export default function InstitutionPrograms() {
-  const p = usePalette();
   const [status, setStatus] = useState("");
-  const programs = usePrograms({ status: status || undefined, limit: 50 });
-
-  const rows = Array.isArray(programs.data) ? programs.data : programs.data?.data ?? [];
-  const activeCount = rows.filter((pr) => pr.status === "ACTIVE").length;
+  const programs = useProgramsPaged({ status: status || undefined });
+  const total = programs.meta?.total ?? programs.items.length;
+  const activeCount = programs.items.filter((pr) => pr.status === "ACTIVE").length;
 
   return (
-    <View style={{ flex: 1, backgroundColor: p.bg }}>
+    <Screen scroll={false} padded={false}>
       <StackHeader title="البرامج والخطط" kicker="سجل البرامج" />
-      <View style={{ flex: 1, gap: sp[12], padding: sp[16] }}>
+      <View style={{ paddingHorizontal: sp[16], paddingTop: sp[12], gap: sp[12] }}>
         <ChipGroup options={STATUS_CHIPS} selectedId={status} onSelect={setStatus} />
-        {rows.length > 0 ? (
-          <StatLine label="البرامج المعروضة" value={`${rows.length}`} hint={`${activeCount} نشطة`} />
-        ) : null}
-        {programs.isLoading ? (
-          <SkeletonList rows={8} />
-        ) : programs.isError ? (
-          <ErrorState message="تعذّر تحميل البرامج." onRetry={() => programs.refetch()} />
-        ) : rows.length === 0 ? (
-          <EmptyState title="لا برامج بعد" message="لم تُعتمد برامج لهذه المؤسسة بعد — البرامج الأكاديمية والتقنية والمهنية." />
-        ) : (
-          <RowList>
-            {rows.map((pr, i) => (
-              <LedgerRow
-                key={pr.id}
-                last={i === rows.length - 1}
-                accessibilityLabel={pr.nameAr}
-                onPress={() => router.push(`/institution/programs/${pr.id}` as never)}
-              >
-                <View style={{ flexDirection: "row", alignItems: "center", gap: sp[10] }}>
-                  <View style={{ flex: 1, gap: 2 }}>
-                    <T variant="body" weight="medium">{pr.nameAr}</T>
-                    <T variant="xs" color="muted">
-                      {labelOf(PROGRAM_KIND_LABELS, pr.kind)}
-                      {pr.code ? ` · ${pr.code}` : ""}
-                      {pr.orgUnit ? ` · ${pr.orgUnit.nameAr}` : ""}
-                    </T>
-                  </View>
-                  <Badge label={labelOf(PROGRAM_STATUS_LABELS, pr.status)} tone={toneOf(pr.status)} />
-                </View>
-              </LedgerRow>
-            ))}
-          </RowList>
-        )}
+        <T variant="xs" color="faint">
+          {latn(programs.items.length)} معروضاً{total > programs.items.length ? ` من ${latn(total)} وفق سجل البرامج` : ""}
+          {` · ${latn(activeCount)} نشطة`}
+        </T>
       </View>
-    </View>
+      <View style={{ flex: 1, paddingTop: sp[8] }}>
+        <DataList
+          data={programs.items}
+          renderItem={({ item }) => <ProgramRow item={item} />}
+          keyExtractor={(pr) => pr.id}
+          isLoading={programs.isLoading}
+          isError={programs.isError}
+          emptyTitle="لا برامج بعد"
+          emptyMessage="لم تُعتمد برامج لهذه المؤسسة بعد — البرامج الأكاديمية والتقنية والمهنية."
+          onRetry={() => programs.refetch()}
+          refetch={programs.refetch}
+          isRefetching={programs.isRefetching}
+          onEndReached={programs.onEndReached}
+          isFetchingNextPage={programs.isFetchingNextPage}
+          hasNextPage={programs.hasNextPage}
+          loadMoreError={programs.loadMoreError}
+          onRetryLoadMore={programs.retryLoadMore}
+          contentPadding={{ horizontal: 16, bottom: 24 }}
+        />
+      </View>
+    </Screen>
   );
 }

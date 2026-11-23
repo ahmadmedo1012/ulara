@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { View } from "react-native";
+import { Screen } from "@/components/ui/screen";
 import { StackHeader } from "@/components/shell/AppTopBar";
+import { RowList, LedgerRow } from "@/components/ui/data";
 import { T } from "@/components/ui/text";
 import { Badge } from "@/components/ui/surfaces";
-import { RowList, LedgerRow } from "@/components/ui/data";
 import { SkeletonList, ErrorState, EmptyState } from "@/components/ui/states";
 import { usePalette } from "@/design/theme";
 import { sp } from "@/design/tokens";
+import { latn } from "@/lib/format";
 import ChevronDown from "lucide-react-native/icons/chevron-down";
 import ChevronLeft from "lucide-react-native/icons/chevron-left";
 import { useOrgUnitTree } from "@/features/institutional/queries";
@@ -32,6 +34,7 @@ function UnitNode({ node, depth }: { node: OrgUnitTreeNode; depth: number }) {
             <T variant="xs" color="muted">
               {labelOf(ORG_UNIT_TYPE_LABELS, node.type)}
               {node.code ? ` · ${node.code}` : ""}
+              {node.location ? ` · ${node.location}` : ""}
             </T>
           </View>
           {childCount > 0 ? (
@@ -59,11 +62,11 @@ function UnitNode({ node, depth }: { node: OrgUnitTreeNode; depth: number }) {
  * parity, read surface): the real hierarchy from GET
  * /institutional/org-units/tree (the wire's nested { unit, children }
  * shape unwrapped at the api seam) — colleges → scientific
- * departments → labs/offices. Collapse state is local; the first
- * level renders expanded.
+ * departments → labs/offices. The whole tree scrolls (Screen scroll —
+ * one scroller; every unit reachable however deep the tree), collapse
+ * state is local, the first level renders expanded.
  */
 export default function InstitutionOrganization() {
-  const p = usePalette();
   const tree = useOrgUnitTree();
 
   const nodes = tree.data ?? [];
@@ -71,9 +74,9 @@ export default function InstitutionOrganization() {
     ns.reduce((n, x) => n + 1 + flatCount(x.children), 0);
 
   return (
-    <View style={{ flex: 1, backgroundColor: p.bg }}>
+    <Screen scroll padded={false}>
       <StackHeader title="الهيكل التنظيمي" kicker="شجرة الوحدات" />
-      <View style={{ flex: 1, gap: sp[12], padding: sp[16] }}>
+      <View style={{ gap: sp[12], padding: sp[16] }}>
         {tree.isLoading ? (
           <SkeletonList rows={8} />
         ) : tree.isError ? (
@@ -83,16 +86,16 @@ export default function InstitutionOrganization() {
         ) : (
           <>
             <T variant="xs" color="faint">
-              {flatCount(nodes)} وحدة في الشجرة — الأسهم تفتح المستويات.
+              {latn(flatCount(nodes))} وحدة في الشجرة — الأسهم تفتح المستويات.
             </T>
             <RowList>
-              {nodes.map((n, i) => (
+              {nodes.map((n) => (
                 <UnitNode key={n.id} node={n} depth={0} />
               ))}
             </RowList>
           </>
         )}
       </View>
-    </View>
+    </Screen>
   );
 }

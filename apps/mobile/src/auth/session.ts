@@ -31,6 +31,8 @@ import { create } from "zustand";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getToken, setToken } from "@/lib/tokenStorage";
 import { apiWithCookieCapture, post, registerAuthBridge, get as apiGet } from "@/api/client";
+import { queryClient } from "@/lib/queryClient";
+import { queryCachePersister } from "@/lib/resilience/persistence";
 import type { AuthUser, SessionResponse } from "@/api/types";
 
 const KEY_USER = "ula-mobile-user";
@@ -127,6 +129,22 @@ function persistTokens(accessToken: string | null, refreshCookie: string | null)
   return pendingPersistence;
 }
 
+/**
+ * R353-2 §5 — the session-boundary cache purge. The query cache and
+ * its PERSISTED copy (AsyncStorage, 24h maxAge) must never outlive
+ * the session that fetched them: another account logging in on the
+ * same device would otherwise hydrate the previous user's data (and
+ * the previous institution's rows) cold-start fresh. select-institution
+ * already clears on switch; this closes the login/logout/expiry
+ * boundaries. Failure to clear storage is non-fatal (the in-memory
+ * clear already happened — a stale persisted blob is then discarded
+ * by the buster/maxAge guards on next restore).
+ */
+async function purgeCachedServerState(): Promise<void> {
+  queryClient.clear();
+  await queryCachePersister.removeClient().catch(() => undefined);
+}
+
 export const useSession = create<SessionState>((set, get) => ({
   user: null,
   accessToken: null,
@@ -185,6 +203,13 @@ export const useSession = create<SessionState>((set, get) => ({
     const prev = get();
     const effectiveCookie = refreshCookie ?? prev.refreshCookie;
     const effectiveInst = user.currentInstitution?.id ?? prev.activeInstitutionId;
+    // §5: a DIFFERENT account establishing a session (fresh login,
+    // post-expiry re-login) is a session boundary — the previous
+    // account's cached server state dies with its session. Same user
+    // (token refresh, profile refresh) keeps the warm cache.
+    if (prev.user && prev.user.id !== user.id) {
+      void purgeCachedServerState();
+    }
     sessionWriteVersion++;
     void persistSession(accessToken, effectiveCookie, user, effectiveInst);
     // STATE carries the cookie too — the API bridge reads it for the
@@ -201,6 +226,9 @@ export const useSession = create<SessionState>((set, get) => ({
 
   clearSession: async () => {
     sessionWriteVersion++;
+    // §5: logout/expiry is a session boundary — cached server state
+    // (memory + persisted) dies with the session.
+    void purgeCachedServerState();
     await persistSession(null, null, null, null);
     set((s) => ({
       user: null,

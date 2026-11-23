@@ -116,7 +116,7 @@ position, never the platform role.*
 | Digital metrics | `digital` | `GET /admin/digital`, `GET /health` | ✅ |
 | Sync console | ~~`sync`~~ (removed) | ~~`GET /admin/sync`, `POST /admin/sync/trigger`~~ | 🚫 r342 t13 — zu-sync retirement: routes left the backend; `app/admin/sync` console screen + dashboard quick-action row deleted |
 | Invites | `invites` | `GET/POST /invites`, `DELETE /invites/:id` | ✅ |
-| Bulk import | `bulk-import` | `POST /users/bulk-import/preview`, `POST /users/bulk-import/commit` | ✅ r353 — CSV paste → server-planned preview (dupes + faculty/department resolution) → one-transactional commit with the temp-password sheet. The row was a phantom claim before (no route file existed) |
+| Bulk import | `bulk-import` | `POST /users/bulk-import/preview`, `POST /users/bulk-import/commit` | ✅ r353-2 — CSV paste → server-planned preview (dupes + faculty/department resolution) → the honest commit: the VALID rows are created in one transaction, the invalid rows are SKIPPED and the count returns in the answer (never «all-or-nothing»). The preview is bound to the exact CSV + institution (editing either invalidates it), ONE explicit confirmation shows the exact counts, a TIMEOUT surfaces the ambiguous outcome, and temp passwords are one-time screen state delivered via the platform Share sheet. The row was a phantom claim before r353 (no route file existed) |
 | Feedback inbox | `feedback` | `GET /feedback`, `PATCH /feedback/:id` | ✅ |
 | Papers drill | dashboard | `GET /admin/papers` | ⚠️ plagiarism column labeled «محاكاة» |
 
@@ -153,35 +153,76 @@ position, never the platform role.*
 ## 7. Institutional Operating Workspace (r353 — `/institution/**`)
 
 *The institution's own statutory surface (web r352 parity). Reachable
-for ADMIN / QUALITY / OWNER — institution reads are context reads per
-contract §0; WRITE affordances gate on the server's effective
+for ADMIN / QUALITY / OWNER — the WEB route gate is the sanctioned
+product reference (`frontend/src/App.tsx`:
+`ProtectedRoute allow={['ADMIN','OWNER','QUALITY']}`); the API
+contract's §0 «any active member» language describes the server's read
+scoping, not a wider product gate — mobile matches the web gate
+byte-for-byte. WRITE affordances gate on the server's effective
 capability set (`GET /me/permissions`) via `useMyCapabilities`, never
-role-name inference. The org-tree wire shape (`{ unit, children }`)
-is unwrapped at the api seam (the web's live-QA lesson). Kind-aware:
-research hides for Law 21/2023 stages 1–2.*
+role-name inference.*
+
+**R353-2 (Phase 2) ground truth, per row:**
+- **Scrolling:** every screen scrolls to its last element — list
+  registers ride `DataList` (FlashList v2 native / FlatList web, the
+  house ONE-scroller rule); detail pages ride `Screen scroll`; no
+  `DataList` inside a `ScrollView`.
+- **Pagination:** every register rides `usePagedList` + the `paged`
+  transport (page 1, limit 20, meta-driven `totalPages`) — lists page
+  past the first page and totals are the server's word
+  (`meta.total`), never a fabricated `totalPages: 1`.
+- **Wire types (the §8 audit):** every row type mirrors the REAL
+  route projections (`fullNameAr` not an invented `displayName`,
+  `membershipCount`/`meetingCount`, `conferredAt`, `entryDate`,
+  `{ unit, ancestors }` for org-unit detail, the `{ person, … }`
+  people aggregate, `minutes` as the route's ≤1-row ARRAY).
+- **Institution isolation (§5):** keep-previous-data is guarded by
+  `sameScopePlaceholder` — a membership switch shows the honest
+  loading state, never the previous institution's rows; the access
+  screen's user-search key is scope-scoped and the whole
+  search/selection state resets on scope change; session boundaries
+  (logout / different-account login) purge the query cache AND its
+  persisted copy.
+- **Kind rule (§7):** research hides by kind at the ROUTE level — a
+  foreign-kind deep link renders the explanatory state and fires NO
+  research reads (not merely a hidden nav row).
 
 | Section | Native route | API | Status |
 |---|---|---|---|
-| Overview (masthead + section rail) | `institution` | `GET /institutions/me/profile` | ✅ kind/sector/ownership/status + capability-marked sections |
-| Organization tree | `institution/organization` | `GET /institutional/org-units/tree` | ✅ collapsible tree, kind + status chips |
-| People & staff | `institution/people`, `people/[id]` | `GET /institutional/people`, `GET /institutional/people/:id` | ✅ search + detail with appointments |
-| Positions & appointments | `institution/positions`, `appointments/[id]` | `GET /institutional/appointments`, `GET /institutional/appointments/:id` | ✅ status-filtered register + record |
-| Access (capabilities & grants) | `institution/access` | `GET /me/permissions`, `GET /me/unit-capabilities`, `GET /admin/users/:id/unit-capabilities`, `POST /admin/users/:id/unit-capabilities`, `POST /admin/unit-capabilities/:grantId/revoke` | ✅ own effective set + grant/revoke management (UNIT_CAPABILITIES_ASSIGN-gated) |
-| Councils & meetings | `institution/councils`, `councils/[id]`, `councils/[id]/meetings/[meetingId]` | `GET /governance/councils`, `GET /governance/councils/:id`, `GET /governance/councils/:id/meetings`, `GET /governance/meetings/:id` | ✅ memberships → meetings → agenda/attendance/resolutions/minutes |
-| Programs & versions | `institution/programs`, `programs/[id]` | `GET /academic/programs`, `GET /academic/programs/:id` | ✅ status-filtered + version history |
-| Training placements + evaluation | `institution/training` | `GET /academic/training-placements`, `PATCH /academic/training-placements/:id` | ✅ evaluation write (PROGRAMS_MANAGE-gated) |
-| Learners / enrollments / credentials | `institution/students` | `GET /academic/learners`, `GET /academic/program-enrollments`, `GET /academic/credentials` | ✅ three-register segmented surface |
-| Quality (self-assessment + accreditation) | `institution/quality` | `GET /compliance/self-assessments`, `GET /compliance/accreditations` | ✅ two-register segmented surface |
-| Licenses / inspections / findings | `institution/licenses` | `GET /compliance/licenses`, `GET /compliance/inspections`, `GET /compliance/findings` | ✅ three-register segmented surface |
-| Facilities / equipment / reservations | `institution/facilities`, `facilities/[id]` | `GET /operations/facilities`, `GET /operations/facilities/:id`, `GET /operations/equipment`, `GET /operations/reservations`, `GET /operations/work-orders`, `POST /operations/reservations` | ✅ facility record + reservation write (FACILITIES_MANAGE-gated) |
-| Institutional research | `institution/research`, `research/[id]` | `GET /research-projects`, `GET /research-projects/:id`, `GET /research-outputs` | ✅ team + outputs (kind-gated: hidden for intermediate institutes / vocational centers) |
+| Overview (masthead + section rail) | `institution` | `GET /institutions/me/profile` | ✅ kind/sector/ownership/status + capability-marked sections, scrolling page |
+| No-context state (role allowed, zero memberships) | `institution` (layout gate) | — | ✅ honest «لم تُحدَّد مؤسسة» state directing to selection — never an eternal skeleton or empty-data copy |
+| Organization tree | `institution/organization` | `GET /institutional/org-units/tree` | ✅ collapsible tree in ONE scrolling page, kind + status chips |
+| People & staff | `institution/people`, `people/[id]` | `GET /institutional/people`, `GET /institutional/people/:id` | ✅ live search + full pagination + the real `{ person, appointments, unitCapabilityGrants }` aggregate |
+| Positions & appointments | `institution/positions`, `appointments/[id]` | `GET /institutional/appointments`, `GET /institutional/appointments/:id` | ✅ status-filtered paged register + record (decisionNumber/acting/termMonths surfaced) |
+| Access (capabilities & grants) | `institution/access` | `GET /me/permissions`, `GET /me/unit-capabilities`, `GET /admin/users/:id/unit-capabilities`, `POST /admin/users/:id/unit-capabilities`, `POST /admin/unit-capabilities/:grantId/revoke` | ✅ own effective set + grant/revoke management (UNIT_CAPABILITIES_ASSIGN-gated, scope-labeled, self-grant blocked, institution-scoped user search, reset-on-switch) |
+| Councils & meetings | `institution/councils`, `councils/[id]`, `councils/[id]/meetings/[meetingId]` | `GET /governance/councils`, `GET /governance/councils/:id`, `GET /governance/councils/:id/meetings`, `GET /governance/meetings/:id` | ✅ memberships in the header + the meetings register as the page's own paged scroller; agenda/attendance/resolutions/minutes (the wire's minutes ARRAY read as minutes[0]) |
+| Programs & versions | `institution/programs`, `programs/[id]` | `GET /academic/programs`, `GET /academic/programs/:id` | ✅ status-filtered paged register + version history |
+| Training placements + evaluation | `institution/training` | `GET /academic/training-placements`, `PATCH /academic/training-placements/:id` | ✅ paged register + evaluation write (PROGRAMS_MANAGE-gated, score 0–100 validated) |
+| Learners / enrollments / credentials | `institution/students` | `GET /academic/learners`, `GET /academic/program-enrollments`, `GET /academic/credentials` | ✅ three segmented registers, each its own paged DataList |
+| Quality (self-assessment + accreditation) | `institution/quality` | `GET /compliance/self-assessments`, `GET /compliance/accreditations` | ✅ two segmented paged registers |
+| Licenses / inspections / findings | `institution/licenses` | `GET /compliance/licenses`, `GET /compliance/inspections`, `GET /compliance/findings` | ✅ three segmented paged registers |
+| Facilities / equipment / reservations / incidents | `institution/facilities`, `facilities/[id]` | `GET /operations/facilities`, `GET /operations/facilities/:id`, `GET /operations/equipment`, `GET /operations/reservations`, `GET /operations/work-orders`, `GET /operations/safety-incidents`, `POST /operations/reservations` | ✅ facility record (counts from the wire's `_count`) + equipment/reservations paged + work orders/incidents sections + the booking write (FACILITIES_MANAGE-gated; date+time compose in the device timezone, end>start validated, 409 overlap surfaced with the server's own words) |
+| Institutional research | `institution/research`, `research/[id]` | `GET /research-projects`, `GET /research-projects/:id`, `GET /research-outputs` | ✅ paged register + detail with the team in the header and outputs as the page's own paged scroller (kind-gated at the ROUTE: foreign-kind deep links render the explanatory state and fire no reads) |
 
-**Honest scope note:** the heavy authoring CRUD (creating org units,
-people, appointments, councils, programs…) remains web-first — the
-mobile surface reads the real data and carries the on-site writes the
-field needs (grant/revoke capabilities, training evaluation, facility
-booking). Creation flows on mobile are follow-up work, tracked in the
-PR body — never dead buttons.
+**Honest scope notes (Phase 2):**
+- The heavy authoring CRUD (creating org units, people, appointments,
+  councils, programs…) remains **web-first** — the mobile surface
+  reads real data and carries the on-site writes the field needs
+  (grant/revoke capabilities, training evaluation, facility booking).
+  Creation flows on mobile are follow-up work — never dead buttons.
+- Detail-page sub-registers (facility equipment/reservations, council
+  appointments on the person record) are bounded per the web's own
+  detail surfaces (`limit` 20–50) with the server's count honestly
+  labeled when more rows exist; the main registers all paginate
+  fully.
+- Work orders and safety incidents cannot be filtered by facility
+  server-side (the contract's filters are status/equipmentId only —
+  web parity): the facility page filters the loaded page client-side
+  and says so.
+- Device verification (real Android/iOS scroll physics, FlashList
+  recycling, keyboard behavior) is **pending** — no emulator/device
+  in this sandbox; jest + the render net cover rendering and the
+  data/pagination/isolation contracts.
 
 ## 8. Cross-cutting integrations
 
@@ -190,7 +231,7 @@ PR body — never dead buttons.
 | Auth transport | Bearer access (15min) + `ulara_refresh` cookie replayed manually (Set-Cookie captured natively; SameSite/Secure are browser-only constraints) | ✅ verified against live API |
 | Token storage | SecureStore (access + refresh value); user JSON in AsyncStorage; never logged | ✅ |
 | Session boundaries | logout / change-password / reset bump tokenVersion → clean sign-out honored | ✅ |
-| Cache discipline | TanStack Query, institution-scoped keys, `queryClient.clear()` at session boundaries | ✅ |
+| Cache discipline | TanStack Query, institution-scoped keys (scope segment LAST), `sameScopePlaceholder` keep-previous-data guard, `queryClient.clear()` + persisted-cache removal at session boundaries (logout / different-account login) | ✅ pinned by the isolation suite (src/features/institutional/queries.test.tsx + src/auth/session-boundary.test.ts) |
 | Pagination | `{data, meta}` offset pagination; keepPreviousData on page flips | ✅ |
 | Offline | NetInfo banner; cached reads; writes blocked honestly | ✅ |
 | RTL | forced RTL, logical props, mirrored back arrow | ✅ (Android first-ever launch applies from second start — native limitation, documented) |

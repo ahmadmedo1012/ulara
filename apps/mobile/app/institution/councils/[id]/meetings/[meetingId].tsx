@@ -1,11 +1,11 @@
 import { View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
+import { Screen } from "@/components/ui/screen";
 import { StackHeader } from "@/components/shell/AppTopBar";
+import { RowList, LedgerRow, StatLine } from "@/components/ui/data";
 import { T } from "@/components/ui/text";
 import { Badge } from "@/components/ui/surfaces";
-import { RowList, LedgerRow, StatLine } from "@/components/ui/data";
 import { SkeletonList, ErrorState, EmptyState } from "@/components/ui/states";
-import { usePalette } from "@/design/theme";
 import { sp } from "@/design/tokens";
 import { useMeeting } from "@/features/institutional/queries";
 import {
@@ -18,23 +18,27 @@ import {
  * /institution/councils/[id]/meetings/[meetingId] — the meeting
  * record (web MeetingDetailPage parity, read surface): attendance,
  * agenda items, resolutions (with due dates) and the minutes draft
- * state — the governance depth in one scroll.
+ * state — the governance depth in ONE scrolling page (every section
+ * reachable). Wire shape (GET /governance/meetings/:id): the FLAT
+ * prisma row with its one-to-many includes — `minutes` arrives as an
+ * ARRAY of ≤1 current row (Prisma include semantics), read as
+ * minutes[0] here.
  */
 export default function InstitutionMeetingDetail() {
-  const p = usePalette();
   const params = useLocalSearchParams<{ id: string; meetingId: string }>();
   const meetingId = typeof params.meetingId === "string" ? params.meetingId : Array.isArray(params.meetingId) ? params.meetingId[0] : "";
 
   const meeting = useMeeting(meetingId || null);
   const data = meeting.data ?? null;
+  const minutes = data?.minutes && data.minutes.length > 0 ? data.minutes[0] : null;
 
   return (
-    <View style={{ flex: 1, backgroundColor: p.bg }}>
+    <Screen scroll padded={false}>
       <StackHeader
         title={data?.seqNumber ? `اجتماع رقم ${data.seqNumber}` : "سجل الاجتماع"}
         kicker="المجالس واللجان"
       />
-      <View style={{ flex: 1, gap: sp[12], padding: sp[16] }}>
+      <View style={{ gap: sp[12], padding: sp[16] }}>
         {meeting.isLoading ? (
           <SkeletonList rows={6} />
         ) : meeting.isError ? (
@@ -62,8 +66,11 @@ export default function InstitutionMeetingDetail() {
                 {(data.attendance ?? []).map((a, i, arr) => (
                   <LedgerRow key={a.id} last={i === arr.length - 1}>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: sp[10] }}>
-                      <View style={{ flex: 1 }}>
-                        <T variant="body" weight="medium">{a.person?.displayName ?? "غير مرتبط"}</T>
+                      <View style={{ flex: 1, gap: 2 }}>
+                        <T variant="body" weight="medium">{a.person?.fullNameAr ?? "غير مرتبط"}</T>
+                        {a.attendeeKind === "GUEST" ? (
+                          <T variant="xs" color="faint">ضيف موثَّق</T>
+                        ) : null}
                       </View>
                       <Badge label={labelOf(ATTENDANCE_LABELS, a.status)} tone={toneOf(a.status)} />
                     </View>
@@ -118,19 +125,19 @@ export default function InstitutionMeetingDetail() {
               </RowList>
             )}
 
-            {/* ── minutes ── */}
+            {/* ── minutes (the wire's ≤1-row array → [0]) ── */}
             <T variant="h4" weight="bold">المحضر</T>
-            {data.minutes ? (
+            {minutes ? (
               <View style={{ gap: sp[6] }}>
-                <StatLine label="حالة المحضر" value={labelOf(MINUTES_STATUS_LABELS, data.minutes.status)} />
-                {data.minutes.approvedAt ? (
-                  <T variant="xs" color="faint">اعتُمد: {data.minutes.approvedAt.slice(0, 10)}</T>
+                <StatLine label="حالة المحضر" value={labelOf(MINUTES_STATUS_LABELS, minutes.status)} />
+                {minutes.approvedAt ? (
+                  <T variant="xs" color="faint">اعتُمد: {minutes.approvedAt.slice(0, 10)}</T>
                 ) : null}
-                {data.minutes.signedAt ? (
-                  <T variant="xs" color="faint">وُقِّع: {data.minutes.signedAt.slice(0, 10)}</T>
+                {minutes.signedAt ? (
+                  <T variant="xs" color="faint">وُقِّع: {minutes.signedAt.slice(0, 10)}</T>
                 ) : null}
-                {data.minutes.contentAr ? (
-                  <T variant="sm" color="muted" numberOfLines={12}>{data.minutes.contentAr}</T>
+                {minutes.contentAr ? (
+                  <T variant="sm" color="muted" numberOfLines={12}>{minutes.contentAr}</T>
                 ) : (
                   <T variant="sm" color="muted">مسودة المحضر بلا نص بعد.</T>
                 )}
@@ -141,6 +148,6 @@ export default function InstitutionMeetingDetail() {
           </>
         )}
       </View>
-    </View>
+    </Screen>
   );
 }
