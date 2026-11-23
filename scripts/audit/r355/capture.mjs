@@ -430,11 +430,21 @@ async function main() {
               }
 
               // 3. Clipped Text (text-overflow without title or truncated unintentionally)
+              // R355 (instrument repair): the sr-only / visually-hidden
+              // clip recipes (base.css: width 1px + overflow hidden) are
+              // the INTENTIONAL a11y idiom — their scrollWidth always
+              // exceeds the 1px clientWidth by construction, and the
+              // original heuristic recorded every screen-reader-only
+              // string as a P2 clipping defect (all 7 catalogued
+              // TEXT_CLIPPED routes were sr-only false positives).
+              // Excluded by class AND by the sub-pixel clip shape; real
+              // visible clipping (clientWidth > 2) still gates.
               const elementsWithOverflow = [];
               const allEls = document.querySelectorAll('h1, h2, h3, h4, p, span, td, th');
               for (const el of allEls) {
                 if (el.children.length > 0) continue;
-                if (el.scrollWidth > el.clientWidth + 2 && el.clientWidth > 0) {
+                if (el.classList.contains('sr-only') || el.classList.contains('visually-hidden')) continue;
+                if (el.scrollWidth > el.clientWidth + 2 && el.clientWidth > 2) {
                   const style = window.getComputedStyle(el);
                   if (style.overflow === 'hidden' && style.textOverflow !== 'ellipsis') {
                     elementsWithOverflow.push({

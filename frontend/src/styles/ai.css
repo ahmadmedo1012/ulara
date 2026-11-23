@@ -158,11 +158,48 @@
 .ai-conv-error-pad { padding: var(--sp-2); }
 .ai-suggestion-text { color: var(--text-muted); }
 
+/* ── R355 (القاعدة المفقودة): the quick chips + the retry control
+   shipped BARE since the r351 split — the student.css inheritance the
+   strip's comment cites has no rule (the section is comment-only), so
+   both rendered as UA-default buttons (24px, padding 0, no frame).
+   The base rides the family's own square hairline voice (the r313
+   radius-0 canon — chips are square, only dots/avatars round):
+   quiet well, muted ink, the warm copper hover register. Tokens only. */
+.ai-surface .ai-quick-chip,
+.ai-surface .chat-retry {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: var(--sp-1) var(--sp-3);
+  border: 1px solid var(--surface-border);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  cursor: pointer;
+  transition: color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+}
+.ai-surface .ai-quick-chip:is(:hover, :focus-visible),
+.ai-surface .chat-retry:is(:hover, :focus-visible) {
+  color: var(--c-copper-deep);
+  border-color: var(--c-copper-ink);
+}
+.ai-surface .ai-quick-chip:disabled,
+.ai-surface .chat-retry:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
 /* ── G (عقد r290 نفسه): أرضية اللمس 44px لأدوات المحادثة على كل جهاز
       لمسي فعلي — الأجهزة اللوحية فوق 640px كانت تقيس .chat-send عند
       40px و.ai-quick-chip عند 35px (قياس مباشر على 1440). min-* فقط
       تُكبّر صندوق النقر؛ إيقاع الماوس الدقيق يبقى مضغوطًا كما صُمِّم. */
-@media (pointer: coarse) {
+/* R355 (tap floor): the 44px seats now apply on coarse pointers OR any
+   phone-band width — a ≤767px surface is phone-class even when a mouse
+   drives it (headless audits measure fine-pointer at 360px; real touch
+   laptops at wide viewports keep the coarse arm). The design-tokens
+   touchFloor (44) is an absolute floor, not a pointer-type privilege. */
+@media (pointer: coarse), (max-width: 767px) {
   .ai-surface .chat-input { min-block-size: 44px; }
   .ai-surface .chat-send { min-inline-size: 44px; min-block-size: 44px; }
   .ai-surface .ai-quick-chip { min-block-size: 44px; }
