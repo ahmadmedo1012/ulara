@@ -20,15 +20,47 @@
   بناء الواجهة والخلفية)، rewrites (SPA + `/api`)، رؤوس أمنية (CSP
   ببصمة bootstrap السمة، HSTS، …)، وcron (§4).
 - **الترحيلات جزء من بناء Vercel (المسار الحقيقي)**: `buildCommand` في
-  `vercel.json` يشغّل `npm --prefix backend run prisma:deploy` — أي سكربت
-  `backend/scripts/migrate-deploy.mjs`: اشتقاق الرابط المباشر
-  (`DIRECT_DATABASE_URL` أو اشتقاقه بتجريد `-pooler` من
-  `DATABASE_URL`) + محاولات إيقاظ Neon + **قفل استشاري على مستوى
-  الجلسة** يُنسّق البناءات الإنتاجية المتزامنة على قاعدة Neon نفسها.
-  البوابة `VERCEL_ENV=production` **فقط** — بناءات preview لا تُرحِّل
-  الإنتاج أبدًا؛ مسار CLI في `deploy.yml` وتكامل Git في Vercel يركبان
-  نفس `buildCommand`؛ والنشر idempotent (إعادة `prisma migrate deploy`
-  على قاعدة محدّثة = no-op).
+  `vercel.json` هو `bash scripts/vercel-build.sh` — منطق البناء نفسه
+  (بوابة `VERCEL_ENV=production` ثم `prisma:deploy` ثم توليد العميل
+  وبناء الواجهة والخلفية والتحقق من `backend/dist/app.js`) انتقل إلى
+  السكربت في 2026-11-23: السلسلة المضمّنة بلغت 268 حرفًا بينما مخطط
+  Vercel يسقّف `buildCommand` عند **256**، ففشلت كل نشرات preview منذ
+  إدخال بوابة الترحيل بخطأ تحقق المخطط **قبل** أي بناء («The
+  `vercel.json` schema validation failed … `buildCommand` should NOT be
+  longer than 256 characters»). السكربت يعيد استخدام نفس العقد،
+  و`.vercelignore` يعيد تضمينه صراحةً.
+- **عقد قفل الترحيل (سكربت `backend/scripts/migrate-deploy.mjs`)**:
+  المرشحات للترحيل اتصالات **مباشرة فقط** — `DIRECT_DATABASE_URL`، أو
+  المشتق بتجريد `-pooler` من `DATABASE_URL`، أو `DATABASE_URL` نفسه إن
+  كان مباشرًا. **لا مسار احتياطي عبر الـpooler إطلاقًا**: PgBouncer في
+  وضع transaction pooling لا يضمن ثبات جلسة PostgreSQL طوال القفل
+  (وثائق PgBouncer)، و`connection_limit=1` لا يثبت شيئًا عن هوية الجلسة
+  الخادمية — فعندما لا يصل أي مرشح مباشر يفشل السكربت بأمان برسالة
+  تشخيص واضحة بدل الترحيل بلا حماية. القفل نفسه
+  `pg_advisory_xact_lock` (على مستوى **المعاملة**) داخل معاملة Prisma
+  تفاعلية واحدة تُثبِّت اتصالًا واحدًا للجلسة كلها: القفل والإطلاق
+  وجميع خطوات الترحيل تجري على جلسة واحدة مضمونة، ويُحرَّر القفل حتمًا
+  عند COMMIT/ROLLBACK أو بموت العملية (لا قفل عالق أبدًا — مُثبَت
+  بحزام `tests/integration/migrate-lock.test.ts`). عقد Prisma 5.22
+  مُتحقَّق تجريبيًا: `SET LOCAL` عبر واجهة التنفيذ `$executeRawUnsafe`،
+  واستعلامات `SELECT` (اكتساب القفل، `pg_locks`) عبر واجهة النتائج
+  `$queryRawUnsafe` — الشكل العاري `SELECT pg_advisory_xact_lock(…)`
+  يرفضه Prisma («Failed to deserialize column of type 'void'») فيركب
+  القفل سطرًا حاملًا مطبوعًا؛ وللـ`SET` القديم عبر واجهة التنفيذ على
+  استعلام SELECT كان يُرجع عدد الصفوف ويُخفي نتائجها (لا يمكن ملاحظة
+  نجاح القفل قط). بعد انتهاء الترحيل يعيد السكربت التحقق من خلال
+  `pg_locks` أن القفل ظل محوزًا طوال التشغيل — لا يُعلَن نجاح ترحيل
+  لم يكن القفل مملوكًا فعليًا خلاله، وخطأ انتظار القفل (300 ثانية)
+  يفشل بصوت عالٍ ولا يُبتلع أبدًا.
+- **عازل Vercel المزدوج**: بوابة `VERCEL_ENV=production` في سكربت
+  البناء، **وأيضًا** داخل `migrate-deploy.mjs` نفسه (يرفض أي بيئة
+  Vercel غير إنتاجية حتى لو أعاد أحدهم توصيل البوابة)، ومتغير
+  `DATABASE_URL` في Vercel منفصل بين preview وproduction (قاعدتا Neon
+  مختلفتان — مُتحقَّق عبر API المنصة)، فبناءات preview لا تستطيع لمس
+  قاعدة الإنتاج ترحيلًا قط. البوابة `VERCEL_ENV=production` **فقط** —
+  بناءات preview لا تُرحِّل الإنتاج أبدًا؛ مسار CLI في `deploy.yml`
+  وتكامل Git في Vercel يركبان نفس `buildCommand`؛ والنشر idempotent
+  (إعادة `prisma migrate deploy` على قاعدة محدّثة = no-op).
 - **Neon cold start**: الويب دائم الاستيقاظ على Vercel؛ القاعدة (Neon
   مجانية) تصفر الحساب بعد الخمول — أول طلب يدفع استيقاظًا أقل من ثانية،
   وسكربت `backend/scripts/migrate-deploy.mjs` يعيد المحاولة حتى استيقاظ Neon.

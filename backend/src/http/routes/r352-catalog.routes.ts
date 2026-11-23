@@ -13,6 +13,7 @@
 import { Router } from 'express';
 import { prisma } from '../../db.js';
 import { authMiddleware } from '../middleware/auth.js';
+import { resolveCallerInstitutionScope } from '../../lib/profile-scoping.js';
 
 const router = Router();
 
@@ -55,7 +56,20 @@ router.get('/position-templates', async (req, res, next) => {
     // templates PLUS their own institution's variants — never another
     // institution's (the unfiltered listing leaked foreign rows'
     // existence to any authenticated user).
-    const callerInstitutionId = req.user?.institutionId ?? null;
+    //
+    // The institution context is DB-VERIFIED here — authMiddleware only
+    // verifies the JWT signature, so the token's `inst` claim is NEVER
+    // trusted alone (resolveCallerInstitutionScope re-resolves it
+    // against an ACTIVE membership in an ACTIVE institution):
+    //   - no context claim → global templates only;
+    //   - a claim that does not resolve (revoked membership, suspended
+    //     institution, forged claim) → 403 INSTITUTION_CONTEXT_INVALID —
+    //     an invalid context is surfaced loudly, never silently
+    //     downgraded to "no context".
+    const callerInstitutionId = await resolveCallerInstitutionScope(
+      req.user!.id,
+      req.user!.institutionId,
+    );
     const data = await prisma.positionTemplate.findMany({
       where: callerInstitutionId
         ? { OR: [{ isLocalVariant: false }, { institutionId: callerInstitutionId }] }

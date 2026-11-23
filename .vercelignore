@@ -2,8 +2,10 @@
 # backend + frontend + shared + api + the install/build toolchain files.
 # Everything else (mobile app, docs, specs, engineering history, local
 # test artifacts) builds and ships through its own pipelines and must
-# not enter the upload. Patterns are gitignore-style; the negated line
-# below re-includes the ONE script the root preinstall hook runs.
+# not enter the upload. Patterns are gitignore-style; the negated lines
+# below re-include the two scripts the root hooks run plus the Vercel
+# buildCommand entry (scripts/vercel-build.sh) that must ship with the
+# upload — without it the build has no build script at all.
 node_modules
 backend/node_modules
 frontend/node_modules
@@ -16,6 +18,7 @@ apps
 scripts/*
 !scripts/warn-node-env.mjs
 !scripts/setup-hooks.mjs
+!scripts/vercel-build.sh
 .github
 .githooks
 .eas

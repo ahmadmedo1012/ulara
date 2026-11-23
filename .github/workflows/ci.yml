@@ -186,10 +186,11 @@ jobs:
       - run: npm --prefix backend run prisma:generate
       # Migrations via the repo's OWN deploy script — the same path
       # production uses. Verified against a plain localhost URL (local
-      # embedded Postgres): DNS resolve + TCP probe + SELECT 1 all
-      # succeed, and the "pooler fallback" candidate it appends
-      # (pgbouncer=true, connection_limit=1) is harmless on a plain
-      # Postgres, so `prisma migrate deploy` applies all 18 migrations.
+      # embedded Postgres): DNS resolve + TCP probe + SELECT 1 succeed,
+      # the URL is already direct so it is the single candidate, and
+      # `prisma migrate deploy` applies the full chain under the
+      # advisory-lock transaction (the migrate-lock contract itself is
+      # pinned by tests/integration/migrate-lock.test.ts below).
       # (npx prisma migrate deploy --schema prisma/schema.prisma would
       # also work; keeping the production script exercised is worth more.)
       - name: Apply migrations to the disposable service DB

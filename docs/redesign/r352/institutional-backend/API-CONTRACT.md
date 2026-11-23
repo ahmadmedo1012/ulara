@@ -46,7 +46,7 @@ existing read-only oversight (`QUALITY_VIEW`) applies to the read surfaces.
 | GET | `/catalog/institution-types` | `[{ id, code, sector, nameAr, nameEn, isIndependentLegalPersonality, legalBasis, defaultAuthorityId }]` |
 | GET | `/catalog/regulatory-authorities` | `[{ id, code, nameAr, nameEn, kind }]` |
 | GET | `/catalog/credential-types` | `[{ id, code, nameAr, nameEn, level, grantsProgression, legalBasis }]` |
-| GET | `/catalog/position-templates` | `[{ id, code, titleAr, titleEn, category, scopeRequirement, eligibleInstitutionTypeCodes, isLocalVariant, institutionId }]` |
+| GET | `/catalog/position-templates` | `[{ id, code, titleAr, titleEn, category, scopeRequirement, eligibleInstitutionTypeCodes, isLocalVariant, institutionId }]` — local variants ride the caller's DB-VERIFIED institution context (an unverified `inst` claim is never trusted: contextless → globals only; a claim that does not resolve — revoked membership / suspended institution / forged id — 403 `INSTITUTION_CONTEXT_INVALID`, never silently downgraded) |
 | GET | `/catalog/accreditation-criteria-sets` | `[{ id, code, version, nameAr, appliesTo, authorityId, isActive, items: [{ id, code, titleAr }] }]` |
 
 ## 2. Institution classification

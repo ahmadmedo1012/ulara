@@ -178,7 +178,28 @@ router.get('/admin/users/:id/permissions', requireCapability('ROLES_ASSIGN'), as
       },
     });
     if (!target) throw AppError.notFound('المستخدم غير موجود');
-    const caps = await getEffectiveCapabilities(target.id, target.role);
+    // The effective set is computed IN the caller's DB-VERIFIED
+    // institution context — the SAME scope the `overrides` listing
+    // below is filtered to (platform-global rows + that institution's
+    // rows). The pre-fix call passed NO context, so `effective` ignored
+    // institution-scoped UserPermission grants while the listing showed
+    // them: the two halves of this payload disagreed.
+    //
+    // Semantics pinned:
+    //   - ADMIN/QUALITY caller → callerInstitution (DB-verified above);
+    //     effective = role defaults ∪ RolePermission ∪ global +
+    //     same-institution UserPermission grants ∪ institution-wide
+    //     (orgUnitId NULL) UnitCapabilityGrants in that institution —
+    //     minus revokes (deny precedence). Unit-scoped grants are NOT
+    //     counted here: they authorize unit-targeted checks only
+    //     (assertCapabilityForUnit), never institution-wide operations.
+    //   - OWNER without an institution context → the contextless
+    //     computation BY DEFINITION (platform governance view): role
+    //     defaults ∪ RolePermission ∪ global UserPermission rows only —
+    //     institution-scoped grants never apply to a session that
+    //     selected no institution. The response reports
+    //     contextInstitutionId: null so this is machine-visible.
+    const caps = await getEffectiveCapabilities(target.id, target.role, callerInstitution);
     // r352 tenant isolation: an institutional caller lists the GLOBAL
     // rows plus THEIR institution's scoped rows only — the unscoped
     // listing disclosed other institutions' override rows (capability,
@@ -194,6 +215,11 @@ router.get('/admin/users/:id/permissions', requireCapability('ROLES_ASSIGN'), as
       data: {
         user: target,
         roleDefaults: DEFAULT_ROLE_CAPABILITIES[target.role],
+        // The institution context `effective` was computed in (null = the
+        // contextless platform slice — the OWNER governance view). The
+        // overrides listing above is filtered to exactly the same scope,
+        // so the two halves of the payload always agree.
+        contextInstitutionId: callerInstitution,
         effective: Array.from(caps),
         overrides,
       },
