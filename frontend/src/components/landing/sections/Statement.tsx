@@ -55,26 +55,12 @@ import { RevealCssClass } from '../../../hooks/useReveal';
 function StatementDraft() {
   return (
     <div className="st-draft" aria-hidden="true">
-      {/* r351 P4 — the shared displacement-ink filter (the B0 extraction's
-          §5 constants, verbatim: fractalNoise 0.045/0.055 · octaves 4 ·
-          seed 5 · scale 100 on R/G · blur 1.8 · contrast 2.2/−0.6),
-          mounted once per band; the media img consumes it via
-          `filter: url(#st-ink-displace)` — the courtyard drawing reads
-          as surveyed-on-paper, its reveal carrying the ink's own edge.
-          STATIC displacement (no motion) — the reduced-motion belt has
-          nothing to collapse. */}
-      <svg className="st-draft-defs" width="0" height="0" focusable="false" aria-hidden="true">
-        <defs>
-          <filter id="st-ink-displace" x="-5%" y="-5%" width="110%" height="110%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.045 0.055" numOctaves="4" seed="5" result="noise" />
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="100" xChannelSelector="R" yChannelSelector="G" />
-            <feGaussianBlur stdDeviation="1.8" result="blurred" />
-            <feComponentTransfer in="blurred" result="contrast">
-              <feFuncA type="linear" slope="2.2" intercept="-0.6" />
-            </feComponentTransfer>
-          </filter>
-        </defs>
-      </svg>
+      {/* r353 — the r351 displacement-ink filter defs RETIRE with the
+          filter itself (statement.css): the extracted turbulence
+          constants smeared the courtyard raster into an unreadable
+          gray blotch on the live sheet — the audit's worst-asset
+          finding; the illustration now ships raw, its own ink grade
+          intact. */}
       {/* the drafting field — the sheet's reference grid behind the title */}
       <svg className="st-draft-svg st-draft-grid" viewBox="0 0 320 320" fill="none" preserveAspectRatio="xMinYMin meet">
         {[1, 2, 3, 4, 5, 6, 7].map((n) => (
