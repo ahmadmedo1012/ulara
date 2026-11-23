@@ -100,15 +100,20 @@ function LoopFlipped() {
         {/* the video slab — the lecture recording, its play diamond */}
         <IsoBox x={-52} y={-16} w={52} d={22} h={3} />
         <IsoNode x={-45} y={-5} z={3.2} s={3} />
-        {/* the timeline: the hair rail + the inked progress crawling */}
+        {/* the timeline: the hair rail + the inked progress crawling
+            (r353: the crawl reads ROYAL — the platform measuring the
+            lecture, the warm copper staying on the checkpoint + check) */}
         <Route points={[[-46, -5, 3.4], [-8, -5, 3.4]]} dashed={false} stroke={PLATE.muted} strokeWidth={1} opacity={0.7} />
         <g className="iso-loop-line" style={ld('0.3s')}>
-          <Route points={[[-46, -5, 3.4], [-20, -5, 3.4]]} dashed={false} strokeWidth={2} opacity={0.9} />
+          <Route points={[[-46, -5, 3.4], [-20, -5, 3.4]]} dashed={false} strokeWidth={2} opacity={0.9} stroke={PLATE.royal} />
         </g>
-        {/* the checkpoints — popping in sequence, the middle one copper */}
+        {/* the checkpoints — popping in sequence (r354-final: all three
+            read in the neutral top voice — the panel's ONE warm focal
+            is the attendance check; the copper middle checkpoint the
+            r354 census found competing retired) */}
         {[-40, -28, -16].map((cx, i) => (
           <g key={cx} className="iso-loop-dot" style={ld(`${1.1 + i * 0.45}s`)}>
-            <IsoNode x={cx} y={-5} z={3.4} s={2.4} fill={i === 1 ? PLATE.sienna : PLATE.top} />
+            <IsoNode x={cx} y={-5} z={3.4} s={2.4} fill={PLATE.top} />
           </g>
         ))}
         {/* the attendance tower — landing with its check + tag */}
@@ -117,19 +122,23 @@ function LoopFlipped() {
           <polyline points={`${towerTop.sx - 4.4},${towerTop.sy + 0.5} ${towerTop.sx - 1.1},${towerTop.sy + 4} ${towerTop.sx + 4.6},${towerTop.sy - 3}`} fill="none" stroke={PLATE.sienna} strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" />
           <PlateTag x={towerTop.sx} y={towerTop.sy - 16} text="ATTEND" dark />
         </g>
-        {/* the attendance beacon — a node orbiting the tower's top */}
+        {/* the attendance beacon — a node orbiting the tower's top
+            (r354: the orbiting satellite de-coppers — the panel's warm
+            focal is the attendance CHECK itself; the beacon is the
+            system's tracking node, the royal data voice) */}
         <g transform={`translate(${towerTop.sx} ${towerTop.sy})`}>
           <g className="iso-loop-orbit">
             <circle r={7.5} fill="none" stroke={PLATE.hair} strokeWidth={0.9} strokeDasharray="3 3" />
-            <polygon points={sheetDiamond(7.5, 0, 1.7)} fill={PLATE.sienna} stroke={PLATE.ink} strokeWidth={0.7} />
+            <polygon points={sheetDiamond(7.5, 0, 1.7)} fill={PLATE.royal} stroke={PLATE.ink} strokeWidth={0.7} />
           </g>
         </g>
-        {/* the connectors — checkpoint flow → tower, timeline → tower */}
+        {/* the connectors — checkpoint flow → tower, timeline → tower
+            (royal: the system's data lines) */}
         <g className="iso-loop-line" style={ld('1.6s')}>
-          <Route points={[[5, -2, 3], [24, -3, 6]]} />
+          <Route points={[[5, -2, 3], [24, -3, 6]]} stroke={PLATE.royal} />
         </g>
         <g className="iso-loop-line" style={ld('2s')}>
-          <Route points={[[-16, -5, 3.4], [-16, 4, 1.2], [22, 2, 1.2]]} />
+          <Route points={[[-16, -5, 3.4], [-16, 4, 1.2], [22, 2, 1.2]]} stroke={PLATE.royal} />
         </g>
       </g>
       <Caption ar="شريط المحاضرة + إدماج مصحّح فوريًا + حضور تلقائي" mono="LOOP 6s / CHECKPOINT x3" />
@@ -165,23 +174,36 @@ function LoopMastery() {
         <g transform={`translate(${gapC.sx} ${gapC.sy})`}>
           <polygon className="iso-loop-pulse" points={sheetDiamond(0, 0, 4.2)} fill="none" stroke={PLATE.sienna} strokeWidth={1.3} />
         </g>
-        {/* the recommendation — the arrow + the NEXT STEP chip */}
+        {/* the recommendation — the arrow + the NEXT STEP chip (royal:
+            the system's recommendation line; the gap stays the one
+            warm focal) */}
         <g className="iso-loop-dot" style={ld('2.2s')}>
-          <Route points={[[gapX + 7, gapY + 2, 2.5], [22, -3, 2.5]]} dashed={false} strokeWidth={1.6} />
-          <polyline points={`${iso(22, -3, 2.5).sx},${iso(22, -3, 2.5).sy} ${iso(18.6, -2.2, 2.5).sx},${iso(18.6, -2.2, 2.5).sy} ${iso(19.4, -4.6, 2.5).sx},${iso(19.4, -4.6, 2.5).sy}`} fill="none" stroke={PLATE.sienna} strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" />
+          <Route points={[[gapX + 7, gapY + 2, 2.5], [22, -3, 2.5]]} dashed={false} strokeWidth={1.6} stroke={PLATE.royal} />
+          <polyline points={`${iso(22, -3, 2.5).sx},${iso(22, -3, 2.5).sy} ${iso(18.6, -2.2, 2.5).sx},${iso(18.6, -2.2, 2.5).sy} ${iso(19.4, -4.6, 2.5).sx},${iso(19.4, -4.6, 2.5).sy}`} fill="none" stroke={PLATE.royal} strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" />
         </g>
         <g className="iso-loop-box" style={ld('2.6s')}>
           <IsoBox x={26} y={-10} w={15} d={13} h={5} top={PLATE.ink} east={PLATE.ink} west={PLATE.ink} />
+          {/* r354: the recommendation box's lines ride the muted
+              record voice — the panel's ONE warm focal is the gap
+              cell itself, the box is the system's ink answer */}
           {[-6.5, -3.5, -0.5].map((by, i) => (
             <polyline
               key={by}
               points={`${iso(28.5, by, 5.1).sx},${iso(28.5, by, 5.1).sy} ${iso(28.5 + (i === 2 ? 5 : 9), by, 5.1).sx},${iso(28.5 + (i === 2 ? 5 : 9), by, 5.1).sy}`}
               fill="none"
-              stroke={i === 2 ? PLATE.sienna : PLATE.muted}
+              stroke={PLATE.muted}
               strokeWidth={1.4}
             />
           ))}
-          <PlateTag x={iso(33.5, -3.5, 5).sx} y={iso(33.5, -3.5, 5).sy - 12} text="NEXT STEP" dark />
+          {/* r354 — the NEXT STEP chip's re-seat: the r353 seat (anchor.sy
+            − 12) set the chip's bottom edge EXACTLY on the
+            recommendation box's top-face corner (sy +3 both — the
+            documented kiss). The anchor lifts to −15: a 3-unit
+            (×1.35 scale ≈ 4px) clearance ring between the chip and
+            the box it names; the mastery chip guard
+            (tests/unit/r354-plate-guards.test.ts) pins the clearance
+            so the contact cannot return. */}
+        <PlateTag x={iso(33.5, -3.5, 5).sx} y={iso(33.5, -3.5, 5).sy - 15} text="NEXT STEP" dark />
         </g>
       </g>
       <Caption ar="خلايا تمتلئ بالإتقان، الفجوة تُعلَّم، والتوصية جاهزة" mono="MATRIX 4x6 / GAP:FLAGGED" />
@@ -200,12 +222,14 @@ function LoopResearch() {
         {/* the document — submitted, its lines still fresh */}
         <g className="iso-loop-box" style={ld('0s')}>
           <IsoBox x={-58} y={-12} w={17} d={13} h={2} />
+          {/* r354: the document's lines all ride the muted record
+              voice — the scan dial keeps the panel's ONE warm focal */}
           {[0, 1, 2, 3].map((i) => (
             <polyline
               key={i}
               points={`${iso(-55, -9.5 + i * 2.6, 2.1).sx},${iso(-55, -9.5 + i * 2.6, 2.1).sy} ${iso(-46 - (i === 3 ? 8 : 0), -9.5 + i * 2.6, 2.1).sx},${iso(-46 - (i === 3 ? 8 : 0), -9.5 + i * 2.6, 2.1).sy}`}
               fill="none"
-              stroke={i === 2 ? PLATE.sienna : PLATE.muted}
+              stroke={PLATE.muted}
               strokeWidth={1.3}
             />
           ))}
@@ -258,23 +282,27 @@ function LoopResearch() {
               strokeWidth={0.9}
             />
           ))}
+          {/* r354: the shelf's receipt mark de-coppers — the scan
+              dial is the panel's ONE warm focal */}
           <polyline
             points={`${iso(25, -6, 3.1).sx},${iso(25, -6, 3.1).sy} ${iso(31, -6, 3.1).sx},${iso(31, -6, 3.1).sy}`}
             fill="none"
-            stroke={PLATE.sienna}
+            stroke={PLATE.muted}
             strokeWidth={1.6}
           />
           <PlateTag x={iso(30.5, 6, 0).sx} y={iso(30.5, 6, 0).sy + 10} text="LIB" />
         </g>
-        {/* the pipeline — flowing dashes between the stages */}
+        {/* the pipeline — flowing dashes between the stages (royal:
+            the system's research pipeline; the scan dial keeps the
+            one warm focal) */}
         <g className="iso-loop-line" style={ld('0.5s')}>
-          <Route points={[[-39, -5.5, 2.4], [-35, -5.5, 3]]} />
+          <Route points={[[-39, -5.5, 2.4], [-35, -5.5, 3]]} stroke={PLATE.royal} />
         </g>
         <g className="iso-loop-line" style={ld('1.3s')}>
-          <Route points={[[-18, -4, 4], [-12, -4, 4]]} />
+          <Route points={[[-18, -4, 4], [-12, -4, 4]]} stroke={PLATE.royal} />
         </g>
         <g className="iso-loop-line" style={ld('2.3s')}>
-          <Route points={[[11, -1.5, 4], [20, -3.5, 4]]} />
+          <Route points={[[11, -1.5, 4], [20, -3.5, 4]]} stroke={PLATE.royal} />
         </g>
       </g>
       <Caption ar="إرسال ← فحص ← شروح الأستاذ ← نشر في المكتبة" mono="PIPELINE 4-STAGE" />
@@ -312,8 +340,11 @@ function LoopQuality() {
         <g transform={`translate(${dialC.sx} ${dialC.sy})`}>
           <g className="iso-loop-sweep">
             {/* the needle — symmetric through the pivot (a drafting
-                compass): the sweep rotates around the group's origin */}
-            <line x1={-10} y1={3} x2={10} y2={-3} stroke={PLATE.sienna} strokeWidth={1.8} strokeLinecap="round" />
+                compass): the sweep rotates around the group's origin.
+                r353: the sweep reads ROYAL — quality's measurement is
+                the platform's own instrument; the ledger's one tick
+                keeps the warm focal */}
+            <line x1={-10} y1={3} x2={10} y2={-3} stroke={PLATE.royal} strokeWidth={1.8} strokeLinecap="round" />
           </g>
           <circle r={1.8} fill={PLATE.ink} />
         </g>
@@ -321,13 +352,16 @@ function LoopQuality() {
         {[-16, 0, 16].map((cx, i) => (
           <g key={cx} className="iso-loop-box" style={ld(`${1 + i * 0.4}s`)}>
             <IsoBox x={cx} y={-14} w={13} d={9} h={2.6} />
+            {/* r354: the council seats' record lines all ride the
+                muted voice — the ledger's ONE copper tick keeps the
+                panel's warm focal */}
             <polyline
               points={`${iso(cx + 2, -11.5, 2.7).sx},${iso(cx + 2, -11.5, 2.7).sy} ${iso(cx + 8, -11.5, 2.7).sx},${iso(cx + 8, -11.5, 2.7).sy}`}
               fill="none"
-              stroke={i === 0 ? PLATE.sienna : PLATE.muted}
+              stroke={PLATE.muted}
               strokeWidth={1.3}
             />
-            {i === 1 && <IsoNode x={cx + 6.5} y={-9.5} z={2.7} s={1.5} />}
+            {i === 1 && <IsoNode x={cx + 6.5} y={-9.5} z={2.7} s={1.5} fill={PLATE.royal} />}
           </g>
         ))}
         {/* the ledger — the long compliance strip */}
@@ -347,9 +381,9 @@ function LoopQuality() {
             );
           })}
         </g>
-        {/* the gauge's reading flowing to the council */}
+        {/* the gauge's reading flowing to the council (royal data) */}
         <g className="iso-loop-line" style={ld('0.8s')}>
-          <Route points={[[-40, -8, 2], [-24, -9, 2]]} />
+          <Route points={[[-40, -8, 2], [-24, -9, 2]]} stroke={PLATE.royal} />
         </g>
       </g>
       <Caption ar="مؤشرات قرائية، صف المجلس، وسجل الالتزام ممتد" mono="GAUGE / COUNCIL x3 / LEDGER" />

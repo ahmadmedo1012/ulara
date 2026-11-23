@@ -3525,7 +3525,11 @@ a.pf-row-link {
   /* r324 P3 (X9) — the ONE display ladder (d1 @ weight 600). */
   font-size: var(--fs-d1);
   font-weight: var(--fw-semibold);
-  line-height: var(--type-display-line-height);
+  /* r353 — the Arabic display lh floor (AGENTS §6's own pattern
+     max(dsLh, 1.35×fs)): the 1.28 rung clipped the headline's
+     diacritics (لا حرمَ جامعيًّا — the fatha + shadda marks ride
+     above the em box at d1 size); the floor keeps the marks whole. */
+  line-height: max(var(--type-display-line-height), 1.35);
   color: var(--text);
 }
 

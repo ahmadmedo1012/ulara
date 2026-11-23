@@ -1,0 +1,1017 @@
+{
+ "generated": "2026-11-23T08:53:17Z",
+ "method": "agent-browser (CDP Chromium) over the two Vite dev servers: AFTER=branch HEAD, BEFORE=7c15daf (the r353-final pre-round tree); themes seeded through the REAL ulara-theme store (reload path); journey beats via the r312 convergence scroll to matched band-progress values; why/pains/roles CSS animations frozen at the 35% cycle point; REF pairs capture the identical beat with the statement plaques hidden by a visibility override (pointer-transparent overlays — no layout change). The AFTER tree = commit 46b47d4 (the code state the captures rode — the later test-only commit changes no rendering); BEFORE = 7c15daf (the r353-final pre-round tree).",
+ "shots": [
+  {
+   "file": "evidence/after/01-hero-home-1440-light.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "top of page, scroll 0, post-boot settle",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/after/03-hero-home-1440-dark.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "dark",
+   "scrollProgress": null,
+   "captureState": "top of page, scroll 0, post-boot settle",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/after/12-journey-p3304-1440-dark.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "dark",
+   "scrollProgress": 0.3303,
+   "captureState": "band progress 0.3303 (card2 alpha 0.554, layer min 0.180)",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/after/13-journey-p4429-1440-dark.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "dark",
+   "scrollProgress": 0.443,
+   "captureState": "band progress 0.443 (card2 alpha 0, layer min 0.180)",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/after/14-why-1440-light.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    1200
+   ],
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "scroll-position seat (top@15%vh), CSS animations frozen at 35% cycle",
+   "capturedUtc": "2026-11-23T08:53:17Z",
+   "probePanels": [
+    {
+     "x": 753,
+     "y": 209,
+     "w": 569,
+     "h": 312,
+     "fullyInView": true
+    },
+    {
+     "x": 125,
+     "y": 234,
+     "w": 569,
+     "h": 287,
+     "fullyInView": true
+    },
+    {
+     "x": 753,
+     "y": 548,
+     "w": 569,
+     "h": 312,
+     "fullyInView": true
+    },
+    {
+     "x": 125,
+     "y": 573,
+     "w": 569,
+     "h": 287,
+     "fullyInView": true
+    }
+   ]
+  },
+  {
+   "file": "evidence/after/15-pains-1440-light.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    1200
+   ],
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "scroll-position seat (top@15%vh), CSS animations frozen at 35% cycle",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/after/16-roles-1440-light.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "section seat, animations frozen at 35% cycle",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/after/16a-roles-usecase-open-1440-light.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "section seat, animations frozen; row 06 open via its icon button",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/after/17-hero-home-390-light.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    390,
+    844
+   ],
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "top of page, scroll 0, post-boot settle",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/after/18-hero-home-390-dark.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    390,
+    844
+   ],
+   "theme": "dark",
+   "scrollProgress": null,
+   "captureState": "top of page, scroll 0, post-boot settle",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/after/19-why-768-light.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    768,
+    1200
+   ],
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "scroll-position seat (top@15%vh), CSS animations frozen at 35% cycle",
+   "capturedUtc": "2026-11-23T08:53:17Z",
+   "probePanels": [
+    {
+     "x": 29,
+     "y": 203,
+     "w": 709,
+     "h": 213,
+     "fullyInView": true
+    },
+    {
+     "x": 29,
+     "y": 445,
+     "w": 709,
+     "h": 213,
+     "fullyInView": true
+    },
+    {
+     "x": 29,
+     "y": 687,
+     "w": 709,
+     "h": 213,
+     "fullyInView": true
+    },
+    {
+     "x": 29,
+     "y": 929,
+     "w": 709,
+     "h": 213,
+     "fullyInView": true
+    }
+   ]
+  },
+  {
+   "file": "evidence/crops/REF-1x-journey-p2554-1440-light.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "top of page, scroll 0",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/after/1x-journey-p2554-1440-light.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "light",
+   "scrollProgress": 0.2554,
+   "captureState": "band progress 0.2554 (card2 alpha 0.753, layer min 0.180)",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/crops/REF-1x-journey-p2929-1440-light.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "top of page, scroll 0",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/after/1x-journey-p2929-1440-light.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "light",
+   "scrollProgress": 0.293,
+   "captureState": "band progress 0.293 (card2 alpha 1, layer min 0.180)",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/crops/REF-1x-journey-p3210-1440-light.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "top of page, scroll 0",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/after/1x-journey-p3210-1440-light.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "light",
+   "scrollProgress": 0.321,
+   "captureState": "band progress 0.321 (card2 alpha 0.985, layer min 0.180)",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/crops/REF-1x-journey-p3304-1440-light.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "top of page, scroll 0",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/after/1x-journey-p3304-1440-light.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "light",
+   "scrollProgress": 0.3303,
+   "captureState": "band progress 0.3303 (card2 alpha 0.554, layer min 0.180)",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/after/1x-journey-p3398-1440-light.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "light",
+   "scrollProgress": 0.3398,
+   "captureState": "band progress 0.3398 (card2 alpha 0.241, layer min 0.180)",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/after/1x-journey-p3585-1440-light.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "light",
+   "scrollProgress": 0.3586,
+   "captureState": "band progress 0.3586 (card2 alpha 0, layer min 0.180)",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/after/1x-journey-p4054-1440-light.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "light",
+   "scrollProgress": 0.4054,
+   "captureState": "band progress 0.4054 (card2 alpha 0, layer min 0.180)",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/after/1x-journey-p4804-1440-light.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "light",
+   "scrollProgress": 0.4803,
+   "captureState": "band progress 0.4803 (card2 alpha 0, layer min 0.180)",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/after/20-pains-390-light.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    390,
+    1200
+   ],
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "scroll-position seat (top@15%vh), CSS animations frozen at 35% cycle",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/after/21-hero-home-1024-light.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1024,
+    768
+   ],
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "top of page, scroll 0, post-boot settle",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/after/22-hero-home-360-light.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    360,
+    800
+   ],
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "top of page, scroll 0, post-boot settle",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/after/2x-journey-m-p0812-390-light.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    390,
+    844
+   ],
+   "theme": "light",
+   "scrollProgress": 0.0813,
+   "captureState": "band progress 0.0813 (card2 alpha 1, layer min 0.180)",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/after/2x-journey-m-p1122-390-light.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    390,
+    844
+   ],
+   "theme": "light",
+   "scrollProgress": 0.1122,
+   "captureState": "band progress 0.1122 (card2 alpha 0.559, layer min 0.180)",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/after/2x-journey-m-p1451-390-light.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    390,
+    844
+   ],
+   "theme": "light",
+   "scrollProgress": 0.145,
+   "captureState": "band progress 0.145 (card2 alpha 0, layer min 0.180)",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/after/31-journey-rm-1440-light.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "top of page, scroll 0",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/after/32-journey-rm-390-light.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    390,
+    844
+   ],
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "top of page, scroll 0",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/after/33-why-rm-1440-light.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": null,
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "scroll-position seat (top@15%vh), CSS animations frozen at 35% cycle",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/before/01-hero-home-1440-light.webp",
+   "side": "before",
+   "route": "/",
+   "commit": "7c15daf779594b4fa14018ab3aeb3d7a2db28460",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "top of page, scroll 0, post-boot settle",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/before/14-why-1440-light.webp",
+   "side": "before",
+   "route": "/",
+   "commit": "7c15daf779594b4fa14018ab3aeb3d7a2db28460",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    1200
+   ],
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "scroll-position seat (top@15%vh), CSS animations frozen at 35% cycle",
+   "capturedUtc": "2026-11-23T08:53:17Z",
+   "probePanels": [
+    {
+     "x": 753,
+     "y": 209,
+     "w": 569,
+     "h": 312,
+     "fullyInView": true
+    },
+    {
+     "x": 125,
+     "y": 234,
+     "w": 569,
+     "h": 287,
+     "fullyInView": true
+    },
+    {
+     "x": 753,
+     "y": 548,
+     "w": 569,
+     "h": 312,
+     "fullyInView": true
+    },
+    {
+     "x": 125,
+     "y": 573,
+     "w": 569,
+     "h": 287,
+     "fullyInView": true
+    }
+   ]
+  },
+  {
+   "file": "evidence/before/15-pains-1440-light.webp",
+   "side": "before",
+   "route": "/",
+   "commit": "7c15daf779594b4fa14018ab3aeb3d7a2db28460",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    1200
+   ],
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "scroll-position seat (top@15%vh), CSS animations frozen at 35% cycle",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/before/16-roles-1440-light.webp",
+   "side": "before",
+   "route": "/",
+   "commit": "7c15daf779594b4fa14018ab3aeb3d7a2db28460",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "section seat, animations frozen at 35% cycle",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/crops/REF-1x-journey-p2929-1440-light.webp",
+   "side": "before",
+   "route": "/",
+   "commit": "7c15daf779594b4fa14018ab3aeb3d7a2db28460",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "top of page, scroll 0",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/before/1x-journey-p2929-1440-light.webp",
+   "side": "before",
+   "route": "/",
+   "commit": "7c15daf779594b4fa14018ab3aeb3d7a2db28460",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "light",
+   "scrollProgress": 0.293,
+   "captureState": "band progress 0.293 (card2 alpha 1, layer min 0.180)",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/crops/REF-1x-journey-p3304-1440-light.webp",
+   "side": "before",
+   "route": "/",
+   "commit": "7c15daf779594b4fa14018ab3aeb3d7a2db28460",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "top of page, scroll 0",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/before/1x-journey-p3304-1440-light.webp",
+   "side": "before",
+   "route": "/",
+   "commit": "7c15daf779594b4fa14018ab3aeb3d7a2db28460",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "light",
+   "scrollProgress": 0.3303,
+   "captureState": "band progress 0.3303 (card2 alpha 1, layer min 0.180)",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/crops/REF-1x-journey-p3679-1440-light.webp",
+   "side": "before",
+   "route": "/",
+   "commit": "7c15daf779594b4fa14018ab3aeb3d7a2db28460",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "top of page, scroll 0",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/before/1x-journey-p3679-1440-light.webp",
+   "side": "before",
+   "route": "/",
+   "commit": "7c15daf779594b4fa14018ab3aeb3d7a2db28460",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "light",
+   "scrollProgress": 0.3679,
+   "captureState": "band progress 0.3679 (card2 alpha 1, layer min 0.180)",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/crops/REF-1x-journey-p4054-1440-light.webp",
+   "side": "before",
+   "route": "/",
+   "commit": "7c15daf779594b4fa14018ab3aeb3d7a2db28460",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "top of page, scroll 0",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/before/1x-journey-p4054-1440-light.webp",
+   "side": "before",
+   "route": "/",
+   "commit": "7c15daf779594b4fa14018ab3aeb3d7a2db28460",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "light",
+   "scrollProgress": 0.4054,
+   "captureState": "band progress 0.4054 (card2 alpha 0.634, layer min 0.180)",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/before/1x-journey-p4429-1440-light.webp",
+   "side": "before",
+   "route": "/",
+   "commit": "7c15daf779594b4fa14018ab3aeb3d7a2db28460",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "light",
+   "scrollProgress": 0.443,
+   "captureState": "band progress 0.443 (card2 alpha 0.156, layer min 0.180)",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/before/1x-journey-p4804-1440-light.webp",
+   "side": "before",
+   "route": "/",
+   "commit": "7c15daf779594b4fa14018ab3aeb3d7a2db28460",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "light",
+   "scrollProgress": 0.4805,
+   "captureState": "band progress 0.4805 (card2 alpha 0, layer min 0.180)",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/crops/15a-pains-ruler-gray-after.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": null,
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "scroll-position seat (top@15%vh), CSS animations frozen at 35% cycle",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/crops/15a-pains-ruler-after.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": null,
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "scroll-position seat (top@15%vh), CSS animations frozen at 35% cycle",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/crops/15a-pains-ruler-before.webp",
+   "side": "before",
+   "route": "/",
+   "commit": "7c15daf779594b4fa14018ab3aeb3d7a2db28460",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": null,
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "scroll-position seat (top@15%vh), CSS animations frozen at 35% cycle",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/crops/15b-pains-dayrail-gray-after.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": null,
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "scroll-position seat (top@15%vh), CSS animations frozen at 35% cycle",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/crops/15b-pains-dayrail-after.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": null,
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "scroll-position seat (top@15%vh), CSS animations frozen at 35% cycle",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/crops/15b-pains-dayrail-before.webp",
+   "side": "before",
+   "route": "/",
+   "commit": "7c15daf779594b4fa14018ab3aeb3d7a2db28460",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": null,
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "scroll-position seat (top@15%vh), CSS animations frozen at 35% cycle",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/crops/15c-pains-brokentab-gray-after.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": null,
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "scroll-position seat (top@15%vh), CSS animations frozen at 35% cycle",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/crops/15c-pains-brokentab-after.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": null,
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "scroll-position seat (top@15%vh), CSS animations frozen at 35% cycle",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/crops/15c-pains-brokentab-before.webp",
+   "side": "before",
+   "route": "/",
+   "commit": "7c15daf779594b4fa14018ab3aeb3d7a2db28460",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": null,
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "scroll-position seat (top@15%vh), CSS animations frozen at 35% cycle",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/crops/1x-journey-p2929-1440-light-line-after.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "top of page, scroll 0",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/crops/1x-journey-p3210-1440-light-line-after.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": [
+    1440,
+    900
+   ],
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "top of page, scroll 0",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/crops/why-p1-after.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": null,
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "scroll-position seat (top@15%vh), CSS animations frozen at 35% cycle",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/crops/why-p1-before.webp",
+   "side": "before",
+   "route": "/",
+   "commit": "7c15daf779594b4fa14018ab3aeb3d7a2db28460",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": null,
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "scroll-position seat (top@15%vh), CSS animations frozen at 35% cycle",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/crops/why-p2-after.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": null,
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "scroll-position seat (top@15%vh), CSS animations frozen at 35% cycle",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/crops/why-p2-before.webp",
+   "side": "before",
+   "route": "/",
+   "commit": "7c15daf779594b4fa14018ab3aeb3d7a2db28460",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": null,
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "scroll-position seat (top@15%vh), CSS animations frozen at 35% cycle",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/crops/why-p3-after.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": null,
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "scroll-position seat (top@15%vh), CSS animations frozen at 35% cycle",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/crops/why-p3-before.webp",
+   "side": "before",
+   "route": "/",
+   "commit": "7c15daf779594b4fa14018ab3aeb3d7a2db28460",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": null,
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "scroll-position seat (top@15%vh), CSS animations frozen at 35% cycle",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/crops/why-p4-after.webp",
+   "side": "after",
+   "route": "/",
+   "commit": "46b47d4",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": null,
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "scroll-position seat (top@15%vh), CSS animations frozen at 35% cycle",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  },
+  {
+   "file": "evidence/crops/why-p4-before.webp",
+   "side": "before",
+   "route": "/",
+   "commit": "7c15daf779594b4fa14018ab3aeb3d7a2db28460",
+   "browser": "Chrome/158.0.0.0",
+   "viewport": null,
+   "theme": "light",
+   "scrollProgress": null,
+   "captureState": "scroll-position seat (top@15%vh), CSS animations frozen at 35% cycle",
+   "capturedUtc": "2026-11-23T08:53:17Z"
+  }
+ ]
+}

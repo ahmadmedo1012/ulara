@@ -599,12 +599,27 @@ section.chapters {
   @media (max-width: 991px) {
     font-size: 4.8rem;
   }
-  /* the paper halo — the glyphs cross the plan's ghost line-work
-     (a whisper stroke keeps the statement readable over ink). */
-  paint-order: stroke fill;
-  stroke: var(--bg);
-  stroke-width: 6px;
-  stroke-linejoin: round;
+  /* the paper halo — the glyphs cross the plan's line-work (the
+     statement rides the assembling campus, r325's overlay contract).
+     r354-final, measured: the retired «SVG paint stroke on HTML
+     text» belt never painted — stroke/stroke-width are SVG-text
+     properties; a 12px red stroke injected on the live plate paints
+     ZERO pixels in this Chromium (the r354 claim of a binary render
+     proof was wrong). THE belt is the em-keyed text-shadow outline,
+     and it now carries a true rim: 0.05em solid 8-way (≈2.3px at the
+     D1 rung — the old 0.025/0.03em band was ≤1.4px, half-eaten by
+     the glyph's own anti-aliasing; measured perimeter purity 75%)
+     + the crisp 0.025em inner pass + the two soft outer passes that
+     keep the mid-beat seat readable where the r353 rebuild's
+     densified central ink runs. All engines paint text-shadow. */
+  text-shadow:
+    -0.025em -0.025em 0 var(--bg), 0.025em -0.025em 0 var(--bg),
+    -0.025em 0.025em 0 var(--bg), 0.025em 0.025em 0 var(--bg),
+    -0.05em -0.05em 0 var(--bg), 0.05em -0.05em 0 var(--bg),
+    -0.05em 0.05em 0 var(--bg), 0.05em 0.05em 0 var(--bg),
+    -0.055em 0 0 var(--bg), 0.055em 0 0 var(--bg),
+    0 -0.055em 0 var(--bg), 0 0.055em 0 var(--bg),
+    0 0 0.16em var(--bg), 0 0 0.34em var(--bg);
 }
 
 /* ── the three annotation cards — the measured plan callouts ──────
@@ -1142,7 +1157,6 @@ section.chapters {
   .jt-card-plate {
     max-inline-size: calc(100% - 2 * var(--sp-4));
     margin-inline: auto;
-    stroke-width: 4px;
   }
 
   .jt-card {

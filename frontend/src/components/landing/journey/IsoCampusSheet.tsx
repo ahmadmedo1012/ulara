@@ -97,13 +97,26 @@ export const FRAG_VECTORS: Readonly<Record<string, readonly [number, number]>> =
 
 /* the sheet's ink ladder (see the file head — the PLAN_INK_CSS
  * pattern: CSS rules beat the kernel's presentation attributes, the
- * values stay plate-unit user units). */
+ * values stay plate-unit user units). r353 — the rebuild's new
+ * drafting voices join the ladder (the arcade colonnades, the palms,
+ * the domes, the royal dimension lines) so the journey sheet keeps
+ * its hairline plan-voice against the hero's heavier centerpiece
+ * register. */
 const SHEET_INK_CSS = `
   .jt .jt-plan .iso-box polygon      { stroke-width: 0.55; }
   .jt .jt-plan .iso-route            { stroke-width: 0.6; stroke-dasharray: 2.6 2; }
   .jt .jt-plan .iso-node             { stroke-width: 0.42; }
   .jt .jt-plan .iso-tree line        { stroke-width: 0.5; }
   .jt .jt-plan .iso-tree polygon     { stroke-width: 0.42; }
+  .jt .jt-plan .iso-arcade line,
+  .jt .jt-plan .iso-arcade circle    { stroke-width: 0.34; }
+  .jt .jt-plan .iso-palm path        { stroke-width: 0.38; }
+  .jt .jt-plan .iso-palm polygon     { stroke-width: 0.32; }
+  .jt .jt-plan .iso-dome path        { stroke-width: 0.45; }
+  .jt .jt-plan .iso-dome ellipse     { stroke-width: 0.4; }
+  .jt .jt-plan .iso-dim line,
+  .jt .jt-plan .iso-dim path         { stroke-width: 0.3; }
+  .jt .jt-plan .iso-dim text         { font-size: 3.4px; }
   .jt .jt-plan .iso-leader path      { stroke-width: 0.42; stroke-dasharray: 2 1.5; }
   .jt .jt-plan .iso-leader circle    { stroke-width: 0.3; }
   .jt .jt-plan .iso-furn line,

@@ -95,17 +95,16 @@
   inline-size: 100%;
   block-size: 100%;
   object-fit: cover;
-  /* r351 P4 — the shared displacement-ink filter (the B0 §5 constants;
-     the defs ride StatementDraft's svg seat). STATIC displacement — no
-     motion, nothing for the RM belt to collapse. */
-  filter: url('#st-ink-displace');
+  /* r353 — the r351 displacement-ink filter RETIRES from the raster
+     seat: the extracted constants (scale 100 turbulence + blur +
+     contrast) were authored for the reference's own svg shapes; on
+     the courtyard's fine hatching they smeared the drawing into the
+     gray blotch the visual audit caught (the ink illustration
+     carries its own surveyed-paper texture already — the filter was
+     destroying the asset, not grading it). The drawing now ships
+     RAW, edge to edge. */
 }
 
-.st-draft-defs {
-  position: absolute;
-  inline-size: 0;
-  block-size: 0;
-}
 /* the tonal veil the reference draws as a filtered svg — ours is a
    transparent-background svg whose rect carries the ink (the record's
    own svg seat keeps backgroundColor rgba(0,0,0,0); the tone is the

@@ -101,7 +101,6 @@ export function IsoBox({
   hatchEast = false,
   opacity = 1,
   className,
-  cornerStone,
 }: {
   x: number;
   y: number;
@@ -117,16 +116,13 @@ export function IsoBox({
   hatchEast?: boolean;
   opacity?: number;
   className?: string;
-  cornerStone?: boolean;
 }) {
+  /* r354 — the cornerStone prop retires with its last consumer: the
+   * campus colour-law pass removed the copper quoin inlays (a scatter
+   * of warm points across the wings/gate/tower crown — the warm voice
+   * stays on the plate's focal moments only), and no other plate
+   * mounts it (the deadcode ratchet owns the removal) */
   const f = isoBoxFaces(x, y, z, w, d, h);
-  const corner = cornerStone
-    ? poly(
-        { x: x + w, y, z: z + h },
-        { x: x + w, y, z: z + h - 4 },
-        { x: x + w - 4, y, z: z + h },
-      )
-    : null;
   return (
     <g className={className} opacity={opacity}>
       <polygon points={f.west} fill={west} stroke={stroke} strokeWidth={strokeWidth} strokeLinejoin="round" />
@@ -138,21 +134,22 @@ export function IsoBox({
         strokeLinejoin="round"
       />
       <polygon points={f.top} fill={top} stroke={stroke} strokeWidth={strokeWidth} strokeLinejoin="round" />
-      {corner && (
-        <polygon points={corner} fill={PLATE.sienna} stroke={PLATE.ink} strokeWidth={0.8} />
-      )}
     </g>
   );
 }
 
 /* ————————————————— node / diamond ————————————————— */
 
+/* r354-final colour law (the census verdict): the kernel's DEFAULTS
+ * are the SYSTEM voice — a node on the data net paints ROYAL unless
+ * a plate explicitly claims the warm learner focal. Every warm
+ * accent in the plates is now an EXPLICIT fill at its focal seat. */
 export function IsoNode({
   x,
   y,
   z = 0,
   s = 1.6,
-  fill = PLATE.sienna,
+  fill = PLATE.royal,
   stroke = PLATE.ink,
   className,
 }: {
@@ -209,7 +206,7 @@ function round2(n: number) {
 export function Route({
   points,
   dashed = true,
-  stroke = PLATE.sienna,
+  stroke = PLATE.royal,
   strokeWidth = 1.2,
   opacity = 0.85,
   className,
@@ -279,7 +276,7 @@ export function Leader({
         cx={o.x}
         cy={o.y}
         r="1.8"
-        fill={PLATE.sienna}
+        fill={PLATE.royal}
         stroke={PLATE.ink}
         strokeWidth="0.6"
       />
@@ -387,7 +384,7 @@ export function SeatLabel({
 }) {
   return (
     <g>
-      <circle cx={x} cy={y} r={1.9} fill={PLATE.sienna} stroke={PLATE.ink} strokeWidth={0.6} />
+      <circle cx={x} cy={y} r={1.9} fill={PLATE.royal} stroke={PLATE.ink} strokeWidth={0.6} />
       <line x1={x} y1={y} x2={tx} y2={ty} stroke={PLATE.muted} strokeWidth={0.9} strokeDasharray="4 3" />
       <text
         x={tx}
@@ -412,6 +409,210 @@ export function RegMark({ x, y, s = 10 }: { x: number; y: number; s?: number }) 
       <line x1={x - s} y1={y} x2={x + s} y2={y} />
       <line x1={x} y1={y - s} x2={x} y2={y + s} />
       <circle cx={x} cy={y} r={s * 0.35} fill="none" />
+    </g>
+  );
+}
+
+/* ————————————————— r353 · the architectural drafting set ———————————————
+ * The visual-artwork round's shared vocabulary: the annotation layer
+ * (dimensions + section marks in ROYAL — the platform's engineering
+ * voice) and the planting/roofline primitives the campus, journey and
+ * role plates compose from. All compact + data-driven: one seat per
+ * motif, colours through the PLATE vars only. */
+
+/** The horizontal circle's sheet ellipse in 30° iso: radius r at
+ * (cx,cy,z) projects rx = r·√2·cos30, ry = r·√2·sin30. */
+export function isoEllipse(cx: number, cy: number, z: number, r: number) {
+  const c = iso(cx, cy, z);
+  return { cx: c.sx, cy: c.sy, rx: r * 1.2247, ry: r * 0.7071 };
+}
+
+/** A dimension line — extension lines from two iso points, an
+ * arrowed measure stroke between them, and the mono value label.
+ * The r353 annotation voice: royal blue, the drafting sheet's own
+ * measurement register (system lines = the platform's colour). */
+export function Dim({
+  a,
+  b,
+  label,
+  gap = 3,
+  stroke = PLATE.royal,
+}: {
+  a: { x: number; y: number; z?: number };
+  b: { x: number; y: number; z?: number };
+  label: string;
+  gap?: number;
+  stroke?: string;
+}) {
+  const p = iso(a.x, a.y, a.z ?? 0);
+  const q = iso(b.x, b.y, b.z ?? 0);
+  const dx = q.sx - p.sx;
+  const dy = q.sy - p.sy;
+  const len = Math.hypot(dx, dy) || 1;
+  /* the sheet-space normal (extensions step off the measured span) */
+  const nx = -dy / len;
+  const ny = dx / len;
+  const e1 = { x: p.sx + nx * gap, y: p.sy + ny * gap };
+  const e2 = { x: q.sx + nx * gap, y: q.sy + ny * gap };
+  const ext = (o: { sx: number; sy: number }, e: { x: number; y: number }) =>
+    `M ${o.sx + nx * 1.2} ${o.sy + ny * 1.2} L ${e.x + nx * 2.4} ${e.y + ny * 2.4}`;
+  const ah = (tip: { x: number; y: number }, sgn: number) =>
+    `M ${tip.x} ${tip.y} L ${tip.x - sgn * (dx / len) * 3 + nx * 1.1} ${tip.y - sgn * (dy / len) * 3 + ny * 1.1} L ${tip.x - sgn * (dx / len) * 3 - nx * 1.1} ${tip.y - sgn * (dy / len) * 3 - ny * 1.1} Z`;
+  return (
+    <g className="iso-dim" stroke={stroke} fill={stroke}>
+      <path d={ext(p, e1)} fill="none" strokeWidth={0.6} opacity={0.6} />
+      <path d={ext(q, e2)} fill="none" strokeWidth={0.6} opacity={0.6} />
+      <line x1={e1.x} y1={e1.y} x2={e2.x} y2={e2.y} strokeWidth={0.7} />
+      <path d={ah(e1, 1)} strokeWidth={0.45} />
+      <path d={ah(e2, -1)} strokeWidth={0.45} />
+      <text
+        x={(e1.x + e2.x) / 2 + nx * 6.5}
+        y={(e1.y + e2.y) / 2 + ny * 6.5 + 1.6}
+        textAnchor="middle"
+        fontSize={7}
+        fontFamily="var(--font-iso-mono), monospace"
+        fontWeight={500}
+        fill={stroke}
+        /* the measured value rides a paper halo (paint-order stroke)
+           so the numerals never merge with the line they name — the
+           drafting sheet's own break-line convention */
+        stroke={PLATE.paper}
+        strokeWidth={2.6}
+        style={{ direction: 'ltr', paintOrder: 'stroke' }}
+      >
+        {label}
+      </text>
+    </g>
+  );
+}
+
+/** An arcade colonnade on a box face — the riwaq rhythm: column
+ * pairs along the face + the lintel line they carry. face = 'east'
+ * (max-x, faces lower-right) | 'west' (max-y, faces lower-left). */
+export function Arcade({
+  x,
+  y,
+  z,
+  w,
+  d,
+  h,
+  face = 'east',
+  n = 4,
+  inset = 1.4,
+  stroke = PLATE.ink,
+}: {
+  x: number;
+  y: number;
+  z: number;
+  w: number;
+  d: number;
+  h: number;
+  face?: 'east' | 'west';
+  n?: number;
+  inset?: number;
+  stroke?: string;
+}) {
+  const cols: { x1: number; y1: number; x2: number; y2: number }[] = [];
+  for (let i = 0; i <= n; i++) {
+    const t = i / n;
+    const p =
+      face === 'east'
+        ? { a: iso(x + w, y + inset + (d - inset * 2) * t, z), b: iso(x + w, y + inset + (d - inset * 2) * t, z + h) }
+        : { a: iso(x + inset + (w - inset * 2) * t, y + d, z), b: iso(x + inset + (w - inset * 2) * t, y + d, z + h) };
+    cols.push({ x1: p.a.sx, y1: p.a.sy, x2: p.b.sx, y2: p.b.sy });
+  }
+  const lintel =
+    face === 'east'
+      ? { a: iso(x + w, y + inset, z + h), b: iso(x + w, y + d - inset, z + h) }
+      : { a: iso(x + inset, y + d, z + h), b: iso(x + w - inset, y + d, z + h) };
+  return (
+    <g className="iso-arcade" stroke={stroke} fill="none">
+      {cols.map((c, i) => (
+        <g key={i}>
+          <line x1={c.x1} y1={c.y1} x2={c.x2} y2={c.y2} strokeWidth={0.75} />
+          <circle cx={c.x2} cy={c.y2} r={0.55} fill={stroke} stroke="none" />
+        </g>
+      ))}
+      <line x1={lintel.a.sx} y1={lintel.a.sy} x2={lintel.b.sx} y2={lintel.b.sy} strokeWidth={0.75} />
+    </g>
+  );
+}
+
+/** A palm — the campus planting's vertical accent: a gently curved
+ * trunk, a diamond crown boss and 5 splayed fronds. */
+export function Palm({ x, y, s = 1 }: { x: number; y: number; s?: number }) {
+  const b = iso(x, y, 0);
+  const m = iso(x + 0.6 * s, y + 0.6 * s, 3.4 * s);
+  const t = iso(x + 1.1 * s, y + 1.1 * s, 6.4 * s);
+  return (
+    <g className="iso-palm">
+      <path
+        d={`M ${b.sx} ${b.sy} Q ${m.sx} ${m.sy} ${t.sx} ${t.sy}`}
+        fill="none"
+        stroke={PLATE.ink}
+        strokeWidth={1}
+        strokeLinecap="round"
+      />
+      <g stroke={PLATE.ink} strokeWidth={0.85} fill="none" strokeLinecap="round">
+        <path d={`M ${t.sx} ${t.sy} q ${4.6 * s} ${-2.2 * s} ${7.6 * s} ${-1.1 * s}`} />
+        <path d={`M ${t.sx} ${t.sy} q ${4.4 * s} ${1.4 * s} ${7.2 * s} ${2.6 * s}`} />
+        <path d={`M ${t.sx} ${t.sy} q ${-4.6 * s} ${-2.4 * s} ${-7.4 * s} ${-1.4 * s}`} />
+        <path d={`M ${t.sx} ${t.sy} q ${-4.2 * s} ${1.2 * s} ${-7 * s} ${2.8 * s}`} />
+        <path d={`M ${t.sx} ${t.sy} q ${-0.6 * s} ${-3.4 * s} ${0.4 * s} ${-5 * s}`} />
+      </g>
+      <SheetDiamond cx={t.sx} cy={t.sy} s={0.9 * s} fill={PLATE.muted} stroke={PLATE.ink} strokeWidth={0.6} />
+    </g>
+  );
+}
+
+/** A dome — the sheet ellipse's crown: the upper half-ellipse over a
+ * drum cylinder side (the observatory / reading-room silhouettes). */
+export function IsoDome({
+  x,
+  y,
+  z,
+  r,
+  oculus = true,
+  fill = PLATE.top,
+  stroke = PLATE.ink,
+}: {
+  x: number;
+  y: number;
+  z: number;
+  r: number;
+  oculus?: boolean;
+  fill?: string;
+  stroke?: string;
+}) {
+  const e = isoEllipse(x, y, z, r);
+  const b = iso(x, y, z - r * 0.9);
+  return (
+    <g className="iso-dome">
+      <path
+        d={`M ${e.cx - e.rx} ${e.cy} A ${e.rx} ${e.ry} 0 0 1 ${e.cx + e.rx} ${e.cy} L ${e.cx + e.rx} ${e.cy + 0.01} Z`}
+        fill={fill}
+        stroke="none"
+        opacity={0.92}
+      />
+      <ellipse cx={e.cx} cy={e.cy} rx={e.rx} ry={e.ry} fill="none" stroke={stroke} strokeWidth={1} opacity={0.35} />
+      <path
+        d={`M ${e.cx - e.rx} ${e.cy} A ${e.rx} ${e.ry} 0 0 1 ${e.cx + e.rx} ${e.cy}`}
+        fill="none"
+        stroke={stroke}
+        strokeWidth={1.1}
+      />
+      {/* the meridian seam — one drafted section line over the crown */}
+      <ellipse
+        cx={e.cx}
+        cy={e.cy}
+        rx={e.rx * 0.55}
+        ry={e.ry}
+        fill="none"
+        stroke={stroke}
+        strokeWidth={0.7}
+        opacity={0.6}
+      />
+      {oculus && <circle cx={e.cx} cy={b.sy + 2.4} r={0.9} fill={PLATE.sienna} stroke="none" />}
     </g>
   );
 }

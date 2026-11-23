@@ -40,7 +40,7 @@ import { useEffect, useRef } from 'react';
  * (iso-plate.css) — zero raw literals in this file (the color gate).
  */
 import { iso, isoBoxFaces } from '../../../lib/iso';
-import { IsoDefs } from '../kernel/Iso';
+import { IsoDefs, isoEllipse } from '../kernel/Iso';
 import { CampusFrag } from '../plates/CampusArt';
 /* the isometric plate grammar's painting system (the --iso-* seats +
    the ink belt) rides the plate — every plate mounting the kernel
@@ -51,8 +51,21 @@ import '../../../styles/landing/iso-plate.css';
  * AND the inspection stations author against it directly). The sheet
  * window is the iso projection's bounding box with margin for the
  * furniture + labels: x/y are NEGATIVE (the iso origin sits at the
- * plinth's reading-start corner, the drawing extends around it). */
-export const CAMPUS_FRAME = { x: -92, y: -58, w: 184, h: 168 } as const;
+ * plinth's reading-start corner, the drawing extends around it).
+ *
+ * r354 (composition rebalance): the r353 window (−92,−58,184×168)
+ * carried ~80 sheet units of DEAD vertical margin — the furniture the
+ * hero seat HIDES (labels, coord readouts, scale bar) still owned its
+ * reservation, so the campus rendered at ~52% of the frame's height
+ * (measured: ink bbox −24…+63 inside −58…+110 — 88 of 168 units).
+ * The window now wraps the VISIBLE ink (north-arrow ticks at −24 …
+ * the 56.0 dimension's extensions at +63) with a 6–7-unit drafting
+ * mat: 184×100, aspect 1.84 — at the same seat width the drawing
+ * gains ×1.68 rendered height. The journey sheet never reads this
+ * constant (it mounts CampusFrag on its own 1200×760 sheet); the
+ * inspection stations re-seat onto the tightened window (the old
+ * corner anchors sat in the retired dead margins). */
+export const CAMPUS_FRAME = { x: -92, y: -30, w: 184, h: 100 } as const;
 
 /* ── the ink variant's layer schedule (data-ink — the drafting order:
  * ground first, masses, connectors, then furniture + labels last). ── */
@@ -62,10 +75,15 @@ type CampusVariant = 'trace' | 'ink';
  * volume, drawing in drafting order (each carries cp-draw + its inline
  * delay; the duration is preloader.css's canonical token). ── */
 function TraceStrokes() {
-  /* the volumes' outlines in drafting order: plinth → wings → tower →
-   * observatory → plaza → field. The delays ramp over the sequence. */
+  /* the volumes' outlines in drafting order: plinth → walls → wings →
+   * tower (+dome) → observatory (+dome) → plaza → field. The delays
+   * ramp over the sequence. (r353: the rebuild's new silhouettes —
+   * the perimeter wall + gate piers, the tower's dome + finial and
+   * the observatory drum — join the trace.) */
   const outlines: string[] = [
     isoBoxFaces(0, 0, 0, 56, 56, 2).outline,
+    isoBoxFaces(1.6, 1.6, 2, 21, 1.1, 2.2).outline,
+    isoBoxFaces(1.6, 1.6, 2, 1.1, 52.8, 2.2).outline,
     isoBoxFaces(4, 4, 2, 10, 10, 7).outline,
     isoBoxFaces(42, 4, 2, 11, 9, 8).outline,
     isoBoxFaces(4, 42, 2, 9, 11, 8).outline,
@@ -77,7 +95,12 @@ function TraceStrokes() {
     isoBoxFaces(20, 44, 2, 17, 10, 1.2).outline,
     isoBoxFaces(6, 24, 2, 8, 14, 0.9).outline,
   ];
-  const spread = 90;
+  const spread = 76;
+  /* the domes' crown arcs — two half-ellipses closing the trace */
+  const domeArc = (x: number, y: number, z: number, r: number) => {
+    const e = isoEllipse(x, y, z, r);
+    return `M ${e.cx - e.rx} ${e.cy} A ${e.rx} ${e.ry} 0 0 1 ${e.cx + e.rx} ${e.cy}`;
+  };
   return (
     <>
       {outlines.map((points, i) => (
@@ -89,7 +112,21 @@ function TraceStrokes() {
           style={{ animationDelay: `${i * spread}ms` }}
         />
       ))}
-      {/* the ground rule + the tree ring close the trace */}
+      <path
+        className="cp-draw cp-2"
+        d={domeArc(28, 28, 23, 5.6)}
+        pathLength={1}
+        fill="none"
+        style={{ animationDelay: `${10 * spread}ms` }}
+      />
+      <path
+        className="cp-draw cp-2"
+        d={domeArc(50.5, 29.5, 14.4, 3.4)}
+        pathLength={1}
+        fill="none"
+        style={{ animationDelay: `${10.5 * spread}ms` }}
+      />
+      {/* the ground rule closes the trace */}
       <polyline
         className="cp-draw cp-15"
         points={[
@@ -142,7 +179,7 @@ export function CampusPlate({ variant }: { variant: CampusVariant }) {
       preserveAspectRatio="xMidYMid meet"
       role="img"
       data-variant={variant}
-      aria-label="رسم ثلاثي الأبعاد: الحرم الرقمي لأُلارا — برج المكتبة البحثية، أربع كليات، مرصد الجودة، ساحة المجتمع، ميدان التدريب، ومسارات البيانات التي تربطها جميعًا"
+      aria-label="رسم ثلاثي الأبعاد: الحرم الرقمي لأُلارا — برج المكتبة البحثية بقبتها، أربع كليات، مرصد الجودة بقبته، ساحة المجتمع ونافورتها، ميدان التدريب، سور الحرم وبوابته، ومسارات البيانات الزرقاء التي تربطها جميعًا"
       style={{ overflow: 'visible' }}
     >
       <IsoDefs />

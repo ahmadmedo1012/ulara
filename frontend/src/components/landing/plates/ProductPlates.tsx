@@ -114,11 +114,11 @@ export function ExamRunnerPlate({ label, dataSpec }: { label: string; dataSpec?:
             );
           })}
           <g className="iso-loop-sweep">
-            <line x1={-6.4} y1={2} x2={6.4} y2={-2} stroke={PLATE.sienna} strokeWidth={1.6} strokeLinecap="round" />
+            <line x1={-6.4} y1={2} x2={6.4} y2={-2} stroke={PLATE.royal} strokeWidth={1.6} strokeLinecap="round" />
           </g>
           <circle r={1.5} fill={PLATE.ink} />
         </g>
-        {/* the timer's concept label — copper dot on the dial's rim,
+        {/* the timer's concept label — royal annotation dot on the dial's rim,
             the word seated clear above-left of the instrument */}
         <SeatLabel x={dialC.sx - 10} y={dialC.sy} tx={-50} ty={-52} text="المؤقّت" />
 
@@ -202,14 +202,17 @@ export function AssistantPlate({ label, dataSpec }: { label: string; dataSpec?: 
         <g transform={`translate(${coreTop.sx} ${coreTop.sy})`}>
           <g className="iso-loop-orbit">
             <circle r={11.5} fill="none" stroke={PLATE.hair} strokeWidth={0.9} strokeDasharray="3 3" />
-            <polygon points={`0,${-1.8} ${1.8},0 0,${1.8} ${-1.8},0`} fill={PLATE.sienna} stroke={PLATE.ink} strokeWidth={0.7} />
+            <polygon points={`0,${-1.8} ${1.8},0 0,${1.8} ${-1.8},0`} fill={PLATE.royal} stroke={PLATE.ink} strokeWidth={0.7} />
           </g>
         </g>
 
         {/* the student — the seat + the question node popping in */}
         <IsoBox x={-50} y={4} w={11} d={11} h={3} />
         <g className="iso-loop-dot" style={ld('0s')}>
-          <IsoNode x={-44.5} y={9.5} z={4.4} s={2.6} />
+          {/* r354-final: the question node keeps the WARM learner focal
+           * explicitly (the kernel's default is the royal system voice
+             now — the census law: warm is always explicit) */}
+          <IsoNode x={-44.5} y={9.5} z={4.4} s={2.6} fill={PLATE.sienna} />
         </g>
         {/* the question's concept label — dot on the student's node */}
         <SeatLabel x={-46.8} y={-22.2} tx={-62} ty={-44} text="سؤال الطالب" />
@@ -229,7 +232,7 @@ export function AssistantPlate({ label, dataSpec }: { label: string; dataSpec?: 
             <polyline
               points={`${iso(-49, -11 + ry * 4.6, 2.2).sx},${iso(-49, -11 + ry * 4.6, 2.2).sy} ${iso(-36 - (ry === 1 ? 6 : 0), -11 + ry * 4.6, 2.2).sx},${iso(-36 - (ry === 1 ? 6 : 0), -11 + ry * 4.6, 2.2).sy}`}
               fill="none"
-              stroke={ry === 0 ? PLATE.sienna : PLATE.muted}
+              stroke={PLATE.muted}
               strokeWidth={1.3}
             />
           </g>
@@ -250,7 +253,7 @@ export function AssistantPlate({ label, dataSpec }: { label: string; dataSpec?: 
               key={py}
               points={`${iso(25, py, 5.1).sx},${iso(25, py, 5.1).sy} ${iso(25 + (i === 0 ? 11 : 7), py, 5.1).sx},${iso(25 + (i === 0 ? 11 : 7), py, 5.1).sy}`}
               fill="none"
-              stroke={i === 0 ? PLATE.sienna : PLATE.muted}
+              stroke={PLATE.muted}
               strokeWidth={1.4}
             />
           ))}
