@@ -116,16 +116,15 @@ jobs:
           [ -d "$ANDROID_HOME/platforms/android-37" ] || \
             ln -s "$ANDROID_HOME/platforms/android-37.0" "$ANDROID_HOME/platforms/android-37"
 
-      - name: Gradle + NDK cache
+      - name: Gradle cache
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-            /usr/local/lib/android/sdk/ndk
-          key: android-apk-${{ hashFiles('apps/mobile/package-lock.json', 'apps/mobile/app.config.ts') }}
+          key: android-apk-v2-${{ hashFiles('apps/mobile/package-lock.json', 'apps/mobile/app.config.ts') }}
           restore-keys: |
-            android-apk-
+            android-apk-v2-
 
       - name: Dependencies (npm ci)
         working-directory: apps/mobile
@@ -253,17 +252,16 @@ jobs:
           [ -d "$ANDROID_HOME/platforms/android-37" ] || \
             ln -s "$ANDROID_HOME/platforms/android-37.0" "$ANDROID_HOME/platforms/android-37"
 
-      - name: Gradle + NDK cache
+      - name: Gradle cache
         if: steps.secrets.outputs.available == 'true'
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-            /usr/local/lib/android/sdk/ndk
-          key: android-apk-${{ hashFiles('apps/mobile/package-lock.json', 'apps/mobile/app.config.ts') }}
+          key: android-apk-v2-${{ hashFiles('apps/mobile/package-lock.json', 'apps/mobile/app.config.ts') }}
           restore-keys: |
-            android-apk-
+            android-apk-v2-
 
       - name: Dependencies (npm ci)
         if: steps.secrets.outputs.available == 'true'
