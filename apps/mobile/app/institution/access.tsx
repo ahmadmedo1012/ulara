@@ -215,6 +215,7 @@ export default function InstitutionAccess() {
                   <LedgerRow
                     key={u.id}
                     last={i === users.results.length - 1}
+                    accessibilityLabel={`اختيار المستخدم ${u.firstName} ${u.lastName} — ${u.email}`}
                     onPress={() => { setSelectedUser(u); setQ(""); setAppliedQ(""); appliedRef.current = ""; }}
                   >
                     <View style={{ flexDirection: "row", alignItems: "center", gap: sp[10] }}>
@@ -238,6 +239,7 @@ export default function InstitutionAccess() {
                     label="تغيير المستخدم"
                     kind="ghost"
                     small
+                    accessibilityLabel="إلغاء اختيار المستخدم الحالي"
                     onPress={() => { setSelectedUser(null); setCapability(null); setOrgUnit(null); }}
                   />
                 </View>
