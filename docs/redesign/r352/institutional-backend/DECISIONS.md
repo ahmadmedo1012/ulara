@@ -159,6 +159,13 @@ capability-gated, institution-scoped routes with the platform's PDF gates
 `fileUrl` stays a DEPRECATED external reference — never trusted as an
 upload.
 
+**Correction (post-audit):** the upload/download byte routes above were
+DEFERRED — they were never implemented. What is real: the storage rails
+(the governance key namespace + `BinaryObject` sink) and the
+`binaryObjectId` FKs on `CouncilDocument`/`ComplianceEvidence`, consumed
+today only via `POST /governance/councils/:id/documents` metadata (an
+optional reference to an already-stored governance-key object).
+
 ## D13 — Partial unique indexes in raw SQL
 
 Prisma 5.22 cannot declare partial/expression indexes. Overlap prevention

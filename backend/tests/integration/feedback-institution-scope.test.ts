@@ -131,3 +131,8 @@ describe('r352 hardening #3 — the feedback institution scope', () => {
     expect(ownerPatch.status).toBe(200);
   });
 });
+
+declare global {
+  // eslint-disable-next-line no-var
+  var __fb: unknown;
+}

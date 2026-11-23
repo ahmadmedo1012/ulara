@@ -51,7 +51,7 @@ supplied the inventory; every finding below carries its evidence.
   state: OPEN
 - id: t12
   finding: "Backend/API correctness + security sweep (wave 6): auth/refresh/revocation, role permissions, tenant isolation, query performance, file authorization, error envelopes, rate limits — read-only audit + targeted fixes."
-  evidence: "backend/src/** (r341 t07 spot-audited health/status only)"
+  evidence: "backend/src/** (r341 t07 spot-audited health/status only); 2026-11-23 platform round swept auth/refresh/revocation (existing belts), role permissions + tenant isolation (5 cross-tenant defects fixed with regression belts: findings programId IDOR, learners userId linkage, position-templates local variants, institutional-admin global capability overrides, lecture-video stream), file authorization (governance storage + lecture gate), rate limits (XFF re-probe closed); QUERY PERFORMANCE remains unswept — keep state OPEN for that residual"
   severity: medium
   user_impact: "Unknown residual correctness/security risk in changed surfaces"
   root_cause: "No comprehensive sweep this round"
@@ -82,7 +82,7 @@ supplied the inventory; every finding below carries its evidence.
   dependencies: []
   acceptance: "devInbox gated to non-production; the research archive family institution-scoped to the caller's VERIFIED context (OWNER platform-wide); the invite family institution-bound on create/register/redeem; suites green"
   state: DONE
-  closure: "wip/r341-integration (t14): backend tsc 0, vitest 92 files/1955 PASS, eslint 0 errors; NOT FIXED (backlog): lecture-video serving gate (unguessable-cuid mitigated), feedback inbox institution column, token claim staleness (accepted), XFF re-probe"
+  closure: "wip/r341-integration (t14): backend tsc 0, vitest 92 files/1955 PASS, eslint 0 errors; 2026-11-23 update — lecture-video serving gate CLOSED 2026-11-23 (assertOfferingAccess matrix, lecture-video-access.test.ts); feedback inbox institution column CLOSED (migration 0006 + scoped inbox, feedback-institution-scope.test.ts); XFF re-probe CLOSED (live probe: varying spoofed XFF never evaded the auth limiter on Vercel — IP keys are platform-inserted); token claim staleness remains accepted (≤15 min)"
 
 ## Orchestration decision (recorded honestly)
 

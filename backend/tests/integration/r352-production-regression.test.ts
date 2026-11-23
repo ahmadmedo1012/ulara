@@ -143,3 +143,8 @@ describe('r352 production regression — the schema-drift 500 belt (2026-11-23)'
     expect(res.body.data.roleDefaults).toContain('USERS_MANAGE');
   });
 });
+
+declare global {
+  // eslint-disable-next-line no-var
+  var __reg: unknown;
+}

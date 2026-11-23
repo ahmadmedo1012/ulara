@@ -2,8 +2,12 @@
 
 > One domain model for all institution kinds. All changes **additive**;
 > existing tables/columns/IDs untouched except explicitly listed nullable
-> additions. Migration: `0003_r352_institutional_core` (DDL + backfills +
-> partial unique indexes via raw SQL).
+> additions. Migrations: the chain `0003_r352_institutional_core` →
+> `0004_r352_backend_hardening` → `0005_r352_mirror_ids_cuid_shape` (DDL +
+> backfills + partial unique indexes via raw SQL), plus
+> `0006_r352_feedback_institution_scope`: `PilotFeedback` gains a nullable
+> `institutionId` — the ADMIN/QUALITY feedback inbox is institution-scoped
+> while OWNER keeps the platform-wide view.
 
 ## 1. Institution classification
 
@@ -50,13 +54,17 @@ position templates.
 ## 2. Organizational hierarchy
 
 **`OrganizationalUnit`** — `id, institutionId → Institution, parentId? (self-FK
-"OrgUnitTree"), code?, nameAr, nameEn?, type OrgUnitType, status OrgUnitStatus
+"OrgUnitTree"), code?, nameAr, nameEn?, type String (an OrgUnitType code —
+validated against the `OrgUnitTypeDefinition` catalog, not a DB enum), status
+OrgUnitStatus
 (ACTIVE | INACTIVE | DISSOLVED), sortOrder, location?, contactEmail?,
 contactPhone?, establishedAt?, dissolvedAt?, createdAt, updatedAt`.
 `@@unique([institutionId, code])` (nullable code), indexes
 (institutionId,type), (institutionId,parentId).
 
-`OrgUnitType` (18): `FACULTY, COLLEGE, SCIENTIFIC_DEPARTMENT, INSTITUTE,
+OrgUnitType codes (18 seeded catalog rows in `OrgUnitTypeDefinition`; the
+plain-string column is validated against the catalog so local extensions
+need no migration): `FACULTY, COLLEGE, SCIENTIFIC_DEPARTMENT, INSTITUTE,
 RESEARCH_CENTER, RESEARCH_UNIT, GENERAL_ADMINISTRATION, OFFICE,
 ADMINISTRATIVE_DEPARTMENT, BRANCH, CAMPUS, TRAINING_UNIT, LABORATORY,
 WORKSHOP, DEANERY_OFFICE, REGISTRAR_OFFICE, QA_OFFICE, OTHER` — covers
@@ -139,12 +147,21 @@ FACILITIES_MANAGE, RESEARCH_PROJECTS_MANAGE, UNIT_CAPABILITIES_ASSIGN`.
   FACILITIES/RESEARCH_PROJECTS manage). OWNER holds everything (existing
   rule). **QUALITY gains NOTHING by default** — `QUALITY_INTERNAL_MANAGE`
   (internal QA-office self-assessment writes) is explicitly granted only
-  (UserPermission / UnitRoleGrant), preserving QUALITY's read-only oversight
+  (UserPermission / UnitCapabilityGrant), preserving QUALITY's read-only oversight
   + exam moderation semantics. The National Center ≠ the institution's QA
   office: `ACCREDITATION_MANAGE` (external records) defaults to ADMIN.
-- **`UnitRoleGrant`** — `id, userId → User, institutionId, orgUnitId? →
+- **`UnitRoleGrant`** — superseded by **`UnitCapabilityGrant`** (migration
+  `0004`, which dropped the old table): a grant is a SINGLE `Capability`
+  scoped to `orgUnitId? → OrganizationalUnit` (null = institution-wide;
+  unit grants cover their subtree) with `isActive` + `revokedAt` — never a
+  role bundle (the pre-hardening shape below is kept for the record). The
+  effective-caps merge today: membership-role defaults ∪ RolePermission
+  rows ∪ UserPermission grants ∪ active `UnitCapabilityGrant` capabilities
+  (institution-wide grants apply anywhere; unit grants only within their
+  subtree), minus UserPermission revokes (deny precedence). Original
+  (superseded) shape: `id, userId → User, institutionId, orgUnitId? →
   OrganizationalUnit (null = institution-wide), role Role, isActive,
-  grantedById?, reason?, createdAt, updatedAt`. Multiple grants per user
+  grantedById?, reason?, createdAt, updatedAt` — multiple grants per user
   allowed; effective caps = membership-role defaults ∪ active UnitRoleGrant
   role defaults ∪ RolePermission rows ∪ UserPermission grants, minus denies.
 - **Deny precedence (fix)**: `mergeCapabilities` rewritten deterministically —

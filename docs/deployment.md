@@ -19,11 +19,46 @@
 - `api/index.ts` محوّل Vercel؛ `vercel.json`: بناء (prisma generate +
   بناء الواجهة والخلفية)، rewrites (SPA + `/api`)، رؤوس أمنية (CSP
   ببصمة bootstrap السمة، HSTS، …)، وcron (§4).
+- **الترحيلات جزء من بناء Vercel (المسار الحقيقي)**: `buildCommand` في
+  `vercel.json` يشغّل `npm --prefix backend run prisma:deploy` — أي سكربت
+  `backend/scripts/migrate-deploy.mjs`: اشتقاق الرابط المباشر
+  (`DIRECT_DATABASE_URL` أو اشتقاقه بتجريد `-pooler` من
+  `DATABASE_URL`) + محاولات إيقاظ Neon + **قفل استشاري على مستوى
+  الجلسة** يُنسّق البناءات الإنتاجية المتزامنة على قاعدة Neon نفسها.
+  البوابة `VERCEL_ENV=production` **فقط** — بناءات preview لا تُرحِّل
+  الإنتاج أبدًا؛ مسار CLI في `deploy.yml` وتكامل Git في Vercel يركبان
+  نفس `buildCommand`؛ والنشر idempotent (إعادة `prisma migrate deploy`
+  على قاعدة محدّثة = no-op).
 - **Neon cold start**: الويب دائم الاستيقاظ على Vercel؛ القاعدة (Neon
   مجانية) تصفر الحساب بعد الخمول — أول طلب يدفع استيقاظًا أقل من ثانية،
   وسكربت `backend/scripts/migrate-deploy.mjs` يعيد المحاولة حتى استيقاظ Neon.
 - أول طلب بعد نشر جديد: `deploy-smoke` يستقصي `GET /api/v1/status` حتى
-  يطابق `buildId` رأس `main` (حتى 20 دقيقة).
+  يطابق `buildId` رأس `main` (حتى 20 دقيقة) — ويسير حزام انحراف المخطط:
+  `GET /colleges` + `auth/me` + `me/permissions` + `catalog/*`.
+- **حادثة 2026-11-23 (انحراف مخطط الإنتاج)**: الترحيلات 0003–0005 لم
+  تصل قاعدة الإنتاج قط (لا مسار نشر كان يُنفّذ الترحيل) فخدم الإنتاج
+  أخطاء 500 — `GET /colleges` (P2022: عمود `Faculty.orgUnitId`) و
+  `GET /auth/me` (P2022 عبر includes الكلية) و`/catalog/*` (P2021:
+  جداول r352 غائبة) و`/me/permissions` (P2021: `UnitCapabilityGrant`).
+  العلاج: بروفة على نسخة معزولة، تطبيق 0003–0005 + بذر كتالوجات r352،
+  ثم تثبيت المسار أعلاه + حزام الدخان + حزام الانحدار
+  `r352-production-regression.test.ts`.
+- **تقارب كتالوجات المرجع في الإنتاج**: `npm run seed:r352 -w backend`
+  (idempotent، إضافي فقط) — المشغّل الجراحي لقواعد الإنتاج المؤسّسة.
+  البذرة الكاملة `prisma/seed.ts` إنشاء-فقط (r180): القاعدة المؤسَّسة
+  (بها مستخدمون) تُتخطى بالكامل باستثناء حسابات @test.ly الموثّقة
+  وكتالوجات r352 الإضافية وبذور الترحيل الحاجزة — لكن تشغيلها في
+  النشر يبقى مسؤولية مشغّل واعية، والمشغّل الجراحي أعلاه هو المسار
+  الموصى به.
+- **بقايا قاعدة الإنتاج (صادقة — ليست نظيفة)**: 14 جدولًا يتيمًا من
+  السلالة السابقة للـsquash (MailOutbox، MailSuppression،
+  NotificationPreference، StudentDocument، AiInstitutionQuota،
+  EmailVerificationToken، FieldValue، ImportJob، ImportMappingProfile،
+  ImportRow، ImportUpload، InstitutionFieldDefinition، RateLimitHit،
+  TickRun) + أعمدة/فهارس شاردة (مثل `AiTelemetry.provider` وبعض فهارس
+  trgm/title) — خاملة بالنسبة للتطبيق الحالي (لا نموذج Prisma يشير
+  إليها)، أُبقيت لتجنّب تدمير بيانات حيّة؛ ترحيل تنظيف مستقبلي بموافقة
+  المالك قد يُسقطها.
 
 ## 3. المتغيرات (عقد `backend/src/env.ts`)
 
@@ -87,9 +122,10 @@ AI_API_KEY=<سر المالك — لا يوضع في أي ملف>
 ## 4. cron والوظائف اليومية
 
 `vercel.json` ← `crons`: `0 3 * * *` يضرب `GET /api/v1/jobs/daily`
-بسرّ `CRON_SECRET`. الوظائف (idempotent، لا ترفض أبدًا — الفشل جزء من
-الحمولة): مزامنة حقائق مؤسّسة العرض + تقليم `LoginEvent` (180 يومًا) +
-**تمريرة ensure لحسابات الاختبار** (§6). الطلب الفوري:
+بسرّ `CRON_SECRET`. وظيفة قاعدة البيانات اليومية **واحدة**: تقليم
+`LoginEvent` (180 يومًا) — مزامنة حقائق مؤسّسة العرض تقاعدت مع نظام
+zu-sync (r342 t13). مع `ULARA_TEST_ACCOUNTS=1` تضيف الجولة اليومية نفسها
+**تمريرة ensure لحسابات الاختبار** (§6)؛ والطلب الفوري:
 `POST /api/v1/jobs/test-accounts` بسرّ الخدمة. في النشر الطويل الأمد
 يعمل مجدول داخل العملية نفسها (إقلاع + كل 24 ساعة).
 

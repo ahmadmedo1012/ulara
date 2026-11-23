@@ -468,10 +468,13 @@ export async function backfillOrgUnitsFromLegacy(prisma: PrismaClient): Promise<
 
 // ── Standalone runner ─────────────────────────────────────────────
 // `npm run seed:r352 -w backend` / `tsx prisma/seed-r352-catalogs.ts`.
-// The full prisma/seed.ts refuses NODE_ENV=production by design (AGENTS.md
-// §7); established production databases converge the r352 catalogs through
-// THIS surgical, additive, idempotent runner instead. Only executes when
-// invoked directly (import.meta check) — importing from seed.ts never runs it.
+// The surgical, additive, idempotent path for ESTABLISHED production
+// databases (the full prisma/seed.ts is create-once and skips established
+// databases entirely — except the documented @test.ly accounts, these very
+// catalogs and the guarded backfills — but running it at deploy time stays
+// a conscious operator decision; this runner is the documented one-command
+// path). Only executes when invoked directly (import.meta check) —
+// importing from seed.ts never runs it.
 import { pathToFileURL } from 'node:url';
 
 const invokedDirectly =

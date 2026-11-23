@@ -249,3 +249,8 @@ describe('r352 cross-tenant writes — the isolation-fix belt', () => {
     expect(scoped.some((o) => o.institutionId === w.B.institution.id)).toBe(false);
   });
 });
+
+declare global {
+  // eslint-disable-next-line no-var
+  var __iso: unknown;
+}

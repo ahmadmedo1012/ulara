@@ -19,7 +19,8 @@
 ## 2. Identity & permissions (as found)
 
 - Roles: `STUDENT | TEACHER | ADMIN | QUALITY | OWNER`.
-- Capabilities: 19-value enum; `DEFAULT_ROLE_CAPABILITIES` + `RolePermission`
+- Capabilities: 28-value enum (17 pre-R352 + the 11 institutional-core
+  values); `DEFAULT_ROLE_CAPABILITIES` + `RolePermission`
   rows (30s cache) + `UserPermission` overrides
   (`@@unique([userId, capability, institutionId])`, `grant` boolean,
   NULL institution = platform-global).
@@ -67,7 +68,7 @@
 
 ## 4. Routes (as found)
 
-24 route modules mounted in `app.ts` (ordering-sensitive: public routers
+43 route modules mounted in `app.ts` (ordering-sensitive: public routers
 before broad authed mounts). Governance mutations use the shared pattern:
 `prisma.$transaction` + `AuditLog` row inside the same transaction
 (`courses.routes.ts` / `institution.routes.ts` pattern). Zod DTOs in
@@ -130,10 +131,14 @@ snapshot tooling, integration harness (`seedUser`/`seedInstitution`/
 
 # r352 hardening state (post-review, this PR)
 
-- Migrations: `0001` + `0002` + `0003_r352_institutional_core` +
-  `0004_r352_backend_hardening` (additive except the documented
-  UnitRoleGrant drop and the replaced uniques; learner bridge backfill
-  verified on fresh AND data-bearing upgrades).
+- Migrations: `0001` → `0006` (`0002_retire_zu_sync`,
+  `0003_r352_institutional_core`, `0004_r352_backend_hardening`,
+  `0005_r352_mirror_ids_cuid_shape`, `0006_r352_feedback_institution_scope`)
+  — additive except the documented UnitRoleGrant drop and the replaced
+  uniques; learner bridge backfill verified on fresh AND data-bearing
+  upgrades; `0006` adds `PilotFeedback.institutionId` (nullable — the
+  ADMIN/QUALITY feedback inbox is institution-scoped, OWNER keeps the
+  platform-wide view).
 - Authorization: single-capability scoped grants (`UnitCapabilityGrant`);
   deterministic deny precedence; unit-aware scope policies on the R352
   write routes; §3.1 institution-context law enforced end-to-end.

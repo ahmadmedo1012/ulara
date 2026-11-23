@@ -20,7 +20,7 @@ invented) are recorded at the end.
 | QUALITY_INTERNAL_MANAGE | self-assessments (grant-only — the UI names this explicitly) |
 | FACILITIES_MANAGE | facilities + work orders + reservations + incidents |
 | RESEARCH_PROJECTS_MANAGE | research projects/teams/outputs |
-| UNIT_ROLES_ASSIGN | access section's grant/revoke surface |
+| UNIT_CAPABILITIES_ASSIGN | access section's grant/revoke surface |
 
 `GET /me/permissions` is the ONLY authorization input the UI reads (never client
 role labels).
@@ -32,7 +32,7 @@ role labels).
 | GET /catalog/institution-types | overview classification editor (kind options, sector-consistent) |
 | GET /catalog/regulatory-authorities | overview editor; quality (accreditation authority); licenses (inspections/licenses authority) |
 | GET /catalog/credential-types | students (the statutory credentials tab); programs (credential option) |
-| GET /catalog/position-templates | positions (catalog + the create-appointment options, eligibility-per-kind + scopeRequirement) |
+| GET /catalog/position-templates | positions (catalog + the create-appointment options, eligibility-per-kind + allowedUnitTypes) |
 | GET /catalog/accreditation-criteria-sets | quality (criteria section + self-assessment/accreditation options) |
 
 ## §2 Classification → screens
@@ -59,7 +59,7 @@ role labels).
 |---|---|
 | GET /institutional/people (paged) | people directory; options in positions/councils/research/access |
 | POST /institutional/people | people create |
-| GET /institutional/people/:id | person detail (+appointments+unitRoleGrants) |
+| GET /institutional/people/:id | person detail (+appointments+unitCapabilityGrants) |
 | PATCH /institutional/people/:id | *(reserved — edit dialog lands with the first edit flow)* |
 | POST /institutional/people/:id/status | person detail status actions |
 | GET /institutional/people/:id/appointments | *(person detail uses the :id aggregate's appointments today; the dedicated history endpoint is the contract's own deep view — wired via the aggregate until an edit-history UI needs the full record)* |
@@ -123,10 +123,12 @@ consumed on the equipment side), work-orders (list/post/patch), reservations
 Projects (list/post/get/patch), members (post/delete), outputs (list/post) —
 research screens.
 
-## §12 Scoped roles → screens
+## §12 Unit-capability grants → screens
 
-GET /me/unit-roles → access; GET/POST /admin/users/:id/unit-roles +
-POST /admin/unit-roles/:id/revoke → the ROLES_ASSIGN section.
+GET /me/unit-capabilities → access; GET/POST /admin/users/:id/unit-capabilities +
+POST /admin/unit-capabilities/:id/revoke → the UNIT_CAPABILITIES_ASSIGN section.
+`?institutionId` on the admin grant list is honored for OWNER only (non-OWNER
+callers are always scoped to their server-verified institution).
 
 ## Missing operations (recorded, NOT invented)
 

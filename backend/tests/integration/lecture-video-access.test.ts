@@ -142,3 +142,8 @@ describe('r342 t14 — the lecture-video serving gate', () => {
     expect(res.status).toBe(400);
   });
 });
+
+declare global {
+  // eslint-disable-next-line no-var
+  var __vg: unknown;
+}
