@@ -431,7 +431,11 @@ const WHY_PANELS = [
  */
 export function WhyPanels() {
   return (
-    <div className="wy-panels" data-spec="why.panels">
+    /* R355 (a11y): tabIndex 0 + the naming label — the panels band is a
+       scrollable region on narrow widths and axe's
+       scrollable-region-focusable wants keyboard users able to scroll
+       it (same repair as the hero work strip). */
+    <div className="wy-panels" data-spec="why.panels" tabIndex={0} role="group" aria-label="أسباب اختيار أُلارا">
       {WHY_PANELS.map((w, i) => {
         const Loop = w.Loop;
         return (

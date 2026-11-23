@@ -24,7 +24,7 @@
  *         reference, never trusted as an upload; uploads and downloads
  *         are separate, authorized endpoints.
  */
-import { Router } from 'express';
+import express, { Router } from 'express';
 import { Prisma, Role } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../../db.js';
@@ -38,6 +38,12 @@ import {
 } from '../../lib/lifecycle-rules.js';
 import { assertCapabilityForUnit, assertCapabilityIn } from '../../lib/permissions.js';
 import { governanceKeyInstitution } from '../../lib/tenant-guards.js';
+import { getStorage, generateStorageId } from '../../lib/storage.js';
+import {
+  isPdfMagicBytes, containsPdfActiveContent, MAX_UPLOAD_PDF_BYTES,
+  parseRangeHeader, FILE_NOT_FOUND_MESSAGE,
+} from './files.routes.js';
+import { isVercelRuntime, RUNTIME_PDF_MAX_BYTES } from '../../lib/pdf-limits.js';
 import {
   councilListSchema, councilCreateSchema, councilUpdateSchema,
   councilMembershipCreateSchema, councilMembershipEndSchema,
@@ -975,5 +981,121 @@ router.post(
     }
   },
 );
+
+async function assertGovernanceUploadPermission(userId: string, role: Role, institutionId: string): Promise<void> {
+  if (role === Role.OWNER || role === Role.ADMIN) return;
+  await assertCapabilityIn(userId, role, institutionId, 'COUNCILS_MANAGE', 'ACCREDITATION_MANAGE');
+}
+
+// ── D-6 byte upload/download ────────────────────────────────────────
+
+router.post(
+  '/documents/upload',
+  express.raw({ type: 'application/pdf', limit: MAX_UPLOAD_PDF_BYTES }),
+  async (req, res, next) => {
+    try {
+      const institutionId = req.institution?.id;
+      if (!institutionId && req.user!.role !== Role.OWNER) {
+        throw AppError.forbidden('يتطلب رفع وثائق الحوكمة سياق مؤسسة نشط');
+      }
+      const targetInstId = institutionId ?? 'global';
+      await assertGovernanceUploadPermission(req.user!.id, req.user!.role, targetInstId);
+
+      const body = req.body;
+      if (!Buffer.isBuffer(body)) {
+        throw AppError.badRequest('أرسل ملف PDF واحدًا بترميز application/pdf');
+      }
+      if (body.length === 0 || body.length > MAX_UPLOAD_PDF_BYTES) {
+        throw new AppError(
+          'PAYLOAD_TOO_LARGE',
+          `حجم الملف يتجاوز الحد المسموح (${Math.round(MAX_UPLOAD_PDF_BYTES / (1024 * 1024))} ميجابايت)`,
+          413,
+        );
+      }
+      if (!isPdfMagicBytes(body)) {
+        throw AppError.badRequest('الملف المرفق ليس ملف PDF صالحاً');
+      }
+      if (containsPdfActiveContent(body)) {
+        throw AppError.badRequest('ملف PDF يحتوي تضمينات برمجية نشطة — غير مسموح');
+      }
+
+      const fileId = generateStorageId();
+      const key = `governance/${targetInstId}/${fileId}.pdf`;
+      const storage = getStorage();
+      await storage.put(key, body);
+
+      await audit(prisma, req.user!.id, targetInstId, 'governance.document.upload', 'BinaryObject', key, {
+        sizeBytes: body.length,
+      });
+
+      res.status(201).json({
+        data: {
+          key,
+          sizeBytes: body.length,
+          mimeType: 'application/pdf',
+        },
+      });
+    } catch (e) {
+      next(e);
+    }
+  },
+);
+
+router.get('/documents/:id/file', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const document = await prisma.councilDocument.findUnique({
+      where: { id: id! },
+      include: { council: { select: { institutionId: true, orgUnitId: true } } },
+    });
+    if (!document) {
+      throw AppError.notFound(FILE_NOT_FOUND_MESSAGE);
+    }
+    if (req.user!.role !== Role.OWNER) {
+      if (!req.institution || req.institution.id !== document.council.institutionId) {
+        throw AppError.notFound(FILE_NOT_FOUND_MESSAGE);
+      }
+    }
+    if (!document.binaryObjectId) {
+      throw AppError.notFound(FILE_NOT_FOUND_MESSAGE);
+    }
+    const key = document.binaryObjectId;
+    const keyInst = governanceKeyInstitution(key);
+    if (keyInst && req.user!.role !== Role.OWNER && keyInst !== document.council.institutionId) {
+      throw AppError.notFound(FILE_NOT_FOUND_MESSAGE);
+    }
+    const storage = getStorage();
+    const info = await storage.stat(key);
+    if (!info) throw AppError.notFound(FILE_NOT_FOUND_MESSAGE);
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Accept-Ranges', 'bytes');
+    res.setHeader('Cache-Control', 'private, max-age=3600');
+
+    const range = parseRangeHeader(req.headers.range, info.size);
+    if (range === 'unsatisfiable') {
+      res.setHeader('Content-Range', `bytes */${info.size}`);
+      res.status(416).end();
+      return;
+    }
+    if (range === null && isVercelRuntime() && info.size > RUNTIME_PDF_MAX_BYTES) {
+      throw new AppError(
+        'PAYLOAD_TOO_LARGE',
+        'حجم الملف أكبر من حدّ النقل على هذا المستضيف — استخدم تنزيلًا مقسّمًا.',
+        413,
+      );
+    }
+    const slice = range === null ? await storage.get(key) : await storage.getRange(key, range.start, range.end);
+    if (!slice) throw AppError.notFound(FILE_NOT_FOUND_MESSAGE);
+    if (range !== null) {
+      res.status(206);
+      res.setHeader('Content-Range', `bytes ${range.start}-${range.end}/${info.size}`);
+    }
+    res.setHeader('Content-Length', String(slice.length));
+    res.end(slice);
+  } catch (e) {
+    next(e);
+  }
+});
 
 export default router;

@@ -1,0 +1,13 @@
+[
+  {
+    "route": "/auth",
+    "role": "PUBLIC",
+    "type": "SMALL_TAP_TARGETS",
+    "severity": "P1",
+    "message": "SMALL_TAP_TARGETS",
+    "viewports": [
+      "360px:light",
+      "360px:dark"
+    ]
+  }
+]

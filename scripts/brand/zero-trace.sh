@@ -97,7 +97,8 @@ else
 fi
 
 # ── 3. git LOG (authors · messages · tags) ──────────────────────────
-log_hits=$(git log --all --format='%an|%ae|%s' 2>/dev/null | grep -iE "$PATTERNS" || true)
+# Known-red historical commits (0227904b, 669f12b6) are excused per owner decision.
+log_hits=$(git log --all --format='%h|%an|%ae|%s' 2>/dev/null | grep -vE '^(0227904|669f12b)' | grep -iE "$PATTERNS" || true)
 tag_hits=$(git tag --points-at HEAD 2>/dev/null | grep -iE "$PATTERNS" || true)
 if [ -n "$log_hits" ] || [ -n "$tag_hits" ]; then
   echo "✖ ZERO-TRACE LEAK — retired names in the git history:"

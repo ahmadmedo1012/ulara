@@ -14,10 +14,12 @@
  *    inter-word gaps. A real ' ' node between consecutive masks keeps
  *    textContent, copy, search and screen reading correct while each
  *    word still rides its own overflow-hidden mask.
- *  · A11y contract (R318 §A1): the wrapper carries aria-label={text}
- *    (one clean string for AT); every .wr-w mask is aria-hidden so the
- *    split words are never announced twice. No tracking/letter-spacing
- *    is ever added — Arabic display keeps its natural metrics.
+ *  · A11y contract (R318 §A1, R355 repair): the word masks carry the
+ *    real text (each mask its whole word, real ' ' text nodes between)
+ *    so the DOM reads exactly the source sentence to AT, copy and
+ *    search; the decorative ink-roll twins and char scaffolds stay
+ *    aria-hidden. No tracking/letter-spacing is ever added — Arabic
+ *    display keeps its natural metrics.
  *  · Each word rides an overflow-hidden mask; the shared IO belt
  *    (RevealCssClass) triggers the reveal — the same once-only,
  *    fling-hardened contract as the block reveals.
@@ -58,13 +60,20 @@ export function WordReveal({ text, className }: WordRevealProps) {
     <RevealCssClass
       as="span"
       className={['wr', className].filter(Boolean).join(' ')}
-      aria-label={text}
     >
+      {/* R355 (a11y): the wrapper's aria-label={text} was a prohibited
+          attribute on a role-less span (axe aria-prohibited-attr, the
+          r355 catalog's `/` P1) — and masking the words forced the label
+          to exist. The masks now expose their real text to AT: each
+          .wr-w carries its whole word and the real ' ' text nodes
+          between them make the DOM read exactly the source sentence
+          (one clean string, announced once — textContent, copy and
+          search stay byte-identical). The decorative twins and char
+          scaffolds keep their own aria-hidden. */}
       {words.map((w, i) => (
         <Fragment key={`${w}-${i}`}>
           <span
             className="wr-w"
-            aria-hidden="true"
             style={{ ['--wr-i' as string]: Math.min(i, MAX_STAGGER) }}
           >
             <span className="wr-i">{w}</span>
@@ -142,9 +151,12 @@ export function ScrubReveal({ text, className, lines, renderLine, wordSpec, char
       const ds = wordSpec?.(gi);
       return (
         <Fragment key={`${w}-${gi}`}>
+          {/* R355 (a11y): the mask is AT-visible (its whole word + the
+              real space nodes = the exact sentence; see WordReveal's
+              repair note) — only the decorative twins/scaffolds below
+              stay aria-hidden. */}
           <span
             className="wr-w"
-            aria-hidden="true"
             data-spec={ds}
             style={{ ['--wr-i' as string]: gi }}
           >
@@ -183,9 +195,10 @@ export function ScrubReveal({ text, className, lines, renderLine, wordSpec, char
   return (
     <span
       className={['wr wr-scrub', className].filter(Boolean).join(' ')}
-      aria-label={text}
       style={{ ['--wr-n' as string]: n }}
     >
+      {/* R355 (a11y): aria-label retired from the role-less span —
+          see WordReveal's repair note; the masks are the AT text. */}
       {body}
     </span>
   );

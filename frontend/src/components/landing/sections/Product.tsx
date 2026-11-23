@@ -124,6 +124,8 @@ export function Product() {
  * menu), and the ≤991 per-row plate with its flanking rule. */
 function PlatformRow({ item, idx, hidden, clone }: { item: typeof PLATFORM_ITEMS[number]; idx: 1 | 2 | 3 | 4 | 5; hidden?: boolean; clone?: boolean }) {
   const ds = (k: string) => `platform.${k}${idx}`;
+  /* R355 (a11y): propagated to the CTA anchor's tabIndex — see the
+     aria-hidden-focus repair at the pr-cta seat. */
   return (
     <div className={`pr-row${clone ? ' pr-clone' : ''}`} data-spec={ds('row')} aria-hidden={hidden || clone || undefined}>
       {/* the head cell — 481×193 @1920 */}
@@ -148,7 +150,17 @@ function PlatformRow({ item, idx, hidden, clone }: { item: typeof PLATFORM_ITEMS
             {item.text}
           </RevealCssClass>
         </div>
-        <a href="#cta" className="pr-cta" data-spec={ds('cta')}>
+        <a
+          href="#cta"
+          className="pr-cta"
+          data-spec={ds('cta')}
+          /* R355 (a11y): the cross-fade twin + the marquee loop copies ride
+             aria-hidden rows — a focusable anchor inside them is the axe
+             aria-hidden-focus violation. tabIndex -1 pulls the seat out of
+             the tab order (lighthouse's own prescribed fix); the PRIMARY
+             row's CTA (idx 1, never hidden) keeps its natural focusability. */
+          tabIndex={hidden || clone ? -1 : undefined}
+        >
           <div className="pr-cta-rule" data-spec={ds('ctarule')} aria-hidden="true" />
           {/* r338 T-08c2 — the reference's CTA internals are divs (a[2] > div[2] >
               div[1] > …, measured): the structural wrappers re-tagged

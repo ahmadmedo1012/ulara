@@ -127,7 +127,7 @@ export function CompetitionsIndexPage() {
   };
   const [creating, setCreating] = useState(false);
 
-  const canRun = perms.data?.capabilities.includes('COMPETITIONS_RUN') ?? false;
+  const canRun = perms.data?.capabilities?.includes('COMPETITIONS_RUN') ?? false;
 
   const competitions = q.data ?? [];
   const visible = filter === 'all' ? competitions : competitions.filter((c) => c.status === filter);

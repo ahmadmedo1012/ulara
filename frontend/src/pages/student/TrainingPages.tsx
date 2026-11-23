@@ -138,7 +138,7 @@ export default function TrainingCatalogPage() {
             onRetry={() => meQ.refetch()}
           />
         </Card>
-      ) : me ? (
+      ) : me?.level ? (
         <>
           <StatStrip
             ariaLabel="ملخّص إنجازاتك"
@@ -812,7 +812,7 @@ export function AchievementsPage() {
             onRetry={() => meQ.refetch()}
           />
         </Card>
-      ) : me ? (
+      ) : me?.level ? (
         <div className="r305a-strip">
           {/* R305 DS: the achievements KPI strip rides the page's ONE deep
               band (r305a-strip). The gold DISCIPLINE keeps --gold on the

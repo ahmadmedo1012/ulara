@@ -69,9 +69,9 @@ export function GamificationPage() {
   // Real self-development progression (level / tier / distance to next level).
   const training = useTrainingMe();
 
-  const xp = dash.data ? dash.data.kpi.totalXp : null;
-  const rank = dash.data?.kpi.rank ?? null;
-  const cohortSize = dash.data?.kpi.cohortSize ?? 0;
+  const xp = dash.data?.kpi?.totalXp ?? null;
+  const rank = dash.data?.kpi?.rank ?? null;
+  const cohortSize = dash.data?.kpi?.cohortSize ?? 0;
   const me = training.data;
 
   /* r224 (4A redesign — Superlist): the page opens with the pattern
@@ -116,8 +116,8 @@ export function GamificationPage() {
           },
           {
             label: 'مستوى التطوير الذاتي',
-            value: me ? formatNum(me.level.level) : '—',
-            hint: me ? TIER_LABEL[me.level.tier] : 'لم يبدأ المسار بعد',
+            value: me?.level ? formatNum(me.level.level) : '—',
+            hint: me?.level ? TIER_LABEL[me.level.tier] : 'لم يبدأ المسار بعد',
             tone: 'neutral',
           },
           {
@@ -151,21 +151,21 @@ export function GamificationPage() {
         ) : (
           <div
             className="r305g-level"
-            style={{ ['--tier-color' as never]: me ? TIER_COLOR[me.level.tier] : undefined }}
+            style={{ ['--tier-color' as never]: me?.level ? TIER_COLOR[me.level.tier] : undefined }}
           >
               <div
                 className="tier-orb lg"
-                data-empty={!me}
-                aria-label={me ? `المستوى ${me.level.level} في مسار التطوير الذاتي` : undefined}
+                data-empty={!me?.level}
+                aria-label={me?.level ? `المستوى ${me.level.level} في مسار التطوير الذاتي` : undefined}
               >
-                {me ? me.level.level : '—'}
+                {me?.level ? me.level.level : '—'}
               </div>
               <div className="r305g-level-main">
                 <span className="r305s-eyebrow">مستوى التقدّم</span>
                 <div className="r305g-level-title">
                   {training.isError
                     ? 'تعذّر تحميل مستوى التطوير الذاتي'
-                    : me
+                    : me?.level
                       ? `${TIER_LABEL[me.level.tier]} · المستوى ${me.level.level} في التطوير الذاتي`
                       : 'لم يبدأ مسار التطوير الذاتي بعد'}
                 </div>
@@ -193,7 +193,7 @@ export function GamificationPage() {
                     </button>
                   </div>
                 )}
-                {me && (
+                {me?.level && (
                   <>
                     <div
                       className="xp-track"
@@ -316,7 +316,7 @@ export function GamificationPage() {
                       : <bdi className="font-mono">#{i + 1}</bdi>}
                   </span>
                   <UserAvatar
-                    initials={l.avatarInitials ?? `${l.firstName[0] ?? ''}${l.lastName[0] ?? ''}`}
+                    initials={l.avatarInitials ?? `${l.firstName?.[0] ?? ''}${l.lastName?.[0] ?? ''}`}
                     color={l.avatarColor ?? undefined}
                     size={32}
                   />
@@ -952,7 +952,16 @@ export function ResultsPage() {
   }
 
   const d = q.data;
-  const hasGrades = d.courses.some((c) => c.gradePct !== null);
+  /* R355 (empty-state guard): a degraded/legacy payload (or the audit's
+     empty envelope) can land without the nested aggregates — the typed
+     contract is real but the wire is not validated. Normalize ONCE here
+     instead of guarding every seat below (the 355dbe5 sweep fixed the
+     courses.some read; this closes the whole access family — the
+     headline/courseCount crash the fresh capture found). */
+  const headline = d?.headline ?? { avgGradePct: null, highest: null, lowest: null, courseCount: 0 };
+  const courses = d?.courses ?? [];
+  const recentAssignments = d?.recentAssignments ?? [];
+  const hasGrades = courses.some((c) => c.gradePct !== null);
   const cc = chartColors();
   /* r164-a (status semantics): النتائج الطالبية كانت تحمل سلّمًا
      خاصًا 85/70/60 يخالف سلّم النطاقات الكنونيّ الواحد
@@ -971,7 +980,7 @@ export function ResultsPage() {
   // r164-e: the awaiting-grading half of the timeline. Optional on the
   // wire (additive backend field) — an older payload degrades to the
   // honest "nothing pending" copy instead of crashing.
-  const pendingSubs = d.pendingSubmissions ?? [];
+  const pendingSubs = d?.pendingSubmissions ?? [];
   // Build the shared chart options ONCE per render (each cartesianOptions()
   // call resolves CSS custom properties — it is not free).
   const baseOpts = cartesianOptions({ horizontal: true });
@@ -981,8 +990,8 @@ export function ResultsPage() {
       <PatternPageHeader
         title="النتائج والتقييمات"
         description="تفاصيل درجاتك وتحليل أدائك بناءً على بياناتك الفعليّة."
-        meta={d.headline.courseCount > 0
-          ? <>{countAr(d.headline.courseCount, ['مقرّر واحد مُقيَّم', 'مقرّران مُقيَّمان', 'مقرّرات مُقيَّمة', 'مقرّراً مُقيَّماً'])} هذا الفصل</>
+        meta={headline.courseCount > 0
+          ? <>{countAr(headline.courseCount, ['مقرّر واحد مُقيَّم', 'مقرّران مُقيَّمان', 'مقرّرات مُقيَّمة', 'مقرّراً مُقيَّماً'])} هذا الفصل</>
           : undefined}
         /* R341 (D7c): the page's CTA pair — honest navigation to the
             assessments that produce these grades (the accent primary
@@ -1019,23 +1028,23 @@ export function ResultsPage() {
         items={[
           {
             label: 'أعلى درجة',
-            value: d.headline.highest ? <bdi>{formatPct1(d.headline.highest.gradePct)}%</bdi> : '—',
-            hint: d.headline.highest?.courseName ?? 'لا توجد درجات بعد',
-            tone: d.headline.highest ? bandTone(d.headline.highest.gradePct) : 'neutral',
+            value: headline.highest ? <bdi>{formatPct1(headline.highest.gradePct)}%</bdi> : '—',
+            hint: headline.highest?.courseName ?? 'لا توجد درجات بعد',
+            tone: headline.highest ? bandTone(headline.highest.gradePct) : 'neutral',
           },
           {
             label: 'المتوسّط',
-            value: d.headline.avgGradePct !== null ? <bdi>{formatPct1(d.headline.avgGradePct)}%</bdi> : '—',
-            hint: d.headline.courseCount > 0
-              ? `عبر ${countAr(d.headline.courseCount, ['مقرّر واحد', 'مقرّرين', 'مقرّرات', 'مقرّراً'])}`
+            value: headline.avgGradePct !== null ? <bdi>{formatPct1(headline.avgGradePct)}%</bdi> : '—',
+            hint: headline.courseCount > 0
+              ? `عبر ${countAr(headline.courseCount, ['مقرّر واحد', 'مقرّرين', 'مقرّرات', 'مقرّراً'])}`
               : 'لا تقييمات بعد',
-            tone: d.headline.avgGradePct !== null ? bandTone(d.headline.avgGradePct) : 'neutral',
+            tone: headline.avgGradePct !== null ? bandTone(headline.avgGradePct) : 'neutral',
           },
           {
             label: 'أدنى درجة',
-            value: d.headline.lowest ? <bdi>{formatPct1(d.headline.lowest.gradePct)}%</bdi> : '—',
-            hint: d.headline.lowest?.courseName ?? '—',
-            tone: d.headline.lowest ? bandTone(d.headline.lowest.gradePct) : 'neutral',
+            value: headline.lowest ? <bdi>{formatPct1(headline.lowest.gradePct)}%</bdi> : '—',
+            hint: headline.lowest?.courseName ?? '—',
+            tone: headline.lowest ? bandTone(headline.lowest.gradePct) : 'neutral',
           },
         ]}
         />
@@ -1056,15 +1065,15 @@ export function ResultsPage() {
             className="results-chart-frame"
             ariaLabel="درجاتك حسب المقرّر بالنسبة المئوية"
             summary={
-              d.headline.avgGradePct !== null
-                ? `متوسّط درجاتك ${formatPct1(d.headline.avgGradePct)}% عبر ${countAr(d.headline.courseCount, ['مقرّر واحد', 'مقرّرين', 'مقرّرات', 'مقرّراً'])}`
+              headline.avgGradePct !== null
+                ? `متوسّط درجاتك ${formatPct1(headline.avgGradePct)}% عبر ${countAr(headline.courseCount, ['مقرّر واحد', 'مقرّرين', 'مقرّرات', 'مقرّراً'])}`
                 : 'لم تُسجَّل درجات بعد.'
             }
-            height={Math.max(180, d.courses.length * 32)}
+            height={Math.max(180, courses.length * 32)}
             table={{
               caption: 'درجاتك حسب المقرّر بالنسبة المئوية',
               columns: ['المقرّر', 'الدرجة'],
-              rows: d.courses.map((r) => [r.courseName, `${formatPct1(r.gradePct)}%`]),
+              rows: courses.map((r) => [r.courseName, `${formatPct1(r.gradePct)}%`]),
             }}
           >
             {/* Horizontal bars — Arabic course names read at full width on
@@ -1077,14 +1086,14 @@ export function ResultsPage() {
             <Bar
               key={themeKey}
               data={{
-                labels: d.courses.map((r) => r.courseName),
+                labels: courses.map((r) => r.courseName),
                 datasets: [{
                   label: 'الدرجة',
-                  data: d.courses.map((r) => r.gradePct ?? 0),
+                  data: courses.map((r) => r.gradePct ?? 0),
                   /* r164-a: كل عمود يحمل لون نطاقه من السلّم الكنونيّ
                      (PASS = cc.gold) بدل السلّم الخاصّ القديم الذي كان
                      يصبغ ٥٠–٦٤٪ بالأحمر. */
-                  backgroundColor: d.courses.map((r) => BAND_CHART_COLOR[gradeBand(r.gradePct ?? 0).key]),
+                  backgroundColor: courses.map((r) => BAND_CHART_COLOR[gradeBand(r.gradePct ?? 0).key]),
                   borderRadius: 6,
                   maxBarThickness: 26,
                 }],
@@ -1181,7 +1190,7 @@ export function ResultsPage() {
             <p className="text-sm text-muted" style={{ padding: 'var(--sp-3) 0' }}>لم تُسجَّل درجات بعد.</p>
           ) : (
             <div className="flex-col gap-4">
-              {d.courses.map((r) => (
+              {courses.map((r) => (
                 <ProgressBar
                   key={r.offeringId}
                   value={r.gradePct ?? 0}
@@ -1197,11 +1206,11 @@ export function ResultsPage() {
         </Card>
 
         <Card title="آخر الواجبات المقيَّمة">
-          {d.recentAssignments.length === 0 ? (
+          {recentAssignments.length === 0 ? (
             <p className="text-sm text-muted" style={{ padding: 'var(--sp-3) 0' }}>لا توجد تقييمات حديثة.</p>
           ) : (
             <div className="flex-col gap-2">
-              {d.recentAssignments.slice(0, 6).map((a) => {
+              {recentAssignments.slice(0, 6).map((a) => {
                 /* r164-a (status semantics): الصفّ يحمل نطاق درجته من
                    السلّم الكنونيّ — الشارة نفسها («ممتاز»…«ضعيف») التي
                    يعرضها جدول درجات الأستاذ لنفس الرقم، ومحاذاة اللون
@@ -1370,7 +1379,7 @@ export function SocialPage() {
               <form onSubmit={submit} className="flex-col gap-3">
                 <div className="flex items-start gap-3">
                   <UserAvatar
-                    initials={user.avatarInitials ?? `${user.firstName[0] ?? ''}${user.lastName[0] ?? ''}`}
+                    initials={user.avatarInitials ?? `${user.firstName?.[0] ?? ''}${user.lastName?.[0] ?? ''}`}
                     color={user.avatarColor ?? undefined}
                     size={36}
                   />
@@ -1449,7 +1458,7 @@ export function SocialPage() {
             />
           ) : (
             posts.data.map((p) => {
-              const initials = p.author.avatarInitials ?? `${p.author.firstName[0] ?? ''}${p.author.lastName[0] ?? ''}`;
+              const initials = p.author.avatarInitials ?? `${p.author.firstName?.[0] ?? ''}${p.author.lastName?.[0] ?? ''}`;
               const reacted = hasReacted(p.id);
               /* The optimistic ±1 applies ONLY to this session's clicks —
                  a server-truth reaction is already inside _count.reactions.

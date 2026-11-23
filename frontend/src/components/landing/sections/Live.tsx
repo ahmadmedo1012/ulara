@@ -121,11 +121,16 @@ export function Live({ colsRef, dotsRef }: LiveProps) {
             </div>
           </div>
           <div className="pm-subwrap" data-spec="problem.subwrap">
-            <div className="pm-sub" data-spec="problem.sub">
+            {/* R355 (a11y): re-tagged div → p — it IS the section's lead
+                paragraph, and the inline prose link inside it (صفحة القدرات)
+                then rides the capture's inline-text-link exemption instead
+                of failing the 44px tap floor reserved for standalone
+                controls. Class selectors keep working; no belt pins the tag. */}
+            <p className="pm-sub" data-spec="problem.sub">
               المشكلات التي بُنيت أُلارا لحلّها — تحت كل وجع بند يعمل اليوم،
               والسجل الكامل في{' '}
               <Link to="/capabilities" className="fo-text-link">صفحة القدرات</Link>.
-            </div>
+            </p>
           </div>
         </div>
 
@@ -219,10 +224,24 @@ export function Live({ colsRef, dotsRef }: LiveProps) {
           {/* ≤767 only — the reference's swiper dot rail at the band's
               foot (2.02×0.2rem bars, 1st active): one button per
               column, the active bar follows the snap position, a tap
-              centers its column. */}
-          <div className="pm-dots" ref={dotsRef} aria-hidden="true" data-spec="problem.rail">
+              centers its column.
+              R355 (a11y): the rail is NO LONGER aria-hidden — focusable
+              buttons inside an aria-hidden wrapper is the axe
+              aria-hidden-focus violation (the r355 catalog's `/` P1).
+              Each bar now carries its column's accessible name; the
+              buttons stay tabIndex -1 (pointer/tap seats — the scroll
+              region itself is the keyboard path, the columns are the
+              content), so the tab order is unchanged. */}
+          <div className="pm-dots" ref={dotsRef} data-spec="problem.rail">
             {PAINS.map((p, j) => (
-              <button key={p.num} type="button" className="pm-dot-btn" data-pm-num={p.num} tabIndex={-1}>
+              <button
+                key={p.num}
+                type="button"
+                className="pm-dot-btn"
+                data-pm-num={p.num}
+                tabIndex={-1}
+                aria-label={`الانتقال إلى: ${p.title}`}
+              >
                 <span className="pm-dot-bar" data-spec={`problem.dotbar.${j + 1}`} />
               </button>
             ))}

@@ -93,11 +93,12 @@ export function trendCoverage(trend: TeacherDashboard['trend']): {
   /** Weeks with any recorded value (grade OR attendance). */
   weeksRecorded: number;
 } {
-  const gradePoints = trend.filter((t) => t.avgGradePct !== null).length;
-  const attendancePoints = trend.filter((t) => t.attendancePct !== null).length;
+  const safeTrend = trend ?? [];
+  const gradePoints = safeTrend.filter((t) => t.avgGradePct !== null).length;
+  const attendancePoints = safeTrend.filter((t) => t.attendancePct !== null).length;
   return {
     drawable: gradePoints >= 2 || attendancePoints >= 2,
-    weeksRecorded: trend.filter((t) => t.avgGradePct !== null || t.attendancePct !== null).length,
+    weeksRecorded: safeTrend.filter((t) => t.avgGradePct !== null || t.attendancePct !== null).length,
   };
 }
 
@@ -192,8 +193,8 @@ export function TeacherDashboardPage() {
   const offsQ = useTeacherOfferings();
 
   const visible = useMemo(() => {
-    if (!dash.data) return [];
-    return filter === 'all' ? dash.data.feed : dash.data.feed.filter((f) => f.kind === filter);
+    const feed = dash.data?.feed ?? [];
+    return filter === 'all' ? feed : feed.filter((f) => f.kind === filter);
   }, [dash.data, filter]);
 
   const filterCounts = useMemo(() => {

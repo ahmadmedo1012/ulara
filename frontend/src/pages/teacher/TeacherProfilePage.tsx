@@ -263,7 +263,7 @@ export default function TeacherProfilePage() {
       <Card>
         <div className="teacher-header">
           <UserAvatar
-            initials={profile.avatarInitials ?? `${profile.firstName[0] ?? ''}${profile.lastName[0] ?? ''}`}
+            initials={profile.avatarInitials ?? `${profile.firstName?.[0] ?? profile.name?.[0] ?? ''}${profile.lastName?.[0] ?? ''}`}
             color={profile.avatarColor ?? undefined}
             /* R342-09 rung hygiene: 72 → 75 — the initials land on the
              * 30px type rung (72×0.4 = 28.8 ≈ 29 was off every rung). */

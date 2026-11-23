@@ -116,16 +116,15 @@ jobs:
           [ -d "$ANDROID_HOME/platforms/android-37" ] || \
             ln -s "$ANDROID_HOME/platforms/android-37.0" "$ANDROID_HOME/platforms/android-37"
 
-      - name: Gradle + NDK cache
+      - name: Gradle cache
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-            /usr/local/lib/android/sdk/ndk
-          key: android-apk-${{ hashFiles('apps/mobile/package-lock.json', 'apps/mobile/app.config.ts') }}
+          key: android-apk-v2-${{ hashFiles('apps/mobile/package-lock.json', 'apps/mobile/app.config.ts') }}
           restore-keys: |
-            android-apk-
+            android-apk-v2-
 
       - name: Dependencies (npm ci)
         working-directory: apps/mobile
@@ -253,17 +252,16 @@ jobs:
           [ -d "$ANDROID_HOME/platforms/android-37" ] || \
             ln -s "$ANDROID_HOME/platforms/android-37.0" "$ANDROID_HOME/platforms/android-37"
 
-      - name: Gradle + NDK cache
+      - name: Gradle cache
         if: steps.secrets.outputs.available == 'true'
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-            /usr/local/lib/android/sdk/ndk
-          key: android-apk-${{ hashFiles('apps/mobile/package-lock.json', 'apps/mobile/app.config.ts') }}
+          key: android-apk-v2-${{ hashFiles('apps/mobile/package-lock.json', 'apps/mobile/app.config.ts') }}
           restore-keys: |
-            android-apk-
+            android-apk-v2-
 
       - name: Dependencies (npm ci)
         if: steps.secrets.outputs.available == 'true'
@@ -334,8 +332,8 @@ jobs:
           APKSIGNER="$ANDROID_HOME/build-tools/37.0.0/apksigner"
           "$APKSIGNER" verify --print-certs ulara.apk | tee "$RUNNER_TEMP/apksigner-certs.txt"
           # Pin 1 — against the keystore the lane itself materialized:
-          EXPECTED="$(cat "$RUNNER_TEMP/expected-cert-sha256.txt" | tr -d '[:space:]' | tr 'A-F' 'a-f')"
-          ACTUAL="$("$APKSIGNER" verify --print-certs ulara.apk | grep -i 'SHA-256 digest:' | head -1 | sed -E 's/.*SHA-256 digest:\s*//' | tr -d '[:space:]' | tr 'A-F' 'a-f')"
+          EXPECTED="$(cat "$RUNNER_TEMP/expected-cert-sha256.txt" | tr -d '[:space:]:' | tr 'A-F' 'a-f')"
+          ACTUAL="$("$APKSIGNER" verify --print-certs ulara.apk | grep -i 'SHA-256 digest:' | head -1 | sed -E 's/.*SHA-256 digest:\s*//' | tr -d '[:space:]:' | tr 'A-F' 'a-f')"
           if [ -z "$ACTUAL" ]; then
             echo "::error::could not extract the APK's signing certificate SHA-256 — signature verification failed?"
             exit 1
@@ -347,7 +345,7 @@ jobs:
           echo "signature pin: APK certificate == direct-channel keystore certificate"
           # Pin 2 — the owner's explicit pin (optional secret):
           if [ -n "$EXPECTED_CERT_SHA256" ]; then
-            PIN="$(printf '%s' "$EXPECTED_CERT_SHA256" | tr -d '[:space:]' | tr 'A-F' 'a-f')"
+            PIN="$(printf '%s' "$EXPECTED_CERT_SHA256" | tr -d '[:space:]:' | tr 'A-F' 'a-f')"
             if [ "$ACTUAL" != "$PIN" ]; then
               echo "::error::ANDROID_KEY_CERT_SHA256 pin mismatch — the provisioned keystore is NOT the original direct-channel identity (got $ACTUAL, pinned $PIN). Refusing to publish."
               exit 1

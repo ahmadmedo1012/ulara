@@ -102,6 +102,18 @@
     --text: var(--neutral-0);
     --text-muted: color-mix(in srgb, var(--neutral-0) 72%, var(--neutral-900));
     --text-faint: color-mix(in srgb, var(--neutral-0) 67%, var(--neutral-900));
+    /* R355 (surface-drift repair): --text-subtle is defined at :root as
+       var(--text-muted) — the substitution freezes at :root, so the
+       local --text-muted override above never flows into it and the
+       unlayered .text-subtle utility (components.css's utilities region
+       rides outside @layer components — unlayered beats every layer)
+       painted page-ground muted on the inverted band: 2.92:1 light /
+       1.85:1 dark on /student/lectures/:lectureId (6 drift findings).
+       Re-deriving the seat locally at the same 85/15 mix as
+       .r305s-band-secondary makes BOTH cascade paths (utility and class)
+       converge on one band-safe ink: 13.05:1 on the light ink pole,
+       7.72:1 on the dark paper pole. */
+    --text-subtle: color-mix(in srgb, var(--neutral-0) 85%, var(--neutral-900));
     --success-ink: color-mix(in srgb, var(--success) 62%, var(--neutral-0));
     --warning-ink: color-mix(in srgb, var(--warning) 62%, var(--neutral-0));
     --danger-ink: color-mix(in srgb, var(--danger) 62%, var(--neutral-0));

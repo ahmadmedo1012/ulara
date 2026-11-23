@@ -888,7 +888,12 @@
   margin-block-start: 0.5rem;
   font-size: 1.4rem;
   line-height: 1.96rem;
-  color: var(--iso-sienna);
+  /* R355 (contrast): the raw sienna ink (#F15534) ran 3.07:1 on the
+     paper — under the 4.5:1 floor for this 1.4rem caption numeral.
+     The warm family's OWN text rung is the deep (the tokens' law:
+     «ordinary small text never rides the raw ink»): #9C2B0F light
+     6.84:1 on the paper · #FFC5AE dark — both poles clear AA. */
+  color: var(--c-copper-deep);
 }
 
 .wyp-title {

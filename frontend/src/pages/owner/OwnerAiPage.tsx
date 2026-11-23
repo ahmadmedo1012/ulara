@@ -272,7 +272,7 @@ export function OwnerAiPage() {
 
           <div className="owner-ai-chart-grid">
             <Card title="الطلبات حسب الميزة">
-              {data.byFeature.length === 0 ? (
+              {(data.byFeature ?? []).length === 0 ? (
                 <EmptyState illustration="empty-list"
                   icon={Bot}
                   title="لا توجد طلبات لعرضها"
@@ -303,7 +303,7 @@ export function OwnerAiPage() {
             </Card>
 
             <Card title="اتّجاه الاستخدام (7 أيّام)">
-              {data.trend.length === 0 ? (
+              {(data.trend ?? []).length === 0 ? (
                 <EmptyState illustration="empty-list" title="لا توجد بيانات بعد" description="يُرسم الاتّجاه فور تسجيل أوّل طلب." />
               ) : (
                 <ChartFrame
@@ -322,7 +322,7 @@ export function OwnerAiPage() {
             </Card>
           </div>
 
-          {data.byFeature.length > 0 && (
+          {(data.byFeature ?? []).length > 0 && (
             <Card title="تفاصيل الاستخدام حسب الميزة">
               <div className="table-wrap">
                 <table className="table tbl-stack">

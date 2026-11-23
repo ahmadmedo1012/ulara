@@ -94,7 +94,7 @@
     },
     {
       "name": "governance",
-      "description": "21 operation(s) under /api/v1/governance"
+      "description": "23 operation(s) under /api/v1/governance"
     },
     {
       "name": "health",
@@ -12407,6 +12407,132 @@
             }
           }
         }
+      }
+    },
+    "/api/v1/governance/documents/{id}/file": {
+      "get": {
+        "tags": [
+          "governance"
+        ],
+        "summary": "GET /api/v1/governance/documents/:id/file",
+        "description": "Declared in `backend/src/http/routes/r352-councils.routes.ts` (mounted at `/api/v1/governance`).",
+        "x-mounted-at": "/api/v1/governance",
+        "responses": {
+          "200": {
+            "description": "Success envelope `{ data }`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessEnvelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation / bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/v1/governance/documents/upload": {
+      "post": {
+        "tags": [
+          "governance"
+        ],
+        "summary": "POST /api/v1/governance/documents/upload",
+        "description": "Declared in `backend/src/http/routes/r352-councils.routes.ts` (mounted at `/api/v1/governance`).",
+        "x-mounted-at": "/api/v1/governance",
+        "responses": {
+          "200": {
+            "description": "Success envelope `{ data }`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessEnvelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation / bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": []
       }
     },
     "/api/v1/governance/meetings/{id}": {
@@ -33767,9 +33893,9 @@
   },
   "x-generator": {
     "tool": "backend/scripts/generate-openapi.ts (hand-rolled: express-stack walk + zod-v3 walker)",
-    "generatedAt": "2026-11-23T03:07:04.644Z",
-    "operationCount": 376,
-    "pathCount": 304,
+    "generatedAt": "2026-11-23T18:25:06.694Z",
+    "operationCount": 378,
+    "pathCount": 306,
     "contractSnapshotCovered": 13,
     "snapshotCoveredRoutes": [
       "GET /api/v1/ai/config",

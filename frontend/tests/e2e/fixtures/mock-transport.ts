@@ -136,6 +136,26 @@ import {
   AI_SERVICE_STATUS_LOCAL,
   AI_CONNECTION_CHECK_LOCAL,
 } from './ai-fixtures';
+import {
+  INSTITUTION_TYPES_CATALOG,
+  REGULATORY_AUTHORITIES_CATALOG,
+  CREDENTIAL_TYPES_CATALOG,
+  POSITION_TEMPLATES_CATALOG,
+  CRITERIA_SETS_CATALOG,
+  MY_INSTITUTION_PROFILE,
+  MY_INSTITUTION_CAPABILITIES,
+  INSTITUTION_ORG_TREE,
+  INSTITUTION_PEOPLE_PAGE,
+  INSTITUTION_POSITIONS_PAGE,
+  INSTITUTION_COUNCILS_PAGE,
+  INSTITUTION_PROGRAMS_PAGE,
+  INSTITUTION_TRAINING_PAGE,
+  INSTITUTION_LEARNERS_PAGE,
+  INSTITUTION_ACCREDITATION_PAGE,
+  INSTITUTION_LICENSES_PAGE,
+  INSTITUTION_FACILITIES_PAGE,
+  INSTITUTION_RESEARCH_PAGE,
+} from './institutional-fixtures';
 
 /* ── envelope helpers (the real backend's shapes) ──────────────── */
 
@@ -348,6 +368,26 @@ export function standardRoutes(): MockRouteDef[] {
     // /files/papers/* and /files/materials/*
     { method: 'GET', path: '/files/papers/:filename', pdf: true },
     { method: 'GET', path: '/files/materials/:filename', pdf: true },
+
+    // ── Institutional & Catalogs (R352/R355) ─────────────────────
+    { method: 'GET', path: '/catalog/institution-types', json: ok(INSTITUTION_TYPES_CATALOG) },
+    { method: 'GET', path: '/catalog/regulatory-authorities', json: ok(REGULATORY_AUTHORITIES_CATALOG) },
+    { method: 'GET', path: '/catalog/credential-types', json: ok(CREDENTIAL_TYPES_CATALOG) },
+    { method: 'GET', path: '/catalog/position-templates', json: ok(POSITION_TEMPLATES_CATALOG) },
+    { method: 'GET', path: '/catalog/accreditation-criteria-sets', json: ok(CRITERIA_SETS_CATALOG) },
+    { method: 'GET', path: '/institutions/me/profile', json: ok(MY_INSTITUTION_PROFILE) },
+    { method: 'GET', path: '/me/capabilities', json: ok(MY_INSTITUTION_CAPABILITIES) },
+    { method: 'GET', path: '/institution/org-units/tree', json: ok(INSTITUTION_ORG_TREE) },
+    { method: 'GET', path: '/institution/people', json: INSTITUTION_PEOPLE_PAGE },
+    { method: 'GET', path: '/institution/positions', json: INSTITUTION_POSITIONS_PAGE },
+    { method: 'GET', path: '/institution/councils', json: INSTITUTION_COUNCILS_PAGE },
+    { method: 'GET', path: '/institution/programs', json: INSTITUTION_PROGRAMS_PAGE },
+    { method: 'GET', path: '/institution/training', json: INSTITUTION_TRAINING_PAGE },
+    { method: 'GET', path: '/institution/learners', json: INSTITUTION_LEARNERS_PAGE },
+    { method: 'GET', path: '/institution/accreditation', json: INSTITUTION_ACCREDITATION_PAGE },
+    { method: 'GET', path: '/institution/licenses', json: INSTITUTION_LICENSES_PAGE },
+    { method: 'GET', path: '/institution/facilities', json: INSTITUTION_FACILITIES_PAGE },
+    { method: 'GET', path: '/institution/research-projects', json: INSTITUTION_RESEARCH_PAGE },
 
     // ── AI fixtures (A3) ──────────────────────────────────────────
     /* ── AI fixtures (A3) ─────────────────────────────────────────

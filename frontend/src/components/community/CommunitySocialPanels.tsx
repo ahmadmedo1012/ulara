@@ -53,7 +53,7 @@ function StudyRoomCard({ room }: { room: StudyRoomRow }) {
   const leavePending = leave.isPending && leave.variables?.roomId === room.id;
   const mine = room.owner.id === user?.id;
   const initials = room.owner.avatarInitials
-    ?? `${room.owner.firstName[0] ?? ''}${room.owner.lastName[0] ?? ''}`;
+    ?? `${room.owner.firstName?.[0] ?? ''}${room.owner.lastName?.[0] ?? ''}`;
 
   /* r262 (اتجاه Superlist): صفّ غرفة هادئ في RowList الأب — الصورة
      الرمزية تقود، الموضوع والعدد سطر ثانوي، وانضمام/مغادرة في الطرف
@@ -245,7 +245,7 @@ export function PostsFeedPanel() {
             <form onSubmit={submit} className="flex-col gap-3">
               <div className="flex items-start gap-3">
                 <UserAvatar
-                  initials={user.avatarInitials ?? `${user.firstName[0] ?? ''}${user.lastName[0] ?? ''}`}
+                  initials={user.avatarInitials ?? `${user.firstName?.[0] ?? ''}${user.lastName?.[0] ?? ''}`}
                   color={user.avatarColor ?? undefined}
                   size={36}
                 />
@@ -328,7 +328,7 @@ export function PostsFeedPanel() {
           </Card>
         ) : (
           posts.data.map((p) => {
-            const initials = p.author.avatarInitials ?? `${p.author.firstName[0] ?? ''}${p.author.lastName[0] ?? ''}`;
+            const initials = p.author.avatarInitials ?? `${p.author.firstName?.[0] ?? ''}${p.author.lastName?.[0] ?? ''}`;
             const reacted = hasReacted(p.id);
             /* The optimistic ±1 applies ONLY to this session's clicks —
                a server-truth reaction is already inside _count.reactions. */

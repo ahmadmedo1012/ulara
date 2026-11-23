@@ -111,6 +111,7 @@ frontend/tests/e2e/__screenshots__/
 # size-gated .webp conversions in that same directory — see
 # docs/redesign/r352/institutional-frontend/screenshots/README.md.
 docs/redesign/r352/institutional-frontend/screenshots/*.png
+docs/redesign/r355/evidence/captures/
 
 # portable dev PG runtime artifacts (tools/boot-pg.sh)
 # NOTE: tools/package.json is intentionally TRACKED (boot-pg.sh needs it to

@@ -485,7 +485,7 @@ export function AdminDashboardPage() {
             />
             <Stat
               label="بحوث منشورة"
-              value={formatNum(r.headline.publishedPapers)}
+              value={formatNum(r.headline?.publishedPapers ?? 0)}
               to="/admin/reports?status=PUBLISHED"
               hint="فتح سجلّ البحوث المنشورة"
             />
@@ -1199,18 +1199,18 @@ export function AdminReportsPage() {
            * (real month range) stays; the restated labels go. */
           {
             label: 'إجمالي البحوث',
-            value: formatNum(data.headline.totalPapers),
+            value: formatNum(data.headline?.totalPapers ?? 0),
             trend: periodLabel,
             to: status ? '/admin/reports' : undefined,
           },
           {
             label: 'بحوث منشورة',
-            value: formatNum(data.headline.publishedPapers),
+            value: formatNum(data.headline?.publishedPapers ?? 0),
             to: '/admin/reports?status=PUBLISHED',
           },
           {
             label: 'طلاب نشطون',
-            value: formatNum(data.headline.activeStudents),
+            value: formatNum(data.headline?.activeStudents ?? 0),
             to: '/admin/students',
           },
           {

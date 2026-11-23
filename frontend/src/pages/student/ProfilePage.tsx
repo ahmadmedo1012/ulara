@@ -174,7 +174,7 @@ export default function ProfilePage() {
   };
 
   if (!user) return null;
-  const initials = user.avatarInitials ?? `${user.firstName[0] ?? ''}${user.lastName[0] ?? ''}`;
+  const initials = user.avatarInitials ?? `${user.firstName?.[0] ?? ''}${user.lastName?.[0] ?? ''}`;
 
   return (
     <div className="r319s-page">

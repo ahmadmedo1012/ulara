@@ -330,6 +330,12 @@ footer.fo-footer {
      scales rem against it) */
   padding-block: 0.66rem;
   min-block-size: 44px;
+  /* R355 (tap floor): short Arabic labels (e.g. «البيان», 31px wide)
+     missed the 44px INLINE floor — min-inline-size + centering keeps
+     the column's visual rhythm while every label paints a square
+     target. */
+  min-inline-size: 44px;
+  justify-content: center;
   text-decoration: none;
   color: var(--text);
   font-size: var(--fs-body);

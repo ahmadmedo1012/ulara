@@ -118,10 +118,10 @@ export default function CommunityPage() {
   const perms = useMyPermissions();
   const user = useAuthStore((s) => s.user);
 
-  const canAnnounceFaculty = perms.data?.capabilities.includes('ANNOUNCE_FACULTY') ?? false;
-  const canAnnouncePlatform = perms.data?.capabilities.includes('ANNOUNCE_PLATFORM') ?? false;
+  const canAnnounceFaculty = perms.data?.capabilities?.includes('ANNOUNCE_FACULTY') ?? false;
+  const canAnnouncePlatform = perms.data?.capabilities?.includes('ANNOUNCE_PLATFORM') ?? false;
   const canAnnounce = canAnnounceFaculty || canAnnouncePlatform;
-  const canRunEvents = perms.data?.capabilities.includes('EVENTS_RUN') ?? false;
+  const canRunEvents = perms.data?.capabilities?.includes('EVENTS_RUN') ?? false;
   /* OFFERING scope is offered where an existing hook can enumerate the
      author's permitted targets: /teacher/me/offerings (TEACHER + OWNER —
      15-a P1-2). ADMIN/QUALITY may address any offering server-side but

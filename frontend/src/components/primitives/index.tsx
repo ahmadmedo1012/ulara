@@ -518,11 +518,11 @@ export const __test__ = {
 };
 
 export function UserAvatar({
-  initials,
+  initials = '—',
   color,
   size = 36,
 }: {
-  initials: string;
+  initials?: string;
   color?: string;
   size?: number;
 }) {
@@ -542,7 +542,7 @@ export function UserAvatar({
         ...(ink ? { color: ink } : {}),
       }}
     >
-      {initials}
+      {initials || '—'}
     </span>
   );
 }
