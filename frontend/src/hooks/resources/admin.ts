@@ -513,7 +513,8 @@ export function useAssignUserScope(userId: string) {
   });
 }
 
-// ── Enrollment CRUD (r154e.2: API existed, page was browse-only — docs/16 §د5) ──
+// ── Enrollment CRUD (r154e.2: API existed, page was browse-only — قرار
+// د5 من مستند القرارات المرقّم docs/16، الضائع في squash الـ 1.0) ──
 // The backend already routes POST/DELETE with capacity + dedupe + audit
 // (enrollments.routes.ts); these are the frontend half — the hooks the
 // /admin/students page never had.

@@ -3,7 +3,8 @@ import { PREFERS_REDUCED_MOTION } from '../../../lib/motion-media';
  * SheetCursor — R308 «أداة الإشارة» — the landing's custom pointer.
  *
  * An ORIGINAL implementation of the reference's measured cursor
- * grammar (docs/redesign/r308/reference-observations.md §4), on the
+ * grammar (the r308 reference-observations ledger §4 — lost in the 1.0
+ * squash; the measured grammar below is the living record), on the
  * Ulara token system:
  *
  *  · Canvas 2D layer (fixed, viewport-sized, DPR-capped at 2): a 10px

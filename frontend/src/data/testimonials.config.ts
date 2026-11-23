@@ -3,7 +3,8 @@
  * FUTURE authorized social proof on the landing page.
  *
  * INTENTIONALLY EMPTY. Real, named testimonials require real people
- * and documented consent (docs/16 هـ — the externally-blocked item).
+ * and documented consent (البند «هـ» من مستند القرارات المرقّم docs/16،
+ * الضائع في squash الـ 1.0 — the externally-blocked item).
  * Fabricating names, quotes, roles, or affiliations is FORBIDDEN by the
  * platform's honesty rules (audits 4-A1 praised the landing's
  * unattributed role-quotes for exactly this reason). The component that

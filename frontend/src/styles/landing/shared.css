@@ -1,5 +1,7 @@
 /* R332 — split VERBATIM from src/styles/landing.css · shared = flow-mode responsive (2920-3332) + dark/RM/reveal belts (3333-3385) + anchor offsets (3386-3411)
-   full map + proof: docs/redesign/r332/css-split-landing.md */
+   map + proof: each split header's region ranges + the import order in landing.css
+   (the r332 ledger doc itself was lost in the 1.0 squash — R357 re-pointed
+   every citation to the living map) */
 
 /* ═══ Responsive — flow mode (the sheet stacks, nothing pins) ═══════ */
 /* R331 (A-Web-Nav): the bar's ≤991 collapse rules moved to

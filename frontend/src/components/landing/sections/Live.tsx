@@ -1,6 +1,8 @@
 /* P2-0 (r335 split) — [3] التحديات — R337 (A-problem): the section
- * is REBUILT against the frozen reference spec (docs/redesign/r335/
- * the frozen r335 reference captures (home-problem-wrap.{390),768,1024,1440,1920}.json).
+ * is REBUILT against the frozen r335 reference spec — the r335 doc tree
+ * and its reference captures (home-problem-wrap.{390,768,1024,1440,1920}.json)
+ * were lost in the 1.0 squash; the ruled-ledger band below + the r337
+ * rebuild's e2e belt are the living record.
  *
  * the reference's problem band is a RULED LEDGER of four columns — the
  * inverse of the old open-column transplant (R322 2-d, retired with

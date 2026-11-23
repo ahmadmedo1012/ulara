@@ -157,7 +157,9 @@ describe('OwnerSystemPage — storage block (r164-l additive field, defensive re
     ).toBeInTheDocument();
     // The fix is named: the env var + the documented owner step.
     expect(screen.getByText(/STORAGE_DRIVER=s3/)).toBeInTheDocument();
-    expect(screen.getByText(/docs\/12-deployment\.md/)).toBeInTheDocument();
+    // R357: the pointer must be a REAL doc — the numbered docs/12-* tree
+    // died in the 1.0 squash, so the panel now cites the living section.
+    expect(screen.getByText(/docs\/deployment\.md §7\.1/)).toBeInTheDocument();
   });
 
   it('s3 driver + verified reachable (r167 fields) → «دائمة», NO warning', async () => {

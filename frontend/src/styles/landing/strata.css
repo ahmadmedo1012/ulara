@@ -1,5 +1,7 @@
 /* R332 — split VERBATIM from src/styles/landing.css · strata = the late cascade strata in original order: fl/sx (6010-6205), R314 mobile parity (6206-7435), Y2 pr grid (7436-7580), cycle-4 textures (7581-7645), jt breathing (7646-7671), cv skirt (7672-7774), X14 wave (7775-7832), Y2 belt (7833-7896), rhythm ladder (7897-7920)
-   full map + proof: docs/redesign/r332/css-split-landing.md */
+   map + proof: each split header's region ranges + the import order in landing.css
+   (the r332 ledger doc itself was lost in the 1.0 squash — R357 re-pointed
+   every citation to the living map) */
 
 /* ════════════════════════════════════════════════════════════════════
    R308 — THE CLOSING INSTRUMENTS (fl / sx / cta corners / vs snap)

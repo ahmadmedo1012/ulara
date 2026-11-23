@@ -437,7 +437,8 @@ describe('r306 hygiene — the sheet stays clean', () => {
   it('r308 — continuous instruments are SCOPED keyframes, every one collapsed under reduced motion', () => {
     /* The r306 «zero keyframes» policy is superseded by R308's
      * continuous-instrument grammar (the reference's marquee, pulsing
-     * markers, scan line, ring crawl, tag snap — parity-matrix §D/E).
+     * markers, scan line, ring crawl, tag snap — the lost r308
+     * parity-matrix's §D/E grammar, pinned here).
      * The contract that survives: every @keyframes is one of the
      * whitelisted instruments, and the reduced-motion belt collapses
      * each of them to its resolved static state. */

@@ -22,8 +22,8 @@
  * …with two new EMPTY slots (reset at the front, utilities between
  * pages and overrides). Empty layers cannot change any computed
  * value, so this declaration is cascade-neutral by construction —
- * proven by the pass-1 BEFORE/AFTER screenshot pairs
- * (docs/redesign/r331/css-pass1.md §5).
+ * proven by the pass-1 BEFORE/AFTER screenshot pairs (the r331 css-pass1
+ * ledger §5 was lost in the 1.0 squash).
  *
  * ── Why declaration-only in pass 1 ──────────────────────────────────
  *

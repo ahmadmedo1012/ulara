@@ -183,3 +183,8 @@ apps/mobile/*.orig
 # CONTRIBUTING document `cp .env.example backend/.env`; the r323
 # ai-stream test pins its AI knobs). Re-assert the negation LAST.
 !.env.example
+
+# R357: the css-coverage harness writes its local summary here (the
+# directory was revived by docs/design/README.md — the output itself is
+# a local measurement, never committed).
+docs/design/css-coverage.json

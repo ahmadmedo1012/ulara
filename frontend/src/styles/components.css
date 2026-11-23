@@ -3021,7 +3021,8 @@
    ║  (append-only; source order within @layer components wins)      ║
    ╚══════════════════════════════════════════════════════════════════╝
    The Turion-derived upgrade of the r189 ledger primitives. The
-   direction reference (docs/design/r190-reference-matrix.md):
+   direction reference (the r190 reference matrix was lost in the 1.0
+   squash; the direction rules below are the living record):
    · dark = the VOID — panels become translucent luminosity steps
      (color-mix white washes over --surface), separation by light,
      not hairlines; hover states glow violet at the inline-start edge.

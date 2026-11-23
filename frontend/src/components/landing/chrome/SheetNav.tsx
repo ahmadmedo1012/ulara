@@ -72,7 +72,8 @@ const MENU_SCROLL_LOCK_KEY = 'landing-mobile-menu';
  * router route so the guest exit-sweep (GuestReveal) owns the
  * navigation. المسابقات is auth-gated — the link rides the same cell
  * grammar and the ProtectedRoute gives the guest the honest login wall
- * (documented in docs/redesign/r331/web-nav.md). */
+ * (documented by this file's grammar comments — the r331 web-nav doc was
+ * lost in the 1.0 squash). */
 type NavSeat = { label: string; href: string; anchor?: boolean };
 
 const NAV_SEATS: readonly NavSeat[] = [
