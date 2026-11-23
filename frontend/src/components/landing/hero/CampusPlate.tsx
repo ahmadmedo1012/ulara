@@ -51,8 +51,21 @@ import '../../../styles/landing/iso-plate.css';
  * AND the inspection stations author against it directly). The sheet
  * window is the iso projection's bounding box with margin for the
  * furniture + labels: x/y are NEGATIVE (the iso origin sits at the
- * plinth's reading-start corner, the drawing extends around it). */
-export const CAMPUS_FRAME = { x: -92, y: -58, w: 184, h: 168 } as const;
+ * plinth's reading-start corner, the drawing extends around it).
+ *
+ * r354 (composition rebalance): the r353 window (−92,−58,184×168)
+ * carried ~80 sheet units of DEAD vertical margin — the furniture the
+ * hero seat HIDES (labels, coord readouts, scale bar) still owned its
+ * reservation, so the campus rendered at ~52% of the frame's height
+ * (measured: ink bbox −24…+63 inside −58…+110 — 88 of 168 units).
+ * The window now wraps the VISIBLE ink (north-arrow ticks at −24 …
+ * the 56.0 dimension's extensions at +63) with a 6–7-unit drafting
+ * mat: 184×100, aspect 1.84 — at the same seat width the drawing
+ * gains ×1.68 rendered height. The journey sheet never reads this
+ * constant (it mounts CampusFrag on its own 1200×760 sheet); the
+ * inspection stations re-seat onto the tightened window (the old
+ * corner anchors sat in the retired dead margins). */
+export const CAMPUS_FRAME = { x: -92, y: -30, w: 184, h: 100 } as const;
 
 /* ── the ink variant's layer schedule (data-ink — the drafting order:
  * ground first, masses, connectors, then furniture + labels last). ── */

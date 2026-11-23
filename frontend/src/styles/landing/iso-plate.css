@@ -27,9 +27,11 @@
   --iso-ink-soft:   color-mix(in srgb, var(--neutral-900) 55%, transparent);
   --iso-muted:      var(--text-muted);
   --iso-hair:       var(--neutral-300);
-  /* the ONE signal family (the copper canon — never a second hue) */
+  /* the ONE warm family (the copper canon — never a second hue;
+     r354: the redundant --iso-signal alias retired — one seat, one
+     name, the observatory signal rides --iso-sienna like every
+     other warm focal) */
   --iso-sienna:     var(--c-copper-ink);
-  --iso-signal:     var(--c-copper-ink);
   /* r353 (visual artwork) — the ROYAL annotation layer: the plate
      grammar's engineering-intelligence voice. Dimensions, data routes,
      level marks and every SYSTEM line paint royal (the brand's primary
@@ -67,15 +69,21 @@
   display: block;
 }
 
-/* the HERO seat — the iso sheet window is square-ish (184×168), so it
-   caps by the fold's height (never the old wide elevation's
-   width-first grammar): the drawing centers as the band's centerpiece
-   (r351 P1: the giant headline leads the fold, so the plate shares the
-   band with it — ~34% of a 1440 sheet, the paper breathing around it;
+/* the HERO seat — the iso sheet window is wide (184×100, aspect 1.84),
+   so it caps by BOTH the fold's height economy and the band's width:
+   the drawing centers as the band's centerpiece (r351 P1: the giant
+   headline leads the fold, so the plate shares the band with it).
+   r354 (composition rebalance): the r353 cap (54svh) was keyed to the
+   OLD near-square window — with the dead vertical margins retired the
+   same 54svh width produced a ×1.68 SHORTER drawing; the cap re-rungs
+   to 84svh/760px so the campus reads at ~52% of a 1440 band's width
+   (measured: 756px seat → 749×382 ink on a 1440×468 stage — the
+   r353 seat rendered 486×233). The height economy holds at every
+   belt (the svg's height stays ≤ ~86% of the art band's 1fr row);
    the trace variant (the preloader's seat) keeps the pl-plate width
-   grammar preloader.css owns). */
+   grammar preloader.css owns. */
 .hro .hro-art .cp-svg[data-variant='ink'] {
-  inline-size: min(54svh, 100%, 720px);
+  inline-size: min(84svh, 100%, 760px);
   block-size: auto;
   margin-inline: auto;
 }

@@ -126,18 +126,26 @@ interface MarkerDef {
   bodyAr: string;
 }
 
-/* CAMPUS_FRAME is the iso sheet window (r346: -92,-58,184,168; stations
- * author in the shifted 0..184 x 0..168 space) — the authored
+/* CAMPUS_FRAME is the iso sheet window (r354: -92,-30,184,100; stations
+ * author in the shifted 0..184 x 0..100 space) — the authored
  * ex/ey ARE the viewBox coordinates; the field pair stays so the
- * geometry helpers keep one signature. */
+ * geometry helpers keep one signature.
+ *
+ * r354 re-seat: the old anchors sat in the retired dead margins (the
+ * corners of the 168-tall window, on empty paper). They now anchor
+ * ON the campus's own volumes — LC the lecture annex, CP the tower's
+ * riwaq court, MG the observatory beacon, RR the hipped-roof hall,
+ * EX the plaza fountain — so the instrument reads as pins on the
+ * surveyed drawing. The hit boxes re-rung to the tightened window
+ * (168×48 ≈ the old 91%×48% relative footprint). */
 const MARKERS: MarkerDef[] = [
   {
     id: 'lc',
     code: 'LC',
-    ex: 46,
-    ey: 17,
+    ex: 133,
+    ey: 58,
     w: 168,
-    h: 80,
+    h: 48,
     labelAr: 'المحاضرات التفاعلية',
     bodyAr: 'المحاضرة تعمل داخل المتصفح: شرائح، مؤقّت، أسئلة تُصحَّح فورًا.',
   },
@@ -145,39 +153,39 @@ const MARKERS: MarkerDef[] = [
     id: 'cp',
     code: 'CP',
     ex: 92,
-    ey: 84,
+    ey: 53,
     w: 168,
-    h: 80,
+    h: 48,
     labelAr: 'نقطة فحص',
     bodyAr: 'سؤال قصير داخل المحاضرة يُصحَّح فورًا قبل المتابعة.',
   },
   {
     id: 'mg',
     code: 'MG',
-    ex: 138,
-    ey: 17,
+    ex: 110,
+    ey: 45,
     w: 168,
-    h: 80,
+    h: 48,
     labelAr: 'فجوة إتقان',
     bodyAr: 'المصفوفة تكشف الفجوة وتربطها بالدرس المناسب لك.',
   },
   {
     id: 'rr',
     code: 'RR',
-    ex: 46,
-    ey: 151,
+    ex: 58,
+    ey: 50,
     w: 168,
-    h: 80,
+    h: 48,
     labelAr: 'مراجعة بحث',
     bodyAr: 'بحث PDF بملاحظات معلَّمة من الأستاذ ثم فهرسة في المكتبة.',
   },
   {
     id: 'ex',
     code: 'EX',
-    ex: 138,
-    ey: 151,
+    ex: 74,
+    ey: 66,
     w: 168,
-    h: 80,
+    h: 48,
     labelAr: 'اختبارات',
     bodyAr: 'موضوعية ومقالية بتصحيح تلقائي وتقارير للأستاذ.',
   },
