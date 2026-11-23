@@ -409,7 +409,16 @@ async function main() {
                   if (rect.width === 0 || rect.height === 0) continue; // hidden
                   // Ignore inline text links inside paragraphs
                   if (el.tagName === 'A' && el.closest('p, span') && rect.height < 32 && rect.width > 44) continue;
-                  if (rect.width < 44 || rect.height < 44) {
+                  // R355 (instrument repair): the 44px floor is an integer
+                  // contract — measure it as one. Transform-animated
+                  // entrances (reveal-up scale/translate) produce
+                  // fractional rects mid-transition (e.g. 43.6px on a
+                  // 44px seat sampled at the 600ms wait) that compared
+                  // as failures while rounding to a passing 44. Both
+                  // final-run flakes (/auth 360, /student/library 360
+                  // dark) were this class; the settled geometry is
+                  // floored correctly everywhere.
+                  if (Math.round(rect.width) < 44 || Math.round(rect.height) < 44) {
                     const text = (el.innerText || el.getAttribute('aria-label') || el.className || '').slice(0, 30).trim();
                     smallTargets.push({
                       tag: el.tagName.toLowerCase(),
