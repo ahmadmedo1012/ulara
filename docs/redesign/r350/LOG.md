@@ -102,11 +102,11 @@ instrument per cell. Results live in `docs/redesign/r350/shots/role-shots-result
 
 | role @1440 | words | shot |
 |---|---|---|
-| STUDENT | 297 | r350-role-student-light-1440.png |
-| TEACHER | 277 | r350-role-teacher-light-1440.png |
-| ADMIN | 171 | r350-role-admin-light-1440.png |
-| QUALITY | 209 | r350-role-quality-light-1440.png |
-| OWNER | 224 | r350-role-owner-light-1440.png |
+| STUDENT | 297 | r350-role-student-light-1440.webp |
+| TEACHER | 277 | r350-role-teacher-light-1440.webp |
+| ADMIN | 171 | r350-role-admin-light-1440.webp |
+| QUALITY | 209 | r350-role-quality-light-1440.webp |
+| OWNER | 224 | r350-role-owner-light-1440.webp |
 
 (390 counterparts captured alongside; 390 words: student 283 · teacher 270 · admin 166 ·
 quality 203 · owner 217.)
