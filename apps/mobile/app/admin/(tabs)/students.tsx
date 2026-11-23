@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import Animated from "react-native-reanimated";
+import { router } from "expo-router";
 import { humanizeError } from "@/lib/errors";
 import { haptics } from "@/haptics";
 import { useStaggerEntrance } from "@/motion";
@@ -75,6 +76,18 @@ export default function AdminStudents() {
             قائمة الطلاب المسجَّلين في الجامعة، مع البحث وإدارة التسجيلات.
           </T>
         </View>
+
+        {/* r353 — the cohort intake door (the parity row made real):
+            the CSV class-list → preview → one-transactional commit. */}
+        <Button
+          label="استيراد دفعة من CSV"
+          kind="ghost"
+          small
+          onPress={() => {
+            haptics.selection();
+            router.push("/admin/bulk-import" as never);
+          }}
+        />
 
         <SearchBar
           value={q}

@@ -560,6 +560,16 @@ export interface UsePagedListOptions<T> {
   limit?: number;
   enabled?: boolean;
   staleTime?: number;
+  /**
+   * R353-2 §5 — keep-previous-data policy. Default: keep the previous
+   * pages while the key changes (the house list UX — filter/search
+   * smoothness on platform-level lists). Institution-scoped callers
+   * MUST pass the scope-guarded variant (sameScopePlaceholder in
+   * features/institutional/queries.ts) so a membership switch shows
+   * the honest loading state instead of the PREVIOUS institution's
+   * rows (a privacy/isolation rule, not a cache-performance taste).
+   */
+  placeholderData?: (prev: InfiniteData<PagedPage<T>, number> | undefined, previousQuery: { queryKey: readonly unknown[] } | undefined) => InfiniteData<PagedPage<T>, number> | undefined;
 }
 
 export interface UsePagedListResult<T> {
@@ -633,7 +643,7 @@ export function usePagedList<T>(opts: UsePagedListOptions<T>): UsePagedListResul
     },
     enabled: opts.enabled,
     staleTime: opts.staleTime,
-    placeholderData: (prev) => prev,
+    placeholderData: opts.placeholderData ?? ((prev) => prev),
   });
 
   const items = useMemo(() => (query.data?.pages ?? []).flatMap((page) => page.rows), [query.data]);

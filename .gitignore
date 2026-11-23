@@ -104,6 +104,14 @@ test-results/
 # committed evidence copies live in audits/evidence/r319/ios/)
 frontend/tests/e2e/__screenshots__/
 
+# r352-visual-capture belt (frontend/tests/e2e/r352-visual-capture.e2e.ts)
+# writes its full 104-frame matrix as full-size PNGs (~31MB — always over
+# the size gate). The belt is a dev instrument, not a CI gate; its raw
+# PNG output is local-only. The committed evidence copies are the
+# size-gated .webp conversions in that same directory — see
+# docs/redesign/r352/institutional-frontend/screenshots/README.md.
+docs/redesign/r352/institutional-frontend/screenshots/*.png
+
 # portable dev PG runtime artifacts (tools/boot-pg.sh)
 # NOTE: tools/package.json is intentionally TRACKED (boot-pg.sh needs it to
 # install @embedded-postgres on a fresh clone); only its generated lockfile

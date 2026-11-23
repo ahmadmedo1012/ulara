@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { MemoryRouter, useNavigate } from 'react-router-dom';
 import { PageTransition } from '../../src/components/motion/PageTransition';
 
 describe('PageTransition', () => {
@@ -48,6 +48,57 @@ describe('PageTransition', () => {
     const wrapper = container.querySelector('.page-transition');
     expect(wrapper).not.toBeNull();
     expect(wrapper?.getAttribute('data-route-key')).toBeTruthy();
+  });
+
+  /* r353 — the strips' seat contract: the paper strips
+   * (motion.css's `.page-transition-inner::before/::after`, the
+   * route-transition open leg) live on the KEYED inner node, which
+   * React re-creates on every pathname change — that re-creation is
+   * what replays the open leg per navigation (r351 had them on the
+   * persistent wrapper: they ran once, then — fill-mode `backwards`
+   * holding no end state — sat covering the viewport forever). The
+   * wrapper itself stays the stable data-route-key mount. */
+  it('renders the keyed inner node — the paper strips\' seat (r353)', () => {
+    const { container } = render(
+      <MemoryRouter initialEntries={['/x']}>
+        <PageTransition>
+          <p>route content</p>
+        </PageTransition>
+      </MemoryRouter>,
+    );
+    const wrapper = container.querySelector('.page-transition');
+    const inner = container.querySelector('.page-transition-inner');
+    expect(inner, 'the keyed inner node exists (the strips\' seat)').not.toBeNull();
+    expect(wrapper?.contains(inner), 'the inner node is the wrapper\'s child').toBe(true);
+    expect(inner?.getAttribute('key')).toBeNull(); // React consumes the key — the seat is positional
+  });
+
+  it('the inner node remounts per pathname (the replay engine)', () => {
+    function Harness() {
+      const navigate = useNavigate();
+      return (
+        <>
+          <button type="button" onClick={() => navigate('/y')}>go</button>
+          <PageTransition>
+            <p>route content</p>
+          </PageTransition>
+        </>
+      );
+    }
+    const { container } = render(
+      <MemoryRouter initialEntries={['/x']}>
+        <Harness />
+      </MemoryRouter>,
+    );
+    const wrapperBefore = container.querySelector('.page-transition');
+    const first = container.querySelector('.page-transition-inner');
+    fireEvent.click(screen.getByText('go'));
+    const wrapperAfter = container.querySelector('.page-transition');
+    const second = container.querySelector('.page-transition-inner');
+    expect(second).not.toBeNull();
+    expect(first === second, 'a pathname change re-creates the inner node (and its pseudo-element strips)').toBe(false);
+    // The wrapper itself stays the stable mount (the data-route-key contract).
+    expect(wrapperAfter === wrapperBefore, 'the wrapper persists across routes (stable data-route-key contract)').toBe(true);
   });
 
   it('applies an additional className when provided', () => {

@@ -572,28 +572,49 @@
   }
 }
 
-/* ═══ r351 P4 — the route transition: the measured reference arc ═══
-   The keyed remount inside PageTransition replays the OPEN leg on every
-   route change: TWO fixed paper strips (the preloader's own band
-   grammar) cover the viewport and FLY APART from the sheet's centreline
-   — the content grows from the centreline outward exactly as the B0
-   curve records (0.7s power2.out). The strips are transform-only,
-   pointer-events:none, viewport-anchored: unlike a clip-path ON the
-   routed content they can never block hit-testing, never mis-seat on
-   pages taller than the viewport, and never leave a containing block
-   behind (the independent review's finding 1). The CLOSE leg (the same
-   strips flying IN, 0.6s power2.in) needs the shell's own
-   pending-navigation state — its CSS seat is ready below
-   (.is-route-leaving); A2 owns the class flip. API untouched:
-   { children, className }. */
+/* ═══ r353 — the route transition, REPAIRED ═══
+   r351-P4 (4d1fbe7) shipped the strips as pseudo-elements of
+   `.page-transition` — the PERSISTENT wrapper — with
+   `animation-fill-mode: backwards`. Two defects rode that seat:
+   (1) NO REPLAY: the wrapper never remounts (only the keyed
+   `.page-transition-inner` does), so the open leg ran exactly once
+   on shell mount and never again — route changes played NO strip
+   transition at all; (2) THE COVER: after that one run, `backwards`
+   (which holds nothing after the end) dropped the strips back to
+   their base state — translateY(0), i.e. an opaque full-viewport
+   cover at `var(--bg)` on the --pt-z rung — so every routed page
+   LOOKED blank/black behind the strips while `pointer-events: none`
+   kept the DOM hit-testable (clicks passed) and Playwright's
+   box-based visibility stayed green: content existed in the DOM,
+   was clickable, and was invisible to the eye.
+
+   The repair keeps the r351 geometry byte-identical — two fixed
+   transform-only paper strips flying apart from the sheet's
+   centreline (0.7s power2.out), the 0.2 seam, the
+   pointer-transparent viewport anchoring, the --pt-z rung — and
+   moves the pseudo-elements onto the KEYED node
+   (`.page-transition-inner`): React re-creates the node (and its
+   pseudo-elements) on every pathname change, so the open leg now
+   GENUINELY replays on every route change — first visits, internal
+   navigation and back/forward alike. `animation-fill-mode: both`
+   pins the from-state (covering) before the first frame AND retains
+   the to-state (off-screen) after the end — nothing covers the page
+   at rest, ever. The CLOSE leg (.is-route-leaving) stays the
+   documented inert seat (the shell's pending-navigation flip — the
+   r351 A2 request — never landed); its selectors follow the strips'
+   new home. API untouched: { children, className }. */
 
 .page-transition {
   position: relative;
   --pt-z: 240; /* the strips' rung: above routed content, below the shell chrome (the raw-ladder law) */
 }
 
-.page-transition::before,
-.page-transition::after {
+/* The strips live on the KEYED inner node: the pseudo-elements are
+   re-created with it on every route change, so the open leg replays
+   per navigation (the repair's seat move). Transform-only,
+   viewport-anchored, pointer-transparent — the r351 guarantees. */
+.page-transition-inner::before,
+.page-transition-inner::after {
   content: '';
   position: fixed;
   inset-inline: 0;
@@ -603,15 +624,18 @@
   z-index: var(--pt-z);
   animation-duration: 0.7s;
   animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1); /* power2.out */
-  animation-fill-mode: backwards;
+  /* both, never backwards: the held `to` state (off-screen) is what
+     keeps the strips from re-covering the page after the open leg —
+     the r351 defect this line repairs */
+  animation-fill-mode: both;
 }
 
-.page-transition::before {
+.page-transition-inner::before {
   top: 0;
   animation-name: pt-open-top;
 }
 
-.page-transition::after {
+.page-transition-inner::after {
   bottom: 0;
   animation-name: pt-open-bot;
 }
@@ -628,13 +652,14 @@
 
 /* the close leg's seat — inert until the shell flips the class: the
    strips fly IN over the leaving page (0.6s power2.in), then the keyed
-   swap replays the open leg */
-.page-transition.is-route-leaving::before {
-  animation: pt-close-top 0.6s cubic-bezier(0.55, 0.055, 0.675, 0.19) backwards;
+   swap replays the open leg. `both` holds the covered end state until
+   the remount clears it. */
+.page-transition.is-route-leaving .page-transition-inner::before {
+  animation: pt-close-top 0.6s cubic-bezier(0.55, 0.055, 0.675, 0.19) both;
 }
 
-.page-transition.is-route-leaving::after {
-  animation: pt-close-bot 0.6s cubic-bezier(0.55, 0.055, 0.675, 0.19) backwards;
+.page-transition.is-route-leaving .page-transition-inner::after {
+  animation: pt-close-bot 0.6s cubic-bezier(0.55, 0.055, 0.675, 0.19) both;
 }
 
 @keyframes pt-close-top {
@@ -648,8 +673,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .page-transition::before,
-  .page-transition::after {
+  .page-transition-inner::before,
+  .page-transition-inner::after {
     display: none;
     animation: none;
   }
