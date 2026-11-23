@@ -465,3 +465,26 @@ export async function backfillOrgUnitsFromLegacy(prisma: PrismaClient): Promise<
   const departments = await prisma.department.count({ where: { orgUnitId: { not: null } } });
   return { faculties, departments };
 }
+
+// ── Standalone runner ─────────────────────────────────────────────
+// `npm run seed:r352 -w backend` / `tsx prisma/seed-r352-catalogs.ts`.
+// The full prisma/seed.ts refuses NODE_ENV=production by design (AGENTS.md
+// §7); established production databases converge the r352 catalogs through
+// THIS surgical, additive, idempotent runner instead. Only executes when
+// invoked directly (import.meta check) — importing from seed.ts never runs it.
+import { pathToFileURL } from 'node:url';
+
+const invokedDirectly =
+  process.argv[1] !== undefined && import.meta.url === pathToFileURL(process.argv[1]).href;
+
+if (invokedDirectly) {
+  const { PrismaClient: Client } = await import('@prisma/client');
+  const runner = new Client();
+  const catalogs = await ensureR352Catalogs(runner);
+  const mirrored = await backfillOrgUnitsFromLegacy(runner);
+  const backfilled = await backfillLegacyAppointments(runner);
+  console.log(
+    `🌱 r352 catalogs: ${JSON.stringify(catalogs)} · org-unit mirrors: ${JSON.stringify(mirrored)} · backfilled appointments: ${backfilled}`,
+  );
+  await runner.$disconnect();
+}

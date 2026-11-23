@@ -21,6 +21,7 @@
     "prisma:deploy": "node scripts/migrate-deploy.mjs",
     "prisma:seed": "tsx prisma/seed.ts",
     "seed:demo:r330": "tsx prisma/seed-demo-r330.ts",
+    "seed:r352": "tsx prisma/seed-r352-catalogs.ts",
     "rotate:password": "node scripts/rotate-demo-passwords.mjs",
     "provision:owner": "node scripts/provision-owner.mjs",
     "postinstall": "prisma generate",
