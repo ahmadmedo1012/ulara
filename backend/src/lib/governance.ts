@@ -1,6 +1,7 @@
 import { Prisma, Role } from '@prisma/client';
 import { prisma } from '../db.js';
 import { AppError } from './errors.js';
+import { resolveCallerInstitutionScope, institutionContextRequiredError } from './profile-scoping.js';
 
 /**
  * Shared governance guards for the user-management surfaces
@@ -112,6 +113,41 @@ export async function assertNotLastActiveOwner(
 }
 
 // ── 2. Faculty governance scope (scopeFacultyId) ───────────────────
+
+/**
+ * r352 final closure (§3) — THE governance-context rule, stated once and
+ * shared by every capability-gated governance route:
+ *
+ *   OWNER is the ONLY role entitled to the platform-wide governance
+ *   path (a null context BY DEFINITION — the documented platform
+ *   governance view). Every NON-OWNER caller must operate under a
+ *   DB-verified, ACTIVE institution context:
+ *     - no `inst` claim / no context selected → 403
+ *       INSTITUTION_CONTEXT_REQUIRED (fail closed — never a silent
+ *       fall-through to the platform-wide scope);
+ *     - a stale, forged, revoked-membership or suspended-institution
+ *       claim → 403 INSTITUTION_CONTEXT_INVALID (fail closed).
+ *
+ * A capability grant (role default, platform-global override,
+ * institution-scoped override, or unit grant) NEVER widens the caller's
+ * governance scope past their verified institution: possessing
+ * ROLES_ASSIGN/USERS_MANAGE authorizes the OPERATION within the
+ * tenant, never the OWNER platform-wide path. The pre-fix routes
+ * resolved a context only for ADMIN/QUALITY and let every other
+ * capability-holding role (e.g. a STUDENT with an institution-scoped
+ * ROLES_ASSIGN grant) fall through to `callerInstitution = null` —
+ * which the routes then interpreted as the platform-wide scope
+ * (cross-tenant listing, the full override trail, and even
+ * platform-GLOBAL UserPermission writes).
+ */
+export async function resolveGovernanceCallerContext(
+  user: { id: string; role: Role; institutionId: string | null },
+): Promise<string | null> {
+  if (user.role === Role.OWNER) return null; // the platform-wide path, by definition
+  const scope = await resolveCallerInstitutionScope(user.id, user.institutionId);
+  if (scope === null) throw institutionContextRequiredError();
+  return scope;
+}
 
 /**
  * Target summary a scope decision needs. Faculty association is

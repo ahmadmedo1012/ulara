@@ -22,6 +22,7 @@ import {
 import { MAX_PRESIGN_EXPIRES_SEC } from '../../lib/storage-presign.js';
 import { RUNTIME_PDF_MAX_BYTES, isVercelRuntime } from '../../lib/pdf-limits.js';
 import { assertOfferingAccess } from '../../lib/permissions.js';
+import { assertOfferingInCallerInstitution } from '../../lib/profile-scoping.js';
 
 const router = Router();
 
@@ -879,6 +880,18 @@ router.get('/lectures/:filename', async (req, res, next) => {
     });
     if (!lecture) throw AppError.notFound(FILE_NOT_FOUND_MESSAGE);
     await assertOfferingAccess(lecture.offeringId, req.user!.id, req.user!.role);
+    // r352 final closure (§6/§11): the INSTITUTION boundary for the
+    // oversight roles whose per-row guards bypass ownership (ADMIN/
+    // QUALITY) — the same chain guard every other offering surface
+    // runs (assertOfferingInCallerInstitution): a foreign-institution
+    // ADMIN/QUALITY must never stream another tenant's lecture bytes
+    // (404 on reads — existence never leaks), and a contextless
+    // institutional caller fails closed (403 REQUIRED). STUDENT/TEACHER
+    // are no-ops here (their access is already pinned to rows they own)
+    // and OWNER keeps the platform-wide oversight by design. The check
+    // runs BEFORE stat/get/getRange — authorization precedes every
+    // storage touch.
+    await assertOfferingInCallerInstitution(lecture.offeringId, req.user!, 'read');
     const key = buildStorageKey('lectures', filename);
     const storage = getStorage();
 

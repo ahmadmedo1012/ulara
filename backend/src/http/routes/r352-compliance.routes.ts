@@ -61,14 +61,24 @@ async function requireAuthority(code: string) {
   return authority;
 }
 
-/** Validate an accreditation/license scope target belongs to the institution. */
+/**
+ * r352 final closure (§4) — validate EVERY non-null scope target
+ * IN-INSTITUTION, independently of every other field and of the
+ * scopeType label: the pre-fix helper checked a target only when its
+ * matching scopeType was selected, so a foreign institution's
+ * orgUnitId/programId rode an omitted or mismatched scopeType
+ * straight into the persisted row (and later leaked through the
+ * list-detail includes). The DTO invariant upstream now guarantees
+ * scopeType/target-id coherence; this is the belt that proves TENANT
+ * OWNERSHIP for every id that can exist — the same per-field contract
+ * the findings-creation path already enforced.
+ */
 async function assertScopeTargets(
   institutionId: string,
-  scopeType: 'INSTITUTION' | 'ORGANIZATIONAL_UNIT' | 'PROGRAM' | null | undefined,
   orgUnitId?: string | null,
   programId?: string | null,
 ): Promise<void> {
-  if (scopeType === 'ORGANIZATIONAL_UNIT' && orgUnitId) {
+  if (orgUnitId) {
     const unit = await prisma.organizationalUnit.findUnique({
       where: { id: orgUnitId }, select: { institutionId: true },
     });
@@ -76,7 +86,7 @@ async function assertScopeTargets(
       throw new AppError('ACCREDITATION_SCOPE_INVALID', 'وحدة النطاق المحددة لا تنتمي إلى مؤسستك', 400);
     }
   }
-  if (scopeType === 'PROGRAM' && programId) {
+  if (programId) {
     const program = await prisma.program.findUnique({
       where: { id: programId }, select: { institutionId: true },
     });
@@ -125,7 +135,7 @@ router.post(
       const institutionId = req.institution!.id;
       const input = req.body as z.infer<typeof accreditationCreateSchema>;
       const authority = await requireAuthority(input.authorityCode);
-      await assertScopeTargets(institutionId, input.scopeType, input.orgUnitId, input.programId);
+      await assertScopeTargets(institutionId, input.orgUnitId, input.programId);
       if (input.criteriaSetId) {
         const set = await prisma.accreditationCriteriaSet.findUnique({
           where: { id: input.criteriaSetId }, select: { id: true },
@@ -248,7 +258,7 @@ router.post(
       const institutionId = req.institution!.id;
       const input = req.body as z.infer<typeof licenseCreateSchema>;
       const authority = await requireAuthority(input.authorityCode);
-      await assertScopeTargets(institutionId, input.scopeType, input.orgUnitId, input.programId);
+      await assertScopeTargets(institutionId, input.orgUnitId, input.programId);
       const license = await prisma.$transaction(async (tx) => {
         const created = await tx.operationalLicense.create({
           data: {
@@ -483,16 +493,14 @@ router.post(
       if (input.inspectionId) await requireInspection(institutionId, input.inspectionId);
       if (input.externalAccreditationId) await requireAccreditation(institutionId, input.externalAccreditationId);
       // Tenant isolation: EVERY scope target id must belong to the caller's
-      // institution — checked per-field, never derived from one field's
-      // presence (the pre-fix bug: the passed scopeType was computed from
+      // institution — checked per-field, independently of the other fields
+      // (the pre-fix bug: the passed scopeType was computed from
       // orgUnitId only, so a foreign institution's programId was stored
       // unvalidated and then leaked through the list's program include).
-      if (input.orgUnitId) {
-        await assertScopeTargets(institutionId, 'ORGANIZATIONAL_UNIT', input.orgUnitId, null);
-      }
-      if (input.programId) {
-        await assertScopeTargets(institutionId, 'PROGRAM', null, input.programId);
-      }
+      // assertScopeTargets now carries the same per-field contract for
+      // every compliance surface (§4): each non-null id is validated on
+      // its own, scopeType label or not.
+      await assertScopeTargets(institutionId, input.orgUnitId, input.programId);
       const finding = await prisma.$transaction(async (tx) => {
         const created = await tx.complianceFinding.create({
           data: {
@@ -695,6 +703,17 @@ router.post(
         if (!program || program.institutionId !== institutionId) {
           throw AppError.notFound('البرنامج المحدد غير موجود في مؤسستك');
         }
+      }
+      // §4 reference audit — criteriaSetId is a GLOBAL catalog reference
+      // (the seeded AccreditationCriteriaSet table): any institution may
+      // cite it, but a nonexistent id must fail as a clean 404 instead of a
+      // P2003 foreign-key 500 (the same contract the accreditation create
+      // path already enforces for its criteriaSetId).
+      if (input.criteriaSetId) {
+        const set = await prisma.accreditationCriteriaSet.findUnique({
+          where: { id: input.criteriaSetId }, select: { id: true },
+        });
+        if (!set) throw AppError.notFound('مجموعة المعايير المحددة غير موجودة');
       }
       const assessment = await prisma.$transaction(async (tx) => {
         const created = await tx.internalSelfAssessment.create({

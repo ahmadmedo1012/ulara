@@ -87,19 +87,35 @@ export function cronAuthMiddleware(
  * The test-account heal — gated by ULARA_TEST_ACCOUNTS=1 (the boot
  * path's switch). Never fatal: the daily summary carries the honest
  * result either way (the route family's contract).
+ *
+ * r352 FINAL CLOSURE (§5): the production policy is enforced INSIDE
+ * ensureTestAccounts — a production runtime performs ZERO writes (the
+ * public-password OWNER fixture can never be re-activated or healed by
+ * the daily cron). The summary reports the refusal honestly with the
+ * policy's secret-free reason.
  */
 async function runTestAccountsEnsure(source: 'cron' | 'operator'): Promise<{
   ran: boolean;
   jobs?: number;
   reason?: string;
+  policy?: { production: boolean; ownerAllowed: boolean; demoAllowed: boolean };
   error?: string;
 }> {
   if (process.env.ULARA_TEST_ACCOUNTS !== '1') {
     return { ran: false, reason: 'ULARA_TEST_ACCOUNTS!=1' };
   }
   try {
-    const { ensureTestAccounts } = await import('../../modules/auth/test-accounts.js');
+    const { ensureTestAccounts, testAccountsRuntimePolicy } = await import('../../modules/auth/test-accounts.js');
+    const policy = testAccountsRuntimePolicy();
     const jobs = await ensureTestAccounts(prisma);
+    if (jobs === 0 && policy.production) {
+      logger.info({ source, policy: { production: policy.production, ownerAllowed: policy.ownerAllowed, demoAllowed: policy.demoAllowed }, reason: policy.reason }, '[jobs/test-accounts] ensure refused by the r352 §5 production policy — zero writes');
+      return {
+        ran: false,
+        reason: policy.reason,
+        policy: { production: policy.production, ownerAllowed: policy.ownerAllowed, demoAllowed: policy.demoAllowed },
+      };
+    }
     logger.info({ source, jobs }, '[jobs/test-accounts] ensure pass completed');
     return { ran: true, jobs };
   } catch (err) {

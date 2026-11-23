@@ -1,19 +1,37 @@
 # Deploy smoke — after a change is deployed, prove the LIVE service
-# before users complain (R326 M0.6 → owner's 2026-11-12 login rescue).
+# before users complain (R326 M0.6 → the owner's 2026-11-12 login
+# rescue → the r352 FINAL CLOSURE §5 rework 2026-11-23).
 #
 #   wait-for-deploy  → poll GET /api/v1/status until buildId == the pushed
 #                      SHA (the platform derives buildId from the deployed
 #                      commit env), up to 20 minutes (builds take minutes)
-#   smoke            → health · login ×12 test accounts (the PUBLISHED
-#                      demo password 12345678 — the owner's 2026-11-12
-#                      rule: smoke = ما يجربه المالك تمامًا) · one
-#                      app-critical endpoint · live openapi.json vs the
-#                      committed contract (additive-only)
-#   login-ui         → scripts/e2e/login-all.mjs — the owner's acceptance
-#                      proof in a REAL browser: every account typed
-#                      MANUALLY (never the quick button), verified to
-#                      reach its role dashboard, screenshot per role.
-#                      Any failure opens an issue.
+#   smoke            → the LIVE production surface, CREDENTIAL-FREE:
+#                      health · the PUBLIC schema-drift probe (GET /colleges
+#                      — the r352 P2022 signal) · the READ-ONLY SQL
+#                      schema/catalog/ledger belt (the P2021 signal: r352
+#                      tables, seeded catalogs, mirrors, migration ledger)
+#                      · live openapi.json vs the committed contract
+#                      (additive-only) · the zero-trace DB scan.
+#
+#                      r352 final closure (§5): EVERY @test.ly login left
+#                      the live production smoke — a public fixed-password
+#                      identity must never be the production smoke's
+#                      credential (least-privilege, fail-closed), and NO
+#                      token, token prefix, password, or database URL is
+#                      ever echoed into the Actions logs.
+#   smoke-isolated   → the FULL authenticated journey matrix — login ×12
+#                      (the documented demo table INCLUDING the OWNER
+#                      fixture), the real student chooser journey, the
+#                      r352 institutional belt, and the browser
+#                      login-all proof — in a DISPOSABLE ISOLATED
+#                      environment: a postgres:16 service + the protected
+#                      migration path + db:seed + the real built app.
+#                      OWNER behavior stays covered (§5.6) with ZERO
+#                      production credentials: the fixtures live only
+#                      in the disposable database (non-production
+#                      runtime — the r352 §5 policy allows exactly that),
+#                      and nothing outlives the runner.
+#   open-issue-on-failure → an issue when any of the above failed.
 name: Deploy smoke
 
 on:
@@ -57,7 +75,7 @@ jobs:
           echo "::warning::The production deploy did not report buildId $SHORT within 20 minutes — smokes run against the PREVIOUS deploy."
 
   smoke:
-    name: Smoke the live service
+    name: Smoke the LIVE service (credential-free probes)
     needs: wait-for-deploy
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -65,117 +83,24 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - name: Health
         run: curl -sf --max-time 30 "$BASE/health" | tee /dev/stderr | grep -q '"ok":true'
-      - name: Login ×12 test accounts (the PUBLISHED demo password — smoke = ما يجربه المالك)
-        # Owner rule (2026-11-12): the rotated SMOKE_PW_* secrets are
-        # RETIRED — the smoke proves the exact journey the owner's hands
-        # take: the documented @test.ly accounts with 12345678. The
-        # daily cron re-converges these credentials on the production
-        # DB (ULARA_TEST_ACCOUNTS=1), so smoke and reality can never
-        # diverge again.
-        run: |
-          for who in student student2 teacher teacher2 head dean vicedean registrar admin2 faculty quality owner; do
-            TOK=$(curl -sf --max-time 60 -X POST "$BASE/auth/login" \
-              -H 'Content-Type: application/json' \
-              -d "{\"email\":\"$who@test.ly\",\"password\":\"12345678\"}" \
-              | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["accessToken"])')
-            echo "$who@test.ly: token ${TOK:0:16}…"
-            [ -n "$TOK" ] || exit 1
-          done
-      - name: One app-critical endpoint — the REAL student journey (r344)
-        # The t14 fail-closed context guard (INSTITUTION_CONTEXT_REQUIRED
-        # on a contextless call) is the DESIGNED behavior since r341 —
-        # the multi-membership accounts log in contextless and the UI
-        # walks the chooser. The 1.0-era smoke expected a bare 200 and
-        # false-alarmed issues #5/#6/#11 on the green production build.
-        # The honest smoke walks the REAL journey: login → pick the
-        # first ACTIVE membership from the login payload (exactly what
-        # the chooser offers) → select-institution → dashboard 200 —
-        # and first asserts the contextless 403 IS the honest shape.
-        run: |
-          RESP=$(curl -sf --max-time 60 -X POST "$BASE/auth/login" \
-            -H 'Content-Type: application/json' \
-            -d '{"email":"student@test.ly","password":"12345678"}')
-          TOK=$(echo "$RESP" | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["accessToken"])')
-          [ -n "$TOK" ] || { echo "login failed"; exit 1; }
-          CODE=$(curl -s -o /tmp/ctx.json -w '%{http_code}' --max-time 30 \
-            -H "Authorization: Bearer $TOK" "$BASE/me/dashboard")
-          echo "contextless GET /me/dashboard → $CODE (the designed fail-closed shape)"
-          python3 - <<'EOF' || exit 1
-          import json
-          d = json.load(open('/tmp/ctx.json'))
-          assert d["error"]["code"] == "INSTITUTION_CONTEXT_REQUIRED", d
-          print("honest 403 confirmed:", d["error"]["message"])
-          EOF
-          INST=$(echo "$RESP" | python3 -c 'import json,sys; u=json.load(sys.stdin)["data"]["user"]; m=[x for x in (u.get("memberships") or []) if x.get("isActive", True)]; print(u.get("institutionId") or (m[0]["institutionId"] if m else ""))')
-          [ -n "$INST" ] || { echo "no ACTIVE membership — cannot walk the chooser"; exit 1; }
-          echo "select-institution: $INST"
-          TOK2=$(curl -sf --max-time 30 -X POST -H "Authorization: Bearer $TOK" -H 'Content-Type: application/json' \
-            "$BASE/auth/select-institution" -d "{\"institutionId\":\"$INST\"}" \
-            | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["accessToken"])')
-          [ -n "$TOK2" ] || { echo "select-institution failed"; exit 1; }
-          CODE=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 \
-            -H "Authorization: Bearer $TOK2" "$BASE/me/dashboard")
-          echo "post-select GET /me/dashboard → $CODE"
-          [ "$CODE" = "200" ] || exit 1
-      - name: The r352 institutional belt (the 2026-11-23 schema-drift regression)
+      - name: The PUBLIC schema-drift probe (the r352 P2022 signal)
         # The confirmed production incident: GET /colleges 500 (P2022 —
-        # Faculty.orgUnitId), GET /auth/me 500 (P2022 via Faculty includes),
-        # GET /catalog/* 500 (P2021 — r352 tables absent). Root cause: no
-        # deploy path ran `prisma migrate deploy`, so migrations 0003–0005
-        # never reached production while the code (and CI's fresh DBs)
-        # had them. vercel.json now migrates on production builds; THIS
-        # belt fails loudly if a deploy ever ships code ahead of schema
-        # again, and proves the seeded reference catalogs (a 200 with an
-        # empty catalog is a silent seed regression, not a pass).
+        # Faculty.orgUnitId). Public, unauthenticated, and loud: the
+        # colleges listing is the exact surface the incident broke.
         run: |
           CODE=$(curl -s -o /tmp/colleges.json -w '%{http_code}' --max-time 30 "$BASE/colleges?institution=ulara-demo")
           echo "GET /colleges?institution=ulara-demo → $CODE"
           [ "$CODE" = "200" ] || { echo "::error::the public colleges listing is not answering (schema drift belt)"; exit 1; }
-          TOK=$(curl -sf --max-time 60 -X POST "$BASE/auth/login" -H 'Content-Type: application/json' \
-            -d '{"email":"admin2@test.ly","password":"12345678"}' \
-            | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["accessToken"])')
-          [ -n "$TOK" ] || { echo "login failed"; exit 1; }
-          for path in auth/me me/permissions catalog/institution-types catalog/credential-types catalog/regulatory-authorities catalog/position-templates catalog/accreditation-criteria-sets; do
-            CODE=$(curl -s -o /tmp/r352.json -w '%{http_code}' --max-time 30 -H "Authorization: Bearer $TOK" "$BASE/$path")
-            echo "GET /$path → $CODE"
-            [ "$CODE" = "200" ] || { echo "::error::$path is not 200 (schema drift belt)"; exit 1; }
-          done
-          python3 - <<'EOF' || exit 1
-          import json
-          d = json.load(open('/tmp/r352.json'))
-          assert isinstance(d.get("data"), list) and len(d["data"]) > 0, d
-          print(f"accreditation-criteria-sets seeded: {len(d['data'])} rows")
-          EOF
-          # The institutional surface with a SELECTED context (org-units is
-          # the r352 mirror read: Faculty→OrganizationalUnit backfill +
-          # migration 0005's cuid rewrite must be live and correct). The
-          # institution is derived from admin2's own ACTIVE membership —
-          # exactly what the chooser offers, never a hardcoded id.
-          INST=$(curl -sf --max-time 60 -X POST "$BASE/auth/login" -H 'Content-Type: application/json' \
-            -d '{"email":"admin2@test.ly","password":"12345678"}' \
-            | python3 -c 'import json,sys; u=json.load(sys.stdin)["data"]["user"]; m=[x for x in (u.get("memberships") or []) if x.get("isActive", True)]; print(m[0]["institutionId"] if m else "")')
-          [ -n "$INST" ] || { echo "admin2 has no ACTIVE membership — cannot select an institution"; exit 1; }
-          TOK2=$(curl -sf --max-time 30 -X POST -H "Authorization: Bearer $TOK" -H 'Content-Type: application/json' \
-            "$BASE/auth/select-institution" -d "{\"institutionId\":\"$INST\"}" \
-            | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["accessToken"])')
-          [ -n "$TOK2" ] || { echo "select-institution failed"; exit 1; }
-          CODE=$(curl -s -o /tmp/orgunits.json -w '%{http_code}' --max-time 30 -H "Authorization: Bearer $TOK2" "$BASE/institutional/org-units")
-          echo "GET /institutional/org-units → $CODE"
-          [ "$CODE" = "200" ] || { echo "::error::the institutional org-units surface is not answering"; exit 1; }
-          python3 - <<'EOF' || exit 1
-          import json
-          d = json.load(open('/tmp/orgunits.json'))
-          units = d.get("data")
-          assert isinstance(units, list) and len(units) > 0, d
-          print(f"org-units live: {len(units)} units")
-          EOF
-      - name: Zero-trace DB scan (every text column + the migrations ledger)
-        # The DATABASE half of the zero-trace policy (the repository half
-        # is the CI zero-trace job). psql ships on ubuntu-24.04 runners.
+      - name: The READ-ONLY SQL schema/catalog/ledger belt (the P2021 signal)
+        # The authenticated catalog probes left the live production smoke
+        # with the @test.ly logins (r352 final closure §5). The
+        # schema/catalog regression signals they carried are proven
+        # READ-ONLY here instead: r352 tables, seeded catalogs, mirror
+        # columns, migration ledger health. psql ships on ubuntu-24.04
+        # runners. Strictly SELECT-only SQL (deploy-smoke-schema.sql).
         env:
           DATABASE_URL: ${{ secrets.ULARA_DB_URL }}
-        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f scripts/sql/zero-trace-scan.sql
-
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f scripts/sql/deploy-smoke-schema.sql
       - name: Live OpenAPI vs committed contract (no route may disappear)
         run: |
           # The live site serves the SPA at /openapi.json (the spec is a
@@ -217,22 +142,198 @@ jobs:
           print("contract holds: every committed op exists live (additive-only)")
           EOF
 
-  login-ui:
-    name: Login UI — every account typed manually in a real browser
+  smoke-isolated:
+    name: Authenticated journeys (isolated disposable environment — no production credentials)
     needs: wait-for-deploy
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 40
+    # The disposable database: a postgres:16 service container. The
+    # r352 §5 test-account policy classifies this runner as a
+    # NON-production runtime (no VERCEL, no NODE_ENV=production), so the
+    # FULL fixture set — the OWNER fixture included — is allowed to live
+    # HERE and only here. Nothing outlives the runner.
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      ISO_DB_URL: postgresql://postgres:postgres@localhost:5432/postgres
+      ISO_PORT: "4100"
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '22'
-      # Root install brings the workspaces (frontend's playwright is
-      # hoisted) + tsx for the shared-table import in the script.
+          cache: 'npm'
       - run: npm ci
-      - name: Install Playwright chromium
+      - name: Migrate the disposable database (the protected migrate path)
+        env:
+          DATABASE_URL: ${{ env.ISO_DB_URL }}
+        run: npm --prefix backend run prisma:deploy
+      - name: Seed the disposable environment (corpus + test accounts + the OWNER fixture)
+        env:
+          DATABASE_URL: ${{ env.ISO_DB_URL }}
+        run: npm --prefix backend run prisma:seed
+      - name: Build the real app (frontend + backend, the vercel-build sequence)
+        run: |
+          npm --prefix backend run prisma:generate
+          npm run build -w frontend
+          npm run build -w backend
+          node -e "if(!require('fs').existsSync('backend/dist/app.js')){console.error('[smoke-isolated] backend/dist/app.js missing — build produced no artifact');process.exit(1)}"
+      - name: Boot the app (ULARA_TEST_ACCOUNTS=1 on a non-production runtime)
+        # The boot-path belt: the ensure runs (fixtures live in the
+        # disposable DB) and the boot log must say so — the §5 policy
+        # keeps this path alive ONLY because the runtime is disposable.
+        env:
+          DATABASE_URL: ${{ env.ISO_DB_URL }}
+          PORT: ${{ env.ISO_PORT }}
+          # Disposable-environment dummies (≥ the env schema's minimums) —
+          # never production values, never secrets.
+          JWT_ACCESS_SECRET: iso-smoke-access-secret-0123456789abcdef
+          JWT_REFRESH_SECRET: iso-smoke-refresh-secret-0123456789abcdef
+          INTERNAL_SERVICE_TOKEN: iso-smoke-service-token-0123456789
+          ULARA_TEST_ACCOUNTS: "1"
+        run: |
+          nohup node backend/dist/index.js > /tmp/iso-app.log 2>&1 &
+          for i in $(seq 1 90); do
+            if curl -sf --max-time 5 "http://127.0.0.1:$ISO_PORT/api/v1/health" >/dev/null 2>&1; then
+              echo "isolated app ready (attempt $i)"
+              grep -q "Test accounts ensured" /tmp/iso-app.log || { echo "::error::the boot-path test-account ensure did not run"; tail -40 /tmp/iso-app.log; exit 1; }
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "::error::the isolated app did not become healthy"
+          tail -40 /tmp/iso-app.log
+          exit 1
+      - name: Login ×12 (the documented demo table — no token/password echoed)
+        # The demo password is read from the ONE shared source table at
+        # runtime (never a literal in the log); the token is consumed
+        # in-pipe and never printed (r352 final closure §5.12).
+        run: |
+          PW=$(node -e "import('./backend/dist/modules/auth/test-accounts.data.js').then(m=>process.stdout.write(m.TEST_PASSWORD))")
+          [ -n "$PW" ] || { echo "could not read the demo table"; exit 1; }
+          for who in student student2 teacher teacher2 head dean vicedean registrar admin2 faculty quality owner; do
+            TOK=$(curl -sf --max-time 60 -X POST "http://127.0.0.1:$ISO_PORT/api/v1/auth/login" \
+              -H 'Content-Type: application/json' \
+              -d "{\"email\":\"$who@test.ly\",\"password\":\"$PW\"}" \
+              | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["accessToken"])')
+            [ -n "$TOK" ] || { echo "login failed for $who@test.ly"; exit 1; }
+            echo "login ok: $who@test.ly"
+          done
+      - name: OWNER behavior (the isolated environment — §5.6)
+        # The OWNER journey is covered HERE, never against production
+        # with a public password: the OWNER console is role-pinned, so a
+        # 200 on /owner/stats proves the platform-wide authority path
+        # works end-to-end for the fixture.
+        run: |
+          PW=$(node -e "import('./backend/dist/modules/auth/test-accounts.data.js').then(m=>process.stdout.write(m.TEST_PASSWORD))")
+          TOK=$(curl -sf --max-time 60 -X POST "http://127.0.0.1:$ISO_PORT/api/v1/auth/login" \
+            -H 'Content-Type: application/json' \
+            -d "{\"email\":\"owner@test.ly\",\"password\":\"$PW\"}" \
+            | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["accessToken"])')
+          [ -n "$TOK" ] || { echo "owner login failed"; exit 1; }
+          echo "login ok: owner@test.ly"
+          CODE=$(curl -s -o /tmp/owner-stats.json -w '%{http_code}' --max-time 30 \
+            -H "Authorization: Bearer $TOK" "http://127.0.0.1:$ISO_PORT/api/v1/owner/stats")
+          echo "OWNER GET /owner/stats → $CODE"
+          [ "$CODE" = "200" ] || { echo "::error::the OWNER platform surface is not answering in the isolated environment"; exit 1; }
+      - name: One app-critical endpoint — the REAL student journey (r344)
+        # The t14 fail-closed context guard (INSTITUTION_CONTEXT_REQUIRED
+        # on a contextless call) is the DESIGNED behavior since r341 —
+        # the multi-membership accounts log in contextless and the UI
+        # walks the chooser. The honest smoke walks the REAL journey:
+        # login → pick the first ACTIVE membership from the login
+        # payload (exactly what the chooser offers) →
+        # select-institution → dashboard 200 — and first asserts the
+        # contextless 403 IS the honest shape.
+        run: |
+          PW=$(node -e "import('./backend/dist/modules/auth/test-accounts.data.js').then(m=>process.stdout.write(m.TEST_PASSWORD))")
+          RESP=$(curl -sf --max-time 60 -X POST "http://127.0.0.1:$ISO_PORT/api/v1/auth/login" \
+            -H 'Content-Type: application/json' \
+            -d "{\"email\":\"student@test.ly\",\"password\":\"$PW\"}")
+          TOK=$(echo "$RESP" | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["accessToken"])')
+          [ -n "$TOK" ] || { echo "login failed"; exit 1; }
+          CODE=$(curl -s -o /tmp/ctx.json -w '%{http_code}' --max-time 30 \
+            -H "Authorization: Bearer $TOK" "http://127.0.0.1:$ISO_PORT/api/v1/me/dashboard")
+          echo "contextless GET /me/dashboard → $CODE (the designed fail-closed shape)"
+          python3 - <<'EOF' || exit 1
+          import json
+          d = json.load(open('/tmp/ctx.json'))
+          assert d["error"]["code"] == "INSTITUTION_CONTEXT_REQUIRED", d
+          print("honest 403 confirmed:", d["error"]["message"])
+          EOF
+          INST=$(echo "$RESP" | python3 -c 'import json,sys; u=json.load(sys.stdin)["data"]["user"]; m=[x for x in (u.get("memberships") or []) if x.get("isActive", True)]; print(u.get("institutionId") or (m[0]["institutionId"] if m else ""))')
+          [ -n "$INST" ] || { echo "no ACTIVE membership — cannot walk the chooser"; exit 1; }
+          echo "select-institution: $INST"
+          TOK2=$(curl -sf --max-time 30 -X POST -H "Authorization: Bearer $TOK" -H 'Content-Type: application/json' \
+            "http://127.0.0.1:$ISO_PORT/api/v1/auth/select-institution" -d "{\"institutionId\":\"$INST\"}" \
+            | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["accessToken"])')
+          [ -n "$TOK2" ] || { echo "select-institution failed"; exit 1; }
+          CODE=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 \
+            -H "Authorization: Bearer $TOK2" "http://127.0.0.1:$ISO_PORT/api/v1/me/dashboard")
+          echo "post-select GET /me/dashboard → $CODE"
+          [ "$CODE" = "200" ] || exit 1
+      - name: The r352 institutional belt (the 2026-11-23 schema-drift regression)
+        # The same belt that used to log into production with the
+        # public password — now in the isolated environment where the
+        # credentials legitimately live. It proves: the institutional
+        # catalog surface, the seeded reference catalogs (a 200 with an
+        # empty catalog is a silent seed regression, not a pass), and
+        # the org-unit mirror read.
+        run: |
+          PW=$(node -e "import('./backend/dist/modules/auth/test-accounts.data.js').then(m=>process.stdout.write(m.TEST_PASSWORD))")
+          TOK=$(curl -sf --max-time 60 -X POST "http://127.0.0.1:$ISO_PORT/api/v1/auth/login" -H 'Content-Type: application/json' \
+            -d "{\"email\":\"admin2@test.ly\",\"password\":\"$PW\"}" \
+            | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["accessToken"])')
+          [ -n "$TOK" ] || { echo "login failed"; exit 1; }
+          echo "login ok: admin2@test.ly"
+          for path in auth/me me/permissions catalog/institution-types catalog/credential-types catalog/regulatory-authorities catalog/position-templates catalog/accreditation-criteria-sets; do
+            CODE=$(curl -s -o /tmp/r352.json -w '%{http_code}' --max-time 30 -H "Authorization: Bearer $TOK" "http://127.0.0.1:$ISO_PORT/api/v1/$path")
+            echo "GET /$path → $CODE"
+            [ "$CODE" = "200" ] || { echo "::error::$path is not 200 (schema drift belt)"; exit 1; }
+          done
+          python3 - <<'EOF' || exit 1
+          import json
+          d = json.load(open('/tmp/r352.json'))
+          assert isinstance(d.get("data"), list) and len(d["data"]) > 0, d
+          print(f"accreditation-criteria-sets seeded: {len(d['data'])} rows")
+          EOF
+          INST=$(curl -sf --max-time 60 -X POST "http://127.0.0.1:$ISO_PORT/api/v1/auth/login" -H 'Content-Type: application/json' \
+            -d "{\"email\":\"admin2@test.ly\",\"password\":\"$PW\"}" \
+            | python3 -c 'import json,sys; u=json.load(sys.stdin)["data"]["user"]; m=[x for x in (u.get("memberships") or []) if x.get("isActive", True)]; print(m[0]["institutionId"] if m else "")')
+          [ -n "$INST" ] || { echo "admin2 has no ACTIVE membership — cannot select an institution"; exit 1; }
+          TOK2=$(curl -sf --max-time 30 -X POST -H "Authorization: Bearer $TOK" -H 'Content-Type: application/json' \
+            "http://127.0.0.1:$ISO_PORT/api/v1/auth/select-institution" -d "{\"institutionId\":\"$INST\"}" \
+            | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["accessToken"])')
+          [ -n "$TOK2" ] || { echo "select-institution failed"; exit 1; }
+          CODE=$(curl -s -o /tmp/orgunits.json -w '%{http_code}' --max-time 30 -H "Authorization: Bearer $TOK2" "http://127.0.0.1:$ISO_PORT/api/v1/institutional/org-units")
+          echo "GET /institutional/org-units → $CODE"
+          [ "$CODE" = "200" ] || { echo "::error::the institutional org-units surface is not answering"; exit 1; }
+          python3 - <<'EOF' || exit 1
+          import json
+          d = json.load(open('/tmp/orgunits.json'))
+          units = d.get("data")
+          assert isinstance(units, list) and len(units) > 0, d
+          print(f"org-units live: {len(units)} units")
+          EOF
+      - name: Install Playwright chromium (for the browser proof)
         run: npx playwright install chromium --with-deps
       - name: login-all (12 accounts · manual typing · role dashboards · screenshots)
+        # The owner's acceptance proof in a REAL browser — against the
+        # ISOLATED environment (r352 final closure §5), never against
+        # production with a public password. The script reads the ONE
+        # shared account table itself; it never prints credentials.
+        env:
+          ULARA_BASE_URL: http://127.0.0.1:${{ env.ISO_PORT }}
         run: npx tsx scripts/e2e/login-all.mjs
       - name: Upload the evidence (screenshots + results JSON)
         if: always()
@@ -244,7 +345,7 @@ jobs:
 
   open-issue-on-failure:
     name: Open an issue on failure
-    needs: [smoke, login-ui]
+    needs: [smoke, smoke-isolated]
     if: failure()
     runs-on: ubuntu-24.04
     permissions:

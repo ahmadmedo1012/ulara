@@ -1,7 +1,7 @@
 /**
  * R320 §C — `ensureTestAccounts()`: the idempotent upsert that keeps the
  * documented easy-login test accounts (`@test.ly` / `12345678`) present,
- * unlocked and attached to realistic profiles, in EVERY environment.
+ * unlocked and attached to realistic profiles.
  *
  * Run semantics (the two entry points):
  *   1. `npm run db:seed` — ALWAYS: once after the full corpus body on a
@@ -14,6 +14,26 @@
  *      exception touches).
  *   2. BACKEND BOOT with `ULARA_TEST_ACCOUNTS=1` (backend/src/index.ts)
  *      — the self-healing dev/ops path; guarded, non-fatal, logged.
+ *
+ * r352 FINAL CLOSURE (§5) — the production policy, enforced INSIDE the
+ * ensure so every entry point (boot, the daily cron, the
+ * /jobs/test-accounts operator route, db:seed, the operator script)
+ * funnels through the same rule:
+ *   - A PRODUCTION runtime NEVER creates, heals, re-activates, or
+ *     password-resets the platform OWNER test account: a public,
+ *     fixed-password identity must not hold platform-wide authority in
+ *     production (no flag can override this — see §5.2/§5.4).
+ *   - In a production runtime the NON-OWNER demo accounts are refused
+ *     BY DEFAULT too (fail closed); the explicit operator opt-in
+ *     `ULARA_TEST_ACCOUNTS_PRODUCTION_DEMO=1` keeps them available ONLY
+ *     because their data and permissions are bound to the designated
+ *     demo institutions ('ulara-demo' / 'ulara-demo-2') and — since the
+ *     §3 closure — every non-OWNER administrative path is DB-verified
+ *     institution-scoped, so the demo flows cannot reach real tenant
+ *     data (§5.7).
+ *   - Full fixtures stay available in local development, disposable
+ *     integration databases, and protected test environments
+ *     (non-production runtimes; Vercel preview/development builds).
  *
  * Guarantees:
  *   - NEVER touches real users' data: every write is an upsert keyed by
@@ -40,6 +60,67 @@
 import { AcademicRank, PrismaClient, Role } from '@prisma/client';
 import { hashPassword } from '../../lib/password.js';
 import { TEST_ACCOUNTS, TEST_PASSWORD } from './test-accounts.data.js';
+
+// ── the r352 final-closure production policy (§5) ────────────────────
+
+/**
+ * A production runtime is:
+ *   - any Vercel deployment EXCEPT the explicitly non-production ones
+ *     (preview/development) — VERCEL_ENV missing or anything else on a
+ *     Vercel host fails CLOSED as production (the same polarity the
+ *     migration gate uses, mirrored);
+ *   - or NODE_ENV=production anywhere else (the classic deployment).
+ * Local dev (NODE_ENV=development/test/anything else) and CI runners
+ * are non-production: full fixtures stay available there (§5.3).
+ */
+export function isProductionRuntime(): boolean {
+  const vercel = process.env.VERCEL;
+  const vercelEnv = process.env.VERCEL_ENV;
+  if (vercel !== undefined && vercel !== '') {
+    return !(vercelEnv === 'preview' || vercelEnv === 'development');
+  }
+  return process.env.NODE_ENV === 'production';
+}
+
+export interface TestAccountsRuntimePolicy {
+  /** True when the runtime is production-shaped (see isProductionRuntime). */
+  production: boolean;
+  /**
+   * The platform OWNER fixture (owner@test.ly — public password, no
+   * membership, platform-wide authority) may be ensured here? NEVER in
+   * a production runtime; no flag overrides this (§5.2/§5.4).
+   */
+  ownerAllowed: boolean;
+  /**
+   * The NON-OWNER demo accounts may be ensured here? In production
+   * only behind the explicit operator opt-in (§5.7 — the designated
+   * demo institutions); refused by default. Always true elsewhere.
+   */
+  demoAllowed: boolean;
+  /** An operator-facing, secret-free explanation for the logs/summaries. */
+  reason: string;
+}
+
+/** The single policy decision every entry point funnels through. */
+export function testAccountsRuntimePolicy(): TestAccountsRuntimePolicy {
+  if (!isProductionRuntime()) {
+    return {
+      production: false,
+      ownerAllowed: true,
+      demoAllowed: true,
+      reason: 'non-production runtime — full test-account fixtures allowed',
+    };
+  }
+  const demoOptIn = process.env.ULARA_TEST_ACCOUNTS_PRODUCTION_DEMO === '1';
+  return {
+    production: true,
+    ownerAllowed: false,
+    demoAllowed: demoOptIn,
+    reason: demoOptIn
+      ? 'production runtime — the OWNER fixture is refused categorically; the designated-demo-institution accounts are kept by the explicit ULARA_TEST_ACCOUNTS_PRODUCTION_DEMO=1 operator decision'
+      : 'production runtime — test-account ensure refused (fail-closed); the explicit operator opt-in ULARA_TEST_ACCOUNTS_PRODUCTION_DEMO=1 keeps the designated-demo-institution accounts',
+  };
+}
 
 /** Realistic Arabic profile data for each test account (keyed by email).
  * The six corpus-overlapping accounts reuse the seed's exact names so a
@@ -242,16 +323,38 @@ async function ensureEnrolments(
 }
 
 /**
- * The idempotent test-account ensure. Returns the number of jobs in the
- * table (every account is upserted — created or healed — on every run).
- * Throws on infrastructure errors (callers decide fatality: the seed
- * lets it fail the run; the boot path catches and logs).
+ * The idempotent test-account ensure. Returns the number of accounts
+ * the pass actually ensured (created or healed) — 0 when the r352
+ * production policy refused the runtime (every entry point — boot,
+ * cron, the operator route, db:seed, the operator script — funnels
+ * through that same decision). Throws on infrastructure errors
+ * (callers decide fatality: the seed lets it fail the run; the boot
+ * path catches and logs).
  */
 export async function ensureTestAccounts(prisma: PrismaClient): Promise<number> {
+  // r352 final closure (§5): the production policy is enforced HERE —
+  // no entry point can bypass it. A production runtime never creates,
+  // heals, re-activates or password-resets owner@test.ly (a public
+  // fixed-password identity must not hold platform-wide authority), and
+  // the non-OWNER demo accounts stay behind the explicit operator
+  // opt-in. Every non-production runtime keeps the full fixtures.
+  const policy = testAccountsRuntimePolicy();
+  if (!policy.demoAllowed) {
+    // Production, no opt-in: zero writes — a previous OWNER fixture can
+    // never be silently reactivated by a later boot, cron, or seed.
+    return 0;
+  }
   const skeleton = await ensureSkeleton(prisma);
   const passwordHash = await hashPassword(TEST_PASSWORD);
 
+  let ensured = 0;
   for (const account of TEST_ACCOUNTS) {
+    // The OWNER fixture is categorically refused in a production
+    // runtime — even with the demo opt-in (§5.2/§5.4: no flag overrides
+    // the public-password platform-OWNER prohibition).
+    if (!policy.ownerAllowed && account.role === Role.OWNER) {
+      continue;
+    }
     const profile = ACCOUNT_PROFILES[account.email];
     if (!profile) continue; // unknown account — the table and profiles must stay in lockstep
 
@@ -369,7 +472,9 @@ export async function ensureTestAccounts(prisma: PrismaClient): Promise<number> 
         });
       }
     }
+
+    ensured += 1;
   }
 
-  return TEST_ACCOUNTS.length;
+  return ensured;
 }

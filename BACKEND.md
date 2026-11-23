@@ -121,6 +121,19 @@ condensed overview. The r352 institutional endpoint families ride the spec's
 | POST | `/admin/teachers/:id/verify` | TEACHERS_VERIFY | Verify teacher |
 | POST | `/admin/teachers/:id/position` | ROLES_ASSIGN | Assign leadership position |
 
+> **r352 final closure (§3) — the governance-context rule on the four
+> capability-gated rows above:** OWNER is the ONLY platform-wide path
+> (null context by definition — cross-tenant list, full override trail,
+> platform-GLOBAL override writes). EVERY other caller — ADMIN, QUALITY,
+> and TEACHER/STUDENT capability holders via explicit grants included —
+> must hold a DB‑verified ACTIVE institution context: 403
+> `INSTITUTION_CONTEXT_REQUIRED` without one (fail closed), 403
+> `INSTITUTION_CONTEXT_INVALID` on a stale/revoked/suspended/forged
+> claim; the listing is pinned to their institution, override writes
+> land institution‑scoped (never a platform-global row), and
+> cross‑institution targets are 404 on reads (no existence leak) / 403
+> on writes. Full matrix: `docs/redesign/r352/institutional-backend/AUTHORIZATION-MATRIX.md`.
+
 ### Courses — `/courses`
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|

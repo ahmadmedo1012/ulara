@@ -34,11 +34,24 @@ async function main() {
   // failing ensure must never take the API down. The table's single
   // source of truth is modules/auth/test-accounts.data.ts; the upserts
   // touch ONLY these accounts (never real users' data).
+  // r352 FINAL CLOSURE (§5): the production policy is enforced INSIDE
+  // ensureTestAccounts — a production runtime refuses the pass (zero
+  // writes; owner@test.ly can never be re-activated or password-reset
+  // by a later boot), and the boot log says exactly WHY (the policy
+  // reason carries no secrets).
   if (process.env.ULARA_TEST_ACCOUNTS === '1') {
     try {
-      const { ensureTestAccounts } = await import('./modules/auth/test-accounts.js');
+      const { ensureTestAccounts, testAccountsRuntimePolicy } = await import('./modules/auth/test-accounts.js');
+      const policy = testAccountsRuntimePolicy();
       const ensured = await ensureTestAccounts(prisma);
-      logger.info(`🧪 Test accounts ensured (${ensured} jobs) — ULARA_TEST_ACCOUNTS=1`);
+      if (policy.demoAllowed && ensured > 0) {
+        logger.info(`🧪 Test accounts ensured (${ensured} jobs) — ULARA_TEST_ACCOUNTS=1`);
+      } else {
+        logger.info(
+          { policy: { production: policy.production, ownerAllowed: policy.ownerAllowed, demoAllowed: policy.demoAllowed }, reason: policy.reason },
+          '🧪 Test-account ensure refused by the r352 §5 production policy — zero writes',
+        );
+      }
     } catch (err) {
       logger.error({ err }, '❌ Test-account ensure failed (non-fatal) — continuing boot');
     }

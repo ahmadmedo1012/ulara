@@ -17,9 +17,9 @@ import {
   lockActiveOwnerRows,
   planTeacherProvisioning,
   requiresLastOwnerGuard,
+  resolveGovernanceCallerContext,
   resolveProvisionInstitution,
 } from '../../lib/governance.js';
-import { resolveCallerInstitutionScope, institutionContextRequiredError } from '../../lib/profile-scoping.js';
 import {
   getEffectiveCapabilities,
   DEFAULT_ROLE_CAPABILITIES,
@@ -91,21 +91,18 @@ router.get(
       };
       // Faculty governance scope: a scoped ADMIN only lists the users
       // of their own faculty — mirrors the write guards below.
-      // r179 (phase-5): an ADMIN/QUALITY caller MUST hold a DB-verified
-      // institution context (403 INSTITUTION_CONTEXT_REQUIRED without
-      // one); the list is pinned to that institution. OWNER keeps the
-      // platform-wide view.
+      // r352 final closure (§3): the ONE governance-context rule — OWNER
+      // is the ONLY platform-wide path (null context by definition);
+      // EVERY non-OWNER caller (ADMIN, QUALITY, TEACHER, STUDENT —
+      // capability holders via explicit grants included) must hold a
+      // DB-verified ACTIVE institution context or the route fails
+      // closed (403). A capability grant can never widen a non-OWNER
+      // caller into the platform-wide listing: the pre-fix check
+      // resolved a context for ADMIN/QUALITY only and let any other
+      // capability-holding role fall through to the null =
+      // platform-wide scope.
       const scopeFacultyId = await getGovernanceScope(req.user!.id);
-      const institutionScope =
-        req.user!.role === Role.ADMIN || req.user!.role === Role.QUALITY
-          ? await resolveCallerInstitutionScope(req.user!.id, req.user!.institutionId)
-          : null;
-      if (
-        (req.user!.role === Role.ADMIN || req.user!.role === Role.QUALITY) &&
-        !institutionScope
-      ) {
-        throw institutionContextRequiredError();
-      }
+      const institutionScope = await resolveGovernanceCallerContext(req.user!);
       const where = buildScopedUserWhere(scopeFacultyId, {
         ...(role ? { role } : {}),
         ...(q
@@ -140,18 +137,16 @@ router.get(
 router.get('/admin/users/:id/permissions', requireCapability('ROLES_ASSIGN'), async (req, res, next) => {
   try {
     // Faculty governance scope — a scoped ADMIN cannot inspect the
-    // permission profile of an out-of-faculty user. r179 (phase-5):
-    // an ADMIN/QUALITY caller MUST hold a DB-verified institution
-    // context (403 without one) and the target must be a member of
-    // that institution (404 otherwise — never leak a foreign user's
-    // existence); OWNER reads any target (platform governance).
-    const callerInstitution =
-      req.user!.role === Role.ADMIN || req.user!.role === Role.QUALITY
-        ? await resolveCallerInstitutionScope(req.user!.id, req.user!.institutionId)
-        : null;
-    if ((req.user!.role === Role.ADMIN || req.user!.role === Role.QUALITY) && !callerInstitution) {
-      throw institutionContextRequiredError();
-    }
+    // permission profile of an out-of-faculty user. r352 final closure
+    // (§3): the ONE rule — OWNER alone reads any target (platform
+    // governance, null context by definition); EVERY non-OWNER caller
+    // (ADMIN/QUALITY/TEACHER/STUDENT — capability holders via explicit
+    // grants included) must hold a DB-verified ACTIVE institution
+    // context (403 without one — never a fall-through to the
+    // platform-wide view), and the target must be a member of that
+    // institution (404 otherwise — never leak a foreign user's
+    // existence).
+    const callerInstitution = await resolveGovernanceCallerContext(req.user!);
     if (callerInstitution) {
       const targetMembership = await prisma.membership.findFirst({
         where: {
@@ -258,17 +253,15 @@ router.post(
       // Pre-validate the target: without this, a grant against a
       // non-existent user surfaced as a P2003 foreign-key 500 instead
       // of a clean 404.
-      // r179 (phase-5): an ADMIN/QUALITY caller MUST hold a DB-verified
-      // institution context (403 without one); the target must be a
-      // member of that institution (403 — a cross-institution
-      // governance write). OWNER governs platform-wide (null context).
-      const callerInstitution =
-        req.user!.role === Role.ADMIN || req.user!.role === Role.QUALITY
-          ? await resolveCallerInstitutionScope(req.user!.id, req.user!.institutionId)
-          : null;
-      if ((req.user!.role === Role.ADMIN || req.user!.role === Role.QUALITY) && !callerInstitution) {
-        throw institutionContextRequiredError();
-      }
+      // r352 final closure (§3): the ONE rule — OWNER alone writes
+      // platform-global rows (null context by definition); EVERY
+      // non-OWNER caller (ADMIN/QUALITY/TEACHER/STUDENT — capability
+      // holders via explicit grants included) must hold a DB-verified
+      // ACTIVE institution context (403 without one — never a
+      // fall-through to the platform-wide write) and their override
+      // lands INSTITUTION-SCOPED to exactly that context (a scoped
+      // grant can never turn into a platform-global row).
+      const callerInstitution = await resolveGovernanceCallerContext(req.user!);
       if (callerInstitution) {
         const targetMembership = await prisma.membership.findFirst({
           where: {
@@ -409,18 +402,32 @@ router.post(
         throw AppError.forbidden('لا يمكن منح دور المالك عبر النظام — تواصل مع الدعم الفني');
       }
 
-      // r179 (phase-5): DB-verified caller institution context —
-      // REQUIRED for ADMIN/QUALITY (403 without one); null for the
-      // platform OWNER only. It scopes the target's profile reads
-      // below (no legacy oldest-profile fallback — an OWNER promotion
-      // without a context needs an explicit departmentId) and the
-      // TEACHER-provisioning institution further down.
-      const callerInstitution =
-        req.user!.role === Role.ADMIN || req.user!.role === Role.QUALITY
-          ? await resolveCallerInstitutionScope(req.user!.id, req.user!.institutionId)
-          : null;
-      if ((req.user!.role === Role.ADMIN || req.user!.role === Role.QUALITY) && !callerInstitution) {
-        throw institutionContextRequiredError();
+      // r352 final closure (§3): the ONE rule for the role-change
+      // surface too — OWNER alone keeps the platform-wide path (null
+      // context by definition); EVERY non-OWNER caller must hold a
+      // DB-verified ACTIVE institution context (403 without one —
+      // never a fall-through to the platform-wide role change) and
+      // the TARGET must hold an ACTIVE membership in that verified
+      // institution (403 otherwise — a cross-institution role change;
+      // the pre-fix route checked the caller's context for
+      // ADMIN/QUALITY only and never checked the target's membership
+      // at all, so a capability-holding STUDENT/TEACHER fell through
+      // to the platform-wide path and could retarget a foreign
+      // institution's member).
+      const callerInstitution = await resolveGovernanceCallerContext(req.user!);
+      if (callerInstitution) {
+        const targetMembership = await prisma.membership.findFirst({
+          where: {
+            userId: id,
+            institutionId: callerInstitution,
+            isActive: true,
+            institution: { status: 'ACTIVE' },
+          },
+          select: { id: true },
+        });
+        if (!targetMembership) {
+          throw AppError.forbidden('هذا المستخدم ليس عضواً في مؤسستك');
+        }
       }
       const target = await prisma.user.findUnique({
         where: { id },

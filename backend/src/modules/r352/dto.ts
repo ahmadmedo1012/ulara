@@ -517,6 +517,77 @@ export const credentialRevokeSchema = z
   .strict();
 
 // ─── compliance ────────────────────────────────────────────────────
+// r352 final closure (§4) — the scope-invariant, encoded once and
+// shared by the accreditation and license creation DTOs:
+//   - orgUnitId is legal ONLY with scopeType=ORGANIZATIONAL_UNIT;
+//   - programId is legal ONLY with scopeType=PROGRAM;
+//   - a declared ORGANIZATIONAL_UNIT/PROGRAM scope REQUIRES its target
+//     id; an INSTITUTION scope forbids both;
+//   - supplying both ids together is a contradictory combination.
+// Every non-null reference is then validated IN-INSTITUTION at the
+// route boundary (assertScopeTargets) INDEPENDENTLY of the other
+// field — a foreign tenant id can never ride an omitted or mismatched
+// scopeType into the row (the pre-fix helper validated a target only
+// when its matching scopeType was selected, so e.g. a foreign
+// orgUnitId with no scopeType passed unvalidated and later leaked
+// through the list includes). Contradictory combinations are
+// rejected explicitly (400 VALIDATION_ERROR) — an id is never
+// silently discarded or persisted under a scope label it never had.
+const scopeTargetsInvariant = (
+  v: { scopeType?: 'INSTITUTION' | 'ORGANIZATIONAL_UNIT' | 'PROGRAM'; orgUnitId?: string; programId?: string },
+  ctx: z.RefinementCtx,
+): void => {
+  const hasUnit = v.orgUnitId !== undefined;
+  const hasProgram = v.programId !== undefined;
+  if (hasUnit && hasProgram) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['orgUnitId'],
+      message: 'لا يمكن تحديد وحدة تنظيمية وبرنامج معًا — نطاق السجل واحد',
+    });
+    return;
+  }
+  if (hasUnit && v.scopeType !== 'ORGANIZATIONAL_UNIT') {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['orgUnitId'],
+      message: 'تحديد وحدة تنظيمية يتطلب scopeType=ORGANIZATIONAL_UNIT',
+    });
+    return;
+  }
+  if (hasProgram && v.scopeType !== 'PROGRAM') {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['programId'],
+      message: 'تحديد برنامج يتطلب scopeType=PROGRAM',
+    });
+    return;
+  }
+  if (v.scopeType === 'ORGANIZATIONAL_UNIT' && !hasUnit) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['scopeType'],
+      message: 'نطاق ORGANIZATIONAL_UNIT يتطلب تحديد orgUnitId',
+    });
+    return;
+  }
+  if (v.scopeType === 'PROGRAM' && !hasProgram) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['scopeType'],
+      message: 'نطاق PROGRAM يتطلب تحديد programId',
+    });
+    return;
+  }
+  if (v.scopeType === 'INSTITUTION' && (hasUnit || hasProgram)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['scopeType'],
+      message: 'نطاق INSTITUTION لا يحدد وحدة تنظيمية ولا برنامجًا',
+    });
+  }
+};
+
 const accreditationScope = z
   .object({
     scopeType: z.enum(['INSTITUTION', 'ORGANIZATIONAL_UNIT', 'PROGRAM']).optional(),
@@ -532,17 +603,21 @@ export const accreditationListSchema = paginationSchema.extend({
   type: z.enum(['INSTITUTIONAL', 'PROGRAM']).optional(),
 });
 
-export const accreditationCreateSchema = accreditationScope.extend({
-  type: z.enum(['INSTITUTIONAL', 'PROGRAM']),
-  authorityCode: z.string().trim().min(2).max(64),
-  decisionNumber: z.string().trim().max(120).optional(),
-  decisionDate: optionalDate,
-  effectiveFrom: optionalDate,
-  effectiveTo: optionalDate,
-  criteriaSetId: optionalId,
-  reportRef: z.string().trim().max(300).optional(),
-  notes: z.string().trim().max(4000).optional(),
-});
+export const accreditationCreateSchema = accreditationScope
+  .extend({
+    type: z.enum(['INSTITUTIONAL', 'PROGRAM']),
+    authorityCode: z.string().trim().min(2).max(64),
+    decisionNumber: z.string().trim().max(120).optional(),
+    decisionDate: optionalDate,
+    effectiveFrom: optionalDate,
+    effectiveTo: optionalDate,
+    criteriaSetId: optionalId,
+    reportRef: z.string().trim().max(300).optional(),
+    notes: z.string().trim().max(4000).optional(),
+  })
+  // r352 final closure (§4): the scope-invariant rides the final
+  // creation DTO (see scopeTargetsInvariant above for the semantics).
+  .superRefine(scopeTargetsInvariant);
 
 export const accreditationUpdateSchema = z
   .object({
@@ -576,7 +651,10 @@ export const licenseCreateSchema = z
     conditions: z.string().trim().max(4000).optional(),
     documentRef: z.string().trim().max(300).optional(),
   })
-  .strict();
+  .strict()
+  // r352 final closure (§4): the SAME scope-invariant as accreditation
+  // creation — see scopeTargetsInvariant above for the semantics.
+  .superRefine(scopeTargetsInvariant);
 
 export const licenseUpdateSchema = z
   .object({
