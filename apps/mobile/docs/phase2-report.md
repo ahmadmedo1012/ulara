@@ -2,6 +2,8 @@
 
 **Branch:** `agent/ulara-product-roles-mobile` · **PR:** #42 · **Base:** `main`
 **Phase-1 review HEAD:** `f3674264ad379f10c8315fffb8d83067d5acce63`
+**Phase-2 final HEAD:** `0b87c80` (code `7c928b6` + docs-evidence
+`4185edd` + a11y `0b87c80` — 6 commits on `main` @ `a71d7d8`)
 
 Phase 2 turned the Phase-1 surfaces into production-grade truth: the
 size-gate failure fixed without touching limits, every workspace
@@ -223,20 +225,49 @@ no-re-fire).
 - Training evaluation keeps the 0–100 score gate (server schema
   agrees); mutations invalidate the whole ['inst'] family.
 
-## 10. Gates — the live Actions runs on the Phase-2 HEAD `7c928b6`
+## 10. Gates — the live Actions runs (code HEAD `7c928b6`, final HEAD `0b87c80`)
 
 | Workflow | Run | Result |
 |---|---|---|
-| Size gate | [45105617820](https://github.com/ahmadmedo1012/ulara/actions/runs/45105617820) | **success** — file ≤500KB · docs 38,807KB ≤ 40MB · push adds 3,150KB ≤ 5MB (the Phase-1 RED closed; limits untouched) |
+| Size gate (on `7c928b6`) | [45105617820](https://github.com/ahmadmedo1012/ulara/actions/runs/45105617820) | **success** — file ≤500KB · docs 38,807KB ≤ 40MB · push adds 3,150KB ≤ 5MB (the Phase-1 RED closed; limits untouched) |
 | Mobile (fast lane, dispatched on the branch) | [45106878185](https://github.com/ahmadmedo1012/ulara/actions/runs/45106878185) | **success** — Mobile gates (typecheck · lint · contract · export); native lanes skipped by the fast-lane design |
-| deadcode | [45105617949](https://github.com/ahmadmedo1012/ulara/actions/runs/45105617949) | success |
-| CI | [45105617817](https://github.com/ahmadmedo1012/ulara/actions/runs/45105617817) | every job green EXCEPT Zero-trace — see below |
+| deadcode (on `7c928b6`) | [45105617949](https://github.com/ahmadmedo1012/ulara/actions/runs/45105617949) | success |
+| CI (on `7c928b6`) | [45105617817](https://github.com/ahmadmedo1012/ulara/actions/runs/45105617817) | every job green EXCEPT Zero-trace — see below |
+| Size gate (on `0b87c80`) | [45108343918](https://github.com/ahmadmedo1012/ulara/actions/runs/45108343918) | **success** — same three rules, all green on the final HEAD |
+| deadcode (on `0b87c80`) | [45108343792](https://github.com/ahmadmedo1012/ulara/actions/runs/45108343792) | success |
+| CI — pull_request run on `0b87c80` | [45108343752](https://github.com/ahmadmedo1012/ulara/actions/runs/45108343752) | every job green except Zero-trace — **E2E ✓ 229/229** (this test in 4.7s) |
+| CI — push run on the same SHA `0b87c80` | [45108338622](https://github.com/ahmadmedo1012/ulara/actions/runs/45108338622) | **E2E green on the final rerun** (attempt 4: 228 passed · 1 flaky rescued by the repo's own Playwright retry · 0 failed; r305 QA belt 76/76; axe a11y gate 12/12) — only Zero-trace remains red, and it fails on `main` too |
 
-CI job-by-job: Typecheck ✓ · Lint ✓ · Design gates ✓ · **E2E
-(hermetic browser journeys) ✓ — includes the Phase-1 r353
-route-transition pixel-proof (PageTransition intact, re-proven in
-CI)** · DB integration ✓ · Test (frontend) ✓ · Test (backend) ✓ ·
-Build ✓ · Surface drift ✓ · E2E iOS skipped (lane conditions).
+CI job-by-job (both the `7c928b6` and `0b87c80` runs): Typecheck ✓ ·
+Lint ✓ · Design gates ✓ · **E2E (hermetic browser journeys) ✓ —
+includes the Phase-1 r353 route-transition pixel-proof
+(PageTransition intact, re-proven in CI)** · DB integration ✓ ·
+Test (frontend) ✓ · Test (backend) ✓ · Build ✓ · Surface drift ✓ ·
+E2E iOS skipped (lane conditions; the push run's iOS job ran green).
+
+**The push run's e2e flake, stated exactly as it is (never claimed
+as passed when it wasn't):** two attempts landed on
+`r305-shell-ds.e2e.ts:284` — the pre-existing scroll-restoration wait
+(`page.waitForFunction` 15s timeout, timeout-only; the assertion
+itself never failed) — and the final rerun resolved it exactly the
+way the repo designed: the test timed out once under batch load and
+**passed on Playwright's own retry in 3.7s** → "228 passed · 1 flaky
+· 0 failed" → job green. The evidence that this is the repo's
+documented CI-load flake and not this branch: (1) the same commit
+`0b87c80` ran the full E2E suite green in the pull_request run
+(229 passed, this test 4.7s); (2) the test's own header comments
+document this exact failure mode (timeout on `waitForFunction` only
+under full-batch load, passes solo 4/4, hit twice at the 5327cb3f
+era, window already raised 4000→15000ms); the failing attempts both
+ran in congested windows (a 5-hour runner-queue backlog; an
+overlapping CI batch from a sibling branch), the passing ones in
+quiet windows; (3) `frontend/` is byte-identical between `7c928b6`
+(full E2E green in CI 45105617817) and the final HEAD — the last two
+commits are docs + a mobile a11y file; (4) the full CI-style batch
+was reproduced locally (2-CPU, CI=1, workers=2, Chromium): 228
+passed / 0 failed / 1 unrelated flaky (r349 QR, passed on retry);
+solo runs pass on both this branch and pristine `main` (6.0s / 7.3s
+vs the 15s window).
 
 **Zero-trace fails identically on `main` (run set 45097200129) and on
 this branch — it flags a retired brand name inside r350-era git
