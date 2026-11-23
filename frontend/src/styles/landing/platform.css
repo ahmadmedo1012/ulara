@@ -177,6 +177,11 @@ html[data-theme='dark'] .pr-section .pr-cta {
   position: relative;
   display: block;
   margin-block-start: auto;
+  /* R355 (tap floor): the phone-band strip measured 40px — lifted to
+     the 44px touch-floor canon as a minimum (the ≥992 desktop strip
+     is 193px; only the stacked ≤991 seat grows, by 4px of breathing
+     room under the same hairline frame). */
+  min-block-size: 44px;
   color: var(--pr-cta);
   text-decoration: none;
   transition: color 0.4s ease; /* motion-token: allow — reference-measured a[2] hover fade (TR 0.4s/ease) */

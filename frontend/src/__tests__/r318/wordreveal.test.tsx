@@ -10,9 +10,13 @@
  * IO-belt reveal — and ScrubReveal — the scroll-scrub reveal):
  *   (a) the wrapper's textContent normalized-equals the source string
  *       INCLUDING the inter-word spaces;
- *   (b) every `.wr-w` mask is aria-hidden="true" (AT reads the
- *       wrapper's aria-label, never the split words twice);
- *   (c) the wrapper carries aria-label={text} (one clean string);
+ *   (b) R355 repair: the masks are AT-VISIBLE (each carries its whole
+ *       word — the real text IS the accessible text) while the
+ *       decorative ink-roll twins (.wr-i2) and char scaffolds (.wr-c)
+ *       stay aria-hidden — never announced twice;
+ *   (c) R355 repair: the wrapper carries NO aria-label (prohibited on
+ *       a role-less span — axe aria-prohibited-attr); the accessible
+ *       name is the content itself;
  *   (d) the mask count === the source word count — words split on
  *       spaces ONLY, never below word level (Arabic joining intact).
  */
@@ -34,12 +38,17 @@ function expectWordSpaces(container: HTMLElement, text: string) {
   // (d) word count === source word count (never split below word level)
   expect(masks.length).toBe(words.length);
 
-  // (b) every mask is aria-hidden — AT reads the wrapper label, not the words
-  masks.forEach((m) => expect(m.getAttribute('aria-hidden')).toBe('true'));
+  // (b) R355: the masks are AT-visible (their real words ARE the
+  // accessible text); the decorative twins/scaffolds stay hidden
+  masks.forEach((m) => expect(m.getAttribute('aria-hidden')).toBeNull());
+  container
+    .querySelectorAll<HTMLElement>('.wr-i2, .wr-c')
+    .forEach((d) => expect(d.getAttribute('aria-hidden')).toBe('true'));
 
-  // (c) the wrapper carries the full string as its aria-label
+  // (c) R355: no aria-label on the role-less wrapper — the content is
+  // the accessible text (the axe aria-prohibited-attr repair)
   expect(wrapper).not.toBeNull();
-  expect(wrapper!.getAttribute('aria-label')).toBe(text);
+  expect(wrapper!.getAttribute('aria-label')).toBeNull();
 
   // (a) textContent normalized-equals the source INCLUDING spaces…
   expect(norm(wrapper!.textContent ?? '')).toBe(norm(text));

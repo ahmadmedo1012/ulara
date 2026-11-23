@@ -231,6 +231,12 @@ html[data-theme='dark'] body.ula-grain::before {
   inset-inline-start: var(--sp-2);
   z-index: 100;
   padding: var(--sp-2-5) var(--sp-4);
+  /* R355 (tap floor): the measured 41px box missed the 44px touch
+     floor by 3px — min-block-size + flex centering lifts the seat
+     without changing the resting look (it is off-canvas until focus). */
+  min-block-size: 44px;
+  display: inline-flex;
+  align-items: center;
   /* R323 A5 §2 → 2026: the skip link rides the royal signal pair
      (var(--accent) + var(--accent-fg) — theme-aware: light #2540D9 +
      white 7.46:1 AAA · dark #8AA0FF + #262019 6.56:1 AA; the #DB3A00

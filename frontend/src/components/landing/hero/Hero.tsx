@@ -195,7 +195,12 @@ export function Hero() {
           subjects (the reference's home-hero-work band): ONE static
           row ≥1200 (space-between, zero mask), a snap-scrolling strip
           below — riding the work-card rise (3.2rem · 1s p3.out). ══ */}
-      <div className="hro-work fo-hero-work" aria-label="قدرات أُلارا العاملة اليوم">
+      {/* R355 (a11y): tabIndex 0 — the strip is a snap-scroll region and
+          axe's scrollable-region-focusable wants keyboard users able to
+          scroll it; its aria-label names it. The ITEMS stay tabIndex -1
+          (programmatically focusable, never tab stops — the strip is the
+          keyboard seat, the items are decorative chrome). */}
+      <div className="hro-work fo-hero-work" aria-label="قدرات أُلارا العاملة اليوم" tabIndex={0}>
         <div className="hro-work-track">
           {/* divs, not spans — the instrument asserts the reference's
               measured div boxes (T-11c) */}

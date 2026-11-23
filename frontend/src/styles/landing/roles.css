@@ -254,6 +254,24 @@
   margin-inline-start: auto;
   color: var(--rule-strong);
   transition: color 0.4s ease;
+  /* R355 (tap floor): the accordion control PAINTS a ≥44px hit box
+     (the touch-floor canon) while its layout footprint stays the
+     glyph's own — the pm-dot-btn painted-target pattern (pains.css):
+     the box is 44×44 and grid-centres the glyph, the negative block
+     margin collapses the layout height back to the iconbtn's own, so
+     the row height and the glyph centre never move (the r354 belt
+     pins role/tabindex/Enter behaviour, not rects). */
+  inline-size: 44px;
+  block-size: 44px;
+  display: grid;
+  place-items: center;
+  /* the layout footprint collapses back to the glyph's own rung on
+     BOTH axes (base 2rem; the 768–991 band re-runs at 2.2rem below):
+     the block margin keeps the row height, the inline-end margin keeps
+     the glyph centre exactly where it was (the surplus hit box eats
+     the row's end padding, transparent and harmless) */
+  margin-block: calc((2rem - 44px) / 2);
+  margin-inline-end: calc((2rem - 44px) / 2);
 }
 /* r339 T-12 — the accordion icon's night seat: --rule-strong flips to
    #85857F in dark — 3.97:1 on the #262019 ground, under the 4.5:1 text
@@ -273,6 +291,15 @@
   place-items: center;
   inline-size: 2rem;
   block-size: 2rem;
+}
+/* R355 (tap floor): the 768–991 band sizes the glyph 2.2rem — the
+   painted hit box's collapsing margins follow the same rung so the
+   layout footprint stays the glyph's own at every width. */
+@media (min-width: 768px) and (max-width: 991px) {
+  .rl-row-icon {
+    margin-block: calc((2.2rem - 44px) / 2);
+    margin-inline-end: calc((2.2rem - 44px) / 2);
+  }
 }
 .rl-row-svg { inline-size: 2rem; block-size: 2rem; overflow: visible; }
 .rl-p1, .rl-p2 {

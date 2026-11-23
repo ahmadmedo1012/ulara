@@ -657,6 +657,10 @@
   align-items: center;
   gap: 0.7rem;
   padding: 1.1rem 1.9rem;
+  /* R355 (tap floor): the phone-band box measured 42px — the 44px
+     touch-floor canon (design-tokens touchFloor: 44) as a minimum;
+     the desktop boxes already exceed it, so nothing moves ≥992. */
+  min-block-size: 44px;
   border: 1px solid var(--text);
   background-color: transparent;
   overflow: hidden;
