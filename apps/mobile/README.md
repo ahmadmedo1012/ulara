@@ -118,8 +118,12 @@ The website evolves continuously. Isolation rules:
 
 ## Honest limits (current)
 
-- Remote push is **not implemented** — the backend has no device-token
-  model; see `docs/push-backend-proposal.md` for the additive contract.
+- Remote push: the client side is live (permission ask → Expo token →
+  `POST /me/push-devices`; `src/lib/push.tsx`) and the backend owns the
+  device model (`PushDevice`, `/me/push-devices`, fan-out module gated
+  by `PUSH_ENABLED` — **dark by default**). Until the flag lights in
+  the deployment, notifications ride the in-app inbox only;
+  `docs/push-backend-proposal.md` keeps the rollout history.
 - The AI assistant's "suggest" surfaces are the backend's own template
   simulation, disclosed in-app as «محاكاة».
 - PDF review annotation parity is read/annotate via the built-in viewer;

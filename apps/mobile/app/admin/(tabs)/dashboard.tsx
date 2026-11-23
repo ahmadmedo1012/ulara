@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import BookOpen from "lucide-react-native/icons/book-open";
 import FileText from "lucide-react-native/icons/file-text";
 import Inbox from "lucide-react-native/icons/inbox";
+import Landmark from "lucide-react-native/icons/landmark";
 import ShieldCheck from "lucide-react-native/icons/shield-check";
 import { LargeTitleScreen } from "@/components/shell/LargeTitleScreen";
 import { SectionBar } from "@/components/ui";
@@ -169,6 +170,10 @@ export default function AdminDashboard() {
                 screen (app/admin/sync.tsx, deleted). */}
             {(
               [
+                /* r353 — the Institutional Operating Workspace door (web
+                   ADMIN_NAV parity: the first item after the dashboard).
+                   The 13 statutory sections live under /institution. */
+                [Landmark, "مساحة العمل المؤسسية", "الهيكل والكوادر والمجالس والبرامج والجودة", "/institution"],
                 [BookOpen, "إدارة المقرّرات", "المقرّرات والشُّعب مع البحث والإضافة", "/admin/courses"],
                 [ShieldCheck, "التحوّل الرقميّ", "مؤشّرات تبنّي المنصّة الرقميّة", "/admin/digital"],
                 [Inbox, "دعوات التسجيل", "أكواد الانضمام للطلاب والأساتذة", "/admin/invites"],

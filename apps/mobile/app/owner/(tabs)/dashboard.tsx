@@ -5,6 +5,7 @@ import { router } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import Activity from "lucide-react-native/icons/activity";
 import Bot from "lucide-react-native/icons/bot";
+import Briefcase from "lucide-react-native/icons/briefcase";
 import FileText from "lucide-react-native/icons/file-text";
 import Landmark from "lucide-react-native/icons/landmark";
 import Palette from "lucide-react-native/icons/palette";
@@ -120,6 +121,28 @@ export default function OwnerDashboard() {
             </View>
           </Animated.View>
         ) : null}
+
+        {/* r353 — the Institutional Operating Workspace door (web
+            OWNER_NAV parity: Briefcase — Landmark is taken by the
+            institutions console in this role's nav). The 13 statutory
+            sections live under /institution. */}
+        <Animated.View entering={entering(2)}>
+          <LedgerRow
+            onPress={() => {
+              haptics.selection();
+              router.push("/institution" as never);
+            }}
+            accessibilityLabel="مساحة العمل المؤسسية"
+          >
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+              <Briefcase size={18} color={p.textMuted} />
+              <View style={{ flex: 1 }}>
+                <T variant="body" weight="bold">مساحة العمل المؤسسية</T>
+                <T variant="xs" color="muted">الهيكل والكوادر والمجالس والبرامج والجودة والبحث</T>
+              </View>
+            </View>
+          </LedgerRow>
+        </Animated.View>
 
         <Animated.View entering={entering(2)}>
           <SectionBar

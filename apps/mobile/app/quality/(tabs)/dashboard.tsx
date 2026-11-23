@@ -1,7 +1,9 @@
 import { View } from "react-native";
 import Animated from "react-native-reanimated";
+import { router } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import Eye from "lucide-react-native/icons/eye";
+import Landmark from "lucide-react-native/icons/landmark";
 import { LargeTitleScreen } from "@/components/shell/LargeTitleScreen";
 import { SectionBar } from "@/components/ui";
 import { T } from "@/components/ui/text";
@@ -13,6 +15,7 @@ import { useInstitutionScope } from "@/hooks/useInstitutionScope";
 import { usePalette } from "@/design/theme";
 import { sp } from "@/design/tokens";
 import { useStaggerEntrance } from "@/motion";
+import { haptics } from "@/haptics";
 import { humanizeError } from "@/lib/errors";
 import { num } from "@/lib/format";
 import {
@@ -120,6 +123,29 @@ export default function QualityDashboard() {
                 <MetricTile label="الشُّعب" value={numOf(data.offerings)} />
                 <MetricTile label="المحاضرات" value={numOf(data.lectures)} />
               </View>
+            </Animated.View>
+
+            {/* r353 — the Institutional Operating Workspace door (web
+                QUALITY_NAV parity: Landmark — the compliance oversight
+                seat for the QUALITY role). The 13 statutory sections
+                live under /institution; quality reads them member-level
+                with internal-QA writes gated per capability. */}
+            <Animated.View entering={entering(2)}>
+              <LedgerRow
+                onPress={() => {
+                  haptics.selection();
+                  router.push("/institution" as never);
+                }}
+                accessibilityLabel="مساحة العمل المؤسسية"
+              >
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+                  <Landmark size={18} color={p.textMuted} />
+                  <View style={{ flex: 1 }}>
+                    <T variant="body" weight="bold">مساحة العمل المؤسسية</T>
+                    <T variant="xs" color="muted">التقييم الذاتي والاعتماد والتراخيص والتفتيش</T>
+                  </View>
+                </View>
+              </LedgerRow>
             </Animated.View>
 
             <Animated.View entering={entering(2)}>

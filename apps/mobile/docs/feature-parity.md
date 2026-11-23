@@ -99,7 +99,10 @@
 | Labs preview | `labs` | `GET /labs` | ✅ |
 | Messages / AI / library / alerts | mirrors student | same | ✅ |
 
-## 4. Admin (المسجل العام)
+## 4. Admin (إدارة المؤسسة)
+
+*The role's canonical name (r352 §D7) — «المسجل العام» is a job
+position, never the platform role.*
 
 | Feature | Native route | API | Status |
 |---|---|---|---|
@@ -113,7 +116,7 @@
 | Digital metrics | `digital` | `GET /admin/digital`, `GET /health` | ✅ |
 | Sync console | ~~`sync`~~ (removed) | ~~`GET /admin/sync`, `POST /admin/sync/trigger`~~ | 🚫 r342 t13 — zu-sync retirement: routes left the backend; `app/admin/sync` console screen + dashboard quick-action row deleted |
 | Invites | `invites` | `GET/POST /invites`, `DELETE /invites/:id` | ✅ |
-| Bulk import | `bulk-import` | `POST /users/bulk-import/preview|commit` | ✅ CSV picker |
+| Bulk import | `bulk-import` | `POST /users/bulk-import/preview`, `POST /users/bulk-import/commit` | ✅ r353 — CSV paste → server-planned preview (dupes + faculty/department resolution) → one-transactional commit with the temp-password sheet. The row was a phantom claim before (no route file existed) |
 | Feedback inbox | `feedback` | `GET /feedback`, `PATCH /feedback/:id` | ✅ |
 | Papers drill | dashboard | `GET /admin/papers` | ⚠️ plagiarism column labeled «محاكاة» |
 
@@ -147,7 +150,40 @@
 | Feedback inbox | `feedback` | `GET /feedback`, `PATCH /feedback/:id` | ✅ |
 | Personal inbox | `(tabs)/notifications` | `GET /notifications` | ✅ |
 
-## 7. Cross-cutting integrations
+## 7. Institutional Operating Workspace (r353 — `/institution/**`)
+
+*The institution's own statutory surface (web r352 parity). Reachable
+for ADMIN / QUALITY / OWNER — institution reads are context reads per
+contract §0; WRITE affordances gate on the server's effective
+capability set (`GET /me/permissions`) via `useMyCapabilities`, never
+role-name inference. The org-tree wire shape (`{ unit, children }`)
+is unwrapped at the api seam (the web's live-QA lesson). Kind-aware:
+research hides for Law 21/2023 stages 1–2.*
+
+| Section | Native route | API | Status |
+|---|---|---|---|
+| Overview (masthead + section rail) | `institution` | `GET /institutions/me/profile` | ✅ kind/sector/ownership/status + capability-marked sections |
+| Organization tree | `institution/organization` | `GET /institutional/org-units/tree` | ✅ collapsible tree, kind + status chips |
+| People & staff | `institution/people`, `people/[id]` | `GET /institutional/people`, `GET /institutional/people/:id` | ✅ search + detail with appointments |
+| Positions & appointments | `institution/positions`, `appointments/[id]` | `GET /institutional/appointments`, `GET /institutional/appointments/:id` | ✅ status-filtered register + record |
+| Access (capabilities & grants) | `institution/access` | `GET /me/permissions`, `GET /me/unit-capabilities`, `GET /admin/users/:id/unit-capabilities`, `POST /admin/users/:id/unit-capabilities`, `POST /admin/unit-capabilities/:grantId/revoke` | ✅ own effective set + grant/revoke management (UNIT_CAPABILITIES_ASSIGN-gated) |
+| Councils & meetings | `institution/councils`, `councils/[id]`, `councils/[id]/meetings/[meetingId]` | `GET /governance/councils`, `GET /governance/councils/:id`, `GET /governance/councils/:id/meetings`, `GET /governance/meetings/:id` | ✅ memberships → meetings → agenda/attendance/resolutions/minutes |
+| Programs & versions | `institution/programs`, `programs/[id]` | `GET /academic/programs`, `GET /academic/programs/:id` | ✅ status-filtered + version history |
+| Training placements + evaluation | `institution/training` | `GET /academic/training-placements`, `PATCH /academic/training-placements/:id` | ✅ evaluation write (PROGRAMS_MANAGE-gated) |
+| Learners / enrollments / credentials | `institution/students` | `GET /academic/learners`, `GET /academic/program-enrollments`, `GET /academic/credentials` | ✅ three-register segmented surface |
+| Quality (self-assessment + accreditation) | `institution/quality` | `GET /compliance/self-assessments`, `GET /compliance/accreditations` | ✅ two-register segmented surface |
+| Licenses / inspections / findings | `institution/licenses` | `GET /compliance/licenses`, `GET /compliance/inspections`, `GET /compliance/findings` | ✅ three-register segmented surface |
+| Facilities / equipment / reservations | `institution/facilities`, `facilities/[id]` | `GET /operations/facilities`, `GET /operations/facilities/:id`, `GET /operations/equipment`, `GET /operations/reservations`, `GET /operations/work-orders`, `POST /operations/reservations` | ✅ facility record + reservation write (FACILITIES_MANAGE-gated) |
+| Institutional research | `institution/research`, `research/[id]` | `GET /research-projects`, `GET /research-projects/:id`, `GET /research-outputs` | ✅ team + outputs (kind-gated: hidden for intermediate institutes / vocational centers) |
+
+**Honest scope note:** the heavy authoring CRUD (creating org units,
+people, appointments, councils, programs…) remains web-first — the
+mobile surface reads the real data and carries the on-site writes the
+field needs (grant/revoke capabilities, training evaluation, facility
+booking). Creation flows on mobile are follow-up work, tracked in the
+PR body — never dead buttons.
+
+## 8. Cross-cutting integrations
 
 | Concern | Implementation | Status |
 |---|---|---|
@@ -161,6 +197,6 @@
 | Deep links | web-path-mirroring routes + `ulara://` scheme; notification links honor safe in-app paths | ✅ |
 | Performance | FlashList on long feeds, expo-image caching, lazy tabs | ✅ |
 
-## 8. Deployment mismatch watch
+## 9. Deployment mismatch watch
 
 The web surface + API deploy automatically to Vercel from `main` (deploy.yml, gated on its repository secrets — Deploy run evidence lands in the run summary). Endpoints added in source but not yet deployed return 404 until the next deploy; the client normalizes this honestly rather than fabricating data. At Ω+2.0 revalidation the deployed `buildId` was current with `main` (`74dd870`), and `scripts/contract-check.mjs` (253 routes, 0 drift) runs against backend source on every Mobile workflow run.
