@@ -58,27 +58,26 @@ export function OwnerGovernancePage() {
     return chartColors();
   }, [themeKey]);
 
-  const growthChartData = useMemo(() => govData ? {
-    labels: govData.weeklyGrowth.map((w) => w.week),
-    datasets: [
-      {
-        label: 'مستخدمون جدد',
-        data: govData.weeklyGrowth.map((w) => w.count),
-        borderColor: c.accent,
-        backgroundColor: `color-mix(in srgb, ${c.accent} 12%, transparent)`,
-        fill: true,
-        tension: 0.4,
-        // A lone point draws with more presence — a 2px-radius dot
-        // alone on an integer axis reads as "one week of data", not
-        // "broken chart" (4-A7 P1-4). Still inside the memo so the
-        // prop identity stays stable across unrelated re-renders
-        // (audit 11-f P2-2 — the pinned contract).
-        pointRadius: govData.weeklyGrowth.length === 1 ? 5 : 4,
-        pointHoverRadius: 7,
-        pointBackgroundColor: c.accent,
-      },
-    ],
-  } : null, [govData, c]);
+  const growthChartData = useMemo(() => {
+    if (!govData) return null;
+    const weeklyGrowth = govData.weeklyGrowth ?? [];
+    return {
+      labels: weeklyGrowth.map((w) => w.week),
+      datasets: [
+        {
+          label: 'مستخدمون جدد',
+          data: weeklyGrowth.map((w) => w.count),
+          borderColor: c.accent,
+          backgroundColor: `color-mix(in srgb, ${c.accent} 12%, transparent)`,
+          fill: true,
+          tension: 0.4,
+          pointRadius: weeklyGrowth.length === 1 ? 5 : 4,
+          pointHoverRadius: 7,
+          pointBackgroundColor: c.accent,
+        },
+      ],
+    };
+  }, [govData, c]);
 
   /* 22-b (4-A7 P1-4): a COUNT series — weekly signups — must never
    * render fractional y-ticks (4.75→5.25 step 0.05 signalled false
@@ -236,19 +235,19 @@ export function OwnerGovernancePage() {
               message="تعذّر تحميل بيانات النموّ"
               onRetry={() => governance.refetch()}
             />
-          ) : govData.weeklyGrowth.length === 0 ? (
+          ) : (govData.weeklyGrowth ?? []).length === 0 ? (
             <EmptyState illustration="empty-list" title="لا توجد بيانات نموّ بعد" description="سيُرسم المنحنى فور تسجيل أوّل مستخدم." />
           ) : (
             <ChartFrame
               className="owner-chart-container"
               ariaLabel={growthAriaLabel}
-              summary={govData.weeklyGrowth.length === 1
+              summary={(govData.weeklyGrowth ?? []).length === 1
                 ? `أسبوع واحد من البيانات حتى الآن — ${countAr(govData.weeklyGrowth[0]!.count, ['مستخدم جديد واحد', 'مستخدمان جديدان', 'مستخدمين جدد', 'مستخدماً جديداً'])} في أسبوعه الأول، ويُرسم المنحنى فور تسجيل الأسبوع القادم.`
-                : `أعلى نموّ ${countAr(Math.max(...govData.weeklyGrowth.map((w) => w.count)), ['مستخدم جديد واحد', 'مستخدمان جديدان', 'مستخدمين جدد', 'مستخدماً جديداً'])} في أسبوع واحد.`}
+                : `أعلى نموّ ${countAr(Math.max(...(govData.weeklyGrowth ?? []).map((w) => w.count)), ['مستخدم جديد واحد', 'مستخدمان جديدان', 'مستخدمين جدد', 'مستخدماً جديداً'])} في أسبوع واحد.`}
               table={{
                 caption: 'نموّ المستخدمين الأسبوعي',
                 columns: ['الأسبوع', 'مستخدمون جدد'],
-                rows: govData.weeklyGrowth.map((w) => [w.week, w.count]),
+                rows: (govData.weeklyGrowth ?? []).map((w) => [w.week, w.count]),
               }}
             >
               <Line key={themeKey} data={growthChartData!} options={growthOptions} />

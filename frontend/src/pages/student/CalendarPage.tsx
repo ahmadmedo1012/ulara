@@ -158,7 +158,7 @@ export default function StudentCalendarPage() {
         cells,
       ),
       ...datedEvents(
-        dash.data.agenda.assignments.map((a) => ({
+        (dash.data?.agenda?.assignments ?? []).map((a) => ({
           id: a.id,
           title: `${ASSIGNMENT_KIND_LABEL[a.type]}: ${a.title}`,
           at: a.dueAt,

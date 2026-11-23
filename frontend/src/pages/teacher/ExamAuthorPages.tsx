@@ -588,8 +588,8 @@ export default function ExamAuthoringPage() {
   const [tab, setTab] = useState<HubTab>('templates');
   const [building, setBuilding] = useState(false);
 
-  const canAuthor = perms.data?.capabilities.includes('EXAMS_AUTHOR') ?? false;
-  const canModerate = perms.data?.capabilities.includes('EXAMS_MODERATE') ?? false;
+  const canAuthor = perms.data?.capabilities?.includes('EXAMS_AUTHOR') ?? false;
+  const canModerate = perms.data?.capabilities?.includes('EXAMS_MODERATE') ?? false;
 
   const tabs = useMemo<Array<{ value: HubTab; label: string }>>(() => [
     ...(canAuthor
@@ -838,7 +838,7 @@ function PublishButton({
   const meId = useAuthStore((s) => s.user?.id);
   const navigate = useNavigate();
   const perms = useMyPermissions();
-  const canAuthor = perms.data?.capabilities.includes('EXAMS_AUTHOR') ?? false;
+  const canAuthor = perms.data?.capabilities?.includes('EXAMS_AUTHOR') ?? false;
 
   // The backend gate: publish requires APPROVED + authorship. The button
   // renders only where the gate can pass — anywhere else it would be a
@@ -2170,7 +2170,7 @@ export function ExamTemplateDetailPage() {
 
 function TemplateDetailBody({ template }: { template: ExamTemplateDetail }) {
   const perms = useMyPermissions();
-  const canModerate = perms.data?.capabilities.includes('EXAMS_MODERATE') ?? false;
+  const canModerate = perms.data?.capabilities?.includes('EXAMS_MODERATE') ?? false;
   const user = useAuthStore((s) => s.user);
   // The grading section renders only where the attempts endpoint's gate
   // can pass for THIS viewer (the PublishButton rule: never a surface
@@ -2338,8 +2338,8 @@ function AuthorActions({ template }: { template: ExamTemplateDetail }) {
   const [editing, setEditing] = useState(false);
   const [cloneFailed, setCloneFailed] = useState(false);
 
-  const canAuthor = perms.data?.capabilities.includes('EXAMS_AUTHOR') ?? false;
-  const canModerate = perms.data?.capabilities.includes('EXAMS_MODERATE') ?? false;
+  const canAuthor = perms.data?.capabilities?.includes('EXAMS_AUTHOR') ?? false;
+  const canModerate = perms.data?.capabilities?.includes('EXAMS_MODERATE') ?? false;
   // The capability AND the ownership/status gate must both hold — the
   // backend's PATCH door is requireCapability('EXAMS_AUTHOR') first,
   // then the author/oversight assert (canEditTemplate mirrors only the

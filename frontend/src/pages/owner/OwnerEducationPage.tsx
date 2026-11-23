@@ -154,7 +154,7 @@ export function OwnerEducationPage() {
     );
   }
 
-  const { totals, byFaculty, topCourses, workloadBuckets, attendanceTrend } = edu;
+  const { totals, byFaculty = [], topCourses = [], workloadBuckets = { idle: 0, one: 0, two: 0, three: 0, fourPlus: 0 }, attendanceTrend = [] } = edu;
 
   const totalTeachers =
     workloadBuckets.idle +

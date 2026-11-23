@@ -430,10 +430,11 @@ export function QualityDashboardPage() {
   // 5-A8 P2-4 (chart honesty): a 100/0/0 distribution renders a solid
   // ring with zero analytical signal — degenerate distributions get
   // the honest ProgressBar form instead of the doughnut.
+  const attendance = e?.attendance ?? { presentRate: 0, lateRate: 0, absentRate: 0, total: 0 };
   const attendanceDominant = Math.max(
-    e.attendance.presentRate,
-    e.attendance.lateRate,
-    e.attendance.absentRate,
+    attendance.presentRate,
+    attendance.lateRate,
+    attendance.absentRate,
   ) >= 97;
 
   // KPI bars — every value derives from a real payload field:
@@ -479,9 +480,9 @@ export function QualityDashboardPage() {
           },
           {
             label: 'معدل الحضور',
-            value: <CountIn value={Math.round(e.attendance.presentRate)} suffix="%" />,
-            trend: countAr(e.attendance.total, ['سجل واحد', 'سجلان', 'سجلات', 'سجلاً']),
-            trendTone: e.attendance.presentRate >= 75 ? 'up' : e.attendance.presentRate >= 60 ? 'flat' : 'down',
+            value: <CountIn value={Math.round(attendance.presentRate)} suffix="%" />,
+            trend: countAr(attendance.total, ['سجل واحد', 'سجلان', 'سجلات', 'سجلاً']),
+            trendTone: attendance.presentRate >= 75 ? 'up' : attendance.presentRate >= 60 ? 'flat' : 'down',
             to: '/quality/courses?metric=attendance',
           },
           {
@@ -556,8 +557,8 @@ export function QualityDashboardPage() {
               (WS-F6 pins the four progressbar names). */}
           <Card title="مؤشرات الجودة الأساسية" icon={ShieldCheck}>
             <div className="qlt-kpi-ledger">
-              <ProgressBar value={e.attendance.presentRate} label="معدل الحضور التراكمي" ariaLabel="معدل الحضور التراكمي" color="var(--success)" />
-              <ProgressBar value={e.videos.completionRate} label="معدل إكمال المحاضرات" ariaLabel="معدل إكمال المحاضرات" color="var(--accent)" />
+              <ProgressBar value={attendance.presentRate} label="معدل الحضور التراكمي" ariaLabel="معدل الحضور التراكمي" color="var(--success)" />
+              <ProgressBar value={e.videos?.completionRate ?? 0} label="معدل إكمال المحاضرات" ariaLabel="معدل إكمال المحاضرات" color="var(--accent)" />
               <ProgressBar value={enrollmentRate} label="معدل تسجيل الطلاب في المقرّرات" ariaLabel="معدل تسجيل الطلاب في المقرّرات" color="var(--brand-purple)" />
               <ProgressBar value={paperProgress} label="نسبة البحوث المكتملة التقييم" ariaLabel="نسبة البحوث المكتملة التقييم" color="var(--gold)" />
             </div>
@@ -570,9 +571,9 @@ export function QualityDashboardPage() {
               honest note beats a solid ring that carries no signal. */}
           {attendanceDominant ? (
             <div className="flex-col gap-4">
-              <ProgressBar value={e.attendance.presentRate} label="حضور" ariaLabel="نسبة الحضور" color="var(--success)" />
+              <ProgressBar value={attendance.presentRate} label="حضور" ariaLabel="نسبة الحضور" color="var(--success)" />
               <p className="text-sm text-muted">
-                تأخير <bdi>{Math.round(e.attendance.lateRate)}%</bdi> · غياب <bdi>{Math.round(e.attendance.absentRate)}%</bdi>
+                تأخير <bdi>{Math.round(attendance.lateRate)}%</bdi> · غياب <bdi>{Math.round(attendance.absentRate)}%</bdi>
               </p>
               <p className="text-xs text-subtle">
                 كل السجلات تقريباً بوضع واحد؛ يظهر المخطط الدائريّ فور تنوّع حالات الحضور.
@@ -580,14 +581,14 @@ export function QualityDashboardPage() {
             </div>
           ) : (
           <ChartFrame
-            ariaLabel={`توزيع الحضور: حضور ${Math.round(e.attendance.presentRate)}% وتأخر ${Math.round(e.attendance.lateRate)}% وغياب ${Math.round(e.attendance.absentRate)}%`}
+            ariaLabel={`توزيع الحضور: حضور ${Math.round(attendance.presentRate)}% وتأخر ${Math.round(attendance.lateRate)}% وغياب ${Math.round(attendance.absentRate)}%`}
             table={{
               caption: 'توزيع الحضور',
               columns: ['الحالة', 'النسبة'],
               rows: [
-                ['حضور', Math.round(e.attendance.presentRate)],
-                ['تأخر', Math.round(e.attendance.lateRate)],
-                ['غياب', Math.round(e.attendance.absentRate)],
+                ['حضور', Math.round(attendance.presentRate)],
+                ['تأخر', Math.round(attendance.lateRate)],
+                ['غياب', Math.round(attendance.absentRate)],
               ],
             }}
             height={220}
@@ -598,7 +599,7 @@ export function QualityDashboardPage() {
               data={{
                 labels: ['حضور', 'تأخر', 'غياب'],
                 datasets: [{
-                  data: [e.attendance.presentRate, e.attendance.lateRate, e.attendance.absentRate],
+                  data: [attendance.presentRate, attendance.lateRate, attendance.absentRate],
                   backgroundColor: [cc.success, cc.warning, cc.danger],
                   borderColor: cc.surface,
                   borderWidth: 2,
@@ -1272,10 +1273,13 @@ export function QualityEngagementPage() {
   const enrollmentRate = d.totalStudents > 0 ? Math.min(100, (d.enrollments / d.totalStudents) * 100) : 0;
   // Empty weeklyActive (backend edge) must read as an honest dash,
   // never as NaN (audit 0-e P2-39).
-  const weeklyAvg = d.weeklyActive.length > 0
-    ? Math.round(d.weeklyActive.reduce((a, b) => a + b, 0) / d.weeklyActive.length)
+  const weeklyActive = d?.weeklyActive ?? [];
+  const attendance = d?.attendance ?? { presentRate: 0, lateRate: 0, absentRate: 0, total: 0 };
+  const videos = d?.videos ?? { completionRate: 0, completedLectures: 0 };
+  const weeklyAvg = weeklyActive.length > 0
+    ? Math.round(weeklyActive.reduce((a, b) => a + b, 0) / weeklyActive.length)
     : null;
-  const peak = d.weeklyActive.length > 0 ? Math.max(...d.weeklyActive) : null;
+  const peak = weeklyActive.length > 0 ? Math.max(...weeklyActive) : null;
 
   return (
     <div className="page">
@@ -1287,15 +1291,15 @@ export function QualityEngagementPage() {
         cells={[
           {
             label: 'معدل الحضور',
-            value: <CountIn value={Math.round(d.attendance.presentRate)} suffix="%" />,
-            trend: countAr(d.attendance.total, ['سجل واحد', 'سجلان', 'سجلات', 'سجلاً']),
-            trendTone: d.attendance.presentRate >= 75 ? 'up' : d.attendance.presentRate >= 60 ? 'flat' : 'down',
+            value: <CountIn value={Math.round(attendance.presentRate)} suffix="%" />,
+            trend: countAr(attendance.total, ['سجل واحد', 'سجلان', 'سجلات', 'سجلاً']),
+            trendTone: attendance.presentRate >= 75 ? 'up' : attendance.presentRate >= 60 ? 'flat' : 'down',
             to: '/quality/courses?metric=attendance',
           },
           {
             label: 'إكمال المحاضرات',
-            value: <CountIn value={Math.round(d.videos.completionRate)} suffix="%" />,
-            trend: countAr(d.videos.completedLectures, ['محاضرة مكتملة', 'محاضرتان مكتملتان', 'محاضرات مكتملة', 'محاضرة مكتملة']),
+            value: <CountIn value={Math.round(videos.completionRate)} suffix="%" />,
+            trend: countAr(videos.completedLectures, ['محاضرة مكتملة', 'محاضرتان مكتملتان', 'محاضرات مكتملة', 'محاضرة مكتملة']),
             trendTone: 'flat',
             to: '/quality/courses?metric=completion',
           },
@@ -1735,7 +1739,7 @@ export function QualityAlertsPage() {
          * itself. */
         actions={(
           <>
-            {q.data && q.data.counts.critical > 0 && (
+            {q.data && q.data.counts && q.data.counts.critical > 0 && (
               /* R305 DS (§D): the critical count rides the chip lexicon. */
               <span className="hr-chip" data-tone="danger">{countAr(q.data.counts.critical, ['تنبيه حرج', 'تنبيهان حرجان', 'تنبيهات حرجة', 'تنبيهاً حرجاً'])}</span>
             )}

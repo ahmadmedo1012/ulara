@@ -194,7 +194,7 @@ export function OwnerSystemPage() {
                 every page-index seat). */}
             <span className="page-index" aria-hidden="true" dir="ltr">[07]</span>
             النظام والتشغيل
-            {sysData && sysData.alerts.openCount > 0 && (
+            {sysData && sysData.alerts && sysData.alerts.openCount > 0 && (
               <span className="owner-badge-counter">
                 <bdi>{formatNum(sysData.alerts.openCount)}</bdi>
               </span>

@@ -213,7 +213,7 @@ export default function StudentCoursesPage() {
   const [submitTarget, setSubmitTarget] = useState<{ assignment: AgendaAssignment; offeringId: string } | null>(null);
   const [filter, setFilter] = useState<CourseFilter>('all');
 
-  const upcoming = dashboard.data?.agenda.assignments ?? [];
+  const upcoming = dashboard.data?.agenda?.assignments ?? [];
 
   const counts: Record<CourseFilter, number> = {
     all: data?.length ?? 0,

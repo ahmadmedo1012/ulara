@@ -69,9 +69,9 @@ export function GamificationPage() {
   // Real self-development progression (level / tier / distance to next level).
   const training = useTrainingMe();
 
-  const xp = dash.data ? dash.data.kpi.totalXp : null;
-  const rank = dash.data?.kpi.rank ?? null;
-  const cohortSize = dash.data?.kpi.cohortSize ?? 0;
+  const xp = dash.data?.kpi?.totalXp ?? null;
+  const rank = dash.data?.kpi?.rank ?? null;
+  const cohortSize = dash.data?.kpi?.cohortSize ?? 0;
   const me = training.data;
 
   /* r224 (4A redesign — Superlist): the page opens with the pattern
@@ -116,8 +116,8 @@ export function GamificationPage() {
           },
           {
             label: 'مستوى التطوير الذاتي',
-            value: me ? formatNum(me.level.level) : '—',
-            hint: me ? TIER_LABEL[me.level.tier] : 'لم يبدأ المسار بعد',
+            value: me?.level ? formatNum(me.level.level) : '—',
+            hint: me?.level ? TIER_LABEL[me.level.tier] : 'لم يبدأ المسار بعد',
             tone: 'neutral',
           },
           {
@@ -151,21 +151,21 @@ export function GamificationPage() {
         ) : (
           <div
             className="r305g-level"
-            style={{ ['--tier-color' as never]: me ? TIER_COLOR[me.level.tier] : undefined }}
+            style={{ ['--tier-color' as never]: me?.level ? TIER_COLOR[me.level.tier] : undefined }}
           >
               <div
                 className="tier-orb lg"
-                data-empty={!me}
-                aria-label={me ? `المستوى ${me.level.level} في مسار التطوير الذاتي` : undefined}
+                data-empty={!me?.level}
+                aria-label={me?.level ? `المستوى ${me.level.level} في مسار التطوير الذاتي` : undefined}
               >
-                {me ? me.level.level : '—'}
+                {me?.level ? me.level.level : '—'}
               </div>
               <div className="r305g-level-main">
                 <span className="r305s-eyebrow">مستوى التقدّم</span>
                 <div className="r305g-level-title">
                   {training.isError
                     ? 'تعذّر تحميل مستوى التطوير الذاتي'
-                    : me
+                    : me?.level
                       ? `${TIER_LABEL[me.level.tier]} · المستوى ${me.level.level} في التطوير الذاتي`
                       : 'لم يبدأ مسار التطوير الذاتي بعد'}
                 </div>
@@ -193,7 +193,7 @@ export function GamificationPage() {
                     </button>
                   </div>
                 )}
-                {me && (
+                {me?.level && (
                   <>
                     <div
                       className="xp-track"
@@ -316,7 +316,7 @@ export function GamificationPage() {
                       : <bdi className="font-mono">#{i + 1}</bdi>}
                   </span>
                   <UserAvatar
-                    initials={l.avatarInitials ?? `${l.firstName[0] ?? ''}${l.lastName[0] ?? ''}`}
+                    initials={l.avatarInitials ?? `${l.firstName?.[0] ?? ''}${l.lastName?.[0] ?? ''}`}
                     color={l.avatarColor ?? undefined}
                     size={32}
                   />
@@ -952,7 +952,7 @@ export function ResultsPage() {
   }
 
   const d = q.data;
-  const hasGrades = d.courses.some((c) => c.gradePct !== null);
+  const hasGrades = d?.courses?.some((c) => c.gradePct !== null) ?? false;
   const cc = chartColors();
   /* r164-a (status semantics): النتائج الطالبية كانت تحمل سلّمًا
      خاصًا 85/70/60 يخالف سلّم النطاقات الكنونيّ الواحد
@@ -1370,7 +1370,7 @@ export function SocialPage() {
               <form onSubmit={submit} className="flex-col gap-3">
                 <div className="flex items-start gap-3">
                   <UserAvatar
-                    initials={user.avatarInitials ?? `${user.firstName[0] ?? ''}${user.lastName[0] ?? ''}`}
+                    initials={user.avatarInitials ?? `${user.firstName?.[0] ?? ''}${user.lastName?.[0] ?? ''}`}
                     color={user.avatarColor ?? undefined}
                     size={36}
                   />
@@ -1449,7 +1449,7 @@ export function SocialPage() {
             />
           ) : (
             posts.data.map((p) => {
-              const initials = p.author.avatarInitials ?? `${p.author.firstName[0] ?? ''}${p.author.lastName[0] ?? ''}`;
+              const initials = p.author.avatarInitials ?? `${p.author.firstName?.[0] ?? ''}${p.author.lastName?.[0] ?? ''}`;
               const reacted = hasReacted(p.id);
               /* The optimistic ±1 applies ONLY to this session's clicks —
                  a server-truth reaction is already inside _count.reactions.

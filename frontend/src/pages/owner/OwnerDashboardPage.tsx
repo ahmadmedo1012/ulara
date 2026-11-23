@@ -191,7 +191,7 @@ function OwnerActionStrip({ alerts }: { alerts: OperationalAlert[] }) {
       hint: 'فتح التنبيهات التشغيليّة',
     });
   }
-  const idle = education.data?.workloadBuckets.idle ?? 0;
+  const idle = education.data?.workloadBuckets?.idle ?? 0;
   if (education.isSuccess && idle > 0) {
     rows.push({
       key: 'idle-teachers',
