@@ -617,6 +617,17 @@
     /* v6 press-snap: the press hop rides the micro duration */
     transition-duration: var(--motion-duration-micro);
   }
+  /* R319 (C2-G2 · §C3): the .tab.on soft accent selection halo is
+     RETIRED (the old `box-shadow: 0 0 0 4px accent 14%` wash) — the
+     active state is the 2px hairline underline alone (::after below:
+     ink on light, accent on dark — no pill, no wash, the reference tab
+     grammar). (r356: restored verbatim — the e9be4a2 dedupe deleted
+     this rule with no duplicate to unify and no documented reason;
+     .tab carries live consumers (community/library/training) that
+     lost their press feedback while .pill/.btn kept theirs.) */
+  .tab:active {
+    transform: scale(0.96);
+  }
   /* (2026: the selected pill unifies on the royal signal in BOTH
      themes — light rode the ink slab while dark rode the accent; the
      owner's «selected states = the primary» rule makes it the accent
@@ -1399,6 +1410,7 @@
     border-radius: var(--r-xl);
     background: var(--c-grey-bg); color: var(--c-grey-deep);
     display: inline-flex; align-items: center; justify-content: center;
+    margin-block-end: var(--sp-3);
     transition: transform var(--motion-duration-reveal) var(--ease-out);
   }
   @media (hover: hover) and (pointer: fine) {
@@ -1449,12 +1461,14 @@
      ║  the page hasn't booted yet), don't just spin — also show a   ║
      ║  faint skeleton block so the layout doesn't feel broken.      ║
      ╚═══════════════════════════════════════════════════════════════╝ */
-    inline-size: 56px; block-size: 56px;
-    border-radius: var(--r-xl);
-    background: var(--c-grey-bg); color: var(--c-grey-deep);
-    display: inline-flex; align-items: center; justify-content: center;
-    margin-block-end: var(--sp-3);
-  }
+  /* (r356: the 56px fallback geometry that lived here as a SECOND
+     .state-icon rule is merged into the STATE family's .state-icon
+     above — one rule, one home. The e9be4a2 merge stranded this
+     block selector-less: floating declarations at layer depth are
+     dropped by the CSS parser, and the orphan `}` closed
+     @layer components early — pushing ~900 lines (incl. .text-subtle)
+     into the unlayered zone, the surface-drift contrast findings on
+     /student/lectures/:lectureId and the lost margin-block-end.) */
   /* 012-design-graphics-uplift T089 — bespoke illustration block
      replaces the icon on opt-in surfaces. Sized to give the scene
      room to breathe without dominating the empty/error layout. */
@@ -2351,6 +2365,7 @@
      overrides-layer ≤640 block owns the 44px floor wholesale; the
      same-value bang here was belt-and-braces. .teacher-row keeps its
      own 48px min from wave 3-c.) */
+}
 
 /* ╔═══════════════════════════════════════════════════════════════╗
    ║  wave 5-a: TEACHER PAGES (audit 0-e + wave-5 mission)         ║
