@@ -178,20 +178,37 @@ function DrawLecture() {
       {/* the lectern + the screen tower above it */}
       <DrawBox x={-20} y={-16} w={8} dd={8} h={6} delay={160} />
       <DrawBox x={-22} y={-14} z={6} w={14} dd={6} h={9} delay={300} />
-      {/* the play diamond on the screen's top face — the lecture plays */}
-      <polygon className="ip-draw ip-fill" pathLength={1} points={sheetDiamond(iso(-15, -11, 15.6).sx, iso(-15, -11, 15.6).sy, 2.6)} fill={PLATE.sienna} stroke={PLATE.ink} strokeWidth={0.9} style={d(580)} />
+      {/* the play diamond on the screen's top face — the lecture
+          plays (r354: the control reads ROYAL — the platform's media
+          voice; the warm colour stays on the wound: the dying trace +
+          its empty landing ring) */}
+      <polygon className="ip-draw ip-fill" pathLength={1} points={sheetDiamond(iso(-15, -11, 15.6).sx, iso(-15, -11, 15.6).sy, 2.6)} fill={PLATE.royal} stroke={PLATE.ink} strokeWidth={0.9} style={d(580)} />
       {/* the audience rows — six seats, no signal returning */}
       {[-16, -8, 0].map((ax, i) =>
         [2, 10].map((ay, j) => (
           <DrawBox key={`${i}-${j}`} x={ax} y={ay} w={4} dd={4} h={2} delay={660 + (i * 2 + j) * 90} step={40} />
         )),
       )}
-      {/* the measuring ruler — full height, at the far edge; its ticks
-          read ROYAL (r353: the platform's measurement voice on the
-          wound — the system that would have caught the dead trace) */}
+      {/* the measuring ruler — full height, at the far edge (r354:
+          the graduation now reads by SHAPE, not colour alone — the
+          r353 staff was a 3×4×24 sliver whose ticks rendered as ~2px
+          «colour segments»; the ticks now CROSS the staff's silhouette
+          like real graduations — majors run past both face edges
+          (y −9.6…−4.2, the Dim measure-line grammar the mastery
+          axes already use), minors stay inside — so the instrument
+          reads as a ruler even in grayscale); the ticks read ROYAL
+          (the platform's measurement voice on the wound — the system
+          that would have caught the dead trace) */}
       <DrawBox x={18} y={-8} w={3} dd={4} h={24} delay={1350} />
       {[3, 7, 11, 15, 19, 23].map((tz, i) => (
-        <DrawLine key={tz} from={[21, -7.6, tz]} to={[21, -6.2, tz]} delay={1450 + i * 45} strokeWidth={0.8} color={PLATE.royal} />
+        <DrawLine
+          key={tz}
+          from={[21, i % 2 === 0 ? -10.2 : -8.2, tz]}
+          to={[21, i % 2 === 0 ? -4.2 : -6.2, tz]}
+          delay={1450 + i * 45}
+          strokeWidth={i % 2 === 0 ? 1.25 : 0.85}
+          color={PLATE.royal}
+        />
       ))}
       {/* the lecture's dashed trace — it dies midway, never arriving */}
       <DrawRoute points={[[-10, -9, 15], [4, -3, 10], [14, -4, 7]]} delay={1700} />
@@ -220,16 +237,37 @@ function DrawGrading() {
         <DrawLine key={ly} from={[-14, ly, 6.4]} to={[-7, ly, 6.4]} delay={840 + i * 70} strokeWidth={0.8} />
       ))}
       {/* the day-count rail — the correction's journey across the
-          weeks; the ticks read ROYAL (the platform's clock on the
+          weeks; the graduation reads by SHAPE first (r354: the r353
+          ticks were ~2px marks inside the rail's 4-unit face — the
+          majors now CROSS the rail's silhouette, majors at the D+1
+          anchor, the span's midpoint and the D+14 end (y 5.8…10.4),
+          minors tucked inside (y 7…9.4) — the classic timeline
+          grammar); the ticks read ROYAL (the platform's clock on the
           wound — the wait the system would have closed) */}
       <DrawBox x={-8} y={6} w={34} dd={4} h={1} delay={1000} step={60} />
-      {[-6, -1.8, 2.4, 6.6, 10.8, 15, 19.2, 23.4].map((tx, i) => (
-        <DrawLine key={tx} from={[tx, 7.2, 1]} to={[tx, 8.8, 1]} delay={1120 + i * 55} strokeWidth={0.8} color={PLATE.royal} />
+      {/* r354 — the D+14 END major re-seats past the stamp (x 25.6,
+          right of the stamp's 18–24 footprint): the r353 tick grid
+          rode the rail at x 23.4 — straight through the stamp's body;
+          the end graduation now lands at the rail's true terminus,
+          clear of the ink it measures */}
+      {[-6, -1.8, 2.4, 6.6, 10.8, 15, 19.2].map((tx, i) => (
+        <DrawLine
+          key={tx}
+          from={[tx, i === 0 || i === 3 ? 5.8 : 7, 1]}
+          to={[tx, i === 0 || i === 3 ? 10.4 : 9.4, 1]}
+          delay={1120 + i * 55}
+          strokeWidth={i === 0 || i === 3 ? 1.2 : 0.85}
+          color={PLATE.royal}
+        />
       ))}
-      {/* the inked crawl — only the first stretch is ever corrected */}
-      <DrawRoute points={[[-6, 8, 1.6], [10, 8, 1.6]]} delay={1600} strokeWidth={1.6} opacity={1} />
+      <DrawLine from={[25.6, 5.8, 1]} to={[25.6, 10.4, 1]} delay={1120 + 7 * 55} strokeWidth={1.2} color={PLATE.royal} />
+      {/* the inked crawl — only the first stretch is ever corrected
+          (r354: the crawl is the system's correction progress — the
+          ROYAL data voice; the warm colour stays on the wound: the
+          D+14 stamp, the wait's climax) */}
+      <DrawRoute points={[[-6, 8, 1.6], [10, 8, 1.6]]} delay={1600} strokeWidth={1.6} opacity={1} stroke={PLATE.royal} />
       {/* the dashed remainder — weeks away */}
-      <DrawRoute points={[[10, 8, 1.6], [24, 8, 1.6]]} delay={1720} opacity={0.55} />
+      <DrawRoute points={[[10, 8, 1.6], [24, 8, 1.6]]} delay={1720} opacity={0.55} stroke={PLATE.royal} />
       {/* the D+14 stamp slamming in past the rail's end */}
       <DrawBox x={18} y={3} z={1} w={6} dd={5} h={3.5} top={PLATE.sienna} delay={1850} />
       <DrawTag x={stampTop.sx} y={stampTop.sy - 9} text="D+14" delay={2050} dark />
@@ -321,6 +359,52 @@ function DrawArchive() {
       <DrawBox x={13.5} y={-8} z={22} w={3} dd={3} h={1.2} delay={840} step={50} />
       <DrawBox x={17.5} y={-8} z={22} w={3} dd={3} h={1.2} delay={940} step={50} />
       <polygon className="ip-dash" points={brokenTab} fill="none" stroke={PLATE.sienna} strokeWidth={1.1} strokeDasharray="3 3" style={d(1060)} />
+      {/* r354 — the fallen fragment: the broken tab itself, drifted
+          off the cabinet's crown. The r353 seat (the dashed ghost
+          alone) read as «an empty slot», not «something broke AWAY»;
+          the wound now reads by SHAPE in three beats — the dashed
+          ghost slot where the tab was, a short dashed FALL LINE down
+          the cabinet's blind side, and the SHARD itself (a tilted
+          paper square, larger than life at this scale so it survives
+          the ~190px render) resting clear of the cabinet on bare
+          paper. Sheet-space authored (the mastery axes' own flat
+          grammar). */}
+      {(() => {
+        const pts = brokenTab.split(' ').map((pt) => {
+          const [px, py] = pt.split(',').map(Number);
+          return { x: px ?? 0, y: py ?? 0 };
+        });
+        const cx = pts.reduce((s, p) => s + p.x, 0) / pts.length;
+        const cy = pts.reduce((s, p) => s + p.y, 0) / pts.length;
+        const shard = { x: cx + 9.5, y: cy + 19 };
+        const hs = 3.4;
+        return (
+          <>
+            {/* the fall line — the tab's drift path off the crown */}
+            <line
+              className="ip-dash"
+              x1={cx + 2.2}
+              y1={cy + 2.6}
+              x2={shard.x - 1.4}
+              y2={shard.y - 3.4}
+              stroke={PLATE.sienna}
+              strokeWidth={0.95}
+              strokeDasharray="3 3"
+              style={d(1120)}
+            />
+            {/* the shard — the tab itself, tilted where it rests */}
+            <g style={d(1180)}>
+              <polygon
+                points={`${shard.x - hs},${shard.y} ${shard.x},${shard.y - hs} ${shard.x + hs},${shard.y} ${shard.x},${shard.y + hs}`}
+                fill={PLATE.paperHi}
+                stroke={PLATE.sienna}
+                strokeWidth={1.1}
+                style={{ transformBox: 'fill-box', transformOrigin: 'center', rotate: '18deg' }}
+              />
+            </g>
+          </>
+        );
+      })()}
       {/* the submitted page — floating, drifting toward the archive */}
       <DrawBox x={-24} y={-8} z={12} w={10} dd={7} h={1} delay={1150} step={60} />
       {[-6, -3.5, -1].map((ly, i) => (
@@ -330,7 +414,10 @@ function DrawArchive() {
       <DrawRoute points={[[-13, -4, 12.5], [-4, -3.5, 10.5]]} delay={1560} />
       <DrawRoute points={[[-4, -3.5, 10.5], [8, -4, 7]]} delay={1680} opacity={0.5} />
       {/* the lost-index tag — clear of the broken tab, above it */}
-      <DrawTag x={28} y={-24} text="IDX —" delay={1820} />
+      {/* r354 — the tag lifts 2 units (y −24 → −26): its rect bottom
+          kissed the ghost slot's crown (−16.45 vs −16.5) — the audit's
+          «slightly overlaps the cabinet's top edge» */}
+      <DrawTag x={28} y={-26} text="IDX —" delay={1820} />
     </>
   );
 }
