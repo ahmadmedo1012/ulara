@@ -1,7 +1,6 @@
 /* R332 — split VERBATIM from src/styles/landing.css · colleges = R313 D7 colleges registry strip (1712-1761)
-   map + proof: each split header's region ranges + the import order in landing.css
-   (the r332 ledger doc itself was lost in the 1.0 squash — R357 re-pointed
-   every citation to the living map) */
+   map + proof: the import order in landing.css + these region ranges
+   (the lost r332 ledger is keyed in docs/redesign/r357/LOST-DOCS.md) */
 
 /* ═══ شريط الكليات (R313 · D7 §9) — the colleges registry strip: the
    ruled hairline row that carries the #colleges anchor OFF the page —

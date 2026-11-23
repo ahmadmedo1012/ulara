@@ -1,7 +1,6 @@
 /* R332 — split VERBATIM from src/styles/landing.css · hero = R322 hero transplant + bp drawing + title block (371-1095) + R308 hi instrument (4028-4405) + fo-ticker (4406-4453)
-   map + proof: each split header's region ranges + the import order in landing.css
-   (the r332 ledger doc itself was lost in the 1.0 squash — R357 re-pointed
-   every citation to the living map) */
+   map + proof: the import order in landing.css + these region ranges
+   (the lost r332 ledger is keyed in docs/redesign/r357/LOST-DOCS.md) */
 
 /* ═══ HERO — R322 (2-b): the measured reference transplant ══════════════
  * the retired r322 extraction docs (hero-{1440,768,390}.json) — the reference

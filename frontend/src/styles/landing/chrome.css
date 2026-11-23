@@ -1,7 +1,6 @@
 /* R332 — split VERBATIM from src/styles/landing.css · chrome = R1 sheet chrome/frame/grain/labels/skip/mobile-menu (1-370) + R308 sc pointer (3933-4027) + R308 sl loader (4454-4854)
-   map + proof: each split header's region ranges + the import order in landing.css
-   (the r332 ledger doc itself was lost in the 1.0 squash — R357 re-pointed
-   every citation to the living map)
+   map + proof: the import order in landing.css + these region ranges
+   (the lost r332 ledger is keyed in docs/redesign/r357/LOST-DOCS.md)
 
    r335 (W-chrome) — the retired chrome is GONE from this sheet:
      · the R313 SheetLoader (.sl-*) — the mount retired with R333 P-D,
