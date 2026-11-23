@@ -562,14 +562,34 @@ async function main() {
   await browser.close();
   killServer();
 
+  // Group and deduplicate defects to prevent multi-viewport explosion
+  const grouped = {};
+  for (const d of defects) {
+    const rawMsg = d.message || (d.errors ? d.errors[0] : '') || d.type;
+    const cleanMsg = typeof rawMsg === 'string' ? rawMsg.split('\n')[0].slice(0, 200) : String(rawMsg);
+    const key = `${d.route}|${d.type}|${cleanMsg}`;
+    if (!grouped[key]) {
+      grouped[key] = {
+        route: d.route,
+        role: d.role,
+        type: d.type,
+        severity: d.severity,
+        message: cleanMsg,
+        viewports: [],
+      };
+    }
+    grouped[key].viewports.push(`${d.width}px:${d.theme}`);
+  }
+  const dedupedDefects = Object.values(grouped);
+
   // Save Master Defect Catalog
   const defectJsonPath = resolve(EVIDENCE_DIR, 'defects-master.json');
-  writeFileSync(defectJsonPath, JSON.stringify(defects, null, 2), 'utf8');
+  writeFileSync(defectJsonPath, JSON.stringify(dedupedDefects, null, 2), 'utf8');
 
   // Generate Markdown Summary
-  const p0s = defects.filter(d => d.severity === 'P0');
-  const p1s = defects.filter(d => d.severity === 'P1');
-  const p2s = defects.filter(d => d.severity === 'P2');
+  const p0s = dedupedDefects.filter(d => d.severity === 'P0');
+  const p1s = dedupedDefects.filter(d => d.severity === 'P1');
+  const p2s = dedupedDefects.filter(d => d.severity === 'P2');
 
   const summaryMd = `# Phase 1 Master Visual Defect Catalog (R355)
 
@@ -593,12 +613,12 @@ async function main() {
 ---
 
 ## 2. P0 Critical Defects
-${p0s.length === 0 ? '_None detected!_' : p0s.map(d => `- **[${d.role}] ${d.route} (${d.width}px, ${d.theme}):** ${d.message || d.type}`).join('\n')}
+${p0s.length === 0 ? '_None detected!_' : p0s.map(d => `- **[${d.role}] ${d.route} (${d.viewports.slice(0, 3).join(', ')}${d.viewports.length > 3 ? '...' : ''}):** ${d.message || d.type}`).join('\n')}
 
 ---
 
 ## 3. P1 Major Defects (Highlights)
-${p1s.slice(0, 30).map(d => `- **[${d.role}] ${d.route} (${d.width}px, ${d.theme}):** ${d.type} ${d.count ? `(count: ${d.count})` : ''} ${d.errors ? `(${d.errors[0]})` : ''}`).join('\n')}
+${p1s.slice(0, 30).map(d => `- **[${d.role}] ${d.route} (${d.viewports.slice(0, 3).join(', ')}):** ${d.type} — ${d.message || ''}`).join('\n')}
 
 ---
 
