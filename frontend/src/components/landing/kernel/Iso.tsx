@@ -101,7 +101,6 @@ export function IsoBox({
   hatchEast = false,
   opacity = 1,
   className,
-  cornerStone,
 }: {
   x: number;
   y: number;
@@ -117,16 +116,13 @@ export function IsoBox({
   hatchEast?: boolean;
   opacity?: number;
   className?: string;
-  cornerStone?: boolean;
 }) {
+  /* r354 — the cornerStone prop retires with its last consumer: the
+   * campus colour-law pass removed the copper quoin inlays (a scatter
+   * of warm points across the wings/gate/tower crown — the warm voice
+   * stays on the plate's focal moments only), and no other plate
+   * mounts it (the deadcode ratchet owns the removal) */
   const f = isoBoxFaces(x, y, z, w, d, h);
-  const corner = cornerStone
-    ? poly(
-        { x: x + w, y, z: z + h },
-        { x: x + w, y, z: z + h - 4 },
-        { x: x + w - 4, y, z: z + h },
-      )
-    : null;
   return (
     <g className={className} opacity={opacity}>
       <polygon points={f.west} fill={west} stroke={stroke} strokeWidth={strokeWidth} strokeLinejoin="round" />
@@ -138,9 +134,6 @@ export function IsoBox({
         strokeLinejoin="round"
       />
       <polygon points={f.top} fill={top} stroke={stroke} strokeWidth={strokeWidth} strokeLinejoin="round" />
-      {corner && (
-        <polygon points={corner} fill={PLATE.sienna} stroke={PLATE.ink} strokeWidth={0.8} />
-      )}
     </g>
   );
 }

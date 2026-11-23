@@ -4,10 +4,20 @@
  * THE PHASE-4 DIRECTIVE (r346 → r347): the landing's last screenshots
  * retire — the roles band's 8-slide media deck (the /media/product
  * dashboard captures) becomes EIGHT isometric self-running machines,
- * one per accordion row, each drawing ITS ROLE'S OWN WORK in the plate
+ * one per accordion row, each drawing ITS ROW'S OWN WORK in the plate
  * grammar (pure-CSS loops on the iso-loop-* belt, zero JS ticks). The
  * deck's cross-fade law is untouched (.rl-slide transform/opacity, the
  * measured reference belt); only the occupant of each slide changes.
+ *
+ * r354 (the roles-truth pass): the platform has EXACTLY FIVE entry
+ * roles — slides 01–05 are those roles (the Coord captions now carry
+ * the ROLE n/05 register). The last three slides are NOT entry roles:
+ * 06 is a USE CASE a student or teacher runs, 07 is a use case whose
+ * surface is still sealed, 08 is a BENEFICIARY with no separate
+ * account — their captions carry the USE CASE / BENEFICIARY register,
+ * and the band's accordion carries the matching group divider + kind
+ * chips (sections/Roles.tsx). No visitor can read eight independent
+ * entry roles off the sheet.
  *
  * Each machine is a DIFFERENT composition (the jscpd law — no two
  * scenes share a vocabulary):
@@ -50,7 +60,7 @@
  * plate; a dead JS pass still renders the full drawing.
  */
 import type { CSSProperties } from 'react';
-import { PLATE, iso, sheetDiamond } from '../../../lib/iso';
+import { PLATE, iso, isoBoxFaces, sheetDiamond } from '../../../lib/iso';
 import {
   IsoDefs,
   GroundFill,
@@ -152,7 +162,7 @@ function SceneStudent({ dataSpec }: { dataSpec?: string }) {
       <PlateLabel x={568} y={460} anchor="start" size={12}>
         رحلة شخصية: محطات فهم تُتقَن واحدًا واحدًا
       </PlateLabel>
-      <Coord x={152} y={478}>STUDENT JOURNEY / CHECKPOINTS x5</Coord>
+      <Coord x={152} y={478}>ROLE 01/05 · STUDENT JOURNEY / CHECKPOINTS x5</Coord>
     </SlideFrame>
   );
 }
@@ -214,7 +224,7 @@ function SceneTeacher({ dataSpec }: { dataSpec?: string }) {
       <PlateLabel x={568} y={460} anchor="start" size={12}>
         يبني المحاضرة والاختبار، ويصحّح بملاحظات
       </PlateLabel>
-      <Coord x={152} y={478}>TEACHER DESK / BUILD + GRADE</Coord>
+      <Coord x={152} y={478}>ROLE 02/05 · TEACHER DESK / BUILD + GRADE</Coord>
     </SlideFrame>
   );
 }
@@ -257,10 +267,12 @@ function SceneRegistrar({ dataSpec }: { dataSpec?: string }) {
         </g>
         <SeatLabel x={capTop.sx + 9} y={capTop.sy - 9} tx={70} ty={-62} text="الصلاحيات" />
 
-        {/* the live-reports ledger — the strip at the foot */}
+        {/* the live-reports ledger — the strip at the foot (r354: its
+            active line reads ROYAL — live data, the platform's voice;
+            the role's warm focal is the permissions key above) */}
         <g className="iso-loop-dot" style={ld('2.2s')}>
           <IsoBox x={-44} y={28} w={30} d={8} h={1.6} />
-          <Rune a={iso(-40, 32, 1.8)} b={iso(-24, 32, 1.8)} stroke={PLATE.sienna} />
+          <Rune a={iso(-40, 32, 1.8)} b={iso(-24, 32, 1.8)} stroke={PLATE.royal} />
           <Rune a={iso(-40, 34.5, 1.8)} b={iso(-30, 34.5, 1.8)} />
         </g>
         <SeatLabel x={iso(-34, 31, 1.8).sx} y={iso(-34, 31, 1.8).sy} tx={-60} ty={66} text="تقارير حيّة" />
@@ -269,7 +281,7 @@ function SceneRegistrar({ dataSpec }: { dataSpec?: string }) {
       <PlateLabel x={568} y={460} anchor="start" size={12}>
         السجلّ: كليات وأقسام وصلاحيات وتقارير حيّة
       </PlateLabel>
-      <Coord x={152} y={478}>REGISTRY / TOWER + WINGS + KEY</Coord>
+      <Coord x={152} y={478}>ROLE 03/05 · REGISTRY / TOWER + WINGS + KEY</Coord>
     </SlideFrame>
   );
 }
@@ -318,16 +330,21 @@ function SceneQuality({ dataSpec }: { dataSpec?: string }) {
         })}
         <SeatLabel x={iso(-55, 2, 3).sx} y={iso(-55, 2, 3).sy} tx={-62} ty={-50} text="مؤسسة معزولة" />
 
-        {/* the gauge — the dial over the middle compound */}
+        {/* the gauge — the dial over the middle compound (r354: the
+            needle reads ROYAL — quality's measurement is the
+            platform's own instrument, the why-panel precedent; the
+            role's warm focal is the flagged institution) */}
         <g transform={`translate(${dialC.sx} ${dialC.sy})`}>
           <circle r={9} fill={PLATE.paperHi} stroke={PLATE.ink} strokeWidth={1.1} />
           <g className="iso-loop-sweep">
-            <line x1={-6.6} y1={2} x2={6.6} y2={-2} stroke={PLATE.sienna} strokeWidth={1.6} strokeLinecap="round" />
+            <line x1={-6.6} y1={2} x2={6.6} y2={-2} stroke={PLATE.royal} strokeWidth={1.6} strokeLinecap="round" />
           </g>
           <circle r={1.5} fill={PLATE.ink} />
         </g>
 
-        {/* the compliance ledger — one strip beneath all three */}
+        {/* the compliance ledger — one strip beneath all three (r354:
+            the ticks all ride the record voice — the slide's ONE warm
+            focal is the flagged institution) */}
         <g className="iso-loop-dot" style={ld('2.4s')}>
           <IsoBox x={-46} y={26} w={88} d={7} h={1.6} />
           {[0, 1, 2, 3, 4, 5].map((i) => (
@@ -335,7 +352,7 @@ function SceneQuality({ dataSpec }: { dataSpec?: string }) {
               key={i}
               a={iso(-40 + i * 14, 30, 1.8)}
               b={iso(-34 + i * 14, 30, 1.8)}
-              stroke={i === 4 ? PLATE.sienna : PLATE.muted}
+              stroke={PLATE.muted}
             />
           ))}
         </g>
@@ -345,7 +362,7 @@ function SceneQuality({ dataSpec }: { dataSpec?: string }) {
       <PlateLabel x={568} y={460} anchor="start" size={12}>
         كل مؤسسة معزولة تمامًا عن غيرها
       </PlateLabel>
-      <Coord x={152} y={478}>QUALITY / ISOLATED x3 + LEDGER</Coord>
+      <Coord x={152} y={478}>ROLE 04/05 · QUALITY / ISOLATED x3 + LEDGER</Coord>
     </SlideFrame>
   );
 }
@@ -368,7 +385,9 @@ function SceneOwner({ dataSpec }: { dataSpec?: string }) {
         </g>
         {[0, 1, 2, 3, 4, 5, 6].map((i) => (
           <g key={i} className="iso-loop-dot" style={ld(`${0.8 + i * 0.3}s`)}>
-            <Rune a={iso(-28 + i * 10, 15.5, 2.4)} b={iso(-25 + i * 10, 15.5, 2.4)} stroke={i === 5 ? PLATE.sienna : PLATE.ink} />
+            {/* r354: the audit ticks all ride the record voice — the
+                slide's ONE warm focal is the keystone diamond above */}
+            <Rune a={iso(-28 + i * 10, 15.5, 2.4)} b={iso(-25 + i * 10, 15.5, 2.4)} stroke={PLATE.ink} />
           </g>
         ))}
         <SeatLabel x={iso(-30, 16, 2.4).sx} y={iso(-30, 16, 2.4).sy} tx={-72} ty={60} text="سجلّ التدقيق" />
@@ -397,11 +416,13 @@ function SceneOwner({ dataSpec }: { dataSpec?: string }) {
         </g>
         <SeatLabel x={keyPost.sx + 12} y={keyPost.sy} tx={62} ty={-54} text="مفاتيح منفصلة" />
 
-        {/* the institution seals — paper chips tied by dashed routes */}
+        {/* the institution seals — paper chips tied by dashed routes
+            (r354: the seals' marks ride the record voice — the slide's
+            ONE warm focal is the keystone) */}
         {[[-46, -18], [-30, -26], [34, -20]].map(([sx, sy], i) => (
           <g key={`${sx}-${sy}`} className="iso-loop-box" style={ld(`${1.4 + i * 0.35}s`)}>
             <IsoBox x={sx!} y={sy!} w={9} d={7} h={0.8} top={PLATE.paperHi} />
-            <Rune a={iso(sx! + 2, sy! + 2, 1)} b={iso(sx! + 6, sy! + 2, 1)} stroke={PLATE.sienna} />
+            <Rune a={iso(sx! + 2, sy! + 2, 1)} b={iso(sx! + 6, sy! + 2, 1)} stroke={PLATE.muted} />
           </g>
         ))}
         <g className="iso-loop-line" style={ld('1s')}>
@@ -416,7 +437,7 @@ function SceneOwner({ dataSpec }: { dataSpec?: string }) {
       <PlateLabel x={568} y={460} anchor="start" size={12}>
         الحاكمية: سجلّ تدقيق لا يُطمس، ومفاتيح منفصلة
       </PlateLabel>
-      <Coord x={152} y={478}>GOVERNANCE / AUDIT + KEYS x3</Coord>
+      <Coord x={152} y={478}>ROLE 05/05 · GOVERNANCE / AUDIT + KEYS x3</Coord>
     </SlideFrame>
   );
 }
@@ -440,11 +461,14 @@ function SceneResearcher({ dataSpec }: { dataSpec?: string }) {
           <IsoBox x={-30} y={2} w={18} d={9} z={2} h={1} top={PLATE.paperHi} />
         </g>
 
-        {/* the scan lens — the hovering circle, its pulse ring */}
+        {/* the scan lens — the hovering circle, its pulse ring (r354:
+            the lens is the system's integrity instrument — ROYAL; the
+            role's warm focal is the professor's copper margin marks,
+            the annotated-research story itself) */}
         <circle cx={lens.sx} cy={lens.sy} r={9} fill={PLATE.paperHi} stroke={PLATE.ink} strokeWidth={1.1} />
-        <polygon points={sheetDiamond(lens.sx, lens.sy, 1.8)} fill={PLATE.sienna} stroke={PLATE.ink} strokeWidth={0.7} />
+        <polygon points={sheetDiamond(lens.sx, lens.sy, 1.8)} fill={PLATE.royal} stroke={PLATE.ink} strokeWidth={0.7} />
         <g transform={`translate(${lens.sx} ${lens.sy})`}>
-          <polygon className="iso-loop-pulse" points={sheetDiamond(0, 0, 13)} fill="none" stroke={PLATE.sienna} strokeWidth={1.2} />
+          <polygon className="iso-loop-pulse" points={sheetDiamond(0, 0, 13)} fill="none" stroke={PLATE.royal} strokeWidth={1.2} />
         </g>
         <SeatLabel x={lens.sx} y={lens.sy - 9} tx={-30} ty={-56} text="فحص النزاهة" />
 
@@ -469,9 +493,9 @@ function SceneResearcher({ dataSpec }: { dataSpec?: string }) {
       </g>
 
       <PlateLabel x={568} y={460} anchor="start" size={12}>
-        يكتب بحثه: رفع، وفحص معلَن، وملاحظات معلَّمة
+        حالة استخدام — يكتب بحثه: رفع، وفحص معلَن، وملاحظات معلَّمة
       </PlateLabel>
-      <Coord x={152} y={478}>RESEARCH DESK / SCAN + MARGINS + SHELF</Coord>
+      <Coord x={152} y={478}>USE CASE · RESEARCH DESK / SCAN + MARGINS + SHELF</Coord>
     </SlideFrame>
   );
 }
@@ -501,7 +525,7 @@ function SceneLabs({ dataSpec }: { dataSpec?: string }) {
             {/* the dashed seal — the box's top face outline, NEVER a fill:
              * the honest «قيد التطوير» — the catalog browses, never runs */}
             <polygon
-              points={isoBoxTop(bx, by, bz + 6.5, 14, 10)}
+              points={isoBoxFaces(bx, by, bz + 6.5, 14, 10, 0).top}
               fill="none"
               stroke={PLATE.sienna}
               strokeWidth={1}
@@ -512,11 +536,14 @@ function SceneLabs({ dataSpec }: { dataSpec?: string }) {
         <PlateTag x={iso(-25, -11, 6.7).sx} y={iso(-25, -11, 6.7).sy - 9} text="SEALED" dark />
         <SeatLabel x={iso(-25, -11, 6.7).sx} y={iso(-25, -11, 6.7).sy} tx={-74} ty={-62} text="قيد التطوير" />
 
-        {/* the browsing lens — resting on one sealed box, pulsing */}
+        {/* the browsing lens — resting on one sealed box, pulsing
+            (r354: the pulse reads ROYAL — the system's browsing
+            instrument; the slide's warm focal is the sealed boxes, the
+            honest «قيد التطوير» wound) */}
         <circle cx={lensC.sx} cy={lensC.sy} r={7.5} fill={PLATE.paperHi} stroke={PLATE.ink} strokeWidth={1.1} />
         <polygon points={sheetDiamond(lensC.sx, lensC.sy, 1.5)} fill={PLATE.ink} />
         <g transform={`translate(${lensC.sx} ${lensC.sy})`}>
-          <polygon className="iso-loop-pulse" points={sheetDiamond(0, 0, 11)} fill="none" stroke={PLATE.sienna} strokeWidth={1.1} />
+          <polygon className="iso-loop-pulse" points={sheetDiamond(0, 0, 11)} fill="none" stroke={PLATE.royal} strokeWidth={1.1} />
         </g>
 
         {/* the catalog index — the mono chip under the shelf */}
@@ -527,20 +554,11 @@ function SceneLabs({ dataSpec }: { dataSpec?: string }) {
       </g>
 
       <PlateLabel x={568} y={460} anchor="start" size={12}>
-        المعامل الافتراضية قيد التطوير — فهرس دون تشغيل
+        حالة استخدام — المعامل الافتراضية قيد التطوير: فهرس دون تشغيل
       </PlateLabel>
-      <Coord x={152} y={478}>V-LABS / SEALED CATALOG x4</Coord>
+      <Coord x={152} y={478}>USE CASE · V-LABS / SEALED CATALOG x4</Coord>
     </SlideFrame>
   );
-}
-
-/* the sealed box's top-face outline (local helper — the dashed seal) */
-function isoBoxTop(x: number, y: number, z: number, w: number, d: number): string {
-  const p1 = iso(x, y, z);
-  const p2 = iso(x + w, y, z);
-  const p3 = iso(x + w, y + d, z);
-  const p4 = iso(x, y + d, z);
-  return `${p1.sx},${p1.sy} ${p2.sx},${p2.sy} ${p3.sx},${p3.sy} ${p4.sx},${p4.sy}`;
 }
 
 /* ═══════════ 08 · وليّ الأمر — the honest absence ═══════════ */
@@ -557,7 +575,7 @@ function SceneGuardian({ dataSpec }: { dataSpec?: string }) {
         <g className="iso-loop-dot" style={ld('0s')}>
           <IsoBox x={-48} y={-14} w={24} d={16} h={1} top={PLATE.paperHi} />
           {[0, 1, 2].map((ry) => (
-            <Rune key={ry} a={iso(-44, -10 + ry * 5, 1.2)} b={iso(-32 - (ry === 2 ? 6 : 0), -10 + ry * 5, 1.2)} stroke={ry === 0 ? PLATE.sienna : PLATE.muted} />
+            <Rune key={ry} a={iso(-44, -10 + ry * 5, 1.2)} b={iso(-32 - (ry === 2 ? 6 : 0), -10 + ry * 5, 1.2)} stroke={ry === 0 ? PLATE.royal : PLATE.muted} />
           ))}
         </g>
         <PlateTag x={iso(-36, -6, 1.4).sx} y={iso(-36, -6, 1.4).sy - 10} text="REPORT" dark />
@@ -594,9 +612,9 @@ function SceneGuardian({ dataSpec }: { dataSpec?: string }) {
       </g>
 
       <PlateLabel x={568} y={460} anchor="start" size={12}>
-        لا حساب منفصل — المتابعة عبر تقرير الطالب نفسه
+        مستفيد بلا حساب منفصل — المتابعة عبر تقرير الطالب نفسه
       </PlateLabel>
-      <Coord x={152} y={478}>GUARDIAN / REPORT ONLY</Coord>
+      <Coord x={152} y={478}>BENEFICIARY · GUARDIAN / REPORT ONLY</Coord>
     </SlideFrame>
   );
 }

@@ -187,7 +187,13 @@ function Wing({
   return (
     <g>
       <Shadow x={x} y={y} w={w} d={d} s={4} />
-      <IsoBox className="iso-box" x={x} y={y} z={2} w={w} d={d} h={h} strokeWidth={1.5} cornerStone />
+      {/* r354 colour-law pass: the wing's base drops its copper quoin
+          (cornerStone) — four wings × one inlay each read as a scatter
+          of copper points across the plinth; the wings keep clean
+          silhouettes (their arcades and roofs speak), the warm voice
+          stays on the campus's OWN focal moments (the two flags + the
+          observatory beacon + its signal route) */}
+      <IsoBox className="iso-box" x={x} y={y} z={2} w={w} d={d} h={h} strokeWidth={1.5} />
       {hip ? (
         /* the hipped roof — ridge + four hips, two shaded faces */
         (() => {
@@ -281,9 +287,12 @@ export function CampusFrag({ name }: { name: CampusFragName }) {
           {/* the west wall's two leaves — the gate gap between them */}
           <IsoBox className="iso-box" x={1.6} y={54.3} w={21} d={1.1} h={2} z={2} top={PLATE.top} strokeWidth={0.8} />
           <IsoBox className="iso-box" x={33.4} y={54.3} w={21} d={1.1} h={2} z={2} top={PLATE.top} strokeWidth={0.8} />
-          {/* the gate — two piers, the lintel, the pennant */}
-          <IsoBox className="iso-box" x={23} y={53.6} w={2} d={2.5} h={5.4} strokeWidth={1.1} cornerStone />
-          <IsoBox className="iso-box" x={31} y={53.6} w={2} d={2.5} h={5.4} strokeWidth={1.1} cornerStone />
+          {/* the gate — two piers, the lintel, the pennant (r354: the
+              piers drop their copper quoins — the gate's warm voice is
+              the PENNANT, the learner's threshold flag, not cut-stone
+              inlays) */}
+          <IsoBox className="iso-box" x={23} y={53.6} w={2} d={2.5} h={5.4} strokeWidth={1.1} />
+          <IsoBox className="iso-box" x={31} y={53.6} w={2} d={2.5} h={5.4} strokeWidth={1.1} />
           <IsoBox className="iso-box" x={23} y={54.2} z={7.4} w={10} d={1.3} h={0.9} top={PLATE.east} strokeWidth={0.9} />
           {(() => {
             const t = iso(28, 54.8, 8.3);
@@ -347,14 +356,17 @@ export function CampusFrag({ name }: { name: CampusFragName }) {
           ))}
           {/* the crown — clerestory slits + the dome over the
               reading room + the finial flag */}
-          <IsoBox className="iso-box" x={23} y={23} z={15} w={10} d={10} h={8} strokeWidth={1.4} cornerStone />
+          <IsoBox className="iso-box" x={23} y={23} z={15} w={10} d={10} h={8} strokeWidth={1.4} />
           {[0, 1, 2].map((i) => (
             <g key={i}>
               <line {...lineBetween(iso(33, 25.5 + i * 3, 16.4), iso(33, 25.5 + i * 3, 21.4))} stroke={PLATE.muted} strokeWidth={0.8} />
               <line {...lineBetween(iso(25.5 + i * 3, 33, 16.4), iso(25.5 + i * 3, 33, 21.4))} stroke={PLATE.muted} strokeWidth={0.8} />
             </g>
           ))}
-          <IsoDome x={28} y={28} z={23} r={5.6} />
+          {/* r354 — oculus={false}: the reading-room dome drops its warm
+              oculus dot (another copper scatter point); the tower's warm
+              voice is the finial flag alone */}
+          <IsoDome x={28} y={28} z={23} r={5.6} oculus={false} />
           {(() => {
             const t = iso(28, 28, 27.4);
             const t2 = iso(28, 28, 31);
@@ -448,7 +460,10 @@ export function CampusFrag({ name }: { name: CampusFragName }) {
             return (
               <g key={i} className="iso-furn">
                 <line x1={p.sx} y1={p.sy} x2={p.sx} y2={p.sy - 4.4} stroke={PLATE.ink} strokeWidth={0.9} />
-                <SheetDiamond cx={p.sx} cy={p.sy - 5.4} s={1.1} fill={PLATE.sienna} stroke={PLATE.ink} strokeWidth={0.6} />
+                {/* r354 — the lamp crowns de-copper (furniture, not a
+                    focal moment): the plaza's warm voice stays with the
+                    observatory beacon alone */}
+                <SheetDiamond cx={p.sx} cy={p.sy - 5.4} s={1.1} fill={PLATE.ink} stroke={PLATE.ink} strokeWidth={0.6} />
               </g>
             );
           })}
@@ -507,8 +522,10 @@ export function CampusFrag({ name }: { name: CampusFragName }) {
           <Route className="iso-route" points={[[9, 47, 10], [16, 40, 10], [21, 36, 10]]} stroke={PLATE.royal} />
           <Route className="iso-route" points={[[47, 47, 9], [40, 40, 9], [38, 38, 9]]} stroke={PLATE.royal} />
           <Route className="iso-route" points={[[24, 49, 4], [22, 42, 6], [24, 38, 8]]} stroke={PLATE.royal} />
-          {/* the observatory signal — the ONE warm route on the sheet */}
-          <Route className="iso-route" points={[[50.5, 30, 12], [44, 28, 12], [38, 27, 12]]} stroke="var(--iso-signal)" />
+          {/* the observatory signal — the ONE warm route on the sheet
+              (r354: rides --iso-sienna directly — the redundant
+              --iso-signal alias retires; ONE warm seat, one name) */}
+          <Route className="iso-route" points={[[50.5, 30, 12], [44, 28, 12], [38, 27, 12]]} stroke={PLATE.sienna} />
           {/* the flow chevrons — direction on the two reading-start
               routes (small royal arrows, the net's own pulse) */}
           {([
@@ -532,7 +549,7 @@ export function CampusFrag({ name }: { name: CampusFragName }) {
           <IsoNode className="iso-node" x={40} y={16} z={10} s={1.3} fill={PLATE.royal} />
           <IsoNode className="iso-node" x={16} y={40} z={10} s={1.3} fill={PLATE.royal} />
           <IsoNode className="iso-node" x={40} y={40} z={9} s={1.3} fill={PLATE.royal} />
-          <IsoNode className="iso-node" x={44} y={28} z={12} s={1.3} fill="var(--iso-signal)" />
+          <IsoNode className="iso-node" x={44} y={28} z={12} s={1.3} fill={PLATE.sienna} />
         </>
       );
     case 'trees':
