@@ -11,12 +11,17 @@
   (`I18nManager.forceRTL` + `ensureRTL` مرة واحدة عند الإقلاع)،
   ترجمة `ar`، أرقام لاتينية افتراضيًا مع خيار عربية-هندية
   (`useNumerals` — بلا Intl على Hermes عمدًا).
-- **البصمة البصرية**: ورق/حبر/سيينا (نظام ds — انظر
-  [design-system.md](design-system.md))؛ 8 أصول أيقونات/بلاش مطابقة
-  بايتًا للعلامة (`tokens:check` ← `icons:check 8/8`).
+- **البصمة البصرية**: ورق/حبر/أزرق ملكي — «الرقّ والأزرق الملكي» 2026
+  (نظام ds — انظر
+  [design-system.md](design-system.md))؛ الإشارة الأساسية هي `accent`
+  (`#2540D9` — `src/design/tokens.generated.ts`)، والعائلة النحاسية
+  الدافئة مقعد حالة زخرفي ثانٍ لا إشارة أساسية؛ 8 أصول أيقونات/بلاش
+  مطابقة بايتًا للعلامة
+  (`tokens:check` ← `icons:check 8/8`).
 - **الصلاحيات**: Face ID/اللمس الحيوي عبر `expo-local-authentication`
   (عبارة الطلب عربية)، إشعارات (`expo-notifications` — أيقونة العلامة
-  + صبغة سيينا لشريط الحالة)، لا كاميرا/موقع.
+  + صبغة الإشارة الملكية `#2540D9` للإشعار في `app.config.ts`)، لا
+  كاميرا/موقع.
 - **أندرويد**: edge-to-edge (SDK 58)، `predictiveBackGestureEnabled`
   (صفر استدعاءات `BackHandler.preventDefault` — مضمّن بالفحص)،
   `expo-navigation-bar` بـ`enforceContrast` + `AppNavigationBar`
@@ -51,7 +56,7 @@ Expo SDK 58 · RN 0.88 · React 19.3 · expo-router (React Compiler مفعّل).
 
 | الطبقة | المدخل | القاعدة الحاكمة |
 |---|---|---|
-| السيمانتك | `src/design/semantic.ts` + `theme.tsx` | عنصر برتقالي **واحد** لكل شاشة (`accent`)؛ نص بحجم الجسم عبر `accentInk`؛ نجاح/تحذير/خطر نغمات تغذية راجعة؛ ارتفاع = درجة سطح + خط شعري — **لا ظلال إطلاقًا** |
+| السيمانتك | `src/design/semantic.ts` + `theme.tsx` | عنصر إشارة **واحد** لكل شاشة (`accent` — الأزرق الملكي `#2540D9`)؛ نص بحجم الجسم عبر `accentInk`؛ نجاح/تحذير/خطر نغمات تغذية راجعة؛ ارتفاع = درجة سطح + خط شعري — **لا ظلال إطلاقًا** |
 | الحركة | `src/motion/` (reanimated 4.7) | `transform`/`opacity` فقط؛ يُخفض كل شيء مع `prefers-reduced-motion`؛ زنبرك للتفاعل وتوقيت للحالات؛ منحنى ds واحد؛ خروج أسرع من دخول |
 | اللمس | `src/haptics.ts` | باب واحد مسجَّل (بوابة تشغيل + خنق لكل نوع + أرضية 60ms)؛ الويب no-op دائمًا؛ لا استيراد مباشر لـ`expo-haptics` من الشاشات أبدًا |
 | الأوراق | `src/components/ui/sheet.tsx` (gorhom 5) | `AppSheet` بنقاط snap ومتصلة بلوحة المفاتيح؛ المدخلات داخل الورقة `SheetTextInput` حصرًا |

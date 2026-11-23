@@ -84,11 +84,21 @@ basis: `audits/evidence/r313/` (live reference census + production baseline; 3 m
 An architect's drawing sheet: warm-neutral **paper** grounds, graphite **ink**, fine
 **hairlines** and ruled matrices, near-square corners, a drafting voice of **mono
 bracketed indices** (`[01]`, coordinates, metadata rows), generous but controlled negative
-space, and exactly ONE **orange signal** — spent with restraint on the active interaction,
-the key annotation, and the primary CTA. Charcoal slabs carry the primary actions (the
+space, and exactly ONE **royal signal** (`#2540D9` — the 2026 «Parchment & Royal»
+primary) spent with restraint on the active interaction, links, the focus ring, and
+the primary CTA; the warm sienna (`#F15534`) is a SECONDARY decorative voice — small
+focal moments in the drawings (the flag, the mastery gap, the beacon), never a
+primary button, link, or active state. Charcoal slabs carry the default actions (the
 reference's own recipe); dark theme is the charcoal itself as ground — a coherent
 complementary system, not an inversion. Original flat SVG line work for illustration;
 no 3D canvases, no poster displays, no competing art direction anywhere.
+
+*(r354 note: earlier rounds — R313/R325 below — call the `--accent` seat «orange»/
+«ember»: that was the PRE-2026 value. The seat itself never moved — `--accent` is
+and remains the ONE signal — its value re-keyed to the royal `#2540D9` with the 2026
+identity; wherever a round record says «orange signal», read «the `--accent` signal,
+today the royal». The retired `#C72E00`/`#ED4C1F` values stay printed in those
+records as history, never as current law.)*
 
 ## 2. Color — the token contract (tokens.css)
 
@@ -438,9 +448,11 @@ frame — every value verified against `tokens.css` live (light theme; the dark
 pair swaps paper↔ink, the accent re-keys to `#8AA0FF`). **Drift notes found (documentation, not tokens):** (1) the §2 table
 above still prints the pre-R313 light ground `#F6F8FA` — §0/D1 is the
 authority (`#F6F6EE`); (2) the TYPE had drifted (census: 5–6 display sizes,
-100% weight 700) — §4.c is the repair. Orange stays an accent ≤5% of area per
-screen except designed full-bleed moments; `--accent-ink` `#C72E00` carries
-accent TEXT (5.16:1 AA).
+100% weight 700) — §4.c is the repair. *(R313's own closing sentence — kept as the
+era's record: «Orange stays an accent ≤5% of area per screen except designed
+full-bleed moments; `--accent-ink` `#C72E00` carries accent TEXT (5.16:1 AA)» — the
+pre-2026 state. The 2026 law supersedes it: the signal IS the royal `#2540D9`
+(6.62 AA, §2 above), and the warm family is decorative-secondary (§1).)*
 
 ## R324 — FINISH THE BEAUTY (the ONE type system, every page)
 
@@ -474,7 +486,7 @@ owner flagged, not a style.
 The authenticated app has no reference page to trace: its grammar is
 **The reference's MATERIAL (§1, §4.d) applied with discipline to authenticated
 density** — paper, ink, hairlines, radius 0, no elevation, the ONE
-orange signal — plus the drafting voice the landing already speaks
+signal (the era's «orange» — `--accent`, today the royal) — plus the drafting voice the landing already speaks
 (`[NN]` indices, mono micro-labels, ruled fields). The section pins the
 registers; the consumable seats land ADDITIVELY in
 `frontend/src/styles/r325-app.css` (`--app-*` + the `.pat-*` state
@@ -562,7 +574,7 @@ preview on hover (the signal is spent on active state, not browsing).
 - **Focus:** the border re-keys **1px ink → 2px signal**
   (`--app-input-focus` = `--accent`, `--app-input-focus-w` 2px; D4's
   measured `#ED4C1F` mid-rung harmonizes onto the canonical seats — no
-  third orange). The universal ring (`--state-focus-ring-*`) stays the
+  third signal hue). The universal ring (`--state-focus-ring-*`) stays the
   fallback belt.
 - **Error = the signal, not rose:** rule → `--accent`
   (`--app-input-error-line`), message below in `--accent-ink`
@@ -576,7 +588,8 @@ preview on hover (the signal is spent on active state, not browsing).
 
 Hairline chip (1px `--app-line-soft`, radius 0, padding `--sp-1`/`--sp-2`),
 mono `--fs-mono-md` label, **6px dot** (`--app-chip-dot`, `--r-full`) —
-**ink/orange only, no new colours**. The dot's three states carry the
+**ink/signal only, no new colours** (the era's «orange» = `--accent`, today the
+royal). The dot's three states carry the
 axis: **hollow** = dormant (draft · archived · locked) · **ink** =
 settled (published · graded · active) · **signal** = awaiting action
 (pending · needs-review · overdue). Locked things additionally earn the
@@ -596,7 +609,7 @@ this grammar — no NEW chip colour is ever minted.
   `--motion-duration-skeleton`, transform-only; **RM: sweep dies, the
   static hatch remains** (same-sheet kill, contract-pinned).
 - **Error:** a 2px `--accent` rule, `--accent-ink` copy, a 44px retry —
-  the same orange discipline as field errors.
+  the same signal discipline as field errors.
 
 ### §R325.h Dialogs / sheets / drawers
 
@@ -674,7 +687,7 @@ the owner alone carries the signal:
 | `dean` | `DEA` | cross-hatch (`--app-cross`) |
 | `admin` | `ADM` | horizontal rules (`--app-rules-h`) |
 | `quality` | `QUA` | square grid (`--app-grid-pat`) |
-| `owner` | `OWN` | **signal hatch** (the one orange mark) |
+| `owner` | `OWN` | **signal hatch** (the ONE signal-coloured mark — today the royal) |
 
 Codes ride `--fs-mono-md`, `dir="ltr"` — sidebar footer, the gallery,
 print headers. Patterns reuse the §R325.g state recipes; nothing new is
