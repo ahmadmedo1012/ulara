@@ -952,7 +952,16 @@ export function ResultsPage() {
   }
 
   const d = q.data;
-  const hasGrades = d?.courses?.some((c) => c.gradePct !== null) ?? false;
+  /* R355 (empty-state guard): a degraded/legacy payload (or the audit's
+     empty envelope) can land without the nested aggregates — the typed
+     contract is real but the wire is not validated. Normalize ONCE here
+     instead of guarding every seat below (the 355dbe5 sweep fixed the
+     courses.some read; this closes the whole access family — the
+     headline/courseCount crash the fresh capture found). */
+  const headline = d?.headline ?? { avgGradePct: null, highest: null, lowest: null, courseCount: 0 };
+  const courses = d?.courses ?? [];
+  const recentAssignments = d?.recentAssignments ?? [];
+  const hasGrades = courses.some((c) => c.gradePct !== null);
   const cc = chartColors();
   /* r164-a (status semantics): النتائج الطالبية كانت تحمل سلّمًا
      خاصًا 85/70/60 يخالف سلّم النطاقات الكنونيّ الواحد
@@ -971,7 +980,7 @@ export function ResultsPage() {
   // r164-e: the awaiting-grading half of the timeline. Optional on the
   // wire (additive backend field) — an older payload degrades to the
   // honest "nothing pending" copy instead of crashing.
-  const pendingSubs = d.pendingSubmissions ?? [];
+  const pendingSubs = d?.pendingSubmissions ?? [];
   // Build the shared chart options ONCE per render (each cartesianOptions()
   // call resolves CSS custom properties — it is not free).
   const baseOpts = cartesianOptions({ horizontal: true });
@@ -981,8 +990,8 @@ export function ResultsPage() {
       <PatternPageHeader
         title="النتائج والتقييمات"
         description="تفاصيل درجاتك وتحليل أدائك بناءً على بياناتك الفعليّة."
-        meta={d.headline.courseCount > 0
-          ? <>{countAr(d.headline.courseCount, ['مقرّر واحد مُقيَّم', 'مقرّران مُقيَّمان', 'مقرّرات مُقيَّمة', 'مقرّراً مُقيَّماً'])} هذا الفصل</>
+        meta={headline.courseCount > 0
+          ? <>{countAr(headline.courseCount, ['مقرّر واحد مُقيَّم', 'مقرّران مُقيَّمان', 'مقرّرات مُقيَّمة', 'مقرّراً مُقيَّماً'])} هذا الفصل</>
           : undefined}
         /* R341 (D7c): the page's CTA pair — honest navigation to the
             assessments that produce these grades (the accent primary
@@ -1019,23 +1028,23 @@ export function ResultsPage() {
         items={[
           {
             label: 'أعلى درجة',
-            value: d.headline.highest ? <bdi>{formatPct1(d.headline.highest.gradePct)}%</bdi> : '—',
-            hint: d.headline.highest?.courseName ?? 'لا توجد درجات بعد',
-            tone: d.headline.highest ? bandTone(d.headline.highest.gradePct) : 'neutral',
+            value: headline.highest ? <bdi>{formatPct1(headline.highest.gradePct)}%</bdi> : '—',
+            hint: headline.highest?.courseName ?? 'لا توجد درجات بعد',
+            tone: headline.highest ? bandTone(headline.highest.gradePct) : 'neutral',
           },
           {
             label: 'المتوسّط',
-            value: d.headline.avgGradePct !== null ? <bdi>{formatPct1(d.headline.avgGradePct)}%</bdi> : '—',
-            hint: d.headline.courseCount > 0
-              ? `عبر ${countAr(d.headline.courseCount, ['مقرّر واحد', 'مقرّرين', 'مقرّرات', 'مقرّراً'])}`
+            value: headline.avgGradePct !== null ? <bdi>{formatPct1(headline.avgGradePct)}%</bdi> : '—',
+            hint: headline.courseCount > 0
+              ? `عبر ${countAr(headline.courseCount, ['مقرّر واحد', 'مقرّرين', 'مقرّرات', 'مقرّراً'])}`
               : 'لا تقييمات بعد',
-            tone: d.headline.avgGradePct !== null ? bandTone(d.headline.avgGradePct) : 'neutral',
+            tone: headline.avgGradePct !== null ? bandTone(headline.avgGradePct) : 'neutral',
           },
           {
             label: 'أدنى درجة',
-            value: d.headline.lowest ? <bdi>{formatPct1(d.headline.lowest.gradePct)}%</bdi> : '—',
-            hint: d.headline.lowest?.courseName ?? '—',
-            tone: d.headline.lowest ? bandTone(d.headline.lowest.gradePct) : 'neutral',
+            value: headline.lowest ? <bdi>{formatPct1(headline.lowest.gradePct)}%</bdi> : '—',
+            hint: headline.lowest?.courseName ?? '—',
+            tone: headline.lowest ? bandTone(headline.lowest.gradePct) : 'neutral',
           },
         ]}
         />
@@ -1056,15 +1065,15 @@ export function ResultsPage() {
             className="results-chart-frame"
             ariaLabel="درجاتك حسب المقرّر بالنسبة المئوية"
             summary={
-              d.headline.avgGradePct !== null
-                ? `متوسّط درجاتك ${formatPct1(d.headline.avgGradePct)}% عبر ${countAr(d.headline.courseCount, ['مقرّر واحد', 'مقرّرين', 'مقرّرات', 'مقرّراً'])}`
+              headline.avgGradePct !== null
+                ? `متوسّط درجاتك ${formatPct1(headline.avgGradePct)}% عبر ${countAr(headline.courseCount, ['مقرّر واحد', 'مقرّرين', 'مقرّرات', 'مقرّراً'])}`
                 : 'لم تُسجَّل درجات بعد.'
             }
-            height={Math.max(180, d.courses.length * 32)}
+            height={Math.max(180, courses.length * 32)}
             table={{
               caption: 'درجاتك حسب المقرّر بالنسبة المئوية',
               columns: ['المقرّر', 'الدرجة'],
-              rows: d.courses.map((r) => [r.courseName, `${formatPct1(r.gradePct)}%`]),
+              rows: courses.map((r) => [r.courseName, `${formatPct1(r.gradePct)}%`]),
             }}
           >
             {/* Horizontal bars — Arabic course names read at full width on
@@ -1077,14 +1086,14 @@ export function ResultsPage() {
             <Bar
               key={themeKey}
               data={{
-                labels: d.courses.map((r) => r.courseName),
+                labels: courses.map((r) => r.courseName),
                 datasets: [{
                   label: 'الدرجة',
-                  data: d.courses.map((r) => r.gradePct ?? 0),
+                  data: courses.map((r) => r.gradePct ?? 0),
                   /* r164-a: كل عمود يحمل لون نطاقه من السلّم الكنونيّ
                      (PASS = cc.gold) بدل السلّم الخاصّ القديم الذي كان
                      يصبغ ٥٠–٦٤٪ بالأحمر. */
-                  backgroundColor: d.courses.map((r) => BAND_CHART_COLOR[gradeBand(r.gradePct ?? 0).key]),
+                  backgroundColor: courses.map((r) => BAND_CHART_COLOR[gradeBand(r.gradePct ?? 0).key]),
                   borderRadius: 6,
                   maxBarThickness: 26,
                 }],
@@ -1181,7 +1190,7 @@ export function ResultsPage() {
             <p className="text-sm text-muted" style={{ padding: 'var(--sp-3) 0' }}>لم تُسجَّل درجات بعد.</p>
           ) : (
             <div className="flex-col gap-4">
-              {d.courses.map((r) => (
+              {courses.map((r) => (
                 <ProgressBar
                   key={r.offeringId}
                   value={r.gradePct ?? 0}
@@ -1197,11 +1206,11 @@ export function ResultsPage() {
         </Card>
 
         <Card title="آخر الواجبات المقيَّمة">
-          {d.recentAssignments.length === 0 ? (
+          {recentAssignments.length === 0 ? (
             <p className="text-sm text-muted" style={{ padding: 'var(--sp-3) 0' }}>لا توجد تقييمات حديثة.</p>
           ) : (
             <div className="flex-col gap-2">
-              {d.recentAssignments.slice(0, 6).map((a) => {
+              {recentAssignments.slice(0, 6).map((a) => {
                 /* r164-a (status semantics): الصفّ يحمل نطاق درجته من
                    السلّم الكنونيّ — الشارة نفسها («ممتاز»…«ضعيف») التي
                    يعرضها جدول درجات الأستاذ لنفس الرقم، ومحاذاة اللون

@@ -681,10 +681,15 @@
    AA 4.5:1 floor at 390 — the panel's unreadable index. The mobile belt
    seats the index in the muted ink (5.5:1 on paper); ≥768 keeps the
    measured ghost. */
-@media (max-width: 767px) {
-  .pm-section .pm-index {
-    color: var(--text-muted);
-  }
+/* R355 (contrast close-out): the ≥768 light ghost was the LAST
+   under-floor seat — --neutral-400 (#B4B4B0) measures 2.3:1 on the
+   paper, under the 4.5:1 floor for the 1.4rem mono numeral (the
+   fresh capture's axe finding at 768:light). The r339 sweep had
+   already re-seated the dark arm and the ≤767 band on --text-muted
+   for exactly this reason; the light desktop ghost now joins them —
+   the ghost register survives in the hue family, never in a failure. */
+.pm-section .pm-index {
+  color: var(--text-muted);
 }
 
 

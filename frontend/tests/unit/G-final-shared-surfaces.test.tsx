@@ -281,7 +281,13 @@ describe('G · ai.css — the chat controls meet the 44px touch floor on real to
   const ai = stripComments(read('src/styles/ai.css'));
 
   it('the coarse-pointer belt floors every chat control (the r290 class of fix)', () => {
-    const belt = ai.match(/@media \(pointer: coarse\) \{[\s\S]*?\n\}/)?.[0] ?? '';
+    /* R355: the belt now also covers the phone band —
+       `@media (pointer: coarse), (max-width: 767px)` — a ≤767px surface
+       is phone-class even when a mouse drives it. The extraction keys
+       on the block that floors .chat-input (ai.css carries several
+       bare coarse blocks for other controls). */
+    const belt =
+      ai.match(/@media \(pointer: coarse\)(?:, \(max-width: 767px\))? \{[\s\S]*?\n\}/)?.[0] ?? '';
     expect(belt).toContain('.ai-surface .chat-input');
     expect(belt).toContain('.ai-surface .chat-send');
     expect(belt).toContain('.ai-surface .ai-quick-chip');
