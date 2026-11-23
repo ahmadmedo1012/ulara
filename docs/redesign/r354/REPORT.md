@@ -107,30 +107,60 @@ against the measured ink bounds (the mat ≥4 units, the dead-margin
 ceiling 12 — the window can never silently regrow the shrink) and the
 NEXT-STEP clearance below.
 
-## 3. The journey statement — the overlap cured within the contract
+## 3. The journey statement — the overlap cured on MEASURED contrast
 
-**The finding:** the desktop plaque-2 window (out t 2.5–3.0) held the
-statement over the assembled campus through band progress 0.30–0.48 —
-the VLM-flagged destructive beats (glyphs dissolving into the tower's
-lantern strokes; the audit's before shot: `evidence/before/
-10-journey-mid-1440-light.webp`).
+**The finding (the r353 defect):** the desktop plaque-2 window
+(out t 2.5–3.0) held the statement over the assembled campus through
+band progress 0.30–0.48 — the VLM-flagged destructive beats (glyphs
+dissolving into the tower's lantern strokes; the crops:
+`evidence/crops/REF-1x-journey-*` vs the before/after beats).
 
-**The fix (the R349 precedent applied to the seat it was invented
-for):** the desktop exit aligns with the mobile window — **out
-2.2–2.6** (one window for both belts). The exit now completes before
-the satellite layer finishes resolving beneath the glyphs; from beat
-0.4 the campus owns a clean reading window (`after/
-11-journey-late-1440-light.webp`). The r325 contracts hold verbatim
-(unboxed plaques, the 18% ghost floor at progress 0, the rest states,
-the RM static sheet — r325-map-clip 4/4).
+**The final fix (two passes, both measured):**
 
-**The halo hardens for cross-browser truth:** the plaque's paper halo
-rides a two-belt mechanism — the CSS paint stroke (Chromium renders it
-on HTML text; verified by an isolated binary render test) **plus** an
-em-keyed `text-shadow` outline (the same halo where the stroke does
-not paint — Firefox/Safari). At the statement's full-presence beat
-the VLM rates legibility over ink **8/10** with the halo clearly
-separating glyphs from line-work.
+*Pass 1* pulled the desktop exit to the mobile window (2.2–2.6). The
+final-phase pair-diff audit then showed the deeper truth: **a uniform
+opacity fade cannot hold readable contrast into its tail at all** —
+the statement/reference glyph-contrast metric (the A/REF screenshot
+pairs at identical scroll positions; the plaques hidden by a
+visibility override — pointer-transparent overlays, no layout change)
+measures the drop crossing below the 3:1 WCAG large-text bar around
+alpha 0.95 and falling monotonically. No exit *timing* fixes that;
+the fix is to cross the degraded span fast:
+
+*Pass 2 (final)* — **out t 2.15–2.35**: the 1.0→0.5 alpha drop spans
+~0.06s of clock ≈ **16px of scroll** at 1440 (a flick, not a restable
+frame), and the exit completes while the satellite layer (2.02–2.52)
+is still ~2/3 resolved. The campus owns a clean reading window from
+band progress ~0.36; the statement never *rests* at low contrast over
+dense ink on either belt.
+
+**The halo's true belt (a wrong claim corrected):** the r354 report
+claimed a «two-belt mechanism — the CSS paint stroke (Chromium
+renders it on HTML text) plus text-shadow». **The stroke belt never
+painted**: stroke/stroke-width are SVG-text properties; a 12px red
+stroke injected on the live plate paints ZERO pixels in Chromium
+(measured live in this round). The em-keyed `text-shadow` is the ONE
+belt, and it now carries a true rim — the 0.025em crisp pass + a
+**0.05em solid 8-way rim** (≈2.3px at the D1 rung; the old ≤1.4px
+band was half-eaten by the glyphs' own anti-aliasing) + the two soft
+outer passes. The dead stroke declarations retire with the mobile
+`stroke-width: 4px` override.
+
+**The reproducible readability verdict** (the method replaces the
+earlier «8/10» impression — full definition with the evidence):
+
+| beat (band progress) | alpha | glyph luma | halo perimeter purity | verdict |
+|---|---|---|---|---|
+| after p0.2929 (t2.0, full presence) | 1.00 | 61.0 | **97.4%** | READABLE |
+| after p0.3210 (t2.15, exit start) | 0.985 | 63.1 | **98.4%** | READABLE |
+| after p0.3304 (t2.2, mid-flick) | 0.554 | 134.0 | 76.6% | transient crossing (by design, ~16px) |
+| before p0.2929 (the r353 halo) | 1.00 | 61.0 | **75.7%** | halo unreliable — the defect |
+| before p0.3679 (the r353 held window) | 1.00 | 60.7 | **73.9%** | halo unreliable — the defect |
+
+The before build's halo held only ~75% of the glyph perimeter at FULL
+presence; the final belt holds 97–98%. The r325 contracts hold
+verbatim (r325-map-clip 4/4; the new r354-final e2e pins the exit
+beats, the belt, and the clean-window invariant).
 
 ## 4. The why / pains / roles plates — the residuals closed
 
@@ -176,23 +206,40 @@ The r306 num-ladder (01–08), the r168b truthfulness pins and the
 frozen-spec row structure all hold (32/32 pin tests re-run green). No
 visitor can read eight independent entry roles off the sheet.
 
-## 5. The colour-law ratchet — one warm focal per plate
+## 5. The two-voice colour law — the COMPLETE census (final)
 
-The audit's demand: prove each plate keeps ONE clear warm focal, not a
-scatter of copper points. The r353 census found the scatter; r354
-retires it (every change documented at its seat):
+The final-phase audit re-censused every `PLATE.sienna` use including
+**shared-helper defaults** (the r354 pass missed them). The verdict
+that emerged: the kernel's DEFAULTS must be the SYSTEM voice — a node
+on the data net paints royal unless a plate explicitly claims the
+warm learner focal. The law's wording never changes; the
+implementation now actually satisfies it:
 
-| plate | retired warm seats | the ONE focal that remains |
-|---|---|---|
-| CampusArt | 4 wing quoins + 2 gate-pier quoins + the tower crown quoin (the cornerStone prop retires with its last consumer), 2 lamp crowns, the dome's oculus dot, the `--iso-signal` alias | the observatory beacon + its signal route + the two narrative flags |
-| WhyPanels 01–04 | the orbiting attendance beacon, the rec-box's third line, the document's copper line, the shelf receipt mark, the council seats' first line | the attendance check · the gap cell · the scan dial · the ledger tick |
-| IsoPains 01/02 | the play diamond, the correction crawl (both → royal) | the dying trace + ring · the D+14 stamp |
-| RolePlates 03–08 | the live-reports line, the gauge needle (the why-panel precedent), the ledger hot tick, the three seal marks, the lens diamond + pulse, the labs pulse, the report's first line | the permissions key · the flagged institution · the keystone · the professor's copper margins · the sealed boxes · the report itself |
+| seat | was | now | why |
+|---|---|---|---|
+| `IsoNode` default fill | sienna | **royal** | the system voice; warm is always an explicit claim |
+| `Route` default stroke | sienna | **royal** | the data-path voice |
+| `Leader` / `SeatLabel` dots | sienna | **royal** | annotation = system |
+| `Palm` crown marker | sienna | **muted** | decorative — the campus's ONE warm cluster stays the observatory beacon + its signal route + the two narrative flags |
+| CampusArt vessel watermark rect | sienna @10% opacity | **ink** | a watermark detail must not carry the signal |
+| CampusArt field node | (default warm) | **royal explicit** | the plaza's data node |
+| ProductPlates: timer needle, knowledge-ring diamond | sienna | **royal** | the platform's measurement/orbit voices |
+| ProductPlates: question node | (default warm) | **sienna explicit** | the panel's ONE warm focal — now an honest explicit claim |
+| ProductPlates: answer lines, review-plan lines | first line sienna | **all muted** | record voice; no competing warm stripes |
+| WhyPanels 01 checkpoints | middle node sienna | **all neutral top** | the attendance check stays the panel's ONE warm focal |
+| (r354 pass, kept) | cornerStone quoins, lamp crowns, the dome oculus, the secondary ledger/lens/pulse marks, the IsoPains play diamond + crawl | **retired/royal** | the original scatter retirement |
 
-**Dark-mode royal verified at runtime:** `--iso-royal` resolves to
-`--c-royal-deep` = **#A9B8FF** in dark (the strong text tier, 6.85:1
-on the dark soft) — not the pale fill seat; measured live in the
-browser through the real theme store.
+After the census the warm inventory per plate: **CampusArt** — the
+observatory beacon + its signal route + the gate pennant + the tower
+flag (one coherent narrative cluster); **WhyPanels** — one focal each
+(the attendance check · the gap cell · the scan dial · the ledger
+tick); **IsoPains** — the wounds themselves (the dying trace + ring ·
+the D+14 stamp · the gap · the shard); **RolePlates/PRODUCT** — the
+seats the r354 census already retired to single focals. Grayscale
+legibility: the measurement instruments read by shape (the crops/
+`15*-gray` evidence); dark-mode royal verified at runtime:
+`--iso-royal` resolves to **#A9B8FF** in dark (the strong text tier)
+through the real theme store (pinned by the r354-final e2e).
 
 ## 6. The identity docs say the royal truth
 
@@ -224,40 +271,63 @@ noises were scroll-stitch artifacts; the substantive contracts are
 pinned by the e2e audit suites (below). No new content invented, no
 stock imagery.
 
-## 8. Gates (all measured from this branch's tree after the round)
+## 8. Gates (re-measured from the FINAL branch tree — the closure run)
 
-| gate | result |
+| gate | result (this round's closure run) |
 |---|---|
-| **bundle** | **812.5 KB gz / 815 — PASS** (entry 65.0/92 · pdf 95.7/110). The round costs **+0.3 KB gz net** (the roles-truth furniture + the graduations + the shard + the halo − the dedupes below); the ceiling untouched, no gate weakened |
-| typecheck (tsc) | PASS |
-| eslint (changed files + tree) | 0 errors |
-| stylelint ratchet (`stylelint-gate.sh`) | **GREEN — 40 vs baseline 40** (the round ADDS zero; the six pre-existing roles.css duplicates predate it — verified by stash-diff) |
-| check-colors --strict | PASS |
-| check-icons | PASS |
-| check-raw-css --strict | PASS |
-| check-motion-tokens | PASS |
-| deadcode ratchet | GREEN — 10 at baseline, 0 regressed (the cornerStone prop + the isoBoxTop helper + the --iso-signal alias retired with their consumers) |
-| size gate | **GREEN** (rule 1/2/3 — §1.1) |
-| vitest (frontend, full) | **3062/3062** (3060 + this round's 2 guards) |
-| e2e: r351-public-audit + r349-public-clip + r308-landing-instruments + r325-map-clip | **41/41** (text-on-text, clipped captions, horizontal overflow @1440/1024/768/390/360; stations; the map clip) |
-| e2e: r312-guest-reveal + guest-landing | 6/6 |
-| e2e: r312-mobile-camera | 6/6 |
+| **bundle** | **812.6 KB gz / 815 — PASS** (entry 65.0/92 · pdf 95.7/110). The final pass costs **+0.1 KB** net (the exit retiming + the census re-keys are value swaps); the ceilings untouched |
+| typecheck (root: backend + frontend + both test trees) | PASS |
+| eslint | 0 errors (14 pre-existing warnings) |
+| stylelint ratchet (`stylelint-gate.sh`) | **GREEN — 40 errors vs baseline 40, held** (the raw `lint:css` output reports the pre-existing baseline set; the ratchet is the enforced authority) |
+| check-colors --strict · check-icons · check-raw-css --strict · check-motion-tokens | all PASS |
+| tokens build --check | PASS (mobile + brand twins byte-identical) |
+| deadcode ratchet | GREEN (the earlier retirements hold; nothing new regressed) |
+| **size gate** | **GREEN** — rule 1 ok (7 allowlisted legacy), **rule 2: docs 40,572KB ≤ 40,960KB**, rule 3: the final push adds ~1,587KB (≤5MB; the branch's total docs delta vs main ≈ 4.65MB ≤ 5MB) |
+| vitest frontend (full) | **3062/3062** |
+| vitest backend (DB-free) | **2161 passed / 19 skipped** (the disposable-Postgres integration file — CI owns its run) |
+| **e2e r354-final (NEW — 18 checks)** | **18/18** — the hero geometry ×6 belts, the keyboard station, the exit beats desktop+mobile, the halo belt, the RM settled plates, the NEXT STEP rendered clearance, the three pains instruments, the roles truth + accordion, the dark tier |
+| e2e: r325-map-clip + r349-public-clip + r308-landing-instruments | **26/26** |
+| e2e: r312-guest-reveal + r312-mobile-camera + r351-public-audit | **25/25** |
+| e2e: r305 (shell + theme + reduced-motion) | **76/76** |
 
-(e2e on the task's own vite :5310; WebKit absent on this box — CI owns
-it, per the house note. The preloader does not play on this sandbox —
-2 CPU cores trip the low-cores gate — so the trace seat is verified by
-the r323-loader-overlap contracts + CI, not by a local capture; the
-frame math keeps the centreline through the tower's lantern.)
+(e2e on the round's own vite :5310/5311 pair; WebKit absent on this
+box — CI owns it (the PR-triggered iOS run completed green on the last
+audited round); the preloader does not play on ≤2-core sandboxes — the
+r323-loader-overlap contracts + CI own that seat.)
 
-## 9. Visual evidence
+## 9. Visual evidence — the REBUILT set (matched-pair truth)
 
-`evidence/before` / `evidence/after` — hero (light + dark, 1440; light
-@1024/390/360; dark @390), the journey's fixed mid beat + the clean
-late window (light + dark), why (1440 + 768), pains (1440 + 390),
-roles (1440). All WebP ≤115KB, dark captured through the REAL theme
-store (`ulara-theme` → `data-theme=dark`, not emulated media). The
-before set: this round's own pre-fix captures (hero, journey, why,
-pains) + r353's roles shot.
+The earlier set's defects (mismatched routes in the hero pair,
+unmatched journey progress, non-deterministic why captures) are cured
+by the full rebuild: **every pair is the same route, same viewport,
+same theme path, same scroll position, same capture method** — the
+only variable is the tree (AFTER = the branch HEAD code commit;
+BEFORE = 7c15daf, the r353-final pre-round tree). Full per-shot
+conditions in **`evidence/MANIFEST.json`** (route, commit, browser,
+viewport, theme, scroll progress, capture state, counterpart).
+
+- **hero**: `before/after/01-hero-home-1440-light` — the SAME homepage
+  route both sides (the old «after» shot was a different page
+  entirely); + dark 1440/390, light 1024/390/360.
+- **journey (matched band-progress beats)**: desktop
+  `1x-journey-p{2554,2929,3210,3304,3398,3585,4054,4804}` (after) vs
+  `p{2929,3304,3679,4054,4429,4804}` (before — the old 2.5–3.0
+  window), mobile `2x-journey-m-p{0812,1122,1451}`, dark
+  `12/13-journey`, RM `31/32-journey-rm`; **the REF pairs**
+  (`crops/REF-*`) capture the identical beats with the statement
+  hidden — the pair-diff metric's input; the statement line close-ups
+  ride `crops/1x-journey-*-line`.
+- **why**: 1440×1200 before/after (all four panels fully seated — the
+  old 900px shots cropped panels 3–4), 768, RM settled state, and the
+  four 2x panel crops (`crops/why-p{1..4}-{before,after}`).
+- **pains**: 1440/390 bands + the instrument close-ups at 2x
+  (`crops/15{a,b,c}-*-{before,after}`) **+ grayscale**
+  (`crops/15{a,b,c}-*-gray-after`) proving the shape legibility.
+- **roles**: the band before/after + `16a-roles-usecase-open`
+  (row 06 opened via its keyboard-operable icon, deck at [06/08]).
+
+All WebP ≤115KB; dark through the REAL theme store; RM through real
+media emulation (not a class toggle).
 
 ## 10. Residuals (honest)
 
@@ -266,16 +336,137 @@ pains) + r353's roles shot.
   and name halves pass on this branch's tree. The gate stays red on
   main's own git history (§1.2) — the documented inherited blocker
   (two r350 commits, ancestry-proven); owner-level resolution.
-- **The bundle margin is 2.5 KB** (812.5/815) — the round nets +0.3 KB
-  for the roles-truth furniture and the instrument graduations after
-  the dedupe claw-backs (cornerStone/isoBoxTop/--iso-signal retire).
-  The ceiling stands; a future bundle-diet round owns further
-  reduction, as every prior lift has documented.
-- The statement plaque's mid-exit beats (0.3–0.4) still show the
-  statement fading over ink — transient by design (the exit completes
-  at beat 0.405); at full presence the halo carries 8/10 legibility,
-  and from 0.4 the drawing owns the window.
+- **The bundle margin is 2.4 KB** (812.6/815) after the final pass.
+  The ceilings stand; a future bundle-diet round owns further
+  reduction.
+- The journey statement's exit flick (t 2.15–2.35) crosses below the
+  3:1 bar by design — the crossing spans ~16px of scroll and the
+  statement is never AT REST in it (the r354-final e2e pins the
+  beats); at full presence the halo belt holds 97–98% perimeter
+  purity.
 - The preloader trace seat could not be captured on this box (the
   2-core gate suppresses the intro) — geometry-verified + CI-owned.
+- The `.jt-anno` CSS block in journey.css has no markup consumer
+  (an orphaned seat predating this round) — flagged for the owner's
+  CSS-diet; removing it is outside this round's lane (the stylelint
+  baseline owns the count).
 
-— the visual-artwork agent, R354
+---
+
+# 11. FINAL CLOSURE (the final-phase handoff)
+
+## A. Final code state
+
+- Final branch HEAD at this writing: **bc0444e** (the closure
+  evidence/docs commits follow it; the PR page carries the live tip).
+- Base: **a71d7d8** (`origin/main`). 20+ commits ahead, 0 behind —
+  18 carried from R353/R354 + the final-phase commits (the code fix,
+  the e2e belt, the evidence rebuild + this closure).
+- Scope confirmation: `frontend/src/components/landing/**`,
+  `frontend/src/styles/landing/journey.css`,
+  `frontend/tests/e2e/r354-final.e2e.ts`,
+  `docs/redesign/r354/**`. No backend, no `apps/mobile/**`, no
+  workflows, no gates, no shared tokens, no other agent's files.
+- Main files: `IsoJourneyScene.tsx` (the exit retiming),
+  `journey.css` (the halo belt), `kernel/Iso.tsx` + the four plates
+  (the census), `r354-final.e2e.ts` (the 18-check belt), the evidence
+  set + MANIFEST.
+
+## B. Defects and corrections (each with its guard)
+
+| defect | root cause | correction | guard |
+|---|---|---|---|
+| the hero before/after pair compared different routes | the old «after» shot was captured on `/campus`-family content while named as the homepage hero | both sides re-captured on `/` at scroll 0, matched viewport/theme/method | the MANIFEST's route+state fields; the e2e hero belt pins the route's own geometry |
+| journey before/after at unmatched progress (~32% vs ~38%) | the beats were chosen per-build, not per-band-progress | both builds scrolled to the SAME pRaw values via the r312 convergence scroll (the pin JSONs record the achieved pRaw) | r354-final e2e: the exit beats at exact clock t |
+| the statement unreadable in its exit tail | a uniform opacity fade physically cannot hold 3:1 into its tail (measured) | the exit window re-timed 2.15–2.35 — the degraded span crossed in ~16px of scroll; the exit completes before the satellite layer resolves | r354-final e2e: presence/fall/gone beats + the clean-window invariant |
+| the halo unreliable (75% perimeter purity at full presence) | the «SVG stroke on HTML text» belt never painted (wrong r354 claim); the shadow band was ≤1.4px | the shadow belt carries a 0.05em 8-way rim (97–98% purity measured); the dead stroke declarations retired | r354-final e2e: ≥12 shadow passes + stroke retired |
+| why captures showed faint/unfinished panels | the CSS loops' pre-iteration opacity-0 state was captured mid-cycle | captures FREEZE every animation at its canonical 35% phase (progress-based animations skipped); the RM belt pins the settled outcome | r354-final e2e: under RM every loop element rests at opacity 1 |
+| pains refinements unverifiable at full-band scale | the instruments are ~170px art cells | 2x close-up crops + grayscale pairs ship per instrument | r354-final e2e: the ruler/tick/shape assertions on real SVG rects |
+| NEXT STEP chip kissing the rec box | the authored anchor sat the chip's bottom ON the box's corner | the anchor lifted −12→−15 (3-unit ring) | r354-final e2e: the rendered clearance ≥2px (SVG client rects) |
+| warm scatter beyond the claimed focals | the kernel's shared defaults were warm (IsoNode/Route/Leader/SeatLabel/Palm) | the defaults re-key royal/muted; warm survives only as explicit focal claims | the census table §5 + check-colors --strict |
+| the report's zero-trace claim contradicted CI | the report quoted historical commit subjects verbatim | hash+safe-description references only; honest §1.2 disclosure | zero-trace content/name halves green |
+| PR description's commit count (17 vs 18) | a stale count | corrected in the PR body at push time | the PR page |
+
+## C. Evidence
+
+`evidence/{before,after,crops}` + `evidence/MANIFEST.json` — every
+shot's route/commit/browser/viewport/theme/scroll/state recorded. The
+matched pairs and what each demonstrates:
+
+- `01-hero-home-1440-light` (before/after): the same homepage; the
+  campus window 486→756px wide (33.7%→52.5% of the band), the
+  stations re-seated onto the volumes (the geom JSONs in the capture
+  meta record the exact rects).
+- `1x-journey-p*`: the matched beats — before holds the statement at
+  full opacity over the resolved campus through p0.368+; after clears
+  by p0.3585 while the satellites still resolve.
+- `crops/REF-*`: the same beats with the plaques hidden — the
+  pair-diff metric's substrate (§3's table).
+- `crops/why-p*`: the four panels complete both sides; the NEXT STEP
+  clearance visible in p2.
+- `crops/15{a,b,c}-*`: the ruler graduations, the D+14 tick clear of
+  the stamp, the broken tab's three beats — each with grayscale.
+
+## D. Verification matrix (the closure run — this tree, this box)
+
+| check | command | result |
+|---|---|---|
+| typecheck | `npm run typecheck` (backend+frontend+tests) | PASS |
+| eslint | `npm run lint` | 0 errors (14 pre-existing warnings) |
+| vitest frontend | `npm --prefix frontend run test` | **3062/3062** |
+| vitest backend | (root `npm test`) | **2161 passed, 19 skipped** (DB-integration — CI owns) |
+| e2e new | `playwright test tests/e2e/r354-final.e2e.ts` | **18/18** |
+| e2e guards | r325 + r349 + r308 | **26/26** |
+| e2e guards | r312×2 + r351 | **25/25** |
+| e2e r305 | `npm run test:r305` | **76/76** |
+| build + bundle | `npm --prefix frontend run build` + `node scripts/check-bundle-size.mjs` | **812.6/815 KB gz** (entry 65.0/92, pdf 95.7/110) |
+| stylelint ratchet | `scripts/gates/stylelint-gate.sh` | GREEN 40=40 |
+| colors/icons/raw-css/motion | the four `scripts/check-*.sh` | all PASS |
+| tokens | `node scripts/tokens/build.mjs --check` | PASS (twins identical) |
+| size gate | `scripts/gates/size-gate.sh` (staged) | **GREEN** (docs 40,572≤40,960KB; push +1,587KB≤5MB) |
+| zero-trace | `bash scripts/brand/zero-trace.sh` | content ✔ names ✔ history ✖ (inherited, §1.2) |
+| WebKit iOS | CI `ios-webkit` job | not runnable on this box (no WebKit libs, no root); CI owns — the last PR-triggered run completed green |
+
+Not run locally (owner/CI-owned per the house rules): the disposable-
+Postgres DB integration, the full heavyweight verify matrix, the iOS
+WebKit belt, the production deployment checks.
+
+## E. Residual risks
+
+1. **Zero-trace history** (§1.2): owner-level — requires a main
+   history decision outside every agent's lane. Disclosed, proven,
+   not bypassed.
+2. **Bundle margin 2.4KB**: any future landing addition needs a
+   diet first; the ceilings are the CI authority (AGENTS.md's older
+   770KB reference is stale vs the gate's 815KB — flagged to the
+   owner, the gate untouched).
+3. **The exit flick** (t 2.15–2.35): by design and guarded; if a
+   reviewer wants a longer readable tail, the physics says the
+   statement must exit BEFORE the ink resolves further (a placement
+   change), not fade slower.
+4. **WebKit**: verified by CI only (the skipped PR run earlier was a
+   workflow-order artifact; the completed run was green).
+5. **The `.jt-anno` orphan CSS** — owner's CSS-diet lane.
+
+## F. Final PR status
+
+- PR **#40 remains OPEN and unmerged**; the branch
+  `agent/ulara-visual-artwork` remains separate; no other branch was
+  touched; no force-push; no history rewrite.
+- The PR description is refreshed at push time (the honest commit
+  count, the final-phase summary, the ECC triage below).
+
+### The ECC bot triage (the generic warnings)
+
+- «role-owner paths deleted»: the diff's deletions under
+  `frontend/public/` are **static illustration assets retired by the
+  R353 rebuild** (dead 3.4MB of pre-rebuild art) — no authorization,
+  authentication or role-ownership code path is touched by this
+  branch (the changed-file list is landing visuals + docs + tests
+  only).
+- «reference-readiness»: the round's reference materials live under
+  `docs/redesign/**` as historical evidence; adding RAG corpora or
+  evaluator datasets is outside this branch's lane and would violate
+  the ownership rules — not applicable.
+
+— the visual-artwork agent, R354-FINAL
