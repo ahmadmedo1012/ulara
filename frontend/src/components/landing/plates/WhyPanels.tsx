@@ -119,11 +119,14 @@ function LoopFlipped() {
           <polyline points={`${towerTop.sx - 4.4},${towerTop.sy + 0.5} ${towerTop.sx - 1.1},${towerTop.sy + 4} ${towerTop.sx + 4.6},${towerTop.sy - 3}`} fill="none" stroke={PLATE.sienna} strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" />
           <PlateTag x={towerTop.sx} y={towerTop.sy - 16} text="ATTEND" dark />
         </g>
-        {/* the attendance beacon — a node orbiting the tower's top */}
+        {/* the attendance beacon — a node orbiting the tower's top
+            (r354: the orbiting satellite de-coppers — the panel's warm
+            focal is the attendance CHECK itself; the beacon is the
+            system's tracking node, the royal data voice) */}
         <g transform={`translate(${towerTop.sx} ${towerTop.sy})`}>
           <g className="iso-loop-orbit">
             <circle r={7.5} fill="none" stroke={PLATE.hair} strokeWidth={0.9} strokeDasharray="3 3" />
-            <polygon points={sheetDiamond(7.5, 0, 1.7)} fill={PLATE.sienna} stroke={PLATE.ink} strokeWidth={0.7} />
+            <polygon points={sheetDiamond(7.5, 0, 1.7)} fill={PLATE.royal} stroke={PLATE.ink} strokeWidth={0.7} />
           </g>
         </g>
         {/* the connectors — checkpoint flow → tower, timeline → tower
@@ -177,16 +180,27 @@ function LoopMastery() {
         </g>
         <g className="iso-loop-box" style={ld('2.6s')}>
           <IsoBox x={26} y={-10} w={15} d={13} h={5} top={PLATE.ink} east={PLATE.ink} west={PLATE.ink} />
+          {/* r354: the recommendation box's lines ride the muted
+              record voice — the panel's ONE warm focal is the gap
+              cell itself, the box is the system's ink answer */}
           {[-6.5, -3.5, -0.5].map((by, i) => (
             <polyline
               key={by}
               points={`${iso(28.5, by, 5.1).sx},${iso(28.5, by, 5.1).sy} ${iso(28.5 + (i === 2 ? 5 : 9), by, 5.1).sx},${iso(28.5 + (i === 2 ? 5 : 9), by, 5.1).sy}`}
               fill="none"
-              stroke={i === 2 ? PLATE.sienna : PLATE.muted}
+              stroke={PLATE.muted}
               strokeWidth={1.4}
             />
           ))}
-          <PlateTag x={iso(33.5, -3.5, 5).sx} y={iso(33.5, -3.5, 5).sy - 12} text="NEXT STEP" dark />
+          {/* r354 — the NEXT STEP chip's re-seat: the r353 seat (anchor.sy
+            − 12) set the chip's bottom edge EXACTLY on the
+            recommendation box's top-face corner (sy +3 both — the
+            documented kiss). The anchor lifts to −15: a 3-unit
+            (×1.35 scale ≈ 4px) clearance ring between the chip and
+            the box it names; the mastery chip guard
+            (tests/unit/r354-plate-guards.test.ts) pins the clearance
+            so the contact cannot return. */}
+        <PlateTag x={iso(33.5, -3.5, 5).sx} y={iso(33.5, -3.5, 5).sy - 15} text="NEXT STEP" dark />
         </g>
       </g>
       <Caption ar="خلايا تمتلئ بالإتقان، الفجوة تُعلَّم، والتوصية جاهزة" mono="MATRIX 4x6 / GAP:FLAGGED" />
@@ -205,12 +219,14 @@ function LoopResearch() {
         {/* the document — submitted, its lines still fresh */}
         <g className="iso-loop-box" style={ld('0s')}>
           <IsoBox x={-58} y={-12} w={17} d={13} h={2} />
+          {/* r354: the document's lines all ride the muted record
+              voice — the scan dial keeps the panel's ONE warm focal */}
           {[0, 1, 2, 3].map((i) => (
             <polyline
               key={i}
               points={`${iso(-55, -9.5 + i * 2.6, 2.1).sx},${iso(-55, -9.5 + i * 2.6, 2.1).sy} ${iso(-46 - (i === 3 ? 8 : 0), -9.5 + i * 2.6, 2.1).sx},${iso(-46 - (i === 3 ? 8 : 0), -9.5 + i * 2.6, 2.1).sy}`}
               fill="none"
-              stroke={i === 2 ? PLATE.sienna : PLATE.muted}
+              stroke={PLATE.muted}
               strokeWidth={1.3}
             />
           ))}
@@ -263,10 +279,12 @@ function LoopResearch() {
               strokeWidth={0.9}
             />
           ))}
+          {/* r354: the shelf's receipt mark de-coppers — the scan
+              dial is the panel's ONE warm focal */}
           <polyline
             points={`${iso(25, -6, 3.1).sx},${iso(25, -6, 3.1).sy} ${iso(31, -6, 3.1).sx},${iso(31, -6, 3.1).sy}`}
             fill="none"
-            stroke={PLATE.sienna}
+            stroke={PLATE.muted}
             strokeWidth={1.6}
           />
           <PlateTag x={iso(30.5, 6, 0).sx} y={iso(30.5, 6, 0).sy + 10} text="LIB" />
@@ -331,13 +349,16 @@ function LoopQuality() {
         {[-16, 0, 16].map((cx, i) => (
           <g key={cx} className="iso-loop-box" style={ld(`${1 + i * 0.4}s`)}>
             <IsoBox x={cx} y={-14} w={13} d={9} h={2.6} />
+            {/* r354: the council seats' record lines all ride the
+                muted voice — the ledger's ONE copper tick keeps the
+                panel's warm focal */}
             <polyline
               points={`${iso(cx + 2, -11.5, 2.7).sx},${iso(cx + 2, -11.5, 2.7).sy} ${iso(cx + 8, -11.5, 2.7).sx},${iso(cx + 8, -11.5, 2.7).sy}`}
               fill="none"
-              stroke={i === 0 ? PLATE.sienna : PLATE.muted}
+              stroke={PLATE.muted}
               strokeWidth={1.3}
             />
-            {i === 1 && <IsoNode x={cx + 6.5} y={-9.5} z={2.7} s={1.5} />}
+            {i === 1 && <IsoNode x={cx + 6.5} y={-9.5} z={2.7} s={1.5} fill={PLATE.royal} />}
           </g>
         ))}
         {/* the ledger — the long compliance strip */}
