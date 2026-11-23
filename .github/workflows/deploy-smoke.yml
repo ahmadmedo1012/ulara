@@ -201,6 +201,16 @@ jobs:
           JWT_REFRESH_SECRET: iso-smoke-refresh-secret-0123456789abcdef
           INTERNAL_SERVICE_TOKEN: iso-smoke-service-token-0123456789
           ULARA_TEST_ACCOUNTS: "1"
+          # The r357 §E.2 owner patch (deploy-smoke #43–#46 cure): boot
+          # preview-like — exactly a Vercel preview deployment's shape
+          # (production build serves the SPA statics + a non-production
+          # runtime where the §5 policy allows the disposable fixtures).
+          # Without this the §5 policy still allows the fixtures but
+          # serveStatic's isProd coupling serves no SPA and the browser
+          # login-all walks into `Cannot GET /auth`.
+          NODE_ENV: production
+          VERCEL: "1"
+          VERCEL_ENV: preview
         run: |
           nohup node backend/dist/index.js > /tmp/iso-app.log 2>&1 &
           for i in $(seq 1 90); do
