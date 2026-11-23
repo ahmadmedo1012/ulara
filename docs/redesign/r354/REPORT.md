@@ -14,7 +14,7 @@
 | Typecheck · Lint · Build · Frontend · Backend · DB | ✅ | re-run locally below |
 | Design gates · Surface drift · deadcode | ✅ | re-run locally below |
 | **Size gate** | ❌ two PNGs >500KB | **FIXED — §1** |
-| Zero-trace | ❌ | **inherited main blocker — §1.3** |
+| Zero-trace | ❌ | **branch content hit fixed + inherited history blocker — §1.2** |
 
 ### 1.1 The Size Gate fix (no allowlist, no ceiling change)
 
@@ -34,17 +34,45 @@ GREEN — rule 1 (no tracked file >500KB), rule 2 (docs 39,788KB ≤ 40MB),
 rule 3 (the branch adds 3,087KB to docs vs main ≤ 5MB). Every other
 evidence image in this round ships WebP ≤115KB from the start.
 
-### 1.2 Zero-trace — the inherited main blocker (documented, not worked around)
+### 1.2 Zero-trace — the branch-owned hit FIXED, the inherited history blocker proven separately
 
-`bash scripts/brand/zero-trace.sh` fails on the GIT HISTORY of two
-R350 commits («fix(r350): CI repairs … heron->refsite» and «docs(r350):
-the B0 reference extraction — heronaiapp.com measured live…») — commits
-that live in **main's own history** (`git merge-base --is-ancestor`
-verified: both precede this branch's fork point a71d7d8). No file or
-path this branch adds contains a retired name (the content + name
-halves of the gate pass locally). Per the round's rules: the git
-history is NOT rewritten, the gate is NOT weakened, no exception is
-added — recorded as an inherited main blocker with the proof above.
+The earlier text of this section was itself part of the problem and is
+corrected here (honest disclosure, not concealment). The gate's CI run
+failed on TWO distinct problems:
+
+**1. Branch-owned CONTENT hit — this report's own fault, now FIXED.**
+The previous revision of this file quoted the two historical commit
+subjects verbatim while documenting them — reproducing a retired name
+inside branch-owned content (exactly the content hit CI reported, and a
+contradiction of this report's earlier "no file this branch adds
+contains a retired name" claim). This rewrite refers to those commits
+by hash + safe description only. After the fix, the branch re-scans
+clean on both branch-owned halves:
+
+```text
+bash scripts/brand/zero-trace.sh   →
+✔ content clean — no retired name in any tracked file
+✔ names clean — no retired name in any tracked path
+✖ retired names in the git history: (the two r350 commits below)
+zero-trace: FAIL  ← the history half only
+```
+
+**2. Inherited HISTORY hits — proven ancestors of main, owner-level.**
+Two r350 commits carry the retired reference identity inside their
+subjects; neither was authored by this branch:
+
+| commit | safe description | ancestry proof |
+|---|---|---|
+| `0227904b` | r350 CI-repairs commit (its subject contains the retired design-reference name) | `git merge-base --is-ancestor 0227904b a71d7d8` → YES — precedes the fork point |
+| `669f12b6` | r350 reference-extraction doc commit (its subject contains the retired reference domain) | `git merge-base --is-ancestor 669f12b6 a71d7d8` → YES — precedes the fork point |
+
+The fork point is the merge-base `a71d7d8` (= origin/main HEAD): both
+commits entered **main's own history** before this branch existed.
+Per the round's rules: the git history is NOT rewritten, the gate is
+NOT weakened, no exception is added. The history half stays red until
+the owner resolves main's own history (an owner-level decision —
+history rewriting is outside every agent's lane); the content and name
+halves pass on this branch's tree.
 
 ## 2. The hero composition rebalance (the measured fix, not a zoom)
 
@@ -233,8 +261,11 @@ pains) + r353's roles shot.
 
 ## 10. Residuals (honest)
 
-- **Zero-trace** stays red on main's own git history (§1.3) — the
-  documented inherited blocker; nothing this branch adds trips it.
+- **Zero-trace**: the branch-owned content hit (this report's earlier
+  revision quoting historical commit subjects) is fixed — the content
+  and name halves pass on this branch's tree. The gate stays red on
+  main's own git history (§1.2) — the documented inherited blocker
+  (two r350 commits, ancestry-proven); owner-level resolution.
 - **The bundle margin is 2.5 KB** (812.5/815) — the round nets +0.3 KB
   for the roles-truth furniture and the instrument graduations after
   the dedupe claw-backs (cornerStone/isoBoxTop/--iso-signal retire).

@@ -140,12 +140,16 @@ export function IsoBox({
 
 /* ————————————————— node / diamond ————————————————— */
 
+/* r354-final colour law (the census verdict): the kernel's DEFAULTS
+ * are the SYSTEM voice — a node on the data net paints ROYAL unless
+ * a plate explicitly claims the warm learner focal. Every warm
+ * accent in the plates is now an EXPLICIT fill at its focal seat. */
 export function IsoNode({
   x,
   y,
   z = 0,
   s = 1.6,
-  fill = PLATE.sienna,
+  fill = PLATE.royal,
   stroke = PLATE.ink,
   className,
 }: {
@@ -202,7 +206,7 @@ function round2(n: number) {
 export function Route({
   points,
   dashed = true,
-  stroke = PLATE.sienna,
+  stroke = PLATE.royal,
   strokeWidth = 1.2,
   opacity = 0.85,
   className,
@@ -272,7 +276,7 @@ export function Leader({
         cx={o.x}
         cy={o.y}
         r="1.8"
-        fill={PLATE.sienna}
+        fill={PLATE.royal}
         stroke={PLATE.ink}
         strokeWidth="0.6"
       />
@@ -380,7 +384,7 @@ export function SeatLabel({
 }) {
   return (
     <g>
-      <circle cx={x} cy={y} r={1.9} fill={PLATE.sienna} stroke={PLATE.ink} strokeWidth={0.6} />
+      <circle cx={x} cy={y} r={1.9} fill={PLATE.royal} stroke={PLATE.ink} strokeWidth={0.6} />
       <line x1={x} y1={y} x2={tx} y2={ty} stroke={PLATE.muted} strokeWidth={0.9} strokeDasharray="4 3" />
       <text
         x={tx}
@@ -556,7 +560,7 @@ export function Palm({ x, y, s = 1 }: { x: number; y: number; s?: number }) {
         <path d={`M ${t.sx} ${t.sy} q ${-4.2 * s} ${1.2 * s} ${-7 * s} ${2.8 * s}`} />
         <path d={`M ${t.sx} ${t.sy} q ${-0.6 * s} ${-3.4 * s} ${0.4 * s} ${-5 * s}`} />
       </g>
-      <SheetDiamond cx={t.sx} cy={t.sy} s={0.9 * s} fill={PLATE.sienna} stroke={PLATE.ink} strokeWidth={0.6} />
+      <SheetDiamond cx={t.sx} cy={t.sy} s={0.9 * s} fill={PLATE.muted} stroke={PLATE.ink} strokeWidth={0.6} />
     </g>
   );
 }

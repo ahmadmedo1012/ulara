@@ -321,7 +321,7 @@ export function CampusFrag({ name }: { name: CampusFragName }) {
               strokeWidth="2.4"
               strokeLinecap="round"
             />
-            <rect x="4.2" y="-9.6" width="3.4" height="3.4" fill={PLATE.sienna} stroke="none" />
+            <rect x="4.2" y="-9.6" width="3.4" height="3.4" fill={PLATE.ink} stroke="none" />
           </g>
         </>
       );
@@ -476,7 +476,7 @@ export function CampusFrag({ name }: { name: CampusFragName }) {
             stroke={PLATE.muted}
             strokeWidth={0.9}
           />
-          <IsoNode className="iso-node" x={36.5} y={49} z={3.4} s={1} />
+          <IsoNode className="iso-node" x={36.5} y={49} z={3.4} s={1} fill={PLATE.royal} />
         </>
       );
     case 'field':

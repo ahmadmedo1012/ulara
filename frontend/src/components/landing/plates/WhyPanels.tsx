@@ -107,10 +107,13 @@ function LoopFlipped() {
         <g className="iso-loop-line" style={ld('0.3s')}>
           <Route points={[[-46, -5, 3.4], [-20, -5, 3.4]]} dashed={false} strokeWidth={2} opacity={0.9} stroke={PLATE.royal} />
         </g>
-        {/* the checkpoints — popping in sequence, the middle one copper */}
+        {/* the checkpoints — popping in sequence (r354-final: all three
+            read in the neutral top voice — the panel's ONE warm focal
+            is the attendance check; the copper middle checkpoint the
+            r354 census found competing retired) */}
         {[-40, -28, -16].map((cx, i) => (
           <g key={cx} className="iso-loop-dot" style={ld(`${1.1 + i * 0.45}s`)}>
-            <IsoNode x={cx} y={-5} z={3.4} s={2.4} fill={i === 1 ? PLATE.sienna : PLATE.top} />
+            <IsoNode x={cx} y={-5} z={3.4} s={2.4} fill={PLATE.top} />
           </g>
         ))}
         {/* the attendance tower — landing with its check + tag */}

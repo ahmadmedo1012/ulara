@@ -601,23 +601,24 @@ section.chapters {
   }
   /* the paper halo — the glyphs cross the plan's line-work (the
      statement rides the assembling campus, r325's overlay contract).
-     TWO belt mechanism: the SVG paint stroke (paint-order keeps it
-     behind the fill — Chromium renders it on HTML text) + an
-     em-keyed text-shadow outline (the same halo where the CSS stroke
-     does not paint — Firefox/Safari ignore stroke on HTML). The
-     shadow offsets ride em so the halo scales with the plaque's own
-     rung (D1 @≥992, the 4.8rem mobile band); the two soft outer
-     passes keep the glyphs clear of the r353 rebuild's densified
-     central ink at the mid beats. */
-  paint-order: stroke fill;
-  stroke: var(--bg);
-  stroke-width: 6px;
-  stroke-linejoin: round;
+     r354-final, measured: the retired «SVG paint stroke on HTML
+     text» belt never painted — stroke/stroke-width are SVG-text
+     properties; a 12px red stroke injected on the live plate paints
+     ZERO pixels in this Chromium (the r354 claim of a binary render
+     proof was wrong). THE belt is the em-keyed text-shadow outline,
+     and it now carries a true rim: 0.05em solid 8-way (≈2.3px at the
+     D1 rung — the old 0.025/0.03em band was ≤1.4px, half-eaten by
+     the glyph's own anti-aliasing; measured perimeter purity 75%)
+     + the crisp 0.025em inner pass + the two soft outer passes that
+     keep the mid-beat seat readable where the r353 rebuild's
+     densified central ink runs. All engines paint text-shadow. */
   text-shadow:
     -0.025em -0.025em 0 var(--bg), 0.025em -0.025em 0 var(--bg),
     -0.025em 0.025em 0 var(--bg), 0.025em 0.025em 0 var(--bg),
-    -0.03em 0 0 var(--bg), 0.03em 0 0 var(--bg),
-    0 -0.03em 0 var(--bg), 0 0.03em 0 var(--bg),
+    -0.05em -0.05em 0 var(--bg), 0.05em -0.05em 0 var(--bg),
+    -0.05em 0.05em 0 var(--bg), 0.05em 0.05em 0 var(--bg),
+    -0.055em 0 0 var(--bg), 0.055em 0 0 var(--bg),
+    0 -0.055em 0 var(--bg), 0 0.055em 0 var(--bg),
     0 0 0.16em var(--bg), 0 0 0.34em var(--bg);
 }
 
@@ -1156,7 +1157,6 @@ section.chapters {
   .jt-card-plate {
     max-inline-size: calc(100% - 2 * var(--sp-4));
     margin-inline: auto;
-    stroke-width: 4px;
   }
 
   .jt-card {

@@ -801,22 +801,28 @@ export function IsoJourneyScene() {
       /* 4 · the statement plaques — plaque 1 stands from t 0 (the
        *     spec's rest state), out 1.0–1.4; plaque 2 in 1.6–2.0
        *     (the 0.2s dead gap keeps one voice at a time), out
-       *     2.2–2.6 on BOTH belts — R349 pulled the mobile exit ahead
-       *     of the camera pan (the held statement rode the panning
-       *     drawing, ink-on-ink); R354 extends the same cure to the
-       *     desktop: the r353 architectural rebuild densified the
-       *     central ink under the statement seat (the tower's
-       *     lantern + both reading-start wings resolve through the
-       *     layer windows 1.02–2.52 — measured overlap: the statement
-       *     rode the assembled campus through band progress
-       *     0.30–0.48, the VLM-flagged destructive beats), and the
-       *     static overview camera never sweeps the seat clear. The
-       *     exit now completes at t 2.6 — before the satellite layer
-       *     (observatory/plaza/field) finishes resolving beneath the
-       *     glyphs; one window for both belts, the R349 precedent
-       *     applied to the seat it was invented for. */
+       *     2.15–2.35 on BOTH belts. The exit window's history, all
+       *     measured: r349 cured the ≤991 belt (the held statement
+       *     rode the panning camera, ink-on-ink); r353's desktop
+       *     window (2.5–3.0) held the statement over the RESOLVED
+       *     campus through band progress 0.30–0.48 — the VLM-flagged
+       *     destructive beats; R354's first pass pulled the desktop
+       *     to the mobile window (2.2–2.6). The final pass re-times
+       *     on MEASURED glyph contrast (the statement/reference
+       *     pair-diff metric, r354-final evidence): a uniform
+       *     opacity fade crosses below the 3:1 WCAG large-text bar
+       *     around opacity 0.95 and keeps falling — no opacity fade
+       *     can hold readable contrast into its tail, so the fix is
+       *     to cross the degraded span FAST and finish before the
+       *     seat's ink peaks: the 1.0→0.5 drop now spans ~0.06s of
+       *     clock (~63px of scroll at 1440 — a flick, not a restable
+       *     frame), and the exit completes at t 2.35, while the
+       *     satellite layer (2.02–2.52) is still ~2/3 resolved —
+       *     the campus owns a clean reading window from band
+       *     progress ~0.36, and the statement never rests at low
+       *     contrast over dense ink on either belt. */
       writeCard(card1Ref.current, t, -1, -1, 1.0, 1.4);
-      writeFade(card2Ref.current, t, 1.6, 2.0, 2.2, 2.6);
+      writeFade(card2Ref.current, t, 1.6, 2.0, 2.15, 2.35);
 
       /* 5 · the r346 ASSEMBLY — the band-progress windows (the
        *     caption exit, the fragment flights, the marker pops, the
