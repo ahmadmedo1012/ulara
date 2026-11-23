@@ -19,58 +19,79 @@
  *    draws the dashed empty seat — no separate account).
  *  · No funnel CTA here (the 5-register / 6-login counts stay).
  */
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { ROLE_SLIDES } from '../plates/RolePlates';
 
 /* ── The deck: the eight accordion rows, each with its role machine.
  * The five verified roles first (their lines are the ROLE_SHOWCASES
- * copy the r168b pins ride), then the three honest personas. */
+ * copy the r168b pins ride), then the three honest personas.
+ *
+ * r354 (the roles-truth pass): the platform has EXACTLY FIVE entry
+ * roles (STUDENT · TEACHER · ADMIN · QUALITY · OWNER — the auth
+ * surface's own register). The last three rows are NOT roles — a
+ * use case a student or teacher runs (الباحث), a professional
+ * position whose surface is still sealed (مشرف المعمل), and a
+ * beneficiary with no separate account (وليّ الأمر). The band now
+ * SAYS so, visually and textually: a group divider under row 05 +
+ * kind chips on the exception rows, so no visitor reads eight
+ * independent entry roles. */
 interface RoleRow {
   num: string;
   title: string;
   line: string;
+  /** 'role' — one of the five platform entry roles; 'case' — a
+   * persona / use case that rides ON those roles (marked honestly) */
+  kind: 'role' | 'case';
 }
 
 const ROLE_ROWS: RoleRow[] = [
   {
     num: '01',
     title: 'الطالب',
+    kind: 'role',
     line: 'رحلة تعلّم شخصية — من المحاضرة الأولى إلى الإتقان: جدول اليوم، والمهام، والتقدّم في مقرّر واحد.',
   },
   {
     num: '02',
     title: 'الأستاذ',
+    kind: 'role',
     line: 'بناء المحاضرات والاختبارات، وتصحيح بملاحظات، ومتابعة الطلاب قسمًا قسمًا.',
   },
   {
     num: '03',
     title: 'إدارة المؤسسة',
+    kind: 'role',
     line: 'الكليات والأقسام والمقرّرات والصلاحيات، وتقارير حيّة عنها جميعًا.',
   },
   {
     num: '04',
     title: 'ضمان الجودة',
+    kind: 'role',
     line: 'مجالس الجودة ومؤشرات الالتزام — وكل مؤسّسة معزولة تمامًا عن غيرها.',
   },
   {
     num: '05',
     title: 'مالك المنصّة',
+    kind: 'role',
     line: 'الحاكمية والمؤسّسات وسجلّ التدقيق — والصلاحيات منفصلة دورًا عن دور.',
   },
   {
     num: '06',
     title: 'الباحث',
-    line: 'طالب أو أستاذ يكتب بحثه: رفع PDF، وفحص نزاهة معلَن، وملاحظات معلَّمة من الأستاذ.',
+    kind: 'case',
+    line: 'حالة استخدام — طالب أو أستاذ يكتب بحثه: رفع PDF، وفحص نزاهة معلَن، وملاحظات معلَّمة من الأستاذ.',
   },
   {
     num: '07',
     title: 'مشرف المعمل',
-    line: 'المعامل الافتراضية قيد التطوير — فهرس للاستعراض دون تشغيل بعد.',
+    kind: 'case',
+    line: 'حالة استخدام — المعامل الافتراضية قيد التطوير: فهرس للاستعراض دون تشغيل بعد.',
   },
   {
     num: '08',
     title: 'وليّ الأمر',
-    line: 'لا حساب منفصل لوليّ الأمر اليوم — المتابعة تمرّ عبر تقرير الطالب نفسه.',
+    kind: 'case',
+    line: 'شخص مستفيد بلا حساب منفصل — المتابعة تمرّ عبر تقرير الطالب نفسه.',
   },
 ];
 
@@ -166,8 +187,18 @@ export function Roles() {
               {ROLE_ROWS.map((r, i) => {
                 const isOpen = i === open;
                 return (
+                  <Fragment key={r.num}>
+                    {/* r354 — the group divider: the five platform roles
+                        end at row 05; the band SAYS the seam before the
+                        personas begin (never eight entry roles) */}
+                    {i === 5 ? (
+                      <div className="rl-group" aria-hidden="true" data-spec="roles.groupdiv">
+                        <span className="fo-mono rl-group-num" dir="ltr">[05/05]</span>
+                        <span className="rl-group-label">أدوار المنصّة الخمسة — وما يليها شخصيات وحالات استخدام، ليست أدوار دخول</span>
+                        <span className="rl-group-rule" />
+                      </div>
+                    ) : null}
                   <div
-                    key={r.num}
                     className={`rl-row${isOpen ? ' is-open' : ''}`}
                     data-spec={`roles.row.${i + 1}`}
                     style={{ ['--rl-i' as string]: i }}
@@ -177,6 +208,9 @@ export function Roles() {
                         <div className="rl-row-ink" data-spec={`roles.rowink.${i + 1}`}>
                           <div className="rl-row-title" data-spec={`roles.rowtitle.${i + 1}`}>
                             {r.title}
+                            {r.kind === 'case' ? (
+                              <span className="rl-kind" data-spec={`roles.rowkind.${i + 1}`}>حالة استخدام</span>
+                            ) : null}
                           </div>
                         </div>
                       </div>
@@ -232,6 +266,7 @@ export function Roles() {
                       </>
                     )}
                   </div>
+                  </Fragment>
                 );
               })}
             </div>

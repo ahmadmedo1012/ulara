@@ -171,6 +171,76 @@
   font-weight: 700;
   color: var(--text);
 }
+
+/* ── r354 — the roles-truth furniture ──────────────────────────────
+   The platform has five entry roles; the last three accordion rows
+   are personas / use cases. The seam is now VISIBLE: a group divider
+   strip under row 05 + a quiet mono kind chip on the exception rows.
+   Both seats ride the accordion's own measured voice (mono xs, the
+   muted register, hairline rules) — they annotate the census, they
+   never restyle it. */
+.rl-kind {
+  display: inline-block;
+  vertical-align: middle;
+  margin-inline-start: var(--sp-2);
+  padding: 0.1rem 0.6rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-xs);
+  line-height: 1.6;
+  font-weight: 500;
+  color: var(--text-muted);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-sm);
+  white-space: nowrap;
+}
+
+/* the group divider — the seam between the five roles and the
+   personas (aria-hidden: the rows' own chips carry the semantics) */
+.rl-group {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding-block: 0.9rem;
+  padding-inline: 3.2rem 3.2rem;
+  padding-inline-start: 15.4rem;
+  background: color-mix(in srgb, var(--iso-paper-hi) 55%, transparent);
+  border-block-start: 1px solid var(--rule);
+  border-block-end: 1px solid var(--rule);
+}
+.rl-group-num {
+  flex: none;
+  font-size: var(--fs-mono-xs);
+  color: var(--accent);
+}
+.rl-group-label {
+  flex: none;
+  /* the Arabic voice (the mono face carries no Arabic glyphs — the
+     label rides the sans register at the mono xs rung's own size) */
+  font-size: var(--fs-mono-xs);
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+.rl-group-rule {
+  flex: 1 1 auto;
+  block-size: 0;
+  border-block-start: 1px dashed var(--rule);
+}
+
+@media (max-width: 1279px) {
+  .rl-group {
+    padding-inline: 2.4rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .rl-group {
+    padding-inline: 1.6rem;
+    padding-block: 0.7rem;
+  }
+  .rl-kind {
+    margin-inline-start: var(--sp-1-5);
+  }
+}
 .rl-row-icon {
   flex: none;
   margin-inline-start: auto;
