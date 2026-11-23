@@ -20,7 +20,7 @@ runbook, roadmap); the generated English reference is `docs/api/openapi.json`
 | `scripts/conformance/` | NOT PRESENT in this repository (R342-final audit: never landed — no trace in git history; earlier AGENTS text described it aspirationally). The visual-verification instruments of record are the pixel-exact E2E belts (`tests/e2e/r309-*, r308-*, r311-*, r312-*`) + the r305/audit suites. Do not cite conformance percentages. |
 | `shared/` | `design-tokens.json` (source of generated tokens), `brand/`, `testAccounts.ts` |
 | `tools/` | `boot-pg.sh` (local postgres), `daemon.js` |
-| `docs/` | Arabic topic files (`architecture`, `deployment`, `mobile`, `testing`, `design-system`, `runbook`, `roadmap`) + `api/openapi.json` (generated) + `ops/` + `redesign/` (`redesign/r342/` = current program: QUEUE/HANDOFF/OWNERSHIP/BACKLOG; r341 = closed — runtime verdict run 43465697203; rounds r305–r340 predate the 1.0 squash and are not on disk) |
+| `docs/` | Arabic topic files (`architecture`, `deployment`, `mobile`, `testing`, `design-system`, `runbook`, `roadmap`) + `api/openapi.json` (generated) + `ops/` + `redesign/` (`redesign/r352/` = current program — institutional backend + frontend; `r342/` = wave log/BACKLOG/OWNERSHIP; `r351*` = the palette + experience rounds; r341 = closed — runtime verdict run 43465697203; rounds r305–r340 predate the 1.0 squash and are not on disk) |
 | `.github/workflows/` | `ci.yml` (full gate matrix), `size-gate.yml`, `mobile.yml`, `android-apk.yml`, `deploy.yml` (Vercel), `deploy-smoke.yml`, `build-ios-sidestore.yml`, `mobile-builds-ledger.yml`, `deadcode.yml` — runners pinned to `ubuntu-24.04` |
 
 Sources of truth (don't guess, read): endpoints → `backend/src/app.ts` + `http/routes/`
@@ -72,15 +72,19 @@ CSS: `npm run lint:css -w frontend` (stylelint 16), `npm run gate:css-coverage -
 
 ## 3. Gates & ceilings
 
-CI (`ci.yml` jobs: lint, typecheck, build, test-frontend, test-backend, db-integration,
-e2e, ios-webkit, design-gates, conform-gate, surface-drift; plus `size-gate.yml`) mirrors
-these local gates — all runners pinned `ubuntu-24.04`:
+CI (`ci.yml` jobs: zero-trace, lint, typecheck, build, test-frontend, test-backend,
+db-integration, e2e, ios-webkit, design-gates, surface-drift; plus `size-gate.yml`)
+mirrors these local gates — all runners pinned `ubuntu-24.04`:
 
 - **Bundle** — `scripts/check-bundle-size.mjs`, gz, `dist/assets/*.js` ONLY (CSS is not in
-  the gate): **total ≤ 770 KB HARD** (R339 restored r337's 777 — 13 KB slack invited
-  bloat; measured 764.1 at the re-pin), entry ≤ 92, pdf ≤ 110. It
+  the gate): **total ≤ 815 KB HARD** (R352 raised 770 → 815, +5.8%, documented in the
+  gate header: the institutional workspace's 15 lazy page chunks + inst kit + API clients
+  measured 809.6 KB gz on the branch head vs 746.9 on its merge base — a 62.7 KB statutory
+  feature that 23 KB of headroom could not hold; entry stayed 65.0), entry ≤ 92,
+  pdf ≤ 110. It
   sums ALL js chunks **including async chunks** — lazy-splitting only moves weight; the
   honest lever is real code cuts (e.g. the axios→native-fetch diet, −17.9 KB).
+  The constants in `check-bundle-size.mjs` are the source of truth; this line mirrors them.
 - **Visual conformance** — rides the pixel-exact E2E belts (the retired
   `scripts/conformance/` ratchet never landed in this repo — see §1). Section
   regressions are caught by the geometry/a11y assertions in the e2e + r305 suites.
@@ -97,7 +101,9 @@ these local gates — all runners pinned `ubuntu-24.04`:
 
 ## 4. Ownership (current wave)
 
-Binding: `docs/redesign/r342/OWNERSHIP.md` + `scripts/conformance/mapping/*.json`.
+Binding: `docs/redesign/r342/OWNERSHIP.md` (the seat map) + the current round's
+`docs/redesign/r352/*/HANDOFF.md` (what each wave actually owns). The r342
+`scripts/conformance/mapping/*.json` files never landed — that tree does not exist.
 Own ONLY the files your task names; everything else is a merge block. Historical seat
 map (the R338 rulings; each wave's OWNERSHIP.md supersedes it per-task):
 
@@ -116,8 +122,8 @@ map (the R338 rulings; each wave's OWNERSHIP.md supersedes it per-task):
 
 Other zones: inner pages (`pages/{auth,about,help,app}*`, `styles/auth.css`…) have a
 dedicated owner; `apps/mobile/**` + mobile workflows belong to the mobile track;
-`scripts/conformance/run.mjs` is the **lead-controlled shared instrument** — section
-agents never edit it; `.github/workflows`, ceilings and baselines are lead-only.
+`.github/workflows`, ceilings, baselines and `scripts/` gates are lead-only — section
+agents never edit them.
 Cross-dependency: problem's copy-driven line-counts live in platform-owned `Live.tsx`.
 Current round state (wave log, merges, rulings): `docs/redesign/r342/HANDOFF.md` + the
 queue/ownership in the same directory.
@@ -126,9 +132,10 @@ queue/ownership in the same directory.
 
 - **Landing section**: create `frontend/src/components/landing/sections/X.tsx` +
   `frontend/src/styles/landing/x.css` (component imports its own sheet — see
-  `LandingPage.tsx` header note); add the seat + import in `pages/LandingPage.tsx`; add
-  `scripts/conformance/mapping/<key>.json` (ourSection/seat ids must match the DOM);
-  measure with `run.mjs`; total bundle must stay ≤770 KB.
+  `LandingPage.tsx` header note); add the seat + import in `pages/LandingPage.tsx`;
+  pin its geometry/a11y contract in the pixel-exact E2E belts (`frontend/tests/e2e/`,
+  the r305/r308/r309/r311/r312 pattern) — that is the verification instrument, there is
+  no conformance mapping file; total bundle must stay ≤815 KB.
 - **App page**: `frontend/src/pages/X.tsx` + route in `App.tsx` — mind entry-chunk weight
   (`App.tsx`, `GlobalSearch` are eager; prefer lazy routes); light+dark themes, RTL and
   a11y are contract, and `check-csp-hash.sh` must stay green.
@@ -164,7 +171,8 @@ queue/ownership in the same directory.
 
 ## 7. Never-do list
 
-- Never raise a ceiling (770 / 92 / 110), re-pin the retired reference spec baseline,
+- Never raise a ceiling (815 / 92 / 110) without a documented, measured reason in
+  `scripts/check-bundle-size.mjs`'s header, re-pin the retired reference spec baseline,
   weaken an assertion or test, lower the ratchet, or
   add `continue-on-error`.
 - Never paste the retired reference site's NAME anywhere (files, prose,
