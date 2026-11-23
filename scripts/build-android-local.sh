@@ -294,7 +294,7 @@ ok "android/local.properties → sdk.dir=$ANDROID_HOME_DIR"
 
 # ── 3. gradle assembleRelease ───────────────────────────────────────────
 say "gradlew assembleRelease (first run: downloads gradle 9.4.1 + deps — several minutes)"
-(cd "$MOBILE_DIR/android" && ./gradlew assembleRelease "$@")
+(cd "$MOBILE_DIR/android" && (./gradlew assembleRelease --stacktrace "$@" || (echo "Retrying assembleRelease once after transient error..." && ./gradlew assembleRelease --stacktrace "$@")))
 ok "assembleRelease finished"
 
 # ── 4. The artifact ─────────────────────────────────────────────────────
