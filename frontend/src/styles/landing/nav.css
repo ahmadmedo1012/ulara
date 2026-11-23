@@ -522,8 +522,11 @@ html[data-theme='dark'] .fo-header {
   position: absolute;
   inset: 0;
   background: var(--accent);
-  transform: translateY(-101%);
-  transition: transform 0.5s var(--ease); /* the measured bg-hover wipe */
+  transform: none;
+  transition:
+    -webkit-mask-position var(--t-slow) var(--ease-pixel),
+    mask-position var(--t-slow) var(--ease-pixel),
+    background-color 0.5s var(--ease);
   pointer-events: none;
   z-index: -1;
 }
@@ -812,15 +815,7 @@ html[data-theme='dark'] .fo-header {
  * mask-position + the recorded AA ground swap. Rest = slice 0 (the
  * slab hidden); resolved hover = slice 19 (the recorded slab seated);
  * reduced motion pops to the identical final state. */
-.fo-actions-cta::before {
-  transform: none;
-  /* the mask grammar rides the shared pattern (patterns.css) — this
-     seat adds only the walk's transition + its ground swap leg */
-  transition:
-    -webkit-mask-position var(--t-slow) var(--ease-pixel),
-    mask-position var(--t-slow) var(--ease-pixel),
-    background-color 0.5s var(--ease);
-}
+
 
 /* Keyboard parity (the base .btn:focus-visible pattern): keyboard
  * focus walks the SAME dither to the same recorded slab — the
