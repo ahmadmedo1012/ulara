@@ -186,6 +186,36 @@ honest numbers, the integrity strings, and the a11y contracts are pinned by
 `landing-funnel` / `r306-landing-sheet` / `landing-scrollspy-grain` / `guest-landing.e2e`
 / the r188-brand gates.
 
+### §5.a The isometric plate grammar — the r346/r353 art direction
+
+Every drawing on the landing (the hero campus plate, the journey's campus sheet, the
+pains plates, the why loops, the role machines) renders from ONE grammar:
+`lib/iso.ts` (the 30° projection + the `PLATE` palette) → `kernel/Iso.tsx` (the
+primitives: boxes, routes, leaders, tags + the r353 architectural set — `Dim`
+dimension lines, `Arcade` colonnades, `Palm`, `IsoDome`) → the fragments
+(`plates/CampusArt.tsx` is the campus's ONE geometry source; both the hero and the
+journey mount it). The painting system is `styles/landing/iso-plate.css` (the
+`--iso-*` seats, all var()-references — the color gate's law).
+
+**The two-voice colour law (r353, the 2026 identity carried into the drawings):**
+- **ROYAL** (`--iso-royal` → `--c-royal-ink`, `#2540D9` light / `#8AA0FF` dark) is
+  the engineering-intelligence layer: data routes, network nodes, dimension lines,
+  measurement ticks, the compass needle, the recommendation/pipeline/priority flows.
+  Blue = the platform.
+- **Warm sienna** (`--iso-sienna` → the copper family `#F15534`) is the FOCAL accent,
+  spent on the learner's journey alone: the flag, the mastery gap, the observatory
+  beacon, the one hot tick per plate. Warm = the human moment — never a substitute
+  for the royal signal.
+
+**The line-weight hierarchy:** profile 1.6–1.8 on silhouettes, structure 1.1–1.3,
+detail 0.7–0.9 — the drafting sheet's three voices (the journey's sheet re-keys
+every weight through its `SHEET_INK_CSS` hairline ladder).
+
+**Architectural credibility law:** a campus building must read as its program —
+arcades (riwaq), gate + piers + lintel, dome + drum + slit, hipped roofs, parapets,
+fenestration grids, fountains, tracks, palms — never generic boxes. Every element
+lands ON the ground plane; annotations terminate on real features.
+
 ## 6. Components & patterns
 
 Buttons: `.btn.primary` charcoal slab (the default primary — the auth submit joined it in
