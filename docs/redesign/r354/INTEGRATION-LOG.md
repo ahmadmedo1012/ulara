@@ -85,7 +85,28 @@ git push origin --delete agent/ulara-{visual-artwork,product-roles-mobile,backen
 git ls-remote --heads origin             → refs/heads/main only
 ```
 
-## 7. Known red / NOT MEASURED
+## 7. Production (measured, 2026-11-23 10:55Z)
+
+Production serves **`buildId: 09b352ffb76f`** — the integration commit
+`09b352ffb76fc48a863414d071e6a2a697b0f9a3`.
+
+| route | code |
+|---|---|
+| `/api/v1/status` | 200 (`db.ok: true`, `aiMode: openai`) |
+| `/api/v1/health` | 200 |
+| `/api/v1/colleges?institution=ulara-demo` | 200 |
+| `/api/v1/colleges/leaderboard` | 200 |
+| `/api/v1/institutions` | 200 |
+| `/api/v1/auth/me` (no token) | 401 |
+| `/api/v1/catalog/institution-types` (no token) | 401 |
+
+Migration `0006_r352_feedback_institution_scope` finished at
+`2026-11-23T10:48:58Z` in the production build — the first live run of
+`scripts/vercel-build.sh`'s production branch (`prisma:deploy`, advisory
+lock, direct candidates only). `_prisma_migrations` order confirmed:
+`0006` → `0005` → `0004`.
+
+## 8. Known red / NOT MEASURED
 
 - **Zero-trace history**: red on `main` before this integration and after it, on
   the same two r350 commit subjects. No new trace was added (content + names
