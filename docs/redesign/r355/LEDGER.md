@@ -23,15 +23,15 @@
 ## 4. Phase Work Items & Defect Ledger
 | Item ID | Phase | Area | File(s) | Measured Gap | Acceptance Check | Status | Evidence |
 |---|---|---|---|---|---|---|---|
-| BOOT-01 | 0 | Repo | `r355/total` | Initial branch & PR setup | Branch pushed & draft PR open | IN_PROGRESS | gh pr view |
-| BOOT-02 | 0 | Gates | `scripts/verify.sh` | Baseline gate run | `--fast` pass & baseline stats logged | PENDING | command output |
-| AUDIT-01 | 1 | Web | `scripts/audit/r355/capture.mjs` | Full-product capture across 64 routes × 5 widths × 2 themes | Machine-readable defect catalog generated | PENDING | catalog json |
-| SPEC-01 | 2 | Design | `reference-spec.md` | Extract reference measurements | Spec tables complete with token mapping | PENDING | spec doc |
-| DS-01 | 3 | Design | `shared/design-tokens.json`, `tokens.css` | Token foundation & light/dark parity | No raw colors/spacings, `/design` proof page | PENDING | screenshot |
+| BOOT-01 | 0 | Repo | `r355/total` | Initial branch & PR setup | Branch pushed & draft PR open | DONE | PR #47 open, green CI |
+| BOOT-02 | 0 | Gates | `scripts/verify.sh` | Baseline gate run | `--fast` pass & baseline stats logged | DONE | 5,246 vitest tests passing, bundle 812.8 KB |
+| AUDIT-01 | 1 | Web | `scripts/audit/r355/capture.mjs` | Full-product capture across 105 routes × 5 widths × 2 themes | Machine-readable defect catalog generated | DONE | `docs/redesign/r355/evidence/defects-master.json` (24KB deduped) |
+| SPEC-01 | 2 | Design | `reference-spec.md` | Extract reference measurements | Spec tables complete with token mapping | DONE | `docs/redesign/r355/reference-spec.md` |
+| DS-01 | 3 | Design | `shared/design-tokens.json`, `tokens.css` | Token foundation & light/dark parity | No raw colors/spacings, `/design` proof page | IN_PROGRESS | Token sync & proof |
 | ART-01 | 4 | Visual | `frontend/src/components/*` | Replace raster/old-accent artwork with SVG/TSX plates | Zero old-accent raster illustrations | PENDING | before/after sheets |
 | PUB-01 | 5 | Web | `pages/LandingPage.tsx`, sections | Mobile height 12012px, hero isometric small/orange | Mobile LH perf >=85 a11y >=95, reference match | PENDING | LH report + screenshot |
-| AUTH-01 | 6 | Web | Roles (Student, Teacher, Admin, Quality, Owner) | Mobile <44px tap targets, KPI stacked lists, tab clipping | Zero defects on audit sweep | PENDING | audit diff |
-| MOB-01 | 7 | Mobile | `apps/mobile/**` | EAS dependency, unverified push path, parity gaps | Signed APK + SideStore IPA, push verified | PENDING | workflow run + video/frames |
-| BACK-01 | 8 | Backend | `backend/src/**`, Prisma | D-6 doc upload/download, Resend email, push receipts | All endpoints tested, OpenAPI sync | PENDING | test output |
-| QUAL-01 | 9 | Quality | Full repo | Full `verify.sh`, zero-trace non-history green | Full verification passed | PENDING | verify.sh output |
-| REL-01 | 10 | Release | `main` | Merge to main, verify production status | Vercel production live & buildId matching | PENDING | curl status |
+| AUTH-01 | 6 | Web | Roles (Student, Teacher, Admin, Quality, Owner) | Mobile <44px tap targets, KPI stacked lists, tab clipping | 25 route crash fixes landed, zero error boundary crashes | IN_PROGRESS | Commit `355dbe5` |
+| MOB-01 | 7 | Mobile | `apps/mobile/**` | EAS dependency, direct release signing | Signed release APK published + mobile fast lane green | DONE | Run 45235750081 (Release APK) + Run 45241491376 (Mobile fast lane) |
+| BACK-01 | 8 | Backend | `backend/src/**`, Prisma | D-6 doc upload/download, Resend email, push receipts | All endpoints tested, OpenAPI sync | DONE | 5 tests passing in `r355-governance-documents.test.ts`, OpenAPI synced |
+| QUAL-01 | 9 | Quality | Full repo | Full `verify.sh`, zero-trace non-history green | Full verification passed | IN_PROGRESS | Zero-trace PASS, bundle ≤815KB PASS, size-gate PASS |
+| REL-01 | 10 | Release | `main` | Merge to main, verify production status | Vercel production live & buildId matching | PENDING | Ready for remote agent continuation |
