@@ -71,6 +71,17 @@ import '../../../styles/landing/preloader.css';
  * and never holds past 2.6s (the hard cap readiness races), then the
  * completed beat, then the slit. */
 const RELEASE_FLOOR_MS = 2000;
+/* r353 — the observer margin. The r309 belt stamps its tMount AFTER
+ * `.pl` becomes layout-observable, i.e. one Playwright round-trip after
+ * this component's clock; r344's first-rAF stamp removed the paint
+ * delay but not that round-trip. Measured on the slow runner class:
+ * 94ms (doneAt 1906 vs the 2000 floor — the belt went red with the
+ * display already at 100). The belt's contract is a floor, so the
+ * release gate holds the floor PLUS this margin; the display keeps
+ * crawling at 99 to the floor, and the whole entrance still lands
+ * inside the documented 2.0-2.6s window (MAX_RUN_MS is unchanged). */
+const RELEASE_MARGIN_MS = 400;
+const RELEASE_EXIT_MS = RELEASE_FLOOR_MS + RELEASE_MARGIN_MS;
 const MAX_RUN_MS = 2600;
 const EXIT_HOLD_MS = 500;
 const ENTRY_DONE_EVENT = 'ula:entry-done';
@@ -263,12 +274,13 @@ export function Preloader({ onExitStart, onDone }: PreloaderProps) {
       /* the DISPLAY never rounds to 100 before the release floor —
        * the eased value crawls at 99 until the floor opens, then the
        * exit's own setPct(100) lands the terminal readout. */
-      const next = t < RELEASE_FLOOR_MS ? Math.min(99, Math.round(shown)) : Math.round(shown);
+      const next =
+        t < RELEASE_EXIT_MS ? Math.min(99, Math.round(shown)) : Math.round(shown);
       setPct(next);
       /* the progress var drives BOTH centreline halves (the root is the
        * one shared writer — the two band children read the same value) */
       root.style.setProperty('--pl-p', (shown / 100).toFixed(4));
-      if (solved && t >= RELEASE_FLOOR_MS && shown >= 99.5) {
+      if (solved && t >= RELEASE_EXIT_MS && shown >= 99.5) {
         runExit();
         return;
       }
