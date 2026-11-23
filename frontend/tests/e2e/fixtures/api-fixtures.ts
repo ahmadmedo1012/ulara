@@ -62,6 +62,50 @@ export interface FixtureUser {
   scopeFacultyId: string | null;
 }
 
+
+/* r358 — the public leaderboard sheet's hermetic seat: the r358 scan's
+ * zero-501 assertion caught GET /colleges/leaderboard answering 501 (the
+ * route is PUBLIC, aggregate-only, no PII — r179 sub-project C). Shape =
+ * LeaderboardCollege rows keyed by the six showcase faculties. */
+export const COLLEGES_LEADERBOARD: { colleges: Array<{
+  id: string; name: string; iconEmoji: string | null; city: string;
+  studentCount: number; teacherCount: number; totalXp: number; avgXp: number; avgGpa: number;
+  publishedPapers: number; examAttempts: number; labSessions: number; completedEnrollments: number;
+  ranks: { totalXp: number; avgGpa: number; publishedPapers: number; examAttempts: number; labSessions: number; completedEnrollments: number };
+}> } = {
+  colleges: [
+    { id: 'fcl_eng', name: 'كلية الهندسة', iconEmoji: '⚙️', city: 'طرابلس', studentCount: 412, teacherCount: 38, totalXp: 128400, avgXp: 311, avgGpa: 3.42, publishedPapers: 41, examAttempts: 1890, labSessions: 312, completedEnrollments: 1046, ranks: { totalXp: 1, avgGpa: 2, publishedPapers: 1, examAttempts: 1, labSessions: 1, completedEnrollments: 1 } },
+    { id: 'fcl_sci', name: 'كلية العلوم', iconEmoji: '🔬', city: 'طرابلس', studentCount: 388, teacherCount: 34, totalXp: 104900, avgXp: 270, avgGpa: 3.51, publishedPapers: 36, examAttempts: 1612, labSessions: 244, completedEnrollments: 921, ranks: { totalXp: 2, avgGpa: 1, publishedPapers: 2, examAttempts: 2, labSessions: 2, completedEnrollments: 2 } },
+    { id: 'fcl_med', name: 'كلية الطب البشري', iconEmoji: '🩺', city: 'بنغازي', studentCount: 297, teacherCount: 29, totalXp: 88300, avgXp: 297, avgGpa: 3.36, publishedPapers: 28, examAttempts: 1204, labSessions: 198, completedEnrollments: 712, ranks: { totalXp: 3, avgGpa: 3, publishedPapers: 3, examAttempts: 3, labSessions: 3, completedEnrollments: 3 } },
+    { id: 'fcl_bus', name: 'كلية الاقتصاد', iconEmoji: '📊', city: 'طرابلس', studentCount: 254, teacherCount: 22, totalXp: 61200, avgXp: 241, avgGpa: 3.18, publishedPapers: 17, examAttempts: 890, labSessions: 96, completedEnrollments: 588, ranks: { totalXp: 4, avgGpa: 4, publishedPapers: 4, examAttempts: 4, labSessions: 4, completedEnrollments: 4 } },
+    { id: 'fcl_law', name: 'كلية القانون', iconEmoji: '⚖️', city: 'سبها', studentCount: 186, teacherCount: 18, totalXp: 42100, avgXp: 226, avgGpa: 3.05, publishedPapers: 11, examAttempts: 620, labSessions: 52, completedEnrollments: 409, ranks: { totalXp: 5, avgGpa: 5, publishedPapers: 5, examAttempts: 5, labSessions: 5, completedEnrollments: 5 } },
+    { id: 'fcl_art', name: 'كلية الآداب', iconEmoji: '📚', city: 'المحلة', studentCount: 141, teacherCount: 14, totalXp: 27600, avgXp: 196, avgGpa: 2.94, publishedPapers: 7, examAttempts: 388, labSessions: 31, completedEnrollments: 262, ranks: { totalXp: 6, avgGpa: 6, publishedPapers: 6, examAttempts: 6, labSessions: 6, completedEnrollments: 6 } },
+  ],
+};
+
+
+/* r358 — the remaining two hermetic seats the full scan's zero-501 assertion
+ * caught: the public registration picker's /institutions list and the
+ * error-state pages' /status probe (system-status strip). */
+export const PUBLIC_INSTITUTIONS_FIXTURE = [
+  { id: 'inst_ulara_showcase', name: 'جامعة الأفق النموذجية', nameEn: 'Ufuq Showcase University', slug: 'ufuq' },
+  { id: 'inst_ulara_model', name: 'جامعة المتوسط التقنية', nameEn: 'Muttawasit Technical University', slug: 'muttawasit' },
+  { id: 'inst_ulara_demo', name: 'كلية الرافدين', nameEn: 'Rafidayn College', slug: 'rafidayn' },
+] as Array<{ id: string; name: string; nameEn: string | null; slug: string }>;
+
+export const SYSTEM_STATUS_FIXTURE = {
+  ok: true,
+  db: { ok: true, latencyMs: 42 },
+  storageDriver: 'postgres',
+  aiMode: 'local',
+  mailProvider: 'none',
+  buildId: 'e2e-hermetic',
+  serverTime: '2026-01-01T00:00:00.000Z',
+  maxPdfUploadBytes: 4194304,
+  minAppVersion: null,
+  updateUrl: null,
+};
+
 export const STUDENT_USER: FixtureUser = {
   id: 'usr_e2e_student',
   email: 'student@zu.edu.ly',

@@ -28,7 +28,9 @@ Mission: sync, clean, then match the reference. Owner verdict driving this round
 | 11-23 23:1x | pdfjs-dist 6 (PR #49) | CLOSED, not merged: +36 KB gz on the pdf ceiling (131.8/110) — the viewer upgrade is not worth the weight this round; the v6 render/canvas+destroy patch was prototyped then dropped with the reset. |
 | 11-23 23:2x | lucide-react 1.77 (PR #52) | CLOSED, not merged: +3.3 KB gz measured with everything else reverted — over a frozen ceiling with zero feature need this round. |
 | 11-23 23:3x | §7.C (perf ≥ 85) vs r355's documented 0.68–0.75 boot tradeoff | Both live contracts: Phase C1 makes the intro non-blocking for LCP (shorter/skippable preloader) while preserving the reference choreography for opted-in sessions. Logged, not dropped. |
-| 11-23 23:3x | `npm ci` in apps/mobile | via daemon `nice -n 10`, started during the root gate's vitest step (network-bound, low CPU). |
+| 11-23 23:4x | `npm ci` in apps/mobile | via daemon `nice -n 10` — DONE (1.1G node_modules, no errors). |
+| 11-24 00:0x | Vercel deploys for 76fb60f + 58aaf29 ERROR | TWO root causes fixed on main: (1) the committed lock was the placeholder resolution — `npm ci` died in every CI job AND the Vercel build → 58aaf29 regenerates + verifies the lock; (2) argon2 0.41→0.45 (the minor-patch seat) breaks the backend typecheck (Buffer<ArrayBufferLike> + Options namespace) → 4fd2d13 reverts the argon2 seat to 0.41.1. @types/node 26 verified INNOCENT both directions (kept, PR #50 legitimate). Production after: `buildId:"4fd2d135946b"` == main head → READY + matching. |
+| 11-24 00:1x | The zero-501 assertion found THREE real fixture gaps | `/colleges/leaderboard` (public leaderboard sheet), `/institutions` (the registration picker), `/status` (the error-state pages' system strip) — all three fixtures added in the same round (the mission's example gap was stale; these are the live ones). The instrument gained an overwrite guard (--force) after a probe clobbered the first full catalog — the full scan reruns with the fixtures in. |
 
 ## 2. §1 clean-base record
 
@@ -51,10 +53,10 @@ The reference's engine bundle (289 KB, obfuscated Lenis/GSAP/ScrollTrigger/Split
 |---|---|---|---|
 | SYNC-01 sync + clean base | §1 | DONE | this §2 + merge commits on main |
 | DEPS-01 dependabot batch | §1 | DONE | §2 record; PR closures; branch deletions |
-| CLEAN-01 repo cleanup | §1 | RUNNING | deadcode ratchet output → appended below |
+| CLEAN-01 repo cleanup | §1 | DONE | deadcode CI job: success on `4fd2d13` · zero-trace: full PASS (content+names+history) · untracked junk: only transient daemon pid/log files (gitignored logs, pids deleted) · docs: r357's truth-ledger round already cured the stale-doc debt; nothing contradicting found in the §1 sweep |
 | AUDIT-01 Phase A instruments (parse + capture + sheets) | A | DONE (code) | `scripts/audit/r358/**` committed on `r358/visual-match` |
 | SPEC-01 `reference-spec.md` | A | DONE | `docs/redesign/r358/reference-spec.md` + `reference/reference-numbers.json` |
-| SCAN-01 ULARA full scan (fixtures, zero-501, visual metrics) | A | RUNNING | `evidence/defects-master.json` + `visual-metrics.json` when landed |
+| SCAN-01 ULARA full scan (fixtures, zero-501, visual metrics) | A | RUNNING (rerun with the 3 new fixtures) | first full pass: 122 routes × 5 × 2 = 48 defects (2 P0 expected-state banners, 21 tap-target routes, KPI_STACKED_LIST on /teacher/intelligence, OLD_ACCENT_COLOR #d97706 on /owner/users, 22 console-501s → now cured at the fixture level); landing page height 12,012px @390 CONFIRMED |
 | DIFF-01 side-by-side sheets + numeric deltas | A | PENDING | `evidence/diff-report.md` + `evidence/sheets/**` |
 | DS-01 token foundation to reference proportions (fluid-root ladder, hairline law, sharp geometry, type confidence) | B | PENDING | tokens:check + /__design both themes RTL |
 | LAND-01 landing rebuild (hero plate scale, rhythm, intro LCP) | C1 | PENDING | captures + Lighthouse ≥85/95 |

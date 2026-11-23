@@ -32,6 +32,9 @@ import { fileURLToPath } from 'node:url';
 
 import {
   ADMIN_COURSES_PAGE,
+  COLLEGES_LEADERBOARD,
+  PUBLIC_INSTITUTIONS_FIXTURE,
+  SYSTEM_STATUS_FIXTURE,
   ADMIN_FACULTIES,
   ADMIN_PAPERS_GRADED_PAGE,
   ADMIN_REPORTS,
@@ -370,6 +373,10 @@ export function standardRoutes(): MockRouteDef[] {
     { method: 'GET', path: '/files/materials/:filename', pdf: true },
 
     // ── Institutional & Catalogs (R352/R355) ─────────────────────
+    { method: 'GET', path: '/colleges/leaderboard', json: ok(COLLEGES_LEADERBOARD) },
+    { method: 'GET', path: '/colleges/leaderboard', json: ok(COLLEGES_LEADERBOARD) },
+    { method: 'GET', path: '/institutions', json: ok(PUBLIC_INSTITUTIONS_FIXTURE) },
+    { method: 'GET', path: '/status', json: ok(SYSTEM_STATUS_FIXTURE) },
     { method: 'GET', path: '/catalog/institution-types', json: ok(INSTITUTION_TYPES_CATALOG) },
     { method: 'GET', path: '/catalog/regulatory-authorities', json: ok(REGULATORY_AUTHORITIES_CATALOG) },
     { method: 'GET', path: '/catalog/credential-types', json: ok(CREDENTIAL_TYPES_CATALOG) },

@@ -286,6 +286,12 @@ async function visualMetrics(page: import('playwright').Page, path: string, widt
 /* ── 6. the scan ─────────────────────────────────────────────────── */
 async function main() {
   mkdirSync(EVIDENCE, { recursive: true });
+  // r358 lesson: probes must never clobber a full-scan catalog — require --force to overwrite.
+  const masterPath = join(EVIDENCE, 'defects-master.json');
+  if (existsSync(masterPath) && !argv.includes('--force')) {
+    console.error('[GUARD] defects-master.json exists — pass --force to overwrite (or move it aside). Aborting.');
+    process.exit(3);
+  }
   const { routes: derived, diffs } = deriveRoutes();
   writeFileSync(join(EVIDENCE, 'route-derivation.json'), JSON.stringify({
     scanned: derived.map(r => r.path).sort(),
