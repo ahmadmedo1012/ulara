@@ -52,8 +52,10 @@ function failedSavesLabel(n: number): string {
  * defensive and a missing block renders «غير متوفر» — never a guess,
  * never a crash. `persistent: false` is the honest local-driver
  * production state (a Render disk survives nothing): the warning
- * names the damage and the documented owner fix (docs/12-deployment.md
- * «تخزين رفعات PDF في الإنتاج — خطوات المالك»).
+ * names the damage and the documented owner fix (docs/deployment.md
+ * §7.1 «خطوات المالك: تخزين رفعات PDF في الإنتاج» — the numbered
+ * docs/12-* tree died in the 1.0 squash; R357 re-pointed the panel
+ * to the living section).
  *
  * r167 (reachability): the block gains s3-only additive `reachable` +
  * `checkedAt` from a memoized backend probe. The durability claim is
@@ -330,8 +332,8 @@ export function OwnerSystemPage() {
                   <>
                     السائق مهيّأ بـ<bdi>S3</bdi> لكن آخر فحص لم يتلقَّ ردًّا. تحقّق من متغيّرات{' '}
                     <bdi>S3_*</bdi> في لوحة البيئة ومن حالة المزوّد نفسه — الخطوات الكاملة في{' '}
-                    <bdi>docs/12-deployment.md</bdi>
-                    («تخزين رفعات PDF في الإنتاج — خطوات المالك»).
+                    <bdi>docs/deployment.md §7.1</bdi>
+                    («خطوات المالك: تخزين رفعات PDF في الإنتاج»).
                   </>
                 )}
               />
@@ -345,8 +347,8 @@ export function OwnerSystemPage() {
                   <>
                     أوراق البحث وملفات المقرّرات المرفوعة ستُفقد عند كل نشر جديد. دوامها يتطلب
                     ضبط <code>STORAGE_DRIVER=s3</code> مع متغيّرات <bdi>S3_*</bdi> من لوحة
-                    البيئة — الخطوات الكاملة في <bdi>docs/12-deployment.md</bdi>
-                    («تخزين رفعات PDF في الإنتاج — خطوات المالك»).
+                    البيئة — الخطوات الكاملة في <bdi>docs/deployment.md §7.1</bdi>
+                    («خطوات المالك: تخزين رفعات PDF في الإنتاج»).
                   </>
                 )}
               />

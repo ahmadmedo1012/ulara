@@ -128,7 +128,9 @@ describe('OwnerSystemPage — storage card, s3 + reachable:false', () => {
       screen.getByText('مخزن الكائنات لا يستجيب — الرفعات الجديدة ستفشل حتى يعود'),
     ).toBeInTheDocument();
     expect(screen.getByText(/S3_\*/)).toBeInTheDocument();
-    expect(screen.getByText(/docs\/12-deployment\.md/)).toBeInTheDocument();
+    // R357: the pointer must be a REAL doc — the numbered docs/12-* tree
+    // died in the 1.0 squash, so the panel now cites the living section.
+    expect(screen.getByText(/docs\/deployment\.md §7\.1/)).toBeInTheDocument();
     // The LOCAL-driver warning family must NOT fire (persistent stays true).
     expect(screen.queryByText(/لا تنجو من إعادة النشر/)).toBeNull();
   });

@@ -2,7 +2,8 @@
  * r308-interaction.test.ts — the R308 instrument contracts.
  *
  * Unit tests for the pure + behavioral cores of the interaction layer
- * (parity-matrix §Verification): the shared conductor's wake/sleep
+ * (parity-matrix §Verification — the matrix was lost in the 1.0 squash;
+ * this belt is the living proof): the shared conductor's wake/sleep
  * lifecycle, the viewBox letterbox mapping + drag geometry (the AABB
  * remap that keeps the stations glued to the drawing at any crop),
  * the entrance gate's session/reduced-motion decisions, and the

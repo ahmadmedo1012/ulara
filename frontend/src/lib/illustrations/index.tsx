@@ -2,9 +2,10 @@
  * Illustration scene registry — the legacy 012 scenes that survive the
  * r280 mk-ill migration.
  *
- * Per specs/012-design-graphics-uplift/contracts/illustration-system.md
- * (the original contract) and the Agent I wiring guide
- * (docs/redesign/handoff/illustrations.md §4 Option B).
+ * Per the original illustration-system contract and the Agent I wiring
+ * guide's §4 Option B (both docs — specs/012-… and
+ * docs/redesign/handoff/illustrations.md — were lost in the 1.0 squash;
+ * this inventory's own header + the r280 scene table are the record).
  *
  * r280 scene inventory (post-migration — every surviving scene consumed):
  *   milestone-section      → MilestoneScene celebration modal

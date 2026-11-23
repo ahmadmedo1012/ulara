@@ -456,7 +456,8 @@ export function AppRoutes() {
             /auth/register (the alias rides the canonical page), the
             universities surface IS the public colleges gallery, and the
             feature-claims ledger «ما يعمل اليوم» is the /capabilities
-            route. Decisions: docs/redesign/r332/qa/w10a-routes.md. */}
+            route. Decisions: the r332 w10a-routes QA pass (the doc was
+            lost in the 1.0 squash — this redirect map is the record). */}
         <Route path="/register" element={<Navigate to={ROUTES.authRegister} replace />} />
         <Route path="/universities" element={<Navigate to={ROUTES.colleges} replace />} />
         <Route path="/features" element={<Navigate to={ROUTES.capabilities} replace />} />

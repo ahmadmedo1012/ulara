@@ -77,8 +77,9 @@ import '../styles/landing/consent-edge.css';
 // pinned beside each surface).
 // landing/ — R332 (A-CSS-Exec): the 7,920-line landing.css monolith was
 // split VERBATIM into the per-section sheets below. The import order IS
-// the original rule order (the region map + the five proven-safe
-// moves live in docs/redesign/r332/css-split-landing.md) — the family
+// the original rule order (the region map + the five proven-safe moves
+// were pinned by the r332 split ledger — the doc was lost in the 1.0
+// squash; the living map is each sheet header's region ranges) — the family
 // still loads AFTER r314-chrome.css and BEFORE r330-home.css exactly
 // as the single landing.css import did, so every cascade contract
 // (r323 chrome last-word, r330 override, r331 nav last-word) holds.
@@ -479,7 +480,8 @@ export default function LandingPage() {
           state machine, the clip-path menu) lives in its own chrome
           component with its own stylesheet — see
           components/landing/chrome/SheetNav.tsx + styles/r331/nav.css
-          and docs/redesign/r331/web-nav.md. ── */}
+          (the r331 web-nav doc was lost in the 1.0 squash — the grammar
+          comments in SheetNav.tsx are the living record). ── */}
       <SheetNav />
 
       <main id="main" tabIndex={-1}>

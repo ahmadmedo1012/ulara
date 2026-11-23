@@ -13,9 +13,10 @@
  *   3. the four tones on their proper grounds,
  *   4. clear space = ½ mark height,
  *   5. the minimum sizes (mark 16 px, lockup 88 px),
- *   6. the three colour tokens (paper · ink · sienna),
+ *   6. the three colour tokens (paper · ink · royal — r351 «Parchment
+ *      & Royal» re-valued the r323 sienna seat),
  *   7. do / don't,
- *   8. the animated draw (the hairline vessel → the sienna cornerstone
+ *   8. the animated draw (the hairline vessel → the royal cornerstone
  *      LAST).
  *
  * Dark-mode correctness is structural: every chrome colour is a system
@@ -147,7 +148,8 @@ export default function BrandPage(): React.JSX.Element {
         <p className="r323b-lead">
           «الإناء المتّحد» — هوية واحدة بعد ست هويات متزاحة: حرف U مفتوح
           من الأعلى — إناء، كتاب مفتوح، وعاء للمعرفة — يُرسم شعيرة حبر
-          واحدة موحّدة بوصلات round، وحجر سيينا محروقة واحد يجلس على
+          واحدة موحّدة بوصلات round، وحجر ملكي واحد (بعد استيلاء «الرقّ
+          والملكي» 2026 على مقعد السيينا الأصلي) يجلس على
           قمّة الساق اليمنى (21,3). المرجع المكتوب:{' '}
           <code>docs/redesign/r323/brand/BRAND.md</code>.
         </p>
@@ -203,9 +205,9 @@ export default function BrandPage(): React.JSX.Element {
           ))}
         </div>
         <p>
-          المقعد `var(--accent)` يعيد ضبط نفسه في النسق الداكن (السيينا
-          المضيئة) — لا «نسخة داكنة» ثانية من الشعار، ولا خلفية سيينا
-          تحت الرمز أبدًا.
+          المقعد `var(--accent)` يعيد ضبط نفسه في النسق الداكن (الملكي
+          المتوهج #8AA0FF) — لا «نسخة داكنة» ثانية من الشعار، ولا خلفية
+          ملوّنة تحت الرمز أبدًا.
         </p>
       </section>
 
@@ -291,9 +293,9 @@ export default function BrandPage(): React.JSX.Element {
           <div>
             <span className="r323b-mono">DO · افعل</span>
             <ul className="r323b-do">
-              <li>ابدأ من الشبكة: كل مراسي الرمز تقاطعات (VARIANTS.md — ب).</li>
+              <li>ابدأ من الشبكة: كل مراسي الرمز تقاطعات (BRAND.md §2 — شبكة الـ32).</li>
               <li>شعرة واحدة متّصلة بوصلات round — بلا ظل.</li>
-              <li>حجر سيينا محروقة واحد فوق قمّة الساق اليمنى (21,3).</li>
+              <li>حجر ملكي واحد فوق قمّة الساق اليمنى (21,3).</li>
               <li>الفراغ الأمان ½ ارتفاع الرمز؛ الحد الأدنى 16px / 88px.</li>
               <li>currentColor + var(--accent) — والداكن يتكيف وحده.</li>
               <li>inline SVG فقط، مع title و data-logo على الجذر.</li>
@@ -322,7 +324,7 @@ export default function BrandPage(): React.JSX.Element {
           <Logo variant="lockup" size={44} animated />
         </div>
         <p>
-          <code>animated</code> يرسم الشعيرات 600–900ms — حجر السيينا
+          <code>animated</code> يرسم الشعيرات 600–900ms — الحجر الملكي
           آخر شيء يظهر. تحت <code>prefers-reduced-motion</code> لا يتحرك
           شيء: الشعار كامل من اللحظة الأولى.
         </p>

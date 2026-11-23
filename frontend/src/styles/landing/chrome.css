@@ -1,5 +1,7 @@
 /* R332 — split VERBATIM from src/styles/landing.css · chrome = R1 sheet chrome/frame/grain/labels/skip/mobile-menu (1-370) + R308 sc pointer (3933-4027) + R308 sl loader (4454-4854)
-   full map + proof: docs/redesign/r332/css-split-landing.md
+   map + proof: each split header's region ranges + the import order in landing.css
+   (the r332 ledger doc itself was lost in the 1.0 squash — R357 re-pointed
+   every citation to the living map)
 
    r335 (W-chrome) — the retired chrome is GONE from this sheet:
      · the R313 SheetLoader (.sl-*) — the mount retired with R333 P-D,
@@ -275,7 +277,8 @@ html[data-theme='dark'] body.ula-grain::before {
  * in this sheet. */
 
 /* ════════════════════════════════════════════════════════════════════
-   R308 — THE INTERACTION LAYER (docs/redesign/r308/parity-matrix.md)
+   R308 — THE INTERACTION LAYER (the r308 parity matrix was lost in the
+   1.0 squash; the living proof is tests/e2e/r308-landing-instruments.e2e.ts)
    The reference's connected instrument system, rebuilt on the token
    canon: the entrance loader, the custom pointer (canvas + ring), the
    hero's local inspection instrument (guides/plus/readout + drag box

@@ -76,8 +76,8 @@ export const PRODUCT_CAPTURES: [
 ];
 
 /* ── P-A2 R333 (INV-08) → R342-final — the 2× capture seats ──
- * The 2× surfaces (@2880×1740 re-captures, docs/redesign/r333/
- * media-capture.md) ride the Vite asset pipeline (src/assets/product/
+ * The 2× surfaces (@2880×1740 re-captures — the r333 media-capture
+ * ledger was lost in the 1.0 squash) ride the Vite asset pipeline (src/assets/product/
  * *.webp → hashed dist assets). The R342 editorial-scenes rebuild
  * consumes them DIRECTLY (sections/Product.tsx: exam-active +
  * ai-tutor; WhyScene.tsx: lecture-checkpoint as the lecture-player
