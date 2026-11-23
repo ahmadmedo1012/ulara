@@ -95,9 +95,13 @@ job الوحيد الأحمر في CI على `15b50d2`. السجل الحرفي:
 ```
 ✔ content clean · ✔ names clean
 ✖ ZERO-TRACE LEAK — retired names in the git history:
-  fix(r350): CI repairs — … zero-trace rename (heron->refsite) …
-  docs(r350): the B0 reference extraction — heronaiapp.com measured live …
+  fix(r350): CI repairs — … zero-trace rename (the retired name -> refsite) …
+  docs(r350): the B0 reference extraction — the retired reference domain measured live …
 ```
+
+(الاسمان المتقاعَدان في نصَّي الالتزامين حُذِفا حرفيًّا من هذا الاقتباس —
+سياسة البوابة ذاتها «الحذف لا الاستثناء» تسري حتى على المُقتبَس؛ الشكل
+الحرفي الكامل في سجل وظيفة CI نفسه.)
 
 التزاما r350 في **تاريخ main نفسه** يسبقان نقطة تفرّع a71d7d8 — مثبت
 في R354 §1.2 بإثبات `merge-base --is-ancestor`. العلاج الوحيد = قرار
