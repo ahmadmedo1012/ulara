@@ -39,7 +39,7 @@ Legend: ⏳ todo · 🔨 in progress · ✅ done (evidence linked) · ⚠ done w
 - ✅ C6 `build-ios-sidestore.yml` green — run 45343504949 (19m21s, dispatched with `-f ref=r359/a4-mobile-backend` after the D18 root cause): artifact `Ulara-unsigned-ipa` (16.6 MB) + the `sidestore-latest` release carries Ulara.ipa + SHA256SUMS.txt + build-info.json. The self-diagnosis notices prove the checkout: runner HEAD = 2d19ddb (this branch), committed deps = 47 (the retired tree). Config gate: updates.url absent, expo-updates absent from committed source, runtimeVersion = inert CLI-injected metadata (notice).
 - ⚠ C6-note: the config-gate hunt left the gate STRICTER than main's (commit-source checks + notice trail); the first three dispatch failures were the gate refusing MAIN's tree (which still ships expo-updates — see D18) — kept as evidence.
 - ✅ C7 mobile.yml fast lane green (run 45311496684 — typecheck, lint, contract-check, tokens, api:types drift, jest 1448, export, 8MB budget; ZERO EAS step). Full lane (emulator + C8 shots) dispatched: run 45339276768
-- 🔨 C8 android-smoke extended (shots-onboarding + shots-role flows, cold+warm start budget, 320/768 size passes, 80-min ceiling) — riding the full-lane run 45339276768
+- 🔨 C8 android-smoke extended (tour + five role homes + 320/360/768 sizes + cold/warm start budget) — runs 45339276768 → 45346878959 → 45353893364 (each fixed real defects: student's institution pick, stale ADMIN/OWNER headings, launcher popup) — run 4 (45353893364+1) dispatched with the popup dismissal; ALL five role homes + full tour already captured in run 3's artifact
 
 ### Backend
 - ✅ B1 Schema/migration `0007` — models renamed per D16 (UserNotificationPreference, EmailVerifyToken); fully idempotent SQL; applied to production 2026-11-24 01:20 UTC (backup branch `backup-r359-20261124T010815Z` created first, verified on branch copy `verify-r359-0007` before production; all lineage tables intact; `/api/v1/status` green after): `NotificationPreference`, `PushDeliveryReceipt`, `EmailEvent`, `EmailVerificationToken`, `IdempotencyRecord`, search indexes (D6–D11)
@@ -57,13 +57,13 @@ Legend: ⏳ todo · 🔨 in progress · ✅ done (evidence linked) · ⚠ done w
 - ✅ B13 Migrations — backup branch → verify branch copy → production (see B1); `/api/v1/status` + smoke green: Neon backup branch → verify on branch copy → apply to production → `/api/v1/status` + smoke after
 
 ### Mobile
-- ⏳ M1 Launch: splash light/dark (exists) + brand moment ≤1.2s (mark + hairline draw, shortened on repeat, reduced-motion safe) + fonts/session gate (exists) → skeletons
-- ⏳ M2 First-run onboarding: 4 screens, role-aware, art via `components/art` placeholder contract, notification permission priming
-- ⏳ M3 Push client: token-rotation listener, badge clear on read, `safeDeepLink` on tap; unregister on logout (exists)
-- ⏳ M4 Flat-language rebuild pass on `components/ui/*` + `components/shell/*` (structure/patterns per D14)
-- ⏳ M5 All-sizes pass: 320/360/390/412/768/1024 + landscape + 200% font + RTL (CI screenshots + code audit)
-- ⏳ M6 Performance: cold-start numbers from emulator (`am start -W`), FlashList audit, memoised rows, image caching audit
-- ⏳ M7 Docs: feature-parity refresh (stale push row + others), push-backend-proposal header, useNotifications comment, `mobile-patterns.md`
+- ✅ M1 Launch — splash light/dark (existing, tokens-gated), BootMark + BootStrip counter (900ms, cold-boot-only), repeat-launch shortening via the persisted ula-mobile-boot-seen stamp, reduced-motion static, skeletons on every list (never blank): splash light/dark (exists) + brand moment ≤1.2s (mark + hairline draw, shortened on repeat, reduced-motion safe) + fonts/session gate (exists) → skeletons
+- ✅ M2 First-run onboarding — 4 role-aware screens (display-scale titles, mono indices, hairline progress rule), notification permission priming on screen 3, entry-rule gate (pinned tests), tour fixture (student owes it) + flows skip it elsewhere; art rides the repo blueprints (A2 contract pending): 4 screens, role-aware, art via `components/art` placeholder contract, notification permission priming
+- ✅ M3 Push client — rotation listener, badge discipline (bump on arrival, clear on read), safeDeepLink on tap, project-id seam (zero placeholder honest); 10 pinned tests (src/lib/push.test.tsx): token-rotation listener, badge clear on read, `safeDeepLink` on tap; unregister on logout (exists)
+- ✅ M4 Flat-language pass — components/ui + shell already the flat drafting language (code-verified: zero shadows, radius 0, hairlines, mono labels); M2 added the display-scale register; settings gains the notification-preferences group on `components/ui/*` + `components/shell/*` (structure/patterns per D14)
+- 🔨 M5 All-sizes — pixel_6 (411dp) native + 320/360/768 passes riding run 4; 200% font + landscape remain code-audit only (documented limitation of the emulator lane — the M5 file records the reasoning): 320/360/390/412/768/1024 + landscape + 200% font + RTL (CI screenshots + code audit)
+- ✅ M6 Performance — cold-start measured on the emulator: COLD TotalTime 1879ms / WaitTime 1891ms (run 45353893364, am start -W, activity-level; the brand moment rides ON the hydration window, never after it); FlashList on every long list (DataList) + memoised rows (house rule, unchanged); image caching via expo-image: cold-start numbers from emulator (`am start -W`), FlashList audit, memoised rows, image caching audit
+- ✅ M7 Docs — feature-parity push row + push-backend-proposal header + mobile-patterns.md + docs/mobile.md §7 + API-CONTRACT.md: feature-parity refresh (stale push row + others), push-backend-proposal header, useNotifications comment, `mobile-patterns.md`
 
 ### Gates
 - ⏳ G1 Backend `typecheck` + `typecheck:tests` green
@@ -71,7 +71,7 @@ Legend: ⏳ todo · 🔨 in progress · ✅ done (evidence linked) · ⚠ done w
 - ⏳ G3 Mobile `typecheck` + `npm test` green; `contract-check` + `tokens:check` + `api:types` drift zero
 - ⏳ G4 `scripts/verify.sh` green for owned parts
 - ⏳ G5 Zero-trace (non-history) green; secret scan green
-- ⏳ G6 Fidelity sheets: mobile screenshots vs reference mobile shots + written critique (VLM read)
+- 🔨 G6 Fidelity sheets — 10 sheets + 2 critique rounds recorded (evidence/fidelity-critiques.md); round 2 verdict: the flat drafting language carried, the illustration 'genuinely reads as a CAD draft', color economy matches; size sheets land with run 4: mobile screenshots vs reference mobile shots + written critique (VLM read)
 
 ## Evidence index (`docs/redesign/r359-a4/evidence/`)
 (populated as items land)

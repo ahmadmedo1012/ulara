@@ -70,3 +70,40 @@ the flat drafting language is carried; the reference's register is marketing.
 Re-captured with: the blueprint placeholder art, the display-scale tour
 titles, the ADMIN/OWNER home sheets (the stale-heading fix unblocked their
 capture), and the size passes (320/360/768) via the lightweight flow.
+
+## Round 2 (run 45353893364 — the blueprint placeholder art + display titles)
+
+Sheets rebuilt with ALL five role homes + the upgraded onboarding art.
+
+### onboarding2-role-vs-m-platform1 (the representative sheet)
+- Composition: clear header → progress → illustration → divider → content →
+  CTA vertical rhythm; the blueprint sits in the upper half with generous
+  whitespace; RTL right-alignment correct. Wish recorded: drafting micro-
+  annotations (dimensions/ticks/scale label) near the plan → handed to A2's
+  brief (the art contract).
+- Typography: the Arabic headline dominates; the bracketed mono labels
+  (`[02/04]`, `[onboarding-02]`) are "exactly the right reference-derived
+  move" (the critic's words). Wish recorded: one intermediate weight step.
+- Hairlines: thin dividers, flat CTA, flat blueprint lines — consistent with
+  the reference's regime. Nitpick recorded: the progress segment's active
+  blue is heavier than the 1px rules.
+- **Illustration: "the star" — "the classroom plan — door swing arc, desk
+  rows on a curve, wall poché, dimension line with blue node — genuinely
+  reads as a CAD/architectural draft, and the blue dot ties it to the brand
+  accent."**
+- Color: "Very tight. Cream paper, near-black ink, single blue accent…
+  Matches the reference's cream/black + single-orange-accent economy."
+
+### Role-home sheets (student/teacher/admin/quality/owner)
+Same verdict as round 1's: the flat drafting grammar carried in the native
+register (mono kickers, hairline rules, h2 titles, the royal signal on
+actions only); the reference's extreme type scale is its landing register —
+matched on the app side by the display-scale greeting/hero areas. The
+perceived-shadow point was code-disproven (zero shadow properties).
+
+### Round 2 verdict
+The app's screens read as designed product pages in the same flat drafting
+language; the reference's remaining edge is its marketing-register type
+drama (by intent, not by our defect) and A2's pending final illustrations.
+Actions recorded for the integrator/A2: drafting micro-annotations, an
+intermediate type step, and visible construction lines in static frames.
