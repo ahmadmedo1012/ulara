@@ -234,4 +234,17 @@ export const KNOWN_DURATIONS_MS: ReadonlyArray<number> = [
   // cinematic contract, this list is its runtime counterpart — same
   // convention as r331/r341). ×36 findings on `/` until folded in.
   450, 550,
+  // r360 integration (A3's §2 re-measured register — the one-cycle
+  // convention: the ladder change updates this list AND re-promotes
+  // the surface baseline in the same commit): the THREE-value
+  // mechanical register — micro 160 (hover/press colour), fast 320
+  // (small reveals, sheets, route transitions), base/slow/slower 640
+  // (section reveals, drawn hairlines; the old 400/480/500/650/720
+  // rungs stay listed for the sheets not yet re-keyed). ×2304
+  // findings on the slice sweep until folded in.
+  160, 320, 640,
+  // r360 integration (A1's authored callout reveal): hero.css
+  // .hi-tag's 0.35s opacity/transform seat — the inspection chip's
+  // own entrance, same authored-cinematic convention as r331/r341.
+  350,
 ];
