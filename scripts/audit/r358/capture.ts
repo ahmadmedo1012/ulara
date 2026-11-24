@@ -56,7 +56,7 @@ const argv = process.argv.slice(2);
 const arg = (n: string, d: string) => { const i = argv.indexOf(`--${n}`); return i >= 0 && argv[i + 1] ? argv[i + 1] : d; };
 const PORT = Number(arg('port', '5198'));
 const BASE_URL = `http://127.0.0.1:${PORT}`;
-const EVIDENCE = resolve(ROOT, 'docs/redesign/r358/evidence');
+const EVIDENCE = resolve(ROOT, arg('output', 'docs/redesign/r358/evidence'));
 const CAPTURES = resolve(EVIDENCE, 'captures');
 const AXE_BUNDLE = resolve(ROOT, 'node_modules/axe-core/axe.min.js');
 const WIDTHS = arg('widths', '360,390,768,1024,1440').split(',').map(Number);
@@ -66,7 +66,7 @@ const LIMIT = Number.parseInt(arg('limit', '0'), 10);
 const ROUTES_FILTER = arg('routes', null);
 
 /* ── 1. route derivation (never guessed) ─────────────────────────── */
-type ScanRoute = { path: string; role: string; name: string };
+type ScanRoute = { path: string; basePath: string; role: string; name: string };
 
 function roleFor(path: string): string {
   if (path.startsWith('/student')) return 'STUDENT';
@@ -359,8 +359,8 @@ async function main() {
           } catch { /* degrade */ }
         } catch { /* storage denied */ }
       });
-      if (user || theme) await seedSession(context, user, { theme: theme as 'light' | 'dark' });
-      await installMockApi(context, { sessionUser: user, overrides: [] });
+      if (user || theme) await seedSession(context, user, { theme: theme as 'light' | 'dark', selectedInstitution: roleKey === 'ADMIN' });
+      await installMockApi(context, { sessionUser: user, selectedInstitution: roleKey === 'ADMIN' });
 
       const page = await context.newPage();
       // tsx/esbuild keepNames shim: serialized evaluate() callbacks may
@@ -368,6 +368,9 @@ async function main() {
       await page.addInitScript('window.__name = function (f) { return f; };');
       const consoleErrors: string[] = [];
       const missingFixtures: string[] = [];
+      page.on('response', res => {
+        if (res.status() === 501) missingFixtures.push(res.request().method() + ' ' + new URL(res.url()).pathname);
+      });
       page.on('console', m => {
         if (m.type() === 'error') {
           const t = m.text();
@@ -416,7 +419,7 @@ async function main() {
             });
             const axeViolations = (axeResult.violations || []).filter(v => ['serious', 'critical'].includes(v.impact)).map(v => ({ id: v.id, impact: v.impact, nodesCount: v.nodes.length }));
             if (axeViolations.length > 0) evaluation.push({ type: 'AXE_VIOLATIONS', severity: 'P1', violations: axeViolations });
-          } catch { /* axe unavailable — counted as instrument warning */ }
+          } catch (error) { evaluation.push({ type: 'INSTRUMENT_ERROR', severity: 'P1', message: 'axe: ' + String(error) }); }
           if (missingFixtures.length > 0) evaluation.push({ type: 'MISSING_FIXTURE', severity: 'P1', message: `501s: ${[...new Set(missingFixtures)].slice(0, 6).join(' · ')}` });
           if (consoleErrors.length > 0) evaluation.push({ type: 'CONSOLE_ERRORS', severity: 'P1', errors: consoleErrors.slice(0, 4) });
 
@@ -457,7 +460,7 @@ async function main() {
   const p2 = deduped.filter(d => d.severity === 'P2');
   const summary = `# R358 Phase A — ULARA Scan\n\n**Scope:** ${routes.length} routes × ${WIDTHS.join('/')} × ${THEMES.join('/')}\n**Master:** ${MASTER_NAME}\n**Defects (deduped):** ${deduped.length} — P0 ${p0.length} · P1 ${p1.length} · P2 ${p2.length}\n\n## P0\n${p0.map(d => `- [${d.role}] ${d.route} (${(d.viewports as string[]).slice(0, 3).join(', ')}): ${d.message}`).join('\n') || '_none_'}\n\n## P1\n${p1.slice(0, 40).map(d => `- [${d.role}] ${d.route} (${(d.viewports as string[]).slice(0, 2).join(', ')}): ${d.type} — ${d.message || ''}`).join('\n') || '_none_'}\n\n## P2\n${p2.slice(0, 40).map(d => `- [${d.role}] ${d.route}: ${d.type} — ${d.message || ''}`).join('\n') || '_none_'}\n`;
   writeFileSync(join(EVIDENCE, MASTER_NAME.replace(/\.json$/, '') + '-summary.md'), summary);
-  console.log(`[COMPLETE] ${deduped.length} defects — evidence in docs/redesign/r358/evidence/`);
+  console.log(`[COMPLETE] ${deduped.length} defects — evidence in ${EVIDENCE}`);
 }
 
 main().catch(e => { console.error('[FATAL]', e); killServer(); process.exit(1); });

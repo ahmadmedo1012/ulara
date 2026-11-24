@@ -34,7 +34,15 @@
 
 - P5 documentation: corrected the Android download page, operator rollback, deployment guide and contributor guide to describe upgrades by signed binary. SideStore already defaults to main. [Contract and test output](evidence/mobile-distribution.txt).
 
-NEXT: Finish the role and institution fixtures, mobile artifacts, and remaining visual gates.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:d54a8ffde81225e6e4411155d023363b96a58e643ad40f73e990d7a517ae7abc -->
+
+- P1 capture: seven [role and shell comparison sheets with observations](evidence/role-critique.md). Fixed institution context on session hydration and added HTTP response detection for fixture 501s; axe exceptions now appear as instrument failures. [Scoped overview rerun](evidence/institution-scan.txt): 4 cells, no detected defects. [Role baseline](evidence/role-baseline.json) is not a full-matrix pass.
+
+NEXT: Repair the design specimen tap targets and audit institution list/detail coverage.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 

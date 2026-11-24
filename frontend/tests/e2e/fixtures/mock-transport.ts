@@ -402,15 +402,18 @@ export function standardRoutes(): MockRouteDef[] {
     { method: 'GET', path: '/catalog/accreditation-criteria-sets', json: ok(CRITERIA_SETS_CATALOG) },
     { method: 'GET', path: '/institutions/me/profile', json: ok(MY_INSTITUTION_PROFILE) },
     { method: 'GET', path: '/me/capabilities', json: ok(MY_INSTITUTION_CAPABILITIES) },
+    { method: 'GET', path: '/institutional/org-units', json: {
+      data: INSTITUTION_ORG_TREE, meta: { page: 1, limit: 1, total: INSTITUTION_ORG_TREE.length, totalPages: 1 },
+    } },
     { method: 'GET', path: '/institution/org-units/tree', json: ok(INSTITUTION_ORG_TREE) },
-    { method: 'GET', path: '/institution/people', json: INSTITUTION_PEOPLE_PAGE },
+    { method: 'GET', path: '/institutional/people', json: INSTITUTION_PEOPLE_PAGE },
     { method: 'GET', path: '/institution/positions', json: INSTITUTION_POSITIONS_PAGE },
-    { method: 'GET', path: '/institution/councils', json: INSTITUTION_COUNCILS_PAGE },
+    { method: 'GET', path: '/governance/councils', json: INSTITUTION_COUNCILS_PAGE },
     { method: 'GET', path: '/institution/programs', json: INSTITUTION_PROGRAMS_PAGE },
     { method: 'GET', path: '/institution/training', json: INSTITUTION_TRAINING_PAGE },
     { method: 'GET', path: '/institution/learners', json: INSTITUTION_LEARNERS_PAGE },
     { method: 'GET', path: '/institution/accreditation', json: INSTITUTION_ACCREDITATION_PAGE },
-    { method: 'GET', path: '/institution/licenses', json: INSTITUTION_LICENSES_PAGE },
+    { method: 'GET', path: '/compliance/licenses', json: INSTITUTION_LICENSES_PAGE },
     { method: 'GET', path: '/institution/facilities', json: INSTITUTION_FACILITIES_PAGE },
     { method: 'GET', path: '/institution/research-projects', json: INSTITUTION_RESEARCH_PAGE },
     /* ── r360 F4 — the settings register's own corpus (prefs GET +
@@ -512,6 +515,7 @@ async function fulfillJson(route: Route, status: number, body: unknown): Promise
 export interface InstallMockApiOptions {
   /** Session user answering /auth/me before any login (null = guest). */
   sessionUser?: FixtureUser | null;
+  selectedInstitution?: boolean;
   /** Per-test routes; matched BEFORE the standard table. */
   overrides?: MockRouteDef[];
   /** Replace the standard table entirely (default: standardRoutes()). */
@@ -553,7 +557,7 @@ export async function installMockApi(
     }
     if (method === 'GET' && url.pathname.endsWith('/auth/me')) {
       if (session.user) {
-        await fulfillJson(route, 200, ok(meProfile(session.user)));
+        await fulfillJson(route, 200, ok({ ...meProfile(session.user), ...(options.selectedInstitution ? institutionContext(session.user) : {}) }));
       } else {
         await fulfillJson(route, 401, fail('UNAUTHENTICATED', 'جلسة غير صالحة'));
       }
@@ -694,8 +698,16 @@ export async function statefulFail(
  * JSON.stringify's { state, version }). Seeding this BEFORE any app
  * script boots the app fully signed-in, reload-style.
  */
-export function authStorageJson(user: FixtureUser, token: string): string {
-  return JSON.stringify({ state: { user, accessToken: token }, version: 0 });
+function institutionContext(user: FixtureUser) {
+  const { id, name, nameEn, slug } = MY_INSTITUTION_PROFILE.institution;
+  return {
+    currentInstitution: { id, name, nameEn, slug },
+    membershipRole: user.role,
+    memberships: [{ institutionId: id, name, nameEn, slug, role: user.role, isActive: true }],
+  };
+}
+export function authStorageJson(user: FixtureUser, token: string, selectedInstitution = false): string {
+  return JSON.stringify({ state: { user, accessToken: token, ...(selectedInstitution ? institutionContext(user) : {}) }, version: selectedInstitution ? 1 : 0 });
 }
 
 /** localStorage payload for `ulara-theme` (theme.store.ts v2). */
@@ -714,9 +726,9 @@ export function themeStorageJson(mode: 'light' | 'dark'): string {
 export async function seedSession(
   target: BrowserContext | Page,
   user: FixtureUser | null,
-  opts: { token?: string; theme?: 'light' | 'dark' } = {},
+  opts: { selectedInstitution?: boolean; token?: string; theme?: 'light' | 'dark' } = {},
 ): Promise<void> {
-  const authJson = user ? authStorageJson(user, opts.token ?? 'e2e-token-student') : null;
+  const authJson = user ? authStorageJson(user, opts.token ?? 'e2e-token-student', opts.selectedInstitution) : null;
   const themeJson = opts.theme ? themeStorageJson(opts.theme) : null;
   await target.addInitScript(
     ([auth, theme]) => {

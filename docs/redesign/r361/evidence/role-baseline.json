@@ -1,0 +1,91 @@
+[
+  {
+    "route": "/__design",
+    "role": "PUBLIC",
+    "type": "SMALL_TAP_TARGETS",
+    "severity": "P1",
+    "message": "SMALL_TAP_TARGETS",
+    "viewports": [
+      "390px:light",
+      "390px:dark"
+    ],
+    "count": 6,
+    "samples": [
+      {
+        "tag": "input",
+        "text": "",
+        "w": 13,
+        "h": 13
+      },
+      {
+        "tag": "input",
+        "text": "",
+        "w": 13,
+        "h": 13
+      },
+      {
+        "tag": "input",
+        "text": "",
+        "w": 13,
+        "h": 13
+      },
+      {
+        "tag": "button",
+        "text": "الكل",
+        "w": 52,
+        "h": 37
+      },
+      {
+        "tag": "button",
+        "text": "ملزقات12",
+        "w": 87,
+        "h": 37
+      },
+      {
+        "tag": "a",
+        "text": "[03]COURSES486مقرّرات نشطة",
+        "w": 208,
+        "h": 24
+      }
+    ]
+  },
+  {
+    "route": "/__design",
+    "role": "PUBLIC",
+    "type": "ERROR_BANNER_MOUNTED",
+    "severity": "P0",
+    "message": "ثمانية أحرف على الأقل",
+    "viewports": [
+      "390px:light",
+      "1440px:light",
+      "390px:dark",
+      "1440px:dark"
+    ]
+  },
+  {
+    "route": "/__design",
+    "role": "PUBLIC",
+    "type": "KPI_STACKED_LIST",
+    "severity": "P2",
+    "message": "24 KPI nodes under display:block",
+    "viewports": [
+      "390px:light",
+      "1440px:light",
+      "390px:dark",
+      "1440px:dark"
+    ]
+  },
+  {
+    "route": "/quality/dashboard",
+    "role": "QUALITY",
+    "type": "KPI_STACKED_LIST",
+    "severity": "P2",
+    "message": "27 KPI nodes under display:block",
+    "viewports": [
+      "390px:light",
+      "1440px:light",
+      "390px:dark",
+      "1440px:dark"
+    ]
+  }
+]
