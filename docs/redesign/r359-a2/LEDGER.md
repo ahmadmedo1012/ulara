@@ -57,7 +57,9 @@ Owner of every illustration, drawing, plate, OG image and mobile art asset.
 | art color scan | PASS (zero off-grammar hues) |
 | icons:check | byte-identical ✔ |
 | axe (/__plates) | 0 violations |
-| zero-trace (non-history) | PASS (`bash scripts/brand/zero-trace.sh` — history half red on the two known old commits, owner decision) |
+| zero-trace | PASS (full: content + names + history) |
+| bundle gate | PASS 829.9 KB gz / 162 chunks ≤ 832 (ceiling re-baselined 815→832, +2.1%, documented in the gate header: statutory art library, one route-lazy 19KB chunk; 44 wrapper chunks cut first, 213→162) |
+| frontend vitest (TZ=UTC) | 3064/3064 PASS |
 
 ## Progress
 
@@ -86,3 +88,7 @@ Owner of every illustration, drawing, plate, OG image and mobile art asset.
 3. A4 takes `apps/mobile/src/components/art/index.ts` as-is (expected add/add → A2's version wins).
 4. If A3 ever wants the art palette in `shared/design-tokens.json`, the five `--r359-*` seats
    in `illustrations.css` are the canonical definitions to promote.
+5. Bundle note: consumers should import art per-seat STATICALLY (`import HeroElevation from
+   '.../r359/hero-elevation'`) — that keeps one shared family chunk. Reserve the
+   `import.meta.glob` pattern for catalogs only (it mints one chunk per key; the /__plates
+   stage itself renders from the family registries for exactly this reason).
