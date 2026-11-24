@@ -27,12 +27,40 @@
 import { StatLine } from '../components/patterns';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { AlertRow, Badge, MetricCard, Pill, ProgressBar } from '../components/primitives';
+import { ART_KEYS } from '@shared/art/manifest';
+import { sceneFor as heroScenes } from '@shared/art/scenes/hero';
+import { sceneFor as plansScenes } from '@shared/art/scenes/plans';
+import { sceneFor as sectionsScenes } from '@shared/art/scenes/sections';
+import { sceneFor as usecasesScenes } from '@shared/art/scenes/usecases';
+import { sceneFor as statesScenes } from '@shared/art/scenes/states';
+import { sceneFor as onboardingScenes } from '@shared/art/scenes/onboarding';
+import { ArtSvg } from '../components/illustrations/r359/lib/runtime';
+import { useState } from 'react';
 import type { ReactNode } from 'react';
+import '../styles/plates.css';
+
+/* the r359 art library — rendered straight from the family registries
+ * (the stage keeps ONE chunk: the per-key lazy chunks are the
+ * CONSUMERS' graph — `import.meta.glob('../illustrations/r359/*.tsx')`
+ * or static per-seat imports, both resolve the same default exports) */
+const FAMILY_SCENES: Record<string, (k: string) => ReturnType<typeof heroScenes>> = {
+  hero: heroScenes,
+  plans: plansScenes,
+  sections: sectionsScenes,
+  why: sectionsScenes,
+  usecases: usecasesScenes,
+  cta: sectionsScenes,
+  marks: statesScenes,
+  states: statesScenes,
+  onboarding: onboardingScenes,
+};
 
 function PlatesPage(): React.JSX.Element {
   usePageTitle('لوحات المنتج');
   return (
-    <main className="plates-root" aria-label="لوحات المنتج — مشاهد معزولة">
+    <>
+    <main className="plates-root">
+    <h1 className="sr-only">لوحات المنتج ومكتبة الرسوم</h1>
       <PlateScene id="student-dashboard" title="لوحة الطالب">
         <FragmentDashboard />
       </PlateScene>
@@ -66,7 +94,67 @@ function PlatesPage(): React.JSX.Element {
       <PlateScene id="lecture-checkpoint" title="نقطة الفحص">
         <FragmentCheckpoint />
       </PlateScene>
+      <ArtLibrary />
     </main>
+    </>
+  );
+}
+
+/* ── the r359 art library gallery — every key, light/dark, two
+ * frames, animated toggle: the living proof + the integrator's
+ * checklist (contract §5.7) ───────────────────────────────────────── */
+function ArtLibrary(): React.JSX.Element {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [animated, setAnimated] = useState(false);
+  const [frame, setFrame] = useState<'desktop' | 'mobile'>('desktop');
+
+  return (
+    <section className="artlib" aria-label="مكتبة الرسوم r359">
+      <header className="artlib-bar">
+        <span className="artlib-title">[R359] ART LIBRARY — مكتبة الرسوم</span>
+        <div className="artlib-controls" role="group" aria-label="ضبط العرض">
+          <span className="artlib-ctl">
+            {(['light', 'dark'] as const).map((t) => (
+              <button key={t} type="button" data-ctl={`theme-${t}`} className="artlib-btn" aria-pressed={theme === t} onClick={() => setTheme(t)}>
+                {t.toUpperCase()}
+              </button>
+            ))}
+          </span>
+          <span className="artlib-ctl">
+            {(['desktop', 'mobile'] as const).map((f) => (
+              <button key={f} type="button" data-ctl={`frame-${f}`} className="artlib-btn" aria-pressed={frame === f} onClick={() => setFrame(f)}>
+                {f.toUpperCase()}
+              </button>
+            ))}
+          </span>
+          <button type="button" data-ctl="anim" className="artlib-btn" aria-pressed={animated} onClick={() => setAnimated((v) => !v)}>
+            ANIM {animated ? 'ON' : 'OFF'}
+          </button>
+        </div>
+      </header>
+      <div className={`artlib-grid is-${frame}`}>
+        {ART_KEYS.map((meta, i) => {
+          const fam = FAMILY_SCENES[meta.family];
+          if (!fam) {
+            return (
+              <div className="artcard" data-artcard={meta.key} key={meta.key}>
+                <span className="artcard-key">[{String(i + 1).padStart(2, '0')}] {meta.key}</span>
+                <span className="artcard-missing">MISSING</span>
+              </div>
+            );
+          }
+          return (
+            <div className="artcard" data-artcard={meta.key} key={meta.key}>
+              <span className="artcard-key">[{String(i + 1).padStart(2, '0')}] {meta.key}</span>
+              <span className="artcard-title">{meta.title}</span>
+              <div className={`artframe is-${frame}`}>
+                <ArtSvg build={fam(meta.key)} theme={theme} animated={animated} />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
   );
 }
 
@@ -322,7 +410,7 @@ function FragmentExamActive() {
         <span className="plate-mono plate-strong">29:55</span>
         <span className="plate-muted">اختبار قصير — هندسة البرمجيات</span>
       </div>
-      <div className="plate-dots" aria-label="خمسة أسئلة">
+      <div className="plate-dots" role="img" aria-label="خمسة أسئلة">
         <span className="plate-dot is-on" /><span className="plate-dot" /><span className="plate-dot" /><span className="plate-dot" /><span className="plate-dot" />
       </div>
       <div className="plate-q">
