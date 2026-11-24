@@ -38,6 +38,7 @@
  * Presentational: the scrub driver (--wr-p writer) stays in the
  * composer (pages/LandingPage.tsx) on the shared sheet clock — this
  * component receives the section + title refs it measures. */
+import campusPlan from '@shared/art/svg/plan-campus-site.svg';
 import { Fragment, type ReactNode, type RefObject } from 'react';
 import { ScrubReveal } from '../journey/WordReveal';
 import { RevealCssClass } from '../../../hooks/useReveal';
@@ -125,19 +126,6 @@ const CRAWL_CLAUSES: readonly string[] = [
   'تعليم أفضل',
 ] as const;
 
-/* The media cell's art — R343 C-1: the retired Commons photograph is
- * replaced by the R342 ORIGINAL courtyard illustration (ASSET-CONTRACT
- * §3.2: 1200×1200 light/dark twins, the informative alt is the
- * contract's own wording). Phase Ω: the alt names the PLATFORM's own
- * courtyard — no campus claim. */
-const MEDIA_ART = {
-  light: '/media/illustrations/r342/statement/statement-courtyard-light.webp',
-  dark: '/media/illustrations/r342/statement/statement-courtyard-dark.webp',
-  alt: 'المقطع المعماري لقلب المنصّة: فناء داخلي تُحيط به أروقة مقوسة وفي مركزه شجرة المعرفة — رسم حبر أصلي لمنصّة أُلارا',
-  width: 1200,
-  height: 1200,
-} as const;
-
 /** One arrow glyph — the census nest (svg > path), shared by the pill
  * icons and the ticker label buttons. The svg box is the spec's own
  * 2.04rem seat; the stroke path draws the recorded 11×7 chevron. */
@@ -187,26 +175,14 @@ export function Statement({ sectionRef, titleRef }: StatementProps) {
             <div className="st-media-in" data-spec="intro.mediain">
               <div className="st-media-inner" data-spec="intro.mediainner">
                 <img
-                  className="st-media-img is-light"
-                  src={MEDIA_ART.light}
-                  alt={MEDIA_ART.alt}
+                  className="st-media-img"
+                  src={campusPlan}
+                  alt="مخطط معماري يبيّن مباني الحرم ومساراته"
                   loading="lazy"
                   decoding="async"
-                  fetchPriority="low"
-                  width={MEDIA_ART.width}
-                  height={MEDIA_ART.height}
+                  width={1200}
+                  height={840}
                   data-spec="intro.mediaimg"
-                />
-                <img
-                  className="st-media-img is-dark"
-                  src={MEDIA_ART.dark}
-                  alt=""
-                  aria-hidden="true"
-                  loading="lazy"
-                  decoding="async"
-                  fetchPriority="low"
-                  width={MEDIA_ART.width}
-                  height={MEDIA_ART.height}
                 />
               </div>
             </div>

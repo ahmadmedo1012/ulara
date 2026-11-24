@@ -19,7 +19,7 @@ import { execFileSync } from 'node:child_process';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..', '..');
-const OUT = join(ROOT, 'frontend', 'public', 'media', 'illustrations', 'r342', 'footer');
+const OUT = join(ROOT, 'frontend', 'public', 'media', 'illustrations', 'r359', 'footer');
 const { chromium } = createRequire(join(ROOT, 'package.json'))('playwright');
 
 /* ── the skyline scene, drawn with the shared grammar ───────────── */

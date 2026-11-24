@@ -76,7 +76,8 @@ for (const [key, buildFn] of Object.entries(ALL)) {
   const res = optimize(svg, {
     multipass: true,
     plugins: [
-      'preset-default',
+      // Keep the root palette in CSS: inline light variables override the dark media rule.
+      { name: 'preset-default', params: { overrides: { inlineStyles: false } } },
       'removeDimensions',
       { name: 'removeViewBox', active: false },
     ],

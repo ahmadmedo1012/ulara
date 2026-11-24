@@ -289,23 +289,18 @@
     }
   ],
   "illustrations": {
-    "generatedFor": "Phase Ω → r353: the two CONSUMED plates only (statement-courtyard, footer-skyline — pinned by r306-landing-sheet). The retired unconsumed r342 sets (hero/journey/problems/roles/why) were superseded by the r346 isometric plate grammar rendering live from code and are deleted from the vault with this round.",
-    "generatedAt": "2026-11-08",
-    "policy": {
-      "ar": "رسوم معمارية أصلية بأسلوب الحبر المعماري أحادي اللون، مولّدة لأُلارا في جولة R342 وأعيد تلوينها إلى رموز الهوية البصرية بدقة البكسل (الورق #F5F1E8 / الحبر #1A1713 / الأزرق الملكي #2540D9 — لون العلامة الأساسي في هوية «الرقّ والأزرق الملكي» 2026 — في النمط الفاتح، وعكسهما في الداكن حيث تصبح الإشارة #8AA0FF). لا أعمال لأطراف ثالثة، ولا نصوص مطبوعة داخل الصور، ولا تصوير لجامعة حقيقية. ظهور أي مبنى هو تخيّل تعليمي عام ولا يعني أي ارتباط مؤسسي.",
-      "en": "Original monochrome architectural ink illustrations generated for the platform in R342 and post-processed to pixel-exact brand tokens (paper #F5F1E8 / ink #1A1713 / the royal blue #2540D9 — the primary brand signal of the 2026 Parchment & Royal identity — in the light theme; the dark twins flip the grounds and the signal re-keys to #8AA0FF). No third-party artwork, no baked text, no real-university depictions; buildings are imagined educational scenes, not institutional claims."
-    },
+    "generatedFor": "Landing statement and footer",
     "count": 2,
     "items": [
       {
-        "id": "r342/footer-skyline",
+        "id": "r359/footer-skyline",
         "type": "illustration",
         "slot": "footer",
         "nameAr": "footer-skyline",
         "altAr": "أفق حرم جامعي متخيّل بخط رفيع: رواق وقاعة وبرج وأشجار على خط أرض واحد",
         "assets": {
-          "light": "/media/illustrations/r342/footer/footer-skyline-light.webp",
-          "dark": "/media/illustrations/r342/footer/footer-skyline-dark.webp"
+          "light": "/media/illustrations/r359/footer/footer-skyline-light.webp",
+          "dark": "/media/illustrations/r359/footer/footer-skyline-dark.webp"
         },
         "intrinsic": {
           "light": [
@@ -327,39 +322,20 @@
         },
         "decorative": true,
         "objectFit": "cover",
-        "tool": "glm-image + r342-duotone-remap (original work)",
-        "license": "original-work-ulara-r342",
-        "contract": "docs/redesign/r342/ASSET-CONTRACT.md",
+        "tool": "scripts/art/retire-skyline.mjs",
+        "license": "original-work-ulara",
+        "contract": "shared/art/grammar.ts",
         "assets2x": {
-          "light": "/media/illustrations/r342/footer/footer-skyline-light@2x.webp",
-          "dark": "/media/illustrations/r342/footer/footer-skyline-dark@2x.webp"
+          "light": "/media/illustrations/r359/footer/footer-skyline-light@2x.webp",
+          "dark": "/media/illustrations/r359/footer/footer-skyline-dark@2x.webp"
         }
       },
       {
-        "id": "r342/statement-courtyard",
+        "id": "plan-campus-site",
         "type": "illustration",
         "slot": "home-intro-wrap",
-        "nameAr": "statement-courtyard",
-        "altAr": "المقطع المعماري لقلب الحرم الجامعي: فناء داخلي تُحيط به أروقة مقوسة وفي مركزه شجرة المعرفة — رسم حبر أصلي لمنصّة أُلارا",
-        "assets": {
-          "light": "/media/illustrations/r342/statement/statement-courtyard-light.webp",
-          "dark": "/media/illustrations/r342/statement/statement-courtyard-dark.webp"
-        },
-        "intrinsic": {
-          "light": [
-            1200,
-            1200
-          ],
-          "dark": [
-            1200,
-            1200
-          ]
-        },
-        "decorative": false,
-        "objectFit": "cover",
-        "tool": "glm-image + r342-duotone-remap (original work)",
-        "license": "original-work-ulara-r342",
-        "contract": "docs/redesign/r342/ASSET-CONTRACT.md"
+        "source": "shared/art/svg/plan-campus-site.svg",
+        "license": "original-work-ulara"
       }
     ]
   },

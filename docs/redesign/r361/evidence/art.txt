@@ -1,0 +1,9 @@
+OK: zero red/orange/off-grammar hues in shipped art (145 surfaces scanned; ink/paper/hairline/royal only).
+ Test Files  2 passed (2)
+      Tests  34 passed (34)
+  5 passed (20.4s)
+PASS — الأوزان داخل الأسقف المثبَّتة (إجمالي 864.3 KB gz، الدخول 30.0 KB، pdf 95.7 KB).
+footer-skyline-light@2x.webp saturated red/orange pixels: 0
+footer-skyline-dark@2x.webp saturated red/orange pixels: 0
+footer-skyline-light.webp saturated red/orange pixels: 0
+footer-skyline-dark.webp saturated red/orange pixels: 0

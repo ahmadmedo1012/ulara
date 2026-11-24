@@ -331,9 +331,9 @@ describe('r306 → r310 — the elevation illustration (the honest interactive)'
     // the r342 ORIGINAL illustrations (registered in the manifest) +
     // the card system — the reuse is pinned where it renders
     const manifestJson = read('public/media/manifest.json');
-    expect(manifestJson).toContain('statement-courtyard');
+    expect(manifestJson).toContain('plan-campus-site');
     expect(manifestJson).toContain('footer-skyline');
-    expect(read('src/components/landing/sections/Statement.tsx')).toContain('statement-courtyard-light.webp');
+    expect(read('src/components/landing/sections/Statement.tsx')).toContain('@shared/art/svg/plan-campus-site.svg');
     expect(read('src/components/landing/sections/Footer.tsx')).toContain('footer-skyline-light.webp');
   });
 });

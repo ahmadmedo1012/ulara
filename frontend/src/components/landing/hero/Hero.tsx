@@ -1,4 +1,4 @@
-import { Fragment, Suspense, lazy, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { Icon } from '../../Icon';
@@ -6,22 +6,8 @@ import { HERO_WORK_ITEMS } from '../../../data/landing-ledger';
 import { ElevationArt, VB_MOBILE } from './ElevationArt';
 import '../../../styles/landing/hero-mechanics.css';
 
-/* ── the A2 art contract (r359) ─────────────────────────────────────────
- * Web art lives in `components/illustrations/r359/<key>.tsx`. The hero
- * consumes keys `hero-elevation` / `hero-elevation-mobile` through a lazy
- * glob; when a key is absent (A2's branch not merged yet) the committed
- * fallback `ElevationArt` (A1's own slice) owns the seat — a plain
- * hairline frame never shows. Post-merge A2's key wins by precedence. */
-const R359_ART = import.meta.glob('../../illustrations/r359/hero-elevation*.tsx') as Record<
-  string,
-  () => Promise<{ default: React.ComponentType<{ className?: string }> }>
->;
-const HeroElevationArt = R359_ART['../../illustrations/r359/hero-elevation.tsx']
-  ? lazy(R359_ART['../../illustrations/r359/hero-elevation.tsx'])
-  : null;
-const HeroElevationMobileArt = R359_ART['../../illustrations/r359/hero-elevation-mobile.tsx']
-  ? lazy(R359_ART['../../illustrations/r359/hero-elevation-mobile.tsx'])
-  : null;
+import desktopElevation from '@shared/art/svg/hero-elevation.svg';
+import mobileElevation from '@shared/art/svg/hero-elevation-mobile.svg';
 
 /* The display title — TWO authored lines at the reference's h1 scale
  * (r359 D1: the fluid N/864·vw law — 46.7px @1440, 31.8px @390). Line one
@@ -128,7 +114,7 @@ export function Hero() {
   const openSet = reduced ? new Set(STATIONS.map((s) => s.id)) : open;
 
   /* mobile art key choice (≤767 → the mobile elevation). */
-  const [mobile, setMobile] = useState(false);
+  const [mobile, setMobile] = useState(() => typeof window !== 'undefined' && window.matchMedia?.('(max-width: 767px)')?.matches === true);
   useEffect(() => {
     if (typeof window.matchMedia !== 'function') return undefined;
     const mq = window.matchMedia('(max-width: 767px)');
@@ -169,8 +155,8 @@ export function Hero() {
     x: ((vx - vX) / vW) * 100,
     y: ((vy - vY) / vH) * 100,
   });
-  const Art = mobile ? (HeroElevationMobileArt ?? HeroElevationArt ?? ElevationArt)
-    : (HeroElevationArt ?? ElevationArt);
+  const [failedArt, setFailedArt] = useState<string | null>(null);
+  const elevation = mobile ? mobileElevation : desktopElevation;
 
   return (
     <section className="fo-hero hro" aria-label="أُلارا — من المحاضرة إلى الإتقان">
@@ -195,13 +181,12 @@ export function Hero() {
             below tracks the drawing EXACTLY. */}
         <div className="hro-art">
           <div className="hro-ink" aria-hidden="true">
-            <Suspense fallback={<ElevationArt className="hro-elevation" viewBox={vb} />}>
-              {Art === ElevationArt ? (
-                <ElevationArt className="hro-elevation" viewBox={vb} />
-              ) : (
-                <Art className="hro-elevation" />
-              )}
-            </Suspense>
+            {failedArt === elevation ? (
+              <ElevationArt className="hro-elevation" viewBox={vb} />
+            ) : (
+              <img className="hro-elevation" src={elevation} alt="" fetchPriority="high"
+                onError={() => setFailedArt(elevation)} />
+            )}
           </div>
 
           {/* the inspection stations — signal squares + callout tags, riding

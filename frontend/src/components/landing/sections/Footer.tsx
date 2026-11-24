@@ -270,8 +270,8 @@ export function Footer({ year }: { year: number }) {
           <div className="fo-strip-media">
             <img
               className="fo-strip-img is-light"
-              src="/media/illustrations/r342/footer/footer-skyline-light.webp"
-              srcSet="/media/illustrations/r342/footer/footer-skyline-light@2x.webp 2x"
+              src="/media/illustrations/r359/footer/footer-skyline-light.webp"
+              srcSet="/media/illustrations/r359/footer/footer-skyline-light@2x.webp 2x"
               alt="أفق حرم جامعي متخيّل بخط رفيع: رواق وقاعة وبرج وأشجار على خط أرض واحد"
               loading="lazy"
               fetchPriority="low"
@@ -280,8 +280,8 @@ export function Footer({ year }: { year: number }) {
             />
             <img
               className="fo-strip-img is-dark"
-              src="/media/illustrations/r342/footer/footer-skyline-dark.webp"
-              srcSet="/media/illustrations/r342/footer/footer-skyline-dark@2x.webp 2x"
+              src="/media/illustrations/r359/footer/footer-skyline-dark.webp"
+              srcSet="/media/illustrations/r359/footer/footer-skyline-dark@2x.webp 2x"
               alt=""
               aria-hidden="true"
               loading="lazy"

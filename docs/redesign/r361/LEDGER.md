@@ -40,7 +40,15 @@
 
 - P1 capture: seven [role and shell comparison sheets with observations](evidence/role-critique.md). Fixed institution context on session hydration and added HTTP response detection for fixture 501s; axe exceptions now appear as instrument failures. [Scoped overview rerun](evidence/institution-scan.txt): 4 cells, no detected defects. [Role baseline](evidence/role-baseline.json) is not a full-matrix pass.
 
-NEXT: Repair the design specimen tap targets and audit institution list/detail coverage.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:c701b7f320c135292b48d650d4160ae95e3f1a10f7f117d8c8441640bc492a85 -->
+
+- P2/P6: render the A2 hero SVG as an image instead of mounting two React drawings at startup. Preserve interactive stations and the fallback. The statement uses the A2 campus plan; the footer uses the A2 skyline. Removed the old asset directory and fixed the exported SVG dark palette cascade. [Tests, bundle and art scan](evidence/art.txt). Re-measured deadcode after the merged art library and consumer changes: 47 unused-file candidates, 19 exports and 220 types; these counts are debt, not removals.
+
+NEXT: Measure production performance after deploy; check mobile builds from this change. Finish visual and accessibility corrections.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 
