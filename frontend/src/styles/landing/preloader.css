@@ -348,7 +348,11 @@
   font-weight: 700;
   line-height: 1.06;
   color: var(--text);
-  animation: pl-rise var(--motion-duration-long) var(--ease-out) both;
+  /* r359 A1 §C — the headline is the LCP carrier: it paints at the
+   * loader's first frame (no rise delay — the boot lines, counter and
+   * the mark keep their staged choreography; the promise leads). */
+  animation: none;
+  opacity: 1;
 }
 
 @keyframes pl-rise {

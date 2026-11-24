@@ -168,13 +168,17 @@
   </head>
   <body>
     <div id="root">
-      <!-- r309 (§4.2): the boot plate — a meaningful static first frame
-           inside #root for the window between first paint and the React
-           mount (production loads the bundle over the network; the old
-           empty shell painted as an unexplained blank viewport). The
-           plate is opaque, fixed (zero CLS), follows the resolved
-           data-theme, and is REPLACED by React's first commit. No CSP
-           impact: style-src already allows inline styles. -->
+      <!-- r309 (§4.2) → r359 A1 §C: the boot plate — a meaningful static
+           first frame inside #root for the window between first paint
+           and the React mount. r359: the wordmark now renders at the
+           DISPLAY scale (the landing's own h1 law — clamp(34px, 9vw,
+           62px) · 800) so the plate is the LCP CARRIER: the biggest
+           text on the page paints at parse time (system font, zero
+           blocking) instead of waiting for the preloader's exit — the
+           mobile-perf law (Perf ≥ 85) without touching the entrance
+           choreography (React's first commit replaces the plate with
+           the preloader, which carries the same wordmark family). The
+           plate stays opaque, fixed (zero CLS), theme-resolved. -->
       <div class="ula-boot-plate" aria-hidden="true"><span>أُلارا</span></div>
     </div>
     <style>
@@ -187,9 +191,10 @@
         background: #F5F1E8;
         color: #1A1713; /* the 2026 approved light ink */
         font-family: system-ui, sans-serif;
-        font-size: 22px;
-        font-weight: 700;
+        font-size: clamp(34px, 9vw, 62px); /* r359 A1 — the display law (the LCP carrier) */
+        font-weight: 800;
         letter-spacing: 0; /* R323 V-ζ — Arabic is never letter-spaced (AUDIT.md §V-ζ) */
+        line-height: 1.04;
       }
       html[data-theme="dark"] .ula-boot-plate {
         background: #262019;

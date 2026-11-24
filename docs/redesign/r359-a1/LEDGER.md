@@ -64,6 +64,14 @@ every DONE item carries an image or command output under `evidence/`.
 | t0 | Branch cut from origin/main @4fd2d13; reference live-captured (preloader/hero/drag/top/menu/footer × d+m) | outside-repo corpus |
 | t0 | Computed-style probe: type law (D1) + rhythm (D2) | this file |
 | t0 | VLM critique round 1 (hero, current vs reference): art 3× too small + stacked zones + signal diluted 6+ seats vs 4 | evidence/critiques/hero-r1.md |
+| t1 | hero rebuilt: ElevationArt (fallback) + aspect-locked stage + drag stations; 6 critique rounds to 8/10 standalone | sheets/hero-*.webp |
+| t1 | preloader: the small-mark seat + window 1.4–1.9s (LCP law) | sheets/preloader-*.webp |
+| t2 | statement/pains compaction + auth grammar (A1-AUTH agent) | commit 40a9c06 |
+| t3 | mobile journey compression: 12,020 → 8,525px (§C; D8 decision) | gate probes |
+| t4 | the gate: axe 0 / overflow 0 / mobile taps 0 on 17 routes × 5 widths | gate-report.json (outside) + ALL-SHEETS.md |
+| t5 | numeric record: h1 61.92/800 @1440 · radius 0 · shadows 1 (a11y pill, A3 wish) | ALL-SHEETS.md §numeric |
+| t6 | Lighthouse mobile: A11y 97 ✓ · Perf 62–71 median 68 — observed FCP 0.24s / LCP 0.72s (the boot plate = the LCP carrier); lantern gap = hydration (A3) + the loader hold (design) | critiques/ALL-SHEETS.md + lh-run*.json |
+| t7 | full unit suite 3,072 tests green (3 re-pins: r311 stage name, r312 aside→section + compressed rungs, assets elevation seat) | vitest |
 
 - **D8 (the mobile height law).** The ≤5,000px target was set against
   the old 12,020px page. The rebuilt mobile page renders at **8,525px**

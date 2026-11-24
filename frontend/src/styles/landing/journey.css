@@ -1244,11 +1244,11 @@ section.chapters {
 }
 
 /* the ladder's phone rungs (the pinned derivation). */
+/* r359 A1 §C — the phone ladder compresses to the ≤5,000px page law
+   (was 380dvh): the sticky scrub still carries every beat, the stacked
+   findings ladder flows inside the tighter track. */
 @media (max-width: 767px) {
   .jt-map-col {
-    /* r359 A1 §C — the phone ladder compresses to the ≤5,000px page
-     * law (was 380dvh): the sticky scrub still carries every beat,
-     * the stacked findings ladder flows inside the tighter track. */
     block-size: 92dvh;
     padding-inline: 0;
   }

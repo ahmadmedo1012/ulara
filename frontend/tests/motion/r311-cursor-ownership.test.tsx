@@ -138,7 +138,7 @@ describe('R311 cursor ownership — the real router + landing in one tree', () =
   it('the unified suppression vocabulary: data-cursor="none", never "hidden"', async () => {
     mountApp('/');
     expect(document.querySelectorAll('[data-cursor="hidden"]')).toHaveLength(0);
-    expect(document.querySelector('.bp-stage')?.getAttribute('data-cursor')).toBe('none');
+    expect(document.querySelector('.hro-stage')?.getAttribute('data-cursor')).toBe('none'); /* r359 A1 — the stage seat renamed with the hero rebuild */
 
     /* the entrance loader (jsdom plays it: fine media + empty session)
      * must carry the same token — R333: the loader is the Preloader (.pl),

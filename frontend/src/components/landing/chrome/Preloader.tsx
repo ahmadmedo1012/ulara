@@ -70,7 +70,7 @@ import '../../../styles/landing/preloader.css';
  * needs its spread AND the r309 belt's ≥2000ms mount-skew pin is law)
  * and never holds past 2.6s (the hard cap readiness races), then the
  * completed beat, then the slit. */
-const RELEASE_FLOOR_MS = 2000;
+const RELEASE_FLOOR_MS = 1400; /* r359 A1 §C — the floor tightens 2000→1400 for the mobile LCP law (Perf ≥85 gate); every beat still plays, tighter */
 /* r353 — the observer margin. The r309 belt stamps its tMount AFTER
  * `.pl` becomes layout-observable, i.e. one Playwright round-trip after
  * this component's clock; r344's first-rAF stamp removed the paint
@@ -80,9 +80,9 @@ const RELEASE_FLOOR_MS = 2000;
  * release gate holds the floor PLUS this margin; the display keeps
  * crawling at 99 to the floor, and the whole entrance still lands
  * inside the documented 2.0-2.6s window (MAX_RUN_MS is unchanged). */
-const RELEASE_MARGIN_MS = 400;
+const RELEASE_MARGIN_MS = 300;
 const RELEASE_EXIT_MS = RELEASE_FLOOR_MS + RELEASE_MARGIN_MS;
-const MAX_RUN_MS = 2600;
+const MAX_RUN_MS = 1900;
 const EXIT_HOLD_MS = 500;
 const ENTRY_DONE_EVENT = 'ula:entry-done';
 
