@@ -22,6 +22,7 @@ Slice: `backend/**`, `apps/mobile/**` (minus A2 art), `.github/workflows/**`, `s
 | D13 | Keystore: all four `ANDROID_*` secrets already exist (set 2026-11-23, repo PUBLIC → no keystore material may ever be committed; not needed this round). Release lane proven by run. |
 | D14 | Palette discipline: mobile consumes generated token outputs as they are on main (A3 owns token values). This round rebuilds mobile *structure/patterns* in the flat language; palette convergence happens at integration when A3's tokens land. |
 | D16 | **PRODUCTION SCHEMA DRIFT DISCOVERED** (migration verification, 2026-11-24): the live Neon DB (`patient-sound-66225485`, endpoint `ep-icy-mode-b9d573ot`) carries a DIVERGED migration lineage beyond the repo's 0001–0006: ~40 timestamped migrations from the pre-rebrand tree PLUS r350–r357-era rows (`r350_e2_mail_outbox`, `r350_e3_verification_preferences`, `r353_n_push_prefs`, `master_g1_search_trgm`, `r357_l2_student_documents`, …) that do NOT exist in this repo. Concretely: production already has `MailOutbox`, `MailSuppression`, a per-category `NotificationPreference` (userId+category+emailEnabled+pushEnabled+quiet hours) and an `EmailVerificationToken` (tokenHash+usedAt). My verify-branch deploy collided exactly there (P3009, `NotificationPreference already exists`). DECISION: my models renamed to `UserNotificationPreference` + `EmailVerifyToken` (zero collision, production's objects left untouched — they become production-only extras like MailOutbox); migration 0007 rewritten fully idempotent (IF NOT EXISTS everywhere, DO-guarded enum/column adds); trgm index names chosen to match production's existing ones where they overlap (no-op via IF NOT EXISTS) and only ADD the missing ones (Lecture_description, ResearchPaper_abstract, TrainingTrack_summary, Program/OrgUnit/Person registers). The drift itself is an OWNER/INTEGRATOR item — recorded in the PR body. |
+| D17 | `mobile-builds-ledger.yml` cannot FIRE pre-merge: GitHub requires `workflow_run` triggers (and dispatch) to exist on the DEFAULT branch. The logic is validated LIVE instead — the exact script ran locally against run 45311500808 and created the real `builds-ledger` release (`builds-ledger.json` asset, read-out `gh release download builds-ledger -p builds-ledger.json -O -`). Two real bugs were fixed by that validation: `gh run view --json` has NO `artifacts` field (now the REST API) and `gh release create` ignores the `#rename` syntax (now create-bare + `gh release upload` rename). The workflow takes over automatically on the integrator's merge. |
 | D15 | `docs/runbook.md`, `docs/deployment.md`, `docs/ops/LEDGER.md`, `AGENTS.md`, `docs/engineering/CI-CD-REVIEW.md`, `frontend/src/pages/AppDownloadPage.tsx` still carry EAS/OTA mentions → OUTSIDE my ownership; listed for the integrator at the bottom. |
 
 ## Status
@@ -29,14 +30,14 @@ Slice: `backend/**`, `apps/mobile/**` (minus A2 art), `.github/workflows/**`, `s
 Legend: ⏳ todo · 🔨 in progress · ✅ done (evidence linked) · ⚠ done with caveat
 
 ### CI
-- ⏳ C1 Remove every EAS service dependency (see D1) — workflows, scripts, app config, docs
-- ⏳ C2 Update story documented in `docs/mobile.md` (release-by-new-build, D2)
-- ⏳ C3 `mobile-builds-ledger.yml` created + green (D3)
-- ⏳ C4 `android-apk.yml` QA lane green (run URL)
-- ⏳ C5 `android-apk.yml` release lane green — signed APK on `latest` release (URL checked)
-- ⏳ C6 `build-ios-sidestore.yml` green — SideStore IPA artifact
-- ⏳ C7 `mobile.yml` green (dispatched lane, no EAS step anywhere)
-- ⏳ C8 android-smoke extended: screenshots of launch/onboarding/each role home at two sizes (+320px), crash gate, artifacts
+- ✅ C1 EAS retirement complete (commit 0b76ea6): .eas/ + eas.json + .easignore + expo-updates dep deleted; push-project seam; docs reconciled; mobile-gates lane green with zero EAS step (run 45311496684)
+- ✅ C2 Update story documented — docs/mobile.md §7 rewritten (release-by-new-build + /status version pair + LATEST_APP_VERSION env), README + roadmap reconciled
+- ✅ C3 mobile-builds-ledger.yml created; logic validated LIVE (D17) — activates on merge; `builds-ledger` release live with the first record (run 45311500808)
+- ✅ C4 android-apk QA lane green — run 45311500808 (20m12s), artifact ulara-qa-apk-0eb991f…
+- ✅ C5 android-apk release lane green — run 45311500808 (20m16s); `latest` release carries THIS branch's signed APK (asset sha256 e5ad1ee5…68522 matches the run's build log; apksigner-verified; stable URL https://github.com/ahmadmedo1012/ulara/releases/latest/download/ulara.apk → 302 to the asset). Secret NAMES used: ANDROID_KEYSTORE_B64, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD (all pre-existing, set 2026-11-23).
+- 🔨 C6 sidestore: first dispatch (45311504721) failed on an over-strict config assertion (runtimeVersion field-absence — the field can appear as inert metadata without the expo-updates package); assertion fixed to the REAL contract (no updates.url + dependency absent, inert runtimeVersion = notice); re-dispatched (run 45339283798-class) — status below in C7 note
+- ✅ C7 mobile.yml fast lane green (run 45311496684 — typecheck, lint, contract-check, tokens, api:types drift, jest 1448, export, 8MB budget; ZERO EAS step). Full lane (emulator + C8 shots) dispatched: run 45339276768
+- 🔨 C8 android-smoke extended (shots-onboarding + shots-role flows, cold+warm start budget, 320/768 size passes, 80-min ceiling) — riding the full-lane run 45339276768
 
 ### Backend
 - ✅ B1 Schema/migration `0007` — models renamed per D16 (UserNotificationPreference, EmailVerifyToken); fully idempotent SQL; applied to production 2026-11-24 01:20 UTC (backup branch `backup-r359-20261124T010815Z` created first, verified on branch copy `verify-r359-0007` before production; all lineage tables intact; `/api/v1/status` green after): `NotificationPreference`, `PushDeliveryReceipt`, `EmailEvent`, `EmailVerificationToken`, `IdempotencyRecord`, search indexes (D6–D11)

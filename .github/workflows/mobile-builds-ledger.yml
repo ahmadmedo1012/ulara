@@ -63,10 +63,15 @@ jobs:
           RUN_ID="${{ steps.run.outputs.id }}"
           mkdir -p /tmp/ledger && cd /tmp/ledger
 
-          # The run's metadata (name, sha, conclusion, artifacts).
-          if ! gh run view "$RUN_ID" --json databaseId,workflowName,headSha,headBranch,conclusion,status,displayTitle,createdAt,url,artifacts > run.json; then
+          # The run's metadata (name, sha, conclusion) + its artifacts
+          # (gh run view --json has NO artifacts field — the REST API
+          # carries them; validated locally against run 45311500808).
+          if ! gh run view "$RUN_ID" --json databaseId,workflowName,headSha,headBranch,conclusion,status,displayTitle,createdAt,url > run.json; then
             echo "::warning::run $RUN_ID not accessible — skipping"
             exit 0
+          fi
+          if ! gh api "repos/${{ github.repository }}/actions/runs/$RUN_ID/artifacts" --paginate > artifacts.json; then
+            echo '[ ]' > artifacts.json
           fi
 
           # Current ledger (release asset) or a fresh array.
@@ -80,25 +85,34 @@ jobs:
           node -e '
             const fs = require("fs");
             const run = JSON.parse(fs.readFileSync("run.json", "utf8"));
+            let artifacts = []; try {
+              const pages = JSON.parse(fs.readFileSync("artifacts.json", "utf8"));
+              // --paginate emits either one object or JSONL objects.
+              artifacts = Array.isArray(pages)
+                ? pages.flatMap((p) => p.artifacts || [])
+                : pages.artifacts || [];
+            } catch {}
             let led = []; try { led = JSON.parse(fs.readFileSync("builds-ledger.json", "utf8")); } catch {}
             const rec = {
               at: run.createdAt, workflow: run.workflowName, runId: run.databaseId, runUrl: run.url,
               sha: run.headSha, ref: run.headBranch, title: run.displayTitle,
               status: run.status, conclusion: run.conclusion,
-              artifacts: (run.artifacts || []).map(a => ({ name: a.name, sizeBytes: a.sizeInBytes })),
+              artifacts: (artifacts || []).map(a => ({ name: a.name, sizeBytes: a.sizeInBytes })),
             };
             const out = [rec, ...led.filter(x => x.runId !== rec.runId)].slice(0, 200);
             fs.writeFileSync("new.json", JSON.stringify(out, null, 2));
             console.log(`ledger now ${out.length} records (cap 200)`);
           '
 
-          # Publish (create the release on the first record; prerelease = internal ledger).
-          if gh release view "$LEDGER_TAG" >/dev/null 2>&1; then
-            gh release upload "$LEDGER_TAG" new.json#builds-ledger.json --clobber
-          else
-            gh release create "$LEDGER_TAG" new.json#builds-ledger.json --prerelease \
+          # Publish (create the release on the first record; prerelease = internal
+          # ledger). The #rename lives on `gh release upload` (create ignores
+          # it — validated live: the first record must land as
+          # builds-ledger.json, so create is bare and the upload renames).
+          if ! gh release view "$LEDGER_TAG" >/dev/null 2>&1; then
+            gh release create "$LEDGER_TAG" --prerelease \
               --title "سجلّ البنيات الأصلية — native builds ledger" \
               --notes "Machine-maintained rolling ledger of every native build (r359 A4). Rollback reference: RELEASE.md §mobile. Read-out: \`gh release download builds-ledger -p builds-ledger.json -O -\`"
           fi
+          gh release upload "$LEDGER_TAG" new.json#builds-ledger.json --clobber
           echo "## Ledger updated" >> "$GITHUB_STEP_SUMMARY"
           echo "Run recorded: $RUN_ID" >> "$GITHUB_STEP_SUMMARY"
