@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, Switch, View } from "react-native";
 import Fingerprint from "lucide-react-native/icons/fingerprint-pattern";
 import Flag from "lucide-react-native/icons/flag";
 import Hash from "lucide-react-native/icons/hash";
 import Moon from "lucide-react-native/icons/moon";
 import Vibrate from "lucide-react-native/icons/vibrate";
 import { router } from "expo-router";
-import { useQueryClient } from "@tanstack/react-query";
-import { apiWithCookieCapture, ApiError, put } from "@/api/client";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { apiWithCookieCapture, ApiError, get, put } from "@/api/client";
 import { useSession, ROLE_LABELS, POSITION_LABELS, RANK_LABELS } from "@/auth/session";
 import { setThemePreference, usePalette, useThemePreference, type ThemePreference } from "@/design/theme";
 import { unregisterPushDevices } from "@/lib/push";
 import { NUMERALS_OPTIONS, useNumerals } from "@/lib/format";
 import { haptics } from "@/haptics";
-import { sp } from "@/design/tokens";
+import { sp, touchFloor } from "@/design/tokens";
 import { Screen, PageHeader } from "@/components/ui/screen";
 import { T, MonoLabel } from "@/components/ui/text";
 import { Button } from "@/components/ui/pressables";
@@ -21,21 +21,54 @@ import { Card, Badge } from "@/components/ui/surfaces";
 import { RowList, LedgerRow } from "@/components/ui/data";
 import { Field, Segmented, SecretField } from "@/components/ui/fields";
 import { ConfirmSheet } from "@/components/ui/sheet";
+import { ErrorState, SkeletonList } from "@/components/ui/states";
 import { toast } from "@/components/ui/toast";
 import { authenticate, biometricAvailable, getBiometricLockEnabled, setBiometricLockEnabled } from "@/lib/biometric";
+import { humanizeError } from "@/lib/errors";
 import type { SessionResponse } from "@/api/types";
 import Constants from "expo-constants";
 
 /** /settings — the SHARED settings surface (every role). R341 M3: the
  *  30-row wall of boxed one-per-setting cards is dead — rows are grouped
  *  by concern under muted group headers ([01] التفضيلات · [02] الحساب ·
- *  [03] الأمان · [04] الدعم · [05] الجلسة), and every row sits on the
- *  ledger rhythm (RowList/LedgerRow hairlines, 48px targets), tokens
- *  only. The measured hierarchy: the page title carries the loud tier,
- *  group headers stay muted so the rows — the actual seats — read first.
- *  The student Profile keeps a one-tap mirror of the same toggles; both
- *  seats read/write the identical persisted state, so they can never
- *  disagree. */
+ *  [03] الأمان · [04] الدعم · [05] الجلسة · [06] الإشعارات), and every
+ *  row sits on the ledger rhythm (RowList/LedgerRow hairlines, 48px
+ *  targets), tokens only. The measured hierarchy: the page title carries
+ *  the loud tier, group headers stay muted so the rows — the actual
+ *  seats — read first. The student Profile keeps a one-tap mirror of the
+ *  same toggles; both seats read/write the identical persisted state, so
+ *  they can never disagree. r359 A4 appends [06] الإشعارات — the
+ *  server-side per-category preference seat (GET/PUT
+ *  /me/notification-preferences), behind no role gate: every logged-in
+ *  user sees it. */
+/** r359 A4 — GET/PUT /me/notification-preferences (the wire shape every
+ *  logged-in user owns; the server answers the effective set — defaults
+ *  when no row exists: all four push categories ON · emailDigest OFF). */
+interface NotificationPreferences {
+  userId: string;
+  pushUrgent: boolean;
+  pushAcademic: boolean;
+  pushSystem: boolean;
+  pushSocial: boolean;
+  emailDigest: boolean;
+}
+
+/** A PUT carries the ONE changed field (the backend demands ≥1 boolean). */
+type PreferenceChange = Partial<Omit<NotificationPreferences, "userId">>;
+type PreferenceField = Exclude<keyof NotificationPreferences, "userId">;
+
+const PREFS_KEY = ["notification-preferences"] as const;
+
+/** The four push-category seats — labels mirror the inbox chips
+ *  (notificationTypeLabel in features/notifications) so both surfaces
+ *  name a category with the same word. */
+const PUSH_CATEGORY_ROWS: { field: PreferenceField; testID: string; label: string; hint: string }[] = [
+  { field: "pushUrgent", testID: "pref-push-URGENT", label: "عاجل", hint: "تنبيهات فورية مهمة" },
+  { field: "pushAcademic", testID: "pref-push-ACADEMIC", label: "أكاديمي", hint: "محاضرات وواجبات ونتائج" },
+  { field: "pushSystem", testID: "pref-push-SYSTEM", label: "النظام", hint: "إعلانات المنصة والتحديثات" },
+  { field: "pushSocial", testID: "pref-push-SOCIAL", label: "اجتماعي", hint: "رسائل وتفاعلات المجتمع" },
+];
+
 export default function Settings() {
   const p = usePalette();
   const user = useSession((s) => s.user);
@@ -108,6 +141,50 @@ export default function Settings() {
   const changeNumerals = (next: string) => {
     haptics.selection();
     setNumerals(next as typeof numerals);
+  };
+
+  /* r359 A4 — notification preferences: fetch on mount (60s stale, the
+   * unread-count cadence); every toggle is OPTIMISTIC — the cache flips
+   * at the tap, the PUT carries the single changed field, and a failure
+   * rolls ONLY that field back + toasts (the switch never lies about
+   * what the server accepted). */
+  const prefs = useQuery({
+    queryKey: PREFS_KEY,
+    queryFn: () => get<NotificationPreferences>("/me/notification-preferences"),
+    staleTime: 60_000,
+  });
+  const prefData = prefs.data ?? null;
+  const savePref = useMutation({
+    mutationFn: (change: PreferenceChange) => put<NotificationPreferences>("/me/notification-preferences", change),
+    onMutate: (change) => {
+      const prev = qc.getQueryData<NotificationPreferences>(PREFS_KEY) ?? null;
+      if (prev) qc.setQueryData<NotificationPreferences>(PREFS_KEY, { ...prev, ...change });
+      return { prev };
+    },
+    // Roll back ONLY the fields this mutation carried — a concurrent toggle
+    // of another category keeps its optimistic state (a whole-snapshot
+    // restore would clobber it).
+    onError: (e, change, ctx) => {
+      const prev = ctx?.prev ?? null;
+      if (prev) {
+        qc.setQueryData<NotificationPreferences>(PREFS_KEY, (old) => {
+          if (!old) return prev;
+          const restored: NotificationPreferences = { ...old };
+          for (const field of Object.keys(change) as PreferenceField[]) restored[field] = prev[field];
+          return restored;
+        });
+      }
+      haptics.notify("error");
+      toast.error(humanizeError(e), "تعذّر حفظ التفضيل");
+    },
+    // No onSuccess cache write: the optimistic value already equals the
+    // request, and a late server row could clobber a newer concurrent
+    // toggle — the next mount's refetch reconciles.
+  });
+  const togglePref = (field: PreferenceField, next: boolean) => {
+    haptics.selection();
+    const change: PreferenceChange = { [field]: next };
+    savePref.mutate(change);
   };
 
   const changePassword = async () => {
@@ -313,7 +390,7 @@ export default function Settings() {
           </RowList>
         </View>
 
-        {/* [05] الجلسة — الخروج وتذييل الإصدار */}
+        {/* [05] الجلسة — الخروج */}
         <View style={{ gap: sp[8] }}>
           <GroupHeader index={5} title="الجلسة" />
           <Button
@@ -324,6 +401,42 @@ export default function Settings() {
               setConfirmLogout(true);
             }}
           />
+        </View>
+
+        {/* [06] الإشعارات — r359 A4: مقاعد تفضيل الفئات الأربع + الملخّص
+            الأسبوعي (اختياري، معطّل افتراضيًا) — لكل مستخدم مسجّل الدخول،
+            التبديل متفائل مع تراجع عند الفشل. */}
+        <View style={{ gap: sp[8] }}>
+          <GroupHeader index={6} title="الإشعارات" />
+          <T variant="xs" color="muted">
+            تنبيهات جهازك مقسّمة إلى أربع فئات — والملخّص الأسبوعي بالبريد خدمة اختيارية.
+          </T>
+          {prefs.isLoading ? (
+            <SkeletonList rows={5} rowHeight={48} />
+          ) : prefs.isError ? (
+            <ErrorState compact message={humanizeError(prefs.error)} onRetry={() => prefs.refetch()} />
+          ) : prefData ? (
+            <RowList>
+              {PUSH_CATEGORY_ROWS.map((row) => (
+                <PrefRow
+                  key={row.field}
+                  label={row.label}
+                  hint={row.hint}
+                  testID={row.testID}
+                  value={prefData[row.field]}
+                  onToggle={(next) => togglePref(row.field, next)}
+                />
+              ))}
+              <PrefRow
+                last
+                label="الملخّص الأسبوعي بالبريد"
+                hint="رسالة أسبوعية بأهم إشعاراتك غير المقروءة"
+                testID="pref-email-digest"
+                value={prefData.emailDigest}
+                onToggle={(next) => togglePref("emailDigest", next)}
+              />
+            </RowList>
+          ) : null}
         </View>
         <T variant="xs" color="faint" style={{ textAlign: "center" }}>
           أُلارا موبايل {Constants.expoConfig?.version ?? "1.0.0"} — Expo SDK {Constants.expoConfig?.sdkVersion ?? "58"}
@@ -392,6 +505,63 @@ function FactRow({ label, value, last }: { label: string; value: string; last?: 
       <T variant="body" weight="medium">
         {value}
       </T>
+    </LedgerRow>
+  );
+}
+
+/** Preference row — one ledger seat with a Switch (the app's first RN
+ *  Switch: royal track when on, palette tokens only). The native frame is
+ *  ~31px tall, so the 44px touch floor lives on an accessible Pressable
+ *  wrapper that owns the switch ROLE, STATE, LABEL and testID; the Switch
+ *  renders the visual state only (pointerEvents off + a11y-hidden — one
+ *  touch path and one accessibility target, never a double toggle). */
+function PrefRow({
+  label,
+  hint,
+  value,
+  testID,
+  onToggle,
+  last,
+}: {
+  label: string;
+  hint: string;
+  value: boolean;
+  testID: string;
+  onToggle: (next: boolean) => void;
+  last?: boolean;
+}) {
+  const p = usePalette();
+  return (
+    <LedgerRow last={last}>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: sp[10] }}>
+        <View style={{ flex: 1 }}>
+          <T variant="body" weight="medium">
+            {label}
+          </T>
+          <T variant="xs" color="muted">
+            {hint}
+          </T>
+        </View>
+        <Pressable
+          accessible
+          accessibilityRole="switch"
+          accessibilityLabel={label}
+          accessibilityState={{ checked: value }}
+          testID={testID}
+          onPress={() => onToggle(!value)}
+          style={{ minHeight: touchFloor, minWidth: touchFloor, alignItems: "center", justifyContent: "center" }}
+        >
+          <Switch
+            pointerEvents="none"
+            accessibilityElementsHidden
+            importantForAccessibility="no-hide-descendants"
+            value={value}
+            onValueChange={onToggle}
+            trackColor={{ false: p.border, true: p.accent }}
+            thumbColor={p.surface}
+          />
+        </Pressable>
+      </View>
     </LedgerRow>
   );
 }

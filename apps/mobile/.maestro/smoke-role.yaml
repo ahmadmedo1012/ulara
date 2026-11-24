@@ -109,6 +109,16 @@ appId: ly.ulara.app
 - tapOn:
     text: "دخول"               # FormScreen submitLabel (app/auth/login.tsx)
 
+# 2b ── r359 A4 (M2): the FIRST-RUN TOUR may appear between the login
+#       and the dashboard (a user whose onboardingCompletedAt is null —
+#       e.g. the first journey after the r359 upgrade, or any fresh
+#       account). The escape is always reachable: «تخطي» completes the
+#       tour and the boot rule resolves to the role home. Optional: a
+#       pre-onboarded account never sees it.
+- tapOn:
+    text: "تخطي"               # app/onboarding.tsx — the skip escape
+    optional: true
+
 # 3 ── the role's dashboard landed (always-rendered heading per role:
 #      STUDENT → student/(tabs)/dashboard.tsx SectionBar «أرقامك هذا الفصل»;
 #      TEACHER → PageHeader «لوحة الأستاذ»; ADMIN → «لوحة المسجل العام»;

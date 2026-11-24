@@ -1,10 +1,16 @@
 # Remote push notifications — additive backend proposal
 
-**Status: 🔗 blocked by an external configuration** — the current backend has **no
-device-token model** (`backend/prisma/schema.prisma` has no `deviceToken`/push
-entity; `backend/src/http/routes/*` registers no push routes). This document is
-the minimal backward-compatible addition required before the mobile client can
-wire `expo-notifications`. Nothing here changes any existing web API behavior.
+**Status: ✅ implemented — this document is kept as the design record.**
+r326/r327 shipped the proposal verbatim: the `PushDevice` model, the three
+`/me/push-devices` routes, and the client wiring (`src/lib/push.tsx`). r359 A4
+completed the send path: Expo **delivery receipts** (ticket check +
+`PushDeliveryReceipt` rows), **per-user category preferences**
+(`GET/PUT /me/notification-preferences`, consulted before every fan-out), and
+the **stale-device pruning** sweeper (180d `lastSeenAt`). The remaining steps
+are OWNER configuration, not code: live fan-out stays dark behind
+`PUSH_ENABLED=false` until an Expo push project id is registered and set as
+`EXPO_PUBLIC_PUSH_PROJECT_ID` (see `docs/mobile.md` §7 + roadmap item 3).
+Nothing here changes any existing web API behavior.
 
 ## Why the inbox is REST-polled today
 
@@ -83,5 +89,7 @@ the inbox), fan out the same payload via Expo's push API
 
 - No store credentials (FCM/APNs) are configured on the Expo account yet, so
   **no end-to-end push delivery has been demonstrated.**
-- The proposal above is a design + contract, not deployed code; the deployed
-  API (`buildId b31059dce46b`) has none of these routes.
+- The historical caveat that sat here — "a design + contract, not deployed
+  code" — is retired: the model, routes, receipts, category preferences and
+  pruning are implemented (r326/r327 + r359 A4). Only the owner's Expo push
+  project id + `PUSH_ENABLED` stand between this code and live delivery.

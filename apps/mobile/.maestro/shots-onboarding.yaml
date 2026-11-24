@@ -1,0 +1,75 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# shots-onboarding.yaml — r359 A4 (C8): the FIRST-RUN TOUR's four screens,
+# captured for the fidelity sheets (acceptance A). Deterministic by
+# fixture: the STUDENT test account OWES the tour (test-accounts.ts —
+# onboardingCompletedAt deliberately null), so the post-login handoff
+# routes here before the dashboard. The flow taps through the four
+# screens (a Maestro takeScreenshot per screen), completes the tour
+# (which server-stamps the account), and ends on the student dashboard.
+# Runs FIRST in the android-smoke script (before the five-role journey
+# — the journey's student leg finds the tour already completed).
+# ENV: EMAIL=student@test.ly PASSWORD=12345678
+# ═══════════════════════════════════════════════════════════════════════════
+name: shots-onboarding (r359 C8 — the first-run tour, a shot per screen)
+appId: ly.ulara.app
+---
+- launchApp:
+    appId: ly.ulara.app
+    clearState: true
+- tapOn:
+    text: "Wait"
+    optional: true                 # the launcher-ANR dialog's revive button
+- scrollUntilVisible:
+    element:
+      text: "ابدأ الآن"            # app/auth/index.tsx — the Welcome CTA
+    direction: DOWN
+    timeout: 15000
+- tapOn:
+    text: "ابدأ الآن"              # → /auth/login
+- extendedWaitUntil:
+    visible:
+      text: "تسجيل الدخول"
+    timeout: 20000
+- tapOn:
+    id: "login-email"
+- inputText: "${EMAIL}"
+- tapOn:
+    id: "login-password"
+- inputText: "${PASSWORD}"
+- tapOn:
+    text: "دخول"                   # FormScreen submit (same grounding as smoke-role.yaml)
+# The tour appears (the student fixture owes it) — capture all four.
+- extendedWaitUntil:
+    visible:
+      text: "أهلًا بك"              # onboardingContent screen 1 title
+    timeout: 30000
+- takeScreenshot: ONBOARDING-1
+- tapOn:
+    text: "التالي"
+- extendedWaitUntil:
+    visible:
+      text: "مساحتك كطالب"          # screen 2 (ROLE-AWARE — the student variant)
+    timeout: 10000
+- takeScreenshot: ONBOARDING-2
+- tapOn:
+    text: "التالي"
+- extendedWaitUntil:
+    visible:
+      text: "إشعاراتك في مكانها"    # screen 3 (the priming screen)
+    timeout: 10000
+- takeScreenshot: ONBOARDING-3
+- tapOn:
+    text: "التالي"
+- extendedWaitUntil:
+    visible:
+      text: "كل شيء بانتظارك"       # screen 4
+    timeout: 10000
+- takeScreenshot: ONBOARDING-4
+- tapOn:
+    text: "ابدأ الآن"              # the completion CTA (server-stamps + / → role home)
+# The student dashboard landed (the tour's completion destination).
+- extendedWaitUntil:
+    visible:
+      text: "أرقامك هذا الفصل"
+    timeout: 45000
+- takeScreenshot: HOME-STUDENT-TOURED

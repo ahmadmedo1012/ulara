@@ -1,0 +1,46 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# shots-role.yaml — r359 A4 (C8): one role's HOME screen captured at the
+# CURRENT viewport size (the android-smoke script drives this at the
+# pixel_6 profile, then at 320×568 and 768×1024 via `adb shell wm size`
+# for the all-sizes evidence). Runs AFTER the five-role journey (the
+# logins are warm; the tour is already completed or skipped by the
+# optional تخطي in smoke-role.yaml).
+# ENV: EMAIL, PASSWORD, ROLE (dashboard heading per role, same mapping
+#      as smoke-role.yaml), SHOT (the screenshot name suffix).
+# ═══════════════════════════════════════════════════════════════════════════
+name: shots-role (r359 C8 — a role home, captured)
+appId: ly.ulara.app
+---
+- launchApp:
+    appId: ly.ulara.app
+    clearState: true
+- tapOn:
+    text: "Wait"
+    optional: true
+- scrollUntilVisible:
+    element:
+      text: "ابدأ الآن"
+    direction: DOWN
+    timeout: 15000
+- tapOn:
+    text: "ابدأ الآن"
+- extendedWaitUntil:
+    visible:
+      text: "تسجيل الدخول"
+    timeout: 20000
+- tapOn:
+    id: "login-email"
+- inputText: "${EMAIL}"
+- tapOn:
+    id: "login-password"
+- inputText: "${PASSWORD}"
+- tapOn:
+    text: "دخول"
+- tapOn:
+    text: "تخطي"                   # the tour escape, when still owed
+    optional: true
+- extendedWaitUntil:
+    visible:
+      text: "${ROLE == 'STUDENT' ? 'أرقامك هذا الفصل' : ROLE == 'TEACHER' ? 'لوحة الأستاذ' : ROLE == 'ADMIN' ? 'لوحة المسجل العام' : ROLE == 'QUALITY' ? 'لوحة الجودة' : 'لوحة التحكم الرئيسية'}"
+    timeout: 45000
+- takeScreenshot: "HOME-${SHOT}"
