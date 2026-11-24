@@ -28,21 +28,32 @@ import { StatLine } from '../components/patterns';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { AlertRow, Badge, MetricCard, Pill, ProgressBar } from '../components/primitives';
 import { ART_KEYS } from '@shared/art/manifest';
-import type { ArtPlateProps } from '@shared/art/grammar';
-import { lazy, Suspense, useState } from 'react';
-import type { ComponentType, ReactNode } from 'react';
+import { sceneFor as heroScenes } from '@shared/art/scenes/hero';
+import { sceneFor as plansScenes } from '@shared/art/scenes/plans';
+import { sceneFor as sectionsScenes } from '@shared/art/scenes/sections';
+import { sceneFor as usecasesScenes } from '@shared/art/scenes/usecases';
+import { sceneFor as statesScenes } from '@shared/art/scenes/states';
+import { sceneFor as onboardingScenes } from '@shared/art/scenes/onboarding';
+import { ArtSvg } from '../components/illustrations/r359/lib/runtime';
+import { useState } from 'react';
+import type { ReactNode } from 'react';
 import '../styles/plates.css';
 
-/* the r359 art library — one lazy chunk per key (the same contract
- * consumers' import.meta.glob seats resolve) */
-const ART_MODULES = import.meta.glob<{ default: ComponentType<ArtPlateProps> }>(
-  '../components/illustrations/r359/*.tsx',
-);
-const ART_LAZY: Record<string, ComponentType<ArtPlateProps>> = {};
-for (const [p, load] of Object.entries(ART_MODULES)) {
-  const key = p.split('/').pop()!.replace('.tsx', '');
-  ART_LAZY[key] = lazy(load);
-}
+/* the r359 art library — rendered straight from the family registries
+ * (the stage keeps ONE chunk: the per-key lazy chunks are the
+ * CONSUMERS' graph — `import.meta.glob('../illustrations/r359/*.tsx')`
+ * or static per-seat imports, both resolve the same default exports) */
+const FAMILY_SCENES: Record<string, (k: string) => ReturnType<typeof heroScenes>> = {
+  hero: heroScenes,
+  plans: plansScenes,
+  sections: sectionsScenes,
+  why: sectionsScenes,
+  usecases: usecasesScenes,
+  cta: sectionsScenes,
+  marks: statesScenes,
+  states: statesScenes,
+  onboarding: onboardingScenes,
+};
 
 function PlatesPage(): React.JSX.Element {
   usePageTitle('لوحات المنتج');
@@ -123,8 +134,8 @@ function ArtLibrary(): React.JSX.Element {
       </header>
       <div className={`artlib-grid is-${frame}`}>
         {ART_KEYS.map((meta, i) => {
-          const Art = ART_LAZY[meta.key];
-          if (!Art) {
+          const fam = FAMILY_SCENES[meta.family];
+          if (!fam) {
             return (
               <div className="artcard" data-artcard={meta.key} key={meta.key}>
                 <span className="artcard-key">[{String(i + 1).padStart(2, '0')}] {meta.key}</span>
@@ -137,9 +148,7 @@ function ArtLibrary(): React.JSX.Element {
               <span className="artcard-key">[{String(i + 1).padStart(2, '0')}] {meta.key}</span>
               <span className="artcard-title">{meta.title}</span>
               <div className={`artframe is-${frame}`}>
-                <Suspense fallback={<div className="artframe-skeleton" />}>
-                  <Art theme={theme} animated={animated} />
-                </Suspense>
+                <ArtSvg build={fam(meta.key)} theme={theme} animated={animated} />
               </div>
             </div>
           );
