@@ -1,0 +1,67 @@
+=== D16 evidence — production _prisma_migrations (read-only, 2026-11-24T15:00Z) ===
+total rows: 56
+2026-11-19 0001_ulara_baseline
+2026-11-19 0002_retire_zu_sync
+2026-11-23 0003_r352_institutional_core
+2026-11-23 0004_r352_backend_hardening
+2026-11-23 0005_r352_mirror_ids_cuid_shape
+2026-11-23 0006_r352_feedback_institution_scope
+2026-11-24 0007_r359_backend_ops
+2026-11-14 20260523171735_init
+2026-11-14 20260523171735_init
+2026-11-14 20260523232850_add_quality_role_and_matrix
+2026-11-14 20260524162255_add_paper_annotation
+2026-11-14 20260524164537_add_extracted_text
+2026-11-14 20260524174538_add_training_rewards
+2026-11-14 20260524181333_governance_exams_social
+2026-11-14 20260525010828_add_university_sync
+2026-11-14 20260525111706_teacher_profile_extended_and_live
+2026-11-14 20260527030000_add_owner_role
+2026-11-14 20260527040000_owner_enterprise_models
+2026-11-14 20260531120000_add_governance_scope_and_positions
+2026-11-14 20260601100000_faculty_city_and_region_alignment
+2026-11-14 20260602190000_012_design_uplift_state
+2026-11-14 20260924000000_index_hardening
+2026-11-14 20260924050000_drop_orphan_indexes
+2026-11-14 20260929000000_progress_truth_backfill
+2026-11-14 20261011230730_index_fk_gap_closing
+2026-11-14 20261013150858_checkpoint_answer_memory
+2026-11-14 20261016190858_postgres_binary_objects
+2026-11-14 20261017020724_multi_institution_foundation
+2026-11-14 20261018000000_phase5_data_isolation
+2026-11-14 20261019000000_r188_demo_institution_rebrand
+2026-11-14 20261021000000_password_reset_tokens
+2026-11-14 20261029013000_r323_ai_quota
+2026-11-14 20261029125203_r323_ai_knowledge_chunks
+2026-11-14 20261029190000_r323_transcript_status
+2026-11-14 20261029200000_r323_invite_codes
+2026-11-14 20261029210000_r323_pilot_feedback
+2026-11-14 20261030120000_r324_restore_trgm_index
+2026-11-14 20261031000052_r326_client_errors_push_devices
+2026-11-14 20261111035651_master_e1_academic_profiles
+2026-11-14 20261111043256_master_f1_import_jobs
+2026-11-14 20261111054500_master_g1_search_trgm
+2026-11-14 20261111080000_r349_u_neutral_tenant
+2026-11-14 20261111220000_r349_p1_profile_fields
+2026-11-14 20261113233247_r350_e2_mail_outbox
+2026-11-14 20261114000647_r350_e3_verification_preferences
+2026-11-14 20261114060000_r350_i_p2_rollback_diff
+2026-11-14 20261114094500_r351_x2b_tick_run
+2026-11-14 20261114100000_r350_s3_search_indexes
+2026-11-14 20261114100500_r351_x2c_rate_limit_store
+2026-11-14 20261114103000_r351_x2d_import_uploads
+2026-11-14 20261114154500_r352_k1_repair_baseline
+2026-11-14 20261114200000_r353_e2_staff_roles
+2026-11-15 20261115060000_r353_c2_ai_telemetry_provider
+2026-11-15 20261116090000_r353_n_push_prefs
+2026-11-16 20261116120000_r357_l2_student_documents
+2026-11-16 20261116143000_r357_l5_institution_ai_quota
+
+=== the repo's migrations (backend/prisma/migrations) ===
+0001_ulara_baseline
+0002_retire_zu_sync
+0003_r352_institutional_core
+0004_r352_backend_hardening
+0005_r352_mirror_ids_cuid_shape
+0006_r352_feedback_institution_scope
+0007_r359_backend_ops

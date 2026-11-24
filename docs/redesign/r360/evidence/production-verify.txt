@@ -1,0 +1,14 @@
+=== r360 production verification — 2026-11-24T15:46Z ===
+--- GET /api/v1/status ---
+{"data":{"ok":true,"db":{"ok":true,"latencyMs":12},"storageDriver":"postgres","aiMode":"openai","mailProvider":"resend","buildId":"134e0ca072a5","serverTime":"2026-11-24T15:50:48.274Z","maxPdfUploadBytes":4194304,"minAppVersion":null,"updateUrl":"https://ulara.vercel.app/app","latestAppVersion":null}}
+--- GET /api/v1/colleges (status + first row) ---
+HTTP 200
+{"data":[{"id":"cmw9d5zt20004exl1h5tw4edy","name":"كلية إدارة الأعمال","nameEn":"Business Administration","iconEmoji":"💼","city":"افتراضي","institution":{"id":"inst-ulara-showcase","name":"مس�
+--- GET /api/v1/me/push-devices (unauthenticated) ---
+{"error":{"code":"UNAUTHENTICATED","message":"يلزم تسجيل الدخول للمتابعة"}}
+HTTP 401
+--- POST /governance/documents/upload (unauthenticated — route exists) ---
+{"error":{"code":"UNAUTHENTICATED","message":"يلزم تسجيل الدخول للمتابعة"}}
+HTTP 401
+--- deployment ---
+url: ulara-me1bzdfwp-tadmora.vercel.app | state: READY | commit: 134e0ca072a5de41eeec1d61dfdf1c355494900b
