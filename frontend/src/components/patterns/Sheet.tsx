@@ -271,7 +271,14 @@ export function DataSheet<Row>({
           <tr>
             <th scope="col" aria-hidden="true" style={{ inlineSize: '1rem' }} />
             {columns.map((c) => (
-              <th key={c.key} scope="col">
+              /* R359 final: a noLabel column (actions/pin cells) renders an
+               * aria-hidden empty th — axe's empty-table-header rule
+               * otherwise flags the screen-reader-empty header cell. */
+              <th
+                key={c.key}
+                scope="col"
+                aria-hidden={c.noLabel || c.label === '' ? 'true' : undefined}
+              >
                 {c.label}
               </th>
             ))}

@@ -7,12 +7,15 @@ import {
   Download, RefreshCw, Mail, X,
   GraduationCap, UserMinus, AlertCircle, BookOpen, FileText,
 } from 'lucide-react';
-import { Card, Badge, UserAvatar } from '../../components/primitives';
+import { Card, Badge } from '../../components/primitives';
 import { StatStrip } from '../../components/primitives/Ledger';
-import { ErrorState, EmptyState, TableSkeleton, ListSkeleton, Skeleton } from '../../components/primitives/States';
-/* r253 (Phase B): the students roster composes the shell patterns —
- * PageFrame + patterns PageHeader + FilterBar + RowList rows. */
-import { PageFrame, PageHeader as PatternsPageHeader, FilterBar, RowList, RowItem } from '../../components/patterns';
+import { ErrorState, EmptyState, TableSkeleton, Skeleton } from '../../components/primitives/States';
+/* r253 (Phase B) → R359 final: the students roster speaks the sheet
+ * grammar — the KpiBand strip + the DataSheet register (dense hairline
+ * table, mono numerics, labelled cards ≤640px). */
+import { PageFrame, PageHeader as PatternsPageHeader, FilterBar } from '../../components/patterns';
+/* R359 final — the sheet grammar primitives. */
+import { SheetSection, KpiBand, DataSheet, type DataSheetColumn } from '../../components/patterns';
 import { Modal } from '../../components/overlays/Modal';
 import { Icon } from '../../components/Icon';
 import { api, unwrap } from '../../lib/api';
@@ -137,31 +140,96 @@ export function AdminStudentsPage() {
     placeholderData: (prev) => prev,
   });
 
-  /* r253 (Phase B): the roster is RowList rows — identity + GPA/status
-   * at a glance, the academic facts (reg number · faculty · year/level)
-   * in the meta line, and the enrollments action behind the inline
-   * expansion. The compact band's column diet dies with the table: the
-   * row carries ALL fields at every width.
-   * R305-A8: the .r305ao marker scopes the ds sheet to this page.
-   * PageFrame (a frozen pattern) takes no className, so the marker rides
-   * a quiet full-width wrapper div — .pf-page's measure/rhythm and the
-   * .content-inner > * entrance contract (exactly one child) hold. */
+  /* R359 final — the roster columns: every academic fact visible at a
+   * glance (the RowItem expansion dies; the table IS the expansion),
+   * numerics in the mono tabular register, the status as the flat
+   * hairline flag, and the registrar's enrollments verb in the last
+   * cell. */
+  const columns: DataSheetColumn<AdminStudentRow>[] = [
+    {
+      key: 'name',
+      label: 'الطالب',
+      render: (s) => (
+        <span className="sg-cell-stack">
+          <span className="sg-cell-title">{s.firstName} {s.lastName}</span>
+          <bdi className="sg-cell-sub" dir="ltr">{s.email}</bdi>
+        </span>
+      ),
+    },
+    {
+      key: 'universityId',
+      label: 'رقم القيد',
+      mono: true,
+      render: (s) => (s.studentProfile?.universityId ? <bdi>{s.studentProfile.universityId}</bdi> : '—'),
+    },
+    {
+      key: 'faculty',
+      label: 'الكلّيّة / القسم',
+      render: (s) => (
+        <span className="sg-cell-stack">
+          <span>{s.studentProfile?.faculty.name ?? '—'}</span>
+          <span className="sg-cell-sub">{s.studentProfile?.department.name ?? '—'}</span>
+        </span>
+      ),
+    },
+    {
+      key: 'year',
+      label: 'السنة',
+      numeric: true,
+      render: (s) => s.studentProfile?.year ?? '—',
+    },
+    {
+      key: 'gpa',
+      label: 'المعدّل',
+      numeric: true,
+      render: (s) => s.studentProfile?.gpa ?? '—',
+    },
+    {
+      key: 'status',
+      label: 'الحالة',
+      render: (s) => (
+        <span className="sg-flag" data-tone={s.isActive ? 'positive' : 'danger'}>
+          {s.isActive ? 'نشط' : 'موقوف'}
+        </span>
+      ),
+    },
+    {
+      key: 'actions',
+      label: '',
+      noLabel: true,
+      render: (s) => (
+        <button
+          type="button"
+          className="btn ghost sm"
+          onClick={() => setEnrollmentStudent(s)}
+          aria-label={`تسجيلات ${s.firstName} ${s.lastName}`}
+        >
+          <Icon icon={GraduationCap} size={13} />
+          تسجيلات
+        </button>
+      ),
+    },
+  ];
+
+  /* R359 final — the sheet-grammar roster: KpiBand (honest numerals from
+   * the live payloads) + the DataSheet register inside the framed
+   * section. .r305ao keeps scoping the family ds sheet; PageFrame (a
+   * frozen pattern) takes no className, so the marker rides the quiet
+   * full-width wrapper (the .content-inner > * entrance contract holds). */
   return (
     <div className="r305ao">
     <PageFrame width="default">
       <PatternsPageHeader
+        eyebrow="إدارة المؤسسة"
         title="إدارة الطلاب"
         /* r351 A2 (Q3): header description retired — the roster explains itself. */
         breadcrumbs={[{ label: 'لوحة إدارة المؤسسة', to: '/admin/dashboard' }, { label: 'الطلاب' }]}
         meta={studentsQ.data
-          ? `${countAr(studentsQ.data.meta.total, ['طالب واحد مسجَّل', 'طالبان مسجَّلان', 'طلاب مسجَّلون', 'طالباً مسجَّلاً'])} · بحث الخادم`
+          ? `${countAr(studentsQ.data.meta.total, ['طالب واحد مسجَّل', 'طالبان مسجَّلان', 'طلاب مسجَّلون', 'طالباً مسجَّلاً'])} · بحث الخادم`
           : 'قراءة سجلّ الطلاب…'}
         actions={(
           /* R342-09: the roster's ONE standing action rides the accent
-           * register (the D8 family law) — the bulk import is the
-           * registrar's primary students verb, so the first viewport at
-           * every width keeps the affordance (the admin topbar hides
-           * «اسأل AI» entirely). */
+           * register — the bulk import is the registrar's primary verb. */
           <button type="button" className="btn accent sm" onClick={() => setBulkImportOpen(true)}>
             <Icon icon={Download} size={14} />
             استيراد طلاب من ملف
@@ -176,6 +244,35 @@ export function AdminStudentsPage() {
           void studentsQ.refetch();
         }} />
       )}
+
+      {/* R359 final — the KPI band: every numeral derives from the live
+          payloads (meta.total · the faculty list · the current query's
+          row count). Honest-empty while pending. */}
+      <KpiBand
+        items={[
+          {
+            index: '01',
+            caption: 'TOTAL',
+            label: 'إجمالي الطلاب المسجَّلين',
+            value: studentsQ.data?.meta.total ?? 0,
+            empty: studentsQ.isPending,
+          },
+          {
+            index: '02',
+            caption: 'FACULTIES',
+            label: 'كلّيّات متاحة للتصفية',
+            value: facQ.data?.length ?? 0,
+            empty: facQ.isPending,
+          },
+          {
+            index: '03',
+            caption: 'RESULTS',
+            label: 'نتائج الاستعلام الحالي',
+            value: studentsQ.data?.data.length ?? 0,
+            empty: studentsQ.isPending,
+          },
+        ]}
+      />
 
       <FilterBar
         search={{
@@ -205,85 +302,48 @@ export function AdminStudentsPage() {
         )}
       />
 
-      <Card>
-        {studentsQ.isPending && <ListSkeleton rows={6} />}
-        {studentsQ.isError && <ErrorState error={studentsQ.error} message="تعذّر تحميل قائمة الطلاب" onRetry={() => studentsQ.refetch()} />}
+      {/* R359 final — the roster sheet: pad=none (the table IS the body). */}
+      <SheetSection index="01" caption="STUDENT ROSTER" title="سجلّ الطلاب" pad="none">
+        {studentsQ.isError && (
+          <div className="sg-pad-in">
+            <ErrorState error={studentsQ.error} message="تعذّر تحميل قائمة الطلاب" onRetry={() => studentsQ.refetch()} />
+          </div>
+        )}
         {studentsQ.data && (
           <>
-            <RowList aria-label="قائمة الطلاب" empty={(
-              /* r351 A2 (Q3): empty-state prose retired — the title + reset action suffice. */
-              <EmptyState illustration="empty-search" title="لا توجد نتائج" description="" action={hasActiveFilters ? (
-                <button type="button" className="btn ghost sm" onClick={clearSearch}>
-                  <Icon icon={X} size={13} />
-                  مسح البحث
-                </button>
-              ) : undefined} />
-            )}>
-              {studentsQ.data.data.map((s) => (
-                <RowItem
-                  key={s.id}
-                  leading={<UserAvatar size={32} initials={s.avatarInitials ?? `${s.firstName[0]}${s.lastName[0]}`} color={s.avatarColor ?? undefined} />}
-                  title={`${s.firstName} ${s.lastName}`}
-                  meta={(
-                    <>
-                      <bdi>{s.email}</bdi>
-                      {' · '}
-                      <span className="font-mono">
-                        {s.studentProfile?.universityId ? <bdi>{s.studentProfile.universityId}</bdi> : '—'}
-                      </span>
-                      {' · '}
-                      {s.studentProfile?.faculty.name ?? '—'}
-                    </>
-                  )}
-                  trailing={(
-                    <>
-                      <span className="font-mono" title="المعدّل التراكمي">{s.studentProfile?.gpa ?? '—'}</span>
-                      <span className={`pill ${s.isActive ? 'on' : ''}`}>
-                        {s.isActive ? 'نشط' : 'موقوف'}
-                      </span>
-                    </>
-                  )}
-                  expandLabel={`بيانات وتسجيلات ${s.firstName} ${s.lastName}`}
-                >
-                  {/* r299: the expansion body — the full academic facts +
-                      the enrollments action. The owner.css
-                      .owner-row-actions plate is NOT loaded in this
-                      chunk (family-sheet ownership), so the same
-                      anatomy rides the global utilities instead. */}
-                  <div className="flex flex-wrap items-center gap-3" style={{ paddingBlockStart: 'var(--sp-2)' }}>
-                    <span className="text-sm text-muted">
-                      القسم: {s.studentProfile?.department.name ?? '—'} · السنة {s.studentProfile?.year ?? '—'} · المستوى {s.studentProfile?.level ?? '—'}
-                    </span>
-                    <button
-                      type="button"
-                      className="btn ghost sm"
-                      onClick={() => setEnrollmentStudent(s)}
-                    >
-                      <Icon icon={GraduationCap} size={13} />
-                      تسجيلات
+            <DataSheet
+              caption="سجلّ الطلاب"
+              columns={columns}
+              rows={studentsQ.data.data}
+              loading={studentsQ.isPending}
+              empty={(
+                <EmptyState
+                  illustration="empty-search"
+                  title="لا توجد نتائج"
+                  description=""
+                  action={hasActiveFilters ? (
+                    <button type="button" className="btn ghost sm" onClick={clearSearch}>
+                      <Icon icon={X} size={13} />
+                      مسح البحث
                     </button>
-                  </div>
-                </RowItem>
-              ))}
-            </RowList>
-
-            {/* r157 (6A9 #7): the shared TablePaginationFooter — the
-                family footer brings the bounded pageList + aria-current=page
-                + the countAr «طالب» count + server-side page requests.
-                Rendered while rows exist so the roster total stays visible
-                on single-page results (the old footer's contract). */}
+                  ) : undefined}
+                />
+              )}
+            />
             {studentsQ.data.data.length > 0 && (
-              <TablePaginationFooter
-                page={studentsQ.data.meta.page}
-                totalPages={studentsQ.data.meta.totalPages}
-                total={studentsQ.data.meta.total}
-                unit={['طالب واحد', 'طالبان', 'طلاب', 'طالباً']}
-                onPage={setPage}
-              />
+              <div className="sg-pad-in">
+                <TablePaginationFooter
+                  page={studentsQ.data.meta.page}
+                  totalPages={studentsQ.data.meta.totalPages}
+                  total={studentsQ.data.meta.total}
+                  unit={['طالب واحد', 'طالبان', 'طلاب', 'طالباً']}
+                  onPage={setPage}
+                />
+              </div>
             )}
           </>
         )}
-      </Card>
+      </SheetSection>
       {enrollmentStudent && (
         <EnrollmentModal
           student={enrollmentStudent}

@@ -17,7 +17,7 @@ export const ds = {
     text: "#282828",
     textSecondary: "#646464",
     textMuted: "#666663",
-    textFaint: "#6E6E6A",
+    textFaint: "#676765",
     accent: "#2540D9",
     accentHover: "#1B30B0",
     accentHoverFg: "#FFFFFF",

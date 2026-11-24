@@ -54,7 +54,7 @@ for (const s of shots) {
   const page = await ctx.newPage();
   const errors = [];
   page.on('console', (m) => {
-    if (m.type() === 'error') errors.push(m.text().slice(0, 300));
+    if (m.type() === 'error') errors.push(m.text().slice(0, 1600));
   });
   page.on('pageerror', (e) => errors.push(String(e).slice(0, 300)));
   await page.setViewportSize({ width: s.width ?? 1440, height: s.height ?? 900 });
@@ -89,9 +89,13 @@ for (const s of shots) {
     let shadowViolations = 0;
     for (const el of Array.from(document.querySelectorAll('*')).slice(0, 3000)) {
       const cs = getComputedStyle(el);
+      /* R359 final: the sanctioned circular rung (9999px/999px, the
+       * --r-full seat — avatars, status dots, the notif badge) is NOT a
+       * violation; only non-circular non-zero radii count. */
+      const br = cs.borderRadius;
+      const isCircular = /9999?px/.test(br);
       const isRound = el.tagName === 'IMG' && el.closest('[data-round-ok]') !== null;
-      if (!isRound) {
-        const br = cs.borderRadius;
+      if (!isRound && !isCircular) {
         if (br && br !== '0px' && !br.includes('%')) radiusViolations++;
       }
       if (cs.boxShadow && cs.boxShadow !== 'none') shadowViolations++;

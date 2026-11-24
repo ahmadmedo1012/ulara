@@ -327,6 +327,30 @@ a.sg-kpi:focus-visible::after { transform: scaleY(1); }
 .sg-table tbody tr:hover .sg-row-go { color: var(--accent); transform: var(--sg-go-nudge, translateX(-3px)); }
 html[dir='rtl'] .sg-table tbody tr:hover .sg-row-go { transform: translateX(3px); }
 
+/* ── cell anatomy helpers (R359 final): the two-line cell (primary +
+   quiet sub-line — name/email, faculty/department) and the padded
+   inset used under pad=none sections (pagination feet, error states). */
+.sg-cell-stack {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+  min-inline-size: 0;
+  vertical-align: middle;
+}
+.sg-cell-title { color: var(--text); font-weight: var(--fw-medium); }
+.sg-cell-sub {
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  font-family: var(--font-mono);
+  letter-spacing: 0.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-inline-size: 34ch;
+}
+.sg-pad-in { padding: var(--sp-3) var(--sp-4); }
+.sg-pad-in + .sg-pad-in, .sg-table + .sg-pad-in { border-block-start: 1px solid var(--rule); }
+
 /* ── ≤640px: labelled cards (thead collapses to sr-only) ─────────── */
 @media (max-width: 640px) {
   .sg-table thead {
@@ -399,6 +423,25 @@ html[dir='rtl'] .sg-table tbody tr:hover .sg-row-go { transform: translateX(3px)
 }
 .sg-tag[data-tone='neutral'] .sg-tag-pin { background: var(--text); color: var(--surface); }
 .sg-tag[data-tone='positive'] .sg-tag-pin { background: var(--success); color: var(--surface); }
+
+/* ── the flat status flag (R359 final): the Arabic state word in the
+   square hairline chip — content, not classification (the Latin mono
+   classification rides the chip's neighbours). Radius 0, hairline
+   border, no fill; the tone tints TEXT + BORDER only. */
+.sg-flag {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px var(--sp-2);
+  border: 1px solid var(--border-strong);
+  font-size: var(--fs-xs);
+  line-height: 1.5;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.sg-flag[data-tone='signal'] { color: var(--accent); border-color: var(--accent); }
+.sg-flag[data-tone='positive'] { color: var(--success-ink); border-color: color-mix(in srgb, var(--success) 55%, var(--rule)); }
+.sg-flag[data-tone='danger'] { color: var(--danger-ink); border-color: color-mix(in srgb, var(--danger) 55%, var(--rule)); }
+.sg-flag[data-tone='quiet'] { color: var(--text-faint); }
 
 /* ═══ 5 · THE COORDINATE READOUT ════════════════════════════════════
    A live mono instrument at the sheet's corner: X/Y of the scroll

@@ -710,8 +710,11 @@
    polled 60s — useUnreadNotifications); digits are Western, ≥13px,
    tabular. */
 .topbar-notif-badge {
-  background: var(--danger);
-  color: var(--danger-fg);
+  /* R359 final — the ONE-signal law: the unread counter spends the
+     royal signal (the reference's own badge register), never a second
+     hue. Unread-ness is an annotation, not a danger. */
+  background: var(--accent);
+  color: var(--accent-fg);
 }
 
 /* ═══════════════════════════════════════════════════════════════════
