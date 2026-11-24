@@ -596,7 +596,7 @@
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto auto auto;
   }
-  .st-media { aspect-ratio: 4 / 3; } /* r351 P8 — the phone media reads as a framed plate, not a square plate (the courtyard stays the band's own image) */
+  .st-media { aspect-ratio: 21 / 10; } /* r359 A1 §C — the phone media compresses to the ≤5,000px page law */
   /* R338 T-03i — the phone band's own measures: the wrap carries the
      record's 8px gutters (374px inside the 390 viewport), the title
      pitch is the record's own 26.2px (2.62rem), the pill sits 1.92rem
@@ -610,10 +610,10 @@
       max(8px, env(safe-area-inset-right, 0px));
   }
 
-  .st-stmt-in { padding: 2.4rem 1.7rem; }
+  .st-stmt-in { padding: 1.6rem 1.2rem 1.2rem; } /* r359 A1 §C — the phone wrap tightens */
   .st-title { font-size: 2.4rem; line-height: 3.24rem; }
   .st-line { block-size: 2.62rem; }
-  .st-titlebox { margin-block-end: 1.92rem; }
+  .st-titlebox { margin-block-end: 1.2rem; }
   .st-pill-icons { --st-seat: 4.13rem; }
   .st-pill-t-in { line-height: 1.89rem; }
   /* the phone roll distance follows the phone label leading */

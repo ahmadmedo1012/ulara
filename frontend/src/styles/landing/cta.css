@@ -962,6 +962,9 @@ html[data-theme='dark'] .fo-cta .fo-text-link {
   color: var(--cta-ink);
   text-decoration: none;
   border-block-end: 1px solid transparent;
+  /* r359 A1 §C — the painted 44px tap floor */
+  padding-block: 0.8rem;
+  margin-block: -0.8rem;
 }
 
 @media (max-width: 768px) {

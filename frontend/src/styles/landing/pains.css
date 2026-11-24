@@ -377,23 +377,23 @@
 
   .pm-head {
     grid-template-columns: minmax(0, 1fr);
-    padding: 6.4rem 1.6rem 3.2rem; /* census 63.51/15.88/31.76/15.88px ✓ */
+    padding: 3.2rem 1.6rem 1.6rem; /* r359 A1 §C — the phone band halves (the ≥50% copy-cut law) */
   }
   .pm-kicker {
     margin-block-end: 1.2rem;
   }
   .pm-title {
-    font-size: 3.2rem;
-    padding-block-end: 4.16rem; /* 2 lines × floor-lh + pad = the census 127px 4-line box */
+    font-size: 2.6rem; /* r359 A1 §C — the phone title steps to the compact rung */
+    padding-block-end: 1.2rem;
   }
   .pm-subwrap {
     justify-self: start;
     max-inline-size: none;
-    margin-block-start: 2rem; /* census: the subwrap's own 19.85px margin (the single-col head stacks it under the title) */
+    margin-block-start: 0.8rem; /* r359 A1 §C — the phone head stack tightens */
     padding-block-end: 0;
   }
   .pm-sub {
-    padding-block-end: 1.9rem; /* the compact-Arabic compensation pad: our sub runs 3 lines × 21.44 + 18.8 = the census 83px box (the reference's English wraps 4 lines; the box is the measured contract, the line count is the language's) */
+    padding-block-end: 0.8rem;
   }
 
   .pm-cols {

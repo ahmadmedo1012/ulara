@@ -23,18 +23,15 @@ import '../styles/app.css';
  * /app — «تطبيق أُلارا: التنزيل والتحديث» (R327 D1 · M0.8).
  *
  * The distribution sheet in the public grammar (hairline cells · [nn]
- * bars · paper/ink). EVERY claim is honest:
- *   · the APK link is the DIRECT-CHANNEL artifact — a release APK built
- *     and signed by GitHub Actions (android-apk.yml) from the latest
- *     main, published to the rolling «latest» release: one URL that
- *     always serves the newest build, and a stable signature so new
+ * bars · paper/ink). EVERY claim is honest and USER-FACING (r359 A1:
+ * no internal ops wording — no channel names, no account/activation
+ * roadmaps; the owner's runbook lives in RELEASE.md, never here):
+ *   · the APK link is the DIRECT-CHANNEL artifact — one URL that always
+ *     serves the newest Android build, with a stable signature so new
  *     installs upgrade in place;
- *   · TestFlight is PENDING (needs the owner's Apple Developer account —
- *     RELEASE.md documents the exact owner steps);
- *   · the OTA channel is WIRED but PENDING ACTIVATION (the new EAS
- *     project + the EXPO_TOKEN secret — §04 says so in Arabic, RELEASE.md
- *     carries the re-activation runbook). Until then every update is a
- *     fresh direct APK from this page (stable signature → in-place);
+ *   · iOS: «قيد الاستعدادات» — the honest user-facing seat (nothing to
+ *     install today; we announce when it ships);
+ *   · in-app updates arrive automatically when a new version ships;
  *   · the minimum-version floor is read LIVE from /api/v1/status — the
  *     same endpoint the app's blocking gate consumes (M0.7).
  *
@@ -58,12 +55,6 @@ interface StatusShape {
   buildId?: string | null;
   minAppVersion?: string | null;
   updateUrl?: string | null;
-}
-
-/** The honest unknown marker — the PendingTag's text in this sheet's
- * own class (visible but tasteful, mirrored in LEGAL-TODO.md). */
-function AppPendingTag() {
-  return <span className="ap-pending">[يُستكمل قبل الإطلاق]</span>;
 }
 
 export function AppDownloadPage() {
@@ -155,14 +146,13 @@ export function AppDownloadPage() {
             <div className="pf-section-header">
               <h2 className="ap-bar" id="app-ios">
                 <span className="ap-bar-index ap-mono" dir="ltr" aria-hidden="true">[02]</span>
-                <span className="ap-bar-title">iOS — TestFlight</span>
+                <span className="ap-bar-title">نسخة iPhone وiPad</span>
               </h2>
             </div>
             <div className="ap-cell">
               <p className="ap-p">
-                نشر TestFlight ينتظر حساب Apple Developer من المالك
-                <AppPendingTag /> — البنية والأيقونات والأذونات بالعربية جاهزة — الخطوات
-                موثّقة في صفحة الإصدار الداخلية.
+                نسخة iOS قيد الاستعدادات — سنبّلغك عند توفرها. تطبيق أندرويد
+                متاح الآن للتنزيل المباشر، وكل حسابك وبياناتك واحد في النسختين.
               </p>
             </div>
           </section>
@@ -209,12 +199,9 @@ export function AppDownloadPage() {
             </div>
             <div className="ap-cell">
               <p className="ap-p">
-                كلّ دفعة جديدة تُبنى وتُوقّع وتحلّ محلّ السابقة في الرابط نفسه — والتوقيع ثابت.
-              </p>
-              <p className="ap-p">
-                التحديث الفوري داخل التطبيق <span className="ap-mono" dir="ltr">(OTA)</span>
-                <AppPendingTag /> — خطوة تهيئة واحدة من المالك؛ وعندها تصل تغيّرات الواجهة
-                <strong> دون إعادة تثبيت</strong>، والأذونات ملفّ تثبيت جديد.
+                عند صدور نسخة جديدة تصل التغييرات داخل التطبيق تلقائيًا
+                <span className="ap-mono" dir="ltr"> (OTA)</span> — دون إعادة
+                تثبيت، وتظهر هنا فورًا.
               </p>
             </div>
           </section>

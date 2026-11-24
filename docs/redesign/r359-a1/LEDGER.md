@@ -65,6 +65,29 @@ every DONE item carries an image or command output under `evidence/`.
 | t0 | Computed-style probe: type law (D1) + rhythm (D2) | this file |
 | t0 | VLM critique round 1 (hero, current vs reference): art 3× too small + stacked zones + signal diluted 6+ seats vs 4 | evidence/critiques/hero-r1.md |
 
+- **D8 (the mobile height law).** The ≤5,000px target was set against
+  the old 12,020px page. The rebuilt mobile page renders at **8,525px**
+  with every band at the reference's own measured mobile rhythm (the
+  reference's own mobile journey measures ~10,613px — the rebuilt page
+  sits 20% under it). Meeting 5,000 at the letter would require deleting
+  whole sections (chapters' complete-but-compressed scrub alone is
+  2,045px). Decision: the rhythm law wins; the number is recorded
+  honestly. If the owner wants the hard cap, the chapters scrub drops to
+  a static plate (one-line change: --jt-scrub: 0dvh).
+- **D9 (the .btn fine-pointer 768 context).** The tap gate's 768px
+  fine-pointer probe shows .btn at 40px — real touch hardware paints 44
+  (components.css's pointer:coarse belt, A3's file). Out of the mobile
+  gate's scope; no change made (A3 ownership).
+
 ## Wishes for the integrator
 
-- (none yet)
+- **A2 art keys** (the art contract): `hero-elevation` /
+  `hero-elevation-mobile` (the hero's fallback is 8/10 — A2's commissioned
+  tonal drawing lands the last step), the plan-plate keys for the
+  product/roles panels (the reference's stacked-plan density), the
+  chapters plan vocabulary (poché walls + dimension strings).
+- **A3**: the skip-link a11y pill in base.css carries `var(--elev-3)` —
+  the landing's zero-shadow gate counts it (off-canvas until keyboard
+  focus; one box-shadow). A border-only equivalent would zero the census.
+- **Regenerate after merge**: nothing hand-merged on this branch (no
+  generated artifacts touched).

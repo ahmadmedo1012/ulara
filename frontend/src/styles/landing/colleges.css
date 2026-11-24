@@ -63,5 +63,10 @@
   text-decoration: none;
   border-block-end: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
   padding-block-end: var(--sp-0-5);
+  /* r359 A1 §C — the painted 44px tap floor (the established pattern:
+     the hit box paints 44px while the layout footprint stays the text's
+     own — pointer + touch both clear the floor, the rhythm never moves) */
+  padding-block: 14px;
+  margin-block: -14px;
 }
 

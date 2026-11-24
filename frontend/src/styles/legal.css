@@ -37,6 +37,9 @@
     text-decoration: none;
     border-block-end: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
     padding-block-end: var(--sp-0-5);
+    /* r359 A1 §C — the painted 44px tap floor (the layout rhythm never moves) */
+    padding-block: 14px;
+    margin-block: -14px;
   }
 
   /* ══ 2 · THE LIST — the policy sheet's ruled prose ═══════════════ */

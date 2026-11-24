@@ -279,11 +279,19 @@ footer.fo-footer {
  * into a 800px ledger (measured col2: 803px @390 → ~530). The last
  * group of each band spans the full row when odd. */
 @media (max-width: 767px) {
+  /* r359 A1 §C — the phone colophon tightens to the ≤5,000px page law:
+     the secondary link grids retire from the phone sheet (the ≥50%
+     copy-cut law — every door stays one tap away on /help and the
+     sitemap cell); the contact + social rows keep their seats. */
+  .fo-grid { padding: var(--sp-4) 1.6rem var(--sp-3); row-gap: var(--sp-4); }
+  .fo-strip-img { aspect-ratio: 1440 / 52; }
+  .fo-c2-top .fo-lgroup:nth-child(1),
+  .fo-c2-top .fo-lgroup:nth-child(2) { display: none; }
   .fo-c2-top,
   .fo-c2-bottom {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: 1.6rem;
-    row-gap: var(--sp-5);
+    row-gap: var(--sp-4);
   }
 
   .fo-c2-top .fo-lgroup:nth-child(3),
@@ -308,8 +316,11 @@ footer.fo-footer {
   }
 
   .fo-c2-bottom {
-    margin-block-start: var(--sp-5);
+    margin-block-start: var(--sp-3);
   }
+  /* the phone banner tightens */
+  .fo-giant-banner { margin: var(--sp-2) 0; padding: var(--sp-1) 0; }
+  .fo-giant-text { font-size: clamp(1.6rem, 8vw, 2.8rem); }
 }
 .fo-lgroup {
   display: grid;

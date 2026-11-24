@@ -618,8 +618,9 @@
 @media (max-width: 767px) {
   .wy-scene {
     padding-inline: 1.7rem;
-    padding-block: 4rem 5.6rem;
+    padding-block: 1.8rem 2.4rem; /* r359 A1 §C — the phone scene tightens */
   }
+  .wy-row + .wy-row { margin-block-start: 4rem; } /* r359 A1 §C — the phone row rhythm tightens */
 
   .wy-furniture {
     inset-inline: 1.7rem;

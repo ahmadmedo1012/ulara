@@ -574,7 +574,7 @@ html[data-theme='dark'] .pr-section .pr-cta {
     /* r351 P8 — the phone frame rides the reference's own platform
        economy (558px for the whole band): two compact plates, not two
        half-folds */
-    block-size: 11.09rem;
+    block-size: 9.4rem; /* r359 A1 §C — the phone plates tighten (the ≤5,000px law) */
     aspect-ratio: auto;
   }
 
@@ -605,13 +605,13 @@ html[data-theme='dark'] .pr-section .pr-cta {
   .pr-section .pr-side {
     grid-column: 1;
     grid-row: 3;
-    block-size: 12.23rem; /* r351 P8 — the compact side seat */
+    block-size: 9.6rem; /* r359 A1 §C — the compact side seat tightens */
   }
 
   /* r338 T-08c2 — row-2's side cell measures 182 @390 (the deeper
      second fold: img 226 + head 87 + side 182) */
   .pr-section .pr-row:nth-child(2) .pr-side {
-    block-size: 13.34rem;
+    block-size: 10.4rem;
   }
 
   .pr-section .pr-sidebox {

@@ -259,8 +259,8 @@ export function Hero() {
           value marquee at the hero seam): one static row ≥1200, the
           snap-scrolling strip below. `.fo-hero-work` keeps the pinned
           funnel seat. ══ */}
-      <div className="hro-work fo-hero-work" aria-label="قدرات أُلارا العاملة اليوم" tabIndex={0}>
-        <div className="hro-work-track">
+      <div className="hro-work fo-hero-work">
+        <div className="hro-work-track fo-hero-work" role="group" aria-label="قدرات أُلارا العاملة اليوم" tabIndex={0}>
           {HERO_WORK_ITEMS.map((cap, i) => (
             <div key={cap} className="hro-work-item" tabIndex={-1}>
               <span className="fo-mono" dir="ltr">[{String(i + 1).padStart(2, '0')}]</span>
