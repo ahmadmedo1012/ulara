@@ -10,14 +10,14 @@
 
 export const ds = {
   light: {
-    bg: "#F5F1E8",
+    bg: "#F2F1EC",
     surface: "#FFFFFF",
-    surfaceHover: "#EFEBDF",
+    surfaceHover: "#EBEBE5",
     overlay: "#FFFFFF",
-    text: "#1A1713",
-    textSecondary: "#414140",
-    textMuted: "#62625F",
-    textFaint: "#666660",
+    text: "#282828",
+    textSecondary: "#646464",
+    textMuted: "#666663",
+    textFaint: "#676765",
     accent: "#2540D9",
     accentHover: "#1B30B0",
     accentHoverFg: "#FFFFFF",
@@ -27,20 +27,20 @@ export const ds = {
     accentFg: "#FFFFFF",
     primary: "#2540D9",
     primaryFg: "#FFFFFF",
-    border: "#E0E0DA",
+    border: "#DBDBD5",
     rule: "#B3B3AF",
     gold: "#B57438",
     goldInk: "#8F5A28",
     dangerFg: "#FFFFFF",
-    onSurface: "#1A1713",
-    onSurfaceMuted: "#62625F",
+    onSurface: "#282828",
+    onSurfaceMuted: "#666663",
   },
   dark: {
     bg: "#262019",
     surface: "#2E2E2E",
     surfaceHover: "#353535",
     overlay: "#2E2E2E",
-    text: "#F5F1E8",
+    text: "#F0F0EB",
     textSecondary: "#C9C9C5",
     textMuted: "#B4B4B0",
     textFaint: "#A2A29D",
@@ -58,7 +58,7 @@ export const ds = {
     gold: "#E0A067",
     goldInk: "#F2B782",
     dangerFg: "#262019",
-    onSurface: "#F5F1E8",
+    onSurface: "#F0F0EB",
     onSurfaceMuted: "#B4B4B0",
   },
 };
@@ -130,14 +130,14 @@ export const sp = {
 } as const;
 
 export const motion = {
-  micro: 80,
-  fast: 200,
-  base: 400,
-  slow: 500,
-  slower: 650,
-  cinema: 900,
-  sheetExit: 835,
-  guestReveal: 700,
+  micro: 160,
+  fast: 320,
+  base: 640,
+  slow: 640,
+  slower: 640,
+  cinema: 640,
+  sheetExit: 320,
+  guestReveal: 640,
 } as const;
 
 export const dsEase = [0.23, 1, 0.32, 1] as const;

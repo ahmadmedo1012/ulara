@@ -57,7 +57,7 @@ export function CampusLifePage() {
           <div className="cu-head pf-page-header-text">
             <span className="fo-eyebrow"><span className="fo-mono" dir="ltr">[01]</span> بيئة العمل الرقمية</span>
             <RevealCssClass as="h1" className="cu-title" delay={1} id="cu-photos-title">
-              لا حرمَ جامعيًّا — <em>بيئة تُبنى من بياناتك</em>
+              لا حرمَ جامعيًّا — بيئة تُبنى من بياناتك
             </RevealCssClass>
             <RevealCssClass as="p" className="cu-lede" delay={2}>
               أُلارا منصّة مستقلة متعددة المستأجرين: لا جامعة ولا حرم ولا صور جامعات.
@@ -96,7 +96,7 @@ export function CampusLifePage() {
           <div className="cu-head pf-page-header-text">
             <span className="fo-eyebrow"><span className="fo-mono" dir="ltr">[02]</span> لكل دور واجهته</span>
             <RevealCssClass as="h2" className="cu-title" delay={1} id="cu-roles-title">
-              منصّة واحدة <em>بأدوار متكاملة</em>
+              منصّة واحدة بأدوار متكاملة
             </RevealCssClass>
             <RevealCssClass as="p" className="cu-lede" delay={2}>
               الطالب والأستاذ والمسجل وضمان الجودة ومالك المنصّة — كلٌّ يعمل في بيئته داخل مؤسسته،

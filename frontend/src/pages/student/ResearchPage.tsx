@@ -1,5 +1,4 @@
 import { useId, useRef, useState } from 'react';
-import type { ReactNode } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import {
   BookMarked, Upload, ScanSearch, X,
@@ -10,20 +9,21 @@ import { FormField, ProgressBar } from '../../components/primitives';
 import { ErrorState, EmptyState } from '../../components/primitives/States';
 import { Modal } from '../../components/overlays/Modal';
 import { useDiscardGuard } from '../../components/curriculum/AuthoringModal';
-import { PAPER_STATUS_TONE } from '../../lib/paperStatus';
 import { validatePdfFileDeep, pdfUploadErrorMessage } from '../../lib/pdfUpload';
 import { Icon } from '../../components/Icon';
 import { toast } from '../../lib/toast';
-import { countAr, formatDateWithYearAr } from '../../lib/format';
+import { formatDateWithYearAr } from '../../lib/format';
 import {
   useMyResearch, useUploadPaper, useUploadPaperFile, useScanPaper,
   useMyEnrollments, apiErrorMessage,
   type ResearchPaper, type PaperStatus,
 } from '../../hooks/useResources';
 import { PageFrame, PageHeader, RowList, RowItem } from '../../components/patterns';
-/* R319 (c3-S1) — the §B2 kit: the mono-indexed section title bars +
- * the count meta (the DashboardPage conversion's components). */
-import { SectionBar, BarCount } from '../../components/student';
+/* R359 (A3 · final sweep) — the sheet grammar joins the §B2 kit: the
+ * framed section (registration crosses + Latin mono caption + the
+ * aside slot) + the KpiBand (the dimension-string register replacing
+ * the deep lifecycle band). Status words ride the flat sg-flag. */
+import { SheetSection, KpiBand } from '../../components/patterns';
 import { StatusPipeline } from '../../components/paper/StatusPipeline';
 import { ScanResults } from '../../components/paper/ScanResults';
 import { formatInt } from '../../utils/numbers';
@@ -51,24 +51,24 @@ const STATUS_LABEL: Record<PaperStatus, string> = {
   PUBLISHED: 'مُنشور في المكتبة',
 };
 
-/* R305-A7: status chips — dot + Arabic label (state never rides color
- * alone). The TONE ladder stays canonical (lib/paperStatus.ts); this
- * map only translates badge tones onto the shared chip vocabulary. */
-type ChipTone = 'accent' | 'success' | 'warning' | 'danger' | 'info' | 'gold';
-type BadgeTone = 'brand' | 'green' | 'amber' | 'red' | 'gold' | 'purple';
-const BADGE_TONE_TO_CHIP: Record<BadgeTone, ChipTone> = {
-  amber: 'warning',
-  brand: 'accent',
-  purple: 'info',
-  red: 'danger',
-  gold: 'gold',
-  green: 'success',
+/* R359 (final sweep) — the status words ride the flat sg-flag register
+ * (hairline chip, tone on TEXT + BORDER only — never a tinted fill).
+ * The tone ladder stays canonical (lib/paperStatus.ts's semantics):
+ * the LIVE scan spends the ONE royal signal, failures read danger,
+ * publication reads positive, and every waiting state stays neutral —
+ * the Arabic label always carries the state (never hue alone). */
+const STATUS_FLAG_TONE: Record<PaperStatus, 'signal' | 'positive' | 'danger' | undefined> = {
+  UPLOADED: undefined,
+  SCANNING: 'signal',
+  CHECKS_PASSED: undefined,
+  CHECKS_FAILED: 'danger',
+  GRADED: undefined,
+  PUBLISHED: 'positive',
 };
-function StatusChip({ tone, label }: { tone: ChipTone; label: string }) {
+function PaperStatusFlag({ status }: { status: PaperStatus }) {
   return (
-    <span className={`r305rp-chip r305rp-chip--${tone}`}>
-      <span className="r305rp-chip-dot" aria-hidden="true" />
-      {label}
+    <span className="sg-flag" data-tone={STATUS_FLAG_TONE[status]}>
+      {STATUS_LABEL[status]}
     </span>
   );
 }
@@ -133,17 +133,6 @@ export default function StudentResearchPage() {
   const pendingCount = papers.filter((p) => p.status === 'UPLOADED' || p.status === 'SCANNING' || p.status === 'CHECKS_PASSED').length;
   const gradedCount = papers.filter((p) => p.status === 'GRADED' || p.status === 'PUBLISHED').length;
   const failedCount = papers.filter((p) => p.status === 'CHECKS_FAILED').length;
-  /* R305-A7: the summary rides the page's ONE deep band as a metric
-   * register — values formatted via utils/numbers (the StatLine canon:
-   * the component never formats; neither does the band). A real state
-   * (a failed paper) rides a danger dot + the hint line, never color
-   * alone. */
-  const kpis: Array<{ label: string; value: ReactNode; hint: string; flag?: boolean }> = [
-    { label: 'إجمالي بحوثك', value: formatInt(papers.length), hint: 'منذ أول رفعة' },
-    { label: 'قيد المراجعة', value: formatInt(pendingCount), hint: pendingCount > 0 ? 'بانتظار خطوة تالية' : 'لا شيء معلّق' },
-    { label: 'مُقيَّمة', value: formatInt(gradedCount), hint: gradedCount > 0 ? 'منها المنشور' : 'لا توجد بعد' },
-    { label: 'تعذّر اجتياز الفحص', value: formatInt(failedCount), hint: failedCount > 0 ? 'تحتاج إعادة رفع' : 'لا شيء', flag: failedCount > 0 },
-  ];
 
   const startScan = async (id: string) => {
     setScanningId(id);
@@ -184,6 +173,7 @@ export default function StudentResearchPage() {
     <div className="r305rp r319s-page">
     <PageFrame width="default">
       <PageHeader
+        eyebrow="طلاب الجامعة"
         title="بحوثي العلمية"
         description={
           /* r168b: the scan is a deterministic simulation until a real
@@ -213,9 +203,7 @@ export default function StudentResearchPage() {
         )}
       />
 
-      {my.isPending ? (
-        <RowList aria-label="بحوثك" loading />
-      ) : my.isError ? (
+      {my.isError ? (
         <ErrorRetry error={my.error} onRetry={() => my.refetch()} />
       ) : (
         <>
@@ -238,22 +226,52 @@ export default function StudentResearchPage() {
             </section>
           )}
 
-          {/* R305-A7: the page's ONE deep band — the lifecycle summary. */}
-          <section className="r305rp-band r305rp-band--deep r305rp-res-band" aria-label="ملخص بحوثك">
-            <span className="r305rp-eyebrow">ملخص الحالة</span>
-            <dl className="r305rp-res-metrics">
-              {kpis.map((k) => (
-                <div key={k.label}>
-                  <dt className="r305rp-metric-label">{k.label}</dt>
-                  <dd className="r305rp-metric">
-                    {k.flag ? <span className="r305rp-res-flag" aria-hidden="true" /> : null}
-                    {k.value}
-                  </dd>
-                  <dd className="r305rp-band-secondary r305rp-res-metric-hint">{k.hint}</dd>
-                </div>
-              ))}
-            </dl>
-          </section>
+          {/* R359 (final sweep) — the lifecycle summary joins the KPI
+              band register: ONE framed sheet [01] with the four honest
+              facts as count-in numerals (numbers arrive as NUMBERS —
+              the band formats them through the platform numeral
+              convention). The failed-paper state spends its danger
+              tone on the delta line, never a colored pill; pending
+              renders the honest «—» empty cells. */}
+          <SheetSection index="01" caption="LIFECYCLE" title="ملخص بحوثك" pad="none">
+            <KpiBand
+              items={[
+                {
+                  index: '01',
+                  caption: 'PAPERS',
+                  label: 'إجمالي بحوثك',
+                  value: papers.length,
+                  delta: 'منذ أول رفعة',
+                  empty: my.isPending,
+                },
+                {
+                  index: '02',
+                  caption: 'IN REVIEW',
+                  label: 'قيد المراجعة',
+                  value: pendingCount,
+                  delta: pendingCount > 0 ? 'بانتظار خطوة تالية' : 'لا شيء معلّق',
+                  empty: my.isPending,
+                },
+                {
+                  index: '03',
+                  caption: 'GRADED',
+                  label: 'مُقيَّمة',
+                  value: gradedCount,
+                  delta: gradedCount > 0 ? 'منها المنشور' : 'لا توجد بعد',
+                  empty: my.isPending,
+                },
+                {
+                  index: '04',
+                  caption: 'FAILED',
+                  label: 'تعذّر اجتياز الفحص',
+                  value: failedCount,
+                  delta: failedCount > 0 ? 'تحتاج إعادة رفع' : 'لا شيء',
+                  deltaTone: failedCount > 0 ? 'danger' : 'neutral',
+                  empty: my.isPending,
+                },
+              ]}
+            />
+          </SheetSection>
 
           {scanError && (
             <div className="alert red" role="alert">
@@ -267,27 +285,18 @@ export default function StudentResearchPage() {
 
           {/* The list IS the page: each row carries its journey, results
               and actions attached — expandable so the list stays calm.
-              R319 (c3-S1): the list region opens with the §B2 title bar
-              — [01] بحوثي + the papers count as quiet mono meta (the
-              lifecycle band above is the view's metadata band,
-              unnumbered like the dashboard's momentum strip). */}
-          <SectionBar
-            title="بحوثي"
-            meta={
-              papers.length > 0 ? (
-                <BarCount
-                  n={papers.length}
-                  srLabel={countAr(papers.length, ['بحث واحد', 'بحثان', 'بحوث', 'بحثاً'])}
-                />
-              ) : undefined
-            }
-          />
-          <RowList
-            aria-label="بحوثك"
-            empty={
-              <EmptyUpload onOpen={openFreshUpload} />
-            }
-          >
+              R359 (final sweep): the region rides the framed sheet [02];
+              the papers are a workflow feed (pipelines, results and
+              grades in the expansion), so the RowList stays — INSIDE
+              the frame, with the loading + empty registers in the body. */}
+          <SheetSection index="02" caption="MY PAPERS" title="بحوثي" pad="none">
+            <RowList
+              aria-label="بحوثك"
+              loading={my.isPending}
+              empty={
+                <EmptyUpload onOpen={openFreshUpload} />
+              }
+            >
             {papers.map((p) => (
               <PaperRow
                 key={p.id}
@@ -297,7 +306,8 @@ export default function StudentResearchPage() {
                 onResubmit={() => openResubmit(p)}
               />
             ))}
-          </RowList>
+            </RowList>
+          </SheetSection>
         </>
       )}
 
@@ -431,10 +441,7 @@ function PaperRow({
         </>
       }
       trailing={
-        <StatusChip
-          tone={BADGE_TONE_TO_CHIP[PAPER_STATUS_TONE[paper.status]]}
-          label={STATUS_LABEL[paper.status]}
-        />
+        <PaperStatusFlag status={paper.status} />
       }
       defaultExpanded={mustAct}
       expandLabel={`تفاصيل البحث: ${paper.title}`}
@@ -538,23 +545,25 @@ function ProcessExplainer() {
   ];
   return (
     <section aria-label="كيف يعمل النظام" className="r305rp-res-how">
-      {/* R319 (c3-S1): the explainer's heading joins the §B2 title-bar
-          register — [02] + the step count as mono meta. */}
-      <SectionBar
+      {/* R359 (final sweep): the explainer rides the framed sheet [03]
+          — the four honest steps inside the frame. */}
+      <SheetSection
+        index="03"
+        caption="WORKFLOW"
         title="كيف يعمل النظام"
-        meta={<BarCount n={STEPS.length} srLabel={countAr(STEPS.length, ['خطوة واحدة', 'خطوتان', 'خطوات', 'خطوة'])} />}
-      />
-      <ol className="r305rp-res-steps">
-        {STEPS.map((s) => (
-          <li key={s.n} className="r305rp-res-step">
-            <span className="r305rp-res-step-num" aria-hidden="true"><bdi>{formatInt(s.n)}</bdi></span>
-            <div className="r305rp-res-step-body">
-              <div className="r305rp-res-step-title">{s.title}</div>
-              <div className="r305rp-res-step-desc">{s.desc}</div>
-            </div>
-          </li>
-        ))}
-      </ol>
+      >
+        <ol className="r305rp-res-steps">
+          {STEPS.map((s) => (
+            <li key={s.n} className="r305rp-res-step">
+              <span className="r305rp-res-step-num" aria-hidden="true"><bdi>{formatInt(s.n)}</bdi></span>
+              <div className="r305rp-res-step-body">
+                <div className="r305rp-res-step-title">{s.title}</div>
+                <div className="r305rp-res-step-desc">{s.desc}</div>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </SheetSection>
     </section>
   );
 }

@@ -9,9 +9,11 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Inbox, MessageSquarePlus, RefreshCw, Smartphone } from 'lucide-react';
-import { Card } from '../../components/primitives';
-/* The patterns PageHeader — breadcrumbs brow + meta, the owner pages' seat. */
-import { PageHeader } from '../../components/patterns';
+/* The patterns PageHeader — breadcrumbs brow + meta, the owner pages' seat.
+ * R359 (W2-e): the inbox rides the sheet grammar — the KpiBand counts
+ * + the two framed sections (the Card died; each section names its
+ * register with its Latin classification). */
+import { PageHeader, KpiBand, SheetSection } from '../../components/patterns';
 import { EmptyState, ErrorState, Skeleton } from '../../components/primitives/States';
 import { Icon } from '../../components/Icon';
 import { useFeedbackInbox, useFeedbackStatus, useClientErrors, useClientErrorReview, type FeedbackRow, type ClientErrorRow } from '../../hooks/resources/feedback';
@@ -199,7 +201,32 @@ export default function FeedbackInboxPage() {
         }
       />
 
-      <Card title="التقارير" subtitle="الحالة تتحرّك باتجاه واحد: مفتوح → قيد المراجعة → أُصلح أو مُستبعد.">
+      {/* R359 (W2-e) — the inbox's KPI band: the real counts from the
+          two feeds' meta blocks; honest-empty ('—') while pending or
+          failed (never a fake zero). */}
+      <KpiBand
+        items={[
+          {
+            index: '01',
+            caption: 'REPORTS',
+            label: 'التقارير الواردة',
+            value: meta?.total ?? 0,
+            empty: meta == null,
+          },
+          {
+            index: '02',
+            caption: 'CLIENT ERRORS',
+            label: 'أخطاء الجوّال غير المراجَعة',
+            value: errMeta?.unreviewed ?? 0,
+            empty: errMeta == null,
+          },
+        ]}
+      />
+
+      <SheetSection index="01" caption="REPORTS" title="التقارير">
+        <p className="fb-lead text-sm text-muted">
+          الحالة تتحرّك باتجاه واحد: مفتوح → قيد المراجعة → أُصلح أو مُستبعد.
+        </p>
         <div className="fb-status-actions" style={{ marginInlineStart: 0, marginBottom: 'var(--sp-2-5)' }}>
           {FILTERS.map((f) => (
             <button
@@ -257,16 +284,14 @@ export default function FeedbackInboxPage() {
         <p className="inv-note">
           <Icon icon={MessageSquarePlus} size={12} /> الودجت العائم على كل شاشة مسجّل الدخول هو مصدر هذه التقارير.
         </p>
-      </Card>
+      </SheetSection>
 
-      <Card
-        title="أخطاء تطبيق الجوّال"
-        subtitle={
-          errMeta
+      <SheetSection index="02" caption="CLIENT ERRORS" title="أخطاء تطبيق الجوّال">
+        <p className="fb-lead text-sm text-muted">
+          {errMeta
             ? `${errMeta.unreviewed} خطأً غير مراجَع — تصل تلقائيًا من التطبيق عند حدوث انهيار أو خلل.`
-            : 'تقارير الأعطال التي يرسلها تطبيق الجوّال تلقائيًا مع مسارها وجهازها وإصدارها.'
-        }
-      >
+            : 'تقارير الأعطال التي يرسلها تطبيق الجوّال تلقائيًا مع مسارها وجهازها وإصدارها.'}
+        </p>
         <div className="fb-status-actions" style={{ marginInlineStart: 0, marginBottom: 'var(--sp-2-5)' }}>
           {ERROR_FILTERS.map((f) => (
             <button
@@ -323,7 +348,7 @@ export default function FeedbackInboxPage() {
             </button>
           </div>
         )}
-      </Card>
+      </SheetSection>
     </div>
   );
 }

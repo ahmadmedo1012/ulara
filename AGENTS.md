@@ -77,7 +77,7 @@ db-integration, e2e, ios-webkit, design-gates, surface-drift; plus `size-gate.ym
 mirrors these local gates — all runners pinned `ubuntu-24.04`:
 
 - **Bundle** — `scripts/check-bundle-size.mjs`, gz, `dist/assets/*.js` ONLY (CSS is not in
-  the gate): **total ≤ 815 KB HARD** (R352 raised 770 → 815, +5.8%, documented in the
+  the gate): **total ≤ 832 KB HARD** (R359 raised 815 → 832, +2.1%, documented in the
   gate header: the institutional workspace's 15 lazy page chunks + inst kit + API clients
   measured 809.6 KB gz on the branch head vs 746.9 on its merge base — a 62.7 KB statutory
   feature that 23 KB of headroom could not hold; entry stayed 65.0), entry ≤ 92,

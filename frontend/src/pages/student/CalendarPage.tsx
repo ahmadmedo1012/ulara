@@ -5,15 +5,15 @@ import {
   Presentation, ClipboardList, ClipboardCheck, Radio,
   type LucideIcon,
 } from 'lucide-react';
-import { Card, Badge } from '../../components/primitives';
 import { ErrorState, EmptyState, Skeleton } from '../../components/primitives/States';
 import { PageFrame, PageHeader } from '../../components/patterns';
-/* R319 (c3-S2) — the §B2 kit: the today week strip (the page's genuine
- * week context) + the hatched empty cell + the mono-indexed section
- * bar that opens the month instrument (r341 D7a — the calendar joins
- * the family's [nn] register: every student page's regions open with
- * the SectionBar). */
-import { WeekStrip, EmptyCell, SectionBar, BarCount } from '../../components/student';
+/* R359 (A3) — the sheet grammar: the framed month sheet (SheetSection)
+ * + the KPI band of real payload counts replace the §B2 SectionBar /
+ * BarCount register (the roster exemplar's recomposition). */
+import { SheetSection, KpiBand, SheetEmpty } from '../../components/patterns';
+/* R319 (c3-S2) — the today week strip (the page's genuine week context)
+ * keeps its seat above the framed sheet. */
+import { WeekStrip } from '../../components/student';
 import { Icon } from '../../components/Icon';
 import { useStudentDashboard, useMyEnrollments, useMyExams } from '../../hooks/useResources';
 import { WEEKDAY_NAMES_AR, arUnit } from '../../lib/format';
@@ -57,6 +57,12 @@ import '../../styles/student/academic-pages.css';
  * Composed CLIENT-SIDE from existing endpoints — no new backend route.
  * Every event row is a link to its source page (course / exam taker /
  * broadcast); today is highlighted; dots + legend carry the kinds.
+ *
+ * R359 (A3): the page speaks the sheet grammar — a KPI band of real
+ * payload counts, then the month instrument inside ONE framed [01]
+ * MONTH SHEET section (the month readout as the section title, the
+ * navigation on the head rule's aside slot). The cal-* grid anatomy
+ * is untouched.
  */
 
 const KIND_LEGEND: Array<{ kind: CalendarEventKind; label: string }> = [
@@ -88,19 +94,15 @@ function selectedDayLabel(key: string): string {
   return `${dow} · ${md}`;
 }
 
-/* r299 (final C): shape-matched pending mirror — the settled page is
- * a pattern header + the month grid; the skeleton holds the header's
- * own box and a 7×6 cell grid of the same footprint (the CardSkeleton
- * lines said "document", not "calendar" — the data-land swap jumped).
- * Skeleton cells reuse .cal-cell geometry (aria-hidden). */
+/* r299 (final C) → R359: shape-matched pending mirror — the settled
+ * page is a pattern header + the framed month sheet; the skeleton
+ * holds the weekday row + a 7×6 cell grid of the same footprint inside
+ * the same frame (the section head carries the month title — view
+ * state, no payload needed). Skeleton cells reuse .cal-cell geometry
+ * (aria-hidden). */
 function CalendarSkeleton() {
   return (
-    <Card className="cal-card" flush>
-      <header className="cal-head">
-        <Skeleton width={28} height={28} rounded="var(--r-md)" />
-        <Skeleton width={120} height={20} />
-        <Skeleton width={28} height={28} rounded="var(--r-md)" />
-      </header>
+    <>
       <div className="cal-dow-row">
         {WEEKDAY_NAMES_AR.map((name) => (
           <span key={name} className="cal-dow"><Skeleton width={28} height={11} /></span>
@@ -117,7 +119,7 @@ function CalendarSkeleton() {
           </span>
         ))}
       </div>
-    </Card>
+    </>
   );
 }
 
@@ -201,6 +203,13 @@ export default function StudentCalendarPage() {
     () => cells.filter((c) => c.inMonth && byDay.has(c.key)).length,
     [cells, byDay],
   );
+  /* R359 — the KPI band's honest numerator: every event landing on an
+   * in-month cell of the VIEW month (the same read the grid paints).
+   * Out-of-month buckets never render, so they never count. */
+  const monthEventTotal = useMemo(
+    () => cells.filter((c) => c.inMonth).reduce((n, c) => n + (byDay.get(c.key)?.length ?? 0), 0),
+    [cells, byDay],
+  );
 
   const shiftMonth = (delta: number) => {
     setView((v) => {
@@ -228,21 +237,66 @@ export default function StudentCalendarPage() {
     setSelectedKey(key);
   };
 
+  /* The month navigation cluster — R359: it rides the framed sheet's
+   * head-rule aside slot (never floating buttons). «السابق» points
+   * inline-START (right in RTL = the past), «التالي» inline-END (left
+   * = forward); the «اليوم» chip appears ONLY while the page sits
+   * away from today. */
+  const monthNav = (
+    <div className="flex items-center gap-2">
+      <button
+        type="button"
+        className="btn ghost sm cal-nav-btn"
+        onClick={() => shiftMonth(-1)}
+        aria-label="الشهر السابق"
+      >
+        <Icon icon={ChevronRight} size={16} aria-hidden />
+      </button>
+      {awayFromToday && (
+        <button
+          type="button"
+          className="btn ghost sm cal-nav-btn"
+          onClick={goToday}
+          aria-label="العودة إلى اليوم"
+        >
+          اليوم
+        </button>
+      )}
+      <button
+        type="button"
+        className="btn ghost sm cal-nav-btn"
+        onClick={() => shiftMonth(1)}
+        aria-label="الشهر التالي"
+      >
+        <Icon icon={ChevronLeft} size={16} aria-hidden />
+      </button>
+    </div>
+  );
+
   // ── Loading / error shells (the shared States grammar) ──────────
   if (enrollments.isPending || dash.isPending || exams.isPending) {
     return (
       <div className="r319s-page">
       <PageFrame width="default">
-        <PageHeader title="التقويم الأكاديمي" description="جارٍ جمع مواعيدك…" />
+        <PageHeader eyebrow="طلاب الجامعة" title="التقويم الأكاديمي" description="جارٍ جمع مواعيدك…" />
         {/* R319 (c3-S2): the week strip — the page's genuine today/week
-            context (the grid's today cell anchors on it). r341 D7a: the
-            [01] bar opens the month instrument in the pending mirror
-            too — the settled handoff moves nothing (the r172b law). */}
-        <SectionBar title="مواعيد الشهر" />
+            context (the grid's today cell anchors on it). */}
         <WeekStrip />
-        <div aria-busy="true" aria-live="polite">
-          <CalendarSkeleton />
-        </div>
+        {/* R359 — the pending mirror holds the SAME framed month sheet
+            (the month title is view state, not payload — it reads
+            honestly while the sources load); the body is the footprint
+            skeleton, never the interactive grid (the r172b law). */}
+        <SheetSection
+          size="lg"
+          index="01"
+          caption="MONTH SHEET"
+          title={<span aria-live="polite">{monthTitleAr(view.year, view.month)}</span>}
+          pad="none"
+        >
+          <div aria-busy="true" aria-live="polite">
+            <CalendarSkeleton />
+          </div>
+        </SheetSection>
       </PageFrame>
       </div>
     );
@@ -252,17 +306,18 @@ export default function StudentCalendarPage() {
     return (
       <div className="r319s-page">
       <PageFrame width="default">
-        <PageHeader title="التقويم الأكاديمي" />
-        <SectionBar title="مواعيد الشهر" />
-        <ErrorState
-          message="تعذَّر تحميل التقويم الأكاديمي"
-          error={failed.error}
-          onRetry={() => {
-            enrollments.refetch();
-            dash.refetch();
-            exams.refetch();
-          }}
-        />
+        <PageHeader eyebrow="طلاب الجامعة" title="التقويم الأكاديمي" />
+        <SheetSection index="01" caption="MONTH SHEET" title="مواعيد الشهر">
+          <ErrorState
+            message="تعذَّر تحميل التقويم الأكاديمي"
+            error={failed.error}
+            onRetry={() => {
+              enrollments.refetch();
+              dash.refetch();
+              exams.refetch();
+            }}
+          />
+        </SheetSection>
       </PageFrame>
       </div>
     );
@@ -277,6 +332,7 @@ export default function StudentCalendarPage() {
     <div className="r319s-page">
     <PageFrame width="default">
       <PageHeader
+        eyebrow="طلاب الجامعة"
         title="التقويم الأكاديمي"
         description={
           'كل مواعيدك في نظرة واحدة: الحصص الأسبوعية، ومواعيد تسليم الواجبات، ' +
@@ -295,66 +351,61 @@ export default function StudentCalendarPage() {
         }
       />
 
+      {/* R359 — the KPI band: every numeral derives from the live
+          payloads (enrollments · in-month events · exam windows · the
+          agenda's assignments). The days-with-events count survives as
+          the EVENTS cell's delta (countAr for assistive tech). */}
+      <KpiBand
+        items={[
+          {
+            index: '01',
+            caption: 'ENROLLED',
+            label: 'مقرّرات مسجّلة هذا الفصل',
+            value: enrollments.data?.length ?? 0,
+          },
+          {
+            index: '02',
+            caption: 'EVENTS',
+            label: 'مواعيد في الشهر المعروض',
+            value: monthEventTotal,
+            delta: monthEventCount > 0
+              ? countAr(monthEventCount, ['يوم واحد له مواعيد', 'يومان لهما مواعيد', 'أيام لها مواعيد', 'يوماً له مواعيد'])
+              : undefined,
+          },
+          {
+            index: '03',
+            caption: 'EXAMS',
+            label: 'نوافذ اختبارات مفتوحة',
+            value: exams.data?.length ?? 0,
+          },
+          {
+            index: '04',
+            caption: 'DEADLINES',
+            label: 'واجبات في أجندة الأسبوع',
+            value: dash.data?.agenda?.assignments.length ?? 0,
+          },
+        ]}
+      />
+
       {/* R319 (c3-S2): the week strip — the page's genuine today/week
           context: the current week as one hairline row of 7 cells with
-          today inked, above the month grid whose today cell anchors it.
-          r341 D7a: the [01] SectionBar opens the month instrument (the
-          family's mono-indexed register) with the honest days-with-
-          events count as its quiet mono meta (countAr for AT). */}
-      <SectionBar
-        title="مواعيد الشهر"
-        meta={
-          monthEventCount > 0 ? (
-            <BarCount
-              n={monthEventCount}
-              srLabel={countAr(monthEventCount, ['يوم واحد له مواعيد', 'يومان لهما مواعيد', 'أيام لها مواعيد', 'يوماً له مواعيد'])}
-            />
-          ) : undefined
-        }
-      />
+          today inked, above the month grid whose today cell anchors it. */}
       <WeekStrip />
 
-      <Card className="cal-card" flush>
-        {/* Month navigation — «السابق» points inline-START (right in
-            RTL = the past), «التالي» inline-END (left = forward).
-            r304: the «اليوم» chip rides the inline-end cluster and
-            appears ONLY while the page sits away from today (another
-            month browsed, or another day selected); one tap returns
-            the grid to today's month AND re-selects today. */}
-        <header className="cal-head">
-          <button
-            type="button"
-            className="btn ghost sm cal-nav-btn"
-            onClick={() => shiftMonth(-1)}
-            aria-label="الشهر السابق"
-          >
-            <Icon icon={ChevronRight} size={16} aria-hidden />
-          </button>
-          <h2 className="cal-month" aria-live="polite">{monthTitleAr(view.year, view.month)}</h2>
-          <div
-            style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)' }}
-          >
-            {awayFromToday && (
-              <button
-                type="button"
-                className="btn ghost sm cal-nav-btn"
-                onClick={goToday}
-                aria-label="العودة إلى اليوم"
-              >
-                اليوم
-              </button>
-            )}
-            <button
-              type="button"
-              className="btn ghost sm cal-nav-btn"
-              onClick={() => shiftMonth(1)}
-              aria-label="الشهر التالي"
-            >
-              <Icon icon={ChevronLeft} size={16} aria-hidden />
-            </button>
-          </div>
-        </header>
-
+      {/* R359 — the framed month sheet: the [01] MONTH SHEET section
+          carries the month readout as its title (aria-live preserved)
+          and the month navigation on the head rule's aside slot. The
+          legend / weekday row / 42-cell grid / day detail keep their
+          cal-* anatomy inside the frame — pad=none because the grid IS
+          the body. */}
+      <SheetSection
+        size="lg"
+        index="01"
+        caption="MONTH SHEET"
+        title={<span aria-live="polite">{monthTitleAr(view.year, view.month)}</span>}
+        aside={monthNav}
+        pad="none"
+      >
         {/* the reference micro-label: the legend is a metadata block — classify
             it (the chips below carry the kinds; tone on the dot only). */}
         <div className="cal-legend" aria-label="مفتاح الرموز">
@@ -425,12 +476,13 @@ export default function StudentCalendarPage() {
             event's source page (course / exam taker / broadcast). */}
         <div className="cal-detail">
           {monthEventCount === 0 ? (
-            /* R319 (c3-S2): the quiet month is the sheet's reserved-but-
-               empty region — the hatched EmptyCell (the old EmptyState's
-               copy, kept honest and verbatim). */
-            <EmptyCell
-              label="شهر هادئ"
-              note={`لا مواعيد في ${monthTitleAr(view.year, view.month)} — جرّب شهرًا آخر، أو راجع جدولك ومقرّراتك.`}
+            /* R359: the quiet month is the sheet's reserved-but-empty
+               region — the hairline placeholder frame (the old
+               EmptyCell's copy, kept honest and verbatim). */
+            <SheetEmpty
+              code="NO-EVENTS"
+              title="شهر هادئ"
+              desc={`لا مواعيد في ${monthTitleAr(view.year, view.month)} — جرّب شهرًا آخر، أو راجع جدولك ومقرّراتك.`}
             />
           ) : selectedEvents.length === 0 ? (
             <EmptyState
@@ -456,7 +508,9 @@ export default function StudentCalendarPage() {
                       ))}
                     </span>
                   )}
-                  <Badge color="brand">{arUnit(selectedEvents.length, 'حدث واحد', 'حدثان', 'أحداث')}</Badge>
+                  {/* R359: the day's event count rides the flat hairline
+                      flag (the ONE signal tone) — never a tinted pill. */}
+                  <span className="sg-flag" data-tone="signal">{arUnit(selectedEvents.length, 'حدث واحد', 'حدثان', 'أحداث')}</span>
                 </span>
               </header>
               <div className="cal-detail-list">
@@ -481,7 +535,7 @@ export default function StudentCalendarPage() {
             </>
           )}
         </div>
-      </Card>
+      </SheetSection>
     </PageFrame>
     </div>
   );

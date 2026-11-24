@@ -7,12 +7,21 @@
  * clearly apart from their platform login role.
  */
 import {
-  useState, useNavigate, useParams, Plus,
+  useState, useParams, Plus,
   PageFrame, PageHeader, toast, formatDate, Icon,
-  serverError, DetailList, EnumChip, InstFilters, InstFormDialog, InstPagedTable,
+  serverError, DetailList, EnumChip, InstFilters, InstFormDialog,
   InstSection, InstStates, InstSelect,
-  type InstColumn, type InstField, type InstFormValues,
+  type InstField, type InstFormValues,
 } from './scaffold';
+/* R359 (W2-e): the directory rides the sheet grammar — the KpiBand
+ * facts, the framed PEOPLE register (the DataSheet with mono staff
+ * numbers, cell-stack identity, flat sg-flag statuses) and the
+ * person's own row links to the detail route. */
+import { Link } from 'react-router-dom';
+import { KpiBand, SheetSection, DataSheet, type DataSheetColumn } from '../../components/patterns';
+import { StatusFlag, rowToneFromStatus } from '../../components/institutional/kit';
+import { TablePaginationFooter } from '../admin/TablePaginationFooter';
+import { useInstitutionScope } from '../../stores/auth.store';
 import {
   useMyCapabilities, useOrgUnitTree, usePeople, usePerson, useInstActions,
 } from '../../hooks/institutional/queries';
@@ -74,9 +83,9 @@ const CATEGORY_TABS: Array<{ value: string; label: string }> = [
 const PERSON_UNIT: [string, string, string, string] = ['فرد واحد', 'فردان', 'أفراد', 'فرد'];
 
 export function InstitutionPeoplePage() {
-  const navigate = useNavigate();
   const caps = useMyCapabilities();
   const canManage = caps.data?.has('PEOPLE_MANAGE') ?? false;
+  const scope = useInstitutionScope();
 
   const [category, setCategory] = useState('');
   const [status, setStatus] = useState('');
@@ -115,11 +124,39 @@ export function InstitutionPeoplePage() {
     }
   };
 
-  const columns: Array<InstColumn<Person>> = [
-    { head: 'الاسم', cell: (p) => <span className="inst-tree-name">{p.fullNameAr}</span> },
-    { head: 'الفئة', cell: (p) => <span className="inst-tree-kind">{STAFF_CATEGORY_LABELS[p.category] ?? p.category}</span> },
-    { head: 'الحالة', cell: (p) => <EnumChip value={p.staffStatus} labels={STAFF_STATUS_LABELS} /> },
-    { head: 'الرقم الوظيفي', mobileHidden: true, cell: (p) => <span className="font-mono">{p.staffNumber ?? '—'}</span> },
+  /* R359 (W2-e) — the register columns: the name is the row's link to
+   * the person's file (the old row-click becomes a real anchor), the
+   * category rides the sub line, statuses ride the flat flag, the
+   * staff number is the mono datum. */
+  const columns: DataSheetColumn<Person>[] = [
+    {
+      key: 'name',
+      label: 'الاسم',
+      render: (p) => (
+        <Link to={`/institution/people/${p.id}`} className="sg-cell-title">{p.fullNameAr}</Link>
+      ),
+    },
+    {
+      key: 'category',
+      label: 'الفئة',
+      render: (p) => (
+        <span className="sg-cell-stack">
+          <span>{STAFF_CATEGORY_LABELS[p.category] ?? p.category}</span>
+          <span className="sg-cell-sub">دليل الكادر المؤسسي</span>
+        </span>
+      ),
+    },
+    {
+      key: 'status',
+      label: 'الحالة',
+      render: (p) => <StatusFlag value={p.staffStatus} labels={STAFF_STATUS_LABELS} />,
+    },
+    {
+      key: 'staffNumber',
+      label: 'الرقم الوظيفي',
+      mono: true,
+      render: (p) => (p.staffNumber ? <bdi>{p.staffNumber}</bdi> : '—'),
+    },
   ];
 
   return (
@@ -134,6 +171,38 @@ export function InstitutionPeoplePage() {
           </button>
         ) : null}
       />
+
+      {/* R359 (W2-e) — the KPI band: the real counts from the paged
+          payload + the unit options the form offers; honest-empty ('—')
+          while pending. No institution context → no band (the honest
+          select-institution state below speaks for the page). */}
+      {scope !== null && (
+        <KpiBand
+          items={[
+            {
+              index: '01',
+              caption: 'PEOPLE',
+              label: 'الأفراد المسجّلون (الاستعلام الحالي)',
+              value: peopleQuery.data?.meta.total ?? 0,
+              empty: peopleQuery.data == null,
+            },
+            {
+              index: '02',
+              caption: 'RESULTS',
+              label: 'نتائج الصفحة الحاليّة',
+              value: peopleQuery.data?.data.length ?? 0,
+              empty: peopleQuery.data == null,
+            },
+            {
+              index: '03',
+              caption: 'ORG UNITS',
+              label: 'الوحدات التنظيمية النشطة',
+              value: unitOptions.length,
+              empty: treeQuery.data == null,
+            },
+          ]}
+        />
+      )}
 
       <InstFilters search={search} onSearch={(v) => { setSearch(v); setPage(1); }}>
         <InstSelect
@@ -152,15 +221,34 @@ export function InstitutionPeoplePage() {
         />
       </InstFilters>
 
-      <InstPagedTable
-        query={peopleQuery}
-        columns={columns}
-        rowKey={(p) => p.id}
-        ariaLabel="دليل الأفراد"
-        unit={PERSON_UNIT}
-        onPage={setPage}
-        onRowClick={(p) => navigate(`/institution/people/${p.id}`)}
-      />
+      {/* R359 (W2-e) — the framed register: states + DataSheet + the
+          family pagination footer (the same InstStates contract owns
+          the context gate, loading, error and empty). */}
+      <SheetSection index="01" caption="PEOPLE" title="دليل الأفراد" pad="none">
+        <InstStates
+          isLoading={peopleQuery.isLoading}
+          error={peopleQuery.error}
+          isEmpty={(peopleQuery.data?.data ?? []).length === 0}
+        >
+          <DataSheet
+            caption="دليل الأفراد"
+            columns={columns}
+            rows={peopleQuery.data?.data ?? []}
+            rowTone={(p) => rowToneFromStatus(p.staffStatus)}
+          />
+        </InstStates>
+        {peopleQuery.data && peopleQuery.data.meta.totalPages > 1 && (
+          <div className="sg-pad-in">
+            <TablePaginationFooter
+              page={peopleQuery.data.meta.page}
+              totalPages={peopleQuery.data.meta.totalPages}
+              total={peopleQuery.data.meta.total}
+              unit={PERSON_UNIT}
+              onPage={setPage}
+            />
+          </div>
+        )}
+      </SheetSection>
 
       <InstFormDialog
         open={formOpen}

@@ -1,12 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Users, ChevronLeft, ChevronRight, X, AlertCircle } from 'lucide-react';
-/* r252 (Phase B): the directory composes the shell patterns — StatLine
- * facts, FilterBar (search + role pills), and the table becomes dense
- * RowList rows whose actions live behind the inline expansion (the
- * Superlist "detail attached to the item" move). */
-import { PageFrame, PageHeader as PatternsPageHeader, StatLine, FilterBar, RowList, RowItem } from '../../components/patterns';
-import { Card, Badge, UserAvatar, AlertRow } from '../../components/primitives';
+/* r252 (Phase B) → R359 (W2-e): the directory speaks the sheet
+ * grammar — the KpiBand strip (honest numerals, the «الفئة الأكبر»
+ * honesty claim riding the delta line) and the roster rides the
+ * framed SheetSection. The RowList expansion stays: three pin files
+ * (confirm-verbs / role-picker / institution-column) own the row's
+ * inline-expansion anatomy — the table IS the actions surface. */
+import { PageFrame, PageHeader as PatternsPageHeader, FilterBar, RowList, RowItem } from '../../components/patterns';
+import { KpiBand, SheetSection } from '../../components/patterns';
+import { Badge, UserAvatar, AlertRow } from '../../components/primitives';
 import { ErrorState, EmptyState, ListSkeleton } from '../../components/primitives/States';
 import { Icon } from '../../components/Icon';
 import { ConfirmDialog } from '../../components/owner/ConfirmDialog';
@@ -272,8 +275,7 @@ export function OwnerUsersPage() {
     (toggleStatus.isPending && toggleStatus.variables?.userId === user.id);
   const mutationBusy = changeRole.isPending || toggleStatus.isPending;
 
-  const kpiValue = (n: number) =>
-    stats.isPending ? '…' : statData ? formatNum(n) : '—';
+  const kpiUnknown = !statData;
 
   /* r299 (honesty): «أكبر شريحة» used to render unconditionally — the
    * hint asserted students are the largest segment without comparing
@@ -300,6 +302,8 @@ export function OwnerUsersPage() {
       <PageFrame width="default">
         <PatternsPageHeader
           title="إدارة المستخدمين"
+          /* R359 (W2-e): the owner console's family eyebrow. */
+          eyebrow="مالك المنصّة"
           /* r351 A2 (Q3): header description retired — the directory explains itself. */
           breadcrumbs={[{ label: 'لوحة المالك', to: '/owner/dashboard' }, { label: 'المستخدمون' }]}
           /* R341 D11: the [03] nav-order gutter numeral (OWNER_NAV
@@ -317,17 +321,44 @@ export function OwnerUsersPage() {
           )}
         />
 
-        {/* Metrics — real values only: '…' while loading, '—' on error
-            (never a fake zero). r252: the patterns StatLine. */}
-        <StatLine
+        {/* R359 (W2-e) — the KPI band: every numeral derives from the
+            live /owner/stats payload; the honest-empty register ('—')
+            covers pending AND error (never a fake zero). The r299
+            «الفئة الأكبر» honesty claim rides the delta line exactly
+            once — only for the segment that IS the largest. */}
+        <KpiBand
           items={[
-            /* r351 A2 (Q3): the «حسابات مسجَّلة» restating hint retired;
-             * the «الفئة الأكبر» honesty claim + neutral fallbacks stay
-             * (r299 pins). */
-            { label: 'إجمالي المستخدمين', value: kpiValue(statData?.totalUsers ?? 0) },
-            { label: 'الطلاب', value: kpiValue(statData?.students ?? 0), hint: topSegmentKey === 'students' ? 'الفئة الأكبر' : 'حسابات الطلاب' },
-            { label: 'الأساتذة', value: kpiValue(statData?.teachers ?? 0), hint: topSegmentKey === 'teachers' ? 'الفئة الأكبر' : 'هيئة التدريس' },
-            { label: 'مسجلون عامّون وجودة', value: kpiValue((statData?.admins ?? 0) + (statData?.quality ?? 0)), hint: topSegmentKey === 'staff' ? 'الفئة الأكبر' : 'إدارة ومتابعة' },
+            {
+              index: '01',
+              caption: 'TOTAL',
+              label: 'إجمالي المستخدمين',
+              value: statData?.totalUsers ?? 0,
+              empty: kpiUnknown,
+            },
+            {
+              index: '02',
+              caption: 'STUDENTS',
+              label: 'الطلاب',
+              value: statData?.students ?? 0,
+              empty: kpiUnknown,
+              delta: topSegmentKey === 'students' ? 'الفئة الأكبر' : 'حسابات الطلاب',
+            },
+            {
+              index: '03',
+              caption: 'TEACHERS',
+              label: 'الأساتذة',
+              value: statData?.teachers ?? 0,
+              empty: kpiUnknown,
+              delta: topSegmentKey === 'teachers' ? 'الفئة الأكبر' : 'هيئة التدريس',
+            },
+            {
+              index: '04',
+              caption: 'STAFF',
+              label: 'مسجلون عامّون وجودة',
+              value: (statData?.admins ?? 0) + (statData?.quality ?? 0),
+              empty: kpiUnknown,
+              delta: topSegmentKey === 'staff' ? 'الفئة الأكبر' : 'إدارة ومتابعة',
+            },
           ]}
         />
 
@@ -355,9 +386,15 @@ export function OwnerUsersPage() {
           )}
         />
 
-        {/* Users list — dense rows with inline expansion (r252). */}
-        <Card className="owner-users-card">
+        {/* R359 (W2-e) — the roster sheet: the hairline frame +
+            registration crosses replace the Card; the rows ARE the
+            body (pad=none), the inline-error rail and the pagination
+            ride the .sg-pad-in inset register. The RowList expansion
+            anatomy is pinned (confirm-verbs / role-picker /
+            institution-column) — the roster keeps it verbatim. */}
+        <SheetSection index="01" caption="ACCOUNTS" title="دليل الحسابات" pad="none">
           {actionError && (
+            <div className="sg-pad-in">
             <AlertRow
               color="red"
               icon={AlertCircle}
@@ -384,6 +421,7 @@ export function OwnerUsersPage() {
                 </>
               }
             />
+            </div>
           )}
 
           {ownerUsers.isPending ? (
@@ -522,6 +560,7 @@ export function OwnerUsersPage() {
                   r164-i (table-coherence): the footer renders whenever rows
                   exist, single page included. */}
               {meta && users.length > 0 && (
+                <div className="sg-pad-in">
                 <div className="table-pagination">
                   <span>
                     الصفحة {page} من {totalPages} · {usersCountLabel(meta.total)}
@@ -562,10 +601,11 @@ export function OwnerUsersPage() {
                     </button>
                   </div>
                 </div>
+                </div>
               )}
             </>
           )}
-        </Card>
+        </SheetSection>
 
         {/* Confirm Dialog */}
         <ConfirmDialog

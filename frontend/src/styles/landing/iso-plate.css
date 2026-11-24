@@ -27,11 +27,11 @@
   --iso-ink-soft:   color-mix(in srgb, var(--neutral-900) 55%, transparent);
   --iso-muted:      var(--text-muted);
   --iso-hair:       var(--neutral-300);
-  /* the ONE warm family (the copper canon — never a second hue;
-     r354: the redundant --iso-signal alias retired — one seat, one
-     name, the observatory signal rides --iso-sienna like every
-     other warm focal) */
-  --iso-sienna:     var(--c-copper-ink);
+  /* r359 A1 D6 — the warm family RETIRES from the plates: the old
+     orange reads as a second signal against the reference's one-hue
+     law. The focal accents (journey markers, flags, the one hot
+     cell) join the royal family — one signal, one hue. */
+  --iso-sienna:     var(--c-royal-ink);
   /* r353 (visual artwork) — the ROYAL annotation layer: the plate
      grammar's engineering-intelligence voice. Dimensions, data routes,
      level marks and every SYSTEM line paint royal (the brand's primary

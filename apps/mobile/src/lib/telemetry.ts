@@ -51,16 +51,12 @@ export function crumb(event: string): void {
 
 let lastSendAt = 0;
 
+// r359 A4: the OTA layer is retired (release-by-new-build) — there is
+// no updateId/runtimeVersion to report anymore. The fields stay in the
+// report shape (the backend contract accepts them; older builds still
+// send them) but are always null from this build on.
 async function updateMeta(): Promise<{ updateId: string | null; runtimeVersion: string | null }> {
-  try {
-    const Updates = await import("expo-updates");
-    return {
-      updateId: Updates.updateId ?? null,
-      runtimeVersion: Updates.runtimeVersion ?? null,
-    };
-  } catch {
-    return { updateId: null, runtimeVersion: null };
-  }
+  return { updateId: null, runtimeVersion: null };
 }
 
 /** Report a client error. Safe to call from anywhere, including crash paths. */

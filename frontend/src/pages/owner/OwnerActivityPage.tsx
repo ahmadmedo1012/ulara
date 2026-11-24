@@ -2,17 +2,21 @@ import { useState } from 'react';
 import type { CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  LogIn, FileText, UserCog, Server, AlertTriangle, Clock,
+  LogIn, FileText, UserCog, Server, AlertTriangle,
   RefreshCw, ChevronDown, ChevronRight, ChevronLeft,
 } from 'lucide-react';
-import { Card, Tabs } from '../../components/primitives';
+import { Tabs } from '../../components/primitives';
 import { ErrorState, EmptyState, Skeleton } from '../../components/primitives/States';
 import { Icon } from '../../components/Icon';
 /* r252 (Phase B): the audit log composes the shell patterns — PageFrame
  * rhythm, patterns PageHeader, the StatLine facts, and FilterBar as the
  * sticky filter rail above the timeline (the mission's "filterable
  * timeline of rows", not a raw table). */
-import { PageFrame, PageHeader as PatternsPageHeader, StatLine, FilterBar } from '../../components/patterns';
+import { PageFrame, PageHeader as PatternsPageHeader, FilterBar } from '../../components/patterns';
+/* R359 (W2-e): the audit log speaks the sheet grammar — the KpiBand
+ * facts + the framed AUDIT LOG section (the Card died; the timeline
+ * rows ARE the body). */
+import { KpiBand, SheetSection } from '../../components/patterns';
 import { useOwnerActivity } from '../../hooks/useOwner';
 import { formatRelativeAr } from '../../lib/format';
 import type { LucideIcon } from 'lucide-react';
@@ -192,11 +196,11 @@ export function OwnerActivityPage() {
     roles: decorated.filter((e) => e.category === 'roles').length,
   };
 
-  // Honest KPIs (audit 0-e P1-27): '…' while loading, '—' on error —
-  // never a confident "0" for data we don't have.
-  const kpiValue = (n: number) =>
-    activity.isPending ? '…' : activity.isError ? '—' : <bdi>{formatNum(n)}</bdi>;
+  // Honest KPIs (audit 0-e P1-27): the honest-empty band register
+  // covers loading AND error — never a confident "0" for data we
+  // don't have (R359 W2-e: the KpiBand's empty flag).
   const kpiKnown = activity.isSuccess;
+  const kpiUnknown = !kpiKnown;
 
   return (
     /* r305-A8 «ds»: the scoped sheet keys every rule off the .r305ao
@@ -206,6 +210,7 @@ export function OwnerActivityPage() {
       <PageFrame width="default">
         <PatternsPageHeader
           title="سجل النشاط والمراقبة"
+          eyebrow="مالك المنصّة"
           /* r351 A2 (Q3): header description retired — the timeline is self-evident. */
           breadcrumbs={[{ label: 'لوحة المالك', to: '/owner/dashboard' }, { label: 'سجلّ النشاط' }]}
           /* R341 D11: the [05] nav-order gutter numeral (OWNER_NAV
@@ -222,32 +227,43 @@ export function OwnerActivityPage() {
           )}
         />
 
-        {/* r252: the page's four facts ride the patterns StatLine —
-            same honest '…'/'—' unknowns, same real per-page counts. */}
-        <StatLine
+        {/* R359 (W2-e) — the KPI band: per-page counts derived from the
+            loaded payload; the honest-empty register covers pending +
+            error. The failed-operations delta takes the danger ink only
+            when failures actually exist. */}
+        <KpiBand
           items={[
-            /* r351 A2 (Q3): the «المسجَّلة على المنصّة» restating hint
-             * retired; the per-page scope hints stay (they qualify the
-             * numbers — honest, not decorative). */
             {
+              index: '01',
+              caption: 'EVENTS',
               label: 'إجمالي الأحداث',
-              value: kpiValue(activity.data?.meta.total ?? kpi.total),
+              value: activity.data?.meta.total ?? kpi.total,
+              empty: kpiUnknown,
             },
             {
+              index: '02',
+              caption: 'LOGINS',
               label: 'تسجيلات دخول',
-              value: kpiValue(kpi.logins),
-              hint: 'ضمن الصفحة الحاليّة',
+              value: kpi.logins,
+              empty: kpiUnknown,
+              delta: 'ضمن الصفحة الحاليّة',
             },
             {
+              index: '03',
+              caption: 'FAILED',
               label: 'عمليّات فاشلة',
-              value: kpiValue(kpi.failed),
-              hint: kpiKnown ? (kpi.failed === 0 ? 'لا إخفاقات ضمن الصفحة' : 'تحقّق من التفاصيل أدناه') : 'بانتظار البيانات',
-              tone: kpiKnown && kpi.failed > 0 ? 'danger' : 'neutral',
+              value: kpi.failed,
+              empty: kpiUnknown,
+              delta: kpiKnown ? (kpi.failed === 0 ? 'لا إخفاقات ضمن الصفحة' : 'تحقّق من التفاصيل أدناه') : 'بانتظار البيانات',
+              deltaTone: kpiKnown && kpi.failed > 0 ? 'danger' : 'neutral',
             },
             {
+              index: '04',
+              caption: 'ROLES',
               label: 'تغييرات صلاحيّات',
-              value: kpiValue(kpi.roles),
-              hint: 'ضمن الصفحة الحاليّة',
+              value: kpi.roles,
+              empty: kpiUnknown,
+              delta: 'ضمن الصفحة الحاليّة',
             },
           ]}
         />
@@ -257,7 +273,11 @@ export function OwnerActivityPage() {
             through 50 events; the app's only scroll container owns it). */}
         <FilterBar sticky filters={<Tabs value={filter} onChange={setFilter} items={tabItems} />} />
 
-        <Card title="سجلّ الأحداث" icon={Clock}>
+        {/* R359 (W2-e) — the framed audit log: the Card died, the
+            timeline rows ride the section body and the windowed
+            pagination takes the .sg-pad-in inset register (hairline
+            divider above it). */}
+        <SheetSection index="01" caption="AUDIT LOG" title="سجلّ الأحداث">
           {activity.isPending ? (
             <TimelineSkeleton rows={7} />
           ) : activity.isError ? (
@@ -339,6 +359,7 @@ export function OwnerActivityPage() {
               grammar as the users directory (the hand-rolled prev/next-only
               footer died with its .owner-activity-* classes). */}
           {activity.data && activity.data.meta.totalPages > 1 && (
+            <div className="sg-pad-in">
             <div className="table-pagination">
               <span>
                 الصفحة {page} من {activity.data.meta.totalPages} · {eventsCountLabel(activity.data.meta.total)}
@@ -381,8 +402,9 @@ export function OwnerActivityPage() {
                 </button>
               </div>
             </div>
+            </div>
           )}
-        </Card>
+        </SheetSection>
       </PageFrame>
     </div>
   );

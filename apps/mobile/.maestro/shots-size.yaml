@@ -1,0 +1,25 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# shots-size.yaml — r359 A4 (C8/M5): the SIZE-PASS capture. Runs AFTER the
+# role-home shots with the viewport ALREADY overridden (`adb shell wm size
+# 320x568` / `768x1024` + a forced cold restart — the launcher ANRs when
+# the override lands mid-session; run 45346878959's forensics). The app's
+# session PERSISTS (launchApp WITHOUT clearState — the student stays
+# logged in from the earlier passes), so this flow is four calm steps:
+# relaunch → dismiss the launcher dialog if it appeared → wait for the
+# student dashboard (the app re-laid-out at the new size) → capture.
+# ENV: SHOT (the screenshot name suffix).
+# ═══════════════════════════════════════════════════════════════════════════
+name: shots-size (r359 C8 — the size pass, session kept)
+appId: ly.ulara.app
+---
+- launchApp:
+    appId: ly.ulara.app
+    clearState: false
+- tapOn:
+    text: "Wait"                   # the launcher-ANR revive dialog, when it fires
+    optional: true
+- extendedWaitUntil:
+    visible:
+      text: "أرقامك هذا الفصل"      # the student dashboard's always-rendered SectionBar
+    timeout: 60000
+- takeScreenshot: "HOME-${SHOT}"

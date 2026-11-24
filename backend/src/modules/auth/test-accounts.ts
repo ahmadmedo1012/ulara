@@ -394,6 +394,13 @@ export async function ensureTestAccounts(prisma: PrismaClient): Promise<number> 
         avatarInitials: profile.avatarInitials,
         avatarColor: profile.avatarColor,
         emailVerifiedAt: new Date(),
+        // r359 A4: the STUDENT fixture deliberately OWES the first-run
+        // tour (onboardingCompletedAt null) — the onboarding shots flow
+        // (.maestro/shots-onboarding.yaml) drives it once per smoke run;
+        // every other role starts pre-toured (the CI journeys assert
+        // dashboards, not the tour), and the student journey's optional
+        // «تخطي» tap covers the ordering (shots first, journey second).
+        onboardingCompletedAt: account.role === 'STUDENT' ? null : new Date(),
         scopeFacultyId: account.scoped ? skeleton.primaryItFaculty.id : null,
       },
     });

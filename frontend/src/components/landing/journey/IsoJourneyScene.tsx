@@ -1118,7 +1118,7 @@ export function IsoJourneyScene() {
             {/* the INTRODUCTION card — the measured corner card (the
                 r312 contract, verbatim): five findings ONE at a time,
                 collapsed to the head outside the card era. */}
-            <aside className="jt-intro" aria-label={INTRO_TITLE_AR}>
+            <section className="jt-intro" aria-label={INTRO_TITLE_AR}>
               <div className="jt-intro-headchip" data-spec="map.introhead">
                 <div className="jt-intro-labelw" data-spec="map.introlabelw">
                   <div className="jt-intro-head" data-spec="map.introlabel">{INTRO_TITLE_AR}</div>
@@ -1142,7 +1142,7 @@ export function IsoJourneyScene() {
                   ))}
                 </div>
               </div>
-            </aside>
+            </section>
           </div>
         </div>
 

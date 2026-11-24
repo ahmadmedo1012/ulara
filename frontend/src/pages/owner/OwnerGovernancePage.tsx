@@ -14,10 +14,12 @@ import {
   Legend,
 } from 'chart.js';
 import { Card } from '../../components/primitives';
-import { StatStrip } from '../../components/primitives/Ledger';
 /* R304: the governance console opens with the patterns PageHeader —
- * breadcrumbs back to the owner dashboard. */
-import { PageHeader as PatternsPageHeader } from '../../components/patterns';
+ * breadcrumbs back to the owner dashboard.
+ * R359 (W2-e): the governance console rides the sheet grammar — the
+ * KpiBand facts, the framed chart sections (the lateral rhythm), and
+ * the daily/reason registers ride the DataSheet. */
+import { PageHeader as PatternsPageHeader, KpiBand, SheetSection, DataSheet, type DataSheetColumn } from '../../components/patterns';
 import {
   ErrorState, EmptyState, ChartSkeleton, TableSkeleton,
 } from '../../components/primitives/States';
@@ -159,12 +161,25 @@ export function OwnerGovernancePage() {
     ? `مخطط خطّي لنموّ المستخدمين — مستخدمون جدد أسبوعياً على مدى ${growthWindow}`
     : 'مخطط خطّي لنموّ المستخدمين — مستخدمون جدد أسبوعياً';
 
+  /* R359 (W2-e) — the daily/reason register columns: mono dates and
+   * reasons (bidi-isolated Latin runs), numeric counts. */
+  const dailyColumns: DataSheetColumn<{ date: string; success: number; failure: number }>[] = [
+    { key: 'date', label: 'التاريخ', mono: true, render: (d) => <bdi>{d.date}</bdi> },
+    { key: 'success', label: 'ناجحة', numeric: true, render: (d) => formatNum(d.success) },
+    { key: 'failure', label: 'فاشلة', numeric: true, render: (d) => formatNum(d.failure) },
+  ];
+  const reasonColumns: DataSheetColumn<{ reason: string; count: number }>[] = [
+    { key: 'reason', label: 'السبب', mono: true, render: (r) => <bdi>{r.reason}</bdi> },
+    { key: 'count', label: 'العدد', numeric: true, render: (r) => formatNum(r.count) },
+  ];
+
   return (
     /* r305-A8 «ds»: page-root marker — stat strips, chart containers
        and tables all key off the scoped sheet's .r305ao selector. */
     <div className="page r305ao">
       <PatternsPageHeader
         title="الحوكمة المتقدّمة"
+        eyebrow="مالك المنصّة"
         description="تتبّع الصلاحيات والنموّ وتحليل تسجيلات الدخول"
         breadcrumbs={[{ label: 'لوحة المالك', to: '/owner/dashboard' }, { label: 'الحوكمة المتقدّمة' }]}
         /* R341 D11: the [13] nav-order gutter numeral (OWNER_NAV
@@ -194,39 +209,39 @@ export function OwnerGovernancePage() {
           />
         </Card>
       ) : (
-        /* R190 (D4): the typographic stat strip — was the grid-3 icon
-         * tiles; each area still owns its pending/error state above. */
-        <StatStrip
-          ariaLabel="مؤشرات الحوكمة"
-          cells={[
+        /* R359 (W2-e) — the KPI band: raw monthly counts with no
+         * comparison payload ride the neutral delta ink (the r299
+         * law — no up/down tone the data never asserted). */
+        <KpiBand
+          items={[
             {
+              index: '01',
+              caption: 'PERMISSIONS',
               label: 'تغييرات الصلاحيات',
-              value: formatNum(govData.permissionChanges),
-              trend: 'تجاوزات موثّقة في السجلّ',
-              trendTone: 'flat',
+              value: govData.permissionChanges,
+              delta: 'تجاوزات موثّقة في السجلّ',
             },
             {
+              index: '02',
+              caption: 'ROLES',
               label: 'تغييرات الأدوار',
-              value: formatNum(govData.roleChanges),
-              trend: 'تعيينات وتحويلات',
-              trendTone: 'flat',
+              value: govData.roleChanges,
+              delta: 'تعيينات وتحويلات',
             },
             {
+              index: '03',
+              caption: 'NEW USERS',
               label: 'مستخدمون جدد هذا الشهر',
-              value: formatNum(govData.newUsersThisMonth),
-              trend: 'من باب التسجيل',
-              /* r299: flat, not 'up' — the strip's up/down tones mean
-                 delta-vs-baseline (R189); this is a raw monthly count
-                 with no comparison payload, so green ink claimed a
-                 growth the data never asserted. */
-              trendTone: 'flat',
+              value: govData.newUsersThisMonth,
+              delta: 'من باب التسجيل',
             },
           ]}
         />
       )}
 
-      <div className="owner-ai-chart-grid">
-        <Card title={growthTitle}>
+      {/* R359 (W2-e): the two chart sections ride the lateral rhythm. */}
+      <div className="sg-cols" data-cols="2">
+        <SheetSection index="01" caption="USER GROWTH" title={growthTitle}>
           {governance.isPending ? (
             <ChartSkeleton height={236} />
           ) : governance.isError || !govData ? (
@@ -253,11 +268,11 @@ export function OwnerGovernancePage() {
               <Line key={themeKey} data={growthChartData!} options={growthOptions} />
             </ChartFrame>
           )}
-        </Card>
+        </SheetSection>
 
         {/* r134 فشل→تعذّر family canon: the title pairs the adjectives the
             doughnut legend and the daily table already use (ناجحة/فاشلة). */}
-        <Card title="تسجيلات الدخول: ناجحة / فاشلة">
+        <SheetSection index="02" caption="LOGIN OUTCOMES" title="تسجيلات الدخول: ناجحة / فاشلة">
           {loginAnalytics.isPending ? (
             <ChartSkeleton height={236} />
           ) : loginAnalytics.isError || !loginData ? (
@@ -285,14 +300,13 @@ export function OwnerGovernancePage() {
               <Doughnut key={themeKey} data={doughnutData!} options={doughnutOptions} />
             </ChartFrame>
           )}
-        </Card>
+        </SheetSection>
       </div>
 
       {/* r299: the .owner-governance-section wrapper died — it stacked
-          its own padding on top of the .page gap (double rhythm) and its
-          h3 rule had no <h3> consumer (the Card titles render <span>).
-          The Card rides the page's uniform gap like every sibling. */}
-      <Card title="تفاصيل تسجيلات الدخول اليوميّة">
+          its own padding on top of the .page gap (double rhythm).
+          R359 (W2-e): the daily register rides the framed DataSheet. */}
+      <SheetSection index="03" caption="DAILY LOGINS" title="تفاصيل تسجيلات الدخول اليوميّة" pad="none">
           {loginAnalytics.isPending ? (
             <TableSkeleton rows={5} cols={3} />
           ) : loginAnalytics.isError || !loginData ? (
@@ -304,50 +318,22 @@ export function OwnerGovernancePage() {
           ) : loginData.daily.length === 0 ? (
             <EmptyState illustration="empty-list" title="لا توجد بيانات يوميّة" description="تُسجَّل المحاولات يوماً بيوم فور حدوثها." />
           ) : (
-            <div className="table-wrap">
-              <table className="table tbl-stack">
-                <thead>
-                  <tr>
-                    <th scope="col">التاريخ</th>
-                    <th scope="col">ناجحة</th>
-                    <th scope="col">فاشلة</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {loginData.daily.map((d) => (
-                    <tr key={d.date}>
-                      <td data-label="التاريخ"><bdi className="owner-num" dir="ltr">{d.date}</bdi></td>
-                      <td className="owner-num owner-num-success" data-label="ناجحة">{formatNum(d.success)}</td>
-                      <td className="owner-num owner-num-warning" data-label="فاشلة">{formatNum(d.failure)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <DataSheet
+              caption="تفاصيل تسجيلات الدخول اليوميّة"
+              columns={dailyColumns}
+              rows={loginData.daily}
+            />
           )}
-        </Card>
+        </SheetSection>
 
       {loginData && loginData.topReasons.length > 0 && (
-        <Card title="أسباب تعذّر تسجيل الدخول">
-          <div className="table-wrap">
-            <table className="table tbl-stack">
-              <thead>
-                <tr>
-                  <th scope="col">السبب</th>
-                  <th scope="col">العدد</th>
-                </tr>
-              </thead>
-              <tbody>
-                {loginData.topReasons.map((r) => (
-                  <tr key={r.reason}>
-                    <td data-label="السبب"><bdi>{r.reason}</bdi></td>
-                    <td className="owner-num" data-label="العدد">{formatNum(r.count)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
+        <SheetSection index="04" caption="TOP REASONS" title="أسباب تعذّر تسجيل الدخول" pad="none">
+          <DataSheet
+            caption="أسباب تعذّر تسجيل الدخول"
+            columns={reasonColumns}
+            rows={loginData.topReasons}
+          />
+        </SheetSection>
       )}
     </div>
   );

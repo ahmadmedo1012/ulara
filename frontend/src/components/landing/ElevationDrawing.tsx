@@ -71,10 +71,11 @@ import { BP_DRAWABLE, BP_DRAWABLE_HAIR } from './copy';
  *    retired with HeroInkWindow's R342-final deletion).
  */
 
-/* The drawing's own frame — shared with HeroInspect + LandingPage. */
-export const ELEVATION_VB = { w: 1440, h: 640 } as const;
+/* The drawing's own frame — internal (the loader's ink window; the
+ * hero's r359 frame lock lives in Hero.tsx). */
+const ELEVATION_VB = { w: 1440, h: 640 } as const;
 
-export type ElevationVariant = 'sheet' | 'entrance' | 'hero';
+type ElevationVariant = 'sheet' | 'entrance' | 'hero';
 
 /* Repeated-window helper — a library/auditorium window with its
  * center mullion (the drafting shorthand for glazing). */

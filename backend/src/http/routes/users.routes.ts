@@ -30,6 +30,8 @@ import { resolveCallerInstitutionScope, institutionContextRequiredError } from '
 // r323 B4 — the demo cohort sweep («حذف بيانات العرض»): the registrar's
 // one-action removal of the @demo.ulara.ly pilot sample.
 import { demoCohortStats, removeDemoCohort } from '../../modules/users/demo-cohort.js';
+// r359 A4 — request idempotency (bulk-import commit is side-effectful).
+import { idempotencyMiddleware } from '../middleware/idempotency.js';
 
 const router = Router();
 router.use(authMiddleware);
@@ -127,6 +129,116 @@ router.get(
         prisma.user.count({ where }),
       ]);
       res.json({ data, meta: buildMeta(page, limit, total) });
+    } catch (e) {
+      next(e);
+    }
+  },
+);
+
+// ── r359 A4 — bulk EXPORT (the import's twin) ─────────────────────
+// GET /users/export?role=&format=csv|json — ADMIN/OWNER, the SAME
+// tenant + faculty governance scope as the list above (what you cannot
+// govern, you do not export). Bounded: at most 10,000 rows (the cap is
+// stated in the response headers — a larger institution pages through
+// the regular list API). CSV is UTF-8 WITH BOM so Excel renders Arabic
+// names correctly; json returns the rows as-is.
+export const EXPORT_MAX_ROWS = 10_000;
+
+const exportQuerySchema = z.object({
+  role: z.nativeEnum(Role).optional(),
+  format: z.enum(['csv', 'json']).default('csv'),
+});
+
+router.get(
+  '/export',
+  requireRole(Role.ADMIN, Role.OWNER),
+  validate(exportQuerySchema, 'query'),
+  createRouteLimiter({ windowMs: 60_000, max: 3 }),
+  async (req, res, next) => {
+    try {
+      const { role, format } = req.query as unknown as { role?: Role; format: 'csv' | 'json' };
+      // Identical scope discipline to GET /users (faculty governance +
+      // verified institution context; OWNER = platform-wide).
+      const scopeFacultyId = await getGovernanceScope(req.user!.id);
+      const institutionScope =
+        req.user!.role === Role.ADMIN || req.user!.role === Role.QUALITY
+          ? await resolveCallerInstitutionScope(req.user!.id, req.user!.institutionId)
+          : null;
+      if (
+        (req.user!.role === Role.ADMIN || req.user!.role === Role.QUALITY) &&
+        !institutionScope
+      ) {
+        throw institutionContextRequiredError();
+      }
+      const where = buildScopedUserWhere(
+        scopeFacultyId,
+        { ...(role ? { role } : {}) },
+        institutionScope,
+      );
+
+      const rows = await prisma.user.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        take: EXPORT_MAX_ROWS + 1,
+        select: {
+          id: true,
+          email: true,
+          role: true,
+          firstName: true,
+          lastName: true,
+          isActive: true,
+          emailVerifiedAt: true,
+          createdAt: true,
+          memberships: { select: { institutionId: true, role: true, isActive: true } },
+          studentProfiles: { select: { universityId: true }, take: 1 },
+        },
+      });
+      const truncated = rows.length > EXPORT_MAX_ROWS;
+      const bounded = truncated ? rows.slice(0, EXPORT_MAX_ROWS) : rows;
+
+      const stamp = new Date().toISOString().slice(0, 10);
+      res.setHeader('X-Export-Rows', String(bounded.length));
+      if (truncated) res.setHeader('X-Export-Truncated', 'true');
+
+      if (format === 'json') {
+        res.setHeader('Content-Disposition', `attachment; filename="ulara-users-${stamp}.json"`);
+        res.json({ data: bounded, meta: { total: bounded.length, truncated } });
+        return;
+      }
+
+      // CSV: BOM + header row; memberships flatten to `inst:role` pairs.
+      const header = ['id', 'email', 'role', 'firstName', 'lastName', 'universityId', 'isActive', 'emailVerified', 'createdAt', 'memberships'];
+      const escape = (v: unknown): string => {
+        const s = v === null || v === undefined ? '' : String(v);
+        // NOTE: the regex lives behind an `=` (not a bare `return /…/`) —
+        // the OpenAPI generator's source scanner treats a `/` after a
+        // word as division, and a `return /…/.test(…)` shape would eat
+        // the wrong span (its string-skipper would swallow a paren).
+        const needsQuoting = /[",\n]/.test(s);
+        return needsQuoting ? `"${s.replace(/"/g, '""')}"` : s;
+      };
+      const lines = [header.join(',')];
+      for (const r of bounded) {
+        lines.push(
+          [
+            r.id,
+            r.email,
+            r.role,
+            r.firstName,
+            r.lastName,
+            r.studentProfiles[0]?.universityId ?? '',
+            r.isActive ? '1' : '0',
+            r.emailVerifiedAt ? '1' : '0',
+            r.createdAt.toISOString(),
+            r.memberships.map((m) => `${m.institutionId}:${m.role}${m.isActive ? '' : ':inactive'}`).join(';'),
+          ]
+            .map(escape)
+            .join(','),
+        );
+      }
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      res.setHeader('Content-Disposition', `attachment; filename="ulara-users-${stamp}.csv"`);
+      res.send(`\uFEFF${lines.join('\n')}\n`);
     } catch (e) {
       next(e);
     }
@@ -561,6 +673,9 @@ router.post(
   '/bulk-import/commit',
   bulkImportLimiter,
   requireRole(Role.ADMIN, Role.OWNER),
+  // r359 A4 — AFTER auth (the key scope is the user); a network retry
+  // returns the stored response instead of re-importing.
+  idempotencyMiddleware(),
   validate(bulkImportBodySchema, 'body'),
   async (req, res, next) => {
     try {

@@ -8,7 +8,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
-import { PageFrame, PageHeader } from '../../components/patterns';
+import { PageFrame, PageHeader, KpiBand } from '../../components/patterns';
 import { toast } from '../../lib/toast';
 import { formatDate } from '../../utils/numbers';
 import {
@@ -94,8 +94,6 @@ export function InstitutionOverviewPage() {
     }
   };
 
-  const unitCount = orgUnitsQuery.data?.meta?.total ?? 0;
-  const peopleCount = peopleQuery.data?.meta?.total ?? 0;
   const activeLicenses = (licensesQuery.data?.data ?? []).filter(
     (l) => l.status === 'ACTIVE' || l.status === 'RENEWED',
   );
@@ -117,22 +115,41 @@ export function InstitutionOverviewPage() {
       >
         {inst && (
           <>
-            <div className="inst-stats">
-              <Link to={ROUTES.institutionOrganization} className="inst-stat">
-                <span className="inst-stat-value">{unitCount}</span>
-                <span className="inst-stat-label">وحدة تنظيمية</span>
-              </Link>
-              <Link to={ROUTES.institutionPeople} className="inst-stat">
-                <span className="inst-stat-value">{peopleCount}</span>
-                <span className="inst-stat-label">فرد في الدليل</span>
-              </Link>
-              <Link to={ROUTES.institutionLicenses} className="inst-stat">
-                <span className="inst-stat-value">{activeLicenses.length}</span>
-                <span className="inst-stat-label">ترخيص/إذن ساري</span>
-              </Link>
-            </div>
+            {/* R359 final · W3 — the overview facts ride the KPI band
+             * (hairline-divided strip, mono indices, honest-empty «—»
+             * while the counts load; each cell opens its register). */}
+            <KpiBand
+              items={[
+                {
+                  index: '01',
+                  caption: 'ORG UNITS',
+                  label: 'الوحدات التنظيمية',
+                  value: orgUnitsQuery.data?.meta?.total ?? 0,
+                  empty: orgUnitsQuery.data == null,
+                  to: ROUTES.institutionOrganization,
+                },
+                {
+                  index: '02',
+                  caption: 'PEOPLE',
+                  label: 'أفراد الدليل',
+                  value: peopleQuery.data?.meta?.total ?? 0,
+                  empty: peopleQuery.data == null,
+                  to: ROUTES.institutionPeople,
+                },
+                {
+                  index: '03',
+                  caption: 'ACTIVE LICENSES',
+                  label: 'ترخيص/إذن ساري',
+                  value: licensesQuery.data == null ? 0 : activeLicenses.length,
+                  empty: licensesQuery.data == null,
+                  to: ROUTES.institutionLicenses,
+                },
+              ]}
+            />
 
             <InstSection
+              index="01"
+              caption="LEGAL IDENTITY"
               title="الهوية القانونية"
               description="التصنيف القانوني للمؤسسة كما تعيده الخدمة — لا تُخترع أي قيم في الواجهة."
               actions={canClassify ? (
@@ -164,6 +181,8 @@ export function InstitutionOverviewPage() {
             </InstSection>
 
             <InstSection
+              index="02"
+              caption="LICENSES"
               title="التراخيص وأذون المزاولة"
               description="أحدث سجلات الترخيص لدى الجهات المانحة — التفاصيل الكاملة في قسم التراخيص والتفتيش."
               actions={<Link className="btn ghost sm" to={ROUTES.institutionLicenses}>عرض الكل</Link>}

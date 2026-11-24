@@ -70,6 +70,10 @@ import { toast } from '../lib/toast';
 import { dueChip, StatusChip } from '../components/student/StatusChip';
 import { useBottomStackLayer } from '../hooks/useBottomStackLayer';
 import { getBottomStackTotal } from '../lib/bottomStack';
+/* R359 (A3): the sheet grammar joins the gallery — the authenticated
+ * product's page language, demonstrated live. */
+import { SheetSection, KpiBand, DataSheet, CalloutTag, SheetEmpty } from '../components/patterns/Sheet';
+import type { DataSheetColumn } from '../components/patterns/Sheet';
 import '../styles/shared/design.css';
 /* §R325.n — the gallery is the specimen page FOR the app-grammar
    sheet: it mounts the same unlayered sheet AppShell mounts so the
@@ -200,6 +204,34 @@ function Cell({ label, children }: { label: string; children: React.ReactNode })
     </div>
   );
 }
+
+/* §R359 · the sheet-grammar demo data — the DataSheet specimen. */
+interface DsRow {
+  id: string;
+  name: string;
+  faculty: string;
+  year: number;
+  gpa: string;
+  status: 'on' | 'review' | 'off';
+}
+const DS_ROWS: DsRow[] = [
+  { id: 'CS-2026-0142', name: 'سالم عبدالسلام', faculty: 'كلّيّة الهندسة', year: 3, gpa: '3.72', status: 'on' },
+  { id: 'CS-2026-0089', name: 'مريم الفيتوري', faculty: 'كلّيّة العلوم', year: 2, gpa: '3.95', status: 'on' },
+  { id: 'CS-2026-0311', name: 'أحمد الورفلي', faculty: 'كلّيّة الهندسة', year: 4, gpa: '2.84', status: 'review' },
+  { id: 'CS-2026-0007', name: 'نورة بن سعيد', faculty: 'كلّيّة الآداب', year: 1, gpa: '3.10', status: 'off' },
+];
+const DS_COLUMNS: DataSheetColumn<DsRow>[] = [
+  { key: 'id', label: 'الرقم الجامعي', numeric: true, render: (r) => <bdi>{r.id}</bdi> },
+  { key: 'name', label: 'الاسم', render: (r) => r.name },
+  { key: 'faculty', label: 'الكلّيّة', render: (r) => r.faculty },
+  { key: 'year', label: 'السنة', numeric: true, render: (r) => r.year },
+  { key: 'gpa', label: 'المعدّل', numeric: true, render: (r) => r.gpa },
+  {
+    key: 'status',
+    label: 'الحالة',
+    render: (r) => (r.status === 'on' ? 'نشط' : r.status === 'review' ? 'قيد المراجعة' : 'موقوف'),
+  },
+];
 
 export default function DesignPage(): React.JSX.Element {
   usePageTitle('نظام المكونات');
@@ -766,6 +798,44 @@ export default function DesignPage(): React.JSX.Element {
 
         <Section index="17" title="طبقة الأسفل" note="§R325 — كومة الأسفل: لافتة ← توست ← زر عائم">
           <BottomStackDemo />
+        </Section>
+
+        <Section index="18" title="قواعد الورقة — §R359" note="SheetSection · KpiBand · DataSheet · CalloutTag · SheetEmpty — لغة الصفحات خلف تسجيل الدخول">
+          <div className="r323d-grid">
+            <Cell label="SheetSection">
+              <SheetSection index="01" caption="DEMO / SECTION" title="مقطع مؤطّر" pad="tight">
+                <p className="r323d-p">إطار شعري بعلامات تسجيل الزوايا وفهرس ‎[01] وتسمية أحادية لاتينية فوق العنوان العربي — القاعدة التي تُبنى عليها صفحات الأدوار.</p>
+              </SheetSection>
+            </Cell>
+            <Cell label="CalloutTag">
+              <div style={{ display: 'flex', gap: 'var(--sp-2)', alignItems: 'center', flexWrap: 'wrap' }}>
+                <CalloutTag pin="01">قبل الإصلاح</CalloutTag>
+                <CalloutTag pin="02">بعد الإصلاح</CalloutTag>
+                <CalloutTag pin="A" tone="neutral">ملاحظة</CalloutTag>
+              </div>
+            </Cell>
+            <Cell label="SheetEmpty">
+              <SheetEmpty code="NO DATA" title="لا بيانات بعد" desc="الحالة الفارغة الصادقة بلغة الورقة نفسها." />
+            </Cell>
+          </div>
+          <SheetSection index="02" caption="DEMO / KPI BAND" title="شريط المؤشرات" pad="none" className="r323d-sheet-demo">
+            <KpiBand
+              items={[
+                { index: '01', caption: 'STUDENTS', label: 'الطلاب النشطون', value: 1042, delta: '+3.2%', deltaTone: 'positive' },
+                { index: '02', caption: 'FACULTY', label: 'هيئة التدريس', value: 137, delta: 'ثابت' },
+                { index: '03', caption: 'COURSES', label: 'مقرّرات نشطة', value: 486, to: '/__design' },
+                { index: '04', caption: 'ATTENDANCE', label: 'معدل الحضور', value: 82, unit: '%', deltaTone: 'warning', delta: 'مراجعة' },
+                { index: '05', caption: 'EMPTY', label: 'قيمة غير متاحة بعد', value: '—', empty: true },
+              ]}
+            />
+          </SheetSection>
+          <SheetSection index="03" caption="DEMO / DATA SHEET" title="جدول البيانات الكثيف" pad="none" className="r323d-sheet-demo">
+            <DataSheet
+              caption="عيّنة جدول البيانات"
+              columns={DS_COLUMNS}
+              rows={DS_ROWS}
+            />
+          </SheetSection>
         </Section>
       </main>
 

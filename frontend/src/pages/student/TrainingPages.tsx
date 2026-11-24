@@ -19,13 +19,18 @@ import {
   AlertTriangle,
 } from 'lucide-react';
 import { Card, Badge, ProgressBar, UserAvatar, AlertRow } from '../../components/primitives';
-import { StatStrip } from '../../components/primitives/Ledger';
 /* r265 (4E — اتجاه Superlist): شبكة بطاقات المسارات تصير قائمة صفوف
    هادئة (عقد RowList/RowItem) — العنوان باب الصف والتفاصيل على السطر
    الثانوي والتقدّم في الطرف. G النهائية: الإطار/الترويسة/التصفية على
    عقد patterns كاملة (PageFrame/PageHeader/FilterBar) — نفس لغة
    عائلة المجتمع/المسابقات/الكليات. */
 import { PageFrame, PageHeader, RowList, RowItem, FilterBar } from '../../components/patterns';
+/* R359 (A3) — the sheet grammar: the KPI band of real progression
+ * counts + the framed sections replace the StatStrip + Card/EmptyCell
+ * seats (the roster exemplar's recomposition). XP/level values render
+ * as INK numerals — the tier orbs + tinted pills retire. */
+import { SheetSection, KpiBand } from '../../components/patterns';
+import { EmptyCell } from '../../components/student';
 import { PageSkeleton, DetailSkeleton, ErrorState, EmptyState, Skeleton, ListSkeleton, CardSkeleton } from '../../components/primitives/States';
 import { Icon } from '../../components/Icon';
 import { EmojiIcon } from '../../components/EmojiIcon';
@@ -40,9 +45,7 @@ import { TIER_LABEL, TIER_COLOR, RARITY_COLOR, RARITY_LABEL } from '../../lib/ga
 import { apiErrorMessage, countAr } from '../../lib/format';
 import { useIsNarrowLayout } from '../../hooks/useIsNarrowLayout';
 import { useEntityPageTitle } from '../../components/layout/AppShell';
-/* R319 (c3-S2) — the §B2 kit: the hatched empty cell (the AchievementsPage
- * tab panels' honest empties). */
-import { EmptyCell } from '../../components/student';
+
 import '../../styles/training.css'; // training surfaces + shared families this module owns (D11 css split, 12-15)
 /* R305 DS: the shared student vocabulary + the supplemental family's
    page-scoped refinements (the achievements deep strip — §2 of that sheet). */
@@ -117,67 +120,60 @@ export default function TrainingCatalogPage() {
   return (
     <PageFrame>
       <PageHeader
+        eyebrow="طلاب الجامعة"
         title="التطوير الذاتي"
         description="مسارات تدريبية مصمَّمة بعناية لتناسب احتياجاتك الأكاديمية والمهنية. أكمل مساراً لتحصل على سجلّ إتمام موثَّق من المنصة."
       />
 
-      {/* My summary — KPI band + level progress. Pending → shape-matched
-          skeletons; error → honest message + retry (never a fake summary). */}
-      {meQ.isPending ? (
-        <>
-          {/* 22-c (A4 P2-2): 4-tile skeleton matches the landed grid-4
-              KPI band (was the shared 3-tile grid-3 — shift on load). */}
-          <KpiStripSkeleton count={4} />
-          <LevelBandSkeleton />
-        </>
-      ) : meQ.isError ? (
-        <Card>
+      {/* R359 — the KPI band: the four real progression counts (points
+          · badges · active tracks · certificates) with the level + tier
+          + badge-pool facts as the cells' deltas. XP/level values are
+          INK numerals — the tier orb + tinted level band retire (the
+          color law). Pending renders the band in the honest-empty
+          register; error keeps its honest retry inside the frame. */}
+      {meQ.isError ? (
+        <SheetSection index="01" caption="PROGRESS" title="ملخّص تقدّمك">
           <ErrorState
-            message="تعذَّر تحميل ملخص تقدّمك في التطوير الذاتي"
+            message="تعذّر تحميل ملخص تقدّمك في التطوير الذاتي"
             error={meQ.error}
             onRetry={() => meQ.refetch()}
           />
-        </Card>
+        </SheetSection>
       ) : me?.level ? (
-        <>
-          <StatStrip
-            ariaLabel="ملخّص إنجازاتك"
-            cells={[
-              { label: 'نقاطك', value: formatNum(me.points), trend: `المستوى ${me.level.level} · ${TIER_LABEL[me.level.tier]}` },
-              { label: 'الأوسمة', value: formatNum(me.badgeCount), trend: badgesQ.data ? `من ${countAr(badgesQ.data.length, ['وسام واحد', 'وسامين', 'أوسمة', 'وساماً'])} في المنصة` : 'في مسارات التطوير الذاتي' },
-              { label: 'مسارات نشطة', value: formatNum(enrolledCount), trend: countAr(completedCount, ['واحد مكتمل', 'مكتملان', 'مكتملة', 'مكتمل']) },
-              { label: 'الشهادات', value: formatNum(me.certificateCount), trend: 'إتمام موثَّق من المنصة' },
-            ]}
-          />
-
-          {/* Level progress band */}
-          <Card>
-            <div className="level-band">
-              <div
-                className="tier-orb"
-                style={{ ['--tier-color' as never]: TIER_COLOR[me.level.tier] }}
-                aria-hidden
-              >
-                {me.level.level}
-              </div>
-              <div className="level-band-main">
-                <div className="text-xs text-subtle">
-                  {TIER_LABEL[me.level.tier]} · المستوى <bdi>{me.level.level}</bdi>
-                </div>
-                <ProgressBar
-                  value={me.level.pctIntoLevel}
-                  color={TIER_COLOR[me.level.tier]}
-                  label={`${pointsAr(me.level.toNext)} للمستوى التالي`}
-                  ariaLabel="التقدّم نحو المستوى التالي في التطوير الذاتي"
-                />
-              </div>
-              <Link to="/achievements" className="btn ghost sm">
-                عرض الإنجازات
-                <Icon icon={ChevronLeft} size={14} />
-              </Link>
-            </div>
-          </Card>
-        </>
+        <KpiBand
+          items={[
+            {
+              index: '01',
+              caption: 'POINTS',
+              label: 'نقاطك',
+              value: me.points,
+              delta: `المستوى ${me.level.level} · ${TIER_LABEL[me.level.tier]}`,
+            },
+            {
+              index: '02',
+              caption: 'BADGES',
+              label: 'الأوسمة',
+              value: me.badgeCount,
+              delta: badgesQ.data
+                ? `من ${countAr(badgesQ.data.length, ['وسام واحد', 'وسامين', 'أوسمة', 'وساماً'])} في المنصة`
+                : 'في مسارات التطوير الذاتي',
+            },
+            {
+              index: '03',
+              caption: 'TRACKS',
+              label: 'مسارات نشطة',
+              value: enrolledCount,
+              delta: countAr(completedCount, ['واحد مكتمل', 'مكتملان', 'مكتملة', 'مكتمل']),
+            },
+            {
+              index: '04',
+              caption: 'CERTS',
+              label: 'الشهادات',
+              value: me.certificateCount,
+              delta: 'إتمام موثَّق من المنصة',
+            },
+          ]}
+        />
       ) : null}
 
       {/* Category filter pills — only once the catalog is loaded (an
@@ -214,21 +210,34 @@ export default function TrainingCatalogPage() {
         />
       )}
 
-      {/* Track rows — r265: قائمة صفوف هادئة بدل شبكة بطاقات. pending →
-          هيكل مطابق، error → حالة إعادة محاولة صادقة (لا «لا توجد
-          مسارات» فوق واجهة ميتة). */}
+      {/* Track rows — r265: قائمة صفوف هادئة بدل شبكة بطاقات. R359:
+          the framed [01] TRACK CATALOG sheet carries every honest state
+          (loading/error/empty/resolved); the «عرض الإنجازات» cross-link
+          (the old level band's verb) rides the head rule's aside slot. */}
+      <SheetSection
+        index="01"
+        caption="TRACK CATALOG"
+        title="المسارات التدريبية"
+        aside={(
+          <Link to="/achievements" className="btn ghost sm">
+            عرض الإنجازات
+            <Icon icon={ChevronLeft} size={14} />
+          </Link>
+        )}
+        pad="none"
+      >
       {tracksQ.isPending ? (
         <ListSkeleton rows={5} />
       ) : tracksQ.isError ? (
-        <Card>
+        <div className="sg-pad-in">
           <ErrorState
             message="تعذَّر تحميل المسارات التدريبية"
             error={tracksQ.error}
             onRetry={() => tracksQ.refetch()}
           />
-        </Card>
+        </div>
       ) : visible.length === 0 ? (
-        <Card>
+        <div className="sg-pad-in">
           {/* r305 (2-c): خريطة العصبة — «المقرّرات empty-courses» لمحتوى
               التعلّم (كانت empty-community)؛ أرضية المجتمع تبقى على
               أسطح المجتمع فقط. */}
@@ -238,7 +247,7 @@ export default function TrainingCatalogPage() {
             illustration="empty-courses"
             description="ستظهر المسارات الجديدة هنا فور نشرها من فريق الجامعة."
           />
-        </Card>
+        </div>
       ) : (
         <RowList aria-label="قائمة المسارات التدريبية">
           {visible.map((t) => (
@@ -246,6 +255,7 @@ export default function TrainingCatalogPage() {
           ))}
         </RowList>
       )}
+      </SheetSection>
     </PageFrame>
   );
 }
@@ -316,19 +326,6 @@ function KpiStripSkeleton({ count = 3 }: { count?: number }) {
   );
 }
 
-function LevelBandSkeleton() {
-  return (
-    <Card>
-      <div className="level-band" aria-hidden>
-        <Skeleton width={48} height={48} rounded="50%" />
-        <div className="level-band-main">
-          <Skeleton width={150} height={11} />
-          <Skeleton width="100%" height={8} rounded="var(--r-full)" />
-        </div>
-      </div>
-    </Card>
-  );
-}
 
 /* ═══════════════ Single track page ═══════════════ */
 export function TrainingTrackPage() {
@@ -814,16 +811,34 @@ export function AchievementsPage() {
         </Card>
       ) : me?.level ? (
         <div className="r305a-strip">
-          {/* R305 DS: the achievements KPI strip rides the page's ONE deep
-              band (r305a-strip). The gold DISCIPLINE keeps --gold on the
-              achievement anatomy (tier orbs, xp fill, +XP chips — training.css
-              gamification section); the strip's numerals stay band-neutral ink. */}
-          <StatStrip
-            ariaLabel="ملخّص نقاطك"
-            cells={[
-              { label: 'مجموع النقاط', value: formatNum(me.points), trend: `المستوى ${me.level.level} · ${TIER_LABEL[me.level.tier]}` },
-              { label: 'الأوسمة المحقّقة', value: formatNum(me.badgeCount), trend: badgesQ.data ? `من ${countAr(badgesQ.data.length, ['وسام واحد', 'وسامين', 'أوسمة', 'وساماً'])}` : undefined },
-              { label: 'الشهادات', value: formatNum(me.certificateCount), trend: 'إتمام موثَّق من المنصة' },
+          {/* R359 (A3 · W2-a) — the achievements band joins the KpiBand
+              register (the training overview's twin conversion). The gold
+              DISCIPLINE keeps --gold on the achievement anatomy (tier
+              orbs, xp fill, +XP chips — training.css gamification
+              section); the band's numerals stay ink. */}
+          <KpiBand
+            items={[
+              {
+                index: '01',
+                caption: 'POINTS',
+                label: 'مجموع النقاط',
+                value: me.points,
+                delta: `المستوى ${me.level.level} · ${TIER_LABEL[me.level.tier]}`,
+              },
+              {
+                index: '02',
+                caption: 'BADGES',
+                label: 'الأوسمة المحقّقة',
+                value: me.badgeCount,
+                delta: badgesQ.data ? `من ${countAr(badgesQ.data.length, ['وسام واحد', 'وسامين', 'أوسمة', 'وساماً'])}` : undefined,
+              },
+              {
+                index: '03',
+                caption: 'CERTS',
+                label: 'الشهادات',
+                value: me.certificateCount,
+                delta: 'إتمام موثَّق من المنصة',
+              },
             ]}
           />
         </div>

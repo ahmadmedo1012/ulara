@@ -116,9 +116,12 @@ describe('r188 brand reset — campus photography retired (no real-university im
        DELETED HeroInkWindow (superseded, zero consumers — git history
        keeps the rollback; ElevationArt survives module-internal to
        ElevationDrawing for the SheetLoader's entrance variant). */
-    expect(src).toContain('<CampusPlate variant="ink" />');
-    const ink = read('src/components/landing/hero/CampusPlate.tsx');
-    expect(ink).toContain('variant === \'ink\'');
+    /* r359 A1 — the hero's ink seat is the r359 ELEVATION family: the
+     * A2 art-contract glob (hero-elevation) with the committed
+     * fallback ElevationArt; the semantics (whole drafted elevation,
+     * transparent paper, no raster) re-pin on the new seats. */
+    expect(src).toContain('<ElevationArt className="hro-elevation" viewBox={vb} />');
+    const ink = read('src/components/landing/hero/ElevationArt.tsx');
     // transparent paper — the raster <image> is gone from the plate
     expect(ink).not.toContain('<image');
     // …and the r188 provenance strings survive (brand gates below

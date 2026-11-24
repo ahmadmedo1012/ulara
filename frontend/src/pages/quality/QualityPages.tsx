@@ -7,9 +7,9 @@ import {
   LineElement, BarElement, ArcElement, Filler, Tooltip, Legend,
 } from 'chart.js';
 import {
-  ShieldCheck, BookOpen, Activity,
-  AlertTriangle, TrendingUp, FileText, ClipboardCheck, ListChecks,
-  Building2, School, Star, ArrowLeft, X,
+  BookOpen, Activity,
+  FileText, ClipboardCheck, ListChecks,
+  School, Star, ArrowLeft, X,
   CheckCircle2, Search, Eye,
   type LucideIcon,
 } from 'lucide-react';
@@ -21,12 +21,14 @@ import { Card, Badge, AlertRow, ProgressBar, UserAvatar } from '../../components
  * header grammar (the primitives/PageHeader form stays for the families
  * that still own it). */
 import { PageHeader } from '../../components/patterns';
-import { StatStrip } from '../../components/primitives/Ledger';
+/* R359 (A3) — the sheet grammar: the quality dashboard is the
+ * reference implementation of the authenticated product's new page
+ * language (framed sections + the KPI band + the lateral split). */
+import { SheetSection, KpiBand } from '../../components/patterns';
 import { ChartFrame } from '../../components/charts';
 import { cartesianOptions, radialOptions, chartColors, useChartThemeKey } from '../../lib/chartTheme';
 import { ErrorState, EmptyState, ChartSkeleton, ListSkeleton, TableSkeleton, Skeleton, CardSkeleton } from '../../components/primitives/States';
 import { useCompactRosterBand } from '../admin/AdminPages'; // R341 deadcode reconciliation — one definition (see the Professor Evaluation note)
-import { CountIn } from '../../components/motion/CountIn';
 import { Icon } from '../../components/Icon';
 import { api, unwrap } from '../../lib/api';
 import { formatRelativeArShort, WEEKDAY_NAMES_AR, countAr } from '../../lib/format';
@@ -454,119 +456,120 @@ export function QualityDashboardPage() {
       <div className="hr-scope">
       {pageHeader}
 
-      {/* R189 — the typographic stat strip (was the grid-4 KPI tiles). */}
-      <StatStrip
-        ariaLabel="مؤشرات الجودة الأساسية"
-        cells={[
-          {
-            label: 'الطلاب النشطون',
-            value: <CountIn value={d.users.STUDENT ?? 0} />,
-            trend: 'إجمالي',
-            trendTone: 'flat',
-          },
-          {
-            label: 'هيئة التدريس',
-            value: <CountIn value={d.users.TEACHER ?? 0} />,
-            trend: 'فاعلون',
-            trendTone: 'flat',
-            to: '/quality/professors',
-          },
-          {
-            label: 'مقرّرات نشطة',
-            value: <CountIn value={d.offerings} />,
-            trend: countAr(d.lectures, ['محاضرة واحدة', 'محاضرتان', 'محاضرات', 'محاضرة']),
-            trendTone: 'flat',
-            to: '/quality/courses',
-          },
-          {
-            label: 'معدل الحضور',
-            value: <CountIn value={Math.round(attendance.presentRate)} suffix="%" />,
-            trend: countAr(attendance.total, ['سجل واحد', 'سجلان', 'سجلات', 'سجلاً']),
-            trendTone: attendance.presentRate >= 75 ? 'up' : attendance.presentRate >= 60 ? 'flat' : 'down',
-            to: '/quality/courses?metric=attendance',
-          },
-          {
-            label: 'بحوث مكتملة',
-            value: `${Math.round(paperProgress)}%`,
-            trend: paperTotal > 0 ? `${formatNum(paperDone)} من ${formatNum(paperTotal)} بحثًا` : 'لا بحوث بعد',
-            trendTone: 'flat',
-          },
-        ]}
-      />
+      {/* R359 (A3): the KPI BAND — the reference's dimension-string
+          register (hairline-divided strip of huge mono numerals)
+          replaces the narrow stacked strip. Values/payloads identical
+          to the r189 StatStrip cells; every number still derives from
+          a real payload field. */}
+      <SheetSection index="01" caption="QUALITY / KPI" title="المؤشرات الأساسية" pad="none">
+        <KpiBand
+          items={[
+            {
+              index: '01',
+              caption: 'STUDENTS',
+              label: 'الطلاب النشطون',
+              value: d.users.STUDENT ?? 0,
+              delta: 'إجمالي',
+            },
+            {
+              index: '02',
+              caption: 'FACULTY',
+              label: 'هيئة التدريس',
+              value: d.users.TEACHER ?? 0,
+              delta: 'فاعلون',
+              to: '/quality/professors',
+            },
+            {
+              index: '03',
+              caption: 'COURSES',
+              label: 'مقرّرات نشطة',
+              value: d.offerings,
+              delta: countAr(d.lectures, ['محاضرة واحدة', 'محاضرتان', 'محاضرات', 'محاضرة']),
+              to: '/quality/courses',
+            },
+            {
+              index: '04',
+              caption: 'ATTENDANCE',
+              label: 'معدل الحضور',
+              value: Math.round(attendance.presentRate),
+              unit: '%',
+              delta: countAr(attendance.total, ['سجل واحد', 'سجلان', 'سجلات', 'سجلاً']),
+              deltaTone: attendance.presentRate >= 75 ? 'positive' : attendance.presentRate >= 60 ? 'neutral' : 'danger',
+              to: '/quality/courses?metric=attendance',
+            },
+            {
+              index: '05',
+              caption: 'RESEARCH',
+              label: 'بحوث مكتملة',
+              value: `${Math.round(paperProgress)}%`,
+              delta: paperTotal > 0 ? `${formatNum(paperDone)} من ${formatNum(paperTotal)} بحثًا` : 'لا بحوث بعد',
+            },
+          ]}
+        />
+      </SheetSection>
 
-      {/* 4C-b (Superlist board): ONE compact signal line (the stat strip)
-          then the oversight board — main column = weekly activity chart +
-          the honest KPI ledger; side rail = attendance mix + alerts.
-          Charts stay ChartFrame-wrapped with their sr-only tables. */}
-      <div className="qlt-board qlt-section">
-        <div className="qlt-board-main">
-          <Card
-            title="النشاط الأسبوعي"
-            subtitle={
-              e.weeklyActiveEstimated
-                ? 'جلسات يومية نشطة — منحنى تقديري'
-                : 'جلسات يومية نشطة'
-            }
-            icon={TrendingUp}
-          >
-          <ChartFrame
-            ariaLabel={`مخطط خطّي للنشاط الأسبوعي — جلسات نشطة يومياً${e.weeklyActiveEstimated ? ' (منحنى تقديري)' : ''}`}
-            summary={
-              e.weeklyActive.length > 0
-                ? `الذروة ${countAr(Math.max(...e.weeklyActive), ['جلسة واحدة', 'جلستان', 'جلسات', 'جلسة'])}`
-                : 'لا بيانات نشاط لهذا الأسبوع.'
-            }
-            table={{
-              caption: 'النشاط الأسبوعي — جلسات نشطة يومياً',
-              columns: ['اليوم', 'جلسات'],
-              rows: WEEKDAY_NAMES_AR.map((day, i) => [day, e.weeklyActive[i] ?? 0]),
-            }}
-            height={220}
-          >
-          <Line
-            key={themeKey}
-            aria-hidden="true"
-            data={{
-              labels: WEEKDAY_NAMES_AR,
-              datasets: [{
-                label: 'مستخدم نشط',
-                data: e.weeklyActive,
-                borderColor: cc.accent,
-                backgroundColor: `color-mix(in srgb, ${cc.accent} 12%, transparent)`,
-                tension: 0.4,
-                fill: true,
-                borderWidth: 2,
-                pointRadius: 3,
-                pointHoverRadius: 5,
-                pointBackgroundColor: cc.accent,
-                // 5-A8 P2-4 (chart honesty): the backend's deterministic
-                // fallback is a binary square wave — smoothing it into a
-                // curve invents a trend that isn't in the data. Estimated
-                // series render as DOTS ONLY (no interpolation, no fill).
-                ...(e.weeklyActiveEstimated ? { showLine: false, fill: false, pointRadius: 5, pointHoverRadius: 7 } : {}),
-              }],
-            }}
-            options={opts}
-          />
-        </ChartFrame>
-          </Card>
+      {/* R359 (A3): the LATERAL SPLIT — the reference's plan/text
+          division (7:5 with a full-height hairline). Main column = the
+          weekly activity chart + the honest KPI ledger; side rail =
+          the attendance mix + alerts. Charts stay ChartFrame-wrapped
+          with their sr-only tables. */}
+      <div className="sg-split">
+        <div>
+          <SheetSection index="02" caption="WEEKLY ACTIVITY" title="النشاط الأسبوعي" className="qlt-sec">
+            <ChartFrame
+              ariaLabel={`مخطط خطّي للنشاط الأسبوعي — جلسات نشطة يومياً${e.weeklyActiveEstimated ? ' (منحنى تقديري)' : ''}`}
+              summary={
+                e.weeklyActive.length > 0
+                  ? `الذروة ${countAr(Math.max(...e.weeklyActive), ['جلسة واحدة', 'جلستان', 'جلسات', 'جلسة'])}`
+                  : 'لا بيانات نشاط لهذا الأسبوع.'
+              }
+              table={{
+                caption: 'النشاط الأسبوعي — جلسات نشطة يومياً',
+                columns: ['اليوم', 'جلسات'],
+                rows: WEEKDAY_NAMES_AR.map((day, i) => [day, e.weeklyActive[i] ?? 0]),
+              }}
+              height={220}
+            >
+              <Line
+                key={themeKey}
+                aria-hidden="true"
+                data={{
+                  labels: WEEKDAY_NAMES_AR,
+                  datasets: [{
+                    label: 'مستخدم نشط',
+                    data: e.weeklyActive,
+                    borderColor: cc.accent,
+                    backgroundColor: `color-mix(in srgb, ${cc.accent} 12%, transparent)`,
+                    tension: 0.4,
+                    fill: true,
+                    borderWidth: 2,
+                    pointRadius: 3,
+                    pointHoverRadius: 5,
+                    pointBackgroundColor: cc.accent,
+                    ...(e.weeklyActiveEstimated ? { showLine: false, fill: false, pointRadius: 5, pointHoverRadius: 7 } : {}),
+                  }],
+                }}
+                options={opts}
+              />
+            </ChartFrame>
+          </SheetSection>
 
           {/* 4C-b: the honest KPI ledger — the four payload-derived
               progressbars as a calm list (hairline rows, mono tabular
               values, thin rails). Labels/values/aria contract unchanged
               (WS-F6 pins the four progressbar names). */}
-          <Card title="مؤشرات الجودة الأساسية" icon={ShieldCheck}>
+          <SheetSection index="03" caption="KPI LEDGER" title="مؤشرات الجودة الأساسية" className="qlt-sec">
             <div className="qlt-kpi-ledger">
               <ProgressBar value={attendance.presentRate} label="معدل الحضور التراكمي" ariaLabel="معدل الحضور التراكمي" color="var(--success)" />
               <ProgressBar value={e.videos?.completionRate ?? 0} label="معدل إكمال المحاضرات" ariaLabel="معدل إكمال المحاضرات" color="var(--accent)" />
               <ProgressBar value={enrollmentRate} label="معدل تسجيل الطلاب في المقرّرات" ariaLabel="معدل تسجيل الطلاب في المقرّرات" color="var(--brand-purple)" />
               <ProgressBar value={paperProgress} label="نسبة البحوث المكتملة التقييم" ariaLabel="نسبة البحوث المكتملة التقييم" color="var(--gold)" />
             </div>
-          </Card>
+          </SheetSection>
         </div>
 
-        <div className="qlt-board-side">
-          <Card title="توزيع الحضور" icon={ClipboardCheck}>
+        <div>
+          <SheetSection index="04" caption="ATTENDANCE MIX" title="توزيع الحضور" className="qlt-sec">
           {/* Degenerate distribution (5-A8 P2-4): one ProgressBar + the
               honest note beats a solid ring that carries no signal. */}
           {attendanceDominant ? (
@@ -600,7 +603,11 @@ export function QualityDashboardPage() {
                 labels: ['حضور', 'تأخر', 'غياب'],
                 datasets: [{
                   data: [attendance.presentRate, attendance.lateRate, attendance.absentRate],
-                  backgroundColor: [cc.success, cc.warning, cc.danger],
+                  /* R359 (A3 · the one-signal law): the mix rides the
+                   * chart dataviz register — royal for the hero series
+                   * (حضور), the hairline grey + ink neutrals for the
+                   * rest; no green/gold/red rainbow on the sheet. */
+                  backgroundColor: [cc.accent, cc.grid, cc.strongText],
                   borderColor: cc.surface,
                   borderWidth: 2,
                 }],
@@ -609,16 +616,18 @@ export function QualityDashboardPage() {
             />
           </ChartFrame>
           )}
-          </Card>
+          </SheetSection>
 
-          <Card title="تنبيهات الجودة" icon={AlertTriangle}>
+          <SheetSection
+            index="05"
+            caption="ALERTS"
+            title="تنبيهات الجودة"
+            className="qlt-sec"
+            aside={<Link to="/quality/alerts" className="btn ghost sm">عرض الكل</Link>}
+          >
           {al.isPending ? (
             <ListSkeleton rows={3} />
           ) : al.isError ? (
-            /* r299 (E item 9): the shared ErrorState (retry built in) —
-               the hand-rolled EmptyState + ghost buttons retired. The
-               section Card keeps its header chrome (title/icon), so the
-               state renders inside it (page-level errors render bare). */
             <ErrorState
               message="تعذّر تحميل التنبيهات"
               error={al.error}
@@ -651,7 +660,7 @@ export function QualityDashboardPage() {
               </Link>
             </>
           )}
-        </Card>
+          </SheetSection>
         </div>
       </div>
       </div>
@@ -730,45 +739,54 @@ export function QualityCoursesPage() {
           </>
         )}
       />
+
+      {/* R359 final — the KPI band: the roster's own honest counts (the
+          server meta.total — falling back to the visible rows when an
+          older payload carries no meta — and the current window). */}
+      <KpiBand
+        items={[
+          { index: '01', caption: 'COURSES', label: 'إجمالي المقرّرات', value: total ?? courses?.length ?? 0, empty: c.isPending },
+          { index: '02', caption: 'SHOWN', label: 'مقرّرات معروضة حالياً', value: courses?.length ?? 0, empty: c.isPending },
+        ]}
+      />
+
       {c.isPending ? (
-        <Card title="المقرّرات النشطة" icon={BookOpen}><TableSkeleton rows={4} cols={8} /></Card>
+        /* The pending mirror keeps the resolved board's frame. */
+        <SheetSection index="01" caption="ACTIVE COURSES" title="المقرّرات النشطة" className="qlt-sec">
+          <TableSkeleton rows={4} cols={8} />
+        </SheetSection>
       ) :
-       c.isError ? <ErrorState message="تعذّر تحميل قائمة المقرّرات" error={c.error} onRetry={() => c.refetch()} /> :
-       !courses?.length ? <Card><EmptyState
-         illustration="empty-list"
-         icon={BookOpen}
-         title={debouncedQ ? 'لا نتائج مطابقة' : 'لا توجد مقرّرات نشطة بعد'}
-         /* r351 A2 (Q3): empty-state prose retired — the title + reset
-          * action suffice. */
-         description=""
-         action={debouncedQ ? (
-           <button type="button" className="btn ghost sm" onClick={clearSearch}>
-             <Icon icon={X} size={13} />
-             مسح البحث
-           </button>
-         ) : undefined}
-       /></Card> : (
-        <Card
+       c.isError ? <ErrorState message="تعذّر تحميل قائمة المقرّرات" error={c.error} onRetry={() => c.refetch()} /> : (
+        /* 5-A8 §6 step 6 (rhythm): the roster is the page's primary
+         * section — it takes the breath after the KPI band. R359 (A3):
+         * the roster sits FRAMED; the count chip + the drill's reset
+         * verb ride the head rule's aside slot. The table itself keeps
+         * the shared .table.tbl-stack DOM — its mobile data-label
+         * contract and the «اكتمال المحتوى» header tooltip are pinned
+         * (QualityPages-rosters). */
+        <SheetSection
+          index="01"
+          caption="ACTIVE COURSES"
           title="المقرّرات النشطة"
-          subtitle={total != null
-            ? (
-              /* R305 DS (§D): the roster count line rides the §0
-                 section-count chip (text unchanged — tests pin it). */
-              <span className="hr-section-count">
-                {`${countAr(total, ['مقرّر واحد', 'مقرّران', 'مقرّرات', 'مقرّراً'])}${debouncedQ ? ' مطابقة للبحث' : ''}${courses && courses.length < total ? ` · تُعرض أول ${courses.length}` : ''}`}
-              </span>
-            )
-            : undefined}
-          icon={BookOpen}
-          actions={metric ? (
-            <button
-              type="button"
-              className="btn ghost sm"
-              onClick={() => setSearchParams({})}
-            >
-              <Icon icon={X} size={13} />
-              عرض الجدول الكامل
-            </button>
+          className="qlt-sec"
+          aside={total != null || metric ? (
+            <>
+              {total != null && (
+                <span className="hr-section-count">
+                  {`${countAr(total, ['مقرّر واحد', 'مقرّران', 'مقرّرات', 'مقرّراً'])}${debouncedQ ? ' مطابقة للبحث' : ''}${courses && courses.length < total ? ` · تُعرض أول ${courses.length}` : ''}`}
+                </span>
+              )}
+              {metric && (
+                <button
+                  type="button"
+                  className="btn ghost sm"
+                  onClick={() => setSearchParams({})}
+                >
+                  <Icon icon={X} size={13} />
+                  عرض الجدول الكامل
+                </button>
+              )}
+            </>
           ) : undefined}
         >
           {/* R304: the roster search chrome — now the family-owned
@@ -789,14 +807,30 @@ export function QualityCoursesPage() {
               />
             </div>
           </div>
-          {/* tbl-stack (A8 P1-1): the roster collapses to labelled cards
-              on phones — same .table-wrap > .table.tbl-stack pattern as
-              every admin roster (OwnerUsersPage reference). 4C-b: the
-              page-scoped qlt-table restyle keeps the ONE shared DOM —
-              mono tabular metric columns, identity cell (name + code)
-              leading. R305 DS (§D): .hr-table layers the filled
-              header + denser hairline rows over the shared recipe. */}
+          {!courses?.length ? (
+            <EmptyState
+              illustration="empty-list"
+              icon={BookOpen}
+              title={debouncedQ ? 'لا نتائج مطابقة' : 'لا توجد مقرّرات نشطة بعد'}
+              /* r351 A2 (Q3): empty-state prose retired — the title + reset
+               * action suffice. */
+              description=""
+              action={debouncedQ ? (
+                <button type="button" className="btn ghost sm" onClick={clearSearch}>
+                  <Icon icon={X} size={13} />
+                  مسح البحث
+                </button>
+              ) : undefined}
+            />
+          ) : (
           <div className="table-wrap">
+            {/* tbl-stack (A8 P1-1): the roster collapses to labelled cards
+                on phones — same .table-wrap > .table.tbl-stack pattern as
+                every admin roster (OwnerUsersPage reference). 4C-b: the
+                page-scoped qlt-table restyle keeps the ONE shared DOM —
+                mono tabular metric columns, identity cell (name + code)
+                leading. R305 DS (§D): .hr-table layers the filled
+                header + denser hairline rows over the shared recipe. */}
             <table className="table tbl-stack qlt-table hr-table">
               <thead>
                 <tr>
@@ -871,7 +905,8 @@ export function QualityCoursesPage() {
               </tbody>
             </table>
           </div>
-        </Card>
+          )}
+        </SheetSection>
       )}
       </div>
     </div>
@@ -939,7 +974,10 @@ export function QualityProfessorsPage() {
           actions={<ReadOnlyBadge />}
         />
         <StatStripSkeleton cells={3} />
-        <Card title="هيئة التدريس" icon={School}><TableSkeleton rows={5} cols={8} /></Card>
+        {/* The pending mirror keeps the resolved roster's frame. */}
+        <SheetSection index="01" caption="FACULTY ROSTER" title="هيئة التدريس" className="qlt-sec">
+          <TableSkeleton rows={5} cols={8} />
+        </SheetSection>
         </div>
       </div>
     );
@@ -1005,52 +1043,58 @@ export function QualityProfessorsPage() {
         )}
       />
 
-      {/* R190 (D4): the typographic stat strip — was the grid-3
-          icon-tile band (the audit's "identical icon-box grid" read).
-          The «بحاجة لمتابعة» cell stays a stat; its roster FILTER
-          affordance moved down into the toolbar as a pressed pill
-          (the filter belongs beside the search — the pinned toggle
-          contract lives there now). */}
-      <StatStrip
-        ariaLabel="مؤشرات هيئة التدريس"
-        cells={[
+      {/* R190 (D4): the KPI band — was the grid-3 icon-tile band (the
+          audit's "identical icon-box grid" read), then the typographic
+          strip; R359 final re-keys it onto the band register (count-in
+          numerals, real Latin classifications, the follow-up delta in
+          the semantic tone). The «بحاجة لمتابعة» FILTER affordance
+          stays in the toolbar below as a pressed pill (the pinned
+          toggle contract lives there). */}
+      <KpiBand
+        items={[
           {
+            index: '01',
+            caption: 'SATISFACTION',
             label: 'متوسط رضا الطلاب',
-            value: <CountIn value={Math.round(avgSat * 10) / 10} />,
-            trend: 'من 5.0',
-            trendTone: 'flat',
+            value: Math.round(avgSat * 10) / 10,
+            delta: 'من 5.0',
           },
           {
+            index: '02',
+            caption: 'RESPONSE',
             label: 'متوسط الاستجابة',
-            value: <CountIn value={Math.round(avgResp)} suffix=" س" />,
-            trend: 'على رسائل الطلاب',
-            trendTone: 'flat',
+            value: Math.round(avgResp),
+            unit: 'س',
+            delta: 'على رسائل الطلاب',
           },
           {
+            index: '03',
+            caption: 'FOLLOW-UP',
             label: 'بحاجة لمتابعة',
-            value: <CountIn value={lowComp} />,
-            trend: 'التزام أقلّ من 50%',
-            trendTone: lowComp > 0 ? 'down' : 'flat',
+            value: lowComp,
+            delta: 'التزام أقلّ من 50%',
+            deltaTone: lowComp > 0 ? 'danger' : undefined,
           },
         ]}
       />
 
       {/* 5-A8 §6 step 6 (rhythm): the roster is the page's primary
-          section — it takes the breath after the KPI band (the
-          .qlt-section rung replaces the former inline margin). */}
-      <Card
-        className="qlt-section"
+          section — it takes the breath after the KPI band. R359 (A3):
+          the roster sits FRAMED; the count chip rides the head rule's
+          aside slot. The 8-column table keeps the shared
+          .table.tbl-stack DOM — its data-label contract and the
+          gold-ink satisfaction cell are pinned (QualityPages-rosters /
+          QualityDashboard). */}
+      <SheetSection
+        index="01"
+        caption="FACULTY ROSTER"
         title={lowOnly ? `هيئة التدريس · بحاجة لمتابعة (${lowComp})` : 'هيئة التدريس'}
-        subtitle={total != null
-          ? (
-            /* R305 DS (§D): the count line rides the §0
-               section-count chip (text unchanged — tests pin it). */
-            <span className="hr-section-count">
-              {`${countAr(total, ['أستاذ واحد', 'أستاذان', 'أساتذة', 'أستاذاً'])}${searching ? ' مطابقة للبحث' : ''}${professors.length < total ? ` · تُعرض أول ${professors.length}` : ''}`}
-            </span>
-          )
-          : undefined}
-        icon={School}
+        className="qlt-sec"
+        aside={total != null ? (
+          <span className="hr-section-count">
+            {`${countAr(total, ['أستاذ واحد', 'أستاذان', 'أساتذة', 'أستاذاً'])}${searching ? ' مطابقة للبحث' : ''}${professors.length < total ? ` · تُعرض أول ${professors.length}` : ''}`}
+          </span>
+        ) : undefined}
       >
         {/* R304: the roster search chrome — the family-owned
             .tq-toolbar/.tq-search pill (migrated off the borrowed
@@ -1208,7 +1252,7 @@ export function QualityProfessorsPage() {
         </div>
           </>
         )}
-      </Card>
+      </SheetSection>
       </div>
     </div>
   );
@@ -1246,7 +1290,8 @@ export function QualityEngagementPage() {
         <div className="hr-scope">
         {pageHeader}
         <StatStripSkeleton cells={4} />
-        <div className="grid-2-1">
+        {/* The pending mirror keeps the resolved split's shape. */}
+        <div className="sg-split">
           <Card><ChartSkeleton height={240} /></Card>
           <Card><ListSkeleton rows={3} /></Card>
         </div>
@@ -1286,46 +1331,63 @@ export function QualityEngagementPage() {
       <div className="hr-scope">
       {pageHeader}
 
-      <StatStrip
-        ariaLabel="مؤشرات الانخراط"
-        cells={[
+      {/* R359 final — the KPI band: every numeral derives from the
+          /quality/engagement payload; the two drill cells land their
+          rosters pre-filtered (the KpiBand's to= cells are listitems —
+          the drill contract rides the same navigation, one tap on the
+          cell). */}
+      <KpiBand
+        items={[
           {
+            index: '01',
+            caption: 'ATTENDANCE',
             label: 'معدل الحضور',
-            value: <CountIn value={Math.round(attendance.presentRate)} suffix="%" />,
-            trend: countAr(attendance.total, ['سجل واحد', 'سجلان', 'سجلات', 'سجلاً']),
-            trendTone: attendance.presentRate >= 75 ? 'up' : attendance.presentRate >= 60 ? 'flat' : 'down',
+            value: Math.round(attendance.presentRate),
+            unit: '%',
+            delta: countAr(attendance.total, ['سجل واحد', 'سجلان', 'سجلات', 'سجلاً']),
+            deltaTone: attendance.presentRate >= 75 ? 'positive' : attendance.presentRate >= 60 ? 'neutral' : 'danger',
             to: '/quality/courses?metric=attendance',
           },
           {
+            index: '02',
+            caption: 'COMPLETION',
             label: 'إكمال المحاضرات',
-            value: <CountIn value={Math.round(videos.completionRate)} suffix="%" />,
-            trend: countAr(videos.completedLectures, ['محاضرة مكتملة', 'محاضرتان مكتملتان', 'محاضرات مكتملة', 'محاضرة مكتملة']),
-            trendTone: 'flat',
+            value: Math.round(videos.completionRate),
+            unit: '%',
+            delta: countAr(videos.completedLectures, ['محاضرة مكتملة', 'محاضرتان مكتملتان', 'محاضرات مكتملة', 'محاضرة مكتملة']),
             to: '/quality/courses?metric=completion',
           },
           {
+            index: '03',
+            caption: 'ENROLLMENT',
             label: 'معدل التسجيل',
-            value: <CountIn value={Math.round(enrollmentRate)} suffix="%" />,
-            trend: countAr(d.enrollments, ['تسجيل واحد', 'تسجيلان', 'تسجيلات', 'تسجيلاً']),
-            trendTone: 'flat',
+            value: Math.round(enrollmentRate),
+            unit: '%',
+            delta: countAr(d.enrollments, ['تسجيل واحد', 'تسجيلان', 'تسجيلات', 'تسجيلاً']),
           },
           {
+            index: '04',
+            caption: 'WEEKLY AVG',
             label: 'متوسط النشاط الأسبوعي',
-            value: weeklyAvg === null ? '—' : <CountIn value={weeklyAvg} />,
-            trend: 'مستخدم/يوم',
-            trendTone: 'flat',
+            value: weeklyAvg ?? '—',
+            empty: weeklyAvg === null,
+            delta: 'مستخدم/يوم',
           },
         ]}
       />
 
       {/* 5-A8 §6 step 6 (rhythm): the charts row is the page's breathing
-          section after the tight KPI band (the .qlt-section rung — the
-          same rhythm the quality dashboard's board carries). */}
-      <div className="grid-2-1 qlt-section">
-        <Card
+          section after the tight KPI band. R359 (A3): the row becomes
+          the LATERAL SPLIT (7:5 with the full-height hairline) — main
+          column = the weekly chart, side rail = the viewing ledger.
+          Charts stay ChartFrame-wrapped with their sr-only tables. */}
+      <div className="sg-split">
+        <SheetSection
+          index="01"
+          caption="WEEKLY ACTIVITY"
           title="النشاط الأسبوعي"
-          icon={TrendingUp}
-          subtitle={d.weeklyActiveEstimated ? 'جلسات يومية · تقديرية' : undefined}
+          className="qlt-sec"
+          aside={d.weeklyActiveEstimated ? <span className="text-sm text-muted">جلسات يومية · تقديرية</span> : undefined}
         >
           <ChartFrame
             ariaLabel="مخطط أعمدة للنشاط الأسبوعي — عدد الجلسات النشطة يومياً"
@@ -1357,16 +1419,16 @@ export function QualityEngagementPage() {
               options={opts}
             />
           </ChartFrame>
-        </Card>
+        </SheetSection>
 
-        <Card title="تحليل المشاهدة" icon={Activity}>
+        <SheetSection index="02" caption="VIEWING ANALYSIS" title="تحليل المشاهدة" className="qlt-sec">
           {/* 4C-b: the payload-derived bars as a calm ledger list. */}
           <div className="qlt-progress-list">
             <ProgressBar value={d.videos.completionRate} label="معدل الإكمال" ariaLabel="معدل إكمال المحاضرات" color="var(--accent)" />
             <ProgressBar value={(d.videos.completedLectures / Math.max(d.videos.totalLectures, 1)) * 100} label="نسبة المحاضرات المكتملة" ariaLabel="نسبة المحاضرات المكتملة" color="var(--success)" />
             <ProgressBar value={d.attendance.absentRate} label="نسبة الغياب" ariaLabel="نسبة الغياب" color="var(--danger)" />
           </div>
-        </Card>
+        </SheetSection>
       </div>
       </div>
     </div>
@@ -1435,7 +1497,8 @@ export function QualityCurriculumPage() {
         <div className="hr-scope">
         {pageHeader}
         <CardSkeleton lines={2} />
-        <Card>
+        {/* The pending mirror keeps the resolved tree's frame. */}
+        <SheetSection index="02" caption="CURRICULUM TREE" title="شجرة المناهج" className="qlt-sec">
           {/* 5-C3 (A9 P2-5): the placeholder carries the primitives-family
               busy semantics (bars stay aria-hidden). 4C-b: the bars are
               row-shaped now — the resolved surface is a course-row list,
@@ -1445,7 +1508,7 @@ export function QualityCurriculumPage() {
               <Skeleton key={i} width="100%" height={56} />
             ))}
           </div>
-        </Card>
+        </SheetSection>
         </div>
       </div>
     );
@@ -1477,13 +1540,26 @@ export function QualityCurriculumPage() {
       <div className="hr-scope">
       {pageHeader}
 
+      {/* R359 final — the KPI band: the tree's own real per-level
+          counts (the same numbers the pills below carry — the band is
+          the at-a-glance register, the pills are the filter verb). */}
+      <KpiBand
+        items={[
+          { index: '01', caption: 'COURSES', label: 'إجمالي المقرّرات', value: total },
+          { index: '02', caption: 'COMPLETE', label: 'مقرّرات مكتملة المحتوى', value: levelCounts.strong, delta: LEVEL_LEGEND.strong },
+          { index: '03', caption: 'PARTIAL', label: 'مقرّرات جزئيّة', value: levelCounts.weak, delta: LEVEL_LEGEND.weak },
+          { index: '04', caption: 'BEHIND', label: 'مقرّرات متأخّرة', value: levelCounts.poor, deltaTone: levelCounts.poor > 0 ? 'warning' : undefined, delta: LEVEL_LEGEND.poor },
+        ]}
+      />
+
       {/* Filter + legend — the pills reuse the shared .filter-pill
           segmented-control family; rows dim (not disappear) so the
           roster stays whole while filtering (4C-b keeps the matrix
           page's dim-in-place contract on the row list). R305 DS
           (§D): .hr-toolbar joins for the one placement grammar, and a
-          pressed pill reads the ember. */}
-      <Card>
+          pressed pill reads the ember. R359 (A3): the rail sits
+          framed, its own [01] region of the sheet. */}
+      <SheetSection index="01" caption="COMPLETION LEVELS" title="مستويات اكتمال المحتوى" className="qlt-sec">
         <div className="filter-pill-row hr-toolbar" role="group" aria-label="تصفية المقرّرات بحسب نسبة اكتمال المحتوى">
           <button
             type="button"
@@ -1516,12 +1592,22 @@ export function QualityCurriculumPage() {
             </span>
           ))}
         </div>
-      </Card>
+      </SheetSection>
 
+      {/* R359 (A3): the whole tree rides ONE framed section — faculties
+          are tree siblings (map-derived rows), so per-faculty [nn]
+          indices would violate the honesty law; each faculty heads its
+          own rung inside the frame with its counted subtitle. */}
+      <SheetSection index="02" caption="CURRICULUM TREE" title="شجرة المناهج" className="qlt-sec">
       <div className="flex-col gap-4">
         {c.data.map((f) => (
-          <Card key={f.id} title={f.name} icon={Building2}
-            subtitle={`${countAr(f.departments.length, ['قسم واحد', 'قسمان', 'أقسام', 'قسماً'])} · ${countAr(f.departments.reduce((s, d) => s + d.courses.length, 0), ['مقرّر واحد', 'مقرّران', 'مقرّرات', 'مقرّراً'])}`}>
+          <section key={f.id} aria-label={f.name}>
+            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 'var(--sp-3)', flexWrap: 'wrap', marginBlockEnd: 'var(--sp-2)' }}>
+              <h3 className="section-title" style={{ margin: 0 }}>{f.name}</h3>
+              <span className="text-xs text-muted">
+                {countAr(f.departments.length, ['قسم واحد', 'قسمان', 'أقسام', 'قسماً'])} · {countAr(f.departments.reduce((s, d) => s + d.courses.length, 0), ['مقرّر واحد', 'مقرّران', 'مقرّرات', 'مقرّراً'])}
+              </span>
+            </div>
             <div className="flex-col gap-4">
               {f.departments.map((d) => {
                 const completions = d.courses.map((co) => courseCompletion(co));
@@ -1596,9 +1682,10 @@ export function QualityCurriculumPage() {
                 );
               })}
             </div>
-          </Card>
+          </section>
         ))}
       </div>
+      </SheetSection>
       </div>
     </div>
   );
@@ -1667,8 +1754,8 @@ export function QualityReportsPage() {
           separators + a quiet hover wash (the former .alert link rows
           retire with their card-in-card boxes). R305 DS (§D): the
           icon wells ride the ember — these rows are the page's primary
-          actions. */}
-      <Card title="اللوحات الحيّة" icon={ListChecks}>
+          actions. R359 (A3): the ledger sits framed, [01] on the sheet. */}
+      <SheetSection index="01" caption="LIVE BOARDS" title="اللوحات الحيّة" className="qlt-sec">
         {/* r351 A2 (Q3): the «أربع لوحات مرتبطة ببعضها» subtitle + the
             per-row descs retired — the row titles are the boards' names. */}
         <div className="qlt-link-rows">
@@ -1689,9 +1776,9 @@ export function QualityReportsPage() {
             </Link>
           ))}
         </div>
-      </Card>
+      </SheetSection>
 
-      <Card title="تصدير تقارير ثابتة (PDF/Excel)" icon={FileText}>
+      <SheetSection index="02" caption="STATIC EXPORTS" title="تصدير تقارير ثابتة (PDF/Excel)" className="qlt-sec">
         {/* R305 DS (§D): the honest pending disclosure rides the §0
             note box (copy unchanged). */}
         <p className="qlt-note hr-note">
@@ -1699,7 +1786,7 @@ export function QualityReportsPage() {
            * live-boards plug retired (they sit directly above). */}
           إصدار التقارير القابلة للتحميل قيد التطوير.
         </p>
-      </Card>
+      </SheetSection>
       </div>
     </div>
   );
@@ -1753,14 +1840,17 @@ export function QualityAlertsPage() {
 
       {q.isPending ? (
         /* r148 (AUDIT-2 L8): قائمة تنبيهات (نقطة خطورة + سطران) —
-           ListSkeleton مطابق الشكل بدل السبينر الصفحي. */
-        <Card><ListSkeleton rows={4} /></Card>
+           ListSkeleton مطابق الشكل بدل السبينر الصفحي. The pending
+           mirror keeps the resolved queue's frame. */
+        <SheetSection index="01" caption="ALERTS QUEUE" title="تنبيهات نشطة" className="qlt-sec">
+          <ListSkeleton rows={4} />
+        </SheetSection>
       ) : q.isError ? (
         /* r299 (E item 9): the sector's ONE page-level error grammar —
            bare ErrorState with a specific message, under the header. */
         <ErrorState message="تعذّر تحميل التنبيهات" error={q.error} onRetry={() => q.refetch()} />
       ) : !q.data || q.data.alerts.length === 0 ? (
-        <Card>
+        <SheetSection index="01" caption="ALERTS QUEUE" title="تنبيهات نشطة" className="qlt-sec">
           {/* r299 (E item 4): the shared EmptyState primitive (the
               dashboard alerts card's own convention) — the hand-rolled
               .state div retired; copy unchanged. */}
@@ -1772,12 +1862,17 @@ export function QualityAlertsPage() {
                * the title states the honest fact. */
             description=""
           />
-        </Card>
+        </SheetSection>
       ) : (
-        <Card
+        /* R359 (A3): the queue sits FRAMED — the count chip rides the
+         * head rule's aside slot; the severity pills + the alert rows
+         * keep their §D anatomy inside. */
+        <SheetSection
+          index="01"
+          caption="ALERTS QUEUE"
           title="تنبيهات نشطة"
-          icon={AlertTriangle}
-          subtitle={q.data.counts.total > q.data.alerts.length
+          className="qlt-sec"
+          aside={q.data.counts.total > q.data.alerts.length
             /* r299 (E item 3): the honest cap disclosure — the backend
                slices 20 rows server-side while counts.total stays the
                TRUE uncapped count (learning.routes.ts); the rosters'
@@ -1848,7 +1943,7 @@ export function QualityAlertsPage() {
               </div>
             </>
           )}
-        </Card>
+        </SheetSection>
       )}
       </div>
     </div>

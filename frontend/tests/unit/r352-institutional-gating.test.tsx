@@ -19,6 +19,14 @@ const ADMIN_USER: AuthUser = {
   id: 'u-admin', email: 'admin@test.ly', firstName: 'مدير', lastName: 'تجريبي', role: 'ADMIN',
 };
 
+/** Paged list routes answer the BARE wire shape — the body IS
+ * `{ data, meta }` (backend lib/pagination.ts: res.json({ data, meta }))
+ * with NO outer `{ data: payload }` envelope; every other route answers
+ * the standard envelope (unwrap's contract: res.data.data). The seam
+ * surfaced when A3's KpiBand became the first `.meta` consumer — the
+ * double-wrap made listQuery.data.meta undefined and crashed the page. */
+const PAGED_ROUTES = new Set(['/institutional/org-units']);
+
 /** Installs the hermetic adapter: route table + recording. */
 function installAdapter(routes: Record<string, unknown>, log: string[] = []) {
   api.defaults.adapter = (config: ApiRequestConfig) => {
@@ -32,7 +40,8 @@ function installAdapter(routes: Record<string, unknown>, log: string[] = []) {
       };
       return Promise.reject(new ApiError('501', config, 'ERR_BAD_REQUEST', res));
     }
-    const res: ApiResponse<unknown> = { data: { data: hit[1] }, status: 200, statusText: 'OK', headers: {}, config };
+    const body = PAGED_ROUTES.has(url) ? hit[1] : { data: hit[1] };
+    const res: ApiResponse<unknown> = { data: body, status: 200, statusText: 'OK', headers: {}, config };
     return Promise.resolve(res);
   };
 }
@@ -101,7 +110,11 @@ describe('r352 honest states', () => {
     const log: string[] = [];
     installAdapter({}, log);
     render(withProviders(<InstitutionOrganizationPage />));
-    await waitFor(() => expect(screen.getByText('اختر مؤسستك أولاً')).toBeInTheDocument());
+    /* R359 (A3 · the dead-region repair): an ADMIN with ZERO
+     * memberships gets the honest no-membership sheet state (the
+     * «pick from the switcher» copy now renders only when a
+     * membership exists to pick). */
+    await waitFor(() => expect(screen.getByText('لا عضوية مؤسسية لحسابك')).toBeInTheDocument());
     // no institution-scoped request was fired without a context
     expect(log.filter((l) => l.includes('org-units'))).toHaveLength(0);
   });

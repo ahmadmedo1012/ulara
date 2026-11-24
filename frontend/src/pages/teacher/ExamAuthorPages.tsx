@@ -46,6 +46,15 @@ import {
 import type { LucideIcon } from 'lucide-react';
 import { Badge, Button, FormField, Input, Tabs } from '../../components/primitives';
 import type { ThemeColor } from '../../components/primitives';
+/* R359 (A3 · W2-c) — the sheet grammar joins the exam surfaces: the
+ * hub/detail sections ride framed SheetSections ([nn] index + Latin
+ * caption + Arabic title), the template facts ride a KpiBand, the
+ * grading attempts become a DataSheet ledger, and the status chips
+ * speak the hairline sg-flag register (ink text, tone on the border). */
+import {
+  SheetSection, KpiBand, DataSheet,
+  type DataSheetColumn, type KpiTone,
+} from '../../components/patterns';
 import {
   DetailSkeleton, EmptyState, ErrorState, ListSkeleton, LoadingState,
   PermissionDeniedState,
@@ -123,14 +132,6 @@ export const EXAM_STATUS_LABEL: Record<ExamStatusFE, string> = {
   PUBLISHED: 'منشور',
   CLOSED: 'مُغلق',
 };
-const EXAM_STATUS_COLOR: Record<ExamStatusFE, ThemeColor> = {
-  DRAFT: 'purple',
-  PENDING_REVIEW: 'amber',
-  APPROVED: 'green',
-  REJECTED: 'red',
-  PUBLISHED: 'brand',
-  CLOSED: 'purple',
-};
 const EXAM_STATUS_ICON: Record<ExamStatusFE, LucideIcon> = {
   DRAFT: FileText,
   PENDING_REVIEW: Hourglass,
@@ -147,14 +148,6 @@ const ATTEMPT_STATUS_LABEL: Record<ExamAttemptStatusFE, string> = {
   SUBMITTED: 'بانتظار التصحيح',
   GRADED: 'مُصحَّحة',
   EXPIRED: 'منتهية بانتهاء الوقت',
-};
-const ATTEMPT_STATUS_COLOR: Record<ExamAttemptStatusFE, ThemeColor> = {
-  IN_PROGRESS: 'purple',
-  // The actionable state — amber + the pending-answers count in the row
-  // keep «بانتظار التصحيح» the loudest chip on the surface.
-  SUBMITTED: 'amber',
-  GRADED: 'green',
-  EXPIRED: 'red',
 };
 
 /** Client mirror of the attempts endpoint's authorization (the backend
@@ -344,11 +337,25 @@ function useCloneExamTemplate() {
   });
 }
 
+/* R359 (A3 · W2-c) — the exam-status flag tones: the status word in
+ * the hairline chip, tone on text + border only (never a filled
+ * pill). PUBLISHED carries the ONE royal signal (the live exam);
+ * DRAFT/CLOSED quiet; PENDING_REVIEW warning ink; REJECTED danger. */
+const EXAM_STATUS_FLAG_TONE: Record<ExamStatusFE, 'signal' | 'positive' | 'danger' | 'quiet' | 'warning' | undefined> = {
+  DRAFT: 'quiet',
+  PENDING_REVIEW: 'warning',
+  APPROVED: 'positive',
+  REJECTED: 'danger',
+  PUBLISHED: 'signal',
+  CLOSED: 'quiet',
+};
+
 function TemplateStatusBadge({ status }: { status: ExamStatusFE }) {
   return (
-    <Badge color={EXAM_STATUS_COLOR[status]} icon={EXAM_STATUS_ICON[status]}>
+    <span className="sg-flag" data-tone={EXAM_STATUS_FLAG_TONE[status]}>
+      <Icon icon={EXAM_STATUS_ICON[status]} size={11} />
       {EXAM_STATUS_LABEL[status]}
-    </Badge>
+    </span>
   );
 }
 
@@ -618,7 +625,7 @@ export default function ExamAuthoringPage() {
           <div className="page-title-block">
             {/* R305 DS — the workflow brow: the exam lifecycle opens
                 every authoring surface with its stage strip. */}
-            <span className="hr-brow exa2-brow">مسار الاختبارات</span>
+            <span className="hr-brow exa2-brow">عضو هيئة التدريس · مسار الاختبارات</span>
             <h1 className="page-title">بنك الأسئلة والاختبارات</h1>
             <p className="page-subtitle">
               تأليف الأسئلة وبناء قوالب الاختبارات الموحَّدة، ومتابعة اعتمادها من الجودة حتى النشر.
@@ -670,60 +677,36 @@ function PermissionDeniedBlock() {
 
 /* ═══════════════ My templates tab ═══════════════ */
 
-/** 4C-a — the tab opener (Superlist grammar → R305 DS): a large-type
- *  section title, ONE honest Arabic line, and the tab's actions at the
- *  inline-end. R305: the head wears the shared .hr-section-head layer
- *  (hairline anchor + strong heading ink) and an optional .hr-section-count
- *  chip carries the surface's noun count. Replaces the generic Card chrome
- *  the tabs used to render inside; the row sheets below carry the content. */
-function ExaSectionHead({
-  title,
-  desc,
-  count,
-  actions,
-}: {
-  /* R342-09: title widened to ReactNode — the section heads now carry
-   * the [nn] .w11-idx gutter index (the family numeral register). */
-  title: React.ReactNode;
-  desc?: string;
-  count?: React.ReactNode;
-  actions?: React.ReactNode;
-}) {
-  return (
-    <div className="exa-section-head hr-section-head">
-      <div className="exa-section-heading">
-        <h2 className="exa-section-title">{title}</h2>
-        {desc && <p className="exa-section-desc">{desc}</p>}
-      </div>
-      {count != null && <span className="hr-section-count">{count}</span>}
-      {actions && <div className="exa-section-actions">{actions}</div>}
-    </div>
-  );
-}
 
 function MyTemplatesSection({ onBuild }: { onBuild: () => void }) {
   const q = useExamTemplates();
 
   return (
-    <>
-      <ExaSectionHead
-        title={<>قوالب اختباراتي</>}
-        desc={
-          q.isPending
-            ? 'جارٍ التحميل…'
-            : q.data && q.data.length > 0
-              ? `${countAr(q.data.length, ['قالب واحد', 'قالبان', 'قوالب', 'قالباً'])} — يُفتح النشر بعد اعتماد الجودة.`
-              : 'ستظهر قوالبك هنا — ابنِ قالباً من أسئلة البنك المعتمدة.'
-        }
-        actions={
-          /* R342-09: the tab's build action rides the accent register
+    /* R359 (A3 · W2-c) — the tab's surface rides the framed [01] MY
+     * TEMPLATES section: the counted honest note + the tab's ONE build
+     * action on the head rule, the row sheets as the body. */
+    <SheetSection
+      index="01"
+      caption="MY TEMPLATES"
+      title="قوالب اختباراتي"
+      aside={(
+        <>
+          {(q.isPending || (q.data != null && q.data.length > 0)) && (
+            <span className="sg-label">
+              {q.isPending
+                ? 'جارٍ التحميل…'
+                : `${countAr(q.data.length, ['قالب واحد', 'قالبان', 'قوالب', 'قالباً'])} — يُفتح النشر بعد اعتماد الجودة.`}
+            </span>
+          )}
+          {/* R342-09: the tab's build action rides the accent register
            * (the D8 family law — the ONE ember action per view, the
-           * materials/assignments create-button seat). */
+           * materials/assignments create-button seat). */}
           <Button variant="accent" className="hr-cta" onClick={onBuild}>
             <Icon icon={Plus} size={14} /> قالب اختبار جديد
           </Button>
-        }
-      />
+        </>
+      )}
+    >
       {q.isPending ? (
         <ListSkeleton rows={4} />
       ) : q.isError ? (
@@ -756,7 +739,7 @@ function MyTemplatesSection({ onBuild }: { onBuild: () => void }) {
           )}
         </>
       )}
-    </>
+    </SheetSection>
   );
 }
 
@@ -970,16 +953,23 @@ function QuestionBankSection() {
   const filtered = categoryId !== '' || type !== '' || difficulty !== '' || debouncedQ !== '';
 
   return (
-    <>
-      <ExaSectionHead
-        title={<>بنك الأسئلة المعتمدة</>}
-        desc="الأسئلة التي اعتمدتها الجودة وتصلح لبناء القوالب — إنشاء سؤال جديد يمرّ على المراجعة أولاً."
-        actions={
-          <Button variant="accent" className="hr-cta" onClick={() => setCreating(true)}>
-            <Icon icon={Plus} size={14} /> سؤال جديد
-          </Button>
-        }
-      />
+    /* R359 (A3 · W2-c) — the bank rides the framed [01] QUESTION BANK
+     * section: the ONE create action on the head rule, the honest
+     * channel note as the body's lead line, the calm filter toolbar
+     * beneath it. */
+    <SheetSection
+      index="01"
+      caption="QUESTION BANK"
+      title="بنك الأسئلة المعتمدة"
+      aside={
+        <Button variant="accent" className="hr-cta" onClick={() => setCreating(true)}>
+          <Icon icon={Plus} size={14} /> سؤال جديد
+        </Button>
+      }
+    >
+      <p className="text-sm text-muted" style={{ marginBlockEnd: 'var(--sp-3)' }}>
+        الأسئلة التي اعتمدتها الجودة وتصلح لبناء القوالب — إنشاء سؤال جديد يمرّ على المراجعة أولاً.
+      </p>
 
       {/* One calm toolbar — search flexes, the three selects wrap after
           it; the debounce + endpoint contract are unchanged. R305: the
@@ -1086,7 +1076,7 @@ function QuestionBankSection() {
       )}
 
       {creating && <CreateQuestionModal onClose={() => setCreating(false)} />}
-    </>
+    </SheetSection>
   );
 }
 
@@ -2093,17 +2083,22 @@ function ModerationQueueSection() {
   const q = useExamModerationQueue();
 
   return (
-    <>
-      <ExaSectionHead
-        title={<>قوالب بانتظار المراجعة</>}
-        desc={
-          q.isPending
-            ? 'جارٍ التحميل…'
-            : q.data && q.data.length > 0
-              ? countAr(q.data.length, ['قالب واحد بانتظار قرارك', 'قالبان بانتظار قرارك', 'قوالب بانتظار قرارك', 'قالباً بانتظار قرارك'])
-              : undefined
-        }
-      />
+    /* R359 (A3 · W2-c) — the queue rides the framed [01] MODERATION
+     * QUEUE section; the counted awaiting note rides the head rule. */
+    <SheetSection
+      index="01"
+      caption="MODERATION QUEUE"
+      title="قوالب بانتظار المراجعة"
+      aside={(
+        (q.isPending || (q.data != null && q.data.length > 0)) ? (
+          <span className="sg-label">
+            {q.isPending
+              ? 'جارٍ التحميل…'
+              : countAr(q.data.length, ['قالب واحد بانتظار قرارك', 'قالبان بانتظار قرارك', 'قوالب بانتظار قرارك', 'قالباً بانتظار قرارك'])}
+          </span>
+        ) : undefined
+      )}
+    >
       {q.isPending ? (
         <ListSkeleton rows={3} />
       ) : q.isError ? (
@@ -2139,7 +2134,7 @@ function ModerationQueueSection() {
           ))}
         </div>
       )}
-    </>
+    </SheetSection>
   );
 }
 
@@ -2229,20 +2224,52 @@ function TemplateDetailBody({ template }: { template: ExamTemplateDetail }) {
         </p>
       )}
 
+      {/* R359 (A3 · W2-c) — the template's ONE KpiBand: the authored
+          facts as real payload numerals (questions · running points ·
+          attempts), the honest-empty register when the bank emptied
+          the template. */}
+      <KpiBand
+        items={[
+          {
+            index: '01',
+            caption: 'QUESTIONS',
+            label: 'أسئلة القالب',
+            value: template.questions.length,
+            empty: template.questions.length === 0,
+          },
+          {
+            index: '02',
+            caption: 'POINTS',
+            label: 'مجموع النقاط',
+            value: totalPoints,
+            empty: totalPoints === 0,
+          },
+          {
+            index: '03',
+            caption: 'ATTEMPTS',
+            label: 'محاولات الطلاب',
+            value: template._count.attempts,
+          },
+        ]}
+      />
+
       {/* 4C-a — the two-column split: the questions + grading list on
           the main side, the template's facts and the moderation decision
-          attached as the aside (stacks below on narrow screens). The
-          header numbers live where they answer questions: the count and
-          the running points total ride the questions section head, the
-          duration/pass mark/order ride the facts panel. */}
+          attached as the aside (stacks below on narrow screens). R359:
+          the questions ride the framed [01] TEMPLATE QUESTIONS section
+          (the counted noun + the running points total on the head rule). */}
       <div className="exa-split">
         <div className="exa-main">
-          <section aria-label="أسئلة القالب">
-            <ExaSectionHead
-              title={<>أسئلة القالب</>}
-              count={countAr(template.questions.length, ['سؤال واحد', 'سؤالان', 'أسئلة', 'سؤالاً'])}
-              desc={`مجموع النقاط ${countAr(totalPoints, ['نقطة واحدة', 'نقطتان', 'نقاط', 'نقطة'])}`}
-            />
+          <SheetSection
+            index="01"
+            caption="TEMPLATE QUESTIONS"
+            title="أسئلة القالب"
+            aside={(
+              <span className="sg-label">
+                {countAr(template.questions.length, ['سؤال واحد', 'سؤالان', 'أسئلة', 'سؤالاً'])} · مجموع النقاط {countAr(totalPoints, ['نقطة واحدة', 'نقطتان', 'نقاط', 'نقطة'])}
+              </span>
+            )}
+          >
             {template.questions.length === 0 ? (
               <EmptyState illustration="empty-list"
                 icon={FileQuestion}
@@ -2264,7 +2291,7 @@ function TemplateDetailBody({ template }: { template: ExamTemplateDetail }) {
                 ))}
               </div>
             )}
-          </section>
+          </SheetSection>
 
           {canGradeHere && <AttemptsSection template={template} />}
         </div>
@@ -2654,6 +2681,23 @@ function DetailLine({ label, children }: { label: string; children: React.ReactN
 
 /* ═══════════════ Manual grading — «التصحيح» (18-F2) ═══════════════ */
 
+/* R359 (A3 · W2-c) — the attempt flag + row-pin tones: SUBMITTED reads
+ * warning (the actionable state — ink text on the hairline chip, amber
+ * on the row's inline-start pin), GRADED positive, EXPIRED danger,
+ * IN_PROGRESS quiet. */
+const ATTEMPT_FLAG_TONE: Record<ExamAttemptStatusFE, 'warning' | 'positive' | 'danger' | 'quiet' | undefined> = {
+  IN_PROGRESS: 'quiet',
+  SUBMITTED: 'warning',
+  GRADED: 'positive',
+  EXPIRED: 'danger',
+};
+const ATTEMPT_ROW_TONE: Record<ExamAttemptStatusFE, KpiTone | undefined> = {
+  IN_PROGRESS: undefined,
+  SUBMITTED: 'warning',
+  GRADED: 'positive',
+  EXPIRED: 'danger',
+};
+
 function AttemptsSection({ template }: { template: ExamTemplateDetail }) {
   const q = useExamAttempts(template.id);
   const [onlyPending, setOnlyPending] = useState(false);
@@ -2663,23 +2707,85 @@ function AttemptsSection({ template }: { template: ExamTemplateDetail }) {
   const awaiting = attempts.filter((a) => a.status === 'SUBMITTED').length;
   const visible = onlyPending ? attempts.filter((a) => a.status === 'SUBMITTED') : attempts;
 
+  /* R359 (A3 · W2-c) — the grading LEDGER: the attempt rows as a
+   * DataSheet (hairline rows, mono score fractions, the aligned status
+   * flag column, ONE تصحيح verb on the awaiting row). The student cell
+   * carries the two-line anatomy — name over the arrival sub-line, the
+   * counted pending-answers note as its own line (never a suffix). */
+  const columns: DataSheetColumn<ExamAttemptRow>[] = [
+    {
+      key: 'student',
+      label: 'الطالب',
+      render: (a) => (
+        <span className="sg-cell-stack">
+          <span className="sg-cell-title" title={a.studentName}>{a.studentName}</span>
+          <span className="sg-cell-sub" title={formatDateTimeAr(a.submittedAt ?? a.startedAt)}>
+            {a.submittedAt
+              ? `سلِّمت ${formatRelativeArShort(a.submittedAt)}`
+              : `بدأت ${formatRelativeArShort(a.startedAt)}`}
+          </span>
+          {a.status === 'SUBMITTED' && a.pendingReview > 0 && (
+            <span className="sg-cell-sub">
+              {countAr(a.pendingReview, ['إجابة واحدة بانتظار تقييمك', 'إجابتان بانتظار تقييمك', 'إجابات بانتظار تقييمك', 'إجابة بانتظار تقييمك'])}
+            </span>
+          )}
+        </span>
+      ),
+    },
+    {
+      key: 'status',
+      label: 'الحالة',
+      render: (a) => (
+        <span className="sg-flag" data-tone={ATTEMPT_FLAG_TONE[a.status]}>
+          {ATTEMPT_STATUS_LABEL[a.status]}
+        </span>
+      ),
+    },
+    {
+      key: 'score',
+      label: 'الدرجة',
+      numeric: true,
+      render: (a) =>
+        /* The machine score so far — the SUBMITTED row's partial truth
+         * (auto-graded points), never a fabricated verdict. */
+        a.score === null ? (
+          <span title="لم تُحسب الدرجة بعد">—</span>
+        ) : (
+          <bdi title={`الدرجة الحالية: ${a.score} من ${a.maxScore}`}>{a.score} / {a.maxScore}</bdi>
+        ),
+    },
+    {
+      key: 'grade',
+      label: '',
+      noLabel: true,
+      render: (a) =>
+        a.status === 'SUBMITTED' ? (
+          <Button variant="primary" size="sm" onClick={() => setGrading(a)}>
+            <Icon icon={ClipboardCheck} size={12} /> تصحيح
+          </Button>
+        ) : null,
+    },
+  ];
+
   return (
-    <section aria-label="التصحيح">
-      <ExaSectionHead
-        title={<>التصحيح</>}
-        desc={
-          q.isPending
-            ? 'جارٍ التحميل…'
-            : attempts.length > 0
-              ? /* P2-1 (5-A7): awaiting can be 0 while attempts exist —
-                 * countAr(0) renders the broken «0 محاولة…». */
-                (awaiting === 0
-                  ? 'لا محاولات بانتظار تصحيحك'
-                  : countAr(awaiting, ['محاولة واحدة بانتظار تصحيحك', 'محاولتان بانتظار تصحيحك', 'محاولات بانتظار تصحيحك', 'محاولة بانتظار تصحيحك']))
-              : undefined
-        }
-        actions={
-          attempts.length > 0 ? (
+    <SheetSection
+      index="02"
+      caption="GRADING"
+      title="التصحيح"
+      aside={(
+        <>
+          {(q.isPending || attempts.length > 0) && (
+            <span className="sg-label">
+              {q.isPending
+                ? 'جارٍ التحميل…'
+                : /* P2-1 (5-A7): awaiting can be 0 while attempts exist —
+                   * countAr(0) renders the broken «0 محاولة…». */
+                  (awaiting === 0
+                    ? 'لا محاولات بانتظار تصحيحك'
+                    : countAr(awaiting, ['محاولة واحدة بانتظار تصحيحك', 'محاولتان بانتظار تصحيحك', 'محاولات بانتظار تصحيحك', 'محاولة بانتظار تصحيحك']))}
+            </span>
+          )}
+          {attempts.length > 0 && (
             <label className="exa-check">
               <input
                 type="checkbox"
@@ -2688,29 +2794,34 @@ function AttemptsSection({ template }: { template: ExamTemplateDetail }) {
               />
               بانتظار التصحيح فقط
             </label>
-          ) : undefined
-        }
-      />
-      {q.isPending ? (
-        <ListSkeleton rows={4} />
-      ) : q.isError ? (
-        <ErrorState message="تعذَّر تحميل المحاولات" error={q.error} onRetry={() => q.refetch()} />
-      ) : visible.length === 0 ? (
-        <EmptyState illustration="empty-list"
-          icon={onlyPending ? ClipboardCheck : FileQuestion}
-          title={onlyPending ? 'لا محاولات بانتظار التصحيح' : 'لا محاولات بعد'}
-          description={
-            onlyPending
-              ? 'كل المحاولات المسلَّمة مُصحَّحة — ستظهر المحاولات الجديدة هنا فور تسليمها.'
-              : 'يبدأ الطلاب المحاولات من صفحة الاختبارات الخاصة بهم؛ تظهر محاولاتهم هنا لحظة بدئها.'
-          }
-        />
-      ) : (
-        <div className="exa-rows">
-          {visible.map((a) => (
-            <AttemptRow key={a.id} attempt={a} onGrade={() => setGrading(a)} />
-          ))}
+          )}
+        </>
+      )}
+      pad="none"
+    >
+      {q.isError ? (
+        <div className="sg-pad-in">
+          <ErrorState message="تعذَّر تحميل المحاولات" error={q.error} onRetry={() => q.refetch()} />
         </div>
+      ) : (
+        <DataSheet
+          caption="محاولات الطلاب"
+          columns={columns}
+          rows={visible}
+          loading={q.isPending}
+          rowTone={(a) => ATTEMPT_ROW_TONE[a.status]}
+          empty={(
+            <EmptyState illustration="empty-list"
+              icon={onlyPending ? ClipboardCheck : FileQuestion}
+              title={onlyPending ? 'لا محاولات بانتظار التصحيح' : 'لا محاولات بعد'}
+              description={
+                onlyPending
+                  ? 'كل المحاولات المسلَّمة مُصحَّحة — ستظهر المحاولات الجديدة هنا فور تسليمها.'
+                  : 'يبدأ الطلاب المحاولات من صفحة الاختبارات الخاصة بهم؛ تظهر محاولاتهم هنا لحظة بدئها.'
+              }
+            />
+          )}
+        />
       )}
 
       {grading && (
@@ -2720,63 +2831,7 @@ function AttemptsSection({ template }: { template: ExamTemplateDetail }) {
           onClose={() => setGrading(null)}
         />
       )}
-    </section>
-  );
-}
-
-function AttemptRow({ attempt, onGrade }: { attempt: ExamAttemptRow; onGrade: () => void }) {
-  const scoreTitle =
-    attempt.score === null
-      ? 'لم تُحسب الدرجة بعد'
-      : `الدرجة الحالية: ${attempt.score} من ${attempt.maxScore}`;
-  return (
-    /* 4C-a: a static row for finished/in-flight attempts (no hover —
-       nothing is clickable on them), the SUBMITTED one carrying the
-       single تصحيح action. The machine score rides the actions edge in
-       mono tabular figures. R305: the severity edge mirrors the
-       attempt's state inline-start (SUBMITTED = awaiting action). */
-    <div className="exa-row hr-edge" data-severity={
-      attempt.status === 'SUBMITTED'
-        ? 'soon'
-        : attempt.status === 'GRADED'
-          ? 'info'
-          : attempt.status === 'EXPIRED'
-            ? 'overdue'
-            : undefined
-    }>
-      <div className="exa-row-main">
-        <div className="exa-row-title" title={attempt.studentName}>{attempt.studentName}</div>
-        <div className="exa-row-sub">
-          <Badge color={ATTEMPT_STATUS_COLOR[attempt.status]}>{ATTEMPT_STATUS_LABEL[attempt.status]}</Badge>
-          {attempt.submittedAt ? (
-            <span title={formatDateTimeAr(attempt.submittedAt)}>
-              سلِّمت {formatRelativeArShort(attempt.submittedAt)}
-            </span>
-          ) : (
-            <span title={formatDateTimeAr(attempt.startedAt)}>
-              بدأت {formatRelativeArShort(attempt.startedAt)}
-            </span>
-          )}
-          {attempt.status === 'SUBMITTED' && attempt.pendingReview > 0 && (
-            <span>
-              {countAr(attempt.pendingReview, ['إجابة واحدة بانتظار تقييمك', 'إجابتان بانتظار تقييمك', 'إجابات بانتظار تقييمك', 'إجابة بانتظار تقييمك'])}
-            </span>
-          )}
-        </div>
-      </div>
-      <div className="exa-row-actions">
-        {/* The machine score so far — the SUBMITTED row's partial truth
-            (auto-graded points), never a fabricated verdict. */}
-        <span className="exa-points" title={scoreTitle}>
-          {attempt.score === null ? '—' : <bdi>{attempt.score} / {attempt.maxScore}</bdi>}
-        </span>
-        {attempt.status === 'SUBMITTED' && (
-          <Button variant="primary" size="sm" onClick={onGrade}>
-            <Icon icon={ClipboardCheck} size={12} /> تصحيح
-          </Button>
-        )}
-      </div>
-    </div>
+    </SheetSection>
   );
 }
 

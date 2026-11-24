@@ -108,6 +108,31 @@ appId: ly.ulara.app
 # above the keyboard by construction — that is KeyboardStickyView's job).
 - tapOn:
     text: "دخول"               # FormScreen submitLabel (app/auth/login.tsx)
+# 2a ── r359 A4: the documented R336-E submit race (the sticky-button
+#       tap can be swallowed by the dying IME animation — runs
+#       45339276768's admin/owner legs) — a second OPTIONAL tap: a
+#       settled no-op when the submit fired, the retry when it didn't.
+- tapOn:
+    text: "دخول"
+    optional: true
+
+# 2b ── r359 A4 (M2): the FIRST-RUN TOUR may appear between the login
+#       and the dashboard (a user whose onboardingCompletedAt is null —
+#       the seeded test accounts ship NULL). The escape is always
+#       reachable: «تخطي» completes the tour and the boot rule resolves
+#       to the role home. Optional: a pre-onboarded account never sees it.
+- tapOn:
+    text: "تخطي"               # app/onboarding.tsx — the skip escape
+    optional: true
+
+# 2c ── r359 A4: the STUDENT fixture has TWO memberships (the seed's
+#       multi-institution design — regNumbers span ulara-demo and the
+#       secondary workspace), so the login does NOT auto-select and the
+#       boot rule routes to /select-institution. Pick the primary
+#       workspace; optional: single-membership roles never see it.
+- tapOn:
+    text: "مساحة عمل أُلارا التجريبية"   # app/select-institution.tsx — the primary row
+    optional: true
 
 # 3 ── the role's dashboard landed (always-rendered heading per role:
 #      STUDENT → student/(tabs)/dashboard.tsx SectionBar «أرقامك هذا الفصل»;
@@ -115,7 +140,7 @@ appId: ly.ulara.app
 #      QUALITY → «لوحة الجودة»; OWNER → «لوحة التحكم الرئيسية»)
 - extendedWaitUntil:
     visible:
-      text: "${ROLE == 'STUDENT' ? 'أرقامك هذا الفصل' : ROLE == 'TEACHER' ? 'لوحة الأستاذ' : ROLE == 'ADMIN' ? 'لوحة المسجل العام' : ROLE == 'QUALITY' ? 'لوحة الجودة' : 'لوحة التحكم الرئيسية'}"
+      text: "${ROLE == 'STUDENT' ? 'أرقامك هذا الفصل' : ROLE == 'TEACHER' ? 'لوحة الأستاذ' : ROLE == 'ADMIN' ? 'لوحة إدارة المؤسسة' : ROLE == 'QUALITY' ? 'لوحة الجودة' : 'لوحة التحكم'}"
     timeout: 45000
 
 # 4 ── tab visit 1 (labels: src/components/shell/roleTabs.ts ROLE_TABS;

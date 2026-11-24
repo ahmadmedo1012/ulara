@@ -13,7 +13,7 @@
 import { useMemo, useState } from 'react';
 import { ChevronLeft, List, Network, Pencil, Plus } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
-import { PageFrame, PageHeader } from '../../components/patterns';
+import { PageFrame, PageHeader, KpiBand } from '../../components/patterns';
 import { toast } from '../../lib/toast';
 import { formatDate } from '../../utils/numbers';
 import {
@@ -345,6 +345,33 @@ export function InstitutionOrganizationPage() {
         }
       />
 
+      {/* R359 final · W3 — the structure facts ride the KPI band
+          (honest-empty «—» while the registers load). */}
+      <KpiBand
+        items={[
+          {
+            index: '01',
+            caption: 'ORG UNITS',
+            label: 'الوحدات التنظيمية (الاستعلام الحالي)',
+            value: listQuery.data?.meta.total ?? 0,
+            empty: listQuery.data == null,
+          },
+          {
+            index: '02',
+            caption: 'UNIT KINDS',
+            label: 'أنواع الوحدات المتاحة',
+            value: Object.keys(ORG_UNIT_TYPE_LABELS).length,
+          },
+          {
+            index: '03',
+            caption: 'ACTIVE',
+            label: 'وحدات نشطة في الشجرة',
+            value: treeQuery.data ? flatten(tree).filter((u) => u.status === 'ACTIVE').length : 0,
+            empty: treeQuery.data == null,
+          },
+        ]}
+      />
+
       <div
         id="org-view-panel"
         role="tabpanel"
@@ -352,6 +379,7 @@ export function InstitutionOrganizationPage() {
         tabIndex={0}
       >
       {view === 'tree' ? (
+        <InstSection index="01" caption="UNIT TREE" title="شجرة الهيكل" pad="none">
         <InstStates
           isLoading={treeQuery.isLoading}
           error={treeQuery.error}
@@ -372,6 +400,7 @@ export function InstitutionOrganizationPage() {
             ))}
           </ul>
         </InstStates>
+        </InstSection>
       ) : (
         <>
           <InstFilters search={search} onSearch={(v) => { setSearch(v); setPage(1); }}>
@@ -390,6 +419,7 @@ export function InstitutionOrganizationPage() {
               options={Object.entries(ORG_UNIT_STATUS_LABELS).map(([value, label]) => ({ value, label }))}
             />
           </InstFilters>
+          <InstSection index="01" caption="UNIT REGISTER" title="قائمة الوحدات" pad="none">
           <InstPagedTable
             query={listQuery}
             columns={listColumns}
@@ -399,14 +429,19 @@ export function InstitutionOrganizationPage() {
             onPage={setPage}
             onRowClick={(u) => { setSelectedId(u.id); setView('tree'); }}
           />
+          </InstSection>
         </>
       )}
       </div>
 
-      {/* the unit detail panel */}
+      {/* the unit detail panel — R359 final · W3: the flat file
+          register; its sub-registers are flat siblings (no nested
+          frames — the grammar law). */}
       {activeId && detailQuery.data ? (
         (() => { const detail = detailQuery.data; return (
         <InstSection
+          index="02"
+          caption="UNIT FILE"
           title={detail.unit.nameAr}
           description={ORG_UNIT_TYPE_LABELS[detail.unit.type]}
           actions={canManage ? (
@@ -436,7 +471,14 @@ export function InstitutionOrganizationPage() {
               { label: 'أُنشئت', value: formatDate(detail.unit.createdAt) },
             ]}
           />
-          <InstSection title="أفراد الوحدة">
+        </InstSection>
+        );
+        })()
+      ) : null}
+
+      {activeId && detailQuery.data ? (
+        <>
+          <InstSection index="03" caption="STAFF" title="أفراد الوحدة" pad="none">
             <InstStates
               isLoading={peopleQuery.isLoading}
               error={peopleQuery.error}
@@ -455,7 +497,7 @@ export function InstitutionOrganizationPage() {
               />
             </InstStates>
           </InstSection>
-          <InstSection title="تعيينات قيادية في الوحدة">
+          <InstSection index="04" caption="APPOINTMENTS" title="تعيينات قيادية في الوحدة" pad="none">
             <InstStates
               isLoading={appointmentsQuery.isLoading}
               error={appointmentsQuery.error}
@@ -474,7 +516,7 @@ export function InstitutionOrganizationPage() {
               />
             </InstStates>
           </InstSection>
-          <InstSection title="برامج الوحدة">
+          <InstSection index="05" caption="PROGRAMS" title="برامج الوحدة" pad="none">
             <InstStates
               isLoading={programsQuery.isLoading}
               error={programsQuery.error}
@@ -487,15 +529,13 @@ export function InstitutionOrganizationPage() {
                 dense
                 columns={[
                   { head: 'البرنامج', cell: (p) => p.nameAr },
-                  { head: 'الرمز', cell: (p) => <span className="font-mono">{p.code}</span> },
+                  { head: 'الرمز', cell: (p) => <span className="font-mono">{p.code}</span>, mono: true },
                   { head: 'الحالة', cell: (p) => <EnumChip value={p.status} labels={PROGRAM_STATUS_LABELS} /> },
                 ]}
               />
             </InstStates>
           </InstSection>
-        </InstSection>
-        );
-        })()
+        </>
       ) : null}
 
       <InstFormDialog

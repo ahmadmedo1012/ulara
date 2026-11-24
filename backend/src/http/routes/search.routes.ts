@@ -5,6 +5,7 @@ import { authMiddleware } from '../middleware/auth.js';
 import { normalizeArabicSearch, matchesNormalizedQuery } from '../../modules/search/normalize.js';
 import { offeringVisibilityFilter } from './courses.routes.js';
 import { resolveCallerInstitutionScope } from '../../lib/profile-scoping.js';
+import { getEffectiveCapabilities } from '../../lib/permissions.js';
 
 const router = Router();
 router.use(authMiddleware);
@@ -136,7 +137,7 @@ router.get('/search/global', async (req, res, next) => {
     const q = sanitizeSearchQuery(req.query.q);
     const qN = normalizeArabicSearch(q);
     if (q.length < 2 || qN.length < 2) {
-      res.json({ data: { courses: [], lectures: [], papers: [], tracks: [] } });
+      res.json({ data: { courses: [], lectures: [], papers: [], tracks: [], programs: [], orgUnits: [], people: [] } });
       return;
     }
 
@@ -158,7 +159,21 @@ router.get('/search/global', async (req, res, next) => {
      * files — the archive's own law (learning.routes r342 t14).
      * Fail-closed: no verified context → NO paper rows at all (the
      * courses/lectures/tracks sections are context-free and stay). */
-    const paperScope = await resolveCallerInstitutionScope(userId, req.user!.institutionId);
+    // r359 A4: the VERIFIED institution context — shared fence for the
+    // papers (r342 t14) and the new institutional groups.
+    const instScope = await resolveCallerInstitutionScope(userId, req.user!.institutionId);
+    // r359 A4: the caller's effective capabilities in that context gate
+    // the new groups (one resolution, reused three times). Fail-soft: a
+    // permissions-layer error degrades to "no institutional rows" — the
+    // four original groups keep answering (per-keystroke route).
+    let caps: Awaited<ReturnType<typeof getEffectiveCapabilities>> | null = null;
+    if (instScope) {
+      try {
+        caps = await getEffectiveCapabilities(userId, role, instScope);
+      } catch {
+        caps = null;
+      }
+    }
 
     // Query both the raw and the normalized form so hamza/alif-variant
     // queries still hit the DB's raw-text contains index.
@@ -175,7 +190,7 @@ router.get('/search/global', async (req, res, next) => {
     // returns rows in arbitrary order, so the 15-of-N candidate subset
     // (and which 5 survive the JS re-verify below) would flip between
     // keystrokes. Ordering follows each domain's own list convention.
-    const [courseCandidates, lectureCandidates, paperCandidates, trackCandidates] = await Promise.all([
+    const [courseCandidates, lectureCandidates, paperCandidates, trackCandidates, programCandidates, orgUnitCandidates, personCandidates] = await Promise.all([
       // Course offerings (matched on course name + code) — newest first.
       prisma.courseOffering.findMany({
         where: {
@@ -220,11 +235,11 @@ router.get('/search/global', async (req, res, next) => {
       // Only rows with a fileUrl: the hit's href opens the document
       // viewer, and consumers without a file have no linkable
       // destination (r155c).
-      paperScope
+      instScope
         ? prisma.researchPaper.findMany({
             where: {
               status: 'PUBLISHED',
-              institutionId: paperScope,
+              institutionId: instScope,
               fileUrl: { not: null },
               OR: [
                 ...variants.map((v) => ({ title: ic(v) })),
@@ -252,6 +267,58 @@ router.get('/search/global', async (req, res, next) => {
         orderBy: { order: 'asc' },
         take: CANDIDATE_TAKE,
       }),
+
+      /* r359 A4 — search coverage of the r352 institutional entities.
+       * All three groups ride the papers' law: institution-scoped to the
+       * caller's VERIFIED context (fail-closed without one) AND
+       * capability-gated exactly like the registers they open
+       * (PROGRAMS_MANAGE / ORG_STRUCTURE_MANAGE / PEOPLE_MANAGE) — a
+       * dropdown row IS a link, so roles without the surface see no
+       * rows. The capability set resolves ONCE below. */
+      instScope
+        ? prisma.program.findMany({
+            where: {
+              institutionId: instScope,
+              OR: [
+                ...variants.map((v) => ({ nameAr: ic(v) })),
+                { nameEn: ic(q) },
+                { code: ic(q) },
+              ],
+            },
+            orderBy: { createdAt: 'desc' },
+            take: CANDIDATE_TAKE,
+          })
+        : Promise.resolve([]),
+
+      instScope
+        ? prisma.organizationalUnit.findMany({
+            where: {
+              institutionId: instScope,
+              OR: [
+                ...variants.map((v) => ({ nameAr: ic(v) })),
+                { nameEn: ic(q) },
+                { code: ic(q) },
+              ],
+            },
+            orderBy: { createdAt: 'desc' },
+            take: CANDIDATE_TAKE,
+          })
+        : Promise.resolve([]),
+
+      instScope
+        ? prisma.institutionalPerson.findMany({
+            where: {
+              institutionId: instScope,
+              OR: [
+                ...variants.map((v) => ({ fullNameAr: ic(v) })),
+                { fullNameEn: ic(q) },
+                { email: ic(q) },
+              ],
+            },
+            orderBy: { createdAt: 'desc' },
+            take: CANDIDATE_TAKE,
+          })
+        : Promise.resolve([]),
     ]);
 
     // JS re-verification with the canonical foldings (raw OR normalized
@@ -260,6 +327,10 @@ router.get('/search/global', async (req, res, next) => {
     const lectures = lectureCandidates.filter((l) => searchHit([l.title, l.description ?? ''], q, qN)).slice(0, RESULT_TAKE);
     const papers = paperCandidates.filter((p) => searchHit([p.title, p.abstract ?? ''], q, qN)).slice(0, RESULT_TAKE);
     const tracks = trackCandidates.filter((t) => searchHit([t.title, t.titleEn ?? '', t.summary], q, qN)).slice(0, RESULT_TAKE);
+    // r359 A4 — the institutional groups (capability + tenant gated above).
+    const programs = programCandidates.filter((p) => searchHit([p.nameAr, p.nameEn ?? '', p.code], q, qN)).slice(0, RESULT_TAKE);
+    const orgUnits = orgUnitCandidates.filter((u) => searchHit([u.nameAr, u.nameEn ?? '', u.code ?? ''], q, qN)).slice(0, RESULT_TAKE);
+    const people = personCandidates.filter((p) => searchHit([p.fullNameAr, p.fullNameEn ?? '', p.email ?? ''], q, qN)).slice(0, RESULT_TAKE);
 
     res.json({
       data: {
@@ -311,6 +382,38 @@ router.get('/search/global', async (req, res, next) => {
             themeColor: t.themeColor,
             href,
           })),
+        // r359 A4 — institutional registers: rows only for callers whose
+        // capabilities open the surface (the register's own gate).
+        programs:
+          caps?.has('PROGRAMS_MANAGE') && instScope
+            ? programs.map((p) => ({
+                id: p.id,
+                title: p.nameAr,
+                subtitle: p.nameEn ?? p.code,
+                iconEmoji: '🎓',
+                href: `/institution/programs/${p.id}`,
+              }))
+            : [],
+        orgUnits:
+          caps?.has('ORG_STRUCTURE_MANAGE') && instScope
+            ? orgUnits.map((u) => ({
+                id: u.id,
+                title: u.nameAr,
+                subtitle: u.nameEn ?? u.type,
+                iconEmoji: '🏛️',
+                href: '/institution/organization',
+              }))
+            : [],
+        people:
+          caps?.has('PEOPLE_MANAGE') && instScope
+            ? people.map((p) => ({
+                id: p.id,
+                title: p.fullNameAr,
+                subtitle: p.category,
+                iconEmoji: '👤',
+                href: `/institution/people/${p.id}`,
+              }))
+            : [],
       },
     });
   } catch (e) { next(e); }

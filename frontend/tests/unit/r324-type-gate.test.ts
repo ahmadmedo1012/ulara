@@ -177,6 +177,18 @@ const H1_SEATS = ['pf-page-title', 'page-title', 'cu-title', 'nf-title', 'auth-f
  *  Everything else at 700 fails the gate. */
 const NUMERAL_SEATS = ['stat-value', 'admin-stat-value', 'metric', 'kpi-value', 'res-step-num', 'gap-pct', 'scan-value', 'metric-value'];
 
+/* r359 (A1-AUTH · the measured design grammar): the auth shell's
+ * display headline — the .auth-form-title seat — re-pins the display
+ * weight 700 (the reference's own headline weight), the ONE heading
+ * family the r359 grammar holds above the r324 500/600 law. The
+ * exception is BY SEAT, not by `type-gate: allow` marker: the seat
+ * stays fully swept otherwise (font-size rung ×3 bands + the
+ * ≤32px H1 ceiling at 390 — its clamp(23.8px, 2.78vw, 40px) rides
+ * the d2/d3 rungs at every band). */
+const DISPLAY_700_SEATS = new Set(['auth-form-title']);
+const isDisplay700Seat = (sel: string) =>
+  [...DISPLAY_700_SEATS].some((s) => new RegExp(`\\.${s}([\\s,.:#\\[{)]|$)`).test(sel));
+
 interface HeadingRule { file: string; sel: string; body: string; }
 
 function cssFiles(): string[] {
@@ -282,6 +294,7 @@ describe('r325 Y4 — the type census gate (every heading level × every seat ×
     if (/font-weight\s*:/.test(body)) {
       it(`weight ≤ 600 — ${where}`, () => {
         if (isNumeralSeat(sel)) return; // gauge numerals — the one exception
+        if (isDisplay700Seat(sel)) return; // the r359 auth display headline — the documented 700 seat
         const raw = (body.match(/font-weight\s*:\s*([^;]+);/) ?? [])[1] ?? '';
         const fw = resolveFw(raw);
         // Unresolvable non-allowlisted expressions fail loudly (honest gate).
@@ -355,7 +368,10 @@ describe('r325 Y4 — the type census gate (every heading level × every seat ×
       const m = tokenSrc.match(/--fs-d1:\s*clamp\(([^)]+)\)/);
       expect(m).toBeTruthy();
       expect(m![1]).toContain('31.74px');
-      expect(m![1]).toContain('5.6rem');
+      /* R359 (A3): the cap re-keys to the §2 measured h1 — 62.22px
+       * @1440 (7.4664rem on the 8.333px root); the floor contract
+       * above is unchanged. */
+      expect(m![1]).toContain('7.4664rem');
     });
   });
 

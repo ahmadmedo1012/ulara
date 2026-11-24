@@ -173,11 +173,19 @@
     --fs-display-lg: 7.2rem;  /* 60px    @1440 */
     --fs-display-md: 6.4rem;  /* 53.33px @1440 */
 
-    --fs-h1: 5.6rem;          /* 46.67px @1440 — the reference h1 (700 · lh 1.0 · ls −0.02em · UPPER for Latin) */
-    --fs-h2: 4.8rem;          /* 40px    @1440 — the reference h2 */
-    --fs-h3: 4rem;            /* 33.33px @1440 — the reference h3 */
+    /* R359 (A3) — the §2 measured re-key: h1 62.22 · h2 44.44 · lead
+       17.78 @1440 (ratios 3.5 / 2.5 / 1 of the §2 body). The rem caps
+       ride the same fluid root (8.333px @1440): 7.4664 / 5.3328 /
+       2.1336rem exactly. Arabic keeps the 16px lead floor. */
+    /* R359b — the Y4 clamp discipline rides the aliases too (the
+       type census: every seat within 1.3× of a rung at 390/768/1440;
+       the unclamped rem aliases GROW on the mobile-band root — the
+       exact disease the census was written to kill). */
+    --fs-h1: clamp(31.74px, 4.8vw, 7.4664rem);  /* ≡ d1: 62.22 @1440 · 31.74 @390 */
+    --fs-h2: clamp(31.74px, 4.8vw, 5.3328rem);  /* ≡ d2: 44.44 @1440 · 31.74 @390 */
+    --fs-h3: clamp(23.33px, 2.8vw, 4.2672rem);  /* 35.56 @1440 · 23.33 floor @390 (d3's own floor) */
 
-    --fs-body-lg: max(13px, 1.8rem);   /* 15px @1440 — the lead step, floor-gated */
+    --fs-body-lg: clamp(16px, 1.48vw, 2.1336rem); /* 17.78px @1440 — the §2 body (page leads); mobile holds the 16px floor like the reference */
     --fs-body:    max(13px, 1.6rem);   /* 13.33px @1440 — the reference txt-16, floor-gated */
     /* r140 → R313 — the chrome step joins the reference's uniform
        body run (nav/footer/labels all ride 13.33px there), floor-gated
@@ -210,7 +218,7 @@
     --fs-label-md: var(--fs-sm); --fs-label-sm: var(--fs-xs);
 
     --fs-metric-xl: 48px;
-    --fs-metric-lg: 30px;
+    --fs-metric-lg: 38px;
     --fs-metric-md: 24px;
 
     --lh-tight: 1.05;
@@ -252,14 +260,18 @@
        was the R309 fixed 650ms whose animation raced to ~21ms). */
 
 
-    /* r305 — --ease re-keys to the reference's decel standard
-       (.23,1,.32,1); --ease-in adopts its roll/exit curve (.625,.05,0,1).
-       --ease-out keeps the tighter (.16,1,.3,1) for entrances that must
-       settle faster than the standard. */
-    /* R326 M0.4 — --ease itself moved to tokens.generated.css (shared
-       with the app); the rest of the easing vocabulary stays here. */
-    --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
-    --ease-in:     cubic-bezier(0.625, 0.05, 0, 1);
+    /* r305 → R359 (A3, final-phase re-measure): ONE mechanical easing —
+       cubic-bezier(.23,1,.32,1), the curve the reference's own bundle
+       measures on every transition (×11 in the live CSS census; its .4s
+       color moves + .5s icon transforms all ride it) — fast departure,
+       decelerating arrival, dead stop. The whole vocabulary
+       (out/in/soft/springs) re-points at the shared --ease (generated
+       from design-tokens.json) so no surface can bounce, spring or
+       overshoot anywhere in the product. --ease-linear stays
+       for continuous loops (the reference's own marquee register);
+       --ease-pixel stays a steps() rung (discrete by design). */
+    --ease-out:    var(--ease);
+    --ease-in:     var(--ease);
     /* constant speed — the correct curve for CONTINUOUS infinite loops
        (spinners, skeleton sweeps, shimmer drifts) and scroll-linked
        progress. Beat-family loops (heartbeat, breathe, pulse) are
@@ -267,15 +279,16 @@
        marquee runs 10s linear infinite (marqueeLeft, translateX(-100%))
        — same grammar. */
     --ease-linear: linear;
-    --ease-soft:   cubic-bezier(0.22, 1, 0.36, 1);
-    /* Spring vocabulary — polish-authored springs adopted verbatim.
-       Overshoot tiers: soft 1.18 (settle), spring 1.36 (pop),
-       bounce 1.56 (playful), snappy (0.5,1.6,0.4,1) (quick rebound). */
-    --ease-spring-soft:   cubic-bezier(0.34, 1.18, 0.64, 1);
-    --ease-spring:        cubic-bezier(0.34, 1.36, 0.64, 1);
-    --ease-bounce:        cubic-bezier(0.34, 1.56, 0.64, 1);
-    --ease-spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-    --ease-spring-snappy: cubic-bezier(0.5, 1.6, 0.4, 1);
+    --ease-soft:   var(--ease);
+    /* R359: the spring vocabulary is RETIRED as a CURVE (no bounce, no
+       springs — the §2 motion law) but the NAMES survive as aliases of
+       the one mechanical easing so every historical consumer resolves
+       honestly. Do not reintroduce an overshoot curve. */
+    --ease-spring-soft:   var(--ease);
+    --ease-spring:        var(--ease);
+    --ease-bounce:        var(--ease);
+    --ease-spring-bounce: var(--ease);
+    --ease-spring-snappy: var(--ease);
     /* r344 A1 — the pixel-dissolve rung: the CTA fill walks its
        20-slice dithered mask 0%→100% in 19 discrete steps (a temporal
        density dissolve — direction-neutral, RTL-safe). A steps() rung
@@ -320,12 +333,12 @@
        --ease-* rungs so they remain a single source. r305: page/reveal
        re-keyed to the reference register (400/480); stat/skeleton keep
        their existing rhythm (independent of the reference). */
-    --motion-duration-micro:    var(--t-micro);   /*  80ms */
-    --motion-duration-short:    var(--t-fast);    /* 200ms */
-    --motion-duration-medium:   var(--t-base);    /* 400ms */
-    --motion-duration-long:     var(--t-slow);    /* 500ms */
-    --motion-duration-page:     400ms;
-    --motion-duration-reveal:   480ms;
+    --motion-duration-micro:    var(--t-micro);   /* 160ms — R359 */
+    --motion-duration-short:    var(--t-fast);    /* 320ms — R359 */
+    --motion-duration-medium:   var(--t-base);    /* 640ms — R359 */
+    --motion-duration-long:     var(--t-slow);    /* 640ms — R359 */
+    --motion-duration-page:     var(--t-fast);    /* 320ms — R359: the route register */
+    --motion-duration-reveal:   var(--t-base);    /* 640ms — R359: slow, precise */
     /* R333 (P-C) — the drawn-card reveal rung: the retired craft sheet row 13's
        imgCardReveal. r345 §A3/B2 — the r305 compression (900ms) is retired:
        the token returns to the MEASURED 1.6s expo.out (the live tween census,
@@ -363,7 +376,7 @@
        resolve on the landing sheet (r339 T-11c computed-:root finding:
        the parity layer's :root block loses the cascade there) — this
        is the landing-resolvable home for the same recorded curve. */
-    --motion-ease-band-exit:   cubic-bezier(1, 0, 0.44, 1);
+    --motion-ease-band-exit:   var(--ease);
     /* r339 T-18 — the recorded preloader exit ground (the reference's
        .loading-progress-item tint at exit: #b3b3af, the chrome
        cell-grammar grey). Canonical seat so the landing sheet resolves
@@ -954,37 +967,30 @@
 
 @layer tokens {
 
-  /* ─── 1. Role-accent (Light) — seven slots, each ≥3.0 vs the paper
-     (computed against the live --bg by tests/unit/token-snapshot.test.ts;
-     role-accents tint chrome only, never body text). Re-verified on the
-     ULARA parchment #F5F1E8 (the 2026 royal takeover): student 6.62 ·
-     faculty 3.04 · department-head 3.30 · dean 3.43 · admin 3.34 ·
-     quality 3.19 · owner 5.05. student rides the brand royal #2540D9
-     (was the sienna ink #A33312 — the role that historically tracked
-     the brand signal keeps that contract under the new palette). */
+  /* ─── 1. Role-accent — R359 final phase: the ONE-signal discipline.
+     Every role's chrome accent IS the royal signal itself (#2540D9
+     light · 6.60:1 on the paper · #8AA0FF dark · 6.00:1 on the night
+     ground — both clear the 3.0 AA-large chrome bar the snapshot test
+     asserts). The per-role hue families (mint/lavender/sienna…) are
+     RETIRED: the reference's colour law is paper + ink + hairline +
+     ONE signal, and role identity is carried by mono labels/indices,
+     never by hue. */
   :root[data-theme="light"] body[data-role="student"]         { --role-accent: #2540D9; }
-  /* r305: faculty + quality retuned one step against the cooler paper
-     (the r304 values measured at/near the 3.0 rounding-risk floor);
-     the ULARA re-verify keeps them (3.04/3.19). department-head +
-     admin carry the ULARA re-tint (#D0663E / #5486C4) for the same
-     margin rule on the warmer #F5F1E8 ground. */
-  :root[data-theme="light"] body[data-role="faculty"]         { --role-accent: #3F9C5F; }
-  :root[data-theme="light"] body[data-role="department-head"] { --role-accent: #D0663E; }
-  :root[data-theme="light"] body[data-role="dean"]            { --role-accent: #8A6FE0; }
-  :root[data-theme="light"] body[data-role="admin"]           { --role-accent: #5486C4; }
-  :root[data-theme="light"] body[data-role="quality"]         { --role-accent: #D9606C; }
-  :root[data-theme="light"] body[data-role="owner"]           { --role-accent: #6B665E; }
+  :root[data-theme="light"] body[data-role="faculty"]         { --role-accent: #2540D9; }
+  :root[data-theme="light"] body[data-role="department-head"] { --role-accent: #2540D9; }
+  :root[data-theme="light"] body[data-role="dean"]            { --role-accent: #2540D9; }
+  :root[data-theme="light"] body[data-role="admin"]           { --role-accent: #2540D9; }
+  :root[data-theme="light"] body[data-role="quality"]         { --role-accent: #2540D9; }
+  :root[data-theme="light"] body[data-role="owner"]           { --role-accent: #2540D9; }
 
-  /* ─── Role-accent (Dark) — each ≥3.0 vs #262019 (re-verified on the
-     2026 royal re-key: student 6.56 · faculty 8.40 · department-head
-     7.76 · dean 7.17 · admin 7.51 · quality 7.61 · owner 7.62). ── */
+  /* Dark rows — the night royal signal on the charcoal ground. */
   :root[data-theme="dark"]  body[data-role="student"]         { --role-accent: #8AA0FF; }
-  :root[data-theme="dark"]  body[data-role="faculty"]         { --role-accent: #82CB99; }
-  :root[data-theme="dark"]  body[data-role="department-head"] { --role-accent: #F2A07F; }
-  :root[data-theme="dark"]  body[data-role="dean"]            { --role-accent: #B7A0F4; }
-  :root[data-theme="dark"]  body[data-role="admin"]           { --role-accent: #92B4DC; }
-  :root[data-theme="dark"]  body[data-role="quality"]         { --role-accent: #F09BA3; }
-  :root[data-theme="dark"]  body[data-role="owner"]           { --role-accent: #B7B2A6; }
+  :root[data-theme="dark"]  body[data-role="faculty"]         { --role-accent: #8AA0FF; }
+  :root[data-theme="dark"]  body[data-role="department-head"] { --role-accent: #8AA0FF; }
+  :root[data-theme="dark"]  body[data-role="dean"]            { --role-accent: #8AA0FF; }
+  :root[data-theme="dark"]  body[data-role="admin"]           { --role-accent: #8AA0FF; }
+  :root[data-theme="dark"]  body[data-role="quality"]         { --role-accent: #8AA0FF; }
+  :root[data-theme="dark"]  body[data-role="owner"]           { --role-accent: #8AA0FF; }
 
   /* Default when no data-role is set: fall through to existing --accent. */
   /* (PI-45 R333: the formerly separate :root blocks — role-accent
@@ -1334,18 +1340,19 @@
        which is the brief's legibility intent. Evidence: the
        extraction ladder (the retired r322 extraction docs, *.md) +
        audits/evidence/r322/dsys/type-census-after.md. */
-    --fs-d1: clamp(31.74px, 4.8vw, 5.6rem);  /* 46.7 @1440 · 47.6 @991 · 36.9 @768 · 31.74 @390 — the reference's own ladder */
-    --fs-d2: clamp(31.74px, 4.8vw, 4.8rem);  /* 40 @1440 · 47.6 @991 · 36.9 @768 · 31.74 @390 */
+    --fs-d1: clamp(31.74px, 4.8vw, 7.4664rem);  /* 62.22 @1440 · 47.6 @991 · 36.9 @768 · 31.74 @390 — the reference's own ladder, R359 cap re-key */
+    --fs-d2: clamp(31.74px, 4.8vw, 5.3328rem);  /* 44.44 @1440 · 47.6 @991 · 36.9 @768 · 31.74 @390 */
     --fs-d3: clamp(23.33px, 2.8vw, 2.8rem);  /* 23.3 @1440 · 23.3 @768/390 (flat, like the reference's card titles) */
     --fs-st:  clamp(22.1px, 2.87vw, 4rem);   /* the statement-band scrub seat: 33.3 @1440 · 22.1 @768/390 */
 
-    /* r324 P3 — the APP-DENSITY ladder (dashboards/data surfaces; the
-       narrative display ladder above is for story pages). H1 28/24 ·
-       H2 20 · H3 16 — px-exact at the desktop root, px floors on
-       phones (density, not display). */
-    --fs-app-h1: clamp(24px, 2.34vw, 3.36rem); /* 28px @1440 · 24px @390 */
-    --fs-app-h2: clamp(18px, 1.67vw, 2.4rem);  /* 20px @1440 · 18px @390 */
-    --fs-app-h3: 1.92rem;                      /* 16px flat */
+    /* r324 P3 → R359 (A3) — the APP ladder JOINS the §2 display scale:
+       the authenticated product speaks the same huge confident headings
+       as the reference (62.22 / 44.44 @1440), floors hold mobile
+       legibility (30 / 22 / 17px). Density lives in the CONTENT rungs
+       (--fs-body 13.33, mono labels 11-12), not the page voice. */
+    --fs-app-h1: clamp(30px, 4.35vw, 7.4664rem); /* 62.22px @1440 · 30px @390 */
+    --fs-app-h2: clamp(22px, 3.1vw, 5.3328rem);    /* 44.44px @1440 · 22px @390 */
+    --fs-app-h3: clamp(17px, 1.63vw, 2.8rem);     /* 23.33px @1440 · 17px @390 */
 
     /* ─── R322 · the rem spacing scale (DESIGN.md §4.b) ───────────────
        Eleven rungs, rem on the fluid root — the ONLY allowed values
@@ -1443,9 +1450,23 @@
    r306's "exactly one [data-theme=dark] .landing" pin in the sheet
    family still holds. */
 .landing {
-  --bg: #F3F2EC;
+  --bg: #F2F1EC;
   --text: #282828;
   --text-primary: #282828;
+  /* R360 integration — the r359 hero's paper-scope seats, promoted
+     from hero.css's var() fallbacks (A1 logged the migration wish for
+     the integrator; the fallbacks WERE the values — --paper,
+     --paper-ink, --paper-ink-2 and --hairline were defined nowhere).
+     Values verbatim: the reference-measured set (A1's D1/D6). The
+     rawHex ratchet demanded the literals live in this sanctioned
+     home. Scoped to .landing: the two legacy var(--paper) consumers
+     outside the landing tree (workspace.css/app.css) are untouched. */
+  --paper: #F2F1EC;
+  --paper-ink: #282828;
+  --paper-ink-2: #646464;
+  --hairline: #B3B3AF;
+  /* the CTA's ink on the royal fill (was hero.css's raw #fff) */
+  --on-signal: #FFFFFF;
   /* R342 integration (a11y fix) — the rebuild's measured secondary
      #72726F reads 4.3:1 on the landing paper #F3F2EC: under the AA body
      floor (4.5) and 0.2 short of passing. The reference's own warm-grey
@@ -1487,4 +1508,28 @@
   --border: #4A4A48;
   --border-strong: #5C5C5A;
   --preloader-exit-ground: #4A4A48;
+}
+
+/* ═══ r359 ART GRAMMAR — forced palettes (r360 integration) ════════
+   Moved verbatim from illustrations.css (A2's grammar sheet): the
+   .mk-r359[data-art-theme] blocks force a palette for plates shown
+   out-of-theme (the /__plates living stage + docs displays). The
+   default .mk-r359 maps onto house tokens in illustrations.css; these
+   forced seats carry the grammar's concrete hex (the RN twin swaps the
+   identical values at render time — shared/art grammar, byte-equal
+   palette web ↔ RN). The literals live here because this file is the
+   one sanctioned raw-value home (css-counts.mjs). */
+.mk-r359[data-art-theme='light'] {
+  --r359-ink: #282828;
+  --r359-ink-2: #62625F;
+  --r359-hair: #B3B3AF;
+  --r359-sig: #2540D9;
+  --r359-paper: #F3F2EC;
+}
+.mk-r359[data-art-theme='dark'] {
+  --r359-ink: #F3F2EC;
+  --r359-ink-2: #B3B3AF;
+  --r359-hair: #4A4A48;
+  --r359-sig: #8AA0FF;
+  --r359-paper: #1C1C1A;
 }

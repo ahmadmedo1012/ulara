@@ -613,15 +613,19 @@ export function cartesianOptions(opts?: {
         }
       : { display: false, drawBorder: false },
     ticks: {
-      color: c.text,
+      /* R359 (A3): the tick register re-keys to the §2 secondary text
+       * seat (--text-secondary #646464) at 11px — the measured
+       * low-contrast complaint (10px muted grey on paper) — and gains
+       * padding so the hairline axes breathe. */
+      color: cssVar('--text-secondary', c.text),
       // Numeric axes use the mono stack — tabular numerals keep tick
       // columns optically aligned; category axes keep the Arabic sans
       // stack (day names, course names).
-      // R313 (WP-D · charts): 10px Geist Mono axis voice; pure-Latin
+      // R313 (WP-D · charts): Geist Mono axis voice; pure-Latin
       // labels render UPPERCASE (the reference's micro-index register);
       // Arabic + numeric labels pass through untouched.
-      font: { family: numeric ? fontMono() : fontSans(), size: 10 },
-      padding: 6,
+      font: { family: numeric ? fontMono() : fontSans(), size: 11 },
+      padding: 8,
       callback(this: { getLabelForValue(value: number): string }, value: number): string {
         const label = this.getLabelForValue(value);
         return /^[A-Za-z][A-Za-z0-9\s-]*$/.test(label) ? label.toUpperCase() : label;

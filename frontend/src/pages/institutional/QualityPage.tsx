@@ -17,6 +17,7 @@ import {
   InstPagedTable, InstSection, InstStates, InstSelect,
   type InstColumn, type InstField, type InstFormValues,
 } from './scaffold';
+import { KpiBand } from '../../components/patterns';
 import {
   useAccreditations, useAuthorities, useCriteriaSets,
   useEvidence, useMyCapabilities, useOrgUnitTree,
@@ -287,15 +288,53 @@ export function InstitutionQualityPage() {
         }
       />
 
+      {/* R359 final · W3 — the quality facts ride the KPI band. */}
+      <KpiBand
+        items={[
+          {
+            index: '01',
+            caption: 'SELF-ASSESSMENTS',
+            label: 'التقييمات الذاتية (الاستعلام الحالي)',
+            value: selfAssessmentsQuery.data?.meta.total ?? 0,
+            empty: selfAssessmentsQuery.data == null,
+          },
+          {
+            index: '02',
+            caption: 'ACCREDITATIONS',
+            label: 'سجلات الاعتماد الخارجي (الاستعلام الحالي)',
+            value: accreditationsQuery.data?.meta.total ?? 0,
+            empty: accreditationsQuery.data == null,
+          },
+          {
+            index: '03',
+            caption: 'CRITERIA SETS',
+            label: 'حزم معايير الاعتماد في الدليل',
+            value: criteriaSetsQuery.data?.length ?? 0,
+            empty: criteriaSetsQuery.data == null,
+          },
+          {
+            index: '04',
+            caption: 'EVIDENCE',
+            label: 'مستندات الأدلة (الاستعلام الحالي)',
+            value: evidenceQuery.data?.meta.total ?? 0,
+            empty: evidenceQuery.data == null,
+          },
+        ]}
+      />
+
       <InstSection
-        title="١ · التقييم الذاتي الداخلي (مكتب ضمان الجودة)"
+        index="01"
+        caption="SELF-ASSESSMENT"
+        title="التقييم الذاتي الداخلي (مكتب ضمان الجودة)"
         description="دورة مكتب الجودة الداخلية: مسودة ← مُقدمة ← قيد المراجعة ← معتمدة ← مؤرشفة. الكتابة تتطلب منحًا صريحًا لقدرة «إدارة التقييم الذاتي الداخلي» — لا يملكها أحد افتراضيًا."
+        pad="none"
       >
         {!canInternal && (
-          <p className="inst-cap-note">
+          <p className="inst-cap-note sg-pad-in">
             أنت تقرأ فقط — الكتابة في التقييم الذاتي تتطلب قدرة <b>QUALITY_INTERNAL_MANAGE</b> (منح صريح من إدارة المؤسسة).
           </p>
         )}
+        <div className="sg-pad-in">
         <InstFilters>
           <InstSelect
             ariaLabel="تصفية بحالة التقييم الذاتي"
@@ -305,6 +344,7 @@ export function InstitutionQualityPage() {
             options={Object.entries(SELF_ASSESSMENT_STATUS_LABELS).map(([value, label]) => ({ value, label }))}
           />
         </InstFilters>
+        </div>
         <InstPagedTable
           query={selfAssessmentsQuery}
           columns={saColumns}
@@ -316,9 +356,13 @@ export function InstitutionQualityPage() {
       </InstSection>
 
       <InstSection
-        title="٢ · الاعتماد الخارجي (مؤسسي وبرامجي)"
+        index="02"
+        caption="ACCREDITATION"
+        title="الاعتماد الخارجي (مؤسسي وبرامجي)"
         description="قرارات الجهات الرقابية والمانحة: قيد التقديم ← مراجعة ← ممنوح/مشروط ← تجديد/إيقاف/إلغاء/انتهاء."
+        pad="none"
       >
+        <div className="sg-pad-in">
         <InstFilters>
           <InstSelect
             ariaLabel="تصفية بنوع الاعتماد"
@@ -335,6 +379,7 @@ export function InstitutionQualityPage() {
             options={Object.entries(ACCREDITATION_STATUS_LABELS).map(([value, label]) => ({ value, label }))}
           />
         </InstFilters>
+        </div>
         <InstPagedTable
           query={accreditationsQuery}
           columns={accColumns}
@@ -346,7 +391,9 @@ export function InstitutionQualityPage() {
       </InstSection>
 
       <InstSection
-        title="٣ · حزم معايير الاعتماد"
+        index="03"
+        caption="CRITERIA SETS"
+        title="حزم معايير الاعتماد"
         description="المعايير المعتمدة كما يعيدها الدليل (الجهة + الإصدار + المعايير الفرعية) — لا نصوص مخترعة."
       >
         <InstStates
@@ -355,7 +402,8 @@ export function InstitutionQualityPage() {
           isEmpty={(criteriaSetsQuery.data ?? []).length === 0}
         >
           {(criteriaSetsQuery.data ?? []).map((set) => (
-            <InstSection key={set.id} title={`${set.nameAr} — إصدار ${set.version}`}>
+            <div key={set.id} className="inst-catalog-group">
+              <h4 className="inst-catalog-group-title">{set.nameAr} — إصدار {set.version}</h4>
               <DetailList
                 items={[
                   { label: 'ينطبق على', value: set.appliesTo === 'INSTITUTIONAL' ? 'المؤسسة' : 'البرامج' },
@@ -370,13 +418,15 @@ export function InstitutionQualityPage() {
                   },
                 ]}
               />
-            </InstSection>
+            </div>
           ))}
         </InstStates>
       </InstSection>
 
       <InstSection
-        title="٤ · الأدلة والمستندات"
+        index="04"
+        caption="EVIDENCE"
+        title="الأدلة والمستندات"
         description="مستندات مرتبطة بسجلات الجودة والاعتماد (بيانات وصفية + مراجع)."
         actions={canExternal || canInternal ? (
           <button type="button" className="btn ghost sm" onClick={() => setEvidenceOpen(true)}>

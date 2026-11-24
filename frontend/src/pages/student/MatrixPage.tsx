@@ -8,9 +8,12 @@ import { ErrorState, Skeleton } from '../../components/primitives/States';
 import {
   PageFrame, PageHeader, RowList, RowItem, FilterBar,
 } from '../../components/patterns';
-/* R319 (c3-S1) — the §B2 kit: the mono-indexed section title bar, the
- * per-course mastery bar, the hatched empty cell. */
-import { SectionBar, BarCount, CourseBar, EmptyCell } from '../../components/student';
+/* R359 (A3 · final sweep) — the sheet grammar joins the §B2 kit: the
+ * framed section (registration crosses + Latin mono caption + the
+ * aside slot) + the KpiBand (the dimension-string register carrying
+ * the mastery facts the PageHeader's meta line used to prose). */
+import { SheetSection, KpiBand } from '../../components/patterns';
+import { BarCount, CourseBar, EmptyCell } from '../../components/student';
 import { Num } from '../../components/primitives/Num';
 import { Icon } from '../../components/Icon';
 import { useMatrix, useGaps } from '../../hooks/useResources';
@@ -31,10 +34,10 @@ import '../../styles/student/academic-pages.css';
 /* r299 (final C): the matrix joins the patterns contract — PageFrame/
  * PageHeader open the page, the level filter rides FilterBar + the
  * shared .pill grammar (the training.css filter-pill import is
- * retired), and the priority-gaps Card becomes a SectionHeader +
- * RowList — the same row anatomy the dashboard's gaps ledger carries.
- * The heatmap itself (r220 legible grid, mobile recomposition, the
- * r164d سدّ الفجوة link contract) is untouched. */
+ * retired), and the priority-gaps Card becomes a framed sheet section
+ * + RowList — the same row anatomy the dashboard's gaps ledger
+ * carries. The heatmap itself (r220 legible grid, mobile
+ * recomposition, the r164d سدّ الفجوة link contract) is untouched. */
 
 /* r220 (4A redesign — Superlist direction): the matrix stays the
  * per-course dense concept grid, but every status is now legible
@@ -167,6 +170,7 @@ export default function MatrixPage() {
     <div className="r319s-page">
     <PageFrame width="default">
       <PageHeader
+        eyebrow="طلاب الجامعة"
         title="المصفوفة التعليمية"
         description={
           'خريطة معرفيّة شخصيّة لكل مفهوم درسته. كل خلية تعكس درجة إتقانك، ' +
@@ -196,6 +200,44 @@ export default function MatrixPage() {
         )}
       />
 
+      {/* R359 (final sweep) — the KPI band: the mastery facts the
+          PageHeader's meta line carried as prose, now as honest
+          numerals in the dimension-string register. Every count
+          derives from the live matrix payload's per-level tally;
+          pending renders the honest «—» empty cells. */}
+      <KpiBand
+        items={[
+          {
+            index: '01',
+            caption: 'MEASURED',
+            label: 'مفاهيم مُقاسة',
+            value: totalConcepts,
+            empty: matrix.isPending,
+          },
+          {
+            index: '02',
+            caption: 'MASTERED',
+            label: 'مفاهيم أتقنتها (80%+)',
+            value: levelCounts['lvl-strong'],
+            empty: matrix.isPending,
+          },
+          {
+            index: '03',
+            caption: 'GAPS',
+            label: 'فجوات تحتاج مراجعة',
+            value: levelCounts['lvl-weak'] + levelCounts['lvl-poor'],
+            empty: matrix.isPending,
+          },
+          {
+            index: '04',
+            caption: 'UNTESTED',
+            label: 'مفاهيم لم تُختبر بعد',
+            value: levelCounts['lvl-untouched'],
+            empty: matrix.isPending,
+          },
+        ]}
+      />
+
       {/* Status key — the words ARE the encoding; the dots only anchor
           the eye. Ranges stated in text so the key never leans on hue. */}
       <div className="matrix-legend" role="group" aria-label="دليل حالات الإتقان">
@@ -206,19 +248,21 @@ export default function MatrixPage() {
         <div className="matrix-legend-item"><span className="matrix-legend-dot" style={{ background: 'var(--text-subtle)' }} /> لم يُختبر</div>
       </div>
 
-      {/* Top gaps with one-click fill — r299: the same SectionHeader +
-          RowList anatomy the dashboard's gaps ledger carries. The سدّ
-          الفجوة contract is the r164d pin: where a recommendation
-          exists the WHOLE row is the link (RowItem to) and the chip
-          rides the trailing slot; no recommendation stays an honest
-          non-link row. R319 (c3-S1): the heading joins the §B2
-          title-bar register — [01] + the actable gaps count as quiet
-          mono meta; the description survives as the note under the
-          bar (honest copy, unchanged). */}
+      {/* Top gaps with one-click fill — r299: the same row anatomy the
+          dashboard's gaps ledger carries. The سدّ الفجوة contract is
+          the r164d pin: where a recommendation exists the WHOLE row is
+          the link (RowItem to) and the chip rides the trailing slot;
+          no recommendation stays an honest non-link row.
+          R359 (final sweep): the region rides the framed sheet — [01]
+          + the actable gaps count in the head's aside; the note and
+          every state live INSIDE the body. */}
       <section aria-label="فجوات الإتقان ذات الأولوية">
-        <SectionBar
+        <SheetSection
+          index="01"
+          caption="PRIORITY GAPS"
           title="فجواتك ذات الأولوية"
-          meta={
+          pad="none"
+          aside={
             !gaps.isPending && !gaps.isError && (gaps.data?.length ?? 0) > 0 ? (
               <BarCount
                 n={gaps.data!.length}
@@ -226,258 +270,284 @@ export default function MatrixPage() {
               />
             ) : undefined
           }
-        />
-        <p className="r319sp-sec-note">ابدأ بسدّ هذه الفجوات — حيث تتوفّر توصية، يأخذك الصفّ مباشرة إلى المحاضرة المناسبة</p>
-        {gaps.isPending ? (
-          <RowList aria-label="قائمة الفجوات ذات الأولوية" loading />
-        ) : gaps.isError ? (
-          <ErrorState
-            message="تعذَّر تحميل فجواتك"
-            error={gaps.error}
-            onRetry={() => gaps.refetch()}
-          />
-        ) : !gaps.data?.length ? (
-          /* R319 (c3-S1): the no-gaps state is the hatched EmptyCell. */
-          <EmptyCell
-            label="لا فجوات حالياً — أحسنت!"
-            note="استمر بحضور المحاضرات والإجابة على نقاط التفاعل."
-          />
-        ) : (
-          <RowList aria-label="قائمة الفجوات ذات الأولوية">
-            {gaps.data.slice(0, 5).map((g) => (
-              <RowItem
-                key={g.conceptId}
-                leading={<Icon icon={AlertCircle} size={16} style={{ color: 'var(--warning-ink)' }} />}
-                title={g.conceptName}
-                meta={<>{g.courseName} · <Num className="font-mono">{formatInt(Math.round(g.level * 100))}%</Num> الآن</>}
-                to={g.recommendedLectureId ? `/student/lectures/${g.recommendedLectureId}` : undefined}
-                trailing={g.recommendedLectureId
-                  ? <span className="btn outline sm pf-chip"><Icon icon={Play} size={13} />سدّ الفجوة</span>
-                  : <Badge>لا توصية</Badge>}
-              />
-            ))}
-          </RowList>
-        )}
-      </section>
-
-      {/* The full matrix per course */}
-      {matrix.isPending ? (
-        <div className="flex-col gap-4" aria-busy="true" aria-live="polite">
-          <MatrixCourseSkeleton />
-          <MatrixCourseSkeleton />
-        </div>
-      ) : matrix.isError ? (
-        <ErrorState
-          message="تعذَّر تحميل المصفوفة التعليميّة"
-          error={matrix.error}
-          onRetry={() => matrix.refetch()}
-        />
-      ) : !matrix.data?.length ? (
-        /* R319 (c3-S1): the empty matrix is the hatched EmptyCell —
-           the sheet's reserved-but-empty region. */
-        <EmptyCell
-          label="لم تتشكّل مصفوفتك بعد"
-          note="شاهد أول محاضرة وأجب عن نقاط التفاعل فيها، وستبدأ المصفوفة برسم خريطة معرفتك تلقائياً."
-        />
-      ) : (
-        <div className="flex-col gap-4">
-          {/* R319 (c3-S1): the heatmap region opens with the §B2
-              title-bar — [02] + the measured-concepts count as quiet
-              mono meta (the PageHeader's meta phrase, as data). */}
-          <SectionBar
-            title="مصفوفتك حسب المقرّر"
-            meta={
-              totalConcepts > 0 ? (
-                <BarCount
-                  n={totalConcepts}
-                  srLabel={countAr(totalConcepts, ['مفهوم واحد مُقاس', 'مفهومان مُقاسان', 'مفاهيم مُقاسة', 'مفهوماً مُقاساً'])}
-                />
-              ) : undefined
-            }
-          />
-          {/* Level filter — dimming non-matching cells animates the
-              heatmap's shade transitions (the page's signature moment).
-              r299: the FilterBar + shared .pill grammar (the CoursesPage
-              toolbar contract) replaces the training.css filter-pill
-              family — one filter voice across the student family. */}
-          <FilterBar
-            filters={
-              <div className="matrix-filter" role="group" aria-label="تصفية المفاهيم بحسب درجة الإتقان">
-                <button
-                  type="button"
-                  className={`pill${filter === 'all' ? ' on' : ''}`}
-                  aria-pressed={filter === 'all'}
-                  onClick={() => setFilter('all')}
-                >
-                  الكل
-                  <span className="matrix-filter-count" aria-hidden>{formatInt(totalConcepts)}</span>
-                </button>
-                {(Object.keys(FILTER_LABEL) as Array<Exclude<LevelFilter, 'all'>>).map((key) => (
-                  <button
-                    key={key}
-                    type="button"
-                    className={`pill${filter === key ? ' on' : ''}`}
-                    aria-pressed={filter === key}
-                    onClick={() => setFilter(key)}
-                    disabled={levelCounts[key] === 0}
-                  >
-                    {FILTER_LABEL[key]}
-                    <span className="matrix-filter-count" aria-hidden>{formatInt(levelCounts[key])}</span>
-                  </button>
-                ))}
-              </div>
-            }
-            trailing={mappedCourses.length > 1 ? (
-              /* r304 — course anchor chips: one quiet ghost chip per
-                  mapped course, jumping to its heatmap block below
-                  (the same quiet-anchor recipe the lecture player's
-                  contents chip uses). One course = nothing renders. */
-              <div
-                role="group"
-                aria-label="الانتقال السريع بين مقرّرات المصفوفة"
-                style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 'var(--sp-2)' }}
-              >
-                {mappedCourses.map((c) => (
-                  <button
-                    key={c.courseId}
-                    type="button"
-                    className="btn ghost sm"
-                    onClick={() => jumpToCourse(c.courseId)}
-                  >
-                    <bdi>{c.courseName}</bdi>
-                  </button>
-                ))}
-              </div>
-            ) : undefined}
-          />
-
-          {/* 22-c (A4 P3-7): the seed maps concepts on ONE course — the
-              other five each rendered the same «لم تُحدَّد مفاهيم هذا
-              المقرّر بعد» empty card, burying the one real heatmap under
-              an empty-state directory. Un-mapped courses collapse into a
-              single summary line; mapped ones render in full. */}
-          {mappedCourses.map((c) => {
-            const Cmp = courseIcon(c.courseCode);
-            const tint = courseTint(c.themeColor);
-            const totalConceptsInCourse = c.concepts.length;
-            const masteredConcepts = c.concepts.filter((x) => x.level >= 0.8).length;
-            const avgPct = totalConceptsInCourse
-              ? Math.round((c.concepts.reduce((s, x) => s + x.level, 0) / totalConceptsInCourse) * 100)
-              : 0;
-            return (
-              <div className="matrix-course" key={c.courseId} id={`matrix-course-${c.courseId}`}>
-                <div className="matrix-course-head">
-                  <div
-                    className="matrix-course-icon"
-                    style={{
-                      // color-mix keeps API tints theme-adaptive (the old
-                      // `${tint}15` alpha-hex concat broke on 8-digit input).
-                      background: `color-mix(in srgb, ${tint} 14%, var(--surface))`,
-                      // badge-tile pattern: hue pulled toward ink for a
-                      // theme-adaptive ≥3:1 icon contrast.
-                      color: `color-mix(in srgb, ${tint} 60%, var(--text))`,
-                    }}
-                  >
-                    <Icon icon={Cmp} size={18} />
-                  </div>
-                  <div className="flex-1" style={{ minWidth: 0 }}>
-                    <div className="text-md font-semibold" style={{ color: 'var(--text)' }}>{c.courseName}</div>
-                    <div className="text-xs text-subtle">
-                      {conceptCount(totalConceptsInCourse)} ·{' '}
-                      {masteredConcepts > 0 ? `أتقنت ${masteredConcepts}` : 'لم تتقن منها بعد'}
+        >
+          <div className="sg-pad-in">
+            <p className="r319sp-sec-note">ابدأ بسدّ هذه الفجوات — حيث تتوفّر توصية، يأخذك الصفّ مباشرة إلى المحاضرة المناسبة</p>
+          </div>
+          {gaps.isPending ? (
+            <div className="sg-pad-in" aria-busy="true" aria-live="polite">
+              {[0, 1].map((i) => (
+                <div className="pf-row" key={i} aria-hidden>
+                  <div className="pf-row-line">
+                    <div className="pf-row-main">
+                      <span className="pat-skeleton" style={{ display: 'inline-block', inlineSize: '45%', blockSize: '0.9em' }} />
+                      <span className="pat-skeleton" style={{ display: 'inline-block', inlineSize: '55%', blockSize: '0.7em' }} />
                     </div>
                   </div>
-                  <Link to={`/student/courses/${c.offeringId}`} className="btn ghost sm">
-                    افتح المقرّر
-                    <Icon icon={ArrowLeft} size={13} />
-                  </Link>
                 </div>
-
-                {/* R319 (c3-S1): the block's real average-mastery datum
-                    as the §B2 CourseBar — hairline + end-tick + the mono
-                    % readout (the old «متوسط NN%» prose, as the sheet's
-                    instrument). Neutral ink; aria-labels the course. */}
-                <div className="r319sp-matrix-bar">
-                  <CourseBar
-                    pct={avgPct}
-                    ariaLabel={`متوسط إتقان مقرر ${c.courseName}: ${avgPct}%`}
-                  />
-                </div>
-
-                {/* The concept grid — a keyboard-legible list: every cell
-                    is focusable with a full aria-label (name + status +
-                    %), so the heatmap reads linearly without a pointer.
-                    Gap cells stay real links (r164d contract). */}
-                <div className="matrix-cells" aria-label={`مفاهيم مقرر ${c.courseName}`}>
-                  {c.concepts.map((k) => {
-                    const cls = levelClass(k.level, k.attempts);
-                    const dimmed = filter !== 'all' && cls !== filter;
-                    const pctText = k.attempts > 0 ? `${formatInt(Math.round(k.level * 100))}%` : '—';
-                    const statusText = levelLabel(k.level, k.attempts);
-                    const cellAria = `${k.name} — ${statusText}${k.attempts > 0 ? ` (${pctText})` : ''}`;
-                    const titleBase = `${k.name} — ${statusText}${k.attempts > 0 ? ` (${pctText})` : ''}`;
-                    const body = (
-                      <>
-                        <div className="matrix-name">{k.name}</div>
-                        <div className="matrix-meta">
-                          <span className={`r305s-chip matrix-status-chip${LEVEL_CHIP_TONE[cls] ? ` ${LEVEL_CHIP_TONE[cls]}` : ''}`}>
-                            <i className="r305s-chip-dot" aria-hidden />
-                            {statusText}
-                          </span>
-                          <span className="matrix-meta-pct">{pctText}</span>
-                        </div>
-                      </>
-                    );
-                    /* r164d: only the GAP levels link (weak/poor — the
-                     * same «سدّ الفجوة» contract the rows above carry);
-                     * strong/good/untouched tiles stay informational. */
-                    const remediation = cls === 'lvl-weak' || cls === 'lvl-poor'
-                      ? gapLectureByConcept.get(k.id)
-                      : undefined;
-                    if (remediation) {
-                      /* r164d + r304: the cell link's aria-name is the
-                       * ACTION, not just the state — «سدّ فجوة» + the
-                       * concept + the honest destination (the lecture
-                       * title when the payload names one). The concept
-                       * name stays in the name so the row link and the
-                       * cell link keep agreeing (MatrixPage-links pin). */
-                      return (
-                        <Link
-                          to={`/student/lectures/${remediation.lectureId}`}
-                          className={`matrix-cell ${cls}${dimmed ? ' is-dim' : ''}`}
-                          style={{ cursor: 'pointer' }}
-                          title={`${titleBase} — راجع في: ${remediation.lectureTitle ?? 'المحاضرة الموصى بها'}`}
-                          aria-label={`سدّ فجوة: ${k.name} — انتقل إلى المحاضرة${remediation.lectureTitle ? ` «${remediation.lectureTitle}»` : ''}`}
-                          key={k.id}
-                        >
-                          {body}
-                        </Link>
-                      );
-                    }
-                    return (
-                      <div
-                        className={`matrix-cell ${cls}${dimmed ? ' is-dim' : ''}`}
-                        key={k.id}
-                        title={titleBase}
-                        aria-label={cellAria}
-                        tabIndex={0}
-                      >
-                        {body}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
-          {unmappedCount > 0 && (
-            <p className="matrix-unmapped-note">
-              {countAr(unmappedCount, ['مقرّر واحد آخر في قائمتك', 'مقرّران آخران في قائمتك', 'مقرّرات أخرى في قائمتك', 'مقرّراً آخر في قائمتك'])}
-              {' '}بلا مفاهيم محدَّدة بعد — تظهر خرائطها هنا فور إضافتها من الأستاذ.
-            </p>
+              ))}
+            </div>
+          ) : gaps.isError ? (
+            <div className="sg-pad-in">
+              <ErrorState
+                message="تعذّر تحميل فجواتك"
+                error={gaps.error}
+                onRetry={() => gaps.refetch()}
+              />
+            </div>
+          ) : !gaps.data?.length ? (
+            <div className="sg-pad-in">
+              {/* R319 (c3-S1): the no-gaps state is the hatched EmptyCell. */}
+              <EmptyCell
+                label="لا فجوات حالياً — أحسنت!"
+                note="استمر بحضور المحاضرات والإجابة على نقاط التفاعل."
+              />
+            </div>
+          ) : (
+            /* The gap rows are action rows (the whole line is the سدّ
+               الفجوة link) — the RowList stays, inside the frame. */
+            <RowList aria-label="قائمة الفجوات ذات الأولوية">
+              {gaps.data.slice(0, 5).map((g) => (
+                <RowItem
+                  key={g.conceptId}
+                  leading={<Icon icon={AlertCircle} size={16} style={{ color: 'var(--warning-ink)' }} />}
+                  title={g.conceptName}
+                  meta={<>{g.courseName} · <Num className="font-mono">{formatInt(Math.round(g.level * 100))}%</Num> الآن</>}
+                  to={g.recommendedLectureId ? `/student/lectures/${g.recommendedLectureId}` : undefined}
+                  trailing={g.recommendedLectureId
+                    ? <span className="btn outline sm pf-chip"><Icon icon={Play} size={13} />سدّ الفجوة</span>
+                    : <Badge>لا توصية</Badge>}
+                />
+              ))}
+            </RowList>
           )}
-        </div>
-      )}
+        </SheetSection>
+      </section>
+
+      {/* The full matrix per course — R359 (final sweep): the heatmap
+          region rides the framed sheet ([02] + the measured-concepts
+          count in the head's aside); the legend, the level filter and
+          every state live INSIDE the body. The heatmap's own anatomy
+          (course blocks + concept cells) is untouched. */}
+      <section aria-label="المصفوفة حسب المقرّر">
+        <SheetSection
+          index="02"
+          caption="MASTERY MATRIX"
+          title="مصفوفتك حسب المقرّر"
+          aside={
+            totalConcepts > 0 ? (
+              <BarCount
+                n={totalConcepts}
+                srLabel={countAr(totalConcepts, ['مفهوم واحد مُقاس', 'مفهومان مُقاسان', 'مفاهيم مُقاسة', 'مفهوماً مُقاساً'])}
+              />
+            ) : undefined
+          }
+        >
+          {matrix.isPending ? (
+            <div className="flex-col gap-4" aria-busy="true" aria-live="polite">
+              <MatrixCourseSkeleton />
+              <MatrixCourseSkeleton />
+            </div>
+          ) : matrix.isError ? (
+            <ErrorState
+              message="تعذّر تحميل المصفوفة التعليميّة"
+              error={matrix.error}
+              onRetry={() => matrix.refetch()}
+            />
+          ) : !matrix.data?.length ? (
+            /* R319 (c3-S1): the empty matrix is the hatched EmptyCell —
+               the sheet's reserved-but-empty region. */
+            <EmptyCell
+              label="لم تتشكّل مصفوفتك بعد"
+              note="شاهد أول محاضرة وأجب عن نقاط التفاعل فيها، وستبدأ المصفوفة برسم خريطة معرفتك تلقائياً."
+            />
+          ) : (
+            <div className="flex-col gap-4">
+              {/* Level filter — dimming non-matching cells animates the
+                  heatmap's shade transitions (the page's signature moment).
+                  r299: the FilterBar + shared .pill grammar (the CoursesPage
+                  toolbar contract) replaces the training.css filter-pill
+                  family — one filter voice across the student family. */}
+              <FilterBar
+                filters={
+                  <div className="matrix-filter" role="group" aria-label="تصفية المفاهيم بحسب درجة الإتقان">
+                    <button
+                      type="button"
+                      className={`pill${filter === 'all' ? ' on' : ''}`}
+                      aria-pressed={filter === 'all'}
+                      onClick={() => setFilter('all')}
+                    >
+                      الكل
+                      <span className="matrix-filter-count" aria-hidden>{formatInt(totalConcepts)}</span>
+                    </button>
+                    {(Object.keys(FILTER_LABEL) as Array<Exclude<LevelFilter, 'all'>>).map((key) => (
+                      <button
+                        key={key}
+                        type="button"
+                        className={`pill${filter === key ? ' on' : ''}`}
+                        aria-pressed={filter === key}
+                        onClick={() => setFilter(key)}
+                        disabled={levelCounts[key] === 0}
+                      >
+                        {FILTER_LABEL[key]}
+                        <span className="matrix-filter-count" aria-hidden>{formatInt(levelCounts[key])}</span>
+                      </button>
+                    ))}
+                  </div>
+                }
+                trailing={mappedCourses.length > 1 ? (
+                  /* r304 — course anchor chips: one quiet ghost chip per
+                      mapped course, jumping to its heatmap block below
+                      (the same quiet-anchor recipe the lecture player's
+                      contents chip uses). One course = nothing renders. */
+                  <div
+                    role="group"
+                    aria-label="الانتقال السريع بين مقرّرات المصفوفة"
+                    style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 'var(--sp-2)' }}
+                  >
+                    {mappedCourses.map((c) => (
+                      <button
+                        key={c.courseId}
+                        type="button"
+                        className="btn ghost sm"
+                        onClick={() => jumpToCourse(c.courseId)}
+                      >
+                        <bdi>{c.courseName}</bdi>
+                      </button>
+                    ))}
+                  </div>
+                ) : undefined}
+              />
+
+              {/* 22-c (A4 P3-7): the seed maps concepts on ONE course — the
+                  other five each rendered the same «لم تُحدَّد مفاهيم هذا
+                  المقرّر بعد» empty card, burying the one real heatmap under
+                  an empty-state directory. Un-mapped courses collapse into a
+                  single summary line; mapped ones render in full. */}
+              {mappedCourses.map((c) => {
+                const Cmp = courseIcon(c.courseCode);
+                const tint = courseTint(c.themeColor);
+                const totalConceptsInCourse = c.concepts.length;
+                const masteredConcepts = c.concepts.filter((x) => x.level >= 0.8).length;
+                const avgPct = totalConceptsInCourse
+                  ? Math.round((c.concepts.reduce((s, x) => s + x.level, 0) / totalConceptsInCourse) * 100)
+                  : 0;
+                return (
+                  <div className="matrix-course" key={c.courseId} id={`matrix-course-${c.courseId}`}>
+                    <div className="matrix-course-head">
+                      <div
+                        className="matrix-course-icon"
+                        style={{
+                          // color-mix keeps API tints theme-adaptive (the old
+                          // `${tint}15` alpha-hex concat broke on 8-digit input).
+                          background: `color-mix(in srgb, ${tint} 14%, var(--surface))`,
+                          // badge-tile pattern: hue pulled toward ink for a
+                          // theme-adaptive ≥3:1 icon contrast.
+                          color: `color-mix(in srgb, ${tint} 60%, var(--text))`,
+                        }}
+                      >
+                        <Icon icon={Cmp} size={18} />
+                      </div>
+                      <div className="flex-1" style={{ minWidth: 0 }}>
+                        <div className="text-md font-semibold" style={{ color: 'var(--text)' }}>{c.courseName}</div>
+                        <div className="text-xs text-subtle">
+                          {conceptCount(totalConceptsInCourse)} ·{' '}
+                          {masteredConcepts > 0 ? `أتقنت ${masteredConcepts}` : 'لم تتقن منها بعد'}
+                        </div>
+                      </div>
+                      <Link to={`/student/courses/${c.offeringId}`} className="btn ghost sm">
+                        افتح المقرّر
+                        <Icon icon={ArrowLeft} size={13} />
+                      </Link>
+                    </div>
+
+                    {/* R319 (c3-S1): the block's real average-mastery datum
+                        as the §B2 CourseBar — hairline + end-tick + the mono
+                        % readout (the old «متوسط NN%» prose, as the sheet's
+                        instrument). Neutral ink; aria-labels the course. */}
+                    <div className="r319sp-matrix-bar">
+                      <CourseBar
+                        pct={avgPct}
+                        ariaLabel={`متوسط إتقان مقرر ${c.courseName}: ${avgPct}%`}
+                      />
+                    </div>
+
+                    {/* The concept grid — a keyboard-legible list: every cell
+                        is focusable with a full aria-label (name + status +
+                        %), so the heatmap reads linearly without a pointer.
+                        Gap cells stay real links (r164d contract). */}
+                    <div className="matrix-cells" aria-label={`مفاهيم مقرر ${c.courseName}`}>
+                      {c.concepts.map((k) => {
+                        const cls = levelClass(k.level, k.attempts);
+                        const dimmed = filter !== 'all' && cls !== filter;
+                        const pctText = k.attempts > 0 ? `${formatInt(Math.round(k.level * 100))}%` : '—';
+                        const statusText = levelLabel(k.level, k.attempts);
+                        const cellAria = `${k.name} — ${statusText}${k.attempts > 0 ? ` (${pctText})` : ''}`;
+                        const titleBase = `${k.name} — ${statusText}${k.attempts > 0 ? ` (${pctText})` : ''}`;
+                        const body = (
+                          <>
+                            <div className="matrix-name">{k.name}</div>
+                            <div className="matrix-meta">
+                              <span className={`r305s-chip matrix-status-chip${LEVEL_CHIP_TONE[cls] ? ` ${LEVEL_CHIP_TONE[cls]}` : ''}`}>
+                                <i className="r305s-chip-dot" aria-hidden />
+                                {statusText}
+                              </span>
+                              <span className="matrix-meta-pct">{pctText}</span>
+                            </div>
+                          </>
+                        );
+                        /* r164d: only the GAP levels link (weak/poor — the
+                         * same «سدّ الفجوة» contract the rows above carry);
+                         * strong/good/untouched tiles stay informational. */
+                        const remediation = cls === 'lvl-weak' || cls === 'lvl-poor'
+                          ? gapLectureByConcept.get(k.id)
+                          : undefined;
+                        if (remediation) {
+                          /* r164d + r304: the cell link's aria-name is the
+                           * ACTION, not just the state — «سدّ فجوة» + the
+                           * concept + the honest destination (the lecture
+                           * title when the payload names one). The concept
+                           * name stays in the name so the row link and the
+                           * cell link keep agreeing (MatrixPage-links pin). */
+                          return (
+                            <Link
+                              to={`/student/lectures/${remediation.lectureId}`}
+                              className={`matrix-cell ${cls}${dimmed ? ' is-dim' : ''}`}
+                              style={{ cursor: 'pointer' }}
+                              title={`${titleBase} — راجع في: ${remediation.lectureTitle ?? 'المحاضرة الموصى بها'}`}
+                              aria-label={`سدّ فجوة: ${k.name} — انتقل إلى المحاضرة${remediation.lectureTitle ? ` «${remediation.lectureTitle}»` : ''}`}
+                              key={k.id}
+                            >
+                              {body}
+                            </Link>
+                          );
+                        }
+                        return (
+                          <div
+                            className={`matrix-cell ${cls}${dimmed ? ' is-dim' : ''}`}
+                            key={k.id}
+                            title={titleBase}
+                            aria-label={cellAria}
+                            tabIndex={0}
+                          >
+                            {body}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+              {unmappedCount > 0 && (
+                <p className="matrix-unmapped-note">
+                  {countAr(unmappedCount, ['مقرّر واحد آخر في قائمتك', 'مقرّران آخران في قائمتك', 'مقرّرات أخرى في قائمتك', 'مقرّراً آخر في قائمتك'])}
+                  {' '}بلا مفاهيم محدَّدة بعد — تظهر خرائطها هنا فور إضافتها من الأستاذ.
+                </p>
+              )}
+            </div>
+          )}
+        </SheetSection>
+      </section>
     </PageFrame>
     </div>
   );

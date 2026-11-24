@@ -124,9 +124,9 @@
     --fs-display-lg: 7.2rem;
     --fs-display-md: 6.4rem;
 
-    --fs-h1: 5.6rem;          /* 46.67px @1440 — the measured reference h1 */
-    --fs-h2: 4.8rem;          /* 40px    @1440 — the reference h2 */
-    --fs-h3: 4rem;            /* 33.33px @1440 — the reference h3 */
+    --fs-h1: clamp(31.74px,4.8vw,7.4664rem);          /* 46.67px @1440 — the measured reference h1 */
+    --fs-h2: clamp(31.74px,4.8vw,5.3328rem);          /* 40px    @1440 — the reference h2 */
+    --fs-h3: clamp(23.33px,2.8vw,4.2672rem);            /* 33.33px @1440 — the reference h3 */
 
     /* r325 Y4 — the CLAMPED display ladder (tokens.css:1337): floors are
        the reference's own phone sizes; the 4.8vw mid-term reproduces the reference's
@@ -137,7 +137,7 @@
     --fs-d3: clamp(23.33px, 2.8vw, 2.8rem);
     --fs-st: clamp(22.1px, 2.87vw, 4rem);
 
-    --fs-body-lg: max(13px, 1.8rem);
+    --fs-body-lg: clamp(16px,1.48vw,2.1336rem);
     --fs-body:    max(13px, 1.6rem);
     /* r140 → R313 — the chrome step joins the reference's uniform
        13.33px body run, floor-gated for Arabic. */
@@ -179,28 +179,28 @@
     --ls-display-tight: -0.02em;
 
     /* ─── Motion — raw ladder 80/160/240/380/520/720 ──────────────── */
-    --t-micro: 80ms;
-    --t-fast:  200ms;
-    --t-base:  400ms;
-    --t-slow:  500ms;
-    --t-slower: 650ms;
-    --t-cinema: 900ms;
+    --t-micro: 160ms;
+    --t-fast:  320ms;
+    --t-base:  640ms;
+    --t-slow:  640ms;
+    --t-slower: 640ms;
+    --t-cinema: 640ms;
     /* R313 (D10) — the loader's measured center-out two-band split. */
-    --t-sheet-exit: 835ms;
+    --t-sheet-exit: 320ms;
     --t-guest-reveal: 700ms;
 
     /* easings — ease-out settles at (0.16,1,0.3,1); the spring family
        overshoots 1.18/1.36/1.56 (soft/spring/bounce) + snappy rebound */
     --ease:        cubic-bezier(0.23, 1, 0.32, 1);
-    --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
-    --ease-in:     cubic-bezier(0.625, 0.05, 0, 1);
+    --ease-out:    cubic-bezier(0.23,1,0.32,1);
+    --ease-in:     cubic-bezier(0.23,1,0.32,1);
     --ease-linear: linear;
-    --ease-soft:   cubic-bezier(0.22, 1, 0.36, 1);
-    --ease-spring-soft:   cubic-bezier(0.34, 1.18, 0.64, 1);
-    --ease-spring:        cubic-bezier(0.34, 1.36, 0.64, 1);
-    --ease-bounce:        cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-soft:   cubic-bezier(0.23,1,0.32,1);
+    --ease-spring-soft:   cubic-bezier(0.23,1,0.32,1);
+    --ease-spring:        cubic-bezier(0.23,1,0.32,1);
+    --ease-bounce:        cubic-bezier(0.23,1,0.32,1);
     --ease-spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-    --ease-spring-snappy: cubic-bezier(0.5, 1.6, 0.4, 1);
+    --ease-spring-snappy: cubic-bezier(0.23,1,0.32,1);
 
     /* composed transitions — --t-clean is an `all` shorthand; consumers
        that can enumerate properties (see .icon-btn) should. */
@@ -218,8 +218,8 @@
     --motion-duration-short:    var(--t-fast);    /* 200ms */
     --motion-duration-medium:   var(--t-base);    /* 400ms */
     --motion-duration-long:     var(--t-slow);    /* 500ms */
-    --motion-duration-page:     400ms;
-    --motion-duration-reveal:   480ms;
+    --motion-duration-page:     320ms;
+    --motion-duration-reveal:   640ms;
     --motion-duration-stat:     700ms;
     --motion-duration-skeleton: 1200ms;
     /* R313 (D10) — canonical seat for the entrance sheet's exit. */
@@ -397,16 +397,16 @@
        ground + band rungs are retired; #B3B3AF is the reference's
        construction hairline). */
     --neutral-0:   #FFFFFF;          /* ground — cards/inputs */
-    --neutral-50:  #F5F1E8;          /* paper — the warm vintage page ground (R313) */
-    --neutral-100: #EFEBDF;          /* card hover, subtle band — warm step */
-    --neutral-150: #EDE9DC;          /* inset wells — warm step */
-    --neutral-200: #E0E0DA;          /* hairline — the reference's guide grey */
+    --neutral-50:  #f2f1ec;          /* paper — the warm vintage page ground (R313) */
+    --neutral-100: #ebebe5;          /* card hover, subtle band — warm step */
+    --neutral-150: #e7e7e1;          /* inset wells — warm step */
+    --neutral-200: #dbdbd5;          /* hairline — the reference's guide grey */
     --neutral-300: #B3B3AF;          /* divider / rule / grid — the reference's --content--border */
     --neutral-400: #B4B4B0;   /* disable rung — the reference's technical grey */
     --neutral-500: #72726F;
     --neutral-700: #414140;          /* ink-secondary (the reference's own) */
     --neutral-800: #333330;
-    --neutral-900: #1A1713;          /* ink — the 2026 approved light ink, 15.84:1 on paper (AAA) */
+    --neutral-900: #282828;          /* ink — the 2026 approved light ink, 15.84:1 on paper (AAA) */
 
     /* the 9 section-color families — near-neutral grounds + their own
        inks; mint = the approved success (#17724A) and rose = the approved
@@ -438,8 +438,8 @@
 
     --text:        var(--neutral-900);
     --text-secondary: var(--neutral-700);
-    --text-muted:  #62625F;   /* R313: rgba(40,40,40,.72) on #F5F1E8, solid — 5.63:1 ground · 6.12:1 surface */
-    --text-faint:  #666660;   /* R341 M6: muted-ink AA audit — #70706A→#666660 (96/96 pairs ≥4.5:1 both themes; tokens regen, this export follows) */
+    --text-muted:  #666663;   /* R313: rgba(40,40,40,.72) on #F5F1E8, solid — 5.63:1 ground · 6.12:1 surface */
+    --text-faint:  #676765;   /* R341 M6: muted-ink AA audit — #70706A→#666660 (96/96 pairs ≥4.5:1 both themes; tokens regen, this export follows) */
     --text-on-accent: #FFFFFF;   /* 2026: white on the royal fill — 7.46:1 AAA */
     --text-on-dark:   var(--neutral-50);
 
@@ -583,7 +583,7 @@
     --neutral-500: #B4B4B0;          /* r305 ink-muted — the redeemed disable grey, 7.09:1 */
     --neutral-700: #C9C9C5;          /* ink-secondary */
     --neutral-800: #E0E0DC;
-    --neutral-900: #F5F1E8;          /* ink — the paper twin. R324 override (X22, reviewers A/B): the dark ink unifies to the SAME warm paper #F5F1E8 as the light ground (the old blueprint-blue #F6F8FA ran a +12 blue channel — a second paper). Contrast rises (13.44:1 on #262019), no seat depends on the cool cast. */
+    --neutral-900: #f0f0eb;          /* ink — the paper twin. R324 override (X22, reviewers A/B): the dark ink unifies to the SAME warm paper #F5F1E8 as the light ground (the old blueprint-blue #F6F8FA ran a +12 blue channel — a second paper). Contrast rises (13.44:1 on #262019), no seat depends on the cool cast. */
 
     /* night hue families — ember-tinted deep grounds + luminous inks (r305) */
     --c-peach-bg:     #43241C;   --c-peach-ink:    #FF8E68;   --c-peach-deep:   #FFC5AE;

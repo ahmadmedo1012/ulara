@@ -1,21 +1,28 @@
 /**
- * push.tsx — R327 C3 — the mobile push client.
+ * push.tsx — R327 C3 → r359 A4 — the mobile push client.
  *
  * The contract (the M2.6 registration's client half):
- *  · permission is requested ONLY from a value-shown moment (the alerts
- *    screen's «تفعيل الإشعارات» affordance / settings row) — never at
- *    first open;
+ *  · permission is requested ONLY from a value-shown moment (onboarding
+ *    priming, the alerts screen's «تفعيل الإشعارات» affordance / settings
+ *    row) — never cold at first open;
  *  · once granted, the Expo token registers on POST /me/push-devices
  *    (re-registration is idempotent — the upsert re-owns the row);
+ *  · token ROTATION re-registers (addPushTokenListener — a refreshed
+ *    FCM/APNs token must never orphan the old row);
  *  · Android channels: «alerts» (high importance) — configured at boot;
- *  · a notification tap deep-links into the app (payload.data.link —
- *    the same ulara:// routes the notification row carries);
- *  · foreground arrivals bump the badge; logout unregisters (a handed-
- *    -over phone must not keep pushing).
+ *  · a notification tap deep-links into the app (payload.data.link — the
+ *    same in-app-path guard the inbox rows use);
+ *  · foreground arrivals increment the badge; reading the inbox clears it;
+ *    logout unregisters (a handed-over phone must not keep pushing).
+ *
+ * r359 A4 honesty rule: push needs an Expo push project id
+ * (extra.pushProjectId). While it is the zero placeholder (no Expo
+ * project registered yet — see app.config.ts) the client reports
+ * «unavailable» instead of pretending: every surface degrades to the
+ * REST inbox, which stays the surface of record.
  *
  * Everything is best-effort: a push failure NEVER touches the app's
- * core flows. The REST inbox (useNotifications) remains the surface of
- * record — the push is the tap on the shoulder.
+ * core flows.
  */
 import { useEffect, useRef } from "react";
 import { Platform } from "react-native";
@@ -25,11 +32,22 @@ import Constants from "expo-constants";
 import { router } from "expo-router";
 import { get, post, del } from "@/api/client";
 import { useSession } from "@/auth/session";
+import { safeDeepLink } from "@/hooks/useNotifications";
 
 /** The Android channels (id, importance, name) — ds: one honest bell. */
 export const CHANNEL_ALERTS = "alerts";
 
 let channelsReady = false;
+
+/** The Expo push project seam (app.config.ts extra.pushProjectId).
+ * Zero placeholder → push is honestly unavailable on this build. */
+export function pushProjectId(): string | null {
+  const id = Constants.expoConfig?.extra?.pushProjectId;
+  if (typeof id !== "string" || !id || id === "00000000-0000-0000-0000-000000000000") {
+    return null;
+  }
+  return id;
+}
 
 /** Configure Android channels + the foreground presentation. Idempotent. */
 export function ensurePushRuntime(): void {
@@ -70,6 +88,29 @@ export async function currentPermission(): Promise<PushPermissionState> {
   }
 }
 
+/** Mint the Expo push token — null when push is unavailable on this build
+ * (no project id) or on tokenless environments (emulators without play
+ * services). Never throws. */
+async function mintPushToken(): Promise<string | null> {
+  const projectId = pushProjectId();
+  if (!projectId) return null;
+  try {
+    const token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
+    if (!token || token.length < 20) return null;
+    return token;
+  } catch {
+    return null;
+  }
+}
+
+async function registerToken(token: string): Promise<void> {
+  await post("/me/push-devices", {
+    expoToken: token,
+    platform: Platform.OS === "ios" ? "IOS" : Platform.OS === "android" ? "ANDROID" : "WEB",
+    appVersion: Constants.expoConfig?.version ?? undefined,
+  });
+}
+
 /**
  * The value-shown request flow (call from a user gesture ONLY):
  * ask → on grant, take the Expo token → register on /me/push-devices.
@@ -83,18 +124,10 @@ export async function requestAndRegisterPush(): Promise<PushPermissionState> {
     });
     if (!settings.granted) return settings.canAskAgain === false ? "denied" : "undetermined";
 
-    const token = (
-      await Notifications.getExpoPushTokenAsync({
-        projectId: Constants.expoConfig?.extra?.eas?.projectId ?? undefined,
-      })
-    ).data;
-    if (!token || token.length < 20) return "granted"; // tokenless (simulator) — permission still true
+    const token = await mintPushToken();
+    if (!token) return "granted"; // permission granted; push payload unavailable this build
 
-    await post("/me/push-devices", {
-      expoToken: token,
-      platform: Platform.OS === "ios" ? "IOS" : Platform.OS === "android" ? "ANDROID" : "WEB",
-      appVersion: Constants.expoConfig?.version ?? undefined,
-    });
+    await registerToken(token);
     return "granted";
   } catch {
     // Never throw into a button press — the inbox still works.
@@ -105,14 +138,11 @@ export async function requestAndRegisterPush(): Promise<PushPermissionState> {
 /** Silent re-registration for an ALREADY-granted session (boot + login). */
 async function registerIfGranted(): Promise<void> {
   try {
+    if (!pushProjectId()) return; // nothing to mint without a project
     if ((await currentPermission()) !== "granted") return;
-    const token = (await Notifications.getExpoPushTokenAsync()).data;
-    if (!token || token.length < 20) return;
-    await post("/me/push-devices", {
-      expoToken: token,
-      platform: Platform.OS === "ios" ? "IOS" : Platform.OS === "android" ? "ANDROID" : "WEB",
-      appVersion: Constants.expoConfig?.version ?? undefined,
-    });
+    const token = await mintPushToken();
+    if (!token) return;
+    await registerToken(token);
   } catch {
     /* best-effort */
   }
@@ -129,9 +159,30 @@ export async function unregisterPushDevices(): Promise<void> {
   }
 }
 
+/* ── badge discipline (r359 A4) ─────────────────────────────────────── */
+
+/** Foreground arrival → badge counts the unseen, not «1» forever. */
+async function bumpBadge(): Promise<void> {
+  try {
+    const current = await Notifications.getBadgeCountAsync();
+    await Notifications.setBadgeCountAsync(current + 1);
+  } catch {
+    /* best-effort */
+  }
+}
+
+/** Clear the launcher badge — call when the inbox is fully read. */
+export async function clearPushBadge(): Promise<void> {
+  try {
+    await Notifications.setBadgeCountAsync(0);
+  } catch {
+    /* best-effort */
+  }
+}
+
 /**
  * PushRegistrar — mounts ONCE in the root layout:
- *  · boot: channels + foreground handler + tap → deep link
+ *  · boot: channels + foreground handler + tap → deep link + rotation
  *  · session: silent re-registration when permission already granted
  */
 export function PushRegistrar(): null {
@@ -145,17 +196,28 @@ export function PushRegistrar(): null {
     ensurePushRuntime();
 
     const tapSub = Notifications.addNotificationResponseReceivedListener((response) => {
-      const link = response.notification.request.content.data?.link;
-      if (typeof link === "string" && link.startsWith("/")) {
+      const link = safeDeepLink(response.notification.request.content.data?.link as string | null);
+      if (link) {
         router.push(link as never);
       }
     });
     const foreSub = Notifications.addNotificationReceivedListener(() => {
-      void Notifications.setBadgeCountAsync(1).catch(() => undefined);
+      void bumpBadge();
     });
+    // Token rotation (SDK 53+): a refreshed device token re-registers so
+    // the old row never orphans into dead-token land.
+    const rotateSub =
+      typeof Notifications.addPushTokenListener === "function"
+        ? Notifications.addPushTokenListener((token) => {
+            if (typeof token?.data === "string" && token.data.length >= 20) {
+              void registerToken(token.data).catch(() => undefined);
+            }
+          })
+        : null;
     return () => {
       tapSub.remove();
       foreSub.remove();
+      rotateSub?.remove();
     };
   }, []);
 

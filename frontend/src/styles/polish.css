@@ -577,11 +577,12 @@
     text-align: center;
     border: 2px solid var(--surface);
     font-variant-numeric: tabular-nums;
-    /* Off-token by design: danger-tinted attention glow, not elevation. */
-  box-shadow: 0 2px 6px -1px color-mix(in srgb, var(--danger) 50%, transparent);
     /* Calm pulse to draw attention without nagging */
     animation: notif-bell-pulse var(--motion-duration-ambient) var(--ease-out) infinite;
   }
+  /* R359 (A3 · the no-shadow law): the badge's danger-tinted attention
+     glow is RETIRED — the danger ground + the 2px surface collar + the
+     pulse carry the attention; the sheet never casts shadows. */
   @keyframes notif-bell-pulse {
     0%, 100% { transform: scale(1); }
     50%      { transform: scale(1.08); }
@@ -2856,7 +2857,9 @@
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-strong, var(--accent)) 100%);
+    /* R359 final — flat signal fill: the route-progress strip is ONE
+       colour (the no-gradient law; the accent→strong wash retired). */
+    background: var(--accent);
     transform-origin: left;
     transform: scaleX(0);
     /* r155d (integrity F4): was raw 1000 — above the toast(500)/lightbox
@@ -2888,7 +2891,6 @@
      the accent end and the fill reads right→left. */
   [dir="rtl"] .scroll-progress {
     transform-origin: right;
-    background: linear-gradient(270deg, var(--accent) 0%, var(--accent-strong, var(--accent)) 100%);
   }
   /* (r155d dead-selector sweep: the [dir="rtl"] .landing .scroll-progress
      twin deleted with its base above — the landing variant no longer

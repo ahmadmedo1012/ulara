@@ -18,6 +18,7 @@ import {
   InstPagedTable, InstSection, InstStates, InstSelect,
   type InstColumn, type InstField, type InstFormValues,
 } from './scaffold';
+import { KpiBand } from '../../components/patterns';
 import {
   useCredentialTypes, useCredentials, useEnrollments, useLearners, useMyCapabilities,
   useOrgUnitTree, usePrograms, useInstActions } from '../../hooks/institutional/queries';
@@ -307,6 +308,33 @@ export function InstitutionStudentsPage() {
         ) : null}
       />
 
+      {/* R359 final · W3 — the learner facts ride the KPI band. */}
+      <KpiBand
+        items={[
+          {
+            index: '01',
+            caption: 'LEARNERS',
+            label: 'المتعلمون النشطون (الاستعلام الحالي)',
+            value: learnersQuery.data?.meta.total ?? 0,
+            empty: learnersQuery.data == null,
+          },
+          {
+            index: '02',
+            caption: 'ENROLLMENTS',
+            label: 'تسجيلات البرامج (الاستعلام الحالي)',
+            value: enrollmentsQuery.data?.meta.total ?? 0,
+            empty: enrollmentsQuery.data == null,
+          },
+          {
+            index: '03',
+            caption: 'CREDENTIALS',
+            label: 'الشهادات الممنوحة (الاستعلام الحالي)',
+            value: credentialsQuery.data?.meta.total ?? 0,
+            empty: credentialsQuery.data == null,
+          },
+        ]}
+      />
+
       <div className="inst-tabs" role="tablist" aria-label="أقسام الطلاب والمتعلمين">
         <button type="button" role="tab" aria-selected={tab === 'register'} className="inst-tab" onClick={() => setTab('register')}>
           السجل العام للمتعلمين
@@ -320,6 +348,7 @@ export function InstitutionStudentsPage() {
       </div>
 
       {tab === 'register' ? (
+        <InstSection index="01" caption="LEARNER REGISTER" title="السجل العام للمتعلمين" pad="none">
         <InstPagedTable
           query={learnersQuery}
           columns={learnerColumns}
@@ -329,6 +358,7 @@ export function InstitutionStudentsPage() {
           onPage={() => undefined}
           empty={null}
         />
+        </InstSection>
       ) : tab === 'enrollments' ? (
         <>
           <InstFilters>
@@ -340,6 +370,7 @@ export function InstitutionStudentsPage() {
               options={Object.entries(ENROLLMENT_STATUS_LABELS).map(([value, label]) => ({ value, label }))}
             />
           </InstFilters>
+          <InstSection index="01" caption="PROGRAM ENROLLMENTS" title="التسجيل بالبرامج" pad="none">
           <InstPagedTable
             query={enrollmentsQuery}
             columns={enrollmentColumns}
@@ -348,11 +379,14 @@ export function InstitutionStudentsPage() {
             unit={ENROLL_UNIT}
             onPage={setPage}
           />
+          </InstSection>
         </>
       ) : (
         <>
           {/* credential-type catalog: rendered from the API only */}
           <InstSection
+            index="01"
+            caption="CREDENTIAL TYPES"
             title="أنواع الشهادات القانونية"
             description="كما يعيدها دليل الخدمة — شهادة التدريب المهني، شهادة التكوين الأساسي، الدبلوم الفني المتوسط، الدبلوم المهني التخصصي، الدبلوم التقني العالي، البكالوريوس التقني، الإجازة العالية (الماجستير)، الإجازة الدقيقة (الدكتوراه) — وأي أنواع أخرى معتمدة."
           >
@@ -377,6 +411,7 @@ export function InstitutionStudentsPage() {
               />
             </InstStates>
           </InstSection>
+          <InstSection index="02" caption="CREDENTIALS LEDGER" title="الشهادات الممنوحة" pad="none">
           <InstPagedTable
             query={credentialsQuery}
             columns={credentialColumns}
@@ -385,6 +420,7 @@ export function InstitutionStudentsPage() {
             unit={CRED_UNIT}
             onPage={() => undefined}
           />
+          </InstSection>
         </>
       )}
 

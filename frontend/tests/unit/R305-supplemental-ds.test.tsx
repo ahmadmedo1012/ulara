@@ -240,7 +240,11 @@ describe('R305 profile — the identity hero is the page’s ONE deep band', () 
 /* ── 2 · GamificationPage — the deep level band + kicker sections ── */
 
 describe('R305 gamification — the level statement is the ONE deep band', () => {
-  it('the tier orb + eyebrow live inside the deep band; achievements/leaderboard demote to kicker sections', () => {
+  /* R359 re-pin — the colour law: the tinted deep band + tier orb
+   * retired; the progression facts (XP / LEVEL / RANK) ride the KpiBand
+   * as INK numerals with honest deltas, and the two lists demote to
+   * framed sheet sections. */
+  it('the progression facts ride the KPI band as ink numerals; achievements/leaderboard demote to framed sections', () => {
     mocks.trainingMe = {
       points: 320,
       level: { level: 4, tier: 'BRONZE', toNext: 80, pctIntoLevel: 40 },
@@ -252,31 +256,32 @@ describe('R305 gamification — the level statement is the ONE deep band', () =>
     };
     const { container } = renderPage(<GamificationPage />);
 
-    const band = container.querySelector('.r305s-band--deep');
-    expect(band).not.toBeNull();
-    expect(container.querySelectorAll('.r305s-band--deep')).toHaveLength(1);
-    // The level anatomy rides the band's own register (r305g-level).
-    const level = band!.querySelector('.r305g-level');
-    expect(level).not.toBeNull();
-    expect(level!.querySelector('.tier-orb')).not.toBeNull();
-    expect(level!.querySelector('.r305s-eyebrow')!.textContent).toBe('مستوى التقدّم');
-    // The band holds NO stat strip — the KPI line stays on the page surface.
-    expect(band!.querySelector('.stat-strip')).toBeNull();
+    // The colour law: the tinted deep band + the tier orb are GONE.
+    expect(container.querySelector('.r305s-band--deep')).toBeNull();
+    expect(container.querySelectorAll('.tier-orb')).toHaveLength(0);
 
-    /* R319 override (c3-S2): the two lists' headings joined the §B2
-       title-bar register — the mono-indexed SectionBar (h2 + [01]/[02]
-       gutter + hairline rule) instead of the r305 kicker. Same sections,
-       same titles, same heading level. */
-    const barTitles = Array.from(container.querySelectorAll('.r319s-bar h2.r319s-bar-title')).map((h) => h.textContent);
-    expect(barTitles).toEqual(['الإنجازات المحققة', 'لوحة المتصدرين']);
-    // r351 A2 (Q2): the [0N] gutter register is retired.
+    // The three facts ride the band: XP / LEVEL / RANK (ink numerals).
+    const labels = Array.from(container.querySelectorAll('.sg-kpi-label')).map((l) => l.textContent);
+    expect(labels).toEqual(['نقاط الإنجاز', 'مستوى التطوير الذاتي', 'مركزك على الدفعة']);
+    const captions = Array.from(container.querySelectorAll('.sg-kpi-top .sg-label')).map((l) => l.textContent);
+    expect(captions).toEqual(['XP', 'LEVEL', 'RANK']);
+
+    // The two lists are framed sheet sections with the same titles.
+    const titles = Array.from(container.querySelectorAll('.sg-section > .sg-head .sg-title')).map((h) => h.textContent);
+    expect(titles).toEqual(['الإنجازات المحققة', 'لوحة المتصدرين']);
+    // r351 A2 (Q2): the [0N] gutter register stays retired.
     expect(container.querySelectorAll('.r319s-bar-index')).toHaveLength(0);
   });
 
-  it('the empty-training state is honest inside the same band (no fabricated tier)', () => {
+  it('the empty-training state is honest inside the LEVEL cell (no fabricated tier)', () => {
     const { container } = renderPage(<GamificationPage />);
-    const level = container.querySelector('.r305s-band--deep .r305g-level');
-    expect(level!.textContent).toContain('لم يبدأ مسار التطوير الذاتي بعد');
+    // me = null → the LEVEL cell renders the honest «—» + the honest
+    // delta note (never a fabricated tier).
+    const cells = Array.from(container.querySelectorAll('.sg-kpi'));
+    const levelCell = cells.find((c) => c.querySelector('.sg-label')?.textContent === 'LEVEL');
+    expect(levelCell).toBeDefined();
+    expect(levelCell!.querySelector('.sg-kpi-value')!.textContent).toBe('—');
+    expect(levelCell!.textContent).toContain('لم يبدأ المسار بعد');
   });
 
   it('the gold discipline: the sheet never consumes var(--gold); UniversityInfo membership rows lost the gold badge', () => {
@@ -293,7 +298,10 @@ describe('R305 gamification — the level statement is the ONE deep band', () =>
 /* ── 3 · AchievementsPage — the gold register rides the deep strip ── */
 
 describe('R305 achievements — the KPI strip wears the deep register around the shared StatStrip', () => {
-  it('the strip wrapper carries .r305a-strip and the stat cells keep their real sources', () => {
+  /* R359 re-pin — the achievements band joined the KpiBand register
+   * (the StatStrip inside .r305a-strip retired; same three facts, same
+   * real sources, the dimension-string voice). */
+  it('the strip wrapper carries .r305a-strip around the KpiBand; the cells keep their real sources', () => {
     mocks.trainingMe = {
       points: 320,
       level: { level: 4, tier: 'BRONZE', toNext: 80, pctIntoLevel: 40 },
@@ -307,15 +315,17 @@ describe('R305 achievements — the KPI strip wears the deep register around the
 
     const strip = container.querySelector('.r305a-strip');
     expect(strip).not.toBeNull();
-    // The shared StatStrip anatomy is intact inside it (components.css owns it;
-    // the family sheet only re-inks label/value/trend onto the deep ground).
-    const statStrip = strip!.querySelector('.stat-strip');
-    expect(statStrip).not.toBeNull();
-    expect(statStrip!.getAttribute('aria-label')).toBe('ملخّص نقاطك');
-    const labels = Array.from(statStrip!.querySelectorAll('.stat-label')).map((l) => l.textContent);
+    // The KpiBand anatomy is intact inside it.
+    const band = strip!.querySelector('.sg-kpis');
+    expect(band).not.toBeNull();
+    expect(band!.getAttribute('aria-label')).toBe('مؤشرات');
+    const labels = Array.from(band!.querySelectorAll('.sg-kpi-label')).map((l) => l.textContent);
     expect(labels).toEqual(['مجموع النقاط', 'الأوسمة المحقّقة', 'الشهادات']);
-    expect(statStrip!.querySelectorAll('.stat-value')).toHaveLength(3);
-    // Gold stays OFF the strip's type — the values are band-neutral ink
+    expect(band!.querySelectorAll('.sg-kpi-value')).toHaveLength(3);
+    // The numerals are the REAL payload values (320 / 2 / 1).
+    const values = Array.from(band!.querySelectorAll('.sg-kpi-value')).map((l) => l.textContent);
+    expect(values).toEqual(['320', '2', '1']);
+    // Gold stays OFF the band — the values are band-neutral ink
     // (no gold chip/tone is mounted anywhere in the strip).
     expect(strip!.querySelectorAll('.r305s-chip--gold, [style*="--gold"]')).toHaveLength(0);
   });
@@ -361,11 +371,17 @@ describe('R305 alerts — the notification list de-boxes onto the page surface (
     const section = container.querySelector('section.r305p-alerts');
     expect(section).not.toBeNull();
     expect(section!.getAttribute('aria-label')).toBe('سجل الإشعارات');
-    /* R319 override (c3-S2): the log's heading joined the §B2 title-bar
-       register — [01] آخر الإشعارات (the mono-indexed SectionBar), still
-       inside the same role-neutral .r305p-alerts section. */
-    expect(section!.querySelector('.r319s-bar h2.r319s-bar-title')!.textContent).toBe('آخر الإشعارات');
-    // r351 A2 (Q2): the [0N] gutter register is retired.
+    /* R359 re-pin: the log's heading rides the framed sheet section —
+       [01] NOTIFICATION LOG / آخر الإشعارات — still inside the same
+       role-neutral .r305p-alerts section. */
+    const head = section!.querySelector('.sg-head');
+    expect(head).not.toBeNull();
+    expect(head!.querySelector('.sg-title')!.textContent).toBe('آخر الإشعارات');
+    expect(head!.querySelector('.sg-caption')!.textContent).toBe('NOTIFICATION LOG');
+    expect(head!.querySelector('.sg-index')!.textContent).toBe('[01]');
+    // The server's honest total rides the head rule (the mono BarCount).
+    expect(head!.querySelector('.sg-aside .r319s-count')!.textContent).toBe('02');
+    // r351 A2 (Q2): the [0N] gutter register stays retired.
     expect(section!.querySelector('.r319s-bar-index')).toBeNull();
     // The hairline rows sit DIRECTLY on the page surface — the np-row's
     // ancestors contain no .card box any more.
@@ -403,19 +419,24 @@ describe('R305 labs — the catalog is ONE editorial section with honest states'
     ];
     const { container } = renderPage(<LabsPage />);
 
-    // The section exists with the §B2 title-bar h2 (a real heading, not a
-    // card title).
-    const section = container.querySelector('section[aria-label="دليل المعامل"]');
+    // The section exists as the framed sheet (a real heading, not a
+    // card title) — located by its LAB CATALOG caption register.
+    const section = Array.from(container.querySelectorAll('section.sg-section')).find(
+      (el) => el.querySelector('.sg-caption')?.textContent === 'LAB CATALOG',
+    );
     expect(section).not.toBeNull();
-    /* R319 override (c3-S1): the section heading joins the §B2
-       title-bar register — the mono-indexed SectionBar (h2 +
-       [01] gutter + hairline rule) instead of the r305 kicker. Same
-       heading, same section contract; the labs count rides the bar's
-       quiet mono meta (countAr for assistive tech). */
-    expect(section!.querySelector('.r319s-bar h2.r319s-bar-title')!.textContent).toBe('دليل المعامل');
-    // r351 A2 (Q2): the [0N] gutter register is retired.
+    /* R359 re-pin: the catalog heading rides the framed sheet section —
+       [01] LAB CATALOG / دليل المعامل — with the labs count on the
+       head rule's aside (the honest mono register). */
+    const head = section!.querySelector('.sg-head');
+    expect(head).not.toBeNull();
+    expect(head!.querySelector('.sg-title')!.textContent).toBe('دليل المعامل');
+    expect(head!.querySelector('.sg-caption')!.textContent).toBe('LAB CATALOG');
+    expect(head!.querySelector('.sg-index')!.textContent).toBe('[01]');
+    // The honest counted aside rides the head rule (countAr phrase).
+    expect(head!.querySelector('.sg-aside .sg-label')!.textContent).toContain('معملان متاحان');
+    // r351 A2 (Q2): the [0N] gutter register stays retired.
     expect(section!.querySelector('.r319s-bar-index')).toBeNull();
-    expect(section!.querySelector('.r319s-count')!.textContent).toBe('02');
 
     // Card metadata: platform + counted noun ride .r305s-meta-row with the
     // technical separator — the D17-2 counted plural (3 → تجارب), never a
@@ -442,7 +463,9 @@ describe('R305 labs — the catalog is ONE editorial section with honest states'
     // shows INSIDE the section (the pending/error branches share its shape:
     // the skeleton mirrors the resolved grid, the error/empty are Cards in
     // the same slot — nothing renders outside the kicker's region).
-    const section = container.querySelector('section[aria-label="دليل المعامل"]');
+    const section = Array.from(container.querySelectorAll('section.sg-section')).find(
+      (el) => el.querySelector('.sg-caption')?.textContent === 'LAB CATALOG',
+    );
     expect(section).not.toBeNull();
     expect(screen.getByText('لا معامل متاحة')).toBeInTheDocument();
   });

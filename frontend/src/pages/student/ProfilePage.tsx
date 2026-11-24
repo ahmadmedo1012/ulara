@@ -4,13 +4,17 @@ import {
   CheckCircle2, AlertCircle, Trophy, Hash, UserCog, type LucideIcon,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Card, ProgressBar, Badge, UserAvatar, Tabs } from '../../components/primitives';
+import { ProgressBar, UserAvatar, Tabs } from '../../components/primitives';
 import { ErrorState, Skeleton } from '../../components/primitives/States';
-import { PageFrame, PageHeader, StatLine } from '../../components/patterns';
-/* R319 (c3-S2) — the §B2 kit: the mono-indexed section title bar + the
- * hatched empty cell + the mono status chip (the DashboardPage
- * conversion's components — the pages-B half of the Cycle 3 sweep). */
-import { SectionBar, BarCount, StatusChip, EmptyCell } from '../../components/student';
+import { PageFrame, PageHeader } from '../../components/patterns';
+/* R359 (A3) — the sheet grammar: the KPI band of real payload counts +
+ * the framed tab panels replace the StatLine + §B2 SectionBar/Card
+ * register (the roster exemplar's recomposition). The R305 hero band
+ * (identity + completeness meter) keeps its pinned deep-band seat. */
+import { SheetSection, KpiBand, SheetEmpty } from '../../components/patterns';
+/* R319 (c3-S2) — the §B2 mono status chip (the LINKED/UNLINKED
+ * register). */
+import { StatusChip } from '../../components/student';
 import { Icon } from '../../components/Icon';
 import { useAuthStore } from '../../stores/auth.store';
 import { useMyAchievements, useMyEnrollments, useMyResearch, useMyProfile } from '../../hooks/useResources';
@@ -26,8 +30,8 @@ import '../../styles/student/ds-core.css';
 import '../../styles/student/ds-supplemental.css';
 /* R319 (c3-S2): the sheet system — the §B2 component anatomy + the
  * academic family's harmonics (the same pair every converted student
- * page rides; the profile's own regions are Cards + the R305 hero band,
- * which keep their pinned registers). */
+ * page rides; the profile's own regions + the R305 hero band keep
+ * their pinned registers). */
 import '../../styles/student/pages.css';
 import '../../styles/student/academic-pages.css';
 import { formatNum } from '../../utils/numbers';
@@ -123,6 +127,7 @@ export default function ProfilePage() {
   const editInputId = useId();
 
   const linkedCount = Object.keys(links).filter((k) => links[k]).length;
+  const publishedCount = research.data?.filter((r) => r.status === 'PUBLISHED').length ?? 0;
 
   // Profile completeness — real signals only: basic account data (name +
   // email, always present server-side), actual email verification, and
@@ -180,6 +185,7 @@ export default function ProfilePage() {
     <div className="r319s-page">
     <PageFrame width="default">
       <PageHeader
+        eyebrow="طلاب الجامعة"
         title="ملفي الشخصي"
         description="معلوماتك الأكاديمية، حساباتك العلمية، وإنجازاتك في المنصة."
         /* R342-08 — the header CTA pair (the D11/D8 measured seat;
@@ -204,7 +210,9 @@ export default function ProfilePage() {
       {/* R305 DS hero — the ONE deep band on the page: identity
           (avatar + name + verified state) and the completeness meter
           share the auto-inverting ground; the eyebrow classifies the
-          band as the account block before the tabs classify content. */}
+          band as the account block before the tabs classify content.
+          R359: the verified state rides the flat sg-flag (status as
+          content, never a tinted Badge fill). */}
       <div className="r305s-band r305s-band--deep r305p-hero">
         <UserAvatar initials={initials} color={user.avatarColor ?? undefined} size={64} />
         <div className="r305p-hero-id">
@@ -215,9 +223,9 @@ export default function ProfilePage() {
             <bdi dir="ltr" className="font-mono">{user.email}</bdi>
             {profile.data ? (
               emailVerified ? (
-                <Badge color="green" icon={CheckCircle2}>موثَّق</Badge>
+                <span className="sg-flag" data-tone="positive"><Icon icon={CheckCircle2} size={11} aria-hidden /> موثَّق</span>
               ) : (
-                <Badge color="amber" icon={AlertCircle}>البريد غير موثَّق</Badge>
+                <span className="sg-flag"><Icon icon={AlertCircle} size={11} aria-hidden /> البريد غير موثَّق</span>
               )
             ) : null}
           </div>
@@ -244,34 +252,39 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* R304: the 2×2 MetricCard wall folds into ONE StatLine — the
-          same four facts with the same real sources and the same
-          honest query states (pending → '…', error → '—'). The saved
-          links' count keeps its local-only disclosure: the hint says
-          WHERE the links live (browser localStorage), never implying a
-          server-side record. */}
-      <StatLine
+      {/* R359 — the KPI band: the same four facts from the same real
+          sources (enrollments · achievements · published research · the
+          saved-links ratio with its local-only disclosure). Honest-empty
+          cells while a query settles; the error string verbatim on
+          failure. XP values are INK numerals — never colored orbs. */}
+      <KpiBand
         items={[
           {
+            index: '01',
+            caption: 'ENROLLED',
             label: 'مقرّرات مسجَّلة',
-            value: enrollments.isPending ? '…' : enrollments.isError ? '—' : formatNum(enrollments.data?.length ?? 0),
+            value: enrollments.isPending ? 0 : enrollments.isError ? '—' : (enrollments.data?.length ?? 0),
+            empty: enrollments.isPending,
           },
           {
+            index: '02',
+            caption: 'ACHIEVEMENTS',
             label: 'إنجازات محققة',
-            value: achievements.isPending ? '…' : achievements.isError ? '—' : formatNum(achievements.data?.length ?? 0),
+            value: achievements.isPending ? 0 : achievements.isError ? '—' : (achievements.data?.length ?? 0),
+            empty: achievements.isPending,
           },
           {
+            index: '03',
+            caption: 'PUBLISHED',
             label: 'بحوث منشورة',
-            value:
-              research.isPending ? '…'
-                : research.isError ? '—'
-                  : formatNum(research.data?.filter((r) => r.status === 'PUBLISHED').length ?? 0),
+            value: research.isPending ? 0 : research.isError ? '—' : publishedCount,
+            empty: research.isPending,
           },
           {
-            label: 'روابط محفوظة',
+            index: '04',
+            caption: 'LINKS',
+            label: 'روابط محفوظة (حفظ محليّ في متصفّحك فقط)',
             value: `${formatNum(linkedCount)} / ${formatNum(LINKS.length)}`,
-            hint: 'حفظ محليّ في متصفّحك فقط',
-            tone: linkedCount >= 2 ? 'positive' : linkedCount === 0 ? 'warning' : 'neutral',
           },
         ]}
       />
@@ -287,14 +300,10 @@ export default function ProfilePage() {
       />
 
       {tab === 'academic' && (
-        <section aria-label="المعلومات الأكاديمية">
-          {/* R319 (c3-S2): the tab panel's heading joins the §B2
-              title-bar register — [01]…[03] follow the tabs' order, so
-              whichever facet is open reads as the sheet's numbered
-              section; the account-level password block below closes the
-              sheet as [04]. */}
-          <SectionBar title="المعلومات الأكاديمية" />
-        <Card>
+        /* R359 — [01] follows the tabs' order, so whichever facet is
+         * open reads as the sheet's numbered section; the account-level
+         * password block below closes the sheet as [04]. */
+        <SheetSection index="01" caption="ACADEMIC RECORD" title="المعلومات الأكاديمية">
           <div className="grid-2">
             <ProfileField label="الاسم الكامل" value={`${user.firstName} ${user.lastName}`} icon={User} />
             <ProfileField label="البريد الجامعي" value={user.email} icon={Mail} mono />
@@ -343,31 +352,27 @@ export default function ProfilePage() {
                 on surface); dark already passed either way. */}
             <bdi dir="ltr" className="font-mono" style={{ color: 'var(--accent-ink)' }}>info@demo.ulara.ly</bdi>.
           </div>
-        </Card>
-        </section>
+        </SheetSection>
       )}
 
       {tab === 'links' && (
         /* Academic links — a local, browser-only shortcut list. There is no
            server-side binding (no field in PATCH /users/:id), so this is
            honestly presented as a personal note, not an institutional link. */
-        <section aria-label="الحسابات الأكاديمية">
-          {/* R319 (c3-S2): the panel's heading joins the §B2 title-bar
-              register — the mono meta is the honest linked/total ratio
-              (real data — the same pair the StatLine's رابع cell counts);
-              the old Card subtitle survives verbatim as the under-bar
-              note. */}
-          <SectionBar
-            title="الحسابات الأكاديمية"
-            meta={(
-              <span className="r319s-bar-meta">
-                <bdi className="r319s-mono" dir="ltr" aria-hidden="true">{linkedCount}/{formatNum(LINKS.length)}</bdi>
-                <span className="sr-only">{countAr(linkedCount, ['رابط محفوظ واحد', 'رابطان محفوظان', 'روابط محفوظة', 'رابطاً محفوظاً'])} من {formatNum(LINKS.length)}</span>
-              </span>
-            )}
-          />
+        <SheetSection
+          index="02"
+          caption="ACADEMIC LINKS"
+          title="الحسابات الأكاديمية"
+          aside={(
+            /* the honest linked/total ratio (real data — the same pair
+               the KPI band's LINKS cell counts) */
+            <span className="r319s-bar-meta">
+              <bdi className="sg-label" dir="ltr" aria-hidden="true">{linkedCount}/{formatNum(LINKS.length)}</bdi>
+              <span className="sr-only">{countAr(linkedCount, ['رابط محفوظ واحد', 'رابطان محفوظان', 'روابط محفوظة', 'رابطاً محفوظاً'])} من {formatNum(LINKS.length)}</span>
+            </span>
+          )}
+        >
           <p className="r319sp-sec-note">روابطك الأكاديمية للرجوع السريع — تُحفظ في متصفّحك فقط ولا تُرسَل إلى الجامعة.</p>
-          <Card>
           <div className="flex-col gap-3">
             {LINKS.map((l) => {
               const value = links[l.key];
@@ -456,30 +461,21 @@ export default function ProfilePage() {
                     </form>
                   )}
                 </div>
-                  );
+              );
             })}
           </div>
-        </Card>
-        </section>
+        </SheetSection>
       )}
 
       {tab === 'achievements' && (
-        <section aria-label="الإنجازات الأخيرة">
-          {/* R319 (c3-S2): the panel's heading joins the §B2 title-bar
-              register — the honest resolved count as mono meta (pending /
-              error show no count — never a fabricated zero). */}
-          <SectionBar
-            title="الإنجازات الأخيرة"
-            meta={
-              !achievements.isPending && !achievements.isError && (achievements.data?.length ?? 0) > 0 ? (
-                <BarCount
-                  n={achievements.data!.length}
-                  srLabel={countAr(achievements.data!.length, ['إنجاز واحد محقّق', 'إنجازان محقّقان', 'إنجازات محقّقة', 'إنجازاً محقّقاً'])}
-                />
-              ) : undefined
-            }
-          />
-          <Card>
+        <SheetSection
+          index="03"
+          caption="RECENT ACHIEVEMENTS"
+          title="الإنجازات الأخيرة"
+          aside={!achievements.isPending && !achievements.isError && (achievements.data?.length ?? 0) > 0 ? (
+            <span className="sg-label">{countAr(achievements.data!.length, ['إنجاز واحد محقّق', 'إنجازان محقّقان', 'إنجازات محقّقة', 'إنجازاً محقّقاً'])}</span>
+          ) : undefined}
+        >
           {achievements.isPending ? (
             <div className="flex-col gap-2" aria-busy="true">
               {[0, 1, 2].map((i) => (
@@ -500,12 +496,13 @@ export default function ProfilePage() {
               onRetry={() => achievements.refetch()}
             />
           ) : !achievements.data?.length ? (
-            /* R319 (c3-S2): the empty achievements tab is the sheet's
-               reserved-but-empty region — the hatched EmptyCell (the old
-               EmptyState's copy, kept honest and verbatim). */
-            <EmptyCell
-              label="لا إنجازات بعد"
-              note="أكمل بعض المحاضرات والمهام لكسب أوّل شارة."
+            /* R359: the empty achievements tab is the sheet's
+               reserved-but-empty region — the hairline placeholder frame
+               (the old EmptyCell's copy, kept honest and verbatim). */
+            <SheetEmpty
+              code="NO-DATA"
+              title="لا إنجازات بعد"
+              desc="أكمل بعض المحاضرات والمهام لكسب أوّل شارة."
             />
           ) : (
             <div className="flex-col gap-2">
@@ -516,24 +513,26 @@ export default function ProfilePage() {
                     <div className="achievement-name">{a.achievement.name}</div>
                     <div className="achievement-desc">{a.achievement.description}</div>
                   </div>
-                  <Badge color="gold"><bdi className="font-mono" dir="ltr">+{a.achievement.xp}</bdi></Badge>
+                  {/* R359 — XP is an INK mono numeral (the color law:
+                      gamification numerals never ride colored orbs or
+                      tinted badges; the gold seat stays on the medal
+                      glyph alone). */}
+                  <span className="sg-label"><bdi dir="ltr">+{a.achievement.xp} XP</bdi></span>
                 </div>
               ))}
             </div>
           )}
-          </Card>
-        </section>
+        </SheetSection>
       )}
 
       {/* r180-F4: password change — an account-level section, so it
           lives OUTSIDE the academic tabs (security is not one of the
-          profile's academic facets). R319 (c3-S2): the block's heading
-          joins the §B2 title-bar register as the sheet's closing [04]. */}
-      <section aria-label="تغيير كلمة المرور">
-        <SectionBar title="تغيير كلمة المرور" />
+          profile's academic facets). R359: the block closes the sheet
+          as the framed [04]. */}
+      <SheetSection index="04" caption="PASSWORD" title="تغيير كلمة المرور">
         <p className="r319sp-sec-note">عند التغيير تُنهى جلساتك على بقية الأجهزة، وتبقى جلستك الحالية مفتوحة.</p>
         <ChangePasswordCard />
-      </section>
+      </SheetSection>
     </PageFrame>
     </div>
   );

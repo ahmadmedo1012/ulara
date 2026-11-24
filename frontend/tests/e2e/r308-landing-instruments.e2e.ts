@@ -75,24 +75,26 @@ test.describe('R308 — لوحة البدء (the entrance)', () => {
 });
 
 test.describe('R308 — محطات الفحص (the inspection stations)', () => {
-  test('the stations are real controls: open, read, reset — without any pointer', async ({ page }) => {
+  test('the stations are real controls: open, read, close — without any pointer', async ({ page }) => {
     await page.goto('/');
-    const station = page.locator('.hi-marker[data-marker="cp"]');
+    await page.waitForFunction(() =>
+      document.querySelectorAll('.hi-marker[data-marker]').length === 4);
+    const station = page.locator('.hi-marker[data-marker="C-01"]');
     await expect(station).toHaveCount(1);
     await expect(station).toHaveAttribute('aria-pressed', 'false');
     await station.click();
     await expect(station).toHaveAttribute('aria-pressed', 'true');
-    /* the label is real content, not a tooltip (r309: the card is a
-     * sibling of the button — .hi-card carries the visible copy).
-     * R321 §A6 override (re-pinned R322 3-b): the card's marks carry
-     * NO DOM text — the label/body render from data-* attributes via
-     * CSS content (the decor-innertext gate); the readable contract
-     * re-seats on the attribute + the button's own accessible name. */
-    await expect(page.locator('.hi-card[data-marker="cp"] .hi-marker-label')).toHaveAttribute('data-label', 'نقطة فحص');
-    /* the reset control appears once a station is open */
-    const reset = page.locator('.hi-reset');
-    await expect(reset).toBeVisible();
-    await reset.click();
+    /* r359 A1: the label is real readable content, not a tooltip — the
+     * callout tag (a sibling of the button inside the station) carries
+     * the visible copy: the mono bracket index + the Arabic capability
+     * name. The R321/R322 data-label attribute contract retired with
+     * the old card DOM. */
+    const tag = page.locator('.hro-station.is-open .hi-tag');
+    await expect(tag).toBeVisible();
+    await expect(tag).toContainText('[C-01]');
+    await expect(tag).toContainText('مقرر تفاعلي');
+    /* the close path is the tap itself (r359: no reset control ships) */
+    await station.click();
     await expect(station).toHaveAttribute('aria-pressed', 'false');
   });
 });
@@ -170,10 +172,12 @@ test.describe('R308 — the static belt', () => {
     /* R315 (B1·A.2) re-pin: the static belt's complete-sheet proof
      * anchors on the current display H1 (was «أُلارا») */
     await expect(page.locator('.fo-hero-title')).toContainText('رحلة تعلم واحدة');
-    /* the drawing is complete, not dash-hidden — R342-final: the plate
-     * seats FIVE inspection stations (cp/ex/lc/mg/rr — see
-     * r309-recovery's STATION_IDS); under RM they stand open-free but
-     * present and readable as the static sheet's own furniture */
-    await expect(page.locator('.hi-marker')).toHaveCount(5);
+    /* the drawing is complete, not dash-hidden — R359 A1: the rebuilt
+     * hero seats FOUR bracket-index stations (see r309-recovery's
+     * STATION_IDS); under RM they stand OPEN (the static sheet's own
+     * furniture — the callouts render fully revealed) and readable. */
+    await expect(page.locator('.hi-marker')).toHaveCount(4);
+    await expect(page.locator('.hro-station.is-open')).toHaveCount(4);
+    await expect(page.locator('.hro-stage .hi-tag').first()).toBeVisible();
   });
 });

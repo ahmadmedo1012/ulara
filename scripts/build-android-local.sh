@@ -38,24 +38,12 @@
 # fine for a local emulator, rejected by Play):
 #   ALLOW_DEBUG_KEYSTORE=1 scripts/build-android-local.sh
 #
-# ── ALTERNATIVE: `eas build --local` (commented on purpose) ────────────
-# Same "no cloud quota" goal, EAS-CLI-driven (Linux needs Docker running;
-# macOS runs natively). Credentials are fetched from the EAS servers, so
-# upload the SAME keystore once: `eas credentials -p android`.
-#
-#   npm i -g eas-cli && eas login            # or EXPO_TOKEN=… for headless
-#   cd apps/mobile
-#   EXPO_TOKEN=… eas build --platform android --profile preview --local
-#   # add --non-interactive --no-wait for scripted use; ~2× slower than
-#   # raw gradle on the same machine but reuses EAS's environment image,
-#   # credentials handling and artifact upload.
-#
-# NOTE on OTA: this build changes the runtime fingerprint whenever native
-# deps/plugins/config change (runtimeVersion policy = "fingerprint").
-# JS-only changes ship via `eas update` WITHOUT a new build — but ONLY to
-# binaries whose fingerprint matches; after THIS branch (new native dep
-# expo-navigation-bar) an OTA update must target the NEW runtime (build
-# once, then `eas update`). See docs/mobile/ANDROID-LOCAL.md §OTA.
+# ── r359 A4: EAS is RETIRED ─────────────────────────────────────────────
+# This script IS the Android build machine (GitHub Actions runs it on
+# ubuntu runners; it also works locally). There is no `eas build --local`
+# alternative anymore and no OTA layer: every JS or native change ships
+# as a NEW BUILD from this recipe (release-by-new-build story,
+# docs/mobile.md §7). Expo CLI stays for prebuild/export only.
 # ═══════════════════════════════════════════════════════════════════════
 set -euo pipefail
 
@@ -312,7 +300,5 @@ else
   echo "  → android/app/build/outputs/bundle/release/app-release.aab"
 fi
 echo ""
-echo "  OTA reminder: this binary embeds the CURRENT runtime fingerprint."
-echo "  JS-only changes still ship via 'eas update' WITHOUT a new build, but"
-echo "  only to binaries whose fingerprint matches — see"
-echo "  docs/mobile/ANDROID-LOCAL.md §OTA."
+echo "  Update story (r359): release-by-new-build — every change ships as a"
+echo "  new APK from this recipe; no OTA layer (docs/mobile.md §7)."

@@ -32,7 +32,9 @@ export const useUiStore = create<UiState>()(
       // Default collapsed on first visit — user explicitly requested
       // the sidebar fold rather than be permanently visible. Once a user
       // toggles it, their preference is persisted and respected.
-      sidebarCollapsed: true,
+      /* R359 (A3): the labeled rail is the default — the icon rail
+         (the collapsed state) stays one Ctrl+B away. */
+      sidebarCollapsed: false,
       recentPaletteIds: [],
       openSidebar: () => set({ sidebarOpen: true }),
       closeSidebar: () => set({ sidebarOpen: false }),

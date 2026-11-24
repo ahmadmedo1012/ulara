@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Building2, BookOpen, BarChart3, FileText, TrendingUp, ClipboardCheck, AlertTriangle, Search, X, ChevronDown, ArrowLeft, Plus, Trash2, GraduationCap, Activity } from 'lucide-react';
-import { Card, Badge, Tabs, UserAvatar, AlertRow, FormField } from '../../components/primitives';
+import { Card, Tabs, UserAvatar, AlertRow, FormField } from '../../components/primitives';
 import { StatStrip, LedgerPanel, LedgerRow } from '../../components/primitives/Ledger';
 /* R304 (workstream 4D): the admin family rides the shell patterns —
  * the patterns PageHeader opens every route (breadcrumbs back to the
@@ -10,12 +10,15 @@ import { StatStrip, LedgerPanel, LedgerRow } from '../../components/primitives/L
  * order). The local header twin this page carried since 5-A8 retired
  * with the r288 anatomy fold. */
 import { PageHeader as PatternsPageHeader, FilterBar } from '../../components/patterns';
+/* R359 final — the sheet grammar primitives: the framed section, the
+ * KPI band and the dense hairline data sheet the admin core mounts
+ * below its (test-pinned) StatStrip rosters. */
+import { SheetSection, KpiBand, DataSheet, type DataSheetColumn } from '../../components/patterns';
 import {
   EmptyState, ErrorState,
-  CardSkeleton, TableSkeleton, StripSkeleton, Skeleton,
+  CardSkeleton, StripSkeleton, Skeleton,
 } from '../../components/primitives/States';
 import { ChartFrame } from '../../components/charts';
-import { PAPER_STATUS_TONE } from '../../lib/paperStatus';
 import { Icon } from '../../components/Icon';
 import { EmojiIcon } from '../../components/EmojiIcon';
 import { useReducedMotion } from '../../components/motion';
@@ -253,7 +256,7 @@ export function AdminDashboardPage() {
        so the pending → resolved handoff moves nothing. */
     return (
       <div className="page r305ao" aria-busy="true" aria-live="polite">
-        <PatternsPageHeader title={roleDashboardLabel('ADMIN')} description="إحصائيات حيّة عن طلاب وأساتذة المنصّة." />
+        <PatternsPageHeader eyebrow="إدارة المؤسسة" title={roleDashboardLabel('ADMIN')} description="إحصائيات حيّة عن طلاب وأساتذة المنصّة." />
         <StripSkeleton title="يحتاج انتباهك" subtitle="جارٍ التحقق من حالات تحتاج انتباهك…" />
         <div className="stat-strip" aria-busy="true">
           {[0, 1, 2, 3].map((i) => (
@@ -284,7 +287,7 @@ export function AdminDashboardPage() {
     // am I on?) before offering the retry.
     return (
       <div className="page r305ao">
-        <PatternsPageHeader title={roleDashboardLabel('ADMIN')} description="إحصائيات حيّة عن طلاب وأساتذة المنصّة." />
+        <PatternsPageHeader eyebrow="إدارة المؤسسة" title={roleDashboardLabel('ADMIN')} description="إحصائيات حيّة عن طلاب وأساتذة المنصّة." />
         <Card>
           <ErrorState
             error={stats.error ?? facs.error ?? reports.error}
@@ -318,6 +321,7 @@ export function AdminDashboardPage() {
   return (
     <div className="page r305ao">
       <PatternsPageHeader
+        eyebrow="إدارة المؤسسة"
         title={roleDashboardLabel('ADMIN')}
         description="إحصائيات حيّة عن طلاب وأساتذة المنصّة."
         meta={<>{formatDate(new Date(), { weekday: 'long', day: 'numeric', month: 'long' })} · حساب لحظيّ</>}
@@ -379,14 +383,23 @@ export function AdminDashboardPage() {
 
       {/* 5-A8 §6 step 6 (rhythm): the charts row is the page's breathing
           section — 88px above it vs the KPI strip's 40px (taste.md:
-          rhythm = contrast between tight and generous, never uniform). */}
-      <div className="grid-2-1" style={{ marginBlockStart: 'var(--sp-9)' }}>
-        <Card
-          title={<>توزّع الطلاب حسب الكلّيّة</>}
-          icon={BarChart3}
-          subtitle={topByStudents.length > 1
-            ? `أعلى ${countAr(topByStudents.length, ['كلّيّة', 'كلّيّتين', 'كلّيّات', 'كلّيّة'])} عدداً · انقر عموداً لعرض طلابها`
-            : undefined}
+          rhythm = contrast between tight and generous, never uniform).
+          R359 (A3): the row becomes the LATERAL SPLIT — the reference's
+          plan/text division (7:5 with a full-height hairline). Main
+          column = the distribution chart; side rail = the quick reads.
+          The KPI strip above stays the r189 StatStrip on purpose — its
+          navigable cells are the pinned a.stat-cell-link contract, and
+          grammar §15 re-keys that strip onto the band register in CSS. */}
+      <div className="sg-split" style={{ marginBlockStart: 'var(--sp-9)' }}>
+        <SheetSection
+          index="01"
+          caption="STUDENT DISTRIBUTION"
+          title="توزّع الطلاب حسب الكلّيّة"
+          aside={topByStudents.length > 1 ? (
+            <span className="text-sm text-muted">
+              أعلى {countAr(topByStudents.length, ['كلّيّة', 'كلّيّتين', 'كلّيّات', 'كلّيّة'])} عدداً · انقر عموداً لعرض طلابها
+            </span>
+          ) : undefined}
         >
           {/* 5-A8 §6 step 5 (chart honesty): a single bar in a chart box
               carries no distribution signal — degrade to the stat + its
@@ -456,16 +469,13 @@ export function AdminDashboardPage() {
               />
             </ChartFrame>
           )}
-        </Card>
+        </SheetSection>
 
         {/* W11: .w11-quick — the quick-stat values lift from the uniform
             --fs-sm body rung to the metric rung (inner.css §W11); the
-            same .admin-stat classes elsewhere are untouched. */}
-        <Card
-          title={<>مؤشرات سريعة</>}
-          icon={TrendingUp}
-          className="w11-quick"
-        >
+            same .admin-stat classes elsewhere are untouched. R359 (A3):
+            the quick reads ride the split's side rail, framed [02]. */}
+        <SheetSection index="02" caption="QUICK READS" title="مؤشرات سريعة" className="w11-quick">
           <div className="flex-col gap-2">
             {/* 5-A8 §5 row 6 + P3-2: the rows navigate where a route
                 answers them; the papers PAIR collapsed into one drill
@@ -490,10 +500,19 @@ export function AdminDashboardPage() {
               hint="فتح سجلّ البحوث المنشورة"
             />
           </div>
-        </Card>
+        </SheetSection>
       </div>
 
-      <Card title={<>نشاط الإنتاج العلميّ — آخر 6 أشهر</>} icon={TrendingUp} subtitle="أبحاث مقدَّمة، مقيَّمة، ومنشورة شهرياً">
+      {/* R359 (A3): the research-output board joins the framed sections —
+          the descriptive line rides the head rule's aside slot (actions
+          never float), the chart stays ChartFrame-wrapped with its
+          sr-only table. */}
+      <SheetSection
+        index="03"
+        caption="RESEARCH OUTPUT"
+        title="نشاط الإنتاج العلميّ — آخر 6 أشهر"
+        aside={<span className="text-sm text-muted">أبحاث مقدَّمة، مقيَّمة، ومنشورة شهرياً</span>}
+      >
         {r.paperTrend.length === 0 || r.paperTrend.every((m) => m.submitted + m.graded + m.published === 0) ? (
           <EmptyState
             icon={TrendingUp}
@@ -525,18 +544,22 @@ export function AdminDashboardPage() {
                     pointBackgroundColor: c.accent,
                   },
                   {
+                    /* R359 (A3 · the one-signal law): the hero series
+                     * (مقدَّم) rides the royal; the two completion states
+                     * ride the ink + hairline-grey neutrals — no
+                     * gold/green rainbow on the sheet. */
                     label: 'مقيَّم',
                     data: r.paperTrend.map((m) => m.graded),
-                    borderColor: c.gold,
+                    borderColor: c.strongText,
                     fill: true, tension: 0.4, pointRadius: 4, borderWidth: 2,
-                    pointBackgroundColor: c.gold,
+                    pointBackgroundColor: c.strongText,
                   },
                   {
                     label: 'منشور',
                     data: r.paperTrend.map((m) => m.published),
-                    borderColor: c.success,
+                    borderColor: c.grid,
                     fill: true, tension: 0.4, pointRadius: 4, borderWidth: 2,
-                    pointBackgroundColor: c.success,
+                    pointBackgroundColor: c.grid,
                   },
                 ],
               }}
@@ -544,7 +567,7 @@ export function AdminDashboardPage() {
             />
           </ChartFrame>
         )}
-      </Card>
+      </SheetSection>
     </div>
   );
 }
@@ -719,6 +742,7 @@ export function AdminFacultiesPage() {
     return (
       <div className="page r305ao">
         <PatternsPageHeader
+          eyebrow="إدارة المؤسسة"
           title="الكلّيّات والأقسام"
           /* r351 A2 (Q3): header description retired — the roster explains itself. */
           breadcrumbs={[{ label: 'لوحة إدارة المؤسسة', to: '/admin/dashboard' }, { label: 'الكلّيّات والأقسام' }]}
@@ -732,6 +756,7 @@ export function AdminFacultiesPage() {
     return (
       <div className="page r305ao">
         <PatternsPageHeader
+          eyebrow="إدارة المؤسسة"
           title="الكلّيّات والأقسام"
           /* r351 A2 (Q3): header description retired — the roster explains itself. */
           breadcrumbs={[{ label: 'لوحة إدارة المؤسسة', to: '/admin/dashboard' }, { label: 'الكلّيّات والأقسام' }]}
@@ -768,6 +793,7 @@ export function AdminFacultiesPage() {
   return (
     <div className="page r305ao">
       <PatternsPageHeader
+        eyebrow="إدارة المؤسسة"
         title="الكلّيّات والأقسام"
         /* r351 A2 (Q3): header description retired — the roster explains itself. */
         breadcrumbs={[{ label: 'لوحة إدارة المؤسسة', to: '/admin/dashboard' }, { label: 'الكلّيّات والأقسام' }]}
@@ -789,27 +815,35 @@ export function AdminFacultiesPage() {
         )}
       />
 
-      <StatStrip
-        ariaLabel="إحصائيات الكلّيّات والأقسام"
-        cells={[
-          /* r351 A2 (Q3): trend notes retired — each restated its cell
-           * label; the counts speak for themselves. */
-          { label: 'الكلّيّات', value: formatNum(data.length) },
-          { label: 'الأقسام', value: formatNum(totalDepts) },
-          { label: 'إجمالي الطلاب', value: formatNum(totalStudents) },
-          { label: 'هيئة التدريس', value: formatNum(totalTeachers) },
+      {/* R359 final — the KPI band: every numeral derives from the live
+          faculties payload (the directory's own sums). The r189 StatStrip
+          cells re-key onto the band register verbatim. */}
+      <KpiBand
+        items={[
+          { index: '01', caption: 'FACULTIES', label: 'الكلّيّات', value: data.length },
+          { index: '02', caption: 'DEPARTMENTS', label: 'الأقسام', value: totalDepts },
+          { index: '03', caption: 'STUDENTS', label: 'إجمالي الطلاب', value: totalStudents },
+          { index: '04', caption: 'STAFF', label: 'هيئة التدريس', value: totalTeachers },
         ]}
       />
 
       {/* 5-A8 §6 step 6 (rhythm): the directory is the page's primary
-          section — it takes the breath after the KPI band. */}
-      <Card
-        style={{ marginBlockStart: 'var(--sp-9)' }}
+          section — it breathes after the KPI band. R359 (A3): the
+          collapsible faculty tree keeps its custom rows (the
+          aria-expanded head contract is the directory's own grammar —
+          DataSheet has no tree rows) but sits FRAMED, with the count
+          line on the head rule. */}
+      <SheetSection
+        index="01"
+        caption="FACULTY DIRECTORY"
         title={`الكلّيّات (${visible.length})`}
-        icon={Building2}
-        subtitle={hasFilters
-          ? `من أصل ${countAr(data.length, ['كلّيّة واحدة', 'كلّيّتين', 'كلّيّات', 'كلّيّة'])} · بعد التصفيّة`
-          : `${countAr(totalDepts, ['قسم واحد', 'قسمان', 'أقسام', 'قسماً'])} · ${countAr(totalCourses, ['مقرّر واحد', 'مقرّران', 'مقرّرات', 'مقرّراً'])}`}
+        aside={(
+          <span className="text-sm text-muted">
+            {hasFilters
+              ? `من أصل ${countAr(data.length, ['كلّيّة واحدة', 'كلّيّتين', 'كلّيّات', 'كلّيّة'])} · بعد التصفيّة`
+              : `${countAr(totalDepts, ['قسم واحد', 'قسمان', 'أقسام', 'قسماً'])} · ${countAr(totalCourses, ['مقرّر واحد', 'مقرّران', 'مقرّرات', 'مقرّراً'])}`}
+          </span>
+        )}
       >
         {/* R304: the directory's control rail rides the patterns FilterBar —
             search → city filter → the create action, the family order.
@@ -872,7 +906,7 @@ export function AdminFacultiesPage() {
             />
           )}
         </div>
-      </Card>
+      </SheetSection>
 
       {/* r180: «إضافة كلّيّة» — the AdminCoursesPage create-course modal
           pattern verbatim (Modal + FormField canon + footer buttons +
@@ -1049,42 +1083,17 @@ const PAPER_STATUS_LABEL: Record<ResearchStatus, string> = {
   PUBLISHED: 'منشورة',
 };
 /* r149 (R3-A1 #1): انتقل التعريف إلى lib/paperStatus.ts — سلّم واحد
- * للطالب وإدارة المؤسسة (هذه كانت النسخة الأغنى فاعتُمدت كما هي — r352 §D7: الإداري = إدارة المؤسسة). */
-
-/** One register row — status badge + the moderation-relevant numbers.
- *  R304: the paper's title is the row's identity cell (ws-id) — its
- *  offering context rides the ws-meta line under it. */
-function PaperRow({ p }: { p: AdminPaper }) {
-  return (
-    <tr>
-      <td data-label="البحث" className="ws-id">
-        <div className="font-semibold" style={{ color: 'var(--text)' }}>{p.title}</div>
-        {p.offering && (
-          <div className="ws-meta">{p.offering.course.name} · <bdi>{p.offering.course.code}</bdi></div>
-        )}
-      </td>
-      <td data-label="الطالب">
-        <div className="admin-students-name">
-          <UserAvatar
-            initials={p.student.avatarInitials ?? `${p.student.firstName[0]}${p.student.lastName[0]}`}
-            color={p.student.avatarColor ?? undefined}
-            size={28}
-          />
-          <div>{p.student.firstName} {p.student.lastName}</div>
-        </div>
-      </td>
-      <td data-label="الحالة">
-        <Badge color={PAPER_STATUS_TONE[p.status]}>{PAPER_STATUS_LABEL[p.status]}</Badge>
-      </td>
-      <td className="admin-table-num font-mono" data-label="نسبة الاقتباس (محاكاة)">
-        {/* r148 (VLM-C VC-1): تنسيق دفاعي — عشري JS الخام (4.1999…)
-             وصل الجدول حرفيًا من حاصل ضرب عائم في الواجهة الخلفية. */}
-        {p.plagiarismPct != null ? <bdi>{formatPct(p.plagiarismPct)}%</bdi> : '—'}
-      </td>
-      <td data-label="تاريخ الرفع">{formatRelativeArShort(p.uploadedAt)}</td>
-    </tr>
-  );
-}
+ * للطالب وإدارة المؤسسة (هذه كانت النسخة الأغنى فاعتُمدت كما هي — r352 §D7: الإداري = إدارة المؤسسة).
+ *
+ * R359 final — the register's flat status flag tones: PUBLISHED rides
+ * positive, CHECKS_FAILED rides danger, and the registrar's actionable
+ * GRADED state (بحوث بانتظار النشر) spends the ONE royal signal; the
+ * transient pipeline states stay neutral hairline. */
+const PAPER_FLAG_TONE: Partial<Record<ResearchStatus, 'positive' | 'danger' | 'signal'>> = {
+  PUBLISHED: 'positive',
+  CHECKS_FAILED: 'danger',
+  GRADED: 'signal',
+};
 
 export function AdminReportsPage() {
   const { data, isPending, isError, error, refetch } = useAdminReports();
@@ -1141,6 +1150,7 @@ export function AdminReportsPage() {
     return (
       <div className="page r305ao">
         <PatternsPageHeader
+          eyebrow="إدارة المؤسسة"
           title="التقارير المؤسسية"
           /* r351 A2 (Q3): header description retired — the KPI band explains the page. */
           breadcrumbs={[{ label: 'لوحة إدارة المؤسسة', to: '/admin/dashboard' }, { label: 'التقارير المؤسسية' }]}
@@ -1154,6 +1164,7 @@ export function AdminReportsPage() {
     return (
       <div className="page r305ao">
         <PatternsPageHeader
+          eyebrow="إدارة المؤسسة"
           title="التقارير المؤسسية"
           /* r351 A2 (Q3): header description retired — the KPI band explains the page. */
           breadcrumbs={[{ label: 'لوحة إدارة المؤسسة', to: '/admin/dashboard' }, { label: 'التقارير المؤسسية' }]}
@@ -1168,9 +1179,66 @@ export function AdminReportsPage() {
   const periodLabel = months.length >= 2 ? `من ${months[0]} إلى ${months[months.length - 1]}` : undefined;
   const papersMeta = papers.data?.meta;
 
+  /* R359 final — the register's sheet columns: the paper's title is the
+   * identity cell (its offering context rides the sub-line), the
+   * student carries the avatar + name, the status rides the flat
+   * sg-flag, and the plagiarism + date numerics ride the mono
+   * tabular register. */
+  const paperColumns: DataSheetColumn<AdminPaper>[] = [
+    {
+      key: 'title',
+      label: 'البحث',
+      render: (p) => (
+        <span className="sg-cell-stack">
+          <span className="sg-cell-title">{p.title}</span>
+          {p.offering && (
+            <span className="sg-cell-sub">{p.offering.course.name} · <bdi>{p.offering.course.code}</bdi></span>
+          )}
+        </span>
+      ),
+    },
+    {
+      key: 'student',
+      label: 'الطالب',
+      render: (p) => (
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--sp-2)' }}>
+          <UserAvatar
+            initials={p.student.avatarInitials ?? `${p.student.firstName[0]}${p.student.lastName[0]}`}
+            color={p.student.avatarColor ?? undefined}
+            size={28}
+          />
+          <span>{p.student.firstName} {p.student.lastName}</span>
+        </span>
+      ),
+    },
+    {
+      key: 'status',
+      label: 'الحالة',
+      render: (p) => (
+        <span className="sg-flag" data-tone={PAPER_FLAG_TONE[p.status]}>{PAPER_STATUS_LABEL[p.status]}</span>
+      ),
+    },
+    {
+      key: 'plagiarism',
+      label: 'الاقتباس (محاكاة)',
+      numeric: true,
+      render: (p) => (
+        /* r148 (VLM-C VC-1): تنسيق دفاعي — عشري JS الخام (4.1999…)
+         * وصل الجدول حرفيًا من حاصل ضرب عائم في الواجهة الخلفية. */
+        p.plagiarismPct != null ? <bdi>{formatPct(p.plagiarismPct)}%</bdi> : '—'
+      ),
+    },
+    {
+      key: 'uploadedAt',
+      label: 'تاريخ الرفع',
+      render: (p) => formatRelativeArShort(p.uploadedAt),
+    },
+  ];
+
   return (
     <div className="page r305ao">
       <PatternsPageHeader
+        eyebrow="إدارة المؤسسة"
         title="التقارير المؤسسية"
         /* r351 A2 (Q3): header description retired — the KPI band explains the page. */
         breadcrumbs={[{ label: 'لوحة إدارة المؤسسة', to: '/admin/dashboard' }, { label: 'التقارير المؤسسية' }]}
@@ -1190,8 +1258,11 @@ export function AdminReportsPage() {
       {/* §5 row 8: the papers KPIs land on the register — the URL is
           the action: ?status=PUBLISHED lands the register pre-filtered
           (the page's own landing effect scrolls to it), the students
-          cell crosses pages. R190: the typographic stat line replaces
-          the icon-box MetricCard grid (the r189-prerelease pattern). */}
+          cell crosses pages. R359 (A3): the strip stays the r189
+          StatStrip on purpose — its navigable cells are the pinned
+          a.stat-cell-link contract (the KpiBand's cells render
+          role=listitem, not links); grammar §15 re-keys the strip onto
+          the band register in CSS. */}
       <StatStrip
         ariaLabel="مؤشّرات التقارير المؤسسية"
         cells={[
@@ -1224,23 +1295,26 @@ export function AdminReportsPage() {
           view — one bundle, two presentations, no third arrangement.
           5-A8 §6 step 6 (rhythm): this is the page's primary section —
           it breathes after the tight KPI band (the dashboards' charts
-          row carries the same break). */}
-      <Card
-        style={{ marginBlockStart: 'var(--sp-9)' }}
+          row carries the same break). R359 (A3): the board sits framed;
+          the Tabs ride the head rule's aside slot with the period.
+          The ?trend=table view keeps the shared .table-wrap table —
+          its mobile data-label contract is pinned (AdminConsolePages). */}
+      <SheetSection
+        index="01"
+        caption="PAPER TREND"
         title="حركة البحوث العلمية"
-        icon={TrendingUp}
-        /* r351 A2 (Q3): subtitle trimmed to the period (real month
-         * range); the series legend below already names the three states. */
-        subtitle={periodLabel}
-        actions={(
-          <Tabs
-            value={trendView}
-            onChange={setTrendView}
-            items={[
-              { value: 'bars', label: 'أعمدة' },
-              { value: 'table', label: 'جدول' },
-            ]}
-          />
+        aside={(
+          <>
+            {periodLabel !== undefined && <span className="text-sm text-muted">{periodLabel}</span>}
+            <Tabs
+              value={trendView}
+              onChange={setTrendView}
+              items={[
+                { value: 'bars', label: 'أعمدة' },
+                { value: 'table', label: 'جدول' },
+              ]}
+            />
+          </>
         )}
       >
         {data.paperTrend.length === 0 ? (
@@ -1327,131 +1401,124 @@ export function AdminReportsPage() {
             </div>
           </>
         )}
-      </Card>
+      </SheetSection>
 
       {/* Papers register — 5-B4 consuming GET /admin/papers (5-B1):
-          status pills + pagination, the §5 row 8 drill-down landing. */}
+          status pills + pagination, the §5 row 8 drill-down landing.
+          R359 final: the register re-keys onto the DataSheet (mono
+          numerics, the flat sg-flag statuses, the two-line identity
+          cells); the pills ride the padded inset above the sheet and
+          the pagination keeps the family footer. */}
       <div ref={registerRef} style={{ scrollMarginBlockStart: 'var(--sp-4)' }}>
-        <Card
+        <SheetSection
+          index="02"
+          caption="PAPERS REGISTER"
           title="سجلّ البحوث"
-          icon={FileText}
+          pad="none"
           /* r351 A2 (Q3): the no-meta prose fallback retired — the
            * counted total + status label (real data) stay. */
-          subtitle={papersMeta
-            ? `${countAr(papersMeta.total, ['ورقة واحدة', 'ورقتان', 'أوراق', 'ورقة'])}${status ? ` · ${PAPER_STATUS_LABEL[status]}` : ' · جميع الحالات'}`
-            : undefined}
+          aside={papersMeta ? (
+            <span className="text-sm text-muted">
+              {`${countAr(papersMeta.total, ['ورقة واحدة', 'ورقتان', 'أوراق', 'ورقة'])}${status ? ` · ${PAPER_STATUS_LABEL[status]}` : ' · جميع الحالات'}`}
+            </span>
+          ) : undefined}
         >
-          <div className="filter-bar" role="group" aria-label="تصفية البحوث حسب الحالة">
-            <button
-              type="button"
-              className={`pill${status === undefined ? ' on' : ''}`}
-              aria-pressed={status === undefined}
-              onClick={() => setStatusFilter(undefined)}
-            >
-              الكل
-            </button>
-            {RESEARCH_STATUSES.map((st) => (
+          <div className="sg-pad-in">
+            <div className="filter-bar" role="group" aria-label="تصفية البحوث حسب الحالة">
               <button
-                key={st}
                 type="button"
-                className={`pill${status === st ? ' on' : ''}`}
-                aria-pressed={status === st}
-                onClick={() => setStatusFilter(st)}
+                className={`pill${status === undefined ? ' on' : ''}`}
+                aria-pressed={status === undefined}
+                onClick={() => setStatusFilter(undefined)}
               >
-                {PAPER_STATUS_LABEL[st]}
+                الكل
               </button>
-            ))}
+              {RESEARCH_STATUSES.map((st) => (
+                <button
+                  key={st}
+                  type="button"
+                  className={`pill${status === st ? ' on' : ''}`}
+                  aria-pressed={status === st}
+                  onClick={() => setStatusFilter(st)}
+                >
+                  {PAPER_STATUS_LABEL[st]}
+                </button>
+              ))}
+            </div>
           </div>
 
-          {papers.isPending ? (
-            <TableSkeleton rows={5} cols={5} />
-          ) : papers.isError ? (
-            <ErrorState
-              error={papers.error}
-              message="تعذّر تحميل سجلّ البحوث"
-              onRetry={() => papers.refetch()}
-            />
-          ) : papers.data && papers.data.data.length === 0 ? (
-            /* r351 A2 (Q3): empty-state prose retired — the title +
-             * «عرض جميع الحالات» action suffice. */
-            <EmptyState
-              icon={FileText}
-              title={status ? `لا توجد بحوث بحالة «${PAPER_STATUS_LABEL[status]}»` : 'لا توجد بحوث بعد'}
-              description=""
-              action={status ? (
-                <button type="button" className="btn ghost sm" onClick={() => setStatusFilter(undefined)}>
-                  <Icon icon={X} size={13} />
-                  عرض جميع الحالات
-                </button>
-              ) : undefined}
-            />
-          ) : papers.data ? (
-            <div className="table-wrap">
-              {/* R304: the register rides the workspace table family —
-                  identity-first cells, quiet 13px header voice. */}
-              <table className="table tbl-stack ws-table">
-                <thead>
-                  <tr>
-                    <th scope="col">البحث</th>
-                    <th scope="col">الطالب</th>
-                    <th scope="col">الحالة</th>
-                    <th scope="col" className="admin-table-num" style={{ width: 110 }} title="قيمة محاكاة تجريبية — ليست قياساً فعلياً حتى تفعيل كشف حقيقي">نسبة الاقتباس <span className="text-xxs text-subtle">محاكاة</span></th>
-                    <th scope="col" style={{ width: 130 }}>تاريخ الرفع</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {papers.data.data.map((p) => <PaperRow key={p.id} p={p} />)}
-                </tbody>
-              </table>
-              {papersMeta && papersMeta.totalPages > 1 && (
-                <TablePaginationFooter
-                  page={papersMeta.page}
-                  totalPages={papersMeta.totalPages}
-                  total={papersMeta.total}
-                  unit={PAPER_UNIT}
-                  onPage={setPapersPage}
-                />
-              )}
+          {papers.isError ? (
+            <div className="sg-pad-in">
+              <ErrorState
+                error={papers.error}
+                message="تعذّر تحميل سجلّ البحوث"
+                onRetry={() => papers.refetch()}
+              />
             </div>
-          ) : null}
-        </Card>
+          ) : (
+            <DataSheet
+              caption="جدول سجلّ البحوث"
+              columns={paperColumns}
+              rows={papers.data?.data ?? []}
+              loading={papers.isPending}
+              empty={(
+                /* r351 A2 (Q3): empty-state prose retired — the title +
+                 * «عرض جميع الحالات» action suffice. */
+                <div className="sg-pad-in">
+                  <EmptyState
+                    icon={FileText}
+                    title={status ? `لا توجد بحوث بحالة «${PAPER_STATUS_LABEL[status]}»` : 'لا توجد بحوث بعد'}
+                    description=""
+                    action={status ? (
+                      <button type="button" className="btn ghost sm" onClick={() => setStatusFilter(undefined)}>
+                        <Icon icon={X} size={13} />
+                        عرض جميع الحالات
+                      </button>
+                    ) : undefined}
+                  />
+                </div>
+              )}
+            />
+          )}
+          {papersMeta && papersMeta.totalPages > 1 && (
+            <div className="sg-pad-in">
+              <TablePaginationFooter
+                page={papersMeta.page}
+                totalPages={papersMeta.totalPages}
+                total={papersMeta.total}
+                unit={PAPER_UNIT}
+                onPage={setPapersPage}
+              />
+            </div>
+          )}
+        </SheetSection>
       </div>
 
-      {/* Top courses */}
-      {/* r351 A2 (Q3): «بناءً على عدد الطلاب» subtitle retired — the
-          title + enrollments column already say the sort key. */}
-      <Card title="أكثر المقرّرات تسجيلاً" icon={ClipboardCheck}>
-        {data.topCourses.length === 0 ? (
-          <EmptyState illustration="empty-list"
-            icon={ClipboardCheck}
-            title="لا توجد تسجيلات بعد"
-            description=""
-          />
-        ) : (
-          <div className="table-wrap">
-            <table className="table tbl-stack ws-table">
-              <thead>
-                <tr>
-                  <th scope="col" style={{ width: 110 }}>الكود</th>
-                  <th scope="col">اسم المقرّر</th>
-                  <th scope="col" className="admin-table-num" style={{ width: 130 }}>طلاب مسجَّلون</th>
-                  <th scope="col" className="admin-table-num" style={{ width: 110 }}>المحاضرات</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.topCourses.map((c) => (
-                  <tr key={c.code}>
-                    <td className="font-mono text-subtle" data-label="الكود"><bdi>{c.code}</bdi></td>
-                    <td className="ws-id" data-label="اسم المقرّر">{c.name}</td>
-                    <td className="admin-table-num font-mono" data-label="طلاب مسجَّلون">{c.enrollments}</td>
-                    <td className="admin-table-num font-mono" data-label="المحاضرات">{c.lectures}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Card>
+      {/* Top courses — r351 A2 (Q3): «بناءً على عدد الطلاب» subtitle
+          retired — the title + enrollments column already say the sort
+          key. R359 final: the table re-keys onto the DataSheet register
+          (mono code + numeric columns). */}
+      <SheetSection index="03" caption="TOP COURSES" title="أكثر المقرّرات تسجيلاً" pad="none">
+        <DataSheet
+          caption="جدول أكثر المقرّرات تسجيلاً"
+          rows={data.topCourses}
+          columns={[
+            { key: 'code', label: 'الكود', mono: true, render: (c) => <bdi>{c.code}</bdi> },
+            { key: 'name', label: 'اسم المقرّر', render: (c) => <span className="sg-cell-title">{c.name}</span> },
+            { key: 'enrollments', label: 'طلاب مسجَّلون', numeric: true, render: (c) => c.enrollments },
+            { key: 'lectures', label: 'المحاضرات', numeric: true, render: (c) => c.lectures },
+          ]}
+          empty={(
+            <div className="sg-pad-in">
+              <EmptyState illustration="empty-list"
+                icon={ClipboardCheck}
+                title="لا توجد تسجيلات بعد"
+                description=""
+              />
+            </div>
+          )}
+        />
+      </SheetSection>
     </div>
   );
 }
@@ -1589,7 +1656,6 @@ export function AdminCoursesPage() {
   // pattern). ≤640 keeps the .tbl-stack card collapse; the folded counts
   // stay visible in the meta line there too.
   const compact = useCompactRosterBand();
-  const courseCols = compact ? 6 : 8;
 
   const coursesQ = useAdminCourses({
     page,
@@ -1608,9 +1674,104 @@ export function AdminCoursesPage() {
   const meta = coursesQ.data?.meta;
   const courses = coursesQ.data?.data;
 
+  /* R359 final — the console's sheet columns: the r183-B5 compact diet
+   * (≤1024) keeps folding «تسجيلات» + «الفصول» into the name cell's
+   * meta line (8 → 6 columns) exactly as before; the numerics ride the
+   * mono tabular register and the verbs ride the trailing noLabel
+   * cell (the destructive delete keeps the r305ao danger class). */
+  const courseColumns: DataSheetColumn<AdminCourse>[] = [
+    { key: 'code', label: 'الكود', mono: true, render: (c) => <bdi>{c.code}</bdi> },
+    {
+      key: 'name',
+      label: 'اسم المقرّر',
+      render: (c) => (
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--sp-2)' }}>
+          {c.themeColor && (
+            <span className="admin-course-tint" style={{ background: c.themeColor }} aria-hidden />
+          )}
+          <span className="sg-cell-stack">
+            <span className="sg-cell-title">{c.name}</span>
+            {compact && (
+              <span className="sg-cell-sub">
+                {countAr(c.totalEnrollments, ['تسجيل واحد', 'تسجيلان', 'تسجيلات', 'تسجيلاً'])}
+                {' · '}
+                {countAr(c.offeringCount, ['فصل واحد', 'فصلان', 'فصول', 'فصلاً'])}
+              </span>
+            )}
+          </span>
+        </span>
+      ),
+    },
+    {
+      key: 'faculty',
+      label: 'الكلّيّة / القسم',
+      render: (c) => (
+        c.faculty ? (
+          <span className="sg-cell-stack">
+            <span className="sg-cell-title">
+              <EmojiIcon emoji={c.facultyEmoji} fallback={BookOpen} size={16} className="text-subtle" /> {c.faculty}
+            </span>
+            <span className="sg-cell-sub">{c.department ?? '—'}</span>
+          </span>
+        ) : '—'
+      ),
+    },
+    { key: 'credits', label: 'س.م', numeric: true, render: (c) => c.credits },
+    ...(!compact ? [{ key: 'enrollments', label: 'تسجيلات', numeric: true, render: (c: AdminCourse) => c.totalEnrollments }] : []),
+    { key: 'lectures', label: 'محاضرات', numeric: true, render: (c) => c.totalLectures },
+    ...(!compact ? [{ key: 'offerings', label: 'الفصول', numeric: true, render: (c: AdminCourse) => c.offeringCount }] : []),
+    {
+      key: 'actions',
+      label: '',
+      noLabel: true,
+      render: (c) => (
+        <div className="flex items-center gap-2">
+          {/* r180: «فتح شعبة» leads the cluster — the section
+              create is this round's headline action, and the
+              ghost sm + Plus grammar matches the siblings
+              (the header's «إضافة مقرّر» is its primary twin). */}
+          <button
+            type="button"
+            className="btn ghost sm"
+            onClick={() => openOfferingForm(c)}
+            aria-label={`فتح شعبة لمقرّر ${c.name}`}
+          >
+            <Icon icon={Plus} size={13} />
+            فتح شعبة
+          </button>
+          <button
+            type="button"
+            className="btn ghost sm"
+            onClick={() => openEdit(c)}
+            aria-label={`تعديل ${c.name}`}
+          >
+            <Icon icon={ArrowLeft} size={13} />
+            تعديل
+          </button>
+          {/* R305-A8: the destructive verb stands apart — the
+              reference danger fill rides the standalone
+              .r305ao-btn-danger class (the scoped sheet's
+              §9 hierarchy) while the ghost danger variant
+              stays for non-scoped surfaces. The confirm
+              flow below is untouched. */}
+          <button
+            type="button"
+            className="btn ghost sm danger r305ao-btn-danger"
+            onClick={() => remove(c)}
+            aria-label={`حذف ${c.name}`}
+          >
+            <Icon icon={Trash2} size={13} />
+            حذف
+          </button>
+        </div>
+      ),
+    },
+  ];
+
   return (
     <div className="page r305ao">
       <PatternsPageHeader
+        eyebrow="إدارة المؤسسة"
         title="إدارة المقرّرات"
         /* r351 A2 (Q3): header description trimmed — the counted total
          * (meta.total — the pinned data read) stays; the filtered-state
@@ -1637,210 +1798,105 @@ export function AdminCoursesPage() {
         )}
       />
 
-      <Card>
-        {/* R304: the roster's control rail rides the patterns FilterBar —
-            both filters run server-side (R342-09: the create action moved
-            up to the page header's action slot, the students-page family
-            contract). The old capped-KPI header copy retired — the count
-            reads the server meta in the header description. */}
-        <FilterBar
-          filters={(
-            <>
-              <div className="admin-students-search">
-                <Icon icon={Search} size={14} />
-                <input
-                  type="search"
-                  placeholder="ابحث بالاسم أو الكود…"
-                  value={q}
-                  onChange={(e) => setQ(e.target.value)}
-                  className="admin-students-input"
-                  aria-label="البحث في المقرّرات"
+      {/* R359 final — the KPI band: the console's honest counts (the
+          server meta total · the faculty filter's options · the current
+          query's rows) — the students exemplar's band, twin register.
+          The old capped-page aggregates stay retired (5-A8 P2-1). */}
+      <KpiBand
+        items={[
+          { index: '01', caption: 'COURSES', label: 'إجمالي المقرّرات', value: meta?.total ?? 0, empty: coursesQ.isPending },
+          { index: '02', caption: 'FACULTIES', label: 'كلّيّات متاحة للتصفية', value: facQ.data?.length ?? 0, empty: facQ.isPending },
+          { index: '03', caption: 'RESULTS', label: 'نتائج الاستعلام الحالي', value: courses?.length ?? 0, empty: coursesQ.isPending },
+        ]}
+      />
+
+      {/* R304: the roster's control rail rides the patterns FilterBar —
+          both filters run server-side (R342-09: the create action moved
+          up to the page header's action slot, the students-page family
+          contract). The old capped-KPI header copy retired — the count
+          reads the server meta in the header description. */}
+      <FilterBar
+        filters={(
+          <>
+            <div className="admin-students-search">
+              <Icon icon={Search} size={14} />
+              <input
+                type="search"
+                placeholder="ابحث بالاسم أو الكود…"
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                className="admin-students-input"
+                aria-label="البحث في المقرّرات"
+              />
+            </div>
+            <select
+              className="admin-students-input"
+              value={facultyId}
+              onChange={(e) => { setFacultyId(e.target.value); setPage(1); }}
+              disabled={facQ.isPending}
+              aria-label="تصفية حسب الكلّيّة"
+            >
+              <option value="">{facQ.isPending ? 'جارٍ تحميل الكلّيّات…' : 'كلّ الكلّيّات'}</option>
+              {facQ.data?.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
+            </select>
+            {facQ.isError && (
+              <button type="button" className="btn ghost sm" onClick={() => facQ.refetch()}>
+                إعادة تحميل الكلّيّات
+              </button>
+            )}
+          </>
+        )}
+      />
+
+      {/* R359 final — the roster sheet: pad=none (the table IS the
+          body); the pagination footer rides the padded inset below. */}
+      <SheetSection index="01" caption="COURSES CONSOLE" title="سجلّ المقرّرات" pad="none">
+        {coursesQ.isError ? (
+          <div className="sg-pad-in">
+            <ErrorState
+              error={coursesQ.error}
+              message="تعذّر تحميل قائمة المقرّرات"
+              onRetry={() => coursesQ.refetch()}
+            />
+          </div>
+        ) : (
+          <>
+            <DataSheet
+              caption="جدول سجلّ المقرّرات"
+              columns={courseColumns}
+              rows={courses ?? []}
+              loading={coursesQ.isPending}
+              empty={(
+                /* r351 A2 (Q3): empty-state prose retired — the title +
+                 * reset action suffice. */
+                <div className="sg-pad-in">
+                  <EmptyState illustration="empty-search"
+                    title="لا توجد نتائج"
+                    description=""
+                    action={hasFilters ? (
+                      <button type="button" className="btn ghost sm" onClick={clearFilters}>
+                        <Icon icon={X} size={13} />
+                        مسح البحث والفلتر
+                      </button>
+                    ) : undefined}
+                  />
+                </div>
+              )}
+            />
+            {courses && meta && meta.totalPages > 1 && (
+              <div className="sg-pad-in">
+                <TablePaginationFooter
+                  page={meta.page}
+                  totalPages={meta.totalPages}
+                  total={meta.total}
+                  unit={['مقرّر واحد', 'مقرّران', 'مقرّرات', 'مقرّراً']}
+                  onPage={setPage}
                 />
               </div>
-              <select
-                className="admin-students-input"
-                value={facultyId}
-                onChange={(e) => { setFacultyId(e.target.value); setPage(1); }}
-                disabled={facQ.isPending}
-                aria-label="تصفية حسب الكلّيّة"
-              >
-                <option value="">{facQ.isPending ? 'جارٍ تحميل الكلّيّات…' : 'كلّ الكلّيّات'}</option>
-                {facQ.data?.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
-              </select>
-              {facQ.isError && (
-                <button type="button" className="btn ghost sm" onClick={() => facQ.refetch()}>
-                  إعادة تحميل الكلّيّات
-                </button>
-              )}
-            </>
-          )}
-        />
-
-        {/* 8 columns now — the r155c actions header made the skeleton's
-            cols={7} under-advertise the table it stands in for.
-            r183-B5: the compact diet renders 6. */}
-        {coursesQ.isPending && <TableSkeleton rows={6} cols={courseCols} />}
-        {coursesQ.isError && (
-          <ErrorState
-            error={coursesQ.error}
-            message="تعذّر تحميل قائمة المقرّرات"
-            onRetry={() => coursesQ.refetch()}
-          />
-        )}
-        {courses && (
-          <div className="table-wrap">
-            {/* R304: the roster rides the workspace table family —
-                identity-first name cell, quiet header voice, and on
-                phones the name becomes the summary card's title. */}
-            <table className="table tbl-stack ws-table">
-              <thead>
-                <tr>
-                  <th scope="col" style={{ width: 100 }}>الكود</th>
-                  <th scope="col">اسم المقرّر</th>
-                  <th scope="col">الكلّيّة / القسم</th>
-                  <th scope="col" className="admin-table-num" style={{ width: 70 }}>س.م</th>
-                  {/* r183-B5: folded into the name cell's meta line at
-                      ≤1024 (the compact band) — counts stay on the row. */}
-                  {!compact && <th scope="col" className="admin-table-num" style={{ width: 110 }}>تسجيلات</th>}
-                  <th scope="col" className="admin-table-num" style={{ width: 100 }}>محاضرات</th>
-                  {!compact && <th scope="col" className="admin-table-num" style={{ width: 100 }}>الفصول</th>}
-                  {/* r155c: the rows already carried an 8th data-label cell
-                      (الإجراءات — تعديل/حذف) with no matching header, and the
-                      empty-state row spanned 7 of 8 columns. Follows the
-                      established actions-header pattern (AdminExtraPages
-                      students table / OwnerUsersPage).
-                      r166e: dropped r166b's end-alignment class —
-                      its text-align: end moved the header to the
-                      column's opposite edge while the cluster's
-                      justify-end had no CSS rule anywhere (dead
-                      utility, computed justify-content: normal).
-                      Plain th = the family pattern: header and
-                      buttons share the START edge (right in RTL),
-                      like the students table. */}
-                  <th scope="col">إجراءات</th>
-                </tr>
-              </thead>
-              <tbody>
-                {courses.length === 0 && (
-                  <tr>
-                    <td colSpan={courseCols}>
-                      {/* r351 A2 (Q3): empty-state prose retired — the title + reset action suffice. */}
-                      <EmptyState illustration="empty-search"
-                        title="لا توجد نتائج"
-                        description=""
-                        action={hasFilters ? (
-                          <button type="button" className="btn ghost sm" onClick={clearFilters}>
-                            <Icon icon={X} size={13} />
-                            مسح البحث والفلتر
-                          </button>
-                        ) : undefined}
-                      />
-                    </td>
-                  </tr>
-                )}
-                {courses.map((c) => (
-                  <tr key={c.id}>
-                    <td className="font-mono text-subtle" data-label="الكود"><bdi>{c.code}</bdi></td>
-                    <td data-label="اسم المقرّر" className="ws-id">
-                      <div className="flex items-center gap-2">
-                        {c.themeColor && (
-                          <span className="admin-course-tint" style={{ background: c.themeColor }} aria-hidden />
-                        )}
-                        <div>
-                          <span className="font-semibold" style={{ color: 'var(--text)' }}>{c.name}</span>
-                          {compact && (
-                            <div className="ws-meta">
-                              {countAr(c.totalEnrollments, ['تسجيل واحد', 'تسجيلان', 'تسجيلات', 'تسجيلاً'])}
-                              {' · '}
-                              {countAr(c.offeringCount, ['فصل واحد', 'فصلان', 'فصول', 'فصلاً'])}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </td>
-                    <td data-label="الكلّيّة / القسم">
-                      {c.faculty ? (
-                        <div className="flex items-center gap-1">
-                          <EmojiIcon emoji={c.facultyEmoji} fallback={BookOpen} size={16} className="text-subtle" />
-                          <span className="text-xs text-muted">{c.faculty}</span>
-                          {c.department && <span className="text-xxs text-subtle">· {c.department}</span>}
-                        </div>
-                      ) : (
-                        <span className="text-xxs text-subtle">—</span>
-                      )}
-                    </td>
-                    <td className="admin-table-num font-mono" data-label="ساعات معتمدة">{c.credits}</td>
-                    {!compact && <td className="admin-table-num font-mono" data-label="تسجيلات">{c.totalEnrollments}</td>}
-                    <td className="admin-table-num font-mono" data-label="محاضرات">{c.totalLectures}</td>
-                    {!compact && <td className="admin-table-num font-mono" data-label="الفصول">{c.offeringCount}</td>}
-                    {/* r157 (6A9 #9): font-mono dropped — the actions cell
-                        carries Arabic button labels, not figures; the mono
-                        face was a copy-paste from the numeric neighbors.
-                        r166e: the r166b alignment class is gone and
-                        the dead justify-end utility dropped with it
-                        (no rule exists — it computed
-                        justify-content: normal, so the end-aligned
-                        header sat opposite the start-packed buttons).
-                        Plain td/cluster packs from the START edge
-                        like the students table. */}
-                    <td data-label="الإجراءات">
-                      <div className="flex items-center gap-2">
-                        {/* r180: «فتح شعبة» leads the cluster — the section
-                            create is this round's headline action, and the
-                            ghost sm + Plus grammar matches the siblings
-                            (the toolbar's «إضافة مقرّر» is its primary
-                            twin). */}
-                        <button
-                          type="button"
-                          className="btn ghost sm"
-                          onClick={() => openOfferingForm(c)}
-                          aria-label={`فتح شعبة لمقرّر ${c.name}`}
-                        >
-                          <Icon icon={Plus} size={13} />
-                          فتح شعبة
-                        </button>
-                        <button
-                          type="button"
-                          className="btn ghost sm"
-                          onClick={() => openEdit(c)}
-                          aria-label={`تعديل ${c.name}`}
-                        >
-                          <Icon icon={ArrowLeft} size={13} />
-                          تعديل
-                        </button>
-                        {/* R305-A8: the destructive verb stands apart —
-                            the reference danger fill rides the standalone
-                            .r305ao-btn-danger class (the scoped sheet's
-                            §9 hierarchy) while the ghost danger variant
-                            stays for non-scoped surfaces. The confirm
-                            flow below is untouched. */}
-                        <button
-                          type="button"
-                          className="btn ghost sm danger r305ao-btn-danger"
-                          onClick={() => remove(c)}
-                          aria-label={`حذف ${c.name}`}
-                        >
-                          <Icon icon={Trash2} size={13} />
-                          حذف
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {meta && meta.totalPages > 1 && (
-              <TablePaginationFooter
-                page={meta.page}
-                totalPages={meta.totalPages}
-                total={meta.total}
-                unit={['مقرّر واحد', 'مقرّران', 'مقرّرات', 'مقرّراً']}
-                onPage={setPage}
-              />
             )}
-          </div>
+          </>
         )}
-      </Card>
+      </SheetSection>
 
       {/* Course create/edit form — 16-decisions #5. Keyed off formMode:
           switching between create and edit remounts the modal and resets

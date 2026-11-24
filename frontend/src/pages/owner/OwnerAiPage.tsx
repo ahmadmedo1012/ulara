@@ -1,4 +1,3 @@
-import type { CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
 import { Bot, Sparkles } from 'lucide-react';
 import { Bar, Line } from 'react-chartjs-2';
@@ -16,18 +15,20 @@ import {
   Filler,
 } from 'chart.js';
 import { Card, Badge } from '../../components/primitives';
-import { StatStrip } from '../../components/primitives/Ledger';
 /* R304: the AI console opens with the patterns PageHeader — breadcrumbs
  * back to the owner dashboard; the provider badge rides the header's
- * action slot (a fact about the service, kept beside its title). */
-import { PageHeader as PatternsPageHeader } from '../../components/patterns';
+ * action slot (a fact about the service, kept beside its title).
+ * R359 (W2-e): the console rides the sheet grammar — the KpiBand
+ * facts + the framed sections; the feature detail rides the DataSheet
+ * (mono numerics + the share meters). */
+import { PageHeader as PatternsPageHeader, KpiBand, SheetSection, DataSheet, type DataSheetColumn } from '../../components/patterns';
 import {
   ErrorState, EmptyState, ChartSkeleton, TableSkeleton,
 } from '../../components/primitives/States';
 import { StatStripSkeleton } from '../../components/owner/StripSkeletons';
 import { ChartFrame } from '../../components/charts/ChartFrame';
 import { cartesianOptions, chartColors, useChartThemeKey } from '../../lib/chartTheme';
-import { useOwnerAiMetrics } from '../../hooks/useOwner';
+import { useOwnerAiMetrics, type AiMetrics } from '../../hooks/useOwner';
 import { useAiConfig, useAiServiceStatus, useAiConnectionCheck } from '../../hooks/useResources';
 import { useReducedMotion } from '../../components/motion';
 import { formatNum } from '../../utils/numbers';
@@ -46,6 +47,53 @@ const FEATURE_LABELS: Record<string, string> = {
 /** Arabic label for a feature key, bidi-isolated when unknown (raw enum). */
 function featureLabel(feature: string) {
   return FEATURE_LABELS[feature] ?? <bdi>{feature}</bdi>;
+}
+
+/* ── R359 (W2-e): the feature-detail register — the DataSheet with
+   the share meters (each meter keeps its authored staggered fill,
+   owner.css §6-b, now inside the sheet's cell). A typed local sheet:
+   the columns need the resolved payload's totalTokens denominator. */
+function FeatureDetailSheet({
+  rows, totalTokens,
+}: {
+  rows: AiMetrics['byFeature'];
+  totalTokens: number;
+}) {
+  const columns: DataSheetColumn<AiMetrics['byFeature'][number]>[] = [
+    {
+      key: 'feature',
+      label: 'الميزة',
+      render: (f) => <span className="sg-cell-title">{featureLabel(f.feature)}</span>,
+    },
+    {
+      key: 'count',
+      label: 'الطلبات',
+      numeric: true,
+      render: (f) => formatNum(f.count),
+    },
+    {
+      key: 'tokens',
+      label: 'التوكنات',
+      numeric: true,
+      render: (f) => formatNum(f.tokens),
+    },
+    {
+      key: 'share',
+      label: 'الحصة من التوكنات',
+      render: (f) => {
+        const share = totalTokens > 0 ? (f.tokens / totalTokens) * 100 : 0;
+        return (
+          <span className="owner-share" title={`${formatNum(f.tokens)} من ${formatNum(totalTokens)} توكن`}>
+            <span className="owner-share-track" aria-hidden>
+              <span className="owner-share-fill" style={{ inlineSize: `${share}%` }} />
+            </span>
+            <bdi className="owner-num">{Math.round(share)}%</bdi>
+          </span>
+        );
+      },
+    },
+  ];
+  return <DataSheet caption="تفاصيل الاستخدام حسب الميزة" columns={columns} rows={rows} />;
 }
 
 /** The StatStrip's shape-matched pending placeholder (R190 D4 — the
@@ -128,6 +176,7 @@ export function OwnerAiPage() {
     <div className="page r305ao">
       <PatternsPageHeader
         title="مركز الذكاء الاصطناعيّ"
+        eyebrow="مالك المنصّة"
         description="مراقبة استخدام وأداء خدمات الذكاء الاصطناعيّ"
         breadcrumbs={[{ label: 'لوحة المالك', to: '/owner/dashboard' }, { label: 'مركز الذكاء الاصطناعيّ' }]}
         /* R341 D11: the [09] nav-order gutter numeral (OWNER_NAV
@@ -158,7 +207,7 @@ export function OwnerAiPage() {
 
       {/* r351 AI-4 — بطاقة المزوّد: الحالة الصادقة + فحص الاتصال.
           الوضع المحليّ يحمل تعليمات الإعداد بدل الأرقام. */}
-      <Card title="حالة المزوّد">
+      <SheetSection index="01" caption="PROVIDER" title="حالة المزوّد">
         {serviceStatus.isError ? (
           <p className="text-sm text-muted">تعذّر جلب حالة المزوّد.</p>
         ) : serviceStatus.data?.local ? (
@@ -217,7 +266,7 @@ export function OwnerAiPage() {
         ) : (
           <p className="text-sm text-muted" aria-busy="true">جارٍ الجلب…</p>
         )}
-      </Card>
+      </SheetSection>
 
       {aiMetrics.isPending ? (
         <>
@@ -235,43 +284,49 @@ export function OwnerAiPage() {
         </Card>
       ) : (
         <>
-          {/* R190 (D4): the typographic stat strip — was the grid-4 icon
-              tiles. Latin unit runs stay bidi-isolated; 6A10-3 keeps the
-              values whole-number honest (97.4→97, 812.6→813). */}
-          <StatStrip
-            ariaLabel="مؤشرات استخدام الذكاء الاصطناعيّ"
-            cells={[
+          {/* R359 (W2-e) — the KPI band: Latin unit runs join tight as
+              pre-formatted strings (6A10-3 keeps the values whole-number
+              honest — 97.4→97, 812.6→813; the tenth-precision raws never
+              render). */}
+          <KpiBand
+            items={[
               {
+                index: '01',
+                caption: 'REQUESTS',
                 label: 'إجمالي الطلبات',
-                value: <bdi>{formatNum(data.totalRequests)}</bdi>,
-                trend: 'تراكميّة على المنصّة',
-                trendTone: 'flat',
+                value: data.totalRequests,
+                delta: 'تراكميّة على المنصّة',
               },
               {
+                index: '02',
+                caption: 'TOKENS',
                 label: 'إجمالي التوكنات',
                 value: data.totalTokens >= 1_000_000
-                  ? <bdi>{(data.totalTokens / 1_000_000).toFixed(1)}M</bdi>
-                  : <bdi>{formatNum(data.totalTokens)}</bdi>,
-                trend: 'مقيسة من المزوّد',
-                trendTone: 'flat',
+                  ? `${(data.totalTokens / 1_000_000).toFixed(1)}M`
+                  : data.totalTokens,
+                delta: 'مقيسة من المزوّد',
               },
               {
+                index: '03',
+                caption: 'SUCCESS',
                 label: 'معدّل النجاح',
-                value: <bdi>{Math.round(data.successRate)}%</bdi>,
-                trend: data.successRate >= 90 ? 'تشغيل مستقرّ' : 'راجع الأعطال الأخيرة',
-                trendTone: data.successRate >= 90 ? 'up' : 'down',
+                value: `${Math.round(data.successRate)}%`,
+                delta: data.successRate >= 90 ? 'تشغيل مستقرّ' : 'راجع الأعطال الأخيرة',
+                deltaTone: data.successRate >= 90 ? 'positive' : 'danger',
               },
               {
+                index: '04',
+                caption: 'LATENCY',
                 label: 'متوسّط الاستجابة',
-                value: <bdi>{Math.round(data.avgLatencyMs)}ms</bdi>,
-                trend: 'زمن الردّ المتوسط',
-                trendTone: 'flat',
+                value: `${Math.round(data.avgLatencyMs)}ms`,
+                delta: 'زمن الردّ المتوسط',
               },
             ]}
           />
 
-          <div className="owner-ai-chart-grid">
-            <Card title="الطلبات حسب الميزة">
+          {/* R359 (W2-e): the two chart sections ride the lateral rhythm. */}
+          <div className="sg-cols" data-cols="2">
+            <SheetSection index="02" caption="BY FEATURE" title="الطلبات حسب الميزة">
               {(data.byFeature ?? []).length === 0 ? (
                 <EmptyState illustration="empty-list"
                   icon={Bot}
@@ -300,9 +355,9 @@ export function OwnerAiPage() {
                   <Bar key={themeKey} data={barData} options={chartOptions} />
                 </ChartFrame>
               )}
-            </Card>
+            </SheetSection>
 
-            <Card title="اتّجاه الاستخدام (7 أيّام)">
+            <SheetSection index="03" caption="USAGE TREND" title="اتّجاه الاستخدام (7 أيّام)">
               {(data.trend ?? []).length === 0 ? (
                 <EmptyState illustration="empty-list" title="لا توجد بيانات بعد" description="يُرسم الاتّجاه فور تسجيل أوّل طلب." />
               ) : (
@@ -319,48 +374,16 @@ export function OwnerAiPage() {
                   <Line key={themeKey} data={lineData} options={chartOptions} />
                 </ChartFrame>
               )}
-            </Card>
+            </SheetSection>
           </div>
 
           {(data.byFeature ?? []).length > 0 && (
-            <Card title="تفاصيل الاستخدام حسب الميزة">
-              <div className="table-wrap">
-                <table className="table tbl-stack">
-                  <thead>
-                    <tr>
-                      <th scope="col">الميزة</th>
-                      <th scope="col">الطلبات</th>
-                      <th scope="col">التوكنات</th>
-                      <th scope="col">الحصة من التوكنات</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {/* The authored moment: each share meter fills from its
-                        inline-start edge on load, staggered per row
-                        (owner.css §6-b) — tabular numerals keep the
-                        columns optically aligned. */}
-                    {data.byFeature.map((f, i) => {
-                      const share = data.totalTokens > 0 ? (f.tokens / data.totalTokens) * 100 : 0;
-                      return (
-                        <tr key={f.feature} style={{ '--meter-i': i } as CSSProperties}>
-                          <td className="tbl-strong" data-label="الميزة">{featureLabel(f.feature)}</td>
-                          <td className="owner-num" data-label="الطلبات">{formatNum(f.count)}</td>
-                          <td className="owner-num" data-label="التوكنات">{formatNum(f.tokens)}</td>
-                          <td data-label="الحصة من التوكنات">
-                            <span className="owner-share" title={`${formatNum(f.tokens)} من ${formatNum(data.totalTokens)} توكن`}>
-                              <span className="owner-share-track" aria-hidden>
-                                <span className="owner-share-fill" style={{ inlineSize: `${share}%` }} />
-                              </span>
-                              <bdi className="owner-num">{Math.round(share)}%</bdi>
-                            </span>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </Card>
+            <SheetSection index="04" caption="FEATURE DETAIL" title="تفاصيل الاستخدام حسب الميزة" pad="none">
+              {/* The authored moment stays: each share meter fills from
+                  its inline-start edge on load, staggered per row
+                  (owner.css §6-b) — now inside the sheet's cell. */}
+              <FeatureDetailSheet rows={data.byFeature} totalTokens={data.totalTokens} />
+            </SheetSection>
           )}
         </>
       )}

@@ -32,6 +32,9 @@ import { fileURLToPath } from 'node:url';
 
 import {
   ADMIN_COURSES_PAGE,
+  COLLEGES_LEADERBOARD,
+  PUBLIC_INSTITUTIONS_FIXTURE,
+  SYSTEM_STATUS_FIXTURE,
   ADMIN_FACULTIES,
   ADMIN_PAPERS_GRADED_PAGE,
   ADMIN_REPORTS,
@@ -118,6 +121,7 @@ import {
   TRAINING_LEADERBOARD,
   TRAINING_ME_SUMMARY,
   UNREAD_COUNT,
+  PUSH_DEVICES,
   USER_ACHIEVEMENTS,
   USER_SKILLS,
   VALID_LOGIN,
@@ -239,6 +243,11 @@ export function standardRoutes(): MockRouteDef[] {
     { method: 'GET', path: '/notifications', json: pageOf(NOTIFICATIONS, { unread: UNREAD_COUNT, limit: 50 }) },
     { method: 'PATCH', path: '/notifications/:id/read', json: ok({ ok: true }) },
     { method: 'POST', path: '/notifications/read-all', json: ok({ updated: UNREAD_COUNT }) },
+    /* r359 §5.5 — the settings sheet's device register: the list the
+     * backend serves today + the unregister verb (scoped to the caller).
+     * Registration itself happens from the mobile app — never here. */
+    { method: 'GET', path: '/me/push-devices', json: ok(PUSH_DEVICES) },
+    { method: 'DELETE', path: '/me/push-devices/:id', json: ok({ ok: true }) },
 
     { method: 'GET', path: '/search/global', json: ok(SEARCH_RESULTS) },
 
@@ -370,6 +379,10 @@ export function standardRoutes(): MockRouteDef[] {
     { method: 'GET', path: '/files/materials/:filename', pdf: true },
 
     // ── Institutional & Catalogs (R352/R355) ─────────────────────
+    { method: 'GET', path: '/colleges/leaderboard', json: ok(COLLEGES_LEADERBOARD) },
+    { method: 'GET', path: '/colleges/leaderboard', json: ok(COLLEGES_LEADERBOARD) },
+    { method: 'GET', path: '/institutions', json: ok(PUBLIC_INSTITUTIONS_FIXTURE) },
+    { method: 'GET', path: '/status', json: ok(SYSTEM_STATUS_FIXTURE) },
     { method: 'GET', path: '/catalog/institution-types', json: ok(INSTITUTION_TYPES_CATALOG) },
     { method: 'GET', path: '/catalog/regulatory-authorities', json: ok(REGULATORY_AUTHORITIES_CATALOG) },
     { method: 'GET', path: '/catalog/credential-types', json: ok(CREDENTIAL_TYPES_CATALOG) },

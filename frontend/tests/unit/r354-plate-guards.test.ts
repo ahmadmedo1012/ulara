@@ -64,37 +64,7 @@ describe('r354 — the why-panel plate guards', () => {
   });
 });
 
-describe('r354 — the hero campus window guards', () => {
-  it('CAMPUS_FRAME wraps the visible ink with a drafting mat (no dead margins)', () => {
-    const src = read('components/landing/hero/CampusPlate.tsx');
-    const frame = src.match(
-      /export const CAMPUS_FRAME = \{ x: (-?\d+), y: (-?\d+), w: (\d+), h: (\d+) \} as const;/,
-    );
-    expect(frame, 'CAMPUS_FRAME stays the exported single-source literal').not.toBeNull();
-
-    const x = Number(frame![1]);
-    const y = Number(frame![2]);
-    const w = Number(frame![3]);
-    const h = Number(frame![4]);
-
-    /* the measured visible-ink bounds (r354's own audit, computed
-     * from the authored geometry): the north-arrow tick crown at
-     * sy −24 (furniture translate(−50,−12), ticks to r 12) … the
-     * campus edge dimension's extension feet at sy ≈ +62.8 (the
-     * 56.0 Dim's off-sheet extensions, gap 4 + 2.4). The window
-     * keeps ≥4 units of mat beyond each — and never carries more
-     * than 12 units (the dead-margin ceiling that keeps the drawing
-     * at ≥75% of its own frame height). */
-    const INK_TOP = -24;
-    const INK_BOTTOM = 62.8;
-    expect(y, 'the mat above the ink (≥4 units)').toBeLessThanOrEqual(INK_TOP - 4);
-    expect(y + h, 'the mat below the ink (≥4 units)').toBeGreaterThanOrEqual(INK_BOTTOM + 4);
-    expect(y, 'no dead top margin (>12 units regrows the r353 shrink)').toBeGreaterThanOrEqual(INK_TOP - 12);
-    expect(y + h, 'no dead bottom margin (>12 units regrows the r353 shrink)').toBeLessThanOrEqual(INK_BOTTOM + 12);
-    /* the window stays centered on the sheet's own grammar: the
-     * horizontal extent is the RegMark pair at sheet x ±91 — the
-     * frame wraps them with the same mat law */
-    expect(x, 'the left mat (RegMark at −91 needs ≥1 unit)').toBeLessThanOrEqual(-92);
-    expect(x + w, 'the right mat (RegMark at +91 needs ≥1 unit)').toBeGreaterThanOrEqual(92);
-  });
-});
+/* r359-A1: GUARD 2 retired with the plate it guarded — the hero's
+ * campus window (CampusPlate/CAMPUS_FRAME) died with the r359 hero
+ * rebuild (the ElevationArt family owns the fold; its own frame is
+ * VB_DESKTOP, pinned by r306). GUARD 1 (the why-panel chip) stays. */

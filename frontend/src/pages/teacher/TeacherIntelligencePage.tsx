@@ -10,12 +10,17 @@
 import { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
-  AlertTriangle, BookOpen, Sparkles, ChevronRight, ChevronLeft,
+  BookOpen, Sparkles, ChevronRight, ChevronLeft,
   Users, ClipboardCheck, BarChart3, Brain, Lightbulb, ArrowUpRight,
   CheckCircle2, RefreshCw, MessageSquare,
 } from 'lucide-react';
-import { Card, Badge, UserAvatar, Tabs } from '../../components/primitives';
-import { StatStrip } from '../../components/primitives/Ledger';
+import { Badge, UserAvatar, Tabs } from '../../components/primitives';
+/* R359 (A3 · W2-c) — the sheet grammar joins the intelligence
+ * surfaces: the analytics StatStrip + the flagged-tier ladder re-key
+ * onto the KpiBand, the major panels ride framed SheetSections, and
+ * the status chips speak the hairline sg-flag register (ink text,
+ * tone on the border — never a filled pill). */
+import { SheetSection, KpiBand } from '../../components/patterns';
 import { DetailSkeleton, ErrorState, EmptyState, ListSkeleton, Skeleton } from '../../components/primitives/States';
 import { Icon } from '../../components/Icon';
 import { EmojiIcon } from '../../components/EmojiIcon';
@@ -36,7 +41,7 @@ import '../../styles/teacher/ds-core.css'; // R305 DS: §0 primitives + §E tax-
  * done daily-work pages speak (TeacherPages.tsx:54), so the
  * intelligence surfaces' section heads read on the numeral axis too. */
 import '../../styles/landing/inner.css';
-import { formatPct1, formatNum } from '../../utils/numbers';
+import { formatPct1 } from '../../utils/numbers';
 
 /* The shared risk vocabulary (the dashboard mirrors these exact
  * strings — never reword). The chip tones are the reference §0 status
@@ -51,10 +56,14 @@ const RISK_SEV: Record<RiskLevel, 'ok' | 'watch' | 'warn' | 'critical'> = {
   AT_RISK: 'warn',
   CRITICAL: 'critical',
 };
-const RISK_TONE: Record<RiskLevel, 'ok' | 'info' | 'warn' | 'danger'> = {
-  OK: 'ok',
-  WATCH: 'info',
-  AT_RISK: 'warn',
+/* R359 (A3 · W2-c) — the flat flag tones for the risk vocabulary:
+ * stable reads positive ink, watched quiets, critical carries the
+ * danger border. AT_RISK stays ink (the row's inline-start severity
+ * rail already carries the amber). */
+const RISK_FLAG_TONE: Record<RiskLevel, 'positive' | 'quiet' | 'danger' | undefined> = {
+  OK: 'positive',
+  WATCH: 'quiet',
+  AT_RISK: undefined,
   CRITICAL: 'danger',
 };
 const RISK_LABEL: Record<RiskLevel, string> = {
@@ -87,7 +96,7 @@ export default function TeacherIntelligencePage() {
     <div className="page">
       <header className="page-header">
         <div className="page-title-block">
-          <span className="hr-brow">تحليل لحظي</span>
+          <span className="hr-brow">عضو هيئة التدريس · تحليل لحظي</span>
           <h1 className="page-title">الذكاء الأكاديمي</h1>
           <p className="page-subtitle">
             متابعة أداء طلابك مدعومة بتحليل لحظي للحضور والدرجات والمتابعة، مع توصيات تدخّل ذكية.
@@ -104,21 +113,28 @@ export default function TeacherIntelligencePage() {
         </Link>
       </header>
 
-      {/* Global at-risk panel */}
-      <Card
-        title={<>طلاب يحتاجون متابعة</>}
-        icon={AlertTriangle}
-        subtitle={
-          risks.isPending ? 'جارٍ التحميل…'
-          : risks.data && risks.data.length > 0 ? countAr(risks.data.length, ['طالب موزّع', 'طالبان موزّعان', 'طلاب موزّعون', 'طالباً موزّعاً'])
-          : undefined
-        }
-        actions={(
-          /* A6 P3 (22-a): the Latin run is bdi-isolated like every other
-           * Latin fragment on teacher surfaces (ResearchReview grammar).
-           * R305: the suggestion affordance rides the reference ember chip —
-           * the one warm accent on this panel. */
-          <span className="hr-chip" data-tone="ember"><Icon icon={Brain} size={11} /> <bdi>AI</bdi></span>
+      {/* Global at-risk panel — R359 (A3 · W2-c): the [01] RISK BOARD
+          frame; the tier ladder rides the KpiBand register below, the
+          signal chips speak the hairline sg-flag vocabulary. */}
+      <SheetSection
+        index="01"
+        caption="RISK BOARD"
+        title="طلاب يحتاجون متابعة"
+        aside={(
+          <>
+            {(risks.isPending || (risks.data != null && risks.data.length > 0)) && (
+              <span className="sg-label">
+                {risks.isPending
+                  ? 'جارٍ التحميل…'
+                  : countAr(risks.data.length, ['طالب موزّع', 'طالبان موزّعان', 'طلاب موزّعون', 'طالباً موزّعاً'])}
+              </span>
+            )}
+            {/* A6 P3 (22-a): the Latin run is bdi-isolated like every
+             * other Latin fragment on teacher surfaces. R359: the AI
+             * affordance rides the royal signal flag — the one warm
+             * accent on this panel. */}
+            <span className="sg-flag" data-tone="signal"><Icon icon={Brain} size={11} /> <bdi>AI</bdi></span>
+          </>
         )}
       >
         {risks.isPending ? (
@@ -151,7 +167,7 @@ export default function TeacherIntelligencePage() {
                     <div className="risk-row-name">{r.name}</div>
                     <div className="risk-row-meta">
                       <span>{r.courseIcon} {r.courseName}</span>
-                      {r.signals.map((s) => <span key={s} className="hr-chip" data-tone="warn">{s}</span>)}
+                      {r.signals.map((s) => <span key={s} className="sg-flag" data-tone="warning">{s}</span>)}
                     </div>
                     <div className="risk-row-suggestion">
                       <Icon icon={Lightbulb} size={11} style={{ color: 'var(--gold-ink)' }} /> {r.suggestion}
@@ -159,24 +175,30 @@ export default function TeacherIntelligencePage() {
                   </div>
                   <div className="risk-row-score">
                     <div className="risk-row-pct"><bdi>{formatPct1(r.riskScore)}%</bdi></div>
-                    <span className="hr-chip" data-tone={RISK_TONE[r.riskLevel]}>{RISK_LABEL[r.riskLevel]}</span>
+                    <span className="sg-flag" data-tone={RISK_FLAG_TONE[r.riskLevel]}>{RISK_LABEL[r.riskLevel]}</span>
                   </div>
                 </div>
               ))}
             </div>
           </>
         )}
-      </Card>
+      </SheetSection>
 
-      {/* My offerings */}
-      <Card
-        title={<>مقرّراتي</>}
-        icon={BookOpen}
-        subtitle={
-          offerings.isPending ? 'جارٍ التحميل…'
-          : offerings.data && offerings.data.length > 0 ? countAr(offerings.data.length, ['مقرّر واحد هذا الفصل', 'مقرّران هذا الفصل', 'مقرّرات هذا الفصل', 'مقرّراً هذا الفصل'])
-          : undefined
-        }
+      {/* My offerings — R359: the [02] MY OFFERINGS frame; the Superlist
+          row catalog stays (one row per offering, detail one tap away). */}
+      <SheetSection
+        index="02"
+        caption="MY OFFERINGS"
+        title="مقرّراتي"
+        aside={(
+          (offerings.isPending || (offerings.data != null && offerings.data.length > 0)) ? (
+            <span className="sg-label">
+              {offerings.isPending
+                ? 'جارٍ التحميل…'
+                : countAr(offerings.data.length, ['مقرّر واحد هذا الفصل', 'مقرّران هذا الفصل', 'مقرّرات هذا الفصل', 'مقرّراً هذا الفصل'])}
+            </span>
+          ) : undefined
+        )}
       >
         {offerings.isPending ? (
           <TrackGridSkeleton />
@@ -202,38 +224,48 @@ export default function TeacherIntelligencePage() {
             ))}
           </div>
         )}
-      </Card>
+      </SheetSection>
     </div>
     </div>
   );
 }
 
-/** R305 §E (.hr-kpi): the flagged-tier ladder — honest counts of what
- * this panel holds (WATCH/AT_RISK/CRITICAL; the endpoint skips stable
- * students, so «مستقر» is deliberately absent rather than a lying
- * zero). Ember emphasis is reserved for a non-zero critical count. */
+/** R359 (A3 · W2-c): the flagged-tier ladder on the KpiBand register —
+ *  honest counts of what this panel holds (WATCH/AT_RISK/CRITICAL;
+ *  the endpoint skips stable students, so «مستقر» is deliberately
+ *  absent rather than a lying zero). The Latin captions carry the
+ *  real classifications; a non-zero critical count reads its danger
+ *  delta. */
 function FlaggedLadder({ counts }: {
   counts: { WATCH: number; AT_RISK: number; CRITICAL: number };
 }) {
-  const tiers = [
-    { v: 'WATCH' as const, label: RISK_LABEL.WATCH },
-    { v: 'AT_RISK' as const, label: RISK_LABEL.AT_RISK },
-    { v: 'CRITICAL' as const, label: RISK_LABEL.CRITICAL },
-  ];
   return (
-    <div className="tax-kpis">
-      {tiers.map((t) => (
-        <div className="hr-kpi" key={t.v}>
-          <span
-            className="hr-kpi-value"
-            data-emphasis={t.v === 'CRITICAL' && counts.CRITICAL > 0 ? 'true' : undefined}
-          >
-            {formatNum(counts[t.v])}
-          </span>
-          <span className="hr-kpi-label">{t.label}</span>
-        </div>
-      ))}
-    </div>
+    <KpiBand
+      items={[
+        {
+          index: '01',
+          caption: 'WATCH',
+          label: RISK_LABEL.WATCH,
+          value: counts.WATCH,
+        },
+        {
+          index: '02',
+          caption: 'AT-RISK',
+          label: RISK_LABEL.AT_RISK,
+          value: counts.AT_RISK,
+          deltaTone: counts.AT_RISK > 0 ? 'warning' : undefined,
+          delta: counts.AT_RISK > 0 ? 'مراقبة مستمرّة' : undefined,
+        },
+        {
+          index: '03',
+          caption: 'CRITICAL',
+          label: RISK_LABEL.CRITICAL,
+          value: counts.CRITICAL,
+          deltaTone: counts.CRITICAL > 0 ? 'danger' : undefined,
+          delta: counts.CRITICAL > 0 ? 'تدخّل عاجل' : undefined,
+        },
+      ]}
+    />
   );
 }
 
@@ -473,32 +505,44 @@ export function TeacherOfferingDetailPage() {
         />
       )}
       {analytics.data && (
-        <StatStrip
-          ariaLabel="مؤشّرات المقرّر"
-          cells={[
+        /* R359 (A3 · W2-c) — the offering's ONE KpiBand: the four
+         * analytics facts with real payload numerals; the deltas carry
+         * the same threshold verdicts the old strip spoke. */
+        <KpiBand
+          items={[
             {
+              index: '01',
+              caption: 'ENROLLED',
               label: 'مسجَّلون',
-              value: formatNum(analytics.data.enrolled),
-              trend: 'تسجيلات نشطة في المقرّر',
-              trendTone: 'flat',
+              value: analytics.data.enrolled,
+              delta: 'تسجيلات نشطة في المقرّر',
             },
             {
+              index: '02',
+              caption: 'ATTENDANCE',
               label: 'الحضور العام',
-              value: `${formatNum(analytics.data.overallAttendance)}%`,
-              trend: analytics.data.overallAttendance >= 75 ? 'فوق حدّ 75%' : 'تحت حدّ 75%',
-              trendTone: analytics.data.overallAttendance >= 75 ? 'up' : 'down',
+              value: analytics.data.overallAttendance,
+              unit: '٪',
+              delta: analytics.data.overallAttendance >= 75 ? 'فوق حدّ 75' : 'تحت حدّ 75',
+              deltaTone: analytics.data.overallAttendance >= 75 ? 'positive' : 'danger',
             },
             {
+              index: '03',
+              caption: 'AVG',
               label: 'متوسط الدرجات',
-              value: `${formatNum(analytics.data.avgGrade)}%`,
-              trend: analytics.data.avgGrade >= 65 ? 'فوق حدّ 65%' : 'تحت حدّ 65%',
-              trendTone: analytics.data.avgGrade >= 65 ? 'up' : 'down',
+              value: analytics.data.avgGrade,
+              unit: '٪',
+              delta: analytics.data.avgGrade >= 65 ? 'فوق حدّ 65' : 'تحت حدّ 65',
+              deltaTone: analytics.data.avgGrade >= 65 ? 'positive' : 'warning',
             },
             {
+              index: '04',
+              caption: 'PASS RATE',
               label: 'نسبة النجاح',
-              value: `${formatNum(analytics.data.passRate)}%`,
-              trend: 'طلاب عند 50 فأعلى',
-              trendTone: analytics.data.passRate >= 50 ? 'up' : 'down',
+              value: analytics.data.passRate,
+              unit: '٪',
+              delta: 'طلاب عند 50 فأعلى',
+              deltaTone: analytics.data.passRate >= 50 ? 'positive' : 'danger',
             },
           ]}
         />
@@ -511,7 +555,7 @@ export function TeacherOfferingDetailPage() {
       />
 
       {tab === 'students' && (
-        <Card title={<>قائمة الطلاب — تحليل لحظي</>} icon={Users}>
+        <SheetSection index="01" caption="LIVE ROSTER" title="قائمة الطلاب — تحليل لحظي">
           {students.isPending ? (
             <ListSkeleton rows={4} />
           ) : students.isError ? (
@@ -563,14 +607,15 @@ export function TeacherOfferingDetailPage() {
               </div>
             </>
           )}
-        </Card>
+        </SheetSection>
       )}
 
       {tab === 'curriculum' && (
-        <Card
-          title={<>اقتراح هيكل منهج (محاكاة قالبية)</>}
-          icon={Brain}
-          actions={
+        <SheetSection
+          index="02"
+          caption="CURRICULUM AI"
+          title="اقتراح هيكل منهج (محاكاة قالبية)"
+          aside={
             /* R305: the tab's one primary action rides the ember-flavored
              * .hr-cta emphasis cap (never a re-painted .btn). */
             <button
@@ -637,7 +682,7 @@ export function TeacherOfferingDetailPage() {
               </div>
             </>
           )}
-        </Card>
+        </SheetSection>
       )}
       {tab === 'authoring' && canAuthor && offeringId && (
         <CurriculumAuthoringPanel offeringId={offeringId} accent={accent} />
@@ -664,7 +709,7 @@ function StudentRow({ student, dimmed }: { student: TeacherStudentRow; dimmed: b
         </div>
         {student.signals.length > 0 && (
           <div className="risk-row-meta" style={{ marginBlockStart: 'var(--sp-1)' }}>
-            {student.signals.map((s) => <span key={s} className="hr-chip" data-tone="warn">{s}</span>)}
+            {student.signals.map((s) => <span key={s} className="sg-flag" data-tone="warning">{s}</span>)}
           </div>
         )}
         <div className="risk-row-suggestion">
@@ -673,7 +718,7 @@ function StudentRow({ student, dimmed }: { student: TeacherStudentRow; dimmed: b
       </div>
       <div className="risk-row-score">
         <div className="risk-row-pct"><bdi>{student.riskScore}%</bdi></div>
-        <span className="hr-chip" data-tone={RISK_TONE[student.riskLevel]}>{RISK_LABEL[student.riskLevel]}</span>
+        <span className="sg-flag" data-tone={RISK_FLAG_TONE[student.riskLevel]}>{RISK_LABEL[student.riskLevel]}</span>
       </div>
     </div>
   );

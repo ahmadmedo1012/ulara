@@ -151,8 +151,15 @@ describe('R320 cycle-3 — SettingsPage (any-authed)', () => {
         </MemoryRouter>
       </QueryClientProvider>,
     );
+    /* R359 §5.5: the notifications seat graduated from «قريبًا» to the
+     * REAL register (unread state + the push-device sheet + the honest
+     * per-category PENDING empty) — sessions keeps the honest «قريبًا». */
     const soon = screen.getAllByText('قريبًا');
-    expect(soon.length).toBeGreaterThanOrEqual(2); // notifications + sessions
+    expect(soon.length).toBeGreaterThanOrEqual(1); // sessions
+    // The notification register's real seats are present.
+    expect(screen.getByText('غير المقروءة الآن')).toBeInTheDocument();
+    expect(screen.getByText('الأجهزة المسجّلة للإشعارات الفورية')).toBeInTheDocument(); // the DataSheet caption
+    expect(screen.getByText(/مفتاح إيقاف فئة بعينها/)).toBeInTheDocument(); // the per-category honest empty
     // No notification-preference controls pretend to exist.
     expect(screen.queryByRole('switch')).toBeNull();
     expect(screen.queryByRole('checkbox')).toBeNull();

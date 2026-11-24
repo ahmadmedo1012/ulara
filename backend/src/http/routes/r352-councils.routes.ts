@@ -42,7 +42,14 @@ import { getStorage, generateStorageId } from '../../lib/storage.js';
 import {
   isPdfMagicBytes, containsPdfActiveContent, MAX_UPLOAD_PDF_BYTES,
   parseRangeHeader, FILE_NOT_FOUND_MESSAGE,
+  MAX_SINGLE_UPLOAD_BYTES, MULTIPART_PART_SIZE, MAX_MULTIPART_PARTS,
+  PRESIGN_UNSUPPORTED_MESSAGE,
 } from './files.routes.js';
+// r359 A4 — the S3-only large-file path (mirrors the lecture-video
+// presign contract; honest 503 elsewhere).
+import { S3Driver } from '../../lib/storage.js';
+import { MAX_PRESIGN_EXPIRES_SEC } from '../../lib/storage-presign.js';
+import { idempotencyMiddleware } from '../middleware/idempotency.js';
 import { isVercelRuntime, RUNTIME_PDF_MAX_BYTES } from '../../lib/pdf-limits.js';
 import {
   councilListSchema, councilCreateSchema, councilUpdateSchema,
@@ -992,6 +999,9 @@ async function assertGovernanceUploadPermission(userId: string, role: Role, inst
 router.post(
   '/documents/upload',
   express.raw({ type: 'application/pdf', limit: MAX_UPLOAD_PDF_BYTES }),
+  // r359 A4 — Idempotency-Key honored (byte uploads are expensive;
+  // a retried POST must not store twice).
+  idempotencyMiddleware(),
   async (req, res, next) => {
     try {
       const institutionId = req.institution?.id;
@@ -1093,6 +1103,148 @@ router.get('/documents/:id/file', async (req, res, next) => {
     }
     res.setHeader('Content-Length', String(slice.length));
     res.end(slice);
+  } catch (e) {
+    next(e);
+  }
+});
+
+// ── r359 A4 — D-6 large-file presign path (S3 drivers only) ─────────
+// The raw-body route above tops out at MAX_UPLOAD_PDF_BYTES (15 MiB)
+// because the whole file transits the API process. Files up to
+// GOVERNANCE_MAX_PRESIGN_BYTES (500 MiB) upload DIRECTLY to the
+// S3-compatible store via presigned URLs, then attach through the SAME
+// metadata route (binaryObjectId = the returned key). Drivers without
+// presigning answer the honest 503 (PRESIGN_UNSUPPORTED_MESSAGE) —
+// never a silent fallback.
+export const GOVERNANCE_MAX_PRESIGN_BYTES = 500 * 1024 * 1024;
+export const GOVERNANCE_MIN_PRESIGN_BYTES = 1024 * 1024; // below this the raw route is simpler
+
+const governancePresignBody = z.object({
+  filename: z.string().min(1).max(255),
+  sizeBytes: z.number().int().positive(),
+  multipart: z.boolean().optional(),
+});
+
+function governancePresignUnsupported(): AppError {
+  return new AppError('INTERNAL', PRESIGN_UNSUPPORTED_MESSAGE, 503);
+}
+
+router.post('/documents/presign', async (req, res, next) => {
+  try {
+    const institutionId = req.institution?.id;
+    if (!institutionId && req.user!.role !== Role.OWNER) {
+      throw AppError.forbidden('يتطلب رفع وثائق الحوكمة سياق مؤسسة نشط');
+    }
+    const targetInstId = institutionId ?? 'global';
+    await assertGovernanceUploadPermission(req.user!.id, req.user!.role, targetInstId);
+
+    const parsed = governancePresignBody.safeParse(req.body);
+    if (!parsed.success) throw AppError.badRequest('بيانات الطلب غير صالحة');
+    const { filename, sizeBytes, multipart = false } = parsed.data;
+
+    // PDF-only namespace (the D-6 policy: the upload surface is
+    // PDF-only until a dedicated file-type policy exists).
+    const baseName = filename.split(/[\\/]/).pop() ?? '';
+    if (!/^[\w\-. ]+\.pdf$/i.test(baseName)) {
+      throw AppError.badRequest('مساحة وثائق الحوكمة تقبل ملفات PDF فقط');
+    }
+    if (sizeBytes < GOVERNANCE_MIN_PRESIGN_BYTES || sizeBytes > GOVERNANCE_MAX_PRESIGN_BYTES) {
+      throw AppError.badRequest(
+        `حجم الرفع المباشر بين 1 و 500 ميجابايت — الأصغر يمر عبر مسار الرفع المباشر المعتاد`,
+      );
+    }
+    if (!multipart && sizeBytes > MAX_SINGLE_UPLOAD_BYTES) {
+      throw AppError.badRequest('الملف أكبر من 100 ميجابايت — استخدم الرفع متعدد الأجزاء');
+    }
+
+    const storage = getStorage();
+    if (!(storage instanceof S3Driver)) {
+      throw governancePresignUnsupported();
+    }
+
+    const fileId = generateStorageId();
+    // The SAME tenant-bound key shape as the raw route — the complete
+    // step re-verifies the binding, and the metadata route enforces it
+    // again on attach (three fences, one law).
+    const key = `governance/${targetInstId}/${fileId}.pdf`;
+
+    if (multipart) {
+      const partCount = Math.min(Math.ceil(sizeBytes / MULTIPART_PART_SIZE), MAX_MULTIPART_PARTS);
+      const uploadId = await storage.createMultipartUpload(key);
+      const parts = Array.from({ length: partCount }, (_, i) => ({
+        partNumber: i + 1,
+        url: storage.presignPartUrl(key, uploadId, i + 1, MAX_PRESIGN_EXPIRES_SEC),
+      }));
+      await audit(prisma, req.user!.id, targetInstId, 'governance.document.presign', 'BinaryObject', key, {
+        mode: 'multipart', sizeBytes, partCount,
+      });
+      res.json({ data: { mode: 'multipart' as const, key, uploadId, partSize: MULTIPART_PART_SIZE, parts } });
+      return;
+    }
+
+    await audit(prisma, req.user!.id, targetInstId, 'governance.document.presign', 'BinaryObject', key, {
+      mode: 'single', sizeBytes,
+    });
+    res.json({
+      data: {
+        mode: 'single' as const,
+        key,
+        url: storage.presignPutUrl(key, MAX_PRESIGN_EXPIRES_SEC),
+        headers: { 'Content-Type': 'application/pdf' },
+      },
+    });
+  } catch (e) {
+    next(e);
+  }
+});
+
+const governanceCompleteBody = z.object({
+  key: z.string().min(1).max(512),
+  uploadId: z.string().min(1).max(1024).optional(),
+  parts: z
+    .array(z.object({ partNumber: z.number().int().min(1).max(MAX_MULTIPART_PARTS), etag: z.string().min(1).max(256) }))
+    .max(MAX_MULTIPART_PARTS)
+    .optional(),
+});
+
+router.post('/documents/complete', async (req, res, next) => {
+  try {
+    const institutionId = req.institution?.id;
+    if (!institutionId && req.user!.role !== Role.OWNER) {
+      throw AppError.forbidden('يتطلب رفع وثائق الحوكمة سياق مؤسسة نشط');
+    }
+    const targetInstId = institutionId ?? 'global';
+    await assertGovernanceUploadPermission(req.user!.id, req.user!.role, targetInstId);
+
+    const parsed = governanceCompleteBody.safeParse(req.body);
+    if (!parsed.success) throw AppError.badRequest('بيانات الطلب غير صالحة');
+    const { key, uploadId, parts } = parsed.data;
+
+    // The tenant fence: the key must belong to THIS caller's institution
+    // (a cross-tenant key is rejected even before the store is touched).
+    if (governanceKeyInstitution(key) !== targetInstId) {
+      throw new AppError('EVIDENCE_OWNER_INVALID', 'مفتاح التخزين لا ينتمي إلى مساحة مؤسستك', 400);
+    }
+
+    const storage = getStorage();
+    if (!(storage instanceof S3Driver)) {
+      throw governancePresignUnsupported();
+    }
+    if (uploadId !== undefined) {
+      if (parts === undefined || parts.length === 0) {
+        throw AppError.badRequest('أجزاء الرفع غير مكتملة');
+      }
+      await storage.completeMultipartUpload(key, uploadId, parts);
+    }
+    // HEAD proves the bytes really landed — no key is handed back for
+    // an absent object (the metadata attach would then lie).
+    const info = await storage.stat(key);
+    if (info === null) throw AppError.notFound('لم يُعثر على الملف المرفوع');
+
+    await audit(prisma, req.user!.id, targetInstId, 'governance.document.upload.presigned', 'BinaryObject', key, {
+      sizeBytes: info.size,
+    });
+    res.json({ data: { key, sizeBytes: info.size, mimeType: 'application/pdf' } });
   } catch (e) {
     next(e);
   }

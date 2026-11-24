@@ -124,9 +124,10 @@
   text-align: center;
   padding: var(--sp-8) var(--sp-5);
   border-radius: var(--r-xl);
-  /* r313: flat paper-step band on a hairline — the accent-soft tint
-     retired with the two-tone sweep. */
-  background: var(--surface-2);
+  /* r359 final: the guest-sheet paper law — the product's surface-2
+     step band retires on the public page; flat warm paper on the
+     hairline (the landing's own band grammar). */
+  background: transparent;
   border-block-start: 1px solid var(--border-strong);
   margin-block-start: var(--sp-4);
 }
@@ -235,7 +236,9 @@
   gap: var(--sp-1-5);
   padding: var(--sp-1-5) var(--sp-2);
   border-radius: var(--r-sm);
-  background: var(--surface-2);
+  /* r359 final: hairline chip on paper (the warm-paper law) */
+  background: transparent;
+  border: 1px solid var(--rule-strong);
   color: var(--text-muted);
   font-size: var(--type-label-size-sm);
   font-variant-numeric: tabular-nums lining-nums;
@@ -259,9 +262,9 @@
   gap: var(--sp-4);
   padding: var(--sp-5);
   border-radius: var(--r-lg);
-  /* r313: flat sheet (the surface-1→2 gradient retired) on the
-     hairline grammar. */
-  background: var(--surface);
+  /* r359 final: the guest-sheet paper law — the detail hero rides
+     flat warm paper on the hairline grammar (the landing's row seat). */
+  background: transparent;
   border: 1px solid var(--border);
   border-block-start: 3px solid var(--college-accent, var(--rule));
 }
@@ -305,7 +308,8 @@
   align-items: center;
   justify-content: center;
   border-radius: var(--r-md);
-  background: var(--surface-1);
+  /* r359 final: hairline plate on paper (the warm-paper law) */
+  background: transparent;
   border: 1px solid var(--college-accent-soft, var(--border));
   flex: 0 0 auto;
 }
@@ -1232,5 +1236,19 @@ a.comp-card {
   }
   .post-tag {
     color: var(--accent-ink, var(--accent));
+  }
+
+  /* ── R359 FINAL — THE GUEST-SHEET PAPER LAW ────────────────────────
+     The pattern rowlist's product surface (the white --surface fill +
+     the elev-1 shadow) retires on the public directories (colleges +
+     competitions, both families load this sheet): hairline-bordered
+     transparent warm paper — the landing's own row grammar. §6B's
+     zero-shadow + the warm-paper law; the authed sheets keep the
+     product surface (A3's anatomy). Same layer, later import — the
+     overlay wins (the .ab-bar precedent). ────────────────────────── */
+
+  .pf-rowlist {
+    background: transparent;
+    box-shadow: none;
   }
 }

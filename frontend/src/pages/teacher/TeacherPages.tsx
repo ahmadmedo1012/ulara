@@ -2,17 +2,22 @@ import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import {
-  Users, BarChart3, ClipboardCheck, ClipboardList,
-  AlertTriangle, Calendar, Upload, RefreshCw,
+  ClipboardCheck, ClipboardList,
+  AlertTriangle, Upload, RefreshCw,
   Send, FileText, X, CheckCircle2,
   ExternalLink, Presentation, Video, FileArchive,
   Image as ImageIcon, Paperclip,
-  ChevronsUpDown, ChevronUp, ChevronDown,
+  ChevronUp, ChevronDown,
 } from 'lucide-react';
 import { useDiscardGuard } from '../../components/curriculum/AuthoringModal';
 import { InviteCodesCard } from '../../components/teacher/InvitesCard';
 import { Card, Badge, ProgressBar, UserAvatar, FormField, Pill } from '../../components/primitives';
-import { StatStrip } from '../../components/primitives/Ledger';
+/* R359 (A3 · W2-c) — the sheet grammar: SheetSection (framed block +
+ * [nn] index + Latin caption), KpiBand (the dimension-string strip),
+ * DataSheet (the dense hairline ledger). The teacher daily-work pages
+ * recompose onto it; the hr- scope stays for the legacy chips the
+ * pinned tests still hold. */
+import { SheetSection, KpiBand, DataSheet, type DataSheetColumn, type KpiTone } from '../../components/patterns';
 import { ErrorState, EmptyState, Skeleton, ListSkeleton, TableSkeleton, CardSkeleton } from '../../components/primitives/States';
 import { Icon } from '../../components/Icon';
 import { Modal } from '../../components/overlays/Modal';
@@ -33,6 +38,8 @@ import {
   apiErrorMessage,
   type PendingSubmissionRow,
   type TeacherStudentRow,
+  type TeacherAssignmentRow,
+  type TeacherMaterial,
   type GradeKindFE,
   type OfferingGradeRow,
 } from '../../hooks/useResources';
@@ -65,18 +72,11 @@ import '../../styles/landing/inner.css';
  */
 
 /* ─── Generic placeholder structure ─── */
-/* R305 DS: the .hr-chip tone for each family Badge color — the ONE
- * status vocabulary of the round (green→ok, brand/gold/purple→info,
- * amber→warn, red→danger). Badges whose class names are e2e/unit-pinned
- * (the queue ceiling + ratio chips) keep the .badge primitive. */
-const HR_CHIP_TONE: Record<'green' | 'amber' | 'red' | 'purple' | 'gold' | 'brand', 'ok' | 'info' | 'warn' | 'danger'> = {
-  green: 'ok',
-  brand: 'info',
-  gold: 'info',
-  purple: 'info',
-  amber: 'warn',
-  red: 'danger',
-};
+/* R359 (A3 · W2-c): the family's chip vocabulary joined the sheet
+ * grammar — hr-chip[data-tone] fills retired in favour of the
+ * hairline sg-flag register (ink text, tone on the border); the
+ * maps above (BAND_FLAG_TONE / RISK_FLAG_TONE / RISK_ROW_TONE) own
+ * the vocabulary now. */
 
 /* r351 A2 (Q3): `subtitle` is optional — most seats keep only the h1
  * (the explanatory subtitle prose retired across the family). */
@@ -102,6 +102,35 @@ function PageHeader({ title, subtitle, actions, brow }: { title: string; subtitl
  * gradeBand (22-a, A6 P2) is the platform's ONE grade taxonomy,
  * consumed by the grades table, the students table and the performance
  * distribution — one student reads as one chip everywhere. */
+
+/* R359 (A3 · W2-c) — the sheet-grammar flag tone maps: the ONE status
+ * vocabulary of the sg-flag register (signal / positive / danger /
+ * quiet; no tone = ink). The band/risk chips keep their Arabic labels
+ * verbatim (the pinned vocabulary) — only the paint changes: hairline
+ * chips, ink text, tone on the border. */
+type FlagTone = 'signal' | 'positive' | 'danger' | 'quiet' | 'warning' | undefined;
+const BAND_FLAG_TONE: Record<'green' | 'brand' | 'amber' | 'gold' | 'red', FlagTone> = {
+  green: 'positive',
+  brand: 'signal',
+  amber: undefined,
+  gold: undefined,
+  red: 'danger',
+};
+const RISK_FLAG_TONE: Record<TeacherStudentRow['riskLevel'], FlagTone> = {
+  OK: 'positive',
+  WATCH: 'quiet',
+  AT_RISK: undefined,
+  CRITICAL: 'danger',
+};
+/* The DataSheet row pins carry the KpiTone set (warning included): an
+ * at-risk student marks the row's inline-start pin without painting
+ * the whole row. */
+const RISK_ROW_TONE: Record<TeacherStudentRow['riskLevel'], KpiTone | undefined> = {
+  OK: 'positive',
+  WATCH: undefined,
+  AT_RISK: 'warning',
+  CRITICAL: 'danger',
+};
 
 /* ─── Shared course picker (A6 P3, 22-a) ─────────────────────
  * The grades/students/performance trio each carried a copy of the
@@ -202,7 +231,7 @@ export function TeacherSchedulePage() {
       <PageHeader
         title="جدول المحاضرات"
         /* r351 A2 (Q3): header subtitle retired — the timetable explains itself. */
-        brow="التدريس · الجدول"
+        brow="عضو هيئة التدريس · الجدول"
         actions={(
           /* R341 D8 — the calendar-page precedent: a read-only ledger
            * still names its ONE honest next action on the accent
@@ -242,7 +271,7 @@ export function TeacherSchedulePage() {
                 <span className="tpg-day-aux">
                   {/* R305 DS: today is THE ember signal of the page —
                       the marker chip rides the ember tone. */}
-                  {d.dow === todayDow && <span className="hr-chip" data-tone="ember">اليوم</span>}
+                  {d.dow === todayDow && <span className="hr-chip" data-tone="signal">اليوم</span>}
                   <span className="tpg-day-count">
                     {/* 22-c counted nouns. */}
                     <bdi>{d.items.length}</bdi> {countAr(d.items.length, ['محاضرة واحدة', 'محاضرتان', 'محاضرات', 'محاضرة'])}
@@ -346,37 +375,42 @@ function sortRoster<T extends { name: string; avgGrade: number; attendancePct: n
   return sort.dir === 'asc' ? sorted : sorted.reverse();
 }
 
-/** The sortable column header: a real button keeps the columnheader's
- *  accessible name exactly the label (the order glyph is aria-hidden
- *  decoration); an active th carries aria-sort for screen readers. */
-function SortableHead({
-  label,
-  sortKey,
-  sort,
-  onCycle,
-}: {
-  label: string;
-  sortKey: RosterSortKey;
+/** R359 (A3 · W2-c) — the roster sort control: the R304 click cycle
+ *  (none → first direction → opposite → none, the same pure helpers)
+ *  rides the section head's aside. The DataSheet's mono column heads
+ *  are read-only classification — the view control belongs on the rule
+ *  where the actions live, never inside the ledger's header cells. */
+function RosterSortControl({ sort, onCycle }: {
   sort: RosterSort | null;
   onCycle: (key: RosterSortKey) => void;
 }) {
-  const active = sort?.key === sortKey;
-  const Glyph = !active ? ChevronsUpDown : sort.dir === 'asc' ? ChevronUp : ChevronDown;
+  const opts: Array<{ key: RosterSortKey; label: string }> = [
+    { key: 'name', label: 'الاسم' },
+    { key: 'average', label: 'المتوسط' },
+    { key: 'attendance', label: 'الحضور' },
+  ];
   return (
-    <th
-      scope="col"
-      aria-sort={active ? (sort.dir === 'asc' ? 'ascending' : 'descending') : undefined}
-    >
-      {/* R305 DS: the shared .hr-sort-btn anatomy (44px floor) rides
-          beside the R304 .tpg-sort; the glyph span takes the ember when
-          the column is the active sort (aria-sort stays on the th). */}
-      <button type="button" className="tpg-sort hr-sort-btn" onClick={() => onCycle(sortKey)}>
-        {label}
-        <span className="hr-sort-glyph" aria-hidden="true">
-          <Icon icon={Glyph} size={12} />
-        </span>
-      </button>
-    </th>
+    <div className="hr-toolbar" role="group" aria-label="ترتيب السجلّ">
+      {opts.map((o) => {
+        const active = sort?.key === o.key;
+        return (
+          <button
+            key={o.key}
+            type="button"
+            className={`filter-pill${active ? ' on' : ''}`}
+            aria-pressed={active}
+            onClick={() => onCycle(o.key)}
+          >
+            {o.label}
+            {active && (
+              <span className="hr-sort-glyph" aria-hidden="true">
+                <Icon icon={sort!.dir === 'asc' ? ChevronUp : ChevronDown} size={12} />
+              </span>
+            )}
+          </button>
+        );
+      })}
+    </div>
   );
 }
 
@@ -472,7 +506,7 @@ export function AttendancePage() {
       <PageHeader
         title="الحضور والغياب"
         subtitle="سجلّ واحد لكلّ تاريخ."
-        brow="التدريس · الحضور"
+        brow="عضو هيئة التدريس · الحضور"
         actions={
           <button
             type="button"
@@ -490,7 +524,10 @@ export function AttendancePage() {
         }
       />
 
-      <Card title={<>الجلسة</>} icon={Calendar} className="tpg-session">
+      {/* R359 (A3 · W2-c) — the roll-call sheet: [01] SESSION carries
+          the session facts; the roster + the live session stats ride
+          the 7:5 split as [02]/[03]. */}
+      <SheetSection index="01" caption="SESSION" title="الجلسة" className="tpg-session">
         <div className="form-row-3">
           <FormField label="المقرّر">
             <select className="input" value={effectiveOfferingId} onChange={(e) => setOfferingId(e.target.value)}>
@@ -536,12 +573,14 @@ export function AttendancePage() {
             <span className="flex-1">{dateError}</span>
           </div>
         )}
-      </Card>
+      </SheetSection>
 
       <div className="grid-2-1">
-        <Card
-          title={<>{offering ? `طلاب ${offering.course.name}` : 'الطلاب'}</>}
-          icon={ClipboardCheck}
+        <SheetSection
+          index="02"
+          caption="ROLL CALL"
+          title={offering ? `طلاب ${offering.course.name}` : 'الطلاب'}
+          pad="tight"
         >
           {!effectiveOfferingId ? (
             <EmptyState title="لا توجد مقرّرات" description="" illustration="empty-courses" />
@@ -614,10 +653,10 @@ export function AttendancePage() {
               })}
             </div>
           )}
-        </Card>
+        </SheetSection>
 
-        <Card title={<>إحصائيّات الجلسة</>}>
-          {/* A6 P2 (22-a): the stats card mirrors the roster's state —
+        <SheetSection index="03" caption="SESSION STATS" title="إحصائيّات الجلسة">
+          {/* A6 P2 (22-a): the stats section mirrors the roster's state —
               never four fake 0% bars while nothing is loaded. Empty
               buckets dim instead of painting full-weight zero tracks
               (the old "barely visible grey … looks like a rendering
@@ -678,7 +717,7 @@ export function AttendancePage() {
               <span>تمّ حفظ سجلّ الحضور لهذا التاريخ.</span>
             </div>
           )}
-        </Card>
+        </SheetSection>
       </div>
     </div>
     </div>
@@ -721,6 +760,54 @@ export function GradesPage() {
     );
   }
 
+  /* R359 (A3 · W2-c) — the read-side ledger columns: the name, the mono
+   * university id, the mono tabular grade/attendance percentages (bdi —
+   * the Latin % stays stable inside the RTL cell), and the ONE grade
+   * taxonomy (gradeBand, 22-a) as a hairline flag — the same label this
+   * student wears on /students and the same bucket /performance counts. */
+  const gradesColumns: DataSheetColumn<TeacherStudentRow>[] = [
+    {
+      key: 'name',
+      label: 'الطالب',
+      render: (s) => <span className="sg-cell-title">{s.name}</span>,
+    },
+    {
+      key: 'universityId',
+      label: 'الرقم الجامعيّ',
+      mono: true,
+      render: (s) => <bdi>{s.universityId}</bdi>,
+    },
+    {
+      key: 'avg',
+      label: 'متوسّط الدرجات',
+      numeric: true,
+      render: (s) => <bdi>{formatPct1(s.avgGrade)}%</bdi>,
+    },
+    {
+      key: 'att',
+      label: 'الحضور',
+      numeric: true,
+      render: (s) => <bdi>{formatPct1(s.attendancePct)}%</bdi>,
+    },
+    {
+      key: 'band',
+      label: 'التقدير',
+      render: (s) => {
+        const band = gradeBand(s.avgGrade);
+        return <span className="sg-flag" data-tone={BAND_FLAG_TONE[band.color]}>{band.label}</span>;
+      },
+    },
+  ];
+
+  /* The KpiBand's honest numerals — roster-derived means + counts (the
+   * Arabic percent sign keeps the band's dimension string distinct from
+   * the ledger's Latin-% cells beside it). */
+  const roster = stuQ.data ?? [];
+  const avgMean = roster.length > 0 ? Math.round((roster.reduce((sum, s) => sum + s.avgGrade, 0) / roster.length) * 10) / 10 : 0;
+  const attMean = roster.length > 0 ? Math.round((roster.reduce((sum, s) => sum + s.attendancePct, 0) / roster.length) * 10) / 10 : 0;
+  const passingCount = roster.filter((s) => s.avgGrade >= 50).length;
+  const rosterEmpty = roster.length === 0;
+
   return (
     /* R305 DS: .hr-scope declares the ember tokens + §A tqd- deltas. */
     <div className="hr-scope">
@@ -728,7 +815,7 @@ export function GradesPage() {
       <PageHeader
         title="درجات الطلاب"
         /* r351 A2 (Q3): header subtitle retired — the table explains itself. */
-        brow="التدريس · الدرجات"
+        brow="عضو هيئة التدريس · الدرجات"
         actions={(
           <>
             {/* R341 D8 — the page's ONE primary action on the accent
@@ -745,67 +832,72 @@ export function GradesPage() {
         )}
       />
 
-      <Card
-        title={<>{offering ? `${offering.course.name} · ${offering.course.code}` : 'الدرجات'}</>}
-        icon={ClipboardList}
-        /* The old «قيد التطوير» note's still-true half lives here: the
-         * average folds every graded artifact (assignment submissions
-         * AND the semester grades recorded below), and the intelligence
-         * page stays the deeper drill-down.
-         * r351 A2 (Q3): trimmed to the one honest sentence — the
-         * drill-down plug retired (the intelligence link lives on the
-         * students + performance seats). */
-        
+      <KpiBand
+        items={[
+          {
+            index: '01',
+            caption: 'ENROLLED',
+            label: 'طلاب المقرّر',
+            value: roster.length,
+            empty: stuQ.isPending || !effectiveOfferingId,
+          },
+          {
+            index: '02',
+            caption: 'AVG',
+            label: 'متوسّط الدرجات',
+            value: avgMean,
+            unit: '٪',
+            empty: stuQ.isPending || rosterEmpty,
+          },
+          {
+            index: '03',
+            caption: 'ATTENDANCE',
+            label: 'متوسّط الحضور',
+            value: attMean,
+            unit: '٪',
+            empty: stuQ.isPending || rosterEmpty,
+          },
+          {
+            index: '04',
+            caption: 'PASSING',
+            label: 'الناجحون (50 فأعلى)',
+            value: passingCount,
+            empty: stuQ.isPending || rosterEmpty,
+          },
+        ]}
+      />
+
+      {/* R359 (A3 · W2-c) — the framed grade roster: [01] GRADE ROSTER,
+          the R304 sort control on the head rule, the DataSheet as the
+          body (pad=none — the ledger IS the body). */}
+      <SheetSection
+        index="01"
+        caption="GRADE ROSTER"
+        title={offering ? `${offering.course.name} · ${offering.course.code}` : 'الدرجات'}
+        aside={<RosterSortControl sort={sort} onCycle={cycleSort} />}
+        pad="none"
       >
         {!effectiveOfferingId ? (
           /* r351 A2 (Q3): empty-state prose retired — the picker sits
            * directly above. */
           <EmptyState title="اختر مقرّراً" description="" illustration="empty-courses" />
-        ) : stuQ.isPending ? (
-          <TableSkeleton rows={5} cols={5} />
         ) : stuQ.isError ? (
-          <ErrorState error={stuQ.error} onRetry={() => stuQ.refetch()} />
-        ) : (stuQ.data ?? []).length === 0 ? (
-          /* r351 A2 (Q3): empty-state prose retired — the title speaks. */
-          <EmptyState title="لا يوجد طلاب" description="" illustration="empty-list" />
-        ) : (
-          <div className="table-wrap tpg-grades">
-            <table className="table tbl-stack">
-              <thead>
-                <tr>
-                  <SortableHead label="الطالب" sortKey="name" sort={sort} onCycle={cycleSort} />
-                  <th scope="col">الرقم الجامعيّ</th>
-                  <SortableHead label="متوسّط الدرجات" sortKey="average" sort={sort} onCycle={cycleSort} />
-                  <SortableHead label="الحضور" sortKey="attendance" sort={sort} onCycle={cycleSort} />
-                  <th scope="col">التقدير</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sortedStudents.map((s) => {
-                  /* One taxonomy everywhere (A6 P2, 22-a): the same
-                   * gradeBand chip this student wears on /students and
-                   * the same bucket they count into on /performance. */
-                  const band = gradeBand(s.avgGrade);
-                  return (
-                    <tr key={s.studentId}>
-                      <td className="tbl-strong" data-label="الطالب">{s.name}</td>
-                      <td data-label="الرقم الجامعيّ"><bdi className="font-mono text-xs">{s.universityId}</bdi></td>
-                      <td className="tbl-num" data-label="متوسّط الدرجات"><bdi>{formatPct1(s.avgGrade)}%</bdi></td>
-                      {/* bdi keeps the Latin %-sign placement stable in
-                          the RTL cell — same isolation as the average
-                          column beside it. */}
-                      <td className="tbl-num" data-label="الحضور"><bdi>{formatPct1(s.attendancePct)}%</bdi></td>
-                      {/* R305 DS: the band chip speaks the ONE status
-                          vocabulary (.hr-chip[data-tone]). */}
-                      <td data-label="التقدير"><span className="hr-chip" data-tone={HR_CHIP_TONE[band.color]}>{band.label}</span></td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+          <div className="sg-pad-in">
+            <ErrorState error={stuQ.error} onRetry={() => stuQ.refetch()} />
           </div>
+        ) : (
+          <DataSheet
+            caption="درجات الطلاب"
+            columns={gradesColumns}
+            rows={sortedStudents}
+            loading={stuQ.isPending}
+            empty={(
+              /* r351 A2 (Q3): empty-state prose retired — the title speaks. */
+              <EmptyState title="لا يوجد طلاب" description="" illustration="empty-list" />
+            )}
+          />
         )}
-      </Card>
+      </SheetSection>
 
       {/* r180-F2: the real write half — replaces the retired
           «إدخال الدرجات الفصليّة قيد التطوير» card (the endpoint it
@@ -973,29 +1065,36 @@ function SemesterGradeEntry({
   };
 
   return (
+    /* R359 (A3 · W2-c) — the write half joins the sheet register: the
+     * [02] SEMESTER ENTRY frame, the dirty-count honest note + the
+     * save verb on the head rule. The #grade-entry anchor target
+     * stays (the header CTA jumps here). */
     <div id="grade-entry">
-    <Card
-      title={<>إدخال الدرجات الفصليّة</>}
-      icon={ClipboardCheck}
+    <SheetSection
+      index="02"
+      caption="SEMESTER ENTRY"
+      title="إدخال الدرجات الفصليّة"
       /* r351 A2 (Q3): trimmed to the honest core — empty rows are never
        * sent; the prefill sentence retired (the table shows it). */
-      subtitle={
-        dirtyRows.length > 0
-          ? countAr(dirtyRows.length, ['صف واحد غير محفوظ', 'صفان غير محفوظان', 'صفوف غير محفوظة', 'صفاً غير محفوظاً'])
-          : 'الصفوف الفارغة لا تُرسَل.'
-      }
-      actions={
-        <button
-          type="button"
-          /* R305 DS: the card's ONE ember-flavored primary.
-           * R341 D8 — accent register (the pattern-library primary). */
-          className="btn accent hr-cta"
-          onClick={() => void onSave()}
-          disabled={pending || !offeringId || students.length === 0}
-        >
-          {pending ? 'جارٍ الحفظ…' : 'حفظ الدرجات'}
-        </button>
-      }
+      aside={(
+        <>
+          <span className="sg-label">
+            {dirtyRows.length > 0
+              ? countAr(dirtyRows.length, ['صف واحد غير محفوظ', 'صفان غير محفوظان', 'صفوف غير محفوظة', 'صفاً غير محفوظاً'])
+              : 'الصفوف الفارغة لا تُرسَل.'}
+          </span>
+          <button
+            type="button"
+            /* R305 DS: the section's ONE ember-flavored primary.
+             * R341 D8 — accent register (the pattern-library primary). */
+            className="btn accent hr-cta"
+            onClick={() => void onSave()}
+            disabled={pending || !offeringId || students.length === 0}
+          >
+            {pending ? 'جارٍ الحفظ…' : 'حفظ الدرجات'}
+          </button>
+        </>
+      )}
     >
       {/* A real <form> — Enter in any score field saves (the
           GradeSubmissionModal / AssignmentFormModal contract). */}
@@ -1161,7 +1260,7 @@ function SemesterGradeEntry({
           </div>
         )}
       </form>
-    </Card>
+    </SheetSection>
     </div>
   );
 }
@@ -1518,6 +1617,63 @@ export function MaterialsPage() {
   const q = useTeacherMaterials();
   const [adding, setAdding] = useState(false);
 
+  /* R359 (A3 · W2-c) — the materials ledger: every file row carries the
+   * same anatomy — the two-line file cell (linked name over the course
+   * sub-line, the type's content-driven icon leading), the hairline
+   * type flag, mono tabular views/downloads, the honest size, and the
+   * relative update stamp. */
+  const columns: DataSheetColumn<TeacherMaterial>[] = [
+    {
+      key: 'name',
+      label: 'الملف',
+      render: (m) => {
+        const TypeIcon = MATERIAL_TYPE_ICON[m.type] ?? FileText;
+        return (
+          <span className="sg-cell-stack">
+            <a href={m.url} target="_blank" rel="noreferrer" className="text-link sg-cell-title">
+              <Icon icon={TypeIcon} size={13} className="text-subtle" /> <bdi>{m.name}</bdi>
+            </a>
+            <span className="sg-cell-sub">{m.course.name}</span>
+          </span>
+        );
+      },
+    },
+    {
+      key: 'type',
+      label: 'النوع',
+      render: (m) => (
+        <span className="sg-flag">{MATERIAL_TYPE_LABEL[m.type] ?? <bdi>{m.type}</bdi>}</span>
+      ),
+    },
+    {
+      key: 'views',
+      label: 'المشاهدات',
+      numeric: true,
+      render: (m) => formatNum(m.views),
+    },
+    {
+      key: 'downloads',
+      label: 'التحميلات',
+      numeric: true,
+      render: (m) => formatNum(m.downloads),
+    },
+    {
+      key: 'size',
+      label: 'الحجم',
+      mono: true,
+      render: (m) => <bdi>{m.sizeBytes > 0 ? formatSize(m.sizeBytes) : '—'}</bdi>,
+    },
+    {
+      key: 'updated',
+      label: 'آخر تحديث',
+      render: (m) => (
+        <span className="sg-cell-sub" title={formatDateTimeAr(m.createdAt)}>
+          حُدِّث {formatRelativeArShort(m.createdAt)}
+        </span>
+      ),
+    },
+  ];
+
   return (
     /* R305 DS: .hr-scope declares the ember tokens + §A tqd- deltas. */
     <div className="hr-scope">
@@ -1526,7 +1682,7 @@ export function MaterialsPage() {
         title="الملفات التعليمية"
         /* r351 A2 (Q3): header subtitle retired — the rows explain
          * themselves (views/downloads counts are in the rows). */
-        brow="التدريس · المواد"
+        brow="عضو هيئة التدريس · المواد"
         actions={(
           /* r144 (T1-h F2): the channel the old dead-end card pointed
            * at without providing. By-link creation (no multipart).
@@ -1540,56 +1696,27 @@ export function MaterialsPage() {
       />
 
       {/* R190 D-2: the standalone "how to add" explainer card is gone —
-          its honest channel copy folds into the files card's subtitle
-          (one card fewer of dead weight above the actual data; the
-          header's primary CTA already names the action). */}
-      <Card
-        title={<>ملفاتك</>}
-        icon={FileText}
-        /* r351 A2 (Q3): the two-channel how-to subtitle retired — the
-         * modal's «ملف PDF | رابط خارجي» pills state the channels. */
-      >
-        {q.isPending ? (
-          <ListSkeleton rows={5} />
-        ) : q.isError ? (
-          <ErrorState error={q.error} onRetry={() => q.refetch()} />
-        ) : !q.data || q.data.length === 0 ? (
-          /* r351 A2 (Q3): empty-state prose retired — the header's
-           * «إضافة مادة» button is the action. */
-          <EmptyState title="لم ترفع ملفات بعد" description="" illustration="empty-list" />
-        ) : (
-          /* 4C-c: file rows, not a 7-column table — the detail rides the
-              row (course · type badge · views · downloads), the trailing
-              column carries the honest size + updated-relative marks. */
-          <div className="tpg-mat-list">
-            {q.data.map((m) => {
-              const TypeIcon = MATERIAL_TYPE_ICON[m.type] ?? FileText;
-              return (
-                <div key={m.id} className="tpg-mat-row">
-                  <span className="tpg-mat-icon" aria-hidden><Icon icon={TypeIcon} size={18} /></span>
-                  <div className="tpg-mat-body">
-                    <a href={m.url} target="_blank" rel="noreferrer" className="text-link tpg-mat-title">
-                      <bdi>{m.name}</bdi>
-                    </a>
-                    <div className="tpg-mat-sub">
-                      <span>{m.course.name}</span>
-                      {/* R305 DS: the file type reads as the neutral chip
-                          of the one status vocabulary. */}
-                      <span className="hr-chip">{MATERIAL_TYPE_LABEL[m.type] ?? <bdi>{m.type}</bdi>}</span>
-                      <span>{formatNum(m.views)} مشاهدة</span>
-                      <span>{formatNum(m.downloads)} تحميل</span>
-                    </div>
-                  </div>
-                  <div className="tpg-mat-meta">
-                    <bdi className="font-mono">{m.sizeBytes > 0 ? formatSize(m.sizeBytes) : '—'}</bdi>
-                    <span title={formatDateTimeAr(m.createdAt)}>حُدِّث {formatRelativeArShort(m.createdAt)}</span>
-                  </div>
-                </div>
-              );
-            })}
+          its honest channel copy folds into the modal's channel pills.
+          R359: the [01] MATERIALS frame carries the ledger. */}
+      <SheetSection index="01" caption="MATERIALS" title="ملفاتك" pad="none">
+        {q.isError ? (
+          <div className="sg-pad-in">
+            <ErrorState error={q.error} onRetry={() => q.refetch()} />
           </div>
+        ) : (
+          <DataSheet
+            caption="الملفات التعليمية"
+            columns={columns}
+            rows={q.data ?? []}
+            loading={q.isPending}
+            empty={(
+              /* r351 A2 (Q3): empty-state prose retired — the header's
+               * «إضافة مادة» button is the action. */
+              <EmptyState title="لم ترفع ملفات بعد" description="" illustration="empty-list" />
+            )}
+          />
         )}
-      </Card>
+      </SheetSection>
 
       {adding && <MaterialFormModal onClose={() => setAdding(false)} />}
     </div>
@@ -1610,12 +1737,6 @@ const STUDENT_RISK_LABEL: Record<TeacherStudentRow['riskLevel'], string> = {
   WATCH: 'تحت المراقبة',
   AT_RISK: 'في خطر',
   CRITICAL: 'حرج',
-};
-const STUDENT_RISK_TONE: Record<TeacherStudentRow['riskLevel'], 'green' | 'gold' | 'amber' | 'red'> = {
-  OK: 'green',
-  WATCH: 'gold',
-  AT_RISK: 'amber',
-  CRITICAL: 'red',
 };
 
 export function StudentsListPage() {
@@ -1650,6 +1771,66 @@ export function StudentsListPage() {
     );
   }
 
+  /* R359 (A3 · W2-c) — the class-roster ledger: the name is the row's
+   * door (ONE tap to the offering's intelligence deep dive), the mono
+   * id + percentages, and the TWO classifications as hairline flags —
+   * التقدير (the ONE grade taxonomy, 22-a) and المخاطرة (the same risk
+   * vocabulary the intelligence risk rows wear). At-risk students pin
+   * their row's inline-start edge (warning) — the scan reads the pin
+   * before the flag. */
+  const columns: DataSheetColumn<TeacherStudentRow>[] = [
+    {
+      key: 'name',
+      label: 'الاسم',
+      render: (s) => (
+        <Link
+          to={`/teacher/intelligence/${effectiveOfferingId}`}
+          className="text-link sg-cell-title"
+          title="سياق المخاطرة والأداء في الذكاء الأكاديميّ"
+        >
+          {s.name}
+        </Link>
+      ),
+    },
+    {
+      key: 'universityId',
+      label: 'الرقم الجامعيّ',
+      mono: true,
+      render: (s) => <bdi>{s.universityId}</bdi>,
+    },
+    {
+      key: 'att',
+      label: 'الحضور',
+      numeric: true,
+      render: (s) => <bdi>{formatPct1(s.attendancePct)}%</bdi>,
+    },
+    {
+      key: 'avg',
+      label: 'المتوسّط',
+      numeric: true,
+      render: (s) => <bdi>{formatPct1(s.avgGrade)}%</bdi>,
+    },
+    {
+      key: 'band',
+      label: 'التقدير',
+      render: (s) => {
+        const band = gradeBand(s.avgGrade);
+        return <span className="sg-flag" data-tone={BAND_FLAG_TONE[band.color]}>{band.label}</span>;
+      },
+    },
+    {
+      key: 'risk',
+      label: 'المخاطرة',
+      render: (s) => (
+        <span className="sg-flag" data-tone={RISK_FLAG_TONE[s.riskLevel]}>{STUDENT_RISK_LABEL[s.riskLevel]}</span>
+      ),
+    },
+  ];
+
+  /* The KpiBand's honest numerals — roster count + the flagged tiers
+   * the intelligence page's risk board owns in full. */
+  const flaggedCount = students.filter((s) => s.riskLevel === 'AT_RISK' || s.riskLevel === 'CRITICAL').length;
+
   return (
     /* R305 DS: .hr-scope declares the ember tokens + §A tqd- deltas. */
     <div className="hr-scope">
@@ -1657,7 +1838,7 @@ export function StudentsListPage() {
       <PageHeader
         title="قائمة الطلاب"
         /* r351 A2 (Q3): header subtitle retired — the roster explains itself. */
-        brow="التدريس · الفصل"
+        brow="عضو هيئة التدريس · الفصل"
         actions={(
           <>
             {/* R341 D8 — the roster's ONE primary action on the accent
@@ -1675,91 +1856,64 @@ export function StudentsListPage() {
         )}
       />
 
-      <Card
-        title={
-          <>
-            
-            {offering
-              ? `${offering.course.name} · ${offering.course.code} · ${
-                /* P2-1: «0 طالباً» is broken Arabic — the zero case names
-                 * the reality (the empty-state below carries the guidance). */
-                students.length === 0
-                  ? 'لا طلاب مسجَّلين'
-                  : countAr(students.length, ['طالب واحد', 'طالبان', 'طلاب', 'طالباً'])
-              }`
-              : 'الطلاب'}
-          </>
-        }
-        icon={Users}
+      <KpiBand
+        items={[
+          {
+            index: '01',
+            caption: 'ENROLLED',
+            label: 'طلاب المقرّر',
+            value: students.length,
+            empty: stuQ.isPending || !effectiveOfferingId,
+          },
+          {
+            index: '02',
+            caption: 'FLAGGED',
+            label: 'بحاجة متابعة (في خطر أو حرج)',
+            value: flaggedCount,
+            empty: stuQ.isPending || !effectiveOfferingId,
+          },
+        ]}
+      />
+
+      <SheetSection
+        index="01"
+        caption="CLASS ROSTER"
+        title={offering
+          ? `${offering.course.name} · ${offering.course.code} · ${
+            /* P2-1: «0 طالباً» is broken Arabic — the zero case names
+             * the reality (the empty-state below carries the guidance). */
+            students.length === 0
+              ? 'لا طلاب مسجَّلين'
+              : countAr(students.length, ['طالب واحد', 'طالبان', 'طلاب', 'طالباً'])
+          }`
+          : 'الطلاب'}
+        aside={<RosterSortControl sort={sort} onCycle={cycleSort} />}
+        pad="none"
       >
         {!effectiveOfferingId ? (
           /* r351 A2 (Q3): empty-state prose retired — the picker sits
            * directly above. */
           <EmptyState title="اختر مقرّراً" description="" illustration="empty-courses" />
-        ) : stuQ.isPending ? (
-          <TableSkeleton rows={5} cols={6} />
         ) : stuQ.isError ? (
-          <ErrorState error={stuQ.error} onRetry={() => stuQ.refetch()} />
-        ) : students.length === 0 ? (
-          /* r351 A2 (Q3): empty-state prose retired — the title speaks. */
-          <EmptyState title="لا يوجد طلاب مسجَّلون" description="" illustration="empty-list" />
-        ) : (
-          <div className="table-wrap tpg-students">
-            <table className="table tbl-stack">
-              <thead>
-                <tr>
-                  <SortableHead label="الاسم" sortKey="name" sort={sort} onCycle={cycleSort} />
-                  <th scope="col">الرقم الجامعيّ</th>
-                  <SortableHead label="الحضور" sortKey="attendance" sort={sort} onCycle={cycleSort} />
-                  <SortableHead label="المتوسّط" sortKey="average" sort={sort} onCycle={cycleSort} />
-                  {/* A6 P2 (22-a): «التقدير» — the same column name and
-                      the same gradeBand chip as the grades table; the
-                      old «الحالة» column carried a private vocabulary
-                      (متفوّق/متوسّط) that disagreed with its sisters. */}
-                  <th scope="col">التقدير</th>
-                  {/* r164-h: «المخاطرة» — the same risk vocabulary the
-                      intelligence page's risk rows wear, so the row's
-                      link (below) has visible context to act on. */}
-                  <th scope="col">المخاطرة</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sortedStudents.map((s) => {
-                  const band = gradeBand(s.avgGrade);
-                  return (
-                    <tr key={s.studentId}>
-                      {/* r164-h: the name is the row's door — ONE tap to
-                          the offering's intelligence deep dive (the risk
-                          context the chip beside it names). */}
-                      <td className="tbl-strong" data-label="الاسم">
-                        <Link
-                          to={`/teacher/intelligence/${effectiveOfferingId}`}
-                          className="text-link"
-                          title="سياق المخاطرة والأداء في الذكاء الأكاديميّ"
-                        >
-                          {s.name}
-                        </Link>
-                      </td>
-                      <td data-label="الرقم الجامعيّ"><bdi className="font-mono text-xs">{s.universityId}</bdi></td>
-                      <td className="tbl-num" data-label="الحضور">{formatPct1(s.attendancePct)}%</td>
-                      <td className="tbl-num" data-label="المتوسّط"><bdi>{formatPct1(s.avgGrade)}%</bdi></td>
-                      {/* R305 DS: band + risk ride the ONE chip vocabulary
-                          (the same tones the grades table and the dashboard
-                          risk rows wear). */}
-                      <td data-label="التقدير"><span className="hr-chip" data-tone={HR_CHIP_TONE[band.color]}>{band.label}</span></td>
-                      <td data-label="المخاطرة">
-                        <span className="hr-chip" data-tone={HR_CHIP_TONE[STUDENT_RISK_TONE[s.riskLevel]]}>{STUDENT_RISK_LABEL[s.riskLevel]}</span>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+          <div className="sg-pad-in">
+            <ErrorState error={stuQ.error} onRetry={() => stuQ.refetch()} />
           </div>
+        ) : (
+          <DataSheet
+            caption="قائمة الطلاب"
+            columns={columns}
+            rows={sortedStudents}
+            loading={stuQ.isPending}
+            rowTone={(s) => RISK_ROW_TONE[s.riskLevel]}
+            empty={(
+              /* r351 A2 (Q3): empty-state prose retired — the title speaks. */
+              <EmptyState title="لا يوجد طلاب مسجَّلون" description="" illustration="empty-list" />
+            )}
+          />
         )}
-      </Card>
+      </SheetSection>
     </div>
-    
+
 
       {/* r323 B3.1 — the invite codes seat: mint scoped codes for the
           selected offering (the register page consumes them). */}
@@ -1849,7 +2003,7 @@ export function PerformancePage() {
         title="الأداء والتحليل"
         /* r351 A2 (Q3): header subtitle retired — the KPI band explains
          * itself (values are visibly roster-derived). */
-        brow="التدريس · التحليل"
+        brow="عضو هيئة التدريس · التحليل"
         actions={(
           <>
             {/* R341 D8 — the analysis ledger's ONE primary action on the
@@ -1890,33 +2044,49 @@ export function PerformancePage() {
         <ErrorState message="تعذَّر تحميل مؤشّرات المقرّر" error={analytics.error} onRetry={() => analytics.refetch()} />
       ) : (
         <>
-          <StatStrip
-            ariaLabel="مؤشّرات أداء المقرّر"
-            cells={[
+          {/* R359 (A3 · W2-c) — the ONE KpiBand: roster-derived pass
+              rate / excellence / need counts with the honest deltas
+              (the ٪ unit keeps the band's dimension string distinct
+              from the distribution's Latin-% rows). */}
+          <KpiBand
+            items={[
               {
+                index: '01',
+                caption: 'PASS RATE',
                 label: 'معدّل النجاح',
-                value: students.length > 0 ? `${formatPct1(passRate)}%` : '—',
-                trend: students.length > 0 ? `${passing} من ${students.length}` : 'لا توجد بيانات',
-                trendTone: students.length === 0 ? 'flat' : passRate >= 70 ? 'up' : passRate >= 50 ? 'flat' : 'down',
+                value: passRate,
+                unit: '٪',
+                delta: students.length > 0 ? `${passing} من ${students.length}` : 'لا توجد بيانات',
+                deltaTone: students.length === 0 ? 'neutral' : passRate >= 70 ? 'positive' : passRate >= 50 ? 'neutral' : 'danger',
+                empty: students.length === 0,
               },
               {
+                index: '02',
+                caption: 'EXCELLENT',
                 label: 'طلاب متفوّقون',
-                value: top.toString(),
-                trend: students.length > 0 ? `من ${students.length}` : 'لا توجد بيانات',
-                trendTone: 'flat',
+                value: top,
+                delta: students.length > 0 ? `من ${students.length}` : 'لا توجد بيانات',
+                empty: students.length === 0,
               },
               {
+                index: '03',
+                caption: 'NEEDS SUPPORT',
                 label: 'بحاجة دعم',
-                value: atRisk.toString(),
-                trend: atRisk > 0 ? 'مراقبة مستمرّة' : 'لا تنبيهات',
-                trendTone: atRisk === 0 ? 'up' : 'down',
+                value: atRisk,
+                delta: atRisk > 0 ? 'مراقبة مستمرّة' : 'لا تنبيهات',
+                deltaTone: atRisk === 0 ? 'positive' : 'warning',
+                empty: students.length === 0,
               },
             ]}
           />
 
-          <Card
-            title={<>{offering ? `توزيع الدرجات — ${offering.course.name}` : 'توزيع الدرجات'}</>}
-            icon={BarChart3}
+          {/* R359 (A3 · W2-c) — the distribution joins the register as
+              the [01] GRADE DISTRIBUTION frame; the band ledger lines
+              (label + range · tabular share · the quiet bar) stay. */}
+          <SheetSection
+            index="01"
+            caption="GRADE DISTRIBUTION"
+            title={offering ? `توزيع الدرجات — ${offering.course.name}` : 'توزيع الدرجات'}
           >
             {students.length === 0 ? (
               /* r351 A2 (Q3): empty-state prose retired — the title speaks. */
@@ -1953,7 +2123,7 @@ export function PerformancePage() {
                 ))}
               </div>
             )}
-          </Card>
+          </SheetSection>
         </>
       )}
     </div>
@@ -2216,6 +2386,81 @@ export function AssignmentsPage() {
     ? pending.find((p) => p.submissionId !== gradeTarget.submissionId) ?? null
     : null;
 
+  /* R359 (A3 · W2-c) — the assignments ledger columns: the two-line
+   * work cell (kind: title over course · code), the mono ceiling, the
+   * flat flag due-date (overdue danger · imminent warning-ink · else
+   * positive), the mono submissions fraction, and the pinned .badge
+   * ratio whose tone still keys off the deadline (E / 3-a). */
+  const assignmentsColumns: DataSheetColumn<TeacherAssignmentRow>[] = [
+    {
+      key: 'title',
+      label: 'الواجب',
+      render: (a) => (
+        <span className="sg-cell-stack">
+          <span className="sg-cell-title">
+            {ASSIGNMENT_KIND_LABEL[a.type] ?? <bdi>{a.type}</bdi>}: {a.title}
+          </span>
+          <span className="sg-cell-sub">{a.course.name} · <bdi>{a.course.code}</bdi></span>
+        </span>
+      ),
+    },
+    {
+      key: 'max',
+      label: 'الدرجة العظمى',
+      numeric: true,
+      render: (a) => a.maxScore,
+    },
+    {
+      key: 'due',
+      label: 'الموعد',
+      render: (a) => {
+        /* 5-B6 (A7): the due flag carries its own tone so a teacher
+         * scanning the ledger reads urgency without parsing relative
+         * dates — the full date rides the title (P3-2). */
+        const days = Math.round((new Date(a.dueAt).getTime() - Date.now()) / 86400000);
+        const dueTone = days < 0 ? 'danger' : days <= 3 ? 'warning' : 'positive';
+        return (
+          <span className="sg-flag" data-tone={dueTone} title={formatDateTimeAr(a.dueAt)}>
+            {formatDue(a.dueAt)}
+          </span>
+        );
+      },
+    },
+    {
+      key: 'subs',
+      label: 'التسليمات',
+      numeric: true,
+      render: (a) => (
+        <span className="sg-cell-stack" title="التسليمات مقابل المسجّلين">
+          <bdi>{a.submissions} / {a.enrolled}</bdi>
+          {/* P2-1 (5-A7): the zero case names the reality — countAr(0)
+           * renders the broken «0 تسليماً». */}
+          <span className="sg-cell-sub">
+            {a.submissions === 0 ? 'لا تسليمات بعد' : countAr(a.submissions, ['تسليم', 'تسليمان', 'تسليمات', 'تسليماً'])}
+          </span>
+        </span>
+      ),
+    },
+    {
+      key: 'ratio',
+      label: 'نسبة التسليم',
+      render: (a) => {
+        const ratio = a.enrolled > 0 ? a.submissions / a.enrolled : 0;
+        const days = Math.round((new Date(a.dueAt).getTime() - Date.now()) / 86400000);
+        /* Submission-ratio tone keys off the deadline too: strict
+         * green/amber/red only once the deadline is here or past — a
+         * future-due assignment with a low ratio is not a problem yet,
+         * so it renders NEUTRAL unless more than half already
+         * submitted. Overdue keeps the strict mapping; due today
+         * counts as urgent. The .badge primitive stays (unit-pinned). */
+        const ratioTone: 'green' | 'amber' | 'red' | undefined = days > 0
+          ? (ratio > 0.5 ? 'green' : undefined)
+          : (ratio > 0.5 ? 'green' : ratio > 0.25 ? 'amber' : 'red');
+        return <Badge color={ratioTone}>{Math.round(ratio * 100)}%</Badge>;
+      },
+    },
+  ];
+
   return (
     /* R305 DS: .hr-scope declares the ember tokens + §A tqd- deltas. */
     <div className="hr-scope">
@@ -2224,7 +2469,7 @@ export function AssignmentsPage() {
         title="الواجبات والاختبارات"
         /* r351 A2 (Q3): header subtitle retired — the two cards (queue +
          * list) explain the page. */
-        brow="التدريس · التصحيح"
+        brow="عضو هيئة التدريس · التصحيح"
         actions={(
           /* r144 (T1-h F1): the teaching loop's missing authoring half —
            * the copy used to promise «ستظهر هنا فور إنشاء أيّ واجب» with
@@ -2238,6 +2483,35 @@ export function AssignmentsPage() {
         )}
       />
 
+      {/* R359 (A3 · W2-c) — the page's ONE KpiBand: every numeral is a
+          live payload count (the queue endpoint · the assignments
+          endpoint · the submitted total). Honest-empty while pending. */}
+      <KpiBand
+        items={[
+          {
+            index: '01',
+            caption: 'PENDING',
+            label: 'تسليمات بانتظار درجتك',
+            value: pending.length,
+            empty: pendingQ.isPending,
+          },
+          {
+            index: '02',
+            caption: 'ASSIGNMENTS',
+            label: 'واجبات واختبارات منشورة',
+            value: q.data?.length ?? 0,
+            empty: q.isPending,
+          },
+          {
+            index: '03',
+            caption: 'SUBMISSIONS',
+            label: 'إجمالي التسليمات المستلمة',
+            value: (q.data ?? []).reduce((sum, a) => sum + a.submissions, 0),
+            empty: q.isPending,
+          },
+        ]}
+      />
+
       <NeedsReviewCard
         pending={pending}
         isPending={pendingQ.isPending}
@@ -2248,75 +2522,29 @@ export function AssignmentsPage() {
         onGrade={(target) => setGradeTarget(target)}
       />
 
-      <Card title={<>جميع الواجبات</>} icon={ClipboardList}>
-        {q.isPending ? (
-          <ListSkeleton rows={5} />
-        ) : q.isError ? (
-          <ErrorState error={q.error} onRetry={() => q.refetch()} />
-        ) : !q.data || q.data.length === 0 ? (
-          /* r351 A2 (Q3): empty-state prose retired — the header's
-           * «واجب جديد» button is the action. */
-          <EmptyState title="لا توجد واجبات بعد" description="" illustration="empty-list" />
-        ) : (
-          <div className="flex-col gap-2">
-            {q.data.map((a) => {
-              const ratio = a.enrolled > 0 ? a.submissions / a.enrolled : 0;
-              /* 5-B6 (A7 «assignments 7.5 → 9»): the due chip carries its
-               * own tone so a teacher scanning the list reads urgency
-               * without parsing relative dates — overdue red, ≤3 days
-               * amber, beyond green. The full date rides the title
-               * attribute (P3-2 parity with the exam attempts). */
-              const days = Math.round((new Date(a.dueAt).getTime() - Date.now()) / 86400000);
-              const dueTone: 'green' | 'amber' | 'red' = days < 0 ? 'red' : days <= 3 ? 'amber' : 'green';
-              /* Submission-ratio tone keys off the deadline too: strict
-               * green/amber/red only once the deadline is here or past
-               * (days <= 0) — a future-due assignment with a low ratio
-               * is not a problem yet (most of the class still has
-               * time), so it renders NEUTRAL unless more than half
-               * already submitted (a healthy signal under any
-               * deadline). Overdue keeps the strict mapping; due today
-               * counts as urgent. */
-              const ratioTone: 'green' | 'amber' | 'red' | undefined = days > 0
-                ? (ratio > 0.5 ? 'green' : undefined)
-                : (ratio > 0.5 ? 'green' : ratio > 0.25 ? 'amber' : 'red');
-              return (
-                <div key={a.id} className="list-row">
-                  <div className="list-row-body">
-                    <div className="list-row-title">
-                      {ASSIGNMENT_KIND_LABEL[a.type] ?? <bdi>{a.type}</bdi>}: {a.title}
-                    </div>
-                    {/* Grading context travels with the row — course,
-                        ceiling, the counted submissions and the tone-chip
-                        due date (overdue red, ≤3 days amber, beyond
-                        green; the full date rides the title).
-                        R305 DS: the due chip rides the ONE status
-                        vocabulary (.hr-chip[data-tone]); the ratio badge
-                        keeps the pinned .badge primitive. */}
-                    <div className="tpg-asg-meta">
-                      <span>{a.course.name} · <bdi>{a.course.code}</bdi></span>
-                      <span>الدرجة من <bdi className="font-mono">{a.maxScore}</bdi></span>
-                    </div>
-                  </div>
-                  <div className="tpg-asg-side">
-                    <span title={formatDateTimeAr(a.dueAt)}>
-                      <span className="hr-chip" data-tone={HR_CHIP_TONE[dueTone]}>{formatDue(a.dueAt)}</span>
-                    </span>
-                    {/* LTR fraction order stays stable inside the RTL line;
-                        the counted noun follows the numerator (1/few/many).
-                        P2-1 (5-A7): the zero case names the reality —
-                        countAr(0) renders the broken «0 تسليماً». */}
-                    <span className="text-xs font-mono text-muted" title="التسليمات مقابل المسجّلين">
-                      <bdi>{a.submissions} / {a.enrolled}</bdi>{' '}
-                      {a.submissions === 0 ? 'لا تسليمات بعد' : countAr(a.submissions, ['تسليم', 'تسليمان', 'تسليمات', 'تسليماً'])}
-                    </span>
-                    <Badge color={ratioTone}>{Math.round(ratio * 100)}%</Badge>
-                  </div>
-                </div>
-              );
-            })}
+      {/* R359 (A3 · W2-c) — the assignments ledger: the roster of
+          authored work as a DataSheet (hairline rows, mono ceilings,
+          flat flag due-dates, the pinned .badge ratio). pad=none — the
+          table IS the body. */}
+      <SheetSection index="02" caption="ALL ASSIGNMENTS" title="جميع الواجبات" pad="none">
+        {q.isError ? (
+          <div className="sg-pad-in">
+            <ErrorState error={q.error} onRetry={() => q.refetch()} />
           </div>
+        ) : (
+          <DataSheet
+            caption="جميع الواجبات"
+            columns={assignmentsColumns}
+            rows={q.data ?? []}
+            loading={q.isPending}
+            empty={(
+              /* r351 A2 (Q3): empty-state prose retired — the header's
+               * «واجب جديد» button is the action. */
+              <EmptyState title="لا توجد واجبات بعد" description="" illustration="empty-list" />
+            )}
+          />
         )}
-      </Card>
+      </SheetSection>
 
       {gradeTarget && (
         /* Keyed by submission: «تقييم التالي» swaps the target and the
@@ -2433,22 +2661,78 @@ function NeedsReviewCard({
 }) {
   const groups = useMemo(() => groupPending(pending, dueFor), [pending, dueFor]);
 
+  /* R359 (A3 · W2-c) — the queue LEDGER columns. The old card was "a
+   * half-built table" (the VLM verdict): orphaned تصحيح buttons,
+   * misaligned rows, a ragged vertical rule. The DataSheet rebuild
+   * gives every row the same anatomy — the two-line student cell
+   * (name over the arrival sub-line), the hairline status flag
+   * (متأخر vs في الموعد — aligned column, never a floating chip),
+   * and ONE verb button per row (تصحيح, the 44px-floor primary).
+   * The late state rides ONE channel — the flag (the VLM verdict:
+   * pin + flag + bar was three accents for one state). */
+  const columns: DataSheetColumn<GradeTarget>[] = [
+    {
+      key: 'student',
+      label: 'الطالب',
+      render: (p) => (
+        <span className="sg-cell-stack">
+          <span className="sg-cell-title">{p.studentName}</span>
+          <span className="sg-cell-sub" title={formatDateTimeAr(p.submittedAt)}>
+            وصل {formatRelativeArShort(p.submittedAt)}
+          </span>
+        </span>
+      ),
+    },
+    {
+      key: 'status',
+      label: 'الحالة',
+      render: (p) =>
+        p.late ? (
+          /* 18-G's late flag — a state of the submission, never a
+           * suffix inside the assignment title (the 16-B1 hazard). */
+          <span className="sg-flag" data-tone="warning">متأخر</span>
+        ) : (
+          <span className="sg-flag" data-tone="quiet">في الموعد</span>
+        ),
+    },
+    {
+      key: 'grade',
+      label: '',
+      noLabel: true,
+      render: (p) => (
+        <button type="button" className="btn primary sm" onClick={() => onGrade(p)}>
+          <Icon icon={ClipboardCheck} size={14} /> تصحيح
+        </button>
+      ),
+    },
+  ];
+
   return (
-    <Card
-      title={<>تسليمات بانتظار التقييم</>}
-      icon={ClipboardCheck}
+    /* R359 (A3 · W2-c) — the framed queue section: [01] GRADING QUEUE,
+     * the counted honest subtitle on the head rule (the pinned countAr
+     * copy, byte-exact), pad=none — the ledger IS the body. The
+     * .queue-group frames stay (grouping is content, not chrome). */
+    <SheetSection
+      index="01"
+      caption="GRADING QUEUE"
+      title="تسليمات بانتظار التقييم"
       /* P2-1: countAr(0) renders the broken «0 تسليماً…» — the zero case
        * gets its own honest copy (the dashboard-badge pattern). */
-      subtitle={
-        pending.length === 0
-          ? 'لا تسليمات بانتظار درجتك'
-          : countAr(pending.length, ['تسليم واحد بانتظار درجتك', 'تسليمان بانتظار درجتك', 'تسليمات بانتظار درجتك', 'تسليماً بانتظار درجتك'])
+      aside={
+        <span className="sg-label">
+          {pending.length === 0
+            ? 'لا تسليمات بانتظار درجتك'
+            : countAr(pending.length, ['تسليم واحد بانتظار درجتك', 'تسليمان بانتظار درجتك', 'تسليمات بانتظار درجتك', 'تسليماً بانتظار درجتك'])}
+        </span>
       }
+      pad="none"
     >
       {isPending ? (
-        <ListSkeleton rows={3} />
+        <DataSheet caption="تسليمات بانتظار التقييم" columns={columns} rows={[]} loading />
       ) : isError ? (
-        <ErrorState error={error} onRetry={onRetry} />
+        <div className="sg-pad-in">
+          <ErrorState error={error} onRetry={onRetry} />
+        </div>
       ) : pending.length === 0 ? (
         /* r351 A2 (Q3): empty-state prose retired — the subtitle's
          * honest zero copy carries the state. */
@@ -2458,12 +2742,9 @@ function NeedsReviewCard({
           description=""
         />
       ) : (
-        /* 4C-c Superlist recomposition: the groups are calm queue
-            sections — hairline frame, header rule (title · course · due
-            meta · ceiling · count) over full-height submission rows,
-            each with ONE trailing ≥44px signal action. The shared
-            .queue-group classes stay on the frame (the e2e locator pins
-            them); the tpg layer owns the composition. */
+        /* The groups: one framed ledger per assignment — the head rule
+         * (title · course · due meta · mono ceiling · counted flag)
+         * over the submission rows. */
         <div className="tpg-queue">
           {groups.map((g) => {
             /* R304: the «what needs me first» edge — overdue queues wear
@@ -2471,9 +2752,6 @@ function NeedsReviewCard({
                inline-start-edge grammar as the quality alerts rows). */
             const days = g.dueAt ? Math.round((new Date(g.dueAt).getTime() - Date.now()) / 86400000) : null;
             const dueEdge: 'overdue' | 'soon' | undefined = days === null ? undefined : days < 0 ? 'overdue' : days <= 3 ? 'soon' : undefined;
-            /* R305 DS: the §0 .hr-edge carries the 3px inline-start
-               severity rule (data-due stays for the R304 mapping); the
-               due + count chips speak the ONE status vocabulary. */
             return (
             <div key={g.key} className="queue-group tpg-queue-section hr-edge" data-due={dueEdge} data-severity={dueEdge}>
               <div className="queue-group-head tpg-queue-head">
@@ -2492,48 +2770,26 @@ function NeedsReviewCard({
                   )}
                 </div>
                 {g.maxScore !== undefined && (
+                  /* The ceiling badge keeps the .badge primitive (the
+                   * unit suite pins the counted mono numeral on it). */
                   <Badge>الدرجة من <bdi className="font-mono">{g.maxScore}</bdi></Badge>
                 )}
-                <span className="hr-chip" data-tone="warn">
+                <span className="sg-flag">
                   {countAr(g.rows.length, ['تسليم واحد', 'تسليمان', 'تسليمات', 'تسليماً'])}
                 </span>
               </div>
-              <div className="tpg-queue-rows">
-                {g.rows.map((p) => (
-                  <div key={p.submissionId} className="list-row tpg-queue-row">
-                    <UserAvatar
-                      initials={p.studentName.split(' ').map((w) => w[0] ?? '').slice(0, 2).join('')}
-                      size={32}
-                    />
-                    <div className="list-row-body">
-                      <div className="list-row-title tpg-asg-meta">
-                        <span>{p.studentName}</span>
-                        {/* 18-G's late flag — a small warning chip beside the
-                            name, never a suffix inside the assignment title
-                            (maxScore matches the stripped title). R305 DS:
-                            it rides the ONE status vocabulary. */}
-                        {p.late && <span className="hr-chip" data-tone="warn">متأخر</span>}
-                      </div>
-                      <div className="list-row-sub" title={formatDateTimeAr(p.submittedAt)}>
-                        وصل {formatRelativeArShort(p.submittedAt)}
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      className="btn primary sm tpg-act"
-                      onClick={() => onGrade(p)}
-                    >
-                      <Icon icon={ClipboardCheck} size={14} /> تصحيح
-                    </button>
-                  </div>
-                ))}
-              </div>
+              <DataSheet
+                caption={`تسليمات بانتظار التقييم — ${g.assignmentTitle}`}
+                columns={columns}
+                rows={g.rows}
+                rowTone={(p) => (p.late ? 'warning' : undefined)}
+              />
             </div>
             );
           })}
         </div>
       )}
-    </Card>
+    </SheetSection>
   );
 }
 

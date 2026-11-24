@@ -54,7 +54,9 @@
   .hp-faq-q::-webkit-details-marker { display: none; }
 
   .hp-faq-q .hp-mono {
-    color: var(--accent-ink);
+    /* r359 final — the reference's index voice: mono muted ink, the
+       signal stays in the interactive seats only (D6) */
+    color: var(--text-muted);
     font-size: var(--fs-sm);
     font-weight: var(--fw-medium);
     letter-spacing: 0.06em;
@@ -134,5 +136,19 @@
     .hp-colophon {
       break-inside: avoid;
     }
+  }
+
+  /* ══ 4 · R359 FINAL — THE LINK LAW (the landing footer's own grammar:
+     ink at rest with the hairline underline, the royal arrives on
+     hover — D6's seat discipline). Same layer, later import — the
+     overlay wins. ═════════════════════════════════════════════════ */
+
+  .hp-link {
+    color: var(--text);
+    border-block-end-color: var(--rule-strong);
+  }
+
+  .hp-code {
+    color: var(--text);
   }
 }

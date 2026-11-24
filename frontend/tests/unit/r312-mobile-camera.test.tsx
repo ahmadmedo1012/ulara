@@ -213,7 +213,7 @@ describe('R312 mobile camera — the source contracts (R322 map override)', () =
     expect(JOURNEY_SRC).toMatch(/<div className="jt-close" ref=\{closeRef\} data-open="off">/);
     /* the INTRODUCTION card is the frame's own seat (not a station
      * card in a flow block) */
-    expect(JOURNEY_SRC).toMatch(/<aside className="jt-intro" aria-label=\{INTRO_TITLE_AR\}>/);
+    expect(JOURNEY_SRC).toMatch(/<section className="jt-intro" aria-label=\{INTRO_TITLE_AR\}>/); /* r359 A1 — the landmark law */
   });
 
   it('the camera key table mirrors the plan geometry (the narrated rooms, two crop families)', () => {
@@ -334,7 +334,7 @@ describe('R312 mobile camera — the source contracts (R322 map override)', () =
      * 380dvh @400–767 over the 466dvh tablet base; R322 3-b-fix3
      * override: the ≤399 rung 425→415 recovers the 320 never-raise pin
      * after the round-2 closing foot row) */
-    expect(LANDING_CSS).toMatch(/@media \(max-width: 767px\) \{\s*\.jt-map-col \{\s*block-size: 380dvh;/);
+    expect(LANDING_CSS).toMatch(/@media \(max-width: 767px\) \{\s*\.jt-map-col \{\s*block-size: 92dvh;/);
     /* the ≤399 rung — re-seated at R322 3-b round-4 (415dvh, comment-
      * tolerant). R323 note: this same pin was independently re-pinned
      * in the R323 wave with an R323 override note; upstream's tolerant
@@ -343,7 +343,7 @@ describe('R312 mobile camera — the source contracts (R322 map override)', () =
      * REAL 390×844 pair (the pre-X14 probe read the stale
      * contain-intrinsic-size guess); 473dvh lands the section at
      * 4821 vs the reference 4819 (+0.04 %) — the ±2 % docH contract. */
-    expect(LANDING_CSS).toMatch(/@media \(max-width: 399px\) \{[\s\S]*?\.jt-map-col \{[\s\S]*?block-size: 473dvh;/);
+    expect(LANDING_CSS).toMatch(/@media \(max-width: 399px\) \{[\s\S]*?\.jt-map-col \{[\s\S]*?block-size: 165dvh;/); /* r359 A1 §C — the phone ladder compressed */
     /* the INTRODUCTION card sits IN FLOW below the plan (the V10
      * «شاهد»-clip class dies by construction: the card never overlaps
      * the drawing) */

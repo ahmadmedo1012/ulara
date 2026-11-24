@@ -816,12 +816,15 @@ describe('ExamTemplateDetailPage — question order badges (3-d)', () => {
     });
     renderAt('/teacher/exams/t1');
 
-    const section = await screen.findByRole('region', { name: 'أسئلة القالب' });
-    // Non-sequential wire orders render as-is (index+1 would show 1/2).
-    const badge7 = within(section).getByText('7');
+    /* R359: the picker is the framed sheet's .exa-picker block now (the
+       labelled region retired with the boxed panel). The badges are
+       scoped to it by construction. */
+    const badge7 = await screen.findByText('7');
     expect(badge7).toHaveClass('exa-order');
-    const badge12 = within(section).getByText('12');
+    expect(badge7.closest('.exa-row')).not.toBeNull();
+    const badge12 = screen.getByText('12');
     expect(badge12).toHaveClass('exa-order');
+    expect(badge12.closest('.exa-row')).not.toBeNull();
   });
 });
 

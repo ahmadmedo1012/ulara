@@ -125,3 +125,93 @@
     }
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   r359 ART LIBRARY (A2) — the architectural drawing grammar.
+   ───────────────────────────────────────────────────────────────────
+   Scoped custom properties ONLY (A2 never edits shared tokens): the
+   five grammar colors map onto house tokens, so light/dark flips ride
+   the theme cascade; `data-art-theme` forces a palette for plates
+   shown out-of-theme (the forced blocks are the one sanctioned raw
+   seat — same values the tokens resolve to, color-gate allowed).
+   Motion register: stroke draw-in, slow dash flow, ±1px drift —
+   slow/precise/mechanical only; the global reduced-motion belt
+   (base.css) zeroes it app-wide.
+   ═══════════════════════════════════════════════════════════════════ */
+
+@layer components {
+
+  .mk-r359 {
+    --r359-ink: var(--text-primary);
+    --r359-ink-2: var(--text-secondary);
+    --r359-hair: var(--rule);
+    --r359-sig: var(--c-royal-ink);
+    --r359-paper: var(--bg);
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    aspect-ratio: var(--r359-ar, 16 / 9);
+  }
+
+  .mk-r359 text {
+    user-select: none;
+  }
+
+  /* forced palettes (plates page + docs displays out-of-theme) —
+     r360: the raw literals moved to the sanctioned tokens.css home
+     (same values, same selectors; nothing else declares --r359-*) */
+
+  /* ── the motion register (animated === true) ──────────────────── */
+
+  .mk-r359[data-anim='on'] [data-a='draw'] {
+    stroke-dasharray: 1;
+    animation: r359-draw var(--t-slower) var(--ease-out) both;
+  }
+
+  .mk-r359[data-anim='on'] [data-a='draw-slow'] {
+    stroke-dasharray: 1;
+    animation: r359-draw var(--t-cinema) var(--ease-out) both;
+  }
+
+  .mk-r359[data-anim='on'] [data-a='dash'] {
+    animation: r359-dashflow var(--t-cinema) var(--ease-linear) infinite;
+  }
+
+  .mk-r359[data-anim='on'] [data-a='drift'] {
+    animation: r359-drift var(--t-cinema) var(--ease-soft) infinite alternate;
+  }
+
+  .mk-r359[data-anim='on'] [data-a='pulse'] {
+    animation: r359-pulse var(--t-slow) var(--ease-soft) infinite alternate;
+  }
+}
+
+@keyframes r359-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes r359-dashflow {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -36; }
+}
+
+@keyframes r359-drift {
+  from { transform: translate(0, 0); }
+  to { transform: translate(-1px, 1px); }
+}
+
+@keyframes r359-pulse {
+  from { opacity: 0.55; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mk-r359[data-anim='on'] [data-a='draw'],
+  .mk-r359[data-anim='on'] [data-a='draw-slow'],
+  .mk-r359[data-anim='on'] [data-a='dash'],
+  .mk-r359[data-anim='on'] [data-a='drift'],
+  .mk-r359[data-anim='on'] [data-a='pulse'] {
+    animation: none;
+  }
+}

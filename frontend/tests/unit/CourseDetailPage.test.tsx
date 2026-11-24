@@ -13,7 +13,7 @@
  * the page is exercised against the actual selection rules.
  */
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import CourseDetailPage from '../../src/pages/student/CourseDetailPage';
 
@@ -129,9 +129,15 @@ describe('CourseDetailPage — hero progress + «التالي» CTA (r164d)', ()
 
     const cta = screen.getByRole('link', { name: /التالي/ });
     expect(cta).toHaveAttribute('href', '/student/lectures/l2');
-    // The next lecture's title rides the note under the CTA (and its
-    // row below — the same lecture, two scent points).
-    expect(screen.getAllByText('الطبقة الناقلة')).toHaveLength(2);
+    // R359: the next lecture's title rides the note under the CTA, and
+    // its row below carries the same title inside the lecture link
+    // (the same lecture, two scent points — the row title is the
+    // composite «المحاضرة 02 — …» now).
+    expect(screen.getByText('الطبقة الناقلة')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /الطبقة الناقلة/ })).toHaveAttribute(
+      'href',
+      '/student/lectures/l2',
+    );
     expect(screen.queryByText(/تبقى نقاط تفاعل/)).toBeNull();
   });
 
@@ -183,8 +189,13 @@ describe('CourseDetailPage — per-lecture checkpoint-pending badge (r164d)', ()
 
     const badges = screen.getAllByText('نقاط تفاعل متبقية');
     expect(badges).toHaveLength(1);
-    // The pending badge rides the SAME row as the lecture it belongs to.
-    expect(badges[0]!.closest('a')?.getAttribute('href')).toBe('/student/lectures/l2');
+    // R359: the pending badge rides the SAME ledger row (tr) as the
+    // lecture it belongs to — the row's title link is the scent.
+    const row = badges[0]!.closest('tr') as HTMLElement;
+    expect(within(row).getByRole('link', { name: /الطبقة الناقلة/ })).toHaveAttribute(
+      'href',
+      '/student/lectures/l2',
+    );
     // Both lectures completed the WATCH loop → both keep the plain
     // completion badge; only l2 additionally wears the pending badge.
     expect(screen.getAllByText('مكتملة')).toHaveLength(2);
@@ -202,8 +213,12 @@ describe('CourseDetailPage — per-lecture checkpoint-pending badge (r164d)', ()
     ];
     renderCourse();
 
-    const nextRow = screen.getByText('تابع من هنا').closest('a');
-    expect(nextRow?.getAttribute('href')).toBe('/student/lectures/l2');
+    // R359: the «تابع من هنا» flag rides the pending lecture's ledger
+    // row; the row's title link carries the destination.
+    const nextRow = screen.getByText('تابع من هنا').closest('tr') as HTMLElement;
+    expect(
+      within(nextRow).getByRole('link', { name: /الطبقة الناقلة/ }).getAttribute('href'),
+    ).toBe('/student/lectures/l2');
   });
 });
 

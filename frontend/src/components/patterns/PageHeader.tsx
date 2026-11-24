@@ -33,12 +33,17 @@ export function PageHeader({
   actions,
   breadcrumbs,
   tabs,
+  index,
 }: {
   /** Page title — rendered as the route's single semantic h1. */
   title: string;
   description?: ReactNode;
   /** Small pre-title line (13px, accent-ink). A real classification, never decoration. */
   eyebrow?: string;
+  /** R359 (A3): the bracketed mono index — an EXPLICIT page-authored
+   *  string ('01'), rendered in the eyebrow line. Never derived from
+   *  DOM order (the r351 lesson); pages own their honest numbering. */
+  index?: string;
   /** Data line under the description (dates, counts — real data only). */
   meta?: ReactNode;
   /** Header actions row — pass one flex node with the page's buttons. */
@@ -75,7 +80,14 @@ export function PageHeader({
       )}
       <div className="pf-page-header-main">
         <div className="pf-page-header-text">
-          {eyebrow !== undefined && <p className="pf-eyebrow">{eyebrow}</p>}
+          {eyebrow !== undefined && (
+            <p className="pf-eyebrow">
+              {index !== undefined && (
+                <span className="pf-eyebrow-index" aria-hidden="true">[{index}]</span>
+              )}
+              {eyebrow}
+            </p>
+          )}
           <h1 className="pf-page-title">{title}</h1>
           {description !== undefined && <p className="pf-page-desc">{description}</p>}
           {meta !== undefined && <div className="pf-page-meta">{meta}</div>}

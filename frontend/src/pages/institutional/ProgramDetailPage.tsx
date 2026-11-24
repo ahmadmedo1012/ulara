@@ -195,6 +195,8 @@ export function InstitutionProgramDetailPage() {
         {program && (
           <>
             <InstSection
+              index="01"
+              caption="PROGRAM"
               title="بيانات البرنامج"
               actions={canManage && (
                 <span className="inst-actions">
@@ -215,6 +217,8 @@ export function InstitutionProgramDetailPage() {
             </InstSection>
 
             <InstSection
+              index="02"
+              caption="CURRICULUM VERSIONS"
               title="إصدارات الخطة الدراسية"
               description="إصدار واحد نشط لكل برنامج (قاعدة الخادم) — انتقالات: مسودة ← معتمدة ← سارية ← متقاعدة."
               actions={canManage && (
@@ -263,6 +267,8 @@ export function InstitutionProgramDetailPage() {
 
             {activeVersion && (
               <InstSection
+                index="03"
+                caption="PLAN COURSES"
                 title={`مقررات الخطة: ${activeVersion.label}`}
                 description="ربط المقررات القائمة بالخطة — المقرر نفسه يُدار من إدارة المقررات."
                 actions={canManage && (

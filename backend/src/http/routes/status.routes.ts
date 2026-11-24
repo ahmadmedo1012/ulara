@@ -96,6 +96,11 @@ router.get('/status', async (_req, res) => {
       // Unset MIN_APP_VERSION = no gate (bare-clone/dev default).
       minAppVersion: env.MIN_APP_VERSION ?? null,
       updateUrl: env.APP_DOWNLOAD_URL ?? 'https://ulara.vercel.app/app',
+      // r359 A4 — the release-by-new-build pair: latestAppVersion is the
+      // newest PUBLISHED native build. The app shows a one-time
+      // non-blocking «يتوفر إصدار جديد» toast when below it. Unset =
+      // no toast (bare-clone default).
+      latestAppVersion: env.LATEST_APP_VERSION ?? null,
     },
   });
 });

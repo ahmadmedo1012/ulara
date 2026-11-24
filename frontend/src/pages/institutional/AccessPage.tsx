@@ -127,6 +127,8 @@ export function InstitutionAccessPage() {
 
       <InstStates isLoading={capsQuery.isLoading} error={capsQuery.error} isEmpty={false}>
         <InstSection
+          index="01"
+          caption="IDENTITY"
           title="دورك وعضويتك"
           description="التمييز الثلاثي: دور المنصة (تسجيل الدخول) · دور العضوية في هذه المؤسسة · المنح الإضافية."
         >
@@ -148,6 +150,8 @@ export function InstitutionAccessPage() {
         </InstSection>
 
         <InstSection
+          index="02"
+          caption="EFFECTIVE CAPABILITIES"
           title="القدرات الفعّالة"
           description="الدمج الذي يعيده الخادم: افتراضيات الدور ∪ منح النطاق ∪ المنح الصريحة − أي نقض. أي نقض ينقض المنح."
         >
@@ -171,6 +175,8 @@ export function InstitutionAccessPage() {
         </InstSection>
 
         <InstSection
+          index="03"
+          caption="MY GRANTS"
           title="منح صلاحياتي على الوحدات"
           description="منح نطاقها وحدة تنظيمية أو المؤسسة ككل — قدرة واحدة لكل منحة (GET /me/unit-capabilities)."
         >
@@ -198,6 +204,8 @@ export function InstitutionAccessPage() {
 
         {canAssign && (
           <InstSection
+            index="04"
+            caption="ASSIGN GRANTS"
             title="منح صلاحيات المستخدمين"
             description="أدخل معرّف مستخدم لعرض منحه، أو امنح صلاحية جديدة. يجب أن يكون المستخدم عضوًا نشطًا في المؤسسة (يؤكده الخادم)."
           >

@@ -182,3 +182,50 @@ export function renderInviteEmail(name: string, loginUrl: string, tempPassword: 
     text: `${body}\n\nكلمة المرور المؤقتة: ${tempPassword}\n\nرابط الدخول:\n${loginUrl}\n`,
   };
 }
+
+/** r359 A4 — the email verification mail: one button, 48h expiry,
+ * a plain fallback link. Same RTL shell, same discipline. */
+export function renderVerificationEmail(name: string, verifyUrl: string, hours = 48): { subject: string; html: string; text: string } {
+  const title = `مرحبًا ${name} — أكّد بريدك الإلكتروني`;
+  const body = `أكّد ملكية هذا البريد لتوثيق حسابك في أُلارا. رابط التأكيد يعمل مرة واحدة ولمدة ${hours} ساعة.`;
+  return {
+    subject: 'أُلارا — تأكيد البريد الإلكتروني',
+    html: renderEmailShell({
+      title,
+      bodyHtml: `<p style="margin:0;">${body}</p>`,
+      ctaLabel: 'تأكيد البريد',
+      ctaUrl: verifyUrl,
+      footerNote: 'إذا لم تُنشئ حسابًا في أُلارا فتجاهل هذه الرسالة ولن يُفعَّل أي شيء.',
+    }),
+    text: `${body}\n\nرابط التأكيد (مرة واحدة، ${hours} ساعة):\n${verifyUrl}\n`,
+  };
+}
+
+/** r359 A4 — the weekly unread digest (opt-in only). Bounded list of
+ * the week's unread inbox items; the CTA goes to the app inbox. */
+export function renderDigestEmail(
+  name: string,
+  items: Array<{ title: string; body?: string | null }>,
+  inboxUrl: string,
+  weekLabel: string,
+): { subject: string; html: string; text: string } {
+  const title = `ملخّص أسبوعك في أُلارا — ${weekLabel}`;
+  const rows = items
+    .map(
+      (it) =>
+        `<tr><td style="padding:10px 0;border-bottom:${SHELL_BORDER};font-size:14px;color:#1A1713;font-weight:600;">${it.title}${it.body ? `<div style="font-weight:400;color:#4A4A44;font-size:13px;line-height:1.9;margin-top:4px;">${it.body}</div>` : ''}</td></tr>`,
+    )
+    .join('');
+  const body = `مرحبًا ${name} — هذه أهم إشعاراتك غير المقروءة خلال الأسبوع الماضي (${items.length}):`;
+  return {
+    subject: 'أُلارا — ملخّص الإشعارات الأسبوعي',
+    html: renderEmailShell({
+      title,
+      bodyHtml: `<p style="margin:0 0 8px;">${body}</p><table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;">${rows}</table>`,
+      ctaLabel: 'فتح صندوق الإشعارات',
+      ctaUrl: inboxUrl,
+      footerNote: 'وصلتك هذه الرسالة لأنك فعّلت الملخّص الأسبوعي من إعدادات الإشعارات — يمكنك إيقافه في أي وقت.',
+    }),
+    text: `${body}\n\n${items.map((it) => `• ${it.title}${it.body ? ` — ${it.body}` : ''}`).join('\n')}\n\n${inboxUrl}\n`,
+  };
+}

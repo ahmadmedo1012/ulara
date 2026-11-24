@@ -23,7 +23,7 @@ import { useReducedMotion } from '../../components/motion';
 import { EmptyState, ErrorState, PageSkeleton, ListSkeleton, CardSkeleton, StripSkeleton, Skeleton } from '../../components/primitives/States';
 import { ChartFrame } from '../../components/charts';
 import { Icon } from '../../components/Icon';
-import { radialOptions, chartPalette, useChartThemeKey } from '../../lib/chartTheme';
+import { radialOptions, chartColors, useChartThemeKey } from '../../lib/chartTheme';
 import { useOwnerStats, useOwnerRealtime, useOwnerAlerts, useOwnerActivity, useOwnerEducation, type OperationalAlert } from '../../hooks/useOwner';
 import { countAr, formatRelativeAr } from '../../lib/format';
 import { isCriticalAlert } from '../../lib/ownerLabels';
@@ -273,11 +273,15 @@ export function OwnerDashboardPage() {
 
   const chartData = useMemo(() => {
     void themeKey;
+    const c = chartColors();
     return {
       labels: segments.map((s) => s.label),
       datasets: [{
         data: segments.map((s) => s.value),
-        backgroundColor: chartPalette().slice(0, 4),
+        /* R359 (A3 · the one-signal dataviz law): the composition donut
+         * rides the royal + neutral register (hero series royal, the
+         * rest grey/ink steps) — no categorical rainbow on the sheet. */
+        backgroundColor: [c.accent, c.grid, c.strongText, c.surfaceMuted],
         borderWidth: 0,
         hoverOffset: 6,
       }],
@@ -313,6 +317,9 @@ export function OwnerDashboardPage() {
       <OwnerFrame>
         <PatternsPageHeader
           title="لوحة التحكم الرئيسية"
+          /* R359 (W2-e): the owner console's family eyebrow — the console
+           * pages name their owner (مالك المنصّة) above the h1. */
+          eyebrow="مالك المنصّة"
         />
         <div className="owner-live-status is-pending" aria-busy="true" aria-live="polite">
           <div className="owner-live-pulse" />
@@ -351,6 +358,7 @@ export function OwnerDashboardPage() {
       <OwnerFrame>
         <PatternsPageHeader
           title="لوحة التحكم الرئيسية"
+          eyebrow="مالك المنصّة"
         />
         <ErrorState
           error={stats.error ?? realtime.error}
@@ -432,6 +440,7 @@ export function OwnerDashboardPage() {
     <OwnerFrame>
       <PatternsPageHeader
         title="لوحة التحكم الرئيسية"
+        eyebrow="مالك المنصّة"
         /* R342-10: the [01] nav-order gutter numeral — the OWNER_NAV
          * register's first seat, the only page still missing its header
          * numeral after D11 covered the other twelve (realtime [02] …

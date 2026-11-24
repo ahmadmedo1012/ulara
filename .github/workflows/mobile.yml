@@ -28,9 +28,10 @@
 #     native-build-devclient: the local Gradle dev-client APK (expo
 #     prebuild + Gradle on an Actions runner), saved fingerprint-keyed
 #     (actions/cache) + uploaded per-run, for Lane B's future runs.
-#     Fingerprint inputs: package(-lock).json, app.config.ts, eas.json,
+#     Fingerprint inputs: package(-lock).json, app.config.ts,
 #     assets/, plugins/, shared/, the build recipe, and this workflow —
-#     a JS-only change NEVER changes the fingerprint.
+#     a JS-only change NEVER changes the fingerprint. (r359 A4: eas.json
+#     is GONE — EAS services retired; Expo CLI stays for prebuild/export.)
 #
 #   Lane D — full (EXPLICIT dispatch only — never the default):
 #     fast gates + the original android-smoke machine — the full local
@@ -138,7 +139,7 @@ jobs:
       - name: Native fingerprint (hash of native-affecting inputs)
         id: fp
         run: |
-          FP='${{ hashFiles('apps/mobile/package.json', 'apps/mobile/package-lock.json', 'apps/mobile/app.config.ts', 'apps/mobile/eas.json', 'apps/mobile/assets/**', 'apps/mobile/plugins/**', 'shared/**', 'scripts/build-android-local.sh', '.github/workflows/mobile.yml') }}'
+          FP='${{ hashFiles('apps/mobile/package.json', 'apps/mobile/package-lock.json', 'apps/mobile/app.config.ts', 'apps/mobile/assets/**', 'apps/mobile/plugins/**', 'shared/**', 'scripts/build-android-local.sh', '.github/workflows/mobile.yml') }}'
           if [ -z "$FP" ]; then
             echo "::error::native fingerprint hashed to EMPTY — native inputs missing from the tree?"
             exit 1
@@ -158,7 +159,7 @@ jobs:
             exit 0
           fi
           CHANGED=$(git diff --name-only HEAD~1 HEAD || echo "")
-          NATIVE=$(echo "$CHANGED" | grep -E '^apps/mobile/(package(-lock)?\.json|app\.config\.ts|eas\.json|assets/|plugins?/)|^shared/|^scripts/build-android-local\.sh|^\.github/workflows/mobile\.yml' || true)
+          NATIVE=$(echo "$CHANGED" | grep -E '^apps/mobile/(package(-lock)?\.json|app\.config\.ts|assets/|plugins?/)|^shared/|^scripts/build-android-local\.sh|^\.github/workflows/mobile\.yml' || true)
           if [ -n "$NATIVE" ]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
             {
@@ -934,7 +935,61 @@ jobs:
             adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
             adb install -r apps/mobile/android/app/build/outputs/apk/release/app-release.apk || touch fail.flag
             "$HOME/.maestro/bin/maestro" --version || touch fail.flag
+            # ── r359 A4 (M6): the COLD-START budget — force-stop then a
+            # measured start (WaitTime/TotalTime in ms, captured to the
+            # artifacts + the step summary outside the emulator block).
+            adb shell am force-stop ly.ulara.app >/dev/null 2>&1 || true
+            adb shell am start -W -n ly.ulara.app/.MainActivity > cold-start.txt 2>&1 || touch fail.flag
+            adb shell am force-stop ly.ulara.app >/dev/null 2>&1 || true
+            adb shell am start -W -n ly.ulara.app/.MainActivity > warm-start.txt 2>&1 || true
+            # ── r359 A4 (C8/M2): the FIRST-RUN TOUR shots (the student
+            # fixture owes the tour — test-accounts.ts; four screens +
+            # the toured home; completes the tour server-side so the
+            # five-role journey below never sees it again).
+            "$HOME/.maestro/bin/maestro" test apps/mobile/.maestro/shots-onboarding.yaml -e EMAIL=student@test.ly -e PASSWORD=12345678 || { echo "::error::onboarding shots failed — see maestro-debug in the artifacts"; touch fail.flag; }
             for entry in student@test.ly:STUDENT teacher@test.ly:TEACHER registrar@test.ly:ADMIN quality@test.ly:QUALITY owner@test.ly:OWNER; do EMAIL="${entry%%:*}"; ROLE="${entry##*:}"; echo "── android-smoke: $EMAIL ($ROLE)"; "$HOME/.maestro/bin/maestro" test apps/mobile/.maestro/smoke-role.yaml -e EMAIL="$EMAIL" -e PASSWORD=12345678 -e ROLE="$ROLE" || { echo "::error::maestro journey failed for $EMAIL ($ROLE) — see logcat in the artifacts"; touch fail.flag; }; done
+            # ── r359 A4 (C8/M5): the ROLE-HOME shots at the native
+            # pixel_6 size (411dp) — every role, one capture each.
+            for entry in student@test.ly:STUDENT teacher@test.ly:TEACHER registrar@test.ly:ADMIN quality@test.ly:QUALITY owner@test.ly:OWNER; do EMAIL="${entry%%:*}"; ROLE="${entry##*:}"; "$HOME/.maestro/bin/maestro" test apps/mobile/.maestro/shots-role.yaml -e EMAIL="$EMAIL" -e PASSWORD=12345678 -e ROLE="$ROLE" -e SHOT="$ROLE" || touch fail.flag; done
+            # ── the 320×568 pass (the minimum supported width) + the
+            # 768×1024 tablet pass — student + teacher homes each, then
+            # the viewport resets. `wm size` overrides survive until
+            # reset; the app re-lays out live.
+            # the size passes need the STUDENT session (the loop's last
+            # login was the OWNER): one more student home pass — it rides
+            # the now-green student journey.
+            "$HOME/.maestro/bin/maestro" test apps/mobile/.maestro/shots-role.yaml -e EMAIL=student@test.ly -e PASSWORD=12345678 -e ROLE=STUDENT -e SHOT=STUDENT || touch fail.flag
+            # ── the size passes: viewport override + cold restart, then the
+            # LIGHTWEIGHT capture (shots-size.yaml — the session persists,
+            # no fresh login journey: the launcher ANRs when the override
+            # lands mid-session and swallows full journeys; run 45346878959
+            # forensics). The student home re-lays-out live at each size.
+            adb shell wm size 320x568 >/dev/null 2>&1 || true
+            adb shell am force-stop ly.ulara.app >/dev/null 2>&1 || true
+            sleep 3
+            # run 45353893364 forensics: the LAUNCHER redraws at the new size
+            # and parks an app-info popup over everything (the app renders
+            # behind it, dimmed). Dismiss system dialogs + BACK (we are on
+            # the launcher — the app is force-stopped, BACK is safe).
+            adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
+            adb shell input keyevent 4 >/dev/null 2>&1 || true
+            sleep 2
+            "$HOME/.maestro/bin/maestro" test apps/mobile/.maestro/shots-size.yaml -e SHOT=STUDENT-320 || touch fail.flag
+            adb shell wm size 360x640 >/dev/null 2>&1 || true
+            adb shell am force-stop ly.ulara.app >/dev/null 2>&1 || true
+            sleep 3
+            adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
+            adb shell input keyevent 4 >/dev/null 2>&1 || true
+            sleep 2
+            "$HOME/.maestro/bin/maestro" test apps/mobile/.maestro/shots-size.yaml -e SHOT=STUDENT-360 || touch fail.flag
+            adb shell wm size 768x1024 >/dev/null 2>&1 || true
+            adb shell am force-stop ly.ulara.app >/dev/null 2>&1 || true
+            sleep 3
+            adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
+            adb shell input keyevent 4 >/dev/null 2>&1 || true
+            sleep 2
+            "$HOME/.maestro/bin/maestro" test apps/mobile/.maestro/shots-size.yaml -e SHOT=STUDENT-TABLET || touch fail.flag
+            adb shell wm size reset >/dev/null 2>&1 || true
             "$ANDROID_HOME/platform-tools/adb" devices > adb-devices.txt 2>&1 || true
             timeout 60 "$ANDROID_HOME/platform-tools/adb" logcat -d > logcat.txt 2>&1; [ -s logcat.txt ] || echo "(logcat capture failed — adb device state follows:)" >> logcat.txt
             cat adb-devices.txt >> logcat.txt 2>/dev/null || true
@@ -977,6 +1032,8 @@ jobs:
             logcat.txt
             adb-devices.txt
             crash-report.txt
+            cold-start.txt
+            warm-start.txt
             backend.log
             maestro-debug
             maestro-debug.txt

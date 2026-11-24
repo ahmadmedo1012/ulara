@@ -1,0 +1,22 @@
+{
+ "radius": {
+  ".artframe": "0px",
+  ".artlib-btn": "0px",
+  ".artcard": "0px",
+  ".plate-stage": "0px"
+ },
+ "shadows": 0,
+ "strokes": {
+  "var(--r359-ink)": 2936,
+  "var(--r359-paper)": 7,
+  "var(--r359-hair)": 92,
+  "var(--r359-sig)": 62,
+  "fill:var(--r359-ink)": 217,
+  "fill:var(--r359-paper)": 83,
+  "fill:var(--r359-sig)": 84,
+  "fill:var(--r359-ink-2)": 134
+ },
+ "sigMarks": 0,
+ "buttons": 0,
+ "monoFont": "\"Geist Mono\", \"IBM Plex Mono\", \"IBM Plex"
+}

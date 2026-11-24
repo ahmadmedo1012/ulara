@@ -14,6 +14,10 @@ type RevealProps = {
   children: ReactNode;
   /** Element to render. */
   as?: 'div' | 'section' | 'article' | 'span' | 'li';
+  /** R359 (A3): arbitrary rest props (id, data-*, aria-*) forward to
+   *  the rendered element — the sheet-grammar sections are Reveal
+   *  elements themselves. Class/style stay explicit above. */
+  [k: string]: unknown;
   /** Reveal distance. */
   distance?: 'small' | 'medium' | 'large';
   /** Visual treatment. 'lift' (default) — the existing fade + rise
@@ -64,6 +68,7 @@ export function Reveal({
   staggerIndex = 0,
   className,
   style,
+  ...rest
 }: RevealProps): JSX.Element {
   const ref = useRef<HTMLElement | null>(null);
   const [revealed, setRevealed] = useState(false);
@@ -178,6 +183,7 @@ export function Reveal({
     <Tag
       ref={ref as React.RefObject<HTMLDivElement>}
       className={className}
+      {...(rest as object)}
       data-reveal
       data-revealed={revealed ? 'true' : 'false'}
       // r305-c: 'lift' (default) stays attribute-free for a zero DOM

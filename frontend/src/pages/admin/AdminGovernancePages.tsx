@@ -14,28 +14,31 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
-  ShieldCheck, GraduationCap, Award, ChevronLeft, ChevronRight, CheckCircle2,
+  ShieldCheck, GraduationCap, Award, ChevronRight, CheckCircle2,
   AlertCircle, Sparkles, Briefcase, Building2, Users, Crown, BookOpen,
   X,
 } from 'lucide-react';
-import { Card, Badge, UserAvatar, AlertRow, FormField, PageHeader } from '../../components/primitives';
+import { Card, Badge, UserAvatar, AlertRow, FormField } from '../../components/primitives';
 import { StatStrip } from '../../components/primitives/Ledger';
 import { ConfirmDialog } from '../../components/owner/ConfirmDialog';
 import {
   CardSkeleton, DetailSkeleton, ErrorState, EmptyState,
 } from '../../components/primitives/States';
 /* r251 (Phase B): the teachers page composes Agent S's frozen patterns
- * (SplitView + RowList/RowItem + FilterBar + StatLine + PageFrame +
- * patterns/PageHeader). The primitives PageHeader above stays imported —
- * the permissions editor (same file) still rides it until its own pass. */
+ * (SplitView + FilterBar + PageFrame + patterns/PageHeader — the
+ * primitives PageHeader this file carried retired when the permissions
+ * editor joined the family header). R359 (A3): both governance pages
+ * join the sheet grammar — framed sections + the band register + the
+ * DataSheet roster. */
 import {
   PageFrame,
   PageHeader as PatternsPageHeader,
-  RowList,
-  RowItem,
   SplitView,
-  StatLine,
   FilterBar,
+  SheetSection,
+  KpiBand,
+  DataSheet,
+  type DataSheetColumn,
 } from '../../components/patterns';
 import { Icon } from '../../components/Icon';
 // R320 §B (c1-RENAME): the role chips/pickers consume the ONE shared
@@ -271,19 +274,63 @@ export function AdminTeachersPage() {
     setPage(1);
   };
 
-  /* r251 (Phase B — Superlist composition): the teachers console is the
-   * admin family's flagship list→detail surface, so it composes Agent S's
-   * frozen patterns end-to-end: PageFrame rhythm, the patterns PageHeader
-   * (breadcrumbs back to the family), a one-fact StatLine, the FilterBar
-   * search pill, and the SplitView (desktop sticky detail / mobile
-   * full-screen Sheet). Selection rides a stretched button inside each
-   * RowItem (a real <button> for keyboard focus; the ::after plate in
-   * admin.css makes the WHOLE row its tap target). Loading/empty/error
-   * stay honest: RowList's own skeleton + the family's EmptyState/ErrorState. */
+  /* r251 (Phase B — Superlist composition): the teachers console keeps
+   * its list→detail SplitView (the sticky detail pane is the console's
+   * own contract), but the roster itself re-keys onto the DataSheet
+   * register (R359 final): the identity cell carries the select button
+   * + the mono email sub-line, the status rides the flat sg-flag, and
+   * the selected row's pin spends the ONE royal signal (rowTone). */
   const selectedTeacher = teachers.find((t) => t.id === selectedId) ?? null;
   const selectedName = selectedTeacher
     ? `${selectedTeacher.firstName} ${selectedTeacher.lastName}`
     : 'ملف الأستاذ';
+
+  const rosterColumns: DataSheetColumn<AdminUserRow>[] = [
+    {
+      key: 'teacher',
+      label: 'الأستاذ',
+      render: (t) => (
+        /* The console's select verb: a REAL button (keyboard focusable,
+         * the teacher's name as its accessible name — the same idiom the
+         * r251 RowItem plate carried, restated inline for the sheet's
+         * cells; the stretched ::after plate stays with .pf-row rows). */
+        <button
+          type="button"
+          aria-pressed={selectedId === t.id}
+          onClick={() => setSelectedId(t.id)}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 'var(--sp-2)',
+            padding: 'var(--sp-1) 0',
+            minBlockSize: 'var(--touch-floor, 44px)',
+            border: 0,
+            background: 'none',
+            font: 'inherit',
+            fontWeight: 'var(--fw-semibold)',
+            color: selectedId === t.id ? 'var(--accent-ink, var(--accent))' : 'var(--text)',
+            cursor: 'pointer',
+            textAlign: 'start',
+          }}
+        >
+          <UserAvatar initials={t.avatarInitials ?? 'أس'} color={t.avatarColor ?? undefined} size={28} />
+          <span className="sg-cell-stack">
+            <span className="sg-cell-title">{t.firstName} {t.lastName}</span>
+            <bdi className="sg-cell-sub" dir="ltr">{t.email}</bdi>
+          </span>
+        </button>
+      ),
+    },
+    {
+      key: 'status',
+      label: 'الحالة',
+      render: (t) => (
+        <span className="sg-flag" data-tone={t.isActive ? 'positive' : 'danger'}>
+          {t.isActive ? 'نشط' : 'موقوف'}
+        </span>
+      ),
+    },
+  ];
 
   const teacherListEmpty = (
     <EmptyState
@@ -310,6 +357,7 @@ export function AdminTeachersPage() {
     <div className="r305ao">
     <PageFrame width="wide">
       <PatternsPageHeader
+        eyebrow="إدارة المؤسسة"
         title="إدارة الأساتذة"
         description="توثيق الملفات الأكاديمية واقتراح المقرّرات الأنسب لكل أستاذ بناء على تخصصه ودرجته العلمية وشهاداته."
         breadcrumbs={[{ label: 'لوحة إدارة المؤسسة', to: '/admin/dashboard' }, { label: 'الأساتذة' }]}
@@ -335,13 +383,18 @@ export function AdminTeachersPage() {
           anywhere in the /admin/users payload (verification is
           per-teacher via TEACHERS_VERIFY), and a hardcoded «فعّال»
           fakes a platform-wide status the backend never asserts.
-          r251: the lone fact rides the patterns StatLine. */}
-      <StatLine
-        items={[{
-          label: 'عدد الأساتذة',
-          value: teacherCount,
-          hint: count.isPending ? 'قراءة عدّاد الخادم…' : count.data ? 'في هذه المؤسّسة' : 'تعذّر قراءة العدّاد',
-        }]}
+          R359 (A3): the lone fact rides the StatStrip band register
+          (grammar §15 re-keys the strip); the KpiBand register is
+          barred here — the kpiValue pin reads .stat-cell/.pf-stat. */}
+      <StatStrip
+        ariaLabel="مؤشرات هيئة التدريس"
+        cells={[
+          {
+            label: 'عدد الأساتذة',
+            value: teacherCount,
+            trend: count.isPending ? 'قراءة عدّاد الخادم…' : count.data ? 'في هذه المؤسّسة' : 'تعذّر قراءة العدّاد',
+          },
+        ]}
       />
 
       <FilterBar
@@ -368,26 +421,18 @@ export function AdminTeachersPage() {
             </Card>
           ) : (
             <>
-              <RowList aria-label="قائمة الأساتذة" loading={roster.isPending} empty={teacherListEmpty} density="compact">
-                {teachers.map((t) => (
-                  <RowItem
-                    key={t.id}
-                    leading={<UserAvatar initials={t.avatarInitials ?? 'أس'} color={t.avatarColor ?? undefined} size={38} />}
-                    title={(
-                      <button
-                        type="button"
-                        className="govx-row-select"
-                        aria-pressed={selectedId === t.id}
-                        onClick={() => setSelectedId(t.id)}
-                      >
-                        {t.firstName} {t.lastName}
-                      </button>
-                    )}
-                    meta={<bdi>{t.email}</bdi>}
-                    trailing={<Icon icon={ChevronLeft} size={14} className="text-subtle" />}
-                  />
-                ))}
-              </RowList>
+              {/* R359 final — the roster sheet: the two-column register
+                  inside the console's narrow list slot. rowTone spends
+                  the royal pin on the selected row; the family's
+                  pagination footer rides below. */}
+              <DataSheet
+                caption="قائمة الأساتذة"
+                columns={rosterColumns}
+                rows={teachers}
+                loading={roster.isPending}
+                empty={teacherListEmpty}
+                rowTone={(t) => (selectedId === t.id ? 'signal' : undefined)}
+              />
 
               {/* r299: Server-side pagination — the family's canonical
                   TablePaginationFooter (windowed page numbers, RTL-correct
@@ -1037,26 +1082,40 @@ export function AdminPermissionsPage() {
           * open straight onto a back-link + card (NO h1: the only admin
           * route without one — axe page-has-heading-one). The h1 names
           * the USER (same contract as the tab title above); the mono
-          * meta line carries the role + email facts. */}
-      <PageHeader
-        title={<>{data.user.firstName} {data.user.lastName}</>}
-        subtitle="إدارة صلاحيات هذا المستخدم: الدور الافتراضي، والاستثناءات اليدوية، والنطاق."
+          * meta line carries the role + email facts. R359 (A3): the
+          * masthead joins the family header (eyebrow + the pf
+          * register) — the ReactNode-title primitives twin retires. */}
+      <PatternsPageHeader
+        eyebrow="إدارة المؤسسة"
+        title={`${data.user.firstName} ${data.user.lastName}`}
+        description="إدارة صلاحيات هذا المستخدم: الدور الافتراضي، والاستثناءات اليدوية، والنطاق."
         meta={<>{roleLabel} · <bdi>{data.user.email}</bdi></>}
       />
 
       {/* R190-D3: the icon-box MetricCard trio → the typographic stat
           * line (■ mono labels + metric values; no icon wells).
           * r299: «الدور الحالي» died — the header's meta line directly
-          * above carries role + email; one owner per datum. */}
-      <StatStrip
-        ariaLabel="حالة صلاحيات المستخدم"
-        cells={[
-          { label: 'صلاحيات فعلية', value: formatNum(data.effective.length), trend: 'مفعّلة الآن' },
-          { label: 'استثناءات يدوية', value: formatNum(data.overrides.length), trend: data.overrides.length > 0 ? 'منح أو سحب يدويّ' : 'لا استثناءات' },
+          * above carries role + email; one owner per datum.
+          * R359 final: the pair re-keys onto the KPI band (count-in
+          * numerals, the caption the real classification). */}
+      <KpiBand
+        items={[
+          { index: '01', caption: 'EFFECTIVE', label: 'صلاحيات فعلية', value: data.effective.length, delta: 'مفعّلة الآن' },
+          {
+            index: '02',
+            caption: 'OVERRIDES',
+            label: 'استثناءات يدوية',
+            value: data.overrides.length,
+            delta: data.overrides.length > 0 ? 'منح أو سحب يدويّ' : 'لا استثناءات',
+          },
         ]}
       />
 
-      <Card title="محرّر الصلاحيات" icon={ShieldCheck}>
+      {/* R359 (A3): the matrix joins the framed sections — the six
+          * domain groups keep their custom rows (the state badge + one
+          * verb button anatomy is pinned); the head rule carries the
+          * sheet's own classification. */}
+      <SheetSection index="01" caption="CAPABILITY MATRIX" title="محرّر الصلاحيات">
         {(data.user.role === 'ADMIN' || data.user.role === 'QUALITY') && (
           <ScopeAssignmentCard
             key={data.user.id}
@@ -1204,7 +1263,7 @@ export function AdminPermissionsPage() {
             );
           })}
         </div>
-      </Card>
+      </SheetSection>
     </div>
   );
 }

@@ -4,7 +4,7 @@ import {
   Plus, Landmark, ShieldCheck, Ban, RotateCcw, UserPlus,
   ArrowLeft, AlertTriangle, Eye, EyeOff,
 } from 'lucide-react';
-import { Card, Badge, FormField, AlertRow } from '../../components/primitives';
+import { FormField, AlertRow } from '../../components/primitives';
 import { ErrorState, EmptyState, TableSkeleton } from '../../components/primitives/States';
 /* R304 (workstream 4D): the console opens with the patterns PageHeader
  * (breadcrumbs back to the owner dashboard; the always-visible create
@@ -12,6 +12,10 @@ import { ErrorState, EmptyState, TableSkeleton } from '../../components/primitiv
  * any dialog) and the institutions register rides the workspace table
  * family (ws-table, defined in admin.css — the detail page's sheet). */
 import { PageHeader as PatternsPageHeader } from '../../components/patterns';
+/* R359 (W2-e): the console speaks the sheet grammar — the KpiBand
+ * totals + the framed sections; the register rides the DataSheet
+ * (mono numerics, cell-stack identity, flat sg-flag statuses). */
+import { KpiBand, SheetSection, DataSheet, type DataSheetColumn } from '../../components/patterns';
 import { Icon } from '../../components/Icon';
 import { ConfirmDialog } from '../../components/owner/ConfirmDialog';
 import { Modal } from '../../components/overlays/Modal';
@@ -108,11 +112,9 @@ function CreateInstitutionCard({
   };
 
   return (
-    <Card
-      title="إنشاء مؤسسة جديدة"
-      icon={Plus}
-      /* r351 A2 (Q3): card subtitle retired — the form fields explain it. */
-    >
+    /* R359 (W2-e): the create band rides the framed section (the Card
+     * died with the console's grammar recomposition). */
+    <SheetSection index="01" caption="NEW INSTITUTION" title="إنشاء مؤسسة جديدة">
       <form
         className="owner-inst-create-form"
         onSubmit={(e) => {
@@ -171,7 +173,7 @@ function CreateInstitutionCard({
           />
         )}
       </form>
-    </Card>
+    </SheetSection>
   );
 }
 
@@ -572,10 +574,139 @@ export function OwnerInstitutionsPage() {
     );
   };
 
+  /* R359 (W2-e) — the register's DataSheet columns: identity-first
+   * cell-stack (name / Latin name / slug), the flat sg-flag statuses,
+   * mono numerics for the counts, the admins list with its
+   * revoke/restore verbs, and the console's actions cell (the
+   * destructive verbs keep their .r305ao-btn-danger fills). */
+  const registerColumns: DataSheetColumn<OwnerInstitution>[] = [
+    {
+      key: 'name',
+      label: 'المؤسسة',
+      render: (institution) => (
+        <span className="sg-cell-stack">
+          <span className="owner-inst-name sg-cell-title">{institution.name}</span>
+          {institution.nameEn && (
+            <bdi className="sg-cell-sub" dir="ltr">{institution.nameEn}</bdi>
+          )}
+          <bdi className="sg-cell-sub font-mono" dir="ltr">{institution.slug}</bdi>
+        </span>
+      ),
+    },
+    {
+      key: 'status',
+      label: 'الحالة',
+      render: (institution) => (
+        <span className="sg-flag" data-tone={institution.status === 'ACTIVE' ? 'positive' : 'danger'}>
+          {STATUS_LABELS[institution.status]}
+        </span>
+      ),
+    },
+    {
+      key: 'members',
+      label: 'الأعضاء النشطون',
+      numeric: true,
+      render: (institution) => formatNum(institution.activeMembershipCount),
+    },
+    {
+      key: 'faculties',
+      label: 'الكليات',
+      numeric: true,
+      render: (institution) => formatNum(institution.facultyCount),
+    },
+    {
+      key: 'admins',
+      label: 'إدارة المؤسسة',
+      render: (institution) =>
+        institution.admins.length === 0 ? (
+          <span className="text-xs text-subtle">لا أعضاء إدارة بعد</span>
+        ) : (
+          <ul className="owner-inst-admins">
+            {institution.admins.map((admin) => (
+              <li key={admin.membershipId}>
+                <span className="owner-inst-admin-name">
+                  {admin.firstName} {admin.lastName}
+                  {admin.isActive ? '' : ' · معطّلة'}
+                </span>
+                <bdi className="owner-inst-admin-email" dir="ltr">{admin.email}</bdi>
+                <button
+                  type="button"
+                  /* R305-A8 danger hierarchy: revoking a live admin's
+                   * membership cuts their access instantly — the
+                   * destructive verb rides the danger fill; the
+                   * restoring verb (استعادة) stays a quiet ghost
+                   * action. */
+                  className={`btn ghost sm${admin.isActive ? ' r305ao-btn-danger' : ''}`}
+                  disabled={mutationBusy}
+                  onClick={() =>
+                    admin.isActive
+                      ? onRevokeAdmin(institution, admin)
+                      : onRestoreAdmin(institution, admin)
+                  }
+                >
+                  <Icon icon={admin.isActive ? Ban : RotateCcw} size={12} />
+                  {admin.isActive ? 'إلغاء العضوية' : 'استعادة'}
+                </button>
+              </li>
+            ))}
+          </ul>
+        ),
+    },
+    {
+      key: 'createdAt',
+      label: 'تاريخ الإنشاء',
+      render: (institution) => formatDate(institution.createdAt, { dateStyle: 'medium' }),
+    },
+    {
+      key: 'actions',
+      label: 'إجراءات',
+      render: (institution) => (
+        <span className="table-row-actions">
+          {/* r181 (phase-8 owner setup): the institution's own
+              academic-setup context — faculties → departments →
+              courses → offerings, all bound to THIS institution's
+              slug. */}
+          <Link
+            to={`/owner/institutions/${institution.slug}`}
+            className="btn ghost sm"
+            title={`فتح سياق «${institution.name}» وإعداد بنيتها الأكاديمية`}
+          >
+            <Icon icon={ArrowLeft} size={13} />
+            فتح المؤسسة
+          </Link>
+          <button
+            type="button"
+            className="btn ghost sm"
+            onClick={() => setProvisionTarget(institution)}
+            disabled={mutationBusy}
+            title={`تعيين مسجل عام لـ«${institution.name}»`}
+          >
+            <Icon icon={ShieldCheck} size={13} />
+            تعيين مسجل عام
+          </button>
+          <button
+            type="button"
+            /* R305-A8 danger hierarchy: suspending an institution cuts
+             * every member's access — the destructive verb gets the
+             * danger fill, while the reactivating verb (تنشيط) stays
+             * ghost. */
+            className={`btn ghost sm${institution.status === 'ACTIVE' ? ' r305ao-btn-danger' : ''}`}
+            onClick={() => onToggleStatus(institution)}
+            disabled={mutationBusy}
+          >
+            <Icon icon={institution.status === 'ACTIVE' ? Ban : RotateCcw} size={13} />
+            {institution.status === 'ACTIVE' ? 'تعليق' : 'تنشيط'}
+          </button>
+        </span>
+      ),
+    },
+  ];
+
   return (
     <div className="page r305ao">
       <PatternsPageHeader
         title="المؤسسات"
+        eyebrow="مالك المنصّة"
         /* r351 A2 (Q3): header description retired — the register explains the page. */
         breadcrumbs={[{ label: 'لوحة المالك', to: '/owner/dashboard' }, { label: 'المؤسسات' }]}
         /* R341 D11: the [04] nav-order gutter numeral (OWNER_NAV
@@ -584,16 +715,48 @@ export function OwnerInstitutionsPage() {
          * in-viewport CTA at both bands. */
       />
 
+      {/* R359 (W2-e) — the register's KPI band: honest payload sums from
+          the listing (institution count · active memberships · faculties).
+          Honest-empty ('—') while pending or failed — never a fake zero. */}
+      <KpiBand
+        items={[
+          {
+            index: '01',
+            caption: 'INSTITUTIONS',
+            label: 'المؤسسات المسجّلة',
+            value: institutions.length,
+            empty: listing.data == null,
+          },
+          {
+            index: '02',
+            caption: 'MEMBERS',
+            label: 'العضويات النشطة (مجموع)',
+            value: institutions.reduce((sum, i) => sum + i.activeMembershipCount, 0),
+            empty: listing.data == null,
+          },
+          {
+            index: '03',
+            caption: 'FACULTIES',
+            label: 'الكليات (مجموع)',
+            value: institutions.reduce((sum, i) => sum + i.facultyCount, 0),
+            empty: listing.data == null,
+          },
+        ]}
+      />
+
       <CreateInstitutionCard
         isPending={createM.isPending}
         error={createM.isError ? createM.error : null}
         onCreate={onCreate}
       />
 
-      {/* r299: the vestigial .owner-users-card className died (its only
-          rule targets .alert inside — this card has none); the skeleton's
-          column count now advertises the real 7-column table. */}
-      <Card title="المؤسسات المسجّلة">
+      {/* R359 (W2-e) — the framed register: the hand-rolled ws-table
+          dies; the DataSheet owns the anatomy (mono numerics, the
+          cell-stack identity, the flat sg-flag statuses, the row pin
+          keyed to the institution's own tone). The pending skeleton
+          keeps its aria-busy contract (the pin file's honest pending
+          shape) and the empty/error branches stay verbatim. */}
+      <SheetSection index="02" caption="INSTITUTION REGISTER" title="المؤسسات المسجّلة" pad="none">
         {listing.isPending ? (
           <TableSkeleton rows={4} cols={7} />
         ) : listing.isError ? (
@@ -607,143 +770,22 @@ export function OwnerInstitutionsPage() {
             description=""
           />
         ) : (
-          <div className="table-wrap">
-            {/* R304: the register rides the workspace table family —
-                identity-first cells, quiet header voice, and on phones
-                the institution's name becomes the summary card's title. */}
-            <table className="table tbl-stack ws-table">
-              <thead>
-                <tr>
-                  <th scope="col">المؤسسة</th>
-                  <th scope="col">الحالة</th>
-                  <th scope="col">الأعضاء النشطون</th>
-                  <th scope="col">الكليات</th>
-                  <th scope="col">إدارة المؤسسة</th>
-                  <th scope="col">تاريخ الإنشاء</th>
-                  <th scope="col">إجراءات</th>
-                </tr>
-              </thead>
-              <tbody>
-                {institutions.map((institution) => (
-                  <tr key={institution.id}>
-                    <td className="tbl-strong ws-id" data-label="المؤسسة">
-                      <div className="owner-inst-cell">
-                        <span className="owner-inst-name">{institution.name}</span>
-                        {institution.nameEn && (
-                          <span className="owner-inst-sub ws-meta" dir="ltr">{institution.nameEn}</span>
-                        )}
-                        <span className="owner-inst-sub font-mono ws-meta" dir="ltr">{institution.slug}</span>
-                      </div>
-                    </td>
-                    <td data-label="الحالة">
-                      <Badge color={institution.status === 'ACTIVE' ? 'green' : 'red'}>
-                        {STATUS_LABELS[institution.status]}
-                      </Badge>
-                    </td>
-                    <td data-label="الأعضاء النشطون">
-                      {/* r299: the per-cell metric icons died — the column
-                          header already names the metric; a 13px icon before
-                          every figure was decoration competing with the
-                          numbers (and .owner-inst-metric svg with them). */}
-                      <span className="owner-inst-metric">
-                        {formatNum(institution.activeMembershipCount)}
-                      </span>
-                    </td>
-                    <td data-label="الكليات">
-                      <span className="owner-inst-metric">
-                        {formatNum(institution.facultyCount)}
-                      </span>
-                    </td>
-                    <td data-label="إدارة المؤسسة">
-                      {institution.admins.length === 0 ? (
-                        <span className="text-xs text-subtle">لا أعضاء إدارة بعد</span>
-                      ) : (
-                        <ul className="owner-inst-admins">
-                          {institution.admins.map((admin) => (
-                            <li key={admin.membershipId}>
-                              <span className="owner-inst-admin-name">
-                                {admin.firstName} {admin.lastName}
-                                {admin.isActive ? '' : ' · معطّلة'}
-                              </span>
-                              <bdi className="owner-inst-admin-email" dir="ltr">{admin.email}</bdi>
-                              <button
-                                type="button"
-                                /* R305-A8 danger hierarchy: revoking a live
-                                 * admin's membership cuts their access
-                                 * instantly — the destructive verb rides
-                                 * the danger fill; the restoring verb
-                                 * (استعادة) stays a quiet ghost action. */
-                                className={`btn ghost sm${admin.isActive ? ' r305ao-btn-danger' : ''}`}
-                                disabled={mutationBusy}
-                                onClick={() =>
-                                  admin.isActive
-                                    ? onRevokeAdmin(institution, admin)
-                                    : onRestoreAdmin(institution, admin)
-                                }
-                              >
-                                <Icon icon={admin.isActive ? Ban : RotateCcw} size={12} />
-                                {admin.isActive ? 'إلغاء العضوية' : 'استعادة'}
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </td>
-                    <td data-label="تاريخ الإنشاء">
-                      <span className="owner-inst-metric">
-                        {formatDate(institution.createdAt, { dateStyle: 'medium' })}
-                      </span>
-                    </td>
-                    <td data-label="إجراءات">
-                      <span className="table-row-actions">
-                        {/* r181 (phase-8 owner setup): the institution's own
-                            academic-setup context — faculties → departments
-                            → courses → offerings, all bound to THIS
-                            institution's slug. */}
-                        <Link
-                          to={`/owner/institutions/${institution.slug}`}
-                          className="btn ghost sm"
-                          title={`فتح سياق «${institution.name}» وإعداد بنيتها الأكاديمية`}
-                        >
-                          <Icon icon={ArrowLeft} size={13} />
-                          فتح المؤسسة
-                        </Link>
-                        <button
-                          type="button"
-                          className="btn ghost sm"
-                          onClick={() => setProvisionTarget(institution)}
-                          disabled={mutationBusy}
-                          title={`تعيين مسجل عام لـ«${institution.name}»`}
-                        >
-                          <Icon icon={ShieldCheck} size={13} />
-                          تعيين مسجل عام
-                        </button>
-                        <button
-                          type="button"
-                          /* R305-A8 danger hierarchy: suspending an
-                           * institution cuts every member's access — the
-                           * destructive verb gets the danger fill, while
-                           * the reactivating verb (تنشيط) stays ghost. */
-                          className={`btn ghost sm${institution.status === 'ACTIVE' ? ' r305ao-btn-danger' : ''}`}
-                          onClick={() => onToggleStatus(institution)}
-                          disabled={mutationBusy}
-                        >
-                          <Icon icon={institution.status === 'ACTIVE' ? Ban : RotateCcw} size={13} />
-                          {institution.status === 'ACTIVE' ? 'تعليق' : 'تنشيط'}
-                        </button>
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <>
+            <DataSheet
+              caption="سجلّ المؤسسات"
+              columns={registerColumns}
+              rows={institutions}
+              rowTone={(institution) => (institution.status === 'SUSPENDED' ? 'danger' : undefined)}
+            />
 
-            <div className="table-pagination">
-              <span>{institutionsCountLabel(institutions.length)}</span>
+            <div className="sg-pad-in">
+              <div className="table-pagination">
+                <span>{institutionsCountLabel(institutions.length)}</span>
+              </div>
             </div>
-          </div>
+          </>
         )}
-      </Card>
+      </SheetSection>
 
       <ProvisionAdminModal
         open={provisionTarget !== null}
