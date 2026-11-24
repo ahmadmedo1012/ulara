@@ -23,6 +23,10 @@ import {
   useCouncil, useMyCapabilities, useMeeting, useMeetings, usePeople, useInstActions} from '../../hooks/institutional/queries';
 
 import * as instApi from '../../lib/institutional/api';
+/* R359 final · D-6 — the governance documents register + the PDF
+ * upload/download UI (r352 §12b), composed inside the council and
+ * meeting surfaces. */
+import { GovernanceDocuments, GovernanceUploadForm } from '../../components/institutional/documents';
 import {
   AGENDA_STATUS_LABELS, ATTENDANCE_LABELS, COUNCIL_ROLE_LABELS, COUNCIL_STATUS_LABELS,
   COUNCIL_TYPE_LABELS, MEETING_STATUS_LABELS, MINUTES_STATUS_LABELS,
@@ -202,7 +206,7 @@ export function InstitutionCouncilDetailPage() {
       <InstStates isLoading={councilQuery.isLoading} error={councilQuery.error} isEmpty={!council}>
         {council && (
           <>
-            <InstSection title="النصاب والسند">
+            <InstSection index="01" caption="LEGAL BASIS" title="النصاب والسند">
               <DetailList
                 items={[
                   { label: 'السند القانوني', value: council.legalBasis ?? null },
@@ -214,6 +218,8 @@ export function InstitutionCouncilDetailPage() {
             </InstSection>
 
             <InstSection
+              index="02"
+              caption="MEMBERSHIP"
               title="العضوية"
               description="الرئيس ونائبه وأمين المجلس والأعضاء والمراقبون — بمراجع قرارات التشكيل ومدد العضوية."
               actions={canManage ? (
@@ -248,6 +254,8 @@ export function InstitutionCouncilDetailPage() {
             </InstSection>
 
             <InstSection
+              index="03"
+              caption="MEETINGS"
               title="الاجتماعات"
               actions={canManage ? (
                 <button type="button" className="btn primary sm" onClick={() => setMeetingOpen(true)}>
@@ -288,16 +296,42 @@ export function InstitutionCouncilDetailPage() {
               </InstStates>
             </InstSection>
 
+            {/* R359 final · D-6 — the council documents seat: the real
+                byte-upload flow (POST /governance/documents/upload →
+                attach the storage key to the council) + the metadata
+                reference dialog. The per-meeting registers (with the
+                authorized PDF download verb) render on each meeting's
+                page, where the aggregate serves them. */}
             <InstSection
+              index="04"
+              caption="DOCUMENTS"
               title="مستندات المجلس"
-              description="مراجع ومستندات مرتبطة بالمجلس (بيانات وصفية)."
+              description="ارفع ملف PDF (حتى 15 ميجابايت) فيرتبط بالمجلس مباشرة، أو أضف مرجعًا وصفيًا. سجل المستندات المرتبطة بكل اجتماع يُعرض في صفحة الاجتماع نفسه."
               actions={canManage ? (
                 <button type="button" className="btn ghost sm" onClick={() => setDocOpen(true)}>إضافة مرجع</button>
               ) : null}
             >
-              <p className="inst-section-desc">
-                تُدار مراجع المستندات عبر الخدمة؛ اطرح رفع الملفات كتحسين لاحق موثق في HANDOFF.
-              </p>
+              {canManage ? (
+                <GovernanceUploadForm
+                  onAttached={() => {
+                    /* the council aggregate carries no documents list
+                     * today (the register renders per meeting); the
+                     * toast + the server's audit trail carry the fact. */
+                  }}
+                  attach={(upload, titleAr, kind) => {
+                    if (!id) return Promise.reject(new Error('لا يوجد مجلس.'));
+                    return instApi.addCouncilDocument(id, {
+                      titleAr,
+                      kind,
+                      binaryObjectId: upload.key,
+                    });
+                  }}
+                />
+              ) : (
+                <p className="inst-section-desc">
+                  رفع المستندات وتسجيل المراجع يتطلب قدرة «إدارة المجالس» — الجهة المانحة هي إدارة مؤسستك.
+                </p>
+              )}
             </InstSection>
           </>
         )}
@@ -532,7 +566,9 @@ export function InstitutionMeetingDetailPage() {
           <>
             {/* 1 · التحضير */}
             <InstSection
-              title="١ · التحضير — جدول الأعمال"
+              index="01"
+              caption="AGENDA"
+              title="التحضير — جدول الأعمال"
               description="بنود جدول الأعمال وحالاتها قبل الانعقاد."
               actions={canManage && (
                 <span className="inst-actions">
@@ -578,7 +614,9 @@ export function InstitutionMeetingDetailPage() {
 
             {/* 2 · الانعقاد — الحضور */}
             <InstSection
-              title="٢ · الحضور"
+              index="02"
+              caption="ATTENDANCE"
+              title="الحضور"
               description="سجل الحضور الدقيق: حاضر، غائب، بعذر، متأخر — لكل مشارك صنفه: عضو (يُتحقق من عضويته) أو ضيف (مشارك خارجي موثّق). يُحفظ دفعة واحدة (upsert)."
             >
               {meeting.attendance.length > 0 && (
@@ -643,7 +681,9 @@ export function InstitutionMeetingDetailPage() {
 
             {/* 3 · القرارات */}
             <InstSection
-              title="٣ · القرارات والتوصيات"
+              index="03"
+              caption="RESOLUTIONS"
+              title="القرارات والتوصيات"
               description="قرارات المجلس وتوصياته وإجراءات المتابعة — بحالاتها (مسودة ← معتمد ← منفَّذ)."
               actions={canManage && (
                 <button type="button" className="btn ghost sm" onClick={() => setResolutionOpen(true)}>
@@ -684,7 +724,9 @@ export function InstitutionMeetingDetailPage() {
 
             {/* 4 · المحضر */}
             <InstSection
-              title="٤ · المحضر"
+              index="04"
+              caption="MINUTES"
+              title="المحضر"
               description="المسودة تُحفظ بعد الانعقاد؛ الاعتماد ثم التوقيع خطوتان منفصلتان بتاريخيهما."
             >
               {!meeting.minutes && (
@@ -738,6 +780,37 @@ export function InstitutionMeetingDetailPage() {
                 <button type="button" className="btn primary sm" disabled={busy} onClick={signMinutes}>
                   توقيع المحضر (بصفة الرئيس)
                 </button>
+              )}
+            </InstSection>
+
+            {/* 5 · مستندات الاجتماع — R359 final · D-6: the register the
+                meeting aggregate serves, with the authorized PDF
+                download verb + the meeting-linked byte-upload flow. */}
+            <InstSection
+              index="05"
+              caption="DOCUMENTS"
+              title="مستندات الاجتماع"
+              description="الملفات والمراجع المرتبطة بهذا الاجتماع — التنزيل يجري عبر قناة الخدمة المصرّح بها (نطاق مؤسستك)."
+            >
+              <GovernanceDocuments
+                documents={meeting.documents ?? []}
+                emptyNote={canManage
+                  ? 'لا مستندات مرتبطة بهذا الاجتماع بعد — ارفع ملف PDF أو أضف مرجعًا أدناه.'
+                  : 'لا مستندات مرتبطة بهذا الاجتماع بعد.'}
+              />
+              {canManage && (
+                <GovernanceUploadForm
+                  onAttached={() => void meetingQuery.refetch()}
+                  attach={(upload, titleAr, kind) => {
+                    if (!id) return Promise.reject(new Error('لا يوجد مجلس.'));
+                    return instApi.addCouncilDocument(id, {
+                      titleAr,
+                      kind,
+                      meetingId: meeting.meeting.id,
+                      binaryObjectId: upload.key,
+                    });
+                  }}
+                />
               )}
             </InstSection>
           </>

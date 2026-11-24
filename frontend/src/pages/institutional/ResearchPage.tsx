@@ -13,6 +13,7 @@ import {
   InstSection, InstStates, InstSelect, type InstColumn,
   type InstField, type InstFormValues,
 } from './scaffold';
+import { KpiBand } from '../../components/patterns';
 import {
   useMyCapabilities, useOrgUnitTree, usePeople, useResearchOutputs, useResearchProject, useResearchProjects, useInstActions } from '../../hooks/institutional/queries';
 import * as instApi from '../../lib/institutional/api';
@@ -179,6 +180,27 @@ export function InstitutionResearchPage() {
         />
       </InstFilters>
 
+      {/* R359 final · W3 — the research facts ride the KPI band. */}
+      <KpiBand
+        items={[
+          {
+            index: '01',
+            caption: 'PROJECTS',
+            label: 'المشاريع البحثية (الاستعلام الحالي)',
+            value: projectsQuery.data?.meta.total ?? 0,
+            empty: projectsQuery.data == null,
+          },
+          {
+            index: '02',
+            caption: 'OUTPUTS',
+            label: 'المخرجات البحثية (الاستعلام الحالي)',
+            value: outputsQuery.data?.meta.total ?? 0,
+            empty: outputsQuery.data == null,
+          },
+        ]}
+      />
+
+      <InstSection index="01" caption="RESEARCH PROJECTS" title="سجلّ المشاريع البحثية" pad="none">
       <InstPagedTable
         query={projectsQuery}
         columns={columns}
@@ -188,8 +210,10 @@ export function InstitutionResearchPage() {
         onPage={setPage}
         onRowClick={(p) => navigate(`/institution/research/${p.id}`)}
       />
+      </InstSection>
 
-      <InstSection title="أحدث المخرجات البحثية">
+      <InstSection index="02" caption="RESEARCH OUTPUTS" title="أحدث المخرجات البحثية" pad="none">
+        <div className="sg-pad-in">
         <InstFilters>
           <InstSelect
             ariaLabel="تصفية بنوع المخرج"
@@ -199,6 +223,7 @@ export function InstitutionResearchPage() {
             options={Object.entries(RESEARCH_OUTPUT_LABELS).map(([value, label]) => ({ value, label }))}
           />
         </InstFilters>
+        </div>
         <InstPagedTable
           query={outputsQuery}
           columns={outColumns}
@@ -300,6 +325,8 @@ export function InstitutionResearchDetailPage() {
         {project && (
           <>
             <InstSection
+              index="01"
+              caption="PROJECT"
               title="بيانات المشروع"
               actions={canManage && (
                 <span className="inst-actions">
@@ -325,6 +352,8 @@ export function InstitutionResearchDetailPage() {
             </InstSection>
 
             <InstSection
+              index="02"
+              caption="TEAM"
               title="فريق البحث"
               actions={canManage && (
                 <button type="button" className="btn primary sm" onClick={() => setMemberOpen(true)}>

@@ -12,6 +12,7 @@ import {
   InstStates, InstSelect, type InstColumn, type InstField,
   type InstFormValues,
 } from './scaffold';
+import { KpiBand } from '../../components/patterns';
 import {
   useEquipment, useFacilities, useFacility, useMyCapabilities,
   useOrgUnitTree, usePrograms, useReservations, useSafetyIncidents, useWorkOrders, useInstActions } from '../../hooks/institutional/queries';
@@ -159,7 +160,28 @@ export function InstitutionFacilitiesPage() {
         ) : null}
       />
 
-      <InstSection title="١ · المنشآت">
+      {/* R359 final · W3 — the facilities facts ride the KPI band. */}
+      <KpiBand
+        items={[
+          {
+            index: '01',
+            caption: 'FACILITIES',
+            label: 'المنشآت (الاستعلام الحالي)',
+            value: facilitiesQuery.data?.meta.total ?? 0,
+            empty: facilitiesQuery.data == null,
+          },
+          {
+            index: '02',
+            caption: 'EQUIPMENT',
+            label: 'الأجهزة والمعدات (الاستعلام الحالي)',
+            value: equipmentQuery.data?.meta.total ?? 0,
+            empty: equipmentQuery.data == null,
+          },
+        ]}
+      />
+
+      <InstSection index="01" caption="FACILITIES" title="المنشآت" pad="none">
+        <div className="sg-pad-in">
         <InstFilters>
           <InstSelect
             ariaLabel="تصفية بالنوع"
@@ -176,6 +198,7 @@ export function InstitutionFacilitiesPage() {
             options={Object.entries(FACILITY_STATUS_LABELS).map(([value, label]) => ({ value, label }))}
           />
         </InstFilters>
+        </div>
         <InstPagedTable
           query={facilitiesQuery}
           columns={facColumns}
@@ -188,7 +211,9 @@ export function InstitutionFacilitiesPage() {
       </InstSection>
 
       <InstSection
-        title="٢ · الأجهزة والمعدات"
+        index="02"
+        caption="EQUIPMENT"
+        title="الأجهزة والمعدات"
         description="جرد الأصول وحالتها الفنية ومسؤوليها — وربطها بالبرامج التي تخدمها من صفحة تفاصيل المنشأة."
         actions={canManage ? (
           <button type="button" className="btn primary sm" onClick={() => setEqOpen(true)}>
@@ -426,7 +451,7 @@ export function InstitutionFacilityDetailPage() {
       <InstStates isLoading={facilityQuery.isLoading} error={facilityQuery.error} isEmpty={!facility}>
         {facility && (
           <>
-            <InstSection title="بيانات المنشأة">
+            <InstSection index="01" caption="FACILITY" title="بيانات المنشأة">
               <DetailList
                 items={[
                   { label: 'الوحدة المسؤولة', value: facility.orgUnit?.nameAr ?? null },
@@ -438,6 +463,8 @@ export function InstitutionFacilityDetailPage() {
             </InstSection>
 
             <InstSection
+              index="02"
+              caption="EQUIPMENT"
               title="أجهزة المنشأة"
               description="جرد المنشأة — كل جهاز يوثّق البرامج التي يخدمها (معايير التدريب العملي)."
             >

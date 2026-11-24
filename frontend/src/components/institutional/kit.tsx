@@ -14,7 +14,7 @@ import { Link } from 'react-router-dom';
 import { Icon } from '../Icon';
 import { Search, X, Loader2, ChevronDown } from 'lucide-react';
 import { EmptyState, ErrorState, ListSkeleton } from '../primitives/States';
-import { SheetEmpty } from '../patterns/Sheet';
+import { SheetEmpty, SheetSection, DataSheet, type DataSheetColumn } from '../patterns/Sheet';
 import { TablePaginationFooter } from '../../pages/admin/TablePaginationFooter';
 import { toneOf, type InstTone } from '../../lib/institutional/labels';
 import { cycleFocusTrap } from '../../lib/focusTrap';
@@ -159,54 +159,59 @@ export interface InstColumn<Row> {
   width?: number;
   /** Column header only — hide on mobile stacking (decorative). */
   mobileHidden?: boolean;
+  /** R359 final · W3 — the sheet registers: mono micro-text (codes),
+   * numeric (tabular LTR numerals) and the row's inline-start tone pin. */
+  mono?: boolean;
+  numeric?: boolean;
+  tone?: (row: Row) => 'positive' | 'warning' | 'danger' | 'signal' | undefined;
+}
+
+/** InstColumn → DataSheetColumn (the R359 final bridge: the whole
+ * workspace's list anatomy rides the sheet-grammar DataSheet — mono
+ * head, hairline rows, row pins, hover fill, labelled cards ≤640px —
+ * with the callers' column configs untouched). */
+function toSheetColumns<Row>(columns: Array<InstColumn<Row>>): Array<DataSheetColumn<Row>> {
+  return columns.map((c) => ({
+    key: c.head,
+    label: c.head,
+    mono: c.mono,
+    numeric: c.numeric,
+    noLabel: c.mobileHidden,
+    render: c.cell,
+  }));
 }
 
 /**
- * The one table anatomy every list uses: .table-wrap > table.table
- * .tbl-stack (the platform's table system — responsive stacking via
- * data-label), sticky-header-free, hairline rows.
+ * The one table anatomy every list uses (R359 final · W3: the sheet-
+ * grammar DataSheet — the .table/.tbl-stack register it rode from
+ * r352 to r358 is retired with the grammar law; onRowClick survives
+ * as the row's button register with Enter/Space support).
  */
 export function InstTable<Row>({
-  rows, columns, rowKey, onRowClick, ariaLabel, dense,
+  rows, columns, onRowClick, ariaLabel, dense,
 }: {
   rows: Row[];
   columns: Array<InstColumn<Row>>;
-  rowKey: (row: Row) => string;
+  /** Kept for the r352 call-site contract (the DataSheet keys rows
+   * by index; identity rides the page's query cache). */
+  rowKey?: (row: Row) => string;
   onRowClick?: (row: Row) => void;
   ariaLabel: string;
   dense?: boolean;
 }) {
+  /* one tone fn per table (the FIRST column that declares one owns the
+   * row pin; tone is a row property, not a column one). */
+  const tone = columns.find((c) => c.tone)?.tone;
+  const sheetColumns = useMemo(() => toSheetColumns(columns), [columns]);
   return (
-    <div className="table-wrap">
-      <table className={`table tbl-stack${dense ? ' inst-table-dense' : ''}`} aria-label={ariaLabel}>
-        <thead>
-          <tr>
-            {columns.map((c, i) => (
-              <th key={i} scope="col">{c.head}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row) => (
-            <tr
-              key={rowKey(row)}
-              onClick={onRowClick ? () => onRowClick(row) : undefined}
-              className={onRowClick ? 'inst-row-click' : undefined}
-              tabIndex={onRowClick ? 0 : undefined}
-              onKeyDown={onRowClick ? (e) => {
-                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onRowClick(row); }
-              } : undefined}
-            >
-              {columns.map((c, i) => (
-                <td key={i} data-label={c.mobileHidden ? undefined : c.head}>
-                  {c.cell(row)}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <DataSheet
+      caption={ariaLabel}
+      columns={sheetColumns}
+      rows={rows}
+      rowTone={tone ? (row) => tone(row) : undefined}
+      onRowClick={onRowClick}
+      className={dense ? 'inst-table-dense' : undefined}
+    />
   );
 }
 
@@ -247,13 +252,17 @@ export function InstPagedTable<Row>({
         />
       </InstStates>
       {meta && meta.totalPages > 1 && (
-        <TablePaginationFooter
-          page={meta.page}
-          totalPages={meta.totalPages}
-          total={meta.total}
-          unit={unit}
-          onPage={onPage}
-        />
+        /* R359 final · W3: the footer rides the sheet's own padded
+         * register (hairline rule over the table's last row). */
+        <div className="sg-pad-in">
+          <TablePaginationFooter
+            page={meta.page}
+            totalPages={meta.totalPages}
+            total={meta.total}
+            unit={unit}
+            onPage={onPage}
+          />
+        </div>
       )}
     </>
   );
@@ -261,23 +270,39 @@ export function InstPagedTable<Row>({
 
 /* ── the section header used inside detail pages ────────────────── */
 
+/**
+ * R359 final · W3: InstSection IS the sheet grammar now — a thin
+ * wrapper over SheetSection (hairline frame + registration crosses +
+ * the draw-in rule) so every detail page that composes it speaks the
+ * same language as the recomposed fleet. `index`/`caption` are
+ * optional additions; the old call sites keep working (the frame is
+ * the upgrade they get for free).
+ */
 export function InstSection({
-  title, actions, children, description,
+  title, actions, children, description, index, caption, pad,
 }: {
   title: string;
   description?: string;
   actions?: ReactNode;
   children: ReactNode;
+  /** The bracketed mono index — explicit, page-authored ('01'). */
+  index?: string;
+  /** Latin mono micro-caption over the title (a real classification). */
+  caption?: string;
+  /** Body padding register (tables ride pad='none'). */
+  pad?: 'none' | 'tight';
 }) {
   return (
-    <section className="inst-section">
-      <header className="inst-section-head">
-        <h3 className="inst-section-title">{title}</h3>
-        {actions}
-      </header>
-      {description && <p className="inst-section-desc">{description}</p>}
+    <SheetSection
+      index={index}
+      caption={caption}
+      title={title}
+      desc={description}
+      aside={actions}
+      pad={pad}
+    >
       {children}
-    </section>
+    </SheetSection>
   );
 }
 

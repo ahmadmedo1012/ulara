@@ -37,6 +37,7 @@ export function SheetSection({
   index,
   caption,
   title,
+  desc,
   aside,
   children,
   size,
@@ -51,6 +52,8 @@ export function SheetSection({
   caption?: string;
   /** The Arabic section title (h2/h3 by size). */
   title?: ReactNode;
+  /** Optional Arabic explainer under the title (the head's second line). */
+  desc?: ReactNode;
   /** Actions slot on the head rule. */
   aside?: ReactNode;
   children: ReactNode;
@@ -78,13 +81,14 @@ export function SheetSection({
       <i className="sg-reg sg-reg--tr" aria-hidden="true" />
       <i className="sg-reg sg-reg--bl" aria-hidden="true" />
       <i className="sg-reg sg-reg--br" aria-hidden="true" />
-      {(title !== undefined || caption !== undefined || aside !== undefined) && (
+      {(title !== undefined || caption !== undefined || aside !== undefined || desc !== undefined) && (
         <header className="sg-head">
           <div className="sg-head-main">
             {index !== undefined && <span className="sg-index" aria-hidden="true">[{index}]</span>}
             <div>
               {caption !== undefined && <span className="sg-caption">{caption}</span>}
               {title !== undefined && <h2 className="sg-title">{title}</h2>}
+              {desc !== undefined && <p className="sg-desc">{desc}</p>}
             </div>
           </div>
           {aside !== undefined && <div className="sg-aside">{aside}</div>}
@@ -217,8 +221,10 @@ export function DataSheet<Row>({
   caption,
   rowTone,
   rowTo,
+  onRowClick,
   empty,
   loading,
+  className,
 }: {
   columns: DataSheetColumn<Row>[];
   rows: Row[];
@@ -228,8 +234,12 @@ export function DataSheet<Row>({
   rowTone?: (row: Row, index: number) => KpiTone | undefined;
   /** Row link target — makes rows clickable with the arrow register. */
   rowTo?: (row: Row, index: number) => string | undefined;
+  /** R359 final · W3 — click handler (the workspace's dialog-opening
+   * rows): the clickable + cursor register without a navigation. */
+  onRowClick?: (row: Row, index: number) => void;
   empty?: ReactNode;
   loading?: boolean;
+  className?: string;
 }) {
   if (loading) {
     return (
@@ -263,8 +273,9 @@ export function DataSheet<Row>({
   if (rows.length === 0) {
     return <>{empty ?? <SheetEmpty title="لا بيانات بعد" desc="ستظهر السجلات هنا فور توفرها." />}</>;
   }
+  const clickable = rowTo !== undefined || onRowClick !== undefined;
   return (
-    <div className="sg-sheet-wrap">
+    <div className={`sg-sheet-wrap${className ? ` ${className}` : ''}`}>
       <table className="sg-table">
         <caption className="sr-only">{caption}</caption>
         <thead>
@@ -282,7 +293,7 @@ export function DataSheet<Row>({
                 {c.label}
               </th>
             ))}
-            {rowTo !== undefined && <th scope="col" aria-hidden="true" style={{ inlineSize: '1rem' }} />}
+            {clickable && <th scope="col" aria-hidden="true" style={{ inlineSize: '1rem' }} />}
           </tr>
         </thead>
         <tbody>
@@ -303,7 +314,7 @@ export function DataSheet<Row>({
                     {c.render(row, i)}
                   </td>
                 ))}
-                {rowTo !== undefined && (
+                {clickable && (
                   <td className="sg-no-label sg-num" aria-hidden="true">
                     <span className="sg-row-go">
                       <ArrowLeft size={14} aria-hidden="true" />
@@ -312,11 +323,38 @@ export function DataSheet<Row>({
                 )}
               </>
             );
-            return to !== undefined ? (
-              <tr key={i} data-tone={tone} data-clickable="true">
-                {cells}
-              </tr>
-            ) : (
+            if (to !== undefined) {
+              return (
+                <tr key={i} data-tone={tone} data-clickable="true">
+                  {cells}
+                </tr>
+              );
+            }
+            if (onRowClick !== undefined) {
+              /* the workspace's dialog-opening rows: button semantics on
+               * the row (Enter/Space), cursor + hover registers via
+               * [data-clickable] — no fake anchor; the accessible name
+               * is the row's own content. */
+              return (
+                <tr
+                  key={i}
+                  data-tone={tone}
+                  data-clickable="true"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => onRowClick(row, i)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      onRowClick(row, i);
+                    }
+                  }}
+                >
+                  {cells}
+                </tr>
+              );
+            }
+            return (
               <tr key={i} data-tone={tone}>
                 {cells}
               </tr>

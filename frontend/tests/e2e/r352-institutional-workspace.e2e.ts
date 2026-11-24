@@ -184,6 +184,22 @@ const MEETING_DETAIL = {
     contentAr: 'افتُتح الاجتماع بحضور الأعضاء…', status: 'DRAFT',
     approvedAt: null, approvedByPersonId: null, signedAt: null, signedByPersonId: null,
   },
+  /* R359 final · D-6 — the meeting-linked governance documents: one
+   * byte-attached PDF (downloads via /governance/documents/:id/file)
+   * + one external reference (metadata-only, honest flag). */
+  documents: [
+    {
+      id: 'doc-bytes-1', councilId: 'council-sci', meetingId: 'meeting-1',
+      titleAr: 'محضر الاجتماع المُوقَّع 2025', binaryObjectId: 'governance/inst-r352-e2e/fixture-1.pdf',
+      fileUrl: null, kind: 'محضر', notes: null, uploadedById: 'u-admin', createdAt: NOW,
+    },
+    {
+      id: 'doc-ref-1', councilId: 'council-sci', meetingId: 'meeting-1',
+      titleAr: 'مرجع اللائحة التنظيمية', binaryObjectId: null,
+      fileUrl: 'https://example.org/regulations', kind: 'لائحة', notes: null,
+      uploadedById: 'u-admin', createdAt: NOW,
+    },
+  ],
 };
 
 const PEOPLE_PAGE = {
@@ -331,6 +347,28 @@ async function installInstitutionalApi(page: Page, caps: string[]) {
       method: 'GET',
       pattern: '**/api/v1/governance/meetings/meeting-1',
       fulfill: (ctx) => statefulOk(ctx.route, MEETING_DETAIL),
+    },
+    // R359 final · D-6 — the byte upload answers the contract shape;
+    // the file stream answers real (tiny) PDF bytes.
+    {
+      method: 'POST',
+      pattern: '**/api/v1/governance/documents/upload',
+      fulfill: (ctx) =>
+        statefulOk(ctx.route, {
+          key: 'governance/inst-r352-e2e/uploaded-e2e.pdf',
+          sizeBytes: 1024,
+          mimeType: 'application/pdf',
+        }),
+    },
+    {
+      method: 'GET',
+      pattern: '**/api/v1/governance/documents/doc-bytes-1/file',
+      fulfill: (ctx) =>
+        ctx.route.fulfill({
+          status: 200,
+          contentType: 'application/pdf',
+          body: '%PDF-1.4\n%\xc7\xec\x8f\xa2\n1 0 obj<<>>endobj\ntrailer<<>>\n%%EOF',
+        }),
     },
     // every other institutional read the rail pages fire answers empty
     {

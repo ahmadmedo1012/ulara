@@ -13,6 +13,7 @@ import {
   InstFormDialog, InstPagedTable, InstSection, InstStates,
   InstSelect, type InstColumn, type InstField, type InstFormValues,
 } from './scaffold';
+import { KpiBand } from '../../components/patterns';
 import {
   useCredentialTypes, useMyCapabilities, usePrograms, useTerms, useInstActions } from '../../hooks/institutional/queries';
 import * as instApi from '../../lib/institutional/api';
@@ -148,6 +149,33 @@ export function InstitutionProgramsPage() {
         />
       </InstFilters>
 
+      {/* R359 final · W3 — the programs facts ride the KPI band. */}
+      <KpiBand
+        items={[
+          {
+            index: '01',
+            caption: 'PROGRAMS',
+            label: 'البرامج (الاستعلام الحالي)',
+            value: programsQuery.data?.meta.total ?? 0,
+            empty: programsQuery.data == null,
+          },
+          {
+            index: '02',
+            caption: 'TERMS',
+            label: 'الفصول الدراسية المسجلة',
+            value: termsQuery.data?.length ?? 0,
+            empty: termsQuery.data == null,
+          },
+          {
+            index: '03',
+            caption: 'KINDS',
+            label: 'طبائع البرامج المتاحة',
+            value: Object.keys(PROGRAM_KIND_LABELS).length,
+          },
+        ]}
+      />
+
+      <InstSection index="01" caption="PROGRAMS" title="سجلّ البرامج" pad="none">
       <InstPagedTable
         query={programsQuery}
         columns={columns}
@@ -157,8 +185,11 @@ export function InstitutionProgramsPage() {
         onPage={setPage}
         onRowClick={(p) => navigate(`/institution/programs/${p.id}`)}
       />
+      </InstSection>
 
       <InstSection
+        index="02"
+        caption="ACADEMIC TERMS"
         title="الفصول الدراسية"
         description="الأعوام/الفصول الدراسية المعتمدة للبرامج."
         actions={canManage ? (

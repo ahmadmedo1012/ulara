@@ -405,6 +405,10 @@ export interface MeetingDetail {
   attendance: AttendanceRecord[];
   resolutions: CouncilResolution[];
   minutes: MeetingMinutes | null;
+  /** D-6 — the meeting-linked document register (the backend
+   * aggregate includes it; the download stream is
+   * GET /governance/documents/:id/file). */
+  documents?: CouncilDocument[];
 }
 
 export interface CouncilDocument {
@@ -412,9 +416,14 @@ export interface CouncilDocument {
   councilId: ID;
   meetingId?: ID | null;
   titleAr: string;
+  /** D-6 — the governance storage key (`governance/<instId>/<uuid>.pdf`)
+   * when real bytes are attached; the document streams via
+   * GET /governance/documents/:id/file only when this is present. */
+  binaryObjectId?: string | null;
   fileUrl?: string | null;
   kind?: string | null;
   notes?: string | null;
+  uploadedById?: ID | null;
   createdAt: string;
 }
 

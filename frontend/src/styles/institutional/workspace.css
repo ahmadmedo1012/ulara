@@ -333,6 +333,16 @@
   font-size: var(--fs-xs);
 }
 
+/* R359 final · W3 — the dense register rides the DataSheet wrap now
+ * (the kit bridge passes the class onto .sg-sheet-wrap); the r352
+ * .table targets stay for any straggler page that still renders the
+ * old anatomy. */
+.sg-sheet-wrap.inst-table-dense td,
+.sg-sheet-wrap.inst-table-dense th {
+  font-size: var(--fs-xs);
+  padding-block: var(--sp-2);
+}
+
 .inst-row-click { cursor: pointer; }
 .inst-row-click:hover { background: var(--surface-2); }
 .inst-row-click:focus-visible {
@@ -654,32 +664,44 @@
 .inst-cap-note b { color: var(--text-secondary); font-weight: var(--fw-semibold); }
 
 /* ── stat strip (module overviews) ────────────────────────────── */
+/* R359 final · W3 — the module-overview stats join the KPI-band
+ * register by CSS (the .sg-kpis anatomy): ONE hairline-divided strip,
+ * huge mono tabular numerals, mono micro-labels — no boxed cards.
+ * (OverviewPage now composes the real KpiBand; this restyle is the
+ * safety net for any page that still emits .inst-stats.) */
 
 .inst-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: var(--sp-2-5);
+  border: 1px solid var(--rule);
+  background: var(--paper);
 }
 
 .inst-stat {
-  border: 1px solid var(--surface-border);
-  border-radius: var(--r-md);
-  background: var(--surface);
-  padding: var(--sp-3);
   display: grid;
   gap: var(--sp-1);
+  align-content: start;
+  padding: var(--sp-3) var(--sp-4);
+  border: 0;
+  background: transparent;
 }
 
+.inst-stat + .inst-stat { border-inline-start: 1px solid var(--rule); }
+
 .inst-stat-value {
+  font-family: var(--font-mono);
   font-size: var(--fs-metric-md);
-  font-weight: var(--fw-bold);
+  font-weight: 500;
   color: var(--text-strong);
   font-variant-numeric: tabular-nums;
+  line-height: 1.1;
 }
 
 .inst-stat-label {
-  font-size: var(--fs-xs);
-  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-xs);
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
 }
 
 /* ── attendance / member pickers ──────────────────────────────── */
@@ -788,3 +810,43 @@
 .inst-masthead { min-inline-size: 0; }
 
 } /* end @layer pages */
+
+/* ── R359 final · W3 — the flattened catalog groups (the position
+ * templates' per-category registers inside ONE framed section; the
+ * nested frames retired — the grammar's flat law). ─────────────── */
+
+.inst-catalog-group + .inst-catalog-group {
+  margin-block-start: var(--sp-5);
+  border-block-start: 1px solid var(--rule);
+  padding-block-start: var(--sp-4);
+}
+
+.inst-catalog-group-title {
+  margin: 0 0 var(--sp-2);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--text-strong);
+}
+
+/* ── R359 final · D-6 — the governance upload form (the council
+ * documents register): the InstFormDialog field anatomy, sheet-flat
+ * (hairline inputs, 0 radius, no fills). ───────────────────────── */
+
+.inst-upload-form {
+  display: grid;
+  gap: var(--sp-3);
+  max-inline-size: 34rem;
+}
+
+.inst-upload-form .inst-dialog-actions { justify-content: flex-start; }
+
+.inst-upload-progress {
+  inline-size: 100%;
+  block-size: 4px;
+  appearance: none;
+  background: transparent;
+  border: 0;
+}
+.inst-upload-progress::-webkit-progress-bar { background: var(--surface-2); }
+.inst-upload-progress::-webkit-progress-value { background: var(--accent); }
+.inst-upload-progress::-moz-progress-bar { background: var(--accent); }

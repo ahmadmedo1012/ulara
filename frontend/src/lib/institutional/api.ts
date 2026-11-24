@@ -223,7 +223,59 @@ export const signMinutes = (meetingId: ID, signedByPersonId: ID) =>
 
 export const addCouncilDocument = (councilId: ID, input: {
   titleAr: string; fileUrl?: string; kind?: string; meetingId?: ID; notes?: string;
+  /** D-6 — the governance storage key returned by
+   * POST /governance/documents/upload (§9: the server verifies the
+   * key belongs to THIS institution's governance namespace). */
+  binaryObjectId?: string;
 }) => post<CouncilDocument>(`/governance/councils/${councilId}/documents`, input);
+
+/* ── D-6 — governance document bytes (the r352 §12b contract) ──── */
+
+/** What POST /governance/documents/upload answers (201). */
+export interface GovernanceUploadResult {
+  /** The tenant-scoped storage key — becomes the council document's
+   * binaryObjectId on attach (`governance/<instId>/<uuid>.pdf`). */
+  key: string;
+  sizeBytes: number;
+  mimeType: 'application/pdf';
+}
+
+/**
+ * D-6 — the raw PDF byte upload: the request body IS the file, with
+ * Content-Type application/pdf (the backend's express.raw gate). The
+ * XHR path rides automatically via onUploadProgress so the caller can
+ * paint a byte-accurate bar; server rules (magic bytes, active-content
+ * gate, 15 MiB cap) surface their own Arabic messages verbatim.
+ */
+export function uploadGovernancePdf(
+  file: File,
+  onUploadProgress?: (fraction: number) => void,
+): Promise<GovernanceUploadResult> {
+  return unwrap<GovernanceUploadResult>(api.post<never>('/governance/documents/upload', file, {
+    headers: { 'Content-Type': 'application/pdf' },
+    timeout: 120_000,
+    ...(onUploadProgress
+      ? {
+          onUploadProgress: (e) => {
+            if (e.total) onUploadProgress(e.loaded / e.total);
+          },
+        }
+      : {}),
+  }));
+}
+
+/**
+ * D-6 — the authorized PDF stream: fetches the document's bytes as a
+ * Blob (Bearer-authenticated; the browser could never fetch the
+ * tenant-scoped key directly). The caller saves it via an object URL.
+ */
+export async function fetchGovernanceDocumentFile(documentId: ID): Promise<Blob> {
+  const res = await api.get<never>(`/governance/documents/${documentId}/file`, {
+    responseType: 'blob',
+    timeout: 60_000,
+  });
+  return res.data as Blob;
+}
 
 /* ── §7 programs, terms, enrollments, placements ────────────────── */
 

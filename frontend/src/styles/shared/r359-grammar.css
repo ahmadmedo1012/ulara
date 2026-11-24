@@ -148,6 +148,16 @@
   color: var(--text);
 }
 .sg-section--lg .sg-title { font-size: var(--fs-app-h2); line-height: 1.15; }
+/* R359 final · W3 — the head's Arabic explainer line (InstSection's
+ * old description seat, translated: secondary ink, one line, rides
+ * under the title inside the same head rule). */
+.sg-desc {
+  margin: var(--sp-1) 0 0;
+  font-size: var(--fs-xs);
+  line-height: 1.6;
+  color: var(--text-secondary);
+  max-inline-size: 62ch;
+}
 .sg-aside {
   display: flex;
   align-items: center;
