@@ -1,0 +1,21 @@
+dd8c11aa98899a1eddcec25abc947a563f50026a
+{"data":{"ok":true,"db":{"ok":true,"latencyMs":19},"storageDriver":"postgres","aiMode":"openai","mailProvider":"resend","buildId":"dd8c11aa9889","serverTime":"2026-11-24T23:30:59.694Z","maxPdfUploadBytes":4194304,"minAppVersion":null,"updateUrl":"https://ulara.vercel.app/app","latestAppVersion":null}}
+colleges: 200
+E2E iOS (real WebKit, iPhone 13)	failure
+E2E (hermetic browser journeys)	cancelled
+Zero-trace (retired identities)	success
+Typecheck (src + tests)	success
+Design gates (icons + motion + colors + raw-css type/radius/spacing + parity + CSP)	success
+Lint (eslint, src trees)	failure
+Test (backend)	success
+Build (DB-free)	success
+Test (frontend)	failure
+DB integration (transactions + locks, disposable Postgres)	success
+Surface drift	skipped
+dd8c11aa98899a1eddcec25abc947a563f50026a	refs/heads/main
+6f98b960e6910da7a5d3fc18d1b5dc2b68d78e0b	refs/heads/r358/visual-match
+553cf08695c9308d96b5232b229bf961cfe3a484	refs/heads/r359/a1-landing
+52819752a9f5c81acd4e04e5d438426b84a1a4be	refs/heads/r359/a2-art
+0b1c9390efb049bc61f1db7e5fba801d50692c9a	refs/heads/r359/a3-product
+f5ca4442e6f055dcee703cbcaae825b398998447	refs/heads/r359/a4-mobile-backend
+22a03b61bf421970ac573a02be7b6141281113d0	refs/heads/r360/integration
