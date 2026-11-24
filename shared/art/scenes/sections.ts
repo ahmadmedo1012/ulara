@@ -13,7 +13,7 @@
  */
 import type { ArtBuilder, ArtDoc, ArtNode } from '../grammar';
 import {
-  C, D, W, circ, dashRule, dimH, hatchPoly, label, line,
+  C, D, W, circ, dashRule, dimH, g, hatchPoly, label, line,
   path, rect, stairs, stipplePoly, tree,
 } from '../grammar';
 
@@ -40,21 +40,53 @@ function link(x1: number, y1: number, x2: number, y2: number): ArtNode {
   return line(x1, y1, x2, y2, { stroke: C.sig, 'stroke-width': W.fine, 'stroke-dasharray': '5 4' });
 }
 
-/** a small plan fragment (rooms) used as the base of why plates */
+/** a real plan fragment: poché walls, opening + swing, furniture */
 function planFragment(x: number, y: number, w: number, h: number, seed: number): ArtNode[] {
   const out: ArtNode[] = [];
-  out.push(rect(x, y, w, h, { fill: 'none', stroke: C.ink, 'stroke-width': 3 }));
-  out.push(line(x + w * 0.55, y, x + w * 0.55, y + h, { stroke: C.ink, 'stroke-width': 2 }));
-  out.push(line(x, y + h * 0.45, x + w * 0.55, y + h * 0.45, { stroke: C.ink, 'stroke-width': 2 }));
-  // furniture hints
+  const XW2 = 8, PW2 = 5;
+  // poché envelope
+  out.push(line(x, y, x + w, y, { stroke: C.ink, 'stroke-width': XW2, 'stroke-linecap': 'square' }));
+  out.push(line(x + w, y, x + w, y + h, { stroke: C.ink, 'stroke-width': XW2, 'stroke-linecap': 'square' }));
+  out.push(line(x + w, y + h, x, y + h, { stroke: C.ink, 'stroke-width': XW2, 'stroke-linecap': 'square' }));
+  out.push(line(x, y + h, x, y, { stroke: C.ink, 'stroke-width': XW2, 'stroke-linecap': 'square' }));
+  // partitions with a door opening
+  out.push(line(x + w * 0.58, y, x + w * 0.58, y + h * 0.38, { stroke: C.ink, 'stroke-width': PW2 }));
+  out.push(line(x + w * 0.58, y + h * 0.62, x + w * 0.58, y + h, { stroke: C.ink, 'stroke-width': PW2 }));
+  out.push(rect(x + w * 0.58 - PW2 / 2 - 1, y + h * 0.38, PW2 + 2, h * 0.24, { fill: 'var(--r359-paper)', stroke: 'none' }));
+  out.push(path(`M${x + w * 0.58} ${y + h * 0.62}A${h * 0.24} ${h * 0.24} 0 0 1 ${x + w * 0.58 + h * 0.24} ${y + h * 0.38}`, { fill: 'none', stroke: C.ink, 'stroke-width': W.hair, opacity: 0.8 }));
+  // window band on the far wall
+  out.push(rect(x + w * 0.14, y - XW2 / 2 - 2, w * 0.3, 2, { fill: C.paper, stroke: 'none' }));
+  out.push(line(x + w * 0.14, y - 3, x + w * 0.44, y - 3, { stroke: C.ink, 'stroke-width': W.fine }));
+  out.push(line(x + w * 0.14, y + 3, x + w * 0.44, y + 3, { stroke: C.ink, 'stroke-width': W.fine }));
+  // furniture: desks + X-box
   const r = seed * 13;
-  for (let i = 0; i < 5; i++) {
-    const fx = x + 18 + ((r * (i + 3) * 37) % Math.max(1, w - 70));
-    const fy = y + 18 + ((r * (i + 5) * 53) % Math.max(1, h - 60));
-    out.push(rect(fx, fy, 26, 14, { fill: 'none', stroke: C.ink, 'stroke-width': W.hair, opacity: 0.7 }));
+  for (let i = 0; i < 4; i++) {
+    const fx = x + 24 + ((r * (i + 3) * 37) % Math.max(1, w * 0.5 - 60));
+    const fy = y + 24 + ((r * (i + 5) * 53) % Math.max(1, h - 80));
+    out.push(rect(fx, fy, 40, 20, { fill: 'none', stroke: C.ink, 'stroke-width': W.hair }));
+    out.push(rect(fx + 13, fy + 22, 14, 10, { fill: 'none', stroke: C.ink, 'stroke-width': W.hair, opacity: 0.7 }));
   }
-  out.push(dashRule(x - 14, y + h * 0.5, x - 2, y + h * 0.5));
+  out.push(rect(x + w * 0.68, y + h * 0.12, 54, 34, { fill: 'none', stroke: C.ink, 'stroke-width': W.fine }));
+  out.push(line(x + w * 0.68, y + h * 0.12, x + w * 0.68 + 54, y + h * 0.12 + 34, { stroke: C.ink, 'stroke-width': W.hair }));
+  out.push(line(x + w * 0.68 + 54, y + h * 0.12, x + w * 0.68, y + h * 0.12 + 34, { stroke: C.ink, 'stroke-width': W.hair }));
+  // title block + scale bar
+  out.push(line(x, y + h + 34, x + w * 0.66, y + h + 34, { stroke: C.ink, 'stroke-width': W.med }));
+  out.push(label(x, y + h + 50, `ROOM ${seed}/A · SCALE 1:100`, { fill: C.ink }));
+  for (let i = 0; i < 4; i++) {
+    out.push(rect(x + w * 0.4 + i * 22, y + h + 28, 22, 6, i % 2 === 0 ? { fill: C.ink, stroke: 'none' } : { fill: 'none', stroke: C.ink, 'stroke-width': W.hair }));
+  }
   return out;
+}
+
+/** anchored callout: leader + 0-radius royal tag with code (why plates) */
+function tag(x: number, y: number, code: string, w = 118): ArtNode {
+  return g(
+    {},
+    line(x, y, x + 18, y - 22, { stroke: C.sig, 'stroke-width': W.fine }),
+    rect(x - 5, y - 5, 10, 10, { fill: C.sig, stroke: 'none' }),
+    rect(x + 18, y - 33, w, 20, { fill: C.sig, stroke: 'none' }),
+    label(x + 18 + w / 2, y - 19.5, code, { fill: 'var(--r359-paper)', 'text-anchor': 'middle' }),
+  );
 }
 
 /** hairline UI card (the product-block voice) */
@@ -79,13 +111,13 @@ function whyObserve(): ArtDoc {
   nodes.push(link(pts[5]![0], pts[5]![1], pts[0]![0], pts[0]![1]));
   for (const [px, py] of pts) nodes.push(node2(px, py));
   // instrument labels
-  nodes.push(label(470, 120, 'SIGNALS 06', { fill: C.ink }));
-  nodes.push(label(470, 140, 'LATENCY 4MS', {}));
-  nodes.push(label(470, 160, 'SOURCE LMS/A', {}));
-  for (let i = 0; i < 3; i++) {
-    nodes.push(circ(478, 196 + i * 26, 3, { fill: 'none', stroke: C.sig, 'stroke-width': W.fine }));
-  }
-  nodes.push(dimH(70, 410, 430, 40, 40, { label: 'OBSERVE / 01' }));
+  // one anchored finding, reference discipline
+  nodes.push(tag(240, 130, 'OBS-01 · SEAT 12'));
+  nodes.push(...uiCard(470, 96, 200, 120, 'SIGNALS'));
+  nodes.push(label(486, 140, 'SIGNALS 06', { fill: C.ink }));
+  nodes.push(label(486, 160, 'LATENCY 4MS', {}));
+  nodes.push(label(486, 180, 'SOURCE LMS/A', {}));
+  nodes.push(dimH(70, 410, 470, 60, 60, { label: '8400MM' }));
   return plateShell(720, 540, 'why-observe', 'راقب', nodes);
 }
 
@@ -103,10 +135,12 @@ function whyAdvise(): ArtDoc {
   for (const [dx, dy] of [[200, 140], [200, 250], [330, 250]] as Array<[number, number]>) {
     nodes.push(path(`M${dx} ${dy - 9}l9 9l-9 9l-9 -9z`, { fill: 'var(--r359-paper)', stroke: C.sig, 'stroke-width': W.fine }));
   }
-  nodes.push(label(470, 120, 'PATH 3 OF 9', { fill: C.ink }));
-  nodes.push(label(470, 140, 'CONF 0.87', {}));
-  nodes.push(label(470, 160, 'RULES 12', {}));
-  nodes.push(dimH(70, 410, 430, 40, 40, { label: 'ADVISE / 02' }));
+  nodes.push(tag(200, 250, 'ADV-02 · ROUTE B'));
+  nodes.push(...uiCard(470, 96, 200, 120, 'ADVISOR'));
+  nodes.push(label(486, 140, 'PATH 3 OF 9', { fill: C.ink }));
+  nodes.push(label(486, 160, 'CONF 0.87', {}));
+  nodes.push(label(486, 180, 'RULES 12', {}));
+  nodes.push(dimH(70, 410, 470, 60, 60, { label: '8400MM' }));
   return plateShell(720, 540, 'why-advise', 'وجّه', nodes);
 }
 
@@ -119,14 +153,14 @@ function whyAct(): ArtDoc {
     nodes.push(node2(fx, fy, 9));
     nodes.push(path(`M${fx - 4} ${fy - 4}l8 8M${fx + 4} ${fy - 4}l-8 8`, { stroke: 'var(--r359-paper)', 'stroke-width': W.fine, fill: 'none' }));
   }
-  // strike-through task list (right)
-  nodes.push(label(470, 120, 'QUEUE 05', { fill: C.ink }));
+  nodes.push(tag(260, 140, 'ACT-03 · ASSIGN'));
+  nodes.push(...uiCard(470, 96, 200, 150, 'QUEUE'));
   for (let i = 0; i < 4; i++) {
     const ly = 148 + i * 30;
-    nodes.push(rect(470, ly - 10, 170, 16, { fill: 'none', stroke: C.ink, 'stroke-width': W.hair }));
-    nodes.push(line(470, ly - 10, 640, ly + 6, { stroke: C.ink, 'stroke-width': W.hair, opacity: i < 3 ? 0.85 : 0 }));
+    nodes.push(rect(486, ly - 10, 160, 16, { fill: 'none', stroke: C.ink, 'stroke-width': W.hair }));
+    nodes.push(line(486, ly - 10, 646, ly + 6, { stroke: C.ink, 'stroke-width': W.hair, opacity: i < 3 ? 0.85 : 0 }));
   }
-  nodes.push(dimH(70, 410, 430, 40, 40, { label: 'ACT / 03' }));
+  nodes.push(dimH(70, 410, 470, 60, 60, { label: '8400MM' }));
   return plateShell(720, 540, 'why-act', 'نفّذ', nodes);
 }
 
@@ -144,14 +178,15 @@ function whyLearn(): ArtDoc {
     const px = cx + Math.cos(a) * rx, py = cy + Math.sin(a) * ry;
     nodes.push(node2(px, py, 10));
   }
-  nodes.push(label(470, 120, 'EPOCH 42', { fill: C.ink }));
-  nodes.push(label(470, 140, 'GAIN +3.1%', {}));
-  nodes.push(label(470, 160, 'MSE 0.018', {}));
-  // small mastery bar ladder
+  nodes.push(tag(320, 240, 'LRN-04 · +3.1%'));
+  nodes.push(...uiCard(470, 96, 200, 170, 'LOOP'));
+  nodes.push(label(486, 140, 'EPOCH 42', { fill: C.ink }));
+  nodes.push(label(486, 160, 'GAIN +3.1%', {}));
+  nodes.push(label(486, 180, 'MSE 0.018', {}));
   for (let i = 0; i < 4; i++) {
-    nodes.push(rect(470, 200 + i * 22, 30 + i * 26, 10, { fill: i === 3 ? C.sig : 'none', stroke: C.ink, 'stroke-width': W.hair }));
+    nodes.push(rect(486, 204 + i * 22, 30 + i * 32, 10, { fill: i === 3 ? C.sig : 'none', stroke: C.ink, 'stroke-width': W.hair }));
   }
-  nodes.push(dimH(70, 410, 430, 40, 40, { label: 'LEARN / 04' }));
+  nodes.push(dimH(70, 410, 470, 60, 60, { label: '8400MM' }));
   return plateShell(720, 540, 'why-learn', 'تعلّم', nodes);
 }
 
