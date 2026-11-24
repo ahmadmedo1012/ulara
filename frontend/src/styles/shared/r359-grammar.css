@@ -734,3 +734,30 @@ a.pf-stat:hover { background: var(--surface-2); }
 .r305a-strip .stat-trend {
   color: color-mix(in srgb, var(--neutral-0) 85%, var(--neutral-900));
 }
+
+/* ═══ 16 · THE TAB STRIPS — scrollable with an edge fade, never clipped ══
+   The spec law: tabs scroll on narrow bands with a fade at the
+   overflow edge. RTL note: the overflow end is the LEFT (inline-end)
+   edge — the mask fades there, mirroring for LTR. The fade is an
+   AFFORDANCE (the strip reads scrollable), applied only on the
+   narrow bands where overflow actually happens. */
+
+@media (max-width: 920px) {
+  .inst-rail,
+  .inst-tabs,
+  .pf-page-tabs .tabs,
+  .tabs {
+    /* the start-edge fade — RTL fades the left edge, LTR the right */
+    -webkit-mask-image: linear-gradient(to left, black 0, black calc(100% - var(--sp-5)), transparent 100%);
+    mask-image: linear-gradient(to left, black 0, black calc(100% - var(--sp-5)), transparent 100%);
+    scroll-padding-inline: var(--sp-2);
+    overscroll-behavior-inline: contain;
+  }
+  html[dir='ltr'] .inst-rail,
+  html[dir='ltr'] .inst-tabs,
+  html[dir='ltr'] .pf-page-tabs .tabs,
+  html[dir='ltr'] .tabs {
+    -webkit-mask-image: linear-gradient(to right, black 0, black calc(100% - var(--sp-5)), transparent 100%);
+    mask-image: linear-gradient(to right, black 0, black calc(100% - var(--sp-5)), transparent 100%);
+  }
+}

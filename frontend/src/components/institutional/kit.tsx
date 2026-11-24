@@ -10,14 +10,16 @@
  */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 import { Icon } from '../Icon';
 import { Search, X, Loader2, ChevronDown } from 'lucide-react';
 import { EmptyState, ErrorState, ListSkeleton } from '../primitives/States';
+import { SheetEmpty } from '../patterns/Sheet';
 import { TablePaginationFooter } from '../../pages/admin/TablePaginationFooter';
 import { toneOf, type InstTone } from '../../lib/institutional/labels';
 import { cycleFocusTrap } from '../../lib/focusTrap';
 import type { Paged } from '../../lib/institutional/types';
-import { useInstitutionScope } from '../../stores/auth.store';
+import { useInstitutionScope, useAuthStore } from '../../stores/auth.store';
 import '../../styles/institutional/workspace.css';
 
 /** The server's own Arabic error message from the shared envelope —
@@ -53,11 +55,40 @@ export function EnumChip({
 /** The honest no-institution-context state (contract §0: reads need
  * a verified membership → select an institution first). */
 function ContextRequiredState() {
+  /* R359 (A3 · the dead-region repair): the «choose an institution»
+   * dead end becomes a designed sheet state with a REAL action —
+   * memberships exist → point at the topbar switcher with the sheet's
+   * own register; no memberships at all → the OWNER gets the create
+   * CTA, everyone else gets the honest ask-your-owner note. */
+  const memberships = useAuthStore((s) => s.memberships);
+  const role = useAuthStore((s) => s.user?.role ?? null);
+  if (memberships && memberships.length > 0) {
+    return (
+      <div className="inst-state">
+        <SheetEmpty
+          code="NO CONTEXT"
+          title="اختر مؤسستك أولاً"
+          desc="مساحة العمل المؤسسية تعمل داخل سياق مؤسسة محددة — افتح مبدّل المؤسسات في الشريط العلوي ثم عُد إلى هنا."
+        />
+      </div>
+    );
+  }
+  const isOwner = role === 'OWNER';
   return (
     <div className="inst-state">
-      <EmptyState
-        title="اختر مؤسستك أولاً"
-        description="مساحة العمل المؤسسية تعمل داخل سياق مؤسسة محددة — اختر مؤسستك من أعلى الصفحة ثم عُد إلى هنا."
+      <SheetEmpty
+        code="NO INSTITUTION"
+        title={isOwner ? 'لم تُنشأ مؤسسات بعد' : 'لا عضوية مؤسسية لحسابك'}
+        desc={
+          isOwner
+            ? 'أنشئ المؤسسة الأولى من لوحة المالك — المؤسسات، ثم اربط مديريها وحدودها التنظيمية.'
+            : 'حسابك غير مرتبط بأي مؤسسة حالياً. يربط مالك المنصّة الحسابات بالمؤسسات عند إنشائها.'
+        }
+        action={
+          isOwner ? (
+            <Link className="btn primary sm" to="/owner/institutions">إنشاء مؤسسة من لوحة المالك</Link>
+          ) : undefined
+        }
       />
     </div>
   );
