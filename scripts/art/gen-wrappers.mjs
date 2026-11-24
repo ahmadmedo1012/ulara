@@ -25,6 +25,13 @@ const OUT_DIR = join(ROOT, 'frontend', 'src', 'components', 'illustrations', 'r3
 const GRADUATED = {
   'hero-elevation': 'scenes/hero',
   'hero-elevation-mobile': 'scenes/hero',
+  'plan-lecture-hall': 'scenes/plans',
+  'plan-library': 'scenes/plans',
+  'plan-lab': 'scenes/plans',
+  'plan-admin-office': 'scenes/plans',
+  'plan-campus-site': 'scenes/plans',
+  'plan-exam-hall': 'scenes/plans',
+  'plan-research-lab': 'scenes/plans',
 };
 
 /* ── bundle the manifest to read ART_KEYS as JSON ────────────────── */
