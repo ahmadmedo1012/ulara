@@ -7,7 +7,7 @@ wired to the live production API.
 ```
 API   https://ulara.vercel.app/api/v1
 App   ly.ulara.app · slug ulara
-EAS   project — NEW project pending `eas init` (the retired pre-rebrand project is not reused; account: rh2011)
+Push Expo project id — pending (EXPO_PUBLIC_PUSH_PROJECT_ID; zero placeholder until the owner registers one — push stays honestly unavailable)
 ```
 
 ## Quick start
@@ -67,7 +67,7 @@ run (notifications path, theme verb, chapter mutations, a nonexistent
 `GET /admin/users/:id`) — run it in CI or before any merge touching
 `src/api/**` or `backend/src/http/routes/**`.
 
-## Builds & updates — Actions-native native builds; EAS is OTA only
+## Builds & updates — Actions-native; release-by-new-build (r359)
 
 Native builds are GitHub-Actions-only (the owner's binding requirement —
 `eas build` is retired from this repo's pipeline):
@@ -79,24 +79,19 @@ Native builds are GitHub-Actions-only (the owner's binding requirement —
 - **dev-client / smoke lanes** → `.github/workflows/mobile.yml`
   (expo prebuild + Gradle on Actions runners)
 
-EAS remains ONLY as the OTA (JS update) channel — `eas update` delivers
-JS/asset changes to installed builds whose fingerprint matches:
-
-```bash
-npx eas update --channel preview             # OTA (JS-only changes)
-```
-
-`eas.json` still declares the channels (`preview`/`production`) and embeds
-`EXPO_PUBLIC_API_BASE_URL` from the profile env.
+EAS is RETIRED (r359 A4): no `eas build`, no `eas update`, no `eas.json`,
+no `EXPO_TOKEN`, no OTA layer. Every change — JS or native — ships as a
+NEW NATIVE BUILD from the GitHub-Actions lanes above
+(release-by-new-build; docs/mobile.md §7). The in-app update story is
+the `/status` version pair: `minAppVersion` blocks builds below the
+floor (the «يلزم تحديث التطبيق» screen), `latestAppVersion` shows a
+one-time «يتوفر إصدار جديد» toast that points at the download page.
 
 | Change | Delivery |
 |---|---|
-| JS/TS screens, styles, API wiring | EAS Update (OTA) is sufficient |
-| New native module / `app.config.ts` plugin, icon, splash, permissions | **requires a new build — run the Actions workflows above** |
-| `expo-notifications` wiring (still gated on the backend proposal) | **requires a new build — run the Actions workflows above** |
-
-Never put `EXPO_TOKEN` (or any secret) in `EXPO_PUBLIC_*` — it is injected by
-the CI/CLI environment, not the bundle.
+| JS/TS screens, styles, API wiring | **new build — run the Actions workflows above** |
+| New native module / `app.config.ts` plugin, icon, splash, permissions | **new build — run the Actions workflows above** |
+| `expo-notifications` wiring (client shipped; needs an Expo push project id) | **new build — run the Actions workflows above** |
 
 ## Synchronizing with `origin/main`
 
@@ -111,10 +106,9 @@ The website evolves continuously. Isolation rules:
 3. Check `docs/feature-parity.md` rows for features the backend changed and
    update statuses honestly (✅ / 🧩 / 🔗 / ⚠️ / 🚫 — never upgrade a status
    without evidence).
-4. When a reconciliation needs a JS change only, ship it via
-   `eas update --channel preview`; native-affecting changes need a rebuild
-   via the GitHub-Actions workflows (android-apk.yml) before the production
-   channel moves.
+4. Ship every reconciliation — JS-only or native — as a new build via the
+   GitHub-Actions workflows (android-apk.yml) before the production
+   channel moves (r359: no OTA layer anymore).
 
 ## Honest limits (current)
 

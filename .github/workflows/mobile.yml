@@ -28,9 +28,10 @@
 #     native-build-devclient: the local Gradle dev-client APK (expo
 #     prebuild + Gradle on an Actions runner), saved fingerprint-keyed
 #     (actions/cache) + uploaded per-run, for Lane B's future runs.
-#     Fingerprint inputs: package(-lock).json, app.config.ts, eas.json,
+#     Fingerprint inputs: package(-lock).json, app.config.ts,
 #     assets/, plugins/, shared/, the build recipe, and this workflow —
-#     a JS-only change NEVER changes the fingerprint.
+#     a JS-only change NEVER changes the fingerprint. (r359 A4: eas.json
+#     is GONE — EAS services retired; Expo CLI stays for prebuild/export.)
 #
 #   Lane D — full (EXPLICIT dispatch only — never the default):
 #     fast gates + the original android-smoke machine — the full local
@@ -138,7 +139,7 @@ jobs:
       - name: Native fingerprint (hash of native-affecting inputs)
         id: fp
         run: |
-          FP='${{ hashFiles('apps/mobile/package.json', 'apps/mobile/package-lock.json', 'apps/mobile/app.config.ts', 'apps/mobile/eas.json', 'apps/mobile/assets/**', 'apps/mobile/plugins/**', 'shared/**', 'scripts/build-android-local.sh', '.github/workflows/mobile.yml') }}'
+          FP='${{ hashFiles('apps/mobile/package.json', 'apps/mobile/package-lock.json', 'apps/mobile/app.config.ts', 'apps/mobile/assets/**', 'apps/mobile/plugins/**', 'shared/**', 'scripts/build-android-local.sh', '.github/workflows/mobile.yml') }}'
           if [ -z "$FP" ]; then
             echo "::error::native fingerprint hashed to EMPTY — native inputs missing from the tree?"
             exit 1
@@ -158,7 +159,7 @@ jobs:
             exit 0
           fi
           CHANGED=$(git diff --name-only HEAD~1 HEAD || echo "")
-          NATIVE=$(echo "$CHANGED" | grep -E '^apps/mobile/(package(-lock)?\.json|app\.config\.ts|eas\.json|assets/|plugins?/)|^shared/|^scripts/build-android-local\.sh|^\.github/workflows/mobile\.yml' || true)
+          NATIVE=$(echo "$CHANGED" | grep -E '^apps/mobile/(package(-lock)?\.json|app\.config\.ts|assets/|plugins?/)|^shared/|^scripts/build-android-local\.sh|^\.github/workflows/mobile\.yml' || true)
           if [ -n "$NATIVE" ]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
             {

@@ -1,10 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { del, get, patch, post } from "@/api/client";
 import type { AppNotification, Message, Paginated } from "@/api/types";
+import { clearPushBadge } from "@/lib/push";
 
 /**
- * Notifications & messages — the real in-app inbox (backend has no remote
- * push tokens today; the inbox is REST-polled exactly like the web client).
+ * Notifications & messages — the real in-app inbox of record. Remote push
+ * rides on top when available (src/lib/push.tsx — needs an Expo push
+ * project id); the badge clears when the inbox reaches fully-read.
  */
 
 export const NOTIFICATIONS_FEED_LIMIT = 30;
@@ -33,7 +35,13 @@ export function useNotifications(page = 1, limit = NOTIFICATIONS_FEED_LIMIT, q?:
 export function useMarkRead() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => patch<AppNotification>(`/notifications/${id}/read`),
+    mutationFn: async (id: string) => {
+      const res = await patch<AppNotification>(`/notifications/${id}/read`);
+      // Badge mirrors the inbox: clear it when nothing is left unread.
+      const unread = qc.getQueryData<number>(["notifications", "unread"]);
+      if (unread != null && unread <= 1) void clearPushBadge();
+      return res;
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["notifications"] });
     },
@@ -43,7 +51,11 @@ export function useMarkRead() {
 export function useMarkAllRead() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: () => post<{ updated: number }>("/notifications/read-all"),
+    mutationFn: async () => {
+      const res = await post<{ updated: number }>("/notifications/read-all");
+      void clearPushBadge();
+      return res;
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["notifications"] });
     },

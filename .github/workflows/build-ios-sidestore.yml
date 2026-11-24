@@ -118,7 +118,10 @@ jobs:
           if (c.ios?.bundleIdentifier !== 'ly.ulara.app') {
             fail(`Unexpected iOS bundle id: ${c.ios?.bundleIdentifier}`);
           }
-          if (!c.runtimeVersion) fail('runtimeVersion is missing');
+          // r359 A4: expo-updates is retired (release-by-new-build) — the
+          // config must NOT embed an updates/runtimeVersion surface anymore.
+          if (c.runtimeVersion) fail('runtimeVersion must be ABSENT (expo-updates retired r359)');
+          if (c.updates) fail('updates block must be ABSENT (expo-updates retired r359)');
           // The API host this build will talk to. Guarded so an obsolete
           // hostname can never ship silently (the retired pre-Vercel
           // hosting families must never come back here — assembled from

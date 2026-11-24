@@ -398,8 +398,8 @@ jobs:
           **ملاحظات:**
           - هذه قناة التوزيع المباشر؛ نسخة متجر Google Play (AAB) قيد الإعداد
             وتتخطّى خطوة واحدة من المالك (docs/mobile.md §8).
-          - التحديثات التلقائية (OTA) عبر EAS لم تُفعَّل بعد (يتطلب تهيئة مشروع
-            EAS الجديد — docs/mobile.md §8).
+          - التحديثات تصل عبر بناء جديد موقّع من نفس المفتاح (قناة «بناء
+            جديد» — docs/mobile.md §7)؛ لا توجد طبقة OTA.
           - حزمة الويب (PWA) بديل فوري للمتصفح: ulara.vercel.app.
           EOF
           # The rolling release: delete + recreate the fixed `latest` tag so
