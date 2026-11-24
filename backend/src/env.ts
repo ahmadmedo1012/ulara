@@ -74,6 +74,10 @@ const schema = z
     // The app origin for email footer links (optional — templates omit
     // the footer link when unset).
     APP_ORIGIN: z.string().url().optional(),
+    // r359 A4 — Resend webhook HMAC secret (dashboard → webhooks). When
+    // UNSET the webhook endpoint fails closed (401): an unsigned event
+    // stream would let anyone forge bounce/complaint suppressions.
+    RESEND_WEBHOOK_SECRET: z.string().trim().min(16).optional(),
     // ── AI provider (chat assistant: backend/src/lib/ai.ts) ── The
     // default 'local' mode composes replies in-process (zero cost,
     // zero external calls). Selecting 'openai' opts into a real
@@ -123,6 +127,12 @@ const schema = z
     // deployed site.
     MIN_APP_VERSION: z.string().trim().regex(/^\d+\.\d+\.\d+$/, 'MIN_APP_VERSION must be semver (e.g. 1.0.0)').optional(),
     APP_DOWNLOAD_URL: z.string().trim().url().optional(),
+    // ── r359 A4 — the release-by-new-build pair: LATEST_APP_VERSION is
+    // the newest PUBLISHED app semver. The mobile app (r359) compares on
+    // cold start/foreground and shows a ONE-TIME non-blocking
+    // «يتوفر إصدار جديد» toast when below (there is no OTA layer —
+    // updates ARE new builds). Unset = no toast (bare-clone default).
+    LATEST_APP_VERSION: z.string().trim().regex(/^\d+\.\d+\.\d+$/, 'LATEST_APP_VERSION must be semver (e.g. 1.0.0)').optional(),
     // ── r326 M2.6 — Expo push fan-out switch ── dark until the project
     // is fully configured on the Expo dashboard (FCM/APNs credentials);
     // registration routes are always on, only the send path is gated.

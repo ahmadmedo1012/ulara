@@ -1,0 +1,118 @@
+# mobile-builds-ledger.yml — r359 A4 (D3)
+#
+# The native-builds LEDGER: one rolling JSON record of every native
+# build the repo produces (APK lanes, IPA lane, mobile smoke lanes),
+# stored as a release asset on the dedicated `builds-ledger` tag — no
+# repo writes, no main pushes, nothing for branch merges to conflict
+# with (RELEASE.md's rollback reference becomes real).
+#
+# Triggers:
+#   · workflow_run — android-apk.yml / build-ios-sidestore.yml / mobile.yml
+#     completing (works for main merges AND feature-branch runs).
+#   · workflow_dispatch — manual backfill for a given run id.
+#
+# Record shape (append-only array, newest first, capped at 200, one
+# record per run id — a re-run replaces its own record):
+#   { at, workflow, runId, runUrl, sha, ref, title, status, conclusion,
+#     artifacts: [{name, sizeBytes}] }
+#
+# Owner read-out (the RELEASE.md rollback path):
+#   gh release download builds-ledger -p builds-ledger.json -O -
+name: Mobile builds ledger
+on:
+  workflow_run:
+    workflows: ["Android APK (direct)", "Build unsigned iOS IPA (SideStore)", "Mobile"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: "Run id to record"
+        required: true
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: mobile-builds-ledger
+  cancel-in-progress: false
+
+jobs:
+  ledger:
+    name: Append build record
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion != 'skipped' }}
+    env:
+      GH_TOKEN: ${{ github.token }}
+      LEDGER_TAG: builds-ledger
+    steps:
+      - name: Resolve the run to record
+        id: run
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_run" ]; then
+            RUN_ID="${{ github.event.workflow_run.id }}"
+          else
+            RUN_ID="${{ github.event.inputs.run_id }}"
+          fi
+          echo "id=$RUN_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Append the record to the rolling ledger asset
+        run: |
+          set -euo pipefail
+          RUN_ID="${{ steps.run.outputs.id }}"
+          mkdir -p /tmp/ledger && cd /tmp/ledger
+
+          # The run's metadata (name, sha, conclusion) + its artifacts
+          # (gh run view --json has NO artifacts field — the REST API
+          # carries them; validated locally against run 45311500808).
+          if ! gh run view "$RUN_ID" --json databaseId,workflowName,headSha,headBranch,conclusion,status,displayTitle,createdAt,url > run.json; then
+            echo "::warning::run $RUN_ID not accessible — skipping"
+            exit 0
+          fi
+          if ! gh api "repos/${{ github.repository }}/actions/runs/$RUN_ID/artifacts" --paginate > artifacts.json; then
+            echo '[ ]' > artifacts.json
+          fi
+
+          # Current ledger (release asset) or a fresh array.
+          if gh release view "$LEDGER_TAG" >/dev/null 2>&1; then
+            gh release download "$LEDGER_TAG" -p builds-ledger.json -O builds-ledger.json --clobber || echo '[]' > builds-ledger.json
+          else
+            echo '[]' > builds-ledger.json
+          fi
+
+          # Append: newest first, one record per run id, cap 200.
+          node -e '
+            const fs = require("fs");
+            const run = JSON.parse(fs.readFileSync("run.json", "utf8"));
+            let artifacts = []; try {
+              const pages = JSON.parse(fs.readFileSync("artifacts.json", "utf8"));
+              // --paginate emits either one object or JSONL objects.
+              artifacts = Array.isArray(pages)
+                ? pages.flatMap((p) => p.artifacts || [])
+                : pages.artifacts || [];
+            } catch {}
+            let led = []; try { led = JSON.parse(fs.readFileSync("builds-ledger.json", "utf8")); } catch {}
+            const rec = {
+              at: run.createdAt, workflow: run.workflowName, runId: run.databaseId, runUrl: run.url,
+              sha: run.headSha, ref: run.headBranch, title: run.displayTitle,
+              status: run.status, conclusion: run.conclusion,
+              artifacts: (artifacts || []).map(a => ({ name: a.name, sizeBytes: a.sizeInBytes })),
+            };
+            const out = [rec, ...led.filter(x => x.runId !== rec.runId)].slice(0, 200);
+            fs.writeFileSync("new.json", JSON.stringify(out, null, 2));
+            console.log(`ledger now ${out.length} records (cap 200)`);
+          '
+
+          # Publish (create the release on the first record; prerelease = internal
+          # ledger). The #rename lives on `gh release upload` (create ignores
+          # it — validated live: the first record must land as
+          # builds-ledger.json, so create is bare and the upload renames).
+          if ! gh release view "$LEDGER_TAG" >/dev/null 2>&1; then
+            gh release create "$LEDGER_TAG" --prerelease \
+              --title "سجلّ البنيات الأصلية — native builds ledger" \
+              --notes "Machine-maintained rolling ledger of every native build (r359 A4). Rollback reference: RELEASE.md §mobile. Read-out: \`gh release download builds-ledger -p builds-ledger.json -O -\`"
+          fi
+          gh release upload "$LEDGER_TAG" new.json#builds-ledger.json --clobber
+          echo "## Ledger updated" >> "$GITHUB_STEP_SUMMARY"
+          echo "Run recorded: $RUN_ID" >> "$GITHUB_STEP_SUMMARY"

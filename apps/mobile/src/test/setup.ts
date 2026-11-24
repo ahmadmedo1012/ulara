@@ -160,15 +160,8 @@ jest.mock("expo-splash-screen", () => ({
   hideAsync: jest.fn().mockResolvedValue(undefined),
 }));
 
-jest.mock("expo-updates", () => ({
-  checkForUpdateAsync: jest.fn().mockResolvedValue({ isAvailable: false }),
-  fetchUpdateAsync: jest.fn().mockResolvedValue(undefined),
-  reloadAsync: jest.fn().mockResolvedValue(undefined),
-  updateId: "test-update-id",
-  runtimeVersion: "test-runtime",
-  channel: "test",
-  isEmbeddedUpdate: false,
-}));
+/* (r359 A4: no expo-updates mock — the dependency is retired with the OTA
+ * layer; updates ship as new native builds via /status version checks.) */
 
 /* ── router: hooks the screens read at render time ──────────────────── */
 

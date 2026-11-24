@@ -21,7 +21,7 @@
 | Forgot password | `app/auth/forgot-password.tsx` | `POST /auth/forgot-password` (devInbox surfaced for @test.ly) | ✅ |
 | Reset password | `app/auth/reset-password.tsx` | `POST /auth/reset-password` | ✅ |
 | Institution selection (multi-membership) | `app/select-institution.tsx` | `POST /auth/select-institution` | ✅ |
-| Settings (`/settings`) | `app/settings.tsx` | `PUT /me/theme`, `POST /auth/change-password` | ✅ |
+| Settings (`/settings`) | `app/settings.tsx` | `PUT /me/theme`, `POST /auth/change-password`, `GET/PUT /me/notification-preferences` (r359 A4: per-category push toggles + weekly email digest, optimistic with rollback) | ✅ |
 | Global search | `app/search.tsx` | `GET /search/global` | ✅ |
 | Notifications inbox (per role) | `app/{student,teacher,admin,quality,owner}/alerts` + owner `(tabs)/notifications` | `GET /notifications`, `PATCH /notifications/:id/read`, `POST /notifications/read-all` | ✅ (paths fixed by contract-check: mounted at `/api/v1`, not `/me/*`) |
 | Messages (DMs) | `student/messages`, `teacher/messages` | `GET /messages`, `POST /messages`, `POST /messages/read-all` | ✅ |
@@ -38,7 +38,7 @@
 | Feedback loop («أبلغ عن مشكلة») | `/report` route from Profile/`/settings` (R331: FAB removed) | `POST /feedback` | ✅ (no screenshot/console tape on mobile — disclosed) |
 | Theme sync (light/dark/system) | settings | `PUT /me/theme` | ✅ |
 | Onboarding/milestones | welcome + role home | `POST /me/onboarding/complete` fired on first role-home | ✅ (4-frame tour & milestone scenes are web instruments, not ported) |
-| Remote push notifications | — | backend has **no device-token model** | 🔗 additive backend proposal in `docs/push-backend-proposal.md`; `expo-notifications` dependency declared, client registration **not yet wired** (needs the backend contract first) |
+| Remote push notifications | no dedicated route — client lives in `src/lib/push.tsx`; preference toggles in `app/settings.tsx` | `POST/GET/DELETE /me/push-devices`, `GET/PUT /me/notification-preferences`; server fan-out via `expo-server-sdk` (delivery receipts + per-user category preferences + stale-device pruning since r359 A4, gated by `PUSH_ENABLED`, default off) | 🔗 LIVE delivery only: the backend routes and the client are fully wired — value-shown permission ask, token registration + rotation listener, badge discipline, safe deep links, settings toggles. What remains is owner configuration: minting Expo push tokens requires an Expo push project id (`EXPO_PUBLIC_PUSH_PROJECT_ID` — zero placeholder until the owner registers one; server `PUSH_ENABLED` flag flips the fan-out on). See `docs/mobile.md` §7 + roadmap item 3 |
 
 ## 2. Student
 

@@ -1,5 +1,8 @@
 import { prisma } from './db.js';
 import { logger } from './logger.js';
+// r359 A4 — push receipt settling, stale-device pruning, weekly digest.
+import { checkPendingReceipts, sweepStaleDevices } from './modules/notifications/push.js';
+import { runWeeklyDigest } from './modules/email/outbox.js';
 
 /**
  * Lightweight in-process scheduler.
@@ -194,6 +197,33 @@ export async function runLoginEventRetentionSweep(label: string): Promise<Retent
   }
 }
 
+// ── r359 A4 — the ops ticker (receipts every 5 min; the daily tick
+// gains the device sweep; the hourly tick gates the weekly digest) ──
+
+let opsTimer: NodeJS.Timeout | null = null;
+let hourlyTimer: NodeJS.Timeout | null = null;
+let digestWeekStamp = '';
+
+/** The digest runs Sunday 18:00–19:00 UTC (Africa/Tripoli 20:00 local);
+ * the stamp prevents double-firing inside the window. */
+function weekStamp(now: Date): string {
+  return `${now.getUTCFullYear()}-W${Math.floor(
+    (Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()) -
+      Date.UTC(now.getUTCFullYear(), 0, 1)) / 604800000,
+  )}`;
+}
+
+async function runOpsTick(label: string): Promise<void> {
+  try {
+    const receipts = await checkPendingReceipts(prisma);
+    if (receipts.checked > 0) {
+      logger.info({ label, ...receipts }, '[scheduler] push receipt check complete');
+    }
+  } catch (err) {
+    logger.warn({ err, label }, '[scheduler] push receipt check failed');
+  }
+}
+
 export function startScheduler() {
   // Initial run after boot, once the server is responsive. Retention
   // also runs on boot: on Render's free tier the process is restarted
@@ -207,16 +237,41 @@ export function startScheduler() {
     void runLoginEventRetentionSweep('initial');
   }, BOOT_DELAY_MS);
 
-  // Recurring daily run (same never-reject contract).
+  // Recurring daily run (same never-reject contract). r359 A4: the
+  // daily tick ALSO prunes stale push devices (180d) + old receipts.
   dailyTimer = setInterval(() => {
     void runLoginEventRetentionSweep('daily');
+    void sweepStaleDevices(prisma).catch((err) => {
+      logger.warn({ err }, '[scheduler] stale-device sweep failed');
+    });
   }, ONE_DAY_MS);
+
+  // r359 A4 — the ops ticker: settle Expo push receipts every 5 minutes.
+  opsTimer = setInterval(() => {
+    void runOpsTick('ops');
+  }, 5 * 60 * 1000);
+
+  // r359 A4 — the hourly gate for the weekly digest (Sunday 18:00 UTC).
+  hourlyTimer = setInterval(() => {
+    const now = new Date();
+    if (now.getUTCDay() !== 0 || now.getUTCHours() !== 18) return;
+    const stamp = weekStamp(now);
+    if (digestWeekStamp === stamp) return;
+    digestWeekStamp = stamp;
+    void runWeeklyDigest(prisma, now)
+      .then((out) => logger.info({ ...out }, '[scheduler] weekly digest complete'))
+      .catch((err) => logger.warn({ err }, '[scheduler] weekly digest failed'));
+  }, 60 * 60 * 1000);
 
   if (typeof dailyTimer.unref === 'function') dailyTimer.unref();
   if (typeof bootTimer.unref === 'function') bootTimer.unref();
+  if (typeof opsTimer.unref === 'function') opsTimer.unref();
+  if (typeof hourlyTimer.unref === 'function') hourlyTimer.unref();
 }
 
 export function stopScheduler() {
   if (dailyTimer) { clearInterval(dailyTimer); dailyTimer = null; }
   if (bootTimer) { clearTimeout(bootTimer); bootTimer = null; }
+  if (opsTimer) { clearInterval(opsTimer); opsTimer = null; }
+  if (hourlyTimer) { clearInterval(hourlyTimer); hourlyTimer = null; }
 }

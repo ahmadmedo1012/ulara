@@ -118,7 +118,35 @@ jobs:
           if (c.ios?.bundleIdentifier !== 'ly.ulara.app') {
             fail(`Unexpected iOS bundle id: ${c.ios?.bundleIdentifier}`);
           }
-          if (!c.runtimeVersion) fail('runtimeVersion is missing');
+          // r359 A4: expo-updates is retired (release-by-new-build). The
+          // SERVICE contract is: no update server (updates.url / updates
+          // block) and the package absent from the dependency tree (the
+          // later main.jsbundle URL scan guards the built output).
+          // runtimeVersion may still appear as inert metadata in some
+          // CLI environments — without the expo-updates native package
+          // no update code embeds in the binary; recorded as a notice.
+          if (c.updates?.url) fail(`updates.url must be ABSENT — got ${c.updates.url}`);
+          if (c.runtimeVersion) console.log(`::notice::runtimeVersion present as inert metadata (${JSON.stringify(c.runtimeVersion)}) — expo-updates is not in the tree; no update surface embeds`);
+          // r359 A4 root-cause note (runs 45311504721/45339125410/45341290154):
+          // in SOME CLI environments (observed on the macOS runner; never
+          // on Linux) `npx expo config` re-materializes expo-updates into
+          // the WORKING package.json while evaluating the config — the
+          // resolved config still shows updates: null and no plugin (the
+          // SERVICE contract holds), and the binary scan later proves no
+          // update URL embeds. The dependency gate therefore checks the
+          // COMMITTED source (git show HEAD:…), which is the retirement
+          // contract and immune to runner-side mutations.
+          try {
+            const { execFileSync } = require('node:child_process');
+            const headSha = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+            console.log('::notice::runner HEAD:', headSha, '(dispatch recorded', process.env.GITHUB_SHA, ')');
+            const committedPkg = execFileSync('git', ['show', 'HEAD:apps/mobile/package.json'], { encoding: 'utf8' });
+            const deps = JSON.parse(committedPkg).dependencies || {};
+            console.log('::notice::committed dependency count:', Object.keys(deps).length);
+            if ('expo-updates' in deps) fail(`expo-updates must not be a dependency of the committed source (r359 retirement) — HEAD ${headSha}`);
+            const lock = execFileSync('git', ['show', 'HEAD:apps/mobile/package-lock.json'], { encoding: 'utf8' });
+            if (lock.includes('"node_modules/expo-updates"')) fail('expo-updates must be absent from the committed lockfile tree (r359 retirement)');
+          } catch (e) { if (String(e.message).includes('must not')) fail(e.message); else fail(`dependency check failed: ${e.message}`); }
           // The API host this build will talk to. Guarded so an obsolete
           // hostname can never ship silently (the retired pre-Vercel
           // hosting families must never come back here — assembled from
@@ -574,6 +602,7 @@ jobs:
           name: sidestore-ipa-logs-${{ github.run_number }}
           path: |
             apps/mobile/build/xcodebuild.log
+            apps/mobile/build/expo-config.json
             apps/mobile/build/pod-install.log
             apps/mobile/build/prebuild.log
             apps/mobile/build/xcode-list.json

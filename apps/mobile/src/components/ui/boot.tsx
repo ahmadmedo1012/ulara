@@ -44,6 +44,7 @@ import { sp } from "@/design/tokens";
 import { dsEase } from "@/design/tokens.generated";
 import { useReduceMotion } from "@/hooks/useReduceMotion";
 import { T } from "./text";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Button } from "./pressables";
 
 const EASE = Easing.bezier(dsEase[0], dsEase[1], dsEase[2], dsEase[3]);
@@ -177,6 +178,11 @@ export function BootMark({ size = 120 }: { size?: number }) {
 export interface EntryUserLike {
   role: string;
   currentInstitution?: { id: string } | null;
+  /** r359 A4 (M2): null/undefined = the first-run tour is still owed
+   * (the user is routed through /onboarding before their role home).
+   * Missing field (older cached sessions) = treated as COMPLETED —
+   * fail-open: an existing user is never re-toured by a schema gap. */
+  onboardingCompletedAt?: string | null;
 }
 
 /**
@@ -187,9 +193,13 @@ export interface EntryUserLike {
  *   1. `?continue=` wins ONLY when the session can honor it — an
  *      institution context is active, or the user is the platform
  *      OWNER (no institution membership by design).
- *   2. Otherwise a non-OWNER/non-ADMIN role without an institution
+ *   2. r359 A4 (M2): a user whose tour is owed (onboardingCompletedAt
+ *      explicitly null — missing = completed, see EntryUserLike) goes
+ *      through /onboarding FIRST (the app intro precedes context
+ *      selection — the tour needs no institution).
+ *   3. Otherwise a non-OWNER/non-ADMIN role without an institution
  *      context hits the institution gate (/select-institution).
- *   3. Everyone else lands on their role home (unknown roles → student).
+ *   4. Everyone else lands on their role home (unknown roles → student).
  *
  * The ADMIN exemption mirrors the login flow's original contract: an
  * ADMIN (إدارة المؤسسة) is provisioned institution-bound — when the
@@ -204,6 +214,8 @@ export function resolveEntryDestination(
 ): string {
   const cont = continueParam ? decodeURIComponent(continueParam) : null;
   if (cont && (user.currentInstitution || user.role === "OWNER")) return cont;
+  // r359 A4: EXPLICIT null only (undefined = older cached session = done).
+  if (user.onboardingCompletedAt === null) return "/onboarding";
   const needsInstitution =
     user.role !== "OWNER" && user.role !== "ADMIN" && !user.currentInstitution;
   if (needsInstitution) return "/select-institution";
@@ -230,6 +242,15 @@ export const BOOT_COUNTER_MS = 900;
  * Static under reduced motion (the strip renders complete, no count);
  * flips hasBootedOnce when the run ends (or on unmount after start).
  */
+/** r359 A4 (M1): the persisted repeat-launch stamp — the FULL 900ms
+ * counter runs on the first launch EVER; every later launch (new
+ * process included) gets the completed strip immediately (the mark
+ * alone carries the moment — a returning user is never re-counted at).
+ * Async read; the strip starts full-run and drops to static the moment
+ * the stamp resolves — worst case (slow storage) the first repeat
+ * launch plays the full count once more. */
+const BOOT_SEEN_KEY = "ula-mobile-boot-seen";
+
 export function BootStrip({ size = 120 }: { size?: number }) {
   const p = usePalette();
   const reduced = useReduceMotion();
@@ -241,6 +262,27 @@ export function BootStrip({ size = 120 }: { size?: number }) {
       hasBootedOnce = true;
       return;
     }
+    // r359 A4 (M1): repeat launches (the persisted ula-mobile-boot-seen
+    // stamp) skip the count — the strip completes instantly and the
+    // mark alone carries the moment. The FIRST run is the one that
+    // writes the stamp. Storage failure degrades to the full count.
+    let skipCount = false;
+    let stopAnim: (() => void) | null = null;
+    void AsyncStorage.getItem(BOOT_SEEN_KEY)
+      .then((seen) => {
+        if (seen === "1") {
+          skipCount = true;
+          setPct(100);
+          hasBootedOnce = true;
+          stopAnim?.();
+        } else {
+          void AsyncStorage.setItem(BOOT_SEEN_KEY, "1").catch(() => undefined);
+        }
+      })
+      .catch(() => undefined);
+
+    if (skipCount) return;
+
     const v = new Animated.Value(0);
     // integer-step updates only (≤100 renders on the whole run, and the
     // strip is the only thing on screen at this moment).
@@ -253,6 +295,7 @@ export function BootStrip({ size = 120 }: { size?: number }) {
       easing: EASE,
       useNativeDriver: false, // listener-driven state — JS value
     });
+    stopAnim = () => anim.stop();
     anim.start(({ finished }) => {
       if (finished) {
         doneRef.current = true;

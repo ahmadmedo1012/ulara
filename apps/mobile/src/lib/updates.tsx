@@ -1,22 +1,25 @@
 /**
- * R326 M0.7 — the update experience.
+ * r326 M0.7 → r359 A4 — the update experience (release-by-new-build).
  *
- * 1. OTA: on cold start and on foreground, check expo-updates silently →
- *    download → ONE toast «تحديث جاهز — أعد التشغيل» → reload on tap.
- *    (checkAutomatically: ON_LOAD covers the cold start; the foreground
- *    listener re-checks on return, throttled to once per 30 minutes.)
+ * EAS OTA is RETIRED (owner contract, r359): JS never hot-swaps in the
+ * field; every fix ships as a NEW NATIVE BUILD from the GitHub Actions
+ * lanes. What remains here is the server-driven version story:
+ *
+ * 1. New-version toast: on cold start and on foreground (throttled),
+ *    GET /status carries { latestAppVersion, updateUrl }. When the
+ *    running appVersion < latestAppVersion we show ONE non-blocking
+ *    toast «يتوفر إصدار جديد» that opens the download page.
  * 2. Min-version gate: GET /status carries { minAppVersion, updateUrl }.
  *    When the running appVersion < minAppVersion the caller must render
  *    the blocking «يلزم تحديث التطبيق» screen (BlockingUpdateGate) —
  *    nothing else in the app runs below the floor.
  *
  * Everything here is fire-and-forget safe: a failed check NEVER breaks
- * the app (offline, airplane mode, cold Render — all just skip).
+ * the app (offline, airplane mode, cold server — all just skip).
  */
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AppState, Linking, Pressable, StyleSheet, Text, View } from "react-native";
 import Constants from "expo-constants";
-import * as Updates from "expo-updates";
 import { toast } from "@/components/ui/toast";
 import { crumb, reportClientError } from "@/lib/telemetry";
 import { themeFor } from "@/design/theme";
@@ -44,56 +47,47 @@ export function compareSemver(a: string, b: string): number {
   return 0;
 }
 
-/* ── the OTA half ───────────────────────────────────────────────────── */
+/* ── the new-build half ─────────────────────────────────────────────── */
 
-interface UpdatesLike {
-  checkForUpdateAsync: () => Promise<{ isAvailable: boolean }>;
-  fetchUpdateAsync: () => Promise<unknown>;
-  reloadAsync: () => Promise<void>;
-  updateId?: string | null;
-  runtimeVersion?: string | null;
-  channel?: string | null;
-  isEmbeddedUpdate?: boolean;
+interface StatusVersionShape {
+  minAppVersion?: string | null;
+  latestAppVersion?: string | null;
+  updateUrl?: string | null;
 }
 
-function updatesRuntime(): UpdatesLike | null {
-  try {
-    const u = Updates as unknown as UpdatesLike;
-    if (typeof u?.checkForUpdateAsync !== "function") return null;
-    return u;
-  } catch {
-    return null;
-  }
+async function fetchStatusVersions(signal: AbortSignal): Promise<StatusVersionShape | null> {
+  const res = await fetch(`${STATUS_URL}/status`, { signal });
+  if (!res.ok) return null;
+  const body = (await res.json()) as { data?: StatusVersionShape };
+  return body.data ?? null;
 }
 
-export async function checkAndDownloadUpdate(showToast = true): Promise<boolean> {
-  const u = updatesRuntime();
-  if (!u || __DEV__) return false; // dev never OTA-reloads
-  try {
-    const { isAvailable } = await u.checkForUpdateAsync();
-    if (!isAvailable) return false;
-    crumb("ota: downloading update");
-    await u.fetchUpdateAsync();
-    if (showToast) {
-      toast.info("تحديث جاهز — أعد التشغيل لتطبيقه", "تحديث أُلارا");
-    }
-    crumb("ota: update downloaded");
-    return true;
-  } catch (e) {
-    // Offline / rate-limited / no matching runtime — never break the app.
-    crumb(`ota: check failed (${e instanceof Error ? e.message : "unknown"})`);
-    return false;
-  }
-}
-
-/** Silent cold-start check + foreground re-check (throttled). */
+/** Cold-start + foreground (throttled) check: shows ONE toast when a
+ * newer build is published. Non-blocking by design — the floor is the
+ * min-version gate below, not this. */
 export function useAppUpdates(): void {
   const lastCheck = useRef(0);
+  const announced = useRef(false);
   const check = useCallback(async () => {
     const now = Date.now();
     if (now - lastCheck.current < 15_000) return;
     lastCheck.current = now;
-    await checkAndDownloadUpdate();
+    if (__DEV__) return; // dev never nags about published builds
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 10_000);
+    try {
+      const v = await fetchStatusVersions(ctrl.signal);
+      const latest = v?.latestAppVersion ?? null;
+      if (v && latest && compareSemver(appSemver(), latest) < 0 && !announced.current) {
+        announced.current = true; // once per app session, ever
+        crumb(`update: new build published (app ${appSemver()} < latest ${latest})`);
+        toast.info("يتوفر إصدار جديد من أُلارا — حمّله من صفحة التطبيق", "تحديث أُلارا");
+      }
+    } catch {
+      /* offline / cold server — never break the app */
+    } finally {
+      clearTimeout(timer);
+    }
   }, []);
 
   useEffect(() => {
@@ -106,13 +100,10 @@ export function useAppUpdates(): void {
   }, []);
 }
 
-/** Record the running update in the telemetry context (crash reports
- * carry which OTA the user was on). */
+/** Record the running build in the telemetry context (crash reports
+ * carry the exact native version — there is no OTA layer anymore). */
 export function updateStamp(): string {
-  const u = updatesRuntime();
-  const id = u?.updateId ? String(u.updateId).slice(0, 8) : "embedded";
-  const rt = u?.runtimeVersion ?? "—";
-  return `update ${id} · runtime ${rt} · v${appSemver()}`;
+  return `build v${appSemver()}`;
 }
 
 /* ── the min-version gate half ──────────────────────────────────────── */
@@ -131,13 +122,10 @@ export function useVersionGate(): VersionGate {
     const timer = setTimeout(() => ctrl.abort(), 10000);
     (async () => {
       try {
-        const res = await fetch(`${STATUS_URL}/status`, { signal: ctrl.signal });
-        const body = (await res.json()) as {
-          data?: { minAppVersion?: string | null; updateUrl?: string | null };
-        };
+        const v = await fetchStatusVersions(ctrl.signal);
         clearTimeout(timer);
-        const min = body.data?.minAppVersion ?? null;
-        const updateUrl = body.data?.updateUrl ?? "https://ulara.vercel.app/app";
+        const min = v?.minAppVersion ?? null;
+        const updateUrl = v?.updateUrl ?? "https://ulara.vercel.app/app";
         if (cancelled) return;
         if (min && compareSemver(appSemver(), min) < 0) {
           crumb(`version gate: BLOCKED (app ${appSemver()} < min ${min})`);

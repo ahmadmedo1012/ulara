@@ -76,6 +76,8 @@ export const DEFAULT_ROLE_CAPABILITIES: Record<Role, Capability[]> = {
     'FACILITIES_MANAGE',
     'RESEARCH_PROJECTS_MANAGE',
     'UNIT_CAPABILITIES_ASSIGN',
+    // r359 A4 — institution-scoped audit trail browsing.
+    'AUDIT_BROWSE',
     // NOTE: No RESEARCH_GRADE_OWN/ANY — admins shouldn't grade by default.
     //       No EXAMS_AUTHOR/MODERATE — separate capability grant required.
     //       No QUALITY_VIEW — separate role.
@@ -86,6 +88,9 @@ export const DEFAULT_ROLE_CAPABILITIES: Record<Role, Capability[]> = {
     'QUALITY_REPORT',
     'EXAMS_MODERATE',
     'ANNOUNCE_FACULTY',
+    // r359 A4 — audit browsing is an oversight READ, squarely the
+    // quality role's job; writes stay out (unchanged).
+    'AUDIT_BROWSE',
     // NOTE: NO USERS_MANAGE, NO ROLES_ASSIGN — quality is oversight, not control.
     //       r352: NO institutional-management capabilities either — the
     //       internal QA-office writes ride the explicit
@@ -123,6 +128,7 @@ export const DEFAULT_ROLE_CAPABILITIES: Record<Role, Capability[]> = {
     'FACILITIES_MANAGE',
     'RESEARCH_PROJECTS_MANAGE',
     'UNIT_CAPABILITIES_ASSIGN',
+    'AUDIT_BROWSE',
   ],
 };
 

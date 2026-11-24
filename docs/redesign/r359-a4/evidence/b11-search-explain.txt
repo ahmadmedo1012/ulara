@@ -1,0 +1,24 @@
+r359 A4 — B11 query-performance sweep evidence (production Neon, read-only EXPLAIN, 2026-11-24)
+
+Migration 0007 applied to production (backup branch first: backup-r359-20261124T010815Z
+= br-fragrant-meadow-b9i8h4nb from main br-aged-surf-b9ebjpna; verified on branch copy
+verify-r359-0007 = br-snowy-shadow-b97ahb52 / ep-rough-base-b9fcrbkv before production).
+
+trgm GIN coverage: 32 indexes total on production (22 pre-existing lineage + 10 added
+by 0007; 6 of 0007's 16 names deliberately match lineage names -> IF NOT EXISTS no-op).
+
+Planner behavior at CURRENT pilot scale (row counts: 9 courses, 25 org units, 6 people):
+  SELECT id FROM "Course" WHERE name ILIKE '%chem%'
+    -> Seq Scan (correct choice — table tiny; r342 t12 measured the seq-scan cost
+       crossing point at ~100k rows)
+Proving the indexes serve the same patterns (SET enable_seqscan = off, session-local):
+  Course.name ILIKE '%chem%'
+    -> Bitmap Heap Scan -> Bitmap Index Scan on "Course_name_trgm_idx"
+  OrganizationalUnit.nameAr ILIKE '%dept%'
+    -> Bitmap Heap Scan -> Bitmap Index Scan on "OrganizationalUnit_nameAr_trgm_idx"
+  InstitutionalPerson.fullNameAr ILIKE '%med%'
+    -> Bitmap Heap Scan -> Bitmap Index Scan on "InstitutionalPerson_fullNameAr_trgm_idx"
+
+Conclusion: every ILIKE'd column in GET /search/global now has trgm coverage that the
+planner demonstrably uses; at today's scale the planner honestly prefers seq scans
+(correct), and the ~100k-row growth risk from r342 t12 is closed for search paths.

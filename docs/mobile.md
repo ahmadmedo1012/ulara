@@ -151,29 +151,34 @@ export ULARA_ANDROID_KEYSTORE_PASSWORD='…'        # بعيدًا عن سجل �
   يرفضه). كل `android/` مولّد ومُهمَل في git (CNG) — لا تلتزم منه
   شيئًا.
 
-## 7. القنوات والنشر
+## 7. القنوات والنشر — قصة التحديث: «بناء جديد» (r359)
 
-- **القنوات** (`eas.json`): قنوات OTA الآن — `development`/`preview`/
-  `production` تحمل `EXPO_PUBLIC_API_BASE_URL=https://ulara.vercel.app/api/v1`
-  وتخدم `eas update`؛ لا بناء native عبر EAS (محال).
-- **سياسة fingerprint**: تغيير JS يصل عبر `eas update` لكل بناء مطابق
-  للبصمة؛ أي تغيير native (تبعية/إضافة/مفاتيح `app.config.ts`) يغيّر
-  البصمة ⇒ بناء ثنائي جديد مرة واحدة، والتحديثات فوقه. المثال الحي:
-  إضافة `expo-navigation-bar` (بصمة جديدة، لا يوصلها OTA وحده).
-- **OTA خامل حتى إعادة التفعيل**: (1) `npx eas-cli init` من
-  `apps/mobile` وتثبيت المعرف الحقيقي في `app.config.ts` (يرفع حارس
-  المعرف الصفري المطبوع في رأس الملف)؛ (2) سر `EXPO_TOKEN`. أوامر
-  المشغّل: `eas-cli update:list/channel:view --branch production`؛
-  التراجع: `update:republish` بمعرف الجيد أو `update:rollback`.
+**لا توجد طبقة OTA إطلاقًا** (قرار r359 — إحالة خدمات EAS كاملة):
+لا `eas build` ولا `eas update` ولا `eas submit` ولا `EXPO_TOKEN` ولا
+`eas.json`. Expo CLI تبقى أداة تكوين/prebuild/تصدير فقط. كل تغيير —
+JS أو native — يُسلَّم كـ**بناء ثنائي جديد** من مسارات GitHub Actions.
+
+**آلية التحديث داخل التطبيق** (زوج الإصدارات في `GET /status`):
+- `minAppVersion`: أرضية الإصدار — التشغيل تحت الأرضية يشغّل شاشة
+  «يلزم تحديث التطبيق» الحاجبة (`src/lib/updates.tsx` —
+  `BlockingUpdateGate`) وتفتح `updateUrl` (صفحة `/app`).
+- `latestAppVersion`: أحدث إصدار منشور — عند اكتشاف نسخة أحدث تظهر
+  مرة واحدة في الجلسة توست «يتوفر إصدار جديد» (غير حاجبة). يضبطها
+  الخادم من متغير البيئة `LATEST_APP_VERSION`.
+- التراجع = إعادة نشر بناء سابق على إصدار `latest` (التوقيع نفسه
+  يسمح بالتثبيت فوق النسخة الحالية).
+
+**القنوات الفعلية**:
 - **القناة المباشرة**: إصدار GitHub `latest` —
   `https://github.com/ahmadmedo1012/ulara/releases/latest/download/ulara.apk`
-  (توقيع مستقر = تحديث في المكان)؛ صفحة `/app` هي الواجهة. التثبيتات
-  المتقطعة من مشروع EAS القديم ترفض أندرويد التحديث العابر للتوقيع:
-  إزالة تثبيت واحدة ثم `/app`.
-- **أوامر الإصدار اليدوية** (Actions-native — لا أوامر `eas build`
-  في هذا المستودع): dispatch `android-apk.yml` بمسار `release` (APK
-  موقَّع يُنشر لإصدار `latest` المتدحرج) أو `build-ios-sidestore.yml`
-  (IPA جانبي غير موقَّع على macOS runners).
+  (توقيع مستقر = تحديث في المكان)؛ صفحة `/app` هي الواجهة.
+- **سجل البنيات** (`mobile-builds-ledger.yml`): كل بناء native يُسجّل
+  في أصل `builds-ledger.json` على إصدار `builds-ledger` (التاريخ،
+  SHA، الإصدار، المسار، البصمات) — مرجع التراجع والتدقيق.
+- **أوامر الإصدار اليدوية** (Actions-native — لا أوامر `eas` في هذا
+  المستودع): dispatch `android-apk.yml` بمسار `release` (APK موقَّع
+  يُنشر لإصدار `latest` المتدحرج) أو `build-ios-sidestore.yml`
+  (IPA جانبي غير موقّع على macOS runners).
 
 ## 8. المتجر (خطوات المالك فقط — لم تُعد بعد)
 
@@ -196,7 +201,7 @@ export ULARA_ANDROID_KEYSTORE_PASSWORD='…'        # بعيدًا عن سجل �
 | توكن الوصول | ذاكرة الجلسة | إعادة إصدار عند 401 عبر كوكي التحديث |
 | كوكي `ulara_refresh` | `expo-secure-store` (`lib/tokenStorage`) | اعتماد 7 أيام — لا يُخزَّن في AsyncStorage أبدًا |
 | تفضيلات غير سرية (سمة/أرقام/لمس/كاش) | AsyncStorage بمفاتيح `ula-mobile-*` | قاعدة العائلة: أسرار SecureStore فقط؛ غير السرّي في المفاتيح الموحدة |
-| `EXPO_PUBLIC_API_BASE_URL` | `eas.json` | **تكوين عام لا سر** — يُضمَّن في الحزمة؛ لا أسرار في `app.config.ts` أو الحزمة أبدًا |
-| `EXPO_TOKEN` | أسرار GitHub Actions | لـOTA فقط (لا بناء سحابي بعد إحالة EAS Build) — دوّره إن لامسه أحد |
+| `EXPO_PUBLIC_API_BASE_URL` | بيئة البناء (Actions) | **تكوين عام لا سر** — يُضمَّن في الحزمة؛ لا أسرار في `app.config.ts` أو الحزمة أبدًا |
+| `EXPO_PUBLIC_PUSH_PROJECT_ID` | بيئة البناء (Actions) | معرف مشروع Expo للإشعارات فقط (ليس خدمة بناء/تحديث) — صفر افتراضيًا حتى تسجيل مشروع دفع |
 | مفتاح التوقيع | `~/.ulara/ulara-release.keystore` محليًا، أو أسرار Actions (`ANDROID_KEYSTORE_B64`…) لقناة CI | انسخه احتياطيًا خارج الجهاز |
 | مفاتيح ASC/Play | خارج المستودع — خطوة مالك مستقبلية | §8 — لا EAS credentials بعد الإحالة |
