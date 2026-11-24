@@ -15,7 +15,7 @@
  *    (entityType/entityId) rides the URL-driven deep links from the
  *    detail surfaces; this sheet keeps the two everyday filters.
  *  · Rows render server fields verbatim; the actor column carries
- *    the include's own name/email; ip + time ride the mono/​date
+ *    the include's own name/email; ip + time ride the mono/date
  *    registers.
  *  · The register speaks the sheet grammar (KpiBand + DataSheet +
  *    the family pagination footer + InstFilters, the workspace's own

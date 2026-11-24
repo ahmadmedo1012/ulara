@@ -116,6 +116,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/institution/people': 'الأفراد والكوادر',
   '/institution/positions': 'المناصب والتعيينات',
   '/institution/access': 'الصلاحيات والأدوار',
+  '/institution/audit': 'سجل التدقيق',
   '/institution/councils': 'المجالس واللجان',
   '/institution/programs': 'البرامج والخطط الدراسية',
   '/institution/training': 'التدريب العملي',
