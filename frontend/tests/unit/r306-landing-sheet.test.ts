@@ -202,18 +202,21 @@ describe('r306 → r310 — the elevation illustration (the honest interactive)'
        (CAMPUS_FRAME) driving the viewBox, no raster. The R342-final
        integration DELETED HeroInkWindow (superseded by the plate,
        zero consumers — git history is the rollback). */
-    expect(liveTsx).toContain('<CampusPlate variant="ink" />');
-    const ink = read('src/components/landing/hero/CampusPlate.tsx');
-    expect(ink).toContain('className="bp-svg cp-svg"');
-    // the viewBox is the plate's own frame (CAMPUS_FRAME — exported,
-    // single source) — the frame is the contract; the literal window
-    // pin retires with the seat.
-    expect(ink).toContain('export const CAMPUS_FRAME');
-    expect(ink).toMatch(/viewBox=\{`\$\{CAMPUS_FRAME\.x\} \$\{CAMPUS_FRAME\.y\}/);
-    // the loader mounts the SAME plate in its trace variant (one
-    // object across the handoff — HeroInspect authors against the
-    // same exported frame)
-    expect(read('src/components/landing/chrome/Preloader.tsx')).toContain('<CampusPlate variant="trace" />');
+    /* r359 A1 — the hero's ink seat moved onto the r359 ELEVATION family:
+       the hero mounts the A2 art-contract glob (hero-elevation) with the
+       committed fallback ElevationArt (the loader→hero handoff now rides
+       the SAME elevation, small, per the reference's own loader mark).
+       The pin's semantics (one SVG object, transparent paper, no raster,
+       exported single-source frame) re-pin on the new seats. */
+    expect(liveTsx).toContain('<ElevationArt className="hro-elevation" viewBox={vb} />');
+    const ink = read('src/components/landing/hero/ElevationArt.tsx');
+    expect(ink).toContain('className={`ev-svg ');
+    // the viewBox window family is the art's own exported single source
+    // (the hero maps its stations through it)
+    expect(ink).toContain('export const VB_MOBILE');
+    // the loader mounts the SAME elevation as its small mark (one object
+    // across the handoff)
+    expect(read('src/components/landing/chrome/Preloader.tsx')).toContain('<ElevationArt viewBox="250 74 960 546" />');
     // transparent paper: no raster <image> in the plate
     expect(ink).not.toContain('<image');
     // the loader keeps its own original line drawing (SheetLoader)
@@ -228,24 +231,23 @@ describe('r306 → r310 — the elevation illustration (the honest interactive)'
     expect(manifest).toContain('"composition"');
   });
 
-  it('R314 override — the inspection stations are real buttons (HeroInspect) over the ink render', () => {
-    // the bp-hotspot stage row retired with the elevation; the
-    // inspection instrument's OWN markers (HeroInspect) carry the
-    // same contract: real <button>, 44px targets, aria-pressed state.
-    const inspect = read('src/components/landing/cursor/HeroInspect.tsx');
-    expect(inspect).toMatch(/DOT_TARGET_PX = 44/);
-    expect(inspect).toMatch(/aria-pressed/);
-    expect(liveTsx).toContain('<HeroInspect />');
+  it('R314 override — the inspection stations are real buttons over the ink render', () => {
+    /* r359 A1 — the station system moved INTO the hero (the drag-to-
+     * reveal grammar): real <button> seats with aria-pressed state and
+     * 44px touch targets, riding ON the aspect-locked drawing. */
+    const hero = read('src/components/landing/hero/Hero.tsx');
+    expect(hero).toMatch(/className="hi-marker"/);
+    expect(hero).toMatch(/aria-pressed=\{shown\}/);
+    expect(read('src/styles/landing/hero.css')).toMatch(/\.hi-marker\s*\{[\s\S]*?min-block-size: 44px/s);
+    expect(hero).toMatch(/onPointerDown=\{onStagePointerDown\}/);
   });
 
   it('R314 override — the honest stage copy lives in the inspection stations (panel retired)', () => {
-    // the details panel retired with the elevation; the SAME honest
-    // capability copy rides HeroInspect's station annotations.
-    const inspect = read('src/components/landing/cursor/HeroInspect.tsx');
-    // the stations' honest capability labels (checkpoints, research
-    // review, mastery gap — the interactive annotation copy)
-    for (const t of ['نقطة فحص', 'مراجعة بحث', 'فجوة إتقان']) {
-      expect(inspect).toContain(t);
+    // the station callouts carry the university concepts (the r359
+    // station register: course, exam, research, institution)
+    const hero = read('src/components/landing/hero/Hero.tsx');
+    for (const t of ['مقرر تفاعلي', 'اختبار موثّق', 'بحث علمي', 'مؤسسة أكاديمية']) {
+      expect(hero).toContain(t);
     }
   });
 
@@ -276,10 +278,11 @@ describe('r306 → r310 — the elevation illustration (the honest interactive)'
     // art-mass + stacked-cells pins move to the base seats. The 2-line
     // H1 strip measure holds on the D1 rung (measured ≤767: h=67px =
     // exactly 2 lines @390 AND @360).
-    /* R333 re-key: the width-driven drawing contract lives on the
-     * base .bp-svg seat (hero.css) since the band grammar retired. */
-    expect(live).toMatch(/\.bp-svg\s*\{[\s\S]*?inline-size:\s*100%/s);
-    expect(live).toMatch(/\.bp-svg\s*\{[\s\S]*?block-size:\s*auto/s);
+    /* r359 A1 re-key: the drawing contract is the ASPECT-LOCKED art
+     * box (zero letterbox — the stations map to the viewBox fractions);
+     * mobile locks to the building crop's own aspect. */
+    expect(live).toMatch(/\.hro-art\s*\{[\s\S]*?aspect-ratio: 1440 \/ 700/s);
+    expect(live).toMatch(/aspect-ratio: 960 \/ 546/s);
     // R322 override (1-d FINAL · the type-scale migration): the ≤767 H1
     // re-clamp RETIRED — the D1 rung (--fs-d1, band-independent) governs
     // from the base seat: 31.74px floor across the phone band (the reference's
@@ -290,7 +293,9 @@ describe('r306 → r310 — the elevation illustration (the honest interactive)'
     // 2-line H1 strip measure holds on the rung (measured ≤767:
     // h=67px = exactly 2 lines @390 AND @360).
     expect(mq).not.toMatch(/\.fo-hero-title\s*\{/);
-    expect(live).toMatch(/\.fo-hero-title\s*\{[\s\S]*?font-size:\s*var\(--fs-d1\)/s);
+    /* r359 A1: the hero's own scoped rung (--hro-h1 — the D1 fluid law
+     * measured live: 3.6vw ≈ 46.7px @1440 with the Arabic-mass lift) */
+    expect(live).toMatch(/\.hro-title,\s*\n?\.hro-title \.hro-line\s*\{[\s\S]*?font-size:\s*var\(--hro-h1\)/s);
   });
 
   it('the SVG carries a full Arabic description (the drawing is informative, not decorative clutter)', () => {
@@ -314,8 +319,11 @@ describe('r306 → r310 — the elevation illustration (the honest interactive)'
      * unchanged, and the CSS half of the pin below is untouched. */
     expect(liveTsx).toMatch(/className="bp-plus bp-plus-tl"(?: aria-hidden="true")? \/>/);
     expect(liveTsx).toMatch(/className="bp-dmark bp-dmark-tl"(?: aria-hidden="true")? \/>/);
-    expect(live).toMatch(/\.bp-plus::before\s*\{\s*content:\s*'\+'/);
-    expect(live).toMatch(/\.bp-dmark::before\s*\{\s*content:\s*'\+'/);
+    /* r359 A1: the marks render their glyphs as background bars on the
+     * ::before/::after pair (out of innerText — the empty-span contract
+     * holds; the glyph carrier moved from content to background). */
+    expect(live).toMatch(/\.bp-dmark::before,\s*\n?\.bp-dmark::after\s*\{[\s\S]*?background: var\(--hro-ink\)/s);
+    expect(live).toMatch(/\.bp-plus::before,\s*\n?\.bp-plus::after\s*\{[\s\S]*?background: var\(--hro-ink\)/s);
     // R322 override (2-b) → R333 re-key: the dashed inner frame rides
     // the live .hro-stage::before seat (same 1px dashed rule,
     // proximity-revealed as before) after the retired band grammar
@@ -477,7 +485,6 @@ describe('r306 hygiene — the sheet stays clean', () => {
       '.pm-art .pm-draw', // R313: the pain cards' draw-in collapses to the complete drawing
       '.wy-capture', // R313: the why cross-fade collapses to the fully readable stack
       '.wy[data-wy-stage=\'0\'] .wy-rail .wy-stage:nth-child(1) .wy-stage-verb', // R313: the wy-snap
-      '.hro-deco', // R331: the hero deco fade-loop collapses to the static ledger card
       '.pr-row', // r338 T-08: pr-item-fade collapses to the first row (the pairmate stays hidden)
       '.rl-rule-w', // r339 T-11b1: the row-rule widen collapses to the authored full-width rule
       '.rl-rule-x', // r339 T-11b1: the frame-pair draw collapses to the authored unscaled hairlines

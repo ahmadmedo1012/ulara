@@ -62,7 +62,7 @@ import { PREFERS_REDUCED_MOTION } from '../../../lib/motion-media';
  * the hero's staged ink-in begins while the slit opens.
  */
 import { useEffect, useRef, useState } from 'react';
-import { CampusPlate } from '../hero/CampusPlate';
+import { ElevationArt } from '../hero/ElevationArt';
 import { markIntroSeen } from '../../../lib/motion/introGate';
 import '../../../styles/landing/preloader.css';
 
@@ -345,10 +345,12 @@ export function Preloader({ onExitStart, onDone }: PreloaderProps) {
         <span className="pl-fr pl-fr-s" aria-hidden="true" />
         <span className="pl-fr pl-fr-e" aria-hidden="true" />
 
-        {/* the plate — the campus traces itself (the hero's drawing,
-            arriving first as pure linework) */}
-        <div className="pl-plate" aria-hidden="true">
-          <CampusPlate variant="trace" />
+        {/* the small mark — the SAME elevation the hero seats, small on
+            the sheet (r359: the reference's loader carries a small pencil
+            glyph, not the full plate; the drawing honesty holds — what
+            finishes drawing IS what the hero mounts) */}
+        <div className="pl-plate pl-mark" aria-hidden="true">
+          <ElevationArt viewBox="250 74 960 546" />
         </div>
 
         {/* the reading — the percentage at the rule's origin edge (the

@@ -190,8 +190,42 @@
   inline-size: 1px;
 }
 
-/* the plate — centered, straddling the centreline like the reference's
-   drawing (the rule passes THROUGH the building) */
+/* r359 — the SMALL MARK: the hero's own elevation drawn small on the
+   sheet (the reference's loader carries a small pencil glyph, never the
+   full plate). Seated at the lower-left field (the glyph's own corpus
+   seat), sized ~260px, ink-only. */
+.pl-mark {
+  position: absolute;
+  inset-inline-start: 8%;
+  inset-block-start: 58%;
+  inline-size: clamp(180px, 20vw, 280px);
+  aspect-ratio: 960 / 546;
+  translate: 0 -50%;
+  pointer-events: none;
+  color: var(--pl-ink, #282828);
+  opacity: 0.9;
+}
+.pl-mark .ev-svg {
+  inline-size: 100%;
+  block-size: 100%;
+  display: block;
+}
+/* the mark draws in — stroke-rise on the structure lines, 1.4s */
+.pl-mark .ev-out,
+.pl-mark .ev-struct {
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+  animation: pl-trace 1.4s var(--ease-soft) both;
+}
+.pl-mark .ev-shadow,
+.pl-mark .ev-fill,
+.pl-mark .ev-dot {
+  animation: pl-mark-ink 1.1s linear 0.5s both;
+}
+@keyframes pl-mark-ink {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 .pl-plate {
   position: absolute;
   inset-inline: 0;
@@ -539,7 +573,12 @@
   .pl-headline-line,
   .pl-meta-row,
   .pl-boot-item,
-  .pl-plate .cp-draw {
+  .pl-plate .cp-draw,
+  .pl-mark .ev-out,
+  .pl-mark .ev-struct,
+  .pl-mark .ev-shadow,
+  .pl-mark .ev-fill,
+  .pl-mark .ev-dot {
     transition: none;
     animation: none;
   }
@@ -548,6 +587,15 @@
     stroke-dasharray: none;
     stroke-dashoffset: 0;
   }
+
+  .pl-mark .ev-out,
+  .pl-mark .ev-struct {
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+  }
+  .pl-mark .ev-shadow,
+  .pl-mark .ev-fill,
+  .pl-mark .ev-dot { opacity: 1; }
 
   .pl-headline-line,
   .pl-meta-row,

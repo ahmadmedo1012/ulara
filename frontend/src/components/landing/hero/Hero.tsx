@@ -1,114 +1,226 @@
-/**
- * Hero — the signature moment (r351 P1: the reference anatomy, RTL).
- *
- * ONE calm sheet, THREE bands — the content leads:
- *
- *   .hro (full-bleed band, 100svh-class height)
- *   ├─ [1] the content band — AT THE TOP (the reference leads with the
- *   │      giant headline): the 2-line display H1 (masked line reveal)
- *   │      ‖ the ONE lead sentence (one mask line) ‖ the ONE primary
- *   │      CTA (the reference's label roll-swap + fill wipe).
- *   ├─ [2] the art band — the CAMPUS PLATE centered on bare paper
- *   │      (CampusPlate 'ink': the SAME elevation the preloader traces,
- *   │      completing between the exit lines — the loader→hero handoff);
- *   │      the inspection instrument (HeroInspect — crosshair guides +
- *   │      live X/Y readout + drag-to-inspect stations) + the ruler
- *   │      chrome over the one frame. The stage is DECLUTTERED (r351
- *   │      P1): the static zone-name leader labels and the corner
- *   │      coordinate readouts retire FROM THE HERO SEAT (they keep
- *   │      their seat on the journey plate — hero.css hides
- *   │      [data-frag='labels'] and .iso-coord inside .hro-stage), and
- *   │      the deco cards retire from the hero entirely.
- *   ├─ [3] the work strip (the six honest subjects — unchanged seat).
- *   └─ [4] the section frame (4 wiping edges + plus marks).
- *
- * The removed hero seats (r351 P1 — logged in GAP.md §3.1):
- *   · the login secondary (alt cell) — login lives in the masthead
- *     (desktop bar + mobile menu; the funnel unit tests pin those
- *     seats) — the hero carries ONE primary, like the reference;
- *   · the two deco cards — mono micro-copy repetition of the work
- *     strip's own subjects.
- *
- * Mechanics (the reveal grammar, exact reference values):
- *   · hairline wipes — the frame's 4 edges scaleX/scaleY 0→1,
- *     1.2s LINEAR, origin mirrored for RTL (top right — the reference's
- *     top-left in LTR);
- *   · title mask-lines — each display line rides its own
- *     overflow-hidden mask, translateY(103%)→0, 0.8s power2.out,
- *     0.02s stagger (y is direction-neutral — no RTL mirror);
- *   · plate/frame/deco fades — 1s power3.out; the ink itself DRAWS
- *     (the staged ink-in belt — the plate's data-ink layers);
- *   · the CTA roll/wipe — label rolls one line up on hover/focus
- *     while the accent fill wipes from the reading-end edge.
- *
- * The motion engine is CSS transitions + the landing's OWN gates —
- * the hero itself carries no GSAP (the whole stack's ONE gsap seat is
- * the journey's scrubbed scene, lib/motion/engine.ts, which keeps its
- * own ticker parked; the hero never touches it). The choreography
- * hangs on the `.landing.intro-draw → .landing.intro-done` flip
- * (R308's entrance gate: the loader plays once per session; on its
- * exit slit the hero timeline begins). The GSAP ease curves are
- * translated to cubic-bezier(·) equivalents (documented in
- * hero-mechanics.css). prefers-reduced-motion collapses the whole
- * timeline to the settled sheet (RM belt inside hero-mechanics.css);
- * the intro gate never plays under RM.
- *
- * Stable hooks kept for the platform's contracts (tests/scripts —
- * see tests/unit/landing-funnel.test.tsx, tests/e2e/r312-*):
- *   .fo-hero (section) · .fo-hero-title (the H1) ·
- *   .fo-hero-actions .fo-hero-cta (the ONE primary) ·
- *   .fo-hero-work (the strip). Everything else is namespaced hro-*.
- */
-import { Fragment } from 'react';
+import { Fragment, Suspense, lazy, useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { Icon } from '../../Icon';
 import { HERO_WORK_ITEMS } from '../../../data/landing-ledger';
-import { CampusPlate } from './CampusPlate';
-import { HeroInspect } from '../cursor/HeroInspect';
+import { ElevationArt, VB_MOBILE } from './ElevationArt';
 import '../../../styles/landing/hero-mechanics.css';
-import { BRAND_LABEL, REGISTER } from '../copy';
 
-/* the hero's interaction-state seat ordinals (the r338 census register):
- * the work strip twins carry the recorded 1/2/5/7/4/6 seats — the
- * hover arms in hero.css bind those ordinals (a rename would silent-drop
- * the recorded deltas). */
-const WORK_SEAT_ORD = ['1', '2', '5', '7', '4', '6'] as const;
+/* ── the A2 art contract (r359) ─────────────────────────────────────────
+ * Web art lives in `components/illustrations/r359/<key>.tsx`. The hero
+ * consumes keys `hero-elevation` / `hero-elevation-mobile` through a lazy
+ * glob; when a key is absent (A2's branch not merged yet) the committed
+ * fallback `ElevationArt` (A1's own slice) owns the seat — a plain
+ * hairline frame never shows. Post-merge A2's key wins by precedence. */
+const R359_ART = import.meta.glob('../../illustrations/r359/hero-elevation*.tsx') as Record<
+  string,
+  () => Promise<{ default: React.ComponentType<{ className?: string }> }>
+>;
+const HeroElevationArt = R359_ART['../../illustrations/r359/hero-elevation.tsx']
+  ? lazy(R359_ART['../../illustrations/r359/hero-elevation.tsx'])
+  : null;
+const HeroElevationMobileArt = R359_ART['../../illustrations/r359/hero-elevation-mobile.tsx']
+  ? lazy(R359_ART['../../illustrations/r359/hero-elevation-mobile.tsx'])
+  : null;
 
-/* The display title — TWO authored lines (the frozen spec's own
- * h1 box is the 2-line seat at 1440/1920/1024: 772×93 · 1029×124 ·
- * 549×66 — lh = fs exactly, 2 lines). UNVOCALISED (zero tashkeel — the
- * display canon), no tracking; the second line carries the whole
- * «من المحاضرة إلى الإتقان» clause so the pair reads as one sentence
- * seam-to-seam at every belt. r351 P1: the pair rides the hero's own
- * giant rung (--hro-d1, the section-scoped clamp in hero.css — the
- * reference's 7.2rem-class display scale, Arabic-floor leading). */
+/* The display title — TWO authored lines at the reference's h1 scale
+ * (r359 D1: the fluid N/864·vw law — 46.7px @1440, 31.8px @390). Line one
+ * is the frozen test contract (HERO_READY) — the pair reads as one
+ * sentence seam-to-seam, lh = fs exactly. */
 const TITLE_LINES = ['رحلة تعلم واحدة', 'من المحاضرة إلى الإتقان'] as const;
 
-/* r351 P1 — the lead is ONE sentence (≤18 words; the reference's
- * one-liner density): the funnel sentence, one mask line. */
+/* r351 P1 kept: ONE lead sentence (≤18 words), one mask line. */
 const LEAD_LINE = 'محاضرات تفاعلية، ومصفوفة إتقان، واختبارات وبحوث — تجربة عربية واحدة.' as const;
 
-export function Hero() {
-  return (
-    <section className="fo-hero hro" aria-label={BRAND_LABEL}>
+/* the inspection stations — university concepts pinned on the elevation
+ * (the reference's drag-to-reveal hotspots). Coordinates are in the
+ * DESKTOP viewBox space (1440×620); the art box maps them to % at
+ * render time so they ride ON the building features. */
+const STATIONS = [
+  { id: 'C-01', label: 'مقرر تفاعلي', vx: 640, vy: 330, dir: 'up' },
+  { id: 'E-02', label: 'اختبار موثّق', vx: 980, vy: 500, dir: 'down' },
+  { id: 'R-03', label: 'بحث علمي', vx: 1030, vy: 260, dir: 'up' },
+  { id: 'I-04', label: 'مؤسسة أكاديمية', vx: 380, vy: 400, dir: 'down' },
+] as const;
 
-      {/* ══ [1] THE CONTENT BAND — the giant headline leads the fold
-          (the reference's own order): title cell (the 2-line H1)
-          ‖ the lead cell (ONE sentence + the register CTA under it).
-          The login secondary retired to the masthead (it lives in the
-          header pair + the mobile menu — the funnel seats the tests
-          pin). ══ */}
+export function Hero() {
+  const stageRef = useRef<HTMLDivElement>(null);
+  /* the reveal state: 0 = sealed · 1..N = stations revealed up to N ·
+   * 'all' = the full sheet (drag reached the far end). A tap on a
+   * station toggles just that one. */
+  const [open, setOpen] = useState<ReadonlySet<string>>(new Set());
+
+  /* drag-to-reveal — the reference's interaction: press on the drawing
+   * and drag; the callout tags unseal one by one as the drag travels
+   * (each 40px of travel unmasks the next station). Pointer-up keeps
+   * whatever was unsealed. Keyboard: the station buttons toggle on
+   * Enter/Space (focus-visible reveal). */
+  const dragRef = useRef({ on: false, x: 0, unsealed: 0 });
+
+  const revealNext = useCallback(() => {
+    setOpen((prev) => {
+      const next = new Set(prev);
+      for (const s of STATIONS) {
+        if (!next.has(s.id)) {
+          next.add(s.id);
+          return next;
+        }
+      }
+      return next;
+    });
+  }, []);
+
+  const onStagePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    dragRef.current = { on: true, x: e.clientX, unsealed: 0 };
+  };
+  const onStagePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragRef.current.on) return;
+    const dx = Math.abs(e.clientX - dragRef.current.x);
+    const step = 40;
+    const should = Math.min(STATIONS.length, Math.floor(dx / step));
+    while (dragRef.current.unsealed < should) {
+      dragRef.current.unsealed += 1;
+      revealNext();
+    }
+  };
+  const onStagePointerUp = () => {
+    dragRef.current.on = false;
+  };
+
+  const toggleStation = (id: string) => {
+    setOpen((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  /* reduced motion: the callouts render fully open (static sheet). */
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    if (typeof window.matchMedia !== 'function') return undefined;
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReduced(mq.matches);
+    const on = (e: MediaQueryListEvent) => setReduced(e.matches);
+    mq.addEventListener('change', on);
+    return () => mq.removeEventListener('change', on);
+  }, []);
+  const openSet = reduced ? new Set(STATIONS.map((s) => s.id)) : open;
+
+  /* mobile art key choice (≤767 → the mobile elevation). */
+  const [mobile, setMobile] = useState(false);
+  useEffect(() => {
+    if (typeof window.matchMedia !== 'function') return undefined;
+    const mq = window.matchMedia('(max-width: 767px)');
+    setMobile(mq.matches);
+    const on = (e: MediaQueryListEvent) => setMobile(e.matches);
+    mq.addEventListener('change', on);
+    return () => mq.removeEventListener('change', on);
+  }, []);
+  /* the active viewBox window — the fallback art's own crop (mobile seats
+   * the building; A2's mobile key replaces the whole art when present). */
+  const vb = mobile ? VB_MOBILE : '0 0 1440 620';
+  const [vX, vY, vW, vH] = vb.split(' ').map(Number) as [number, number, number, number];
+  const pct = (vx: number, vy: number) => ({
+    x: ((vx - vX) / vW) * 100,
+    y: ((vy - vY) / vH) * 100,
+  });
+  const Art = mobile ? (HeroElevationMobileArt ?? HeroElevationArt ?? ElevationArt)
+    : (HeroElevationArt ?? ElevationArt);
+
+  return (
+    <section className="fo-hero hro" aria-label="أُلارا — من المحاضرة إلى الإتقان">
+
+      {/* ══ [1] THE STAGE — the elevation owns the fold (r359 D4/D5):
+          the drawing fills the art band edge-to-edge between the two
+          dotted rules (7.5% / 83.5% of the fold, the reference's own
+          seat), the inspection stations ride ON the drawing, the tick
+          rulers + registration crosses frame the sheet. ══ */}
+      <div
+        className="hro-stage"
+        data-cursor="none"
+        ref={stageRef}
+        onPointerDown={onStagePointerDown}
+        onPointerMove={onStagePointerMove}
+        onPointerUp={onStagePointerUp}
+        onPointerCancel={onStagePointerUp}
+      >
+        {/* the art — A2's key (lazy) or the committed fallback. The art
+            box is ASPECT-LOCKED to the active viewBox (hero.css), so the
+            drawing fills it with zero letterbox — the stations layer
+            below tracks the drawing EXACTLY. */}
+        <div className="hro-art">
+          <div className="hro-ink" aria-hidden="true">
+            <Suspense fallback={<ElevationArt className="hro-elevation" viewBox={vb} />}>
+              {Art === ElevationArt ? (
+                <ElevationArt className="hro-elevation" viewBox={vb} />
+              ) : (
+                <Art className="hro-elevation" />
+              )}
+            </Suspense>
+          </div>
+
+          {/* the inspection stations — signal squares + callout tags, riding
+              ON the drawing (% of the aspect-locked art box = the viewBox's
+              own fractions). Keyboard: the buttons toggle their own callout;
+              drag reveals them in sequence. `.hi-marker` keeps the e2e seat. */}
+          <div className="hro-stations-layer">
+            {STATIONS.map((s) => {
+              const shown = openSet.has(s.id);
+              const p = pct(s.vx, s.vy);
+              return (
+                <div key={s.id} className={`hro-station hro-st-${s.dir} ${shown ? 'is-open' : ''}`} style={{ insetInlineStart: `${p.x}%`, insetBlockStart: `${p.y}%` }}>
+                  <button
+                    type="button"
+                    className="hi-marker"
+                    aria-pressed={shown}
+                    aria-label={`${s.label} — ${shown ? 'مفتوح' : 'مُغلق'} — اضغط للكشف`}
+                    onClick={() => toggleStation(s.id)}
+                    onFocus={() => setOpen((prev) => new Set(prev).add(s.id))}
+                    tabIndex={0}
+                  >
+                    <span className="hi-sq" aria-hidden="true" />
+                  </button>
+                  <span className="hi-tag" aria-hidden={!shown}>
+                    <span className="hi-tag-idx fo-mono" dir="ltr">[{s.id}]</span>
+                    <span className="hi-tag-txt">{s.label}</span>
+                  </span>
+                </div>
+              );
+            })}
+            {/* the drag hint — mono, seals away once anything is open */}
+            <span className={`hro-hint fo-mono ${openSet.size > 0 ? 'is-gone' : ''}`} aria-hidden="true">
+              [اسحب على الرسم لكشف التفاصيل]
+            </span>
+          </div>
+        </div>
+
+        {/* the ruler chrome — dashed tick strips on the stage's four
+            inner edges (the reference's ruler layer). */}
+        <div className="bp-rulers" aria-hidden="true">
+          <span className="bp-ruler bp-ruler-t" />
+          <span className="bp-ruler bp-ruler-b" />
+          <span className="bp-ruler bp-ruler-s" />
+          <span className="bp-ruler bp-ruler-e" />
+        </div>
+
+        {/* the ± registration marks at the stage's four corners */}
+        <span data-spec-hover="11" className="bp-dmark bp-dmark-tl" aria-hidden="true" />
+        <span data-spec-hover="12" className="bp-dmark bp-dmark-tr" aria-hidden="true" />
+        <span data-spec-hover="13" className="bp-dmark bp-dmark-bl" aria-hidden="true" />
+        <span data-spec-hover="14" className="bp-dmark bp-dmark-br" aria-hidden="true" />
+      </div>
+
+      {/* ══ [2] THE BOTTOM BAND — the reference's composed fold footer
+          (r359 D4, RTL mirror): the giant H1 leads from the reading
+          start (right), the hairline divider, then the one-line lead +
+          the discover/register cell at the far end. ══ */}
       <div className="hro-content">
         <div className="hro-title-cell">
           <h1 className="hro-title fo-hero-title">
             {TITLE_LINES.map((line, i) => (
               <Fragment key={line}>
-                {/* the whitespace text node between mask lines is the
-                    accessible-text seam: display:block masks render no
-                    box for it (visually inert), but textContent keeps
-                    the natural sentence spacing — screen readers and
-                    text pins read «من المحاضرة إلى الإتقان», not glue */}
                 {i > 0 ? ' ' : null}
                 <span className="hro-lmask">
                   <span className="hro-line">{line}</span>
@@ -118,10 +230,7 @@ export function Hero() {
           </h1>
         </div>
 
-        <div className="hro-sub-cell">
-          {/* ONE sentence (r351 P1) — the reference's one-liner lead,
-              one mask line (div, not p — the reference's lead is a
-              measured div box, T-11c) */}
+        <div className="hro-sub-cell" aria-hidden="false">
           <div className="hro-lead">
             <span className="hro-lmask">
               <span className="hro-line">{LEAD_LINE}</span>
@@ -129,18 +238,16 @@ export function Hero() {
           </div>
 
           {/* the funnel contract (r164b → r188, kept byte-identical):
-              ONE primary «أنشئ حسابك الجامعي» → /auth/register — now
-              styled as the reference's own btn-fill seat: the label
-              rolls one line up on hover/focus while the accent fill
-              wipes from the reading-end edge (the .hro-cta-fill/
-              .hro-cta-roll pair; the bottom twin is aria-hidden — the
-              accessible name stays the ONE real label). */}
+              ONE primary «أنشئ حسابك الجامعي» → /auth/register — the
+              reference's DISCOVER-MORE cell seat: bordered cell, the
+              label rolls one line up on hover/focus while the royal
+              fill wipes from the reading-end edge. */}
           <div className="hro-actions fo-hero-actions">
             <Link to="/auth/register" className="hro-cta fo-hero-cta" data-spec-hover="3">
               <span className="hro-cta-fill" aria-hidden="true" />
               <span className="hro-cta-roll">
-                <span className="hro-cta-top">{REGISTER}</span>
-                <span className="hro-cta-bot" aria-hidden="true">{REGISTER}</span>
+                <span className="hro-cta-top">أنشئ حسابك الجامعي</span>
+                <span className="hro-cta-bot" aria-hidden="true">أنشئ حسابك الجامعي</span>
               </span>
               <Icon icon={ArrowLeft} size={16} aria-hidden="true" />
             </Link>
@@ -148,69 +255,14 @@ export function Hero() {
         </div>
       </div>
 
-      {/* ══ [2] THE ART BAND — the drafting stage (the reference's
-          home-hero-img layer stack, ONE physical frame for the ink,
-          the inspection instrument and the drafting chrome). The plate
-          sits CENTERED at its own composed width — the drawing reads as
-          the sheet's centerpiece with paper breathing around it, never
-          a full-bleed scan. ══ */}
-      <div className="hro-art">
-        <div className="bp-stage hro-stage" data-cursor="none">
-          {/* the ink — the whole campus elevation on transparent
-              paper (drawn in by the staged ink-in belt; the SAME
-              plate the preloader traces, completing between the
-              exit lines). r351 P1: the stage-level CSS hides the
-              labels + coordinate fragments here — they belong to the
-              journey plate; the hero stage is the ONE calm drawing. */}
-          <div className="hro-plate">
-            <CampusPlate variant="ink" />
-          </div>
-          {/* the cursor instrument — crosshair guides + coordinate
-              readout + the drag-to-inspect stations (fine pointers,
-              ≥992 — the reference's interact-wrap, Ulara's own). */}
-          <HeroInspect />
-          {/* the ruler chrome — dashed tick strips on the frame's four
-              inner edges (the reference's ruler layer, visible at rest;
-              the quadrant graticule + red datum rules retire with the
-              survey pass — the plate carries its own dimension chain). */}
-          <div className="bp-rulers" aria-hidden="true">
-            <span className="bp-ruler bp-ruler-t" />
-            <span className="bp-ruler bp-ruler-b" />
-            <span className="bp-ruler bp-ruler-s" />
-            <span className="bp-ruler bp-ruler-e" />
-          </div>
-
-          {/* the ± registration marks — the dashed inner frame's corner
-              chrome (R315 B1 · A.3); direct stage children so their
-              seats track the frame's own inset. Hover-revealed with
-              the frame they annotate (clean corners at rest). */}
-          <span data-spec-hover="11" className="bp-dmark bp-dmark-tl" aria-hidden="true" />
-          <span data-spec-hover="12" className="bp-dmark bp-dmark-tr" aria-hidden="true" />
-          <span data-spec-hover="13" className="bp-dmark bp-dmark-bl" aria-hidden="true" />
-          <span data-spec-hover="14" className="bp-dmark bp-dmark-br" aria-hidden="true" />
-        </div>
-      </div>
-
-      {/* ══ [3] THE WORK STRIP — the six honest live-capability
-          subjects (the reference's home-hero-work band): ONE static
-          row ≥1200 (space-between, zero mask), a snap-scrolling strip
-          below — riding the work-card rise (3.2rem · 1s p3.out). ══ */}
-      {/* R355 (a11y): tabIndex 0 — the strip is a snap-scroll region and
-          axe's scrollable-region-focusable wants keyboard users able to
-          scroll it; its aria-label names it. The ITEMS stay tabIndex -1
-          (programmatically focusable, never tab stops — the strip is the
-          keyboard seat, the items are decorative chrome). */}
+      {/* ══ [3] THE WORK STRIP — the capabilities ticker (the reference's
+          value marquee at the hero seam): one static row ≥1200, the
+          snap-scrolling strip below. `.fo-hero-work` keeps the pinned
+          funnel seat. ══ */}
       <div className="hro-work fo-hero-work" aria-label="قدرات أُلارا العاملة اليوم" tabIndex={0}>
         <div className="hro-work-track">
-          {/* divs, not spans — the instrument asserts the reference's
-              measured div boxes (T-11c) */}
           {HERO_WORK_ITEMS.map((cap, i) => (
-            <div
-              key={cap}
-              className="hro-work-item"
-              tabIndex={-1}
-              data-spec-hover={WORK_SEAT_ORD[i]}
-            >
+            <div key={cap} className="hro-work-item" tabIndex={-1}>
               <span className="fo-mono" dir="ltr">[{String(i + 1).padStart(2, '0')}]</span>
               {cap}
             </div>
@@ -218,11 +270,9 @@ export function Hero() {
         </div>
       </div>
 
-      {/* ══ [4] THE FRAME — the reference's bg-border frame (R332 W1):
-          4 wiping edge strips (1.2s linear; origin mirrored for RTL)
-          + 4 corner plus marks, seated on the SECTION — inset 1.2rem
-          from the viewport edges over the full-bleed sheet, never
-          hugging an inner window (the run-001 kill). ══ */}
+      {/* ══ [4] THE FRAME — 4 hairline edges + corner plus marks on the
+          section (the reference's page frame; inset from the viewport
+          edges). ══ */}
       <span className="hro-edge hro-edge-t" aria-hidden="true" />
       <span className="hro-edge hro-edge-b" aria-hidden="true" />
       <span className="hro-edge hro-edge-s" aria-hidden="true" />
