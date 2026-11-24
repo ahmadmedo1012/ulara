@@ -188,22 +188,27 @@ export function coord(x: number, y: number, cx: number, cy: number, a: Record<st
 
 /**
  * Stipple field inside a polygon — the board-formed concrete tone.
- * One path, round linecap micro-segments; density 0..1 controls tone.
+ * One path, round linecap micro-dots. `tone` 0..1 maps to BOTH dot
+ * size and lattice pitch (measured from the reference: sunlit grain
+ * ≈ sparse 0.85px dots at ~6px pitch; cast shadows ≈ heavy overlap
+ * at ~2px pitch reading 60–80% ink) — the r359-i4 fidelity pass
+ * found the old flat count-mapping capped shadows at ~9% ink.
  */
 export function stipplePoly(
   pts: Array<[number, number]>,
-  density: number,
+  tone: number,
   seed: number,
-  opts: { dot?: number; a?: Record<string, string | number> } = {},
+  opts: { a?: Record<string, string | number> } = {},
 ): ArtNode {
+  const t = Math.min(1, Math.max(0, tone));
+  const pitch = 6.5 - 4.5 * Math.sqrt(t);      // 6.5px → 2.0px
+  const dot = 0.85 + 1.65 * Math.pow(t, 1.35); // 0.85 → 2.5 (overlaps in deep shade)
   const r = rng(seed);
-  const dot = opts.dot ?? 0.9;
   const xs = pts.map((p) => p[0]);
   const ys = pts.map((p) => p[1]);
   const [minX, maxX] = [Math.min(...xs), Math.max(...xs)];
   const [minY, maxY] = [Math.min(...ys), Math.max(...ys)];
-  const area = Math.abs(polyArea(pts));
-  const n = Math.round(area * density * 0.16);
+  const n = Math.round(((maxX - minX) * (maxY - minY)) / (pitch * pitch));
   let d = '';
   for (let i = 0; i < n; i++) {
     const x = rr(r, minX, maxX);
@@ -215,7 +220,7 @@ export function stipplePoly(
   return path(d, {
     fill: 'none',
     stroke: C.ink,
-    'stroke-width': dot,
+    'stroke-width': n2(dot),
     'stroke-linecap': 'round',
     ...opts.a,
   });
@@ -295,14 +300,20 @@ export interface TreeOpts {
   opacity?: number;
   stroke?: string;
   seed?: number;
+  /** number of main limbs leaving the trunk base (1–3) */
+  limbs?: number;
+  /** trunk weight multiplier (default 1; ~0.6 for feathered canopies) */
+  trunk?: number;
 }
 
 /**
  * A bare winter tree — recursive tapering branches, the reference's
- * foreground voice. Root at (x, baseY), height h.
+ * foreground voice. Root at (x, baseY), height h. `limbs` splits the
+ * trunk near the ground the way hand drawings do; stroke tapers
+ * ~0.6× per order down to the hairline.
  */
 export function tree(x: number, baseY: number, h: number, opts: TreeOpts = {}): ArtNode {
-  const { depth = 6, spread = 26, lean = 0, opacity = 1, stroke = C.ink, seed = 1 } = opts;
+  const { depth = 6, spread = 28, lean = 0, opacity = 1, stroke = C.ink, seed = 1, limbs = 1, trunk = 1 } = opts;
   const r = rng(seed * 7919 + 13);
   const nodes: ArtNode[] = [];
 
@@ -323,11 +334,26 @@ export function tree(x: number, baseY: number, h: number, opts: TreeOpts = {}): 
     for (let i = 0; i < n; i++) {
       const t = n === 2 ? i * 2 - 1 : i - 1;
       const sp = rr(r, 0.45, 1) * spread * (t === 0 ? 0.3 : 1) * (Math.PI / 180);
-      branch(ex, ey, ang + sp * (t === 0 ? 0.4 : t), len * rr(r, 0.62, 0.78), d - 1, Math.max(wgt * 0.62, W.hair));
+      branch(ex, ey, ang + sp * (t === 0 ? 0.4 : t), len * rr(r, 0.62, 0.78), d - 1, Math.max(wgt * 0.6, 0.5));
     }
   };
 
-  branch(x, baseY, -Math.PI / 2 + lean, h * 0.34, depth, Math.max(h / 42, 1.1));
+  const trunkW = Math.max((h / 50) * trunk, 1.1);
+  const up = -Math.PI / 2 + lean;
+  if (limbs <= 1) {
+    branch(x, baseY, up, h * 0.36, depth, trunkW);
+  } else {
+    // short trunk, then limbs fan out of it
+    const ty = baseY - h * 0.16;
+    nodes.push(path(
+      new D(x, baseY).q(x + lean * 8, baseY - h * 0.08, x, ty).toString(),
+      { fill: 'none', stroke, 'stroke-width': n2(trunkW * 1.15), 'stroke-linecap': 'round' },
+    ));
+    for (let i = 0; i < limbs; i++) {
+      const t = limbs === 1 ? 0 : i / (limbs - 1) - 0.5;
+      branch(x, ty, up + t * 0.5 + rr(r, -0.08, 0.08), h * rr(r, 0.24, 0.3), depth - 1, trunkW * 0.72);
+    }
+  }
   return g({ opacity: n2(opacity) }, ...nodes);
 }
 

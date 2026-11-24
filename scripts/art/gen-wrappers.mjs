@@ -23,7 +23,8 @@ const OUT_DIR = join(ROOT, 'frontend', 'src', 'components', 'illustrations', 'r3
 /* key → family scene module (relative to shared/art). Update as
  * families graduate; a key not listed here rides the stubs. */
 const GRADUATED = {
-  // 'hero-elevation': 'scenes/hero',
+  'hero-elevation': 'scenes/hero',
+  'hero-elevation-mobile': 'scenes/hero',
 };
 
 /* ── bundle the manifest to read ART_KEYS as JSON ────────────────── */

@@ -101,19 +101,19 @@ function ArtLibrary(): React.JSX.Element {
         <div className="artlib-controls" role="group" aria-label="ضبط العرض">
           <span className="artlib-ctl">
             {(['light', 'dark'] as const).map((t) => (
-              <button key={t} type="button" className="artlib-btn" aria-pressed={theme === t} onClick={() => setTheme(t)}>
+              <button key={t} type="button" data-ctl={`theme-${t}`} className="artlib-btn" aria-pressed={theme === t} onClick={() => setTheme(t)}>
                 {t.toUpperCase()}
               </button>
             ))}
           </span>
           <span className="artlib-ctl">
             {(['desktop', 'mobile'] as const).map((f) => (
-              <button key={f} type="button" className="artlib-btn" aria-pressed={frame === f} onClick={() => setFrame(f)}>
+              <button key={f} type="button" data-ctl={`frame-${f}`} className="artlib-btn" aria-pressed={frame === f} onClick={() => setFrame(f)}>
                 {f.toUpperCase()}
               </button>
             ))}
           </span>
-          <button type="button" className="artlib-btn" aria-pressed={animated} onClick={() => setAnimated((v) => !v)}>
+          <button type="button" data-ctl="anim" className="artlib-btn" aria-pressed={animated} onClick={() => setAnimated((v) => !v)}>
             ANIM {animated ? 'ON' : 'OFF'}
           </button>
         </div>

@@ -113,7 +113,7 @@ function planAnatomy(w: number, h: number, key: string): ArtNode {
     {},
     rect(x, y, pw, ph, { fill: 'none', stroke: C.ink, 'stroke-width': W.wall }),
     rect(x + 18, y + 18, pw - 36, ph - 36, { fill: 'none', stroke: C.ink, 'stroke-width': W.med }),
-    stippleRect(x + 18, y + 18, 16, ph - 36, 0.5, 42),
+    stippleRect(x + 18, y + 18, 16, ph - 36, 0.32, 42),
     stairs(x + pw - 90, y + 24, x + pw - 30, y + 96, 6),
     hatchPoly([[x, y + ph], [x + pw * 0.35, y + ph], [x + pw * 0.22, y + ph + 26]], { angle: 45, pitch: 7 }),
     dimH(x, x + pw, y + ph + 60, 66, 66, { label: '12000MM' }),
