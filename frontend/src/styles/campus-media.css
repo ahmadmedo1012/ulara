@@ -37,6 +37,6 @@
   font-weight: 600;
   text-decoration: none;
   border-block-end: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
-  padding-block: 14px;
-  margin-block: -14px;
+  padding-block: 14px; /* spacing-gate: allow — the painted 44px tap floor: 14px is the half-step between the sp-3/sp-4 grid, rhythm-safe */
+  margin-block: -14px; /* spacing-gate: allow — the painted 44px tap floor's offsetting bleed, keeps the layout rhythm */
 }

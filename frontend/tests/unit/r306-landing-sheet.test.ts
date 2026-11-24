@@ -220,7 +220,7 @@ describe('r306 → r310 — the elevation illustration (the honest interactive)'
     // transparent paper: no raster <image> in the plate
     expect(ink).not.toContain('<image');
     // the loader keeps its own original line drawing (SheetLoader)
-    expect(art).toContain('export const ELEVATION_VB');
+    expect(art).toContain('const ELEVATION_VB = { w: 1440, h: 640 }');
     // never canvas, never <picture>
     expect(liveTsx).not.toContain('<picture>');
     expect(liveTsx).not.toContain('<canvas');

@@ -227,4 +227,11 @@ export const KNOWN_DURATIONS_MS: ReadonlyArray<number> = [
   // the frozen spec's measured value, not an ad-hoc literal; ×90
   // findings on `/` until folded in — same convention as r164/r190.
   300,
+  // r359-A1 integration: the hero rebuild's staged ink-in (the
+  // elevation's six layers draw in 0.12s apart — hero-mechanics.css
+  // ev-i1..i5 at 0.55s + hero.css ev-i6 at 0.45s; the design-gate
+  // motion check already whitelists these sheets as the authored
+  // cinematic contract, this list is its runtime counterpart — same
+  // convention as r331/r341). ×36 findings on `/` until folded in.
+  450, 550,
 ];

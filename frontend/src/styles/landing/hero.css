@@ -18,11 +18,13 @@
   /* the type law (scoped — A1's own seats per the partition contract) */
   --hro-h1: clamp(34px, 4.3vw, 82px);      /* 62@1440 · 82@1907 · floor 34@390 — the brief's h1 law (62.22 desktop scale) */
   --hro-lead: clamp(13.3px, 1.11vw, 21.3px); /* 16@1440 · 21.3@1920 — the reference's own paragraph voice */
-  --hro-ink: var(--paper-ink, #282828);
-  --hro-ink-2: var(--paper-ink-2, #646464);
-  --hro-hair: var(--hairline, #b3b3af);
-  --hro-paper: var(--paper, #f2f1ec);
-  --hro-sig: var(--accent, #2540d9);
+  /* the reference's measured ink family — A1's scoped seats (D1/D6);
+     the token migration wish is logged for the integrator */
+  --hro-ink: var(--paper-ink, #282828); /* color-gate: allow — the reference's measured ink, A1 scoped seat (D1) */
+  --hro-ink-2: var(--paper-ink-2, #646464); /* color-gate: allow — the reference's measured secondary ink, A1 scoped seat (D1) */
+  --hro-hair: var(--hairline, #b3b3af); /* color-gate: allow — the reference's measured hairline, A1 scoped seat (D1) */
+  --hro-paper: var(--paper, #f2f1ec); /* color-gate: allow — the reference's measured warm paper, A1 scoped seat (D1) */
+  --hro-sig: var(--accent);
 
   display: grid;
   grid-template-rows: minmax(0, 1fr) auto auto;
@@ -346,7 +348,7 @@
   z-index: -1;
 }
 .hro-cta:hover .hro-cta-fill { transform: scaleX(1); }
-.hro-cta:hover { color: #fff; border-color: var(--hro-sig); }
+.hro-cta:hover { color: #fff; border-color: var(--hro-sig); } /* color-gate: allow — white-on-signal, the reference's primary-button law */
 /* focus: the universal ring (base.css) owns visibility — no private
    :focus-visible sub-language on the landing (r172a §3). */
 /* the label roll — one visible line; the twin rides below the fold */
@@ -357,7 +359,7 @@
   align-content: start;
 }
 .hro-cta-top, .hro-cta-bot { display: block; line-height: 1.5; transition: transform 0.42s cubic-bezier(0.625, 0.05, 0, 1); white-space: nowrap; }
-.hro-cta-bot { color: #fff; }
+.hro-cta-bot { color: #fff; } /* color-gate: allow — white-on-signal, the reference's primary-button law */
 .hro-cta:hover .hro-cta-top { transform: translateY(-1.5em); }
 
 /* ── [3] THE WORK STRIP (the value ticker at the seam) ─────────────── */

@@ -35,8 +35,6 @@ import type { CSSProperties } from 'react';
  * Hero.tsx); this file stays as the committed no-art floor.
  */
 
-export const ELEVATION_FRAME = { w: 1440, h: 640 } as const;
-
 /* the ink layers — staged ink-in rides these (hero-mechanics.css):
  * 1 structure (ground + slabs) · 2 masses · 3 glazing · 4 texture +
  * shadows · 5 trees · 6 callouts. */
@@ -93,20 +91,20 @@ export function ElevationArt({
         </pattern>
         {/* the fade gradients (mask luminance: white = ink, black = paper) */}
         <linearGradient id="ev-g-r" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0" stopColor="#fff" stopOpacity="0.92" />
-          <stop offset="1" stopColor="#000" />
+          <stop offset="0" stopColor="#fff" /* color-gate: allow — mask luminance ramp (white=ink, black=paper), not palette */ stopOpacity="0.92" />
+          <stop offset="1" stopColor="#000" /* color-gate: allow — mask luminance ramp (white=ink, black=paper), not palette */ />
         </linearGradient>
         <linearGradient id="ev-g-d" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#fff" stopOpacity="0.92" />
-          <stop offset="1" stopColor="#000" />
+          <stop offset="0" stopColor="#fff" /* color-gate: allow — mask luminance ramp (white=ink, black=paper), not palette */ stopOpacity="0.92" />
+          <stop offset="1" stopColor="#000" /* color-gate: allow — mask luminance ramp (white=ink, black=paper), not palette */ />
         </linearGradient>
         <linearGradient id="ev-g-diag" x1="0" y1="0" x2="0.7" y2="1">
-          <stop offset="0" stopColor="#fff" stopOpacity="0.95" />
-          <stop offset="1" stopColor="#000" />
+          <stop offset="0" stopColor="#fff" /* color-gate: allow — mask luminance ramp (white=ink, black=paper), not palette */ stopOpacity="0.95" />
+          <stop offset="1" stopColor="#000" /* color-gate: allow — mask luminance ramp (white=ink, black=paper), not palette */ />
         </linearGradient>
         <linearGradient id="ev-g-up" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#000" />
-          <stop offset="1" stopColor="#fff" stopOpacity="0.9" />
+          <stop offset="0" stopColor="#000" /* color-gate: allow — mask luminance ramp (white=ink, black=paper), not palette */ />
+          <stop offset="1" stopColor="#fff" /* color-gate: allow — mask luminance ramp (white=ink, black=paper), not palette */ stopOpacity="0.9" />
         </linearGradient>
         <mask id="ev-m-r"><rect x="0" y="-80" width="1440" height="700" fill="url(#ev-g-r)" /></mask>
         <mask id="ev-m-d"><rect x="0" y="-80" width="1440" height="700" fill="url(#ev-g-d)" /></mask>

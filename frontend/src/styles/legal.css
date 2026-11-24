@@ -38,8 +38,8 @@
     border-block-end: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
     padding-block-end: var(--sp-0-5);
     /* r359 A1 §C — the painted 44px tap floor (the layout rhythm never moves) */
-    padding-block: 14px;
-    margin-block: -14px;
+    padding-block: 14px; /* spacing-gate: allow — the painted 44px tap floor: the sp-3/sp-4 half-step, rhythm-safe */
+    margin-block: -14px; /* spacing-gate: allow — the tap floor's offsetting bleed, keeps the rhythm */
   }
 
   /* ══ 2 · THE LIST — the policy sheet's ruled prose ═══════════════ */
@@ -275,5 +275,17 @@
 
   html:has(.lg)::-webkit-scrollbar {
     display: none;
+  }
+
+  /* ══ R359 FINAL — THE LINK LAW (ink at rest, royal on hover — the
+     landing footer's grammar, D6's seat discipline). ═══════════════ */
+
+  .lg-link {
+    color: var(--text);
+    border-block-end-color: var(--rule-strong);
+  }
+
+  .lg-code {
+    color: var(--text);
   }
 }

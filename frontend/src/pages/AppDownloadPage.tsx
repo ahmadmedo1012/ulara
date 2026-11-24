@@ -104,7 +104,7 @@ export function AppDownloadPage() {
         <div className="pf-page" data-width="reading">
           <div className="pf-page-header">
             <div className="pf-page-header-text">
-              <p className="pf-eyebrow">وثيقة التوزيع</p>
+              <p className="fo-eyebrow"><span className="fo-mono" dir="ltr">[01]</span> وثيقة التوزيع</p>
               <h1 className="pf-page-title">تطبيق أُلارا — التنزيل والتحديث</h1>
               <p className="pf-page-desc">
                 تنزيل أندرويد المباشر، حالة iOS، وكيف تصل التحديثات — قراءة حيّة من الخادم.
@@ -258,7 +258,7 @@ export function AppDownloadPage() {
             </div>
             <div className="ap-cell">
               <p className="ap-p">
-                أندرويد 8.0+ وiOS 15+ — عربية بالكامل، بالوضعين الفاتح والداكن. للبلاغ عن
+                أندرويد <bdi className="ap-mono" dir="ltr">8.0+</bdi> و<bdi className="ap-mono" dir="ltr">iOS 15+</bdi> — عربية بالكامل، بالوضعين الفاتح والداكن. للبلاغ عن
                 مشكلة: <Link to="/contact" className="ap-link">قناة التواصل</Link>.
               </p>
             </div>

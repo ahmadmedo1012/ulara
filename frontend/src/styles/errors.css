@@ -85,7 +85,7 @@
   font-family: var(--font-display);
   /* the r359 measured headline clamp: 23.8px @390 · 21.4px @768 ·
      40px @1440 — on the d2/d3 rungs at every band (gate-checked) */
-  font-size: clamp(23.8px, 2.78vw, 40px);
+  font-size: clamp(23.8px, 2.78vw, 40px); /* type-gate: allow — the r359 measured fluid law at the error display rung (D1), errors.css outside the landing exemption */
   /* the r359 display weight — the one seat above the r324 500/600
      law (tests/unit/r324-type-gate.test.ts carries the exception) */
   font-weight: var(--fw-bold);
@@ -96,7 +96,7 @@
 
 .auth-shell .auth-form-sub {
   /* the r359 measured body clamp: 13.3px floor · 15.5px ceiling */
-  font-size: clamp(13.3px, .926vw, 15.5px);
+  font-size: clamp(13.3px, .926vw, 15.5px); /* type-gate: allow — the r359 measured fluid law at the error body rung (D1), errors.css outside the landing exemption */
   line-height: var(--lh-base);
 }
 
