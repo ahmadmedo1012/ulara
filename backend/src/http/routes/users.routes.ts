@@ -210,7 +210,12 @@ router.get(
       const header = ['id', 'email', 'role', 'firstName', 'lastName', 'universityId', 'isActive', 'emailVerified', 'createdAt', 'memberships'];
       const escape = (v: unknown): string => {
         const s = v === null || v === undefined ? '' : String(v);
-        return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+        // NOTE: the regex lives behind an `=` (not a bare `return /…/`) —
+        // the OpenAPI generator's source scanner treats a `/` after a
+        // word as division, and a `return /…/.test(…)` shape would eat
+        // the wrong span (its string-skipper would swallow a paren).
+        const needsQuoting = /[",\n]/.test(s);
+        return needsQuoting ? `"${s.replace(/"/g, '""')}"` : s;
       };
       const lines = [header.join(',')];
       for (const r of bounded) {
