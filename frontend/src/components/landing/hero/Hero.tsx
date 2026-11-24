@@ -184,7 +184,7 @@ export function Hero() {
             {failedArt === elevation ? (
               <ElevationArt className="hro-elevation" viewBox={vb} />
             ) : (
-              <img className="hro-elevation" src={elevation} alt="" fetchPriority="high"
+              <img className="hro-elevation" src={elevation} draggable={false} alt="" fetchPriority="high"
                 onError={() => setFailedArt(elevation)} />
             )}
           </div>

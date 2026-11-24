@@ -58,7 +58,15 @@
 
 - P4: 17 previously missing institution API paths now have explicit fixtures. Repaired org-tree envelopes and list field names; response errors reset between matrix cells. The 13-route phone sweep recorded no missing fixtures; the two remaining short record links were corrected and retested in both themes. [Measurements](evidence/institution-fixes.txt).
 
-NEXT: Review the full-route sweep, including the new computed radius and shadow census.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:bb351aa3cb14fdba89adaa313f9f127a675ebf5f45ca0f5a371d549feaf35068 -->
+
+- P2: [nine landing section comparisons and critique](evidence/landing-critique.md). The loaded phone page measures 4,980 px normally and 5,564 px with reduced motion. Fixed native image dragging intercepting station gestures (both failing midpoint cases now pass). Limited frame-by-frame style changes to the two progress fills. [Measurements and tests](evidence/landing-measures.txt); the first live SVG build scored 73/100 performance/accessibility 100, below target.
+
+NEXT: Confirm the next production deployment, Lighthouse and final verification results.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 

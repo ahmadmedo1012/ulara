@@ -151,6 +151,10 @@ export function Preloader({ onExitStart, onDone }: PreloaderProps) {
   useEffect(() => {
     const root = rootRef.current;
     if (!root) return undefined;
+    const fills = root.querySelectorAll<HTMLElement>('.pl-line-fill');
+    const updateFill = (fraction: number) => {
+      for (const fill of fills) fill.style.transform = `scaleX(${fraction.toFixed(4)})`;
+    };
 
     /* session-once: the introGate's sessionStorage seen-flag is THE
      * flag — stamped the moment the overlay plays so in-session
@@ -226,7 +230,7 @@ export function Preloader({ onExitStart, onDone }: PreloaderProps) {
       exited = true;
       cancelAnimationFrame(raf);
       writePct(100);
-      root.style.setProperty('--pl-p', '1');
+      updateFill(1);
       /* the scroll lock releases as the reveal starts (the page is
        * scrollable under the opening slit — the cleanup contract) */
       doc.style.overflow = prevOverflow;
@@ -321,9 +325,8 @@ export function Preloader({ onExitStart, onDone }: PreloaderProps) {
         lastPctShown = next;
         lastPctAt = nowMs;
       }
-      /* the progress var drives BOTH centreline halves (the root is the
-       * one shared writer — the two band children read the same value) */
-      root.style.setProperty('--pl-p', (shown / 100).toFixed(4));
+      // Only the two narrow rules move; the SVG subtree needs no style update.
+      updateFill(shown / 100);
       if (solved && t >= RELEASE_EXIT_MS && shown >= 99.5) {
         runExit();
         return;

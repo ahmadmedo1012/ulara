@@ -87,8 +87,8 @@
   position: absolute;
   inset: 0;
   background: var(--accent);
-  /* the shared progress var — one writer (the root), two halves */
-  transform: scaleX(var(--pl-p, 0));
+  /* Progress is written directly to the two fills. */
+  transform: scaleX(0);
   transform-origin: right; /* grows right→left — the RTL reading start */
   transition: background-color var(--motion-duration-sheet-exit) var(--motion-ease-band-exit);
 }

@@ -1,0 +1,8 @@
+settled no-preference [
+  4980,
+--
+settled reduce [
+  5564,
+  2 passed (7.2s)
+      Tests  9 passed (9)
+Production	2026-11-24T23:49:41.341Z	https://ulara.vercel.app/	0.73	1	2.9 s	900 ms	0
