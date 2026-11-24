@@ -47,10 +47,18 @@ import React, { memo, useMemo } from 'react';
 import Svg, { Circle, Ellipse, G, Line, Path, Polygon, Polyline, Rect, Text as SvgText } from 'react-native-svg';
 import type { ArtBuilder, ArtDoc, ArtNode, ArtPlateProps } from './shared/grammar';
 
-const PALETTE = {
+interface Pal {
+  ink: string;
+  ink2: string;
+  hair: string;
+  sig: string;
+  paper: string;
+}
+
+const PALETTE: Record<'light' | 'dark', Pal> = {
   light: { ink: '#282828', ink2: '#62625F', hair: '#B3B3AF', sig: '#2540D9', paper: '#F3F2EC' },
   dark: { ink: '#F3F2EC', ink2: '#B3B3AF', hair: '#4A4A48', sig: '#8AA0FF', paper: '#1C1C1A' },
-} as const;
+};
 
 const CAMEL: Record<string, string> = {
   'stroke-width': 'strokeWidth',
@@ -71,7 +79,7 @@ const FONT_MAP: Record<string, string> = {
   'var(--font-sans)': 'sans-serif',
 };
 
-function color(v: unknown, pal: typeof PALETTE.light): unknown {
+function color(v: unknown, pal: Pal): unknown {
   if (typeof v !== 'string') return v;
   if (v === 'var(--r359-ink)') return pal.ink;
   if (v === 'var(--r359-ink-2)') return pal.ink2;
@@ -81,7 +89,7 @@ function color(v: unknown, pal: typeof PALETTE.light): unknown {
   return FONT_MAP[v] ?? v;
 }
 
-function renderNode(n: ArtNode, i: React.Key, pal: typeof PALETTE.light): React.JSX.Element {
+function renderNode(n: ArtNode, i: React.Key, pal: Pal): React.JSX.Element {
   const raw = n.a ?? {};
   const p: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(raw)) {

@@ -47,7 +47,9 @@ for (const [p, load] of Object.entries(ART_MODULES)) {
 function PlatesPage(): React.JSX.Element {
   usePageTitle('لوحات المنتج');
   return (
-    <main className="plates-root" aria-label="لوحات المنتج — مشاهد معزولة">
+    <>
+    <main className="plates-root">
+    <h1 className="sr-only">لوحات المنتج ومكتبة الرسوم</h1>
       <PlateScene id="student-dashboard" title="لوحة الطالب">
         <FragmentDashboard />
       </PlateScene>
@@ -83,6 +85,7 @@ function PlatesPage(): React.JSX.Element {
       </PlateScene>
       <ArtLibrary />
     </main>
+    </>
   );
 }
 
@@ -398,7 +401,7 @@ function FragmentExamActive() {
         <span className="plate-mono plate-strong">29:55</span>
         <span className="plate-muted">اختبار قصير — هندسة البرمجيات</span>
       </div>
-      <div className="plate-dots" aria-label="خمسة أسئلة">
+      <div className="plate-dots" role="img" aria-label="خمسة أسئلة">
         <span className="plate-dot is-on" /><span className="plate-dot" /><span className="plate-dot" /><span className="plate-dot" /><span className="plate-dot" />
       </div>
       <div className="plate-q">
