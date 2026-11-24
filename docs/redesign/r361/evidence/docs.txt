@@ -1,0 +1,6 @@
+Found shared/design-tokens.json
+Found shared/art
+Found docs/redesign/r360/DECISIONS.md
+Found scripts/gates/size-gate.sh
+Found docs/design-system.md
+Found docs/redesign/r361/LEDGER.md

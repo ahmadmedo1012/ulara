@@ -102,20 +102,20 @@ records as history, never as current law.)*
 
 ## 2. Color — the token contract (tokens.css)
 
-| Token | Light | Dark | Register |
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:1924b90bd1575a2d1b316a64a74fbc96484c018d251d114db4e82662e4a16cfa -->
+
+| Token | Light | Dark | Purpose |
 |---|---|---|---|
-| `--bg` | blueprint paper `#F5F1E8` | charcoal `#262019` | the grounds |
-| `--surface` | `#FFFFFF` | `#2E2E2E` | 1.06/1.09 elevation step |
-| `--text` | the 2026 ink `#1A1713` (15.84 AAA) | paper `#F5F1E8` (14.30 AAA) | primary ink |
-| `--text-secondary` / `--text-muted` / `--text-faint` | `#414140` / `#62625F` / `#666660` | `#C9C9C5` / `#B4B4B0` / `#A2A29D` | the ink ramp (9.6 → 4.5) |
-| `--accent` | royal `#2540D9` (6.62 AA — the signal IS text-safe) | `#8AA0FF` (6.56 AA) | the signal fill (2026 «Parchment & Royal») |
-| `--accent-ink` | `#2540D9` (**6.62 AA text**) | `#8AA0FF` (6.56 AA) | signal TEXT (links, numerals, emphasis) |
-| `--accent-soft` / `--accent-strong` | `#E4E9FF` / `#1B30B0` | `#2A2F4A` / `#A9B8FF` | tint wells / deep ink (dark strong = the r351-main derived tier, 6.85 on the soft · 8.43 on the ground) |
-| `--accent-fg` (labels ON the fill) | `#FFFFFF` (7.46 AAA on royal) | `#262019` (6.56 — white FAILS 2.46, never use) | the fill-label law (2026) |
-| `--primary` / `--primary-fg` | royal slab `#2540D9` + white (7.46 AAA) | `#8AA0FF` + `#262019` (6.56) | PRIMARY CTAs (2026 — the primary joins the brand signal) |
-| `--border` / `--rule` / `--grid-line` | `#E0E0DA` / `#C8C8C8` / `#B3B3AF` | `#4A4A48` / `#4A4A48` / `#5C5C5A` | the hairline tiers (`--grid-line` decorative on light) |
-| `--gold` / `--gold-ink` / `--gold-soft` | `#B57438` / `#8F5A28` / yellow-bg | `#E0A067` / `#F2B782` | **achievements/status gold ONLY** — never a second accent |
-| `--state-focus-ring-color` | `#2540D9` (6.62 — ≥3:1 every adjacent surface) | `#8AA0FF` (6.56 bg · 5.53 card) | the ONE focus ring (base.css) |
+| `--bg` | `#F2F1EC` | `#262019` | Page ground |
+| `--surface` | `#FFFFFF` | `#2E2E2E` | Card ground |
+| `--accent` | `#2540D9` | `#8AA0FF` | Links, primary actions and instrument highlights |
+| `--grid-line` | `#B3B3AF` | See the dark semantic token | Decorative grid |
+
+Resolve other values through `shared/design-tokens.json` and the generated CSS. Status colours describe outcomes; the shared art library uses a single royal signal.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 Status families `--c-{royal,mint,yellow,rose,sky,lavender,copper/coral,grey,…}-{bg,ink,deep}`:
 computed triads, deep-vs-bg ≥4.5 both themes. 2026: success = the approved green `#17724A`
@@ -198,24 +198,13 @@ honest numbers, the integrity strings, and the a11y contracts are pinned by
 
 ### §5.a The isometric plate grammar — the r346/r353 art direction
 
-Every drawing on the landing (the hero campus plate, the journey's campus sheet, the
-pains plates, the why loops, the role machines) renders from ONE grammar:
-`lib/iso.ts` (the 30° projection + the `PLATE` palette) → `kernel/Iso.tsx` (the
-primitives: boxes, routes, leaders, tags + the r353 architectural set — `Dim`
-dimension lines, `Arcade` colonnades, `Palm`, `IsoDome`) → the fragments
-(`plates/CampusArt.tsx` is the campus's ONE geometry source; both the hero and the
-journey mount it). The painting system is `styles/landing/iso-plate.css` (the
-`--iso-*` seats, all var()-references — the color gate's law).
+<!-- coderabbit-ai-generated:v1 -->
 
-**The two-voice colour law (r353, the 2026 identity carried into the drawings):**
-- **ROYAL** (`--iso-royal` → `--c-royal-ink`, `#2540D9` light / `#8AA0FF` dark) is
-  the engineering-intelligence layer: data routes, network nodes, dimension lines,
-  measurement ticks, the compass needle, the recommendation/pipeline/priority flows.
-  Blue = the platform.
-- **Warm sienna** (`--iso-sienna` → the copper family `#F15534`) is the FOCAL accent,
-  spent on the learner's journey alone: the flag, the mastery gap, the observatory
-  beacon, the one hot tick per plate. Warm = the human moment — never a substitute
-  for the royal signal.
+<!-- coderabbit-ai-generated-section:v1:3acb202f0f7fab679c6cd27431f00d43c85908266a8536fa9fa011638ab7e17e -->
+
+The shipped hero, statement and role plates use the shared A2 art library (`shared/art`). The generator emits theme-aware SVGs for the web and React Native drawings for the app. Use ink for structure, hairlines for dimensions, and royal for the active route or measurement. Run the art palette gate after regeneration.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 **The line-weight hierarchy:** profile 1.6–1.8 on silhouettes, structure 1.1–1.3,
 detail 0.7–0.9 — the drafting sheet's three voices (the journey's sheet re-keys

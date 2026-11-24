@@ -64,7 +64,15 @@
 
 - P2: [nine landing section comparisons and critique](evidence/landing-critique.md). The loaded phone page measures 4,980 px normally and 5,564 px with reduced motion. Fixed native image dragging intercepting station gestures (both failing midpoint cases now pass). Limited frame-by-frame style changes to the two progress fills. [Measurements and tests](evidence/landing-measures.txt); the first live SVG build scored 73/100 performance/accessibility 100, below target.
 
-NEXT: Confirm the next production deployment, Lighthouse and final verification results.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:e32a9bbc1357f000cdc3b560108d69cea541cecfc15d51084af4f1f93f0e3825 -->
+
+P7 — Updated README, web palette and art guidance, deployment lineage, CI trigger table and open operator tasks; source checks: [docs](evidence/docs.txt). Previous landed item: f9791e2.
+
+NEXT: Repair mobile lint, confirm builds and run final captures.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 

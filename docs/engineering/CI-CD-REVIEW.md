@@ -6,17 +6,23 @@ the same gates locally; GitHub-side settings were **not** inspected.
 
 ## 1. Current pipeline shape
 
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:389e32fc052994331d57c430ab4a4e204e17ff1288b6843dfb5937401a0861ff -->
+
 | Workflow | Trigger | Jobs | Notes |
 |---|---|---|---|
 | `ci.yml` | push (any branch), PR, dispatch | `zero-trace`, `lint`, `typecheck`, `build`, `test-frontend`, `test-backend`, `db-integration`, `e2e`, `ios-webkit`, `design-gates`, `surface-drift` | the main matrix; `contents: read`; per-ref concurrency cancels stale runs |
-| `size-gate.yml` | push, PR, dispatch | `size-gate` | file ≤500 KB, `docs/` ≤30 MB, push adds ≤5 MB |
+| `size-gate.yml` | push, PR, dispatch | `size-gate` | file ≤500 KB, `docs/` ≤58 MiB, push adds ≤5 MB |
 | `deploy.yml` | push to `main` (path-filtered), dispatch | `deploy` | Vercel CLI `--prod --regions fra1`, credential gate skips green when secrets are absent |
 | `deploy-smoke.yml` | after deploy | smoke | polls the live buildId until it equals the pushed SHA |
 | `mobile.yml` | mobile paths | devclient/full lanes | emulator + artifacts |
 | `android-apk.yml` | mobile paths/dispatch | QA + signed release | |
-| `build-ios-sidestore.yml` | dispatch | sidestore IPA | |
+| `build-ios-sidestore.yml` | mobile paths on main / dispatch | sidestore IPA | |
 | `mobile-builds-ledger.yml` | mobile builds | ledger | |
-| `deadcode.yml` | schedule/PR | knip + jscpd ratchet | |
+| `deadcode.yml` | push/PR/dispatch | knip + jscpd ratchet | |
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 Strengths observed: least-privilege `permissions` everywhere, explicit
 `timeout-minutes` on every job, `concurrency` groups (and `cancel-in-progress:

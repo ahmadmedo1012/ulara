@@ -4,7 +4,15 @@
 > وما الذي يفعّل النشر أين، والمتغيرات وcron وعمل المشغّل اليومي.
 > الشيفرة مصدر الحقيقة: `vercel.json` و`.github/workflows/*.yml`.
 
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:8d6bdfc1cdd3f325b9279a58960bae941ce48ab8a9d8d84de753759092cbcf18 -->
+
+سلسلة الهجرات في المستودع هي المعتمدة (0001 إلى 0007 عند الدمج). سجلات الإنتاج الأقدم تُترك كما هي؛ لا تعد ضبط القاعدة. الدليل: [قرار التسوية D10](redesign/r360/DECISIONS.md). في r361 نجح النقل العادي عبر Git؛ يظل مسار API المعتمد في D14 وسيلة استعادة عند تعذّر النقل.
+
 ## 1. ماذا يفعّل ماذا (push إلى `main`)
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- coderabbit-ai-generated:v1 -->
 
