@@ -225,7 +225,9 @@
 /* Primary emphasis cap: ONE ember-flavored primary action per surface
    is expressed by .hr-cta (never by re-painting .btn globally). */
 .hr-cta {
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hr-ember) 38%, transparent);
+  /* R359 (A3 · the no-shadow law): the ember ring rides the .btn's own
+     border seat (identical 1px tinted ring, zero computed box-shadow). */
+  border-color: color-mix(in srgb, var(--hr-ember) 38%, transparent);
 }
 
 /* Focus: never weaken the global ring — only add a visible offset

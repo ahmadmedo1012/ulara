@@ -763,7 +763,10 @@
     inline-size: 8px;
     border-radius: var(--r-full);
     background: var(--text-muted);
-    box-shadow: inset 0 0 0 1px var(--surface);
+    /* R359 (A3 · the no-shadow law): the surface collar rides a real
+       border (border-box keeps the 8px outer geometry identical). */
+    border: 1px solid var(--surface);
+    box-sizing: border-box;
   }
 
   /* ╔═══════════════════════════════════════════════════════════════╗

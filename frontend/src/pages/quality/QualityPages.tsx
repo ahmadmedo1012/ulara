@@ -7,7 +7,7 @@ import {
   LineElement, BarElement, ArcElement, Filler, Tooltip, Legend,
 } from 'chart.js';
 import {
-  ShieldCheck, BookOpen, Activity,
+  BookOpen, Activity,
   AlertTriangle, TrendingUp, FileText, ClipboardCheck, ListChecks,
   Building2, School, Star, ArrowLeft, X,
   CheckCircle2, Search, Eye,
@@ -21,6 +21,10 @@ import { Card, Badge, AlertRow, ProgressBar, UserAvatar } from '../../components
  * header grammar (the primitives/PageHeader form stays for the families
  * that still own it). */
 import { PageHeader } from '../../components/patterns';
+/* R359 (A3) — the sheet grammar: the quality dashboard is the
+ * reference implementation of the authenticated product's new page
+ * language (framed sections + the KPI band + the lateral split). */
+import { SheetSection, KpiBand } from '../../components/patterns';
 import { StatStrip } from '../../components/primitives/Ledger';
 import { ChartFrame } from '../../components/charts';
 import { cartesianOptions, radialOptions, chartColors, useChartThemeKey } from '../../lib/chartTheme';
@@ -454,119 +458,120 @@ export function QualityDashboardPage() {
       <div className="hr-scope">
       {pageHeader}
 
-      {/* R189 — the typographic stat strip (was the grid-4 KPI tiles). */}
-      <StatStrip
-        ariaLabel="مؤشرات الجودة الأساسية"
-        cells={[
-          {
-            label: 'الطلاب النشطون',
-            value: <CountIn value={d.users.STUDENT ?? 0} />,
-            trend: 'إجمالي',
-            trendTone: 'flat',
-          },
-          {
-            label: 'هيئة التدريس',
-            value: <CountIn value={d.users.TEACHER ?? 0} />,
-            trend: 'فاعلون',
-            trendTone: 'flat',
-            to: '/quality/professors',
-          },
-          {
-            label: 'مقرّرات نشطة',
-            value: <CountIn value={d.offerings} />,
-            trend: countAr(d.lectures, ['محاضرة واحدة', 'محاضرتان', 'محاضرات', 'محاضرة']),
-            trendTone: 'flat',
-            to: '/quality/courses',
-          },
-          {
-            label: 'معدل الحضور',
-            value: <CountIn value={Math.round(attendance.presentRate)} suffix="%" />,
-            trend: countAr(attendance.total, ['سجل واحد', 'سجلان', 'سجلات', 'سجلاً']),
-            trendTone: attendance.presentRate >= 75 ? 'up' : attendance.presentRate >= 60 ? 'flat' : 'down',
-            to: '/quality/courses?metric=attendance',
-          },
-          {
-            label: 'بحوث مكتملة',
-            value: `${Math.round(paperProgress)}%`,
-            trend: paperTotal > 0 ? `${formatNum(paperDone)} من ${formatNum(paperTotal)} بحثًا` : 'لا بحوث بعد',
-            trendTone: 'flat',
-          },
-        ]}
-      />
+      {/* R359 (A3): the KPI BAND — the reference's dimension-string
+          register (hairline-divided strip of huge mono numerals)
+          replaces the narrow stacked strip. Values/payloads identical
+          to the r189 StatStrip cells; every number still derives from
+          a real payload field. */}
+      <SheetSection index="01" caption="QUALITY / KPI" title="المؤشرات الأساسية" pad="none">
+        <KpiBand
+          items={[
+            {
+              index: '01',
+              caption: 'STUDENTS',
+              label: 'الطلاب النشطون',
+              value: d.users.STUDENT ?? 0,
+              delta: 'إجمالي',
+            },
+            {
+              index: '02',
+              caption: 'FACULTY',
+              label: 'هيئة التدريس',
+              value: d.users.TEACHER ?? 0,
+              delta: 'فاعلون',
+              to: '/quality/professors',
+            },
+            {
+              index: '03',
+              caption: 'COURSES',
+              label: 'مقرّرات نشطة',
+              value: d.offerings,
+              delta: countAr(d.lectures, ['محاضرة واحدة', 'محاضرتان', 'محاضرات', 'محاضرة']),
+              to: '/quality/courses',
+            },
+            {
+              index: '04',
+              caption: 'ATTENDANCE',
+              label: 'معدل الحضور',
+              value: Math.round(attendance.presentRate),
+              unit: '%',
+              delta: countAr(attendance.total, ['سجل واحد', 'سجلان', 'سجلات', 'سجلاً']),
+              deltaTone: attendance.presentRate >= 75 ? 'positive' : attendance.presentRate >= 60 ? 'neutral' : 'danger',
+              to: '/quality/courses?metric=attendance',
+            },
+            {
+              index: '05',
+              caption: 'RESEARCH',
+              label: 'بحوث مكتملة',
+              value: `${Math.round(paperProgress)}%`,
+              delta: paperTotal > 0 ? `${formatNum(paperDone)} من ${formatNum(paperTotal)} بحثًا` : 'لا بحوث بعد',
+            },
+          ]}
+        />
+      </SheetSection>
 
-      {/* 4C-b (Superlist board): ONE compact signal line (the stat strip)
-          then the oversight board — main column = weekly activity chart +
-          the honest KPI ledger; side rail = attendance mix + alerts.
-          Charts stay ChartFrame-wrapped with their sr-only tables. */}
-      <div className="qlt-board qlt-section">
-        <div className="qlt-board-main">
-          <Card
-            title="النشاط الأسبوعي"
-            subtitle={
-              e.weeklyActiveEstimated
-                ? 'جلسات يومية نشطة — منحنى تقديري'
-                : 'جلسات يومية نشطة'
-            }
-            icon={TrendingUp}
-          >
-          <ChartFrame
-            ariaLabel={`مخطط خطّي للنشاط الأسبوعي — جلسات نشطة يومياً${e.weeklyActiveEstimated ? ' (منحنى تقديري)' : ''}`}
-            summary={
-              e.weeklyActive.length > 0
-                ? `الذروة ${countAr(Math.max(...e.weeklyActive), ['جلسة واحدة', 'جلستان', 'جلسات', 'جلسة'])}`
-                : 'لا بيانات نشاط لهذا الأسبوع.'
-            }
-            table={{
-              caption: 'النشاط الأسبوعي — جلسات نشطة يومياً',
-              columns: ['اليوم', 'جلسات'],
-              rows: WEEKDAY_NAMES_AR.map((day, i) => [day, e.weeklyActive[i] ?? 0]),
-            }}
-            height={220}
-          >
-          <Line
-            key={themeKey}
-            aria-hidden="true"
-            data={{
-              labels: WEEKDAY_NAMES_AR,
-              datasets: [{
-                label: 'مستخدم نشط',
-                data: e.weeklyActive,
-                borderColor: cc.accent,
-                backgroundColor: `color-mix(in srgb, ${cc.accent} 12%, transparent)`,
-                tension: 0.4,
-                fill: true,
-                borderWidth: 2,
-                pointRadius: 3,
-                pointHoverRadius: 5,
-                pointBackgroundColor: cc.accent,
-                // 5-A8 P2-4 (chart honesty): the backend's deterministic
-                // fallback is a binary square wave — smoothing it into a
-                // curve invents a trend that isn't in the data. Estimated
-                // series render as DOTS ONLY (no interpolation, no fill).
-                ...(e.weeklyActiveEstimated ? { showLine: false, fill: false, pointRadius: 5, pointHoverRadius: 7 } : {}),
-              }],
-            }}
-            options={opts}
-          />
-        </ChartFrame>
-          </Card>
+      {/* R359 (A3): the LATERAL SPLIT — the reference's plan/text
+          division (7:5 with a full-height hairline). Main column = the
+          weekly activity chart + the honest KPI ledger; side rail =
+          the attendance mix + alerts. Charts stay ChartFrame-wrapped
+          with their sr-only tables. */}
+      <div className="sg-split">
+        <div>
+          <SheetSection index="02" caption="WEEKLY ACTIVITY" title="النشاط الأسبوعي" className="qlt-sec">
+            <ChartFrame
+              ariaLabel={`مخطط خطّي للنشاط الأسبوعي — جلسات نشطة يومياً${e.weeklyActiveEstimated ? ' (منحنى تقديري)' : ''}`}
+              summary={
+                e.weeklyActive.length > 0
+                  ? `الذروة ${countAr(Math.max(...e.weeklyActive), ['جلسة واحدة', 'جلستان', 'جلسات', 'جلسة'])}`
+                  : 'لا بيانات نشاط لهذا الأسبوع.'
+              }
+              table={{
+                caption: 'النشاط الأسبوعي — جلسات نشطة يومياً',
+                columns: ['اليوم', 'جلسات'],
+                rows: WEEKDAY_NAMES_AR.map((day, i) => [day, e.weeklyActive[i] ?? 0]),
+              }}
+              height={220}
+            >
+              <Line
+                key={themeKey}
+                aria-hidden="true"
+                data={{
+                  labels: WEEKDAY_NAMES_AR,
+                  datasets: [{
+                    label: 'مستخدم نشط',
+                    data: e.weeklyActive,
+                    borderColor: cc.accent,
+                    backgroundColor: `color-mix(in srgb, ${cc.accent} 12%, transparent)`,
+                    tension: 0.4,
+                    fill: true,
+                    borderWidth: 2,
+                    pointRadius: 3,
+                    pointHoverRadius: 5,
+                    pointBackgroundColor: cc.accent,
+                    ...(e.weeklyActiveEstimated ? { showLine: false, fill: false, pointRadius: 5, pointHoverRadius: 7 } : {}),
+                  }],
+                }}
+                options={opts}
+              />
+            </ChartFrame>
+          </SheetSection>
 
           {/* 4C-b: the honest KPI ledger — the four payload-derived
               progressbars as a calm list (hairline rows, mono tabular
               values, thin rails). Labels/values/aria contract unchanged
               (WS-F6 pins the four progressbar names). */}
-          <Card title="مؤشرات الجودة الأساسية" icon={ShieldCheck}>
+          <SheetSection index="03" caption="KPI LEDGER" title="مؤشرات الجودة الأساسية" className="qlt-sec">
             <div className="qlt-kpi-ledger">
               <ProgressBar value={attendance.presentRate} label="معدل الحضور التراكمي" ariaLabel="معدل الحضور التراكمي" color="var(--success)" />
               <ProgressBar value={e.videos?.completionRate ?? 0} label="معدل إكمال المحاضرات" ariaLabel="معدل إكمال المحاضرات" color="var(--accent)" />
               <ProgressBar value={enrollmentRate} label="معدل تسجيل الطلاب في المقرّرات" ariaLabel="معدل تسجيل الطلاب في المقرّرات" color="var(--brand-purple)" />
               <ProgressBar value={paperProgress} label="نسبة البحوث المكتملة التقييم" ariaLabel="نسبة البحوث المكتملة التقييم" color="var(--gold)" />
             </div>
-          </Card>
+          </SheetSection>
         </div>
 
-        <div className="qlt-board-side">
-          <Card title="توزيع الحضور" icon={ClipboardCheck}>
+        <div>
+          <SheetSection index="04" caption="ATTENDANCE MIX" title="توزيع الحضور" className="qlt-sec">
           {/* Degenerate distribution (5-A8 P2-4): one ProgressBar + the
               honest note beats a solid ring that carries no signal. */}
           {attendanceDominant ? (
@@ -600,7 +605,11 @@ export function QualityDashboardPage() {
                 labels: ['حضور', 'تأخر', 'غياب'],
                 datasets: [{
                   data: [attendance.presentRate, attendance.lateRate, attendance.absentRate],
-                  backgroundColor: [cc.success, cc.warning, cc.danger],
+                  /* R359 (A3 · the one-signal law): the mix rides the
+                   * chart dataviz register — royal for the hero series
+                   * (حضور), the hairline grey + ink neutrals for the
+                   * rest; no green/gold/red rainbow on the sheet. */
+                  backgroundColor: [cc.accent, cc.grid, cc.strongText],
                   borderColor: cc.surface,
                   borderWidth: 2,
                 }],
@@ -609,16 +618,18 @@ export function QualityDashboardPage() {
             />
           </ChartFrame>
           )}
-          </Card>
+          </SheetSection>
 
-          <Card title="تنبيهات الجودة" icon={AlertTriangle}>
+          <SheetSection
+            index="05"
+            caption="ALERTS"
+            title="تنبيهات الجودة"
+            className="qlt-sec"
+            aside={<Link to="/quality/alerts" className="btn ghost sm">عرض الكل</Link>}
+          >
           {al.isPending ? (
             <ListSkeleton rows={3} />
           ) : al.isError ? (
-            /* r299 (E item 9): the shared ErrorState (retry built in) —
-               the hand-rolled EmptyState + ghost buttons retired. The
-               section Card keeps its header chrome (title/icon), so the
-               state renders inside it (page-level errors render bare). */
             <ErrorState
               message="تعذّر تحميل التنبيهات"
               error={al.error}
@@ -651,7 +662,7 @@ export function QualityDashboardPage() {
               </Link>
             </>
           )}
-        </Card>
+          </SheetSection>
         </div>
       </div>
       </div>

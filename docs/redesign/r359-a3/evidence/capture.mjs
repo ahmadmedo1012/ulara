@@ -42,8 +42,8 @@ async function contextFor(role, theme) {
     viewport: { width: 1440, height: 900 },
     deviceScaleFactor: 1,
   });
-  await installMockApi(ctx, {});
   const user = role === 'guest' ? null : ROLE_USERS[role];
+  await installMockApi(ctx, { sessionUser: user });
   await seedSession(ctx, user, { theme });
   ctxCache.set(key, ctx);
   return ctx;

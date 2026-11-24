@@ -1,0 +1,660 @@
+/* ═════════════════════════════════════════════════════════════════════
+   ULARA — R359 · THE SHEET GRAMMAR (A3 — the authenticated product
+   speaks the drawing-sheet language of the reference)
+   ─────────────────────────────────────────────────────────────────────
+   The measured translation of the reference's page grammar to software:
+
+     · framed SECTIONS on the paper itself — 1px hairline frames with
+       drafting registration crosses at the corners, a mono index
+       `[01]` + a Latin mono micro-caption over the Arabic title, and
+       an actions slot on the rule (never floating buttons);
+     · the KPI BAND — one hairline-divided strip of huge mono numerals
+       (the reference's dimension-string register), deltas in the ONE
+       signal, count-in on mount — replaces stacked KPI text lists;
+     · the DATA SHEET — dense hairline tables, mono numerics, sticky
+       mono head, 44px rows; collapses to labelled cards ≤640px;
+     · CALLOUT TAGS — the royal square pin with the white mono digit
+       (the reference's annotation markers) for before/after and
+       status callouts;
+     · the COORDINATE READOUT — a live mono `X:····PX / Y:····PX`
+       scroll instrument at the sheet's corner;
+     · LATERAL RHYTHM — .sg-split (the reference's 7:5 plan/text
+       division with a full-height hairline) and .sg-cols hairline
+       column grids; no lazy single column at desktop widths;
+     · MOTION — hairlines DRAW (scaleX from the inline-start edge),
+       numerals COUNT, sections settle: 160/320/640ms on the ONE
+       mechanical easing. No springs, no bounce, no overshoot.
+
+   CASCADE CONTRACT — the house precedent (r305-shell.css): imported
+   ONLY by AppShell.tsx (after chrome.css), deliberately UNLAYERED so
+   a normal declaration outranks every @layer rule without
+   !important. Tokens only (no raw hex, no raw px in the gated axes,
+   no raw z-index, durations via --t-* rungs). Radius 0 everywhere;
+   circular primitives keep --r-full by explicit exception only.
+   ═════════════════════════════════════════════════════════════════════ */
+
+/* ═══ 1 · THE SHEET SECTION ══════════════════════════════════════════
+   A framed block of the page. Sits ON the paper (transparent ground
+   — the reference's sections are drawn on the sheet, not pasted as
+   white cards); the white --surface is reserved for INSERTS (tables,
+   widgets, sheets) the way the reference reserves it for the chat
+   mockup. Registration crosses sit OUTSIDE the frame corners. */
+
+.sg-section {
+  position: relative;
+  border: 1px solid var(--rule);
+  background: transparent;
+  /* the draw-in rule: a hairline that scales in from the inline-start
+     edge when the section enters view (640ms, mechanical). */
+  --sg-draw: var(--t-base);
+}
+.sg-section + .sg-section { margin-block-start: var(--sp-6); }
+
+/* registration crosses — 10×10 plus-marks, ink, outside the corners */
+.sg-reg {
+  position: absolute;
+  inline-size: var(--sg-reg-size, 11px);
+  block-size: var(--sg-reg-size, 11px);
+  pointer-events: none;
+}
+.sg-reg::before,
+.sg-reg::after {
+  content: '';
+  position: absolute;
+  background: var(--text);
+  opacity: 0.72;
+}
+.sg-reg::before {
+  inset-block-start: calc(50% - 0.5px);
+  inset-inline-start: 0;
+  inline-size: 100%;
+  block-size: 1px;
+}
+.sg-reg::after {
+  inset-block-start: 0;
+  inset-inline-start: calc(50% - 0.5px);
+  inline-size: 1px;
+  block-size: 100%;
+}
+.sg-reg--tl { inset-block-start: calc(-1 * var(--sg-reg-size, 11px) - 3px); inset-inline-start: calc(-1 * var(--sg-reg-size, 11px) - 3px); }
+.sg-reg--tr { inset-block-start: calc(-1 * var(--sg-reg-size, 11px) - 3px); inset-inline-end: calc(-1 * var(--sg-reg-size, 11px) - 3px); }
+.sg-reg--bl { inset-block-end: calc(-1 * var(--sg-reg-size, 11px) - 3px); inset-inline-start: calc(-1 * var(--sg-reg-size, 11px) - 3px); }
+.sg-reg--br { inset-block-end: calc(-1 * var(--sg-reg-size, 11px) - 3px); inset-inline-end: calc(-1 * var(--sg-reg-size, 11px) - 3px); }
+
+/* the draw rule rides the frame's top edge — armed ONLY on sections
+   the sanctioned belt owns ([data-reveal]); plain sections render the
+   static frame (a failed import can never hide the rule). */
+.sg-section[data-reveal]::before {
+  content: '';
+  position: absolute;
+  inset-block-start: -1px;
+  inset-inline-start: 0;
+  inline-size: 100%;
+  block-size: 1px;
+  background: var(--text);
+  transform: scaleX(0);
+  transform-origin: var(--sg-draw-origin, inline-start);
+  transition: transform var(--sg-draw) var(--ease);
+}
+.sg-section[data-revealed='true']::before { transform: scaleX(1); }
+@media (prefers-reduced-motion: reduce) {
+  .sg-section[data-reveal]::before { transform: none; transition: none; }
+}
+
+/* ── the section head: index · caption · title · aside ───────────── */
+.sg-head {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+  padding: var(--sp-3) var(--sp-4);
+  border-block-end: 1px solid var(--rule);
+}
+.sg-head-main {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-3);
+  min-inline-size: 0;
+  flex: 1 1 auto;
+}
+.sg-index {
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-sm);
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.sg-caption {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-xs);
+  font-weight: 400;
+  color: var(--text-secondary);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-block-end: var(--sp-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sg-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--fs-app-h3);
+  font-weight: var(--fw-semibold);
+  line-height: 1.2;
+  color: var(--text);
+}
+.sg-section--lg .sg-title { font-size: var(--fs-app-h2); line-height: 1.15; }
+.sg-aside {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex: 0 0 auto;
+  padding-block-start: var(--sp-2);
+}
+
+/* ── the body ─────────────────────────────────────────────────────── */
+.sg-body { padding: var(--sp-4); }
+.sg-section--pad-none .sg-body { padding: 0; }
+.sg-section--pad-tight .sg-body { padding: var(--sp-2); }
+
+/* ═══ 2 · THE KPI BAND ══════════════════════════════════════════════
+   The reference's dimension-string register as a metrics strip: huge
+   Geist Mono tabular numerals, hairline cell dividers, a mono caption
+   + [nn] index on top, the Arabic label under, the delta in the ONE
+   signal (or the semantic tone). Count-in on mount (CountIn). */
+
+.sg-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--sg-kpi-min, 148px), 1fr));
+}
+.sg-kpi {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  padding: var(--sp-3) var(--sp-4) var(--sp-4);
+  min-block-size: calc(var(--touch-floor, 44px) + var(--sp-6));
+  text-decoration: none;
+  color: inherit;
+}
+.sg-kpi + .sg-kpi { border-inline-start: 1px solid var(--rule); }
+/* the wrap seam: a hairline above every wrapped row's first cell */
+.sg-kpi[data-wrap='true'] { border-block-start: 1px solid var(--rule); }
+.sg-kpi-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-2);
+}
+.sg-kpi-top .sg-index { color: var(--text-secondary); }
+.sg-kpi-value {
+  font-family: var(--font-mono);
+  font-size: var(--fs-metric-lg);
+  font-weight: 500;
+  line-height: 1;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+.sg-kpi[data-size='xl'] .sg-kpi-value { font-size: var(--fs-metric-xl); }
+.sg-kpi-label {
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+.sg-kpi-delta {
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-sm);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+.sg-kpi-delta[data-tone='signal'] { color: var(--accent); }
+.sg-kpi-delta[data-tone='positive'] { color: var(--success-ink); }
+.sg-kpi-delta[data-tone='warning'] { color: var(--warning-ink); }
+.sg-kpi-delta[data-tone='danger'] { color: var(--danger-ink); }
+.sg-kpi[data-empty='true'] .sg-kpi-value {
+  font-family: var(--font-sans);
+  font-size: var(--fs-body-lg);
+  font-weight: var(--fw-regular);
+  color: var(--text-faint);
+}
+/* interactive KPI (to=) — the hover fills the cell with the surface
+   step and ticks the inline-start edge with the signal, 160ms */
+a.sg-kpi:hover,
+a.sg-kpi:focus-visible {
+  background: var(--surface-2);
+  outline: none;
+}
+a.sg-kpi::after {
+  content: '';
+  position: absolute;
+  inset-block: var(--sp-3);
+  inset-inline-start: 0;
+  inline-size: 2px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transform-origin: block-start;
+  transition: transform var(--t-micro) var(--ease);
+}
+a.sg-kpi:hover::after,
+a.sg-kpi:focus-visible::after { transform: scaleY(1); }
+
+/* ═══ 3 · THE DATA SHEET (table) ════════════════════════════════════
+   Dense hairline rows, mono numerics, sticky mono head. The white
+   surface INSERT (the reference reserves white for inserts). ≤640px:
+   rows become labelled cards. */
+
+.sg-sheet-wrap { overflow-x: auto; }
+.sg-table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  font-size: var(--fs-body);
+}
+.sg-table thead th {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: var(--z-base);
+  background: var(--surface);
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-xs);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: start;
+  color: var(--text-secondary);
+  padding: var(--sp-2) var(--sp-3);
+  border-block-end: 1px solid var(--border-strong);
+  white-space: nowrap;
+}
+.sg-table tbody td,
+.sg-table tbody th {
+  padding: var(--sp-2) var(--sp-3);
+  border-block-end: 1px solid var(--rule);
+  text-align: start;
+  vertical-align: middle;
+  line-height: 1.5;
+}
+.sg-table tbody th {
+  font-weight: var(--fw-medium);
+  color: var(--text);
+}
+.sg-table td.sg-num,
+.sg-table th.sg-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  direction: ltr;
+  unicode-bidi: isolate;
+  white-space: nowrap;
+}
+.sg-table td.sg-mono {
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-sm);
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.sg-table tbody tr { transition: background-color var(--t-micro) var(--ease); }
+.sg-table tbody tr:hover { background: var(--surface-2); }
+.sg-table tbody tr[data-clickable='true'] { cursor: pointer; }
+.sg-table tbody tr:last-child td,
+.sg-table tbody tr:last-child th { border-block-end: 0; }
+.sg-table .sg-row-pin {
+  display: inline-block;
+  inline-size: var(--sp-2);
+  block-size: var(--sp-2);
+  background: var(--rule);
+}
+.sg-table tr[data-tone='signal'] .sg-row-pin { background: var(--accent); }
+.sg-table tr[data-tone='positive'] .sg-row-pin { background: var(--success); }
+.sg-table tr[data-tone='warning'] .sg-row-pin { background: var(--warning); }
+.sg-table tr[data-tone='danger'] .sg-row-pin { background: var(--danger); }
+
+/* the reference's row-action register: the LAST cell carries the
+   inline-end arrow that slides in on hover (mechanical, 160ms) */
+.sg-table .sg-row-go {
+  color: var(--text-secondary);
+  transition: transform var(--t-micro) var(--ease), color var(--t-micro) var(--ease);
+}
+.sg-table tbody tr:hover .sg-row-go { color: var(--accent); transform: var(--sg-go-nudge, translateX(-3px)); }
+html[dir='rtl'] .sg-table tbody tr:hover .sg-row-go { transform: translateX(3px); }
+
+/* ── ≤640px: labelled cards (thead collapses to sr-only) ─────────── */
+@media (max-width: 640px) {
+  .sg-table thead {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .sg-table,
+  .sg-table tbody,
+  .sg-table tr,
+  .sg-table td,
+  .sg-table th { display: block; inline-size: 100%; }
+  .sg-table tbody tr {
+    padding: var(--sp-2) var(--sp-3);
+    border-block-end: 1px solid var(--rule);
+  }
+  .sg-table tbody tr:hover { background: transparent; }
+  .sg-table tbody td,
+  .sg-table tbody th {
+    border: 0;
+    padding: var(--sp-1) 0;
+    display: grid;
+    grid-template-columns: minmax(6rem, 40%) minmax(0, 1fr);
+    gap: var(--sp-2);
+    align-items: baseline;
+  }
+  .sg-table tbody td::before,
+  .sg-table tbody th::before {
+    content: attr(data-label);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+  .sg-table tbody td.sg-no-label::before,
+  .sg-table tbody th.sg-no-label::before { content: none; }
+  .sg-table tbody td.sg-no-label,
+  .sg-table tbody th.sg-no-label { display: block; }
+  .sg-table .sg-row-go { display: none; }
+}
+
+/* ═══ 4 · THE CALLOUT TAG ═══════════════════════════════════════════
+   The royal square pin + label — the reference's annotation marker. */
+
+.sg-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-sm);
+  color: var(--text);
+  white-space: nowrap;
+}
+.sg-tag-pin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--sp-5);
+  block-size: var(--sp-5);
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-xs);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  flex: 0 0 auto;
+}
+.sg-tag[data-tone='neutral'] .sg-tag-pin { background: var(--text); color: var(--surface); }
+.sg-tag[data-tone='positive'] .sg-tag-pin { background: var(--success); color: var(--surface); }
+
+/* ═══ 5 · THE COORDINATE READOUT ════════════════════════════════════
+   A live mono instrument at the sheet's corner: X/Y of the scroll
+   position, updated on rAF, aria-hidden (decorative-but-honest — the
+   numbers ARE the scroll position). */
+
+.sg-coords {
+  position: fixed;
+  inset-block-end: var(--sp-2);
+  inset-inline-end: var(--sp-3);
+  z-index: var(--z-header);
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-xs);
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+  direction: ltr;
+  unicode-bidi: isolate;
+  pointer-events: none;
+  user-select: none;
+  /* the paper chip — the instrument never visually collides with the
+     last row it floats over (the reference's readouts sit on bare
+     paper; where content passes beneath, the chip IS paper). */
+  background: var(--bg);
+  padding: var(--sp-0-5) var(--sp-1);
+  border: 1px solid var(--rule);
+}
+@media (max-width: 920px) {
+  .sg-coords { display: none; } /* the mobile sheet stays clean */
+}
+
+/* ═══ 6 · LATERAL RHYTHM ════════════════════════════════════════════
+   The reference's plan/text division (≈68/32 → 7fr/5fr here) with a
+   full-height hairline; and hairline column grids. No lazy single
+   column at desktop widths. */
+
+.sg-split {
+  display: grid;
+  gap: var(--sp-5);
+  align-items: start;
+}
+@media (min-width: 921px) {
+  .sg-split { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+  .sg-split > * + * {
+    border-inline-start: 1px solid var(--rule);
+    padding-inline-start: var(--sp-5);
+  }
+}
+.sg-split[data-ratio='even'] { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+
+.sg-cols {
+  display: grid;
+  gap: var(--sp-4);
+}
+@media (min-width: 921px) {
+  .sg-cols[data-cols='2'] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sg-cols[data-cols='3'] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .sg-cols[data-cols='4'] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .sg-cols[data-rule='true'] > * + * { border-inline-start: 1px solid var(--rule); padding-inline-start: var(--sp-4); }
+}
+
+/* ═══ 7 · THE MONO MICRO-LABEL UTILITY ══════════════════════════════
+   Latin micro-labels (indices, counters, coordinates, sheet codes).
+   Arabic runs continue in the brand face via the mono stack's
+   fallback — the house recipe. */
+
+.sg-label {
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-xs);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ═══ 8 · SECTION REVEAL (the settle) ═══════════════════════════════
+   Sections settle through the SANCTIONED one-shot belt
+   (components/motion/Reveal.tsx — data-reveal/data-revealed): the
+   grammar owns only the DRAW RULE (§1) and this explicit opt-in
+   register for non-section blocks. CSS never hides un-armed blocks,
+   so a failed import can never hide content. */
+
+.sg-reveal {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity var(--t-base) var(--ease), transform var(--t-base) var(--ease);
+}
+.sg-reveal.in-view {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sg-reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* ═══ 9 · THE PAGE HEADER REGISTER (r359 re-key of the pf- seats) ═══
+   The §2 voice: a mono eyebrow with the bracketed index, the HUGE
+   h1, the 17.78 lead, a hairline closing the header block. */
+
+.pf-page-header {
+  padding-block-end: var(--sp-4);
+  border-block-end: 1px solid var(--rule);
+}
+.pf-eyebrow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+  margin: 0 0 var(--sp-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-sm);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+html[lang='ar'] .pf-eyebrow { letter-spacing: 0.02em; }
+.pf-eyebrow-index {
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+.pf-page-title {
+  font-family: var(--font-display);
+  font-size: var(--fs-app-h1);
+  font-weight: var(--fw-semibold);
+  line-height: 1.12;
+  letter-spacing: var(--ls-normal);
+  max-inline-size: 22ch;
+  text-wrap: balance;
+}
+.pf-page-desc {
+  font-size: var(--fs-body-lg);
+  line-height: 1.55;
+  color: var(--text-secondary);
+  max-inline-size: 64ch;
+}
+.pf-page-meta {
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-xs);
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+.pf-breadcrumbs ol li,
+.pf-breadcrumbs ol li a,
+.pf-breadcrumbs ol li span {
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-xs);
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+}
+
+/* ═══ 10 · THE STATLINE → KPI REGISTER (existing pattern, re-keyed) ══
+   Every dashboard already composes StatLine; the band now reads as
+   the reference's dimension strip: hairline-divided cells, mono
+   tabular values at metric scale, the label UNDER the value. */
+
+.pf-statline {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--sg-kpi-min, 148px), 1fr));
+  border: 1px solid var(--rule);
+  background: transparent;
+}
+.pf-statline[data-spread='true'] { justify-content: initial; }
+.pf-stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  padding: var(--sp-3) var(--sp-4);
+  min-block-size: calc(var(--touch-floor, 44px) + var(--sp-4));
+  text-decoration: none;
+  color: inherit;
+}
+.pf-stat + .pf-stat { border-inline-start: 1px solid var(--rule); }
+.pf-stat-label {
+  order: 2;
+  font-size: var(--fs-sm);
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+.pf-stat-value {
+  order: 1;
+  font-family: var(--font-mono);
+  font-size: var(--fs-metric-lg);
+  font-weight: 500;
+  line-height: 1;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+a.pf-stat:hover { background: var(--surface-2); }
+.pf-stat-hint {
+  order: 3;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-xs);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ═══ 11 · ROWLIST DENSITY (the r319 section-bar parity) ════════════
+   Rows ride the hairline register: 1px rules, 44px floors, the
+   inline-start progress pin, mono meta. */
+
+.rl-row,
+.pf-row {
+  transition: background-color var(--t-micro) var(--ease);
+}
+.pf-row:hover { background: var(--surface-2); }
+
+/* ═══ 12 · SECTION TITLE SCALE (SectionHeader) ══════════════════════
+   In-page section headings ride the app h2 (44.44 @1440) when they
+   open a band, h3 (23.33) inside frames. */
+
+.pf-section-title {
+  font-family: var(--font-display);
+  font-size: var(--fs-app-h2);
+  font-weight: var(--fw-semibold);
+  line-height: 1.15;
+}
+.sg-section .pf-section-title { font-size: var(--fs-app-h3); }
+
+/* ═══ 13 · EMPTY/ERROR BLOCKS — the hairline placeholder frame ══════
+   The art registry's fallback: a hairline frame with the mono
+   placeholder register and the registration crosses — an honest
+   «no data yet» in the sheet's own language. */
+
+.sg-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-3);
+  padding: var(--sp-9) var(--sp-4);
+  text-align: center;
+}
+.sg-empty-frame {
+  position: relative;
+  inline-size: var(--sg-empty-size, 120px);
+  block-size: var(--sg-empty-size, 120px);
+  border: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sg-empty-frame .sg-reg--tl { inset-block-start: -3px; inset-inline-start: -3px; }
+.sg-empty-frame .sg-reg--tr { inset-block-start: -3px; inset-inline-end: -3px; }
+.sg-empty-frame .sg-reg--bl { inset-block-end: -3px; inset-inline-start: -3px; }
+.sg-empty-frame .sg-reg--br { inset-block-end: -3px; inset-inline-end: -3px; }
+.sg-empty-title {
+  margin: 0;
+  font-size: var(--fs-app-h3);
+  font-weight: var(--fw-semibold);
+  color: var(--text);
+}
+.sg-empty-desc {
+  margin: 0;
+  font-size: var(--fs-body);
+  color: var(--text-secondary);
+  max-inline-size: 44ch;
+}

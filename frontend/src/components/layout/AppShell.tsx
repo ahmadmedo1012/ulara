@@ -25,6 +25,15 @@ import '../../styles/shared/app-grammar.css';
 // z-run. Last word of the shell cascade (after r325-app.css, unlayered,
 // shell-imported — the same house contract).
 import '../../styles/shell/chrome.css';
+/* R359 (A3) — THE SHEET GRAMMAR: the authenticated product's page
+ * language translated from the reference's drawing-sheet grammar —
+ * framed sections with registration crosses + [nn] mono indices, the
+ * KPI band (hairline-divided huge mono numerals), the data sheet
+ * (dense hairline tables → labelled cards ≤640px), callout tags, the
+ * live coordinate readout, lateral-rhythm grids, and the §2 page-
+ * header/type registers. Same cascade contract as the sheets above:
+ * unlayered, shell-imported, last word. */
+import '../../styles/shared/r359-grammar.css';
 // R325 (P2.5 · DESIGN.md §R325): the INDICATOR sheet — the seven
 // measurement instruments of components/patterns/indicators.tsx
 // (RulerGauge · SegmentedProgress · MasteryCells · StreakTicks ·
@@ -37,6 +46,9 @@ import { SheetFrame, SheetGrain } from './SheetFrame';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
 import { BottomNav } from './BottomNav';
+/* R359 (A3) — the live coordinate readout (the sheet-grammar's mono
+ * scroll instrument at the sheet's corner). */
+import { CoordReadout } from '../patterns/Sheet';
 import { ServerWakePill } from './ServerWakePill';
 import { CommandPaletteBody } from './GlobalSearch';
 import { CommandPalette } from '../overlays';
@@ -465,6 +477,9 @@ export function AppShell({ children }: { children?: ReactNode }) {
             transition transform can ever trap the fixed layers. */}
         <SheetFrame />
         <SheetGrain />
+        {/* R359 (A3): the coordinate readout — reads the .content
+            scroller (the app's one scroll container), desktop only. */}
+        <CoordReadout />
         <Sidebar />
         <main className="main" id="main" tabIndex={-1}>
           <ScrollProgress />
