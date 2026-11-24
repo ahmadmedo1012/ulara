@@ -54,7 +54,7 @@
     --t-cinema: 640ms;
     --t-sheet-exit: 320ms;
     --t-guest-reveal: 640ms;
-    --ease: cubic-bezier(0.2, 0, 0, 1);
+    --ease: cubic-bezier(0.23, 1, 0.32, 1);
   }
 
   /* LIGHT THEME — the ds blueprint paper */

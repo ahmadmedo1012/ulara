@@ -140,7 +140,7 @@ export const motion = {
   guestReveal: 640,
 } as const;
 
-export const dsEase = [0.2, 0, 0, 1] as const;
+export const dsEase = [0.23, 1, 0.32, 1] as const;
 
 // radius discipline: 0 everywhere; circles only for round elements.
 export const radius = {

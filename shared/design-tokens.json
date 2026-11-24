@@ -356,7 +356,7 @@
     "full": 9999
   },
   "motion": {
-    "$doc": "R359 — the measured mechanical register (the reference re-measure): a THREE-value ladder 160/320/640ms on ONE mechanical easing cubic-bezier(0.2,0,0,1) — constant departure, decelerating arrival, dead stop. No springs, no bounce, no overshoot anywhere (the spring vocabulary in tokens.css re-points here). micro 160 = hover/press color; fast 320 = small reveals, sheets, route transitions; base/slow/slower 640 = section reveals, drawn hairlines. Web: the prefers-reduced-motion kill in tokens.css zeroes the rungs by import order.",
+    "$doc": "R359 — the measured mechanical register (the reference re-measure): a THREE-value ladder 160/320/640ms on ONE mechanical easing cubic-bezier(0.23,1,0.32,1) — the curve measured on the reference's own transition census (fast departure, decelerating arrival, dead stop). No springs, no bounce, no overshoot anywhere (the spring vocabulary in tokens.css re-points here). micro 160 = hover/press color; fast 320 = small reveals, sheets, route transitions; base/slow/slower 640 = section reveals, drawn hairlines. Web: the prefers-reduced-motion kill in tokens.css zeroes the rungs by import order.",
     "micro": 160,
     "fast": 320,
     "base": 640,
@@ -366,9 +366,9 @@
     "sheetExit": 320,
     "guestReveal": 640,
     "ease": [
-      0.2,
-      0,
-      0,
+      0.23,
+      1,
+      0.32,
       1
     ]
   },

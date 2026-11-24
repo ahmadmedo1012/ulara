@@ -260,11 +260,14 @@
        was the R309 fixed 650ms whose animation raced to ~21ms). */
 
 
-    /* r305 → R359 (A3): ONE mechanical easing — cubic-bezier(0.2,0,0,1),
-       constant departure, decelerating arrival, dead stop. The whole
-       vocabulary (out/in/soft/springs) re-points at the shared --ease
-       (generated from design-tokens.json) so no surface can bounce,
-       spring or overshoot anywhere in the product. --ease-linear stays
+    /* r305 → R359 (A3, final-phase re-measure): ONE mechanical easing —
+       cubic-bezier(.23,1,.32,1), the curve the reference's own bundle
+       measures on every transition (×11 in the live CSS census; its .4s
+       color moves + .5s icon transforms all ride it) — fast departure,
+       decelerating arrival, dead stop. The whole vocabulary
+       (out/in/soft/springs) re-points at the shared --ease (generated
+       from design-tokens.json) so no surface can bounce, spring or
+       overshoot anywhere in the product. --ease-linear stays
        for continuous loops (the reference's own marquee register);
        --ease-pixel stays a steps() rung (discrete by design). */
     --ease-out:    var(--ease);
@@ -373,7 +376,7 @@
        resolve on the landing sheet (r339 T-11c computed-:root finding:
        the parity layer's :root block loses the cascade there) — this
        is the landing-resolvable home for the same recorded curve. */
-    --motion-ease-band-exit:   cubic-bezier(1, 0, 0.44, 1);
+    --motion-ease-band-exit:   var(--ease);
     /* r339 T-18 — the recorded preloader exit ground (the reference's
        .loading-progress-item tint at exit: #b3b3af, the chrome
        cell-grammar grey). Canonical seat so the landing sheet resolves
@@ -964,37 +967,30 @@
 
 @layer tokens {
 
-  /* ─── 1. Role-accent (Light) — seven slots, each ≥3.0 vs the paper
-     (computed against the live --bg by tests/unit/token-snapshot.test.ts;
-     role-accents tint chrome only, never body text). Re-verified on the
-     ULARA parchment #F5F1E8 (the 2026 royal takeover): student 6.62 ·
-     faculty 3.04 · department-head 3.30 · dean 3.43 · admin 3.34 ·
-     quality 3.19 · owner 5.05. student rides the brand royal #2540D9
-     (was the sienna ink #A33312 — the role that historically tracked
-     the brand signal keeps that contract under the new palette). */
+  /* ─── 1. Role-accent — R359 final phase: the ONE-signal discipline.
+     Every role's chrome accent IS the royal signal itself (#2540D9
+     light · 6.60:1 on the paper · #8AA0FF dark · 6.00:1 on the night
+     ground — both clear the 3.0 AA-large chrome bar the snapshot test
+     asserts). The per-role hue families (mint/lavender/sienna…) are
+     RETIRED: the reference's colour law is paper + ink + hairline +
+     ONE signal, and role identity is carried by mono labels/indices,
+     never by hue. */
   :root[data-theme="light"] body[data-role="student"]         { --role-accent: #2540D9; }
-  /* r305: faculty + quality retuned one step against the cooler paper
-     (the r304 values measured at/near the 3.0 rounding-risk floor);
-     the ULARA re-verify keeps them (3.04/3.19). department-head +
-     admin carry the ULARA re-tint (#D0663E / #5486C4) for the same
-     margin rule on the warmer #F5F1E8 ground. */
-  :root[data-theme="light"] body[data-role="faculty"]         { --role-accent: #3F9C5F; }
-  :root[data-theme="light"] body[data-role="department-head"] { --role-accent: #D0663E; }
-  :root[data-theme="light"] body[data-role="dean"]            { --role-accent: #8A6FE0; }
-  :root[data-theme="light"] body[data-role="admin"]           { --role-accent: #5486C4; }
-  :root[data-theme="light"] body[data-role="quality"]         { --role-accent: #D9606C; }
-  :root[data-theme="light"] body[data-role="owner"]           { --role-accent: #6B665E; }
+  :root[data-theme="light"] body[data-role="faculty"]         { --role-accent: #2540D9; }
+  :root[data-theme="light"] body[data-role="department-head"] { --role-accent: #2540D9; }
+  :root[data-theme="light"] body[data-role="dean"]            { --role-accent: #2540D9; }
+  :root[data-theme="light"] body[data-role="admin"]           { --role-accent: #2540D9; }
+  :root[data-theme="light"] body[data-role="quality"]         { --role-accent: #2540D9; }
+  :root[data-theme="light"] body[data-role="owner"]           { --role-accent: #2540D9; }
 
-  /* ─── Role-accent (Dark) — each ≥3.0 vs #262019 (re-verified on the
-     2026 royal re-key: student 6.56 · faculty 8.40 · department-head
-     7.76 · dean 7.17 · admin 7.51 · quality 7.61 · owner 7.62). ── */
+  /* Dark rows — the night royal signal on the charcoal ground. */
   :root[data-theme="dark"]  body[data-role="student"]         { --role-accent: #8AA0FF; }
-  :root[data-theme="dark"]  body[data-role="faculty"]         { --role-accent: #82CB99; }
-  :root[data-theme="dark"]  body[data-role="department-head"] { --role-accent: #F2A07F; }
-  :root[data-theme="dark"]  body[data-role="dean"]            { --role-accent: #B7A0F4; }
-  :root[data-theme="dark"]  body[data-role="admin"]           { --role-accent: #92B4DC; }
-  :root[data-theme="dark"]  body[data-role="quality"]         { --role-accent: #F09BA3; }
-  :root[data-theme="dark"]  body[data-role="owner"]           { --role-accent: #B7B2A6; }
+  :root[data-theme="dark"]  body[data-role="faculty"]         { --role-accent: #8AA0FF; }
+  :root[data-theme="dark"]  body[data-role="department-head"] { --role-accent: #8AA0FF; }
+  :root[data-theme="dark"]  body[data-role="dean"]            { --role-accent: #8AA0FF; }
+  :root[data-theme="dark"]  body[data-role="admin"]           { --role-accent: #8AA0FF; }
+  :root[data-theme="dark"]  body[data-role="quality"]         { --role-accent: #8AA0FF; }
+  :root[data-theme="dark"]  body[data-role="owner"]           { --role-accent: #8AA0FF; }
 
   /* Default when no data-role is set: fall through to existing --accent. */
   /* (PI-45 R333: the formerly separate :root blocks — role-accent
@@ -1454,7 +1450,7 @@
    r306's "exactly one [data-theme=dark] .landing" pin in the sheet
    family still holds. */
 .landing {
-  --bg: #F3F2EC;
+  --bg: #F2F1EC;
   --text: #282828;
   --text-primary: #282828;
   /* R342 integration (a11y fix) — the rebuild's measured secondary
