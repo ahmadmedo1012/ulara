@@ -43,6 +43,25 @@ const STATIONS = [
   { id: 'I-04', label: 'مؤسسة أكاديمية', vx: 380, vy: 400, dir: 'down' },
 ] as const;
 
+/* r360 F2 — the MOBILE station seats: A2's mobile elevation (the art key
+ * that mounts on every phone) is its own tall doc (390×560, the campus
+ * facade crop) — the desktop vx/vy fractions do not land on ITS
+ * features. These seats are % of the mobile art box, pinned to the
+ * builder's own geometry (shared/art/scenes/hero.ts): the left core
+ * (x 62–122), the right core (x 268–328), the ground line y 430, the
+ * wall x 24–62. */
+const STATIONS_MOBILE: Record<string, { x: number; y: number }> = {
+  /* NOTE: the x fractions are RTL-MIRRORED (the seats ride
+   * inset-inline-start + translate −50%, which centers each station on
+   * its anchor — in RTL the anchor sits (100−x)% from the LEFT). The
+   * values keep every marker's center ON a drawing feature while its
+   * callout tag's leftward arm stays inside the box at 360. */
+  'C-01': { x: 75.4, y: 53.6 }, /* center on the left core (doc 92, 300) */
+  'E-02': { x: 10, y: 76.8 },   /* center on the right ground (doc 340, 430) */
+  'R-03': { x: 20.3, y: 42.9 }, /* center on the right core (doc 298, 240) */
+  'I-04': { x: 81, y: 71.4 },   /* the left wall's edge (doc ~65, 400) — the tag arm's floor */
+};
+
 export function Hero() {
   const stageRef = useRef<HTMLDivElement>(null);
   /* the reveal state: 0 = sealed · 1..N = stations revealed up to N ·
@@ -192,7 +211,12 @@ export function Hero() {
           <div className="hro-stations-layer">
             {STATIONS.map((s) => {
               const shown = openSet.has(s.id);
-              const p = pct(s.vx, s.vy);
+              /* r360 F2 — the seat picks the mobile fractions when A2's
+               * tall mobile doc owns the art box (hero.css ≤767: the box
+               * is aspect-locked to the 390/560 doc). */
+              const p = mobile
+                ? (STATIONS_MOBILE[s.id] ?? { x: 50, y: 50 })
+                : pct(s.vx, s.vy);
               return (
                 <div key={s.id} className={`hro-station hro-st-${s.dir} ${shown ? 'is-open' : ''}`} style={{ insetInlineStart: `${p.x}%`, insetBlockStart: `${p.y}%` }}>
                   <button

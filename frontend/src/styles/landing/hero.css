@@ -46,8 +46,14 @@
   min-block-size: 0;
   /* the drawing breathes between the two dotted rules — NOT
    * edge-to-edge: the reference's own air is ~150px above the roof,
-   * ~140px under the ground line. */
-  padding-block: 3.5% 4.5%;
+   * ~140px under the ground line.
+   * r360 F2 — the scale law: the reference's drawing measures ~71% of
+   * the 1440 viewport wide and its optical center sits at ~48% of the
+   * hero (y 250-685 of ~900); ours measured 67% wide with the center
+   * at ~35% (y 80-550) — the padding rebalance (7.5% above the roof
+   * / 1.5% under the ground) seats the drawing lower, and the art box
+   * grows to the measured reference width. */
+  padding-block: 7.5% 1.5%;
   padding-inline: 3.5%;
   touch-action: pan-y; /* drag reveals horizontally; vertical scroll stays free */
   user-select: none;
@@ -71,7 +77,10 @@
  * stage content (the reference's own air law); mobile: width-locked. */
 .hro-art {
   position: relative;
-  block-size: 94%;
+  /* r360 F2 — 94% → 105%: the drawing's measured width 967px (67%)
+   * grows to ~1075px (75%) — the reference's own fill; the aspect
+   * lock keeps zero letterbox (the stations' % seats stay exact). */
+  block-size: 105%;
   aspect-ratio: 1440 / 700;
   max-inline-size: 100%;
 }
@@ -465,7 +474,13 @@
   .hro-art {
     block-size: auto;
     inline-size: 100%;
-    aspect-ratio: 960 / 546;
+    /* r360 F2 — the box follows the MOUNTED art: A2's mobile elevation
+     * is its own tall doc (390×560 — shared/art/scenes/hero.ts); the
+     * old 960/546 lock (the fallback crop's aspect) letterboxed it to
+     * a 149×213 sliver of the stage. Aspect-locked to the doc: the
+     * drawing fills the box edge to edge, the mobile station seats
+     * (STATIONS_MOBILE) ride its own fractions. */
+    aspect-ratio: 390 / 560;
     max-block-size: 82%;
   }
   .hro-content { padding-inline: 2%; padding-block: 1.4em; }

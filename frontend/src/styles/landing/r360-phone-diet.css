@@ -552,3 +552,12 @@
   .pm-frame { padding: 0.4rem !important; }
   .pm-dots { padding-block: 0.3rem !important; }
 }
+
+/* ═══ round 11 — F2's taller mobile hero pays for its own seat ═════
+   The mobile art box (aspect-locked to A2's 390/560 doc) grew the
+   stage ~20px; the hero's own paddings pay the difference back so
+   the ≤5,000px page law keeps its margin. */
+@media (max-width: 767px) {
+  .hro-stage { padding-block: 4% 5% !important; }
+  .hro-content { padding-block: 1em !important; }
+}
