@@ -11,6 +11,11 @@ import { EmptyState, ErrorState, TableSkeleton, CardSkeleton, ListSkeleton } fro
  * the way back, and the institution's scope facts (status + members)
  * read as one quiet meta line under the name. */
 import { PageHeader as PatternsPageHeader } from '../../components/patterns';
+/* R359 (W2-e): the setup context rides the sheet grammar — the two
+ * supply-chain sections become framed SheetSections (the Counts ride
+ * the head rule beside the section's verb) and the courses register
+ * rides the DataSheet (mono codes, numeric credits/offerings). */
+import { SheetSection, DataSheet, type DataSheetColumn } from '../../components/patterns';
 import { Icon } from '../../components/Icon';
 import { EmojiIcon } from '../../components/EmojiIcon';
 import { Modal } from '../../components/overlays/Modal';
@@ -441,6 +446,62 @@ export function OwnerInstitutionDetailPage() {
     );
   }
 
+  /* R359 (W2-e) — the courses register columns: mono code, the
+   * name as the cell title, the faculty/department as the sub line,
+   * numeric credits + offerings, and the offering verb. */
+  const courseColumns: DataSheetColumn<AdminCourse>[] = [
+    {
+      key: 'code',
+      label: 'الكود',
+      mono: true,
+      render: (c) => <bdi>{c.code}</bdi>,
+    },
+    {
+      key: 'name',
+      label: 'اسم المقرّر',
+      render: (c) => <span className="sg-cell-title">{c.name}</span>,
+    },
+    {
+      key: 'faculty',
+      label: 'الكلّيّة / القسم',
+      render: (c) => (
+        <span className="sg-cell-stack">
+          <span>{c.faculty ?? '—'}</span>
+          {c.department && <span className="sg-cell-sub">{c.department}</span>}
+        </span>
+      ),
+    },
+    {
+      key: 'credits',
+      label: 'س.م',
+      numeric: true,
+      render: (c) => c.credits,
+    },
+    {
+      key: 'offerings',
+      label: 'الفصول',
+      numeric: true,
+      render: (c) => c.offeringCount,
+    },
+    {
+      key: 'actions',
+      label: 'إجراءات',
+      render: (c) => (
+        <button
+          type="button"
+          className="btn ghost sm"
+          onClick={() => openOfferingForm(c)}
+          disabled={suspended || mutationBusy}
+          aria-label={`فتح شعبة لمقرّر ${c.name}`}
+          title={suspended ? 'التعديلات الأكاديمية متاحة للمؤسسات النشطة فقط' : undefined}
+        >
+          <Icon icon={Plus} size={13} />
+          فتح شعبة
+        </button>
+      ),
+    },
+  ];
+
   const faculties = facultiesQ.data ?? [];
   const totalDepartments = faculties.reduce((s, f) => s + f.departmentCount, 0);
   /* r183-B5 (A9 P1): the census — duplicate empty seed rows (same
@@ -528,26 +589,33 @@ export function OwnerInstitutionDetailPage() {
           per datum; the strip was the second printing (mission item:
           repeated KPI cards). The page keeps its uniform .page gap. */}
 
-      {/* ── Section 1: the academic structure (faculties + departments) ── */}
-      <Card
+      {/* ── Section 1: the academic structure (faculties + departments) ──
+          R359 (W2-e): the framed section — the census counts (r299's
+          one-owner seat) ride the head rule beside the verb. */}
+      <SheetSection
+        index="01"
+        caption="ACADEMIC STRUCTURE"
         title="البنية الأكاديمية"
-        icon={Building2}
-        subtitle={`${countAr(faculties.length, ['كلّيّة واحدة', 'كلّيّتان', 'كلّيّات', 'كلّيّة'])} · ${countAr(totalDepartments, ['قسم واحد', 'قسمان', 'أقسام', 'قسماً'])}${foldedRows > 0 ? ` · ${foldedRows} سجلّ بذر مكرّر مُجمَّع` : ''}`}
-        actions={(
-          /* r180/R304: the section's create action rides the section
-              header — the scope (this institution) is named by the
-              page itself; the button stays disabled while suspended. */
-          <button
-            type="button"
-            className="btn primary sm"
-            onClick={openFacultyForm}
-            disabled={suspended}
-            aria-label="إضافة كلّيّة جديدة إلى المؤسسة"
-            title={suspended ? 'التعديلات الأكاديمية متاحة للمؤسسات النشطة فقط' : undefined}
-          >
-            <Icon icon={Plus} size={14} />
-            إضافة كلّيّة
-          </button>
+        aside={(
+          <>
+            <span className="text-sm text-muted">
+              {`${countAr(faculties.length, ['كلّيّة واحدة', 'كلّيّتان', 'كلّيّات', 'كلّيّة'])} · ${countAr(totalDepartments, ['قسم واحد', 'قسمان', 'أقسام', 'قسماً'])}${foldedRows > 0 ? ` · ${foldedRows} سجلّ بذر مكرّر مُجمَّع` : ''}`}
+            </span>
+            {/* r180/R304: the section's create action rides the section
+                header — the scope (this institution) is named by the
+                page itself; the button stays disabled while suspended. */}
+            <button
+              type="button"
+              className="btn primary sm"
+              onClick={openFacultyForm}
+              disabled={suspended}
+              aria-label="إضافة كلّيّة جديدة إلى المؤسسة"
+              title={suspended ? 'التعديلات الأكاديمية متاحة للمؤسسات النشطة فقط' : undefined}
+            >
+              <Icon icon={Plus} size={14} />
+              إضافة كلّيّة
+            </button>
+          </>
         )}
       >
         {facultiesQ.isPending && <ListSkeleton rows={4} />}
@@ -629,27 +697,33 @@ export function OwnerInstitutionDetailPage() {
             )}
           </div>
         )}
-      </Card>
+      </SheetSection>
 
       {/* ── Section 2: the courses + offerings supply chain ─────────── */}
-      <Card
+      <SheetSection
+        index="02"
+        caption="COURSES"
         title="المقرّرات والشُّعب"
-        icon={BookOpen}
-        subtitle={coursesMeta
-          ? countAr(coursesMeta.total, ['مقرّر واحد', 'مقرّران', 'مقرّرات', 'مقرّراً'])
-          : undefined}
-        actions={(
-          <button
-            type="button"
-            className="btn primary sm"
-            onClick={openCourseForm}
-            disabled={suspended}
-            aria-label="إضافة مقرّر جديد إلى المؤسسة"
-            title={suspended ? 'التعديلات الأكاديمية متاحة للمؤسسات النشطة فقط' : undefined}
-          >
-            <Icon icon={Plus} size={14} />
-            إضافة مقرّر
-          </button>
+        pad="none"
+        aside={(
+          <>
+            {coursesMeta && (
+              <span className="text-sm text-muted">
+                {countAr(coursesMeta.total, ['مقرّر واحد', 'مقرّران', 'مقرّرات', 'مقرّراً'])}
+              </span>
+            )}
+            <button
+              type="button"
+              className="btn primary sm"
+              onClick={openCourseForm}
+              disabled={suspended}
+              aria-label="إضافة مقرّر جديد إلى المؤسسة"
+              title={suspended ? 'التعديلات الأكاديمية متاحة للمؤسسات النشطة فقط' : undefined}
+            >
+              <Icon icon={Plus} size={14} />
+              إضافة مقرّر
+            </button>
+          </>
         )}
       >
         {coursesQ.isPending && <TableSkeleton rows={5} cols={6} />}
@@ -657,69 +731,25 @@ export function OwnerInstitutionDetailPage() {
           <ErrorState error={coursesQ.error} onRetry={() => coursesQ.refetch()} />
         )}
         {coursesQ.data && (
-          <div className="table-wrap">
-            {/* R304: the supply chain rides the workspace table family —
-                the course's name is the identity cell; on phones it
-                becomes the summary card's title. */}
-            <table className="table tbl-stack ws-table">
-              <thead>
-                <tr>
-                  <th scope="col" style={{ width: 100 }}>الكود</th>
-                  <th scope="col">اسم المقرّر</th>
-                  <th scope="col">الكلّيّة / القسم</th>
-                  <th scope="col" className="admin-table-num" style={{ width: 70 }}>س.م</th>
-                  <th scope="col" className="admin-table-num" style={{ width: 100 }}>الفصول</th>
-                  <th scope="col">إجراءات</th>
-                </tr>
-              </thead>
-              <tbody>
-                {courses.length === 0 && (
-                  <tr>
-                    <td colSpan={6}>
-                      <EmptyState
-                        icon={BookOpen}
-                        title="لا مقرّرات بعد"
-                        description="أضف أول مقرّر بعد إنشاء كلّيّة وقسم له — الشُّعب تُفتح من صف المقرّر."
-                      />
-                    </td>
-                  </tr>
-                )}
-                {courses.map((c) => (
-                  <tr key={c.id}>
-                    <td className="font-mono text-subtle" data-label="الكود"><bdi>{c.code}</bdi></td>
-                    <td className="ws-id" data-label="اسم المقرّر">
-                      <span className="font-semibold" style={{ color: 'var(--text)' }}>{c.name}</span>
-                    </td>
-                    <td data-label="الكلّيّة / القسم">
-                      {c.faculty ? (
-                        <span className="text-xs text-muted">
-                          {c.faculty}
-                          {c.department && <span className="text-xxs text-subtle"> · {c.department}</span>}
-                        </span>
-                      ) : (
-                        <span className="text-xxs text-subtle">—</span>
-                      )}
-                    </td>
-                    <td className="admin-table-num font-mono" data-label="ساعات معتمدة">{c.credits}</td>
-                    <td className="admin-table-num font-mono" data-label="الفصول">{c.offeringCount}</td>
-                    <td data-label="إجراءات">
-                      <button
-                        type="button"
-                        className="btn ghost sm"
-                        onClick={() => openOfferingForm(c)}
-                        disabled={suspended || mutationBusy}
-                        aria-label={`فتح شعبة لمقرّر ${c.name}`}
-                        title={suspended ? 'التعديلات الأكاديمية متاحة للمؤسسات النشطة فقط' : undefined}
-                      >
-                        <Icon icon={Plus} size={13} />
-                        فتح شعبة
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <>
+            {/* R359 (W2-e): the supply chain rides the DataSheet — mono
+                codes, numeric credits/offerings, the cell-stack
+                identity; the offering verb keeps its aria-labelled 44px
+                seat. */}
+            <DataSheet
+              caption="سجلّ المقرّرات"
+              columns={courseColumns}
+              rows={courses}
+              empty={(
+                <EmptyState
+                  icon={BookOpen}
+                  title="لا مقرّرات بعد"
+                  description="أضف أول مقرّر بعد إنشاء كلّيّة وقسم له — الشُّعب تُفتح من صف المقرّر."
+                />
+              )}
+            />
             {coursesMeta && coursesMeta.totalPages > 1 && (
+              <div className="sg-pad-in">
               <div className="table-pagination">
                 <span>
                   صفحة {formatNum(coursesMeta.page)} من {formatNum(coursesMeta.totalPages)} · {countAr(coursesMeta.total, ['مقرّر واحد', 'مقرّران', 'مقرّرات', 'مقرّراً'])}
@@ -750,10 +780,11 @@ export function OwnerInstitutionDetailPage() {
                   </button>
                 </span>
               </div>
+              </div>
             )}
-          </div>
+          </>
         )}
-      </Card>
+      </SheetSection>
 
       {/* ── «إضافة كلّيّة» modal ─────────────────────────────────────── */}
       <Modal open={facultyFormOpen} onClose={closeFacultyForm} ariaLabel="إضافة كلّيّة جديدة">

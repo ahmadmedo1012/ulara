@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { KeyboardEvent, ReactNode } from 'react';
+import type { KeyboardEvent } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useIsNarrowLayout } from '../../hooks/useIsNarrowLayout';
 import {
@@ -9,7 +9,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { Pill, UserAvatar } from '../../components/primitives';
-import { ErrorState, EmptyState, Skeleton } from '../../components/primitives/States';
+import { ErrorState, EmptyState } from '../../components/primitives/States';
 import { Sheet } from '../../components/overlays';
 import { Icon } from '../../components/Icon';
 import {
@@ -26,7 +26,16 @@ import {
 } from '../../components/patterns';
 /* R319 (c3-S1) — the §B2 kit: the mono-indexed section title bars +
  * the count meta (the DashboardPage conversion's components). */
-import { SectionBar, BarCount } from '../../components/student';
+/* R359 (A3 · final sweep) — the sheet grammar joins the §B2 kit: the
+ * framed section (registration crosses + Latin mono caption + the
+ * aside slot), the KpiBand (the dimension-string register), and the
+ * DataSheet for the loans ledger. Status words ride the flat sg-flag. */
+import {
+  SheetSection, KpiBand, DataSheet, SheetEmpty, type DataSheetColumn,
+} from '../../components/patterns';
+/* R319 (c3-S1) — the §B2 kit: the mono count meta (the DashboardPage
+ * conversion's component). */
+import { BarCount } from '../../components/student';
 import '../../styles/research.css';
 /* R305-A7 «ds»: the scoped research/PDF/library sheet — loaded
  * DIRECTLY AFTER the family sheet so later source order inside
@@ -58,18 +67,6 @@ const BOOKS_PAGE_SIZE = 24;
 const categoryIcon = (cat: string): LucideIcon =>
   CATEGORIES.find((c) => c.id === cat)?.icon ?? LibraryIcon;
 const categoryLabel = (cat: string) => CATEGORIES.find((c) => c.id === cat)?.label ?? cat;
-
-/* R305-A7: status chips — dot + Arabic label (state never rides color
- * alone). The chips vocabulary rides the shared §4 anatomy. */
-type ChipTone = 'accent' | 'success' | 'warning' | 'danger' | 'info' | 'gold';
-function StatusChip({ tone, label }: { tone?: ChipTone; label: ReactNode }) {
-  return (
-    <span className={`r305rp-chip${tone ? ` r305rp-chip--${tone}` : ''}`}>
-      <span className="r305rp-chip-dot" aria-hidden="true" />
-      {label}
-    </span>
-  );
-}
 
 /** Escape every HTML-significant character. */
 function escapeHtml(s: string): string {
@@ -194,10 +191,14 @@ function BookRow({ book }: { book: Book }) {
       trailing={
         <span className="rs-book-tail">
           <span title={book.totalCopies > 0 ? `${availabilityHint} من ${formatInt(book.totalCopies)}` : undefined}>
-            <StatusChip
-              tone={book.availableCopies > 0 ? 'success' : undefined}
-              label={book.availableCopies > 0 ? 'متاح' : 'مستعار'}
-            />
+            {/* R359 (colour law): the availability state rides the flat
+                hairline flag — words + tone ink, never a tinted dot chip. */}
+            <span
+              className="sg-flag"
+              data-tone={book.availableCopies > 0 ? 'positive' : 'quiet'}
+            >
+              {book.availableCopies > 0 ? 'متاح' : 'مستعار'}
+            </span>
           </span>
           <button
             type="button"
@@ -264,6 +265,16 @@ function BookRow({ book }: { book: Book }) {
    الصادق: التعبئة = ما تبقّى، وأحمر بعد الصفر)، وزر الإرجاع يبقى في
    نهاية الصف. الحالة تُقرأ مرة: الشارة (متأخرة/قريبة/نشطة) + التاريخ. */
 
+/** The loan's honest state — shared by the status flag and the row pin. */
+function loanState(loan: MyLoan): { tone: 'positive' | 'danger' | undefined; label: string; overdue: boolean } {
+  const daysLeft = (new Date(loan.dueAt).getTime() - Date.now()) / 86_400_000;
+  const overdue = daysLeft < 0 || loan.status === 'OVERDUE';
+  const dueSoon = !overdue && daysLeft <= 3;
+  if (overdue) return { tone: 'danger', label: 'متأخر الإرجاع', overdue: true };
+  if (dueSoon) return { tone: undefined, label: 'ينتهي قريباً', overdue: false };
+  return { tone: 'positive', label: 'نشطة', overdue: false };
+}
+
 /** Due-window meter — remaining time of the 14-day loan as a calm bar.
  *  Overdue renders an empty red track: nothing left, honestly. */
 function LoanDue({ loan }: { loan: MyLoan }) {
@@ -290,19 +301,10 @@ function LoanDue({ loan }: { loan: MyLoan }) {
   );
 }
 
-function LoanRow({ loan }: { loan: MyLoan }) {
+/** The row's إرجاع verb — a component so each row owns its mutation
+ *  state (disabled + aria-disabled while in flight, the platform pair). */
+function ReturnLoanButton({ loan }: { loan: MyLoan }) {
   const returnLoan = useReturnLoan();
-  const daysLeft = (new Date(loan.dueAt).getTime() - Date.now()) / 86_400_000;
-  const overdue = daysLeft < 0 || loan.status === 'OVERDUE';
-  const dueSoon = !overdue && daysLeft <= 3;
-  /* R305-A7: the loan state rides the shared chip anatomy — dot + tone
-   * + the Arabic label, never color alone. */
-  const state = overdue
-    ? { tone: 'danger' as const, label: 'متأخر الإرجاع' }
-    : dueSoon
-      ? { tone: 'warning' as const, label: 'ينتهي قريباً' }
-      : { tone: 'success' as const, label: 'نشطة' };
-
   const onReturn = async () => {
     try {
       await returnLoan.mutateAsync(loan.id);
@@ -311,65 +313,18 @@ function LoanRow({ loan }: { loan: MyLoan }) {
       toast.error(apiErrorMessage(e, 'تعذَّر الإرجاع — تحقّق من اتصالك وحاول مرة أخرى.'));
     }
   };
-
   return (
-    <RowItem
-      title={loan.book.title}
-      meta={
-        <>
-          <span>{loan.book.author}</span>
-          <span aria-hidden="true">·</span>
-          {loan.book.category && (
-            <>
-              <span>{categoryLabel(loan.book.category)}</span>
-              <span aria-hidden="true">·</span>
-            </>
-          )}
-          <StatusChip tone={state.tone} label={state.label} />
-        </>
-      }
-      trailing={
-        <button
-          type="button"
-          className="btn ghost sm"
-          onClick={() => void onReturn()}
-          disabled={returnLoan.isPending}
-          aria-disabled={returnLoan.isPending || undefined}
-          aria-label={`إرجاع ${loan.book.title}`}
-        >
-          <Icon icon={Undo2} size={13} />
-          {returnLoan.isPending ? 'جارٍ الإرجاع…' : 'إرجاع'}
-        </button>
-      }
-      defaultExpanded
+    <button
+      type="button"
+      className="btn ghost sm"
+      onClick={() => void onReturn()}
+      disabled={returnLoan.isPending}
+      aria-disabled={returnLoan.isPending || undefined}
+      aria-label={`إرجاع ${loan.book.title}`}
     >
-      {/* The due surface: meter + the two real dates — the body owns
-          the time story so the row line stays one calm read. Open by
-          default: unfinished work shows its clock without a click. */}
-      <div className="flex-col gap-2" style={{ width: '100%' }}>
-        <LoanDue loan={loan} />
-        <span className="rs-row-meta">
-          <span>موعد الإرجاع: <bdi className="font-mono">{formatDateAr(loan.dueAt)}</bdi></span>
-          <span aria-hidden="true">·</span>
-          <span>استُعير: {formatDateAr(loan.borrowedAt)}</span>
-        </span>
-      </div>
-    </RowItem>
-  );
-}
-
-/** Shape-matched loans placeholder — mirrors a loan row (title bar +
- * meter line), the loading-closure craft floor. */
-function LoansSkeleton() {
-  return (
-    <div className="rs-loans" aria-busy="true" aria-live="polite">
-      {[0, 1].map((i) => (
-        <div key={i} className="flex-col gap-2" aria-hidden>
-          <Skeleton width="45%" height={14} />
-          <Skeleton width="70%" height={8} />
-        </div>
-      ))}
-    </div>
+      <Icon icon={Undo2} size={13} />
+      {returnLoan.isPending ? 'جارٍ الإرجاع…' : 'إرجاع'}
+    </button>
   );
 }
 
@@ -457,6 +412,7 @@ export default function LibraryPage() {
     const days = (new Date(l.dueAt).getTime() - Date.now()) / 86400000;
     return days >= 0 && days <= 3;
   }).length;
+  const overdueLoans = openLoans.filter((l) => loanState(l).overdue).length;
   /* r184: the honest total reads the server's meta.total — never the
    * (possibly truncated) array length. */
   const totalBooks = booksMeta?.total ?? null;
@@ -500,26 +456,41 @@ export default function LibraryPage() {
     return [...byCourse.values()];
   })();
 
-  // Research-tab facts — the ONE deep band on the page: the archive
-  // summary reads as a metric register (mono numerals over labels).
-  const researchCells: Array<{ label: string; value: ReactNode }> = [
+  // Research-tab facts — the archive summary rides the KPI band
+  // register (R359 final sweep): four honest numerals, count-in, the
+  // average as a pre-formatted string (rendered verbatim). Every value
+  // derives from the published-research payload.
+  const researchAvg = research.data && research.data.length
+    ? `${formatNum(Math.round((research.data.reduce((s, p) => s + (p.grade ?? 0), 0) / research.data.length) * 10) / 10, { maximumFractionDigits: 1 })}/20`
+    : null;
+  const archiveKpis = [
     {
+      index: '01',
+      caption: 'PAPERS',
       label: 'بحوث منشورة',
-      value: research.data?.length != null ? formatInt(research.data.length) : '—',
+      value: research.data?.length ?? 0,
+      empty: research.isPending,
     },
     {
+      index: '02',
+      caption: 'AUTHORS',
       label: 'مؤلفون طلابيون',
-      value: research.data ? formatInt(new Set(research.data.map((p) => p.student.id)).size) : '—',
+      value: research.data ? new Set(research.data.map((p) => p.student.id)).size : 0,
+      empty: research.isPending,
     },
     {
+      index: '03',
+      caption: 'AVG GRADE',
       label: 'متوسط التقييم',
-      value: research.data && research.data.length
-        ? <bdi>{`${formatNum(Math.round((research.data.reduce((s, p) => s + (p.grade ?? 0), 0) / research.data.length) * 10) / 10, { maximumFractionDigits: 1 })}/20`}</bdi>
-        : '—',
+      value: researchAvg ?? '—',
+      empty: research.isPending || !researchAvg,
     },
     {
+      index: '04',
+      caption: 'THIS YEAR',
       label: 'منشورة هذا العام',
-      value: research.data ? formatInt(research.data.filter((p) => p.publishedAt && new Date(p.publishedAt).getFullYear() >= new Date().getFullYear()).length) : '—',
+      value: research.data ? research.data.filter((p) => p.publishedAt && new Date(p.publishedAt).getFullYear() >= new Date().getFullYear()).length : 0,
+      empty: research.isPending,
     },
   ];
 
@@ -594,6 +565,52 @@ export default function LibraryPage() {
     </button>
   );
 
+  /* R359 (final sweep) — the loans ledger columns: the book (title +
+   * author sub-line), the state as the flat sg-flag, the due surface
+   * (the 14-day meter + the two real dates), and the row's إرجاع verb. */
+  const loanColumns: DataSheetColumn<MyLoan>[] = [
+    {
+      key: 'book',
+      label: 'الكتاب',
+      render: (l) => (
+        <span className="sg-cell-stack">
+          <span className="sg-cell-title">{l.book.title}</span>
+          <span className="sg-cell-sub">
+            {l.book.author}
+            {l.book.category ? ` · ${categoryLabel(l.book.category)}` : ''}
+          </span>
+        </span>
+      ),
+    },
+    {
+      key: 'status',
+      label: 'الحالة',
+      render: (l) => (
+        <span className="sg-flag" data-tone={loanState(l).tone}>
+          {loanState(l).label}
+        </span>
+      ),
+    },
+    {
+      key: 'due',
+      label: 'الموعد',
+      render: (l) => (
+        <span className="sg-cell-stack">
+          <LoanDue loan={l} />
+          <span className="sg-cell-sub">
+            موعد الإرجاع <bdi>{formatDateAr(l.dueAt)}</bdi> · استُعير {formatDateAr(l.borrowedAt)}
+          </span>
+        </span>
+      ),
+    },
+    {
+      key: 'return',
+      label: '',
+      noLabel: true,
+      render: (l) => <ReturnLoanButton loan={l} />,
+    },
+  ];
+
   // The research empty-state names the search that ACTUALLY ran: a
   // no-hits answer only when the debounced server search resolved
   // empty; an unfinished or short query falls back to the honest
@@ -624,6 +641,7 @@ export default function LibraryPage() {
     <div className="r305rp r319s-page">
     <PageFrame width="default">
       <PageHeader
+        eyebrow="طلاب الجامعة"
         title="المكتبة الإلكترونية"
         description={
           /* 22-c (A3 P3-10): honest scope — no «آلاف الكتب» overclaim. */
@@ -691,49 +709,80 @@ export default function LibraryPage() {
 
       {!isResearchTab ? (
         <div role="tabpanel" id="lib-panel-books" aria-labelledby="lib-tab-books" className="flex-col gap-4">
-          {/* استعاراتي — the continue surface: rows when open loans
-              exist, one honest technical empty line when they don't.
-              R305-A7: a framed panel; the kicker carries the heading +
-              the honest count with the hairline filling the remainder.
-              R319 (c3-S1): the heading joins the §B2 title-bar register
-              — [01] + the open-loans count as quiet mono meta (countAr
-              for assistive tech; the due-soon datum stays visible). */}
-          <section className="r305rp-panel r305rp-lib-loans" aria-label="استعاراتي النشطة">
-            <SectionBar
-              title="استعاراتي"
-              meta={
-                !loans.isPending && !loans.isError && openLoans.length > 0 ? (
-                  <>
-                    <BarCount
-                      n={openLoans.length}
-                      srLabel={countAr(openLoans.length, ['استعارة واحدة', 'استعارتان', 'استعارات', 'استعارة'])}
-                    />
-                    {dueSoon > 0 && (
-                      <span>· {formatInt(dueSoon)} تنتهي قريباً</span>
-                    )}
-                  </>
-                ) : undefined
-              }
-            />
-            {loans.isPending ? (
-              <LoansSkeleton />
-            ) : loans.isError ? (
-              <ErrorState error={loans.error} onRetry={() => loans.refetch()} />
-            ) : openLoans.length === 0 ? (
-              <div className="r305rp-empty">
-                <span className="r305rp-eyebrow">الحالة</span>
-                <p className="r305rp-lib-loansempty-line">
-                  <strong>لا استعارات نشطة</strong> — اضغط «استعارة» على أي كتاب متاح ليظهر هنا مع موعد إرجاعه خلال 14 يوماً.
-                </p>
+          {/* R359 (final sweep) — the loans KPI band: the borrower's
+              three honest facts (open loans · due soon · overdue),
+              every numeral from the live /me/loans payload; pending
+              renders the honest «—» empty cells. */}
+          <KpiBand
+            items={[
+              {
+                index: '01',
+                caption: 'LOANS',
+                label: 'استعارات نشطة',
+                value: openLoans.length,
+                empty: loans.isPending,
+              },
+              {
+                index: '02',
+                caption: 'DUE SOON',
+                label: 'تنتهي قريباً',
+                value: dueSoon,
+                empty: loans.isPending,
+              },
+              {
+                index: '03',
+                caption: 'OVERDUE',
+                label: 'متأخرة الإرجاع',
+                value: overdueLoans,
+                empty: loans.isPending,
+              },
+            ]}
+          />
+
+          {/* استعاراتي — the continue surface: the loans LEDGER as a
+              DataSheet inside the framed sheet [01] — book · state flag ·
+              the due meter + dates · the إرجاع verb; the overdue row spends
+              its danger pin. Loading + the honest empty live in the body. */}
+          <SheetSection
+            index="01"
+            caption="ACTIVE LOANS"
+            title="استعاراتي"
+            pad="none"
+            aside={
+              !loans.isPending && !loans.isError && openLoans.length > 0 ? (
+                <>
+                  <BarCount
+                    n={openLoans.length}
+                    srLabel={countAr(openLoans.length, ['استعارة واحدة', 'استعارتان', 'استعارات', 'استعارة'])}
+                  />
+                  {dueSoon > 0 && (
+                    <span>· {formatInt(dueSoon)} تنتهي قريباً</span>
+                  )}
+                </>
+              ) : undefined
+            }
+          >
+            {loans.isError ? (
+              <div className="sg-pad-in">
+                <ErrorState error={loans.error} onRetry={() => loans.refetch()} />
               </div>
             ) : (
-              <div className="rs-loans">
-                {openLoans.map((l) => (
-                  <LoanRow key={l.id} loan={l} />
-                ))}
-              </div>
+              <DataSheet
+                caption="استعاراتي النشطة"
+                columns={loanColumns}
+                rows={openLoans}
+                loading={loans.isPending}
+                rowTone={(l) => (loanState(l).overdue ? 'danger' : undefined)}
+                empty={(
+                  <SheetEmpty
+                    code="NO-LOANS"
+                    title="لا استعارات نشطة"
+                    desc="اضغط «استعارة» على أي كتاب متاح ليظهر هنا مع موعد إرجاعه خلال 14 يوماً."
+                  />
+                )}
+              />
             )}
-          </section>
+          </SheetSection>
 
           {/* Filter row — pills inline on wide screens, one «تصفية»
               trigger + bottom Sheet on phones (draft-then-apply; the
@@ -801,13 +850,18 @@ export default function LibraryPage() {
             </div>
           </Sheet>
 
-          {/* R319 (c3-S1): the books region opens with the §B2
-              mono-indexed title bar — [02] + the server's honest total
-              (meta.total, never the page array) as quiet mono meta. The
-              filter pills + list below keep their own rhythm. */}
-          <SectionBar
+          {/* R359 (final sweep) — the books region rides the framed
+              sheet [02] with the server's honest total (meta.total,
+              never the page array) in the head's aside. The books keep
+              their expandable rows (inspect-before-borrow), so the
+              RowList stays — INSIDE the frame; loading + error + the
+              empties live in the body. */}
+          <SheetSection
+            index="02"
+            caption="CATALOG"
             title="الكتب"
-            meta={
+            pad="none"
+            aside={
               !books.isPending && !books.isError && totalBooks !== null ? (
                 <BarCount
                   n={totalBooks}
@@ -815,26 +869,31 @@ export default function LibraryPage() {
                 />
               ) : undefined
             }
-          />
-          <RowList
-            aria-label="قائمة الكتب"
-            loading={books.isPending}
-            empty={
-              <EmptyState
-                icon={LibraryIcon}
-                illustration={booksFiltered ? 'empty-search' : 'empty-library'}
-                title={booksFiltered ? 'لا توجد كتب تطابق البحث' : 'لا توجد كتب بعد'}
-                description={booksFiltered ? 'جرّب كلمات بحث مختلفة أو إزالة التصنيفات.' : 'ستظهر هنا كتب المكتبة فور توفرها.'}
-              />
-            }
           >
-            {!books.isError && bookRows.map((b) => (
-              <BookRow key={b.id} book={b} />
-            ))}
-          </RowList>
-          {books.isError && (
-            <ErrorState error={books.error} onRetry={() => books.refetch()} />
-          )}
+            {books.isError ? (
+              <div className="sg-pad-in">
+                <ErrorState error={books.error} onRetry={() => books.refetch()} />
+              </div>
+            ) : (
+              <RowList
+                aria-label="قائمة الكتب"
+                loading={books.isPending}
+                empty={
+                  <EmptyState
+                    icon={LibraryIcon}
+                    illustration={booksFiltered ? 'empty-search' : 'empty-library'}
+                    title={booksFiltered ? 'لا توجد كتب تطاقق البحث' : 'لا توجد كتب بعد'}
+                    description={booksFiltered ? 'جرّب كلمات بحث مختلفة أو إزالة التصنيفات.' : 'ستظهر هنا كتب المكتبة فير توفرها.'}
+                  />
+                }
+              >
+                {bookRows.map((b) => (
+                  <BookRow key={b.id} book={b} />
+                ))}
+              </RowList>
+            )}
+          </SheetSection>
+
           {/* r184: the honest pager — replaces the silent `limit: 100`
               truncation. RTL: "previous" points inline-start-ward = the
               right chevron (the MessagesInbox / CatalogPage pager
@@ -873,31 +932,28 @@ export default function LibraryPage() {
         </div>
       ) : (
         <div role="tabpanel" id="lib-panel-research" aria-labelledby="lib-tab-research" className="flex-col gap-4">
-          {/* R305-A7: the page's ONE deep band — the archive summary as
-              a metric register (label over mono value). */}
-          <section className="r305rp-band r305rp-band--deep r305rp-lib-band" aria-label="ملخص أرشيف البحوث">
-            <span className="r305rp-eyebrow">ملخص الأرشيف</span>
-            <dl className="r305rp-lib-metrics">
-              {researchCells.map((c) => (
-                <div key={c.label}>
-                  <dt className="r305rp-metric-label">{c.label}</dt>
-                  <dd className="r305rp-metric">{c.value}</dd>
-                </div>
-              ))}
-            </dl>
-          </section>
+          {/* R359 (final sweep) — the archive summary rides the KPI
+              band register: ONE framed sheet [01] with the four honest
+              archive facts (numbers as count-in numerals; the average
+              as a pre-formatted string). */}
+          <SheetSection index="01" caption="ARCHIVE" title="ملخص الأرشيف" pad="none">
+            <KpiBand items={archiveKpis} />
+          </SheetSection>
 
           {/* Grouped when browsing ≥2 courses; flat while searching or
               when everything lives in one course (no decorative group
               headers around a single entry).
-              R319 (c3-S1): the research list region opens with the §B2
-              title bar — [01] (this view's first section; the summary
-              band above is the view's metadata band, unnumbered like
-              the dashboard's momentum strip) + the honest visible
-              count as mono meta. */}
-          <SectionBar
+              R359 (final sweep): the research list region rides the
+              framed sheet [02] with the honest visible count in the
+              head's aside; the rows keep their expandable anatomy
+              (snippet/abstract + the reader link), so the RowList
+              stays — INSIDE the frame. */}
+          <SheetSection
+            index="02"
+            caption="PUBLISHED RESEARCH"
             title="البحوث المنشورة"
-            meta={
+            pad="none"
+            aside={
               !researchInUse && !research.isPending && !research.isError && visibleResearch.length > 0 ? (
                 <BarCount
                   n={visibleResearch.length}
@@ -905,42 +961,45 @@ export default function LibraryPage() {
                 />
               ) : undefined
             }
-          />
-          {(!researchInUse && !research.isPending && !research.isError && researchGroups) ? (
-            researchGroups.map((g) => (
-              <section key={g.code ?? 'general'} className="rs-group" aria-label={`${g.code ? g.code + ' — ' : ''}${g.label}`}>
-                <div className="rs-group-head">
-                  <h3 className="rs-group-title">
-                    {g.code && <bdi className="font-mono">{g.code}</bdi>}
-                    {g.code ? ' — ' : ''}{g.label}
-                  </h3>
-                  <span className="rs-group-count">{countAr(g.papers.length, ['بحث واحد', 'بحثان', 'بحوث', 'بحوثاً'])}</span>
-                </div>
-                <RowList aria-label={`بحوث ${g.label}`}>
-                  {g.papers.map((p) => <ResearchHitRow key={p.id} paper={p} hit={null} />)}
-                </RowList>
-              </section>
-            ))
-          ) : (
-            <RowList
-              aria-label="قائمة البحوث المنشورة"
-              loading={researchInUse ? search.isPending : research.isPending}
-              empty={researchEmpty}
-            >
-              {!(researchInUse ? search.isError : research.isError) && visibleResearch.map((p) => {
-                const hit = researchInUse ? (p as ResearchSearchHit) : null;
-                return (
-                  <ResearchHitRow key={p.id} paper={p} hit={hit} />
-                );
-              })}
-            </RowList>
-          )}
-          {(researchInUse ? search.isError : research.isError) && (
-            <ErrorState
-              error={researchInUse ? search.error : research.error}
-              onRetry={() => (researchInUse ? search.refetch() : research.refetch())}
-            />
-          )}
+          >
+            {(!researchInUse && !research.isPending && !research.isError && researchGroups) ? (
+              researchGroups.map((g) => (
+                <section key={g.code ?? 'general'} className="rs-group" aria-label={`${g.code ? g.code + ' — ' : ''}${g.label}`}>
+                  <div className="rs-group-head">
+                    <h3 className="rs-group-title">
+                      {g.code && <bdi className="font-mono">{g.code}</bdi>}
+                      {g.code ? ' — ' : ''}{g.label}
+                    </h3>
+                    <span className="rs-group-count">{countAr(g.papers.length, ['بحث واحد', 'بحثان', 'بحوث', 'بحوثاً'])}</span>
+                  </div>
+                  <RowList aria-label={`بحوث ${g.label}`}>
+                    {g.papers.map((p) => <ResearchHitRow key={p.id} paper={p} hit={null} />)}
+                  </RowList>
+                </section>
+              ))
+            ) : (
+              <RowList
+                aria-label="قائمة البحوث المنشورة"
+                loading={researchInUse ? search.isPending : research.isPending}
+                empty={researchEmpty}
+              >
+                {!(researchInUse ? search.isError : research.isError) && visibleResearch.map((p) => {
+                  const hit = researchInUse ? (p as ResearchSearchHit) : null;
+                  return (
+                    <ResearchHitRow key={p.id} paper={p} hit={hit} />
+                  );
+                })}
+              </RowList>
+            )}
+            {(researchInUse ? search.isError : research.isError) && (
+              <div className="sg-pad-in">
+                <ErrorState
+                  error={researchInUse ? search.error : research.error}
+                  onRetry={() => (researchInUse ? search.refetch() : research.refetch())}
+                />
+              </div>
+            )}
+          </SheetSection>
         </div>
       )}
     </PageFrame>
@@ -1006,16 +1065,18 @@ function ResearchHitRow({ paper, hit }: {
         </>
       }
       trailing={
+        /* R359 (colour law): the match annotation + the grade ride
+           the flat hairline flag — words + tone ink, no tinted pills.
+           The strong grade (17+) reads positive; the rest stay neutral
+           (the numeral carries the data). */
         hit ? (
-          <StatusChip
-            tone={hit.matchedIn === 'title' ? 'success' : hit.matchedIn === 'abstract' ? 'gold' : 'info'}
-            label={hit.matchedIn === 'title' ? 'تطابق في العنوان' : hit.matchedIn === 'abstract' ? 'تطابق في الملخص' : 'تطابق في المتن'}
-          />
+          <span className="sg-flag">
+            {hit.matchedIn === 'title' ? 'تطاقق في العنوان' : hit.matchedIn === 'abstract' ? 'تطاقق في الملخص' : 'تطاقق في المتن'}
+          </span>
         ) : paper.grade != null ? (
-          <StatusChip
-            tone={paper.grade >= 17 ? 'success' : paper.grade >= 14 ? 'gold' : 'warning'}
-            label={<bdi>{paper.grade}/20</bdi>}
-          />
+          <span className="sg-flag" data-tone={paper.grade >= 17 ? 'positive' : undefined}>
+            <bdi>{paper.grade}/20</bdi>
+          </span>
         ) : undefined
       }
       defaultExpanded

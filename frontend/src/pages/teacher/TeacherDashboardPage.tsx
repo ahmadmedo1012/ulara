@@ -10,8 +10,14 @@ import {
 import { Card, UserAvatar } from '../../components/primitives';
 import { ErrorState, EmptyState, ChartSkeleton, ListSkeleton } from '../../components/primitives/States';
 import {
-  PageFrame, PageHeader, SectionHeader, RowList, RowItem, StatLine, TodayList, FilterBar,
+  PageFrame, PageHeader, SectionHeader, RowList, RowItem, TodayList, FilterBar,
 } from '../../components/patterns';
+/* R359 (A3 · W2-c) — the sheet grammar joins the dashboard: the
+ * StatLine's four stats re-key onto the KpiBand (the dimension-string
+ * register — huge mono numerals, count-in, honest-empty) and the
+ * trend chart rides a framed SheetSection. The queue/today/feed
+ * surfaces keep their frozen pattern registers (RowList/TodayList). */
+import { KpiBand, SheetSection } from '../../components/patterns';
 import '../../styles/teacher/ds-core.css'; // R305 DS: §0 hr- primitives + §A tqd- deltas (mounted via .hr-scope)
 /* R332 W11 — the dashboard grammar bridge (styles/landing/inner.css §W11):
  * the [nn] section-index chips (.w11-idx) this page mounts in its
@@ -33,7 +39,7 @@ import {
   type TeacherOffering,
 } from '../../hooks/useResources';
 import { countAr, formatRelativeAr, WEEKDAY_NAMES_AR } from '../../lib/format';
-import { formatDate, formatNum, formatPct1 } from '../../utils/numbers';
+import { formatDate, formatNum } from '../../utils/numbers';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Filler, Tooltip, Legend);
 
@@ -294,7 +300,7 @@ export function TeacherDashboardPage() {
                 </bdi>
               </span>
             )}
-            <span className="hr-chip" data-tone={visible.length === 0 ? 'ok' : 'ember'}>
+            <span className="hr-chip" data-tone={visible.length === 0 ? 'ok' : 'signal'}>
               <bdi className="font-mono" dir="ltr">{visible.length}</bdi>
               <span className="sr-only">{countAr(visible.length, ['عنصر يحتاج متابعة', 'عنصران يحتاجان متابعة', 'عناصر تحتاج متابعة', 'عنصراً يحتاج متابعة'])}</span>
             </span>
@@ -302,39 +308,47 @@ export function TeacherDashboardPage() {
         }
       />
 
-      {/* The compact signal line (StatLine — one flat row, no tiles).
-          Tones are semantic only: work waiting reads amber, healthy
-          numbers stay neutral. */}
-      <StatLine
-        /* r348: spread seats the four stats across the sheet's full line
-         * (the inline-end half held ~440px of dead paper at 1440); the
-         * two not-yet data wear the honest-empty register. */
-        spread
+      {/* R359 (A3 · W2-c) — the compact signal line joins the KpiBand
+          register: huge mono numerals, count-in, the honest-empty — for
+          the same four stats (tones semantic only: work waiting reads
+          warning, healthy numbers stay neutral; the Arabic ٪ keeps the
+          band's dimension strings distinct from any Latin-% reads). */}
+      <KpiBand
         items={[
           {
+            index: '01',
+            caption: 'STUDENTS',
             label: 'طلابك',
-            value: formatNum(d.kpi.studentCount),
-            hint: 'مقرّراتك',
+            value: d.kpi.studentCount,
+            delta: 'مقرّراتك',
           },
           {
+            index: '02',
+            caption: 'AVG',
             label: 'متوسط الأداء',
-            value: d.kpi.avgGradePct !== null ? `${formatPct1(d.kpi.avgGradePct)}%` : '—',
-            hint: d.kpi.avgGradePct === null ? 'لا تقييمات' : 'تقييمات معتمدة',
-            tone: d.kpi.avgGradePct === null || d.kpi.avgGradePct >= 70 ? 'neutral' : 'warning',
+            value: d.kpi.avgGradePct ?? 0,
+            unit: '٪',
+            delta: d.kpi.avgGradePct === null ? 'لا تقييمات' : 'تقييمات معتمدة',
+            deltaTone: d.kpi.avgGradePct === null || d.kpi.avgGradePct >= 70 ? 'neutral' : 'warning',
             empty: d.kpi.avgGradePct === null,
           },
           {
+            index: '03',
+            caption: 'ATTENDANCE',
             label: 'الحضور',
-            value: d.kpi.attendancePct !== null ? `${formatPct1(d.kpi.attendancePct)}%` : '—',
-            hint: d.kpi.attendancePct === null ? 'لا سجلات' : 'الجلسات المسجّلة',
-            tone: d.kpi.attendancePct === null || d.kpi.attendancePct >= 75 ? 'neutral' : 'warning',
+            value: d.kpi.attendancePct ?? 0,
+            unit: '٪',
+            delta: d.kpi.attendancePct === null ? 'لا سجلات' : 'الجلسات المسجّلة',
+            deltaTone: d.kpi.attendancePct === null || d.kpi.attendancePct >= 75 ? 'neutral' : 'warning',
             empty: d.kpi.attendancePct === null,
           },
           {
+            index: '04',
+            caption: 'PENDING',
             label: 'بحاجة تقييم',
-            value: formatNum(d.kpi.needsReview),
-            hint: 'واجبات وبحوث',
-            tone: d.kpi.needsReview === 0 ? 'positive' : 'warning',
+            value: d.kpi.needsReview,
+            delta: 'واجبات وبحوث',
+            deltaTone: d.kpi.needsReview === 0 ? 'positive' : 'warning',
             to: '/teacher/assignments',
           },
         ]}
@@ -361,10 +375,15 @@ export function TeacherDashboardPage() {
           per signal. */}
 
       {/* Performance + attendance trend — real 6-week data, wrapped for
-          screen readers (aria-label + sr-only data table, audit 0-f). */}
-      <Card
-        title={<>الأداء والحضور</>}
-        icon={Activity} subtitle="آخر ستة أسابيع">
+          screen readers (aria-label + sr-only data table, audit 0-f).
+          R359: the chart rides the [01] PERFORMANCE TREND frame (the
+          ChartFrame stays — the section is the paper around it). */}
+      <SheetSection
+        index="01"
+        caption="PERFORMANCE TREND"
+        title="الأداء والحضور"
+        aside={<span className="sg-label">آخر ستة أسابيع</span>}
+      >
         {!coverage.drawable ? (
           <>
             <EmptyState
@@ -403,7 +422,7 @@ export function TeacherDashboardPage() {
             />
           </ChartFrame>
         )}
-      </Card>
+      </SheetSection>
 
       {/* Filter toolbar — the FilterBar pattern (r210): one calm row,
           pills keep their aria-pressed state, the full-notifications

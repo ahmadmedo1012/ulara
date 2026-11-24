@@ -50,6 +50,33 @@ export function EnumChip({
   return <StatusChip label={labels[value] ?? value} tone={toneOf(value)} title={title} />;
 }
 
+/* ── R359 (W2-e): the sheet-grammar status flag ────────────────────
+ * The DataSheet registers speak the flat .sg-flag (r359-grammar.css)
+ * — the colour law retires the inst-chip's tinted fills on the sheet
+ * surfaces. One shared mapping so every workspace register renders
+ * the same tone vocabulary (ok→positive, danger→danger, muted→quiet,
+ * the in-flight/attention tones ride the neutral ink). */
+export function StatusFlag({
+  value, labels,
+}: { value: string | null | undefined; labels: Record<string, string> }) {
+  if (!value) return <span className="sg-flag" data-tone="quiet">—</span>;
+  const tone = toneOf(value);
+  const flagTone: 'positive' | 'danger' | 'quiet' | undefined =
+    tone === 'ok' ? 'positive' : tone === 'danger' ? 'danger' : tone === 'muted' ? 'quiet' : undefined;
+  return (
+    <span className="sg-flag" data-tone={flagTone}>
+      {labels[value] ?? value}
+    </span>
+  );
+}
+
+/** The row-tone bridge: the same InstTone vocabulary keyed to the
+ * DataSheet's inline-start row pin. */
+export function rowToneFromStatus(status: string | null | undefined): 'positive' | 'danger' | undefined {
+  const tone = toneOf(status);
+  return tone === 'ok' ? 'positive' : tone === 'danger' ? 'danger' : undefined;
+}
+
 /* ── the workspace states ───────────────────────────────────────── */
 
 /** The honest no-institution-context state (contract §0: reads need

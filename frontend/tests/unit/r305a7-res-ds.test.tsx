@@ -123,7 +123,12 @@ describe('StudentResearchPage — the .r305rp marker (R305-A7)', () => {
     const roots = document.querySelectorAll('.r305rp');
     expect(roots.length).toBe(1);
     expect(roots[0]!.querySelector('h1')?.textContent).toBe('بحوثي العلمية');
-    expect(roots[0]!.querySelector('.r305rp-band--deep')).not.toBeNull();
+    /* R359 re-pin — the deep band retired; the lifecycle facts ride the
+     * framed [01] LIFECYCLE sheet with the KpiBand. */
+    const lifecycle = Array.from(roots[0]!.querySelectorAll('section.sg-section')).find(
+      (el) => el.querySelector('.sg-caption')?.textContent === 'LIFECYCLE',
+    );
+    expect(lifecycle).toBeDefined();
   });
 });
 
@@ -132,42 +137,46 @@ describe('StudentResearchPage — the .r305rp marker (R305-A7)', () => {
    ══════════════════════════════════════════════════════════════════ */
 
 describe('StudentResearchPage — the lifecycle summary band (R305-A7)', () => {
-  it('exactly ONE deep band carries the four lifecycle facts, label over formatted value', () => {
+  /* R359 re-pin — the four lifecycle facts ride the KpiBand inside the
+   * framed [01] LIFECYCLE section (count-in numerals, honest deltas). */
+  it('exactly ONE KPI band carries the four lifecycle facts, label under counted numeral', () => {
     mocks.my = { data: [paperFixture()], isPending: false, isError: false, error: null, refetch: () => undefined };
     renderPage();
 
-    const bands = document.querySelectorAll('.r305rp-band--deep');
+    const bands = document.querySelectorAll('.sg-kpis');
     expect(bands.length).toBe(1);
     const band = bands[0]!;
     for (const label of ['إجمالي بحوثك', 'قيد المراجعة', 'مُقيَّمة', 'تعذّر اجتياز الفحص']) {
       expect(band.textContent).toContain(label);
     }
-    const metrics = band.querySelectorAll('.r305rp-metric');
-    expect(metrics).toHaveLength(4);
-    // The total rides the FORMATTED register (formatInt → the platform's
-    // one numeral convention), and the hint rides the band-secondary ink.
-    expect(metrics[0]!.textContent).toContain(formatInt(1));
-    expect(band.querySelectorAll('.r305rp-band-secondary')).toHaveLength(4);
+    const cells = band.querySelectorAll('.sg-kpi');
+    expect(cells).toHaveLength(4);
+    // The total settles at the counted numeral, and every cell carries
+    // its honest delta hint (the band-secondary register).
+    expect(band.textContent).toContain(formatInt(1));
+    expect(band.querySelectorAll('.sg-kpi-delta')).toHaveLength(4);
   });
 
-  it('a failed paper flags its metric with the danger dot + the honest hint (never color alone)', () => {
+  it('a failed paper flags its cell with the danger delta + the honest hint (never color alone)', () => {
     mocks.my = {
       data: [paperFixture({ status: 'CHECKS_FAILED' })],
       isPending: false, isError: false, error: null, refetch: () => undefined,
     };
     renderPage();
 
-    const band = document.querySelector('.r305rp-band--deep')!;
-    expect(band.querySelector('.r305rp-res-flag')).not.toBeNull();
+    const band = document.querySelector('.sg-kpis')!;
+    const dangerDelta = band.querySelector('.sg-kpi-delta[data-tone="danger"]');
+    expect(dangerDelta).not.toBeNull();
     expect(band.textContent).toContain('تحتاج إعادة رفع');
   });
 
-  it('the KPI numerals are formatInt-formatted, not raw array lengths (source pin)', () => {
-    // The behavioral difference only shows past the grouping floor, so
-    // the caller-formatting contract is ALSO pinned at the source.
+  it('the KPI numerals are count-in formatted by the band (source pin)', () => {
+    // R359: the band receives the raw count and CountIn formats it
+    // (formatNum 0-decimals — the platform numeral convention; the
+    // grouping-floor behaviour the old pin guarded lives in CountIn).
     const src = readFileSync(PAGE_SRC, 'utf8');
-    expect(src).toMatch(/value:\s*formatInt\(papers\.length\)/);
-    expect(src).not.toMatch(/value:\s*papers\.length/);
+    expect(src).toMatch(/value:\s*papers\.length/);
+    expect(src).toContain("caption: 'PAPERS'");
   });
 });
 
@@ -204,10 +213,13 @@ describe('StudentResearchPage — status chips (R305-A7)', () => {
     mocks.my = { data: [paperFixture()], isPending: false, isError: false, error: null, refetch: () => undefined };
     renderPage();
 
-    const chip = screen.getByText('بانتظار الفحص').closest('.r305rp-chip')!;
-    expect(chip.querySelector('.r305rp-chip-dot')).not.toBeNull();
-    // UPLOADED is amber on the canonical ladder → the warning chip tone.
-    expect(chip.className).toContain('r305rp-chip--warning');
+    /* R359 re-pin — the status word rides the flat sg-flag (tone on
+     * text + border; the tinted dot-chip retired). */
+    const flag = screen.getByText('بانتظار الفحص').closest('.sg-flag')!;
+    expect(flag).not.toBeNull();
+    // R359 colour law: UPLOADED is a WAITING state → the neutral flag
+    // (no tone ink); the Arabic label carries the state, hue does not.
+    expect(flag.getAttribute('data-tone')).toBeNull();
   });
 
   it('a published paper reads «مُنشور في المكتبة» on the success chip', () => {
@@ -217,9 +229,8 @@ describe('StudentResearchPage — status chips (R305-A7)', () => {
     };
     renderPage();
 
-    const chip = screen.getByText('مُنشور في المكتبة').closest('.r305rp-chip')!;
-    expect(chip.className).toContain('r305rp-chip--success');
-    expect(chip.querySelector('.r305rp-chip-dot')).not.toBeNull();
+    const flag = screen.getByText('مُنشور في المكتبة').closest('.sg-flag')!;
+    expect(flag.getAttribute('data-tone')).toBe('positive');
   });
 });
 

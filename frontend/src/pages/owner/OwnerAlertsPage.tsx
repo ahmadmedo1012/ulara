@@ -3,11 +3,16 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import type { CSSProperties } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Card, Badge } from '../../components/primitives';
+import { Badge } from '../../components/primitives';
 import { StatStrip } from '../../components/primitives/Ledger';
 /* R304: the alerts board opens with the patterns PageHeader —
- * breadcrumbs back to the owner dashboard. */
-import { PageHeader as PatternsPageHeader } from '../../components/patterns';
+ * breadcrumbs back to the owner dashboard.
+ * R359 (W2-e): the board rides the sheet grammar — the open feed
+ * rides the framed OPEN ALERTS section. The KPI StatStrip stays
+ * verbatim: its .stat-cell anatomy + the meta-driven counts are
+ * pinned (r165g/6A10-2), and the grammar already re-keys the strip
+ * onto the band register (r359-grammar.css §15). */
+import { PageHeader as PatternsPageHeader, SheetSection } from '../../components/patterns';
 import { EmptyState, ErrorState, Skeleton } from '../../components/primitives/States';
 import { Icon } from '../../components/Icon';
 import { ConfirmDialog } from '../../components/owner/ConfirmDialog';
@@ -144,6 +149,7 @@ export function OwnerAlertsPage() {
     <div className="page r305ao">
       <PatternsPageHeader
         title="التنبيهات التشغيليّة"
+        eyebrow="مالك المنصّة"
         description="إدارة ومراقبة التنبيهات والحوادث التشغيليّة — مباشرة من سجلّ المنصّة."
         breadcrumbs={[{ label: 'لوحة المالك', to: '/owner/dashboard' }, { label: 'التنبيهات التشغيليّة' }]}
         /* R341 D11: the [11] nav-order gutter numeral (OWNER_NAV
@@ -192,7 +198,7 @@ export function OwnerAlertsPage() {
       {/* r299: «التنبيهات المفتوحة» — the KPI above says «مفتوحة», the
           dashboard band says «مفتوحة»; one console, one word for one
           concept («نشطة» described a different state on other pages). */}
-      <Card title="التنبيهات المفتوحة">
+      <SheetSection index="01" caption="OPEN ALERTS" title="التنبيهات المفتوحة">
         {alertsQuery.isPending ? (
           <AlertListSkeleton />
         ) : alertsQuery.isError ? (
@@ -266,7 +272,7 @@ export function OwnerAlertsPage() {
             })}
           </div>
         )}
-      </Card>
+      </SheetSection>
 
       {/* r251: the resolve confirmation — names the alert, and the
        * consequence: the alert CLOSES and the resolution lands in the

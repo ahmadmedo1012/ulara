@@ -1,14 +1,18 @@
 import { useMemo, useState, type ReactNode } from 'react';
-import { Link, useInRouterContext } from 'react-router-dom';
+import { useInRouterContext, Link } from 'react-router-dom';
 import {
-  Briefcase, MapPin,
-  Code, BarChart3, Palette, Network, Smartphone, Shield, BadgeCheck, GraduationCap,
-  type LucideIcon,
+  MapPin,
+  BadgeCheck, GraduationCap,
 } from 'lucide-react';
-/* R319 (c3-S2) — the §B2 kit: the mono-indexed section title bar + the
- * hatched empty cell. */
-import { SectionBar, BarCount, StatusChip, EmptyCell } from '../../components/student';
-import { ErrorState, TableSkeleton } from '../../components/primitives/States';
+/* R359 (A3) — the sheet grammar: the KPI band of real payload counts +
+ * the DataSheet register (mono numerics, two-line cells, labelled
+ * cards ≤640px) inside the framed [01] JOB BOARD section replace the
+ * §B2 SectionBar + hand-rolled .jobs-table (the roster exemplar's
+ * recomposition). */
+import { SheetSection, KpiBand, DataSheet, SheetEmpty, type DataSheetColumn } from '../../components/patterns';
+/* R319 (c3-S2) — the §B2 mono status chip (the APPLIED register). */
+import { StatusChip } from '../../components/student';
+import { ErrorState } from '../../components/primitives/States';
 import { Icon } from '../../components/Icon';
 import { PageFrame, PageHeader, FilterBar } from '../../components/patterns';
 import { useJobs, useApplyJob, apiErrorMessage, type Job } from '../../hooks/useResources';
@@ -28,17 +32,6 @@ const TYPE_LABELS: Record<string, string> = {
   INTERNSHIP: 'تدريب',
   FREELANCE: 'عمل حر',
   REMOTE: 'عن بُعد',
-};
-
-const jobIcon = (cat: string, title: string): LucideIcon => {
-  const t = title.toLowerCase();
-  if (t.includes('بيانات') || t.includes('analyst')) return BarChart3;
-  if (t.includes('ui') || t.includes('ux') || t.includes('تصميم')) return Palette;
-  if (t.includes('شبك')) return Network;
-  if (t.includes('موبايل')) return Smartphone;
-  if (t.includes('أمن')) return Shield;
-  if (cat === 'tech' || t.includes('برمج')) return Code;
-  return Briefcase;
 };
 
 /** Proper Arabic counted noun for the open-opportunities line
@@ -70,17 +63,19 @@ function fmtPosted(iso: string): string {
   return formatDate(d, { day: 'numeric', month: 'short' });
 }
 
-/** One jobs-table row. `applied` is the SERVER truth seeded from the
- *  payload's appliedJobIds (18-G) plus any application this session
- *  landed — the old useState(false) was client-local fiction, un-liking
- *  the badge on every remount while the server row persisted. */
-function JobRow({ job, applied }: { job: Job; applied: boolean }) {
+/** The row's apply verb + its honest states. `applied` is the SERVER
+ *  truth seeded from the payload's appliedJobIds (18-G) plus any
+ *  application this session landed — the old useState(false) was
+ *  client-local fiction, un-liking the badge on every remount while
+ *  the server row persisted. R359: the verb + its inline failure
+ *  render inside the DataSheet actions cell (the old full-width
+ *  error row dies with the hand-rolled table). */
+function JobActions({ job, applied }: { job: Job; applied: boolean }) {
   const apply = useApplyJob();
   // Optimistic in-session flag: pressing تقدّم shows the badge before the
   // invalidation refetch confirms it (a failure rolls it back below).
   const [justApplied, setJustApplied] = useState(false);
   const isApplied = applied || justApplied;
-  const Cmp = jobIcon(job.category, job.title);
 
   const onApply = async () => {
     try {
@@ -91,70 +86,27 @@ function JobRow({ job, applied }: { job: Job; applied: boolean }) {
     }
   };
 
+  if (isApplied) {
+    /* R319 (c3-S2): the applied state rides the §B2 mono chip
+       register — square hairline ink, never a color-only Badge. */
+    return <StatusChip label="APPLIED" tone="done" />;
+  }
   return (
-    <>
-      <tr>
-        <td className="tbl-strong" data-label="الوظيفة">
-          <div className="job-title-cell">
-            <span className="job-icon-well" aria-hidden>
-              <Icon icon={Cmp} size={18} />
-            </span>
-            <span className="job-title-block">
-              <span className="job-title" title={job.title}>{job.title}</span>
-              <span className="job-company" title={job.company}>{job.company}</span>
-            </span>
-          </div>
-        </td>
-        <td data-label="الموقع">
-          <span className="flex items-center gap-1">
-            <Icon icon={MapPin} size={12} aria-hidden /> {job.location}
-          </span>
-        </td>
-        <td data-label="النوع">{TYPE_LABELS[job.type] ?? job.type}</td>
-        <td data-label="الراتب">
-          {job.salary
-            ? <bdi className="font-mono">{job.salary}</bdi>
-            : <span className="text-xs text-subtle">حسب الاتفاق</span>}
-        </td>
-        <td
-          className="tbl-num"
-          data-label="النشر"
-          title={formatDate(job.postedAt, { dateStyle: 'long' })}
-        >
-          {fmtPosted(job.postedAt)}
-        </td>
-        <td data-label="الإجراء">
-          {isApplied ? (
-            /* R319 (c3-S2): the applied state rides the §B2 mono chip
-               register — square hairline ink, never a color-only Badge. */
-            <StatusChip label="APPLIED" tone="done" />
-          ) : (
-            /* The authored moment: actions stay quiet until the row is
-               hovered / focused (CSS .table-row-actions — persistent on
-               touch, always visible for keyboard via focus-within). */
-            <span className="table-row-actions">
-              <button
-                type="button"
-                className="btn primary sm"
-                onClick={() => void onApply()}
-                disabled={apply.isPending}
-              >
-                {apply.isPending ? 'جارٍ التقديم…' : 'تقدّم'}
-              </button>
-            </span>
-          )}
-        </td>
-      </tr>
+    <span className="sg-cell-stack">
+      <button
+        type="button"
+        className="btn primary sm"
+        onClick={() => void onApply()}
+        disabled={apply.isPending}
+      >
+        {apply.isPending ? 'جارٍ التقديم…' : 'تقدّم'}
+      </button>
       {apply.isError && (
-        <tr>
-          <td colSpan={6} role="alert">
-            <p className="job-apply-error">
-              {apiErrorMessage(apply.error, 'تعذّر إرسال طلب التقديم — حاول مرة أخرى.')}
-            </p>
-          </td>
-        </tr>
+        <p className="job-apply-error" role="alert">
+          {apiErrorMessage(apply.error, 'تعذّر إرسال طلب التقديم — حاول مرة أخرى.')}
+        </p>
       )}
-    </>
+    </span>
   );
 }
 
@@ -172,10 +124,61 @@ export default function JobsPage() {
   const isFiltering = type !== 'ALL';
   const filtered = isFiltering ? jobs.filter((j) => j.type === type) : jobs;
 
+  /* R359 — the board's columns: the job as a two-line cell (title +
+     company), the salary in the mono numeric register, the posting age
+     in mono with its full date on title, and the apply verb (or the
+     APPLIED chip) in the last cell. */
+  const columns: DataSheetColumn<Job>[] = [
+    {
+      key: 'title',
+      label: 'الوظيفة',
+      render: (j) => (
+        <span className="sg-cell-stack">
+          <span className="sg-cell-title" title={j.title}>{j.title}</span>
+          <span className="sg-cell-sub" title={j.company}>{j.company}</span>
+        </span>
+      ),
+    },
+    {
+      key: 'location',
+      label: 'الموقع',
+      render: (j) => (
+        <span className="flex items-center gap-1">
+          <Icon icon={MapPin} size={12} aria-hidden /> {j.location}
+        </span>
+      ),
+    },
+    {
+      key: 'type',
+      label: 'النوع',
+      render: (j) => TYPE_LABELS[j.type] ?? j.type,
+    },
+    {
+      key: 'salary',
+      label: 'الراتب',
+      numeric: true,
+      render: (j) => (j.salary ? <bdi>{j.salary}</bdi> : 'حسب الاتفاق'),
+    },
+    {
+      key: 'posted',
+      label: 'النشر',
+      mono: true,
+      render: (j) => (
+        <span title={formatDate(j.postedAt, { dateStyle: 'long' })}>{fmtPosted(j.postedAt)}</span>
+      ),
+    },
+    {
+      key: 'actions',
+      label: 'الإجراء',
+      render: (j) => <JobActions job={j} applied={appliedJobIds.has(j.id)} />,
+    },
+  ];
+
   return (
     <div className="r319s-page">
     <PageFrame width="default">
       <PageHeader
+        eyebrow="طلاب الجامعة"
         title="فرص العمل"
         description="وظائف وفرص تدريب تجريبية مفتوحة لطلاب وخرّيجي الجامعة (بيانات عرض)."
         /* R342-08 — the header CTA pair (the D11/D8 measured seat;
@@ -197,34 +200,54 @@ export default function JobsPage() {
         )}
       />
 
-      {/* R319 (c3-S2): the board opens with the §B2 title-bar — [01]
-          فرص العمل, the honest open-jobs count as mono meta (countAr for
-          assistive tech). */}
-      <SectionBar
-        title="فرص العمل"
-        meta={
-          !isPending && !isError && jobs.length > 0 ? (
-            <BarCount
-              n={jobs.length}
-              srLabel={countAr(jobs.length, ['فرصة واحدة مفتوحة', 'فرصتان مفتوحتان', 'فرص مفتوحة', 'فرصةً مفتوحة'])}
-            />
-          ) : undefined
-        }
-      />
-
       {isPending ? (
-        <TableSkeleton rows={5} cols={6} />
+        /* R359 — the pending mirror: the framed sheet + the DataSheet's
+           own skeleton body (the table IS the body). */
+        <SheetSection index="01" caption="JOB BOARD" title="فرص العمل المفتوحة" pad="none">
+          <DataSheet caption="فرص العمل" columns={columns} rows={[]} loading />
+        </SheetSection>
       ) : isError ? (
-        <ErrorState error={error} onRetry={() => refetch()} />
+        <SheetSection index="01" caption="JOB BOARD" title="فرص العمل المفتوحة">
+          <ErrorState error={error} onRetry={() => refetch()} />
+        </SheetSection>
       ) : jobs.length === 0 ? (
-        /* R319 (c3-S2): the empty board is the sheet's reserved-but-empty
-           region — the hatched EmptyCell (same honest copy). */
-        <EmptyCell
-          label="لا توجد فرص نشطة هذا الأسبوع"
-          note="نضيف فرص التوظيف والتدريب من شركات وطنية وعربية بشكل دوري. ستصلك إشعارات الفرص الملائمة لتخصصك تلقائياً."
-        />
+        /* R359: the empty board is the sheet's reserved-but-empty
+           region — the hairline placeholder frame (same honest copy). */
+        <SheetSection index="01" caption="JOB BOARD" title="فرص العمل المفتوحة">
+          <SheetEmpty
+            code="NO-POSTINGS"
+            title="لا توجد فرص نشطة هذا الأسبوع"
+            desc="نضيف فرص التوظيف والتدريب من شركات وطنية وعربية بشكل دوري. ستصلك إشعارات الفرص الملائمة لتخصصك تلقائياً."
+          />
+        </SheetSection>
       ) : (
         <>
+          {/* R359 — the KPI band: every numeral derives from the live
+              payload (the loaded rows · the distinct types actually on
+              the board · the server-truth applications count). */}
+          <KpiBand
+            items={[
+              {
+                index: '01',
+                caption: 'OPENINGS',
+                label: 'فرص مفتوحة على اللوحة',
+                value: jobs.length,
+              },
+              {
+                index: '02',
+                caption: 'TYPES',
+                label: 'أنواع عقود متاحة للتصفية',
+                value: types.length,
+              },
+              {
+                index: '03',
+                caption: 'APPLIED',
+                label: 'طلبات قدّمتها من هذه اللوحة',
+                value: appliedJobIds.size,
+              },
+            ]}
+          />
+
           <FilterBar
             filters={
               <div className="flex items-center gap-2" role="group" aria-label="تصفية فرص العمل حسب النوع">
@@ -251,51 +274,44 @@ export default function JobsPage() {
             }
           />
 
-          {/* The counted line — honest about the filtered subset. */}
-          {/* R305 DS: the counted line is page metadata — it rides the
-              chip register (accent dot = live fact) when a count exists. */}
-          <p className="jobs-count" aria-live="polite">
-            {filtered.length === 0 ? (
-              'لا توجد فرص ضمن هذا النوع حاليّاً — جرّب نوعاً آخر.'
-            ) : (
-              <span className="r305s-chip r305s-chip--accent">
-                <span className="r305s-chip-dot" aria-hidden />
-                <bdi>
-                  {openJobsLabel(filtered.length)}
-                  {isFiltering ? ` من أصل ${formatInt(jobs.length)}` : ''}
-                </bdi>
-              </span>
+          {/* R359 — the board sheet: the counted line rides the head
+              rule's aside slot; pad=none (the table IS the body). */}
+          <SheetSection
+            index="01"
+            caption="JOB BOARD"
+            title="فرص العمل المفتوحة"
+            aside={(
+              /* The counted line — honest about the filtered subset
+                  (R305 DS: the accent dot = live fact chip). */
+              <p className="jobs-count" aria-live="polite" style={{ margin: 0 }}>
+                <span className="r305s-chip r305s-chip--accent">
+                  <span className="r305s-chip-dot" aria-hidden />
+                  <bdi>
+                    {openJobsLabel(filtered.length)}
+                    {isFiltering ? ` من أصل ${formatInt(jobs.length)}` : ''}
+                  </bdi>
+                </span>
+              </p>
             )}
-          </p>
-
-          {filtered.length === 0 ? (
-            /* R319 (c3-S2): the empty filter bucket — the hatched
-               EmptyCell (the CoursesPage filter-bucket precedent). */
-            <EmptyCell
-              label="لا توجد فرص ضمن هذا النوع"
-              note="اختر نوعاً آخر من الأزرار أعلاه — كل الفرص المفتوحة تظهر تحت «الكل»."
-            />
-          ) : (
-            <div className="table-wrap jobs-table-wrap">
-              <table className="table tbl-stack jobs-table">
-                <thead>
-                  <tr>
-                    <th scope="col">الوظيفة</th>
-                    <th scope="col">الموقع</th>
-                    <th scope="col">النوع</th>
-                    <th scope="col">الراتب</th>
-                    <th scope="col">نُشرت</th>
-                    <th scope="col">الإجراء</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filtered.map((j) => (
-                    <JobRow key={j.id} job={j} applied={appliedJobIds.has(j.id)} />
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+            pad="none"
+          >
+            {filtered.length === 0 ? (
+              /* R359: the empty filter bucket — the hairline
+                 placeholder frame (the CoursesPage filter-bucket
+                 precedent). */
+              <SheetEmpty
+                code="NO-MATCH"
+                title="لا توجد فرص ضمن هذا النوع"
+                desc="اختر نوعاً آخر من الأزرار أعلاه — كل الفرص المفتوحة تظهر تحت «الكل»."
+              />
+            ) : (
+              <DataSheet
+                caption="فرص العمل"
+                columns={columns}
+                rows={filtered}
+              />
+            )}
+          </SheetSection>
         </>
       )}
     </PageFrame>

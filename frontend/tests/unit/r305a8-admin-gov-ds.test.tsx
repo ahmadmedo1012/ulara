@@ -328,8 +328,8 @@ describe('R305-A8 danger hierarchy — destructive verbs ride the new vocabulary
     });
 
     renderWithProviders(<AdminStudentsPage />);
-    fireEvent.click(await screen.findByRole('button', { name: 'بيانات وتسجيلات أحمد الزروق' }));
-    fireEvent.click(await screen.findByRole('button', { name: 'تسجيلات' }));
+    /* R359: the roster speaks the DataSheet register — the enrollment verb is the direct per-row button (aria-label «تسجيلات …»), the RowItem expansion is gone. */
+    fireEvent.click(await screen.findByRole('button', { name: 'تسجيلات أحمد الزروق' }));
 
     // The modal mounts through a portal — wait for the destructive verbs
     // themselves (the zone renders during the enrollments' pending tick

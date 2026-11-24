@@ -6,11 +6,19 @@
  * the list + creation flow.
  */
 import {
-  useState, useNavigate, Plus, PageFrame,
+  useState, Plus, PageFrame,
   PageHeader, toast, Icon, serverError,
-  EnumChip, InstConfirm, InstFilters, InstFormDialog, InstPagedTable,
-  InstSelect, type InstColumn, type InstField, type InstFormValues,
+  InstConfirm, InstFilters, InstFormDialog,
+  InstSelect, type InstField, type InstFormValues,
 } from './scaffold';
+/* R359 (W2-e): the governance register rides the sheet grammar — the
+ * KpiBand facts + the framed COUNCILS register (the DataSheet with
+ * flat sg-flag statuses, the council's own row linking to its file). */
+import { Link, useNavigate } from 'react-router-dom';
+import { KpiBand, SheetSection, DataSheet, type DataSheetColumn } from '../../components/patterns';
+import { StatusFlag, rowToneFromStatus, InstStates } from '../../components/institutional/kit';
+import { TablePaginationFooter } from '../admin/TablePaginationFooter';
+import { useInstitutionScope } from '../../stores/auth.store';
 import {
   useCouncils, useMyCapabilities, useOrgUnitTree, useInstActions} from '../../hooks/institutional/queries';
 import * as instApi from '../../lib/institutional/api';
@@ -24,6 +32,7 @@ const COUNCIL_UNIT: [string, string, string, string] = ['مجلس واحد', 'م
 
 export function InstitutionCouncilsPage() {
   const navigate = useNavigate();
+  const scope = useInstitutionScope();
   const caps = useMyCapabilities();
   const canManage = caps.data?.has('COUNCILS_MANAGE') ?? false;
 
@@ -110,14 +119,36 @@ export function InstitutionCouncilsPage() {
 
   const [transitionStatus, setTransitionStatus] = useState<'ACTIVE' | 'DISSOLVED' | 'CANCELLED'>('DISSOLVED');
 
-  const columns: Array<InstColumn<Council>> = [
-    { head: 'المجلس', cell: (c) => <span className="inst-tree-name">{c.nameAr}</span> },
-    { head: 'النوع', cell: (c) => <span className="inst-tree-kind">{COUNCIL_TYPE_LABELS[c.type]}</span> },
-    { head: 'الحالة', cell: (c) => <EnumChip value={c.status} labels={COUNCIL_STATUS_LABELS} /> },
-    { head: 'السند القانوني', mobileHidden: true, cell: (c) => c.legalBasis ?? '—' },
+  /* R359 (W2-e) — the register columns: the council's name is the row's
+   * link to its file, the type rides the sub line, statuses ride the
+   * flat flag, the legal basis is the mono datum. */
+  const columns: DataSheetColumn<Council>[] = [
     {
-      head: 'إجراءات',
-      cell: (c) => {
+      key: 'name',
+      label: 'المجلس',
+      render: (c) => (
+        <Link to={`/institution/councils/${c.id}`} className="sg-cell-title">{c.nameAr}</Link>
+      ),
+    },
+    {
+      key: 'type',
+      label: 'النوع',
+      render: (c) => (
+        <span className="sg-cell-stack">
+          <span>{COUNCIL_TYPE_LABELS[c.type]}</span>
+          {c.legalBasis && <span className="sg-cell-sub">{c.legalBasis}</span>}
+        </span>
+      ),
+    },
+    {
+      key: 'status',
+      label: 'الحالة',
+      render: (c) => <StatusFlag value={c.status} labels={COUNCIL_STATUS_LABELS} />,
+    },
+    {
+      key: 'actions',
+      label: 'إجراءات',
+      render: (c) => {
         const moves = canManage ? transitionsOf(c) : [];
         return moves.length > 0 ? (
           <span className="inst-actions">
@@ -127,8 +158,7 @@ export function InstitutionCouncilsPage() {
                 type="button"
                 className={`btn ghost sm${m.danger ? ' danger' : ''}`}
                 disabled={busy}
-                onClick={(e) => {
-                  e.stopPropagation();
+                onClick={() => {
                   setTransitionStatus(m.to);
                   setTransitionTarget(c);
                 }}
@@ -157,6 +187,36 @@ export function InstitutionCouncilsPage() {
         ) : null}
       />
 
+      {/* R359 (W2-e) — the KPI band: the real counts from the paged
+          payload + the unit options the creation form offers. */}
+      {scope !== null && (
+        <KpiBand
+          items={[
+            {
+              index: '01',
+              caption: 'COUNCILS',
+              label: 'المجالس واللجان (الاستعلام الحالي)',
+              value: councilsQuery.data?.meta.total ?? 0,
+              empty: councilsQuery.data == null,
+            },
+            {
+              index: '02',
+              caption: 'RESULTS',
+              label: 'نتائج الصفحة الحاليّة',
+              value: councilsQuery.data?.data.length ?? 0,
+              empty: councilsQuery.data == null,
+            },
+            {
+              index: '03',
+              caption: 'ORG UNITS',
+              label: 'الوحدات التنظيمية النشطة',
+              value: activeUnitOptions(treeQuery.data).length,
+              empty: treeQuery.data == null,
+            },
+          ]}
+        />
+      )}
+
       <InstFilters>
         <InstSelect
           ariaLabel="تصفية بالنوع"
@@ -174,15 +234,33 @@ export function InstitutionCouncilsPage() {
         />
       </InstFilters>
 
-      <InstPagedTable
-        query={councilsQuery}
-        columns={columns}
-        rowKey={(c) => c.id}
-        ariaLabel="قائمة المجالس واللجان"
-        unit={COUNCIL_UNIT}
-        onPage={setPage}
-        onRowClick={(c) => navigate(`/institution/councils/${c.id}`)}
-      />
+      {/* R359 (W2-e) — the framed register (states + DataSheet + the
+          family pagination footer). */}
+      <SheetSection index="01" caption="COUNCILS" title="سجلّ المجالس واللجان" pad="none">
+        <InstStates
+          isLoading={councilsQuery.isLoading}
+          error={councilsQuery.error}
+          isEmpty={(councilsQuery.data?.data ?? []).length === 0}
+        >
+          <DataSheet
+            caption="سجلّ المجالس واللجان"
+            columns={columns}
+            rows={councilsQuery.data?.data ?? []}
+            rowTone={(c) => rowToneFromStatus(c.status)}
+          />
+        </InstStates>
+        {councilsQuery.data && councilsQuery.data.meta.totalPages > 1 && (
+          <div className="sg-pad-in">
+            <TablePaginationFooter
+              page={councilsQuery.data.meta.page}
+              totalPages={councilsQuery.data.meta.totalPages}
+              total={councilsQuery.data.meta.total}
+              unit={COUNCIL_UNIT}
+              onPage={setPage}
+            />
+          </div>
+        )}
+      </SheetSection>
 
       <InstFormDialog
         open={formOpen}

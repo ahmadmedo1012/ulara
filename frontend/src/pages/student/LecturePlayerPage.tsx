@@ -10,7 +10,12 @@ import { EmptyState, ErrorState, Skeleton } from '../../components/primitives/St
  * + the §B2 kit (the mono-indexed section title bar, the honest mono
  * count, the hatched empty cell). */
 import { PageFrame } from '../../components/patterns';
-import { SectionBar, BarCount, EmptyCell } from '../../components/student';
+/* R359 (A3 · final sweep) — the sheet grammar joins the §B2 kit: the
+ * side panel's boards become framed sections (registration crosses +
+ * Latin mono caption + the aside count slot). The player ENGINE is
+ * untouched — only the seating around it. */
+import { SheetSection } from '../../components/patterns';
+import { BarCount, EmptyCell } from '../../components/student';
 import { Icon } from '../../components/Icon';
 import { Modal } from '../../components/overlays/Modal';
 import { VideoPlayerChrome } from '../../components/player/VideoPlayerChrome';
@@ -870,19 +875,23 @@ export default function LecturePlayerPage() {
           <div className="lecture-panel">
 
             {data.checkpoints.length > 0 && (
-              <section className="lecture-sec" aria-labelledby="lec-sec-cp">
-                <SectionBar
+              <section className="lecture-sec" aria-label="نقاط التفاعل">
+                <SheetSection
+                  index="02"
+                  caption="CHECKPOINTS"
                   title="نقاط التفاعل"
-                  id="lec-sec-cp"
-                  meta={<BarCount n={checkpointsTotal} srLabel={countAr(checkpointsTotal, ['نقطة تفاعل واحدة', 'نقطتا تفاعل', 'نقاط تفاعل', 'نقطة تفاعل'])} />}
-                />
-                {/* R321 B3: the honest answered-count copy the old
-                    section-title meta carried, verbatim — one quiet
-                    note under the §B2 bar (the ml-sec-note register). */}
-                <p className="lecture-sec-note">
-                  أُجيب عن {formatInt(checkpointsAnswered)} من {formatInt(checkpointsTotal)}
-                </p>
-                <div className="cp-list">
+                  pad="none"
+                  aside={<BarCount n={checkpointsTotal} srLabel={countAr(checkpointsTotal, ['نقطة تفاعل واحدة', 'نقطتا تفاعل', 'نقاط تفاعل', 'نقطة تفاعل'])} />}
+                >
+                  {/* R321 B3: the honest answered-count copy the old
+                      section-title meta carried, verbatim — one quiet
+                      note in the framed body (the ml-sec-note register). */}
+                  <div className="sg-pad-in">
+                    <p className="lecture-sec-note">
+                      أُجيب عن {formatInt(checkpointsAnswered)} من {formatInt(checkpointsTotal)}
+                    </p>
+                  </div>
+                  <div className="cp-list">
                   {data.checkpoints.map((c) => {
                     const answered = answeredCheckpointIds.has(c.id);
                     return (
@@ -903,16 +912,19 @@ export default function LecturePlayerPage() {
                       </button>
                     );
                   })}
-                </div>
+                  </div>
+                </SheetSection>
               </section>
             )}
 
-            <section className="lecture-sec" aria-labelledby="lec-sec-ch">
-              <SectionBar
+            <section className="lecture-sec" aria-label="فصول المحاضرة">
+              <SheetSection
+                index="03"
+                caption="CHAPTERS"
                 title="فصول المحاضرة"
-                id="lec-sec-ch"
-                meta={<BarCount n={data.chapters.length} srLabel={countAr(data.chapters.length, ['فصل واحد', 'فصلان', 'فصول', 'فصلاً'])} />}
-              />
+                pad="none"
+                aside={<BarCount n={data.chapters.length} srLabel={countAr(data.chapters.length, ['فصل واحد', 'فصلان', 'فصول', 'فصلاً'])} />}
+              >
               {data.chapters.length > 0 ? (
                 <div className="chapter-list">
                   {data.chapters.map((ch, i) => {
@@ -944,10 +956,13 @@ export default function LecturePlayerPage() {
                   })}
                 </div>
               ) : (
-                // R321 B3 — the honest no-chapters copy, now the sheet's
-                // hatched EmptyCell (same words, the reserved region).
-                <EmptyCell label="لا فصول مقسَّمة" note="لم تُقسَّم هذه المحاضرة إلى فصول — شاهدها كاملة دون تنقّل." />
+                // R321 B3 — the honest no-chapters copy, the sheet’s
+                // hatched EmptyCell in the framed body’s inset.
+                <div className="sg-pad-in">
+                  <EmptyCell label="لا فصول مقسَّمة" note="لم تُقسَّم هذه المحاضرة إلى فصول — شاهدها كاملة دون تنقّل." />
+                </div>
               )}
+              </SheetSection>
             </section>
 
             {/* r323 B2.2 — the transcript panel: the SAME VTT bytes the
@@ -955,12 +970,15 @@ export default function LecturePlayerPage() {
                 the host's seekTo. Only mounts when a transcript exists;
                 the honest empty result keeps the search honest. */}
             {cues !== null && cues.length > 0 && (
-              <section className="lecture-sec" aria-labelledby="lec-sec-tr">
-                <SectionBar
+              <section className="lecture-sec" aria-label="النص المكتوب">
+                <SheetSection
+                  index="04"
+                  caption="TRANSCRIPT"
                   title="النص المكتوب"
-                  id="lec-sec-tr"
-                  meta={<BarCount n={cues.length} srLabel={countAr(cues.length, ['مقطع واحد', 'مقطعان', 'مقاطع', 'مقطع'])} />}
-                />
+                  pad="none"
+                  aside={<BarCount n={cues.length} srLabel={countAr(cues.length, ['مقطع واحد', 'مقطعان', 'مقاطع', 'مقطع'])} />}
+                >
+                <div className="sg-pad-in">
                 <div className="tr-search">
                   <input
                     type="search"
@@ -970,6 +988,7 @@ export default function LecturePlayerPage() {
                     value={cueQuery}
                     onChange={(e) => setCueQuery(e.target.value)}
                   />
+                </div>
                 </div>
                 <div className="tr-cue-list" role="list">
                   {cues
@@ -991,8 +1010,11 @@ export default function LecturePlayerPage() {
                 </div>
                 {cueQuery.trim() !== '' &&
                   cues.filter((c) => c.text.includes(cueQuery.trim())).length === 0 && (
-                    <p className="lecture-sec-note">لا نتائج مطابقة في هذا النص.</p>
+                    <div className="sg-pad-in">
+                      <p className="lecture-sec-note">لا نتائج مطابقة في هذا النص.</p>
+                    </div>
                   )}
+                </SheetSection>
               </section>
             )}
 

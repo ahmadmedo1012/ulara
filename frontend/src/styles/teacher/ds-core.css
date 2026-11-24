@@ -127,24 +127,42 @@
    components.css (BADGES & PILLS). Only the tone family lives here;
    the raw 600 became var(--fw-semibold) — the same value via the
    token (r325 Y4). */
+/* R359 final — the FLAT register: tone rides TEXT + the ::before dot
+   only; the soft FILLS retire (the reference's chips never tint the
+   paper). The ember tone's seat survives one round as an alias of the
+   royal signal (TODAY/attention = the ONE signal), then dies. */
 .hr-chip[data-tone='ok'] {
   color: var(--success-ink);
-  background: var(--success-soft);
-  border-color: color-mix(in srgb, var(--success) 32%, transparent);
+  background: transparent;
+  border-color: color-mix(in srgb, var(--success) 45%, var(--rule));
 }
 .hr-chip[data-tone='ok']::before { background: var(--success); }
 .hr-chip[data-tone='danger'] {
   color: var(--danger-ink);
-  background: var(--danger-soft);
-  border-color: color-mix(in srgb, var(--danger) 32%, transparent);
+  background: transparent;
+  border-color: color-mix(in srgb, var(--danger) 45%, var(--rule));
 }
 .hr-chip[data-tone='danger']::before { background: var(--danger); }
+.hr-chip[data-tone='signal'],
 .hr-chip[data-tone='ember'] {
-  color: var(--hr-ember-ink);
-  background: var(--hr-ember-wash);
-  border-color: var(--hr-ember-edge);
+  color: var(--accent-ink);
+  background: transparent;
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--rule));
 }
-.hr-chip[data-tone='ember']::before { background: var(--hr-ember); }
+.hr-chip[data-tone='signal']::before,
+.hr-chip[data-tone='ember']::before { background: var(--accent); }
+.hr-chip[data-tone='warn'] {
+  color: var(--warning-ink);
+  background: transparent;
+  border-color: color-mix(in srgb, var(--warning) 45%, var(--rule));
+}
+.hr-chip[data-tone='warn']::before { background: var(--warning); }
+.hr-chip[data-tone='info'] {
+  color: var(--info-ink);
+  background: transparent;
+  border-color: color-mix(in srgb, var(--info) 45%, var(--rule));
+}
+.hr-chip[data-tone='info']::before { background: var(--info); }
 
 /* ─── Data table: dense-but-readable, hairline rows, tabular digits ── */
 

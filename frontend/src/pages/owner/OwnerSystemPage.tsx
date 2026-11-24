@@ -1,8 +1,13 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AlertTriangle, RefreshCw, Settings, CheckCircle2, ChevronDown, HardDrive } from 'lucide-react';
-import { Card, Badge, AlertRow } from '../../components/primitives';
+import { AlertTriangle, RefreshCw, CheckCircle2, ChevronDown } from 'lucide-react';
+import { Badge, AlertRow } from '../../components/primitives';
 import { StatStrip } from '../../components/primitives/Ledger';
+/* R359 (W2-e): the console rides the sheet grammar — the patterns
+ * PageHeader (the family eyebrow + the [07] OWNER_NAV seat) and the
+ * four operational sections ride framed SheetSections (the Card
+ * died; each region names itself with its Latin classification). */
+import { PageHeader as PatternsPageHeader, SheetSection } from '../../components/patterns';
 import { EmptyState, ErrorState, ListSkeleton } from '../../components/primitives/States';
 import { Icon } from '../../components/Icon';
 import { ToggleSwitch } from '../../components/owner/ToggleSwitch';
@@ -188,42 +193,42 @@ export function OwnerSystemPage() {
        every rule off .r305ao (stack fields, error entries, meters,
        health rows all live under it). */
     <div className="page r305ao">
-      <header className="page-header">
-        <div className="page-title-block">
-          <h1 className="page-title">
-            {/* R341 D11: the [07] nav-order gutter numeral (OWNER_NAV
-                register — the D10 quality precedent; aria-hidden like
-                every page-index seat). */}
-            <span className="page-index" aria-hidden="true" dir="ltr">[07]</span>
-            النظام والتشغيل
-            {sysData && sysData.alerts && sysData.alerts.openCount > 0 && (
-              <span className="owner-badge-counter">
-                <bdi>{formatNum(sysData.alerts.openCount)}</bdi>
-              </span>
-            )}
-          </h1>
-          {/* r351 A2 (Q3): page subtitle retired — the KPI strip explains the page. */}
-        </div>
-        {/* D11 (D8/D10 header-CTA precedent): the console's sibling
-            board — the operational alerts the health KPI counts
-            (primary) rides beside r327 Y7's ONE manual refresh (ghost
-            sm + RefreshCw 12 — the owner-family idiom; the console
-            refreshes on a single bounded cadence, useOwnerSystem 30s
-            while visible, and this button covers the «أحتاجها الآن»
-            moment after a deploy or a fix). */}
-        <div className="row">
-          <Link to="/owner/alerts" className="btn accent sm">التنبيهات التشغيليّة</Link>
-          <button
-            type="button"
-            className="btn ghost sm"
-            onClick={() => void sys.refetch()}
-            disabled={sys.isFetching}
-          >
-            <Icon icon={RefreshCw} size={12} />
-            {sys.isFetching ? 'جارٍ التحديث…' : 'تحديث'}
-          </button>
-        </div>
-      </header>
+      <PatternsPageHeader
+        title="النظام والتشغيل"
+        eyebrow="مالك المنصّة"
+        /* R341 D11: the [07] nav-order gutter numeral (OWNER_NAV
+         * register — the D10 quality precedent); R359 (W2-e): the
+         * numeral rides the patterns header's eyebrow line. */
+        index="07"
+        meta={
+          sysData && sysData.alerts && sysData.alerts.openCount > 0 ? (
+            <span className="owner-badge-counter">
+              <bdi>{formatNum(sysData.alerts.openCount)}</bdi>
+            </span>
+          ) : undefined
+        }
+        actions={(
+          /* D11 (D8/D10 header-CTA precedent): the console's sibling
+              board — the operational alerts the health KPI counts
+              (primary) rides beside r327 Y7's ONE manual refresh (ghost
+              sm + RefreshCw 12 — the owner-family idiom; the console
+              refreshes on a single bounded cadence, useOwnerSystem 30s
+              while visible, and this button covers the «أحتاجها الآن»
+              moment after a deploy or a fix). */
+          <>
+            <Link to="/owner/alerts" className="btn accent sm">التنبيهات التشغيليّة</Link>
+            <button
+              type="button"
+              className="btn ghost sm"
+              onClick={() => void sys.refetch()}
+              disabled={sys.isFetching}
+            >
+              <Icon icon={RefreshCw} size={12} />
+              {sys.isFetching ? 'جارٍ التحديث…' : 'تحديث'}
+            </button>
+          </>
+        )}
+      />
 
       {/* Real metrics — service health derives from the live query state */}
       <StatStrip
@@ -254,7 +259,7 @@ export function OwnerSystemPage() {
           upload substrate, straight from the /owner/system payload's
           (optional) storage block. A missing block (older backend) is
           an honest «غير متوفر», never a guessed green. */}
-      <Card title="تخزين الرفعات (PDF)" icon={HardDrive}>
+      <SheetSection index="01" caption="UPLOAD STORAGE" title="تخزين الرفعات (PDF)">
         {sys.isPending ? (
           <div className="owner-health-list">
             <div className="owner-health-row">
@@ -355,7 +360,7 @@ export function OwnerSystemPage() {
             )}
           </div>
         )}
-      </Card>
+      </SheetSection>
 
       {/* r342 t13: «سجلّ المزامنة» — the whole sync-run feed card is retired
           with the zu-sync system (dropped upstream): GET /owner/system no
@@ -364,7 +369,7 @@ export function OwnerSystemPage() {
           untouched. */}
 
       {/* Feature Flags — real data */}
-      <Card title="أعلام الميزات (Feature Flags)" icon={Settings}>
+      <SheetSection index="02" caption="FEATURE FLAGS" title="أعلام الميزات (Feature Flags)">
         <div className="owner-list-pad">
           {/* 6A10-1: the error branch sits BEFORE the length check — a
               failing flags query must never masquerade as "no flags
@@ -444,12 +449,12 @@ export function OwnerSystemPage() {
           onConfirm={() => (flagConfirm ? confirmFlagToggle(flagConfirm) : Promise.resolve())}
           onCancel={() => setFlagConfirm(null)}
         />
-      </Card>
+      </SheetSection>
 
       {/* Operational alerts — real data, replacing the fake error log.
           An API failure surfaces as an honest error state, never as
           the "لا توجد تنبيهات" empty state. */}
-      <Card title="التنبيهات التشغيلية المفتوحة" icon={AlertTriangle}>
+      <SheetSection index="03" caption="OPERATIONAL ALERTS" title="التنبيهات التشغيلية المفتوحة">
         <div className="owner-list-pad">
           {sys.isPending ? (
             <ListSkeleton rows={3} />
@@ -507,13 +512,13 @@ export function OwnerSystemPage() {
             ))
           )}
         </div>
-      </Card>
+      </SheetSection>
 
       {/* Platform settings — real data. r165g (truthfulness): the
           editor's copy no longer carries an implicit "applies now"
           promise — like the flags above, PlatformSetting rows are
           recorded + audited but no runtime consumer exists yet. */}
-      <Card title="إعدادات المنصّة" icon={Settings}>
+      <SheetSection index="04" caption="PLATFORM SETTINGS" title="إعدادات المنصّة">
         <div className="owner-list-pad">
           {/* 6A10-1: same ordering contract as the flags card above —
               error state (with retry) BEFORE the empty state, never a
@@ -569,7 +574,7 @@ export function OwnerSystemPage() {
           تُحفَظ القيمة في قاعدة البيانات وتُوثَّق في سجلّ النشاط — لا يستهلكها
           مسار تشغيل بعد؛ سلوك المنصّة يبقى بقيمه المضمّنة في الشيفرة.
         </p>
-      </Card>
+      </SheetSection>
     </div>
   );
 }

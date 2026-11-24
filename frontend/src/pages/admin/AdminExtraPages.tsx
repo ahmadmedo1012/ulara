@@ -1,14 +1,10 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, Navigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
-  ShieldCheck, Server,
-  Radio, Settings,
-  Download, RefreshCw, Mail, X,
+  Download, RefreshCw, Mail, X, Radio,
   GraduationCap, UserMinus, AlertCircle, BookOpen, FileText,
 } from 'lucide-react';
-import { Card, Badge } from '../../components/primitives';
-import { StatStrip } from '../../components/primitives/Ledger';
 import { ErrorState, EmptyState, TableSkeleton, Skeleton } from '../../components/primitives/States';
 /* r253 (Phase B) → R359 final: the students roster speaks the sheet
  * grammar — the KpiBand strip + the DataSheet register (dense hairline
@@ -28,8 +24,9 @@ import { BulkImportModal } from '../../components/admin/BulkImportModal';
 /* T-24: footer moved to the shared leaf (AdminPages cycle severance). */
 import { TablePaginationFooter } from './TablePaginationFooter';
 /* P2.2 dedup: re-pointed off AdminPages' retired byte-identical copy
- * onto the canonical owner StatStripSkeleton (components/owner). */
-import { StatStripSkeleton } from '../../components/owner/StripSkeletons';
+ * onto the canonical owner StatStripSkeleton (components/owner) — R359:
+ * the skeleton left with the digital band's always-mounted honest-empty
+ * register. */
 import { countAr } from '../../lib/format';
 import { formatNum } from '../../utils/numbers';
 // D14 css split (13-17): colleges.css has owned the admin-extras surfaces
@@ -552,6 +549,7 @@ export function AdminDigitalPage() {
   return (
     <div className="page r305ao">
       <PatternsPageHeader
+        eyebrow="إدارة المؤسسة"
         title="التحوّل الرقميّ"
         /* r351 A2 (Q3): header description retired — the metric labels explain the page. */
         breadcrumbs={[{ label: 'لوحة إدارة المؤسسة', to: '/admin/dashboard' }, { label: 'التحوّل الرقميّ' }]}
@@ -566,75 +564,59 @@ export function AdminDigitalPage() {
         )}
       />
 
-      {q.isPending && (
-        <>
-          <StatStripSkeleton />
-          <TableSkeleton rows={6} cols={3} />
-        </>
-      )}
+      {q.isPending && <TableSkeleton rows={6} cols={3} />}
       {q.isError && <ErrorState error={q.error} message="تعذّر تحميل مؤشّرات التحوّل الرقميّ" onRetry={() => q.refetch()} />}
       {q.data && (
         <>
-          {/* R190-D3: the typographic stat line replaces the icon-box
-              MetricCard grid — the adoption numbers are exactly what
-              the ■-marked mono labels + metric values speak. */}
-          <StatStrip
-            ariaLabel="مؤشّرات التبنّي العامّة"
-            cells={[
-              /* r351 A2 (Q3): trend notes retired — each restated the
-               * cell label; the numbers sit side by side in the strip. */
-              { label: 'إجمالي الحسابات', value: formatNum(q.data.totalUsers) },
-              { label: 'حسابات نشطة', value: formatNum(q.data.activeUsers) },
-              { label: 'نسبة التبنّي', value: `${formatNum(q.data.adoptionPct)}٪` },
-              { label: 'ملفات تعليمية مرفوعة', value: formatNum(q.data.materialsUploaded) },
+          {/* R359 final — the KPI band: every numeral derives from the
+              live /admin/digital payload (honest-empty while pending —
+              the band itself stays mounted). */}
+          <KpiBand
+            items={[
+              { index: '01', caption: 'ACCOUNTS', label: 'إجمالي الحسابات', value: q.data.totalUsers },
+              { index: '02', caption: 'ACTIVE', label: 'حسابات نشطة', value: q.data.activeUsers },
+              { index: '03', caption: 'ADOPTION', label: 'نسبة التبنّي', value: q.data.adoptionPct, unit: '%' },
+              { index: '04', caption: 'MATERIALS', label: 'ملفات تعليمية مرفوعة', value: q.data.materialsUploaded },
             ]}
           />
 
           {/* 5-A8 §6 step 4 (route identity): the four single-stat cards
               fold into ONE «تبنّي المكوّنات» register — this was the third
-              consecutive 4-identical-tiles page in the nav. One card, one
-              scanning rhythm, mobile-safe via tbl-stack.
-              §6 step 6 (rhythm): the register is the page's primary
-              section — it takes the breath after the KPI band. */}
-          <Card
-            style={{ marginBlockStart: 'var(--sp-9)' }}
-            title="تبنّي المكوّنات"
-            icon={ShieldCheck}
-            /* r351 A2 (Q3): card subtitle retired — the register's rows explain it. */
-          >
-            <div className="table-wrap">
-              <table className="table tbl-stack ws-table">
-                <thead>
-                  <tr>
-                    <th scope="col">المكوّن</th>
-                    <th scope="col">المؤشّر</th>
-                    <th scope="col" className="admin-table-num" style={{ width: 120 }}>القيمة</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <DigitalRow component="الاختبار الإلكترونيّ" label="اختبارات منشورة" value={q.data.onlineExams} />
-                  <DigitalRow component="الاختبار الإلكترونيّ" label="محاولات أداء" value={q.data.examAttempts} />
-                  <DigitalRow component="التعلّم النشط" label="جلسات معامل افتراضيّة" value={q.data.labSessions} />
-                  <DigitalRow component="التعلّم النشط" label="جلسات بثّ مباشر" value={q.data.liveSessions} />
-                  <DigitalRow component="التعلّم الذاتيّ" label={<>تسجيلات <bdi>MOOC</bdi></>} value={q.data.moocEnrollments} />
-                  <DigitalRow component="البحث العلميّ" label="أوراق علميّة في النظام" value={q.data.researchPapers} />
-                </tbody>
-              </table>
-            </div>
-          </Card>
+              consecutive 4-identical-tiles page in the nav. One register,
+              one scanning rhythm, mobile-safe via the sheet's own card
+              collapse. §6 step 6 (rhythm): the register is the page's
+              primary section — it takes the breath after the KPI band.
+              R359 final: the register re-keys onto the DataSheet (mono
+              numerics, the component as the quiet sub-line). */}
+          <SheetSection index="01" caption="COMPONENT ADOPTION" title="تبنّي المكوّنات" pad="none">
+            <DataSheet
+              caption="جدول تبنّي المكوّنات"
+              rows={[
+                { component: 'الاختبار الإلكترونيّ', label: 'اختبارات منشورة', value: q.data.onlineExams },
+                { component: 'الاختبار الإلكترونيّ', label: 'محاولات أداء', value: q.data.examAttempts },
+                { component: 'التعلّم النشط', label: 'جلسات معامل افتراضيّة', value: q.data.labSessions },
+                { component: 'التعلّم النشط', label: 'جلسات بثّ مباشر', value: q.data.liveSessions },
+                { component: 'التعلّم الذاتيّ', label: 'تسجيلات MOOC', value: q.data.moocEnrollments },
+                { component: 'البحث العلميّ', label: 'أوراق علميّة في النظام', value: q.data.researchPapers },
+              ]}
+              columns={[
+                {
+                  key: 'metric',
+                  label: 'المؤشّر',
+                  render: (r) => (
+                    <span className="sg-cell-stack">
+                      <span className="sg-cell-title">{r.label}</span>
+                      <span className="sg-cell-sub">{r.component}</span>
+                    </span>
+                  ),
+                },
+                { key: 'value', label: 'القيمة', numeric: true, render: (r) => formatNum(r.value) },
+              ]}
+            />
+          </SheetSection>
         </>
       )}
     </div>
-  );
-}
-
-function DigitalRow({ component, label, value }: { component: string; label: ReactNode; value: number }) {
-  return (
-    <tr>
-      <td data-label="المكوّن"><span className="text-sm text-muted">{component}</span></td>
-      <td data-label="المؤشّر">{label}</td>
-      <td className="admin-table-num font-mono" data-label="القيمة">{formatNum(value)}</td>
-    </tr>
   );
 }
 
@@ -684,6 +666,7 @@ export function AdminSettingsPage() {
   return (
     <div className="page r305ao">
       <PatternsPageHeader
+        eyebrow="إدارة المؤسسة"
         title="إعدادات المنصّة"
         /* r351 A2 (Q3): header description trimmed to the one honest
          * sentence (individual toggles are WIP); the explanatory first
@@ -695,8 +678,13 @@ export function AdminSettingsPage() {
          * settings ledger states its own facts, no external CTA. */
       />
 
-      <div className="grid-2">
-        <Card title="الهويّة المؤسّسيّة" icon={Settings}>
+      {/* R359 (A3): the four fact groups become framed sections on the
+          hairline column grid (sg-cols) — explicit indices, real Latin
+          classifications, the honest health probe riding the flat
+          sg-flag instead of the tinted Badge fills. The .settings-row
+          families keep their rows inside the frames. */}
+      <div className="sg-cols" data-cols="2">
+        <SheetSection index="01" caption="INSTITUTIONAL IDENTITY" title="الهويّة المؤسّسيّة">
           <div className="settings-row">
             <div>
               <div className="settings-label">اسم المنصّة</div>
@@ -715,9 +703,9 @@ export function AdminSettingsPage() {
               <div className="settings-value">أُلارا — علامة المنصّة المستقلّة</div>
             </div>
           </div>
-        </Card>
+        </SheetSection>
 
-        <Card title="البنية التشغيليّة" icon={Server}>
+        <SheetSection index="02" caption="INFRASTRUCTURE" title="البنية التشغيليّة">
           <div className="settings-row">
             <div>
               <div className="settings-label">قاعدة البيانات</div>
@@ -730,7 +718,9 @@ export function AdminSettingsPage() {
               </div>
             </div>
             {!health.isPending && (
-              <Badge color={dbOk ? 'green' : 'red'}>{dbOk ? 'متصلة' : 'غير متاحة'}</Badge>
+              <span className="sg-flag" data-tone={dbOk ? 'positive' : 'danger'}>
+                {dbOk ? 'متصلة' : 'غير متاحة'}
+              </span>
             )}
           </div>
           <div className="settings-row">
@@ -745,9 +735,9 @@ export function AdminSettingsPage() {
               <div className="settings-value">حدّ عامّ 1000 طلب كل 15 دقيقة · مصادقة 10 محاولات لكل 15 دقيقة</div>
             </div>
           </div>
-        </Card>
+        </SheetSection>
 
-        <Card title="عمليّات النظام" icon={RefreshCw}>
+        <SheetSection index="03" caption="SYSTEM OPERATIONS" title="عمليّات النظام">
           {/* r351 A2 (Q3): helper paragraph trimmed to the one honest
            * sentence (the verbs live in the owner panel); the restating
            * first sentence retired. */}
@@ -775,9 +765,9 @@ export function AdminSettingsPage() {
               فحص الصحّة العامّة
             </button>
           </div>
-        </Card>
+        </SheetSection>
 
-        <Card title="الموارد المرتبطة" icon={ShieldCheck}>
+        <SheetSection index="04" caption="LINKED RESOURCES" title="الموارد المرتبطة">
           <ul className="settings-links">
             {/* r342 t13: بند «مزامنة الكلّيّات والأقسام» (/admin/sync)
                 أُحيل — سُقِط نظام zu-sync من المنبع. */}
@@ -789,7 +779,7 @@ export function AdminSettingsPage() {
                 colleges + leaderboard page). */}
             <li><Link to="/colleges">كلّيّات الجامعة</Link></li>
           </ul>
-        </Card>
+        </SheetSection>
       </div>
     </div>
   );

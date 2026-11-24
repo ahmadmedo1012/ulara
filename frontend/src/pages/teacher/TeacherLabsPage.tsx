@@ -24,7 +24,10 @@ import {
   ExternalLink, ChevronLeft, AlertCircle, type LucideIcon,
 } from 'lucide-react';
 import { Card } from '../../components/primitives';
-import { StatStrip } from '../../components/primitives/Ledger';
+/* R359 (A3 · W2-c) — the sheet grammar joins the labs directory: the
+ * counts strip re-keys onto the KpiBand (real payload numerals) and
+ * the directory rides a framed SheetSection. */
+import { SheetSection, KpiBand } from '../../components/patterns';
 import { ErrorState, Skeleton, EmptyState } from '../../components/primitives/States';
 import { Icon } from '../../components/Icon';
 import { useLabs, type VirtualLab } from '../../hooks/useResources';
@@ -111,7 +114,7 @@ export default function TeacherLabsPage() {
     <div className="page page-labs">
       <header className="page-header">
         <div className="page-title-block">
-          <span className="hr-brow">التعلّم العملي</span>
+          <span className="hr-brow">عضو هيئة التدريس · التعلّم العملي</span>
           <h1 className="page-title">المعامل الافتراضية</h1>
           <p className="page-subtitle">
             استعرض المعامل الافتراضية المتاحة على المنصة. يمكنك توجيه طلابك لها كمكمّل عملي
@@ -132,12 +135,11 @@ export default function TeacherLabsPage() {
         <LabsSkeleton />
       ) : isError ? (
         <>
-          <StatStrip
-            ariaLabel="إحصاءات المعامل"
-            cells={[
-              { label: 'معامل متاحة', value: '—' },
-              { label: 'فئات المعامل', value: '—' },
-              { label: 'منصّات التدريب', value: '—' },
+          <KpiBand
+            items={[
+              { index: '01', caption: 'LABS', label: 'معامل متاحة', value: 0, empty: true },
+              { index: '02', caption: 'CATEGORIES', label: 'فئات المعامل', value: 0, empty: true },
+              { index: '03', caption: 'PLATFORMS', label: 'منصّات التدريب', value: 0, empty: true },
             ]}
           />
           <Card>
@@ -150,26 +152,30 @@ export default function TeacherLabsPage() {
         </>
       ) : (
         <>
-          <StatStrip
-            ariaLabel="إحصاءات المعامل"
-            cells={[
+          {/* R359 (A3 · W2-c) — the ONE KpiBand: real payload numerals
+              (the labs list · its distinct categories · its platforms). */}
+          <KpiBand
+            items={[
               {
+                index: '01',
+                caption: 'LABS',
                 label: 'معامل متاحة',
-                value: formatNum(labs?.length ?? 0),
-                trend: 'جاهزة للتجربة',
-                trendTone: 'flat',
+                value: labs?.length ?? 0,
+                delta: 'جاهزة للتجربة',
               },
               {
+                index: '02',
+                caption: 'CATEGORIES',
                 label: 'فئات المعامل',
-                value: formatNum(categories),
-                trend: 'شبكات، علوم، ذكاء اصطناعي…',
-                trendTone: 'flat',
+                value: categories,
+                delta: 'شبكات، علوم، ذكاء اصطناعي…',
               },
               {
+                index: '03',
+                caption: 'PLATFORMS',
                 label: 'منصّات التدريب',
-                value: formatNum(platforms),
-                trend: 'منصّات مختلفة داخل المعامل',
-                trendTone: 'flat',
+                value: platforms,
+                delta: 'منصّات مختلفة داخل المعامل',
               },
             ]}
           />
@@ -194,12 +200,19 @@ export default function TeacherLabsPage() {
               />
             </Card>
           ) : (
-            <Card
-              title={<>المعامل المتاحة</>}
-              icon={FlaskConical}
-              subtitle={labs && labs.length > 0
-                ? countAr(labs.length, ['معمل واحد متاح', 'معملان متاحان', 'معامل متاحة', 'معملاً متاحاً'])
-                : undefined}
+            /* R359 (A3 · W2-c) — the [01] AVAILABLE LABS frame; the
+             * counted noun rides the head rule's aside. */
+            <SheetSection
+              index="01"
+              caption="AVAILABLE LABS"
+              title="المعامل المتاحة"
+              aside={(
+                labs && labs.length > 0 ? (
+                  <span className="sg-label">
+                    {countAr(labs.length, ['معمل واحد متاح', 'معملان متاحان', 'معامل متاحة', 'معملاً متاحاً'])}
+                  </span>
+                ) : undefined
+              )}
             >
               {/* r241 (Superlist): a LIST of labs, not a card wall — each
                   row keeps the category/platform kicker, the honest
@@ -207,7 +220,7 @@ export default function TeacherLabsPage() {
               <div className="tq-rows" role="list">
                 {labs?.map((lab) => <LabRow key={lab.id} lab={lab} />)}
               </div>
-            </Card>
+            </SheetSection>
           )}
         </>
       )}

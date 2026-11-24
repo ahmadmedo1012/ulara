@@ -55,34 +55,11 @@
     box-shadow: var(--shadow-card);
   }
   .card.flush   { padding: 0; overflow: clip; }
-  /* r294 (polish v8 fold): cursor-follow spotlight — a quiet radial
-     wash fades in on hover over every non-flush card. The centre is
-     static (JS-free: no --cx/--cy tracking — the heavier pointer
-     glow stays landing-scoped). paint-order stays local. */
-  .card:not(.flush) {
-    position: relative;
-    isolation: isolate;
-  }
-  .card:not(.flush)::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background:
-      radial-gradient(
-        320px circle at var(--cx, 50%) var(--cy, 50%),
-        color-mix(in srgb, var(--accent) 5%, transparent),
-        transparent 70%
-      );
-    opacity: 0;
-    transition: opacity var(--motion-duration-medium) var(--ease-out);
-    pointer-events: none;
-    z-index: 0; /* paint-order baseline — local, not a --z-* layer */
-  }
-  @media (hover: hover) and (pointer: fine) {
-    .card:not(.flush):hover::before { opacity: 1; }
-  }
-  .card > * { position: relative; z-index: 1; }
+  /* R359 final — the cursor-follow spotlight is RETIRED: the reference
+     law is flat paper + hairlines, no gradients, no glow (a radial
+     accent wash — however quiet — is a gradient AND a glow). The card
+     is the white plate on the paper, nothing more. The isolation +
+     z-order scaffolding the spotlight needed goes with it. */
   /* r296 (polish v10 fold): any iframe/video inside a card clips to
      the premium frame instead of breaking its radius. */
   /* 13-17 dead-selector sweep (11-g P2-7): .card-link dropped from
@@ -582,7 +559,11 @@
     align-items: center;
     gap: var(--sp-1-5); /* r149 (R3-A2 #1) */
     padding: 7px 14px; /* spacing-gate: allow — pill grade 7/14 — compact control padding below the sp-3 rung */
-    border-radius: var(--r-full);
+    /* R359 final — the square chip register: the reference's filter
+       chips are square (radius 0); a pill is a control, not a circular
+       primitive — the --r-full exception is reserved for avatars and
+       status dots. */
+    border-radius: var(--r-sm);
     font-size: var(--type-label-size-sm);
     font-weight: var(--fw-semibold);
     color: var(--text-secondary);
@@ -597,6 +578,11 @@
       transform var(--motion-duration-short) var(--ease),
       box-shadow var(--motion-duration-medium) var(--ease);
   }
+  /* R359 final — the touch floor: on coarse pointers the chip grows to
+     the 44px target band (the desktop chip keeps its compact 30px). */
+  @media (pointer: coarse) {
+    .pill { min-block-size: 44px; padding-inline: var(--sp-4); }
+  }
   .pill.on {
     background: var(--accent);
     color: var(--accent-fg);
@@ -609,7 +595,8 @@
   }
   @media (hover: hover) and (pointer: fine) {
     .pill:hover {
-      transform: translateY(var(--hover-lift));
+      /* R359 final — no lift: flat mechanical hovers change colour,
+       * never geometry (the reference's own hover census). */
       color: var(--text);
       border-color: var(--border-strong);
       background: var(--surface-2);
@@ -3050,10 +3037,10 @@
   [data-theme="dark"] .stat-strip,
   [data-theme="dark"] .momentum,
   [data-theme="dark"] .card {
-    background:
-      linear-gradient(180deg,
-        color-mix(in srgb, var(--text) 4%, var(--surface)),
-        color-mix(in srgb, var(--text) 1.5%, var(--surface)));
+    /* R359 final — flat dark plate: the vertical 4%→1.5% text wash was
+       a gradient (the no-gradient law); one flat mixed step carries the
+       same luminosity read. */
+    background: color-mix(in srgb, var(--text) 2.5%, var(--surface));
     border-color: var(--surface-border);
   }
   /* the zone heads keep their tinted bands — on the void they ride a

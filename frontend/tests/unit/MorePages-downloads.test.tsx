@@ -87,13 +87,21 @@ describe('DownloadsPage — honest link targets (r157 6A7)', () => {
     // — an empty cell whose accessible name never reaches the visual
     // layer. The header now carries the same Arabic copy as
     // OwnerUsersPage's actions header as real text content.
+    // R359 (A3): the table is the DataSheet register, which prepends
+    // ONE aria-hidden registration-pin th (the row-tone pin cell —
+    // deliberately outside the accessible tree, the exemplar's
+    // empty-table-header cure). The pin counts; the six DATA columns
+    // are what this pin protects.
     mocks.materials.data = SEEDED;
     const { container } = renderPage();
-    const headers = Array.from(container.querySelectorAll('thead th'));
+    const allHeaders = Array.from(container.querySelectorAll('thead th'));
+    expect(allHeaders).toHaveLength(7);
+    const headers = allHeaders.filter((th) => th.getAttribute('aria-hidden') !== 'true');
     expect(headers).toHaveLength(6);
     for (const th of headers) {
-      // every column header exposes real text (the accessible name is
-      // content, not a bare aria-label attribute on an empty cell)
+      // every DATA column header exposes real text (the accessible
+      // name is content, not a bare aria-label attribute on an empty
+      // cell); none carries a bare aria-label.
       expect(th.textContent?.trim(), th.outerHTML).not.toBe('');
       expect(th.getAttribute('aria-label')).toBeNull();
     }

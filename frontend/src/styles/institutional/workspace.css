@@ -129,31 +129,34 @@
 
 /* .inst-chip base + ::before: shared with .hr-chip — see
    components.css (BADGES & PILLS). Only the tone family lives here. */
+/* R359 final — the FLAT register (the hr-chip twin): tone rides TEXT
+   + the ::before dot; the soft fills retire (chips never tint the
+   paper). */
 .inst-chip[data-tone='ok'] {
   color: var(--success-ink);
-  background: var(--success-soft);
-  border-color: color-mix(in srgb, var(--success) 32%, transparent);
+  background: transparent;
+  border-color: color-mix(in srgb, var(--success) 45%, var(--rule));
 }
 .inst-chip[data-tone='ok']::before { background: var(--success); }
 
 .inst-chip[data-tone='danger'] {
   color: var(--danger-ink);
-  background: var(--danger-soft);
-  border-color: color-mix(in srgb, var(--danger) 32%, transparent);
+  background: transparent;
+  border-color: color-mix(in srgb, var(--danger) 45%, var(--rule));
 }
 .inst-chip[data-tone='danger']::before { background: var(--danger); }
 
 .inst-chip[data-tone='warn'] {
   color: var(--warning-ink, var(--text-strong));
-  background: var(--warning-soft, var(--surface-3));
-  border-color: color-mix(in srgb, var(--warning, var(--accent)) 32%, transparent);
+  background: transparent;
+  border-color: color-mix(in srgb, var(--warning, var(--accent)) 45%, var(--rule));
 }
 .inst-chip[data-tone='warn']::before { background: var(--warning, var(--accent)); }
 
 .inst-chip[data-tone='info'] {
   color: var(--info-ink, var(--text-strong));
-  background: var(--info-soft, var(--surface-3));
-  border-color: color-mix(in srgb, var(--info) 32%, transparent);
+  background: transparent;
+  border-color: color-mix(in srgb, var(--info) 45%, var(--rule));
 }
 .inst-chip[data-tone='info']::before { background: var(--info); }
 

@@ -2857,7 +2857,9 @@
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-strong, var(--accent)) 100%);
+    /* R359 final — flat signal fill: the route-progress strip is ONE
+       colour (the no-gradient law; the accent→strong wash retired). */
+    background: var(--accent);
     transform-origin: left;
     transform: scaleX(0);
     /* r155d (integrity F4): was raw 1000 — above the toast(500)/lightbox
@@ -2889,7 +2891,6 @@
      the accent end and the fill reads right→left. */
   [dir="rtl"] .scroll-progress {
     transform-origin: right;
-    background: linear-gradient(270deg, var(--accent) 0%, var(--accent-strong, var(--accent)) 100%);
   }
   /* (r155d dead-selector sweep: the [dir="rtl"] .landing .scroll-progress
      twin deleted with its base above — the landing variant no longer

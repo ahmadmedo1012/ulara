@@ -9,16 +9,17 @@ import {
 import { Link } from 'react-router-dom';
 import { Card, ProgressBar } from '../../components/primitives';
 import { Skeleton, ErrorState, EmptyState } from '../../components/primitives/States';
-import { PageFrame, PageHeader, StatLine } from '../../components/patterns';
-/* R319 (c3-S1) — the §B2 kit: the mono-indexed section title bar + the
- * hatched empty cell (the DashboardPage conversion's components). */
-import { SectionBar, BarCount, EmptyCell } from '../../components/student';
+import { PageFrame, PageHeader } from '../../components/patterns';
+/* R359 (A3) — the sheet grammar: the KPI band of real lab-session
+ * counts + the framed catalog section replace the StatLine + §B2
+ * SectionBar register (the roster exemplar's recomposition). The
+ * thumb-card grid keeps its anatomy inside the frame. */
+import { SheetSection, KpiBand, SheetEmpty } from '../../components/patterns';
 import { Icon } from '../../components/Icon';
 import { useReducedMotion } from '../../components/motion/useReducedMotion';
 import { useLabs, useMyLabSessions, useCompleteLabSession, type VirtualLab } from '../../hooks/useResources';
 import { courseTint } from '../../lib/courseMeta';
 import { countAr } from '../../lib/format';
-import { formatNum } from '../../utils/numbers';
 /* R305 DS: the shared student vocabulary + this family's refinements.
    The labs catalog rides the FOUNDATION classes only (kicker section
    register, meta-row separators, status chips) — the family sheet adds
@@ -134,21 +135,9 @@ const inferCategory = (lab: VirtualLab): string => {
   return lab.category;
 };
 
-/** Shape-matched StatLine skeleton (3 stat cells — R304 mirror of the
- *  resolved strip, same pending→resolved handoff contract as the
- *  dashboard's loading mirror). */
-function LabsStatsSkeleton() {
-  return (
-    <div className="pf-statline" aria-busy="true" aria-live="polite">
-      {[0, 1, 2].map((i) => (
-        <div key={i} className="pf-stat">
-          <Skeleton width={90} height={13} />
-          <Skeleton width={56} height={24} />
-        </div>
-      ))}
-    </div>
-  );
-}
+/** Shape-matched pending mirror for the KPI band — retired with the
+ * R359 recomposition: the band renders always, its not-yet cells in
+ * the honest-empty register (value '—' + empty flag per query). */
 
 /* Typing cadence for the simulator terminal — a JS timer, not a CSS
    motion value (there is no JS-readable duration token); under
@@ -166,6 +155,7 @@ export default function LabsPage() {
       {!activeLab ? (
         <>
           <PageHeader
+            eyebrow="طلاب الجامعة"
             title="المعامل الافتراضية"
             description={
               'تجارب علمية تفاعلية بدون الحاجة لمعدات حقيقية — شغّل التجربة خطوة بخطوة وراقب النتائج في طرفية المحاكاة.'
@@ -189,61 +179,54 @@ export default function LabsPage() {
             )}
           />
 
-          {/* R304: the metric-card wall folds into ONE StatLine — same
-              three facts, same honest sources (pending → '…', error →
-              '—'); the tone recolors the value only where it means
-              something (live session = signal, earned completion =
-              positive). */}
-          {labs.isPending ? <LabsStatsSkeleton /> : (
-            <StatLine
-              items={[
-                {
-                  label: 'معامل متاحة',
-                  value: labs.isError ? '—' : formatNum(labs.data?.length ?? 0),
-                  hint: 'مسجَّلة في دليل المنصّة',
-                },
-                {
-                  label: 'جلسات نشطة',
-                  value: labStats.isPending ? '…' : labStats.isError || !labStats.data ? '—' : formatNum(labStats.data.active),
-                  /* 22-c (A4 P3-3): with zero lab sessions ever the hint
-                     would read «من أصل 0 جلسة» — dead copy. Only surface
-                     the denominator once one exists. */
-                  hint:
-                    labStats.data && labStats.data.total > 0
-                      ? `من أصل ${countAr(labStats.data.total, ['جلسة واحدة', 'جلستين', 'جلسات', 'جلسة'])}`
-                      : undefined,
-                  tone: labStats.data && labStats.data.active > 0 ? 'signal' : undefined,
-                },
-                {
-                  label: 'تجارب مكتملة',
-                  value: labStats.isPending ? '…' : labStats.isError || !labStats.data ? '—' : formatNum(labStats.data.completed),
-                  hint:
-                    labStats.data && labStats.data.completed === 0
-                      ? 'لم تُسجَّل تجربة مكتملة بعد'
-                      : undefined,
-                  tone: labStats.data && labStats.data.completed > 0 ? 'positive' : undefined,
-                },
-              ]}
-            />
-          )}
+          {/* R359 — the KPI band: same three facts, same honest sources
+              (the registry's labs · the session log's active/completed
+              counts); not-yet cells ride the honest-empty register,
+              failures render the error string verbatim. */}
+          <KpiBand
+            items={[
+              {
+                index: '01',
+                caption: 'LABS',
+                label: 'معامل متاحة في دليل المنصّة',
+                value: labs.isPending ? 0 : labs.isError ? '—' : (labs.data?.length ?? 0),
+                empty: labs.isPending,
+              },
+              {
+                index: '02',
+                caption: 'ACTIVE',
+                label: 'جلسات نشطة',
+                value: labStats.isPending ? 0 : labStats.isError || !labStats.data ? '—' : labStats.data.active,
+                empty: labStats.isPending,
+                /* 22-c (A4 P3-3): with zero lab sessions ever the delta
+                   would read «من أصل 0 جلسة» — dead copy. Only surface
+                   the denominator once one exists. */
+                delta: labStats.data && labStats.data.total > 0
+                  ? `من أصل ${countAr(labStats.data.total, ['جلسة واحدة', 'جلستين', 'جلسات', 'جلسة'])}`
+                  : undefined,
+              },
+              {
+                index: '03',
+                caption: 'COMPLETED',
+                label: 'تجارب مكتملة',
+                value: labStats.isPending ? 0 : labStats.isError || !labStats.data ? '—' : labStats.data.completed,
+                empty: labStats.isPending,
+              },
+            ]}
+          />
 
-          {/* R305 DS: the catalog is ONE editorial section — every
-              honest state (loading/error/empty/resolved) lives inside it.
-              R319 (c3-S1): the section heading joins the §B2 title-bar
-              register — [01] + the resolved labs count as quiet mono meta
+          {/* R359 — the catalog is ONE framed section — every honest
+              state (loading/error/empty/resolved) lives inside it; the
+              resolved labs count rides the head rule's aside slot
               (countAr for assistive tech). */}
-          <section aria-label="دليل المعامل">
-            <SectionBar
-              title="دليل المعامل"
-              meta={
-                !labs.isPending && !labs.isError && (labs.data?.length ?? 0) > 0 ? (
-                  <BarCount
-                    n={labs.data!.length}
-                    srLabel={countAr(labs.data!.length, ['معمل واحد متاح', 'معملان متاحان', 'معامل متاحة', 'معملاً متاحاً'])}
-                  />
-                ) : undefined
-              }
-            />
+          <SheetSection
+            index="01"
+            caption="LAB CATALOG"
+            title="دليل المعامل"
+            aside={!labs.isPending && !labs.isError && (labs.data?.length ?? 0) > 0 ? (
+              <span className="sg-label">{countAr(labs.data!.length, ['معمل واحد متاح', 'معملان متاحان', 'معامل متاحة', 'معملاً متاحاً'])}</span>
+            ) : undefined}
+          >
 
           {labs.isPending ? (
             <div className="grid-3" aria-busy="true" aria-live="polite">
@@ -258,13 +241,14 @@ export default function LabsPage() {
               ))}
             </div>
           ) :
-           labs.isError ? <Card><ErrorState error={labs.error} onRetry={() => labs.refetch()} /></Card> :
+           labs.isError ? <ErrorState error={labs.error} onRetry={() => labs.refetch()} /> :
            !labs.data?.length ? (
-             /* R319 (c3-S1): the empty catalog is the hatched EmptyCell —
-                the sheet's reserved-but-empty region. */
-             <EmptyCell
-               label="لا معامل متاحة"
-               note="لم تُسجّل معامل في دليل المنصّة بعد — ستظهر هنا فور إضافتها."
+             /* R359: the empty catalog is the sheet's reserved-but-empty
+                region — the hairline placeholder frame. */
+             <SheetEmpty
+               code="NO-LABS"
+               title="لا معامل متاحة"
+               desc="لم تُسجّل معامل في دليل المنصّة بعد — ستظهر هنا فور إضافتها."
              />
            ) : (
             <div className="grid-3">
@@ -278,7 +262,7 @@ export default function LabsPage() {
                   <div key={l.id} className="thumb-card glass">
                     <div
                       className="thumb-card-image"
-                      style={{ background: `color-mix(in srgb, ${tint} 10%, transparent)`, height: 96 }}
+                      style={{ height: 96 }}
                     >
                       <span style={{ color: `color-mix(in srgb, ${tint} 70%, var(--text))` }}>
                         <Icon icon={Cmp} size={32} strokeWidth={1.6} />
@@ -310,7 +294,7 @@ export default function LabsPage() {
               })}
             </div>
           )}
-          </section>
+          </SheetSection>
         </>
       ) : (
         <LabRunner lab={activeLab} onExit={() => setActiveLab(null)} />

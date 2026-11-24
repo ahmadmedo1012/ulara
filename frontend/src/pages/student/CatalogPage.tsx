@@ -3,12 +3,15 @@ import { Link } from 'react-router-dom';
 import {
   Search, X, BookOpen, Info, ChevronRight, ChevronLeft,
 } from 'lucide-react';
-import { Card, Badge } from '../../components/primitives';
+import { Card } from '../../components/primitives';
 import { EmptyState, ErrorState, Skeleton } from '../../components/primitives/States';
 import { PageFrame, PageHeader } from '../../components/patterns';
-/* R319 (c3-S1) — the §B2 kit: the mono-indexed section title bar + the
- * hatched empty cell (the DashboardPage conversion's components). */
-import { SectionBar, BarCount, EmptyCell } from '../../components/student';
+/* R359 (A3 · final sweep) — the sheet grammar joins the §B2 kit: the
+ * framed section (registration crosses + Latin mono caption + the
+ * aside slot) replaces the §B2 title bar; the honest server total
+ * rides the head's aside. */
+import { SheetSection } from '../../components/patterns';
+import { BarCount, EmptyCell } from '../../components/student';
 import { Icon } from '../../components/Icon';
 import { courseIcon, courseTint } from '../../lib/courseMeta';
 import { countAr } from '../../lib/format';
@@ -37,6 +40,10 @@ import '../../styles/student/academic-pages.css';
  * grammar (aria-label + × clear) with its 250ms debounce, and the
  * pagination footer is the MessagesInbox convention (RTL chevrons,
  * countAr total).
+ *
+ * R359 (final sweep): the catalogue region rides the framed sheet —
+ * loading, error, the no-context gate and the empties all live INSIDE
+ * the section body.
  */
 
 /* One server page of the catalogue — grid-3 × 4 rows keeps the page
@@ -90,7 +97,7 @@ function CatalogCard({ c, i }: { c: CatalogCourseRow; i: number }) {
       </div>
       <div className="thumb-card-body">
         <div className="thumb-card-meta">
-          <Badge><bdi className="font-mono">{c.code}</bdi></Badge>
+          <span className="font-mono" dir="ltr">{c.code}</span>
           <span className="thumb-card-count">
             {countAr(c.credits, CREDITS_UNIT)}
           </span>
@@ -213,91 +220,93 @@ export default function CatalogPage() {
         </div>
       </Card>
 
-      {catalog.isError ? (
-        <Card><ErrorState error={catalog.error} onRetry={() => catalog.refetch()} /></Card>
-      ) : !institutionSlug ? (
-        /* First: the context gate — a disabled query stays pending
-           forever (React Query never resolves it), so the honest
-           no-context state must be checked BEFORE the skeleton. */
-        <Card>
+      {/* R359 (final sweep) — the catalogue sheet: the framed region
+          [01] with the server's honest total (meta.total, never the
+          page array) as the head's quiet mono count. Loading, error,
+          the no-context gate and the empties all live INSIDE the body. */}
+      <SheetSection
+        index="01"
+        caption="INSTITUTION CATALOG"
+        title="مقرّرات المؤسسة"
+        aside={
+          !catalog.isPending && !catalog.isError && meta ? (
+            <BarCount
+              n={meta.total}
+              srLabel={countAr(meta.total, COURSE_UNIT)}
+            />
+          ) : undefined
+        }
+      >
+        {catalog.isError ? (
+          <ErrorState error={catalog.error} onRetry={() => catalog.refetch()} />
+        ) : !institutionSlug ? (
+          /* First: the context gate — a disabled query stays pending
+             forever (React Query never resolves it), so the honest
+             no-context state must be checked BEFORE the skeleton. */
           <EmptyState
             icon={BookOpen}
             title="لم تُحدَّد مؤسستك بعد"
             description="اختر مؤسستك من مبدّل المؤسسة في الشريط الأعلى لعرض دليل مقرّراتها."
           />
-        </Card>
-      ) : catalog.isPending ? (
-        <CatalogGridSkeleton />
-      ) : !rows.length ? (
-        <Card>
-          {/* R319 (c3-S1): the empty catalogue is the hatched EmptyCell
-             inside the search Card's own slot — the sheet's
-             reserved-but-empty region. */}
+        ) : catalog.isPending ? (
+          <CatalogGridSkeleton />
+        ) : !rows.length ? (
+          /* R319 (c3-S1): the empty catalogue is the hatched EmptyCell
+             — the sheet's reserved-but-empty region. */
           <EmptyCell
             label={searching ? 'لا توجد مقرّرات تطابق البحث' : 'لا توجد مقرّرات بعد'}
             note={searching
               ? `لم نجد مقرّراً يطابق «${debouncedQ}» — جرّب كلمات أخرى.`
               : 'لم تُضف مقرّرات إلى دليل مؤسستك حتى الآن — ستظهر هنا فور إضافتها من المسجل العام.'}
           />
-        </Card>
-      ) : (
-        <>
-          {/* R319 (c3-S1): the catalogue region opens with the §B2
-              mono-indexed title bar — [01] + the server's honest total
-              as quiet mono meta (countAr for assistive tech). */}
-          <SectionBar
-            title="مقرّرات المؤسسة"
-            meta={
-              <BarCount
-                n={meta?.total ?? rows.length}
-                srLabel={countAr(meta?.total ?? rows.length, COURSE_UNIT)}
-              />
-            }
-          />
-          <p className="courses-summary">
-            <bdi>{countAr(meta?.total ?? rows.length, COURSE_UNIT)}</bdi>
-            {searching && <> · نتائج البحث عن «<bdi>{debouncedQ}</bdi>»</>}
-          </p>
-          <div className="grid-3 courses-grid">
-            {rows.map((c, i) => (
-              <CatalogCard key={c.id} c={c} i={i} />
-            ))}
-          </div>
-          {meta && totalPages > 1 && (
-            <div
-              className="flex items-center justify-between flex-wrap gap-3"
-              style={{ marginBlockStart: 'var(--sp-4)' }}
-            >
-              <span className="text-xs text-muted">
-                الصفحة <bdi>{meta.page}</bdi> من <bdi>{totalPages}</bdi> ·{' '}
-                {countAr(meta.total, COURSE_UNIT)}
-              </span>
-              <div className="flex gap-2">
-                {/* RTL: "previous" points inline-start-ward = the right
-                    chevron (the MessagesInbox pager convention). */}
-                <button
-                  type="button"
-                  className="btn ghost sm"
-                  disabled={page <= 1}
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  aria-label="الصفحة السابقة"
-                >
-                  <Icon icon={ChevronRight} size={14} /> السابق
-                </button>
-                <button
-                  type="button"
-                  className="btn ghost sm"
-                  disabled={page >= totalPages}
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  aria-label="الصفحة التالية"
-                >
-                  التالي <Icon icon={ChevronLeft} size={14} />
-                </button>
-              </div>
+        ) : (
+          <>
+            {searching && (
+              <p className="courses-summary">
+                نتائج البحث عن «<bdi>{debouncedQ}</bdi>»
+              </p>
+            )}
+            <div className="grid-3 courses-grid">
+              {rows.map((c, i) => (
+                <CatalogCard key={c.id} c={c} i={i} />
+              ))}
             </div>
-          )}
-        </>
-      )}
+            {meta && totalPages > 1 && (
+              <div
+                className="flex items-center justify-between flex-wrap gap-3"
+                style={{ marginBlockStart: 'var(--sp-4)' }}
+              >
+                <span className="text-xs text-muted">
+                  الصفحة <bdi>{meta.page}</bdi> من <bdi>{totalPages}</bdi> ·{' '}
+                  {countAr(meta.total, COURSE_UNIT)}
+                </span>
+                <div className="flex gap-2">
+                  {/* RTL: "previous" points inline-start-ward = the right
+                      chevron (the MessagesInbox pager convention). */}
+                  <button
+                    type="button"
+                    className="btn ghost sm"
+                    disabled={page <= 1}
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    aria-label="الصفحة السابقة"
+                  >
+                    <Icon icon={ChevronRight} size={14} /> السابق
+                  </button>
+                  <button
+                    type="button"
+                    className="btn ghost sm"
+                    disabled={page >= totalPages}
+                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                    aria-label="الصفحة التالية"
+                  >
+                    التالي <Icon icon={ChevronLeft} size={14} />
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </SheetSection>
     </PageFrame>
     </div>
   );

@@ -317,6 +317,9 @@ export function OwnerDashboardPage() {
       <OwnerFrame>
         <PatternsPageHeader
           title="لوحة التحكم الرئيسية"
+          /* R359 (W2-e): the owner console's family eyebrow — the console
+           * pages name their owner (مالك المنصّة) above the h1. */
+          eyebrow="مالك المنصّة"
         />
         <div className="owner-live-status is-pending" aria-busy="true" aria-live="polite">
           <div className="owner-live-pulse" />
@@ -355,6 +358,7 @@ export function OwnerDashboardPage() {
       <OwnerFrame>
         <PatternsPageHeader
           title="لوحة التحكم الرئيسية"
+          eyebrow="مالك المنصّة"
         />
         <ErrorState
           error={stats.error ?? realtime.error}
@@ -436,6 +440,7 @@ export function OwnerDashboardPage() {
     <OwnerFrame>
       <PatternsPageHeader
         title="لوحة التحكم الرئيسية"
+        eyebrow="مالك المنصّة"
         /* R342-10: the [01] nav-order gutter numeral — the OWNER_NAV
          * register's first seat, the only page still missing its header
          * numeral after D11 covered the other twelve (realtime [02] …

@@ -3,8 +3,14 @@ import { Link } from 'react-router-dom';
 import { StatStrip } from '../../components/primitives/Ledger';
 import { ErrorState } from '../../components/primitives/States';
 /* R304: the live board opens with the patterns PageHeader —
- * breadcrumbs back to the owner dashboard. */
+ * breadcrumbs back to the owner dashboard.
+ * R359 (W2-e): the live monitor rides the sheet grammar — the framed
+ * LIVE MONITOR section (registration crosses + mono poll readout on
+ * the head rule) owns the status band + the strip. The strip stays
+ * the single owner of the four numbers (r299's one-owner-per-datum
+ * law — pinned by OwnerRealtimePage-table), so no second band. */
 import { PageHeader as PatternsPageHeader } from '../../components/patterns';
+import { SheetSection, MonoLabel } from '../../components/patterns';
 /* r299: the strip's shape-matched skeleton — one owner-owned helper
  * replaces both the mismatched KpiSkeleton (the retired icon-tile
  * anatomy) and the local copy-pasted variants. */
@@ -70,6 +76,7 @@ export function OwnerRealtimePage() {
     <div className="page r305ao">
       <PatternsPageHeader
         title="المراقبة الحيّة"
+        eyebrow="مالك المنصّة"
         description="مراقبة العمليّات الحيّة للمنصّة في الوقت الفعليّ"
         breadcrumbs={[{ label: 'لوحة المالك', to: '/owner/dashboard' }, { label: 'المراقبة الحيّة' }]}
         /* R341 D11: the [02] nav-order gutter numeral (OWNER_NAV
@@ -87,18 +94,36 @@ export function OwnerRealtimePage() {
         )}
       />
 
+      {/* R359 (W2-e) — the framed live monitor: every branch (pending
+          skeleton / initial-load error / live band + strip) renders
+          inside the SAME frame, so the sheet never pops in late. The
+          aside readout names the poll cadence the query actually runs
+          (useOwnerRealtime's 15s refetchInterval — a real
+          classification, not decoration). */}
+      <SheetSection
+        index="01"
+        caption="LIVE MONITOR"
+        title="لوحة القياس الحيّة"
+        pad="none"
+        aside={<MonoLabel>POLL 15S</MonoLabel>}
+      >
       {realtime.isPending ? (
         /* r299: shape-matched — the resolved band is the typographic
          * strip (the summary card that followed it died with it — every
          * one of its four numbers repeated the strip above it twice
          * on the same screen). */
-        <StatStripSkeleton />
+        <div className="sg-pad-in">
+          <StatStripSkeleton />
+        </div>
       ) : !data ? (
         /* 6A10-9: initial load failure (no data ever landed) — the
            ONLY path that full-clears the page. */
-        <ErrorState error={realtime.error} onRetry={() => realtime.refetch()} />
+        <div className="sg-pad-in">
+          <ErrorState error={realtime.error} onRetry={() => realtime.refetch()} />
+        </div>
       ) : (
         <>
+          <div className="sg-pad-in">
           <div
             className={`owner-live-status${hasAlerts ? ' has-alerts' : ''}${alerts.isPending ? ' is-pending' : ''}${anyDegraded ? ' is-degraded' : ''}`}
             role={anyDegraded ? 'alert' : undefined}
@@ -138,6 +163,7 @@ export function OwnerRealtimePage() {
               </span>
             </div>
           </div>
+          </div>
 
           {/* Live region: value changes are announced politely; the
               values remount (keyed) so each change re-settles.
@@ -154,6 +180,7 @@ export function OwnerRealtimePage() {
           ]} /></section>
         </>
       )}
+      </SheetSection>
     </div>
   );
 }
