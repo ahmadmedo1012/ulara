@@ -249,3 +249,110 @@
   border: 1px solid var(--accent);
   color: var(--accent-ink);
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   r359 ART LIBRARY GALLERY (A2) — every key, light/dark, two frames,
+   animated toggle. The gallery sits BELOW the product plates (their
+   byte-stability contract is untouched — element captures isolate
+   [data-plate] stages only).
+   ═══════════════════════════════════════════════════════════════════ */
+
+.artlib {
+  margin-block-start: var(--sp-9);
+  border-block-start: 1px solid var(--neutral-300);
+  padding-block-start: var(--sp-7);
+}
+
+.artlib-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  margin-block-end: var(--sp-6);
+}
+
+.artlib-title {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  direction: ltr;
+  color: var(--neutral-900);
+}
+
+[data-theme='dark'] .artlib-title { color: var(--neutral-50); }
+
+.artlib-controls { display: flex; flex-wrap: wrap; gap: var(--sp-2-5); }
+.artlib-ctl { display: inline-flex; border: 1px solid var(--neutral-300); }
+
+.artlib-btn {
+  appearance: none;
+  border: 0;
+  border-inline-end: 1px solid var(--neutral-300);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.06em;
+  padding: var(--sp-1-5) var(--sp-3);
+  cursor: pointer;
+}
+
+.artlib-btn:last-child { border-inline-end: 0; }
+.artlib-btn[aria-pressed='true'] { background: var(--neutral-900); color: var(--neutral-50); }
+[data-theme='dark'] .artlib-btn[aria-pressed='true'] { background: var(--neutral-50); color: var(--neutral-900); }
+.artlib-btn:focus-visible { outline: 2px solid var(--state-focus-ring-color); outline-offset: -2px; }
+
+.artlib-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: var(--sp-6);
+}
+
+.artcard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  min-inline-size: 0;
+}
+
+.artcard-key {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  direction: ltr;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.artcard-title { font-size: var(--fs-sm); color: var(--text-primary); }
+
+.artcard-missing {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--accent-ink);
+  border: 1px dashed var(--neutral-300);
+  padding: var(--sp-3);
+  direction: ltr;
+}
+
+/* the frame: paper ground + hairline; the art svg fills it (aspect
+ * ratio reserved by the runtime's --r359-ar) */
+.artframe {
+  border: 1px solid var(--neutral-300);
+  background: var(--neutral-50);
+  padding: var(--sp-2);
+}
+
+[data-theme='dark'] .artframe { background: var(--neutral-900); }
+
+.artframe.is-desktop { max-inline-size: 720px; }
+.artframe.is-mobile { max-inline-size: 390px; }
+
+.artframe-skeleton {
+  block-size: 200px;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent 0 6px,
+    var(--border-faint) 6px 7px
+  );
+}

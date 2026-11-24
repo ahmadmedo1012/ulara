@@ -27,7 +27,22 @@
 import { StatLine } from '../components/patterns';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { AlertRow, Badge, MetricCard, Pill, ProgressBar } from '../components/primitives';
-import type { ReactNode } from 'react';
+import { ART_KEYS } from '@shared/art/manifest';
+import type { ArtPlateProps } from '@shared/art/grammar';
+import { lazy, Suspense, useState } from 'react';
+import type { ComponentType, ReactNode } from 'react';
+import '../styles/plates.css';
+
+/* the r359 art library — one lazy chunk per key (the same contract
+ * consumers' import.meta.glob seats resolve) */
+const ART_MODULES = import.meta.glob<{ default: ComponentType<ArtPlateProps> }>(
+  '../components/illustrations/r359/*.tsx',
+);
+const ART_LAZY: Record<string, ComponentType<ArtPlateProps>> = {};
+for (const [p, load] of Object.entries(ART_MODULES)) {
+  const key = p.split('/').pop()!.replace('.tsx', '');
+  ART_LAZY[key] = lazy(load);
+}
 
 function PlatesPage(): React.JSX.Element {
   usePageTitle('لوحات المنتج');
@@ -66,7 +81,68 @@ function PlatesPage(): React.JSX.Element {
       <PlateScene id="lecture-checkpoint" title="نقطة الفحص">
         <FragmentCheckpoint />
       </PlateScene>
+      <ArtLibrary />
     </main>
+  );
+}
+
+/* ── the r359 art library gallery — every key, light/dark, two
+ * frames, animated toggle: the living proof + the integrator's
+ * checklist (contract §5.7) ───────────────────────────────────────── */
+function ArtLibrary(): React.JSX.Element {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [animated, setAnimated] = useState(false);
+  const [frame, setFrame] = useState<'desktop' | 'mobile'>('desktop');
+
+  return (
+    <section className="artlib" aria-label="مكتبة الرسوم r359">
+      <header className="artlib-bar">
+        <span className="artlib-title">[R359] ART LIBRARY — مكتبة الرسوم</span>
+        <div className="artlib-controls" role="group" aria-label="ضبط العرض">
+          <span className="artlib-ctl">
+            {(['light', 'dark'] as const).map((t) => (
+              <button key={t} type="button" className="artlib-btn" aria-pressed={theme === t} onClick={() => setTheme(t)}>
+                {t.toUpperCase()}
+              </button>
+            ))}
+          </span>
+          <span className="artlib-ctl">
+            {(['desktop', 'mobile'] as const).map((f) => (
+              <button key={f} type="button" className="artlib-btn" aria-pressed={frame === f} onClick={() => setFrame(f)}>
+                {f.toUpperCase()}
+              </button>
+            ))}
+          </span>
+          <button type="button" className="artlib-btn" aria-pressed={animated} onClick={() => setAnimated((v) => !v)}>
+            ANIM {animated ? 'ON' : 'OFF'}
+          </button>
+        </div>
+      </header>
+      <div className={`artlib-grid is-${frame}`}>
+        {ART_KEYS.map((meta, i) => {
+          const Art = ART_LAZY[meta.key];
+          if (!Art) {
+            return (
+              <div className="artcard" data-artcard={meta.key} key={meta.key}>
+                <span className="artcard-key">[{String(i + 1).padStart(2, '0')}] {meta.key}</span>
+                <span className="artcard-missing">MISSING</span>
+              </div>
+            );
+          }
+          return (
+            <div className="artcard" data-artcard={meta.key} key={meta.key}>
+              <span className="artcard-key">[{String(i + 1).padStart(2, '0')}] {meta.key}</span>
+              <span className="artcard-title">{meta.title}</span>
+              <div className={`artframe is-${frame}`}>
+                <Suspense fallback={<div className="artframe-skeleton" />}>
+                  <Art theme={theme} animated={animated} />
+                </Suspense>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
   );
 }
 

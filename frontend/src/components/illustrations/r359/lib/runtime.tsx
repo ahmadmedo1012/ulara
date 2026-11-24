@@ -42,14 +42,14 @@ function propsOf(n: ArtNode): Record<string, string | number> {
 }
 
 function renderNode(n: ArtNode, i: number): ReactNode {
-  const p = { key: i, ...propsOf(n) };
-  if (n.t === 'text') return <text {...p}>{n.s}</text>;
+  const p = propsOf(n);
+  if (n.t === 'text') return <text key={i} {...p}>{n.s}</text>;
   if (n.c === undefined || n.c.length === 0) {
     const T = n.t as 'path';
-    return <T {...p} />;
+    return <T key={i} {...p} />;
   }
   const T = n.t as 'g';
-  return <T {...p}>{n.c.map(renderNode)}</T>;
+  return <T key={i} {...p}>{n.c.map(renderNode)}</T>;
 }
 
 export interface ArtSvgProps extends ArtPlateProps {
