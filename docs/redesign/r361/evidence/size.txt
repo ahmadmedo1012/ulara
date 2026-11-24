@@ -1,0 +1,11 @@
+size-gate: allowlisted >500KB: apps/mobile/package-lock.json
+size-gate: allowlisted >500KB: apps/mobile/src/api/schema.generated.ts
+size-gate: allowlisted >500KB: backend/storage/papers/sample.pdf
+size-gate: allowlisted >500KB: docs/api/openapi.json
+size-gate: allowlisted >500KB: frontend/public/lectures/se301-01-intro.mp4
+size-gate: allowlisted >500KB: frontend/public/lectures/se301-02-requirements.mp4
+size-gate: allowlisted >500KB: frontend/public/lectures/se301-03-design.mp4
+size-gate: rule 1 ok — no tracked file >500KB outside allowlist (7 allowlisted)
+size-gate: rule 2 ok — docs/ tracked total 57857KB ≤ 59392KB (58MB)
+size-gate: rule 3 ok — change adds 658KB to docs/ ≤ 5120KB (5MB) vs base origin/main
+size-gate: GREEN — tree stays lean (files ≤500KB, docs/ ≤58MB, push adds ≤5MB to docs/).

@@ -16,7 +16,15 @@
 
 - P1/P2 measurements after 6c43670: [landing and shell contracts](evidence/landing-contracts.txt) now pin the approved mobile art ratio, bundle budget and paper shade. Eight iPhone Chromium cases passed. [Mobile Lighthouse, live URLs](evidence/lighthouse-baseline.txt); home performance below target.
 
-NEXT: Inspect role sheets, reduce landing blocking time; WebKit and the final matrix remain open.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:358b9232fdc887dbef94f88c1050e4e325db413fdad9346ee89d72b155343e70 -->
+
+- Size gate at 64da859: the merged design evidence totals 56.5 MiB. Raised the docs budget from 40 to 58 MiB to retain those proofs. The per-file and push limits remain in force. [Gate output](evidence/size.txt).
+
+NEXT: Inspect role sheets, reduce landing blocking time and verify the governance transfer flow.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 
