@@ -36,8 +36,18 @@ appId: ly.ulara.app
 - inputText: "${PASSWORD}"
 - tapOn:
     text: "دخول"
+# r359 A4: the R336-E submit-race retry (a settled no-op when the first
+# tap fired; the retry when it was swallowed).
+- tapOn:
+    text: "دخول"
+    optional: true
 - tapOn:
     text: "تخطي"                   # the tour escape, when still owed
+    optional: true
+# r359 A4: the student's two memberships → /select-institution. Pick the
+# primary workspace (optional for single-membership roles).
+- tapOn:
+    text: "مساحة عمل أُلارا التجريبية"
     optional: true
 - extendedWaitUntil:
     visible:

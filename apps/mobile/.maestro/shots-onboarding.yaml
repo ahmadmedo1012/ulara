@@ -67,6 +67,15 @@ appId: ly.ulara.app
 - takeScreenshot: ONBOARDING-4
 - tapOn:
     text: "ابدأ الآن"              # the completion CTA (server-stamps + / → role home)
+# The student fixture has TWO memberships — the boot rule routes to
+# /select-institution after the tour. Pick the primary workspace.
+- extendedWaitUntil:
+    visible:
+      text: "اختيار المؤسّسة"        # app/select-institution.tsx — PageHeader title
+    timeout: 20000
+- takeScreenshot: SELECT-INSTITUTION
+- tapOn:
+    text: "مساحة عمل أُلارا التجريبية"
 # The student dashboard landed (the tour's completion destination).
 - extendedWaitUntil:
     visible:

@@ -956,9 +956,18 @@ jobs:
             # the viewport resets. `wm size` overrides survive until
             # reset; the app re-lays out live.
             adb shell wm size 320x568 >/dev/null 2>&1 || true
+            # a cold restart after the override: the app re-lays out from
+            # a fresh process (runs 45339276768's size passes died on a
+            # stale-layout welcome — the scroll never found the CTA).
+            adb shell am force-stop ly.ulara.app >/dev/null 2>&1 || true
+            sleep 3
             "$HOME/.maestro/bin/maestro" test apps/mobile/.maestro/shots-role.yaml -e EMAIL=student@test.ly -e PASSWORD=12345678 -e ROLE=STUDENT -e SHOT=STUDENT-320 || touch fail.flag
+            adb shell am force-stop ly.ulara.app >/dev/null 2>&1 || true
+            sleep 3
             "$HOME/.maestro/bin/maestro" test apps/mobile/.maestro/shots-role.yaml -e EMAIL=teacher@test.ly -e PASSWORD=12345678 -e ROLE=TEACHER -e SHOT=TEACHER-320 || touch fail.flag
             adb shell wm size 768x1024 >/dev/null 2>&1 || true
+            adb shell am force-stop ly.ulara.app >/dev/null 2>&1 || true
+            sleep 3
             "$HOME/.maestro/bin/maestro" test apps/mobile/.maestro/shots-role.yaml -e EMAIL=student@test.ly -e PASSWORD=12345678 -e ROLE=STUDENT -e SHOT=STUDENT-TABLET || touch fail.flag
             adb shell wm size reset >/dev/null 2>&1 || true
             "$ANDROID_HOME/platform-tools/adb" devices > adb-devices.txt 2>&1 || true
