@@ -370,11 +370,12 @@ describe('QualityDashboardPage — alerts card error path retries in place (A8 P
 
     const retry = screen.getByRole('button', { name: /إعادة المحاولة/ });
     expect(retry).toBeInTheDocument();
-    // r299 (E item 9): the shared ErrorState grammar — the retry rides
-    // the primitive's own primary button, and the state sits inside its
-    // section Card (the card owns the «تنبيهات الجودة» header chrome;
-    // page-level errors render bare, pinned below).
-    expect(retry.closest('.card')).not.toBeNull();
+    // r299 (E item 9) → R359 (A3): the shared ErrorState grammar — the
+    // retry rides the primitive's own primary button, and the state sits
+    // inside its framed SECTION (the sheet-grammar SheetSection owns the
+    // «تنبيهات الجودة» header chrome now; page-level errors render bare,
+    // pinned below).
+    expect(retry.closest('.sg-section')).not.toBeNull();
   });
 });
 

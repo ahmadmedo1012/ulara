@@ -355,7 +355,10 @@ describe('r325 Y4 — the type census gate (every heading level × every seat ×
       const m = tokenSrc.match(/--fs-d1:\s*clamp\(([^)]+)\)/);
       expect(m).toBeTruthy();
       expect(m![1]).toContain('31.74px');
-      expect(m![1]).toContain('5.6rem');
+      /* R359 (A3): the cap re-keys to the §2 measured h1 — 62.22px
+       * @1440 (7.4664rem on the 8.333px root); the floor contract
+       * above is unchanged. */
+      expect(m![1]).toContain('7.4664rem');
     });
   });
 

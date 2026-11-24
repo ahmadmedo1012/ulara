@@ -658,3 +658,79 @@ a.pf-stat:hover { background: var(--surface-2); }
   color: var(--text-secondary);
   max-inline-size: 44ch;
 }
+
+/* ═══ 15 · THE STATSTRIP FAMILY (admin/owner .stat-*) JOINS THE BAND ══
+   The r189 typographic strip re-keys onto the KPI-band register: the
+   auto-fit hairline grid, huge mono tabular values, the label UNDER
+   the numeral, mono trend notes. One re-key upgrades every StatStrip
+   consumer (admin + owner + quality sector) without touching TSX. */
+
+.stat-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--sg-kpi-min, 148px), 1fr));
+  border: 1px solid var(--rule);
+  border-radius: 0;
+  background: transparent;
+}
+.stat-cell {
+  display: block;
+  padding: var(--sp-3) var(--sp-4) var(--sp-4);
+  min-block-size: calc(var(--touch-floor, 44px) + var(--sp-4));
+  text-decoration: none;
+  color: inherit;
+}
+.stat-cell + .stat-cell { border-inline-start: 1px solid var(--rule); }
+.stat-cell dl {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  margin: 0;
+}
+.stat-label {
+  order: 2;
+  font-size: var(--fs-sm);
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+.stat-value {
+  order: 1;
+  font-family: var(--font-mono);
+  font-size: var(--fs-metric-lg);
+  font-weight: 500;
+  line-height: 1;
+  margin: 0;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+.stat-trend {
+  order: 3;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-xs);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.stat-trend.up { color: var(--success-ink); }
+.stat-trend.down { color: var(--danger-ink); }
+
+/* the achievements ink-pole variant keeps its inversion (ds-supple-
+   mental.css §2) — restated here so the transparent base above cannot
+   wash it out (unlayered beats layered; the pole stays). */
+.r305a-strip .stat-strip {
+  background: var(--neutral-900);
+  border-color: transparent;
+  padding: var(--sp-4) var(--sp-2);
+}
+.r305a-strip .stat-cell {
+  border-color: color-mix(in srgb, var(--neutral-0) 16%, transparent);
+}
+.r305a-strip .stat-label {
+  color: color-mix(in srgb, var(--neutral-0) 72%, var(--neutral-900));
+}
+.r305a-strip .stat-value { color: var(--neutral-0); }
+.r305a-strip .stat-trend {
+  color: color-mix(in srgb, var(--neutral-0) 85%, var(--neutral-900));
+}

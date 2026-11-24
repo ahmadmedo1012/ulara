@@ -477,15 +477,19 @@ function trendChartData(trend: TeacherDashboard['trend']) {
         spanGaps: true,
       },
       {
+        /* R359 (A3 · the one-signal dataviz law): the second series
+         * rides the INK neutral, not a second hue — royal carries the
+         * hero series, neutrals carry the rest. */
         label: 'الحضور %',
         data: trend.map((t) => t.attendancePct ?? null),
-        borderColor: c.success,
-        backgroundColor: `color-mix(in srgb, ${c.success} 10%, transparent)`,
+        borderColor: c.strongText,
+        backgroundColor: `color-mix(in srgb, ${c.strongText} 8%, transparent)`,
         fill: true,
         tension: 0.4,
         pointRadius: 3,
-        pointBackgroundColor: c.success,
+        pointBackgroundColor: c.strongText,
         borderWidth: 2,
+        borderDash: [4, 3],
         spanGaps: true,
       },
     ],

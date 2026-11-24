@@ -16,7 +16,7 @@ export const ds = {
     overlay: "#FFFFFF",
     text: "#282828",
     textSecondary: "#646464",
-    textMuted: "#6B6B67",
+    textMuted: "#666663",
     textFaint: "#6E6E6A",
     accent: "#2540D9",
     accentHover: "#1B30B0",
@@ -33,7 +33,7 @@ export const ds = {
     goldInk: "#8F5A28",
     dangerFg: "#FFFFFF",
     onSurface: "#282828",
-    onSurfaceMuted: "#6B6B67",
+    onSurfaceMuted: "#666663",
   },
   dark: {
     bg: "#262019",

@@ -23,7 +23,7 @@ import { useReducedMotion } from '../../components/motion';
 import { EmptyState, ErrorState, PageSkeleton, ListSkeleton, CardSkeleton, StripSkeleton, Skeleton } from '../../components/primitives/States';
 import { ChartFrame } from '../../components/charts';
 import { Icon } from '../../components/Icon';
-import { radialOptions, chartPalette, useChartThemeKey } from '../../lib/chartTheme';
+import { radialOptions, chartColors, useChartThemeKey } from '../../lib/chartTheme';
 import { useOwnerStats, useOwnerRealtime, useOwnerAlerts, useOwnerActivity, useOwnerEducation, type OperationalAlert } from '../../hooks/useOwner';
 import { countAr, formatRelativeAr } from '../../lib/format';
 import { isCriticalAlert } from '../../lib/ownerLabels';
@@ -273,11 +273,15 @@ export function OwnerDashboardPage() {
 
   const chartData = useMemo(() => {
     void themeKey;
+    const c = chartColors();
     return {
       labels: segments.map((s) => s.label),
       datasets: [{
         data: segments.map((s) => s.value),
-        backgroundColor: chartPalette().slice(0, 4),
+        /* R359 (A3 · the one-signal dataviz law): the composition donut
+         * rides the royal + neutral register (hero series royal, the
+         * rest grey/ink steps) — no categorical rainbow on the sheet. */
+        backgroundColor: [c.accent, c.grid, c.strongText, c.surfaceMuted],
         borderWidth: 0,
         hoverOffset: 6,
       }],

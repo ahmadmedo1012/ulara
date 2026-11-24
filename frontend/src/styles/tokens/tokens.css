@@ -177,9 +177,13 @@
        17.78 @1440 (ratios 3.5 / 2.5 / 1 of the §2 body). The rem caps
        ride the same fluid root (8.333px @1440): 7.4664 / 5.3328 /
        2.1336rem exactly. Arabic keeps the 16px lead floor. */
-    --fs-h1: 7.4664rem;        /* 62.22px @1440 — the reference h1 (700 · lh 1.0 · ls −0.02em · UPPER for Latin; Arabic 600 · lh 1.15 · no tracking) */
-    --fs-h2: 5.3328rem;        /* 44.44px @1440 — the reference h2 */
-    --fs-h3: 4.2672rem;        /* 35.56px @1440 — 2× the §2 body */
+    /* R359b — the Y4 clamp discipline rides the aliases too (the
+       type census: every seat within 1.3× of a rung at 390/768/1440;
+       the unclamped rem aliases GROW on the mobile-band root — the
+       exact disease the census was written to kill). */
+    --fs-h1: clamp(31.74px, 4.8vw, 7.4664rem);  /* ≡ d1: 62.22 @1440 · 31.74 @390 */
+    --fs-h2: clamp(31.74px, 4.8vw, 5.3328rem);  /* ≡ d2: 44.44 @1440 · 31.74 @390 */
+    --fs-h3: clamp(23.33px, 2.8vw, 4.2672rem);  /* 35.56 @1440 · 23.33 floor @390 (d3's own floor) */
 
     --fs-body-lg: clamp(16px, 1.48vw, 2.1336rem); /* 17.78px @1440 — the §2 body (page leads); mobile holds the 16px floor like the reference */
     --fs-body:    max(13px, 1.6rem);   /* 13.33px @1440 — the reference txt-16, floor-gated */
