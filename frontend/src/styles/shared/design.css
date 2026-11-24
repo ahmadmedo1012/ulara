@@ -228,3 +228,12 @@
 /* §R359 — the gallery's sheet-grammar demo spacing (unlayered so it
    lands after the grammar sheet's own rules; the gallery only). */
 .r323d-sheet-demo { margin-block-start: var(--sp-4); }
+
+@media (max-width: 640px) {
+  .r323d .r323d-inline,
+  .r323d button,
+  .r323d a.sg-kpi {
+    min-block-size: var(--touch-floor, 44px);
+    min-inline-size: var(--touch-floor, 44px);
+  }
+}

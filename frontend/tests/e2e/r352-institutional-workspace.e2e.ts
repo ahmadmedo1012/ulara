@@ -463,17 +463,17 @@ test.describe('r352 — the institutional workspace journey (hermetic)', () => {
     await installInstitutionalApi(page, ['COUNCILS_MANAGE']);
     await page.goto('/institution/councils');
 
-    await expect(page.getByRole('table', { name: 'قائمة المجالس واللجان' })).toBeVisible();
+    await expect(page.getByRole('table', { name: 'سجلّ المجالس واللجان' })).toBeVisible();
     await expect(page.getByText('المجلس العلمي للكلية')).toBeVisible();
 
     // → council detail
-    await page.getByRole('row').filter({ hasText: 'المجلس العلمي للكلية' }).click();
+    await page.getByRole('link', { name: 'المجلس العلمي للكلية' }).click();
     await expect(page.getByText('د. سالم العميد').first()).toBeVisible();
     await expect(page.getByText('أ. فاطمة الأمينة').first()).toBeVisible();
 
     // → meeting detail (the numbered section grammar)
     await page.getByRole('row').filter({ hasText: 'قاعة المجلس' }).click();
-    await expect(page.getByText('١ · التحضير — جدول الأعمال')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'التحضير — جدول الأعمال' })).toBeVisible();
     await expect(page.getByText('خطط 2027 المقترحة')).toBeVisible();
     await expect(page.getByText('اعتماد خطة 2027 بعد التعديلات')).toBeVisible();
     // the minutes draft renders read-only with its DRAFT chip

@@ -462,7 +462,7 @@ export function QualityDashboardPage() {
           to the r189 StatStrip cells; every number still derives from
           a real payload field. */}
       <SheetSection index="01" caption="QUALITY / KPI" title="المؤشرات الأساسية" pad="none">
-        <KpiBand
+        <KpiBand className="quality-summary-band"
           items={[
             {
               index: '01',

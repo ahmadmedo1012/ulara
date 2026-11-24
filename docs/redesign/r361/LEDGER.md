@@ -46,7 +46,15 @@
 
 - P2/P6: render the A2 hero SVG as an image instead of mounting two React drawings at startup. Preserve interactive stations and the fallback. The statement uses the A2 campus plan; the footer uses the A2 skyline. Removed the old asset directory and fixed the exported SVG dark palette cascade. [Tests, bundle and art scan](evidence/art.txt). Re-measured deadcode after the merged art library and consumer changes: 47 unused-file candidates, 19 exports and 220 types; these counts are debt, not removals.
 
-NEXT: Measure production performance after deploy; check mobile builds from this change. Finish visual and accessibility corrections.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:786133df10f9e25e1d39a3b42b11d9d3204617a90a450723cb4b8714ffb78f3f -->
+
+- P1: the design gallery now loads the real sheet stylesheet; its six small targets clear the phone floor. The quality dashboard uses a full last row on phones. Of four original findings, the remaining alert is the gallery’s intentional invalid-password specimen. Updated the institutional journey to follow the council link and named register. All five journeys passed. [Focused rerun](evidence/product-rerun.txt).
+
+NEXT: Complete full-route verification, production measurements, mobile artifact checks and branch cleanup.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 

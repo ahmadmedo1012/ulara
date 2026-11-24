@@ -202,7 +202,9 @@ async function pageMetrics(page: import('playwright').Page, width: number): Prom
       const interactives = document.querySelectorAll('button, a, input, select, textarea, [role="button"], [role="tab"]');
       const small: unknown[] = [];
       for (const el of Array.from(interactives)) {
-        const rect = el.getBoundingClientRect();
+        const target = el instanceof HTMLInputElement && ['checkbox', 'radio'].includes(el.type)
+          ? el.closest('label') ?? el : el;
+        const rect = target.getBoundingClientRect();
         if (rect.width === 0 || rect.height === 0) continue;
         if (el.tagName === 'A' && el.closest('p, span') && rect.height < 32 && rect.width > 44) continue;
         if (Math.round(rect.width) < 44 || Math.round(rect.height) < 44) {
@@ -257,13 +259,18 @@ async function pageMetrics(page: import('playwright').Page, width: number): Prom
      * (The old read flagged the .sg-kpis band itself — the first
      * [class*="kpi"] match in document order — under its contents
      * wrapper, while the band is its own grid.) */
-    const kpis = Array.from(document.querySelectorAll('[class*="kpi"], [data-testid*="kpi"]'));
-    if (kpis.length >= 3) {
-      let parent = kpis[0].parentElement;
+    const cells = document.querySelectorAll('.sg-kpi, [data-testid="kpi"], .kpi-card');
+    const parents = new Set<Element>();
+    for (const cell of cells) {
+      let parent = cell.parentElement;
       while (parent && getComputedStyle(parent).display === 'contents') parent = parent.parentElement;
-      const pcs = parent ? getComputedStyle(parent) : null;
-      if (pcs && pcs.display !== 'grid' && pcs.display !== 'flex') {
-        issues.push({ type: 'KPI_STACKED_LIST', severity: 'P2', message: `${kpis.length} KPI nodes under display:${pcs.display}` });
+      if (parent) parents.add(parent);
+    }
+    for (const band of parents) {
+      const count = Array.from(cells).filter(cell => band.contains(cell)).length;
+      const display = getComputedStyle(band).display;
+      if (count >= 3 && !['grid', 'flex', 'inline-grid', 'inline-flex'].includes(display)) {
+        issues.push({ type: 'KPI_STACKED_LIST', severity: 'P2', message: `${count} KPI cells under display:${display}` });
       }
     }
     return issues;

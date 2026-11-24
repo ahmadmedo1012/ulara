@@ -407,6 +407,7 @@ export function standardRoutes(): MockRouteDef[] {
     } },
     { method: 'GET', path: '/institution/org-units/tree', json: ok(INSTITUTION_ORG_TREE) },
     { method: 'GET', path: '/institutional/people', json: INSTITUTION_PEOPLE_PAGE },
+    { method: 'GET', path: '/institutional/appointments', json: { data: [], meta: { page: 1, limit: 10, total: 0, totalPages: 0 } } },
     { method: 'GET', path: '/institution/positions', json: INSTITUTION_POSITIONS_PAGE },
     { method: 'GET', path: '/governance/councils', json: INSTITUTION_COUNCILS_PAGE },
     { method: 'GET', path: '/institution/programs', json: INSTITUTION_PROGRAMS_PAGE },

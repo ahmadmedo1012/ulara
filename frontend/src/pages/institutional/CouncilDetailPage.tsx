@@ -306,7 +306,7 @@ export function InstitutionCouncilDetailPage() {
               index="04"
               caption="DOCUMENTS"
               title="مستندات المجلس"
-              description="ارفع ملف PDF (حتى 15 ميجابايت) فيرتبط بالمجلس مباشرة، أو أضف مرجعًا وصفيًا. سجل المستندات المرتبطة بكل اجتماع يُعرض في صفحة الاجتماع نفسه."
+              description="ارفع ملف PDF (حتى 500 ميجابايت بحسب التخزين المتاح) فيرتبط بالمجلس مباشرة، أو أضف مرجعًا وصفيًا. سجل المستندات المرتبطة بكل اجتماع يُعرض في صفحة الاجتماع نفسه."
               actions={canManage ? (
                 <button type="button" className="btn ghost sm" onClick={() => setDocOpen(true)}>إضافة مرجع</button>
               ) : null}

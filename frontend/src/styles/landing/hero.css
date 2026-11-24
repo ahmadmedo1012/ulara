@@ -214,7 +214,7 @@
   visibility: visible;
   transform: translateY(0);
 }
-.hi-tag-idx { color: var(--hro-sig); font-size: 10px; }
+.hi-tag-idx { color: var(--hro-ink); font-size: inherit; }
 /* the leader tick from the square to the tag */
 .hi-tag::before {
   content: '';

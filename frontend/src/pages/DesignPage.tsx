@@ -81,11 +81,12 @@ import '../styles/shared/design.css';
    The shell cascade contract (after r319-shell.css) is untouched —
    this import serves the evidence surface only. */
 import '../styles/shared/app-grammar.css';
+import '../styles/shared/r359-grammar.css';
 
 const BTN_VARIANTS: Array<{ v: Parameters<typeof Button>[0]['variant']; label: string }> = [
   { v: 'default', label: 'افتراضي' },
   { v: 'primary', label: 'أساسي' },
-  { v: 'accent', label: 'برتقالي' },
+  { v: 'accent', label: 'لون التمييز' },
   { v: 'gold', label: 'ذهبي' },
   { v: 'ghost', label: 'شفاف' },
   { v: 'outline', label: 'محدّد' },
