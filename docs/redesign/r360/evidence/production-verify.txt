@@ -11,4 +11,4 @@ HTTP 401
 {"error":{"code":"UNAUTHENTICATED","message":"يلزم تسجيل الدخول للمتابعة"}}
 HTTP 401
 --- deployment ---
-url: ulara-me1bzdfwp-tadmora.vercel.app | state: READY | commit: 134e0ca072a5de41eeec1d61dfdf1c355494900b
+url: ulara.vercel.app (production alias; deployment dpl_898PuS3GxX1gaegW4r1tfFWzRQ9d) | state: READY | commit: 134e0ca072a5de41eeec1d61dfdf1c355494900b
