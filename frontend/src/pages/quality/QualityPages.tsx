@@ -1176,7 +1176,12 @@ export function QualityProfessorsPage() {
             admin siblings. At ≤1024 the compact diet (above) keeps the
             tablet band inside the wrap. R305 DS (§D): .hr-table
             layers the filled header + denser hairline rows. */}
-        <div className="table-wrap">
+        {/* r360 F3 — the scrollable-region-focusable floor (axe
+            wcag2a/2aa @768/1024): the 8-column roster sideways-scrolls
+            inside this wrap, so keyboard users get focus + arrow-scroll
+            parity (the universal focus ring rides base.css). Same
+            contract as the landing's snap belt. */}
+        <div className="table-wrap" tabIndex={0} role="region" aria-label="جدول هيئة التدريس — قابل للتمرير جانبيًا">
           <table className="table tbl-stack qlt-roster hr-table">
             <thead>
               <tr>

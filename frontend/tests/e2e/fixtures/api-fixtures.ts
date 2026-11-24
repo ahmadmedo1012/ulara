@@ -152,7 +152,7 @@ export const QUALITY_USER: FixtureUser = {
   firstName: 'عائشة',
   lastName: 'الباروني',
   role: 'QUALITY',
-  avatarColor: '#d97706',
+  avatarColor: '#D4A537',
   avatarInitials: 'عب',
   scopeFacultyId: null,
 };
@@ -946,6 +946,137 @@ export const MODERATION_TEMPLATES: Record<string, unknown> = {
   tpl_e2e_quiz4: MODERATION_TEMPLATE_QUIZ,
   tpl_e2e_final_net: MODERATION_TEMPLATE_FINAL,
 };
+
+/* ── teacher exam authoring (r360 F5 — the zero-501 corpus) ────── */
+
+/** GET /exams/templates — ExamTemplateRow[] (the author's own list;
+ *  TEACHER scoping is authorId — every row's author is the seeded
+ *  teacher, so the surface reads honestly for the role the scan
+ *  seeds). Rows reuse the moderation family's ids so the detail
+ *  fixtures resolve for the same rows (one coherent corpus). */
+export const EXAM_TEMPLATE_ROWS = [
+  {
+    id: 'tpl_e2e_quiz4',
+    title: 'اختبار قصير — الوحدة الرابعة',
+    kind: 'QUIZ' as const,
+    status: 'PENDING_REVIEW' as const,
+    durationMin: 20,
+    passingScore: 60,
+    openAt: null,
+    closeAt: null,
+    offering: { id: OFFERING_ID, course: { name: 'مقدمة في الخوارزميات', code: 'CS-201', iconEmoji: null } },
+    faculty: null,
+    author: { firstName: 'ليلى', lastName: 'الفيتوري' },
+    _count: { questions: 2, attempts: 0 },
+  },
+  {
+    id: 'tpl_e2e_mid_algorithms',
+    title: 'اختبار نصفي — مقدمة في الخوارزميات',
+    kind: 'MIDTERM' as const,
+    status: 'PUBLISHED' as const,
+    durationMin: 45,
+    passingScore: 50,
+    openAt: iso(-24),
+    closeAt: iso(24 * 3),
+    offering: { id: OFFERING_ID, course: { name: 'مقدمة في الخوارزميات', code: 'CS-201', iconEmoji: null } },
+    faculty: null,
+    author: { firstName: 'ليلى', lastName: 'الفيتوري' },
+    _count: { questions: 8, attempts: 14 },
+  },
+  {
+    id: 'tpl_e2e_final_net',
+    title: 'اختبار نهائي — الشبكات',
+    kind: 'FINAL' as const,
+    status: 'PENDING_REVIEW' as const,
+    durationMin: 90,
+    passingScore: 50,
+    openAt: null,
+    closeAt: null,
+    offering: null,
+    faculty: { name: 'كلية الهندسة' },
+    author: { firstName: 'منير', lastName: 'الزروق' },
+    _count: { questions: 1, attempts: 0 },
+  },
+  {
+    id: 'tpl_e2e_practice_db',
+    title: 'اختبار تدريبي — قواعد البيانات',
+    kind: 'PRACTICE' as const,
+    status: 'DRAFT' as const,
+    durationMin: 30,
+    passingScore: 60,
+    openAt: null,
+    closeAt: null,
+    offering: { id: OFFERING_ID, course: { name: 'قواعد البيانات', code: 'CS-304', iconEmoji: null } },
+    faculty: null,
+    author: { firstName: 'ليلى', lastName: 'الفيتوري' },
+    _count: { questions: 0, attempts: 0 },
+  },
+];
+
+/** GET /question-bank — QuestionRow[] (the bank tab's own corpus;
+ *  mirrors the moderation detail's question family so the two tabs
+ *  read as one bank). */
+export const QUESTION_BANK_ROWS = [
+  {
+    id: 'qst_e2e_1',
+    type: 'MCQ' as const,
+    prompt: 'ما التعقيد الزمني للبحث الثنائي في أسوأ الحالات؟',
+    difficulty: 'EASY' as const,
+    points: 2,
+    category: { title: 'تحليل التعقيد', slug: 'complexity', iconEmoji: null },
+    choices: ['O(log n)', 'O(n)', 'O(n log n)', 'O(1)'],
+    author: 'ليلى الفيتوري',
+    tags: ['تحليل'],
+  },
+  {
+    id: 'qst_e2e_2',
+    type: 'SHORT' as const,
+    prompt: 'عرّف خاصية البنية الفرعية المثلى مع مثال.',
+    difficulty: 'MEDIUM' as const,
+    points: 2,
+    category: { title: 'تحليل التعقيد', slug: 'complexity', iconEmoji: null },
+    choices: null,
+    author: 'ليلى الفيتوري',
+    tags: [],
+  },
+  {
+    id: 'qst_e2e_3',
+    type: 'TRUE_FALSE' as const,
+    prompt: 'بروتوكول TCP يضمن تسليم الحزم بترتيب إرسالها.',
+    difficulty: 'EASY' as const,
+    points: 1,
+    category: { title: 'أساسيات الشبكات', slug: 'networking', iconEmoji: null },
+    choices: ['صح', 'خطأ'],
+    author: 'منير الزروق',
+    tags: [],
+  },
+];
+
+/** GET /question-bank/categories — QuestionCategoryRow[]. */
+export const QUESTION_CATEGORY_ROWS = [
+  {
+    id: 'cat_e2e_complexity',
+    slug: 'complexity',
+    title: 'تحليل التعقيد',
+    description: null,
+    iconEmoji: null,
+    isShared: true,
+    faculty: null,
+    department: null,
+    _count: { questions: 2 },
+  },
+  {
+    id: 'cat_e2e_networking',
+    slug: 'networking',
+    title: 'أساسيات الشبكات',
+    description: null,
+    iconEmoji: null,
+    isShared: true,
+    faculty: null,
+    department: null,
+    _count: { questions: 1 },
+  },
+];
 
 /* ── library borrow/return loop (r165h) ────────────────────────── */
 
@@ -2039,7 +2170,7 @@ export const OWNER_USERS_PAGE = {
   data: [
     { id: 'usr_e2e_student', email: 'student@zu.edu.ly', firstName: 'أحمد', lastName: 'الزاوي', role: 'STUDENT', avatarColor: '#3b82f6', avatarInitials: 'أز', isActive: true, createdAt: iso(-24 * 90), memberships: [{ institution: { id: 'ins_e2e_1', name: 'مساحة عمل أُلارا التجريبية', slug: 'ulara-demo', status: 'ACTIVE' as const } }] },
     { id: 'usr_e2e_teacher', email: 'teacher@zu.edu.ly', firstName: 'ليلى', lastName: 'الفيتوري', role: 'TEACHER', avatarColor: '#8b5cf6', avatarInitials: 'لف', isActive: true, createdAt: iso(-24 * 400), memberships: [{ institution: { id: 'ins_e2e_1', name: 'مساحة عمل أُلارا التجريبية', slug: 'ulara-demo', status: 'ACTIVE' as const } }] },
-    { id: 'usr_e2e_quality', email: 'quality@zu.edu.ly', firstName: 'عائشة', lastName: 'الباروني', role: 'QUALITY', avatarColor: '#d97706', avatarInitials: 'عب', isActive: true, createdAt: iso(-24 * 200), memberships: [{ institution: { id: 'ins_e2e_1', name: 'مساحة عمل أُلارا التجريبية', slug: 'ulara-demo', status: 'ACTIVE' as const } }] },
+    { id: 'usr_e2e_quality', email: 'quality@zu.edu.ly', firstName: 'عائشة', lastName: 'الباروني', role: 'QUALITY', avatarColor: '#D4A537', avatarInitials: 'عب', isActive: true, createdAt: iso(-24 * 200), memberships: [{ institution: { id: 'ins_e2e_1', name: 'مساحة عمل أُلارا التجريبية', slug: 'ulara-demo', status: 'ACTIVE' as const } }] },
   ],
   meta: { page: 1, limit: 20, total: 3, totalPages: 1 },
 };

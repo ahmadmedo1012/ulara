@@ -232,16 +232,30 @@ try {
       const cell = { width, theme, defects: [] };
       try {
         await page.goto(`${BASE}/`, { waitUntil: 'domcontentloaded', timeout: 60_000 });
-        await page.locator(FOOTER_SEL).waitFor({ state: 'visible', timeout: 45_000 });
+        await page.locator('main#main').waitFor({ state: 'visible', timeout: 45_000 });
         await page.evaluate((t) => {
           document.documentElement.setAttribute('data-theme', t);
           document.documentElement.setAttribute('data-theme-swapping', ''); // freeze transitions (the app's own mechanism)
         }, theme);
-        // scroll through the page to trigger every reveal-on-scroll observer
-        await page.evaluate(() => {
-          window.scrollTo(0, document.body.scrollHeight);
-          return new Promise((r) => setTimeout(r, 350));
+        /* r360 F1's lazy landing: the footer itself mounts on
+         * intersection (MountOnVisible) — the stepped walk mounts every
+         * section the way a real user's scroll does, THEN the footer
+         * wait has something to wait for (one jump skips the middle
+         * sections — observers report only the final state). */
+        await page.evaluate(async () => {
+          const step = 700;
+          let y = 0;
+          let lastMax = -1;
+          for (let i = 0; i < 80; i++) {
+            window.scrollTo(0, y);
+            await new Promise((r) => setTimeout(r, 110));
+            const max = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+            if (y + window.innerHeight >= max && max === lastMax) break;
+            if (y + window.innerHeight >= max) lastMax = max;
+            y += step;
+          }
         });
+        await page.locator(FOOTER_SEL).waitFor({ state: 'visible', timeout: 20_000 });
         await page.locator(FOOTER_SEL).scrollIntoViewIfNeeded();
         await page.waitForTimeout(700); // settle (fonts, late reveal)
 

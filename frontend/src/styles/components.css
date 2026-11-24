@@ -3564,3 +3564,42 @@
   @container grid4 (max-width: 860px) {
     .grid-4 { grid-template-columns: repeat(2, minmax(0,1fr)); }
   }
+
+/* ═══ r360 F3 — THE MOBILE TOUCH FLOOR (the audit's tap-target law) ═══
+   Every interactive control ≥44×44 at ≤767. The .btn.sm family already
+   carries the floor globally (r351 A2 Q6); this block extends it to the
+   compact control families the r358 full-product scan measured under
+   the line (the toast's close glyph 14×14 on EVERY route, the filter
+   pills 26–37px, the leaderboard sort heads 29px, the social reaction
+   buttons, the DataSheet row links 24–41px). The row links ride the
+   transparent hit-area idiom (padding + negative margin) so the ledger
+   density is untouched; the real controls grow honestly. */
+@media (max-width: 767px) {
+  /* the toast's close affordance: the X glyph stays 14px, the touch
+     box grows to the floor and the negative margins keep the toast's
+     visual corner seat (the button carries no background). */
+  .toast-close {
+    min-inline-size: 44px;
+    min-block-size: 44px;
+    margin-block: -15px; /* spacing-gate: allow — the transparent hit-area idiom's optical seat-keeper (the 44px box must not push the toast's visual corner) */
+    margin-inline: -15px; /* spacing-gate: allow — same idiom, inline axis */
+  }
+
+  /* the chip families — real controls, honest growth (training.css's
+     own craft-floor precedent, now the app-wide law) */
+  .filter-pill,
+  .leaderboard-sort,
+  .post-action {
+    min-block-size: 44px;
+    min-inline-size: 44px;
+  }
+
+  /* the DataSheet row links — the transparent hit-area idiom (the
+     ledger's visual density is untouched; the touch box grows) */
+  td .text-link,
+  .sg-cell a,
+  a.sg-cell-title {
+    padding-block: 0.5rem;
+    margin-block: -0.5rem;
+  }
+}

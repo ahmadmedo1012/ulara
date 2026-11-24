@@ -144,6 +144,10 @@ export function Live({ colsRef, dotsRef }: LiveProps) {
             ref={colsRef as RefObject<HTMLDivElement>}
             role="list"
             aria-label="الأوجاع الأربعة"
+            tabIndex={0} /* r360 F3 — the scrollable-region-focusable floor (axe
+                            wcag2a/2aa): the snap belt is a real scrollable region;
+                            keyboard users get focus + arrow-scroll parity (the CSS
+                            focus ring contract: base.css's universal ring) */
             data-spec="problem.cols"
           >
             {PAINS.map((p, i) => (

@@ -205,7 +205,7 @@ export const TRAINING_CERTS = [
 export const TRAINING_LEADERBOARD = [
   { rank: 1, userId: 'usr_qa_student', name: 'أحمد الزاوي', avatarColor: '#3b82f6', avatarInitials: 'أز', points: 1240, level: { level: 7, tier: 'GOLD', toNext: 260, pctIntoLevel: 40 } },
   { rank: 2, userId: 'usr_qa_peer1', name: 'سارة المنصوري', avatarColor: '#059669', avatarInitials: 'سم', points: 1120, level: { level: 6, tier: 'SILVER', toNext: 380, pctIntoLevel: 62 } },
-  { rank: 3, userId: 'usr_qa_peer2', name: 'خالد الترهوني', avatarColor: '#d97706', avatarInitials: 'خت', points: 980, level: { level: 6, tier: 'SILVER', toNext: 520, pctIntoLevel: 30 } },
+  { rank: 3, userId: 'usr_qa_peer2', name: 'خالد الترهوني', avatarColor: '#F06292', avatarInitials: 'خت', points: 980, level: { level: 6, tier: 'SILVER', toNext: 520, pctIntoLevel: 30 } },
 ];
 
 /** GET /announcements/feed — AnnouncementRow[] (hooks/resources/social.ts). */

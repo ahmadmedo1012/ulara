@@ -112,7 +112,11 @@ const GATED_IMPACTS = ['serious', 'critical']; // the gate's definition — neve
 /** Route → content-ready selector (the app's own surfaces). Falls back to
  *  the boot-plate-detached React-mounted signal for unlisted routes. */
 const ROUTE_READY = {
-  '/': 'footer.fo-footer',   // landing colophon footer (footer-overlap's proven wait)
+  /* r360 F1: the landing's sections (footer included) mount lazily on
+   * intersection — the ready signal must be the ALWAYS-mounted root,
+   * not a below-fold section. main#main is LandingPage's own first
+   * commit; the stepped walk below then mounts everything else. */
+  '/': 'main#main',
   '/auth': '.auth-shell',    // the login sheet root (App.tsx GuestRoute)
   '/404': '.nf-shell',       // NotFoundPage sheet root (also the `*` catch-all)
 };
@@ -208,8 +212,14 @@ try {
         };
         try {
           await page.goto(`${BASE}${route}`, { waitUntil: 'domcontentloaded', timeout: 60_000 });
-          // React's first commit replaces the static boot plate — the mount signal
-          await page.waitForSelector('.ula-boot-plate', { state: 'detached', timeout: 45_000 });
+          // React's first commit replaces the static boot plate — the mount
+          // signal. r360 F1's boot diet keeps the plate MOUNTED in its done
+          // state (aria-hidden, the fade seat) instead of detaching it, so
+          // the mount signal is: detached OR settled into .is-done.
+          await page.waitForFunction(() => {
+            const p = document.querySelector('.ula-boot-plate');
+            return !p || p.classList.contains('is-done');
+          }, { timeout: 45_000 });
           const ready = ROUTE_READY[route];
           if (ready) await page.locator(ready).first().waitFor({ state: 'visible', timeout: 45_000 });
           cell.direction = await page.evaluate(() =>
@@ -221,11 +231,29 @@ try {
             document.documentElement.setAttribute('data-theme', t);
             document.documentElement.setAttribute('data-theme-swapping', ''); // freeze transitions
           }, theme);
-          // scroll through the page to trigger every reveal-on-scroll observer
-          await page.evaluate(() => {
-            window.scrollTo(0, document.body.scrollHeight);
-            return new Promise((r) => setTimeout(r, 350));
+          /* r360 F1's lazy landing: sections (and the footer itself) mount
+           * on intersection (MountOnVisible, 420px lead). ONE jump to the
+           * bottom skips every middle section — the observers only report
+           * the final intersection state — and the footer is not even in
+           * the DOM before the first approach. The stepped walk mounts
+           * every section the way a real user's scroll does; the loop
+           * keeps walking while late mounts grow the page (the height
+           * stabilises only when everything is mounted). */
+          await page.evaluate(async () => {
+            const step = 700;
+            let y = 0;
+            let lastMax = -1;
+            for (let i = 0; i < 80; i++) {
+              window.scrollTo(0, y);
+              await new Promise((r) => setTimeout(r, 110));
+              const max = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+              if (y + window.innerHeight >= max && max === lastMax) break;
+              if (y + window.innerHeight >= max) lastMax = max;
+              y += step;
+            }
           });
+          // the footer is the LAST lazy mount — its visibility proves the walk landed
+          await page.locator('footer.fo-footer, main .fo-footer').first().waitFor({ state: 'attached', timeout: 20_000 }).catch(() => {});
           await page.evaluate(() => window.scrollTo(0, 0));
           await page.waitForTimeout(700); // settle (fonts, late reveal)
 

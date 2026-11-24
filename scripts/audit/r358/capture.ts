@@ -91,6 +91,16 @@ function deriveRoutes(): { routes: ScanRoute[]; mounted: string[]; diffs: Record
     '/contact', '/campus', '/colleges/leaderboard',
     '/404', '/403', '/500', '/maintenance',
     '/auth/forgot-password', '/auth/reset-password'];
+  /* r360 F3 — the reset sheet is a TOKENED route by contract (a bare
+   * visit is the page's own honest terminal state — the dead-link
+   * register — and would read as a P0 error banner). The scan visits
+   * the form state: a fixture token satisfies the page's structural
+   * ?token=<43 chars> contract without touching the API (the page
+   * only calls the backend on submit). The name/mounted checks below
+   * use the path SANS query. */
+  const QUERY_OVERRIDES: Record<string, string> = {
+    '/auth/reset-password': '/auth/reset-password?token=e2e_fixture_reset_token_0123456789abcdef0123456',
+  };
   const candidates = [...new Set([...fromRoutes, ...publicExtras, ...literalExtras])].filter(p => p !== '/login' && p !== '/login' && p !== '/register' && p !== '/universities' && p !== '/features');
 
   // every path literally mounted in App.tsx (path="…" or path={ROUTES.x})
@@ -118,11 +128,16 @@ function deriveRoutes(): { routes: ScanRoute[]; mounted: string[]; diffs: Record
   const scan = candidates
     .filter(p => !p.startsWith('/__'))
     .filter(p => mounted.has(p) || p === '/404')
-    .map(path => ({ path, role: roleFor(path), name: path === '/' ? 'landing' : path.replace(/\//g, '_').replace(/^_/, '').replace(/_/g, '-') }));
+    .map(path => ({
+      path: QUERY_OVERRIDES[path] ?? path,
+      basePath: path,
+      role: roleFor(path),
+      name: path === '/' ? 'landing' : path.replace(/\//g, '_').replace(/^_/, '').replace(/_/g, '-'),
+    }));
 
-  const scannedSet = new Set(scan.map(s => s.path));
+  const scannedSet = new Set(scan.map(s => s.basePath));
   const mountedNotScanned = [...mounted].filter(p => !scannedSet.has(p) && !p.startsWith('/login') && !p.startsWith('/register') && !p.startsWith('/universities') && !p.startsWith('/features'));
-  const scannedNotMounted = scan.filter(s => !mounted.has(s.path)).map(s => s.path);
+  const scannedNotMounted = scan.filter(s => !mounted.has(s.basePath)).map(s => s.basePath);
   return { routes: scan, mounted: [...mounted].sort(), diffs: { mountedNotScanned, scannedNotMounted } };
 }
 
@@ -236,10 +251,16 @@ async function pageMetrics(page: import('playwright').Page, width: number): Prom
     }
     if (retiredHits.length > 0) issues.push({ type: 'OLD_ACCENT_COLOR', severity: 'P1', message: `retired accent computed colors present: ${retiredHits.join(',')}` });
 
-    /* r358 — KPI layout mode */
+    /* r360 F3 — KPI layout mode. display:contents is a PASSTHROUGH
+     * (the .hr-scope boxless wrapper idiom), not a stacked list: walk
+     * up to the first real layout ancestor before judging grid/flex.
+     * (The old read flagged the .sg-kpis band itself — the first
+     * [class*="kpi"] match in document order — under its contents
+     * wrapper, while the band is its own grid.) */
     const kpis = Array.from(document.querySelectorAll('[class*="kpi"], [data-testid*="kpi"]'));
     if (kpis.length >= 3) {
-      const parent = kpis[0].parentElement;
+      let parent = kpis[0].parentElement;
+      while (parent && getComputedStyle(parent).display === 'contents') parent = parent.parentElement;
       const pcs = parent ? getComputedStyle(parent) : null;
       if (pcs && pcs.display !== 'grid' && pcs.display !== 'flex') {
         issues.push({ type: 'KPI_STACKED_LIST', severity: 'P2', message: `${kpis.length} KPI nodes under display:${pcs.display}` });
@@ -304,7 +325,7 @@ async function main() {
     process.exit(2);
   }
   const routes = ROUTES_FILTER
-    ? ROUTES_FILTER.split(',').map(p => ({ path: p, role: roleFor(p), name: p === '/' ? 'landing' : p.replace(/\//g, '-').replace(/^-/, '') }))
+    ? ROUTES_FILTER.split(',').map(p => ({ path: p, basePath: p, role: roleFor(p), name: p === '/' ? 'landing' : p.replace(/\//g, '-').replace(/^-/, '') }))
     : derived.filter(r => !FILTER_ROLE || r.role === FILTER_ROLE).slice(0, LIMIT > 0 ? LIMIT : undefined);
 
   await bootPreview();
@@ -361,9 +382,27 @@ async function main() {
             await page.goto(`${BASE_URL}${routeDef.path}`, { waitUntil: 'domcontentloaded', timeout: 20000 });
             await page.waitForTimeout(700);
           } catch (e) {
-            defects.push({ route: routeDef.path, role: routeDef.role, width, theme, type: 'NAVIGATION_ERROR', severity: 'P0', message: String((e as Error).message).slice(0, 200) });
+            defects.push({ route: routeDef.basePath, role: routeDef.role, width, theme, type: 'NAVIGATION_ERROR', severity: 'P0', message: String((e as Error).message).slice(0, 200) });
             continue;
           }
+          /* r360 F3 — the settle hardening: three transient states were
+           * poisoning the measurements (each reproduced CLEAN in a
+           * controlled probe at the same fixture/width/theme):
+           * 1. toasts mid-enter (opacity < 1 → axe color-contrast flags
+           *    on the animating text) — dismiss them before measuring;
+           * 2. reveal-up entrances mid-flight (scaled rects — a 44px
+           *    seat sampled at 0.84 scale reads 37px) — force-complete
+           *    every reveal, then let the transitions land;
+           * 3. axe's own injected artifacts lingering into the
+           *    retired-accent computed-color sweep — the sweep runs
+           *    BEFORE axe now (pageMetrics precedes this block). */
+          try {
+            await page.evaluate(() => {
+              document.querySelectorAll('.toast-close').forEach((b) => { try { (b as HTMLElement).click(); } catch { /* already gone */ } });
+              document.querySelectorAll('[class*="reveal"]').forEach((el) => { el.classList.add('in-view'); });
+            });
+            await page.waitForTimeout(900);
+          } catch { /* best-effort settle */ }
           let evaluation = await pageMetrics(page, width);
           // axe
           try {
@@ -384,10 +423,10 @@ async function main() {
               await page.screenshot({ path: join(roleDir, `${routeDef.name}-${width}-${theme}.jpg`), type: 'jpeg', quality: 75, fullPage: width === 390 && routeDef.path === '/' });
               visuals.push(await visualMetrics(page, routeDef.path, width));
             } catch (e) {
-              defects.push({ route: routeDef.path, role: routeDef.role, width, theme, type: 'INSTRUMENT_ERROR', severity: 'P2', message: `visual-metrics/shot: ${String((e as Error).message).slice(0, 140)}` });
+              defects.push({ route: routeDef.basePath, role: routeDef.role, width, theme, type: 'INSTRUMENT_ERROR', severity: 'P2', message: `visual-metrics/shot: ${String((e as Error).message).slice(0, 140)}` });
             }
           }
-          for (const issue of evaluation) defects.push({ route: routeDef.path, role: routeDef.role, width, theme, ...issue });
+          for (const issue of evaluation) defects.push({ route: routeDef.basePath, role: routeDef.role, width, theme, ...issue });
         }
       }
       await context.close();
@@ -402,7 +441,7 @@ async function main() {
     const rawMsg = (d.message as string) || (d.errors ? (d.errors as string[])[0] : '') || (d.type as string);
     const cleanMsg = String(rawMsg).split('\n')[0].slice(0, 200);
     const key = `${d.route}|${d.type}|${cleanMsg}`;
-    if (!grouped[key]) grouped[key] = { route: d.route, role: d.role, type: d.type, severity: d.severity, message: cleanMsg, viewports: [] as string[] };
+    if (!grouped[key]) grouped[key] = { route: d.route, role: d.role, type: d.type, severity: d.severity, message: cleanMsg, viewports: [] as string[], count: (d as { count?: number }).count, samples: (d as { samples?: unknown[] }).samples, violations: (d as { violations?: unknown[] }).violations }; /* r360 F3 — keep count/samples through the dedup (the element-level evidence the fixes need) */
     (grouped[key].viewports as string[]).push(`${d.width}px:${d.theme}`);
   }
   const deduped = Object.values(grouped);

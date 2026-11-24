@@ -66,6 +66,9 @@ import {
   MESSAGES_PAGE,
   MOOC_COURSES,
   MODERATION_QUEUE,
+  EXAM_TEMPLATE_ROWS,
+  QUESTION_BANK_ROWS,
+  QUESTION_CATEGORY_ROWS,
   MODERATION_TEMPLATES,
   MY_EXAMS,
   MY_LAB_STATS,
@@ -306,7 +309,10 @@ export function standardRoutes(): MockRouteDef[] {
      * BASELINE.md). Paginated bodies ride RAW ({data,meta}) exactly
      * like /owner/activity; enveloped ones ride ok(). */
     // permissions + identity
-    { method: 'GET', path: '/me/permissions', json: ok(myPermissions(STUDENT_USER.role)) },
+    /* r360 F3 — /me/permissions moved to the dynamic block below: the
+     * static table hardcoded the STUDENT answer for EVERY session, so
+     * capability-gated honest walls (teacher exams' EXAMS_AUTHOR) fired
+     * on pages the seeded role actually holds. Role-honest now. */
     // community / social
     { method: 'GET', path: '/announcements/feed', json: ok(ANNOUNCEMENT_FEED) },
     { method: 'GET', path: '/competitions', json: ok(COMPETITION_ROWS) },
@@ -344,8 +350,11 @@ export function standardRoutes(): MockRouteDef[] {
     { method: 'GET', path: '/teacher/offerings/:offeringId/analytics', json: ok(OFFERING_ANALYTICS) },
     { method: 'GET', path: '/offerings/:offeringId/grades', json: ok(OFFERING_GRADES) },
     { method: 'GET', path: '/research/queue', json: ok(RESEARCH_QUEUE) },
-    // exams (moderation + authoring detail)
+    // exams (moderation + authoring detail + the r360 F5 authoring list)
     { method: 'GET', path: '/exams/moderation-queue', json: ok(MODERATION_QUEUE) },
+    { method: 'GET', path: '/exams/templates', json: ok(EXAM_TEMPLATE_ROWS) },
+    { method: 'GET', path: '/question-bank', json: ok(QUESTION_BANK_ROWS) },
+    { method: 'GET', path: '/question-bank/categories', json: ok(QUESTION_CATEGORY_ROWS) },
     { method: 'GET', path: '/exams/templates/tpl_e2e_quiz4', json: ok(MODERATION_TEMPLATES.tpl_e2e_quiz4) },
     { method: 'GET', path: '/exams/templates/tpl_e2e_final_net', json: ok(MODERATION_TEMPLATES.tpl_e2e_final_net) },
     { method: 'GET', path: '/exams/templates/:templateId/attempts', json: ok(TEMPLATE_ATTEMPTS) },
@@ -537,6 +546,15 @@ export async function installMockApi(
       } else {
         await fulfillJson(route, 401, fail('UNAUTHENTICATED', 'جلسة غير صالحة'));
       }
+      return;
+    }
+    /* r360 F3 — role-honest permissions: the answer follows the LIVE
+     * session (seeded or just-logged-in), exactly like /auth/me. The
+     * honest walls (teacher exams' EXAMS_AUTHOR band) then render only
+     * for roles that truly lack the grant. */
+    if (method === 'GET' && (apiPath === '/me/permissions' || url.pathname.endsWith('/me/permissions'))) {
+      const role = (session.user?.role ?? 'STUDENT') as Parameters<typeof myPermissions>[0];
+      await fulfillJson(route, 200, ok(myPermissions(role)));
       return;
     }
     if (method === 'POST' && url.pathname.endsWith('/auth/refresh')) {
