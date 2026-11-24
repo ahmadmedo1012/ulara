@@ -1,0 +1,7109 @@
+{
+  "generatedAt": "2026-11-24T10:58:20.696Z",
+  "base": "http://localhost:5302",
+  "matrix": "full",
+  "visitedCells": 442,
+  "hardFailures": 0,
+  "wordiest": [
+    {
+      "role": "OWNER",
+      "route": "/settings",
+      "words": 270,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "QUALITY",
+      "route": "/settings",
+      "words": 259,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "ADMIN",
+      "route": "/settings",
+      "words": 255,
+      "viewport": "1024x768"
+    },
+    {
+      "role": "QUALITY",
+      "route": "/quality/dashboard",
+      "words": 247,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "OWNER",
+      "route": "/owner/education",
+      "words": 235,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "OWNER",
+      "route": "/owner/system",
+      "words": 233,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "OWNER",
+      "route": "/owner/activity",
+      "words": 224,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "OWNER",
+      "route": "/owner/ai",
+      "words": 223,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "OWNER",
+      "route": "/owner/dashboard",
+      "words": 220,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "ADMIN",
+      "route": "/admin/dashboard",
+      "words": 217,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "STUDENT",
+      "route": "/settings",
+      "words": 216,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "TEACHER",
+      "route": "/settings",
+      "words": 216,
+      "viewport": "768x900"
+    },
+    {
+      "role": "OWNER",
+      "route": "/vision",
+      "words": 208,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "OWNER",
+      "route": "/owner/feedback",
+      "words": 205,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "OWNER",
+      "route": "/owner/governance",
+      "words": 204,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "QUALITY",
+      "route": "/vision",
+      "words": 197,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "ADMIN",
+      "route": "/vision",
+      "words": 194,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "OWNER",
+      "route": "/colleges",
+      "words": 190,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "STUDENT",
+      "route": "/student/research",
+      "words": 186,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "STUDENT",
+      "route": "/student/dashboard",
+      "words": 182,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "QUALITY",
+      "route": "/colleges",
+      "words": 180,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "TEACHER",
+      "route": "/teacher/dashboard",
+      "words": 171,
+      "viewport": "768x900"
+    },
+    {
+      "role": "STUDENT",
+      "route": "/student/university",
+      "words": 169,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "STUDENT",
+      "route": "/student/payment",
+      "words": 168,
+      "viewport": "1440x900"
+    },
+    {
+      "role": "TEACHER",
+      "route": "/teacher/exams/tpl_e2e_quiz4",
+      "words": 165,
+      "viewport": "768x900"
+    }
+  ],
+  "defects": {
+    "overflows": [
+      {
+        "cell": "ADMIN·/institution·light·768",
+        "px": 4
+      },
+      {
+        "cell": "ADMIN·/institution·light·390",
+        "px": 4
+      },
+      {
+        "cell": "QUALITY·/institution·light·768",
+        "px": 4
+      },
+      {
+        "cell": "QUALITY·/institution·light·390",
+        "px": 4
+      },
+      {
+        "cell": "OWNER·/institution·light·768",
+        "px": 4
+      },
+      {
+        "cell": "OWNER·/institution·light·390",
+        "px": 4
+      },
+      {
+        "cell": "OWNER·/owner/governance·light·390",
+        "px": 11
+      }
+    ],
+    "smallTargets": [
+      {
+        "cell": "STUDENT·/student/calendar·light·1440",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "الشهر السابق",
+            "w": 42,
+            "h": 44
+          },
+          {
+            "tag": "button",
+            "name": "الشهر التالي",
+            "w": 42,
+            "h": 44
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/calendar·light·1024",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "الشهر السابق",
+            "w": 42,
+            "h": 44
+          },
+          {
+            "tag": "button",
+            "name": "الشهر التالي",
+            "w": 42,
+            "h": 44
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/calendar·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "الشهر السابق",
+            "w": 42,
+            "h": 44
+          },
+          {
+            "tag": "button",
+            "name": "الشهر التالي",
+            "w": 42,
+            "h": 44
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/calendar·light·390",
+        "count": 23,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "الشهر السابق",
+            "w": 39,
+            "h": 44
+          },
+          {
+            "tag": "button",
+            "name": "الشهر التالي",
+            "w": 34,
+            "h": 44
+          },
+          {
+            "tag": "button",
+            "name": "الأحد 1 — حدث واحد",
+            "w": 41,
+            "h": 48
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/research·light·1440",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "رفع بحث جديد",
+            "w": 142,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/research·light·1024",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "رفع بحث جديد",
+            "w": 142,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/research·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "رفع بحث جديد",
+            "w": 142,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/ai·light·1440",
+        "count": 7,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "اشرح مفهوماً",
+            "w": 87,
+            "h": 31
+          },
+          {
+            "tag": "button",
+            "name": "أسوأ فجواتي",
+            "w": 85,
+            "h": 31
+          },
+          {
+            "tag": "button",
+            "name": "إرسال",
+            "w": 57,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/ai·light·1024",
+        "count": 7,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "اشرح مفهوماً",
+            "w": 87,
+            "h": 31
+          },
+          {
+            "tag": "button",
+            "name": "أسوأ فجواتي",
+            "w": 85,
+            "h": 31
+          },
+          {
+            "tag": "button",
+            "name": "إرسال",
+            "w": 57,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/ai·light·768",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "اشرح مفهوماً",
+            "w": 87,
+            "h": 31
+          },
+          {
+            "tag": "button",
+            "name": "أسوأ فجواتي",
+            "w": 85,
+            "h": 31
+          },
+          {
+            "tag": "button",
+            "name": "إرسال",
+            "w": 57,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/labs·light·1440",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "قريباً",
+            "w": 86,
+            "h": 40
+          },
+          {
+            "tag": "button",
+            "name": "ابدأ تجربة",
+            "w": 113,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/labs·light·1024",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "قريباً",
+            "w": 86,
+            "h": 40
+          },
+          {
+            "tag": "button",
+            "name": "ابدأ تجربة",
+            "w": 113,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/labs·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "قريباً",
+            "w": 86,
+            "h": 40
+          },
+          {
+            "tag": "button",
+            "name": "ابدأ تجربة",
+            "w": 113,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/training·light·1440",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "كل المسارات (0)",
+            "w": 136,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/training·light·1024",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "كل المسارات (0)",
+            "w": 136,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/training·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "كل المسارات (0)",
+            "w": 136,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/community·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "عرض نص الإعلان: فتح باب التقديم لمنافسة ",
+            "w": 19,
+            "h": 44
+          },
+          {
+            "tag": "button",
+            "name": "عرض نص الإعلان: ورشة عمل: مراجعة ما قبل ",
+            "w": 36,
+            "h": 44
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/social·light·1440",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "أعجبني بهذا المنشور",
+            "w": 13,
+            "h": 35
+          },
+          {
+            "tag": "button",
+            "name": "إزالة الإعجاب",
+            "w": 13,
+            "h": 35
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/social·light·1024",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "أعجبني بهذا المنشور",
+            "w": 13,
+            "h": 34
+          },
+          {
+            "tag": "button",
+            "name": "إزالة الإعجاب",
+            "w": 13,
+            "h": 34
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/social·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "أعجبني بهذا المنشور",
+            "w": 13,
+            "h": 37
+          },
+          {
+            "tag": "button",
+            "name": "إزالة الإعجاب",
+            "w": 13,
+            "h": 37
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/social·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "أعجبني بهذا المنشور",
+            "w": 13,
+            "h": 39
+          },
+          {
+            "tag": "button",
+            "name": "إزالة الإعجاب",
+            "w": 13,
+            "h": 39
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/messages·light·1440",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "رسالة جديدة",
+            "w": 131,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/messages·light·1024",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "رسالة جديدة",
+            "w": 131,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/messages·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "رسالة جديدة",
+            "w": 131,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/settings·light·1440",
+        "count": 4,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/settings·light·1024",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/settings·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "تغيير كلمة المرور",
+            "w": 123,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/courses/offr_e2e_algorithms·light·1440",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "التالي: المحاضرة 2",
+            "w": 181,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/courses/offr_e2e_algorithms·light·1024",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "التالي: المحاضرة 2",
+            "w": 181,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/courses/offr_e2e_algorithms·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "التالي: المحاضرة 2",
+            "w": 181,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/lectures/lec_e2e_greedy·light·1440",
+        "count": 7,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "إرجاع 10 ثوانٍ",
+            "w": 40,
+            "h": 40
+          },
+          {
+            "tag": "button",
+            "name": "تشغيل",
+            "w": 40,
+            "h": 40
+          },
+          {
+            "tag": "button",
+            "name": "تقديم 10 ثوانٍ",
+            "w": 40,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/lectures/lec_e2e_greedy·light·1024",
+        "count": 7,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "إرجاع 10 ثوانٍ",
+            "w": 40,
+            "h": 40
+          },
+          {
+            "tag": "button",
+            "name": "تشغيل",
+            "w": 40,
+            "h": 40
+          },
+          {
+            "tag": "button",
+            "name": "تقديم 10 ثوانٍ",
+            "w": 40,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/lectures/lec_e2e_greedy·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "المحاضرة السابقة",
+            "w": 155,
+            "h": 40
+          },
+          {
+            "tag": "a",
+            "name": "عُد إلى المقرّر",
+            "w": 127,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/lectures/lec_e2e_greedy·light·390",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "أجب عن نقطة التفاعل عند 05:00: متى يضمن ",
+            "w": 273,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/online-exams/exm_e2e_quiz3·light·1440",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "العودة إلى الاختبارات",
+            "w": 1092,
+            "h": 40
+          },
+          {
+            "tag": "button",
+            "name": "بدء الاختبار",
+            "w": 98,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/online-exams/exm_e2e_quiz3·light·1024",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "العودة إلى الاختبارات",
+            "w": 868,
+            "h": 40
+          },
+          {
+            "tag": "button",
+            "name": "بدء الاختبار",
+            "w": 98,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/online-exams/exm_e2e_quiz3·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "العودة إلى الاختبارات",
+            "w": 740,
+            "h": 40
+          },
+          {
+            "tag": "button",
+            "name": "بدء الاختبار",
+            "w": 98,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/document/syllabus-sample.pdf·light·1440",
+        "count": 11,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "العودة إلى المكتبة",
+            "w": 83,
+            "h": 36
+          },
+          {
+            "tag": "button",
+            "name": "مصغّرات الصفحات",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "الصفحة السابقة",
+            "w": 32,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/document/syllabus-sample.pdf·light·1024",
+        "count": 11,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "العودة إلى المكتبة",
+            "w": 83,
+            "h": 35
+          },
+          {
+            "tag": "button",
+            "name": "مصغّرات الصفحات",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "الصفحة السابقة",
+            "w": 32,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/document/syllabus-sample.pdf·light·768",
+        "count": 11,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "العودة إلى المكتبة",
+            "w": 96,
+            "h": 38
+          },
+          {
+            "tag": "button",
+            "name": "مصغّرات الصفحات",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "الصفحة السابقة",
+            "w": 32,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/document/syllabus-sample.pdf·light·390",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "العودة إلى المكتبة",
+            "w": 102,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/attendance·light·1440",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "حفظ السجلّ",
+            "w": 106,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/attendance·light·1024",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "حفظ السجلّ",
+            "w": 106,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/attendance·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "حفظ السجلّ",
+            "w": 106,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/students·light·1440",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "أحمد الزاوي",
+            "w": 61,
+            "h": 19
+          },
+          {
+            "tag": "a",
+            "name": "مروة البراني",
+            "w": 54,
+            "h": 19
+          },
+          {
+            "tag": "a",
+            "name": "يوسف الزاوي",
+            "w": 66,
+            "h": 19
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/students·light·1024",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "أحمد الزاوي",
+            "w": 61,
+            "h": 19
+          },
+          {
+            "tag": "a",
+            "name": "مروة البراني",
+            "w": 54,
+            "h": 19
+          },
+          {
+            "tag": "a",
+            "name": "يوسف الزاوي",
+            "w": 66,
+            "h": 19
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/students·light·768",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "أحمد الزاوي",
+            "w": 61,
+            "h": 19
+          },
+          {
+            "tag": "a",
+            "name": "مروة البراني",
+            "w": 54,
+            "h": 19
+          },
+          {
+            "tag": "a",
+            "name": "يوسف الزاوي",
+            "w": 66,
+            "h": 19
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/students·light·390",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "أحمد الزاوي",
+            "w": 61,
+            "h": 19
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/materials·light·1440",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "إضافة مادة",
+            "w": 122,
+            "h": 40
+          },
+          {
+            "tag": "a",
+            "name": "محاضرة الجشع — الشرائح.pptx",
+            "w": 863,
+            "h": 21
+          },
+          {
+            "tag": "a",
+            "name": "ورقة تمارين ٤.pdf",
+            "w": 863,
+            "h": 21
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/materials·light·1024",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "إضافة مادة",
+            "w": 122,
+            "h": 40
+          },
+          {
+            "tag": "a",
+            "name": "محاضرة الجشع — الشرائح.pptx",
+            "w": 639,
+            "h": 21
+          },
+          {
+            "tag": "a",
+            "name": "ورقة تمارين ٤.pdf",
+            "w": 639,
+            "h": 21
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/materials·light·768",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "إضافة مادة",
+            "w": 122,
+            "h": 40
+          },
+          {
+            "tag": "a",
+            "name": "محاضرة الجشع — الشرائح.pptx",
+            "w": 511,
+            "h": 21
+          },
+          {
+            "tag": "a",
+            "name": "ورقة تمارين ٤.pdf",
+            "w": 511,
+            "h": 21
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/materials·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "محاضرة الجشع — الشرائح.pptx",
+            "w": 149,
+            "h": 43
+          },
+          {
+            "tag": "a",
+            "name": "ورقة تمارين ٤.pdf",
+            "w": 149,
+            "h": 21
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/grades·light·1440",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "حفظ الدرجات",
+            "w": 112,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/grades·light·1024",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "حفظ الدرجات",
+            "w": 112,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/grades·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "حفظ الدرجات",
+            "w": 112,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/assignments·light·1440",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "واجب جديد",
+            "w": 127,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/assignments·light·1024",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "واجب جديد",
+            "w": 127,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/assignments·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "واجب جديد",
+            "w": 127,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/exams·light·1440",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "العودة للوحة التحكم",
+            "w": 147,
+            "h": 44
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/exams·light·1024",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "العودة للوحة التحكم",
+            "w": 147,
+            "h": 44
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/exams·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "العودة للوحة التحكم",
+            "w": 139,
+            "h": 41
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/research·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "مراجعة أقدم بحث",
+            "w": 156,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/live·light·1440",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "جلسة جديدة",
+            "w": 133,
+            "h": 40
+          },
+          {
+            "tag": "a",
+            "name": "رابط الانضمام",
+            "w": 64,
+            "h": 20
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/live·light·1024",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "جلسة جديدة",
+            "w": 133,
+            "h": 40
+          },
+          {
+            "tag": "a",
+            "name": "رابط الانضمام",
+            "w": 64,
+            "h": 20
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/live·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "جلسة جديدة",
+            "w": 133,
+            "h": 40
+          },
+          {
+            "tag": "a",
+            "name": "رابط الانضمام",
+            "w": 64,
+            "h": 20
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/ai·light·1440",
+        "count": 7,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "اشرح مفهوماً",
+            "w": 87,
+            "h": 31
+          },
+          {
+            "tag": "button",
+            "name": "أسوأ فجواتي",
+            "w": 85,
+            "h": 31
+          },
+          {
+            "tag": "button",
+            "name": "إرسال",
+            "w": 57,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/ai·light·1024",
+        "count": 7,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "اشرح مفهوماً",
+            "w": 87,
+            "h": 31
+          },
+          {
+            "tag": "button",
+            "name": "أسوأ فجواتي",
+            "w": 85,
+            "h": 31
+          },
+          {
+            "tag": "button",
+            "name": "إرسال",
+            "w": 57,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/ai·light·768",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "اشرح مفهوماً",
+            "w": 87,
+            "h": 31
+          },
+          {
+            "tag": "button",
+            "name": "أسوأ فجواتي",
+            "w": 85,
+            "h": 31
+          },
+          {
+            "tag": "button",
+            "name": "إرسال",
+            "w": 57,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/profile·light·1440",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "تعديل البيانات الشخصية",
+            "w": 189,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/profile·light·1024",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "تعديل البيانات الشخصية",
+            "w": 189,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/profile·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "تعديل البيانات الشخصية",
+            "w": 189,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/messages·light·1440",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "رسالة جديدة",
+            "w": 131,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/messages·light·1024",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "رسالة جديدة",
+            "w": 131,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/messages·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "رسالة جديدة",
+            "w": 131,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/community·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "عرض نص الإعلان: فتح باب التقديم لمنافسة ",
+            "w": 19,
+            "h": 44
+          },
+          {
+            "tag": "button",
+            "name": "عرض نص الإعلان: ورشة عمل: مراجعة ما قبل ",
+            "w": 36,
+            "h": 44
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/settings·light·1440",
+        "count": 4,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/settings·light·1024",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/settings·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "تغيير كلمة المرور",
+            "w": 123,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/exams/tpl_e2e_quiz4·light·1440",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "العودة إلى بنك الأسئلة والاختبارات",
+            "w": 1092,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/exams/tpl_e2e_quiz4·light·1024",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "العودة إلى بنك الأسئلة والاختبارات",
+            "w": 868,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/exams/tpl_e2e_quiz4·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "العودة إلى بنك الأسئلة والاختبارات",
+            "w": 740,
+            "h": 40
+          },
+          {
+            "tag": "input",
+            "name": "",
+            "w": 13,
+            "h": 13
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/intelligence/offr_e2e_algorithms·light·1440",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "العودة إلى كل مقرّراتي",
+            "w": 1092,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/intelligence/offr_e2e_algorithms·light·1024",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "العودة إلى كل مقرّراتي",
+            "w": 868,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/intelligence/offr_e2e_algorithms·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "العودة إلى كل مقرّراتي",
+            "w": 740,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/teachers·light·1440",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "أحمد الزاوي",
+            "w": 61,
+            "h": 16
+          },
+          {
+            "tag": "button",
+            "name": "ليلى الفيتوري",
+            "w": 65,
+            "h": 16
+          },
+          {
+            "tag": "button",
+            "name": "خالد المبروك",
+            "w": 67,
+            "h": 16
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/teachers·light·1024",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "أحمد الزاوي",
+            "w": 61,
+            "h": 16
+          },
+          {
+            "tag": "button",
+            "name": "ليلى الفيتوري",
+            "w": 65,
+            "h": 16
+          },
+          {
+            "tag": "button",
+            "name": "خالد المبروك",
+            "w": 67,
+            "h": 16
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/teachers·light·768",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "أحمد الزاوي",
+            "w": 71,
+            "h": 18
+          },
+          {
+            "tag": "button",
+            "name": "ليلى الفيتوري",
+            "w": 76,
+            "h": 18
+          },
+          {
+            "tag": "button",
+            "name": "خالد المبروك",
+            "w": 76,
+            "h": 18
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/teachers·light·390",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "أحمد الزاوي",
+            "w": 74,
+            "h": 19
+          },
+          {
+            "tag": "button",
+            "name": "ليلى الفيتوري",
+            "w": 82,
+            "h": 19
+          },
+          {
+            "tag": "button",
+            "name": "خالد المبروك",
+            "w": 82,
+            "h": 19
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/students·light·1440",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "الصفحة السابقة",
+            "w": 70,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "الصفحة 1",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "الصفحة التالية",
+            "w": 60,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/students·light·1024",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "الصفحة السابقة",
+            "w": 70,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "الصفحة 1",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "الصفحة التالية",
+            "w": 60,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/students·light·768",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "الصفحة السابقة",
+            "w": 70,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "الصفحة 1",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "الصفحة التالية",
+            "w": 60,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/students·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "بيانات وتسجيلات أحمد الزاوي",
+            "w": 20,
+            "h": 44
+          },
+          {
+            "tag": "button",
+            "name": "بيانات وتسجيلات مروة البراني",
+            "w": 20,
+            "h": 44
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/reports·light·1440",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "بحوث منشورة1,204",
+            "w": 1080,
+            "h": 44
+          },
+          {
+            "tag": "a",
+            "name": "طلاب نشطون964",
+            "w": 1080,
+            "h": 44
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/reports·light·1024",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "a",
+            "name": "بحوث منشورة1,204",
+            "w": 856,
+            "h": 43
+          },
+          {
+            "tag": "a",
+            "name": "طلاب نشطون964",
+            "w": 856,
+            "h": 43
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/settings·light·1440",
+        "count": 4,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/settings·light·1024",
+        "count": 6,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/settings·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "تغيير كلمة المرور",
+            "w": 123,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/community·light·1440",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/community·light·1024",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/vision·light·1440",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/vision·light·1024",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·dark·1440",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/institution·light·1440",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/institution·light·1024",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/dashboard·light·1440",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/dashboard·light·1024",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/courses·light·1440",
+        "count": 4,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/courses·light·1024",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/professors·light·1440",
+        "count": 4,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/professors·light·1024",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/engagement·light·1440",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/engagement·light·1024",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/exam-moderation·light·1440",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/exam-moderation·light·1024",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/curriculum·light·1440",
+        "count": 7,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/curriculum·light·1024",
+        "count": 7,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/curriculum·light·768",
+        "count": 4,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "الكل1",
+            "w": 70,
+            "h": 36
+          },
+          {
+            "tag": "button",
+            "name": "مكتمل1",
+            "w": 82,
+            "h": 36
+          },
+          {
+            "tag": "button",
+            "name": "جزئي0",
+            "w": 71,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/reports·light·1440",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/reports·light·1024",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/notifications·light·1440",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/notifications·light·1024",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/notifications·light·390",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "تعليم «تم نشر درجة الواجب الثاني» كمقروء",
+            "w": 112,
+            "h": 44
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/alerts·light·1440",
+        "count": 7,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/alerts·light·1024",
+        "count": 7,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/alerts·light·768",
+        "count": 4,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "الكل4",
+            "w": 70,
+            "h": 36
+          },
+          {
+            "tag": "button",
+            "name": "حرج1",
+            "w": 70,
+            "h": 36
+          },
+          {
+            "tag": "button",
+            "name": "تحذير2",
+            "w": 77,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/community·light·1440",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/community·light·1024",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/colleges·light·1440",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/colleges·light·1024",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/settings·light·1440",
+        "count": 7,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/settings·light·1024",
+        "count": 6,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/settings·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "تغيير كلمة المرور",
+            "w": 123,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/vision·light·1440",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/vision·light·1024",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/dashboard·dark·1440",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/institution·light·1440",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/institution·light·1024",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/dashboard·light·1440",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/dashboard·light·1024",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/realtime·light·1440",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/realtime·light·1024",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/users·light·1440",
+        "count": 6,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/users·light·1024",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/users·light·768",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "الصفحة السابقة",
+            "w": 70,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "الصفحة 1",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "tag": "button",
+            "name": "الصفحة التالية",
+            "w": 60,
+            "h": 32
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/institutions·light·1440",
+        "count": 4,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/institutions·light·1024",
+        "count": 4,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/institutions·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "إنشاء المؤسسة",
+            "w": 127,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/activity·light·1440",
+        "count": 5,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/activity·light·1024",
+        "count": 5,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/activity·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "عرض التفاصيل",
+            "w": 87,
+            "h": 36
+          },
+          {
+            "tag": "button",
+            "name": "عرض التفاصيل",
+            "w": 87,
+            "h": 36
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/activity·light·390",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "عرض التفاصيل",
+            "w": 91,
+            "h": 38
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/content·light·1440",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/content·light·1024",
+        "count": 4,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/system·light·1440",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/system·light·1024",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/education·light·1440",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/education·light·1024",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/colleges·light·1440",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/colleges·light·1024",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/ai·light·1440",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/ai·light·1024",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/notifications·light·1440",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/notifications·light·1024",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/alerts·light·1440",
+        "count": 5,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/alerts·light·1024",
+        "count": 5,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/alerts·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "حلّ التنبيه",
+            "w": 114,
+            "h": 40
+          },
+          {
+            "tag": "button",
+            "name": "حلّ التنبيه",
+            "w": 114,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/feedback·light·1440",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/feedback·light·1024",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/settings·light·1440",
+        "count": 7,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/settings·light·1024",
+        "count": 6,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/settings·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "تغيير كلمة المرور",
+            "w": 123,
+            "h": 40
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/governance·light·1440",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/governance·light·1024",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/vision·light·1440",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/vision·light·1024",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/dashboard·dark·1440",
+        "count": 3,
+        "sample": [
+          {
+            "tag": "button",
+            "name": "فاتح",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "داكن",
+            "w": 30,
+            "h": 28
+          },
+          {
+            "tag": "button",
+            "name": "تلقائي",
+            "w": 30,
+            "h": 28
+          }
+        ]
+      }
+    ],
+    "overlaps": [
+      {
+        "cell": "STUDENT·/student/dashboard·light·768",
+        "count": 4,
+        "sample": [
+          {
+            "el": "pf-today-link",
+            "text": "مقدمة في الخوارزميات — قاعة A2",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 13567
+              }
+            ]
+          },
+          {
+            "el": "pf-today-meta",
+            "text": "اليوم · 09:00–10:30",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 13008
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/dashboard·light·390",
+        "count": 5,
+        "sample": [
+          {
+            "el": "ind-mono ind-sched-code",
+            "text": "CS-201",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 323
+              }
+            ]
+          },
+          {
+            "el": "ind-mono ind-sched-code",
+            "text": "CS-310",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 315
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/calendar·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "cal-cell",
+            "text": "22",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 2341
+              }
+            ]
+          },
+          {
+            "el": "cal-cell",
+            "text": "23",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 2341
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/calendar·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "cal-cell",
+            "text": "8",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1598
+              }
+            ]
+          },
+          {
+            "el": "cal-cell",
+            "text": "9",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1599
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/courses·light·390",
+        "count": 4,
+        "sample": [
+          {
+            "el": "r305c-sec-note",
+            "text": "واجباتك المستحقة فعلياً خلال ا",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 5545
+              }
+            ]
+          },
+          {
+            "el": "pf-row-title",
+            "text": "واجب: واجب الأسبوع الثالث",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 3954
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/results·light·768",
+        "count": 7,
+        "sample": [
+          {
+            "el": "TH",
+            "text": "المقرّر",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 3011
+              }
+            ]
+          },
+          {
+            "el": "TH",
+            "text": "الدرجة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 962
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/matrix·light·768",
+        "count": 3,
+        "sample": [
+          {
+            "el": "text-md font-semibold",
+            "text": "مقدمة في الخوارزميات",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 5574
+              }
+            ]
+          },
+          {
+            "el": "text-xs text-subtle",
+            "text": "3 مفاهيم · أتقنت 2",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 15607
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/matrix·light·390",
+        "count": 6,
+        "sample": [
+          {
+            "el": "r319s-bar-title",
+            "text": "مصفوفتك حسب المقرّر",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 2314
+              }
+            ]
+          },
+          {
+            "el": "r319s-mono r319s-count",
+            "text": "03",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 158
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/online-exams·light·768",
+        "count": 8,
+        "sample": [
+          {
+            "el": "oex-row-title",
+            "text": "اختبار نصفي — الخوارزميات",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 11281
+              }
+            ]
+          },
+          {
+            "el": "oex-row-kicker",
+            "text": "نصفي · مقدمة في الخوارزميات",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 11576
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/online-exams·light·390",
+        "count": 3,
+        "sample": [
+          {
+            "el": "r319s-bar-title",
+            "text": "اختبارات أجريتها",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 3334
+              }
+            ]
+          },
+          {
+            "el": "r319s-mono r319s-count",
+            "text": "01",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 367
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/library·light·768",
+        "count": 7,
+        "sample": [
+          {
+            "el": "SPAN",
+            "text": "د. عبد الرحمن الشريف",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1379
+              }
+            ]
+          },
+          {
+            "el": "SPAN",
+            "text": "برمجة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 361
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/library·light·390",
+        "count": 1,
+        "sample": [
+          {
+            "el": "btn outline sm",
+            "text": "تصفية",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 3564
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/research·light·768",
+        "count": 8,
+        "sample": [
+          {
+            "el": "SPAN",
+            "text": "مقدمة في الخوارزميات (CS-201)",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 2707
+              }
+            ]
+          },
+          {
+            "el": "font-mono",
+            "text": "CS-201",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 759
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/research·light·390",
+        "count": 3,
+        "sample": [
+          {
+            "el": "r305rp-band-secondary r305rp-res-metric-",
+            "text": "لا شيء",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 5239
+              }
+            ]
+          },
+          {
+            "el": "r319s-bar-title",
+            "text": "بحوثي",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1405
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/ai·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "el": "ai-side-label",
+            "text": "محادثاتك",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1029
+              }
+            ]
+          },
+          {
+            "el": "btn ghost sm",
+            "text": "جديدة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 3608
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/ai·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "el": "btn accent chat-send",
+            "text": "",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 2043
+              }
+            ]
+          },
+          {
+            "el": "btn ghost sm",
+            "text": "جديدة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 414
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/labs·light·390",
+        "count": 1,
+        "sample": [
+          {
+            "el": "btn primary",
+            "text": "ابدأ تجربة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 3309
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/live·light·390",
+        "count": 6,
+        "sample": [
+          {
+            "el": "pf-row-title",
+            "text": "مقدمة في الاستعلامات",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 959
+              }
+            ]
+          },
+          {
+            "el": "r305s-meta-row",
+            "text": "CS-210قواعد البيانات 16 مارس، ",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 13300
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/achievements·light·390",
+        "count": 3,
+        "sample": [
+          {
+            "el": "badge-tile-title",
+            "text": "الغوّاص",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 9166
+              }
+            ]
+          },
+          {
+            "el": "badge-tile-desc",
+            "text": "أنجز كل تجارب المعمل.",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 9166
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/gamification·light·390",
+        "count": 4,
+        "sample": [
+          {
+            "el": "pf-row-meta",
+            "text": "سبعة أيام متتالية",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 3081
+              }
+            ]
+          },
+          {
+            "el": "badge gold",
+            "text": "+30 نقطة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 747
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/skills·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "el": "TD",
+            "text": "استعلامات SQL",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 507
+              }
+            ]
+          },
+          {
+            "el": "TD",
+            "text": "20%",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 423
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/skills·light·390",
+        "count": 9,
+        "sample": [
+          {
+            "el": "CAPTION",
+            "text": "مستوى الإتقان لكل مهارة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 2594
+              }
+            ]
+          },
+          {
+            "el": "TH",
+            "text": "المهارة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 2828
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/mooc·light·390",
+        "count": 3,
+        "sample": [
+          {
+            "el": "BDI",
+            "text": "210",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 720
+              }
+            ]
+          },
+          {
+            "el": "BDI",
+            "text": "مبتدئ",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 600
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/webinars·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "el": "webinar-dest-desc",
+            "text": "تابع الفعاليّات والإعلانات وال",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 8172
+              }
+            ]
+          },
+          {
+            "el": "btn primary sm",
+            "text": "فتح المجتمع",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 3544
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/social·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "el": "BDI",
+            "text": "#خوارزميات",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1083
+              }
+            ]
+          },
+          {
+            "el": "BDI",
+            "text": "#مراجعة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 299
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/social·light·390",
+        "count": 3,
+        "sample": [
+          {
+            "el": "r319s-bar-title",
+            "text": "الأكثر تداولاً",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 2477
+              }
+            ]
+          },
+          {
+            "el": "r319s-mono r319s-count",
+            "text": "02",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 367
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/colleges·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "el": "pf-row-title",
+            "text": "٢ · المقرّرات والمحتوى",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 11663
+              }
+            ]
+          },
+          {
+            "el": "cp-meta-row",
+            "text": "الأستاذ يبني المحاضرات والاختب",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 14149
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/colleges·light·390",
+        "count": 6,
+        "sample": [
+          {
+            "el": "pf-row-line pf-row-link",
+            "text": "كلية الآدابArts2قسم260طالب15عض",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 27106
+              }
+            ]
+          },
+          {
+            "el": "pf-row-title",
+            "text": "كلية الآداب",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 4838
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/jobs·light·390",
+        "count": 1,
+        "sample": [
+          {
+            "el": "btn primary sm",
+            "text": "تقدّم",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1090
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/profile·light·768",
+        "count": 3,
+        "sample": [
+          {
+            "el": "text-sm",
+            "text": "قسم علوم الحاسوب",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 3030
+              }
+            ]
+          },
+          {
+            "el": "text-xxs text-subtle",
+            "text": "الرقم الجامعي",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 13221
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/profile·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "el": "r319s-bar-title",
+            "text": "المعلومات الأكاديمية",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 4545
+              }
+            ]
+          },
+          {
+            "el": "text-xxs text-subtle",
+            "text": "الاسم الكامل",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 2089
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/settings·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "el": "btn primary",
+            "text": "تغيير كلمة المرور",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 575
+              }
+            ]
+          },
+          {
+            "el": "r319s-bar-title",
+            "text": "معلومات الحساب والتحقق",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 7198
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/settings·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "el": "input",
+            "text": "",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 5945
+              }
+            ]
+          },
+          {
+            "el": "btn primary",
+            "text": "تغيير كلمة المرور",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 5412
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/payment·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "el": "pf-row-line pf-row-link",
+            "text": "تابع مواعيد الرسوم وإعلانات ال",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 10777
+              }
+            ]
+          },
+          {
+            "el": "r319s-bar-title",
+            "text": "مكتب الشؤون الماليّة بالجامعة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 11540
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/payment·light·390",
+        "count": 4,
+        "sample": [
+          {
+            "el": "pf-row-title",
+            "text": "أحضر رقمك الجامعيّ أو بطاقتك ا",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 5447
+              }
+            ]
+          },
+          {
+            "el": "pf-row-meta",
+            "text": "عند المراجعة أو السداد",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 6131
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/university·light·768",
+        "count": 4,
+        "sample": [
+          {
+            "el": "r305u-fact-label",
+            "text": "الموقع",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 7139
+              }
+            ]
+          },
+          {
+            "el": "r305u-fact-value",
+            "text": "افتراضية",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 7139
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/university·light·390",
+        "count": 1,
+        "sample": [
+          {
+            "el": "r319s-bar-title",
+            "text": "بطاقة تعريف",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 2953
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/map·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "el": "SPAN",
+            "text": "بيانات التواصل أعلاه بيانات عر",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 3144
+              }
+            ]
+          },
+          {
+            "el": "btn primary sm",
+            "text": "بطاقة المؤسّسة الكاملة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 12177
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/map·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "el": "ml-fact-label",
+            "text": "الهاتف",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 7503
+              }
+            ]
+          },
+          {
+            "el": "font-mono text-sm",
+            "text": "+218 00 000000",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 7503
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/downloads·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "el": "TD",
+            "text": "مقدمة في الخوارزميات",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 9669
+              }
+            ]
+          },
+          {
+            "el": "badge",
+            "text": "DOC",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 796
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/vision·light·768",
+        "count": 6,
+        "sample": [
+          {
+            "el": "pf-row-line pf-row-link",
+            "text": "مولّد السيرة الذاتيةسيرة ذاتية",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 35619
+              }
+            ]
+          },
+          {
+            "el": "pf-row-title",
+            "text": "مولّد السيرة الذاتية",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 5188
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/vision·light·390",
+        "count": 7,
+        "sample": [
+          {
+            "el": "pf-row-line pf-row-link",
+            "text": "الإشراف الذكي على الاختباراتإش",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 17014
+              }
+            ]
+          },
+          {
+            "el": "pf-row-title",
+            "text": "الإشراف الذكي على الاختبارات",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1522
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/courses/offr_e2e_algorithms·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "el": "r319s-bar-title",
+            "text": "الجدول الأسبوعي",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 6404
+              }
+            ]
+          },
+          {
+            "el": "r319s-mono r319s-count",
+            "text": "01",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 340
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/courses/offr_e2e_algorithms·light·390",
+        "count": 3,
+        "sample": [
+          {
+            "el": "list-row course-lec-row next",
+            "text": "المحاضرة 02الخوارزميات الجشعة ",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 27262
+              }
+            ]
+          },
+          {
+            "el": "r319s-mono r319s-coursebar-pct",
+            "text": "62%",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 412
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/lectures/lec_e2e_greedy·light·768",
+        "count": 4,
+        "sample": [
+          {
+            "el": "lecture-desc",
+            "text": "الاختيار الجشع والإثبات الصحيح",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 3265
+              }
+            ]
+          },
+          {
+            "el": "r319s-bar-title",
+            "text": "نقاط التفاعل",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 4795
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/lectures/lec_e2e_greedy·light·390",
+        "count": 5,
+        "sample": [
+          {
+            "el": "cp-row",
+            "text": "05:00متى يضمن الخيار الجشع الح",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 10971
+              }
+            ]
+          },
+          {
+            "el": "chapter-time",
+            "text": "05:00",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1222
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "STUDENT·/student/dashboard·dark·390",
+        "count": 5,
+        "sample": [
+          {
+            "el": "ind-mono ind-sched-code",
+            "text": "CS-201",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 323
+              }
+            ]
+          },
+          {
+            "el": "ind-mono ind-sched-code",
+            "text": "CS-310",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 315
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/dashboard·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "el": "card-subtitle",
+            "text": "آخر ستة أسابيع",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 623
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/dashboard·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "el": "pf-section-title",
+            "text": "محاضرات اليوم",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 11112
+              }
+            ]
+          },
+          {
+            "el": "pf-section-desc",
+            "text": "الثلاثاء",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 7306
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/intelligence·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "el": "SPAN",
+            "text": "مقرّراتي",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1941
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/intelligence·light·390",
+        "count": 3,
+        "sample": [
+          {
+            "el": "risk-row-suggestion",
+            "text": "خطة دعم أسبوعية + مراجعة الوحد",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 4900
+              }
+            ]
+          },
+          {
+            "el": "BDI",
+            "text": "78%",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 840
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/performance·light·390",
+        "count": 8,
+        "sample": [
+          {
+            "el": "tpg-dist-label",
+            "text": "ممتاز (85 فأعلى)",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 2448
+              }
+            ]
+          },
+          {
+            "el": "BDI",
+            "text": "85 فأعلى",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1416
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/attendance·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "avatar",
+            "text": "أز",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1024
+              }
+            ]
+          },
+          {
+            "el": "list-row-title",
+            "text": "أحمد الزاوي",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 7670
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/attendance·light·390",
+        "count": 4,
+        "sample": [
+          {
+            "el": "tpg-att-summary-label",
+            "text": "حاضر",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 557
+              }
+            ]
+          },
+          {
+            "el": "tpg-att-summary-label",
+            "text": "متأخّر",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 557
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/students·light·768",
+        "count": 7,
+        "sample": [
+          {
+            "el": "SPAN",
+            "text": "الصلاحية",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1426
+              }
+            ]
+          },
+          {
+            "el": "SELECT",
+            "text": "7 أيام14 يومًا30 يومًا",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 3520
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/students·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "el": "BDI",
+            "text": "84%",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 532
+              }
+            ]
+          },
+          {
+            "el": "hr-chip",
+            "text": "جيّد جدّاً",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 469
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/grades·light·768",
+        "count": 3,
+        "sample": [
+          {
+            "el": "form-field-label",
+            "text": "الدرجة العظمى",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 2299
+              }
+            ]
+          },
+          {
+            "el": "input",
+            "text": "",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 29832
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/grades·light·390",
+        "count": 1,
+        "sample": [
+          {
+            "el": "hr-chip",
+            "text": "جيّد جدّاً",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 2028
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/assignments·light·390",
+        "count": 1,
+        "sample": [
+          {
+            "el": "SPAN",
+            "text": "جميع الواجبات",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 10583
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/live·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "el": "SPAN",
+            "text": "جلسات قادمة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 5449
+              }
+            ]
+          },
+          {
+            "el": "card-subtitle",
+            "text": "جلسة مجدولة واحدة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 5702
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/live·light·390",
+        "count": 5,
+        "sample": [
+          {
+            "el": "live-row-title",
+            "text": "مراجعة الخوارزميات الجشعة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 3620
+              }
+            ]
+          },
+          {
+            "el": "text-xs text-muted",
+            "text": "CS-201 · مقدمة في الخوارزميات ",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 3468
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/labs·light·768",
+        "count": 5,
+        "sample": [
+          {
+            "el": "BDI",
+            "text": "خوارزميات",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 700
+              }
+            ]
+          },
+          {
+            "el": "BDI",
+            "text": "web",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 364
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/labs·light·390",
+        "count": 1,
+        "sample": [
+          {
+            "el": "SPAN",
+            "text": "المعامل المتاحة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 20153
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/library·light·768",
+        "count": 7,
+        "sample": [
+          {
+            "el": "SPAN",
+            "text": "د. عبد الرحمن الشريف",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1379
+              }
+            ]
+          },
+          {
+            "el": "SPAN",
+            "text": "برمجة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 361
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/library·light·390",
+        "count": 1,
+        "sample": [
+          {
+            "el": "btn outline sm",
+            "text": "تصفية",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 3564
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/ai·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "el": "ai-side-label",
+            "text": "محادثاتك",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1029
+              }
+            ]
+          },
+          {
+            "el": "btn ghost sm",
+            "text": "جديدة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 3608
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/ai·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "el": "btn accent chat-send",
+            "text": "",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 2043
+              }
+            ]
+          },
+          {
+            "el": "btn ghost sm",
+            "text": "جديدة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 414
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/profile·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "el": "SPAN",
+            "text": "نبذة شخصية",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 4883
+              }
+            ]
+          },
+          {
+            "el": "text-sm text-muted",
+            "text": "لم تُضف نبذة بعد.",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 8878
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/profile·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "el": "stat-value",
+            "text": "دكتوراه",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 4080
+              }
+            ]
+          },
+          {
+            "el": "stat-trend flat",
+            "text": "12 سنة خبرة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 9166
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/colleges·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "el": "pf-row-title",
+            "text": "٢ · المقرّرات والمحتوى",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 11663
+              }
+            ]
+          },
+          {
+            "el": "cp-meta-row",
+            "text": "الأستاذ يبني المحاضرات والاختب",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 14149
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/colleges·light·390",
+        "count": 6,
+        "sample": [
+          {
+            "el": "pf-row-line pf-row-link",
+            "text": "كلية الآدابArts2قسم260طالب15عض",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 27106
+              }
+            ]
+          },
+          {
+            "el": "pf-row-title",
+            "text": "كلية الآداب",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 4838
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/vision·light·768",
+        "count": 6,
+        "sample": [
+          {
+            "el": "pf-row-line pf-row-link",
+            "text": "مولّد السيرة الذاتيةسيرة ذاتية",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 35619
+              }
+            ]
+          },
+          {
+            "el": "pf-row-title",
+            "text": "مولّد السيرة الذاتية",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 5188
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/vision·light·390",
+        "count": 7,
+        "sample": [
+          {
+            "el": "pf-row-line pf-row-link",
+            "text": "الإشراف الذكي على الاختباراتإش",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 17014
+              }
+            ]
+          },
+          {
+            "el": "pf-row-title",
+            "text": "الإشراف الذكي على الاختبارات",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1522
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/settings·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "el": "btn primary",
+            "text": "تغيير كلمة المرور",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 575
+              }
+            ]
+          },
+          {
+            "el": "r319s-bar-title",
+            "text": "معلومات الحساب والتحقق",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 7199
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/settings·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "el": "input",
+            "text": "",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 5945
+              }
+            ]
+          },
+          {
+            "el": "btn primary",
+            "text": "تغيير كلمة المرور",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 5412
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/exams/tpl_e2e_quiz4·light·768",
+        "count": 4,
+        "sample": [
+          {
+            "el": "exa-section-title",
+            "text": "التصحيح",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 28844
+              }
+            ]
+          },
+          {
+            "el": "exa-section-desc",
+            "text": "محاولة واحدة بانتظار تصحيحك",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 5211
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/exams/tpl_e2e_quiz4·light·390",
+        "count": 5,
+        "sample": [
+          {
+            "el": "exa-row-title exa-row-title-wrap",
+            "text": "عرّف خاصية البنية الفرعية المث",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 5166
+              }
+            ]
+          },
+          {
+            "el": "badge",
+            "text": "إجابة قصيرة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 2621
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/intelligence/offr_e2e_algorithms·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "el": "SPAN",
+            "text": "قائمة الطلاب — تحليل لحظي",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 23794
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/intelligence/offr_e2e_algorithms·light·390",
+        "count": 3,
+        "sample": [
+          {
+            "el": "tab on",
+            "text": "الطلاب وتقييم المخاطر",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 4277
+              }
+            ]
+          },
+          {
+            "el": "tab",
+            "text": "مساعد المنهج",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 3146
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "TEACHER·/teacher/dashboard·dark·390",
+        "count": 2,
+        "sample": [
+          {
+            "el": "pf-section-title",
+            "text": "محاضرات اليوم",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 11112
+              }
+            ]
+          },
+          {
+            "el": "pf-section-desc",
+            "text": "الثلاثاء",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 7306
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·light·390",
+        "count": 5,
+        "sample": [
+          {
+            "el": "stat-cell stat-cell-link",
+            "text": "هيئة التدريس137عضو",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 6371
+              }
+            ]
+          },
+          {
+            "el": "stat-cell stat-cell-link",
+            "text": "المقرّرات3425231 تسجيلاً",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 27262
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/faculties·light·768",
+        "count": 6,
+        "sample": [
+          {
+            "el": "admin-faculty-head",
+            "text": "كلية الطب البشري· Medicineقسم ",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 14556
+              }
+            ]
+          },
+          {
+            "el": "SPAN",
+            "text": "قسم واحد",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 254
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/faculties·light·390",
+        "count": 7,
+        "sample": [
+          {
+            "el": "admin-faculty-head",
+            "text": "كلية الهندسة· Engineeringقسمان",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 24613
+              }
+            ]
+          },
+          {
+            "el": "admin-faculty-name",
+            "text": "كلية الهندسة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1824
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/colleges·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "el": "pf-row-title",
+            "text": "٢ · المقرّرات والمحتوى",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 11663
+              }
+            ]
+          },
+          {
+            "el": "cp-meta-row",
+            "text": "الأستاذ يبني المحاضرات والاختب",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 14149
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/colleges·light·390",
+        "count": 6,
+        "sample": [
+          {
+            "el": "pf-row-line pf-row-link",
+            "text": "كلية الآدابArts2قسم260طالب15عض",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 27106
+              }
+            ]
+          },
+          {
+            "el": "pf-row-title",
+            "text": "كلية الآداب",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 4838
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/courses·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "el": "font-semibold",
+            "text": "قواعد البيانات",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1349
+              }
+            ]
+          },
+          {
+            "el": "ws-meta",
+            "text": "274 تسجيلاً · فصلان",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 2230
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/digital·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "el": "TD",
+            "text": "أوراق علميّة في النظام",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 2196
+              }
+            ]
+          },
+          {
+            "el": "admin-table-num font-mono",
+            "text": "74",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 829
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/digital·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "el": "TD",
+            "text": "اختبارات منشورة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 5377
+              }
+            ]
+          },
+          {
+            "el": "admin-table-num font-mono",
+            "text": "46",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 16433
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/reports·light·768",
+        "count": 4,
+        "sample": [
+          {
+            "el": "trend-label",
+            "text": "ديسمبر",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 553
+              }
+            ]
+          },
+          {
+            "el": "trend-bar-val",
+            "text": "241",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 594
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/reports·light·390",
+        "count": 3,
+        "sample": [
+          {
+            "el": "trend-bar-val",
+            "text": "212",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 720
+              }
+            ]
+          },
+          {
+            "el": "trend-bar-val",
+            "text": "188",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 720
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/settings·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "el": "SPAN",
+            "text": "عمليّات النظام",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1933
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/settings·light·390",
+        "count": 1,
+        "sample": [
+          {
+            "el": "settings-value",
+            "text": "حدّ عامّ 1000 طلب كل 15 دقيقة ",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 9875
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/settings·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "el": "btn primary",
+            "text": "تغيير كلمة المرور",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 4374
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/settings·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "el": "input",
+            "text": "",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 13904
+              }
+            ]
+          },
+          {
+            "el": "btn primary",
+            "text": "تغيير كلمة المرور",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 2689
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/community·light·390",
+        "count": 3,
+        "sample": [
+          {
+            "el": "pf-row-meta",
+            "text": "سالم القرضابي · إدارة المؤسسة ",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 239
+              }
+            ]
+          },
+          {
+            "el": "TIME",
+            "text": "15 مارس",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 114
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/vision·light·768",
+        "count": 4,
+        "sample": [
+          {
+            "el": "pf-row-line pf-row-link",
+            "text": "مولّد السيرة الذاتيةسيرة ذاتية",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 50332
+              }
+            ]
+          },
+          {
+            "el": "pf-row-title",
+            "text": "مولّد السيرة الذاتية",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 9525
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/vision·light·390",
+        "count": 5,
+        "sample": [
+          {
+            "el": "pf-row-line pf-row-link",
+            "text": "المساعد البحثيمرافق كتابة البح",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 3687
+              }
+            ]
+          },
+          {
+            "el": "pf-row-line pf-row-link",
+            "text": "الإشراف الذكي على الاختباراتإش",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 23071
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "ADMIN·/admin/dashboard·dark·390",
+        "count": 3,
+        "sample": [
+          {
+            "el": "sg-index",
+            "text": "[01]",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 588
+              }
+            ]
+          },
+          {
+            "el": "sg-caption",
+            "text": "STUDENT DISTRIBUTION",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 3556
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/dashboard·light·390",
+        "count": 3,
+        "sample": [
+          {
+            "el": "sg-index",
+            "text": "[02]",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 588
+              }
+            ]
+          },
+          {
+            "el": "sg-caption",
+            "text": "WEEKLY ACTIVITY",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 2522
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/courses·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "el": "DIV",
+            "text": "12 محاضرة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 6003
+              }
+            ]
+          },
+          {
+            "el": "text-xxs text-subtle",
+            "text": "9 ملفات",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 5460
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/professors·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "el": "DIV",
+            "text": "كلية الهندسة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 6003
+              }
+            ]
+          },
+          {
+            "el": "text-xxs text-subtle",
+            "text": "علوم الحاسوب",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 4485
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/engagement·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "TH",
+            "text": "اليوم",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1035
+              }
+            ]
+          },
+          {
+            "el": "TH",
+            "text": "جلسات",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 970
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/exam-moderation·light·390",
+        "count": 6,
+        "sample": [
+          {
+            "el": "badge",
+            "text": "اختبار قصير",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 302
+              }
+            ]
+          },
+          {
+            "el": "badge brand",
+            "text": "مقدمة في الخوارزميات",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 502
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/curriculum·light·390",
+        "count": 1,
+        "sample": [
+          {
+            "el": "heat-legend-key",
+            "text": "متأخر — أقلّ من 40%",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 7989
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/notifications·light·390",
+        "count": 3,
+        "sample": [
+          {
+            "el": "flex items-center gap-2 flex-wrap",
+            "text": "تنبيه: اقتراب موعد اختبار نصفي",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 9743
+              }
+            ]
+          },
+          {
+            "el": "sg-flag",
+            "text": "غير مقروء",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1528
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/alerts·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "el": "qlt-alert-row-desc",
+            "text": "أربع محاضرات في CS-201 بلا ملخ",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 16551
+              }
+            ]
+          },
+          {
+            "el": "qlt-alert-row-time",
+            "text": "منذ 255 يوماً",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 7942
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/community·light·390",
+        "count": 3,
+        "sample": [
+          {
+            "el": "pf-row-meta",
+            "text": "سالم القرضابي · إدارة المؤسسة ",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 239
+              }
+            ]
+          },
+          {
+            "el": "TIME",
+            "text": "15 مارس",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 114
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/colleges·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "el": "pf-row-title",
+            "text": "٢ · المقرّرات والمحتوى",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 11663
+              }
+            ]
+          },
+          {
+            "el": "cp-meta-row",
+            "text": "الأستاذ يبني المحاضرات والاختب",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 14149
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/colleges·light·390",
+        "count": 6,
+        "sample": [
+          {
+            "el": "pf-row-line pf-row-link",
+            "text": "كلية الآدابArts2قسم260طالب15عض",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 26554
+              }
+            ]
+          },
+          {
+            "el": "pf-row-title",
+            "text": "كلية الآداب",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 4838
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/settings·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "el": "btn primary",
+            "text": "تغيير كلمة المرور",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 4374
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/settings·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "el": "input",
+            "text": "",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 13904
+              }
+            ]
+          },
+          {
+            "el": "btn primary",
+            "text": "تغيير كلمة المرور",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 2689
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/vision·light·768",
+        "count": 4,
+        "sample": [
+          {
+            "el": "pf-row-line pf-row-link",
+            "text": "مولّد السيرة الذاتيةسيرة ذاتية",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 50332
+              }
+            ]
+          },
+          {
+            "el": "pf-row-title",
+            "text": "مولّد السيرة الذاتية",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 9525
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/vision·light·390",
+        "count": 5,
+        "sample": [
+          {
+            "el": "pf-row-line pf-row-link",
+            "text": "المساعد البحثيمرافق كتابة البح",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 3687
+              }
+            ]
+          },
+          {
+            "el": "pf-row-line pf-row-link",
+            "text": "الإشراف الذكي على الاختباراتإش",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 23071
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "QUALITY·/quality/dashboard·dark·390",
+        "count": 3,
+        "sample": [
+          {
+            "el": "sg-index",
+            "text": "[02]",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 588
+              }
+            ]
+          },
+          {
+            "el": "sg-caption",
+            "text": "WEEKLY ACTIVITY",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 2522
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/dashboard·light·390",
+        "count": 3,
+        "sample": [
+          {
+            "el": "pf-stat-hint",
+            "text": "486 شعبة فاعلة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1445
+              }
+            ]
+          },
+          {
+            "el": "pf-stat-hint",
+            "text": "تراكمية",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1445
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/users·light·390",
+        "count": 7,
+        "sample": [
+          {
+            "el": "sg-title",
+            "text": "دليل الحسابات",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1240
+              }
+            ]
+          },
+          {
+            "el": "avatar",
+            "text": "أز",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 333
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/institutions·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "owner-inst-name sg-cell-title",
+            "text": "مساحة عمل أُلارا التجريبية",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 3038
+              }
+            ]
+          },
+          {
+            "el": "sg-cell-sub",
+            "text": "Ulara Demo Workspace",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 3171
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/institutions·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "el": "form-field-label",
+            "text": "المعرّف (slug — اختياري)",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 6774
+              }
+            ]
+          },
+          {
+            "el": "input",
+            "text": "",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 13806
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/activity·light·768",
+        "count": 6,
+        "sample": [
+          {
+            "el": "BDI",
+            "text": "COURSE_ARCHIVED",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 2356
+              }
+            ]
+          },
+          {
+            "el": "owner-timeline-meta",
+            "text": "خالد الدرسي · admin@zu.edu.ly ",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 11576
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/activity·light·390",
+        "count": 5,
+        "sample": [
+          {
+            "el": "owner-timeline-meta",
+            "text": "أمين المنصّة · owner@zu.edu.ly",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 10419
+              }
+            ]
+          },
+          {
+            "el": "owner-timeline-email",
+            "text": "owner@zu.edu.ly",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 2040
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/content·light·768",
+        "count": 4,
+        "sample": [
+          {
+            "el": "owner-swatch-hex",
+            "text": "#B57438",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 603
+              }
+            ]
+          },
+          {
+            "el": "text-xxs text-subtle",
+            "text": "لون التمييز --accent-soft",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 13533
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/content·light·390",
+        "count": 1,
+        "sample": [
+          {
+            "el": "SPAN",
+            "text": "تعديل الألوان ومحتوى الصفحة ال",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 19822
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/system·light·768",
+        "count": 3,
+        "sample": [
+          {
+            "el": "owner-toggle-label-text",
+            "text": "المساعد الذكي",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1694
+              }
+            ]
+          },
+          {
+            "el": "owner-toggle-label-text",
+            "text": "منشورات المجتمع",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 2244
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/system·light·390",
+        "count": 4,
+        "sample": [
+          {
+            "el": "alert-title",
+            "text": "الرفعات لا تنجو من إعادة النشر",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 2354
+              }
+            ]
+          },
+          {
+            "el": "alert-desc",
+            "text": "أوراق البحث وملفات المقرّرات ا",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 22259
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/education·light·768",
+        "count": 9,
+        "sample": [
+          {
+            "el": "CAPTION",
+            "text": "المقرّرات حسب الكلّيّة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 4519
+              }
+            ]
+          },
+          {
+            "el": "TH",
+            "text": "الكلّيّة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1672
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/colleges·light·768",
+        "count": 2,
+        "sample": [
+          {
+            "el": "pf-row-title",
+            "text": "٢ · المقرّرات والمحتوى",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 11663
+              }
+            ]
+          },
+          {
+            "el": "cp-meta-row",
+            "text": "الأستاذ يبني المحاضرات والاختب",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 14149
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/colleges·light·390",
+        "count": 6,
+        "sample": [
+          {
+            "el": "pf-row-line pf-row-link",
+            "text": "كلية الآدابArts2قسم260طالب15عض",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 26619
+              }
+            ]
+          },
+          {
+            "el": "pf-row-title",
+            "text": "كلية الآداب",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 4838
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/ai·light·390",
+        "count": 4,
+        "sample": [
+          {
+            "el": "sg-kpi-label",
+            "text": "معدّل النجاح",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 781
+              }
+            ]
+          },
+          {
+            "el": "sg-kpi-delta",
+            "text": "تشغيل مستقرّ",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 2789
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/notifications·light·390",
+        "count": 3,
+        "sample": [
+          {
+            "el": "flex items-center gap-2 flex-wrap",
+            "text": "تنبيه: اقتراب موعد اختبار نصفي",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 9743
+              }
+            ]
+          },
+          {
+            "el": "sg-flag",
+            "text": "غير مقروء",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1528
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/alerts·light·390",
+        "count": 5,
+        "sample": [
+          {
+            "el": "message",
+            "text": "زمن الانتظار في طابور إشعارات ",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 7791
+              }
+            ]
+          },
+          {
+            "el": "btn primary",
+            "text": "حلّ التنبيه",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 5016
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/feedback·light·768",
+        "count": 3,
+        "sample": [
+          {
+            "el": "sg-index",
+            "text": "[02]",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 543
+              }
+            ]
+          },
+          {
+            "el": "sg-caption",
+            "text": "CLIENT ERRORS",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 2957
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/feedback·light·390",
+        "count": 7,
+        "sample": [
+          {
+            "el": "fb-chip",
+            "text": "اقتراح",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 630
+              }
+            ]
+          },
+          {
+            "el": "fb-chip",
+            "text": "قيد المراجعة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1407
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/settings·light·768",
+        "count": 1,
+        "sample": [
+          {
+            "el": "btn primary",
+            "text": "تغيير كلمة المرور",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 4374
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/settings·light·390",
+        "count": 2,
+        "sample": [
+          {
+            "el": "input",
+            "text": "",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 13904
+              }
+            ]
+          },
+          {
+            "el": "btn primary",
+            "text": "تغيير كلمة المرور",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 2689
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/governance·light·768",
+        "count": 3,
+        "sample": [
+          {
+            "el": "sg-index",
+            "text": "[02]",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 543
+              }
+            ]
+          },
+          {
+            "el": "sg-caption",
+            "text": "LOGIN OUTCOMES",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 4662
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/vision·light·768",
+        "count": 4,
+        "sample": [
+          {
+            "el": "pf-row-line pf-row-link",
+            "text": "مولّد السيرة الذاتيةسيرة ذاتية",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 50332
+              }
+            ]
+          },
+          {
+            "el": "pf-row-title",
+            "text": "مولّد السيرة الذاتية",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 9525
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/vision·light·390",
+        "count": 5,
+        "sample": [
+          {
+            "el": "pf-row-line pf-row-link",
+            "text": "المساعد البحثيمرافق كتابة البح",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 3687
+              }
+            ]
+          },
+          {
+            "el": "pf-row-line pf-row-link",
+            "text": "الإشراف الذكي على الاختباراتإش",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 23071
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cell": "OWNER·/owner/dashboard·dark·390",
+        "count": 3,
+        "sample": [
+          {
+            "el": "pf-stat-hint",
+            "text": "486 شعبة فاعلة",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1445
+              }
+            ]
+          },
+          {
+            "el": "pf-stat-hint",
+            "text": "تراكمية",
+            "by": [
+              {
+                "fixed": "bottom-nav",
+                "area": 1445
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "runtimeErrors": [],
+    "notImplemented": []
+  }
+}

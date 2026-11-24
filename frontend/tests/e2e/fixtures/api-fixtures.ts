@@ -549,6 +549,28 @@ export const NOTIFICATIONS = [
 /** Unread count riding the notifications envelope meta. */
 export const UNREAD_COUNT = 2;
 
+/* ── push devices (r359 §5.5 — the notification-settings register) ──
+ * The REAL wire shape of GET /me/push-devices (push.routes.ts r326
+ * M2.6): the mobile app registers Expo tokens; the settings sheet
+ * lists them + owns the unregister verb. Two devices exercise both
+ * the ANDROID and IOS platform render paths (WEB rides the enum). */
+export const PUSH_DEVICES = [
+  {
+    id: 'dev_e2e_android',
+    platform: 'ANDROID' as const,
+    appVersion: '1.4.0',
+    lastSeenAt: iso(-3),
+    createdAt: iso(-480),
+  },
+  {
+    id: 'dev_e2e_ios',
+    platform: 'IOS' as const,
+    appVersion: '1.3.2',
+    lastSeenAt: iso(-30),
+    createdAt: iso(-2400),
+  },
+];
+
 /* ── faculties: GET /faculties — Faculty[] (register form) ─────── */
 
 export const FACULTIES = [
