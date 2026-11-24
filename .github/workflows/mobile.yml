@@ -967,14 +967,27 @@ jobs:
             adb shell wm size 320x568 >/dev/null 2>&1 || true
             adb shell am force-stop ly.ulara.app >/dev/null 2>&1 || true
             sleep 3
+            # run 45353893364 forensics: the LAUNCHER redraws at the new size
+            # and parks an app-info popup over everything (the app renders
+            # behind it, dimmed). Dismiss system dialogs + BACK (we are on
+            # the launcher — the app is force-stopped, BACK is safe).
+            adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
+            adb shell input keyevent 4 >/dev/null 2>&1 || true
+            sleep 2
             "$HOME/.maestro/bin/maestro" test apps/mobile/.maestro/shots-size.yaml -e SHOT=STUDENT-320 || touch fail.flag
             adb shell wm size 360x640 >/dev/null 2>&1 || true
             adb shell am force-stop ly.ulara.app >/dev/null 2>&1 || true
             sleep 3
+            adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
+            adb shell input keyevent 4 >/dev/null 2>&1 || true
+            sleep 2
             "$HOME/.maestro/bin/maestro" test apps/mobile/.maestro/shots-size.yaml -e SHOT=STUDENT-360 || touch fail.flag
             adb shell wm size 768x1024 >/dev/null 2>&1 || true
             adb shell am force-stop ly.ulara.app >/dev/null 2>&1 || true
             sleep 3
+            adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
+            adb shell input keyevent 4 >/dev/null 2>&1 || true
+            sleep 2
             "$HOME/.maestro/bin/maestro" test apps/mobile/.maestro/shots-size.yaml -e SHOT=STUDENT-TABLET || touch fail.flag
             adb shell wm size reset >/dev/null 2>&1 || true
             "$ANDROID_HOME/platform-tools/adb" devices > adb-devices.txt 2>&1 || true
