@@ -590,6 +590,7 @@ jobs:
           name: sidestore-ipa-logs-${{ github.run_number }}
           path: |
             apps/mobile/build/xcodebuild.log
+            apps/mobile/build/expo-config.json
             apps/mobile/build/pod-install.log
             apps/mobile/build/prebuild.log
             apps/mobile/build/xcode-list.json
