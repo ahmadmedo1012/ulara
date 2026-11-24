@@ -123,11 +123,19 @@ function north(x: number, y: number): ArtNode {
   );
 }
 
-/** paper-cut opening through a poché wall (door gap) */
+/** paper-cut opening through a poché wall + jamb ticks */
 function opening(x: number, y: number, len: number, horiz: boolean, thick = XW + 2): ArtNode {
-  return horiz
-    ? rect(x, y - thick / 2, len, thick, { fill: C.paper, stroke: 'none' })
-    : rect(x - thick / 2, y, thick, len, { fill: C.paper, stroke: 'none' });
+  const t2 = XW / 2 + 1;
+  const jamb = horiz
+    ? [line(x, y - t2, x, y + t2, { stroke: C.ink, 'stroke-width': W.fine }), line(x + len, y - t2, x + len, y + t2, { stroke: C.ink, 'stroke-width': W.fine })]
+    : [line(x - t2, y, x + t2, y, { stroke: C.ink, 'stroke-width': W.fine }), line(x - t2, y + len, x + t2, y + len, { stroke: C.ink, 'stroke-width': W.fine })];
+  return g(
+    {},
+    horiz
+      ? rect(x, y - thick / 2, len, thick, { fill: C.paper, stroke: 'none' })
+      : rect(x - thick / 2, y, thick, len, { fill: C.paper, stroke: 'none' }),
+    ...jamb,
+  );
 }
 
 /* ═══════════════════ shared plan shell ══════════════════════════ */
@@ -143,9 +151,8 @@ interface PlanSpec {
 function plan(spec: PlanSpec): ArtDoc {
   const W_ = 1200, H = 840;
   const x0 = 130, y0 = 90, w = 820, h = 560;
-  const inner: ArtNode[] = [];
-  spec.draw(x0, y0, w, h, inner);
-  const nodes: ArtNode[] = [g({ opacity: 0.82 }, ...inner)];
+  const nodes: ArtNode[] = [];
+  spec.draw(x0, y0, w, h, nodes);
 
   /* dimensions: overall + one bay */
   nodes.push(dimH(x0, x0 + w, y0 + h + 56, 70, 70, { label: `${(w * 0.05).toFixed(0)}000MM` }));
@@ -175,6 +182,8 @@ function lectureHall(x0: number, y0: number, w: number, h: number, nodes: ArtNod
   nodes.push(rect(x0 + 250, y0 + 16, 320, 70, { fill: 'none', stroke: C.ink, 'stroke-width': W.med }));
   nodes.push(line(x0 + 290, y0 + 30, x0 + 530, y0 + 30, { stroke: C.ink, 'stroke-width': W.med }));
   nodes.push(label(x0 + 410, y0 + 62, 'STAGE / 80MM', { 'text-anchor': 'middle' }));
+  // rear cross-aisle
+  nodes.push(path(`M${x0 + 100} ${y0 + h - 130}H${x0 + w - 100}`, { stroke: C.hair, 'stroke-width': W.hair, 'stroke-dasharray': '6 5', fill: 'none' }));
   // tiered rows (curved)
   for (let i = 0; i < 6; i++) {
     const ry = y0 + 130 + i * 58;
