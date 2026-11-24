@@ -28,7 +28,15 @@
 
 - P3: council and meeting upload forms now switch to direct storage above the deployment body limit (4 MiB on production). Single PUT and multipart completion use the existing governance contract. [12 client tests](evidence/governance-transfer.txt), including refusal and missing ETag; frontend test-tree typecheck passed. Production uses Postgres and refuses presigning. An S3 deployment must explicitly allow its storage origin in CSP and expose ETag through CORS; live S3 transfer is unverified.
 
-NEXT: Repair the capture instrument and institution scope, then repeat the role audit.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:5710d84093a298ddb05d7f4847684268241e52c9da116738212c74fbac7b023b -->
+
+- P5 documentation: corrected the Android download page, operator rollback, deployment guide and contributor guide to describe upgrades by signed binary. SideStore already defaults to main. [Contract and test output](evidence/mobile-distribution.txt).
+
+NEXT: Finish the role and institution fixtures, mobile artifacts, and remaining visual gates.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 

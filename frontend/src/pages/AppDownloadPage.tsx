@@ -31,7 +31,7 @@ import '../styles/app.css';
  *     installs upgrade in place;
  *   · iOS: «قيد الاستعدادات» — the honest user-facing seat (nothing to
  *     install today; we announce when it ships);
- *   · in-app updates arrive automatically when a new version ships;
+ *   · Android users install a new signed build from this page;
  *   · the minimum-version floor is read LIVE from /api/v1/status — the
  *     same endpoint the app's blocking gate consumes (M0.7).
  *
@@ -190,18 +190,16 @@ export function AppDownloadPage() {
             </div>
           </section>
 
-          <section aria-labelledby="app-ota">
+          <section aria-labelledby="app-updates">
             <div className="pf-section-header">
-              <h2 className="ap-bar" id="app-ota">
+              <h2 className="ap-bar" id="app-updates">
                 <span className="ap-bar-index ap-mono" dir="ltr" aria-hidden="true">[04]</span>
-                <span className="ap-bar-title">كيف تصل التحديثات؟ (القنوات)</span>
+                <span className="ap-bar-title">كيف أحدّث التطبيق؟</span>
               </h2>
             </div>
             <div className="ap-cell">
               <p className="ap-p">
-                عند صدور نسخة جديدة تصل التغييرات داخل التطبيق تلقائيًا
-                <span className="ap-mono" dir="ltr"> (OTA)</span> — دون إعادة
-                تثبيت، وتظهر هنا فورًا.
+                على أندرويد، نزّل النسخة الجديدة من هذه الصفحة وثبّتها فوق نسختك الحالية للاحتفاظ ببياناتك.
               </p>
             </div>
           </section>

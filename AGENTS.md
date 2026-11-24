@@ -139,11 +139,13 @@ queue/ownership in the same directory.
 - **App page**: `frontend/src/pages/X.tsx` + route in `App.tsx` — mind entry-chunk weight
   (`App.tsx`, `GlobalSearch` are eager; prefer lazy routes); light+dark themes, RTL and
   a11y are contract, and `check-csp-hash.sh` must stay green.
-- **Mobile screen**: `apps/mobile/app/**` (Expo ~58, expo-router, own lockfile) — start
-  from `apps/mobile/README.md`; native builds go through the GitHub-Actions native
-  lanes (`mobile.yml` devclient/full lanes; `android-apk.yml` QA + signed release;
-  `build-ios-sidestore.yml` sidestore IPA) — EAS Build is retired; EAS remains only
-  the OTA (JS update) channel.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:29ce9331d3f335aa486d913788ba7bc9054e83294f3bf0263a0993b03f6c51f1 -->
+
+- **Mobile screen**: see `apps/mobile/README.md`. GitHub Actions builds the Android APK and SideStore IPA. Ship JavaScript and native changes in a new binary.
+
+<!-- /coderabbit-ai-generated:v1 -->
 - **Backend route**: `backend/src/http/routes/*.ts` following the envelope + error-code
   conventions (`BACKEND.md`, `docs/api/openapi.json`); keep decision logic in pure
   DB-free functions (tests mock `../../src/db.js`); schema change = edit

@@ -13,10 +13,13 @@
    login-all، logcat المحاكي في android-smoke، توقيعات الانهيار).
 3. **راجع**: من لوحة Vercel (Deployments) آخر نشر صحيح، أو ادفع
    إصلاحًا — الأتمتة تعيد النشر والتحقق من الدخان ذاتيًا.
-4. **تراجع OTA إن كان التغيير جوالًا**:
-   `npx eas-cli update:republish --branch production <update-id-الجيد>`
-   أو `update:rollback --branch production` (المستخدمون يرون السابق
-   عند الإقلاع القادم).
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:b2b02b00cccb478e9c9d1d258a9aeecfa8256f4ffcf17586894bbb628d30ee0e -->
+
+4. **إذا كان الخلل في تطبيق الهاتف**، اعكس التغيير في المصدر وابنِ إصدارًا مصححًا برقم أعلى وبمفتاح التوقيع المعتاد. تحقّق من بصمة الحزمة قبل نشرها.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 ## 2. القاعدة (Neon) — الاستيقاظ والترحيلات
 
@@ -77,6 +80,10 @@ npm run db:verify      # جداول/ترحيلات/عدّ صفوف مقابل م
 
 ## 6. أدوات سريعة
 
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:56c0584d7b1076e3beec03888f6fb0f8ec2f3fcd31727b3fa0cff9809dfe13f3 -->
+
 | الغرض | الأمر |
 |---|---|
 | صحة الإنتاج | `curl -s https://ulara.vercel.app/api/v1/health` |
@@ -84,5 +91,7 @@ npm run db:verify      # جداول/ترحيلات/عدّ صفوف مقابل م
 | 12 دخولًا في متصفح حقيقي | `npx tsx scripts/e2e/login-all.mjs` |
 | بوابة الصفر-أثر (محتوى/أسماء) | `bash scripts/brand/zero-trace.sh` |
 | عقد الـAPI | `npm run api:openapi` ثم راجع الفرق |
-| حالة EAS/OTA | `npx eas-cli update:list --branch production` |
+| آخر بناء للهاتف | `gh run list --workflow android-apk.yml --limit 1` |
 | توزير كلمة/إنقاذ دخول/نسخ | §§3–5 أعلاه |
+
+<!-- /coderabbit-ai-generated:v1 -->

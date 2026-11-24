@@ -6,13 +6,18 @@
 
 ## 1. ماذا يفعّل ماذا (push إلى `main`)
 
-| التغيير | Vercel (الويب) | GitHub Actions | EAS |
-|---|---|---|---|
-| `backend/**` | ✅ نشر (workflow `deploy.yml` بأسراره الثلاثة، أو `vercel deploy` يدويًا) | CI + **deploy-smoke** (ينتظر `buildId == SHA` ثم صحة + 12 دخولًا + لوحة + مقارنة OpenAPI حي/مُلتزَم additive؛ الفشل يفتح issue) | — |
-| `frontend/**`, `shared/**` | ✅ نشر | CI | — |
-| `apps/mobile/**` أو `shared/**` | ❌ أبدًا (`.vercelignore` يستثني التطبيق) | **Mobile**: بوابات (typecheck · lint · contract-check · export · bundle) + **android-smoke** + **Android APK** | EAS Update لقناتي `production`/`preview` — **خامل** حتى خطوات إعادة التفعيل (§5) |
-| تغيير native (تبعية/إضافة/`app.config.ts`/أصول) | ❌ | نفس البوابات + APK جديد | — (EAS Build مُحال — لا بناء native عبر EAS) |
-| `docs/**`, `*.md` | ❌ | CI فقط | — |
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:1a55885d619510304af14b25f50629e6251fd35d0b6fec71635c0fc90bbbd577 -->
+
+| التغيير | أثر الدفع إلى main |
+|---|---|
+| الواجهة أو الخلفية | ينشر deploy.yml إلى Vercel ثم يفحص deploy-smoke الخدمة. |
+| تطبيق الهاتف | تفحص Mobile التطبيق وتبني مسارات أندرويد وiOS حزم التثبيت. |
+| shared | يؤثر في الويب والهاتف؛ راجع مرشحات المسارات لكل سير عمل. |
+| وثائق فقط | لا تستدعي نشر الويب. |
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 ## 2. المنصة (Vercel + Neon) — الإعداد المنجز
 
@@ -164,8 +169,13 @@ zu-sync (r342 t13). مع `ULARA_TEST_ACCOUNTS=1` تضيف الجولة اليو�
 ونفس التقرير). في النشر الطويل الأمد يعمل مجدول داخل العملية نفسها
 (إقلاع + كل 24 ساعة).
 
-## 5. قناة أندرويد المباشرة + OTA
+<!-- coderabbit-ai-generated:v1 -->
 
+<!-- coderabbit-ai-generated-section:v1:62600f20afc009cb98fb0eb9739517be99a4c6025697457662c709e98692e9d5 -->
+
+## 5. نشر تطبيق أندرويد
+
+<!-- /coderabbit-ai-generated:v1 -->
 - **APK موقَّع مباشر** (`android-apk.yml` على runners GitHub): يُبنى
   بسكربت `scripts/build-android-local.sh` ويُنشر إلى إصدار `latest`
   المتدحرج — رابط ثابت دائمًا الأحدث:
@@ -187,19 +197,13 @@ zu-sync (r342 t13). مع `ULARA_TEST_ACCOUNTS=1` تضيف الجولة اليو�
   توفيره)، وينشر `SHA256SUMS.txt` كأصل في الإصدار، ويرفع سجلات
   البناء عند الفشل. المشغّل اليدوي يقبل مدخل `lane`:
   `qa`/`release`/`both`.
-- **OTA** (`expo-updates`, سياسة fingerprint): تغييرات JS تصل كل بناء
-  مطابق للبصمة؛ التغيير native يغيّر البصمة ⇒ يلزم بناء جديد مرة ثم
-  تجري التحديثات فوقه. **القناة موصولة لكن خاملة**: مشروع EAS الجديد
-  لم يُنشأ بعد (`eas init` معلّق) و`EXPO_TOKEN` غير مضبوط. خطوتا
-  المالك (~5 دقائق): (1) `npx eas-cli init` من `apps/mobile` وتثبيت
-  المعرف الحقيقي في `app.config.ts`؛ (2) إنشاء token في expo.dev ←
-  سر Actions `EXPO_TOKEN`. التفصيل: [mobile.md](mobile.md). EAS تبقى
-  قناة OTA (JS) فقط — عقد المالك المُلزم: البناء native عبر GitHub
-  Actions حصرًا و`eas build` مُحال.
-- **حقيقة التثبيتات المتقطعة**: البناء من مشروع EAS القديم لا يستقبل
-  تحديثات المشروع الجديد (بصمة مختلفة) — طريق ترقيته: إزالة تثبيت
-  واحدة ثم تثبيت APK من `/app`؛ بعدها التحديثات في مكانها. الحد الأدنى
-  `MIN_APP_VERSION` هو الحارس الشامل لأي متخلّف.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:abcba22633f8a4a33388fa5849de6ddcccebd8496f1a8ad19db315170bc27803 -->
+
+- تصدر تعديلات التطبيق في حزمة جديدة عبر GitHub Actions. ينزّل المستخدم النسخة الموقّعة من صفحة [التطبيق](https://ulara.vercel.app/app) ويثبّتها فوق نسخته الحالية إذا تطابق التوقيع.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 ## 6. التشغيل اليومي وحسابات العرض
 
@@ -366,7 +370,10 @@ npm run db:verify    # جداول/ترحيلات/عدّ صفوف مقابل قا
   `/app`. غير مضبوط ⇒ لا بوابة. رفعه: متغيرات بيئة Vercel.
 - `/app`: APK المباشر (إصدار `latest`)، تاريخ الإصدارات + بصمات، «ما
   الجديد»، حالة iOS. تخدمها الخلفية `updateUrl`.
-- **تحديث داخل التطبيق**: فحص صامت عند الإقلاع (`ON_LOAD`) ← تنزيل ←
-  toast «تحديث جاهز — أعد التشغيل». خامل حتى إعادة تفعيل OTA (§5)؛
-  Telemetry التحديث يحمل `updateId` فيظهر في صندوق المالك أي تحديثٍ
-  جاء منه انهيار.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:ec5b7126362b182d4c9ec89c5aae7ae2b7da2495947bf9b14c679be24d8ae300 -->
+
+- عند توفّر إصدار أحدث، يقرأ التطبيق رقم الإصدار ورابط التنزيل من خدمة الحالة. تُثبَّت الحزمة الجديدة من صفحة التنزيل.
+
+<!-- /coderabbit-ai-generated:v1 -->
