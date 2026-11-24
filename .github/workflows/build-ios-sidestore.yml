@@ -138,9 +138,12 @@ jobs:
           // contract and immune to runner-side mutations.
           try {
             const { execFileSync } = require('node:child_process');
+            const headSha = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+            console.log('::notice::runner HEAD:', headSha, '(dispatch recorded', process.env.GITHUB_SHA, ')');
             const committedPkg = execFileSync('git', ['show', 'HEAD:apps/mobile/package.json'], { encoding: 'utf8' });
             const deps = JSON.parse(committedPkg).dependencies || {};
-            if ('expo-updates' in deps) fail('expo-updates must not be a dependency of the committed source (r359 retirement)');
+            console.log('::notice::committed dependency count:', Object.keys(deps).length);
+            if ('expo-updates' in deps) fail(`expo-updates must not be a dependency of the committed source (r359 retirement) — HEAD ${headSha}`);
             const lock = execFileSync('git', ['show', 'HEAD:apps/mobile/package-lock.json'], { encoding: 'utf8' });
             if (lock.includes('"node_modules/expo-updates"')) fail('expo-updates must be absent from the committed lockfile tree (r359 retirement)');
           } catch (e) { if (String(e.message).includes('must not')) fail(e.message); else fail(`dependency check failed: ${e.message}`); }
