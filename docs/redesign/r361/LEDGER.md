@@ -52,7 +52,15 @@
 
 - P1: the design gallery now loads the real sheet stylesheet; its six small targets clear the phone floor. The quality dashboard uses a full last row on phones. Of four original findings, the remaining alert is the gallery’s intentional invalid-password specimen. Updated the institutional journey to follow the council link and named register. All five journeys passed. [Focused rerun](evidence/product-rerun.txt).
 
-NEXT: Complete full-route verification, production measurements, mobile artifact checks and branch cleanup.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:11139661d947b30dfe8188e8082393c23649bf1874a38b4538eedd56c4b54b4c -->
+
+- P4: 17 previously missing institution API paths now have explicit fixtures. Repaired org-tree envelopes and list field names; response errors reset between matrix cells. The 13-route phone sweep recorded no missing fixtures; the two remaining short record links were corrected and retested in both themes. [Measurements](evidence/institution-fixes.txt).
+
+NEXT: Review the full-route sweep, including the new computed radius and shadow census.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 

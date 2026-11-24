@@ -833,3 +833,11 @@ a.pf-stat:hover { background: var(--surface-2); }
     border-block-start: 1px solid var(--rule);
   }
 }
+
+@media (max-width: 640px) {
+  .sg-table a.sg-cell-title {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--touch-floor, 44px);
+  }
+}

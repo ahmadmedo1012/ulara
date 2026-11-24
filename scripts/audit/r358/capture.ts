@@ -236,8 +236,14 @@ async function pageMetrics(page: import('playwright').Page, width: number): Prom
     const RETIRED = ['#ea580c', '#f97316', '#c2410c', '#c43e16', '#ff6b3d', '#d97706', '#fbbf24'];
     const norm = (c: string) => c.replace(/\s+/g, '').toLowerCase();
     const retiredHits: string[] = [];
+    const materials: { element: string; radius: string; shadow: string }[] = [];
     for (const el of Array.from(document.querySelectorAll('body *'))) {
       const cs = getComputedStyle(el);
+      if (el instanceof HTMLElement && el.getClientRects().length && cs.visibility === 'visible' &&
+          (cs.boxShadow !== 'none' || [cs.borderTopLeftRadius, cs.borderTopRightRadius,
+            cs.borderBottomRightRadius, cs.borderBottomLeftRadius].some(r => parseFloat(r) > 0))) {
+        materials.push({ element: el.tagName + '.' + Array.from(el.classList).join('.'), radius: cs.borderRadius, shadow: cs.boxShadow });
+      }
       for (const prop of [cs.color, cs.backgroundColor, cs.borderTopColor] as string[]) {
         if (prop && prop.includes('rgb')) {
           // convert to hex for compare
@@ -251,6 +257,7 @@ async function pageMetrics(page: import('playwright').Page, width: number): Prom
         void raw;
       }
     }
+    if (materials.length) issues.push({ type: 'RADIUS_OR_SHADOW', severity: 'P2', count: materials.length, samples: materials.slice(0, 6) });
     if (retiredHits.length > 0) issues.push({ type: 'OLD_ACCENT_COLOR', severity: 'P1', message: `retired accent computed colors present: ${retiredHits.join(',')}` });
 
     /* r360 F3 — KPI layout mode. display:contents is a PASSTHROUGH
@@ -390,6 +397,8 @@ async function main() {
 
       for (const routeDef of roleRoutes) {
         for (const width of WIDTHS) {
+          consoleErrors.length = 0;
+          missingFixtures.length = 0;
           const height = width < 768 ? 844 : 900;
           await page.setViewportSize({ width, height });
           try {

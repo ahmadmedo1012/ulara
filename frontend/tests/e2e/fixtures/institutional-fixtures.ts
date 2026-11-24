@@ -186,6 +186,13 @@ export const INSTITUTION_ORG_TREE = [
   },
 ];
 
+type TreeSeat = { id: string; code: string; nameAr: string; type: string; parentId: string | null; children: TreeSeat[] };
+type WireSeat = { unit: Omit<TreeSeat, 'children'> & { institutionId: string; status: string }; children: WireSeat[] };
+function wireSeat({ children, ...unit }: TreeSeat): WireSeat {
+  return { unit: { ...unit, institutionId: MY_INSTITUTION_PROFILE.institution.id, status: 'ACTIVE' }, children: children.map(wireSeat) };
+}
+export const INSTITUTION_WIRE_TREE = INSTITUTION_ORG_TREE.map(wireSeat);
+
 export const INSTITUTION_PEOPLE_PAGE = {
   data: [
     {
@@ -196,7 +203,7 @@ export const INSTITUTION_PEOPLE_PAGE = {
       email: 'a.elkadi@ulara.edu.ly',
       phone: '0912345678',
       status: 'ACTIVE',
-      category: 'ACADEMIC',
+      staffStatus: 'ACTIVE', category: 'ACADEMIC_STAFF',
       activeAppointmentsCount: 1,
     },
     {
@@ -207,7 +214,7 @@ export const INSTITUTION_PEOPLE_PAGE = {
       email: 'f.tarhuni@ulara.edu.ly',
       phone: '0923456789',
       status: 'ACTIVE',
-      category: 'ADMINISTRATIVE',
+      staffStatus: 'ACTIVE', category: 'ADMINISTRATIVE_STAFF',
       activeAppointmentsCount: 1,
     },
   ],
@@ -238,7 +245,7 @@ export const INSTITUTION_COUNCILS_PAGE = {
       code: 'UNIV_COUNCIL',
       nameAr: 'مجلس الجامعة الدائم',
       nameEn: 'University Permanent Council',
-      kind: 'STATUTORY',
+      type: 'UNIVERSITY_COUNCIL',
       status: 'ACTIVE',
       membersCount: 8,
       lastMeetingDate: '2026-11-10T10:00:00Z',
@@ -254,10 +261,10 @@ export const INSTITUTION_PROGRAMS_PAGE = {
       code: 'BS_SWE',
       nameAr: 'بكالوريوس هندسة البرمجيات الذكية',
       nameEn: 'B.Sc. in Intelligent Software Engineering',
-      credentialType: 'BACHELOR',
+      kind: 'ACADEMIC',
       orgUnit: { id: 'unit_cs', nameAr: 'كلية تقنية المعلومات' },
-      durationYears: 4,
-      totalCredits: 136,
+      durationMonths: 48,
+      totalCreditHours: 136,
       status: 'ACTIVE',
       enrolledLearnersCount: 320,
     },
@@ -269,12 +276,13 @@ export const INSTITUTION_TRAINING_PAGE = {
   data: [
     {
       id: 'trn_1',
-      learnerNameAr: 'أحمد محمود الطرابلسي',
-      partnerOrganization: 'شركة التقنية والاتصالات الوطنية',
+      studentProfileId: 'lrn_1',
+      student: { id: 'lrn_1', firstName: 'أحمد', lastName: 'الطرابلسي' },
+      externalHost: 'شركة التقنية والاتصالات الوطنية',
       trainingTrack: 'تطوير النظم السحابية',
-      status: 'IN_PROGRESS',
-      startDate: '2026-09-01',
-      endDate: '2026-12-01',
+      status: 'ACTIVE',
+      startsAt: '2026-09-01',
+      endsAt: '2026-12-01',
     },
   ],
   meta: { page: 1, limit: 10, total: 1, totalPages: 1 },
@@ -284,6 +292,7 @@ export const INSTITUTION_LEARNERS_PAGE = {
   data: [
     {
       id: 'lrn_1',
+      category: 'STUDENT', learnerNumber: 'DEMO-1',
       nationalId: '120040011223',
       fullNameAr: 'أحمد محمود الطرابلسي',
       programNameAr: 'بكالوريوس هندسة البرمجيات الذكية',
@@ -317,9 +326,9 @@ export const INSTITUTION_LICENSES_PAGE = {
       licenseNumber: 'LIC-2026-LY-0092',
       issuingAuthority: 'وزارة التعليم العالي والبحث العلمي',
       titleAr: 'ترخيص تشغيل المقر الرئيسي والمختبرات التقنية',
-      issueDate: '2026-01-01',
-      expiryDate: '2029-01-01',
-      status: 'VALID',
+      issuedAt: '2026-01-01',
+      expiresAt: '2029-01-01',
+      kind: 'OPERATING_PERMIT', status: 'ACTIVE',
     },
   ],
   meta: { page: 1, limit: 10, total: 1, totalPages: 1 },
@@ -333,7 +342,7 @@ export const INSTITUTION_FACILITIES_PAGE = {
       code: 'LAB_AI_101',
       building: 'مبنى الخوارزمي',
       capacity: 35,
-      status: 'OPERATIONAL',
+      type: 'LABORATORY', status: 'ACTIVE',
       equipmentCount: 35,
     },
   ],
