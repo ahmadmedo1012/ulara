@@ -43,6 +43,8 @@ import { assertCapabilityForUnit, assertCapabilityIn, callerAuthorityCoversUnit 
 import { assertOrgUnitInInstitution } from '../../lib/tenant-guards.js';
 import { isPrismaWriteConflictOrDeadlock } from '../../lib/prisma-errors.js';
 import { unitCapabilityGrantCreateSchema } from '../../modules/r352/dto.js';
+import { paginationSchema } from '../../lib/pagination.js';
+import { buildMeta } from '../../lib/pagination.js';
 
 const router = Router();
 
@@ -293,6 +295,93 @@ router.post(
       ) {
         return next(AppError.conflict('توجد منحة مطابقة لهذا المستخدم بالفعل'));
       }
+      next(e);
+    }
+  },
+);
+
+// ── r359 A4 — unit-scoped grant BROWSING (r352 audit §I.5 gap) ─────
+// GET /admin/unit-capabilities?unitId=&userId=&includeSubtree=&page=&limit=
+// Institution-wide by default (the §3.2 browsing rule); an OPTIONAL unitId
+// narrows to that unit's grants — with includeSubtree=true also every
+// descendant unit's grants (the authority-covers-unit mirror). The unit
+// is tenant-verified against the resolved institution scope.
+router.get(
+  '/admin/unit-capabilities',
+  requireCapability('UNIT_CAPABILITIES_ASSIGN'),
+  requireInstitutionUnlessOwner,
+  validate(paginationSchema.extend({
+    unitId: z.string().trim().min(1).optional(),
+    userId: z.string().trim().min(1).optional(),
+    includeSubtree: z.coerce.boolean().default(false).optional(),
+  })),
+  async (req, res, next) => {
+    try {
+      const scope = resolveAdminInstitutionScope(req);
+      if (!scope) {
+        throw new AppError(
+          'INSTITUTION_CONTEXT_REQUIRED',
+          'حدّد المؤسسة أولًا — اختر مؤسستك ثم أعد المحاولة',
+          403,
+        );
+      }
+      if (scope.explicit) await assertOwnerTargetInstitution(scope.institutionId);
+      const { page, limit, q, unitId, userId, includeSubtree } = req.query as unknown as {
+        page: number; limit: number; q?: string; unitId?: string; userId?: string; includeSubtree?: boolean;
+      };
+
+      let unitIds: string[] | null = null;
+      if (unitId) {
+        await assertOrgUnitInInstitution(unitId, scope.institutionId);
+        if (includeSubtree) {
+          // Descendant set: walk every unit's ancestor chain once.
+          const units = await prisma.organizationalUnit.findMany({
+            where: { institutionId: scope.institutionId },
+            select: { id: true, parentId: true },
+          });
+          const parentOf = new Map(units.map((u) => [u.id, u.parentId]));
+          const inSubtree = (startId: string): boolean => {
+            let cur: string | null = startId;
+            for (let depth = 0; cur && depth < 50; depth += 1) {
+              if (cur === unitId) return true;
+              cur = parentOf.get(cur) ?? null;
+            }
+            return false;
+          };
+          unitIds = units.filter((u) => inSubtree(u.id)).map((u) => u.id);
+        } else {
+          unitIds = [unitId];
+        }
+      }
+
+      const where: Prisma.UnitCapabilityGrantWhereInput = {
+        institutionId: scope.institutionId,
+        ...(userId ? { userId } : {}),
+        ...(unitIds ? { orgUnitId: { in: unitIds } } : {}),
+        ...(q
+          ? {
+              user: {
+                OR: [
+                  { email: { contains: q, mode: 'insensitive' } },
+                  { firstName: { contains: q, mode: 'insensitive' } },
+                  { lastName: { contains: q, mode: 'insensitive' } },
+                ],
+              },
+            }
+          : {}),
+      };
+      const [total, data] = await Promise.all([
+        prisma.unitCapabilityGrant.count({ where }),
+        prisma.unitCapabilityGrant.findMany({
+          where,
+          include: GRANT_INCLUDE,
+          orderBy: { createdAt: 'desc' },
+          skip: (page - 1) * limit,
+          take: limit,
+        }),
+      ]);
+      res.json({ data, meta: buildMeta(page, limit, total) });
+    } catch (e) {
       next(e);
     }
   },

@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { prisma } from '../../db.js';
 import { env } from '../../env.js';
 import { authMiddleware, optionalAuthMiddleware } from '../middleware/auth.js';
 import {
@@ -32,6 +33,9 @@ import { mailConfig, renderResetEmail, sendMail } from '../../lib/mail.js';
 import { parseDurationMs, verifyRefreshToken } from '../../lib/jwt.js';
 import { AppError } from '../../lib/errors.js';
 import { logger } from '../../logger.js';
+// r359 A4 — the email verification flow (single-use 48h tokens).
+import { consumeVerificationToken, issueVerificationEmail } from '../../modules/email/outbox.js';
+import { z } from 'zod';
 
 /** The reset email's stated lifetime in minutes (mirrors TOKEN_TTL_MS). */
 const MAIL_TTL_MINUTES = Math.round(TOKEN_TTL_MS / 60_000);
@@ -67,6 +71,11 @@ router.post('/register', authRateLimiter, validate(registerSchema), async (req, 
   try {
     const { user, accessToken, refreshToken } = await registerUser(req.body);
     setRefreshCookie(res, refreshToken);
+    // r359 A4 — verification mail rides the registration (best-effort,
+    // fire-and-forget: a mail outage must never fail the signup).
+    if (env.APP_ORIGIN) {
+      void issueVerificationEmail(prisma, user.id, env.APP_ORIGIN).catch(() => undefined);
+    }
     res.status(201).json({ data: { user, accessToken } });
   } catch (e) {
     next(e);
@@ -327,6 +336,52 @@ router.post(
     }
   },
 );
+
+// ── r359 A4 — email verification ────────────────────────────────────
+// POST /auth/verify-email { token } — PUBLIC (the mail link opens on
+// any device/browser; no session assumed). Honest 200s: verified /
+// already_verified; 400 with the reason for invalid/expired tokens.
+const verifyEmailSchema = z
+  .object({ token: z.string().trim().min(20).max(200) })
+  .strict();
+router.post('/verify-email', authRateLimiter, validate(verifyEmailSchema), async (req, res, next) => {
+  try {
+    const outcome = await consumeVerificationToken(prisma, (req.body as { token: string }).token);
+    if (outcome === 'invalid' || outcome === 'expired') {
+      throw AppError.badRequest(
+        outcome === 'expired'
+          ? 'انتهت صلاحية رابط التأكيد — أعد إرسال الرسالة من داخل التطبيق'
+          : 'رابط التأكيد غير صالح — تأكد من نسخه كاملًا أو أعد الإرسال',
+      );
+    }
+    res.json({ data: { status: outcome } });
+  } catch (e) {
+    next(e);
+  }
+});
+
+// POST /auth/resend-verification — authenticated; rate-limited by the
+// shared auth limiter (10/15min/IP). Honest outcomes, never a leak:
+// already-verified users get the same 200 as a sent mail.
+router.post('/resend-verification', authMiddleware, authRateLimiter, async (req, res, next) => {
+  try {
+    if (!env.APP_ORIGIN) {
+      throw AppError.badRequest('قناة البريد غير مهيأة على هذا الخادم');
+    }
+    const outcome = await issueVerificationEmail(prisma, req.user!.id, env.APP_ORIGIN);
+    res.json({
+      data: {
+        status:
+          outcome === 'sent' ? 'sent' :
+          outcome === 'already_verified' ? 'already_verified' :
+          outcome === 'skipped_suppressed' ? 'unavailable' :
+          'unavailable',
+      },
+    });
+  } catch (e) {
+    next(e);
+  }
+});
 
 router.get('/me', authMiddleware, async (req, res, next) => {
   try {

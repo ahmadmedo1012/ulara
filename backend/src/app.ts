@@ -74,6 +74,10 @@ import r352AcademicRoutes from './http/routes/r352-academic.routes.js';
 import r352ComplianceRoutes from './http/routes/r352-compliance.routes.js';
 import r352OperationsRoutes from './http/routes/r352-operations.routes.js';
 import r352ResearchRoutes from './http/routes/r352-research.routes.js';
+// r359 A4 — new routers: the Resend webhook (bounce/complaint, HMAC-gated)
+// and the institution-scoped audit-log browse.
+import webhooksRoutes from './http/routes/webhooks.routes.js';
+import r352AuditRoutes from './http/routes/r352-audit.routes.js';
 import r352UnitCapabilitiesRoutes from './http/routes/r352-unit-capabilities.routes.js';
 import { themeRouter } from './modules/theme/router.js';
 import { onboardingRouter } from './modules/onboarding/router.js';
@@ -202,7 +206,12 @@ export function createApp() {
   // 1 MB request-body cap for JSON + urlencoded. Body-parser rejections
   // (entity.parse.failed / entity.too.large) are mapped to 400/413 by the
   // error handler (wave 12-5) — coordinate here if the limit ever changes.
-  app.use(express.json({ limit: '1mb' }));
+  // r359 A4 — capture the RAW body for HMAC-verified webhooks (Resend
+  // bounce/complaint): the signature is computed over the exact bytes,
+  // so the parsed JSON alone cannot verify it. One allocation per
+  // request, kept on the request object (webhook route is the only
+  // consumer — the reference is dropped with the request).
+  app.use(express.json({ limit: '1mb', verify: (req, buf, encoding) => { (req as { rawBody?: Buffer }).rawBody = Buffer.from(buf.toString(String(encoding))); } }));
   app.use(express.urlencoded({ extended: true, limit: '1mb' }));
   app.use(cookieParser());
 
@@ -301,6 +310,11 @@ export function createApp() {
   // change-driven, not timed, so the shared budget is ample.
   app.use('/api/v1', statusRoutes);
 
+  // r359 A4 — provider webhooks (Resend bounce/complaint). Carries its
+  // own fail-closed HMAC gate; mounted before the auth routers so no
+  // session middleware shadows it (same law as statusRoutes).
+  app.use('/api/v1/webhooks', webhooksRoutes);
+
   // Scheduled-jobs surface (serverless deployments): vercel.json's cron
   // invokes GET /api/v1/jobs/daily once a day with the Bearer CRON secret
   // — the same two jobs the in-process ticker runs on the long-process
@@ -347,6 +361,8 @@ export function createApp() {
   // its own requireRole(OWNER) gate). Sits beside institutionRoutes,
   // before the broad authed mounts — same ordering law.
   app.use('/api/v1', r352InstitutionRoutes);
+  // r359 A4 — institution-scoped audit-log browsing (AUDIT_BROWSE).
+  app.use('/api/v1/institutional', r352AuditRoutes);
   // r352 — public reference catalogs (Bearer, no institution context).
   app.use('/api/v1/catalog', r352CatalogRoutes);
   // r342 t13 (2026-11-19): syncRoutes (/admin/sync, /admin/sync/trigger,

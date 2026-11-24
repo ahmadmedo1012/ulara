@@ -173,15 +173,57 @@ router.get(
   },
 );
 
-// ── GET /owner/activity — paginated audit log ────────────────────
+// ── GET /owner/activity — paginated audit log (r359 A4: filters) ──
+// The OWNER cross-tenant trail. r359 A4 adds the same composable filter
+// set the institutional browse carries (action/entityType/entityId/
+// actorId/from/to/q) — pagination convention unchanged.
 router.get(
   '/activity',
-  validate(paginationSchema, 'query'),
+  validate(
+    paginationSchema.extend({
+      action: z.string().trim().min(1).max(120).optional(),
+      entityType: z.string().trim().min(1).max(120).optional(),
+      entityId: z.string().trim().min(1).max(120).optional(),
+      actorId: z.string().trim().min(1).max(120).optional(),
+      from: z.coerce.date().optional(),
+      to: z.coerce.date().optional(),
+    }),
+    'query',
+  ),
   async (req, res, next) => {
     try {
-      const { page, limit } = req.query as unknown as { page: number; limit: number };
+      const { page, limit, q, action, entityType, entityId, actorId, from, to } = req
+        .query as unknown as {
+        page: number;
+        limit: number;
+        q?: string;
+        action?: string;
+        entityType?: string;
+        entityId?: string;
+        actorId?: string;
+        from?: Date;
+        to?: Date;
+      };
+      const where = {
+        ...(action ? { action } : {}),
+        ...(entityType ? { entityType } : {}),
+        ...(entityId ? { entityId } : {}),
+        ...(actorId ? { userId: actorId } : {}),
+        ...(from || to
+          ? { createdAt: { ...(from ? { gte: from } : {}), ...(to ? { lte: to } : {}) } }
+          : {}),
+        ...(q
+          ? {
+              OR: [
+                { action: { contains: q, mode: 'insensitive' as const } },
+                { entityType: { contains: q, mode: 'insensitive' as const } },
+              ],
+            }
+          : {}),
+      };
       const [data, total] = await Promise.all([
         prisma.auditLog.findMany({
+          where,
           skip: (page - 1) * limit,
           take: limit,
           orderBy: { createdAt: 'desc' },
@@ -189,7 +231,7 @@ router.get(
             user: { select: { firstName: true, lastName: true, email: true } },
           },
         }),
-        prisma.auditLog.count(),
+        prisma.auditLog.count({ where }),
       ]);
       res.json({ data, meta: buildMeta(page, limit, total) });
     } catch (e) {

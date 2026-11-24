@@ -217,6 +217,9 @@ enum Capability {
   FACILITIES_MANAGE // manage facilities/equipment/work orders/reservations
   RESEARCH_PROJECTS_MANAGE // manage institutional research projects
   UNIT_CAPABILITIES_ASSIGN // grant/revoke unit-scoped capability grants (r352 hardening)
+  // r359 A4 — audit-log browsing (institution-scoped trail for
+  // ADMIN/QUALITY; the OWNER cross-tenant view stays /owner/activity).
+  AUDIT_BROWSE
 }
 
 enum QuestionType {
@@ -420,6 +423,11 @@ model User {
   themePreferenceUpdatedAt DateTime        @default(now())
   onboardingCompletedAt    DateTime?
   firedMilestones          String[]        @default([])
+  // r359 A4 — email deliverability suppression (Resend bounce/complaint
+  // webhooks). A hard bounce or a spam complaint parks the address:
+  // sendMail skips it until an operator clears the flag (owner console).
+  emailBouncedAt           DateTime?
+  emailComplainedAt        DateTime?
   createdAt                DateTime        @default(now())
   updatedAt                DateTime        @updatedAt
 
@@ -453,6 +461,11 @@ model User {
   labSessions         LabSession[]
   aiConversations     AiConversation[]
   auditLogs           AuditLog[]
+  // r359 A4 — push/email/idempotency surfaces
+  notificationPreference NotificationPreference?
+  emailEvents           EmailEvent[]
+  emailVerificationTokens EmailVerificationToken[]
+  idempotencyRecords   IdempotencyRecord[]
   watchEvents         WatchEvent[]         @relation("StudentWatchEvents")
   checkpointAnswers   CheckpointAnswer[]   @relation("StudentCheckpointAnswers")
   masteries           StudentMastery[]     @relation("StudentMasteries")
@@ -889,6 +902,7 @@ model Notification {
   link      String?
   readAt    DateTime?
   createdAt DateTime         @default(now())
+  receipts PushDeliveryReceipt[]
 
   @@index([userId, readAt])
   // r146 (T1-c F5): the notifications list (GET /me/notifications — the
@@ -2319,6 +2333,7 @@ model PushDevice {
   appVersion String?
   lastSeenAt DateTime @default(now())
   createdAt  DateTime @default(now())
+  receipts   PushDeliveryReceipt[]
 
   @@index([userId])
   @@index([lastSeenAt])
@@ -3894,4 +3909,120 @@ model ResearchOutput {
   @@index([institutionId, type])
   @@index([projectId])
   @@index([personId])
+}
+
+// ════════════════════════════════════════════════════════════════
+//  r359 A4 — PUSH RECEIPTS · EMAIL EVENTS · EMAIL VERIFICATION ·
+//  NOTIFICATION PREFERENCES · IDEMPOTENCY
+//  Migration 0007_r359_backend_ops. Additive only.
+// ════════════════════════════════════════════════════════════════
+
+/// Per-user notification category preferences (r359 A4). One row per
+/// user, booleans per NotificationType group; the push fan-out and the
+/// weekly digest read it, defaults apply when no row exists. All four
+/// push categories default ON; the email digest defaults OFF (opt-in).
+model NotificationPreference {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pushUrgent   Boolean  @default(true)
+  pushAcademic Boolean  @default(true)
+  pushSystem   Boolean  @default(true)
+  pushSocial   Boolean  @default(true)
+  emailDigest  Boolean  @default(false)
+  updatedAt    DateTime @updatedAt
+
+  @@index([emailDigest])
+}
+
+/// Expo push delivery receipts (r359 A4). After each fan-out chunk the
+/// Expo ticket ids are checked; one row per ticket outcome, kept for
+/// forensics + pruning decisions (DeviceNotRegistered is pruned on
+/// sight in push.ts as before — receipts are the evidence trail).
+model PushDeliveryReceipt {
+  id             String        @id @default(cuid())
+  pushDeviceId   String
+  pushDevice     PushDevice    @relation(fields: [pushDeviceId], references: [id], onDelete: Cascade)
+  notificationId String?
+  notification   Notification? @relation(fields: [notificationId], references: [id], onDelete: SetNull)
+  ticketId       String?
+  status         PushReceiptStatus @default(PENDING)
+  errorDetail    String?
+  checkedAt      DateTime?
+  createdAt      DateTime      @default(now())
+
+  @@index([pushDeviceId])
+  @@index([status, createdAt])
+}
+
+enum PushReceiptStatus {
+  PENDING
+  SENT
+  DELIVERED
+  FAILED
+  ERROR
+}
+
+/// Email deliverability events (r359 A4) — rows minted by the Resend
+/// webhook (bounce/complaint/delivery/open) and by sendMail itself
+/// (SEND_SKIPPED_SUPPRESSED, SEND_FAILED). The suppression decision
+/// (User.emailBouncedAt/emailComplainedAt) is derived from these but
+/// stored on the user so the hot path never scans this table.
+model EmailEvent {
+  id                String        @id @default(cuid())
+  userId            String?
+  user              User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  email             String
+  type              EmailEventType
+  providerMessageId String?
+  detail            String?
+  raw               Json?
+  createdAt         DateTime      @default(now())
+
+  @@index([email, createdAt])
+  @@index([type, createdAt])
+}
+
+enum EmailEventType {
+  BOUNCE
+  COMPLAINT
+  DELIVERY
+  OPEN
+  SEND_SKIPPED_SUPPRESSED
+  SEND_FAILED
+}
+
+/// Email verification tokens (r359 A4) — the verification flow the
+/// register/reset family never had. Token is stored HASHED (sha256);
+/// single-use, 48h expiry, newest-wins (a resend invalidates the old
+/// row via consumedAt stamp on the user's open tokens).
+model EmailVerificationToken {
+  id         String    @id @default(cuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash  String    @unique
+  expiresAt  DateTime
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([userId])
+}
+
+/// Request-scoped idempotency (r359 A4) for side-effectful POSTs
+/// (announcements, bulk-import commit, invites, governance uploads).
+/// Key = Idempotency-Key header hash, scoped to user+route; a replay
+/// inside the retention window returns the stored response verbatim.
+model IdempotencyRecord {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  route          String
+  keyHash        String
+  responseStatus Int
+  responseBody   Json
+  createdAt      DateTime @default(now())
+  expiresAt      DateTime
+
+  @@unique([userId, route, keyHash])
+  @@index([expiresAt])
 }

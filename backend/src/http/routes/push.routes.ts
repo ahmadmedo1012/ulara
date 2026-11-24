@@ -17,6 +17,7 @@ import { z } from 'zod';
 import { prisma } from '../../db.js';
 import { authMiddleware } from '../middleware/auth.js';
 import { validate } from '../validate.js';
+import { DEFAULT_NOTIFICATION_PREFERENCES } from '../../modules/notifications/preferences.js';
 
 const router = Router();
 router.use(authMiddleware);
@@ -83,3 +84,55 @@ router.delete('/me/push-devices/:id', async (req, res, next) => {
 });
 
 export default router;
+
+// ── r359 A4 — notification preferences ──────────────────────────────
+//   GET /me/notification-preferences — the effective set (defaults when
+//                                    no row exists — fail-open to the
+//                                    pre-r359 behavior)
+//   PUT /me/notification-preferences — upsert the caller's own row
+//
+// The push fan-out consults these BEFORE any Expo traffic; the weekly
+// email digest reads emailDigest (opt-in, default false).
+const preferenceBody = z
+  .object({
+    pushUrgent: z.boolean().optional(),
+    pushAcademic: z.boolean().optional(),
+    pushSystem: z.boolean().optional(),
+    pushSocial: z.boolean().optional(),
+    emailDigest: z.boolean().optional(),
+  })
+  .strict()
+  .refine((v) => Object.values(v).some(Boolean), {
+    message: 'أرسل تفضيلًا واحدًا على الأقل',
+  });
+
+router.get('/me/notification-preferences', async (req, res, next) => {
+  try {
+    const row = await prisma.notificationPreference.findUnique({
+      where: { userId: req.user!.id },
+    });
+    res.json({
+      data:
+        row ?? {
+          userId: req.user!.id,
+          ...DEFAULT_NOTIFICATION_PREFERENCES,
+        },
+    });
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.put('/me/notification-preferences', validate(preferenceBody), async (req, res, next) => {
+  try {
+    const b = req.body as z.infer<typeof preferenceBody>;
+    const row = await prisma.notificationPreference.upsert({
+      where: { userId: req.user!.id },
+      create: { userId: req.user!.id, ...b },
+      update: { ...b },
+    });
+    res.json({ data: row });
+  } catch (e) {
+    next(e);
+  }
+});
