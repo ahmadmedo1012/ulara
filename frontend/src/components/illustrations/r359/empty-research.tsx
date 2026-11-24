@@ -5,7 +5,7 @@
  * the web contract seat: default export, lazy-chunkable, token-colored.
  */
 import { ArtSvg } from './lib/runtime';
-import { stubFor } from '@shared/art/scenes/stubs';
+import { sceneFor } from '@shared/art/scenes/states';
 
 export interface R359ArtProps {
   className?: string;
@@ -14,7 +14,7 @@ export interface R359ArtProps {
   theme?: 'light' | 'dark';
 }
 
-const BUILDER = stubFor('empty-research');
+const BUILDER = sceneFor('empty-research');
 
 export default function EmptyResearch(props: R359ArtProps): React.JSX.Element {
   return <ArtSvg build={BUILDER} {...props} />;

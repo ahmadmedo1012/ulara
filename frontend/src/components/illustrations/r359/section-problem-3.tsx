@@ -5,7 +5,7 @@
  * the web contract seat: default export, lazy-chunkable, token-colored.
  */
 import { ArtSvg } from './lib/runtime';
-import { stubFor } from '@shared/art/scenes/stubs';
+import { sceneFor } from '@shared/art/scenes/sections';
 
 export interface R359ArtProps {
   className?: string;
@@ -14,7 +14,7 @@ export interface R359ArtProps {
   theme?: 'light' | 'dark';
 }
 
-const BUILDER = stubFor('section-problem-3');
+const BUILDER = sceneFor('section-problem-3');
 
 export default function SectionProblem3(props: R359ArtProps): React.JSX.Element {
   return <ArtSvg build={BUILDER} {...props} />;
