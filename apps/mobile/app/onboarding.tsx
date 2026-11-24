@@ -6,7 +6,7 @@ import { Screen } from "@/components/ui/screen";
 import { Button } from "@/components/ui/pressables";
 import { Hairline } from "@/components/ui/surfaces";
 import { T, MonoLabel } from "@/components/ui/text";
-import { OnboardingArt } from "@/components/art";
+import { OnboardingArt } from "@/features/onboarding/OnboardingArt";
 import { onboardingScreens, ONBOARDING_SCREEN_COUNT } from "@/features/onboarding/onboardingContent";
 import { useSession } from "@/auth/session";
 import { post } from "@/api/client";
