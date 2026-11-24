@@ -22,7 +22,15 @@
 
 - Size gate at 64da859: the merged design evidence totals 56.5 MiB. Raised the docs budget from 40 to 58 MiB to retain those proofs. The per-file and push limits remain in force. [Gate output](evidence/size.txt).
 
-NEXT: Inspect role sheets, reduce landing blocking time and verify the governance transfer flow.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:543adc737b99804a19061976550e408ed1853e7fe4856ff3bd25d69d2159fb94 -->
+
+- P3: council and meeting upload forms now switch to direct storage above the deployment body limit (4 MiB on production). Single PUT and multipart completion use the existing governance contract. [12 client tests](evidence/governance-transfer.txt), including refusal and missing ETag; frontend test-tree typecheck passed. Production uses Postgres and refuses presigning. An S3 deployment must explicitly allow its storage origin in CSP and expose ETag through CORS; live S3 transfer is unverified.
+
+NEXT: Repair the capture instrument and institution scope, then repeat the role audit.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 

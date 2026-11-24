@@ -11,6 +11,7 @@
  * except where the contract itself takes one (the admin
  * unit-capabilities surface, where the server verifies it).
  */
+import { effectivePdfMaxBytes, sniffPdfMagicBytes } from '../pdfUpload';
 import { api, unwrap } from '../api';
 import type {
   AcademicTerm, AccreditationStatus, Appointment, AppointmentDetail, AppointmentInput,
@@ -240,6 +241,45 @@ export interface GovernanceUploadResult {
   mimeType: 'application/pdf';
 }
 
+export const GOVERNANCE_PDF_LIMIT = 500 * 1024 * 1024;
+
+type DocumentTransfer =
+  | { mode: 'single'; key: string; url: string; headers: Record<string, string> }
+  | { mode: 'multipart'; key: string; uploadId: string; partSize: number; parts: { partNumber: number; url: string }[] };
+
+async function uploadDirect(file: File, progress?: (fraction: number) => void) {
+  if (file.size > GOVERNANCE_PDF_LIMIT) throw new Error('الحد الأقصى للمستند 500 ميجابايت.');
+  if (await sniffPdfMagicBytes(file) !== true) throw new Error('محتوى الملف ليس مستند PDF صالحًا.');
+  const transfer = await post<DocumentTransfer>('/governance/documents/presign', {
+    // The storage API accepts ASCII PDF names; the council title retains the user's name.
+    filename: 'document.pdf', sizeBytes: file.size, multipart: file.size > 100 * 1024 * 1024,
+  });
+  const putBytes = async (url: string, body: Blob, headers?: Record<string, string>) => {
+    const res = await fetch(url, { method: 'PUT', credentials: 'omit', body, headers });
+    if (!res.ok) throw new Error('تعذّر رفع المستند إلى التخزين.');
+    return res.headers.get('etag');
+  };
+  if (transfer.mode === 'single') {
+    await putBytes(transfer.url, file, transfer.headers);
+    progress?.(1);
+    return post<GovernanceUploadResult>('/governance/documents/complete', { key: transfer.key });
+  }
+  const parts = [];
+  let sent = 0;
+  for (const { partNumber, url } of transfer.parts) {
+    const start = (partNumber - 1) * transfer.partSize;
+    const part = file.slice(start, start + transfer.partSize);
+    const etag = await putBytes(url, part);
+    if (!etag) throw new Error('تعذّر تأكيد استلام جزء من الملف.');
+    parts.push({ partNumber, etag });
+    sent += part.size;
+    progress?.(sent / file.size);
+  }
+  return post<GovernanceUploadResult>('/governance/documents/complete', {
+    key: transfer.key, uploadId: transfer.uploadId, parts,
+  });
+}
+
 /**
  * D-6 — the raw PDF byte upload: the request body IS the file, with
  * Content-Type application/pdf (the backend's express.raw gate). The
@@ -251,6 +291,7 @@ export function uploadGovernancePdf(
   file: File,
   onUploadProgress?: (fraction: number) => void,
 ): Promise<GovernanceUploadResult> {
+  if (file.size > effectivePdfMaxBytes()) return uploadDirect(file, onUploadProgress);
   return unwrap<GovernanceUploadResult>(api.post<never>('/governance/documents/upload', file, {
     headers: { 'Content-Type': 'application/pdf' },
     timeout: 120_000,

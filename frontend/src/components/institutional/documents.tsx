@@ -7,8 +7,8 @@
  *     files (GET /governance/documents/:id/file → Blob → object URL)
  *     and an honest «مرجع خارجي» line for metadata-only rows.
  *   · GovernanceUploadForm  the upload flow: pick a PDF (magic-bytes
- *     + 15 MiB caps are the SERVER's law; the client only gates the
- *     obvious), POST the raw bytes to /governance/documents/upload,
+ *     + size limits are checked before transfer; the raw route checks the
+ *     bytes). Larger files go directly to storage after presigning;
  *     then attach the returned storage key to the council document.
  *
  * Graceful degradation (the A4 merge contract): while the endpoints
@@ -22,6 +22,7 @@ import { Icon } from '../Icon';
 import { toast } from '../../lib/toast';
 import { serverError } from './kit';
 import {
+  GOVERNANCE_PDF_LIMIT,
   fetchGovernanceDocumentFile,
   uploadGovernancePdf,
   type GovernanceUploadResult,
@@ -140,7 +141,7 @@ export function GovernanceDocuments({
 
 /* ── the upload form ────────────────────────────────────────────── */
 
-const MAX_PDF_BYTES = 15 * 1024 * 1024;
+
 
 export function GovernanceUploadForm({
   onAttached,
@@ -161,13 +162,14 @@ export function GovernanceUploadForm({
 
   const pick = (f: File | null) => {
     setError(null);
+    setFile(null);
     if (!f) return;
     if (f.type !== 'application/pdf' && !f.name.toLowerCase().endsWith('.pdf')) {
       setError('اختر ملف PDF صالحًا (الخادم يتحقق من بصمة الملف).');
       return;
     }
-    if (f.size > MAX_PDF_BYTES) {
-      setError('حجم الملف يتجاوز الحد المسموح (15 ميجابايت).');
+    if (f.size > GOVERNANCE_PDF_LIMIT) {
+      setError('حجم الملف يتجاوز الحد المسموح (500 ميجابايت).');
       return;
     }
     setFile(f);
@@ -196,7 +198,8 @@ export function GovernanceUploadForm({
       if (inputRef.current) inputRef.current.value = '';
       onAttached(doc);
     } catch (err) {
-      const msg = serverError(err, '');
+      const status = (err as { response?: { status?: number } })?.response?.status;
+      const msg = status === 501 || status === 503 ? '' : serverError(err, err instanceof Error ? err.message : '');
       setError(
         msg ||
           'تعذَّر رفع الملف — ميزة رفع وثائق الحوكمة غير متاحة على هذا الخادم حاليًا؛ استخدم «إضافة مرجع» (بيانات وصفية) أو تواصل مع إدارة المؤسسة.',
@@ -210,7 +213,7 @@ export function GovernanceUploadForm({
   return (
     <div className="inst-upload-form">
       <div className="inst-field">
-        <label htmlFor="gov-doc-file">ملف PDF (حتى 15 ميجابايت)</label>
+        <label htmlFor="gov-doc-file">ملف PDF (حتى 500 ميجابايت)</label>
         <input
           ref={inputRef}
           id="gov-doc-file"
