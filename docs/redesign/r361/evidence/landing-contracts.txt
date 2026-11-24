@@ -1,0 +1,33 @@
+
+ RUN  v2.1.9 /home/vercel-sandbox/workspace/repos/github.com/ahmadmedo1012/ulara/frontend
+
+ ✓ tests/unit/r306-landing-sheet.test.ts (21 tests) 26ms
+stderr | tests/unit/r183-B8-polish-perf.test.tsx > r183-B8 — AuthPage conditional sub copy (A5 finding 2) > a bounced deep-link visitor (state.from) reads the resume-the-journey line
+⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+ ✓ tests/unit/r183-B8-polish-perf.test.tsx (10 tests) 147ms
+
+ Test Files  2 passed (2)
+      Tests  31 passed (31)
+   Start at  23:32:35
+   Duration  2.88s (transform 575ms, setup 736ms, collect 788ms, tests 172ms, environment 2.43s, prepare 317ms)
+
+bundle-size gate — 188 JS chunks, 2791.2 KB raw
+[1/3] total gz (كل الحزم) … PASS — 863.9 KB gz / سقف 865 KB
+[2/3] entry index-5kb5rJRW.js (حزمة الدخول) … PASS — 30.0 KB gz / سقف 92 KB
+[3/3] pdf worker pdf-ksa_hnld.js (عامل PDF) … PASS — 95.7 KB gz / سقف 110 KB
+      heaviest chunks (gz):
+        pdf-ksa_hnld.js                 95.7 KB
+        charts-ZCx0N5nZ.js              65.0 KB
+        react-k5_3mBov.js               52.3 KB
+        index-5kb5rJRW.js               30.0 KB
+        OwnerPages-DQZF6qhD.js          28.2 KB
+        sections-lazy-Ythk1kQs.js       25.0 KB
+        LandingPage-BuOVlF-D.js         23.4 KB
+        AppShell-B7Wv4i2K.js            22.4 KB
+        TeacherPages-BKBy0PNf.js        20.0 KB
+        ExamAuthorPages-DLt6wrhD.js     16.0 KB
+
+PASS — الأوزان داخل الأسقف المثبَّتة (إجمالي 863.9 KB gz، الدخول 30.0 KB، pdf 95.7 KB).
+  8 passed (21.5s)

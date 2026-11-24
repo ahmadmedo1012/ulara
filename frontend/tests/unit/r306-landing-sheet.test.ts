@@ -280,9 +280,9 @@ describe('r306 → r310 — the elevation illustration (the honest interactive)'
     // exactly 2 lines @390 AND @360).
     /* r359 A1 re-key: the drawing contract is the ASPECT-LOCKED art
      * box (zero letterbox — the stations map to the viewBox fractions);
-     * mobile locks to the building crop's own aspect. */
+     * mobile locks to the mounted mobile drawing's own aspect. */
     expect(live).toMatch(/\.hro-art\s*\{[\s\S]*?aspect-ratio: 1440 \/ 700/s);
-    expect(live).toMatch(/aspect-ratio: 960 \/ 546/s);
+    expect(live).toMatch(/aspect-ratio: 390 \/ 560/s);
     // R322 override (1-d FINAL · the type-scale migration): the ≤767 H1
     // re-clamp RETIRED — the D1 rung (--fs-d1, band-independent) governs
     // from the base seat: 31.74px floor across the phone band (the reference's

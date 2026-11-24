@@ -10,6 +10,14 @@
 
 - P1 institution audit: added the Arabic page title and removed invisible whitespace that broke lint on baseline 1bdddc1. [All 16 route-title tests passed](evidence/audit-title.txt); ESLint passed on the audit component.
 
-NEXT: Inspect the baseline role captures and repair remaining CI failures.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:03c0663c5dd22dac89582447d25fea8d600f32f124aced2e7e42d6a02f78af0e -->
+
+- P1/P2 measurements after 6c43670: [landing and shell contracts](evidence/landing-contracts.txt) now pin the approved mobile art ratio, bundle budget and paper shade. Eight iPhone Chromium cases passed. [Mobile Lighthouse, live URLs](evidence/lighthouse-baseline.txt); home performance below target.
+
+NEXT: Inspect role sheets, reduce landing blocking time; WebKit and the final matrix remain open.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->

@@ -50,7 +50,7 @@ export const GHOST_ROW_TEXT = 'مقرّراتي الدراسية';
 
 /** The theme's own paper ground (tokens.css --bg) — the only ground the sheet may paint. */
 export const PAPER: Record<'light' | 'dark', string> = {
-  light: 'rgb(245, 241, 232)',
+  light: 'rgb(242, 241, 236)',
   dark: 'rgb(38, 32, 25)',
 };
 
