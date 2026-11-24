@@ -1,0 +1,146 @@
+[
+  {
+    "name": "before-student-dash",
+    "route": "/student/dashboard",
+    "role": "STUDENT",
+    "theme": "light",
+    "width": 1440,
+    "height": 900,
+    "file": "before-student-dash.webp",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    ],
+    "overflowX": 0,
+    "smallTargets": 0,
+    "targetList": [],
+    "radiusViolations": 6,
+    "shadowViolations": 2,
+    "title": "لوحة التحكم · أُلارا"
+  },
+  {
+    "name": "before-quality-dash",
+    "route": "/quality/dashboard",
+    "role": "QUALITY",
+    "theme": "light",
+    "width": 1440,
+    "height": 900,
+    "file": "before-quality-dash.webp",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    ],
+    "overflowX": 0,
+    "smallTargets": 0,
+    "targetList": [],
+    "radiusViolations": 9,
+    "shadowViolations": 3,
+    "title": "لوحة الجودة · أُلارا"
+  },
+  {
+    "name": "before-owner-institutions",
+    "route": "/owner/institutions",
+    "role": "OWNER",
+    "theme": "light",
+    "width": 1440,
+    "height": 900,
+    "file": "before-owner-institutions.webp",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    ],
+    "overflowX": 0,
+    "smallTargets": 0,
+    "targetList": [],
+    "radiusViolations": 1,
+    "shadowViolations": 2,
+    "title": "المؤسسات · أُلارا"
+  },
+  {
+    "name": "before-admin-students",
+    "route": "/admin/students",
+    "role": "ADMIN",
+    "theme": "light",
+    "width": 1440,
+    "height": 900,
+    "file": "before-admin-students.webp",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    ],
+    "overflowX": 0,
+    "smallTargets": 0,
+    "targetList": [],
+    "radiusViolations": 3,
+    "shadowViolations": 4,
+    "title": "إدارة الطلاب · أُلارا"
+  },
+  {
+    "name": "before-teacher-dash",
+    "route": "/teacher/dashboard",
+    "role": "TEACHER",
+    "theme": "light",
+    "width": 1440,
+    "height": 900,
+    "file": "before-teacher-dash.webp",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    ],
+    "overflowX": 0,
+    "smallTargets": 0,
+    "targetList": [],
+    "radiusViolations": 6,
+    "shadowViolations": 4,
+    "title": "لوحة الأستاذ · أُلارا"
+  },
+  {
+    "name": "before-institution-org",
+    "route": "/institution/organization",
+    "role": "OWNER",
+    "theme": "light",
+    "width": 1440,
+    "height": 900,
+    "file": "before-institution-org.webp",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    ],
+    "overflowX": 0,
+    "smallTargets": 0,
+    "targetList": [],
+    "radiusViolations": 1,
+    "shadowViolations": 2,
+    "title": "الهيكل التنظيمي · أُلارا"
+  },
+  {
+    "name": "before-student-dash-m",
+    "route": "/student/dashboard",
+    "role": "STUDENT",
+    "theme": "light",
+    "width": 390,
+    "height": 844,
+    "file": "before-student-dash-m.webp",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    ],
+    "overflowX": 0,
+    "smallTargets": 0,
+    "targetList": [],
+    "radiusViolations": 6,
+    "shadowViolations": 2,
+    "title": "لوحة التحكم · أُلارا"
+  },
+  {
+    "name": "before-quality-dash-m",
+    "route": "/quality/dashboard",
+    "role": "QUALITY",
+    "theme": "light",
+    "width": 390,
+    "height": 844,
+    "file": "before-quality-dash-m.webp",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    ],
+    "overflowX": 0,
+    "smallTargets": 0,
+    "targetList": [],
+    "radiusViolations": 9,
+    "shadowViolations": 3,
+    "title": "لوحة الجودة · أُلارا"
+  }
+]

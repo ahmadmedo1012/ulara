@@ -374,10 +374,11 @@
 }
 
 /* أرضية اللمس 44px لصفوف المحادثات — نفس عقد أدوات المحادثة أعلاه
-   (min-* فقط تُكبّر صندوق النقر). */
-@media (pointer: coarse) {
-  .ai-surface .ai-conv-open { min-block-size: 44px; }
-}
+   (min-* فقط تُكبّر صندوق النقر). R359 (A3): the floor is
+   UNCONDITIONAL — pointer-fine headless captures measured 43px and a
+   floor that flickers with the pointer class is no floor. */
+.ai-surface .ai-conv-open,
+button.ai-conv-open { min-block-size: 44px; }
 
 /* ── r351 AI-4 — the owner provider card ────────────────────────── */
 .owner-ai-provider-grid {

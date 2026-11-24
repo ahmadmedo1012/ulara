@@ -53,11 +53,13 @@ describe('r166e — /admin/courses actions column follows the family pattern', (
     }
   });
 
-  it('the actions th/td are plain and the cluster carries no dead justify-end', () => {
+  /* R359 re-pin — the courses roster is the DataSheet register: the
+   * actions ride the noLabel actions COLUMN (verb buttons in a plain
+   * flex cluster), not the old th/td pair. */
+  it('the actions column is the noLabel DataSheet cell and the cluster carries no dead justify-end', () => {
     const page = stripComments(read('src/pages/admin/AdminPages.tsx'));
-    // Plain th/td — the students-table family shape (START edge in RTL).
-    expect(page).toContain('<th scope="col">إجراءات</th>');
-    expect(page).toContain('<td data-label="الإجراءات">');
+    expect(page).toContain("key: 'actions'");
+    expect(page).toContain('noLabel: true');
     expect(page).not.toContain(deadClass);
     // The cluster is flex items-center gap-2 ONLY: justify-end has no rule
     // (pinned below), so carrying it would be a dead-class trap again.

@@ -229,6 +229,9 @@ export interface ApiRequestConfig {
   timeout?: number;
   onUploadProgress?: (event: ApiProgressEvent) => void;
   signal?: AbortSignal;
+  /** R359 final · D-6 — 'blob' returns the raw binary body (the
+   * governance PDF stream); default keeps the JSON/text contract. */
+  responseType?: 'json' | 'blob';
 }
 
 /** What every `api.*` method resolves — the axios response shape, so
@@ -521,7 +524,11 @@ async function fetchTransport(cfg: InternalConfig): Promise<ApiResponse<unknown>
       signal: controller.signal,
     });
     const response: ApiResponse<unknown> = {
-      data: parseBody(await res.text(), res.headers.get('content-type')),
+      /* R359 final · D-6: a blob request returns the binary body
+       * itself (PDF streams); everything else parses text/JSON. */
+      data: cfg.responseType === 'blob'
+        ? await res.blob()
+        : parseBody(await res.text(), res.headers.get('content-type')),
       status: res.status,
       statusText: res.statusText,
       headers: Object.fromEntries(res.headers.entries()),
@@ -560,6 +567,9 @@ function xhrTransport(cfg: InternalConfig): Promise<ApiResponse<unknown>> {
     xhr.open(method, buildURL(cfg), true);
     xhr.withCredentials = true;
     xhr.timeout = cfg.timeout ?? DEFAULT_TIMEOUT_MS;
+    /* R359 final · D-6: binary responses arrive as Blob (governance
+     * PDF streams); the default text/JSON parse stays untouched. */
+    if (cfg.responseType === 'blob') xhr.responseType = 'blob';
 
     const headers: Record<string, string> = { ...(cfg.headers ?? {}) };
     const { body, json, form } = serializeBody(cfg);
@@ -573,7 +583,9 @@ function xhrTransport(cfg: InternalConfig): Promise<ApiResponse<unknown>> {
     };
     xhr.onload = () => {
       const response: ApiResponse<unknown> = {
-        data: parseBody(xhr.responseText, xhr.getResponseHeader('content-type')),
+        data: cfg.responseType === 'blob'
+          ? xhr.response
+          : parseBody(xhr.responseText, xhr.getResponseHeader('content-type')),
         status: xhr.status,
         statusText: xhr.statusText,
         headers: responseHeadersOf(xhr),

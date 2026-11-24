@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  Palette, Bell, ToggleRight, ArrowLeft, Info,
-} from 'lucide-react';
-import { Card } from '../../components/primitives';
+import { ArrowLeft, Info } from 'lucide-react';
 /* R304: the branding landing opens with the patterns PageHeader —
- * breadcrumbs back to the owner dashboard. */
-import { PageHeader as PatternsPageHeader } from '../../components/patterns';
+ * breadcrumbs back to the owner dashboard.
+ * R359 (W2-e): the landing rides the sheet grammar — the two channel
+ * sections share the lateral .sg-cols rhythm, the identity surface
+ * rides its own frame (the Card died). */
+import { PageHeader as PatternsPageHeader, SheetSection } from '../../components/patterns';
 import { Icon } from '../../components/Icon';
 
 /**
@@ -113,6 +113,7 @@ export function OwnerContentPage() {
     <div className="page r305ao">
       <PatternsPageHeader
         title="المحتوى والعلامة التجاريّة"
+        eyebrow="مالك المنصّة"
         /* r351 A2 (Q3): header description retired — the cards name themselves. */
         breadcrumbs={[{ label: 'لوحة المالك', to: '/owner/dashboard' }, { label: 'المحتوى والعلامة التجاريّة' }]}
         /* R341 D11: the [06] nav-order gutter numeral (OWNER_NAV
@@ -120,17 +121,19 @@ export function OwnerContentPage() {
          * already carry their own primary links both bands. */
       />
 
-      <div className="grid-2">
-        <Card title="الإعلانات الرسميّة" icon={Bell}>
-          {/* r351 A2 (Q3): capabilities lead retired — the card title +
-              CTA explain the card; the composer page states its own scope. */}
+      {/* R359 (W2-e): the two channel sections ride the lateral rhythm —
+          .sg-cols keeps the 2-column plan at desktop, one column below. */}
+      <div className="sg-cols" data-cols="2">
+        <SheetSection index="01" caption="ANNOUNCEMENTS" title="الإعلانات الرسميّة">
+          {/* r351 A2 (Q3): capabilities lead retired — the section title +
+              CTA explain it; the composer page states its own scope. */}
           <Link to="/community" className="btn primary sm">
             <Icon icon={ArrowLeft} size={13} />
             فتح المجتمع الجامعيّ
           </Link>
-        </Card>
+        </SheetSection>
 
-        <Card title="ميزات المنصّة" icon={ToggleRight}>
+        <SheetSection index="02" caption="FEATURE FLAGS" title="ميزات المنصّة">
           {/* r351 A2 (Q3): lead trimmed to the two pinned honesty phrases
              * (r165g) — the examples list + the restating final clause
              * retired. */}
@@ -141,10 +144,10 @@ export function OwnerContentPage() {
             <Icon icon={ArrowLeft} size={13} />
             فتح إعدادات النظام
           </Link>
-        </Card>
+        </SheetSection>
       </div>
 
-      <Card title="الهويّة البصريّة" icon={Palette} className="owner-card-settle">
+      <SheetSection index="03" caption="BRAND IDENTITY" title="الهويّة البصريّة" className="owner-card-settle">
         <div className="owner-brand-notice">
           <Icon icon={Info} size={14} />
           <span>
@@ -181,7 +184,7 @@ export function OwnerContentPage() {
             </div>
           ))}
         </div>
-      </Card>
+      </SheetSection>
     </div>
   );
 }

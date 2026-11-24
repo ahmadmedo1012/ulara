@@ -35,30 +35,34 @@ const stripComments = (src: string) => src.replace(/\/\*[\s\S]*?\*\//g, '');
 /* ── [fix 1] the admin compact-roster band ──────────────────────── */
 
 describe('r183-B5 [A8 P2] — admin rosters carry the ≤1024 compact-band diet', () => {
-  it('AdminPages exports the band hook and the courses table folds «تسجيلات»+«الفصول» into the meta line', () => {
+  /* R359 re-pin — the courses roster is the DataSheet register now:
+   * the band hook survives; the diet folds the two lowest-priority
+   * COLUMNS (تسجيلات/الفصول) via conditional column entries, and the
+   * counted facts ride the name cell's sub-line inside it. */
+  it('AdminPages exports the band hook and the courses ledger folds «تسجيلات»+«الفصول» into the name sub-line', () => {
     const page = stripComments(read('src/pages/admin/AdminPages.tsx'));
     expect(page).toContain('export function useCompactRosterBand()');
     // The diet: both lowest-priority columns render only above the band…
-    expect(page).toContain('{!compact && <th scope="col" className="admin-table-num" style={{ width: 110 }}>تسجيلات</th>}');
-    expect(page).toContain('{!compact && <th scope="col" className="admin-table-num" style={{ width: 100 }}>الفصول</th>}');
-    // …and the counts ride the name cell's meta line inside it.
+    expect(page).toContain("...(!compact ? [{ key: 'enrollments', label: 'تسجيلات'");
+    expect(page).toContain("...(!compact ? [{ key: 'offerings', label: 'الفصول'");
+    // …and the counts ride the name cell's sub-line inside it.
     expect(page).toContain('{compact && (');
     expect(page).toContain("countAr(c.offeringCount, ['فصل واحد', 'فصلان', 'فصول', 'فصلاً'])");
-    // The skeleton advertises the dieted column count (6), not 8.
-    expect(page).toContain('const courseCols = compact ? 6 : 8;');
   });
 
-  /* r253 re-pin (4D Phase B): the STUDENTS roster left the table world —
-   * it is RowList rows now, and a row carries ALL fields at every width,
-   * so the compact column diet (and its hook import) is retired there.
-   * The courses roster above keeps the band; this pin now guards the
-   * students page's post-table contract instead. */
-  it('AdminExtraPages students roster is the RowList recomposition (no compact-band diet needed)', () => {
+  /* r253 re-pin (4D Phase B) → R359 final re-pin: the STUDENTS roster
+   * left the RowList world — it is the DataSheet sheet-grammar register
+   * now (dense hairline table, mono numerics, labelled cards ≤640px),
+   * and a row carries ALL fields as COLUMNS at every width, so the
+   * compact column diet (and its hook import) stays retired there.
+   * The courses roster above keeps the band; this pin guards the
+   * students page's sheet-grammar contract. */
+  it('AdminExtraPages students roster is the DataSheet sheet-grammar recomposition (no compact-band diet needed)', () => {
     const page = stripComments(read('src/pages/admin/AdminExtraPages.tsx'));
-    // The row is the patterns RowItem — the academic fields ride the
-    // meta line and the expansion body at every width.
-    expect(page).toContain('RowItem');
-    expect(page).toContain('expandLabel=');
+    // The roster is the patterns DataSheet inside a framed SheetSection —
+    // the academic fields ride the columns at every width.
+    expect(page).toContain('DataSheet');
+    expect(page).toContain('<SheetSection index="01" caption="STUDENT ROSTER"');
     // The retired diet pins stay retired.
     expect(page).not.toContain('const studentCols = compact ? 6 : 8;');
     expect(page).not.toContain('{!compact && <th scope="col">السنة</th>}');

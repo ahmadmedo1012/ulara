@@ -58,12 +58,12 @@
      ╚═══════════════════════════════════════════════════════════════╝ */
   .sidebar {
     inline-size: var(--sidebar-w);
-    /* r304 fold (ex «final-visual-system»): the rail rides one calm step
-       between the page paper and the cards — surface pulled 4% toward
-       the paper — instead of the flat --sidebar-bg wash. Content-facing
-       hairline stays on the inline-END edge (base.css owns the border;
-       the color lands on --rule there). */
-    background: color-mix(in srgb, var(--surface) 96%, var(--bg));
+    /* r304 fold → R359 (A3 · the sheet grammar): the rail IS the sheet —
+       the paper ground itself, separated from the content by the ONE
+       inline-end hairline (base.css owns the border). The tinted-surface
+       slab read as a pasted SaaS panel against the drafted sheet; the
+       reference separates by LINES, not fills. */
+    background: var(--bg);
     padding: var(--sp-3) var(--sp-3) var(--sp-3);
     /* 4-A2 P1-2: the sidebar itself must NOT be the scroll container —
        with the whole rail scrolling, the pinned-intent footer
@@ -1303,6 +1303,9 @@
     color: var(--_fg);
     /* R313 (WP-F · D16): square option on the square track. */
     border-radius: var(--r-xs);
+    /* R359: the reserved 1px border seat — the is-active thumb's
+       hairline outline lands with zero layout shift. */
+    border: 1px solid transparent;
     /* R329 (gate:clean): the transition is r305-shell.css's unlayered
        control recipe — this in-layer copy was inert. */
     cursor: pointer;
@@ -1318,14 +1321,13 @@
     --_fg: var(--text);
     background: var(--_bg);
     color: var(--_fg);
-    /* r305 (the reference conservation): the thumb floats by SURFACE STEP + an
-       inset hairline now (precise outlines) — the at-rest --shadow-card
-       on a chrome control read as elevation the overlay ladder doesn't
-       sanction. Inset ring, not a border: no layout shift inside the
-       segmented track. R313 (WP-F · D16): a border would render the
-       same 1px hairline today — the inset ring stays (no layout shift
-       inside the segmented track). */
-    box-shadow: inset 0 0 0 1px var(--rule);
+    /* r305 (the reference conservation): the thumb floats by SURFACE STEP
+       + a hairline outline now — precise outlines, never elevation.
+       R359 (A3 · the no-shadow law): the inset box-shadow ring became a
+       literal border (same 1px hairline, no layout shift — the option
+       rides the segmented track's fixed 1px border seat that was always
+       reserved, so the geometry is identical). */
+    border: 1px solid var(--rule);
   }
 
   /* Collapsed icon rail (4-A2 P2-9): the 3 options used to squeeze

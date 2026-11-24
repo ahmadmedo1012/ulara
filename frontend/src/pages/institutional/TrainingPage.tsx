@@ -11,7 +11,7 @@ import { toast } from '../../lib/toast';
 import { formatDate } from '../../utils/numbers';
 
 import { serverError,
-  EnumChip, InstFilters, InstFormDialog, InstPagedTable, InstSelect,
+  EnumChip, InstFilters, InstFormDialog, InstPagedTable, InstSection, InstSelect,
   type InstColumn, type InstField, type InstFormValues,
 } from '../../components/institutional/kit';
 import { Icon } from '../../components/Icon';
@@ -162,6 +162,7 @@ export function InstitutionTrainingPage() {
         />
       </InstFilters>
 
+      <InstSection index="01" caption="PLACEMENTS" title="سجلّ التدريبات العملية" pad="none">
       <InstPagedTable
         query={placementsQuery}
         columns={columns}
@@ -170,6 +171,7 @@ export function InstitutionTrainingPage() {
         unit={PLACE_UNIT}
         onPage={setPage}
       />
+      </InstSection>
 
       <InstFormDialog open={open} title="تدريب عملي جديد" fields={fields} submitLabel="تخطيط" busy={busy} onCancel={() => setOpen(false)} onSubmit={submit} />
       {evaluateTarget && (

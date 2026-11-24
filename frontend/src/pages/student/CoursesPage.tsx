@@ -8,17 +8,23 @@ import { FormField } from '../../components/primitives';
 import {
   PageFrame, PageHeader, RowList, RowItem, FilterBar,
 } from '../../components/patterns';
-/* R319 (c3-S1) — the §B2 kit: the mono-indexed section title bar, the
- * per-course hairline bar, the mono status chips, the hatched empties
- * (the DashboardPage conversion's own components, now this family's). */
+/* R359 (A3 · final sweep) — the sheet grammar joins the §B2 kit: the
+ * framed section (registration crosses + Latin mono caption + the
+ * aside slot), the KpiBand (the dimension-string register replacing
+ * the summary line), and the DataSheet (the roster register the admin
+ * students exemplar established — the enrolled-course list IS tabular:
+ * course · code · teacher · progress). */
 import {
-  SectionBar, BarCount, CourseBar, StatusChip, EmptyCell, dueChip, dueDays,
+  SheetSection, KpiBand, DataSheet, type DataSheetColumn,
+} from '../../components/patterns';
+import {
+  BarCount, CourseBar, StatusChip, EmptyCell, dueChip, dueDays,
 } from '../../components/student';
-import { ErrorState, EmptyState, Skeleton } from '../../components/primitives/States';
+import { ErrorState, EmptyState } from '../../components/primitives/States';
 import { Modal } from '../../components/overlays/Modal';
 import { useDiscardGuard } from '../../components/curriculum/AuthoringModal';
 import { Icon } from '../../components/Icon';
-import { courseIcon, courseTint, ASSIGNMENT_KIND_LABEL } from '../../lib/courseMeta';
+import { courseIcon, ASSIGNMENT_KIND_LABEL } from '../../lib/courseMeta';
 import { countAr } from '../../lib/format';
 import {
   useMyEnrollments,
@@ -91,118 +97,32 @@ function formatDue(iso: string): string {
  * now — dueChip(dueDays(iso)) derives the honest Latin label
  * (OVERDUE / DUE TODAY / DUE nD / DUE) from the same whole-day
  * arithmetic formatDue rides; the Arabic prose sentence stays in the
- * row's meta («الموعد …»), the chip is the state. The r305 dot-chip
- * map (dueStatus + DUE_CHIP_TONE) is retired with its label voice. */
+ * row's meta («الموعد …»), the chip is the state. */
 
-/** Shape-matched loading skeleton for the course row list (audit 0-d
- *  P2 — the page used a bare spinner where a list fits). */
-function CourseListSkeleton() {
-  return (
-    <div aria-busy="true" aria-live="polite">
-      {[0, 1, 2, 3, 4, 5].map((i) => (
-        <div className="pf-row" key={i} aria-hidden>
-          <div className="pf-row-line">
-            <Skeleton width={40} height={40} rounded="var(--r-md)" />
-            <div className="pf-row-main">
-              <Skeleton width="45%" height={15} />
-              <Skeleton width="60%" height={11} />
-            </div>
-            <Skeleton width={140} height={8} rounded="var(--r-full)" />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-/** r221 (4A redesign — Superlist): the course row — the LIST is the
- *  product. Needs a per-offering lectures query (the count scent «٣
- *  محاضرات»); the whole title is the link and the CTA chip is visual
- *  (no nested interactive inside an anchor).
- *  r341 D7a — `actNow` seats the row's verb on the accent register
- *  (the ONE act-now row: the first not-done course, the exams list's
- *  oex-row-cta precedent — «the accent is reserved for THE actionable
- *  state»); every other row keeps the quiet ghost verb so the
- *  one-accent discipline holds with N enrolled courses. The span is
- *  still decorative chrome inside the row LINK — the row is the
- *  control (r289). */
-function CourseRow({ e, actNow }: { e: MyEnrollment; actNow?: boolean }) {
+/* R359 (final sweep) — the course cell's quiet metadata line: code ·
+ * teacher · lecture count. A COMPONENT (not a render closure) because
+ * the lecture-count scent rides its own per-offering query (the same
+ * cached list the lecture player's prev/next bar reads, so the
+ * request is amortized across the visit; fail-soft: no count on
+ * error). */
+function CourseMetaLine({ e }: { e: MyEnrollment }) {
   const c = e.offering.course;
-  const Cmp = courseIcon(c.code ?? c.name);
-  const tint = courseTint(c.themeColor);
   const teacher = `د. ${e.offering.teacher.firstName} ${e.offering.teacher.lastName}`;
-  // Lecture count — the same cached list the lecture player's prev/next
-  // bar reads (['offerings', id, 'lectures']), so the row's request is
-  // amortized across the visit. Fail-soft: no count on error.
   const lecturesQ = useOfferingLectures(e.offering.id);
   const lectureCount = lecturesQ.data?.length;
   return (
-    /* r289: الصف كله الوصلة (RowItem to) — صف المقرّر باب دخول كامل
-       العرض؛ شارة «تابع/ابدأ» في الطرف تظل داخل الوصلة (علامة
-       غنية بلا عنصر تفاعلي متداخل). */
-    <RowItem
-      to={`/student/courses/${e.offering.id}`}
-      leading={
-        <span
-          className="courses-row-icon"
-          style={{
-            background: `color-mix(in srgb, ${tint} 14%, var(--surface))`,
-            color: `color-mix(in srgb, ${tint} 60%, var(--text))`,
-          }}
-        >
-          <Icon icon={Cmp} size={18} />
-        </span>
-      }
-      title={c.name}
-      /* R305 (the reference): the row's quiet metadata line — code · teacher ·
-       * lecture count — rides the foundation meta-row; separators are
-       * technical hairlines (divider color, not text opacity), the code
-       * stays bidi-isolated mono. Same data, same voice as before. */
-      meta={
-        <span className="r305s-meta-row">
-          <bdi className="font-mono">{c.code}</bdi>
-          <span className="r305s-meta-sep" aria-hidden />
-          <span>{teacher}</span>
-          {lectureCount !== undefined && lectureCount > 0 && (
-            <>
-              <span className="r305s-meta-sep" aria-hidden />
-              <span>{countAr(lectureCount, ['محاضرة واحدة', 'محاضرتان', 'محاضرات', 'محاضرة'])}</span>
-            </>
-          )}
-          {lectureCount === 0 && (
-            <>
-              <span className="r305s-meta-sep" aria-hidden />
-              <span>بانتظار محتوى المقرّر</span>
-            </>
-          )}
-        </span>
-      }
-      trailing={
-        <span className="courses-row-progress">
-          {/* R319 (c3-S1): the row's progress rides the §B2 CourseBar —
-              the hairline + end-tick instrument with the mono code/pct
-              readout (the dashboard's DashCourseRow register). The %
-              readout stays the row's data in --text-secondary ink; the
-              old tinted fill is retired (neutral ink — orange stays the
-              semester/LIVE signal). */}
-          <CourseBar
-            code={c.code ?? undefined}
-            pct={e.progressPct}
-            ariaLabel={`تقدّم مقرّر ${c.name}: ${e.progressPct}%`}
-          />
-          <span
-            className={
-              actNow
-                ? 'btn accent sm courses-row-go courses-row-go--now'
-                : 'btn ghost sm courses-row-go'
-            }
-          >
-            {e.progressPct > 0 ? 'تابع' : 'ابدأ'}
-            <Icon icon={ArrowLeft} size={12} />
-          </span>
-        </span>
-      }
-    />
+    <span className="sg-cell-sub">
+      <bdi dir="ltr">{c.code}</bdi>
+      {' · '}
+      {teacher}
+      {lectureCount !== undefined && lectureCount > 0 && (
+        <>
+          {' · '}
+          {countAr(lectureCount, ['محاضرة واحدة', 'محاضرتان', 'محاضرات', 'محاضرة'])}
+        </>
+      )}
+      {lectureCount === 0 && <>{' · '}بانتظار محتوى المقرّر</>}
+    </span>
   );
 }
 
@@ -231,130 +151,213 @@ export default function StudentCoursesPage() {
    * row the current bucket hides. */
   const actNowId = (filtered.find((e) => e.progressPct < 100) ?? filtered[0])?.id;
 
+  /* R359 (final sweep) — the enrolled-course roster columns (the admin
+   * students exemplar's register): the course's identity (the ink
+   * glyph well — the API tint retired; identity is the glyph itself,
+   * colour stays paper+ink+ONE signal) +
+   * title link + the code·teacher·lectures sub-line; the progress as
+   * the §B2 CourseBar instrument (mono numerics); and the row's verb
+   * — now a REAL link (the table row is not an anchor, so the verb
+   * and the title are the row's two scents to the same destination). */
+  const columns: DataSheetColumn<MyEnrollment>[] = [
+    {
+      key: 'course',
+      label: 'المقرّر',
+      render: (e) => {
+        const c = e.offering.course;
+        const Cmp = courseIcon(c.code ?? c.name);
+        return (
+          <span className="flex items-center gap-2">
+            <span className="courses-row-icon">
+              <Icon icon={Cmp} size={18} />
+            </span>
+            <span className="sg-cell-stack">
+              <Link className="sg-cell-title" to={`/student/courses/${e.offering.id}`}>
+                {c.name}
+              </Link>
+              <CourseMetaLine e={e} />
+            </span>
+          </span>
+        );
+      },
+    },
+    {
+      key: 'progress',
+      label: 'التقدّم',
+      render: (e) => (
+        <CourseBar
+          code={e.offering.course.code ?? undefined}
+          pct={e.progressPct}
+          ariaLabel={`تقدّم مقرّر ${e.offering.course.name}: ${e.progressPct}%`}
+        />
+      ),
+    },
+    {
+      key: 'go',
+      label: '',
+      noLabel: true,
+      render: (e) => (
+        <Link
+          to={`/student/courses/${e.offering.id}`}
+          className={
+            e.id === actNowId
+              ? 'btn accent sm courses-row-go courses-row-go--now'
+              : 'btn ghost sm courses-row-go'
+          }
+        >
+          {e.progressPct > 0 ? 'تابع' : 'ابدأ'}
+          <Icon icon={ArrowLeft} size={12} />
+        </Link>
+      ),
+    },
+  ];
+
   return (
     <div className="r319s-page">
     <PageFrame width="default">
       <PageHeader
+        eyebrow="طلاب الجامعة"
         title="مقرّراتي الدراسية"
         description="جميع المقرّرات التي سجّلت فيها هذا الفصل، مع تقدّمك في كل واحد منها."
       />
 
-      {isPending ? (
-        <>
-          {/* r173a: the summary-line mirror — the pending placeholder
-              keeps the settled line's own box so the data handoff never
-              moves the list below. */}
-          <p className="courses-summary" aria-busy="true">
-            <Skeleton width={220} height={20} rounded="var(--r-sm)" />
-          </p>
-          <CourseListSkeleton />
-        </>
-      ) : isError ? (
-        <ErrorState error={error} onRetry={() => refetch()} />
-      ) : !data?.length ? (
-        <EmptyState illustration="empty-courses" icon={BookOpen} title="لم تسجّل في أي مقرّر بعد" description="تواصل مع المسجل العام لإكمال تسجيل مقرّرات الفصل — ستظهر هنا فور اعتمادها." />
-      ) : (
-        <>
-          {/* R319 (c3-S1): the courses region opens with the §B2
-              mono-indexed title bar — the sheet's [01] section, the
-              honest enrolled count as its quiet mono meta (countAr for
-              assistive tech). The summary line + filter + list below
-              keep their own rhythm. */}
-          <SectionBar
-            title="مقرّراتك"
-            meta={
-              <BarCount
-                n={data.length}
-                srLabel={countAr(data.length, ['مقرّر مسجَّل واحد', 'مقرّران مسجّلان', 'مقرّرات مسجَّلة', 'مقرّراً مسجّلاً'])}
-              />
-            }
-          />
-          {/* r173a (the r171 VLM «courses header weight» deferred note):
-              the stats that used to wear four MetricCards now ride ONE
-              light text-muted line. The SAME counts object; the FilterBar
-              keeps the per-bucket counts, so a bucket shows here only
-              when it is non-zero. */}
-          <p className="courses-summary">
-            <bdi>{countAr(data.length, ['مقرّر مسجَّل واحد', 'مقرّران مسجّلان', 'مقرّرات مسجَّلة', 'مقرّراً مسجّلاً'])}</bdi>
-            {counts.done > 0 && (
-              <> · مكتملة <bdi>{counts.done}</bdi></>
-            )}
-            {counts.active > 0 && (
-              <> · قيد التقدّم <bdi>{counts.active}</bdi></>
-            )}
-            {counts.attention > 0 && (
-              <> · بحاجة إلى اهتمام <bdi>{counts.attention}</bdi></>
-            )}
-          </p>
+      {/* R359 (final sweep) — the KPI band: the same counts object the
+          old one-line summary read (total · done · active · attention),
+          now in the dimension-string register. Every numeral derives
+          from the live enrollments payload; pending renders the honest
+          «—» empty cell (the band is its own loading mirror). */}
+      <KpiBand
+        items={[
+          {
+            index: '01',
+            caption: 'ENROLLED',
+            label: 'مقرّرات مسجَّلة هذا الفصل',
+            value: data?.length ?? 0,
+            empty: isPending,
+          },
+          {
+            index: '02',
+            caption: 'COMPLETED',
+            label: 'مكتملة',
+            value: counts.done,
+            empty: isPending,
+          },
+          {
+            index: '03',
+            caption: 'IN PROGRESS',
+            label: 'قيد التقدّم',
+            value: counts.active,
+            empty: isPending,
+          },
+          {
+            index: '04',
+            caption: 'STALLED',
+            label: 'بحاجة إلى اهتمام',
+            value: counts.attention,
+            empty: isPending,
+          },
+        ]}
+      />
 
-          {data.length > 1 && (
-            <FilterBar
-              filters={
-                <div className="courses-filter" role="group" aria-label="تصفية المقرّرات حسب الحالة">
-                  {FILTERS.map((f) => (
-                    <button
-                      key={f.key}
-                      type="button"
-                      className={`pill${filter === f.key ? ' on' : ''}`}
-                      aria-pressed={filter === f.key}
-                      onClick={() => setFilter(f.key)}
-                    >
-                      {f.label}
-                      <span className="courses-filter-count" aria-hidden>{counts[f.key]}</span>
-                    </button>
-                  ))}
-                </div>
-              }
-            />
-          )}
+      {(data?.length ?? 0) > 1 && (
+        <FilterBar
+          filters={
+            <div className="courses-filter" role="group" aria-label="تصفية المقرّرات حسب الحالة">
+              {FILTERS.map((f) => (
+                <button
+                  key={f.key}
+                  type="button"
+                  className={`pill${filter === f.key ? ' on' : ''}`}
+                  aria-pressed={filter === f.key}
+                  onClick={() => setFilter(f.key)}
+                >
+                  {f.label}
+                  <span className="courses-filter-count" aria-hidden>{counts[f.key]}</span>
+                </button>
+              ))}
+            </div>
+          }
+        />
+      )}
 
-          {/* key={filter} remounts the list on filter change so the CSS
-              re-stagger replays — data refetches alone never replay it. */}
-          <RowList key={filter} aria-label="قائمة المقرّرات المسجّلة">
-            {filtered.length ? filtered.map((e) => (
-              <CourseRow key={e.id} e={e} actNow={e.id === actNowId} />
-            )) : (
+      {/* R359 (final sweep) — the roster sheet: pad=none (the table IS
+          the body). Loading, error and both empty registers (the
+          no-enrollments door + the empty filter bucket) live INSIDE
+          the framed section. */}
+      <SheetSection index="01" caption="ENROLLED COURSES" title="مقرّراتك" pad="none">
+        {isError && (
+          <div className="sg-pad-in">
+            <ErrorState error={error} onRetry={() => refetch()} />
+          </div>
+        )}
+        {!isError && !data?.length && !isPending && (
+          <div className="sg-pad-in">
+            <EmptyState illustration="empty-courses" icon={BookOpen} title="لم تسجّل في أي مقرّر بعد" description="تواصل مع المسجل العام لإكمال تسجيل مقرّرات الفصل — ستظهر هنا فور اعتمادها." />
+          </div>
+        )}
+        {!isError && ((data?.length ?? 0) > 0 || isPending) && (
+          <DataSheet
+            caption="قائمة المقرّرات المسجّلة"
+            columns={columns}
+            rows={filtered}
+            loading={isPending}
+            empty={(
               /* R319 (c3-S1): the empty filter bucket is the sheet's
-                 reserved-but-empty region — the hatched EmptyCell, never
-                 a bare «لا شيء» prose wall. */
+                 reserved-but-empty region — the hatched EmptyCell. */
               <EmptyCell
                 label="لا توجد مقرّرات في هذا التصنيف"
                 note="جرّب تصنيفاً آخر من الأزرار أعلاه لعرض مقرّراتك."
               />
             )}
-          </RowList>
-        </>
-      )}
-
-      <section aria-label="الواجبات القادمة">
-        {/* R319 (c3-S1): the section's heading joins the §B2 title-bar
-            register — [02] + the honest actable count as mono meta; the
-            old description line survives as the quiet note under the
-            bar (honest copy, unchanged). */}
-        <SectionBar
-          title="الواجبات القادمة"
-          meta={
-            !dashboard.isPending && !dashboard.isError && upcoming.length > 0 ? (
-              <BarCount
-                n={upcoming.length}
-                srLabel={countAr(upcoming.length, ['واجب واحد قادم', 'واجبان قادمان', 'واجبات قادمة', 'واجباً قادماً'])}
-              />
-            ) : undefined
-          }
-        />
-        <p className="r305c-sec-note">واجباتك المستحقة فعلياً خلال الأسبوع القادم ولم تُسلّمها بعد</p>
-        {dashboard.isPending ? (
-          <CourseListSkeleton />
-        ) : dashboard.isError ? (
-          <ErrorState error={dashboard.error} onRetry={() => dashboard.refetch()} />
-        ) : !upcoming.length ? (
-          /* R319 (c3-S1): the empty agenda is the hatched EmptyCell —
-             the sheet's reserved-but-empty region. */
-          <EmptyCell
-            label="لا توجد واجبات قادمة"
-            note="ستظهر هنا الواجبات المستحقة فور إضافتها من أساتذة مقرّراتك."
           />
+        )}
+      </SheetSection>
+
+      <SheetSection
+        index="02"
+        caption="UPCOMING ASSIGNMENTS"
+        title="الواجبات القادمة"
+        pad="none"
+        aside={
+          !dashboard.isPending && !dashboard.isError && upcoming.length > 0 ? (
+            <BarCount
+              n={upcoming.length}
+              srLabel={countAr(upcoming.length, ['واجب واحد قادم', 'واجبان قادمان', 'واجبات قادمة', 'واجباً قادماً'])}
+            />
+          ) : undefined
+        }
+      >
+        {dashboard.isPending ? (
+          <div className="sg-pad-in" aria-busy="true" aria-live="polite">
+            {/* r173a: the shape-matched mirror — one skeleton owner for
+                the agenda region, inside the framed body. */}
+            {[0, 1].map((i) => (
+              <div className="pf-row" key={i} aria-hidden>
+                <div className="pf-row-line">
+                  <div className="pf-row-main">
+                    <span className="pat-skeleton" style={{ display: 'inline-block', inlineSize: '45%', blockSize: '0.9em' }} />
+                    <span className="pat-skeleton" style={{ display: 'inline-block', inlineSize: '60%', blockSize: '0.7em' }} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : dashboard.isError ? (
+          <div className="sg-pad-in">
+            <ErrorState error={dashboard.error} onRetry={() => dashboard.refetch()} />
+          </div>
+        ) : !upcoming.length ? (
+          <div className="sg-pad-in">
+            {/* R319 (c3-S1): the empty agenda is the hatched EmptyCell —
+                the sheet's reserved-but-empty region. */}
+            <EmptyCell
+              label="لا توجد واجبات قادمة"
+              note="ستظهر هنا الواجبات المستحقة فور إضافتها من أساتذة مقرّراتك."
+            />
+          </div>
         ) : (
+          /* The agenda is a feed, not a ledger — the RowList stays
+             (r319 §B2 rows), now inside the framed section. */
           <RowList aria-label="قائمة الواجبات القادمة">
             {upcoming.map((a) => {
               /* R319 (c3-S1): dueChip + dueDays — the SAME honest
@@ -388,7 +391,7 @@ export default function StudentCoursesPage() {
             })}
           </RowList>
         )}
-      </section>
+      </SheetSection>
 
       {submitTarget && (
         <SubmitAssignmentModal

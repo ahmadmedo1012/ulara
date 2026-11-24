@@ -7,12 +7,12 @@
  */
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
-import { PageFrame, PageHeader } from '../../components/patterns';
+import { PageFrame, PageHeader, KpiBand } from '../../components/patterns';
 import { toast } from '../../lib/toast';
 import { formatDate } from '../../utils/numbers';
 import { serverError,
   DetailList, EnumChip, InstFilters, InstFormDialog, InstPagedTable, InstSection,
-  InstSelect, type InstColumn, type InstField, type InstFormValues,
+  InstSelect, StatusFlag, rowToneFromStatus, type InstColumn, type InstField, type InstFormValues,
 } from '../../components/institutional/kit';
 import { Icon } from '../../components/Icon';
 import {
@@ -249,9 +249,9 @@ export function InstitutionLicensesPage() {
   const licColumns: Array<InstColumn<OperationalLicense>> = [
     { head: 'النوع', cell: (l) => LICENSE_KIND_LABELS[l.kind] },
     { head: 'الجهة', cell: (l) => l.authority?.nameAr ?? l.authorityId },
-    { head: 'الرقم', cell: (l) => <span className="font-mono">{l.licenseNumber ?? '—'}</span> },
+    { head: 'الرقم', cell: (l) => <span className="font-mono">{l.licenseNumber ?? '—'}</span>, mono: true },
     { head: 'ينتهي', cell: (l) => (l.expiresAt ? formatDate(l.expiresAt) : '—') },
-    { head: 'الحالة', cell: (l) => <EnumChip value={l.status} labels={LICENSE_STATUS_LABELS} /> },
+    { head: 'الحالة', cell: (l) => <StatusFlag value={l.status} labels={LICENSE_STATUS_LABELS} />, tone: (l) => rowToneFromStatus(l.status) },
     {
       head: 'إجراءات', mobileHidden: true,
       cell: (l) => canManage ? (
@@ -271,7 +271,7 @@ export function InstitutionLicensesPage() {
     { head: 'الجهة', cell: (i) => i.authority?.nameAr ?? i.authorityId },
     { head: 'المخطط', cell: (i) => (i.scheduledAt ? formatDate(i.scheduledAt) : '—') },
     { head: 'أُجري', cell: (i) => (i.conductedAt ? formatDate(i.conductedAt) : '—') },
-    { head: 'الحالة', cell: (i) => <EnumChip value={i.status} labels={INSPECTION_STATUS_LABELS} /> },
+    { head: 'الحالة', cell: (i) => <StatusFlag value={i.status} labels={INSPECTION_STATUS_LABELS} />, tone: (i) => rowToneFromStatus(i.status) },
     {
       head: 'إجراءات', mobileHidden: true,
       cell: (i) => canManage ? (
@@ -292,9 +292,9 @@ export function InstitutionLicensesPage() {
 
   const findColumns: Array<InstColumn<ComplianceFinding>> = [
     { head: 'الملاحظة', cell: (f) => <span className="inst-tree-name">{f.titleAr}</span> },
-    { head: 'الخطورة', cell: (f) => <EnumChip value={f.severity} labels={FINDING_SEVERITY_LABELS} /> },
+    { head: 'الخطورة', cell: (f) => <StatusFlag value={f.severity} labels={FINDING_SEVERITY_LABELS} /> },
     { head: 'الاستحقاق', cell: (f) => (f.dueDate ? formatDate(f.dueDate) : '—') },
-    { head: 'الحالة', cell: (f) => <EnumChip value={f.status} labels={FINDING_STATUS_LABELS} /> },
+    { head: 'الحالة', cell: (f) => <StatusFlag value={f.status} labels={FINDING_STATUS_LABELS} />, tone: (f) => rowToneFromStatus(f.status) },
     {
       head: 'إجراءات', mobileHidden: true,
       cell: (f) => canManage ? (
@@ -325,7 +325,37 @@ export function InstitutionLicensesPage() {
         ) : null}
       />
 
-      <InstSection title="١ · التراخيص وأذون المزاولة">
+      {/* R359 final · W3 — the oversight facts ride the KPI band. */}
+      <KpiBand
+        items={[
+          {
+            index: '01',
+            caption: 'LICENSES',
+            label: 'التراخيص (الاستعلام الحالي)',
+            value: licensesQuery.data?.meta.total ?? 0,
+            empty: licensesQuery.data == null,
+          },
+          {
+            index: '02',
+            caption: 'INSPECTIONS',
+            label: 'زيارات التفتيش (الاستعلام الحالي)',
+            value: inspectionsQuery.data?.meta.total ?? 0,
+            empty: inspectionsQuery.data == null,
+          },
+          {
+            index: '03',
+            caption: 'OPEN FINDINGS',
+            label: 'ملاحظات مفتوحة (الاستعلام الحالي)',
+            value: (findingsQuery.data?.data ?? []).filter(
+              (f) => f.status !== 'RESOLVED' && f.status !== 'CLOSED',
+            ).length,
+            empty: findingsQuery.data == null,
+          },
+        ]}
+      />
+
+      <InstSection index="01" caption="LICENSES" title="التراخيص وأذون المزاولة" pad="none">
+        <div className="sg-pad-in">
         <InstFilters>
           <InstSelect
             ariaLabel="تصفية بنوع الترخيص"
@@ -342,10 +372,12 @@ export function InstitutionLicensesPage() {
             options={Object.entries(LICENSE_STATUS_LABELS).map(([value, label]) => ({ value, label }))}
           />
         </InstFilters>
+        </div>
         <InstPagedTable query={licensesQuery} columns={licColumns} rowKey={(l) => l.id} ariaLabel="سجل التراخيص" unit={LIC_UNIT} onPage={setLicPage} />
       </InstSection>
 
-      <InstSection title="٢ · التفتيش الخارجي">
+      <InstSection index="02" caption="INSPECTIONS" title="التفتيش الخارجي" pad="none">
+        <div className="sg-pad-in">
         <InstFilters>
           <InstSelect
             ariaLabel="تصفية بحالة التفتيش"
@@ -355,10 +387,12 @@ export function InstitutionLicensesPage() {
             options={Object.entries(INSPECTION_STATUS_LABELS).map(([value, label]) => ({ value, label }))}
           />
         </InstFilters>
+        </div>
         <InstPagedTable query={inspectionsQuery} columns={inspColumns} rowKey={(i) => i.id} ariaLabel="سجل التفتيش" unit={INSP_UNIT} onPage={setInspPage} />
       </InstSection>
 
-      <InstSection title="٣ · الملاحظات وخطط المعالجة">
+      <InstSection index="03" caption="FINDINGS" title="الملاحظات وخطط المعالجة" pad="none">
+        <div className="sg-pad-in">
         <InstFilters>
           <InstSelect
             ariaLabel="تصفية بالخطورة"
@@ -375,6 +409,7 @@ export function InstitutionLicensesPage() {
             options={Object.entries(FINDING_STATUS_LABELS).map(([value, label]) => ({ value, label }))}
           />
         </InstFilters>
+        </div>
         <InstPagedTable
           query={findingsQuery}
           columns={findColumns}
@@ -386,6 +421,7 @@ export function InstitutionLicensesPage() {
         {/* corrective plans render inside the findings rows' expandable
             body when the API returns them; the add-flow is the dialog */}
         {(findingsQuery.data?.data ?? []).filter((f) => (f.correctiveActions ?? []).length > 0).length > 0 && (
+          <div className="sg-pad-in">
           <DetailList
             items={(findingsQuery.data?.data ?? [])
               .filter((f) => (f.correctiveActions ?? []).length > 0)
@@ -403,6 +439,7 @@ export function InstitutionLicensesPage() {
                 ),
               }))}
           />
+          </div>
         )}
       </InstSection>
 

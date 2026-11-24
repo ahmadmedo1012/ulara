@@ -12,11 +12,15 @@
  */
 import { useCallback, useMemo, useState } from 'react';
 import {
-  Radio, Plus, Play, Square, X, Calendar, Clock, AlertCircle,
-  CheckCircle2, RefreshCw,
+  Plus, Play, Square, X, Clock, AlertCircle, RefreshCw,
 } from 'lucide-react';
 import { Card, FormField } from '../../components/primitives';
-import { StatStrip } from '../../components/primitives/Ledger';
+/* R359 (A3 · W2-c) — the sheet grammar joins the live board: the
+ * status StatStrip re-keys onto the KpiBand (real session counts,
+ * honest-empty while pending), the session regions ride framed
+ * SheetSections, and the settled states speak the hairline sg-flag
+ * register (LIVE keeps its authored breathing chip). */
+import { SheetSection, KpiBand } from '../../components/patterns';
 import { ErrorState, Skeleton, EmptyState } from '../../components/primitives/States';
 import { useDiscardGuard } from '../../components/curriculum/AuthoringModal';
 import { Icon } from '../../components/Icon';
@@ -41,17 +45,16 @@ const STATUS_LABEL: Record<LiveSessionRow['status'], string> = {
   ENDED: 'منتهية',
   CANCELLED: 'ملغاة',
 };
-/* Status vocabulary (R305 DS .hr-chip tones): SCHEDULED warn (amber
- * waiting), ENDED ok (done) — and CANCELLED neutral: a cancelled
- * session is a void state, not an accent one (the dashboard's
- * done=neutral grammar; brand is an accent, never a status). LIVE
- * keeps its authored .live-chip with the breathing danger dot — the
- * one moving moment on the page, so it stays out of the chip ramp. */
-const STATUS_TONE: Record<LiveSessionRow['status'], 'ok' | 'warn' | 'neutral' | undefined> = {
-  SCHEDULED: 'warn',
+/* Status vocabulary (R359 A3 · W2-c sg-flag tones): SCHEDULED reads
+ * warning ink, ENDED positive — and CANCELLED quiets: a cancelled
+ * session is a void state, not an accent one. LIVE keeps its authored
+ * .live-chip with the breathing danger dot — the one moving moment on
+ * the page, so it stays out of the flag ramp. */
+const STATUS_FLAG_TONE: Record<LiveSessionRow['status'], 'warning' | 'positive' | 'quiet' | undefined> = {
+  SCHEDULED: 'warning',
   LIVE: undefined,
-  ENDED: 'ok',
-  CANCELLED: 'neutral',
+  ENDED: 'positive',
+  CANCELLED: 'quiet',
 };
 
 /** Shape-matched skeleton for the stat strip + session rows. */
@@ -162,7 +165,7 @@ export default function TeacherLivePage() {
     <div className="page">
       <header className="page-header">
         <div className="page-title-block">
-          <span className="hr-brow">التعليم المتزامن</span>
+          <span className="hr-brow">عضو هيئة التدريس · التعليم المتزامن</span>
           <h1 className="page-title">إدارة البث المباشر</h1>
           <p className="page-subtitle">
             جدولة المحاضرات الحية وتشغيلها وإيقافها. الطلاب يرون فقط الجلسات الخاصة بمقرّراتهم.
@@ -178,17 +181,18 @@ export default function TeacherLivePage() {
       </header>
 
       {/* Metrics read only from settled data — never a fake "0" while the
-          list is still loading (audit 0-e P1-17). */}
+          list is still loading (audit 0-e P1-17). R359: the ONE KpiBand
+          (real session counts; the A6 P2 one-word context rides the
+          delta lines). */}
       {sessions.isPending ? (
         <LiveSkeleton />
       ) : sessions.isError ? (
         <>
-          <StatStrip
-            ariaLabel="حالة الجلسات"
-            cells={[
-              { label: 'مباشرة الآن', value: '—' },
-              { label: 'مجدولة', value: '—' },
-              { label: 'منتهية', value: '—' },
+          <KpiBand
+            items={[
+              { index: '01', caption: 'LIVE', label: 'مباشرة الآن', value: 0, empty: true },
+              { index: '02', caption: 'SCHEDULED', label: 'مجدولة', value: 0, empty: true },
+              { index: '03', caption: 'ENDED', label: 'منتهية', value: 0, empty: true },
             ]}
           />
           <Card>
@@ -201,36 +205,40 @@ export default function TeacherLivePage() {
         </>
       ) : (
         <>
-          <StatStrip
-            ariaLabel="حالة الجلسات"
-            cells={[
+          <KpiBand
+            items={[
               {
+                index: '01',
+                caption: 'LIVE',
                 label: 'مباشرة الآن',
-                value: live.length.toString(),
+                value: live.length,
                 /* A6 P2 (22-a): keep the honest zeros, add the one-word
                    context — the bare 0/0/0 wall read as a malfunction
                    ("Zero Wall" / "depressing" VLM verdicts). */
-                trend: live.length === 0 ? 'لا بثّ نشط حالياً' : 'يمكن إنهاؤها من هنا',
-                trendTone: 'flat',
+                delta: live.length === 0 ? 'لا بثّ نشط حالياً' : 'يمكن إنهاؤها من هنا',
               },
               {
+                index: '02',
+                caption: 'SCHEDULED',
                 label: 'مجدولة',
-                value: scheduled.length.toString(),
-                trend: scheduled.length === 0 ? 'لا جلسات قادمة' : 'قادمة في جدولك',
-                trendTone: scheduled.length === 0 ? 'flat' : 'up',
+                value: scheduled.length,
+                delta: scheduled.length === 0 ? 'لا جلسات قادمة' : 'قادمة في جدولك',
+                deltaTone: scheduled.length === 0 ? undefined : 'positive',
               },
               {
+                index: '03',
+                caption: 'ENDED',
                 label: 'منتهية',
-                value: past.length.toString(),
-                trend: past.length === 0 ? 'لا جلسات سابقة' : 'معروضة في الأسفل',
-                trendTone: 'flat',
+                value: past.length,
+                delta: past.length === 0 ? 'لا جلسات سابقة' : 'معروضة في الأسفل',
               },
             ]}
           />
 
-          {/* New-session form */}
+          {/* New-session form — R359: the [01] NEW SESSION frame (an
+              authoring surface on the sheet). */}
           {showForm && (
-            <Card title="جلسة بث جديدة" icon={Plus}>
+            <SheetSection index="01" caption="NEW SESSION" title="جلسة بث جديدة">
               <form onSubmit={onSubmit} className="flex-col gap-3">
                 {offerings.isError && (
                   <div className="form-feedback fail" role="alert">
@@ -344,7 +352,7 @@ export default function TeacherLivePage() {
                 </div>
               </form>
               {guard}
-            </Card>
+            </SheetSection>
           )}
 
           {/* A failed start/end/cancel surfaces here with a working retry. */}
@@ -360,9 +368,14 @@ export default function TeacherLivePage() {
             </div>
           )}
 
-          {/* Live now */}
+          {/* Live now — R359: the [02] LIVE NOW frame. */}
           {live.length > 0 && (
-            <Card title={<>مباشرة الآن</>} icon={Radio} subtitle="جلسات نشطة — يمكنك إنهاؤها من هنا">
+            <SheetSection
+              index="02"
+              caption="LIVE NOW"
+              title="مباشرة الآن"
+              aside={<span className="sg-label">جلسات نشطة — يمكنك إنهاؤها من هنا</span>}
+            >
               <div className="flex-col gap-2">
                 {live.map((s) => (
                   <SessionRow
@@ -373,18 +386,25 @@ export default function TeacherLivePage() {
                   />
                 ))}
               </div>
-            </Card>
+            </SheetSection>
           )}
 
           {/* Scheduled — r157 / 6A9: countAr grammar (the old `${n} جلسة
               مجدولة` template broke at 0 and 2 — «0 جلسة مجدولة» / «2
-              جلسة مجدولة»); the zero case names the reality. */}
-          <Card
-            title={<>جلسات قادمة</>}
-            icon={Calendar}
-            subtitle={scheduled.length === 0
-              ? 'لا جلسات مجدولة'
-              : countAr(scheduled.length, ['جلسة مجدولة واحدة', 'جلستان مجدولتان', 'جلسات مجدولة', 'جلسة مجدولة'])}
+              جلسة مجدولة»); the zero case names the reality. R359: the
+              [03] SCHEDULED frame carries the counted noun on the head
+              rule. */}
+          <SheetSection
+            index="03"
+            caption="SCHEDULED"
+            title="جلسات قادمة"
+            aside={(
+              <span className="sg-label">
+                {scheduled.length === 0
+                  ? 'لا جلسات مجدولة'
+                  : countAr(scheduled.length, ['جلسة مجدولة واحدة', 'جلستان مجدولتان', 'جلسات مجدولة', 'جلسة مجدولة'])}
+              </span>
+            )}
           >
             {scheduled.length === 0 ? (
               /* r149 (R3-A1 #6): EmptyState الكنونية — كانت يدوية بعلامة
@@ -407,13 +427,14 @@ export default function TeacherLivePage() {
                 ))}
               </div>
             )}
-          </Card>
+          </SheetSection>
 
           {/* Past — capped at 10 rows; the disclosure (r157 / 6A9)
               names the truncation honestly: «أحدث 10 جلسات من أصل N».
-              The old silent .slice(0, 10) hid the rest. */}
+              The old silent .slice(0, 10) hid the rest. R359: the [04]
+              PAST frame. */}
           {past.length > 0 && (
-            <Card title={<>جلسات سابقة</>} icon={CheckCircle2}>
+            <SheetSection index="04" caption="PAST" title="جلسات سابقة">
               <div className="flex-col gap-2">
                 {past.slice(0, 10).map((s) => (
                   <SessionRow key={s.id} session={s} />
@@ -424,7 +445,7 @@ export default function TeacherLivePage() {
                   أحدث <bdi>10</bdi> جلسات من أصل <bdi>{past.length}</bdi>
                 </div>
               )}
-            </Card>
+            </SheetSection>
           )}
         </>
       )}
@@ -488,9 +509,9 @@ function SessionRow({
           {STATUS_LABEL[s.status]}
         </span>
       ) : (
-        /* R305: the settled states speak the shared the reference chip vocabulary
-            (warn=waiting · ok=done · neutral=void). */
-        <span className="hr-chip" data-tone={STATUS_TONE[s.status]}>
+        /* R359: the settled states speak the hairline sg-flag register
+            (warning ink = waiting · positive = done · quiet = void). */
+        <span className="sg-flag" data-tone={STATUS_FLAG_TONE[s.status]}>
           {STATUS_LABEL[s.status]}
         </span>
       )}

@@ -1,9 +1,12 @@
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Info, Building2, Download } from 'lucide-react';
-/* R321 (c1 · WP-B2) — the §B2 kit: the mono-indexed section title
- * bar, the honest mono count + the hatched empty cell. */
-import { SectionBar, BarCount, EmptyCell } from '../../components/student';
+/* R359 (A3) — the sheet grammar: the framed sections + the KPI band of
+ * real directory counts replace the §B2 SectionBar register (the
+ * roster exemplar's recomposition). The RowList directory rows keep
+ * their anatomy inside the frame. */
+import { SheetSection, KpiBand } from '../../components/patterns';
 import { PageFrame, PageHeader, RowList, RowItem } from '../../components/patterns';
+import { BarCount, EmptyCell } from '../../components/student';
 import { Icon } from '../../components/Icon';
 import { EmojiIcon } from '../../components/EmojiIcon';
 import { useFaculties, useCurrentInstitutionSlug } from '../../hooks/useResources';
@@ -46,6 +49,10 @@ function arCount(n: number, one: string, two: string, few: string, many: string)
 export default function CampusMapPage() {
   const facs = useFaculties(useCurrentInstitutionSlug()); // r180: caller-institution scoping
   const faculties = facs.data ?? [];
+  /* R359 — the band's honest numerals: the faculties the registrar
+   * authored + the departments under them (a real sum over the same
+   * payload the directory renders). Honest-empty while pending. */
+  const departmentCount = faculties.reduce((n, f) => n + f.departments.length, 0);
 
   return (
     /* R321 (c1 · WP-B2) — the page joins the sheet system: ONE
@@ -79,45 +86,54 @@ export default function CampusMapPage() {
         )}
       />
 
-      {/* [02] the honest statement — the map is built from YOUR data.
-          R321 B2: the §B2 title bar + the note on the page paper. */}
-      <section className="ml-sec" aria-labelledby="map-sec-built">
-        <SectionBar
-          title="الخريطة تُبنى من بيانات مؤسستك"
-          id="map-sec-built"
-          meta={
-            !facs.isPending && !facs.isError && faculties.length > 0 ? (
-              <BarCount
-                n={faculties.length}
-                srLabel={arCount(faculties.length, 'كلّيّة واحدة', 'كلّيّتان', 'كليّات', 'كلّيّة')}
-              />
-            ) : undefined
-          }
-        />
+      {/* R359 — the KPI band: the directory's two real counts (the
+          faculties + their departments), honest-empty while the
+          payload loads. */}
+      <KpiBand
+        items={[
+          {
+            index: '01',
+            caption: 'FACULTIES',
+            label: 'كلّيّات في دليل مؤسستك',
+            value: faculties.length,
+            empty: facs.isPending,
+          },
+          {
+            index: '02',
+            caption: 'DEPARTMENTS',
+            label: 'أقسام أكاديمية تحتها',
+            value: departmentCount,
+            empty: facs.isPending,
+          },
+        ]}
+      />
+
+      {/* [01] the honest statement — the map is built from YOUR data. */}
+      <SheetSection index="01" caption="INSTITUTION DATA" title="الخريطة تُبنى من بيانات مؤسستك">
         <p className="ml-sec-note">
           أُلارا منصّة مستقلة متعددة المستأجرين ولا تحمل حرمًا جامعيًّا ولا خريطة جاهزة:
           كليات مؤسستك تُنشأ من لوحة إدارة المؤسسة، وهذا الدليل يقرأها من قاعدة بيانات مؤسستك مباشرة —
           بلا قوالب مفروضة وبلا محتوى مُختلق.
         </p>
-      </section>
+      </SheetSection>
 
-      {/* [03] Directory — DB-driven, every row a door. R304: the RowList
+      {/* [02] Directory — DB-driven, every row a door. R304: the RowList
           of whole-row links (`to` — the 44px row IS the tap target);
-          R321 B2: the §B2 title bar (the honest count as mono meta). */}
+          R359: the framed sheet carries the honest count on the head
+          rule's aside slot. */}
       {facs.isError ? null : (
-        <section className="ml-sec" aria-labelledby="map-sec-directory">
-          <SectionBar
-            title="كليات مؤسستك"
-            id="map-sec-directory"
-            meta={
-              facs.isSuccess ? (
-                <BarCount
-                  n={faculties.length}
-                  srLabel={arCount(faculties.length, 'كلّيّة واحدة', 'كلّيّتان', 'كليّات', 'كلّيّة')}
-                />
-              ) : undefined
-            }
-          />
+        <SheetSection
+          index="02"
+          caption="FACULTY DIRECTORY"
+          title="كليات مؤسستك"
+          aside={facs.isSuccess ? (
+            <BarCount
+              n={faculties.length}
+              srLabel={arCount(faculties.length, 'كلّيّة واحدة', 'كلّيّتان', 'كليّات', 'كلّيّة')}
+            />
+          ) : undefined}
+          pad="none"
+        >
           <RowList
             loading={facs.isPending}
             aria-label="دليل الكليّات"
@@ -148,14 +164,13 @@ export default function CampusMapPage() {
               />
             ))}
           </RowList>
-        </section>
+        </SheetSection>
       )}
 
-      {/* [04] Contact — hairline rows on the page paper (label rung +
+      {/* [03] Contact — hairline rows on the page paper (label rung +
           mono LTR values); the obviously-synthetic demo details, clearly
           labeled (the r307 demo-contact contract). */}
-      <section className="ml-sec" aria-labelledby="map-sec-contact">
-        <SectionBar title="معلومات التواصل" id="map-sec-contact" />
+      <SheetSection index="03" caption="CONTACT" title="معلومات التواصل">
         <div className="ml-facts">
           <div className="ml-fact">
             <span className="ml-fact-label">الهاتف</span>
@@ -178,7 +193,7 @@ export default function CampusMapPage() {
             بعد انضمامها.
           </span>
         </div>
-      </section>
+      </SheetSection>
 
       {/* R305 DS: a card holding one link is box noise — the
           cross-link rides the copper rail instead. */}

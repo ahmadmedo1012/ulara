@@ -23,3 +23,16 @@ export type { FilterBarSearch } from './FilterBar';
 
 export { TodayList } from './TodayList';
 export type { TodayItem } from './TodayList';
+
+/* R359 (A3) — the sheet-grammar patterns (additive; contract v1
+ * signatures untouched). Full grammar contract in Sheet.tsx. */
+export {
+  SheetSection,
+  KpiBand,
+  DataSheet,
+  CalloutTag,
+  CoordReadout,
+  SheetEmpty,
+  MonoLabel,
+} from './Sheet';
+export type { KpiItem, KpiTone, DataSheetColumn } from './Sheet';

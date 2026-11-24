@@ -3,12 +3,15 @@ import {
 } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Card } from '../../components/primitives';
 import { Skeleton } from '../../components/primitives/States';
 import { PageFrame, PageHeader, RowList, RowItem } from '../../components/patterns';
-import { Reveal } from '../../components/motion';
-/* R319 (c3-S2) — the §B2 kit: the mono-indexed section title bar. */
-import { SectionBar } from '../../components/student';
+/* R359 (A3) — the sheet grammar: every region below the masthead is a
+ * framed SheetSection (explicit index + Latin caption + Arabic title)
+ * on the head rule. The Card wrappers + §B2 SectionBars retire; the
+ * RowList steps + the fact/contact rows keep their anatomy inside the
+ * frames. NO KpiBand here — the page deliberately renders no figures
+ * (the money-path honesty contract below). */
+import { SheetSection } from '../../components/patterns';
 import { Icon } from '../../components/Icon';
 import { useAuthStore } from '../../stores/auth.store';
 import { useMyProfile } from '../../hooks/useResources';
@@ -59,6 +62,7 @@ export default function PaymentPage() {
     <div className="r319s-page">
     <PageFrame width="default">
       <PageHeader
+        eyebrow="طلاب الجامعة"
         title="الشؤون الماليّة"
         description="حالة رسومك الجامعيّة وكيفيّة سدادها."
         /* R342-08 — the header CTA pair (the D11/D8 measured seat;
@@ -66,7 +70,7 @@ export default function PaymentPage() {
            university-services family's honest siblings — «الجامعة
            التجريبية» (the registrar facts) and «دليل الحرم
            الجامعيّ» (where to find the office). The in-section
-           «المجتمع الجامعيّ» link keeps its seat in §06. */
+           «المجتمع الجامعيّ» link keeps its seat in §05. */
         actions={(
           <>
             <Link to="/student/university" className="btn primary sm">
@@ -81,11 +85,8 @@ export default function PaymentPage() {
         )}
       />
 
-      {/* R319 (c3-S2): every region below the masthead opens with the
-          §B2 mono-indexed title bar — the sheet's table of contents
-          ([01]…[06]); the Cards keep their hairline regions. */}
-      <SectionBar title="بياناتك" />
-      <Card>
+      {/* [01] — the identity facts (loading/error honest, mono LTR runs). */}
+      <SheetSection index="01" caption="IDENTITY" title="بياناتك">
         <div className="grid-3" style={{ gap: 'var(--sp-3)' }}>
           <FactRow label="الاسم" value={fullName} />
           <FactRow label="الرقم الجامعيّ" value={universityId} mono pending={profile.isPending} />
@@ -100,34 +101,27 @@ export default function PaymentPage() {
             </button>
           </div>
         )}
-      </Card>
+      </SheetSection>
 
-      {/* The page's one authored moment: the fees-status card lifts in
-          once (small distance) — money-path restraint, no confetti. */}
-      <Reveal distance="small">
-        <SectionBar title="حالة الرسوم" />
-        <Card>
-          {/* R305 DS: the honest fees disclosure is the page's ONE
-              emphasized region — the copper rail (.r305s-next) instead of
-              the neutral panel well. */}
-          <div className="r305s-next r305p-rail">
-            <p className="text-sm text-muted" style={{ margin: 0, lineHeight: 'var(--lh-loose)' }}>
-              تكامل الدفع الإلكترونيّ مع نظام الخزينة الجامعيّة قيد التطوير، والمنصّة لا تعرض
-              أيّ مبالغ تقديريّة. رصيدك الفعليّ وسجلّ سدادك مصدرهما مكتب الشؤون الماليّة —
-              حتّى ذلك الحين، خُطواتك اليوم:
-            </p>
-          </div>
-        </Card>
-      </Reveal>
+      {/* [02] — the honest fees disclosure: the page's ONE emphasized
+          region rides the copper rail (.r305s-next) inside the frame. */}
+      <SheetSection index="02" caption="FEES STATUS" title="حالة الرسوم">
+        <div className="r305s-next r305p-rail">
+          <p className="text-sm text-muted" style={{ margin: 0, lineHeight: 'var(--lh-loose)' }}>
+            تكامل الدفع الإلكترونيّ مع نظام الخزينة الجامعيّة قيد التطوير، والمنصّة لا تعرض
+            أيّ مبالغ تقديريّة. رصيدك الفعليّ وسجلّ سدادك مصدرهما مكتب الشؤون الماليّة —
+            حتّى ذلك الحين، خُطواتك اليوم:
+          </p>
+        </div>
+      </SheetSection>
 
-      {/* R304: the checklist becomes the RowList it always wanted to be —
+      {/* [03] — the checklist is the RowList it always wanted to be:
           three honest, non-fake steps. Only the row with a REAL
           destination is a whole-row link (the community board); the
           other two are guidance whose target is the contacts card
           below and your own wallet — no invented checkout, no fake
           deep links. */}
-      <section aria-label="خطواتك اليوم">
-        <SectionBar title="خطواتك اليوم" />
+      <SheetSection index="03" caption="NEXT STEPS" title="خطواتك اليوم" pad="none">
         <RowList aria-label="خطوات السداد اليوم">
           <RowItem
             leading={
@@ -158,46 +152,43 @@ export default function PaymentPage() {
             meta="تُنشر على لوحة المجتمع الجامعيّ"
           />
         </RowList>
-      </section>
+      </SheetSection>
 
-      <div className="grid-2">
-        <div>
-        <SectionBar title="مكتب الشؤون الماليّة بالجامعة" />
-        <Card>
+      {/* [04] — the office block: contacts + hours on the sheet's 7:5
+          lateral division (one hairline between them at desktop). */}
+      <SheetSection index="04" caption="FINANCE OFFICE" title="مكتب الشؤون الماليّة بالجامعة">
+        <div className="sg-split">
           <div className="flex-col gap-3">
             <ContactRow icon={Phone} label="الهاتف" value="+218 23 762659" mono />
             <ContactRow icon={Phone} label="هاتف بديل" value="+218 23 762882" mono />
             <ContactRow icon={Mail} label="البريد الإلكترونيّ" value="info@demo.ulara.ly" mono />
             <ContactRow icon={Building2} label="العنوان" value="مساحة عمل أُلارا التجريبية — بيانات عرض" />
           </div>
-        </Card>
-        </div>
-        <div>
-        <SectionBar title="ساعات العمل" />
-        <Card>
-          <div className="flex-col gap-2">
-            <div className="list-row">
-              <div className="list-row-body">
-                <div className="list-row-title">الأحد إلى الخميس</div>
-                <div className="list-row-sub">من 9:00 صباحاً حتى 2:00 مساءً</div>
+          <div>
+            <span className="sg-label">WORK HOURS</span>
+            <div className="flex-col gap-2" style={{ marginBlockStart: 'var(--sp-2)' }}>
+              <div className="list-row">
+                <div className="list-row-body">
+                  <div className="list-row-title">الأحد إلى الخميس</div>
+                  <div className="list-row-sub">من 9:00 صباحاً حتى 2:00 مساءً</div>
+                </div>
+              </div>
+              <div className="list-row">
+                <div className="list-row-body">
+                  <div className="list-row-title">الجمعة والسبت</div>
+                  <div className="list-row-sub">إجازة أسبوعيّة</div>
+                </div>
               </div>
             </div>
-            <div className="list-row">
-              <div className="list-row-body">
-                <div className="list-row-title">الجمعة والسبت</div>
-                <div className="list-row-sub">إجازة أسبوعيّة</div>
-              </div>
-            </div>
+            <p className="text-xxs text-subtle" style={{ marginBlockStart: 'var(--sp-3)', lineHeight: 1.6 }}>
+              الساعات المعتمدة من الإدارة. قد تتغيّر خلال فترات الاختبارات والإجازات الرسميّة.
+            </p>
           </div>
-          <p className="text-xxs text-subtle" style={{ marginBlockStart: 'var(--sp-3)', lineHeight: 1.6 }}>
-            الساعات المعتمدة من الإدارة. قد تتغيّر خلال فترات الاختبارات والإجازات الرسميّة.
-          </p>
-        </Card>
         </div>
-      </div>
+      </SheetSection>
 
-      <SectionBar title="إعلانات الإدارة الماليّة" />
-      <Card>
+      {/* [05] — where the official announcements actually live. */}
+      <SheetSection index="05" caption="ANNOUNCEMENTS" title="إعلانات الإدارة الماليّة">
         <p className="text-sm text-muted" style={{ padding: 'var(--sp-3) 0' }}>
           الإعلانات الرسميّة الخاصّة بالرسوم والمواعيد تُنشر على لوحة المجتمع الجامعيّ.
         </p>
@@ -205,7 +196,7 @@ export default function PaymentPage() {
           <Icon icon={ArrowLeft} size={13} />
           فتح المجتمع الجامعيّ
         </Link>
-      </Card>
+      </SheetSection>
     </PageFrame>
     </div>
   );

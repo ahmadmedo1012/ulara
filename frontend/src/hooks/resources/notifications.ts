@@ -60,6 +60,38 @@ export function useNotifications() {
     queryFn: () => unwrap<Notification[]>(api.get('/notifications?limit=50')),
   });
 }
+
+// ── Push devices (r359 §5.5 — the notification-settings register) ─
+/* The REAL device seats the backend serves today (push.routes.ts, the
+ * r326 M2.6 contract): registration happens from the mobile app (Expo
+ * token upsert); the web owns the LIST + the unregister verb. No
+ * per-category preference endpoint exists yet — the settings sheet
+ * keeps that seat honest (SheetEmpty) and the need rides the ledger. */
+export interface PushDevice {
+  id: string;
+  platform: 'ANDROID' | 'IOS' | 'WEB';
+  appVersion?: string | null;
+  lastSeenAt: string;
+  createdAt: string;
+}
+
+export function usePushDevices() {
+  return useQuery({
+    queryKey: ['push-devices'],
+    queryFn: () => unwrap<PushDevice[]>(api.get('/me/push-devices')),
+    staleTime: 60_000,
+  });
+}
+
+/** Unregister a device — a handed-over phone must not keep pushing
+ *  (DELETE /me/push-devices/:id, scoped to the caller on the backend). */
+export function useUnregisterPushDevice() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => unwrap<{ ok: boolean }>(api.delete(`/me/push-devices/${id}`)),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['push-devices'] }),
+  });
+}
 export function useMarkNotifRead() {
   const qc = useQueryClient();
   return useMutation({

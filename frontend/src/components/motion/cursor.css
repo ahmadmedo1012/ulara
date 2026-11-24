@@ -74,8 +74,10 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  /* hollow ring: 1px stroke around a transparent disc */
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent);
+  /* hollow ring: 1px stroke around a transparent disc — a BORDER,
+   * not a box-shadow ring (R359 · the no-shadow law; identical 1px
+   * stroke, zero computed box-shadow). */
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
   transform: translate(-50%, -50%) scale(0);
   transition:
     opacity var(--t-fast) var(--ease),

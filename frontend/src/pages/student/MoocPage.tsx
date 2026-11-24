@@ -4,13 +4,15 @@ import {
   Code, Database, Palette, Languages, Briefcase,
   type LucideIcon,
 } from 'lucide-react';
-import { Badge } from '../../components/primitives';
 import { ErrorState, Skeleton } from '../../components/primitives/States';
 import { Icon } from '../../components/Icon';
 import { PageFrame, PageHeader, FilterBar } from '../../components/patterns';
-/* R319 (c3-S1) — the §B2 kit: the mono-indexed section title bar + the
- * hatched empty cell (the DashboardPage conversion's components). */
-import { SectionBar, BarCount, EmptyCell } from '../../components/student';
+/* R359 (A3) — the sheet grammar: the KPI band of real payload counts +
+ * the framed catalog section replace the §B2 SectionBar register (the
+ * roster exemplar's recomposition). The thumb-card grid keeps its
+ * anatomy inside the frame; level/certificate states ride the flat
+ * sg-flag chip (never tinted Badges). */
+import { SheetSection, KpiBand, SheetEmpty } from '../../components/patterns';
 import { useMoocs, type MoocCourse } from '../../hooks/useResources';
 import { formatInt, formatNum } from '../../utils/numbers';
 import { matchesNormalizedQuery } from '../../lib/search';
@@ -97,9 +99,13 @@ function MoocCard({ m, index }: { m: MoocCourse; index: number }) {
           <span><Icon icon={Users2} size={12} aria-hidden /> <bdi>{formatNum(m.enrolled)}</bdi></span>
         </div>
 
+        {/* R359 — the level/certificate states ride the flat hairline
+            flag (status as content, never a tinted Badge fill). */}
         <div className="flex items-center justify-between" style={{ marginTop: 'var(--sp-2)' }}>
-          <Badge>{levelLabel(m.level)}</Badge>
-          {m.hasCertificate && <Badge color="gold" icon={Award}>شهادة</Badge>}
+          <span className="sg-flag">{levelLabel(m.level)}</span>
+          {m.hasCertificate && (
+            <span className="sg-flag"><Icon icon={Award} size={11} aria-hidden /> شهادة</span>
+          )}
         </div>
 
         {/* Real external course page when the record has one —
@@ -138,39 +144,71 @@ export default function MoocPage() {
   }, [data, query]);
   const searching = query.trim().length > 0;
 
+  /* R359 — the band's honest numerals: the catalog size, the distinct
+   * categories actually present, and the courses that carry a
+   * certificate — all derived from the same payload the grid renders. */
+  const categoryCount = useMemo(
+    () => new Set((data ?? []).map((m) => m.category)).size,
+    [data],
+  );
+  const certificateCount = useMemo(
+    () => (data ?? []).filter((m) => m.hasCertificate).length,
+    [data],
+  );
+
   return (
     <div className="r319s-page">
     <PageFrame width="default">
       <PageHeader
+        eyebrow="طلاب الجامعة"
         title="دورات خارجية"
         description="دورات من منصّات تعليم عالمية وبرامج تدريبية معتمدة — التسجيل يتم على موقع المنصّة نفسها."
       />
 
       {isPending ? (
-        <MoocGridSkeleton />
+        <SheetSection index="01" caption="EXTERNAL CATALOG" title="الدورات المتاحة">
+          <MoocGridSkeleton />
+        </SheetSection>
       ) : isError ? (
-        <ErrorState error={error} onRetry={() => refetch()} />
+        <SheetSection index="01" caption="EXTERNAL CATALOG" title="الدورات المتاحة">
+          <ErrorState error={error} onRetry={() => refetch()} />
+        </SheetSection>
       ) : !data?.length ? (
-        /* R319 (c3-S1): the empty catalog is the hatched EmptyCell —
-           the sheet's reserved-but-empty region. */
-        <EmptyCell
-          label="لا توجد دورات خارجية مرتبطة"
-          note="تربط إدارة المؤسسة دورات Coursera ودورات edX المعتمدة بمقرّراتك؛ راجع المرشد الأكاديمي لمعرفة المعتمد هذا الفصل."
-        />
+        /* R359: the empty catalog is the sheet's reserved-but-empty
+           region — the hairline placeholder frame. */
+        <SheetSection index="01" caption="EXTERNAL CATALOG" title="الدورات المتاحة">
+          <SheetEmpty
+            code="NO-COURSES"
+            title="لا توجد دورات خارجية مرتبطة"
+            desc="تربط إدارة المؤسسة دورات Coursera ودورات edX المعتمدة بمقرّراتك؛ راجع المرشد الأكاديمي لمعرفة المعتمد هذا الفصل."
+          />
+        </SheetSection>
       ) : (
         <>
-          {/* R319 (c3-S1): the catalog region opens with the §B2
-              mono-indexed title bar — [01] + the honest course count as
-              quiet mono meta (countAr for assistive tech). */}
-          <SectionBar
-            title="الدورات المتاحة"
-            meta={
-              <BarCount
-                n={data.length}
-                srLabel={countAr(data.length, ['دورة خارجية واحدة', 'دورتان خارجيتان', 'دورات خارجية', 'دورة خارجية'])}
-              />
-            }
+          {/* R359 — the KPI band: real counts from the loaded catalog. */}
+          <KpiBand
+            items={[
+              {
+                index: '01',
+                caption: 'COURSES',
+                label: 'دورات مرتبطة بمقرّراتك',
+                value: data.length,
+              },
+              {
+                index: '02',
+                caption: 'CATEGORIES',
+                label: 'فئات معرفية على الكتالوج',
+                value: categoryCount,
+              },
+              {
+                index: '03',
+                caption: 'CERTIFICATES',
+                label: 'دورات بشهادة إتمام',
+                value: certificateCount,
+              },
+            ]}
           />
+
           <FilterBar
             search={{
               value: query,
@@ -179,33 +217,40 @@ export default function MoocPage() {
             }}
           />
 
-          {/* The counted-results line — the settled total, and the
-              filtered subset while searching (live under aria). */}
-          {/* R305 DS: the counted line is page metadata — it rides the
-              chip register (accent dot = live fact), not bare muted text. */}
-          <p className="r305s-meta-row" aria-live="polite">
-            <span className="r305s-chip r305s-chip--accent">
-              <span className="r305s-chip-dot" aria-hidden />
-              {searching ? (
-                <bdi>{formatInt(filtered.length)} من {formatInt(data.length)} دورة</bdi>
-              ) : (
-                <bdi>{countAr(data.length, ['دورة خارجية واحدة', 'دورتان خارجيتان', 'دورات خارجية', 'دورة خارجية'])}</bdi>
-              )}
-            </span>
-          </p>
-
-          {searching && filtered.length === 0 ? (
-            /* R319 (c3-S1): the no-hits search answer is the hatched
-               EmptyCell — the sheet's reserved-but-empty region. */
-            <EmptyCell
-              label="لا نتائج مطابقة للبحث"
-              note="جرّب كلمة أقصر، أو ابحث باسم الجهة التي تقدّم الدورة."
-            />
-          ) : (
-            <div className="grid-3 mooc-grid">
-              {filtered.map((m, i) => <MoocCard key={m.id} m={m} index={i} />)}
-            </div>
-          )}
+          {/* R359 — the catalog sheet: the counted-results line rides
+              the head rule's aside slot (the settled total, and the
+              filtered subset while searching — live under aria). */}
+          <SheetSection
+            index="01"
+            caption="EXTERNAL CATALOG"
+            title="الدورات المتاحة"
+            aside={(
+              <p className="r305s-meta-row" aria-live="polite" style={{ margin: 0 }}>
+                <span className="r305s-chip r305s-chip--accent">
+                  <span className="r305s-chip-dot" aria-hidden />
+                  {searching ? (
+                    <bdi>{formatInt(filtered.length)} من {formatInt(data.length)} دورة</bdi>
+                  ) : (
+                    <bdi>{countAr(data.length, ['دورة خارجية واحدة', 'دورتان خارجيتان', 'دورات خارجية', 'دورة خارجية'])}</bdi>
+                  )}
+                </span>
+              </p>
+            )}
+          >
+            {searching && filtered.length === 0 ? (
+              /* R359: the no-hits search answer is the hairline
+                 placeholder frame. */
+              <SheetEmpty
+                code="NO-MATCH"
+                title="لا نتائج مطابقة للبحث"
+                desc="جرّب كلمة أقصر، أو ابحث باسم الجهة التي تقدّم الدورة."
+              />
+            ) : (
+              <div className="grid-3 mooc-grid">
+                {filtered.map((m, i) => <MoocCard key={m.id} m={m} index={i} />)}
+              </div>
+            )}
+          </SheetSection>
         </>
       )}
     </PageFrame>

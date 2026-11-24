@@ -9,7 +9,7 @@
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Plus } from 'lucide-react';
-import { PageFrame, PageHeader } from '../../components/patterns';
+import { PageFrame, PageHeader, KpiBand } from '../../components/patterns';
 import { toast } from '../../lib/toast';
 import { formatDate } from '../../utils/numbers';
 import { serverError,
@@ -209,6 +209,34 @@ export function InstitutionPositionsPage() {
         />
       </InstFilters>
 
+      {/* R359 final · W3 — the appointments facts ride the KPI band. */}
+      <KpiBand
+        items={[
+          {
+            index: '01',
+            caption: 'APPOINTMENTS',
+            label: 'التعيينات (الاستعلام الحالي)',
+            value: appointmentsQuery.data?.meta.total ?? 0,
+            empty: appointmentsQuery.data == null,
+          },
+          {
+            index: '02',
+            caption: 'POSITION TEMPLATES',
+            label: 'قوالب المناصب المؤهلة لنوع مؤسستك',
+            value: eligibleTemplates.length,
+            empty: templatesQuery.data == null,
+          },
+          {
+            index: '03',
+            caption: 'CATEGORIES',
+            label: 'فئات الدليل المعروضة',
+            value: catalogByCategory.length,
+            empty: templatesQuery.data == null,
+          },
+        ]}
+      />
+
+      <InstSection index="01" caption="APPOINTMENTS" title="سجلّ التعيينات" pad="none">
       <InstPagedTable
         query={appointmentsQuery}
         columns={columns}
@@ -219,8 +247,11 @@ export function InstitutionPositionsPage() {
         empty={null}
         onRowClick={(a) => navigate(`/institution/appointments/${a.id}`)}
       />
+      </InstSection>
 
       <InstSection
+        index="02"
+        caption="POSITION CATALOG"
         title="دليل المناصب المعتمدة"
         description="القوالب القانونية العائدة للدليل — تُعرض كما تعيدها الخدمة، مؤهلةً لنوع مؤسستك."
       >
@@ -230,7 +261,10 @@ export function InstitutionPositionsPage() {
           isEmpty={eligibleTemplates.length === 0}
         >
           {catalogByCategory.map(([category, list]) => (
-            <InstSection key={category} title={POSITION_CATEGORY_LABELS[category as keyof typeof POSITION_CATEGORY_LABELS] ?? category}>
+            <div key={category} className="inst-catalog-group">
+              <h4 className="inst-catalog-group-title">
+                {POSITION_CATEGORY_LABELS[category as keyof typeof POSITION_CATEGORY_LABELS] ?? category}
+              </h4>
               <DetailList
                 items={list.map((t) => ({
                   label: t.titleAr,
@@ -245,7 +279,7 @@ export function InstitutionPositionsPage() {
                   ),
                 }))}
               />
-            </InstSection>
+            </div>
           ))}
         </InstStates>
       </InstSection>
@@ -330,7 +364,7 @@ export function InstitutionAppointmentDetailPage() {
       />
       <InstStates isLoading={query.isLoading} error={query.error} isEmpty={!a}>
         {a && (
-          <InstSection title="بيانات السجل">
+          <InstSection index="01" caption="RECORD" title="بيانات السجل">
             <DetailList
               items={[
                 { label: 'الحامل', value: a.person?.fullNameAr ?? '—' },

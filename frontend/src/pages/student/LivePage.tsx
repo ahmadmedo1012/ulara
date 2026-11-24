@@ -8,38 +8,38 @@
  * sessions. They see only sessions for offerings they are enrolled
  * in, and can join the teacher-provided URL.
  *
- * R304 rebuild: PageFrame + patterns PageHeader + ONE StatLine (the
- * grid-3 MetricCard wall is gone) + per-status sections as
- * RowList/RowItem rows. The session row is deliberately NOT a
+ * R304 rebuild: PageFrame + patterns PageHeader + per-status sections
+ * as RowList/RowItem rows. The session row is deliberately NOT a
  * whole-row link — its trailing slot carries the real join/recording
  * anchors, and a row that is itself a link must never nest an
  * interactive control (patterns contract).
  *
- * R321 (c1 · WP-B2) — the page joins the sheet system (the CampusMap
- * family twin): ONE .r321m-page opt-in root (the r321-exams.css
- * contract), the SectionHeader stacks became §B2 title bars with
- * honest mono counts, the empty boards are hatched EmptyCells, and
- * the status pills ride the square r305s-chip register (tone on the
- * dot). The .live-chip/.live-dot honest LIVE pulse and the
- * .live-row-icon wells keep their student.css family untouched.
+ * R359 (A3) — the page speaks the sheet grammar: the KPI band of real
+ * session counts replaces the StatLine, and the per-status boards live
+ * inside framed SheetSections (explicit index + Latin caption + Arabic
+ * title, the honest count on the head rule). The .live-chip/.live-dot
+ * honest LIVE pulse and the .live-row-icon wells keep their
+ * student.css family untouched.
  */
 import { useMemo, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { ExternalLink, Clock, MonitorPlay, X, Video, FlaskConical } from 'lucide-react';
 import { Link } from 'react-router-dom';
-/* R321 (c1 · WP-B2) — the §B2 kit: the mono-indexed section title
- * bar, the honest mono count + the hatched empty cell. */
-import { SectionBar, BarCount, EmptyCell } from '../../components/student';
 import { ErrorState } from '../../components/primitives/States';
 import { Icon } from '../../components/Icon';
 import { EmojiIcon } from '../../components/EmojiIcon';
 import {
-  PageFrame, PageHeader, RowList, RowItem, StatLine,
+  PageFrame, PageHeader, RowList, RowItem,
 } from '../../components/patterns';
+/* R359 (A3) — the sheet grammar: the KPI band of real session counts
+ * + the framed per-status sections (the roster exemplar's
+ * recomposition). The session rows keep their RowItem anatomy inside
+ * the frames. */
+import { SheetSection, KpiBand, SheetEmpty } from '../../components/patterns';
 import { useJoinLiveSession, useLiveSessions, type LiveSessionRow } from '../../hooks/useResources';
 import { apiErrorMessage } from '../../hooks/useResources';
 
-import { formatDate, formatInt } from '../../utils/numbers';
+import { formatDate } from '../../utils/numbers';
 import { countAr } from '../../lib/format';
 
 /* R305 DS: the shared student vocabulary + this family's refinements. */
@@ -82,7 +82,7 @@ export default function LivePage() {
   const live = useMemo(() => list.filter((s) => s.status === 'LIVE'), [list]);
   const upcoming = useMemo(() => list.filter((s) => s.status === 'SCHEDULED'), [list]);
   const ended = useMemo(() => list.filter((s) => s.status === 'ENDED'), [list]);
-  // The section shows the latest window only; the StatLine keeps the
+  // The section shows the latest window only; the KPI band keeps the
   // honest ENDED total.
   const recent = useMemo(() => ended.slice(0, 8), [ended]);
 
@@ -187,26 +187,41 @@ export default function LivePage() {
         <RowList loading aria-label="جلسات البث" />
       ) : isError ? (
         /* API-down is the default demo state — surface it honestly with
-           retry instead of masking it as an empty schedule. */
-        <ErrorState
-          message="تعذَّر تحميل البثوث"
-          error={error}
-          onRetry={() => refetch()}
-        />
+           retry inside the framed session log. */
+        <SheetSection index="01" caption="SESSION LOG" title="جلسات البثّ">
+          <ErrorState
+            message="تعذَّر تحميل البثوث"
+            error={error}
+            onRetry={() => refetch()}
+          />
+        </SheetSection>
       ) : (
         <>
-          {/* The three MetricCards collapsed into ONE StatLine. «منتهية»
-              counts every ENDED session in the payload — the section
-              below renders only the latest window. */}
-          <StatLine
+          {/* R359 — the KPI band: the three real session counts (the
+              old MetricCard wall's facts, the StatLine's numerals —
+              same sources, the dimension-string register now). */}
+          <KpiBand
             items={[
               {
+                index: '01',
+                caption: 'LIVE',
                 label: 'مباشرة الآن',
-                value: formatInt(live.length),
-                tone: live.length > 0 ? 'signal' : 'neutral',
+                value: live.length,
+                delta: live.length > 0 ? 'على الهواء الآن' : undefined,
+                deltaTone: live.length > 0 ? 'signal' : undefined,
               },
-              { label: 'جلسات قادمة', value: formatInt(upcoming.length) },
-              { label: 'منتهية', value: formatInt(ended.length) },
+              {
+                index: '02',
+                caption: 'SCHEDULED',
+                label: 'جلسات قادمة',
+                value: upcoming.length,
+              },
+              {
+                index: '03',
+                caption: 'ENDED',
+                label: 'جلسات منتهية',
+                value: ended.length,
+              },
             ]}
           />
 
@@ -215,37 +230,36 @@ export default function LivePage() {
               list gets ONE honest empty state; the per-status sections
               keep their stable slots (15-j §3 #10: "is anything on
               air?" deserves a stable answer) only when the schedule
-              has ANY content. R321 B2: the one empty state is the
-              sheet's hatched EmptyCell. */}
+              has ANY content. R359: the one empty state is the
+              hairline placeholder frame. */}
           {list.length === 0 ? (
-            <EmptyCell
-              label="لا توجد بثوث بعد"
-              note="لا توجد بثوث مرتبطة بمقرراتك بعد. حال نشر أساتذتك جلسة جديدة، ستظهر هنا تلقائياً."
-            />
+            <SheetSection index="01" caption="SESSION LOG" title="جلسات البثّ">
+              <SheetEmpty
+                code="NO-SESSIONS"
+                title="لا توجد بثوث بعد"
+                desc="لا توجد بثوث مرتبطة بمقرراتك بعد. حال نشر أساتذتك جلسة جديدة، ستظهر هنا تلقائياً."
+              />
+            </SheetSection>
           ) : (
             <>
-              <section className="ml-sec" aria-labelledby="live-sec-live">
-                <SectionBar
-                  title="مباشرة الآن"
-                  id="live-sec-live"
-                  meta={
-                    live.length > 0 ? (
-                      <BarCount
-                        n={live.length}
-                        srLabel={countAr(live.length, ['جلسة واحدة', 'جلستان', 'جلسات', 'جلسة'])}
-                      />
-                    ) : undefined
-                  }
-                />
+              <SheetSection
+                index="01"
+                caption="ON AIR"
+                title="مباشرة الآن"
+                aside={live.length > 0 ? (
+                  <span className="sg-label">{countAr(live.length, ['جلسة واحدة', 'جلستان', 'جلسات', 'جلسة'])}</span>
+                ) : undefined}
+              >
                 {live.length > 0 && (
                   <p className="ml-sec-note">انضمّ إلى أيّ جلسة بنقرة واحدة</p>
                 )}
                 <RowList
                   aria-label="الجلسات المباشرة الآن"
                   empty={(
-                    <EmptyCell
-                      label="لا بثّ مباشرة الآن"
-                      note="لا توجد جلسات نشطة لمقرراتك في هذه اللحظة؛ راجع الجلسات القادمة في القائمة أدناه."
+                    <SheetEmpty
+                      code="OFF-AIR"
+                      title="لا بثّ مباشرة الآن"
+                      desc="لا توجد جلسات نشطة لمقرراتك في هذه اللحظة؛ راجع الجلسات القادمة في القائمة أدناه."
                     />
                   )}
                 >
@@ -259,54 +273,48 @@ export default function LivePage() {
                     />
                   ))}
                 </RowList>
-              </section>
+              </SheetSection>
 
-              <section className="ml-sec" aria-labelledby="live-sec-upcoming">
-                <SectionBar
-                  title="جلسات قادمة"
-                  id="live-sec-upcoming"
-                  meta={
-                    upcoming.length > 0 ? (
-                      <BarCount
-                        n={upcoming.length}
-                        srLabel={countAr(upcoming.length, ['جلسة واحدة', 'جلستان', 'جلسات', 'جلسة'])}
-                      />
-                    ) : undefined
-                  }
-                />
+              <SheetSection
+                index="02"
+                caption="SCHEDULED"
+                title="جلسات قادمة"
+                aside={upcoming.length > 0 ? (
+                  <span className="sg-label">{countAr(upcoming.length, ['جلسة واحدة', 'جلستان', 'جلسات', 'جلسة'])}</span>
+                ) : undefined}
+                pad="none"
+              >
                 <RowList
                   aria-label="الجلسات القادمة"
                   empty={(
-                    <EmptyCell
-                      label="لا توجد جلسات مجدولة"
-                      note="لا توجد جلسات مجدولة لمقرراتك حالياً. سيظهر هنا أي بثّ يجدوله أساتذتك."
+                    <SheetEmpty
+                      code="NONE"
+                      title="لا توجد جلسات مجدولة"
+                      desc="لا توجد جلسات مجدولة لمقرراتك حالياً. سيظهر هنا أي بثّ يجدوله أساتذتك."
                     />
                   )}
                 >
                   {upcoming.map((s) => <StudentSessionRow key={s.id} session={s} />)}
                 </RowList>
-              </section>
+              </SheetSection>
 
               {recent.length > 0 && (
-                <section className="ml-sec" aria-labelledby="live-sec-ended">
-                  <SectionBar
-                    title="جلسات منتهية"
-                    id="live-sec-ended"
-                    meta={(
-                      /* The board prints the rows it shows (the latest
-                          window); the StatLine above keeps the honest
-                          ENDED total. */
-                      <BarCount
-                        n={recent.length}
-                        srLabel={countAr(recent.length, ['جلسة واحدة', 'جلستان', 'جلسات', 'جلسة'])}
-                      />
-                    )}
-                  />
+                <SheetSection
+                  index="03"
+                  caption="RECENT"
+                  title="جلسات منتهية"
+                  aside={(
+                    /* The board prints the rows it shows (the latest
+                        window); the KPI band above keeps the honest
+                        ENDED total. */
+                    <span className="sg-label">{countAr(recent.length, ['جلسة واحدة', 'جلستان', 'جلسات', 'جلسة'])}</span>
+                  )}
+                >
                   <p className="ml-sec-note">أحدث الجلسات المنتهية — قد تتوفر لها تسجيلات</p>
                   <RowList aria-label="الجلسات المنتهية">
                     {recent.map((s) => <StudentSessionRow key={s.id} session={s} />)}
                   </RowList>
-                </section>
+                </SheetSection>
               )}
             </>
           )}
@@ -352,7 +360,7 @@ function StudentSessionRow({
       title={s.title}
       meta={
         /* R305 DS: the row's metadata rides the meta-row register —
-           hairline separators instead of bare middots. */
+            hairline separators instead of bare middots. */
         <span className="r305s-meta-row">
           <bdi>{s.offering.course.code}</bdi>
           <span className="r305s-meta-sep" aria-hidden />

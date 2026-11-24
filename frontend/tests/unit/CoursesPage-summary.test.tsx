@@ -1,27 +1,21 @@
 /**
- * r173a — the courses header weight (the r171 VLM deferred note).
+ * r173a → R359 final re-pin — the courses opening rides the KPI band.
  *
- * The VLM read /student/courses's opening as heavier than the page's
- * content rhythm: under an h1+subtitle header sat a four-MetricCard
- * KPI strip (four icon wells + 28px values) before the light glass
- * thumb-card grid. The stats now ride ONE light text-muted line —
- * the same counts object, zero data-logic change.
+ * The r173a ruling (one light text-muted summary line) is superseded by
+ * the sheet grammar: the SAME counts object (total · done · active ·
+ * attention) now rides the KpiBand — the reference's dimension-string
+ * register (huge mono numerals, [01]–[04] indices, hairline cells).
  *
  * Layers pinned here:
- *   1. SETTLED — the header keeps exactly h1 + one subtitle line; NO
- *      metric tiles render; the single summary line carries the same
- *      counted totals (zero buckets stay off the line — the filter
- *      pills below already own the per-bucket counts); the pills keep
- *      their counts (data logic untouched).
- *   2. PENDING — the mirror is the summary line's own box (a 20px
- *      skeleton in the same .courses-summary slot) + the course grid
- *      skeleton: one loading owner, and the KpiSkeleton died with the
- *      strip it mirrored.
- *   3. 0% AFFORDANCE INTEGRATION — a zero-progress course card shows
- *      the ProgressBar 0% starting-edge marker (the primitive's own
+ *   1. SETTLED — the header keeps exactly h1 + eyebrow + one subtitle
+ *      line; NO metric tiles render; the band carries the same counted
+ *      totals (a zero bucket rides as the honest 0 cell — the band is
+ *      a fixed-slot instrument, the pills still own per-bucket counts).
+ *   2. PENDING — the band's own honest-empty register («—» cells,
+ *      data-empty) + the DataSheet skeleton inside the framed section:
+ *      one loading owner.
+ *   3. 0% AFFORDANCE INTEGRATION — unchanged (the primitive's own
  *      contract is pinned in Tabs-ProgressBar.test.tsx).
- *   4. CSS — student.css's .courses-summary recipe is source-pinned
- *      (the MetricCard-tone readStyle pattern).
  */
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
@@ -115,34 +109,46 @@ describe('StudentCoursesPage — the light single-line summary (r173a)', () => {
     expect(container.querySelectorAll('.grid-4')).toHaveLength(0);
   });
 
-  it('the header keeps exactly h1 + one subtitle line (r221 re-pin: the patterns PageHeader)', () => {
+  it('the header keeps exactly h1 + eyebrow + one subtitle line (R359 re-pin: the patterns PageHeader)', () => {
     renderPage();
     const header = document.querySelector('header.pf-page-header') as HTMLElement;
     expect(header).not.toBeNull();
     expect(within(header).getByRole('heading', { level: 1, name: 'مقرّراتي الدراسية' }));
     expect(header.textContent).toContain('جميع المقرّرات التي سجّلت فيها هذا الفصل');
-    // The header block carries nothing else — no stats, no chips.
-    expect(header.querySelectorAll('p, .badge, .pill, .metric')).toHaveLength(1);
+    // The header block carries exactly the eyebrow + the description —
+    // no stats, no chips.
+    expect(header.querySelectorAll('p')).toHaveLength(2);
+    expect(header.querySelector('.pf-eyebrow')).not.toBeNull();
   });
 
-  it('the SAME counts ride one light line: counted total + non-zero buckets only', () => {
+  it('the SAME counts ride the KPI band: total + every bucket as fixed-slot numerals', () => {
     const { container } = renderPage();
-    // 3 enrollments → counted plural; done 1, active 2, attention 1;
-    // every bucket is non-zero here so all three ride the line.
-    // (textContent: the counted noun + digits live in bdi children,
-    // which getNodeText-based queries can't see across.)
-    const summary = container.querySelector('.courses-summary') as HTMLElement;
-    expect(summary.textContent).toBe(
-      '3 مقرّرات مسجَّلة · مكتملة 1 · قيد التقدّم 2 · بحاجة إلى اهتمام 1',
+    // 3 enrollments → total 3; done 1, active 2, attention 1 — the
+    // band's four cells carry the counts object verbatim.
+    const values = Array.from(container.querySelectorAll('.sg-kpi-value')).map(
+      (el) => el.textContent,
     );
+    expect(values).toEqual(['3', '1', '2', '1']);
+    const labels = Array.from(container.querySelectorAll('.sg-kpi-label')).map(
+      (el) => el.textContent,
+    );
+    expect(labels).toEqual([
+      'مقرّرات مسجَّلة هذا الفصل',
+      'مكتملة',
+      'قيد التقدّم',
+      'بحاجة إلى اهتمام',
+    ]);
   });
 
-  it('a zero bucket stays OFF the line (the filter pills below already own it)', () => {
+  it('a zero bucket rides as the honest 0 cell (fixed-slot instrument; pills own the phrasing)', () => {
     mocks.enrollments = [enrollment('a', 100), enrollment('b', 62)];
     const { container } = renderPage();
-    // attention = 0 → the phrase must not render; done/active ride.
-    const summary = container.querySelector('.courses-summary') as HTMLElement;
-    expect(summary.textContent).toBe('مقرّران مسجّلان · مكتملة 1 · قيد التقدّم 1');
+    // attention = 0 → the fourth cell reads the honest 0 (the band is
+    // a fixed-slot instrument; hiding slots would lie about the sheet).
+    const values = Array.from(container.querySelectorAll('.sg-kpi-value')).map(
+      (el) => el.textContent,
+    );
+    expect(values).toEqual(['2', '1', '1', '0']);
   });
 
   it('the filter pills keep their per-bucket counts — data logic untouched', () => {
@@ -160,19 +166,22 @@ describe('StudentCoursesPage — the light single-line summary (r173a)', () => {
 
 /* ── 2 · Pending: the summary-line mirror ───────────────────────── */
 
-describe('StudentCoursesPage — pending mirror (r173a)', () => {
-  it('the line\'s own box + the grid skeleton; zero metric tiles, zero spinners', () => {
+describe('StudentCoursesPage — pending mirror (R359 re-pin)', () => {
+  it('the band\'s honest-empty cells + the DataSheet skeleton; zero metric tiles, zero spinners', () => {
     mocks.enrollmentsPending = true;
     const { container } = renderPage();
 
-    const summary = container.querySelector('.courses-summary');
-    expect(summary).not.toBeNull();
-    expect((summary as HTMLElement).getAttribute('aria-busy')).toBe('true');
-    expect((summary as HTMLElement).querySelector('.skeleton')).not.toBeNull();
+    // The band is its own loading mirror: every cell renders the
+    // honest «—» register (data-empty), never a fabricated 0.
+    const emptyCells = container.querySelectorAll('.sg-kpi[data-empty="true"]');
+    expect(emptyCells.length).toBe(4);
+    for (const cell of Array.from(emptyCells)) {
+      expect(cell.querySelector('.sg-kpi-value')?.textContent).toBe('—');
+    }
 
-    // The row-list skeleton owns the list area (r221: the row list
-    // replaced the card grid — its skeleton mirrors the pf-row shape).
-    expect(container.querySelector('.pf-row[aria-hidden="true"]')).not.toBeNull();
+    // The DataSheet skeleton owns the list area inside the framed
+    // section (aria-busy on the sheet wrap).
+    expect(container.querySelector('.sg-sheet-wrap[aria-busy="true"]')).not.toBeNull();
     // The one-loading-owner rule.
     expect(container.querySelectorAll('.metric')).toHaveLength(0);
     expect(container.querySelectorAll('.spinner')).toHaveLength(0);

@@ -7,10 +7,13 @@ import {
   PointElement, LineElement, Filler, Tooltip, Legend,
 } from 'chart.js';
 import { Card, ProgressBar } from '../../components/primitives';
-import { StatStrip } from '../../components/primitives/Ledger';
 /* R304: the education overview opens with the patterns PageHeader —
- * breadcrumbs back to the owner dashboard. */
-import { PageHeader as PatternsPageHeader } from '../../components/patterns';
+ * breadcrumbs back to the owner dashboard.
+ * R359 (W2-e): the overview rides the sheet grammar — the KpiBand
+ * facts + the four framed sections; the top-courses register rides
+ * the DataSheet. The workload meters keep the ProgressBar (the
+ * sanctioned meter register). */
+import { PageHeader as PatternsPageHeader, KpiBand, SheetSection, DataSheet, type DataSheetColumn } from '../../components/patterns';
 import {
   ErrorState, EmptyState, ChartSkeleton, TableSkeleton, ListSkeleton,
 } from '../../components/primitives/States';
@@ -126,6 +129,7 @@ export function OwnerEducationPage() {
          so the scoped sheet reaches the skeleton band too. */
       <div className="page r305ao" aria-busy="true">
         <PatternsPageHeader
+          eyebrow="مالك المنصّة"
           title="النظرة التعليميّة"
           /* r351 A2 (Q3): loading-status description retired — the
            * skeletons + aria-busy already say it. */
@@ -146,6 +150,7 @@ export function OwnerEducationPage() {
          state renders under the same scoped grammar. */
       <div className="page r305ao">
         <PatternsPageHeader
+          eyebrow="مالك المنصّة"
           title="النظرة التعليميّة"
           breadcrumbs={[{ label: 'لوحة المالك', to: '/owner/dashboard' }, { label: 'النظرة التعليميّة' }]}
         />
@@ -173,6 +178,14 @@ export function OwnerEducationPage() {
 
   // Workload buckets — share-of-teachers meters (owner.css §6-b); the
   // staggered fill on load is the page's authored moment.
+  /* R359 (W2-e) — the top-courses register columns. */
+  const topCourseColumns: DataSheetColumn<(typeof topCourses)[number]>[] = [
+    { key: 'code', label: 'الرمز', mono: true, render: (c) => <bdi>{c.code}</bdi> },
+    { key: 'name', label: 'اسم المقرّر', render: (c) => <span className="sg-cell-title">{c.name}</span> },
+    { key: 'faculty', label: 'الكلّيّة', render: (c) => <span className="sg-cell-sub">{c.facultyName}</span> },
+    { key: 'enrolled', label: 'المسجَّلون', numeric: true, render: (c) => formatNum(c.enrolled) },
+  ];
+
   const buckets: Array<{ label: string; n: number; color: string; aria: string }> = [
     { label: 'بدون عرض هذا الفصل', n: workloadBuckets.idle, color: 'var(--neutral-400)', aria: 'نسبة الأساتذة بدون عرض هذا الفصل' },
     { label: 'عرض واحد', n: workloadBuckets.one, color: c.accent, aria: 'نسبة الأساتذة بعرض واحد هذا الفصل' },
@@ -186,6 +199,7 @@ export function OwnerEducationPage() {
        tables and chart containers all key off the scoped sheet. */
     <div className="page r305ao">
       <PatternsPageHeader
+        eyebrow="مالك المنصّة"
         title="النظرة التعليميّة"
         /* r351 A2 (Q3): header description retired — the KPI strip
          * names its own subjects. */
@@ -205,21 +219,21 @@ export function OwnerEducationPage() {
         )}
       />
 
-      {/* r299: the trend notes died — each one restated its own label
-          («إجمالي المقرّرات» / «مقرّرات مسجَّلة») in different words; the
-          label already carries the noun. */}
-      <StatStrip
-        ariaLabel="إحصائيات التعليم"
-        cells={[
-          { label: 'إجمالي المقرّرات', value: formatNum(totals.totalCourses) },
-          { label: 'عدد الأساتذة', value: formatNum(totals.teachers) },
-          { label: 'العروض النشطة', value: formatNum(totals.totalOfferings) },
-          { label: 'متوسط التسجيل في العرض', value: formatNum(totals.avgEnrolment) },
+      {/* R359 (W2-e) — the KPI band: the four education facts as live
+          numerals (the resolved branch guarantees the payload). r299:
+          no trend notes — each one restated its own label in different
+          words. */}
+      <KpiBand
+        items={[
+          { index: '01', caption: 'COURSES', label: 'إجمالي المقرّرات', value: totals.totalCourses },
+          { index: '02', caption: 'TEACHERS', label: 'عدد الأساتذة', value: totals.teachers },
+          { index: '03', caption: 'OFFERINGS', label: 'العروض النشطة', value: totals.totalOfferings },
+          { index: '04', caption: 'AVG ENROLMENT', label: 'متوسط التسجيل في العرض', value: totals.avgEnrolment },
         ]}
       />
 
       {/* r351 A2 (Q3): card subtitle retired — the title + axis labels say it. */}
-      <Card title="المقرّرات حسب الكلّيّة">
+      <SheetSection index="01" caption="COURSES BY FACULTY" title="المقرّرات حسب الكلّيّة">
         {byFaculty.length === 0 ? (
           /* r351 A2 (Q3): empty-state prose retired — the title speaks. */
           <EmptyState illustration="empty-courses" title="لا مقرّرات بعد" description="" />
@@ -237,43 +251,30 @@ export function OwnerEducationPage() {
             <Bar key={themeKey} data={barData} options={barOptions} plugins={barPlugins} />
           </ChartFrame>
         )}
-      </Card>
+      </SheetSection>
 
-      <Card title="أكثر المقرّرات تسجيلاً">
+      <SheetSection index="02" caption="TOP COURSES" title="أكثر المقرّرات تسجيلاً" pad="none">
         {topCourses.length === 0 ? (
           /* r351 A2 (Q3): empty-state prose retired — the title speaks. */
-          <EmptyState illustration="empty-list" title="لا تسجيلات بعد" description="" />
-        ) : (
-          <div className="table-wrap">
-            <table className="table tbl-stack">
-              <thead>
-                <tr>
-                  <th scope="col">الرمز</th>
-                  <th scope="col">اسم المقرّر</th>
-                  <th scope="col">الكلّيّة</th>
-                  <th scope="col">المسجَّلون</th>
-                </tr>
-              </thead>
-              <tbody>
-                {topCourses.map((course) => (
-                  // R190 (D4): the composite key — two faculties can carry
-                  // the same course code (SE301 in both), so the bare
-                  // `course.code` collided and React warned on duplicate
-                  // keys. The faculty-scoped pair is the row's identity.
-                  <tr key={`${course.code}·${course.facultyName}`}>
-                    <td data-label="الرمز"><bdi className="owner-num" dir="ltr">{course.code}</bdi></td>
-                    <td className="tbl-strong" data-label="اسم المقرّر">{course.name}</td>
-                    <td data-label="الكلّيّة" className="owner-cell-muted">{course.facultyName}</td>
-                    <td className="owner-num" data-label="المسجَّلون">{formatNum(course.enrolled)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="sg-pad-in">
+            <EmptyState illustration="empty-list" title="لا تسجيلات بعد" description="" />
           </div>
+        ) : (
+          /* R359 (W2-e): the register rides the DataSheet — mono codes,
+           * the cell-stack identity, numeric enrolments. The composite
+           * row key (two faculties can carry the same code — R190 D4)
+           * stays the page's own concern via the rows array identity. */
+          <DataSheet
+            caption="أكثر المقرّرات تسجيلاً"
+            columns={topCourseColumns}
+            rows={topCourses}
+          />
         )}
-      </Card>
+      </SheetSection>
 
-      <Card
+      <SheetSection
+        index="03"
+        caption="WORKLOAD"
         title="توزيع حِمل أعضاء هيئة التدريس"
         /* r351 A2 (Q3): subtitle retired — the bucket labels below
          * name the offering counts. */
@@ -295,11 +296,11 @@ export function OwnerEducationPage() {
             ))}
           </div>
         )}
-      </Card>
+      </SheetSection>
 
       {/* r351 A2 (Q3): subtitle trimmed to the data window («آخر 6 أشهر»)
           — the computation-source aside retired. */}
-      <Card title="اتّجاه الحضور" subtitle="آخر 6 أشهر">
+      <SheetSection index="04" caption="ATTENDANCE" title="اتّجاه الحضور" aside={<span className="sg-label">آخر 6 أشهر</span>}>
         {!trendHasData ? (
           /* r351 A2 (Q3): empty-state prose retired — the title speaks. */
           <EmptyState illustration="empty-list" title="لا توجد سجلّات حضور بعد" description="" />
@@ -317,7 +318,7 @@ export function OwnerEducationPage() {
             <Line key={themeKey} data={lineData} options={lineOptions} />
           </ChartFrame>
         )}
-      </Card>
+      </SheetSection>
     </div>
   );
 }

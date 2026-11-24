@@ -121,6 +121,7 @@ import {
   TRAINING_LEADERBOARD,
   TRAINING_ME_SUMMARY,
   UNREAD_COUNT,
+  PUSH_DEVICES,
   USER_ACHIEVEMENTS,
   USER_SKILLS,
   VALID_LOGIN,
@@ -242,6 +243,11 @@ export function standardRoutes(): MockRouteDef[] {
     { method: 'GET', path: '/notifications', json: pageOf(NOTIFICATIONS, { unread: UNREAD_COUNT, limit: 50 }) },
     { method: 'PATCH', path: '/notifications/:id/read', json: ok({ ok: true }) },
     { method: 'POST', path: '/notifications/read-all', json: ok({ updated: UNREAD_COUNT }) },
+    /* r359 §5.5 — the settings sheet's device register: the list the
+     * backend serves today + the unregister verb (scoped to the caller).
+     * Registration itself happens from the mobile app — never here. */
+    { method: 'GET', path: '/me/push-devices', json: ok(PUSH_DEVICES) },
+    { method: 'DELETE', path: '/me/push-devices/:id', json: ok({ ok: true }) },
 
     { method: 'GET', path: '/search/global', json: ok(SEARCH_RESULTS) },
 

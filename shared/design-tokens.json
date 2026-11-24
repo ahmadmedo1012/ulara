@@ -4,29 +4,29 @@
   "$doc": "R326 M0.4 — the ONE source of truth for the shared ds design tokens (web + mobile). Provenance: frontend/src/styles/tokens/tokens.css (R313/R322/R323/R324 canon) and the r325-era apps/mobile/src/design/tokens.ts hand-copy it replaces. Regen: npm run tokens:build (repo root). Outputs: frontend/src/styles/tokens/tokens.generated.css (web CSS vars, imported BEFORE tokens.css, same @layer tokens) + apps/mobile/src/design/tokens.generated.ts (mobile TS). Drift gate: npm run tokens:check (CI-enforced). Reference grammar: 'neutral.50' | 'triad.<family>.<bg|ink|deep>' | 'brand.<key>' | a semantic seat name (another ref, one tier up) | a literal '#hex'. External seat: brand.warmInk emits var(--warm-ink) on web — its definition stays hand-written in tokens.css base :root. NOT shared (deliberately): the web fluid-rem type ladder + font stacks (tokens.css hand section — web-only), the mobile px ladder lives here under typography.mobile; --state-focus-ring-color / glass / veils / charts stay hand-written in tokens.css (web-only seats). 2026 fg-seat unification: dangerFg + accentHoverFg are FIRST-CLASS semantic seats here (emitted to both halves — one source); tokens.css keeps only their doc comments, never a second declaration. 2026 brand takeover (feat/unified-brand-palette-2026): the owner-approved «Parchment & Royal» palette — royal blue #2540D9 (light) / #8AA0FF (dark) becomes THE primary signal via triad.royal; the sienna/ember era is retired (copper re-keys to the warm decorative #F15534 family); success/danger re-key to the approved #17724A/#C62828 (light) and #5FD39A/#FF7A70 (dark).",
   "color": {
     "brand": {
-      "$doc": "The ULARA brand colours — the OWNER-APPROVED palette (2026-11-21, the final brand decision): paper #F5F1E8 · ink #1A1713 · PRIMARY #2540D9 (dark #8AA0FF) — the action colour — plus the warm DECORATIVE accent #F15534 (never an action or a danger tone; the retired sienna/ember hexes #C43E16/#FF6B3D are gone from the brand seats — copper re-keys to the warm decorative family) and the warm label ink #17130E. #262019 survives only as the dark surface (neutral.dark.50). Contrast (WCAG 2.2 relative luminance, recomputed): primary on paper 6.62:1 · white on primary 7.46:1 · white on hover 10.02:1 · dark primary on dark ground 6.56:1 · dark ink #262019 on dark primary 6.56:1 (the owner-verified pair — white on it FAILS at 2.46:1 and is never used) · white on dark hover 4.83:1. Consumed by the brand kit (ulara-kit.mjs cross-check: colors.accent ≡ brand.primary) and the semantic seat refs; web emits var(--warm-ink) refs only.",
-      "paper": "#F5F1E8",
-      "ink": "#1A1713",
-      "warmInk": "#17130E",
+      "$doc": "The ULARA brand colours — the R359 re-measure of the reference (A3): paper #F2F1EC · ink #282828 · PRIMARY #2540D9 (dark #8AA0FF) — the action colour — plus the warm DECORATIVE accent #F15534 (never an action or a danger tone; the retired sienna/ember hexes #C43E16/#FF6B3D are gone from the brand seats — copper re-keys to the warm decorative family) and the warm label ink #262623. #262019 survives only as the dark surface (neutral.dark.50). Contrast (WCAG 2.2 relative luminance, recomputed): primary on paper 6.62:1 · white on primary 7.46:1 · white on hover 10.02:1 · dark primary on dark ground 6.56:1 · dark ink #262019 on dark primary 6.56:1 (the owner-verified pair — white on it FAILS at 2.46:1 and is never used) · white on dark hover 4.83:1. Consumed by the brand kit (ulara-kit.mjs cross-check: colors.accent ≡ brand.primary) and the semantic seat refs; web emits var(--warm-ink) refs only.",
+      "paper": "#F2F1EC",
+      "ink": "#282828",
+      "warmInk": "#262623",
       "primary": "#2540D9",
       "primaryDark": "#8AA0FF",
       "white": "#FFFFFF",
       "warmAccent": "#F15534"
     },
     "neutral": {
-      "$doc": "The warm vintage-paper ramp (R313). Light: near-white ground #F5F1E8 over white surfaces, the 2026 approved ink #1A1713 (15.84:1 AAA — was #262019, which survives only as the DARK ground). Dark: the charcoal #262019 itself as ground, surfaces one step up (#2E2E2E), warm hairlines, near-white ink #F5F1E8. neutral-900 dark is the R324 X22 warm paper twin #F5F1E8 (was #F6F8FA — that spelling is on the parity gate's FORBIDDEN list).",
+      "$doc": "The warm paper ramp (R359 re-key to the measured reference seats). Light: the paper ground #F2F1EC over white surfaces, ink #282828, secondary text #646464 (neutral.500), hairline #B3B3AF (neutral.300) (15.84:1 AAA — was #262019, which survives only as the DARK ground). Dark: the charcoal #262019 itself as ground, surfaces one step up (#2E2E2E), warm hairlines, near-white ink #F0F0EB. neutral-900 dark is the paper twin (was #F6F8FA — that spelling is on the parity gate's FORBIDDEN list).",
       "light": {
         "0": "#FFFFFF",
-        "50": "#F5F1E8",
-        "100": "#EFEBDF",
-        "150": "#EDE9DC",
-        "200": "#E0E0DA",
+        "50": "#F2F1EC",
+        "100": "#EBEBE5",
+        "150": "#E7E7E1",
+        "200": "#DBDBD5",
         "300": "#B3B3AF",
         "400": "#B4B4B0",
-        "500": "#72726F",
-        "700": "#414140",
-        "800": "#333330",
-        "900": "#1A1713"
+        "500": "#646464",
+        "700": "#424242",
+        "800": "#333333",
+        "900": "#282828"
       },
       "dark": {
         "0": "#2E2E2E",
@@ -39,7 +39,7 @@
         "500": "#B4B4B0",
         "700": "#C9C9C5",
         "800": "#E0E0DC",
-        "900": "#F5F1E8"
+        "900": "#F0F0EB"
       }
     },
     "triad": {
@@ -181,9 +181,9 @@
         "surfaceElevated": "surface1",
         "text": "neutral.900",
         "textStrong": "neutral.900",
-        "textSecondary": "neutral.700",
-        "textMuted": "#62625F",
-        "textFaint": "#666660",
+        "textSecondary": "neutral.500",
+        "textMuted": "#666663",
+        "textFaint": "#676765",
         "textOnAccent": "#FFFFFF",
         "textOnDark": "neutral.50",
         "border": "neutral.200",
@@ -356,15 +356,15 @@
     "full": 9999
   },
   "motion": {
-    "$doc": "The measured ds register (r305 census: .4s ×174 dominant; decel standard .23,1,.32,1). Web: the prefers-reduced-motion kill in tokens.css zeroes the rungs by import order. The --ease-out/in/linear/soft/spring family stays hand-written in tokens.css (web-only).",
-    "micro": 80,
-    "fast": 200,
-    "base": 400,
-    "slow": 500,
-    "slower": 650,
-    "cinema": 900,
-    "sheetExit": 835,
-    "guestReveal": 700,
+    "$doc": "R359 — the measured mechanical register (the reference re-measure): a THREE-value ladder 160/320/640ms on ONE mechanical easing cubic-bezier(0.23,1,0.32,1) — the curve measured on the reference's own transition census (fast departure, decelerating arrival, dead stop). No springs, no bounce, no overshoot anywhere (the spring vocabulary in tokens.css re-points here). micro 160 = hover/press color; fast 320 = small reveals, sheets, route transitions; base/slow/slower 640 = section reveals, drawn hairlines. Web: the prefers-reduced-motion kill in tokens.css zeroes the rungs by import order.",
+    "micro": 160,
+    "fast": 320,
+    "base": 640,
+    "slow": 640,
+    "slower": 640,
+    "cinema": 640,
+    "sheetExit": 320,
+    "guestReveal": 640,
     "ease": [
       0.23,
       1,

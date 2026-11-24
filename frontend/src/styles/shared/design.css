@@ -224,3 +224,7 @@
   .r323d { padding-inline: var(--sp-3); }
   .r323d-grid, .r323d-grid-2 { grid-template-columns: 1fr; }
 }
+
+/* §R359 — the gallery's sheet-grammar demo spacing (unlayered so it
+   lands after the grammar sheet's own rules; the gallery only). */
+.r323d-sheet-demo { margin-block-start: var(--sp-4); }

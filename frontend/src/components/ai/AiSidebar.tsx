@@ -50,7 +50,12 @@ export function AiSidebar({
   onSuggestion,
 }: AiSidebarProps) {
   return (
-    <aside className="ai-side">
+    /* R359 final: a plain div, not <aside> — the column lives INSIDE the
+     * route's <main>, and axe's landmark-complementary-is-top-level rule
+     * (rightly) demands complementary landmarks sit at top level. The
+     * sheet column carries no independent landmark semantics; the h2
+     * labels inside keep the structure honest. */
+    <div className="ai-side">
       <div className="ai-side-head">
         <h2 className="ai-side-label">محادثاتك</h2>
         <button type="button" className="btn ghost sm" onClick={onNew} disabled={busy}>
@@ -170,6 +175,6 @@ export function AiSidebar({
           ))}
         </div>
       </Card>
-    </aside>
+    </div>
   );
 }

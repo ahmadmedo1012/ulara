@@ -186,7 +186,10 @@ describe('LibraryPage — the deep summary band (R305-A7)', () => {
     expect(document.querySelector('.r305rp-band--deep')).toBeNull();
   });
 
-  it("the research tab's archive summary is the deep band, in the metric register", () => {
+  /* R359 re-pin — the archive summary rides the framed [01] ARCHIVE
+   * sheet section with the KpiBand (the deep band + its metric register
+   * retired; same four honest facts in the dimension-string voice). */
+  it("the research tab's archive summary is the KPI band, in the framed ARCHIVE sheet", () => {
     mocks.research = [
       {
         id: 'pp-1', title: 'بحث أول', abstract: null, fileUrl: null, status: 'PUBLISHED',
@@ -198,14 +201,18 @@ describe('LibraryPage — the deep summary band (R305-A7)', () => {
     ];
     renderLibrary('/student/library?tab=research');
 
-    const band = document.querySelector('.r305rp-band--deep');
+    const section = Array.from(document.querySelectorAll('section.sg-section')).find(
+      (el) => el.querySelector('.sg-caption')?.textContent === 'ARCHIVE',
+    );
+    expect(section).toBeDefined();
+    // The four archive facts, label-under-numeral in the band register.
+    const band = section!.querySelector('.sg-kpis');
     expect(band).not.toBeNull();
-    // The four archive facts, label-over-value in the mono register.
     for (const label of ['بحوث منشورة', 'مؤلفون طلابيون', 'متوسط التقييم', 'منشورة هذا العام']) {
       expect(band!.textContent).toContain(label);
     }
-    expect(band!.querySelectorAll('.r305rp-metric')).toHaveLength(4);
-    expect(band!.querySelector('.r305rp-eyebrow')?.textContent).toContain('ملخص الأرشيف');
+    expect(band!.querySelectorAll('.sg-kpi')).toHaveLength(4);
+    expect(section!.querySelector('.sg-title')?.textContent).toContain('ملخص الأرشيف');
   });
 });
 
@@ -213,28 +220,31 @@ describe('LibraryPage — the deep summary band (R305-A7)', () => {
    3. State never color alone — chips pair dot + Arabic label
    ══════════════════════════════════════════════════════════════════ */
 
-describe('LibraryPage — status chips (R305-A7)', () => {
-  it('the availability chip pairs the tone dot with «متاح»', () => {
+/* R359 re-pin — the colour law: status chips joined the flat sg-flag
+ * register (words + tone ink on a hairline border; the tinted dot-chip
+ * retired). State is still never colour alone — the Arabic label IS the
+ * state, the tone rides text + border. */
+describe('LibraryPage — status flags (R359 re-pin)', () => {
+  it('the availability flag reads «متاح» in the positive tone', () => {
     mocks.books = [bookFixture()];
     renderLibrary();
 
-    const chip = screen.getByText('متاح').closest('.r305rp-chip')!;
-    expect(chip).not.toBeNull();
-    expect(chip.querySelector('.r305rp-chip-dot')).not.toBeNull();
-    expect(chip.className).toContain('r305rp-chip--success');
+    const flag = screen.getByText('متاح').closest('.sg-flag')!;
+    expect(flag).not.toBeNull();
+    expect(flag.getAttribute('data-tone')).toBe('positive');
   });
 
-  it('the loan-state chip pairs the dot with «نشطة»', () => {
+  it('the loan-state flag reads «نشطة» in the positive tone', () => {
     mocks.books = [bookFixture()];
     mocks.loans = [loanFixture()];
     renderLibrary();
 
-    const chip = screen.getByText('نشطة').closest('.r305rp-chip')!;
-    expect(chip.querySelector('.r305rp-chip-dot')).not.toBeNull();
-    expect(chip.className).toContain('r305rp-chip--success');
+    const flag = screen.getByText('نشطة').closest('.sg-flag')!;
+    expect(flag).not.toBeNull();
+    expect(flag.getAttribute('data-tone')).toBe('positive');
   });
 
-  it('an overdue loan reads «متأخر الإرجاع» on the danger chip — label, not just tone', () => {
+  it('an overdue loan reads «متأخر الإرجاع» on the danger flag — label, not just tone', () => {
     mocks.books = [bookFixture()];
     mocks.loans = [loanFixture({
       status: 'OVERDUE',
@@ -242,9 +252,8 @@ describe('LibraryPage — status chips (R305-A7)', () => {
     })];
     renderLibrary();
 
-    const chip = screen.getByText('متأخر الإرجاع').closest('.r305rp-chip')!;
-    expect(chip.className).toContain('r305rp-chip--danger');
-    expect(chip.querySelector('.r305rp-chip-dot')).not.toBeNull();
+    const flag = screen.getByText('متأخر الإرجاع').closest('.sg-flag')!;
+    expect(flag.getAttribute('data-tone')).toBe('danger');
   });
 });
 
@@ -253,13 +262,17 @@ describe('LibraryPage — status chips (R305-A7)', () => {
    ══════════════════════════════════════════════════════════════════ */
 
 describe('LibraryPage — the technical empty/loading surfaces (R305-A7)', () => {
-  it('no open loans renders the .r305rp-empty surface with the honest line', () => {
+  it('no open loans renders the framed sheet honest-empty surface with the honest line', () => {
     renderLibrary();
 
-    const empty = document.querySelector('.r305rp-empty');
-    expect(empty).not.toBeNull();
-    expect(empty!.querySelector('.r305rp-eyebrow')?.textContent).toContain('الحالة');
+    /* R359 re-pin — the loans ledger's empty state rides the framed
+     * section's honest-empty register (the .r305rp-empty surface
+     * retired with the deep band). */
     expect(screen.getByText('لا استعارات نشطة')).toBeInTheDocument();
+    const section = Array.from(document.querySelectorAll('section.sg-section')).find(
+      (el) => el.textContent?.includes('لا استعارات نشطة'),
+    );
+    expect(section).toBeDefined();
   });
 
   it('pending loans render the shape-matched skeleton with aria-busy (never the empty line)', () => {

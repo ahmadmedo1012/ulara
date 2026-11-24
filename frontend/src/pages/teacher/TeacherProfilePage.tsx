@@ -16,12 +16,17 @@
 import { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  GraduationCap, Award, BookOpen, Users2, MapPin, Clock, Globe,
-  ShieldCheck, AlertCircle, Edit3, Save, X, FileText, Sparkles,
+  GraduationCap, Award, BookOpen, Users2, MapPin, Clock,
+  ShieldCheck, AlertCircle, Edit3, Save, X, FileText,
   ChevronLeft,
 } from 'lucide-react';
 import { Card, Badge, UserAvatar, FormField } from '../../components/primitives';
-import { StatStrip } from '../../components/primitives/Ledger';
+/* R359 (A3 · W2-c) — the sheet grammar joins the profile: the
+ * workload strip re-keys onto the KpiBand and the major regions ride
+ * framed SheetSections ([nn] index + Latin caption + Arabic title).
+ * The counted Card subtitles move to the head rule's aside — the
+ * pinned zero-case copy stays byte-exact. */
+import { SheetSection, KpiBand } from '../../components/patterns';
 import { ErrorState, EmptyState, Skeleton, CardSkeleton } from '../../components/primitives/States';
 import { Icon } from '../../components/Icon';
 import { EmojiIcon } from '../../components/EmojiIcon';
@@ -215,7 +220,7 @@ export default function TeacherProfilePage() {
     <div className="page page-profile">
       <header className="page-header">
         <div className="page-title-block">
-          <span className="hr-brow">هيئة التدريس</span>
+          <span className="hr-brow">عضو هيئة التدريس</span>
           <h1 className="page-title">الملف الأكاديمي</h1>
           {/* r351 A2 (Q3): subtitle trimmed to the audience fact (who sees
               it); the keep-it-updated advice retired. */}
@@ -259,8 +264,9 @@ export default function TeacherProfilePage() {
         </div>
       )}
 
-      {/* Header: avatar + name + rank + verification */}
-      <Card>
+      {/* Header: avatar + name + rank + verification — R359: the
+          [01] IDENTITY frame. */}
+      <SheetSection index="01" caption="IDENTITY" title="البطاقة الأكاديمية">
         <div className="teacher-header">
           <UserAvatar
             initials={profile.avatarInitials ?? `${profile.firstName?.[0] ?? profile.name?.[0] ?? ''}${profile.lastName?.[0] ?? ''}`}
@@ -293,38 +299,38 @@ export default function TeacherProfilePage() {
             </div>
           </div>
         </div>
-      </Card>
+      </SheetSection>
 
-      {/* Workload — the typographic stat strip (mono label + metric
-       * value + trend note); the icon-card KPI grid is the retired
-       * template pattern. */}
-      <StatStrip
-        ariaLabel="حجم التدريس هذا الفصل"
-        cells={[
+      {/* Workload — R359: the typographic KpiBand (mono numerals +
+       * count-in); the degree renders verbatim (a string datum, not a
+       * count — no count-in on a word). */}
+      <KpiBand
+        items={[
           {
+            index: '01',
+            caption: 'COURSES',
             label: 'المقرّرات هذا الفصل',
-            value: profile.workload.courseCount.toString(),
-            trend: countAr(profile.workload.totalCredits, ['وحدة معتمدة واحدة', 'وحدتان معتمدتان', 'وحدات معتمدة', 'وحدة معتمدة']),
-            trendTone: 'flat',
+            value: profile.workload.courseCount,
+            delta: countAr(profile.workload.totalCredits, ['وحدة معتمدة واحدة', 'وحدتان معتمدتان', 'وحدات معتمدة', 'وحدة معتمدة']),
           },
           {
+            index: '02',
+            caption: 'STUDENTS',
             label: 'إجمالي الطلاب',
-            value: profile.workload.totalEnrolled.toString(),
-            /* r351 A2 (Q3): the teacher-scoped trend note retired — the
-             * whole strip is the teacher's own workload. */
-            trendTone: 'flat',
+            value: profile.workload.totalEnrolled,
           },
           {
+            index: '03',
+            caption: 'DEGREE',
             label: 'الدرجة العلمية',
             value: DEGREE_LABEL[profile.degreeLevel] ?? profile.degreeLevel,
-            trend: countAr(profile.yearsExperience, ['سنة خبرة واحدة', 'سنتا خبرة', 'سنوات خبرة', 'سنة خبرة']),
-            trendTone: 'flat',
+            delta: countAr(profile.yearsExperience, ['سنة خبرة واحدة', 'سنتا خبرة', 'سنوات خبرة', 'سنة خبرة']),
           },
         ]}
       />
 
-      {/* Bio + contact (editable) */}
-      <Card title={<>نبذة شخصية</>} icon={FileText}>
+      {/* Bio + contact (editable) — R359: [02] BIO. */}
+      <SheetSection index="02" caption="BIO" title="نبذة شخصية">
         {editing && draft ? (
           /* r152c (A2): the four edit-mode controls were placeholder-ONLY
              — no accessible name at all. FormField gives each a real
@@ -344,10 +350,10 @@ export default function TeacherProfilePage() {
           /* r351 A2 (Q3): trimmed — the edit button sits in the header. */
           <div className="text-sm text-muted">لم تُضف نبذة بعد.</div>
         )}
-      </Card>
+      </SheetSection>
 
       <div className="grid-2">
-        <Card title={<>المكتب وساعات العمل</>} icon={MapPin}>
+        <SheetSection index="03" caption="OFFICE" title="المكتب وساعات العمل">
           {editing && draft ? (
             <div className="flex-col gap-2">
               <FormField label="موقع المكتب" id="teacher-office-location-field">
@@ -387,9 +393,9 @@ export default function TeacherProfilePage() {
               )}
             </div>
           )}
-        </Card>
+        </SheetSection>
 
-        <Card title={<>الموقع الإلكتروني</>} icon={Globe}>
+        <SheetSection index="04" caption="WEBSITE" title="الموقع الإلكتروني">
           {editing && draft ? (
             <FormField label="الموقع الإلكتروني" id="teacher-website-field">
               <input
@@ -407,12 +413,12 @@ export default function TeacherProfilePage() {
           ) : (
             <div className="text-xs text-muted">لم يُضف موقع شخصي.</div>
           )}
-        </Card>
+        </SheetSection>
       </div>
 
       {/* Subject keywords + degree summary */}
       <div className="grid-2">
-        <Card title={<>مجالات الاهتمام البحثي</>} icon={Sparkles}>
+        <SheetSection index="05" caption="RESEARCH INTERESTS" title="مجالات الاهتمام البحثي">
           {profile.subjectKeywords.length === 0 ? (
             <div className="text-sm text-muted">لم تُسجَّل مجالات بحثية بعد.</div>
           ) : (
@@ -420,16 +426,21 @@ export default function TeacherProfilePage() {
               {profile.subjectKeywords.map((kw) => <Badge key={kw}>{kw}</Badge>)}
             </div>
           )}
-        </Card>
-        <Card
-          title={<>الشهادات والاعتمادات</>}
-          icon={GraduationCap}
+        </SheetSection>
+        <SheetSection
+          index="06"
+          caption="CREDENTIALS"
+          title="الشهادات والاعتمادات"
           /* r157 / 6A9 — countAr grammar: «3 شهادات» (the old
            * `${n} شهادة` template broke at 0 and 2); the zero case
            * names the reality like the body copy does. */
-          subtitle={profile.certifications.length === 0
-            ? 'لم تُضف شهادة'
-            : countAr(profile.certifications.length, ['شهادة واحدة', 'شهادتان', 'شهادات', 'شهادة'])}
+          aside={(
+            <span className="sg-label">
+              {profile.certifications.length === 0
+                ? 'لم تُضف شهادة'
+                : countAr(profile.certifications.length, ['شهادة واحدة', 'شهادتان', 'شهادات', 'شهادة'])}
+            </span>
+          )}
         >
           {profile.certifications.length === 0 ? (
             <div className="text-sm text-muted">لم تُضف شهادات.</div>
@@ -446,16 +457,21 @@ export default function TeacherProfilePage() {
               ))}
             </div>
           )}
-        </Card>
+        </SheetSection>
       </div>
 
-      {/* Publications & awards */}
-      <Card
-        title={<>المنشورات العلمية</>}
-        icon={FileText}
-        subtitle={profile.publications.length === 0
-          ? 'لم تُضف منشورات'
-          : countAr(profile.publications.length, ['منشور واحد', 'منشوران', 'منشورات', 'منشوراً'])}
+      {/* Publications & awards — R359: [07] PUBLICATIONS. */}
+      <SheetSection
+        index="07"
+        caption="PUBLICATIONS"
+        title="المنشورات العلمية"
+        aside={(
+          <span className="sg-label">
+            {profile.publications.length === 0
+              ? 'لم تُضف منشورات'
+              : countAr(profile.publications.length, ['منشور واحد', 'منشوران', 'منشورات', 'منشوراً'])}
+          </span>
+        )}
       >
         {profile.publications.length === 0 ? (
           <EmptyState illustration="empty-research"
@@ -483,14 +499,19 @@ export default function TeacherProfilePage() {
             ))}
           </div>
         )}
-      </Card>
+      </SheetSection>
 
-      <Card
-        title={<>التكريمات والجوائز</>}
-        icon={Award}
-        subtitle={profile.awards.length === 0
-          ? 'لم تُضف جائزة'
-          : countAr(profile.awards.length, ['جائزة واحدة', 'جائزتان', 'جوائز', 'جائزة'])}
+      <SheetSection
+        index="08"
+        caption="AWARDS"
+        title="التكريمات والجوائز"
+        aside={(
+          <span className="sg-label">
+            {profile.awards.length === 0
+              ? 'لم تُضف جائزة'
+              : countAr(profile.awards.length, ['جائزة واحدة', 'جائزتان', 'جوائز', 'جائزة'])}
+          </span>
+        )}
       >
         {profile.awards.length === 0 ? (
           /* r351 A2 (Q3): the managed-by note retired — the publications
@@ -516,10 +537,19 @@ export default function TeacherProfilePage() {
             ))}
           </div>
         )}
-      </Card>
+      </SheetSection>
 
-      {/* Courses currently teaching */}
-      <Card title={<>المقرّرات الحالية</>} icon={BookOpen} subtitle={countAr(profile.courses.length, ['مقرّر واحد هذا الفصل', 'مقرّران هذا الفصل', 'مقرّرات هذا الفصل', 'مقرّراً هذا الفصل'])}>
+      {/* Courses currently teaching — R359: [09] CURRENT COURSES. */}
+      <SheetSection
+        index="09"
+        caption="CURRENT COURSES"
+        title="المقرّرات الحالية"
+        aside={(
+          <span className="sg-label">
+            {countAr(profile.courses.length, ['مقرّر واحد هذا الفصل', 'مقرّران هذا الفصل', 'مقرّرات هذا الفصل', 'مقرّراً هذا الفصل'])}
+          </span>
+        )}
+      >
         {profile.courses.length === 0 ? (
           /* r351 A2 (Q3): empty-state prose retired — the title states
              * the assignment fact. */
@@ -538,7 +568,7 @@ export default function TeacherProfilePage() {
             ))}
           </div>
         )}
-      </Card>
+      </SheetSection>
 
       {/* r157 / 6A9 — the discard-confirm for cancelEdit (portal-mounted). */}
       {discardGuard}

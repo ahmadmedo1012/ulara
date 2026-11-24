@@ -2,21 +2,26 @@ import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
   Play, FileText,
-  Clock, CheckCircle2, ChevronLeft, ChevronRight, Presentation, Video, FileArchive, Image,
+  CheckCircle2, ChevronLeft, ChevronRight, Presentation, Video, FileArchive, Image,
   type LucideIcon,
 } from 'lucide-react';
 import { Badge, ProgressBar } from '../../components/primitives';
 import { ErrorState, Skeleton, ListSkeleton } from '../../components/primitives/States';
 import {
-  PageFrame, PageHeader, StatLine, FilterBar, RowList, RowItem,
+  PageFrame, PageHeader, FilterBar,
 } from '../../components/patterns';
-/* R319 (c3-S1) — the §B2 kit: mono-indexed section title bars, the
- * per-lecture hairline bar, the mono status chips, the hatched
- * empties (the DashboardPage conversion's own components). */
+/* R359 (A3 · final sweep) — the sheet grammar joins the §B2 kit: the
+ * framed section (registration crosses + Latin mono caption + the
+ * aside slot), the KpiBand (the dimension-string register replacing
+ * the StatLine), and the DataSheet (the ledger register) for the
+ * tabular regions (the curriculum + the assignments ledger). */
 import {
-  SectionBar, BarCount, CourseBar, StatusChip, EmptyCell, dueChip, dueDays,
+  SheetSection, KpiBand, DataSheet, type DataSheetColumn,
+} from '../../components/patterns';
+import {
+  BarCount, CourseBar, StatusChip, EmptyCell, dueChip, dueDays,
 } from '../../components/student';
-import { Reveal, RevealGroup, useReducedMotion } from '../../components/motion';
+import { useReducedMotion } from '../../components/motion';
 import { Icon } from '../../components/Icon';
 import { useOfferingFull, selectNextLecture, pendingCheckpoints } from '../../hooks/useResources';
 import { useEntityPageTitle } from '../../components/layout/AppShell';
@@ -48,8 +53,8 @@ function fmtDuration(sec: number) {
    formatDue rides); the color map below is retired with the r305 badge. */
 
 /* R304 — the curriculum filter: the same pill language the courses and
-   matrix pages speak, over the page's real lecture states. Pure
-   client-side filtering of the already-loaded list. */
+ * matrix pages speak, over the page's real lecture states. Pure
+ * client-side filtering of the already-loaded list. */
 type LectureFilter = 'all' | 'open' | 'done';
 const LECTURE_FILTERS: Array<{ key: LectureFilter; label: string }> = [
   { key: 'all', label: 'الكل' },
@@ -192,10 +197,115 @@ export default function CourseDetailPage() {
     ? data.lectures
     : data.lectures.filter((l) => lectureBucket(l) === lecFilter);
 
+  /* R359 (final sweep) — the curriculum ledger columns (the roster
+   * register): the lecture's title IS the link (the ResearchHitRow
+   * precedent — the row is data, the title is the way in), the quiet
+   * meta line carries duration · chapters · checkpoints, the progress
+   * rides the §B2 CourseBar (the honest zero-tick on an unopened
+   * lecture included), and the state words ride the flat sg-flag. */
+  const lectureColumns: DataSheetColumn<NonNullable<typeof data>['lectures'][number]>[] = [
+    {
+      key: 'lecture',
+      label: 'المحاضرة',
+      render: (lec) => (
+        <span className="sg-cell-stack">
+          <Link className="sg-cell-title" to={`/student/lectures/${lec.id}`}>
+            المحاضرة <bdi className="font-mono">{String(lec.ordinal).padStart(2, '0')}</bdi>
+            {' — '}
+            {lec.title}
+          </Link>
+          <span className="sg-cell-sub">
+            <bdi dir="ltr">{fmtDuration(lec.durationSec)}</bdi>
+            {' · '}
+            {countAr(lec._count.chapters, ['فصل واحد', 'فصلان', 'فصول', 'فصلاً'])}
+            {' · '}
+            {countAr(lec._count.checkpoints, ['نقطة تفاعل واحدة', 'نقطتا تفاعل', 'نقاط تفاعل', 'نقطة تفاعل'])}
+          </span>
+        </span>
+      ),
+    },
+    {
+      key: 'progress',
+      label: 'التقدّم',
+      render: (lec) => {
+        const we = lec.watchEvents?.[0];
+        const watchedPct = we && we.totalSec > 0 ? Math.round((we.watchedSec / we.totalSec) * 100) : 0;
+        return (
+          /* r157 (W2-F7): named per-lecture bar — every progressbar on
+             the page needs its own accessible name. The §B2 CourseBar
+             (hairline + end-tick + mono %) renders on EVERY row now:
+             the honest 0% tick on an unopened lecture (the r173a
+             zero-mark contract) and the full bar on a completed one. */
+          <CourseBar
+            pct={watchedPct}
+            ariaLabel={`تقدّم المحاضرة ${lec.ordinal}`}
+          />
+        );
+      },
+    },
+    {
+      key: 'status',
+      label: 'الحالة',
+      render: (lec) => {
+        const we = lec.watchEvents?.[0];
+        const completed = we?.completed ?? false;
+        // r164d: checkpoints still open on this row (watch may be
+        // complete while answers are not — surfaced as the flat flag).
+        const rowPending = pendingCheckpoints(lec);
+        const isNext = data.lectures.indexOf(lec) === nextLecIdx;
+        return (
+          <span className="flex flex-wrap items-center gap-1">
+            {completed && <span className="sg-flag" data-tone="positive">مكتملة</span>}
+            {rowPending > 0 && <span className="sg-flag">نقاط تفاعل متبقية</span>}
+            {isNext && <span className="sg-flag" data-tone="signal">تابع من هنا</span>}
+            {!completed && rowPending === 0 && !isNext && <span className="text-subtle">—</span>}
+          </span>
+        );
+      },
+    },
+  ];
+
+  /* R359 (final sweep) — the assignments ledger: title + kind, the
+   * weight in the mono numeric register, the due date, and the §B2
+   * due chip (dueChip + dueDays — the same whole-day arithmetic). */
+  const assignmentColumns: DataSheetColumn<NonNullable<typeof data>['assignments'][number]>[] = [
+    {
+      key: 'title',
+      label: 'الواجب',
+      render: (a) => (
+        <span className="sg-cell-stack">
+          <span className="sg-cell-title">{a.title}</span>
+          <span className="sg-cell-sub">{ASSIGNMENT_KIND_LABEL[a.type as AssignmentKind] ?? a.type}</span>
+        </span>
+      ),
+    },
+    {
+      key: 'weight',
+      label: 'الوزن',
+      numeric: true,
+      render: (a) => <>{formatInt(a.weight)}%</>,
+    },
+    {
+      key: 'due',
+      label: 'آخر موعد',
+      mono: true,
+      render: (a) => <bdi>{formatDateAr(a.dueAt)}</bdi>,
+    },
+    {
+      key: 'state',
+      label: 'الحالة',
+      render: (a) => {
+        const due = dueChip(dueDays(a.dueAt));
+        return <StatusChip label={due.label} tone={due.tone} />;
+      },
+    },
+  ];
+
   return (
     <div className="r319s-page">
     <PageFrame width="default">
       <PageHeader
+        eyebrow="طلاب الجامعة"
         title={data.course.name}
         breadcrumbs={[
           { label: 'مقرّراتي الدراسية', to: '/student/courses' },
@@ -261,35 +371,68 @@ export default function CourseDetailPage() {
             </div>
           </div>
         ) : data.lectures.length > 0 ? (
-          <Badge color="green" icon={CheckCircle2}>أنهيت محاضرات المقرّر</Badge>
+          /* R359 (colour law): the done badge joins the flat hairline
+             flag register — words + tone ink, no tinted pill. */
+          <span className="sg-flag" data-tone="positive">
+            <Icon icon={CheckCircle2} size={13} aria-hidden="true" />
+            أنهيت محاضرات المقرّر
+          </span>
         ) : null}
       </div>
 
-      {/* The course's own facts as one stat line (r221: no icon-box
-          KPI wall). */}
-      <StatLine
-        items={[
-          { label: 'المحاضرات', value: formatInt(data.lectures.length), hint: countAr(watchedCount, ['واحدة مكتملة', 'مكتملتان', 'مكتملة', 'مكتملة']) },
-          { label: 'المواد المرفقة', value: formatInt(data.materials.length), hint: countAr(data.materials.length, ['ملف واحد متاح', 'ملفان متاحان', 'ملفات متاحة', 'ملفاً متاحاً']) },
-          { label: 'الواجبات', value: formatInt(data.assignments.length), hint: 'هذا الفصل' },
-          { label: 'الطلاب', value: formatInt(data._count.enrollments), hint: countAr(data._count.enrollments, ['طالب واحد مسجَّل', 'طالبان مسجَّلان', 'طلاب مسجَّلون', 'طالباً مسجَّلاً']) },
-        ]}
-      />
+      {/* R359 (final sweep) — the course's own facts as ONE KpiBand in
+          the framed sheet (the r221 stat line joins the dimension-string
+          register). Every numeral derives from the live /full payload. */}
+      <SheetSection index="01" caption="COURSE SHEET" title="مؤشرات المقرّر" pad="none">
+        <KpiBand
+          items={[
+            {
+              index: '01',
+              caption: 'LECTURES',
+              label: 'المحاضرات',
+              value: data.lectures.length,
+              delta: countAr(watchedCount, ['واحدة مكتملة', 'مكتملتان', 'مكتملة', 'مكتملة']),
+            },
+            {
+              index: '02',
+              caption: 'MATERIALS',
+              label: 'المواد المرفقة',
+              value: data.materials.length,
+              delta: countAr(data.materials.length, ['ملف واحد متاح', 'ملفان متاحان', 'ملفات متاحة', 'ملفاً متاحاً']),
+            },
+            {
+              index: '03',
+              caption: 'ASSIGNMENTS',
+              label: 'الواجبات',
+              value: data.assignments.length,
+              delta: 'هذا الفصل',
+            },
+            {
+              index: '04',
+              caption: 'CLASSMATES',
+              label: 'الطلاب المسجَّلون',
+              value: data._count.enrollments,
+            },
+          ]}
+        />
+      </SheetSection>
 
-      {/* Lectures — the curriculum; rows reveal with a capped stagger
-          (Reveal/RevealGroup primitives, reduced-motion aware).
-          heading="h2" (PP-X2 / audit P3-24): SR heading navigation can
-          jump between the page's sections instead of meeting a single
-          H1 + anonymous card titles. R319 (c3-S1): the section heading
-          joins the §B2 title-bar register — [01] + the watched/total
-          ratio as quiet mono meta (the counted Arabic phrase stays for
-          assistive tech; the visible voice is the tabular numeral). */}
+      {/* Lectures — the curriculum ledger. heading="h2" (PP-X2 / audit
+          P3-24): SR heading navigation can jump between the page's
+          sections instead of meeting a single H1 + anonymous card
+          titles. R359 (final sweep): the section joins the framed sheet
+          grammar — the watched/total ratio rides the head's aside slot
+          (mono for sighted readers; the counted Arabic phrase stays for
+          assistive tech). */}
       <section aria-label="محاضرات المقرر" className="course-lectures">
-        <SectionBar
+        <SheetSection
+          index="02"
+          caption="CURRICULUM"
           title="المحاضرات"
-          meta={
+          pad="none"
+          aside={
             data.lectures.length > 0 ? (
-              <span className="r319s-bar-meta">
+              <span>
                 <bdi className="r319s-mono r319s-count" dir="ltr" aria-hidden="true">
                   {formatInt(watchedCount)}/{formatInt(data.lectures.length)}
                 </bdi>
@@ -299,130 +442,75 @@ export default function CourseDetailPage() {
               </span>
             ) : undefined
           }
-        />
-        {!data.lectures.length ? (
-          <EmptyCell
-            label="لم تُرفع محاضرات بعد"
-            note="سيقوم الأستاذ بإضافة المحاضرات تباعاً مع تقدّم الفصل."
-          />
-        ) : (
-          <>
-            {data.lectures.length > 3 && (
-              <FilterBar
-                filters={
-                  <div className="courses-filter" role="group" aria-label="تصفية المحاضرات حسب الحالة">
-                    {LECTURE_FILTERS.map((f) => {
-                      const n = f.key === 'all' ? data.lectures.length : f.key === 'done' ? doneCount : openCount;
-                      return (
-                        <button
-                          key={f.key}
-                          type="button"
-                          className={`pill${lecFilter === f.key ? ' on' : ''}`}
-                          aria-pressed={lecFilter === f.key}
-                          onClick={() => setLecFilter(f.key)}
-                        >
-                          {f.label}
-                          <span className="courses-filter-count" aria-hidden>{formatInt(n)}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                }
-              />
-            )}
-            {filteredLectures.length === 0 ? (
+        >
+          {!data.lectures.length ? (
+            <div className="sg-pad-in">
               <EmptyCell
-                label="لا محاضرات في هذا التصنيف"
-                note={lecFilter === 'done'
-                  ? 'لم تُكمل محاضرة كاملة بعد — «تابع من هنا» يقودك إلى أول محاضرة غير منتهية.'
-                  : 'كل محاضرات المقرر مكتملة عندك — أنجزت المنهج كاملاً.'}
+                label="لم تُرفع محاضرات بعد"
+                note="سيقوم الأستاذ بإضافة المحاضرات تباعاً مع تقدّم الفصل."
               />
-            ) : (
-          <RevealGroup className="flex-col gap-2">
-            {filteredLectures.map((lec) => {
-              const lecIdx = data.lectures.indexOf(lec);
-              const we = lec.watchEvents?.[0];
-              const watchedPct = we && we.totalSec > 0 ? Math.round((we.watchedSec / we.totalSec) * 100) : 0;
-              const completed = we?.completed ?? false;
-              // r164d: checkpoints still open on this row (watch may be
-              // complete while answers are not — surfaced as a badge).
-              const rowPending = pendingCheckpoints(lec);
-              // The "continue here" row (see nextLec above).
-              const isNext = lecIdx === nextLecIdx;
-              return (
-                <Reveal key={lec.id}>
-                  <Link
-                    to={`/student/lectures/${lec.id}`}
-                    className={`list-row course-lec-row${isNext ? ' next' : ''}`}
-                    style={{ textDecoration: 'none' }}
-                  >
-                    <div className={completed ? 'course-lec-well done' : 'course-lec-well'} aria-hidden>
-                      <Icon icon={completed ? CheckCircle2 : Play} size={16} />
-                    </div>
-                    <div className="list-row-body">
-                      <div className="list-row-title">
-                        <span className="text-xxs text-subtle" style={{ marginInlineEnd: 'var(--sp-1-5)' }}>
-                          المحاضرة <bdi className="font-mono">{String(lec.ordinal).padStart(2, '0')}</bdi>
-                        </span>
-                        {lec.title}
+            </div>
+          ) : (
+            <>
+              {data.lectures.length > 3 && (
+                <div className="sg-pad-in">
+                  <FilterBar
+                    filters={
+                      <div className="courses-filter" role="group" aria-label="تصفية المحاضرات حسب الحالة">
+                        {LECTURE_FILTERS.map((f) => {
+                          const n = f.key === 'all' ? data.lectures.length : f.key === 'done' ? doneCount : openCount;
+                          return (
+                            <button
+                              key={f.key}
+                              type="button"
+                              className={`pill${lecFilter === f.key ? ' on' : ''}`}
+                              aria-pressed={lecFilter === f.key}
+                              onClick={() => setLecFilter(f.key)}
+                            >
+                              {f.label}
+                              <span className="courses-filter-count" aria-hidden>{formatInt(n)}</span>
+                            </button>
+                          );
+                        })}
                       </div>
-                      <div className="list-row-sub flex gap-3" style={{ flexWrap: 'wrap' }}>
-                        <span className="flex items-center gap-1">
-                          <Icon icon={Clock} size={11} /> <bdi className="font-mono">{fmtDuration(lec.durationSec)}</bdi>
-                        </span>
-                        <span>·</span>
-                        <span>{countAr(lec._count.chapters, ['فصل واحد', 'فصلان', 'فصول', 'فصلاً'])}</span>
-                        <span>·</span>
-                        <span>{countAr(lec._count.checkpoints, ['نقطة تفاعل واحدة', 'نقطتا تفاعل', 'نقاط تفاعل', 'نقطة تفاعل'])}</span>
-                      </div>
-                      {watchedPct > 0 && watchedPct < 100 && (
-                        <div style={{ marginTop: 'var(--sp-1-5)', maxWidth: 240 }}>
-                          {/* r157 (W2-F7): named per-lecture bar — every
-                              progressbar on the page needs its own accessible
-                              name (the hero's has one; these rows had none,
-                              so a screen reader met N unnamed sliders).
-                              R319 (c3-S1): the row's progress rides the §B2
-                              CourseBar (hairline + end-tick + mono %) —
-                              same name, same honest datum, the sheet's
-                              instrument register. */}
-                          <CourseBar
-                            pct={watchedPct}
-                            ariaLabel={`تقدّم المحاضرة ${lec.ordinal}`}
-                          />
-                        </div>
-                      )}
-                    </div>
-                    {completed && <Badge color="green">مكتملة</Badge>
-                    /* r164d: checkpoint-pending state — the row's open
-                     * loop, visible where the decision is made (watch
-                     * done ≠ lecture done). */}
-
-                    {rowPending > 0 && (
-                      <Badge color="amber">نقاط تفاعل متبقية</Badge>
-                    )}
-                    {/* The next row's affordance replaces the raw % — the
-                        verb names the action, the inline progress bar above
-                        already carries the number. */}
-                    {isNext && <Badge color="brand">تابع من هنا</Badge>}
-                    {!completed && watchedPct > 0 && !isNext && <Badge color="brand">{watchedPct}%</Badge>}
-                  </Link>
-                </Reveal>
-              );
-            })}
-          </RevealGroup>
-            )}
-          </>
-        )}
+                    }
+                  />
+                </div>
+              )}
+              {filteredLectures.length === 0 ? (
+                <div className="sg-pad-in">
+                  <EmptyCell
+                    label="لا محاضرات في هذا التصنيف"
+                    note={lecFilter === 'done'
+                      ? 'لم تُكمل محاضرة كاملة بعد — «تابع من هنا» يقودك إلى أول محاضرة غير منتهية.'
+                      : 'كل محاضرات المقرر مكتملة عندك — أنجزت المنهج كاملاً.'}
+                  />
+                </div>
+              ) : (
+                <DataSheet
+                  caption="محاضرات المقرر"
+                  columns={lectureColumns}
+                  rows={filteredLectures}
+                  /* the «تابع من هنا» row spends the ONE royal pin —
+                     the row the continue strip points at. */
+                  rowTone={(lec) => (data.lectures.indexOf(lec) === nextLecIdx ? 'signal' : undefined)}
+                />
+              )}
+            </>
+          )}
+        </SheetSection>
       </section>
 
-      {/* Materials + Assignments + Schedule */}
+      {/* Materials + Schedule — the lateral 2:1 division keeps its
+          geometry; each board joins the framed sheet grammar. */}
       <div className="grid-2-1">
         <section aria-label="المواد المرفقة">
-        {/* R319 (c3-S1): [02] — the materials count as quiet mono meta
-            (countAr for assistive tech); the empty is the hatched cell. */}
-        <SectionBar
+        <SheetSection
+          index="03"
+          caption="MATERIALS"
           title="المواد المرفقة"
-          meta={
+          pad="none"
+          aside={
             data.materials.length > 0 ? (
               <BarCount
                 n={data.materials.length}
@@ -430,15 +518,16 @@ export default function CourseDetailPage() {
               />
             ) : undefined
           }
-        />
-        <div className="pf-rowlist">
+        >
           {!data.materials.length ? (
-            <EmptyCell
-              label="الأستاذ لم يرفع مواد بعد"
-              note="ستظهر هنا الملفات والمراجع فور رفعها — العروض التقديمية، أوراق العمل، والقراءات."
-            />
+            <div className="sg-pad-in">
+              <EmptyCell
+                label="الأستاذ لم يرفع مواد بعد"
+                note="ستظهر هنا الملفات والمراجع فور رفعها — العروض التقديمية، أوراق العمل، والقراءات."
+              />
+            </div>
           ) : (
-            <div className="flex-col gap-2">
+            <div className="sg-pad-in flex-col gap-2">
               {data.materials.map((m) => {
                 const label = MATERIAL_TYPE_LABEL[m.type as keyof typeof MATERIAL_TYPE_LABEL] ?? m.type;
                 /* r144 (T1-h F8) made the row a real link; r164d
@@ -483,14 +572,16 @@ export default function CourseDetailPage() {
               })}
             </div>
           )}
-        </div>
+        </SheetSection>
         </section>
 
         <section aria-label="الجدول الأسبوعي">
-        {/* R319 (c3-S1): [03] — the weekly sessions count as mono meta. */}
-        <SectionBar
+        <SheetSection
+          index="04"
+          caption="WEEKLY SCHEDULE"
           title="الجدول الأسبوعي"
-          meta={
+          pad="none"
+          aside={
             data.schedule.length > 0 ? (
               <BarCount
                 n={data.schedule.length}
@@ -498,15 +589,16 @@ export default function CourseDetailPage() {
               />
             ) : undefined
           }
-        />
-        <div className="pf-rowlist">
+        >
           {!data.schedule.length ? (
-            <EmptyCell
-              label="لم يُنشَر جدول هذا المقرّر بعد"
-              note="سيظهر هنا فور تثبيت مواعيد المحاضرات الأسبوعيّة."
-            />
+            <div className="sg-pad-in">
+              <EmptyCell
+                label="لم يُنشَر جدول هذا المقرّر بعد"
+                note="سيظهر هنا فور تثبيت مواعيد المحاضرات الأسبوعيّة."
+              />
+            </div>
           ) : (
-            <div className="flex-col gap-2">
+            <div className="sg-pad-in flex-col gap-2">
               {data.schedule.map((s) => (
                 <div key={s.id} className="list-row">
                   <span className="list-row-meta"><bdi className="font-mono">{s.startTime}–{s.endTime}</bdi></span>
@@ -518,16 +610,19 @@ export default function CourseDetailPage() {
               ))}
             </div>
           )}
-        </div>
+        </SheetSection>
         </section>
       </div>
 
       <section aria-label="واجبات المقرر">
-      {/* R319 (c3-S1): [04] — the assignments count as mono meta; each
-          row's due state rides the §B2 mono chip (dueChip + dueDays). */}
-      <SectionBar
+      {/* R359 (final sweep): the assignments ledger joins the DataSheet
+          register — mono weights + dates + the §B2 due chips. */}
+      <SheetSection
+        index="05"
+        caption="ASSIGNMENTS"
         title="الواجبات"
-        meta={
+        pad="none"
+        aside={
           data.assignments.length > 0 ? (
             <BarCount
               n={data.assignments.length}
@@ -535,30 +630,25 @@ export default function CourseDetailPage() {
             />
           ) : undefined
         }
-      />
-      <p className="r305c-sec-note">مواعيد التسليم ووزن كل واجب في درجة المقرر — التسليم من صفحة مقرّراتك.</p>
-      {!data.assignments.length ? (
-        <EmptyCell
-          label="لا توجد واجبات نشطة"
-          note="حالياً لا شيء بانتظارك في هذا المقرر. وقت جيد لمراجعة المحاضرات السابقة."
-        />
-      ) : (
-        <RowList aria-label="قائمة واجبات المقرر" density="compact">
-          {[...data.assignments]
-            .sort((a, b) => new Date(a.dueAt).getTime() - new Date(b.dueAt).getTime())
-            .map((a) => {
-              const due = dueChip(dueDays(a.dueAt));
-              return (
-                <RowItem
-                  key={a.id}
-                  title={a.title}
-                  meta={<>{ASSIGNMENT_KIND_LABEL[a.type as AssignmentKind] ?? a.type} · الوزن {formatInt(a.weight)}% · آخر موعد {formatDateAr(a.dueAt)}</>}
-                  trailing={<StatusChip label={due.label} tone={due.tone} />}
-                />
-              );
-            })}
-        </RowList>
-      )}
+      >
+        <div className="sg-pad-in">
+          <p className="r305c-sec-note">مواعيد التسليم ووزن كل واجب في درجة المقرر — التسليم من صفحة مقرّراتك.</p>
+        </div>
+        {!data.assignments.length ? (
+          <div className="sg-pad-in">
+            <EmptyCell
+              label="لا توجد واجبات نشطة"
+              note="حالياً لا شيء بانتظارك في هذا المقرر. وقت جيد لمراجعة المحاضرات السابقة."
+            />
+          </div>
+        ) : (
+          <DataSheet
+            caption="قائمة واجبات المقرر"
+            columns={assignmentColumns}
+            rows={[...data.assignments].sort((a, b) => new Date(a.dueAt).getTime() - new Date(b.dueAt).getTime())}
+          />
+        )}
+      </SheetSection>
       </section>
     </PageFrame>
     </div>

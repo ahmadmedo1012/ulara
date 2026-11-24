@@ -101,7 +101,11 @@ describe('r352 honest states', () => {
     const log: string[] = [];
     installAdapter({}, log);
     render(withProviders(<InstitutionOrganizationPage />));
-    await waitFor(() => expect(screen.getByText('اختر مؤسستك أولاً')).toBeInTheDocument());
+    /* R359 (A3 · the dead-region repair): an ADMIN with ZERO
+     * memberships gets the honest no-membership sheet state (the
+     * «pick from the switcher» copy now renders only when a
+     * membership exists to pick). */
+    await waitFor(() => expect(screen.getByText('لا عضوية مؤسسية لحسابك')).toBeInTheDocument());
     // no institution-scoped request was fired without a context
     expect(log.filter((l) => l.includes('org-units'))).toHaveLength(0);
   });

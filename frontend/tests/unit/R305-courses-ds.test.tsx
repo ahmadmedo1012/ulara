@@ -161,30 +161,30 @@ beforeEach(() => {
 
 /* ── 1 · CoursesPage — the reference row anatomy ─────────────────────────── */
 
-describe('R305 courses — the course row rides the foundation meta-row', () => {
-  it('code · teacher · lecture count render as .r305s-meta-row with technical separators', () => {
+/* R359 re-pin — the course row is a DataSheet cell now; the metadata
+ * line (code · teacher · lecture count) rides the .sg-cell-sub register
+ * under the title link, '·' textual technical separators. */
+describe('R359 courses — the course row rides the ledger sub-line', () => {
+  it('code · teacher · lecture count render inside the cell sub-line', () => {
     mocks.enrollments = [enrollment('a', 62)];
     mocks.lectures = [{ id: 'lec1' }, { id: 'lec2' }, { id: 'lec3' }];
     const { container } = render(<MemoryRouter><StudentCoursesPage /></MemoryRouter>);
 
-    const metaRow = container.querySelector('.pf-row-meta .r305s-meta-row');
+    const metaRow = container.querySelector('.sg-table .sg-cell-sub');
     expect(metaRow).not.toBeNull();
-    // The code stays bidi-isolated mono — never a bare digit run in RTL.
-    const code = metaRow!.querySelector('bdi.font-mono');
+    // The code stays bidi-isolated — never a bare digit run in RTL.
+    const code = metaRow!.querySelector('bdi');
     expect(code).not.toBeNull();
     expect(code!.textContent).toBe('CS-a');
-    // Three metadata items ⇒ two technical separators (hairline elements,
-    // not '·' text opacity).
-    expect(metaRow!.querySelectorAll('.r305s-meta-sep')).toHaveLength(2);
     expect(metaRow!.textContent).toContain('د. سالم الطاهر');
     expect(metaRow!.textContent).toContain('3 محاضرات');
   });
 
-  it('the zero-content course keeps its honest line inside the same meta-row', () => {
+  it('the zero-content course keeps its honest line inside the same sub-line', () => {
     mocks.enrollments = [enrollment('z', 0)];
     mocks.lectures = [];
     const { container } = render(<MemoryRouter><StudentCoursesPage /></MemoryRouter>);
-    const metaRow = container.querySelector('.pf-row-meta .r305s-meta-row') as HTMLElement;
+    const metaRow = container.querySelector('.sg-table .sg-cell-sub') as HTMLElement;
     expect(metaRow.textContent).toContain('بانتظار محتوى المقرّر');
   });
 });
@@ -286,16 +286,20 @@ describe('R305 course detail — the curriculum sections ride the kicker heading
        change. The lectures bar's meta is the watched/total ratio in
        mono (1/2 visible; the counted Arabic phrase «أكملت 1 من
        محاضرتين» stays for assistive tech via sr-only). */
-    const titles = Array.from(document.querySelectorAll('h2.r319s-bar-title')).map((h) => h.textContent);
-    expect(titles).toEqual(['المحاضرات', 'المواد المرفقة', 'الجدول الأسبوعي', 'الواجبات']);
-    // r351 A2 (Q2): the [0N] gutter register is retired.
+    /* R359 re-pin — the four curriculum sections are framed sheet
+       sections now (h2.sg-title + Latin mono caption + [nn] index). */
+    const titles = Array.from(document.querySelectorAll('section.sg-section h2.sg-title')).map((h) => h.textContent);
+    expect(titles).toEqual(['مؤشرات المقرّر', 'المحاضرات', 'المواد المرفقة', 'الجدول الأسبوعي', 'الواجبات']);
+    const captions = Array.from(document.querySelectorAll('section.sg-section .sg-caption')).map((h) => h.textContent);
+    expect(captions).toEqual(['COURSE SHEET', 'CURRICULUM', 'MATERIALS', 'WEEKLY SCHEDULE', 'ASSIGNMENTS']);
+    // r351 A2 (Q2): the [0N] gutter register stays retired.
     expect(document.querySelectorAll('.r319s-bar-index')).toHaveLength(0);
-    // The lectures bar carries the watched/total ratio as quiet mono meta
+    // The lectures section carries the watched/total ratio as quiet mono meta
     // + the counted Arabic phrase for assistive tech (never a bare numeral).
-    const lecBar = document.querySelector('.course-lectures .r319s-bar') as HTMLElement;
-    expect(lecBar.querySelector('.r319s-count')!.textContent).toBe('1/2');
-    expect(lecBar.querySelector('.sr-only')!.textContent).toContain('أكملت');
-    expect(lecBar.querySelector('.sr-only')!.textContent).toContain('محاضرتين');
+    const lecSec = document.querySelector('section.course-lectures') as HTMLElement;
+    expect(lecSec.querySelector('.r319s-count')!.textContent).toBe('1/2');
+    expect(lecSec.querySelector('.sr-only')!.textContent).toContain('أكملت');
+    expect(lecSec.querySelector('.sr-only')!.textContent).toContain('محاضرتين');
   });
 });
 
@@ -310,12 +314,12 @@ describe('R305 player — the now-playing block is the page’s ONE deep band', 
     expect(page.match(/r305s-band--deep/g)?.length).toBe(1);
     // The secondary runs re-derive from the band ink.
     expect(page.match(/r305s-band-secondary/g)?.length).toBe(2);
-    // R321 override (WP-B3): the outline contract holds in the sheet
-    // grammar — h1 lecture title (kept) + SectionBar h2 boards replace
-    // the retired h2 panel / h3 sec-title rungs.
+    // R359 re-pin: the outline contract holds in the sheet grammar —
+    // h1 lecture title (kept) + the framed SheetSection h2 boards
+    // ([02] CHECKPOINTS and siblings) replace the retired rungs.
     expect(page).toContain('<h1 className="lecture-meta-title">');
-    expect(page).toContain('<SectionBar');
-    expect(page.match(/<SectionBar/g)?.length ?? 0).toBeGreaterThanOrEqual(2); // 2 literal mounts (the third board rides the shared row family)
+    expect(page).toContain('<SheetSection');
+    expect(page.match(/<SheetSection/g)?.length ?? 0).toBeGreaterThanOrEqual(3); // the three framed boards
     // The r299 landmark contract (labelled section, never aside) holds.
     expect(page).toMatch(/<section[^>]*lecture-aside[^>]*aria-label="محتويات المحاضرة"/);
   });

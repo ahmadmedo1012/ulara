@@ -3,14 +3,19 @@ import type { ReactNode } from 'react';
 import {
   Video, ArrowLeft, MessageSquare, Clock, ExternalLink,
 } from 'lucide-react';
-/* R319 (c3-S2) — the §B2 kit: the mono-indexed section title bar, the
- * LIVE/UPCOMING mono chips + the hatched empty cell. */
-import { SectionBar, BarCount, StatusChip, EmptyCell } from '../../components/student';
+/* R359 (A3) — the sheet grammar: the KPI band of real payload counts +
+ * the framed sections replace the §B2 SectionBar register (the roster
+ * exemplar's recomposition). The webinar-row feed keeps its anatomy
+ * inside the frame. */
+import { SheetSection, KpiBand, SheetEmpty } from '../../components/patterns';
+/* R319 (c3-S2) — the §B2 mono status chips (the LIVE/UPCOMING
+ * register). */
+import { StatusChip } from '../../components/student';
 import { ErrorState, Skeleton } from '../../components/primitives/States';
 import { Icon } from '../../components/Icon';
-import { PageFrame, PageHeader, StatLine } from '../../components/patterns';
+import { PageFrame, PageHeader } from '../../components/patterns';
 import { useCampusEvents, useLiveSessions } from '../../hooks/useResources';
-import { formatDate, formatInt, formatNum, formatTime } from '../../utils/numbers';
+import { formatDate, formatTime } from '../../utils/numbers';
 import { countAr } from '../../lib/format';
 
 /* R305 DS: the shared student vocabulary + this family's refinements. */
@@ -30,11 +35,9 @@ import '../../styles/student/academic-pages.css';
  * session schedule (live-vs-upcoming distinction: the pulse dot marks
  * LIVE sessions only) plus links to where events actually live.
  *
- * R304 rebuild: PageFrame + patterns PageHeader + ONE StatLine (the
- * grid-2 MetricCard pair is gone — including the one that abused the
- * `change` slot as an error control; that failure path now lives in
- * its own quiet retry row under the StatLine). The session rows keep
- * their `.webinar-row` anatomy inside SectionHeader sections.
+ * R359 (A3): the page speaks the sheet grammar — a KPI band of real
+ * payload counts, then the session feed and the honest destinations
+ * inside framed sections. The .webinar-row anatomy is untouched.
  */
 
 /** Human session slot: weekday + date + time (time isolated in a bdi). */
@@ -60,25 +63,29 @@ export default function WebinarsPage() {
     <div className="r319s-page">
     <PageFrame width="default">
       <PageHeader
+        eyebrow="طلاب الجامعة"
         title="الندوات وورش العمل"
         description="جدول البثّ المباشر لمقرّراتك، وروابط سريعة إلى حيث تُنشر الفعاليّات الجامعيّة الرسميّة."
       />
 
-      {/* The two MetricCards collapsed into ONE StatLine — counts from
-          the real payloads only (honest «…»/«—» placeholders while the
-          queries settle / fail). */}
-      <StatLine
+      {/* R359 — the KPI band: counts from the real payloads only
+          (honest-empty cells while the queries settle, the error
+          string verbatim when they fail). */}
+      <KpiBand
         items={[
           {
-            label: 'فعاليّات قادمة',
-            value: events.isPending ? '…' : events.isError ? '—' : formatNum(events.data?.length ?? 0),
-            hint: 'على لوحة المجتمع',
+            index: '01',
+            caption: 'EVENTS',
+            label: 'فعاليّات قادمة على لوحة المجتمع',
+            value: events.isPending ? 0 : events.isError ? '—' : (events.data?.length ?? 0),
+            empty: events.isPending,
           },
           {
-            label: 'بثوث مباشرة الآن',
-            value: live.isPending ? '…' : live.isError ? '—' : formatInt(liveNow.length),
-            hint: 'مرتبطة بمقرّراتك',
-            tone: !live.isPending && !live.isError && liveNow.length > 0 ? 'signal' : 'neutral',
+            index: '02',
+            caption: 'LIVE',
+            label: 'بثوث مباشرة الآن لمقرّراتك',
+            value: live.isPending ? 0 : live.isError ? '—' : liveNow.length,
+            empty: live.isPending,
           },
         ]}
       />
@@ -94,21 +101,14 @@ export default function WebinarsPage() {
         </div>
       )}
 
-      <section aria-label="جلسات البثّ المباشر">
-        {/* R319 (c3-S2): the section's heading joins the §B2 title-bar
-            register — [01] with the honest session count as mono meta;
-            the old description survives as the under-bar note. */}
-        <SectionBar
-          title="جلسات البثّ المباشر"
-          meta={
-            !live.isPending && !live.isError && sessions.length > 0 ? (
-              <BarCount
-                n={sessions.length}
-                srLabel={countAr(sessions.length, ['جلسة واحدة', 'جلستان', 'جلسات', 'جلسة'])}
-              />
-            ) : undefined
-          }
-        />
+      <SheetSection
+        index="01"
+        caption="LIVE SESSIONS"
+        title="جلسات البثّ المباشر"
+        aside={!live.isPending && !live.isError && sessions.length > 0 ? (
+          <span className="sg-label">{countAr(sessions.length, ['جلسة واحدة', 'جلستان', 'جلسات', 'جلسة'])}</span>
+        ) : undefined}
+      >
         <p className="r319sp-sec-note">البثوث المرتبطة بمقرّراتك — المباشرة منها تُعلَّم بنبضة حمراء</p>
         {live.isPending ? (
           <div className="flex-col gap-2" aria-busy="true" aria-live="polite">
@@ -126,11 +126,13 @@ export default function WebinarsPage() {
         ) : live.isError ? (
           <ErrorState error={live.error} onRetry={() => live.refetch()} />
         ) : !sessions.length ? (
-          /* R319 (c3-S2): the hatched EmptyCell — the sheet's
-             reserved-but-empty region (same copy, same one action). */
-          <EmptyCell
-            label="لا توجد جلسات مباشرة مجدولة الآن"
-            note="عندما يبدأ أستاذك بثّاً مباشراً ستجده هنا وفي صفحة البثّ — مع التسجيلات بعد انتهاء الجلسة."
+          /* R359: the empty schedule is the sheet's reserved-but-empty
+             region — the hairline placeholder frame (same copy, same
+             one action). */
+          <SheetEmpty
+            code="NO-SESSIONS"
+            title="لا توجد جلسات مباشرة مجدولة الآن"
+            desc="عندما يبدأ أستاذك بثّاً مباشراً ستجده هنا وفي صفحة البثّ — مع التسجيلات بعد انتهاء الجلسة."
             action={<Link to="/student/live" className="btn outline sm">زيارة صفحة البثّ</Link>}
           />
         ) : (
@@ -183,11 +185,9 @@ export default function WebinarsPage() {
             })}
           </div>
         )}
-      </section>
+      </SheetSection>
 
-      <section aria-label="أين أجد الفعاليّات الحقيقيّة؟">
-        {/* R319 (c3-S2): [02] — the honest-destinations section's bar. */}
-        <SectionBar title="أين أجد الفعاليّات الحقيقيّة؟" />
+      <SheetSection index="02" caption="DESTINATIONS" title="أين أجد الفعاليّات الحقيقيّة؟">
         <p className="r319sp-sec-note">الفعاليّات الرسميّة تُنشر على لوحة المجتمع، وجلسات مقرّراتك تعيش في صفحة البثّ.</p>
         {/* R305 DS: the two destinations fold from card tiles into the
             copper-edged rails (the shared .r305s-next emphasis) — quiet
@@ -222,7 +222,7 @@ export default function WebinarsPage() {
             </Link>
           </div>
         </div>
-      </section>
+      </SheetSection>
     </PageFrame>
     </div>
   );
