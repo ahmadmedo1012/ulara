@@ -37,6 +37,7 @@ describe('r352 module registry — the 13 sections exist with routes + capabilit
       '/institution/licenses',
       '/institution/facilities',
       '/institution/research',
+      '/institution/audit',
     ]);
   });
 
@@ -53,6 +54,8 @@ describe('r352 module registry — the 13 sections exist with routes + capabilit
     expect(byRoute.get('/institution/facilities')).toBe('FACILITIES_MANAGE');
     expect(byRoute.get('/institution/research')).toBe('RESEARCH_PROJECTS_MANAGE');
     expect(byRoute.get('/institution')).toBeNull(); // overview: read-only
+    // r360 F4: the audit trail — read-only oversight (AUDIT_BROWSE gates the READ)
+    expect(byRoute.get('/institution/audit')).toBeNull();
   });
 
   it('exposes the two separate write gates the contract splits out', () => {
@@ -68,7 +71,7 @@ describe('r352 kind-visibility — research only where the mandate exists', () =
     for (const kind of ['UNIVERSITY', 'ACADEMY', 'RESEARCH_BODY', 'TECHNICAL_COLLEGE', 'HIGHER_TECHNICAL_INSTITUTE']) {
       const sections = visibleModules(profileOf(kind)).map((m) => m.to);
       expect(sections, kind).toContain('/institution/research');
-      expect(sections, kind).toHaveLength(13);
+      expect(sections, kind).toHaveLength(14); /* r360 F4: +audit */
     }
   });
 
@@ -76,7 +79,7 @@ describe('r352 kind-visibility — research only where the mandate exists', () =
     for (const kind of ['INTERMEDIATE_TECHNICAL_INSTITUTE', 'VOCATIONAL_TRAINING_CENTER']) {
       const sections = visibleModules(profileOf(kind)).map((m) => m.to);
       expect(sections, kind).not.toContain('/institution/research');
-      expect(sections, kind).toHaveLength(12);
+      expect(sections, kind).toHaveLength(13); /* r360 F4: +audit */
       // every other section stays visible
       for (const m of INST_MODULES.filter((x) => x.to !== '/institution/research')) {
         expect(sections, `${kind} keeps ${m.to}`).toContain(m.to);

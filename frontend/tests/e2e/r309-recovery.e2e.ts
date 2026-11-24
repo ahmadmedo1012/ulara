@@ -27,6 +27,15 @@ const VW = { desktop: { width: 1440, height: 900 }, tablet: { width: 768, height
  * layout. */
 const STATION_IDS = ['C-01', 'E-02', 'R-03', 'I-04'] as const;
 
+/* r360 F1's in-page exit clock — the window seam, declared (the e2e
+ * tree is typechecked; the evaluate round-trip keeps the same shape). */
+declare global {
+  interface Window {
+    __ulaExit?: { hundredAt: number | null; goneAt: number | null; classAt: number | null };
+  }
+}
+
+
 async function openAllStations(page: import('@playwright/test').Page) {
   for (const id of STATION_IDS) {
     await page.locator(`.hi-marker[data-marker="${id}"]`).dispatchEvent('click');
@@ -446,7 +455,7 @@ test.describe('R309/R313 loader — the asset-gated entrance clock and the lock 
        * (CI measured 219ms). A 50ms in-page poll stamps both moments on
        * the page's own monotonic clock: the delta is the real one. */
       (function () {
-        var st = (window.__ulaExit = { hundredAt: null, goneAt: null, classAt: null });
+        var st = (window.__ulaExit = { hundredAt: null, goneAt: null, classAt: null } as { hundredAt: number | null; goneAt: number | null; classAt: number | null });
         var seenClass = false;
         var sawOverlay = false; /* the poll must not end before the overlay ever mounts */
         var iv = setInterval(function () {
@@ -507,7 +516,7 @@ test.describe('R309/R313 loader — the asset-gated entrance clock and the lock 
      * 620ms real, and the class-stamp proves the exit CLASS rode the
      * hold before the split could start. */
     await expect(page.locator('.pl')).toHaveCount(0, { timeout: 6000 });
-    const exitClock = await page.evaluate(() => window.__ulaExit ?? { hundredAt: null, goneAt: null, classAt: null });
+    const exitClock = await page.evaluate(() => window.__ulaExit ?? ({ hundredAt: null, goneAt: null, classAt: null } as { hundredAt: number | null; goneAt: number | null; classAt: number | null }));
     expect(exitClock.hundredAt, 'the in-page clock saw the counter reach 100%').not.toBeNull();
     expect(exitClock.goneAt, 'the in-page clock saw the overlay unmount').not.toBeNull();
     const realDelta = (exitClock.goneAt ?? 0) - (exitClock.hundredAt ?? 0);

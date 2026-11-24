@@ -23,7 +23,7 @@ import type {
   PositionTemplateRow, Program, ProgramCourseRow, ProgramDetail, ProgramEnrollment,
   ProgramInput, ProgramVersion, RegulatoryInspection, ResearchOutput, ResearchProject,
   ResearchProjectDetail, SafetyIncident, TrainingPlacement, UnitCapabilityGrant,
-  LearnerInput, LearnerProfileRow,
+  LearnerInput, LearnerProfileRow, AuditLogEntry,
 } from './types';
 
 /* ── internal helpers (not exported — keep the surface typed) ────── */
@@ -550,3 +550,16 @@ export const grantUnitCapability = (userId: ID, input: {
 
 export const revokeUnitCapability = (grantId: ID) =>
   post<UnitCapabilityGrant>(`/admin/unit-capabilities/${grantId}/revoke`);
+
+/* ── r360 F4 — the audit trail (r359 A4's route) ──────────────────
+ * GET /institutional/audit-logs — paged, institution-scoped by the
+ * SERVER's verified context (the client never sends an
+ * institutionId). Filters: q (action + resource text), action,
+ * entityType/entityId (the route maps them onto the model's
+ * resourceType/resourceId), actorId, from/to. Capability: AUDIT_BROWSE
+ * — the server refuses without it; the 403 rides the shared error
+ * states like every other institutional read. */
+export const getAuditLogs = (params: {
+  q?: string; action?: string; entityType?: string; entityId?: string;
+  actorId?: string; from?: string; to?: string; page?: number; limit?: number;
+}) => getList<AuditLogEntry>('/institutional/audit-logs', params as Params);

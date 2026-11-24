@@ -1,22 +1,25 @@
+import { useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { Bell, BellRing, Languages, LifeBuoy, MonitorSmartphone, Moon, Palette, Trash2 } from 'lucide-react';
+import { Bell, BellRing, Languages, LifeBuoy, Mail, MailCheck, MonitorSmartphone, Moon, Palette, Trash2 } from 'lucide-react';
 import { Card } from '../components/primitives';
 import { Icon } from '../components/Icon';
 import { PageFrame, PageHeader, SheetSection, SheetEmpty, DataSheet } from '../components/patterns';
 import { ChangePasswordCard } from '../components/account/ChangePasswordCard';
 import { ThemeToggle } from '../components/layout/ThemeToggle';
-import { useMe } from '../hooks/useAuth';
+import { useMe, useResendVerification } from '../hooks/useAuth';
 import { useAuthStore } from '../stores/auth.store';
 import { roleLabel } from '../lib/roleLabels';
 import { usePageTitle } from '../hooks/usePageTitle';
 /* R359 §5.5 — the notification-settings register: the REAL seats the
- * backend serves (unread state + push devices) built as live UI, the
- * per-category preference seat kept honest (no endpoint yet). */
+ * backend serves (unread state + push devices + the r359 A4 per-category
+ * preference row + the digest opt-in) built as live UI. */
 import {
   useUnreadNotifications,
   useMarkAllNotifsRead,
   usePushDevices,
   useUnregisterPushDevice,
+  useNotificationPreferences,
+  useUpdateNotificationPreference,
   type PushDevice,
 } from '../hooks/resources/notifications';
 import { formatRelativeArShort } from '../lib/format';
@@ -38,18 +41,26 @@ const DEVICE_PLATFORM_AR: Record<PushDevice['platform'], string> = {
   WEB: 'الويب',
 };
 
-/* ── The notification-settings register (r359 §5.5) ───────────────
+/* ── The notification-settings register (r359 §5.5 + r360 F4) ──────
  * What WORKS today, wired live: the unread state (real count + the
- * mark-all-read verb the bell owns) and the push-device register
+ * mark-all-read verb the bell owns), the push-device register
  * (list + unregister — registration itself happens from the mobile
- * app per the r326 M2.6 contract). What does NOT exist yet stays an
- * honest seat: per-category preferences (URGENT/ACADEMIC/SYSTEM/
- * SOCIAL) have no backend endpoint — never a fake toggle. */
+ * app per the r326 M2.6 contract), and the per-category preference
+ * row (URGENT/ACADEMIC/SYSTEM/SOCIAL + the email digest opt-in) on
+ * r359 A4's GET/PUT /me/notification-preferences. */
 function NotificationSettingsSection() {
   const unread = useUnreadNotifications();
   const markAll = useMarkAllNotifsRead();
   const devices = usePushDevices();
   const unregister = useUnregisterPushDevice();
+  /* r360 F4 — the REAL per-category register (r359 A4 backend). */
+  const prefs = useNotificationPreferences();
+  const updatePref = useUpdateNotificationPreference();
+  /* The row speaks (field, next); the mutation speaks one-key patches —
+   * the adapter lives HERE so the row never knows the wire shape. */
+  const flip = (field: 'pushUrgent' | 'pushAcademic' | 'pushSystem' | 'pushSocial' | 'emailDigest', next: boolean) => {
+    updatePref.mutate({ [field]: next });
+  };
 
   const count = unread.data ?? 0;
 
@@ -159,19 +170,185 @@ function NotificationSettingsSection() {
         />
       )}
 
-      {/* The per-category seat — HONEST (no endpoint yet): the four
-          categories arrive today with no per-category control on the
-          server; a fake toggle would imply state that does not exist. */}
+      {/* The per-category register — REAL (r359 A4's
+          GET/PUT /me/notification-preferences, wired r360 F4): the four
+          categories the backend's push fan-out consults before any Expo
+          traffic, plus the weekly email digest's opt-in (default off).
+          The toggle is the caller's own row — optimistic flip, server
+          settle. */}
       <div className="set-note">
-        تفضيلات الفئات (العاجل · الأكاديمي · النظام · الاجتماعي) تصلك جميعًا اليوم —
-        مقعد التحكم لكل فئة على حدة بانتظار مقعد الخدمة المقابل.
+        تفضيلات الفئات تتحكّم في الإشعارات الفورية قبل مغادرة الخادم —
+        إيقاف فئة يوقفها على كل أجهزتك المسجّلة.
       </div>
-      <SheetEmpty
-        title="التحكم لكل فئة"
-        desc="كل الفئات تصلك الآن عبر الجرس والجوال المسجّل — مفتاح إيقاف فئة بعينها يحتاج مقعدًا في الخدمة أولًا."
-        code="PENDING"
-      />
+      {prefs.isError ? (
+        <SheetEmpty
+          title="تعذّر تحميل تفضيلاتك"
+          desc="خدمة التفضيلات غير متاحة الآن — أعد المحاولة لاحقًا."
+          code="ERROR"
+        />
+      ) : (
+        <Card>
+          <PreferenceToggleRow
+            label="العاجل"
+            note="تعطيلات المنصّة والقرارات الحسّاسة زمنيًا"
+            caption="URGENT"
+            field="pushUrgent"
+            value={prefs.data?.pushUrgent}
+            loading={prefs.isPending}
+            onFlip={flip}
+          />
+          <PreferenceToggleRow
+            label="الأكاديمي"
+            note="الاختبارات والتسليمات ونتائج المقرّرات"
+            caption="ACADEMIC"
+            field="pushAcademic"
+            value={prefs.data?.pushAcademic}
+            loading={prefs.isPending}
+            onFlip={flip}
+          />
+          <PreferenceToggleRow
+            label="النظام"
+            note="تحديثات الحساب والصيانة المعلنة"
+            caption="SYSTEM"
+            field="pushSystem"
+            value={prefs.data?.pushSystem}
+            loading={prefs.isPending}
+            onFlip={flip}
+          />
+          <PreferenceToggleRow
+            label="الاجتماعي"
+            note="الرسائل والتفاعلات والمجتمع"
+            caption="SOCIAL"
+            field="pushSocial"
+            value={prefs.data?.pushSocial}
+            loading={prefs.isPending}
+            onFlip={flip}
+          />
+          <PreferenceToggleRow
+            label="الملخّص الأسبوعي بالبريد"
+            note="رسالة واحدة كل أسبوع تلخّص ما فاتك — معطّل افتراضيًا"
+            caption="EMAIL DIGEST"
+            field="emailDigest"
+            value={prefs.data?.emailDigest}
+            loading={prefs.isPending}
+            onFlip={flip}
+            icon={<Icon icon={Mail} size={16} aria-hidden />}
+          />
+        </Card>
+      )}
     </SheetSection>
+  );
+}
+
+/* The preference row's own toggle: the repo's pressed-pill grammar
+ * (aria-pressed), 44px touch floor, the signal wash when on. The
+ * flip rides the optimistic mutation — the label answers the state,
+ * never a fake switch. */
+function PreferenceToggleRow({
+  label, note, caption, field, value, loading, onFlip, icon,
+}: {
+  label: string;
+  note: string;
+  caption: string;
+  field: 'pushUrgent' | 'pushAcademic' | 'pushSystem' | 'pushSocial' | 'emailDigest';
+  value: boolean | undefined;
+  loading: boolean;
+  onFlip: (field: 'pushUrgent' | 'pushAcademic' | 'pushSystem' | 'pushSocial' | 'emailDigest', next: boolean) => void;
+  icon?: ReactNode;
+}) {
+  const on = value ?? false;
+  return (
+    <div className="set-row">
+      <div className="set-row-main">
+        {icon ?? <Icon icon={Bell} size={16} aria-hidden />}
+        <div>
+          <div className="set-row-title">{label}</div>
+          <div className="set-row-note">{note}</div>
+        </div>
+      </div>
+      <button
+        type="button"
+        className="set-toggle"
+        aria-pressed={on}
+        aria-label={`${label} — ${on ? 'مفعّل' : 'موقوف'}`}
+        disabled={loading || value === undefined}
+        onClick={() => onFlip(field, !on)}
+      >
+        <span className="set-toggle-state" aria-hidden="true">{on ? 'مفعّل' : 'موقوف'}</span>
+        <span className="sg-label" aria-hidden="true">{caption}</span>
+      </button>
+    </div>
+  );
+}
+
+/**
+ * EmailVerificationCard — r360 F4's verification seat on the account
+ * facts sheet. State derives from /auth/me's emailVerifiedAt (the
+ * server's own fact, never a client guess). The resend verb is
+ * r359 A4's POST /auth/resend-verification; its honest statuses are
+ * surfaced verbatim: 'sent' (رسالة أُرسلت — تحقّق من صندوقك),
+ * 'already_verified' (the quiet confirm), 'unavailable' (قناة البريد
+ * غير مهيأة — the provider-less refusal as a state, not an error).
+ */
+function EmailVerificationCard() {
+  const { data: me } = useMe();
+  const resend = useResendVerification();
+  const [line, setLine] = useState<string | null>(null);
+
+  const verified = Boolean(me?.emailVerifiedAt);
+
+  const onResend = () => {
+    setLine(null);
+    resend.mutate(undefined, {
+      onSuccess: ({ status }) => {
+        setLine(
+          status === 'sent'
+            ? 'أُرسلت رسالة التأكيد — تحقّق من صندوق بريدك (ومجلد الرسائل غير المرغوبة).'
+            : status === 'already_verified'
+              ? 'بريدك مؤكَّد بالفعل — لا حاجة لأي رسالة.'
+              : 'قناة البريد غير مهيأة على هذا الخادم حاليًا — أعد المحاولة لاحقًا.',
+        );
+      },
+      onError: () => {
+        setLine('تعذّر إرسال رسالة التأكيد — تحقّق من اتصالك ثم أعد المحاولة.');
+      },
+    });
+  };
+
+  return (
+    <Card>
+      <div className="set-row">
+        <div className="set-row-main">
+          {verified
+            ? <Icon icon={MailCheck} size={16} aria-hidden />
+            : <Icon icon={Mail} size={16} aria-hidden />}
+          <div>
+            <div className="set-row-title">
+              {verified ? 'البريد الإلكتروني مؤكَّد' : 'البريد الإلكتروني غير مؤكَّد'}
+            </div>
+            <div className="set-row-note">
+              {verified
+                ? 'مرتبط بحسابك ويمكنه استلام روابط الاستعادة والملخّص الأسبوعي.'
+                : 'أكِّد بريدك لتأمين استعادة كلمة المرور واستلام الملخّص الأسبوعي.'}
+            </div>
+          </div>
+        </div>
+        {!verified && (
+          <button
+            type="button"
+            className="btn ghost sm"
+            onClick={onResend}
+            disabled={resend.isPending}
+            data-loading={resend.isPending ? 'true' : undefined}
+          >
+            إعادة إرسال رسالة التأكيد
+          </button>
+        )}
+      </div>
+      {line && (
+        <p className="set-note" role="status">{line}</p>
+      )}
+    </Card>
   );
 }
 
@@ -284,9 +461,12 @@ export default function SettingsPage() {
             </div>
           )}
         </Card>
-        <p className="set-note">
-          التحقق بالبريد قيد الإطلاق — حسابات العرض تُنشأ ببريد مؤكَّد في نموذج البيانات.
-        </p>
+        {/* r360 F4 — the email-verification seat, REAL (r359 A4's
+            backend): verified shows the quiet confirmed line; unverified
+            shows the banner + the resend verb with its honest outcomes
+            (sent / already_verified / unavailable — the provider-less
+            refusal is a state, never a fake success). */}
+        <EmailVerificationCard />
       </SheetSection>
 
       {/* ── [04] الإشعارات — the real register (r359 §5.5) ─────── */}

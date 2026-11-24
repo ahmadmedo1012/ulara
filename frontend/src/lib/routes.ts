@@ -53,6 +53,7 @@ export const ROUTES = {
   institutionFacilities: '/institution/facilities',
   institutionFacilityDetail: '/institution/facilities/:id',
   institutionResearch: '/institution/research',
+  institutionAudit: '/institution/audit',
   institutionResearchDetail: '/institution/research/:id',
   ownerActivity: '/owner/activity',
   ownerAi: '/owner/ai',

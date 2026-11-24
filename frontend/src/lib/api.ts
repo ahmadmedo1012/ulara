@@ -123,6 +123,61 @@ export interface ResetPasswordResponse {
   ok: boolean;
 }
 
+/* ── r360 F4 — email verification (r359 A4 backend wiring) ──────── */
+
+/** POST /auth/resend-verification response body (`data` envelope
+ *  unwrapped). Honest statuses, never a leak: 'sent' (a mail left the
+ *  outbox or will on the next digest sweep), 'already_verified' (the
+ *  same 200 as a sent mail — no account-state oracle), 'unavailable'
+ *  (the mail channel is not configured on this server / the address
+ *  is suppressed — the honest refusal). */
+export type ResendVerificationStatus = 'sent' | 'already_verified' | 'unavailable';
+export interface ResendVerificationResponse {
+  status: ResendVerificationStatus;
+}
+
+/** POST /auth/resend-verification — authenticated, rate-limited by the
+ *  shared auth limiter on the server (10/15min/IP). */
+export function resendVerification(): Promise<ResendVerificationResponse> {
+  return unwrap<ResendVerificationResponse>(api.post('/auth/resend-verification', {}));
+}
+
+/* ── r360 F4 — the users export (r359 A4 backend) ────────────────── */
+
+/** The export's filterable role union (the backend's nativeEnum). */
+export type ExportRole = 'STUDENT' | 'TEACHER' | 'ADMIN' | 'QUALITY' | 'OWNER';
+
+export interface UsersExportResult {
+  blob: Blob;
+  /** The caller-side filename (the backend sets no
+   *  Content-Disposition; X-Export-Rows carries the count). */
+  filename: string;
+  /** Rows in the file, from the X-Export-Rows header (null when the
+   *  transport dropped it — the blob is still the truth). */
+  rows: number | null;
+}
+
+/** GET /users/export — ADMIN/OWNER (server-gated). `format: 'csv'`
+ *  answers text/csv WITH a BOM (Excel opens Arabic correctly); the
+ *  row count rides X-Export-Rows. The caller turns the blob into an
+ *  object-URL download (the governance document's proven idiom). */
+export async function downloadUsersExport(
+  opts: { role?: ExportRole; format?: 'csv' | 'json' } = {},
+): Promise<UsersExportResult> {
+  const params: Record<string, string> = { format: opts.format ?? 'csv' };
+  if (opts.role) params.role = opts.role;
+  const res = await api.get<Blob>('/users/export', { params, responseType: 'blob', timeout: 60_000 });
+  const rowsHeader = (res.headers as Record<string, string> | undefined)?.['x-export-rows'];
+  const rows = rowsHeader != null && /^\d+$/.test(rowsHeader) ? Number(rowsHeader) : null;
+  const stamp = new Date().toISOString().slice(0, 10);
+  const roleSuffix = opts.role ? `-${opts.role.toLowerCase()}` : '';
+  return {
+    blob: res.data as Blob,
+    filename: `ulara-users${roleSuffix}-${stamp}.${opts.format ?? 'csv'}`,
+    rows,
+  };
+}
+
 /** POST /auth/forgot-password — always 200 with the generic envelope. */
 export function requestPasswordReset(email: string): Promise<ForgotPasswordResponse> {
   return unwrap<ForgotPasswordResponse>(api.post('/auth/forgot-password', { email }));

@@ -145,6 +145,7 @@ export const CAPABILITY_LABELS: Record<string, string> = {
   FACILITIES_MANAGE: 'إدارة المعامل والموارد',
   RESEARCH_PROJECTS_MANAGE: 'إدارة المشاريع البحثية',
   UNIT_CAPABILITIES_ASSIGN: 'منح صلاحيات النطاق',
+  AUDIT_BROWSE: 'تصفّح سجل التدقيق',
 };
 
 /* ── appointments ───────────────────────────────────────────────── */

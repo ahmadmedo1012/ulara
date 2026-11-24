@@ -13,7 +13,7 @@
  */
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useMemo } from 'react';
-import { useMyInstitutionProfile } from '../../hooks/institutional/queries';
+import { useMyCapabilities, useMyInstitutionProfile } from '../../hooks/institutional/queries';
 import { moduleHiddenReason, visibleModules } from './modules';
 import { INSTITUTION_STATUS_LABELS, SECTOR_LABELS } from '../../lib/institutional/labels';
 import { EnumChip, ModuleHiddenState } from './kit';
@@ -26,7 +26,12 @@ export function InstitutionWorkspaceLayout() {
   const location = useLocation();
 
   const profile = profileQuery.data ?? null;
-  const sections = useMemo(() => visibleModules(profile), [profile]);
+  /* r360 F4 — the capability reader for the ONE read-gated module
+   * (audit): while the caps load, `undefined` keeps the pre-audit
+   * nav (no flash); the filter only ever hides. */
+  const capsQuery = useMyCapabilities();
+  const caps = capsQuery.data ?? undefined;
+  const sections = useMemo(() => visibleModules(profile, caps), [profile, caps]);
   const hiddenReason = moduleHiddenReason(location.pathname, profile);
 
   const institution = profileQuery.data ?? null;

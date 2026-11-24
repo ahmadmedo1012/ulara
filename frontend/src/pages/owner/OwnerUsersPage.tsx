@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Users, ChevronLeft, ChevronRight, X, AlertCircle } from 'lucide-react';
+import { Users, ChevronLeft, ChevronRight, X, AlertCircle, Download } from 'lucide-react';
 /* r252 (Phase B) → R359 (W2-e): the directory speaks the sheet
  * grammar — the KpiBand strip (honest numerals, the «الفئة الأكبر»
  * honesty claim riding the delta line) and the roster rides the
@@ -14,6 +14,7 @@ import { ErrorState, EmptyState, ListSkeleton } from '../../components/primitive
 import { Icon } from '../../components/Icon';
 import { ConfirmDialog } from '../../components/owner/ConfirmDialog';
 import { apiErrorMessage } from '../../hooks/useResources';
+import { downloadUsersExport, type ExportRole } from '../../lib/api';
 import { useOwnerStats, useOwnerUsers, useChangeUserRole, useToggleUserStatus } from '../../hooks/useOwner';
 import { formatDate, formatNum } from '../../utils/numbers';
 // R320 §B (c1-RENAME): the directory's role chips/pickers consume the ONE
@@ -122,6 +123,35 @@ export function OwnerUsersPage() {
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState<RoleFilter>('ALL');
+
+  /* r360 F4 — the export verb (GET /users/export, r359 A4 backend):
+   * honors the live role filter (ALL exports the whole platform
+   * register the server's governance scope allows). The download is
+   * the governance-document idiom (object URL + anchor + late
+   * revoke); failures land in the page's own inline error register. */
+  const [exportBusy, setExportBusy] = useState(false);
+  const onExport = async () => {
+    setExportBusy(true);
+    try {
+      const role: ExportRole | undefined = roleFilter === 'ALL' ? undefined : (roleFilter as ExportRole);
+      const { blob, filename, rows } = await downloadUsersExport({ role, format: 'csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 30_000);
+      if (rows != null && rows === 0) {
+        setActionError({ title: 'الملف فارغ', detail: 'لا حسابات في هذا النطاق — جرّب تصدير فئة أخرى.' });
+      }
+    } catch (e) {
+      setActionError({ title: 'تعذّر التصدير', detail: apiErrorMessage(e, 'حاول مرة أخرى بعد لحظات.') });
+    } finally {
+      setExportBusy(false);
+    }
+  };
   const [page, setPage] = useState(1);
   const [actionError, setActionError] = useState<{ title: string; detail: string } | null>(null);
   /** Last attempted row action — powers the inline retry (5-b pattern). */
@@ -317,6 +347,20 @@ export function OwnerUsersPage() {
             <>
               <Link to="/owner/activity" className="btn accent sm">سجلّ النشاط</Link>
               <Link to="/owner/governance" className="btn ghost sm">الحوكمة</Link>
+              {/* r360 F4 — the export verb (the header's CTA register:
+                  navigation-only stays the law for LINKS; this is the
+                  one download action, honouring the live role filter). */}
+              <button
+                type="button"
+                className="btn ghost sm"
+                onClick={() => void onExport()}
+                disabled={exportBusy}
+                data-loading={exportBusy ? 'true' : undefined}
+                title="ملف CSV بترميز يفتح العربية صحيحة في Excel"
+              >
+                <Icon icon={Download} size={14} aria-hidden />
+                تصدير CSV{roleFilter !== 'ALL' ? ` — ${filterItems.find((i) => i.value === roleFilter)?.label ?? ''}` : ''}
+              </button>
             </>
           )}
         />

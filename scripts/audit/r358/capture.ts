@@ -308,9 +308,13 @@ async function visualMetrics(page: import('playwright').Page, path: string, widt
 async function main() {
   mkdirSync(EVIDENCE, { recursive: true });
   // r358 lesson: probes must never clobber a full-scan catalog — require --force to overwrite.
-  const masterPath = join(EVIDENCE, 'defects-master.json');
+  /* r360 F3 — the sandbox reaps detached processes, so the FULL matrix
+   * runs in role/width CHUNKS; --master names the chunk's own catalog
+   * (merged into defects-master.json by the caller). */
+  const MASTER_NAME = arg('master', 'defects-master.json');
+  const masterPath = join(EVIDENCE, MASTER_NAME);
   if (existsSync(masterPath) && !argv.includes('--force')) {
-    console.error('[GUARD] defects-master.json exists — pass --force to overwrite (or move it aside). Aborting.');
+    console.error(`[GUARD] ${MASTER_NAME} exists — pass --force to overwrite (or move it aside). Aborting.`);
     process.exit(3);
   }
   const { routes: derived, diffs } = deriveRoutes();
@@ -445,14 +449,14 @@ async function main() {
     (grouped[key].viewports as string[]).push(`${d.width}px:${d.theme}`);
   }
   const deduped = Object.values(grouped);
-  writeFileSync(join(EVIDENCE, 'defects-master.json'), JSON.stringify(deduped, null, 2));
+  writeFileSync(masterPath, JSON.stringify(deduped, null, 2));
   writeFileSync(join(EVIDENCE, 'visual-metrics.json'), JSON.stringify(visuals, null, 2));
 
   const p0 = deduped.filter(d => d.severity === 'P0');
   const p1 = deduped.filter(d => d.severity === 'P1');
   const p2 = deduped.filter(d => d.severity === 'P2');
-  const summary = `# R358 Phase A — ULARA Scan\n\n**Scope:** ${routes.length} routes × ${WIDTHS.join('/')} × ${THEMES.join('/')}\n**Defects (deduped):** ${deduped.length} — P0 ${p0.length} · P1 ${p1.length} · P2 ${p2.length}\n\n## P0\n${p0.map(d => `- [${d.role}] ${d.route} (${(d.viewports as string[]).slice(0, 3).join(', ')}): ${d.message}`).join('\n') || '_none_'}\n\n## P1\n${p1.slice(0, 40).map(d => `- [${d.role}] ${d.route} (${(d.viewports as string[]).slice(0, 2).join(', ')}): ${d.type} — ${d.message || ''}`).join('\n') || '_none_'}\n\n## P2\n${p2.slice(0, 40).map(d => `- [${d.role}] ${d.route}: ${d.type} — ${d.message || ''}`).join('\n') || '_none_'}\n`;
-  writeFileSync(join(EVIDENCE, 'defects-summary.md'), summary);
+  const summary = `# R358 Phase A — ULARA Scan\n\n**Scope:** ${routes.length} routes × ${WIDTHS.join('/')} × ${THEMES.join('/')}\n**Master:** ${MASTER_NAME}\n**Defects (deduped):** ${deduped.length} — P0 ${p0.length} · P1 ${p1.length} · P2 ${p2.length}\n\n## P0\n${p0.map(d => `- [${d.role}] ${d.route} (${(d.viewports as string[]).slice(0, 3).join(', ')}): ${d.message}`).join('\n') || '_none_'}\n\n## P1\n${p1.slice(0, 40).map(d => `- [${d.role}] ${d.route} (${(d.viewports as string[]).slice(0, 2).join(', ')}): ${d.type} — ${d.message || ''}`).join('\n') || '_none_'}\n\n## P2\n${p2.slice(0, 40).map(d => `- [${d.role}] ${d.route}: ${d.type} — ${d.message || ''}`).join('\n') || '_none_'}\n`;
+  writeFileSync(join(EVIDENCE, MASTER_NAME.replace(/\.json$/, '') + '-summary.md'), summary);
   console.log(`[COMPLETE] ${deduped.length} defects — evidence in docs/redesign/r358/evidence/`);
 }
 

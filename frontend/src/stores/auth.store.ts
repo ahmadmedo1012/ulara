@@ -50,6 +50,11 @@ export interface AuthUser {
   avatarInitials?: string | null;
   /** NULL for university-wide ADMIN/QUALITY; set = scoped to that faculty. */
   scopeFacultyId?: string | null;
+  /** r360 F4 — when the email is verified (r359 A4's auth module ships
+   *  it on /auth/me; null = not yet). Optional: pre-r359 fixtures and
+   *  cached sessions keep resolving without it (then the honest seat
+   *  shows the unverified register). */
+  emailVerifiedAt?: string | null;
 }
 
 /** r178: one of the user's institution memberships (login/register/me

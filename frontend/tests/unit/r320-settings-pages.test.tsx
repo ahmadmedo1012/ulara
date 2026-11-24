@@ -34,7 +34,10 @@ vi.mock('../../src/hooks/useAuth', () => {
     },
     isPending: false,
   };
-  return { useMe: () => meState };
+  /* r360 F4 — the verification seat's resend verb (a quiet stub: the
+   * seat's states are pinned by r360-f4-backend-ui.test.tsx). */
+  const resendStub = { mutate: vi.fn(), isPending: false };
+  return { useMe: () => meState, useResendVerification: () => resendStub };
 });
 
 import {
@@ -159,8 +162,13 @@ describe('R320 cycle-3 — SettingsPage (any-authed)', () => {
     // The notification register's real seats are present.
     expect(screen.getByText('غير المقروءة الآن')).toBeInTheDocument();
     expect(screen.getByText('الأجهزة المسجّلة للإشعارات الفورية')).toBeInTheDocument(); // the DataSheet caption
-    expect(screen.getByText(/مفتاح إيقاف فئة بعينها/)).toBeInTheDocument(); // the per-category honest empty
-    // No notification-preference controls pretend to exist.
+    /* r360 F4 — the per-category seat graduated: the endpoint is REAL
+     * (r359 A4's GET/PUT /me/notification-preferences), so the honest
+     * PENDING empty retired. With no transport in this suite the
+     * register renders its honest error state — never the old
+     * «بانتظار مقعد الخدمة» copy. */
+    expect(screen.queryByText(/مفتاح إيقاف فئة بعينها/)).toBeNull();
+    // The register's toggles are pressed-pill BUTTONS, never fake switches.
     expect(screen.queryByRole('switch')).toBeNull();
     expect(screen.queryByRole('checkbox')).toBeNull();
     // The data seat's channels are real routes.
@@ -186,8 +194,11 @@ describe('R320 cycle-3 — SettingsPage (any-authed)', () => {
     expect(screen.getByText('teacher@test.ly')).toBeInTheDocument();
     expect(screen.getByText('أستاذ')).toBeInTheDocument(); // roleLabel(TEACHER)
     expect(screen.getByText('مساحة عمل أُلارا التجريبية')).toBeInTheDocument();
-    // The verification story is honest (no fake verified badge).
-    expect(screen.getByText(/التحقق بالبريد قيد الإطلاق/)).toBeInTheDocument();
+    /* r360 F4 — the verification seat is REAL now: this meState
+     * carries no emailVerifiedAt → the honest unverified banner (no
+     * fake verified badge, no invented date). */
+    expect(screen.getByText('البريد الإلكتروني غير مؤكَّد')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'إعادة إرسال رسالة التأكيد' })).toBeInTheDocument();
   });
 });
 

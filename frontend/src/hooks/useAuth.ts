@@ -6,6 +6,7 @@ import {
   selectInstitution,
   requestPasswordReset,
   resetPassword,
+  resendVerification,
   type AuthSessionResponse,
 } from '../lib/api';
 import { useAuthStore, type AuthUser, type AcademicPosition, type SessionInstitutionExtras } from '../stores/auth.store';
@@ -167,5 +168,15 @@ export function useResetPassword() {
   return useMutation({
     mutationFn: (input: { token: string; password: string }) =>
       resetPassword(input.token, input.password),
+  });
+}
+
+/** r360 F4 — the email-verification resend (r359 A4's backend verb).
+ * Plain mutation, no cache: the verification state itself lives on
+ * /auth/me (emailVerifiedAt) and the resend's honest statuses ('sent' /
+ * 'already_verified' / 'unavailable') are one-shot UI lines, not rows. */
+export function useResendVerification() {
+  return useMutation({
+    mutationFn: () => resendVerification(),
   });
 }

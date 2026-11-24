@@ -1078,6 +1078,78 @@ export const QUESTION_CATEGORY_ROWS = [
   },
 ];
 
+/* ── notification preferences (r360 F4 — the settings register) ── */
+
+/** GET /me/notification-preferences — NotificationPreferences (the
+ *  effective set; emailDigest default-off so the opt-in reads as the
+ *  honest default the backend ships). */
+export const NOTIFICATION_PREFERENCES: Record<string, unknown> = {
+  userId: STUDENT_USER.id,
+  pushUrgent: true,
+  pushAcademic: true,
+  pushSystem: true,
+  pushSocial: false,
+  emailDigest: false,
+};
+
+/** POST /auth/resend-verification — the honest 'sent' envelope. */
+export const RESEND_VERIFICATION_SENT: Record<string, unknown> = { status: 'sent' };
+
+/* ── the audit trail (r360 F4 — the institutional browser) ─────── */
+
+/** GET /institutional/audit-logs — AuditLogEntry[] (the paged body's
+ *  data half; the meta half is INSTITUTION_PEOPLE_PAGE-style). Rows
+ *  are byte-faithful to the route's include: the model's own column
+ *  names (resourceType/resourceId) + the actor row. */
+export const AUDIT_LOG_ROWS: Record<string, unknown>[] = [
+  {
+    id: 'aud_e2e_1',
+    userId: 'usr_e2e_admin',
+    institutionId: 'ins_e2e_1',
+    action: 'council.create',
+    resourceType: 'Council',
+    resourceId: 'cnc_e2e_1',
+    ip: '10.20.30.4',
+    userAgent: 'Mozilla/5.0 (e2e)',
+    metadata: { source: 'councils.routes' },
+    createdAt: iso(-2),
+    user: { id: 'usr_e2e_admin', email: 'admin@zu.edu.ly', firstName: 'سالم', lastName: 'القرضابي' },
+  },
+  {
+    id: 'aud_e2e_2',
+    userId: 'usr_e2e_owner',
+    institutionId: 'ins_e2e_1',
+    action: 'governance.document.upload',
+    resourceType: 'CouncilDocument',
+    resourceId: 'doc_e2e_2',
+    ip: '10.20.30.9',
+    userAgent: 'ulara-mobile/1.0',
+    metadata: { bytes: 84213, storage: 'DB' },
+    createdAt: iso(-6),
+    user: { id: 'usr_e2e_owner', email: 'owner@zu.edu.ly', firstName: 'المدير', lastName: 'الأعلى' },
+  },
+  {
+    id: 'aud_e2e_3',
+    userId: null,
+    institutionId: 'ins_e2e_1',
+    action: 'scheduler.digest.sweep',
+    resourceType: 'MailOutbox',
+    resourceId: null,
+    ip: null,
+    userAgent: null,
+    metadata: { swept: 0 },
+    createdAt: iso(-26),
+    user: null,
+  },
+];
+
+/** GET /institutional/audit-logs — the RAW paged body ({ data, meta }),
+ *  the institutional getList contract's own shape. */
+export const AUDIT_LOGS_PAGE: Record<string, unknown> = {
+  data: AUDIT_LOG_ROWS,
+  meta: { page: 1, limit: 20, total: AUDIT_LOG_ROWS.length, totalPages: 1 },
+};
+
 /* ── library borrow/return loop (r165h) ────────────────────────── */
 
 /** GET /library/books — Book[] (one single-copy book so availability

@@ -49,4 +49,36 @@
     margin-block-start: var(--sp-0-5);
     overflow-wrap: anywhere;
   }
+
+  /* ══ r360 F4 — the preference toggle (per-category + digest) ══
+     The pressed-pill grammar on a 44px floor: OFF = the quiet neutral
+     chip; ON = the signal wash + signal ink (the royal accent's own
+     -ink token — the guardrail). The state word is the label (never a
+     bare switch): the row title says what, the pill says whether. */
+  .set-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    min-block-size: 44px;
+    min-inline-size: 44px;
+    padding-inline: var(--sp-3);
+    border: 1px solid var(--rule);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: var(--fs-xs);
+    line-height: 1;
+    cursor: pointer;
+  }
+  .set-toggle:disabled {
+    opacity: 0.55;
+    cursor: default;
+  }
+  .set-toggle[aria-pressed='true'] {
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    border-color: color-mix(in srgb, var(--accent) 34%, transparent);
+    color: var(--accent-ink);
+  }
+  .set-toggle-state {
+    font-weight: 600;
+  }
 }

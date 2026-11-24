@@ -284,6 +284,28 @@
   border-radius: var(--r-xs);
 }
 
+/* r360 F4 — the audit trail's action-exact filter field: the family's
+ * own 44px-floor input register (the sheet grammar's flat discipline —
+ * radius 0, no shadow), mono + LTR for the action keys. */
+.inst-action-input {
+  min-block-size: 44px;
+  padding-inline: var(--sp-3);
+  border: 1px solid var(--rule);
+  background: var(--surface);
+  color: var(--text-strong);
+  font-size: var(--fs-sm);
+  flex: 1 1 240px;
+  max-inline-size: 340px;
+}
+.inst-action-input:focus-visible {
+  outline: var(--state-focus-ring-width) solid var(--state-focus-ring-color);
+  outline-offset: var(--state-focus-ring-offset);
+}
+.inst-action-input::placeholder {
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
 .inst-select {
   position: relative;
   display: inline-flex;

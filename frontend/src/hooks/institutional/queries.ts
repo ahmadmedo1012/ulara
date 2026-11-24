@@ -396,3 +396,21 @@ export function useUnitCapabilityActions() {
   );
 }
 
+
+/* ── r360 F4 — the audit trail (r359 A4's route) ─────────────────── */
+
+/** GET /institutional/audit-logs — the paged, institution-scoped
+ * trail (AUDIT_BROWSE-gated on the server; the 403 rides the page's
+ * honest states). Params are the route's own filter contract. */
+export function useAuditLogs(params: {
+  q?: string; action?: string; entityType?: string; entityId?: string;
+  actorId?: string; from?: string; to?: string; page?: number; limit?: number;
+}) {
+  const scope = useInstitutionScope();
+  return useQuery({
+    queryKey: withInstitutionScope(['inst', 'audit-logs', params], scope),
+    queryFn: () => instApi.getAuditLogs(params),
+    enabled: scope !== null,
+    placeholderData: (prev) => prev,
+  });
+}

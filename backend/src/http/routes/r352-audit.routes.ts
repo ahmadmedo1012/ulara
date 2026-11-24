@@ -58,9 +58,14 @@ router.get(
       const where = {
         // ── the tenant fence: the verified context, nothing else ──
         institutionId: req.institution!.id,
+        // r360 F4: the QUERY contract keeps A4's entityType/entityId
+        // names (the FE + docs already speak them) but the MODEL's
+        // columns are resourceType/resourceId (schema.prisma's AuditLog)
+        // — the hermetic tests' prisma mock masked the key mismatch,
+        // a live q/filter read threw "Unknown argument entityType".
         ...(action ? { action } : {}),
-        ...(entityType ? { entityType } : {}),
-        ...(entityId ? { entityId } : {}),
+        ...(entityType ? { resourceType: entityType } : {}),
+        ...(entityId ? { resourceId: entityId } : {}),
         ...(actorId ? { userId: actorId } : {}),
         ...(from || to
           ? {
@@ -74,7 +79,7 @@ router.get(
           ? {
               OR: [
                 { action: { contains: q, mode: 'insensitive' as const } },
-                { entityType: { contains: q, mode: 'insensitive' as const } },
+                { resourceType: { contains: q, mode: 'insensitive' as const } },
               ],
             }
           : {}),

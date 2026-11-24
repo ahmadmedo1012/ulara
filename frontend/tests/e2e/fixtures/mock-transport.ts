@@ -66,6 +66,9 @@ import {
   MESSAGES_PAGE,
   MOOC_COURSES,
   MODERATION_QUEUE,
+  NOTIFICATION_PREFERENCES,
+  AUDIT_LOGS_PAGE,
+  RESEND_VERIFICATION_SENT,
   EXAM_TEMPLATE_ROWS,
   QUESTION_BANK_ROWS,
   QUESTION_CATEGORY_ROWS,
@@ -410,6 +413,14 @@ export function standardRoutes(): MockRouteDef[] {
     { method: 'GET', path: '/institution/licenses', json: INSTITUTION_LICENSES_PAGE },
     { method: 'GET', path: '/institution/facilities', json: INSTITUTION_FACILITIES_PAGE },
     { method: 'GET', path: '/institution/research-projects', json: INSTITUTION_RESEARCH_PAGE },
+    /* ── r360 F4 — the settings register's own corpus (prefs GET +
+     * resend POST; the PUT is per-journey stateful, exactly like the
+     * other mutating journeys). */
+    { method: 'GET', path: '/me/notification-preferences', json: ok(NOTIFICATION_PREFERENCES) },
+    /* r360 F4 — the audit browser's read (the scan's ADMIN/QUALITY/OWNER
+     * sessions hold AUDIT_BROWSE by the role-honest permissions). */
+    { method: 'GET', path: '/institutional/audit-logs', json: AUDIT_LOGS_PAGE },
+    { method: 'POST', path: '/auth/resend-verification', json: ok(RESEND_VERIFICATION_SENT) },
 
     // ── AI fixtures (A3) ──────────────────────────────────────────
     /* ── AI fixtures (A3) ─────────────────────────────────────────

@@ -227,6 +227,7 @@ const InstitutionLicensesPage = lazy(() => import('./pages/institutional/License
 const InstitutionFacilitiesPage = lazy(() => import('./pages/institutional/FacilitiesPage').then((m) => ({ default: m.InstitutionFacilitiesPage })));
 const InstitutionFacilityDetailPage = lazy(() => import('./pages/institutional/FacilitiesPage').then((m) => ({ default: m.InstitutionFacilityDetailPage })));
 const InstitutionResearchPage = lazy(() => import('./pages/institutional/ResearchPage').then((m) => ({ default: m.InstitutionResearchPage })));
+const InstitutionAuditLogPage = lazy(() => import('./pages/institutional/AuditLogPage').then((m) => ({ default: m.InstitutionAuditLogPage })));
 const InstitutionResearchDetailPage = lazy(() => import('./pages/institutional/ResearchPage').then((m) => ({ default: m.InstitutionResearchDetailPage })));
 
 /* R313 (WP-A1 · D7): the landing re-composition moved the documentary
@@ -696,6 +697,7 @@ export function AppRoutes() {
               <Route path="/institution/facilities/:id" element={<InstitutionFacilityDetailPage />} />
               <Route path={ROUTES.institutionResearch} element={<InstitutionResearchPage />} />
               <Route path="/institution/research/:id" element={<InstitutionResearchDetailPage />} />
+              <Route path={ROUTES.institutionAudit} element={<InstitutionAuditLogPage />} />
             </Route>
           </Route>
         </Route>

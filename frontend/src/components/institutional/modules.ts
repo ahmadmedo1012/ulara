@@ -21,7 +21,7 @@
 import type { LucideIcon } from 'lucide-react';
 import {
   LayoutDashboard, Network, Users, BadgeCheck, ShieldCheck, Landmark, GraduationCap,
-  Wrench, BookOpen, Award, FileCheck2, FlaskConical, Microscope,
+  Wrench, BookOpen, Award, FileCheck2, FlaskConical, Microscope, ScrollText,
 } from 'lucide-react';
 import type { InstCapability, InstitutionProfile } from '../../lib/institutional/types';
 
@@ -34,6 +34,11 @@ interface InstModule {
   /** Capability that unlocks WRITE actions inside the module (reads
    * stay member-level). null = read-only module by contract. */
   manage: InstCapability | null;
+  /** r360 F4 — when the module's READ itself is a gated oversight
+   * surface (the server refuses without the capability), the nav hides
+   * it for members who lack the grant. Undefined = the module's read
+   * is a context read (the registry's default law). */
+  readCapability?: InstCapability;
   /** True when the institution's kind makes the module foreign
    * (function, not array —keeps the rule next to its reason). */
   foreignToKind?: (kindCode?: string | null) => boolean;
@@ -60,6 +65,12 @@ export const INST_MODULES: InstModule[] = [
     foreignToKind: (kind) =>
       kind === 'INTERMEDIATE_TECHNICAL_INSTITUTE' || kind === 'VOCATIONAL_TRAINING_CENTER',
   },
+  /* r360 F4 — the oversight trail browser (r359 A4's
+   * GET /institutional/audit-logs). The READ is capability-gated on
+   * the server (AUDIT_BROWSE — ADMIN/QUALITY/OWNER defaults): the nav
+   * hides it for members without the grant instead of deep-linking
+   * them into a 403 wall. */
+  { to: '/institution/audit', label: 'سجل التدقيق', icon: ScrollText, manage: null, readCapability: 'AUDIT_BROWSE' },
 ];
 
 /** The credential award/revoke write gate (students module owns the
@@ -70,10 +81,19 @@ export const CREDENTIALS_CAPABILITY: InstCapability = 'CREDENTIALS_MANAGE';
 export const QUALITY_INTERNAL_CAPABILITY: InstCapability = 'QUALITY_INTERNAL_MANAGE';
 
 /** Sections the caller sees: kind-relevant rows only — capabilities
- * gate the WRITE controls inside, not the read surface. */
-export function visibleModules(profile: InstitutionProfile | null | undefined): InstModule[] {
+ * gate the WRITE controls inside, not the read surface; the ONE
+ * read-gated module (audit) additionally requires its oversight
+ * capability when a capability reader is supplied. The reader is
+ * optional so kind-only callers (tests, deep links) keep the
+ * pre-audit behaviour for the thirteen context modules. */
+export function visibleModules(
+  profile: InstitutionProfile | null | undefined,
+  capabilities?: { has: (cap: string) => boolean } | null,
+): InstModule[] {
   const kind = profile?.kind?.code ?? null;
-  return INST_MODULES.filter((m) => !m.foreignToKind?.(kind));
+  return INST_MODULES.filter((m) =>
+    !m.foreignToKind?.(kind) &&
+    (m.readCapability === undefined || !capabilities || capabilities.has(m.readCapability)));
 }
 
 /** Why a deep-linked module is hidden — kind vs nothing-to-show. */

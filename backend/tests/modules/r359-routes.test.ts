@@ -290,6 +290,29 @@ describe('r359 A4 — routes', () => {
       const body = (await res.json()) as { error: { code: string } };
       expect(body.error.code).toBe('INSTITUTION_CONTEXT_REQUIRED');
     });
+
+    /* r360 F4 — the model-column mapping pin: the QUERY keeps A4's
+     * entityType/entityId contract, the MODEL's columns are
+     * resourceType/resourceId. The hermetic mock masked the mismatch —
+     * a live q/entityType read threw Prisma's "Unknown argument". The
+     * where that reaches prisma must speak the model's names. */
+    it('q/entityType/entityId filters map onto the model columns (resourceType/resourceId), never raw query names', async () => {
+      const { prisma } = await import('../../src/db.js');
+      const findMany = prisma.auditLog.findMany as unknown as { mock: { calls: unknown[][] } };
+      findMany.mock.calls.length = 0;
+      const res = await fetch(
+        `${baseUrl}/api/v1/institutional/audit-logs?q=council&entityType=CouncilDocument&entityId=doc_1`,
+        { headers: { authorization: 'Bearer t' } },
+      );
+      expect(res.status).toBe(200);
+      const where = (findMany.mock.calls[0]![0] as { where: Record<string, unknown> }).where;
+      expect(where).not.toHaveProperty('entityType');
+      expect(where).not.toHaveProperty('entityId');
+      expect(where.resourceType).toBe('CouncilDocument');
+      expect(where.resourceId).toBe('doc_1');
+      expect((where.OR as Array<Record<string, unknown>>).some((c) => 'resourceType' in c)).toBe(true);
+      expect((where.OR as Array<Record<string, unknown>>).some((c) => 'entityType' in c)).toBe(false);
+    });
   });
 
   // ── users export ───────────────────────────────────────────────────

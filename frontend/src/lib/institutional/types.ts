@@ -30,6 +30,25 @@ export interface Paged<T> {
 
 export type ID = string;
 
+/* ── r360 F4 — §audit trail (r359 A4's GET /institutional/audit-logs) ──
+ * Byte-faithful to the route's rows (schema.prisma's AuditLog + the
+ * actor include). The QUERY keeps A4's entityType/entityId filter
+ * names; the ROW's own columns are the model's resourceType/resourceId
+ * (the mapping is the backend's, pinned by its own test). */
+export interface AuditLogEntry {
+  id: ID;
+  userId: string | null;
+  institutionId: string | null;
+  action: string;
+  resourceType?: string | null;
+  resourceId?: string | null;
+  ip?: string | null;
+  userAgent?: string | null;
+  metadata?: Record<string, unknown> | null;
+  createdAt: string;
+  user?: { id: string; email: string; firstName: string; lastName: string } | null;
+}
+
 /* ── §1 catalogs (session-level, no institution context) ─────────── */
 
 export interface InstitutionTypeRow {
@@ -898,7 +917,10 @@ export type InstCapability =
   | 'ORG_STRUCTURE_MANAGE' | 'PEOPLE_MANAGE' | 'APPOINTMENTS_MANAGE'
   | 'COUNCILS_MANAGE' | 'PROGRAMS_MANAGE' | 'CREDENTIALS_MANAGE'
   | 'ACCREDITATION_MANAGE' | 'QUALITY_INTERNAL_MANAGE' | 'FACILITIES_MANAGE'
-  | 'RESEARCH_PROJECTS_MANAGE' | 'UNIT_CAPABILITIES_ASSIGN';
+  | 'RESEARCH_PROJECTS_MANAGE' | 'UNIT_CAPABILITIES_ASSIGN'
+  // r359 A4 — institution-scoped audit trail browsing (r360 F4 UI):
+  // an oversight READ, not a management write.
+  | 'AUDIT_BROWSE';
 
 export interface MyPermissions {
   role: PlatformRole;

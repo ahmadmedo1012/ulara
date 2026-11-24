@@ -92,6 +92,51 @@ export function useUnregisterPushDevice() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['push-devices'] }),
   });
 }
+
+// ── Notification preferences (r359 A4 backend · r360 F4 wiring) ──
+/* The REAL per-category register the backend serves today
+ * (push.routes.ts): GET answers the effective set (server defaults
+ * when no row exists — fail-open to the pre-r359 behaviour), PUT
+ * upserts the caller's own row. The push fan-out consults these
+ * BEFORE any Expo traffic; the weekly email digest reads emailDigest
+ * (opt-in, default false). */
+export interface NotificationPreferences {
+  userId: string;
+  pushUrgent: boolean;
+  pushAcademic: boolean;
+  pushSystem: boolean;
+  pushSocial: boolean;
+  emailDigest: boolean;
+}
+
+export function useNotificationPreferences() {
+  return useQuery({
+    queryKey: ['notification-preferences'],
+    queryFn: () => unwrap<NotificationPreferences>(api.get('/me/notification-preferences')),
+    staleTime: 30_000,
+  });
+}
+
+/** Upsert one preference at a time (the backend takes a partial body —
+ * at least one key must ride along). Optimistic on purpose: the row is
+ * the caller's own, the toggle is the feedback. */
+export function useUpdateNotificationPreference() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (patch: Partial<Omit<NotificationPreferences, 'userId'>>) =>
+      unwrap<NotificationPreferences>(api.put('/me/notification-preferences', patch)),
+    onMutate: async (patch) => {
+      await qc.cancelQueries({ queryKey: ['notification-preferences'] });
+      const prev = qc.getQueryData<NotificationPreferences>(['notification-preferences']);
+      if (prev) qc.setQueryData(['notification-preferences'], { ...prev, ...patch });
+      return { prev };
+    },
+    onError: (_e, _patch, ctx) => {
+      if (ctx?.prev) qc.setQueryData(['notification-preferences'], ctx.prev);
+    },
+    onSettled: () => qc.invalidateQueries({ queryKey: ['notification-preferences'] }),
+  });
+}
 export function useMarkNotifRead() {
   const qc = useQueryClient();
   return useMutation({
