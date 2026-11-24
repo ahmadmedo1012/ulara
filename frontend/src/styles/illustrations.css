@@ -157,22 +157,9 @@
     user-select: none;
   }
 
-  /* forced palettes (plates page + docs displays out-of-theme) */
-  .mk-r359[data-art-theme='light'] {
-    --r359-ink: #282828;      /* color-gate: allow — r359 forced-light art palette (A2 grammar sheet) */
-    --r359-ink-2: #62625F;    /* color-gate: allow — r359 forced-light art palette (A2 grammar sheet) */
-    --r359-hair: #B3B3AF;     /* color-gate: allow — r359 forced-light art palette (A2 grammar sheet) */
-    --r359-sig: #2540D9;      /* color-gate: allow — r359 forced-light art palette (A2 grammar sheet) */
-    --r359-paper: #F3F2EC;    /* color-gate: allow — r359 forced-light art palette (A2 grammar sheet) */
-  }
-
-  .mk-r359[data-art-theme='dark'] {
-    --r359-ink: #F3F2EC;      /* color-gate: allow — r359 forced-dark art palette (A2 grammar sheet) */
-    --r359-ink-2: #B3B3AF;    /* color-gate: allow — r359 forced-dark art palette (A2 grammar sheet) */
-    --r359-hair: #4A4A48;     /* color-gate: allow — r359 forced-dark art palette (A2 grammar sheet) */
-    --r359-sig: #8AA0FF;      /* color-gate: allow — r359 forced-dark art palette (A2 grammar sheet) */
-    --r359-paper: #1C1C1A;    /* color-gate: allow — r359 forced-dark art palette (A2 grammar sheet) */
-  }
+  /* forced palettes (plates page + docs displays out-of-theme) —
+     r360: the raw literals moved to the sanctioned tokens.css home
+     (same values, same selectors; nothing else declares --r359-*) */
 
   /* ── the motion register (animated === true) ──────────────────── */
 

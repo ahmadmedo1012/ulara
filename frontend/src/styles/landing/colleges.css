@@ -62,10 +62,12 @@
   font-weight: 600;
   text-decoration: none;
   border-block-end: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
-  padding-block-end: var(--sp-0-5);
   /* r359 A1 §C — the painted 44px tap floor (the established pattern:
      the hit box paints 44px while the layout footprint stays the text's
-     own — pointer + touch both clear the floor, the rhythm never moves) */
+     own — pointer + touch both clear the floor, the rhythm never moves).
+     The r360 merge drops the pre-r359 padding-block-end underline
+     offset: the r359 shorthand already won the cascade, the rendered
+     box is unchanged. */
   padding-block: 14px;
   margin-block: -14px;
 }

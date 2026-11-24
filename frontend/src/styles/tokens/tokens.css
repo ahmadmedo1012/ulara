@@ -1453,6 +1453,20 @@
   --bg: #F2F1EC;
   --text: #282828;
   --text-primary: #282828;
+  /* R360 integration — the r359 hero's paper-scope seats, promoted
+     from hero.css's var() fallbacks (A1 logged the migration wish for
+     the integrator; the fallbacks WERE the values — --paper,
+     --paper-ink, --paper-ink-2 and --hairline were defined nowhere).
+     Values verbatim: the reference-measured set (A1's D1/D6). The
+     rawHex ratchet demanded the literals live in this sanctioned
+     home. Scoped to .landing: the two legacy var(--paper) consumers
+     outside the landing tree (workspace.css/app.css) are untouched. */
+  --paper: #F2F1EC;
+  --paper-ink: #282828;
+  --paper-ink-2: #646464;
+  --hairline: #B3B3AF;
+  /* the CTA's ink on the royal fill (was hero.css's raw #fff) */
+  --on-signal: #FFFFFF;
   /* R342 integration (a11y fix) — the rebuild's measured secondary
      #72726F reads 4.3:1 on the landing paper #F3F2EC: under the AA body
      floor (4.5) and 0.2 short of passing. The reference's own warm-grey
@@ -1494,4 +1508,28 @@
   --border: #4A4A48;
   --border-strong: #5C5C5A;
   --preloader-exit-ground: #4A4A48;
+}
+
+/* ═══ r359 ART GRAMMAR — forced palettes (r360 integration) ════════
+   Moved verbatim from illustrations.css (A2's grammar sheet): the
+   .mk-r359[data-art-theme] blocks force a palette for plates shown
+   out-of-theme (the /__plates living stage + docs displays). The
+   default .mk-r359 maps onto house tokens in illustrations.css; these
+   forced seats carry the grammar's concrete hex (the RN twin swaps the
+   identical values at render time — shared/art grammar, byte-equal
+   palette web ↔ RN). The literals live here because this file is the
+   one sanctioned raw-value home (css-counts.mjs). */
+.mk-r359[data-art-theme='light'] {
+  --r359-ink: #282828;
+  --r359-ink-2: #62625F;
+  --r359-hair: #B3B3AF;
+  --r359-sig: #2540D9;
+  --r359-paper: #F3F2EC;
+}
+.mk-r359[data-art-theme='dark'] {
+  --r359-ink: #F3F2EC;
+  --r359-ink-2: #B3B3AF;
+  --r359-hair: #4A4A48;
+  --r359-sig: #8AA0FF;
+  --r359-paper: #1C1C1A;
 }

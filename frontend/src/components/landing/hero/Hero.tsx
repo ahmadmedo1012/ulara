@@ -1,4 +1,4 @@
-import { Fragment, Suspense, lazy, useCallback, useEffect, useRef, useState } from 'react';
+import { Fragment, Suspense, lazy, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { Icon } from '../../Icon';
@@ -118,6 +118,30 @@ export function Hero() {
     mq.addEventListener('change', on);
     return () => mq.removeEventListener('change', on);
   }, []);
+
+  /* r360 — the callout chips clamp INTO the stage: the centered anchor
+   * can push edge stations' chips past the stage edge on narrow art
+   * (measured: R-03's chip clipped ~22px at 390). A physical --tag-dx,
+   * computed against the live stage rect, rides the tag's translate
+   * (see .hi-tag in hero.css). Runs on every reveal change + resize. */
+  const clampTags = useCallback(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+    const sr = stage.getBoundingClientRect();
+    stage.querySelectorAll<HTMLElement>('.hro-station.is-open .hi-tag').forEach((tag) => {
+      tag.style.removeProperty('--tag-dx');
+      const tr = tag.getBoundingClientRect();
+      let dx = 0;
+      if (tr.left < sr.left) dx = sr.left - tr.left + 0.5; /* +0.5: sub-pixel safety */
+      else if (tr.right > sr.right) dx = sr.right - tr.right - 0.5;
+      if (dx !== 0) tag.style.setProperty('--tag-dx', `${dx.toFixed(1)}px`);
+    });
+  }, []);
+  useLayoutEffect(() => { clampTags(); }, [clampTags, openSet, mobile]);
+  useEffect(() => {
+    window.addEventListener('resize', clampTags);
+    return () => window.removeEventListener('resize', clampTags);
+  }, [clampTags]);
   /* the active viewBox window — the fallback art's own crop (mobile seats
    * the building; A2's mobile key replaces the whole art when present). */
   const vb = mobile ? VB_MOBILE : '0 0 1440 620';
@@ -174,10 +198,22 @@ export function Hero() {
                   <button
                     type="button"
                     className="hi-marker"
+                    data-marker={s.id}
                     aria-pressed={shown}
                     aria-label={`${s.label} — ${shown ? 'مفتوح' : 'مُغلق'} — اضغط للكشف`}
                     onClick={() => toggleStation(s.id)}
-                    onFocus={() => setOpen((prev) => new Set(prev).add(s.id))}
+                    /* the focus-visible reveal law — KEYBOARD focus previews
+                     * the callout (Tab/Shift+Tab); a pointer press must NOT
+                     * pre-open here (r360 fix: pointer mousedown focuses the
+                     * button too, so the focus-reveal + the click-toggle
+                     * cancelled each other and a tap on a closed station
+                     * appeared dead). :focus-visible is true only for
+                     * keyboard focus in every supported engine. */
+                    onFocus={(e) => {
+                      if (e.currentTarget.matches(':focus-visible')) {
+                        setOpen((prev) => new Set(prev).add(s.id));
+                      }
+                    }}
                     tabIndex={0}
                   >
                     <span className="hi-sq" aria-hidden="true" />

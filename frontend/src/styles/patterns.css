@@ -2175,8 +2175,11 @@ a.pf-row-link {
     font-weight: var(--fw-semibold);
     text-decoration: none;
     border-block-end: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
-    padding-block-end: var(--sp-0-5);
-    /* r359 A1 §C — the painted 44px tap floor (the layout rhythm never moves) */
+    /* r359 A1 §C — the painted 44px tap floor (the layout rhythm never
+       moves). The r360 merge drops the pre-r359 padding-block-end
+       underline offset: the r359 shorthand already won the cascade, so
+       the rendered box is unchanged (14px both sides, the underline
+       rides the floor's edge). */
     padding-block: 14px; /* spacing-gate: allow — the painted 44px tap floor: the sp-3/sp-4 half-step, rhythm-safe */
     margin-block: -14px; /* spacing-gate: allow — the tap floor's offsetting bleed, keeps the rhythm */
   }

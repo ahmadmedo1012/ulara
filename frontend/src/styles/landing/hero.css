@@ -19,11 +19,12 @@
   --hro-h1: clamp(34px, 4.3vw, 82px);      /* 62@1440 · 82@1907 · floor 34@390 — the brief's h1 law (62.22 desktop scale) */
   --hro-lead: clamp(13.3px, 1.11vw, 21.3px); /* 16@1440 · 21.3@1920 — the reference's own paragraph voice */
   /* the reference's measured ink family — A1's scoped seats (D1/D6);
-     the token migration wish is logged for the integrator */
-  --hro-ink: var(--paper-ink, #282828); /* color-gate: allow — the reference's measured ink, A1 scoped seat (D1) */
-  --hro-ink-2: var(--paper-ink-2, #646464); /* color-gate: allow — the reference's measured secondary ink, A1 scoped seat (D1) */
-  --hro-hair: var(--hairline, #b3b3af); /* color-gate: allow — the reference's measured hairline, A1 scoped seat (D1) */
-  --hro-paper: var(--paper, #f2f1ec); /* color-gate: allow — the reference's measured warm paper, A1 scoped seat (D1) */
+     r360: the seats now resolve from the .landing token home
+     (tokens.css), the var() fallback literals retired */
+  --hro-ink: var(--paper-ink);
+  --hro-ink-2: var(--paper-ink-2);
+  --hro-hair: var(--hairline);
+  --hro-paper: var(--paper);
   --hro-sig: var(--accent);
 
   display: grid;
@@ -163,7 +164,14 @@
   position: absolute;
   inset-block-start: calc(100% + 6px);
   inset-inline-start: 50%;
-  translate: -50% 0;
+  /* r360 RTL fix + edge clamp: the old `translate: -50%` is PHYSICAL
+     while inset-inline-start is LOGICAL — under RTL the chip anchored
+     its end edge at the station and then shifted half its width the
+     wrong way, landing 1.5× its width off-station (measured: E-02's
+     chip at -117px on a 390px stage). RTL anchors the END edge
+     instead (the -50% shift then centers correctly in both
+     directions); --tag-dx is the JS-measured edge clamp (Hero.tsx). */
+  translate: calc(-50% + var(--tag-dx, 0px)) 0;
   display: inline-flex;
   align-items: baseline;
   gap: 0.5em;
@@ -186,6 +194,11 @@
   inset-block-start: auto;
   inset-block-end: calc(100% + 6px);
   transform: translateY(-4px);
+}
+/* the RTL arm of the r360 centering fix — see .hi-tag above */
+[dir='rtl'] .hi-tag {
+  inset-inline-start: auto;
+  inset-inline-end: 50%;
 }
 .hro-station.is-open .hi-tag {
   opacity: 1;
@@ -348,7 +361,7 @@
   z-index: -1;
 }
 .hro-cta:hover .hro-cta-fill { transform: scaleX(1); }
-.hro-cta:hover { color: #fff; border-color: var(--hro-sig); } /* color-gate: allow — white-on-signal, the reference's primary-button law */
+.hro-cta:hover { color: var(--on-signal); border-color: var(--hro-sig); } /* white-on-signal, the reference's primary-button law — r360: the seat lives in the .landing token home */
 /* focus: the universal ring (base.css) owns visibility — no private
    :focus-visible sub-language on the landing (r172a §3). */
 /* the label roll — one visible line; the twin rides below the fold */
@@ -359,7 +372,7 @@
   align-content: start;
 }
 .hro-cta-top, .hro-cta-bot { display: block; line-height: 1.5; transition: transform 0.42s cubic-bezier(0.625, 0.05, 0, 1); white-space: nowrap; }
-.hro-cta-bot { color: #fff; } /* color-gate: allow — white-on-signal, the reference's primary-button law */
+.hro-cta-bot { color: var(--on-signal); } /* white-on-signal, the reference's primary-button law — r360: the seat lives in the .landing token home */
 .hro-cta:hover .hro-cta-top { transform: translateY(-1.5em); }
 
 /* ── [3] THE WORK STRIP (the value ticker at the seam) ─────────────── */
@@ -369,17 +382,20 @@
   padding-inline: 3.5%;
   background: var(--hro-paper);
 }
-/* the strip's keyboard seat paints the 44px floor (the tap law) */
-.hro-work-track {
-  min-block-size: 44px;
-  align-items: center;
-}
+/* the strip's seat: the flex track whose keyboard focus paints the
+   44px floor (the tap law) — one block (the r360 merge joined A1's
+   split declarations; values identical) */
 .hro-work-track {
   display: flex;
   gap: 0;
   justify-content: space-between;
   overflow-x: auto;
   scrollbar-width: none;
+  min-block-size: 44px;
+  align-items: center;
+  /* the r328 blowout law, kept: without it the strip's nowrap content
+     inflates every band's track past the viewport on narrow stages */
+  max-inline-size: 100%;
 }
 .hro-work-track::-webkit-scrollbar { display: none; }
 .hro-work-item {
@@ -428,7 +444,6 @@
    work strip's nowrap content inflates every band's track past the
    viewport on narrow stages. ─────────────────────────────────────── */
 .hro > * { min-inline-size: 0; }
-.hro-work-track { max-inline-size: 100%; }
 
 /* ── breakpoints ──────────────────────────────────────────────────── */
 @media (max-width: 991px) {
