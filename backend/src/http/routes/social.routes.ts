@@ -9,6 +9,7 @@ import { validate } from '../validate.js';
 import { AppError } from '../../lib/errors.js';
 import { isSanctionedMediaUrl } from '../../lib/sanctioned-url.js';
 import { assertCapability } from '../../lib/permissions.js';
+import { idempotencyMiddleware } from '../middleware/idempotency.js';
 import { resolveStudentProfile, resolveTeacherProfile } from '../../lib/profile-scoping.js';
 // r323 B3.3 — an announcement tells its scope's audience (same
 // transaction as the row: the write and the tell land together).
@@ -402,6 +403,10 @@ export const createAnnouncementSchema = z
 router.post(
   '/announcements',
   requireCapability('ANNOUNCE_FACULTY', 'ANNOUNCE_PLATFORM'),
+  // r359 A4 — Idempotency-Key honored (the notify fan-out is a
+  // payment-grade side effect: a network retry must never double-bell
+  // a whole audience).
+  idempotencyMiddleware(),
   validate(createAnnouncementSchema),
   async (req, res, next) => {
     try {

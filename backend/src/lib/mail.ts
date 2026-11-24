@@ -216,7 +216,7 @@ export function renderDigestEmail(
         `<tr><td style="padding:10px 0;border-bottom:${SHELL_BORDER};font-size:14px;color:#1A1713;font-weight:600;">${it.title}${it.body ? `<div style="font-weight:400;color:#4A4A44;font-size:13px;line-height:1.9;margin-top:4px;">${it.body}</div>` : ''}</td></tr>`,
     )
     .join('');
-  const body = `هذه أهم إشعاراتك غير المقروءة خلال الأسبوع الماضي (${items.length}):`;
+  const body = `مرحبًا ${name} — هذه أهم إشعاراتك غير المقروءة خلال الأسبوع الماضي (${items.length}):`;
   return {
     subject: 'أُلارا — ملخّص الإشعارات الأسبوعي',
     html: renderEmailShell({

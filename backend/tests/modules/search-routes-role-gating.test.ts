@@ -37,6 +37,15 @@ vi.mock('../../src/db.js', () => ({
     lecture: { findMany: vi.fn() },
     researchPaper: { findMany: vi.fn() },
     trainingTrack: { findMany: vi.fn() },
+    // r359 A4: the search route also scans the r352 institutional
+    // registers (programs / org-units / people) + resolves the
+    // caller's capabilities for their gates.
+    program: { findMany: vi.fn() },
+    organizationalUnit: { findMany: vi.fn() },
+    institutionalPerson: { findMany: vi.fn() },
+    userPermission: { findMany: vi.fn() },
+    rolePermission: { findMany: vi.fn() },
+    unitCapabilityGrant: { findMany: vi.fn() },
     // r342 t14: the search route resolves the caller's institution
     // context before the paper scan (cross-institution PII scoping).
     membership: { findFirst: vi.fn() },
@@ -83,6 +92,14 @@ beforeEach(() => {
   // the suite's subject is the per-role href mapping, not the context
   // gate (that lives in the scoping tests).
   membershipFindFirst.mockResolvedValue({ institutionId: 'inst_1' } as never);
+  // r359 A4: the institutional scans default to empty (their gating
+  // tests live in their own suite).
+  vi.mocked(prisma.program.findMany).mockResolvedValue([]);
+  vi.mocked(prisma.organizationalUnit.findMany).mockResolvedValue([]);
+  vi.mocked(prisma.institutionalPerson.findMany).mockResolvedValue([]);
+  vi.mocked(prisma.userPermission.findMany).mockResolvedValue([]);
+  vi.mocked(prisma.rolePermission.findMany).mockResolvedValue([]);
+  vi.mocked(prisma.unitCapabilityGrant.findMany).mockResolvedValue([]);
   offeringFindMany.mockResolvedValue([
     {
       id: 'off_1',

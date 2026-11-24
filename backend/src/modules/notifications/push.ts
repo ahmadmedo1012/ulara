@@ -146,7 +146,7 @@ export async function checkPendingReceipts(
   client: {
     pushDeliveryReceipt: {
       findMany(args: {
-        where: { status: string; createdAt: { gte: Date } };
+        where: { status: 'PENDING'; createdAt: { gte: Date } };
         select: { id: true; ticketId: true; pushDeviceId: true };
         take: number;
       }): Promise<Array<{ id: string; ticketId: string | null; pushDeviceId: string }>>;
@@ -158,12 +158,12 @@ export async function checkPendingReceipts(
     pushDevice: {
       deleteMany(args: { where: { id: { in: string[] } } }): Promise<{ count: number }>;
     };
-  } = prisma,
+  },
   now: Date = new Date(),
 ): Promise<{ checked: number; delivered: number; sent: number; failed: number; prunedDevices: number }> {
   const floor = new Date(now.getTime() - RECEIPT_MAX_AGE_HOURS * 3600_000);
   const pending = await client.pushDeliveryReceipt.findMany({
-    where: { status: 'PENDING', createdAt: { gte: floor } },
+    where: { status: 'PENDING' as const, createdAt: { gte: floor } },
     select: { id: true, ticketId: true, pushDeviceId: true },
     take: 500,
   });
@@ -251,7 +251,7 @@ export async function sweepStaleDevices(
     pushDeliveryReceipt: {
       deleteMany(args: { where: { createdAt: { lt: Date } } }): Promise<{ count: number }>;
     };
-  } = prisma,
+  },
   now: Date = new Date(),
 ): Promise<{ devices: number; receipts: number }> {
   const deviceCutoff = new Date(now.getTime() - DEVICE_STALE_DAYS * 24 * 3600_000);

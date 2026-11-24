@@ -19,7 +19,6 @@
  * job logs and continues per user.
  */
 import { createHash, randomBytes } from 'node:crypto';
-import { prisma } from '../../db.js';
 import { env } from '../../env.js';
 import { logger } from '../../logger.js';
 import { mailConfig, sendMail, renderVerificationEmail, renderDigestEmail, type MailMessage } from '../../lib/mail.js';
@@ -134,7 +133,7 @@ export async function issueVerificationEmail(
   });
 
   const verifyUrl = `${origin}/verify-email?token=${token}`;
-  const message = renderVerificationEmail(user.firstName, verifyUrl, VERIFICATION_TOKEN_HOURS);
+  const message = { to: user.email, ...renderVerificationEmail(user.firstName, verifyUrl, VERIFICATION_TOKEN_HOURS) };
   return sendMailForUser(client, user, message, fetchImpl);
 }
 
@@ -218,12 +217,10 @@ export async function runWeeklyDigest(
       if (items.length === 0) continue; // nothing to say — silence is correct
       out.recipients += 1;
       const weekLabel = `${weekAgo.getUTCFullYear()}/${weekAgo.getUTCMonth() + 1}/${weekAgo.getUTCDate()}`;
-      const message = renderDigestEmail(
-        user.firstName,
-        items,
-        `${env.APP_ORIGIN}/notifications`,
-        weekLabel,
-      );
+      const message = {
+        to: user.email,
+        ...renderDigestEmail(user.firstName, items, `${env.APP_ORIGIN}/notifications`, weekLabel),
+      };
       const result = await sendMailForUser(client, user, message, fetchImpl);
       if (result === 'sent') out.sent += 1;
       else if (result === 'skipped_suppressed') out.skipped += 1;

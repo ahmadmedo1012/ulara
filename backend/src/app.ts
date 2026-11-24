@@ -211,7 +211,7 @@ export function createApp() {
   // so the parsed JSON alone cannot verify it. One allocation per
   // request, kept on the request object (webhook route is the only
   // consumer — the reference is dropped with the request).
-  app.use(express.json({ limit: '1mb', verify: (req, buf, encoding) => { (req as { rawBody?: Buffer }).rawBody = Buffer.from(buf.toString(String(encoding))); } }));
+  app.use(express.json({ limit: '1mb', verify: (req, _res, buf) => { (req as { rawBody?: Buffer }).rawBody = Buffer.from(buf); } }));
   app.use(express.urlencoded({ extended: true, limit: '1mb' }));
   app.use(cookieParser());
 
