@@ -21,6 +21,12 @@ const OUT_DIR = join(ROOT, 'frontend', 'public', 'og');
 
 const hero = readFileSync(join(ROOT, 'shared', 'art', 'svg', 'hero-elevation.svg'), 'utf8');
 const plan = readFileSync(join(ROOT, 'shared', 'art', 'svg', 'plan-lecture-hall.svg'), 'utf8');
+// The wordmark vessel rides the CANONICAL brand twin (shared/brand/
+// mark.svg — generated from frontend/src/brand/mark.ts geometry), never
+// a hand-copied path: the logo single-source law (scripts/brand/
+// logo-gate.sh). The ink is re-seated to the r359 measured ink via CSS
+// (presentation attributes lose to CSS — geometry stays single-source).
+const mark = readFileSync(join(ROOT, 'shared', 'brand', 'mark.svg'), 'utf8');
 
 const html = `<!doctype html><meta charset="utf-8">
 <style>
@@ -38,6 +44,8 @@ const html = `<!doctype html><meta charset="utf-8">
   .plan svg { width: 100%; display: block; }
   .wordmark { position: absolute; left: 44px; top: 470px; display: flex; align-items: center; gap: 14px; }
   .u { width: 44px; height: 44px; }
+  .u svg { width: 100%; height: 100%; display: block; }
+  .u svg g { stroke: #282828; }
   .ar { font-family: sans-serif; font-size: 40px; font-weight: 700; letter-spacing: 0; }
   .en { font-size: 13px; letter-spacing: 3px; color: #62625F; margin-top: 4px; }
   .sig { position: absolute; left: 44px; top: 560px; display: flex; gap: 10px; align-items: center; }
@@ -50,7 +58,7 @@ const html = `<!doctype html><meta charset="utf-8">
 <div class="hero">${hero}</div>
 <div class="plan">${plan}</div>
 <div class="wordmark">
-  <svg class="u" viewBox="0 0 32 32"><path d="M9 7L9 19Q9 27 16 27Q23 27 23 19L23 7" fill="none" stroke="#282828" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="21" y="3" width="4" height="4" fill="#2540D9"/></svg>
+  <div class="u">${mark}</div>
   <div>
     <div class="ar">أُلارا</div>
     <div class="en">ULARA — UNIVERSITY OS</div>

@@ -34775,7 +34775,7 @@
   },
   "x-generator": {
     "tool": "backend/scripts/generate-openapi.ts (hand-rolled: express-stack walk + zod-v3 walker)",
-    "generatedAt": "2026-11-24T01:03:38.959Z",
+    "generatedAt": "2026-11-24T13:20:51.188Z",
     "operationCount": 388,
     "pathCount": 315,
     "contractSnapshotCovered": 13,
