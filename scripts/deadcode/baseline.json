@@ -1,8 +1,8 @@
 {
-  "_comment": "T-22 Track B ratchet baseline — measured analyzer output. Counts may only improve; when a count drops, re-pin it here in the SAME commit (scripts/deadcode/check.sh --update). Pinned tools: knip@5.88.1, jscpd@5.4.2, dependency-cruiser@18.7.2 (+ typescript@5.7.2 for depcruise); jscpd minTokens=70. r37 re-pin (2026-11-22): knip.json now counts the CI-run test trees (tests/e2e, tests/unit, tests/audit, tests/r305, tests/ios, tests/motion) as ENTRY files — playwright/vitest specs are executed by CI, they were never dead code; the old config's blind spot had pinned 51 test files as 'unused'. The measured counts dropped accordingly and were re-pinned in the same commit, per the ratchet law.",
+  "_comment": "T-22 Track B ratchet baseline — measured analyzer output. Counts may only improve; when a count drops, re-pin it here in the SAME commit (scripts/deadcode/check.sh --update). Pinned tools: knip@5.88.1, jscpd@5.4.2, dependency-cruiser@18.7.2 (+ typescript@5.7.2 for depcruise); jscpd minTokens=70. r359-A1 re-pin: the landing rebuild retired its boot-log/scroll-rule/hero-inspect/campus-plate family (7 dead files deleted, 2 exports un-exported); counts dropped 18→16 exports / 252→250 clones and were re-pinned in the same commit, per the ratchet law.",
   "knip": {
     "unusedFiles": 2,
-    "unusedExports": 18,
+    "unusedExports": 16,
     "unusedExportedTypes": 216,
     "unusedDependencies": 0,
     "unusedDevDependencies": 1,
@@ -11,7 +11,7 @@
     "duplicates": 0
   },
   "jscpd": {
-    "duplicateBlocks": 252
+    "duplicateBlocks": 250
   },
   "depcruise": {
     "circularDependencies": 0

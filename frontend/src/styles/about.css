@@ -43,4 +43,19 @@
       break-inside: avoid;
     }
   }
+
+  /* ══ 4 · R359 FINAL — THE LINK LAW (the landing footer's own grammar:
+     ink at rest with the hairline underline, the royal arrives on
+     hover — D6's seat discipline; the shared accent-ink recipe stays
+     for the authed sheets). Same layer, later import — the overlay
+     wins, same mechanism as the .ab-bar rung above. ═══════════════ */
+
+  .ab-link {
+    color: var(--text);
+    border-block-end-color: var(--rule-strong);
+  }
+
+  .ab-code {
+    color: var(--text);
+  }
 }

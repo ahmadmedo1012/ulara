@@ -11,6 +11,11 @@ import { useThemeSync } from '../../components/layout/ThemeToggle';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { authErrorView } from '../../lib/authErrors';
 import type { ForgotPasswordResponse } from '../../lib/api';
+// r359 · A1-AUTH — the auth sheets' measured grammar (the appended
+// AUTH section of errors.css, A1-owned; unlayered + .auth-shell-scoped
+// so only these four sheets drift). The base sheet rules stay in
+// patterns.css.
+import '../../styles/errors.css';
 
 /**
  * R320 §D (PAGES-GAP §5) — خطوة ١ من استعادة كلمة المرور:
@@ -122,6 +127,9 @@ export default function ForgotPasswordPage() {
                     aria-describedby={form.formState.errors.email ? 'forgot-email-error' : undefined}
                     {...form.register('email')}
                   />
+                  {/* r359 grammar #6 — the tiny mono caption under the
+                      control (Latin run, dir=ltr, decorative). */}
+                  <span className="auth-micro" dir="ltr" aria-hidden="true">EMAIL · 48PX</span>
                   {form.formState.errors.email && (
                     <span id="forgot-email-error" className="auth-field-error">
                       {form.formState.errors.email.message}
@@ -209,7 +217,12 @@ export default function ForgotPasswordPage() {
                 </>
               ) : (
                 <>
-                  <span>إرسال رابط الاستعادة</span>
+                  {/* r359 grammar #4 — the primary's label ROLLS one
+                      line up on hover/focus (.auth-roll). */}
+                  <span className="auth-roll">
+                    <span className="auth-roll-line">إرسال رابط الاستعادة</span>
+                    <span className="auth-roll-line" aria-hidden="true">إرسال رابط الاستعادة</span>
+                  </span>
                   <Icon icon={ArrowLeft} size={14} />
                 </>
               )}

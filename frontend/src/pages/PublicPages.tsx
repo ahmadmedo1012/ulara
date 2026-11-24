@@ -68,7 +68,7 @@ export function AboutPage() {
         <div className="pf-page" data-width="reading">
           <div className="pf-page-header">
             <div className="pf-page-header-text">
-              <p className="pf-eyebrow">بيان المنصّة</p>
+              <p className="fo-eyebrow"><span className="fo-mono" dir="ltr">[01]</span> بيان المنصّة</p>
               <h1 className="pf-page-title">عن أُلارا</h1>
               <p className="pf-page-desc">
                 كل ما يمكن قوله بصدق اليوم موجود في فقرة واحدة — نضعها هنا كما هي في صفحة البداية، حرفيًا.
@@ -325,7 +325,7 @@ export function HelpPage() {
         <div className="pf-page" data-width="reading">
           <div className="pf-page-header">
             <div className="pf-page-header-text">
-              <p className="pf-eyebrow">أسئلة الزوّار</p>
+              <p className="fo-eyebrow"><span className="fo-mono" dir="ltr">[01]</span> أسئلة الزوّار</p>
               <h1 className="pf-page-title">المساعدة والأسئلة الشائعة</h1>
               <p className="pf-page-desc">
                 تسعة أسئلة هي ما يسأله الزوار فعلًا — وكل جواب يستند إلى ما يعمل اليوم في المنصّة، بلا تجميل.

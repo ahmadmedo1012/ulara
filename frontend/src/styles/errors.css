@@ -39,3 +39,255 @@
     }
   }
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   أُلارا — THE AUTH SHEETS' MEASURED GRAMMAR (r359 · A1-AUTH)
+   /auth · /auth/register · /auth/forgot-password · /auth/reset-password
+   ════════════════════════════════════════════════════════════════════
+   APPENDED AUTH SECTION (this file is A1-owned and also serves the
+   error sheets above; the four auth pages import it directly so the
+   block rides their chunk). The base sheet grammar — paper ground,
+   the 7px drafting frame, hairline cells, mono indices — lives in
+   patterns.css §GUEST DOOR SHEETS and is NOT touched here; this block
+   re-pins the r359 measured grammar on top of it:
+
+   · ONE signal color — the royal var(--accent) (#2540D9 light /
+     #8AA0FF dark); the retired warm-orange family stays retired;
+     errors are RED-FREE (ink text + a royal underline — the ARIA
+     contracts in the TSX are untouched);
+   · the submit is the royal PRIMARY at rest (fill + fg pair, AAA
+     both themes); its label ROLLS one line up on hover (an
+     overflow-hidden two-line stack — the .auth-roll markup);
+   · the demo table's emails never break mid-word (word-break:
+     keep-all + nowrap: the ROW wraps, the address never does — the
+     360px fix);
+   · the headline rides the measured display rung
+     clamp(23.8px, 2.78vw, 40px) at weight 700 — the ONE heading seat
+     the r359 grammar re-pins above the r324 500/600 law (the type
+     gate carries the documented exception; the seat stays fully
+     rung- and ceiling-swept);
+   · the corner registration marks are drawn as TWO 1px ink bars
+     (::before + ::after), not a font glyph;
+   · micro captions under the controls (mono, Latin, dir=ltr).
+
+   Cascade discipline: every rule is UNLAYERED (the patterns.css §9
+   D7b precedent — unlayered beats every @layer regardless of import
+   position, so nothing here needs !important) and scoped to
+   .auth-shell, so the sibling surfaces that borrow the auth class
+   family (the /nf error sheets, the app-area .auth-error utilities)
+   never drift. Theme tokens only · :hover inside (hover:hover) ·
+   logical properties · radius 0 · no gradients, no shadows, no blur.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── A1 · TYPE — the measured display + body rungs ─────────────────── */
+
+.auth-shell .auth-form-title {
+  font-family: var(--font-display);
+  /* the r359 measured headline clamp: 23.8px @390 · 21.4px @768 ·
+     40px @1440 — on the d2/d3 rungs at every band (gate-checked) */
+  font-size: clamp(23.8px, 2.78vw, 40px); /* type-gate: allow — the r359 measured fluid law at the error display rung (D1), errors.css outside the landing exemption */
+  /* the r359 display weight — the one seat above the r324 500/600
+     law (tests/unit/r324-type-gate.test.ts carries the exception) */
+  font-weight: var(--fw-bold);
+  line-height: 1.12;
+  letter-spacing: 0; /* Arabic joins — never tracked */
+  text-wrap: balance;
+}
+
+.auth-shell .auth-form-sub {
+  /* the r359 measured body clamp: 13.3px floor · 15.5px ceiling */
+  font-size: clamp(13.3px, .926vw, 15.5px); /* type-gate: allow — the r359 measured fluid law at the error body rung (D1), errors.css outside the landing exemption */
+  line-height: var(--lh-base);
+}
+
+/* ── A2 · THE SUBMIT — the royal primary at rest + the label roll ─── */
+
+.auth-shell .auth-submit {
+  background: var(--accent);      /* the primary fill — royal at REST */
+  border-color: var(--accent);
+  color: var(--accent-fg);         /* the theme-aware label pair (AAA) */
+  font-family: var(--font-sans);   /* mono is the micro-label voice, not the CTA's */
+  text-transform: none;
+}
+.auth-shell .auth-submit::before {
+  /* the R315 fill-wipe is retired — the fill IS the rest state now
+     (the roll below is the hover motion) */
+  content: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .auth-shell .auth-submit:not(:disabled):hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+    color: var(--accent-hover-fg); /* paired bg+fg (the B1 discipline) */
+  }
+}
+
+/* the label roll: a two-line stack clipped to ONE line; hover/focus
+   slides it up a line so the duplicate copy rolls in from below
+   (the reference's hover idiom — cheap: one transform, no layout). */
+.auth-roll {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: clip;
+  block-size: 1.5em; /* exactly one label line */
+  transition: transform var(--t-base) var(--ease);
+}
+.auth-roll-line {
+  display: block;
+  line-height: 1.5;
+}
+@media (hover: hover) and (pointer: fine) {
+  .auth-shell .auth-submit:not(:disabled):hover .auth-roll,
+  .auth-shell .auth-submit:not(:disabled):focus-visible .auth-roll {
+    transform: translateY(-100%);
+  }
+}
+
+/* ── A3 · ERRORS — ink + the royal underline, red-free ──────────────── */
+
+/* the field micro-label: ink text, the royal underline carries the
+   signal (describedby-only contract untouched — r157 F5). */
+.auth-shell .auth-field-error {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+/* the submit-level banner: neutral hairline box, ink copy, ONE royal
+   underline on the block-end edge (role="alert" stays in the TSX). */
+.auth-shell .auth-error {
+  border-color: var(--border-strong);
+  border-block-end-color: var(--accent);
+  color: var(--text);
+}
+/* the banner's inline doors (retry / 409 login): royal ink + the
+   prompt-link's 44px hit-area padding trick. */
+.auth-shell .auth-error-link,
+.auth-shell .auth-retry-link {
+  color: var(--accent-ink);
+  display: inline-block;
+  padding-block: var(--sp-3);
+  margin-block: calc(-1 * var(--sp-3));
+}
+
+/* an invalid control answers in INK (never red): the royal underline
+   on its error micro-label is the signal. :focus keeps the shared
+   royal border ladder (focus > validity). */
+.auth-shell .auth-input[aria-invalid="true"]:not(:focus) {
+  border-color: var(--text);
+}
+
+/* the invite-code advisory's bad tier — the same ink+royal voice. */
+.auth-shell .auth-invite-hint[data-kind="bad"] {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+/* the forgot/reset honest notes: neutral ink on a hairline (the
+   warning amber is retired — ONE signal color). */
+.auth-shell .fp-mail-note,
+.auth-shell .fp-invalid {
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+.auth-shell .fp-invalid {
+  border-block-end-color: var(--accent); /* the terminal door's royal underline */
+}
+
+/* ── A4 · THE DEMO TABLE — emails NEVER break mid-word (the 360px fix) */
+
+/* an address is ONE word: keep-all + nowrap + overflow-wrap: normal
+   retire the old `anywhere` break (which sliced student@test.ly into
+   "student@test .1 / y"). The row wraps the whole credential block
+   to its own flex line instead — fully readable at 360px. */
+.auth-shell .auth-demo-cred {
+  word-break: keep-all;
+  overflow-wrap: normal;
+  hyphens: none;
+  white-space: nowrap;
+}
+/* the creds cell's floor becomes its min-content (the whole address),
+   so the flex row wraps it WHOLE rather than squeezing it into a
+   mid-word break. */
+.auth-shell .auth-demo-row-creds {
+  min-inline-size: auto;
+  max-inline-size: 100%;
+}
+
+/* ── A5 · THE QUICK-LOGIN CELL — the ghost recipe (1px ink border) ──── */
+
+.auth-shell .auth-demo-fill {
+  background: transparent;
+  border-color: var(--text); /* ghost — the 1px INK border (r359 #4) */
+  color: var(--text);
+}
+@media (hover: hover) and (pointer: fine) {
+  .auth-shell .auth-demo-fill:hover {
+    /* paired bg+fg — the ink secondary fill wipes in on hover */
+    background: var(--text);
+    border-color: var(--text);
+    color: var(--bg);
+  }
+}
+
+/* ── A6 · THE REGISTRATION MARKS — two 1px ink bars ─────────────────── */
+
+.auth-shell .auth-mark {
+  color: var(--text); /* ink registration chrome (r359 #7) */
+}
+.auth-shell .auth-mark::before,
+.auth-shell .auth-mark::after {
+  /* the plus is DRAWN (two 1px bars through the 10×10 corner cell),
+     not typeset — pure CSS, ink via currentColor. patterns.css's
+     content:'+' rule stays pinned for the r321 §A6 belt; this
+     unlayered pair wins the render. */
+  content: '';
+  position: absolute;
+  background: currentColor;
+}
+.auth-shell .auth-mark::before {
+  inline-size: 10px;
+  block-size: 1px;
+  inset-block-start: 4.5px;
+  inset-inline: 0;
+}
+.auth-shell .auth-mark::after {
+  inline-size: 1px;
+  block-size: 10px;
+  inset-block: 0;
+  inset-inline-start: 4.5px;
+}
+
+/* ── A7 · MICRO CAPTIONS — the mono voice under the controls ───────── */
+
+.auth-shell .auth-micro {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-xs); /* the 11px mono rung (gate-checked) */
+  font-variant-numeric: tabular-nums;
+  line-height: 1.4;
+  color: var(--text-faint);
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+/* ── A8 · SQUARE STEP DOTS — radius 0 everywhere (r359 #1) ──────────── */
+
+.auth-shell .auth-step-dot {
+  border-radius: 0; /* the drafting cell voice — no circles on the sheet */
+}
+
+/* ── A9 · REDUCED MOTION — the roll collapses with the fleet ────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-roll {
+    transition: none;
+    transform: none;
+  }
+}

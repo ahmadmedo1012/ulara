@@ -548,7 +548,7 @@ test.describe('R309/R313 loader — the asset-gated entrance clock and the lock 
      * re-measuring the mount→visible skew on the red runner. */
     await expect(page.locator('.pl-counter')).toHaveText('100%', { timeout: 8000 });
     const doneAt = Date.now() - tMount;
-    expect(doneAt).toBeGreaterThanOrEqual(2000);
+    expect(doneAt).toBeGreaterThanOrEqual(1400); /* r359 A1 §C — the floor tightened 2000→1400 with the preloader's LCP law */
     expect(doneAt).toBeLessThanOrEqual(7000);
 
     /* the completed state holds ~0.7s, then the geometric 835ms

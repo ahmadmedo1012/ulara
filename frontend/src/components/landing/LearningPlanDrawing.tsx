@@ -155,24 +155,8 @@ const PLAN_INK_CSS = `
   .jt[data-wash='mastery'] .jt-plan .pl-station[data-station='4'] { fill: #1A1A1A; font-weight: 700; }
 `;
 
-/* the section drawing's own pigment sheet — the SAME paper-artifact
- * ruling as the plan (pinned drafting primaries in both themes);
- * scoped to the side column's `.jt-section` twin (SectionDrawing.tsx). */
-export const SECTION_INK_CSS = `
-  .jt .jt-section .bp-ink   { stroke: var(--text); stroke-width: 2.4; fill: none; }
-  .jt .jt-section .bp-ink-2 { stroke-width: 3.8; }
-  .jt .jt-section .bp-hair  { stroke: var(--rule); stroke-width: 2; fill: none; }
-  .jt .jt-section .bp-fill  { fill: none; stroke: var(--rule); stroke-width: 2; }
-  .jt .jt-section .bp-dash  { stroke: var(--text); stroke-width: 2; fill: none; }
-  .jt .jt-section .bp-micro { fill: #62625F; }
-  .jt .jt-section .pl-name   { fill: #414140; }
-  .jt .jt-section .pl-dot    { fill: var(--text); }
-  .jt .jt-section .pl-wall   { fill: var(--text); }
-  .jt .jt-section .sc-zone   { fill: var(--accent); fill-opacity: 0; }
-  .jt[data-stage='0'] .jt-section .sc-zone[data-room='lecture'],
-  .jt[data-stage='2'] .jt-section .sc-zone[data-room='exam'],
-  .jt[data-stage='3'] .jt-section .sc-zone[data-room='mastery'] { fill-opacity: 1; }
-`;
+/* (the section drawing's own pigment sheet retired with the side
+ * column's compression — the .jt-section twin no longer mounts.) */
 
 /* A door opening + its quarter-circle swing arc (the plan grammar):
  * a thin 1.5px-rendered ink leaf + arc, radius = the door width. */

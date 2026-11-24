@@ -11,6 +11,11 @@ import { useThemeSync } from '../../components/layout/ThemeToggle';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { authErrorView } from '../../lib/authErrors';
 import { isCommonPassword } from '../../lib/commonPasswords';
+// r359 · A1-AUTH — the auth sheets' measured grammar (the appended
+// AUTH section of errors.css, A1-owned; unlayered + .auth-shell-scoped
+// so only these four sheets drift). The base sheet rules stay in
+// patterns.css.
+import '../../styles/errors.css';
 
 /**
  * R320 §D (PAGES-GAP §5) — خطوة ٢: /auth/reset-password?token=…
@@ -164,7 +169,12 @@ export default function ResetPasswordPage() {
                   flips background + color on hover — r329: every
                   actionable seat answers the pointer). */}
               <Link to="/auth/forgot-password" className="auth-submit fp-new-link auth-primary-link">
-                اطلب رابطًا جديدًا
+                {/* r359 grammar #4 — the same label-roll contract as the
+                    form submits (this IS the state's primary action). */}
+                <span className="auth-roll">
+                  <span className="auth-roll-line">اطلب رابطًا جديدًا</span>
+                  <span className="auth-roll-line" aria-hidden="true">اطلب رابطًا جديدًا</span>
+                </span>
                 <Icon icon={ArrowLeft} size={14} />
               </Link>
               {/* the honest second door: the dead link never unlocks a
@@ -201,6 +211,9 @@ export default function ResetPasswordPage() {
                         aria-describedby={form.formState.errors.password ? 'reset-password-error' : undefined}
                         {...form.register('password')}
                       />
+                      {/* r359 grammar #6 — the tiny mono caption under the
+                          control (Latin run, dir=ltr, decorative). */}
+                      <span className="auth-micro" dir="ltr" aria-hidden="true">PASS · 48PX</span>
                       {form.formState.errors.password && (
                         <span id="reset-password-error" className="auth-field-error">
                           {form.formState.errors.password.message}
@@ -224,6 +237,9 @@ export default function ResetPasswordPage() {
                         aria-describedby={form.formState.errors.confirm ? 'reset-confirm-error' : undefined}
                         {...form.register('confirm')}
                       />
+                      {/* r359 grammar #6 — the tiny mono caption under the
+                          control (Latin run, dir=ltr, decorative). */}
+                      <span className="auth-micro" dir="ltr" aria-hidden="true">PASS · 48PX</span>
                       {form.formState.errors.confirm && (
                         <span id="reset-confirm-error" className="auth-field-error">
                           {form.formState.errors.confirm.message}
@@ -274,7 +290,12 @@ export default function ResetPasswordPage() {
                     </>
                   ) : (
                     <>
-                      <span>حفظ كلمة المرور الجديدة</span>
+                      {/* r359 grammar #4 — the primary's label ROLLS one
+                          line up on hover/focus (.auth-roll). */}
+                      <span className="auth-roll">
+                        <span className="auth-roll-line">حفظ كلمة المرور الجديدة</span>
+                        <span className="auth-roll-line" aria-hidden="true">حفظ كلمة المرور الجديدة</span>
+                      </span>
                       <Icon icon={ArrowLeft} size={14} />
                     </>
                   )}

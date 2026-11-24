@@ -54,7 +54,7 @@ export function CapabilitiesPage() {
           <div className="cu-head pf-page-header-text">
             <span className="fo-eyebrow"><span className="fo-mono" dir="ltr">[01]</span> ما يعمل اليوم</span>
             <RevealCssClass as="h1" className="cu-title" delay={1} id="cap-live-title">
-              قدرات <em>موثَّقة</em>، لا ادّعاءات
+              قدرات موثَّقة، لا ادّعاءات
             </RevealCssClass>
             <RevealCssClass as="p" className="cu-lede" delay={2}>
               كل رقم يُحسب من حالة الميزات في النظام — يتغيّر مع التحديثات، لا مع الحملات.
@@ -85,7 +85,7 @@ export function CapabilitiesPage() {
           <div className="cu-head pf-page-header-text">
             <span className="fo-eyebrow"><span className="fo-mono" dir="ltr">[02]</span> إلى أين</span>
             <RevealCssClass as="h2" className="cu-title" delay={1} id="cap-vision-title">
-              نحو تعليمٍ <em>يعرف كلَّ طالب</em>
+              نحو تعليمٍ يعرف كلَّ طالب
             </RevealCssClass>
             <RevealCssClass as="p" className="cu-lede" delay={2}>
               منظومة تتذكّر ما شاهده وما أخطأ فيه —

@@ -63,7 +63,7 @@ export default function NotFoundPage() {
             — the pattern library's quiet kicker seat carries the
             sheet's own tab-title word (no code chrome). The sr-only
             «خطأ 404.» carrier stays; the title carries the meaning. */}
-        <p className="pf-eyebrow">الصفحة غير موجودة</p>
+        <p className="fo-eyebrow">الصفحة غير موجودة</p>
         <span className="sr-only">خطأ 404.</span>
 
         <h1 className="nf-title">هذه الصفحة تغيّبت عن الحضور</h1>

@@ -1,1234 +1,471 @@
-/* R332 — split VERBATIM from src/styles/landing.css · hero = R322 hero transplant + bp drawing + title block (371-1095) + R308 hi instrument (4028-4405) + fo-ticker (4406-4453)
-   map + proof: the import order in landing.css + these region ranges
-   (the lost r332 ledger is keyed in docs/redesign/r357/LOST-DOCS.md) */
+/* ═══ HERO — the r359 rebuild (A1) ═══════════════════════════════════════
+ * The reference's own fold, measured live (ledger D1-D5):
+ *   · the fold is ONE viewport: the fixed header bar (SheetNav) floats
+ *     over it; the ELEVATION owns the middle band edge-to-edge between
+ *     two dotted rules (the frame's 7.5% / 83.5% seats);
+ *   · the bottom band (the reference's ~13% fold footer, RTL-mirrored
+ *     D4): the giant H1 from the reading start (right) ‖ hairline
+ *     divider ‖ the one-line lead + the register cell at the far end;
+ *   · the work strip closes the band (the value marquee at the seam);
+ *   · chrome: tick rulers on the stage's four inner edges, ±
+ *     registration crosses, the section's hairline frame edges;
+ *   · type law D1: h1 = 3.24vw (46.7@1440 · 62.22@1920 · floor
+ *     31.74@390), body = .926vw, mono micro absolute.
+ * Signal discipline D6: royal on the register cell, the station
+ * squares, the hint bracket — nowhere else. No radii. No shadows. */
 
-/* ═══ HERO — R322 (2-b): the measured reference transplant ══════════════
- * the retired r322 extraction docs (hero-{1440,768,390}.json) — the reference
- * hero is ONE full-viewport screen built as TWO stacked bands inside
- * the page frame: the ART band (the whole illustration, ink filling
- * the band width, on transparent paper inside a hairline drafting
- * frame with corner plus marks and a dashed ruler overlay) over the
- * CONTENT band (16.01rem @1440: H1 cell cols 1–7 ‖ 1px vertical
- * divider ‖ sub cell cols 8–12 = paragraph + register CTA in one row,
- * then the work marquee strip). Our anatomy maps 1:1 (RTL-mirrored,
- * the same fluid root): .fo-hero = grid rows [art 1fr | content auto],
- * the band keeps the measured 100svh − 13px @1440 · 100svh − 1.62rem
- * @≤479 quartet seats.
- *
- * Retired with this transplant (the R314/R315 interim grammar): the
- * .fo-hero-window letterbox window (the 67%-width ink seat — V10's
- * tiny phone art), the 3-cell .fo-hero-strip (H1 ‖ lead+[LIVE]+CTA ‖
- * discover link — the reviewer's isolated-CTA composition), the
- * [LIVE] disclosure chip (V1 family: the honest demo-data disclosure
- * lives in the platform frames) and the far-end discover link (the
- * extraction's content band carries neither cell). The capabilities
- * marquee returns HOME from the statement band (the reference seats
- * home-hero-work inside the hero's sub cell). */
-.fo-hero {
+.hro {
+  /* the type law (scoped — A1's own seats per the partition contract) */
+  --hro-h1: clamp(34px, 4.3vw, 82px);      /* 62@1440 · 82@1907 · floor 34@390 — the brief's h1 law (62.22 desktop scale) */
+  --hro-lead: clamp(13.3px, 1.11vw, 21.3px); /* 16@1440 · 21.3@1920 — the reference's own paragraph voice */
+  /* the reference's measured ink family — A1's scoped seats (D1/D6);
+     the token migration wish is logged for the integrator */
+  --hro-ink: var(--paper-ink, #282828); /* color-gate: allow — the reference's measured ink, A1 scoped seat (D1) */
+  --hro-ink-2: var(--paper-ink-2, #646464); /* color-gate: allow — the reference's measured secondary ink, A1 scoped seat (D1) */
+  --hro-hair: var(--hairline, #b3b3af); /* color-gate: allow — the reference's measured hairline, A1 scoped seat (D1) */
+  --hro-paper: var(--paper, #f2f1ec); /* color-gate: allow — the reference's measured warm paper, A1 scoped seat (D1) */
+  --hro-sig: var(--accent);
+
   display: grid;
-  /* r351 P1 — the reference's order: the giant headline LEADS the fold
-   * (content band first), the art band takes everything under it, the
-   * work strip closes the band. */
-  grid-template-rows: auto minmax(0, 1fr) auto;
-  /* the measured reference band (887 = 100svh − 13 @1440×900; the
-   * ≥992 twin below re-pins the quartet's 1.6rem form). */
-  min-block-size: calc(100svh - 13px); /* spacing-gate: allow — the measured reference band (887 = 900 − 13), an external constant */
+  grid-template-rows: minmax(0, 1fr) auto auto;
+  /* the measured reference band (887 = 100svh − 13 @1440) */
+  min-block-size: calc(100svh - 13px);
   align-content: stretch;
-  padding-block: 0;
-  /* R342-02 — the L1-c consent is an in-flow tail band (page bottom):
-   * the R328 corner-card reserve retires with it; the 14px seam stays. */
-  padding-block-end: 14px; /* spacing-gate: allow — the measured reference seam, not a rung */
-}
-
-/* R328 (H1/H3) — the hero's three bands are grid items of a 1-column
- * grid: without a floor, an item's min-width:auto (the <1200 snap
- * strip's max-content track, the aspect-ruled stage) inflates EVERY
- * band's track past the viewport (measured 429px-wide bands on a
- * 390px phone — the whole fold shifted −39px left). The floor pins
- * each band to the sheet; the strip's own overflow scrolls inside. */
-/* R333 (PI-B1): the art band + content band retired with the R331
- * mechanics rebuild — the band floor merged into .fo-hero-work below. */
-.fo-hero-title {
-  font-family: var(--font-display);
-  /* R322 (1-d): the H1 rides the D1 rung — --fs-d1 (the legacy-measured
-     5.6rem h1 @1440, band-independent clamp; see tokens.css R322),
-     weight 600 (the display voice's top rung — the 700 era ends),
-     lh 1.05 (the D1 leading; also the minimum IBM Plex Sans Arabic's
-     ascender/descender metrics need to keep the two unvocalised lines
-     clear of each other), text-wrap: balance. The 2-line split «رحلة
-     تعلم واحدة / من المحاضرة إلى الإتقان» holds 2 lines at every belt
-     on the rung (measured post-migration). Arabic stays UNVOCALISED
-     (zero tashkeel — the display canon), no tracking (cursive joins). */
-  font-size: var(--fs-d1);
-  font-weight: 600;
-  line-height: 1.05;
-  text-wrap: balance;
-  letter-spacing: 0;
-  color: var(--text);
-  margin: 0;
-  /* the Arabic display floor still breathes: glyphs may lift a
-     hair above the em box without clipping */
-  overflow-block: visible;
-}
-
-
-/* the register CTA — flush inline-end of the sub row (the funnel
- * contract's .fo-hero-actions seat) */
-.fo-hero-actions {
-  display: flex;
-  align-items: center;
-  flex: 0 0 auto;
-}
-
-/* ── the work strip — the reference's home-hero-work band as the
- * hero's own closing row (R328 H2/H3) ──────────────────────
- * ≥1200px: ONE static row — the six honest subjects anchored edge to
- * edge (space-between), ZERO mask, no crawl: an index row is read at
- * a glance (the R322 loop + its duplicated track retire; the X13
- * mid-glyph fade problem dies with the loop itself).
- * <1200px: the strip scrolls horizontally with mandatory snap — whole
- * items settle at the edges, nothing is ever cropped mid-glyph at
- * rest. Hairlines close the band top and bottom (the hero's own
- * closing rule moved here with the band). */
-.fo-hero-work {
-  min-inline-size: 0; /* R333 (PI-B1): the old art/content floor seat, merged here */
-  display: flex;
-  overflow: hidden;                /* ≥1200: the row fits; <1200 flips to the snap scroller */
-  margin-inline: 7px; /* R328 (H7 · R2) — the closing rules END at the sheet frame, never full-bleed */ /* spacing-gate: allow — the sheet frame's own inset (measured) */
-  border-block-start: 1px solid var(--rule);
-  border-block-end: 1px solid var(--rule);
-  padding-inline: 7px; /* spacing-gate: allow — the sheet frame's own 7px inset (measured) */
-}
-
-
-/* <1200px — the snap-scrolling strip (R328 H3): the six subjects
- * overflow any narrower band honestly — a touch scroller with
- * mandatory snap (whole items settle at the rest edges, zero
- * mid-glyph crop), the wheel/trackpad rides the same row. The
- * scrollbar stays hidden (the snap rhythm is the affordance; the
- * items themselves signal continuation). */
-@media (max-width: 1199px) {
-  .fo-hero-work {
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;                /* Firefox */
-    -webkit-overflow-scrolling: touch;
-  }
-  .fo-hero-work::-webkit-scrollbar {
-    display: none;                        /* Chromium/WebKit */
-  }
-}
-
-/* ══ The blueprint — the interactive technical drawing ═══════════════
- * The stage is a relative box: the SVG draws the structures, the
- * inspection instrument (HeroInspect) anchors to the stage + the
- * SVG's own box (R309's ONE physical frame), and on phones the
- * station cards flow under the drawing (44px targets, no overlay
- * crowding). R313 (D9) → R322 (2-b): the ruler tick strips ride all
- * four inner edges of the art band's frame + the corner plus marks —
- * the reference's drawing-frame chrome, now VISIBLE at rest like the
- * extraction's settled evidence (the reference's own ruler overlay
- * spans the whole art box at op .64). The .fo-hero-fig grid seat is
- * retired with the R310 fig composition (dead since R315). */
-.bp-stage {
   position: relative;
-  border: 1px solid var(--rule);
-  background: var(--surface);
-  padding: var(--sp-4);
-  /* R313 (D7 §1): the window caps at the drawing's own proportion —
-     the hero band holds ~100vh-frame; the 108rem cap keeps the
-     elevation centered and legible (≈900px @1440, scaling with the
-     fluid root exactly like the reference's rem-authored window).
-     R313-int (5-int · failures 5+6): inline-size, NOT max-inline-size
-     — with auto margins a max- cap left the box shrink-to-fit at the
-     SVG's 300px intrinsic width (a 300×133 drawing inside a 1160px
-     track), so the annotation cards could not seat without overlap
-     and the drag box fell under its own visibility floor. An explicit
-     inline-size makes the window actually reach min(track, 108rem).
-     (R333 PI-B1: the old art-band scoped seat retired with the band.) */
-  inline-size: min(100%, 108rem);
-  margin-inline: auto;
+  padding-block: 0;
+  /* clear the fixed header band (D3: header top 0.46vw + bar ~44px) */
+  padding-block-start: 0; /* the stage's own top rule seats under it */
 }
 
-/* ── R313 (D9) → R322 (2-b) — the ruler ticks + corner plus marks +
-   the dashed measure grid on the art band's frame. The strips are
-   pure repeating hairlines on the four INNER edges — var(--rule) at
-   drafting-chrome emphasis, 1px marks on an 8px pitch, 7px long.
-   R322 (2-b): the chrome is VISIBLE at rest — the extraction's own
-   recommendation (the reference's ruler is an IX2 reveal whose
-   settled state the evidence shots show: dashed lines across the
-   art box + brand-red marker lines, op .64); our entrance belt
-   (the art band's reveal-up) fades the whole chrome in with the
-   band. ≤767 the ruler retires with the reference (@390 the hero
-   carries no ruler overlay — measured). ── */
-.bp-rulers {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: var(--z-hro-rulers);
-  opacity: 0.64;
-  transition: opacity var(--t-slow) var(--ease);
-}
-
-
-@media (max-width: 767px) {
-  .bp-rulers {
-    display: none;
-  }
-}
-
-/* the dashed measure lines — the reference's ruler overlay core: two
- * horizontal + two vertical dashed rules across the paper (the 2×2
- * quadrant graticule) and two solid brand-red marker lines (the
- * measured line-brand seats). Physical hairlines, drafting wash. */
-.bp-measure {
-  position: absolute;
-}
-
-.bp-measure-h {
-  inset-inline: 0;
-  block-size: 0;
-  border-block-start: 1px dashed var(--rule);
-}
-
-.bp-measure-v {
-  inset-block: 0;
-  inline-size: 0;
-  border-inline-start: 1px dashed var(--rule);
-}
-
-/* the horizontal pair seats at the paper's thirds (clear of the
- * ink's own band) */
-.bp-measure-h1 { inset-block-start: 22%; }
-.bp-measure-h2 { inset-block-end: 18%; }
-
-/* the vertical pair seats inboard of the trees' canopies */
-.bp-measure-v1 { inset-inline-start: 12%; }
-.bp-measure-v2 { inset-inline-end: 12%; }
-
-/* the two solid brand-red marker lines — the measured line-brand
- * seats (short rules riding the horizontal pair's ends) */
-.bp-measure-marker {
-  inset-block-start: 22%;
-  inset-inline: 0;
-  block-size: 0;
-  border-block-start: 1px solid var(--accent);
-  /* short rules, never full-width: the marker reads as a datum, not
-     a divider */
-  margin-inline: 18%;
-}
-
-.bp-measure-m2 {
-  inset-block-start: auto;
-  inset-block-end: 18%;
-  margin-inline: 26% 36%;
-}
-
-.bp-ruler {
-  position: absolute;
-  opacity: 0.9;
-}
-
-.bp-ruler-t,
-.bp-ruler-b {
-  inset-inline: 2px;
-  block-size: 7px;
-  background-image: repeating-linear-gradient(to right, var(--rule) 0 1px, transparent 1px 8px);
-}
-
-.bp-ruler-t { inset-block-start: 2px; }
-.bp-ruler-b { inset-block-end: 2px; }
-
-.bp-ruler-s,
-.bp-ruler-e {
-  inset-block: 2px;
-  inline-size: 7px;
-  background-image: repeating-linear-gradient(to bottom, var(--rule) 0 1px, transparent 1px 8px);
-}
-
-.bp-ruler-s { inset-inline-start: 2px; }
-.bp-ruler-e { inset-inline-end: 2px; }
-
-/* the corner plus marks — the reference's 10×10 registration marks a
-   few px inside the window corners (measured ≈5px in from the sides,
-   ≈10px from the top/bottom bar, r313 frame-hero-corner crop). */
-.bp-plus {
-  position: absolute;
-  color: var(--rule);
-  font-family: var(--font-mono);
-  font-size: var(--fs-mono-md);
-  line-height: 1;
-}
-
-/* R321 §A6 — the glyph is pseudo-element content (out of innerText; the
-   .auth-mark note in auth.css owns the reasoning). */
-.bp-plus::before { content: '+'; }
-
-.bp-plus-tl { inset-block-start: 6px; inset-inline-start: 3px; }
-.bp-plus-tr { inset-block-start: 6px; inset-inline-end: 3px; }
-.bp-plus-bl { inset-block-end: 6px; inset-inline-start: 3px; }
-.bp-plus-br { inset-block-end: 6px; inset-inline-end: 3px; }
-
-/* R315 (B1 · A.3): the small ± registration marks at the dashed inner
-   frame's corners — centred on the frame's corner (inset 16px − half
-   the glyph), one step fainter than the window's own plus marks. */
-.bp-dmark {
-  position: absolute;
-  color: var(--rule);
-  font-family: var(--font-mono);
-  font-size: var(--fs-mono-xs);
-  line-height: 1;
-  opacity: 0.9;
-}
-
-/* R321 §A6 — pseudo-element glyph, out of innerText (the .bp-plus note). */
-.bp-dmark::before { content: '+'; }
-
-.bp-dmark-tl { inset-block-start: 11px; inset-inline-start: 11px; }
-.bp-dmark-tr { inset-block-start: 11px; inset-inline-end: 11px; }
-.bp-dmark-bl { inset-block-end: 11px; inset-inline-start: 11px; }
-.bp-dmark-br { inset-block-end: 11px; inset-inline-end: 11px; }
-
-.bp-svg {
-  display: block;
-  inline-size: 100%;
-  block-size: auto;
-}
-
-/* the drawing's own ink system — zero raw colors, every class rides
- * the canonical tokens so the artwork follows both themes.
- * R310 adds the drafting hierarchy: bp-ink-2 (the primary mass
- * weight), bp-micro (the mono technical voice), and the texture
- * patterns (stippled walls, hatched ground) — all line work. */
-.bp-ink { stroke: var(--text); stroke-width: 1.5; fill: none; }
-.bp-ink-2 { stroke-width: 2; } /* the primary-structure weight */.bp-hair { stroke: var(--grid-line); stroke-width: 1; fill: none; }
-.bp-dash { stroke: var(--rule-strong); stroke-width: 1; fill: none; stroke-dasharray: 5 5; }
-.bp-dash-2 { stroke-width: 1.5; }
-.bp-signal { stroke: var(--accent); stroke-width: 1.5; fill: none; }
-.bp-signal-fill { fill: var(--accent); stroke: none; }
-.bp-fill { fill: var(--surface); stroke: var(--text); stroke-width: 1.5; }
-
-/* the mono technical voice — coordinates, dimensions, axis letters.
- * Latin micro-labels ride the mono family, tabular, LTR. */
-.bp-micro {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 500;
-  fill: var(--text-muted);
-}
-
-/* r340 T-P1y (§5 index legibility): the elevation SVG scales with the
- * viewport, so at 390 the 12-unit labels render ~3.2px tall (measured
- * 2×4px ink — the panel's "unreadably small" finding, worse than
- * scored). calc() cannot express the inverse scale (division by a
- * length is invalid CSS). R342-final: the old measurer (HeroInkWindow)
- * is deleted — the belt keeps the 12px fallback for the belt's
- * remaining bp-micro seats (ElevationDrawing via SheetLoader, the
- * journey's plan labels), and the LIVE plate (CampusPlate) carries its
- * own measured --cp-label-fs seat below (the 11px rendered floor). */
-@media (max-width: 991px) {
-  .hro .bp-micro {
-    font-size: var(--bp-label-fs, 12px);
-  }
-}
-
-/* the texture patterns — the reference's stipple/hatch as line work */
-.bp-stipple-dot { fill: var(--grid-line); }
-.bp-stipple-fill { fill: url(#bp-stipple-elv); stroke: none; opacity: 0.85; }
-.bp-hatch-line { stroke: var(--grid-line); stroke-width: 1; }
-.bp-hatch-fill { fill: url(#bp-hatch-elv); stroke: none; opacity: 0.7; }
-
-/* the structural grid — the faintest drafting layer */
-.bp-gridline {
-  stroke: var(--grid-line);
-  stroke-width: 1;
-  stroke-dasharray: 3 5;
-  opacity: 0.55;
-}
-
-.bp-name {
-  font-family: var(--font-sans);
-  font-size: 15px;
-  font-weight: 600;
-  fill: var(--text-secondary);
-}
-.bp-tag {
-  font-family: var(--font-sans);
-  font-size: 13px;
-  fill: var(--text-faint);
-}
-
-/* the active stage — the red-pencil revision: the active volume's
- * envelope warms to the signal (R310 wires the R306 rule that never
- * matched a selector — the volumes carry bp-vol + bp-on). */
-.bp-vol.bp-on .bp-fill,.bp-vol.bp-on .bp-ink {
-  stroke: var(--accent-ink);
-}
-
-/* the hotspots — real buttons, keyboard-operable, aria-pressed. In
- * OVERLAY mode (desktop/tablet) they are compact [NN] pins: the
- * drafting convention — number-only markers at the annotation spot
- * above each structure (they must MARK, never MASK, the artwork; the
- * Arabic names live in the drawing + the panel, and the accessible
- * name comes from aria-label). R310: the container is JS-sized to the
- * SVG box and each pin consumes PHYSICAL left/top (px, from the same
- * viewBox mapping as the stations — one frame, no logical-property
- * mirroring in the RTL document). In FLOW mode (≤760px) the same
- * buttons become full chip rows that carry the labels visibly. */
-.bp-hotspots {
-  position: absolute;
-  pointer-events: none; /* the container passes through; the buttons take it back */
-}
-
-.bp-hotspot {
-  position: absolute;
-  left: var(--hot-x, 0px);
-  top: var(--hot-y, 0px);
-  transform: translate(-50%, -50%);
-  pointer-events: auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  inline-size: 44px;
-  block-size: 44px;
-  padding: var(--sp-1);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--r-xs);
-  background: color-mix(in srgb, var(--surface) 92%, transparent);
-  color: var(--text);
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  cursor: pointer;
-  transition:
-    background-color var(--t-base) var(--ease),
-    border-color var(--t-base) var(--ease),
-    color var(--t-base) var(--ease);
-}
-
-
-
-.bp-hotspot[aria-pressed='true'] {
-  background: var(--accent-soft);
-  border-color: var(--accent);
-  color: var(--accent-strong);
-}
-
-.bp-hotspot[aria-pressed='true'] .bp-hotspot-num {
-  color: var(--accent-ink);
-}
-
-
-/* ══ The title block — the metadata grid (the sheet's own identity) ══
- * R313 (D7 §8): the block moved from the hero to the closing section
- * (the hero band holds one viewport); it reads as a two-column ruled
- * table there (see .fo-cta .fo-hero-meta). */
-.fo-meta-row {
+/* ── [1] THE STAGE ─────────────────────────────────────────────────── */
+.hro-stage {
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(96px, auto) 1fr;
-  align-items: baseline;
-  gap: var(--sp-4);
-  padding: var(--sp-2-5) var(--sp-4);
-  border-block-end: 1px solid var(--rule);
-}
-
-.fo-meta-row:last-child {
-  border-block-end: 0;
-}
-
-.fo-meta-k {
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  color: var(--text-muted);
-}
-
-.fo-meta-v {
-  font-size: var(--fs-sm);
-  color: var(--text-secondary);
-}
-
-.fo-meta-v .fo-mono {
-  color: var(--accent-ink);
-  font-size: var(--fs-xs);
-}
-
-/* ── hi — the hero's local inspection instrument (R309: ONE physical
-   frame). The layer is JS-sized to the SVG's own box and every child
-   anchors with PHYSICAL left/top against it — the R308 logical
-   `inset-inline-start` mirrored every element against its left-based
-   coordinate math inside the RTL document (cards clipped the viewport,
-   the vertical guide crossed into the hero copy). Physical anchoring
-   keeps the visible instrument and the logical geometry in one frame
-   at every size and direction. ──────────────────────────────────── */
-
-/* the interaction layer — the drawing frame itself (JS-sized; 0×0
-   until the mapping runs, so unpositioned children park off-canvas). */
-.hi-layer {
-  position: absolute;
-  pointer-events: none;
-  z-index: var(--z-hro-layer);
-}
-
-.hi-instrument {
-  position: absolute;
-  inset: 0;
-  display: none;
-}
-
-@media (hover: hover) and (min-width: 992px) {
-  .hi-instrument {
-    display: block;
-  }
-}
-
-.hi-guide {
-  position: absolute;
-  background: var(--border);
-  opacity: 0;
-  mix-blend-mode: difference; /* the reference's cursor line (the program digest's colors.heroCursorLine) */
-  transition: opacity var(--t-base) var(--ease);
-}
-
-/* physical anchors — the guides span the frame exactly and translate
-   only along their own axis, so they can never leave the drawing. */
-.hi-guide-x {
-  left: 0;
-  right: 0;
-  top: 0;
-  block-size: 1px;
-}
-
-.hi-guide-y {
-  top: 0;
-  bottom: 0;
-  left: 0;
-  inline-size: 1px;
-}
-
-.hi-layer[data-point='on'] .hi-guide {
-  opacity: 0.2; /* the reference's 0.2 line opacity inside the difference blend */
-}
-
-.hi-plus {
-  position: absolute;
-  left: 0;
-  top: 0;
-  inline-size: 8px;
-  block-size: 8px;
-  margin: -4px 0 0 -4px; /* spacing-gate: allow — negative half-plus centering */
-  /* off-canvas UNTIL the first frame write (the JS transform centers
-     the plus on the pointer; the raw left:0+margin would poke 4px
-     past the frame's corner for the first frame) */
-  transform: translate(-100px, -100px);
-  opacity: 0;
-  transition: opacity var(--t-base) var(--ease);
-}
-
-.hi-layer[data-point='on'] .hi-plus {
-  opacity: 1;
-}
-
-.hi-plus-h,
-.hi-plus-v {
-  position: absolute;
-  background: var(--accent);
-}
-
-.hi-plus-h {
-  top: 3px;
-  left: 0;
-  right: 0;
-  block-size: 2px;
-}
-
-.hi-plus-v {
-  left: 3px;
-  top: 0;
-  bottom: 0;
-  inline-size: 2px;
-}
-
-.hi-readout {
-  position: absolute;
-  left: 0;
-  top: 0;
-  padding: var(--sp-0-5) var(--sp-1-5);
-  background: color-mix(in srgb, var(--surface) 88%, transparent);
-  border: 1px solid var(--rule);
-  border-radius: var(--r-xs);
-  color: var(--text-muted);
-  font-size: var(--fs-xxs);
-  letter-spacing: 0.04em;
-  white-space: nowrap;
-  opacity: 0;
-  transition: opacity var(--t-base) var(--ease);
-}
-
-.hi-layer[data-point='on'] .hi-readout {
-  opacity: 1;
-}
-
-/* the drag selection box — driven imperatively through CSS vars.
-   R309: the size/position vars are finally CONSUMED (R308 wrote them
-   but no rule read them — the box rendered 2×2 at the frame's corner;
-   the drag was invisible). */
-.hi-box {
-  position: absolute;
-  left: 0;
-  top: 0;
-  display: none;
-  z-index: var(--z-hro-box);
-  inline-size: var(--bw, 0px);
-  block-size: var(--bh, 0px);
-  transform: translate(var(--bx, 0px), var(--by, 0px));
-  border: 1px solid var(--c-coral-ink);
-  background: linear-gradient(
-    var(--ba, 315deg),
-    color-mix(in srgb, var(--c-coral-ink) 64%, transparent) 0%,
-    transparent 67%
-  );
-  pointer-events: none;
-}
-
-.hi-box[data-on='on'] {
-  display: block;
-}
-
-.hi-box-handle {
-  position: absolute;
-  inline-size: 5px;
-  block-size: 5px;
-  background: var(--accent);
-}
-.hi-box-handle-tl { inset-block-start: -3px; inset-inline-start: -3px; }
-.hi-box-handle-tr { inset-block-start: -3px; inset-inline-end: -3px; }
-.hi-box-handle-bl { inset-block-end: -3px; inset-inline-start: -3px; }
-.hi-box-handle-br { inset-block-end: -3px; inset-inline-end: -3px; }
-
-.hi-leaders-svg {
-  position: absolute;
-  inset: 0;
-  inline-size: 100%;
-  block-size: 100%;
-  pointer-events: none;
-  z-index: var(--z-hro-box);
-}
-
-.hi-leader-path {
-  fill: none;
-  stroke: var(--accent);
-  stroke-width: 1.5;
-  stroke-dasharray: 4 3;
-}
-
-.bp-stage[data-dragging] {
+  place-items: end center; /* r359: the drawing seats ON the bottom rule — the air lives ABOVE the roof (the reference's own law) */
+  min-block-size: 0;
+  /* the drawing breathes between the two dotted rules — NOT
+   * edge-to-edge: the reference's own air is ~150px above the roof,
+   * ~140px under the ground line. */
+  padding-block: 3.5% 4.5%;
+  padding-inline: 3.5%;
+  touch-action: pan-y; /* drag reveals horizontally; vertical scroll stays free */
   user-select: none;
-  -webkit-user-select: none;
+  outline: none;
+  min-inline-size: 0; /* the grid-item floor (the blowout law) */
 }
-
-/* the inspection stations — real buttons (the universal path: tap,
-   click, Enter/Space); 44px dot targets glued to the artwork through
-   the letterbox transform (PHYSICAL left/top — see the frame note).
-   Focus rings ride the universal :focus-visible language (base.css /
-   motion.css) — landing.css carries zero private focus rules (r190). */
-.hi-marker {
-  position: absolute;
-  left: var(--mk-x, -100px);
-  top: var(--mk-y, -100px);
-  inline-size: var(--mk-w, 44px);
-  block-size: var(--mk-h, 44px);
-  transform: translate(-50%, -50%);
-  pointer-events: auto;
-  background: none;
-  border: 0;
-  padding: 0;
-  cursor: pointer;
-  z-index: var(--z-hro-station);
-  /* R313 (D2/D12): square station (the reference's inspection stations
-     are square plus-marks, never circles) — the 44×44 target stays. */
-}
-
-.hi-marker-dot {
-  position: absolute;
-  inset-block-start: 50%;
-  inset-inline-start: 50%;
-  inline-size: 12px;
-  block-size: 12px;
-  margin: -6px 0 0 -6px; /* spacing-gate: allow — negative half-mark centering */
-  /* R313 (D12): the reference's 8×8 plus-mark, drawn as two accent
-     bars (a plus glyph) — square, no fill. */
-  background: transparent;
-  animation: hi-pulse 2.2s var(--ease) infinite;
-  transition: scale var(--t-base) var(--ease);
-}
-.hi-marker-dot::before,
-.hi-marker-dot::after {
+.hro-stage::before,
+.hro-stage::after {
   content: '';
   position: absolute;
-  background: var(--accent);
+  inset-inline: 3.5%;
+  border-top: 1px dashed var(--hro-hair);
+  pointer-events: none;
 }
-.hi-marker-dot::before {
-  inset-block-start: 5px;
-  inset-inline-start: 0;
-  inline-size: 12px;
-  block-size: 2px;
+.hro-stage::before { inset-block-start: 2.2%; }
+.hro-stage::after { inset-block-end: 1.2%; }
+
+/* the art box — ASPECT-LOCKED to the active viewBox (zero letterbox:
+ * the drawing fills the box exactly, so the stations layer's % seats
+ * ARE the viewBox fractions). Desktop: height-capped at 76% of the
+ * stage content (the reference's own air law); mobile: width-locked. */
+.hro-art {
+  position: relative;
+  block-size: 94%;
+  aspect-ratio: 1440 / 700;
+  max-inline-size: 100%;
 }
-.hi-marker-dot::after {
-  inset-block-start: 0;
-  inset-inline-start: 5px;
-  inline-size: 2px;
-  block-size: 12px;
+.hro-ink {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
 }
 
-.hi-marker[data-open='on'] .hi-marker-dot {
-  animation: none;
-  scale: 0.55;
+/* the stations layer — EXACTLY the art box (inset 0 of .hro-art) */
+.hro-stations-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.hro-elevation,
+.hro-ink .ev-svg {
+  block-size: 100%;
+  inline-size: 100%;
+  /* the ink rides currentColor so the dark theme inverts with the paper */
+  color: var(--hro-ink);
+}
+
+/* ── the ElevationArt ink grammar (the r359 elevation) ─────────────── */
+.ev-svg { display: block; }
+.ev-out { stroke: currentColor; }
+.ev-struct { stroke: currentColor; }
+.ev-glaze { stroke: currentColor; opacity: 0.8; }
+.ev-tree { stroke: currentColor; }
+.ev-tree-ghost { stroke: currentColor; opacity: 0.34; }
+.ev-dot { fill: currentColor; opacity: 0.62; }
+.ev-shadow { opacity: 0.95; }
+.ev-fill { fill: currentColor; opacity: 0.2; }
+.ev-refl { stroke: currentColor; opacity: 0.55; }
+.ev-dim { stroke: currentColor; opacity: 0.85; }
+.ev-dim-t {
+  font-family: var(--font-mono, 'IBM Plex Mono', ui-monospace, monospace);
+  font-size: 9px;
+  fill: currentColor;
   opacity: 0.85;
 }
+.ev-people { opacity: 0.9; }
 
-@keyframes hi-pulse {
-  0%,
-  100% {
-    opacity: 0.72;
-  }
-  50% {
-    opacity: 0.99;
-  }
-}
+/* staged ink-in — the intro gates flip .landing.intro-draw → .intro-done
+ * (hero-mechanics.css owns the belt; these are the seats) */
+.ev-i1, .ev-i2, .ev-i3, .ev-i4, .ev-i5 { opacity: 1; }
+.landing.intro-draw .ev-i1 { opacity: 0; }
+.landing.intro-draw .ev-i2 { opacity: 0; }
+.landing.intro-draw .ev-i3 { opacity: 0; }
+.landing.intro-draw .ev-i4 { opacity: 0; }
+.landing.intro-draw .ev-i5 { opacity: 0; }
+.landing.intro-draw .ev-i6 { opacity: 0; }
+/* the callout ink is hidden at rest — inspection reveals it */
+.ev-i6 { opacity: 0; transition: opacity 0.45s linear; }
+.hro-stage.is-inspected .ev-i6 { opacity: 1; }
 
-/* ── the revealed cards — OVERLAY presentation (>760px) ──────────────
-   Pure presentation laid out by the collision-aware pass (see
-   sheetGeometry.layoutAnnotationCards): anchored to the dot, clamped
-   inside the frame, never overlapping. Never interactive — the dots
-   and the reset control own the control path. */
-.hi-card {
+/* ── the inspection stations ──────────────────────────────────────── */
+.hro-station {
   position: absolute;
-  left: var(--c-x, -999px);
-  top: var(--c-y, -999px);
-  inline-size: var(--c-w, 204px);
-  block-size: var(--c-h, 88px);
+  translate: -50% -50%;
+  pointer-events: none; /* the button re-enables its own hits */
+}
+.hi-marker {
+  pointer-events: auto;
+  position: relative;
   display: grid;
-  align-content: center;
-  gap: var(--sp-0-5);
-  padding: var(--sp-2) var(--sp-3);
-  /* the reference's annotation slab (.home-hero-interact): the ink
-     ground carries a vermilion wash (the interact-block's 0.72 opacity
-     over the ink) — the mix reads ≈5.2:1 under the paper label, AA.
-     Flat sheet grammar: no border, no shadow, square corners. */
-  background: var(--text);
-  border: 0;
-  box-shadow: none;
-  border-radius: 0;
-  text-align: start;
-  pointer-events: none;
-  opacity: 0;
-  scale: 0.85;
-  z-index: var(--z-hro-card);
-  transition:
-    opacity var(--t-base) var(--ease),
-    scale var(--t-base) var(--ease);
+  place-items: center;
+  /* 44px touch target with a 10px visual square */
+  min-inline-size: 44px;
+  min-block-size: 44px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }
-
-/* the vermilion wash — the reference's .home-hero-interact-block
-   (absolute inset 0, accent at 0.72 over the ink ground) */
-.hi-card::before {
-  content: '';
+.hi-sq {
+  inline-size: 9px;
+  block-size: 9px;
+  background: var(--hro-sig);
+  outline: 1px solid var(--hro-paper);
+  outline-offset: -1px;
+  /* r359 D6 — the markers are DRAWN, flat: no hover pop (the reference's
+     own hotspots never scale); the tag's reveal is the interaction. */
+}
+/* focus: the universal ring (base.css) owns the marker's visibility —
+   r172a §3: zero private :focus-visible rules on the landing. */
+/* the callout tag — hairline chip, mono index + Arabic label */
+.hi-tag {
   position: absolute;
-  inset: 0;
-  background: var(--accent);
-  opacity: 0.72;
-  pointer-events: none;
-}
-
-.hi-card > * {
-  position: relative;
-  z-index: var(--z-hro-card-child);
-}
-
-.hi-card[data-open='on'] {
-  opacity: 1;
-  scale: 1;
-}
-
-.hi-marker-code {
-  color: var(--bg);
-  font-size: var(--fs-xxs);
-  font-weight: 700;
-  opacity: 0.82;
-}
-
-/* R321 §A6 — the code renders from attr(): the marker's mono code
-   stays out of innerText (the .auth-mark note owns the reasoning). */
-.hi-marker-code::before { content: attr(data-code); }
-
-/* the instrument card's Arabic label + body ride attr() too — the
-   whole hi-card is aria-hidden decor (§A6: out of innerText). */
-.hi-marker-label::before { content: attr(data-label); }
-.hi-marker-body::before { content: attr(data-body); }
-
-.hi-marker-label {
-  color: var(--bg);
-  font-size: var(--fs-sm);
-  font-weight: 700;
-}
-
-.hi-marker-body {
-  color: var(--bg);
-  font-size: var(--fs-xs);
-  line-height: 1.55;
-  opacity: 0.92;
-}
-
-/* ── the flow rail — the affordance row + the mobile cards ──────
-   >760px: a transparent overlay (the hint chip keeps its stage-bottom
-   position WITHOUT growing the stage — the percentage-positioned
-   hotspot pins never drift). ≤760px — the same breakpoint where the
-   pins already flow — the rail enters the document flow and carries
-   the revealed cards as readable blocks. ── */
-.hi-flow {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: var(--z-hro-flow);
-}
-
-.hi-flow-card {
-  display: none;
-  grid-template-columns: auto 1fr;
+  inset-block-start: calc(100% + 6px);
+  inset-inline-start: 50%;
+  translate: -50% 0;
+  display: inline-flex;
   align-items: baseline;
-  gap: var(--sp-1) var(--sp-2);
-  padding: var(--sp-3);
-  /* the annotation slab's flow twin — the same ink + vermilion wash
-     ground so the mobile presentation reads as ONE instrument */
-  position: relative;
-  isolation: isolate;
-  background: var(--text);
-  border: 0;
-  border-radius: var(--r-xs);
-  text-align: start;
+  gap: 0.5em;
+  padding: 0.35em 0.6em;
+  background: var(--hro-paper);
+  border: 1px solid var(--hro-ink);
+  white-space: nowrap;
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--hro-ink);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(4px);
+  transition:
+    opacity 0.35s cubic-bezier(0.625, 0.05, 0, 1),
+    transform 0.35s cubic-bezier(0.625, 0.05, 0, 1),
+    visibility 0.35s linear;
 }
-
-.hi-flow-card::before {
+.hro-station.hro-st-down .hi-tag {
+  inset-block-start: auto;
+  inset-block-end: calc(100% + 6px);
+  transform: translateY(-4px);
+}
+.hro-station.is-open .hi-tag {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.hi-tag-idx { color: var(--hro-sig); font-size: 10px; }
+/* the leader tick from the square to the tag */
+.hi-tag::before {
   content: '';
   position: absolute;
+  inset-block-start: -7px;
+  inset-inline-start: 50%;
+  inline-size: 1px;
+  block-size: 6px;
+  background: var(--hro-ink);
+}
+.hro-station.hro-st-down .hi-tag::before {
+  inset-block-start: auto;
+  inset-block-end: -7px;
+}
+/* the drag hint */
+.hro-hint {
+  position: absolute;
+  inset-block-end: 1.8%;
+  inset-inline-start: 50%;
+  translate: -50% 0;
+  font-size: 10px;
+  color: var(--hro-ink-2);
+  letter-spacing: 0;
+  padding: 0.3em 0.7em;
+  border: 1px dashed var(--hro-hair);
+  background: color-mix(in srgb, var(--hro-paper) 85%, transparent);
+  transition: opacity 0.4s linear;
+  pointer-events: none;
+}
+.hro-hint.is-gone { opacity: 0; }
+
+/* the ruler chrome — the reference's full drawing-sheet frame: vertical
+   tick columns at the stage's outer edges (full height) + horizontal
+   tick strips aligned with the dotted rules */
+.bp-rulers { position: absolute; inset: 0; pointer-events: none; }
+.bp-ruler {
+  position: absolute;
+  background-image: repeating-linear-gradient(
+    to var(--bp-tick-dir, right),
+    var(--hro-hair) 0 1px,
+    transparent 1px 6px
+  );
+}
+.bp-ruler-t { inset-block-start: 2.2%; inset-inline: 0; block-size: 4px; --bp-tick-dir: right; background-size: 100% 4px; }
+.bp-ruler-b { inset-block-end: 1.2%; inset-inline: 0; block-size: 4px; --bp-tick-dir: right; background-size: 100% 4px; }
+.bp-ruler-s { inset-inline-start: 0; inset-block: 0; inline-size: 4px; --bp-tick-dir: down; background-size: 4px 100%; }
+.bp-ruler-e { inset-inline-end: 0; inset-block: 0; inline-size: 4px; --bp-tick-dir: down; background-size: 4px 100%; }
+
+/* the ± registration crosses at the stage corners — the glyph paints
+   from ::before content (r321: never innerText, always CSS paint) */
+.bp-dmark {
+  position: absolute;
+  inline-size: 13px;
+  block-size: 13px;
+  pointer-events: none;
+}
+.bp-dmark::before {
+  content: '+';
+  position: absolute;
   inset: 0;
-  z-index: var(--z-hro-flow-under);
-  background: var(--accent);
-  opacity: 0.72;
+  font: 10px/13px var(--font-mono, ui-monospace, monospace);
+  color: var(--hro-ink);
+  text-align: center;
+}
+.bp-dmark-tl { inset-block-start: 1.2%; inset-inline-start: 1.2%; }
+.bp-dmark-tr { inset-block-start: 1.2%; inset-inline-end: 1.2%; }
+.bp-dmark-bl { inset-block-end: 1.2%; inset-inline-start: 1.2%; }
+.bp-dmark-br { inset-block-end: 1.2%; inset-inline-end: 1.2%; }
+
+/* ── [2] THE BOTTOM BAND ───────────────────────────────────────────── */
+.hro-content {
+  position: relative;
+  display: grid;
+  /* RTL: the H1 cell takes the reading start (grid's inline start = the
+   * right in RTL), the sub cell the far end — the reference's own
+   * bottom band mirrored (D4). */
+  grid-template-columns: minmax(0, 7fr) minmax(0, 4.4fr);
+  align-items: end;
+  gap: 0;
+  padding-block: 2.2% 2.4%;
+  padding-inline: 3.5%;
+  border-block-start: 1px solid var(--hro-hair);
+  background: var(--hro-paper);
+}
+/* the hairline vertical divider between the two cells */
+.hro-title-cell {
+  padding-inline-end: clamp(16px, 2.2vw, 34px);
+  padding-block-end: 0.6%;
+}
+.hro-sub-cell {
+  border-inline-start: 1px solid var(--hro-hair);
+  padding-inline-start: clamp(16px, 2.2vw, 34px);
+  display: grid;
+  gap: 1.1em;
+  justify-items: start;
+  padding-block-end: 0.6%;
 }
 
-.hi-flow-card .hi-marker-label {
-  font-size: var(--fs-body);
+/* the giant H1 — the D1 law */
+.hro-title,
+.hro-title .hro-line {
+  font-size: var(--hro-h1);
+  line-height: 1.04;           /* tight leading — the Arabic floor */
+  font-weight: 800;
+  color: var(--hro-ink);
+  letter-spacing: 0;           /* Arabic never tracks */
+  text-transform: none;
+  margin: 0;
+}
+.hro-lmask {
+  display: block;
+  overflow: hidden;             /* the mask-line reveal seat */
+  padding-block-end: 0.06em;   /* Arabic descenders clear the mask */
+  margin-block-end: -0.06em;
+}
+.hro-line { display: block; }
+
+/* the lead sentence */
+.hro-lead {
+  font-size: var(--hro-lead);
+  line-height: 1.5;
+  color: var(--hro-ink-2);
+  max-inline-size: 46ch;
 }
 
-.hi-flow-card .hi-marker-body {
-  grid-column: 1 / -1;
-  font-size: var(--fs-sm);
+/* the register cell — the reference's DISCOVER-MORE seat: a bordered
+ * cell, label rolls up while the royal fill wipes from the reading end */
+.hro-actions { display: flex; }
+.hro-cta {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9em;
+  padding: 0.85em 1.3em;
+  border: 1px solid var(--hro-ink);
+  color: var(--hro-ink);
+  background: transparent;
+  font-size: clamp(12px, 0.83vw, 15.5px);
+  font-weight: 600;
+  text-decoration: none;
+  overflow: hidden;
+  isolation: isolate;
+  min-block-size: 44px;
+  white-space: nowrap;
+}
+.hro-cta-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--hro-sig);
+  transform: scaleX(0);
+  transform-origin: left;          /* reading end in RTL = left */
+  transition: transform 0.42s cubic-bezier(0.625, 0.05, 0, 1);
+  z-index: -1;
+}
+.hro-cta:hover .hro-cta-fill { transform: scaleX(1); }
+.hro-cta:hover { color: #fff; border-color: var(--hro-sig); } /* color-gate: allow — white-on-signal, the reference's primary-button law */
+/* focus: the universal ring (base.css) owns visibility — no private
+   :focus-visible sub-language on the landing (r172a §3). */
+/* the label roll — one visible line; the twin rides below the fold */
+.hro-cta-roll {
+  display: grid;
+  overflow: hidden;
+  block-size: 1.5em;
+  align-content: start;
+}
+.hro-cta-top, .hro-cta-bot { display: block; line-height: 1.5; transition: transform 0.42s cubic-bezier(0.625, 0.05, 0, 1); white-space: nowrap; }
+.hro-cta-bot { color: #fff; } /* color-gate: allow — white-on-signal, the reference's primary-button law */
+.hro-cta:hover .hro-cta-top { transform: translateY(-1.5em); }
+
+/* ── [3] THE WORK STRIP (the value ticker at the seam) ─────────────── */
+.hro-work {
+  border-block-start: 1px solid var(--hro-hair);
+  padding-block: 0.9%;
+  padding-inline: 3.5%;
+  background: var(--hro-paper);
+}
+/* the strip's keyboard seat paints the 44px floor (the tap law) */
+.hro-work-track {
+  min-block-size: 44px;
+  align-items: center;
+}
+.hro-work-track {
+  display: flex;
+  gap: 0;
+  justify-content: space-between;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.hro-work-track::-webkit-scrollbar { display: none; }
+.hro-work-item {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.55em;
+  font-size: clamp(11px, 0.78vw, 13.5px);
+  color: var(--hro-ink-2);
+  padding-inline-end: 2.2em;
+  white-space: nowrap;
+}
+.hro-work-item .fo-mono { color: var(--hro-ink); font-size: 0.85em; }
+
+/* ── [4] THE SECTION FRAME ─────────────────────────────────────────── */
+.hro-edge {
+  position: absolute;
+  background: var(--hro-hair);
+  transform-origin: center;
+}
+.hro-edge-t { inset-block-start: 7px; inset-inline: 7px; block-size: 1px; }
+.hro-edge-b { inset-block-end: 7px; inset-inline: 7px; block-size: 1px; }
+.hro-edge-s { inset-inline-start: 7px; inset-block: 7px; inline-size: 1px; }
+.hro-edge-e { inset-inline-end: 7px; inset-block: 7px; inline-size: 1px; }
+
+.bp-plus {
+  position: absolute;
+  inline-size: 13px;
+  block-size: 13px;
+  pointer-events: none;
+}
+.bp-plus::before {
+  content: '+';
+  position: absolute;
+  inset: 0;
+  font: 10px/13px var(--font-mono, ui-monospace, monospace);
+  color: var(--hro-ink);
+  text-align: center;
+}
+.bp-plus-tl { inset-block-start: 2px; inset-inline-start: 2px; }
+.bp-plus-tr { inset-block-start: 2px; inset-inline-end: 2px; }
+.bp-plus-bl { inset-block-end: 2px; inset-inline-start: 2px; }
+.bp-plus-br { inset-block-end: 2px; inset-inline-end: 2px; }
+
+/* ── the grid-item floor (the r328 blowout law, kept): without it the
+   work strip's nowrap content inflates every band's track past the
+   viewport on narrow stages. ─────────────────────────────────────── */
+.hro > * { min-inline-size: 0; }
+.hro-work-track { max-inline-size: 100%; }
+
+/* ── breakpoints ──────────────────────────────────────────────────── */
+@media (max-width: 991px) {
+  .hro-content {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.2em;
+  }
+  .hro-sub-cell {
+    border-inline-start: none;
+    padding-inline-start: 0;
+    padding-block-end: 0;
+  }
+  .hro-title-cell { padding-inline-end: 0; }
 }
 
 @media (max-width: 767px) {
-  /* L1-b (R341 · T-16 #2) — the phone illustration's own mat: the 390
-     record seats the ink at x24 w342 (frame x16 w358 · img x24 w342);
-     our full-bleed stage ran the drawing out to the sheet frame's 8px
-     edge (~0 margin, the panel's "hero illustration butts against the
-     edges"). Padding-only: the stage box, its 8/5 aspect and every
-     pinned y below are untouched. The mat is 18px, not the record's
-     16px, because the drafting scene's ink runs past its viewBox on
-     the start side (~60 viewBox units, the authored crop) — at the
-     record's own 16px mat that internal <g> bbox lands at x5.7, fully
-     inside the viewport, and the edge390 union reads it as the content
-     edge (FAIL, −2.3); 18px keeps the bbox at x8.2 so the union stays
-     the measured 7px text edge. The VISIBLE ink (svg clips the crop)
-     seats at x26 — ≥20px gutters, 2px wide of the record's img, an
-     off-book seat (no mirror pin). max() rides the mat so notched
-     phones clear the safe area (env() is 0 in the harness — conformance
-     geometry unchanged). */
-  .hro .hro-stage {
-    padding-inline: max(18px, env(safe-area-inset-left, 0px))
-      max(18px, env(safe-area-inset-right, 0px));
+  .hro { min-block-size: calc(100svh - 8px); }
+  .hro-stage { padding-block: 6% 7%; padding-inline: 2%; }
+  .hro-art {
+    block-size: auto;
+    inline-size: 100%;
+    aspect-ratio: 960 / 546;
+    max-block-size: 82%;
   }
-
-  .hi-card {
-    display: none; /* the overlay presentation yields to the flow */
-  }
-
-  .hi-flow {
-    position: static;
-    pointer-events: auto;
-    display: grid;
-    gap: var(--sp-2);
-    padding-block-start: var(--sp-3);
-  }
-
-  .hi-flow .hi-hint {
-    position: static;
-    padding: 0 var(--sp-0-5);
-  }
-
-  .hi-flow[data-any-open='off'] .hi-flow-card {
-    display: none;
-  }
-
-  .hi-flow-card[data-open='on'] {
-    display: grid;
-  }
+  .hro-content { padding-inline: 2%; padding-block: 1.4em; }
+  .hro-lead { max-inline-size: 100%; }
+  .hro-work { padding-inline: 2%; }
+  .hro-work-track { justify-content: flex-start; }
+  .hro-work-item { padding-inline-end: 1.4em; }
+  .hi-tag { font-size: 11px; }
 }
 
-/* the affordance row (overlaid at the stage's bottom corner above
-   760px — the R308 position; static inside the flow rail below) */
-.hi-hint {
-  position: absolute;
-  inset-block-end: var(--sp-2);
-  inset-inline-start: var(--sp-3);
-  display: flex;
-  align-items: center;
-  gap: var(--sp-3);
-  pointer-events: auto;
-}
-
-.hi-hint-text {
-  /* R328 (H2 · S-B) — the hint is real copy, not decoration: the old
-     --text-faint seat measured ~4.5:1 on paper (borderline at 13px).
-     --text-secondary clears AA on BOTH sheets with room. */
-  color: var(--text-secondary);
-  font-size: var(--fs-xxs); /* 13px @1440 — above the brief's 12px floor */
-}
-
-.hi-reset {
-  border: 1px solid var(--rule);
-  border-radius: var(--r-xs);
-  background: color-mix(in srgb, var(--surface) 88%, transparent);
-  color: var(--text-secondary);
-  font-size: var(--fs-xxs);
-  padding: var(--sp-0-5) var(--sp-2);
-  cursor: pointer;
-  transition:
-    color var(--t-fast) var(--ease),
-    border-color var(--t-fast) var(--ease);
-}
-
-@media (hover: hover) {
-  .hi-reset:hover {
-    color: var(--accent-ink);
-    border-color: var(--accent);
-  }
-}
-
-/* ── fo-ticker — the capabilities crawl (the hero's continuous
-   instrument). RTL loop: the pair of tracks slides toward the
-   reading direction — new items continuously enter from the edge
-   the eye is reading toward. ─────────────────────────────────────── */
-.fo-ticker {
-  grid-column: 1 / -1;
-  display: flex;
-  overflow: hidden;
-  border-block: 1px solid var(--rule);
-  margin-block-start: var(--sp-8);
-  gap: var(--sp-8);
-}
-
-.fo-ticker-track {
-  --fo-ticker-lap: 36s; /* the crawl's lap duration (owner seat: hero.css holds the ticker's motion tokens; patterns.css lp-marquee reads it) */
-  display: flex;
-  flex: 0 0 auto;
-  min-inline-size: 100%;
-  align-items: center;
-  gap: var(--sp-8);
-  padding-block: var(--sp-2-5);
-  animation: fo-ticker-rtl var(--fo-ticker-lap) linear infinite;
-}
-
-.fo-ticker-item {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sp-2-5);
-  white-space: nowrap;
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  color: var(--text-secondary);
-}
-
-.fo-ticker-item .fo-mono {
-  color: var(--accent-ink);
-  font-size: var(--fs-xxs);
-}
-
-@keyframes fo-ticker-rtl {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(100%);
-  }
-}
-
-/* ── sl — the entrance loader («لوحة البدء») ──────────────────────── */
-
-/* ═══ r338 T-13b — interaction-state seats (interact.mjs parity) ═════
- * The reference census twins (div.home-hero-sub-wrap > interactive[N])
- * bound with data-spec-hover=N in Hero.tsx. Each twin fires on pointer
- * hover AND on focus (:focus-within matches the seat itself holding
- * focus — r172a §3: ZERO :focus-visible rules in the landing family;
- * the universal base.css ring carries the outline, these twins carry
- * the recorded delta channels: color + the tr lift). Per-bp gates
- * mirror the recorded delta classes EXACTLY — a NOCHANGE record at a
- * breakpoint means no hover arm there (a surprise hover is as wrong as
- * a missing one); the focus arms stay ungated (keyboard parity is not
- * a per-bp property). .probe-hover is the conformance probe's class.
- *   0 login · 3 register · 1/2/5/7/4/6 work strip · 8/9 deco ·
- *   11–14 ± dmarks · 15–20 the graticule measures. */
-.hro {
-  /* ═══ R347 — the hero sheet's stacking rungs (css-counts: raw z-index
-     literals live on scoped custom properties, never raw in the sheets —
-     the --z-hero-grid precedent) ═══ */
-  --z-hro-rulers: 1;      /* the dashed ruler overlay over the art band */
-  --z-hro-layer: 3;       /* the inspection instrument's frame layer */
-  --z-hro-box: 4;         /* the drag box + the leaders sheet */
-  --z-hro-station: 5;     /* the clickable inspection stations */
-  --z-hro-card: 6;        /* the readout card (tops the stations) */
-  --z-hro-card-child: 1;  /* a card's children over its accent ::before */
-  --z-hro-flow: 3;        /* the reduced-motion flow rail */
-  --z-hro-flow-under: -1; /* the flow card's accent underlay */
-  --hro-seat-ink: var(--accent); /* 2026 — the royal signal owns the seat ink (was the measured rgb(250,54,0) ember; ADDENDUM 9 scoped-var pattern resolved onto the canonical token) */
-  --hro-seat-ghost: rgb(255, 243, 239); /* color-gate: allow — measured reference register-hover wash-off (the primary's ghost after-state: fill → transparent, ink → rgb(255,243,239)) */
-  --hro-seat-lift: translateY(-0.12rem);
-}
-
-/* 0 — the login secondary (color+bd, every recorded bp):
- * ink rgb(40,40,40) → the measured ember. r351 P1: the hero seat has
- * no login link anymore (it lives in the masthead); the rule is inert
- * (kept for rollback). */
-.hro .hro-alt:is(:hover, :focus-within),
-.hro .hro-alt.probe-hover {
-  color: var(--hro-seat-ink);
-  border-bottom-color: var(--hro-seat-ink);
-  transform: var(--hro-seat-lift);
-}
-
-/* 3 — the register primary (r351 P1: the roll-swap + fill-wipe seat).
- * The hover/focus arms now ride the fill mechanic itself
- * (.hro-cta-fill scaleY + .hro-cta-roll translate — mechanics [C]);
- * the twin keeps ONE recorded channel (the lift) and no color/bg/border
- * fight (the previous ghost-flip belonged to the retired boxed skin). */
-.hro .hro-cta:is(:hover, :focus-within),
-.hro .hro-cta.probe-hover {
-  transform: var(--hro-seat-lift);
-}
-
-/* the work strip seats — focus arm ungated, hover arms bp-gated.
- * Recorded class color+bd (the strip's captions warm on hover) */
-.hro .hro-work-item[data-spec-hover]:focus-within {
-  color: var(--hro-seat-ink);
-  transform: var(--hro-seat-lift);
-}
-
-/* the deco seats (8/9) — the probe focus-walks the first ten twins,
- * so the cards carry the same ungated keyboard-parity arm (they are
- * tabIndex -1 in Hero.tsx: programmatically focusable, never a tab
- * stop — the strip stays decorative chrome) */
-.hro .hro-deco[data-spec-hover]:focus-within {
-  color: var(--hro-seat-ink);
-  transform: var(--hro-seat-lift);
-}
-
-.hro .hro-work-item[data-spec-hover="1"]:hover,
-.hro .hro-work-item[data-spec-hover="1"].probe-hover {
-  color: var(--hro-seat-ink);
-  transform: var(--hro-seat-lift);
-}
-
-@media (min-width: 768px) and (max-width: 1440px) {
-  /* 2 — recorded 768/1024/1440 only (NOCHANGE at 1920) */
-  .hro .hro-work-item[data-spec-hover="2"]:hover,
-  .hro .hro-work-item[data-spec-hover="2"].probe-hover {
-    color: var(--hro-seat-ink);
-    transform: var(--hro-seat-lift);
-  }
-}
-
-@media (min-width: 1024px) {
-  /* 4 + 6 — recorded ≥1024 (6 carries the tr lift) */
-  .hro .hro-work-item[data-spec-hover="4"]:hover,
-  .hro .hro-work-item[data-spec-hover="4"].probe-hover,
-  .hro .hro-work-item[data-spec-hover="6"]:hover,
-  .hro .hro-work-item[data-spec-hover="6"].probe-hover {
-    color: var(--hro-seat-ink);
-    transform: var(--hro-seat-lift);
-  }
-}
-
-@media (min-width: 1440px) {
-  /* 5 — recorded ≥1440 */
-  .hro .hro-work-item[data-spec-hover="5"]:hover,
-  .hro .hro-work-item[data-spec-hover="5"].probe-hover {
-    color: var(--hro-seat-ink);
-    transform: var(--hro-seat-lift);
-  }
-}
-
-@media (min-width: 1920px) {
-  /* 7 — recorded at 1920 only */
-  .hro .hro-work-item[data-spec-hover="7"]:hover,
-  .hro .hro-work-item[data-spec-hover="7"].probe-hover {
-    color: var(--hro-seat-ink);
-    transform: var(--hro-seat-lift);
-  }
-}
-
-/* the stage chrome seats (deco cards, ± dmarks, graticule measures) —
- * never focus-walked, so pure bp-gated hover twins */
-@media (min-width: 1024px) {
-  .hro :is([data-spec-hover="8"], [data-spec-hover="11"], [data-spec-hover="16"]):hover,
-  .hro :is([data-spec-hover="8"], [data-spec-hover="11"], [data-spec-hover="16"]).probe-hover {
-    color: var(--hro-seat-ink);
-    transform: var(--hro-seat-lift);
-  }
-}
-
-@media (min-width: 1440px) {
-  .hro :is([data-spec-hover="12"]):hover,
-  .hro :is([data-spec-hover="12"]).probe-hover {
-    color: var(--hro-seat-ink);
-    transform: var(--hro-seat-lift);
-  }
-}
-
-@media (min-width: 1024px) and (max-width: 1440px) {
-  /* 19 — recorded at 1024/1440 only */
-  .hro :is([data-spec-hover="19"]):hover,
-  .hro :is([data-spec-hover="19"]).probe-hover {
-    color: var(--hro-seat-ink);
-    transform: var(--hro-seat-lift);
-  }
-}
-
-@media (min-width: 1920px) {
-  .hro :is([data-spec-hover="9"], [data-spec-hover="13"], [data-spec-hover="14"], [data-spec-hover="15"], [data-spec-hover="17"], [data-spec-hover="18"], [data-spec-hover="20"]):hover,
-  .hro :is([data-spec-hover="9"], [data-spec-hover="13"], [data-spec-hover="14"], [data-spec-hover="15"], [data-spec-hover="17"], [data-spec-hover="18"], [data-spec-hover="20"]).probe-hover {
-    color: var(--hro-seat-ink);
-    transform: var(--hro-seat-lift);
-  }
-}
-
-/* ════════════════════════════════════════════════════════════════════
-   THE PLATE — CampusPlate's drawing language (the hero's centerpiece
-   AND, in its trace variant, the preloader's self-drawing sheet). The
-   colour ladder rides the tokens: ink on --text, furniture on
-   --grid-line, the ONE signal family on --accent. Zero raw values.
-   Non-scaling strokes: the ink keeps its authored weight at every
-   render size (the phone plate renders hairlines without it).
-   ════════════════════════════════════════════════════════════════════ */
-
-/* the plate seat — centered at its own composed width: the drawing
- * reads as the sheet's centerpiece with paper breathing around it
- * (the reference's illustration spans ~64% of the viewport; ours sits
- * at the same order of magnitude and never full-bleeds). */
-.hro-plate {
-  /* the absolute cap is px on purpose: the fluid rem root (~8.33px @1440)
-     makes large rem values collapse — the plate caps at ~69% of the
-     1440 band and grows with the band below that */
-  inline-size: min(100%, 1000px);
-  margin-inline: auto;
-  display: block;
-}
-
-.cp-svg {
-  inline-size: 100%;
-  block-size: auto;
-  display: block;
-}
-
-/* the stroke ladder — three ink weights, the drafting hierarchy */
-.hro-plate .cp-2,
-.pl-plate .cp-2 {
-  stroke: var(--text);
-  stroke-width: 2.25;
-  fill: none;
-  vector-effect: non-scaling-stroke;
-}
-
-.hro-plate .cp-15,
-.pl-plate .cp-15 {
-  stroke: var(--text);
-  stroke-width: 1.5;
-  fill: none;
-  vector-effect: non-scaling-stroke;
-}
-
-.hro-plate .cp-1,
-.pl-plate .cp-1 {
-  stroke: var(--text);
-  stroke-width: 1;
-  fill: none;
-  opacity: 0.8;
-  vector-effect: non-scaling-stroke;
-}
-
-/* the grey furniture — dims, crosses, ticks, hatch (quiet drafting
- * chrome, never competing with the ink) */
-.hro-plate .cp-f,
-.pl-plate .cp-f {
-  stroke: var(--grid-line);
-  stroke-width: 1;
-  fill: none;
-  vector-effect: non-scaling-stroke;
-}
-
-/* the fills' fade seat — the intro belt's fill-opacity rung does not
- * touch these (no bp-drawable class): the whole seat fades in with the
- * fifth layer's delay so the washes resolve as the masses draw */
-.landing.intro-draw .hro-stage .cp-plate-fills {
-  opacity: 0;
-}
-
-.landing.intro-done .hro-stage .cp-plate-fills {
-  opacity: 1;
-  transition: opacity var(--t-base) var(--ease);
-  transition-delay: 710ms;
-}
-
-/* the fills — paper knockouts + the restrained grey washes */
-.hro-plate .cp-fill-paper {
-  fill: var(--bg);
-  stroke: none;
-}
-
-.hro-plate .cp-fill-wash {
-  fill: var(--grid-line);
-  fill-opacity: 0.16;
-  stroke: none;
-}
-
-.hro-plate .cp-fill-wash-soft {
-  fill: var(--grid-line);
-  fill-opacity: 0.09;
-  stroke: none;
-}
-
-/* the dimension labels — the plate's mono voice (11px-rendered floor
- * through the inverse-scale var the component measures) */
-.hro-plate .cp-dim {
-  font-family: var(--font-mono);
-  font-size: var(--cp-label-fs, 13px);
-  fill: var(--text-muted);
-  letter-spacing: 0.06em;
-}
-
-/* the ONE signal family — the checkpoint pennant + the mastery beacon
- * (fill marks, the raw accent's documented fill register) */
-.hro-plate .cp-signal,
-.pl-plate .cp-signal {
-  fill: var(--accent);
-  stroke: none;
-  vector-effect: non-scaling-stroke;
-}
-
-/* ── the plate's RM pin — the intro belt collapses to the settled
- * sheet; the fills resolve instantly (hero-mechanics owns the stroke
- * side; this seat owns the washes' opacity seat). ── */
+/* ── reduced motion ───────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  .landing.intro-draw .hro-stage .cp-plate-fills,
-  .landing.intro-done .hro-stage .cp-plate-fills {
-    opacity: 1;
-    transition: none;
-  }
+  .hro-cta-fill,
+  .hro-cta-top,
+  .hi-sq,
+  .hi-tag,
+  .ev-i6 { transition: none; }
 }

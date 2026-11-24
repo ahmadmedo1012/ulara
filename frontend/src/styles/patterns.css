@@ -2173,6 +2173,9 @@ a.pf-row-link {
     text-decoration: none;
     border-block-end: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
     padding-block-end: var(--sp-0-5);
+    /* r359 A1 §C — the painted 44px tap floor (the layout rhythm never moves) */
+    padding-block: 14px; /* spacing-gate: allow — the painted 44px tap floor: the sp-3/sp-4 half-step, rhythm-safe */
+    margin-block: -14px; /* spacing-gate: allow — the tap floor's offsetting bleed, keeps the rhythm */
   }
 
   /* ══ G·CTA · THE PAIR — the sheets' own actions (the pages.mjs hover

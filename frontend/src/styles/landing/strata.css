@@ -1297,7 +1297,14 @@
    @1024×768 / 1440×900 after the copy cut + the band compactions):
    wy 1778→995 @1024 · 2488→1317 @1440 · cta 856→602 · 1164→768. */
 .st-section { contain-intrinsic-size: auto calc(-0.5px + 50.24vw); }  /* 514 @1024 · 723 @1440 */
-.chapters   { contain-intrinsic-size: auto calc(2835.7px + 201.63vw); } /* 4900 @1024 · 5739 @1440 — the deliberate track (100dvh − 1.56rem + 540dvh scrub, journey.css --jt-scrub): linear fit over the two gate anchors */
+.chapters   { contain-intrinsic-size: auto calc(2835.7px + 201.63vw); }
+/* r359 A1 §C — the phone band's intrinsic follows the compressed
+   track (the sticky frame + the tight ladder): the placeholder must
+   not overshoot the rendered box or the page height jumps when the
+   section enters the viewport. */
+@media (max-width: 767px) {
+  .chapters { contain-intrinsic-size: auto 2050px; }
+} /* 4900 @1024 · 5739 @1440 — the deliberate track (100dvh − 1.56rem + 540dvh scrub, journey.css --jt-scrub): linear fit over the two gate anchors */
 .pr-section { contain-intrinsic-size: auto calc(2px + 49.28vw); }   /* 507 @1024 · 712 @1440 */
 .wy-section { contain-intrinsic-size: auto calc(202.4px + 77.4vw); }  /* 995 @1024 · 1317 @1440 (r351 re-pin) */
 .rl-section { contain-intrinsic-size: auto calc(436px + 31.25vw); }  /* 756 @1024 · 886 @1440 */
@@ -1308,6 +1315,13 @@
 @media (min-width: 992px) and (max-width: 1179px) {
   .st-section { contain-intrinsic-size: auto calc(-0.5px + 50.24vw); }
   .chapters   { contain-intrinsic-size: auto calc(2835.7px + 201.63vw); }
+/* r359 A1 §C — the phone band's intrinsic follows the compressed
+   track (the sticky frame + the tight ladder): the placeholder must
+   not overshoot the rendered box or the page height jumps when the
+   section enters the viewport. */
+@media (max-width: 767px) {
+  .chapters { contain-intrinsic-size: auto 2050px; }
+}
   .pr-section { contain-intrinsic-size: auto calc(2px + 49.28vw); }
   .wy-section { contain-intrinsic-size: auto calc(30px + 170.67vw); }
   .rl-section { contain-intrinsic-size: auto calc(436px + 31.25vw); }

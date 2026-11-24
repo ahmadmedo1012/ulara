@@ -25,3 +25,18 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+
+/* ══ r359 A1 §C — the shared guest text-link grammar (the painted 44px
+   tap floor). The .fo-text-link family's base lives in the colleges
+   sheet; the campus family uses the class without loading that sheet,
+   so the page-scoped copy carries the SAME grammar (color + floor) —
+   inline boxes paint the hit box, the rhythm never moves. ═════════ */
+.cu-foot .fo-text-link {
+  color: var(--accent-ink);
+  font-weight: 600;
+  text-decoration: none;
+  border-block-end: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  padding-block: 14px; /* spacing-gate: allow — the painted 44px tap floor: 14px is the half-step between the sp-3/sp-4 grid, rhythm-safe */
+  margin-block: -14px; /* spacing-gate: allow — the painted 44px tap floor's offsetting bleed, keeps the layout rhythm */
+}

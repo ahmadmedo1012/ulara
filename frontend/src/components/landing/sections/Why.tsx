@@ -15,57 +15,8 @@
  * screenshots) — is RETIRED from the mount; the file stays in the tree
  * for rollback, and the head's note seat now tells the truth about the
  * diagrams instead of claiming screenshots. */
-import { useState } from 'react';
 import { RevealCssClass } from '../../../hooks/useReveal';
 import { WhyPanels } from '../plates/WhyPanels';
-
-/* r351 P6 — THREE questions, one honest sentence each (the measured
- * reference density; the assistant-optional and trial disclosures keep
- * their seats on /capabilities and /help where they belong). */
-const FAQ = [
-  {
-    q: 'هل بياناتنا معزولة فعلًا؟',
-    a: 'نعم — قاعدة بيانات مستقلة لكل مؤسسة، وسجلّ تدقيق يوثّق كل وصول.',
-  },
-  {
-    q: 'ماذا يعني «عربية-أولًا»؟',
-    a: 'الواجهة والبحث والتصميم عربية أولًا — RTL أصيل، لا ترجمة ملحقة.',
-  },
-  {
-    q: 'كيف تُحسب مصفوفة الإتقان؟',
-    a: 'خلية إتقان لكل مفهوم — من الإجابات والاختبارات، لا من الحضور.',
-  },
-] as const;
-
-function FaqItem({ q, a }: { q: string; a: string }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <div className={`wy-faq-item${open ? ' is-open' : ''}`}>
-      <button
-        type="button"
-        className="wy-faq-q"
-        onClick={() => setOpen((o) => !o)}
-        aria-expanded={open}
-      >
-        <span className="wy-faq-qrow">
-          <span className="wy-faq-plus" aria-hidden="true" />
-          <span className="wy-faq-qtext">{q}</span>
-        </span>
-        <span className="wy-faq-mark fo-mono" aria-hidden="true" dir="ltr">
-          +
-        </span>
-      </button>
-      {/* the answer collapses on the grid-rows axis (the modern
-          accordion pattern) — a state change, never a hidden-content
-          reveal: the reveal law does not apply to interactive state */}
-      <div className="wy-faq-a">
-        <div className="wy-faq-a-in">
-          <p className="wy-faq-atext">{a}</p>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export function Why() {
   return (
@@ -101,21 +52,9 @@ export function Why() {
           see the file head + plates/WhyPanels.tsx) */}
       <WhyPanels />
 
-      {/* the FAQ — the sandbox's five questions, closing the band */}
-      <div id="faq" className="wy-faq">
-        <div className="wy-faq-head">
-          <RevealCssClass as="div" className="wy-faq-kick">
-            <p className="wy-faq-kicker">الأسئلة الشائعة</p>
-          </RevealCssClass>
-          <span className="wy-faq-dash" aria-hidden="true" />
-          <span className="wy-faq-count fo-mono" dir="ltr">FAQ/03</span>
-        </div>
-        <RevealCssClass as="div" className="wy-faq-list" delay={1}>
-          {FAQ.map((f) => (
-            <FaqItem key={f.q} q={f.q} a={f.a} />
-          ))}
-        </RevealCssClass>
-      </div>
+      {/* r359 A1 — the FAQ RETIRES from the landing (the reference's
+          why band closes on the four pillars; the three questions
+          live on /help where they belong — the ≥50% copy-cut law). */}
     </section>
   );
 }

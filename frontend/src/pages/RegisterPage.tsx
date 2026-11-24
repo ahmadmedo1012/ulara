@@ -24,6 +24,11 @@ import { isCommonPassword } from '../lib/commonPasswords';
 // seat PAGES-GAP §4 maps (RegisterPage.tsx:655 area), both role forms.
 import { ConsentLine } from '../components/ConsentLine';
 import type { AppRole } from '../stores/auth.store';
+// r359 · A1-AUTH — the auth sheets' measured grammar (the appended
+// AUTH section of errors.css, A1-owned; unlayered + .auth-shell-scoped
+// so only these four sheets drift). The base sheet rules stay in
+// patterns.css.
+import '../styles/errors.css';
 
 /**
  * Self-serve registration is restricted to academic roles.
@@ -594,7 +599,7 @@ function InviteCodeField({ index, error, hint, register }: {
   register: ReturnType<UseFormReturn<StudentInputs>['register']>;
 }) {
   return (
-    <Field index={index} label="كود الدعوة (اختياري)" error={error}>
+    <Field index={index} label="كود الدعوة (اختياري)" error={error} micro="TEXT · 48PX">
       <input
         className="input auth-input"
         type="text"
@@ -652,18 +657,18 @@ function StudentForm({ form, error, isPending, faculties, institutions, institut
           into the same ruled block; the label/control contracts are
           unchanged). */}
       <div className="auth-cells">
-      <Field index="[01]" label="الاسم الأول" error={form.formState.errors.firstName?.message}>
+      <Field index="[01]" label="الاسم الأول" error={form.formState.errors.firstName?.message} micro="TEXT · 48PX">
         <input className="input auth-input" type="text" autoComplete="given-name" {...form.register('firstName')} />
       </Field>
-      <Field index="[02]" label="اللقب" error={form.formState.errors.lastName?.message}>
+      <Field index="[02]" label="اللقب" error={form.formState.errors.lastName?.message} micro="TEXT · 48PX">
         <input className="input auth-input" type="text" autoComplete="family-name" {...form.register('lastName')} />
       </Field>
 
-      <Field index="[03]" label="البريد الإلكتروني" error={form.formState.errors.email?.message}>
+      <Field index="[03]" label="البريد الإلكتروني" error={form.formState.errors.email?.message} micro="EMAIL · 48PX">
         <input className="input auth-input" type="email" dir="ltr" placeholder="example@email.com" autoComplete="email" {...form.register('email')} />
       </Field>
 
-      <Field index="[04]" label="كلمة المرور (12 حرفًا على الأقل)" error={form.formState.errors.password?.message}>
+      <Field index="[04]" label="كلمة المرور (12 حرفًا على الأقل)" error={form.formState.errors.password?.message} micro="PASS · 48PX">
         {/* dir="ltr": passwords are overwhelmingly Latin runs; the caret
             and masked glyphs must not bidi-flip in RTL. The 12-dot
             placeholder carries the length floor (and marks the field
@@ -686,7 +691,7 @@ function StudentForm({ form, error, isPending, faculties, institutions, institut
       <PasswordStrengthHint password={passwordValue} />
 
       <div className="auth-cells">
-      <Field index="[05]" label="رقم القيد الجامعي" error={form.formState.errors.universityId?.message}>
+      <Field index="[05]" label="رقم القيد الجامعي" error={form.formState.errors.universityId?.message} micro="TEXT · 48PX">
         {/* dir="ltr": university IDs are Latin/digit runs (2024-CS-1234)
             that bidi-scramble inside an RTL input. */}
         <input className="input auth-input" type="text" placeholder="مثلاً 2024-CS-1234" dir="ltr" {...form.register('universityId')} />
@@ -702,7 +707,7 @@ function StudentForm({ form, error, isPending, faculties, institutions, institut
         error={form.formState.errors.institutionId?.message}
       />
 
-      <Field index="[07]" label="الكلّيّة" error={form.formState.errors.facultyId?.message}>
+      <Field index="[07]" label="الكلّيّة" error={form.formState.errors.facultyId?.message} micro="SEL · 48PX">
         {/* r157 F5 (6A11 #5 opt-in): the faculties skeleton announces
             itself — role=status + aria-busy via the Wave-1 Skeleton
             aria-label contract. */}
@@ -728,6 +733,7 @@ function StudentForm({ form, error, isPending, faculties, institutions, institut
       <Field
         index="[08]"
         label="القسم"
+        micro="SEL · 48PX"
         /* r157 F5: while the honest empty state is showing, the
            «اختر القسم» error would name a control that doesn't exist —
            the empty box IS the explanation, so the field error is
@@ -744,7 +750,7 @@ function StudentForm({ form, error, isPending, faculties, institutions, institut
         )}
       </Field>
 
-      <Field index="[09]" label="السنة الدراسية" error={form.formState.errors.year?.message}>
+      <Field index="[09]" label="السنة الدراسية" error={form.formState.errors.year?.message} micro="SEL · 48PX">
         <select className="auth-input" {...form.register('year')}>
           {[1, 2, 3, 4, 5, 6, 7, 8].map((y) => <option key={y} value={y}>السنة {y}</option>)}
         </select>
@@ -773,7 +779,15 @@ function StudentForm({ form, error, isPending, faculties, institutions, institut
 
       <button type="submit" className="auth-submit" disabled={isPending} aria-busy={isPending}>
         {isPending && <span className="auth-submit-spinner" aria-hidden />}
-        {isPending ? 'جارٍ الإنشاء…' : 'إنشاء الحساب'}
+        {isPending ? 'جارٍ الإنشاء…' : (
+          /* r359 grammar #4 — the primary's label ROLLS one line up on
+             hover/focus (.auth-roll; the aria-hidden duplicate never
+             enters the a11y tree). */
+          <span className="auth-roll">
+            <span className="auth-roll-line">إنشاء الحساب</span>
+            <span className="auth-roll-line" aria-hidden="true">إنشاء الحساب</span>
+          </span>
+        )}
       </button>
       {/* R320 §D (c2-LEGAL · PAGES-GAP §4): the consent line under the
           submit — «بإنشاء الحساب أنت توافق على شروط الاستخدام وسياسة
@@ -828,18 +842,18 @@ function TeacherForm({ form, error, isPending, faculties, institutions, institut
           monotonic [01]..[08] indices (same grammar as the student
           sheet; the label/control contracts are unchanged). */}
       <div className="auth-cells">
-      <Field index="[01]" label="الاسم الأول" error={form.formState.errors.firstName?.message}>
+      <Field index="[01]" label="الاسم الأول" error={form.formState.errors.firstName?.message} micro="TEXT · 48PX">
         <input className="input auth-input" type="text" autoComplete="given-name" {...form.register('firstName')} />
       </Field>
-      <Field index="[02]" label="اللقب" error={form.formState.errors.lastName?.message}>
+      <Field index="[02]" label="اللقب" error={form.formState.errors.lastName?.message} micro="TEXT · 48PX">
         <input className="input auth-input" type="text" autoComplete="family-name" {...form.register('lastName')} />
       </Field>
 
-      <Field index="[03]" label="البريد الجامعي" error={form.formState.errors.email?.message}>
+      <Field index="[03]" label="البريد الجامعي" error={form.formState.errors.email?.message} micro="EMAIL · 48PX">
         <input className="input auth-input" type="email" dir="ltr" placeholder="example@email.com" autoComplete="email" {...form.register('email')} />
       </Field>
 
-      <Field index="[04]" label="كلمة المرور (12 حرفًا على الأقل)" error={form.formState.errors.password?.message}>
+      <Field index="[04]" label="كلمة المرور (12 حرفًا على الأقل)" error={form.formState.errors.password?.message} micro="PASS · 48PX">
         {/* dir="ltr": passwords are overwhelmingly Latin runs; the caret
             and masked glyphs must not bidi-flip in RTL. The 12-dot
             placeholder carries the length floor (and marks the field
@@ -872,7 +886,7 @@ function TeacherForm({ form, error, isPending, faculties, institutions, institut
         error={form.formState.errors.institutionId?.message}
       />
 
-      <Field index="[06]" label="الكلّيّة" error={form.formState.errors.facultyId?.message}>
+      <Field index="[06]" label="الكلّيّة" error={form.formState.errors.facultyId?.message} micro="SEL · 48PX">
         {/* r157 F5 (6A11 #5 opt-in): the faculties skeleton announces
             itself — role=status + aria-busy via the Wave-1 Skeleton
             aria-label contract. */}
@@ -898,6 +912,7 @@ function TeacherForm({ form, error, isPending, faculties, institutions, institut
       <Field
         index="[07]"
         label="القسم"
+        micro="SEL · 48PX"
         error={deptEmpty ? undefined : form.formState.errors.departmentId?.message}
       >
         {deptEmpty ? (
@@ -910,7 +925,7 @@ function TeacherForm({ form, error, isPending, faculties, institutions, institut
         )}
       </Field>
 
-      <Field index="[08]" label="التخصص العلمي" error={form.formState.errors.specialty?.message}>
+      <Field index="[08]" label="التخصص العلمي" error={form.formState.errors.specialty?.message} micro="TEXT · 48PX">
         <input className="input auth-input" type="text" placeholder="مثلاً: الذكاء الاصطناعي" {...form.register('specialty')} />
       </Field>
       </div>
@@ -932,7 +947,14 @@ function TeacherForm({ form, error, isPending, faculties, institutions, institut
 
       <button type="submit" className="auth-submit" disabled={isPending} aria-busy={isPending}>
         {isPending && <span className="auth-submit-spinner" aria-hidden />}
-        {isPending ? 'جارٍ الإنشاء…' : 'إنشاء الحساب'}
+        {isPending ? 'جارٍ الإنشاء…' : (
+          /* r359 grammar #4 — the primary's label ROLLS one line up on
+             hover/focus (.auth-roll; the student form's twin seat). */
+          <span className="auth-roll">
+            <span className="auth-roll-line">إنشاء الحساب</span>
+            <span className="auth-roll-line" aria-hidden="true">إنشاء الحساب</span>
+          </span>
+        )}
       </button>
       {/* R320 §D: the same consent line on the TEACHER step-2 form —
           both registration paths acknowledge the same two policies. */}
@@ -954,6 +976,10 @@ interface FieldProps {
   index: string;
   label: string;
   error?: string;
+  /** r359 grammar #6 — the tiny mono caption under the control
+   *  (Latin run, dir=ltr, decorative; names the control's kind and
+   *  measured height). */
+  micro?: string;
   children: React.ReactNode;
 }
 
@@ -974,7 +1000,7 @@ interface FieldProps {
  *
  *  R315 (K-I): the field renders as a ruled CELL row (index + label +
  *  control) — same ARIA contract, new seat. */
-function Field({ index, label, error, children }: FieldProps) {
+function Field({ index, label, error, micro, children }: FieldProps) {
   const id = useId();
   const errorId = `${id}-error`;
   const wired = Children.map(children, (child) => {
@@ -993,6 +1019,7 @@ function Field({ index, label, error, children }: FieldProps) {
       <label htmlFor={id} className="form-label">{label}</label>
       <div className="auth-cell-control">
         <div className="auth-input-wrap">{wired}</div>
+        {micro && <span className="auth-micro" dir="ltr" aria-hidden="true">{micro}</span>}
         {error && <span id={errorId} className="auth-field-error">{error}</span>}
       </div>
     </div>
@@ -1026,7 +1053,7 @@ function InstitutionField({
   error,
 }: InstitutionFieldProps) {
   return (
-    <Field index={index} label="المؤسسة التعليمية" error={error}>
+    <Field index={index} label="المؤسسة التعليمية" error={error} micro="SEL · 48PX">
       {institutions.status === 'loading' && (
         <Skeleton className="auth-select-skeleton" aria-label="جارٍ تحميل المؤسسات" />
       )}

@@ -66,14 +66,10 @@ import { cycleFocusTrap } from '../../../lib/focusTrap';
  * owns the viewport via the ref-counted body lock (lib/scrollLock). */
 const MENU_SCROLL_LOCK_KEY = 'landing-mobile-menu';
 
-/* ── R331 — the seat register: the site's real public routes in the
- * reference's own order (home first, the deep surfaces after). `anchor`
- * seats stay in-page (the landing's own bands); every other seat is a
- * router route so the guest exit-sweep (GuestReveal) owns the
- * navigation. المسابقات is auth-gated — the link rides the same cell
- * grammar and the ProtectedRoute gives the guest the honest login wall
- * (documented by this file's grammar comments — the r331 web-nav doc was
- * lost in the 1.0 squash). */
+/* ── R331 → r359 — the seat register: the reference's OWN count (four
+ * ruled cells + the signal CTA) on the desktop bar; the two deep
+ * surfaces (المسابقات · التطبيق) ride the MOBILE menu only — the
+ * desktop bar reads as clean as the reference's tight cell grid. */
 type NavSeat = { label: string; href: string; anchor?: boolean };
 
 const NAV_SEATS: readonly NavSeat[] = [
@@ -81,6 +77,10 @@ const NAV_SEATS: readonly NavSeat[] = [
   { label: 'المقررات', href: '#chapters', anchor: true },
   { label: 'الكليات', href: '/colleges' },
   { label: 'الحرم الجامعي', href: '/campus' },
+] as const;
+
+/* the mobile-only seats (the full register stays one tap away) */
+const MOBILE_EXTRA_SEATS: readonly NavSeat[] = [
   { label: 'المسابقات', href: '/competitions' },
   { label: 'التطبيق', href: '/app' },
 ] as const;
@@ -489,11 +489,25 @@ export function SheetNav() {
               </Link>
             )
           ))}
+          {/* the mobile-only seats — the deep surfaces stay one tap away
+              on the phone sheet (the desktop bar keeps the reference's
+              four-cell count) */}
+          {MOBILE_EXTRA_SEATS.map((seat, i) => (
+            seat.anchor ? (
+              <a key={seat.href} href={seat.href} className="fo-mb-row" style={rowStyle(NAV_SEATS.length + i)}>
+                <span className="fo-mb-txt">{seat.label}</span>
+              </a>
+            ) : (
+              <Link key={seat.href} to={seat.href} className="fo-mb-row" style={rowStyle(NAV_SEATS.length + i)}>
+                <span className="fo-mb-txt">{seat.label}</span>
+              </Link>
+            )
+          ))}
           <div className="fo-mb-sub" aria-label="أقسام الصفحة">
             <Link
               to={MOBILE_LEDGER_ROW.href}
               className="fo-mb-row fo-mb-sub-row"
-              style={rowStyle(NAV_SEATS.length)}
+              style={rowStyle(NAV_SEATS.length + MOBILE_EXTRA_SEATS.length)}
             >
               <span className="fo-mb-txt">{MOBILE_LEDGER_ROW.label}</span>
             </Link>
@@ -501,7 +515,7 @@ export function SheetNav() {
           <div
             className="fo-mobile-theme"
             onClick={(e) => e.stopPropagation()}
-            style={rowStyle(NAV_SEATS.length + 1)}
+            style={rowStyle(NAV_SEATS.length + MOBILE_EXTRA_SEATS.length + 1)}
           >
             <span className="fo-mobile-theme-label">المظهر</span>
             <ThemeToggle />
@@ -509,7 +523,7 @@ export function SheetNav() {
           <Link
             to="/auth"
             className="btn ghost fo-mb-login"
-            style={rowStyle(NAV_SEATS.length + 2)}
+            style={rowStyle(NAV_SEATS.length + MOBILE_EXTRA_SEATS.length + 2)}
           >
             <span className="fo-mb-txt">{LOGIN}</span>
           </Link>

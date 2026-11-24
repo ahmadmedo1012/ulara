@@ -35,6 +35,11 @@ import {
 // ONLY AuthPage edits.
 import { ConsentLine } from '../components/ConsentLine';
 import type { AppRole, MembershipInfo } from '../stores/auth.store';
+// r359 · A1-AUTH — the auth sheets' measured grammar (the appended
+// AUTH section of errors.css, A1-owned; unlayered + .auth-shell-scoped
+// so only these four sheets drift). The base sheet rules stay in
+// patterns.css.
+import '../styles/errors.css';
 import type { ApiError } from '../lib/api';
 
 /** Login-error envelope the backend rejects with (lib/errors.ts):
@@ -433,6 +438,9 @@ export default function AuthPage() {
                     aria-describedby={loginForm.formState.errors.email ? 'auth-email-error' : undefined}
                     {...loginForm.register('email')}
                   />
+                  {/* r359 grammar #6 — the tiny mono caption under the
+                      control (Latin run, dir=ltr, decorative). */}
+                  <span className="auth-micro" dir="ltr" aria-hidden="true">TEXT · 48PX</span>
                   {/* describedby-only (r157 F5): the span keeps its id/contract
                       for aria-describedby wiring, but no longer role="alert" —
                       the ONE summary line below is the announcement. */}
@@ -472,6 +480,9 @@ export default function AuthPage() {
                       <Icon icon={showPassword ? EyeOff : Eye} size={16} />
                     </button>
                   </div>
+                  {/* r359 grammar #6 — the tiny mono caption under the
+                      control (Latin run, dir=ltr, decorative). */}
+                  <span className="auth-micro" dir="ltr" aria-hidden="true">PASS · 48PX</span>
                   {loginForm.formState.errors.password && (
                     <span id="auth-password-error" className="auth-field-error">
                       {loginForm.formState.errors.password.message}
@@ -532,6 +543,7 @@ export default function AuthPage() {
                         ))}
                       </select>
                     )}
+                    <span className="auth-micro" dir="ltr" aria-hidden="true">SEL · 48PX</span>
                   </div>
                 </div>
               )}
@@ -590,7 +602,13 @@ export default function AuthPage() {
                 </>
               ) : (
                 <>
-                  <span>تسجيل الدخول</span>
+                  {/* r359 grammar #4 — the primary's label ROLLS one line
+                      up on hover/focus (the .auth-roll stack; the
+                      aria-hidden duplicate never enters the a11y tree). */}
+                  <span className="auth-roll">
+                    <span className="auth-roll-line">تسجيل الدخول</span>
+                    <span className="auth-roll-line" aria-hidden="true">تسجيل الدخول</span>
+                  </span>
                   <Icon icon={ArrowLeft} size={14} />
                 </>
               )}
