@@ -58,12 +58,12 @@
      ╚═══════════════════════════════════════════════════════════════╝ */
   .sidebar {
     inline-size: var(--sidebar-w);
-    /* r304 fold (ex «final-visual-system»): the rail rides one calm step
-       between the page paper and the cards — surface pulled 4% toward
-       the paper — instead of the flat --sidebar-bg wash. Content-facing
-       hairline stays on the inline-END edge (base.css owns the border;
-       the color lands on --rule there). */
-    background: color-mix(in srgb, var(--surface) 96%, var(--bg));
+    /* r304 fold → R359 (A3 · the sheet grammar): the rail IS the sheet —
+       the paper ground itself, separated from the content by the ONE
+       inline-end hairline (base.css owns the border). The tinted-surface
+       slab read as a pasted SaaS panel against the drafted sheet; the
+       reference separates by LINES, not fills. */
+    background: var(--bg);
     padding: var(--sp-3) var(--sp-3) var(--sp-3);
     /* 4-A2 P1-2: the sidebar itself must NOT be the scroll container —
        with the whole rail scrolling, the pinned-intent footer

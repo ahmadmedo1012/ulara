@@ -761,3 +761,13 @@ a.pf-stat:hover { background: var(--surface-2); }
     mask-image: linear-gradient(to right, black 0, black calc(100% - var(--sp-5)), transparent 100%);
   }
 }
+
+/* ═══ 17 · THE BREADCRUMB TOUCH FLOOR (§9 companion) ════════════════
+   The crumb links' padding-based target measured 42px on the roster
+   captures — the floor becomes explicit (44px, both axes). */
+.pf-breadcrumbs a {
+  min-block-size: var(--touch-floor, 44px);
+  min-inline-size: var(--touch-floor, 44px);
+  display: inline-flex;
+  align-items: center;
+}

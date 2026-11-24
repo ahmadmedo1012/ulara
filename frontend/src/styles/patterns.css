@@ -230,6 +230,9 @@ a.pf-row-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  /* R359: the 44px FLOOR is both axes — a 20px-wide chevron read as a
+     sub-floor target on the mobile roster captures. */
+  min-inline-size: 44px;
   inline-size: 44px;
   block-size: 44px;
   margin-inline-end: calc(-1 * var(--sp-2));
