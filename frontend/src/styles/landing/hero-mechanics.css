@@ -26,7 +26,12 @@
 .landing.intro-draw .hro-edge-s { transform: scaleY(0); transform-origin: top; }
 .landing.intro-draw .hro-edge-e { transform: scaleY(0); transform-origin: top; }
 
-.landing.intro-draw .hro-line { transform: translateY(103%); }
+/* r360 F1 — the H1 lines RETIRE from the armed (masked) set: the
+ * title paints revealed from the first React frame — the LCP is the
+ * SECOND title line (13.9k size units, the largest text on the page),
+ * and mask-clipping it behind the preloader's exit was the whole LCP
+ * tail (measured 4.2s on throttled mobile). The preloader's wipe IS
+ * the reveal now; the lead/CTA/edge choreography keeps its staging. */
 .landing.intro-draw .hro-title { opacity: 1; }
 .landing.intro-draw .hro-lead { opacity: 0; translate: 0 10px; }
 .landing.intro-draw .hro-cta { opacity: 0; translate: 0 10px; }
@@ -45,7 +50,11 @@
 }
 .hro-line {
   transform: translateY(0);
-  transition: transform 0.8s cubic-bezier(0.22, 0.61, 0.36, 1);
+  /* r360 F1 — the reveal rung tightens 0.8s→0.32s (the measured
+   * fast rung): the H1's SECOND line is the LCP element (the mask
+   * reveal is what makes it contentful), so this transition's tail
+   * WAS the LCP tail on throttled mobile. Every reveal still plays. */
+  transition: transform 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 .hro-title .hro-lmask:nth-child(1) .hro-line,
 .hro-title .hro-lmask:first-of-type .hro-line { transition-delay: 0.15s; }

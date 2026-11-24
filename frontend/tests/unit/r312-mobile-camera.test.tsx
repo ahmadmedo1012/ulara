@@ -334,7 +334,13 @@ describe('R312 mobile camera — the source contracts (R322 map override)', () =
      * 380dvh @400–767 over the 466dvh tablet base; R322 3-b-fix3
      * override: the ≤399 rung 425→415 recovers the 320 never-raise pin
      * after the round-2 closing foot row) */
-    expect(LANDING_CSS).toMatch(/@media \(max-width: 767px\) \{\s*\.jt-map-col \{\s*block-size: 92dvh;/);
+    /* r360 F1 — the phone journey collapses to the STATIC readable sheet
+     * (the R342-11 reduced-motion architecture, now the phone default):
+     * the sticky track + scrub retire below 768 — the window, the
+     * findings ladder and the closing column read in ONE flow (the
+     * ≤5,000px page law). The tablet sticky-in-column (≤991) stays. */
+    expect(LANDING_CSS).toMatch(/@media \(max-width: 767px\) \{[\s\S]*?\.jt-map-col \{\s*block-size: auto;/);
+    expect(LANDING_CSS).toMatch(/@media \(max-width: 767px\) \{[\s\S]*?\.jt-map-in \{\s*position: static;/);
     /* the ≤399 rung — re-seated at R322 3-b round-4 (415dvh, comment-
      * tolerant). R323 note: this same pin was independently re-pinned
      * in the R323 wave with an R323 override note; upstream's tolerant
@@ -343,7 +349,7 @@ describe('R312 mobile camera — the source contracts (R322 map override)', () =
      * REAL 390×844 pair (the pre-X14 probe read the stale
      * contain-intrinsic-size guess); 473dvh lands the section at
      * 4821 vs the reference 4819 (+0.04 %) — the ±2 % docH contract. */
-    expect(LANDING_CSS).toMatch(/@media \(max-width: 399px\) \{[\s\S]*?\.jt-map-col \{[\s\S]*?block-size: 165dvh;/); /* r359 A1 §C — the phone ladder compressed */
+    expect(LANDING_CSS).toMatch(/@media \(max-width: 399px\) \{[\s\S]*?\.jt-map-col \{\s*block-size: auto;/); /* r360 F1 — the 165dvh track retired with the phone static sheet (the column stays content-sized) */
     /* the INTRODUCTION card sits IN FLOW below the plan (the V10
      * «شاهد»-clip class dies by construction: the card never overlaps
      * the drawing) */

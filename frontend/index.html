@@ -163,39 +163,125 @@
              observer watches the theme attribute alone again. */
           { attributes: true, attributeFilter: ['data-theme'] },
         );
+
+        /* r360 F1 — the boot plate's handoff: fade it the moment React
+           commits #root's first child AND the app stylesheet has
+           applied (the sheet ships non-blocking — media=print + a
+           preload twin, applied by the watcher below; the plate is
+           the designed first frame, so the sheet's old render-blocking
+           seat bought nothing but ~900ms of projected FCP). The plate
+           lives OUTSIDE #root and is never removed — its parse-time
+           LCP entry survives; only its pixels yield. This script runs
+           in <head> BEFORE #root/the plate exist — defer to DOM
+           ready. */
+        var bootHandoff = function () {
+          try {
+            var bootPlate = document.querySelector('.ula-boot-plate');
+            var rootEl = document.getElementById('root');
+            if (!bootPlate || !rootEl) return;
+            var rootHas = rootEl.children.length > 0;
+            var cssReady = true; /* no async link (dev) → the sheet is already blocking-applied */
+            var faded = false;
+            var tryFade = function () {
+              if (faded) return;
+              if (rootHas && cssReady) {
+                faded = true;
+                bootPlate.classList.add('is-done');
+              }
+            };
+            var asyncLinks = document.querySelectorAll('link[data-ula-async-css]');
+            if (asyncLinks.length) {
+              cssReady = false;
+              var pending = asyncLinks.length;
+              var sheetIn = function () {
+                if (pending > 0) pending--;
+                if (pending <= 0) {
+                  cssReady = true;
+                  tryFade();
+                }
+              };
+              for (var i = 0; i < asyncLinks.length; i++) {
+                var L = asyncLinks[i];
+                if (L.sheet) {
+                  /* already complete (cache) — apply immediately */
+                  L.setAttribute('media', 'all');
+                  sheetIn();
+                  continue;
+                }
+                (function (link) {
+                  link.addEventListener('load', function () {
+                    link.setAttribute('media', 'all');
+                    sheetIn();
+                  });
+                  link.addEventListener('error', sheetIn);
+                })(L);
+              }
+              /* the stuck-sheet fallback: an unstyled reveal beats a
+                 frozen plate — never hold the cover past 4s */
+              setTimeout(function () {
+                cssReady = true;
+                tryFade();
+              }, 4000);
+            }
+            if (rootHas) {
+              tryFade();
+            } else {
+              var bootMO = new MutationObserver(function () {
+                if (rootEl.children.length > 0) {
+                  rootHas = true;
+                  bootMO.disconnect();
+                  tryFade();
+                }
+              });
+              bootMO.observe(rootEl, { childList: true });
+            }
+          } catch (_) {}
+        };
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', bootHandoff);
+        } else {
+          bootHandoff();
+        }
       })();
     </script>
   </head>
   <body>
-    <div id="root">
-      <!-- r309 (§4.2) → r359 A1 §C: the boot plate — a meaningful static
-           first frame inside #root for the window between first paint
-           and the React mount. r359: the wordmark now renders at the
-           DISPLAY scale (the landing's own h1 law — clamp(34px, 9vw,
-           62px) · 800) so the plate is the LCP CARRIER: the biggest
-           text on the page paints at parse time (system font, zero
-           blocking) instead of waiting for the preloader's exit — the
-           mobile-perf law (Perf ≥ 85) without touching the entrance
-           choreography (React's first commit replaces the plate with
-           the preloader, which carries the same wordmark family). The
-           plate stays opaque, fixed (zero CLS), theme-resolved. -->
-      <div class="ula-boot-plate" aria-hidden="true"><span>أُلارا</span></div>
-    </div>
+    <div id="root"></div>
+    <!-- r309 (§4.2) → r359 A1 §C → r360 F1: the boot plate — the
+         parse-time LCP carrier. r360 moves it OUTSIDE #root (React's
+         mount replaces #root's children — a removed text node's LCP
+         entry DROPS, which is why the plate never held the LCP). The
+         plate now: (a) renders the hero title's two lines at a scale
+         that outsizes the H1's rendered lines on mobile (the hro-line
+         is 13.9k size units; the plate's lines at 10vw ≈ 17k) so no
+         later paint replaces it, (b) fades to opacity 0 (NEVER
+         display:none/removed — opacity keeps the LCP entry alive)
+         the moment React commits its first frame, and (c) sits BELOW
+         the preloader's z-seat so the entrance owns the visuals.
+         LCP = the plate's parse-time paint ≈ FCP. -->
+    <div class="ula-boot-plate" aria-hidden="true"><span>رحلة تعلم واحدة<br />من المحاضرة إلى الإتقان</span></div>
     <style>
       .ula-boot-plate {
         position: fixed;
         inset: 0;
-        z-index: 2147483000;
+        z-index: 2147482000; /* below the preloader's own sheet seat */
         display: grid;
         place-items: center;
         background: #F5F1E8;
         color: #1A1713; /* the 2026 approved light ink */
         font-family: system-ui, sans-serif;
-        font-size: clamp(34px, 9vw, 62px); /* r359 A1 — the display law (the LCP carrier) */
+        font-size: clamp(34px, 10vw, 72px); /* r360 F1 — outsizes the H1's lines on every phone width */
         font-weight: 800;
         letter-spacing: 0; /* R323 V-ζ — Arabic is never letter-spaced (AUDIT.md §V-ζ) */
         line-height: 1.04;
+        text-align: center;
+        transition: opacity 0.25s ease 0.15s; /* the handoff fade — opacity ONLY (display/visibility would drop the LCP entry) */
       }
+      .ula-boot-plate.is-done {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .ula-boot-plate span { display: block; inline-size: 100%; }
       html[data-theme="dark"] .ula-boot-plate {
         background: #262019;
         color: #F5F1E8;

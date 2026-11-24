@@ -21,7 +21,7 @@
  *   · 404 way-back — home (primary) + colleges + login (r164b).
  */
 import { describe, expect, it, beforeAll } from 'vitest';
-import { render, screen, fireEvent, within, act } from '@testing-library/react';
+import { render, screen, fireEvent, within, act, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { readFileSync } from 'node:fs';
@@ -197,8 +197,16 @@ describe('landing funnel — rendered guest DOM (r164b → r188)', () => {
     expect(primary?.getAttribute('href')).toBe('/auth/register');
   });
 
-  it('the finale closes the loop: primary → /auth/register AND a login ghost → /auth', () => {
+  it('the finale closes the loop: primary → /auth/register AND a login ghost → /auth', async () => {
     const { container } = renderLanding();
+
+    /* r360 F1 — the finale rides the lazy Vision chunk behind the
+     * mount-gate (the diet law): wait the gate's fallback + the lazy
+     * import to land before the funnel assertions. */
+    await waitFor(
+      () => expect(container.querySelector('.fo-cta-actions .btn.accent')).not.toBeNull(),
+      { timeout: 2500 },
+    );
 
     const primary = container.querySelector<HTMLAnchorElement>(
       '.fo-cta-actions .btn.accent',
@@ -213,9 +221,13 @@ describe('landing funnel — rendered guest DOM (r164b → r188)', () => {
     expect(login?.getAttribute('href')).toBe('/auth');
   });
 
-  it('ONE primary per content viewport: a single accent CTA in hero and finale each', () => {
+  it('ONE primary per content viewport: a single accent CTA in hero and finale each', async () => {
     const { container } = renderLanding();
 
+    await waitFor(
+      () => expect(container.querySelector('.fo-cta-actions .btn.accent')).not.toBeNull(),
+      { timeout: 2500 },
+    );
     expect(container.querySelectorAll('.fo-hero-actions .fo-hero-cta')).toHaveLength(1);
     expect(container.querySelectorAll('.fo-cta-actions .btn.accent')).toHaveLength(1);
   });

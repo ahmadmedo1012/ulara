@@ -443,9 +443,9 @@ footer.fo-footer {
 }
 /* the theme swap — the wy-cycle grammar: one render paints, its twin
    holds the box (visibility keeps the layout seat) */
-.fo-strip-img.is-dark { visibility: hidden; }
-[data-theme='dark'] .fo-strip-img.is-light { visibility: hidden; }
-[data-theme='dark'] .fo-strip-img.is-dark { visibility: visible; }
+.fo-strip-img.is-dark { display: none; } /* r360 F1 — same twin-defer law */
+[data-theme='dark'] .fo-strip-img.is-light { display: none; }
+[data-theme='dark'] .fo-strip-img.is-dark { display: block; visibility: visible; }
 
 /* ═══ the © bar + the policy row — one ruled line (R321 §A2) ═══════ */
 .fo-footer-bottom {

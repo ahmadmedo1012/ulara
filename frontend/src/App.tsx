@@ -4,10 +4,19 @@ import { lazy, Suspense, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { ROUTES } from './lib/routes';
 import { queryClient } from './lib/queryClient';
-import { AppShell, ProtectedRoute } from './components/layout/AppShell';
+import { ProtectedRoute } from './components/layout/ProtectedRoute';
+/* r360 F1 — the authenticated shell rides a lazy boundary: App.tsx's
+ * static AppShell import dragged the entire shell tree (sidebar/
+ * topbar/bottom-nav/command palette/onboarding/feedback + nav's lucide
+ * registry) into the ENTRY chunk — ~110KB of code the public boots
+ * (landing, auth, guest colleges) never mount. The lazy boundary
+ * suspends into the ROOT fallback (the branded splash — the exact
+ * loading language the shell-level waits already speak, see the
+ * boundary note below). */
+const AppShell = lazy(() => import('./components/layout/AppShell').then((m) => ({ default: m.AppShell })));
 import { GuestReveal } from './components/motion';
 import { useAuthStore } from './stores/auth.store';
-import { ROLE_HOME } from './lib/nav';
+import { ROLE_HOME } from './lib/roleHome'; /* r360 F1 — the icon-free source (lib/nav drags the lucide registry into the entry) */
 import { HydrationSplash } from './components/HydrationSplash';
 /* R323 §A2 — the ONE loading surface: boot splash (the new mark's
  * stroke-draw), the 2-px route progress strip and the cold-start card

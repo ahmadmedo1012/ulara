@@ -143,7 +143,9 @@ describe('r188 — the folio chrome that ships', () => {
      * (#chapters), and the chrome seats resolve to the site's REAL
      * public routes (stronger than in-page anchors). */
     for (const s2 of ['chapters', 'live', 'roles', 'colleges']) {
-      expect(tsx).toContain(`id="${s2}"`);
+      /* r360 F1 — #chapters rides the mount-gate wrapper (anchorId) so
+       * the anchor resolves while the lazy section streams in. */
+      expect(tsx.includes(`id="${s2}"`) || tsx.includes(`anchorId="${s2}"`)).toBe(true);
     }
     expect(navTsx).toContain("href: '#chapters'");
     for (const r of ['/colleges', '/campus', '/competitions', '/app']) {

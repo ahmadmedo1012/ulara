@@ -69,9 +69,9 @@
  * the same cell now carries the platform's OWN value clauses (typographic
  * cards, type-first: a mono index + the clause in the house type). Same
  * box, same cell geometry, zero CLS. */
-.st-media-img.is-dark { visibility: hidden; }
-[data-theme="dark"] .st-media-img.is-light { visibility: hidden; }
-[data-theme="dark"] .st-media-img.is-dark { visibility: visible; }
+.st-media-img.is-dark { display: none; } /* r360 F1 — display:none defers the non-active theme twin (visibility:hidden still intersects the lazy threshold and downloads both rasters) */
+[data-theme="dark"] .st-media-img.is-light { display: none; }
+[data-theme="dark"] .st-media-img.is-dark { display: block; visibility: visible; }
 
 .st-crawl-card {
   display: grid;

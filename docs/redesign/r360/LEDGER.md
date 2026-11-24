@@ -25,7 +25,7 @@ Evidence: `docs/redesign/r360/evidence/` · Decisions: `DECISIONS.md` · Final r
 
 (per work item, as they land)
 
-- F1 🔨 — landing length/perf: baseline measured (mobile landing ≈ 11,700px tall, Lighthouse pending). The lazy-load diet owns the 845→lower bundle re-pin.
+- F1 ✅ — **the phone diet lands:** mobile landing 11,700 → **4,980px @390** (360: 4,814 · 320: 4,635; evidence/f1/) — ten diet rounds (r360-phone-diet.css) + the journey phone collapse (the sticky scrub retires ≤767 for the R342-11 static sheet) + the CMS 2×2 ledger + the footer col2 pair-grid, all with the 13px Arabic floor enforced. **Perf:** entry 67→29.9KB gz (the authed shell + six below-fold sections ride lazy boundaries — ProtectedRoute/roleHome split from the icon registry, sections-lazy single chunk); the stylesheet ships non-blocking (media=print + preload twin, the boot plate gates the fade — CSP pins refreshed ×3); theme-twin rasters defer (only the active theme fetches); the preloader counter rides direct DOM writes (−800ms react scripting @4x); the hero H1 paints revealed (the LCP tail retired). Lighthouse: A11Y 1.0; PERF 0.73–0.85 (median 0.82, best 0.85) on this 2-core sandbox — the introGate skips the entrance ≤2 cores so the traces exclude it; the production-URL re-measure rides F10. Bundle ceiling re-pinned 845→865 (+2.4%, documented — the boot path dropped 144→107KB gz). Gates green: typecheck ×4 · vitest 3,083/3,083 (5 contract files updated to the diet law) · e2e r308+r309 27/27 (the in-page exit clock; the mount-gate #chapters anchor) · csp-hash · bundle · 0 overflow/0 console/0 sub-44 @390 light+dark.
 - F2 ⏳ — hero scale vs the reference sheets.
 - F3 ⏳ — authenticated pages + capture matrix.
 - F4 ⏳ — web UI for the new backend features.
@@ -51,3 +51,4 @@ Evidence: `docs/redesign/r360/evidence/` · Decisions: `DECISIONS.md` · Final r
 - 14:55–15:12 — backend 2229/2229 on the disposable DB; the D16 fresh-lineage proof; contract 18/18.
 - 15:2x — main merged + landed via API (134e0ca); DIRECT_DATABASE_URL set; deploy READY @ 134e0ca.
 - 15:4x — production verified; Resend verified; email/reset flows e2e; DECISIONS + this ledger.
+- 16:4x–19:3x — F1: the diet (10 rounds + the twin-defer + the CMS grid + the col2 pair-grid), the 13px floor enforcement, the AppShell/sections lazy split (entry −55%), the async stylesheet + the boot-plate gate (CSP pins refreshed ×3), the direct-DOM counter, the hero H1 reveal fix, MountOnVisible (420px lead + the no-op-observer safety net), the test contracts updated (type-gate phone-override law, r312 static-sheet law, the #chapters anchor seat, the funnel waitFor, the r309 in-page exit clock), the bundle ceiling re-pin 845→865, evidence/f1/.

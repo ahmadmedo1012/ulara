@@ -381,7 +381,14 @@ describe('r306 — the honest ledger is a hairline table', () => {
 describe('r306 — the funnel/a11y contracts carried forward', () => {
   it('every chapter keeps its numbered anchor + heading contract', () => {
     for (const id of ['statement', 'chapters', 'live', 'roles', 'colleges', 'vision']) {
-      expect(liveTsx).toContain(`id="${id}"`);
+      /* r360 F1 — the #chapters anchor moved to the mount-gate wrapper
+       * (LandingPage: anchorId="chapters") so hash navigation lands on
+       * the seat even while the lazy section is unmounted; every other
+       * id rides its section as before. */
+      expect(
+        liveTsx.includes(`id="${id}"`) || liveTsx.includes(`anchorId="${id}"`),
+        `the ${id} anchor must resolve (id or anchorId)`,
+      ).toBe(true);
     }
     // R315 override (K-E): the numbered-ledger template (ch-${ch.num}-title)
     // retired with the 05–06 demo rows; the walkthrough's own stations

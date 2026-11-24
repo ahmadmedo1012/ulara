@@ -113,6 +113,15 @@ test.describe('R308 — رحلة التعلّم (the walkthrough ladder)', () =>
      * furniture: the five findings ride the intro card, the closing
      * reads immediately in flow. */
     await expect(page.locator('.jt-cam, .jt-flow, .jt-station, .jt-side')).toHaveCount(0);
+    /* r360 F1 — the chapters section mount-gates: wait the entrance
+     * out (its scroll-lock would eat the window scroll), then scroll
+     * the window into range (the wrapper exists; the section mounts
+     * as the viewport approaches), then the locators resolve. */
+    await expect(page.locator('.pl')).toHaveCount(0, { timeout: 8000 });
+    /* r360 F1 — the #chapters anchor (always present on the gate wrapper)
+     * arms the observer; the in-section locators resolve after the mount. */
+    await page.locator('#chapters').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(600);
     const map = page.locator('.jt-map-in');
     await map.scrollIntoViewIfNeeded();
     await expect(page.locator('.jt-window .bp-svg')).toBeVisible();

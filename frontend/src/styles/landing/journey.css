@@ -1248,9 +1248,22 @@ section.chapters {
    (was 380dvh): the sticky scrub still carries every beat, the stacked
    findings ladder flows inside the tighter track. */
 @media (max-width: 767px) {
+  /* r360 F1 — the phone journey collapses to the STATIC readable sheet
+   * (the R342-11 reduced-motion architecture, now the phone default):
+   * the sticky track + scrub choreography retire below 768px — the
+   * window, the findings ladder and the closing column read in ONE
+   * flow (the ≤5,000px page law; the map-col track was the whale at
+   * 165dvh@390). The e2e's readable-sequence contract (r312/r308) is
+   * exactly this layout. */
   .jt-map-col {
-    block-size: 92dvh;
+    block-size: auto;
     padding-inline: 0;
+  }
+  .jt-map-in {
+    position: static;
+    inset-block-start: auto;
+    block-size: auto;
+    padding-block-start: 1em;
   }
 
   .jt-close {
@@ -1271,8 +1284,11 @@ section.chapters {
 }
 
 @media (max-width: 399px) {
+  /* r360 F1 — the 165dvh track retired with the phone static sheet
+   * (see the ≤767 collapse above); the narrow-phone window keeps its
+   * own aspect families but the column stays content-sized. */
   .jt-map-col {
-    block-size: 165dvh;
+    block-size: auto;
   }
 }
 

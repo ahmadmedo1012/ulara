@@ -320,8 +320,14 @@ describe('r325 Y4 — the type census gate (every heading level × every seat ×
     (groups.get(key) as unknown as typeof RULES).push(r);
   }
   for (const [key, grp] of groups) {
+    /* r360 F1 — the phone-override family law: a (file × selector) group
+     * whose EVERY rule sits inside a ≤767 media block is a phone-band
+     * OVERRIDE sheet (the landing's diet sheet) — the base sheets own
+     * the ≥768 bands for those selectors, so only the 390 band is this
+     * group's to answer for. */
+    const phoneOnly = grp.every((r) => r.media != null && /max-width\s*:\s*76[0-9]px/.test(r.media) && mediaApplies(r.media, 768) === false);
     it(`font-size rides a rung ×3 bands — ${key.slice(0, 84)}`, () => {
-      for (const band of BANDS) {
+      for (const band of phoneOnly ? ([390] as const) : BANDS) {
         const applicable = grp.filter((r) => mediaApplies(r.media, band));
         expect(applicable.length, `some font-size rule for ${key} applies at @${band}`).toBeGreaterThan(0);
         const winner = applicable[applicable.length - 1]!; // last in file order

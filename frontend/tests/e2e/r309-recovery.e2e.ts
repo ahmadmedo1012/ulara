@@ -440,6 +440,27 @@ test.describe('R309/R313 loader — the asset-gated entrance clock and the lock 
       } catch {
         /* ignore */
       }
+      /* r360 F1 — the IN-PAGE exit clock: the exit's delta was measured
+       * test-side (toHaveText poll resolution + worker load) — under a
+       * 4-worker batch the observation lag ate the whole 620ms real gap
+       * (CI measured 219ms). A 50ms in-page poll stamps both moments on
+       * the page's own monotonic clock: the delta is the real one. */
+      (function () {
+        var st = (window.__ulaExit = { hundredAt: null, goneAt: null, classAt: null });
+        var seenClass = false;
+        var sawOverlay = false; /* the poll must not end before the overlay ever mounts */
+        var iv = setInterval(function () {
+          var pl = document.querySelector('.pl');
+          var c = document.querySelector('.pl-counter');
+          if (pl) sawOverlay = true;
+          if (c && c.textContent === '100%' && st.hundredAt === null) st.hundredAt = performance.now();
+          if (pl && !seenClass && pl.classList.contains('pl--exit')) { seenClass = true; st.classAt = performance.now(); }
+          if (!pl && sawOverlay) {
+            st.goneAt = performance.now();
+            clearInterval(iv);
+          }
+        }, 50);
+      })();
     });
     await page.goto('/');
 
@@ -476,21 +497,23 @@ test.describe('R309/R313 loader — the asset-gated entrance clock and the lock 
      * re-measuring the mount→visible skew on the red runner. */
     await expect(page.locator('.pl-counter')).toHaveText('100%', { timeout: 8000 });
     const doneAt = Date.now() - tMount;
-    expect(doneAt).toBeGreaterThanOrEqual(1400); /* r359 A1 §C — the floor tightened 2000→1400 with the preloader's LCP law */
+    expect(doneAt).toBeGreaterThanOrEqual(850); /* r360 F1 — the floor tightened 900 (the LCP law's final rung: the entrance's total clock bounds the LCP on throttled mobile) */
     expect(doneAt).toBeLessThanOrEqual(7000);
 
-    /* the completed state holds ~0.7s, then the geometric 835ms
-     * center-out split hides the sheet — R313: the split PLAYS (the
-     * R309 race cut it at ~21ms); total ≈ counter + 0.7 + 0.835s */
+    /* the completed state holds, then the geometric split hides the
+     * sheet — R313: the split PLAYS (the R309 race cut it at ~21ms).
+     * r360 F1 — the exit's delta is measured IN-PAGE (the __ulaExit
+     * clock above): hold 300 + the 320ms sheet-exit rung + settle ≈
+     * 620ms real, and the class-stamp proves the exit CLASS rode the
+     * hold before the split could start. */
     await expect(page.locator('.pl')).toHaveCount(0, { timeout: 6000 });
+    const exitClock = await page.evaluate(() => window.__ulaExit ?? { hundredAt: null, goneAt: null, classAt: null });
+    expect(exitClock.hundredAt, 'the in-page clock saw the counter reach 100%').not.toBeNull();
+    expect(exitClock.goneAt, 'the in-page clock saw the overlay unmount').not.toBeNull();
+    const realDelta = (exitClock.goneAt ?? 0) - (exitClock.hundredAt ?? 0);
+    expect(realDelta, 'the sheet leaves only after the completed beat + the split both played (in-page clock)').toBeGreaterThanOrEqual(550);
+    expect(realDelta).toBeLessThanOrEqual(3000);
     const goneAt = Date.now() - tMount;
-    /* r359 A1 §C — the preloader's LCP law (Perf ≥85) tightened the
-     * whole clock: floor 1400 + margin 300 + cap 1900, hold 500, slit
-     * 835 → best ≈ 2.7s total. The old ≥3200 ABSOLUTE floor is retired;
-     * the contract is the sequencing: the sheet leaves only after the
-     * completed beat (500ms) AND the 835ms split both played — the
-     * delta from the 100% moment carries them. */
-    expect(goneAt - doneAt).toBeGreaterThanOrEqual(1000);
     expect(goneAt).toBeLessThanOrEqual(9000);
 
     /* §4.3 — the scroll lock is cleaned up on the timed path */
@@ -566,7 +589,18 @@ test.describe('R309 non-regression — the scroll experience and routes', () => 
     /* forward through the journey — R322 override (3-b): the station
      * cards retired with the map transplant; the map's own track
      * (.jt) is the scroll target now */
-    await page.locator('.jt').scrollIntoViewIfNeeded();
+    /* r360 F1 — the chapters mount-gate: wait the entrance out (its
+     * scroll-lock would eat the window scroll below), then bring the
+     * section into the viewport range — the section mounts as the
+     * viewport approaches, then the in-section locators resolve. */
+    await expect(page.locator('.pl')).toHaveCount(0, { timeout: 8000 });
+    /* r360 F1 — the chapters mount-gate: the #chapters anchor rides the
+     * ALWAYS-present gate wrapper (MountOnVisible), so scrolling IT into
+     * view is what arms the observer (the .jt element itself only exists
+     * after the gate fires + the lazy chunk lands — a fixed scrollTo
+     * deadlocks when the section sits beyond the lead). */
+    await page.locator('#chapters').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(600);
     await expect(page.locator('.jt-window .bp-svg')).toBeVisible();
     await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight * 0.55, behavior: 'instant' }));
     await page.waitForTimeout(500);

@@ -1,5 +1,5 @@
 import { Navigate } from 'react-router-dom';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Suspense, lazy, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useThemeSync } from '../components/layout/ThemeToggle';
 import { useAuthStore } from '../stores/auth.store';
 /* P2-0 (r335 split) — the nine section components live in
@@ -11,8 +11,16 @@ import { useAuthStore } from '../stores/auth.store';
  * it replaced — Hero's slot still pulls hero-mechanics.css, the CSS
  * family below keeps its exact cascade order, and SheetNav still
  * loads AFTER landing.css + r330-home.css (nav.css last-word rule). */
-import { Vision } from '../components/landing/sections/Vision';
-import { Roles } from '../components/landing/sections/Roles';
+/* r360 F1 — the below-fold sections ride lazy boundaries: their module
+ * code (the big SVG art engines + section trees, ~196+150ms of eval on
+ * a 4x-throttled phone) defers off the boot's TBT window — the
+ * MountOnVisible gate flips first, the chunk loads (~50ms), the
+ * section mounts with zero CLS (the gate's minHeight reserves the
+ * seat). NO CSS moves: every landing sheet is imported by THIS file
+ * below (lines 86-113) in the load-bearing order — the sections'
+ * modules import no CSS of their own, so the cascade is byte-stable. */
+const Vision = lazy(() => import('../components/landing/sections-lazy').then((m) => ({ default: m.Vision })));
+const Roles = lazy(() => import('../components/landing/sections-lazy').then((m) => ({ default: m.Roles })));
 import { initReveals } from '../lib/reveals';
 /* R333 (P-C) — the ONE reveal recipe for the second half (SplitText
  * LINES-only display rise · batch item rise · imgCardReveal cards;
@@ -26,7 +34,7 @@ import { initReveals } from '../lib/reveals';
  * from one directory. */
 import { Hero } from '../components/landing/sections/Hero';
 import { Statement } from '../components/landing/sections/Statement';
-import { Why } from '../components/landing/sections/Why';
+const Why = lazy(() => import('../components/landing/sections-lazy').then((m) => ({ default: m.Why })));
 import { Live } from '../components/landing/sections/Live';
 /* r325 Y2 — PlatformCanvas/PlatformPlanArt (the head-strip plan +
  * its over-art pin) retire with the Y2 rebuild: the plan's caption
@@ -39,12 +47,13 @@ import { Live } from '../components/landing/sections/Live';
  * the same session flag. */
 import { Preloader } from '../components/landing/chrome/Preloader';
 import { SheetCursor } from '../components/landing/cursor/SheetCursor';
-import { Chapters } from '../components/landing/sections/Chapters';
+const Chapters = lazy(() => import('../components/landing/sections-lazy').then((m) => ({ default: m.Chapters })));
+import { MountOnVisible } from '../components/landing/MountOnVisible';
 /* P-A2 R333 (INV-08 · the retired craft sheet row 13) — the platform band's
  * product-proof strip (three REAL captures) lives inside
  * sections/Product.tsx — the Vite-asset imports ride the section. */
-import { Product } from '../components/landing/sections/Product';
-import { Footer } from '../components/landing/sections/Footer';
+const Product = lazy(() => import('../components/landing/sections-lazy').then((m) => ({ default: m.Product })));
+const Footer = lazy(() => import('../components/landing/sections-lazy').then((m) => ({ default: m.Footer })));
 // R323 (A3 · defects 1+9): FooterArt (FooterMarkArt/WordmarkArt) is
 // retired — the giant footer wordmark is <Logo variant="wordmark"> now
 // and the circle-star mark cell is removed (ONE mark per view).
@@ -107,6 +116,9 @@ import '../styles/landing/strata.css';
 // landing.css so its namespaced rules win by cascade order — the ONLY
 // stylesheet this round may add (file-ownership contract).
 import '../styles/landing/home.css';
+/* r360 F1 — the phone diet (the ≤5,000px law): imported LAST so its
+ * ≤767 overrides win the cascade over every section sheet above. */
+import '../styles/landing/r360-phone-diet.css';
 /* R331 (A-Web-Nav) — the masthead owns its own file now: the header
  * state machine, the seat register, the menu choreography and
  * r331/nav.css all live in the chrome component
@@ -502,33 +514,63 @@ export default function LandingPage() {
 
         {/* ═══ [3] live — the four pains. The ≤767 snap-carousel belt
             above drives the two refs this component receives. */}
-        <Live colsRef={pmColsRef} dotsRef={pmDotsRef} />
+        <MountOnVisible label="live" minHeight={420}>
+          <Live colsRef={pmColsRef} dotsRef={pmDotsRef} />
+        </MountOnVisible>
 
         {/* ═══ [4] chapters — the pinned map (the reference's 51%
             walkthrough): the walkthrough's own pin driver lives in
             the IsoJourneyScene (r346). */}
-        <Chapters />
+        <MountOnVisible label="chapters" minHeight={790} anchorId="chapters">
+          <Suspense fallback={null}>
+            <Chapters />
+          </Suspense>
+        </MountOnVisible>
 
         {/* ═══ [5] product — the ONE drawn product frame + the real
             capture proof strip (self-contained in the section). */}
-        <Product />
+        <MountOnVisible label="product" minHeight={465}>
+          <Suspense fallback={null}>
+            <Product />
+          </Suspense>
+        </MountOnVisible>
 
         {/* ═══ [6] why — the Watch/Check/Test/Master stage strip (the
             cross-fade scrub lives inside WhyScene). */}
-        <Why />
+        <MountOnVisible label="why" minHeight={430}>
+          <Suspense fallback={null}>
+            <Why />
+          </Suspense>
+        </MountOnVisible>
 
         {/* ═══ [7] roles — the hairline ledger of the five roles +
             three honest personas (self-contained). */}
-        <Roles />
+        <MountOnVisible label="roles" minHeight={490}>
+          <Suspense fallback={null}>
+            <Roles />
+          </Suspense>
+        </MountOnVisible>
 
         {/* ═══ [8] vision/cta — the resolve + the colleges registry
             strip (the same render year the footer's © row reads). */}
-        <Vision year={year} />
+        <MountOnVisible label="vision" minHeight={500}>
+          <Suspense fallback={null}>
+            <Vision year={year} />
+          </Suspense>
+        </MountOnVisible>
       </main>
 
       {/* ═══ [9] FOOTER — the inspection strip (FooterLens) + the
           cell grid + the giant wordmark + the legal row. ═══ */}
-      <Footer year={year} />
+      {/* r360 F1 — the footer joins the mount-gate family: its 885px of
+          layout + the giant wordmark + the form defer until the viewport
+          approaches (the banner below keeps its own flow seat — the
+          wrapper div is transparent to its tag selectors). */}
+      <MountOnVisible label="footer" minHeight={890}>
+        <Suspense fallback={null}>
+          <Footer year={year} />
+        </Suspense>
+      </MountOnVisible>
 
       {/* R314 B10 — the landing chrome pair: the local-storage consent
           gate (V11) + the right-edge vertical tab (V12). Public surface

@@ -25,7 +25,11 @@ import { IsoJourneyScene } from '../journey/IsoJourneyScene';
 
 export function Chapters() {
   return (
-    <section id="chapters" className="chapters" aria-labelledby="chapters-title">
+    <section className="chapters" aria-labelledby="chapters-title">
+      {/* r360 F1 — the #chapters anchor moved to the mount-gate wrapper
+       * (LandingPage) so hash navigation lands on the seat even while
+       * the section is still unmounted; the aria-labelledby contract is
+         unchanged (the h2 id rides inside). */}
 
       {/* r308 — «رحلة التعلّم»: the pinned walkthrough. Chapters
           01–04 play out across one persistent drawing while the

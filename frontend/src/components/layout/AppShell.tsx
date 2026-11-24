@@ -1,4 +1,4 @@
-import { Outlet, Navigate, useLocation } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import { Suspense, useEffect, useRef, useState } from 'react';
 // R305-A4 the reference shell layer — the shell's own r305 treatment, scoped
@@ -56,7 +56,7 @@ import { useThemeSync } from './ThemeToggle';
 import { useScrollRestoration } from './useScrollRestoration';
 import { PageTransition } from '../motion';
 import { PageSkeleton } from '../primitives/States';
-import { useAuthStore, type AppRole } from '../../stores/auth.store';
+import { useAuthStore } from '../../stores/auth.store';
 import { useRoleAccent } from '../../hooks/useRoleAccent';
 import { useThemeProfileSync } from '../../hooks/useThemeProfileSync';
 import { ScrollProgress } from './ScrollProgress';
@@ -66,7 +66,6 @@ import { OnboardingFlow } from '../onboarding/OnboardingFlow';
 import { FeedbackWidget } from '../feedback/FeedbackWidget';
 import { MilestoneScene } from '../onboarding/MilestoneScene';
 import { overlayStack } from '../../lib/overlayStack';
-import { toast } from '../../lib/toast';
 import { NAV_BY_ROLE, ROLE_HOME } from '../../lib/nav';
 // CONCRETE module import (r157 6A4-2/6A13-3): shell tests mock the
 // motion BARREL with PageTransition only — importing useReducedMotion
@@ -547,41 +546,9 @@ export function AppShell({ children }: { children?: ReactNode }) {
    any landing surface that later wants the breadcrumb; the redirect
    itself stays `replace` — browser back returns to the page BEFORE
    the denied one (recorded in App-routes.test.tsx). */
-const DENIED_ROLE_MESSAGE = 'هذه الصفحة غير متاحة لدور حسابك — أُعيدك إلى لوحتك';
-
-function DeniedRoleNotice() {
-  const announced = useRef(false);
-  useEffect(() => {
-    if (announced.current) return;
-    announced.current = true;
-    toast.info(DENIED_ROLE_MESSAGE);
-  }, []);
-  return null;
-}
-
-export function ProtectedRoute({ allow }: { allow?: AppRole[] }) {
-  const isHydrated = useAuthStore((s) => s.isHydrated);
-  const user = useAuthStore((s) => s.user);
-  const location = useLocation();
-
-  /* R323 §A2 foreman integration: the app-root boot Splash owns the
-   * pre-hydration window (a fullscreen orchestrator layer from first
-   * paint) — rendering the legacy HydrationSplash here as well put a
-   * SECOND logo on screen at boot, the exact overlap the
-   * r323-loader-overlap e2e pin exists to catch. null is invisible
-   * under the splash; the store decides the instant it rehydrates. */
-  if (!isHydrated) return null;
-  if (!user) return <Navigate to="/auth" replace state={{ from: location }} />;
-  if (allow && !allow.includes(user.role)) {
-    return (
-      <>
-        <DeniedRoleNotice />
-        <Navigate to={ROLE_HOME[user.role]} replace state={{ deniedFrom: location.pathname }} />
-      </>
-    );
-  }
-  return <Outlet />;
-}
+/* r360 F1 — ProtectedRoute (+ its denied-role notice) moved to its own
+   module (components/layout/ProtectedRoute.tsx): App.tsx needs the guard
+   statically, but this file's shell tree must stay lazy. */
 
 /* (HydrateMe deleted in wave 16-E3 — 15-f FE-3 / 15-d P1-4: it was
    never rendered anywhere; every consumer calls useMe() directly.) */

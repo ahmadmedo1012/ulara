@@ -426,13 +426,7 @@ export const NAV_BY_ROLE: Record<AppRole, NavGroup[]> = {
    never drift apart. The auth pages' own copies are scheduled to
    fold onto this export in their own wave.
    ─────────────────────────────────────────────────────────────────── */
-export const ROLE_HOME: Record<AppRole, string> = {
-  STUDENT: ROUTES.studentDashboard,
-  TEACHER: ROUTES.teacherDashboard,
-  ADMIN: ROUTES.adminDashboard,
-  QUALITY: ROUTES.qualityDashboard,
-  OWNER: ROUTES.ownerDashboard,
-};
+export { ROLE_HOME } from './roleHome'; /* r360 F1 — the map moved to lib/roleHome.ts (the guards need it without nav's icon registry); re-exported here so every importer is unchanged */
 
 /* ───────────────────────────────────────────────────────────────────
    ROLE_LABELS — moved to lib/roleLabels.ts (R320 §B, c1-RENAME): the

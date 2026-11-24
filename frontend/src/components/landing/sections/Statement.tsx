@@ -192,6 +192,7 @@ export function Statement({ sectionRef, titleRef }: StatementProps) {
                   alt={MEDIA_ART.alt}
                   loading="lazy"
                   decoding="async"
+                  fetchPriority="low"
                   width={MEDIA_ART.width}
                   height={MEDIA_ART.height}
                   data-spec="intro.mediaimg"
@@ -203,6 +204,7 @@ export function Statement({ sectionRef, titleRef }: StatementProps) {
                   aria-hidden="true"
                   loading="lazy"
                   decoding="async"
+                  fetchPriority="low"
                   width={MEDIA_ART.width}
                   height={MEDIA_ART.height}
                 />

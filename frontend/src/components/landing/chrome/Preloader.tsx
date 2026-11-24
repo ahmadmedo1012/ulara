@@ -61,7 +61,7 @@ import { PREFERS_REDUCED_MOTION } from '../../../lib/motion-media';
  * banner) mounts under the reveal and never overlaps the overlay, and
  * the hero's staged ink-in begins while the slit opens.
  */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { ElevationArt } from '../hero/ElevationArt';
 import { markIntroSeen } from '../../../lib/motion/introGate';
 import '../../../styles/landing/preloader.css';
@@ -70,7 +70,7 @@ import '../../../styles/landing/preloader.css';
  * needs its spread AND the r309 belt's ≥2000ms mount-skew pin is law)
  * and never holds past 2.6s (the hard cap readiness races), then the
  * completed beat, then the slit. */
-const RELEASE_FLOOR_MS = 1400; /* r359 A1 §C — the floor tightens 2000→1400 for the mobile LCP law (Perf ≥85 gate); every beat still plays, tighter */
+const RELEASE_FLOOR_MS = 900; /* r360 F1 — the floor tightens 1400→900: the LCP element is the hero ART, revealed only after the overlay's exit (the staged ink-in), so the entrance's total clock bounds LCP on throttled mobile (measured: exit ≈3.2s → LCP 4.2s → perf 68-75). Every beat still plays, tighter still (A1 §C's own direction); worst case now ≈ 2.9s total. */
 /* r353 — the observer margin. The r309 belt stamps its tMount AFTER
  * `.pl` becomes layout-observable, i.e. one Playwright round-trip after
  * this component's clock; r344's first-rAF stamp removed the paint
@@ -80,10 +80,10 @@ const RELEASE_FLOOR_MS = 1400; /* r359 A1 §C — the floor tightens 2000→1400
  * release gate holds the floor PLUS this margin; the display keeps
  * crawling at 99 to the floor, and the whole entrance still lands
  * inside the documented 2.0-2.6s window (MAX_RUN_MS is unchanged). */
-const RELEASE_MARGIN_MS = 300;
+const RELEASE_MARGIN_MS = 200; /* r360 F1 — tightened with the floor */
 const RELEASE_EXIT_MS = RELEASE_FLOOR_MS + RELEASE_MARGIN_MS;
-const MAX_RUN_MS = 1900;
-const EXIT_HOLD_MS = 500;
+const MAX_RUN_MS = 1300; /* r360 F1 — the hard cap tightens with the floor (the counter curve maps onto w) */
+const EXIT_HOLD_MS = 300; /* r360 F1 — the completed beat tightens 500→300 */
 const ENTRY_DONE_EVENT = 'ula:entry-done';
 
 /* the boot ledger — the sheet's own steps, in tracing order (r351 P2:
@@ -124,17 +124,17 @@ type PreloaderProps = {
 
 export function Preloader({ onExitStart, onDone }: PreloaderProps) {
   const rootRef = useRef<HTMLDivElement>(null);
-  const [pct, setPct] = useState(0);
-  /* r351 P2 — the sheet's own px space (the X:/Y: readout sweeps the
-   * live viewport once, at mount — the readout is decorative). */
-  const [sheet, setSheet] = useState({ w: 0, h: 0 });
-  useEffect(() => {
-    if (typeof window === 'undefined') return undefined;
-    const read = () => setSheet({ w: window.innerWidth, h: window.innerHeight });
-    read();
-    window.addEventListener('resize', read);
-    return () => window.removeEventListener('resize', read);
-  }, []);
+  /* r360 F1 — the counter rides DIRECT DOM writes (textContent +
+   * aria + class toggles), never React state: the old 12Hz setPct
+   * re-rendered the whole overlay tree ~16× across the entrance —
+   * ~800ms of react scripting on a 4x-throttled phone (the measured
+   * react-chunk scripting whale). The initial render paints 0%; the
+   * rAF loop owns every update; the exit writes the terminal 100.
+   * The coords sweep reads window.innerWidth live (the r351 resize
+   * listener retired with the state — the sweep is decorative). */
+  const counterRef = useRef<HTMLSpanElement>(null);
+  const coordsRef = useRef<HTMLSpanElement>(null);
+  const bootRef = useRef<HTMLOListElement>(null);
 
   /* the skip contract: the skip control ends the entrance
    * immediately — but the EXIT must PLAY (the hold + slit), not cut.
@@ -189,13 +189,43 @@ export function Preloader({ onExitStart, onDone }: PreloaderProps) {
     let exited = false;
     let raf = 0;
     let shown = 0; /* the eased display value behind the counter */
+    /* r360 F1 — the 12Hz display throttle's own bookkeeping (see the
+     * frame loop: terminal rungs always land, intermediate digits ride
+     * the 80ms quantum). */
+    let lastPctShown = -1;
+    let lastPctAt = 0;
+    /* r360 F1 — the one direct-DOM writer (see the counter note at the
+     * refs): counter text, aria, the coords sweep and the boot rows'
+     * lit state — zero React involvement during the entrance. */
+    const writePct = (v: number) => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      if (counterRef.current) counterRef.current.textContent = v + '%';
+      root.setAttribute('aria-valuenow', String(v));
+      if (coordsRef.current) {
+        coordsRef.current.textContent =
+          'X:' + Math.round((w * v) / 100) + 'PX Y:' + Math.round((h * v) / 100) + 'PX';
+      }
+      if (bootRef.current) {
+        const items = bootRef.current.children;
+        for (let i = 0; i < items.length; i++) {
+          const li = items.item(i);
+          if (li) {
+            li.classList.toggle(
+              'pl-boot-item--lit',
+              v >= ((i + 1) / items.length) * 100 - 0.4,
+            );
+          }
+        }
+      }
+    };
     const cleanups: Array<() => void> = [];
 
     const runExit = () => {
       if (exited) return;
       exited = true;
       cancelAnimationFrame(raf);
-      setPct(100);
+      writePct(100);
       root.style.setProperty('--pl-p', '1');
       /* the scroll lock releases as the reveal starts (the page is
        * scrollable under the opening slit — the cleanup contract) */
@@ -276,7 +306,21 @@ export function Preloader({ onExitStart, onDone }: PreloaderProps) {
        * exit's own setPct(100) lands the terminal readout. */
       const next =
         t < RELEASE_EXIT_MS ? Math.min(99, Math.round(shown)) : Math.round(shown);
-      setPct(next);
+      /* r360 F1 — the counter's DISPLAY throttles to 12Hz: a setState
+       * per rAF was ~78 re-renders across the entrance, each forcing
+       * style+layout of the readout on a throttled mobile CPU (the
+       * measured Style&Layout whale). The crawl reads identically at
+       * 12Hz — a percentage digit does not animate smoothly at 60 —
+       * and terminal rungs (99/100, the tail flip) always land. */
+      const nowMs = now;
+      if (
+        next !== lastPctShown &&
+        (next >= 99 || nowMs - lastPctAt >= 80)
+      ) {
+        writePct(next);
+        lastPctShown = next;
+        lastPctAt = nowMs;
+      }
       /* the progress var drives BOTH centreline halves (the root is the
        * one shared writer — the two band children read the same value) */
       root.style.setProperty('--pl-p', (shown / 100).toFixed(4));
@@ -312,7 +356,7 @@ export function Preloader({ onExitStart, onDone }: PreloaderProps) {
       aria-label="تحميل صفحة أُلارا"
       aria-valuemin={0}
       aria-valuemax={100}
-      aria-valuenow={pct}
+      aria-valuenow={0}
     >
       {/* the paper — the recorded split seat: two real band halves meet
        * flush at the centreline; each carries its half of the orange
@@ -359,11 +403,12 @@ export function Preloader({ onExitStart, onDone }: PreloaderProps) {
             readout sweeping the sheet (r351 P2 — the measured
             coordinate-readout grammar, our own sweep). */}
         <div className="pl-read" aria-hidden="true">
-          <span className="pl-counter" dir="ltr">{pct}%</span>
-          <span className="pl-coords" dir="ltr">
-            {'X:'}
-            {Math.round((sheet.w * pct) / 100)}PX {'Y:'}
-            {Math.round((sheet.h * pct) / 100)}PX
+          {/* r360 F1 — the counter/coords ride the direct-DOM writer
+              (counterRef/coordsRef); the initial paint reads 0% and the
+              rAF loop owns every subsequent frame. */}
+          <span className="pl-counter" dir="ltr" ref={counterRef}>0%</span>
+          <span className="pl-coords" dir="ltr" ref={coordsRef}>
+            {'X:0PX Y:0PX'}
           </span>
         </div>
 
@@ -399,21 +444,16 @@ export function Preloader({ onExitStart, onDone }: PreloaderProps) {
               </div>
             ))}
           </div>
-          <ol className="pl-boot">
-            {BOOT_LINES.map((line, i) => {
-              /* progress-locked (r351 P2 — the measured behavior: a row
-               * lights only when the counter crosses its threshold) */
-              const lit = pct >= ((i + 1) / BOOT_LINES.length) * 100 - 0.4;
-              return (
-                <li
-                  key={line}
-                  className={lit ? 'pl-boot-item pl-boot-item--lit' : 'pl-boot-item'}
-                >
-                  <span className="pl-boot-num" dir="ltr">{String(i + 1).padStart(3, '0')}</span>
-                  <span className="pl-boot-txt">{line}</span>
-                </li>
-              );
-            })}
+          <ol className="pl-boot" ref={bootRef}>
+            {BOOT_LINES.map((line, i) => (
+              /* progress-locked (r351 P2): the lit class is toggled by
+               * the direct-DOM writer (writePct) — the initial render
+               * ships every row unlit (r360 F1) */
+              <li key={line} className="pl-boot-item">
+                <span className="pl-boot-num" dir="ltr">{String(i + 1).padStart(3, '0')}</span>
+                <span className="pl-boot-txt">{line}</span>
+              </li>
+            ))}
           </ol>
         </div>
 

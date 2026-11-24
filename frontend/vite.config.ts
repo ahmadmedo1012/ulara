@@ -1,7 +1,34 @@
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { visualizer } from 'rollup-plugin-visualizer';
 import path from 'node:path';
+
+// r360 F1 — the async stylesheet seat. The landing's boot plate is the
+// designed parse-time first frame (an opaque fixed cover with its own
+// inline styles), so the emitted sheet's render-blocking seat bought
+// nothing but ~0.9s of projected FCP on throttled mobile. This plugin
+// rewrites the built sheet link to ship NON-blocking — media="print"
+// (never blocks rendering) + a high-priority `preload` twin so the
+// download keeps its old priority — and the head bootstrap script in
+// index.html applies it (media→all) on load, gated against the boot
+// plate's fade (the plate never reveals an unstyled frame; a 4s
+// stuck-sheet fallback forces the fade). Dev mode is untouched (the
+// stylesheet link only exists in the build output; `apply: 'build'`).
+function asyncStylesheet(): Plugin {
+  return {
+    name: 'ulara-async-stylesheet',
+    apply: 'build',
+    transformIndexHtml: {
+      order: 'post',
+      handler(html) {
+        return html.replace(
+          /<link rel="stylesheet" crossorigin href="([^"]+)">/g,
+          '<link rel="preload" as="style" crossorigin href="$1" />\n    <link rel="stylesheet" crossorigin href="$1" media="print" data-ula-async-css />',
+        );
+      },
+    },
+  };
+}
 
 // Opt-in bundle analysis: `BUNDLE_REPORT=1 npm run build` (or
 // `npm run build:report`, which sets the flag) writes
@@ -12,6 +39,7 @@ const enableBundleReport = !!process.env.BUNDLE_REPORT;
 export default defineConfig({
   plugins: [
     react(),
+    asyncStylesheet(),
     ...(enableBundleReport
       ? [visualizer({ filename: 'dist/bundle-report.html', template: 'sunburst', gzipSize: true })]
       : []),
