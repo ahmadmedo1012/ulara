@@ -955,20 +955,27 @@ jobs:
             # 768×1024 tablet pass — student + teacher homes each, then
             # the viewport resets. `wm size` overrides survive until
             # reset; the app re-lays out live.
+            # the size passes need the STUDENT session (the loop's last
+            # login was the OWNER): one more student home pass — it rides
+            # the now-green student journey.
+            "$HOME/.maestro/bin/maestro" test apps/mobile/.maestro/shots-role.yaml -e EMAIL=student@test.ly -e PASSWORD=12345678 -e ROLE=STUDENT -e SHOT=STUDENT || touch fail.flag
+            # ── the size passes: viewport override + cold restart, then the
+            # LIGHTWEIGHT capture (shots-size.yaml — the session persists,
+            # no fresh login journey: the launcher ANRs when the override
+            # lands mid-session and swallows full journeys; run 45346878959
+            # forensics). The student home re-lays-out live at each size.
             adb shell wm size 320x568 >/dev/null 2>&1 || true
-            # a cold restart after the override: the app re-lays out from
-            # a fresh process (runs 45339276768's size passes died on a
-            # stale-layout welcome — the scroll never found the CTA).
             adb shell am force-stop ly.ulara.app >/dev/null 2>&1 || true
             sleep 3
-            "$HOME/.maestro/bin/maestro" test apps/mobile/.maestro/shots-role.yaml -e EMAIL=student@test.ly -e PASSWORD=12345678 -e ROLE=STUDENT -e SHOT=STUDENT-320 || touch fail.flag
+            "$HOME/.maestro/bin/maestro" test apps/mobile/.maestro/shots-size.yaml -e SHOT=STUDENT-320 || touch fail.flag
+            adb shell wm size 360x640 >/dev/null 2>&1 || true
             adb shell am force-stop ly.ulara.app >/dev/null 2>&1 || true
             sleep 3
-            "$HOME/.maestro/bin/maestro" test apps/mobile/.maestro/shots-role.yaml -e EMAIL=teacher@test.ly -e PASSWORD=12345678 -e ROLE=TEACHER -e SHOT=TEACHER-320 || touch fail.flag
+            "$HOME/.maestro/bin/maestro" test apps/mobile/.maestro/shots-size.yaml -e SHOT=STUDENT-360 || touch fail.flag
             adb shell wm size 768x1024 >/dev/null 2>&1 || true
             adb shell am force-stop ly.ulara.app >/dev/null 2>&1 || true
             sleep 3
-            "$HOME/.maestro/bin/maestro" test apps/mobile/.maestro/shots-role.yaml -e EMAIL=student@test.ly -e PASSWORD=12345678 -e ROLE=STUDENT -e SHOT=STUDENT-TABLET || touch fail.flag
+            "$HOME/.maestro/bin/maestro" test apps/mobile/.maestro/shots-size.yaml -e SHOT=STUDENT-TABLET || touch fail.flag
             adb shell wm size reset >/dev/null 2>&1 || true
             "$ANDROID_HOME/platform-tools/adb" devices > adb-devices.txt 2>&1 || true
             timeout 60 "$ANDROID_HOME/platform-tools/adb" logcat -d > logcat.txt 2>&1; [ -s logcat.txt ] || echo "(logcat capture failed — adb device state follows:)" >> logcat.txt

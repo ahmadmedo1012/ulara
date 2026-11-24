@@ -51,6 +51,6 @@ appId: ly.ulara.app
     optional: true
 - extendedWaitUntil:
     visible:
-      text: "${ROLE == 'STUDENT' ? 'أرقامك هذا الفصل' : ROLE == 'TEACHER' ? 'لوحة الأستاذ' : ROLE == 'ADMIN' ? 'لوحة المسجل العام' : ROLE == 'QUALITY' ? 'لوحة الجودة' : 'لوحة التحكم الرئيسية'}"
+      text: "${ROLE == 'STUDENT' ? 'أرقامك هذا الفصل' : ROLE == 'TEACHER' ? 'لوحة الأستاذ' : ROLE == 'ADMIN' ? 'لوحة إدارة المؤسسة' : ROLE == 'QUALITY' ? 'لوحة الجودة' : 'لوحة التحكم'}"
     timeout: 45000
 - takeScreenshot: "HOME-${SHOT}"

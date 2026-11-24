@@ -140,7 +140,7 @@ appId: ly.ulara.app
 #      QUALITY → «لوحة الجودة»; OWNER → «لوحة التحكم الرئيسية»)
 - extendedWaitUntil:
     visible:
-      text: "${ROLE == 'STUDENT' ? 'أرقامك هذا الفصل' : ROLE == 'TEACHER' ? 'لوحة الأستاذ' : ROLE == 'ADMIN' ? 'لوحة المسجل العام' : ROLE == 'QUALITY' ? 'لوحة الجودة' : 'لوحة التحكم الرئيسية'}"
+      text: "${ROLE == 'STUDENT' ? 'أرقامك هذا الفصل' : ROLE == 'TEACHER' ? 'لوحة الأستاذ' : ROLE == 'ADMIN' ? 'لوحة إدارة المؤسسة' : ROLE == 'QUALITY' ? 'لوحة الجودة' : 'لوحة التحكم'}"
     timeout: 45000
 
 # 4 ── tab visit 1 (labels: src/components/shell/roleTabs.ts ROLE_TABS;
