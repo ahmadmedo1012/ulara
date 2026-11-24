@@ -128,8 +128,10 @@ jobs:
           if (c.updates?.url) fail(`updates.url must be ABSENT — got ${c.updates.url}`);
           if (c.runtimeVersion) console.log(`::notice::runtimeVersion present as inert metadata (${JSON.stringify(c.runtimeVersion)}) — expo-updates is not in the tree; no update surface embeds`);
           try {
+            console.log('::notice::package.json path:', require.resolve('./package.json'));
             const deps = require('./package.json').dependencies || {};
-            if ('expo-updates' in deps) fail('expo-updates must not be a dependency (r359 retirement)');
+            console.log('::notice::dependency count:', Object.keys(deps).length, '| updates-like keys:', Object.keys(deps).filter(k => k.includes('updates')).join(',') || '(none)');
+            if ('expo-updates' in deps) fail(`expo-updates must not be a dependency (r359 retirement) — resolved from ${require.resolve('./package.json')}`);
             const lock = require('fs').readFileSync('./package-lock.json', 'utf8');
             if (lock.includes('"node_modules/expo-updates"')) fail('expo-updates must be absent from the lockfile tree (r359 retirement)');
           } catch (e) { fail(`dependency check failed: ${e.message}`); }
