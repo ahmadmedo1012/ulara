@@ -33,7 +33,7 @@ export const DEFAULT_NOTIFICATION_PREFERENCES: NotificationPreferences = {
 
 /** Minimal structural Prisma slice — keeps this unit-testable. */
 export interface PreferenceClient {
-  notificationPreference: {
+  userNotificationPreference: {
     findMany(args: {
       where: { userId: { in: string[] } };
       select: {
@@ -75,7 +75,7 @@ export async function resolvePreferences(
 ): Promise<Map<string, NotificationPreferences>> {
   const map = new Map<string, NotificationPreferences>();
   if (userIds.length === 0) return map;
-  const rows = await client.notificationPreference.findMany({
+  const rows = await client.userNotificationPreference.findMany({
     where: { userId: { in: userIds } },
     select: {
       userId: true,
@@ -99,5 +99,5 @@ export async function resolvePreferences(
 
 /** The live-DB convenience wrapper used by routes + the digest job. */
 export function resolveUserPreferences(userIds: string[]): Promise<Map<string, NotificationPreferences>> {
-  return resolvePreferences(prisma, userIds);
+  return resolvePreferences({ userNotificationPreference: prisma.userNotificationPreference }, userIds);
 }

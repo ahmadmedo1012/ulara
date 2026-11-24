@@ -87,7 +87,7 @@ describe('notification preferences (r359)', () => {
         emailDigest: true,
       },
     ]);
-    const client: PreferenceClient = { notificationPreference: { findMany } };
+    const client: PreferenceClient = { userNotificationPreference: { findMany } };
     const map = await resolvePreferences(client, ['u1', 'u2', 'u3']);
     expect(findMany).toHaveBeenCalledTimes(1);
     expect(map.get('u1')).toEqual(DEFAULT_NOTIFICATION_PREFERENCES);
@@ -97,7 +97,7 @@ describe('notification preferences (r359)', () => {
 
   it('resolvePreferences with an empty roster makes NO query', async () => {
     const findMany = vi.fn(async () => []);
-    const client: PreferenceClient = { notificationPreference: { findMany } };
+    const client: PreferenceClient = { userNotificationPreference: { findMany } };
     const map = await resolvePreferences(client, []);
     expect(findMany).not.toHaveBeenCalled();
     expect(map.size).toBe(0);
@@ -212,7 +212,7 @@ describe('email outbox (r359)', () => {
           return u;
         }),
       },
-      emailVerificationToken: {
+      emailVerifyToken: {
         create: vi.fn(async ({ data }: { data: Record<string, unknown> }) => { tokens.push(data); return data; }),
         updateMany: vi.fn(async () => ({ count: 0 })),
         findUnique: vi.fn(async ({ where }: { where: { tokenHash: string } }) =>
@@ -248,7 +248,7 @@ describe('email outbox (r359)', () => {
     const raw = 'y'.repeat(43);
     const client = {
       user: { findUnique: vi.fn(async () => null), update: vi.fn(async () => ({})) },
-      emailVerificationToken: {
+      emailVerifyToken: {
         create: vi.fn(),
         updateMany: vi.fn(async () => ({ count: 1 })),
         findUnique: vi.fn(async () => ({ id: 't1', userId: 'u1', expiresAt: new Date(Date.now() - 1000), consumedAt: null })),
@@ -262,7 +262,7 @@ describe('email outbox (r359)', () => {
 describe('weekly digest (r359)', () => {
   function digestClient(opts: { optedIn: string[]; unread: Record<string, Array<{ title: string; body: string | null }>> }) {
     return {
-      notificationPreference: {
+      userNotificationPreference: {
         findMany: vi.fn(async () => opts.optedIn.map((userId) => ({ userId }))),
       },
       user: {

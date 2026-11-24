@@ -60,7 +60,7 @@ const state = {
 
 vi.mock('../../src/db.js', () => ({
   prisma: {
-    notificationPreference: {
+    userNotificationPreference: {
       findUnique: vi.fn(async () => state.preferenceRow),
       upsert: vi.fn(async ({ create }: { create: Record<string, unknown> }) => {
         // Mirrors the DB defaults (unsent booleans default true/false).
@@ -86,7 +86,7 @@ vi.mock('../../src/db.js', () => ({
       }),
     },
     emailEvent: { create: vi.fn(async (args: unknown) => state.emailEventCreate(args)) },
-    emailVerificationToken: { create: vi.fn(), updateMany: vi.fn(async () => ({ count: 0 })), findUnique: vi.fn() },
+    emailVerifyToken: { create: vi.fn(), updateMany: vi.fn(async () => ({ count: 0 })), findUnique: vi.fn() },
     $transaction: vi.fn(async (fn: (tx: unknown) => Promise<unknown>) => fn({})),
   },
   withRetry: vi.fn(),

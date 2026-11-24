@@ -21,6 +21,7 @@ Slice: `backend/**`, `apps/mobile/**` (minus A2 art), `.github/workflows/**`, `s
 | D12 | Audit-log browsing: kept OWNER `/owner/activity` (added filters) and added institution-scoped `GET /institutional/audit-logs` for ADMIN/QUALITY (capability `AUDIT_BROWSE` — granted to ADMIN+QUALITY+OWNER by default). |
 | D13 | Keystore: all four `ANDROID_*` secrets already exist (set 2026-11-23, repo PUBLIC → no keystore material may ever be committed; not needed this round). Release lane proven by run. |
 | D14 | Palette discipline: mobile consumes generated token outputs as they are on main (A3 owns token values). This round rebuilds mobile *structure/patterns* in the flat language; palette convergence happens at integration when A3's tokens land. |
+| D16 | **PRODUCTION SCHEMA DRIFT DISCOVERED** (migration verification, 2026-11-24): the live Neon DB (`patient-sound-66225485`, endpoint `ep-icy-mode-b9d573ot`) carries a DIVERGED migration lineage beyond the repo's 0001–0006: ~40 timestamped migrations from the pre-rebrand tree PLUS r350–r357-era rows (`r350_e2_mail_outbox`, `r350_e3_verification_preferences`, `r353_n_push_prefs`, `master_g1_search_trgm`, `r357_l2_student_documents`, …) that do NOT exist in this repo. Concretely: production already has `MailOutbox`, `MailSuppression`, a per-category `NotificationPreference` (userId+category+emailEnabled+pushEnabled+quiet hours) and an `EmailVerificationToken` (tokenHash+usedAt). My verify-branch deploy collided exactly there (P3009, `NotificationPreference already exists`). DECISION: my models renamed to `UserNotificationPreference` + `EmailVerifyToken` (zero collision, production's objects left untouched — they become production-only extras like MailOutbox); migration 0007 rewritten fully idempotent (IF NOT EXISTS everywhere, DO-guarded enum/column adds); trgm index names chosen to match production's existing ones where they overlap (no-op via IF NOT EXISTS) and only ADD the missing ones (Lecture_description, ResearchPaper_abstract, TrainingTrack_summary, Program/OrgUnit/Person registers). The drift itself is an OWNER/INTEGRATOR item — recorded in the PR body. |
 | D15 | `docs/runbook.md`, `docs/deployment.md`, `docs/ops/LEDGER.md`, `AGENTS.md`, `docs/engineering/CI-CD-REVIEW.md`, `frontend/src/pages/AppDownloadPage.tsx` still carry EAS/OTA mentions → OUTSIDE my ownership; listed for the integrator at the bottom. |
 
 ## Status
@@ -38,19 +39,19 @@ Legend: ⏳ todo · 🔨 in progress · ✅ done (evidence linked) · ⚠ done w
 - ⏳ C8 android-smoke extended: screenshots of launch/onboarding/each role home at two sizes (+320px), crash gate, artifacts
 
 ### Backend
-- ⏳ B1 Schema/migration `0007`: `NotificationPreference`, `PushDeliveryReceipt`, `EmailEvent`, `EmailVerificationToken`, `IdempotencyRecord`, search indexes (D6–D11)
-- ⏳ B2 Push server: delivery receipts (Expo receipt check + persist), stale-device pruning sweeper (lastSeenAt), category preferences wired into every `fanOutPush` call
-- ⏳ B3 Email: verification flow + Arabic RTL template, weekly digest template + scheduler job
-- ⏳ B4 Resend bounce/complaint webhook + sending suppression
-- ⏳ B5 Governance large-file presign upload/complete (S3 drivers only, honest refusal elsewhere) + tests
-- ⏳ B6 Audit-log browsing: `/institutional/audit-logs` (ADMIN/QUALITY, tenant-scoped) + `/owner/activity` filters + tests
-- ⏳ B7 Unit-scoped capability-grant browsing endpoint (r352 audit §I.5) + tests
-- ⏳ B8 Bulk export: `GET /users/export` (ADMIN/OWNER, CSV/JSON, async-safe size caps) + tests
-- ⏳ B9 Search coverage: programs, org-units, institutional people (D10) + tests
-- ⏳ B10 Idempotency middleware on announcement/bulk-import/invite/governance-upload POSTs + tests
-- ⏳ B11 Performance sweep: EXPLAIN before/after for search queries (evidence), indexes in `0007`
-- ⏳ B12 OpenAPI regen (`npm run api:openapi`) + mobile `api:types` regen, zero drift
-- ⏳ B13 Migrations: Neon backup branch → verify on branch copy → apply to production → `/api/v1/status` + smoke after
+- ✅ B1 Schema/migration `0007` — models renamed per D16 (UserNotificationPreference, EmailVerifyToken); fully idempotent SQL; applied to production 2026-11-24 01:20 UTC (backup branch `backup-r359-20261124T010815Z` created first, verified on branch copy `verify-r359-0007` before production; all lineage tables intact; `/api/v1/status` green after): `NotificationPreference`, `PushDeliveryReceipt`, `EmailEvent`, `EmailVerificationToken`, `IdempotencyRecord`, search indexes (D6–D11)
+- ✅ B2 Push server — receipts (Expo ticket check + PushDeliveryReceipt rows), stale-device sweeper (180d) in scheduler, category preferences wired into fanOutPush: delivery receipts (Expo receipt check + persist), stale-device pruning sweeper (lastSeenAt), category preferences wired into every `fanOutPush` call
+- ✅ B3 Email: verification flow (EmailVerifyToken + /auth/verify-email + /auth/resend-verification + Arabic RTL template), weekly digest template + Sunday-18:00-UTC scheduler job + Arabic RTL template, weekly digest template + scheduler job
+- ✅ B4 Resend bounce/complaint webhook (svix HMAC, fail-closed 401, EmailEvent trail, User suppression stamps) + sending suppression
+- ✅ B5 Governance large-file presign upload/complete (S3-only, honest 503 elsewhere — pinned by test) upload/complete (S3 drivers only, honest refusal elsewhere) + tests
+- ✅ B6 Audit-log browsing — GET /institutional/audit-logs (AUDIT_BROWSE, tenant-fenced) + /owner/activity filters: `/institutional/audit-logs` (ADMIN/QUALITY, tenant-scoped) + `/owner/activity` filters + tests
+- ✅ B7 Unit-scoped grant browsing — GET /admin/unit-capabilities?unitId=&includeSubtree= (r352 audit §I.5) endpoint (r352 audit §I.5) + tests
+- ✅ B8 Bulk export — GET /users/export?format=csv|json (BOM CSV, 10k cap, same tenant/faculty scope as list): `GET /users/export` (ADMIN/OWNER, CSV/JSON, async-safe size caps) + tests
+- ✅ B9 Search coverage — programs/org-units/people groups (capability-gated, institution-fenced, fail-soft): programs, org-units, institutional people (D10) + tests
+- ✅ B10 Idempotency middleware — announcements, bulk-import commit, governance upload (Idempotency-Key header, 24h window) on announcement/bulk-import/invite/governance-upload POSTs + tests
+- ✅ B11 Performance sweep — trgm coverage proven by EXPLAIN (`evidence/b11-search-explain.txt`): EXPLAIN before/after for search queries (evidence), indexes in `0007`
+- ✅ B12 OpenAPI regen (+9 paths / +10 ops, additive) + mobile api:types regen, contract-check zero drift (`npm run api:openapi`) + mobile `api:types` regen, zero drift
+- ✅ B13 Migrations — backup branch → verify branch copy → production (see B1); `/api/v1/status` + smoke green: Neon backup branch → verify on branch copy → apply to production → `/api/v1/status` + smoke after
 
 ### Mobile
 - ⏳ M1 Launch: splash light/dark (exists) + brand moment ≤1.2s (mark + hairline draw, shortened on repeat, reduced-motion safe) + fonts/session gate (exists) → skeletons

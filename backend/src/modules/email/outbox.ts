@@ -93,7 +93,7 @@ export interface VerificationClient {
   user: {
     findUnique(args: { where: { id: string }; select: { id: true; email: true; firstName: true; emailVerifiedAt: true; emailBouncedAt: true; emailComplainedAt: true } }): Promise<OutboxUser & { firstName: string; emailVerifiedAt: Date | null } | null>;
   };
-  emailVerificationToken: {
+  emailVerifyToken: {
     create(args: { data: Record<string, unknown> }): Promise<unknown>;
     updateMany(args: { where: Record<string, unknown>; data: Record<string, unknown> }): Promise<{ count: number }>;
     findUnique(args: { where: { tokenHash: string } }): Promise<{ id: string; userId: string; expiresAt: Date; consumedAt: Date | null } | null>;
@@ -118,13 +118,13 @@ export async function issueVerificationEmail(
   if (user.emailVerifiedAt) return 'already_verified';
 
   // Consume any previous open tokens (newest-wins).
-  await client.emailVerificationToken.updateMany({
+  await client.emailVerifyToken.updateMany({
     where: { userId, consumedAt: null },
     data: { consumedAt: new Date() },
   });
 
   const token = mintVerificationToken();
-  await client.emailVerificationToken.create({
+  await client.emailVerifyToken.create({
     data: {
       userId,
       tokenHash: hashVerificationToken(token),
@@ -150,7 +150,7 @@ export async function consumeVerificationToken(
   now: Date = new Date(),
 ): Promise<'verified' | 'already_verified' | 'invalid' | 'expired'> {
   if (!token || token.length < 20 || token.length > 200) return 'invalid';
-  const row = await client.emailVerificationToken.findUnique({ where: { tokenHash: hashVerificationToken(token) } });
+  const row = await client.emailVerifyToken.findUnique({ where: { tokenHash: hashVerificationToken(token) } });
   if (!row) return 'invalid';
   if (row.consumedAt) {
     // A consumed token still maps to a user — report their true state.
@@ -158,7 +158,7 @@ export async function consumeVerificationToken(
     return user?.emailVerifiedAt ? 'already_verified' : 'invalid';
   }
   if (row.expiresAt < now) return 'expired';
-  await client.emailVerificationToken.updateMany({ where: { id: row.id }, data: { consumedAt: now } });
+  await client.emailVerifyToken.updateMany({ where: { id: row.id }, data: { consumedAt: now } });
   await client.user.update({ where: { id: row.userId }, data: { emailVerifiedAt: now } });
   return 'verified';
 }
@@ -168,7 +168,7 @@ export async function consumeVerificationToken(
 export const DIGEST_MAX_ITEMS = 20;
 
 export interface DigestClient {
-  notificationPreference: {
+  userNotificationPreference: {
     findMany(args: { where: { emailDigest: boolean }; select: { userId: true } }): Promise<Array<{ userId: string }>>;
   };
   user: {
@@ -197,7 +197,7 @@ export async function runWeeklyDigest(
 ): Promise<{ recipients: number; sent: number; skipped: number; failed: number }> {
   const out = { recipients: 0, sent: 0, skipped: 0, failed: 0 };
   const weekAgo = new Date(now.getTime() - 7 * 24 * 3600_000);
-  const optedIn = await client.notificationPreference.findMany({
+  const optedIn = await client.userNotificationPreference.findMany({
     where: { emailDigest: true },
     select: { userId: true },
   });

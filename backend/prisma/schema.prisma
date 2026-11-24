@@ -462,9 +462,9 @@ model User {
   aiConversations     AiConversation[]
   auditLogs           AuditLog[]
   // r359 A4 — push/email/idempotency surfaces
-  notificationPreference NotificationPreference?
+  notificationPreference UserNotificationPreference?
   emailEvents           EmailEvent[]
-  emailVerificationTokens EmailVerificationToken[]
+  emailVerifyTokens EmailVerifyToken[]
   idempotencyRecords   IdempotencyRecord[]
   watchEvents         WatchEvent[]         @relation("StudentWatchEvents")
   checkpointAnswers   CheckpointAnswer[]   @relation("StudentCheckpointAnswers")
@@ -3921,7 +3921,7 @@ model ResearchOutput {
 /// user, booleans per NotificationType group; the push fan-out and the
 /// weekly digest read it, defaults apply when no row exists. All four
 /// push categories default ON; the email digest defaults OFF (opt-in).
-model NotificationPreference {
+model UserNotificationPreference {
   id           String   @id @default(cuid())
   userId       String   @unique
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -3996,7 +3996,7 @@ enum EmailEventType {
 /// register/reset family never had. Token is stored HASHED (sha256);
 /// single-use, 48h expiry, newest-wins (a resend invalidates the old
 /// row via consumedAt stamp on the user's open tokens).
-model EmailVerificationToken {
+model EmailVerifyToken {
   id         String    @id @default(cuid())
   userId     String
   user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)

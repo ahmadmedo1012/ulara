@@ -108,7 +108,7 @@ const preferenceBody = z
 
 router.get('/me/notification-preferences', async (req, res, next) => {
   try {
-    const row = await prisma.notificationPreference.findUnique({
+    const row = await prisma.userNotificationPreference.findUnique({
       where: { userId: req.user!.id },
     });
     res.json({
@@ -126,7 +126,7 @@ router.get('/me/notification-preferences', async (req, res, next) => {
 router.put('/me/notification-preferences', validate(preferenceBody), async (req, res, next) => {
   try {
     const b = req.body as z.infer<typeof preferenceBody>;
-    const row = await prisma.notificationPreference.upsert({
+    const row = await prisma.userNotificationPreference.upsert({
       where: { userId: req.user!.id },
       create: { userId: req.user!.id, ...b },
       update: { ...b },
