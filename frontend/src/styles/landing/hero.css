@@ -153,14 +153,11 @@
   outline-offset: -1px;
   transition: transform 0.3s cubic-bezier(0.625, 0.05, 0, 1);
 }
-.hi-marker:hover .hi-sq,
-.hi-marker:focus-visible .hi-sq {
+.hi-marker:hover .hi-sq {
   transform: scale(1.35);
 }
-.hi-marker:focus-visible {
-  outline: 2px solid var(--hro-sig);
-  outline-offset: 2px;
-}
+/* focus: the universal ring (base.css) owns the marker's visibility —
+   r172a §3: zero private :focus-visible rules on the landing. */
 /* the callout tag — hairline chip, mono index + Arabic label */
 .hi-tag {
   position: absolute;
@@ -244,21 +241,22 @@
 .bp-ruler-s { inset-inline-start: 0; inset-block: 0; inline-size: 4px; --bp-tick-dir: down; background-size: 4px 100%; }
 .bp-ruler-e { inset-inline-end: 0; inset-block: 0; inline-size: 4px; --bp-tick-dir: down; background-size: 4px 100%; }
 
-/* the ± registration crosses at the stage corners */
+/* the ± registration crosses at the stage corners — the glyph paints
+   from ::before content (r321: never innerText, always CSS paint) */
 .bp-dmark {
   position: absolute;
-  inline-size: 11px;
-  block-size: 11px;
+  inline-size: 13px;
+  block-size: 13px;
   pointer-events: none;
 }
-.bp-dmark::before,
-.bp-dmark::after {
-  content: '';
+.bp-dmark::before {
+  content: '+';
   position: absolute;
-  background: var(--hro-ink);
+  inset: 0;
+  font: 10px/13px var(--font-mono, ui-monospace, monospace);
+  color: var(--hro-ink);
+  text-align: center;
 }
-.bp-dmark::before { inset-block-start: 5px; inset-inline: 0; block-size: 1px; }
-.bp-dmark::after { inset-inline-start: 5px; inset-block: 0; inline-size: 1px; }
 .bp-dmark-tl { inset-block-start: 1.2%; inset-inline-start: 1.2%; }
 .bp-dmark-tr { inset-block-start: 1.2%; inset-inline-end: 1.2%; }
 .bp-dmark-bl { inset-block-end: 1.2%; inset-inline-start: 1.2%; }
@@ -349,10 +347,10 @@
   transition: transform 0.42s cubic-bezier(0.625, 0.05, 0, 1);
   z-index: -1;
 }
-.hro-cta:hover .hro-cta-fill,
-.hro-cta:focus-visible .hro-cta-fill { transform: scaleX(1); }
-.hro-cta:hover, .hro-cta:focus-visible { color: #fff; border-color: var(--hro-sig); }
-.hro-cta:focus-visible { outline: 2px solid var(--hro-sig); outline-offset: 2px; }
+.hro-cta:hover .hro-cta-fill { transform: scaleX(1); }
+.hro-cta:hover { color: #fff; border-color: var(--hro-sig); }
+/* focus: the universal ring (base.css) owns visibility — no private
+   :focus-visible sub-language on the landing (r172a §3). */
 /* the label roll — one visible line; the twin rides below the fold */
 .hro-cta-roll {
   display: grid;
@@ -362,8 +360,7 @@
 }
 .hro-cta-top, .hro-cta-bot { display: block; line-height: 1.5; transition: transform 0.42s cubic-bezier(0.625, 0.05, 0, 1); white-space: nowrap; }
 .hro-cta-bot { color: #fff; }
-.hro-cta:hover .hro-cta-top,
-.hro-cta:focus-visible .hro-cta-top { transform: translateY(-1.5em); }
+.hro-cta:hover .hro-cta-top { transform: translateY(-1.5em); }
 
 /* ── [3] THE WORK STRIP (the value ticker at the seam) ─────────────── */
 .hro-work {
@@ -405,14 +402,18 @@
 
 .bp-plus {
   position: absolute;
-  inline-size: 11px;
-  block-size: 11px;
+  inline-size: 13px;
+  block-size: 13px;
   pointer-events: none;
 }
-.bp-plus::before,
-.bp-plus::after { content: ''; position: absolute; background: var(--hro-ink); }
-.bp-plus::before { inset-block-start: 5px; inset-inline: 0; block-size: 1px; }
-.bp-plus::after { inset-inline-start: 5px; inset-block: 0; inline-size: 1px; }
+.bp-plus::before {
+  content: '+';
+  position: absolute;
+  inset: 0;
+  font: 10px/13px var(--font-mono, ui-monospace, monospace);
+  color: var(--hro-ink);
+  text-align: center;
+}
 .bp-plus-tl { inset-block-start: 2px; inset-inline-start: 2px; }
 .bp-plus-tr { inset-block-start: 2px; inset-inline-end: 2px; }
 .bp-plus-bl { inset-block-end: 2px; inset-inline-start: 2px; }

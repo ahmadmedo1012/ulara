@@ -319,11 +319,8 @@ describe('r306 → r310 — the elevation illustration (the honest interactive)'
      * unchanged, and the CSS half of the pin below is untouched. */
     expect(liveTsx).toMatch(/className="bp-plus bp-plus-tl"(?: aria-hidden="true")? \/>/);
     expect(liveTsx).toMatch(/className="bp-dmark bp-dmark-tl"(?: aria-hidden="true")? \/>/);
-    /* r359 A1: the marks render their glyphs as background bars on the
-     * ::before/::after pair (out of innerText — the empty-span contract
-     * holds; the glyph carrier moved from content to background). */
-    expect(live).toMatch(/\.bp-dmark::before,\s*\n?\.bp-dmark::after\s*\{[\s\S]*?background: var\(--hro-ink\)/s);
-    expect(live).toMatch(/\.bp-plus::before,\s*\n?\.bp-plus::after\s*\{[\s\S]*?background: var\(--hro-ink\)/s);
+    expect(live).toMatch(/\.bp-plus::before\s*\{[\s\S]*?content:\s*'\+'/);
+    expect(live).toMatch(/\.bp-dmark::before\s*\{[\s\S]*?content:\s*'\+'/);
     // R322 override (2-b) → R333 re-key: the dashed inner frame rides
     // the live .hro-stage::before seat (same 1px dashed rule,
     // proximity-revealed as before) after the retired band grammar
