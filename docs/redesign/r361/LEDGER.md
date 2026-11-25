@@ -226,7 +226,15 @@ P1/P5/P8 — Restored immediate visibility of the five real student metrics, ret
 
 | Shell scrollports and internal workbenches (parent 705e359; containing commit) | 91/143 overflow cases at 360px became 0/143; 30 internal workbench cells clean, print stages remain 720×450, seven focused Chromium and 33 component tests passed. | [Commands, counts and visual critique](evidence/shell-and-workbenches.txt) |
 
-NEXT: Match the current commit to production and signed release artifacts; read final role matrix, mobile Lighthouse and native emulator results separately. Two aggregate verifier invocations have already been used.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:0c962789621fe28f2216d144dbb4fcf3be68b293f0ee7c089e31a2f58c1d1ca3 -->
+
+| Final release verification (parent 77ef2ed) | Documented the verified second distribution path when the Actions archive endpoint returned HTTP 502. A complete 16,928,372-byte IPA from 705e359 passed its release checksum and contained the expected iPhone executable and JavaScript bundle. A rolling tag alone is not proof of the final source. | [Mobile release verification](../../../apps/mobile/README.md#verify-the-rolling-ios-file-against-a-commit) |
+
+NEXT: Check live status, Android certificate, iOS archive, mobile journeys and the role matrix against this containing commit. The web runtime is unchanged from 77ef2ed.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 

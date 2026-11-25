@@ -123,7 +123,27 @@ display, font and rotation settings on exit.
 
 Ship application and dependency changes in a new native build. The status response carries `minAppVersion` (required update) and `latestAppVersion` (available update). For rollback and installation requirements see [the mobile runbook](../../docs/mobile.md).
 
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:76ea6098dee82e8353887602aa80f308c2f0b57229f38b6dfd987d0dc6aa302c -->
+
+### Verify the rolling iOS file against a commit
+
+If downloading the Actions ZIP is unavailable, the iOS workflow publishes the same unsigned IPA, checksum and build metadata together in the [SideStore release](https://github.com/ahmadmedo1012/ulara/releases/tag/sidestore-latest). In an empty directory, set `EXPECTED_COMMIT` to the full SHA being accepted and run:
+
+```sh
+gh release download sidestore-latest --repo ahmadmedo1012/ulara \
+  --pattern Ulara.ipa --pattern SHA256SUMS.txt --pattern build-info.json
+test "$(jq -r .commit build-info.json)" = "$EXPECTED_COMMIT"
+sha256sum -c SHA256SUMS.txt
+unzip -tq Ulara.ipa
+```
+
+Record the Actions run and the verified source together. A rolling tag can advance before a previously started download finishes. The IPA is unsigned; checksum verification does not sign it or establish App Store distribution.
+
 ## Synchronizing with main
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 Start from current `main`. After a backend change run `npm run typecheck`, `npm run contract-check`, and `npm run api:types` in `apps/mobile`; inspect the generated diff before publishing. Update [feature parity](docs/feature-parity.md) only for verified behavior.
 
