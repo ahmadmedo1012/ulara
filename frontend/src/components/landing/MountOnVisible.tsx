@@ -21,6 +21,7 @@ export function MountOnVisible({
   minHeight,
   label,
   anchorId,
+  lead = 420,
 }: {
   children: ReactNode;
   /** the pre-mount placeholder height (the diet-measured section height, px @390) */
@@ -30,6 +31,8 @@ export function MountOnVisible({
   /** the section's anchor id (#hash navigation + the menu's section
    *  links scroll HERE while the section itself is still unmounted) */
   anchorId?: string;
+  /** Start rendering this far ahead of the viewport. */
+  lead?: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [show, setShow] = useState(false);
@@ -50,7 +53,7 @@ export function MountOnVisible({
           io.disconnect();
         }
       },
-      { rootMargin: '420px 0px' }, /* r360 F1 — the lead tightens 800→420: at load the 800px zone swallowed the chapters section (top 1505 < 844+800) and pulled its 36KB chunk onto the boot path; 420 keeps the near-fold sections (live 326px below) instant while chapters (661px below) waits for the first scroll — the audit window never sees it. */
+      { rootMargin: `${lead}px 0px` },
     );
     io.observe(el);
     /* r360 F1 — the no-op-observer safety net: a REAL browser reports
@@ -66,7 +69,7 @@ export function MountOnVisible({
       io.disconnect();
       window.clearTimeout(fallback);
     };
-  }, []);
+  }, [lead]);
 
   return (
     <div

@@ -124,7 +124,15 @@ P8 — Ran the requested two full script invocations. The last run passed typech
 
 P9 — Verified all six topic tips were ancestors of main and deleted their refs with an atomic lease. Remote and local now contain only main; zero open PRs; latest and builds-ledger retained. [Ref and PR reads](evidence/cleanup.txt). Smart HTTPS worked.
 
-NEXT: Complete remaining verification and document any unmet release conditions.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:a053ec341316a64a015f6fd14446b63ff671b7856c6e8eabd106baadc0090c79 -->
+
+P2 — The challenges carousel no longer reconciles four offscreen diagrams on initial phone load. Its scroll and keyboard handlers now attach at section mount. The cold-entry/tap/resize probe and all five landing-instrument journeys passed. [Evidence](evidence/phone-carousel.txt).
+
+NEXT: Remeasure live Lighthouse once production serves the new carousel; verify teacher and owner targets.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 

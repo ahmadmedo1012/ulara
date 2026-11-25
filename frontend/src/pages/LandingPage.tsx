@@ -35,7 +35,7 @@ import { initReveals } from '../lib/reveals';
 import { Hero } from '../components/landing/sections/Hero';
 import { Statement } from '../components/landing/sections/Statement';
 const Why = lazy(() => import('../components/landing/sections-lazy').then((m) => ({ default: m.Why })));
-import { Live } from '../components/landing/sections/Live';
+const Live = lazy(() => import('../components/landing/sections/Live').then((m) => ({ default: m.Live })));
 /* r325 Y2 — PlatformCanvas/PlatformPlanArt (the head-strip plan +
  * its over-art pin) retire with the Y2 rebuild: the plan's caption
  * lives under the ONE product frame now (see sections/Product.tsx). */
@@ -285,89 +285,6 @@ export default function LandingPage() {
     }
   });
 
-  /* R322 (2-d) — the pains' ≤767 snap carousel + the reference's dot
-   * rail. Pure CSS scroll-snap owns the swipe (no swiper dep); this
-   * belt only (a) makes the scroll region keyboard-focusable inside
-   * the tier, (b) mirrors the snap position onto the dots (the
-   * closest-to-center column wins — direction-agnostic, safe in RTL),
-   * and (c) lets a dot tap center its column. ≥768 the carousel is a
-   * plain grid: the listener detaches, the dots hide, tabIndex
-   * releases. Reduced motion: the tap jumps without smoothing (the
-   * page's RM canon). */
-  const pmColsRef = useRef<HTMLOListElement>(null);
-  const pmDotsRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const cols = pmColsRef.current;
-    const dots = pmDotsRef.current;
-    if (!cols || !dots || typeof window.matchMedia !== 'function') return undefined;
-    const mm = window.matchMedia('(max-width: 767px)');
-    const btns = Array.from(dots.querySelectorAll<HTMLButtonElement>('.pm-dot-btn'));
-    const reduced =
-      typeof window.matchMedia === 'function' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    const setActive = (i: number) => {
-      btns.forEach((b, j) => {
-        b.classList.toggle('is-active', j === i);
-        b.setAttribute('aria-current', j === i ? 'true' : 'false');
-      });
-    };
-    const nearest = () => {
-      const c = cols.getBoundingClientRect();
-      const mid = (c.left + c.right) / 2;
-      let best = 0;
-      let bd = Infinity;
-      Array.from(cols.children).forEach((child, j) => {
-        const r = child.getBoundingClientRect();
-        const d = Math.abs((r.left + r.right) / 2 - mid);
-        if (d < bd) {
-          bd = d;
-          best = j;
-        }
-      });
-      return best;
-    };
-    const onScroll = () => setActive(nearest());
-    const onTap = (e: Event) => {
-      const target = e.target as HTMLElement | null;
-      const btn = target?.closest?.('.pm-dot-btn') as HTMLButtonElement | null;
-      if (!btn) return;
-      const i = btns.indexOf(btn);
-      const child = cols.children[i];
-      if (child) {
-        child.scrollIntoView({
-          behavior: reduced ? 'auto' : 'smooth',
-          block: 'nearest',
-          inline: 'center',
-        });
-      }
-    };
-    const apply = (on: boolean) => {
-      cols.tabIndex = on ? 0 : -1;
-      btns.forEach((b) => {
-        b.tabIndex = on ? 0 : -1;
-      });
-      dots.toggleAttribute('data-on', on);
-      if (on) {
-        cols.addEventListener('scroll', onScroll, { passive: true });
-        dots.addEventListener('click', onTap);
-        onScroll();
-      } else {
-        cols.removeEventListener('scroll', onScroll);
-        dots.removeEventListener('click', onTap);
-      }
-    };
-    const onMm = (e: MediaQueryList | MediaQueryListEvent) => apply(e.matches);
-    onMm(mm);
-    const listener = (e: MediaQueryListEvent) => onMm(e);
-    mm.addEventListener('change', listener);
-    return () => {
-      mm.removeEventListener('change', listener);
-      cols.removeEventListener('scroll', onScroll);
-      dots.removeEventListener('click', onTap);
-    };
-  }, []);
-
   /* R313 (D11): the exit sweep is installed at the GUEST boundary
    * (GuestReveal — every public-page navigation), no longer scoped to
    * the landing root. */
@@ -514,8 +431,8 @@ export default function LandingPage() {
 
         {/* ═══ [3] live — the four pains. The ≤767 snap-carousel belt
             above drives the two refs this component receives. */}
-        <MountOnVisible label="live" minHeight={420}>
-          <Live colsRef={pmColsRef} dotsRef={pmDotsRef} />
+        <MountOnVisible label="live" minHeight={334} lead={120}>
+          <Suspense fallback={<div style={{ minHeight: 334 }} />}><Live /></Suspense>
         </MountOnVisible>
 
         {/* ═══ [4] chapters — the pinned map (the reference's 51%

@@ -28,10 +28,9 @@
  * leading sentence, accented); no invented statistics; the full
  * matrix lives on /capabilities.
  *
- * Presentational: the ≤767 snap-carousel belt (keyboard focus, dot
- * mirroring, dot tap) stays in the composer — this component
- * receives the two refs the belt drives. */
-import type { RefObject } from 'react';
+ * The section owns its carousel listeners so they attach when the
+ * below-fold section mounts. */
+import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 /* R346 (phase-4 art) — the pains' art seat is the isometric plate
  * now: PainArt (the R313/R322 flat motif drawing) + PainFurniture (the
@@ -82,17 +81,90 @@ const PAINS = [
   },
 ] as const;
 
-interface LiveProps {
-  /* the snap-carousel scroll region (≤767) — the composer's belt reads it
-     (R342: the region is a role="list" div — the reference's own list is a
-     plain div; the ordered-list semantics ride the ARIA role; the composer
-     keeps its HTMLOListElement ref, assigned here at the JSX boundary) */
-  colsRef: RefObject<HTMLElement>;
-  /* the dot rail — the composer's belt mirrors the snap position onto it */
-  dotsRef: RefObject<HTMLDivElement>;
-}
+export function Live() {
+  /* R322 (2-d) — the pains' ≤767 snap carousel + the reference's dot
+   * rail. Pure CSS scroll-snap owns the swipe (no swiper dep); this
+   * belt only (a) makes the scroll region keyboard-focusable inside
+   * the tier, (b) mirrors the snap position onto the dots (the
+   * closest-to-center column wins — direction-agnostic, safe in RTL),
+   * and (c) lets a dot tap center its column. ≥768 the carousel is a
+   * plain grid: the listener detaches, the dots hide, tabIndex
+   * releases. Reduced motion: the tap jumps without smoothing (the
+   * page's RM canon). */
+  const colsRef = useRef<HTMLDivElement>(null);
+  const dotsRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const cols = colsRef.current;
+    const dots = dotsRef.current;
+    if (!cols || !dots || typeof window.matchMedia !== 'function') return undefined;
+    const mm = window.matchMedia('(max-width: 767px)');
+    const btns = Array.from(dots.querySelectorAll<HTMLButtonElement>('.pm-dot-btn'));
+    const reduced =
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-export function Live({ colsRef, dotsRef }: LiveProps) {
+    const setActive = (i: number) => {
+      btns.forEach((b, j) => {
+        b.classList.toggle('is-active', j === i);
+        b.setAttribute('aria-current', j === i ? 'true' : 'false');
+      });
+    };
+    const nearest = () => {
+      const c = cols.getBoundingClientRect();
+      const mid = (c.left + c.right) / 2;
+      let best = 0;
+      let bd = Infinity;
+      Array.from(cols.children).forEach((child, j) => {
+        const r = child.getBoundingClientRect();
+        const d = Math.abs((r.left + r.right) / 2 - mid);
+        if (d < bd) {
+          bd = d;
+          best = j;
+        }
+      });
+      return best;
+    };
+    const onScroll = () => setActive(nearest());
+    const onTap = (e: Event) => {
+      const target = e.target as HTMLElement | null;
+      const btn = target?.closest?.('.pm-dot-btn') as HTMLButtonElement | null;
+      if (!btn) return;
+      const i = btns.indexOf(btn);
+      const child = cols.children[i];
+      if (child) {
+        child.scrollIntoView({
+          behavior: reduced ? 'auto' : 'smooth',
+          block: 'nearest',
+          inline: 'center',
+        });
+      }
+    };
+    const apply = (on: boolean) => {
+      cols.tabIndex = on ? 0 : -1;
+      btns.forEach((b) => {
+        b.tabIndex = on ? 0 : -1;
+      });
+      dots.toggleAttribute('data-on', on);
+      if (on) {
+        cols.addEventListener('scroll', onScroll, { passive: true });
+        dots.addEventListener('click', onTap);
+        onScroll();
+      } else {
+        cols.removeEventListener('scroll', onScroll);
+        dots.removeEventListener('click', onTap);
+      }
+    };
+    const onMm = (e: MediaQueryList | MediaQueryListEvent) => apply(e.matches);
+    onMm(mm);
+    const listener = (e: MediaQueryListEvent) => onMm(e);
+    mm.addEventListener('change', listener);
+    return () => {
+      mm.removeEventListener('change', listener);
+      cols.removeEventListener('scroll', onScroll);
+      dots.removeEventListener('click', onTap);
+    };
+  }, []);
+
   return (
     <section id="live" className="pm-section" aria-labelledby="pm-title" data-spec="problem.wrap">
       {/* R342 — the reference's outer positioning wrapper (the spec census:
@@ -141,7 +213,7 @@ export function Live({ colsRef, dotsRef }: LiveProps) {
           <div className="pm-bandinner" data-spec="problem.bandinner">
           <div
             className="pm-cols"
-            ref={colsRef as RefObject<HTMLDivElement>}
+            ref={colsRef}
             role="list"
             aria-label="الأوجاع الأربعة"
             tabIndex={0} /* r360 F3 — the scrollable-region-focusable floor (axe

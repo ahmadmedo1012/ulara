@@ -1,0 +1,2 @@
+PASS: no carousel DOM at cold phone entry; mounted on scroll, tapped fourth item, active item followed; mobile/desktop keyboard stops correct.
+  5 passed (19.9s)
