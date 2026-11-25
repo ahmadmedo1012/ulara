@@ -3,11 +3,20 @@
  *
  * The R310 audit missed the app-level conflict: CursorManager (the
  * circular dot/ring, R305-A2) kept running ON the landing alongside
- * the square sheet instrument (SheetCursor) — measured before-evidence
- * in audits/evidence/r311/before/. The R311 fix is architectural
+ * the landing's own instrument — measured before-evidence in
+ * audits/evidence/r311/before/. The R311 fix is architectural
  * (§1.3 option a): the landing route owns its pointer; the app layer
- * yields for the whole route (render null + teardown), and the
- * suppression vocabulary is unified to data-cursor="none" (§1.5).
+ * yields for the whole route (render null + teardown).
+ *
+ * r363 P2 — the landing instrument itself was rebuilt to the
+ * reference's committed DOT grammar (docs/redesign/r350/reference/
+ * refsite.css: 0.6rem round dot, opacity 0 at rest, transition on the
+ * --t-fast/--ease tokens, grow on interactive hover; the reference
+ * records no press state, no drawn trail, and never hides the native
+ * pointer). These specs re-pin that grammar; the ownership LAWS are
+ * unchanged: exactly ONE pointer system per route, no app-layer glyph
+ * on the landing, the unified data-cursor="none" vocabulary, and the
+ * RM/touch native fallback.
  *
  * These specs run against the REAL router + REAL landing (hermetic:
  * mock transport + Vite dev server; the shared fixture pre-seeds the
@@ -30,10 +39,10 @@ const VW = {
 
 test.use({ e2eRole: 'guest', reducedMotion: 'no-preference' });
 
-/* ═══ §1.7-1/2 — the landing: ONE square pointer ══════════════════ */
+/* ═══ §1.7-1/2 — the landing: ONE pointer system, the reference dot ══ */
 
 test.describe('R311 — the landing owns its pointer', () => {
-  test('exactly one pointer system renders: the square sheet instrument, no circular layer', async ({ page }) => {
+  test('exactly one pointer system renders: the sheet dot, no app layer, native pointer never hidden', async ({ page }) => {
     await page.setViewportSize(VW.desktop);
     await page.goto('/');
     await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
@@ -43,24 +52,44 @@ test.describe('R311 — the landing owns its pointer', () => {
     await expect(page.locator('.cursor-dot-core')).toHaveCount(0);
     await expect(page.locator('.cursor-dot-ring')).toHaveCount(0);
 
-    /* the landing's square instrument is up */
-    await expect(page.locator('.sc-canvas')).toHaveCount(1);
-    await expect(page.locator('.sc-ring')).toHaveCount(1);
+    /* the landing's dot instrument is up — ONE layer, ONE dot element
+     * (the reference anatomy: .cursor → .cursor-main → .cursor-inner) */
+    await expect(page.locator('.sc-cursor')).toHaveCount(1);
+    await expect(page.locator('.sc-cursor-dot')).toHaveCount(1);
 
     /* pointer activity must not resurrect the app layer */
     await page.mouse.move(300, 300);
     await page.mouse.move(900, 500, { steps: 10 });
     await expect(page.locator('.cursor-layer')).toHaveCount(0);
 
-    /* the native cursor is hidden only while the sheet is live, and
-     * the suppression vocabulary is the unified "none" */
+    /* the extraction carries no cursor:none anywhere — the native
+     * pointer stays on plain ground AND on interactive seats */
+    const groundCursor = await page.evaluate(
+      () => getComputedStyle(document.querySelector('.landing') as Element).cursor,
+    );
+    expect(groundCursor).not.toBe('none');
+    const ctaCursor = await page.evaluate(
+      () => getComputedStyle(document.querySelector('.fo-hero-cta') as Element).cursor,
+    );
+    expect(ctaCursor).toBe('pointer');
+
+    /* the dot is hidden over plain ground (the committed model: the
+     * rest state is opacity 0 — no glyph at rest, no drawn trail) */
+    await expect(page.locator('.sc-cursor-dot')).toHaveAttribute('data-on', 'off');
+    const restOpacity = await page.evaluate(
+      () => getComputedStyle(document.querySelector('.sc-cursor-dot') as Element).opacity,
+    );
+    expect(restOpacity).toBe('0');
+
+    /* the suppression vocabulary is the unified "none" (the
+     * reference's own data-cursor="hidden" token is NOT ours) */
     await expect(page.locator('[data-cursor="hidden"]')).toHaveCount(0);
     await expect(page.locator('.hro-stage')).toHaveAttribute('data-cursor', 'none');
     const stageCursor = await page.evaluate(() => getComputedStyle(document.querySelector('.hro-stage') as Element).cursor);
     expect(stageCursor).toBe('crosshair');
   });
 
-  test('link hover: the square reticle only — never a circular ring', async ({ page }) => {
+  test('link hover: the dot lights + grows on the tokens — never a ring, no press contraction', async ({ page }) => {
     await page.setViewportSize(VW.desktop);
     await page.goto('/');
     const cta = page.locator('.fo-hero-cta').first();
@@ -69,38 +98,85 @@ test.describe('R311 — the landing owns its pointer', () => {
     const box = await cta.boundingBox();
     expect(box).not.toBeNull();
     /* single jump — the §1.6 "initial pointer entry" edge: the boundary
-     * event can fire before the first pointermove, so the reticle state
+     * event can fire before the first pointermove, so the dot state
      * must be owned by the move handler too (fixed in R311). */
     await page.mouse.move(box!.x + box!.width / 2, box!.y + box!.height / 2);
-    await expect(page.locator('.sc-ring')).toHaveAttribute('data-on', 'on');
+    await expect(page.locator('.sc-cursor-dot')).toHaveAttribute('data-on', 'on');
+    /* the reveal rides the 320ms token — let the transition land before
+     * reading computed styles (the attribute flips synchronously, the
+     * computed opacity/scale do not) */
+    await page.waitForTimeout(450);
 
-    /* the reticle is SQUARE by construction — no border-radius */
-    const ringStyle = await page.evaluate(() => {
-      const el = document.querySelector('.sc-ring') as Element;
+    /* the dot grammar: a ROUND 0.6rem accent dot, lit + grown on the
+     * interactive seat (refsite.css .cursor-inner + the documented
+     * scale-2.4 inference), revealed on the --t-fast/--ease tokens */
+    const dotStyle = await page.evaluate(() => {
+      const el = document.querySelector('.sc-cursor-dot') as Element;
       const cs = getComputedStyle(el);
-      return { borderRadius: cs.borderRadius, border: cs.borderTopWidth + ' ' + cs.borderTopStyle };
+      const probe = document.createElement('span');
+      probe.style.color =
+        getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || 'none';
+      document.body.appendChild(probe);
+      const accent = getComputedStyle(probe).color;
+      probe.remove();
+      return {
+        borderRadius: cs.borderRadius,
+        opacity: cs.opacity,
+        scale: cs.scale,
+        transitionProperty: cs.transitionProperty,
+        transitionDuration: cs.transitionDuration,
+        backgroundColor: cs.backgroundColor,
+        accent,
+      };
     });
-    expect(ringStyle.borderRadius).toBe('0px');
+    expect(dotStyle.borderRadius).toBe('50%');
+    expect(dotStyle.opacity).toBe('1');
+    expect(dotStyle.scale).toBe('2.4');
+    expect(dotStyle.transitionProperty).toBe('opacity, scale');
+    expect(dotStyle.transitionDuration).toContain('0.32s'); /* --t-fast — closest rung to the reference's .4s */
+    expect(dotStyle.backgroundColor).toBe(dotStyle.accent); /* the dot rides var(--accent) */
 
-    /* the press state: press on a real BUTTON — pressing an anchor and
-     * moving starts Chromium's NATIVE link drag (the drag session then
-     * swallows the pointer stream — measured: events die after step 1),
-     * so the press grammar is exercised on the theme toggle, a button
-     * outside every suppression zone. Release away: no click fires. */
-    const toggle = page.locator('.theme-toggle-option').first();
-    const tb = await toggle.boundingBox();
+    /* back over plain ground: the dot hides again (opacity 0 at rest) */
+    const title = page.locator('.fo-hero-title').first();
+    const tb = await title.boundingBox();
     expect(tb).not.toBeNull();
-    await page.mouse.move(tb!.x + tb!.width / 2, tb!.y + tb!.height / 2, { steps: 6 });
-    await expect(page.locator('.sc-ring')).toHaveAttribute('data-on', 'on');
+    await page.mouse.move(tb!.x + tb!.width / 2, tb!.y + tb!.height / 2, { steps: 4 });
+    await expect(page.locator('.sc-cursor-dot')).toHaveAttribute('data-on', 'off');
+    await page.waitForTimeout(450); /* the hide transition lands */
+    const restStyle = await page.evaluate(() => {
+      const cs = getComputedStyle(document.querySelector('.sc-cursor-dot') as Element);
+      return { opacity: cs.opacity, scale: cs.scale };
+    });
+    expect(restStyle.opacity).toBe('0');
+    expect(restStyle.scale).toBe('1');
+
+    /* the extraction records NO press state: pressing on a real BUTTON
+     * must NOT contract the dot (the retired ring's scale-.56 reticle
+     * is gone). Press on the theme toggle — a button outside every
+     * suppression zone; pressing an anchor and moving starts Chromium's
+     * NATIVE link drag (the drag session swallows the pointer stream —
+     * measured: events die after step 1). Release away: no click fires. */
+    const toggle = page.locator('.theme-toggle-option').first();
+    const kb = await toggle.boundingBox();
+    expect(kb).not.toBeNull();
+    await page.mouse.move(kb!.x + kb!.width / 2, kb!.y + kb!.height / 2, { steps: 6 });
+    await expect(page.locator('.sc-cursor-dot')).toHaveAttribute('data-on', 'on');
+    await page.waitForTimeout(450); /* the grow lands before the press probe */
     await page.mouse.down();
-    await expect(page.locator('.sc-ring')).toHaveAttribute('data-pressed', 'on');
+    await expect(page.locator('.sc-cursor-dot')).toHaveAttribute('data-on', 'on');
+    const pressedScale = await page.evaluate(
+      () => getComputedStyle(document.querySelector('.sc-cursor-dot') as Element).scale,
+    );
+    expect(pressedScale).toBe('2.4'); /* no press contraction in the reference grammar */
     await page.mouse.move(120, 160, { steps: 12 }); /* release away — no click */
     await page.mouse.up();
-    await expect(page.locator('.sc-ring')).toHaveAttribute('data-on', 'off');
-    await expect(page.locator('.sc-ring')).toHaveAttribute('data-pressed', 'off');
+    await expect(page.locator('.sc-cursor-dot')).toHaveAttribute('data-on', 'off');
 
-    /* throughout: no app-layer glyph anywhere */
+    /* throughout: no app-layer glyph anywhere, and the retired square
+     * instruments stay retired */
     await expect(page.locator('.cursor-layer')).toHaveCount(0);
+    await expect(page.locator('.sc-ring')).toHaveCount(0);
+    await expect(page.locator('.sc-canvas')).toHaveCount(0);
   });
 
   test('hero entry: the native crosshair guides the drag and the stations open', async ({ page }) => {
@@ -115,6 +191,10 @@ test.describe('R311 — the landing owns its pointer', () => {
     await expect(stage).toHaveCSS('cursor', 'crosshair');
     await expect(page.locator('.cursor-layer')).toHaveCount(0);
     await expect(page.locator('.cursor-dot-core')).toHaveCount(0);
+
+    /* the suppression zone wins over interactive seats INSIDE it: the
+     * stage's station markers never light the dot */
+    await expect(page.locator('.sc-cursor-dot')).toHaveAttribute('data-on', 'off');
 
     await page.mouse.down();
     await page.mouse.move(sb!.x + sb!.width * 0.72, sb!.y + sb!.height * 0.6, { steps: 14 });
@@ -149,17 +229,18 @@ test.describe('R311 — the entrance loader', () => {
     await expect(page.locator('.pl-cross-v')).toBeVisible();
     await expect(page.locator('.pl')).toBeVisible();
     await expect(page.locator('.cursor-layer')).toHaveCount(0);
-    await expect(page.locator('.sc-canvas')).toHaveCount(1); /* mounted, suppressed inside the zone */
+    await expect(page.locator('.sc-cursor')).toHaveCount(1); /* mounted, suppressed inside the zone */
+    await expect(page.locator('.sc-cursor-dot')).toHaveAttribute('data-on', 'off'); /* the dot never lights here */
 
     /* narrow window: the loader still owns the pointer at EVERY width */
     await page.setViewportSize(VW.narrow);
     await expect(page.locator('.pl')).toBeVisible();
     await expect(page.locator('.cursor-layer')).toHaveCount(0);
 
-    /* exit handoff: back on the sheet, the square owns the pointer */
+    /* exit handoff: back on the sheet, the dot instrument owns the route */
     await expect(page.locator('.pl')).toHaveCount(0, { timeout: 20000 });
     await expect(page.locator('.cursor-layer')).toHaveCount(0);
-    await expect(page.locator('.sc-canvas')).toHaveCount(1);
+    await expect(page.locator('.sc-cursor')).toHaveCount(1);
     await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
   });
 });
@@ -170,7 +251,7 @@ test.describe('R311 — route yield transitions', () => {
   test('off the landing the app layer returns; returning to the landing tears it down', async ({ page }) => {
     await page.setViewportSize(VW.desktop);
     await page.goto('/');
-    await expect(page.locator('.sc-canvas')).toHaveCount(1);
+    await expect(page.locator('.sc-cursor')).toHaveCount(1);
     await expect(page.locator('.cursor-layer')).toHaveCount(0);
 
     /* leave via a real SPA navigation to the public /colleges */
@@ -181,13 +262,13 @@ test.describe('R311 — route yield transitions', () => {
     await expect(page.locator('.cursor-layer')).toHaveCount(1);
     const active = await page.evaluate(() => (document.querySelector('.cursor-layer') as HTMLElement).getAttribute('data-active'));
     expect(active).toBe('true');
-    await expect(page.locator('.sc-canvas')).toHaveCount(0);
+    await expect(page.locator('.sc-cursor')).toHaveCount(0);
 
     /* back to the landing via a real link — the layer tears down */
     await page.click('a[href="/"]');
     await expect(page).toHaveURL(/\/?$/);
     await expect(page.locator('.cursor-layer')).toHaveCount(0);
-    await expect(page.locator('.sc-canvas')).toHaveCount(1);
+    await expect(page.locator('.sc-cursor')).toHaveCount(1);
 
     /* browser back: POP also restores the app layer on /colleges */
     await page.goBack();
@@ -205,7 +286,8 @@ test.describe('R311 — native fallback', () => {
     await page.setViewportSize(VW.desktop);
     await page.goto('/');
     await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
-    await expect(page.locator('.sc-canvas')).toHaveCount(0);
+    await expect(page.locator('.sc-cursor')).toHaveCount(0);
+    await expect(page.locator('.sc-cursor-dot')).toHaveCount(0);
     await expect(page.locator('.cursor-layer')).toHaveCount(0);
     const stageCursor = await page.evaluate(() => getComputedStyle(document.querySelector('.hro-stage') as Element).cursor);
     expect(stageCursor).not.toBe('none');
@@ -215,7 +297,8 @@ test.describe('R311 — native fallback', () => {
     await page.setViewportSize(VW.mobile);
     await page.goto('/');
     await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
-    await expect(page.locator('.sc-canvas')).toHaveCount(0);
+    await expect(page.locator('.sc-cursor')).toHaveCount(0);
+    await expect(page.locator('.sc-cursor-dot')).toHaveCount(0);
     await expect(page.locator('.cursor-layer')).toHaveCount(0);
     await expect(page.locator('.hi-instrument')).toBeHidden();
   });

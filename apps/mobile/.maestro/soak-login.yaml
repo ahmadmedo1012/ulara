@@ -19,6 +19,12 @@ appId: ly.ulara.app
 - launchApp:
     appId: ly.ulara.app
     clearState: true
+    # r363 soak run #4: the dev-client LAUNCHER owned the screen (the
+    # forensic screenshot shows the empty "DEVELOPMENT SERVERS" home) —
+    # the launcher's server discovery is unreliable headless, so every
+    # session open rides the EXPLICIT exp:// URL instead (10.0.2.2 is the
+    # emulator's host alias; metro serves :8081 on the host).
+    deepLink: "exp://10.0.2.2:8081"
 - scrollUntilVisible:
     element:
       text: "ابدأ الآن"
