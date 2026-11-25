@@ -58,7 +58,6 @@ const Footer = lazy(() => import('../components/landing/sections-lazy').then((m)
 // R323 (A3 · defects 1+9): FooterArt (FooterMarkArt/WordmarkArt) is
 // retired — the giant footer wordmark is <Logo variant="wordmark"> now
 // and the circle-star mark cell is removed (ONE mark per view).
-import { ConsentBanner } from '../components/landing/chrome/ConsentBanner';
 import { EdgeTab } from '../components/landing/chrome/EdgeTab';
 /* r339 T-18 (A6) — the scroll progress rule: the reference's measured
  * splitting 1px pair at 50vh + the mono % readout. Scroll-driven CSS
@@ -498,14 +497,10 @@ export default function LandingPage() {
         </Suspense>
       </MountOnVisible>
 
-      {/* R314 B10 — the landing chrome pair: the local-storage consent
-          gate (V11) + the right-edge vertical tab (V12). Public surface
-          only — these never mount on auth pages.
-          R333 P-D — the consent banner waits for the preloader's exit
-          (introDone flips at wipe-start / the `ula:entry-done` event;
-          no overlay overlap), while the tab is not an overlay and
-          mounts as before. */}
-      {introDone && <ConsentBanner />}
+      {/* r363 — the consent gate MOVED INSIDE the Footer's final row
+          (the owner's ruling: the mega statement and the notice strip
+          share one grid row). The right-edge vertical tab stays. Public
+          surface only — these never mount on auth pages. */}
       <EdgeTab />
 
       {/* r359 A1 — the scroll rule (the 50vh splitting pair + the %

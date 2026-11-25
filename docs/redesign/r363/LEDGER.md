@@ -69,9 +69,31 @@ the app pass, and the release. Every DONE line carries command output or an imag
   (63+56+69+60 across `--shard=1..3/4` and `7/8`+`8/8`).
   [Belt output](evidence/p0-e2e-belt.txt).
 
-NEXT: the P0 capture matrix (overlap/axe/tap-target/console sweep over main
-→ the defect list), then P2 — the footer to the owner's rulings (one mono link
-row, statement + cookie strip sharing one grid row, ACCEPT in the signal
-colour, dead links fixed), then the top bar/nav choreography and the cursor
-pass, each with a frame-sequence sheet.
+- **P2 — the footer rebuilt to the owner's rulings (fidelity gate: MATCH).**
+  ONE horizontal mono link row (14 doors + the funnel pair, wrapped in place,
+  never columns) replaces the col2 three-group stack; the giant outline
+  wordmark and the ConsentBanner now SHARE ONE grid row (`.fo-final-row` —
+  answering the gate collapses only the notice cell, the row's height stays
+  the wordmark's, the tail-seam measurer retired with the old tail seat);
+  ACCEPT is the royal signal fill (`--accent` + the owner-verified
+  `--accent-fg` label), REJECT bare; «اعرف أكثر» rides the accent TEXT rung;
+  the 1px signal underline draw sweeps on hover (hover-only — the family's
+  zero-`:focus-visible` law). The r362 open questions are decided and closed.
+  Two VLM rounds on the side-by-side sheet (round 1's six gaps fixed — the
+  probe retired the per-item separators the reference itself never carried);
+  round 2: MATCH on all seven points. [Sheet](evidence/p2-footer-sheet.webp) ·
+  [Critique](evidence/p2-footer-critique.md) · [1440](evidence/p2-footer-1440.webp) ·
+  [390](evidence/p2-footer-390.webp) · [hover draw](evidence/p2-footer-hoverdraw.webp).
+  Re-pins: r349 colophon (the one-row grammar), r323/r325 (scroll the lazy
+  footer before measuring the gate), the contact-cell unit pin. Phone height
+  is neutral (+48px): production main was ALREADY 5,913px with the footer
+  mounted (the ≤5,000px law's earlier "held" claims measured the unmounted
+  placeholder state — the diet is P1's next item, from a measured baseline).
+
+NEXT: P1's phone diet (measured baseline: hero 836 · statement 334 · live
+334 · chapters 692 · product 435 · why 436 · roles 1004 · vision 883 · footer
+~1007 = 5,961 @390 → ≤5,000 needs ~960px of real cuts), then the top
+bar/nav/cursor pass, then the landing frame-sequence walk (P1 evidence
+sheets). The r325 "translate family" local-only belt fails on pristine main
+(pre-existing; not in CI's test:e2e) — noted, not this round's debt.
 

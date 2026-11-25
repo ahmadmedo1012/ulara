@@ -48,12 +48,14 @@
   inline-size: min(320px, calc(100vw - 50px));
 }
 
-/* ── Type — 12–13px PINNED at every viewport ──────────────────────────
+/* ── Type — 12–14px PINNED at every viewport ──────────────────────────
    The rem rungs (--fs-body/--fs-mono-md) scale with the viewport and
    inflated the card to 15.88px @390 / 14.73px @768 (before-probe).
-   Pinned px, the landing.css hand-tuned-chrome precedent. */
+   Pinned px, the landing.css hand-tuned-chrome precedent. r363
+   fidelity pass: the sentence steps to 14px — the notice panel
+   balances the wordmark row it shares (the r362 critique's #5). */
 .cb-banner .cb-text {
-  font-size: 13px;                /* the sentence */
+  font-size: 14px;               /* the sentence */
 }
 
 .cb-banner .cb-more {
@@ -69,21 +71,21 @@
 }
 
 /* ── Accent ONLY on the accept action ─────────────────────────────────
-   «اعرف أكثر» wore --accent-ink since R314; the cell's one brand-accent
-   moment is now the accept wipe. The link reads muted ink, hovers to
-   full ink (underline already carried by r314's hover/focus rules).
-   The doubled `.cb-more.cb-more` over the element selector — (0,3,1)
-   base, (0,4,1) with :hover — is the muscle that also retires r314's
-   (0,3,1) DARK hover fork without a theme fork of our own: one rule
-   out-specifies light and dark alike. */
+   r363 (the owner's ruling + the reference's own register): the
+   accept action IS the signal colour now (consent-edge.css owns the
+   royal fill), and «اعرف أكثر» reads as the accent TEXT rung — the
+   same seat the reference's orange LEARN MORE occupies. The doubled
+   `.cb-more.cb-more` over the element selector — (0,3,1) base,
+   (0,4,1) with :hover — keeps the muscle that also retires r314's
+   (0,3,1) DARK hover fork without a theme fork of our own. */
 .cb-banner a.cb-more.cb-more {
-  color: var(--text-muted);
+  color: var(--accent-ink);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .cb-banner a.cb-more.cb-more:hover,
   .cb-banner a.cb-more.cb-more:focus-visible {
-    color: var(--text);           /* ink on hover — never the accent */
+    color: var(--accent-ink);           /* the accent text rung holds on hover */
   }
 }
 
