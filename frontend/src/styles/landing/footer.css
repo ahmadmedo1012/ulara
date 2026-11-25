@@ -479,7 +479,7 @@ footer.fo-footer {
    plate). */
 @media (max-width: 767px) {
   .fo-grid {
-    padding: var(--sp-4) 1.6rem var(--sp-3);
+    padding: var(--sp-3) 1.6rem var(--sp-2);
     row-gap: var(--sp-3);
   }
 
@@ -494,15 +494,22 @@ footer.fo-footer {
 
   /* the ONE link row on phones — the wrapped ribbon rides the
      tighter padding and the smaller rung; every seat keeps its
-     ≥44px tap floor (the a11y contract, not a design value) */
+     ≥44px tap floor (the a11y contract, not a design value).
+     r363 phone diet: the row's own chrome air steps to the compact
+     rungs (the mounted page measures 5,028 @390; the ≤5,000px law
+     needs the chrome lean). */
   .fo-linkrow {
-    padding: var(--sp-3) 1.6rem var(--sp-2);
-    row-gap: var(--sp-2);
+    padding: var(--sp-2) 1.6rem var(--sp-1);
+    row-gap: var(--sp-1);
   }
 
   .fo-link {
     padding-block: 0.5rem;
-    font-size: var(--fs-chrome);
+    /* r363 phone diet — the ribbon's inline air steps to the © row's
+     * rhythm: the 16 doors wrap to 3 lines instead of 4 (the 44px
+     * block floor — the tap contract — stays on every door) */
+    padding-inline: var(--sp-1);
+    font-size: var(--fs-xxs);
   }
 
   .fo-footer-about {
@@ -529,7 +536,8 @@ footer.fo-footer {
 
   .fo-final-row {
     padding-inline: 1.6rem;
-    gap: var(--sp-2);
+    padding-block-end: var(--sp-2);
+    gap: var(--sp-1);
   }
 
   .fo-giant-text {
@@ -537,7 +545,9 @@ footer.fo-footer {
   }
 
   .fo-top-anchor-row {
-    margin-block-start: 0;
+    /* r363 phone diet — the anchor's air steps to the compact rung */
+    margin-top: var(--sp-2);
+    margin-bottom: 0;
   }
 }
 

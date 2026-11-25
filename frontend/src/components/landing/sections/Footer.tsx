@@ -56,7 +56,7 @@ import { ConsentBanner } from '../chrome/ConsentBanner';
  * Every target is a live door — the r363 dead-link audit walked them
  * (the #chapters anchor is MountOnVisible's anchorId seat). */
 const LINK_ROW: [string, string][] = [
-  ['/capabilities', 'القدرات'],
+  ['/capabilities', 'ما يعمل اليوم'],
   ['#product', 'المنصّة'],
   ['#chapters', 'الفصول'],
   ['#roles', 'الأدوار'],
@@ -291,9 +291,10 @@ export function Footer({ year }: { year: number }) {
           <div className="fo-legal-l">
             <p className="fo-legal-p">
               <span className="fo-mono">© {year} أُلارا</span>
-              {' '}— منصّة مستقلّة · عربية أولًا · بيانات العرض اصطناعية بالكامل —{' '}
-              {/* r341 (t05 · SPA links): the © line's /about door rides
-                  the router too (same class, same visible text). */}
+              {' '}— منصّة مستقلّة · عربية أولًا —{' '}
+              {/* r363 — the display-data note is verbatim in col1's
+                  independence paragraph above (the honest dedupe); the
+                  © line carries the identity + the one door */}
               <Link className="fo-legal-a" to="/about">
                 عن المنصّة
               </Link>

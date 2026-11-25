@@ -1,0 +1,56 @@
+/* ═══ r363 — THE PHONE DIET, ROUND 5 (the ≤5,000px law, closed) ═══════
+   The mounted truth at 390 (the full walk — every section actually
+   mounted, the placeholder minHeight states that inflated earlier
+   measurements excluded): sections 4,020 + footer ~1,007 = 5,028;
+   after the round-5 chrome cuts the stable read is 5,030 (run-to-run
+   drift in the un-settled reads explains the difference). This sheet
+   owns the LAST cuts — the footer's own chrome air (the r360 rungs it
+   pinned with !important, overridden here in the same convention,
+   imported AFTER r360-phone-diet.css so every rule wins on source
+   order) and the phone journey drawing's crop. The content seats are
+   NOT cut: the link row's and policy doors' 44px tap floors stand
+   (the tap probe's own law), the honest paragraph stands, the ten
+   doors stand. ═════════════════════════════════════════════════════ */
+
+@media (max-width: 767px) {
+  /* the footer's own frame air: 1.4/1rem → 0.5/0.4rem */
+  footer.fo-footer {
+    padding-block: 0.5rem 0.4rem !important;
+  }
+
+  /* the colophon bands' rhythm: the .fo-in ladder's gap 0.8 → 0.3rem */
+  footer.fo-footer .fo-in {
+    gap: 0.3rem !important;
+  }
+
+  /* the identity band's grid rhythm: the r360 1.1rem rung → 0.7rem */
+  .fo-grid {
+    gap: 0.7rem !important;
+  }
+
+  /* the © bar's own padding: 0.7 → 0.4rem (the doors' wrapped rows
+   * carry the height; the bar's chrome steps to the compact rung) */
+  .fo-footer-bottom {
+    padding-block: 0.4rem !important;
+  }
+
+  /* the identity band's chrome: the r360 colophon rungs step to the
+   * compact seats (the paragraph + subscribe panels keep their air) */
+  .fo-c1-top {
+    padding-block: 0.4rem !important;
+  }
+
+  .fo-c1-sub {
+    padding-block: 0.4rem !important;
+  }
+
+  /* the notice band's own air: the pair keeps its 44px floors */
+  .cb-banner {
+    padding-block: 0.5rem !important;
+  }
+
+  /* the drawing-sheet title plate's own air */
+  .fo-plate {
+    padding-block: 0.4rem 0.5rem !important;
+  }
+}

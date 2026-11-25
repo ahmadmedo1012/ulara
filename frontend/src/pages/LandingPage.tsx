@@ -119,6 +119,9 @@ import '../styles/landing/home.css';
 /* r360 F1 — the phone diet (the ≤5,000px law): imported LAST so its
  * ≤767 overrides win the cascade over every section sheet above. */
 import '../styles/landing/r360-phone-diet.css';
+/* r363 round 5 — the diet's own follow-up (the footer chrome air);
+ * imported AFTER r360's sheet so its !important rungs win the order. */
+import '../styles/landing/r363-phone-diet.css';
 /* R331 (A-Web-Nav) — the masthead owns its own file now: the header
  * state machine, the seat register, the menu choreography and
  * r331/nav.css all live in the chrome component
