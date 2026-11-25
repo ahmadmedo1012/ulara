@@ -344,18 +344,53 @@ test.describe('R309 hero — the reveal-state lifecycle (§6)', () => {
      * delivered in finer steps. The semantics are unchanged: one sweep,
      * release, the count must hold. */
     await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
-    const sb = await stage.boundingBox();
-    expect(sb).not.toBeNull();
     await waitForMapping(page);
+    /* r363 — CI round 3: HERO_READY + the composed hero still lost
+     * twice in CI (0 stations, both attempts, 4/4 local): page.mouse
+     * is hit-target-blind, and the asset-gated entrance overlay can
+     * still own the press point when the sweep fires — every sibling
+     * spec rides locator clicks (which auto-wait for interception),
+     * a raw sweep does not. The sweep now settles like its sibling,
+     * then waits until the STAGE itself is the topmost element at the
+     * press point (the entrance overlay unmounted), re-measures, and
+     * observes the post-release count over a poll window. Semantics
+     * unchanged: one sweep, one release. */
+    await page.waitForTimeout(800);
+    let sb = await stage.boundingBox();
+    expect(sb).not.toBeNull();
+    await expect
+      .poll(
+        async () => {
+          sb = await stage.boundingBox();
+          if (!sb) return false;
+          return page.evaluate(
+            ([x, y]: [number, number]) => {
+              const el = document.elementFromPoint(x, y);
+              return !!el && el.closest('.hro-stage') != null;
+            },
+            [sb.x + sb.width * 0.75, sb.y + sb.height * 0.5],
+          );
+        },
+        {
+          timeout: 30_000,
+          message: 'the stage owns the press point (the entrance overlay is gone)',
+        },
+      )
+      .toBe(true);
     /* the reference's own semantics: pointer-up keeps whatever was
      * unsealed — one sweep, release, then the count must hold. */
-    await page.mouse.move(sb!.x + sb!.width * 0.75, sb!.y + sb!.height * 0.5);
+    const press = { x: sb!.x + sb!.width * 0.75, y: sb!.y + sb!.height * 0.5 };
+    await page.mouse.move(press.x, press.y);
     await page.mouse.down();
-    await page.mouse.move(sb!.x + sb!.width * 0.25, sb!.y + sb!.height * 0.5, { steps: 16 });
+    await page.mouse.move(sb!.x + sb!.width * 0.25, sb!.y + sb!.height * 0.5, { steps: 24 });
+    await page.waitForTimeout(250);
     await page.mouse.up();
-    await page.waitForTimeout(700);
-    const open = await page.locator('.hro-station.is-open').count();
-    expect(open).toBeGreaterThan(0);
+    await expect
+      .poll(() => page.locator('.hro-station.is-open').count(), {
+        timeout: 8_000,
+        message: 'the release keeps whatever the sweep unsealed',
+      })
+      .toBeGreaterThan(0);
   });
 
   test('the reveal persists across scroll-away AND return-to-top (r359 retired the auto-reset)', async ({ page }) => {
