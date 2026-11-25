@@ -50,7 +50,10 @@ function DocumentDownload({ doc }: { doc: CouncilDocument }) {
       setTimeout(() => URL.revokeObjectURL(url), 30_000);
       toast.success('بدأ تنزيل الملف');
     } catch (err) {
-      toast.error(serverError(err, 'تعذَّر جلب الملف — أعد المحاولة أو تواصل مع إدارة المؤسسة.'));
+      const status = (err as { response?: { status?: number } })?.response?.status;
+      toast.error(status === 501 || status === 503
+        ? 'تنزيل المستند غير متاح على هذا الخادم حاليًا.'
+        : serverError(err, 'تعذَّر جلب الملف — أعد المحاولة أو تواصل مع إدارة المؤسسة.'));
     } finally {
       setBusy(false);
     }
@@ -91,7 +94,7 @@ export function GovernanceDocuments({
             <th scope="col">النوع</th>
             <th scope="col">التاريخ</th>
             <th scope="col">المرفق</th>
-            <th scope="col" aria-hidden="true" />
+            <th scope="col"><span className="sr-only">الإجراء</span></th>
           </tr>
         </thead>
         <tbody>
@@ -115,7 +118,7 @@ export function GovernanceDocuments({
                   <span className="sg-flag" data-tone="quiet">بيانات وصفية</span>
                 )}
               </td>
-              <td data-label="" aria-hidden="true" className="sg-no-label">
+              <td data-label="الإجراء">
                 {d.binaryObjectId ? (
                   <DocumentDownload doc={d} />
                 ) : d.fileUrl ? (

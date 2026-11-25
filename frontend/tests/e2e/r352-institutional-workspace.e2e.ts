@@ -480,6 +480,54 @@ test.describe('r352 — the institutional workspace journey (hermetic)', () => {
     await expect(page.getByText('افتُتح الاجتماع بحضور الأعضاء…')).toBeVisible();
   });
 
+  test('attaches the uploaded PDF to its meeting and downloads the same bytes', async ({ page }) => {
+    await installInstitutionalApi(page, ['COUNCILS_MANAGE']);
+    const payload = Buffer.from('%PDF-1.4\n1 0 obj <<>> endobj\n%%EOF');
+    const document = { ...MEETING_DETAIL.documents[0]!, id: 'doc-roundtrip', titleAr: 'محضر مرفق', binaryObjectId: 'governance/fixture.pdf' };
+    let received: Buffer | null = null;
+    let attached = false;
+    await installStatefulApi(page, [
+      { method: 'POST', pattern: '**/governance/documents/upload', fulfill: ({ route }) => {
+        received = route.request().postDataBuffer();
+        return statefulOk(route, { key: document.binaryObjectId, mimeType: 'application/pdf', sizeBytes: payload.length });
+      } },
+      { method: 'POST', pattern: '**/governance/councils/council-sci/documents', fulfill: ({ route }) => {
+        expect(route.request().postDataJSON()).toMatchObject({ titleAr: document.titleAr, meetingId: 'meeting-1', binaryObjectId: document.binaryObjectId });
+        attached = true;
+        return statefulOk(route, document);
+      } },
+      { method: 'GET', pattern: '**/governance/meetings/meeting-1', fulfill: ({ route }) =>
+        statefulOk(route, { ...MEETING_DETAIL, documents: attached ? [document] : [] }) },
+      { method: 'GET', pattern: '**/governance/documents/doc-roundtrip/file', fulfill: ({ route }) =>
+        route.fulfill({ status: 200, contentType: 'application/pdf', body: received ?? Buffer.alloc(0) }) },
+    ]);
+    await page.goto('/institution/councils/council-sci/meetings/meeting-1');
+    await page.locator('#gov-doc-file').setInputFiles({ name: 'record.pdf', mimeType: 'application/pdf', buffer: payload });
+    await page.getByLabel('عنوان المستند').fill(document.titleAr);
+    await page.getByRole('button', { name: 'رفع وإرفاق بالمجلس' }).click();
+    const verb = page.getByRole('button', { name: 'تنزيل ' + document.titleAr });
+    await expect(verb).toBeVisible();
+    const [download] = await Promise.all([page.waitForEvent('download'), verb.click()]);
+    expect(download.suggestedFilename()).toBe(document.titleAr + '.pdf');
+    const stream = await download.createReadStream();
+    const chunks: Buffer[] = [];
+    for await (const chunk of stream!) chunks.push(Buffer.from(chunk));
+    expect(Buffer.concat(chunks)).toEqual(payload);
+  });
+
+  for (const status of [501, 503]) {
+    test('explains unavailable document storage on ' + status, async ({ page }) => {
+      await installInstitutionalApi(page, ['COUNCILS_MANAGE']);
+      await installStatefulApi(page, [{ method: 'POST', pattern: '**/governance/documents/upload',
+        fulfill: ({ route }) => statefulJson(route, status, { error: { code: 'UNAVAILABLE' } }) }]);
+      await page.goto('/institution/councils/council-sci');
+      await page.locator('#gov-doc-file').setInputFiles({ name: 'record.pdf', mimeType: 'application/pdf', buffer: Buffer.from('%PDF-1.4') });
+      await page.getByRole('button', { name: 'رفع وإرفاق بالمجلس' }).click();
+      await expect(page.locator('.inst-upload-form').getByRole('alert')).toContainText('غير متاحة');
+      await expect(page.getByRole('button', { name: 'إضافة مرجع' })).toBeEnabled();
+    });
+  }
+
   test('a server 403 on the profile surfaces the honest permission panel (backend is authoritative)', async ({ page }) => {
     // the base session stays healthy; ONLY the profile endpoint refuses
     await installInstitutionalApi(page, []);

@@ -1,0 +1,9 @@
+First roundtrip: file was attached but download button was absent from the accessibility tree because its containing td was aria-hidden.
+PASS the workspace boots with the kind-aware rail and the institution masthead (4.2s)
+PASS the organization tree renders the real hierarchy and the unit detail (5.3s)
+PASS a capability-less session reads the same surface with zero write affordances (3.5s)
+PASS the governance depth: councils → council → meeting with its minutes draft (5.4s)
+PASS attaches the uploaded PDF to its meeting and downloads the same bytes (6.5s)
+PASS explains unavailable document storage on 501 (4.4s)
+PASS a server 403 on the profile surfaces the honest permission panel (backend is authoritative) (3.3s)
+PASS explains unavailable document storage on 503 (4.3s)

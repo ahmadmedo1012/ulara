@@ -128,15 +128,19 @@ export ULARA_ANDROID_KEYSTORE_ALIAS=ulara
 export ULARA_ANDROID_KEYSTORE_PASSWORD='…'        # بعيدًا عن سجل الشل
 ```
 
-**المساران** (عقد المالك المُلزم: البناء native على GitHub Actions
-حصرًا — أوامر `eas build` (سحابة أو `--local`) مُحالة من مسار هذا
-المستودع؛ Expo CLI يبقى أداة تكوين/تصدير/prebuild فقط):
+<!-- coderabbit-ai-generated:v1 -->
 
-| | أ. gradle محلي | ب. GitHub Actions |
+<!-- coderabbit-ai-generated-section:v1:4efc5c0df1aff28ec248624ded2043a99a79aeebc793fd1a829a49afbc0c293a -->
+
+**مسارا بناء Android**: السكربت المحلي ومسار GitHub Actions يستعملان وصفة Gradle نفسها.
+
+| | محلي | GitHub Actions |
 |---|---|---|
-| الأمر | `scripts/build-android-local.sh` | `android-apk.yml` (QA + إصدار موقَّع) · `mobile.yml` (مسارا devclient/full) |
-| الحصة | لا تستهلك | runners عامة — لا حصة EAS |
-| يحتاج | JDK+SDK+مفتاح (بيئة) | dispatch يدوي فقط |
+| الأمر | `scripts/build-android-local.sh` | `android-apk.yml` لحزمتي الاختبار والإصدار الموقّع |
+| متى يبدأ | عند تشغيل السكربت | تلقائيًا عند دفع تغييرات الهاتف أو الملفات المشتركة إلى main، أو يدويًا عبر workflow_dispatch |
+| المطلوب | JDK وAndroid SDK ومفتاح التوقيع | أسرار التوقيع للقناة المنشورة؛ نسخة الاختبار لها توقيع منفصل |
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 - الناتج: `apps/mobile/android/app/build/outputs/apk/release/app-release.apk`
   (للمتجر: `./gradlew bundleRelease` ← AAB). المسار ذاته يقوده CI في
@@ -165,8 +169,13 @@ JS أو native — يُسلَّم كـ**بناء ثنائي جديد** من مس
 - `latestAppVersion`: أحدث إصدار منشور — عند اكتشاف نسخة أحدث تظهر
   مرة واحدة في الجلسة توست «يتوفر إصدار جديد» (غير حاجبة). يضبطها
   الخادم من متغير البيئة `LATEST_APP_VERSION`.
-- التراجع = إعادة نشر بناء سابق على إصدار `latest` (التوقيع نفسه
-  يسمح بالتثبيت فوق النسخة الحالية).
+- <!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:30a16d1a0afcf93d1d24116a0f56d49a02ac17913183edc927c9f102d72917ed -->
+
+للتراجع على جهاز مُحدّث: اعكس التغيير، وارفع رقم الإصدار، وابنِ بالمفتاح نفسه. يمكن تنزيل بناء أقدم للتشخيص؛ لا يثبت Android حزمة برقم إصدار أدنى كتحديث عادي.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 **القنوات الفعلية**:
 - **القناة المباشرة**: إصدار GitHub `latest` —

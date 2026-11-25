@@ -154,7 +154,15 @@ P1/P4 — Expanded the census to all 20 mounted detail templates and used a stud
 
 P1/P2/P9 — [Verified mobile repairs and bundle](evidence/phone-final.txt): 4,980 px normal / 4,976 px reduced motion at 390; static findings retain all their text. Lecture, exam and PDF tap targets pass the 40-cell rerun including landing. The lazy carousel split costs 865.2 KB across 188 chunks, so the total limit moves 865 → 866; entry remains 30.0 KB. Removed two obsolete tracked scan PIDs. Previous census e0b61f4.
 
-NEXT: Confirm live metrics and the expanded final census; record binary delivery.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:cd0b4a96bec65fd7778836964f2a2af6c714337ca1dbbb9ddfc9c0f0ebfb8641 -->
+
+P3 — Real Chromium upload/attach/download exposed an aria-hidden table cell around the download action. Gave it a named action column. [Eight institution journeys](evidence/governance-roundtrip.txt), including exact PDF byte roundtrip and separate 501/503 states, pass. Corrected the mobile runbook deployment triggers and downgrade instructions. Previous mobile layout commit 3d12908.
+
+NEXT: Finish final deployment and native release; check theme persistence and matrix reports.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 
