@@ -28,8 +28,8 @@
  *      headline line keeps the ≥16px safe-area gutter from the
  *      viewport edges.
  */
+import { approachSection, scrollToPin } from './fixtures/landing-scene';
 import { test, expect } from './fixtures/e2e';
-import type { Page } from '@playwright/test';
 
 const VW = { mobile: { width: 390, height: 844 }, desktop: { width: 1440, height: 900 } };
 
@@ -44,36 +44,7 @@ test.use({ e2eRole: 'guest', reducedMotion: 'no-preference' });
 /** scroll to a map pin progress and let the driver settle (the r312
  * discipline: iterates to convergence — the intro card's stage flips
  * change the sticky window's height, so the first hop can overshoot). */
-async function scrollToPin(page: Page, p: number, mobile: boolean) {
-  let prev = -1;
-  for (let i = 0; i < 4; i += 1) {
-    const landed = await page.evaluate(
-      ({ p, mobile }) => {
-        const track = document.querySelector('.jt') as HTMLElement;
-        const col = document.querySelector('.jt-map-col') as HTMLElement;
-        const win = document.querySelector('.jt-map-in') as HTMLElement;
-        let target: number;
-        if (mobile) {
-          const cRect = col.getBoundingClientRect();
-          const colTop = cRect.top + window.scrollY;
-          const winH = win.getBoundingClientRect().height;
-          const stickyTop = parseFloat(getComputedStyle(win).top) || 0;
-          target = colTop - stickyTop + p * (cRect.height - winH);
-        } else {
-          const r = track.getBoundingClientRect();
-          target = r.top + window.scrollY + p * (r.height - window.innerHeight);
-        }
-        window.scrollTo({ top: target, behavior: 'instant' });
-        return Math.round(window.scrollY);
-      },
-      { p, mobile },
-    );
-    await page.waitForTimeout(430);
-    if (Math.abs(landed - prev) < 2) break;
-    prev = landed;
-  }
-  await page.waitForTimeout(350);
-}
+
 
 /** the in-page clip probe: every text-bearing element inside the map
  * section, per LINE rect (Range.getClientRects — the reading extents,
@@ -147,6 +118,7 @@ test.describe('R325 Y1 — the map intro clip gate', () => {
     test(`${label}: no text line escapes its container or the viewport at any map progress`, async ({ page }) => {
       await page.setViewportSize(vp);
       await page.goto('/');
+      await approachSection(page, 'chapters');
       await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
       await page.waitForFunction(
         () => (document.querySelector('.jt') as HTMLElement)?.dataset.stage !== undefined,
@@ -168,6 +140,7 @@ test.describe('R325 Y1 — the map intro clip gate', () => {
   test('390: the headline keeps the ≥16px safe-area gutter at every beat', async ({ page }) => {
     await page.setViewportSize(VW.mobile);
     await page.goto('/');
+    await approachSection(page, 'chapters');
     await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
     await page.waitForFunction(
       () => (document.querySelector('.jt') as HTMLElement)?.dataset.stage !== undefined,
@@ -207,6 +180,7 @@ test.describe('R325 Y1 — the map intro clip gate', () => {
   test('the intro is unboxed and the ghost line-work stands at progress 0', async ({ page }) => {
     await page.setViewportSize(VW.desktop);
     await page.goto('/');
+    await approachSection(page, 'chapters');
     await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
     await page.waitForFunction(
       () => (document.querySelector('.jt') as HTMLElement)?.dataset.stage !== undefined,

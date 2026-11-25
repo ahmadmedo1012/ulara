@@ -193,12 +193,12 @@ for (const { role, home } of STAFF_MATRIX) {
 
             // لقطات 1440 لكل دور: الموسّع (فاتح) والمطموس (داكن).
             if (theme === 'light') {
-              await page.locator('.sidebar-collapse-btn').click(); // الافتراضي مطموس → وسّع
+              expect(await isCollapsed(page)).toBe(false);
               await expect(sidebar).toBeVisible();
               await page.waitForTimeout(300); // انتقال المسار الهيكلي
               await snap(page, `${role.toLowerCase()}-1440-light-expanded.png`);
             } else {
-              // الافتراضي المُ persisted مطموس — الإطار الداكن يثبته كما هو.
+              await page.locator('.sidebar-collapse-btn').click();
               expect(await isCollapsed(page)).toBe(true);
               await snap(page, `${role.toLowerCase()}-1440-dark-collapsed.png`);
             }
@@ -236,9 +236,10 @@ test.describe('السكّة المطموسة (الحاسوب ≥921)', () => {
     await page.goto('/student/dashboard');
     await expect(page.locator('h1.pf-page-title')).toBeVisible();
 
-    // الافتراض المُ persisted: مطموس (64px) من أول إطار (useLayoutEffect).
-    expect(await isCollapsed(page)).toBe(true);
-    expect(await sidebarWidth(page)).toBe(SIDEBAR_W_COLLAPSED);
+    expect(await isCollapsed(page)).toBe(false);
+    expect(await sidebarWidth(page)).toBe(SIDEBAR_W_EXPANDED);
+    await page.locator('.sidebar-collapse-btn').click();
+    await expect.poll(() => sidebarWidth(page)).toBe(SIDEBAR_W_COLLAPSED);
 
     // في المطموس: كل رابط يحمل aria-label (اسم محفوظ والعنوان المرئي مخفي).
     const firstItem = page.locator('.nav-item').first();
@@ -412,8 +413,7 @@ test.describe('ثبات السمة', () => {
     const html = page.locator('html');
     await expect(html).toHaveAttribute('data-theme', 'dark');
 
-    // وسّع السكّة أولًا: مجموعة السمة في التذييل تُقصّص في سكة 64px.
-    await page.locator('.sidebar-collapse-btn').click();
+    expect(await isCollapsed(page)).toBe(false);
     const themeGroup = page.getByRole('group', { name: 'السمة' });
     await expect(themeGroup).toBeVisible();
     await themeGroup.getByRole('button', { name: 'فاتح', exact: true }).click();

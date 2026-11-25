@@ -48,6 +48,7 @@ const Live = lazy(() => import('../components/landing/sections/Live').then((m) =
 import { Preloader } from '../components/landing/chrome/Preloader';
 import { SheetCursor } from '../components/landing/cursor/SheetCursor';
 const Chapters = lazy(() => import('../components/landing/sections-lazy').then((m) => ({ default: m.Chapters })));
+import { useLandingFragment } from '../components/landing/useLandingFragment';
 import { MountOnVisible } from '../components/landing/MountOnVisible';
 /* P-A2 R333 (INV-08 · the retired craft sheet row 13) — the platform band's
  * product-proof strip (three REAL captures) lives inside
@@ -231,6 +232,7 @@ export default function LandingPage() {
     }
   });
   const [introDone, setIntroDone] = useState(!introPlaying);
+  useLandingFragment(!introPlaying && !redirectHome);
 
   /* R318 (C2) — the grain's body seat: mounted class in, unmounted out
    * (the pseudo-element film is landing-only, exactly like the old

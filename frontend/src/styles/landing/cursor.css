@@ -103,3 +103,10 @@
     cursor: none;
   }
 }
+
+/* The elevation uses native pointing plus its four station buttons. The
+   shared reticle steps aside here, so the pointer must remain visible. */
+@media (hover: hover) and (pointer: fine) {
+  [data-sheet-cursor='live'] .landing .hro-stage[data-cursor='none'] { cursor: crosshair; }
+  [data-sheet-cursor='live'] .landing .hro-stage .hi-marker { cursor: pointer; }
+}

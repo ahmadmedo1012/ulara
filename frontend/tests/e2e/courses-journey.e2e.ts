@@ -17,20 +17,10 @@ test.describe('رحلة المقرّرات', () => {
     await page.goto('/student/courses');
     // usePageTitle: «<السياق> · أُلارا».
     await expect(page).toHaveTitle('مقرّراتي الدراسية · أُلارا');
-    // r173a: شريط المؤشرات الأربعة (MetricCard) صار سطر ملخّص واحدًا
-    // خفيفًا — نفس الأعداد (تسجيلتان في التثبيت الوهمي → «مقرّران
-    // مسجّلان»)، re-pin صادق لواجهة الصفحة الجديدة.
-    /* R319 re-pin (c3-S1 §B2 conversion): the count now renders TWICE —
-       the SectionBar's visible mono meta (<bdi>مقرّران مسجّلان</bdi>) +
-       the sr-only counted phrase for screen readers. Target the VISIBLE
-       one (getByText strict-mode would see both). */
-    await expect(page.locator('bdi', { hasText: 'مقرّران مسجّلان' }).first()).toBeVisible();
-
-    /* R287 re-pin (r222 reskin): the course card is a RowItem — the
-       title Link carries the name; the code badge + teacher ride the
-       row meta. Scope the row, pin the anchor, click through it. */
-    const card = page.locator(`a[href="/student/courses/${OFFERING_ID}"]`);
-    const cardRow = page.locator('[aria-label="قائمة المقرّرات المسجّلة"] .pf-row', { hasText: 'مقدمة في الخوارزميات' });
+    const enrolled = page.locator('.sg-kpi').filter({ hasText: 'مقرّرات مسجَّلة هذا الفصل' });
+    await expect(enrolled.locator('.sg-kpi-value')).toHaveText(/^[2٢]$/);
+    const cardRow = page.getByRole('row').filter({ hasText: 'مقدمة في الخوارزميات' });
+    const card = cardRow.getByRole('link', { name: 'مقدمة في الخوارزميات' });
     await expect(card).toContainText('مقدمة في الخوارزميات');
     await expect(cardRow).toContainText('CS-201');
     await expect(cardRow).toContainText('د. ليلى الفيتوري');
@@ -48,7 +38,7 @@ test.describe('رحلة المقرّرات', () => {
     // نفسه — وجوده دليل دمج r164d؛ نثبّته ثم ندخل من صف القائمة.
     const nextCta = page.getByRole('link', { name: 'التالي: المحاضرة' });
     await expect(nextCta).toHaveAttribute('href', `/student/lectures/${LECTURE_ID}`);
-    const lecRow = page.locator(`a.course-lec-row[href="/student/lectures/${LECTURE_ID}"]`);
+    const lecRow = page.getByRole('link', { name: /المحاضرة.*الخوارزميات الجشعة/ });
     await expect(lecRow).toContainText('الخوارزميات الجشعة');
     await expect(lecRow).toContainText('المحاضرة');
     await lecRow.click();

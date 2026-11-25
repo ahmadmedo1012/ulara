@@ -16,7 +16,8 @@ test.describe('لوحة الأوامر والبحث الشامل', () => {
     await page.goto('/student/dashboard');
 
     /* الفتح بالوتر */
-    await page.keyboard.press('Control+K');
+    await expect(page.getByRole('heading', { name: 'لوحة التحكم' }).first()).toBeVisible();
+    await page.keyboard.press('Control+k');
     const input = page.getByRole('combobox', { name: 'الأوامر والبحث' });
     await expect(input).toBeVisible();
     await expect(input).toBeFocused();

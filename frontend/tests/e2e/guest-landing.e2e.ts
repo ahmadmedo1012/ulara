@@ -19,6 +19,7 @@ test.describe('الصفحة العامة للزوار', () => {
     await expect(page.getByRole('banner').locator('.fo-brand-name')).toContainText('أُلارا');
     // هوية المنصّة في الترويسة (r188: لا جامعة حقيقية — الاستقلالية؛ r191: العبارة المحذوفة صُنعت في ليبيا لم تعد اسم المنتج)
     await expect(page.locator('.fo-header-actions')).toBeVisible();
+    await page.locator('[data-lz="footer"]').scrollIntoViewIfNeeded();
     await expect(page.getByText('نظام تشغيل الجامعة').first()).toBeVisible();
     // بيان الاستقلالية يسمّي المؤسّسة التجريبية الاصطناعية بالاسم
     await expect(page.getByText('مساحة عمل أُلارا التجريبية').first()).toBeVisible();

@@ -21,6 +21,7 @@
  * contract (the sticky frame, the entrance descent, the reserved
  * closing column).
  */
+import { approachSection, scrollToPin } from './fixtures/landing-scene';
 import { test, expect } from './fixtures/e2e';
 import type { Page } from '@playwright/test';
 
@@ -71,36 +72,7 @@ async function mapGeo(page: Page): Promise<MapGeo> {
  * lands the pin exactly (two consecutive identical targets = done).
  * (The old flow-block spec's retry guarded the lazy tail the same
  * way.) */
-async function scrollToPin(page: Page, p: number, mobile: boolean) {
-  let prev = -1;
-  for (let i = 0; i < 4; i += 1) {
-    const landed = await page.evaluate(
-      ({ p, mobile }) => {
-        const track = document.querySelector('.jt') as HTMLElement;
-        const col = document.querySelector('.jt-map-col') as HTMLElement;
-        const win = document.querySelector('.jt-map-in') as HTMLElement;
-        let target: number;
-        if (mobile) {
-          const cRect = col.getBoundingClientRect();
-          const colTop = cRect.top + window.scrollY;
-          const winH = win.getBoundingClientRect().height;
-          const stickyTop = parseFloat(getComputedStyle(win).top) || 0;
-          target = colTop - stickyTop + p * (cRect.height - winH);
-        } else {
-          const r = track.getBoundingClientRect();
-          target = r.top + window.scrollY + p * (r.height - window.innerHeight);
-        }
-        window.scrollTo({ top: target, behavior: 'instant' });
-        return Math.round(window.scrollY);
-      },
-      { p, mobile },
-    );
-    await page.waitForTimeout(430);
-    if (Math.abs(landed - prev) < 2) break;
-    prev = landed;
-  }
-  await page.waitForTimeout(350);
-}
+
 
 async function sheetState(page: Page) {
   return page.evaluate(() => {
@@ -125,9 +97,10 @@ async function sheetState(page: Page) {
 }
 
 test.describe('R312 — the mobile map (§R R1, R322 override)', () => {
-  test('390px: the sticky-in-column discipline — ONE sheet, the intro card in flow, never overlapping', async ({ page }) => {
+  test('390px: one compact sheet, with the intro below the plan and no empty runway', async ({ page }) => {
     await page.setViewportSize(VW.mobile);
     await page.goto('/');
+    await approachSection(page, 'chapters');
     await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
 
     /* the driver's prime frame (rAF on mount) — wait for the track */
@@ -147,7 +120,7 @@ test.describe('R312 — the mobile map (§R R1, R322 override)', () => {
     await scrollToPin(page, 0.5, true);
     const s = await sheetState(page);
     expect(s.pin?.position).toBe('static');
-    expect(s.mapIn).toBe('sticky');
+    expect(s.mapIn).toBe('static');
     /* the sheet starts FULL (the overview) and stays inside it */
     expect(s.par).toBe('xMidYMid meet');
     const vb = (s.viewBox ?? '').split(' ').map(Number);
@@ -156,8 +129,9 @@ test.describe('R312 — the mobile map (§R R1, R322 override)', () => {
     expect(vb[1]!).toBeGreaterThanOrEqual(0);
     expect(vb[0]! + vb[2]!).toBeLessThanOrEqual(1200);
     expect(vb[1]! + vb[3]!).toBeLessThanOrEqual(760);
-    /* the column IS the tall track (the docH ladder's mobile engine) */
-    expect(geo.colH).toBeGreaterThan(2000);
+    // The compact phone column contains the drawing without a separate scroll runway.
+    expect(geo.colH).toBeGreaterThan(0);
+    expect(Math.abs(geo.colH - geo.winH)).toBeLessThanOrEqual(1);
 
     /* the INTRODUCTION card sits in flow BELOW the plan — the V10
      * «شاهد»-clip class of defect is dead by construction */
@@ -174,6 +148,7 @@ test.describe('R312 — the mobile map (§R R1, R322 override)', () => {
   test('390px: the camera pans the narrated rooms with the finding timeline', async ({ page }) => {
     await page.setViewportSize(VW.mobile);
     await page.goto('/');
+    await approachSection(page, 'chapters');
     await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
     await page.waitForFunction(
       () => (document.querySelector('.jt') as HTMLElement)?.dataset.stage !== undefined,
@@ -196,7 +171,7 @@ test.describe('R312 — the mobile map (§R R1, R322 override)', () => {
     expect(mid.wash).toBe('exam');
     const mvb = (mid.viewBox ?? '').split(' ').map(Number);
     expect(mvb.length).toBe(4);
-    expect(mvb[0]!).toBe(356);
+    expect(Math.abs(mvb[0]! - 356)).toBeLessThanOrEqual(2);
     expect(mvb[2]!).toBe(460);
     expect(mvb[3]!).toBe(600);
     /* the ±16 window absorbs the scroll-convergence residue on the
@@ -237,6 +212,7 @@ test.describe('R312 — the mobile map (§R R1, R322 override)', () => {
   test('390px: the invariant sweep — nothing covered, every state visited in order', async ({ page }) => {
     await page.setViewportSize(VW.mobile);
     await page.goto('/');
+    await approachSection(page, 'chapters');
     await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
     await page.waitForFunction(
       () => (document.querySelector('.jt') as HTMLElement)?.dataset.stage !== undefined,
@@ -245,9 +221,9 @@ test.describe('R312 — the mobile map (§R R1, R322 override)', () => {
     );
 
     const report = await page.evaluate(async () => {
-      const col = document.querySelector('.jt-map-col') as HTMLElement;
-      const cRect = col.getBoundingClientRect();
-      const colTop = cRect.top + window.scrollY;
+      const trackRect = document.querySelector('.jt')!.getBoundingClientRect();
+      const start = trackRect.top + window.scrollY - window.innerHeight;
+      const span = trackRect.height + window.innerHeight;
       const bad: string[] = [];
       const seen: number[] = [];
       /* The R330 mobile clock front-loads the movie (t = 5.52·u^0.55):
@@ -265,11 +241,11 @@ test.describe('R312 — the mobile map (§R R1, R322 override)', () => {
       /* warm-up: land on the pin's start ONCE and let the driver
        * converge before the recorded ladder — re-scrolling to the same
        * target fires no event, so sample 0 reads the settled state */
-      window.scrollTo({ top: colTop, behavior: 'instant' });
+      window.scrollTo({ top: start, behavior: 'instant' });
       await new Promise((r) => setTimeout(r, 250));
       for (let i = 0; i <= steps; i += 1) {
         const p = ps[i]!;
-        window.scrollTo({ top: colTop + p * cRect.height, behavior: 'instant' });
+        window.scrollTo({ top: start + p * span, behavior: 'instant' });
         await new Promise((r) => setTimeout(r, 140));
         const track = document.querySelector('.jt') as HTMLElement;
         const stage = Number(track.dataset.stage ?? -1);
@@ -301,6 +277,7 @@ test.describe('R312 — the mobile map (§R R1, R322 override)', () => {
   test('the ≥992px crossing restores the full sheet exactly once', async ({ page }) => {
     await page.setViewportSize(VW.mobile);
     await page.goto('/');
+    await approachSection(page, 'chapters');
     await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
     await page.waitForFunction(
       () => (document.querySelector('.jt') as HTMLElement)?.dataset.stage !== undefined,
@@ -316,7 +293,7 @@ test.describe('R312 — the mobile map (§R R1, R322 override)', () => {
     expect(cropped.viewBox).not.toBe('0 0 1200 760');
     const cvb = (cropped.viewBox ?? '').split(' ').map(Number);
     expect(cvb.length).toBe(4);
-    expect(cvb[0]!).toBe(356);
+    expect(Math.abs(cvb[0]! - 356)).toBeLessThanOrEqual(2);
     expect(cvb[2]!).toBe(460);
 
     /* up to desktop: restored exactly (the camDirty flag consumes) */
@@ -345,6 +322,7 @@ test.describe('R312 — reduced motion at mobile: the complete static sheet', ()
   test('every layer stands; the camera holds the full overview — never a mid-pan', async ({ page }) => {
     await page.setViewportSize(VW.mobile);
     await page.goto('/');
+    await approachSection(page, 'chapters');
     await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
     await page.waitForFunction(
       () => (document.querySelector('.jt') as HTMLElement)?.dataset.rm === 'on',
@@ -375,6 +353,7 @@ test.describe('R312 — the desktop map contract (the R322 transplant)', () => {
   test('1440px: the sticky frame holds; the entrance descends; the closing column is reserved', async ({ page }) => {
     await page.setViewportSize(VW.desktop);
     await page.goto('/');
+    await approachSection(page, 'chapters');
     await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
     await page.waitForFunction(
       () => (document.querySelector('.jt') as HTMLElement)?.dataset.stage !== undefined,

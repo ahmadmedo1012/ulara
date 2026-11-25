@@ -91,8 +91,8 @@ test.describe('المكتبة الإلكترونية — الاستعارة وا
     /* بطاقة الكتاب الوحيد النسخة متاحة، وبطاقة الاستعارات فارغة بصدق. */
     const bookCard = page.locator('[aria-label="قائمة الكتب"] .pf-row', { hasText: 'البرمجة بلغة C' });
     await expect(bookCard).toContainText('د. عبد الرحمن الشريف');
-    await expect(bookCard.locator('.r305rp-chip')).toContainText('متاح');
-    const loansCard = page.locator('section[aria-label="استعاراتي النشطة"]');
+    await expect(bookCard.locator('.sg-flag')).toContainText('متاح');
+    const loansCard = page.locator('section').filter({ has: page.getByRole('heading', { name: 'استعاراتي', exact: true }) }).last();
     await expect(loansCard).toContainText('لا استعارات نشطة');
 
     /* الاستعارة — صفّ القرض يظهر «نشطة» بموعد إرجاعه، وtoast
@@ -101,14 +101,14 @@ test.describe('المكتبة الإلكترونية — الاستعارة وا
     const borrowToast = page.locator('.toast-success');
     await expect(borrowToast.locator('.toast-title')).toHaveText('تمّت الاستعارة');
     await expect(borrowToast.locator('.toast-desc')).toContainText('موعد إرجاع «البرمجة بلغة C»');
-    const loanRowEl = loansCard.locator('.pf-row', { hasText: 'البرمجة بلغة C' });
+    const loanRowEl = loansCard.getByRole('row').filter({ hasText: 'البرمجة بلغة C' });
     await expect(loanRowEl).toBeVisible();
     await expect(loanRowEl).toContainText('نشطة');
-    await expect(loanRowEl).toContainText('موعد الإرجاع:');
+    await expect(loanRowEl).toContainText('موعد الإرجاع');
     await expect(loansCard).not.toContainText('لا استعارات نشطة');
 
     /* النسخة الوحيدة انتهت: الشارة «مستعار» والزرّ معطّل. */
-    await expect(bookCard.locator('.r305rp-chip')).toContainText('مستعار');
+    await expect(bookCard.locator('.sg-flag')).toContainText('مستعار');
     await expect(bookCard.getByRole('button', { name: 'استعارة البرمجة بلغة C' })).toBeDisabled();
 
     /* الإرجاع — الصف يزول، والحالة الفارغة تعود، والتوافر يُستعاد.
@@ -117,8 +117,8 @@ test.describe('المكتبة الإلكترونية — الاستعارة وا
     await loanRowEl.getByRole('button', { name: 'إرجاع البرمجة بلغة C' }).click();
     await expect(page.locator('.toast-success').last().locator('.toast-title')).toHaveText('تمّ الإرجاع');
     await expect(loansCard).toContainText('لا استعارات نشطة');
-    await expect(loansCard.locator('.pf-row', { hasText: 'البرمجة بلغة C' })).toHaveCount(0);
-    await expect(bookCard.locator('.r305rp-chip')).toContainText('متاح');
+    await expect(loansCard.getByRole('row').filter({ hasText: 'البرمجة بلغة C' })).toHaveCount(0);
+    await expect(bookCard.locator('.sg-flag')).toContainText('متاح');
     await expect(bookCard.getByRole('button', { name: 'استعارة البرمجة بلغة C' })).toBeEnabled();
 
     /* الشكل على السلك حرفيًا: { bookId } فقط — عقد borrowBookSchema. */

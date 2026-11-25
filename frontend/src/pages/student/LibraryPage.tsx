@@ -882,8 +882,8 @@ export default function LibraryPage() {
                   <EmptyState
                     icon={LibraryIcon}
                     illustration={booksFiltered ? 'empty-search' : 'empty-library'}
-                    title={booksFiltered ? 'لا توجد كتب تطاقق البحث' : 'لا توجد كتب بعد'}
-                    description={booksFiltered ? 'جرّب كلمات بحث مختلفة أو إزالة التصنيفات.' : 'ستظهر هنا كتب المكتبة فير توفرها.'}
+                    title={booksFiltered ? 'لا توجد كتب تطابق البحث' : 'لا توجد كتب بعد'}
+                    description={booksFiltered ? 'جرّب كلمات بحث مختلفة أو إزالة التصنيفات.' : 'ستظهر هنا كتب المكتبة فور توفرها.'}
                   />
                 }
               >

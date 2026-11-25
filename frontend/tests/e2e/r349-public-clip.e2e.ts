@@ -24,6 +24,7 @@
  *      brand-block rows retired with R349 D1) while the ten-door legal
  *      row survives intact.
  */
+import { approachSection, scrollToPin } from './fixtures/landing-scene';
 import { test, expect } from './fixtures/e2e';
 import type { Page } from '@playwright/test';
 
@@ -44,6 +45,7 @@ test.describe('R349 — the why head stands inside the phone viewport (the silen
     test(`why head seats read fully inside @${w}x844`, async ({ page }) => {
       await page.setViewportSize({ width: w, height: 844 });
       await page.goto('/');
+      await approachSection(page, 'why');
       await page.locator('.wy-section').scrollIntoViewIfNeeded();
       await settleReveals(page);
 
@@ -77,6 +79,7 @@ test.describe('R349 — the why head stands inside the phone viewport (the silen
   test('the head grid re-seats to ONE column ≤991 (the 552px side-rail root cause)', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
+    await approachSection(page, 'why');
     await page.locator('.wy-section').scrollIntoViewIfNeeded();
     await settleReveals(page, 300);
 
@@ -101,6 +104,7 @@ test.describe('R349 — the plate leader labels read inside the frame (r351: the
   test('every Arabic leader label lands inside @1440', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/');
+    await approachSection(page, 'chapters');
     /* the labels are the journey's LAST assembly beat — sit deep in the
      * scrub so the plate is fully assembled before measuring */
     await page.evaluate(() => {
@@ -148,6 +152,7 @@ test.describe('R349 — the phone deck and the one sitemap (structure pins)', ()
   test('the why pillars swipe as a snap deck ≤767 (no document overflow)', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
+    await approachSection(page, 'why');
     await page.locator('.wy-panels').scrollIntoViewIfNeeded();
     await settleReveals(page);
 
@@ -180,6 +185,7 @@ test.describe('R349 — the phone deck and the one sitemap (structure pins)', ()
   test('the colophon carries ONE sitemap and keeps its ten-door legal row', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
+    await approachSection(page, 'footer');
     await page.locator('.fo-footer').scrollIntoViewIfNeeded();
     await settleReveals(page);
 
@@ -230,36 +236,7 @@ test.describe('R349 — the phone deck and the one sitemap (structure pins)', ()
 /** scroll to a journey pin progress and let the driver settle (the
  *  r312 convergence discipline: the intro card's stage flips change
  *  the sticky window's height, so the first hop can overshoot). */
-async function scrollToJourneyPin(page: Page, p: number, mobile: boolean) {
-  let prev = -1;
-  for (let i = 0; i < 4; i += 1) {
-    const landed = await page.evaluate(
-      ({ p, mobile }) => {
-        const track = document.querySelector('.jt') as HTMLElement;
-        const col = document.querySelector('.jt-map-col') as HTMLElement;
-        const win = document.querySelector('.jt-map-in') as HTMLElement;
-        let target: number;
-        if (mobile) {
-          const cRect = col.getBoundingClientRect();
-          const colTop = cRect.top + window.scrollY;
-          const winH = win.getBoundingClientRect().height;
-          const stickyTop = parseFloat(getComputedStyle(win).top) || 0;
-          target = colTop - stickyTop + p * (cRect.height - winH);
-        } else {
-          const r = track.getBoundingClientRect();
-          target = r.top + window.scrollY + p * (r.height - window.innerHeight);
-        }
-        window.scrollTo({ top: target, behavior: 'instant' });
-        return Math.round(window.scrollY);
-      },
-      { p, mobile },
-    );
-    await page.waitForTimeout(430);
-    if (Math.abs(landed - prev) < 2) break;
-    prev = landed;
-  }
-  await page.waitForTimeout(350);
-}
+
 
 test.describe('R349 — the caption exit breathes (the dead-ref belt)', () => {
   for (const [label, vw, mobile] of [
@@ -269,6 +246,7 @@ test.describe('R349 — the caption exit breathes (the dead-ref belt)', () => {
     test(`the caption is written and gone by mid-band @${label}`, async ({ page }) => {
       await page.setViewportSize(vw);
       await page.goto('/');
+      await approachSection(page, 'chapters');
       await page.waitForFunction(
         () => (document.querySelector('.jt') as HTMLElement)?.dataset.stage !== undefined,
         undefined,
@@ -279,7 +257,7 @@ test.describe('R349 — the caption exit breathes (the dead-ref belt)', () => {
        * span 0.025 · desktop 0.10): the driver must have WRITTEN the
        * caption hidden — the pre-fix dead ref left the inline style
        * empty and the statement standing over the drawing. */
-      await scrollToJourneyPin(page, 0.5, mobile);
+      await scrollToPin(page, 0.5, mobile);
       const cap = await page.evaluate(() => {
         const el = document.querySelector('.jt-caption') as HTMLElement | null;
         if (!el) return { missing: true };
@@ -301,6 +279,7 @@ test.describe('R349 — the phone story card reads from frame one (no blank box)
   test('finding 1 stands during the data-finding=0 beat, below the chip', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
+    await approachSection(page, 'chapters');
     await page.waitForFunction(
       () => (document.querySelector('.jt') as HTMLElement)?.dataset.stage !== undefined,
       undefined,
@@ -309,7 +288,7 @@ test.describe('R349 — the phone story card reads from frame one (no blank box)
 
     /* the pre-story beat (stage 0–1): the card's body must carry the
      * FIRST finding at full ink — the pre-fix blank box. */
-    await scrollToJourneyPin(page, 0.06, true);
+    await scrollToPin(page, 0.06, true);
     const state = await page.evaluate(() => {
       const track = document.querySelector('.jt') as HTMLElement;
       const chip = document.querySelector('.jt-intro-headchip') as HTMLElement;
@@ -340,6 +319,7 @@ test.describe('R349 — the phone story card reads from frame one (no blank box)
   test('the desktop stage-2 card opens WITH its first finding (no blank window)', async ({ page }) => {
     await page.setViewportSize({ width: 1024, height: 768 });
     await page.goto('/');
+    await approachSection(page, 'chapters');
     await page.waitForFunction(
       () => (document.querySelector('.jt') as HTMLElement)?.dataset.stage !== undefined,
       undefined,
@@ -351,7 +331,7 @@ test.describe('R349 — the phone story card reads from frame one (no blank box)
      * stage 3 — a ~0.5s blank paper card over the plan on every
      * desktop width. The wrapper now opens with the body; the first
      * finding must already read. */
-    await scrollToJourneyPin(page, 0.42, false);
+    await scrollToPin(page, 0.42, false);
     const state = await page.evaluate(() => {
       const track = document.querySelector('.jt') as HTMLElement;
       const wrap = document.querySelector('.jt-intro-findings') as HTMLElement;
@@ -378,6 +358,7 @@ test.describe('R349 — the capability panel settles by 92% (no blank unfold)', 
     test(`the head and every row carry ink @${label}`, async ({ page }) => {
       await page.setViewportSize(vw);
       await page.goto('/');
+      await approachSection(page, 'chapters');
       await page.waitForFunction(
         () => (document.querySelector('.jt') as HTMLElement)?.dataset.stage !== undefined,
         undefined,
@@ -386,7 +367,7 @@ test.describe('R349 — the capability panel settles by 92% (no blank unfold)', 
 
       /* the compressed windows settle every row by ~0.92; the retired
        * windows left the header at 0 and the rows mid-flight here. */
-      await scrollToJourneyPin(page, 0.93, mobile);
+      await scrollToPin(page, 0.93, mobile);
       const panel = await page.evaluate(() => {
         const head = document.querySelector('.map-panel-head') as HTMLElement | null;
         const rows = Array.from(document.querySelectorAll('.map-panel-row')) as HTMLElement[];
@@ -408,6 +389,7 @@ test.describe('R349 — the resolve sheet retires the parked phone band + the ch
   test('the sketch band is gone at 390 and the ledger runs two rows', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
+    await approachSection(page, 'vision');
     await page.locator('.fo-cta').scrollIntoViewIfNeeded();
     await settleReveals(page);
 
@@ -427,6 +409,7 @@ test.describe('R349 — the resolve sheet retires the parked phone band + the ch
   test('the colophon carries no channels row while the legal row keeps its ten doors', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
+    await approachSection(page, 'footer');
     await page.locator('.fo-footer').scrollIntoViewIfNeeded();
     await settleReveals(page);
 
@@ -463,6 +446,7 @@ test.describe('R349 — the plate label ink clears the sheet furniture (the ink-
   test('«ساحة المجتمع» clears the scale bar, «ميدان التدريب» and the leader path', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 1000 });
     await page.goto('/');
+    await approachSection(page, 'chapters');
     /* the labels are the journey's LAST assembly beat — sit deep in
      * the scrub so the plate is fully assembled before measuring */
     await page.evaluate(() => {
@@ -569,7 +553,9 @@ test.describe('R349 — the app sheet QR decodes (the honest-extension belt)', (
   test('the QR image loads as a true vector on /app', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 1000 });
     await page.goto('/app');
-    await settleReveals(page);
+    const image = page.locator('.ap-qr img');
+    await image.scrollIntoViewIfNeeded();
+    await image.evaluate((node: HTMLImageElement) => node.decode());
 
     const qr = await page.evaluate(() => {
       const img = document.querySelector<HTMLImageElement>('.ap-qr img');

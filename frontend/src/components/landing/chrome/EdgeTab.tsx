@@ -49,7 +49,7 @@ const yearAr = () =>
 export function EdgeTab() {
   const scrollToFooter = useCallback(() => {
     if (typeof document === 'undefined') return;
-    const footer = document.querySelector(FOOTER_SELECTOR);
+    const footer = document.querySelector(FOOTER_SELECTOR) ?? document.querySelector('[data-lz="footer"]');
     if (!footer) return; /* no footer on this sheet — a no-op, never an error */
     const reduced =
       typeof window.matchMedia === 'function' &&

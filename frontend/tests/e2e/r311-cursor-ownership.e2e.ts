@@ -55,9 +55,9 @@ test.describe('R311 — the landing owns its pointer', () => {
     /* the native cursor is hidden only while the sheet is live, and
      * the suppression vocabulary is the unified "none" */
     await expect(page.locator('[data-cursor="hidden"]')).toHaveCount(0);
-    await expect(page.locator('.bp-stage')).toHaveAttribute('data-cursor', 'none');
-    const stageCursor = await page.evaluate(() => getComputedStyle(document.querySelector('.bp-stage') as Element).cursor);
-    expect(stageCursor).toBe('none');
+    await expect(page.locator('.hro-stage')).toHaveAttribute('data-cursor', 'none');
+    const stageCursor = await page.evaluate(() => getComputedStyle(document.querySelector('.hro-stage') as Element).cursor);
+    expect(stageCursor).toBe('crosshair');
   });
 
   test('link hover: the square reticle only — never a circular ring', async ({ page }) => {
@@ -103,28 +103,22 @@ test.describe('R311 — the landing owns its pointer', () => {
     await expect(page.locator('.cursor-layer')).toHaveCount(0);
   });
 
-  test('hero entry: the local plus owns the pointer — no global glyph competes', async ({ page }) => {
+  test('hero entry: the native crosshair guides the drag and the stations open', async ({ page }) => {
     await page.setViewportSize(VW.desktop);
     await page.goto('/');
-    const stage = page.locator('.bp-stage').first();
+    const stage = page.locator('.hro-stage').first();
     await expect(stage).toBeVisible();
     const sb = await stage.boundingBox();
     expect(sb).not.toBeNull();
 
-    /* enter the drawing — the plus + guides + readout own the zone */
     await page.mouse.move(sb!.x + sb!.width * 0.5, sb!.y + sb!.height * 0.45, { steps: 8 });
-    await expect(page.locator('.hi-layer')).toHaveAttribute('data-point', 'on');
-    await expect(page.locator('.hi-plus')).toBeVisible();
-
-    /* the square sheet suppresses inside the zone; the app layer is
-     * down for the whole route anyway — assert the negative space */
+    await expect(stage).toHaveCSS('cursor', 'crosshair');
     await expect(page.locator('.cursor-layer')).toHaveCount(0);
     await expect(page.locator('.cursor-dot-core')).toHaveCount(0);
 
-    /* drag-to-inspect: selection box + markers, still one owner */
     await page.mouse.down();
     await page.mouse.move(sb!.x + sb!.width * 0.72, sb!.y + sb!.height * 0.6, { steps: 14 });
-    await expect(page.locator('.hi-box')).toHaveAttribute('data-on', 'on');
+    await expect(stage.locator('.hi-marker[aria-pressed="true"]').first()).toBeVisible();
     await page.mouse.up();
     await page.waitForTimeout(700);
     await expect(page.locator('.cursor-layer')).toHaveCount(0);
@@ -213,7 +207,7 @@ test.describe('R311 — native fallback', () => {
     await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
     await expect(page.locator('.sc-canvas')).toHaveCount(0);
     await expect(page.locator('.cursor-layer')).toHaveCount(0);
-    const stageCursor = await page.evaluate(() => getComputedStyle(document.querySelector('.bp-stage') as Element).cursor);
+    const stageCursor = await page.evaluate(() => getComputedStyle(document.querySelector('.hro-stage') as Element).cursor);
     expect(stageCursor).not.toBe('none');
   });
 

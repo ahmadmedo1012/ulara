@@ -67,48 +67,25 @@ run (notifications path, theme verb, chapter mutations, a nonexistent
 `GET /admin/users/:id`) — run it in CI or before any merge touching
 `src/api/**` or `backend/src/http/routes/**`.
 
-## Builds & updates — Actions-native; release-by-new-build (r359)
+<!-- coderabbit-ai-generated:v1 -->
 
-Native builds are GitHub-Actions-only (the owner's binding requirement —
-`eas build` is retired from this repo's pipeline):
+<!-- coderabbit-ai-generated-section:v1:501879db6e18df38accb8ed406b4eff43770a73ee2b0a96270895ea29fddf54e -->
 
-- **QA APK + signed release APK** → `.github/workflows/android-apk.yml`
-  (the signed rolling-`latest` release APK:
-  https://github.com/ahmadmedo1012/ulara/releases/latest/download/ulara.apk)
-- **iOS sidestore IPA (unsigned)** → `.github/workflows/build-ios-sidestore.yml`
-- **dev-client / smoke lanes** → `.github/workflows/mobile.yml`
-  (expo prebuild + Gradle on Actions runners)
+## Build and verify a native release
 
-EAS is RETIRED (r359 A4): no `eas build`, no `eas update`, no `eas.json`,
-no `EXPO_TOKEN`, no OTA layer. Every change — JS or native — ships as a
-NEW NATIVE BUILD from the GitHub-Actions lanes above
-(release-by-new-build; docs/mobile.md §7). The in-app update story is
-the `/status` version pair: `minAppVersion` blocks builds below the
-floor (the «يلزم تحديث التطبيق» screen), `latestAppVersion` shows a
-one-time «يتوفر إصدار جديد» toast that points at the download page.
+Pushes to `main` that change mobile sources or shared assets start the Android and iOS workflows. A maintainer with workflow dispatch access can also run them manually.
 
-| Change | Delivery |
-|---|---|
-| JS/TS screens, styles, API wiring | **new build — run the Actions workflows above** |
-| New native module / `app.config.ts` plugin, icon, splash, permissions | **new build — run the Actions workflows above** |
-| `expo-notifications` wiring (client shipped; needs an Expo push project id) | **new build — run the Actions workflows above** |
+- [Android APK](../../.github/workflows/android-apk.yml) builds the QA artifact and publishes the signed [Android download](https://github.com/ahmadmedo1012/ulara/releases/latest/download/ulara.apk). Compare the source SHA and signing certificate in the release body before distributing the file; the rolling release name alone does not identify a build.
+- [iOS SideStore](../../.github/workflows/build-ios-sidestore.yml) uploads an unsigned IPA to the workflow run.
+- [Mobile](../../.github/workflows/mobile.yml) runs the source gates. Device smoke evidence comes from the full emulator lane; a successful source gate does not establish that an emulator ran.
 
-## Synchronizing with `origin/main`
+Ship application and dependency changes in a new native build. The status response carries `minAppVersion` (required update) and `latestAppVersion` (available update). For rollback and installation requirements see [the mobile runbook](../../docs/mobile.md).
 
-The website evolves continuously. Isolation rules:
+## Synchronizing with main
 
-1. `git fetch origin main` and merge into `feat/mobile-expo` — the merge is
-   safe by construction because the mobile app owns `apps/mobile/**` and the
-   web owns everything else; resolve conflicts **without** reverting upstream
-   web/backend changes.
-2. Re-run `npm run typecheck && npm run contract-check` in `apps/mobile`
-   — the contract gate flags any endpoint/verb the backend removed or moved.
-3. Check `docs/feature-parity.md` rows for features the backend changed and
-   update statuses honestly (✅ / 🧩 / 🔗 / ⚠️ / 🚫 — never upgrade a status
-   without evidence).
-4. Ship every reconciliation — JS-only or native — as a new build via the
-   GitHub-Actions workflows (android-apk.yml) before the production
-   channel moves (r359: no OTA layer anymore).
+Start from current `main`. After a backend change run `npm run typecheck`, `npm run contract-check`, and `npm run api:types` in `apps/mobile`; inspect the generated diff before publishing. Update [feature parity](docs/feature-parity.md) only for verified behavior.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 ## Honest limits (current)
 

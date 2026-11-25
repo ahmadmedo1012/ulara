@@ -178,7 +178,15 @@ P1/P2/P6/P10 — All 44 standalone artworks now use the six published scene modu
 
 After 1b18759: production Lighthouse 77/86/92, accessibility 100 throughout. Repaired 24 drift findings at their CSS source, requested the matching elevation before React, aligned the installed and offline shell colors, and verified retry preserves the address. [Evidence](evidence/initial-paint.txt).
 
-NEXT: Confirm the new deployed hash and Lighthouse; compare final signed APK and unsigned IPA source receipts, surface drift and full route results.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:5e4059dc0b1772c5768e4601c80f9ea326ee694c79ebd6d6e2cf2ce93f396c10 -->
+
+After 3dd07b7: restored links to unmounted landing sections, the visible drag cursor, compact camera coverage and authenticated journeys. Removed the retired mobile branch instructions. [Measurements](evidence/section-entry.txt).
+
+NEXT: Compare the live build, CI, mobile artifacts and browser matrices with HEAD. The two permitted verify.sh invocations are exhausted; targeted retries do not constitute a full green invocation.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 
