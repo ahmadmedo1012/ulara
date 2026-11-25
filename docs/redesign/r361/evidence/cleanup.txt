@@ -1,0 +1,19 @@
+Ancestor: 6f98b960e6910da7a5d3fc18d1b5dc2b68d78e0b refs/heads/r358/visual-match
+Ancestor: 553cf08695c9308d96b5232b229bf961cfe3a484 refs/heads/r359/a1-landing
+Ancestor: 52819752a9f5c81acd4e04e5d438426b84a1a4be refs/heads/r359/a2-art
+Ancestor: 0b1c9390efb049bc61f1db7e5fba801d50692c9a refs/heads/r359/a3-product
+Ancestor: f5ca4442e6f055dcee703cbcaae825b398998447 refs/heads/r359/a4-mobile-backend
+Ancestor: 22a03b61bf421970ac573a02be7b6141281113d0 refs/heads/r360/integration
+To https://github.com/ahmadmedo1012/ulara.git
+ - [deleted]         r358/visual-match
+ - [deleted]         r359/a1-landing
+ - [deleted]         r359/a2-art
+ - [deleted]         r359/a3-product
+ - [deleted]         r359/a4-mobile-backend
+ - [deleted]         r360/integration
+9112f5724ce84d4c255210df426c31677d6a50d6	refs/heads/main
+Open PRs: []
+Tags retained: 4fd2d135946b91acbc2768098c50076a6f2e89fc	refs/tags/builds-ledger
+15746514aef01855ed13a9bc9ed5535b5cafcf3e	refs/tags/latest
+Local branch: * main
+Revisions inspected: 14 including full tracked tree at HEAD. Credential-shaped matches: 0

@@ -118,7 +118,15 @@ P5 — Mobile CI progressed past generated drift and found six expectations for 
 
 P8 — Ran the requested two full script invocations. The last run passed typecheck, 863.8 KB bundle, style, logo, accessibility (12 cells, no serious/critical), design gates and lint. It failed one of 3,098 unit tests on cold module readiness and could not reach the preview for 27 e2e tests. Fixed cold test setup and restarted Preview: all 12 camera assertions and all 27 affected e2e cases then passed separately. [Output](evidence/verification.txt). The complete script itself did not exit green.
 
-NEXT: Finish the isolated sweep and live measurements; verify final mobile and deploy references.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:0048f6b44c134b89a139cb639811c5ada9dc12a23788d1a20bd33a578f5477c8 -->
+
+P9 — Verified all six topic tips were ancestors of main and deleted their refs with an atomic lease. Remote and local now contain only main; zero open PRs; latest and builds-ledger retained. [Ref and PR reads](evidence/cleanup.txt). Smart HTTPS worked.
+
+NEXT: Complete remaining verification and document any unmet release conditions.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 
