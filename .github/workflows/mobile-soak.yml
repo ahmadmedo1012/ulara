@@ -144,8 +144,7 @@ jobs:
         env:
           EXPO_PUBLIC_API_BASE_URL: http://10.0.2.2:4000/api/v1
         run: |
-          npx expo prebuild --platform android --clean --no-install \
-            --application-id ly.ulara.app
+          npx expo prebuild --platform android --clean --no-install
           (cd android && ./gradlew assembleDebug --no-daemon -q) \
             || { echo "::error::gradle assembleDebug failed"; exit 1; }
           cp android/app/build/outputs/apk/debug/app-debug.apk ../dev-client.apk

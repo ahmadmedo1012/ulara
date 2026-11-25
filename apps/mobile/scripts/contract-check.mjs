@@ -106,7 +106,12 @@ if (!existsSync(APP_TS) || !existsSync(ROUTES_DIR)) {
 
 // 1 — consumed (mobile)
 const consumed = new Set();
-for (const f of readdirSync(API_DIR).filter((f) => f.endsWith(".ts"))) {
+// r363 — TEST files under src/api/ are not consumers: client.test.ts's
+// `api("/student/dashboard")` fixtures leaked a phantom endpoint into
+// the drift report (the real dashboard call is /me/dashboard in
+// student.ts). Colocation is the norm in this tree, so the filter
+// names the exclusion.
+for (const f of readdirSync(API_DIR).filter((f) => f.endsWith(".ts") && !/\.(test|spec)\.ts$/.test(f))) {
   for (const x of consumedFrom(readFileSync(join(API_DIR, f), "utf8"))) consumed.add(x);
 }
 for (const x of consumedFrom(readFileSync(join(MOBILE, "src", "auth", "session.ts"), "utf8"))) {
