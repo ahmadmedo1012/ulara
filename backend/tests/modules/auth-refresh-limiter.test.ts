@@ -42,6 +42,15 @@ vi.mock('../../src/db.js', () => ({
     studentProfile: { findMany: vi.fn(async () => []) },
     membership: { findMany: vi.fn(async () => []) },
     loginEvent: { create: vi.fn(async () => ({})) },
+    // P6 — the refresh path consults the session ledger (row lookup +
+    // roll/adopt bookkeeping) on every successful refresh.
+    userSession: {
+      findUnique: vi.fn(),
+      create: vi.fn(async () => ({})),
+      update: vi.fn(),
+      updateMany: vi.fn(async () => ({ count: 1 })),
+      deleteMany: vi.fn(async () => ({ count: 0 })),
+    },
   },
   withRetry: vi.fn(),
 }));

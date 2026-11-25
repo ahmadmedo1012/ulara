@@ -54,7 +54,8 @@ basis: `audits/evidence/r313/` (live reference census + production baseline; 3 m
 - **D11** route transition 721ms sweep + 500ms reveal → **1.6s four-edge inset
   wipe**.
 - **D12** cursor — already at parity since R310/R311; kept (only the paper fallback
-  re-pinned).
+  re-pinned). *(r363 P2: the instrument itself re-seated on the reference's DOT grammar —
+  §4; the square/ring pointer instruments retired.)*
 - **D13** scrub/plateau choreography re-based onto the new 9-section set.
 - **D14** footer → **3 columns + inspection lens** (r 99.09 / pulse 104.04).
 - **D15** cookie banner — **intentionally omitted** (Ulara sets no tracking
@@ -162,9 +163,14 @@ tick. `prefers-reduced-motion` collapses every duration to 0 (motion.css + base.
 and the content stands complete static. No scrolljacking.
 **R308 amendment — the interaction layer** (`docs/redesign/r308/parity-matrix.md`): the
 landing sheet carries the reference's connected instrument system — the once-per-session
-entrance loader (honest progress, session-gated, skipped under RM), the canvas pointer
-instrument (9px signal square, velocity trail, press reticle — fine pointers only, never
-under RM), the hero's local inspection instrument (guides + scene-relative readout +
+entrance loader (honest progress, session-gated, skipped under RM), the pointer
+instrument (r363 P2 fidelity: the r308 canvas square — 9px signal square, velocity trail,
+press reticle — is RETIRED; the reference's DOT grammar ships instead via `SheetCursor.tsx`
++ `styles/landing/cursor.css`: a 0.6rem `--accent` dot on a 0×0 transform-driven head,
+opacity 0 AT REST and over plain ground, lit + grown (scale 2.4, the documented inference)
+on interactive seats only, NO press state, and the native cursor never hidden —
+`data-cursor="none"` zones step the dot aside; fine pointers + hover only, never under RM),
+the hero's local inspection instrument (guides + scene-relative readout +
 drag-to-inspect with viewBox-remapped stations), the pinned walkthrough (CSS sticky —
 still no JS pinning), the ink-mask drawing→photo reveal, the capabilities ticker, the
 footer inspection lens, and the landing-exit sweep. All of it rides ONE shared clock
@@ -190,7 +196,11 @@ click-to-load facades — zero third-party bytes until intent) → the capabilit
 (a ruled hairline table) → the interactive **role selector** (aria-pressed chips over
 the five roles' REAL dashboards, a polite live-region panel) → the interactive college
 registry → the honest status pairs → the coordinates-row CTA → the hairline colophon
-footer. The funnel (5 register CTAs / 5 login affordances — exact counts, pinned), the
+footer. **r363 P2 — the wordmark band law:** the footer's giant wordmark rides the
+measured band `clamp(3.2rem, 18.5vw, 32rem)` — ≈266px of letter at 1440, band ≈285px, the
+reference's own band (`.fo-giant-text`, footer.css; the fluid root makes rem caps too
+tiny to ride — the rung is vw with the 32rem cap). The funnel (5 register CTAs / 5 login
+affordances — exact counts, pinned), the
 honest numbers, the integrity strings, and the a11y contracts are pinned by
 `landing-funnel` / `r306-landing-sheet` / `landing-scrollspy-grain` / `guest-landing.e2e`
 / the r188-brand gates.
@@ -222,6 +232,13 @@ fill with `--warm-ink` labels, ghosts hairline; 44px landing floor; loading stat
 double-submit. Inputs/tables/dialogs/overlays: the shared primitives
 (`components/primitives/`) + `patterns.css` (`PageFrame · PageHeader · RowList ·
 SplitView · FilterBar…` — the normative signatures in `components/patterns/CONTRACT.md`).
+**r363 P3 — the registration furniture:** the corpus's eight cross constructions
+collapsed into ONE primitive — `.reg-cross` + `components/patterns/RegCross.tsx` (a 13px
+hollow-center crosshair, two 1px strokes on `--rule-strong`; `--ink`/`--muted` modifiers;
+size re-seats only via `--reg-cross-size`) — and the furniture kit joins it: `RulerStrip`
+(1px ticks · 6px pitch · 4px thickness), `DimensionLine` (1px rule + 45° slash ticks + a
+mono numeral) and the `.pat-linegrid` line-grid underlay; every seat renders through the
+primitive and keeps only its position classes.
 Empty/loading/error states use the **mk-ill illustration kit** (original two-tone SVG,
 gold in achievement pieces only). Data tables rule with hairlines, sticky headers where
 needed, scoped horizontal scroll on phones. `--gold` = achievements ONLY.
@@ -502,6 +519,11 @@ re-skin. Smoke contract: `tests/unit/r325-app-css-contract.test.ts`
 - **Bands:** desktop ≥921 (rail/expanded sidebar); phone ≤920 —
   sidebar becomes a drawer (`--z-menu-drawer` 530) over a backdrop,
   bottom-nav carries the role's five destinations, top bar persists.
+- **r363 P4 — the dock-band reserve (structural):** at ≤920 `.content` carries
+  `margin-block-end: calc(78px + env(safe-area-inset-bottom))` — the fixed, always-visible
+  bottom-nav band is reserved by the shell itself (the scroller's bottom edge lifts to the
+  dock's top edge), so NO page content can enter the dock's band at any scroll position;
+  the content-inner pad downgrades to last-row daylight only (base.css).
 - **Z-order** rides the shipped scale (dropdown 100 → … → splash 800);
   no new rungs.
 

@@ -449,9 +449,18 @@ const COLLECT_SRC = `(() => {
     if (seen.has(el)) continue;
     seen.add(el);
     const cs = getComputedStyle(el);
+    /* r363 — the DESIGNED-CLAMP exemption: -webkit-line-clamp is the
+       house's deliberate preview truncation (the notification cards'
+       two-line .np-desc, et al) — the reader sees the ellipsis and
+       the full text lives one click away. A clamp that has clamped
+       satisfies scrollH > clientH by construction, so the clipped-read
+       detector must not flag it. (First CI run: /quality/notifications
+       x4 cells.) */
+    const isDesignedClamp = String(cs.webkitLineClamp || 'none') !== 'none';
     const hidesX = el.scrollWidth > el.clientWidth + 1 && cs.overflowX !== 'visible';
     const hidesY = el.scrollHeight > el.clientHeight + 1 && cs.overflowY !== 'visible';
     if (!hidesX && !hidesY) continue;
+    if (isDesignedClamp) continue;
     const ellipsis = cs.textOverflow === 'ellipsis';
     const mustRead = /^H[1-6]$/.test(el.tagName) || el.tagName === 'BUTTON' || el.tagName === 'A';
     if (ellipsis && !mustRead) continue;
@@ -500,7 +509,10 @@ const pageMetricsSrc = (curWidth: number): string => `(function () {
     if (el.classList.contains('sr-only') || el.classList.contains('visually-hidden')) continue;
     if (el.scrollWidth > el.clientWidth + 2 && el.clientWidth > 2) {
       const style = getComputedStyle(el);
-      if (style.overflow === 'hidden' && style.textOverflow !== 'ellipsis') {
+      /* the designed-clamp exemption (see COLLECT_SRC) */
+      const isDesignedClamp =
+        style.display === '-webkit-box' && style.webkitLineClamp !== 'none';
+      if (style.overflow === 'hidden' && style.textOverflow !== 'ellipsis' && !isDesignedClamp) {
         clipped.push({ tag: el.tagName.toLowerCase(), text: (el.textContent || '').slice(0, 36), scrollW: el.scrollWidth, clientW: el.clientWidth });
       }
     }

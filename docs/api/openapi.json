@@ -34,7 +34,7 @@
     },
     {
       "name": "auth",
-      "description": "11 operation(s) under /api/v1/auth"
+      "description": "13 operation(s) under /api/v1/auth"
     },
     {
       "name": "catalog",
@@ -5631,6 +5631,132 @@
             }
           }
         }
+      }
+    },
+    "/api/v1/auth/sessions": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "GET /api/v1/auth/sessions",
+        "description": "Declared in `backend/src/http/routes/auth.routes.ts` (mounted at `/api/v1/auth`).",
+        "x-mounted-at": "/api/v1/auth",
+        "responses": {
+          "200": {
+            "description": "Success envelope `{ data }`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessEnvelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation / bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/v1/auth/sessions/{id}": {
+      "delete": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "DELETE /api/v1/auth/sessions/:id",
+        "description": "Declared in `backend/src/http/routes/auth.routes.ts` (mounted at `/api/v1/auth`).",
+        "x-mounted-at": "/api/v1/auth",
+        "responses": {
+          "200": {
+            "description": "Success envelope `{ data }`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessEnvelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation / bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": []
       }
     },
     "/api/v1/auth/verify-email": {
@@ -34791,9 +34917,9 @@
   },
   "x-generator": {
     "tool": "backend/scripts/generate-openapi.ts (hand-rolled: express-stack walk + zod-v3 walker)",
-    "generatedAt": "2026-11-25T19:59:23.123Z",
-    "operationCount": 388,
-    "pathCount": 315,
+    "generatedAt": "2026-11-25T22:56:38.339Z",
+    "operationCount": 390,
+    "pathCount": 317,
     "contractSnapshotCovered": 13,
     "snapshotCoveredRoutes": [
       "GET /api/v1/ai/config",

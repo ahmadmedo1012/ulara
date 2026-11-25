@@ -27,6 +27,11 @@
 
 <!-- /coderabbit-ai-generated:v1 -->
 
+كل دفعة `main` تدير أيضًا بوابة **المسح الشامل للمنتج** (`product-sweep.yml`):
+ستة مسارات أدوار من كواشف العيوب البصرية على بناء إنتاجي معزول (`vite preview` +
+ناقل الاختبارات الوهمي — بلا قاعدة ولا شبكة)؛ وعلى PRs شعبتها المصغّرة (28 خلية).
+الكتالوجات تُرفع artifacts ولا يُنشر شيئًا (التفاصيل: [runbook.md](runbook.md) §7).
+
 ## 2. المنصة (Vercel + Neon) — الإعداد المنجز
 
 - `api/index.ts` محوّل Vercel؛ `vercel.json`: بناء (prisma generate +

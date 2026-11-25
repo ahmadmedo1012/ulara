@@ -23,6 +23,7 @@
 | [ops/LEDGER.md](ops/LEDGER.md) | سجل التقدّم الوحيد للمالك — إضافة فقط، لا يُلمس |
 | [redesign/r363/](redesign/r363/) | آخر جولة مسجّلة (سجل التسليم + الأدلة)؛ سجل الملكية الدائم: [redesign/r342/OWNERSHIP.md](redesign/r342/OWNERSHIP.md) |
 | [redesign/r352/](redesign/r352/) | برنامج المؤسسة (خلفية + واجهة) — `HANDOFF.md` في كل مسار |
+| [redesign/p4/](redesign/p4/) | أدلة المسح الشامل للمنتج (r363): كتالوجات عيوب كل مسار `defects-<lane>.json` + `defects-summary.md` — تُكتب آليًا من `product-sweep.yml` وتُرفع artifacts |
 
 ## مسارات قراءة مقترحة
 

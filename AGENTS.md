@@ -173,7 +173,7 @@ queue/ownership in the same directory.
 
 ## 7. Never-do list
 
-- Never raise a ceiling (815 / 92 / 110) without a documented, measured reason in
+- Never raise a ceiling (866 / 92 / 110) without a documented, measured reason in
   `scripts/check-bundle-size.mjs`'s header, re-pin the retired reference spec baseline,
   weaken an assertion or test, lower the ratchet, or
   add `continue-on-error`.

@@ -223,4 +223,15 @@ JS أو native — يُسلَّم كـ**بناء ثنائي جديد** من مس
 الوصول وتثبت دورة الاستعادة نفسها)، وروابط بطيئة/ثقيلة عبر `adb emu network`.
 بعد كل جولة: `soak-assert.yaml` يثبت بقاء الجلسة (عنوان لوحة الطالب ظاهر —
 لا خروج ولا شاشة انقطاع حاصرة)، مع لقطات لكل جولة والطبائن الكاملة
-(logcat/metro/backend) في `soak-forensics`. انظر `.github/workflows/mobile-soak.yml`.
+(logcat/metro/backend) في `soak-forensics`.
+
+**آلية الإقلاع (r363)**: APK عميل التطوير يُبنى داخل التشغيل نفسه (`expo prebuild` +
+`assembleDebug`)؛ فتح الجلسة دائمًا عبر deep link عميل التطوير بـ`adb` —
+`exp+ulara://expo-development-client/?url=http%3A%2F%2F10.0.2.2%3A8081` — لا `launchApp`
+في مايسترو (يرفضه هذا البناء) ولا اكتشاف خوادم الرأس (شاشة «DEVELOPMENT SERVERS»
+الفارغة headless)؛ `pm clear ly.ulara.app` قبل الدخول الأول؛ وكل انتظار واجهة يقيس
+نصًّا حقيقيًا من شجرة الوصول (`uiautomator dump` — «ابدأ الآن» لحزمة البرد البارد،
+«أرقامك هذا الفصل» بعد الاستعادة) لا نومًا ثابتًا. جولات القطع (airplane) لا تعيد فتح
+التطبيق أثناءها عمدًا — عميل تطوير بلا Metro شاشة خطأ بالضرورة البنائية، فحقيقة
+استئناف الجلسة تُمارس داخل التطبيق المفتوح؛ والسكربت الجهازي الواحد:
+`apps/mobile/scripts/soak-run.sh`. انظر `.github/workflows/mobile-soak.yml`.
