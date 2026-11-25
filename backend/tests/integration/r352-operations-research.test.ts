@@ -173,7 +173,7 @@ describe('r363 P6 — the facilityId slice filter (audit #3)', () => {
   it('work-orders and safety-incidents read their own facility slice', async () => {
     const s = await sliceSetup();
     const lab = await api('POST', '/api/v1/operations/facilities', {
-      nameAr: `مختبر الدوائر ${uniqueSuffix()}`, type: 'LAB', code: `LB-${uniqueSuffix()}`, capacity: 12,
+      nameAr: `مختبر الدوائر ${uniqueSuffix()}`, type: 'LABORATORY', code: `LB-${uniqueSuffix()}`, capacity: 12,
     }, s.auth);
     expect(lab.status).toBe(201);
 
