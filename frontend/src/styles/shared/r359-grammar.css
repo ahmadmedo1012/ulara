@@ -897,9 +897,11 @@ a.pf-stat:hover { background: var(--surface-2); }
 .dash-disclosure.pf-stat .pf-stat-value { display: block; }
 
 /* Keep the entire sheet and its controls inside the narrow shell scrollport. */
-@media (max-width: 640px) {
+@media (max-width: 920px) {
   .content .sg-reg--tl, .content .sg-reg--bl { inset-inline-start: -3px; }
   .content .sg-reg--tr, .content .sg-reg--br { inset-inline-end: -3px; }
+}
+@media (max-width: 640px) {
   .sg-split, .sg-split[data-ratio='even'], .sg-cols { grid-template-columns: minmax(0, 1fr); }
   .sg-split > *, .sg-cols > * { min-inline-size: 0; }
   .sg-aside { max-inline-size: 100%; flex-wrap: wrap; }

@@ -32,15 +32,20 @@ trap 'rc=$?; trap - EXIT; rm -f -- "$dest/.capture.png" "$dest/.capture.txt"; re
 trap 'exit 130' INT
 trap 'exit 143' TERM
 capture() {
-  local name=$1 focus
+  local name=$1 focus observed_scale
   sleep 2
   focus=$(adb_device shell dumpsys window | sed -n '/mCurrentFocus=/p')
   [[ "$focus" == *ly.ulara.app/* ]] || { echo "Open the ULARA fixture screen first" >&2; return 1; }
+  observed_scale=$(prop font_scale)
+  if [[ "$name" == compact-200pct && ! "$observed_scale" =~ ^2([.]0+)?$ ]]; then
+    echo "The emulator did not apply the 200% font scale" >&2
+    return 1
+  fi
   {
     printf '%s\n' "$focus"
     adb_device shell wm size
     adb_device shell wm density
-    printf 'font_scale=%s\nuser_rotation=%s\n' "$(prop font_scale)" "$(prop user_rotation)"
+    printf 'font_scale=%s\nuser_rotation=%s\n' "$observed_scale" "$(prop user_rotation)"
   } > "$dest/.capture.txt"
   adb_device exec-out screencap -p > "$dest/.capture.png"
   # Fail if adb reports success but the PNG is missing or truncated.

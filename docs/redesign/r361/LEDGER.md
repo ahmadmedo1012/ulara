@@ -238,7 +238,15 @@ P1/P5/P8 — Restored immediate visibility of the five real student metrics, ret
 
 | Shared release handoff (parent d851640) | Recorded the web/native token and source-ID contracts at their shared input root. Token generation and logo parity pass. The app sources and tested frontend build are unchanged from 77ef2ed. | [Shared design and release evidence](../../../shared/README.md) |
 
-NEXT: Confirm all three published artifacts against the containing commit; retain the raw role/axe matrix and isolated production performance measurements.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:5bdb8ce118b12fc31eca5be2a66bb09c3f45c14c846f822a47c473202a254775 -->
+
+| Tablet scrollports and native font-scale evidence (parent c6c05a0; containing commit) | 67 observed tablet overshoots at the 112-route checkpoint; 13 representative routes clean after matching the existing 920px layout breakpoint. The 200% capture now refuses an ignored font setting and restores the device. | [Measurements and verification boundaries](evidence/tablet-and-font-scale.txt) |
+
+NEXT: Compare production and signed native artifacts to this commit; inspect the five-width matrix, isolated mobile Lighthouse, CI and real emulator evidence. Keep failures and skipped checks explicit.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 
