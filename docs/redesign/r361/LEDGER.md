@@ -190,7 +190,15 @@ After 3dd07b7: restored links to unmounted landing sections, the visible drag cu
 
 P1/P8 — The five-role route sweep found a PDF.js cancellation race. Backported its upstream termination check to the verified distribution; six navigation timings, an actual rendered PDF, and 40 viewer tests pass. [Evidence](evidence/pdf-cancellation.txt). Parent: 2f2be13.
 
-NEXT: Compare live build, CI and mobile artifacts with HEAD; use the matching browser receipts and keep the two failed aggregate verification invocations visible.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:c94f8f557aba020c1e7e6878e0795efcbad3050282bf0db7a9cc40dccc6cfa0e -->
+
+P1/P4/P8 — Removed the capture tool's prose-link exemption. The strict sweep found three 19–21px links in settings and institutional registration. Fixed the actual link hit areas; 20 affected cells pass. Previous 21c6eae: 1,430 design cells and 7,150 cross-role cells completed. [Measurements and remaining performance gap](evidence/inline-hit-areas.txt).
+
+NEXT: Verify production and mobile artifact source against HEAD, publish final measurement receipts and keep native emulator and aggregate gate limits explicit.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 

@@ -866,3 +866,15 @@ a.pf-stat:hover { background: var(--surface-2); }
   .teacher-overview .sg-kpi-value { font-size: var(--fs-h2); }
   .r319s-page .dash-section:has(.r319s-term) + section { margin-block-start: calc(-1 * var(--sp-2)); }
 }
+
+/* Inline account and program actions keep their text rhythm on desktop.
+   On phones the link itself owns the touch area, including inside prose. */
+@media (max-width: 767px) {
+  .set-note a, .inst-crumb a {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+    min-block-size: var(--touch-floor, 44px);
+    min-inline-size: var(--touch-floor, 44px);
+  }
+}

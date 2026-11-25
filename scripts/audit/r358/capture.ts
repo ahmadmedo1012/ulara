@@ -232,7 +232,6 @@ async function pageMetrics(page: import('playwright').Page, width: number): Prom
           ? el.closest('label') ?? el : el;
         const rect = target.getBoundingClientRect();
         if (rect.width === 0 || rect.height === 0) continue;
-        if (el.tagName === 'A' && el.closest('p, span') && rect.height < 32 && rect.width > 44) continue;
         if (Math.round(rect.width) < 44 || Math.round(rect.height) < 44) {
           small.push({ tag: el.tagName.toLowerCase(), text: (el.textContent || '').slice(0, 26).trim(), w: Math.round(rect.width), h: Math.round(rect.height) });
         }

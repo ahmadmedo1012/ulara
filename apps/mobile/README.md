@@ -93,7 +93,17 @@ Start from current `main`. After a backend change run `npm run typecheck`, `npm 
 
 <!-- /coderabbit-ai-generated:v1 -->
 
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:6a1dba4fdaa1be1c6efd3ca436977b1c94ad239bd2fa0823a0099e7d1b6e82af -->
+
+## Device evidence
+
+Use a disposable emulator to test the role journeys with the default settings and a 320 dp viewport. Record both `adb shell wm size` and `adb shell wm density`: physical pixels alone do not establish a dp width. Set Android font scale to 2.0, repeat navigation, then restore the prior scale and display overrides. Record the orientation that the app actually accepts; the current manifest requests portrait, so a rotated device alone does not prove landscape layout. Attach the screenshots to the matching source revision.
+
 ## Honest limits (current)
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 - Remote push: the client side is live (permission ask → Expo token →
   `POST /me/push-devices`; `src/lib/push.tsx`) and the backend owns the
