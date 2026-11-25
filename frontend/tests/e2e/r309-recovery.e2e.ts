@@ -111,6 +111,11 @@ test.describe('R309 hero — drag-reveal geometry (the r359 rebuild contract)', 
      * transform of the landing chunk can outrun the 5s default (CI runs
      * a built app and is unaffected). */
     await expect(stage).toBeVisible({ timeout: 30_000 });
+    /* r363 — CI-hardening (the same window as the drag-release spec):
+     * CI's slower world once caught the sweep on a hero whose copy seat
+     * had not composed, so the sweep unsealed nothing. The same H1
+     * readiness sentinel gates the sweep. */
+    await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
     const sb = await stage.boundingBox();
     expect(sb).not.toBeNull();
     await waitForMapping(page);
@@ -122,7 +127,7 @@ test.describe('R309 hero — drag-reveal geometry (the r359 rebuild contract)', 
      * dragRef). A ~60% sweep crosses every rung by construction. */
     await page.mouse.move(sb!.x + sb!.width * 0.8, sb!.y + sb!.height * 0.5);
     await page.mouse.down();
-    await page.mouse.move(sb!.x + sb!.width * 0.2, sb!.y + sb!.height * 0.5, { steps: 12 });
+    await page.mouse.move(sb!.x + sb!.width * 0.2, sb!.y + sb!.height * 0.5, { steps: 24 });
     await page.waitForTimeout(250);
     await page.mouse.up();
     await page.waitForTimeout(700);
