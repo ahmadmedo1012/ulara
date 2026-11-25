@@ -349,7 +349,7 @@ test.describe('المسار النشط واستعادة التمرير', () => {
         return el != null && Math.abs(el.scrollTop - (expected as number)) < 60;
       },
       y,
-      { timeout: 30000 },
+      { timeout: 40000 },
     );
     const restored = await page.evaluate(() => document.querySelector<HTMLElement>('.content')?.scrollTop ?? -1);
     expect(Math.abs(restored - y), `التمرير استُعيد (${restored} ≈ ${y})`).toBeLessThanOrEqual(60);

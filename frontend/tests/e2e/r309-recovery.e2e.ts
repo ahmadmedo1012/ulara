@@ -116,11 +116,18 @@ test.describe('R309 hero — drag-reveal geometry (the r359 rebuild contract)', 
      * had not composed, so the sweep unsealed nothing. The same H1
      * readiness sentinel gates the sweep. */
     await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
-    const sb = await stage.boundingBox();
-    expect(sb).not.toBeNull();
     await waitForMapping(page);
     const centers = await markerCenters(page);
     expect(Object.keys(centers).sort()).toEqual([...STATION_IDS].sort());
+    /* r363 — CI-hardening round 2: the sweep measured the stage's box
+     * mid-reveal on the slower runners (the box moves with the entrance
+     * transform, so the press landed on paper, not the stage — 0
+     * stations, both attempts, while the sibling spec WITH settle waits
+     * passes). The settle + the re-measure at the drag moment pin the
+     * press to the stage's FINAL geometry. */
+    await page.waitForTimeout(800);
+    const sb = await stage.boundingBox();
+    expect(sb).not.toBeNull();
 
     /* the r359 gesture: press on the drawing and sweep — each 40px of
      * travel unmasks the next station in register order (Hero.tsx's
