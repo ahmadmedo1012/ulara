@@ -167,7 +167,7 @@ jobs:
             sleep 20
             adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
             adb reverse tcp:8081 tcp:8081 || touch fail.flag
-            adb install -r ../dev-client.apk || touch fail.flag
+            adb install -r apps/dev-client.apk || touch fail.flag
 
             mkdir -p soak-shots
             echo "── soak: the bootstrap login (student@test.ly)"
