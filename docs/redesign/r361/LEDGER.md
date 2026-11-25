@@ -130,7 +130,15 @@ P9 — Verified all six topic tips were ancestors of main and deleted their refs
 
 P2 — The challenges carousel no longer reconciles four offscreen diagrams on initial phone load. Its scroll and keyboard handlers now attach at section mount. The cold-entry/tap/resize probe and all five landing-instrument journeys passed. [Evidence](evidence/phone-carousel.txt).
 
-NEXT: Remeasure live Lighthouse once production serves the new carousel; verify teacher and owner targets.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:8136b6e05543d3d5001923df89f1a4a144ae33a1af00eac9491ab5e7dc0d5cb9 -->
+
+P1/P10 — 123 static routes in the first sweep; see [issue counts](evidence/first-sweep.txt). Enlarged teacher session links and owner activity controls; [30 revised cells](evidence/owner-teacher-targets.txt) reported zero defects. Settled landing remains 4,980 px. [Arabic delivery report](REPORT.ar.md). Previous landing change: 61938f4.
+
+NEXT: Complete the immutable scan, verify parameterized routes and publish release receipts.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 

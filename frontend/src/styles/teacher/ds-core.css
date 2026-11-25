@@ -758,3 +758,11 @@
   border-radius: 0;
 }
 .inv-note { display: flex; align-items: center; gap: var(--sp-1-5); font-size: var(--fs-xs); /* r341 D8 type-rung fix: same 0.75rem-on-fluid-root bug as .inv-field above */ color: var(--text-secondary); margin: var(--sp-2-5) 0 0; }
+
+@media (max-width: 640px) {
+  .live-session-link {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--touch-floor, 44px);
+  }
+}

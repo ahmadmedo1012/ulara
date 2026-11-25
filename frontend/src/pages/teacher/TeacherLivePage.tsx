@@ -496,7 +496,7 @@ function SessionRow({
           {s.joinUrl && (
             <>
               {' · '}
-              <a href={s.joinUrl} target="_blank" rel="noreferrer">رابط الانضمام</a>
+              <a className="live-session-link" href={s.joinUrl} target="_blank" rel="noreferrer">رابط الانضمام</a>
             </>
           )}
         </div>

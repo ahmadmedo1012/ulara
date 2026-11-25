@@ -1040,3 +1040,7 @@
 }
 
 }
+
+.owner-detail-toggle {
+  min-block-size: var(--touch-floor, 44px);
+}

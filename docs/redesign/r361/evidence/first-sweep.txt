@@ -1,0 +1,7 @@
+First six-role run: 123 static routes, each at five widths in both themes. The build directory was replaced during the run; navigation failures may be instrumentation failures. Counts below are route/issue groups, not affected cells.
+sweep-ADMIN {'RADIUS_OR_SHADOW': 25, 'SMALL_TAP_TARGETS': 2, 'AXE_VIOLATIONS': 3, 'NAVIGATION_ERROR': 4}
+sweep-OWNER {'SMALL_TAP_TARGETS': 1, 'RADIUS_OR_SHADOW': 13}
+sweep-PUBLIC {'RADIUS_OR_SHADOW': 23, 'SMALL_TAP_TARGETS': 1}
+sweep-QUALITY {'RADIUS_OR_SHADOW': 10, 'NAVIGATION_ERROR': 8, 'CONSOLE_ERRORS': 1}
+sweep-STUDENT {'RADIUS_OR_SHADOW': 32, 'SMALL_TAP_TARGETS': 2, 'NAVIGATION_ERROR': 10, 'CONSOLE_ERRORS': 1}
+sweep-TEACHER {'RADIUS_OR_SHADOW': 19, 'SMALL_TAP_TARGETS': 1}
