@@ -244,7 +244,15 @@ P1/P5/P8 — Restored immediate visibility of the five real student metrics, ret
 
 | Tablet scrollports and native font-scale evidence (parent c6c05a0; containing commit) | 67 observed tablet overshoots at the 112-route checkpoint; 13 representative routes clean after matching the existing 920px layout breakpoint. The 200% capture now refuses an ignored font setting and restores the device. | [Measurements and verification boundaries](evidence/tablet-and-font-scale.txt) |
 
-NEXT: Compare production and signed native artifacts to this commit; inspect the five-width matrix, isolated mobile Lighthouse, CI and real emulator evidence. Keep failures and skipped checks explicit.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:390d85f113dab4518365168b1f380035cb965e83b11b35d6fb1cb984fff63c89 -->
+
+| Accessible achievement summary (parent 3adc3ec; containing commit) | Restored both original contracts: the section names the points summary and its inner list names the metrics. 52 component checks and three real browser journeys pass. Isolated Lighthouse on the parent: 86/89/97 Performance and 100 Accessibility across home/about/help, all CLS 0. | [Contract and source-specific evidence](evidence/achievement-region.txt) |
+
+NEXT: Read the final release receipts for the exact commit, including the independent route/role/geometry evidence, Lighthouse, mobile CI, APK signer and IPA metadata. The two local aggregate attempts are already recorded.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 

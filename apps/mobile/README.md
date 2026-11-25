@@ -153,7 +153,15 @@ Start from current `main`. After a backend change run `npm run typecheck`, `npm 
 
 <!-- coderabbit-ai-generated-section:v1:6a1dba4fdaa1be1c6efd3ca436977b1c94ad239bd2fa0823a0099e7d1b6e82af -->
 
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:b6cf52a58e9224e1976465325400c22e4e9eebea98fc28cec747678e4a4c8c89 -->
+
 ## Device evidence
+
+For the 200% font sample, the tool reads the device's effective setting before writing an image. A successful settings command alone is insufficient: if the emulator keeps another scale, the capture fails and restores its previous settings. For rotation, use the dimensions and measured orientation in the adjacent text file; a rotation request does not prove that the app rotated.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- coderabbit-ai-generated:v1 -->
 

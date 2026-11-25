@@ -811,14 +811,13 @@ export function AchievementsPage() {
           />
         </Card>
       ) : me?.level ? (
-        <div className="r305a-strip">
+        <section className="r305a-strip" aria-label="ملخّص نقاطك">
           {/* R359 (A3 · W2-a) — the achievements band joins the KpiBand
               register (the training overview's twin conversion). The gold
               DISCIPLINE keeps --gold on the achievement anatomy (tier
               orbs, xp fill, +XP chips — training.css gamification
               section); the band's numerals stay ink. */}
           <KpiBand
-            label="ملخّص نقاطك"
             items={[
               {
                 index: '01',
@@ -843,7 +842,7 @@ export function AchievementsPage() {
               },
             ]}
           />
-        </div>
+        </section>
       ) : null}
 
       {tab === 'badges' && (
