@@ -10,6 +10,9 @@
 | الملف | المحتوى |
 |---|---|
 | [architecture.md](architecture.md) | القرارات المعمارية والخدمات والوحدات الست وعقد الـAPI |
+| [architecture/](architecture/) | مخططات C4 (سياق/حاويات/تدفق بيانات) — صورة لحظية تزامن مع `architecture.md` |
+| [adr/](adr/) | سجل قرارات المعمارية — توثيق قرارات قائمة (سياق/قرار/بدائل/عواقب) |
+| [cleanup/](cleanup/) | تقرير فحص المستودع الشامل + البنية المستهدفة المقترحة (جولة التنظيم) |
 | [deployment.md](deployment.md) | النشر (Vercel + Neon)، المتغيرات، cron، التشغيل اليومي والعرض |
 | [mobile.md](mobile.md) | تطبيق الجوال: الهوية، البنية، الاختبار، البناء، القنوات، الأسرار |
 | [testing.md](testing.md) | استراتيجية الاختبار: الوحدة/التكامل/e2e/البوابات/الإثباتات/الحمل |
@@ -18,8 +21,8 @@
 | [roadmap.md](roadmap.md) | ما تبقّى (بنود قليلة مرتّبة) |
 | [api/openapi.json](api/openapi.json) | عقد الـAPI المولّد من الشيفرة (`npm run api:openapi`) — مولَّد، لا يُحرَّر يدويًا |
 | [ops/LEDGER.md](ops/LEDGER.md) | سجل التقدّم الوحيد للمالك — إضافة فقط، لا يُلمس |
-| [redesign/r352/](redesign/r352/) | البرنامج الحالي: المؤسسة (خلفية + واجهة) — `HANDOFF.md` في كل مسار |
-| [redesign/r354/REPORT.md](redesign/r354/REPORT.md) | الموجة البصرية الأخيرة + [INTEGRATION-LOG.md](redesign/r354/INTEGRATION-LOG.md) (دمج الـPRs الثلاثة) |
+| [redesign/r363/](redesign/r363/) | آخر جولة مسجّلة (سجل التسليم + الأدلة)؛ سجل الملكية الدائم: [redesign/r342/OWNERSHIP.md](redesign/r342/OWNERSHIP.md) |
+| [redesign/r352/](redesign/r352/) | برنامج المؤسسة (خلفية + واجهة) — `HANDOFF.md` في كل مسار |
 
 ## مسارات قراءة مقترحة
 

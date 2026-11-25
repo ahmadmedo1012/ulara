@@ -74,6 +74,10 @@
 |---|---|
 | فهم المشروع وميزاته | هذا `README.md` + [`docs/architecture.md`](docs/architecture.md) |
 | المعمارية والقرارات الحيّة | [`docs/architecture.md`](docs/architecture.md) |
+| المعمارية بصيغة C4 (سياق/حاويات/تدفق) | [`docs/architecture/`](docs/architecture/) |
+| سجل قرارات المعمارية (ADR) | [`docs/adr/`](docs/adr/) |
+| مراجعة المستودع والبنية المستهدفة | [`docs/cleanup/REPO_AUDIT.md`](docs/cleanup/REPO_AUDIT.md) + [`docs/cleanup/TARGET_STRUCTURE.md`](docs/cleanup/TARGET_STRUCTURE.md) |
+| الديون التقنية المعلقة | [`TECH_DEBT.md`](TECH_DEBT.md) |
 | خريطة المستودع و«أين أعدّل» | [`AGENTS.md`](AGENTS.md) §1 |
 | التشغيل محليًا | قسم «البدء السريع» أدناه + [`docs/README.md`](docs/README.md) (مسارات القراءة) |
 | متغيرات البيئة | [`docs/deployment.md`](docs/deployment.md) §3 + [`.env.example`](.env.example) (عقد `backend/src/env.ts`) |
