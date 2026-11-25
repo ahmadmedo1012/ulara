@@ -232,7 +232,15 @@ P1/P5/P8 — Restored immediate visibility of the five real student metrics, ret
 
 | Final release verification (parent 77ef2ed) | Documented the verified second distribution path when the Actions archive endpoint returned HTTP 502. A complete 16,928,372-byte IPA from 705e359 passed its release checksum and contained the expected iPhone executable and JavaScript bundle. A rolling tag alone is not proof of the final source. | [Mobile release verification](../../../apps/mobile/README.md#verify-the-rolling-ios-file-against-a-commit) |
 
-NEXT: Check live status, Android certificate, iOS archive, mobile journeys and the role matrix against this containing commit. The web runtime is unchanged from 77ef2ed.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:f601b8a18fa6847146c6c587ecddf71890c67b674dc822fb09ba5385df134445 -->
+
+| Shared release handoff (parent d851640) | Recorded the web/native token and source-ID contracts at their shared input root. Token generation and logo parity pass. The app sources and tested frontend build are unchanged from 77ef2ed. | [Shared design and release evidence](../../../shared/README.md) |
+
+NEXT: Confirm all three published artifacts against the containing commit; retain the raw role/axe matrix and isolated production performance measurements.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 
