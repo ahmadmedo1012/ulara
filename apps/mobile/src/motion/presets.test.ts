@@ -14,21 +14,21 @@ import { clamp, durations, easings, pressFeedback, springs, timing } from "./pre
 
 describe("durations — shared token alignment", () => {
   it("uses the shared scale verbatim where it exists", () => {
-    expect(durations.micro).toBe(motion.micro); // 80
-    expect(durations.fast).toBe(motion.fast); // 200
-    expect(durations.base).toBe(motion.base); // 400
-    expect(durations.slow).toBe(motion.slow); // 500
-    expect(durations.countUp).toBe(motion.slower); // 650
+    expect(durations.micro).toBe(motion.micro); // 160
+    expect(durations.fast).toBe(motion.fast); // 320
+    expect(durations.base).toBe(motion.base); // 640
+    expect(durations.slow).toBe(motion.slow); // 640
+    expect(durations.countUp).toBe(motion.slower); // 640
     expect(durations.press).toBe(motion.durationPress); // 120
     expect(durations.entrance).toBe(motion.durationNav); // 240
   });
 
   it("keeps the shared values the docs promise (guards the token source too)", () => {
-    expect(motion.micro).toBe(80);
-    expect(motion.fast).toBe(200);
-    expect(motion.base).toBe(400);
-    expect(motion.slow).toBe(500);
-    expect(motion.slower).toBe(650);
+    expect(motion.micro).toBe(160);
+    expect(motion.fast).toBe(320);
+    expect(motion.base).toBe(640);
+    expect(motion.slow).toBe(640);
+    expect(motion.slower).toBe(640);
   });
 
   it("defines the mobile-only additions at the documented values", () => {
@@ -81,7 +81,7 @@ describe("springs — physical parameters, one per feel", () => {
 describe("timing / pressFeedback / clamp", () => {
   it("timing() bakes duration + the ds ease by default", () => {
     const cfg = timing(durations.fast);
-    expect(cfg.duration).toBe(200);
+    expect(cfg.duration).toBe(320);
     expect(cfg.easing).toBe(easings.ds);
   });
 

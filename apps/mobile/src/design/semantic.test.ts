@@ -37,9 +37,9 @@ describe("semanticColorsFor — light/dark resolution", () => {
 
   it("surfaces follow the ds two-surface rule (ground / card / sunken)", () => {
     const light = semanticColorsFor("light");
-    expect(light.surface).toBe("#F5F1E8"); // paper ground
+    expect(light.surface).toBe("#F2F1EC"); // paper ground
     expect(light.surfaceElevated).toBe("#FFFFFF"); // card ground
-    expect(light.sunken).toBe("#EFEBDF"); // shared surface2/bkSoft
+    expect(light.sunken).toBe("#EBEBE5"); // shared surface2/bkSoft
 
     const dark = semanticColorsFor("dark");
     expect(dark.surface).toBe("#262019");
@@ -57,11 +57,11 @@ describe("semanticColorsFor — light/dark resolution", () => {
 
   it("text tiers are distinct inks (primary → secondary → tertiary)", () => {
     const light = semanticColorsFor("light");
-    expect(light.textPrimary).toBe("#1A1713");
-    expect(light.textSecondary).toBe("#414140");
-    expect(light.textTertiary).toBe("#62625F");
+    expect(light.textPrimary).toBe("#282828");
+    expect(light.textSecondary).toBe("#646464");
+    expect(light.textTertiary).toBe("#666663");
     const dark = semanticColorsFor("dark");
-    expect(dark.textPrimary).toBe("#F5F1E8");
+    expect(dark.textPrimary).toBe("#F0F0EB");
     expect(dark.textSecondary).toBe("#C9C9C5");
     expect(dark.textTertiary).toBe("#B4B4B0");
   });

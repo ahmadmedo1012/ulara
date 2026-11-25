@@ -2,8 +2,7 @@
  * R334 2-a — the ds motion presets (reanimated 4.7 / worklets 0.13).
  *
  * The DURATION scale is the shared one from @/design/tokens (generated from
- * shared/design-tokens.json — micro 80 · fast 200 · base 400 · slow 500 ·
- * slower 650 · cinema 900, plus the mobile-added durationPress 120 /
+ * shared/design-tokens.json — micro 160 · fast 320 · base/slow/slower/cinema 640, plus the mobile-added durationPress 120 /
  * durationNav 240). Everything here imports those numbers; the few values
  * the shared scale doesn't model (shimmer sweep, indeterminate spin, exit
  * fade, stagger step) are defined BELOW as mobile-only motion tokens and
@@ -26,21 +25,21 @@ import { dsEase, motion } from "@/design/tokens";
 
 /** Duration scale — ms. Shared tokens where they exist, mobile-only rest. */
 export const durations = {
-  /** 80 — micro feedback ticks (a11y focus flash). */
+  /** 160 — micro feedback ticks (a11y focus flash). */
   micro: motion.micro,
   /** 120 — press-in settle (token durationPress). */
   press: motion.durationPress,
-  /** 200 — quick state change (token fast). */
+  /** 320 — quick state change (token fast). */
   fast: motion.fast,
   /** 240 — slide/navigation entrances (token durationNav). */
   entrance: motion.durationNav,
   /** 150 — exits always beat entrances (mobile-only). */
   exit: 150,
-  /** 400 — the base rhythm (token base). */
+  /** 640 — the base rhythm (token base). */
   base: motion.base,
-  /** 500 — slow reveal (token slow). */
+  /** 640 — slow reveal (token slow). */
   slow: motion.slow,
-  /** 650 — count-ups (token slower). */
+  /** 640 — count-ups (token slower). */
   countUp: motion.slower,
   /** 1400 — one shimmer sweep across a skeleton (mobile-only). */
   shimmer: 1400,

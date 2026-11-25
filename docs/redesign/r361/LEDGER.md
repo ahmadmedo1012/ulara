@@ -106,7 +106,15 @@ P1/P4 — Added populated council detail and meeting fixtures. [List, detail, ta
 
 P1/P4 — Square cursor and status marks, clearer campus link, focusable named table regions, phone calendar and faculty-link target fixes. [Fifty focused cells](evidence/materials.txt) with no detected defects. The earlier 24 public routes had one short campus link and 23 radius findings; the 25 admin routes also had notification counter radii. The native radius token remains unchanged.
 
-NEXT: Confirm all isolated full-matrix shards, the owner activity target, and production.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:b6c49b5d690577d4ea37b86458f6f5956e37c70273d197bc902dc8c7244c8e4a -->
+
+P5 — Mobile CI progressed past generated drift and found six expectations for the retired colors and motion durations. Re-pinned the four suites to the r359 shared tokens; the fixed-ground logo still uses its own original ink. All [48 assertions passed](evidence/mobile-jest.txt). Previous web item d19dd3a.
+
+NEXT: Verify mobile fast lane, signed outputs and device smoke for the release revision.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 
