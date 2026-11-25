@@ -41,7 +41,8 @@
    · Radius 0 (R313): the reference measures 4 rounded surfaces of
      2774 sampled — near-absolute square corners. The whole ladder
      collapses to 0; ONLY genuinely circular primitives (avatars,
-     status dots) keep --r-full: 9999px.
+     status dots) historically kept --r-full: 9999px. The r361 web
+     surface uses square registration marks for these as well.
    · The measured reference motion register: 0.4s-dominant transitions
      (174×.4s in the bundle) on cubic-bezier(.23,1,.32,1) with the
      .48s roll/exit curve cubic-bezier(.625,.05,0,1) — adopted into the
@@ -1533,3 +1534,6 @@
   --r359-sig: #8AA0FF;
   --r359-paper: #1C1C1A;
 }
+
+/* The shared native radius remains available to native components. */
+body { --r-full: var(--r-sm); }

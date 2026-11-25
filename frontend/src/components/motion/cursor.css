@@ -52,7 +52,6 @@
   left: 0;
   width: 6px;
   height: 6px;
-  border-radius: 50%;
   background: var(--accent);
   transform: translate(-50%, -50%);
   /* R321 §A6 — the inert default the contract always promised ("layer
@@ -73,10 +72,7 @@
   left: 0;
   width: 28px;
   height: 28px;
-  border-radius: 50%;
-  /* hollow ring: 1px stroke around a transparent disc — a BORDER,
-   * not a box-shadow ring (R359 · the no-shadow law; identical 1px
-   * stroke, zero computed box-shadow). */
+  /* A square registration frame marks interactive targets. */
   border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
   transform: translate(-50%, -50%) scale(0);
   transition:

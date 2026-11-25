@@ -425,7 +425,8 @@
     .cal-cell { min-block-size: 48px; }
     .cal-day-num { min-inline-size: 24px; min-block-size: 24px; }
     .cal-head, .cal-legend, .cal-detail-head { padding-inline: var(--sp-3); }
-    .cal-grid, .cal-dow-row { padding-inline: var(--sp-1); }
+    .cal-grid, .cal-grid-skel, .cal-dow-row { padding-inline: 0; column-gap: 0; }
+    .faculty-chip-row { display: flex; align-items: center; min-block-size: var(--touch-floor, 44px); }
   }
 
   /* ═══ Matrix — the heatmap filter signature ═══ */

@@ -1,0 +1,16 @@
+Seven routes x 360/390/1440 x light/dark (isolated build):
+# R358 Phase A — ULARA Scan
+
+**Scope:** 7 routes × 360/390/1440 × light/dark
+**Master:** defects-master.json
+**Defects (deduped):** 0 — P0 0 · P1 0 · P2 0
+Student calendar and university x 360/390 x light/dark:
+# R358 Phase A — ULARA Scan
+
+**Scope:** 2 routes × 360/390 × light/dark
+**Master:** defects-master.json
+**Defects (deduped):** 0 — P0 0 · P1 0 · P2 0
+ Test Files  2 passed (2)
+      Tests  24 passed (24)
+   Start at  00:03:41
+   Duration  15.26s (transform 4.16s, setup 2.94s, collect 6.59s, tests 3.40s, environment 7.19s, prepare 944ms)

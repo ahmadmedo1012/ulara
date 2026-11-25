@@ -105,8 +105,8 @@ export function CampusLifePage() {
           </div>
 
           <RevealCssClass as="p" className="cu-foot" delay={3}>
-            جوّز الأدوار الخمسة يُعرض على الصفحة الرئيسية في مقطع «لماذا أُلارا» —
-            <Link to="/" className="fo-text-link"> من هنا</Link>.
+            تعرّف على مساحة العمل المتاحة لكل دور في
+            <Link to="/" className="fo-text-link"> الصفحة الرئيسية</Link>.
           </RevealCssClass>
         </section>
       </main>

@@ -275,7 +275,7 @@ export function DataSheet<Row>({
   }
   const clickable = rowTo !== undefined || onRowClick !== undefined;
   return (
-    <div className={`sg-sheet-wrap${className ? ` ${className}` : ''}`}>
+    <div className={`sg-sheet-wrap${className ? ` ${className}` : ''}`} role="region" aria-label={caption} tabIndex={0}>
       <table className="sg-table">
         <caption className="sr-only">{caption}</caption>
         <thead>
