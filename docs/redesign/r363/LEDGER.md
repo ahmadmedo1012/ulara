@@ -54,7 +54,24 @@ the app pass, and the release. Every DONE line carries command output or an imag
   [Overlap evidence](evidence/p1-overlap-zero.txt) — the sweep stays at 0 across 14
   cells after the fixes.
 
-NEXT: P2 — the footer to the owner's rulings (one mono link row, statement + cookie
-strip sharing one grid row, ACCEPT in the signal colour, dead links fixed), then the
-top bar/nav choreography and the cursor pass, each with a frame-sequence sheet.
+- **P0-CI — the red E2E job at `9a235698` re-pinned, the belt green locally.**
+  The CI "E2E (hermetic browser journeys)" job failed on the round's first two
+  commits. At `9a235698` three specs failed: two were STALE PINS on the journey
+  grammar the same commit retired (r354's "halo belt ≥12 shadow passes" and
+  r325's "unboxed plates — no border, no background" both asserted the pre-P1a
+  state) — rewritten to pin the NEW plate grammar (0 halo passes, 1px solid
+  hairline rim, opaque paper ground, no shadow, no mask). The third (r309 drag
+  release, 0 stations in CI, 4/4 local passes, different specs failing at
+  `022f5db0` before any code changed) is a CI-window flake: the sweep now rides
+  behind the same `.fo-hero-title` readiness sentinel every r354 spec waits on,
+  with a finer-stepped drag — semantics unchanged. Local proof: the three specs
+  green + the full hermetic belt green in sharded runs — 248 passed, 0 failed
+  (63+56+69+60 across `--shard=1..3/4` and `7/8`+`8/8`).
+  [Belt output](evidence/p0-e2e-belt.txt).
+
+NEXT: the P0 capture matrix (overlap/axe/tap-target/console sweep over main
+→ the defect list), then P2 — the footer to the owner's rulings (one mono link
+row, statement + cookie strip sharing one grid row, ACCEPT in the signal
+colour, dead links fixed), then the top bar/nav choreography and the cursor
+pass, each with a frame-sequence sheet.
 

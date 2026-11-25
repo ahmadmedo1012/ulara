@@ -210,7 +210,7 @@ test.describe('R354-final · the journey statement exit (t out 2.15–2.35)', ()
     expect(await alpha(), 'mobile t2.4: exit complete (never rides the t2.8 camera pan)').toBe(0);
   });
 
-  test('the halo belt is the em-keyed text-shadow; the dead SVG-stroke declarations are retired', async ({ page }) => {
+  test('the plaques are opaque paper plates; the halo belt and the dead SVG-stroke declarations stay retired', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/');
     await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
@@ -226,17 +226,28 @@ test.describe('R354-final · the journey statement exit (t out 2.15–2.35)', ()
       return {
         shadowPasses: (cs.textShadow.match(/rgb\(/g) || []).length,
         stroke: cs.webkitTextStrokeWidth,
-        paintOrder: cs.paintOrder,
+        rimStyle: cs.borderTopStyle,
+        rimWidth: parseFloat(cs.borderTopWidth),
+        boxShadow: cs.boxShadow,
+        paperAlpha: parseFloat(cs.backgroundColor.replace(/^rgba?\(([^)]+)\)$/, (_m, ch: string) => {
+          const parts = ch.split(',');
+          return parts.length > 3 ? parts[3]!.trim() : '1';
+        })),
       };
     });
     expect(belt).not.toBeNull();
-    /* 13 shadow passes (the 0.025em crisp + the 0.05em rim 8-way +
-     * the two soft outer passes); ≥12 is the belt */
-    expect(belt!.shadowPasses, 'the rim belt carries its passes').toBeGreaterThanOrEqual(12);
-    /* r354-final: the SVG stroke on HTML text NEVER painted (a 12px
-     * red injection paints zero pixels in Chromium) — the declarations
-     * are retired, the shadow is the one belt */
+    /* r363 — the owner's text-on-art ruling: the statement plaques are
+     * opaque paper plates with a 1px hairline rim (the drafting-plate
+     * grammar the numbered markers already carry) and the 14-pass
+     * em-keyed halo is retired WITH the dead SVG-stroke declarations.
+     * Zero painted passes is the retirement proof; the rim + the
+     * opaque ground is the plate. */
+    expect(belt!.shadowPasses, 'the retired halo never comes back').toBe(0);
     expect(belt!.stroke, 'no dead stroke width on the HTML text seat').toBe('0px');
+    expect(belt!.rimStyle, 'the plate carries the hairline rim').toBe('solid');
+    expect(belt!.rimWidth, 'the rim is one hairline').toBe(1);
+    expect(belt!.boxShadow, 'the plate never casts — the shadow-free law').toBe('none');
+    expect(belt!.paperAlpha, 'the paper ground is opaque — the ink never rides the art').toBeGreaterThanOrEqual(0.98);
   });
 });
 

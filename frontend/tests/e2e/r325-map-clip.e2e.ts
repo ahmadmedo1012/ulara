@@ -177,7 +177,7 @@ test.describe('R325 Y1 — the map intro clip gate', () => {
     }
   });
 
-  test('the intro is unboxed and the ghost line-work stands at progress 0', async ({ page }) => {
+  test('the intro plaques ride paper plates and the ghost line-work stands at progress 0', async ({ page }) => {
     await page.setViewportSize(VW.desktop);
     await page.goto('/');
     await approachSection(page, 'chapters');
@@ -199,20 +199,16 @@ test.describe('R325 Y1 — the map intro clip gate', () => {
     expect(opacities.length).toBeGreaterThanOrEqual(8);
     for (const o of opacities) expect(o).toBeGreaterThanOrEqual(0.14);
 
-    /* the unboxed headline: no border, no shadow, no own background.
-     * R329 (CI red): the R325 Y1 "feathered paper mask" ::before is
-     * RETIRED — there is nothing to mask out any more; the plate is
-     * the glyphs' wrap guard only. R342-04 re-seat: the plaques
-     * returned ONTO the plan as the frozen spec records them (the
-     * fs-46.67 statements float over the drawing at measured seats;
-     * the R328-H4 caption-band architecture — order −1 strip above
-     * the drawing closed by a hairline — retired with the measured
-     * rebuild). The belt re-seats on the overlay grammar: TWO
-     * absolute overlay seats (.jt-cards for plaque 1, .jt-card2w for
-     * plaque 2 — one statement per seat, never stacked side by
-     * side), z-above the drawing but pointer-transparent, plaque 1
-     * standing at rest and plaque 2's wrapper carrying the measured
-     * gsap from-state (opacity 0). */
+    /* the plated headline. R329 retired the "feathered paper mask"
+     * ::before; R342-04 re-seated the plaques ONTO the plan; r363
+     * plates them for the owner's text-on-art ruling — opaque paper
+     * ground + the 1px hairline rim (the drafting-plate grammar the
+     * numbered markers carry). The belt still rides the overlay
+     * grammar: TWO absolute overlay seats (.jt-cards for plaque 1,
+     * .jt-card2w for plaque 2 — one statement per seat, never stacked
+     * side by side), z-above the drawing but pointer-transparent,
+     * plaque 1 standing at rest and plaque 2's wrapper carrying the
+     * measured gsap from-state (opacity 0). */
     const seat = await page.evaluate(() => {
       const band = document.querySelector('.jt-cards') as HTMLElement | null;
       const wrap2 = document.querySelector('.jt-card2w') as HTMLElement | null;
@@ -254,10 +250,12 @@ test.describe('R325 Y1 — the map intro clip gate', () => {
     );
     expect(plates.length).toBe(2);
     for (const plate of plates) {
-      expect(plate.borderStyle).toBe('none');
-      expect(plate.borderWidth).toBe(0);
+      /* r363 — the owner's ruling: text never sits raw on the art. The
+       * old "unboxed" pins (no border, alpha 0) retired with the halo. */
+      expect(plate.borderStyle).toBe('solid');
+      expect(plate.borderWidth).toBe(1);
       expect(plate.boxShadow).toBe('none');
-      expect(plate.bgAlpha).toBe(0);
+      expect(plate.bgAlpha).toBeGreaterThanOrEqual(0.98);
       expect(plate.maskImage, 'the retired R325 feathered mask must not come back').toBe('none');
     }
   });

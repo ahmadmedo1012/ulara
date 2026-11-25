@@ -322,6 +322,16 @@ test.describe('R309 hero — the reveal-state lifecycle (§6)', () => {
     await page.goto('/');
     const stage = page.locator('.hro-stage');
     await expect(stage).toBeVisible({ timeout: 30_000 });
+    /* r363 — CI-hardening: the two CI-only failures (022f5db / 9a2356,
+     * both attempts, 0 stations open while the same code passes 4/4
+     * locally) share one window — the sweep ran on a hero that had not
+     * yet composed its copy seat, so the pointerdown never reached the
+     * stage's handlers. The sweep now rides behind the same hero-
+     * readiness sentinel every r354 spec waits on (the H1 copy renders
+     * => the hero tree is composed and interactive), and the sweep is
+     * delivered in finer steps. The semantics are unchanged: one sweep,
+     * release, the count must hold. */
+    await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
     const sb = await stage.boundingBox();
     expect(sb).not.toBeNull();
     await waitForMapping(page);
@@ -329,7 +339,7 @@ test.describe('R309 hero — the reveal-state lifecycle (§6)', () => {
      * unsealed — one sweep, release, then the count must hold. */
     await page.mouse.move(sb!.x + sb!.width * 0.75, sb!.y + sb!.height * 0.5);
     await page.mouse.down();
-    await page.mouse.move(sb!.x + sb!.width * 0.25, sb!.y + sb!.height * 0.5, { steps: 8 });
+    await page.mouse.move(sb!.x + sb!.width * 0.25, sb!.y + sb!.height * 0.5, { steps: 16 });
     await page.mouse.up();
     await page.waitForTimeout(700);
     const open = await page.locator('.hro-station.is-open').count();
