@@ -137,10 +137,24 @@ the app pass, and the release. Every DONE line carries command output or an imag
   e2e (248/248), the full vitest (252 files), and the full backend (2,212
   tests) — the end-of-round full verify rides the final commit.
 
-NEXT: the soak's verdict (the re-dispatched run on `3e04d78`; if a round
-fails, the forensics artifact tells which class), then the nav/cursor
-verification sheets (P2's remainder), the capture matrix + P3/P4 sweeps, the
-release bits (signed APK on `latest` + unsigned IPA from the final commit),
-the remaining P6 documented-but-missing audit, and the final full verify +
-report.
+- **The belt's last hardening + the third soak dispatch.** CI on `e3e3a3e` hit
+  the runner-load class again (r309 drag-geometry measured the stage mid-reveal —
+  the press landed on paper; r305's retry burned 32.9s; r353's retry passed):
+  the geometry spec now settles + re-measures the stage at the drag moment, the
+  restore window is 40s, and Live/Hero guard the `matchMedia` RESULT (the r312
+  jsdom crash class — undefined answers degrade, never throw). The deadcode
+  ratchet's one regressed block was my own two `::after` draw rules — one
+  shared rule now (ratchet: 0 regressed). The soak's first two dispatches died
+  on an invalid expo flag and a workspace-relative APK path — both fixed; the
+  THIRD dispatch is IN FLIGHT on `dc794b8` (the dispatch API 500'd twice
+  before landing — GitHub-side transient).
+
+NEXT: the soak's verdict on `dc794b8` (the run is in flight; its forensics
+artifact carries the per-round screenshots + logcat/metro/backend — if a round
+fails, the artifact says which class), CI's verdict on `cc6c812`/`dc794b8`,
+then P2's verification sheets (nav/cursor), the capture matrix + P3/P4 sweeps,
+the release bits (signed APK on `latest` + unsigned IPA from the final
+commit), the remaining P6 documented-but-missing audit, and the final full
+verify + report. The Arabic interim report (REPORT.ar.md) describes the
+landed state with its evidence.
 
