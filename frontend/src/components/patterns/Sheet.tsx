@@ -190,10 +190,10 @@ function KpiCell({ item }: { item: KpiItem }) {
   );
 }
 
-export function KpiBand({ items, className }: { items: KpiItem[]; className?: string }) {
+export function KpiBand({ items, className, label = 'مؤشرات' }: { items: KpiItem[]; className?: string; label?: string }) {
   if (items.length === 0) return null;
   return (
-    <div className={`sg-kpis${className ? ` ${className}` : ''}`} role="list" aria-label="مؤشرات">
+    <div className={`sg-kpis${className ? ` ${className}` : ''}`} role="list" aria-label={label}>
       {items.map((item, i) => (
         <KpiCell item={item} key={`${item.label}-${i}`} />
       ))}

@@ -120,25 +120,19 @@ test.describe('الحركة الكاملة — الخط الأساسي (بدون
       };
     });
 
-    // The r305 the reference ladder (foundation): --t-base = 400ms. r315 C4-E re-pin
-    // (same value): the computed read may serialize 400ms as .4s/0.4s after the
-    // CSS pipeline's token re-serialization — the pin keeps asserting the SAME
-    // duration (400ms), never zero (the reduced-motion belt owns that side).
-    // r315 C4-E hardening: assert the PARSED duration (400ms) so any CSS
-    // pipeline serialization passes (400ms/.4s/0.4s) while zero/other
-    // values still fail — the protective intent is the VALUE, not the string.
+    // R359 pins the full-motion reference beat to 640ms in the shared tokens.
     const ms = probe.durationMedium.endsWith('ms')
       ? parseFloat(probe.durationMedium)
       : parseFloat(probe.durationMedium) * 1000;
-    expect(ms).toBe(400);
+    expect(ms).toBe(640);
     // R319 re-pin: the CTA's transition contract evolved past r305 — the
     // element transitions color+border at --t-base (the r157 button work →
-    // the R313 register; serialized "0.4s, 0.4s") and the background WIPE
+    // the R313 register; serialized "0.64s, 0.64s") and the background WIPE
     // rides the ::before layer's own transition. The protective intent
     // stays: in full-motion mode the durations are REAL --t-base values
     // (never 0s — the reduced-motion belt below owns the zero side).
     const submitDurs = (probe.submitTransitionDuration ?? '').split(',').map((d: string) => parseFloat(d) * 1000);
     expect(submitDurs.length).toBeGreaterThanOrEqual(2);
-    for (const d of submitDurs) expect(d).toBe(400);
+    for (const d of submitDurs) expect(d).toBe(640);
   });
 });

@@ -161,7 +161,7 @@ function ArtLibrary(): React.JSX.Element {
 /* ── the stage wrapper ────────────────────────────────────────────────────── */
 function PlateScene({ id, title, children }: { id: string; title: string; children: ReactNode }) {
   return (
-    <section className="plate" data-plate={id} aria-label={title}>
+    <section className="plate" tabIndex={0} data-plate={id} aria-label={title}>
       <div className="plate-stage">
         <div className="plate-hairline" />
         {children}

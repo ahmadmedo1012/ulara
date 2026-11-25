@@ -220,7 +220,15 @@ P1/P8 — The five dashboards now meet the existing full-body 180-word budget. S
 
 P1/P5/P8 — Restored immediate visibility of the five real student metrics, retained the 180-word limit, and extended tap-target and device-image verification. [Viewport and command proof](evidence/student-kpi-closure.txt). Previous landing: 2a03245.
 
-NEXT: Match the production, Android and iOS receipts to the final source, retain full-suite and emulator limitations, and inspect the final route matrix.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:45b39105297e3521aced12d67a5fce8ff288bd5948aa06b8d6aecce95104db33 -->
+
+| Shell scrollports and internal workbenches (parent 705e359; containing commit) | 91/143 overflow cases at 360px became 0/143; 30 internal workbench cells clean, print stages remain 720×450, seven focused Chromium and 33 component tests passed. | [Commands, counts and visual critique](evidence/shell-and-workbenches.txt) |
+
+NEXT: Match the current commit to production and signed release artifacts; read final role matrix, mobile Lighthouse and native emulator results separately. Two aggregate verifier invocations have already been used.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 

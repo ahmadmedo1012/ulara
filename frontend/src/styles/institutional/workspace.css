@@ -872,3 +872,9 @@
 .inst-upload-progress::-webkit-progress-bar { background: var(--surface-2); }
 .inst-upload-progress::-webkit-progress-value { background: var(--accent); }
 .inst-upload-progress::-moz-progress-bar { background: var(--accent); }
+
+@media (max-width: 640px) {
+  .inst-layout { grid-template-columns: minmax(0, 1fr); }
+  .inst-layout > * { min-inline-size: 0; }
+  .inst-rail { margin-inline: 0; }
+}

@@ -141,6 +141,7 @@ export default function TrainingCatalogPage() {
         </SheetSection>
       ) : me?.level ? (
         <KpiBand
+          label="ملخّص إنجازاتك"
           items={[
             {
               index: '01',
@@ -817,6 +818,7 @@ export function AchievementsPage() {
               orbs, xp fill, +XP chips — training.css gamification
               section); the band's numerals stay ink. */}
           <KpiBand
+            label="ملخّص نقاطك"
             items={[
               {
                 index: '01',

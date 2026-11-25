@@ -98,6 +98,8 @@
   /* tone grounds — tokens, not literals (dark-correct for free) */
   .r323b-ground-ink { background: var(--text-strong); color: var(--bg); }
 
+  .r323b-ground-ink .r323b-mono { color: inherit; }
+
   /* ── 3 · clear-space box: the mark floats ½-height off the hairline ── */
   .r323b-clearspace {
     display: inline-block;

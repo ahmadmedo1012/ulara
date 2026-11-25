@@ -22,6 +22,8 @@
 
 .plate {
   display: block;
+  min-inline-size: 0;
+  overflow-x: auto; /* Keep the 720px export canvas accessible on smaller screens. */
 }
 
 .plate-stage {
@@ -280,12 +282,16 @@
   color: var(--neutral-900);
 }
 
-[data-theme='dark'] .artlib-title { color: var(--neutral-50); }
+[data-theme='dark'] .artlib-title,
+[data-theme='dark'] .plate .plate-stage .metric-head .metric-label,
+[data-theme='dark'] .plate .plate-stage .metric-head .metric-value { color: var(--text-strong); }
 
 .artlib-controls { display: flex; flex-wrap: wrap; gap: var(--sp-2-5); }
 .artlib-ctl { display: inline-flex; border: 1px solid var(--neutral-300); }
 
 .artlib-btn {
+  min-block-size: var(--touch-floor, 44px);
+  min-inline-size: var(--touch-floor, 44px);
   appearance: none;
   border: 0;
   border-inline-end: 1px solid var(--neutral-300);
@@ -305,7 +311,7 @@
 
 .artlib-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
   gap: var(--sp-6);
 }
 
