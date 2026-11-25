@@ -275,6 +275,55 @@
 .bp-dmark-bl { inset-block-end: 1.2%; inset-inline-start: 1.2%; }
 .bp-dmark-br { inset-block-end: 1.2%; inset-inline-end: 1.2%; }
 
+/* ── r363 P3 — THE POINTER CROSSHAIR (the reference's live drafting
+   instrument, REFERENCE.md §4): two full-length 1px hairlines crossing
+   at the pointer (the reference's own @ .16 line weight over the
+   drawing) + the X:/Y: mono readout riding ~14px off the intersection.
+   Hero.tsx drives it imperatively — transform/textContent writes on
+   refs, one rAF per frame, never a re-render per move; the data-live
+   seat below is the only show/hide state. pointer-events:none
+   throughout (visual only — the drag-to-reveal contract is untouched).
+   No transition: the lines follow at rAF cadence, the layer toggles
+   with the pointer's presence. */
+.hro-xhair {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  visibility: hidden; /* shown by the effect's data-live seat */
+}
+.hro-xhair[data-live] { visibility: visible; }
+.hro-xhair-line {
+  position: absolute;
+  background: var(--rule-strong);
+  opacity: 0.16; /* the reference's measured line weight */
+}
+.hro-xhair-v { top: 0; bottom: 0; left: 0; inline-size: 1px; }
+.hro-xhair-h { left: 0; right: 0; top: 0; block-size: 1px; }
+.hro-xhair-xy {
+  position: absolute;
+  top: 0;
+  /* PHYSICAL anchors — the readout translates from the stage's
+     top-left corner in both directions (the pointer is a physical
+     seat; logical insets would mirror the origin under RTL) */
+  left: 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-sm);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  color: var(--text-muted);
+  background: color-mix(in srgb, var(--hro-paper) 85%, transparent);
+  border: 1px solid var(--hro-hair);
+  padding: 0.3em 0.7em;
+  white-space: nowrap;
+}
+
+/* the belt: never on touch/coarse pointers (the effect filters hybrid
+   devices' touch points too; this is the sheet-side gate) */
+@media (hover: none), (pointer: coarse) {
+  .hro-xhair { display: none; }
+}
+
 /* ── [2] THE BOTTOM BAND ───────────────────────────────────────────── */
 .hro-content {
   position: relative;
@@ -478,6 +527,9 @@
   .hi-sq,
   .hi-tag,
   .ev-i6 { transition: none; }
+  /* the crosshair is pointer-MOTION furniture — the static stage law
+     retires it entirely (the JS gate agrees; this is the sheet belt) */
+  .hro-xhair { display: none; }
 }
 
 /* ── r363 — the shared ticker keyframes RESTORED. statement.css and

@@ -708,6 +708,37 @@ footer.fo-footer {
 .fo-giant-plus-bl { inset-block-end: 4px; inset-inline-start: 4px; }
 .fo-giant-plus-br { inset-block-end: 4px; inset-inline-end: 4px; }
 
+/* r363 P3 — THE DATUM TAGS (shot-footer's «[831, 0]» survey voice):
+   small mono station readouts seated BESIDE each corner plus — the
+   plus marks the datum point, the tag reads it (the reference's own
+   pairing). Typography = the reference's measured annotation rung:
+   var(--font-mono) at var(--fs-mono-sm), muted ink. dir="ltr" (on the
+   spans in Footer.tsx) keeps the digits/brackets Latin-ordered inside
+   the RTL sheet; the seats are LOGICAL, paired with the plus seats
+   above — the origin rides the reading start (the landing's
+   RTL-mirrored sheet voice). Static furniture: no motion, no RM gate,
+   pointer-events:none. Footprint math (why the ≤640 rung retires
+   them): at 390 the band leaves ~54px of free corner air per side
+   while a [1440, h] tag needs ~78px — the reference's own mobile
+   still shows no tags either. */
+.fo-datum {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-sm);
+  font-variant-numeric: tabular-nums;
+  line-height: 0.85rem; /* hug the plus rung (the seats' own box) */
+  color: var(--text-muted);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.fo-datum-tl { inset-block-start: 4px; inset-inline-start: calc(4px + 0.85rem + 0.5em); }
+.fo-datum-tr { inset-block-start: 4px; inset-inline-end: calc(4px + 0.85rem + 0.5em); }
+.fo-datum-bl { inset-block-end: 4px; inset-inline-start: calc(4px + 0.85rem + 0.5em); }
+.fo-datum-br { inset-block-end: 4px; inset-inline-end: calc(4px + 0.85rem + 0.5em); }
+@media (max-width: 640px) {
+  .fo-datum { display: none; }
+}
+
 /* ═══ the registration-mark family law (R321 §A6) ═══════════════════
    The rebuilt colophon renders no registration seats, but the family
    contract stays on this sheet: any future .fo-wordmark-reg element

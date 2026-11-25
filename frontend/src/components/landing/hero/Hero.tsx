@@ -5,6 +5,7 @@ import { Icon } from '../../Icon';
 import { HERO_WORK_ITEMS } from '../../../data/landing-ledger';
 import { ElevationArt, VB_MOBILE } from './ElevationArt';
 import { RegCross } from '../../patterns/RegCross';
+import { finePointerSupported } from '../../../lib/motion/pointer';
 import '../../../styles/landing/hero-mechanics.css';
 
 import desktopElevation from '@shared/art/svg/hero-elevation.svg';
@@ -102,6 +103,16 @@ export function Hero() {
     });
   };
 
+  /* r363 P3 — THE POINTER CROSSHAIR refs (reference parity item d):
+   * the full-length hairline pair + the live X/Y readout. The moves
+   * write transforms + textContent on THESE refs inside one rAF per
+   * frame — React never re-renders per pointermove (the reveal state
+   * above is untouched; the drag contract keeps its own handlers). */
+  const xhairRef = useRef<HTMLDivElement>(null);
+  const xhairVRef = useRef<HTMLSpanElement>(null);
+  const xhairHRef = useRef<HTMLSpanElement>(null);
+  const xhairXYRef = useRef<HTMLSpanElement>(null);
+
   /* reduced motion: the callouts render fully open (static sheet). */
   const [reduced, setReduced] = useState(false);
   useEffect(() => {
@@ -116,6 +127,97 @@ export function Hero() {
     mq.addEventListener('change', on);
     return () => mq.removeEventListener('change', on);
   }, []);
+
+  /* the crosshair's own gates + engine — declared AFTER `reduced` (its
+   * dep array reads the state) and keyed on it: when the RM query
+   * flips at runtime the listeners re-bind and the instrument stays
+   * off under the static-stage law. */
+  useEffect(() => {
+    const stage = stageRef.current;
+    const layer = xhairRef.current;
+    const vLine = xhairVRef.current;
+    const hLine = xhairHRef.current;
+    const readout = xhairXYRef.current;
+    /* the gates: fine pointers only — touch/coarse never mounts the
+     * instrument (CSS display:none carries the same belt) — and never
+     * under prefers-reduced-motion (the static stage law). */
+    if (!stage || !layer || !vLine || !hLine || !readout) return undefined;
+    if (!finePointerSupported()) return undefined;
+    if (reduced) return undefined;
+
+    let raf = 0;
+    let cx = 0; /* the pointer's viewport coords — applied once per frame */
+    let cy = 0;
+
+    const apply = () => {
+      raf = 0;
+      /* one layout read per frame (fresh through scroll/resize), then
+       * the direct style writes — no per-move layout thrash. */
+      const r = stage.getBoundingClientRect();
+      const px = cx - r.left;
+      const py = cy - r.top;
+      if (px < 0 || py < 0 || px > r.width || py > r.height) return;
+      /* the hairlines: full-length 1px bars crossing at the pointer */
+      vLine.style.transform = `translate(${px}px, 0)`;
+      hLine.style.transform = `translate(0, ${py}px)`;
+      /* the readout rides ~14px off the intersection; near the far
+       * edges it flips inside, then hard-clamps within the stage —
+       * never clipped, no flip juggling at the near edges. */
+      const OFF = 14;
+      const w = readout.offsetWidth;
+      const h = readout.offsetHeight;
+      let tx = px + OFF;
+      let ty = py + OFF;
+      if (tx + w > r.width) tx = px - w - OFF;
+      if (ty + h > r.height) ty = py - h - OFF;
+      if (tx < 0) tx = 0;
+      if (ty < 0) ty = 0;
+      if (tx + w > r.width) tx = Math.max(0, r.width - w);
+      if (ty + h > r.height) ty = Math.max(0, r.height - h);
+      readout.style.transform = `translate(${tx}px, ${ty}px)`;
+      /* the drafting voice — the preloader's X:/Y:PX grammar, padded
+       * to the sheet's 4-digit station rung (fixed width: the flips
+       * never change the box mid-move) */
+      readout.textContent =
+        `X:${String(Math.round(px)).padStart(4, '0')}PX ` +
+        `Y:${String(Math.round(py)).padStart(4, '0')}PX`;
+    };
+    const schedule = () => {
+      if (!raf) raf = requestAnimationFrame(apply);
+    };
+    /* touch points on hybrid devices never steer the instrument */
+    const isMouse = (e: PointerEvent) => e.pointerType !== 'touch';
+    const onEnter = (e: PointerEvent) => {
+      if (!isMouse(e)) return;
+      layer.setAttribute('data-live', '1');
+      cx = e.clientX;
+      cy = e.clientY;
+      schedule();
+    };
+    const onMove = (e: PointerEvent) => {
+      if (!isMouse(e)) return;
+      cx = e.clientX;
+      cy = e.clientY;
+      schedule();
+    };
+    const onLeave = () => {
+      layer.removeAttribute('data-live');
+      if (raf) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+    };
+    stage.addEventListener('pointerenter', onEnter, { passive: true });
+    stage.addEventListener('pointermove', onMove, { passive: true });
+    stage.addEventListener('pointerleave', onLeave, { passive: true });
+    return () => {
+      stage.removeEventListener('pointerenter', onEnter);
+      stage.removeEventListener('pointermove', onMove);
+      stage.removeEventListener('pointerleave', onLeave);
+      if (raf) cancelAnimationFrame(raf);
+      layer.removeAttribute('data-live');
+    };
+  }, [reduced]);
   const openSet = reduced ? new Set(STATIONS.map((s) => s.id)) : open;
 
   /* mobile art key choice (≤767 → the mobile elevation). */
@@ -265,6 +367,20 @@ export function Hero() {
         <RegCross data-spec-hover="12" className="bp-dmark bp-dmark-tr" />
         <RegCross data-spec-hover="13" className="bp-dmark bp-dmark-bl" />
         <RegCross data-spec-hover="14" className="bp-dmark bp-dmark-br" />
+
+        {/* r363 P3 — THE POINTER CROSSHAIR (the reference's live
+            drafting instrument): two full-length 1px hairlines crossing
+            at the pointer + the X:/Y: mono readout riding ~14px off it.
+            Visual only — pointer-events:none, aria-hidden; shown by the
+            effect's data-live seat, hidden on touch + reduced motion
+            (CSS gates below + the effect's own gates). */}
+        <div className="hro-xhair" aria-hidden="true" ref={xhairRef}>
+          <span className="hro-xhair-line hro-xhair-v" ref={xhairVRef} />
+          <span className="hro-xhair-line hro-xhair-h" ref={xhairHRef} />
+          <span className="hro-xhair-xy" dir="ltr" ref={xhairXYRef}>
+            {'X:0000PX Y:0000PX'}
+          </span>
+        </div>
       </div>
 
       {/* ══ [2] THE BOTTOM BAND — the reference's composed fold footer

@@ -41,7 +41,7 @@
  * styles/landing/footer.css — the geometry lives there, in tokens.
  */
 import { Link } from 'react-router-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { RevealCssClass } from '../../../hooks/useReveal';
 import { Logo } from '../../../brand';
 import { BRAND_LABEL, LOGIN } from '../copy';
@@ -90,6 +90,49 @@ export function Footer({ year }: { year: number }) {
     };
     el.addEventListener('pointermove', onMove, { passive: true });
     return () => el.removeEventListener('pointermove', onMove);
+  }, []);
+
+  /* r363 P3 — THE DATUM TAGS (reference parity item 5, shot-footer's
+   * «[831, 0]» voice): the four corner stations of the banner band,
+   * small mono readouts seated beside each RegCross corner plus. The x
+   * stations ride the design canvas law (0 / 1440 — the stage viewBox
+   * width, the type law's own rung); the y stations are SURVEYED from
+   * the live band box (0 at the top rule, the real band height at the
+   * bottom rule) so the numbers stay true at every viewport and every
+   * type-law tweak. Imperative textContent writes (pre-paint, then on
+   * band resizes) — no re-render. Static furniture: they carry no
+   * motion, so they render under reduced motion and on touch. */
+  const datumRefs = useRef<Array<HTMLSpanElement | null>>([]);
+  useLayoutEffect(() => {
+    const band = lensRef.current;
+    const els = datumRefs.current;
+    if (!band || els.length !== 4 || els.some((el) => !el)) return undefined;
+    const write = () => {
+      const h = Math.round(band.getBoundingClientRect().height);
+      const pair = (x: string) => `[${x}, ${h}]`;
+      const tl = els[0];
+      const tr = els[1];
+      const bl = els[2];
+      const br = els[3];
+      if (tl) tl.textContent = '[0, 0]';
+      if (tr) tr.textContent = '[1440, 0]';
+      if (bl) bl.textContent = pair('0');
+      if (br) br.textContent = pair('1440');
+    };
+    write();
+    let ro: ResizeObserver | undefined;
+    if (typeof ResizeObserver === 'function') {
+      ro = new ResizeObserver(write);
+      ro.observe(band);
+    } else {
+      /* exotic embedders: a plain resize listener keeps the survey
+       * honest without the observer */
+      window.addEventListener('resize', write);
+    }
+    return () => {
+      if (ro) ro.disconnect();
+      else window.removeEventListener('resize', write);
+    };
   }, []);
 
   return (
@@ -283,6 +326,40 @@ export function Footer({ year }: { year: number }) {
             <div className="fo-giant-text fo-giant-fill">ULARA // أُلارا</div>
             <RegCross className="fo-giant-plus fo-giant-plus-bl" tone="muted" />
             <RegCross className="fo-giant-plus fo-giant-plus-br" tone="muted" />
+            {/* r363 P3 — THE DATUM TAGS beside each corner plus (the
+                shot-footer survey voice). dir="ltr" keeps the digits/
+                brackets Latin-ordered inside the RTL sheet; the seats
+                are the logical partners of the pluses above (the origin
+                rides the reading start). The effect above surveys the
+                bottom pair's y from the live band box. */}
+            <span
+              className="fo-datum fo-datum-tl"
+              dir="ltr"
+              ref={(el) => { datumRefs.current[0] = el; }}
+            >
+              [0, 0]
+            </span>
+            <span
+              className="fo-datum fo-datum-tr"
+              dir="ltr"
+              ref={(el) => { datumRefs.current[1] = el; }}
+            >
+              [1440, 0]
+            </span>
+            <span
+              className="fo-datum fo-datum-bl"
+              dir="ltr"
+              ref={(el) => { datumRefs.current[2] = el; }}
+            >
+              [0, 0]
+            </span>
+            <span
+              className="fo-datum fo-datum-br"
+              dir="ltr"
+              ref={(el) => { datumRefs.current[3] = el; }}
+            >
+              [1440, 0]
+            </span>
           </div>
           <ConsentBanner />
         </div>
