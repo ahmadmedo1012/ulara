@@ -126,7 +126,29 @@ app pass. Every DONE line has a command output or an image in `evidence/`.
   carries a written limitation for accordion pages (`/help`): a collapsed answer's
   rects can still intersect the next question even though the reader sees nothing.
 
-NEXT: re-capture the 200 % profile on the rebuilt APK to prove the fix on device; then
-re-run the overlap sweep on `/` at every width with the pitch fix in and confirm 0; the
-remaining P2 detail passes (cursor/nav choreography, decorative-pattern audit, side
-menus/controls), the P3 full-matrix sweep, and the P6 report.
+  **Second pass (commit `0f8d9a0`):** after that fix `/` fell 146 → 8, every hit at
+  ratio 1 with an *identical* y — one `.st-line` held four words that wrap inside it,
+  and the fixed `block-size` dropped the wrapped line exactly onto the next one.
+  `min-block-size` lets a long line grow instead of colliding.
+
+  **Final numbers (98-cell public sweep, 7 routes × 7 widths × 2 themes):**
+  `/` **0**, `/auth` **0**, `/auth/register` **0**, `/404` **0**, `/colleges` **0**,
+  `/about` **0** (14 cells each = 84 clean cells); `/help` 138 — all of them the
+  clipped-accordion class the script header already documents, and a 320/360 visual
+  check of that page is clean. **6 of 7 public routes are at zero; `/help` is not
+  claimed clean.** Role routes are not yet in the sweep (they need auth sessions inside
+  the instrument).
+
+- **P2 note — the detector earned its keep in both directions.** At 1024 the em-box
+  reading was right (nothing was wrong); at 1440/1920 the collision was real. Both
+  readings came from looking at the same cell in a browser rather than trusting the
+  number.
+
+- **Final report:** [REPORT.ar.md](REPORT.ar.md) — every item above with its evidence,
+  plus the honest list of what is still open (24 h soak, 200 % device re-capture on the
+  rebuilt APK, P2.3–P2.5, P3, P4, P6).
+
+NEXT: install the APK from `android-apk.yml` and re-run the 200 % capture to close P4a on
+device; then P2.3 (cursor/nav choreography), P2.4 (patterns), P2.5 (side menus/controls)
+with one sheet + critique each, the P3 full matrix, and P6 (Lighthouse, redeploy, full
+verify, buildId check).
