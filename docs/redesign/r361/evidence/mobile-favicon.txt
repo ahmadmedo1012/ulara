@@ -1,0 +1,6 @@
+GitHub mobile job 45514772925: expected favicon digest prefix 50677881cee5190b.
+  ✔ splash-icon.png — sha 400274c85b18364d
+  ✔ favicon.png — sha 50677881cee5190b
+  ✔ notification-icon.png — sha 5e4fd3e573e6b9f5
+build-app-icons: every asset byte-identical to the one mark. ✔
+build-splash-dark: splash-icon-dark.png byte-identical to the one mark. ✔

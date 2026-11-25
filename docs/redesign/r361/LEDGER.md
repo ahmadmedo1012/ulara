@@ -82,7 +82,15 @@ P5 — Mobile CI failed with seven lint errors in generated art. Fixed the sourc
 
 P2 — The entrance now shares the responsive hero vector and reveals one image instead of animating hundreds of SVG nodes. 21 unit and 4 browser checks pass, including the timing, skip and reduced-motion contracts. [Evidence](evidence/entrance.txt); previous 0157526.
 
-NEXT: Measure the live entry after deployment; finish the dashboard and register checks.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:795f5f2297aaf7740288918c999509e49d539bd7705a0bbfe50e83ee25323aa0 -->
+
+P5 — After lint passed in Actions, mobile generated-code verification exposed stale favicon bytes. Regenerated from the canonical mark; icons, splash and token drift checks pass [locally](evidence/mobile-favicon.txt). Earlier native build 28eafbc was published to latest; this is not yet final-HEAD evidence.
+
+NEXT: Confirm native workflows and emulator screenshots after the favicon correction.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 
