@@ -184,7 +184,15 @@ After 1b18759: production Lighthouse 77/86/92, accessibility 100 throughout. Rep
 
 After 3dd07b7: restored links to unmounted landing sections, the visible drag cursor, compact camera coverage and authenticated journeys. Removed the retired mobile branch instructions. [Measurements](evidence/section-entry.txt).
 
-NEXT: Compare the live build, CI, mobile artifacts and browser matrices with HEAD. The two permitted verify.sh invocations are exhausted; targeted retries do not constitute a full green invocation.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:f8d03218649a433d2a0863f1b13b7714b2fb63129acb2911d2dda8ac60d3abda -->
+
+P1/P8 — The five-role route sweep found a PDF.js cancellation race. Backported its upstream termination check to the verified distribution; six navigation timings, an actual rendered PDF, and 40 viewer tests pass. [Evidence](evidence/pdf-cancellation.txt). Parent: 2f2be13.
+
+NEXT: Compare live build, CI and mobile artifacts with HEAD; use the matching browser receipts and keep the two failed aggregate verification invocations visible.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 

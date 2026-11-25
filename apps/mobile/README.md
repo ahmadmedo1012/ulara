@@ -77,7 +77,13 @@ Pushes to `main` that change mobile sources or shared assets start the Android a
 
 - [Android APK](../../.github/workflows/android-apk.yml) builds the QA artifact and publishes the signed [Android download](https://github.com/ahmadmedo1012/ulara/releases/latest/download/ulara.apk). Compare the source SHA and signing certificate in the release body before distributing the file; the rolling release name alone does not identify a build.
 - [iOS SideStore](../../.github/workflows/build-ios-sidestore.yml) uploads an unsigned IPA to the workflow run.
-- [Mobile](../../.github/workflows/mobile.yml) runs the source gates. Device smoke evidence comes from the full emulator lane; a successful source gate does not establish that an emulator ran.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:ce3ecb25cebd358dcfb0dfdc8254b2e0af86aa567570b3aae455e67ae388e0a7 -->
+
+- [Mobile](../../.github/workflows/mobile.yml) lists source gates and emulator jobs separately. To verify a device build, open the five-role emulator job and its screenshots. A skipped job produces no device evidence, even when the overall workflow is green. The signed APK and SideStore IPA have separate build receipts.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 Ship application and dependency changes in a new native build. The status response carries `minAppVersion` (required update) and `latestAppVersion` (available update). For rollback and installation requirements see [the mobile runbook](../../docs/mobile.md).
 

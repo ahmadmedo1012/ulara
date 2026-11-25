@@ -1,5 +1,6 @@
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
+import { pdfWorkerBackport } from './pdf-worker-backport';
 import { visualizer } from 'rollup-plugin-visualizer';
 import path from 'node:path';
 
@@ -40,6 +41,7 @@ export default defineConfig({
   plugins: [
     react(),
     asyncStylesheet(),
+    pdfWorkerBackport(),
     ...(enableBundleReport
       ? [visualizer({ filename: 'dist/bundle-report.html', template: 'sunburst', gzipSize: true })]
       : []),

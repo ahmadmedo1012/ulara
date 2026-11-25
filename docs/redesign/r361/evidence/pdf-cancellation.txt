@@ -1,0 +1,14 @@
+Parent 2f2be138e464bf38c20da9d333c9ff9873f4423e, production mode; synthetic API session and valid PDF.
+Before: Chromium navigation /document/paper.pdf -> /help at 750ms surfaced an uncaught "Worker was terminated" from setupDoc.onFailure in pdfjs-dist 4.10.38. It also occurred during the cross-role sweep.
+Cause: an already terminated worker's rejection handler threw again while closing an in-flight request.
+After: build of the same PDF.js distribution with upstream's terminated-document guard. SHA-256 of the upstream input is checked before the change. Network cancellation, range requests and errors on active documents remain intact.
+navigated document -> help at ms 10
+navigated document -> help at ms 80
+navigated document -> help at ms 200
+navigated document -> help at ms 450
+navigated document -> help at ms 750
+navigated document -> help at ms 1300
+rendered page [ 886, 1253 ]
+ Test Files  3 passed (3)
+      Tests  40 passed (40)
+✓ built in 27.20s
