@@ -24,6 +24,7 @@ import { Building2, Home, LogIn } from 'lucide-react';
 import { Icon } from '../components/Icon';
 import { Illustration } from '../components/illustrations/Illustration';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { RegCross } from '../components/patterns/RegCross';
 /* R341 D5 — the error sheets' own thin seat sheet (errors.css): the
  * edge390 mobile inset + the primary way-home's hover channels. */
 import '../styles/errors.css';
@@ -36,15 +37,19 @@ export default function NotFoundPage() {
           (fixed 1px #B3B3AF at the 7px inset + 10×10 mono corner plus
           marks, the .sheet-frame grammar). Everything decorative is
           aria-hidden and pointer-transparent; the sr-only span below
-          carries the code for assistive tech. R321 §A6: the mark spans
-          are EMPTY — the '+' glyph renders from CSS ::before so it
-          never leaks into innerText (aria-hidden alone does not
-          remove text from innerText). */}
+          carries the code for assistive tech. The mark spans stay
+          EMPTY (RegCross draws two CSS bars) so nothing ever leaks
+          into innerText. */}
       <div className="nf-frame" aria-hidden="true">
-        <span className="nf-mark nf-mark-tl" />
-        <span className="nf-mark nf-mark-tr" />
-        <span className="nf-mark nf-mark-bl" />
-        <span className="nf-mark nf-mark-br" />
+        {/* P3/r363 (B1): the marks draw from the ONE RegCross primitive
+            (13px hollow-center crosshair, hairline ink) — the .nf-mark
+            marker class stays for the r320 count pin + the r321 §A6
+            decor scan; the spans stay EMPTY (the crosshair is two CSS
+            bars, no glyph text at all). */}
+        <RegCross className="nf-mark" corner="tl" />
+        <RegCross className="nf-mark" corner="tr" />
+        <RegCross className="nf-mark" corner="bl" />
+        <RegCross className="nf-mark" corner="br" />
       </div>
       {/* c3-W6 (K-I completeness): the measured paper-grain film — the
           auth sheet's .auth-grain layer (documented cross-page borrow,

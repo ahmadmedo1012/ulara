@@ -4,6 +4,7 @@ import { ArrowLeft } from 'lucide-react';
 import { Icon } from '../../Icon';
 import { HERO_WORK_ITEMS } from '../../../data/landing-ledger';
 import { ElevationArt, VB_MOBILE } from './ElevationArt';
+import { RegCross } from '../../patterns/RegCross';
 import '../../../styles/landing/hero-mechanics.css';
 
 import desktopElevation from '@shared/art/svg/hero-elevation.svg';
@@ -257,11 +258,13 @@ export function Hero() {
           <span className="bp-ruler bp-ruler-e" />
         </div>
 
-        {/* the ± registration marks at the stage's four corners */}
-        <span data-spec-hover="11" className="bp-dmark bp-dmark-tl" aria-hidden="true" />
-        <span data-spec-hover="12" className="bp-dmark bp-dmark-tr" aria-hidden="true" />
-        <span data-spec-hover="13" className="bp-dmark bp-dmark-bl" aria-hidden="true" />
-        <span data-spec-hover="14" className="bp-dmark bp-dmark-br" aria-hidden="true" />
+        {/* the ± registration marks at the stage's four corners —
+            P3/r363 (B1): the ONE RegCross primitive; the .bp-dmark
+            classes stay for the r306 seats (the stage's % insets). */}
+        <RegCross data-spec-hover="11" className="bp-dmark bp-dmark-tl" />
+        <RegCross data-spec-hover="12" className="bp-dmark bp-dmark-tr" />
+        <RegCross data-spec-hover="13" className="bp-dmark bp-dmark-bl" />
+        <RegCross data-spec-hover="14" className="bp-dmark bp-dmark-br" />
       </div>
 
       {/* ══ [2] THE BOTTOM BAND — the reference's composed fold footer
@@ -329,10 +332,13 @@ export function Hero() {
       <span className="hro-edge hro-edge-b" aria-hidden="true" />
       <span className="hro-edge hro-edge-s" aria-hidden="true" />
       <span className="hro-edge hro-edge-e" aria-hidden="true" />
-      <span className="bp-plus bp-plus-tl" aria-hidden="true" />
-      <span className="bp-plus bp-plus-tr" aria-hidden="true" />
-      <span className="bp-plus bp-plus-bl" aria-hidden="true" />
-      <span className="bp-plus bp-plus-br" aria-hidden="true" />
+      {/* the frame's inner corner pluses — P3/r363 (B1): the ONE
+          RegCross primitive; the .bp-plus classes stay for the r306
+          seats (the 2px inner insets). */}
+      <RegCross className="bp-plus bp-plus-tl" />
+      <RegCross className="bp-plus bp-plus-tr" />
+      <RegCross className="bp-plus bp-plus-bl" />
+      <RegCross className="bp-plus bp-plus-br" />
     </section>
   );
 }

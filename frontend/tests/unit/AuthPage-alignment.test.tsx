@@ -404,18 +404,31 @@ describe('AuthPage — the r359 measured design grammar', () => {
     expect(ruleOf('.auth-shell .auth-form-sub')).toContain('font-size: clamp(13.3px, .926vw, 15.5px)');
   });
 
-  it('the corner registration marks are DRAWN — two 1px ink bars, not a font glyph', () => {
-    // the GROUPED rule draws the chrome: an empty content pair on both
-    // pseudos, painted with currentColor (ink).
-    const group = ruleOf('.auth-shell .auth-mark::before,');
-    expect(group).toContain("content: ''");
-    expect(group).toContain('background: currentColor');
-    // the two bars: 10×1 horizontal + 1×10 vertical through the corner
-    // (the individual rules — the grouped pair above only carries the
-    // content/paint declarations).
-    expect(authDeclarations).toMatch(/\.auth-shell \.auth-mark::before \{\s*inline-size: 10px;\s*block-size: 1px;/);
-    expect(authDeclarations).toMatch(/\.auth-shell \.auth-mark::after \{\s*inline-size: 1px;\s*block-size: 10px;/);
-    expect(ruleOf('.auth-shell .auth-mark {')).toContain('color: var(--text)');
+  it('the corner registration marks DRAW via the ONE RegCross primitive (bars, never a glyph)', () => {
+    /* P3/r363 (B1) re-pin: the door's own 10px ink-bar re-draw
+     * (errors.css A6) retired into the shared primitive —
+     * styles/patterns.css carries the drawing (two 1px bars through a
+     * 13px cell, EMPTY pseudo-element content painted with
+     * currentColor, the canonical hairline ink var(--rule-strong)),
+     * and AuthPage renders it: four marks inside .auth-frame, one per
+     * corner, the .auth-mark marker class kept for the legal-pages
+     * count pin. Nothing may typeset a '+' glyph: the bars are
+     * backgrounds, not content text. */
+    const patterns = read('src/styles/patterns.css').replace(/\/\*[\s\S]*?\*\//g, '');
+    expect(patterns).toMatch(/\.reg-cross::before,\s*\.reg-cross::after\s*\{[^}]*content:\s*''/);
+    expect(patterns).toMatch(/\.reg-cross::before,\s*\.reg-cross::after\s*\{[^}]*background:\s*currentColor/);
+    expect(patterns).toMatch(/\.reg-cross\s*\{[^}]*color:\s*var\(--rule-strong\)/);
+    expect(patterns).toMatch(/\.reg-cross::before\s*\{[^}]*block-size:\s*1px/);
+    expect(patterns).toMatch(/\.reg-cross::after\s*\{[^}]*inline-size:\s*1px/);
+    // the retired door-local re-draw stays retired
+    expect(authDeclarations).not.toContain('.auth-mark');
+    // the markup: the primitive, four corners, inside the sheet frame
+    const page = read('src/pages/AuthPage.tsx').replace(/\/\*[\s\S]*?\*\//g, '');
+    expect(page).toMatch(/<RegCross className="auth-mark" corner="tl" \/>/);
+    expect(page).toMatch(/<RegCross className="auth-mark" corner="tr" \/>/);
+    expect(page).toMatch(/<RegCross className="auth-mark" corner="bl" \/>/);
+    expect(page).toMatch(/<RegCross className="auth-mark" corner="br" \/>/);
+    expect(page).not.toMatch(/className="auth-mark auth-mark-(?:tl|tr|bl|br)"/);
   });
 
   it('the rendered sheet: the roll markup + the mono micro captions (dir=ltr, aria-hidden)', () => {

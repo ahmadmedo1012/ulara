@@ -147,11 +147,18 @@ html[data-theme='dark'] body.ula-grain::before {
   /* the grain is static texture — no motion to reduce */
 }
 
-/* ── R315 (K-A4): the page frame is EXACTLY the four hairlines above
-   (E-crawl ground truth: the reference's .main-deco carries NO plus
-   marks and NO mono coordinates). The old .sheet-mark / .sheet-coord
-   chrome — whose fixed top label collided with the masthead at every
-   width — is retired. ── */
+/* ── R315 (K-A4) → P3/r363 (B2): the page frame is the four hairlines
+   above PLUS the four corner registration marks (restored). K-A4
+   retired the old .sheet-mark/.sheet-coord chrome (its fixed top
+   label collided with the masthead — the coordinates stay retired);
+   the r363 inventory's B2 finding revisits the MARKS themselves with
+   the r350 reference stills (shot-map-1: plus marks on all four
+   frame corners; shot-top: on the hero frame) and the public↔auth
+   symmetry (shell/auth/guest frames all carry them). The marks seat
+   via the ONE .reg-cross primitive (styles/patterns.css +
+   RegCross.tsx — 13px hollow-center crosshair, hairline ink),
+   centered ON the corner intersections — a corner seat, not an edge
+   label, so the K-A4 masthead collision cannot recur. ── */
 
 /* ── The sheet measure — every top-level band shares it ────────────
    (R313 D8/D14: the header + footer LEFT the 1160 measure — the

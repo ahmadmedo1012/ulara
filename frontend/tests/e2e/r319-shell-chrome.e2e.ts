@@ -39,8 +39,8 @@ interface FrameGeometry {
   zIndex: string;
   pointerEvents: string;
   marks: number;
-  markGlyphs: string[];
   markText: string[];
+  markBars: Array<{ before: string; after: string; h: string; v: string }>;
 }
 
 async function frameGeometry(page: import('@playwright/test').Page): Promise<FrameGeometry> {
@@ -57,11 +57,22 @@ async function frameGeometry(page: import('@playwright/test').Page): Promise<Fra
       zIndex: cs.zIndex,
       pointerEvents: cs.pointerEvents,
       marks: marks.length,
-      /* R321 §A6: the '+' glyph is ::before content — textContent must
-         be EMPTY (innerText leak fix); the glyph itself is read from
-         the pseudo-element's computed content. */
-      markGlyphs: marks.map((m) => getComputedStyle(m, '::before').content.replace(/^"|"$/g, '')),
+      /* P3/r363 (B1) re-pin: the crosshair is TWO 1px BARS — the
+         pseudo-elements' content is EMPTY (no glyph text exists in
+         the drawing at all — the §A6 innerText law by construction)
+         and each pseudo paints a currentColor bar of the right
+         measure (1px horizontal / 1px vertical). */
       markText: marks.map((m) => (m.textContent || '').trim()),
+      markBars: marks.map((m) => {
+        const before = getComputedStyle(m, '::before');
+        const after = getComputedStyle(m, '::after');
+        return {
+          before: before.content.replace(/^"|"$/g, ''),
+          after: after.content.replace(/^"|"$/g, ''),
+          h: `${parseFloat(before.width)}x${parseFloat(before.height)}`,
+          v: `${parseFloat(after.width)}x${parseFloat(after.height)}`,
+        };
+      }),
     };
   });
 }
@@ -114,12 +125,19 @@ for (const theme of THEMES) {
       const z = parseInt(frame.zIndex, 10);
       expect(z).toBeGreaterThan(100);
       expect(z).toBeLessThan(300);
-      // the registration marks: four plus-marks ON the corner points.
-      // R321 §A6 — the glyph renders from ::before content; the DOM
-      // text stays empty so innerText never leaks the decor.
+      // the registration marks: four crosses ON the corner points.
+      // P3/r363 (B1) re-pin — the ONE RegCross primitive: each mark
+      // draws TWO 1px bars (a 13px-wide horizontal + a 13px-tall
+      // vertical), the pseudo-element content stays EMPTY (no glyph
+      // text — the DOM text empty too, the §A6 innerText law).
       expect(frame.marks).toBeGreaterThanOrEqual(4);
-      expect(frame.markGlyphs.slice(0, 4)).toEqual(['+', '+', '+', '+']);
       expect(frame.markText).toEqual(['', '', '', '']);
+      for (const bar of frame.markBars.slice(0, 4)) {
+        expect(bar.before).toBe('');
+        expect(bar.after).toBe('');
+        expect(bar.h).toBe('13x1');
+        expect(bar.v).toBe('1x13');
+      }
     });
 
     test('the paper grain: the gate selector resolves to one fixed full-viewport film', async ({ page }) => {

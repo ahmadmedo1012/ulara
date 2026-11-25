@@ -277,14 +277,17 @@ section.chapters {
 .jt-rail-s { inset-inline-start: 0; }
 .jt-rail-e { inset-inline-end: 0; }
 
-/* the four corner marks — crosshair registration svgs, 0.75em
-   square, seated just outside the window's corners (−0.1em). Solid
-   ink (the measured mark colour — not the 72% scaffold wash). */
+/* the four corner marks — P3/r363 (B1): the crosshair DRAWING moved
+   to the ONE .reg-cross primitive (styles/patterns.css + RegCross.tsx,
+   tone=ink — the measured SOLID ink seat, not the scaffold wash);
+   IsoJourneyScene.tsx renders it with these .jt-mark classes kept —
+   SEATS ONLY below. The box keeps its em measure (0.75em of the
+   band's own type — the mark scales with the window it frames),
+   re-seated via the primitive's --reg-cross-size var, seated just
+   outside the window's corners (−0.1em). */
 .jt-mark {
+  --reg-cross-size: 0.75em;
   position: absolute;
-  inline-size: 0.75em;
-  block-size: 0.75em;
-  color: var(--text);
   line-height: 0;
 }
 
@@ -292,25 +295,6 @@ section.chapters {
 .jt-mark-b { inset-block-start: -0.1em; inset-inline-end: -0.1em; }
 .jt-mark-c { inset-block-end: -0.1em; inset-inline-start: -0.1em; }
 .jt-mark-d { inset-block-end: -0.1em; inset-inline-end: -0.1em; }
-
-.jt-mark-in {
-  inline-size: 100%;
-  block-size: 100%;
-}
-
-.jt-mark-svg {
-  display: block;
-  inline-size: 100%;
-  block-size: 100%;
-  overflow: visible;
-}
-
-.jt-mark-svg path {
-  stroke: currentColor;
-  stroke-width: 1;
-  fill: none;
-  transition: transform var(--jt-t-art) var(--jt-e-art); /* the measured 0.4s/ease register */
-}
 
 /* the drifting plan stack — the entrance descent's target. The
    measured rest transform: one frame height minus the scaffold

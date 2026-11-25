@@ -691,12 +691,17 @@ footer.fo-footer {
   }
 }
 
+/* P3/r363 (B1): the wordmark's corner plus seats draw from the ONE
+   .reg-cross primitive (styles/patterns.css + RegCross.tsx, tone=
+   muted — the in-composition light register). Footer.tsx renders it
+   with these .fo-giant-plus classes kept — SEATS ONLY below (the
+   4px insets). The box keeps the 0.85rem glyph rung the seats were
+   measured against (re-seated via the primitive's --reg-cross-size
+   var); the old DOM-text '+' span is retired — the r321 §A6 law
+   (marks never carry DOM text) now holds here too. */
 .fo-giant-plus {
+  --reg-cross-size: 0.85rem;
   position: absolute;
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  user-select: none;
 }
 .fo-giant-plus-tl { inset-block-start: 4px; inset-inline-start: 4px; }
 .fo-giant-plus-tr { inset-block-start: 4px; inset-inline-end: 4px; }

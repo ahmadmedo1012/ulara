@@ -3,6 +3,77 @@
  * split, stats, filters, today. Tokens only; logical properties only;
  * 44px interaction floor. CONTRACT.md is the normative doc. */
 
+/* ═══ RegCross — THE ONE REGISTRATION CROSS (P3/r363 · B1) ══════════
+   The corpus shipped EIGHT cross constructions (10/11/13px, three
+   inks, font-glyph / CSS-bar / inline-SVG variants — the r363
+   inventory, deviation B1). This block is the ONE DOM drawing, and
+   components/patterns/RegCross.tsx is its ONE component; every seat
+   (sheet/auth/nf frame marks, sg-reg, bp-dmark/bp-plus, jt-mark,
+   st-draft-mark, fo-giant-plus, pl-rplus) renders through it and
+   keeps only its own POSITION classes.
+
+   THE CANONICAL CONSTRUCTION (measured spec + the r350 reference
+   stills): a 13px crosshair — two 1px strokes (the horizontal and
+   the vertical bar) crossing at the box center — the plus with the
+   HOLLOW center (no glyph, no circle), hairline ink var(--rule-
+   strong): the frame line's own ink, at one darkness with the frame
+   the mark rides (shot-top / shot-map-1 / shot-footer).
+
+   MODIFIERS — the complete list (two; documented here once):
+     .reg-cross--ink     ink var(--text)       — the solid-ink seats
+       (the journey window's measured solid mark colour);
+     .reg-cross--muted   ink var(--text-muted) — the in-composition
+       light seats (statement title box, footer wordmark, preloader
+       ruler crossings). Frame-line marks take the DEFAULT ink.
+   SIZE has no modifier: --reg-cross-size (default 13px, the largest
+   measured rung) is the one re-seating mechanism for the em-scaled
+   seats that measure against their band's type. The corner seats
+   (reg-cross-tl/tr/bl/br) use PHYSICAL anchors — a corner is a
+   physical seat, and the auth-mark note documents why logical
+   inline anchors drift one mark-width under RTL.
+
+   The SVG art-plate voices (shared/art/grammar.ts regCross(),
+   kernel/Iso.tsx RegMark) are deliberately NOT migrated: they draw
+   in viewBox units at the art hairline weight (0.75px) — a different
+   medium (inventory P3-1 keeps the art voice). */
+.reg-cross {
+  --reg-cross-size: 13px; /* the canonical measured rung — not a spacing-rung value */
+  position: absolute;
+  inline-size: var(--reg-cross-size);
+  block-size: var(--reg-cross-size);
+  pointer-events: none;
+  color: var(--rule-strong);
+}
+.reg-cross::before,
+.reg-cross::after {
+  content: '';
+  position: absolute;
+  background: currentColor;
+}
+.reg-cross::before {
+  /* the horizontal stroke — centered on the box's block axis */
+  inset-block-start: calc(50% - 0.5px);
+  inset-inline: 0;
+  block-size: 1px;
+}
+.reg-cross::after {
+  /* the vertical stroke — centered on the box's inline axis */
+  inset-inline-start: calc(50% - 0.5px);
+  inset-block: 0;
+  inline-size: 1px;
+}
+/* the frame-corner register — centered ON the corner point, the
+   cross straddling the frame line (half out, half in), the
+   reference's own LTR geometry, mirrored correctly under RTL by
+   the physical anchors. */
+.reg-cross-tl { top: 0; left: 0; translate: -50% -50%; }
+.reg-cross-tr { top: 0; right: 0; translate: 50% -50%; }
+.reg-cross-bl { bottom: 0; left: 0; translate: -50% 50%; }
+.reg-cross-br { bottom: 0; right: 0; translate: 50% 50%; }
+/* the two ink modifiers — the complete register (see the block head) */
+.reg-cross--ink { color: var(--text); }
+.reg-cross--muted { color: var(--text-muted); }
+
 /* ═══ PageFrame ═══════════════════════════════════════════════ */
 .pf-page {
   display: flex;
@@ -666,40 +737,18 @@ a.pf-row-link {
     border: 1px solid var(--border-strong);
   }
 
-  /* the corner plus marks — the reference's 10×10 drafting crosses in
-     the mono voice, centered ON the frame's corner points (the
-     registration-mark convention; the .nf-mark twin joins this rule —
-     §7's sheet seats the same marks, W7 dedup).
-     R315 (K-I) engineering note: the anchors are PHYSICAL (top/left/
-     right/bottom), not logical — a corner is a physical seat, and the
-     logical-inline recipe the landing's .sheet-mark uses drifts the
-     mark one width (10px) inside the corner under RTL (the inline
-     anchor mirrors but the physical translate does not). Physical
-     anchors keep the plus ON the intersection in every direction —
-     the reference's own LTR geometry, mirrored correctly. */
-  .auth-mark,
-  .nf-mark {
-    position: absolute;
-    inline-size: 10px;
-    block-size: 10px;
-    display: grid;
-    place-items: center;
-    color: var(--border-strong);
-    font-family: var(--font-mono);
-    font-size: var(--fs-sm);
-    line-height: 1;
-  }
-  /* R321 §A6 — the glyph is pseudo-element content: the marks stay
-     OUT of innerText (the R320 text spans leaked `+ | + | + | +` into
-     every sheet's innerText even inside aria-hidden — innerText only
-     respects rendering, not ARIA). Same font/size/color seat, so the
-     drawn chrome is pixel-identical. */
-  .auth-mark::before { content: '+'; }
-  .nf-mark::before { content: '+'; } /* R341 w7-dedup repair: per-family content rules — the r321 §A6 pin reads each family's OWN ::before/::after rule (a grouped selector leaves the first family pre-comma and fails it); same declarations, two one-line rules */
-  .auth-mark-tl, .nf-mark-tl { top: 0; left: 0; translate: -50% -50%; }
-  .auth-mark-tr, .nf-mark-tr { top: 0; right: 0; translate: 50% -50%; }
-  .auth-mark-bl, .nf-mark-bl { bottom: 0; left: 0; translate: -50% 50%; }
-  .auth-mark-br, .nf-mark-br { bottom: 0; right: 0; translate: 50% 50%; }
+  /* the corner plus marks — P3/r363 (B1): the DRAWING moved to the
+     one .reg-cross primitive (top of this sheet) + RegCross.tsx; the
+     .auth-mark/.nf-mark names survive ONLY as marker classes in the
+     markup (the r320/legal count pins and the r321 §A6 decor scan
+     read them). The R315 (K-I) RTL engineering note lives on with
+     the primitive's corner register: PHYSICAL anchors (top/left/
+     right/bottom), not logical — a corner is a physical seat, and
+     the logical-inline recipe drifts the mark one width inside the
+     corner under RTL (the inline anchor mirrors but the physical
+     translate does not). Physical anchors keep the plus ON the
+     intersection in every direction — the reference's own LTR
+     geometry, mirrored correctly. */
 
   /* ══ 1c · THE PAPER GRAIN (R315 · K-I) — the landing's .fo-grain
      recipe verbatim (the r314 std-dev record, inline feTurbulence data-URIs per R344 C-6: tile std-dev

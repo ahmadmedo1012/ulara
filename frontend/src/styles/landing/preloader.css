@@ -307,16 +307,17 @@
   background-image: repeating-linear-gradient(to bottom, var(--grid-line) 0 1px, transparent 1px 9px);
 }
 
+/* P3/r363 (B1): the ruler-crossing plus marks draw from the ONE
+   .reg-cross primitive (styles/patterns.css + RegCross.tsx, tone=
+   muted — the in-composition light register). Preloader.tsx renders
+   it with these .pl-rplus classes kept — SEATS ONLY below (the
+   crossing insets, tuned so the mark centers on the 24%/64px
+   crossings). The box keeps the mono-md glyph rung the offsets were
+   measured against (re-seated via the primitive's --reg-cross-size
+   var). */
 .pl-rplus {
+  --reg-cross-size: var(--fs-mono-md);
   position: absolute;
-  color: var(--text-muted);
-  font-family: var(--font-mono);
-  font-size: var(--fs-mono-md);
-  line-height: 1;
-}
-
-.pl-rplus::before {
-  content: '+';
 }
 
 .pl-rplus-1 { inset-block-start: calc(24% - 0.55rem); inset-inline-end: calc(24% - 0.35rem); }

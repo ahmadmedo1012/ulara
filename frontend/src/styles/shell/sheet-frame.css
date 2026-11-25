@@ -95,31 +95,16 @@ html[data-theme='dark'] .sheet-grain {
   border: 1px solid var(--border-strong);
 }
 
-/* the corner plus marks — the 10×10 drafting crosses in the mono
-   voice, centered ON the frame's corner points. PHYSICAL anchors
-   (top/left/right/bottom), not logical: a corner is a physical seat —
-   the auth.css .auth-mark note documents why logical inline anchors
-   drift one mark-width under RTL. */
-.sheet-mark {
-  position: absolute;
-  inline-size: 10px; /* the reference's 10×10 registration mark — measured chrome, not a spacing rung */
-  block-size: 10px;
-  display: grid;
-  place-items: center;
-  color: var(--border-strong);
-  font-family: var(--font-mono);
-  font-size: var(--fs-sm);
-  line-height: 1;
-}
-/* R321 §A6 — the glyph is pseudo-element content: the marks stay OUT
-   of innerText (the R320 text spans leaked `+ | + | + | +` into the
-   accessibility text even inside aria-hidden — innerText respects
-   rendering, not ARIA). Pixel-identical drawn chrome. */
-.sheet-mark::before { content: '+'; }
-.sheet-mark-tl { top: 0; left: 0; translate: -50% -50%; }
-.sheet-mark-tr { top: 0; right: 0; translate: 50% -50%; }
-.sheet-mark-bl { bottom: 0; left: 0; translate: -50% 50%; }
-.sheet-mark-br { bottom: 0; right: 0; translate: 50% 50%; }
+/* the corner plus marks — P3/r363 (B1): the DRAWING is the one
+   .reg-cross primitive (styles/patterns.css + components/patterns/
+   RegCross.tsx — 13px hollow-center crosshair, 1px strokes, hairline
+   ink var(--rule-strong)); SheetFrame.tsx renders it with the
+   .sheet-mark marker class kept (the r319-shell-chrome e2e seat
+   reads `.sheet-frame .sheet-mark`) plus the primitive's corner
+   register. PHYSICAL anchors (top/left/right/bottom), not logical:
+   a corner is a physical seat — the auth-mark note in patterns.css
+   §1b documents why logical inline anchors drift one mark-width
+   under RTL. The old 10×10 mono-glyph construction is retired. */
 
 /* ═══ 3 · THE Z-LIFT — content above the film ════════════════════════
    .has-shell paints the workspace ground (layout.css); the grain film

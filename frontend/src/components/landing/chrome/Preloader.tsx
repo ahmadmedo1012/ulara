@@ -1,4 +1,5 @@
 import { PREFERS_REDUCED_MOTION } from '../../../lib/motion-media';
+import { RegCross } from '../../patterns/RegCross';
 /**
  * Preloader — «تتابع الدخول» — the architectural drawing sequence.
  *
@@ -423,10 +424,13 @@ export function Preloader({ onExitStart, onDone }: PreloaderProps) {
         <div className="pl-rulers" aria-hidden="true">
           <span className="pl-ruler pl-ruler-h" />
           <span className="pl-ruler pl-ruler-v" />
-          <span className="pl-rplus pl-rplus-1" />
-          <span className="pl-rplus pl-rplus-2" />
-          <span className="pl-rplus pl-rplus-3" />
-          <span className="pl-rplus pl-rplus-4" />
+          {/* P3/r363 (B1): the crossing pluses draw from the ONE
+              RegCross primitive (tone=muted, the light register); the
+              .pl-rplus classes keep their crossing seats. */}
+          <RegCross className="pl-rplus pl-rplus-1" tone="muted" />
+          <RegCross className="pl-rplus pl-rplus-2" tone="muted" />
+          <RegCross className="pl-rplus pl-rplus-3" tone="muted" />
+          <RegCross className="pl-rplus pl-rplus-4" tone="muted" />
         </div>
 
         {/* the headline — the display promise, reading-start corner */}

@@ -50,36 +50,20 @@
 }
 .sg-section + .sg-section { margin-block-start: var(--sp-6); }
 
-/* registration crosses — 10×10 plus-marks, ink, outside the corners */
-.sg-reg {
-  position: absolute;
-  inline-size: var(--sg-reg-size, 11px);
-  block-size: var(--sg-reg-size, 11px);
-  pointer-events: none;
-}
-.sg-reg::before,
-.sg-reg::after {
-  content: '';
-  position: absolute;
-  background: var(--text);
-  opacity: 0.72;
-}
-.sg-reg::before {
-  inset-block-start: calc(50% - 0.5px);
-  inset-inline-start: 0;
-  inline-size: 100%;
-  block-size: 1px;
-}
-.sg-reg::after {
-  inset-block-start: 0;
-  inset-inline-start: calc(50% - 0.5px);
-  inline-size: 1px;
-  block-size: 100%;
-}
-.sg-reg--tl { inset-block-start: calc(-1 * var(--sg-reg-size, 11px) - 3px); inset-inline-start: calc(-1 * var(--sg-reg-size, 11px) - 3px); }
-.sg-reg--tr { inset-block-start: calc(-1 * var(--sg-reg-size, 11px) - 3px); inset-inline-end: calc(-1 * var(--sg-reg-size, 11px) - 3px); }
-.sg-reg--bl { inset-block-end: calc(-1 * var(--sg-reg-size, 11px) - 3px); inset-inline-start: calc(-1 * var(--sg-reg-size, 11px) - 3px); }
-.sg-reg--br { inset-block-end: calc(-1 * var(--sg-reg-size, 11px) - 3px); inset-inline-end: calc(-1 * var(--sg-reg-size, 11px) - 3px); }
+/* registration crosses — P3/r363 (B1): the DRAWING is the one
+   .reg-cross primitive (styles/patterns.css + RegCross.tsx — 13px
+   hollow-center crosshair, 1px strokes, hairline ink). The old
+   11px CSS-bar voice (--text @ .72 — the B3 off-hairline ink) is
+   retired; the canonical ink reads at one darkness with the frame
+   rule the crosses ride. Sheet.tsx renders the marks with these
+   .sg-reg classes kept — the classes are now SEATS ONLY: the whole
+   box sits OUTSIDE the frame corner with the same 3px gap (the
+   offset rides the primitive's own size var, so it follows the
+   drawing at every register). */
+.sg-reg--tl { inset-block-start: calc(-1 * var(--reg-cross-size, 13px) - 3px); inset-inline-start: calc(-1 * var(--reg-cross-size, 13px) - 3px); }
+.sg-reg--tr { inset-block-start: calc(-1 * var(--reg-cross-size, 13px) - 3px); inset-inline-end: calc(-1 * var(--reg-cross-size, 13px) - 3px); }
+.sg-reg--bl { inset-block-end: calc(-1 * var(--reg-cross-size, 13px) - 3px); inset-inline-start: calc(-1 * var(--reg-cross-size, 13px) - 3px); }
+.sg-reg--br { inset-block-end: calc(-1 * var(--reg-cross-size, 13px) - 3px); inset-inline-end: calc(-1 * var(--reg-cross-size, 13px) - 3px); }
 
 /* the draw rule rides the frame's top edge — armed ONLY on sections
    the sanctioned belt owns ([data-reveal]); plain sections render the

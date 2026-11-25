@@ -46,6 +46,7 @@ import { RevealCssClass } from '../../../hooks/useReveal';
 import { Logo } from '../../../brand';
 import { BRAND_LABEL, LOGIN } from '../copy';
 import { ConsentBanner } from '../chrome/ConsentBanner';
+import { RegCross } from '../../patterns/RegCross';
 
 /* r363 — THE ONE LINK ROW. The retired col2 index (three mono-headed
  * groups + the contact/address groups) collapses into ONE horizontal
@@ -272,12 +273,16 @@ export function Footer({ year }: { year: number }) {
             wordmark's, so nothing below ever shifts. ── */}
         <div className="fo-final-row">
           <div className="fo-giant-banner" aria-hidden="true" ref={lensRef}>
-            <span className="fo-giant-plus fo-giant-plus-tl">+</span>
-            <span className="fo-giant-plus fo-giant-plus-tr">+</span>
+            {/* P3/r363 (B1): the wordmark's corner pluses draw from the
+                ONE RegCross primitive (tone=muted). The old DOM-text
+                '+' spans are gone — the §A6 law (marks never carry DOM
+                text) holds here now too. */}
+            <RegCross className="fo-giant-plus fo-giant-plus-tl" tone="muted" />
+            <RegCross className="fo-giant-plus fo-giant-plus-tr" tone="muted" />
             <div className="fo-giant-text">ULARA // أُلارا</div>
             <div className="fo-giant-text fo-giant-fill">ULARA // أُلارا</div>
-            <span className="fo-giant-plus fo-giant-plus-bl">+</span>
-            <span className="fo-giant-plus fo-giant-plus-br">+</span>
+            <RegCross className="fo-giant-plus fo-giant-plus-bl" tone="muted" />
+            <RegCross className="fo-giant-plus fo-giant-plus-br" tone="muted" />
           </div>
           <ConsentBanner />
         </div>

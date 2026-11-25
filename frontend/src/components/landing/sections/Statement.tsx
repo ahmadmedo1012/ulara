@@ -42,6 +42,7 @@ import campusPlan from '@shared/art/svg/plan-campus-site.svg';
 import { type ReactNode, type RefObject } from 'react';
 import { ScrubReveal } from '../journey/WordReveal';
 import { RevealCssClass } from '../../../hooks/useReveal';
+import { RegCross } from '../../patterns/RegCross';
 
 /* ── R345-ED (feat/home-editorial-scenes) — the statement's own drafting
  * underlay (the section-furniture layer): the faint drafting field, the
@@ -82,9 +83,12 @@ function StatementDraft() {
       </svg>
       {/* the measure dimension — the title block's own width ruler
           (rides .st-titlebox::before/::after — see statement.css) */}
-      {/* the corner registration marks (the drafting sheet's ± seats) */}
-      <span className="st-draft-mark st-draft-mark-a" aria-hidden="true" />
-      <span className="st-draft-mark st-draft-mark-b" aria-hidden="true" />
+      {/* the corner registration marks (the drafting sheet's ± seats)
+          — P3/r363 (B1): the ONE RegCross primitive, tone=muted (the
+          in-composition light register); the .st-draft-mark classes
+          keep their title-block seats. */}
+      <RegCross className="st-draft-mark st-draft-mark-a" tone="muted" />
+      <RegCross className="st-draft-mark st-draft-mark-b" tone="muted" />
       {/* the mono sheet metadata — SEC plate + scale + the section name
           (r324 law: the metadata voice stays Arabic-first — the banned
           Latin `SCALE 1:100` jargon never renders as content) */}

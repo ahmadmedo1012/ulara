@@ -67,6 +67,7 @@ import { Presentation, CircleCheck, FileCheck2, Grid3x3 } from 'lucide-react';
 import { useSheetScroll } from '../../../lib/motion/useSheetScroll';
 import { clamp, setSheetVar } from '../../../lib/motion/sheetConductor';
 import { IsoCampusSheet, FRAG_VECTORS, PLAN_VB } from './IsoCampusSheet';
+import { RegCross } from '../../patterns/RegCross';
 
 /* ── The copy (our own words, honest, Arabic RTL — the r312/r322
  *    contract carried verbatim; the findings/ledger keep their
@@ -945,41 +946,16 @@ export function IsoJourneyScene() {
               <div className="jt-rail jt-rail-s" aria-hidden="true" />
               <div className="jt-rail jt-rail-e" data-spec="map.raile" aria-hidden="true" />
 
-              {/* the four corner marks — crosshair registration svgs
-                  (one vertical + one horizontal stroke each, the
-                  drawing-frame grammar) */}
-              <div className="jt-mark jt-mark-a" data-spec="map.marka" aria-hidden="true">
-                <div className="jt-mark-in" data-spec="map.markain">
-                  <svg className="jt-mark-svg" data-spec="map.markasvg" viewBox="0 0 10 10" aria-hidden="true">
-                    <path data-spec="map.markap1" d="M5 0V10" />
-                    <path data-spec="map.markap2" d="M0 5H10" />
-                  </svg>
-                </div>
-              </div>
-              <div className="jt-mark jt-mark-b" data-spec="map.markb" aria-hidden="true">
-                <div className="jt-mark-in" data-spec="map.markbin">
-                  <svg className="jt-mark-svg" data-spec="map.markbsvg" viewBox="0 0 10 10" aria-hidden="true">
-                    <path data-spec="map.markbp1" d="M5 0V10" />
-                    <path data-spec="map.markbp2" d="M0 5H10" />
-                  </svg>
-                </div>
-              </div>
-              <div className="jt-mark jt-mark-c" data-spec="map.markc" aria-hidden="true">
-                <div className="jt-mark-in" data-spec="map.markcin">
-                  <svg className="jt-mark-svg" data-spec="map.markcsvg" viewBox="0 0 10 10" aria-hidden="true">
-                    <path data-spec="map.markcp1" d="M5 0V10" />
-                    <path data-spec="map.markcp2" d="M0 5H10" />
-                  </svg>
-                </div>
-              </div>
-              <div className="jt-mark jt-mark-d" data-spec="map.markd" aria-hidden="true">
-                <div className="jt-mark-in" data-spec="map.markdin">
-                  <svg className="jt-mark-svg" data-spec="map.markdsvg" viewBox="0 0 10 10" aria-hidden="true">
-                    <path data-spec="map.markdp1" d="M5 0V10" />
-                    <path data-spec="map.markdp2" d="M0 5H10" />
-                  </svg>
-                </div>
-              </div>
+              {/* the four corner marks — P3/r363 (B1): the ONE
+                  RegCross primitive (tone=ink — the measured solid
+                  mark colour this window's seats were pinned at; the
+                  em-scaled box rides .jt-mark's --reg-cross-size).
+                  One vertical + one horizontal stroke each, the
+                  drawing-frame grammar. */}
+              <RegCross className="jt-mark jt-mark-a" data-spec="map.marka" tone="ink" />
+              <RegCross className="jt-mark jt-mark-b" data-spec="map.markb" tone="ink" />
+              <RegCross className="jt-mark jt-mark-c" data-spec="map.markc" tone="ink" />
+              <RegCross className="jt-mark jt-mark-d" data-spec="map.markd" tone="ink" />
 
               {/* the drifting plan stack — the entrance descent's
                   target. r346: the stack carries the ISOMETRIC CAMPUS

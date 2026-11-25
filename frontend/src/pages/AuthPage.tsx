@@ -13,6 +13,7 @@ import { Logo } from '../brand';
 import { useLogin, useSelectInstitution } from '../hooks/useAuth';
 import { listPublicInstitutions } from '../lib/api';
 import { apiErrorCode } from '../lib/format';
+import { RegCross } from '../components/patterns/RegCross';
 import { useThemeSync } from '../components/layout/ThemeToggle';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { ROLE_HOME, ROLE_LABELS } from '../lib/nav';
@@ -294,10 +295,15 @@ export default function AuthPage() {
           grain film. Decorative only: aria-hidden, pointer-transparent,
           visible at every breakpoint the reference shows its frame. */}
       <div className="auth-frame" aria-hidden="true">
-        <span className="auth-mark auth-mark-tl" />
-        <span className="auth-mark auth-mark-tr" />
-        <span className="auth-mark auth-mark-bl" />
-        <span className="auth-mark auth-mark-br" />
+        {/* P3/r363 (B1): the marks draw from the ONE RegCross primitive
+            (13px hollow-center crosshair, hairline ink) — the
+            .auth-mark marker class stays for the legal-pages count
+            pin; the spans stay EMPTY (the crosshair is two CSS bars,
+            no glyph text at all). */}
+        <RegCross className="auth-mark" corner="tl" />
+        <RegCross className="auth-mark" corner="tr" />
+        <RegCross className="auth-mark" corner="bl" />
+        <RegCross className="auth-mark" corner="br" />
       </div>
       <div className="auth-grain" aria-hidden="true" />
 

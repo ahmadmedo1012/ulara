@@ -65,6 +65,7 @@ import { EdgeTab } from '../components/landing/chrome/EdgeTab';
 import { shouldPlayIntro, introEnvironment } from '../lib/motion/introGate';
 import { useSheetScroll } from '../lib/motion/useSheetScroll';
 import { clamp } from '../lib/motion/sheetConductor';
+import { RegCross } from '../components/patterns/RegCross';
 // r314-chrome.css — R314 B10 — the consent banner (V11) + the right-edge
 // vertical tab (V12): the landing chrome pair, the reference geometry with
 // Ulara's own honest content. R323 (A3 · defect 3): imported BEFORE
@@ -389,14 +390,26 @@ export default function LandingPage() {
       {/* P3-24: skip-to-content — first Tab stop, hidden until focused. */}
       <a href="#main" className="fo-skip-link">تخطَّ إلى المحتوى</a>
 
-      {/* ═══ THE SHEET FRAME (R313 · D9 → R315 K-A4) — the reference's
-          page frame is EXACTLY four 1px hairlines at the 7px inset
-          (E-crawl ground truth: .main-deco = 4 lines, NO plus marks, NO
-          mono coordinates at the frame edges — nothing that can ever
-          collide with the masthead at any width). The drafting ± marks
-          live on the hero window's own corners (.bp-plus/.bp-dmark),
-          where the reference carries them. ═══ */}
-      <div className="sheet-frame" aria-hidden="true" />
+      {/* ═══ THE SHEET FRAME (R313 · D9 → R315 K-A4 → P3/r363 B2) —
+          the reference's page frame: four 1px hairlines at the 7px
+          inset, and (restored by P3/r363) the four corner registration
+          marks ON the frame intersections. R315 K-A4 retired the marks
+          citing the .main-deco E-crawl; the r363 inventory (deviation
+          B2) revisits that with the r350 reference stills —
+          shot-map-1 carries plus marks at all four frame corners and
+          shot-top on the hero frame — and with the public↔auth
+          asymmetry (the shell/auth/guest frames all carry them; the
+          landing alone didn't). The marks seat via the ONE RegCross
+          primitive, centered ON the corner points (straddling the
+          line, half out/half in) — they cannot collide with the
+          masthead, which rides the frame's inline edges, not corners.
+          The retired fixed mono coordinates stay retired. ═══ */}
+      <div className="sheet-frame" aria-hidden="true">
+        <RegCross corner="tl" />
+        <RegCross corner="tr" />
+        <RegCross corner="bl" />
+        <RegCross corner="br" />
+      </div>
 
       {/* R314 (V3) → R318 (C2): the measured paper grain + dotted
           micro-grid film (R344 C-6: inline feTurbulence data-URIs, tuned to the r314 measurement record) now seats on

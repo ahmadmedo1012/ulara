@@ -263,22 +263,13 @@
 .bp-ruler-s { inset-inline-start: 0; inset-block: 0; inline-size: 4px; --bp-tick-dir: down; background-size: 4px 100%; }
 .bp-ruler-e { inset-inline-end: 0; inset-block: 0; inline-size: 4px; --bp-tick-dir: down; background-size: 4px 100%; }
 
-/* the ± registration crosses at the stage corners — the glyph paints
-   from ::before content (r321: never innerText, always CSS paint) */
-.bp-dmark {
-  position: absolute;
-  inline-size: 13px;
-  block-size: 13px;
-  pointer-events: none;
-}
-.bp-dmark::before {
-  content: '+';
-  position: absolute;
-  inset: 0;
-  font: 10px/13px var(--font-mono, ui-monospace, monospace);
-  color: var(--hro-ink);
-  text-align: center;
-}
+/* P3/r363 (B1): the ± registration crosses draw from the ONE
+   .reg-cross primitive (styles/patterns.css + RegCross.tsx — 13px
+   hollow-center crosshair, 1px strokes, hairline ink). Hero.tsx
+   renders them with these .bp-dmark classes kept — SEATS ONLY below
+   (the stage's % insets; the seat never moved). The old 13px
+   mono-glyph voice (--hro-ink) is retired — the canonical ink reads
+   at one darkness with the stage's own hairline (--hro-hair). */
 .bp-dmark-tl { inset-block-start: 1.2%; inset-inline-start: 1.2%; }
 .bp-dmark-tr { inset-block-start: 1.2%; inset-inline-end: 1.2%; }
 .bp-dmark-bl { inset-block-end: 1.2%; inset-inline-start: 1.2%; }
@@ -430,20 +421,9 @@
 .hro-edge-s { inset-inline-start: 7px; inset-block: 7px; inline-size: 1px; }
 .hro-edge-e { inset-inline-end: 7px; inset-block: 7px; inline-size: 1px; }
 
-.bp-plus {
-  position: absolute;
-  inline-size: 13px;
-  block-size: 13px;
-  pointer-events: none;
-}
-.bp-plus::before {
-  content: '+';
-  position: absolute;
-  inset: 0;
-  font: 10px/13px var(--font-mono, ui-monospace, monospace);
-  color: var(--hro-ink);
-  text-align: center;
-}
+/* P3/r363 (B1): the stage's inner corner pluses draw from the ONE
+   .reg-cross primitive (same drawing as .bp-dmark above); these
+   .bp-plus classes are SEATS ONLY — the 2px inner insets, unchanged. */
 .bp-plus-tl { inset-block-start: 2px; inset-inline-start: 2px; }
 .bp-plus-tr { inset-block-start: 2px; inset-inline-end: 2px; }
 .bp-plus-bl { inset-block-end: 2px; inset-inline-start: 2px; }

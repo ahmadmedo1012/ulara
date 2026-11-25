@@ -28,19 +28,22 @@
  * at every scroll seat, below popover/drawer/modal/toast — the
  * reference draws its .main-deco frame above all content too).
  */
+import { RegCross } from '../patterns/RegCross';
+
 export function SheetFrame() {
   return (
     <div className="sheet-frame" aria-hidden="true">
-      {/* Physical anchors (top/left/right/bottom), not logical — a
-          corner is a physical seat; the auth.css .auth-mark note
-          documents why logical inline anchors drift under RTL.
-          R321 §A6: the spans are EMPTY — the '+' glyph renders from
-          CSS ::before (r319-shell.css) so it never leaks into
-          innerText (aria-hidden alone does not remove text). */}
-      <span className="sheet-mark sheet-mark-tl" />
-      <span className="sheet-mark sheet-mark-tr" />
-      <span className="sheet-mark sheet-mark-bl" />
-      <span className="sheet-mark sheet-mark-br" />
+      {/* P3/r363 (B1): the marks draw from the ONE RegCross primitive
+          (13px hollow-center crosshair, hairline ink) — the
+          .sheet-mark marker class stays for the r319-shell-chrome
+          e2e seat; the primitive's corner register carries the
+          physical anchors + the centered-on-corner translate (the
+          auth-mark RTL note lives there). The spans are EMPTY —
+          the crosshair is two CSS bars, no glyph text at all. */}
+      <RegCross className="sheet-mark" corner="tl" />
+      <RegCross className="sheet-mark" corner="tr" />
+      <RegCross className="sheet-mark" corner="bl" />
+      <RegCross className="sheet-mark" corner="br" />
     </div>
   );
 }

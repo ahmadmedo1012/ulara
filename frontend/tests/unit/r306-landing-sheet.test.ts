@@ -313,18 +313,27 @@ describe('r306 → r310 — the elevation illustration (the honest interactive)'
     // and the drafting chrome (rulers, + marks, dashed inner frame,
     // ± marks) stays on the window
     expect(liveTsx).toMatch(/className="bp-ruler bp-ruler-t"/);
-    // R321 §A6 re-pin: the marks render their glyph from CSS ::before
-    // content (out of innerText) — the spans are EMPTY now; the glyph
-    // contract moved to the stylesheet rules.
-    /* R332 note: the `" \/>"` literal below is tolerance-widened to
-     * `(?: aria-hidden="true")? \/>` — the concurrent R331 hero pass
-     * added aria-hidden to the (still EMPTY, still self-closing) mark
-     * spans; the pin's semantics (empty spans, glyph via ::before) are
-     * unchanged, and the CSS half of the pin below is untouched. */
-    expect(liveTsx).toMatch(/className="bp-plus bp-plus-tl"(?: aria-hidden="true")? \/>/);
-    expect(liveTsx).toMatch(/className="bp-dmark bp-dmark-tl"(?: aria-hidden="true")? \/>/);
-    expect(live).toMatch(/\.bp-plus::before\s*\{[\s\S]*?content:\s*'\+'/);
-    expect(live).toMatch(/\.bp-dmark::before\s*\{[\s\S]*?content:\s*'\+'/);
+    // P3/r363 re-pin (B1 unification): the marks render from the ONE
+    // RegCross primitive (components/patterns/RegCross.tsx + the
+    // .reg-cross block in styles/patterns.css — a 13px hollow-center
+    // crosshair, two 1px bars, hairline ink var(--rule-strong)). The
+    // spans are EMPTY (the bars are pseudo-element BACKGROUNDS — the
+    // §A6 no-DOM-text law holds stronger than the old content:'+').
+    // The hero family classes survive as the SEATS ONLY (the stage's
+    // % / 2px insets — the positions never migrated); the glyph
+    // content rules are GONE from the landing family sheets.
+    expect(liveTsx).toMatch(/<RegCross className="bp-plus bp-plus-tl" \/>/);
+    expect(liveTsx).toMatch(/<RegCross data-spec-hover="11" className="bp-dmark bp-dmark-tl" \/>/);
+    expect(live).not.toMatch(/\.bp-(?:plus|dmark)::before/);
+    expect(live).toMatch(/\.bp-dmark-tl\s*\{[^}]*inset-block-start:\s*1\.2%/);
+    expect(live).toMatch(/\.bp-plus-tl\s*\{[^}]*inset-block-start:\s*2px/);
+    // the primitive itself: the two bar rules + the canonical
+    // construction (13px rung, hairline ink), in the shared sheet.
+    const patternsSheet = stripComments(read('src/styles/patterns.css'));
+    expect(patternsSheet).toMatch(/\.reg-cross\s*\{[^}]*--reg-cross-size:\s*13px/);
+    expect(patternsSheet).toMatch(/\.reg-cross\s*\{[^}]*color:\s*var\(--rule-strong\)/);
+    expect(patternsSheet).toMatch(/\.reg-cross::before\s*\{[^}]*block-size:\s*1px/);
+    expect(patternsSheet).toMatch(/\.reg-cross::after\s*\{[^}]*inline-size:\s*1px/);
     // R322 override (2-b) → R333 re-key: the dashed inner frame rides
     // the live .hro-stage::before seat (same 1px dashed rule,
     // proximity-revealed as before) after the retired band grammar

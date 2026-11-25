@@ -865,22 +865,15 @@
 .st-draw-e,
 .st-draw-f { stroke-dashoffset: calc((1 - var(--wr-p, 1)) * 1.6); }
 
+/* P3/r363 (B1): the title block's corner registration seats draw
+   from the ONE .reg-cross primitive (styles/patterns.css +
+   RegCross.tsx, tone=muted — the in-composition light register);
+   Statement.tsx renders it with these .st-draft-mark classes kept —
+   SEATS ONLY below. The box keeps the 1.1rem title-block measure
+   (re-seated via the primitive's --reg-cross-size var). */
 .st-draft-mark {
+  --reg-cross-size: 1.1rem;
   position: absolute;
-  inline-size: 1.1rem;
-  block-size: 1.1rem;
-  color: var(--text-muted);
-}
-
-.st-draft-mark::before {
-  content: '+';
-  position: absolute;
-  inset: 0;
-  color: inherit;
-  font-family: var(--font-mono);
-  font-size: var(--fs-mono-md);
-  line-height: 1.1;
-  text-align: center;
 }
 
 .st-draft-mark-a {

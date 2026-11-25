@@ -236,33 +236,14 @@
   }
 }
 
-/* ── A6 · THE REGISTRATION MARKS — two 1px ink bars ─────────────────── */
-
-.auth-shell .auth-mark {
-  color: var(--text); /* ink registration chrome (r359 #7) */
-}
-.auth-shell .auth-mark::before,
-.auth-shell .auth-mark::after {
-  /* the plus is DRAWN (two 1px bars through the 10×10 corner cell),
-     not typeset — pure CSS, ink via currentColor. patterns.css's
-     content:'+' rule stays pinned for the r321 §A6 belt; this
-     unlayered pair wins the render. */
-  content: '';
-  position: absolute;
-  background: currentColor;
-}
-.auth-shell .auth-mark::before {
-  inline-size: 10px;
-  block-size: 1px;
-  inset-block-start: 4.5px;
-  inset-inline: 0;
-}
-.auth-shell .auth-mark::after {
-  inline-size: 1px;
-  block-size: 10px;
-  inset-block: 0;
-  inset-inline-start: 4.5px;
-}
+/* ── A6 · THE REGISTRATION MARKS — RETIRED INTO THE PRIMITIVE ────────
+   P3/r363 (B1): the auth door's own bar re-draw (the 10×10 cell, two
+   1px ink bars) joined the ONE .reg-cross primitive
+   (styles/patterns.css + components/patterns/RegCross.tsx) — same
+   hollow-center crosshair for every seat, the canonical hairline ink
+   var(--rule-strong) at one darkness with the frame line it rides.
+   The .auth-mark name survives only as the markup marker class
+   (the legal-pages count pin + the r321 §A6 decor scan read it). */
 
 /* ── A7 · MICRO CAPTIONS — the mono voice under the controls ───────── */
 

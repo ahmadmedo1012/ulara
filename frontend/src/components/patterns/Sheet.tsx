@@ -4,6 +4,7 @@ import { ArrowLeft } from 'lucide-react';
 import { Reveal } from '../motion/Reveal';
 import { CountIn } from '../motion/CountIn';
 import { formatInt } from '../../utils/numbers';
+import { RegCross } from './RegCross';
 
 /* ═══════════════════════════════════════════════════════════════════
    R359 (A3) — THE SHEET GRAMMAR patterns.
@@ -77,10 +78,14 @@ export function SheetSection({
     .join(' ');
   const inner = (
     <>
-      <i className="sg-reg sg-reg--tl" aria-hidden="true" />
-      <i className="sg-reg sg-reg--tr" aria-hidden="true" />
-      <i className="sg-reg sg-reg--bl" aria-hidden="true" />
-      <i className="sg-reg sg-reg--br" aria-hidden="true" />
+      {/* P3/r363 (B1): the corner crosses draw from the ONE RegCross
+          primitive (13px hollow-center crosshair, hairline ink); the
+          .sg-reg classes stay for the r359 seats (the whole box
+          OUTSIDE the corner, 3px gap). */}
+      <RegCross className="sg-reg sg-reg--tl" />
+      <RegCross className="sg-reg sg-reg--tr" />
+      <RegCross className="sg-reg sg-reg--bl" />
+      <RegCross className="sg-reg sg-reg--br" />
       {(title !== undefined || caption !== undefined || aside !== undefined || desc !== undefined) && (
         <header className="sg-head">
           <div className="sg-head-main">
@@ -444,10 +449,10 @@ export function SheetEmpty({
   return (
     <div className="sg-empty">
       <div className="sg-empty-frame">
-        <i className="sg-reg sg-reg--tl" aria-hidden="true" />
-        <i className="sg-reg sg-reg--tr" aria-hidden="true" />
-        <i className="sg-reg sg-reg--bl" aria-hidden="true" />
-        <i className="sg-reg sg-reg--br" aria-hidden="true" />
+        <RegCross className="sg-reg sg-reg--tl" />
+        <RegCross className="sg-reg sg-reg--tr" />
+        <RegCross className="sg-reg sg-reg--bl" />
+        <RegCross className="sg-reg sg-reg--br" />
         {code !== undefined && <span className="sg-label">{code}</span>}
       </div>
       <p className="sg-empty-title">{title}</p>
