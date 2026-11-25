@@ -21872,6 +21872,7 @@ export interface paths {
                     limit?: number;
                     q?: string;
                     status?: string;
+                    facilityId?: string;
                 };
                 header?: never;
                 path?: never;
@@ -22095,6 +22096,7 @@ export interface paths {
                     q?: string;
                     status?: "OPEN" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
                     equipmentId?: string;
+                    facilityId?: string;
                 };
                 header?: never;
                 path?: never;

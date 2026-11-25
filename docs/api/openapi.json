@@ -22267,6 +22267,14 @@
               "type": "string",
               "maxLength": 40
             }
+          },
+          {
+            "name": "facilityId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
           }
         ]
       },
@@ -22523,6 +22531,14 @@
           },
           {
             "name": "equipmentId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "facilityId",
             "in": "query",
             "required": false,
             "schema": {
@@ -34775,7 +34791,7 @@
   },
   "x-generator": {
     "tool": "backend/scripts/generate-openapi.ts (hand-rolled: express-stack walk + zod-v3 walker)",
-    "generatedAt": "2026-11-24T13:20:51.188Z",
+    "generatedAt": "2026-11-25T19:59:23.123Z",
     "operationCount": 388,
     "pathCount": 315,
     "contractSnapshotCovered": 13,

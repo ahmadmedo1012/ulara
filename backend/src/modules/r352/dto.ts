@@ -870,6 +870,9 @@ export const equipmentProgramLinkSchema = z
 export const workOrderListSchema = paginationSchema.extend({
   status: z.enum(['OPEN', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED']).optional(),
   equipmentId: z.string().cuid().optional(),
+  /* r363 P6 (audit #3): the facility board reads its own slice —
+   * the same optional-filter contract equipmentId already carries. */
+  facilityId: z.string().cuid().optional(),
 });
 
 export const workOrderCreateSchema = z
@@ -917,6 +920,8 @@ export const reservationUpdateSchema = z
 
 export const safetyIncidentListSchema = paginationSchema.extend({
   status: z.string().trim().max(40).optional(),
+  /* r363 P6 (audit #3): the facility board reads its own slice. */
+  facilityId: z.string().cuid().optional(),
 });
 
 export const safetyIncidentCreateSchema = z

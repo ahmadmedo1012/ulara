@@ -154,3 +154,47 @@ describe('r352 research projects', () => {
     expect(detail.body.data.outputs[0].researchPaper.id).toBe(paper.id);
   });
 });
+
+describe('r363 P6 — the facilityId slice filter (audit #3)', () => {
+  it('work-orders and safety-incidents read their own facility slice', async () => {
+    const s = await setup();
+    const lab = await api('POST', '/api/v1/operations/facilities', {
+      nameAr: `مختبر الدوائر ${uniqueSuffix()}`, type: 'LAB', code: `LB-${uniqueSuffix()}`, capacity: 12,
+    }, s.auth);
+    expect(lab.status).toBe(201);
+
+    const woWorkshop = await api('POST', '/api/v1/operations/work-orders', {
+      titleAr: 'أمر في الورشة', kind: 'PREVENTIVE', facilityId: s.workshopId,
+    }, s.auth);
+    const woLab = await api('POST', '/api/v1/operations/work-orders', {
+      titleAr: 'أمر في المختبر', kind: 'CORRECTIVE', facilityId: lab.body.data.id,
+    }, s.auth);
+    expect(woWorkshop.status).toBe(201);
+    expect(woLab.status).toBe(201);
+
+    const slice = await api('GET', `/api/v1/operations/work-orders?facilityId=${s.workshopId}`, undefined, s.auth);
+    expect(slice.status).toBe(200);
+    expect(slice.body.data).toHaveLength(1);
+    expect(slice.body.data[0].facility.id).toBe(s.workshopId);
+
+    const unfiltered = await api('GET', '/api/v1/operations/work-orders', undefined, s.auth);
+    expect(unfiltered.body.data).toHaveLength(2);
+
+    const empty = await api('GET', `/api/v1/operations/work-orders?facilityId=cuidnotmatching`, undefined, s.auth);
+    expect(empty.status).toBe(200);
+    expect(empty.body.data).toHaveLength(0);
+
+    const bad = await api('GET', '/api/v1/operations/work-orders?facilityId=not-a-cuid', undefined, s.auth);
+    expect(bad.status).toBe(400);
+
+    const incident = await api('POST', '/api/v1/operations/safety-incidents', {
+      kind: 'INCIDENT', titleAr: 'حادثة في الورشة', facilityId: s.workshopId, occurredAt: '2026-05-02T09:00:00Z',
+    }, s.auth);
+    expect(incident.status).toBe(201);
+    const incidentSlice = await api('GET', `/api/v1/operations/safety-incidents?facilityId=${s.workshopId}`, undefined, s.auth);
+    expect(incidentSlice.body.data).toHaveLength(1);
+    expect(incidentSlice.body.data[0].facility.id).toBe(s.workshopId);
+    const incidentEmpty = await api('GET', `/api/v1/operations/safety-incidents?facilityId=${lab.body.data.id}`, undefined, s.auth);
+    expect(incidentEmpty.body.data).toHaveLength(0);
+  });
+});
