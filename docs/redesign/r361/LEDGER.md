@@ -70,7 +70,15 @@
 
 P7 — Updated README, web palette and art guidance, deployment lineage, CI trigger table and open operator tasks; source checks: [docs](evidence/docs.txt). Previous landed item: f9791e2.
 
-NEXT: Repair mobile lint, confirm builds and run final captures.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:5a330caaab73604e36e45247c4fc7c8e8a4b6d6f41f1b4b65c31c671e8431106 -->
+
+P5 — Mobile CI failed with seven lint errors in generated art. Fixed the source and generator: 0 errors, 50 existing warnings; mobile typecheck and endpoint contract both pass. [Evidence](evidence/mobile-art.txt); prior item cfacefc.
+
+NEXT: Verify the native artifacts and emulator jobs on the new main push.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 

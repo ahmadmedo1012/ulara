@@ -13,7 +13,7 @@ import {
 
 /* ── shared composition helpers ─────────────────────────────────── */
 
-function useShell(w: number, h: number, key: string, title: string, code: string, nodes: ArtNode[]): ArtDoc {
+function drawRolePlate(w: number, h: number, key: string, title: string, code: string, nodes: ArtNode[]): ArtDoc {
   return {
     w, h, title,
     nodes: [
@@ -63,7 +63,7 @@ function usecaseStudent(): ArtDoc {
   // royal link from a seat to the matrix
   nodes.push(rect(266, 196, 16, 12, { fill: 'none', stroke: C.sig, 'stroke-width': W.fine }));
   nodes.push(line(282, 202, 520, 180, { stroke: C.sig, 'stroke-width': W.fine, 'stroke-dasharray': '5 4' }));
-  return useShell(960, 640, 'usecase-student', 'حالة الطالب', 'STU-01', nodes);
+  return drawRolePlate(960, 640, 'usecase-student', 'حالة الطالب', 'STU-01', nodes);
 }
 
 function usecaseTeacher(): ArtDoc {
@@ -90,7 +90,7 @@ function usecaseTeacher(): ArtDoc {
   // flag one desk
   nodes.push(rect(312, 300, 62, 34, { fill: 'none', stroke: C.sig, 'stroke-width': W.fine, 'stroke-dasharray': '5 3' }));
   nodes.push(line(374, 317, 520, 220, { stroke: C.sig, 'stroke-width': W.fine, 'stroke-dasharray': '5 4' }));
-  return useShell(960, 640, 'usecase-teacher', 'حالة الأستاذ', 'TCH-02', nodes);
+  return drawRolePlate(960, 640, 'usecase-teacher', 'حالة الأستاذ', 'TCH-02', nodes);
 }
 
 function usecaseAdmin(): ArtDoc {
@@ -114,7 +114,7 @@ function usecaseAdmin(): ArtDoc {
   nodes.push(label(540, 316, '22 MEMBERS · 4 ROLES · 1 PENDING', { fill: C.ink }));
   nodes.push(line(290, 210, 520, 200, { stroke: C.sig, 'stroke-width': W.fine, 'stroke-dasharray': '5 4' }));
   nodes.push(rect(278, 202, 14, 14, { fill: C.sig, stroke: 'none' }));
-  return useShell(960, 640, 'usecase-admin', 'حالة إدارة النظام', 'ADM-03', nodes);
+  return drawRolePlate(960, 640, 'usecase-admin', 'حالة إدارة النظام', 'ADM-03', nodes);
 }
 
 function usecaseQuality(): ArtDoc {
@@ -140,7 +140,7 @@ function usecaseQuality(): ArtDoc {
   // one desk flagged for review
   nodes.push(rect(192, 190, 54, 30, { fill: 'none', stroke: C.sig, 'stroke-width': W.fine, 'stroke-dasharray': '5 3' }));
   nodes.push(line(246, 205, 520, 214, { stroke: C.sig, 'stroke-width': W.fine, 'stroke-dasharray': '5 4' }));
-  return useShell(960, 640, 'usecase-quality', 'حالة مكتب الجودة', 'QLT-04', nodes);
+  return drawRolePlate(960, 640, 'usecase-quality', 'حالة مكتب الجودة', 'QLT-04', nodes);
 }
 
 function usecaseOwner(): ArtDoc {
@@ -169,7 +169,7 @@ function usecaseOwner(): ArtDoc {
   }
   nodes.push(label(540, 316, '7 ACTIVE / 9 REGISTERED', { fill: C.ink }));
   nodes.push(line(440, 200, 520, 190, { stroke: C.sig, 'stroke-width': W.fine, 'stroke-dasharray': '5 4' }));
-  return useShell(960, 640, 'usecase-owner', 'حالة مالك المؤسسة', 'OWN-05', nodes);
+  return drawRolePlate(960, 640, 'usecase-owner', 'حالة مالك المؤسسة', 'OWN-05', nodes);
 }
 
 function usecaseInstitution(): ArtDoc {
@@ -190,7 +190,7 @@ function usecaseInstitution(): ArtDoc {
   nodes.push(path('M532 146V276M562 181V276M562 211V276M562 241V276', { stroke: C.hair, 'stroke-width': W.hair, fill: 'none' }));
   nodes.push(label(540, 316, '3 COLLEGES · 12 DEPTS · 1 CAMPUS', { fill: C.ink }));
   nodes.push(line(320, 240, 520, 220, { stroke: C.sig, 'stroke-width': W.fine, 'stroke-dasharray': '5 4' }));
-  return useShell(960, 640, 'usecase-institution', 'حالة المؤسسة التعليمية', 'INS-06', nodes);
+  return drawRolePlate(960, 640, 'usecase-institution', 'حالة المؤسسة التعليمية', 'INS-06', nodes);
 }
 
 /* ── registry ───────────────────────────────────────────────────── */

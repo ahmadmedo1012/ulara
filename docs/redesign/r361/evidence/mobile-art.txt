@@ -1,0 +1,6 @@
+Previous Actions run 45512620542: 7 lint errors, 50 warnings.
+✖ 50 problems (0 errors, 50 warnings)
+  0 errors and 23 warnings potentially fixable with the `--fix` option.
+
+✔ contract-check: no drift — every consumed endpoint is registered by backend source
+npm run typecheck: exit 0
