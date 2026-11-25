@@ -43,3 +43,26 @@ Verification after:
 Note: bundle gate reports 857.8 KB gz total — the ceiling constant in
 check-bundle-size.mjs is the source of truth; the gate PASSED, so the pinned
 ceiling is >= 857.8 KB at this head (the r362 order quotes 865 KB).
+
+--- SECOND PASS (same class, found by re-running the detector after the pitch fix) ---
+
+After the pitch fix the sweep on `/` fell 146 -> 8 findings, all with ratio=1 at
+IDENTICAL y: words 8/9 ("مفهومًا", "مفهومًا،") reported in .st-line #2 at y=1153
+while words 10/11 ("والبحث", "يُفهرَس") sit at y=1153 too. Not an artefact: line 2
+carries four words that do not fit the column, so they WRAP inside it, and the
+fixed `block-size` let the wrapped line land exactly on .st-line #3. The 1440
+screenshot shows the doubled ghost glyphs over the last line.
+
+Fix: `min-block-size` instead of `block-size` at all three bands — the designed
+pitch is preserved, and a line that must wrap grows instead of colliding.
+
+After: overlap sweep on `/` = 14 cells x 1 route -> findings: 0
+       (before the two fixes: 146 findings across the 7 public routes;
+        on `/` alone: 8 at the 1440/1920 cells).
+e2e r349-public-clip 17/17, r354-final 18/18, r308-landing-instruments 5/5 pass
+with the min-block-size change in.
+
+Content note for the owner (not changed by me): the assembled sentence reads
+«والإتقان يُرسَم / مفهومًا مفهومًا، / والبحث يُفهرَس ويبقى.» — «مفهومًا» is
+repeated and the clause is fragmentary. The layout is honest now; the copy is
+the owner's call.

@@ -227,7 +227,13 @@
  */
 .st-line {
   display: block;
-  block-size: max(4rem, 1.35em);
+  /* r362 P2 — `min-block-size`, never a fixed `block-size`: a line whose
+     words do not fit the column wraps onto a second visual line, and a fixed
+     height let that wrapped line land exactly on top of the next .st-line
+     (the second half of the owner's landing collisions — words 8/9 of the
+     statement sat at the same y as words 10/11). A minimum keeps the
+     designed pitch and lets a long line grow instead of colliding. */
+  min-block-size: max(4rem, 1.35em);
 }
 
 /* R338 T-03c: the reference's line nest — line box + mask wrapper, one
@@ -591,7 +597,7 @@
   .st-title { font-size: 2.4rem; line-height: 3.24rem; }
   /* r362 P2 — the tablet pitch also holds the Arabic floor (3.24rem =
      1.35 × 2.4rem); the old 2.525rem was below it. */
-  .st-line { block-size: max(2.525rem, 1.35em); }
+  .st-line { min-block-size: max(2.525rem, 1.35em); }
   .st-titlebox { margin-block-end: 2.4rem; }
   .st-plabel { margin-inline-start: 2.4rem; }
   .st-crawl-cell { inline-size: 12.05rem; block-size: 7.7rem; } /* R342-02 — the measured 768 window cell (111px) and the ticker row's own band */
@@ -632,7 +638,7 @@
   .st-stmt-in { padding: 1.6rem 1.2rem 1.2rem; } /* r359 A1 §C — the phone wrap tightens */
   .st-title { font-size: 2.4rem; line-height: 3.24rem; }
   /* r362 P2 — the phone pitch holds the same floor. */
-  .st-line { block-size: max(2.62rem, 1.35em); }
+  .st-line { min-block-size: max(2.62rem, 1.35em); }
   .st-titlebox { margin-block-end: 1.2rem; }
   .st-pill-icons { --st-seat: 4.13rem; }
   .st-pill-t-in { line-height: 1.89rem; }
