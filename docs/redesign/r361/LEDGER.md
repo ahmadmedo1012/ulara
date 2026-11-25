@@ -94,7 +94,15 @@ P5 — After lint passed in Actions, mobile generated-code verification exposed 
 
 P1 — Reworked the four outstanding dashboard compositions and captured a second comparison [with observations](evidence/dashboard-revision.md). 16 scoped cells: 0 P0, 0 P1, 4 P2 round-mark findings. The capture tool now accepts an immutable build directory, so concurrent builds cannot delete its chunks. Previous item a88e6f0.
 
-NEXT: Retest material and keyboard fixes; include the list, detail, form and audit sheets.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:2442f2f6a70e94b4678c08418e75f81483de9f6045e8236e3579dda08091419a -->
+
+P1/P4 — Added populated council detail and meeting fixtures. [List, detail, table and form comparison](evidence/registers.md): [16 cells](evidence/registers.txt), no recorded defects on the isolated build. Previous dashboard item is in the preceding commit.
+
+NEXT: Confirm all role sweeps, material fixes and release status.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 

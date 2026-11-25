@@ -1,0 +1,6 @@
+# R358 Phase A — ULARA Scan
+
+**Scope:** 4 routes × 390/1440 × light/dark
+**Master:** defects-master.json
+**Defects (deduped):** 0 — P0 0 · P1 0 · P2 0
+Frontend fixture test tree: npm run typecheck:tests -w frontend.

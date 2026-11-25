@@ -417,6 +417,20 @@ export function standardRoutes(): MockRouteDef[] {
     { method: 'GET', path: '/institutional/appointments', json: { data: [], meta: { page: 1, limit: 10, total: 0, totalPages: 0 } } },
     { method: 'GET', path: '/institution/positions', json: INSTITUTION_POSITIONS_PAGE },
     { method: 'GET', path: '/governance/councils', json: INSTITUTION_COUNCILS_PAGE },
+    { method: 'GET', path: '/governance/councils/council_1', json: ok({
+      ...INSTITUTION_COUNCILS_PAGE.data[0], institutionId: MY_INSTITUTION_PROFILE.institution.id,
+      establishedAt: '2024-01-01', legalBasis: 'قرار تشكيل المجلس', charterRef: null,
+      memberships: [{ id: 'membership_1', councilId: 'council_1', personId: 'person_1',
+        role: 'CHAIR', status: 'ACTIVE', startDate: '2024-01-01', person: INSTITUTION_PEOPLE_PAGE.data[0] }],
+    }) },
+    { method: 'GET', path: '/governance/councils/council_1/meetings', json: ok([{
+      id: 'meeting_1', councilId: 'council_1', seqNumber: 1, status: 'HELD',
+      scheduledAt: '2026-11-10T10:00:00Z', location: 'قاعة المجلس',
+    }]) },
+    { method: 'GET', path: '/governance/meetings/meeting_1', json: ok({
+      meeting: { id: 'meeting_1', councilId: 'council_1', seqNumber: 1, status: 'HELD', scheduledAt: '2026-11-10T10:00:00Z', location: 'قاعة المجلس' },
+      agendaItems: [], attendance: [], resolutions: [], minutes: null, documents: [],
+    }) },
     { method: 'GET', path: '/academic/programs', json: INSTITUTION_PROGRAMS_PAGE },
     { method: 'GET', path: '/academic/training-placements', json: INSTITUTION_TRAINING_PAGE },
     { method: 'GET', path: '/academic/learners', json: INSTITUTION_LEARNERS_PAGE },
