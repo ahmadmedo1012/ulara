@@ -1125,10 +1125,11 @@
      the bar is bottom-sticky above the fixed bottom-nav so a long
      paper never hides the way out. Overrides the components.css
      end-aligned block via the pages layer (later in cascade order). ── */
-  /* ≤640px: notifications.css reserves the nav clearance as the
-     scroller's own bottom padding (max(80px, 72px + safe area)) — the
-     sticky reference already sits at the nav's top edge, so 0 docks
-     the bar a hairline above it (measured: 8px gap, no overlap). */
+  /* r363 P4: base.css's ≤920px `.content` dock-band margin ends the
+     scroller at the nav's top edge, so the sticky reference pins there —
+     `bottom: 0` (patterns.css §oex) docks the bar a hairline above it.
+     (The retired notifications.css scroller-pad idiom — max(80px,
+     72px + safe area) — is documented at its own seat.) */
 
   /* ── Verdict lockup (plan-7): icon → title → grade → badge read as
      one tight group inside .empty-state's rhythm; the note and the

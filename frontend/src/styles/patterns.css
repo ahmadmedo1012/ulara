@@ -3304,17 +3304,26 @@ a.pf-row-link {
   @media (max-width: 920px) {
     .oex-submit-bar {
       position: sticky;
-      /* 641–920px: .content has no bottom padding — full nav clearance
-         (≈72px + safe area) so the bar docks above the bottom-nav. */
-      bottom: calc(72px + env(safe-area-inset-bottom) + var(--sp-2));
+      /* r363 P4: `bottom: 0` at every phone/table band. The shell's
+         ≤920px `.content` dock-band margin (base.css) now ends the
+         scroller's visible box AT the fixed bottom-nav's top edge, and
+         a sticky element pins against its containing block ∩ that
+         scrollport — so 0 docks the bar a hairline above the nav on
+         the whole ≤920px band. (The old `calc(72px + safe + --sp-2)`
+         offset lifted the pin ABOVE the viewport bottom to clear the
+         undocked dock — it would now float the bar ~74px off the dock
+         with a dead band under it.) */
+      bottom: 0;
       z-index: 20;
       padding: var(--sp-2) var(--sp-3);
       /* R313 (WP-F · D16): flat docked bar — hairline frame, no shadow. */
     }
   }
 
-  /* ≤640px: the scroller's own bottom padding reserves the nav clearance
-     (notifications.css idiom) — 0 docks the bar a hairline above it. */
+  /* ≤640px: same pin line as 641–920 — the dock-band margin owns the
+     clearance, so 0 keeps docking the bar a hairline above the nav
+     (the retired notifications.css scroller-pad idiom is documented at
+     its own seat). */
   @media (max-width: 640px) {
     .oex-submit-bar { bottom: 0; }
     .oex-qmap { flex-wrap: nowrap; overflow-x: auto; }

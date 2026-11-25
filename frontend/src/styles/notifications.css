@@ -438,9 +438,16 @@
 
 @media (max-width: 640px) {
   /* (r151c: `.bottom-nav { display: flex }` deleted — polish's ≤920px
-     overrides-layer `display: grid` always won.) */
-  /* Push content above the bottom nav so it isn't clipped */
-  .content { padding-bottom: max(80px, calc(var(--sp-11) + env(safe-area-inset-bottom))); } /* spacing-gate: allow — bottom clearance floor 80px for the floating toast stack */
+     overrides-layer `display: grid` always won.)
+     (r363 P4: the `.content { padding-bottom: max(80px, …) }` dock
+     clearance retired — base.css's ≤920px `.content` margin now
+     reserves the dock band STRUCTURALLY (the scroller's visible box
+     ends at the dock's top edge), so this end-of-scroll pad had become
+     a redundant 80px of scroll daylight that also mis-pinned sticky
+     bottom bars 80px above the dock. The toast stack this pad's gate
+     comment named is a fixed overlay above the dock and never read
+     this padding; the sticky bars (patterns.css .oex-submit-bar) pin
+     against the margin's edge and carry `bottom: 0`.) */
 }
 
 /* (r211: the reduced-motion box-shadow carve-out for the retired

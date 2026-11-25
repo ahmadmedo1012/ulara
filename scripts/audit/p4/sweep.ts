@@ -17,11 +17,16 @@
  * Detectors per cell (REUSED, not reinvented):
  *   · glyph-ink TEXT COLLISIONS, CLIPPED TEXT (must-read elements) and
  *     PAGE OVERFLOW — the r362-overlap COLLECT source, verbatim
- *     (Range.getClientRects ink boxes; fullscreen designed layers exempt).
+ *     (Range.getClientRects ink boxes; fullscreen designed layers exempt;
+ *     r363 P4: ink under a COLLAPSED <details> is exempt too — the
+ *     r362 known-limitation zone, closed at the detector with the
+ *     reason inline — Chromium keeps closed panes' boxes queryable).
  *   · r358 pageMetrics: horizontal overflow (P0), tap targets < 44px
  *     (P1, < 768 widths), soft-clipped text (P2), BLANK_PAGE (P0),
  *     ERROR_BANNER_MOUNTED (P0), retired-accent computed colors (P1),
- *     KPI stacked list (P2), raster/radius-shadow inventory (P2).
+ *     KPI stacked list (P2), raster/radius-shadow inventory (P2 —
+ *     honors the documented RADIUS_SHADOW_ALLOWS table, the *-gate
+ *     convention).
  *   · CONSOLE ERRORS + pageerrors (P1) and the loud 501 →
  *     MISSING_FIXTURE elevation (P1) — the zero-501 assertion.
  *   · axe-core serious/critical on wcag2a+wcag2aa (P1) — same floor as
@@ -365,6 +370,22 @@ const COLLECT_SRC = `(() => {
     if (cs.display === 'none' || cs.visibility === 'hidden' || Number(cs.opacity) === 0) continue;
     if (el.closest('[aria-hidden="true"]')) continue;
     if (inLayer(el)) continue;
+    /* r362's KNOWN LIMITATION, closed at the detector (r363 P4): inside
+       a COLLAPSED <details>, Chromium still keeps the hidden pane's
+       boxes queryable (the ::details-content slot lays its subtree out),
+       so a closed answer's text yields live glyph rects that intersect
+       ink the reader CAN see — /help over-reported for exactly this,
+       and the r363 P4 sweep's first run hit it on /quality/dashboard
+       @1440 (a closed «تنبيهات أخرى» alert and the closed KPI-ledger /
+       attendance-mix sections colliding with the visible CTA and each
+       other). A reader cannot read a closed pane, so its ink is exempt:
+       skip any text whose ancestor chain holds a closed <details> —
+       unless the text IS the summary (always visible). */
+    let inClosedDetails = false;
+    for (let a = el; a; a = a.parentElement) {
+      if (a.tagName === 'DETAILS' && a.open === false) { inClosedDetails = true; break; }
+    }
+    if (inClosedDetails && !el.closest('summary')) continue;
     const range = document.createRange();
     range.selectNodeContents(node);
     const rects = [...range.getClientRects()].filter((r) => r.width > 1 && r.height > 1);
@@ -494,6 +515,20 @@ const pageMetricsSrc = (curWidth: number): string => `(function () {
 
   /* r358 — retired-accent computed-color sweep */
   const RETIRED = ['#ea580c', '#f97316', '#c2410c', '#c43e16', '#ff6b3d', '#d97706', '#fbbf24'];
+  /* r363 P4 — documented radius/shadow allows, mirroring the
+     *-gate: allow convention of check-raw-css.sh AT this inventory
+     detector (an entry here = sanctioned inventory, not a defect).
+     Current entries, each with its reason:
+       · .sc-cursor-dot — the landing's pointer dot: the r363 P2
+         fidelity-gated copy of the reference's own .cursor-inner
+         anatomy — a 0.6rem 50% circle (ground truth committed in
+         docs/redesign/r350/reference/refsite.css; anatomy in
+         REFERENCE.md §6; verdict in r363 evidence
+         p2-sheets-critique.md §4). The radius-0 law governs SURFACES
+         (cards/controls/chrome); the pointer instrument is a measured
+         reference extraction, and the raw-css RADIUS axis already
+         sanctions 50% as the circle primitive. */
+  const RADIUS_SHADOW_ALLOWS = '.sc-cursor-dot';
   const retiredHits = [];
   const materials = [];
   for (const el of Array.from(document.querySelectorAll('body *'))) {
@@ -501,6 +536,7 @@ const pageMetricsSrc = (curWidth: number): string => `(function () {
     if (el instanceof HTMLElement && el.getClientRects().length && cs.visibility === 'visible' &&
         (cs.boxShadow !== 'none' || [cs.borderTopLeftRadius, cs.borderTopRightRadius,
           cs.borderBottomRightRadius, cs.borderBottomLeftRadius].some((r) => parseFloat(r) > 0))) {
+      if (el.matches(RADIUS_SHADOW_ALLOWS)) continue; /* documented allow — see the table above */
       materials.push({ element: el.tagName + '.' + Array.from(el.classList).join('.'), radius: cs.borderRadius, shadow: cs.boxShadow });
     }
     for (const prop of [cs.color, cs.backgroundColor, cs.borderTopColor]) {
