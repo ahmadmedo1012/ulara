@@ -313,7 +313,7 @@ export function TeacherDashboardPage() {
           the same four stats (tones semantic only: work waiting reads
           warning, healthy numbers stay neutral; the Arabic ٪ keeps the
           band's dimension strings distinct from any Latin-% reads). */}
-      <KpiBand
+      <KpiBand className="teacher-overview"
         items={[
           {
             index: '01',

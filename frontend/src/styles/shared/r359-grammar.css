@@ -841,3 +841,28 @@ a.pf-stat:hover { background: var(--surface-2); }
     min-block-size: var(--touch-floor, 44px);
   }
 }
+
+
+/* Dashboard readouts stay subordinate to the next action. */
+.admin-priorities .ledger-title { font-size: var(--fs-body); }
+.owner-live-status:has(.owner-live-meta-cell) { flex-wrap: wrap; }
+.owner-live-status .owner-live-meta:has(.owner-live-meta-cell) {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1) var(--sp-3);
+  white-space: normal;
+}
+.owner-live-meta-cell { display: inline-flex; align-items: baseline; gap: var(--sp-1); }
+@media (max-width: 640px) {
+  .sg-pad-in .filter-bar button.pill { min-block-size: var(--touch-floor, 44px); }
+  .teacher-overview .sg-kpi {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-content: start;
+    align-items: baseline;
+    padding: var(--sp-2) var(--sp-3);
+  }
+  .teacher-overview .sg-kpi-top, .teacher-overview .sg-kpi-delta { grid-column: 1 / -1; }
+  .teacher-overview .sg-kpi-value { font-size: var(--fs-h2); }
+  .r319s-page .dash-section:has(.r319s-term) + section { margin-block-start: calc(-1 * var(--sp-2)); }
+}

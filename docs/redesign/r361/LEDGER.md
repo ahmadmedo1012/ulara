@@ -88,7 +88,15 @@ P2 — The entrance now shares the responsive hero vector and reveals one image 
 
 P5 — After lint passed in Actions, mobile generated-code verification exposed stale favicon bytes. Regenerated from the canonical mark; icons, splash and token drift checks pass [locally](evidence/mobile-favicon.txt). Earlier native build 28eafbc was published to latest; this is not yet final-HEAD evidence.
 
-NEXT: Confirm native workflows and emulator screenshots after the favicon correction.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:f7e58e5c097a5226c912effb9bce609d8a7666c6c1b9a63ab63b54e07c3b9e7d -->
+
+P1 — Reworked the four outstanding dashboard compositions and captured a second comparison [with observations](evidence/dashboard-revision.md). 16 scoped cells: 0 P0, 0 P1, 4 P2 round-mark findings. The capture tool now accepts an immutable build directory, so concurrent builds cannot delete its chunks. Previous item a88e6f0.
+
+NEXT: Retest material and keyboard fixes; include the list, detail, form and audit sheets.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 

@@ -55,6 +55,7 @@ const { chromium } = require('playwright') as typeof import('playwright');
 const argv = process.argv.slice(2);
 const arg = (n: string, d: string) => { const i = argv.indexOf(`--${n}`); return i >= 0 && argv[i + 1] ? argv[i + 1] : d; };
 const PORT = Number(arg('port', '5198'));
+const DIST = resolve(ROOT, arg('dist', 'frontend/dist'));
 const BASE_URL = `http://127.0.0.1:${PORT}`;
 const EVIDENCE = resolve(ROOT, arg('output', 'docs/redesign/r358/evidence'));
 const CAPTURES = resolve(EVIDENCE, 'captures');
@@ -173,9 +174,9 @@ function killServer() {
   if (serverProc?.pid) { try { process.kill(-serverProc.pid, 'SIGTERM'); } catch { /* already gone */ } }
 }
 async function bootPreview() {
-  console.log(`[BOOT] vite preview on :${PORT} (needs frontend/dist)`);
-  serverProc = spawn('npx', ['vite', 'preview', '--port', String(PORT), '--strictPort', '--host', '127.0.0.1'], {
-    cwd: resolve(ROOT, 'frontend'), detached: true, stdio: ['ignore', 'pipe', 'pipe'], shell: true,
+  console.log(`[BOOT] vite preview on :${PORT} (build: ${DIST})`);
+  serverProc = spawn(process.execPath, [join(dirname(require.resolve('vite/package.json')), 'bin/vite.js'), 'preview', '--outDir', DIST, '--port', String(PORT), '--strictPort', '--host', '127.0.0.1'], {
+    cwd: resolve(ROOT, 'frontend'), detached: true, stdio: ['ignore', 'pipe', 'pipe'],
   });
   process.on('exit', killServer);
   const t0 = Date.now();
@@ -431,7 +432,11 @@ async function main() {
           try {
             await page.evaluate(axeScript);
             const axeResult = await page.evaluate(async () => {
-              return await (window as unknown as { axe: { run: (n: Document, o: object) => Promise<{ violations: { id: string; impact: string; nodes: unknown[] }[] }> } }).axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] } });
+              const scan = (window as unknown as { axe: { run: (n: Document, o: object) => Promise<{ violations: { id: string; impact: string; nodes: unknown[] }[] }> } }).axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] } });
+              let timer: number | undefined;
+              try { return await Promise.race([scan, new Promise<never>((_, reject) => {
+                timer = window.setTimeout(() => reject(new Error('axe timeout after 20s')), 20000);
+              })]); } finally { window.clearTimeout(timer); }
             });
             const axeViolations = (axeResult.violations || []).filter(v => ['serious', 'critical'].includes(v.impact)).map(v => ({ id: v.id, impact: v.impact, nodesCount: v.nodes.length }));
             if (axeViolations.length > 0) evaluation.push({ type: 'AXE_VIOLATIONS', severity: 'P1', violations: axeViolations });
@@ -443,7 +448,7 @@ async function main() {
             try {
               const roleDir = resolve(CAPTURES, roleKey.toLowerCase());
               mkdirSync(roleDir, { recursive: true });
-              await page.screenshot({ path: join(roleDir, `${routeDef.name}-${width}-${theme}.jpg`), type: 'jpeg', quality: 75, fullPage: width === 390 && routeDef.path === '/' });
+              await page.screenshot({ path: join(roleDir, `${routeDef.name}-${width}-${theme}.jpg`), type: 'jpeg', timeout: 15000, quality: 75, fullPage: width === 390 && routeDef.path === '/' });
               visuals.push(await visualMetrics(page, routeDef.path, width));
             } catch (e) {
               defects.push({ route: routeDef.basePath, role: routeDef.role, width, theme, type: 'INSTRUMENT_ERROR', severity: 'P2', message: `visual-metrics/shot: ${String((e as Error).message).slice(0, 140)}` });

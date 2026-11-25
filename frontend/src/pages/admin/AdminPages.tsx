@@ -218,7 +218,7 @@ function ActionStrip() {
   return (
     <LedgerPanel
       title="يحتاج انتباهك"
-      zone="rose"
+      className="admin-priorities"
       tag={countAr(rows.length, ['بند واحد', 'بندان', 'بنود', 'بنداً'])}
       ariaLabel="حالات تحتاج انتباهك"
     >
