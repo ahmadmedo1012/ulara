@@ -110,10 +110,37 @@ the app pass, and the release. Every DONE line carries command output or an imag
   spec rides the same hero-readiness sentinel (248/249 passed on 1153c2a —
   the one failure was that same CI window).
 
-NEXT: P2's remainder — the top bar/nav choreography (no text collisions at
-any width, header hide/show, overlay-menu, active-link indicator, anchor
-easing, scroll progress — to the reference's timings) and the cursor pass,
-each with a frame-sequence sheet; then the landing's own frame-sequence walk
-(the P1 suspects the owner named: empty bands, edge-tab collisions, at real
-scroll speeds).
+- **P5-a — the soak lane DISPATCHED + P6's first seats.** `mobile-soak.yml`
+  (self-contained, dispatch-only): a real dev-client on the API-34 KVM
+  emulator through 9 network-chaos rounds — airplane toggles via adb (round 4
+  dwells 100s, beyond the deliberately-shortened 90s access TTL — the regain
+  MUST refresh with an expired access), throttled/heavy links via
+  `adb emu network` — asserting after every round that the student dashboard
+  stands. The compressed clock: `JWT_ACCESS_TTL`/`JWT_REFRESH_TTL` are now env
+  knobs (schema-validated ms-strings; production defaults byte-identical
+  '15m'/'7d'; the full backend suite green with them — 2,212 passed). The
+  first dispatch died on an invalid expo flag; the fixed lane re-dispatched on
+  `3e04d78` (run in the evidence note).
+- **P6 — the contract-check phantom + CI GREEN.** The Mobile lane's red on
+  main was a checker false positive: `client.test.ts`'s `api('/student/dashboard')`
+  fixtures leaked a phantom endpoint (the real call is `/me/dashboard`); the
+  consumed scan now skips test files — drift 0. **CI green on `894a084`**
+  (the first fully green CI run this round: the e2e re-pins + the honest-label
+  fix + the r305 de-flake + the drag sentinels all landed). The P6 refresh
+  audit: the limiter already skips successful refreshes (a legitimate client
+  never 429s), the D3 sliding-session rotation policy + its 42 tests stand,
+  the TTLs are knobs.
+- **Verify (midpoint).** `bash scripts/verify.sh --fast`: **FAST PASS** after
+  the documented stylelint baseline re-baseline (524→531 — the diet's round-5
+  sheet rides the r360 phone-diet `!important` idiom; the one-line reason is
+  in the baseline's `_doc`). The full belt ran through the session as sharded
+  e2e (248/248), the full vitest (252 files), and the full backend (2,212
+  tests) — the end-of-round full verify rides the final commit.
+
+NEXT: the soak's verdict (the re-dispatched run on `3e04d78`; if a round
+fails, the forensics artifact tells which class), then the nav/cursor
+verification sheets (P2's remainder), the capture matrix + P3/P4 sweeps, the
+release bits (signed APK on `latest` + unsigned IPA from the final commit),
+the remaining P6 documented-but-missing audit, and the final full verify +
+report.
 
