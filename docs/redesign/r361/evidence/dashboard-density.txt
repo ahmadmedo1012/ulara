@@ -1,0 +1,28 @@
+Dashboard census: authenticated Chromium, 1440x900, real settled DOM with local fixtures.
+Before -> after, body.innerText words (same unfrozen UTC clock; light and dark agreed):
+STUDENT 242 -> 177; TEACHER 238 -> 161; ADMIN 224 -> 169; QUALITY 254 -> 177; OWNER 228 -> 172.
+The separate existing 180-word Playwright gate uses its own frozen clock and passed all five roles.
+R319 material + R351 shell tests: 29 passed. Every disclosure opened using Enter while focused;
+its body occupied more than 44px and the same key closed it. 20 real viewport captures.
+Related unit tests initially 196 passed / 3 failed. A duplicated schedule heading and a real
+layout import inside the route test mock were fixed. The two affected files then passed 34/34.
+
+Reference comparison: inspect density-{student,teacher,admin,quality,owner}.webp.
+Each sheet pairs the nearest reference composition with 1440x900 / 390x844, light and dark.
+The reference is a light composition; the same crop is retained on dark comparison rows.
+* Student: the semester ruler, next lecture with its CTA, and today's commitments remain the
+  visual anchors. Mastery and term readings now have their own named rows below. The strong
+  inverted band does more work than any of the individual rules; the layout has a clear entry.
+* Teacher: title and four KPI columns align to the grading queue. The schedule and follow-up
+  details use quiet rules; the action to grade remains visible. Mobile condenses the figures
+  into pairs and keeps the action out of the phone dock.
+* Admin: the attention list and college distribution remain in the first reading sequence.
+  Deferring the six-month research breakdown keeps the grid orderly without changing the axes.
+* Quality: the first comparison stranded the alerts in the narrow rail. Moved alerts into the
+  first, wider RTL column (also first on phones); charts and their data tables open beside it.
+  Critical items in the three-alert preview stay visible. Other preview alerts expand in place.
+* Owner: operational signals, attention and totals still lead. Historical events open in place.
+  The ink and paper reverse between themes and the user distribution retains its royal segment.
+The additions use a single hairline, the existing text/royal tokens, native RTL markers and
+a 44px minimum row. They introduce no shadow, rounded panel, font change or scripted animation.
+Clean production build: total 862.6 KB gzip; entry 30.1 KB; PDF 95.7 KB. Ceiling 866 KB.

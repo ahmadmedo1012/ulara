@@ -451,6 +451,16 @@ export function QualityDashboardPage() {
   const paperDone = (d.papers.GRADED ?? 0) + (d.papers.PUBLISHED ?? 0);
   const paperProgress = paperTotal > 0 ? (paperDone / paperTotal) * 100 : 0;
 
+  // Preserve the dashboard's three-alert preview. Keep critical alerts in
+  // the overview; the reader can expand other recent alerts in place.
+  const previewAlerts = al.data?.alerts.slice(0, 3) ?? [];
+  const visibleAlerts = previewAlerts.filter((a, i) => i === 0 || a.severity === 'critical');
+  const otherAlerts = previewAlerts.filter((a) => !visibleAlerts.includes(a));
+  const renderAlert = (a: QualityAlert) => (
+    <AlertRow key={a.id} color={SEVERITY_TONE[a.severity]} icon={CATEGORY_ICON[a.category]}
+      title={a.title} description={a.description} time={formatRelativeArShort(a.occurredAt)} />
+  );
+
   return (
     <div className="page">
       <div className="hr-scope">
@@ -508,116 +518,9 @@ export function QualityDashboardPage() {
         />
       </SheetSection>
 
-      {/* R359 (A3): the LATERAL SPLIT — the reference's plan/text
-          division (7:5 with a full-height hairline). Main column = the
-          weekly activity chart + the honest KPI ledger; side rail =
-          the attendance mix + alerts. Charts stay ChartFrame-wrapped
-          with their sr-only tables. */}
+      {/* Urgent work leads in reading order; secondary charts share the other column. */}
       <div className="sg-split">
         <div>
-          <SheetSection index="02" caption="WEEKLY ACTIVITY" title="النشاط الأسبوعي" className="qlt-sec">
-            <ChartFrame
-              ariaLabel={`مخطط خطّي للنشاط الأسبوعي — جلسات نشطة يومياً${e.weeklyActiveEstimated ? ' (منحنى تقديري)' : ''}`}
-              summary={
-                e.weeklyActive.length > 0
-                  ? `الذروة ${countAr(Math.max(...e.weeklyActive), ['جلسة واحدة', 'جلستان', 'جلسات', 'جلسة'])}`
-                  : 'لا بيانات نشاط لهذا الأسبوع.'
-              }
-              table={{
-                caption: 'النشاط الأسبوعي — جلسات نشطة يومياً',
-                columns: ['اليوم', 'جلسات'],
-                rows: WEEKDAY_NAMES_AR.map((day, i) => [day, e.weeklyActive[i] ?? 0]),
-              }}
-              height={220}
-            >
-              <Line
-                key={themeKey}
-                aria-hidden="true"
-                data={{
-                  labels: WEEKDAY_NAMES_AR,
-                  datasets: [{
-                    label: 'مستخدم نشط',
-                    data: e.weeklyActive,
-                    borderColor: cc.accent,
-                    backgroundColor: `color-mix(in srgb, ${cc.accent} 12%, transparent)`,
-                    tension: 0.4,
-                    fill: true,
-                    borderWidth: 2,
-                    pointRadius: 3,
-                    pointHoverRadius: 5,
-                    pointBackgroundColor: cc.accent,
-                    ...(e.weeklyActiveEstimated ? { showLine: false, fill: false, pointRadius: 5, pointHoverRadius: 7 } : {}),
-                  }],
-                }}
-                options={opts}
-              />
-            </ChartFrame>
-          </SheetSection>
-
-          {/* 4C-b: the honest KPI ledger — the four payload-derived
-              progressbars as a calm list (hairline rows, mono tabular
-              values, thin rails). Labels/values/aria contract unchanged
-              (WS-F6 pins the four progressbar names). */}
-          <SheetSection index="03" caption="KPI LEDGER" title="مؤشرات الجودة الأساسية" className="qlt-sec">
-            <div className="qlt-kpi-ledger">
-              <ProgressBar value={attendance.presentRate} label="معدل الحضور التراكمي" ariaLabel="معدل الحضور التراكمي" color="var(--success)" />
-              <ProgressBar value={e.videos?.completionRate ?? 0} label="معدل إكمال المحاضرات" ariaLabel="معدل إكمال المحاضرات" color="var(--accent)" />
-              <ProgressBar value={enrollmentRate} label="معدل تسجيل الطلاب في المقرّرات" ariaLabel="معدل تسجيل الطلاب في المقرّرات" color="var(--brand-purple)" />
-              <ProgressBar value={paperProgress} label="نسبة البحوث المكتملة التقييم" ariaLabel="نسبة البحوث المكتملة التقييم" color="var(--gold)" />
-            </div>
-          </SheetSection>
-        </div>
-
-        <div>
-          <SheetSection index="04" caption="ATTENDANCE MIX" title="توزيع الحضور" className="qlt-sec">
-          {/* Degenerate distribution (5-A8 P2-4): one ProgressBar + the
-              honest note beats a solid ring that carries no signal. */}
-          {attendanceDominant ? (
-            <div className="flex-col gap-4">
-              <ProgressBar value={attendance.presentRate} label="حضور" ariaLabel="نسبة الحضور" color="var(--success)" />
-              <p className="text-sm text-muted">
-                تأخير <bdi>{Math.round(attendance.lateRate)}%</bdi> · غياب <bdi>{Math.round(attendance.absentRate)}%</bdi>
-              </p>
-              <p className="text-xs text-subtle">
-                كل السجلات تقريباً بوضع واحد؛ يظهر المخطط الدائريّ فور تنوّع حالات الحضور.
-              </p>
-            </div>
-          ) : (
-          <ChartFrame
-            ariaLabel={`توزيع الحضور: حضور ${Math.round(attendance.presentRate)}% وتأخر ${Math.round(attendance.lateRate)}% وغياب ${Math.round(attendance.absentRate)}%`}
-            table={{
-              caption: 'توزيع الحضور',
-              columns: ['الحالة', 'النسبة'],
-              rows: [
-                ['حضور', Math.round(attendance.presentRate)],
-                ['تأخر', Math.round(attendance.lateRate)],
-                ['غياب', Math.round(attendance.absentRate)],
-              ],
-            }}
-            height={220}
-          >
-            <Doughnut
-              key={themeKey}
-              aria-hidden="true"
-              data={{
-                labels: ['حضور', 'تأخر', 'غياب'],
-                datasets: [{
-                  data: [attendance.presentRate, attendance.lateRate, attendance.absentRate],
-                  /* R359 (A3 · the one-signal law): the mix rides the
-                   * chart dataviz register — royal for the hero series
-                   * (حضور), the hairline grey + ink neutrals for the
-                   * rest; no green/gold/red rainbow on the sheet. */
-                  backgroundColor: [cc.accent, cc.grid, cc.strongText],
-                  borderColor: cc.surface,
-                  borderWidth: 2,
-                }],
-              }}
-              options={radialOptions({ legend: true, cutout: '65%' })}
-            />
-          </ChartFrame>
-          )}
-          </SheetSection>
-
           <SheetSection
             index="05"
             caption="ALERTS"
@@ -642,17 +545,13 @@ export function QualityDashboardPage() {
           ) : (
             <>
               <div className="qlt-alert-list">
-                {/* Server sorts critical-first; show the top 3 and link out. */}
-                {al.data.alerts.slice(0, 3).map((a) => (
-                  <AlertRow
-                    key={a.id}
-                    color={SEVERITY_TONE[a.severity]}
-                    icon={CATEGORY_ICON[a.category]}
-                    title={a.title}
-                    description={a.description}
-                    time={formatRelativeArShort(a.occurredAt)}
-                  />
-                ))}
+                {visibleAlerts.map(renderAlert)}
+                {otherAlerts.length > 0 && (
+                  <details className="dash-disclosure">
+                    <summary>تنبيهات أخرى ({formatNum(otherAlerts.length)})</summary>
+                    {otherAlerts.map(renderAlert)}
+                  </details>
+                )}
               </div>
               <Link to="/quality/alerts" className="btn ghost sm hr-cta" style={{ marginTop: 'var(--sp-3)' }}>
                 <Icon icon={ArrowLeft} size={13} />
@@ -661,6 +560,116 @@ export function QualityDashboardPage() {
             </>
           )}
           </SheetSection>
+        </div>
+        <div>
+          <details className="dash-disclosure">
+            <summary>النشاط الأسبوعي</summary>
+            <SheetSection index="02" caption="WEEKLY ACTIVITY" title="النشاط الأسبوعي" className="qlt-sec">
+              <ChartFrame
+                ariaLabel={`مخطط خطّي للنشاط الأسبوعي — جلسات نشطة يومياً${e.weeklyActiveEstimated ? ' (منحنى تقديري)' : ''}`}
+                summary={
+                  e.weeklyActive.length > 0
+                    ? `الذروة ${countAr(Math.max(...e.weeklyActive), ['جلسة واحدة', 'جلستان', 'جلسات', 'جلسة'])}`
+                    : 'لا بيانات نشاط لهذا الأسبوع.'
+                }
+                table={{
+                  caption: 'النشاط الأسبوعي — جلسات نشطة يومياً',
+                  columns: ['اليوم', 'جلسات'],
+                  rows: WEEKDAY_NAMES_AR.map((day, i) => [day, e.weeklyActive[i] ?? 0]),
+                }}
+                height={220}
+              >
+                <Line
+                  key={themeKey}
+                  aria-hidden="true"
+                  data={{
+                    labels: WEEKDAY_NAMES_AR,
+                    datasets: [{
+                      label: 'مستخدم نشط',
+                      data: e.weeklyActive,
+                      borderColor: cc.accent,
+                      backgroundColor: `color-mix(in srgb, ${cc.accent} 12%, transparent)`,
+                      tension: 0.4,
+                      fill: true,
+                      borderWidth: 2,
+                      pointRadius: 3,
+                      pointHoverRadius: 5,
+                      pointBackgroundColor: cc.accent,
+                      ...(e.weeklyActiveEstimated ? { showLine: false, fill: false, pointRadius: 5, pointHoverRadius: 7 } : {}),
+                    }],
+                  }}
+                  options={opts}
+                />
+              </ChartFrame>
+            </SheetSection>
+          </details>
+
+          {/* 4C-b: the honest KPI ledger — the four payload-derived
+              progressbars as a calm list (hairline rows, mono tabular
+              values, thin rails). Labels/values/aria contract unchanged
+              (WS-F6 pins the four progressbar names). */}
+          <details className="dash-disclosure">
+            <summary>تفصيل المؤشرات</summary>
+            <SheetSection index="03" caption="KPI LEDGER" title="مؤشرات الجودة الأساسية" className="qlt-sec">
+              <div className="qlt-kpi-ledger">
+                <ProgressBar value={attendance.presentRate} label="معدل الحضور التراكمي" ariaLabel="معدل الحضور التراكمي" color="var(--success)" />
+                <ProgressBar value={e.videos?.completionRate ?? 0} label="معدل إكمال المحاضرات" ariaLabel="معدل إكمال المحاضرات" color="var(--accent)" />
+                <ProgressBar value={enrollmentRate} label="معدل تسجيل الطلاب في المقرّرات" ariaLabel="معدل تسجيل الطلاب في المقرّرات" color="var(--brand-purple)" />
+                <ProgressBar value={paperProgress} label="نسبة البحوث المكتملة التقييم" ariaLabel="نسبة البحوث المكتملة التقييم" color="var(--gold)" />
+              </div>
+            </SheetSection>
+          </details>
+          <details className="dash-disclosure">
+            <summary>توزيع الحضور</summary>
+            <SheetSection index="04" caption="ATTENDANCE MIX" title="توزيع الحضور" className="qlt-sec">
+            {/* Degenerate distribution (5-A8 P2-4): one ProgressBar + the
+                honest note beats a solid ring that carries no signal. */}
+            {attendanceDominant ? (
+              <div className="flex-col gap-4">
+                <ProgressBar value={attendance.presentRate} label="حضور" ariaLabel="نسبة الحضور" color="var(--success)" />
+                <p className="text-sm text-muted">
+                  تأخير <bdi>{Math.round(attendance.lateRate)}%</bdi> · غياب <bdi>{Math.round(attendance.absentRate)}%</bdi>
+                </p>
+                <p className="text-xs text-subtle">
+                  كل السجلات تقريباً بوضع واحد؛ يظهر المخطط الدائريّ فور تنوّع حالات الحضور.
+                </p>
+              </div>
+            ) : (
+            <ChartFrame
+              ariaLabel={`توزيع الحضور: حضور ${Math.round(attendance.presentRate)}% وتأخر ${Math.round(attendance.lateRate)}% وغياب ${Math.round(attendance.absentRate)}%`}
+              table={{
+                caption: 'توزيع الحضور',
+                columns: ['الحالة', 'النسبة'],
+                rows: [
+                  ['حضور', Math.round(attendance.presentRate)],
+                  ['تأخر', Math.round(attendance.lateRate)],
+                  ['غياب', Math.round(attendance.absentRate)],
+                ],
+              }}
+              height={220}
+            >
+              <Doughnut
+                key={themeKey}
+                aria-hidden="true"
+                data={{
+                  labels: ['حضور', 'تأخر', 'غياب'],
+                  datasets: [{
+                    data: [attendance.presentRate, attendance.lateRate, attendance.absentRate],
+                    /* R359 (A3 · the one-signal law): the mix rides the
+                     * chart dataviz register — royal for the hero series
+                     * (حضور), the hairline grey + ink neutrals for the
+                     * rest; no green/gold/red rainbow on the sheet. */
+                    backgroundColor: [cc.accent, cc.grid, cc.strongText],
+                    borderColor: cc.surface,
+                    borderWidth: 2,
+                  }],
+                }}
+                options={radialOptions({ legend: true, cutout: '65%' })}
+              />
+            </ChartFrame>
+            )}
+            </SheetSection>
+          </details>
         </div>
       </div>
       </div>

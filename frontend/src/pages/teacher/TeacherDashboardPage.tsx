@@ -366,7 +366,10 @@ export function TeacherDashboardPage() {
               gutter grammar the student dashboard's SectionBar speaks. */}
           <PendingGradingQueue entries={d.pendingGrading} />
         </section>
-        <TodayLectures />
+        <details className="dash-disclosure">
+          <summary>جدول المحاضرات</summary>
+          <TodayLectures />
+        </details>
       </div>
 
       {/* r351 A2 (Q3): the at-risk shortcuts section is RETIRED — its
@@ -378,101 +381,104 @@ export function TeacherDashboardPage() {
           screen readers (aria-label + sr-only data table, audit 0-f).
           R359: the chart rides the [01] PERFORMANCE TREND frame (the
           ChartFrame stays — the section is the paper around it). */}
-      <SheetSection
-        index="01"
-        caption="PERFORMANCE TREND"
-        title="الأداء والحضور"
-        aside={<span className="sg-label">آخر ستة أسابيع</span>}
-      >
-        {!coverage.drawable ? (
-          <>
+      <details className="dash-disclosure">
+        <summary>الأداء والمتابعات</summary>
+        <SheetSection
+          index="01"
+          caption="PERFORMANCE TREND"
+          title="الأداء والحضور"
+          aside={<span className="sg-label">آخر ستة أسابيع</span>}
+        >
+          {!coverage.drawable ? (
+            <>
+              <EmptyState
+                icon={Activity}
+                title="لا تتوفّر بيانات كافية بعد لرسم الاتجاه"
+                description={
+                  coverage.weeksRecorded === 0
+                    ? 'لم يُسجَّل أي أسبوع حتى الآن — يُرسم المخطط تلقائياً بعد اكتمال أسبوعين على الأقل.'
+                    : `${countAr(coverage.weeksRecorded, ['أسبوع واحد مسجَّل', 'أسبوعان مسجَّلان', 'أسابيع مسجَّلة', 'أسبوعاً مسجَّلاً'])} حتى الآن — يُرسم المخطط تلقائياً بعد اكتمال أسبوعين على الأقل.`
+                }
+              />
+              {/* r351 A2 (Q3): the not-enough-data fallback keeps its
+                  one honest line — the sr table retired with the chart's
+                  own table above. */}
+              <div className="visually-hidden">
+                <p>لا تتوفّر بيانات كافية بعد لرسم المخطط الخطي.</p>
+              </div>
+            </>
+          ) : (
+            <ChartFrame
+              ariaLabel="مخطط خطي لمتوسط الأداء ونسبة الحضور خلال الأسابيع الستة الماضية"
+              summary="الأداء مقابل الحضور."
+              height={240}
+
+            >
+              <Line
+                key={themeKey}
+                data={trendChartData(d.trend)}
+                options={{
+                  ...baseOpts,
+                  scales: {
+                    ...baseOpts.scales,
+                    y: { ...baseOpts.scales!.y, min: 0, max: 100 },
+                  },
+                }}
+              />
+            </ChartFrame>
+          )}
+        </SheetSection>
+
+        {/* Filter toolbar — the FilterBar pattern (r210): one calm row,
+            pills keep their aria-pressed state, the full-notifications
+            link rides the trailing slot. */}
+        <FilterBar
+          filters={
+            <div className="flex items-center gap-2" role="group" aria-label="تصفية التيار">
+              <Icon icon={Filter} size={14} className="text-subtle" />
+              <span className="text-xs text-subtle">تصفية:</span>
+              {FILTER_OPTIONS.map((o) => (
+                <button
+                  key={o.value}
+                  type="button"
+                  className={`pill${filter === o.value ? ' on' : ''}`}
+                  aria-pressed={filter === o.value}
+                  onClick={() => setFilter(o.value)}
+                >
+                  {o.label}
+                  <span className="filter-pill-count">{filterCounts[o.value]}</span>
+                </button>
+              ))}
+            </div>
+          }
+          trailing={
+            <Link to="/teacher/alerts" className="btn ghost sm">
+              <Icon icon={Bell} size={13} />
+              الإشعارات
+            </Link>
+          }
+        />
+
+        {/* The feed — the RowList grammar: one calm surface of rows, the
+            honest empty state names the win. */}
+        <RowList
+          aria-label="تيار المتابعة"
+          empty={
             <EmptyState
-              icon={Activity}
-              title="لا تتوفّر بيانات كافية بعد لرسم الاتجاه"
-              description={
-                coverage.weeksRecorded === 0
-                  ? 'لم يُسجَّل أي أسبوع حتى الآن — يُرسم المخطط تلقائياً بعد اكتمال أسبوعين على الأقل.'
-                  : `${countAr(coverage.weeksRecorded, ['أسبوع واحد مسجَّل', 'أسبوعان مسجَّلان', 'أسابيع مسجَّلة', 'أسبوعاً مسجَّلاً'])} حتى الآن — يُرسم المخطط تلقائياً بعد اكتمال أسبوعين على الأقل.`
+              icon={CheckCircle2}
+              title="لا متطلبات الآن — أحسنت!"
+              action={
+                <Link to="/teacher/intelligence" className="btn outline sm">
+                  <Icon icon={Users} size={13} />
+                  استعرض أداء مقرّراتك
+                </Link>
               }
             />
-            {/* r351 A2 (Q3): the not-enough-data fallback keeps its
-                one honest line — the sr table retired with the chart's
-                own table above. */}
-            <div className="visually-hidden">
-              <p>لا تتوفّر بيانات كافية بعد لرسم المخطط الخطي.</p>
-            </div>
-          </>
-        ) : (
-          <ChartFrame
-            ariaLabel="مخطط خطي لمتوسط الأداء ونسبة الحضور خلال الأسابيع الستة الماضية"
-            summary="الأداء مقابل الحضور."
-            height={240}
-            
-          >
-            <Line
-              key={themeKey}
-              data={trendChartData(d.trend)}
-              options={{
-                ...baseOpts,
-                scales: {
-                  ...baseOpts.scales,
-                  y: { ...baseOpts.scales!.y, min: 0, max: 100 },
-                },
-              }}
-            />
-          </ChartFrame>
-        )}
-      </SheetSection>
-
-      {/* Filter toolbar — the FilterBar pattern (r210): one calm row,
-          pills keep their aria-pressed state, the full-notifications
-          link rides the trailing slot. */}
-      <FilterBar
-        filters={
-          <div className="flex items-center gap-2" role="group" aria-label="تصفية التيار">
-            <Icon icon={Filter} size={14} className="text-subtle" />
-            <span className="text-xs text-subtle">تصفية:</span>
-            {FILTER_OPTIONS.map((o) => (
-              <button
-                key={o.value}
-                type="button"
-                className={`pill${filter === o.value ? ' on' : ''}`}
-                aria-pressed={filter === o.value}
-                onClick={() => setFilter(o.value)}
-              >
-                {o.label}
-                <span className="filter-pill-count">{filterCounts[o.value]}</span>
-              </button>
-            ))}
-          </div>
-        }
-        trailing={
-          <Link to="/teacher/alerts" className="btn ghost sm">
-            <Icon icon={Bell} size={13} />
-            الإشعارات
-          </Link>
-        }
-      />
-
-      {/* The feed — the RowList grammar: one calm surface of rows, the
-          honest empty state names the win. */}
-      <RowList
-        aria-label="تيار المتابعة"
-        empty={
-          <EmptyState
-            icon={CheckCircle2}
-            title="لا متطلبات الآن — أحسنت!"
-            action={
-              <Link to="/teacher/intelligence" className="btn outline sm">
-                <Icon icon={Users} size={13} />
-                استعرض أداء مقرّراتك
-              </Link>
-            }
-          />
-        }
-      >
-        {visible.map((item) => <FeedRow key={item.id} item={item} />)}
-      </RowList>
+          }
+        >
+          {visible.map((item) => <FeedRow key={item.id} item={item} />)}
+        </RowList>
+      </details>
     </PageFrame>
     </div>
   );

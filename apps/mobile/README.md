@@ -98,7 +98,26 @@ The checksum verifies the bytes; the release body records the source commit.
 
 <!-- coderabbit-ai-generated-section:v1:ce3ecb25cebd358dcfb0dfdc8254b2e0af86aa567570b3aae455e67ae388e0a7 -->
 
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:c4cd427ca5104c1d0262a4eb2ace90afee48d003f73d8fd45f5efdddb34cdc96 -->
+
 - [Mobile](../../.github/workflows/mobile.yml) lists source gates and emulator jobs separately. To verify a device build, open the five-role emulator job and its screenshots. A skipped job produces no device evidence, even when the overall workflow is green. The signed APK and SideStore IPA have separate build receipts.
+
+For a manual display check, open the screen with a synthetic account on a
+disposable Android emulator. From `apps/mobile`, run:
+
+```sh
+bash scripts/capture-device-display.sh emulator-5554 /tmp/ulara-display-student
+```
+
+Use the serial from `adb devices` and a new directory per role. Inspect the PNG
+and matching text record for the baseline, 320 dp, 200% text, 768 dp and rotation
+request. The manifest requests portrait: a rotation setting alone does not prove
+a landscape layout. Check the rendered image. The script restores the previous
+display, font and rotation settings on exit.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 

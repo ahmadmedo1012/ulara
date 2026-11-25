@@ -575,37 +575,40 @@ export function OwnerDashboardPage() {
           r253: the 4-column table becomes dense RowList rows — one row
           per event (action · actor · resource · relative time), the
           same facts without the grid. */}
-      <Card title="الأحداث الأخيرة" icon={Clock}>
-        {activity.isPending ? (
-          <ListSkeleton rows={6} />
-        ) : activity.isError ? (
-          <ErrorState error={activity.error} onRetry={() => activity.refetch()} />
-        ) : events.length === 0 ? (
-          <EmptyState illustration="empty-list" title="لا توجد أحداث بعد" description="ستظهر أحدث العمليّات هنا فور حدوثها." icon={FileWarning} />
-        ) : (
-          <RowList aria-label="الأحداث الأخيرة" density="compact">
-            {events.map((ev) => (
-              <RowItem
-                key={ev.id}
-                title={actionLabel(ev.action)}
-                meta={(
-                  <>
-                    {ev.user ? `${ev.user.firstName} ${ev.user.lastName}` : 'النظام'}
-                    {ev.resourceType && (
-                      <> · {resourceLabel(ev.resourceType)}</>
-                    )}
-                  </>
-                )}
-                trailing={
-                  <span className="owner-cell-muted" title={formatDate(ev.createdAt, { dateStyle: 'medium', timeStyle: 'short' })}>
-                    {formatRelativeAr(ev.createdAt)}
-                  </span>
-                }
-              />
-            ))}
-          </RowList>
-        )}
-      </Card>
+      <details className="dash-disclosure">
+        <summary>الأحداث الأخيرة</summary>
+        <Card title="الأحداث الأخيرة" icon={Clock}>
+          {activity.isPending ? (
+            <ListSkeleton rows={6} />
+          ) : activity.isError ? (
+            <ErrorState error={activity.error} onRetry={() => activity.refetch()} />
+          ) : events.length === 0 ? (
+            <EmptyState illustration="empty-list" title="لا توجد أحداث بعد" description="ستظهر أحدث العمليّات هنا فور حدوثها." icon={FileWarning} />
+          ) : (
+            <RowList aria-label="الأحداث الأخيرة" density="compact">
+              {events.map((ev) => (
+                <RowItem
+                  key={ev.id}
+                  title={actionLabel(ev.action)}
+                  meta={(
+                    <>
+                      {ev.user ? `${ev.user.firstName} ${ev.user.lastName}` : 'النظام'}
+                      {ev.resourceType && (
+                        <> · {resourceLabel(ev.resourceType)}</>
+                      )}
+                    </>
+                  )}
+                  trailing={
+                    <span className="owner-cell-muted" title={formatDate(ev.createdAt, { dateStyle: 'medium', timeStyle: 'short' })}>
+                      {formatRelativeAr(ev.createdAt)}
+                    </span>
+                  }
+                />
+              ))}
+            </RowList>
+          )}
+        </Card>
+      </details>
 
       {/* Quick Actions — WS-F6: wired to real /owner/* routes (the old
           four buttons had no onClick and no destination). */}

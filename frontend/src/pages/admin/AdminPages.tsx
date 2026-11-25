@@ -507,67 +507,70 @@ export function AdminDashboardPage() {
           the descriptive line rides the head rule's aside slot (actions
           never float), the chart stays ChartFrame-wrapped with its
           sr-only table. */}
-      <SheetSection
-        index="03"
-        caption="RESEARCH OUTPUT"
-        title="نشاط الإنتاج العلميّ — آخر 6 أشهر"
-        aside={<span className="text-sm text-muted">أبحاث مقدَّمة، مقيَّمة، ومنشورة شهرياً</span>}
-      >
-        {r.paperTrend.length === 0 || r.paperTrend.every((m) => m.submitted + m.graded + m.published === 0) ? (
-          <EmptyState
-            icon={TrendingUp}
-            title="لا توجد بيانات أبحاث بعد"
-            description=""
-          />
-        ) : (
-          <ChartFrame
-            ariaLabel="نشاط الإنتاج العلمي في الأشهر الستة الأخيرة — أبحاث مقدَّمة ومقيَّمة ومنشورة شهرياً"
-            summary="مقارنة حركة البحوث المرفوعة والمقيَّمة والمنشورة على مدى الأشهر الستة الأخيرة."
-            height={240}
-            table={{
-              caption: 'نشاط الإنتاج العلمي شهرياً',
-              columns: ['الشهر', 'مقدَّم', 'مقيَّم', 'منشور'],
-              rows: r.paperTrend.map((m) => [m.month, m.submitted, m.graded, m.published]),
-            }}
-          >
-            <Line
-              key={themeKey}
-              aria-hidden="true"
-              data={{
-                labels: r.paperTrend.map((m) => m.month),
-                datasets: [
-                  {
-                    label: 'مقدَّم',
-                    data: r.paperTrend.map((m) => m.submitted),
-                    borderColor: c.accent,
-                    fill: true, tension: 0.4, pointRadius: 4, borderWidth: 2,
-                    pointBackgroundColor: c.accent,
-                  },
-                  {
-                    /* R359 (A3 · the one-signal law): the hero series
-                     * (مقدَّم) rides the royal; the two completion states
-                     * ride the ink + hairline-grey neutrals — no
-                     * gold/green rainbow on the sheet. */
-                    label: 'مقيَّم',
-                    data: r.paperTrend.map((m) => m.graded),
-                    borderColor: c.strongText,
-                    fill: true, tension: 0.4, pointRadius: 4, borderWidth: 2,
-                    pointBackgroundColor: c.strongText,
-                  },
-                  {
-                    label: 'منشور',
-                    data: r.paperTrend.map((m) => m.published),
-                    borderColor: c.grid,
-                    fill: true, tension: 0.4, pointRadius: 4, borderWidth: 2,
-                    pointBackgroundColor: c.grid,
-                  },
-                ],
-              }}
-              options={cartesianOptions({ legend: true, gradientFill: true })}
+      <details className="dash-disclosure">
+        <summary>تقرير الإنتاج العلمي</summary>
+        <SheetSection
+          index="03"
+          caption="RESEARCH OUTPUT"
+          title="نشاط الإنتاج العلميّ — آخر 6 أشهر"
+          aside={<span className="text-sm text-muted">أبحاث مقدَّمة، مقيَّمة، ومنشورة شهرياً</span>}
+        >
+          {r.paperTrend.length === 0 || r.paperTrend.every((m) => m.submitted + m.graded + m.published === 0) ? (
+            <EmptyState
+              icon={TrendingUp}
+              title="لا توجد بيانات أبحاث بعد"
+              description=""
             />
-          </ChartFrame>
-        )}
-      </SheetSection>
+          ) : (
+            <ChartFrame
+              ariaLabel="نشاط الإنتاج العلمي في الأشهر الستة الأخيرة — أبحاث مقدَّمة ومقيَّمة ومنشورة شهرياً"
+              summary="مقارنة حركة البحوث المرفوعة والمقيَّمة والمنشورة على مدى الأشهر الستة الأخيرة."
+              height={240}
+              table={{
+                caption: 'نشاط الإنتاج العلمي شهرياً',
+                columns: ['الشهر', 'مقدَّم', 'مقيَّم', 'منشور'],
+                rows: r.paperTrend.map((m) => [m.month, m.submitted, m.graded, m.published]),
+              }}
+            >
+              <Line
+                key={themeKey}
+                aria-hidden="true"
+                data={{
+                  labels: r.paperTrend.map((m) => m.month),
+                  datasets: [
+                    {
+                      label: 'مقدَّم',
+                      data: r.paperTrend.map((m) => m.submitted),
+                      borderColor: c.accent,
+                      fill: true, tension: 0.4, pointRadius: 4, borderWidth: 2,
+                      pointBackgroundColor: c.accent,
+                    },
+                    {
+                      /* R359 (A3 · the one-signal law): the hero series
+                       * (مقدَّم) rides the royal; the two completion states
+                       * ride the ink + hairline-grey neutrals — no
+                       * gold/green rainbow on the sheet. */
+                      label: 'مقيَّم',
+                      data: r.paperTrend.map((m) => m.graded),
+                      borderColor: c.strongText,
+                      fill: true, tension: 0.4, pointRadius: 4, borderWidth: 2,
+                      pointBackgroundColor: c.strongText,
+                    },
+                    {
+                      label: 'منشور',
+                      data: r.paperTrend.map((m) => m.published),
+                      borderColor: c.grid,
+                      fill: true, tension: 0.4, pointRadius: 4, borderWidth: 2,
+                      pointBackgroundColor: c.grid,
+                    },
+                  ],
+                }}
+                options={cartesianOptions({ legend: true, gradientFill: true })}
+              />
+            </ChartFrame>
+          )}
+        </SheetSection>
+      </details>
     </div>
   );
 }

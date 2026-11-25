@@ -208,7 +208,15 @@ P1/P5/P8 — Reproduced six stale student journey failures, restored expectation
 
 P1/P6/P8 — Fixed the disappearing student resume card and removed hidden landing drawings. Corrected the browser probes for sheet surfaces, responsive section loading and grading. [Full suite, focused results, budget and bundle](evidence/browser-close.txt). Previous landing: b578aba.
 
-NEXT: Resolve the five dashboard word budgets; verify signing, the native emulator lane and the final publication. Both allowed whole-repository runs have been used.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:82538cde3de007f187fb8fe1d8849416a3bce44b56a2bebe49496c334f7a837c -->
+
+P1/P8 — The five dashboards now meet the existing full-body 180-word budget. Secondary data opens in place. [Before/after numbers, keyboard verification and five visual comparisons](evidence/dashboard-density.txt). Previous landing: af11830.
+
+NEXT: Check the final publication SHA, CI, audit matrix and signed native artifacts; retain both integrated verification outcomes and the real emulator limitation.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 

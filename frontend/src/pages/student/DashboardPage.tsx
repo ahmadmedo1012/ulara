@@ -965,69 +965,72 @@ export default function StudentDashboardPage() {
           )}
         </section>
 
-        <section aria-label="فجوات الإتقان">
-          <SectionBar
-            title="فجوات الإتقان"
-            action={<Link to="/student/matrix" className="btn ghost sm">المصفوفة</Link>}
-          />
-          {gaps.isPending ? (
-            <ListSkeleton rows={2} />
-          ) : gaps.isError ? (
-            <div className="ledger-row ledger-row-flat" role="alert">
-              <span className="ledger-lead"><b>فجوات</b>—</span>
-              <span className="ledger-what">
-                تعذَّر تحميل فجواتك —{' '}
-                <button type="button" className="btn ghost sm" onClick={() => gaps.refetch()}>إعادة المحاولة</button>
-              </span>
-            </div>
-          ) : topGaps.length === 0 ? (
-            <EmptyCell
-              label="لا فجوات بعد"
-              note="لا فجوات مكتشفة بعد — أجب عن نقاط التفاعل في محاضراتك لترسم خريطة إتقانك."
+        <details className="dash-disclosure">
+          <summary>فجوات الإتقان</summary>
+          <section aria-label="فجوات الإتقان">
+            <SectionBar
+              title="فجوات الإتقان"
+              action={<Link to="/student/matrix" className="btn ghost sm">المصفوفة</Link>}
             />
-          ) : (
-            <RowList aria-label="فجوات الإتقان">
-              {topGaps.map((g) => (
-                g.recommendedLectureId ? (
-                  <RowItem
-                    key={g.conceptId}
-                    to={`/student/lectures/${g.recommendedLectureId}`}
-                    leading={<Icon icon={AlertCircle} size={16} className="text-warning-ink" />}
-                    title={g.conceptName}
-                    meta={<>{g.courseName} · <Num className="dash-gap-pct">{formatInt(Math.round(g.level * 100))}%</Num></>}
-                    trailing={
-                      <span className="dash-gap-side">
-                        <MasteryCells
-                          mastery={g.level}
-                          ariaLabel={`إتقان ${g.conceptName}: ${formatInt(Math.round(g.level * 100))}%`}
-                        />
-                        <span className="btn outline sm pf-chip"><Icon icon={Play} size={13} />سدّ الفجوة</span>
-                      </span>
-                    }
-                  />
-                ) : (
-                  <RowItem
-                    key={g.conceptId}
-                    leading={<Icon icon={AlertCircle} size={16} className="text-warning-ink" />}
-                    title={g.conceptName}
-                    meta={<>{g.courseName} · <Num className="dash-gap-pct">{formatInt(Math.round(g.level * 100))}%</Num></>}
-                    trailing={
-                      <span className="dash-gap-side">
-                        {/* P2.5 — the concept's mastery as the 0–4 cell
-                            scale (the matrix register, in the row). */}
-                        <MasteryCells
-                          mastery={g.level}
-                          ariaLabel={`إتقان ${g.conceptName}: ${formatInt(Math.round(g.level * 100))}%`}
-                        />
-                        <span className="r305s-chip"><span className="r305s-chip-dot" aria-hidden="true" />بلا توصية</span>
-                      </span>
-                    }
-                  />
-                )
-              ))}
-            </RowList>
-          )}
-        </section>
+            {gaps.isPending ? (
+              <ListSkeleton rows={2} />
+            ) : gaps.isError ? (
+              <div className="ledger-row ledger-row-flat" role="alert">
+                <span className="ledger-lead"><b>فجوات</b>—</span>
+                <span className="ledger-what">
+                  تعذَّر تحميل فجواتك —{' '}
+                  <button type="button" className="btn ghost sm" onClick={() => gaps.refetch()}>إعادة المحاولة</button>
+                </span>
+              </div>
+            ) : topGaps.length === 0 ? (
+              <EmptyCell
+                label="لا فجوات بعد"
+                note="لا فجوات مكتشفة بعد — أجب عن نقاط التفاعل في محاضراتك لترسم خريطة إتقانك."
+              />
+            ) : (
+              <RowList aria-label="فجوات الإتقان">
+                {topGaps.map((g) => (
+                  g.recommendedLectureId ? (
+                    <RowItem
+                      key={g.conceptId}
+                      to={`/student/lectures/${g.recommendedLectureId}`}
+                      leading={<Icon icon={AlertCircle} size={16} className="text-warning-ink" />}
+                      title={g.conceptName}
+                      meta={<>{g.courseName} · <Num className="dash-gap-pct">{formatInt(Math.round(g.level * 100))}%</Num></>}
+                      trailing={
+                        <span className="dash-gap-side">
+                          <MasteryCells
+                            mastery={g.level}
+                            ariaLabel={`إتقان ${g.conceptName}: ${formatInt(Math.round(g.level * 100))}%`}
+                          />
+                          <span className="btn outline sm pf-chip"><Icon icon={Play} size={13} />سدّ الفجوة</span>
+                        </span>
+                      }
+                    />
+                  ) : (
+                    <RowItem
+                      key={g.conceptId}
+                      leading={<Icon icon={AlertCircle} size={16} className="text-warning-ink" />}
+                      title={g.conceptName}
+                      meta={<>{g.courseName} · <Num className="dash-gap-pct">{formatInt(Math.round(g.level * 100))}%</Num></>}
+                      trailing={
+                        <span className="dash-gap-side">
+                          {/* P2.5 — the concept's mastery as the 0–4 cell
+                              scale (the matrix register, in the row). */}
+                          <MasteryCells
+                            mastery={g.level}
+                            ariaLabel={`إتقان ${g.conceptName}: ${formatInt(Math.round(g.level * 100))}%`}
+                          />
+                          <span className="r305s-chip"><span className="r305s-chip-dot" aria-hidden="true" />بلا توصية</span>
+                        </span>
+                      }
+                    />
+                  )
+                ))}
+              </RowList>
+            )}
+          </section>
+        </details>
       </div>
 
       {/* الحالة — the momentum strip (r220 facts, R305 register): the
@@ -1041,31 +1044,34 @@ export default function StudentDashboardPage() {
           own band in orange) and StreakTicks (the weekly study log —
           NO daily datum exists in the API yet, so the row renders its
           honest empty register: seven empty ticks, today outlined). */}
-      <section aria-label="زخم الفصل" className="dash-momentum">
-        <div className="r305s-rule-labeled" aria-hidden="true">زخم الفصل</div>
-        <StatLine items={statLineItems} spread />
-        {/* r351 A2 (Q3): the AVG CourseBar retired — it re-printed the
-            «إنجاز المقرّرات» KPI's exact datum one section earlier. */}
-        <div className="dash-indicators">
-          {gradeDist && (
+      <details className="dash-disclosure">
+        <summary>مؤشرات الفصل</summary>
+        <section aria-label="زخم الفصل" className="dash-momentum">
+          <div className="r305s-rule-labeled" aria-hidden="true">زخم الفصل</div>
+          <StatLine items={statLineItems} spread />
+          {/* r351 A2 (Q3): the AVG CourseBar retired — it re-printed the
+              «إنجاز المقرّرات» KPI's exact datum one section earlier. */}
+          <div className="dash-indicators">
+            {gradeDist && (
+              <div className="dash-indicator">
+                <span className="ind-microlabel">توزيع درجاتك</span>
+                <GradeBars
+                  bands={gradeDist.counts}
+                  ownIndex={gradeDist.ownIndex}
+                  ariaLabel={`توزيع درجاتك على ${formatInt(gradedScores.length)} عمل مُقيَّم`}
+                />
+              </div>
+            )}
             <div className="dash-indicator">
-              <span className="ind-microlabel">توزيع درجاتك</span>
-              <GradeBars
-                bands={gradeDist.counts}
-                ownIndex={gradeDist.ownIndex}
-                ariaLabel={`توزيع درجاتك على ${formatInt(gradedScores.length)} عمل مُقيَّم`}
+              <span className="ind-microlabel">أسبوع الدراسة</span>
+              <StreakTicks
+                todayIndex={now.getDay()}
+                note=""
               />
             </div>
-          )}
-          <div className="dash-indicator">
-            <span className="ind-microlabel">أسبوع الدراسة</span>
-            <StreakTicks
-              todayIndex={now.getDay()}
-              note=""
-            />
           </div>
-        </div>
-      </section>
+        </section>
+      </details>
 
       {/* P2.5 — the AI assistant entry: a quiet hairline row (the §R325.c
           hatch hover is its only flourish) pointing at the assistant the

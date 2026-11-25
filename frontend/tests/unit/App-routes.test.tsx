@@ -35,14 +35,10 @@ vi.mock('../../src/pages/student/LabsPage', () => ({
   default: () => <div data-testid="labs-page" />,
 }));
 
-// The full AppShell (sidebar / topbar / notifications / network) is
-// orthogonal to a route-table guard test. Keep the REAL exports —
-// ProtectedRoute above all, it is the code under test — and replace
-// only the layout with a pass-through Outlet.
-vi.mock('../../src/components/layout/AppShell', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../src/components/layout/AppShell')>();
-  return { ...actual, AppShell: () => <Outlet /> };
-});
+// The route guards live in ProtectedRoute.tsx and App.tsx. The separate
+// lazy layout only supplies an Outlet here; loading the real sidebar and
+// charts while constructing a mock made cold role redirects depend on IO.
+vi.mock('../../src/components/layout/AppShell', () => ({ AppShell: () => <Outlet /> }));
 
 // Guard bounces land on role dashboards — stub them so the pin never
 // mounts the heavy real pages (charts, live queries) in a unit test.

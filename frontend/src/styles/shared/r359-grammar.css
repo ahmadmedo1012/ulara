@@ -878,3 +878,17 @@ a.pf-stat:hover { background: var(--surface-2); }
     min-inline-size: var(--touch-floor, 44px);
   }
 }
+
+/* Secondary dashboard readings open in place with native keyboard semantics. */
+.dash-disclosure {
+  min-inline-size: 0;
+  border-block-start: 1px solid var(--rule);
+}
+.dash-disclosure > summary {
+  min-block-size: 44px;
+  align-content: center;
+  padding-inline: var(--sp-3);
+  color: var(--text);
+  cursor: pointer;
+}
+.dash-disclosure > summary::marker { color: var(--accent); }
