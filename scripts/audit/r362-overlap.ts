@@ -33,6 +33,14 @@
  *   node scripts/audit/r362-overlap.ts --all --json out.json
  *
  * Exit status: 0 when clean, 1 when any finding — so it can gate CI.
+ *
+ * KNOWN LIMITATION (r362, not yet closed): inside an accordion/`<details>`, a
+ * collapsed answer's text can still produce rects that intersect the next
+ * question even though the reader sees nothing (the answer is clipped by the
+ * item). `/help` therefore over-reports. Do NOT use this instrument on
+ * accordion-dense pages until the clip-ancestor walk handles that pattern;
+ * it is trustworthy on the landing and the shell pages, which is where the
+ * owner's collisions were reported.
  */
 import { chromium } from 'playwright';
 import { installMockApi, seedSession } from '../../frontend/tests/e2e/fixtures/mock-transport';
@@ -115,9 +123,24 @@ const COLLECT_SRC = `(() => {
        each rect by half the (box - font-size) removes the leading, which is
        exactly the part that carries no ink. */
     const fs = parseFloat(cs.fontSize) || 0;
+    /* Visible area: a text box clipped away by an ancestor's overflow is not
+       rendered. A collapsed FAQ answer keeps live rects under its question —
+       a fact about the DOM, not about what the reader sees. */
+    let clipL = -Infinity, clipT = -Infinity, clipR = Infinity, clipB = Infinity;
+    for (let a = el; a && a !== document.body; a = a.parentElement) {
+      const acs = getComputedStyle(a);
+      if (acs.overflow === 'visible' && acs.overflowX === 'visible' && acs.overflowY === 'visible') continue;
+      const ar = a.getBoundingClientRect();
+      clipL = Math.max(clipL, ar.left); clipT = Math.max(clipT, ar.top);
+      clipR = Math.min(clipR, ar.right); clipB = Math.min(clipB, ar.bottom);
+    }
     const ink = rects.map((r) => {
       const pad = Math.max(0, (r.height - fs) / 2);
-      return { left: r.left, right: r.right, top: r.top + pad, bottom: r.bottom - pad, width: r.width, height: r.height - 2 * pad };
+      const top = Math.max(r.top + pad, clipT);
+      const bottom = Math.min(r.bottom - pad, clipB);
+      const left = Math.max(r.left, clipL);
+      const right = Math.min(r.right, clipR);
+      return { left, right, top, bottom, width: Math.max(0, right - left), height: Math.max(0, bottom - top) };
     });
     if (!ink.some((r) => r.height > 1)) continue;
     items.push({ el, node, rects: ink, text: text.slice(0, 48) });
@@ -150,8 +173,8 @@ const COLLECT_SRC = `(() => {
         bText: b.text,
         area: Math.round(best),
         ratio: Number((best / bestSmaller).toFixed(2)),
-        aRect: a.rects.map((r) => [Math.round(r.x), Math.round(r.y), Math.round(r.width), Math.round(r.height)]).slice(0, 3),
-        bRect: b.rects.map((r) => [Math.round(r.x), Math.round(r.y), Math.round(r.width), Math.round(r.height)]).slice(0, 3),
+        aRect: a.rects.map((r) => [Math.round(r.left), Math.round(r.top), Math.round(r.width), Math.round(r.height)]).slice(0, 3),
+        bRect: b.rects.map((r) => [Math.round(r.left), Math.round(r.top), Math.round(r.width), Math.round(r.height)]).slice(0, 3),
         aOpacity: getComputedStyle(a.el).opacity,
         aTransform: getComputedStyle(a.el).transform,
         aClip: getComputedStyle(a.el).clipPath,

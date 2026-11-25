@@ -208,9 +208,26 @@
    the line boxes carry the spec's own pitch as an explicit block-size
    and let the taller glyph boxes bleed (overflow visible): geometry
    matches the frozen record AND the transformed lh expectation. */
+/*
+ * r362 P2 — THE LINE PITCH HOLDS THE ARABIC FLOOR.
+ *
+ * This seat used to be `block-size: 4rem` alone — the reference's 1.0×fs
+ * Latin leading. With the fluid rem root (html 0.5787vw ⇒ 4rem = 33.3px at
+ * 1440) and `.st-title` at 2.78vw (40.03px), the pitch was 0.83 × the font
+ * size while the ARABIC glyph box measures 54px: every line's ink ran into
+ * the next one. The owner's «text collisions on the landing» were here, at
+ * 1024/1440/1920, in both themes — a real, reproducible overlap (the r362
+ * overlap detector flagged it, and the 1440 screenshot shows the four lines
+ * stacked into each other).
+ *
+ * `max(4rem, 1.35em)` keeps the design's own pitch wherever it already
+ * clears the house Arabic floor (max(dsLh, 1.35×fs)) and lifts it to the
+ * floor everywhere else. The 4rem branch still wins on wide viewports whose
+ * font-size is small relative to the root.
+ */
 .st-line {
   display: block;
-  block-size: 4rem;
+  block-size: max(4rem, 1.35em);
 }
 
 /* R338 T-03c: the reference's line nest — line box + mask wrapper, one
@@ -572,7 +589,9 @@
   .st-section { margin-inline: 7.5px; }
   .st-stmt-in { padding: 2.4rem; }
   .st-title { font-size: 2.4rem; line-height: 3.24rem; }
-  .st-line { block-size: 2.525rem; }
+  /* r362 P2 — the tablet pitch also holds the Arabic floor (3.24rem =
+     1.35 × 2.4rem); the old 2.525rem was below it. */
+  .st-line { block-size: max(2.525rem, 1.35em); }
   .st-titlebox { margin-block-end: 2.4rem; }
   .st-plabel { margin-inline-start: 2.4rem; }
   .st-crawl-cell { inline-size: 12.05rem; block-size: 7.7rem; } /* R342-02 — the measured 768 window cell (111px) and the ticker row's own band */
@@ -612,7 +631,8 @@
 
   .st-stmt-in { padding: 1.6rem 1.2rem 1.2rem; } /* r359 A1 §C — the phone wrap tightens */
   .st-title { font-size: 2.4rem; line-height: 3.24rem; }
-  .st-line { block-size: 2.62rem; }
+  /* r362 P2 — the phone pitch holds the same floor. */
+  .st-line { block-size: max(2.62rem, 1.35em); }
   .st-titlebox { margin-block-end: 1.2rem; }
   .st-pill-icons { --st-seat: 4.13rem; }
   .st-pill-t-in { line-height: 1.89rem; }

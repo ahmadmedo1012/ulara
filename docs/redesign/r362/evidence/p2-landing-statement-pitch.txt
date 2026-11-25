@@ -1,0 +1,45 @@
+r362 · P2.1 — the landing statement's line pitch (a REAL collision, fixed)
+
+Owner complaint: "text collisions on the landing".
+
+Reproduced (not guessed):
+  /  @1440 light+dark, / @1920 light+dark — the statement title's four lines
+  had their ink stacked into each other. Persistent: a screenshot taken 3.8 s
+  and another 6 s after load are identical, so it is layout, not a mid-animation
+  frame. Saved as the BEFORE half of landing-statement-pitch.webp.
+
+Measured (getComputedStyle in the built SPA, 1440x900):
+  .st-title   font-size 40.032px   line-height 54.0432px
+  .st-line    block-size 33.3281px  (line pitch)
+  .wr-i       glyph box height 54px,  transform: none
+
+  ⇒ the line pitch was 0.83 x the font size while the Arabic glyph box is
+    1.35 x the font size: 21px of ink intersection between every pair of lines.
+
+Root cause:
+  .st-line carried `block-size: 4rem` alone — the reference's 1.0x-fs LATIN
+  leading. This repo has a FLUID REM ROOT (tokens.css: html 0.5787vw ⇒ 4rem =
+  33.3px @1440), so 4rem stopped being "one line" the moment the statement's
+  font-size moved to 2.78vw/40px in r359. The design comment claimed the taller
+  Arabic glyph box "bleeds with overflow visible" — that bleed IS the collision.
+
+Fix (statement.css, 3 declarations):
+  .st-line { block-size: max(4rem, 1.35em); }            desktop/base
+  .st-line { block-size: max(2.525rem, 1.35em); }        768-991 band
+  .st-line { block-size: max(2.62rem, 1.35em); }         <=767 band
+  The house Arabic floor max(dsLh, 1.35 x fs) now holds at every band; the
+  design's own pitch still wins wherever it already cleared the floor.
+
+Verification after:
+  - 1440 screenshot: four lines separated, no ink intersection
+    (AFTER half of landing-statement-pitch.webp)
+  - e2e r349-public-clip 17/17 pass
+  - e2e r354-final 18/18 pass
+  - e2e r308-landing-instruments 5/5 pass
+  - check-raw-css --strict PASS (type/radius/spacing discipline holds)
+  - stylelint 0 errors (75 pre-existing warnings)
+  - scripts/verify.sh --fast: PASS (bundle 857.8 KB gz <= 815? see note, a11y 0 serious/critical)
+
+Note: bundle gate reports 857.8 KB gz total — the ceiling constant in
+check-bundle-size.mjs is the source of truth; the gate PASSED, so the pinned
+ceiling is >= 857.8 KB at this head (the r362 order quotes 865 KB).

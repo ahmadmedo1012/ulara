@@ -107,6 +107,26 @@ app pass. Every DONE line has a command output or an image in `evidence/`.
   vs one uppercase row; cookie ACCEPT as an ink slab vs the signal colour) and are left
   as owner rulings rather than restyled on a hunch. [Critique](evidence/footer-critique.md).
 
-NEXT: re-capture the 200 % profile on the rebuilt APK to prove the fix on device; then the
+- **P2.1a — the landing statement really did collide, and the detector was right.**
+  The owner's «text collisions on the landing» are on `/` at 1440 and 1920, both themes:
+  the statement title's four lines had their ink stacked into each other (persistent —
+  two screenshots 6 s apart are identical, so layout, not a mid-animation frame).
+  Cause: `.st-line { block-size: 4rem }` — the reference's 1.0×fs **Latin** leading —
+  against a fluid rem root (`html 0.5787vw` ⇒ 4rem = 33.3 px @1440) and a r359 font-size
+  of 2.78vw (40.03 px). The pitch was **0.83 × fs** while the Arabic glyph box is
+  **1.35 × fs**: 21 px of intersection per line pair. Fixed with the house floor at all
+  three bands — `max(4rem, 1.35em)`, `max(2.525rem, 1.35em)`, `max(2.62rem, 1.35em)`.
+  Verified: 1440 screenshot clean; e2e `r349-public-clip` 17/17, `r354-final` 18/18,
+  `r308-landing-instruments` 5/5; `check-raw-css --strict` PASS; stylelint 0 errors;
+  `verify.sh --fast` PASS. [Before/after](evidence/landing-statement-pitch.webp) ·
+  [measurements](evidence/p2-landing-statement-pitch.txt).
+
+  This retires the earlier «the detector over-reports» reading: at 1024 the em-box
+  explanation held, at 1440 and 1920 the collision was real. The detector now also
+  carries a written limitation for accordion pages (`/help`): a collapsed answer's
+  rects can still intersect the next question even though the reader sees nothing.
+
+NEXT: re-capture the 200 % profile on the rebuilt APK to prove the fix on device; then
+re-run the overlap sweep on `/` at every width with the pitch fix in and confirm 0; the
 remaining P2 detail passes (cursor/nav choreography, decorative-pattern audit, side
 menus/controls), the P3 full-matrix sweep, and the P6 report.
