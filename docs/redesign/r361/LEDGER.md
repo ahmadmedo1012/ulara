@@ -160,7 +160,15 @@ P1/P2/P9 — [Verified mobile repairs and bundle](evidence/phone-final.txt): 4,9
 
 P3 — Real Chromium upload/attach/download exposed an aria-hidden table cell around the download action. Gave it a named action column. [Eight institution journeys](evidence/governance-roundtrip.txt), including exact PDF byte roundtrip and separate 501/503 states, pass. Corrected the mobile runbook deployment triggers and downgrade instructions. Previous mobile layout commit 3d12908.
 
-NEXT: Finish final deployment and native release; check theme persistence and matrix reports.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:aa9219544c79ef5b923be7e1def6c223c84e2f2981d17c138b22caa14f401f3d -->
+
+P4 — Verified that selecting dark in the expanded desktop sidebar survives a full reload, including the persisted mode and populated dashboard. [Browser evidence](evidence/theme-reload.txt). Fixed the obsolete rail setup in the test. Previous document fix: 1785615.
+
+NEXT: Complete final visual metrics and correlate production, release and workflow sources.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 

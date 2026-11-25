@@ -1,0 +1,2 @@
+At 1280px the sidebar is expanded by default. The persistence journey attempted to expand it and timed out.
+  1 passed (8.0s)
