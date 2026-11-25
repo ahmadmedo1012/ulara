@@ -20,13 +20,6 @@
 name: soak-assert (r363 P5-a — the surviving session)
 appId: ly.ulara.app
 ---
-- launchApp:
-    appId: ly.ulara.app
-    clearState: false
-    # the same explicit reopen as the bootstrap (run #4's forensics: the
-    # launcher's discovery is unreliable headless — the assert must test
-    # SESSION survival, not server discovery).
-    deepLink: "exp://10.0.2.2:8081"
 - tapOn:
     text: "Wait"
     optional: true

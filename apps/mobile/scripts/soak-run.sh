@@ -23,10 +23,26 @@ FAIL=0
 
 shot() { adb exec-out screencap -p > "$1" 2>/dev/null || true; }
 
+# r363 soak #5: this Maestro build rejects `deepLink` inside launchApp
+# ("Unknown Property") and the dev-client LAUNCHER's own server
+# discovery is unreliable headless (run #4's forensic screenshot: the
+# empty "DEVELOPMENT SERVERS" home). Every session open therefore rides
+# the canonical dev-client deep link, driven by adb — maestro then acts
+# on the already-foregrounded app (no launchApp in the flows).
+DEEP_LINK="exp+ulara://expo-development-client/?url=http%3A%2F%2F10.0.2.2%3A8081"
+open_app() {
+  adb shell am start -a android.intent.action.VIEW -d "$DEEP_LINK" >/dev/null 2>&1 || true
+}
+
 echo "── soak: the bootstrap login (the seeded student account)"
+adb shell pm clear ly.ulara.app >/dev/null 2>&1 || true
+open_app
+sleep 25   # the dev-client connects + metro serves the first bundle
+shot "soak-shots/bootstrap-open.png"
 "$MAESTRO" test apps/mobile/.maestro/soak-login.yaml \
   -e EMAIL="${SOAK_EMAIL:-student@test.ly}" -e PASSWORD="${SOAK_PASSWORD:-12345678}" \
   || { echo "::error::soak bootstrap login failed"; touch fail.flag; FAIL=1; }
+shot "soak-shots/bootstrap-final.png"
 
 # THE ROTATION — each round: chaos → dwell → restore → settle → ASSERT.
 #   airplane   = svc wifi+data off (the connectivity-loss class)
@@ -54,6 +70,8 @@ round() {
   sleep 12
   shot "soak-shots/round-$R-regained.png"
   echo "── soak round $R: the surviving-session assert"
+  open_app
+  sleep 10   # the dev-client reopens the session (no pm clear — the auth store survives)
   "$MAESTRO" test apps/mobile/.maestro/soak-assert.yaml \
     || { echo "::error::soak round $R: the session did NOT survive ($MODE)"; touch fail.flag; FAIL=1; }
   shot "soak-shots/round-$R-asserted.png"
