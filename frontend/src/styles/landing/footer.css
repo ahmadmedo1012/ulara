@@ -638,9 +638,17 @@ footer.fo-footer {
 .fo-giant-text {
   grid-area: 1 / 1;
   font-family: var(--font-sans);
-  /* r351 P3 — the closing outline steps down one rung (the colophon
-     is the footer's voice; the banner is its signature, not its bulk) */
-  font-size: clamp(2.4rem, 6.4vw, 6.8rem);
+  /* r363 P2 (fidelity sheet #1, gap 2): the r351 "one rung down"
+     step-out retired by MEASUREMENT — the reference's giant wordmark
+     band is ~230px of letter at 1440 (≈16% of the viewport width).
+     The fluid root (8.33px) makes rem caps tiny — the ride is
+     18.5vw with a 32rem cap (≈266px at 1440, glyph ≈253px, band
+     ≈285px ≈ the reference's own band). The Arabic word keeps its
+     natural width (no tracking — connected script), centered in the
+     full-width band: the composition's one honest RTL adaptation.
+     The mobile rung keeps its own seat (the reference's mobile
+     still is inconclusive and the phone-diet law holds). */
+  font-size: clamp(3.2rem, 18.5vw, 32rem);
   font-weight: 800;
   letter-spacing: -0.02em;
   color: transparent;
