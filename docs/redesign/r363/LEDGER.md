@@ -268,3 +268,60 @@ continues (ruler + dimension-line furniture, hero pointer crosshair + live
 coords, footer datum tags, line-grid underlay, the /__design specimen
 completions); P4's sweep matrix + the detectors into CI; the release bits;
 the remaining P6 audit; the final full verify + the Arabic report.
+
+- **P4 — the product sweep is a CI gate, and its first run caught 32 real
+  defects (all fixed).** `scripts/audit/p4/sweep.ts`: ONE gateable CLI over
+  the proven instruments — the r362 glyph-ink collision collector (verbatim),
+  the r358 pageMetrics (overflow, tap<44, blank, error-banner, retired
+  accents, KPI stacking), console/501, axe serious/critical — modes
+  `--slice` (7 routes × 390/1440 × 2 themes = 28 cells, the PR lane) and
+  `--full` (the r358-derived 103-route matrix × 7 widths × 6 role lanes),
+  exit 1 on any P0/P1, catalogs `defects-<lane>.json` as artifacts, attach-only
+  serving (`ULARA_E2E_BASE_URL`), hermetic `AUDIT_API_MOCK` transport.
+  `.github/workflows/product-sweep.yml`: slice on PRs, full 6-lane on main
+  pushes + weekly cron. The first local run: exit 1 — 30 P0 collisions (the
+  fixed dock band owned content's first screen at scroll-0 on four phone
+  pages; /quality/dashboard's desktop pair were CLOSED-`<details>` ghosts —
+  r362's documented limitation, now closed AT the detector with the reason)
+  + 2 P2. Fixed at the system level: the shell's ≤920px `.content` now
+  RESERVES the dock band structurally (margin to the dock's top edge —
+  clearance owned once by the shell, not re-earned per page), the redundant
+  80px end-pad retired, sticky bars pin `bottom: 0` against the new edge,
+  and a RADIUS_SHADOW_ALLOWS table (the *-gate convention). Final: **28/28
+  clean, exit 0.** lint/typecheck/all three design gates green.
+
+- **P6 — the belt test + the facility slice.**
+  `backend/tests/modules/auth-refresh-limiter.test.ts` pins the never-429
+  property route-level: 12 successful refreshes → all 200 (skip-successful),
+  the 11th failed refresh → 429 house envelope, and the cap is IP-scoped
+  (a distinct XFF egress refreshes straight through).
+  `?facilityId=` (optional, cuid-validated) on GET /operations/work-orders
+  and /operations/safety-incidents + the integration test; OpenAPI regen
+  (+17 lines), mobile api:types regen, the parity doc's honest note updated.
+  Backend modules belt: 2,178 green. The P6 audit (in /home/z/art/p6-audit.md,
+  41 implemented / 2 partial / 2 missing / 5 owner-step) verified all three
+  r363-P6 ledger claims in code with zero drift; the one structural gap it
+  found (session listing/revocation) is queued as the next P6 item.
+
+- **P3 continued — the furniture kit + the pointer instruments.** The hero
+  stage carries the reference's pointer crosshair with live sheet coords
+  (two 1px hairlines + a mono `X:0720PX Y:0308PX` chip, one rAF, zero
+  re-renders, touch/RM gated); the footer banner carries the four mono
+  datum tags with the band's live-surveyed height; the DOM furniture kit
+  (RulerStrip · DimensionLine · `.pat-linegrid`) landed with its /__design
+  specimen section; the early-access hand-off reads `?email=` into
+  /contact's honest notice (3 new pins; the full unit belt 3,110 green).
+  DESIGN.md/runbook/mobile/deployment/roadmap/AGENTS now describe what is
+  true (P7's first pass, 7 files).
+
+- **P5 — the release lanes verified in place.** The `latest` release carries
+  the signed `ulara.apk` (112.4 MB) + SHA256SUMS; `sidestore-latest` carries
+  the unsigned `Ulara.ipa` (16.9 MB) + build-info; the fingerprint-tracking
+  lane (android-apk.yml) stays green on every push. Soak dispatch #8 rides
+  the sweep-fix commit (the a11y-tree wait + the no-reopen airplane rule).
+
+NEXT: the soak #8 verdict + CI's verdict on b94bc0a (the first CI run with
+the Product-sweep slice lane), then P6's session listing/revocation (the
+structural gap), P4's UX probes (keyboard journeys, zoom-200, reduced-motion,
+throttle — the sweep-ux lane uncomments), the remaining fidelity sheets,
+the final full verify ×2, the Lighthouse pass, and the Arabic report.
