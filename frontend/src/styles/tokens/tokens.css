@@ -1509,6 +1509,11 @@
   --border: #4A4A48;
   --border-strong: #5C5C5A;
   --preloader-exit-ground: #4A4A48;
+  --paper: var(--bg);
+  --paper-ink: var(--text-primary);
+  --paper-ink-2: var(--text-secondary);
+  --hairline: var(--rule);
+  --on-signal: var(--bg);
 }
 
 /* ═══ r359 ART GRAMMAR — forced palettes (r360 integration) ════════

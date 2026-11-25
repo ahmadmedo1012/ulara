@@ -166,7 +166,15 @@ P3 — Real Chromium upload/attach/download exposed an aria-hidden table cell ar
 
 P4 — Verified that selecting dark in the expanded desktop sidebar survives a full reload, including the persisted mode and populated dashboard. [Browser evidence](evidence/theme-reload.txt). Fixed the obsolete rail setup in the test. Previous document fix: 1785615.
 
-NEXT: Complete final visual metrics and correlate production, release and workflow sources.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:cd0ac0c5881b0d64ecb3d9698f4251e4fb634f50e347b5219d2250a8e537a00c -->
+
+P1/P2/P6/P10 — All 44 standalone artworks now use the six published scene modules; previously the exporter silently returned scaffold art. Re-export is byte-identical. Dark hero uses the same themed paper as its illustration. [Exporter and 20-cell proof](evidence/canonical-export.txt), [refreshed visual critiques](evidence/landing-critique.md), [Arabic report](REPORT.ar.md). Earlier signed Android a88e6f0 and unsigned iOS ef92ae1 have separate release receipts. Previous theme item d9cddcc.
+
+NEXT: Read the source SHA from the rolling release and compare with main; verify deployment, final matrix, Lighthouse and native workflow receipts.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 

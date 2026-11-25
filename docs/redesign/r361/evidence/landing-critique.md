@@ -16,4 +16,10 @@ These sheets show a cropped piece of the reference composition above each local 
 | [Vision](landing-vision.webp) | The royal action is easy to locate against paper in both themes. Surrounding negative space gives the action more weight than its size suggests. |
 | [Footer](landing-footer.webp) | The skyline draws a continuous closing line and the phone links form two columns. Desktop has finer type and less graphic mass than the reference. |
 
-No blanket parity claim. Use the crops to review proportion, alignment, density, type and contrast at native scale.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:d212463b8bcdcfbdac1b73a9b96117e23c0cd3e0c441ec3253867eca7838dac5 -->
+
+Final inspection: the building now has distinct floor bands, recessed bays and a visible entry in both themes; the earlier export had substituted a scaffold. On the phone the foreground remains legible between the callouts. The dark title band now continues the drawing's charcoal ground. In the static journey the five entries follow in reading order without the camera's empty frames; the full 390px page now measures 4,976px. The comparison images have been refreshed. The reference detail is a crop, so the absolute scale of its building cannot be inferred from this thumbnail.
+
+<!-- /coderabbit-ai-generated:v1 -->

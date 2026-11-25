@@ -11,7 +11,7 @@
  * Run from the repo root:  node scripts/art/export-svg.mjs [--key k]
  */
 import { build } from 'esbuild';
-import { mkdirSync, writeFileSync, rmSync, readFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync, rmSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { optimize } from 'svgo';
@@ -23,15 +23,17 @@ const OUT = join(ROOT, 'shared', 'art', 'svg');
 /* ── bundle a dump entry: manifest + every family ───────────────── */
 const TMP = join(ROOT, '.tmp-art-dump.mjs');
 const ENTRY = join(ROOT, '.tmp-art-entry.ts');
-const stubKeys = readFileSync(join(ROOT, 'shared', 'art', 'scenes', 'stubs.ts'), 'utf8');
 writeFileSync(ENTRY, `
-import { STUBS } from './shared/art/scenes/stubs';
-const ALL = { ...STUBS };
-for (const m of ['hero', 'plans', 'sections', 'usecases', 'states', 'onboarding']) {
-  try {
-    const mod = await import(\`./shared/art/scenes/\${m}\`);
-    Object.assign(ALL, mod.SCENES);
-  } catch { /* family not landed */ }
+import { ART_KEYS } from './shared/art/manifest';
+import { SCENES as hero } from './shared/art/scenes/hero';
+import { SCENES as plans } from './shared/art/scenes/plans';
+import { SCENES as sections } from './shared/art/scenes/sections';
+import { SCENES as usecases } from './shared/art/scenes/usecases';
+import { SCENES as states } from './shared/art/scenes/states';
+import { SCENES as onboarding } from './shared/art/scenes/onboarding';
+const ALL = { ...hero, ...plans, ...sections, ...usecases, ...states, ...onboarding };
+for (const { key } of ART_KEYS) {
+  if (!ALL[key]) throw new Error('Missing art builder: ' + key);
 }
 export { ALL };
 `);

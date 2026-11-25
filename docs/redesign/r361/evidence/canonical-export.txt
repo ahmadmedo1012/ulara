@@ -1,0 +1,7 @@
+All six scene modules imported directly; each of 44 manifest keys must resolve or export fails.
+export-svg: 44 SVGs (849.9 KB total) → shared/art/svg
+A second complete export produced identical bytes.
+OK: zero red/orange/off-grammar hues in shipped art (145 surfaces scanned; ink/paper/hairline/royal only).
+      Tests  13 passed (13)
+**Scope:** 2 routes × 360/390/768/1024/1440 × light/dark
+**Defects (deduped):** 0 — P0 0 · P1 0 · P2 0
