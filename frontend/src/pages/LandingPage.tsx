@@ -329,12 +329,19 @@ export default function LandingPage() {
       typeof window.requestIdleCallback === 'function'
         ? window.requestIdleCallback.bind(window)
         : undefined;
-    const idleId = ric ? ric(warm, { timeout: 15000 }) : window.setTimeout(warm, 15000);
+    // An idle deadline is a maximum wait. Start the idle request only
+    // after the 15-second reading interval has actually elapsed.
+    let idleId: number | undefined;
+    const delayId = window.setTimeout(() => {
+      if (warmed) return;
+      if (ric) idleId = ric(warm, { timeout: 3000 });
+      else warm();
+    }, 15000);
     return () => {
       root?.removeEventListener('pointerdown', onIntent);
       root?.removeEventListener('focusin', onIntent);
-      if (ric) window.cancelIdleCallback(idleId as number);
-      else window.clearTimeout(idleId as number);
+      window.clearTimeout(delayId);
+      if (idleId !== undefined) window.cancelIdleCallback(idleId);
     };
   }, [redirectHome]);
 

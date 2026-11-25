@@ -136,7 +136,15 @@ P2 — The challenges carousel no longer reconciles four offscreen diagrams on i
 
 P1/P10 — 123 static routes in the first sweep; see [issue counts](evidence/first-sweep.txt). Enlarged teacher session links and owner activity controls; [30 revised cells](evidence/owner-teacher-targets.txt) reported zero defects. Settled landing remains 4,980 px. [Arabic delivery report](REPORT.ar.md). Previous landing change: 61938f4.
 
-NEXT: Complete the immutable scan, verify parameterized routes and publish release receipts.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:6ee63c56185d8daaab717ba5b458d10e6decf7066974a20f87b09db587c6ff42 -->
+
+P2 — On 61938f4 the production waterfall fetched both auth chunks while the reader was idle in the first seconds. Enforced the documented 15-second minimum; keyboard intent still warms both immediately. [Network proof, scores and 11 passing funnel tests](evidence/auth-warm.txt).
+
+NEXT: Check release Lighthouse after deployment and finish the expanded route census.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 

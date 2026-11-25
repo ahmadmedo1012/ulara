@@ -1,0 +1,7 @@
+https://ulara.vercel.app/ 61938f485ec5 performance 70 accessibility 100 benchmark 823.5 largest-contentful-paint: 3.1 s total-blocking-time: 1,020 ms cumulative-layout-shift: 0
+https://ulara.vercel.app/about 61938f485ec5 performance 78 accessibility 100 benchmark 906.5 largest-contentful-paint: 3.4 s total-blocking-time: 500 ms cumulative-layout-shift: 0
+https://ulara.vercel.app/help 61938f485ec5 performance 80 accessibility 100 benchmark 818 largest-contentful-paint: 2.1 s total-blocking-time: 710 ms cumulative-layout-shift: 0
+Production home loaded both AuthPage and RegisterPage during initial Lighthouse navigation.
+No auth or registration chunk fetched during initial read.
+Keyboard intent fetched both auth boundaries.
+11/11 landing funnel Vitest cases passed; production Vite build passed.
