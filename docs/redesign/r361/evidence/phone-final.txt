@@ -1,0 +1,13 @@
+settled no-preference [
+  4980,
+--
+settled reduce [
+  4976,
+bundle-size gate — 188 JS chunks, 2792.2 KB raw
+[1/3] total gz (كل الحزم) … PASS — 865.2 KB gz / سقف 866 KB
+[2/3] entry index-39ReYlSw.js (حزمة الدخول) … PASS — 30.0 KB gz / سقف 92 KB
+[3/3] pdf worker pdf-ksa_hnld.js (عامل PDF) … PASS — 95.7 KB gz / سقف 110 KB
+pdf-target/defects-master-summary.md:**Scope:** 1 routes × 360/390/768/1024/1440 × light/dark
+pdf-target/defects-master-summary.md:**Defects (deduped):** 0 — P0 0 · P1 0 · P2 0
+last-details/defects-master-summary.md:**Scope:** 3 routes × 360/390/768/1024/1440 × light/dark
+last-details/defects-master-summary.md:**Defects (deduped):** 0 — P0 0 · P1 0 · P2 0

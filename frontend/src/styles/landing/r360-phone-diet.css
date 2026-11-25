@@ -28,7 +28,7 @@
   /* ── [4] chapters (static sheet) — the window crop + the ladder tighten ── */
   .jt-window .bp-svg { aspect-ratio: 460 / 480 !important; max-block-size: 420px !important; }
   .jt-intro { padding-block: 0.6rem !important; }
-  .jt-intro-finding { padding-block: 0.35rem !important; font-size: max(13px, 1.1rem) !important; }
+  .jt-intro-finding { font-size: max(13px, 1.1rem) !important; }
   .jt-close { padding-block-start: 1.2rem !important; padding-block-end: 1.6rem !important; }
   .jt-close-cms { padding-block: 0.5rem !important; }
   .jt-close-cms-row { padding-block: 0.45rem !important; }
@@ -122,7 +122,7 @@
   .jt-intro { block-size: auto !important; }
   /* readability floor: the findings are body copy — 1.15rem ≈ 11.4px
    * at the 9.92px landing root, the spec's own mono/body floor rung */
-  .jt-intro-finding { font-size: max(13px, 1.15rem) !important; line-height: 1.32 !important; padding-block: 0.35rem !important; }
+  .jt-intro-finding { font-size: max(13px, 1.15rem) !important; line-height: 1.32 !important; padding-block: var(--finding-row-padding, 0.35rem) !important; }
   .jt-intro-findings { gap: 0.2rem !important; }
   .jt-close-chiprow { padding-block: 0.4rem !important; }
   .jt-close-main { padding-block: 0.6rem !important; }
@@ -315,7 +315,7 @@
   /* ── [4] chapters — the CMS rows (min-block 4em=64px) + window ── */
   .jt-cms-row { min-block-size: 2.6em !important; }
   .jt-cms-ico-in, .jt-cms-ico-in2, .jt-cms-ico svg { inline-size: 1.6em !important; block-size: 1.6em !important; }
-  .jt-close-copyw { margin-block: 0.6rem 0.8rem !important; }
+  .jt-close-copyw { margin-block: var(--journey-static-margin, 0.6rem 0.8rem) !important; }
   .jt-window .bp-svg { max-block-size: 230px !important; aspect-ratio: 460 / 340 !important; }
   .jt-close { padding-block-start: 0.7em !important; }
 
@@ -396,7 +396,7 @@
   .fo-legal-l { line-height: 1.32 !important; }
 
   /* ── [4] chapters — the close ladder's voids ── */
-  .jt-close { margin-block-end: 0.8em !important; padding-block: 0.5rem !important; }
+  .jt-close { margin-block-end: var(--journey-static-margin, 0.8em) !important; padding-block: 0.5rem !important; }
   .jt-close-chiprow { padding-block: 0.25rem !important; }
   .jt-close-main { padding-block: 0.3rem !important; }
   .jt-map-in { padding-block-start: 0.4rem !important; }
@@ -560,4 +560,37 @@
 @media (max-width: 767px) {
   .hro-stage { padding-block: 4% 5% !important; }
   .hro-content { padding-block: 1em !important; }
+}
+
+/* In the static reading mode every finding is open at once. Size each
+   row to its text instead of reserving the animated camera's frame. */
+@media (max-width: 767px) and (prefers-reduced-motion: reduce) {
+  .jt[data-rm='on'] .jt-intro-finding:nth-child(n),
+  .jt[data-rm='on'] .jt-intro-finding:nth-child(n) .jt-f-b,
+  .jt .jt-close-titlew,
+  .jt .jt-close-chiprow,
+  .jt .jt-close-chip-in {
+    min-block-size: 0;
+    block-size: auto;
+  }
+
+  .jt[data-rm='on'] .jt-intro-finding:nth-child(n) {
+    margin: 0;
+    --finding-row-padding: 0 var(--sp-0-5);
+  }
+
+  .jt[data-rm='on'] .jt-intro-finding .jt-f-fw {
+    margin: 0;
+    padding: 0;
+  }
+
+  .jt[data-rm='on'] .jt-f-b,
+  .jt[data-rm='on'] .jt-f-f {
+    font-size: var(--fs-sm);
+    line-height: 1.4;
+  }
+
+  .jt .jt-close-titlew,
+  .jt .jt-close-copyw,
+  .jt .jt-close { --journey-static-margin: 0; margin-block: 0; }
 }

@@ -852,3 +852,7 @@
   background: var(--accent);
   color: var(--neutral-50); /* the ink ground — #17130E in dark */
 }
+
+@media (max-width: 640px) {
+  .doc-reader-head .document-viewer-back { min-block-size: var(--touch-floor, 44px); }
+}

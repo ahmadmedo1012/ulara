@@ -148,7 +148,15 @@ P2 — On 61938f4 the production waterfall fetched both auth chunks while the re
 
 P1/P4 — Expanded the census to all 20 mounted detail templates and used a student session for competitions, vision and document viewing. [210 detail and competition cells](evidence/route-details.txt): zero missing fixtures or crashes; three mobile target groups exposed for repair. f5e5a3e delivered the deferred auth warm-up.
 
-NEXT: Repair the three detail control groups; finish release measurements and mobile artifacts.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:98f27707720fa6b052684fcbf501d5eaf251f7f18e59a13faf3690b0d862136f -->
+
+P1/P2/P9 — [Verified mobile repairs and bundle](evidence/phone-final.txt): 4,980 px normal / 4,976 px reduced motion at 390; static findings retain all their text. Lecture, exam and PDF tap targets pass the 40-cell rerun including landing. The lazy carousel split costs 865.2 KB across 188 chunks, so the total limit moves 865 → 866; entry remains 30.0 KB. Removed two obsolete tracked scan PIDs. Previous census e0b61f4.
+
+NEXT: Confirm live metrics and the expanded final census; record binary delivery.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 

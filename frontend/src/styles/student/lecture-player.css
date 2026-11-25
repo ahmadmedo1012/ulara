@@ -203,3 +203,8 @@
   outline: var(--state-focus-ring, 2px solid var(--accent));
   outline-offset: -2px;
 }
+
+@media (max-width: 640px) {
+  .cp-list .cp-row,
+  .chapter-list .chapter-row { min-block-size: var(--touch-floor, 44px); }
+}

@@ -766,3 +766,12 @@
     min-block-size: var(--touch-floor, 44px);
   }
 }
+
+@media (max-width: 640px) {
+  .exa-check {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    min-block-size: var(--touch-floor, 44px);
+  }
+}
