@@ -31,8 +31,14 @@ export interface RefreshTokenPayload {
 // on some runtimes), which opens algorithm-confusion downgrade.
 const SIGN_ALGORITHM: SignOptions['algorithm'] = 'HS256';
 
-const accessOpts: SignOptions = { algorithm: SIGN_ALGORITHM, expiresIn: env.jwtAccessTtl };
-const refreshOpts: SignOptions = { algorithm: SIGN_ALGORITHM, expiresIn: env.jwtRefreshTtl };
+/* r363 (P6) — the TTLs are env knobs (JWT_ACCESS_TTL / JWT_REFRESH_TTL,
+ * ms-unit strings, schema-validated in env.ts). @types/jsonwebtoken
+ * narrows expiresIn to the ms StringValue template; the knob is the
+ * same unit grammar, cast once at this boundary. */
+const ms = (v: string) => v as unknown as NonNullable<SignOptions['expiresIn']>;
+
+const accessOpts: SignOptions = { algorithm: SIGN_ALGORITHM, expiresIn: ms(env.jwtAccessTtl) };
+const refreshOpts: SignOptions = { algorithm: SIGN_ALGORITHM, expiresIn: ms(env.jwtRefreshTtl) };
 
 export const signAccessToken = (userId: string, role: Role, institutionId: string | null) =>
   jwt.sign(

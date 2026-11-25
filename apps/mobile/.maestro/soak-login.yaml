@@ -1,0 +1,57 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# soak-login.yaml — r363 (P5-a): the SOAK's bootstrap leg.
+#
+# Logs the STUDENT test account in ONCE (clearState — the soak then rides
+# the SAME session across every network-chaos round). The login steps are
+# smoke-role.yaml's own, trimmed to the login + the dashboard landing:
+# the sticky «دخول» submit (the R336 E mechanism — no hardware keys, no
+# keyboard dismiss), the optional first-run tour escape, the optional
+# two-membership institution picker, and the STUDENT dashboard heading
+# assert that ends the bootstrap.
+#
+# ENV PARAMETERS (both required):
+#   EMAIL    student@test.ly (the seeded STUDENT account)
+#   PASSWORD 12345678 (TEST_PASSWORD — test-accounts.data.ts)
+# ═══════════════════════════════════════════════════════════════════════════
+name: soak-login (r363 P5-a — the session bootstrap)
+appId: ly.ulara.app
+---
+- launchApp:
+    appId: ly.ulara.app
+    clearState: true
+- scrollUntilVisible:
+    element:
+      text: "ابدأ الآن"
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    text: "Wait"
+    optional: true
+- scrollUntilVisible:
+    element:
+      text: "ابدأ الآن"
+    direction: DOWN
+    timeout: 25000
+- tapOn:
+    text: "ابدأ الآن"
+- tapOn:
+    id: "login-email"
+- inputText: "${EMAIL}"
+- tapOn:
+    id: "login-password"
+- inputText: "${PASSWORD}"
+- tapOn:
+    text: "دخول"
+- tapOn:
+    text: "دخول"
+    optional: true
+- tapOn:
+    text: "تخطي"
+    optional: true
+- tapOn:
+    text: "مساحة عمل أُلارا التجريبية"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      text: "أرقامك هذا الفصل"
+    timeout: 45000

@@ -23,6 +23,14 @@ const schema = z
     DATABASE_URL: z.string().url(),
     JWT_ACCESS_SECRET: z.string().min(32, 'JWT_ACCESS_SECRET must be ≥32 chars'),
     JWT_REFRESH_SECRET: z.string().min(32, 'JWT_REFRESH_SECRET must be ≥32 chars'),
+    // r363 (P6) — the token TTLs become env knobs. Defaults keep the
+    // production contract byte-identical ('15m'/'7d'); a TEST
+    // deployment (the emulator soak workflow) shortens the access TTL to
+    // compress the refresh cadence into the soak's minutes. jsonwebtoken
+    // accepts vercel/ms unit strings ('90s', '15m', '7d'); the regex
+    // refuses arbitrary junk early with the schema's own message.
+    JWT_ACCESS_TTL: z.string().regex(/^\d+ ?(ms|s|m|h|d)$/, 'JWT_ACCESS_TTL must be an ms-unit string like 90s, 15m, 7d').default('15m'),
+    JWT_REFRESH_TTL: z.string().regex(/^\d+ ?(ms|s|m|h|d)$/, 'JWT_REFRESH_TTL must be an ms-unit string like 90s, 15m, 7d').default('7d'),
     // Optional: service-to-service token for internal endpoints
     // (012-design-graphics-uplift). When unset, every gated endpoint
     // refuses every request — fail-closed by default.
@@ -248,6 +256,6 @@ export const env = {
   // CORS allow-list — env-driven (CORS_ORIGINS), hardcoded default kept
   // for backward compatibility (11-a P2-11).
   corsOrigins: parseCorsOrigins(parsed.data.CORS_ORIGINS),
-  jwtAccessTtl: '15m' as const,
-  jwtRefreshTtl: '7d' as const,
+  jwtAccessTtl: parsed.data.JWT_ACCESS_TTL ?? '15m',
+  jwtRefreshTtl: parsed.data.JWT_REFRESH_TTL ?? '7d',
 };

@@ -1,0 +1,33 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# soak-assert.yaml — r363 (P5-a): the SOAK's per-round assertion leg.
+#
+# Runs after every network-chaos round (wifi/data toggles, throttled and
+# delayed links, the shortened access-TTL backend). It launches the app
+# WITHOUT clearing state and asserts THE CONTRACT the r362 fix owns:
+#
+#   1. THE SESSION SURVIVED — the student dashboard's always-rendered
+#      heading is visible. If the transport had collapsed the session
+#      (the old «every refresh failure = sign-out» bug), the shell would
+#      route a guest to /auth and this assert fails loudly.
+#   2. NO BLOCKING OFFLINE SCREEN — the offline banner machine is slim
+#      and dismissible by contract; the banner label is asserted OPTIONAL
+#      (it legitimately appears under a dead link and disappears on
+#      regain). A blocking full-screen state would fail assert 1 anyway.
+#
+# Banner flapping (appear/disappear cycling) is judged from the round
+# screenshots in the artifacts, not asserted frame-by-frame.
+# ═══════════════════════════════════════════════════════════════════════════
+name: soak-assert (r363 P5-a — the surviving session)
+appId: ly.ulara.app
+---
+- launchApp:
+    appId: ly.ulara.app
+    clearState: false
+- tapOn:
+    text: "Wait"
+    optional: true
+# THE contract: still authenticated, still on the student dashboard.
+- extendedWaitUntil:
+    visible:
+      text: "أرقامك هذا الفصل"
+    timeout: 30000
