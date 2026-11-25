@@ -113,9 +113,16 @@ describe('AuthPage — journey alignment (imm-5)', () => {
     // wash anywhere; depth is hairlines only).
     expect(css).not.toContain('.auth-center::after');
     expect(css).not.toContain('.nf-scene::after');
-    // No gradient ambients survive in the sheet (comments aside).
+    // No gradient AMBIENTS survive in the sheet (comments aside). The
+    // one sanctioned exception: the ruler-strip's repeating-gradient
+    // TICKS (P3 furniture kit) — evenly-spaced 1px ticks have no other
+    // sane CSS construction, they are furniture not ambience, and the
+    // hero's own .bp-ruler-* already drew them this way in hero.css.
+    // The flat-paper law bans ambient WASHES (radial glows, scene
+    // fades); it has never banned a drafting tick.
     const declarations = css.replace(/\/\*[\s\S]*?\*\//g, '');
-    expect(declarations).not.toMatch(/radial-gradient|linear-gradient/);
+    const withoutTicks = declarations.replace(/\.ruler-strip[^{]*\{[^}]*\}/g, '');
+    expect(withoutTicks).not.toMatch(/radial-gradient|linear-gradient/);
     // The card's whole elevation story is the strong hairline.
     const cardAt = declarations.indexOf('.auth-card');
     const cardRule = declarations.slice(cardAt, declarations.indexOf('}', cardAt));

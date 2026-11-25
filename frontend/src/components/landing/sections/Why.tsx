@@ -17,6 +17,7 @@
  * diagrams instead of claiming screenshots. */
 import { RevealCssClass } from '../../../hooks/useReveal';
 import { WhyPanels } from '../plates/WhyPanels';
+import { DimensionLine } from '../../patterns/DimensionLine';
 
 export function Why() {
   return (
@@ -46,7 +47,19 @@ export function Why() {
         </div>
       </div>
 
-      <div className="wy-hrule" aria-hidden="true" data-spec="why.hrule" />
+      {/* the band's measured datum — P3 furniture kit: the ONE
+          DimensionLine primitive (patterns/DimensionLine.tsx + the
+          .dim-line block in styles/patterns.css) rides the band's own
+          rule as section furniture — the reference's dimension chains
+          (shot-platform-1's slash-tick strings with mono numerals)
+          translated to the DOM voice. The label is the band's own
+          measured datum from the r350 measurement program (px @1440,
+          the inventory's journey table). Measurement chrome: the
+          component forces aria-hidden + pointer-events none, and it
+          sits inside this aria-hidden seat. */}
+      <div className="wy-hrule" aria-hidden="true" data-spec="why.hrule">
+        <DimensionLine className="wy-hrule-dim" label="10168" />
+      </div>
 
       {/* R346 — the isometric loop panels (the retired WhyScene's mount;
           see the file head + plates/WhyPanels.tsx) */}

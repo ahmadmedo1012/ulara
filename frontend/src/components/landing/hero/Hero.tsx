@@ -5,6 +5,7 @@ import { Icon } from '../../Icon';
 import { HERO_WORK_ITEMS } from '../../../data/landing-ledger';
 import { ElevationArt, VB_MOBILE } from './ElevationArt';
 import { RegCross } from '../../patterns/RegCross';
+import { RulerStrip } from '../../patterns/RulerStrip';
 import { finePointerSupported } from '../../../lib/motion/pointer';
 import '../../../styles/landing/hero-mechanics.css';
 
@@ -351,13 +352,16 @@ export function Hero() {
           </div>
         </div>
 
-        {/* the ruler chrome — dashed tick strips on the stage's four
-            inner edges (the reference's ruler layer). */}
+        {/* the ruler chrome — tick strips on the stage's four inner
+            edges (the reference's ruler layer). P3 kit: the ONE
+            RulerStrip primitive draws; the .bp-ruler family classes
+            stay as the SEATS ONLY (the stage's % insets + the stage's
+            own hairline ink — hero.css). */}
         <div className="bp-rulers" aria-hidden="true">
-          <span className="bp-ruler bp-ruler-t" />
-          <span className="bp-ruler bp-ruler-b" />
-          <span className="bp-ruler bp-ruler-s" />
-          <span className="bp-ruler bp-ruler-e" />
+          <RulerStrip className="bp-ruler bp-ruler-t" orientation="horizontal" />
+          <RulerStrip className="bp-ruler bp-ruler-b" orientation="horizontal" />
+          <RulerStrip className="bp-ruler bp-ruler-s" orientation="vertical" />
+          <RulerStrip className="bp-ruler bp-ruler-e" orientation="vertical" />
         </div>
 
         {/* the ± registration marks at the stage's four corners —

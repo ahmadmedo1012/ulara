@@ -123,6 +123,16 @@ import '../styles/landing/r360-phone-diet.css';
 /* r363 round 5 — the diet's own follow-up (the footer chrome air);
  * imported AFTER r360's sheet so its !important rungs win the order. */
 import '../styles/landing/r363-phone-diet.css';
+/* P3 (the furniture kit round) — the §R325 .pat-* state-pattern family
+ * joins the public sheet: the journey scene's .pat-linegrid underlay is
+ * the family's first PUBLIC seat (the reference's faint drafting grid
+ * behind the scene plates, shot-usecase / shot-why). The sheet carries
+ * ONLY namespaced --app-* vars + opt-in .pat-* classes — it touches no
+ * landing selector, so this import paints nothing the seats below do
+ * not ask for. Same cascade contract as AppShell's import (unlayered;
+ * the landing family above always out-specifies on shared selectors —
+ * there are none). */
+import '../styles/shared/app-grammar.css';
 /* R331 (A-Web-Nav) — the masthead owns its own file now: the header
  * state machine, the seat register, the menu choreography and
  * r331/nav.css all live in the chrome component

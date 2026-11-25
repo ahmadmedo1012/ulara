@@ -10,22 +10,28 @@
         tables, chips, state patterns, role identity, motion — additive
         only (nothing upstream is re-keyed; the R322 precedent), so
         P2.2 (gallery) and P2.3 (shell) consume one name each;
-     2. the three state-pattern primitives the grammar names —
+     2. the state-pattern primitives the grammar names —
         .pat-hatch (empty/hover tint) · .pat-dots (media placeholder) ·
-        .pat-cross (locked/denied) — plus .pat-skeleton (hatch shimmer).
+        .pat-cross (locked/denied) — plus .pat-skeleton (hatch shimmer)
+        and .pat-linegrid (the P3 page line-grid underlay).
 
    INK PARITY BY CONSTRUCTION: every --app-* colour is a var() alias
    into the §2 canonical pairs (or a color-mix() on currentColor), so
    both themes resolve with ZERO app-local hex — P2.6's «no light-paper
    islands» is structural here, not a re-skin.
 
-   CASCADE CONTRACT — the r305/r319 house precedent: imported ONLY by
-   AppShell.tsx (right after r319-shell.css), deliberately UNLAYERED,
-   no !important. Gate-clean by construction: no raw color literals,
-   font-size/border-radius only via var()/0, spacing only via the
-   --sp/--space ladders, durations only via the token seats below (the
-   RM block collapses them to 0 — the sweep has its same-sheet kill).
-   Smoke contract: tests/unit/r325-app-css-contract.test.ts.
+   CASCADE CONTRACT — the r305/r319 house precedent: deliberately
+   UNLAYERED, no !important. Importers: AppShell.tsx (right after
+   r319-shell.css), DesignPage.tsx (the /__design specimen reads the
+   app grammar directly) and LandingPage.tsx (P3 — the journey scene's
+   .pat-linegrid underlay is the family's first PUBLIC seat; the sheet
+   touches no landing selector — namespaced --app-* vars + opt-in
+   .pat-* classes only). Gate-clean by construction: no raw color
+   literals, font-size/border-radius only via var()/0, spacing only
+   via the --sp/--space ladders, durations only via the token seats
+   below (the RM block collapses them to 0 — the sweep has its
+   same-sheet kill). Smoke contract:
+   tests/unit/r325-app-css-contract.test.ts.
    ═════════════════════════════════════════════════════════════════════ */
 
 :root {
@@ -85,6 +91,9 @@
      every register, both themes. */
   --app-hatch-ink: color-mix(in srgb, currentColor 16%, transparent);
   --app-dots-ink: color-mix(in srgb, currentColor 24%, transparent);
+  /* P3 — the line-grid underlay's ink: the family's FAINTEST register
+     (the reference's drafting grid reads quieter than the hatch). */
+  --app-linegrid-ink: color-mix(in srgb, currentColor 12%, transparent);
   --app-sheen: color-mix(in srgb, var(--app-surface) 72%, transparent);
 
   /* The pattern recipes (geometry literals live here at the definition
@@ -98,6 +107,11 @@
   --app-cross:
     repeating-linear-gradient(45deg, var(--app-hatch-ink) 0 1px, transparent 1px 7px),
     repeating-linear-gradient(-45deg, var(--app-hatch-ink) 0 1px, transparent 1px 7px);
+  /* P3 — the page line-grid: hairlines on the HOUSE SHEET pitch
+     (--sp-7, the 32px rung — the drafting grid pitch), both axes. */
+  --app-linegrid:
+    repeating-linear-gradient(to bottom, var(--app-linegrid-ink) 0 1px, transparent 1px var(--sp-7)),
+    repeating-linear-gradient(to right, var(--app-linegrid-ink) 0 1px, transparent 1px var(--sp-7));
   --app-rules-v: repeating-linear-gradient(
     90deg,
     var(--app-hatch-ink) 0 1px,
@@ -163,6 +177,17 @@
 /* Locked / denied cells and the forbidden panel (§R325.g). */
 .pat-cross {
   background-image: var(--app-cross);
+}
+
+/* The page line-grid underlay (P3) — the reference's faint drafting
+   grid behind scene plates (shot-usecase / shot-why): hairlines on
+   the house sheet pitch (--sp-7), the family's currentColor ink at
+   its faintest register. UNDERLAY ONLY — seat it on an absolute,
+   pointer-events-none, zero-motion background layer (the composition
+   contract: the consumer owns the seat; the pattern never adds
+   layout). */
+.pat-linegrid {
+  background-image: var(--app-linegrid);
 }
 
 /* Skeleton = hatch shimmer. The sweep rides the canonical skeleton

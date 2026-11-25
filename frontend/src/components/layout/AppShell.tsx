@@ -16,8 +16,9 @@ import '../../styles/shell/sheet-frame.css';
 // R325 (P2.1 · DESIGN.md §R325): the app grammar tokens — --app-*
 // (grid/shell chrome, forms, tables, chips, role identity, motion) +
 // the .pat-* state primitives (.pat-hatch/.pat-dots/.pat-cross/
-// .pat-skeleton). Same cascade contract as the two sheets above
-// (unlayered, shell-imported); P2.2/P2.3 consume the --app-* seats.
+// .pat-skeleton/.pat-linegrid). Same cascade contract as the two
+// sheets above (unlayered, shell-imported); P2.2/P2.3 consume the
+// --app-* seats.
 import '../../styles/shared/app-grammar.css';
 // R325 (P2.3 · DESIGN.md §R325): the shell grammar itself — the
 // active-nav tick/fill-wipe, the role identity seat, the topbar/bottom

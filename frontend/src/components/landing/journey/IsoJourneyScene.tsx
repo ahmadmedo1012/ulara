@@ -937,6 +937,15 @@ export function IsoJourneyScene() {
         <div className="jt-map-col">
           {/* the stack seat @≥992 · the STICKY WINDOW @≤991 */}
           <div className="jt-map-in" ref={mapInRef}>
+            {/* the drafting line-grid underlay — P3: the ONE
+                .pat-linegrid pattern (app-grammar.css, the §R325
+                family's first public seat) behind the scene's plates —
+                the reference's faint full-bleed grid (shot-usecase /
+                shot-why). Pure underlay: absolute, pointer-events none,
+                zero layout, zero motion; first child so the window
+                (and everything it mounts) paints above by document
+                order. */}
+            <div className="pat-linegrid jt-gridbg" aria-hidden="true" />
             <div className="jt-window" ref={windowRef}>
               {/* the four registration rails — the frame's inset
                   spacers (the measured window chrome; invisible

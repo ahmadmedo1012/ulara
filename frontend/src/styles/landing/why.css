@@ -142,11 +142,21 @@
   color: var(--wy-note-ink);           /* W9: the measured muted note ink rgb(180,180,176) */
 }
 
-/* the full-width hairline under the head — 1427x1 at y=269 */
+/* the full-width hairline under the head — 1427x1 at y=269.
+   P3 kit: the band's measured datum rides it — the ONE DimensionLine
+   primitive (styles/patterns.css + DimensionLine.tsx) draws; this is
+   the SEAT ONLY (the chain hangs below the band's own rule, in the
+   panels' 6.4rem air, so the head's measured grid is untouched). */
 .wy-hrule {
+  position: relative;
   block-size: 0.12rem;
   background: var(--rule-strong);
   margin-block-start: 0;
+}
+.wy-hrule-dim {
+  inset-inline: 0;
+  inset-block-start: calc(100% + var(--sp-2));
+  block-size: var(--sp-6);
 }
 
 

@@ -153,6 +153,42 @@
   color: var(--app-ink-2);
 }
 
+/* ── P3 — the furniture-kit tiles (§[19]): the DOM drafting furniture
+   (RegCross corners · RulerStrip · DimensionLine · .pat-linegrid), the
+   §[15] tile grammar. SEATS ONLY — the drawings live in the kit
+   (patterns.css + app-grammar.css); these carry the demo geometry. ── */
+.r323d-furn-row {
+  display: flex; align-items: flex-start; justify-content: center;
+  gap: var(--sp-3); inline-size: 100%;
+}
+.r323d-furn-stack {
+  display: flex; flex-direction: column; justify-content: center;
+  gap: var(--sp-4); inline-size: 100%;
+}
+/* the framed-corner register: a hairline frame the crosses straddle */
+.r323d-furn-frame {
+  position: relative; flex: 1 1 auto;
+  inline-size: 100%; block-size: var(--sp-12);
+  border: 1px solid var(--rule-strong);
+}
+.r323d-furn-frame--sm { block-size: var(--sp-9); }
+/* the ruler seats: the strip fills the seat edge-to-edge (orientation) */
+.r323d-furn-ruler {
+  position: relative; flex: 1 1 auto;
+  inline-size: 100%; block-size: var(--sp-6);
+}
+.r323d-furn-ruler--v { flex: 0 0 var(--sp-6); inline-size: var(--sp-6); block-size: var(--sp-12); }
+/* the dimension-chain seats: the box's block-end (h) / inline-start
+   (v) edge is where the measurement reads; headroom carries the label */
+.r323d-furn-dim {
+  position: relative; inline-size: 100%; block-size: var(--sp-7);
+}
+.r323d-furn-dimcol {
+  position: relative; inline-size: var(--sp-8); block-size: var(--sp-12);
+}
+/* the pitch re-seat demo: the strip's ONE re-tuning var, forced here */
+.r323d-furn-pitch { --ruler-strip-pitch: 12px; }
+
 /* ── §R325.m — the role-identity seats ──────────────────────────
    pattern + mono code, no new colours — the swatches read the seven
    --app-role-pat-* seats straight out of r325-app.css. */

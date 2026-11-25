@@ -195,6 +195,21 @@ section.chapters {
   inline-size: 100%;
 }
 
+/* P3 — the drafting line-grid UNDERLAY (.pat-linegrid, app-grammar.css
+   — the §R325 family's first public seat): the reference's faint
+   full-bleed grid behind the scene plates (shot-usecase / shot-why).
+   SEAT ONLY — the pattern draws; this carries the underlay contract:
+   absolute full-bleed, pointer-events none, no z climb (the window is
+   the later positioned sibling, so it and everything it mounts paint
+   above by document order), zero layout contribution, zero motion.
+   The ink rides the band's own currentColor (--jt-ink, 12% mix) —
+   theme-flipped with the band. */
+.jt-gridbg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
 /* the plan box — the measured window: inset 1.2rem of the map
    column (10@1440 · 13@1920 · 7@1024), carrying the four
    registration rails + the four corner marks + the drifting stack.

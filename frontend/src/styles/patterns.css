@@ -74,6 +74,140 @@
 .reg-cross--ink { color: var(--text); }
 .reg-cross--muted { color: var(--text-muted); }
 
+/* ═══ RulerStrip — THE ruler tick strip (P3 furniture kit · B9) ═════
+   The corpus drew the tick-ruler motif TWICE by hand (the hero stage's
+   .bp-ruler-* and the preloader's dashed rules — the r363 inventory,
+   deviation B9). This block + components/patterns/RulerStrip.tsx are
+   the ONE DOM drawing: an evenly-spaced tick strip — 1px ticks on a
+   repeating gradient, pitch --ruler-strip-pitch (6px, the hero's
+   measured rhythm), thickness --ruler-strip-thickness (4px, the hero's
+   measured rung).
+
+   LENGTH IS THE SEAT: the orientation modifier stretches the strip
+   edge-to-edge of its positioning context (inset-inline: 0 on the
+   horizontal run, inset-block: 0 on the vertical); tick COUNT derives
+   from length ÷ pitch — never authored. Pure furniture: absolute,
+   pointer-events none, aria-hidden forced in the component.
+
+   INK register — the RegCross one (two modifiers, documented once):
+   default var(--rule-strong) · --ink var(--text) · --muted
+   var(--text-muted). Per-seat re-inking rides `color` on the seat
+   class (the hero's .bp-ruler keeps its stage-scoped --hro-hair). */
+.ruler-strip {
+  --ruler-strip-pitch: 6px;
+  --ruler-strip-thickness: 4px;
+  position: absolute;
+  pointer-events: none;
+  color: var(--rule-strong);
+}
+.ruler-strip--horizontal {
+  inset-inline: 0;
+  block-size: var(--ruler-strip-thickness);
+  background-image: repeating-linear-gradient(
+    to right,
+    currentColor 0 1px,
+    transparent 1px var(--ruler-strip-pitch)
+  );
+}
+.ruler-strip--vertical {
+  inset-block: 0;
+  inline-size: var(--ruler-strip-thickness);
+  background-image: repeating-linear-gradient(
+    to bottom,
+    currentColor 0 1px,
+    transparent 1px var(--ruler-strip-pitch)
+  );
+}
+/* the two ink modifiers — the complete register (see the block head) */
+.ruler-strip--ink { color: var(--text); }
+.ruler-strip--muted { color: var(--text-muted); }
+
+/* ═══ DimensionLine — THE dimension line (P3 furniture kit) ═════════
+   The reference frames its plans with dimension CHAINS as section
+   furniture — slash-tick strings with mono numerals (shot-platform-1)
+   — while ULARA drew them only inside SVG art plates (grammar.ts
+   dimH/dimV). This block + components/patterns/DimensionLine.tsx
+   translate that art construction to the DOM voice, measured parts
+   preserved: the 1px rule (the box's block-end edge on the horizontal
+   run / inline-start edge on the vertical), the 45° slash ticks at
+   both ends (the art voice's tick — a 1px bar rotated -45°, centered
+   ON the rule line via the +0.5px half-rule offset; length
+   --dim-line-tick, 9px), the mono mid-label (var(--font-mono)
+   var(--fs-mono-sm), muted ink, tabular numerals — the art voice's
+   4px label offset).
+
+   SEATING: the consumer owns the geometry (absolute, like
+   .reg-cross) — seat the box's block-end (h) / inline-start (v) edge
+   where the measurement reads and give it headroom for the label.
+   Length is the seat; ticks hug both ends via LOGICAL inset anchors,
+   so the pair mirrors correctly under RTL. pointer-events none,
+   aria-hidden forced in the component (the numerals are measurement
+   chrome). The SVG art voices are deliberately NOT migrated (they
+   draw in viewBox units at the 0.75px art hairline). */
+.dim-line {
+  --dim-line-tick: 9px;
+  position: absolute;
+  pointer-events: none;
+  color: var(--rule-strong);
+}
+/* the measured rule — the horizontal run, on the box's block-end edge */
+.dim-line::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  block-size: 1px;
+  background: currentColor;
+}
+.dim-line--v::before {
+  /* the vertical run — the rule on the box's inline-start edge */
+  inset-inline: 0 auto;
+  inset-block: 0;
+  inline-size: 1px;
+  block-size: auto;
+}
+/* the 45° slash ticks — centered ON the 1px rule (the +0.5px offset
+   is the rule's own half-weight; calc keeps it exact for any tick) */
+.dim-line-tick {
+  position: absolute;
+  inline-size: 1px;
+  block-size: var(--dim-line-tick);
+  background: currentColor;
+  rotate: -45deg;
+}
+.dim-line-tick-s { inset-inline-start: 0; inset-block-end: calc(var(--dim-line-tick) / -2 + 0.5px); }
+.dim-line-tick-e { inset-inline-end: 0; inset-block-end: calc(var(--dim-line-tick) / -2 + 0.5px); }
+.dim-line--v .dim-line-tick {
+  inline-size: var(--dim-line-tick);
+  block-size: 1px;
+  inset-block-end: auto;
+  inset-inline-start: calc(var(--dim-line-tick) / -2 + 0.5px);
+}
+.dim-line--v .dim-line-tick-s { inset-block-start: 0; }
+.dim-line--v .dim-line-tick-e { inset-block-end: 0; }
+/* the mono mid-label — muted ink, the art voice's 4px offset */
+.dim-line-label {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: var(--sp-1);
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-sm);
+  line-height: 1;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--text-muted);
+}
+.dim-line--v .dim-line-label {
+  /* the vertical run reads the label beside the rule, on the reading
+     side (inline-start), vertically centered along the measurement */
+  inset-inline: var(--sp-1-5) auto;
+  inset-block: 50% auto;
+  translate: 0 -50%;
+  text-align: start;
+}
+
 /* ═══ PageFrame ═══════════════════════════════════════════════ */
 .pf-page {
   display: flex;

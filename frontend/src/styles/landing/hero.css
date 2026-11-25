@@ -248,20 +248,20 @@
 
 /* the ruler chrome — the reference's full drawing-sheet frame: vertical
    tick columns at the stage's outer edges (full height) + horizontal
-   tick strips aligned with the dotted rules */
+   tick strips aligned with the dotted rules. P3 kit (B9 unification):
+   the tick DRAWING moved to the ONE .ruler-strip primitive
+   (styles/patterns.css + RulerStrip.tsx — 1px ticks / 6px pitch / 4px
+   strip, the measured construction this block originated); Hero.tsx
+   renders it with these .bp-ruler classes kept — SEATS ONLY below
+   (the stage's % insets) + the stage's own hairline ink re-seat
+   (--hro-hair, the ruler reads at one darkness with the stage's
+   dotted rules, as measured). */
 .bp-rulers { position: absolute; inset: 0; pointer-events: none; }
-.bp-ruler {
-  position: absolute;
-  background-image: repeating-linear-gradient(
-    to var(--bp-tick-dir, right),
-    var(--hro-hair) 0 1px,
-    transparent 1px 6px
-  );
-}
-.bp-ruler-t { inset-block-start: 2.2%; inset-inline: 0; block-size: 4px; --bp-tick-dir: right; background-size: 100% 4px; }
-.bp-ruler-b { inset-block-end: 1.2%; inset-inline: 0; block-size: 4px; --bp-tick-dir: right; background-size: 100% 4px; }
-.bp-ruler-s { inset-inline-start: 0; inset-block: 0; inline-size: 4px; --bp-tick-dir: down; background-size: 4px 100%; }
-.bp-ruler-e { inset-inline-end: 0; inset-block: 0; inline-size: 4px; --bp-tick-dir: down; background-size: 4px 100%; }
+.bp-ruler { color: var(--hro-hair); }
+.bp-ruler-t { inset-block-start: 2.2%; }
+.bp-ruler-b { inset-block-end: 1.2%; }
+.bp-ruler-s { inset-inline-start: 0; }
+.bp-ruler-e { inset-inline-end: 0; }
 
 /* P3/r363 (B1): the ± registration crosses draw from the ONE
    .reg-cross primitive (styles/patterns.css + RegCross.tsx — 13px
