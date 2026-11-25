@@ -7,6 +7,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { detectDrift, groupByKind, type DriftFinding } from '../../tests/audit/drift';
+import { DEFAULT_BUDGET } from '../../tests/audit/inventory-types';
 import type {
   SurfaceCapture,
   SurfaceInventory,
@@ -207,6 +208,24 @@ describe('detectDrift', () => {
     expect(findings.filter((f) => f.kind === 'fcp-regression')).toEqual([]);
   });
 
+  it('r362: the absolute floor protects a fast shell-paint baseline, not a ratio', () => {
+    // 68ms baseline × 4 (CI's ratio) = 272ms — tighter than the runner's own
+    // first-paint warm-up. The floor lifts the limit to 600ms, so a 584ms
+    // reading (the CI outlier) passes…
+    const withinFloor = detectDrift(
+      inventory([emptyCapture({ route: '/x', fcpMs: 584 })]),
+      { fcpBaseline: { '/x': 68 }, budget: { ...DEFAULT_BUDGET, fcpRegressionRatio: 4 } },
+    );
+    expect(withinFloor.filter((f) => f.kind === 'fcp-regression')).toEqual([]);
+    // …while a REAL blocking-JS regression still trips both the floor and the
+    // ratio — the gate did not become decorative.
+    const realRegression = detectDrift(
+      inventory([emptyCapture({ route: '/x', fcpMs: 1_400 })]),
+      { fcpBaseline: { '/x': 68 }, budget: { ...DEFAULT_BUDGET, fcpRegressionRatio: 4 } },
+    );
+    expect(realRegression.some((f) => f.kind === 'fcp-regression')).toBe(true);
+  });
+
   it('flags bundle size over the per-route budget', () => {
     const findings = detectDrift(
       inventory([emptyCapture({ route: '/heavy', bytesTransferred: 999_999 })]),
@@ -215,6 +234,7 @@ describe('detectDrift', () => {
           routes: { '/heavy': 100_000 },
           defaultBytes: 800_000,
           fcpRegressionRatio: 1.05,
+          fcpMinLimitMs: 600,
           textContrastMin: 4.5,
           numericContrastMin: 7.0,
           illustrationMaxBytesGz: 8_192,
