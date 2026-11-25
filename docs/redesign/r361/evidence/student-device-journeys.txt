@@ -1,0 +1,7 @@
+Parent a39e494b95c2bbe6dcfaea642913748bdf05e6e3; production web application and native runtime unchanged by this verification change.
+Reproduced the six failing academic/student journey assertions (baseline: 6 failed / 2 passed). These selected retired section bar elements; current SheetSection renders indexed h2 sections. Tested the current semantic headings, explicit indices, hairline, counts, progress meters (including both 100% and 62% lecture progress), due/unread/status chips, loan empty state, and zero-radius samples. After first change 7/8 passed; fixing the locator to cover both real lectures passed the remaining journey. The four independent map clip checks also passed.
+Added an operator tool for real Android display captures, including 320dp, 768dp, 200% font, and rotation request; a disposable emulator with ULARA foreground is required. No native screenshots were produced here.
+Five requested profiles, PNG headers, metadata and restoration: PASS (mock adb)
+Restores display overrides and settings after an injected capture failure: PASS (mock adb)
+Failed capture leaves no partial PNG for release evidence: PASS
+Frontend test typecheck: tsc --noEmit -p frontend/tsconfig.test.json passed.

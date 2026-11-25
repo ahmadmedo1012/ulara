@@ -99,7 +99,13 @@ Start from current `main`. After a backend change run `npm run typecheck`, `npm 
 
 ## Device evidence
 
-Use a disposable emulator to test the role journeys with the default settings and a 320 dp viewport. Record both `adb shell wm size` and `adb shell wm density`: physical pixels alone do not establish a dp width. Set Android font scale to 2.0, repeat navigation, then restore the prior scale and display overrides. Record the orientation that the app actually accepts; the current manifest requests portrait, so a rotated device alone does not prove landscape layout. Attach the screenshots to the matching source revision.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:43321ad18a8bbd2da9b27888742f2d28a7c38239fe0e7e5beb862f9b31e00c1c -->
+
+On a disposable emulator, open a role screen signed in with a synthetic account. Run `bash scripts/capture-device-display.sh emulator-5554 /tmp/ulara-display` from this directory (substitute your serial and a new directory). It records PNGs and display settings for the initial screen, 320 dp, 200% font scale, 768 dp and a rotation request, then restores the original overrides. Repeat for the screens under review. Check the images: the current manifest requests portrait, so requesting rotation does not establish landscape support. A screen capture does not establish that a five-role journey passed.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 ## Honest limits (current)
 

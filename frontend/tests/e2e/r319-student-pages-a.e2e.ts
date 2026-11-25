@@ -9,8 +9,8 @@
  * clock (FIXED_NOW 2026-03-15T10:00Z):
  *
  *  1. SECTION BARS — every visited academic route opens its regions
- *     with the mono-indexed title bar (`[01] مقرّراتك …`), the gutter
- *     index in the mono voice, LTR, aria-hidden; ≥2 bars per route.
+ *     with the indexed title bar (`[01] مقرّراتك …`), the gutter
+ *     index marked aria-hidden; ≥2 sections per route.
  *  2. INDICATORS — the §B2 instruments render where the data exists:
  *     CourseBar hairlines (course rows, lecture rows, matrix mastery),
  *     the mono StatusChip register (DUE nD on assignment rows), the
@@ -18,8 +18,7 @@
  *  3. NO ROUNDED CHROME — the card class sample on each route
  *     computes borderRadius 0px (the R313 collapsed ladder — a
  *     regression here means someone re-widened a corner).
- *  4. THE SHEET CODE — the ambient `SHEET S-01 · STUDENT` rides every
- *     masthead (the integrated proof: page + shell = one sheet).
+ *  4. The retired ambient page code stays absent from the rendered page.
  *
  * Routes: /student/courses · /student/courses/:offeringId (the seeded
  * OFFERING_ID fixture) · /student/matrix (stateful /me/matrix +
@@ -27,6 +26,7 @@
  * /student/library (books tab; the paginated books envelope carries
  * its meta SIBLING per the real backend's shape).
  */
+import { expectSheetSections } from './fixtures/sheet-sections';
 import { test, expect } from './fixtures/e2e';
 import {
   OFFERING_ID, LIBRARY_BOOKS, LIBRARY_RESEARCH,
@@ -65,25 +65,6 @@ const GAPS_FIXTURE = [
   },
 ];
 
-/* Shared reader: every SectionBar's gutter index must be the mono
- * [nn] register (Latin digits, LTR, decorative — the dashboard's own
- * contract), and the bar's title keeps its h2. */
-async function readBars(page: import('@playwright/test').Page) {
-  return page.locator('.r319s-bar').evaluateAll((els) =>
-    els.map((el) => ({
-      title: el.querySelector('.r319s-bar-title')?.textContent ?? '',
-      index: (el.querySelector('.r319s-bar-index')?.textContent ?? '').trim(),
-      indexDir: el.querySelector('.r319s-bar-index')?.getAttribute('dir'),
-      indexHidden: el.querySelector('.r319s-bar-index')?.getAttribute('aria-hidden'),
-      indexMono: el.querySelector('.r319s-bar-index')
-        ? getComputedStyle(el.querySelector('.r319s-bar-index')!).fontFamily
-        : '',
-      hasRule: el.querySelector('.r319s-bar-rule') !== null,
-      hasMonoMeta: el.querySelector('.r319s-mono') !== null,
-    })),
-  );
-}
-
 async function expectSheetContract(page: import('@playwright/test').Page) {
   /* r324 X10 re-pin: the ambient sheet code is RETIRED from the DOM
    * (the innerText jargon sweep — unit gate r324-text-gate.test.tsx and
@@ -104,21 +85,9 @@ test.describe('student pages A — §B2 sheet grammar (chromium · light)', () =
   test('/student/courses — [01] مقرّراتك + [02] الواجبات القادمة with CourseBars and DUE chips', async ({ page }) => {
     await page.goto('/student/courses');
     await expect(page.locator('h1.pf-page-title')).toBeVisible({ timeout: 20000 });
-    /* The bar count retries through the enrollments handoff — the
-     * [01] bar rides the resolved-data branch (pending shows the
-     * skeleton instead). */
-    await expect(page.locator('.r319s-bar')).toHaveCount(2, { timeout: 15000 });
-
-    const bars = await readBars(page);
-    expect(bars.length).toBeGreaterThanOrEqual(2);
-    expect(bars.map((b) => b.title)).toEqual(['مقرّراتك', 'الواجبات القادمة']);
-    for (const b of bars) {
-      /* r351 A2 (Q2): the [0N] index register retired — the title +
-         hairline rule + mono meta carry the bar. */
-      expect(b.index).toBe('');
-      expect(b.hasRule).toBe(true);
-      expect(b.hasMonoMeta).toBe(true); // the count meta (02 enrollments / 01 assignment)
-    }
+    const heads = await expectSheetSections(page, [['01', 'مقرّراتك'], ['02', 'الواجبات القادمة']]);
+    await expect(page.getByRole('table', { name: 'قائمة المقرّرات المسجّلة' }).getByRole('row')).toHaveCount(3);
+    await expect(heads.nth(1).locator('.r319s-count')).toHaveText('01');
 
     // The per-course CourseBars — the fixture's two enrollments (62% and
     // 100%), hairline track + end-tick + mono pct readout.
@@ -141,24 +110,15 @@ test.describe('student pages A — §B2 sheet grammar (chromium · light)', () =
     await expectSheetContract(page);
   });
 
-  test('/student/courses/:offeringId — [01]…[04] curriculum bars, lecture CourseBar, DUE chip', async ({ page }) => {
+  test('/student/courses/:offeringId — [01]…[05] course sections, lecture CourseBar, DUE chip', async ({ page }) => {
     await page.goto(`/student/courses/${OFFERING_ID}`);
     await expect(page.locator('h1.pf-page-title')).toBeVisible({ timeout: 20000 });
-    await expect(page.locator('.r319s-bar')).toHaveCount(4, { timeout: 15000 });
+    const heads = await expectSheetSections(page, [['01', 'مؤشرات المقرّر'], ['02', 'المحاضرات'], ['03', 'المواد المرفقة'], ['04', 'الجدول الأسبوعي'], ['05', 'الواجبات']]);
+    await expect(heads.nth(1).locator('.r319s-count')).toBeVisible();
 
-    const bars = await readBars(page);
-    expect(bars).toHaveLength(4);
-    expect(bars.map((b) => b.title)).toEqual(['المحاضرات', 'المواد المرفقة', 'الجدول الأسبوعي', 'الواجبات']);
-    /* r351 A2 (Q2): the [0N] index register retired. */
-    expect(bars.every((b) => b.index === '')).toBe(true);
-    // The lectures bar's mono meta — the watched/total ratio (1/2).
-    expect(bars[0]!.title).toBe('المحاضرات');
-
-    // The in-progress lecture row carries its §B2 CourseBar
-    // (lecture 2: 446/720s watched → 62%).
-    const lecBar = page.locator('.course-lec-row .r319s-coursebar');
-    await expect(lecBar).toHaveCount(1);
-    await expect(lecBar.locator('.r319s-coursebar-pct')).toHaveText('62%');
+    const lecBar = page.getByRole('table', { name: 'محاضرات المقرر' }).getByRole('meter');
+    await expect(lecBar).toHaveCount(2);
+    await expect(lecBar.locator('.r319s-coursebar-pct')).toHaveText(['100%', '62%']);
 
     // The assignment row's due chip — the mono register.
     await expect(page.locator('.r319s-chip').first()).toHaveText(/^DUE \d+D$/);
@@ -191,17 +151,8 @@ test.describe('student pages A — §B2 sheet grammar (chromium · light)', () =
 
     await page.goto('/student/matrix');
     await expect(page.locator('h1.pf-page-title')).toBeVisible({ timeout: 20000 });
-    await expect(page.locator('.r319s-bar')).toHaveCount(2, { timeout: 15000 });
-
-    const bars = await readBars(page);
-    expect(bars).toHaveLength(2);
-    expect(bars.map((b) => b.title)).toEqual(['فجواتك ذات الأولوية', 'مصفوفتك حسب المقرّر']);
-    /* r351 A2 (Q2): the [0N] register retired. */
-    expect(bars.every((b) => b.index === '')).toBe(true);
-    for (const b of bars) {
-      /* r351 A2 (Q2): retired */
-      expect(b.hasMonoMeta).toBe(true); // 01 gap / 03 measured concepts
-    }
+    const heads = await expectSheetSections(page, [['01', 'فجواتك ذات الأولوية'], ['02', 'مصفوفتك حسب المقرّر']]);
+    await expect(heads.locator('.r319s-count')).toHaveText(['01', '03']);
 
     // The per-course mastery CourseBar — (0.9 + 0.5 + 0.2) / 3 → 53%.
     const mastery = page.locator('.r319sp-matrix-bar .r319s-coursebar');
@@ -251,21 +202,14 @@ test.describe('student pages A — §B2 sheet grammar (chromium · light)', () =
 
     await page.goto('/student/library');
     await expect(page.locator('h1.pf-page-title')).toBeVisible({ timeout: 20000 });
-    await expect(page.locator('.r319s-bar')).toHaveCount(2, { timeout: 15000 });
-
-    const bars = await readBars(page);
-    expect(bars).toHaveLength(2);
-    expect(bars.map((b) => b.title)).toEqual(['استعاراتي', 'الكتب']);
-    /* r351 A2 (Q2): the [0N] register retired. */
-    expect(bars.every((b) => b.index === '')).toBe(true);
-    // The books bar's mono meta — the server's honest total (02).
-    const booksBar = page.locator('.r319s-bar', { hasText: 'الكتب' });
+    const heads = await expectSheetSections(page, [['01', 'استعاراتي'], ['02', 'الكتب']]);
+    const booksBar = heads.nth(1);
     await expect(booksBar.locator('.r319s-count')).toHaveText('02');
 
     // The honest empty loans region renders (no fabricated rows) — the
     // indicator/empty contract: the page carries its §B2 count meta
     // AND the reserved-but-empty loans line.
-    const loansPanel = page.locator('section[aria-label="استعاراتي النشطة"]');
+    const loansPanel = page.locator('section.sg-section').filter({ has: page.getByRole('heading', { name: 'استعاراتي', exact: true }) });
     await expect(loansPanel).toContainText('لا استعارات نشطة');
 
     // The panel (the card class sample) computes radius 0.

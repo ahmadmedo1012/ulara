@@ -20,8 +20,7 @@
  *     empty cell itself is pinned on the AI sidebar corpus).
  *  3. NO ROUNDED CHROME — the card/chip class sample on each route
  *     computes borderRadius 0px (the R313 collapsed ladder).
- *  4. THE SHEET CODE — the ambient `SHEET S-01 · STUDENT` rides every
- *     masthead (the integrated proof: page + shell = one sheet).
+ *  4. The retired ambient page code stays absent from the rendered page.
  *
  * Routes: /student/profile · /student/messages (stateful /messages
  * envelope with unread meta — the standard table carries no messages)
@@ -29,6 +28,7 @@
  * table carries neither) · /student/schedule (the standard enrollments'
  * two schedule slots: Sunday + Tuesday).
  */
+import { expectSheetSections } from './fixtures/sheet-sections';
 import { test, expect } from './fixtures/e2e';
 import { installStatefulApi, statefulJson } from './fixtures/mock-transport';
 
@@ -66,36 +66,26 @@ async function expectSheetContract(page: import('@playwright/test').Page) {
 test.describe('student pages B — §B2 sheet grammar (chromium · light)', () => {
   test.use({ themeSeed: 'light' });
 
-  test('/student/profile — SectionBars (Q2: no gutter numeral), UNLINKED mono chips, radius-0 cards', async ({ page }) => {
+  test('/student/profile — indexed sheet sections, UNLINKED mono chips, radius-0 cards', async ({ page }) => {
     await page.goto('/student/profile');
     await expect(page.locator('h1.pf-page-title')).toBeVisible({ timeout: 20000 });
     /* The default academic tab shows its bar; the account-level password
      * block below the tabs closes the sheet with the second bar. */
-    await expect(page.locator('.r319s-bar')).toHaveCount(2, { timeout: 15000 });
-
-    const bars = await readBars(page);
-    expect(bars.map((b) => b.title)).toEqual(['المعلومات الأكاديمية', 'تغيير كلمة المرور']);
-    /* r351 A2 (Q2): the [0N] numeral register retired platform-wide (and
-     * PageHeader/SectionBar no longer accept an index). The invariant the
-     * belt still holds: the bars exist, in order, titled, ruled. */
-    expect(bars.every((b) => b.index === '')).toBe(true);
-    for (const b of bars) {
-      expect(b.hasRule).toBe(true);
-    }
+    await expectSheetSections(page, [['01', 'المعلومات الأكاديمية'], ['04', 'تغيير كلمة المرور']]);
 
     /* The links tab — the §B2 indicator contract: the three unlinked
      * accounts ride the mono chip register + the bar's linked/total
      * mono ratio meta (0/3 — real localStorage data, nothing linked). */
     await page.getByRole('tab', { name: 'الحسابات البحثية' }).click();
-    await expect(page.locator('.r319s-bar').first()).toContainText('الحسابات الأكاديمية');
+    await expect(page.getByRole('heading', { name: 'الحسابات الأكاديمية' })).toBeVisible();
     const chips = page.locator('.r319s-chip', { hasText: 'UNLINKED' });
     await expect(chips).toHaveCount(3);
     expect(await chips.first().getAttribute('dir')).toBe('ltr');
-    const linksBar = page.locator('.r319s-bar', { hasText: 'الحسابات الأكاديمية' });
-    await expect(linksBar.locator('.r319s-mono')).toHaveText('0/3');
+    const linksBar = page.locator('.sg-head', { hasText: 'الحسابات الأكاديمية' });
+    await expect(linksBar.locator('.sg-aside bdi[dir=ltr]')).toHaveText('0/3');
 
     // The account card (the card class sample) computes radius 0.
-    const card = page.locator('.card').first();
+    const card = page.locator('section.sg-section').filter({ has: linksBar });
     await expect(card).toBeVisible();
     expect(await card.evaluate((el) => getComputedStyle(el).borderRadius)).toBe('0px');
 
@@ -254,12 +244,8 @@ test.describe('student pages B — §B2 sheet grammar (chromium · light)', () =
     /* The standard enrollments' two slots (Sunday 09:00 + Tuesday
      * 11:00) — today-first rotation: الأحد (TODAY chip, 01 slot) then
      * الثلاثاء (01 slot). */
-    await expect(page.locator('.r319s-bar')).toHaveCount(2, { timeout: 15000 });
-    const bars = await readBars(page);
-    expect(bars.map((b) => b.title)).toEqual(['الأحد', 'الثلاثاء']);
-    /* r351 A2 (Q2): no gutter numeral on the day bars. */
-    expect(bars.every((b) => b.index === '')).toBe(true);
-    const counts = await page.locator('.r319s-bar .r319s-count').allTextContents();
+    const heads = await expectSheetSections(page, [['00', 'الأحد'], ['02', 'الثلاثاء']]);
+    const counts = await heads.locator('.r319s-count').allTextContents();
     expect(counts).toEqual(['01', '01']);
 
     // Today's marker — the §B2 mono chip register.

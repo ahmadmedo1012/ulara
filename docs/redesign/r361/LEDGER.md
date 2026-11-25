@@ -196,7 +196,15 @@ P1/P8 — The five-role route sweep found a PDF.js cancellation race. Backported
 
 P1/P4/P8 — Removed the capture tool's prose-link exemption. The strict sweep found three 19–21px links in settings and institutional registration. Fixed the actual link hit areas; 20 affected cells pass. Previous 21c6eae: 1,430 design cells and 7,150 cross-role cells completed. [Measurements and remaining performance gap](evidence/inline-hit-areas.txt).
 
-NEXT: Verify production and mobile artifact source against HEAD, publish final measurement receipts and keep native emulator and aggregate gate limits explicit.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:a4697f06f472ff2c664c179a62d234b2f02ca59cad9c7ad168fa24cd06b31a6a -->
+
+P1/P5/P8 — Reproduced six stale student journey failures, restored expectations for the shipped indexed sections, and kept fixture-based counts, meters and route behavior. All eight student journeys now pass; four map clip journeys pass. Added a reproducible Android display capture command with exact override restoration; its adapter tests are distinct from emulator evidence. [Checks](evidence/student-device-journeys.txt). Parent a39e494.
+
+NEXT: Verify the final CI, signing and deployment receipts; the application and fixture transport are byte-equivalent to a39e494. Keep native emulator, Lighthouse and aggregate verification limits explicit.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 
