@@ -1,0 +1,39 @@
+# r362 P1 — the constant sign-out cure: before / after
+
+Repo HEAD: 14c353c  Date: 2026-11-25T04:35:01Z
+
+## BEFORE (HEAD transport: apps/mobile/src/api/client.ts as of 14c353c)
+```
+    ✓ rejects with a TIMEOUT ApiError when the request stalls (no infinite spinner) (66 ms)
+    ✓ still captures the refresh cookie on success (2 ms)
+    ✕ keeps the session on a network error during refresh (1 ms)
+    ✕ keeps the session on a 15s abort during refresh (1 ms)
+    ✕ keeps the session on a 503 while the function cold-starts during refresh (1 ms)
+    ✕ keeps the session on the rate limiter's 429 during refresh (1 ms)
+    ✕ keeps the session on an unparseable 2xx body during refresh (1 ms)
+    ✕ ends the session on a DEFINITIVE refusal (401 invalid refresh)
+    ✕ ends the session on a 403 revocation
+    ✕ a transient failure followed by a good refresh recovers without user action
+    ✓ resolves { data: null } to null — never the whole envelope (1 ms)
+    ✓ unwraps a populated payload normally (2 ms)
+    ✓ surfaces the backend error envelope as an ApiError (1 ms)
+Tests:       8 failed, 5 passed, 13 total
+```
+
+## AFTER (the classification fix)
+```
+    ✓ rejects with a TIMEOUT ApiError when the request stalls (no infinite spinner) (67 ms)
+    ✓ still captures the refresh cookie on success (1 ms)
+    ✓ keeps the session on a network error during refresh (3 ms)
+    ✓ keeps the session on a 15s abort during refresh (2 ms)
+    ✓ keeps the session on a 503 while the function cold-starts during refresh (2 ms)
+    ✓ keeps the session on the rate limiter's 429 during refresh (2 ms)
+    ✓ keeps the session on an unparseable 2xx body during refresh (2 ms)
+    ✓ ends the session on a DEFINITIVE refusal (401 invalid refresh) (2 ms)
+    ✓ ends the session on a 403 revocation (3 ms)
+    ✓ a transient failure followed by a good refresh recovers without user action (24 ms)
+    ✓ resolves { data: null } to null — never the whole envelope (1 ms)
+    ✓ unwraps a populated payload normally (1 ms)
+    ✓ surfaces the backend error envelope as an ApiError (1 ms)
+Tests:       13 passed, 13 total
+```

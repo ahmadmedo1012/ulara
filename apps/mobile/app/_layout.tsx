@@ -44,6 +44,10 @@ import { RootSheetModalProvider } from "@/components/shell/SheetModalHost";
 import { haptics } from "@/haptics";
 import { ToastHost } from "@/components/ui/toast";
 import { useSession } from "@/auth/session";
+// R362 P1 — the kept-but-unverified session's two second chances
+// (foreground + connectivity regain). A no-op unless a TRANSIENT
+// refresh failure actually left the session unverified.
+import { useSessionRecovery } from "@/hooks/useSessionRecovery";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { installGlobalErrorHandlers, crumb } from "@/lib/telemetry";
 import { ensureRTL } from "@/lib/rtl";
@@ -154,6 +158,8 @@ export default function RootLayout() {
   useEffect(() => {
     void hydrate().then(() => crumb(bootMs("session hydrated")));
   }, [hydrate]);
+
+  useSessionRecovery();
 
   useEffect(() => {
     if (loaded && rtlReady && themeHydrated) {

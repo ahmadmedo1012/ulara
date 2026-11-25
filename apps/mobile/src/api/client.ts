@@ -13,6 +13,10 @@
  * allow-list policy (origin omitted ⇒ pass).
  */
 import { AppNotification, PageMeta, Paginated } from "./types";
+// r362 P1 — real-request evidence for the connectivity machine (see
+// lib/resilience/serverLine). A probe is a synthetic request; the app's
+// own traffic is the honest instrument for «the server is unreachable».
+import { reportServerSignal } from "@/lib/resilience/serverLine";
 
 export const API_BASE =
   (process.env.EXPO_PUBLIC_API_BASE_URL as string | undefined) ||
@@ -141,7 +145,7 @@ async function parseEnvelope<T>(res: Response, keepPaged = false): Promise<T> {
 }
 
 /** Single-flight refresh — concurrent 401s share one /auth/refresh call. */
-let refreshInFlight: Promise<boolean> | null = null;
+let refreshInFlight: Promise<RefreshOutcome> | null = null;
 
 /** A stalled /auth/refresh must never hang the single-flight promise
  * forever (every later 401 would await the same dead promise — the
@@ -149,13 +153,55 @@ let refreshInFlight: Promise<boolean> | null = null;
  * expiry + re-login instead of an indefinite spinner. */
 const REFRESH_TIMEOUT_MS = 15_000;
 
-async function tryRefresh(): Promise<boolean> {
+/**
+ * r362 P1 — THE REFRESH-FAILURE CLASSIFICATION (the constant sign-out
+ * cure).
+ *
+ * The old transport answered a single boolean, so every way a refresh
+ * can fail collapsed into «session over»: a DNS blip, a 15s abort, a
+ * 503 while a Vercel function cold-starts, the auth rate limiter's 429
+ * — all of them ran `onSessionExpired()` and wiped SecureStore. On a
+ * Libyan mobile link that is the everyday case, not the exception: the
+ * user was signed out for having bad signal.
+ *
+ * A failed refresh says ONE of two things, and they are not the same:
+ *
+ *   · DEFINITIVE — the endpoint itself refused the token (401/403 from
+ *     `/auth/refresh`), or there is no refresh cookie left to send.
+ *     Only this ends the session; the server has spoken about the
+ *     credential, not about the network.
+ *   · TRANSIENT — a thrown fetch (offline / DNS / TLS), an AbortError
+ *     (the 15s budget), a 5xx (cold start, deploy in flight), a 429
+ *     (`authRateLimiter`), or an unparseable 2xx body. The token may
+ *     still be perfectly valid; the session is KEPT, the caller gets a
+ *     recoverable error, and a bounded backoff ladder re-attempts the
+ *     refresh on its own (plus on foreground / NetInfo regain via
+ *     `retrySessionRefresh`).
+ */
+export type RefreshOutcome = { ok: true } | { ok: false; definitive: boolean };
+
+/** The only statuses that mean «this refresh token is not valid». */
+function isDefinitiveRefreshRefusal(status: number): boolean {
+  return status === 401 || status === 403;
+}
+
+/**
+ * The session is kept but its access token could not be re-minted yet
+ * (a transient refresh failure). Screens surface it as a retryable
+ * state; NOTHING is cleared. Module-scope so the recovery ladder and
+ * the foreground/regain hook agree on whether work is outstanding.
+ */
+let sessionUnverified = false;
+
+async function tryRefresh(): Promise<RefreshOutcome> {
   const bridge = authBridge;
-  if (!bridge) return false;
+  if (!bridge) return { ok: false, definitive: false };
   if (!refreshInFlight) {
-    refreshInFlight = (async () => {
+    refreshInFlight = (async (): Promise<RefreshOutcome> => {
       const cookie = bridge.getRefreshCookie();
-      if (!cookie) return false;
+      // No cookie at all: there is no credential to renew with. This is
+      // the one non-HTTP definitive answer.
+      if (!cookie) return { ok: false, definitive: true };
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), REFRESH_TIMEOUT_MS);
       try {
@@ -165,13 +211,25 @@ async function tryRefresh(): Promise<boolean> {
           body: "{}",
           signal: controller.signal,
         });
-        if (!res.ok) return false;
+        // A response arrived — the server is reachable, whatever it said.
+        reportServerSignal("reachable");
+        if (!res.ok) {
+          // 401/403 = the endpoint refused the token (definitive).
+          // 5xx/429/anything else = the endpoint could not answer
+          // (transient) — the session survives.
+          return { ok: false, definitive: isDefinitiveRefreshRefusal(res.status) };
+        }
         const data = await parseEnvelope<{ user: unknown; accessToken: string }>(res);
         const newCookie = extractRefreshCookie(res);
+        // Rotation: the server always sets a fresh cookie; the OLD value
+        // is the fallback only when the response carried none (a
+        // proxy stripping Set-Cookie must not strand the next refresh).
         bridge.onSessionUpdate({ user: data.user, accessToken: data.accessToken, refreshCookie: newCookie ?? cookie });
-        return true;
+        return { ok: true };
       } catch {
-        return false;
+        // Offline, DNS, TLS, abort, bad body — never proof about the token.
+        reportServerSignal("unreachable");
+        return { ok: false, definitive: false };
       } finally {
         clearTimeout(timer);
         refreshInFlight = null;
@@ -179,6 +237,78 @@ async function tryRefresh(): Promise<boolean> {
     })();
   }
   return refreshInFlight;
+}
+
+/* ── the bounded recovery ladder (r362 P1) ───────────────────────────── */
+
+/** Re-attempt delays after a TRANSIENT refresh failure, then stop. The
+ *  ladder is the «it will fix itself» half of the promise the banner
+ *  makes; it never runs for a definitive refusal (nothing to retry). */
+let retryLadder: readonly number[] = [1_500, 4_000, 10_000];
+let retryStep = 0;
+let retryTimer: ReturnType<typeof setTimeout> | null = null;
+
+function clearSessionRefreshRetry(): void {
+  if (retryTimer !== null) {
+    clearTimeout(retryTimer);
+    retryTimer = null;
+  }
+  retryStep = 0;
+}
+
+function scheduleSessionRefreshRetry(): void {
+  if (retryTimer !== null) return; // one in flight is enough
+  const delay = retryLadder[retryStep];
+  if (delay === undefined) return; // ladder exhausted — leave it to the caller
+  retryTimer = setTimeout(async () => {
+    retryTimer = null;
+    retryStep += 1;
+    const outcome = await tryRefresh();
+    if (outcome.ok) {
+      sessionUnverified = false;
+      retryStep = 0;
+      return;
+    }
+    if (outcome.definitive) {
+      sessionUnverified = false;
+      retryStep = 0;
+      authBridge?.onSessionExpired();
+      return;
+    }
+    scheduleSessionRefreshRetry();
+  }, delay);
+  // A recovery timer must never hold a Node/jest process open.
+  (retryTimer as unknown as { unref?: () => void }).unref?.();
+}
+
+/**
+ * Foreground / NetInfo-regain entry point (r362 P1): re-attempt the
+ * refresh ONLY while a transient failure left the session unverified —
+ * a healthy session must never be rotated gratuitously. Returns whether
+ * the session is freshly verified. Cheap and idempotent: safe to call
+ * from every AppState `active` and every connectivity regain.
+ */
+export async function retrySessionRefresh(): Promise<boolean> {
+  const bridge = authBridge;
+  if (!bridge || !sessionUnverified) return false;
+  clearSessionRefreshRetry();
+  const outcome = await tryRefresh();
+  if (outcome.ok) {
+    sessionUnverified = false;
+    return true;
+  }
+  if (outcome.definitive) {
+    sessionUnverified = false;
+    bridge.onSessionExpired();
+    return false;
+  }
+  scheduleSessionRefreshRetry();
+  return false;
+}
+
+/** True while the session is kept but its access token is not renewed yet. */
+export function isSessionUnverified(): boolean {
+  return sessionUnverified;
 }
 
 export async function api<T>(path: string, opts: RequestOptions = {}): Promise<T> {
@@ -203,17 +333,38 @@ export async function api<T>(path: string, opts: RequestOptions = {}): Promise<T
       body: rawBody !== undefined ? rawBody : body !== undefined ? JSON.stringify(body) : undefined,
       signal: controller.signal,
     });
+    reportServerSignal("reachable");
     if (res.status === 401 && !_isRetry && !path.startsWith("/auth/")) {
-      const refreshed = await tryRefresh();
-      if (refreshed) {
+      const outcome = await tryRefresh();
+      if (outcome.ok) {
+        sessionUnverified = false;
+        clearSessionRefreshRetry();
         return api<T>(path, { ...opts, _isRetry: true });
       }
-      authBridge?.onSessionExpired();
-      throw new ApiError("UNAUTHENTICATED", "انتهت صلاحية الجلسة — سجّل الدخول من جديد", 401);
+      if (outcome.definitive) {
+        // The server refused the credential — the session is really over.
+        sessionUnverified = false;
+        clearSessionRefreshRetry();
+        authBridge?.onSessionExpired();
+        throw new ApiError("UNAUTHENTICATED", "انتهت صلاحية الجلسة — سجّل الدخول من جديد", 401);
+      }
+      // r362 P1 — TRANSIENT: the session is KEPT. Never call
+      // onSessionExpired here: a flaky link is not a logout. Surface a
+      // recoverable error and let the backoff ladder (plus foreground /
+      // NetInfo regain) re-attempt the refresh without user action.
+      sessionUnverified = true;
+      scheduleSessionRefreshRetry();
+      throw new ApiError(
+        "SESSION_UNVERIFIED",
+        "تعذّر تجديد الجلسة مؤقتاً — سيُعاد المحاولة تلقائياً عند عودة الاتصال.",
+        0,
+      );
     }
     return await parseEnvelope<T>(res, opts.paged ?? false);
   } catch (err) {
     if (err instanceof ApiError) throw err;
+    // Transport failure: the only evidence that may feed the server line.
+    reportServerSignal("unreachable");
     if ((err as { name?: string })?.name === "AbortError") {
       throw new ApiError("TIMEOUT", "انتهت مهلة الطلب — حاول مجدداً", 0);
     }
@@ -253,10 +404,12 @@ export async function apiWithCookieCapture<T>(path: string, opts: RequestOptions
       body: opts.rawBody !== undefined ? opts.rawBody : opts.body !== undefined ? JSON.stringify(opts.body) : undefined,
       signal: controller.signal,
     });
+    reportServerSignal("reachable");
     const data = await parseEnvelope<T>(res);
     return { data, refreshCookie: extractRefreshCookie(res) };
   } catch (err) {
     if (err instanceof ApiError) throw err;
+    reportServerSignal("unreachable");
     if ((err as { name?: string })?.name === "AbortError") {
       throw new ApiError("TIMEOUT", "انتهت مهلة الطلب — حاول مجدداً", 0);
     }
@@ -303,6 +456,28 @@ export async function getPage<T>(path: string, query?: RequestOptions["query"]):
     meta: { page: 1, limit: 0, total: rows.length, totalPages: 1 },
   };
 }
+
+/**
+ * Test-only seams (the `__networkInternals` pattern) — NOTHING here is
+ * used by app code. Lets a suite restore the module's first-import
+ * state (bridge, single-flight, recovery ladder) between cases.
+ */
+export const __clientInternals = {
+  isSessionUnverified: (): boolean => sessionUnverified,
+  setRetryLadder(ladder: readonly number[]): void {
+    retryLadder = ladder;
+  },
+  clearRetry(): void {
+    clearSessionRefreshRetry();
+  },
+  reset(): void {
+    clearSessionRefreshRetry();
+    authBridge = null;
+    refreshInFlight = null;
+    sessionUnverified = false;
+    retryLadder = [1_500, 4_000, 10_000];
+  },
+};
 
 /** Full URL for a relative file path (e.g. /api/v1/files/papers/x.pdf). */
 export function absoluteUrl(path: string | null | undefined): string | null {

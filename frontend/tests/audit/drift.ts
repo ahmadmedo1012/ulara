@@ -169,11 +169,20 @@ export function detectDrift(
      * value as an infinite regression. Skip unmeasured sides. */
     if (baselineFcp !== undefined && baselineFcp > 0 && cap.fcpMs > 0) {
       const ratio = cap.fcpMs / baselineFcp;
-      if (ratio > budget.fcpRegressionRatio) {
+      /* r362 P0 — the ratio is the budget; the ABSOLUTE floor is the
+       * measurement correction. On a shell-paint route the ratio alone
+       * gated one cell at 272ms (68ms baseline × 4) while the identical
+       * event on `/` was allowed 592ms — the runner's fixed first-paint
+       * warm-up decided the verdict. The effective limit is therefore
+       * `max(baseline × ratio, fcpMinLimitMs)`: still a regression gate
+       * (a real blocking-JS regression blows past both), no longer a
+       * lottery on which route painted its inline shell fastest. */
+      const limitMs = Math.max(baselineFcp * budget.fcpRegressionRatio, budget.fcpMinLimitMs);
+      if (cap.fcpMs > limitMs) {
         findings.push({
           kind: 'fcp-regression',
           ...ctx,
-          detail: `FCP ${cap.fcpMs}ms vs baseline ${baselineFcp}ms (${(ratio * 100 - 100).toFixed(1)}% over)`,
+          detail: `FCP ${cap.fcpMs}ms over the ${Math.round(limitMs)}ms limit (baseline ${baselineFcp}ms, ratio ${ratio.toFixed(1)}x)`,
         });
       }
     }

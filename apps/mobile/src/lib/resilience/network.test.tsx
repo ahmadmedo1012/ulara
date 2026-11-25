@@ -32,7 +32,7 @@
  */
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { Text } from "react-native";
-import { render, waitFor, act } from "@testing-library/react-native";
+import { render, waitFor, act, fireEvent } from "@testing-library/react-native";
 import { onlineManager } from "@tanstack/react-query";
 import { API_BASE } from "@/api/client";
 import {
@@ -47,6 +47,7 @@ import {
   type ConnState,
 } from "./network";
 import * as NetInfoModule from "@react-native-community/netinfo";
+import { reportServerSignal } from "@/lib/resilience/serverLine";
 
 /* ── the controlled NetInfo mock (multiple listeners + configure) ────── */
 
@@ -146,20 +147,27 @@ describe("nextConnState — the debounced four-dimension machine", () => {
     expect(after.unreachableStreak).toBe(1);
   });
 
-  it("(b) two consecutive unreachable readings confirm ularaServerUnavailable — and the DEVICE stays up", () => {
+  it("(b) THREE consecutive unreachable readings confirm ularaServerUnavailable — and the DEVICE stays up", () => {
+    // r362 P1: the confirm threshold is 3 (was 2). Two readings fit
+    // inside one packet-burst drop — a blip, not an outage; the ladder
+    // now spans ~22s of continuous failure before the claim.
     const once = nextConnState(ONLINE, reading({ isInternetReachable: false }));
     const twice = nextConnState(once, reading({ isInternetReachable: false }));
-    expect(twice.isOnline).toBe(false);
-    expect(twice.phase).toBe("ularaServerUnavailable");
+    expect(twice.isOnline).toBe(true); // two readings are NOT enough
+    expect(twice.phase).toBe("internetAvailable");
+    const thrice = nextConnState(twice, reading({ isInternetReachable: false }));
+    expect(thrice.isOnline).toBe(false);
+    expect(thrice.phase).toBe("ularaServerUnavailable");
     // THE dimension split: a dead ULARA server is NOT a dead device —
     // the link is up, queries must keep running.
-    expect(twice.isDeviceOnline).toBe(true);
-    expect(twice.unreachableStreak).toBe(2);
+    expect(thrice.isDeviceOnline).toBe(true);
+    expect(thrice.unreachableStreak).toBe(3);
   });
 
   it("(c) recovery is immediate — one good reading after server-unavailable is online", () => {
     const once = nextConnState(ONLINE, reading({ isInternetReachable: false }));
-    const confirmed = nextConnState(once, reading({ isInternetReachable: false }));
+    const twice = nextConnState(once, reading({ isInternetReachable: false }));
+    const confirmed = nextConnState(twice, reading({ isInternetReachable: false }));
     expect(confirmed.isOnline).toBe(false);
     const recovered = nextConnState(confirmed, reading({ isInternetReachable: true }));
     expect(recovered.isOnline).toBe(true);
@@ -197,8 +205,9 @@ describe("nextConnState — the debounced four-dimension machine", () => {
     expect(back.isDeviceOnline).toBe(true);
     expect(back.phase).toBe("internetUnknown");
     expect(back.isOnline).toBe(false); // last confirmed line was down
-    // The confirm then lands on the server dimension:
-    const confirmed = nextConnState(back, reading({ isInternetReachable: false }));
+    // The confirm then lands on the server dimension (3 readings):
+    const second = nextConnState(back, reading({ isInternetReachable: false }));
+    const confirmed = nextConnState(second, reading({ isInternetReachable: false }));
     expect(confirmed.phase).toBe("ularaServerUnavailable");
   });
 
@@ -219,7 +228,8 @@ describe("nextConnState — the debounced four-dimension machine", () => {
     const rearm = nextConnState(blip, reading({ isInternetReachable: null }));
     expect(rearm.isOnline).toBe(true);
     expect(rearm.unreachableStreak).toBe(1);
-    const confirmed = nextConnState(rearm, reading({ isInternetReachable: false }));
+    const second = nextConnState(rearm, reading({ isInternetReachable: false }));
+    const confirmed = nextConnState(second, reading({ isInternetReachable: false }));
     expect(confirmed.isOnline).toBe(false);
     expect(confirmed.phase).toBe("ularaServerUnavailable");
   });
@@ -233,7 +243,8 @@ describe("nextConnState — the debounced four-dimension machine", () => {
 
   it("while server-unavailable, further failures stay put (capped, stable)", () => {
     const once = nextConnState(ONLINE, reading({ isInternetReachable: false }));
-    const confirmed = nextConnState(once, reading({ isInternetReachable: false }));
+    const twice = nextConnState(once, reading({ isInternetReachable: false }));
+    const confirmed = nextConnState(twice, reading({ isInternetReachable: false }));
     const again = nextConnState(confirmed, reading({ isInternetReachable: false }));
     expect(again.isOnline).toBe(false);
     expect(again.phase).toBe("ularaServerUnavailable");
@@ -266,7 +277,10 @@ describe("mergeDbHealth — db-degraded only refines a PROVEN-reachable ULARA", 
 
   it("(c) an UNREACHABLE server has NO db evidence — the merge is a no-op", () => {
     const unreachable = nextConnState(
-      nextConnState(ONLINE, reading({ isInternetReachable: false })),
+      nextConnState(
+        nextConnState(ONLINE, reading({ isInternetReachable: false })),
+        reading({ isInternetReachable: false }),
+      ),
       reading({ isInternetReachable: false }),
     );
     expect(unreachable.phase).toBe("ularaServerUnavailable");
@@ -291,8 +305,11 @@ describe("NetInfo.configure — the own-API liveness probe", () => {
     expect(probeConfigAtImport).toMatchObject({
       reachabilityUrl: `${API_BASE}/ping`,
       reachabilityMethod: "GET",
-      reachabilityRequestTimeout: 5 * 1000,
-      reachabilityShortTimeout: 5 * 1000,
+      // r362 P1 — the measured budget: 12s covers a Libyan mobile RTT
+      // plus a cold fra1 function; the 30s cadence stops the probe from
+      // running continuously on a metered connection.
+      reachabilityRequestTimeout: 12 * 1000,
+      reachabilityShortTimeout: 30 * 1000,
       useNativeReachability: false,
     });
   });
@@ -354,12 +371,11 @@ describe("the store wiring", () => {
     const { getByText } = await render(<Probe />);
     await waitFor(() => getByText("true|true|wifi"));
     setOnline.mockClear();
-    await act(async () => {
-      NetInfoMock.__setState({ isInternetReachable: false });
-    });
-    await act(async () => {
-      NetInfoMock.__setState({ isInternetReachable: false });
-    });
+    for (let i = 0; i < 3; i++) {
+      await act(async () => {
+        NetInfoMock.__setState({ isInternetReachable: false });
+      });
+    }
     await waitFor(() => getByText("false|true|wifi")); // server line down…
     expect(__networkInternals.state().phase).toBe("ularaServerUnavailable");
     expect(__networkInternals.state().isDeviceOnline).toBe(true); // …device still up
@@ -389,12 +405,11 @@ describe("the store wiring", () => {
     const setOnline = jest.spyOn(onlineManager, "setOnline");
     const { getByText } = await render(<Probe />);
     await waitFor(() => getByText("true|true|wifi"));
-    await act(async () => {
-      NetInfoMock.__setState({ isInternetReachable: false });
-    });
-    await act(async () => {
-      NetInfoMock.__setState({ isInternetReachable: false });
-    });
+    for (let i = 0; i < 3; i++) {
+      await act(async () => {
+        NetInfoMock.__setState({ isInternetReachable: false });
+      });
+    }
     await waitFor(() => getByText("false|true|wifi"));
     // (c) recovery: ONE good reading — immediate, no debounce.
     await act(async () => {
@@ -420,10 +435,17 @@ describe("the store wiring", () => {
       });
       expect(getByText("true|true|wifi")).toBeTruthy(); // (a) still online
       expect(mockRefresh).not.toHaveBeenCalled();
+      // rung 1 (2s) → reading #2 — still a blip, never a claim
       await act(async () => {
-        jest.advanceTimersByTime(__networkInternals.confirmProbeDelayMs);
+        jest.advanceTimersByTime(__networkInternals.confirmProbeDelaysMs[0]);
       });
       expect(mockRefresh).toHaveBeenCalledTimes(1);
+      expect(getByText("true|true|wifi")).toBeTruthy();
+      // rung 2 (5s) → reading #3 — the honest threshold
+      await act(async () => {
+        jest.advanceTimersByTime(__networkInternals.confirmProbeDelaysMs[1]);
+      });
+      expect(mockRefresh).toHaveBeenCalledTimes(2);
       expect(getByText("false|true|wifi")).toBeTruthy(); // (b) confirmed
     } finally {
       jest.useRealTimers();
@@ -513,12 +535,11 @@ describe("reportDbHealth — the db line rides real responses", () => {
       reportDbHealth(false);
     });
     await waitFor(() => getByText("databaseDegraded"));
-    await act(async () => {
-      NetInfoMock.__setState({ isInternetReachable: false });
-    });
-    await act(async () => {
-      NetInfoMock.__setState({ isInternetReachable: false });
-    });
+    for (let i = 0; i < 3; i++) {
+      await act(async () => {
+        NetInfoMock.__setState({ isInternetReachable: false });
+      });
+    }
     await waitFor(() => getByText("ularaServerUnavailable"));
     // …and recovery re-presents the still-degraded db honestly:
     await act(async () => {
@@ -562,12 +583,11 @@ describe("NetworkBanner — the four honest messages", () => {
     await act(async () => {
       /* bootstrap */
     });
-    await act(async () => {
-      NetInfoMock.__setState({ isInternetReachable: false });
-    });
-    await act(async () => {
-      NetInfoMock.__setState({ isInternetReachable: false });
-    });
+    for (let i = 0; i < 3; i++) {
+      await act(async () => {
+        NetInfoMock.__setState({ isInternetReachable: false });
+      });
+    }
     await waitFor(() => getByText("تعذّر الاتصال بخادم أُلارا حالياً"));
     // THE regression pin — the owner's complaint can never return:
     expect(queryByText(/لا يوجد اتصال بالإنترنت/)).toBeNull();
@@ -597,5 +617,77 @@ describe("NetworkBanner — the four honest messages", () => {
       NetInfoMock.__setState({ isConnected: true, isInternetReachable: true });
     });
     await waitFor(() => getByText("عاد الاتصال بالخدمة"));
+  });
+});
+
+/* ── 7. r362 P1 — real traffic outvotes the probe ──────────────────── */
+
+describe("r362 P1 — the server line is confirmed by REAL traffic, not the probe alone", () => {
+  const drive = async (n: number) => {
+    for (let i = 0; i < n; i++) {
+      await act(async () => {
+        NetInfoMock.__setState({ isInternetReachable: false });
+      });
+    }
+  };
+
+  it("failing probes while real requests SUCCEED never show the server banner", async () => {
+    // The owner's defect: the probe timed out on a working connection and
+    // the app announced the server was down over content that was loading.
+    const { toJSON } = await render(<NetworkBanner />);
+    await act(async () => {
+      reportServerSignal("reachable");
+    });
+    await drive(5);
+    expect(__networkInternals.state().phase).toBe("internetAvailable");
+    expect(__networkInternals.state().isOnline).toBe(true);
+    expect(toJSON()).toBeNull();
+    // The streak is still recorded — the probe fact is not thrown away.
+    expect(__networkInternals.state().unreachableStreak).toBeGreaterThan(0);
+  });
+
+  it("a real transport failure + three failed probes confirm the honest claim", async () => {
+    await render(<NetworkBanner />);
+    await act(async () => {
+      reportServerSignal("unreachable");
+    });
+    await drive(3);
+    expect(__networkInternals.state().phase).toBe("ularaServerUnavailable");
+    expect(__networkInternals.state().isDeviceOnline).toBe(true); // never the device line
+  });
+
+  it("one real response withdraws a standing claim immediately (no user action)", async () => {
+    await render(<NetworkBanner />);
+    await act(async () => {
+      reportServerSignal("unreachable");
+    });
+    await drive(3);
+    expect(__networkInternals.state().phase).toBe("ularaServerUnavailable");
+    await act(async () => {
+      reportServerSignal("reachable");
+    });
+    expect(__networkInternals.state().phase).toBe("internetAvailable");
+    expect(__networkInternals.state().isOnline).toBe(true);
+    expect(__networkInternals.state().unreachableStreak).toBe(0);
+  });
+
+  it("the banner is DISMISSIBLE, and the dismissal dies with the episode", async () => {
+    const { getByText, queryByText, getByLabelText } = await render(<NetworkBanner />);
+    await act(async () => {
+      NetInfoMock.__setState({ isConnected: false, isInternetReachable: false });
+    });
+    await waitFor(() => getByText("لا يوجد اتصال بالشبكة"));
+    await act(async () => {
+      fireEvent.press(getByLabelText("إغلاق التنبيه"));
+    });
+    expect(queryByText("لا يوجد اتصال بالشبكة")).toBeNull();
+    // Recovery ends the episode: a NEW outage speaks again.
+    await act(async () => {
+      NetInfoMock.__setState({ isConnected: true, isInternetReachable: true });
+    });
+    await act(async () => {
+      NetInfoMock.__setState({ isConnected: false, isInternetReachable: false });
+    });
+    await waitFor(() => getByText("لا يوجد اتصال بالشبكة"));
   });
 });

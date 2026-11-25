@@ -1,0 +1,35 @@
+# r362 P1 — the «connection lost» screen: root cause + measurables
+
+Commit: 14c353c  2026-11-25T04:42:00Z
+
+## The probe configuration as shipped (before this change)
+```
+reachabilityUrl: ${API_BASE}/ping
+reachabilityRequestTimeout: 5 * 1000     <- one 5s budget per probe
+reachabilityShortTimeout:   5 * 1000     <- re-probe every 5s (continuous)
+useNativeReachability: false
+OFFLINE_AFTER_READINGS = 2               <- 2 failures (~7s) = «server down»
+```
+
+The instrument, not the network, decided the message: a 5s abort for
+Libyan mobile radio -> fra1 -> a cold serverless function reports «unreachable»
+for a working server; a 5s cadence with a 5s budget keeps a probe almost
+always in flight; and a probe verdict ALONE could claim the server line while
+real API requests were succeeding on the same connection.
+
+## What changed
+- reachabilityRequestTimeout 5s -> 12s (covers mobile RTT + cold start)
+- reachabilityShortTimeout 5s -> 30s (no continuous probing on metered links)
+- OFFLINE_AFTER_READINGS 2 -> 3, confirm ladder 2s/5s/15s (~22s of failure)
+- NEW lib/resilience/serverLine.ts: real-request evidence bus, fed by the API
+  client (every response = reachable, every transport failure = unreachable)
+- the probe may NOT claim ularaServerUnavailable while real traffic succeeds
+- one real response withdraws a standing claim (no user action)
+- the banner is dismissible; the dismissal dies with the episode
+- no blocking full-screen state is reachable from any of this (the banner is
+  36px, safe-area aware; cached content stays visible underneath)
+
+## Tests (TZ=UTC)
+```
+Tests:       48 passed, 48 total
+```

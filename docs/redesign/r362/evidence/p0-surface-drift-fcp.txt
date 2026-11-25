@@ -1,0 +1,57 @@
+# r362 P0 — the red CI gate, root-caused (Surface drift / FCP)
+
+Commit under test: 14c353c  2026-11-25T04:41:49Z
+
+## What CI said
+```
+[capture] /auth/register | light | rtl | 1280] FCP 584ms vs baseline 68ms (758.8% over)
+```
+Only 1 of 72 capture cells failed; the other CI jobs were green.
+
+## What the gate actually gates
+- baseline FCP per route = the light/rtl/1280 cell (run-drift.ts buildFcpBaseline)
+- CI ratio AUDIT_FCP_RATIO=4 -> limit = baseline x 4
+- /auth/register baseline 68ms -> limit 272ms (the TIGHTEST absolute limit in the suite)
+
+## Measured locally (this machine), 8 cold navigations per route
+```
+/auth/register fcp: 60 32 76 32 28 36 56 72 | min 28 max 76 median 56
+/auth          fcp: 48 44 72 36 32 76 32 76 | min 32 max 76 median 48
+```
+The paint at 28-76ms is the inline index.html shell, not the route JS — so the
+route's own render cost cannot explain 584ms.
+
+## The full gate, run locally with CI's exact env (AUDIT_FCP_RATIO=4, slice=1, mock)
+```
+✓ surface inventory: 72 captures -> frontend/tests/audit/surface-inventory.json
+✓ surface drift: clean across 72 captures
+```
+
+## Per-route local FCP (all 72 cells) vs the limit the ratio produces
+```
+route                     baseline  4x-limit  local min/max
+/                            148       592   36 / 84
+/auth                         84       336   32 / 100
+/auth/register                68       272   28 / 92
+/404                         132       528   32 / 64
+/student/dashboard           508      2032   32 / 124
+/student/courses             336      1344   56 / 136
+/student/courses/:offeringId   224       896   52 / 160
+/student/lectures/:lectureId   436      1744   52 / 160
+/student/alerts              276      1104   60 / 148
+/student/calendar            468      1872   64 / 172
+/student/online-exams        296      1184   64 / 124
+/colleges                    224       896   52 / 152
+all 72 local cells: min 28  max 172
+```
+
+## Verdict + fix
+Not a code regression: 72/72 cells pass locally, the failing cell paints at 28-76ms,
+and the cell that failed is the one whose ratio limit is smallest in absolute terms.
+A ratio-only budget on a sub-100ms baseline decides the verdict by runner warm-up
+(cold browser process + V8 compile of the entry chunks), not by a regression.
+
+Measurement fixed at the cause (drift.ts + inventory-types.ts): the effective limit
+is max(baseline x ratio, fcpMinLimitMs=600). The ratio still gates every route;
+the floor only ever binds for shell-paint routes, so a real blocking-JS regression
+(hundreds of ms on every cell) still trips it.

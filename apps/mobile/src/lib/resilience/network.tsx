@@ -53,7 +53,7 @@
  *     static.
  */
 import { useEffect, useState } from "react";
-import { Animated, Easing, StyleSheet, View } from "react-native";
+import { Animated, Easing, Pressable, StyleSheet, View } from "react-native";
 import {
   addEventListener as addNetInfoListener,
   configure as configureNetInfo,
@@ -68,7 +68,9 @@ import WifiOff from "lucide-react-native/icons/wifi-off";
 import CloudOff from "lucide-react-native/icons/cloud-off";
 import Database from "lucide-react-native/icons/database";
 import Wifi from "lucide-react-native/icons/wifi";
+import X from "lucide-react-native/icons/x";
 import { API_BASE } from "@/api/client";
+import { onServerSignal } from "@/lib/resilience/serverLine";
 import { useStatusTones } from "@/design/theme";
 import { dsEase, sp } from "@/design/tokens";
 import { useReduceMotion } from "@/hooks/useReduceMotion";
@@ -97,12 +99,33 @@ import { T } from "@/components/ui/text";
  *     Google endpoint, precisely the blocked-probe class this fix
  *     retires). The library probe against OUR API is the one signal.
  */
+/*
+ * r362 P1 — THE PROBE BUDGET (the false-banner cure, measured).
+ *
+ * The old 5s budget was the wrong instrument for the deployment it
+ * measures: a probe travels Libyan mobile radio → Frankfurt (fra1) → a
+ * COLD serverless function. Cold starts alone are 1–3s, RTT on mobile
+ * data 300–900ms, and the p50 is meaningless on a link that stalls for
+ * seconds under handover. A 5s abort therefore reported «server down»
+ * for a working server, routinely.
+ *
+ * `reachabilityRequestTimeout` is now 12s: long enough that a timeout
+ * means the path is genuinely broken, short enough that a real outage
+ * is still detected inside a user's patience.
+ *
+ * `reachabilityShortTimeout` is the RE-PROBE CADENCE, and 5s was worse
+ * than useless: a 5s budget every 5s meant the probe was effectively
+ * always in flight — a continuous request loop on a metered Libyan
+ * connection, and a near-guaranteed failure on any single attempt. 30s
+ * is a battery- and data-honest steady state; the REAL traffic the app
+ * produces anyway (see serverLine) carries detection between probes.
+ */
 const PROBE_CONFIG: Partial<NetInfoConfiguration> = {
   reachabilityUrl: `${API_BASE}/ping`,
   reachabilityMethod: "GET",
   reachabilityTest: async (response) => response.status >= 200 && response.status < 300,
-  reachabilityRequestTimeout: 5 * 1000,
-  reachabilityShortTimeout: 5 * 1000,
+  reachabilityRequestTimeout: 12 * 1000,
+  reachabilityShortTimeout: 30 * 1000,
   useNativeReachability: false,
 };
 
@@ -119,8 +142,16 @@ if (typeof configureNetInfo === "function") {
 
 /* ── the four-dimension state machine (R342 t08) ────────────────────── */
 
-/** Consecutive unreachable-probe readings required to confirm the server line. */
-const OFFLINE_AFTER_READINGS = 2;
+/**
+ * Consecutive unreachable readings required to confirm the server line.
+ *
+ * r362 P1 — was 2. Two readings could be produced inside ~7s on a link
+ * that dropped a single packet burst, which is the definition of a blip
+ * in the environment this app actually runs in. Three readings across
+ * the backoff ladder (2s, 5s, 15s ⇒ ~22s of continuous failure) is the
+ * point where «the server is not reachable» is a claim worth showing.
+ */
+const OFFLINE_AFTER_READINGS = 3;
 
 /**
  * The honest phase — each name claims ONLY what its evidence proves:
@@ -317,11 +348,26 @@ export function mergeDbHealth(prev: ConnState, dbOk: boolean): ConnState {
  * steady-dead internet yields exactly ONE unreachable event, so the
  * debounce's second reading must be explicitly asked for.
  */
-const CONFIRM_PROBE_DELAY_MS = 2_000;
+const CONFIRM_PROBE_DELAYS_MS = [2_000, 5_000, 15_000] as const;
 
 let connState: ConnState = INITIAL_CONN_STATE;
 /** Dimension 4's storage — the db-degraded flag (reportDbHealth owns it). */
 let dbDegraded = false;
+/**
+ * r362 P1 — REAL-REQUEST evidence about the server line.
+ *
+ *   · `null`  — no real traffic yet: the probe is the only instrument,
+ *               and it works exactly as before.
+ *   · `true`  — real API responses are arriving. The probe is TOLD it
+ *               may not claim `ularaServerUnavailable`: a synthetic
+ *               request timing out proves nothing while the app itself
+ *               is talking to that server successfully. This is the
+ *               line that stopped the banner appearing over working
+ *               content.
+ *   · `false` — real requests are failing in transport too. The probe
+ *               and the traffic now agree, and the warning is honest.
+ */
+let realServerReachable: boolean | null = null;
 const connListeners = new Set<(s: ConnState) => void>();
 let netInfoWired = false;
 let confirmProbeTimer: ReturnType<typeof setTimeout> | null = null;
@@ -333,17 +379,22 @@ function clearConfirmProbe(): void {
   }
 }
 
+/** Which rung of the confirm ladder the next probe waits on. */
+let confirmProbeStep = 0;
+
 function scheduleConfirmProbe(): void {
   if (confirmProbeTimer !== null) return; // one in flight is enough
+  const delay = CONFIRM_PROBE_DELAYS_MS[Math.min(confirmProbeStep, CONFIRM_PROBE_DELAYS_MS.length - 1)];
   confirmProbeTimer = setTimeout(() => {
     confirmProbeTimer = null;
+    confirmProbeStep += 1;
     // refresh() forces a fresh reachability probe → a fresh NetInfo
-    // event → the machine's second reading. (Only unavailable under the
+    // event → the machine's next reading. (Only unavailable under the
     // jest stub — hence the guard.)
     if (typeof refreshNetInfo === "function") {
       refreshNetInfo().catch(() => undefined);
     }
-  }, CONFIRM_PROBE_DELAY_MS);
+  }, delay);
 }
 
 function publish(next: ConnState): void {
@@ -364,7 +415,7 @@ function publish(next: ConnState): void {
 
 /** Every NetInfo reading flows through here — the store's ONE inlet. */
 function pushReading(s: NetInfoState): void {
-  const next = mergeDbHealth(
+  let next = mergeDbHealth(
     nextConnState(connState, {
       isConnected: s.isConnected,
       isInternetReachable: s.isInternetReachable,
@@ -372,6 +423,12 @@ function pushReading(s: NetInfoState): void {
     }),
     !dbDegraded,
   );
+  // r362 P1 — the probe may not outvote real traffic. While real API
+  // responses are arriving, a probe verdict of «unreachable» is a probe
+  // fact, not a server fact: keep the honest online phase.
+  if (realServerReachable === true && next.phase === "ularaServerUnavailable") {
+    next = { ...next, phase: "internetAvailable", isOnline: true };
+  }
   publish(next);
   // The transient-blip confirm: armed on the first unreachable reading
   // while still online; disarmed by any definitive verdict.
@@ -379,8 +436,33 @@ function pushReading(s: NetInfoState): void {
     scheduleConfirmProbe();
   } else {
     clearConfirmProbe();
+    if (next.unreachableStreak === 0) confirmProbeStep = 0;
   }
 }
+
+/**
+ * r362 P1 — the real-request inlet. A response arriving is proof the
+ * server is reachable, so a pending «server unavailable» claim (and its
+ * streak) is withdrawn immediately — the same no-user-action recovery
+ * rule the probe follows, from better evidence. A transport failure is
+ * recorded so that a later probe confirmation is allowed to stand.
+ */
+onServerSignal((signal) => {
+  const reachable = signal === "reachable";
+  realServerReachable = reachable;
+  if (!reachable) return;
+  if (connState.phase === "ularaServerUnavailable" || connState.phase === "internetUnknown") {
+    publish({
+      ...connState,
+      phase: "internetAvailable",
+      isOnline: true,
+      isResolved: true,
+      unreachableStreak: 0,
+    });
+    clearConfirmProbe();
+    confirmProbeStep = 0;
+  }
+});
 
 /**
  * Dimension 4's ONE inlet — real API responses only (wired by
@@ -513,6 +595,12 @@ export function NetworkBanner() {
   const insets = useSafeAreaInsets();
 
   const [phase, setPhase] = useState<BannerPhase>("hidden");
+  // r362 P1 — the banner is DISMISSIBLE. A transient state that the
+  // reader has already seen and decided to live with must not sit on
+  // top of the content forever; the dismissal is per-PHASE, so the next
+  // distinct problem (and any recovery flash) still speaks, and a
+  // recovery clears the dismissal so a later outage is announced again.
+  const [dismissedPhase, setDismissedPhase] = useState<BannerPhase | null>(null);
   // Stays mounted while the exit animation runs (the Animated completion
   // callback clears it) — the boot.tsx enter/exit pattern.
   const [exiting, setExiting] = useState(false);
@@ -536,6 +624,9 @@ export function NetworkBanner() {
       if (nextBanner === was) return;
       const recovered = nextBanner === "hidden" && was !== "hidden";
       was = nextBanner;
+      // A recovery ends the previous episode: a later outage is a NEW
+      // message and must not inherit the old dismissal.
+      if (recovered) setDismissedPhase(null);
       setPhase(recovered ? "back" : nextBanner);
     });
     return unsubscribe;
@@ -553,7 +644,7 @@ export function NetworkBanner() {
     return () => clearTimeout(t);
   }, [phase]);
 
-  const show = phase !== "hidden";
+  const show = phase !== "hidden" && phase !== dismissedPhase;
   const mounted = show || exiting;
 
   // Enter/exit animation — opacity + translateY only. Mounting is
@@ -627,6 +718,15 @@ export function NetworkBanner() {
         <T variant="sm" style={{ color: tone.deep }}>
           {label}
         </T>
+        <Pressable
+          onPress={() => setDismissedPhase(phase)}
+          accessibilityRole="button"
+          accessibilityLabel="إغلاق التنبيه"
+          hitSlop={12}
+          style={{ marginStart: sp[8], padding: 2 }}
+        >
+          <X size={14} color={tone.deep} />
+        </Pressable>
       </View>
     </Animated.View>
   );
@@ -643,14 +743,19 @@ export const __networkInternals = {
   state(): ConnState {
     return connState;
   },
-  /** The confirm-probe delay (fake-timer tests advance by this). */
-  confirmProbeDelayMs: CONFIRM_PROBE_DELAY_MS,
+  /** The FIRST confirm-probe delay (the r362 ladder is progressive; this
+   *  stays the entry rung the fake-timer tests advance by). */
+  confirmProbeDelayMs: CONFIRM_PROBE_DELAYS_MS[0],
+  /** The whole backoff ladder, in order. */
+  confirmProbeDelaysMs: CONFIRM_PROBE_DELAYS_MS,
   /** Restore first-import state: optimistic store, emptied listeners,
    *  disarmed confirm probe, healthy db line. */
   reset(): void {
     clearConfirmProbe();
+    confirmProbeStep = 0;
     connState = INITIAL_CONN_STATE;
     dbDegraded = false;
+    realServerReachable = null;
     connListeners.clear();
   },
 };
