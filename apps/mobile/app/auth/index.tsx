@@ -59,8 +59,14 @@ export default function Welcome() {
           <PlanBuilding autoplay width="78%" style={{ marginTop: sp[40] }} />
 
           {/* title stack — decisive display type */}
-          <Animated.View entering={enter(1)} style={{ marginTop: sp[32], gap: sp[6] }}>
-            <T variant="display" weight="bold" style={{ lineHeight: 40 }}>رحلة تعلم واحدة</T>
+          {/* r362 P4 — the title stack no longer pins a line box: the
+              hardcoded lineHeight:40 (ratio 0.91 against the 44px display
+              size) clipped the glyphs the moment the reader raised the OS
+              text size, and the fixed box refused to let the h4 wrap. The
+              variant's own line height now rides the font scale, and
+              flexShrink lets long Arabic wrap instead of overflowing. */}
+          <Animated.View entering={enter(1)} style={{ marginTop: sp[32], gap: sp[6], flexShrink: 1 }}>
+            <T variant="display" weight="bold">رحلة تعلم واحدة</T>
             <T variant="h4" weight="medium" color="secondary">من المحاضرة إلى الإتقان</T>
           </Animated.View>
 

@@ -65,6 +65,48 @@ app pass. Every DONE line has a command output or an image in `evidence/`.
   honest claim; one response withdraws it; the banner is dismissible). **48/48 pass** in
   the two resilience suites. [Evidence](evidence/p1-offline-banner.txt).
 
-NEXT: install a device build on the emulator and run the offline/session soak; then the
-P2 reference-detail pass (overlap detector, footer, cursor/nav, patterns, side menus) and
-the P3 sweep.
+- **P0b — the emulator captures r361 could not produce: DONE, and they found a real
+  defect.** KVM exists on this host, so `Pixel_7_API_36` boots. The r361 signed APK from
+  the `latest` release (run 45548794852, lane=both, success) was installed
+  (`ly.ulara.app`) and `apps/mobile/scripts/capture-device-display.sh` produced the five
+  verified profiles (baseline 1080×2400, 320 dp, 320 dp @200 % font, tablet 768 dp,
+  landscape 1024×768), plus the 360 and 412 dp widths captured for this round's
+  requirement; every display override was restored (physical 1080×2400 / 420 dpi).
+  **The 200 % capture was broken**: the display headline's line box stayed at its
+  absolute pixel `lineHeight` while `fontSize` doubled, so glyphs collided and climbed
+  into the illustration and the secondary line ran off the container.
+  [Captures + dimensions](evidence/device-captures.txt),
+  [widths sheet](evidence/device-widths.webp),
+  [200 % before](evidence/device-200pct-before.webp),
+  [landscape](evidence/device-landscape.webp).
+
+- **P4a — the 200 % text-size cure (app-wide).** Root cause was the type system, not the
+  screen: `components/ui/text.tsx` pinned a fixed pixel `lineHeight` per variant, and
+  React Native scales `fontSize` with the OS text setting but never `lineHeight`.
+  `scaleLineHeight()` now makes the line box follow the same scale and never drop below
+  the house Arabic floor `1.35 × fontSize` at that scale; at `fontScale 1` it returns the
+  variant byte-for-byte unchanged, so the designed type scale at normal size is
+  untouched. The welcome title's `lineHeight: 40` (a 0.91 ratio against its 44 px
+  display size) is removed and its stack may wrap. Mobile: `tsc` clean, eslint clean,
+  **1514/1514 jest tests pass**.
+
+- **P2.1 — the overlap detector (built, calibrated, and it changed my mind).**
+  `scripts/audit/r362-overlap.ts` walks every route × 320/360/390/768/1024/1440/1920 ×
+  light/dark through the hermetic fixture transport and reports text collisions, clipped
+  text and page overflow. Two calibration rounds were needed before its output could be
+  trusted: element border boxes produced 631 hits (a per-word span's box overlaps its
+  neighbour by design), and even text-node line boxes produced 362 — because a font's
+  ascent+descent box is taller than the line advance under tight display leading.
+  Deflating each rect to its ink box (removing the leading) and skipping fullscreen
+  designed layers brought `/` at 1024 to **0 findings**, which matches the eyeball check
+  on the same cell. Exit status is 1 on any finding, so it can gate CI.
+
+- **P2.2 — footer comparison.** Point-by-point sheet and critique against the
+  reference at 1440: grid, mega type, micro labels, edge tab, hairlines and scroll
+  motion all match; two differences are design decisions (footer links as Arabic columns
+  vs one uppercase row; cookie ACCEPT as an ink slab vs the signal colour) and are left
+  as owner rulings rather than restyled on a hunch. [Critique](evidence/footer-critique.md).
+
+NEXT: re-capture the 200 % profile on the rebuilt APK to prove the fix on device; then the
+remaining P2 detail passes (cursor/nav choreography, decorative-pattern audit, side
+menus/controls), the P3 full-matrix sweep, and the P6 report.

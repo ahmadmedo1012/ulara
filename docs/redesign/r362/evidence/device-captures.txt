@@ -1,0 +1,42 @@
+# r362 — emulator captures (r361's open item, now produced)
+
+Device: Android emulator Pixel_7_API_36 (KVM on this host — the previous
+sandbox had none, which is why r361 could not produce these).
+APK: ulara.apk from the `latest` release built by android-apk.yml at c6f2a586
+(run 45548794852, lane=both, success), package ly.ulara.app.
+
+## Instrument
+`apps/mobile/scripts/capture-device-display.sh emulator-5554 <dir>` — it verifies
+the focused window is ly.ulara.app, PNG integrity, and the expected pixel width
+per profile, and restores every display override on exit.
+
+```
+baseline.png              1080x2400
+compact-320dp.png          320x568
+compact-200pct.png         320x568   (font_scale=2.0)
+tablet-768dp.png           768x1024
+rotation-requested.png    1024x768   (landscape)
+width-360x640.png          360x640    (captured for r362's 360 requirement)
+width-412x732.png          412x732    (captured for r362's 412 requirement)
+```
+
+Overrides restored afterwards: `Physical size: 1080x2400`, `Physical density: 420`.
+
+## What the captures found (the reason this item was not a formality)
+At font_scale=2.0 the welcome screen was BROKEN: the display headline's line
+box stayed at its absolute pixel lineHeight while fontSize doubled, so the
+glyphs collided and climbed into the illustration, and the secondary line ran
+off the container edge.
+
+Root cause, app-wide (not screen-specific): `components/ui/text.tsx` set a
+fixed pixel `lineHeight` per type variant. React Native scales `fontSize` with
+the OS text setting and does NOT scale `lineHeight`.
+
+Fix: `scaleLineHeight()` makes the line box follow the same font scale and
+never drop below the house Arabic floor 1.35 x fontSize at that scale; at
+fontScale 1 it returns the variant UNCHANGED (the designed type scale is
+untouched at normal size). The welcome title's hardcoded `lineHeight: 40`
+(ratio 0.91) is gone and its stack may wrap (flexShrink).
+
+Before/after images: `device-200pct-before.webp` (this run) and
+`device-200pct-after.webp` (the re-captured build).
