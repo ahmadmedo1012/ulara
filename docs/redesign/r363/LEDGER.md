@@ -202,3 +202,69 @@ capture corpus), the capture matrix + P3/P4 sweeps, the release bits (signed
 APK on `latest` + unsigned IPA from the final commit), the remaining P6
 documented-but-missing audit, and the final full verify + Arabic report.
 
+
+- **The owner's cleanup PR #57 — MERGED (house flow).** The pre-change audit
+  held: docs-only + 7 provably-dead scripts (zero refs re-verified), zero
+  overlap with main's lane, no secrets, no zero-trace hits, no gate weakened
+  (the only gate-adjacent diffs are comment/text mirrors of constants main
+  already carries). The branch's one stale red (a deadcode ratchet inherited
+  from the merge-base, self-fixed on main ten minutes later) cleared on the
+  branch update; the final head (0e942a2) ran 14 checks with zero failures;
+  merged as `d4ccb68`, branch deleted, zero open PRs. TECH_DEBT.md's TD-01/02
+  owner decisions are now on the owner's desk.
+
+- **P2 — the fidelity round measured, three identity gaps closed.**
+  (1) THE CURSOR: the committed reference extraction (`r350/reference/
+  refsite.css`) settles the r313 telemetry conflict — the grammar is a
+  0.6rem round dot, `opacity: 0` at rest, grown+shown ONLY on interactive
+  seats, NO press state, and — decisive — NOT ONE `cursor:none` in the
+  whole extraction: the reference never hides the native pointer. The
+  square sheet instrument retired; `SheetCursor` rebuilt (DOM dot + eased
+  head, suppression vocabulary and RM/touch gates kept), the hiding ladder
+  deleted, the R311 unit+e2e pins re-worded to the dot contract (7 e2e +
+  28 unit green). The rebuild also fixes a latent RTL mirror bug (the old
+  ring anchored `inset-inline-start` under `dir=rtl`). (2) THE WORDMARK:
+  the r351 step-down retired BY MEASUREMENT — the reference band is ~230px
+  of letter at 1440; the fluid root (8.33px) had the old rem cap bind at
+  158px — the ride is 18.5vw with a 32rem cap now (font 266px, glyph ≈253px,
+  band 271px ≈ the reference's own). [Sheet](evidence/p2-wordmark-1440.webp).
+  (3) THE EVIDENCE: the re-shoot round closed the capture defects — the
+  hover underline draw MEASURED mid-flight (scaleX 0 → 0.413 @150ms → 1.0
+  settled, right→left origin, pixel diff 72px vs rest), the header hide
+  measured live (translateY −64.64px = −101% on 0.4s ease, latch ≈0.5–1s
+  after the last wheel), the mobile menu captured (wipe + ladder + Escape),
+  and the skyline R20 arbitration: **the strip PAINTS** (30,260 ink px,
+  clip released) — the late-mount seam's live proof. Sheets + critique in
+  evidence; verdicts: footer ADAPT (2 gaps closed), nav ADAPT, cursor GAP→
+  CLOSED. Still open (owner calls): desktop labelled Menu trigger (GAP-3),
+  wordmark construction ornaments (GAP-4 → P3), mid-band density (GAP-5).
+
+- **P3 opened — ONE registration cross.** `RegCross` (patterns.css + the
+  component): 13px hollow-centre crosshair, two 1px `--rule-strong` bars,
+  `corner` register + exactly two tone modifiers. Ten call-site families
+  migrated (shell, auth door, guest sheets, 404/error, Sheet.tsx §-frames,
+  hero stage ±, journey window, statement box, footer wordmark pluses —
+  those were DOM-text `+` spans, an §A6 violation, now CSS-drawn — and the
+  preloader); the SVG art voice (`grammar.ts`, `Iso.tsx`) deliberately
+  stays (viewBox units at the art hairline). The landing frame's four
+  corner marks re-seated (public↔auth symmetry; R315's retirement
+  revisited per the stills). Four test files re-pinned; the deadcode
+  ratchet identical (47/19/220), jscpd 250 = baseline, the full unit belt
+  2,962 green, lint/typecheck/all three design gates green.
+
+- **The soak's launch mechanics (runs #4/#5):** run #4's forensic
+  screenshot showed the dev-client LAUNCHER owning the screen (the empty
+  "DEVELOPMENT SERVERS" home) — discovery is unreliable headless; run #5
+  then showed this Maestro build rejects `deepLink` inside launchApp.
+  The rotation now drives every open itself: `pm clear` + the canonical
+  `exp+ulara://expo-development-client/?url=…` deep link via `am start`,
+  maestro acts on the foregrounded app (no launch steps in the flows);
+  per-round reopens ride the same link without pm clear (the auth store
+  survives — the assert tests SESSION survival, not discovery). Dispatch
+  #6 rides this commit.
+
+NEXT: the soak #6 verdict; CI's verdict on the P3/evidence push; P3
+continues (ruler + dimension-line furniture, hero pointer crosshair + live
+coords, footer datum tags, line-grid underlay, the /__design specimen
+completions); P4's sweep matrix + the detectors into CI; the release bits;
+the remaining P6 audit; the final full verify + the Arabic report.
