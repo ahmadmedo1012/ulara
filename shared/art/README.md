@@ -10,4 +10,10 @@ From the repository root:
 - Run `node scripts/art/build-native.mjs` after editing a builder to refresh the native source copies and components.
 - Run `bash scripts/art/check-art-colors.sh` and inspect the light and dark renderings. The standalone images carry their own theme palette. Their surrounding page supplies its own ink, paper and hairline colors.
 
-The landing and the entrance animation share the same elevation URL. When reviewing a generated elevation, check the facade, floor bands, windows and trees. A framed rectangle is the old scaffold.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:31e1a4e9953f18298355d266470e6d7a5ffab85871523ea12d69cd15c6cad0d6 -->
+
+The landing and the entrance animation share the same elevation URL. The landing preloads the phone drawing through 767 px and the desktop drawing from 768 px; other entry routes load neither drawing. When reviewing a generated elevation, check the facade, floor bands, windows and trees. A framed rectangle is the old scaffold.
+
+<!-- /coderabbit-ai-generated:v1 -->

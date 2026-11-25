@@ -1,0 +1,12 @@
+Production 1b18759, Lighthouse mobile (default simulated throttling; live HTTPS; final measurement with concurrent capture work restricted to separate CPU cores). Route, Performance, Accessibility, LCP, TBT, CLS:
+ /      77  100  3.0s  700ms  0
+ /about 86  100  3.3s  280ms  0
+ /help  92  100  2.1s  300ms  0
+CI 45519554179: fresh surface inventory passed 72 captures, drift failed 24 motion findings on /, /auth, /auth/register, /404. The boot plate had a 250ms fade and the hero a 600ms transition. The boot now uses the fast token and the hero the base token; the drift allowlist is unchanged.
+Candidate: npm --prefix frontend run build (tsc + Vite), CSP hash check, frontend assets + offline + legal unit tests (109), updated token/offline checks (21). Original detector: 8 cells, no findings (all four routes at 360, both themes).
+/ 390 [{"name":"hero-elevation-mobile-yeNh3_n8.svg","initiator":"link","start":52}]
+/ 1440 [{"name":"hero-elevation-CgZ4aLz6.svg","initiator":"link","start":35}]
+/help 390 []
+offline background rgb(38, 32, 25)
+same retry URL + query reached network twice
+Six hero gesture journeys passed against the candidate production build; the open tags stayed within the drawing and survived resize.

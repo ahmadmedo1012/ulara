@@ -214,18 +214,15 @@ describe('welcome-card background + dead brand assets (audit 11-g P2-3 / P1-4 â†
 });
 
 describe('theme-color metas match the real canvas tokens', () => {
-  it('dark meta = #262019 (charcoal night = dark --bg), light meta = #F5F1E8 (R313 warm vintage paper = light --bg)', () => {
+  it('matches both browser chrome and the initial paint to the shared surfaces', () => {
     const html = read('index.html');
-    expect(html).toContain('<meta name="theme-color" content="#262019" media="(prefers-color-scheme: dark)"');
-    expect(html).toContain('<meta name="theme-color" content="#F5F1E8" media="(prefers-color-scheme: light)"');
-    // the runtime sync script must paint the same grounds (R313: the
-    // r305-era #F6F8FA blue-grey paper died with the warm-paper re-key)
-    expect(html.match(/['"]#262019['"]/g)?.length ?? 0).toBeGreaterThanOrEqual(2);
-    expect(html.match(/['"]#F5F1E8['"]/g)?.length ?? 0).toBeGreaterThanOrEqual(1);
-    // the blue-grey #F6F8FA paper is FULLY retired by the ULARA
-    // Parchment & Sienna re-key â€” the boot plate now paints paper
-    // #F5F1E8 on ink #262019 in both directions, so not even the old
-    // "one remaining seat" survives.
+    const { color } = JSON.parse(read('../shared/design-tokens.json'));
+    for (const mode of ['dark', 'light']) {
+      const paper = color.neutral[mode]['50'];
+      expect(html).toContain(`<meta name="theme-color" content="${paper}" media="(prefers-color-scheme: ${mode})"`);
+      expect(html).toContain(`'${paper}'`);
+      expect(html).toContain(`background: ${paper}`);
+    }
     expect(html.match(/#F6F8FA/g)?.length ?? 0).toBe(0);
     expect(html).not.toContain('#070B16');
     expect(html).not.toContain('#16140F');

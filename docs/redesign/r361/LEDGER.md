@@ -172,7 +172,15 @@ P4 — Verified that selecting dark in the expanded desktop sidebar survives a f
 
 P1/P2/P6/P10 — All 44 standalone artworks now use the six published scene modules; previously the exporter silently returned scaffold art. Re-export is byte-identical. Dark hero uses the same themed paper as its illustration. [Exporter and 20-cell proof](evidence/canonical-export.txt), [refreshed visual critiques](evidence/landing-critique.md), [Arabic report](REPORT.ar.md). Earlier signed Android a88e6f0 and unsigned iOS ef92ae1 have separate release receipts. Previous theme item d9cddcc.
 
-NEXT: Read the source SHA from the rolling release and compare with main; verify deployment, final matrix, Lighthouse and native workflow receipts.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:8c41000bd5e81efe8e98fec4b29e41ef7ad37da88af43c694489b06b42acbec0 -->
+
+After 1b18759: production Lighthouse 77/86/92, accessibility 100 throughout. Repaired 24 drift findings at their CSS source, requested the matching elevation before React, aligned the installed and offline shell colors, and verified retry preserves the address. [Evidence](evidence/initial-paint.txt).
+
+NEXT: Confirm the new deployed hash and Lighthouse; compare final signed APK and unsigned IPA source receipts, surface drift and full route results.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 

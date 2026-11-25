@@ -30,7 +30,19 @@
 - **الهاتف:** نجح [بناء APK الموقّع من a88e6f0](https://github.com/ahmadmedo1012/ulara/actions/runs/45515644808) بنفس بصمة الشهادة. أنتج [بناء iOS من ef92ae1](https://github.com/ahmadmedo1012/ulara/actions/runs/45516347668) [ملف IPA غير موقّع](https://github.com/ahmadmedo1012/ulara/actions/runs/45516347668/artifacts/14979760906) بحجم 16,710,037 بايت. اجتازت [فحوص الهاتف](https://github.com/ahmadmedo1012/ulara/actions/runs/45516347633) الأنواع والفحص الساكن والاختبارات والتصدير. لم ينفّذ هذا المسار اختبار المحاكي. المضيف المحلي لا يوفّر KVM، وطلب تشغيل المسار الكامل يدويًا أعاد HTTP 403. التطبيق يعلن اتجاه العرض الرأسي.
 - **الحزمة:** بلغت حزم JS مجتمعة نحو 865 KB gzip؛ أصبح السقف 866 بعد فصل لوحة التحديات عن التحميل الأولي. بقيت حزمة الدخول عند نحو 30 KB. تُنشَر [بناءات Android](https://github.com/ahmadmedo1012/ulara/actions/workflows/android-apk.yml?query=branch%3Amain) و[بناءات iOS](https://github.com/ahmadmedo1012/ulara/actions/workflows/build-ios-sidestore.yml?query=branch%3Amain) و[نشر Vercel](https://github.com/ahmadmedo1012/ulara/actions/workflows/deploy.yml?query=branch%3Amain) بصورة مستقلة. مرجع إثبات التطابق هو حقل المصدر في وصف الإصدار أو البناء، وbuildId في خدمة الحالة.
 
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:60626af1d6c1995e9af1cd59a7d2a500f77be83bce8d0c949eae4a066cd0f04f -->
+
+## القياس على 1b18759 وإصلاحات بداية التحميل
+
+سجّل الإنتاج أداء 77 للرئيسية و86 للتعريف و92 للمساعدة، وإتاحة 100 وCLS صفر في الصفحات الثلاث. تجاوزت صفحتان هدف الأداء. أظهر التسجيل أن المتصفح ينتظر React ليكتشف رسم الرئيسية. أصبح يطلب الرسم المناسب للعرض من رأس المستند؛ لم تطلب صفحة المساعدة رسمًا. واتّحد لون شاشة البدء والتطبيق المثبّت وصفحة انقطاع الاتصال مع لون التصميم. يعيد رابط المحاولة فتح عنوان الطلب نفسه، بما في ذلك معاملاته.
+
+أكمل CI جرد 72 حالة وأبلغ عن 24 مخالفة لتوقيت الحركة. أُصلحت القيم المخالفة في حركة اللوحة والغلاف. أعيد فحص المسارات الأربعة المتأثرة بعرض 360 في الوضعين دون مخالفات، من دون تعديل قائمة السماح. [الأوامر والنتائج](evidence/initial-paint.txt). أنتج [بناء iOS لهذا الالتزام](https://github.com/ahmadmedo1012/ulara/actions/runs/45519554129/artifacts/14980226367) ملف IPA غير موقّع بحجم 16,709,870 بايت.
+
 ## حدود التسليم وقرارات المالك
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 

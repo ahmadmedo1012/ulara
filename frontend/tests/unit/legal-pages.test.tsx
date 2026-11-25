@@ -628,14 +628,14 @@ describe('R320 §D — the static identity (robots · sitemap · manifest · ico
     }
   });
 
-  it('manifest.webmanifest: أُلارا · ar · rtl · standalone · #F5F1E8 · 192+512 maskable', () => {
+  it('manifest.webmanifest: أُلارا · ar · rtl · standalone · #F2F1EC · 192+512 maskable', () => {
     const manifest = JSON.parse(read('public/manifest.webmanifest'));
     expect(manifest.short_name).toBe('أُلارا');
     expect(manifest.lang).toBe('ar');
     expect(manifest.dir).toBe('rtl');
     expect(manifest.display).toBe('standalone');
-    expect(manifest.theme_color).toBe('#F5F1E8');
-    expect(manifest.background_color).toBe('#F5F1E8');
+    expect(manifest.theme_color).toBe('#F2F1EC');
+    expect(manifest.background_color).toBe('#F2F1EC');
     const purposes = manifest.icons.map((i: { purpose: string }) => i.purpose);
     expect(purposes).toContain('maskable');
     const sizes = manifest.icons.map((i: { sizes: string }) => i.sizes);

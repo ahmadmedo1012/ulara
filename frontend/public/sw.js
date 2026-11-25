@@ -25,7 +25,7 @@
  * Updates: a new SW activates immediately (skipWaiting) + tells the
  * clients (CONTENTS_UPDATED) so the app can toast «نسخة جديدة».
  */
-const VERSION = 'ulara-1';
+const VERSION = 'ulara-2';
 const STATIC_CACHE = `ulara-static-${VERSION}`;
 const ASSET_CACHE = `ulara-assets-${VERSION}`;
 

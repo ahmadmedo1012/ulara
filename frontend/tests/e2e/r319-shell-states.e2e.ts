@@ -47,7 +47,7 @@ const BASE_URL = process.env.ULARA_E2E_BASE_URL ?? 'http://localhost:5173';
 /* Evidence frames — the R319 board's owner-screenshot re-shoot mandate. */
 const EVIDENCE_DIR = path.resolve(process.cwd(), '..', 'audits', 'evidence', 'r319-shell');
 const THEMES = ['light', 'dark'] as const;
-/* The theme's own paper ground (tokens.css --bg): light #F5F1E8, dark
+/* The theme's own paper ground (tokens.css --bg): light #F2F1EC, dark
  * #262019 — the ONLY grounds the sheet and the dock may paint. */
 const PAPER: Record<(typeof THEMES)[number], string> = {
   light: 'rgb(242, 241, 236)',

@@ -63,18 +63,18 @@
 .hro-lead {
   opacity: 1;
   translate: 0 0;
-  transition: opacity 0.6s ease-out 0.35s, translate 0.6s ease-out 0.35s;
+  transition: opacity var(--t-base) ease-out 0.35s, translate var(--t-base) ease-out 0.35s;
 }
 .hro-lead .hro-line { transition-delay: 0.35s; }
 .hro-cta {
   opacity: 1;
   translate: 0 0;
-  transition: opacity 0.6s ease-out 0.5s, translate 0.6s ease-out 0.5s;
+  transition: opacity var(--t-base) ease-out 0.5s, translate var(--t-base) ease-out 0.5s;
 }
 .hro-work {
   opacity: 1;
   translate: 0 0;
-  transition: opacity 0.6s ease-out 0.6s, translate 0.6s ease-out 0.6s;
+  transition: opacity var(--t-base) ease-out 0.6s, translate var(--t-base) ease-out 0.6s;
 }
 .hro-stations-layer {
   opacity: 1;

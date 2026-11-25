@@ -132,10 +132,13 @@ export function Hero() {
   const clampTags = useCallback(() => {
     const stage = stageRef.current;
     if (!stage) return;
+    const tags = Array.from(stage.querySelectorAll<HTMLElement>('.hro-station.is-open .hi-tag'));
+    if (!tags.length) return;
+    for (const tag of tags) tag.style.removeProperty('--tag-dx');
     const sr = stage.getBoundingClientRect();
-    stage.querySelectorAll<HTMLElement>('.hro-station.is-open .hi-tag').forEach((tag) => {
-      tag.style.removeProperty('--tag-dx');
-      const tr = tag.getBoundingClientRect();
+    const rects = tags.map((tag) => tag.getBoundingClientRect());
+    rects.forEach((tr, index) => {
+      const tag = tags[index]!;
       let dx = 0;
       if (tr.left < sr.left) dx = sr.left - tr.left + 0.5; /* +0.5: sub-pixel safety */
       else if (tr.right > sr.right) dx = sr.right - tr.right - 0.5;
