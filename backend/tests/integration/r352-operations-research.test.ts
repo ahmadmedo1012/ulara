@@ -156,8 +156,22 @@ describe('r352 research projects', () => {
 });
 
 describe('r363 P6 — the facilityId slice filter (audit #3)', () => {
+  // self-contained setup — the chain test's `setup()` is scoped to its
+  // own describe; the slice test seeds its own minimal board.
+  async function sliceSetup() {
+    const institution = await seedInstitution();
+    const admin = await seedUser({ role: Role.ADMIN });
+    await seedMembership(admin.id, institution.id, Role.ADMIN);
+    const auth = bearer(admin.id, Role.ADMIN, institution.id);
+    const workshop = await api('POST', '/api/v1/operations/facilities', {
+      nameAr: `ورشة التقطيع ${uniqueSuffix()}`, type: 'WORKSHOP', code: `WS-${uniqueSuffix()}`, capacity: 24,
+    }, auth);
+    expect(workshop.status).toBe(201);
+    return { auth, workshopId: workshop.body.data.id as string };
+  }
+
   it('work-orders and safety-incidents read their own facility slice', async () => {
-    const s = await setup();
+    const s = await sliceSetup();
     const lab = await api('POST', '/api/v1/operations/facilities', {
       nameAr: `مختبر الدوائر ${uniqueSuffix()}`, type: 'LAB', code: `LB-${uniqueSuffix()}`, capacity: 12,
     }, s.auth);

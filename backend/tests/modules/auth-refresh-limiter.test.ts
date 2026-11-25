@@ -65,6 +65,9 @@ afterAll(async () => {
 });
 
 const userFindUnique = vi.mocked(prisma.user.findUnique);
+/** House typing pattern (auth-change-password-limiter.test.ts): the
+ *  delegate's impl signature, so mock sites stay fully type-checked. */
+type UserFindUniqueImpl = NonNullable<Parameters<typeof userFindUnique.mockImplementation>[0]>;
 
 const makeUser = (id: string, tokenVersion = 0): User =>
   ({
@@ -100,7 +103,9 @@ const refresh = async (cookie: string, xff?: string): Promise<Response> =>
 
 describe('POST /auth/refresh — the limiter belt (r363 P6)', () => {
   it('a resume-pattern streak of SUCCESSFUL refreshes never 429s (skipSuccessfulRequests)', async () => {
-    userFindUnique.mockImplementation(async () => makeUser('user-1', 0));
+    userFindUnique.mockImplementation(
+      (async () => makeUser('user-1', 0)) as unknown as UserFindUniqueImpl,
+    );
     // 12 refreshes back-to-back — far beyond any sane resume cadence
     // and twice the failure cap. Every one must be 2xx; the bucket
     // stays at zero because successes are skipped.
@@ -130,9 +135,12 @@ describe('POST /auth/refresh — the limiter belt (r363 P6)', () => {
     // The default bucket (127.0.0.1) is capped by phase 2. A distinct
     // rightmost-XFF entry (the trust-proxy=1 topology's key) is its own
     // bucket: the honest client on another egress is unaffected.
-    userFindUnique.mockImplementation(async () => makeUser('user-2', 0));
+    userFindUnique.mockImplementation(
+      (async () => makeUser('user-2', 0)) as unknown as UserFindUniqueImpl,
+    );
     const res = await refresh(signRefreshToken('user-2', 0), '10.9.9.9');
     expect(res.status).toBe(200);
-    expect((await res.json()).data.accessToken).toBeTruthy();
+    const body = (await res.json()) as { data?: { accessToken?: string } };
+    expect(body.data?.accessToken).toBeTruthy();
   });
 });
