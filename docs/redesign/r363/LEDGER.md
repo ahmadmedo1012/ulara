@@ -149,12 +149,56 @@ the app pass, and the release. Every DONE line carries command output or an imag
   THIRD dispatch is IN FLIGHT on `dc794b8` (the dispatch API 500'd twice
   before landing — GitHub-side transient).
 
-NEXT: the soak's verdict on `dc794b8` (the run is in flight; its forensics
-artifact carries the per-round screenshots + logcat/metro/backend — if a round
-fails, the artifact says which class), CI's verdict on `cc6c812`/`dc794b8`,
-then P2's verification sheets (nav/cursor), the capture matrix + P3/P4 sweeps,
-the release bits (signed APK on `latest` + unsigned IPA from the final
-commit), the remaining P6 documented-but-missing audit, and the final full
-verify + report. The Arabic interim report (REPORT.ar.md) describes the
-landed state with its evidence.
+- **P0-CI (round three) — the two holdout flakes root-caused and fixed on
+  the APP side.** CI's e2e job fell again on `ef92b4f` (r305:285 and
+  r309:332, both attempts each, while the same code passes 4/4 locally).
+  Two real causes, both fixed where they live: (1) the scroll-restore
+  watcher's budget was FRAME-count (60 rAF frames) — under runner jank those
+  60 frames stretch past the spec's own window and the watcher stood down
+  BEFORE the late height arrived, stranding the restore at the clamped top;
+  the budget is WALL-CLOCK now (RESTORE_WATCH_MS 4000, a perf.now epoch read
+  at arm time) and a new unit test pins exactly the starvation class
+  (62 sparse frames past the old budget, inside the wall window → the
+  restore completes). (2) the drag-release sweep rides raw `page.mouse` —
+  hit-target-blind — while every sibling spec rides locator clicks that
+  auto-wait for interception; the sweep now settles like its sibling and
+  polls `document.elementFromPoint` at the press point until the STAGE
+  itself owns it (the asset-gated entrance overlay unmounted) before
+  sweeping, and observes the post-release count over a poll window —
+  semantics unchanged: one sweep, one release. Local proof: the three
+  specs green + the full r309 file 22/22 + typecheck clean.
+  [Belt output](evidence/p0-ci-r3.txt).
+
+- **The reveals engine's late-mount seam — a REAL product bug the round
+  audit caught: the footer skyline never painted.** initReveals ran once at
+  the landing's mount, but the second half (Vision, Roles, Chapters,
+  Product, the FOOTER) rides React.lazy and mounts later — `.fo-fstrip`
+  was never armed, never observed, and footer.css keys the skyline's armed
+  clip off the ROOT seam class, so `.fo-strip-media` stood at
+  `inset(100% 0 0 0)` forever for JS-on visitors (the round's own 1440
+  footer capture shows the band blank; the VLM read confirms). The engine
+  now keeps one debounced MutationObserver re-admitting late-mounted
+  elements through the same family table (same classes, same IO bucket —
+  one observer per margin, shared), the giant wordmark joined the rise
+  family (the R21 seat), and the CTA mega title arms with its lazy chunk
+  (the R9 partial). Unit belt: 5 specs (late-arm · intersection release ·
+  wordmark seat · destroy) that fail on the one-shot engine.
+
+- **The soak's third dispatch died on the runner's LINE-BY-LINE script
+  execution — the rotation is a committed file now.** The emulator runner
+  logs one `[command]` per line: the multi-line maestro bootstrap call
+  handed maestro a stray `\` as its flow path ("Flow path does not
+  exist: …/ulara/\") and its `|| touch fail.flag` guard lived on a
+  different invocation; a bash function cannot survive the split at all.
+  The rotation moved to `apps/mobile/scripts/soak-run.sh` (one caller line
+  in the workflow, fail.flag semantics preserved), and the soak
+  re-dispatches on this push.
+
+NEXT: the soak verdict + CI's verdict on this push; the owner's cleanup PR
+(#57 — audited clean: docs-only + 7 provably-dead scripts, zero overlap with
+main, no secrets, no zero-trace hits; merge via house flow after a branch
+update), then P2's verification sheets (footer motion + nav/cursor on the
+capture corpus), the capture matrix + P3/P4 sweeps, the release bits (signed
+APK on `latest` + unsigned IPA from the final commit), the remaining P6
+documented-but-missing audit, and the final full verify + Arabic report.
 
