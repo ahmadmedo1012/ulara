@@ -1,75 +1,82 @@
 import { PREFERS_REDUCED_MOTION } from '../../../lib/motion-media';
 /**
- * SheetCursor — R308 «أداة الإشارة» — the landing's custom pointer.
+ * SheetCursor — the landing's cursor follower — the reference's DOT
+ * grammar (r363 P2 fidelity gate: the r308 square instrument retired;
+ * identity-level gap closed).
  *
- * An ORIGINAL implementation of the reference's measured cursor
- * grammar (the r308 reference-observations ledger §4 — lost in the 1.0
- * squash; the measured grammar below is the living record), on the
- * Ulara token system:
+ * GROUND TRUTH — measured, committed extraction
+ * (docs/redesign/r350/reference/refsite.css; anatomy in
+ * docs/redesign/r350/reference/REFERENCE.md §6; verdict spec in
+ * docs/redesign/r363/evidence/p2-sheets-critique.md §4):
  *
- *  · Canvas 2D layer (fixed, viewport-sized, DPR-capped at 2): a 10px
- *    square in the ONE signal color, eased toward the pointer
- *    (lerp 0.10 — r345 §A4 re-measure, below), with a velocity trail
- *    that appears ONLY above a speed threshold and vanishes on the
- *    first still frame — per-
- *    segment alpha ramps quadratically from 0 (oldest) to ≈1 (newest).
- *    (V15 · R314 cycle-2: the square is the reference's measured
- *    geometry — a true 10×10px bbox with exactly 100 opaque pixels,
- *    solid #C43E16, read by canvas getImageData at rest over links
- *    (r313 telemetry D14). The R308 ground-colour PLATE is retired:
- *    its 13px alpha footprint read as a 13px cursor — the geometry
- *    contract here wins, and the reference ships the naked square
- *    over photography too (its colour-adaptation claim never
- *    reproduced on its own DOM).)
- *  · Interactive-state layer: a 2.8rem (23.3px @1440) square outline
- *    with the reference's measured reticle border (#FC724D, 2px) that
- *    appears over real interactive elements and CONTRACTS into a
- *    targeting reticle (scale .56 / opacity .68) while pressed.
- *  · `data-cursor="none"` suppression zones (R311 §1.5 — the ONE
- *    unified vocabulary, the same token the app-level resolver
- *    honours): where a local system takes over (the hero instrument,
- *    the loader), both layers step aside. The native cursor returns
- *    there.
- *  · Wake/sleep: the whole system rides the ONE shared clock
- *    (sheetConductor) and UNSUBSCRIBES ~8 frames after the pointer
- *    settles — an idle page costs zero animation frames.
+ *   .cursor{z-index:999;pointer-events:none;justify-content:flex-start;
+ *           align-items:flex-start;display:flex;position:fixed;inset:0%}
+ *   .cursor-main{justify-content:center;align-items:center;width:0;
+ *                height:0;display:flex;position:relative}
+ *   .cursor-inner{opacity:0;background-color:#dd6013;border-radius:50%;
+ *                 flex:none;width:.6rem;height:.6rem;transition:all .4s;
+ *                 position:absolute}
+ *   …plus `.cursor{display:none}` inside the touch/mobile belt, and
+ *   NOT ONE `cursor:none` in the whole extraction — the reference
+ *   never hides the native pointer; the dot is pure decoration.
  *
- * Gating (the reference's own ladder): fine pointer + hover only, and
- * never under `prefers-reduced-motion` — the native cursor stays. The
- * authenticated application never mounts this component; it is a
- * landing-sheet instrument.
+ * The behavior model (REFERENCE.md §6): the head (`.cursor-main`) is a
+ * 0×0 point, transform-driven, following with easing (shared-ticker
+ * lerp — r345 §A4 measured the decay ratio ≈0.55/100ms → per-frame
+ * lerp 0.10, kept verbatim); the inner dot sits at OPACITY 0 AT REST
+ * and appears + grows on INTERACTIVE hover only. Over plain ground —
+ * at rest AND in motion — the committed model keeps the dot hidden
+ * (opacity 0 is its only declared state); nothing shows there except
+ * the native pointer. The extraction records NO press state, NO drawn
+ * trail and NO mix-blend for the dot — none is implemented.
+ *
+ * Deviations forced by house law (documented, not silent):
+ *  · `transition: all .4s` → an explicit property list on the tokens
+ *    (`scripts/check-motion-tokens.sh` bans `transition: all` and raw
+ *    durations outside the token sheets). 400ms has no house rung —
+ *    `--t-fast` (320ms) is the closest; the dot's reveal/grow rides it.
+ *  · The hover-grow magnitude is JS-owned in the reference's
+ *    obfuscated bundle and NOT extractable from the committed CSS;
+ *    `scale: 2.4` (0.6rem → ≈1.44rem bloom) is the documented
+ *    inference, riding the same tokenized transition.
+ *  · Colour: the extraction's literal ground is #dd6013; the one-
+ *    signal law maps it to `var(--accent)` (the orange→signal swap is
+ *    the owner-ruled ADAPT — p2 critique §4 delta table).
+ *  · Suppression: the reference marks zones `data-cursor="hidden"`
+ *    (hero wrap, ruler strip, partner controls, loader inner); Ulara's
+ *    unified vocabulary (R311 §1.5) is `data-cursor="none"` — same
+ *    seat, house token. Inside a suppressed zone the dot never lights,
+ *    even over interactives (the zone's own instrument owns the
+ *    pointer). `[data-cursor="link"]` stays an opt-in interactive seat.
+ *
+ * House ownership laws kept intact (R311):
+ *  · ONE pointer system per route — this component unmounts fully on
+ *    every other route; the app-level layer (CursorManager) is
+ *    suspended for the whole landing route (App.tsx → RoutedCursorManager).
+ *  · Fine pointer + hover only, never touch (component gate + the CSS
+ *    belt mirroring the reference's own `display:none` touch rule).
+ *  · Never under prefers-reduced-motion — render nothing; the native
+ *    pointer is the complete fallback.
+ *  · Keyboard focus is unaffected: the layer is aria-hidden,
+ *    pointer-events: none, and its only state driver is pointer hover.
+ *  · Wake/sleep: the follow rides the ONE shared clock (sheetConductor)
+ *    and unsubscribes ~8 frames after the pointer settles — an idle
+ *    page costs zero animation frames.
  */
 import { useEffect, useRef, useState } from 'react';
 import { subscribeSheetFrame, wakeSheet, lerp } from '../../../lib/motion/sheetConductor';
-/* R333 P-D — the instrument's dedicated sheet (re-landed out of
- * chrome.css; no !important in it — the hiding ladder is pure cascade) */
+/* R333 P-D — the instrument's dedicated sheet (no !important in it) */
 import '../../../styles/landing/cursor.css';
 
-/* Measured reference constants (see reference-observations.md §4/§5;
- * V15 · R314 cycle-2: the square re-pinned to the r313 pixel-read
- * measurement — 10×10 bbox, 100 opaque pixels — superseding the
- * r308 case-study "9px" figure).
- *
- * r345 §A4 — the follow constant re-measured BEHAVIORALLY on the live
- * reference (fresh this round, not carried from the r313 digest): the
- * dot's gap to the pointer decays at a constant ratio ≈ 0.55 per
- * 100ms → exponential decay → per-frame lerp ≈ 0.10 (settle ≈ 1.1s).
- * The r313 figure (0.18) was read off the reference's JS; the LIVE
- * feel is slower because the reference's DOM dot ALSO carries a CSS
- * `transition: 0.4s` on its transform — a second smoothing stage the
- * digest didn't account for. Ulara's dot is canvas-drawn (no CSS
- * transition), so the measured EFFECTIVE glide is reproduced with the
- * single lerp alone: 0.10. The interactive ring keeps its own
- * data-state transitions (cursor.css) — untouched. */
-const DOT_SIZE = 10;
+/* Follow constants — the reference's measured glide (r345 §A4: the
+ * dot's gap to the pointer decays ≈0.55 per 100ms → per-frame lerp
+ * 0.10). The dot's own reveal/grow is CSS-side (cursor.css tokens);
+ * the JS pipeline moves the HEAD only, exactly like the reference
+ * (transform-driven cursor-main; transition-bearing cursor-inner). */
 const LERP_K = 0.10;
-const SPEED_SMOOTHING = 0.2;
-const TRAIL_SPEED_THRESHOLD = 1.5; /* px/frame — trail only when fast */
-const TRAIL_LINE_WIDTH = 1.4;
-const TRAIL_MAX_POINTS = 26;
 const IDLE_SLEEP_FRAMES = 8;
-const IDLE_SPEED = 0.05;
-const DPR_CAP = 2;
+const IDLE_SETTLE_PX = 0.5; /* px — "the head has caught up" */
+const IDLE_QUIET_MS = 120;
 
 const INTERACTIVE_SELECTOR =
   'a, button, [role="button"], input, select, textarea, label, summary, [data-cursor="link"]';
@@ -77,8 +84,8 @@ const SUPPRESSED_SELECTOR = '[data-cursor="none"]';
 
 export function SheetCursor() {
   const [live, setLive] = useState(false);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const ringRef = useRef<HTMLDivElement>(null);
+  const headRef = useRef<HTMLDivElement>(null);
+  const dotRef = useRef<HTMLDivElement>(null);
 
   /* ── Eligibility: fine pointer + hover, and never under reduced
    *     motion (the native cursor is the complete fallback). ─────── */
@@ -101,123 +108,48 @@ export function SheetCursor() {
   /* ── The instrument itself: runs only while eligible. ──────────── */
   useEffect(() => {
     if (!live) return undefined;
-    const canvas = canvasRef.current;
-    const ring = ringRef.current;
-    if (!canvas || !ring) return undefined;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return undefined;
+    const head = headRef.current;
+    const dot = dotRef.current;
+    if (!head || !dot) return undefined;
 
-    let vw = 0;
-    let vh = 0;
-    let dpr = 1;
-
-    /* colours re-read on every wake — theme flips mid-session stay
-     * correct because the next pointer movement re-wakes the system. */
-    let ink = '#2540D9';
-
-    const readColors = () => {
-      const styles = getComputedStyle(document.documentElement);
-      ink = styles.getPropertyValue('--accent').trim() || ink;
-    };
-
-    const resize = () => {
-      vw = window.innerWidth;
-      vh = window.innerHeight;
-      dpr = Math.min(window.devicePixelRatio || 1, DPR_CAP);
-      canvas.width = Math.round(vw * dpr);
-      canvas.height = Math.round(vh * dpr);
-      canvas.style.inlineSize = `${vw}px`;
-      canvas.style.blockSize = `${vh}px`;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    };
-    resize();
-    readColors();
-
-    /* mark the document so the CSS hides the native cursor ONLY while
-     * the instrument is actually live (any failure → native cursor). */
+    /* mark the document so the zone seat rules (hero stage, loader)
+     * apply only while the instrument is actually live. NOTE: the
+     * native cursor is NEVER hidden — the extraction carries no
+     * cursor:none anywhere; data-sheet-cursor gates no hiding. */
     document.documentElement.dataset.sheetCursor = 'live';
 
     /* ── pointer state (refs — zero React renders per event) ─────── */
     const target = { x: -100, y: -100 };
     const pos = { x: -100, y: -100 };
-    const ringPos = { x: -100, y: -100 };
-    let speed = 0;
-    let trail: Array<{ x: number; y: number }> = [];
     let hasMoved = false;
     let overInteractive = false;
     let suppressed = false;
-    let pressed = false;
-    let ringVisible = false;
+    let dotVisible = false;
     let idleFrames = 0;
     let lastMoveAt = 0;
     let unsubFrame: (() => void) | null = null;
 
-    const setRingState = () => {
+    /* the dot's only states: hidden (rest / plain ground / suppressed
+     * zones) and lit+grown (interactive seats) — both are CSS
+     * transitions on the element; JS only flips the attribute. */
+    const setDotState = () => {
       const show = overInteractive && !suppressed && hasMoved;
-      if (show !== ringVisible) {
-        ringVisible = show;
-        ring.dataset.on = show ? 'on' : 'off';
+      if (show !== dotVisible) {
+        dotVisible = show;
+        dot.dataset.on = show ? 'on' : 'off';
       }
-      ring.dataset.pressed = pressed ? 'on' : 'off';
     };
 
-    /* ── the frame: reads state, draws, and sleeps when settled ──── */
+    /* ── the frame: ease the head toward the pointer, then sleep ─── */
     const frame = (now: number) => {
-      /* read phase */
-      const dx = target.x - pos.x;
-      const dy = target.y - pos.y;
-      const instant = Math.hypot(dx, dy);
-      speed += (instant - speed) * SPEED_SMOOTHING;
-
-      /* write phase */
       pos.x = lerp(pos.x, target.x, LERP_K);
       pos.y = lerp(pos.y, target.y, LERP_K);
-      ringPos.x = lerp(ringPos.x, target.x, LERP_K);
-      ringPos.y = lerp(ringPos.y, target.y, LERP_K);
-      ring.style.transform = `translate3d(${ringPos.x}px, ${ringPos.y}px, 0)`;
-
-      if (speed > TRAIL_SPEED_THRESHOLD) {
-        trail.push({ x: pos.x, y: pos.y });
-        if (trail.length > TRAIL_MAX_POINTS) trail.shift();
-      } else if (trail.length > 0) {
-        trail = []; /* the trail vanishes on the first still frame */
-      }
-
-      ctx.clearRect(0, 0, vw, vh);
-      if (!suppressed && hasMoved) {
-        if (trail.length > 1) {
-          ctx.lineWidth = TRAIL_LINE_WIDTH;
-          ctx.strokeStyle = ink;
-          ctx.lineCap = 'round';
-          for (let i = 1; i < trail.length; i += 1) {
-            const a = trail[i - 1];
-            const b = trail[i];
-            if (!a || !b) continue;
-            const t = i / (trail.length - 1); /* 0 oldest → 1 newest */
-            ctx.globalAlpha = t * t; /* quadratic ramp */
-            ctx.beginPath();
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(b.x, b.y);
-            ctx.stroke();
-          }
-          ctx.globalAlpha = 1;
-        }
-        /* V15: the naked 10×10 signal square — the reference's measured
-         * resting glyph (no plate: a 13px alpha footprint reads as a
-         * 13px cursor; over dark photography the square keeps its own
-         * contrast, exactly as the reference ships it). */
-        ctx.fillStyle = ink;
-        ctx.fillRect(
-          Math.round(pos.x - DOT_SIZE / 2),
-          Math.round(pos.y - DOT_SIZE / 2),
-          DOT_SIZE,
-          DOT_SIZE,
-        );
-      }
+      head.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0)`;
 
       /* sleep when the pointer has settled — the system unsubscribes
        * itself and costs nothing until the next movement wakes it. */
-      if (hasMoved && now - lastMoveAt > 120 && speed < IDLE_SPEED) {
+      const settled = Math.hypot(target.x - pos.x, target.y - pos.y) < IDLE_SETTLE_PX;
+      if (hasMoved && now - lastMoveAt > IDLE_QUIET_MS && settled) {
         idleFrames += 1;
         if (idleFrames >= IDLE_SLEEP_FRAMES && unsubFrame) {
           unsubFrame();
@@ -229,7 +161,6 @@ export function SheetCursor() {
     };
 
     const wake = () => {
-      readColors();
       if (!unsubFrame) {
         unsubFrame = subscribeSheetFrame(frame);
       } else {
@@ -240,10 +171,10 @@ export function SheetCursor() {
     /* ── listeners ────────────────────────────────────────────────── */
     /* R311 §1.6 (initial pointer entry): the boundary events can fire
      * BEFORE the first pointermove (a pointer entering the viewport
-     * straight onto a link), so setRingState() saw hasMoved=false and
-     * the reticle missed its transition until the next crossing. The
-     * move handler now owns the state as well — every move re-derives
-     * interactive/suppressed from its own target and re-evaluates. */
+     * straight onto a link), so the move handler owns the state as
+     * well — every move re-derives interactive/suppressed from its
+     * own target and re-evaluates. No press listeners: the extraction
+     * records no press state for the dot. */
     const onPointerMove = (e: PointerEvent) => {
       target.x = e.clientX;
       target.y = e.clientY;
@@ -254,7 +185,7 @@ export function SheetCursor() {
         overInteractive = !!el.closest(INTERACTIVE_SELECTOR);
         suppressed = !!el.closest(SUPPRESSED_SELECTOR);
       }
-      setRingState();
+      setDotState();
       idleFrames = 0;
       wake();
     };
@@ -264,17 +195,7 @@ export function SheetCursor() {
       if (!el || typeof el.closest !== 'function') return;
       overInteractive = !!el.closest(INTERACTIVE_SELECTOR);
       suppressed = !!el.closest(SUPPRESSED_SELECTOR);
-      setRingState();
-    };
-
-    const onPointerDown = (e: PointerEvent) => {
-      pressed = true;
-      setRingState();
-      onPointerMove(e);
-    };
-    const onPointerUp = () => {
-      pressed = false;
-      setRingState();
+      setDotState();
     };
 
     const onVisibility = () => {
@@ -284,33 +205,29 @@ export function SheetCursor() {
       }
     };
 
-    window.addEventListener('resize', resize, { passive: true });
     window.addEventListener('pointermove', onPointerMove, { passive: true });
     window.addEventListener('pointerover', onPointerOver, { passive: true });
-    window.addEventListener('pointerdown', onPointerDown, { passive: true });
-    window.addEventListener('pointerup', onPointerUp, { passive: true });
-    window.addEventListener('pointercancel', onPointerUp, { passive: true });
     document.addEventListener('visibilitychange', onVisibility);
 
     return () => {
       if (unsubFrame) unsubFrame();
       delete document.documentElement.dataset.sheetCursor;
-      window.removeEventListener('resize', resize);
       window.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('pointerover', onPointerOver);
-      window.removeEventListener('pointerdown', onPointerDown);
-      window.removeEventListener('pointerup', onPointerUp);
-      window.removeEventListener('pointercancel', onPointerUp);
       document.removeEventListener('visibilitychange', onVisibility);
     };
   }, [live]);
 
   if (!live) return null;
 
+  /* The reference's exact anatomy: fixed layer → 0×0 transform-driven
+   * head → the round inner dot (cursor.css carries the committed
+   * values). One element per seat — no second layer anywhere. */
   return (
-    <>
-      <canvas ref={canvasRef} className="sc-canvas" aria-hidden="true" />
-      <div ref={ringRef} className="sc-ring" data-spec="cursor.dot" data-on="off" data-pressed="off" aria-hidden="true" />
-    </>
+    <div className="sc-cursor" aria-hidden="true">
+      <div ref={headRef} className="sc-cursor-head">
+        <div ref={dotRef} className="sc-cursor-dot" data-spec="cursor.dot" data-on="off" />
+      </div>
+    </div>
   );
 }

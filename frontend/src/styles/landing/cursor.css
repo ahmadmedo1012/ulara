@@ -1,45 +1,86 @@
 /* ════════════════════════════════════════════════════════════════════
-   R333 P-D — the cursor sheet (the retired craft sheet row 8 · INV-05).
-   The custom pointer instrument's dedicated stylesheet, re-landed out
-   of chrome.css: a full-viewport 2D canvas carrying the 10px signal
-   square + velocity trail, and the DOM ring that GROWS over real
-   interactive elements and contracts into a targeting reticle while
-   pressed (threshold-gated — the canvas only trails above a speed
-   threshold; see SheetCursor.tsx).
+   the cursor sheet — the reference's DOT grammar (r363 P2 gate).
 
-   Gating ladder (the sheet adds none — the native cursor is reclaimed by
-   plain cascade order: author rules beat the UA's link cursors, and
-   rule order decides the data-cursor='none' exceptions):
-     · the instrument only mounts for (hover: hover) and (pointer: fine)
-       and never under prefers-reduced-motion (SheetCursor.tsx decides
-       via matchMedia; when live it stamps data-sheet-cursor on <html>);
-     · any failure to start keeps the native cursor (the data attribute
-       is the gate — no attribute, no hiding).
-   The entrance preloader (.pl) owns the pointer while it plays.
+   Measured ground truth (docs/redesign/r350/reference/refsite.css,
+   quoted verbatim — the committed extraction is the law):
+
+     .cursor{z-index:999;pointer-events:none;justify-content:flex-start;
+             align-items:flex-start;display:flex;position:fixed;inset:0%}
+     .cursor-main{justify-content:center;align-items:center;width:0;
+                  height:0;display:flex;position:relative}
+     .cursor-inner{opacity:0;background-color:#dd6013;border-radius:50%;
+                   flex:none;width:.6rem;height:.6rem;transition:all .4s;
+                   position:absolute}
+   plus `.cursor{display:none}` in the reference's touch/mobile belt,
+   and NOT ONE `cursor:none` in the whole extraction: the native
+   pointer is never hidden — the dot is pure decoration that hides at
+   rest, lights + grows on interactive hover, and steps aside inside
+   the suppression zones (reference `data-cursor="hidden"` ≙ Ulara's
+   unified `data-cursor="none"`, R311 §1.5).
+
+   Deviations (documented, house-law-forced — see SheetCursor.tsx):
+     · `transition: all .4s` → explicit property list on the tokens
+       (check-motion-tokens.sh bans `all` + raw durations here); 400ms
+       has no house rung → --t-fast (320ms), the closest.
+     · ground colour #dd6013 → var(--accent) (the one-signal orange→
+       signal swap, owner-ruled ADAPT, p2 critique §4).
+     · grow magnitude: not extractable (obfuscated bundle) →
+       documented inference scale 2.4, riding the same transition.
+     · the reference's `z-index: 999` → this sheet's own register
+       (251 — where the retired square/ring lived); the stack seat is
+       Ulara architecture, not reference grammar.
+
+   Gating ladder (unchanged shape): the instrument only mounts for
+   (hover: hover) and (pointer: fine) and never under prefers-reduced-
+   motion (SheetCursor.tsx decides via matchMedia; while live it
+   stamps data-sheet-cursor on <html>). data-sheet-cursor gates ONLY
+   the zone seat cursors below — there is no native-cursor hiding in
+   this sheet at all (the extraction has none; a dead zone now simply
+   shows the native pointer, exactly like the reference).
+
+   RTL note: the document is dir=rtl, so the reference's logical
+   `justify-content:flex-start` anchor would seat the head at the
+   top-RIGHT and mirror the clientX tracking (a latent bug the retired
+   ring shipped — its inset-inline-start anchor was mirrored). The
+   head here is pinned to the physical top-left, direction-neutral.
    ════════════════════════════════════════════════════════════════════ */
 
-.sc-canvas {
+/* ── the fixed layer (≙ ref .cursor) ──────────────────────────────── */
+.sc-cursor {
   position: fixed;
   inset: 0;
-  z-index: 250;
-  pointer-events: none;
-}
-
-.sc-ring {
-  position: fixed;
-  inset-block-start: 0;
-  inset-inline-start: 0;
-  /* the reference's measured #canvas-cursor-hover — 2.8rem square
-     (23.3px @1440 root 8.333px) */
-  inline-size: 2.8rem;
-  block-size: 2.8rem;
-  margin: -1.4rem 0 0 -1.4rem; /* spacing-gate: allow — negative half-ring centering (no negative token exists) */
-  /* 2026 — the reticle rides the royal signal (was the reference's
-     measured #FC724D coral reticle rgb(252,114,77); the cursor is an
-     interactive brand surface — the canonical --accent seat owns it). */
-  border: 2px solid var(--accent);
   z-index: 251;
   pointer-events: none;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  /* the reference anatomy is authored LTR (flex-start = top-left);
+   * pin that anchor so dir=rtl cannot mirror the clientXY tracking */
+  direction: ltr;
+}
+
+/* ── the head — the 0×0 transform-driven point (≙ ref .cursor-main);
+   JS (SheetCursor frame) owns its translate3d at the measured lerp ── */
+.sc-cursor-head {
+  inline-size: 0;
+  block-size: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+/* ── the dot (≙ ref .cursor-inner): 0.6rem circle in the ONE signal,
+   OPACITY 0 AT REST — hidden over plain ground at rest AND in motion;
+   the grow rides the same tokenized reveal (scale 2.4, the documented
+   inference — the reference bundle owns the number) ───────────────── */
+.sc-cursor-dot {
+  inline-size: 0.6rem;
+  block-size: 0.6rem;
+  flex: none;
+  position: absolute;
+  border-radius: 50%;
+  background-color: var(--accent);
   opacity: 0;
   scale: 1;
   transition:
@@ -47,66 +88,34 @@
     scale var(--t-fast) var(--ease);
 }
 
-.sc-ring[data-on='on'] {
+.sc-cursor-dot[data-on='on'] {
   opacity: 1;
+  scale: 2.4;
 }
 
-.sc-ring[data-pressed='on'] {
-  scale: 0.56;
-}
-
-.sc-ring[data-on='on'][data-pressed='on'] {
-  opacity: 0.68;
-}
-
-/* Difference-blend OPTION over hero art (the retired craft sheet row 8): opt in by
-   stamping data-blend='on' on the canvas — where mix-blend-mode is
-   supported the instrument inverts against the art beneath it, exactly
-   like the reference's difference-blend measuring lines. */
-@supports (mix-blend-mode: difference) {
-  .sc-canvas[data-blend='on'] {
-    mix-blend-mode: difference;
+/* ── the reference's own touch belt (`.cursor{display:none}`) —
+   defence in depth under the component gate: touch never sees it ──── */
+@media (hover: none), (pointer: coarse) {
+  .sc-cursor {
+    display: none;
   }
 }
 
+/* ── zone seat cursors (scoped exactly as before, under the live
+   stamp + fine pointer) — these style the ZONES' OWN instruments, not
+   the dot: the entrance preloader owns the pointer while it plays;
+   the hero stage keeps the drafting crosshair and its station
+   markers stay pointing. No ground/interactive hiding ladder — the
+   reference records none. ─────────────────────────────────────────── */
 @media (hover: hover) and (pointer: fine) {
-  /* the page ground: every surface under the live instrument */
-  [data-sheet-cursor='live'] .landing {
-    cursor: none;
-  }
-
-  /* author reclaim of the UA link/button cursors (author rules beat
-     UA styles — none needed here) */
-  [data-sheet-cursor='live'] .landing :is(a, button, [role='button'], input, select, textarea, label, summary) {
-    cursor: none;
-  }
-
-  /* the local-instrument zones (the hero's drafting layer below 992px
-     is not initialized there — the native crosshair returns so a dead
-     zone never renders zero glyphs) */
-  [data-sheet-cursor='live'] .landing [data-cursor='none'] {
-    cursor: crosshair;
-  }
-
   /* the entry preloader owns the pointer at EVERY width while it
-     plays (its counter is the sole instrument) */
+     plays (its counter + cross is the sole instrument) */
   [data-sheet-cursor='live'] .landing .pl,
   [data-sheet-cursor='live'] .landing .pl * {
     cursor: none;
   }
-}
 
-@media (hover: hover) and (min-width: 992px) {
-  /* ≥992 the hero's local drafting instrument owns the pointer — the
-     native crosshair must not draw a second glyph over the plus */
-  [data-sheet-cursor='live'] .landing [data-cursor='none'] {
-    cursor: none;
-  }
-}
-
-/* The elevation uses native pointing plus its four station buttons. The
-   shared reticle steps aside here, so the pointer must remain visible. */
-@media (hover: hover) and (pointer: fine) {
+  /* the hero's drafting seat: the native crosshair guides the drag */
   [data-sheet-cursor='live'] .landing .hro-stage[data-cursor='none'] { cursor: crosshair; }
   [data-sheet-cursor='live'] .landing .hro-stage .hi-marker { cursor: pointer; }
 }

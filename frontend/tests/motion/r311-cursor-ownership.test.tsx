@@ -6,13 +6,15 @@
  * The R310 unit belt tested each cursor component IN ISOLATION, which
  * is exactly why the app-level conflict was missed: the landing page
  * mounted TWO independent pointer systems at once (CursorManager's
- * circular dot/ring + SheetCursor's square). These specs mount the
+ * circular dot/ring + the landing instrument). These specs mount the
  * REAL router + the REAL landing page + the REAL app-level layer in
  * ONE tree (RoutedCursorManager, exactly as App.tsx mounts it) and
  * assert the ownership contract end to end:
  *
- *   · on '/': the square sheet instrument owns the pointer; the
- *     app-level circular layer is fully unmounted (not hidden).
+ *   · on '/': the landing's dot instrument (r363 P2 rebuild — the
+ *     reference's committed grammar: a 0.6rem round dot, opacity 0 at
+ *     rest, grow on interactive hover; SheetCursor) owns the pointer;
+ *     the app-level circular layer is fully unmounted (not hidden).
  *   · off '/': the app layer returns untouched (r305-A2 preserved).
  *   · returning to '/': the layer tears down — no stale glyphs.
  *   · the suppression vocabulary is the unified data-cursor="none".
@@ -122,12 +124,12 @@ function mountApp(initialEntry: string) {
 /* ═══ the ownership contract ════════════════════════════════════════ */
 
 describe('R311 cursor ownership — the real router + landing in one tree', () => {
-  it('on "/": the square sheet instrument owns the pointer; the app layer is unmounted', () => {
+  it('on "/": the landing dot instrument owns the pointer; the app layer is unmounted', () => {
     mountApp('/');
     expect(document.querySelector('.cursor-layer')).toBeNull();
     expect(document.querySelector('.cursor-dot-core')).toBeNull();
-    expect(document.querySelector('.sc-canvas')).not.toBeNull();
-    expect(document.querySelector('.sc-ring')).not.toBeNull();
+    expect(document.querySelector('.sc-cursor')).not.toBeNull();
+    expect(document.querySelectorAll('.sc-cursor-dot')).toHaveLength(1);
 
     /* pointer activity never resurrects the app layer on the landing */
     fireEvent.pointerMove(window, { clientX: 300, clientY: 300 });
@@ -159,7 +161,7 @@ describe('R311 cursor ownership — the real router + landing in one tree', () =
     expect(layer).not.toBeNull();
 
     /* the sheet instrument unmounted with the landing */
-    expect(document.querySelector('.sc-canvas')).toBeNull();
+    expect(document.querySelector('.sc-cursor')).toBeNull();
 
     /* activity lights the layer (data-active on first move) */
     fireEvent.pointerMove(window, { clientX: 120, clientY: 90 });
@@ -174,13 +176,13 @@ describe('R311 cursor ownership — the real router + landing in one tree', () =
     fireEvent.click(document.querySelector('[data-testid="to-landing"]') as HTMLElement);
     expect(document.querySelector('.cursor-layer')).toBeNull();
     expect(document.querySelector('.cursor-dot-core')).toBeNull();
-    expect(document.querySelector('.sc-canvas')).not.toBeNull();
+    expect(document.querySelector('.sc-cursor')).not.toBeNull();
   });
 
   it('reduced motion: BOTH systems stay down — the native cursor is the fallback', () => {
     installMatchMedia({ fine: true, reduced: true });
     mountApp('/');
-    expect(document.querySelector('.sc-canvas')).toBeNull();
+    expect(document.querySelector('.sc-cursor')).toBeNull();
     expect(document.querySelector('.cursor-layer')).toBeNull();
 
     fireEvent.click(document.querySelector('[data-testid="to-colleges"]') as HTMLElement);
