@@ -157,7 +157,7 @@ export function Live() {
                 of failing the 44px tap floor reserved for standalone
                 controls. Class selectors keep working; no belt pins the tag. */}
             <p className="pm-sub" data-spec="problem.sub">
-              المشكلات التي بُنيت أُلارا لحلّها — تحت كل وجع بند يعمل اليوم،
+              المشكلات التي بُنيت أُلارا لحلّها ليست شعارات — كل بندٍ فيها ميزةٌ تعمل اليوم،
               والسجل الكامل في{' '}
               <Link to="/capabilities" className="fo-text-link">صفحة القدرات</Link>.
             </p>

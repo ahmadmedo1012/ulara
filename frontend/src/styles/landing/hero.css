@@ -499,3 +499,14 @@
   .hi-tag,
   .ev-i6 { transition: none; }
 }
+
+/* ── r363 — the shared ticker keyframes RESTORED. statement.css and
+ * patterns.css animate with fo-ticker-rtl but the keyframes block was
+ * lost in a refactor, so every crawl sat frozen on its first frame —
+ * the seamless-loop duplicate run parked visibly in the static view
+ * («01 01 02 02 …»). One -50% lap over the doubled track; the lap
+ * token (--fo-ticker-lap) and the RM belt stay with their callers. */
+@keyframes fo-ticker-rtl {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}

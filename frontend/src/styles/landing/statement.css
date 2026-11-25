@@ -498,6 +498,15 @@
   inline-size: max-content;
   animation: fo-ticker-rtl 36s linear infinite;
 }
+/* r363 — the two contiguous loop runs (the full clause set, then its
+ * aria-hidden duplicate). The -50% lap (keyframes restored in
+ * hero.css) lands exactly on the run boundary, so the static frame
+ * always reads as one unique row. */
+.st-crawl-run {
+  display: flex;
+  flex: none;
+  align-items: stretch;
+}
 .st-crawl-cell {
   display: block;
   flex: none;

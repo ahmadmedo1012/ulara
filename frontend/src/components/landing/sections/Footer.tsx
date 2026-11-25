@@ -274,7 +274,7 @@ export function Footer({ year }: { year: number }) {
               srcSet="/media/illustrations/r359/footer/footer-skyline-light@2x.webp 2x"
               alt="أفق حرم جامعي متخيّل بخط رفيع: رواق وقاعة وبرج وأشجار على خط أرض واحد"
               loading="lazy"
-              fetchPriority="low"
+             
               width={1440}
               height={384}
             />
@@ -285,7 +285,7 @@ export function Footer({ year }: { year: number }) {
               alt=""
               aria-hidden="true"
               loading="lazy"
-              fetchPriority="low"
+             
               width={1440}
               height={384}
             />

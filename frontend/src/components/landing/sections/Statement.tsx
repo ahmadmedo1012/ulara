@@ -39,7 +39,7 @@
  * composer (pages/LandingPage.tsx) on the shared sheet clock — this
  * component receives the section + title refs it measures. */
 import campusPlan from '@shared/art/svg/plan-campus-site.svg';
-import { Fragment, type ReactNode, type RefObject } from 'react';
+import { type ReactNode, type RefObject } from 'react';
 import { ScrubReveal } from '../journey/WordReveal';
 import { RevealCssClass } from '../../../hooks/useReveal';
 
@@ -105,11 +105,11 @@ function StatementDraft() {
  * (its honest claim — one ledger per institution — the plates and the
  * vision strip already carry it). Four authored lines, one per clause. */
 const STATEMENT_TEXT =
-  'المحاضرة تُبنى وتُقاس، والواجب يُصحّح ويُعاد، والإتقان يُرسَم مفهومًا مفهومًا، والبحث يُفهرَس ويبقى.';
+  'المحاضرة تُبنى وتُقاس، والواجب يُصحّح ويُعاد، والإتقان يُرسَم في كل درس، والبحث يُفهرَس ويبقى.';
 const STATEMENT_LINES = [
   'المحاضرة تُبنى وتُقاس،',
   'والواجب يُصحّح ويُعاد،',
-  'والإتقان يُرسَم مفهومًا مفهومًا،',
+  'والإتقان يُرسَم في كل درس،',
   'والبحث يُفهرَس ويبقى.',
 ] as const;
 
@@ -308,25 +308,40 @@ export function Statement({ sectionRef, titleRef }: StatementProps) {
                       our own plumbing (span seats off the pairable
                       census, per the r338 law). */}
                   <span className="st-crawl-track">
-                    {CRAWL_CLAUSES.map((clause, i) => (
-                      <Fragment key={clause}>
-                        <div className="st-crawl-cell" data-spec={`intro.cell.${i + 1}`}>
-                          <div className="st-crawl-card" data-spec={`intro.celllogo.${i + 1}`}>
-                            <span className="st-crawl-idx fo-mono" dir="ltr">0{i + 1}</span>
-                            <span className="st-crawl-phrase">{clause}</span>
-                          </div>
-                          <div className="st-crawl-sep" aria-hidden="true" data-spec={`intro.cellsep.${i + 1}`} />
-                        </div>
-                        {/* the seamless-loop duplicate — aria-hidden span
-                            seats (off the pairable census by design) */}
-                        <span className="st-crawl-cell" aria-hidden="true" data-spec={`intro.dupcell.${i + 1}`}>
-                          <span className="st-crawl-card" data-spec={`intro.dupcard.${i + 1}`}>
-                            <span className="st-crawl-idx fo-mono" dir="ltr">0{i + 1}</span>
-                            <span className="st-crawl-phrase">{clause}</span>
-                          </span>
-                          <span className="st-crawl-sep" aria-hidden="true" />
-                        </span>
-                      </Fragment>
+                    {/* r363 — the seamless-loop runs REGROUPED: each run is
+                        the FULL clause set. The old per-cell interleave
+                        parked «01 01 02 02 …» pairs in the static frame
+                        (the duplicate seat rendered beside its twin instead
+                        of behind it once the lap froze). The duplicate run
+                        is the loop's continuation — one aria-hidden wrapper
+                        (off the pairable census by design), the same
+                        cell/dupcell data-spec seats as before. */}
+                    {[false, true].map((dup) => (
+                      <div
+                        key={dup ? 'run-dup' : 'run-primary'}
+                        className="st-crawl-run"
+                        aria-hidden={dup || undefined}
+                      >
+                        {CRAWL_CLAUSES.map((clause, i) =>
+                          dup ? (
+                            <span className="st-crawl-cell" key={clause} data-spec={`intro.dupcell.${i + 1}`}>
+                              <span className="st-crawl-card" data-spec={`intro.dupcard.${i + 1}`}>
+                                <span className="st-crawl-idx fo-mono" dir="ltr">0{i + 1}</span>
+                                <span className="st-crawl-phrase">{clause}</span>
+                              </span>
+                              <span className="st-crawl-sep" aria-hidden="true" />
+                            </span>
+                          ) : (
+                            <div className="st-crawl-cell" key={clause} data-spec={`intro.cell.${i + 1}`}>
+                              <div className="st-crawl-card" data-spec={`intro.celllogo.${i + 1}`}>
+                                <span className="st-crawl-idx fo-mono" dir="ltr">0{i + 1}</span>
+                                <span className="st-crawl-phrase">{clause}</span>
+                              </div>
+                              <div className="st-crawl-sep" aria-hidden="true" data-spec={`intro.cellsep.${i + 1}`} />
+                            </div>
+                          ),
+                        )}
+                      </div>
                     ))}
                   </span>
                 </div>

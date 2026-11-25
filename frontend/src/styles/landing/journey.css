@@ -620,14 +620,16 @@ section.chapters {
      + the crisp 0.025em inner pass + the two soft outer passes that
      keep the mid-beat seat readable where the r353 rebuild's
      densified central ink runs. All engines paint text-shadow. */
-  text-shadow:
-    -0.025em -0.025em 0 var(--bg), 0.025em -0.025em 0 var(--bg),
-    -0.025em 0.025em 0 var(--bg), 0.025em 0.025em 0 var(--bg),
-    -0.05em -0.05em 0 var(--bg), 0.05em -0.05em 0 var(--bg),
-    -0.05em 0.05em 0 var(--bg), 0.05em 0.05em 0 var(--bg),
-    -0.055em 0 0 var(--bg), 0.055em 0 0 var(--bg),
-    0 -0.055em 0 var(--bg), 0 0.055em 0 var(--bg),
-    0 0 0.16em var(--bg), 0 0 0.34em var(--bg);
+  /* r363 — the plaque is a REAL paper plate now (the owner's call:
+     text never sits on art unless contrast and legibility are
+     proven). Opaque paper ground + the hairline rim — the drafting-
+     sheet label grammar the numbered markers already carry. The
+     retired 14-pass text-shadow halo never fully separated the ink
+     from the sheet's line-work at the mid-scrub beats, and it cost
+     14 painted shadows per glyph run. */
+  background: var(--bg);
+  border: 1px solid var(--rule-strong);
+  padding: 0.3em 0.55em;
 }
 
 /* ── the INTRODUCTION card — the measured corner card ─────────────
@@ -1553,6 +1555,15 @@ section.chapters {
   text-align: center;
   z-index: 3;
   pointer-events: none;
+  /* r363 — the plate grammar (see .jt-card-plate): the assembly
+     caption rides over the sheet for its first 10% window; it now
+     does so on its own opaque paper seat, never raw on the art. */
+  inline-size: fit-content;
+  margin-inline: auto;
+  max-inline-size: calc(100% - 2 * var(--sp-4));
+  background: var(--bg);
+  border: 1px solid var(--rule-strong);
+  padding: 0.55em 0.9em;
 }
 
 .jt-caption-kicker {

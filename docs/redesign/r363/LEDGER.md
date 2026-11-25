@@ -16,8 +16,45 @@ the app pass, and the release. Every DONE line carries command output or an imag
   matrices run in batched foreground calls and the emulator soak dispatches to
   GitHub Actions (no KVM here). Background processes do not survive tool-call
   boundaries in this sandbox, so long steps are chunked; the 30–60 min soak is a CI
-  workflow, not a local job. `gh` and `ffmpeg` are installed into `~/.local/bin`
-  locally; nothing host-specific is committed.
+  workflow, not a local job. Local `gh` is pending install; GitHub work goes through
+  the REST API with the token (env-only). Nothing host-specific is committed.
 
-NEXT: baseline landing captures (1440/390, light/dark, overlap detector + scroll
-frames) → the P1 defect list, then section-by-section fixes.
+- **P1a — the journey statement rode the drawing raw; it is a plate now.** The pinned
+  scene's two statement plaques (and the assembly caption) sat as bare display ink
+  over the isometric sheet, held only by a 14-pass text-shadow halo that never fully
+  separated the glyphs from the line-work at the mid-scrub beats — the owner's
+  «headline renders ON TOP of the isometric building art». Fixed with the house
+  drafting-plate grammar (the same one the numbered markers carry): opaque paper
+  ground, 1px hairline rim, real padding; the halo retired (14 painted shadows per
+  glyph run). [Before/after](evidence/p1-plaque-plate.webp).
+
+- **P1b — the crawl never moved, and its duplicate run was parked in view.** Two
+  causes, both real: (1) the `fo-ticker-rtl` keyframes were referenced by
+  statement.css and patterns.css but defined NOWHERE — the lap died in a refactor
+  and every crawl froze on frame one; (2) the track interleaved each clause with its
+  seamless-loop twin (`01 01 02 02 …`), so the frozen frame showed duplicated pairs.
+  Keyframes restored (hero.css, the motion-token owner per the patterns.css note),
+  and the track regrouped into two contiguous runs (full set, then the aria-hidden
+  duplicate) so the -50% lap lands on the run boundary and the static frame always
+  reads one unique row. [The crawl](evidence/p1-crawl-unique.webp).
+
+- **P1c — the owner's copy ruling (2).** The statement's «مفهومًا مفهومًا» repeat is
+  rewritten: «…والإتقان يُرسَم في كل درس، والبحث يُفهرَس ويبقى.» — one sentence, four
+  honest capability clauses, no repeated word, nothing truncated. The challenges
+  band's lead («تحت كل وجع بند يعمل اليوم») also read broken; it is now
+  «المشكلات التي بُنيت أُلارا لحلّها ليست شعارات — كل بندٍ فيها ميزةٌ تعمل اليوم،
+  والسجل الكامل في صفحة القدرات.» [Mobile rendering](evidence/p1-mobile-statement.webp).
+
+- **P1d — the SVG furniture collision and the console error.** Inside
+  plan-campus-site.svg the «10M» scale label overlapped «SHT A-101» (they rendered
+  as one garbled strip) and the cover-crop cut «SITE-00 / CAMPUS SITE» mid-label;
+  both labels moved into the crop-safe zone. The React dev-only
+  «fetchPriority prop» console warning is retired with the attribute itself (the
+  hint was redundant: hero art is preloaded, the footer strip is lazy).
+  [Overlap evidence](evidence/p1-overlap-zero.txt) — the sweep stays at 0 across 14
+  cells after the fixes.
+
+NEXT: P2 — the footer to the owner's rulings (one mono link row, statement + cookie
+strip sharing one grid row, ACCEPT in the signal colour, dead links fixed), then the
+top bar/nav choreography and the cursor pass, each with a frame-sequence sheet.
+
