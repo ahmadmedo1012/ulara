@@ -1,0 +1,32 @@
+# R358 Phase A — ULARA Scan
+
+**Scope:** 11 routes × 360/390/768/1024/1440 × light/dark
+**Master:** defects-master.json
+**Defects (deduped):** 2 — P0 0 · P1 2 · P2 0
+
+## P0
+_none_
+
+## P1
+- [STUDENT] /student/lectures/lec_e2e_greedy (360px:light, 390px:light): SMALL_TAP_TARGETS — SMALL_TAP_TARGETS
+- [TEACHER] /teacher/exams/tpl_e2e_quiz4 (360px:light, 390px:light): SMALL_TAP_TARGETS — SMALL_TAP_TARGETS
+
+## P2
+_none_
+
+# R358 Phase A — ULARA Scan
+
+**Scope:** 10 routes × 360/390/768/1024/1440 × light/dark
+**Master:** defects-master.json
+**Defects (deduped):** 1 — P0 0 · P1 1 · P2 0
+
+## P0
+_none_
+
+## P1
+- [STUDENT] /document/paper.pdf (360px:light, 390px:light): SMALL_TAP_TARGETS — SMALL_TAP_TARGETS
+
+## P2
+_none_
+
+Mounted static and concrete detail routes in derivation: 143; missing: []; extra: [].

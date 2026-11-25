@@ -113,6 +113,7 @@ import {
   STUDENT_DASHBOARD,
   STUDENT_MATERIALS,
   STUDENT_USER,
+  ADMIN_USER,
   TEACHER_ASSIGNMENTS,
   TEACHER_DASHBOARD,
   TEACHER_FULL_PROFILE,
@@ -406,13 +407,50 @@ export function standardRoutes(): MockRouteDef[] {
     { method: 'GET', path: '/academic/terms', json: ok([]) },
     ...['/academic/credentials', '/academic/program-enrollments', '/compliance/accreditations',
       '/compliance/evidence', '/compliance/findings', '/compliance/inspections', '/compliance/self-assessments',
-      '/operations/equipment', '/research-outputs'].map(path => ({
+      '/operations/equipment', '/operations/work-orders', '/operations/reservations', '/operations/safety-incidents', '/research-outputs'].map(path => ({
       method: 'GET', path, json: { data: [], meta: { page: 1, limit: 10, total: 0, totalPages: 0 } },
     })),
     { method: 'GET', path: '/institutional/org-units', json: {
       data: INSTITUTION_ORG_TREE, meta: { page: 1, limit: 1, total: INSTITUTION_ORG_TREE.length, totalPages: 1 },
     } },
     { method: 'GET', path: '/institutional/org-units/tree', json: ok(INSTITUTION_WIRE_TREE) },
+    { method: 'GET', path: '/institutional/appointments/appt_1', json: ok({
+      id: 'appt_1', institutionId: MY_INSTITUTION_PROFILE.institution.id, personId: 'person_1', positionId: 'pos_inst_1',
+      status: 'ACTIVE', acting: false, startDate: '2024-01-01', createdAt: '2024-01-01', updatedAt: '2024-01-01',
+      person: INSTITUTION_PEOPLE_PAGE.data[0], position: { ...INSTITUTION_POSITIONS_PAGE.data[0], code: 'DEAN' },
+    }) },
+    { method: 'GET', path: '/admin/users/usr_e2e_teacher/permissions', json: ok({
+      user: { ...TEACHER_USER, scopeFaculty: null }, overrides: [],
+      effective: myPermissions('TEACHER').capabilities, roleDefaults: myPermissions('TEACHER').roleDefaults,
+    }) },
+    { method: 'GET', path: '/training/tracks/study-plan', json: ok({
+      id: 'track_1', slug: 'study-plan', title: 'خطة الدراسة', summary: 'تنظيم وقت الدراسة والمراجعة',
+      category: 'STUDY_SKILLS', level: 'BEGINNER', estMinutes: 10, pointsAward: 20, enrolled: true, isCompleted: false,
+      lessons: [{ id: 'lesson_1', order: 1, title: 'ترتيب الأولويات', contentMarkdown: 'حدّد أولويات هذا الأسبوع.',
+        estMinutes: 10, pointsAward: 20, isCompleted: false }],
+    }) },
+    { method: 'GET', path: '/colleges/clg_e2e_eng', json: ok({
+      id: 'clg_e2e_eng', name: 'كلية الهندسة', nameEn: 'Engineering', city: 'افتراضي',
+      stats: { departmentCount: 3, studentCount: 420, teacherCount: 28, courseCount: 12 },
+      departments: [], leadership: [], topStudents: [], announcements: [], upcomingEvents: [], upcomingLive: [], activeCompetitions: [],
+    }) },
+    { method: 'GET', path: '/institutional/people/person_1', json: ok({
+      person: { ...INSTITUTION_PEOPLE_PAGE.data[0], institutionId: MY_INSTITUTION_PROFILE.institution.id },
+      appointments: [], unitCapabilityGrants: [],
+    }) },
+    { method: 'GET', path: '/academic/programs/prog_1', json: ok({
+      ...INSTITUTION_PROGRAMS_PAGE.data[0], institutionId: MY_INSTITUTION_PROFILE.institution.id, versions: [],
+    }) },
+    { method: 'GET', path: '/operations/facilities/fac_1', json: ok({
+      ...INSTITUTION_FACILITIES_PAGE.data[0], institutionId: MY_INSTITUTION_PROFILE.institution.id,
+    }) },
+    { method: 'GET', path: '/research-projects/res_proj_1', json: ok({
+      ...INSTITUTION_RESEARCH_PAGE.data[0], institutionId: MY_INSTITUTION_PROFILE.institution.id,
+      principalInvestigatorId: 'person_1', members: [],
+    }) },
+    { method: 'GET', path: '/competitions/cmp_e2e_1', json: ok({
+      ...COMPETITION_ROWS[0], organizerId: ADMIN_USER.id, entries: [], _count: { entries: 0 },
+    }) },
     { method: 'GET', path: '/institutional/people', json: INSTITUTION_PEOPLE_PAGE },
     { method: 'GET', path: '/institutional/appointments', json: { data: [], meta: { page: 1, limit: 10, total: 0, totalPages: 0 } } },
     { method: 'GET', path: '/institution/positions', json: INSTITUTION_POSITIONS_PAGE },

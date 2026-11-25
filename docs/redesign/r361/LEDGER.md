@@ -142,7 +142,15 @@ P1/P10 — 123 static routes in the first sweep; see [issue counts](evidence/fir
 
 P2 — On 61938f4 the production waterfall fetched both auth chunks while the reader was idle in the first seconds. Enforced the documented 15-second minimum; keyboard intent still warms both immediately. [Network proof, scores and 11 passing funnel tests](evidence/auth-warm.txt).
 
-NEXT: Check release Lighthouse after deployment and finish the expanded route census.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:832d55d9d7a23b99a4ca76006db282b04fe3c733a955efcd8a7b7468c1e42175 -->
+
+P1/P4 — Expanded the census to all 20 mounted detail templates and used a student session for competitions, vision and document viewing. [210 detail and competition cells](evidence/route-details.txt): zero missing fixtures or crashes; three mobile target groups exposed for repair. f5e5a3e delivered the deferred auth warm-up.
+
+NEXT: Repair the three detail control groups; finish release measurements and mobile artifacts.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 

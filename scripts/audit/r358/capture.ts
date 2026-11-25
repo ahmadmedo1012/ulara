@@ -5,8 +5,8 @@
  *
  * Evolves scripts/audit/r355/capture.mjs on four axes (the r358 mission):
  *  1. ROUTES ARE DERIVED, never guessed — imported from
- *     frontend/src/lib/routes.ts (the r341/Y2 single source), filtered of
- *     :param routes, role-mapped by shell prefix, then CROSS-CHECKED
+ *     frontend/src/lib/routes.ts (the r341/Y2 single source), expanded with concrete
+ *     fixture records for parameterized routes, role-mapped by shell prefix, then CROSS-CHECKED
  *     against every `path=` mounted in frontend/src/App.tsx; the
  *     derivation diff (mounted-but-uncaptured / captured-but-unmounted)
  *     is written to route-derivation.json and the scan FAILS if any
@@ -76,11 +76,35 @@ function roleFor(path: string): string {
   if (path.startsWith('/quality')) return 'QUALITY';
   if (path.startsWith('/owner')) return 'OWNER';
   if (path.startsWith('/institution')) return 'ADMIN';
-  if (['training', 'achievements', 'community'].some(p => path === `/${p}` || path.startsWith(`/${p}/`))) return 'STUDENT';
-  if (path === '/settings' || path === '/vision') return 'STUDENT'; // any-authed shared doors (App.tsx r320 P2-1)
+  if (['training', 'achievements', 'community', 'competitions', 'vision', 'document'].some(p => path === `/${p}` || path.startsWith(`/${p}/`))) return 'STUDENT';
+  if (path === '/settings') return 'STUDENT'; // any-authed shared doors (App.tsx r320 P2-1)
   if (path === '/admin/analysis') return 'ADMIN';
   return 'PUBLIC';
 }
+
+// Concrete detail records served by the same hermetic API as the journeys.
+const DETAIL_PATHS: Record<string, string> = {
+  '/student/courses/:offeringId': '/student/courses/offr_e2e_algorithms',
+  '/student/lectures/:lectureId': '/student/lectures/lec_e2e_greedy',
+  '/training/:slug': '/training/study-plan',
+  '/training/:slug/lesson/:lessonId': '/training/study-plan/lesson/lesson_1',
+  '/student/online-exams/:id': '/student/online-exams/exm_e2e_quiz3',
+  '/teacher/exams/:templateId': '/teacher/exams/tpl_e2e_quiz4',
+  '/teacher/intelligence/:offeringId': '/teacher/intelligence/offr_e2e_algorithms',
+  '/admin/permissions/:id': '/admin/permissions/usr_e2e_teacher',
+  '/owner/institutions/:slug': '/owner/institutions/ulara-demo',
+  '/institution/people/:id': '/institution/people/person_1',
+  '/institution/appointments/:id': '/institution/appointments/appt_1',
+  '/institution/councils/:id': '/institution/councils/council_1',
+  '/institution/councils/:id/meetings/:meetingId': '/institution/councils/council_1/meetings/meeting_1',
+  '/institution/programs/:id': '/institution/programs/prog_1',
+  '/institution/facilities/:id': '/institution/facilities/fac_1',
+  '/institution/research/:id': '/institution/research/res_proj_1',
+  '/colleges/:id': '/colleges/clg_e2e_eng',
+  '/vision/:slug': '/vision/ai-predictor',
+  '/document/:filename': '/document/paper.pdf',
+  '/competitions/:id': '/competitions/cmp_e2e_1',
+};
 
 function deriveRoutes(): { routes: ScanRoute[]; mounted: string[]; diffs: Record<string, string[]> } {
   // constants from the single source
@@ -102,7 +126,7 @@ function deriveRoutes(): { routes: ScanRoute[]; mounted: string[]; diffs: Record
   const QUERY_OVERRIDES: Record<string, string> = {
     '/auth/reset-password': '/auth/reset-password?token=e2e_fixture_reset_token_0123456789abcdef0123456',
   };
-  const candidates = [...new Set([...fromRoutes, ...publicExtras, ...literalExtras])].filter(p => p !== '/login' && p !== '/login' && p !== '/register' && p !== '/universities' && p !== '/features');
+  const candidates = [...new Set([...fromRoutes, ...publicExtras, ...literalExtras, ...Object.keys(DETAIL_PATHS)])].filter(p => p !== '/login' && p !== '/register' && p !== '/universities' && p !== '/features');
 
   // every path literally mounted in App.tsx (path="…" or path={ROUTES.x})
   const appSrc = readFileSync(resolve(ROOT, 'frontend/src/App.tsx'), 'utf8');
@@ -116,12 +140,13 @@ function deriveRoutes(): { routes: ScanRoute[]; mounted: string[]; diffs: Record
   }
   for (const m of appSrc.matchAll(/path="([^"]+)"/g)) {
     const p = m[1];
-    if (!p.includes(':') && !p.startsWith('/__') && p !== '*') mounted.add(p);
+    if (!p.startsWith('/__') && p !== '*') mounted.add(p);
   }
   for (const m of appSrc.matchAll(/path=\{ROUTES\.(\w+)\}/g)) {
     const v = (ROUTES as Record<string, string>)[m[1]];
-    if (v && !v.includes(':')) mounted.add(v);
+    if (v) mounted.add(v);
   }
+  for (const m of appSrc.matchAll(/<Route path="([^"]+)" element=\{<ParamRedirect/g)) redirects.add(m[1]);
   for (const r of redirects) mounted.delete(r);
 
   // drop design/dev surfaces (BrandPage/__design/__plates are instruments, not product)
@@ -130,10 +155,10 @@ function deriveRoutes(): { routes: ScanRoute[]; mounted: string[]; diffs: Record
     .filter(p => !p.startsWith('/__'))
     .filter(p => mounted.has(p) || p === '/404')
     .map(path => ({
-      path: QUERY_OVERRIDES[path] ?? path,
+      path: QUERY_OVERRIDES[path] ?? DETAIL_PATHS[path] ?? path,
       basePath: path,
       role: roleFor(path),
-      name: path === '/' ? 'landing' : path.replace(/\//g, '_').replace(/^_/, '').replace(/_/g, '-'),
+      name: path === '/' ? 'landing' : (DETAIL_PATHS[path] ?? path).replace(/\//g, '_').replace(/^_/, '').replace(/_/g, '-'),
     }));
 
   const scannedSet = new Set(scan.map(s => s.basePath));
@@ -254,8 +279,6 @@ async function pageMetrics(page: import('playwright').Page, width: number): Prom
             if (RETIRED.includes(hex) && !retiredHits.includes(hex)) retiredHits.push(hex);
           }
         }
-        const raw = cs.getPropertyValue('--') as unknown;
-        void raw;
       }
     }
     if (materials.length) issues.push({ type: 'RADIUS_OR_SHADOW', severity: 'P2', count: materials.length, samples: materials.slice(0, 6) });
@@ -427,7 +450,10 @@ async function main() {
             });
             await page.waitForTimeout(900);
           } catch { /* best-effort settle */ }
-          let evaluation = await pageMetrics(page, width);
+          const evaluation = await pageMetrics(page, width);
+          const requested = new URL(routeDef.path, BASE_URL).pathname;
+          const actual = new URL(page.url()).pathname;
+          if (actual !== requested) evaluation.push({ type: 'UNEXPECTED_REDIRECT', severity: 'P0', message: requested + ' → ' + actual });
           // axe
           try {
             await page.evaluate(axeScript);
