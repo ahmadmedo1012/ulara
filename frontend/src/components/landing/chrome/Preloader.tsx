@@ -62,7 +62,8 @@ import { PREFERS_REDUCED_MOTION } from '../../../lib/motion-media';
  * the hero's staged ink-in begins while the slit opens.
  */
 import { useEffect, useRef } from 'react';
-import { ElevationArt } from '../hero/ElevationArt';
+import desktopElevation from '@shared/art/svg/hero-elevation.svg';
+import mobileElevation from '@shared/art/svg/hero-elevation-mobile.svg';
 import { markIntroSeen } from '../../../lib/motion/introGate';
 import '../../../styles/landing/preloader.css';
 
@@ -397,7 +398,8 @@ export function Preloader({ onExitStart, onDone }: PreloaderProps) {
             glyph, not the full plate; the drawing honesty holds — what
             finishes drawing IS what the hero mounts) */}
         <div className="pl-plate pl-mark" aria-hidden="true">
-          <ElevationArt viewBox="250 74 960 546" />
+          <img className="pl-mark-image" alt="" draggable={false}
+            src={typeof window !== 'undefined' && window.matchMedia?.('(max-width: 767px)')?.matches ? mobileElevation : desktopElevation} />
         </div>
 
         {/* the reading — the percentage at the rule's origin edge (the

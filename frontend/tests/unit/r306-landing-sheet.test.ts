@@ -216,7 +216,11 @@ describe('r306 → r310 — the elevation illustration (the honest interactive)'
     expect(ink).toContain('export const VB_MOBILE');
     // the loader mounts the SAME elevation as its small mark (one object
     // across the handoff)
-    expect(read('src/components/landing/chrome/Preloader.tsx')).toContain('<ElevationArt viewBox="250 74 960 546" />');
+    const loader = read('src/components/landing/chrome/Preloader.tsx');
+    for (const asset of ['hero-elevation.svg', 'hero-elevation-mobile.svg']) {
+      expect(loader).toContain(`@shared/art/svg/${asset}`);
+      expect(liveTsx).toContain(`@shared/art/svg/${asset}`);
+    }
     // transparent paper: no raster <image> in the plate
     expect(ink).not.toContain('<image');
     // the loader keeps its own original line drawing (SheetLoader)

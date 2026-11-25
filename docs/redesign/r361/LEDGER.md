@@ -76,7 +76,15 @@ P7 — Updated README, web palette and art guidance, deployment lineage, CI trig
 
 P5 — Mobile CI failed with seven lint errors in generated art. Fixed the source and generator: 0 errors, 50 existing warnings; mobile typecheck and endpoint contract both pass. [Evidence](evidence/mobile-art.txt); prior item cfacefc.
 
-NEXT: Verify the native artifacts and emulator jobs on the new main push.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:ee5dc42fdfb7cf52857c596fc2f8ec82261fa45aa774a70bdc535d1465395351 -->
+
+P2 — The entrance now shares the responsive hero vector and reveals one image instead of animating hundreds of SVG nodes. 21 unit and 4 browser checks pass, including the timing, skip and reduced-motion contracts. [Evidence](evidence/entrance.txt); previous 0157526.
+
+NEXT: Measure the live entry after deployment; finish the dashboard and register checks.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 

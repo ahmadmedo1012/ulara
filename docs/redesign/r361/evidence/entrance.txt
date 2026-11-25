@@ -1,0 +1,11 @@
+ Test Files  1 passed (1)
+      Tests  21 passed (21)
+   Start at  00:00:39
+   Duration  6.06s (transform 502ms, setup 1.12s, collect 433ms, tests 180ms, environment 2.40s, prepare 585ms)
+
+  ✓  2 [e2e] › tests/e2e/r309-recovery.e2e.ts:545:3 › R309/R313 loader — the asset-gated entrance clock and the lock cleanup › the skip path restores the scroll lock too (4.8s)
+  ✓  3 [e2e] › tests/e2e/r309-recovery.e2e.ts:562:5 › R309/R313 loader — the asset-gated entrance clock and the lock cleanup › reduced motion › no loader at all; the page stands complete and scrollable (2.3s)
+  ✓  4 [e2e] › tests/e2e/r309-recovery.e2e.ts:577:3 › R309/R313 loader — the asset-gated entrance clock and the lock cleanup › no stale release labels ride the customer-facing sheet (§8) (1.7s)
+
+  4 passed (22.8s)
+✓ built in 34.61s

@@ -205,27 +205,20 @@
   color: var(--text);
   opacity: 0.9;
 }
-.pl-mark .ev-svg {
+.pl-mark-image {
   inline-size: 100%;
   block-size: 100%;
+  object-fit: contain;
   display: block;
 }
-/* the mark draws in — stroke-rise on the structure lines (skeleton+fast
-   = 1400ms, the tuned LCP window) */
-.pl-mark .ev-out,
-.pl-mark .ev-struct {
-  stroke-dasharray: 1 1;
-  stroke-dashoffset: 1;
-  animation: pl-trace calc(var(--motion-duration-skeleton) + var(--t-fast)) var(--ease-soft) both;
+@media (prefers-reduced-motion: no-preference) {
+  .pl-mark-image {
+    animation: pl-mark-reveal var(--motion-duration-brand-draw-mark) var(--ease-soft) both;
+  }
 }
-.pl-mark .ev-shadow,
-.pl-mark .ev-fill,
-.pl-mark .ev-dot {
-  animation: pl-mark-ink var(--motion-duration-skeleton) var(--ease-linear) 0.4s both;
-}
-@keyframes pl-mark-ink {
-  from { opacity: 0; }
-  to { opacity: 1; }
+@keyframes pl-mark-reveal {
+  from { clip-path: inset(0 0 0 100%); }
+  to { clip-path: inset(0); }
 }
 .pl-plate {
   position: absolute;
@@ -578,12 +571,7 @@
   .pl-headline-line,
   .pl-meta-row,
   .pl-boot-item,
-  .pl-plate .cp-draw,
-  .pl-mark .ev-out,
-  .pl-mark .ev-struct,
-  .pl-mark .ev-shadow,
-  .pl-mark .ev-fill,
-  .pl-mark .ev-dot {
+  .pl-plate .cp-draw {
     transition: none;
     animation: none;
   }
@@ -592,15 +580,6 @@
     stroke-dasharray: none;
     stroke-dashoffset: 0;
   }
-
-  .pl-mark .ev-out,
-  .pl-mark .ev-struct {
-    stroke-dasharray: none;
-    stroke-dashoffset: 0;
-  }
-  .pl-mark .ev-shadow,
-  .pl-mark .ev-fill,
-  .pl-mark .ev-dot { opacity: 1; }
 
   .pl-headline-line,
   .pl-meta-row,
