@@ -44,7 +44,23 @@ capture() {
   } > "$dest/.capture.txt"
   adb_device exec-out screencap -p > "$dest/.capture.png"
   # Fail if adb reports success but the PNG is missing or truncated.
-  node -e 'const b=require("node:fs").readFileSync(process.argv[1]);if(b.length<45||b.readUInt32BE(0)!==0x89504e47||b.toString("ascii",12,16)!=="IHDR"||b.toString("ascii",b.length-8,b.length-4)!=="IEND")process.exit(1);console.log("screenshot="+b.readUInt32BE(16)+"x"+b.readUInt32BE(20))' "$dest/.capture.png" >> "$dest/.capture.txt"
+  node - "$dest/.capture.png" "$name" >> "$dest/.capture.txt" <<'NODE'
+const [file, profile] = process.argv.slice(2);
+const b = require('node:fs').readFileSync(file);
+if (b.length < 45 || !b.subarray(0, 8).equals(Buffer.from('89504e470d0a1a0a', 'hex')) ||
+    b.toString('ascii', 12, 16) !== 'IHDR' || b.toString('ascii', b.length - 8, b.length - 4) !== 'IEND') {
+  throw new Error('Incomplete emulator screenshot');
+}
+const w = b.readUInt32BE(16), h = b.readUInt32BE(20);
+// At the 160-dpi override one display pixel is one dp. Accept either
+// orientation; a successful wm command alone does not establish the size.
+const expected = profile.startsWith('compact-') ? 320 : profile === 'tablet-768dp' ? 768 : 0;
+if (!w || !h || (expected && Math.min(w, h) !== expected)) {
+  throw new Error(`Unexpected screenshot dimensions for ${profile}: ${w}x${h}`);
+}
+console.log(`screenshot=${w}x${h}`);
+console.log(`screenshot_orientation=${w === h ? 'square' : w > h ? 'landscape' : 'portrait'}`);
+NODE
   mv -- "$dest/.capture.png" "$dest/$name.png"
   mv -- "$dest/.capture.txt" "$dest/$name.txt"
 }

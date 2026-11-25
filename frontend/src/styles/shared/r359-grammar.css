@@ -892,3 +892,6 @@ a.pf-stat:hover { background: var(--surface-2); }
   cursor: pointer;
 }
 .dash-disclosure > summary::marker { color: var(--accent); }
+
+.dash-disclosure.pf-stat > summary { padding-inline: var(--sp-1); }
+.dash-disclosure.pf-stat .pf-stat-value { display: block; }

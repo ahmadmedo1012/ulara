@@ -214,7 +214,15 @@ P1/P6/P8 — Fixed the disappearing student resume card and removed hidden landi
 
 P1/P8 — The five dashboards now meet the existing full-body 180-word budget. Secondary data opens in place. [Before/after numbers, keyboard verification and five visual comparisons](evidence/dashboard-density.txt). Previous landing: af11830.
 
-NEXT: Check the final publication SHA, CI, audit matrix and signed native artifacts; retain both integrated verification outcomes and the real emulator limitation.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:cbb7721951635a972711066c7feadf143a21da401af52ac0c3a3922e7a0441ee -->
+
+P1/P5/P8 — Restored immediate visibility of the five real student metrics, retained the 180-word limit, and extended tap-target and device-image verification. [Viewport and command proof](evidence/student-kpi-closure.txt). Previous landing: 2a03245.
+
+NEXT: Match the production, Android and iOS receipts to the final source, retain full-suite and emulator limitations, and inspect the final route matrix.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 

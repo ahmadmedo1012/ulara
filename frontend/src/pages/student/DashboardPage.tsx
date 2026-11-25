@@ -927,43 +927,46 @@ export default function StudentDashboardPage() {
           link — the matrix page's سدّ الفجوة contract, now one voice
           across both surfaces. */}
       <div className="grid-2-1">
-        <section aria-label="مقرّراتك الحالية">
-          <SectionBar
-            title="مقرّراتك"
-            meta={
-              !enrollments.isPending && !enrollments.isError && sortedEnrollments.length > 0 ? (
-                <BarCount
-                  n={sortedEnrollments.length}
-                  srLabel={countAr(sortedEnrollments.length, ['مقرّر نشط واحد', 'مقرّران نشطان', 'مقرّرات نشطة', 'مقررًا نشطًا'])}
-                />
-              ) : undefined
-            }
-            action={<Link to="/student/courses" className="btn ghost sm">المقرّرات</Link>}
-          />
-          {enrollments.isPending ? (
-            <ListSkeleton rows={2} />
-          ) : enrollments.isError ? (
-            <div className="ledger-row ledger-row-flat" role="alert">
-              <span className="ledger-lead"><b>مقرّراتك</b>—</span>
-              <span className="ledger-what">
-                تعذَّر تحميل مقرّراتك —{' '}
-                <button type="button" className="btn ghost sm" onClick={() => enrollments.refetch()}>إعادة المحاولة</button>
-              </span>
-            </div>
-          ) : sortedEnrollments.length === 0 ? (
-            /* R319 (c2-G1): the actionable empty — hatched cell + the
-               catalog link as its ONE action. */
-            <EmptyCell
-              label="لا مقرّرات بعد"
-              note="لم تُسجَّل في مقرّرات هذا الفصل بعد — دليل المقرّرات يعرض ما تقدّمه كلّيّتك."
-              action={<Link to="/student/catalog" className="btn ghost sm">دليل المقرّرات</Link>}
+        <details className="dash-disclosure">
+          <summary>مقرّراتك الحالية</summary>
+          <section aria-label="مقرّراتك الحالية">
+            <SectionBar
+              title="مقرّراتك"
+              meta={
+                !enrollments.isPending && !enrollments.isError && sortedEnrollments.length > 0 ? (
+                  <BarCount
+                    n={sortedEnrollments.length}
+                    srLabel={countAr(sortedEnrollments.length, ['مقرّر نشط واحد', 'مقرّران نشطان', 'مقرّرات نشطة', 'مقررًا نشطًا'])}
+                  />
+                ) : undefined
+              }
+              action={<Link to="/student/courses" className="btn ghost sm">المقرّرات</Link>}
             />
-          ) : (
-            <RowList aria-label="قائمة مقرّراتك">
-              {sortedEnrollments.map((e) => <DashCourseRow key={e.id} e={e} />)}
-            </RowList>
-          )}
-        </section>
+            {enrollments.isPending ? (
+              <ListSkeleton rows={2} />
+            ) : enrollments.isError ? (
+              <div className="ledger-row ledger-row-flat" role="alert">
+                <span className="ledger-lead"><b>مقرّراتك</b>—</span>
+                <span className="ledger-what">
+                  تعذَّر تحميل مقرّراتك —{' '}
+                  <button type="button" className="btn ghost sm" onClick={() => enrollments.refetch()}>إعادة المحاولة</button>
+                </span>
+              </div>
+            ) : sortedEnrollments.length === 0 ? (
+              /* R319 (c2-G1): the actionable empty — hatched cell + the
+                 catalog link as its ONE action. */
+              <EmptyCell
+                label="لا مقرّرات بعد"
+                note="لم تُسجَّل في مقرّرات هذا الفصل بعد — دليل المقرّرات يعرض ما تقدّمه كلّيّتك."
+                action={<Link to="/student/catalog" className="btn ghost sm">دليل المقرّرات</Link>}
+              />
+            ) : (
+              <RowList aria-label="قائمة مقرّراتك">
+                {sortedEnrollments.map((e) => <DashCourseRow key={e.id} e={e} />)}
+              </RowList>
+            )}
+          </section>
+        </details>
 
         <details className="dash-disclosure">
           <summary>فجوات الإتقان</summary>
@@ -1044,11 +1047,10 @@ export default function StudentDashboardPage() {
           own band in orange) and StreakTicks (the weekly study log —
           NO daily datum exists in the API yet, so the row renders its
           honest empty register: seven empty ticks, today outlined). */}
-      <details className="dash-disclosure">
-        <summary>مؤشرات الفصل</summary>
-        <section aria-label="زخم الفصل" className="dash-momentum">
-          <div className="r305s-rule-labeled" aria-hidden="true">زخم الفصل</div>
-          <StatLine items={statLineItems} spread />
+      <section aria-label="زخم الفصل" className="dash-momentum">
+        <StatLine items={statLineItems} spread discloseHints />
+        <details className="dash-disclosure">
+          <summary>توزيع الدرجات والنشاط</summary>
           {/* r351 A2 (Q3): the AVG CourseBar retired — it re-printed the
               «إنجاز المقرّرات» KPI's exact datum one section earlier. */}
           <div className="dash-indicators">
@@ -1070,8 +1072,8 @@ export default function StudentDashboardPage() {
               />
             </div>
           </div>
-        </section>
-      </details>
+        </details>
+      </section>
 
       {/* P2.5 — the AI assistant entry: a quiet hairline row (the §R325.c
           hatch hover is its only flourish) pointing at the assistant the

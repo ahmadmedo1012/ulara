@@ -225,7 +225,7 @@ async function pageMetrics(page: import('playwright').Page, width: number): Prom
       issues.push({ type: 'HORIZONTAL_OVERFLOW', severity: 'P0', message: `scrollWidth ${scrollW}px > viewport ${curWidth}px (+${scrollW - curWidth})` });
     }
     if (curWidth < 768) {
-      const interactives = document.querySelectorAll('button, a, input, select, textarea, [role="button"], [role="tab"]');
+      const interactives = document.querySelectorAll('button, a, input, select, textarea, summary, [role="button"], [role="tab"]');
       const small: unknown[] = [];
       for (const el of Array.from(interactives)) {
         const target = el instanceof HTMLInputElement && ['checkbox', 'radio'].includes(el.type)

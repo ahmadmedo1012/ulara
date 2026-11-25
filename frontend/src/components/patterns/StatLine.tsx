@@ -40,19 +40,29 @@ const TONE_CLASS: Record<NonNullable<StatLineItem['tone']>, string> = {
   signal: ' signal',
 };
 
-export function StatLine({ items, spread }: { items: StatLineItem[]; spread?: boolean }) {
+export function StatLine({ items, spread, discloseHints = false }: { items: StatLineItem[]; spread?: boolean; discloseHints?: boolean }) {
   if (items.length === 0) return null;
   return (
     <div className="pf-statline" data-spread={spread ? 'true' : undefined}>
       {items.map((item, i) => {
-        const tone = TONE_CLASS[item.tone ?? 'neutral'];
-        const body = (
+        const tone = discloseHints ? '' : TONE_CLASS[item.tone ?? 'neutral'];
+        const reading = (
           <>
             <span className="pf-stat-label">{item.label}</span>
             <span className={`pf-stat-value${item.empty ? ' pf-stat-value--empty' : ''}`}>{item.value}</span>
-            {item.hint !== undefined && <span className="pf-stat-hint">{item.hint}</span>}
           </>
         );
+        // Keep both the metric and its value in the overview. An empty datum
+        // always explains itself; a linked metric retains its single action.
+        if (discloseHints && item.hint && !item.empty && !item.to && item.tone !== 'warning' && item.tone !== 'danger') {
+          return (
+            <details key={item.label} className={`pf-stat dash-disclosure${tone}`}>
+              <summary>{reading}</summary>
+              <span className="pf-stat-hint">{item.hint}</span>
+            </details>
+          );
+        }
+        const body = <>{reading}{item.hint !== undefined && <span className="pf-stat-hint">{item.hint}</span>}</>;
         return item.to !== undefined ? (
           <Link key={`${item.label}-${i}`} to={item.to} className={`pf-stat${tone}`}>
             {body}

@@ -1,0 +1,27 @@
+Correction to 2a0324514dae571244189c3ee81761fa31f308f4:
+The full login journey exposed an incompatible detail: the five semester readings had
+moved inside a collapsed section. Restore all five labels and numbers on initial entry.
+Only their explanations open in place. Missing and cautionary readings keep the explanation
+visible immediately. The course list and grade distribution have their own named rows.
+No attendance or student dashboard test was relaxed.
+
+Viewport, themes: 1440x900 and 390x844, light and dark. All five numerical values were
+visible in every capture. The day-of-test student word count was 172 desktop and 167 phone
+after settling, including the whole navigation; before r361 the same census returned 242.
+In the first comparison two positive values still used a second ink. The final computed
+number and body ink match: rgb(40,40,40) in light; rgb(240,240,235) in dark. Royal is
+reserved for the disclosure marker/focus. Five columns fold into two phone columns; the
+opened GPA explanation stays below its value and the baseline of the adjacent metric holds.
+See student-kpi-readings.webp (first metric expanded) and density-student.webp.
+
+Login and KPI data journeys: six passing. Shell, dashboard-material and word-budget
+checks: 29 passing on the restored layout. Dashboard agenda/resume unit tests: 14 passing.
+Mobile-width native summary targets: nine FAQ, eight student and two teacher, one admin,
+four quality and one owner; every inspected control at both widths was at least 44x44px.
+Clean Vite bundle: 862.7 KB gzip, entry 30.0, PDF 95.7, total ceiling 866.
+APK device capture now rejects a claimed 320/768 dp screenshot when its PNG dimensions
+disagree at 160 dpi. Requested rotation and recorded portrait/landscape are distinct.
+Mock adb: five captures, 200% text, existing overrides restored on success and injected
+failure, wrong-size PNG rejected and not published. This is not evidence of a real emulator.
+Final focused release check (login, original role density budgets, skeleton, student
+dashboard journeys): all 12 passed. New capture selector also includes native summary.
