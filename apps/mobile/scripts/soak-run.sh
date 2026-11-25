@@ -34,10 +34,27 @@ open_app() {
   adb shell am start -a android.intent.action.VIEW -d "$DEEP_LINK" >/dev/null 2>&1 || true
 }
 
+# run #6's forensics: the deep link opens the app into "Bundling 26%…"
+# (the dev client's brand moment) — the COLD bundle takes minutes on a
+# 2-core runner, so every open waits for REAL UI text via the a11y tree
+# (uiautomator dump), never a fixed sleep.
+wait_for_text() {
+  TEXT="$1"; POLLS="${2:-30}"
+  for i in $(seq 1 "$POLLS"); do
+    if adb exec-out uiautomator dump /dev/tty 2>/dev/null | grep -q "$TEXT"; then
+      echo "── ui ready (poll $i): $TEXT"
+      return 0
+    fi
+    sleep 6
+  done
+  echo "::error::ui never showed: $TEXT"
+  return 1
+}
+
 echo "── soak: the bootstrap login (the seeded student account)"
 adb shell pm clear ly.ulara.app >/dev/null 2>&1 || true
 open_app
-sleep 25   # the dev-client connects + metro serves the first bundle
+wait_for_text "ابدأ الآن" 50 || true   # the cold bundle — up to ~5 min
 shot "soak-shots/bootstrap-open.png"
 "$MAESTRO" test apps/mobile/.maestro/soak-login.yaml \
   -e EMAIL="${SOAK_EMAIL:-student@test.ly}" -e PASSWORD="${SOAK_PASSWORD:-12345678}" \
@@ -70,8 +87,16 @@ round() {
   sleep 12
   shot "soak-shots/round-$R-regained.png"
   echo "── soak round $R: the surviving-session assert"
-  open_app
-  sleep 10   # the dev-client reopens the session (no pm clear — the auth store survives)
+  # airplane rounds NEVER reopen: a dev-client relaunch with no metro
+  # reach is an error screen BY CONSTRUCTION (the bundler is the app's
+  # js source in dev builds) — the session-resume truth is exercised
+  # in-app (the app stayed foreground through the outage; its own
+  # refresh-on-regain path fires). Networked rounds reopen through the
+  # deep link (the auth store survives — no pm clear).
+  if [ "$MODE" != "airplane" ]; then
+    open_app
+    wait_for_text "أرقامك هذا الفصل" 20 || true
+  fi
   "$MAESTRO" test apps/mobile/.maestro/soak-assert.yaml \
     || { echo "::error::soak round $R: the session did NOT survive ($MODE)"; touch fail.flag; FAIL=1; }
   shot "soak-shots/round-$R-asserted.png"
