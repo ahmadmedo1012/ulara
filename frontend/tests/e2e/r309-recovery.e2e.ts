@@ -363,13 +363,11 @@ test.describe('R309 hero — the reveal-state lifecycle (§6)', () => {
         async () => {
           sb = await stage.boundingBox();
           if (!sb) return false;
-          return page.evaluate(
-            ([x, y]: [number, number]) => {
-              const el = document.elementFromPoint(x, y);
-              return !!el && el.closest('.hro-stage') != null;
-            },
-            [sb.x + sb.width * 0.75, sb.y + sb.height * 0.5],
-          );
+          const at = { x: sb.x + sb.width * 0.75, y: sb.y + sb.height * 0.5 };
+          return page.evaluate(({ x, y }) => {
+            const el = document.elementFromPoint(x, y);
+            return !!el && el.closest('.hro-stage') != null;
+          }, at);
         },
         {
           timeout: 30_000,
