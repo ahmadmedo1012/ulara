@@ -40,8 +40,15 @@ open_app() {
 # (uiautomator dump), never a fixed sleep.
 wait_for_text() {
   TEXT="$1"; POLLS="${2:-30}"
+  # run #9: uiautomator dumps non-ASCII as numeric character entities
+  # (&#x627;…), so a raw-Arabic grep never matches — match BOTH shapes.
+  ESCAPED=$(printf '%s' "$TEXT" | python3 -c "
+import sys
+print(''.join('&#x%X;' % ord(c) if ord(c) > 127 else c for c in sys.stdin.read().strip()))
+")
   for i in $(seq 1 "$POLLS"); do
-    if adb exec-out uiautomator dump /dev/tty 2>/dev/null | grep -q "$TEXT"; then
+    DUMP=$(adb exec-out uiautomator dump /dev/tty 2>/dev/null || true)
+    if printf '%s' "$DUMP" | grep -q -e "$TEXT" -e "$ESCAPED"; then
       echo "── ui ready (poll $i): $TEXT"
       return 0
     fi

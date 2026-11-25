@@ -16,6 +16,15 @@
 name: soak-login (r363 P5-a — the session bootstrap)
 appId: ly.ulara.app
 ---
+# run #9's forensic screenshot: the app renders perfectly BEHIND the
+# dev-client's first-launch DEVELOPER MENU sheet — dismiss it before
+# anything reads the screen.
+- tapOn:
+    text: "Continue"
+    optional: true
+- tapOn:
+    text: "متابعة"
+    optional: true
 - scrollUntilVisible:
     element:
       text: "ابدأ الآن"

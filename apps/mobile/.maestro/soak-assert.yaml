@@ -21,6 +21,12 @@ name: soak-assert (r363 P5-a — the surviving session)
 appId: ly.ulara.app
 ---
 - tapOn:
+    text: "Continue"
+    optional: true
+- tapOn:
+    text: "متابعة"
+    optional: true
+- tapOn:
     text: "Wait"
     optional: true
 # THE contract: still authenticated, still on the student dashboard.
