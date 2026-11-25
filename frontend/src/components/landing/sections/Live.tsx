@@ -1,49 +1,7 @@
-/* P2-0 (r335 split) — [3] التحديات — R337 (A-problem): the section
- * is REBUILT against the frozen r335 reference spec — the r335 doc tree
- * and its reference captures (home-problem-wrap.{390,768,1024,1440,1920}.json)
- * were lost in the 1.0 squash; the ruled-ledger band below + the r337
- * rebuild's e2e belt are the living record.
- *
- * the reference's problem band is a RULED LEDGER of four columns — the
- * inverse of the old open-column transplant (R322 2-d, retired with
- * this rewrite):
- *
- *   section.pm-section[problem.wrap] > toprule · frame
- *   frame > head[problem.head] > titleblock(kicker · h2) · subwrap > sub
- *   frame > band[problem.band] > bandrule · cols · dots(≤767)
- *   cols > col×4[problem.col.N] > colrule · meta(pad box > keyroll >
- *     keytext · indexroll > indextext · cue) · metarule · bodyzone >
- *     artzone(artcolor > artin > IsoPains plate, r346) · textzone(pad box >
- *     tgrid > titlebox > itemtitle · anszone > bodytext) · zonerule
- *
- * STRUCTURE (the spec's own census — 1920): every column carries its
- * own 1px start-edge rule (the FIRST column rides the band's edge
- * instead), the meta row closes with a dashed 1px rule, the art cell
- * is the spec's 36rem square holding the centered 20rem drawing, and
- * the text zone holds the display title + the answer-led body block.
- *
- * Honesty contracts kept (R322 lineage): each pain names a real gap
- * in Libyan higher-ed and keeps its answered-by-a-live-capability
- * line (non-negotiable — the answer rides as the body block's
- * leading sentence, accented); no invented statistics; the full
- * matrix lives on /capabilities.
- *
- * The section owns its carousel listeners so they attach when the
- * below-fold section mounts. */
+/* Four challenges and their live answers. The ruled text columns become
+ * a snap carousel on narrow screens; its controls mount with the section. */
 import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-/* R346 (phase-4 art) — the pains' art seat is the isometric plate
- * now: PainArt (the R313/R322 flat motif drawing) + PainFurniture (the
- * R345 measurement chrome) are RETIRED from the mount — both files
- * stay in the tree for rollback; the r346 sandbox rebuild's
- * self-drawing schematic recipe (Problems.tsx — each pain a small
- * isometric diagram that draws itself when the card enters view)
- * lives in pains/IsoPains.tsx, drawn on the r346 kernel (lib/iso.ts)
- * and painted through the --iso-* seats (iso-plate.css). The census
- * seat (problem.artsvg.N) and the 20rem square art window are kept
- * verbatim — only the drawing inside changed. */
-import { IsoPains } from '../pains/IsoPains';
-
 /* ── The four pains — the honest inverse of the live ledger: each
  * pain names a real gap in Libyan higher-ed today and is answered by
  * a capability that WORKS in the system. The `keyword` is the
@@ -255,21 +213,8 @@ export function Live() {
                   <div className="pm-cue" aria-hidden="true" data-spec={`problem.cue.${i + 1}`} />
                 </div>
 
-                {/* the body zone: the art cell over the text cell. */}
+                {/* The answer follows its challenge in reading order. */}
                 <div className="pm-bodyzone" data-spec={`problem.bodyzone.${i + 1}`}>
-                  <div className="pm-artzone" data-spec={`problem.artzone.${i + 1}`}>
-                    <div className="pm-artcolor" data-spec={`problem.artcolor.${i + 1}`}>
-                      <div className="pm-artin" data-spec={`problem.artin.${i + 1}`}>
-                        {/* R342 — the svg box itself is the spec's bound art
-                            window (the drawing inside is Ulara's own motif);
-                            the container hooks stay on the boxes around it.
-                            R346 — the drawing is the isometric plate now
-                            (pains/IsoPains.tsx); PainArt + the R345
-                            furniture retired with this seat swap. */}
-                        <IsoPains kind={p.num} data-spec={`problem.artsvg.${i + 1}`} />
-                      </div>
-                    </div>
-                  </div>
                   <div className="pm-textzone" data-spec={`problem.textzone.${i + 1}`}>
                     <div className="pm-tgrid" data-spec={`problem.tgrid.${i + 1}`}>
                       <div className="pm-item-titlebox" data-spec={`problem.titleboxcol.${i + 1}`}>

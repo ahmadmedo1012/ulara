@@ -68,7 +68,7 @@ test.describe('حلقة تصحيح الأستاذ', () => {
 
     /* بطاقة الطابور — العدّ العربي المزدوج + رأس المجموعة (العنوان،
      * الكود، سقف الدرجة، موعد الاستحقاق النسبي على الساعة المجمّدة). */
-    const queueCard = page.locator('.card', { hasText: 'تسليمات بانتظار التقييم' });
+    const queueCard = page.locator('section.sg-section', { hasText: 'تسليمات بانتظار التقييم' });
     /* (r351: this is the ASSIGNMENTS page's own queue card — its title
        + counted-noun subtitle are intact; the dashboard's copy cuts
        live on the dashboard page.) */
@@ -80,16 +80,16 @@ test.describe('حلقة تصحيح الأستاذ', () => {
     await expect(group).toContainText('تسليمان');
 
     /* الصفوف — الطالبة الأولى بلا شارة، والثاني «متأخر» مع زمن وصوله. */
-    const onTimeRow = page.locator('.list-row', { hasText: 'مروة البراني' });
+    const onTimeRow = page.getByRole('row').filter({ hasText: 'مروة البراني' });
     await expect(onTimeRow).toContainText('وصل منذ ساعتين');
     await expect(onTimeRow).not.toContainText('متأخر');
-    const lateRow = page.locator('.list-row', { hasText: 'سالم قدّور' });
+    const lateRow = page.getByRole('row').filter({ hasText: 'سالم قدّور' });
     await expect(lateRow).toContainText('متأخر');
     await expect(lateRow).toContainText('وصل منذ يوم');
     await expect(onTimeRow.getByRole('button', { name: 'تصحيح' })).toBeVisible();
 
     /* قائمة «جميع الواجبات» ساكنة بجانب الطابور. */
-    await expect(page.locator('.card', { hasText: 'جميع الواجبات' })).toContainText('مقدمة في الخوارزميات');
+    await expect(page.locator('section.sg-section', { hasText: 'جميع الواجبات' })).toContainText('مقدمة في الخوارزميات');
   });
 
   test('تقييم تسليم: السقف يرفض 25، ثم 17 + ملاحظة تُحفظ والصف يخرج من الطابور', async ({ page }) => {
@@ -102,7 +102,7 @@ test.describe('حلقة تصحيح الأستاذ', () => {
     await page.goto('/teacher/assignments');
 
     /* فتح نموذج التقييم من صف الطالبة الأولى. */
-    await page.locator('.list-row', { hasText: 'مروة البراني' }).getByRole('button', { name: 'تصحيح' }).click();
+    await page.getByRole('row').filter({ hasText: 'مروة البراني' }).getByRole('button', { name: 'تصحيح' }).click();
     const dialog = page.getByRole('dialog', { name: 'تقييم تسليم واجب الأسبوع الثالث' });
     await expect(dialog).toBeVisible();
     await expect(dialog.locator('.modal-title')).toHaveText('تقييم التسليم');
@@ -129,10 +129,10 @@ test.describe('حلقة تصحيح الأستاذ', () => {
 
     /* الصف المصحّح خرج من الطابور والعدّ تراجع — إعادة الجلب بعد
      * الإبطال هي المسار المرسّخ. */
-    const queueCard = page.locator('.card', { hasText: 'تسليمات بانتظار التقييم' });
+    const queueCard = page.locator('section.sg-section', { hasText: 'تسليمات بانتظار التقييم' });
     await expect(queueCard).toContainText('تسليم واحد بانتظار درجتك');
-    await expect(page.locator('.list-row', { hasText: 'مروة البراني' })).toHaveCount(0);
-    await expect(page.locator('.list-row', { hasText: 'سالم قدّور' })).toBeVisible();
+    await expect(page.getByRole('row').filter({ hasText: 'مروة البراني' })).toHaveCount(0);
+    await expect(page.getByRole('row').filter({ hasText: 'سالم قدّور' })).toBeVisible();
 
     /* «تقييم التالي» — الطالب التالي بمسوّدة درجة فارغة (إعادة تركيب
      * keyed بالنموذج لا تُورّث درجة الصف السابق). */

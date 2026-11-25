@@ -6,9 +6,9 @@
  *   1. HERO CAMPUS GEOMETRY — across 360/390/768/1024/1280/1440: the
  *      campus SVG renders at a real size (the composition regression:
  *      the r353 window read 33.7% of the 1440 band; the rebalanced
- *      window ≥45%), no horizontal overflow, and the FIVE inspection
+ *      window ≥45%), no horizontal overflow, and the four inspection
  *      stations sit ON the artwork (station centers inside the SVG's
- *      rect), each carrying a ≥40px hit target and an accessible name,
+ *      rect), each carrying a ≥44px hit target and an accessible name,
  *      each a real focusable button.
  *   2. THE JOURNEY EXIT at exact clock beats (the r354-final window
  *      out t 2.15–2.35): full presence at t 2.10, mid-fall at t 2.20,
@@ -21,51 +21,17 @@
  *      can never be a rest state) + the NEXT STEP chip's REAL rendered
  *      clearance off the recommendation box (SVG client rects, not
  *      source constants).
- *   4. PAINS — the instruments read by shape in the DOM: 6 royal
- *      graduations crossing the lecture ruler, the D+14 end tick
- *      clear of the stamp's body, the broken tab's three beats (ghost
- *      slot + fall line + tilted shard).
+ *   4. PAINS — the four indexed challenges and their answers at three widths.
  *   5. ROLES — five platform entry roles, three labelled use cases,
  *      the [05/05] group divider, keyboard-operable accordion rows.
  *   6. THEME — the dark tier resolves the royal seat to its measured
  *      dark value (the strong text tier), through the real store.
  */
 import { test, expect } from './fixtures/e2e';
+import { approachSection, scrollToPin } from './fixtures/landing-scene';
 import type { Page } from '@playwright/test';
 
 const HERO_READY = 'رحلة تعلم واحدة';
-
-/** the r312 convergence scroll (verbatim discipline from r325-map-clip). */
-async function scrollToPin(page: Page, p: number, mobile: boolean) {
-  let prev = -1;
-  for (let i = 0; i < 4; i += 1) {
-    const landed = await page.evaluate(
-      ({ p, mobile }) => {
-        const track = document.querySelector('.jt') as HTMLElement;
-        const col = document.querySelector('.jt-map-col') as HTMLElement;
-        const win = document.querySelector('.jt-map-in') as HTMLElement;
-        let target: number;
-        if (mobile) {
-          const cRect = col.getBoundingClientRect();
-          const colTop = cRect.top + window.scrollY;
-          const winH = win.getBoundingClientRect().height;
-          const stickyTop = parseFloat(getComputedStyle(win).top) || 0;
-          target = colTop - stickyTop + p * (cRect.height - winH);
-        } else {
-          const r = track.getBoundingClientRect();
-          target = r.top + window.scrollY + p * (r.height - window.innerHeight);
-        }
-        window.scrollTo({ top: target, behavior: 'instant' });
-        return Math.round(window.scrollY);
-      },
-      { p, mobile },
-    );
-    await page.waitForTimeout(430);
-    if (Math.abs(landed - prev) < 2) break;
-    prev = landed;
-  }
-  await page.waitForTimeout(350);
-}
 
 /** band progress → the scene clock t (desktop: linear; mobile: the warp). */
 const pinForT = (t: number, mobile: boolean) =>
@@ -74,6 +40,7 @@ const pinForT = (t: number, mobile: boolean) =>
     : (t / 5.52) * 1.034 - 0.082;
 
 async function awaitJourney(page: Page) {
+  await approachSection(page, 'chapters');
   await page.waitForFunction(
     () => (document.querySelector('.jt') as HTMLElement)?.dataset.stage !== undefined,
     undefined,
@@ -103,10 +70,11 @@ test.describe('R354-final · the hero campus geometry (real browser)', () => {
       await page.waitForTimeout(600);
 
       const seat = await page.evaluate(() => {
-        const svg = document.querySelector('.hro-stage svg, .fo-hero .cp-svg') as SVGSVGElement | null;
+        const svg = document.querySelector<SVGSVGElement | HTMLImageElement>('.hro-stage .hro-elevation');
         const stations = Array.from(document.querySelectorAll('.fo-hero .hi-marker')).map((el) => {
           const r = el.getBoundingClientRect();
           return {
+            id: el.getAttribute('data-marker'),
             label: el.getAttribute('aria-label') || '',
             tag: el.tagName,
             w: r.width,
@@ -115,7 +83,8 @@ test.describe('R354-final · the hero campus geometry (real browser)', () => {
             cy: r.y + r.height / 2,
           };
         });
-        const sr = svg ? svg.getBoundingClientRect() : null;
+        const loaded = !(svg instanceof HTMLImageElement) || (svg.complete && svg.naturalWidth > 0);
+        const sr = svg && loaded ? svg.getBoundingClientRect() : null;
         return {
           vw: innerWidth,
           svg: sr ? { x: sr.x, y: sr.y, w: sr.width, h: sr.height } : null,
@@ -126,7 +95,7 @@ test.describe('R354-final · the hero campus geometry (real browser)', () => {
 
       expect(seat.svg, 'the campus SVG renders').not.toBeNull();
       expect(seat.hOverflow, `${w}: no horizontal overflow`).toBe(false);
-      expect(seat.stations.length, 'five inspection stations').toBe(5);
+      expect(seat.stations.map((s) => s.id)).toEqual(['C-01', 'E-02', 'R-03', 'I-04']);
       if (seat.svg) {
         /* the composition floor: at the wide belts the campus window
          * must read at ≥45% of the band (the rebalanced 184×100
@@ -160,20 +129,21 @@ test.describe('R354-final · the hero campus geometry (real browser)', () => {
     await page.goto('/');
     await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
     const first = page.locator('.fo-hero .hi-marker').first();
+    // Keyboard focus previews the first station; Enter toggles that same
+    // named callout, and a second Enter must restore it without losing focus.
+    await page.keyboard.press('Tab');
     await first.focus();
     await expect(first).toBeFocused();
+    const label = first.locator('..').locator('.hi-tag');
+    await expect(first).toHaveAttribute('aria-pressed', 'true');
+    await expect(label).toHaveAttribute('aria-hidden', 'false');
     await page.keyboard.press('Enter');
-    /* the inspection instrument opens its frame layer (the hero's own
-     * reveal seat — the label sheet becomes visible) */
-    await page.waitForTimeout(400);
-    const opened = await page.evaluate(() => {
-      const box = document.querySelector('.hro-box, .hi-box, .hro-inspect');
-      if (!box) return { found: false };
-      const cs = getComputedStyle(box);
-      return { found: true, visible: cs.visibility !== 'hidden' && +cs.opacity > 0.5 };
-    });
-    expect(opened.found, 'the inspection instrument mounts').toBe(true);
-    expect(opened.visible, 'the instrument opens on Enter').toBe(true);
+    await expect(first).toHaveAttribute('aria-pressed', 'false');
+    await expect(label).toHaveAttribute('aria-hidden', 'true');
+    await page.keyboard.press('Enter');
+    await expect(first).toBeFocused();
+    await expect(first).toHaveAttribute('aria-pressed', 'true');
+    await expect(label).toHaveCSS('opacity', '1');
   });
 });
 
@@ -279,6 +249,7 @@ test.describe('R354-final · the why plates', () => {
     await page.setViewportSize({ width: 1440, height: 1200 });
     await page.goto('/');
     await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
+    await approachSection(page, 'why');
     const band = page.locator('.wy-panels');
     await band.scrollIntoViewIfNeeded();
     await page.waitForTimeout(800);
@@ -298,6 +269,7 @@ test.describe('R354-final · the why plates', () => {
     await page.setViewportSize({ width: 1440, height: 1200 });
     await page.goto('/');
     await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
+    await approachSection(page, 'why');
     await page.locator('.wy-panels').scrollIntoViewIfNeeded();
     await page.waitForTimeout(800);
 
@@ -334,99 +306,33 @@ test.describe('R354-final · the why plates', () => {
   });
 });
 
-/* ── 4 · the pains instruments ───────────────────────────────────── */
-
-test.describe('R354-final · the pains instruments read by shape', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.setViewportSize({ width: 1440, height: 1200 });
+// R359 replaced the drawings with a four-column text ledger (A1, ALL-SHEETS).
+for (const width of [1440, 768, 390]) {
+  test(`the four challenges and their answers remain readable at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: width < 768 ? 844 : 900 });
     await page.goto('/');
-    await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
-    await page.locator('.pm-bandinner').scrollIntoViewIfNeeded();
-    /* the draw-in belt is a one-shot; settle then assert */
-    await page.waitForTimeout(2400);
+    await approachSection(page, 'live');
+    const cards = page.locator('.pm-cols > [role=listitem]');
+    await expect(cards).toHaveCount(4);
+    await expect(cards.locator('.pm-keyword')).toHaveText(['LECTURE', 'GRADING', 'MASTERY', 'ARCHIVE']);
+    await expect(cards.locator('.pm-index')).toHaveText(['01', '02', '03', '04']);
+    for (const [i, card] of (await cards.all()).entries()) {
+      await card.scrollIntoViewIfNeeded();
+      const title = card.locator('.pm-item-title');
+      await expect(title).toBeInViewport();
+      await expect(card.locator('.pm-ans')).toHaveText(/^الجواب: .+/);
+      await card.locator('.pm-ans').scrollIntoViewIfNeeded();
+      await expect(card.locator('.pm-ans')).toBeInViewport();
+      await expect(card.locator('svg')).toHaveCount(0);
+      if (width >= 768 && i % (width < 992 ? 2 : 4) > 0) {
+        const left = await card.boundingBox();
+        const right = await cards.nth(i - 1).boundingBox();
+        expect(left!.y).toBe(right!.y);
+        expect(left!.x).toBeLessThan(right!.x);
+      }
+    }
   });
-
-  test('the lecture ruler carries 6 royal graduations that CROSS the staff', async ({ page }) => {
-    const ruler = await page.evaluate(() => {
-      const arts = Array.from(document.querySelectorAll('.pm-artin'));
-      const svg = arts[0]?.querySelector('svg');
-      if (!svg) return { err: 'no lecture panel' };
-      const grads = Array.from(svg.querySelectorAll('line.ip-draw')).filter(
-        (l) => l.getAttribute('stroke') === 'var(--iso-royal)',
-      );
-      /* an isometric tick is DIAGONAL on the sheet (the 30°
-       * projection shears it) — the honest length measure is the
-       * hypotenuse. The r353 defect rendered as ~2px colour
-       * segments; the majors must read ≥5px, minors below. */
-      const lens = grads.map((l) => {
-        const r = l.getBoundingClientRect();
-        return Math.hypot(r.width, r.height);
-      });
-      return { err: null, total: grads.length, majors: lens.filter((n) => n >= 5).length, maxLen: Math.max(...lens, 0) };
-    });
-    expect(ruler.err).toBeNull();
-    expect(ruler.total, 'six graduations on the ruler').toBe(6);
-    expect(ruler.majors, 'three MAJOR graduations cross the staff at real length (not ~2px segments)').toBe(3);
-    expect(ruler.maxLen, 'the majors read at useful length').toBeGreaterThanOrEqual(6);
-  });
-
-  test('the D+14 end tick sits clear of the stamp body; the tag reads', async ({ page }) => {
-    const seat = await page.evaluate(() => {
-      const arts = Array.from(document.querySelectorAll('.pm-artin'));
-      const svg = arts[1]?.querySelector('svg');
-      if (!svg) return { err: 'no grading panel' };
-      /* the stamp: the sienna-topped box (the only element with the
-       * warm top fill) — find the polygon whose fill is the sienna var */
-      const stamp = Array.from(svg.querySelectorAll('polygon')).find(
-        (p) => p.getAttribute('fill') === 'var(--iso-sienna)',
-      );
-      /* the end tick: the LAST royal graduation line (x 25.6 — the
-       * rail's true terminus) */
-      const ticks = Array.from(svg.querySelectorAll('line.ip-draw')).filter(
-        (l) => l.getAttribute('stroke') === 'var(--iso-royal)',
-      );
-      const endTick = ticks[ticks.length - 1];
-      const tag = Array.from(svg.querySelectorAll('.ip-tag')).some((t) =>
-        (t.textContent || '').includes('D+14'),
-      );
-      if (!stamp || !endTick) return { err: 'missing stamp or tick' };
-      const sr = stamp.getBoundingClientRect();
-      const tr = endTick.getBoundingClientRect();
-      /* the isometric re-seat (iso x 23.4 → 25.6, right of the stamp's
-       * 18–24 footprint) lands the tick clear of the stamp's body in
-       * the projection: no rect intersection (the r353 tick crossed
-       * straight through the stamp's silhouette) */
-      const vGap = tr.top - sr.bottom;
-      const intersects = !(sr.right < tr.left || tr.right < sr.left || sr.bottom < tr.top || tr.bottom < sr.top);
-      return { err: null, vGap, intersects, tag };
-    });
-    expect(seat.err).toBeNull();
-    expect(seat.tag, 'the D+14 tag renders').toBe(true);
-    expect(seat.intersects, 'the end tick never crosses the stamp body').toBe(false);
-    expect(seat.vGap, `the end tick sits clear of the stamp (gap ${(seat.vGap ?? 0).toFixed(1)}px)`).toBeGreaterThanOrEqual(1);
-  });
-
-  test('the broken tab tells its story in three beats (ghost + fall line + tilted shard)', async ({ page }) => {
-    const tab = await page.evaluate(() => {
-      const arts = Array.from(document.querySelectorAll('.pm-artin'));
-      const svg = arts[3]?.querySelector('svg');
-      if (!svg) return { err: 'no archive panel' };
-      const dashes = svg.querySelectorAll('.ip-dash').length;
-      const shard = Array.from(svg.querySelectorAll('polygon')).find((p) => {
-        const s = (p as SVGPolygonElement).style;
-        return s.rotate === '18deg' || s.transform.includes('rotate');
-      });
-      const idx = Array.from(svg.querySelectorAll('.ip-tag')).some((t) =>
-        (t.textContent || '').includes('IDX'),
-      );
-      return { err: null, dashes, shard: !!shard, idx };
-    });
-    expect(tab.err).toBeNull();
-    expect(tab.dashes, 'the ghost slot + the fall line (+ the dashed trail)').toBeGreaterThanOrEqual(2);
-    expect(tab.shard, 'the tilted shard rests clear of the cabinet').toBe(true);
-    expect(tab.idx, 'the IDX tag reads').toBe(true);
-  });
-});
+}
 
 /* ── 5 · the roles truth ─────────────────────────────────────────── */
 
@@ -435,6 +341,7 @@ test.describe('R354-final · five platform roles, honestly separated', () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/');
     await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
+    await approachSection(page, 'roles');
     await page.locator('.rl-section').scrollIntoViewIfNeeded();
     await page.waitForTimeout(600);
   });
@@ -489,9 +396,10 @@ test.describe('R354-final · the dark tier resolves the royal seat', () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/');
     await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
+    await approachSection(page, 'why');
     const seat = await page.evaluate(() => {
       const html = document.documentElement;
-      const svg = document.querySelector('.hro-stage svg, .fo-hero .cp-svg') as SVGElement | null;
+      const svg = document.querySelector('.wy-panels svg') as SVGElement | null;
       const probe = svg ?? html;
       return {
         theme: html.dataset.theme || html.getAttribute('data-theme') || '',

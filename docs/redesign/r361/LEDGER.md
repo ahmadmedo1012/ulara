@@ -202,7 +202,15 @@ P1/P4/P8 — Removed the capture tool's prose-link exemption. The strict sweep f
 
 P1/P5/P8 — Reproduced six stale student journey failures, restored expectations for the shipped indexed sections, and kept fixture-based counts, meters and route behavior. All eight student journeys now pass; four map clip journeys pass. Added a reproducible Android display capture command with exact override restoration; its adapter tests are distinct from emulator evidence. [Checks](evidence/student-device-journeys.txt). Parent a39e494.
 
-NEXT: Verify the final CI, signing and deployment receipts; the application and fixture transport are byte-equivalent to a39e494. Keep native emulator, Lighthouse and aggregate verification limits explicit.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:da2e7cac1a924497b3916d758f194504909aa9582d8581baf3290c67e99fd5be -->
+
+P1/P6/P8 — Fixed the disappearing student resume card and removed hidden landing drawings. Corrected the browser probes for sheet surfaces, responsive section loading and grading. [Full suite, focused results, budget and bundle](evidence/browser-close.txt). Previous landing: b578aba.
+
+NEXT: Resolve the five dashboard word budgets; verify signing, the native emulator lane and the final publication. Both allowed whole-repository runs have been used.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 

@@ -1,0 +1,24 @@
+Browser verification after b578aba1fc4a6796518d492b7ac62e1c4569b847
+Full hermetic Chromium project, localhost fixture transport, TZ=UTC, no DATABASE_URL:
+  212 passed; 29 failed; 19 skipped (260 total, 9.2 minutes).
+  The whole run was not green. No additional full verify.sh invocation was made.
+Independent checks:
+  Current calendar sheet surface, corner radii in light and dark: 2 passed.
+  Teacher grading queue, score ceiling, feedback, request body and removal: 2 passed.
+  Four hero stations across six widths and keyboard open/close: 7 passed.
+  Dark fine drawing signal (#A9B8FF) sampled on a visible illustration: passed.
+  Student resume and agenda unit tests: 14 passed.
+  Student pending -> resolved, same document and viewport: passed. The previous
+  test compared 1440px pending with 1280px resolved. The new test exposed a real
+  second defect: the resume card disappeared if resume data arrived first.
+  Student dashboard, light/dark x 360/390/768/1024/1440: 10 cells; no defects.
+Landing baseline: r359 A1 ALL-SHEETS records the four-column text band retiring
+the glyphs. The old geometry probe measured hidden SVGs at 0x0; those drawings
+and their paint rules are now removed. Columns remain 4 on desktop, 2 on tablet,
+and a scrollable row on phones. No artwork geometry is claimed for this band.
+Clean Vite build and bundle gate: 862.2 KB gzip (previously 865.7; ceiling 866);
+entry 30.0 KB; PDF 95.7 KB.
+The existing 180-word full-body dashboard limit was retained. On the fixed
+browser clock, student 238, teacher 264, admin 218, quality 253, owner 236.
+  Corrected post-layout journey clock + text-card viewport/order at 1440,
+  768 and 390: all 6 passed. Size and CSS lint ratchets passed unmodified.

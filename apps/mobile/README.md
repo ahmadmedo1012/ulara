@@ -75,7 +75,24 @@ run (notifications path, theme verb, chapter mutations, a nonexistent
 
 Pushes to `main` that change mobile sources or shared assets start the Android and iOS workflows. A maintainer with workflow dispatch access can also run them manually.
 
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:eeddd865f50da8596922202bf3681eb4f56616482047369ba95af7f4be3a6dd9 -->
+
 - [Android APK](../../.github/workflows/android-apk.yml) builds the QA artifact and publishes the signed [Android download](https://github.com/ahmadmedo1012/ulara/releases/latest/download/ulara.apk). Compare the source SHA and signing certificate in the release body before distributing the file; the rolling release name alone does not identify a build.
+
+To verify the downloaded Android artifact, put `ulara.apk` and the matching
+`SHA256SUMS.txt` from the same release in an empty directory and run:
+
+```sh
+sha256sum -c SHA256SUMS.txt
+apksigner verify --verbose --print-certs ulara.apk
+```
+
+Check the certificate SHA-256 against your trusted distribution certificate.
+The checksum verifies the bytes; the release body records the source commit.
+
+<!-- /coderabbit-ai-generated:v1 -->
 - [iOS SideStore](../../.github/workflows/build-ios-sidestore.yml) uploads an unsigned IPA to the workflow run.
 <!-- coderabbit-ai-generated:v1 -->
 

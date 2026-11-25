@@ -267,29 +267,6 @@
    mono label row + 3-line stacked heading + one sentence, dashed rule
    under the label — no glyph art in the cells). The iso art retires
    from the band; the cards compact to the reference's ~300px rhythm. */
-.pm-artzone {
-  position: relative;
-  display: none;
-}
-.pm-artcolor {
-  transition: color 0.4s ease;
-  color: var(--rule-strong);
-}
-.pm-artin {
-  color: inherit;
-}
-.pm-artin .pm-art {
-  display: block;
-  inline-size: 20rem;
-  block-size: 20rem;
-}
-.pm-artin .pm-art path,
-.pm-artin .pm-art circle,
-.pm-artin .pm-art ellipse,
-.pm-artin .pm-art line,
-.pm-artin .pm-art rect {
-  stroke: currentColor;
-}
 
 /* ═══ the text zone ═══ */
 .pm-textzone {
@@ -432,8 +409,7 @@
      + scale 0.8) would freeze them mid-entrance forever; the mobile
      belt renders the slides static (the reveal grammar stays live ≥768
      where the grid layout is fully in view). */
-  .pm-section .pm-col,
-  .pm-section .pm-artzone .pm-art {
+  .pm-section .pm-col {
     opacity: 1;
     transform: none;
     scale: 1;
@@ -457,15 +433,6 @@
   }
   .pm-answrap {
     padding-block-start: 0; /* the anszone's own 1.1rem is the census 11px seat — the wrap adds nothing at ≤767 (the spec's anszone: 11 pad + text, no double step) */
-  }
-  .pm-artin .pm-art {
-    inline-size: 16.5rem;
-    block-size: 16.5rem;
-  }
-  .pm-artzone {
-    /* r351 P8 — the phone art frame steps down (the 27.8rem census
-       slack era ends; the drawing stays centered, the band compacts) */
-    min-block-size: 21rem;
   }
   .pm-textzone {
     padding: 2.4rem 1.6rem; /* census 23.82/15.88px ✓ */
@@ -528,15 +495,6 @@
      the ghost register. Our belt already mirrors the snap position onto
      .is-active — the art tint follows it (a live state, not a static
      paint). */
-  .pm-artcolor {
-    color: var(--neutral-400); /* the ghost register (the spec's rgb(180,180,176)) */
-  }
-  .pm-band:has(.pm-dot-btn.is-active[data-pm-num='01']) .pm-col:nth-child(1) .pm-artcolor,
-  .pm-band:has(.pm-dot-btn.is-active[data-pm-num='02']) .pm-col:nth-child(2) .pm-artcolor,
-  .pm-band:has(.pm-dot-btn.is-active[data-pm-num='03']) .pm-col:nth-child(3) .pm-artcolor,
-  .pm-band:has(.pm-dot-btn.is-active[data-pm-num='04']) .pm-col:nth-child(4) .pm-artcolor {
-    color: var(--text);
-  }
 }
 
 /* ═══ 768–991 — the 2×2 wrap (the spec's own 768 census) ═══ */
@@ -603,17 +561,6 @@
   }
   /* the tablet census tints every drawing the full ink (rgb(40,40,40) —
      the reference's own 768 register; ≥992 returns to the rule grey) */
-  .pm-artcolor {
-    color: var(--text);
-  }
-  .pm-artzone {
-    padding-block: 2.4rem; /* census 22.1px */
-    min-block-size: 30.4rem; /* census 280px */
-  }
-  .pm-artin .pm-art {
-    inline-size: 16.5rem;
-    block-size: 16.5rem;
-  }
   .pm-textzone {
     padding: 4.8rem 2.4rem 2.4rem; /* census 44.2/22.1/22.1/22.1px */
   }
@@ -635,9 +582,6 @@
   }
   .pm-col:hover .pm-cue {
     opacity: 1;
-  }
-  .pm-col:hover .pm-artcolor {
-    color: var(--text);
   }
 }
 
@@ -686,125 +630,4 @@
    the ghost register survives in the hue family, never in a failure. */
 .pm-section .pm-index {
   color: var(--text-muted);
-}
-
-
-/* ═══════════════════════════════════════════════════════════════════
-   R346 (phase-4 art) — the pains' isometric self-drawing plates.
-   The retired R345 furniture sheet (.pm-furniture/.pm-fx — the flat
-   measurement chrome over PainArt's flat motifs) is DELETED with its
-   mount (sections/Live.tsx now mounts pains/IsoPains.tsx: each pain
-   a small isometric plate on the r346 kernel — lib/iso.ts — that
-   DRAWS ITSELF when its column enters view; the .pm-artzone
-   position:relative seat was folded into the primary block above).
-
-   Choreography is TRANSITION-only (no keyframes — the r306 census
-   whitelists this sheet's instrument set; the plate grammar's loops
-   live in iso-plate.css): every stroke carries pathLength={1} and
-   draws on a normalised dash ramp, face fills fade on the same rung,
-   dashed routes/markers fade (a dash-phase tween reads as a glitch,
-   not a draw), and the mono instrument tags land with a tiny rise.
-   All of it is armed ONLY under .js-reveal-armed (the house reveals
-   module's root class) and keyed on the column's own .in-view state —
-   the same belt the retired furniture rode — so no-JS and
-   reduced-motion visitors read the complete inked plate. Durations
-   ride the --t rungs + the --ease family; the per-stroke ladder rides
-   the exempt inline --ipd delay slot.
-   ═══════════════════════════════════════════════════════════════════ */
-
-/* the strokes — hidden only once the reveals module has armed */
-.js-reveal-armed .pm-col .ip-draw {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  transition: stroke-dashoffset var(--t-slow) var(--ease-out) var(--ipd, 0ms);
-}
-
-/* the face fills — the ink of the volumes fades in on the same ladder */
-.js-reveal-armed .pm-col .ip-fill {
-  fill-opacity: 0;
-  transition: fill-opacity var(--t-base) var(--ease-out) var(--ipd, 0ms);
-}
-
-/* the dashed routes/markers — they keep their broken rhythm and fade */
-.js-reveal-armed .pm-col .ip-dash {
-  opacity: 0;
-  transition: opacity var(--t-slow) var(--ease-out) var(--ipd, 0ms);
-}
-
-/* the mono instrument tags — a tiny rise as they land */
-.js-reveal-armed .pm-col .ip-tag {
-  opacity: 0;
-  transform: translateY(3px);
-  transition:
-    opacity var(--t-base) var(--ease-out) var(--ipd, 0ms),
-    transform var(--t-base) var(--ease-out) var(--ipd, 0ms);
-}
-
-/* the draw itself — the column's reveal state is the single write */
-.js-reveal-armed .pm-col.in-view .ip-draw {
-  stroke-dashoffset: 0;
-}
-
-.js-reveal-armed .pm-col.in-view .ip-fill {
-  fill-opacity: 1;
-}
-
-.js-reveal-armed .pm-col.in-view .ip-dash {
-  opacity: 1;
-}
-
-.js-reveal-armed .pm-col.in-view .ip-tag {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* the plates' paint layers: the hair furniture rides currentColor
-   (the column's own ghost/active tint grammar — the band's mobile
-   swiper + hover registers keep working); the signal routes and the
-   volume faces paint the --iso-* seats through their attributes. */
-
-/* the ≤767 swiper's ghost/active register extends to the plate: the
-   off-stage slides' whole plate dims with the tint (the census's own
-   ghost ink), the snapped one stands at full ink */
-@media (max-width: 767px) {
-  .pm-section .pm-artin .ip-svg {
-    opacity: 0.6;
-    transition: opacity var(--t-base) var(--ease);
-  }
-
-  .pm-band:has(.pm-dot-btn.is-active[data-pm-num='01']) .pm-col:nth-child(1) .pm-artin .ip-svg,
-  .pm-band:has(.pm-dot-btn.is-active[data-pm-num='02']) .pm-col:nth-child(2) .pm-artin .ip-svg,
-  .pm-band:has(.pm-dot-btn.is-active[data-pm-num='03']) .pm-col:nth-child(3) .pm-artin .ip-svg,
-  .pm-band:has(.pm-dot-btn.is-active[data-pm-num='04']) .pm-col:nth-child(4) .pm-artin .ip-svg {
-    opacity: 1;
-  }
-}
-
-/* ═══ reduced motion: the complete plate stands — every stroke drawn,
-   every fill inked, every tag landed (the house law) ═══ */
-@media (prefers-reduced-motion: reduce) {
-  .js-reveal-armed .pm-col .ip-draw,
-  .js-reveal-armed .pm-col.in-view .ip-draw {
-    stroke-dashoffset: 0;
-    transition: none;
-  }
-
-  .js-reveal-armed .pm-col .ip-fill,
-  .js-reveal-armed .pm-col.in-view .ip-fill {
-    fill-opacity: 1;
-    transition: none;
-  }
-
-  .js-reveal-armed .pm-col .ip-dash,
-  .js-reveal-armed .pm-col.in-view .ip-dash {
-    opacity: 1;
-    transition: none;
-  }
-
-  .js-reveal-armed .pm-col .ip-tag,
-  .js-reveal-armed .pm-col.in-view .ip-tag {
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
 }

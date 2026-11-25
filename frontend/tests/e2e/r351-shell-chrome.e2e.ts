@@ -59,8 +59,7 @@ for (const role of ROLES) {
       await settleDashboard(page);
 
       // 1 — exactly one h1 (the r350 one-title law).
-      const h1s = await page.locator('main h1').all();
-      expect(h1s, `${role}: exactly one h1 in the content`).toHaveLength(1);
+      await expect(page.locator('main h1'), `${role}: exactly one h1 in the content`).toHaveCount(1);
 
       // 2 — ONE identity seat: the topbar user trigger; the retired
       // sidebar identity block and FAB never render anywhere.
@@ -241,36 +240,27 @@ test.describe('r351 shell chrome — the 44px tap floor', () => {
 test.describe('r351 shell chrome — skeleton geometry (CLS ≈ 0)', () => {
   test.use({ e2eRole: 'STUDENT' });
 
-  test('the pending mirror renders the resolved anatomy — pinned header height, same section classes, zero skeletons after resolve', async ({ page, browser }) => {
-    // A cold route with a NEVER-settling dashboard payload holds the
-    // page in its pending branch (the r220 loading mirror).
-    const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
-    await ctx.addInitScript(() => { try { sessionStorage.setItem('ulara-intro-skip', '1'); } catch { /* ignore */ } });
-    const { installMockApi, seedSession } = await import('./fixtures/mock-transport');
-    const { STUDENT_USER } = await import('./fixtures/api-fixtures');
-    await seedSession(ctx, STUDENT_USER, {});
-    await installMockApi(ctx, { sessionUser: STUDENT_USER, overrides: [], routes: [] });
-    const slow = await ctx.newPage();
-    await slow.route('**/api/v1/me/dashboard', async () => {
-      await new Promise(() => { /* never fulfills — the pending branch holds */ });
+  test('the pending mirror renders the resolved anatomy — pinned header height, same section classes, zero skeletons after resolve', async ({ page }) => {
+    // Hold the existing fixture response, then release it in the SAME viewport
+    // and document. Two independent windows cannot measure a layout shift.
+    let release!: () => void;
+    const hold = new Promise<void>((resolve) => { release = resolve; });
+    await page.route('**/api/v1/me/dashboard', async (route) => {
+      await hold;
+      await route.fallback();
     });
-    await slow.goto('/student/dashboard');
-    await slow.locator('.topbar').waitFor({ state: 'visible', timeout: 15_000 });
-    await slow.waitForTimeout(300);
+    await page.goto('/student/dashboard');
+    await expect(page.locator('header.pf-page-header[aria-busy="true"]')).toBeVisible();
+    await page.evaluate(() => document.fonts.ready.then(() => undefined));
 
-    // The pending mirror renders the resolved page's own anatomy:
-    // the PageHeader (pinned height) + the resume band + the list slot.
-    const pending = await slow.evaluate(() => ({
+    const pending = await page.evaluate(() => ({
       headerH: document.querySelector('.pf-page-header')?.getBoundingClientRect().height ?? -1,
       hasResume: !!document.querySelector('.dash-resume-card'),
       hasListSlot: !!document.querySelector('.content-inner .flex-col, .content-inner .rowlist, .content-inner [aria-busy="true"]'),
       title: document.querySelector('.pf-page-title')?.textContent ?? '',
     }));
-    await slow.close();
-    await ctx.close();
-
-    // The resolved page.
-    await page.goto('/student/dashboard');
+    release();
+    await expect(page.locator('header.pf-page-header[aria-busy]')).toHaveCount(0);
     await settleDashboard(page);
     const resolved = await page.evaluate(() => ({
       headerH: document.querySelector('.pf-page-header')?.getBoundingClientRect().height ?? -1,

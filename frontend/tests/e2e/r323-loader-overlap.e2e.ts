@@ -70,7 +70,13 @@ const SAMPLER = `
     const r = el.getBoundingClientRect();
     if (r.width < 1 || r.height < 1) return false;
     const s = getComputedStyle(el);
-    return s.visibility !== 'hidden' && s.display !== 'none' && Number(s.opacity) > 0.01;
+    if (s.visibility === 'hidden' || s.display === 'none') return false;
+    let opacity = 1;
+    for (let parent = el; parent; parent = parent.parentElement) {
+      opacity *= Number(getComputedStyle(parent).opacity);
+      if (opacity <= 0.01) return false;
+    }
+    return true;
   };
   const outsideChromeScopes = (el) => !el.closest('header, footer, [data-scope="header"], [data-scope="footer"]');
   const tick = () => {

@@ -155,18 +155,14 @@ for (const theme of THEMES) {
     });
 
     test('the card family renders radius 0 (hairline grammar, no rounded chrome)', async ({ page }) => {
-      /* /student/calendar renders the shared <Card> primitive (cal-card
-       * flush ×2) from the corpus-served enrollments/dash/exams queries —
-       * a stable card-family sample surface (the dashboard itself rides
-       * the pf-contract rows, G1's §B2 rebuild surface). */
       await page.goto('/student/calendar');
-      await expect(page.locator('.card').first()).toBeVisible({ timeout: 20000 });
-
-      const radii = await page.evaluate(() =>
-        [...document.querySelectorAll('.card')].map((el) => getComputedStyle(el).borderRadius),
-      );
-      expect(radii.length, 'the route renders .card samples').toBeGreaterThan(0);
-      expect(radii.every((r) => r === '0px'), `every .card radius 0 — got ${radii.join(', ')}`).toBe(true);
+      // The resolved month is a SheetSection. Retain the original square-card
+      // invariant, including any legacy cards that the calendar also renders.
+      await expect(page.locator('.sg-head .sg-caption', { hasText: 'MONTH SHEET' })).toBeVisible();
+      const frames = page.locator('main .sg-section, main .card');
+      const radii = await frames.evaluateAll((els) => els.map((el) => getComputedStyle(el).borderRadius));
+      expect(radii.length).toBeGreaterThan(0);
+      expect(radii.every((radius) => radius === '0px'), radii.join(', ')).toBe(true);
     });
 
     test('tabs: active = the 2px hairline underline, square, no pill halo', async ({ page }) => {

@@ -2,8 +2,11 @@ import { expect, type Page } from '@playwright/test';
 
 export async function approachSection(page: Page, section: string) {
   const seat = page.locator(`[data-lz="${section}"]`);
-  await seat.scrollIntoViewIfNeeded();
-  await expect(seat.locator(':scope > :first-child')).toBeVisible();
+  // A section above can mount and move this placeholder after the first scroll.
+  await expect.poll(async () => {
+    await seat.evaluate(el => el.scrollIntoView({ block: 'center', behavior: 'instant' }));
+    return seat.locator(':scope > :first-child').isVisible();
+  }, { timeout: 15_000 }).toBe(true);
 }
 
 export async function scrollToPin(page: Page, p: number, mobile: boolean) {

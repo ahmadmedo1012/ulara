@@ -524,6 +524,7 @@ export default function StudentDashboardPage() {
     [enrollments.data],
   );
 
+  const focus = resumeFocus(resume, trainingCatalog);
   if (dash.isPending) {
     /* r220 loading mirror — the resolved page leads with the PageHeader,
        the TodayList (its continue-learning row first), the gaps list,
@@ -548,7 +549,7 @@ export default function StudentDashboardPage() {
               </div>
             </div>
           </header>
-          {(resume.isPending || trainingCatalog.isPending) && (
+          {focus ? <DashResumeHero focus={focus} /> : (resume.isPending || trainingCatalog.isPending) && (
             /* The hero slot — reserved at the band's footprint so the
                pending → resolved handoff moves nothing (the r172b
                loading-closure contract, re-mirrored for the R304 hero).
@@ -722,7 +723,6 @@ export default function StudentDashboardPage() {
   /* The hero band's decision (independent query — the band appears
      the moment ITS payload lands; the pending mirror above reserves
      its footprint while it flights). */
-  const focus = resumeFocus(resume, trainingCatalog);
 
   /* In-progress courses lead the list — the workspace surfaces the
      nearest finish lines first, not the catalog order. */
