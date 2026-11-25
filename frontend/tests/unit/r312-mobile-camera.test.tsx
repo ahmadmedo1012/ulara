@@ -381,6 +381,10 @@ describe('R312 mobile camera — the source contracts (R322 map override)', () =
 /* ═══ §B — the jsdom integration (the real landing mount) ══════════ */
 
 describe('R312 mobile camera — the real landing in jsdom (R322 map override)', () => {
+  // The camera clock starts after its code arrives. Let Vitest transform the
+  // real lazy section before measuring DOM readiness on a busy runner.
+  beforeAll(async () => { await import('../../src/components/landing/sections-lazy'); });
+
   it('the ONE window mounts; the sheet starts full; the frame holds the intro + closing seats', async () => {
     mountLanding();
     await waitFor(() => expect(document.querySelector('.jt')).not.toBeNull(), { timeout: 2000 });

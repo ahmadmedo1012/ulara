@@ -112,7 +112,15 @@ P1/P4 — Square cursor and status marks, clearer campus link, focusable named t
 
 P5 — Mobile CI progressed past generated drift and found six expectations for the retired colors and motion durations. Re-pinned the four suites to the r359 shared tokens; the fixed-ground logo still uses its own original ink. All [48 assertions passed](evidence/mobile-jest.txt). Previous web item d19dd3a.
 
-NEXT: Verify mobile fast lane, signed outputs and device smoke for the release revision.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:b5ea6e73c37aa5aebc806d2cb58cc598934057ae127bea2bd7b562c02c606ccb -->
+
+P8 — Ran the requested two full script invocations. The last run passed typecheck, 863.8 KB bundle, style, logo, accessibility (12 cells, no serious/critical), design gates and lint. It failed one of 3,098 unit tests on cold module readiness and could not reach the preview for 27 e2e tests. Fixed cold test setup and restarted Preview: all 12 camera assertions and all 27 affected e2e cases then passed separately. [Output](evidence/verification.txt). The complete script itself did not exit green.
+
+NEXT: Finish the isolated sweep and live measurements; verify final mobile and deploy references.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 <!-- /coderabbit-ai-generated:v1 -->
 
