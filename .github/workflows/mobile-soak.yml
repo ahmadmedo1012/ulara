@@ -168,57 +168,13 @@ jobs:
             adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
             adb reverse tcp:8081 tcp:8081 || touch fail.flag
             adb install -r apps/dev-client.apk || touch fail.flag
-
             mkdir -p soak-shots
-            echo "── soak: the bootstrap login (student@test.ly)"
-            "$HOME/.maestro/bin/maestro" test apps/mobile/.maestro/soak-login.yaml \
-              -e EMAIL=student@test.ly -e PASSWORD=12345678 \
-              || { echo "::error::soak bootstrap login failed"; touch fail.flag; }
-
-            # THE ROTATION — each round: chaos → dwell → restore → settle → ASSERT.
-            #   airplane   = svc wifi+data off (the connectivity-loss class)
-            #   throttle   = adb emu network delay/speed (the slow-link class)
-            #   round 4's 100s airplane EXCEEDS the 90s access TTL: the token
-            #   expires mid-flight, so the regain MUST exercise the refresh
-            #   path with an expired access — the r362 classification's proof.
-            round() {
-              R=$1; MODE=$2; DWELL=$3
-              echo "── soak round $R ($MODE, ${DWELL}s dwell)"
-              case "$MODE" in
-                airplane)
-                  adb shell svc wifi disable; adb shell svc data disable ;;
-                throttle)
-                  adb emu network delay 3000 speed 14.4k ;;
-                heavy)
-                  adb emu network delay 8000 speed 9600 ;;
-              esac
-              sleep "$DWELL"
-              case "$MODE" in
-                airplane)
-                  adb shell svc wifi enable; adb shell svc data enable ;;
-                *) adb emu network delay 0 speed full ;;
-              esac
-              sleep 12
-              adb exec-out screencap -p > "soak-shots/round-$R-regained.png" 2>/dev/null || true
-              echo "── soak round $R: the surviving-session assert"
-              "$HOME/.maestro/bin/maestro" test apps/mobile/.maestro/soak-assert.yaml \
-                || { echo "::error::soak round $R: the session did NOT survive ($MODE)"; touch fail.flag; }
-              adb exec-out screencap -p > "soak-shots/round-$R-asserted.png" 2>/dev/null || true
-            }
-
-            round 1 airplane 25
-            round 2 throttle 20
-            round 3 airplane 40
-            round 4 airplane 100
-            round 5 heavy   15
-            round 6 throttle 30
-            round 7 airplane 25
-            round 8 heavy   20
-
-            # the final full-connectivity round: still authenticated, still
-            # the dashboard — the soak's closing state.
-            round 9 airplane 30
-
+            # r363: the runner executes `script:` LINE-BY-LINE (run #3's
+            # log: one [command] per line — the multi-line maestro call
+            # handed maestro a stray `\` as its flow path and its
+            # ||-guard never joined the same invocation). The rotation
+            # is ONE committed file, called with ONE line.
+            bash apps/mobile/scripts/soak-run.sh
             "$ANDROID_HOME/platform-tools/adb" devices > adb-devices.txt 2>&1 || true
             timeout 60 "$ANDROID_HOME/platform-tools/adb" logcat -d > logcat.txt 2>&1; [ -s logcat.txt ] || echo "(logcat capture failed)" >> logcat.txt
             if [ -f fail.flag ]; then echo "::error::soak rounds failed — forensics in the artifact"; exit 1; fi
