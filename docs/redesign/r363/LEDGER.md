@@ -90,10 +90,30 @@ the app pass, and the release. Every DONE line carries command output or an imag
   mounted (the ≤5,000px law's earlier "held" claims measured the unmounted
   placeholder state — the diet is P1's next item, from a measured baseline).
 
-NEXT: P1's phone diet (measured baseline: hero 836 · statement 334 · live
-334 · chapters 692 · product 435 · why 436 · roles 1004 · vision 883 · footer
-~1007 = 5,961 @390 → ≤5,000 needs ~960px of real cuts), then the top
-bar/nav/cursor pass, then the landing frame-sequence walk (P1 evidence
-sheets). The r325 "translate family" local-only belt fails on pristine main
-(pre-existing; not in CI's test:e2e) — noted, not this round's debt.
+- **P1 — the phone diet, round 5: the ≤5,000px law measured CLOSED.**
+  The mounted truth (the full walk — every section actually mounted; the earlier
+  "held" reads were unmounted-placeholder artifacts): 5,030 @390. Round 5
+  (`r363-phone-diet.css`, imported after r360's sheet): the footer's chrome air
+  steps to the compact rungs; the link ribbon rides the © row's fs-xxs rhythm
+  (16 doors wrap to 3 lines; every door keeps its 44px tap floor); the © line
+  drops its duplicated display-data note. Measured with the repo's own
+  `r360-landing-height.mjs`: **4,989 @390 · 4,867 @360 · 4,705 @320**; the tap
+  probe: **CLEAN**; the dieted footer's VLM defect scan: **CLEAN**.
+  [Phone footer](evidence/p1-phone-footer-diet.webp).
+
+- **P1-CI — the 7452b48 reds, fixed by their causes.** guest-landing's
+  «ما يعمل اليوم» pin broke when the link row renamed the honest-ledger door
+  — restored (it IS the r306 honest-content contract). The r312 jsdom belt +
+  the full 252-file unit suite green locally. r305's scroll-restore window
+  15→30s (dropped on 022f5db and 7452b48, retry passing in ~4s both times —
+  the CI-runner load class; the ±60px pin unchanged). The r309 drag-geometry
+  spec rides the same hero-readiness sentinel (248/249 passed on 1153c2a —
+  the one failure was that same CI window).
+
+NEXT: P2's remainder — the top bar/nav choreography (no text collisions at
+any width, header hide/show, overlay-menu, active-link indicator, anchor
+easing, scroll progress — to the reference's timings) and the cursor pass,
+each with a frame-sequence sheet; then the landing's own frame-sequence walk
+(the P1 suspects the owner named: empty bands, edge-tab collisions, at real
+scroll speeds).
 
