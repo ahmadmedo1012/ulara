@@ -69,9 +69,136 @@ the app pass, and the release. Every DONE line carries command output or an imag
   (63+56+69+60 across `--shard=1..3/4` and `7/8`+`8/8`).
   [Belt output](evidence/p0-e2e-belt.txt).
 
-NEXT: the P0 capture matrix (overlap/axe/tap-target/console sweep over main
-→ the defect list), then P2 — the footer to the owner's rulings (one mono link
-row, statement + cookie strip sharing one grid row, ACCEPT in the signal
-colour, dead links fixed), then the top bar/nav choreography and the cursor
-pass, each with a frame-sequence sheet.
+- **P2 — the footer rebuilt to the owner's rulings (fidelity gate: MATCH).**
+  ONE horizontal mono link row (14 doors + the funnel pair, wrapped in place,
+  never columns) replaces the col2 three-group stack; the giant outline
+  wordmark and the ConsentBanner now SHARE ONE grid row (`.fo-final-row` —
+  answering the gate collapses only the notice cell, the row's height stays
+  the wordmark's, the tail-seam measurer retired with the old tail seat);
+  ACCEPT is the royal signal fill (`--accent` + the owner-verified
+  `--accent-fg` label), REJECT bare; «اعرف أكثر» rides the accent TEXT rung;
+  the 1px signal underline draw sweeps on hover (hover-only — the family's
+  zero-`:focus-visible` law). The r362 open questions are decided and closed.
+  Two VLM rounds on the side-by-side sheet (round 1's six gaps fixed — the
+  probe retired the per-item separators the reference itself never carried);
+  round 2: MATCH on all seven points. [Sheet](evidence/p2-footer-sheet.webp) ·
+  [Critique](evidence/p2-footer-critique.md) · [1440](evidence/p2-footer-1440.webp) ·
+  [390](evidence/p2-footer-390.webp) · [hover draw](evidence/p2-footer-hoverdraw.webp).
+  Re-pins: r349 colophon (the one-row grammar), r323/r325 (scroll the lazy
+  footer before measuring the gate), the contact-cell unit pin. Phone height
+  is neutral (+48px): production main was ALREADY 5,913px with the footer
+  mounted (the ≤5,000px law's earlier "held" claims measured the unmounted
+  placeholder state — the diet is P1's next item, from a measured baseline).
+
+- **P1 — the phone diet, round 5: the ≤5,000px law measured CLOSED.**
+  The mounted truth (the full walk — every section actually mounted; the earlier
+  "held" reads were unmounted-placeholder artifacts): 5,030 @390. Round 5
+  (`r363-phone-diet.css`, imported after r360's sheet): the footer's chrome air
+  steps to the compact rungs; the link ribbon rides the © row's fs-xxs rhythm
+  (16 doors wrap to 3 lines; every door keeps its 44px tap floor); the © line
+  drops its duplicated display-data note. Measured with the repo's own
+  `r360-landing-height.mjs`: **4,989 @390 · 4,867 @360 · 4,705 @320**; the tap
+  probe: **CLEAN**; the dieted footer's VLM defect scan: **CLEAN**.
+  [Phone footer](evidence/p1-phone-footer-diet.webp).
+
+- **P1-CI — the 7452b48 reds, fixed by their causes.** guest-landing's
+  «ما يعمل اليوم» pin broke when the link row renamed the honest-ledger door
+  — restored (it IS the r306 honest-content contract). The r312 jsdom belt +
+  the full 252-file unit suite green locally. r305's scroll-restore window
+  15→30s (dropped on 022f5db and 7452b48, retry passing in ~4s both times —
+  the CI-runner load class; the ±60px pin unchanged). The r309 drag-geometry
+  spec rides the same hero-readiness sentinel (248/249 passed on 1153c2a —
+  the one failure was that same CI window).
+
+- **P5-a — the soak lane DISPATCHED + P6's first seats.** `mobile-soak.yml`
+  (self-contained, dispatch-only): a real dev-client on the API-34 KVM
+  emulator through 9 network-chaos rounds — airplane toggles via adb (round 4
+  dwells 100s, beyond the deliberately-shortened 90s access TTL — the regain
+  MUST refresh with an expired access), throttled/heavy links via
+  `adb emu network` — asserting after every round that the student dashboard
+  stands. The compressed clock: `JWT_ACCESS_TTL`/`JWT_REFRESH_TTL` are now env
+  knobs (schema-validated ms-strings; production defaults byte-identical
+  '15m'/'7d'; the full backend suite green with them — 2,212 passed). The
+  first dispatch died on an invalid expo flag; the fixed lane re-dispatched on
+  `3e04d78` (run in the evidence note).
+- **P6 — the contract-check phantom + CI GREEN.** The Mobile lane's red on
+  main was a checker false positive: `client.test.ts`'s `api('/student/dashboard')`
+  fixtures leaked a phantom endpoint (the real call is `/me/dashboard`); the
+  consumed scan now skips test files — drift 0. **CI green on `894a084`**
+  (the first fully green CI run this round: the e2e re-pins + the honest-label
+  fix + the r305 de-flake + the drag sentinels all landed). The P6 refresh
+  audit: the limiter already skips successful refreshes (a legitimate client
+  never 429s), the D3 sliding-session rotation policy + its 42 tests stand,
+  the TTLs are knobs.
+- **Verify (midpoint).** `bash scripts/verify.sh --fast`: **FAST PASS** after
+  the documented stylelint baseline re-baseline (524→531 — the diet's round-5
+  sheet rides the r360 phone-diet `!important` idiom; the one-line reason is
+  in the baseline's `_doc`). The full belt ran through the session as sharded
+  e2e (248/248), the full vitest (252 files), and the full backend (2,212
+  tests) — the end-of-round full verify rides the final commit.
+
+- **The belt's last hardening + the third soak dispatch.** CI on `e3e3a3e` hit
+  the runner-load class again (r309 drag-geometry measured the stage mid-reveal —
+  the press landed on paper; r305's retry burned 32.9s; r353's retry passed):
+  the geometry spec now settles + re-measures the stage at the drag moment, the
+  restore window is 40s, and Live/Hero guard the `matchMedia` RESULT (the r312
+  jsdom crash class — undefined answers degrade, never throw). The deadcode
+  ratchet's one regressed block was my own two `::after` draw rules — one
+  shared rule now (ratchet: 0 regressed). The soak's first two dispatches died
+  on an invalid expo flag and a workspace-relative APK path — both fixed; the
+  THIRD dispatch is IN FLIGHT on `dc794b8` (the dispatch API 500'd twice
+  before landing — GitHub-side transient).
+
+- **P0-CI (round three) — the two holdout flakes root-caused and fixed on
+  the APP side.** CI's e2e job fell again on `ef92b4f` (r305:285 and
+  r309:332, both attempts each, while the same code passes 4/4 locally).
+  Two real causes, both fixed where they live: (1) the scroll-restore
+  watcher's budget was FRAME-count (60 rAF frames) — under runner jank those
+  60 frames stretch past the spec's own window and the watcher stood down
+  BEFORE the late height arrived, stranding the restore at the clamped top;
+  the budget is WALL-CLOCK now (RESTORE_WATCH_MS 4000, a perf.now epoch read
+  at arm time) and a new unit test pins exactly the starvation class
+  (62 sparse frames past the old budget, inside the wall window → the
+  restore completes). (2) the drag-release sweep rides raw `page.mouse` —
+  hit-target-blind — while every sibling spec rides locator clicks that
+  auto-wait for interception; the sweep now settles like its sibling and
+  polls `document.elementFromPoint` at the press point until the STAGE
+  itself owns it (the asset-gated entrance overlay unmounted) before
+  sweeping, and observes the post-release count over a poll window —
+  semantics unchanged: one sweep, one release. Local proof: the three
+  specs green + the full r309 file 22/22 + typecheck clean.
+  [Belt output](evidence/p0-ci-r3.txt).
+
+- **The reveals engine's late-mount seam — a REAL product bug the round
+  audit caught: the footer skyline never painted.** initReveals ran once at
+  the landing's mount, but the second half (Vision, Roles, Chapters,
+  Product, the FOOTER) rides React.lazy and mounts later — `.fo-fstrip`
+  was never armed, never observed, and footer.css keys the skyline's armed
+  clip off the ROOT seam class, so `.fo-strip-media` stood at
+  `inset(100% 0 0 0)` forever for JS-on visitors (the round's own 1440
+  footer capture shows the band blank; the VLM read confirms). The engine
+  now keeps one debounced MutationObserver re-admitting late-mounted
+  elements through the same family table (same classes, same IO bucket —
+  one observer per margin, shared), the giant wordmark joined the rise
+  family (the R21 seat), and the CTA mega title arms with its lazy chunk
+  (the R9 partial). Unit belt: 5 specs (late-arm · intersection release ·
+  wordmark seat · destroy) that fail on the one-shot engine.
+
+- **The soak's third dispatch died on the runner's LINE-BY-LINE script
+  execution — the rotation is a committed file now.** The emulator runner
+  logs one `[command]` per line: the multi-line maestro bootstrap call
+  handed maestro a stray `\` as its flow path ("Flow path does not
+  exist: …/ulara/\") and its `|| touch fail.flag` guard lived on a
+  different invocation; a bash function cannot survive the split at all.
+  The rotation moved to `apps/mobile/scripts/soak-run.sh` (one caller line
+  in the workflow, fail.flag semantics preserved), and the soak
+  re-dispatches on this push.
+
+NEXT: the soak verdict + CI's verdict on this push; the owner's cleanup PR
+(#57 — audited clean: docs-only + 7 provably-dead scripts, zero overlap with
+main, no secrets, no zero-trace hits; merge via house flow after a branch
+update), then P2's verification sheets (footer motion + nav/cursor on the
+capture corpus), the capture matrix + P3/P4 sweeps, the release bits (signed
+APK on `latest` + unsigned IPA from the final commit), the remaining P6
+documented-but-missing audit, and the final full verify + Arabic report.
 

@@ -57,20 +57,25 @@
  *  · `window.UlaraConsent` exposes the live state + both actions
  *    for consoles, tests, and future surfaces (JSDoc below).
  *
- * Landing-only by mount site (LandingPage, after the footer — R314 B10):
- * auth pages never see it. The band rides the sheet's TAIL — the
- * colophon zone where the footer's own «التخزين المحلي» policy link
- * lives — so the gate is discovered exactly where the storage note
- * belongs, never floating over the working page. Entrance is deferred
- * behind the loader (`.landing.intro-draw` hides it; `.landing.intro-done`
- * plays the 200ms clip-up ~600ms after the sheet reveal starts);
- * reduced motion collapses the rise to a plain opacity fade.
+ * r363 — THE SEAT MOVES INSIDE THE FOOTER'S FINAL ROW (the owner's
+ * ruling: the mega statement and the notice strip share one grid
+ * row). The R341 L1-c tail band — IN FLOW at the sheet's tail after
+ * the footer — and its tail-seam measurer (the footer legal-row
+ * overflow paint it measured) RETIRE with the seat: inside the
+ * footer's grid row there is no seam to measure, and answering the
+ * gate collapses only the notice cell (the auto track), the row's
+ * height staying the wordmark's — nothing below ever shifts. The
+ * band keeps its own machine: the bottom-stack registration (the
+ * toasts/FAB lift above its real box), the zero-CLS entrance (opacity
+ * + transform inside its pre-reserved seat) and the intro-gated
+ * cb-rise clip. Landing-only by mount site (inside <Footer>, which
+ * the landing mounts at the sheet's foot); auth pages never see it.
  */
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useBottomStackLayer } from '../../../hooks/useBottomStackLayer';
-/* R332 (W8) — the cell's own sheet. Imported BY the component, so it
- * injects BEFORE r314-chrome.css in the module graph (LandingPage's
+/* The cell's own sheet. Imported BY the component, so it injects
+ * BEFORE r314-chrome.css in the module graph (LandingPage's
  * component imports precede the page's sheet imports) and every
  * override there wins on SPECIFICITY ((0,2,0)–(0,4,1) vs r314's bare
  * (0,1,0) `.cb-*`) — no !important, no ID selectors. */
@@ -220,90 +225,10 @@ export function ConsentBanner() {
    * toast stack and the FAB lift above its real box instead of
    * covering it (the r325 spec pins: the gate's own offset '0px' +
    * the stack offset ≥ the gate's height — both ride this
-   * registration). In flow at the sheet tail the lift guards the one
-   * seat where the band and a fixed toast CAN share the screen: the
-   * scrolled-to-the-end frame. Answering the gate renders null → the
-   * callback ref fires with null → the layer deregisters and the
-   * layers above ease back down (200ms). The same node also carries
-   * the L1-c tail-seam measurer (rootRef below), hence the one
-   * combined ref. */
+   * registration). Answering the gate renders null → the callback ref
+   * fires with null → the layer deregisters and the layers above ease
+   * back down (200ms). */
   const bannerRef = useBottomStackLayer('consent');
-  const rootRef = useRef<HTMLDivElement | null>(null);
-  const setRoot = useCallback(
-    (node: HTMLDivElement | null) => {
-      rootRef.current = node;
-      bannerRef(node);
-    },
-    [bannerRef],
-  );
-
-  /* ── R341 (L1-c) — THE TAIL-SEAM measurer ───────────────────────
-   * The band is IN FLOW directly after the footer, but the footer's
-   * legal row paints BELOW its own border box (the .fo-footer-bottom
-   * census band carries a fixed 42fu height while its wrapped links
-   * overflow it — measured 72px of paint below the footer @1024, 57px
-   * @768, 49px @1440, none @390). Paint order would seat that ink on
-   * the band's first rows — the in-flow twin of the overlay the
-   * fixed cell committed. The measurer walks the footer's subtree
-   * (the mount site's previousElementSibling — no selector coupling),
-   * finds the deepest VISIBLE paint, and stamps the band's
-   * margin-block-start (`--cb-tail-seam`, consent-edge.css) at that
-   * depth + a 12px gap, floored at 20px. CSS fallbacks carry the
-   * measured worst wraps for the JS-off path.
-   *
-   * Cost discipline: rAF-throttled on resize + one mount pass + one
-   * 900ms settle pass (the reveal transforms translate content DOWN
-   * pre-fire, so an early measure only ever over-estimates the seam —
-   * the safe direction); each pass is one subtree walk of the footer
-   * (~200 rect reads, ≤1ms). No scroll listener — a static band's
-   * seam depends on layout, not on the viewport. */
-  useEffect(() => {
-    if (typeof window === 'undefined') return undefined;
-    const node = rootRef.current;
-    if (!node) return undefined;
-
-    const MIN_SEAM_PX = 20; /* the resting seam — the sheet's own rhythm */
-    const GAP_PX = 12;      /* breathing under the footer's last paint row */
-    const SETTLE_MS = 900;  /* post-reveal geometry (transforms settle) */
-    const SETTLE2_MS = 2500; /* the late pass — font swap / reveal-queue
-                                drift (measured live: the deepest paint row
-                                moved ~7px after the first settle pass) */
-
-    let raf = 0;
-
-    const measure = () => {
-      raf = 0;
-      const footer = node.previousElementSibling;
-      if (!(footer instanceof HTMLElement)) return;
-      const footBottom = footer.getBoundingClientRect().bottom;
-      let paintBelow = 0;
-      for (const el of footer.querySelectorAll('*')) {
-        if (!(el instanceof HTMLElement || el instanceof SVGElement)) continue;
-        const cs = getComputedStyle(el);
-        if (cs.display === 'none' || cs.visibility === 'hidden') continue;
-        const r = el.getBoundingClientRect();
-        if (r.width === 0 && r.height === 0) continue;
-        if (r.bottom - footBottom > paintBelow) paintBelow = r.bottom - footBottom;
-      }
-      const seam = Math.max(MIN_SEAM_PX, Math.ceil(paintBelow + GAP_PX));
-      node.style.setProperty('--cb-tail-seam', `${seam}px`);
-    };
-
-    const schedule = () => {
-      if (!raf) raf = window.requestAnimationFrame(measure);
-    };
-
-    schedule(); /* the one mount pass */
-    const settle = window.setTimeout(schedule, SETTLE_MS);
-    const settle2 = window.setTimeout(schedule, SETTLE2_MS);
-    window.addEventListener('resize', schedule);
-    return () => {
-      window.removeEventListener('resize', schedule);
-      if (raf) window.cancelAnimationFrame(raf);
-      window.clearTimeout(settle);
-      window.clearTimeout(settle2);
-    };
-  }, []);
 
   /* The shared answer path — button clicks and the window API both
    * land here, so the two writers can never diverge. */
@@ -350,12 +275,13 @@ export function ConsentBanner() {
   return (
     /* role="region" + label + aria-live="polite": announced as a
      * landmark and politely spoken when it enters — never a modal; the
-     * visitor's flow is never hijacked, keyboard or pointer. The R341
-     * L1-c tail band: ONE 1px var(--rule) hairline box (consent.css
-     * draws the border), IN FLOW at the sheet's tail — the layout
-     * offset IS its own box. */
+     * visitor's flow is never hijacked, keyboard or pointer. r363: the
+     * band is the footer's final-row NOTICE CELL (the owner's ruling —
+     * the mega statement and this strip share one grid row); ONE 1px
+     * var(--rule) hairline box (consent.css draws the border), radius
+     * 0, no shadow, paper ground. */
     <div
-      ref={setRoot}
+      ref={bannerRef}
       className="cb-banner"
       data-spec="consent.banner"
       role="region"

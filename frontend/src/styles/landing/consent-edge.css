@@ -56,29 +56,19 @@
    §1 — cb · the consent band (V11 → R328 H1 → R332 W8 → R341 L1-c)
    ═══════════════════════════════════════════════════════════════════ */
 
-/* R341 (L1-c) — THE TAIL BAND. The R328–R332 fixed corner cell
-   (bottom/left 7px · z 240 · ≤320px) retires: at the page end it sat
-   ON the footer's overflowing legal row, and the R332 yield watcher
-   hid it there — a visibility:hidden conformance pass, not geometry
-   (the blind panel's T-16 #3). The gate is now the brief's FIRST
-   pattern, verbatim: a DISMISSIBLE BANNER WITH LAYOUT OFFSET — IN
-   FLOW at the sheet's tail (mounted after the footer, R314 B10's
-   site), spanning the frame's content width (the footer's own inline
-   margins mirrored), so the page reserves its space BY GEOMETRY. It
-   can never overlay the footer, the primary CTA, or ANY content at
-   ANY scroll seat or width; accepting collapses ONLY its own box
-   (nothing sits below it), and the entrance plays opacity/transform
-   INSIDE the pre-reserved seat (zero CLS). ONE 1px var(--rule)
-   hairline box (consent.css owns the border — untouched), radius 0,
-   NO shadow, paper ground. The band's one measured dependency — the
-   TAIL SEAM below the footer's border box (the legal row's wrapped
-   paint) — is measured by the component (--cb-tail-seam) with CSS
-   fallbacks for the JS-off path. */
+/* r363 — THE FOOTER FINAL-ROW NOTICE CELL (the owner's ruling: the
+   mega statement and this strip share one grid row). The R341 L1-c
+   tail band retires with its seat: the band is a CELL of
+   .fo-final-row (footer.css) — the wordmark owns the row, this band
+   takes the inline-end track (≥1200) or the row below it (the rest).
+   In-cell there is no frame to mirror and no seam to measure; the
+   footer's own frame insets carry every margin. Zero-CLS holds by
+   construction: answering the gate unmounts the cell, the auto
+   track collapses, and the row's height stays the wordmark's. */
 .cb-banner {
   /* Y6 (R325) holds: the band still registers its MEASURED height
      with lib/bottomStack.ts (the r325 spec's toasts-above-the-gate
-     pins ride that registration), but it no longer owns a fixed
-     viewport corner — the manager writes its inline
+     pins ride that registration) — the manager writes its inline
      --app-bottom-stack: 0px and the layers above lift over its real
      box in the one frame they can share: the scrolled-to-the-end
      sheet tail. */
@@ -90,23 +80,13 @@
   justify-content: space-between;
   column-gap: var(--sp-4);
   row-gap: var(--sp-2);
-  /* the footer's own frame inset, mirrored per band (measured chrome):
-     calc(100vw/1440 × 7) = 5/7/9px @1024/1440/1920. */
-  margin-inline: calc(var(--fu) * 7); /* spacing-gate: allow — the sheet frame's measured inset, not a rung */
-  /* THE TAIL SEAM: the measurer in ConsentBanner.tsx stamps the exact
-     depth of the footer's overflowing legal-row paint + 12px. The var
-     fallback carries the MEASURED worst wrap for the JS-off path
-     (72px paint @1024 + 12px gap = 84px ≥768; ≤767 the row fits the
-     footer's box — the belt below seats the 24px resting seam). */
-  margin-block-start: var(--cb-tail-seam, 84px); /* spacing-gate: allow — measured footer paint, not a rung */
-  margin-block-end: 7px;           /* spacing-gate: allow — keeps the band inside the frame's bottom hairline at the doc end */
   padding-block: var(--sp-3);
   padding-inline: var(--sp-4);
   background: var(--bg);
   /* Entrance: invisible until the loader's exit starts (the .landing
      root flips intro-draw → intro-done at the reveal), then a 200ms
      clip-up ~600ms after the sheet reveal — INSIDE the pre-reserved
-     flow seat (opacity/transform only: zero CLS, zero shift). */
+     seat (opacity/transform only: zero CLS, zero shift). */
   opacity: 0;
 }
 
@@ -114,7 +94,8 @@
    on source order (this sheet injects after it: LandingPage's css
    import at line 67 follows the ConsentBanner component import, so
    consent.css lands earlier). The 320px corner-cell ceiling retires
-   with the seat: the band spans its flow seat. */
+   with the old seat: the band fills its final-row cell (auto track,
+   footer.css) and its content decides the width. */
 .cb-banner.cb-banner {
   inline-size: auto;
 }
@@ -203,18 +184,17 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: var(--sp-2);
+  /* r363 fidelity pass — the pair breathes (the reference's cookie pair
+   * rides ~2 rungs of air, the measured 8px @1440 read as touching) */
+  gap: var(--sp-3);
 }
 
-/* «موافق» — R318 (§A9): the REAL primary. An INK slab with a PAPER
-   label — the site's own primary grammar (unified-parity --primary:
-   charcoal slab CTA, 14.74:1) — carried on the theme tokens so both
-   sheets resolve with zero forks (light #262019+#F5F1E8 12.44:1 ·
-   dark #F6F8FA+#262019 13.37:1). The measured SEAT is kept:
-   78.63×27.98 @1440, radius 0, the 1px ink border riding INSIDE the
-   border-box so the outer geometry is exact. Hover keeps the
-   reference's accent fill-wipe (the .btn grammar's wipe pair);
-   :active inverts to the paper/ink pair. */
+/* «موافق» — r363 (the owner's ruling): the accept action is the
+   SIGNAL colour — the royal fill + the owner-verified --accent-fg
+   label pair (light #2540D9+#FFFFFF ≈ 8.6:1 · dark #8AA0FF+warm ink
+   ≈ 7:1 — ≥4.5:1 both themes). The measured SEAT is kept (the
+   inline-size rung, the 1px border riding inside the box, the fill
+   wipe, the press invert). */
 .cb-accept {
   position: relative;
   z-index: 0;
@@ -225,12 +205,12 @@
   inline-size: 9.44rem;            /* 78.67px @1440 — measured (kept) */
   min-block-size: 44px;            /* r351 P8 — the tap floor (was 28px) */
   padding-inline: var(--sp-2);
-  background: var(--text);         /* ink fill — the real primary slab */
-  border: 1px solid var(--text);   /* the 1px ink rule, inside the box */
+  background: var(--accent);       /* the SIGNAL fill — the owner's ruling */
+  border: 1px solid var(--accent); /* the 1px signal rule, inside the box */
   font-family: var(--font-mono);
   font-size: var(--fs-mono-md);    /* the reference's cookie-Accept rung */
   font-weight: var(--fw-medium);
-  color: var(--bg);                /* paper label on ink — ≥4.5:1 both themes */
+  color: var(--accent-fg);          /* the owner-verified on-accent label */
   cursor: pointer;
   transition:
     color var(--t-fast) var(--ease),
@@ -240,17 +220,15 @@
 
 /* the fill-wipe slide (the site's .btn wipe grammar: label + border
    adopt the wipe pair in lockstep; the slab rises from the
-   block-start edge). R318 §A9: the wipe ground is the TEXT-safe
-   accent rung — --accent-ink — so the hovered pair also holds
-   ≥4.5:1 in BOTH themes (light #C72E00+#FFFFFF 5.48:1 ·
-   dark #FF6B33+warm-ink 6.20:1), unlike the raw --accent slab
-   (3.76:1 on the light sheet). */
+   block-start edge). r363: the resting fill is already the signal;
+   the wipe's ground is the INK slab — the hover deepen the royal to a
+   full ink press (both pairs ≥4.5:1 in both themes). */
 .cb-accept::before {
   content: '';
   position: absolute;
   z-index: -1;
   inset: 0;
-  background: var(--accent-ink);
+  background: var(--text);
   transform: translateY(-101%);
   transition: transform var(--t-base) var(--ease);
 }
@@ -258,8 +236,8 @@
 @media (hover: hover) and (pointer: fine) {
   .cb-accept:hover,
   .cb-accept:focus-visible {
-    color: var(--accent-fg);
-    border-color: var(--accent-ink);
+    color: var(--bg);
+    border-color: var(--text);
   }
 }
 
@@ -318,11 +296,10 @@
    bar (brief/full swap, expand toggle, ellipsis truncation) stays
    retired. */
 @media only screen and (max-width: 767px) {
-  .cb-banner {
-    margin-inline: 8px;             /* the footer's own ≤767 frame inset, mirrored */
-    margin-block-start: var(--cb-tail-seam, 24px); /* spacing-gate: allow — the resting seam (the legal row fits the footer's box ≤767) */
-  }
-
+  /* r363 — the phone belt: the band is the final row's second row
+     (single-column grid below 1200); the footer's own frame owns the
+     insets — the retired mirror margins and seam are gone with the
+     tail seat. */
   .cb-actions {
     flex: 1 1 100%;                 /* the pair takes its own row, edge to edge */
     justify-content: space-between;
@@ -338,14 +315,9 @@
   }
 }
 
-/* ── R341 (L1-c) — the tablet belt (768–991): the footer's own frame
-   inset is the flat 7px here (its ≤991 census block); the seam's
-   JS-off floor stays the ≥768 measured worst (84px). ───────────── */
-@media only screen and (min-width: 768px) and (max-width: 991px) {
-  .cb-banner {
-    margin-inline: 7px;             /* the footer's 768–991 frame inset, mirrored */
-  }
-}
+/* ── r363 — the tablet belt retires with the tail seat: inside the
+   footer's final row there is no frame to mirror (the footer's own
+   frame insets carry every width). ───────────────────────────── */
 
 /* ── Reduced motion — NEVER animate: the rise collapses to an instant
    appearance (no slide, no fade — the raw-ladder kill already zeroes

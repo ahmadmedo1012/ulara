@@ -193,9 +193,14 @@ test.describe('R349 — the phone deck and the one sitemap (structure pins)', ()
     const dupRows = await page.locator('.fo-brow').count();
     expect(dupRows).toBe(0);
 
-    /* the ONE index: col2's ruled groups still carry the platform doors */
-    const groups = await page.locator('.fo-c2-top .fo-lgroup').count();
-    expect(groups).toBe(3);
+    /* the ONE index (r363 — the owner's ruling): ONE horizontal link
+     * row replaces the retired col2 three-group column stack. The row
+     * carries the platform doors + the funnel pair; the phone ribbon
+     * wraps in place — never a column stack. */
+    const links = await page.locator('.fo-linkrow .fo-link').count();
+    expect(links).toBeGreaterThanOrEqual(14);
+    const retiredGroups = await page.locator('.fo-linkrow .fo-lgroup').count();
+    expect(retiredGroups).toBe(0);
 
     /* the ten-door legal row (the r321 §A2 contract) survives the
      * compaction untouched */

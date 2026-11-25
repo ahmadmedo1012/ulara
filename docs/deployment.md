@@ -110,6 +110,7 @@
 | المجموعة | المتغيرات | ملاحظات |
 |---|---|---|
 | **إلزامية** | `DATABASE_URL` · `JWT_ACCESS_SECRET` · `JWT_REFRESH_SECRET` (كل سر JWT ≥ 32 حرفًا) | الفشل يمنع الإقلاع |
+| عمر الجلسة | `JWT_ACCESS_TTL` · `JWT_REFRESH_TTL` (سلاسل وحدات ms مثل `90s`/`15m`/`7d` — r363) | افتراضي `15m`/`7d` — للضبط الاختباري فقط (اختبار الإنهاك المُرسل من CI يضبطه مؤقتًا)؛ الإنتاج يتركهما |
 | تشغيل داخلية | `INTERNAL_SERVICE_TOKEN` = `CRON_SECRET` (سر واحد بنقلتين: Bearer للـcron وheader للمشغّل) · `ULARA_TEST_ACCOUNTS=1` (بوابة الإقلاع/cron للتأكد من حسابات العرض — **على الإنتاج ترفضها سياسة r352 §5 دائماً**: مالك العرض بكلمة معلَنة لا يُنشأ/يُفعّل/يُعاد ضبطه أبدًا؛ حسابات العرض غير المالك ترفض افتراضياً ولا تبقى إلا بقرار مشغّل صريح `ULARA_TEST_ACCOUNTS_PRODUCTION_DEMO=1`) · `CORS_ORIGINS` | مغلقًا عند الغياب |
 | تخزين | `STORAGE_DRIVER` (local/postgres/s3) + عند s3: `S3_ENDPOINT/REGION/BUCKET/ACCESS_KEY_ID/SECRET_ACCESS_KEY` | s3 يفشل مغلقًا بدونها |
 | ذكاء | `AI_PROVIDER` (local/openai) + `AI_BASE_URL/API_KEY/MODEL` + `AI_DAILY_LIMIT_DEFAULT` | openai يفشل مغلقًا بدون مفاتيحه |

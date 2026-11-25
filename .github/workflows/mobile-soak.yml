@@ -1,0 +1,207 @@
+# Mobile soak — r363 (P5-a): THE SESSION-RESILIENCE SOAK.
+#
+# The r362 mobile fixes (refresh-failure classification, offline banner
+# machine, foreground/connectivity recovery) proved under CONDITIONS, not
+# under a tap: this lane drives a REAL app on the API-34 KVM emulator
+# through a scripted network-chaos rotation — airplane toggles via adb,
+# throttled/delayed links via `adb emu network`, and a deliberately
+# SHORTENED access-token TTL on the backend (JWT_ACCESS_TTL=90s — the
+# refresh cadence the whole soak exercises) — asserting after every
+# round that the session SURVIVED (the student dashboard heading stands),
+# with per-round screenshots and full forensics (logcat, metro, backend)
+# in the artifacts.
+#
+# Self-contained by design (dispatch-only): embedded PG + migrate + seed +
+# backend :4000 + Metro serving the CURRENT JS + a dev-client APK built
+# in-run (expo prebuild + gradle assembleDebug). ~35–45 min wall.
+#
+# Dispatch: workflow_dispatch only (the owner's deliberate verification).
+
+name: Mobile soak
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: mobile-soak
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: '22'
+  DATABASE_URL: postgresql://ulara@localhost:5433/ulara
+  EXPO_NO_TELEMETRY: '1'
+  CI: 'true'
+
+jobs:
+  soak:
+    name: Android soak (dev-client · chaos rounds · surviving-session gate)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: apps/mobile/package-lock.json
+
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Android SDK components (platform 34 · build-tools · emulator bits)
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
+            "platforms;android-34" "build-tools;34.0.0" >/dev/null || true
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --list_installed 2>/dev/null | head -20
+
+      - name: Unblock KVM for the emulator (ubuntu-24.04 image quirk)
+        run: sudo chmod 666 /dev/kvm || true
+
+      - name: Install Maestro CLI
+        env:
+          MAESTRO_CLI_NO_ANALYTICS: 1
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          "$HOME/.maestro/bin/maestro" --version
+
+      # ── the real stack: embedded PG → migrate → seed → backend :4000,
+      #     with the SHORTENED access TTL (the soak's compressed clock) ──
+      - name: Boot embedded PostgreSQL (tools/boot-pg.sh, :5433)
+        run: |
+          cd tools
+          npm install --no-audit --no-fund
+          bash boot-pg.sh
+
+      - name: Create the ulara database
+        run: |
+          cd tools
+          node -e '
+            const { Client } = require("pg");
+            (async () => {
+              const c = new Client({ host: "127.0.0.1", port: 5433, user: "ulara", database: "postgres" });
+              await c.connect();
+              const r = await c.query("SELECT 1 FROM pg_database WHERE datname = $1", ["ulara"]);
+              if (r.rows.length === 0) await c.query("CREATE DATABASE ulara");
+              await c.end();
+              console.log("db ulara ready");
+            })().catch((e) => { console.error(e.message); process.exit(1); });
+          '
+
+      - name: Root workspace install (backend + frontend)
+        run: npm ci --no-audit --no-fund
+
+      - name: Migrate + seed (db:deploy + db:seed)
+        run: |
+          npm run db:deploy
+          npm run db:seed
+
+      - name: Boot backend (:4000 · test accounts · JWT_ACCESS_TTL=90s) + wait for status
+        run: |
+          export JWT_ACCESS_SECRET="$(openssl rand -hex 48)"
+          export JWT_REFRESH_SECRET="$(openssl rand -hex 48)"
+          export JWT_ACCESS_TTL=90s
+          export JWT_REFRESH_TTL=3d
+          export ULARA_TEST_ACCOUNTS=1
+          export PORT=4000
+          nohup npm run dev -w backend > backend.log 2>&1 &
+          for i in $(seq 1 40); do
+            if curl -sf http://127.0.0.1:4000/api/v1/status >/dev/null 2>&1; then
+              echo "backend up (poll $i) — access TTL 90s"
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "::error::backend never answered /api/v1/status within 120s"
+          tail -40 backend.log
+          exit 1
+
+      - name: Mobile dependencies
+        working-directory: apps/mobile
+        run: npm ci --no-audit --no-fund
+
+      - name: Start Metro (dev-client server · current JS · host loopback API)
+        working-directory: apps/mobile
+        run: |
+          EXPO_PUBLIC_API_BASE_URL=http://10.0.2.2:4000/api/v1 \
+          nohup npx expo start --dev-client --port 8081 > ../../metro.log 2>&1 &
+          for i in $(seq 1 40); do
+            if curl -sf http://127.0.0.1:8081/status >/dev/null 2>&1; then
+              echo "metro up (poll $i)"
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "::error::metro never answered /status within 120s"
+          tail -40 ../../metro.log
+          exit 1
+
+      # ── the dev-client APK (built in-run — self-contained dispatch) ──
+      - name: Prebuild + assemble the dev-client APK
+        working-directory: apps/mobile
+        env:
+          EXPO_PUBLIC_API_BASE_URL: http://10.0.2.2:4000/api/v1
+        run: |
+          npx expo prebuild --platform android --clean --no-install
+          (cd android && ./gradlew assembleDebug --no-daemon -q) \
+            || { echo "::error::gradle assembleDebug failed"; exit 1; }
+          cp android/app/build/outputs/apk/debug/app-debug.apk ../dev-client.apk
+          du -h ../dev-client.apk
+
+      # ── the emulator: login once, then the chaos rotation ──
+      - name: Emulator · bootstrap login · THE SOAK (chaos rounds · surviving-session gate)
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          profile: pixel_6
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot-save -memory 4096 -cores 2
+          emulator-boot-timeout: 720
+          script: |
+            adb shell settings put global window_animation_scale 0
+            adb shell settings put global transition_animation_scale 0
+            adb shell settings put global animator_duration_scale 0
+            sleep 20
+            adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
+            adb reverse tcp:8081 tcp:8081 || touch fail.flag
+            adb install -r apps/dev-client.apk || touch fail.flag
+            mkdir -p soak-shots
+            # r363: the runner executes `script:` LINE-BY-LINE (run #3's
+            # log: one [command] per line — the multi-line maestro call
+            # handed maestro a stray `\` as its flow path and its
+            # ||-guard never joined the same invocation). The rotation
+            # is ONE committed file, called with ONE line.
+            bash apps/mobile/scripts/soak-run.sh
+            "$ANDROID_HOME/platform-tools/adb" devices > adb-devices.txt 2>&1 || true
+            timeout 60 "$ANDROID_HOME/platform-tools/adb" logcat -d > logcat.txt 2>&1; [ -s logcat.txt ] || echo "(logcat capture failed)" >> logcat.txt
+            if [ -f fail.flag ]; then echo "::error::soak rounds failed — forensics in the artifact"; exit 1; fi
+
+      - name: Soak verdict
+        if: always()
+        run: |
+          {
+            echo "## Mobile soak (r363 P5-a)"
+            echo ""
+            if [ -f fail.flag ]; then
+              echo "VERDICT: **FAILED** — a round lost the session or blocked the app. See the soak-forensics artifact (per-round screenshots + logcat + metro + backend)."
+            else
+              echo "VERDICT: **CLEAN** — the session survived every chaos round (airplane up to 100s — beyond the 90s access TTL — plus throttled/heavy links), no blocking offline screen, the dashboard stood after every regain."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload forensics (round screenshots + logcat + metro + backend)
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: soak-forensics
+          path: |
+            soak-shots/
+            logcat.txt
+            adb-devices.txt
+            backend.log
+            metro.log
+          if-no-files-found: warn
+          retention-days: 14

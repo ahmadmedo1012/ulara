@@ -54,12 +54,17 @@ export function Live() {
   useEffect(() => {
     const cols = colsRef.current;
     const dots = dotsRef.current;
-    if (!cols || !dots || typeof window.matchMedia !== 'function') return undefined;
-    const mm = window.matchMedia('(max-width: 767px)');
+    if (!cols || !dots) return undefined;
+    /* r363 — the result guard: exotic embedders (and test doubles that
+     * answer undefined) must never crash the effect; the deck degrades
+     * to its authored static rhythm, never to a thrown TypeError. */
+    const mm =
+      typeof window.matchMedia === 'function' ? window.matchMedia('(max-width: 767px)') : undefined;
+    if (!mm) return undefined;
     const btns = Array.from(dots.querySelectorAll<HTMLButtonElement>('.pm-dot-btn'));
-    const reduced =
-      typeof window.matchMedia === 'function' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const reducedMq =
+      typeof window.matchMedia === 'function' ? window.matchMedia('(prefers-reduced-motion: reduce)') : undefined;
+    const reduced = reducedMq?.matches === true;
 
     const setActive = (i: number) => {
       btns.forEach((b, j) => {

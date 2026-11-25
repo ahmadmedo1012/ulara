@@ -104,9 +104,13 @@ export function Hero() {
   /* reduced motion: the callouts render fully open (static sheet). */
   const [reduced, setReduced] = useState(false);
   useEffect(() => {
-    if (typeof window.matchMedia !== 'function') return undefined;
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setReduced(mq.matches);
+    /* r363 — the result guard: exotic embedders (and test doubles that
+     * answer undefined) must never crash the mount; the callouts degrade
+     * to the interactive sheet, never to a thrown TypeError. */
+    const mq =
+      typeof window.matchMedia === 'function' ? window.matchMedia('(prefers-reduced-motion: reduce)') : undefined;
+    if (!mq) return undefined;
+    setReduced(mq.matches === true);
     const on = (e: MediaQueryListEvent) => setReduced(e.matches);
     mq.addEventListener('change', on);
     return () => mq.removeEventListener('change', on);

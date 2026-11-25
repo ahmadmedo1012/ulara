@@ -85,29 +85,20 @@ footer.fo-footer {
 }
 .fo-col { min-inline-size: 0; }
 
-/* 768–1023: col1 | col2 side by side */
+/* 768–1023: the identity band caps at the sheet's own column rhythm
+   (the retired col2 index now lives in the ONE row above the band) */
 @media (min-width: 768px) {
   .fo-grid {
-    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
-    column-gap: 2.4rem;
-  }
-  .fo-col2 {
-    border-inline-start: 1px solid var(--rule);
-    padding-inline-start: 2.4rem;
+    max-inline-size: 46rem;
   }
 }
 
-/* ≥1024: the same two-column colophon at sheet scale — hairline-ruled
-   at the col2 boundary (the gap keeps the air on each side of the
-   rule, the newspaper column grammar). R336 B2: the retired col3
-   (the construction mark) no longer takes a track. */
+/* ≥1024: the same capped single column at sheet scale. R336 B2: the
+   retired col3 no longer takes a track; r363: col2 rides the ONE
+   link row. */
 @media (min-width: 1024px) {
   .fo-grid {
-    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
-  }
-  .fo-col2 {
-    border-inline: 1px solid var(--rule);
-    padding-inline: 2.4rem;
+    max-inline-size: 46rem;
   }
 }
 
@@ -251,88 +242,30 @@ footer.fo-footer {
 }
 /* (the go button's focus ring delegates to base.css — r172a §3) */
 
-/* ── col2: the link index + the contact groups ───────────────────────
-   auto-fit groups with a FIXED 176px floor: the families re-flow
-   1→2→3 up as col2's own width grows — never a track narrower than a
-   readable link, no per-belt forks, no fixed seats. The column is a
-   flex stack with space-between so the contact groups pin to the
-   band's foot when col1 drives the row height (desktop), and the
-   margin keeps the gap when the column is content-sized (phones). */
-.fo-col2 {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.fo-c2-top,
-.fo-c2-bottom {
+/* ── r363 — THE ONE LINK ROW (the owner's ruling) ─────────────────────
+   The retired col2 three-group column stack is GONE: one horizontal
+   mono index row carries the whole public sitemap. It wraps IN PLACE
+   at narrow widths (flex-wrap — never a column stack); the hairline
+   separators are pure CSS borders between the row's seats (no glyph
+   ever enters the DOM — the §A6 law by construction); every link
+   carries the hover/focus UNDERLINE DRAW (the ::after sweep, drawn
+   inline-start → inline-end on the RTL row). */
+.fo-linkrow {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(176px, 1fr));
-  column-gap: 2.4rem;
-  row-gap: var(--sp-6);
+  row-gap: var(--sp-3);
+  padding: var(--sp-4) 2.4rem var(--sp-3);
+  border-block-end: 1px solid var(--rule);
 }
-.fo-c2-bottom {
-  margin-block-start: var(--sp-7);
-}
-/* R349 (D3 · the phone colophon): the index groups pair up in two
- * columns ≤767 — the reference's own mobile footer compacts its link
- * families side by side instead of stacking five mono-headed groups
- * into a 800px ledger (measured col2: 803px @390 → ~530). The last
- * group of each band spans the full row when odd. */
-@media (max-width: 767px) {
-  /* r359 A1 §C — the phone colophon tightens to the ≤5,000px page law:
-     the secondary link grids retire from the phone sheet (the ≥50%
-     copy-cut law — every door stays one tap away on /help and the
-     sitemap cell); the contact + social rows keep their seats. */
-  .fo-grid { padding: var(--sp-4) 1.6rem var(--sp-3); row-gap: var(--sp-4); }
-  .fo-strip-img { aspect-ratio: 1440 / 52; }
-  .fo-c2-top .fo-lgroup:nth-child(1),
-  .fo-c2-top .fo-lgroup:nth-child(2) { display: none; }
-  .fo-c2-top,
-  .fo-c2-bottom {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: 1.6rem;
-    row-gap: var(--sp-4);
-  }
-
-  .fo-c2-top .fo-lgroup:nth-child(3),
-  .fo-c2-bottom .fo-lgroup:nth-child(3) {
-    grid-column: 1 / -1;
-  }
-
-  /* R349 (D3b): the contact door takes the full row — its one-line
-   * biglink never wraps against the half-column (the audited
-   * unbalanced pair), and the channels ride the reference's own
-   * mobile social grammar: a ruled two-column list, each door its
-   * own row — no ambiguous inline run-ons. */
-  .fo-c2-bottom .fo-lgroup:first-child {
-    grid-column: 1 / -1;
-  }
-
-  .fo-socials {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: 1.6rem;
-    row-gap: var(--sp-1);
-  }
-
-  .fo-c2-bottom {
-    margin-block-start: var(--sp-3);
-  }
-  /* the phone banner tightens */
-  .fo-giant-banner { margin: var(--sp-2) 0; padding: var(--sp-1) 0; }
-  .fo-giant-text { font-size: clamp(1.6rem, 8vw, 2.8rem); }
-}
-.fo-lgroup {
-  display: grid;
-  row-gap: var(--sp-2);
-  align-content: start;
-  min-inline-size: 0;
-}
-.fo-lg-links {
+.fo-linkrow-row {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: wrap;            /* the row wraps in place — never columns */
+  align-items: stretch;
+  /* r363 fidelity pass: the reference's own link row carries NO
+     per-item separators (its hairlines divide COLUMNS, not doors) —
+     the border separators are retired: on a wrapped row every line
+     start wore a stray mark (measured probe), and the gap alone
+     carries the reference's cadence. */
   column-gap: var(--sp-4);
-  row-gap: var(--sp-1);
 }
 .fo-link {
   display: inline-flex;
@@ -340,74 +273,53 @@ footer.fo-footer {
   /* r351 P8 — the ≥44px tap seat (an absolute floor — the fluid root
      scales rem against it) */
   padding-block: 0.66rem;
+  padding-inline: var(--sp-3);
   min-block-size: 44px;
-  /* R355 (tap floor): short Arabic labels (e.g. «البيان», 31px wide)
-     missed the 44px INLINE floor — min-inline-size + centering keeps
-     the column's visual rhythm while every label paints a square
-     target. */
   min-inline-size: 44px;
   justify-content: center;
   text-decoration: none;
   color: var(--text);
   font-size: var(--fs-body);
   font-weight: 500;
+  position: relative;           /* the underline-draw seat */
   transition: color var(--t-fast) var(--ease);
 }
 .fo-link:hover { color: var(--accent); }
+/* r363 — THE UNDERLINE DRAW (the owner's ruling), one shared rule for every
+   footer link family (the draw geometry: a 1px signal hairline sweeping
+   inline-start → end on hover; the per-family seat only overrides the inline
+   inset — one rule, no duplicated blocks). The RTL row draws right → left
+   (transform-origin rides the inline-start edge); the sweep rides the motion
+   tokens only. Keyboard focus does NOT draw the underline — the r172a/r190
+   family law: visibility on focus is the universal base.css ring, never a
+   landing-private :focus-visible language. */
+.fo-link::after,
+.fo-legal-link::after,
+.fo-legal-a::after {
+  content: '';
+  position: absolute;
+  inset-inline: var(--sp-2-5);
+  inset-block-end: 0.25rem;  /* clear of the Arabic descender ink */
+  block-size: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: 100% 50%;  /* RTL inline-start = the right edge */
+  transition: transform var(--t-fast) var(--ease-out);
+}
+/* the link-row doors ride their own inline padding — the draw matches it */
+.fo-link::after { inset-inline: var(--sp-3); }
+@media (hover: hover) and (pointer: fine) {
+  .fo-link:hover::after {
+    transform: scaleX(1);
+  }
+}
 /* the first PLATFORM link carries the accent ink (the folio's own
-   orange door). R342 integration (a11y): the link is 13px body text —
-   the AA body floor (4.5) applies and the raw coral reads 3.07:1 on
-   the paper. The seat resolves the token contract's TEXT-safe accent
-   (--accent-ink — #A33312 on the light arm, the luminous coral on the
-   dark arm), the same law the canon's own orange text seats ride. */
+   orange door). R342 integration (a11y): the seat resolves the token
+   contract's TEXT-safe accent (--accent-ink — the royal text rung in
+   both themes), the same law every accent text seat rides. */
 .fo-link-accent { color: var(--accent-ink); }
 /* the funnel pair's affordance seat — cta.css owns the underline +
    hit-slop grammar; this sheet adds no box of its own */
-
-/* the contact cell */
-.fo-contact-h {
-  margin: 0;
-  font-size: var(--fs-body-lg);
-  line-height: 1.4;
-  font-weight: var(--fw-semibold);
-  color: var(--text);
-}
-.fo-biglink {
-  display: inline-block;
-  margin-block-start: var(--sp-2);
-  padding: var(--sp-2);
-  min-block-size: 44px; /* r351 P8 — the tap seat */
-  text-decoration: none;
-  color: var(--text);
-  font-size: var(--fs-body-lg);
-  line-height: 1.5;
-  font-weight: var(--fw-semibold);
-  transition: color var(--t-fast) var(--ease);
-}
-.fo-biglink:hover { color: var(--accent); }
-
-/* the channels — single-line door links, flex-wrap */
-.fo-socials {
-  display: flex;
-  flex-wrap: wrap;
-  column-gap: var(--sp-4);
-  row-gap: var(--sp-1);
-}
-.fo-social {
-  display: inline-flex;
-  align-items: center;
-  padding-block: var(--sp-1-5);
-  text-decoration: none;
-  color: var(--text);
-  font-size: var(--fs-body);
-  font-weight: 500;
-  transition: color var(--t-fast) var(--ease);
-}
-.fo-social:hover { color: var(--accent); }
-
-/* R336 B2: the col3 construction-mark seat (.fo-col3/.fo-mark/.fo-mark-svg/
-   .fo-mark-p/.fo-mark-veiled) is RETIRED with the drawing it styled —
-   the footer's ONE identity is the canonical stacked <Logo> in col1. */
 
 /* ═══ the ink strip band — normal flow, art-driven height ══════════
    The two licensed skyline renders (light + dark twins) stack in ONE
@@ -484,6 +396,7 @@ footer.fo-footer {
   padding-block: 13.5px;
   margin-block: -13.5px;
   display: inline-block;
+  position: relative;          /* r363 — the underline-draw seat */
   transition: color var(--t-fast) var(--ease);
 }
 .fo-legal-a:hover { color: var(--accent); }
@@ -512,9 +425,19 @@ footer.fo-footer {
   /* the 44px touch floor (the footer link ladder) — a CONTRACT, not a
      the reference measure: stays fixed px at every bp */
   min-block-size: 44px;
+  position: relative;          /* r363 — the underline-draw seat */
   transition: color var(--t-fast) var(--ease);
 }
 .fo-legal-link:hover { color: var(--accent); }
+/* r363 — the underline draw rides the © row's policy doors too: the
+   shared draw rule above carries the geometry; the hover arms below
+   cover every footer link family. */
+@media (hover: hover) and (pointer: fine) {
+  .fo-legal-link:hover::after,
+  .fo-legal-a:hover::after {
+    transform: scaleX(1);
+  }
+}
 /* the separator — §A6 law: the span ships EMPTY, the glyph is CSS
    content (out of innerText, out of the a11y tree) */
 .fo-legal-sep {
@@ -543,12 +466,13 @@ footer.fo-footer {
   }
 }
 
-/* r351 P8 — the phone colophon rides the compact rhythm (the stacked
-   columns keep their seats; the air between them steps down and the
-   horizon strip stays a line, never a plate). */
+/* r351 P8 — the phone colophon rides the compact rhythm (the ONE
+   link row wraps in place under its mono label; the air between the
+   bands steps down and the horizon strip stays a line, never a
+   plate). */
 @media (max-width: 767px) {
   .fo-grid {
-    padding: var(--sp-4) 1.6rem var(--sp-3);
+    padding: var(--sp-3) 1.6rem var(--sp-2);
     row-gap: var(--sp-3);
   }
 
@@ -561,14 +485,24 @@ footer.fo-footer {
     row-gap: var(--sp-2);
   }
 
-  /* the index doors keep ≥44px seats (padding-block + line box) while
-     the group air steps down */
-  .fo-lg-links {
-    row-gap: 0;
+  /* the ONE link row on phones — the wrapped ribbon rides the
+     tighter padding and the smaller rung; every seat keeps its
+     ≥44px tap floor (the a11y contract, not a design value).
+     r363 phone diet: the row's own chrome air steps to the compact
+     rungs (the mounted page measures 5,028 @390; the ≤5,000px law
+     needs the chrome lean). */
+  .fo-linkrow {
+    padding: var(--sp-2) 1.6rem var(--sp-1);
+    row-gap: var(--sp-1);
   }
 
-  .fo-lgroup {
-    row-gap: var(--sp-1);
+  .fo-link {
+    padding-block: 0.5rem;
+    /* r363 phone diet — the ribbon's inline air steps to the © row's
+     * rhythm: the 16 doors wrap to 3 lines instead of 4 (the 44px
+     * block floor — the tap contract — stays on every door) */
+    padding-inline: var(--sp-1);
+    font-size: var(--fs-xxs);
   }
 
   .fo-footer-about {
@@ -593,9 +527,10 @@ footer.fo-footer {
     aspect-ratio: 1440 / 72;
   }
 
-  .fo-giant-banner {
-    margin: var(--sp-2) 0;
-    padding: var(--sp-1) 0;
+  .fo-final-row {
+    padding-inline: 1.6rem;
+    padding-block-end: var(--sp-2);
+    gap: var(--sp-1);
   }
 
   .fo-giant-text {
@@ -603,7 +538,9 @@ footer.fo-footer {
   }
 
   .fo-top-anchor-row {
-    margin-block-start: 0;
+    /* r363 phone diet — the anchor's air steps to the compact rung */
+    margin-top: var(--sp-2);
+    margin-bottom: 0;
   }
 }
 
@@ -624,11 +561,38 @@ footer.fo-footer {
 }
 
 /* ═══ The Grand Outline Wordmark & Back to Top ═══════════════════════ */
+/* r363 — THE FINAL ROW (the owner's ruling): the MEGA statement and
+   the cookie/notice strip SHARE ONE grid row. Below 1200 the row is
+   one column (the wordmark, then the notice band below it — the
+   measured cell math: the band's max-content ≈ 525px @1200 leaves the
+   nowrap giant text too little of the track); ≥1200 the two-cell row
+   rides (the wordmark owns the row, the notice cell takes the
+   inline-end — the RTL mirror of the reference's bottom-right pin).
+   Answering the gate unmounts the notice cell, the auto track
+   collapses to zero, and the wordmark takes the row — the row's
+   height was always the wordmark's, so nothing below ever shifts. */
+.fo-final-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-3);
+  align-items: stretch;
+  padding: 0 2.4rem var(--sp-4);
+}
+@media (min-width: 1200px) {
+  .fo-final-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 2.4rem;
+  }
+}
+
 .fo-top-anchor-row {
   display: flex;
   justify-content: flex-end;
   margin-top: var(--sp-4);
-  margin-bottom: var(--sp-2);
+  /* r363 fidelity pass — the void above the mega row cut: the
+     back-to-top anchor no longer banks its own air before the
+     statement row */
+  margin-bottom: var(--sp-1);
 }
 
 .fo-back-to-top {
@@ -660,7 +624,8 @@ footer.fo-footer {
 .fo-giant-banner {
   position: relative;
   inline-size: 100%;
-  margin: var(--sp-4) 0 var(--sp-3);
+  /* r363 — the seat is the final row's statement CELL: the row owns
+     the rhythm, the banner's own margins retire */
   padding: var(--sp-2) 0;
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
@@ -814,6 +779,12 @@ footer.fo-footer {
   .js-reveal-armed .fo-strip-media,
   .js-reveal-armed .fo-fstrip.in-view .fo-strip-media {
     clip-path: none;
+    transition: none;
+  }
+  /* r363 — the underline draws stand drawn (no sweep under RM) */
+  .fo-link::after,
+  .fo-legal-link::after,
+  .fo-legal-a::after {
     transition: none;
   }
 }

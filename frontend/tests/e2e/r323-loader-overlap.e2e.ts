@@ -155,6 +155,15 @@ for (const viewport of [
         await page.goto('/');
         await page.waitForLoadState('load');
 
+        /* r363 — the gate seats INSIDE the footer's final row (the
+         * owner's ruling), and the footer is the lazy chunk behind
+         * MountOnVisible (.lz-mount[data-lz="footer"]): the band mounts
+         * when the colophon nears, not at page load. Scroll the
+         * placeholder in first, wait for the footer, then measure. */
+        await page.locator('.lz-mount[data-lz="footer"]').scrollIntoViewIfNeeded();
+        await page.locator('.fo-footer').waitFor({ state: 'attached' });
+        await page.waitForTimeout(900); /* the lazy chunk + the cb-rise clip */
+
         const banner = page.locator('.cb-banner');
         const bannerBox = await banner.boundingBox().catch(() => null);
         if (!bannerBox) {

@@ -516,13 +516,14 @@ describe('R320 §D — every wiring point', () => {
   });
 
   it('the footer contact cell is a /contact link now (the honest prose moved onto the page)', () => {
-    /* P2-0 (r335 split): the contact cell lives in sections/Footer.tsx. */
+    /* P2-0 (r335 split): the contact cell lives in sections/Footer.tsx.
+     * r363 re-pin: ONE horizontal link row — the contact door rides the
+     * row's tuple table, and the © policy row keeps its literal door. */
     const src = read('src/components/landing/sections/Footer.tsx');
-    // locate the contact cell by its heading, then read the cell region
-    const idx = src.indexOf('>التواصل<');
-    expect(idx).toBeGreaterThan(0);
-    const region = src.slice(idx, idx + 600);
-    expect(region).toContain('to="/contact"');
+    // the ONE row's tuple carries the /contact door
+    expect(src).toContain("['/contact', 'التواصل']");
+    // the © policy row keeps its literal /contact Link seat
+    expect(src).toContain('to="/contact"');
     // the old honest prose moved onto the /contact page, not deleted
     expect(read('src/pages/PublicPages.tsx')).toContain('التسجيل المبكر من صفحة البداية هو قناة التواصل المتاحة حاليًا');
   });

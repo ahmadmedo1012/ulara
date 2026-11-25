@@ -313,4 +313,53 @@ describe('useScrollRestoration — POP restores through the late content height 
       remove();
     }
   });
+
+  it('the watch budget is wall-clock, not frame-count — a starved frame cadence cannot strand the restore (r363)', async () => {
+    const { layout, mountLate, resolveContent } = makeLateHarness();
+    mountLate();
+    const remove = installClampingStub(layout);
+    /* The CI class (022f5db, ef92b4f — both attempts): the main thread
+     * janks, rAF fires sparsely, and the old 60-FRAME budget stood the
+     * watcher down BEFORE the late height arrived — the restore was
+     * stranded at the clamped top while the test's 40s window starved.
+     * Drive the watcher's clock at 50ms of wall time per delivered
+     * frame: the height lands around frame 63 (t≈3.2s) — past the old
+     * frame budget (60), still inside the wall-clock window (4s). The
+     * old engine never re-applies; the wall-clock engine completes. */
+    let fakeNow = 0;
+    const nowSpy = vi.spyOn(performance, 'now').mockImplementation(() => fakeNow);
+    const jankyFrame = async () => {
+      fakeNow += 50;
+      await flushFrame();
+    };
+    try {
+      act(() => resolveContent());
+      scrollToPosition(800);
+      fireEvent.click(document.querySelector<HTMLButtonElement>('button')!);
+      await flushFrame();
+      expect(scrollerOf().scrollTop).toBe(0);
+      scrollToPosition(300);
+
+      // POP → clamped to 0 (the payload is pending) — the watcher arms.
+      fireEvent.click(document.querySelectorAll<HTMLButtonElement>('button')[1]!);
+      await flushFrame();
+      expect(scrollerOf().scrollTop).toBe(0);
+
+      // 62 janky frames: past the old frame budget (60), inside the
+      // wall-clock window (62 × 50ms = 3.1s < 4s) — then the payload.
+      for (let i = 0; i < 62; i += 1) await jankyFrame();
+      act(() => resolveContent());
+      await jankyFrame();
+      expect(scrollerOf().textContent).toContain('late list tall');
+      expect(scrollerOf().scrollTop).toBe(800);
+
+      // After the window the watcher stands down — the position holds.
+      fakeNow += 10_000;
+      for (let i = 0; i < 4; i += 1) await jankyFrame();
+      expect(scrollerOf().scrollTop).toBe(800);
+    } finally {
+      nowSpy.mockRestore();
+      remove();
+    }
+  });
 });

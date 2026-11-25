@@ -1,26 +1,43 @@
 /**
  * Footer.tsx — the landing colophon, REBUILT on CSS Grid/Flex (ULARA Ω
- * task 1-C). The R338→R343 spec-mirror (the --fu fluid unit, the
- * fixed-height ink band, the absolutely-positioned chrome, the 88
- * data-spec conformance seats) is retired by program decision: the
- * column structure is a real responsive grid (1 col <768 · 2 cols ≥768),
- * the link groups and the policy row are flex-wrap, the ink band is a
- * normal-flow block whose height rides its art, and every seat sizes
- * from its content. The CONTENT is the
- * R338 folio's own, byte-verbatim: the brand identity + independence
- * paragraph, the three link families, the funnel pair, the subscribe
- * door (a real route to /contact), the licensed skyline strip, and the
- * ten-link policy row with CSS ::after glyph separators (the §A6 law
- * — decorative glyphs are CSS content, never DOM text). The R336 B2
- * pass retired the col3 construction-mark drawing: the footer's ONE
- * identity is the canonical stacked <Logo> (col1), same as every
- * other surface.
+ * task 1-C). The R338→R343 spec-mirror is retired by program decision:
+ * the structure is a real responsive grid, the link groups and the
+ * policy row are flex-wrap, and every seat sizes from its content. The
+ * CONTENT is the R338 folio's own: the brand identity + independence
+ * paragraph, the subscribe door (a real route to /contact), the
+ * licensed skyline strip, and the ten-link policy row with CSS ::after
+ * glyph separators (the §A6 law — decorative glyphs are CSS content,
+ * never DOM text). The R336 B2 pass retired the col3 construction-mark
+ * drawing: the footer's ONE identity is the canonical stacked <Logo>.
+ *
+ * r363 P2 — THE OWNER'S FOOTER RULING (the measured ground truth after
+ * r362's «matching» verdict the owner rejected):
+ *   · ONE horizontal uppercase/mono link row — the three-group column
+ *     stack (PLATFORM / JOURNEY / ACCOUNT + CONTACT / ADDRESS) is
+ *     RETIRED. One row carries the whole public index; it wraps IN
+ *     PLACE at narrow widths — never a column stack.
+ *   · the MEGA statement and the cookie/notice strip SHARE ONE grid
+ *     row — the giant outline wordmark band and the ConsentBanner sit
+ *     as the two cells of .fo-final-row (RTL-mirrored: the statement
+ *     owns the row, the notice cell rides the inline-end). Answering
+ *     the gate collapses only the notice cell; the row's height is
+ *     driven by the wordmark, so nothing below ever shifts.
+ *   · the cookie ACCEPT is the SIGNAL colour (royal fill + the
+ *     owner-verified --accent-fg label); REJECT is bare text
+ *     (consent-edge.css owns both).
+ *   · hover underline draw + scroll reveal on the link row
+ *     (the .fo-link::after sweep; the reveal rung keeps the retired
+ *     .fo-c2-top class seat).
+ * The notice band itself is still ConsentBanner's own machine (the
+ * storage contract, the window API, the bottom-stack registration) —
+ * only its SEAT moved: from the sheet's tail (after the footer) into
+ * the footer's final row, per the ruling.
  *
  * Kept structural hooks: the <footer> landmark + .fo-in inner
  * container (pinned by tests/r305/mobile-overflow.e2e.ts) and the
- * six reveal blocks the landing's reveal engine targets by class
- * (.fo-c1-top/.fo-c2-top/.fo-c2-bottom rise; .fo-c1-sub, the strip
- * band, the © bar rise with instant opacity). The sheet is
+ * reveal blocks the landing's reveal engine targets by class
+ * (.fo-c1-top / .fo-c2-top rise; .fo-c1-sub, the strip band, the ©
+ * bar rise with instant opacity). The sheet is
  * styles/landing/footer.css — the geometry lives there, in tokens.
  */
 import { Link } from 'react-router-dom';
@@ -28,64 +45,30 @@ import { useEffect, useRef, useState } from 'react';
 import { RevealCssClass } from '../../../hooks/useReveal';
 import { Logo } from '../../../brand';
 import { BRAND_LABEL, LOGIN } from '../copy';
+import { ConsentBanner } from '../chrome/ConsentBanner';
 
-/* R349 (D1 · the colophon's dedupe): the four small-link rows that
- * lived under the brand block are RETIRED — every one of their doors
- * (المنصّة/الفصول/الأدوار/الكليات/البيان/التحديات/الرؤية/الحياة
- * الجامعية) already lives in col2's ruled index groups. The audited
- * defect — «repeated navigation strings» — read as two competing
- * sitemaps; ONE index (col2) carries the map now, col1 keeps the
- * identity + the honest independence paragraph + the early-access
- * door (the reference's own col1 grammar: tagline + subscribe). */
-
-/* the col2 index: three groups of four (top row) — mono label + links,
- * the FIRST link of the first group carries the accent ink */
-const INDEX_TOP: { label: string; links: [string, string][] }[] = [
-  {
-    label: 'PLATFORM',
-    links: [
-      ['/capabilities', 'ما يعمل اليوم'],
-      ['#product', 'المنصّة فعليًا'],
-      ['#chapters', 'الفصول'],
-      ['#roles', 'الأدوار والشرائح'],
-    ],
-  },
-  {
-    label: 'JOURNEY',
-    links: [
-      ['#statement', 'البيان'],
-      ['#live', 'التحديات'],
-      ['/campus', 'الحياة الجامعية'],
-      ['#vision', 'المبدأ والرؤية'],
-    ],
-  },
-  {
-    label: 'ACCOUNT',
-    /* the funnel pair (register primary + login ghost) renders as
-     * literal <Link> seats inside the group below — the landing-funnel
-     * source contract counts the to= surfaces, not tuple tables */
-    links: [
-      ['/app', 'تطبيق الجوال'],
-      ['/help', 'المساعدة'],
-    ],
-  },
+/* r363 — THE ONE LINK ROW. The retired col2 index (three mono-headed
+ * groups + the contact/address groups) collapses into ONE horizontal
+ * row: every public door the landing owns, in reading order, plus the
+ * funnel pair as literal <Link> seats (the landing-funnel source
+ * contract counts the to= surfaces). `#fragment` doors stay raw
+ * anchors (the r341 t05 SPA split law); route doors ride <Link>.
+ * Every target is a live door — the r363 dead-link audit walked them
+ * (the #chapters anchor is MountOnVisible's anchorId seat). */
+const LINK_ROW: [string, string][] = [
+  ['/capabilities', 'ما يعمل اليوم'],
+  ['#product', 'المنصّة'],
+  ['#chapters', 'الفصول'],
+  ['#roles', 'الأدوار'],
+  ['#statement', 'البيان'],
+  ['#live', 'التحديات'],
+  ['/campus', 'الحياة الجامعية'],
+  ['#vision', 'الرؤية'],
+  ['/colleges', 'الكليات'],
+  ['/app', 'التطبيق'],
+  ['/help', 'المساعدة'],
+  ['/contact', 'التواصل'],
 ];
-
-/* R349 (D3 · the channels retirement): the col2 CHANNELS group is
- * RETIRED — every one of its six doors (التواصل/عن أُلارا/
- * المساعدة/البيانات/الخصوصية/الشروط) already lives verbatim in the
- * pinned ten-door legal row under the © bar. The audit's «repeated
- * navigation strings» finding read the pair as a second sitemap;
- * ONE index (col2's ruled groups) + ONE policy row (the r321 §A2
- * contract) carry every public door now — no information lost, one
- * full link row saved at every width. */
-
-/* R336 B2 (brand unification): the col3 hand-authored "construction
- * mark" (the MARK_PATHS orbit drawing — a SECOND visual identity that
- * lived in no brand source file and bypassed every brand gate) is
- * RETIRED. The footer's ONE identity is the canonical stacked <Logo>
- * in col1; the colophon is a two-column sheet at every breakpoint
- * ≥768 (brand+subscribe | the link index). */
 
 export function Footer({ year }: { year: number }) {
   const [email, setEmail] = useState('');
@@ -113,19 +96,61 @@ export function Footer({ year }: { year: number }) {
       <div className="fo-in" data-spec="footer.in">
         {/* R345-ED — the drawing-sheet title block: the colophon opens
             with its own plate row (identity · sheet · scale · year),
-            the footer reading as the SET'S CLOSING SHEET. Decorative
-            chrome riding the house reveal rung. */}
+            the footer reading as the SET'S CLOSING SHEET. */}
         <RevealCssClass as="div" className="fo-plate" aria-hidden="true">
           <span className="fo-plate-cell fo-mono" dir="ltr">PLATE · 09</span>
           <span className="fo-plate-cell">لوحة الهبوط — يعمل اليوم</span>
           <span className="fo-plate-cell fo-mono" dir="ltr">ULARA · {year}</span>
         </RevealCssClass>
-        {/* ── the column band — CSS Grid: 1 col <768 · 2 cols ≥768
-            (col1 brand+links+subscribe · col2 the link index + contact
-            groups). The retired col3 construction mark is gone (R336 B2):
-            ONE identity — the stacked <Logo> in col1. ── */}
+
+        {/* ── r363 — THE ONE LINK ROW (the owner's ruling): one
+            horizontal uppercase/mono index row — the mono micro-label
+            header + the wrapped link ribbon. It replaces the retired
+            col2 three-group column stack; at narrow widths the row
+            wraps in place, never into columns. The reveal rung keeps
+            the .fo-c2-top class seat the engine targets. ── */}
+        <RevealCssClass as="nav" className="fo-linkrow fo-c2-top" aria-label="فهرس المنصّة">
+          <div className="fo-mono-label" dir="ltr">[ INDEX · الفهرس ]</div>
+          <div className="fo-linkrow-row">
+            {LINK_ROW.map(([to, label], i) =>
+              /* r341 (t05 · SPA links): route doors ride <Link>,
+                 #fragment doors stay raw anchors. The row rides pure
+                 gap cadence — the reference's own link row carries no
+                 per-item separators (its hairlines divide columns, not
+                 doors), and a wrapped row with border separators wore
+                 stray marks at every line start (measured probe). */
+              to.startsWith('#') ? (
+                <a
+                  key={to}
+                  href={to}
+                  className={i ? 'fo-link' : 'fo-link fo-link-accent'}
+                >
+                  {label}
+                </a>
+              ) : (
+                <Link
+                  key={to}
+                  to={to}
+                  className={i ? 'fo-link' : 'fo-link fo-link-accent'}
+                >
+                  {label}
+                </Link>
+              ),
+            )}
+            {/* the funnel pair — the account doors ride the row's end
+                (the landing-funnel source contract counts these to=
+                surfaces; cta.css owns the underline grammar, the class
+                adds no box of its own) */}
+            <Link to="/auth/register" className="fo-link fo-link-account">إنشاء حساب</Link>
+            <Link to="/auth" className="fo-link fo-link-account">{LOGIN}</Link>
+          </div>
+        </RevealCssClass>
+
+        {/* ── the identity band — the brand block + the subscribe door
+            (the retired col2 index now lives in the ONE row above, so
+            the band is a single capped column: the reference's own
+            col1 grammar — identity + subscribe). ── */}
         <div className="fo-grid">
-          {/* col1 (RTL: the right column) — brand + link rows + subscribe */}
           <div className="fo-col fo-col1">
             <div className="fo-c1-top">
               <div className="fo-brand-block">
@@ -139,8 +164,6 @@ export function Footer({ year }: { year: number }) {
                     gate) */}
                 <p className="fo-footer-about">منصّة تعليمية تقنية مستقلّة، عربية أولًا. لا تنتمي إلى أيّ مؤسّسة تعليمية ولا تمثّلها؛ وبيانات العرض داخلها تخصّ «مساحة عمل أُلارا التجريبية» — مساحة اصطناعية بالكامل لأغراض العرض، لا تحاكي أي جامعة.</p>
               </div>
-              {/* R349 (D1): the duplicated small-link rows retired —
-                  col2's ruled index owns the whole sitemap now. */}
             </div>
             <div className="fo-c1-sub">
               <div className="fo-mono-label">[ EARLY ACCESS ]</div>
@@ -194,78 +217,11 @@ export function Footer({ year }: { year: number }) {
               </div>
             </div>
           </div>
-
-          {/* col2 — the wide index: 3 mono-labelled groups up, the
-              contact groups down */}
-          <div className="fo-col fo-col2">
-            <div className="fo-c2-top">
-              {INDEX_TOP.map((g, gi) => (
-                <div className="fo-lgroup" key={g.label}>
-                  <div className="fo-mono-label">{g.label}</div>
-                  <div className="fo-lg-links">
-                    {gi === 2 && (
-                      <>
-                        {/* the funnel pair — fo-link-account carries the
-                            affordance + hit-slop seat (cta.css owns the
-                            underline grammar; the class adds no box of
-                            its own) */}
-                        <Link to="/auth/register" className="fo-link fo-link-account">إنشاء حساب</Link>
-                        <Link to="/auth" className="fo-link fo-link-account">{LOGIN}</Link>
-                      </>
-                    )}
-                    {g.links.map(([to, label], li) =>
-                      /* r341 (t05 · SPA links): same split as the brand
-                         rows — routes ride <Link>, #fragments stay raw
-                         anchors (keys/classes/labels unchanged). */
-                      to.startsWith('#') ? (
-                        <a
-                          key={to}
-                          href={to}
-                          className={gi || li ? 'fo-link' : 'fo-link fo-link-accent'}
-                        >
-                          {label}
-                        </a>
-                      ) : (
-                        <Link
-                          key={to}
-                          to={to}
-                          className={gi || li ? 'fo-link' : 'fo-link fo-link-accent'}
-                        >
-                          {label}
-                        </Link>
-                      ),
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="fo-c2-bottom">
-              <div className="fo-lgroup">
-                <div className="fo-mono-label">CONTACT</div>
-                {/* the contact cell — the /contact door under its own
-                    التواصل heading (the honest prose lives on the page;
-                    the footer carries the door) — R349 (D2): one line */}
-                <h3 className="fo-contact-h">التواصل</h3>
-                <Link to="/contact" className="fo-biglink">
-                  التواصل والتسجيل المبكر — صفحة واحدة
-                </Link>
-              </div>
-              <div className="fo-lgroup">
-                <div className="fo-mono-label">ADDRESS</div>
-                {/* R349 (D2): the REGION row retired — the independence
-                    claim lives verbatim in col1's paragraph; the address
-                    keeps its one honest door. */}
-                <Link to="/about" className="fo-link">مساحة عمل أُلارا التجريبية</Link>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* ── the ink strip band — OUR OWN licensed skyline render,
             light/dark twins swapping on the theme token (the
-            wy-cycle grammar). A normal-flow block: the two renders
-            stack in ONE grid cell and the band's height rides the
-            art's own aspect ratio — no fixed heights, no clipping ── */}
+            wy-cycle grammar). ── */}
         <div className="fo-fstrip">
           <div className="fo-strip-media">
             <img
@@ -274,7 +230,6 @@ export function Footer({ year }: { year: number }) {
               srcSet="/media/illustrations/r359/footer/footer-skyline-light@2x.webp 2x"
               alt="أفق حرم جامعي متخيّل بخط رفيع: رواق وقاعة وبرج وأشجار على خط أرض واحد"
               loading="lazy"
-             
               width={1440}
               height={384}
             />
@@ -285,7 +240,6 @@ export function Footer({ year }: { year: number }) {
               alt=""
               aria-hidden="true"
               loading="lazy"
-             
               width={1440}
               height={384}
             />
@@ -294,12 +248,8 @@ export function Footer({ year }: { year: number }) {
 
         {/* ── The Grand Outline Wordmark & Back to Top (the landing signature closing) ── */}
         <div className="fo-top-anchor-row">
-          {/* R355 (a11y): the standalone aria-label («العودة إلى أعلى
-              الصفحة») disagreed with the visible mono label — the axe
-              label-content-name-mismatch violation (the visible text
-              must be part of the accessible name). Dropped: the
-              button's content (the aria-hidden arrow + the mono span)
-              names it exactly as rendered. */}
+          {/* R355 (a11y): the standalone aria-label dropped — the
+              button's content names it exactly as rendered. */}
           <button
             type="button"
             className="fo-back-to-top"
@@ -312,20 +262,24 @@ export function Footer({ year }: { year: number }) {
           </button>
         </div>
 
-        {/* ── the closing banner — the outline wordmark with OUR OWN
-            pointer-lens reveal (r351 P4): the accent fill twin sits in
-            the same grid cell behind the stroked outline, revealed
-            through a pointer-following radial mask (fine pointers, CSS
-            media-gated; the lens vars are written imperatively — zero
-            React state). The reference's own lens was never extracted;
-            this is Ulara's own design in the same register. ── */}
-        <div className="fo-giant-banner" aria-hidden="true" ref={lensRef}>
-          <span className="fo-giant-plus fo-giant-plus-tl">+</span>
-          <span className="fo-giant-plus fo-giant-plus-tr">+</span>
-          <div className="fo-giant-text">ULARA // أُلارا</div>
-          <div className="fo-giant-text fo-giant-fill">ULARA // أُلارا</div>
-          <span className="fo-giant-plus fo-giant-plus-bl">+</span>
-          <span className="fo-giant-plus fo-giant-plus-br">+</span>
+        {/* ── r363 — THE FINAL ROW (the owner's ruling): the MEGA
+            statement and the cookie/notice strip SHARE ONE grid row.
+            The giant outline wordmark owns the row; the ConsentBanner
+            rides the inline-end cell (RTL-mirrored from the
+            reference's bottom-right pin). Answering the gate unmounts
+            the notice cell — the auto track collapses to zero and the
+            wordmark takes the row; the row's height was always the
+            wordmark's, so nothing below ever shifts. ── */}
+        <div className="fo-final-row">
+          <div className="fo-giant-banner" aria-hidden="true" ref={lensRef}>
+            <span className="fo-giant-plus fo-giant-plus-tl">+</span>
+            <span className="fo-giant-plus fo-giant-plus-tr">+</span>
+            <div className="fo-giant-text">ULARA // أُلارا</div>
+            <div className="fo-giant-text fo-giant-fill">ULARA // أُلارا</div>
+            <span className="fo-giant-plus fo-giant-plus-bl">+</span>
+            <span className="fo-giant-plus fo-giant-plus-br">+</span>
+          </div>
+          <ConsentBanner />
         </div>
 
         {/* ── the © bar + the policy row — one ruled line (R321 §A2):
@@ -337,9 +291,10 @@ export function Footer({ year }: { year: number }) {
           <div className="fo-legal-l">
             <p className="fo-legal-p">
               <span className="fo-mono">© {year} أُلارا</span>
-              {' '}— منصّة مستقلّة · عربية أولًا · بيانات العرض اصطناعية بالكامل —{' '}
-              {/* r341 (t05 · SPA links): the © line's /about door rides
-                  the router too (same class, same visible text). */}
+              {' '}— منصّة مستقلّة · عربية أولًا —{' '}
+              {/* r363 — the display-data note is verbatim in col1's
+                  independence paragraph above (the honest dedupe); the
+                  © line carries the identity + the one door */}
               <Link className="fo-legal-a" to="/about">
                 عن المنصّة
               </Link>
