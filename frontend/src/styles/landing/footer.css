@@ -285,17 +285,20 @@ footer.fo-footer {
   transition: color var(--t-fast) var(--ease);
 }
 .fo-link:hover { color: var(--accent); }
-/* r363 — THE UNDERLINE DRAW (the owner's ruling): a 1px signal hairline
-   sweeps in from inline-start on HOVER. The RTL row draws right →
-   left (transform-origin rides the inline-start edge); the sweep
-   rides the motion tokens only. Keyboard focus does NOT draw the
-   underline — the r172a/r190 family law: visibility on focus is the
-   universal base.css ring, never a landing-private :focus-visible
-   language. */
-.fo-link::after {
+/* r363 — THE UNDERLINE DRAW (the owner's ruling), one shared rule for every
+   footer link family (the draw geometry: a 1px signal hairline sweeping
+   inline-start → end on hover; the per-family seat only overrides the inline
+   inset — one rule, no duplicated blocks). The RTL row draws right → left
+   (transform-origin rides the inline-start edge); the sweep rides the motion
+   tokens only. Keyboard focus does NOT draw the underline — the r172a/r190
+   family law: visibility on focus is the universal base.css ring, never a
+   landing-private :focus-visible language. */
+.fo-link::after,
+.fo-legal-link::after,
+.fo-legal-a::after {
   content: '';
   position: absolute;
-  inset-inline: var(--sp-3);
+  inset-inline: var(--sp-2-5);
   inset-block-end: 0.25rem;  /* clear of the Arabic descender ink */
   block-size: 1px;
   background: var(--accent);
@@ -303,6 +306,8 @@ footer.fo-footer {
   transform-origin: 100% 50%;  /* RTL inline-start = the right edge */
   transition: transform var(--t-fast) var(--ease-out);
 }
+/* the link-row doors ride their own inline padding — the draw matches it */
+.fo-link::after { inset-inline: var(--sp-3); }
 @media (hover: hover) and (pointer: fine) {
   .fo-link:hover::after {
     transform: scaleX(1);
@@ -424,21 +429,9 @@ footer.fo-footer {
   transition: color var(--t-fast) var(--ease);
 }
 .fo-legal-link:hover { color: var(--accent); }
-/* r363 — the underline draw rides the © row's policy doors too (the
-   ruling's hover treatment; same 1px signal sweep — hover only, the
-   family's zero-:focus-visible law holds) */
-.fo-legal-link::after,
-.fo-legal-a::after {
-  content: '';
-  position: absolute;
-  inset-inline: var(--sp-2-5);
-  inset-block-end: 0.25rem;
-  block-size: 1px;
-  background: var(--accent);
-  transform: scaleX(0);
-  transform-origin: 100% 50%;  /* RTL inline-start = the right edge */
-  transition: transform var(--t-fast) var(--ease-out);
-}
+/* r363 — the underline draw rides the © row's policy doors too: the
+   shared draw rule above carries the geometry; the hover arms below
+   cover every footer link family. */
 @media (hover: hover) and (pointer: fine) {
   .fo-legal-link:hover::after,
   .fo-legal-a:hover::after {
