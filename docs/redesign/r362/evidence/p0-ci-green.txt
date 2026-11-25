@@ -1,0 +1,37 @@
+r362 — CI on main is GREEN (acceptance A)
+
+run: https://github.com/ahmadmedo1012/ulara/actions/runs/45554373509
+commit: 8ba33a9 (docs only; code head 0f8d9a0)
+verdict: completed success
+
+jobs:
+  E2E (hermetic browser journeys): success
+  Design gates (icons + motion + colors + raw-css type/radius/spacing + parity + CSP): success
+  Lint (eslint, src trees): success
+  DB integration (transactions + locks, disposable Postgres): success
+  Test (backend): success
+  Test (frontend): success
+  Surface drift: success
+  Typecheck (src + tests): success
+  E2E iOS (real WebKit, iPhone 13): success
+  Build (DB-free): success
+  Zero-trace (retired identities): success
+
+Context — the r361 red gate was 'Surface drift':
+  [/auth/register | light | rtl | 1280] FCP 584ms vs baseline 68ms (758.8% over)
+  Fixed as a measurement fault: BudgetTable/DEFAULT_BUDGET gained fcpMinLimitMs 600,
+  effective limit = max(baseline x ratio, 600). 68ms x 4 = 272ms was unreachable on CI
+  because the CI cell's first paint carries the bundle+theme work; local distribution is
+  28-172ms across all 72 cells. drift.test.ts gained the floor case (22 tests pass),
+  typecheck:tests clean. Commits c6f2a58, 0b3c15a.
+  Surface drift now reports success on this run.
+
+First E2E attempt on this commit had 3 failures (246 passed / 3 failed / 27 skipped):
+  r305-shell-ds:285 active-nav + scroll restore
+  r309-recovery:106 hero drag callout overlap
+  r309-recovery:320 reveal persists after drag (.hro-station.is-open === 0)
+All three pass locally at the same commit with --retries=0:
+  r309-recovery 22/22 passed (16.9s)
+  r305-shell-ds 29/29 passed (24.2s)
+Re-running only the failed job on the same commit: SUCCESS.
+  => CI-runner flake (drag/timing on a slower runner), not a regression.

@@ -144,6 +144,15 @@ app pass. Every DONE line has a command output or an image in `evidence/`.
   readings came from looking at the same cell in a browser rather than trusting the
   number.
 
+- **P0a closed — CI on `main` is GREEN.** Run
+  [45554373509](https://github.com/ahmadmedo1012/ulara/actions/runs/45554373509) at
+  `8ba33a9` (code head `0f8d9a0`): **11/11 jobs success**, including `Surface drift`
+  (the r361 red gate) and `E2E (hermetic browser journeys)`. The first E2E attempt had
+  246 passed / 3 failed; all three fail locally? **no** — they pass at the same commit
+  (`r309-recovery` 22/22, `r305-shell-ds` 29/29 with `--retries=0`), and re-running only
+  the failed job succeeded, so it was CI-runner flake, not a regression.
+  [Evidence](evidence/p0-ci-green.txt).
+
 - **Final report:** [REPORT.ar.md](REPORT.ar.md) — every item above with its evidence,
   plus the honest list of what is still open (24 h soak, 200 % device re-capture on the
   rebuilt APK, P2.3–P2.5, P3, P4, P6).
