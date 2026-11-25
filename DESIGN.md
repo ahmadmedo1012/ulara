@@ -9,8 +9,7 @@
 > Full measured evidence: the retired r305 reference spec (purged with the match program) ·
 > the R306 exclusivity decisions + rebuild plan: the retired r306 exclusivity spec.
 > Historical eras (Orbit Ink, Superlist/OPTIKKA, ultramarine, the editorial poster) are
-> The design history is retired with the archived eras — the canon in THIS file is the only truth.
-> instructions.
+> retired with the archived eras — the canon in THIS file is the only truth.
 
 ---
 
