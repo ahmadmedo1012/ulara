@@ -162,17 +162,36 @@ self-declared GAP-3) — header hide/show unverifiable (capture), menu-open unve
   read at rest") is confirmed as what the code actually renders.
 - **Delta table:** shape square↔circle; rest visibility always-on↔hidden; size ~2×;
   colour blue↔orange signal; grow-on-hover absent↔present. All five properties diverge.
-- **Capture limits:** no ulara frame parks the glyph ON a link or button (f007 is beside
+- **Capture limits (historical):** no ulara frame parked the glyph ON a link or button (f007 is beside
   the CTA), and no refsite interactive-hover still isolates the grown glyph unambiguously
-  (the hero-hover square may be art decoration) — grow behaviour is CSS-declared, not
-  still-proven.
+  (the hero-hover square may be art decoration) — grow behaviour was CSS-declared, not
+  still-proven. **Superseded by the re-shoot round (§6): the cursor was rebuilt and
+  re-shot; the verdict below replaces the retired GAP.**
 
-**VERDICT: GAP** — identity-level mismatch (shape + rest visibility + size + behaviour).
-Fix: `SheetCursor.tsx` + `styles/landing/cursor.css` — swap the square for a
-`0.6rem` circle, `opacity: 0` at rest, `transition: all .4s`, grow on
-interactive-hover (link/button/text-input seats), keep the velocity trail and the
-touch `display:none`; correct the stale telemetry comment (`SheetCursor.tsx:14–31`)
-to match the measured truth first.
+**VERDICT: GAP CLOSED (re-shot r363, commit 3729d5d)** — the rebuild adopts the dot
+grammar and the rebuilt sheet (`p2-cursor-1440.webp`, 2-col state|ulara) verifies it
+live at 1440 light, pixel-measured:
+
+- **rest / plain ground:** the dot is INVISIBLE — computed `opacity: 0`, `scale: 1`,
+  `data-on="off"` at a parked fine-pointer seat over empty paper (sheet row 1 shows
+  nothing but the paper — the [STILL-PIN] behaviour now holds on OUR side too).
+- **over plain text:** still hidden (`opacity 0`) — the dot lights on INTERACTIVE seats
+  only, never on copy.
+- **link hover:** the dot appears + grows MID-FLIGHT (clip-burst frame at ~160ms shows
+  the disc partial — computed `scale ≈2.11`, `opacity ≈0.79` inside the 320ms reveal;
+  the sampler ladder reads scale 1 → 1.58 @91ms → 2.11 @150ms → 2.37 @240ms → 2.4) and
+  settles **round, accent, `scale 2.4`** (5px → 12px disc, `border-radius: 50%`).
+- **button hover:** the same grammar on a `<button>` seat (mid + settled frames).
+- **press:** `mouse.down` on the link produces NO press state — `scale` stays `2.4`
+  (the extraction records no press state; we implement none).
+- **ADAPT lines still correct (kept, no action):** (a) the ground colour is OUR ONE
+  SIGNAL (royal blue `rgb(37,64,217)`), not the refsite orange — the owner-ruled
+  one-signal swap; (b) the NATIVE CURSOR IS NOT HIDDEN — computed `cursor` reads
+  `auto` on body/landing and `pointer` on link/button while the dot layer is live
+  (zero `cursor:none` outside the preloader/hero-zone seats — same law as the
+  refsite extraction); (c) the two house-law-forced deviations stay documented
+  (`--t-fast` 320ms instead of the banned `transition: all .4s`; `scale 2.4` as the
+  documented inference where the refsite bundle is unreadable).
 
 ---
 
@@ -221,3 +240,86 @@ colour roll/persistent-underline language replaced by the ruled scaleX draw; upp
 mono Latin labels mapped to Arabic body face + mono micro-labels; orange→blue signal
 swap; REJECT as bare text (R23); mobile 3-line wrap (anti-column law); band order
 re-authoring on mobile.
+
+---
+
+## 6. Re-shoot round (r363 — capture agent P2-RESHOOT)
+
+The five capture defects listed in §0 are closed this round. New frames live under
+`/home/z/art/reshoot/` (outside the repo); the repo carries the three REBUILT/NEW
+sheets: `p2-cursor-1440.webp` (REPLACES the stale square/ring sheet — §4 verdict
+rewritten above), `p2-footer-1440-light.webp` (REBUILT: wipe pair / settled band /
+hover draw / header hide), and `p2-menu-390.webp` (NEW — the corpus is now FIVE
+`.webp` sheets). All ≤1.2MB webp q78. §0's corpus-health bullets and the hover
+failure findings are SUPERSEDED for footer/hover/cursor/header-hide by this round;
+everything else in §0–§5 stands. Zero-trace held: no external site named anywhere.
+
+Provenance note: a parallel P3/r363 pass (the `.reg-cross` primitive) landed in the
+working tree mid-round (the wordmark's corner `+` seats swapped from DOM-text spans
+to the primitive between this round's runs) — it touches no motion law arbitrated
+here; the corpus's older/newer frames may differ on that cosmetic mark only.
+
+**A. Footer armed @1440 light — the skyline wipe captured mid-flight.** The descent
+ran on real wheel deltas (38 wheels, 0 JS nudges) with the burst rolling; a second
+staged pass parked the page (strip box fully in-viewport, top ≈747) so the flip plays
+on camera at a fixed position. The reveal engine's own machinery fired it
+(`.fo-fstrip` gains `.in-view` → `.fo-strip-media` un-wipes, 120ms delay + 1100ms
+bottom-up clip). **Measured:** computed `clip-path` sampled at ~40ms —
+`inset(100% 0 0)` → `94.8%` → `76%` → `64.5%` → `54%` → `40.6%` → `33.2%` →
+`24.2%` → `19.5%` → `9%` → `inset(0px)` across the 1220ms window. Sheet row 1 holds
+the mid-flight pair (inset 64.5% / 40.6% frames — the strip's bottom band painted,
+top still clipped) + the settled strip.
+
+**E (R20 arbitration): the skyline PAINTS.** The settled band is NOT blank paper —
+ink measurement inside the strip box: 30,260 px darker than the paper threshold
+(14.2% of the band), `img.complete=true`, natural 1440×384, final `clip-path:
+inset(0px)`, grain + outline art visible in the sheet. Audit R20's static claim
+("armed clip never releases") is CONTRADICTED by armed-mode capture twice this
+round: the r363 late-mount seam in `src/lib/reveals.ts` guarantees the arm →
+release pair for lazily-mounted sections. R20 CLOSED.
+
+**A. Hover underline draw — measured (GAP-6 closed).** Each of the four
+`.fo-linkrow` doors was hovered with immediate (~60/130/200ms) and settled (560ms)
+frames plus a 25ms computed sampler of the `::after` transform. On link 1:
+`scaleX 0` at 125ms → **0.413 @150ms** → 0.575 @175ms → 0.792 @200ms → 0.934 @250ms
+→ 1.0 settled — the draw runs right→left (transform-origin 100% 50%, the RTL
+inline-start), 320ms token. **Pixel diff** (link crop, rest vs mid @~130ms): max
+channel Δ 205, **72 px** changed >8Δ (vs 216 px changed for the settled draw) —
+the mid-flight frame pixel-DIFFERS from rest; the old byte-identical failure is
+gone. All four doors verified (settled `::after` = `matrix(1,0,0,1,0,0)`).
+
+**B. Header hidden @1440 — behavior verified live.** Wheel down 5×300px (pointer
+clear of the bar): the state machine latches `on-hide` past 5×bar (bar ≈64.64px) +
+100ms debounce — note the smooth engine's scroll-event tail re-arms the debounce,
+so the latch lands ~0.5–1s after the last wheel, not at the nominal 100ms. Paint:
+`.fo-header-inner` → `matrix(1,0,0,1,0,-64.64)` = the declared `translateY(-101%)`
+on `.4s ease` (class + transform both recorded). One wheel up: `on-hide` removed
+immediately (no debounce on show), transform `none`, bar back. Hidden + revealed
+frames sit in sheet row 4. The header hide is no longer "untestable" (§3 row 2).
+
+**C. Menu @390×844 — captured.** `.fo-burger` click → panel mounts + `.is-open`
+lands two frames later; burst across the wipe + label ladder (20 frames), settled
+state: `aria-expanded=true`, panel h 490, 7 ruled rows, then **Escape-close from
+anywhere** verified (document-level listener): `.is-open` removed, exit clip plays
+while the DOM lingers 420ms, then unmounts (rows → 0). Sheet `p2-menu-390.webp`
+holds wipe-mid / ladder-mid / settled / closed (2×2).
+
+**D. Cursor — see §4.** Dot grammar verified per state with computed-style probes
+(rest/hidden `opacity 0 scale 1`; link/button mid+settled `scale 2.4 opacity 1`;
+pressed unchanged) and the native-cursor computed proof (`auto`/`auto`/`pointer`/
+`pointer` — never hidden). The stale square/ring sheet is REPLACED.
+
+**Still open (unchanged by this round):** GAP-2 wordmark scale (owner arbitration
+owed), GAP-3 desktop labelled-trigger register, GAP-4 construction ornaments,
+GAP-5 mid-band density, and the refsite-side capture folders (§0) which remain
+empty/mislabeled — the refsite side still cites the committed r350 extraction
+stills, by design.
+
+**Post-round note (GAP-2 CLOSED):** the wordmark scale landed on main in
+`ab0e18c` — measured on the live page: font 266.4px, glyph ≈253px, band 271px
+(the reference's band ≈230px letter / ~280px band at 1440); the fluid root
+(8.33px) made the old rem cap bind at 158px — the ride is 18.5vw with a
+32rem cap now. Evidence: `p2-wordmark-1440.webp`. Remaining open items:
+GAP-3 (desktop labelled trigger — owner call), GAP-4 (construction
+ornaments — P3), GAP-5 (mid-band density — owner call), refsite-side
+capture folders (by design).
