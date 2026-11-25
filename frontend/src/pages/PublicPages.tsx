@@ -10,13 +10,14 @@
  * surface, and the contact page invents NO channel — the early-access
  * register form IS the channel today, stated plainly.
  */
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Icon } from '../components/Icon';
 import { Logo } from '../brand';
 import { GuestSheetChrome } from '../components/layout/GuestSheetChrome';
 import {
+  CodeRun,
   LegalCell,
   LegalSectionBar,
   LegalSheet,
@@ -373,6 +374,17 @@ export function ContactPage() {
     description: 'قناة التواصل المتاحة مع منصّة أُلارا — التسجيل المبكر، بلا بريد ولا هواتف مخترعة.',
   });
 
+  /* P2-CONTACT — the footer's early-access form hands the typed
+   * address over here as ?email= (Footer.tsx's subscribe door). This
+   * page has NO form of its own — the standing truth below is that the
+   * register form IS the channel — so the address is surfaced in the
+   * channel cell (never silently dropped), in the page's own honest
+   * voice: the lg-p prose seat + CodeRun's bidi-isolated LTR run (the
+   * R319 mono-run contract — the Arabic sentence's flow is never
+   * punctured). No param → nothing renders; no motion, no new seats. */
+  const [params] = useSearchParams();
+  const email = params.get('email')?.trim() ?? '';
+
   return (
     <LegalSheet
       title="التواصل والتسجيل المبكر"
@@ -381,6 +393,12 @@ export function ContactPage() {
     >
       <LegalSectionBar index={1} title="القناة المتاحة" id="contact-channel" />
       <LegalCell>
+        {email ? (
+          <p className="lg-p">
+            وصلنا بريدك من نموذج التسجيل المبكر — <CodeRun>{email}</CodeRun> —
+            وما يصل عبر هذه القناة هو ما يقرؤه المشغّل.
+          </p>
+        ) : null}
         <p className="lg-p">
           التسجيل المبكر من صفحة البداية هو قناة التواصل المتاحة حاليًا — لا بريد عام في
           مرحلة الإطلاق. اطلب من

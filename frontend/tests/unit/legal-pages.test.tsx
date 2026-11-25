@@ -22,6 +22,8 @@
  *     cell, the register×2 + login ConsentLine mounts, the banner
  *     retarget, the 9 App routes, the /legal Lenis exclusion, the
  *     index.html links);
+ *   · the /contact?email arrival notice (P2-CONTACT): the footer's
+ *     early-access hand-off surfaces the typed address, never drops it;
  *   · the static identity (robots/sitemap/manifest + the PNG icons'
  *     exact IHDR sizes);
  *   · the CSS contracts (tokens-only, hover-guard, print block,
@@ -87,6 +89,17 @@ function renderPage(Component: () => JSX.Element) {
   return render(
     <MemoryRouter>
       <Component />
+    </MemoryRouter>,
+  );
+}
+
+/* P2-CONTACT — the footer's early-access door hands the typed address
+ * over as /contact?email=…; render the sheet AT that URL the way the
+ * navigation really lands on it. */
+function renderContactAt(search: string) {
+  return render(
+    <MemoryRouter initialEntries={[`/contact${search}`]}>
+      <ContactPage />
     </MemoryRouter>,
   );
 }
@@ -431,6 +444,28 @@ describe('R320 §D — the real facts (every sentence from real code)', () => {
     expect(document.querySelector('a[href^="mailto:"]')).toBeNull();
     expect(document.querySelector('a[href^="tel:"]')).toBeNull();
     expect(text).not.toMatch(/@[a-z]+\.(com|net|org)/i);
+  });
+
+  it('P2-CONTACT: /contact?email= surfaces the typed address — the footer hand-off is never silently dropped', () => {
+    renderContactAt('?email=sami%40university.edu');
+    // the arrival notice rides the channel cell, in the page's own voice
+    expect(screen.getByText(/وصلنا بريدك من نموذج التسجيل المبكر/)).toBeTruthy();
+    // the address itself renders as the bidi-isolated LTR mono run (the
+    // R319 contract — the Arabic sentence's flow is never punctured)
+    const run = screen.getByText('sami@university.edu');
+    expect(run).toHaveAttribute('dir', 'ltr');
+    expect(run).toHaveClass('lg-code', 'lg-mono');
+  });
+
+  it('P2-CONTACT: no ?email param → no notice — the standing sheet is unchanged', () => {
+    renderContactAt('');
+    expect(screen.queryByText(/وصلنا بريدك من نموذج التسجيل المبكر/)).toBeNull();
+    expect(document.body.textContent).toContain('التسجيل المبكر من صفحة البداية');
+  });
+
+  it('P2-CONTACT: a whitespace-only param is not an arrival — no notice renders', () => {
+    renderContactAt(`?email=${encodeURIComponent('   ')}`);
+    expect(screen.queryByText(/وصلنا بريدك من نموذج التسجيل المبكر/)).toBeNull();
   });
 
   it('NO certification CLAIMS anywhere (the banned-phrase sweep over the public chunk)', () => {
