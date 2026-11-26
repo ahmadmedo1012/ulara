@@ -276,3 +276,6 @@ Hero, statement, values, chapters line, journey stages, platform plan and roles 
 
 ## Slice 08 accordion restyle
 Desktop role rows are now light rule rows (1.8rem title, hairline between, tight padding, 4rem inset), same control. Verified light+dark capture. Still unlike the reference: the list sits right of two art plates rather than on bare ground. Status: FAILING.
+
+## Slice 08 composition
+Desktop plan strip: first/last plate now 78% of the half, checked plate 46%, so one dominant plan owns the left half like the reference picture. Accordion kept as the slide control (clickable/keyboard rows). Still: line art vs the reference photo-collage. Status: FAILING.

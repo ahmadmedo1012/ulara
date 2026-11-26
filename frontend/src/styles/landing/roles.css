@@ -692,3 +692,11 @@
   }
   .rl-group { padding-inline-start: 4rem; }
 }
+
+/* r368 slice 08 — desktop: the reference's left half is one dominant picture. The plan plates grow so the
+   art owns the half (first and last plate large, the checked plate nested between). Reason: appearance twin. */
+@media (min-width: 992px) {
+  .rl-section > .plan-strip .plan-plate:nth-child(1),
+  .rl-section > .plan-strip .plan-plate:nth-child(3) { inline-size: 78%; }
+  .rl-section > .plan-strip .plan-plate:nth-child(2) { inline-size: 46%; }
+}
