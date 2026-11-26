@@ -674,3 +674,17 @@
   }
   .pm-item-titlebox { margin-block-end: 1.6rem; }
 }
+
+/* r368 slice 05 round 2 — the reference's statement is ONE line in an empty ruled field, with a dashed tick row under the
+ * top rule and a registration cross in each upper corner. Desktop only; DOM and tests untouched. */
+@media (min-width: 992px) {
+  .pm-inner > .pm-head { position: relative; }
+  .pm-inner > .pm-head .pm-title { font-size: clamp(2.8rem, 4.3vw, 6.2rem); max-inline-size: none; white-space: nowrap; }
+  .pm-inner > .pm-head::before {
+    content: ''; position: absolute; inset-inline: 0; inset-block-start: 1.4rem; block-size: 1px; pointer-events: none;
+    background-image: linear-gradient(to right, var(--rule-strong) 0 6px, transparent 6px 12px); background-size: 12px 1px; opacity: .7;
+  }
+  .pm-inner > .pm-head::after {
+    content: '+'; position: absolute; inset-inline-start: 0.9rem; inset-block-start: 2.1rem; font: 300 22px/1 var(--font-mono, monospace); color: var(--text-muted, currentColor); pointer-events: none;
+  }
+}
