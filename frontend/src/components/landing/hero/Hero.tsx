@@ -57,9 +57,9 @@ const STATIONS_MOBILE: Record<string, { x: number; y: number }> = {
    * re-stage of the entrance bay: glass field upper 2/3, stairs lower
    * third), every marker's center ON a drawing feature while its
    * callout tag's arm stays inside the box at 360. */
-  'C-01': { x: 48, y: 49 },   /* center on the upper glass field */
-  'E-02': { x: 66, y: 66 },   /* center on the left stair run */
-  'R-03': { x: 24, y: 52 },   /* center on the right glass field */
+  'C-01': { x: 44, y: 47 },   /* center on the upper glass field */
+  'E-02': { x: 63, y: 61 },   /* center on the left stair run */
+  'R-03': { x: 24, y: 50 },   /* center on the right glass field */
   /* r367: 85 → 80 — in RTL the physical `translate: -50%` shifts the
    * marker's box a further half-width past the mirrored anchor, so the
    * effective center rides (100−x)% − 44px; at 85 the marker's left

@@ -245,3 +245,6 @@ Glass now has a dark interior, floor plates, furniture silhouettes and light str
 
 ## Mobile hero art size (390)
 Measured the drawing at 59% of the phone width vs the reference 65%, and the old mobile crop clipped the right tree. The mobile svg now comes from the same generator (--mobile, wider crop, 41KB gzip) and the box is 82%. Whole drawing visible; one station square still sits below the art (seat fractions pinned to the old crop). Scroll re-measured on the production build: median 33ms, 24 frames >50ms, long tasks 1.6s (unchanged). Status: FAILING.
+
+## Mobile station seats and cookie strip
+Mobile seats re-pinned to the new crop (all on drawing features; hero station tests pass). Cookie strip widened to 596px with a heavy under-edge, matching the reference proportions at 1440. Its button order and the strip sitting over the headline at 1440x1000 still differ. Status: FAILING.

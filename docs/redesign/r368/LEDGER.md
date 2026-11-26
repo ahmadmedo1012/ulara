@@ -118,3 +118,4 @@ NEXT: more
 - hero elevation: richer procedural generator (joints, hatching, stepped massing, plus marks), desktop svg only. NEXT: denser trees, glass depth, mobile art size.
 - hero elevation: glass depth + denser trees (41KB gzip). NEXT: mobile hero art size.
 - hero mobile: art from generator --mobile, 82% box; scroll perf unchanged. NEXT: station seats on mobile, footer cookie strip.
+- hero mobile station seats; cookie strip 596px + under-edge. NEXT: inner-page ruled tables.

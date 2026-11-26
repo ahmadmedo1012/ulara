@@ -554,7 +554,8 @@
 /* r368 — desktop strip proportions: one short row, compact buttons, like the reference. */
 @media (min-width: 900px) {
   .cb-banner.cb-banner {
-    inline-size: min(500px, 100%);
+    inline-size: min(596px, 100%); /* measured 290/700 of the reference sheet at 1440 */
+    box-shadow: 0 4px 0 var(--text); /* the reference's heavy under-edge */
     padding-block: 6px;
     padding-inline: 10px;
     flex-wrap: nowrap;
