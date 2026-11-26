@@ -813,3 +813,41 @@ is hermetically skipped for the recording (the subject is scroll feel,
 not the entrance) and the window itself scrolls (the D6 owner
 decision). No scrolljacking anywhere: RM collapses everything to
 static, and an authenticated route never feels the engine.
+
+---
+
+## r365 — the authenticated product twin (what is now true)
+
+r365 worked the LOGGED-IN product (student, teacher, admin, quality, owner, the
+institutional workspace, the shared shell): every page against the reference's
+product grammar — the table anatomy, the KPI band of huge numerals with flat delta
+flags, mono captions, dark info cards, plan backdrops — with royal blue playing the
+accent role. What changed, as shipped:
+
+- **The flat delta flag** joined the KPI band: `KpiItem.deltaDir ('up'|'down'|'flat')`
+  renders one solid triangle before the delta caption, tone ink, inline-start. Flags
+  ride REAL directions only — a state caption never wears one. `KpiItem.value`
+  accepts ReactNode so pages can ride `CountIn` inside a cell.
+- **The student dashboard's momentum strip rides the KPI-band register** (huge
+  numerals, hairline cells, flags); its pending mirror holds the same `.sg-kpis`
+  grid so the handoff moves nothing (the r172b loading-closure law, re-pinned).
+- **Three lost anatomies were restored** (an upstream publish had kept the class
+  names but dropped the rule bodies): the teacher risk rows (`.risk-*`, ds-core §E),
+  the quality oversight rows (`qlt-*`, patterns.css §3), the exam-authoring surfaces
+  (`exa-*`, ds-core §B) and the owner feedback inbox (`.fb-*`, owner.css) — all in
+  the house recipes: logical properties, hairlines, tokens, no shadows.
+- **Dense pages re-seated on the sheet register**: loading mirrors match the resolved
+  anatomy (band mirrors on `.sg-kpis`, framed `SheetSection` mirrors), error states
+  ride the framed register with retry, statuses wear the flat `.sg-flag` ramp (the
+  `warning` member added), codes/decisions take `mono: true` DataSheet columns,
+  numerals ride `formatInt`/`bdi`/`font-mono`, paginated registers carry
+  `TablePaginationFooter` with counted-noun units.
+- **The exam runner's chrome** went flat: bracket-index navigator cells, mono timer,
+  `sg-flag` autosave states — behaviour untouched.
+- **The institutional workspace sheets** (people/organization/positions/access/
+  councils/programs/training/students) carry `DataSheet` registers, scope-gated KPI
+  bands and the shared state kit; honest-empty stays the law for pending data.
+
+The evidence (side-by-side sheets + written critiques) and the per-wave ledger live in
+`docs/redesign/r365/` — the capture harness (`frontend/tests/e2e/r365-capture.e2e.ts`)
+is opt-in (`R365_CAPTURE=1`) and never rides CI.
