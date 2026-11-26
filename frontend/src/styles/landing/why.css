@@ -1166,3 +1166,9 @@
   .wy-tag b { font-weight: 600; font-size: 13px; letter-spacing: 0; }
   .wy-tag-b { inset-block-start: 42%; inset-inline-start: 38%; }
 }
+
+/* r368 slice 07: raster plate renders have a white ground; multiply sinks it into the paper, dark inverts + screens. Desktop stage only. */
+@media (min-width: 992px) {
+  .wy-plates .plan-plate-art { mix-blend-mode: multiply; }
+  [data-theme="dark"] .wy-plates .plan-plate-art { mix-blend-mode: screen; }
+}

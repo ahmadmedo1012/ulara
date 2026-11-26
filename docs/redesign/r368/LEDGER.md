@@ -152,3 +152,4 @@ NEXT: origin/main sync ~9:50pm; remaining gaps 06 layout, hero photo look, no-co
 - r368 hero v2: stepped massing, lighter fins, thin trunks, stations re-pinned (mirrored raster coords)
 - r368 perf (after hero v2, 10:35): p50 16.7ms, 8 frames >50ms, longtasks 0.58s (mobile unchanged/better). NEXT: Blender iso plates for 06/07 (same scripts/art/blender pipeline), then CTA/registry weight
 - r368 06 plates: Blender iso massing renders (plate.py) replace the svg plan plates on the platform layer (desktop), multiply/screen blend, light+dark verified; NEXT: 07 plates (.wy-plates still svg plans), registry strip weight
+- r368 07 plates: campus/admin/lab Blender renders via PlanPlate src override; 06 aux plates eager-loaded (no late pop-in). light+dark verified. NEXT: registry strip weight, remaining no-reference slices

@@ -39,6 +39,7 @@ export function PlanPlate({
   date = '2026',
   rev = 'A',
   className,
+  src,
 }: {
   plan: PlanId;
   title: string;
@@ -46,10 +47,12 @@ export function PlanPlate({
   date?: string;
   rev?: string;
   className?: string;
+  /* r368: optional raster override (additive) — the Blender plate renders */
+  src?: string;
 }) {
   return (
     <figure className={`plan-plate ${className ?? ''}`}>
-      <img className="plan-plate-art" src={PLAN_SRCS[plan]} alt={title} loading="lazy" decoding="async" />
+      <img className="plan-plate-art" src={src ?? PLAN_SRCS[plan]} alt={title} loading="lazy" decoding="async" />
       <figcaption className="plan-titlebar">
         <span className="plan-title">{title}</span>
         <span className="plan-spec fo-mono" dir="ltr">

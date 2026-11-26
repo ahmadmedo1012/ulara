@@ -1019,7 +1019,7 @@ export function IsoJourneyScene() {
                 ))}
                 {PLAT_AUX_SRCS.map((src, k) => (
                   <span key={k} className={`jt-plat-aux jt-plat-aux-${k + 1}`}>
-                    <img src={src} alt="" loading="lazy" decoding="async" />
+                    <img src={src} alt="" loading="eager" decoding="async" />
                     <span className="jt-plat-tag fo-mono" dir="ltr">{k === 0 ? 'ULR · 1012.2' : 'ULR · 1020.2'}<b dir="rtl">{k === 0 ? 'سعة القاعة' : 'عرض الممر'}</b></span>
                   </span>
                 ))}

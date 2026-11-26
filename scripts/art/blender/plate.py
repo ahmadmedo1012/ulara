@@ -47,6 +47,11 @@ elif kind=='campus':
 elif kind=='admin':
     room(-16,-8,16,16,2.8); room(1,-8,15,7,2.8); room(1,1,15,7,2.8)
     for i in range(5): box(-14,-3,-5+i*2.2,-4.5+i*2.2,0,.9,dk)
+elif kind=='lab':
+    room(-14,-9,28,18,2.6)
+    for i in range(3):
+        box(-11+i*8.5,-5+i*8.5,-4,2,0,1.0,dk); box(-10.5+i*8.5,-5.5+i*8.5,-3.5,1.5,1.0,1.1,conc)
+    box(-12,12,5,5.6,0,1.1,dk); room(-20,-3,6,6,2.6)
 bpy.ops.object.light_add(type='SUN'); s=bpy.context.object; s.rotation_euler=(math.radians(50),0,math.radians(-50)); s.data.energy=5; s.data.angle=math.radians(1.2)
 bpy.ops.object.camera_add(); c=bpy.context.object
 d=Vector((1,-1,.85)).normalized()*60; c.location=d; c.rotation_euler=(-d).to_track_quat('-Z','Y').to_euler()
