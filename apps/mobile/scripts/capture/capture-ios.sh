@@ -22,10 +22,23 @@ pick() {
     if xcrun simctl list devices available | grep -F "$d (" >/dev/null 2>&1; then echo "$d"; return; fi
   done
 }
-PHONE_SM="$(pick "iPhone SE (3rd generation)" "iPhone 13 mini" "iPhone 16 Pro" "iPhone 15")"
-PHONE_LG="$(pick "iPhone 16 Pro Max" "iPhone 15 Pro Max" "iPhone 16 Pro")"
-PAD="$(pick "iPad Pro 13-inch (M4)" "iPad Pro 12.9-inch (6th generation)" "iPad Pro (12.9-inch) (6th generation)" "iPad (10th generation)")"
+# r367: the macos-26 runner image retired the 15/16-era sims the r366 rig
+# listed first — run 45814989647's iOS leg matched NOTHING (0 pngs, the
+# `pick` fallthrough booted no device and every screenshot silently
+# no-opped). The SE-class/Pro Max-class/iPad candidates now span the
+# 2026 image's device catalogue (iPhone 16e/17 family, iPad Pro M4/M5);
+# the 15/16-era names stay first so older images keep their exact pick.
+PHONE_SM="$(pick "iPhone SE (3rd generation)" "iPhone 13 mini" "iPhone 16e" "iPhone 17 Pro" "iPhone 16 Pro" "iPhone 15")"
+PHONE_LG="$(pick "iPhone 17 Pro Max" "iPhone 16 Pro Max" "iPhone 15 Pro Max" "iPhone 16 Pro")"
+PAD="$(pick "iPad Pro 13-inch (M4)" "iPad Pro 13-inch (M5)" "iPad Pro 12.9-inch (6th generation)" "iPad Pro (12.9-inch) (6th generation)" "iPad Pro 11-inch (M4)" "iPad (10th generation)")"
 echo "sims: sm=$PHONE_SM lg=$PHONE_LG pad=$PAD"
+# the honest guard: an empty pick must FAIL the leg (a capture rig that
+# captures nothing is a red rig, not a green one — run 45814989647's lesson)
+if [ -z "${PHONE_SM:-}" ] || [ -z "${PHONE_LG:-}" ] || [ -z "${PAD:-}" ]; then
+  echo "::error::no matching simulator names — dump the catalogue:"
+  xcrun simctl list devices available
+  exit 1
+fi
 
 sweep() { # sweep <DEVICE_NAME> <ROLE> <TAG>
   local DEV="$1" ROLE="$2" TAG="$3"
