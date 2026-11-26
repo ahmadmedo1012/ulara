@@ -122,3 +122,6 @@ Added a centred ruled closing band (headline, one line, one button, corner coord
 
 ## Slice 21 footer round 2
 Added the use-case accordion (art plate left, ruled native-details list right) above the closing band: the reference closing section's structure now exists. Still wrong: art plate is the existing cantilever scene, not a reference-like flat massing with sun disc; type scale and spacing not measured. Status: FAILING.
+
+## Slice 06/07 platform phone round
+Dropped the plan chrome chips on phone (they overlapped the row copy). Still wrong: the plan thumbnail is tiny and the 2nd row's CTA label is clipped by it, rows are fixed-height grids stacked by explicit row numbers, the reference is a plain list of icon rows (a rebuild, not a patch). Status: FAILING.

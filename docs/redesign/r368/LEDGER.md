@@ -44,3 +44,4 @@ NEXT: platform grid to one tall plan cell + ledger rows; half-art/half-list role
 - cursor: SheetCursor already implements the measured dot model (opacity 0 at rest, grows on interactive hover, hidden on touch); no change, slice 10 verified by spec only (live reference blocked)
 - footer closing CTA band added (FAILING; NEXT: use-case accordion, merge main ~6PM)
 - footer use-case accordion + art plate (FAILING; NEXT: merge main, mobile platform/use-case rebuild)
+- phone platform: plan chrome chips dropped (FAILING; NEXT: icon-row rebuild of the phone platform list)

@@ -790,3 +790,8 @@ html[data-theme='dark'] .pr-section .pr-cta {
 /* r368 — ledger scale up to the reference's row rhythm (rows ~3.4rem taller, text 1.5rem) */
 .pr-ledger li { padding-block: 1.7rem; font-size: 1.5rem; }
 .pr-ledger li i { inline-size: 1.8rem; block-size: 1.8rem; }
+
+/* r368 — phone: the plan chrome chips (tag + demo label) overlap the row copy at this size; the plan itself stays. */
+@media (max-width: 767px) {
+  .pr-section .pr-rowimg .pr-frame-chrome { display: none; }
+}
