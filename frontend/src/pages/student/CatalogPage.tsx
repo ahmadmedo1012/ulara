@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import {
   Search, X, BookOpen, Info, ChevronRight, ChevronLeft,
 } from 'lucide-react';
-import { Card } from '../../components/primitives';
 import { EmptyState, ErrorState, Skeleton } from '../../components/primitives/States';
 import { PageFrame, PageHeader } from '../../components/patterns';
 /* R359 (A3 · final sweep) — the sheet grammar joins the §B2 kit: the
@@ -56,11 +55,13 @@ const CREDITS_UNIT: [string, string, string, string] = ['ساعة معتمدة �
 
 /** Shape-matched loading skeleton for the catalogue grid (the
  *  CourseGridSkeleton grammar from CoursesPage — thumb-card anatomy,
- *  never a bare spinner). */
+ *  never a bare spinner). r365: it mirrors the RESOLVED anatomy — one
+ *  skeleton thumb-card per CATALOG_PAGE_SIZE slot, so the pending
+ *  grid holds the same footprint the settled grid will. */
 function CatalogGridSkeleton() {
   return (
     <div className="grid-3" aria-busy="true" aria-live="polite">
-      {[0, 1, 2, 3, 4, 5].map((i) => (
+      {Array.from({ length: CATALOG_PAGE_SIZE }).map((_, i) => (
         <div className="thumb-card" key={i} aria-hidden>
           <div className="thumb-card-image">
             <Skeleton width={56} height={56} rounded="var(--r-lg)" />
@@ -195,10 +196,30 @@ export default function CatalogPage() {
         <span>التسجيل في المقرّرات يتم عبر مكتب المسجل العام — تواصل مع مؤسستك.</span>
       </div>
 
-      {/* Search bar — the LibraryPage GlobalSearch grammar: aria-label,
-          × clear while the field carries text. */}
-      <Card compact>
-        <div className={`topbar-search${q ? ' has-clear' : ''}`} style={{ width: '100%', maxWidth: 360 }}>
+      {/* R359 (final sweep) — the catalogue sheet: the framed region
+          [01] with the server's honest total (meta.total, never the
+          page array) as the head's quiet mono count. Loading, error,
+          the no-context gate and the empties all live INSIDE the body.
+          r365 — the search rides the §2 toolbar law: borderless and
+          attached to the sheet (the body's first child — the floating
+          Card wrapper above the sheet is retired), visible in every
+          state so a failed fetch never strands the field. */}
+      <SheetSection
+        index="01"
+        caption="INSTITUTION CATALOG"
+        title="مقرّرات المؤسسة"
+        aside={
+          !catalog.isPending && !catalog.isError && meta ? (
+            <BarCount
+              n={meta.total}
+              srLabel={countAr(meta.total, COURSE_UNIT)}
+            />
+          ) : undefined
+        }
+      >
+        {/* The sheet's own toolbar — the LibraryPage GlobalSearch
+            grammar: aria-label, × clear while the field carries text. */}
+        <div className={`topbar-search${q ? ' has-clear' : ''}`} style={{ maxWidth: 360, marginBlockEnd: 'var(--sp-4)' }}>
           <span className="topbar-search-icon"><Icon icon={Search} size={14} /></span>
           <input
             type="text"
@@ -218,25 +239,7 @@ export default function CatalogPage() {
             </button>
           )}
         </div>
-      </Card>
 
-      {/* R359 (final sweep) — the catalogue sheet: the framed region
-          [01] with the server's honest total (meta.total, never the
-          page array) as the head's quiet mono count. Loading, error,
-          the no-context gate and the empties all live INSIDE the body. */}
-      <SheetSection
-        index="01"
-        caption="INSTITUTION CATALOG"
-        title="مقرّرات المؤسسة"
-        aside={
-          !catalog.isPending && !catalog.isError && meta ? (
-            <BarCount
-              n={meta.total}
-              srLabel={countAr(meta.total, COURSE_UNIT)}
-            />
-          ) : undefined
-        }
-      >
         {catalog.isError ? (
           <ErrorState error={catalog.error} onRetry={() => catalog.refetch()} />
         ) : !institutionSlug ? (
