@@ -73,3 +73,14 @@ close PRs, zero-trace), final verify ×2.
   /api/v1/status buildId tracks main's HEAD and the db probe is ok. The
   deploy lane rides every push (the LCP fix's buildId landed mid-round).
   — DONE
+- **CI's late catches, cured** — (a) the Playwright 1.65 upgrade re-registered
+  `reducedMotion` as a BUILT-IN test option (the r305 re-registration tuple
+  stopped typechecking — TS2322): the standard spelling rides the built-in
+  now; (b) the quality-moderation e2e pinned the pre-r365 local header
+  classes (h1.page-title/.page-subtitle) — re-pinned to the shared patterns
+  PageHeader's grammar (h1.pf-page-title/.pf-page-desc) with the reason
+  inline; (c) the Vercel production deploy hit the FREE-TIER daily quota
+  (api-deployments-free-per-day, 100/day — today's many pushes spent it):
+  a quota, not a defect; production serves the last successful deploy and
+  the lane resumes at UTC midnight. OWNER-VISIBLE: the deploy cadence may
+  need the paid tier if push-frequency stays at this pace.

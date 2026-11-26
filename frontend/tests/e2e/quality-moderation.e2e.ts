@@ -62,8 +62,12 @@ test.describe('مراجعة قوالب الاختبارات', () => {
 
     await page.goto('/quality/exam-moderation');
     await expect(page).toHaveTitle('مراجعة الاختبارات · أُلارا');
-    await expect(page.locator('h1.page-title')).toHaveText('مراجعة الاختبارات');
-    await expect(page.locator('.page-subtitle')).toContainText('صلاحية حصرية لمكتب الجودة');
+    /* r367: the r365 sheet-grammar re-seat moved the header onto the ONE
+       shared patterns PageHeader — the h1's class is `pf-page-title` and
+       the description rides `.pf-page-desc` (the old .page-title /
+       .page-subtitle classes retired with the local header). */
+    await expect(page.locator('h1.pf-page-title')).toHaveText('مراجعة الاختبارات');
+    await expect(page.locator('.pf-page-desc')).toContainText('صلاحية حصرية لمكتب الجودة');
 
     /* المؤشّرات مشتقّة من الطابور نفسه: قالبان + 3 أسئلة بانتظار الفحص
      * (شريط المؤشّرات الطباعي — StatStrip بدل بطاقات الأيقونات). */

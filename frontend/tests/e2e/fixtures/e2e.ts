@@ -79,14 +79,12 @@ export const test = base.extend<E2eOptions>({
   e2eRole: ['guest', { option: true }],
   apiOverrides: [[], { option: true }],
   themeSeed: [null, { option: true }],
-  /* r305-A4 (integration review): the built-in `reducedMotion` context
-     option is NOT a registered fixture parameter in this @playwright/test
-     (the custom context fixture can't destructure it — "unknown
-     parameter"), so the option is re-registered here as an explicit
-     option fixture and forwarded into newContext below. Specs keep the
-     standard spelling `test.use({ reducedMotion: 'reduce' })`. */
-  reducedMotion: ['no-preference', { option: true }],
-
+  /* r305-A4 (integration review): the option is forwarded into
+     newContext below. NOTE r367: @playwright/test ≥1.65 registers
+     `reducedMotion` as a BUILT-IN test option (the old re-registration
+     tuple no longer typechecks — TS2322), so the standard spelling
+     `test.use({ reducedMotion: 'reduce' })` rides the built-in directly
+     and the context fixture destructures it unchanged. */
   context: async (
     { browser, e2eRole, apiOverrides, themeSeed, viewport, locale, colorScheme, reducedMotion },
     use,
