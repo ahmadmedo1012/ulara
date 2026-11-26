@@ -2028,3 +2028,9 @@ section.chapters {
   .jt[data-wash='library'] .jt-platform img.jt-plat-img-3,
   .jt[data-wash='mastery'] .jt-platform img.jt-plat-img-3 { opacity: 1 !important; }
 }
+
+/* r368 phone — the decorative agent status pill painted over the assembly title ("المنظومة تتجمع") at 390 wide.
+   It is aria-hidden furniture and the reference's phone frame has none. Hidden up to 767px. Reason: overlap defect + appearance twin. */
+@media (max-width: 767px) {
+  .jt-agent-status { display: none; }
+}
