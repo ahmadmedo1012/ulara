@@ -44,7 +44,7 @@ const VW = {
  *  subtree owns the hit-test at the press point. */
 async function waitForHeroPointer(page: import('@playwright/test').Page, xf: number, yf: number) {
   await page.waitForFunction(
-    ([fx, fy]) => {
+    ([fx, fy]: [number, number]) => {
       const st = document.querySelector('.hro-stage');
       if (!st) return false;
       const r = st.getBoundingClientRect();

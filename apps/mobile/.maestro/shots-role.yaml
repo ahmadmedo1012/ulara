@@ -34,12 +34,32 @@ appId: ly.ulara.app
 - tapOn:
     id: "login-password"
 - inputText: "${PASSWORD}"
+# r367: the capture rig's cold legs lost the submit tap (run
+# 45835244276: «دخول» not found for EVERY role — the fresh boot's IME
+# never rose after the password input, so the KeyboardStickyView bar
+# never offset in and the inline resting button sat below the demo
+# ladder's fold). The tap now rides the smoke flow's proven sequence
+# PLUS the settled-form fallback: dismiss the IME (no-op when it never
+# opened), scroll the resting submit into view (exact-word regex — the
+# smoke flow's own anti-collision spelling so the taps can never land
+# on the «تسجيل الدخول» heading), tap it. Every fallback is optional:
+# when the sticky bar DID mount, the first tap already fired and the
+# rest are settled no-ops.
 - tapOn:
     text: "دخول"
-# r359 A4: the R336-E submit-race retry (a settled no-op when the first
-# tap fired; the retry when it was swallowed).
 - tapOn:
     text: "دخول"
+    optional: true
+- hideKeyboard:
+    optional: true
+- scrollUntilVisible:
+    element:
+      textMatches: "^دخول$"
+    direction: DOWN
+    timeout: 8000
+    optional: true
+- tapOn:
+    textMatches: "^دخول$"
     optional: true
 - tapOn:
     text: "تخطي"                   # the tour escape, when still owed

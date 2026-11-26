@@ -115,6 +115,14 @@ const config: ExpoConfig = {
       CFBundleDevelopmentRegion: "ar",
       SupportsRTL: true,
       ITSAppUsesNonExemptEncryption: false,
+      // r367 D-P9 — the ONE privacy-relevant API the app drives directly:
+      // expo-local-authentication (FaceID) for the app-lock confirmation.
+      // The string rides the app's own Arabic voice; the English mirror
+      // lives in docs/redesign/r367/store/LISTING.en.md. Everything else
+      // (notifications' APNs, document pickers) is system-UI or auto-graded
+      // by the SDK's generated PrivacyInfo.xcprivacy (prebuild output).
+      NSFaceIDUsageDescription:
+        "يُستخدم FaceID لتأكيد قفل التطبيق عند كل فتح بارد — لا تُقرأ أي بيانات بيومترية أو تُخزَّن داخل التطبيق.",
     },
   },
   android: {

@@ -117,3 +117,35 @@ close PRs, zero-trace), final verify ×2.
   flow — holds; the number needs its own session).
 NEXT: commit this batch; read the landing batch; B's remaining items
 (P5 responsive per role, scripts/audit), C's verification, D mobile block.
+
+## Session 2 (continued — ~22:15 UTC)
+- **The sandbox reset mid-session** (the local tree + probes lost) — every
+  landed piece was already pushed; the two uncommitted edits (TS18048
+  tuple typing, the rig's login fallback) re-landed and verified: 448ad29.
+- **D — the capture rig's login gap cured**: run 45835244276's artifact
+  forensics — every role's Maestro journey died at «دخول» not found (the
+  fresh boot's IME never rose, the KeyboardStickyView bar never offset in,
+  the resting submit sat below the demo ladder's fold) and the sweep
+  captured the welcome facade instead of the dashboards; shots-role rides
+  the smoke flow's proven sequence + the settled-form fallback now
+  (hideKeyboard → scrollUntilVisible ^دخول$ → tap, all optional); the
+  capture re-dispatched on 448ad29 (FULL matrix).
+- **D-P6 SOUND landed (ca5ebbe)** — the whole set: expo-audio ~58.0.12,
+  scripts/sound/generate.mjs (three synthesized original pieces, ≤0.12
+  peak ≤0.22 s — the committed WAVs are the script's artifacts), src/sound
+  .ts (the haptics architecture mirrored: persisted gate · anti-spam ·
+  web no-op · playsInSilentMode:false · mixWithOthers — a blip never
+  steals lecture audio), key feedback ONLY at FormScreen's submit seam +
+  the settings toggle's audible sample, «أصوات الواجهة» in the settings
+  ledger. The mobile belt 1,525 green (11 new sound tests).
+- **D-P9 the store folder landed** — docs/redesign/r367/store/: the
+  Arabic + English listing drafts (honest claims only), the README (code-
+  landed vs owner-blocked), NSFaceIDUsageDescription in app.config.ts.
+- **P10 the release lanes** — android-apk.yml + build-ios-sidestore.yml
+  auto-ride every main push now (ca5ebbe pending); the APK/IPA from the
+  final commit + fingerprints recorded when they land.
+- CI on 02343ae's TS18048 — cured by 448ad29; ca5ebbe's full CI in flight.
+  The Deploy (Vercel) quota failures continue until 00:00 UTC (owner-
+  visible; production serves the last good deploy).
+NEXT: capture artifacts → the apps evidence sheet + store screenshots;
+CI read; E's final verify ×2; G's final cleanup (branches, zero-trace).
