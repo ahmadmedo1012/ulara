@@ -79,3 +79,5 @@ NEXT: separate art from statement in stage 3
 NEXT: re-sweep slice 06 offsets after reorder
 - slice 06 re-sweep: plaque windows not hit by jump scroll; needs wheel-step capture
 NEXT: wheel-step capture harness for pinned stage
+- slice 06: wheel-step harness; statement no longer cut by the plan thumbnail
+NEXT: remove left column/thumbnail from stage, art off statement

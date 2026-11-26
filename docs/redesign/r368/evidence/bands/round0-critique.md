@@ -173,3 +173,6 @@ Added a paper-coloured text outline to the statement plaques so type crossing th
 
 ## Slice 06 round 6 (re-sweep)
 Re-swept 4800 to 5400 in steps. The scroll harness jumps from the slice 05 band straight to the assembled iso stage, so the statement window (plaque 1 at stage start, plaque 2 mid-scrub) was not caught in any frame; the outline stays unverified by capture. The assembled stage at 5000+ is clear of statements. Needs a driven-scroll capture (smooth wheel steps) to hit the plaque windows. Status: FAILING.
+
+## Slice 06 round 7 (wheel-step capture, scripts/fidelity/wheel.mjs)
+Real wheel steps hit the statement windows. Defect found and fixed: the dominant plan thumbnail sat above the plaques and cut the end of the line ("...واحد"). It now sits below the stack and the statement reads whole, wrapped to two balanced lines. The earlier paper-outline attempt was dropped (the plate already carries a text-shadow rim). Still wrong: the left column and plan thumbnail remain on the stage; the reference stage is bare ground; the art still crosses the second statement. Status: FAILING.

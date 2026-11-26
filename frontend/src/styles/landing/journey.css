@@ -1925,10 +1925,13 @@ section.chapters {
   .jt-caption { border-color: transparent; }
 }
 
-/* r368 slice 06 — where the statement crosses the isometric art, the type carries a paper-coloured outline so it reads cleanly (paint-order puts the outline behind the fill). Additive; the scroll choreography is untouched. */
+/* r368 slice 06 — wheel-step capture showed the 6vw statement running past the visible window edge ("...على مسطح واح" cut). Wrap it into a balanced two-line block that fits the window. (A paper text-stroke was tried and dropped: the plate's own text-shadow rim already carries the halo.) */
 @media (min-width: 992px) {
-  .jt-card .jt-card-plate {
-    -webkit-text-stroke: 0.35em var(--bg);
-    paint-order: stroke fill;
-  }
+  .jt-card .jt-card-plate { max-inline-size: 8.5em; margin-inline: auto; white-space: normal; text-wrap: balance; }
+}
+
+/* r368 slice 06 — the dominant plan thumbnail sat ABOVE the statement plaques and cut the line's end ("...واحد"). It drops below the stack so the statement always reads whole. */
+@media (min-width: 992px) {
+  .jt-dominant { z-index: 1; }
+  .jt-stack { z-index: 2; }
 }
