@@ -162,3 +162,4 @@ NEXT: origin/main sync ~9:50pm; remaining gaps 06 layout, hero photo look, no-co
 - r368 flat thick-wall plan plates replace iso plates (06/07), plate.py flat option. NEXT: royal dots/dashed lines on plates, 06 collage, mobile hero raster.
 - r368 06 collage: numbered royal pins + hairline caption row on the platform frame. NEXT: mobile hero raster, no-corpus slices.
 - r368 mobile hero now the Blender raster crop (137KB vs 543KB svg). perf p50 16.7, 6 frames>50ms, longtasks 0.52s. NEXT: no-corpus slices.
+- r368 no-corpus pass (404, login, about, desktop light): ruled frame, mono labels, royal accents consistent with matched slices; no corpus to measure so status stays FAILING (unverified vs reference). Mobile hero raster verified dark. NEXT: hourly sync, cross-slice analyze.
