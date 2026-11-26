@@ -37,3 +37,4 @@ NEXT: platform grid to one tall plan cell + ledger rows; half-art/half-list role
 - hero elevation v2: heavy massing, bare trees (FAILING; NEXT: mobile elevation, shadow tone)
 - mobile hero uses a cropped flat elevation (FAILING; NEXT: mobile platform/use-case, footer, cookie, cursor)
 - mobile hero markers re-seated on the flat elevation (FAILING; NEXT: footer, cookie bar, cursor, mobile art scale)
+- all four mobile hero markers seated on the drawing (FAILING; NEXT: consent bar to fixed corner look, footer, cursor)

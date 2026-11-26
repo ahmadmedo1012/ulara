@@ -65,7 +65,7 @@ const STATIONS_MOBILE: Record<string, { x: number; y: number }> = {
    * effective center rides (100−x)% − 44px; at 85 the marker's left
    * edge went negative at 360/375 (the CI e2e caught it). 80 seats on
    * the same mirrored stair wall with ≥10px margin at 360. */
-  'I-04': { x: 80, y: 78 },   /* the right stair's low wall — the tag arm's floor */
+  'I-04': { x: 56, y: 60 },   /* the right stair's low wall — the tag arm's floor */
 };
 
 export function Hero() {
