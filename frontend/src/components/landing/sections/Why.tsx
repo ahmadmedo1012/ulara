@@ -88,10 +88,11 @@ export function Why() {
           reference's why stage). The cantilever stage above retires from
           the desktop view only (display:none at >=992; DOM kept). */}
       <div className="wy-plates" aria-label="مخططات المباني خلف الأعمدة الأربعة" data-spec="why.plates">
-        <div className="wy-plates-a"><PlanPlate plan="plan-campus" title="الحرم الجامعي — المسقط العام" /></div>
+        <div className="wy-plates-a"><PlanPlate plan="plan-campus" title="الحرم الجامعي — المسقط العام" /><span className="wy-tag fo-mono" aria-hidden="true">ULR · 1012.2<b>سعة القاعة</b></span></div>
         <div className="wy-plates-line" aria-hidden="true" />
         <div className="plan-plate plan-plate-checked wy-plates-b">
           <PlanPlate plan="plan-laboratory" title="المختبر — المسقط الأفقي" />
+          <span className="wy-tag wy-tag-b fo-mono" aria-hidden="true">ULR · 1020.2<b>عرض الممر</b></span>
           <DarkCard header="جارٍ الفحص…" rows={['سعة المختبر مقابل الجدول', 'أوقات الذروة', 'الحجوزات المفتوحة']} />
         </div>
       </div>

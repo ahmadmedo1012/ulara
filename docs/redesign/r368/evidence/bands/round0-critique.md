@@ -212,3 +212,6 @@ Why stage is now two floating plan plates (campus, laboratory) on bare ground, a
 
 ## Slice 08 redo (1440)
 The plan strip now takes the left half as a stack of title-barred plates with the dark checking card on bare ground; the duotone collage pane is hidden (kept in DOM). Remaining: plate sizes and offsets are not measured against the reference, the third plate is clipped by the section height, no tag cards. Status: FAILING (closer).
+
+## Slices 07/08 round 2 (1440)
+07: plates enlarged, royal tag cards (mono code plus label) overlap the plates like the reference tag cards. 08: all three plates now fit the seat (plate width 52%). Both still FAILING: sizes/offsets not measured to the pixel, no corner plus marks on plates.

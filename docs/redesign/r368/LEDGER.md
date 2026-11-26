@@ -103,3 +103,5 @@ NEXT: more mobile scroll (lazy mount spike, rl-row transitions), then slices 05-
 NEXT: slice 08, 05, 06 redo
 - slice 08: roles stage = stacked plan plates on bare ground
 NEXT: slice 05/06 redo, enlarge 07 plates + tag cards
+- slice 07/08 round 2: tag cards, larger plates, third plate fits
+NEXT: slice 05/06 redo

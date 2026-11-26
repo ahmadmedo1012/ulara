@@ -1149,9 +1149,18 @@
   .wy-section [data-spec="why.stage"] { display: none; }
   .wy-plates {
     display: grid; grid-template-columns: 1fr 1fr; direction: ltr; position: relative;
-    min-block-size: 62rem; padding: 3rem 5rem 6rem; align-items: start;
+    min-block-size: 72rem; padding: 3rem 5rem 6rem; align-items: start;
   }
-  .wy-plates-a { grid-column: 1; max-inline-size: 32rem; inline-size: 32rem; }
-  .wy-plates-b { grid-column: 2; align-self: end; justify-self: end; max-inline-size: 44rem; inline-size: 44rem; position: relative; margin-block-start: 12rem; }
+  .wy-plates-a { grid-column: 1; max-inline-size: 40rem; inline-size: 40rem; position: relative; }
+  .wy-plates-b { grid-column: 2; align-self: end; justify-self: end; max-inline-size: 54rem; inline-size: 54rem; position: relative; margin-block-start: 12rem; }
   .wy-plates-line { position: absolute; inset-inline: 2rem; inset-block-start: 22rem; block-size: 1px; background: var(--duo-signal, #2540d9); }
+}
+@media (min-width: 992px) {
+  .wy-tag {
+    position: absolute; inset-block-start: 22%; inset-inline-start: 6%; z-index: 3;
+    background: var(--duo-signal, #2540d9); color: #fff; padding: 0.6rem 0.9rem; font-size: 11px;
+    letter-spacing: .06em; display: grid; gap: 0.3rem; min-inline-size: 9rem; direction: rtl; text-align: start;
+  }
+  .wy-tag b { font-weight: 600; font-size: 13px; letter-spacing: 0; }
+  .wy-tag-b { inset-block-start: 42%; inset-inline-start: 38%; }
 }
