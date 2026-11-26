@@ -7,12 +7,12 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Plus, Trash2 } from 'lucide-react';
-import { PageFrame, PageHeader } from '../../components/patterns';
+import { PageFrame, PageHeader, DataSheet, SheetEmpty, type DataSheetColumn } from '../../components/patterns';
 import { toast } from '../../lib/toast';
-import { formatDate } from '../../utils/numbers';
+import { formatDate, formatInt } from '../../utils/numbers';
 import { api, unwrap } from '../../lib/api';
 import { serverError,
-  DetailList, EnumChip, InstFormDialog, InstSection, InstStates,
+  DetailList, InstFormDialog, InstSection, InstStates, StatusFlag,
   type InstField, type InstFormValues,
 } from '../../components/institutional/kit';
 import { Icon } from '../../components/Icon';
@@ -23,7 +23,7 @@ import {
   PROGRAM_COURSE_KIND_LABELS, PROGRAM_KIND_LABELS, PROGRAM_STATUS_LABELS,
   VERSION_STATUS_LABELS,
 } from '../../lib/institutional/labels';
-import type { ProgramVersion } from '../../lib/institutional/types';
+import type { ProgramCourseRow, ProgramVersion } from '../../lib/institutional/types';
 
 /** The version lifecycle transitions (contract §7 — enforced server-side). */
 const VERSION_TRANSITIONS: Record<string, string[]> = {
@@ -182,13 +182,67 @@ export function InstitutionProgramDetailPage() {
     }
   };
 
+  /* R359 — the versions register: the label is the row's title, the
+   * status rides the flat flag, the course count is the numeric mono
+   * datum, the lifecycle buttons ride the label-less action cell; the
+   * inspected version pins accent via the row tone. */
+  const versionColumns: DataSheetColumn<ProgramVersion>[] = [
+    { key: 'label', label: 'الإصدار', render: (v) => <span className="sg-cell-title">{v.label}</span> },
+    { key: 'from', label: 'ساري من', render: (v) => (v.effectiveFrom ? formatDate(v.effectiveFrom) : '—') },
+    { key: 'status', label: 'الحالة', render: (v) => <StatusFlag value={v.status} labels={VERSION_STATUS_LABELS} /> },
+    { key: 'courses', label: 'المقررات', numeric: true, render: (v) => (v._count?.courses != null ? formatInt(v._count.courses) : '—') },
+    {
+      key: 'actions', label: 'إجراءات', noLabel: true,
+      render: (v) => {
+        const moves = canManage ? (VERSION_TRANSITIONS[v.status] ?? []) : [];
+        return moves.length > 0 ? (
+          <span className="inst-actions">
+            {moves.map((next) => (
+              <button
+                key={next}
+                type="button"
+                className="btn ghost sm"
+                disabled={busy}
+                onClick={(e) => { e.stopPropagation(); void advanceVersion(v, next); }}
+              >
+                {VERSION_STATUS_LABELS[next as keyof typeof VERSION_STATUS_LABELS]}
+              </button>
+            ))}
+          </span>
+        ) : null;
+      },
+    },
+  ];
+
+  /* R359 — the plan-courses register: the linked course is the title,
+   * term/hours ride the numeric mono cells, the removal is the
+   * label-less action cell (the course entity stays in its own
+   * surfaces — this register only links it into the plan). */
+  const courseColumns: DataSheetColumn<ProgramCourseRow>[] = [
+    {
+      key: 'course', label: 'المقرر',
+      render: (row) => (row.course ? <><bdi>{row.course.code}</bdi> — {row.course.name}</> : row.courseId),
+    },
+    { key: 'kind', label: 'الصنف', render: (row) => PROGRAM_COURSE_KIND_LABELS[row.kind] },
+    { key: 'term', label: 'الفصل', numeric: true, render: (row) => (row.termNo != null ? formatInt(row.termNo) : '—') },
+    { key: 'hours', label: 'الساعات', numeric: true, render: (row) => (row.creditHours != null ? formatInt(row.creditHours) : '—') },
+    ...(canManage ? [{
+      key: 'remove', label: 'إزالة', noLabel: true,
+      render: (row: ProgramCourseRow) => (
+        <button type="button" className="btn ghost sm" aria-label={`إزالة ${row.course?.name ?? ''}`} disabled={busy} onClick={() => removeCourse(row.courseId)}>
+          <Icon icon={Trash2} size={13} />
+        </button>
+      ),
+    }] : []),
+  ];
+
   return (
     <PageFrame width="default">
       <PageHeader
         title={program?.nameAr ?? 'تفاصيل البرنامج'}
         eyebrow="البرامج والخطط الدراسية"
-        description={program ? `${PROGRAM_KIND_LABELS[program.kind]} · رمز ${program.code}` : undefined}
-        meta={program ? <EnumChip value={program.status} labels={PROGRAM_STATUS_LABELS} /> : null}
+        description={program ? (<>{PROGRAM_KIND_LABELS[program.kind]} · رمز <bdi>{program.code}</bdi></>) : undefined}
+        meta={program ? <StatusFlag value={program.status} labels={PROGRAM_STATUS_LABELS} /> : null}
         breadcrumbs={[{ label: 'البرامج', to: '/institution/programs' }]}
       />
       <InstStates isLoading={programQuery.isLoading} error={programQuery.error} isEmpty={!program}>
@@ -209,9 +263,9 @@ export function InstitutionProgramDetailPage() {
             >
               <DetailList
                 items={[
-                  { label: 'المدة', value: program.durationMonths ? `${program.durationMonths} شهر` : null },
-                  { label: 'الساعات المعتمدة', value: program.totalCreditHours ?? null },
-                  { label: 'مرجع الاعتماد', value: program.approvalRef ?? null },
+                  { label: 'المدة', value: program.durationMonths ? `${formatInt(program.durationMonths)} شهر` : null },
+                  { label: 'الساعات المعتمدة', value: program.totalCreditHours != null ? formatInt(program.totalCreditHours) : null },
+                  { label: 'مرجع الاعتماد', value: program.approvalRef ? <bdi>{program.approvalRef}</bdi> : null },
                 ]}
               />
             </InstSection>
@@ -228,40 +282,21 @@ export function InstitutionProgramDetailPage() {
               )}
             >
               {versions.length === 0 ? (
-                <p className="inst-section-desc">لا إصدارات بعد.</p>
-              ) : (
-                <div className="table-wrap">
-                  <table className="table tbl-stack" aria-label="إصدارات الخطة">
-                    <thead>
-                      <tr>
-                        <th scope="col">الإصدار</th>
-                        <th scope="col">ساري من</th>
-                        <th scope="col">الحالة</th>
-                        <th scope="col">المقررات</th>
-                        <th scope="col">إجراءات</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {versions.map((v) => (
-                        <tr key={v.id} className={activeVersion?.id === v.id ? 'inst-row-click' : undefined} aria-selected={activeVersion?.id === v.id}
-                          onClick={() => setVersionId(v.id)}
-                        >
-                          <td data-label="الإصدار">{v.label}</td>
-                          <td data-label="ساري من">{v.effectiveFrom ? formatDate(v.effectiveFrom) : '—'}</td>
-                          <td data-label="الحالة"><EnumChip value={v.status} labels={VERSION_STATUS_LABELS} /></td>
-                          <td data-label="المقررات" className="font-mono">{v._count?.courses ?? '—'}</td>
-                          <td data-label="إجراءات">
-                            {canManage && (VERSION_TRANSITIONS[v.status] ?? []).map((next) => (
-                              <button key={next} type="button" className="btn ghost sm" disabled={busy} onClick={(e) => { e.stopPropagation(); void advanceVersion(v, next); }}>
-                                {VERSION_STATUS_LABELS[next as keyof typeof VERSION_STATUS_LABELS]}
-                              </button>
-                            ))}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div className="inst-state">
+                  <SheetEmpty
+                    code="NO VERSIONS"
+                    title="لا إصدارات بعد"
+                    desc="أنشئ الإصدار الأول من الخطة الدراسية — يبدأ مسودة، ثم اعتماد، ثم سريان."
+                  />
                 </div>
+              ) : (
+                <DataSheet
+                  caption="إصدارات الخطة الدراسية"
+                  columns={versionColumns}
+                  rows={versions}
+                  rowTone={(v) => (activeVersion?.id === v.id ? 'signal' : undefined)}
+                  onRowClick={(v) => setVersionId(v.id)}
+                />
               )}
             </InstSection>
 
@@ -278,40 +313,23 @@ export function InstitutionProgramDetailPage() {
                 )}
               >
                 <InstStates
-                  isLoading={coursesQueryState.isLoading}
+                  isLoading={false}
                   error={coursesQueryState.error}
-                  isEmpty={(coursesQueryState.data ?? []).length === 0}
+                  isEmpty={!coursesQueryState.isLoading && (coursesQueryState.data ?? []).length === 0}
+                  empty={(
+                    <SheetEmpty
+                      code="NO COURSES"
+                      title="لا مقررات في هذه الخطة"
+                      desc="اربط مقررات مؤسستك القائمة بالخطة من زر «ربط مقرر» — لا تُنشأ نسخ مكررة هنا."
+                    />
+                  )}
                 >
-                  <div className="table-wrap">
-                    <table className="table tbl-stack" aria-label="مقررات الخطة">
-                      <thead>
-                        <tr>
-                          <th scope="col">المقرر</th>
-                          <th scope="col">الصنف</th>
-                          <th scope="col">الفصل</th>
-                          <th scope="col">الساعات</th>
-                          {canManage && <th scope="col">إزالة</th>}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {(coursesQueryState.data ?? []).map((row) => (
-                          <tr key={row.id}>
-                            <td data-label="المقرر">{row.course ? `${row.course.code} — ${row.course.name}` : row.courseId}</td>
-                            <td data-label="الصنف">{PROGRAM_COURSE_KIND_LABELS[row.kind]}</td>
-                            <td data-label="الفصل" className="font-mono">{row.termNo ?? '—'}</td>
-                            <td data-label="الساعات" className="font-mono">{row.creditHours ?? '—'}</td>
-                            {canManage && (
-                              <td data-label="إزالة">
-                                <button type="button" className="btn ghost sm" aria-label={`إزالة ${row.course?.name ?? ''}`} disabled={busy} onClick={() => removeCourse(row.courseId)}>
-                                  <Icon icon={Trash2} size={13} />
-                                </button>
-                              </td>
-                            )}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                  <DataSheet
+                    caption="مقررات الخطة الدراسية"
+                    columns={courseColumns}
+                    rows={coursesQueryState.data ?? []}
+                    loading={coursesQueryState.isLoading}
+                  />
                 </InstStates>
               </InstSection>
             )}

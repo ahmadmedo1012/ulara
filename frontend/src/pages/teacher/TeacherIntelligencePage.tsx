@@ -324,18 +324,17 @@ function OfferingRow({ offering }: { offering: TeacherOffering }) {
   );
 }
 
-/** R190 D-2: shape-matched skeleton for the analytics stat strip —
- * the icon-card KpiSkeleton the page used painted 4 × 132px tiles
- * that the strip (label/value/trend) replaces. */
+/** R190 D-2 → r365 loading-closure: the strip's skeleton rides the SAME
+ * sg-kpis anatomy the resolved KpiBand renders (index/caption · numeral
+ * · label) — the old .stat-strip mirror painted an anatomy the page no
+ * longer resolves to, so the data-land swap moved. */
 function AnalyticsStripSkeleton() {
   return (
-    <div className="stat-strip" aria-busy="true" aria-live="polite">
+    <div className="sg-kpis" aria-busy="true" aria-live="polite">
       {[0, 1, 2, 3].map((i) => (
-        <div key={i} className="stat-cell" aria-hidden>
-          <Skeleton width={70} height={11} />
-          <div style={{ marginBlock: 'var(--sp-1)' }}>
-            <Skeleton width={80} height={28} />
-          </div>
+        <div key={i} className="sg-kpi" aria-hidden="true">
+          <Skeleton width={64} height={11} />
+          <Skeleton width={80} height={34} />
           <Skeleton width={100} height={11} />
         </div>
       ))}
@@ -703,9 +702,9 @@ function StudentRow({ student, dimmed }: { student: TeacherStudentRow; dimmed: b
         <div className="risk-row-name">{student.name}</div>
         <div className="risk-row-meta">
           <bdi className="font-mono text-xxs">{student.universityId}</bdi>
-          <span><Icon icon={ClipboardCheck} size={11} /> حضور <bdi>{student.attendancePct}%</bdi></span>
-          <span><Icon icon={BarChart3} size={11} /> درجة <bdi>{student.avgGrade}%</bdi></span>
-          <span><Icon icon={BookOpen} size={11} /> متابعة <bdi>{student.watchPct}%</bdi></span>
+          <span><Icon icon={ClipboardCheck} size={11} /> حضور <bdi>{formatPct1(student.attendancePct)}%</bdi></span>
+          <span><Icon icon={BarChart3} size={11} /> درجة <bdi>{formatPct1(student.avgGrade)}%</bdi></span>
+          <span><Icon icon={BookOpen} size={11} /> متابعة <bdi>{formatPct1(student.watchPct)}%</bdi></span>
         </div>
         {student.signals.length > 0 && (
           <div className="risk-row-meta" style={{ marginBlockStart: 'var(--sp-1)' }}>
@@ -717,7 +716,7 @@ function StudentRow({ student, dimmed }: { student: TeacherStudentRow; dimmed: b
         </div>
       </div>
       <div className="risk-row-score">
-        <div className="risk-row-pct"><bdi>{student.riskScore}%</bdi></div>
+        <div className="risk-row-pct"><bdi>{formatPct1(student.riskScore)}%</bdi></div>
         <span className="sg-flag" data-tone={RISK_FLAG_TONE[student.riskLevel]}>{RISK_LABEL[student.riskLevel]}</span>
       </div>
     </div>

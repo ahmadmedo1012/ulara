@@ -5,7 +5,7 @@ import {
   Download, RefreshCw, Mail, X, Radio,
   GraduationCap, UserMinus, AlertCircle, BookOpen, FileText,
 } from 'lucide-react';
-import { ErrorState, EmptyState, TableSkeleton, Skeleton } from '../../components/primitives/States';
+import { ErrorState, EmptyState, Skeleton } from '../../components/primitives/States';
 /* r253 (Phase B) → R359 final: the students roster speaks the sheet
  * grammar — the KpiBand strip + the DataSheet register (dense hairline
  * table, mono numerics, labelled cards ≤640px). */
@@ -306,39 +306,41 @@ export function AdminStudentsPage() {
             <ErrorState error={studentsQ.error} message="تعذّر تحميل قائمة الطلاب" onRetry={() => studentsQ.refetch()} />
           </div>
         )}
-        {studentsQ.data && (
-          <>
-            <DataSheet
-              caption="سجلّ الطلاب"
-              columns={columns}
-              rows={studentsQ.data.data}
-              loading={studentsQ.isPending}
-              empty={(
-                <EmptyState
-                  illustration="empty-search"
-                  title="لا توجد نتائج"
-                  description=""
-                  action={hasActiveFilters ? (
-                    <button type="button" className="btn ghost sm" onClick={clearSearch}>
-                      <Icon icon={X} size={13} />
-                      مسح البحث
-                    </button>
-                  ) : undefined}
-                />
-              )}
+        {/* 5-b (loading mirror §3/§6-4): the cold load used to render an
+         * EMPTY sheet body (the section collapsed, then the table popped
+         * in) because the body was gated on studentsQ.data. The DataSheet
+         * now mounts unconditionally — loading={isPending} renders the
+         * same-column skeleton table (the courses roster's exact mirror)
+         * and the pagination footer stays gated on the resolved meta. */}
+        <DataSheet
+          caption="سجلّ الطلاب"
+          columns={columns}
+          rows={studentsQ.data?.data ?? []}
+          loading={studentsQ.isPending}
+          empty={(
+            <EmptyState
+              illustration="empty-search"
+              title="لا توجد نتائج"
+              description=""
+              action={hasActiveFilters ? (
+                <button type="button" className="btn ghost sm" onClick={clearSearch}>
+                  <Icon icon={X} size={13} />
+                  مسح البحث
+                </button>
+              ) : undefined}
             />
-            {studentsQ.data.data.length > 0 && (
-              <div className="sg-pad-in">
-                <TablePaginationFooter
-                  page={studentsQ.data.meta.page}
-                  totalPages={studentsQ.data.meta.totalPages}
-                  total={studentsQ.data.meta.total}
-                  unit={['طالب واحد', 'طالبان', 'طلاب', 'طالباً']}
-                  onPage={setPage}
-                />
-              </div>
-            )}
-          </>
+          )}
+        />
+        {studentsQ.data && studentsQ.data.data.length > 0 && (
+          <div className="sg-pad-in">
+            <TablePaginationFooter
+              page={studentsQ.data.meta.page}
+              totalPages={studentsQ.data.meta.totalPages}
+              total={studentsQ.data.meta.total}
+              unit={['طالب واحد', 'طالبان', 'طلاب', 'طالباً']}
+              onPage={setPage}
+            />
+          </div>
         )}
       </SheetSection>
       {enrollmentStudent && (
@@ -564,58 +566,71 @@ export function AdminDigitalPage() {
         )}
       />
 
-      {q.isPending && <TableSkeleton rows={6} cols={3} />}
-      {q.isError && <ErrorState error={q.error} message="تعذّر تحميل مؤشّرات التحوّل الرقميّ" onRetry={() => q.refetch()} />}
-      {q.data && (
-        <>
-          {/* R359 final — the KPI band: every numeral derives from the
-              live /admin/digital payload (honest-empty while pending —
-              the band itself stays mounted). */}
-          <KpiBand
-            items={[
-              { index: '01', caption: 'ACCOUNTS', label: 'إجمالي الحسابات', value: q.data.totalUsers },
-              { index: '02', caption: 'ACTIVE', label: 'حسابات نشطة', value: q.data.activeUsers },
-              { index: '03', caption: 'ADOPTION', label: 'نسبة التبنّي', value: q.data.adoptionPct, unit: '%' },
-              { index: '04', caption: 'MATERIALS', label: 'ملفات تعليمية مرفوعة', value: q.data.materialsUploaded },
-            ]}
-          />
+      {/* 5-b (loading mirror §3 + honest-empty): the band now mounts
+       * ALWAYS — pending cells read the '—' register (never a fake
+       * zero), and the register's skeleton rides the DataSheet's own
+       * loading state (same two columns) instead of the retired 3-col
+       * TableSkeleton that flashed before the 2-col sheet resolved. */}
+      <KpiBand
+        items={[
+          { index: '01', caption: 'ACCOUNTS', label: 'إجمالي الحسابات', value: q.data?.totalUsers ?? 0, empty: q.isPending },
+          { index: '02', caption: 'ACTIVE', label: 'حسابات نشطة', value: q.data?.activeUsers ?? 0, empty: q.isPending },
+          { index: '03', caption: 'ADOPTION', label: 'نسبة التبنّي', value: q.data?.adoptionPct ?? 0, unit: '%', empty: q.isPending },
+          { index: '04', caption: 'MATERIALS', label: 'ملفات تعليمية مرفوعة', value: q.data?.materialsUploaded ?? 0, empty: q.isPending },
+        ]}
+      />
 
-          {/* 5-A8 §6 step 4 (route identity): the four single-stat cards
-              fold into ONE «تبنّي المكوّنات» register — this was the third
-              consecutive 4-identical-tiles page in the nav. One register,
-              one scanning rhythm, mobile-safe via the sheet's own card
-              collapse. §6 step 6 (rhythm): the register is the page's
-              primary section — it takes the breath after the KPI band.
-              R359 final: the register re-keys onto the DataSheet (mono
-              numerics, the component as the quiet sub-line). */}
-          <SheetSection index="01" caption="COMPONENT ADOPTION" title="تبنّي المكوّنات" pad="none">
-            <DataSheet
-              caption="جدول تبنّي المكوّنات"
-              rows={[
+      {/* 5-A8 §6 step 4 (route identity): the four single-stat cards
+          fold into ONE «تبنّي المكوّنات» register — this was the third
+          consecutive 4-identical-tiles page in the nav. One register,
+          one scanning rhythm, mobile-safe via the sheet's own card
+          collapse. §6 step 6 (rhythm): the register is the page's
+          primary section — it takes the breath after the KPI band.
+          R359 final: the register re-keys onto the DataSheet (mono
+          numerics, the component as the quiet sub-line). */}
+      <SheetSection
+        index="01"
+        caption="COMPONENT ADOPTION"
+        /* Untitled while pending/error: the section title stays the
+         * data-land signal (the pinned test waits on it) — the head
+         * lands with the rows, never a pending-state echo. */
+        title={q.data ? 'تبنّي المكوّنات' : undefined}
+        pad="none"
+      >
+        {q.isError ? (
+          <div className="sg-pad-in">
+            <ErrorState error={q.error} message="تعذّر تحميل مؤشّرات التحوّل الرقميّ" onRetry={() => q.refetch()} />
+          </div>
+        ) : (
+          <DataSheet
+            caption="جدول تبنّي المكوّنات"
+            rows={q.data
+              ? [
                 { component: 'الاختبار الإلكترونيّ', label: 'اختبارات منشورة', value: q.data.onlineExams },
                 { component: 'الاختبار الإلكترونيّ', label: 'محاولات أداء', value: q.data.examAttempts },
                 { component: 'التعلّم النشط', label: 'جلسات معامل افتراضيّة', value: q.data.labSessions },
                 { component: 'التعلّم النشط', label: 'جلسات بثّ مباشر', value: q.data.liveSessions },
                 { component: 'التعلّم الذاتيّ', label: 'تسجيلات MOOC', value: q.data.moocEnrollments },
                 { component: 'البحث العلميّ', label: 'أوراق علميّة في النظام', value: q.data.researchPapers },
-              ]}
-              columns={[
-                {
-                  key: 'metric',
-                  label: 'المؤشّر',
-                  render: (r) => (
-                    <span className="sg-cell-stack">
-                      <span className="sg-cell-title">{r.label}</span>
-                      <span className="sg-cell-sub">{r.component}</span>
-                    </span>
-                  ),
-                },
-                { key: 'value', label: 'القيمة', numeric: true, render: (r) => formatNum(r.value) },
-              ]}
-            />
-          </SheetSection>
-        </>
-      )}
+              ]
+              : []}
+            loading={q.isPending}
+            columns={[
+              {
+                key: 'metric',
+                label: 'المؤشّر',
+                render: (r) => (
+                  <span className="sg-cell-stack">
+                    <span className="sg-cell-title">{r.label}</span>
+                    <span className="sg-cell-sub">{r.component}</span>
+                  </span>
+                ),
+              },
+              { key: 'value', label: 'القيمة', numeric: true, render: (r) => formatNum(r.value) },
+            ]}
+          />
+        )}
+      </SheetSection>
     </div>
   );
 }

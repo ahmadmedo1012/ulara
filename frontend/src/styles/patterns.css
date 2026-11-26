@@ -4656,6 +4656,183 @@ button.tq-row:focus-visible {
     gap: var(--sp-2);
   }
 
+  /* ── r365 · the oversight-row chrome, restored ─────────────────
+     The publish import carried the quality TSX but dropped §3's rules
+     (the anatomy comments above stayed; the declarations did not) —
+     the curriculum tree, the alerts queue and the reports ledger
+     rendered bare: no flex anatomy, no hairline separators, no
+     trailing register, no level dots, no filter dim. ONE flat
+     restoration seat on the §2 hairline-row grammar: identity
+     leading · body · trailing flag, hairline-only separators, mono
+     numerics, the §D severity rails (D3) + ember icon wells (D5),
+     the guarded hover wash on the link rows only. Logical properties
+     only; dark/RTL resolve from the tokens. */
+  .hr-scope .qlt-course-row,
+  .hr-scope .qlt-alert-row,
+  .hr-scope .qlt-link-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--sp-2) var(--sp-3);
+    padding-block: var(--sp-3);
+    border-block-end: 1px solid color-mix(in srgb, var(--border) 62%, transparent);
+    min-inline-size: 0;
+  }
+  .hr-scope .qlt-course-row:last-child,
+  .hr-scope .qlt-alert-row:last-child,
+  .hr-scope .qlt-link-row:last-child { border-block-end: 0; }
+  /* The body column owns the growth, so the trailing flag lands on the
+     rule's inline-end without margin tricks (the §2 row anatomy). */
+  .hr-scope .qlt-course-main,
+  .hr-scope .qlt-alert-row-body,
+  .hr-scope .qlt-link-row-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-0-5);
+    flex: 1 1 auto;
+    min-inline-size: 0;
+  }
+  .hr-scope .qlt-course-title {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    font-weight: var(--fw-semibold);
+    color: var(--text-strong);
+  }
+  .hr-scope .qlt-course-code,
+  .hr-scope .qlt-course-meta,
+  .hr-scope .qlt-alert-row-desc {
+    font-size: var(--fs-xs);
+    color: var(--text-secondary);
+  }
+  .hr-scope .qlt-course-code { font-family: var(--font-mono); }
+  /* The trailing register: mono tabular percentage + the level chip. */
+  .hr-scope .qlt-course-side {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    flex: none;
+  }
+  .hr-scope .qlt-course-pct {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--fw-semibold);
+    color: var(--text-strong);
+  }
+  .hr-scope .qlt-course-row.is-dim {
+    opacity: 0.5;
+    transition: opacity var(--t-fast) var(--ease);
+  }
+  /* The alerts queue (§D D3): the 3px severity rail + icon well. */
+  .hr-scope .qlt-alert-row {
+    border-inline-start: 3px solid transparent;
+    border-start-start-radius: var(--r-xs);
+    border-end-start-radius: var(--r-xs);
+  }
+  .hr-scope .qlt-sev-critical { border-inline-start-color: var(--danger); }
+  .hr-scope .qlt-sev-warning  { border-inline-start-color: var(--warning); }
+  .hr-scope .qlt-sev-info     { border-inline-start-color: var(--accent); }
+  .hr-scope .qlt-alert-row-icon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    inline-size: 36px;
+    block-size: 36px;
+    border-radius: var(--r-md);
+    background: var(--surface-2);
+    color: var(--text-secondary);
+  }
+  .hr-scope .qlt-alert-row-title { font-weight: var(--fw-semibold); color: var(--text-strong); }
+  .hr-scope .qlt-alert-row-time {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-variant-numeric: tabular-nums;
+    color: var(--text-faint);
+  }
+  /* The reports ledger (§D D5): the ember icon wells — the page's
+     primary actions — plus the ≥44px row floor and the guarded wash. */
+  .hr-scope a.qlt-link-row {
+    min-block-size: 44px;
+    color: inherit;
+    text-decoration: none;
+  }
+  .hr-scope .qlt-link-row-icon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    inline-size: 40px;
+    block-size: 40px;
+    border-radius: var(--r-md);
+    background: var(--hr-ember-soft);
+    color: var(--hr-ember-ink);
+  }
+  .hr-scope .qlt-link-row-title { font-weight: var(--fw-semibold); color: var(--text-strong); }
+  .hr-scope .qlt-link-row-chevron { flex: none; color: var(--text-faint); }
+  @media (hover: hover) and (pointer: fine) {
+    .hr-scope a.qlt-link-row:hover { background: var(--surface-2); }
+  }
+  /* The curriculum level legend — the dots ARE the data (invisible
+     when unstyled) — and the counted dept-stat row, the professors'
+     compliance pair + filter note, the rosters' §0 count chip and the
+     ledger lists' hairline rhythm. */
+  .hr-scope .heat-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-1) var(--sp-4);
+    margin-block-start: var(--sp-2);
+  }
+  .hr-scope .heat-legend-key {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    font-size: var(--fs-xs);
+    color: var(--text-secondary);
+  }
+  .hr-scope .heat-legend-dot {
+    inline-size: 10px;
+    block-size: 10px;
+    border-radius: var(--r-full);
+    flex: none;
+  }
+  .hr-scope .heat-legend-dot.lvl-strong { background: var(--success); }
+  .hr-scope .heat-legend-dot.lvl-weak   { background: var(--warning); }
+  .hr-scope .heat-legend-dot.lvl-poor   { background: var(--danger); }
+  .hr-scope .q-dept-stat {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: var(--sp-2) var(--sp-3);
+    margin-block-end: var(--sp-1);
+    font-size: var(--fs-xs);
+    color: var(--text-secondary);
+  }
+  .hr-scope .q-compliance {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    min-inline-size: 160px;
+  }
+  .hr-scope .qlt-filter-note {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    margin-block-end: var(--sp-3);
+  }
+  .hr-scope .hr-section-count {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-variant-numeric: tabular-nums;
+    color: var(--text-secondary);
+  }
+  .hr-scope .qlt-kpi-ledger,
+  .hr-scope .qlt-progress-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+  }
+
   /* ── 2 · Section rhythm ────────────────────────────────────────
      5-A8 §6 step 6: the page's primary board takes the breath after
      the stat strip (the desktop .page gap + this rung ≈ the 88px
@@ -5144,3 +5321,14 @@ button.tq-row:focus-visible {
  * @layer pages, no competitor remains in the sheets. */
 @layer pages {
 }
+
+/* ═══ R366 exam-look pass — the taker chrome joins the flat hairline
+ * register (ONE additive rule; unlayered so it settles the @layer ties,
+ * scoped under the family root .r321x-page so nothing leaks). The
+ * navigator dots become square hairline cells, the review rows ledger
+ * lines, the timer + autosave-failure chips square — radius 0, the
+ * sheet draws 1px lines only. Look-only: no behavior seat moves. */
+.r321x-page .oex-qmap-dot,
+.r321x-page .oex-review-q,
+.r321x-page .oex-timer,
+.r321x-page .oex-save-warn { border-radius: 0; }

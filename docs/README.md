@@ -21,7 +21,9 @@
 | [roadmap.md](roadmap.md) | ما تبقّى (بنود قليلة مرتّبة) |
 | [api/openapi.json](api/openapi.json) | عقد الـAPI المولّد من الشيفرة (`npm run api:openapi`) — مولَّد، لا يُحرَّر يدويًا |
 | [ops/LEDGER.md](ops/LEDGER.md) | سجل التقدّم الوحيد للمالك — إضافة فقط، لا يُلمس |
-| [redesign/r363/](redesign/r363/) | آخر جولة مسجّلة (سجل التسليم + الأدلة)؛ سجل الملكية الدائم: [redesign/r342/OWNERSHIP.md](redesign/r342/OWNERSHIP.md) |
+| [redesign/r367/](redesign/r367/) | آخر جولة مسجّلة — «المُنهي»: دمج r365/r366، إقفال أحمر CI، الأداء والوصولية، أوراق الهاتف والإقلاع، التقرير العربي للمالك ([REPORT.ar.md](redesign/r367/REPORT.ar.md))؛ سجل الملكية الدائم: [redesign/r342/OWNERSHIP.md](redesign/r342/OWNERSHIP.md) |
+| [redesign/r363–r366/](redesign/) | جولات القيادة السابقة (الصلابة · الموقع العام · المنتج بعد الدخول · الموبايل) — محتواها على `main` وسجلاتها هنا |
+| [redesign/p4/](redesign/p4/) | أدلة المسح الشامل للمنتج (r363): كتالوجات عيوب كل مسار `defects-<lane>.json` + `defects-summary.md` — تُكتب آليًا من `product-sweep.yml` وتُرفع artifacts |
 | [redesign/r352/](redesign/r352/) | برنامج المؤسسة (خلفية + واجهة) — `HANDOFF.md` في كل مسار |
 | [redesign/p4/](redesign/p4/) | أدلة المسح الشامل للمنتج (r363): كتالوجات عيوب كل مسار `defects-<lane>.json` + `defects-summary.md` — تُكتب آليًا من `product-sweep.yml` وتُرفع artifacts |
 

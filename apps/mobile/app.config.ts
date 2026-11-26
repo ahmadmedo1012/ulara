@@ -96,7 +96,11 @@ const config: ExpoConfig = {
   slug: "ulara",
   version: "1.0.0",
   scheme: "ulara",
-  orientation: "portrait",
+  // r366: the portrait lock retires — "default" lets the OS rotate (the
+  // prime directive: allow landscape and tablets). Every orientation the
+  // screens must survive is captured by mobile-capture-r366.yml's
+  // landscape legs; two-pane tablet layouts are the next round's work.
+  orientation: "default",
   icon: "./assets/images/icon.png",
   userInterfaceStyle: "automatic",
   description: "أُلارا — نظام تشغيل الجامعة (تطبيق الجوال الرسمي)",

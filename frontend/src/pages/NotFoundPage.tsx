@@ -66,12 +66,10 @@ export default function NotFoundPage() {
             The sr-only alt stays silent (the page's copy names the
             state; the figure is atmosphere). */}
         <div className="nf-illustration nf-illustration-v2">
-          <DuotoneScene
-            src={podiumScene}
-            alt=""
-            variant="strip"
-            caption="ROUTE NOT MAPPED"
-          />
+          {/* r367: the caption prop stays empty — r324 X10 (the owner's
+              red team) bans `ROUTE NOT MAPPED` as visible jargon; the
+              page copy already names the state. */}
+          <DuotoneScene src={podiumScene} alt="" variant="strip" />
         </div>
 
         {/* r324 X10 — the mono `ERR [404]` eyebrow and the

@@ -147,10 +147,19 @@ export default function CourseDetailPage() {
         <Skeleton width={200} height={32} rounded="var(--r-md)" />
         {/* R305: the pending mirror keeps the rail's exact box (the
             r305s-next classes included) so the data handoff paints the
-            same copper edge it resolves into. */}
-        <div className="course-continue r305s-next r305c-continue" aria-busy="true" aria-live="polite">
-          <Skeleton width="55%" height={20} />
-          <Skeleton width={220} height={8} rounded="var(--r-full)" />
+            same copper edge it resolves into. r365 (4-a): the strip's
+            flex anatomy + padding ride the shared utilities so the
+            mirror hands off to the resolved strip CLS-safe. */}
+        <div
+          className="course-continue r305s-next r305c-continue flex flex-wrap items-center justify-between gap-4"
+          style={{ padding: 'var(--sp-4) var(--sp-5)' }}
+          aria-busy="true"
+          aria-live="polite"
+        >
+          <div className="course-continue-progress flex flex-col gap-2" style={{ flex: '1 1 260px' }}>
+            <Skeleton width="55%" height={20} />
+            <Skeleton width={220} height={8} rounded="var(--r-full)" />
+          </div>
         </div>
         <ListSkeleton rows={3} />
       </PageFrame>
@@ -327,21 +336,26 @@ export default function CourseDetailPage() {
           tinted hero band (the course tint survives in the progress
           fill and the curriculum rows below), and an .r305s-eyebrow
           micro-label classifies the moment: the next step, the done
-          state, or the plan for an empty curriculum. */}
+          state, or the plan for an empty curriculum.
+          r365 (4-a): the strip's two-column anatomy (progress · next
+          CTA) re-seats on the shared flex utilities + token padding —
+          the .course-continue layout rules the r305 sheet carried are
+          comment-only on this tree, so the strip rendered as stacked
+          blocks flush against the rail's edge. */}
       <div
-        className="course-continue r305s-next r305c-continue"
-        style={{ '--course-tint': tint } as CSSProperties}
+        className="course-continue r305s-next r305c-continue flex flex-wrap items-center justify-between gap-4"
+        style={{ '--course-tint': tint, padding: 'var(--sp-4) var(--sp-5)' } as CSSProperties}
       >
-        <div className="course-continue-progress">
+        <div className="course-continue-progress flex flex-col gap-2" style={{ flex: '1 1 260px' }}>
           <p className="r305s-eyebrow">
             {nextLec ? 'الخطوة التالية' : data.lectures.length > 0 ? 'اكتمل المنهج' : 'خطة المنهج'}
           </p>
-          <div className="course-hero-progress-head">
-            <span className="course-hero-progress-label">تقدّمك في المنهج</span>
-            <span className="course-hero-progress-value">{progressValue}%</span>
+          <div className="course-hero-progress-head flex items-center justify-between gap-2">
+            <span className="course-hero-progress-label text-sm text-muted">تقدّمك في المنهج</span>
+            <span className="course-hero-progress-value font-mono">{progressValue}%</span>
           </div>
           <ProgressBar value={lecProgress} color={tint} showValue={false} ariaLabel="نسبة إكمال محاضرات المقرر" />
-          <div className="course-hero-progress-note">
+          <div className="course-hero-progress-note text-sm text-muted">
             {countAr(watchedCount, ['محاضرة مكتملة', 'محاضرتان مكتملتان', 'محاضرات مكتملة', 'محاضرة مكتملة'])} من {data.lectures.length}
           </div>
         </div>
@@ -350,7 +364,7 @@ export default function CourseDetailPage() {
             left, the honest done state replaces the button (no dead
             CTA). */}
         {nextLec ? (
-          <div className="course-continue-next">
+          <div className="course-continue-next flex flex-col items-start gap-1">
             <Link to={`/student/lectures/${nextLec.id}`} className="btn primary" title={nextLec.title}>
               <Icon icon={Play} size={13} />
               التالي: المحاضرة <bdi>{nextLec.ordinal}</bdi>
@@ -359,7 +373,7 @@ export default function CourseDetailPage() {
               <Icon icon={ChevronLeft} size={13} />
             </Link>
             <div
-              className="course-hero-progress-note"
+              className="course-hero-progress-note text-sm text-muted"
               style={nextPending > 0
                 ? { color: 'var(--warning-ink)' }
                 : { whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}

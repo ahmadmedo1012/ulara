@@ -18,7 +18,7 @@ import {
  * numbers, cell-stack identity, flat sg-flag statuses) and the
  * person's own row links to the detail route. */
 import { Link } from 'react-router-dom';
-import { KpiBand, SheetSection, DataSheet, type DataSheetColumn } from '../../components/patterns';
+import { KpiBand, SheetSection, SheetEmpty, DataSheet, type DataSheetColumn } from '../../components/patterns';
 import { StatusFlag, rowToneFromStatus } from '../../components/institutional/kit';
 import { TablePaginationFooter } from '../admin/TablePaginationFooter';
 import { useInstitutionScope } from '../../stores/auth.store';
@@ -330,7 +330,7 @@ export function InstitutionPersonDetailPage() {
         title={person?.fullNameAr ?? 'تفاصيل الفرد'}
         eyebrow="دليل الأفراد"
         description="المسؤوليات المؤسسية لهذا الفرد — منفصلة عن دوره في المنصة."
-        meta={person ? <EnumChip value={person.staffStatus} labels={STAFF_STATUS_LABELS} /> : null}
+        meta={person ? <StatusFlag value={person.staffStatus} labels={STAFF_STATUS_LABELS} /> : null}
       />
       <InstStates isLoading={query.isLoading} error={query.error} isEmpty={!person}>
         {person && (
@@ -374,35 +374,32 @@ export function InstitutionPersonDetailPage() {
               description="المنصب القانوني/المؤسسي — مستقل عن الرتبة الأكاديمية ودور المنصة."
             >
               {appointments.length === 0 ? (
-                <p className="inst-section-desc">لا توجد تعيينات مسجلة لهذا الفرد.</p>
-              ) : (
-                <div className="table-wrap">
-                  <table className="table tbl-stack" aria-label="تعيينات الفرد">
-                    <thead>
-                      <tr>
-                        <th scope="col">منذ</th>
-                        <th scope="col">حتى</th>
-                        <th scope="col">الحالة</th>
-                        <th scope="col">بقرار</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {appointments.map((a) => (
-                        <tr key={a.id}>
-                          <td data-label="منذ">{formatDate(a.startDate)}</td>
-                          <td data-label="حتى">{a.endDate ? formatDate(a.endDate) : '—'}</td>
-                          <td data-label="الحالة">
-                            <span className="inst-actions">
-                              <EnumChip value={a.status} labels={APPOINTMENT_STATUS_LABELS} />
-                              {a.acting && <EnumChip value="SCHEDULED" labels={{ SCHEDULED: 'بالوكالة' }} />}
-                            </span>
-                          </td>
-                          <td data-label="بقرار" className="font-mono">{a.decisionNumber ?? '—'}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div className="inst-state">
+                  <SheetEmpty
+                    code="NO APPOINTMENTS"
+                    title="لا توجد تعيينات مسجلة لهذا الفرد"
+                    desc="المناصب القانونية تُسجَّل من قسم المناصب والتعيينات."
+                  />
                 </div>
+              ) : (
+                <DataSheet
+                  caption="تعيينات الفرد"
+                  columns={[
+                    { key: 'since', label: 'منذ', render: (a) => formatDate(a.startDate) },
+                    { key: 'until', label: 'حتى', render: (a) => (a.endDate ? formatDate(a.endDate) : '—') },
+                    {
+                      key: 'status', label: 'الحالة',
+                      render: (a) => (
+                        <span className="inst-actions">
+                          <StatusFlag value={a.status} labels={APPOINTMENT_STATUS_LABELS} />
+                          {a.acting && <EnumChip value="SCHEDULED" labels={{ SCHEDULED: 'بالوكالة' }} />}
+                        </span>
+                      ),
+                    },
+                    { key: 'decision', label: 'بقرار', mono: true, render: (a) => (a.decisionNumber ? <bdi>{a.decisionNumber}</bdi> : '—') },
+                  ]}
+                  rows={appointments}
+                />
               )}
             </InstSection>
 
@@ -411,7 +408,13 @@ export function InstitutionPersonDetailPage() {
               description="منح نطاقها وحدة تنظيمية أو المؤسسة ككل — قدرة واحدة لكل منحة؛ تُدار من قسم الصلاحيات."
             >
               {grants.length === 0 ? (
-                <p className="inst-section-desc">لا توجد منح صلاحيات إضافية.</p>
+                <div className="inst-state">
+                  <SheetEmpty
+                    code="NO GRANTS"
+                    title="لا توجد منح صلاحيات إضافية"
+                    desc="منح النطاق تُدار من قسم الصلاحيات والأدوار."
+                  />
+                </div>
               ) : (
                 <DetailList
                   items={grants.map((g) => ({

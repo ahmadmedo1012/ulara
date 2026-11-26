@@ -2015,16 +2015,20 @@ function QuestionPicker({
       {bank.isPending ? (
         <ListSkeleton rows={3} />
       ) : bank.isError ? (
-        <div className="inline-retry" role="alert">
-          <span className="text-sm text-muted">تعذَّر تحميل أسئلة البنك.</span>
-          <Button variant="ghost" size="sm" onClick={() => bank.refetch()}>
-            <Icon icon={AlertTriangle} size={12} /> إعادة المحاولة
-          </Button>
-        </div>
+        /* The shared state kit replaces the hand-rolled .inline-retry row
+           (the TeacherIntelligencePage convention — the builder modal is
+           no exception to the state-kit law). */
+        <ErrorState
+          message="تعذَّر تحميل أسئلة البنك"
+          error={bank.error}
+          onRetry={() => bank.refetch()}
+        />
       ) : !bank.data || bank.data.length === 0 ? (
-        <p className="text-xs text-muted">
-          لا توجد أسئلة معتمدة تطابق البحث — أسئلة جديدة تحتاج اعتماد الجودة أولاً قبل ظهورها هنا.
-        </p>
+        <EmptyState
+          icon={FileQuestion}
+          title="لا توجد أسئلة معتمدة تطابق البحث"
+          description="أسئلة جديدة تحتاج اعتماد الجودة أولاً قبل ظهورها هنا."
+        />
       ) : (
         <div
           role="group"

@@ -60,7 +60,12 @@ const STATIONS_MOBILE: Record<string, { x: number; y: number }> = {
   'C-01': { x: 50, y: 28 },   /* center on the upper glass field */
   'E-02': { x: 22, y: 82 },   /* center on the left stair run */
   'R-03': { x: 78, y: 40 },   /* center on the right glass field */
-  'I-04': { x: 85, y: 78 },   /* the right stair's low wall — the tag arm's floor */
+  /* r367: 85 → 80 — in RTL the physical `translate: -50%` shifts the
+   * marker's box a further half-width past the mirrored anchor, so the
+   * effective center rides (100−x)% − 44px; at 85 the marker's left
+   * edge went negative at 360/375 (the CI e2e caught it). 80 seats on
+   * the same mirrored stair wall with ≥10px margin at 360. */
+  'I-04': { x: 80, y: 78 },   /* the right stair's low wall — the tag arm's floor */
 };
 
 export function Hero() {
@@ -309,7 +314,15 @@ export function Hero() {
                * it must never inherit art-v2's canvas mapping. */
               <ElevationArt className="hro-elevation" viewBox={mobile ? VB_MOBILE : '0 0 1440 620'} />
             ) : (
+              /* r367 Lighthouse pass — this img IS the landing's LCP
+               * (4.0s throttled mobile measured on production): it rides
+               * eager + fetchpriority=high (never the lazy path) and
+               * carries the active doc's intrinsic 390×560 / 1440×700
+               * window so the decode seats without the unsized-image
+               * penalty; the CSS aspect-lock keeps the final geometry. */
               <img className="hro-elevation" src={elevation} draggable={false} alt=""
+                loading="eager" fetchPriority="high"
+                width={mobile ? 390 : 1440} height={mobile ? 560 : 700}
                 onError={() => setFailedArt(elevation)} />
             )}
           </div>

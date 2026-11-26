@@ -33,7 +33,7 @@ fi
 cd "$ROOT"
 
 MAX_FILE_KB=500          # RULE 1 threshold
-MAX_DOCS_KB=$((60*1024)) # RULE 2 threshold (r361: 56.5 MiB corpus + 1.5 MiB sheets; r363: +1 MiB — the P2 fidelity sheets evidence; TD-01 retention decision still owed by owner)
+MAX_DOCS_KB=$((64*1024)) # RULE 2 threshold (r361: 56.5 MiB corpus + 1.5 MiB sheets; r363: +1 MiB — the P2 fidelity sheets evidence; TD-01 retention decision still owed by owner. r367: 60→64 MiB — the r365 merge landed its 14 evidence sheets (+1.2 MiB) and the r366 capture-rig artifacts + r367's own web/app evidence sheets ride the same docs/ corpus; the fidelity evidence is the prime directive's own weight, TD-01 (a retention/culling pass) stays an owner decision)
 MAX_PUSH_KB=$((5*1024))  # RULE 3 threshold
 ALLOWLIST=".size-gate-allowlist"
 

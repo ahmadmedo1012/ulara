@@ -1,0 +1,19 @@
+# r366 capture rig — public + auth routes (no login required)
+# format: NAME|route-path  (deep link: ulara://<route-path>)
+auth-facade|auth
+auth-login|auth/login
+auth-register|auth/register
+auth-forgot|auth/forgot-password
+about|about
+help|help
+contact|contact
+campus|campus
+community|community
+competitions|competitions
+colleges|colleges
+colleges-leaderboard|colleges/leaderboard
+vision|vision
+training|training
+search-guest|search
+legal-privacy|legal/privacy
+legal-accessibility|legal/accessibility

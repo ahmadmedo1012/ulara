@@ -68,6 +68,7 @@ import { useSheetScroll } from '../../../lib/motion/useSheetScroll';
 import { clamp, setSheetVar } from '../../../lib/motion/sheetConductor';
 import { IsoCampusSheet, FRAG_VECTORS, PLAN_VB } from './IsoCampusSheet';
 import { RegCross } from '../../patterns/RegCross';
+import { PlanPlate } from '../plates/PlanPlate';
 
 /* ── The copy (our own words, honest, Arabic RTL — the r312/r322
  *    contract carried verbatim; the findings/ledger keep their
@@ -965,6 +966,22 @@ export function IsoJourneyScene() {
               <RegCross className="jt-mark jt-mark-b" data-spec="map.markb" tone="ink" />
               <RegCross className="jt-mark jt-mark-c" data-spec="map.markc" tone="ink" />
               <RegCross className="jt-mark jt-mark-d" data-spec="map.markd" tone="ink" />
+
+              {/* the dominant plan — r367 (the r364 NEXT item): the
+                  reference's map band carries ONE dominant thick-wall
+                  plan at ~55% of the band (shot-map-2); ULARA's plan
+                  grammar rode the 3-plate use-case grid and the iso
+                  walkthrough owned this band alone. The plan band now
+                  rides BESIDE the walkthrough — the campus plan's own
+                  framed sheet on the window's free inline-end quarter
+                  (the markers own the inline-start 28–68%), authored
+                  visible (the JS-off law), the choreography untouched.
+                  Hidden ≤991 (the stacked column clock has no side
+                  seat) — the phone reads the walkthrough alone, as
+                  before. */}
+              <div className="jt-dominant" data-spec="map.dominant">
+                <PlanPlate plan="plan-campus" title="الحرم الجامعي — المسقط الشامل" scale="1:500" rev="B" />
+              </div>
 
               {/* the drifting plan stack — the entrance descent's
                   target. r346: the stack carries the ISOMETRIC CAMPUS
