@@ -960,6 +960,10 @@ html[data-theme='dark'] .fo-header {
 @media (min-width: 992px) {
   .fo-header ~ main .pf-page-header { display: grid; justify-items: center; text-align: center; gap: 1.2rem; padding-block: 4.8rem 3.2rem; border-block-end: 1px solid var(--grid-line); }
   .fo-header ~ main .pf-page-header-text { display: grid; justify-items: center; text-align: center; }
-  .fo-header ~ main .pf-page-title { font-size: clamp(4rem, 5vw, 7.2rem); line-height: 1.1; text-align: center; }
+  .fo-header ~ main .pf-page-title { line-height: 1.1; text-align: center; }
   .fo-header ~ main .pf-page-actions { justify-content: center; }
 }
+
+/* r368 slice 17/20 — with the full bar present, error and colleges sheets start below it */
+.fo-header ~ .nf-scene { padding-block-start: 72px; }
+body:has(> .fo-header) .page:has(.inx-head) { padding-block-start: 72px; }

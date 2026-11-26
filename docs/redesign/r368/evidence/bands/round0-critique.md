@@ -92,3 +92,6 @@ The full nav bar now leads help, legal, app download, campus and capabilities, a
 
 ## Slices 12-18 round 2
 Inner-page titles centred in a ruled cell at desktop (guest pages only: scoped to pages with the full bar). Closer to the reference opening. Still wrong: no vertical column rules framing the title cell, no ruled pricing-style grid below, the hero image block and boxed notes are not reference structure, title face is Arabic display. Merged origin/main (47 commits, clean, no conflicts, no baselines touched). Colleges (17), auth (19), error/maintenance (20) not yet touched. Status: FAILING.
+
+## Slices 17 and 20 round 1 (colleges, error)
+Full bar now leads the colleges registry (portalled, guest only) and the not-found page. The type census gate (r324-type-gate) failed on my first title size override; the override is dropped (title already rides the d2 rung), gate passes 127. Auth (19) is a task form with no reference counterpart in the corpus; left as is, with its own thin header. Still wrong: colleges plan block and boxed notes, 404 headline stacks to three lines; no ruled column frame. Status: FAILING.

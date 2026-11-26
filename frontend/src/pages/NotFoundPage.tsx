@@ -20,6 +20,7 @@
  *   - the catch-all *  route at the end of App.tsx
  */
 import { Link } from 'react-router-dom';
+import { SheetNav } from '../components/landing/chrome/SheetNav';
 import { Building2, Home, LogIn } from 'lucide-react';
 import { Icon } from '../components/Icon';
 import { DuotoneScene } from '../components/landing/plates/DuotoneScene';
@@ -59,6 +60,7 @@ export default function NotFoundPage() {
           .nf-scene rides z 1 above it (auth.css §7). */}
       <div className="auth-grain" aria-hidden="true" />
 
+      <SheetNav />
       <div className="nf-scene">
         {/* r364 art v2 — the thin-line not-found scene retires; the
             error sheet carries the art system's duotone scene (the

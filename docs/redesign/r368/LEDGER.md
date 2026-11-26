@@ -29,3 +29,4 @@ NEXT: platform grid to one tall plan cell + ledger rows; half-art/half-list role
 - about: full nav bar on inner page (FAILING; NEXT: same bar on help/contact/legal/app/colleges/campus/capabilities, centred titles)
 - inner pages 12-16,18 carry the full nav bar (FAILING; NEXT: centred framed titles, colleges/auth/error)
 - merged origin/main (clean); inner titles centred (FAILING; NEXT: colleges, auth, error, column rules)
+- colleges + 404 carry the full bar; type gate kept (FAILING; NEXT: suite result, column rules, responsive loops)

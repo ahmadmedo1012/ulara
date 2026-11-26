@@ -1,5 +1,7 @@
 import { Link, useParams, useLocation } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { SheetNav } from '../../components/landing/chrome/SheetNav';
 import { useQuery } from '@tanstack/react-query';
 import {
   Building2, Users, BookOpen, GraduationCap, Trophy, Megaphone, ShieldCheck,
@@ -279,6 +281,7 @@ export function CollegesIndexPage() {
           header note) + the registry's mono identity line over the
           header. Authed visitors keep the shell untouched. */}
       {isGuest && <GuestSheetChrome portal />}
+      {isGuest && createPortal(<SheetNav />, document.body)}
       {/* r264: ترويسة patterns هادئة. Phase Ω: /colleges هو صفحة عرض
           تعدّد المستأجرين — لا كتالوج جامعات. */}
       {/* R332 W10b — .inx-head: the page-opening hairline + d2 display
