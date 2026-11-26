@@ -162,3 +162,126 @@
   .duo-strip .fs-slab { inline-size: 4.5rem; }
   .duo-strip .fs-circle-pale { block-size: 13rem; inline-size: 13rem; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   the plan plates + dark cards (the use-case grammar — shot-usecase)
+   ═══════════════════════════════════════════════════════════════════ */
+
+.plan-plate {
+  position: relative;
+  margin: 0;
+  border: 1px solid var(--hairline);
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+}
+.plan-plate-art {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  /* the plan's own paper tone blends into the sheet (same multiply
+     law as the hero ink) */
+  mix-blend-mode: multiply;
+}
+.plan-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-block-start: 1px solid var(--hairline);
+  padding: 0.55rem 0.9rem;
+}
+.plan-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.01em;
+  color: var(--paper-ink);
+}
+.plan-spec {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  font-size: 0.62rem;
+  color: var(--paper-ink-2);
+  text-transform: uppercase;
+}
+.plan-spec-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding-inline: 0.6rem;
+  border-inline-start: 1px solid var(--hairline);
+}
+.plan-spec-cell b {
+  font-weight: 500;
+  font-size: 0.55rem;
+  color: color-mix(in srgb, var(--paper-ink) 55%, transparent);
+}
+.plan-stamp {
+  display: grid;
+  place-items: center;
+  inline-size: 1.6rem;
+  block-size: 1.6rem;
+  border: 1px solid var(--hairline);
+  color: var(--accent);
+  margin-inline-start: 0.5rem;
+}
+.plan-stamp svg { inline-size: 0.9rem; block-size: 0.9rem; }
+
+/* the dark info card — the ink slab (CHECKING… / LEARNED PATTERN) */
+.dark-card {
+  position: absolute;
+  z-index: 3;
+  inset-inline-start: 0;
+  inset-block-end: 0;
+  inline-size: min(19rem, 92%);
+  background: var(--paper-ink);
+  color: var(--paper);
+  border: 1px solid var(--paper-ink);
+  box-shadow: 4px 4px 0 0 color-mix(in srgb, var(--paper-ink) 28%, transparent);
+  padding: 0.55rem 0.75rem 0.6rem;
+}
+.dark-card-head {
+  display: block;
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  margin-block-end: 0.4rem;
+  color: color-mix(in srgb, var(--paper) 88%, transparent);
+}
+.dark-card-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.28rem;
+}
+.dark-card-row {
+  font-size: 0.6rem;
+  letter-spacing: 0.04em;
+  color: color-mix(in srgb, var(--paper) 72%, transparent);
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+.dark-card-row::before {
+  content: "";
+  inline-size: 0.4rem;
+  block-size: 0.4rem;
+  background: var(--accent);
+  flex: none;
+}
+
+/* the roles band's plan row — the use-case reveal strip */
+.plan-strip {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-block-start: 2.5rem;
+}
+.plan-strip .plan-plate { min-inline-size: 0; }
+.plan-strip .plan-plate-checked { position: relative; min-inline-size: 0; }
+@media (max-width: 991px) {
+  .plan-strip { grid-template-columns: 1fr; gap: 1.5rem; }
+  .dark-card { position: static; inline-size: 100%; margin-block-start: 0.6rem; }
+}
