@@ -581,3 +581,11 @@
 @media (min-width: 768px) and (max-width: 991px) {
   .hro-art { block-size: auto; inline-size: 100%; max-inline-size: 96%; }
 }
+
+/* r368 slices 02/03 round: measured against shot-top the reference title is about
+ * 44px at 1440 (ours was 72) and its elevation fills the stage with no side air.
+ * Desktop only; the Arabic floor keeps the title at 3.5vw. */
+@media (min-width: 992px) {
+  .hro { --hro-h1: clamp(36px, 3.5vw, 72px); }
+  .hro-art { max-inline-size: 100%; }
+}

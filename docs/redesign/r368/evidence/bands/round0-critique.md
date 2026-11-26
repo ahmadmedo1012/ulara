@@ -230,3 +230,6 @@ Found: plan SVGs vanished on dark paper (multiply of dark ink). Fixed: dark inve
 
 ## Slices 01-04 pass (1440)
 01-03 hero: composition matches (centred elevation, frame, statement bottom-left); gaps: our elevation is smaller and less detailed than the reference, the Arabic hero title is much larger relative to the frame, no corner plus marks inside the frame. 04 product: big thick-wall plan left with tag, text rail right; gaps: rail order and tab rail differ, no dimension chains on the plan. No new code this pass. Status: FAILING.
+
+## Hero title scale and elevation size (1440)
+Title was 72px against about 44px measured in shot-top; now 3.5vw (50px at 1440, Arabic floor) at 992px and up, and the elevation box no longer carries the 88% side air. The elevation reads larger and the title no longer dominates the bottom band. Remaining: elevation detail and texture are still lighter than the reference drawing, no corner plus marks. Status: FAILING (closer).

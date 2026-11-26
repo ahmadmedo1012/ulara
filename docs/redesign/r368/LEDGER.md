@@ -113,3 +113,5 @@ NEXT: re-measure mobile scroll; further rounds
 NEXT: 07/08 polish
 - dark: plan plates inverted+screen on dark paper
 NEXT: more rounds
+- hero: title 3.5vw desktop, elevation full width
+NEXT: more
