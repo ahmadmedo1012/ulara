@@ -129,3 +129,4 @@ NEXT: more
 - full-page pass logged; 08 role list kept (it is the slide control). NEXT: sync main after 8:49.
 - 08 accordion restyled to light rule rows (control kept). NEXT: sync main after 8:49.
 - 08 dominant plan plates on desktop. NEXT: 06 platform layout, texture.
+- 06 thumbnail yields at stage 2-4 (scale-up tried, dropped). NEXT: texture/line weight.

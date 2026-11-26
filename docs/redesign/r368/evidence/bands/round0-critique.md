@@ -279,3 +279,6 @@ Desktop role rows are now light rule rows (1.8rem title, hairline between, tight
 
 ## Slice 08 composition
 Desktop plan strip: first/last plate now 78% of the half, checked plate 46%, so one dominant plan owns the left half like the reference picture. Accordion kept as the slide control (clickable/keyboard rows). Still: line art vs the reference photo-collage. Status: FAILING.
+
+## Slice 06 stage 2+ layout
+Thumbnail plan now fades at stages 2-4 on desktop. A stack scale-up (1.22) was tried and reverted: no visible gain and it risks marker registration. The reference keeps one large plan filling the frame with the title and feature rows on a clean column; ours keeps the iso walkthrough in the middle with the title column below-left. Not matched. Status: FAILING.

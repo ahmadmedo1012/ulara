@@ -1992,3 +1992,9 @@ section.chapters {
     position: absolute !important; inline-size: 1px !important; block-size: 1px !important; min-block-size: 0 !important; overflow: hidden !important; clip-path: inset(50%) !important; white-space: nowrap; padding: 0 !important; margin: 0 !important;
   }
 }
+
+/* r368 slice 06 (stage 2+) — the small companion thumbnail yields so the walkthrough owns the frame, as the reference's single large plan does.
+   Desktop only. (A 1.22 scale on the stack was tried and dropped: no clear gain, marker registration risk.) */
+@media (min-width: 992px) {
+  .jt[data-stage='2'] .jt-dominant, .jt[data-stage='3'] .jt-dominant, .jt[data-stage='4'] .jt-dominant { opacity: 0; }
+}
