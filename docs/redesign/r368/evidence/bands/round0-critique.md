@@ -270,3 +270,6 @@ The near-empty band at scroll ~2200 is the "chapters" word-reveal statement (.jt
 ## Slices 07/08 plate measurement (1440x1000, from the montage, +-5px)
 07 Why: reference floor-plan plate ~453x446 at x862 y472; ULARA right plate ~453x475 at x910 y415 (width equal, height +6%). Reference elevation plate ~293px wide top-left; ULARA left plan plate ~333 wide (+14%). Plate sizes are within tolerance, so no size change; remaining gaps are the reference keeping a red hairline across the whole band and the dark card nested under the plate, plus finer line weight.
 08 Roles: stacked plates at ~340px wide match the reference column width; the gap is composition (ULARA puts the role list on the right, the reference leaves it as bare ground with two art plates). Status: FAILING.
+
+## Full-page pass (8 scroll stops, 1440x1000, light RTL)
+Hero, statement, values, chapters line, journey stages, platform plan and roles all render without breakage or overlap; the cookie bar clears CTAs. 07: the full-width hairline already exists at plate level and the dark card already overlaps the plate, so no change. 08: NOT hidden. The role list (.rl-row, onClick setOpen) is the only desktop control that switches the slide, so hiding it would remove function, not just appearance. Gap vs the reference (bare ground, two art plates) remains. Status: FAILING.

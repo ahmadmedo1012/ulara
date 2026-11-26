@@ -126,3 +126,4 @@ NEXT: more
 - dark/RTL re-check logged; consent tests 129 pass. NEXT: 07/08 plate measurement, hatching density.
 - hero hatching 1.5x; dark 2200 frame verified by design. NEXT: 07/08 plate measurement.
 - 07/08 plate sizes measured, within tolerance, no code change. NEXT: sync main after 8:49.
+- full-page pass logged; 08 role list kept (it is the slide control). NEXT: sync main after 8:49.
