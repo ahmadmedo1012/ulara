@@ -209,3 +209,6 @@ Remaining 1-2k px spike is first mount cost of lazy sections (chunks are already
 
 ## Slice 07 redo (1440)
 Why stage is now two floating plan plates (campus, laboratory) on bare ground, a royal annotation hairline and the dark checking card, replacing the full-bleed cantilever on desktop (DOM kept, hidden at 992px and up). Remaining: plates are small and quiet versus the reference plates, no corner plus marks or red tag cards, the pillar panels still follow below. Status: FAILING (closer).
+
+## Slice 08 redo (1440)
+The plan strip now takes the left half as a stack of title-barred plates with the dark checking card on bare ground; the duotone collage pane is hidden (kept in DOM). Remaining: plate sizes and offsets are not measured against the reference, the third plate is clipped by the section height, no tag cards. Status: FAILING (closer).

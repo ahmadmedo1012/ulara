@@ -659,3 +659,19 @@
 @media (max-width: 767px) {
   .rl-section .rl-media { aspect-ratio: 4 / 3; min-block-size: 70vw !important; block-size: auto !important; }
 }
+
+/* r368 slice 08: the reference use-case stage is a stack of plan plates with
+ * title bars and a dark card on bare ground, beside the list; no duotone
+ * collage. Desktop only: the plan strip takes the media seat (DOM kept, the
+ * duotone pane hides). Reason: the reference wins for appearance. */
+@media (min-width: 992px) {
+  .rl-section { position: relative; }
+  .rl-section .rl-media { visibility: hidden; }
+  .rl-section > .plan-strip {
+    position: absolute; inset-block-start: 0; inset-inline-start: 0; inline-size: 50%; block-size: 100%;
+    margin: 0; padding: 2.5rem 3rem; gap: 1.25rem; grid-template-columns: minmax(0, 1fr);
+    align-content: start; direction: ltr; overflow: hidden; z-index: 2;
+  }
+  .rl-section > .plan-strip .plan-plate { inline-size: 62%; }
+  .rl-section > .plan-strip .plan-plate:nth-child(2) { justify-self: end; }
+}

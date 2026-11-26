@@ -101,3 +101,5 @@ NEXT: further fixes or mark Ready on owner call
 NEXT: more mobile scroll (lazy mount spike, rl-row transitions), then slices 05-08
 - slice 07: why stage = two plan plates + royal hairline + dark card
 NEXT: slice 08, 05, 06 redo
+- slice 08: roles stage = stacked plan plates on bare ground
+NEXT: slice 05/06 redo, enlarge 07 plates + tag cards
