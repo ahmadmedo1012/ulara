@@ -233,3 +233,6 @@ Found: plan SVGs vanished on dark paper (multiply of dark ink). Fixed: dark inve
 
 ## Hero title scale and elevation size (1440)
 Title was 72px against about 44px measured in shot-top; now 3.5vw (50px at 1440, Arabic floor) at 992px and up, and the elevation box no longer carries the 88% side air. The elevation reads larger and the title no longer dominates the bottom band. Remaining: elevation detail and texture are still lighter than the reference drawing, no corner plus marks. Status: FAILING (closer).
+
+## Elevation texture (1440)
+Tried a procedural grain overlay: it greyed the paper box (rejected, removed). Kept a contrast lift (1.18) on the light elevation at desktop. The reference drawing carries dense concrete hatching, window mullions and a stepped massing that the CSS cannot add; closing that needs a richer scripts/art elevation, which is the next real piece of work. Status: FAILING.

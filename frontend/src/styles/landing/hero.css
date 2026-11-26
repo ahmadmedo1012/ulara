@@ -589,3 +589,13 @@
   .hro { --hro-h1: clamp(36px, 3.5vw, 72px); }
   .hro-art { max-inline-size: 100%; }
 }
+
+/* r368 slice 03 texture: the reference drawing is concrete-grain heavy. Lift the
+ * contrast of the raster a little and lay (a grain overlay was tried and
+ * rejected: it greyed the paper box). Light theme;
+ * the dark treatment keeps its own invert filter. Desktop only. */
+@media (min-width: 992px) {
+  [data-theme="light"] .hro-ink img.hro-elevation, :root:not([data-theme="dark"]) .hro-ink img.hro-elevation {
+    filter: contrast(1.18) saturate(0.9);
+  }
+}
