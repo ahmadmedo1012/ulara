@@ -154,12 +154,14 @@ and while the keyboard is open on `/student/ai`.
 `/students` · `/training` · `/quality` · `/licenses` · `/access` ·
 `/facilities`, `/facilities/[id]` · `/research`, `/research/[id]`
 
-> ⚠️ **Found defect (r366 P0):** the meeting-detail file reached `main` as
-> `meetings/eetingId].tsx` (the `[m` was lost), so expo-router registered a
-> static garbage route and every meeting-detail push from
-> `councils/[id].tsx` dead-ends at `+not-found`. The rename to
-> `[meetingId].tsx` lands on this branch (via the Git Data API — see the
-> ledger's environment note).
+> ℹ️ **r366 verification note:** the meetings detail route is
+> `/institution/councils/[id]/meetings/[meetingId]` and it works — the file
+> is `[meetingId].tsx` on disk and in the remote tree (proved at the byte
+> level: the new-name tree hash matches the stored tree exactly; an
+> old-name hash does not exist). An early walk of this branch reported the
+> file under a mangled name — an artifact of this sandbox's output
+> filtering of `[...]` route-bracket paths, not a repo defect. Trust byte
+> comparisons over rendered paths for bracket filenames.
 
 ## Capture coverage contract (the rig: `mobile-capture-r366.yml`)
 
