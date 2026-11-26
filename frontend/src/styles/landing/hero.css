@@ -16,7 +16,7 @@
 
 .hro {
   /* the type law (scoped — A1's own seats per the partition contract) */
-  --hro-h1: clamp(34px, 4.3vw, 82px);      /* 62@1440 · 82@1907 · floor 34@390 — the brief's h1 law (62.22 desktop scale) */
+  --hro-h1: clamp(36px, 5vw, 96px);      /* r368 slice 03: giant tight display (critique 3) */      /* 62@1440 · 82@1907 · floor 34@390 — the brief's h1 law (62.22 desktop scale) */
   --hro-lead: clamp(13.3px, 1.11vw, 21.3px); /* 16@1440 · 21.3@1920 — the reference's own paragraph voice */
   /* the reference's measured ink family — A1's scoped seats (D1/D6);
      r360: the seats now resolve from the .landing token home
@@ -90,7 +90,7 @@
   position: relative;
   block-size: 100%;
   aspect-ratio: 1440 / 700;
-  max-inline-size: 100%;
+  max-inline-size: 88%; /* r368: the elevation floats with air at both sides (critique 2) */
   margin-inline: auto;
 }
 .hro-ink {
@@ -120,7 +120,7 @@
  * contrast seat keeps the ink's weight through the lift. */
 .hro-ink img.hro-elevation {
   mix-blend-mode: multiply;
-  filter: grayscale(0.15) brightness(1.055) contrast(1.035);
+  filter: grayscale(0.15) brightness(1.09) contrast(1.12); /* r368: the plate ground lifts to pure paper, no boxed edge (critique 1) */
 }
 
 /* ── the ElevationArt ink grammar (the r359 elevation) ─────────────── */
@@ -176,8 +176,8 @@
   cursor: pointer;
 }
 .hi-sq {
-  inline-size: 9px;
-  block-size: 9px;
+  inline-size: 14px; /* r368: solid callout squares read at the reference's size (critique 5) */
+  block-size: 14px;
   background: var(--hro-sig);
   outline: 1px solid var(--hro-paper);
   outline-offset: -1px;

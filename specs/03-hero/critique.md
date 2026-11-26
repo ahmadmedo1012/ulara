@@ -10,3 +10,12 @@ Sheet: docs/redesign/r368/evidence/03-hero/round0-1440.webp (reference left, ULA
 6. Frame: reference plus marks sit at four stage corners; ULARA has them but fainter. Fix: darker hairline.
 7. Cookie strip, right-edge tab: present in the reference at bottom-right and mid-right; slice 09 and 02.
 Status: not nearly indistinguishable. Implementation pending.
+
+## Round 1 (CSS pass, sheet: evidence/03-hero/round1-1440.webp)
+Fixed: headline scale raised to 5vw (floor 36, cap 96); plate ground lifted so the boxed edge is far less visible; art capped at 88% width so it floats with side air; callout squares 9px to 14px.
+Still different (not passing):
+1. The art style: the reference is a flat, clean-line brutalist elevation with large calm tone fields and a few bold ink shapes; ULARA's plate is a dense photographic hatching with a visible ground strip and shadow band. This needs a regenerated flat-field elevation: slice 11.
+2. The nav bar and tool icons above the stage add clutter the reference stage does not have: slice 02.
+3. Bottom band: the reference headline sits left in a wide cell with sub-copy in a narrow cell beside it; ULARA has the same structure mirrored, sub cell wider than the reference's. Fine-tune after the art lands.
+4. Reference stage is taller and emptier above the roof; ours is cropped by the nav. Re-seat after slice 02.
+Status: FAILING, improved. Not "nearly indistinguishable".
