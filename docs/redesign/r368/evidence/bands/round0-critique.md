@@ -308,3 +308,6 @@ Phone: the decorative agent status pill covered the assembly title at 390 wide, 
 - 08 roles: accordion list with light rules matches; plates are larger in ours at the left only.
 - Hero: still procedural drawing vs photo render.
 Status: FAILING
+
+## Round (9:33pm) — fresh desktop light full-page pass (12 scroll frames)
+No new defects. Open gaps unchanged: 06 not the reference's multi-plan collage (now plates+route but static composition), hero is a drawing not a photo, statement band is sparse. Status: FAILING
