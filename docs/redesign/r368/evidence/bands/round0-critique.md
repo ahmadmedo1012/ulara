@@ -288,3 +288,6 @@ New aria-hidden .jt-platform inside the window: at stages 2-4 (>=992px, not redu
 
 ## Slice 06 per-stage plans
 The platform frame now swaps plan by wash beat: lecture hall (lecture/checkpoint), exam hall, library (library/mastery). Found and fixed a cascade issue (another rule held img opacity at 1; the plan imgs use !important opacity scoped to .jt .jt-platform). Verified with fresh wheel frames. Feature rows stay in the left closing column (already ruled icon rows). Status: FAILING.
+
+## Texture and line weight (measured)
+Paper ground: reference empty ground (245,246,238), sd 0.73; ULARA (242,241,236), grain film present, so a 3-level warm shift only, not visible side by side. Plan walls: darkest sampled pixel reference (57,57,36) vs ULARA (37,31,24), wall width on a scanline 17px vs 14px: ULARA walls are slightly darker and warmer and ~15% thinner, an anti-aliasing-sensitive measurement, so no change was made rather than tune to noise. Hero elevation: reference is a photographic render; the procedural drawing is a different technique and is the main remaining texture gap. Status: FAILING.
