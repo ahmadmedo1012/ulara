@@ -119,15 +119,9 @@ describe('r188 — brand-integrity gate (active surfaces stay university-identit
      * (LandingPage + the nine section bands) — the pin reads all of it. */
     const landing = [
       'frontend/src/pages/LandingPage.tsx',
-      'frontend/src/components/landing/sections/Hero.tsx',
-      'frontend/src/components/landing/sections/Statement.tsx',
-      'frontend/src/components/landing/sections/Live.tsx',
-      'frontend/src/components/landing/sections/Chapters.tsx',
-      'frontend/src/components/landing/sections/Product.tsx',
-      'frontend/src/components/landing/sections/Why.tsx',
-      'frontend/src/components/landing/sections/Roles.tsx',
-      'frontend/src/components/landing/sections/Vision.tsx',
-      'frontend/src/components/landing/sections/Footer.tsx',
+      'frontend/src/components/landing/r369/index.tsx',
+      'frontend/src/components/landing/r369/Mascot.tsx',
+      'frontend/src/pages/LandingPage.tsx',
     ].map((p) => readFileSync(path.join(root, p), 'utf8')).join('\n');
     expect(landing).toContain('مساحة عمل أُلارا التجريبية');
     expect(landing).toContain('اصطناعية بالكامل');

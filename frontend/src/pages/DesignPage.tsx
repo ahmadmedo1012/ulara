@@ -82,6 +82,7 @@ import '../styles/shared/design.css';
    this import serves the evidence surface only. */
 import '../styles/shared/app-grammar.css';
 import '../styles/shared/r359-grammar.css';
+import { GLYPH_NAMES, Glyph } from '../components/icons';
 
 const BTN_VARIANTS: Array<{ v: Parameters<typeof Button>[0]['variant']; label: string }> = [
   { v: 'default', label: 'افتراضي' },
@@ -279,6 +280,31 @@ export default function DesignPage(): React.JSX.Element {
       </header>
 
       <main className="r323d-main">
+        <Section
+          index="00"
+          title="أيقونات أُلارا"
+          note={`${GLYPH_NAMES.length} أيقونة — شبكة 24 · سكتة 2 · دو-تون بلون النص، تُرسم في الثيمين`}
+        >
+          <div className="r323d-grid">
+            {GLYPH_NAMES.map((name) => (
+              <Cell key={name} label={name}>
+                <span style={{ display: 'inline-flex', gap: 10, alignItems: 'center' }}>
+                  <Glyph name={name} size={28} />
+                  <Glyph name={name} size={16} />
+                </span>
+              </Cell>
+            ))}
+            <Cell label="micro-motion (hover to play)">
+              <div className="r323d-row">
+                <Glyph name="star" size={28} className="ui-glyph-twinkle" />
+                <Glyph name="flame" size={28} className="ui-glyph-flicker" />
+                <Glyph name="bell" size={28} className="ui-glyph-ring" />
+                <Glyph name="check" size={28} className="ui-glyph-draw" />
+              </div>
+            </Cell>
+          </div>
+        </Section>
+
         <Section index="01" title="الأزرار" note="Button — 8 صيغ · تحويم/ضغط/تركيز تُفرَض على البوابة">
           <div className="r323d-grid">
             {BTN_VARIANTS.map(({ v, label }) => (

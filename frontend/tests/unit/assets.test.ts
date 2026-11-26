@@ -92,41 +92,19 @@ describe('r188 brand reset — campus photography retired (no real-university im
     }
   });
 
-  it('R315 override — the hero seat is the whole drafted ELEVATION on transparent paper (A.1)', () => {
-    /* R331: the hero seat lives in components/landing/hero/Hero.tsx. */
-    const src = read('src/components/landing/hero/Hero.tsx');
+  it('r369 — the hero art is our own mascot SVG (no raster, no photo)', () => {
+    /* r369 replaced the drafted-elevation hero art with the mascot
+     * «نجّوم» — the same contract holds: an original inline SVG, no
+     * <picture>, no campus raster. */
+    const src = read('src/components/landing/r369/Mascot.tsx');
     const page = read('src/pages/LandingPage.tsx');
     expect(page).not.toContain('<picture>');
     expect(page).not.toContain('main_photo');
     expect(src).not.toContain('<picture>');
-    expect(src).not.toContain('main_photo');
-    // R315 (owner §0-A.1, supersedes the R314 raster sanction): the
-    // hero's ONE graphic object is Ulara's own drafted ELEVATION SVG
-    // — whole frontal building, centred, transparent paper, no crop.
-    // The R314 ink render (the Commons-licensed derivative in
-    // manifest.json renders[], adapted:true, ShareAlike kept) leaves
-    // the hero seat; the r188 intent is kept: no real-university
-    // BRANDING, no orbit ring, no vision backdrop, no AI scenes, no
-    // text inside images. The loader keeps its original line drawing.
-    /* feat/home-art-direction re-seat (same evidence as the r306 pin):
-       the hero's ink seat moved OFF the HeroInkWindow/ElevationDrawing
-       pair ONTO the CampusPlate 'ink' variant — the SAME plate the
-       preloader traces (one object across the loader→hero handoff).
-       The pin's semantics (whole drafted elevation, transparent paper,
-       no raster) re-pin on the new seat; the R342-final integration
-       DELETED HeroInkWindow (superseded, zero consumers — git history
-       keeps the rollback; ElevationArt survives module-internal to
-       ElevationDrawing for the SheetLoader's entrance variant). */
-    /* r359 A1 — the hero's ink seat is the r359 ELEVATION family: the
-     * A2 art-contract glob (hero-elevation) with the committed
-     * fallback ElevationArt; the semantics (whole drafted elevation,
-     * transparent paper, no raster) re-pin on the new seats. */
-    expect(src).toContain('<ElevationArt className="hro-elevation" viewBox={vb} />');
-    const ink = read('src/components/landing/hero/ElevationArt.tsx');
-    // transparent paper — the raster <image> is gone from the plate
-    expect(ink).not.toContain('<image');
-    // …and the r188 provenance strings survive (brand gates below
-    // still pin مساحة عمل أُلارا التجريبية as synthetic data).
+    expect(src).not.toContain('<image');
+    expect(src).toContain('viewBox');
+    // decorative by default — the band supplies any meaning in text
+    expect(src).toContain('aria-hidden');
   });
 
   it('r198 — the retired landing raster family stays deleted', () => {

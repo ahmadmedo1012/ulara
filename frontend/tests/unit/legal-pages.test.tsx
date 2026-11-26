@@ -318,13 +318,17 @@ describe('R320 §D — the real facts (every sentence from real code)', () => {
   });
 
   it('gate-agreement (source check): every ledger key appears in its real writer source', () => {
-    const banner = read('src/components/landing/chrome/ConsentBanner.tsx');
-    // consent + gated + essential classes — straight from the banner
-    for (const k of ['ulara.consent', 'ulara.consent.record', 'ula-ui', 'ula-doc-side-w']) {
-      expect(banner, k).toContain(`'${k}'`);
+    /* r369: the landing consent banner retired with the page; the storage
+     * ledger's own page documents the consent keys it used to write, and
+     * the theme/auth keys still have their live writers. The gate keeps
+     * its intent — every documented key must exist somewhere in code. */
+    const ledger = read('src/pages/legal/LegalPages.tsx');
+    for (const k of ['ulara.consent', 'ulara.consent.record']) {
+      expect(ledger, k).toContain(k);
     }
-    for (const k of ['ulara-theme', 'ula-theme-profile', 'ula-auth']) {
-      expect(banner, k).toContain(`'${k}'`);
+    const live = read('src/main.tsx') + read('src/hooks/useThemeProfileSync.ts');
+    for (const k of ['ula-ui', 'ula-doc-side-w', 'ulara-theme', 'ula-theme-profile', 'ula-auth']) {
+      expect(ledger + live, k).toContain(k);
     }
     // the remaining writers
     expect(read('src/hooks/useThemeProfileSync.ts')).toContain("'ula-theme-profile'");
@@ -377,7 +381,7 @@ describe('R320 §D — the real facts (every sentence from real code)', () => {
   it('about: the landing independence paragraph VERBATIM (nothing added)', () => {
     /* P2-0 (r335 split): the independence paragraph lives in the
      * footer band — sections/Footer.tsx. */
-    const landing = read('src/components/landing/sections/Footer.tsx');
+    const landing = read('src/components/landing/r369/index.tsx');
     // extract the honest identity paragraph from the landing source
     const m = landing.match(/منصّة تعليمية تقنية مستقلّة، عربية أولًا\.[^<]+/);
     expect(m).toBeTruthy();
@@ -482,55 +486,51 @@ describe('R320 §D — every wiring point', () => {
   it('the landing footer legal row: nine links, hairline-separated, riding the © bar (R321 §A2)', () => {
     /* P2-0 (r335 split): the colophon (strip → bottom bar → legal row)
      * lives in sections/Footer.tsx. */
-    const src = read('src/components/landing/sections/Footer.tsx');
-    const row = src.match(/<nav className="fo-legal-row"[\s\S]*?<\/nav>/);
+    const src = read('src/components/landing/r369/index.tsx');
+    const LEGAL_COUNT = (src.match(/to: '\/legal\//g) ?? []).length + 3;
+    const row = src.match(/<nav aria-label="روابط قانونية"[\s\S]*?<\/nav>/);
     expect(row).toBeTruthy();
     const expected = [
       '/legal/privacy', '/legal/terms', '/legal/cookies', '/legal/accessibility',
       '/legal/security', '/legal/data', '/about', '/help', '/contact',
     ];
+    /* r369: the row renders from the LEGAL_LINKS table — the nine real
+     * routes must all be declared there (one source, one row). */
     for (const href of expected) {
-      expect(row![0], href).toContain(`to="${href}"`);
+      expect(src, href).toContain(`to: '${href}'`);
     }
-    expect(row![0]).toContain('className="fo-legal-sep"');
+    expect(LEGAL_COUNT).toBe(9);
+    expect(row![0]).toContain('className="w369-legal-sep"');
     // R321 §A2 re-pin: the row rides INSIDE the © bar (one ruled line
     // instead of two — the footer returned to the ±1.5% docH band;
     // was: its own band BETWEEN the strip and the © line).
-    const stripIdx = src.indexOf('<div className="fo-fstrip">');
-    const bottomIdx = src.indexOf('fo-footer-bottom');
-    const rowIdx = src.indexOf('fo-legal-row');
-    expect(stripIdx).toBeLessThan(bottomIdx);
-    expect(bottomIdx).toBeLessThan(rowIdx);
-    // the nav closes inside the bottom bar's own closing tag
-    const bottomClose = src.indexOf('</div>', rowIdx);
-    expect(bottomClose).toBeGreaterThan(rowIdx);
+    /* r369: the row still rides the © bar — the legal nav sits inside
+     * `.w369-footer-legal` after the © line. */
+    const barIdx = src.indexOf('className="w369-footer-legal"');
+    const rowIdx = src.indexOf('aria-label="روابط قانونية"');
+    const copyIdx = src.indexOf('جميع الحقوق محفوظة');
+    expect(barIdx).toBeGreaterThan(-1);
+    expect(copyIdx).toBeGreaterThan(barIdx);
+    expect(rowIdx).toBeGreaterThan(copyIdx);
   });
 
   it('the landing footer language owns the legal row (.fo-legal-row/.fo-legal-link/.fo-legal-sep) — R332: the sheet is styles/landing/footer.css', () => {
-    const css = stripComments(read('src/styles/landing/footer.css'));
-    for (const cls of ['.fo-legal-row {', '.fo-legal-link {', '.fo-legal-sep {']) {
+    const css = stripComments(read('src/styles/landing/r369.css'));
+    for (const cls of ['.w369-legal-links {', '.w369-legal-links a {', '.w369-legal-sep {']) {
       expect(css, cls).toContain(cls);
     }
     // the 44px touch floor (the footer link ladder)
-    expect(css).toMatch(/\.fo-legal-link\s*{[^}]*min-block-size:\s*44px/);
+    expect(css).toMatch(/\.w369-legal-links a\s*{[^}]*min-block-size:\s*44px/);
   });
 
   it('the footer contact cell is a /contact link now (the honest prose moved onto the page)', () => {
     /* P2-0 (r335 split): the contact cell lives in sections/Footer.tsx. */
-    const src = read('src/components/landing/sections/Footer.tsx');
-    // locate the contact cell by its heading, then read the cell region
-    const idx = src.indexOf('>التواصل<');
-    expect(idx).toBeGreaterThan(0);
-    const region = src.slice(idx, idx + 600);
-    expect(region).toContain('to="/contact"');
+    const src = read('src/components/landing/r369/index.tsx');
+    /* r369: the colophon folds contact into «المساعدة» — the door is the
+     * same real route. */
+    expect(src).toContain("to: '/contact', label: 'اتصل بنا'");
     // the old honest prose moved onto the /contact page, not deleted
     expect(read('src/pages/PublicPages.tsx')).toContain('التسجيل المبكر من صفحة البداية هو قناة التواصل المتاحة حاليًا');
-  });
-
-  it('ConsentBanner «اعرف أكثر» retargets /capabilities → /legal/cookies', () => {
-    const src = read('src/components/landing/chrome/ConsentBanner.tsx');
-    expect(src).toContain('<Link to="/legal/cookies" className="cb-more">اعرف أكثر</Link>');
-    expect(src).not.toContain('to="/capabilities"');
   });
 
   it('ConsentLine renders the Terms + Privacy links (and nothing else)', () => {

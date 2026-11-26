@@ -542,7 +542,7 @@
 .w369-marquee-track {
   display: flex;
   inline-size: max-content;
-  animation: w369-marquee 34s linear infinite;
+  animation: w369-marquee var(--motion-duration-ambient-drift) var(--ease-linear) infinite;
 }
 
 .w369-marquee-run {
@@ -621,8 +621,8 @@
   opacity: 1;
   transform: none;
   transition:
-    opacity var(--t-slow) var(--ease-out),
-    transform var(--t-slow) var(--ease);
+    opacity var(--motion-duration-medium) var(--ease-out),
+    transform var(--motion-duration-medium) var(--ease);
 }
 
 @media (max-width: 900px) {
@@ -1093,7 +1093,7 @@
 
 .w369-cta-inner { display: grid; justify-items: center; gap: var(--sp-3); }
 
-.w369-cta-mascot { animation: w369-bob 3.4s var(--ease-out) infinite; }
+.w369-cta-mascot { animation: w369-bob var(--motion-duration-ambient) var(--ease-out) infinite; }
 
 @keyframes w369-bob {
   0%, 100% { transform: translateY(0) rotate(-3deg); }
@@ -1246,7 +1246,7 @@
   align-content: center;
   gap: var(--sp-5);
   background: var(--bg);
-  transition: opacity var(--t-slow) var(--ease-out), visibility var(--t-slow) linear;
+  transition: opacity var(--motion-duration-medium) var(--ease-out), visibility var(--motion-duration-medium) var(--ease-linear);
 }
 
 .w369-pre[data-leaving='true'] {
@@ -1268,7 +1268,7 @@
   border-radius: var(--r-full);
   border-block-start: 3px solid var(--gold);
   opacity: 0.5;
-  animation: w369-ray 900ms var(--ease-out) both;
+  animation: w369-ray var(--motion-duration-long) var(--ease-out) both;
 }
 
 @keyframes w369-ray {
@@ -1285,7 +1285,7 @@
   background: var(--gold);
   color: var(--accent-ink);
   box-shadow: var(--shadow-signal);
-  animation: w369-pop 620ms var(--ease) both;
+  animation: w369-pop var(--motion-duration-medium) var(--ease-out) both;
 }
 
 @keyframes w369-pop {
@@ -1419,4 +1419,24 @@
   font-size: var(--fs-sm);
   font-weight: var(--fw-medium);
   color: var(--text-secondary);
+}
+
+.w369-footer-note {
+  max-inline-size: 46ch;
+  font-size: var(--fs-sm);
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.w369-legal-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-4);
+}
+
+.w369-legal-sep {
+  inline-size: 4px;
+  block-size: 4px;
+  border-radius: var(--r-full);
+  background: var(--border-strong);
 }

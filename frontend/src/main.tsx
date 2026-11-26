@@ -58,6 +58,7 @@ import './styles/polish.css';
 // are the last word on every primitive the r313 era painted square.
 // It introduces no new component names — see the sheet header.
 import './styles/world.css';
+import './styles/icons.css';
 // r304: the r301/r302 «final-visual-system.css» bolt-on is DELETED —
 // its declarations were folded back into their canonical layer homes
 // (layout.css for the sidebar/nav chrome, components.css for buttons/

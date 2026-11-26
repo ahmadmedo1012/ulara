@@ -116,15 +116,9 @@ describe('r177 — landing/auth copy is affiliation-free', () => {
      * the contract reads the surface, not the file layout). */
     const landing = [
       'src/pages/LandingPage.tsx',
-      'src/components/landing/sections/Hero.tsx',
-      'src/components/landing/sections/Statement.tsx',
-      'src/components/landing/sections/Live.tsx',
-      'src/components/landing/sections/Chapters.tsx',
-      'src/components/landing/sections/Product.tsx',
-      'src/components/landing/sections/Why.tsx',
-      'src/components/landing/sections/Roles.tsx',
-      'src/components/landing/sections/Vision.tsx',
-      'src/components/landing/sections/Footer.tsx',
+      'src/components/landing/r369/index.tsx',
+      'src/components/landing/r369/Mascot.tsx',
+      'src/pages/LandingPage.tsx',
     ].map(read).join('\n');
     for (const claim of OFFICIAL_CLAIMS) {
       // comments document the OLD wording on purpose — strip them first
@@ -143,14 +137,15 @@ describe('r177 — landing/auth copy is affiliation-free', () => {
     // reference's measured mark+wordmark seat — the tagline stack is
     // retired from the masthead; the descriptor lives on in the footer
     // brand block (exactly one seat on the sheet) + <title>/meta.
-    expect(landing.match(/fo-brand-sub">\s*([^<\s])/g)?.length ?? 0).toBe(1);
-    expect(landing).not.toMatch(new RegExp(`fo-brand-sub">\\s*${RETIRED_UNI_AR}`));
-    expect(landing.match(/fo-brand-sub">\s*نظام تشغيل الجامعة/g)?.length).toBe(1);
+    /* r369: the masthead tagline stack is gone for good; the descriptor
+     * is the footer's identity note — exactly one seat on the sheet. */
+    expect(landing.match(/w369-footer-note">/g)?.length ?? 0).toBe(1);
+    expect(landing).not.toMatch(new RegExp(`w369-footer-note">\\s*${RETIRED_UNI_AR}`));
     // the copyright is the platform's alone
     // r193: the year renders in WESTERN digits — the platform's one
     // numeral convention (formatNum ar-LY→latn); the r191 Arabic-Indic
     // AR() helper was the drift and is gone.
-    expect(landing).toContain('© {year} أُلارا</span>');
+    expect(landing).toContain('© {year} أُلارا');
   });
 
   it('auth pages carry the platform identity, no ministry strip', () => {

@@ -16,6 +16,13 @@
 #     spec sheet — its raw <svg> is the 32-grid CONSTRUCTION DRAWING,
 #     brand symbology again, not UI iconography)
 #   - frontend/src/lib/illustrations/              (bespoke scene SVGs)
+#   - frontend/src/components/icons/               (r369: ULARA's own
+#     duotone icon LANGUAGE — the grid, stroke weight and aria contract
+#     are pinned by tests/unit/r369-icons.test.ts. This is the one place
+#     a raw <svg> is the deliverable rather than a shortcut: the gate's
+#     purpose is to stop ad-hoc inline SVG in pages, not to forbid the
+#     icon system itself. The landing/public chrome now consumes
+#     <Glyph name=…/> — Lucide stays for the legacy app chrome.)
 #   - frontend/src/components/illustrations/      (r280: the mk-ill
 #     state-graphics kit — 16 two-colour SVG scenes + BrandLoader; the
 #     same category as lib/illustrations, NOT UI iconography. The
@@ -76,7 +83,7 @@ violations=0
 # ticks, mastery cells, streak ticks): the glyphs ARE the data mark, the
 # same class as Ledger's chart marks. UI icons elsewhere still go through
 # <Icon icon={...} />.
-ALLOWED='frontend/src/components/(EmojiIcon|Icon|Illustration)\.tsx|frontend/src/components/landing/|frontend/src/components/illustrations/|frontend/src/components/primitives/Ledger\.tsx|frontend/src/components/patterns/indicators\.tsx|frontend/src/lib/illustrations/|frontend/src/styles/|frontend/public/|frontend/tests/|frontend/src/brand/|frontend/src/pages/BrandPage\.tsx'
+ALLOWED='frontend/src/components/(EmojiIcon|Icon|Illustration)\.tsx|frontend/src/components/icons/|frontend/src/components/landing/|frontend/src/components/illustrations/|frontend/src/components/primitives/Ledger\.tsx|frontend/src/components/patterns/indicators\.tsx|frontend/src/lib/illustrations/|frontend/src/styles/|frontend/public/|frontend/tests/|frontend/src/brand/|frontend/src/pages/BrandPage\.tsx'
 
 # 1. Emoji presentation in source code outside allowlist.
 #    Emoji ranges (BMP + supplementary):

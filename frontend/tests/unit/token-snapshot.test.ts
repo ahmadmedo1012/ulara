@@ -147,19 +147,9 @@ const STYLESHEET_FILES = [
   'components.css',
   // R332 split: landing.css is now the per-section family under
   // styles/landing/ (the stub landing.css is rule-free).
-  'landing/chrome.css',
-  'landing/hero.css',
-  'landing/statement.css',
-  'landing/journey.css',
-  'landing/pains.css',
-  'landing/roles.css',
+  'landing/r369.css',
+  'landing/inner.css',
   'landing/colleges.css',
-  'landing/cta.css',
-  'landing/why.css',
-  'landing/footer.css',
-  'landing/shared.css',
-  'landing/platform.css',
-  'landing/strata.css',
   'colleges.css',
   // (G final sweep: colleges-popover.css deleted with the never-rendered
   // CollegesPopover — r198's landing constellation owns that surface.)

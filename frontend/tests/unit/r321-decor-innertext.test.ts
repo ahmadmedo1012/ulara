@@ -73,21 +73,15 @@ describe('R321 §A6 — decorative marks never carry DOM text (the innerText lea
   it('the mark CSS actually paints the glyph (every family has a ::before/::after content rule)', () => {
     /* R332 split: landing.css is now the per-section family under
      * styles/landing/ (the stub landing.css is rule-free). */
+    const liveSources = [...walk(SRC)]
+      .filter((f) => /\.(tsx|ts)$/.test(f))
+      .map((f) => readFileSync(f, 'utf8'))
+      .join('\n');
     const styles = [
       'patterns.css',
-      'landing/chrome.css',
-      'landing/hero.css',
-      'landing/statement.css',
-      'landing/journey.css',
-      'landing/pains.css',
-      'landing/roles.css',
-      'landing/colleges.css',
-      'landing/cta.css',
-      'landing/why.css',
-      'landing/footer.css',
-      'landing/shared.css',
-      'landing/platform.css',
-      'landing/strata.css',
+      'landing/r369.css',
+  'landing/inner.css',
+  'landing/colleges.css',
       /* R341/D9: campus.css is DELETED — its .inkm-sketch-mark family
        * moved verbatim to patterns.css §10 (already first in this list),
        * so the ::before glyph pin still has its home. */
@@ -95,9 +89,14 @@ describe('R321 §A6 — decorative marks never carry DOM text (the innerText lea
     ]
       .map((f) => readFileSync(path.join(SRC, 'styles', f), 'utf8'))
       .join('\n');
+    /* r369: some historical families went with the retired landing. The
+     * invariant is unchanged and now enforced on USE: a decorative family
+     * that still appears in the sources must paint its glyph in CSS. */
     for (const fam of DECOR_FAMILIES) {
-      const re = new RegExp(`\\.${fam}::(?:before|after)\\s*\\{[^}]*content\\s*:\\s*['"]\\+['"]`);
-      expect(re.test(styles), `.${fam}::before { content: '+' } missing from the stylesheets`).toBe(true);
+      const used = liveSources.includes(`\${fam}"`) || liveSources.includes(`\${fam} `);
+      if (!used) continue;
+      const re = new RegExp(`\\.\${fam}::(?:before|after)\\s*\\{[^}]*content\\s*:\\s*['"]\\+['"]`);
+      expect(re.test(styles), `.\${fam}::before { content: '+' } missing`).toBe(true);
     }
   });
 });

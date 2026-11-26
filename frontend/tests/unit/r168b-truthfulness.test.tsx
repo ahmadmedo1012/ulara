@@ -47,17 +47,17 @@ describe('r168b — Oasis chips are engine-gated in source', () => {
 });
 
 describe('r168b — landing copy claims only what ships', () => {
-  it('r191 — station-03: no chapter-summaries/quiz promise; the AI card claims only the local engine', () => {
-    /* r308: the mastery chapter moved into the pinned walkthrough
-     * (JourneyScene) — the honesty contract reads the whole sheet. */
+  it('r191 → r369 — the landing still promises no summaries it does not ship', () => {
+    /* r369: the AI seats left the landing entirely; the honesty contract
+     * is now the NEGATIVE one — the public story must never promise a
+     * capability the product does not ship. The positive AI scope is
+     * pinned where it ships (AiComposer, above). */
     const page =
       stripJsx(read('src/pages/LandingPage.tsx')) +
-      stripJsx(read('src/components/landing/journey/IsoJourneyScene.tsx'));
+      stripJsx(read('src/components/landing/r369/index.tsx'));
     expect(page).not.toContain('تلخيصات للفصول الطويلة');
-    // r191 copy: the الذكاء الأكاديمي product card — honest local-composer
-    // scope, carried over verbatim from the r190/r168b wording contract.
-    expect(page).toContain('شروحات مخصَّصة');
-    expect(page).toContain('خطط مراجعة حسب أدائك الفعلي');
+    expect(page).not.toContain('شروحات مخصَّصة');
+    expect(page).not.toContain('خطط مراجعة حسب أدائك الفعلي');
   });
 
   it('r188 → r191 — no invented adoption story; the proof section states its source', () => {
@@ -67,7 +67,10 @@ describe('r168b — landing copy claims only what ships', () => {
     // section's numbers are computed from the code and it says so.
     const page = stripJsx(read('src/pages/LandingPage.tsx'));
     expect(page).not.toContain('نتائج تجربة فعلية');
-    expect(page).not.toContain('CountUp');
+    /* r369: CountUp is allowed again ONLY where the value is real
+     * (the three star sources). The invented-fixture ban below is the
+     * contract; the mechanism is not. */
+    expect(page).not.toContain('CountUp(24)');
     expect(page).not.toContain('أرقام توضيحيّة');
     /* R313 override (WP-A1 · D7): the capability-matrix proof copy
      * moved OFF the landing onto /capabilities (the 9-section
@@ -81,12 +84,15 @@ describe('r168b — landing copy claims only what ships', () => {
     expect(html).not.toContain('صُنعت في ليبيا');
   });
 
-  it('r188 → r191 — the vision stage labels AR/VR as a catalog, not running experiments', () => {
-    /* P2-0 (r335 split): the honest-absence lines live in the roles
-     * ledger now — sections/Roles.tsx. */
-    const page = stripJsx(read('src/components/landing/sections/Roles.tsx'));
-    expect(page).toContain('المعامل الافتراضية');
-    expect(page).toContain('دون تشغيل بعد');
+  it('r188 → r369 — the public story still labels what is not running', () => {
+    /* r369 retired the roles ledger from the landing; the honesty rule
+     * it enforced (nothing described as running that is not) rides the
+     * capabilities ledger, which is where the absent features live now. */
+    const ledger = stripJsx(read('src/pages/capabilities/CapabilityPages.tsx'));
+    // the ledger's own words: it is «ما يعمل اليوم», and the demo data is
+    // labelled a synthetic workspace — nothing is claimed as live in prod.
+    expect(ledger).toContain('ما يعمل اليوم');
+    expect(ledger).toContain('مساحة عمل أُلارا التجريبية');
   });
 
   it('r188 — the section landmarks carry distinct aria-labels', () => {
@@ -95,13 +101,12 @@ describe('r168b — landing copy claims only what ships', () => {
      * composer plus both bands. */
     const page =
       stripJsx(read('src/pages/LandingPage.tsx')) +
-      stripJsx(read('src/components/landing/sections/Vision.tsx')) +
-      stripJsx(read('src/components/landing/sections/Footer.tsx'));
-    expect(
-      page.includes('aria-label="أُلارا — نظام تشغيل الجامعة"') ||
-        page.includes('aria-label={BRAND_LABEL}'),
-    ).toBe(true);
-    expect(page).toContain('aria-label="ابدأ رحلتك — أنشئ حسابك"');
+      stripJsx(read('src/components/landing/r369/index.tsx'));
+    expect(page).toContain('aria-label="أُلارا — الصفحة الرئيسية"');
+    /* every landmark that repeats must be told apart by its label */
+    const labels = [...page.matchAll(/aria-label="([^"]+)"/g)].map((m) => m[1]);
+    expect(labels.length).toBeGreaterThanOrEqual(4);
+    expect(new Set(labels).size).toBe(labels.length);
     // The old duplicate pair must not reappear.
     const dupe = page.match(/aria-label="ابدأ رحلتك"/g);
     expect(dupe).toBeNull();

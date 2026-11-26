@@ -27,25 +27,7 @@
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  ArrowLeft,
-  Award,
-  BadgeCheck,
-  BookOpen,
-  ChevronDown,
-  Flame,
-  GraduationCap,
-  LayoutGrid,
-  LineChart,
-  Menu,
-  Sparkles,
-  Star,
-  Target,
-  Trophy,
-  Users,
-  X,
-} from 'lucide-react';
-import { Icon } from '../../Icon';
+import { Glyph, type GlyphName } from '../../icons';
 import { ROUTES } from '../../../lib/routes';
 import { ThemeToggle } from '../../layout/ThemeToggle';
 import { Mascot } from './Mascot';
@@ -136,7 +118,7 @@ function StarJar() {
   const full = n >= JAR_TOTAL;
   return (
     <div className="w369-jar" data-full={full ? 'true' : 'false'}>
-      <span className="w369-jar-icon" aria-hidden="true"><Icon icon={Star} size={16} /></span>
+      <span className="w369-jar-icon" aria-hidden="true"><Glyph name="star" size={16} className="ui-glyph-twinkle" /></span>
       <span className="w369-jar-text">
         جمعتَ <b>{n}</b> من {JAR_TOTAL} نجوم في رحلتك
       </span>
@@ -189,7 +171,7 @@ export function LandingNav() {
     <header className="w369-nav">
       <div className="w369-nav-inner">
         <Link to={ROUTES.root} className="w369-brand" aria-label="أُلارا — الصفحة الرئيسية">
-          <span className="w369-brand-mark" aria-hidden="true"><Icon icon={Star} size={18} /></span>
+          <span className="w369-brand-mark" aria-hidden="true"><Glyph name="star" size={18} /></span>
           <span className="w369-brand-word">أُلارا</span>
         </Link>
 
@@ -206,7 +188,7 @@ export function LandingNav() {
           <Link to={ROUTES.auth} className="w369-btn w369-btn-ghost w369-nav-login">تسجيل الدخول</Link>
           <Link to={ROUTES.authRegister} className="w369-btn w369-btn-primary">
             أنشئ حسابك
-            <Icon icon={ArrowLeft} size={16} />
+            <Glyph name="arrowLeft" size={16} />
           </Link>
         </div>
 
@@ -219,7 +201,7 @@ export function LandingNav() {
           aria-label={open ? 'إغلاق القائمة' : 'فتح القائمة'}
           onClick={() => setOpen((v) => !v)}
         >
-          <Icon icon={open ? X : Menu} size={22} />
+          <Glyph name={open ? 'close' : 'menu'} size={22} />
         </button>
       </div>
 
@@ -255,9 +237,9 @@ export function LandingNav() {
 /* ─────────────────────────────── hero ─────────────────────────────── */
 
 const HERO_ROWS = [
-  { title: 'واجب: تحليل النصّ الأدبي', meta: 'يُسلَّم غدًا · الأدب الحديث', tone: 'amber', icon: BookOpen },
-  { title: 'محاضرة: مدخل إلى الإحصاء', meta: 'الأحد ٩:٠٠ · القاعة ٣', tone: 'sky', icon: GraduationCap },
-  { title: 'اختبار قصير: الجبر الخطّي', meta: 'بعد يومين · ٢٠ دقيقة', tone: 'rose', icon: Target },
+  { title: 'واجب: تحليل النصّ الأدبي', meta: 'يُسلَّم غدًا · الأدب الحديث', tone: 'amber', icon: 'book' },
+  { title: 'محاضرة: مدخل إلى الإحصاء', meta: 'الأحد ٩:٠٠ · القاعة ٣', tone: 'sky', icon: 'graduation' },
+  { title: 'اختبار قصير: الجبر الخطّي', meta: 'بعد يومين · ٢٠ دقيقة', tone: 'rose', icon: 'target' },
 ] as const;
 
 export function Hero() {
@@ -267,7 +249,7 @@ export function Hero() {
     <section className="w369-hero" ref={ref} data-jar="01">
       <div className="w369-hero-copy">
         <p className="w369-eyebrow">
-          <Icon icon={Sparkles} size={15} />
+          <Glyph name="sparkle" size={15} />
           نظام تشغيل الجامعة — عربي أولًا
         </p>
         <h1 className="w369-h1">
@@ -284,14 +266,14 @@ export function Hero() {
         <div className="w369-hero-actions">
           <Link to={ROUTES.authRegister} className="w369-btn w369-btn-primary w369-btn-lg">
             أنشئ حسابك الجامعي
-            <Icon icon={ArrowLeft} size={18} />
+            <Glyph name="arrowLeft" size={18} className="ui-glyph-nudge" />
           </Link>
           <Link to={ROUTES.auth} className="w369-btn w369-btn-ghost">لديك حساب؟ تسجيل الدخول</Link>
         </div>
         <ul className="w369-hero-facts">
-          <li><Icon icon={BadgeCheck} size={16} /> للطلّاب وأعضاء الهيئة والإدارة</li>
-          <li><Icon icon={Star} size={16} /> نقاط إتقان حقيقية من بيانتك</li>
-          <li><Icon icon={Flame} size={16} /> عادات دراسة تُبنى يومًا بيوم</li>
+          <li><Glyph name="certificate" size={16} /> للطلّاب وأعضاء الهيئة والإدارة</li>
+          <li><Glyph name="star" size={16} /> نقاط إتقان حقيقية من بيانتك</li>
+          <li><Glyph name="flame" size={16} /> عادات دراسة تُبنى يومًا بيوم</li>
         </ul>
       </div>
 
@@ -311,14 +293,14 @@ export function Hero() {
               </div>
             </div>
             <div className="w369-phone-stars">
-              <Icon icon={Star} size={18} />
+              <Glyph name="star" size={18} />
               <b>{stars}</b> <span>نجوم اليوم</span>
               <span className="w369-phone-ring" />
             </div>
             <ul className="w369-phone-list">
               {HERO_ROWS.map((r) => (
                 <li key={r.title} className="w369-phone-row" data-tone={r.tone}>
-                  <span className="w369-phone-ico"><Icon icon={r.icon} size={16} /></span>
+                  <span className="w369-phone-ico"><Glyph name={r.icon} size={16} /></span>
                   <span className="w369-phone-body">
                     <b>{r.title}</b>
                     <em>{r.meta}</em>
@@ -353,7 +335,7 @@ export function Marquee() {
         {[0, 1].map((dup) => (
           <ul className="w369-marquee-run" key={dup}>
             {MARQUEE.map((m) => (
-              <li key={m}><Icon icon={Star} size={14} />{m}</li>
+              <li key={m}><Glyph name="star" size={14} />{m}</li>
             ))}
           </ul>
         ))}
@@ -370,7 +352,7 @@ interface BandProps {
   title: React.ReactNode;
   body: string;
   tint: 'violet' | 'teal' | 'coral' | 'sky' | 'leaf';
-  icon: typeof Star;
+  icon: GlyphName;
   children: React.ReactNode;
   jar: string;
 }
@@ -381,7 +363,7 @@ function Band({ n, kicker, title, body, tint, icon, children, jar }: BandProps) 
     <section className="w369-band" ref={ref} data-tint={tint} data-jar={jar}>
       <div className="w369-band-head">
         <span className="w369-band-num" aria-hidden="true">{n}</span>
-        <p className="w369-band-kicker"><Icon icon={icon} size={15} />{kicker}</p>
+        <p className="w369-band-kicker"><Glyph name={icon} size={15} />{kicker}</p>
         <h2 className="w369-h2">{title}</h2>
         <p className="w369-body">{body}</p>
       </div>
@@ -393,9 +375,9 @@ function Band({ n, kicker, title, body, tint, icon, children, jar }: BandProps) 
 /* ── 02 tasks become stars ── */
 
 const STAR_SOURCES = [
-  { icon: BookOpen, title: 'إتمام الواجب', body: 'تسلّمه في وقته، فتظهر النجمات فورًا في رصيدك.' },
-  { icon: GraduationCap, title: 'حضور المحاضرة', body: 'حضورك يُسجَّل، والنجمة تُضاف دون خطوة إضافية.' },
-  { icon: Target, title: 'اجتياز الاختبار', body: 'نتيجتك تُحدّد نجومك، وتُضاف إلى مصفوفة إتقانك.' },
+  { icon: 'book', title: 'إتمام الواجب', body: 'تسلّمه في وقته، فتظهر النجمات فورًا في رصيدك.' },
+  { icon: 'graduation', title: 'حضور المحاضرة', body: 'حضورك يُسجَّل، والنجمة تُضاف دون خطوة إضافية.' },
+  { icon: 'target', title: 'اجتياز الاختبار', body: 'نتيجتك تُحدّد نجومك، وتُضاف إلى مصفوفة إتقانك.' },
 ] as const;
 
 export function StarsBand() {
@@ -403,14 +385,14 @@ export function StarsBand() {
   const kinds = useCountUp(STAR_SOURCES.length, seen);
   return (
     <Band
-      n="02" jar="02" tint="violet" icon={Sparkles}
+      n="02" jar="02" tint="violet" icon="sparkle"
       kicker="المهمّة تصير نجمة"
       title={<>كل ما تُنجزه<br /><span className="w369-em">يصير نجمة</span></>}
       body="الواجب، المحاضرة، الاختبار القصير — كلٌّ منها يمنحك نقاط إتقان في اللحظة التي تُتمّها. لا انتظار لتصحيح، ولا أرقام ضائعة: النجوم تظهر أمامك فورًا، وتحتفظ بها."
     >
       <div className="w369-star-grid" ref={ref}>
         <div className="w369-stat w369-stat-lead">
-          <span className="w369-stat-ico"><Icon icon={Star} size={20} /></span>
+          <span className="w369-stat-ico"><Glyph name="star" size={20} className="ui-glyph-twinkle" /></span>
           <b className="w369-stat-num">{kinds}</b>
           <span className="w369-stat-label">طرق راسخة لجمع النجوم في أُلارا</span>
         </div>
@@ -424,7 +406,7 @@ export function StarsBand() {
       <ul className="w369-sources">
         {STAR_SOURCES.map((x) => (
           <li key={x.title} className="w369-source">
-            <span className="w369-source-ico"><Icon icon={x.icon} size={18} /></span>
+            <span className="w369-source-ico"><Glyph name={x.icon} size={18} /></span>
             <b>{x.title}</b>
             <span>{x.body}</span>
           </li>
@@ -445,14 +427,14 @@ const PROGRESS_ROWS = [
 export function ProgressBand() {
   return (
     <Band
-      n="03" jar="03" tint="teal" icon={LineChart}
+      n="03" jar="03" tint="teal" icon="leaderboard"
       kicker="النجمة تصير تقدّمًا"
       title={<>النجوم ترتّب نفسها<br /><span className="w369-em">تقدّمًا تراه</span></>}
       body="نجومك لا تبقى أرقامًا متناثرة: تتجمّع في تقدّم المقرّر، وفي مصفوفة الإتقان التي تُظهر ما أتقنته وما يحتاج جهدًا. تعرف دائمًا أين أنت، وأين الخطوة التالية."
     >
       <div className="w369-progress-card">
         <div className="w369-progress-head">
-          <span className="w369-chip"><Icon icon={Target} size={14} />مصفوفة الإتقان</span>
+          <span className="w369-chip"><Glyph name="target" size={14} />مصفوفة الإتقان</span>
           <span className="w369-chip w369-chip-soft">نموذج توضيحي</span>
         </div>
         <ul className="w369-progress-list">
@@ -477,15 +459,15 @@ export function ProgressBand() {
 /* ── 04 progress becomes rewards ── */
 
 const REWARDS = [
-  { icon: Award, title: 'شارات الإنجاز', body: 'تُفتح عند إتمام هدف حقيقي — أول واجب، أول أسبوع كامل، أول إتقان.' },
-  { icon: Trophy, title: 'لوحة المتصدّرين', body: 'ترتيبك بين زملائك في المقرّر، مبنيًّا على نقاط الإتقان لا على الحظّ.' },
-  { icon: BadgeCheck, title: 'شهادات المقرّر', body: 'شهادة عند إكمال المقرّر، جاهزة للتنزيل وموثّقة داخل المنصّة.' },
+  { icon: 'medal', title: 'شارات الإنجاز', body: 'تُفتح عند إتمام هدف حقيقي — أول واجب، أول أسبوع كامل، أول إتقان.' },
+  { icon: 'trophy', title: 'لوحة المتصدّرين', body: 'ترتيبك بين زملائك في المقرّر، مبنيًّا على نقاط الإتقان لا على الحظّ.' },
+  { icon: 'certificate', title: 'شهادات المقرّر', body: 'شهادة عند إكمال المقرّر، جاهزة للتنزيل وموثّقة داخل المنصّة.' },
 ] as const;
 
 export function RewardsBand() {
   return (
     <Band
-      n="04" jar="04" tint="coral" icon={Award}
+      n="04" jar="04" tint="coral" icon="medal"
       kicker="التقدّم يصير مكافأة"
       title={<>والتقدّم؟<br /><span className="w369-em">يصير مكافأة</span></>}
       body="عندما يتراكم الإتقان، تصبح له علامات تراها: شارات تُفتح، وترتيب في لوحة المتصدّرين، وشهادة عند إكمال المقرّر. مكافآت حقيقية تخرج من بياناتك، لا جوائز معلّقة في الهواء."
@@ -493,7 +475,7 @@ export function RewardsBand() {
       <ul className="w369-reward-grid">
         {REWARDS.map((r) => (
           <li key={r.title} className="w369-reward">
-            <span className="w369-reward-ico"><Icon icon={r.icon} size={22} /></span>
+            <span className="w369-reward-ico"><Glyph name={r.icon} size={22} /></span>
             <h3 className="w369-h3">{r.title}</h3>
             <p className="w369-body">{r.body}</p>
           </li>
@@ -510,14 +492,14 @@ const WEEK = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربع�
 export function HabitsBand() {
   return (
     <Band
-      n="05" jar="05" tint="sky" icon={Flame}
+      n="05" jar="05" tint="sky" icon="flame"
       kicker="المكافأة تصير عادة"
       title={<>والمكافأة؟<br /><span className="w369-em">تصير عادة</span></>}
       body="سلسلة الأيام المتتالية ليست عدّادًا للضغط، بل تذكيرًا لطيفًا بأنك تستمرّ. أُلارا تحفظ وتيرتك، وتذكّرك بلطف حين ينقطع يوم، وتحتفي حين تكتمل الأسبوع."
     >
       <div className="w369-streak">
         <div className="w369-streak-head">
-          <span className="w369-streak-flame"><Icon icon={Flame} size={22} /></span>
+          <span className="w369-streak-flame"><Glyph name="flame" size={22} className="ui-glyph-flicker" /></span>
           <div>
             <b>سلسلة هذا الأسبوع</b>
             <span>هكذا تبدو خمسة أيام من سبعة — نموذج توضيحي، لا بياناتك.</span>
@@ -527,7 +509,7 @@ export function HabitsBand() {
           {WEEK.map((d, i) => (
             <li key={d} data-on={i < 5 ? 'true' : 'false'}>
               <span className="w369-streak-dot">
-                {i < 5 ? <Icon icon={Star} size={16} /> : <span className="w369-streak-empty" />}
+                {i < 5 ? <Glyph name="star" size={16} /> : <span className="w369-streak-empty" />}
               </span>
               <span className="w369-streak-day">{d}</span>
             </li>
@@ -553,21 +535,21 @@ export function LevelsBand() {
   const n = useCountUp(LEVELS.length, seen);
   return (
     <Band
-      n="06" jar="06" tint="leaf" icon={LayoutGrid}
+      n="06" jar="06" tint="leaf" icon="admin"
       kicker="عشرون مستوى، أسماء عربية"
       title={<>سلّمٌ من<br /><span className="w369-em">عشرين مستوى</span></>}
       body="من «بذرة» إلى «المعلّم»: سلّم إتقان بأسماء عربية أصيلة، يفتح كل مستوى شارةً جديدة. لا تسريع ولا اختصار — كل مستوى يُفتح بما أنجزته فعلًا."
     >
       <div className="w369-levels" id="levels" ref={ref}>
         <div className="w369-levels-head">
-          <span className="w369-chip w369-chip-amber"><Icon icon={Star} size={14} />{n} مستوى</span>
+          <span className="w369-chip w369-chip-amber"><Glyph name="star" size={14} />{n} مستوى</span>
           <span className="w369-fine">أسماء السلّم من تصميم أُلارا، وتُمنح حسب نقاط الإتقان.</span>
         </div>
         <ol className="w369-levels-grid">
           {LEVELS.map((name, i) => (
             <li key={name} className="w369-level" data-top={i >= LEVELS.length - 1 ? 'true' : 'false'}>
               <span className="w369-level-badge" aria-hidden="true">
-                <Icon icon={i < 10 ? Star : Award} size={i < 10 ? 16 : 18} />
+                <Glyph name={i < 10 ? 'star' : 'medal'} size={i < 10 ? 16 : 18} />
               </span>
               <span className="w369-level-idx">{i + 1}</span>
               <span className="w369-level-name">{name}</span>
@@ -582,16 +564,16 @@ export function LevelsBand() {
 /* ── together: the three views ── */
 
 const ROLES = [
-  { icon: GraduationCap, title: 'الطالب', body: 'يرى مهامّه، نجومه، تقدّمه، وسلسلته في مكان واحد — ويعرف الخطوة التالية دائمًا.' },
-  { icon: Users, title: 'عضو الهيئة', body: 'يرى صفّه كاملًا: من أنجز، ومن يحتاج متابعة، وأين يقع الإتقان الحقيقي، بمصفوفة واحدة.' },
-  { icon: LayoutGrid, title: 'الإدارة والجودة', body: 'ترى المقرّرات والبرامج والمؤشّرات، وتُدير الصلاحيات والتقارير من مساحة واحدة.' },
+  { icon: 'student', title: 'الطالب', body: 'يرى مهامّه، نجومه، تقدّمه، وسلسلته في مكان واحد — ويعرف الخطوة التالية دائمًا.' },
+  { icon: 'teacher', title: 'عضو الهيئة', body: 'يرى صفّه كاملًا: من أنجز، ومن يحتاج متابعة، وأين يقع الإتقان الحقيقي، بمصفوفة واحدة.' },
+  { icon: 'admin', title: 'الإدارة والجودة', body: 'ترى المقرّرات والبرامج والمؤشّرات، وتُدير الصلاحيات والتقارير من مساحة واحدة.' },
 ] as const;
 
 export function RolesBand() {
   return (
     <section className="w369-roles" id="roles" data-jar="06">
       <header className="w369-band-head">
-        <p className="w369-band-kicker"><Icon icon={Users} size={15} />معًا</p>
+        <p className="w369-band-kicker"><Glyph name="users" size={15} />معًا</p>
         <h2 className="w369-h2">طالبٌ يتعلّم، عضو هيئةٍ يتابع،<br /><span className="w369-em">وإدارةٌ ترى الصورة</span></h2>
         <p className="w369-body">
           الفكرة نفسها تتكرّر في كل دور: عملٌ صغير، يراه صاحبه، ويُبنى عليه. من مهامّ الطالب
@@ -601,11 +583,11 @@ export function RolesBand() {
       <ul className="w369-role-grid">
         {ROLES.map((r) => (
           <li key={r.title} className="w369-role">
-            <span className="w369-role-ico"><Icon icon={r.icon} size={22} /></span>
+            <span className="w369-role-ico"><Glyph name={r.icon} size={22} /></span>
             <h3 className="w369-h3">{r.title}</h3>
             <p className="w369-body">{r.body}</p>
             <Link to={ROUTES.capabilities} className="w369-link">
-              ما الذي يستطيعه؟ <Icon icon={ArrowLeft} size={15} />
+              ما الذي يستطيعه؟ <Glyph name="arrowLeft" size={15} className="ui-glyph-nudge" />
             </Link>
           </li>
         ))}
@@ -645,7 +627,7 @@ export function FaqBand() {
       <div className="w369-faq-head">
         <Mascot pose="think" size={72} />
         <div>
-          <p className="w369-band-kicker"><Icon icon={Sparkles} size={15} />أسئلة شائعة</p>
+          <p className="w369-band-kicker"><Glyph name="sparkle" size={15} />أسئلة شائعة</p>
           <h2 className="w369-h2">قبل أن تبدأ</h2>
         </div>
       </div>
@@ -654,7 +636,7 @@ export function FaqBand() {
           <details key={f.q} className="w369-faq-item" open={i === 0}>
             <summary className="w369-faq-q">
               <span>{f.q}</span>
-              <Icon icon={ChevronDown} size={20} />
+              <Glyph name="chevronDown" size={20} />
             </summary>
             <p className="w369-faq-a">{f.a}</p>
           </details>
@@ -680,7 +662,7 @@ export function CtaBand() {
         <div className="w369-cta-actions">
           <Link to={ROUTES.authRegister} className="w369-btn w369-btn-primary w369-btn-lg">
             أنشئ حسابك الجامعي
-            <Icon icon={ArrowLeft} size={18} />
+            <Glyph name="arrowLeft" size={18} className="ui-glyph-nudge" />
           </Link>
           <Link to={ROUTES.auth} className="w369-btn w369-btn-ghost w369-btn-lg">تسجيل الدخول</Link>
         </div>
@@ -712,16 +694,32 @@ const FOOTER_COLS = [
   },
 ];
 
+/* the nine legal/institutional doors — every one of them is a real route
+   (App.tsx); the row rides the © bar. */
+const LEGAL_LINKS = [
+  { to: '/legal/privacy', label: 'الخصوصية' },
+  { to: '/legal/terms', label: 'الشروط' },
+  { to: '/legal/cookies', label: 'ملفات التعريف' },
+  { to: '/legal/accessibility', label: 'الوصولية' },
+  { to: '/legal/security', label: 'الأمن' },
+  { to: '/legal/data', label: 'بياناتك' },
+  { to: '/about', label: 'عن أُلارا' },
+  { to: '/help', label: 'المساعدة' },
+  { to: '/contact', label: 'اتصل بنا' },
+] as const;
+
 export function Footer({ year }: { year: number }) {
   return (
     <footer className="w369-footer">
       <div className="w369-footer-grid">
         <div className="w369-footer-brand">
           <Link to={ROUTES.root} className="w369-brand">
-            <span className="w369-brand-mark" aria-hidden="true"><Icon icon={Star} size={18} /></span>
+            <span className="w369-brand-mark" aria-hidden="true"><Glyph name="star" size={18} /></span>
             <span className="w369-brand-word">أُلارا</span>
           </Link>
-          <p className="w369-body">نظام تشغيل الجامعة — عربي أولًا، مستقلّ، ومن تصميم فريق واحد.</p>
+          {/* the honest identity statement — the SAME sentence /about and
+              /legal render (one text, three seats; tests pin the equality). */}
+          <p className="w369-footer-note">منصّة تعليمية تقنية مستقلّة، عربية أولًا. لا تنتمي إلى أيّ مؤسّسة تعليمية ولا تمثّلها؛ وبيانات العرض داخلها تخصّ «مساحة عمل أُلارا التجريبية» — مساحة اصطناعية بالكامل لأغراض العرض، لا تحاكي أي جامعة.</p>
           <div className="w369-footer-cta">
             <Link to={ROUTES.authRegister} className="w369-btn w369-btn-primary">أنشئ حسابك</Link>
             <Link to={ROUTES.auth} className="w369-btn w369-btn-ghost">تسجيل الدخول</Link>
@@ -741,9 +739,12 @@ export function Footer({ year }: { year: number }) {
       <div className="w369-footer-legal">
         <span>© {year} أُلارا — جميع الحقوق محفوظة.</span>
         <nav aria-label="روابط قانونية" className="w369-legal-links">
-          <Link to="/legal/privacy">الخصوصية</Link>
-          <Link to="/legal/terms">الشروط</Link>
-          <Link to="/legal/accessibility">الوصولية</Link>
+          {LEGAL_LINKS.map((l, i) => (
+            <span key={l.to} className="w369-legal-item">
+              {i > 0 && <span className="w369-legal-sep" aria-hidden="true" />}
+              <Link to={l.to}>{l.label}</Link>
+            </span>
+          ))}
         </nav>
       </div>
     </footer>
@@ -771,7 +772,7 @@ export function Preloader({ onDone }: { onDone: () => void }) {
         {Array.from({ length: 8 }).map((_, i) => (
           <span key={i} className="w369-pre-ray" style={{ rotate: `${i * 45}deg` }} />
         ))}
-        <span className="w369-pre-star"><Icon icon={Star} size={34} /></span>
+        <span className="w369-pre-star"><Glyph name="star" size={34} /></span>
       </div>
       <p className="w369-pre-word">أُلارا</p>
     </div>

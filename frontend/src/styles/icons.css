@@ -1,0 +1,141 @@
+/**
+ * r369 — the icon layer.
+ *
+ * `.ui-glyph` is the frame every glyph shares; the duotone accent is the
+ * SAME `currentColor` at low alpha, so an icon inherits its band's
+ * colour and both themes without a second palette to maintain.
+ *
+ * The micro-motion classes are pure CSS (no JS, no listeners) and all of
+ * them stop under `prefers-reduced-motion`. They are opt-in per seat:
+ * `ui-glyph-twinkle` on the star, `ui-glyph-flicker` on the streak
+ * flame, `ui-glyph-ring` on the bell, `ui-glyph-nudge` on a control
+ * arrow (it nudges when the CONTROL is hovered/focused, not itself).
+ */
+
+.ui-glyph {
+  display: inline-block;
+  flex: none;
+  vertical-align: -0.15em;
+  overflow: visible;
+}
+
+.ui-glyph-accent {
+  opacity: 0.16;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+[data-theme='dark'] .ui-glyph-accent {
+  opacity: 0.24;
+}
+
+/* ── twinkle: the star breathes ─────────────────────────────────── */
+
+.ui-glyph-twinkle .ui-glyph-accent {
+  animation: ui-glyph-twinkle var(--motion-duration-ambient-pulse) var(--motion-ease-standard) infinite;
+}
+
+@keyframes ui-glyph-twinkle {
+  0%, 100% { opacity: 0.14; transform: scale(1); }
+  50% { opacity: 0.34; transform: scale(1.08); }
+}
+
+/* ── flicker: a live flame ──────────────────────────────────────── */
+
+.ui-glyph-flicker .ui-glyph-accent {
+  animation: ui-glyph-flicker var(--motion-duration-ambient) var(--motion-ease-standard) infinite;
+}
+
+@keyframes ui-glyph-flicker {
+  0%, 100% { opacity: 0.18; transform: scale(1, 1); }
+  45% { opacity: 0.4; transform: scale(1.04, 1.1); }
+  70% { opacity: 0.22; transform: scale(0.98, 0.94); }
+}
+
+/* ── ring: the bell ─────────────────────────────────────────────── */
+
+.ui-glyph-ring .ui-glyph-accent {
+  transform-origin: 50% 18%;
+}
+
+.ui-glyph-ring:hover .ui-glyph-accent,
+.ui-glyph-ring:focus-visible .ui-glyph-accent,
+:is(a, button):hover > .ui-glyph-ring .ui-glyph-accent,
+:is(a, button):focus-visible > .ui-glyph-ring .ui-glyph-accent {
+  animation: ui-glyph-ring var(--motion-duration-short) var(--ease-out) 2;
+}
+
+@keyframes ui-glyph-ring {
+  0%, 100% { transform: rotate(0deg); }
+  30% { transform: rotate(9deg); }
+  60% { transform: rotate(-7deg); }
+}
+
+/* ── nudge: an arrow leaning towards its destination ────────────── */
+
+.ui-glyph-nudge {
+  transition: transform var(--motion-duration-micro) var(--ease-out);
+}
+
+/* RTL: the nudge mirrors with the glyph (translate uses logical sign) */
+.ui-glyph-nudge-rtl {
+  transition: transform var(--motion-duration-micro) var(--ease-out);
+}
+
+:is(a, button):hover > .ui-glyph-nudge,
+:is(a, button):focus-visible > .ui-glyph-nudge {
+  transform: translateX(-3px);
+}
+
+:is(a, button):hover > .ui-glyph-nudge-rtl,
+:is(a, button):focus-visible > .ui-glyph-nudge-rtl {
+  transform: translateX(3px);
+}
+
+/* ── draw: a check that inks itself in ──────────────────────────── */
+
+.ui-glyph-draw path {
+  stroke-dasharray: 28;
+  stroke-dashoffset: 0;
+}
+
+.ui-glyph-draw:hover path,
+:is(a, button):hover > .ui-glyph-draw path {
+  animation: ui-glyph-draw var(--motion-duration-medium) var(--ease-out) 1;
+}
+
+@keyframes ui-glyph-draw {
+  from { stroke-dashoffset: 28; }
+  to { stroke-dashoffset: 0; }
+}
+
+/* ── the oval ping that says “saved” ────────────────────────────── */
+
+.ui-glyph-pop {
+  animation: ui-glyph-pop var(--motion-duration-card) var(--ease-out) 1;
+}
+
+@keyframes ui-glyph-pop {
+  0% { transform: scale(0.86); }
+  60% { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-glyph-twinkle .ui-glyph-accent,
+  .ui-glyph-flicker .ui-glyph-accent,
+  .ui-glyph-ring:hover .ui-glyph-accent,
+  .ui-glyph-draw:hover path,
+  .ui-glyph-pop {
+    animation: none;
+  }
+  .ui-glyph-nudge,
+  .ui-glyph-nudge-rtl,
+  :is(a, button):hover > .ui-glyph-nudge,
+  :is(a, button):focus-visible > .ui-glyph-nudge,
+  :is(a, button):hover > .ui-glyph-nudge-rtl,
+  :is(a, button):focus-visible > .ui-glyph-nudge-rtl {
+    transform: none;
+    transition: none;
+  }
+}

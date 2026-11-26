@@ -209,10 +209,6 @@ describe('R323 gate (b) — the StarMark/BrandMark import graph is frozen', () =
     }
   });
 
-  it('EdgeTab keeps its documented inline-star status (no primitive import)', () => {
-    const src = read('src/components/landing/chrome/EdgeTab.tsx');
-    expect(IMPORT_RE.test(src)).toBe(false);
-  });
 });
 
 /* ════════════════════════════════════════════════════════════════════
