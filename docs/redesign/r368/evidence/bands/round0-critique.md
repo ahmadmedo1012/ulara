@@ -68,3 +68,6 @@ Ledger row scale raised. Dark card stays hover-only (spec-measured rest state); 
 
 ## Slice 06 map round 2
 Statement plate box removed, 6vw bold centred line. Closer in scale. Still wrong: side list, caption box, grid and chrome crowd the band; the reference is bare ground; font is Arabic display vs the reference grotesk (language only). Status: FAILING.
+
+## Slice 06 map round 3
+Caption border removed (paper seat kept for contrast over art). Side list and grid chrome remain; they are content/structure, to be reduced with the nav slice. Status: FAILING.

@@ -1886,3 +1886,8 @@ section.chapters {
 @media (min-width: 992px) {
   .jt-card .jt-card-plate { background: transparent; border: 0; box-shadow: none; padding: 0; font-size: 6vw; line-height: 1.1; letter-spacing: -0.02em; }
 }
+
+/* r368 slice 06 — the caption keeps its paper seat (contrast over art) but loses the boxed border; reference has bare type */
+@media (min-width: 992px) {
+  .jt-caption { border-color: transparent; }
+}

@@ -21,3 +21,4 @@ NEXT: platform grid to one tall plan cell + ledger rows; half-art/half-list role
 - platform ledger scale (FAILING; NEXT: 05/06 scale, nav, preloader)
 - slices 05/06 measured against shots, critique written (FAILING; NEXT: empty-field statement layout, nav, preloader)
 - slice 06 statement unboxed at 6vw (FAILING; NEXT: clear band chrome, nav, preloader)
+- slice 06 caption unboxed (FAILING; NEXT: nav, preloader)
