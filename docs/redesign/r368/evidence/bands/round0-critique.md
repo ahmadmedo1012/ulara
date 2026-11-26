@@ -176,3 +176,6 @@ Re-swept 4800 to 5400 in steps. The scroll harness jumps from the slice 05 band 
 
 ## Slice 06 round 7 (wheel-step capture, scripts/fidelity/wheel.mjs)
 Real wheel steps hit the statement windows. Defect found and fixed: the dominant plan thumbnail sat above the plaques and cut the end of the line ("...واحد"). It now sits below the stack and the statement reads whole, wrapped to two balanced lines. The earlier paper-outline attempt was dropped (the plate already carries a text-shadow rim). Still wrong: the left column and plan thumbnail remain on the stage; the reference stage is bare ground; the art still crosses the second statement. Status: FAILING.
+
+## Slice 06 round 8 (statement 2 vs art)
+Statement 2 (t 1.6 to 2.35) rides while the first isometric fragments fly in and cross it. That timing is the driver choreography (writeFade 1.6/2.0/2.15/2.35 against the layer windows), tuned and pinned by the timing belt tests; changing it means re-timing the fragment windows, not CSS. Not changed this round. The reference shows one line on bare ground, so this remains a visible difference. Status: FAILING.
