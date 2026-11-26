@@ -38,3 +38,4 @@ NEXT: platform grid to one tall plan cell + ledger rows; half-art/half-list role
 - mobile hero uses a cropped flat elevation (FAILING; NEXT: mobile platform/use-case, footer, cookie, cursor)
 - mobile hero markers re-seated on the flat elevation (FAILING; NEXT: footer, cookie bar, cursor, mobile art scale)
 - all four mobile hero markers seated on the drawing (FAILING; NEXT: consent bar to fixed corner look, footer, cursor)
+- consent bar seated as fixed bottom strip like the reference (UNVERIFIED visually: capture harness hides it; FAILING; NEXT: harness consent-visible capture, footer rebuild, cursor)

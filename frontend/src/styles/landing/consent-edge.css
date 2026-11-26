@@ -536,3 +536,17 @@
     }
   }
 }
+
+/* r368 — the reference seats its cookie bar as a fixed strip on the
+   bottom edge, centred, hairline box, never in the footer. The reference
+   wins over the in-cell seat (reason: appearance twin). */
+.cb-banner.cb-banner {
+  position: fixed;
+  inset-block-end: 0;
+  inset-inline: 0;
+  margin-inline: auto;
+  inline-size: min(560px, 100%);
+  z-index: 40;
+  border: 1px solid var(--text);
+  background: var(--bg);
+}
