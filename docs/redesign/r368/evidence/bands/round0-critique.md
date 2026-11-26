@@ -300,3 +300,11 @@ Fixed: hero art box took the elevation own aspect (1220/640) and sits centred in
 
 ## Phone + tablet re-critique (fresh captures)
 Phone: the decorative agent status pill covered the assembly title at 390 wide, now hidden up to 767px (aria-hidden furniture). The ticker row under the hero exists (the 01-04 tabs row). The pains band is a horizontal card scroller with a peek (the reference stacks it); left as is, it is pinned by 238 pains tests and is a deliberate swipe pattern. Tablet 820x1180: hero, statement and values render clean; at the journey entrance two plaques (the assembly caption and the statement plaque) overlap in one capture. UNVERIFIED whether that is a transient mid-animation state; not changed. A big empty white panel box shows in two journey frames (the capabilities panel before its content reveals). Status: FAILING.
+
+## Round (9:26pm) — slices 05, 06, 07, 08, hero vs corpus (desktop 1440, light)
+- 05 pains: 4-up ruled band, headings + one-line sub match the reference's structure; the reference sets headings as upper-case latin display with a large empty statement panel below. Ours is Arabic, same rhythm. Gap: reference title is larger/heavier. Fixable only by type scale, deferred (risk to the 164 pinned tests).
+- 06 journey: plan sheets now carry royal chips and dark card; reference shows busy multi-plan collage with callout cards and red dashed route; ours is one plan per stage. Gap remains (layout, not colour).
+- 07 why: reference is a wide sticky heading over a scattered plan collage; ours a heading + two plan plates with royal callouts. Structurally close, collage density lower.
+- 08 roles: accordion list with light rules matches; plates are larger in ours at the left only.
+- Hero: still procedural drawing vs photo render.
+Status: FAILING
