@@ -650,3 +650,10 @@
   .pm-inner > .pm-head .pm-title { font-size: clamp(3.6rem, 5.4vw, 7.6rem); line-height: 1.08; max-inline-size: 22ch; margin-inline: auto; }
   .pm-inner > .pm-head .pm-kicker { display: flex; justify-content: center; }
 }
+
+/* r368 slice 05 (separate commit, revertable): the reference's statement field
+ * is the title alone with nothing under it; the sub paragraph (kept in the DOM
+ * for readers and tests) stays visually off at desktop widths. */
+@media (min-width: 992px) {
+  .pm-section .pm-subwrap { display: none; }
+}
