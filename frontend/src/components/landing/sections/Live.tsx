@@ -39,6 +39,33 @@ const PAINS = [
   },
 ] as const;
 
+
+/* r368 — the phone rows' small procedural line drawings (aria-hidden,
+ * phone only via CSS): four isometric blocks, one per pain. */
+function PainArt({ n }: { n: string }) {
+  const c = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.4, strokeLinejoin: 'round' as const };
+  const slab = (x: number, y: number, k: number) => (
+    <g key={`${x}-${y}`} {...c}>
+      <path d={`M${x} ${y} l${30 * k} ${-15 * k} l${30 * k} ${15 * k} l${-30 * k} ${15 * k}z`} />
+      <path d={`M${x} ${y} v${8 * k} l${30 * k} ${15 * k} v${-8 * k}`} />
+      <path d={`M${x + 60 * k} ${y} v${8 * k} l${-30 * k} ${15 * k}`} />
+    </g>
+  );
+  const items =
+    n === '01'
+      ? [slab(60, 70, 1), slab(60, 50, 1), slab(60, 30, 1)]
+      : n === '02'
+        ? [slab(30, 60, 1), slab(90, 60, 1), slab(60, 36, 1)]
+        : n === '03'
+          ? [slab(30, 70, 0.7), slab(72, 70, 0.7), slab(114, 70, 0.7), slab(72, 42, 0.7)]
+          : [slab(60, 78, 1), slab(60, 58, 1), slab(60, 38, 1), slab(60, 18, 1)];
+  return (
+    <svg className="pm-art" viewBox="0 0 180 100" aria-hidden="true" focusable="false">
+      {items}
+    </svg>
+  );
+}
+
 export function Live() {
   /* R322 (2-d) — the pains' ≤767 snap carousel + the reference's dot
    * rail. Pure CSS scroll-snap owns the swipe (no swiper dep); this
@@ -220,6 +247,7 @@ export function Live() {
 
                 {/* The answer follows its challenge in reading order. */}
                 <div className="pm-bodyzone" data-spec={`problem.bodyzone.${i + 1}`}>
+                  <PainArt n={p.num} />
                   <div className="pm-textzone" data-spec={`problem.textzone.${i + 1}`}>
                     <div className="pm-tgrid" data-spec={`problem.tgrid.${i + 1}`}>
                       <div className="pm-item-titlebox" data-spec={`problem.titleboxcol.${i + 1}`}>

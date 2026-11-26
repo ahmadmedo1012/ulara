@@ -342,7 +342,18 @@
   display: none;
 }
 
+.pm-art { display: none; }
 @media (max-width: 767px) {
+  /* r368 — per-row drawing on the phone stack (reference phone rows carry art) */
+  .pm-art {
+    display: block;
+    inline-size: 100%;
+    max-inline-size: 18rem;
+    block-size: auto;
+    margin: 2.4rem auto 0;
+    color: var(--text);
+    direction: ltr;
+  }
   /* the (0,2,0) belt guard (statement.css r337 precedent): a
      ≤767 belt sheet pads the section 56px (the phone header
      reserve) — the frozen spec's phone band carries NO section pad

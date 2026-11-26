@@ -141,3 +141,4 @@ NEXT: more
 - r368 tablet check: caption/plaque overlap not reproduced after settle (transient). Blank capability panel was real in a narrow scrub window (clip full, head not yet); head/rows now start at clip end. Status: FAILING overall.
 - r368 phone pains band now STACKS (one column, rail retired, rules horizontal), matching the reference phone list; pains-related tests (133+164) pass unchanged because they pin DOM/data-spec not the scroller CSS. Mobile perf: p50 16.7ms, 12 frames >50ms, longtasks 0.65s. Status: FAILING overall.
 NEXT: origin/main sync ~9:50pm; remaining gaps 06 layout, hero photo look, no-corpus slices.
+- r368 phone pains rows carry small procedural iso line drawings (PainArt, aria-hidden, phone only). Tests 164 pass. Status: FAILING overall.
