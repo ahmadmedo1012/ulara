@@ -170,3 +170,6 @@ Four offsets captured and opened. The reference shows only one huge centred stat
 
 ## Slice 06 round 5
 Added a paper-coloured text outline to the statement plaques so type crossing the iso art stays legible (desktop). This is legibility, not separation: true separation needs the scroll driver to exit the art during the statement, a choreography change to a timing-belt-pinned driver. After the slice 05 reorder the sweep offsets moved, and the new statement window was not re-hit in this round, so the outline is unverified by capture. Status: FAILING.
+
+## Slice 06 round 6 (re-sweep)
+Re-swept 4800 to 5400 in steps. The scroll harness jumps from the slice 05 band straight to the assembled iso stage, so the statement window (plaque 1 at stage start, plaque 2 mid-scrub) was not caught in any frame; the outline stays unverified by capture. The assembled stage at 5000+ is clear of statements. Needs a driven-scroll capture (smooth wheel steps) to hit the plaque windows. Status: FAILING.

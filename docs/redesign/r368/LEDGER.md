@@ -77,3 +77,5 @@ NEXT: slice 06
 NEXT: separate art from statement in stage 3
 - slice 06 statement outline (unverified by capture)
 NEXT: re-sweep slice 06 offsets after reorder
+- slice 06 re-sweep: plaque windows not hit by jump scroll; needs wheel-step capture
+NEXT: wheel-step capture harness for pinned stage
