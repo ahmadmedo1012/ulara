@@ -65,3 +65,5 @@ NEXT: remaining failing slices
 NEXT: inner-page ruled column frame
 - inner-page column rules on the guest frame
 NEXT: colleges plan block
+- colleges plan block audited, unmeasurable against corpus
+NEXT: auth slice 19 / slices 05-06 declutter

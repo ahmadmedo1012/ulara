@@ -152,3 +152,6 @@ The white box is .map-panel mid-unfold (header and rows reveal only after the cl
 
 ## Inner pages: column rules
 Added two hairline full-height column rules at 20.3% and 79.7% to the guest frame (>=992px), matching the reference pricing shot. Only one inner shot exists in the corpus, and ULARA has no pricing route (404), so the table grammar cannot be compared. Still wrong: plan block boxed, no ruled tables. Status: FAILING.
+
+## Colleges plan block
+The plan plate is a thick-wall SVG asset (PlanPlate, r364). The corpus has no plan-drawing shot to measure line weight against, so changing it would be a guess. Left unchanged; flagged as unmeasured, not as matching. Status: FAILING.
