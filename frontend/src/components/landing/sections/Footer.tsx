@@ -166,12 +166,12 @@ export function Footer({ year }: { year: number }) {
         {/* r368 — the closing call: a centred ruled cell with corner
             coordinates, headline, one line and one button (the
             reference's closing band grammar; copy is Ulara's own). */}
-        <div className="fo-cta" data-spec="footer.cta">
-          <span className="fo-cta-coord fo-cta-coord-a fo-mono" dir="ltr" aria-hidden="true">[0, 000]</span>
-          <span className="fo-cta-coord fo-cta-coord-b fo-mono" dir="ltr" aria-hidden="true">[1440, 000]</span>
-          <h2 className="fo-cta-title">شاهد أُلارا تعمل على جامعتك</h2>
-          <p className="fo-cta-sub">تصفح الكليات التجريبية وجرّب المحاضرات والاختبارات في مساحة عمل كاملة.</p>
-          <Link to="/colleges" className="fo-cta-btn fo-mono">تصفح الكليات</Link>
+        <div className="fo-close" data-spec="footer.cta">
+          <span className="fo-close-coord fo-close-coord-a fo-mono" dir="ltr" aria-hidden="true">[0, 000]</span>
+          <span className="fo-close-coord fo-close-coord-b fo-mono" dir="ltr" aria-hidden="true">[1440, 000]</span>
+          <h2 className="fo-close-title">شاهد أُلارا تعمل على جامعتك</h2>
+          <p className="fo-close-sub">تصفح الكليات التجريبية وجرّب المحاضرات والاختبارات في مساحة عمل كاملة.</p>
+          <Link to="/colleges" className="fo-close-btn fo-mono">تصفح الكليات</Link>
         </div>
 
         {/* R345-ED — the drawing-sheet title block: the colophon opens

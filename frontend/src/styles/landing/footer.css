@@ -833,7 +833,7 @@ footer.fo-footer {
 }
 
 /* r368 — closing call band (the reference's closing cell: ruled box, corner coords, centred headline, one button). */
-.fo-cta {
+.fo-close {
   position: relative;
   display: grid;
   justify-items: center;
@@ -844,15 +844,15 @@ footer.fo-footer {
   border-block: 1px solid var(--rule);
   text-align: center;
 }
-.fo-cta-title {
+.fo-close-title {
   margin: 0;
   max-inline-size: 16ch;
   font-size: clamp(1.8rem, 3.6vw, 3.2rem);
   font-weight: 600;
   line-height: 1.15;
 }
-.fo-cta-sub { margin: 0; max-inline-size: 46ch; font-size: 13px; color: var(--text-muted, inherit); }
-.fo-cta-btn {
+.fo-close-sub { margin: 0; max-inline-size: 46ch; font-size: 13px; color: var(--text-muted, inherit); }
+.fo-close-btn {
   display: inline-flex;
   align-items: center;
   block-size: 44px;
@@ -864,9 +864,9 @@ footer.fo-footer {
   letter-spacing: 0.08em;
   text-decoration: none;
 }
-.fo-cta-coord { position: absolute; inset-block-start: 6px; font-size: 10px; color: var(--text-muted, inherit); }
-.fo-cta-coord-a { left: 8px; }
-.fo-cta-coord-b { right: 8px; }
+.fo-close-coord { position: absolute; inset-block-start: 6px; font-size: 10px; color: var(--text-muted, inherit); }
+.fo-close-coord-a { left: 8px; }
+.fo-close-coord-b { right: 8px; }
 
 /* r368 — use-case accordion: art plate + ruled list (reference closing-section grammar). */
 .fo-uses { display: grid; grid-template-columns: 1fr; border-block-start: 1px solid var(--rule); }
