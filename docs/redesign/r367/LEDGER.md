@@ -31,3 +31,20 @@ honest. Working DIRECTLY on main; batches pushed as pieces land.
 NEXT: merge r366, the two queues (B2/C), the mobile block (D), r363's queue
 (soak verdict, Lighthouse, Arabic report), cleanup (delete merged branches,
 close PRs, zero-trace), final verify ×2.
+- **C. the public site's queued items** — the chapters journey's dominant-plan
+  seat LANDED (7b15a3f): the campus plan's framed sheet rides beside the iso
+  walkthrough on the free inline-end quarter, choreography untouched, sweep +
+  journey contracts green; the wall-weight pass LANDED (the admin plan joins
+  the 14px register); the phone re-stage sheets captured 320→1920 both themes
+  + the fold sheet vs m-top/m-intro + the preloader frame sheet vs
+  preloader-mid — round-2 critique written
+  (evidence/round-2-critique.md): phone grammar at the twin bar, 3 recorded
+  adaptations; the legal+auth+vision+competitions audit rides the CI Product
+  sweep's derived-route matrix (7 widths × 2 themes × 6 roles) on main. — DONE
+  (the Lighthouse pass rode here too: prod mobile perf 86 / a11y 100 / BP 100
+  / SEO 100; the hero img eager+high+intrinsic and the stale SVG preloads
+  re-pointed at the art-v2 webps — CLS 0.008→0.000 locally).
+- **B2/B continuations.** The P4 slice sweep 28 cells clean + the four UX
+  probes (keyboard 45 steps 0 failed · zoom-200 8 cells clean · RM 0 gate
+  findings (the landing RM height stays P2 inventory, the motion-engine law)
+  · 3G throttle 3 cells clean) — run locally on the merged main.
