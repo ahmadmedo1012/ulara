@@ -62,3 +62,6 @@ Ledger rows added (four ruled lines with icon). Still wrong: row scale/position 
 
 ## Platform round 5
 Ledger row scale raised. Dark card stays hover-only (spec-measured rest state); not yet visible at rest like the reference. Status: FAILING.
+
+## Slices 05 and 06 round 1 (measured, not yet fixed)
+05 problem: the reference is four ruled head-columns with tight sans headings, then one empty cream field carrying a single huge centred statement. Ours stacks a plan, a dense list and chrome inside the band, so the empty field and the single statement are missing. 06 map: the reference is the same single huge centred statement on blank ground; ours is a boxed headline over a grid with a side list. Both need the content moved out of the band and the statement scaled to about 6vw. Status: FAILING.
