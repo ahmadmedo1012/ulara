@@ -865,7 +865,7 @@ footer.fo-footer {
   text-decoration: none;
 }
 .fo-close-coord { position: absolute; inset-block-start: 6px; font-size: 10px; color: var(--text-muted, inherit); }
-.fo-close-coord-a { left: 8px; }
+.fo-close-coord-a { left: 36px; }
 .fo-close-coord-b { right: 8px; }
 
 /* r368 — use-case accordion: art plate + ruled list (reference closing-section grammar). */

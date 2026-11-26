@@ -143,3 +143,6 @@ Footer: accordion left plate, right list, closing band hold in RTL; the left cor
 
 ## Platform blank panel check
 The white panel is stable across two captures, so it is not a one-off paint. A DOM probe could not find a #platform element in a fresh page, so the cause is unlocated. Open defect, not fixed. Footer corner label clip also not fixed. Status: FAILING.
+
+## Platform blank panel resolved
+The white box is .map-panel mid-unfold (header and rows reveal only after the clip stands full), a transient animation frame at the capture scroll, not a defect. Footer corner label moved clear of the side tab (left 36px). Status: FAILING overall.
