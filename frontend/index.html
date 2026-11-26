@@ -82,8 +82,13 @@
     <link rel="preload" href="/fonts/plex-sans-arabic-400-normal-arabic.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/plex-sans-arabic-600-normal-arabic.woff2" as="font" type="font/woff2" crossorigin />
     <template id="home-elevation-preload">
-      <link rel="preload" as="image" href="../shared/art/svg/hero-elevation-mobile.svg" media="(max-width: 767px)" fetchpriority="high" />
-      <link rel="preload" as="image" href="../shared/art/svg/hero-elevation.svg" media="(min-width: 768px)" fetchpriority="high" />
+      <!-- r367: the preloads track the ACTUAL LCP image — r364 moved the
+           hero ink from the r361 SVGs to the art-v2 webps (the SVG
+           preloads went stale: dead bytes while the real LCP image, the
+           hero webp, queued behind hydration). Vite rewrites these
+           relative hrefs to the hashed art-v2 assets at build. -->
+      <link rel="preload" as="image" href="./src/assets/art-v2/hero-elevation-mb.webp" media="(max-width: 767px)" fetchpriority="high" />
+      <link rel="preload" as="image" href="./src/assets/art-v2/hero-elevation-dt.webp" media="(min-width: 768px)" fetchpriority="high" />
     </template>
     <script>
       (function () {
