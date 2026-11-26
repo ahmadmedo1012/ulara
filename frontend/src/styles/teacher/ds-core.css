@@ -642,6 +642,64 @@
    deliberately absent rather than a lying zero). Ember emphasis is
    reserved for a non-zero critical count. */
 
+/* ── r365 · the risk-row chrome, restored ──────────────────────────
+   The flagged-row anatomy §E 1-2 name — the publish import carried
+   the TSX but dropped the rules, so the RISK BOARD / LIVE ROSTER rows
+   rendered bare: no flex layout, no hairline separators, no rail ink
+   (§0's .hr-edge names only soon/overdue/ember), no dim on the risk
+   filter's is-dim. One flat hairline row — avatar · body · end-aligned
+   mono score — the severity rail + score ink speak the four-level
+   risk ladder (status text rides -ink tokens, never raw accents),
+   the filter's recede rides the .tpg-att-stat ladder. Logical
+   properties only; dark/RTL resolve from the tokens. */
+.hr-scope .risk-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  padding-block: var(--sp-2);
+  border-block-end: 1px solid var(--rule);
+}
+.hr-scope .risk-row:last-child { border-block-end: 0; }
+.hr-scope .risk-row-name { font-weight: var(--fw-semibold); color: var(--text-strong); }
+.hr-scope .risk-row-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-block-start: var(--sp-1);
+  font-size: var(--fs-xs);
+  color: var(--text-secondary);
+}
+.hr-scope .risk-row-suggestion {
+  margin-block-start: var(--sp-1);
+  font-size: var(--fs-xs);
+  color: var(--text-secondary);
+}
+.hr-scope .risk-row-score {
+  flex: none;
+  margin-inline-start: auto;
+  text-align: end;
+}
+.hr-scope .risk-row-pct {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--fw-semibold);
+  font-size: var(--fs-h3);
+  color: var(--text-strong);
+}
+.hr-scope .risk-row[data-severity='ok']       { border-inline-start-color: var(--success); }
+.hr-scope .risk-row[data-severity='watch']    { border-inline-start-color: var(--info); }
+.hr-scope .risk-row[data-severity='warn']     { border-inline-start-color: var(--warning); }
+.hr-scope .risk-row[data-severity='critical'] { border-inline-start-color: var(--danger); }
+.hr-scope .risk-row[data-severity='ok']       .risk-row-pct { color: var(--success-ink); }
+.hr-scope .risk-row[data-severity='watch']    .risk-row-pct { color: var(--info-ink); }
+.hr-scope .risk-row[data-severity='warn']     .risk-row-pct { color: var(--warning-ink); }
+.hr-scope .risk-row[data-severity='critical'] .risk-row-pct { color: var(--danger-ink); }
+.hr-scope .risk-row.is-dim {
+  opacity: 0.55;
+  transition: opacity var(--t-fast) var(--ease);
+}
+
 /* ── 3 · Composition seams ─────────────────────────────────────────── */
 
 /* The reference brow rides above each page title with a rung of air so
