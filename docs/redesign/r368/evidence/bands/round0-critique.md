@@ -224,3 +224,6 @@ The plan strip now takes the left half as a stack of title-barred plates with th
 
 ## Slice 06 round 10 (1440)
 Stage 1 now shows one large thick-wall plan on bare ground (aria-hidden .jt-bigplan, desktop only), matching the reference second frame (a plan filling the stage). Sequence on desktop: bare statement, big plan, then the existing iso art and scrubbed statement. No driver change. Remaining: the closing column and thumbnail stay for stages 2 and up, plan is the library plan not a measured one. Status: FAILING (closer).
+
+## Dark re-check of the new stages (1440)
+Found: plan SVGs vanished on dark paper (multiply of dark ink). Fixed: dark invert plus screen blend on .plan-plate-art and .jt-bigplan img; the stage-0 statement and stage-1 big plan read well in dark. RTL: stage art is forced ltr (architecture, not mirrored), copy and tag text are rtl. Remaining: tag cards stay royal (not the dark #8AA0FF) and the dark card stays pale. Status: FAILING.

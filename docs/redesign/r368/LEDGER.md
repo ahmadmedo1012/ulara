@@ -111,3 +111,5 @@ NEXT: owner call
 NEXT: re-measure mobile scroll; further rounds
 - slice 06: stage 1 large thick-wall plan frame (desktop)
 NEXT: 07/08 polish
+- dark: plan plates inverted+screen on dark paper
+NEXT: more rounds

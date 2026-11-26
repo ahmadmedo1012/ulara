@@ -319,3 +319,11 @@
 .rl-frame { direction: ltr; }
 .rl-frame > .rl-titlecol, .rl-frame > .rl-contentcol { direction: rtl; }
 .duo-pane .duo-img.is-flat { object-fit: contain; object-position: right bottom; }
+
+/* r368 dark: thick-wall plan SVGs carry dark ink for light paper; on the dark
+ * paper they vanish. Invert them like the hero elevation (ink becomes pale). */
+[data-theme="dark"] .plan-plate-art,
+[data-theme="dark"] .jt-bigplan img {
+  filter: invert(1) grayscale(0.2) brightness(0.9);
+  mix-blend-mode: screen;
+}
