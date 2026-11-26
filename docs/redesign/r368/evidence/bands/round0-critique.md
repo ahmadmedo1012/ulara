@@ -137,3 +137,6 @@ Phone roles title clip was a scroll-under-header capture artifact. Dark desktop 
 
 ## Dark hero art
 Checked: dark uses the same flat elevation SVG, inverted and screened (hero.css slice 22), so massing reads as pale tone on dark paper. No dark reference shot exists in the corpus, so a native dark palette is unmeasurable. Left as is. Status: FAILING (unverified vs reference).
+
+## RTL footer and platform loop 1 (1440)
+Footer: accordion left plate, right list, closing band hold in RTL; the left corner coordinate label is clipped by the side tab. Platform: ledger and title columns mirror correctly; a blank white panel sits over the isometric art in the capture (likely a lazy panel not yet painted, unverified); the art is the isometric campus, not the reference flat plate. Status: FAILING.

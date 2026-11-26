@@ -55,3 +55,5 @@ NEXT: dark and RTL loops
 NEXT: dark hero art flat massing
 - dark hero art audited (inversion only, no dark reference)
 NEXT: RTL footer/platform loops
+- RTL footer/platform loop 1 logged
+NEXT: platform blank panel check, corner label clip
