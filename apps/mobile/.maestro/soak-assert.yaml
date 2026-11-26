@@ -33,4 +33,9 @@ appId: ly.ulara.app
 - extendedWaitUntil:
     visible:
       text: "أرقامك هذا الفصل"
-    timeout: 30000
+    # run #16's forensics: the round-1 screenshot (taken SECONDS after
+    # the assert failed) shows the dashboard FULLY RECOVERED — the
+    # session survived, the app's own recovery lagged the window (the
+    # connectivity probe cadence + the refetch on a cold emulator).
+    # The assert waits for the RECOVERY, not against it: 120s.
+    timeout: 120000
