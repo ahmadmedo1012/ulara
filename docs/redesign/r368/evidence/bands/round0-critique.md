@@ -251,3 +251,6 @@ Mobile seats re-pinned to the new crop (all on drawing features; hero station te
 
 ## Ruled tables and cookie seat
 The reference has no inner-page pricing equivalent in ULARA (no pricing route), so the capability matrix on /features became the full ruled grid: vertical rules per column, dark check boxes. The cookie bar mirrors to the inline-end (left in RTL) so it no longer covers the headline; it still brushes the primary button at 1440x1000. Button order is already the reference order mirrored for RTL (text, accept, reject). Other inner pages (universities, help, legal) have no ruled-table reference in the corpus. Status: FAILING.
+
+## Dark tag cards
+Dark: tag cards use the dark royal #8AA0FF with ink text; the ink slab stays dark with a light hairline instead of inverting to a pale card. Status: FAILING.

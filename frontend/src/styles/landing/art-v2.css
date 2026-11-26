@@ -327,3 +327,13 @@
   filter: invert(1) grayscale(0.2) brightness(0.9);
   mix-blend-mode: screen;
 }
+
+/* r368 slice 22 — dark: the ink slab stays a dark slab with a light hairline (it inverted to a pale card), and the royal tag cards take the dark-theme royal #8AA0FF with ink text. */
+[data-theme="dark"] .dark-card {
+  background: color-mix(in srgb, var(--bg) 70%, #000);
+  color: var(--text);
+  border: 1px solid color-mix(in srgb, var(--text) 70%, transparent);
+  box-shadow: none;
+}
+[data-theme="dark"] .dark-card-head, [data-theme="dark"] .dark-card-row { color: color-mix(in srgb, var(--text) 80%, transparent); }
+[data-theme="dark"] .wy-tag, [data-theme="dark"] .plan-tag { background: #8aa0ff; color: #0c0d12; }
