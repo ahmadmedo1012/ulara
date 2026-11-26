@@ -214,7 +214,8 @@ describe('r306 → r310 — the elevation illustration (the honest interactive)'
      * whole drafted elevation fills the stage; the fallback is one
      * SVG object on transparent paper) re-pin on the new seats. */
     /* r368: the desktop seat is now the procedural flat elevation (the reference's flat architectural drawing) */
-    expect(liveTsx).toContain('hero-elevation-flat.svg');
+    // r368: desktop hero is now the Blender/Cycles raster (scripts/art/blender); phones keep the vector
+    expect(liveTsx).toContain('hero-elevation-bl.webp');
     expect(liveTsx).toContain('hero-elevation-flat-mb.svg');
     expect(liveTsx).toContain('<ElevationArt className="hro-elevation" viewBox={mobile ? VB_MOBILE : \'0 0 1440 620\'} />');
     const ink = read('src/components/landing/hero/ElevationArt.tsx');
