@@ -89,3 +89,5 @@ NEXT: sync origin/main at ~6:26; slice 09-11 loops
 NEXT: slice 10/11
 - slice 11: pale disc on footer stage
 NEXT: main sync ~6:26; slices 12-14
+- slices 12-14 loop logged
+NEXT: main sync ~6:26; slices 15-18
