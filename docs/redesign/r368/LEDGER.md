@@ -165,3 +165,4 @@ NEXT: origin/main sync ~9:50pm; remaining gaps 06 layout, hero photo look, no-co
 - r368 no-corpus pass (404, login, about, desktop light): ruled frame, mono labels, royal accents consistent with matched slices; no corpus to measure so status stays FAILING (unverified vs reference). Mobile hero raster verified dark. NEXT: hourly sync, cross-slice analyze.
 - r368 cross-slice analyze (12:04 AM): 06 gets a third plate; 404/about keep the duotone photo (reference shows photo scenes in the use-case band, so no evidence to swap). 07 plate richness still open. All 22 FAILING.
 - r368 plates v3: clipped 45-degree poche hatching, chairs, door swings in plate.py flat mode. NEXT: sync, analyze.
+- r368 plates v4: campus hatch on all blocks, lighter admin poche, jittered hand-drawn hatching.
