@@ -599,3 +599,11 @@
     filter: contrast(1.18) saturate(0.9);
   }
 }
+
+/* r368 slice 21 — phone: the box takes the mobile elevation's own 1220/640 aspect (it was a 390/560 tall box that letterboxed
+   the drawing into the middle with empty bands above and below, the reference's art fills its frame). Seats in Hero.tsx
+   re-pinned to the new box (y' = (y - 31.8) / 36.4). Reason: appearance twin. */
+@media (max-width: 767px) {
+  .hro-stage { place-items: center; }
+  .hro-art { aspect-ratio: 1220 / 640; max-block-size: none; inline-size: 100%; }
+}

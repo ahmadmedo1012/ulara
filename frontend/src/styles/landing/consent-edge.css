@@ -579,3 +579,18 @@
 @media (min-width: 900px) {
   [dir="rtl"] .cb-banner.cb-banner { right: 0; left: auto; }
 }
+
+/* r368 phone — the reference's strip is compact: the text line, then two bordered buttons side by side
+   (accept first, reject with a hairline box), 30px tall, not a full-height accept slab. Reason: appearance twin. */
+@media (max-width: 767px) {
+  .cb-banner .cb-actions { gap: 8px; justify-content: flex-start; }
+  .cb-banner .cb-accept,
+  .cb-banner .cb-reject {
+    min-block-size: 32px;
+    padding-block: 0;
+    padding-inline: 18px;
+    font-size: 12px;
+    border-radius: 0;
+  }
+  .cb-banner .cb-reject { border: 1px solid var(--rule); }
+}

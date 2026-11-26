@@ -135,3 +135,4 @@ NEXT: more
 - texture/line weight measured (no code change; differences within measurement noise). Hero art remains drawing vs photo.
 - plan wall ink neutral #2c2b28 (was warm #262019); thickness left (anti-alias noise).
 - hero stipple shading + grey back trees; perf unchanged. NEXT: re-critique all slices.
+- phone: hero art box centred at own aspect, compact bordered cookie buttons; perf unchanged.

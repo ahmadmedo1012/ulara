@@ -294,3 +294,6 @@ Paper ground: reference empty ground (245,246,238), sd 0.73; ULARA (242,241,236)
 
 ## Hero toward the reference render (stipple shading)
 Hero elevation now shades its cast shadow, soffit and pier sides with stipple patterns (two 32px dot tiles) like the reference rendering, plus lighter grey back trees for depth. Hatch counts trimmed to keep gzip 46.8KB. Dark theme inverts the stipple cleanly. Mobile perf re-measured: p50 16.7ms, 16 frames >50ms, 1.1s long tasks (was 15 / 1.05s): unchanged. Still: the reference is a photo-like render with finer grain and a more complex building. Status: FAILING.
+
+## Mobile re-critique (390x844 vs the reference phone shots)
+Fixed: hero art box took the elevation own aspect (1220/640) and sits centred in the stage, seats re-pinned (C-01 y42, E-02 y80); cookie strip now text line + two bordered buttons side by side (reference arrangement). Perf re-measured: p50 16.7ms, 18 frames >50ms, long tasks 0.62s. Hero/consent/stations tests: 164 + 129 pass, tsc clean. Remaining phone gaps: the reference has a mono ticker row and tag chips under the hero, ULARA does not; statement/values bands differ in structure. Status: FAILING.
