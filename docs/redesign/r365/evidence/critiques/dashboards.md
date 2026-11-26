@@ -39,7 +39,37 @@ KPI/dashboard grammar is corpus-derived, see `../product-grammar.md` §3).
 | Screen | Light | Dark | Phone | Verdict |
 |---|---|---|---|---|
 | student dashboard | matches, KPI band missing (5) | pending preview matrix | matches | NOT FINAL |
-| teacher dashboard | matches, bottom section empty (2) | pending | matches | NOT FINAL |
-| admin dashboard | matches, deltas (1) | matches | matches | NOT FINAL |
-| quality dashboard | (3) race — recapture | (3) | pending | NOT FINAL |
-| owner dashboard | matches, deltas (1) | matches | matches | NOT FINAL |
+
+## Pass 2 — long-shot re-captures (built preview, shell opened, `sheets/dash2-*.webp`)
+
+The pass-1 "full page" shots were viewport-only (the shell scrolls inside `.content`);
+pass 2 opens the shell for the shot, so the sheets see the whole page. Fixes landed:
+
+1. **Delta flags** — the flat-triangle flag primitive shipped (`KpiItem.deltaDir`), and
+   the student dashboard's momentum strip now IS a KPI band: `58% / 1,240 / 2 / 87% /
+   3.42` with the GPA flag riding its real trend («جيد جداً ▲», tone ink). Capture:
+   `dash2-student` — flag renders, hairline cells, honest-empty keeps its register.
+2. **Quality dashboard** — defect 3 was the dev-server chunk race; the built preview
+   renders the full board (KPI band five cells with bracket indices, flagged alert rows).
+   Verdict: matches.
+3. **Student KPI band** — defect 5 resolved by the momentum lift; no extra band needed.
+4. Teacher/admin/owner dashboards keep their compositions; their KPI cells carry mono
+   captions and state hints, and flags stay OFF where the datum has no real direction
+   (PENDING 6 is a state, not a trend) — the grammar flags direction only.
+5. The teacher page's closed `<details>` disclosures are the repo's deliberate
+   dashboard-disclosure pattern — content exists under both; captured as states, not
+   defects.
+
+### Remaining for dashboards (P6 sweep)
+
+- Re-capture dark long-shots for all five and phone long-shots after the page loops.
+- Admin/owner: consider wiring flags where the KPI payload later gains a real trend
+  series (backend limitation noted in the ledger).
+
+| Screen | Long-shot light | Verdict |
+|---|---|---|
+| student dashboard | KPI band + flags render, whole page coherent | MATCHES (await dark/phone in sweep) |
+| teacher dashboard | KPI band + queue + disclosures; no directional data to flag | MATCHES (await sweep) |
+| admin dashboard | KPI band + distribution chart + quick reads | MATCHES (await sweep) |
+| quality dashboard | full board on built assets | MATCHES (await sweep) |
+| owner dashboard | KPI band + alerts strip + donut | MATCHES (await sweep) |
