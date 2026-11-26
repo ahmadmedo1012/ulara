@@ -80,3 +80,6 @@ The headless sandbox has under 3 cores, so the intro gate skips the loader; capt
 
 ## Slice 01 preloader round 2
 Progress rule now grows left to right with the % at its start (19% frame vs reference 18%: same geometry). Welcome card moved clear of the headline, bottom-right. Layout now matches structurally. Still wrong: Arabic headline is larger and heavier than the reference's small grotesk; the hairline with ticks under the mark is missing; timing against preloader-timeline.json not yet compared. Status: FAILING (closer).
+
+## Slice 01 preloader round 3 (headline and timing)
+Headline now 2.4rem/600 at desktop. Timing measured from preloader-timeline.json: reference reaches 100% at about 4.5s and the loader is gone at about 7.2s, but that run is network-bound (the percent stalls at 58-60% between 1.8s and 2.7s, then jumps). Ours holds a pinned 2.0s floor, 2.6s cap, about 3.3-4.0s total (r309 belt tests). Decision: do not lengthen the wait to imitate a network stall; keep the progress curve front-loaded then eased. Status: FAILING on headline face (Arabic display vs grotesk, language only) and on the missing tick hairline.
