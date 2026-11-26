@@ -263,3 +263,6 @@ RTL desktop bar moved to the inline-start side (right). Measured at 1440x1000, 1
 
 ## Dark and RTL re-check (1440x1000)
 Dark hero, statement band and values band render coherently in RTL; the cookie bar sits right, clear of the CTA, in both themes. The scroll-2200 dark frame is a near-empty band with a single line (likely a reveal not yet triggered in a static capture; unverified). Consent tests: 129 passed. Status: FAILING.
+
+## Hero hatching + near-empty dark frame
+The near-empty band at scroll ~2200 is the "chapters" word-reveal statement (.jt-stack); light renders the same single line, so it is by design, not a dark bug (verified in both themes). Hero hatching density raised 1.5x (gzip 45KB, within budget); the reference still has finer, denser board texture. Slices 07/08 plate sizes are still not pixel-measured. Status: FAILING.

@@ -56,13 +56,13 @@ const hatch = (x, y, w, h, n, o) => { let t = ''; for (let i = 0; i < n; i++) { 
 const joints = (x, y, w, h, cols, rows) => { let t = ''; for (let i = 1; i < cols; i++) t += ln(x + (w / cols) * i, y, x + (w / cols) * i, y + h, 0.8, INK, 0.45); for (let j = 1; j < rows; j++) t += ln(x, y + (h / rows) * j, x + w, y + (h / rows) * j, 0.8, INK, 0.45); return t; };
 const speck = (x, y, w, h, n) => { let t = ''; for (let i = 0; i < n; i++) t += `<circle cx="${f(x + rnd() * w)}" cy="${f(y + rnd() * h)}" r="${f(0.5 + rnd() * 0.9)}" fill="${INK}" opacity="${f(0.25 + rnd() * 0.35)}"/>`; return t; };
 const plus = (x, y, r = 9) => ln(x - r, y, x + r, y, 1.6) + ln(x, y - r, x, y + r, 1.6);
-s += hatch(400, 150, 660, 46, 70, 0.4) + joints(400, 150, 660, 46, 11, 1) + speck(400, 150, 660, 46, 60);
-s += hatch(430, 190, 70, 280, 60, 0.4) + hatch(960, 190, 70, 280, 60, 0.4) + joints(430, 190, 70, 280, 1, 8) + joints(960, 190, 70, 280, 1, 8);
-s += hatch(360, 120, 36, 492, 90, 0.4) + hatch(1064, 120, 36, 492, 90, 0.4) + joints(360, 120, 36, 492, 1, 14) + joints(1064, 120, 36, 492, 1, 14);
-s += joints(420, 470, 640, 142, 8, 1) + hatch(420, 470, 640, 142, 160, 0.35);
+s += hatch(400, 150, 660, 46, 105, 0.4) + joints(400, 150, 660, 46, 11, 1) + speck(400, 150, 660, 46, 60);
+s += hatch(430, 190, 70, 280, 90, 0.4) + hatch(960, 190, 70, 280, 90, 0.4) + joints(430, 190, 70, 280, 1, 8) + joints(960, 190, 70, 280, 1, 8);
+s += hatch(360, 120, 36, 492, 135, 0.4) + hatch(1064, 120, 36, 492, 135, 0.4) + joints(360, 120, 36, 492, 1, 14) + joints(1064, 120, 36, 492, 1, 14);
+s += joints(420, 470, 640, 142, 8, 1) + hatch(420, 470, 640, 142, 240, 0.35);
 s += speck(360, 120, 36, 492, 70) + speck(1064, 120, 36, 492, 70) + speck(430, 190, 70, 280, 60) + speck(960, 190, 70, 280, 60);
 // stepped upper massing + roof-edge parapet ticks
-s += rect(520, 120, 420, 30, PALE, INK, 2) + joints(520, 120, 420, 30, 9, 1) + hatch(520, 120, 420, 30, 40, 0.4);
+s += rect(520, 120, 420, 30, PALE, INK, 2) + joints(520, 120, 420, 30, 9, 1) + hatch(520, 120, 420, 30, 60, 0.4);
 s += rect(600, 96, 260, 24, LIGHT, INK, 2) + joints(600, 96, 260, 24, 6, 1);
 // deeper mullion shadows on the glass
 for (let i = 1; i < 6; i++) s += rect(500 + i * 77 + 1.5, 232, 7, 238, INK, INK, 0, 0.18);
