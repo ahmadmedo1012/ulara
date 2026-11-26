@@ -51,7 +51,27 @@ elif kind=='lab':
     room(-14,-9,28,18,2.6)
     for i in range(3):
         box(-11+i*8.5,-5+i*8.5,-4,2,0,1.0,dk); box(-10.5+i*8.5,-5.5+i*8.5,-3.5,1.5,1.0,1.1,conc)
-    box(-12,12,5,5.6,0,1.1,dk); room(-20,-3,6,6,2.6)
+        for j in range(4): box(-10.6+i*8.5+j*1.2,-10.1+i*8.5+j*1.2,-5.6,-5.1,0,.5,dk)
+        box(-10+i*8.5,-8.5+i*8.5,-1,0.3,1.1,1.4,dk)
+    box(-12,12,5,5.6,0,1.1,dk); box(-12,12,6.4,7,0,1.1,dk); box(-8,-7.7,-8.8,9,0,2.6,conc); box(4,4.3,-8.8,9,0,2.6,conc)
+    room(-20,-3,6,6,2.6); box(10,13,-8,-5,0,2.2,dk)
+def dim(x0,y0,x1,y1):  # dimension string with end ticks
+    box(min(x0,x1),max(x0,x1)+.08,min(y0,y1),max(y0,y1)+.08,0,.03,dk)
+    for (x,y) in ((x0,y0),(x1,y1)): box(x-.5 if y0==y1 else x-.04,x+.5 if y0==y1 else x+.04,y-.04 if y0==y1 else y-.5,y+.04 if y0==y1 else y+.5,0,.03,dk)
+def grid(x0,x1,y0,y1,st=3):
+    for gx in range(int(x0),int(x1)+1,st):
+        for gy in range(int(y0),int(y1)+1,st): box(gx-.08,gx+.08,gy-.08,gy+.08,0,.03,dk)
+if kind=='lecture': dim(-14,-12,14,-12); dim(-17,-9,-17,9); grid(-18,18,-13,13)
+if kind=='library': dim(-15,-13,15,-13); dim(-23,-10,-23,10); grid(-18,18,-13,13)
+if kind=='exam': dim(-13,-12,13,-12); dim(-17,-9,-17,9); grid(-18,18,-13,13)
+if kind=='admin': dim(-16,-11,16,-11); dim(-19,-8,-19,8); grid(-18,18,-13,13)
+if kind=='lab': dim(-14,-12,14,-12); dim(-17,-9,-17,9); grid(-18,18,-13,13)
+if kind=='campus': dim(-18,-15,20,-15); grid(-20,20,-14,14,4)
+sc.render.use_freestyle=True; sc.render.line_thickness_mode='ABSOLUTE'; sc.render.line_thickness=1.1
+vl=bpy.context.view_layer; vl.use_freestyle=True
+ls=vl.freestyle_settings.linesets.new('ink') if not vl.freestyle_settings.linesets else vl.freestyle_settings.linesets[0]
+ls.linestyle=bpy.data.linestyles.new('ls'); ls.select_silhouette=True; ls.select_border=True; ls.select_crease=True
+ls.linestyle.color=(0.02,0.02,0.02); ls.linestyle.thickness=1.3
 bpy.ops.object.light_add(type='SUN'); s=bpy.context.object; s.rotation_euler=(math.radians(50),0,math.radians(-50)); s.data.energy=5; s.data.angle=math.radians(1.2)
 bpy.ops.object.camera_add(); c=bpy.context.object
 d=Vector((1,-1,.85)).normalized()*60; c.location=d; c.rotation_euler=(-d).to_track_quat('-Z','Y').to_euler()
