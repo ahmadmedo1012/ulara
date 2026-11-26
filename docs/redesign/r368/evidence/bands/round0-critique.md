@@ -50,3 +50,6 @@ Still different: the reference has ONE large plan filling a full-height cell wit
 
 ## Roles band round 1
 Art now sits physically left, list right, as in the reference. Still wrong: scene sits low in the pane, the royal slab is too tall, the circle is cropped, the heading is cramped. Status: FAILING.
+
+## Roles band round 2
+Shapes shrunk (slab 38% tall, circles smaller), scene seated bottom. Slab/circle still not aligned to the scene geometry; list still lacks reference scale. Status: FAILING.

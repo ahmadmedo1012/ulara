@@ -306,9 +306,9 @@
 
 /* r368 slice 08: the "pane" variant fills the roles media pane (half-art of the half-art/half-list band) */
 .duo-pane { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; border: 0; z-index: 0; }
-.duo-pane .fs-circle-royal { inset-inline-start: auto; left: -8cqw; inset-block-start: 26%; block-size: 40cqw; inline-size: 40cqw; }
-.duo-pane .fs-slab { inset-inline-start: auto; inset-inline-end: auto; left: 38cqw; inset-block-start: 0; block-size: 60%; inline-size: 26cqw; }
-.duo-pane .fs-circle-pale { inset-inline-start: auto; left: 2cqw; inset-block-end: 4%; block-size: 26cqw; inline-size: 26cqw; }
+.duo-pane .fs-circle-royal { inset-inline-start: auto; left: 4cqw; inset-block-start: 22%; block-size: 26cqw; inline-size: 26cqw; }
+.duo-pane .fs-slab { inset-inline-start: auto; inset-inline-end: auto; left: 40cqw; inset-block-start: 0; block-size: 38%; inline-size: 20cqw; }
+.duo-pane .fs-circle-pale { inset-inline-start: auto; left: 8cqw; inset-block-end: 12%; block-size: 18cqw; inline-size: 18cqw; }
 .duo-pane .duo-img.is-flat { object-fit: cover; object-position: right bottom; }
 .rl-media .rl-deck { display: none; } /* r368: the deck's machines retire from the pane; the static collage replaces them (DOM kept) */
 /* r368 slice 08: physical layout parity with the reference (art at the physical left, ruled list at the right/reading start) */
