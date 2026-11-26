@@ -8,6 +8,9 @@ import { RevealCssClass } from '../../hooks/useReveal';
 /* c3-W6 (K-I extension): the guest sheet chrome — same grammar as
  * /auth + /campus (fixed frame + corner marks + grain film). */
 import { GuestSheetChrome } from '../../components/layout/GuestSheetChrome';
+/* r364 art v2 — the page's architectural hero band + the kit */
+import '../../styles/landing/art-v2.css';
+import { ArtPageHeroPlan } from '../../components/patterns/ArtPageHero';
 // patterns.css §10 (r341/D9) — the guest sub-page sheet (ex
 // campus.css, deleted): the honest capability matrix (ما يعمل اليوم) +
 // the status pairs (إلى أين) moved here VERBATIM from the landing when
@@ -67,6 +70,16 @@ export function CapabilitiesPage() {
               <Link to="/colleges" className="btn ghost">كيف تُبنى الكليات</Link>
             </RevealCssClass>
           </div>
+
+
+          {/* r364 art v2 — the capabilities sheet's hero: the exam
+              hall's thick-wall plan (the instrument every documented
+              capability serves) under its title bar. */}
+          <ArtPageHeroPlan
+            plan="plan-exam-hall"
+            title="قاعة الامتحان — المسقط الأفقي"
+            scale="1:100"
+          />
 
           <RevealCssClass as="ol" className="lv-list" delay={2}>
             {LIVE_CAPABILITIES.map((cap, i) => (

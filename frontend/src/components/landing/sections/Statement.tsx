@@ -38,7 +38,12 @@
  * Presentational: the scrub driver (--wr-p writer) stays in the
  * composer (pages/LandingPage.tsx) on the shared sheet clock — this
  * component receives the section + title refs it measures. */
-import campusPlan from '@shared/art/svg/plan-campus-site.svg';
+/* r364 art v2 — the OLD thin-line campus site plan retires from the
+ * seat; the statement's media cell carries the art-v2 thick-wall
+ * campus plan (scripts/art/plans-v2.mjs: filled-ink footprints,
+ * paths, stippled trees, north + scale bar, dimension strings, the
+ * royal callouts) — the reference's plan grammar (mission §2.3). */
+import campusPlan from '../../../assets/art-v2/plans/plan-campus.svg';
 import { type ReactNode, type RefObject } from 'react';
 import { ScrubReveal } from '../journey/WordReveal';
 import { RevealCssClass } from '../../../hooks/useReveal';
@@ -184,8 +189,8 @@ export function Statement({ sectionRef, titleRef }: StatementProps) {
                   alt="مخطط معماري يبيّن مباني الحرم ومساراته"
                   loading="lazy"
                   decoding="async"
-                  width={1200}
-                  height={840}
+                  width={760}
+                  height={740}
                   data-spec="intro.mediaimg"
                 />
               </div>

@@ -43,6 +43,14 @@
   position: relative;
   display: grid;
   place-items: end center; /* r359: the drawing seats ON the bottom rule — the air lives ABOVE the roof (the reference's own law) */
+  /* r364 art v2 — the row is DEFINITE (100% of the stage's content box):
+   * the art box's block-size:100% must resolve against a definite track
+   * (a lone auto row made the percentage indefinite and the box
+   * collapsed to its aspect fallback — the production capture caught
+   * the 201×98 sliver). The resolved seat (≈1008×490 @1440) IS the
+   * reference's own measured fill: its drawing spans ~71% of the
+   * viewport wide (r350 measurement record). */
+  grid-template-rows: 100%;
   min-block-size: 0;
   /* the drawing breathes between the two dotted rules — NOT
    * edge-to-edge: the reference's own air is ~150px above the roof,
@@ -106,11 +114,13 @@
   color: var(--hro-ink);
 }
 /* r364 art v2 — the raster ink blends INTO the paper: multiply drops
- * the art's own paper tone onto the page's (no beige band mismatch,
- * light theme; the dark theme keeps the same ink-on-paper through the
- * theme's own paper inversion below). */
+ * the art's own paper tone onto the page's. The art's paper is lifted
+ * to pure white first (brightness above its own 0.97 level) so the
+ * multiply leaves NOTHING but the ink — no cream band mismatch. The
+ * contrast seat keeps the ink's weight through the lift. */
 .hro-ink img.hro-elevation {
   mix-blend-mode: multiply;
+  filter: grayscale(0.15) brightness(1.055) contrast(1.035);
 }
 
 /* ── the ElevationArt ink grammar (the r359 elevation) ─────────────── */

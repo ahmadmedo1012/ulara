@@ -214,10 +214,10 @@ const plans = {};
 plans['plan-lecture-hall'] = () => {
   let b = '';
   // outer walls (thick 12)
-  b += rect(120, 90, 540, 12); // top
-  b += rect(120, 90, 12, 480); // left
-  b += rect(648, 90, 12, 480); // right
-  b += rect(120, 558, 540, 12); // bottom
+  b += rect(118, 90, 544, 14); // top (r364 critique: the reference's wall weight)
+  b += rect(118, 90, 14, 482); // left
+  b += rect(646, 90, 14, 482); // right
+  b += rect(118, 558, 544, 14); // bottom
   // stage (front = top): inner wall + platform outline
   b += rect(120, 150, 540, 10);
   b += `<rect x="210" y="100" width="340" height="50" fill="none" stroke="${INK}" stroke-width="3"/>`;
@@ -252,7 +252,7 @@ plans['plan-lecture-hall'] = () => {
 /* 2 — LIBRARY: stacks grid, reading tables, circulation desk, quiet room. */
 plans['plan-library'] = () => {
   let b = '';
-  b += rect(110, 84, 540, 12); b += rect(110, 84, 12, 500); b += rect(638, 84, 12, 500); b += rect(110, 572, 540, 12);
+  b += rect(108, 84, 544, 14); b += rect(108, 84, 14, 502); b += rect(636, 84, 14, 502); b += rect(108, 572, 544, 14);
   // stacks: 5 double shelves left zone
   const sy = [140, 200, 260, 320, 380];
   for (const y of sy) b += stack(150, y, 180);
@@ -283,7 +283,7 @@ plans['plan-library'] = () => {
 /* 3 — LABORATORY: island benches with sinks, fume wall, prep room. */
 plans['plan-laboratory'] = () => {
   let b = '';
-  b += rect(120, 84, 520, 12); b += rect(120, 84, 12, 490); b += rect(628, 84, 12, 490); b += rect(120, 562, 520, 12);
+  b += rect(118, 84, 524, 14); b += rect(118, 84, 14, 492); b += rect(626, 84, 14, 492); b += rect(118, 562, 524, 14);
   // fume hood wall along top
   for (let i = 0; i < 4; i++) b += furn(160 + i * 120, 100, 100, 30, 1);
   b += roomTag(380, 74, 'دواخر السحب', 11);
@@ -310,7 +310,7 @@ plans['plan-laboratory'] = () => {
 /* 4 — EXAM HALL: long parallel single-desk rows, wide aisles, invigilator. */
 plans['plan-exam-hall'] = () => {
   let b = '';
-  b += rect(110, 84, 540, 12); b += rect(110, 84, 12, 500); b += rect(638, 84, 12, 500); b += rect(110, 572, 540, 12);
+  b += rect(108, 84, 544, 14); b += rect(108, 84, 14, 502); b += rect(636, 84, 14, 502); b += rect(108, 572, 544, 14);
   // 5 columns of desk rows
   for (let c = 0; c < 4; c++) {
     const cx = 150 + c * 128;
