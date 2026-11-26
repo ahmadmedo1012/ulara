@@ -40,12 +40,22 @@ on:
         options:
           - quick
           - full
+  # workflow_dispatch needs the file on the DEFAULT branch to be
+  # dispatchable from a branch ref — on this working branch the rig rides
+  # scoped pushes instead (any touch of the rig itself or the capture
+  # scripts re-runs it; matrix_set falls back to quick).
+  push:
+    branches:
+      - r366/app-world-class
+    paths:
+      - '.github/workflows/mobile-capture-r366.yml'
+      - 'apps/mobile/scripts/capture/**'
 
 permissions:
   contents: read
 
 concurrency:
-  group: mobile-capture-r366-${{ inputs.matrix_set }}
+  group: mobile-capture-r366-${{ inputs.matrix_set || 'push' }}
   cancel-in-progress: false
 
 env:
@@ -63,7 +73,7 @@ jobs:
     steps:
       - id: plan
         run: |
-          if [ "${{ inputs.matrix_set }}" = "full" ]; then
+          if [ "${{ inputs.matrix_set || 'quick' }}" = "full" ]; then
             echo 'devices=[{"device":"pixel_5","set":"phone"},{"device":"pixel_6_pro","set":"phone-xl"},{"device":"pixel_fold","set":"foldable"},{"device":"nexus_7_2013","set":"tablet"},{"device":"nexus_10","set":"tablet"}]' >> "$GITHUB_OUTPUT"
           else
             echo 'devices=[{"device":"pixel_5","set":"phone"},{"device":"nexus_10","set":"tablet"}]' >> "$GITHUB_OUTPUT"
