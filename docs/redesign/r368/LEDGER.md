@@ -150,3 +150,4 @@ NEXT: origin/main sync ~9:50pm; remaining gaps 06 layout, hero photo look, no-co
 - r368 hero: projecting mid-level slab with railing ticks, paired mullion fins, darker ground course (svg gzip 47.4KB). Still a drawing vs photo. Status: FAILING overall.
 - r368 hero: desktop elevation is now a Blender/Cycles raster + ink post-process (scripts/art/blender); dark via existing invert; NEXT: apply same pipeline to 06/07 plates, simplify other paths
 - r368 hero v2: stepped massing, lighter fins, thin trunks, stations re-pinned (mirrored raster coords)
+- r368 perf (after hero v2, 10:35): p50 16.7ms, 8 frames >50ms, longtasks 0.58s (mobile unchanged/better). NEXT: Blender iso plates for 06/07 (same scripts/art/blender pipeline), then CTA/registry weight
