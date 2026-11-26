@@ -3,6 +3,7 @@
 import bpy, sys, math, random
 a = sys.argv[sys.argv.index('--')+1:]
 out, W, H, S = a[0], int(a[1]), int(a[2]), int(a[3])
+PASS = a[4] if len(a) > 4 else 'all'   # 'bld' = building + Freestyle outlines, 'tree' = trees only, 'all' = both
 random.seed(7)
 bpy.ops.wm.read_factory_settings(use_empty=True)
 sc = bpy.context.scene
@@ -39,6 +40,7 @@ dark = mat('d',(0.03,0.03,0.03),0.5)
 fin = mat('f',(0.22,0.22,0.21),0.9,tex=40)
 glass = mat('g',(0.4,0.45,0.5),glass=True)
 def box(x0,x1,y0,y1,z0,z1,m):
+    if PASS == 'tree': return
     bpy.ops.mesh.primitive_cube_add()
     o = bpy.context.object
     o.location = ((x0+x1)/2,(y0+y1)/2,(z0+z1)/2); o.scale = ((x1-x0)/2,(y1-y0)/2,(z1-z0)/2)
@@ -91,7 +93,14 @@ def tree(x,h):
     br(Vector((x,-3.0,0)),(random.uniform(-.1,.1),0,1),h*0.38,0.075,8)
     me=bpy.data.meshes.new('t'); bm.to_mesh(me); o=bpy.data.objects.new('t',me); o.data.materials.append(dark)
     bpy.context.collection.objects.link(o)
-tree(-16.5,9); tree(16.5,9.5); tree(-19.5,7); tree(19.5,7.5)
+if PASS != 'bld':
+    tree(-16.5,9); tree(16.5,9.5); tree(-19.5,7); tree(19.5,7.5)
+if PASS == 'bld':
+    sc.render.use_freestyle=True; sc.render.line_thickness_mode='ABSOLUTE'; sc.render.line_thickness=1.0
+    vl=bpy.context.view_layer; vl.use_freestyle=True
+    ls=vl.freestyle_settings.linesets[0] if vl.freestyle_settings.linesets else vl.freestyle_settings.linesets.new('ink')
+    ls.linestyle=bpy.data.linestyles.new('ls')
+    ls.select_silhouette=True; ls.select_border=True; ls.select_crease=True; ls.linestyle.color=(0.02,0.02,0.02); ls.linestyle.thickness=1.2
 # sun
 bpy.ops.object.light_add(type='SUN'); s=bpy.context.object
 s.rotation_euler=(math.radians(52),math.radians(0),math.radians(-55)); s.data.energy=5.5; s.data.angle=math.radians(1.2)

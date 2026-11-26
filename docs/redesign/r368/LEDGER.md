@@ -156,3 +156,4 @@ NEXT: origin/main sync ~9:50pm; remaining gaps 06 layout, hero photo look, no-co
 - r368 plates v2: freestyle ink outlines, dimension strings, grid dots, richer lab (plate.py); CTA registry strip quieted (desktop). NEXT: hourly sync, slices w/o corpus ref
 - r368 NEXT (hero): add Freestyle outlines to hero.py but exclude the tree mesh (select_by_collection) — full-scene freestyle exceeds 100s on 1 CPU
 - r368 hero outlines tried: Freestyle (collection lineset) crashes Blender on 2GB sandbox (no output); ImageMagick edge pass gave worm/halo artefacts and +20% size, both rejected, hero v2 stays. NEXT: render hero in two passes (building / trees) and composite, or lower tree density for Freestyle
+- r368 hero v3: two-pass Blender render (building w/ Freestyle ink outlines + trees), light+dark verified
