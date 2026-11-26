@@ -72,9 +72,10 @@
 /* ═══ round 2 — the measured seats (depth-walked @390) ═════════════ */
 @media (max-width: 767px) {
   /* pm — the head (221px → ~140) + the band cards (249 → ~190) */
-  .pm-head { padding-block: 0.8rem 0.6rem !important; }
-  .pm-head h2, .pm-head .pm-title { font-size: 1.9rem !important; line-height: 1.25 !important; }
-  .pm-head p, .pm-head .pm-copy { font-size: max(13px, 1.15rem) !important; line-height: 1.32 !important; }
+  /* r368 05 mobile: the reference's problem head is a large tight display title over a roomy sub (m-problem), so the diet gives the head air back */
+  .pm-head { padding-block: 22px 18px !important; }
+  .pm-head h2, .pm-head .pm-title { font-size: clamp(27px, 7.6vw, 34px) !important; line-height: 1.22 !important; }
+  .pm-head p, .pm-head .pm-copy { font-size: max(14px, 1.4rem) !important; line-height: 1.5 !important; }
   .pm-band { gap: 0.6rem !important; }
   .pm-band > * { min-block-size: 0 !important; }
   .pm-inner { gap: 0.7rem !important; }
