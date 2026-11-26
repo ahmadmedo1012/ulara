@@ -19,11 +19,11 @@
  */
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
-import { PageFrame, PageHeader } from '../../components/patterns';
+import { PageFrame, PageHeader, KpiBand } from '../../components/patterns';
 import { toast } from '../../lib/toast';
 import { formatDate } from '../../utils/numbers';
 import { serverError,
-  DetailList, EnumChip, InstFormDialog, InstSection, InstStates,
+  DetailList, InstFormDialog, InstSection, InstStates, StatusFlag,
   type InstField, type InstFormValues,
 } from '../../components/institutional/kit';
 import { Icon } from '../../components/Icon';
@@ -126,6 +126,34 @@ export function InstitutionAccessPage() {
       />
 
       <InstStates isLoading={capsQuery.isLoading} error={capsQuery.error} isEmpty={false}>
+        {/* r365 — the headline datum IS the merged effective set: the
+         * band rides the grammar's hairline strip (honest-empty «—»
+         * while the registers pend; no invented delta flags). */}
+        <KpiBand
+          items={[
+            {
+              index: '01',
+              caption: 'EFFECTIVE',
+              label: 'القدرات الفعّالة بعد الدمج',
+              value: caps ? effective.size : 0,
+              empty: caps == null,
+            },
+            {
+              index: '02',
+              caption: 'ROLE DEFAULTS',
+              label: 'افتراضيات الدور',
+              value: caps ? defaults.size : 0,
+              empty: caps == null,
+            },
+            {
+              index: '03',
+              caption: 'MY GRANTS',
+              label: 'منح صلاحياتي على الوحدات',
+              value: myGrantsQuery.data?.length ?? 0,
+              empty: myGrantsQuery.data == null,
+            },
+          ]}
+        />
         <InstSection
           index="01"
           caption="IDENTITY"
@@ -210,16 +238,16 @@ export function InstitutionAccessPage() {
             description="أدخل معرّف مستخدم لعرض منحه، أو امنح صلاحية جديدة. يجب أن يكون المستخدم عضوًا نشطًا في المؤسسة (يؤكده الخادم)."
           >
             <div className="inst-filters">
-              <div className="inst-search">
-                <input
-                  type="text"
-                  value={userIdInput}
-                  onChange={(e) => setUserIdInput(e.target.value)}
-                  placeholder="معرّف المستخدم (ID)…"
-                  aria-label="معرّف المستخدم"
-                  maxLength={40}
-                />
-              </div>
+              <input
+                type="text"
+                className="inst-action-input"
+                value={userIdInput}
+                onChange={(e) => setUserIdInput(e.target.value)}
+                placeholder="معرّف المستخدم (ID)…"
+                aria-label="معرّف المستخدم"
+                maxLength={40}
+                spellCheck={false}
+              />
             </div>
             {userIdInput.trim() && (
               <InstStates
@@ -240,7 +268,7 @@ export function InstitutionAccessPage() {
                             سحب
                           </button>
                         ) : (
-                          <EnumChip value="ENDED" labels={{ ENDED: 'مسحوب' }} />
+                          <StatusFlag value="ENDED" labels={{ ENDED: 'مسحوب' }} />
                         )}
                       </span>
                     ),
