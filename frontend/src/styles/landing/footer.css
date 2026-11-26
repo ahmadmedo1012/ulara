@@ -887,3 +887,21 @@ footer.fo-footer {
   .fo-uses-art { display: block; min-block-size: 420px; border-inline-end: 1px solid var(--rule); background: var(--bg-soft, transparent); }
   .fo-uses-list { direction: rtl; align-self: stretch; }
 }
+
+/* r368 slice 09: the reference's use-case stage is a royal circle and a tall
+ * royal slab on bare ground behind the cantilever; paint them behind the image.
+ * Reason: the reference wins for appearance; additive, desktop only. */
+@media (min-width: 900px) {
+  .fo-uses-art { position: relative; overflow: hidden; isolation: isolate; container-type: inline-size; }
+  .fo-uses-art::before {
+    content: ""; position: absolute; z-index: 0; border-radius: 50%;
+    inline-size: 38cqw; block-size: 38cqw; left: 3cqw; top: 34%;
+    background: var(--duo-signal, #2540d9);
+  }
+  .fo-uses-art::after {
+    content: ""; position: absolute; z-index: 0;
+    inline-size: 25cqw; left: 40cqw; top: 0; block-size: 62%;
+    background: var(--duo-signal, #2540d9);
+  }
+  .fo-uses-art img { position: relative; z-index: 1; mix-blend-mode: multiply; }
+}

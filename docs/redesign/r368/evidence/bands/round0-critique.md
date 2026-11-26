@@ -182,3 +182,6 @@ Statement 2 (t 1.6 to 2.35) rides while the first isometric fragments fly in and
 
 ## Slices 07 and 08 loop (1440, wheel harness)
 07: the band selector #why does not exist in ours; the platform/journey stage sits where the reference shows its two plan plates and the red-accent annotation cards on bare ground. Ours keeps the left title column, ledger and a 3-plate stack, so composition differs (reference: two floating plates, one dark card, no side column). 08: the plan strip (three title-barred plates plus a dark checking card) is close in grammar to the reference use-case plates; the difference is that ours also stacks the duotone scene and a role list above it, where the reference has plates only and the list hover-reveals them. Not changed this round. Status: FAILING.
+
+## Slice 09 footer uses stage (1440)
+Fixed: royal circle and tall royal slab now sit behind the cantilever (multiply), matching the reference stage. Remaining: pale disc, different ground tint, cookie strip is blue-on-white vs reference. Status: FAILING.
