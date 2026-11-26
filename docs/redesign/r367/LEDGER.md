@@ -67,3 +67,9 @@ close PRs, zero-trace), final verify ×2.
   removed, `scripts/brand/zero-trace.sh` PASS (twice), the docs/ index and
   this ledger current. PR #60 (r368) untouched per its own DO-NOT-MERGE
   contract — owner-merged only.
+- **C. the production loop** — the LIVE site verified in the browser (not
+  assumed): the hero art img completes (naturalWidth 1580), the four station
+  markers mount, the h1 reads, and ZERO console/page errors on the load;
+  /api/v1/status buildId tracks main's HEAD and the db probe is ok. The
+  deploy lane rides every push (the LCP fix's buildId landed mid-round).
+  — DONE
