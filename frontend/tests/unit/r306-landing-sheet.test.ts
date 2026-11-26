@@ -499,6 +499,9 @@ describe('r306 hygiene — the sheet stays clean', () => {
       // belt below still collapses every ambient instrument).
       'jt-head-scrub', // r339 T-11b2: the chapters head's scrubbed entrance (journey.css)
       'pr-title-scrub', // r339 T-11b2: the platform band's title flourish (platform.css)
+      // r368: the 06 platform plates' dash crawl + float — ≥992 only, wrapped in prefers-reduced-motion: no-preference (absent under reduce), paused off-stage
+      'jt-plat-dash',
+      'jt-plat-float',
       // r335 W-chrome: 'sl-scan' retired with the R313 SheetLoader sheet
       // (dead .sl-* rules deleted; the preloader's own RM gates are JS-side).
     ]);

@@ -495,8 +495,8 @@ const YIELD_AT: readonly [number, number] = [0.62, 0.18];
  * 0.85 — the audit's «blank white media box». The unfold now
  * completes by 74% and every row settles by ~0.92, so the seat
  * carries INK through its own growth instead of dead paper. */
-const PANEL_BOX_AT: readonly [number, number] = [0.62, 0.04];
-const PANEL_W_AT: readonly [number, number] = [0.62, 0.06];
+const PANEL_BOX_AT: readonly [number, number] = [0.66, 0.02];
+const PANEL_W_AT: readonly [number, number] = [0.66, 0.02];
 const PANEL_HEAD_AT: readonly [number, number] = [0.68, 0.04];
 const PANEL_ROW_AT = 0.7;
 const PANEL_ROW_STEP = 0.03;
@@ -577,7 +577,15 @@ export function IsoJourneyScene() {
     const cap = captionRef.current;
     if (cap) {
       const u = clamp01(pRaw / (mobile ? CAPTION_EXIT_SPAN_MOBILE : CAPTION_EXIT_SPAN));
-      const o = 1 - u;
+      /* r368 — one voice at a time: the caption leaves over the FIRST half of its
+       * window, then the first plaque may stand (it is multiplied by the second
+       * half below) — the two never overlap, in any frame a scroll can rest on. */
+      const o = 1 - clamp01(u * 2);
+      const c1 = card1Ref.current;
+      if (c1) {
+        const base = Number.parseFloat(c1.style.opacity === '' ? '1' : c1.style.opacity);
+        setSheetVar(c1.style, 'opacity', (base * clamp01(u * 2 - 1)).toFixed(3));
+      }
       setSheetVar(cap.style, 'opacity', o.toFixed(3));
       setSheetVar(cap.style, 'translate', `0 ${(-18 * u).toFixed(2)}%`);
       setSheetVar(cap.style, 'visibility', o <= 0 ? 'hidden' : 'visible');
