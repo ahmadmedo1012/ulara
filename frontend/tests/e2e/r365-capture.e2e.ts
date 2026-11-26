@@ -210,7 +210,7 @@ for (const role of roles) {
               fullPage: true,
               animations: 'disabled',
             });
-            const pathName = new URL(shot.path, 'http://x').pathname.split('?')[0];
+            const pathName = new URL(shot.path, 'http://x').pathname.split('?')[0] ?? '';
             expect(page.url().split('?')[0]).toContain(pathName.split('/').slice(0, 3).join('/'));
           });
         }
