@@ -1068,10 +1068,14 @@
   gap: var(--sp-2);
   row-gap: var(--sp-1);
 }
+/* r367 CI catch — the feedback chip's raw `1px` vertical padding was
+   off the spacing grid (the strict raw-css gate): the half-step token
+   --sp-1 (4px on the ds rhythm) reads correctly at the chip's scale
+   and keeps the register on-grid. */
 .r305ao .fb-chip {
   display: inline-flex;
   align-items: center;
-  padding: 1px var(--sp-2);
+  padding: var(--sp-1) var(--sp-2);
   border: 1px solid var(--rule);
   border-radius: var(--r-full);
   font-size: var(--fs-xs);
