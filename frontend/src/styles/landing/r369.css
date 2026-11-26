@@ -210,7 +210,7 @@
 .w369-nav {
   position: sticky;
   inset-block-start: 0;
-  z-index: 60;
+  z-index: var(--z-nav);
   backdrop-filter: blur(var(--glass-blur));
   background: color-mix(in srgb, var(--bg) 82%, transparent);
   border-block-end: 1px solid var(--border);
@@ -612,17 +612,39 @@
 
 .w369-band-head { max-inline-size: 46ch; }
 
-.w369-band-body[data-seen='false'] {
-  opacity: 0;
-  transform: translateY(24px);
-}
-
-.w369-band-body[data-seen='true'] {
-  opacity: 1;
-  transform: none;
+.w369-band-body[data-reveal] {
+  /* only an ARMED body (below the fold, JS confirmed) animates at all */
   transition:
     opacity var(--motion-duration-medium) var(--ease-out),
-    transform var(--motion-duration-medium) var(--ease);
+    transform var(--motion-duration-medium) var(--ease-out);
+}
+
+.w369-band-body[data-reveal='pending'] {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.w369-band-body[data-reveal='in'] {
+  opacity: 1;
+  transform: none;
+}
+
+/* the inner cards settle a beat after their band, in reading order */
+.w369-band-body[data-reveal='in'] > * :is(.w369-reward, .w369-source, .w369-role) {
+  animation: w369-band-settle var(--motion-duration-card) var(--ease-out) both;
+}
+
+.w369-band-body[data-reveal='in'] > * :is(.w369-reward, .w369-source, .w369-role):nth-child(2) {
+  animation-delay: calc(var(--motion-duration-micro) * 1);
+}
+
+.w369-band-body[data-reveal='in'] > * :is(.w369-reward, .w369-source, .w369-role):nth-child(3) {
+  animation-delay: calc(var(--motion-duration-micro) * 2);
+}
+
+@keyframes w369-band-settle {
+  from { opacity: 0; transform: translateY(14px) scale(0.985); }
+  to { opacity: 1; transform: none; }
 }
 
 @media (max-width: 900px) {
@@ -768,7 +790,9 @@
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  /* one column: the band body is the narrow half of the spread, and a
+   * 2-up here left a lonely orphan card on the second row */
+  grid-template-columns: 1fr;
   gap: var(--sp-4);
 }
 
@@ -1192,7 +1216,7 @@
   position: fixed;
   inset-block-end: var(--sp-5);
   inset-inline-start: var(--sp-5);
-  z-index: 55;
+  z-index: var(--z-sticky);
   display: flex;
   align-items: center;
   gap: var(--sp-3);
@@ -1232,6 +1256,8 @@
 
 @media (max-width: 700px) {
   .w369-jar { inset-block-end: var(--sp-3); inset-inline-start: var(--sp-3); font-size: var(--fs-xxs); }
+  /* the floating jar must never sit on top of the closing CTA */
+  .w369-cta { padding-block-end: calc(var(--sp-8) + var(--sp-7)); }
   .w369-jar-track { display: none; }
 }
 
@@ -1240,7 +1266,7 @@
 .w369-pre {
   position: fixed;
   inset: 0;
-  z-index: 900;
+  z-index: var(--z-dialog);
   display: grid;
   place-items: center;
   align-content: center;
@@ -1311,9 +1337,13 @@
   .w369-pre-star {
     animation: none;
   }
-  .w369-band-body[data-seen='false'] {
+  .w369-band-body[data-reveal='pending'] {
     opacity: 1;
     transform: none;
+    transition: none;
+  }
+  .w369-band-body[data-reveal='in'] > * :is(.w369-reward, .w369-source, .w369-role) {
+    animation: none;
   }
   .w369-btn,
   .w369-reward,
@@ -1336,7 +1366,7 @@
   position: fixed;
   inset-block-start: var(--sp-2);
   inset-inline-start: var(--sp-2);
-  z-index: 1000;
+  z-index: var(--z-cursor);
   padding-inline: var(--sp-4);
   padding-block: var(--sp-2);
   border-radius: var(--r-full);
@@ -1439,4 +1469,57 @@
   block-size: 4px;
   border-radius: var(--r-full);
   background: var(--border-strong);
+}
+
+
+/* ── the scroll rail (rides the sticky nav) ──────────────────────── */
+
+.w369-rail {
+  position: absolute;
+  inset-block-end: -1px;
+  inset-inline: 0;
+  block-size: 2px;
+  overflow: hidden;
+  pointer-events: none;
+  background: transparent;
+}
+
+.w369-rail-fill {
+  display: block;
+  block-size: 100%;
+  inline-size: 100%;
+  transform-origin: var(--w369-rail-origin, 100% 50%);
+  background: var(--gold);
+  /* scale only: the rail never reflows and never triggers layout */
+  transition: transform var(--motion-duration-micro) var(--ease-linear);
+}
+
+/* ── anchors land under the sticky bar, never beneath it ─────────── */
+
+.w369-band[id],
+.w369-roles[id] {
+  scroll-margin-block-start: var(--sp-11);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w369-rail-fill { transition: none; }
+}
+
+
+/* ── r369 §S4 — every control clears the 44px thumb floor ────────── */
+
+.w369-nav-links a,
+.w369-brand,
+.w369-skip {
+  min-block-size: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.w369-nav-links a { padding-inline: var(--sp-2); }
+
+/* the theme control is a 3-option segmented button: 44px per thumb door */
+.w369 .theme-toggle-option {
+  min-inline-size: 44px;
+  min-block-size: 44px;
 }

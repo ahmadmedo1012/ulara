@@ -1553,3 +1553,25 @@
    is RETIRED: it silently turned every pill and avatar on the platform into
    a 10px corner, because custom properties inherit. `--r-full` is the real
    circular/pill rung (9999px) everywhere again. */
+
+
+/* ── r369 — ONE z-index ladder ───────────────────────────────────────
+ * Every layer in the product takes its rank from here. The rule is the
+ * order of interruption: content, then things that follow the reader
+ * (sticky bars, the nav), then things that take over (menu, dialog,
+ * toast, cookie bar), then decoration that must never intercept a click
+ * (the cursor). A new surface picks a rung; it never invents a number.
+ *   content 0–10 · sticky bars 100 · nav 200 · menu/overlay 300 ·
+ *   dialog 400 · cookie bar 450 · toast 500 · cursor/effects 600
+ */
+:root {
+  --z-content: 0;
+  --z-raised: 10;
+  --z-sticky: 100;
+  --z-nav: 200;
+  --z-menu: 300;
+  --z-dialog: 400;
+  --z-cookie: 450;
+  --z-toast: 500;
+  --z-cursor: 600;
+}

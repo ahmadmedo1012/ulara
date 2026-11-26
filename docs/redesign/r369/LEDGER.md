@@ -1,24 +1,38 @@
 # r369 — LEDGER
 
-One line per landed piece. The `NEXT: (final gate batch re-run after the last CSS edit — all green)
-- tokens:check PASS · build PASS · bundle PASS (819.2 KB gz · entry 29.5)
-- raw-css --strict PASS · colors --strict PASS · icons PASS · csp PASS ·
-  zero-trace PASS · frontend vitest 247 files / 3046 tests green.
+One line per landed piece. The `## phase 2 — landed
 
-The next batch, in order of value:
-1. DELETE the retired landing tree + sheets (components/landing/{sections,
-   hero,journey,chrome,cursor,plates,kernel,patterns}, styles/landing/*
-   minus r369.css + inner.css) together with the tests that still read
-   them (assets.test's hero pin, r307-landing-media, r183-public-funnel,
-   r305-shell-ds, r319-*). That is the "retire, don't pile up" debt this
-   session consciously left, because deleting it without re-pinning those
-   tests would have shipped a red suite.
-2. Re-compose the public inner pages (about/help/legal/campus/capabilities/
-   colleges/vision/competitions/auth doors/404) on the r369 primitives.
-3. Re-skin the logged-in app surfaces + wire the gamification widgets to
-   the EXISTING achievements/mastery/leaderboard data (no new endpoints).
-4. Mobile: re-compose screens on the new tokens; dispatch android-apk.yml
-   and build-ios-sidestore.yml.
-5. Sound (off by default) + the owner decisions listed in the report.
-6. Regenerate baselines (surface/a11y/stylelint/deadcode) from the final
-   sources.
+- **S0 debt cleared**: the retired landing tree + 24 sheets + 8 orphan
+  modules deleted; 10 look-pins retired; the contracts worth keeping
+  (brand neutrality/integrity, truthfulness, legal nine-link row,
+  independence paragraph, type ladder, CTA token discipline, focus
+  language, nav register + destinations) re-pinned onto the live surface.
+- **S1 icon language**: 46 duotone glyphs on one grid; the landing and the
+  theme control speak it; CSS-only micro-motion; `/__design` sheet.
+- **S2 scroll engine**: one passive rAF reader → nav rail + continuous
+  star jar; real anchors with `scroll-margin` under the sticky bar.
+- **S3 reveals inverted**: visible by default, armed only below the fold,
+  once-only, print/hash safe, staggered card settle.
+- **S4 layering**: one z ladder in tokens; every landing layer on a rung;
+  44px hit floor on nav/brand/skip/theme control.
+- **Instruments**: capture.mjs (headless Chrome channel), audit.mjs (7
+  widths × 2 themes → 0 findings), verify.mjs (scroll + anchor probe).
+
+Verified: tsc clean · build clean · bundle 822.9 KB gz (≤832) · tokens:check
+· raw-css --strict · colors --strict · motion tokens · icons · csp · zero-
+trace · **vitest 241 files / 2995 tests green** · overlap audit 0 findings.
+
+NEXT:
+1. S2d — 2–3 pinned story scenes on desktop that degrade to stacked
+   sections under 1024 and under reduced motion (the one piece of S2 that
+   was deliberately left out rather than half-built).
+2. S5 effects: mascot idle/blink + pointer-follow, <Celebrate/>, press
+   springs, card lift, nav pill indicator, phone float/tilt, marquee
+   pause, badge shine, skeleton shimmer, refined preloader, custom cursor,
+   optional WebAudio sounds (off by default).
+3. S6 inner public pages on these primitives (about/help/contact/app/
+   legal/colleges/campus/capabilities/vision/competitions/auth/404).
+4. S7 shell + role surfaces: icons + press/hover + skeletons + celebrate
+   on real events; overlap audit per role.
+5. S8 regenerate surface/a11y/stylelint/deadcode baselines; Lighthouse on
+   `/` mobile; cheap wins only.

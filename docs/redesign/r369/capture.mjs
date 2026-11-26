@@ -27,7 +27,11 @@ const PRESETS = [
 
 mkdirSync(outDir, { recursive: true });
 
-const browser = await chromium.launch();
+/* This box ships Google Chrome but Playwright's own chromium build is
+ * unavailable for the distro (ubuntu26.04), so the rig drives the
+ * installed browser through the `chrome` channel — same engine, no
+ * download, and the evidence is still headless. */
+const browser = await chromium.launch({ channel: 'chrome' });
 for (const p of PRESETS) {
   const ctx = await browser.newContext({
     viewport: p.viewport,
@@ -49,6 +53,16 @@ for (const p of PRESETS) {
   await page.goto(url, { waitUntil: 'networkidle' });
   await page.waitForTimeout(preloader ? 900 : 1400);
   const suffix = dark ? '-dark' : '';
+  /* Walk the page the way a reader does, then return to the top, so the
+   * full-page shot shows the REVEALED state rather than the armed one. */
+  const height = await page.evaluate(() => document.documentElement.scrollHeight);
+  for (let y = 0; y < height; y += 500) {
+    await page.evaluate((top) => window.scrollTo({ top, behavior: 'instant' }), y);
+    await page.waitForTimeout(90);
+  }
+  await page.waitForTimeout(500);
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  await page.waitForTimeout(320);
   await page.screenshot({ path: `${outDir}/r369-${p.name}${suffix}.png`, fullPage: true });
   // stepped scroll — the reveal choreography must not leave a blank band
   for (let i = 0; i < 6; i += 1) {

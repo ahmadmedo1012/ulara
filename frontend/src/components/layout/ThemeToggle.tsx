@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
-import { Sun, Moon, Monitor } from 'lucide-react';
-import { Icon } from '../Icon';
+import { Glyph, type GlyphName } from '../icons';
 import { useThemeStore, resolveTheme, type ThemeMode } from '../../stores/theme.store';
 
 /**
@@ -30,10 +29,12 @@ export function ThemeToggle() {
   const mode = useThemeStore((s) => s.mode);
   const setMode = useThemeStore((s) => s.setMode);
 
-  const opts: Array<{ value: ThemeMode; icon: typeof Sun; label: string }> = [
-    { value: 'light',  icon: Sun,     label: 'فاتح' },
-    { value: 'dark',   icon: Moon,    label: 'داكن' },
-    { value: 'system', icon: Monitor, label: 'تلقائي' },
+  /* r369 — the theme control speaks the product's own icon language:
+   * sun / moon / half-circle, on the same grid as everything else. */
+  const opts: Array<{ value: ThemeMode; icon: GlyphName; label: string }> = [
+    { value: 'light',  icon: 'sun',  label: 'فاتح' },
+    { value: 'dark',   icon: 'moon', label: 'داكن' },
+    { value: 'system', icon: 'auto', label: 'تلقائي' },
   ];
 
   return (
@@ -48,7 +49,7 @@ export function ThemeToggle() {
           aria-label={o.label}
           aria-pressed={mode === o.value}
         >
-          <Icon icon={o.icon} size={14} />
+          <Glyph name={o.icon} size={18} />
         </button>
       ))}
     </div>

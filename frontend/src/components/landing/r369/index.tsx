@@ -66,6 +66,50 @@ function useInView<T extends HTMLElement>(rootMargin = '-12% 0px') {
   return [ref, seen] as const;
 }
 
+/**
+ * r369 reveal — CONTENT IS VISIBLE BY DEFAULT.
+ *
+ * The old shape (CSS hides everything, then a 1.2s `setTimeout` force-
+ * reveals) could pop a band in late and looked identical to a bug. This
+ * one is the opposite, and the difference matters for no-JS, print,
+ * deep links, screenshots and slow CPUs:
+ *
+ *   · nothing is hidden until JS decides to hide it;
+ *   · and it only decides for an element that starts BELOW the fold, so
+ *     nothing on the first screen ever animates (no CLS, no flash);
+ *   · the observer then flips `data-reveal="pending"` → `"in"` once,
+ *     never back — scrolling up never re-hides content;
+ *   · reduced motion, or no IntersectionObserver, means never armed.
+ *
+ * The visual grammar lives in the sheet (`[data-reveal='pending']`), so
+ * this hook carries no timing of its own.
+ */
+function useReveal<T extends HTMLElement>() {
+  const ref = useRef<T | null>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return undefined;
+    if (prefersReduced() || typeof IntersectionObserver === 'undefined') return undefined;
+    const box = el.getBoundingClientRect();
+    // already on screen (or above it): show it, never animate it
+    if (box.top < window.innerHeight * 0.92) return undefined;
+    el.dataset.reveal = 'pending';
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          el.dataset.reveal = 'in';
+          io.disconnect();
+        }
+      },
+      { rootMargin: '0px 0px -10% 0px' },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return ref;
+}
+
 /** Counts 0 → target once `run` flips. RM jumps straight to the value. */
 function useCountUp(target: number, run: boolean, ms = 1100) {
   const [n, setN] = useState(prefersReduced() ? target : 0);
@@ -86,6 +130,59 @@ function useCountUp(target: number, run: boolean, ms = 1100) {
   return n;
 }
 
+/**
+ * Reveal safety: the armed state is a PROGRESSIVE ENHANCEMENT, so it is
+ * switched off wherever “scroll into view” may never happen — printing
+ * (the whole page must be on paper) and a deep link that drops the
+ * reader mid-page. Both are real, and both would otherwise hide content
+ * the reader is looking at.
+ */
+export function revealAllNow() {
+  document.querySelectorAll('[data-reveal="pending"]').forEach((el) => {
+    (el as HTMLElement).dataset.reveal = 'in';
+  });
+}
+
+/* ─────────────────────────── scroll engine ───────────────────────── */
+
+/**
+ * ONE scroll reader for the page: passive listener, rAF-throttled, reads
+ * a single number (0 → 1). Everything scroll-linked on this surface
+ * subscribes to it — no element polls layout, no scroll listener inside
+ * an animation loop, no `will-change` left behind.
+ */
+function useScrollProgress() {
+  const [p, setP] = useState(0);
+  useEffect(() => {
+    let raf = 0;
+    const read = () => {
+      raf = 0;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      setP(max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0);
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(read); };
+    read();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+  return p;
+}
+
+/** The slim progress rail: one 2px line in the signal colour. */
+function ScrollRail() {
+  const p = useScrollProgress();
+  return (
+    <div className="w369-rail" aria-hidden="true">
+      <span className="w369-rail-fill" style={{ transform: `scaleX(${p})` }} />
+    </div>
+  );
+}
+
 /* ─────────────────────────── star jar (scroll) ───────────────────────── */
 
 /**
@@ -96,30 +193,19 @@ function useCountUp(target: number, run: boolean, ms = 1100) {
 const JAR_TOTAL = 6;
 
 function StarJar() {
-  const [n, setN] = useState(0);
-  useEffect(() => {
-    const nodes = Array.from(document.querySelectorAll('[data-jar]'));
-    if (!nodes.length) return undefined;
-    if (typeof IntersectionObserver === 'undefined') { setN(JAR_TOTAL); return undefined; }
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          if (!e.isIntersecting) continue;
-          const id = (e.target as HTMLElement).dataset.jar;
-          if (!id) continue;
-          setN((prev) => (prev >= JAR_TOTAL ? prev : prev + 1));
-        }
-      },
-      { rootMargin: '-45% 0px -45% 0px' },
-    );
-    nodes.forEach((el) => io.observe(el));
-    return () => io.disconnect();
-  }, []);
+  /* Continuous, not a one-shot trigger: the jar fills as you actually
+   * read, and it empties again if you go back up — the number is your
+   * position in the story, never a claim about the product. */
+  const progress = useScrollProgress();
+  const n = Math.min(JAR_TOTAL, Math.round(progress * JAR_TOTAL));
   const full = n >= JAR_TOTAL;
   return (
     <div className="w369-jar" data-full={full ? 'true' : 'false'}>
       <span className="w369-jar-icon" aria-hidden="true"><Glyph name="star" size={16} className="ui-glyph-twinkle" /></span>
-      <span className="w369-jar-text">
+      {/* the visible number is decoration for the eye; the live region
+          below is the ONE announcement (otherwise a screen reader reads
+          the same sentence twice). */}
+      <span className="w369-jar-text" aria-hidden="true">
         جمعتَ <b>{n}</b> من {JAR_TOTAL} نجوم في رحلتك
       </span>
       <span className="w369-jar-track" aria-hidden="true">
@@ -169,6 +255,7 @@ export function LandingNav() {
   }, [close]);
   return (
     <header className="w369-nav">
+      <ScrollRail />
       <div className="w369-nav-inner">
         <Link to={ROUTES.root} className="w369-brand" aria-label="أُلارا — الصفحة الرئيسية">
           <span className="w369-brand-mark" aria-hidden="true"><Glyph name="star" size={18} /></span>
@@ -355,19 +442,20 @@ interface BandProps {
   icon: GlyphName;
   children: React.ReactNode;
   jar: string;
+  /** anchor target for the nav (#story, #levels …) */
+  id?: string;
 }
 
-function Band({ n, kicker, title, body, tint, icon, children, jar }: BandProps) {
-  const [ref, seen] = useInView<HTMLElement>();
+function Band({ n, kicker, title, body, tint, icon, children, jar, id }: BandProps) {
   return (
-    <section className="w369-band" ref={ref} data-tint={tint} data-jar={jar}>
+    <section className="w369-band" id={id} data-tint={tint} data-jar={jar}>
       <div className="w369-band-head">
         <span className="w369-band-num" aria-hidden="true">{n}</span>
         <p className="w369-band-kicker"><Glyph name={icon} size={15} />{kicker}</p>
         <h2 className="w369-h2">{title}</h2>
         <p className="w369-body">{body}</p>
       </div>
-      <div className="w369-band-body" data-seen={seen ? 'true' : 'false'}>{children}</div>
+      <div className="w369-band-body" ref={useReveal<HTMLDivElement>()}>{children}</div>
     </section>
   );
 }
@@ -385,7 +473,7 @@ export function StarsBand() {
   const kinds = useCountUp(STAR_SOURCES.length, seen);
   return (
     <Band
-      n="02" jar="02" tint="violet" icon="sparkle"
+      n="02" jar="02" tint="violet" icon="sparkle" id="story"
       kicker="المهمّة تصير نجمة"
       title={<>كل ما تُنجزه<br /><span className="w369-em">يصير نجمة</span></>}
       body="الواجب، المحاضرة، الاختبار القصير — كلٌّ منها يمنحك نقاط إتقان في اللحظة التي تُتمّها. لا انتظار لتصحيح، ولا أرقام ضائعة: النجوم تظهر أمامك فورًا، وتحتفظ بها."
@@ -535,12 +623,12 @@ export function LevelsBand() {
   const n = useCountUp(LEVELS.length, seen);
   return (
     <Band
-      n="06" jar="06" tint="leaf" icon="admin"
+      n="06" jar="06" tint="leaf" icon="admin" id="levels"
       kicker="عشرون مستوى، أسماء عربية"
       title={<>سلّمٌ من<br /><span className="w369-em">عشرين مستوى</span></>}
       body="من «بذرة» إلى «المعلّم»: سلّم إتقان بأسماء عربية أصيلة، يفتح كل مستوى شارةً جديدة. لا تسريع ولا اختصار — كل مستوى يُفتح بما أنجزته فعلًا."
     >
-      <div className="w369-levels" id="levels" ref={ref}>
+      <div className="w369-levels" ref={ref}>
         <div className="w369-levels-head">
           <span className="w369-chip w369-chip-amber"><Glyph name="star" size={14} />{n} مستوى</span>
           <span className="w369-fine">أسماء السلّم من تصميم أُلارا، وتُمنح حسب نقاط الإتقان.</span>

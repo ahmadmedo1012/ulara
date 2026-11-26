@@ -288,7 +288,7 @@ export default function DesignPage(): React.JSX.Element {
           <div className="r323d-grid">
             {GLYPH_NAMES.map((name) => (
               <Cell key={name} label={name}>
-                <span style={{ display: 'inline-flex', gap: 10, alignItems: 'center' }}>
+                <span style={{ display: 'inline-flex', gap: 'var(--sp-2)', alignItems: 'center' }}>
                   <Glyph name={name} size={28} />
                   <Glyph name={name} size={16} />
                 </span>

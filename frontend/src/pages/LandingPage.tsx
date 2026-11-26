@@ -45,11 +45,21 @@ import {
   RolesBand,
   StarJar,
   StarsBand,
+  revealAllNow,
 } from '../components/landing/r369';
 import '../styles/landing/r369.css';
 
 export default function LandingPage() {
   useThemeSync();
+
+  /* r369 — the reveal can never hide content for a reader who did not
+   * scroll into it: printing and a mid-page deep link both reveal. */
+  useEffect(() => {
+    const onPrint = () => revealAllNow();
+    window.addEventListener('beforeprint', onPrint);
+    if (window.location.hash) revealAllNow();
+    return () => window.removeEventListener('beforeprint', onPrint);
+  }, []);
   const user = useAuthStore((s) => s.user);
   const isHydrated = useAuthStore((s) => s.isHydrated);
 
