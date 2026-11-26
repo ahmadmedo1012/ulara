@@ -272,3 +272,10 @@
     transform: none;
   }
 }
+
+/* r364 art v2 — the error sheets' duotone scene seat: wider than the
+   retired thin-line box, hard-cropped strip, hairline frame. */
+.nf-illustration-v2 {
+  inline-size: min(560px, 86vw);
+  border: 1px solid var(--hairline);
+}

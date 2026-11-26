@@ -206,20 +206,28 @@ describe('r306 → r310 — the elevation illustration (the honest interactive)'
        the hero mounts the A2 art-contract glob (hero-elevation) with the
        committed fallback ElevationArt (the loader→hero handoff now rides
        the SAME elevation, small, per the reference's own loader mark).
-       The pin's semantics (one SVG object, transparent paper, no raster,
-       exported single-source frame) re-pin on the new seats. */
-    expect(liveTsx).toContain('<ElevationArt className="hro-elevation" viewBox={vb} />');
+       The pin's semantics re-pin on the new seats. */
+    /* r364 art v2 — the stage's PRIMARY seat is the art-v2 dense ink
+     * elevation raster (the reference's own full-stage hero grammar);
+     * ElevationArt stays as the img-failure fallback with its OWN doc
+     * window (never the art-v2 canvas mapping). The semantics (the
+     * whole drafted elevation fills the stage; the fallback is one
+     * SVG object on transparent paper) re-pin on the new seats. */
+    expect(liveTsx).toContain('hero-elevation-dt.webp');
+    expect(liveTsx).toContain('hero-elevation-mb.webp');
+    expect(liveTsx).toContain('<ElevationArt className="hro-elevation" viewBox={mobile ? VB_MOBILE : \'0 0 1440 620\'} />');
     const ink = read('src/components/landing/hero/ElevationArt.tsx');
     expect(ink).toContain('className={`ev-svg ');
     // the viewBox window family is the art's own exported single source
     // (the hero maps its stations through it)
     expect(ink).toContain('export const VB_MOBILE');
-    // the loader mounts the SAME elevation as its small mark (one object
-    // across the handoff)
+    /* r364 art v2 — the loader keeps the SVG elevation as its small
+     * handoff mark; the HERO no longer mounts the SVG keys (its seat
+     * is the art-v2 raster pair pinned above) — the liveTsx half of
+     * this loop retires with the art swap. */
     const loader = read('src/components/landing/chrome/Preloader.tsx');
     for (const asset of ['hero-elevation.svg', 'hero-elevation-mobile.svg']) {
       expect(loader).toContain(`@shared/art/svg/${asset}`);
-      expect(liveTsx).toContain(`@shared/art/svg/${asset}`);
     }
     // transparent paper: no raster <image> in the plate
     expect(ink).not.toContain('<image');
@@ -343,11 +351,16 @@ describe('r306 → r310 — the elevation illustration (the honest interactive)'
     // renders deleted with their generator); the homepage's imagery is
     // the r342 ORIGINAL illustrations (registered in the manifest) +
     // the card system — the reuse is pinned where it renders
+    /* r364 art v2 — the statement's plan seat is the art-v2 thick-wall
+     * campus site plan (scripts/art/plans-v2.mjs), and the footer's
+     * strip seat is the art-v2 duotone podium scene with the flat-shape
+     * kit; the r359 thin-line campus plan + the skyline render retire
+     * from the seats (their files stay in the tree for rollback). */
     const manifestJson = read('public/media/manifest.json');
     expect(manifestJson).toContain('plan-campus-site');
     expect(manifestJson).toContain('footer-skyline');
-    expect(read('src/components/landing/sections/Statement.tsx')).toContain('@shared/art/svg/plan-campus-site.svg');
-    expect(read('src/components/landing/sections/Footer.tsx')).toContain('footer-skyline-light.webp');
+    expect(read('src/components/landing/sections/Statement.tsx')).toContain('art-v2/plans/plan-campus.svg');
+    expect(read('src/components/landing/sections/Footer.tsx')).toContain('DuotoneScene');
   });
 });
 

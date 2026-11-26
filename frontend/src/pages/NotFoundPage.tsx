@@ -22,7 +22,9 @@
 import { Link } from 'react-router-dom';
 import { Building2, Home, LogIn } from 'lucide-react';
 import { Icon } from '../components/Icon';
-import { Illustration } from '../components/illustrations/Illustration';
+import { DuotoneScene } from '../components/landing/plates/DuotoneScene';
+import podiumScene from '../assets/art-v2/podium-scene.webp';
+import '../styles/landing/art-v2.css';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { RegCross } from '../components/patterns/RegCross';
 /* R341 D5 — the error sheets' own thin seat sheet (errors.css): the
@@ -58,8 +60,18 @@ export default function NotFoundPage() {
       <div className="auth-grain" aria-hidden="true" />
 
       <div className="nf-scene">
-        <div className="nf-illustration">
-          <Illustration name="not-found" />
+        {/* r364 art v2 — the thin-line not-found scene retires; the
+            error sheet carries the art system's duotone scene (the
+            empty plaza = the unmapped route) with the flat-shape kit.
+            The sr-only alt stays silent (the page's copy names the
+            state; the figure is atmosphere). */}
+        <div className="nf-illustration nf-illustration-v2">
+          <DuotoneScene
+            src={podiumScene}
+            alt=""
+            variant="strip"
+            caption="ROUTE NOT MAPPED"
+          />
         </div>
 
         {/* r324 X10 — the mono `ERR [404]` eyebrow and the

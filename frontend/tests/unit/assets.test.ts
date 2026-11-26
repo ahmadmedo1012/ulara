@@ -120,7 +120,13 @@ describe('r188 brand reset — campus photography retired (no real-university im
      * A2 art-contract glob (hero-elevation) with the committed
      * fallback ElevationArt; the semantics (whole drafted elevation,
      * transparent paper, no raster) re-pin on the new seats. */
-    expect(src).toContain('<ElevationArt className="hro-elevation" viewBox={vb} />');
+    /* r364 art v2 — the primary seat is the dense ink elevation raster
+     * (desktop + the mobile re-stage crop); the SVG fallback keeps its
+     * own doc window. The r188 semantics (original art, no photography)
+     * hold: the raster is GENERATED ink art, not photography. */
+    expect(src).toContain('hero-elevation-dt.webp');
+    expect(src).toContain('hero-elevation-mb.webp');
+    expect(src).toContain('<ElevationArt className="hro-elevation" viewBox={mobile ? VB_MOBILE : \'0 0 1440 620\'} />');
     const ink = read('src/components/landing/hero/ElevationArt.tsx');
     // transparent paper — the raster <image> is gone from the plate
     expect(ink).not.toContain('<image');
