@@ -95,3 +95,6 @@ Inner-page titles centred in a ruled cell at desktop (guest pages only: scoped t
 
 ## Slices 17 and 20 round 1 (colleges, error)
 Full bar now leads the colleges registry (portalled, guest only) and the not-found page. The type census gate (r324-type-gate) failed on my first title size override; the override is dropped (title already rides the d2 rung), gate passes 127. Auth (19) is a task form with no reference counterpart in the corpus; left as is, with its own thin header. Still wrong: colleges plan block and boxed notes, 404 headline stacks to three lines; no ruled column frame. Status: FAILING.
+
+## Slice 21 responsive round 0 (390x844 vs the mobile corpus shots)
+Fold: the reference shows a small elevation in a quiet cream field, then a tight grotesk headline and body; ours opens with a full-width photographic plate that fills the fold, headline pushed below. Platform: the reference stacks a large headline then four icon rows; ours stacks small ruled rows with tiny type. Use cases: reference has the art first and a dark card; ours leads with the list and a plan. All three are structural and unchanged so far. Status: FAILING, not started beyond measurement.
