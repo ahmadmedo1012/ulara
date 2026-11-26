@@ -25,3 +25,12 @@ Still different:
 2. Half-art/half-list layout not built (slice 08/09).
 3. Thick-wall plan at reference scale (slices 05/07) not started.
 Status: FAILING. 
+
+## Round 3 (sheet: round3-cantilever-why.webp) — procedural cantilever
+Done: original procedural SVG cantilever scene (scripts/art/cantilever.mjs, assets/art-v2/cantilever.svg), flat inks, transparent ground, lone figure; mounted in the why band (DuotoneScene `flat`); shapes at physical left seats on paper (circle bleeds the left edge, slab, pale circle). Grammar now matches the reference's collage: flat royal shapes on bare paper beside a light cantilever.
+Still different:
+1. The building is smaller and thinner than the reference's, which fills the full band height and overlaps the slab base; columns need the thick board-formed concrete texture and a second slab tier.
+2. Reference band is half art / half ruled list under the heading; ULARA still stacks heading above the art, list elsewhere (slice 08/09 layout).
+3. Footer strip still uses the old photo variant; roles band has no art reveal.
+4. Typecheck passes.
+Status: FAILING, much closer in construction.

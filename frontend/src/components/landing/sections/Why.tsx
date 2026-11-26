@@ -19,7 +19,7 @@ import { RevealCssClass } from '../../../hooks/useReveal';
 import { WhyPanels } from '../plates/WhyPanels';
 import { DuotoneScene } from '../plates/DuotoneScene';
 import { DimensionLine } from '../../patterns/DimensionLine';
-import podiumScene from '../../../assets/art-v2/podium-scene.webp';
+import cantileverScene from '../../../assets/art-v2/cantilever.svg';
 
 export function Why() {
   return (
@@ -73,7 +73,8 @@ export function Why() {
           imagery; no band left empty). */}
       <div className="wy-stage" data-spec="why.stage">
         <DuotoneScene
-          src={podiumScene}
+          src={cantileverScene}
+          flat
           alt="طالب واحد يعبر ساحة الحرم الجامعي أمام مبنى الخرسانة الصريحة — المقياس الإنساني الذي بُنيت أُلارا حوله"
           variant="stage"
           caption="Y:10168 · قاعدة التشغيل"

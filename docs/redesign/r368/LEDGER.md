@@ -8,5 +8,6 @@
 - Capture harness gains --selectors (band-aligned); bands round-0 sheet and critique for slices 04-09 (evidence/bands/). Live reference blocked by a bot challenge (not bypassed): corpus shots are the baseline.
 - Flat-shape kit scales with the scene (cqw) in art-v2.css; round-1 band sheet + critique.
 - Duotone layering: shapes behind scene, high-key scene (art-v2.css); round-2 critique.
+- Procedural cantilever scene (scripts/art/cantilever.mjs) + flat shapes on paper in the why band; round-3 sheet and critique. tsc passes.
 
-NEXT: cut-out cantilever art (slice 11), half-art/half-list roles layout (08/09), thick-wall plan scale (05/07).
+NEXT: scale up/texture the cantilever, footer strip to the flat scene, half-art/half-list roles layout (08/09), thick-wall plans (05/07).

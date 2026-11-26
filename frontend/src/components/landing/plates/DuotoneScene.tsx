@@ -35,12 +35,15 @@ export function DuotoneScene({
   variant = 'stage',
   caption,
   note,
+  flat = false,
 }: {
   src: string;
   alt: string;
   variant?: DuoVariant;
   caption?: string;
   note?: string;
+  /** r368: a procedural cut-out scene (transparent ground, no photo filter) */
+  flat?: boolean;
 }) {
   return (
     <figure className={`duo-scene duo-${variant}`} data-variant={variant}>
@@ -56,7 +59,7 @@ export function DuotoneScene({
       {/* the scene — grayscale/contrast treatment seats in CSS so the
           theme drives it; the img carries the real alt (the figure and
           the building ARE content) */}
-      <img className="duo-img" src={src} alt={alt} loading="lazy" decoding="async" />
+      <img className={`duo-img${flat ? ' is-flat' : ''}`} src={src} alt={alt} loading="lazy" decoding="async" />
 
       {/* the caption row — mono datum + the survey arrow, the sheet's
           own furniture at the foot */}

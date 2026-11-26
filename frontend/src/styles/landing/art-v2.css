@@ -102,6 +102,10 @@
   mix-blend-mode: multiply;
 }
 
+/* r368 slice 11: the procedural cut-out scene — transparent ground, flat inks, no photo filter */
+.duo-img.is-flat { filter: none; mix-blend-mode: normal; object-fit: contain; object-position: right bottom; }
+[data-theme="dark"] .duo-img.is-flat { filter: invert(0.9) hue-rotate(180deg); mix-blend-mode: normal; opacity: 1; }
+
 /* ── the caption row ────────────────────────────────────────────── */
 .duo-cap {
   position: absolute;
@@ -286,3 +290,10 @@
   .plan-strip { grid-template-columns: 1fr; gap: 1.5rem; }
   .dark-card { position: static; inline-size: 100%; margin-block-start: 0.6rem; }
 }
+.duo-stage:has(.is-flat) { aspect-ratio: 1344 / 760; max-block-size: 640px; }
+
+/* r368 slice 11: the flat-scene composition is architecture, not text: shapes use PHYSICAL left seats
+   (the reference's circle bleeds the left edge, the slab rises behind the building) in both directions */
+.duo-stage:has(.is-flat) .fs-circle-royal { inset-inline-start: auto; inset-inline-end: auto; left: -6cqw; inset-block-start: 22%; }
+.duo-stage:has(.is-flat) .fs-slab { inset-inline-start: auto; inset-inline-end: auto; left: 24cqw; inset-block-start: 4%; block-size: 62%; }
+.duo-stage:has(.is-flat) .fs-circle-pale { inset-inline-start: auto; left: 3cqw; inset-block-end: -6%; }
