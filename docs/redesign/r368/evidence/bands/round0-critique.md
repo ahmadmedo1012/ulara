@@ -74,3 +74,6 @@ Caption border removed (paper seat kept for contrast over art). Side list and gr
 
 ## Slice 02 nav round 1
 Nav structure already matches the measured reference tree (inset, 56px bar, mono items, CTA cell). Defect found: bar was transparent so content showed through. Now opaque (bg). Remaining: the in-band meta strip and plan still sit beside the nav in the first viewport (slice 04/05); hover fills and submenu not yet compared. Status: FAILING.
+
+## Slice 01 preloader round 1
+The headless sandbox has under 3 cores, so the intro gate skips the loader; capture needs hardwareConcurrency forced to 8 on a production build. Found: the 880px centred .pl-plate rule beat .pl-mark, so the 'small mark' rendered as a full elevation; the boot ledger crowded the field. Fixed: mark is small, boot ledger hidden at desktop, mark and headline seated physically left. Still wrong: progress rule is full-width where the reference is a short orange-to-royal line with % at its start; hairline and the small welcome line differ; timing not yet compared to preloader-timeline.json. Status: FAILING.

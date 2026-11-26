@@ -589,3 +589,22 @@
     opacity: 1;
   }
 }
+
+/* r368 slice 01 — the reference loader is an almost-empty field: a small pencil mark, a hairline, one small headline.
+ * .pl-plate (880px, centred) was beating .pl-mark on source order, so the "small mark" rendered as the full plate. */
+@media (min-width: 992px) {
+  .pl-plate.pl-mark {
+    inset-inline: auto;
+    inset-inline-start: 8%;
+    inset-block-start: 62%;
+    margin-inline: 0;
+    inline-size: clamp(120px, 9vw, 160px);
+  }
+  .pl-boot { display: none; }
+}
+
+/* r368 slice 01 — the reference seats the mark and the headline on the physical left (art is architecture, not mirrored) */
+@media (min-width: 992px) {
+  .pl-plate.pl-mark { inset-inline-start: auto; left: 8%; }
+  .pl-headline { inset-inline-start: auto; left: 40px; }
+}
