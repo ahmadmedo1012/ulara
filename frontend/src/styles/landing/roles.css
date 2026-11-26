@@ -675,3 +675,20 @@
   .rl-section > .plan-strip .plan-plate { inline-size: 52%; }
   .rl-section > .plan-strip .plan-plate:nth-child(2) { justify-self: end; }
 }
+
+/* r368 slice 08 — desktop: the reference's use-case list is light rule-based rows (small title, hairline between,
+   tight padding). Same accordion control, restyled only. Reason: appearance twin; no test pins these metrics. */
+@media (min-width: 992px) {
+  .rl-row {
+    padding-block: 1.3rem 1.2rem;
+    padding-inline-start: 4rem;
+    padding-inline-end: 2rem;
+    border-block-end: 1px solid var(--rule);
+  }
+  .rl-row-title {
+    font-size: 1.8rem;
+    line-height: 2.4rem;
+    font-weight: 600;
+  }
+  .rl-group { padding-inline-start: 4rem; }
+}

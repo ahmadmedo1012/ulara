@@ -127,3 +127,4 @@ NEXT: more
 - hero hatching 1.5x; dark 2200 frame verified by design. NEXT: 07/08 plate measurement.
 - 07/08 plate sizes measured, within tolerance, no code change. NEXT: sync main after 8:49.
 - full-page pass logged; 08 role list kept (it is the slide control). NEXT: sync main after 8:49.
+- 08 accordion restyled to light rule rows (control kept). NEXT: sync main after 8:49.

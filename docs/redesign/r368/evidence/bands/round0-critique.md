@@ -273,3 +273,6 @@ The near-empty band at scroll ~2200 is the "chapters" word-reveal statement (.jt
 
 ## Full-page pass (8 scroll stops, 1440x1000, light RTL)
 Hero, statement, values, chapters line, journey stages, platform plan and roles all render without breakage or overlap; the cookie bar clears CTAs. 07: the full-width hairline already exists at plate level and the dark card already overlaps the plate, so no change. 08: NOT hidden. The role list (.rl-row, onClick setOpen) is the only desktop control that switches the slide, so hiding it would remove function, not just appearance. Gap vs the reference (bare ground, two art plates) remains. Status: FAILING.
+
+## Slice 08 accordion restyle
+Desktop role rows are now light rule rows (1.8rem title, hairline between, tight padding, 4rem inset), same control. Verified light+dark capture. Still unlike the reference: the list sits right of two art plates rather than on bare ground. Status: FAILING.
