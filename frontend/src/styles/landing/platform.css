@@ -780,3 +780,9 @@ html[data-theme='dark'] .pr-section .pr-cta {
   .pr-section .pr-imgs-hrule, .pr-section .pr-img + .pr-imgs-hrule + .pr-img { display: none; }
   .pr-section .pr-img .prp-plan { object-position: center 30%; }
 }
+
+/* r368 — ledger rows: ruled capability lines, small square icon at the end */
+.pr-ledger { list-style: none; margin: 1.6rem 0 0; padding: 0; }
+.pr-ledger li { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-block: 1.1rem; border-block-start: 1px solid var(--pr-rule-ink); font-size: 1.3rem; }
+.pr-ledger li i { inline-size: 1.4rem; block-size: 1.4rem; border: 1px solid currentColor; border-radius: 3px; opacity: .55; flex: none; }
+@media (max-width: 991px) { .pr-ledger { display: none; } }

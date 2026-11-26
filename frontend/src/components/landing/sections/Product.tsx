@@ -72,6 +72,8 @@ const PLATFORM_ITEMS = [
   },
 ] as const;
 
+const LEDGER_ROWS = ['محاضرات مباشرة ومسجّلة في مكان واحد', 'اختبارات إلكترونية بتصحيح تلقائي', 'مساعد أكاديمي يفهم مادتك', 'تقارير تصل للأستاذ وولي الأمر'] as const;
+
 export function Product() {
   return (
     <section id="product" className="pr-section" aria-labelledby="pr-title" data-spec="platform.section">
@@ -161,6 +163,12 @@ function PlatformRow({ item, idx, hidden, clone }: { item: typeof PLATFORM_ITEMS
           <RevealCssClass as="p" className="pr-text" delay={2} data-spec={ds('text')}>
             {item.text}
           </RevealCssClass>
+          {/* r368: the reference's ledger rows (four ruled capability lines with a line-icon each) */}
+          <ul className="pr-ledger" aria-hidden={hidden || clone || undefined}>
+            {LEDGER_ROWS.map((t) => (
+              <li key={t}><span>{t}</span><i aria-hidden="true" /></li>
+            ))}
+          </ul>
         </div>
         <a
           href="#cta"

@@ -17,3 +17,4 @@ NEXT: platform grid to one tall plan cell + ledger rows; half-art/half-list role
 - roles band: art-left/list-right layout with flat cantilever pane (still FAILING; NEXT: pane seats, single tall platform plan cell)
 - roles pane seats tuned (FAILING; NEXT: single tall platform plan cell)
 - platform: single tall plan cell (FAILING; NEXT: ledger rows + dark card, then 05/06 scale)
+- platform: ledger rows (FAILING; NEXT: slice 05/06 scale)

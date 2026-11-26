@@ -56,3 +56,6 @@ Shapes shrunk (slab 38% tall, circles smaller), scene seated bottom. Slab/circle
 
 ## Platform round 3
 Plate column is now one tall cell. Still wrong: copy column order/scale, no ledger rows or chat-widget dark card, plan needs numbered markers. Status: FAILING.
+
+## Platform round 4
+Ledger rows added (four ruled lines with icon). Still wrong: row scale/position vs reference, copy column too small, dark chat card only on hover. Status: FAILING.
