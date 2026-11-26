@@ -951,7 +951,7 @@ html[data-theme='dark'] .fo-header {
   }
 }
 
-/* r368 slice 12 — on inner pages the old thin guest header stays in the DOM (back link, tests) but the full bar leads */
-.ab > .fo-header ~ .ab-header { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.ab > .fo-header ~ .ab-header:focus-within { position: fixed; inset-block-start: 70px; inset-inline-start: 12px; inline-size: auto; block-size: auto; overflow: visible; clip-path: none; z-index: 70; }
-.ab > .fo-header ~ .ab-main { padding-block-start: 72px; }
+/* r368 slices 12-18 — on inner pages the old thin guest header stays in the DOM (back link, tests) but the full bar leads */
+.fo-header ~ :is(.ab-header, .hp-header, .cu-header, .lg-header, .ap-header) { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.fo-header ~ :is(.ab-header, .hp-header, .cu-header, .lg-header, .ap-header):focus-within { position: fixed; inset-block-start: 70px; inset-inline-start: 12px; inline-size: auto; block-size: auto; overflow: visible; clip-path: none; z-index: 70; }
+.fo-header ~ main { padding-block-start: 96px; }

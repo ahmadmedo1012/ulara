@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { SheetNav } from '../components/landing/chrome/SheetNav';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { Icon } from '../components/Icon';
@@ -90,6 +91,7 @@ export function AppDownloadPage() {
     <div className="ap">
       <a href="#main" className="skip-link">تخطَّ إلى المحتوى</a>
       <GuestSheetChrome />
+      <SheetNav />
 
       <header className="ap-header">
         <div className="ap-header-inner">

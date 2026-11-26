@@ -328,6 +328,7 @@ export function HelpPage() {
     <div className="hp">
       <a href="#main" className="skip-link">تخطَّ إلى المحتوى</a>
       <GuestSheetChrome />
+      <SheetNav />
 
       <header className="hp-header">
         <div className="hp-header-inner">

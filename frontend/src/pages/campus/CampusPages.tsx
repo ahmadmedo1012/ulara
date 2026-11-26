@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { SheetNav } from '../../components/landing/chrome/SheetNav';
 import { ArrowRight } from 'lucide-react';
 import { Icon } from '../../components/Icon';
 import { Logo } from '../../brand';
@@ -39,6 +40,7 @@ export function CampusLifePage() {
     <div className="cu">
       <a href="#main" className="skip-link">تخطَّ إلى المحتوى</a>
       <GuestSheetChrome />
+      <SheetNav />
 
       <header className="cu-header">
         <div className="cu-header-inner">

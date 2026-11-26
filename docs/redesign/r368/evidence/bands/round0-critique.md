@@ -86,3 +86,6 @@ Headline now 2.4rem/600 at desktop. Timing measured from preloader-timeline.json
 
 ## Slice 12 about round 1 (inner-page template, compared to the only inner reference shot: the pricing top)
 Defect: the inner page opened with a thin guest header (logo + back link); the reference's inner pages carry the same full bar as the home page. Fix: SheetNav mounted on About; the old header stays in the DOM visually hidden (back link, tests, focus-reveal). Anchors on the bar now resolve to the landing off-home. Still wrong: reference page title is a centred 2-line grotesk in a framed cell with ruled columns; ours is a start-aligned title over a stack of boxed notes. Other inner pages (13-20) still use the old header. Status: FAILING.
+
+## Slices 13-18 round 1 (inner pages: help, legal, app, campus, capabilities, plus about)
+The full nav bar now leads help, legal, app download, campus and capabilities, as on About; old header kept hidden in the DOM (focus-reveal). 186 unit tests across routes, legal, guest, funnel and sheet pass. Eyebrow clipped under the bar in the first capture; main top padding raised to 96px. Colleges pages (17) and auth (19) and error/maintenance (20) not changed. Still wrong everywhere: titles start-aligned instead of centred in a framed cell, boxed note stacks instead of ruled cells, no ruled column frame. Status: FAILING.

@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { SheetNav } from '../../components/landing/chrome/SheetNav';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
@@ -117,6 +118,7 @@ export function LegalSheet({
     <div className="lg">
       <a href="#main" className="skip-link">تخطَّ إلى المحتوى</a>
       <GuestSheetChrome />
+      <SheetNav />
 
       <header className="lg-header">
         <div className="lg-header-inner">

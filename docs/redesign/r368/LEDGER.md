@@ -27,3 +27,4 @@ NEXT: platform grid to one tall plan cell + ledger rows; half-art/half-list role
 - preloader progress rule + welcome card seats (FAILING; NEXT: headline scale, timing, pages 12-20)
 - preloader headline scaled; timing measured and kept (FAILING; NEXT: pages 12-20)
 - about: full nav bar on inner page (FAILING; NEXT: same bar on help/contact/legal/app/colleges/campus/capabilities, centred titles)
+- inner pages 12-16,18 carry the full nav bar (FAILING; NEXT: centred framed titles, colleges/auth/error)
