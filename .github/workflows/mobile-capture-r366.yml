@@ -8,7 +8,7 @@
 #     base URL 10.0.2.2:4000 baked at bundle time), uploaded as an
 #     artifact so the device matrix never re-pays the Gradle toll.
 #   · android-capture — a KVM emulator matrix (small phone via wm-size,
-#     pixel_5, pixel_6_pro, pixel_fold, nexus_7_2013, nexus_10), each leg
+#     pixel_5, pixel_6_pro, pixel_fold, pixel_tablet), each leg
 #     boots its own seeded backend (tools/boot-pg.sh + migrate + seed +
 #     :4000, ULARA_TEST_ACCOUNTS=1) and drives the REAL APK with Maestro
 #     + adb deep links: PUBLIC (logged out) → onboarding tour → per-role
@@ -34,7 +34,7 @@ on:
   workflow_dispatch:
     inputs:
       matrix_set:
-        description: 'quick (pixel_5 + nexus_10) | full (+ pixel_6_pro, pixel_fold, nexus_7_2013)'
+        description: 'quick (pixel_5 + pixel_tablet) | full (+ pixel_6_pro, pixel_fold)'
         default: 'quick'
         type: choice
         options:
@@ -74,9 +74,9 @@ jobs:
       - id: plan
         run: |
           if [ "${{ inputs.matrix_set || 'quick' }}" = "full" ]; then
-            echo 'devices=[{"device":"pixel_5","set":"phone"},{"device":"pixel_6_pro","set":"phone-xl"},{"device":"pixel_fold","set":"foldable"},{"device":"nexus_7_2013","set":"tablet"},{"device":"nexus_10","set":"tablet"}]' >> "$GITHUB_OUTPUT"
+            echo 'devices=[{"device":"pixel_5","set":"phone"},{"device":"pixel_6_pro","set":"phone-xl"},{"device":"pixel_fold","set":"foldable"},{"device":"pixel_tablet","set":"tablet"}]' >> "$GITHUB_OUTPUT"
           else
-            echo 'devices=[{"device":"pixel_5","set":"phone"},{"device":"nexus_10","set":"tablet"}]' >> "$GITHUB_OUTPUT"
+            echo 'devices=[{"device":"pixel_5","set":"phone"},{"device":"pixel_tablet","set":"tablet"}]' >> "$GITHUB_OUTPUT"
           fi
 
   # ── the release APK, built once (throwaway keystore, 10.0.2.2 base) ──
