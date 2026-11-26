@@ -484,6 +484,18 @@
    rows inside the rounded .exa-rows sheet inherit its end radii —
    no extra geometry here. */
 
+/* r365 audit 6-b — the sg-flag ramp's missing warning member. The shared
+   sheet (r359-grammar.css) defines signal/positive/danger/quiet; the
+   exam + live boards also speak 'warning' (PENDING_REVIEW · SUBMITTED ·
+   SCHEDULED), which rendered with the neutral base look. One additive
+   family rule — tone on text + border only, the same recipe as the
+   positive/danger members; serves §B (this file's exam surfaces) and
+   §E (the live board's SCHEDULED flag). */
+.hr-scope .sg-flag[data-tone='warning'] {
+  color: var(--warning-ink);
+  border-color: color-mix(in srgb, var(--warning) 55%, var(--rule));
+}
+
 /* Mobile: §0 floors .hr-toolbar buttons; the section-head actions
    (create CTA, filter checkbox) join the 44px floor when the head
    wraps beneath the title. */
