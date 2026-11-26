@@ -82,4 +82,6 @@ s += tree(215, gy, 400) + tree(285, gy, 300);
 s += tree(1215, gy, 380) + tree(1150, gy, 290);
 // a lone figure
 s += `<g stroke="${INK}" stroke-width="2.4" fill="none"><circle cx="700" cy="${gy - 40}" r="4.2"/>${ln(700, gy - 35, 700, gy - 14, 2.4)}${ln(700, gy - 14, 695, gy, 2.4)}${ln(700, gy - 14, 705, gy, 2.4)}</g>`;
-process.stdout.write(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">${s}</svg>\n`);
+const mb = process.argv.includes('--mobile'); // tighter crop for the phone fold
+const vb = mb ? '110 60 1220 640' : `0 0 ${W} ${H}`;
+process.stdout.write(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}" width="${mb ? 1220 : W}" height="${mb ? 640 : H}">${s}</svg>\n`);

@@ -563,7 +563,7 @@
 
 /* r368 slice 21 — the reference's phone fold seats a small elevation in a quiet field with the headline inside the fold */
 @media (max-width: 767px) {
-  .hro-art { inline-size: 62%; margin-inline: auto; }
+  .hro-art { inline-size: 82%; margin-inline: auto; } /* r368: measured 59% drawing span vs the reference 65% */
 }
 
 /* r368 slice 22 — dark: multiply on dark paper erases the ink. Invert the raster and screen it so the drawing reads as pale ink on the dark paper. */

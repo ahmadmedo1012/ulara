@@ -242,3 +242,6 @@ scripts/art/elevation-flat.mjs now adds formwork joints, board-form hatching, sp
 
 ## Trees and glass depth (1440)
 Glass now has a dark interior, floor plates, furniture silhouettes and light streaks; two trees per side, denser crowns. A first denser try (1.1MB) overshot the frame and was cut back; svg now 479KB raw, 41KB gzip. Still less hatched and heavy than the reference. Status: FAILING.
+
+## Mobile hero art size (390)
+Measured the drawing at 59% of the phone width vs the reference 65%, and the old mobile crop clipped the right tree. The mobile svg now comes from the same generator (--mobile, wider crop, 41KB gzip) and the box is 82%. Whole drawing visible; one station square still sits below the art (seat fractions pinned to the old crop). Scroll re-measured on the production build: median 33ms, 24 frames >50ms, long tasks 1.6s (unchanged). Status: FAILING.
