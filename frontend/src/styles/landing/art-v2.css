@@ -215,7 +215,11 @@
 .plan-spec-cell b {
   font-weight: 500;
   font-size: 0.55rem;
-  color: color-mix(in srgb, var(--paper-ink) 55%, transparent);
+  /* r367 a11y pass — 55% rode 3.85:1 (axe serious, the gate's floor
+     breach at phone/light); 72% measures 5.71:1 light / 7.97:1 dark —
+     the AA floor holds on both arms without losing the ghosted-spec
+     voice. */
+  color: color-mix(in srgb, var(--paper-ink) 72%, transparent);
 }
 .plan-stamp {
   display: grid;

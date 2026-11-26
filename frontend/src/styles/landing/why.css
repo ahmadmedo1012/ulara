@@ -325,6 +325,11 @@
 .wy-stage {
   display: block;
   padding-block: var(--sp-2);
+  /* r367: the r364 art-v2 stage seat folded in — a second .wy-stage
+     block at line ~1131 breached the stylelint ratchet (the gate's ONE
+     error); its declarations ride here, the r364 comment below. */
+  position: relative;
+  margin-block-start: 1.5rem;
 }
 
 .wy-stage-head {
@@ -1127,11 +1132,9 @@
    "stage"): the architectural hero imagery between the band's head
    and the pillars' panels; the flat-shape kit rides the figure (see
    styles/landing/art-v2.css). The stage keeps the band's hairline
-   rails: a rule above, the panels' own rule below. ── */
-.wy-stage {
-  position: relative;
-  margin-block-start: 1.5rem;
-}
+   rails: a rule above, the panels' own rule below.
+   r367: the block's two declarations moved into the base .wy-stage
+   above (the no-duplicate-selectors error). ── */
 .wy-stage .duo-scene {
   /* the stage's own bleed: full band width, hairline-framed by
      art-v2.css's .duo-stage seat */
