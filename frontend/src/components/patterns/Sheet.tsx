@@ -5,6 +5,7 @@ import { Reveal } from '../motion/Reveal';
 import { CountIn } from '../motion/CountIn';
 import { formatInt } from '../../utils/numbers';
 import { RegCross } from './RegCross';
+import { DuotoneScene } from '../landing/plates/DuotoneScene';
 
 /* ═══════════════════════════════════════════════════════════════════
    R359 (A3) — THE SHEET GRAMMAR patterns.
@@ -449,15 +450,30 @@ export function SheetEmpty({
   desc,
   action,
   code,
+  art,
+  artAlt,
 }: {
   title: string;
   desc?: string;
   action?: ReactNode;
   /** Optional mono sheet-code (NO-DATA / ERROR / …). */
   code?: string;
+  /* r367 (the r365 NEXT item): the optional art-v2 scene seat — the
+   * empty sheet may carry ONE duotone scene (the strip variant) above
+   * the frame register; omitted keeps the pre-r367 framed register
+   * verbatim. The scene is atmosphere: alt stays empty (the copy
+   * names the state), the flat-shape kit rides the scene's own
+   * grammar. */
+  art?: string;
+  artAlt?: string;
 }) {
   return (
     <div className="sg-empty">
+      {art !== undefined && (
+        <div className="sg-empty-art" aria-hidden="true">
+          <DuotoneScene src={art} alt={artAlt ?? ''} variant="strip" />
+        </div>
+      )}
       <div className="sg-empty-frame">
         <RegCross className="sg-reg sg-reg--tl" />
         <RegCross className="sg-reg sg-reg--tr" />

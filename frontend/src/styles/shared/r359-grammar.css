@@ -699,6 +699,16 @@ a.pf-stat:hover { background: var(--surface-2); }
   padding: var(--sp-9) var(--sp-4);
   text-align: center;
 }
+/* r367 — the optional art-v2 seat: the empty sheet may carry ONE
+   duotone strip scene above the frame register (the r365 NEXT item).
+   The scene keeps the sheet's quiet measure: capped width, the
+   multiply-style grayscale treatment rides the duo-scene's own CSS. */
+.sg-empty-art {
+  inline-size: min(280px, 100%);
+}
+.sg-empty-art .duo-img {
+  block-size: auto;
+}
 .sg-empty-frame {
   position: relative;
   inline-size: var(--sg-empty-size, 120px);
