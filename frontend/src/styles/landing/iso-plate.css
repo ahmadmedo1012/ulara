@@ -319,3 +319,23 @@
     animation: none;
   }
 }
+
+/* r368 mobile scroll: SVG animations run on the main thread, and ~2000
+ * infinite iso-loop animations (offscreen too) kept style and paint busy on
+ * every scroll frame (measured: 9 s of long tasks per scroll pass at 4x CPU
+ * vs 1 s with animations off). On touch devices the loops settle to their
+ * authored plate, the same state reduced motion uses. */
+@media (pointer: coarse) {
+  .iso-loop-box,
+  .iso-loop-dot,
+  .iso-loop-pulse {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .iso-loop-sweep,
+  .iso-loop-orbit,
+  .iso-loop-line {
+    animation: none;
+  }
+}

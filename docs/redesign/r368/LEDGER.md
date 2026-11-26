@@ -97,3 +97,5 @@ NEXT: main sync ~6:26; slices 19-22
 NEXT: main sync ~6:26; cross-slice analyze
 - cross-slice analyze done; 0/22 passing
 NEXT: further fixes or mark Ready on owner call
+- mobile scroll: iso-loop settled + no Lenis on touch; probe scrollperf.mjs (long tasks 9.1s -> 1.5s)
+NEXT: more mobile scroll (lazy mount spike, rl-row transitions), then slices 05-08

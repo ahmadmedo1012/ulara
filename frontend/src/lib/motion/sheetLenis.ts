@@ -109,6 +109,11 @@ function reducedMotion(): boolean {
 /** One conductor frame: advance Lenis, then sleep the driver the
  *  moment Lenis reports no activity (the zero-idle-page property —
  *  the conductor falls asleep with it). */
+function coarsePointer(): boolean {
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false;
+  return window.matchMedia('(pointer: coarse)').matches === true;
+}
+
 function lenisFrame(now: number): void {
   if (!lenis) {
     detachFrame();
@@ -264,6 +269,11 @@ export function initGuestLenis(): boolean {
   }
   if (lenis) return true;
   if (reducedMotion()) return false; /* RM: NEVER init — native scroll */
+  /* r368 mobile scroll: on touch (coarse-pointer) devices the browser's own
+   * compositor scroll is smooth; the JS-driven sync-touch glide ran the
+   * conductor frame, layout reads and style writes on the main thread each
+   * touch frame and felt choppy. Touch devices keep native scroll. */
+  if (coarsePointer()) return false;
 
   /* The ONE frame clock stays the conductor (r308/r313 pinned
    * contracts — Lenis's raf rides its subscriber slot). R342-final:
