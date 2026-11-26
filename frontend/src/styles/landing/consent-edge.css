@@ -550,3 +550,25 @@
   border: 1px solid var(--text);
   background: var(--bg);
 }
+
+/* r368 — desktop strip proportions: one short row, compact buttons, like the reference. */
+@media (min-width: 900px) {
+  .cb-banner.cb-banner {
+    inline-size: min(500px, 100%);
+    padding-block: 6px;
+    padding-inline: 10px;
+    flex-wrap: nowrap;
+    column-gap: 10px;
+  }
+  .cb-banner .cb-text { flex: 1 1 auto; font-size: 12px; line-height: 1.25; }
+  .cb-banner .cb-actions { gap: 6px; flex: none; }
+  .cb-banner .cb-accept,
+  .cb-banner .cb-reject {
+    min-block-size: 28px;
+    padding-block: 0;
+    padding-inline: 14px;
+    font-size: 11px;
+    border-radius: 0;
+  }
+  .cb-banner .cb-reject { border: 1px solid var(--rule); }
+}

@@ -40,3 +40,4 @@ NEXT: platform grid to one tall plan cell + ledger rows; half-art/half-list role
 - all four mobile hero markers seated on the drawing (FAILING; NEXT: consent bar to fixed corner look, footer, cursor)
 - consent bar seated as fixed bottom strip like the reference (UNVERIFIED visually: capture harness hides it; FAILING; NEXT: harness consent-visible capture, footer rebuild, cursor)
 - consent gate mounts at page root (was inside lazy footer) and shows from first paint as a bottom-right strip; 404 login test scoped (FAILING; NEXT: strip proportions/accent, footer rebuild, cursor)
+- consent strip proportions tuned: one short row, compact buttons (close; FAILING: reference sits inside the frame inset, orange accent vs royal)
