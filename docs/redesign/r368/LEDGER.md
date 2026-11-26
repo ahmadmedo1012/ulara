@@ -154,3 +154,4 @@ NEXT: origin/main sync ~9:50pm; remaining gaps 06 layout, hero photo look, no-co
 - r368 06 plates: Blender iso massing renders (plate.py) replace the svg plan plates on the platform layer (desktop), multiply/screen blend, light+dark verified; NEXT: 07 plates (.wy-plates still svg plans), registry strip weight
 - r368 07 plates: campus/admin/lab Blender renders via PlanPlate src override; 06 aux plates eager-loaded (no late pop-in). light+dark verified. NEXT: registry strip weight, remaining no-reference slices
 - r368 plates v2: freestyle ink outlines, dimension strings, grid dots, richer lab (plate.py); CTA registry strip quieted (desktop). NEXT: hourly sync, slices w/o corpus ref
+- r368 NEXT (hero): add Freestyle outlines to hero.py but exclude the tree mesh (select_by_collection) — full-scene freestyle exceeds 100s on 1 CPU
