@@ -43,3 +43,4 @@ NEXT: platform grid to one tall plan cell + ledger rows; half-art/half-list role
 - consent strip proportions tuned: one short row, compact buttons (close; FAILING: reference sits inside the frame inset, orange accent vs royal)
 - cursor: SheetCursor already implements the measured dot model (opacity 0 at rest, grows on interactive hover, hidden on touch); no change, slice 10 verified by spec only (live reference blocked)
 - footer closing CTA band added (FAILING; NEXT: use-case accordion, merge main ~6PM)
+- footer use-case accordion + art plate (FAILING; NEXT: merge main, mobile platform/use-case rebuild)

@@ -867,3 +867,23 @@ footer.fo-footer {
 .fo-cta-coord { position: absolute; inset-block-start: 6px; font-size: 10px; color: var(--text-muted, inherit); }
 .fo-cta-coord-a { left: 8px; }
 .fo-cta-coord-b { right: 8px; }
+
+/* r368 — use-case accordion: art plate + ruled list (reference closing-section grammar). */
+.fo-uses { display: grid; grid-template-columns: 1fr; border-block-start: 1px solid var(--rule); }
+.fo-uses-art { display: none; }
+.fo-uses-art img { inline-size: 100%; block-size: 100%; object-fit: cover; display: block; }
+.fo-use { border-block-end: 1px solid var(--rule); }
+.fo-use-sum {
+  display: flex; justify-content: space-between; align-items: center;
+  min-block-size: 56px; padding-inline: 16px; cursor: pointer;
+  font-size: 15px; font-weight: 600; list-style: none;
+}
+.fo-use-sum::-webkit-details-marker { display: none; }
+.fo-use-desc { margin: 0; padding: 0 16px 14px; font-size: 13px; color: var(--text-muted, inherit); }
+.fo-use[open] .fo-use-plus { transform: rotate(45deg); }
+.fo-use-plus { transition: transform var(--t-fast) var(--ease); font-weight: 400; }
+@media (min-width: 900px) {
+  .fo-uses { grid-template-columns: 1fr 1fr; direction: ltr; }
+  .fo-uses-art { display: block; min-block-size: 420px; border-inline-end: 1px solid var(--rule); background: var(--bg-soft, transparent); }
+  .fo-uses-list { direction: rtl; align-self: stretch; }
+}

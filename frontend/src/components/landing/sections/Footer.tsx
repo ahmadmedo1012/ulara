@@ -140,6 +140,29 @@ export function Footer({ year }: { year: number }) {
   return (
     <footer className="fo-footer" data-spec="footer.root" aria-label={BRAND_LABEL}>
       <div className="fo-in" data-spec="footer.in">
+        {/* r368 — the use-case accordion: an art plate beside a ruled
+            list of audiences (native details, keyboard-operable). */}
+        <section className="fo-uses" aria-label="لمن صُمّمت أُلارا" data-spec="footer.uses">
+          <div className="fo-uses-art" aria-hidden="true">
+            <img src={cantileverScene} alt="" loading="lazy" />
+          </div>
+          <div className="fo-uses-list">
+            {[
+              ['الطلاب', 'محاضرات واختبارات وتقدّم واضح في مكان واحد.'],
+              ['أعضاء هيئة التدريس', 'ارفع المحتوى وأدر المقررات دون تعقيد.'],
+              ['المعيدون', 'تابع الواجبات والدرجات بخطوات أقل.'],
+              ['منسقو المقررات', 'وحّد الجداول والمواد بين الشعب.'],
+              ['إدارة الكلية', 'نظرة شاملة على المقررات والأداء.'],
+              ['الجامعات الصغيرة', 'ابدأ بمساحة عمل واحدة ثم وسّع.'],
+            ].map(([t, d], i) => (
+              <details key={t} className="fo-use" open={i === 0}>
+                <summary className="fo-use-sum"><span>{t}</span><span className="fo-use-plus" aria-hidden="true">+</span></summary>
+                <p className="fo-use-desc">{d}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+
         {/* r368 — the closing call: a centred ruled cell with corner
             coordinates, headline, one line and one button (the
             reference's closing band grammar; copy is Ulara's own). */}

@@ -119,3 +119,6 @@ Whole building now shows at phone width (the crop cut it before). Still wrong: a
 
 ## Slice 21 footer round 1
 Added a centred ruled closing band (headline, one line, one button, corner coords) at the top of the footer, the reference's closing grammar. Still wrong: no use-case accordion beside a large art plate, the link index, early-access form and giant wordmark remain below, the band is not sized to the reference. Status: FAILING.
+
+## Slice 21 footer round 2
+Added the use-case accordion (art plate left, ruled native-details list right) above the closing band: the reference closing section's structure now exists. Still wrong: art plate is the existing cantilever scene, not a reference-like flat massing with sun disc; type scale and spacing not measured. Status: FAILING.
