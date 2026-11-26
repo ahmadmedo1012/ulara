@@ -110,3 +110,6 @@ Dark hero elevation inverted and screened: now reads as pale blueprint ink on da
 
 ## Slice 03 hero round 2
 The desktop hero art is now an original procedural flat elevation (scripts/art/elevation-flat.mjs): concrete frame, glazed bays, roof slab, podium, steps, two line trees, a cast-shadow wedge. Flat architectural style, as in the reference, instead of dense photographic hatching. Still wrong: our massing is symmetric and thin; the reference stacks a deep solid concrete base under recessed glass with strong shadow tone and bare branching trees. Mobile still uses the raster. Two tests re-pinned to the new asset seat (reference wins over the old raster pin). Status: FAILING (closer).
+
+## Slice 03 hero round 3
+Rebuilt the procedural elevation: two slender outer fins, two heavy piers under a deep roof slab, a recessed two-storey glazed core with reflections, a textured solid podium, a long cast-shadow wedge, side steps, and recursive bare branching trees (the earlier leaf scribbles read as dandelions). Reads as the same family of drawing as the reference, flat and architectural. Still wrong: the reference is more intricate (ribbed concrete, stepped terrace blocks, third volume at the back, denser shadow tone), ours is cleaner and lighter; mobile still uses the raster. Status: FAILING (closer).

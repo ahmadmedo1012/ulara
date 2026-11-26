@@ -34,3 +34,4 @@ NEXT: platform grid to one tall plan cell + ledger rows; half-art/half-list role
 - phone fold art narrowed; dark capture harness fixed; suite 2964/2966 then gate fixed (FAILING; NEXT: dark hero art contrast, more mobile)
 - dark hero art legible; phone hint hidden (FAILING; NEXT: mobile platform/use-case, stored-shot loops)
 - hero desktop art is a procedural flat elevation (FAILING; NEXT: heavier massing + shadow, mobile elevation, mobile bands)
+- hero elevation v2: heavy massing, bare trees (FAILING; NEXT: mobile elevation, shadow tone)
