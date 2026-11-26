@@ -33,6 +33,14 @@ import { RevealCssClass } from '../../../hooks/useReveal';
 import { Hairline, Numeral } from '../patterns';
 import { ExamRunnerPlate, AssistantPlate } from '../plates/ProductPlates';
 
+/* r368 slice 07: the platform band's central plates are THICK-WALL PLANS at reference scale (the reference's
+ * platform band is a large plan with signal callouts), original art from scripts/art/plans-v2.mjs. */
+const PLAN_EXAM = new URL('../../../assets/art-v2/plans/plan-exam-hall.svg', import.meta.url).href;
+const PLAN_LAB = new URL('../../../assets/art-v2/plans/plan-laboratory.svg', import.meta.url).href;
+function PlatformPlan({ src, label, dataSpec }: { src: string; label: string; dataSpec?: string }) {
+  return <img className="prp-plan" src={src} alt={label} data-spec={dataSpec} loading="lazy" decoding="async" />;
+}
+
 /* the two platform items — copy-driven, mirroring the reference's two
  * carousel items (label/title/long-text/two CTA lines each).
  * r342-06 — the plate pair is capability-disjoint from the neighbouring
@@ -89,7 +97,7 @@ export function Product() {
         <div className="pr-imgs" aria-hidden="true">
           <div className="pr-imgs-vrule" data-spec="platform.imgsvruleA" aria-hidden="true" />
           <div className="pr-img" data-spec="platform.img1">
-            <ExamRunnerPlate label={PLATFORM_ITEMS[0].alt} dataSpec="platform.img1img" />
+            <PlatformPlan src={PLAN_EXAM} label={PLATFORM_ITEMS[0].alt} dataSpec="platform.img1img" />
             {/* r340 T-P1y — the drafting chrome every plate carries
                 (the frame now speaks the sheet's own language —
                 hairline + [nn] tag on a paper chip) */}
@@ -101,7 +109,7 @@ export function Product() {
           </div>
           <div className="pr-imgs-hrule" data-spec="platform.imghruleA" aria-hidden="true" />
           <div className="pr-img" data-spec="platform.img2">
-            <AssistantPlate label={PLATFORM_ITEMS[1].alt} dataSpec="platform.img2img" />
+            <PlatformPlan src={PLAN_LAB} label={PLATFORM_ITEMS[1].alt} dataSpec="platform.img2img" />
             <div className="pr-frame-chrome" aria-hidden="true">
               <Hairline variant="border" />
               <span className="pr-frame-tag"><Numeral n={2} /></span>

@@ -39,3 +39,7 @@ Status: FAILING, much closer in construction.
 Done: the cantilever is now one structure (columns stand between the slab underside and the ground line in one-point perspective, board-formed course lines); footer strip uses the same flat scene (cover crop, physical shape seats).
 Still different: (1) the reference building is a solid concrete mass with texture and a pale distant horizon; ours is flat ink and a bit too dominant, hiding the slab; scale the scene to about 70% and let the slab rise behind its roof. (2) Half-art/half-list layout not built. (3) Thick-wall plan scale (05/07) not started.
 Status: FAILING; typecheck passes.
+
+## Platform band round 1 (slice 07, sheet: round1-platform-plans.webp)
+Done: the platform band's central plates are now large thick-wall plans (exam hall, laboratory) filling the column at reference scale, instead of small isometric tiles.
+Still different: (1) plans are cropped mid-wall (object-fit cover) and should show a whole room cluster with dimension strings along the foot and royal callout squares + a dark info card overlapping it, as the reference does; (2) the heading and ledger rows should be large and sit centre-right (reference h2 about 4.8rem/1 uppercase-weight), ours are small at the band foot; (3) the ledger rows with icon rings are missing here. Status: FAILING, closer in scale.

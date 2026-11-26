@@ -10,5 +10,6 @@
 - Duotone layering: shapes behind scene, high-key scene (art-v2.css); round-2 critique.
 - Procedural cantilever scene (scripts/art/cantilever.mjs) + flat shapes on paper in the why band; round-3 sheet and critique. tsc passes.
 - Cantilever reworked into one arcade structure; footer strip on the flat scene; round-4 sheet.
+- Platform band central plates are thick-wall plans at reference scale (Product.tsx, platform.css); round-1 sheet.
 
-NEXT: scene scale/texture, half-art/half-list layout (08/09), thick-wall plans (05/07), then nav/preloader/cursor from measured CSS.
+NEXT: plan crop/callouts/dark card, platform heading scale, half-art/half-list roles layout (08/09), nav/preloader/cursor from measured CSS.
