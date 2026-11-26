@@ -26,7 +26,7 @@ const OUT = join(ROOT, 'frontend', 'src', 'assets', 'art-v2', 'plans');
 
 /* ── grammar constants (r350 measured: ink #282828 family · hairline #b3b3af ·
    royal #2540D9 — the owner's signal seat) ─────────────────────────────── */
-const INK = '#262019';
+const INK = '#2c2b28'; // r368: neutral, a touch lighter than the brand ink (reference walls read olive-grey, not brown)
 const INK_SOFT = '#4a4a48';
 const HAIR = '#b3b3af';
 const FAINT = '#d9d8d2';

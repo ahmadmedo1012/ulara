@@ -133,3 +133,4 @@ NEXT: more
 - 06 desktop platform frame: large plan + dark card at stages 2-4 (own commit). NEXT: mobile perf re-measure, texture.
 - 06 per-wash plan variants. NEXT: texture/line weight.
 - texture/line weight measured (no code change; differences within measurement noise). Hero art remains drawing vs photo.
+- plan wall ink neutral #2c2b28 (was warm #262019); thickness left (anti-alias noise).
