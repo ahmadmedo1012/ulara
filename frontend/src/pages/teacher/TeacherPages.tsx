@@ -724,6 +724,24 @@ export function AttendancePage() {
   );
 }
 
+/* r365 loading-closure — the picker pages' first paint mirrors the
+ * resolved anatomy's opening datum: the KpiBand's sg-kpis cells
+ * (index/caption · numeral · label), so the data-land swap doesn't
+ * move. Same skeleton register the DataSheet loading state speaks. */
+function KpiBandSkeleton({ cells = 4 }: { cells?: number }) {
+  return (
+    <div className="sg-kpis" aria-busy="true" aria-live="polite">
+      {Array.from({ length: cells }, (_, i) => (
+        <div key={i} className="sg-kpi" aria-hidden="true">
+          <Skeleton width={64} height={11} />
+          <Skeleton width={92} height={34} />
+          <Skeleton width={110} height={11} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function GradesPage() {
   const { offsQ, offerings, effectiveOfferingId, setOfferingId, offering } = useOfferingPicker();
   const stuQ = useTeacherStudents(effectiveOfferingId || undefined);
@@ -747,6 +765,7 @@ export function GradesPage() {
       <div className="page">
         {/* r351 A2 (Q3): header subtitle retired — the table explains itself. */}
         <PageHeader title="درجات الطلاب" />
+        <KpiBandSkeleton cells={4} />
         <TableSkeleton rows={5} cols={5} />
       </div>
     );
@@ -1758,6 +1777,7 @@ export function StudentsListPage() {
       <div className="page">
         {/* r351 A2 (Q3): header subtitle retired — the roster explains itself. */}
         <PageHeader title="قائمة الطلاب" />
+        <KpiBandSkeleton cells={2} />
         <TableSkeleton rows={5} cols={6} />
       </div>
     );
@@ -1912,13 +1932,15 @@ export function StudentsListPage() {
           />
         )}
       </SheetSection>
-    </div>
-
 
       {/* r323 B3.1 — the invite codes seat: mint scoped codes for the
-          selected offering (the register page consumes them). */}
+          selected offering (the register page consumes them).
+          r365: the seat rides INSIDE .page — it sat outside the
+          1080px measure as .hr-scope's display:contents child and
+          rendered full-bleed against the page's centered rhythm. */}
       <InviteCodesCard offeringId={effectiveOfferingId} />
-</div>
+    </div>
+    </div>
   );
 }
 

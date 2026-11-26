@@ -16,7 +16,7 @@ import { PageHeader as PatternsPageHeader, FilterBar } from '../../components/pa
 import { SheetSection, KpiBand, DataSheet, type DataSheetColumn } from '../../components/patterns';
 import {
   EmptyState, ErrorState,
-  CardSkeleton, StripSkeleton, Skeleton,
+  StripSkeleton, Skeleton, ListSkeleton, ChartSkeleton,
 } from '../../components/primitives/States';
 import { ChartFrame } from '../../components/charts';
 import { Icon } from '../../components/Icon';
@@ -269,6 +269,9 @@ export function AdminDashboardPage() {
             </div>
           ))}
         </div>
+        {/* r172b (pinned loading-closure §4): the charts-row slots keep the
+         * .grid-2-1 + Card mirror — the test pins this anatomy; the
+         * sg-split re-mirror is deferred to the next loop with the pin. */}
         <div className="grid-2-1" style={{ marginBlockStart: 'var(--sp-9)' }}>
           <Card title="توزّع الطلاب حسب الكلّيّة">
             <Skeleton width="100%" height={174} rounded="var(--r-lg)" />
@@ -288,12 +291,14 @@ export function AdminDashboardPage() {
     return (
       <div className="page r305ao">
         <PatternsPageHeader eyebrow="إدارة المؤسسة" title={roleDashboardLabel('ADMIN')} description="إحصائيات حيّة عن طلاب وأساتذة المنصّة." />
-        <Card>
+        {/* 5-b: the error register rides the hairline section frame (§2) —
+         * the off-grammar Card wrapper retired. */}
+        <SheetSection index="01" caption="STUDENT DISTRIBUTION" title="توزّع الطلاب حسب الكلّيّة">
           <ErrorState
             error={stats.error ?? facs.error ?? reports.error}
             onRetry={() => { stats.refetch(); facs.refetch(); reports.refetch(); }}
           />
-        </Card>
+        </SheetSection>
       </div>
     );
   }
@@ -751,7 +756,15 @@ export function AdminFacultiesPage() {
           breadcrumbs={[{ label: 'لوحة إدارة المؤسسة', to: '/admin/dashboard' }, { label: 'الكلّيّات والأقسام' }]}
         />
         <StatStripSkeleton />
-        <CardSkeleton lines={7} />
+        {/* 5-b (loading mirror §3): the pending directory rides the real
+         * framed section (the FacultyRow handoff keeps its frame); the
+         * generic CardSkeleton flashed a retired card anatomy. The head
+         * stays untitled while pending — the h1 is the branch's one
+         * heading (the resolved section's counted title lands at the
+         * handoff, and the pending h2 must not clone the page h1). */}
+        <SheetSection index="01" caption="FACULTY DIRECTORY">
+          <ListSkeleton rows={5} />
+        </SheetSection>
       </div>
     );
   }
@@ -764,7 +777,11 @@ export function AdminFacultiesPage() {
           /* r351 A2 (Q3): header description retired — the roster explains itself. */
           breadcrumbs={[{ label: 'لوحة إدارة المؤسسة', to: '/admin/dashboard' }, { label: 'الكلّيّات والأقسام' }]}
         />
-        <Card><ErrorState error={error} onRetry={() => refetch()} /></Card>
+        {/* 5-b: the error register rides the hairline section frame (§2) —
+         * the off-grammar Card wrapper retired. */}
+        <SheetSection index="01" caption="FACULTY DIRECTORY" title="الكلّيّات والأقسام">
+          <ErrorState error={error} onRetry={() => refetch()} />
+        </SheetSection>
       </div>
     );
   }
@@ -1159,7 +1176,14 @@ export function AdminReportsPage() {
           breadcrumbs={[{ label: 'لوحة إدارة المؤسسة', to: '/admin/dashboard' }, { label: 'التقارير المؤسسية' }]}
         />
         <StatStripSkeleton />
-        <CardSkeleton lines={6} />
+        {/* 5-b (loading mirror §3): the pending trend board rides the real
+         * framed section with the chart-shaped placeholder — the resolved
+         * ChartFrame cell keeps its frame at the handoff. Untitled while
+         * pending: the resolved section's title must stay the data-land
+         * signal (findByText waits for it), not a pending-state echo. */}
+        <SheetSection index="01" caption="PAPER TREND">
+          <ChartSkeleton height={240} />
+        </SheetSection>
       </div>
     );
   }
@@ -1172,7 +1196,11 @@ export function AdminReportsPage() {
           /* r351 A2 (Q3): header description retired — the KPI band explains the page. */
           breadcrumbs={[{ label: 'لوحة إدارة المؤسسة', to: '/admin/dashboard' }, { label: 'التقارير المؤسسية' }]}
         />
-        <Card><ErrorState error={error} onRetry={() => refetch()} /></Card>
+        {/* 5-b: the error register rides the hairline section frame (§2) —
+         * the off-grammar Card wrapper retired. */}
+        <SheetSection index="01" caption="PAPER TREND" title="حركة البحوث العلمية">
+          <ErrorState error={error} onRetry={() => refetch()} />
+        </SheetSection>
       </div>
     );
   }
