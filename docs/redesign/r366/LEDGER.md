@@ -59,7 +59,9 @@ best-in-class bar and the web's visual language).
   `apps/mobile/scripts/capture/{capture-device,capture-combo,capture-deeplinks,capture-ios}.sh`
   + the route lists `routes-{PUBLIC,STUDENT,TEACHER,ADMIN,QUALITY,OWNER}.txt`.
   Capture-only: no lane contract moves; the four owned workflows keep their
-  exact behaviour.
+  exact behaviour. Dispatch note: `workflow_dispatch` needs the file on the
+  default branch, so on this branch the rig rides scoped pushes (the rig's
+  own paths); on `main` after the merge it is dispatchable directly.
 - **The sweep's deferred set (needs seeded ids wired):** detail routes with
   params render via their list screens only — wiring the seed's real ids
   into `routes-*.txt` (offerings, lectures, exam templates, competitions,
