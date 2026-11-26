@@ -374,21 +374,14 @@
   }
 
   .pm-cols {
-    /* R332 W3 (twin run-001 · 390 defect, kept): `none` hands the
-       track list to the implicit carousel columns — the reference's own
-       mobile anatomy (swiper 11, problem list) as a snap carousel.
-       R342 re-measure: the census pitch is 311.67px on the 374 band
-       = 83.33% (5/6) with BUTT slides (no gap — the 1px column rules
-       carry the divider line; a layout gap doubled the pitch and
-       walked every off-screen slide ≥9px off the mirrored measure). */
-    grid-template-columns: none;
-    grid-auto-flow: column;
-    grid-auto-columns: 83.33%;
+    /* r368 — the phone band STACKS like the reference's phone list:
+       one column, rows top to bottom, no horizontal carousel. */
+    grid-template-columns: minmax(0, 1fr);
+    grid-auto-flow: row;
+    grid-auto-columns: auto;
     gap: 0;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-padding-inline: 1.2rem;
-    scrollbar-width: thin;
+    overflow: visible;
+    scroll-snap-type: none;
   }
 
   .pm-col {
@@ -399,7 +392,10 @@
      (the right edge — the boundary to the previous slide), not the end */
   .pm-colrule {
     inset-inline-start: 0;
-    inset-inline-end: auto;
+    inset-inline-end: 0;
+    inset-block: 0 auto;
+    inline-size: auto;
+    block-size: 1px;
   }
 
   /* the frozen 390 capture records every slide fully rendered — the
@@ -450,7 +446,7 @@
   }
 
   .pm-dots {
-    display: flex;
+    display: none; /* r368 — stacked list: the carousel rail retires on phone */
     justify-content: flex-start;
     align-items: center;
     gap: 0;
