@@ -266,3 +266,7 @@ Dark hero, statement band and values band render coherently in RTL; the cookie b
 
 ## Hero hatching + near-empty dark frame
 The near-empty band at scroll ~2200 is the "chapters" word-reveal statement (.jt-stack); light renders the same single line, so it is by design, not a dark bug (verified in both themes). Hero hatching density raised 1.5x (gzip 45KB, within budget); the reference still has finer, denser board texture. Slices 07/08 plate sizes are still not pixel-measured. Status: FAILING.
+
+## Slices 07/08 plate measurement (1440x1000, from the montage, +-5px)
+07 Why: reference floor-plan plate ~453x446 at x862 y472; ULARA right plate ~453x475 at x910 y415 (width equal, height +6%). Reference elevation plate ~293px wide top-left; ULARA left plan plate ~333 wide (+14%). Plate sizes are within tolerance, so no size change; remaining gaps are the reference keeping a red hairline across the whole band and the dark card nested under the plate, plus finer line weight.
+08 Roles: stacked plates at ~340px wide match the reference column width; the gap is composition (ULARA puts the role list on the right, the reference leaves it as bare ground with two art plates). Status: FAILING.
