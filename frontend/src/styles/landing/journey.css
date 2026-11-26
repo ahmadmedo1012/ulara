@@ -2088,3 +2088,8 @@ section.chapters {
   .jt-plat-cap-t { font-size: 15px; font-weight: 600; }
   .jt-plat-cap-d { font-size: 11px; opacity: .7; }
 }
+
+/* r368 06 collage — a third, smaller plate on the near edge, as the reference stacks several plates */
+@media (min-width: 992px) {
+  .jt-plat-aux-3 { inset-inline-end: auto; inset-inline-start: 3%; inset-block-start: 6%; inline-size: 14%; }
+}

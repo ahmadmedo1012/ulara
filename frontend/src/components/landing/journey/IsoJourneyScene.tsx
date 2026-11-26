@@ -119,7 +119,7 @@ const CLOSE_CHIP_L2_AR = '[04]';
 const PLAT_PLAN_SRCS = ['lecture', 'library', 'exam'].map(
   (n) => new URL(`../../../assets/art-v2/plates-bl/${n}.webp`, import.meta.url).href,
 );
-const PLAT_AUX_SRCS = ['campus', 'admin'].map(
+const PLAT_AUX_SRCS = ['campus', 'admin', 'lab'].map(
   (n) => new URL(`../../../assets/art-v2/plates-bl/${n}.webp`, import.meta.url).href,
 );
 const BIG_PLAN_SRC = new URL('../../../assets/art-v2/plans/plan-library.svg', import.meta.url).href;
@@ -1020,7 +1020,7 @@ export function IsoJourneyScene() {
                 {PLAT_AUX_SRCS.map((src, k) => (
                   <span key={k} className={`jt-plat-aux jt-plat-aux-${k + 1}`}>
                     <img src={src} alt="" loading="eager" decoding="async" />
-                    <span className="jt-plat-tag fo-mono" dir="ltr">{k === 0 ? 'ULR · 1012.2' : 'ULR · 1020.2'}<b dir="rtl">{k === 0 ? 'سعة القاعة' : 'عرض الممر'}</b></span>
+                    {k < 2 && <span className="jt-plat-tag fo-mono" dir="ltr">{k === 0 ? 'ULR · 1012.2' : 'ULR · 1020.2'}<b dir="rtl">{k === 0 ? 'سعة القاعة' : 'عرض الممر'}</b></span>}
                   </span>
                 ))}
                 <svg className="jt-plat-route" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
