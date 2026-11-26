@@ -65,3 +65,6 @@ Ledger row scale raised. Dark card stays hover-only (spec-measured rest state); 
 
 ## Slices 05 and 06 round 1 (measured, not yet fixed)
 05 problem: the reference is four ruled head-columns with tight sans headings, then one empty cream field carrying a single huge centred statement. Ours stacks a plan, a dense list and chrome inside the band, so the empty field and the single statement are missing. 06 map: the reference is the same single huge centred statement on blank ground; ours is a boxed headline over a grid with a side list. Both need the content moved out of the band and the statement scaled to about 6vw. Status: FAILING.
+
+## Slice 06 map round 2
+Statement plate box removed, 6vw bold centred line. Closer in scale. Still wrong: side list, caption box, grid and chrome crowd the band; the reference is bare ground; font is Arabic display vs the reference grotesk (language only). Status: FAILING.

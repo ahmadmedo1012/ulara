@@ -1881,3 +1881,8 @@ section.chapters {
     transition: none;
   }
 }
+
+/* r368 slice 06 — the reference's map statement is one huge centred line on bare ground: no plate box, no border */
+@media (min-width: 992px) {
+  .jt-card .jt-card-plate { background: transparent; border: 0; box-shadow: none; padding: 0; font-size: 6vw; line-height: 1.1; letter-spacing: -0.02em; }
+}
