@@ -89,3 +89,6 @@ Defect: the inner page opened with a thin guest header (logo + back link); the r
 
 ## Slices 13-18 round 1 (inner pages: help, legal, app, campus, capabilities, plus about)
 The full nav bar now leads help, legal, app download, campus and capabilities, as on About; old header kept hidden in the DOM (focus-reveal). 186 unit tests across routes, legal, guest, funnel and sheet pass. Eyebrow clipped under the bar in the first capture; main top padding raised to 96px. Colleges pages (17) and auth (19) and error/maintenance (20) not changed. Still wrong everywhere: titles start-aligned instead of centred in a framed cell, boxed note stacks instead of ruled cells, no ruled column frame. Status: FAILING.
+
+## Slices 12-18 round 2
+Inner-page titles centred in a ruled cell at desktop (guest pages only: scoped to pages with the full bar). Closer to the reference opening. Still wrong: no vertical column rules framing the title cell, no ruled pricing-style grid below, the hero image block and boxed notes are not reference structure, title face is Arabic display. Merged origin/main (47 commits, clean, no conflicts, no baselines touched). Colleges (17), auth (19), error/maintenance (20) not yet touched. Status: FAILING.

@@ -955,3 +955,11 @@ html[data-theme='dark'] .fo-header {
 .fo-header ~ :is(.ab-header, .hp-header, .cu-header, .lg-header, .ap-header) { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .fo-header ~ :is(.ab-header, .hp-header, .cu-header, .lg-header, .ap-header):focus-within { position: fixed; inset-block-start: 70px; inset-inline-start: 12px; inline-size: auto; block-size: auto; overflow: visible; clip-path: none; z-index: 70; }
 .fo-header ~ main { padding-block-start: 96px; }
+
+/* r368 slice 12-18 — the reference opens every inner page with a centred title in a ruled cell between two vertical column rules */
+@media (min-width: 992px) {
+  .fo-header ~ main .pf-page-header { display: grid; justify-items: center; text-align: center; gap: 1.2rem; padding-block: 4.8rem 3.2rem; border-block-end: 1px solid var(--grid-line); }
+  .fo-header ~ main .pf-page-header-text { display: grid; justify-items: center; text-align: center; }
+  .fo-header ~ main .pf-page-title { font-size: clamp(4rem, 5vw, 7.2rem); line-height: 1.1; text-align: center; }
+  .fo-header ~ main .pf-page-actions { justify-content: center; }
+}
