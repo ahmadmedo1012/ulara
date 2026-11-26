@@ -149,3 +149,6 @@ The white box is .map-panel mid-unfold (header and rows reveal only after the cl
 
 ## Inner pages: nav CTA slab
 /colleges header CTA painted a solid royal block because the pixel-mask rule lived only in the landing page stylesheet. SheetNav now imports it; re-captured, CTA reads as small text like home. Still wrong: no ruled column frame on inner pages, plan block boxed notes. Status: FAILING.
+
+## Inner pages: column rules
+Added two hairline full-height column rules at 20.3% and 79.7% to the guest frame (>=992px), matching the reference pricing shot. Only one inner shot exists in the corpus, and ULARA has no pricing route (404), so the table grammar cannot be compared. Still wrong: plan block boxed, no ruled tables. Status: FAILING.

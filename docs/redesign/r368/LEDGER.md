@@ -63,3 +63,5 @@ NEXT: locate the panel by section class
 NEXT: remaining failing slices
 - inner-page nav CTA solid block fixed (patterns.css loads with SheetNav)
 NEXT: inner-page ruled column frame
+- inner-page column rules on the guest frame
+NEXT: colleges plan block

@@ -5332,3 +5332,20 @@ button.tq-row:focus-visible {
 .r321x-page .oex-review-q,
 .r321x-page .oex-timer,
 .r321x-page .oex-save-warn { border-radius: 0; }
+
+/* r368 — the reference's inner pages ride two full-height hairline column rules (about a fifth in from each edge). Additive: the guest frame gains them on wide viewports only; the 4 registration marks stay as they were. */
+@media (min-width: 992px) {
+  .auth-frame::before,
+  .auth-frame::after {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inline-size: 1px;
+    background: var(--rule, currentColor);
+    opacity: 0.55;
+    pointer-events: none;
+  }
+  .auth-frame::before { left: 20.3%; }
+  .auth-frame::after { left: 79.7%; }
+}
+@media print { .auth-frame::before, .auth-frame::after { display: none; } }
