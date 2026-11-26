@@ -142,3 +142,4 @@ NEXT: more
 - r368 phone pains band now STACKS (one column, rail retired, rules horizontal), matching the reference phone list; pains-related tests (133+164) pass unchanged because they pin DOM/data-spec not the scroller CSS. Mobile perf: p50 16.7ms, 12 frames >50ms, longtasks 0.65s. Status: FAILING overall.
 NEXT: origin/main sync ~9:50pm; remaining gaps 06 layout, hero photo look, no-corpus slices.
 - r368 phone pains rows carry small procedural iso line drawings (PainArt, aria-hidden, phone only). Tests 164 pass. Status: FAILING overall.
+- r368 fresh pass (desktop/tablet/phone x light/dark): DEFECT found+fixed: slice-06 platform plan was invisible in dark (no invert) -> dark filter added. Capability panel blank window shrunk (frame opens 0.62-0.68, head 0.68, rows 0.70). Open: phone dark intro card shows empty head at one frame (unverified, may be transient). Status: FAILING overall.

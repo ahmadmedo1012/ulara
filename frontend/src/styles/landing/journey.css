@@ -2011,6 +2011,7 @@ section.chapters {
   .jt-plat-img { position: absolute; inset-block: 6% 6%; inset-inline-start: 4%; block-size: 88%; inline-size: auto; max-inline-size: 78%; object-fit: contain; }
   .jt-plat-sq { position: absolute; inline-size: 2.4rem; block-size: 2.4rem; background: #2540d9; }
   [data-theme="dark"] .jt-plat-sq { background: #8aa0ff; }
+  [data-theme="dark"] .jt-plat-img { filter: invert(1) grayscale(0.2) brightness(0.9); } /* r368 — dark paper: dark-ink plan inverts like the other plan art */
   .jt-plat-sq-a { inset-block-start: 22%; inset-inline-start: 14%; }
   .jt-plat-sq-b { inset-block-start: 58%; inset-inline-start: 38%; }
   .jt-plat-card { position: absolute; inset-block-end: 4%; inset-inline-start: 46%; inline-size: 26%; }

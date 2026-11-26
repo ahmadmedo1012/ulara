@@ -493,9 +493,9 @@ const YIELD_AT: readonly [number, number] = [0.62, 0.18];
  * completes by 74% and every row settles by ~0.92, so the seat
  * carries INK through its own growth instead of dead paper. */
 const PANEL_BOX_AT: readonly [number, number] = [0.62, 0.04];
-const PANEL_W_AT: readonly [number, number] = [0.62, 0.12];
-const PANEL_HEAD_AT: readonly [number, number] = [0.74, 0.04];
-const PANEL_ROW_AT = 0.76;
+const PANEL_W_AT: readonly [number, number] = [0.62, 0.06];
+const PANEL_HEAD_AT: readonly [number, number] = [0.68, 0.04];
+const PANEL_ROW_AT = 0.7;
 const PANEL_ROW_STEP = 0.03;
 const PANEL_ROW_DUR = 0.05;
 
