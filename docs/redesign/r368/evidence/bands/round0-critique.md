@@ -140,3 +140,6 @@ Checked: dark uses the same flat elevation SVG, inverted and screened (hero.css 
 
 ## RTL footer and platform loop 1 (1440)
 Footer: accordion left plate, right list, closing band hold in RTL; the left corner coordinate label is clipped by the side tab. Platform: ledger and title columns mirror correctly; a blank white panel sits over the isometric art in the capture (likely a lazy panel not yet painted, unverified); the art is the isometric campus, not the reference flat plate. Status: FAILING.
+
+## Platform blank panel check
+The white panel is stable across two captures, so it is not a one-off paint. A DOM probe could not find a #platform element in a fresh page, so the cause is unlocated. Open defect, not fixed. Footer corner label clip also not fixed. Status: FAILING.

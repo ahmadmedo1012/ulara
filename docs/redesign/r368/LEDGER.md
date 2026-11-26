@@ -57,3 +57,5 @@ NEXT: dark hero art flat massing
 NEXT: RTL footer/platform loops
 - RTL footer/platform loop 1 logged
 NEXT: platform blank panel check, corner label clip
+- blank platform panel reproduced twice, cause unlocated; label clip open
+NEXT: locate the panel by section class
