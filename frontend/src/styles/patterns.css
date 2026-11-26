@@ -5321,3 +5321,14 @@ button.tq-row:focus-visible {
  * @layer pages, no competitor remains in the sheets. */
 @layer pages {
 }
+
+/* ═══ R366 exam-look pass — the taker chrome joins the flat hairline
+ * register (ONE additive rule; unlayered so it settles the @layer ties,
+ * scoped under the family root .r321x-page so nothing leaks). The
+ * navigator dots become square hairline cells, the review rows ledger
+ * lines, the timer + autosave-failure chips square — radius 0, the
+ * sheet draws 1px lines only. Look-only: no behavior seat moves. */
+.r321x-page .oex-qmap-dot,
+.r321x-page .oex-review-q,
+.r321x-page .oex-timer,
+.r321x-page .oex-save-warn { border-radius: 0; }

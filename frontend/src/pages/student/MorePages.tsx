@@ -2137,6 +2137,26 @@ export function UniversityInfoPage() {
         ]}
       />
 
+      {/* R305 DS: the identity card is the page's ONE deep band — the
+          authority surface. Facts ride the band-safe .r305u-fact anatomy
+          (the deep FactRow variant) inside the .r305u-facts grid.
+          R342-08: the section opener is the §B2 bar — [01] + the h2
+          (same heading semantics the r305s-kicker carried, on the
+          D7a family grammar).
+          r365 audit: [01] leads the DOM — the bracket indices must
+          follow reading order (the r351 A2 honesty law), so IDENTITY
+          sits before VISION & MISSION's [02]. */}
+      <SheetSection index="01" caption="IDENTITY" title="بطاقة تعريف">
+        <div className="r305u-facts">
+          <FactRow deep label="الاسم الرسميّ" value="مساحة عمل أُلارا التجريبية" />
+          <FactRow deep label="النطاق" value="اصطناعية" />
+          <FactRow deep label="النوع" value="تجريبية" />
+          <FactRow deep label="بريد العرض" value="demo.ulara.ly" mono />
+          <FactRow deep label="الموقع" value="افتراضية" />
+          <FactRow deep label="طابع البيانات" value="عرض فقط" />
+        </div>
+      </SheetSection>
+
       {/* Vision + Mission (the demo tenant's synthetic strategy —
           mirrors static-source.ts strategicPlan.*) */}
       <SheetSection index="02" caption="VISION & MISSION" title="الرؤية والرسالة">
@@ -2153,23 +2173,6 @@ export function UniversityInfoPage() {
               سير العمل الأكاديمي كاملًا: الطالب، الأستاذ، والجودة.
             </p>
           </div>
-        </div>
-      </SheetSection>
-
-      {/* R305 DS: the identity card is the page's ONE deep band — the
-          authority surface. Facts ride the band-safe .r305u-fact anatomy
-          (the deep FactRow variant) inside the .r305u-facts grid.
-          R342-08: the section opener is the §B2 bar — [01] + the h2
-          (same heading semantics the r305s-kicker carried, on the
-          D7a family grammar). */}
-      <SheetSection index="01" caption="IDENTITY" title="بطاقة تعريف">
-        <div className="r305u-facts">
-          <FactRow deep label="الاسم الرسميّ" value="مساحة عمل أُلارا التجريبية" />
-          <FactRow deep label="النطاق" value="اصطناعية" />
-          <FactRow deep label="النوع" value="تجريبية" />
-          <FactRow deep label="بريد العرض" value="demo.ulara.ly" mono />
-          <FactRow deep label="الموقع" value="افتراضية" />
-          <FactRow deep label="طابع البيانات" value="عرض فقط" />
         </div>
       </SheetSection>
 
@@ -2267,7 +2270,7 @@ export function UniversityInfoPage() {
       </SheetSection>
 
       <SheetSection index="06" caption="DEGREES" title="الشهادات والبرامج الأكاديميّة">
-        <div className="grid-3" style={{ gap: 'var(--sp-3)', marginBottom: 'var(--sp-4)' }}>
+        <div className="grid-3" style={{ gap: 'var(--sp-3)', marginBlockEnd: 'var(--sp-4)' }}>
           {[
             { ar: 'الإجازة الجامعيّة', en: 'Bachelor / Licence' },
             { ar: 'الدراسات العليا', en: "Master's" },
