@@ -75,3 +75,5 @@ NEXT: slice 05 statement scale, slice 06
 NEXT: slice 06
 - slice 06 scroll sweep logged (statement/art collision, persistent left column)
 NEXT: separate art from statement in stage 3
+- slice 06 statement outline (unverified by capture)
+NEXT: re-sweep slice 06 offsets after reorder
