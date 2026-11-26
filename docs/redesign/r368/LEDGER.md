@@ -67,3 +67,5 @@ NEXT: inner-page ruled column frame
 NEXT: colleges plan block
 - colleges plan block audited, unmeasurable against corpus
 NEXT: auth slice 19 / slices 05-06 declutter
+- auth audited (no reference shot); slice 05 order mismatch logged
+NEXT: slice 05 cards-first + empty statement field

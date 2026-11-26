@@ -155,3 +155,6 @@ Added two hairline full-height column rules at 20.3% and 79.7% to the guest fram
 
 ## Colleges plan block
 The plan plate is a thick-wall SVG asset (PlanPlate, r364). The corpus has no plan-drawing shot to measure line weight against, so changing it would be a guess. Left unchanged; flagged as unmeasured, not as matching. Status: FAILING.
+
+## Auth and slice 05 audit
+Auth (/login): sheet chrome plus my column rules line up with the frame; it carries drafting captions (TEXT / 48PX) the reference has no analogue for, and the corpus has no auth shot, so left. /auth/login is a 404 (login lives at /login). Slice 05: reference reads four ruled cards on top then a big empty field with one centred statement; ours puts a heading and aside above the cards and the statement elsewhere. Order and field not yet matched. Status: FAILING.
