@@ -40,18 +40,36 @@ open_app() {
 # maestro starts too late. Dismiss the menu HERE, by its own node
 # bounds, before any wait.
 dismiss_dev_menu() {
+  # TWO dev overlays guard the app on an emulator:
+  #  · the dev-client's first-launch sheet ("Continue") → tap its node;
+  #  · the REACT NATIVE dev menu ("Toggle element inspector" /
+  #    "Open DevTools") — opened by the emulator runner's own post-boot
+  #    `input keyevent 82` (run #11's forensic screenshot: the full RN
+  #    menu covering the assert) → BACK closes it.
   for _ in 1 2 3; do
     adb shell uiautomator dump /sdcard/ula-dump.xml >/dev/null 2>&1 || true
-    LINE=$(adb shell cat /sdcard/ula-dump.xml 2>/dev/null | tr '\n' ' ' | grep -o 'text="Continue"[^>]*bounds="\[[0-9]*,[0-9]*\]\[[0-9]*,[0-9]*\]"' | head -1)
-    [ -z "$LINE" ] && return 0
-    B=$(printf '%s' "$LINE" | grep -o 'bounds="\[[0-9]*,[0-9]*\]\[[0-9]*,[0-9]*\]"' | sed 's/bounds="//; s/"//')
-    X1=$(printf '%s' "$B" | cut -d, -f1 | tr -d '[')
-    Y1=$(printf '%s' "$B" | cut -d, -f2 | cut -d] -f1)
-    X2=$(printf '%s' "$B" | awk -F'[][]' '{print $3}' | cut -d, -f1)
-    Y2=$(printf '%s' "$B" | awk -F'[][]' '{print $4}')
-    adb shell input tap $(((X1 + X2) / 2)) $(((Y1 + Y2) / 2))
-    echo "── dev menu dismissed (Continue at $((X1 + X2) / 2),$((Y1 + Y2) / 2))"
-    sleep 3
+    DUMP=$(adb shell cat /sdcard/ula-dump.xml 2>/dev/null | tr '\n' ' ')
+    case "$DUMP" in
+      *"Toggle element inspector"*|*"Open DevTools"*)
+        adb shell input keyevent 4
+        echo "── rn dev menu closed (BACK)"
+        sleep 3
+        continue
+        ;;
+    esac
+    LINE=$(printf '%s' "$DUMP" | grep -o 'text="Continue"[^>]*bounds="\[[0-9]*,[0-9]*\]\[[0-9]*,[0-9]*\]"' | head -1)
+    if [ -n "$LINE" ]; then
+      B=$(printf '%s' "$LINE" | grep -o 'bounds="\[[0-9]*,[0-9]*\]\[[0-9]*,[0-9]*\]"' | sed 's/bounds="//; s/"//')
+      X1=$(printf '%s' "$B" | cut -d, -f1 | tr -d '[')
+      Y1=$(printf '%s' "$B" | cut -d, -f2 | cut -d] -f1)
+      X2=$(printf '%s' "$B" | awk -F'[][]' '{print $3}' | cut -d, -f1)
+      Y2=$(printf '%s' "$B" | awk -F'[][]' '{print $4}')
+      adb shell input tap $(((X1 + X2) / 2)) $(((Y1 + Y2) / 2))
+      echo "── dev sheet dismissed (Continue at $((X1 + X2) / 2),$((Y1 + Y2) / 2))"
+      sleep 3
+      continue
+    fi
+    return 0
   done
 }
 
