@@ -46,3 +46,4 @@ NEXT: platform grid to one tall plan cell + ledger rows; half-art/half-list role
 - footer use-case accordion + art plate (FAILING; NEXT: merge main, mobile platform/use-case rebuild)
 - phone platform: plan chrome chips dropped (FAILING; NEXT: icon-row rebuild of the phone platform list)
 - phone platform rebuilt as auto-height stack with ledger rows (FAILING; NEXT: line icons, use-case phone band)
+- ledger rows carry hexagon line icons with a glyph each (FAILING; NEXT: phone use-case band)
