@@ -227,3 +227,6 @@ Stage 1 now shows one large thick-wall plan on bare ground (aria-hidden .jt-bigp
 
 ## Dark re-check of the new stages (1440)
 Found: plan SVGs vanished on dark paper (multiply of dark ink). Fixed: dark invert plus screen blend on .plan-plate-art and .jt-bigplan img; the stage-0 statement and stage-1 big plan read well in dark. RTL: stage art is forced ltr (architecture, not mirrored), copy and tag text are rtl. Remaining: tag cards stay royal (not the dark #8AA0FF) and the dark card stays pale. Status: FAILING.
+
+## Slices 01-04 pass (1440)
+01-03 hero: composition matches (centred elevation, frame, statement bottom-left); gaps: our elevation is smaller and less detailed than the reference, the Arabic hero title is much larger relative to the frame, no corner plus marks inside the frame. 04 product: big thick-wall plan left with tag, text rail right; gaps: rail order and tab rail differ, no dimension chains on the plan. No new code this pass. Status: FAILING.
