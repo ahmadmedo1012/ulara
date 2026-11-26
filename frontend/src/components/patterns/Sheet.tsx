@@ -129,8 +129,9 @@ export interface KpiItem {
   caption?: string;
   /** The Arabic label under the numeral. */
   label: string;
-  /** A number counts in formatted; a string renders verbatim. */
-  value: number | string;
+  /** A number counts in formatted; a string or node renders verbatim
+   *  (r365: ReactNode joins so pages can ride CountIn inside the cell). */
+  value: number | string | ReactNode;
   /** Optional unit appended to the numeral (٪ / مقرر). */
   unit?: string;
   /** The delta line (mono, tone-colored). */

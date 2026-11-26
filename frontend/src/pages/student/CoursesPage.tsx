@@ -473,13 +473,27 @@ export function SubmitAssignmentModal({
       closeOnOverlayClick={!submit.isPending}
       closeOnEscape={!escapeLocked}
     >
-      <div className="modal-header">
-        <div className="modal-title">تسليم الواجب</div>
+      {/* r365 (4-a): the dialog slots (.modal-header/-title/-body) lost
+          their sheet rules — the chrome re-seats on the shared utilities
+          + token styles (the page's banner grammar). The header is the
+          §2 hairline head bar; the body is the scrolling region. */}
+      <div
+        className="modal-header flex items-center justify-between gap-2"
+        style={{
+          padding: 'var(--sp-4) var(--sp-6)',
+          borderBlockEnd: '1px solid var(--rule)',
+          flexShrink: 0,
+        }}
+      >
+        <div className="modal-title font-semibold">تسليم الواجب</div>
         <button type="button" className="icon-btn" onClick={requestClose} aria-label="إغلاق" disabled={submit.isPending}>
           <Icon icon={X} size={16} />
         </button>
       </div>
-      <div className="modal-body">
+      <div
+        className="modal-body"
+        style={{ padding: 'var(--sp-4) var(--sp-6)', overflowY: 'auto' }}
+      >
         <div className="text-sm font-semibold" style={{ color: 'var(--text)' }}>{assignment.title}</div>
         <div className="text-xs text-subtle" style={{ marginBottom: 'var(--sp-4)' }}>
           {assignment.courseName} · <bdi className="font-mono">{assignment.courseCode}</bdi> · الموعد النهائي:{' '}

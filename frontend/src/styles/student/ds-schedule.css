@@ -210,3 +210,19 @@
     .matrix-cell { transition: none; }
   }
 }
+
+/* ═══ UNLAYERED TAIL — the results summary's KPI register (r365 batch-2) ═══
+   patterns.css owns .pf-stat-value UNLAYERED (font-size var(--fs-h3)),
+   and unlayered author styles beat every @layer rule at any
+   specificity — the same cascade reasoning as pages.css's masthead
+   tail. The results summary band (.results-summary.r305s-band--deep,
+   test-pinned) IS the page's KPI seat: its headline numerals ride the
+   huge-metric register the sg-kpi-value carries (--fs-metric-lg; the
+   mono face comes from the band's own .r305s-band--deep rule) instead
+   of the body-scale h3. Font metrics ONLY — the r164-a band tones keep
+   their patterns.css rules untouched, and the honest-empty dash keeps
+   its body size via the :not guard. */
+.results-summary .pf-stat-value:not(.pf-stat-value--empty) {
+  font-size: var(--fs-metric-lg);
+  line-height: 1;
+}
