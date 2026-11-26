@@ -158,3 +158,4 @@ NEXT: origin/main sync ~9:50pm; remaining gaps 06 layout, hero photo look, no-co
 - r368 hero outlines tried: Freestyle (collection lineset) crashes Blender on 2GB sandbox (no output); ImageMagick edge pass gave worm/halo artefacts and +20% size, both rejected, hero v2 stays. NEXT: render hero in two passes (building / trees) and composite, or lower tree density for Freestyle
 - r368 hero v3: two-pass Blender render (building w/ Freestyle ink outlines + trees), light+dark verified
 - r368 hero v4: punched openings, railings, entrance recess+canopy, pergola, planters, pilotis, tower slits
+- r368 hero v5: weathering (vertical rain streaks + blotchy stains) on concrete; light+dark verified

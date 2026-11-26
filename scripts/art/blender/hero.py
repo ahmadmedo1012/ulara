@@ -29,7 +29,16 @@ def mat(name, col, rough=0.9, tex=None, glass=False):
         t = n.new('ShaderNodeTexNoise'); t.inputs['Scale'].default_value = tex; t.inputs['Detail'].default_value = 14
         r = n.new('ShaderNodeValToRGB'); r.color_ramp.elements[0].position = 0.35; r.color_ramp.elements[1].position = 0.65
         r.color_ramp.elements[0].color = (col[0]*0.55,col[1]*0.55,col[2]*0.55,1); r.color_ramp.elements[1].color = (*col,1)
-        l.new(t.outputs['Fac'], r.inputs['Fac']); l.new(r.outputs['Color'], b.inputs['Base Color'])
+        # weathering: vertical rain streaks + large blotchy stains multiply the grain
+        tc=n.new('ShaderNodeTexCoord'); mp=n.new('ShaderNodeMapping'); mp.inputs['Scale'].default_value=(1.0,1.0,0.12)
+        l.new(tc.outputs['Object'], mp.inputs['Vector'])
+        st=n.new('ShaderNodeTexNoise'); st.inputs['Scale'].default_value=1.6; st.inputs['Detail'].default_value=6; l.new(mp.outputs['Vector'], st.inputs['Vector'])
+        sr=n.new('ShaderNodeValToRGB'); sr.color_ramp.elements[0].position=0.3; sr.color_ramp.elements[1].position=0.75
+        sr.color_ramp.elements[0].color=(0.45,0.45,0.45,1); sr.color_ramp.elements[1].color=(1,1,1,1)
+        l.new(st.outputs['Fac'], sr.inputs['Fac'])
+        mx=n.new('ShaderNodeMixRGB'); mx.blend_type='MULTIPLY'; mx.inputs['Fac'].default_value=1.0
+        l.new(r.outputs['Color'], mx.inputs['Color1']); l.new(sr.outputs['Color'], mx.inputs['Color2'])
+        l.new(t.outputs['Fac'], r.inputs['Fac']); l.new(mx.outputs['Color'], b.inputs['Base Color'])
         bu = n.new('ShaderNodeBump'); bu.inputs['Strength'].default_value = 0.6
         l.new(t.outputs['Fac'], bu.inputs['Height']); l.new(bu.outputs['Normal'], b.inputs['Normal'])
     else:
