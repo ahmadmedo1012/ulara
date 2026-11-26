@@ -38,7 +38,11 @@ import { ExamRunnerPlate, AssistantPlate } from '../plates/ProductPlates';
 const PLAN_EXAM = new URL('../../../assets/art-v2/plans/plan-exam-hall.svg', import.meta.url).href;
 const PLAN_LAB = new URL('../../../assets/art-v2/plans/plan-laboratory.svg', import.meta.url).href;
 function PlatformPlan({ src, label, dataSpec }: { src: string; label: string; dataSpec?: string }) {
-  return <img className="prp-plan" src={src} alt={label} data-spec={dataSpec} loading="lazy" decoding="async" />;
+  return (
+    <>
+      <img className="prp-plan" src={src} alt={label} data-spec={dataSpec} loading="lazy" decoding="async" />
+          </>
+  );
 }
 
 /* the two platform items — copy-driven, mirroring the reference's two

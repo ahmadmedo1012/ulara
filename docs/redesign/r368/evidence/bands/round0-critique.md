@@ -43,3 +43,7 @@ Status: FAILING; typecheck passes.
 ## Platform band round 1 (slice 07, sheet: round1-platform-plans.webp)
 Done: the platform band's central plates are now large thick-wall plans (exam hall, laboratory) filling the column at reference scale, instead of small isometric tiles.
 Still different: (1) plans are cropped mid-wall (object-fit cover) and should show a whole room cluster with dimension strings along the foot and royal callout squares + a dark info card overlapping it, as the reference does; (2) the heading and ledger rows should be large and sit centre-right (reference h2 about 4.8rem/1 uppercase-weight), ours are small at the band foot; (3) the ledger rows with icon rings are missing here. Status: FAILING, closer in scale.
+
+## Platform band round 2 (sheet: round2-platform-heading.webp)
+Done: heading to h2 scale (4.8rem/1) like the reference; plans back to cover crop for scale (a contain crop made them small; the plan art already carries its own royal callouts).
+Still different: the reference has ONE large plan filling a full-height cell with a dark info card and the ledger rows beside it; ULARA's grid still has two stacked plan cells. Next: merge the two cells into one tall plan cell and add the ledger rows with icon rings. Status: FAILING.
