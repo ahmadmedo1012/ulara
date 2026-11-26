@@ -113,3 +113,6 @@ The desktop hero art is now an original procedural flat elevation (scripts/art/e
 
 ## Slice 03 hero round 3
 Rebuilt the procedural elevation: two slender outer fins, two heavy piers under a deep roof slab, a recessed two-storey glazed core with reflections, a textured solid podium, a long cast-shadow wedge, side steps, and recursive bare branching trees (the earlier leaf scribbles read as dandelions). Reads as the same family of drawing as the reference, flat and architectural. Still wrong: the reference is more intricate (ribbed concrete, stepped terrace blocks, third volume at the back, denser shadow tone), ours is cleaner and lighter; mobile still uses the raster. Status: FAILING (closer).
+
+## Slice 03 mobile round 1
+Whole building now shows at phone width (the crop cut it before). Still wrong: art is small in a tall empty frame, the three station markers float off the drawing (seated on the old raster), no cookie bar or sticky tag as in the reference. Status: FAILING.
