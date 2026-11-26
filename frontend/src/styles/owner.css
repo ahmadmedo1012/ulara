@@ -1044,3 +1044,65 @@
 .owner-detail-toggle {
   min-block-size: var(--touch-floor, 44px);
 }
+
+/* ══ r365 (8-a) — the feedback inbox's row register ══════════════════
+   The .fb-row family FeedbackInboxPage renders had NO stylesheet —
+   rows, chip heads, console blocks, screenshots and verb rows all fell
+   out of the cascade unstyled. One additive rule-block, scoped to the
+   ds page root (.r305ao) so it touches nothing else: the DataSheet
+   hairline register in tokens + logical properties only. The chips'
+   tone variants stay in components.css (r323's AA-safe -ink tiers). */
+.r305ao .fb-inbox { display: grid; gap: var(--sp-2-5); }
+.r305ao .fb-row {
+  display: grid;
+  gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-4);
+  border: 1px solid var(--rule);
+  background: var(--surface);
+}
+.r305ao .fb-row[data-reviewed='no'] { border-inline-start: 2px solid var(--accent); }
+.r305ao .fb-row-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  row-gap: var(--sp-1);
+}
+.r305ao .fb-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px var(--sp-2);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-full);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold, 600);
+  white-space: nowrap;
+}
+.r305ao .fb-row-route {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+.r305ao .fb-row-user {
+  margin-inline-start: auto;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  text-align: end;
+}
+.r305ao .fb-row-note { margin: 0; font-size: var(--fs-sm); line-height: 1.7; overflow-wrap: anywhere; }
+.r305ao .fb-shot { max-inline-size: 100%; border: 1px solid var(--rule); }
+.r305ao .fb-console {
+  margin: 0;
+  padding: var(--sp-2-5) var(--sp-3);
+  border: 1px solid var(--rule);
+  background: var(--surface-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  line-height: 1.6;
+  overflow: auto;
+  max-block-size: 280px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.r305ao .fb-status-actions { display: flex; align-items: center; flex-wrap: wrap; gap: var(--sp-2); }

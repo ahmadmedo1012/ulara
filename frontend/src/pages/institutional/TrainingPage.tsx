@@ -8,12 +8,14 @@ import { Plus } from 'lucide-react';
 import { PageFrame, PageHeader } from '../../components/patterns';
 import { api, unwrap } from '../../lib/api';
 import { toast } from '../../lib/toast';
-import { formatDate } from '../../utils/numbers';
+import { formatDate, formatPct1 } from '../../utils/numbers';
 
-import { serverError,
-  EnumChip, InstFilters, InstFormDialog, InstPagedTable, InstSection, InstSelect,
+import { serverError, StatusFlag,
+  InstFilters, InstFormDialog, InstPagedTable, InstSection, InstSelect,
   type InstColumn, type InstField, type InstFormValues,
 } from '../../components/institutional/kit';
+import { KpiBand } from '../../components/patterns';
+import { useInstitutionScope } from '../../stores/auth.store';
 import { Icon } from '../../components/Icon';
 import {
   useMyCapabilities, useOrgUnitTree, usePeople, usePlacements, useInstActions } from '../../hooks/institutional/queries';
@@ -29,6 +31,7 @@ interface LearnerOption { id: string; firstName: string; lastName: string }
 export function InstitutionTrainingPage() {
   const caps = useMyCapabilities();
   const canManage = caps.data?.has('PROGRAMS_MANAGE') ?? false;
+  const scope = useInstitutionScope();
 
   const [status, setStatus] = useState('');
   const [page, setPage] = useState(1);
@@ -122,14 +125,14 @@ export function InstitutionTrainingPage() {
   const columns: Array<InstColumn<TrainingPlacement>> = [
     {
       head: 'الطالب/المتدرب',
-      cell: (p) => p.student ? `${p.student.firstName} ${p.student.lastName}` : p.studentProfileId,
+      cell: (p) => (p.student ? <bdi>{`${p.student.firstName} ${p.student.lastName}`}</bdi> : p.studentProfileId),
     },
     { head: 'الجهة المستضيفة', cell: (p) => p.externalHost ?? 'داخل المؤسسة' },
     { head: 'منذ', cell: (p) => formatDate(p.startsAt) },
-    { head: 'الحالة', cell: (p) => <EnumChip value={p.status} labels={PLACEMENT_STATUS_LABELS} /> },
+    { head: 'الحالة', cell: (p) => <StatusFlag value={p.status} labels={PLACEMENT_STATUS_LABELS} /> },
     {
-      head: 'التقييم', mobileHidden: true,
-      cell: (p) => p.evaluationScore != null ? `${p.evaluationScore}%` : '—',
+      head: 'التقييم', mobileHidden: true, numeric: true,
+      cell: (p) => (p.evaluationScore != null ? `${formatPct1(p.evaluationScore)}%` : '—'),
     },
     {
       head: 'إجراءات', mobileHidden: true,
@@ -151,6 +154,36 @@ export function InstitutionTrainingPage() {
           </button>
         ) : null}
       />
+
+      {/* R359 — the placements facts ride the KPI band (gated on the
+          institution context like the family's other registers). */}
+      {scope !== null && (
+        <KpiBand
+          items={[
+            {
+              index: '01',
+              caption: 'PLACEMENTS',
+              label: 'التدريبات (الاستعلام الحالي)',
+              value: placementsQuery.data?.meta.total ?? 0,
+              empty: placementsQuery.data == null,
+            },
+            {
+              index: '02',
+              caption: 'RESULTS',
+              label: 'نتائج الصفحة الحاليّة',
+              value: placementsQuery.data?.data.length ?? 0,
+              empty: placementsQuery.data == null,
+            },
+            {
+              index: '03',
+              caption: 'HOST UNITS',
+              label: 'الوحدات المستضيفة النشطة',
+              value: unitOptions.length,
+              empty: treeQuery.data == null,
+            },
+          ]}
+        />
+      )}
 
       <InstFilters>
         <InstSelect
