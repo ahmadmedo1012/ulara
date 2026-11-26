@@ -560,3 +560,8 @@
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
 }
+
+/* r368 slice 21 — the reference's phone fold seats a small elevation in a quiet field with the headline inside the fold */
+@media (max-width: 767px) {
+  .hro-art { inline-size: 62%; margin-inline: auto; }
+}

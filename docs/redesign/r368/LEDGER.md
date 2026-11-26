@@ -31,3 +31,4 @@ NEXT: platform grid to one tall plan cell + ledger rows; half-art/half-list role
 - merged origin/main (clean); inner titles centred (FAILING; NEXT: colleges, auth, error, column rules)
 - colleges + 404 carry the full bar; type gate kept (FAILING; NEXT: suite result, column rules, responsive loops)
 - slice 21 mobile round-0 measured (FAILING; NEXT: mobile fold, platform, use-case)
+- phone fold art narrowed; dark capture harness fixed; suite 2964/2966 then gate fixed (FAILING; NEXT: dark hero art contrast, more mobile)

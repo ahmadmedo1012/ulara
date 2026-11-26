@@ -26,6 +26,7 @@ const browser = await chromium.launch({ headless: true });
 for (const [w, h] of vps) for (const theme of themes) {
   const ctx = await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 1, reducedMotion: flag('reduced') ? 'reduce' : 'no-preference', colorScheme: theme });
   await ctx.addInitScript((skip) => { if (skip) sessionStorage.setItem('ulara-intro-skip', '1'); }, !flag('intro'));
+  await ctx.addInitScript((t) => { try { localStorage.setItem('ulara-theme', JSON.stringify({ state: { mode: t, modeUpdatedAt: 0 }, version: 2 })); } catch (e) { /* ignore */ } }, theme);
   const page = await ctx.newPage();
   await page.goto(base + route, { waitUntil: 'networkidle' }).catch(() => {});
   await page.evaluate((d) => { document.documentElement.dir = d; }, dir);

@@ -98,3 +98,9 @@ Full bar now leads the colleges registry (portalled, guest only) and the not-fou
 
 ## Slice 21 responsive round 0 (390x844 vs the mobile corpus shots)
 Fold: the reference shows a small elevation in a quiet cream field, then a tight grotesk headline and body; ours opens with a full-width photographic plate that fills the fold, headline pushed below. Platform: the reference stacks a large headline then four icon rows; ours stacks small ruled rows with tiny type. Use cases: reference has the art first and a dark card; ours leads with the list and a plan. All three are structural and unchanged so far. Status: FAILING, not started beyond measurement.
+
+## Slice 21 mobile fold round 1
+Art box narrowed to 62% at phone widths; headline now rides inside the fold. Still wrong: the mounted phone art is a cropped photographic facade, not the reference's small flat elevation in a quiet field; the drag hint overlaps the art. Status: FAILING (closer).
+
+## Slice 22 dark theme round 0
+Harness fix: capture.mjs now sets the real theme store key so dark captures are truly dark (earlier dark captures were light). Findings: dark tokens hold (royal becomes the light periwinkle, paper becomes ink); hero elevation is almost invisible in dark (very low contrast, dim hatching), roles scene and slab read fine. Status: FAILING on the hero art contrast. Full unit suite: 2964 of 2966 passed; the 2 failures were the type gate, fixed (127 pass) after the run started.
