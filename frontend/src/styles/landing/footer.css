@@ -332,14 +332,13 @@ footer.fo-footer {
   margin-block-start: var(--sp-2);
 }
 .fo-strip-media {
+  /* r364 art v2 — the strip seats the DuotoneScene plate (the duotone
+     podium scene + the flat-shape kit): a HARD-CROPPED band now, the
+     reference's own collage edge (shot-footer crops its scene hard
+     against the rules). The r353 fade mask retires with the skyline
+     (mission §0: a rule that stood between us and the match changed
+     in the same commit that swaps the art). */
   display: grid;
-  /* r353 — the skyline breathes into the paper: the strip's top edge
-     fades in over its first third (a mask, not a tone) so the horizon
-     reads as emerging from the sheet instead of cropping hard against
-     the colophon's rules — the visual audit's «cropped abruptly»
-     finding closed without touching the art. */
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0, black 34%);
-  mask-image: linear-gradient(to bottom, transparent 0, black 34%);
 }
 .fo-strip-img {
   grid-area: 1 / 1;
