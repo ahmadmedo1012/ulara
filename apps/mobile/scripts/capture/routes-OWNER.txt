@@ -1,0 +1,29 @@
+# r366 capture rig — OWNER routes (owner@test.ly) + the shared
+# /institution workspace (ADMIN + QUALITY + OWNER context)
+# format: NAME|route-path
+dashboard|owner/dashboard
+users|owner/users
+realtime|owner/realtime
+notifications|owner/notifications
+governance|owner/governance
+institutions|owner/institutions
+alerts|owner/alerts
+feedback|owner/feedback
+activity|owner/activity
+ai|owner/ai
+content|owner/content
+education|owner/education
+system|owner/system
+institution|institution
+institution-organization|institution/organization
+institution-people|institution/people
+institution-positions|institution/positions
+institution-councils|institution/councils
+institution-programs|institution/programs
+institution-students|institution/students
+institution-training|institution/training
+institution-quality|institution/quality
+institution-licenses|institution/licenses
+institution-access|institution/access
+institution-facilities|institution/facilities
+institution-research|institution/research
