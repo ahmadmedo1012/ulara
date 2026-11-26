@@ -258,6 +258,9 @@
   font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
+  /* r363 P4 sweep @320: the CTA pill is a real link — the phone band
+     keeps it on the 44px touch floor (3px of daylight, invisible). */
+  min-block-size: var(--touch-floor, 44px);
 }
 .st-pill-box {
   display: inline-flex;

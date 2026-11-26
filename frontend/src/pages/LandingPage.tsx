@@ -97,6 +97,10 @@ import '../styles/landing/chrome.css';
 // grammar. Loads after chrome, BEFORE every section sheet, so the
 // spec-locked section overrides always out-specify the lp-* bases.
 import '../styles/landing/patterns.css';
+// r364 art v2 — the flat-shape kit + the duotone scene plates (DuotoneScene).
+// Loads after the pattern bases, before every section sheet — the section
+// overrides always out-specify the kit's own seats.
+import '../styles/landing/art-v2.css';
 import '../styles/landing/hero.css';
 import '../styles/landing/statement.css';
 import '../styles/landing/reveals.css';

@@ -1122,3 +1122,18 @@
     transition: none;
   }
 }
+
+/* ── r364 art v2 — the band's duotone stage (DuotoneScene variant
+   "stage"): the architectural hero imagery between the band's head
+   and the pillars' panels; the flat-shape kit rides the figure (see
+   styles/landing/art-v2.css). The stage keeps the band's hairline
+   rails: a rule above, the panels' own rule below. ── */
+.wy-stage {
+  position: relative;
+  margin-block-start: 1.5rem;
+}
+.wy-stage .duo-scene {
+  /* the stage's own bleed: full band width, hairline-framed by
+     art-v2.css's .duo-stage seat */
+  margin-inline: auto;
+}

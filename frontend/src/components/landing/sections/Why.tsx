@@ -17,7 +17,9 @@
  * diagrams instead of claiming screenshots. */
 import { RevealCssClass } from '../../../hooks/useReveal';
 import { WhyPanels } from '../plates/WhyPanels';
+import { DuotoneScene } from '../plates/DuotoneScene';
 import { DimensionLine } from '../../patterns/DimensionLine';
+import podiumScene from '../../../assets/art-v2/podium-scene.webp';
 
 export function Why() {
   return (
@@ -59,6 +61,24 @@ export function Why() {
           sits inside this aria-hidden seat. */}
       <div className="wy-hrule" aria-hidden="true" data-spec="why.hrule">
         <DimensionLine className="wy-hrule-dim" label="10168" />
+      </div>
+
+      {/* r364 art v2 — the band's hero imagery: the duotone campus
+          podium scene (the lone student on the plaza, the reference's
+          own scale figure grammar) composed against the flat-shape
+          kit — the solid royal circle + slab + the pale disc. The
+          four pillars' panels follow below (observe/advise/act/learn
+          keep their machines); the scene gives the band its
+          architectural hero (mission §2.4: every section carries
+          imagery; no band left empty). */}
+      <div className="wy-stage" data-spec="why.stage">
+        <DuotoneScene
+          src={podiumScene}
+          alt="طالب واحد يعبر ساحة الحرم الجامعي أمام مبنى الخرسانة الصريحة — المقياس الإنساني الذي بُنيت أُلارا حوله"
+          variant="stage"
+          caption="Y:10168 · قاعدة التشغيل"
+          note="مقياس واحد: الطالب على الساحة"
+        />
       </div>
 
       {/* R346 — the isometric loop panels (the retired WhyScene's mount;
