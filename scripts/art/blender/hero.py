@@ -77,6 +77,27 @@ box(-9,-5.2,0.2,5.8,11.6,12.6,concrete); box(5.2,9,0.2,5.8,11.6,12.6,concrete)
 box(-5.8,5.0,-2.2,-0.2,0,3.6,concrete); box(6.4,13.8,-1.5,-0.2,0,2.4,concrete)
 # massing variety: taller right tower block, left setback, deep cantilever
 box(5.2,9,0.2,5.8,12.6,16.6,concrete); box(5.0,9.2,-2.6,0.2,11.2,11.8,concrete); box(-9,-5.2,0.2,5.8,12.6,14.2,concrete); box(-12,-9.6,0.2,3,2.0,5.4,concrete); box(-14,-12,0.2,2.5,5.4,5.9,concrete)
+# --- r368 richness: openings, railings, canopy, pergola, planters, pilotis ---
+for (x0,x1) in ((-8.4,-6.0),(6.0,8.4)):
+    for z0 in (4.2,8.4):
+        box(x0,x1,-0.05,0.25,z0+0.5,z0+2.6,dark)            # deep punched openings in the solid wings
+        box(x0-0.05,x1+0.05,-0.12,0.1,z0+2.6,z0+2.75,concrete)   # lintel
+        box(x0-0.05,x1+0.05,-0.12,0.1,z0+0.4,z0+0.5,concrete)    # sill
+# balcony railing on the right cantilever
+for i in range(24): box(5.0+i*0.18,5.06+i*0.18,-2.6,-2.54,11.8,12.9,dark)
+box(5.0,9.2,-2.62,-2.5,12.8,12.95,dark)
+# entrance recess + canopy
+box(-1.6,1.6,-2.22,-2.0,0,2.7,dark); box(-2.6,2.6,-3.4,-2.0,2.8,3.05,concrete)
+for i in range(6): box(-2.4+i*0.9,-2.32+i*0.9,-3.3,-3.22,2.2,2.8,dark)
+# pergola over the left setback block
+for i in range(9): box(-12+i*0.28,-11.94+i*0.28,0.2,3.0,5.9,6.05,dark)
+box(-12,-9.6,0.2,0.3,5.9,6.2,concrete); box(-12,-9.6,2.9,3.0,5.9,6.2,concrete)
+# planters on the podium
+for x in (-8.6,-7.2,6.8,8.2): box(x,x+1.1,-2.0,-1.2,3.2,3.9,concrete)
+# pilotis under the left stepped block
+for x in (-11.6,-10.4): box(x,x+0.3,0.3,0.6,2.0,2.4,concrete)
+# upper tower slits
+for i in range(5): box(5.6+i*0.6,5.75+i*0.6,0.1,0.3,13.2,16.2,dark)
 # trees (bare, thin branches)
 import bmesh
 from mathutils import Vector, Matrix
