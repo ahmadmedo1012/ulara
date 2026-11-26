@@ -764,6 +764,9 @@
     display: inline-flex;
     align-items: center;
     min-block-size: var(--touch-floor, 44px);
+    /* r363 P4 sweep @320: the join link measured 42px WIDE — the
+       floor is both axes. */
+    min-inline-size: var(--touch-floor, 44px);
   }
 }
 

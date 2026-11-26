@@ -493,6 +493,11 @@ const pageMetricsSrc = (curWidth: number): string => `(function () {
     const interactives = document.querySelectorAll('button, a, input, select, textarea, summary, [role="button"], [role="tab"]');
     const small = [];
     for (const el of Array.from(interactives)) {
+      /* r363 — the SKIP-LINK exemption (the WCAG 2.5.8 target-size
+         keyboard/inline exception): the skip link is invisible until
+         focused and its only audience is keyboard users (Tab, not
+         tap) — measuring it as a tap target is a category error. */
+      if (el.closest('.skip-link')) continue;
       const target = el instanceof HTMLInputElement && ['checkbox', 'radio'].includes(el.type)
         ? el.closest('label') ?? el : el;
       const rect = target.getBoundingClientRect();
@@ -775,7 +780,22 @@ async function main() {
             // 4. redirect honesty + transport/ console assertions.
             const requested = new URL(routeDef.route, BASE).pathname;
             const actual = new URL(page.url()).pathname;
-            if (actual !== requested) push('UNEXPECTED_REDIRECT', 'P0', `${requested} → ${actual}`);
+            /* r363 — REDIRECT_ALLOWS: the designed bookmark-compat
+               redirects (each with its in-code reason), the same
+               documented-allow convention as RADIUS_SHADOW_ALLOWS. */
+            const REDIRECT_ALLOWS: Record<string, string> = {
+              // AdminExtraPages.tsx:636 — /admin/analysis folded into
+              // /admin/reports as the trend's table view; old bookmarks
+              // keep working by design.
+              '/admin/analysis': '/admin/reports',
+            };
+            const allowedTo = REDIRECT_ALLOWS[requested];
+            const isAllowed =
+              allowedTo != null &&
+              (actual === allowedTo || actual.startsWith(allowedTo + '?'));
+            if (actual !== requested && !isAllowed) {
+              push('UNEXPECTED_REDIRECT', 'P0', `${requested} → ${actual}`);
+            }
             if (missingFixtures.length > 0) {
               push('MISSING_FIXTURE', 'P1', `501s: ${[...new Set(missingFixtures)].slice(0, 6).join(' · ')}`, { endpoints: [...new Set(missingFixtures)] });
             }

@@ -34,6 +34,27 @@ open_app() {
   adb shell am start -a android.intent.action.VIEW -d "$DEEP_LINK" >/dev/null 2>&1 || true
 }
 
+# run #10's forensics: on a fresh install the dev-client's first-launch
+# DEVELOPER MENU sheet is the FOCUSED window — the a11y dump then sees
+# only the menu, so a text wait can never see the app behind it and
+# maestro starts too late. Dismiss the menu HERE, by its own node
+# bounds, before any wait.
+dismiss_dev_menu() {
+  for _ in 1 2 3; do
+    adb shell uiautomator dump /sdcard/ula-dump.xml >/dev/null 2>&1 || true
+    LINE=$(adb shell cat /sdcard/ula-dump.xml 2>/dev/null | tr '\n' ' ' | grep -o 'text="Continue"[^>]*bounds="\[[0-9]*,[0-9]*\]\[[0-9]*,[0-9]*\]"' | head -1)
+    [ -z "$LINE" ] && return 0
+    B=$(printf '%s' "$LINE" | grep -o 'bounds="\[[0-9]*,[0-9]*\]\[[0-9]*,[0-9]*\]"' | sed 's/bounds="//; s/"//')
+    X1=$(printf '%s' "$B" | cut -d, -f1 | tr -d '[')
+    Y1=$(printf '%s' "$B" | cut -d, -f2 | cut -d] -f1)
+    X2=$(printf '%s' "$B" | awk -F'[][]' '{print $3}' | cut -d, -f1)
+    Y2=$(printf '%s' "$B" | awk -F'[][]' '{print $4}')
+    adb shell input tap $(((X1 + X2) / 2)) $(((Y1 + Y2) / 2))
+    echo "── dev menu dismissed (Continue at $((X1 + X2) / 2),$((Y1 + Y2) / 2))"
+    sleep 3
+  done
+}
+
 # run #6's forensics: the deep link opens the app into "Bundling 26%…"
 # (the dev client's brand moment) — the COLD bundle takes minutes on a
 # 2-core runner, so every open waits for REAL UI text via the a11y tree
@@ -61,6 +82,7 @@ print(''.join('&#x%X;' % ord(c) if ord(c) > 127 else c for c in sys.stdin.read()
 echo "── soak: the bootstrap login (the seeded student account)"
 adb shell pm clear ly.ulara.app >/dev/null 2>&1 || true
 open_app
+dismiss_dev_menu
 wait_for_text "ابدأ الآن" 50 || true   # the cold bundle — up to ~5 min
 shot "soak-shots/bootstrap-open.png"
 "$MAESTRO" test apps/mobile/.maestro/soak-login.yaml \
@@ -102,6 +124,7 @@ round() {
   # deep link (the auth store survives — no pm clear).
   if [ "$MODE" != "airplane" ]; then
     open_app
+    dismiss_dev_menu
     wait_for_text "أرقامك هذا الفصل" 20 || true
   fi
   "$MAESTRO" test apps/mobile/.maestro/soak-assert.yaml \

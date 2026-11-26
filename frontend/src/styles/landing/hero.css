@@ -73,16 +73,17 @@
 
 /* the art box — ASPECT-LOCKED to the active viewBox (zero letterbox:
  * the drawing fills the box exactly, so the stations layer's % seats
- * ARE the viewBox fractions). Desktop: height-capped at 76% of the
- * stage content (the reference's own air law); mobile: width-locked. */
+ * ARE the viewBox fractions). r364 art v2: FULL-BLEED — the dense ink
+ * elevation fills the stage edge-to-edge between the two dotted rules
+ * (the reference's own hero fill: shot-top's drawing reaches the frame
+ * rules on both sides). The height cap is retired — the paper margin
+ * bands around the drawing are part of the art's own canvas now. */
 .hro-art {
   position: relative;
-  /* r360 F2 — 94% → 105%: the drawing's measured width 967px (67%)
-   * grows to ~1075px (75%) — the reference's own fill; the aspect
-   * lock keeps zero letterbox (the stations' % seats stay exact). */
-  block-size: 105%;
+  block-size: 100%;
   aspect-ratio: 1440 / 700;
   max-inline-size: 100%;
+  margin-inline: auto;
 }
 .hro-ink {
   position: absolute;
@@ -103,6 +104,13 @@
   inline-size: 100%;
   /* the ink rides currentColor so the dark theme inverts with the paper */
   color: var(--hro-ink);
+}
+/* r364 art v2 — the raster ink blends INTO the paper: multiply drops
+ * the art's own paper tone onto the page's (no beige band mismatch,
+ * light theme; the dark theme keeps the same ink-on-paper through the
+ * theme's own paper inversion below). */
+.hro-ink img.hro-elevation {
+  mix-blend-mode: multiply;
 }
 
 /* ── the ElevationArt ink grammar (the r359 elevation) ─────────────── */

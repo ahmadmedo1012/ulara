@@ -21,6 +21,7 @@
  */
 import { Fragment, useState } from 'react';
 import { ROLE_SLIDES } from '../plates/RolePlates';
+import { PlanPlate, DarkCard } from '../plates/PlanPlate';
 
 /* ── The deck: the eight accordion rows, each with its role machine.
  * The five verified roles first (their lines are the ROLE_SHOWCASES
@@ -272,6 +273,25 @@ export function Roles() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* r364 art v2 — the plan strip: the thick-wall plans behind the
+          roles (the reference's use-case plan grids — shot-usecase's
+          title-bar plates + the dark info card). The plans are the
+          buildings the roles work inside: the lecture hall (the
+          student's and teacher's stage), the library (the researcher's
+          seat), the exam hall (the quality office's instrument).
+          ORIGINAL art — scripts/art/plans-v2.mjs. */}
+      <div className="plan-strip" data-spec="roles.planstrip" aria-label="المخططات المعمارية خلف الأدوار">
+        <PlanPlate plan="plan-lecture-hall" title="قاعة المحاضرات — المسقط الأفقي" />
+        <div className="plan-plate plan-plate-checked">
+          <PlanPlate plan="plan-library" title="المكتبة — المسقط الأفقي" />
+          <DarkCard
+            header="جارٍ الفحص…"
+            rows={['سعة القراءة مقابل السجل', 'أوقات الذروة', 'الحجوزات المفتوحة']}
+          />
+        </div>
+        <PlanPlate plan="plan-exam-hall" title="قاعة الامتحان — المسقط الأفقي" />
       </div>
     </section>
   );

@@ -9,8 +9,16 @@ import { RulerStrip } from '../../patterns/RulerStrip';
 import { finePointerSupported } from '../../../lib/motion/pointer';
 import '../../../styles/landing/hero-mechanics.css';
 
-import desktopElevation from '@shared/art/svg/hero-elevation.svg';
-import mobileElevation from '@shared/art/svg/hero-elevation-mobile.svg';
+/* r364 P1 art v2 — the ORIGINAL dense ink elevation (the reference's
+ * hero grammar: ONE huge hand-inked brutalist elevation filling the
+ * stage, trees both sides, ceremonial stairs, tiny figures) in
+ * ULARA's university world. Desktop pads to the stage's 1440/700
+ * lock on the art's own paper; mobile re-stages a portrait crop of
+ * the entrance bay at the 390/560 lock (mission P5: phones are
+ * composed, not scaled). The old thin-line elevation retires from
+ * the stage seat (kept as the img-failure fallback below). */
+import heroElevationDesktop from '../../../assets/art-v2/hero-elevation-dt.webp';
+import heroElevationMobile from '../../../assets/art-v2/hero-elevation-mb.webp';
 
 /* The display title — TWO authored lines at the reference's h1 scale
  * (r359 D1: the fluid N/864·vw law — 46.7px @1440, 31.8px @390). Line one
@@ -23,13 +31,15 @@ const LEAD_LINE = 'محاضرات تفاعلية، ومصفوفة إتقان، �
 
 /* the inspection stations — university concepts pinned on the elevation
  * (the reference's drag-to-reveal hotspots). Coordinates are in the
- * DESKTOP viewBox space (1440×620); the art box maps them to % at
- * render time so they ride ON the building features. */
+ * DESKTOP viewBox space (1580×768 — the padded art v2 canvas); the art
+ * box maps them to % at render time so they ride ON the building
+ * features: the curtain-wall glass upper field, the left stair run,
+ * the right curtain wall, the right stair low wall. */
 const STATIONS = [
-  { id: 'C-01', label: 'مقرر تفاعلي', vx: 640, vy: 330, dir: 'up' },
-  { id: 'E-02', label: 'اختبار موثّق', vx: 980, vy: 500, dir: 'down' },
-  { id: 'R-03', label: 'بحث علمي', vx: 1030, vy: 260, dir: 'up' },
-  { id: 'I-04', label: 'مؤسسة أكاديمية', vx: 380, vy: 400, dir: 'down' },
+  { id: 'C-01', label: 'مقرر تفاعلي', vx: 640, vy: 300, dir: 'up' },
+  { id: 'E-02', label: 'اختبار موثّق', vx: 430, vy: 600, dir: 'down' },
+  { id: 'R-03', label: 'بحث علمي', vx: 1040, vy: 280, dir: 'up' },
+  { id: 'I-04', label: 'مؤسسة أكاديمية', vx: 1150, vy: 620, dir: 'down' },
 ] as const;
 
 /* r360 F2 — the MOBILE station seats: A2's mobile elevation (the art key
@@ -43,12 +53,14 @@ const STATIONS_MOBILE: Record<string, { x: number; y: number }> = {
   /* NOTE: the x fractions are RTL-MIRRORED (the seats ride
    * inset-inline-start + translate −50%, which centers each station on
    * its anchor — in RTL the anchor sits (100−x)% from the LEFT). The
-   * values keep every marker's center ON a drawing feature while its
-   * callout tag's leftward arm stays inside the box at 360. */
-  'C-01': { x: 75.4, y: 53.6 }, /* center on the left core (doc 92, 300) */
-  'E-02': { x: 10, y: 76.8 },   /* center on the right ground (doc 340, 430) */
-  'R-03': { x: 20.3, y: 42.9 }, /* center on the right core (doc 298, 240) */
-  'I-04': { x: 81, y: 71.4 },   /* the left wall's edge (doc ~65, 400) — the tag arm's floor */
+   * values seat on the art-v2 mobile crop's own geometry (the portrait
+   * re-stage of the entrance bay: glass field upper 2/3, stairs lower
+   * third), every marker's center ON a drawing feature while its
+   * callout tag's arm stays inside the box at 360. */
+  'C-01': { x: 50, y: 28 },   /* center on the upper glass field */
+  'E-02': { x: 22, y: 82 },   /* center on the left stair run */
+  'R-03': { x: 78, y: 40 },   /* center on the right glass field */
+  'I-04': { x: 85, y: 78 },   /* the right stair's low wall — the tag arm's floor */
 };
 
 export function Hero() {
@@ -258,16 +270,16 @@ export function Hero() {
     window.addEventListener('resize', clampTags);
     return () => window.removeEventListener('resize', clampTags);
   }, [clampTags]);
-  /* the active viewBox window — the fallback art's own crop (mobile seats
-   * the building; A2's mobile key replaces the whole art when present). */
-  const vb = mobile ? VB_MOBILE : '0 0 1440 620';
+  /* the active viewBox window — art v2's own canvas (mobile seats the
+   * entrance-bay crop; the fallback SVG keeps its own doc). */
+  const vb = mobile ? VB_MOBILE : '0 0 1580 768';
   const [vX, vY, vW, vH] = vb.split(' ').map(Number) as [number, number, number, number];
   const pct = (vx: number, vy: number) => ({
     x: ((vx - vX) / vW) * 100,
     y: ((vy - vY) / vH) * 100,
   });
   const [failedArt, setFailedArt] = useState<string | null>(null);
-  const elevation = mobile ? mobileElevation : desktopElevation;
+  const elevation = mobile ? heroElevationMobile : heroElevationDesktop;
 
   return (
     <section className="fo-hero hro" aria-label="أُلارا — من المحاضرة إلى الإتقان">
@@ -293,7 +305,9 @@ export function Hero() {
         <div className="hro-art">
           <div className="hro-ink" aria-hidden="true">
             {failedArt === elevation ? (
-              <ElevationArt className="hro-elevation" viewBox={vb} />
+              /* the committed SVG fallback keeps its OWN doc's window —
+               * it must never inherit art-v2's canvas mapping. */
+              <ElevationArt className="hro-elevation" viewBox={mobile ? VB_MOBILE : '0 0 1440 620'} />
             ) : (
               <img className="hro-elevation" src={elevation} draggable={false} alt=""
                 onError={() => setFailedArt(elevation)} />

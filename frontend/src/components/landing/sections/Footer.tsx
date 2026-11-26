@@ -46,6 +46,8 @@ import { RevealCssClass } from '../../../hooks/useReveal';
 import { Logo } from '../../../brand';
 import { BRAND_LABEL, LOGIN } from '../copy';
 import { ConsentBanner } from '../chrome/ConsentBanner';
+import { DuotoneScene } from '../plates/DuotoneScene';
+import podiumScene from '../../../assets/art-v2/podium-scene.webp';
 import { RegCross } from '../../patterns/RegCross';
 
 /* r363 — THE ONE LINK ROW. The retired col2 index (three mono-headed
@@ -263,29 +265,18 @@ export function Footer({ year }: { year: number }) {
           </div>
         </div>
 
-        {/* ── the ink strip band — OUR OWN licensed skyline render,
-            light/dark twins swapping on the theme token (the
-            wy-cycle grammar). ── */}
+        {/* ── the ink strip band — r364 art v2: the duotone campus
+            podium scene with the flat-shape kit (the solid royal
+            circle cropped by the strip's edge + the slab + the pale
+            disc — the reference's footer collage grammar, our own
+            art). The r359 thin-line skyline retires from the seat. ── */}
         <div className="fo-fstrip">
           <div className="fo-strip-media">
-            <img
-              className="fo-strip-img is-light"
-              src="/media/illustrations/r359/footer/footer-skyline-light.webp"
-              srcSet="/media/illustrations/r359/footer/footer-skyline-light@2x.webp 2x"
-              alt="أفق حرم جامعي متخيّل بخط رفيع: رواق وقاعة وبرج وأشجار على خط أرض واحد"
-              loading="lazy"
-              width={1440}
-              height={384}
-            />
-            <img
-              className="fo-strip-img is-dark"
-              src="/media/illustrations/r359/footer/footer-skyline-dark.webp"
-              srcSet="/media/illustrations/r359/footer/footer-skyline-dark@2x.webp 2x"
-              alt=""
-              aria-hidden="true"
-              loading="lazy"
-              width={1440}
-              height={384}
+            <DuotoneScene
+              src={podiumScene}
+              alt="ساحة الحرم الجامعي بظلال الطالب الوحيد بين كتل الخرسانة — شريط الحبر الختامي"
+              variant="strip"
+              caption="X:0000 · Y:12700"
             />
           </div>
         </div>
