@@ -573,3 +573,9 @@
   }
   .cb-banner .cb-reject { border: 1px solid var(--rule); }
 }
+
+/* r368 — desktop RTL: the reference's bar sits at the inline-end under the SUB copy, away from the headline.
+   In RTL the headline is on the right, so the bar mirrors to the left (inline-end). Reason: the right seat covered the headline. */
+@media (min-width: 900px) {
+  [dir="rtl"] .cb-banner.cb-banner { right: auto; left: 0; }
+}

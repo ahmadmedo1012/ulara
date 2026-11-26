@@ -248,3 +248,6 @@ Measured the drawing at 59% of the phone width vs the reference 65%, and the old
 
 ## Mobile station seats and cookie strip
 Mobile seats re-pinned to the new crop (all on drawing features; hero station tests pass). Cookie strip widened to 596px with a heavy under-edge, matching the reference proportions at 1440. Its button order and the strip sitting over the headline at 1440x1000 still differ. Status: FAILING.
+
+## Ruled tables and cookie seat
+The reference has no inner-page pricing equivalent in ULARA (no pricing route), so the capability matrix on /features became the full ruled grid: vertical rules per column, dark check boxes. The cookie bar mirrors to the inline-end (left in RTL) so it no longer covers the headline; it still brushes the primary button at 1440x1000. Button order is already the reference order mirrored for RTL (text, accept, reject). Other inner pages (universities, help, legal) have no ruled-table reference in the corpus. Status: FAILING.

@@ -5349,3 +5349,13 @@ button.tq-row:focus-visible {
   .auth-frame::after { left: 79.7%; }
 }
 @media print { .auth-frame::before, .auth-frame::after { display: none; } }
+
+/* r368 slice 13 — the reference's feature matrix is a full ruled grid (a vertical rule between every column, small dark check boxes).
+   The capability list becomes the same grid. Additive; reason: the reference wins for appearance. */
+.lv-list { border-color: var(--text); background: transparent; }
+.lv-row { gap: 0; padding: 0; border-block-end-color: var(--rule); }
+.lv-row > * { padding: var(--sp-4) var(--sp-5); align-self: stretch; display: flex; align-items: center; }
+.lv-row > .lv-num { border-inline-start: 1px solid var(--rule); border-inline-end: 0;  min-inline-size: 64px; justify-content: center; }
+.lv-row > .lv-text { border-inline-end: 1px solid var(--rule); }
+.lv-row > .lv-check { display: inline-grid; place-items: center; inline-size: auto; min-inline-size: 72px; border: 0; border-radius: 0; background: transparent; }
+.lv-row > .lv-check svg { box-sizing: content-box; padding: 3px; background: var(--text); color: var(--bg); }

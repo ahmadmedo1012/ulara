@@ -119,3 +119,4 @@ NEXT: more
 - hero elevation: glass depth + denser trees (41KB gzip). NEXT: mobile hero art size.
 - hero mobile: art from generator --mobile, 82% box; scroll perf unchanged. NEXT: station seats on mobile, footer cookie strip.
 - hero mobile station seats; cookie strip 596px + under-edge. NEXT: inner-page ruled tables.
+- /features capability matrix as full ruled grid; cookie bar at inline-end on desktop. NEXT: dark tag cards, 06 stage 2+.
