@@ -73,3 +73,5 @@ NEXT: slice 05 cards-first + empty statement field
 NEXT: slice 05 statement scale, slice 06
 - slice 05 statement scaled and centred
 NEXT: slice 06
+- slice 06 scroll sweep logged (statement/art collision, persistent left column)
+NEXT: separate art from statement in stage 3

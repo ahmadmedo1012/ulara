@@ -164,3 +164,6 @@ Desktop: the four ruled cards now ride above the head (CSS order, DOM untouched)
 
 ## Slice 05 round 3
 Statement scaled to clamp(3.6rem,5.4vw,7.6rem), centred, two lines; kicker centred. Closer to the reference one-line statement but still two lines with a sub paragraph the reference lacks. Status: FAILING.
+
+## Slice 06 round 4 (scroll sweep at 2600/3400/4200/5200)
+Four offsets captured and opened. The reference shows only one huge centred statement on bare ground per stage. Ours keeps a persistent left column (title, ledger, plan thumbnail) and the isometric art sits on top of the statement at about 4200 (text and art collide), and at 3400 the statement is ghosted behind the art. Needs the left column and thumbnail removed from the stage and the art moved off the statement line; not done this round. Status: FAILING.
