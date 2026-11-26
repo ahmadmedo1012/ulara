@@ -16,3 +16,10 @@ One line per landed piece. NEXT at the bottom, updated every time.
 NEXT: P1 art lands first (the biggest lever), then P2 landing sections in the
 reference's order, P3 chrome frame-parity, P4 every other public page, P5 phone
 staging, P6 the whole-site fidelity loop.
+- **P2/P4 round 1 — the twin lands.** Landing: hero (art-v2 elevation),
+  why (duotone stage + flat shapes), roles (plan strip + dark card), footer
+  (duotone strip, the skyline retired). Pages: /about /help /contact
+  /capabilities /colleges /app-download carry the art-v2 heroes. Evidence:
+  4 side-by-side sheets + the round-1 critique (evidence/) — verdict: twin
+  apart from language/brand + 2 recorded adaptations (the masthead; the
+  footer-band consent seat).
