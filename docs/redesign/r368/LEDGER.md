@@ -121,3 +121,4 @@ NEXT: more
 - hero mobile station seats; cookie strip 596px + under-edge. NEXT: inner-page ruled tables.
 - /features capability matrix as full ruled grid; cookie bar at inline-end on desktop. NEXT: dark tag cards, 06 stage 2+.
 - dark: tag cards royal-dark, ink slab stays dark. NEXT: 06 stage 2+, cookie vs CTA.
+- 06 stage 2+: closing paragraph visually hidden on desktop. NEXT: cookie vs CTA, dark/RTL recheck.

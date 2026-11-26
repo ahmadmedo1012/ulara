@@ -1984,3 +1984,11 @@ section.chapters {
   .jt-bigplan img { block-size: 86%; inline-size: auto; max-inline-size: 70%; object-fit: contain; }
   .jt[data-stage='1']:not([data-rm='on']) .jt-bigplan { opacity: 1; visibility: visible; }
 }
+
+/* r368 slice 06 (stage 2+) — the reference's closing column is a bare title over ruled rows with no explanatory paragraph.
+   Desktop only (>=992px); the DOM and the aria text stay (visually hidden, still announced). Reason: appearance twin. */
+@media (min-width: 992px) {
+  .jt .jt-close-copyw, .jt .jt-close-copyw .jt-close-copy {
+    position: absolute !important; inline-size: 1px !important; block-size: 1px !important; min-block-size: 0 !important; overflow: hidden !important; clip-path: inset(50%) !important; white-space: nowrap; padding: 0 !important; margin: 0 !important;
+  }
+}

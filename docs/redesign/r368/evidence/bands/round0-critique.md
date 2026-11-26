@@ -254,3 +254,6 @@ The reference has no inner-page pricing equivalent in ULARA (no pricing route), 
 
 ## Dark tag cards
 Dark: tag cards use the dark royal #8AA0FF with ink text; the ink slab stays dark with a light hairline instead of inverting to a pale card. Status: FAILING.
+
+## Slice 06 stage 2+
+Note: earlier wheel frames in this thread were partly stale (reused output dirs). Fresh frames: the closing-column explanatory paragraph is now visually hidden on desktop (still in the DOM for screen readers), leaving the bare title over ruled rows. The left column and thumbnail plan are still there, the reference has a different platform layout (large plan, feature rows right). Status: FAILING.
