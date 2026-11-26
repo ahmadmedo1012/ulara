@@ -53,3 +53,5 @@ NEXT: platform grid to one tall plan cell + ledger rows; half-art/half-list role
 NEXT: dark and RTL loops
 - dark/RTL loop 1 logged
 NEXT: dark hero art flat massing
+- dark hero art audited (inversion only, no dark reference)
+NEXT: RTL footer/platform loops

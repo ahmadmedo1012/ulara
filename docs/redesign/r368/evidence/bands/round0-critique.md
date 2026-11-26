@@ -134,3 +134,6 @@ Art plate now tall (4/3, collage fills it). Still wrong: title column overlap, p
 
 ## Dark/RTL loop 1
 Phone roles title clip was a scroll-under-header capture artifact. Dark desktop hero: layout, nav and consent strip hold in RTL, but the art is still the old wireframe elevation, not the flat massing twin. Status: FAILING.
+
+## Dark hero art
+Checked: dark uses the same flat elevation SVG, inverted and screened (hero.css slice 22), so massing reads as pale tone on dark paper. No dark reference shot exists in the corpus, so a native dark palette is unmeasurable. Left as is. Status: FAILING (unverified vs reference).
