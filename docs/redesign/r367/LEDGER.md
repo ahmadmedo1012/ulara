@@ -84,3 +84,36 @@ close PRs, zero-trace), final verify ×2.
   a quota, not a defect; production serves the last successful deploy and
   the lane resumes at UTC midnight. OWNER-VISIBLE: the deploy cadence may
   need the paid tier if push-frequency stays at this pace.
+
+## Session 2 (2026-11-26 ~15:30 Libya — the finisher resumes)
+- **main's late CI reds forensics** — three real catches at 977f4d3: (1) the
+  E2E hero drag contracts (r309/r311) raced the BOOT PHASE — the entrance
+  loader owns the pointer while it plays (R311 §1.7-4's own law; R313
+  replays it on every load) AND the guest reveal's clip wipe
+  (guest-reveal-inner, inset 50%→0) keeps the stage un-hittable for its
+  ~700ms — the eager-LCP art (4039ea1) lengthened the boot past the tests'
+  first press, so the drag landed on the loader/wrapper and the stage never
+  saw it; the specs now wait for the handoff (`.pl` unmount) AND for the
+  stage's own subtree to own the hit-test at the press point. (2) the r351
+  journey audit's dominant-plan collisions: the plate rode OVER the iso
+  drawing's left wing («الحرم الجامعي — المسقط» × «ميدان التدريب» at
+  1440/1024; the drawing's labels sweep through the plate's fixed seat with
+  the scrub); the walkthrough now yields the plan's quarter ≥992
+  (inline-size 72% riding inline-start, the three numbered markers re-seated
+  on the same affine map — new = 28% + 0.72×old) and the plate's quarter is
+  genuinely free at every scrub state. (3) @360 seat 0.25 «الباب [05]» ×
+  «[04]»: the r360 phone diet's round-5 min-block-size:0 zeroed the findings
+  deck — the parked cards are absolutely seated, so the current card had NO
+  flow seat and rode over the closing column's chip (32×4 text kiss + the
+  card's paper over the close head); the deck keeps its authored R342-11
+  compact box (10.2em) now — the ONE zeroed floor that must hold.
+- The 44-spec set (r309 + r311 + r351 all widths) green locally after the
+  fixes; the landing-adjacent batch (r305/r308/r312/r325/r349/r352/r353/
+  r354/guest-landing/landing-fragment) re-run in the background.
+- NOTE (owner-visible): the r359 ≤5,000px phone-page law measured 6,531px
+  pre-diet; at 390 today the page reads 7,241px — r363–r367's added bands
+  outgrew the diet's rounds; the +163px deck floor is 2.3% of it. A fresh
+  diet pass is queued behind the merge work (the law's intent — reading
+  flow — holds; the number needs its own session).
+NEXT: commit this batch; read the landing batch; B's remaining items
+(P5 responsive per role, scripts/audit), C's verification, D mobile block.

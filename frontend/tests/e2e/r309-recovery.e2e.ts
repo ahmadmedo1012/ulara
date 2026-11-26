@@ -43,6 +43,25 @@ async function openAllStations(page: import('@playwright/test').Page) {
   await page.waitForTimeout(700); /* the tag transition settles */
 }
 
+/** r367: the hero's pointer surface is LIVE only after the guest
+ *  reveal's clip wipe finishes (guest-reveal-inner animates
+ *  clip-path inset 50%→0; a press mid-wipe lands on the wrapper and
+ *  the stage never sees it). The press waits until the stage's own
+ *  subtree owns the hit-test at the press point. */
+async function waitForHeroPointer(page: import('@playwright/test').Page, xf: number, yf: number) {
+  await page.waitForFunction(
+    ([fx, fy]) => {
+      const st = document.querySelector('.hro-stage');
+      if (!st) return false;
+      const r = st.getBoundingClientRect();
+      const el = document.elementFromPoint(r.left + r.width * fx, r.top + r.height * fy);
+      return !!el && (st === el || st.contains(el));
+    },
+    [xf, yf],
+    { timeout: 20_000 },
+  );
+}
+
 /** r359: the stations are %-positioned at render (no ResizeObserver
  *  mapping) — ready once all four markers carry their data-marker. */
 async function waitForMapping(page: import('@playwright/test').Page) {
@@ -172,6 +191,13 @@ test.describe('R309 hero — drag-reveal geometry (the r359 rebuild contract)', 
     await page.goto('/');
     const stage = page.locator('.hro-stage');
     await expect(stage).toBeVisible({ timeout: 30_000 });
+    /* r367 fix: the entrance loader owns the pointer while it plays
+     * (R311 §1.7-4's law; R313 replays it on every load) — the eager
+     * LCP art lengthened the boot past this test's hover beat, so CI
+     * raced the handoff and the drag landed on the loader. Wait for
+     * the unmount, then for the reveal wipe to hand the surface back. */
+    await expect(page.locator('.pl')).toHaveCount(0, { timeout: 20_000 });
+    await waitForHeroPointer(page, 0.5, 0.5);
     const sb = await stage.boundingBox();
     expect(sb).not.toBeNull();
     await waitForMapping(page);

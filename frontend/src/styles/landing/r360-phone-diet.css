@@ -161,11 +161,19 @@
   .fo-legal-row, .fo-footer-bottom, .fo-grid, .fo-in,
   .map-panel, .map-panel-clip, .map-panel-in,
   .jt-close-cms, .jt-close-cms-in, .jt-close-main, .jt-close-chiprow,
-  .jt-intro, .jt-intro-body, .jt-intro-findings,
+  .jt-intro, .jt-intro-body,
   .st-media, .st-media-in, .rl-deck, .rl-deckinner, .rl-media,
   .wy-head, .wy-panels, .pr-section > * {
     min-block-size: 0 !important;
   }
+  /* r367 fix: the findings deck is the ONE zeroed floor that must
+   * keep its authored height — the parked cards are absolutely
+   * seated, so a 0-height deck gave the current card NO flow seat
+   * and it rode over the closing column's chip (the r351 audit's
+   * «الباب [05]» × «[04]» 32×4 text kiss @360 seat 0.25, plus the
+   * card's own paper over the close head). The R342-11 compact box
+   * (10.2em) covers the tallest parked card at every ≤767 measure. */
+  .jt-intro-findings { min-block-size: 10.2em !important; }
   .fo-cta-band { block-size: auto !important; }
   .fo-c1-top { block-size: auto !important; }
   .fo-c1-sub { block-size: auto !important; }

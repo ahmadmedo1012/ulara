@@ -37,6 +37,25 @@ const VW = {
   mobile: { width: 390, height: 844 },
 };
 
+/** r367: the hero's pointer surface is LIVE only after the guest
+ *  reveal's clip wipe finishes (guest-reveal-inner animates
+ *  clip-path inset 50%→0; a press mid-wipe lands on the wrapper and
+ *  the stage never sees it). The press waits until the stage's own
+ *  subtree owns the hit-test at the press point. */
+async function waitForHeroPointer(page: import('@playwright/test').Page, xf: number, yf: number) {
+  await page.waitForFunction(
+    ([fx, fy]) => {
+      const st = document.querySelector('.hro-stage');
+      if (!st) return false;
+      const r = st.getBoundingClientRect();
+      const el = document.elementFromPoint(r.left + r.width * fx, r.top + r.height * fy);
+      return !!el && (st === el || st.contains(el));
+    },
+    [xf, yf],
+    { timeout: 20_000 },
+  );
+}
+
 test.use({ e2eRole: 'guest', reducedMotion: 'no-preference' });
 
 /* ═══ §1.7-1/2 — the landing: ONE pointer system, the reference dot ══ */
@@ -184,6 +203,14 @@ test.describe('R311 — the landing owns its pointer', () => {
     await page.goto('/');
     const stage = page.locator('.hro-stage').first();
     await expect(stage).toBeVisible();
+    /* r367 fix: the entrance loader OWNS the pointer while it plays
+     * (§1.7-4's own law) — the replay-on-every-load rule (R313) keeps
+     * it up on every goto, and the eager-LCP art lengthened the boot
+     * past this test's first press: the drag landed ON the loader and
+     * the stage never saw it. Wait for the handoff, then for the
+     * reveal wipe to hand the surface back. */
+    await expect(page.locator('.pl')).toHaveCount(0, { timeout: 20_000 });
+    await waitForHeroPointer(page, 0.5, 0.45);
     const sb = await stage.boundingBox();
     expect(sb).not.toBeNull();
 

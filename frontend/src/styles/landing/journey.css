@@ -356,6 +356,27 @@ section.chapters {
   .jt-dominant { display: none; }
 }
 
+/* ≥992 — the walkthrough yields the plan's quarter (r367 fix): the
+   plate rode OVER the drawing's left wing (the iso stack is
+   full-width, so «ميدان التدريب» swept through the plate's fixed
+   seat with the scrub — the r351 audit's text-on-text catches at
+   1440/1024). The drawing now rides the inline-START ~72% (the
+   labels compress with it — the sheet's own geometry is untouched),
+   and the plate's quarter is GENUINELY free at every scrub state.
+   The three numbered markers re-seat on the same affine map
+   (new = 28% + 0.72×old, the box's own translation). Specificity
+   rides the .jt prefix — the base seats below come later in the
+   file and must lose here, not by order. */
+@media (min-width: 992px) {
+  .jt .jt-stack .bp-svg {
+    inline-size: 72%;
+    margin-inline-end: auto;
+  }
+  .jt .jt-mk-a { inset-block-start: 24.8%; inset-inline-start: 20.2%; }
+  .jt .jt-mk-b { inset-block-start: 42.8%; inset-inline-start: 48.9%; }
+  .jt .jt-mk-c { inset-block-start: 65.8%; inset-inline-start: 28.8%; }
+}
+
 /* the plan sheet — the svg element fills the stack box; the
    1200×760 viewBox letterboxes (meet) inside it exactly like the
    reference's plan area. */
