@@ -311,3 +311,6 @@ Status: FAILING
 
 ## Round (9:33pm) — fresh desktop light full-page pass (12 scroll frames)
 No new defects. Open gaps unchanged: 06 not the reference's multi-plan collage (now plates+route but static composition), hero is a drawing not a photo, statement band is sparse. Status: FAILING
+
+## Round (10:03pm) — CTA + footer vs corpus (desktop light)
+CTA: three-cell ruled frame with mono corner readouts, centred title/lede and one royal button matches the reference's CTA structure; title weight/size is within range. Footer: index row + plate line present; reference footer is not in this crop. No fixable delta found at this scale. Remaining gaps unchanged (06 collage composition, hero photographic render, slices with no corpus reference). Status: FAILING
