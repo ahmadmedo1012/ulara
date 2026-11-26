@@ -61,7 +61,7 @@
   inset-inline: 7px;
   block-size: 56px;         /* the measured bar height (56.3 @1440) */
   z-index: 60;
-  background: transparent;
+  background: var(--bg); /* r368 slice 02: the reference bar is bg-global (opaque), content never shows through */
   border-block-end: 1px solid var(--grid-line);
   /* the reference's pointer seat: the bar is pointer-TRANSPARENT — the
    * empty paper over scrolled content stays clickable; the cells below

@@ -71,3 +71,6 @@ Statement plate box removed, 6vw bold centred line. Closer in scale. Still wrong
 
 ## Slice 06 map round 3
 Caption border removed (paper seat kept for contrast over art). Side list and grid chrome remain; they are content/structure, to be reduced with the nav slice. Status: FAILING.
+
+## Slice 02 nav round 1
+Nav structure already matches the measured reference tree (inset, 56px bar, mono items, CTA cell). Defect found: bar was transparent so content showed through. Now opaque (bg). Remaining: the in-band meta strip and plan still sit beside the nav in the first viewport (slice 04/05); hover fills and submenu not yet compared. Status: FAILING.
