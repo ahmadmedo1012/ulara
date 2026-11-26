@@ -176,6 +176,10 @@ for (const role of roles) {
             mkdirSync(dir, { recursive: true });
             await page.goto(shot.path);
             await page.waitForLoadState('networkidle');
+            // dev server compiles each lazy route chunk on first hit —
+            // wait for the page's own h1 (or give up gracefully) so we
+            // never shoot a route-level skeleton as "the page"
+            await page.waitForSelector('main h1, h1.pf-page-title', { timeout: 20_000 }).catch(() => {});
             // settle: fonts, reveals, charts idle-warm
             await page.waitForTimeout(1100);
             await page.screenshot({
