@@ -337,7 +337,10 @@ plans['plan-exam-hall'] = () => {
 /* 5 — ADMIN: reception, offices row, meeting room, records vault. */
 plans['plan-admin'] = () => {
   let b = '';
-  b += rect(120, 90, 520, 12); b += rect(120, 90, 12, 480); b += rect(628, 90, 12, 480); b += rect(120, 558, 520, 12);
+  // r367: the wall-weight pass — the reference's outer walls measure
+  // ~14px at the 760px sheet width (the r364 critique's queued item);
+  // admin was the last plan at 12, it joins the 14 register.
+  b += rect(120, 90, 520, 14); b += rect(120, 90, 14, 480); b += rect(628, 90, 14, 480); b += rect(120, 558, 520, 14);
   // corridor
   b += `<line x1="132" y1="300" x2="628" y2="300" stroke="${HAIR}" stroke-width="1" stroke-dasharray="10 6"/>`;
   // offices top row (3 rooms with doors on corridor wall)
