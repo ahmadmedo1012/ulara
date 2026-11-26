@@ -179,3 +179,6 @@ Real wheel steps hit the statement windows. Defect found and fixed: the dominant
 
 ## Slice 06 round 8 (statement 2 vs art)
 Statement 2 (t 1.6 to 2.35) rides while the first isometric fragments fly in and cross it. That timing is the driver choreography (writeFade 1.6/2.0/2.15/2.35 against the layer windows), tuned and pinned by the timing belt tests; changing it means re-timing the fragment windows, not CSS. Not changed this round. The reference shows one line on bare ground, so this remains a visible difference. Status: FAILING.
+
+## Slices 07 and 08 loop (1440, wheel harness)
+07: the band selector #why does not exist in ours; the platform/journey stage sits where the reference shows its two plan plates and the red-accent annotation cards on bare ground. Ours keeps the left title column, ledger and a 3-plate stack, so composition differs (reference: two floating plates, one dark card, no side column). 08: the plan strip (three title-barred plates plus a dark checking card) is close in grammar to the reference use-case plates; the difference is that ours also stacks the duotone scene and a role list above it, where the reference has plates only and the list hover-reveals them. Not changed this round. Status: FAILING.

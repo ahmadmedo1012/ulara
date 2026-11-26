@@ -83,3 +83,5 @@ NEXT: wheel-step capture harness for pinned stage
 NEXT: remove left column/thumbnail from stage, art off statement
 - slice 06 statement 2 vs art: driver timing, left unchanged and logged
 NEXT: sync origin/main into branch at ~6:26, then slice 07 and 08 loops
+- slices 07/08 loop logged (composition differences, no code change)
+NEXT: sync origin/main at ~6:26; slice 09-11 loops
