@@ -15,10 +15,13 @@
 import {
   useState, useNavigate, useParams, Plus,
   PageFrame, PageHeader, toast, formatDate,
-  Icon, serverError, DetailList, EnumChip,
+  Icon, serverError, DetailList,
   InstFormDialog, InstSection, InstStates, type InstField,
   type InstFormValues,
 } from './scaffold';
+import { StatusFlag } from '../../components/institutional/kit';
+import { DataSheet, SheetEmpty } from '../../components/patterns';
+import { formatInt } from '../../utils/numbers';
 import {
   useCouncil, useMyCapabilities, useMeeting, useMeetings, usePeople, useInstActions} from '../../hooks/institutional/queries';
 
@@ -200,7 +203,7 @@ export function InstitutionCouncilDetailPage() {
         title={council?.nameAr ?? 'تفاصيل المجلس'}
         eyebrow="المجالس واللجان"
         description={council ? COUNCIL_TYPE_LABELS[council.type] : undefined}
-        meta={council ? <EnumChip value={council.status} labels={COUNCIL_STATUS_LABELS} /> : null}
+        meta={council ? <StatusFlag value={council.status} labels={COUNCIL_STATUS_LABELS} /> : null}
         breadcrumbs={[{ label: 'المجالس واللجان', to: '/institution/councils' }]}
       />
       <InstStates isLoading={councilQuery.isLoading} error={councilQuery.error} isEmpty={!council}>
@@ -212,7 +215,7 @@ export function InstitutionCouncilDetailPage() {
                   { label: 'السند القانوني', value: council.legalBasis ?? null },
                   { label: 'مرجع اللائحة', value: council.charterRef ?? null },
                   { label: 'تاريخ الإنشاء', value: council.establishedAt ? formatDate(council.establishedAt) : null },
-                  { label: 'الرمز', value: council.code ?? null },
+                  { label: 'الرمز', value: council.code ? <bdi>{council.code}</bdi> : null },
                 ]}
               />
             </InstSection>
@@ -238,9 +241,9 @@ export function InstitutionCouncilDetailPage() {
                     label: `${COUNCIL_ROLE_LABELS[m.role]} — ${m.person?.fullNameAr ?? m.personId}`,
                     value: (
                       <span className="inst-actions">
-                        <EnumChip value={m.status} labels={MEMBERSHIP_STATUS_LABELS} />
+                        <StatusFlag value={m.status} labels={MEMBERSHIP_STATUS_LABELS} />
                         <span className="inst-tree-kind">من {formatDate(m.startDate)}</span>
-                        {m.decisionRef && <span className="inst-tree-kind">بقرار {m.decisionRef}</span>}
+                        {m.decisionRef && <span className="inst-tree-kind">بقرار <bdi>{m.decisionRef}</bdi></span>}
                         {canManage && m.status === 'ACTIVE' && (
                           <button type="button" className="btn ghost sm" disabled={busy} onClick={() => endMembership(m.id)}>
                             إنهاء العضوية
@@ -263,36 +266,37 @@ export function InstitutionCouncilDetailPage() {
                 </button>
               ) : null}
             >
+              {/* R359 — the meetings register rides the sheet-grammar
+                  DataSheet (mono seq, flat status flags, clickable rows
+                  with Enter/Space); the skeleton mirrors the resolved
+                  table anatomy via the sheet's own loading register. */}
               <InstStates
-                isLoading={meetingsQuery.isLoading}
+                isLoading={false}
                 error={meetingsQuery.error}
-                isEmpty={(meetingsQuery.data ?? []).length === 0}
+                isEmpty={!meetingsQuery.isLoading && (meetingsQuery.data ?? []).length === 0}
+                empty={(
+                  <SheetEmpty
+                    code="NO MEETINGS"
+                    title="لا اجتماعات مجدولة بعد"
+                    desc="جدول أول اجتماع للمجلس من زر «جدولة اجتماع»."
+                  />
+                )}
               >
-                <div className="table-wrap">
-                  <table className="table tbl-stack" aria-label="اجتماعات المجلس">
-                    <thead>
-                      <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">التاريخ</th>
-                        <th scope="col">المكان</th>
-                        <th scope="col">الحالة</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {(meetingsQuery.data ?? []).map((m) => (
-                        <tr key={m.id} className="inst-row-click" tabIndex={0}
-                          onClick={() => navigate(`/institution/councils/${id}/meetings/${m.id}`)}
-                          onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/institution/councils/${id}/meetings/${m.id}`); }}
-                        >
-                          <td data-label="#" className="font-mono">{m.seqNumber ?? '—'}</td>
-                          <td data-label="التاريخ">{formatDate(m.scheduledAt)}</td>
-                          <td data-label="المكان">{m.location ?? '—'}</td>
-                          <td data-label="الحالة"><EnumChip value={m.status} labels={MEETING_STATUS_LABELS} /></td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <DataSheet
+                  caption="اجتماعات المجلس"
+                  columns={[
+                    {
+                      key: 'seq', label: '#', mono: true,
+                      render: (m) => (m.seqNumber != null ? formatInt(m.seqNumber) : '—'),
+                    },
+                    { key: 'date', label: 'التاريخ', render: (m) => formatDate(m.scheduledAt) },
+                    { key: 'location', label: 'المكان', render: (m) => m.location ?? '—' },
+                    { key: 'status', label: 'الحالة', render: (m) => <StatusFlag value={m.status} labels={MEETING_STATUS_LABELS} /> },
+                  ]}
+                  rows={meetingsQuery.data ?? []}
+                  onRowClick={(m) => navigate(`/institution/councils/${id}/meetings/${m.id}`)}
+                  loading={meetingsQuery.isLoading}
+                />
               </InstStates>
             </InstSection>
 
@@ -552,10 +556,10 @@ export function InstitutionMeetingDetailPage() {
   return (
     <PageFrame width="default">
       <PageHeader
-        title={`اجتماع ${council?.nameAr ?? 'المجلس'}${meeting?.meeting.seqNumber ? ` — رقم ${meeting.meeting.seqNumber}` : ''}`}
+        title={`اجتماع ${council?.nameAr ?? 'المجلس'}${meeting?.meeting.seqNumber ? ` — رقم ${formatInt(meeting.meeting.seqNumber)}` : ''}`}
         eyebrow="المجالس واللجان"
         description={meeting ? `${formatDate(meeting.meeting.scheduledAt)}${meeting.meeting.location ? ` · ${meeting.meeting.location}` : ''}` : undefined}
-        meta={meeting ? <EnumChip value={meeting.meeting.status} labels={MEETING_STATUS_LABELS} /> : null}
+        meta={meeting ? <StatusFlag value={meeting.meeting.status} labels={MEETING_STATUS_LABELS} /> : null}
         breadcrumbs={[
           { label: 'المجالس واللجان', to: '/institution/councils' },
           { label: council?.nameAr ?? 'المجلس', to: `/institution/councils/${id}` },
@@ -584,14 +588,20 @@ export function InstitutionMeetingDetailPage() {
               )}
             >
               {meeting.agendaItems.length === 0 ? (
-                <p className="inst-section-desc">جدول الأعمال فارغ — أضف البنود قبل الانعقاد.</p>
+                <div className="inst-state">
+                  <SheetEmpty
+                    code="NO AGENDA"
+                    title="جدول الأعمال فارغ"
+                    desc="أضف البنود قبل الانعقاد — الترتيب والعنوان والتفصيل."
+                  />
+                </div>
               ) : (
                 <DetailList
                   items={meeting.agendaItems.map((a) => ({
                     label: `${a.orderNo}. ${a.titleAr}`,
                     value: (
                       <span className="inst-actions">
-                        <EnumChip value={a.status} labels={AGENDA_STATUS_LABELS} />
+                        <StatusFlag value={a.status} labels={AGENDA_STATUS_LABELS} />
                         {canManage && (
                           <span className="inst-actions">
                             {a.status === 'OPEN' && (
@@ -624,12 +634,19 @@ export function InstitutionMeetingDetailPage() {
                   items={meeting.attendance.map((r) => ({
                     label: (
                       <span className="inst-actions">
-                        {r.person?.fullNameAr ?? r.personId}
-                        {r.attendeeKind === 'GUEST' && <EnumChip value="GUEST" labels={{ GUEST: 'ضيف' }} />}
+                        <bdi>{r.person?.fullNameAr ?? r.personId}</bdi>
+                        {r.attendeeKind === 'GUEST' && <StatusFlag value="GUEST" labels={{ GUEST: 'ضيف' }} />}
                       </span>
                     ),
-                    value: <EnumChip value={r.status} labels={ATTENDANCE_LABELS} />,
+                    value: <StatusFlag value={r.status} labels={ATTENDANCE_LABELS} />,
                   }))}
+                />
+              )}
+              {meeting.attendance.length === 0 && meeting.meeting.status !== 'SCHEDULED' && (
+                <SheetEmpty
+                  code="NO ATTENDANCE"
+                  title="لا حضور مسجّل بعد"
+                  desc="لم يُثبَّت حضور هذا الاجتماع بعد."
                 />
               )}
               {canManage && meeting.meeting.status === 'HELD' && (
@@ -692,7 +709,13 @@ export function InstitutionMeetingDetailPage() {
               )}
             >
               {meeting.resolutions.length === 0 ? (
-                <p className="inst-section-desc">لا قرارات مسجلة لهذا الاجتماع.</p>
+                <div className="inst-state">
+                  <SheetEmpty
+                    code="NO RESOLUTIONS"
+                    title="لا قرارات مسجلة لهذا الاجتماع"
+                    desc="سجّل قرارات المجلس وتوصياته وإجراءات المتابعة من زر «قرار جديد»."
+                  />
+                </div>
               ) : (
                 meeting.resolutions.map((r) => (
                   <div key={r.id} className="inst-detail">
@@ -702,7 +725,7 @@ export function InstitutionMeetingDetailPage() {
                       </dt>
                       <dd>
                         <div className="inst-actions" style={{ justifyContent: 'space-between', inlineSize: '100%' }}>
-                          <EnumChip value={r.status} labels={RESOLUTION_STATUS_LABELS} />
+                          <StatusFlag value={r.status} labels={RESOLUTION_STATUS_LABELS} />
                           {canManage && r.status === 'DRAFT' && (
                             <>
                               <button type="button" className="btn ghost sm" disabled={busy} onClick={() => advanceResolution(r.id, 'APPROVED')}>اعتماد</button>
@@ -737,7 +760,7 @@ export function InstitutionMeetingDetailPage() {
               {meeting.minutes && !minutesEditing && (
                 <>
                   <div className="inst-actions">
-                    <EnumChip value={meeting.minutes.status} labels={MINUTES_STATUS_LABELS} />
+                    <StatusFlag value={meeting.minutes.status} labels={MINUTES_STATUS_LABELS} />
                     {meeting.minutes.approvedAt && <span className="inst-tree-kind">اعتُمد {formatDate(meeting.minutes.approvedAt)}</span>}
                     {meeting.minutes.signedAt && <span className="inst-tree-kind">وُقِّع {formatDate(meeting.minutes.signedAt)}</span>}
                   </div>

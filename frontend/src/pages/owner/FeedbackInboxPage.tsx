@@ -17,7 +17,12 @@ import { PageHeader, KpiBand, SheetSection } from '../../components/patterns';
 import { EmptyState, ErrorState, Skeleton } from '../../components/primitives/States';
 import { Icon } from '../../components/Icon';
 import { useFeedbackInbox, useFeedbackStatus, useClientErrors, useClientErrorReview, type FeedbackRow, type ClientErrorRow } from '../../hooks/resources/feedback';
-import { formatDate } from '../../utils/numbers';
+import { formatDate, formatNum } from '../../utils/numbers';
+/* r365 (8-a): both paginated feeds ride the canonical windowed footer
+ * (TablePaginationFooter — the .table-pagination grammar every other
+ * paginated surface renders) replacing the hand-rolled prev/next row;
+ * a leaf admin module, so the lazy owner chunk pulls no page code. */
+import { TablePaginationFooter } from '../admin/TablePaginationFooter';
 
 const STATUS_LABELS: Record<FeedbackRow['status'], string> = {
   open: 'مفتوح',
@@ -30,6 +35,28 @@ const KIND_LABELS: Record<FeedbackRow['kind'], string> = {
   BUG: 'مشكلة',
   IDEA: 'اقتراح',
 };
+
+/* r365 (8-a): the counted nouns the two pagination footers read —
+ * countAr's [one, two, few, many] forms, like every sibling footer. */
+const REPORT_UNIT: [string, string, string, string] = ['تقرير واحد', 'تقريران', 'تقارير', 'تقريرًا'];
+const ERROR_UNIT: [string, string, string, string] = ['خطأ واحد', 'خطآن', 'أخطاء', 'خطأً'];
+
+/** Shape-matched pending mirror (r365 8-a): the .fb-row anatomy the
+ *  resolved list will occupy — chip pair + meta head, note lines —
+ *  replacing the full-width bare Skeleton block. */
+function InboxRowSkeleton() {
+  return (
+    <div className="fb-row" aria-hidden="true">
+      <div className="fb-row-head">
+        <Skeleton width={54} height={20} rounded="var(--r-full)" />
+        <Skeleton width={70} height={20} rounded="var(--r-full)" />
+        <Skeleton width="38%" height={13} />
+      </div>
+      <Skeleton width="92%" height={12} />
+      <Skeleton width="54%" height={12} />
+    </div>
+  );
+}
 
 /** The transitions the inbox offers per current status — mirrors the
  *  backend's core.ts grammar (open → triage|fixed|dismissed, triage →
@@ -60,7 +87,7 @@ function FeedbackRowCard({ row }: { row: FeedbackRow }) {
       {(row.console?.length ?? 0) > 0 && (
         <>
           <button type="button" className="btn ghost sm" onClick={() => setShowConsole((v) => !v)}>
-            أخطاء لوحة التطوير ({row.console!.length})
+            أخطاء لوحة التطوير ({formatNum(row.console!.length)})
           </button>
           {showConsole && (
             <pre className="fb-console" dir="ltr">
@@ -181,7 +208,9 @@ export default function FeedbackInboxPage() {
   const errMeta = (errors.data as { meta?: { total: number; totalPages: number; page: number; unreviewed: number } } | undefined)?.meta;
 
   return (
-    <div className="page">
+    /* r365 (8-a): the ds page-root marker joins the owner family — the
+       KpiBand/SheetSection surfaces key off the scoped .r305ao sheet. */
+    <div className="page r305ao">
       <PageHeader
         title="صندوق التغذية الراجعة"
         description="كل «أبلغ عن مشكلة / اقتراح» وصل من مستخدمي المنصّة — مع سياقه الكامل."
@@ -245,7 +274,7 @@ export default function FeedbackInboxPage() {
         </div>
 
         {inbox.isPending ? (
-          <Skeleton width="100%" height={140} />
+          <>{[0, 1, 2].map((i) => <InboxRowSkeleton key={i} />)}</>
         ) : inbox.isError ? (
           <ErrorState error={inbox.error} onRetry={() => void inbox.refetch()} />
         ) : rows.length === 0 ? (
@@ -262,23 +291,17 @@ export default function FeedbackInboxPage() {
           </div>
         )}
 
+        {/* r365 (8-a): the windowed .table-pagination footer — the count
+            line + bounded page list + RTL chevrons, the users/Activity
+            register (the hand-rolled prev/next row died). */}
         {meta && meta.totalPages > 1 && (
-          <div className="fb-status-actions" style={{ marginInlineStart: 0, marginTop: 'var(--sp-2-5)' }}>
-            <button type="button" className="btn ghost sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
-              السابق
-            </button>
-            <span className="fb-row-user">
-              صفحة {meta.page} من {meta.totalPages} · {meta.total} تقريرًا
-            </span>
-            <button
-              type="button"
-              className="btn ghost sm"
-              disabled={page >= meta.totalPages}
-              onClick={() => setPage((p) => p + 1)}
-            >
-              التالي
-            </button>
-          </div>
+          <TablePaginationFooter
+            page={meta.page}
+            totalPages={meta.totalPages}
+            total={meta.total}
+            unit={REPORT_UNIT}
+            onPage={setPage}
+          />
         )}
 
         <p className="inv-note">
@@ -289,7 +312,7 @@ export default function FeedbackInboxPage() {
       <SheetSection index="02" caption="CLIENT ERRORS" title="أخطاء تطبيق الجوّال">
         <p className="fb-lead text-sm text-muted">
           {errMeta
-            ? `${errMeta.unreviewed} خطأً غير مراجَع — تصل تلقائيًا من التطبيق عند حدوث انهيار أو خلل.`
+            ? `${formatNum(errMeta.unreviewed)} خطأً غير مراجَع — تصل تلقائيًا من التطبيق عند حدوث انهيار أو خلل.`
             : 'تقارير الأعطال التي يرسلها تطبيق الجوّال تلقائيًا مع مسارها وجهازها وإصدارها.'}
         </p>
         <div className="fb-status-actions" style={{ marginInlineStart: 0, marginBottom: 'var(--sp-2-5)' }}>
@@ -313,7 +336,7 @@ export default function FeedbackInboxPage() {
         </div>
 
         {errors.isPending ? (
-          <Skeleton width="100%" height={140} />
+          <>{[0, 1, 2].map((i) => <InboxRowSkeleton key={i} />)}</>
         ) : errors.isError ? (
           <ErrorState error={errors.error} onRetry={() => void errors.refetch()} />
         ) : errRows.length === 0 ? (
@@ -331,22 +354,13 @@ export default function FeedbackInboxPage() {
         )}
 
         {errMeta && errMeta.totalPages > 1 && (
-          <div className="fb-status-actions" style={{ marginInlineStart: 0, marginTop: 'var(--sp-2-5)' }}>
-            <button type="button" className="btn ghost sm" disabled={errPage <= 1} onClick={() => setErrPage((p) => p - 1)}>
-              السابق
-            </button>
-            <span className="fb-row-user">
-              صفحة {errMeta.page} من {errMeta.totalPages} · {errMeta.total} خطأً
-            </span>
-            <button
-              type="button"
-              className="btn ghost sm"
-              disabled={errPage >= errMeta.totalPages}
-              onClick={() => setErrPage((p) => p + 1)}
-            >
-              التالي
-            </button>
-          </div>
+          <TablePaginationFooter
+            page={errMeta.page}
+            totalPages={errMeta.totalPages}
+            total={errMeta.total}
+            unit={ERROR_UNIT}
+            onPage={setErrPage}
+          />
         )}
       </SheetSection>
     </div>

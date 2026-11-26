@@ -390,11 +390,15 @@ export function OwnerInstitutionDetailPage() {
   if (listing.isPending) {
     return (
       <div className="page r305ao" aria-busy="true" aria-live="polite">
-        <header className="page-header">
-          <div className="page-title-block">
-            <h1 className="page-title">جارٍ تحميل المؤسسة…</h1>
-          </div>
-        </header>
+        {/* r365 (8-a): the pending state rides the patterns PageHeader —
+            the mono eyebrow + breadcrumbs (the naked .page-header h1
+            broke the §1 header grammar); the h1 name + the two
+            shape-matched card skeletons keep the loading mirror. */}
+        <PatternsPageHeader
+          title="جارٍ تحميل المؤسسة…"
+          eyebrow="المؤسسات"
+          breadcrumbs={[{ label: 'كل المؤسسات', to: '/owner/institutions' }, { label: routeSlug ?? 'المؤسسة' }]}
+        />
         {/* r299: the pending mirror follows the resolved page — the
             KPI strip died (its four numbers live on the header line
             and the two cards' subtitles), so two card skeletons stand
@@ -407,11 +411,12 @@ export function OwnerInstitutionDetailPage() {
   if (listing.isError) {
     return (
       <div className="page r305ao">
-        <header className="page-header">
-          <div className="page-title-block">
-            <h1 className="page-title">المؤسسة</h1>
-          </div>
-        </header>
+        {/* r365 (8-a): the error state rides the patterns PageHeader too. */}
+        <PatternsPageHeader
+          title="المؤسسة"
+          eyebrow="المؤسسات"
+          breadcrumbs={[{ label: 'كل المؤسسات', to: '/owner/institutions' }, { label: routeSlug ?? 'المؤسسة' }]}
+        />
         <Card>
           <ErrorState error={listing.error} onRetry={() => listing.refetch()} />
         </Card>
@@ -423,12 +428,15 @@ export function OwnerInstitutionDetailPage() {
      * not-found state, with the way back to the console. */
     return (
       <div className="page r305ao">
-        <header className="page-header">
-          <div className="page-title-block">
-            <h1 className="page-title">المؤسسة غير موجودة</h1>
-            <p className="page-subtitle">لا توجد مؤسسة بمعرّف «{routeSlug}» على المنصّة.</p>
-          </div>
-        </header>
+        {/* r365 (8-a): the not-found state rides the patterns PageHeader —
+            the old .page-subtitle line folds into the description slot
+            (the pinned «slug» copy stays verbatim for the audit trail). */}
+        <PatternsPageHeader
+          title="المؤسسة غير موجودة"
+          eyebrow="المؤسسات"
+          description={`لا توجد مؤسسة بمعرّف «${routeSlug}» على المنصّة.`}
+          breadcrumbs={[{ label: 'كل المؤسسات', to: '/owner/institutions' }, { label: routeSlug ?? 'المؤسسة' }]}
+        />
         <Card>
           <EmptyState
             icon={Landmark}
@@ -475,13 +483,16 @@ export function OwnerInstitutionDetailPage() {
       key: 'credits',
       label: 'س.م',
       numeric: true,
-      render: (c) => c.credits,
+      /* r365 (8-a): the register's numerics ride formatNum like every
+       * sibling column family (the raw JS digits broke the numeral
+       * surface). */
+      render: (c) => formatNum(c.credits),
     },
     {
       key: 'offerings',
       label: 'الفصول',
       numeric: true,
-      render: (c) => c.offeringCount,
+      render: (c) => formatNum(c.offeringCount),
     },
     {
       key: 'actions',
