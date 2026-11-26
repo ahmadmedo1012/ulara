@@ -27,7 +27,7 @@
 import { Icon } from '../../Icon';
 import { MoveDownLeft } from 'lucide-react';
 
-export type DuoVariant = 'stage' | 'strip';
+export type DuoVariant = 'stage' | 'strip' | 'pane';
 
 export function DuotoneScene({
   src,

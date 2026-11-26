@@ -14,3 +14,4 @@
 - Platform heading to h2 scale; plan crop tuned; round-2 sheet.
 
 NEXT: platform grid to one tall plan cell + ledger rows; half-art/half-list roles layout (08/09); nav/preloader/cursor from measured CSS.
+- roles band: art-left/list-right layout with flat cantilever pane (still FAILING; NEXT: pane seats, single tall platform plan cell)

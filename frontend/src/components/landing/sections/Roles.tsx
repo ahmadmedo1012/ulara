@@ -22,6 +22,8 @@
 import { Fragment, useState } from 'react';
 import { ROLE_SLIDES } from '../plates/RolePlates';
 import { PlanPlate, DarkCard } from '../plates/PlanPlate';
+import { DuotoneScene } from '../plates/DuotoneScene';
+import cantileverScene from '../../../assets/art-v2/cantilever.svg';
 
 /* ── The deck: the eight accordion rows, each with its role machine.
  * The five verified roles first (their lines are the ROLE_SHOWCASES
@@ -139,6 +141,8 @@ export function Roles() {
           </div>
           <span className="rl-deck-mark rl-deck-mark-a" aria-hidden="true" />
           <span className="rl-deck-mark rl-deck-mark-b" aria-hidden="true" />
+          {/* r368 slice 08: the reference's use-case art is ONE static collage (flat signal shapes on paper beside a light cantilever) */}
+          <DuotoneScene src={cantileverScene} alt="" flat variant="pane" />
           <div className="rl-deck" data-spec="roles.mediadeck">
             <div className="rl-deckinner" data-spec="roles.mediainner">
               {ROLE_ROWS.map((r, i) => {

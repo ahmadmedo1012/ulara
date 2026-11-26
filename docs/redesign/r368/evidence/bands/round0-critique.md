@@ -47,3 +47,6 @@ Still different: (1) plans are cropped mid-wall (object-fit cover) and should sh
 ## Platform band round 2 (sheet: round2-platform-heading.webp)
 Done: heading to h2 scale (4.8rem/1) like the reference; plans back to cover crop for scale (a contain crop made them small; the plan art already carries its own royal callouts).
 Still different: the reference has ONE large plan filling a full-height cell with a dark info card and the ledger rows beside it; ULARA's grid still has two stacked plan cells. Next: merge the two cells into one tall plan cell and add the ledger rows with icon rings. Status: FAILING.
+
+## Roles band round 1
+Art now sits physically left, list right, as in the reference. Still wrong: scene sits low in the pane, the royal slab is too tall, the circle is cropped, the heading is cramped. Status: FAILING.
