@@ -77,3 +77,6 @@ Nav structure already matches the measured reference tree (inset, 56px bar, mono
 
 ## Slice 01 preloader round 1
 The headless sandbox has under 3 cores, so the intro gate skips the loader; capture needs hardwareConcurrency forced to 8 on a production build. Found: the 880px centred .pl-plate rule beat .pl-mark, so the 'small mark' rendered as a full elevation; the boot ledger crowded the field. Fixed: mark is small, boot ledger hidden at desktop, mark and headline seated physically left. Still wrong: progress rule is full-width where the reference is a short orange-to-royal line with % at its start; hairline and the small welcome line differ; timing not yet compared to preloader-timeline.json. Status: FAILING.
+
+## Slice 01 preloader round 2
+Progress rule now grows left to right with the % at its start (19% frame vs reference 18%: same geometry). Welcome card moved clear of the headline, bottom-right. Layout now matches structurally. Still wrong: Arabic headline is larger and heavier than the reference's small grotesk; the hairline with ticks under the mark is missing; timing against preloader-timeline.json not yet compared. Status: FAILING (closer).

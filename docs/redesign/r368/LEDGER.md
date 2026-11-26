@@ -24,3 +24,4 @@ NEXT: platform grid to one tall plan cell + ledger rows; half-art/half-list role
 - slice 06 caption unboxed (FAILING; NEXT: nav, preloader)
 - nav bar opaque (FAILING; NEXT: preloader re-timing from preloader-timeline.json)
 - preloader: small mark, ledger hidden, left-seated (FAILING; NEXT: progress line + timing, then pages)
+- preloader progress rule + welcome card seats (FAILING; NEXT: headline scale, timing, pages 12-20)

@@ -608,3 +608,14 @@
   .pl-plate.pl-mark { inset-inline-start: auto; left: 8%; }
   .pl-headline { inset-inline-start: auto; left: 40px; }
 }
+
+/* r368 slice 01 — the reference's progress rule grows left to right from the physical left, % sits at its start */
+@media (min-width: 992px) {
+  .pl-line-fill { transform-origin: left; }
+  .pl-read { inset-inline-start: auto; left: 26px; }
+}
+
+/* r368 slice 01 — the welcome card sits bottom-right on the physical right, clear of the left headline */
+@media (min-width: 992px) {
+  .pl-col { inset-inline-end: auto; right: 40%; }
+}
