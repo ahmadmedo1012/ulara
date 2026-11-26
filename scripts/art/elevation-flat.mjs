@@ -49,39 +49,45 @@ s += rect(360, 120, 36, 492, LIGHT, INK, 2);
 s += rect(1064, 120, 36, 492, LIGHT, INK, 2);
 s += ln(378, 120, 378, 612, 1, MID, 0.5); s += ln(1082, 120, 1082, 612, 1, MID, 0.5);
 // cast shadow wedge across podium and glass
-s += poly([[620, 262], [960, 262], [1060, 470], [1060, 612], [800, 612]], INK, 0.3);
-s += poly([[430, 470], [620, 470], [560, 612], [420, 612]], INK, 0.16);
+s += poly([[620, 262], [960, 262], [1060, 470], [1060, 612], [800, 612]], INK, 0.14) + poly([[620, 262], [960, 262], [1060, 470], [1060, 612], [800, 612]], 'url(#st1)', 0.9);
+s += poly([[430, 470], [620, 470], [560, 612], [420, 612]], 'url(#st2)', 0.8);
+s += poly([[500, 206], [960, 206], [960, 262], [500, 262]], 'url(#st1)', 0.9) + poly([[430, 196], [1060, 196], [1060, 206], [430, 206]], 'url(#st1)', 1);
+s += poly([[470, 190], [500, 190], [500, 470], [470, 470]], 'url(#st2)', 0.9) + poly([[1000, 190], [1030, 190], [1030, 470], [1000, 470]], 'url(#st2)', 0.9);
 // r368 texture pass: formwork joints + board-form hatching + speckle on the concrete masses, corner plus marks
 const hatch = (x, y, w, h, n, o) => { let t = ''; for (let i = 0; i < n; i++) { const yy = y + rnd() * h, xx = x + rnd() * w; t += ln(xx, yy, Math.min(x + w, xx + 14 + rnd() * 40), yy + (rnd() - 0.5) * 2, 0.9, INK, o); } return t; };
 const joints = (x, y, w, h, cols, rows) => { let t = ''; for (let i = 1; i < cols; i++) t += ln(x + (w / cols) * i, y, x + (w / cols) * i, y + h, 0.8, INK, 0.45); for (let j = 1; j < rows; j++) t += ln(x, y + (h / rows) * j, x + w, y + (h / rows) * j, 0.8, INK, 0.45); return t; };
 const speck = (x, y, w, h, n) => { let t = ''; for (let i = 0; i < n; i++) t += `<circle cx="${f(x + rnd() * w)}" cy="${f(y + rnd() * h)}" r="${f(0.5 + rnd() * 0.9)}" fill="${INK}" opacity="${f(0.25 + rnd() * 0.35)}"/>`; return t; };
 const plus = (x, y, r = 9) => ln(x - r, y, x + r, y, 1.6) + ln(x, y - r, x, y + r, 1.6);
-s += hatch(400, 150, 660, 46, 105, 0.4) + joints(400, 150, 660, 46, 11, 1) + speck(400, 150, 660, 46, 60);
-s += hatch(430, 190, 70, 280, 90, 0.4) + hatch(960, 190, 70, 280, 90, 0.4) + joints(430, 190, 70, 280, 1, 8) + joints(960, 190, 70, 280, 1, 8);
-s += hatch(360, 120, 36, 492, 135, 0.4) + hatch(1064, 120, 36, 492, 135, 0.4) + joints(360, 120, 36, 492, 1, 14) + joints(1064, 120, 36, 492, 1, 14);
-s += joints(420, 470, 640, 142, 8, 1) + hatch(420, 470, 640, 142, 240, 0.35);
+s += hatch(400, 150, 660, 46, 79, 0.4) + joints(400, 150, 660, 46, 11, 1) + speck(400, 150, 660, 46, 60);
+s += hatch(430, 190, 70, 280, 68, 0.4) + hatch(960, 190, 70, 280, 68, 0.4) + joints(430, 190, 70, 280, 1, 8) + joints(960, 190, 70, 280, 1, 8);
+s += hatch(360, 120, 36, 492, 101, 0.4) + hatch(1064, 120, 36, 492, 101, 0.4) + joints(360, 120, 36, 492, 1, 14) + joints(1064, 120, 36, 492, 1, 14);
+s += joints(420, 470, 640, 142, 8, 1) + hatch(420, 470, 640, 142, 180, 0.35);
 s += speck(360, 120, 36, 492, 70) + speck(1064, 120, 36, 492, 70) + speck(430, 190, 70, 280, 60) + speck(960, 190, 70, 280, 60);
 // stepped upper massing + roof-edge parapet ticks
-s += rect(520, 120, 420, 30, PALE, INK, 2) + joints(520, 120, 420, 30, 9, 1) + hatch(520, 120, 420, 30, 60, 0.4);
+s += rect(520, 120, 420, 30, PALE, INK, 2) + joints(520, 120, 420, 30, 9, 1) + hatch(520, 120, 420, 30, 45, 0.4);
 s += rect(600, 96, 260, 24, LIGHT, INK, 2) + joints(600, 96, 260, 24, 6, 1);
 // deeper mullion shadows on the glass
 for (let i = 1; i < 6; i++) s += rect(500 + i * 77 + 1.5, 232, 7, 238, INK, INK, 0, 0.18);
 // corner plus marks (survey grid)
 s += plus(60, 40) + plus(1380, 40) + plus(60, 660) + plus(1380, 660);
 // bare branching trees
-const branch = (x, y, len, ang, depth, sw) => {
+const branch = (x, y, len, ang, depth, sw, col = INK, op = 0.95) => {
   if (depth === 0 || len < 4) return '';
   const x2 = x + Math.cos(ang) * len, y2 = y + Math.sin(ang) * len;
-  let t = ln(x, y, x2, y2, sw, INK, 0.95);
+  let t = ln(x, y, x2, y2, sw, col, op);
   const n = depth > 4 ? 2 : 3;
-  for (let i = 0; i < n; i++) t += branch(x2, y2, len * (0.7 + rnd() * 0.14), ang + (rnd() - 0.5) * 1.2 + (i - (n - 1) / 2) * 0.35, depth - 1, Math.max(0.8, sw * 0.68));
+  for (let i = 0; i < n; i++) t += branch(x2, y2, len * (0.7 + rnd() * 0.14), ang + (rnd() - 0.5) * 1.2 + (i - (n - 1) / 2) * 0.35, depth - 1, Math.max(0.8, sw * 0.68), col, op);
   return t;
 };
-const tree = (cx, base, h) => ln(cx, base, cx, base - h * 0.28, 5) + branch(cx, base - h * 0.28, h * 0.27, -Math.PI / 2, 8, 4.4);
+const tree = (cx, base, h, col = INK, op = 0.95, d = 8) => ln(cx, base, cx, base - h * 0.28, col === INK ? 5 : 3, col, op) + branch(cx, base - h * 0.28, h * 0.27, -Math.PI / 2, d, col === INK ? 4.4 : 2.6, col, op);
+// lighter back trees for depth (the reference layers a grey tree behind the dark ones)
+s += tree(150, gy, 330, MID, 0.5, 6) + tree(1290, gy, 320, MID, 0.5, 6);
 s += tree(215, gy, 400) + tree(285, gy, 300);
 s += tree(1215, gy, 380) + tree(1150, gy, 290);
 // a lone figure
 s += `<g stroke="${INK}" stroke-width="2.4" fill="none"><circle cx="700" cy="${gy - 40}" r="4.2"/>${ln(700, gy - 35, 700, gy - 14, 2.4)}${ln(700, gy - 14, 695, gy, 2.4)}${ln(700, gy - 14, 705, gy, 2.4)}</g>`;
 const mb = process.argv.includes('--mobile'); // tighter crop for the phone fold
 const vb = mb ? '110 60 1220 640' : `0 0 ${W} ${H}`;
-process.stdout.write(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}" width="${mb ? 1220 : W}" height="${mb ? 640 : H}">${s}</svg>\n`);
+const dots = (n, rmax) => { let t = ''; for (let i = 0; i < n; i++) t += `<circle cx="${f(rnd() * 32)}" cy="${f(rnd() * 32)}" r="${f(0.35 + rnd() * rmax)}"/>`; return t; };
+const defs = `<defs><pattern id="st1" width="32" height="32" patternUnits="userSpaceOnUse" fill="${INK}">${dots(110, 0.8)}</pattern><pattern id="st2" width="32" height="32" patternUnits="userSpaceOnUse" fill="${INK}">${dots(45, 0.7)}</pattern></defs>`;
+process.stdout.write(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}" width="${mb ? 1220 : W}" height="${mb ? 640 : H}">${defs}${s}</svg>\n`);

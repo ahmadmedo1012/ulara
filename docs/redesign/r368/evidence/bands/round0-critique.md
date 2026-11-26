@@ -291,3 +291,6 @@ The platform frame now swaps plan by wash beat: lecture hall (lecture/checkpoint
 
 ## Texture and line weight (measured)
 Paper ground: reference empty ground (245,246,238), sd 0.73; ULARA (242,241,236), grain film present, so a 3-level warm shift only, not visible side by side. Plan walls: darkest sampled pixel reference (57,57,36) vs ULARA (37,31,24), wall width on a scanline 17px vs 14px: ULARA walls are slightly darker and warmer and ~15% thinner, an anti-aliasing-sensitive measurement, so no change was made rather than tune to noise. Hero elevation: reference is a photographic render; the procedural drawing is a different technique and is the main remaining texture gap. Status: FAILING.
+
+## Hero toward the reference render (stipple shading)
+Hero elevation now shades its cast shadow, soffit and pier sides with stipple patterns (two 32px dot tiles) like the reference rendering, plus lighter grey back trees for depth. Hatch counts trimmed to keep gzip 46.8KB. Dark theme inverts the stipple cleanly. Mobile perf re-measured: p50 16.7ms, 16 frames >50ms, 1.1s long tasks (was 15 / 1.05s): unchanged. Still: the reference is a photo-like render with finer grain and a more complex building. Status: FAILING.
