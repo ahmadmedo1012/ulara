@@ -2068,3 +2068,10 @@ section.chapters {
 
 @keyframes jt-plat-dash { to { stroke-dashoffset: -26; } }
 @keyframes jt-plat-float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -6px; } }
+
+/* r368 slice 06: the platform plates are raster renders with a white ground. Multiply sinks the ground into the paper (light);
+   dark inverts the raster and screens it, like the hero raster. Desktop layer only. */
+@media (min-width: 992px) {
+  .jt-plat-img, .jt-plat-aux img { mix-blend-mode: multiply; }
+  [data-theme="dark"] .jt-plat-img, [data-theme="dark"] .jt-plat-aux img { mix-blend-mode: screen; }
+}

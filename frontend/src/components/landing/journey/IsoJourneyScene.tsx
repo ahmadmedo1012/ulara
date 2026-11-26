@@ -115,11 +115,12 @@ const FINDINGS_AR = [
  * aria-labelledby contract rides id="chapters-title"). */
 const CLOSE_CHIP_L1_AR = 'الفصول';
 const CLOSE_CHIP_L2_AR = '[04]';
-const PLAT_PLAN_SRCS = ['plan-lecture-hall', 'plan-library', 'plan-exam-hall'].map(
-  (n) => new URL(`../../../assets/art-v2/plans/${n}.svg`, import.meta.url).href,
+/* r368: the decorative platform plates are Blender/Cycles iso massing renders (scripts/art/blender/plate.py) */
+const PLAT_PLAN_SRCS = ['lecture', 'library', 'exam'].map(
+  (n) => new URL(`../../../assets/art-v2/plates-bl/${n}.webp`, import.meta.url).href,
 );
-const PLAT_AUX_SRCS = ['plan-campus', 'plan-admin'].map(
-  (n) => new URL(`../../../assets/art-v2/plans/${n}.svg`, import.meta.url).href,
+const PLAT_AUX_SRCS = ['campus', 'admin'].map(
+  (n) => new URL(`../../../assets/art-v2/plates-bl/${n}.webp`, import.meta.url).href,
 );
 const BIG_PLAN_SRC = new URL('../../../assets/art-v2/plans/plan-library.svg', import.meta.url).href;
 const CLOSE_TITLE_AR = 'الرحلة — أربعة فصول تتحرك أمامك';
