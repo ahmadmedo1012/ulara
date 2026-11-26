@@ -688,3 +688,8 @@
     content: '+'; position: absolute; inset-inline-start: 0.9rem; inset-block-start: 2.1rem; font: 300 22px/1 var(--font-mono, monospace); color: var(--text-muted, currentColor); pointer-events: none;
   }
 }
+
+/* r368 slice 05 round 3 — the statement owns a tall empty field (the reference's field is ~600px at 1440), centred */
+@media (min-width: 992px) {
+  .pm-section .pm-inner > .pm-head { min-block-size: clamp(520px, 44vw, 700px); display: grid; align-content: center; padding-block: 48px; }
+}

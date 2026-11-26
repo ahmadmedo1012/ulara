@@ -168,3 +168,4 @@ NEXT: origin/main sync ~9:50pm; remaining gaps 06 layout, hero photo look, no-co
 - r368 plates v4: campus hatch on all blocks, lighter admin poche, jittered hand-drawn hatching.
 - r368 hero v6: tonal hatching pass (hatch.sh), mobile crop regenerated. NEXT: statement band.
 - r368 05 statement field round 2: one-line statement (desktop), dashed tick row + corner cross. Mobile untouched. Still FAILING (field sits high, tick row faint).
+- r368 05 round 3: statement field tall (clamp 520-700px) and centred at desktop; the grid under it is the next band, not leftover. Mobile verified unchanged.
