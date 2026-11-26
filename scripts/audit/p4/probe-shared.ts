@@ -86,7 +86,7 @@ export async function launchBrowser(): Promise<Browser> {
 
 export type Role = 'PUBLIC' | 'STUDENT' | 'TEACHER' | 'ADMIN' | 'QUALITY' | 'OWNER';
 
-export interface SeededContextOptions {
+interface SeededContextOptions {
   role: Role;
   width: number;
   height?: number;

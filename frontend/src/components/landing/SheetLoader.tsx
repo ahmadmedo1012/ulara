@@ -89,7 +89,7 @@ function motionDurationMs(name: string, fallback: number): number {
   }
 }
 
-export interface SheetLoaderProps {
+interface SheetLoaderProps {
   onDone: () => void;
   /** fires when the geometric EXIT BEGINS (the slit opens): the page
    *  behind the loader starts its own ink-in then, so the reveal

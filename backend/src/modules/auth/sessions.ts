@@ -44,13 +44,13 @@ import { AppError } from '../../lib/errors.js';
 import { env } from '../../env.js';
 
 /** Request fingerprint threaded from the route layer (LoginContext shape). */
-export interface SessionRequestContext {
+interface SessionRequestContext {
   ip?: string;
   userAgent?: string;
 }
 
 /** Wire shape of one listed session (GET /auth/sessions). */
-export interface SessionListItem {
+interface SessionListItem {
   id: string;
   createdAt: Date;
   lastUsedAt: Date;
@@ -60,9 +60,9 @@ export interface SessionListItem {
   current: boolean;
 }
 
-export type RevokeSessionStatus = 'revoked' | 'already_revoked';
+type RevokeSessionStatus = 'revoked' | 'already_revoked';
 
-export interface RevokeSessionResult {
+interface RevokeSessionResult {
   status: RevokeSessionStatus;
   /** The revoked row was the CALLER's own (its cookie is now dead). */
   current: boolean;
