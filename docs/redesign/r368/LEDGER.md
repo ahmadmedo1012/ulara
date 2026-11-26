@@ -137,3 +137,5 @@ NEXT: more
 - hero stipple shading + grey back trees; perf unchanged. NEXT: re-critique all slices.
 - phone: hero art box centred at own aspect, compact bordered cookie buttons; perf unchanged.
 - phone: agent pill hidden <=767 (overlapped title). Tablet critiqued, plaque overlap unverified.
+
+- r368 tablet check: caption/plaque overlap not reproduced after settle (transient). Blank capability panel was real in a narrow scrub window (clip full, head not yet); head/rows now start at clip end. Status: FAILING overall.
