@@ -1013,6 +1013,9 @@ export function IsoJourneyScene() {
                     <img src={src} alt="" loading="lazy" decoding="async" />
                   </span>
                 ))}
+                <svg className="jt-plat-route" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+                  <polyline points="15.2,24 39,60 77,48 77,17" />
+                </svg>
                 <span className="jt-plat-sq jt-plat-sq-a" />
                 <span className="jt-plat-sq jt-plat-sq-b" />
                 <div className="jt-plat-card">

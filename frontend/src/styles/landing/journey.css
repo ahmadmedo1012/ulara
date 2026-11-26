@@ -2018,6 +2018,20 @@ section.chapters {
   .jt-plat-aux-1 { inset-block-start: 6%; }
   .jt-plat-aux-2 { inset-block-start: 38%; }
   [data-theme="dark"] .jt-plat-aux img { filter: invert(1) grayscale(0.2) brightness(0.9); }
+  /* r368 — the dashed route (royal, where the reference runs its orange route) links the squares to the side plates */
+  .jt-plat-route { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; z-index: 1; overflow: visible; }
+  .jt-plat-route polyline { fill: none; stroke: #2540d9; stroke-width: 1.4; stroke-dasharray: 7 6; vector-effect: non-scaling-stroke; }
+  [data-theme="dark"] .jt-plat-route polyline { stroke: #8aa0ff; }
+  .jt-plat-sq { z-index: 2; }
+  @media (prefers-reduced-motion: no-preference) {
+    .jt-plat-route polyline { animation: jt-plat-dash 2.4s linear infinite; }
+    .jt-plat-aux-1 { animation: jt-plat-float 7s ease-in-out infinite; }
+    .jt-plat-aux-2 { animation: jt-plat-float 8s ease-in-out -3s infinite; }
+    /* the loops run only while the layer is on stage (no off-screen paint) */
+    .jt .jt-platform { animation-play-state: paused; }
+    .jt:not([data-stage='2']):not([data-stage='3']):not([data-stage='4']) .jt-plat-route polyline,
+    .jt:not([data-stage='2']):not([data-stage='3']):not([data-stage='4']) .jt-plat-aux { animation-play-state: paused; }
+  }
   .jt-plat-sq-a { inset-block-start: 22%; inset-inline-start: 14%; }
   .jt-plat-sq-b { inset-block-start: 58%; inset-inline-start: 38%; }
   .jt-plat-card { position: absolute; inset-block-end: 4%; inset-inline-start: 46%; inline-size: 26%; }
@@ -2041,3 +2055,6 @@ section.chapters {
 @media (max-width: 767px) {
   .jt-agent-status { display: none; }
 }
+
+@keyframes jt-plat-dash { to { stroke-dashoffset: -26; } }
+@keyframes jt-plat-float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -6px; } }
