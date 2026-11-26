@@ -785,13 +785,36 @@ html[data-theme='dark'] .pr-section .pr-cta {
 .pr-ledger { list-style: none; margin: 1.6rem 0 0; padding: 0; }
 .pr-ledger li { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-block: 1.1rem; border-block-start: 1px solid var(--pr-rule-ink); font-size: 1.3rem; }
 .pr-ledger li i { inline-size: 1.4rem; block-size: 1.4rem; border: 1px solid currentColor; border-radius: 3px; opacity: .55; flex: none; }
-@media (max-width: 991px) { .pr-ledger { display: none; } } /* r368: shown on phone it overlaps the fixed-height measured rows; the phone band needs a rebuild, not an add-on */
+@media (max-width: 767px) { .pr-ledger { display: block; } }
+@media (min-width: 768px) and (max-width: 991px) { .pr-ledger { display: none; } } /* r368: shown on phone it overlaps the fixed-height measured rows; the phone band needs a rebuild, not an add-on */
 
 /* r368 — ledger scale up to the reference's row rhythm (rows ~3.4rem taller, text 1.5rem) */
 .pr-ledger li { padding-block: 1.7rem; font-size: 1.5rem; }
 .pr-ledger li i { inline-size: 1.8rem; block-size: 1.8rem; }
 
-/* r368 — phone: the plan chrome chips (tag + demo label) overlap the row copy at this size; the plan itself stays. */
+/* r368 — phone rebuild: the reference's phone band is a plain stack (title, one paragraph, ruled
+   capability rows). The fixed-height grid cells, the plan thumbnail and the CTA strip are
+   released into auto-height flow; the ledger rows show. */
 @media (max-width: 767px) {
-  .pr-section .pr-rowimg .pr-frame-chrome { display: none; }
+  .pr-section .pr-row:not(.pr-clone) {
+    display: block;
+    block-size: auto;
+    min-block-size: 0;
+  }
+  .pr-section .pr-row[aria-hidden="true"]:not(.pr-clone) { display: none; }
+  .pr-section .pr-row:not(.pr-clone) .pr-rowimg,
+  .pr-section .pr-row:not(.pr-clone) .pr-cta { display: none; }
+  .pr-section .pr-row:not(.pr-clone) .pr-head,
+  .pr-section .pr-row:not(.pr-clone) .pr-side,
+  .pr-section .pr-row:not(.pr-clone) .pr-sidebox,
+  .pr-section .pr-row:not(.pr-clone) .pr-head-box {
+    position: relative;
+    inset: auto;
+    block-size: auto;
+    min-block-size: 0;
+    padding-block: 18px;
+  }
+  .pr-section .pr-row:not(.pr-clone) .pr-sidebox { padding-inline: 16px; }
+  .pr-section .pr-ledger { display: block; position: static; margin: 12px 0 0; padding: 0; list-style: none; }
+  .pr-section .pr-ledger li { display: flex; align-items: center; justify-content: space-between; min-block-size: 52px; border-block-start: 1px solid var(--rule); font-size: 14px; }
 }

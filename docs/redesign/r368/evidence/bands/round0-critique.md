@@ -125,3 +125,6 @@ Added the use-case accordion (art plate left, ruled native-details list right) a
 
 ## Slice 06/07 platform phone round
 Dropped the plan chrome chips on phone (they overlapped the row copy). Still wrong: the plan thumbnail is tiny and the 2nd row's CTA label is clipped by it, rows are fixed-height grids stacked by explicit row numbers, the reference is a plain list of icon rows (a rebuild, not a patch). Status: FAILING.
+
+## Slice 06/07 platform phone round 2
+Rebuilt the phone band as an auto-height stack: title, paragraph, four ruled capability rows (ledger), no thumbnail, no CTA strip, no overlap. Still wrong: row icons are empty squares not line icons, no hero-sized title, copy column padding unmeasured. Status: FAILING (much closer).
