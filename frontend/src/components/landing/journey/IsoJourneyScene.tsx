@@ -118,6 +118,9 @@ const CLOSE_CHIP_L2_AR = '[04]';
 const PLAT_PLAN_SRCS = ['plan-lecture-hall', 'plan-library', 'plan-exam-hall'].map(
   (n) => new URL(`../../../assets/art-v2/plans/${n}.svg`, import.meta.url).href,
 );
+const PLAT_AUX_SRCS = ['plan-campus', 'plan-admin'].map(
+  (n) => new URL(`../../../assets/art-v2/plans/${n}.svg`, import.meta.url).href,
+);
 const BIG_PLAN_SRC = new URL('../../../assets/art-v2/plans/plan-library.svg', import.meta.url).href;
 const CLOSE_TITLE_AR = 'الرحلة — أربعة فصول تتحرك أمامك';
 /* R349 (D5 · the closing copy's diet): the retired three-sentence
@@ -1004,6 +1007,11 @@ export function IsoJourneyScene() {
                 <div className="pat-linegrid jt-plat-grid" />
                 {PLAT_PLAN_SRCS.map((src, k) => (
                   <img key={k} className={`jt-plat-img jt-plat-img-${k + 2}`} src={src} alt="" loading="lazy" decoding="async" />
+                ))}
+                {PLAT_AUX_SRCS.map((src, k) => (
+                  <span key={k} className={`jt-plat-aux jt-plat-aux-${k + 1}`}>
+                    <img src={src} alt="" loading="lazy" decoding="async" />
+                  </span>
                 ))}
                 <span className="jt-plat-sq jt-plat-sq-a" />
                 <span className="jt-plat-sq jt-plat-sq-b" />

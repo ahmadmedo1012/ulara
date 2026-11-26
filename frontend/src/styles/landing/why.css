@@ -1153,6 +1153,8 @@
   }
   .wy-plates-a { grid-column: 1; max-inline-size: 40rem; inline-size: 40rem; position: relative; }
   .wy-plates-b { grid-column: 2; align-self: end; justify-self: end; max-inline-size: 54rem; inline-size: 54rem; position: relative; margin-block-start: 12rem; }
+  /* r368 — a third, smaller plate lowers the collage's emptiness (the reference stage carries several plans) */
+  .wy-plates-c { grid-column: 1; align-self: end; justify-self: end; inline-size: 26rem; max-inline-size: 26rem; position: relative; }
   .wy-plates-line { position: absolute; inset-inline: 2rem; inset-block-start: 22rem; block-size: 1px; background: var(--duo-signal, #2540d9); }
 }
 @media (min-width: 992px) {

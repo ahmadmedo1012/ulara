@@ -2012,6 +2012,12 @@ section.chapters {
   .jt-plat-sq { position: absolute; inline-size: 2.4rem; block-size: 2.4rem; background: #2540d9; }
   [data-theme="dark"] .jt-plat-sq { background: #8aa0ff; }
   [data-theme="dark"] .jt-plat-img { filter: invert(1) grayscale(0.2) brightness(0.9); } /* r368 — dark paper: dark-ink plan inverts like the other plan art */
+  /* r368 — the reference's platform frames carry several plates: two small secondary plates ride the far edge */
+  .jt-plat-aux { position: absolute; inset-inline-end: 3%; inline-size: 21%; aspect-ratio: 1 / 1; border: 1px solid var(--rule-strong); background: var(--bg); display: grid; place-items: center; padding: 0.6rem; }
+  .jt-plat-aux img { inline-size: 100%; block-size: 100%; object-fit: contain; }
+  .jt-plat-aux-1 { inset-block-start: 6%; }
+  .jt-plat-aux-2 { inset-block-start: 38%; }
+  [data-theme="dark"] .jt-plat-aux img { filter: invert(1) grayscale(0.2) brightness(0.9); }
   .jt-plat-sq-a { inset-block-start: 22%; inset-inline-start: 14%; }
   .jt-plat-sq-b { inset-block-start: 58%; inset-inline-start: 38%; }
   .jt-plat-card { position: absolute; inset-block-end: 4%; inset-inline-start: 46%; inline-size: 26%; }

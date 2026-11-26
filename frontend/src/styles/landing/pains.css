@@ -664,3 +664,13 @@
 @media (min-width: 992px) {
   .pm-section .pm-subwrap { display: none; }
 }
+
+/* r368 — desktop pains heads step up to the reference's heavier display rung (reference: ~26px caps head over a one-line sub at 1440) */
+@media (min-width: 992px) {
+  .pm-item-title {
+    font-size: clamp(22px, 2.05vw, 39px);
+    line-height: 1.2;
+    font-weight: 800;
+  }
+  .pm-item-titlebox { margin-block-end: 1.6rem; }
+}
