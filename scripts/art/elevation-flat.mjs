@@ -68,6 +68,12 @@ s += rect(520, 120, 420, 30, PALE, INK, 2) + joints(520, 120, 420, 30, 9, 1) + h
 s += rect(600, 96, 260, 24, LIGHT, INK, 2) + joints(600, 96, 260, 24, 6, 1);
 // deeper mullion shadows on the glass
 for (let i = 1; i < 6; i++) s += rect(500 + i * 77 + 1.5, 232, 7, 238, INK, INK, 0, 0.18);
+// r368 hero depth: a projecting mid-level slab with railing ticks and soffit shadow, paired mullion fins, a darker ground course
+s += rect(470, 342, 520, 12, LIGHT, INK, 2) + joints(470, 342, 520, 12, 13, 1) + poly([[500, 354], [960, 354], [960, 372], [500, 372]], INK, 0.3) + poly([[500, 354], [960, 354], [960, 372], [500, 372]], 'url(#st2)', 0.8);
+for (let i = 0; i < 40; i++) s += ln(476 + i * 13, 330, 476 + i * 13, 342, 1, INK, 0.55);
+s += ln(470, 330, 990, 330, 1.6, INK, 0.8);
+for (let i = 1; i < 6; i++) s += rect(500 + i * 77 - 5, 232, 4, 238, LIGHT, INK, 0.8);
+s += rect(420, 592, 640, 20, INK, INK, 0, 0.22) + poly([[420, 592], [1060, 592], [1060, 612], [420, 612]], 'url(#st1)', 0.7);
 // corner plus marks (survey grid)
 s += plus(60, 40) + plus(1380, 40) + plus(60, 660) + plus(1380, 660);
 // bare branching trees

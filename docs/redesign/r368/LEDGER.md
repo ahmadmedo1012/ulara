@@ -147,3 +147,4 @@ NEXT: origin/main sync ~9:50pm; remaining gaps 06 layout, hero photo look, no-co
 - r368 slice 06 platform: royal dashed route + subtle float on side plates (desktop only, no-preference motion only). Tests 446 pass. Status: FAILING overall.
 - r368 06: statement frame gets dashed inner frame + faint grid; platform side plates get royal ULR annotation chips. Tests 435 pass. Status: FAILING overall.
 - r368 UX: capability panel frame now opens at 0.66 together with head (blank window 0.02); caption and first plaque are sequenced (never overlap). r306 keyframe whitelist gets jt-plat-dash/float (reason in test). Status: FAILING overall.
+- r368 hero: projecting mid-level slab with railing ticks, paired mullion fins, darker ground course (svg gzip 47.4KB). Still a drawing vs photo. Status: FAILING overall.
