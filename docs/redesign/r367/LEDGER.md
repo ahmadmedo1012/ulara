@@ -48,3 +48,22 @@ close PRs, zero-trace), final verify ×2.
   probes (keyboard 45 steps 0 failed · zoom-200 8 cells clean · RM 0 gate
   findings (the landing RM height stays P2 inventory, the motion-engine law)
   · 3G throttle 3 cells clean) — run locally on the merged main.
+- **D. the mobile block (what landed this round)** — the capture rig's two
+  reds cured (the truncated download-artifact SHA killed both Android legs
+  at Set up job; the iOS pick() matched NO simulator on the macos-26 image
+  — 0 pngs silently; the lists span the 2026 catalogue and an empty pick now
+  FAILS the leg); the deferred detail routes (course/lecture/exam-template)
+  ride the leg's own seeded DB's real ids; **the soak's verdict became the
+  product's fix**: the session survived every chaos round but the gate dumped
+  each re-resolution onto the picker with the error card — RoleGate now
+  auto-restores the last-selected institution (cb449b3, mobile belt 1,514
+  green), the soak re-dispatched on the fix. The rig re-dispatched twice;
+  evidence sheets ride the artifacts when they land. — LANDED (P1–P10's
+  full set stays open, honestly: typography/icons/sound/chrome/store —
+  see REPORT.ar.md §3)
+- **G. cleanup (mid-round)** — both merged branches deleted from the remote
+  (`git ls-remote --heads` = main + the owner's r368), PRs #58/#59 closed
+  with comments, scratch local branches deleted, the stray capture scripts
+  removed, `scripts/brand/zero-trace.sh` PASS (twice), the docs/ index and
+  this ledger current. PR #60 (r368) untouched per its own DO-NOT-MERGE
+  contract — owner-merged only.
