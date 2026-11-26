@@ -122,32 +122,28 @@ jobs:
         working-directory: apps/mobile
         run: npm ci --no-audit --no-fund
 
-      - name: Start Metro (dev-client server · current JS · host loopback API)
-        working-directory: apps/mobile
-        run: |
-          EXPO_PUBLIC_API_BASE_URL=http://10.0.2.2:4000/api/v1 \
-          nohup npx expo start --dev-client --port 8081 > ../../metro.log 2>&1 &
-          for i in $(seq 1 40); do
-            if curl -sf http://127.0.0.1:8081/status >/dev/null 2>&1; then
-              echo "metro up (poll $i)"
-              exit 0
-            fi
-            sleep 3
-          done
-          echo "::error::metro never answered /status within 120s"
-          tail -40 ../../metro.log
-          exit 1
-
-      # ── the dev-client APK (built in-run — self-contained dispatch) ──
-      - name: Prebuild + assemble the dev-client APK
+      # ── the RELEASE APK (built in-run · JS bundled · NO dev launcher) ──
+      # r363 soak #15: fifteen runs fought the dev-client's overlays —
+      # the launcher home, the first-launch sheet, the RN dev menu (the
+      # runner's own keyevent 82), and a dump that goes BLIND while any
+      # of them is up. A RELEASE build ends the war: the JS is bundled
+      # (no metro, no bundler dependency), there is no launcher UI and
+      # no dev menu, the airplane rounds are TRUE offline, and the app
+      # under test is the same artifact class as production. Debug-
+      # signing keeps it installable (the injected-signing trick).
+      - name: Prebuild + assemble the release APK (JS bundled · debug-signed)
         working-directory: apps/mobile
         env:
           EXPO_PUBLIC_API_BASE_URL: http://10.0.2.2:4000/api/v1
         run: |
           npx expo prebuild --platform android --clean --no-install
-          (cd android && ./gradlew assembleDebug --no-daemon -q) \
-            || { echo "::error::gradle assembleDebug failed"; exit 1; }
-          cp android/app/build/outputs/apk/debug/app-debug.apk ../dev-client.apk
+          (cd android && ./gradlew assembleRelease --no-daemon -q \
+            -Pandroid.injected.signing.store.file="$HOME/.android/debug.keystore" \
+            -Pandroid.injected.signing.store.alias=androiddebugkey \
+            -Pandroid.injected.signing.store.password=android \
+            -Pandroid.injected.signing.key.password=android) \
+            || { echo "::error::gradle assembleRelease failed"; exit 1; }
+          cp android/app/build/outputs/apk/release/app-release.apk ../dev-client.apk
           du -h ../dev-client.apk
 
       # ── the emulator: login once, then the chaos rotation ──
@@ -166,7 +162,6 @@ jobs:
             adb shell settings put global animator_duration_scale 0
             sleep 20
             adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
-            adb reverse tcp:8081 tcp:8081 || touch fail.flag
             adb install -r apps/dev-client.apk || touch fail.flag
             mkdir -p soak-shots
             # r363: the runner executes `script:` LINE-BY-LINE (run #3's

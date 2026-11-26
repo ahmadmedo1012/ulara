@@ -29,9 +29,11 @@ shot() { adb exec-out screencap -p > "$1" 2>/dev/null || true; }
 # empty "DEVELOPMENT SERVERS" home). Every session open therefore rides
 # the canonical dev-client deep link, driven by adb — maestro then acts
 # on the already-foregrounded app (no launchApp in the flows).
-DEEP_LINK="exp+ulara://expo-development-client/?url=http%3A%2F%2F10.0.2.2%3A8081"
+# r363 soak #15: the RELEASE build (JS bundled, no dev launcher, no
+# menu, no metro) ends the overlay war — the launch is a plain
+# LAUNCHER intent and the airplane rounds are true offline.
 open_app() {
-  adb shell am start -a android.intent.action.VIEW -d "$DEEP_LINK" >/dev/null 2>&1 || true
+  adb shell monkey -p ly.ulara.app -c android.intent.category.LAUNCHER 1 >/dev/null 2>&1 || true
 }
 
 # run #10's forensics: on a fresh install the dev-client's first-launch
@@ -116,12 +118,11 @@ round() {
   sleep 12
   shot "soak-shots/round-$R-regained.png"
   echo "── soak round $R: the surviving-session assert"
-  # airplane rounds NEVER reopen: a dev-client relaunch with no metro
-  # reach is an error screen BY CONSTRUCTION (the bundler is the app's
-  # js source in dev builds) — the session-resume truth is exercised
-  # in-app (the app stayed foreground through the outage; its own
-  # refresh-on-regain path fires). Networked rounds reopen through the
-  # deep link (the auth store survives — no pm clear).
+  # airplane rounds NEVER reopen (the app stays foreground through the
+  # outage; its own refresh-on-regain path fires — the session-resume
+  # truth). Networked rounds relaunch through the plain LAUNCHER intent
+  # (the release app opens directly; the auth store survives — no pm
+  # clear), and the dismissal belt stays as harmless insurance.
   if [ "$MODE" != "airplane" ]; then
     open_app
     dismiss_dev_menu
