@@ -34,3 +34,8 @@ Still different:
 3. Footer strip still uses the old photo variant; roles band has no art reveal.
 4. Typecheck passes.
 Status: FAILING, much closer in construction.
+
+## Round 4 (sheet: round4-cantilever-arcade.webp)
+Done: the cantilever is now one structure (columns stand between the slab underside and the ground line in one-point perspective, board-formed course lines); footer strip uses the same flat scene (cover crop, physical shape seats).
+Still different: (1) the reference building is a solid concrete mass with texture and a pale distant horizon; ours is flat ink and a bit too dominant, hiding the slab; scale the scene to about 70% and let the slab rise behind its roof. (2) Half-art/half-list layout not built. (3) Thick-wall plan scale (05/07) not started.
+Status: FAILING; typecheck passes.

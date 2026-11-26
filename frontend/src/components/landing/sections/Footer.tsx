@@ -47,7 +47,7 @@ import { Logo } from '../../../brand';
 import { BRAND_LABEL, LOGIN } from '../copy';
 import { ConsentBanner } from '../chrome/ConsentBanner';
 import { DuotoneScene } from '../plates/DuotoneScene';
-import podiumScene from '../../../assets/art-v2/podium-scene.webp';
+import cantileverScene from '../../../assets/art-v2/cantilever.svg';
 import { RegCross } from '../../patterns/RegCross';
 
 /* r363 — THE ONE LINK ROW. The retired col2 index (three mono-headed
@@ -273,7 +273,8 @@ export function Footer({ year }: { year: number }) {
         <div className="fo-fstrip">
           <div className="fo-strip-media">
             <DuotoneScene
-              src={podiumScene}
+              src={cantileverScene}
+              flat
               alt="ساحة الحرم الجامعي بظلال الطالب الوحيد بين كتل الخرسانة — شريط الحبر الختامي"
               variant="strip"
               caption="X:0000 · Y:12700"

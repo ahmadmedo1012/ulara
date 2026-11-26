@@ -297,3 +297,9 @@
 .duo-stage:has(.is-flat) .fs-circle-royal { inset-inline-start: auto; inset-inline-end: auto; left: -6cqw; inset-block-start: 22%; }
 .duo-stage:has(.is-flat) .fs-slab { inset-inline-start: auto; inset-inline-end: auto; left: 24cqw; inset-block-start: 4%; block-size: 62%; }
 .duo-stage:has(.is-flat) .fs-circle-pale { inset-inline-start: auto; left: 3cqw; inset-block-end: -6%; }
+
+/* r368: the footer strip crops the flat scene (cover) and seats the shapes physically */
+.duo-strip .duo-img.is-flat { object-fit: cover; object-position: right 82%; }
+.duo-strip:has(.is-flat) .fs-circle-royal { inset-inline-start: auto; left: -4cqw; inset-block-start: -6cqw; }
+.duo-strip:has(.is-flat) .fs-slab { inset-inline-start: auto; inset-inline-end: auto; left: 22cqw; inset-block-start: -2%; block-size: 70%; }
+.duo-strip:has(.is-flat) .fs-circle-pale { inset-inline-start: auto; left: 6cqw; }
