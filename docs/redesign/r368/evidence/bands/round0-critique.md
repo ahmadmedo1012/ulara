@@ -197,3 +197,6 @@ Same sheet grammar holds on every page (column rules, giant heading, one royal p
 
 ## Slices 19-22 (820/2560 restage check)
 Fixed: at 768-991 the hero elevation overflowed and cropped the house; now sized by width, whole elevation visible (evidence slice21-hero-820.png). 2560: elevation centred with air, holds. Slice 19 auth, 20 error pages, 22 motion/theme/RTL: no new fixes, no reference. Status: FAILING.
+
+## Cross-slice analyze (6:02 PM)
+origin/main already merged (up to date), tsc clean, zero-trace PASS, targeted suites pass; the full suite exceeded the 115s cap so the last full baseline (2964/2966) stands unrefreshed. Verdict per slice: all 22 FAILING (not indistinguishable). Closest: 03 hero (desktop), 09/11 footer stage, 12-14 page template. Furthest: 05/06 (extra statement lines, left column), 08 (duotone stacked over plates), 10, 19, 20, 22 (no reference; spec-verified only). Live reference blocked (403), corpus only.

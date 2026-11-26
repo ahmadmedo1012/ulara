@@ -95,3 +95,5 @@ NEXT: main sync ~6:26; slices 15-18
 NEXT: main sync ~6:26; slices 19-22
 - slice 21: tablet hero elevation uncropped
 NEXT: main sync ~6:26; cross-slice analyze
+- cross-slice analyze done; 0/22 passing
+NEXT: further fixes or mark Ready on owner call
