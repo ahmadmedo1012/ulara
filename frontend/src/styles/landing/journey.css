@@ -1970,6 +1970,12 @@ section.chapters {
     padding-inline: 12%; text-wrap: balance;
     opacity: 0; visibility: hidden; transition: opacity var(--t-fast) var(--ease);
   }
+  /* r368 — the reference's statement sits inside a ruled, gridded frame with corner crosses: dashed inner frame + a faint grid */
+  .jt-lede::before {
+    content: ''; position: absolute; inset: 4% 3%; z-index: -1; border: 1px dashed var(--rule-strong);
+    background-image: linear-gradient(var(--rule) 1px, transparent 1px), linear-gradient(90deg, var(--rule) 1px, transparent 1px);
+    background-size: 6.4rem 6.4rem; opacity: 0.35;
+  }
   .jt[data-stage='0']:not([data-rm='on']) .jt-lede { opacity: 1; visibility: visible; }
 }
 
@@ -2015,6 +2021,10 @@ section.chapters {
   /* r368 — the reference's platform frames carry several plates: two small secondary plates ride the far edge */
   .jt-plat-aux { position: absolute; inset-inline-end: 3%; inline-size: 21%; aspect-ratio: 1 / 1; border: 1px solid var(--rule-strong); background: var(--bg); display: grid; place-items: center; padding: 0.6rem; }
   .jt-plat-aux img { inline-size: 100%; block-size: 100%; object-fit: contain; }
+  .jt-plat-aux { position: absolute; }
+  .jt-plat-tag { position: absolute; inset-inline-start: -14%; inset-block-end: -8%; z-index: 3; background: #2540d9; color: #fff; padding: 0.4rem 0.7rem; font-size: 10px; letter-spacing: .06em; display: grid; gap: 0.2rem; white-space: nowrap; }
+  .jt-plat-tag b { font-weight: 600; font-size: 12px; letter-spacing: 0; }
+  [data-theme="dark"] .jt-plat-tag { background: #8aa0ff; color: #0f1020; }
   .jt-plat-aux-1 { inset-block-start: 6%; }
   .jt-plat-aux-2 { inset-block-start: 38%; }
   [data-theme="dark"] .jt-plat-aux img { filter: invert(1) grayscale(0.2) brightness(0.9); }
