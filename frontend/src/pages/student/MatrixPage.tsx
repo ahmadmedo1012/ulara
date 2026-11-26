@@ -92,8 +92,8 @@ const LEVEL_CHIP_TONE: Record<MasteryClass, string> = {
 function conceptCount(n: number): string {
   if (n === 1) return 'مفهوم واحد';
   if (n === 2) return 'مفهومان';
-  if (n >= 3 && n <= 10) return `${n} مفاهيم`;
-  return `${n} مفهوماً`;
+  if (n >= 3 && n <= 10) return `${formatInt(n)} مفاهيم`;
+  return `${formatInt(n)} مفهوماً`;
 }
 
 /** Shape-matched skeleton for one course block of the heatmap. */
@@ -452,7 +452,7 @@ export default function MatrixPage() {
                         <div className="text-md font-semibold" style={{ color: 'var(--text)' }}>{c.courseName}</div>
                         <div className="text-xs text-subtle">
                           {conceptCount(totalConceptsInCourse)} ·{' '}
-                          {masteredConcepts > 0 ? `أتقنت ${masteredConcepts}` : 'لم تتقن منها بعد'}
+                          {masteredConcepts > 0 ? `أتقنت ${formatInt(masteredConcepts)}` : 'لم تتقن منها بعد'}
                         </div>
                       </div>
                       <Link to={`/student/courses/${c.offeringId}`} className="btn ghost sm">

@@ -24,6 +24,11 @@ import { OfferingMaterialsCard } from '../../components/player/OfferingMaterials
 import { useLecture, useOfferingLectures, useReportWatch, useAnswerCheckpoint, type LectureCheckpoint } from '../../hooks/useResources';
 import { useEntityPageTitle } from '../../components/layout/AppShell';
 import { useAuthStore } from '../../stores/auth.store';
+/* r365 (4-a · §6.5): the ≤1024px contents anchor renders ONLY in the
+ * band where the panel actually re-flows below the player (the same
+ * rung .grid-2-1 folds at — no CSS band needed, the hook is the
+ * SplitView/DocumentViewer precedent). */
+import { useIsNarrowLayout } from '../../hooks/useIsNarrowLayout';
 import { apiBaseURL } from '../../lib/api';
 import { countAr, formatMmSs } from '../../lib/format';
 import { formatInt } from '../../utils/numbers';
@@ -116,8 +121,11 @@ function LectureSkeleton() {
     <div className="r321p-page">
     <PageFrame width="default" aria-busy="true" aria-live="polite">
       <Skeleton width={150} height={32} rounded="var(--r-md)" />
-      <div className="lecture-shell">
-        <div className="lecture-main">
+      {/* r365 (4-a): the mirror rides the SAME grid/flex anatomy the
+          resolved page seats (see the shell note below) — the handoff
+          is CLS-safe. */}
+      <div className="lecture-shell grid-2-1">
+        <div className="lecture-main flex flex-col gap-4">
           <div className="lecture-video-wrap">
             <Skeleton width="100%" height="100%" rounded="var(--r-xl)" />
           </div>
@@ -152,6 +160,10 @@ export default function LecturePlayerPage() {
   const { data, isPending, isError, error, refetch } = useLecture(lectureId);
   // r183-B6 (A4 P3-4): the tab names the LECTURE, not «مشغّل المحاضرة».
   useEntityPageTitle(data?.title ?? null);
+  /* r365 (4-a · §6.5): the player's own narrow band — the panel re-flows
+   * below the player ≤1024px (the shared .grid-2-1 fold), and only there
+   * does the contents anchor chip earn its seat. */
+  const panelBelowPlayer = useIsNarrowLayout(1024);
   const reportWatch = useReportWatch();
   const answerCheckpoint = useAnswerCheckpoint();
   const qc = useQueryClient();
@@ -542,9 +554,13 @@ export default function LecturePlayerPage() {
         {data.offering.course.name}
       </Link>
 
-      <div className="lecture-shell">
-        {/* Video + meta */}
-        <div className="lecture-main">
+      <div className="lecture-shell grid-2-1">
+        {/* Video + meta — r365 (4-a): the shell rides the shared
+            .grid-2-1 (2:1 desktop, ONE column ≤1024 — the same rung the
+            panel's reflow was authored at); the column's rhythm is the
+            shared flex utilities (.lecture-shell/.lecture-main's layout
+            rules are comment-only on this tree). */}
+        <div className="lecture-main flex flex-col gap-4">
           {/* R2-B branded chrome: native `controls` removed — the
               VideoPlayerChrome layers the أُلارا player skin over the
               SAME <video> (same ref, same reporting/checkpoint/
@@ -635,7 +651,17 @@ export default function LecturePlayerPage() {
           </VideoPlayerChrome>
 
           {failedReport && (
-            <div className="lecture-report-retry" role="alert">
+            <div
+              className="lecture-report-retry flex flex-wrap items-center justify-between gap-2"
+              role="alert"
+              style={{
+                padding: 'var(--sp-3) var(--sp-4)',
+                borderRadius: 'var(--r-md)',
+                background: 'var(--danger-soft)',
+                color: 'var(--danger-ink)',
+                fontSize: 'var(--type-label-size)',
+              }}
+            >
               <span>تعذّر تسجيل اكتمال المحاضرة — قد لا يُحتسب تقدّمك للمحاضرة.</span>
               <button
                 type="button"
@@ -660,8 +686,15 @@ export default function LecturePlayerPage() {
               foundation band flips with the theme), with the h1 and the
               secondary runs re-derived from the band's own ink ramp
               (.r305s-band-secondary + the family-sheet override). */}
-          <div className="lecture-meta r305s-band r305s-band--deep r305c-now">
-            <div className="lecture-meta-badges">
+          <div
+            className="lecture-meta r305s-band r305s-band--deep r305c-now"
+            /* r365 (4-a): the band's vertical rhythm rides the shared
+             * flex column (the .lecture-meta layout rules are
+             * comment-only on this tree); the pinned band classes
+             * (R305 re-pin) are untouched. */
+            style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-2)' }}
+          >
+            <div className="lecture-meta-badges flex flex-wrap items-center gap-2">
               <Badge><bdi>{data.offering.course.code}</bdi></Badge>
               <span className="text-xs text-subtle r305s-band-secondary">المحاضرة {data.ordinal}</span>
               {completed && <Badge color="green" icon={CheckCircle2}>مكتملة</Badge>}
@@ -673,7 +706,7 @@ export default function LecturePlayerPage() {
               <span className="page-index" aria-hidden="true" dir="ltr">[01]</span>
               {data.title}
             </h1>
-            <div className="lecture-meta-sub r305s-band-secondary">
+            <div className="lecture-meta-sub r305s-band-secondary text-sm">
               د. {data.offering.teacher.firstName} {data.offering.teacher.lastName} ·{' '}
               <bdi className="font-mono">{formatMmSs(currentSec)} / {formatMmSs(reportTotalSec)}</bdi>
               {checkpointsTotal > 0 && <> · {countAr(checkpointsTotal, ['نقطة تفاعل واحدة', 'نقطتا تفاعل', 'نقاط تفاعل', 'نقطة تفاعل'])}</>}
@@ -682,21 +715,31 @@ export default function LecturePlayerPage() {
 
           {/* R304: the ≤1024px contents anchor — the panel re-flows below
               the player on narrow bands; the chip keeps chapters and
-              checkpoints one tap away from the video. Hidden on desktop
-              (the panel sits beside it there). */}
-          <button
-            type="button"
-            className="btn ghost sm stu-panel-jump"
-            onClick={jumpToContents}
-          >
-            <Icon icon={ListVideo} size={13} />
-            الفصول ونقاط التفاعل
-          </button>
+              checkpoints one tap away from the video. r365 (4-a): it
+              renders ONLY in that band (the hook, not a lost CSS
+              display rule) — on desktop the panel sits beside the
+              player and the chip was a redundant control. */}
+          {panelBelowPlayer && (
+            <button
+              type="button"
+              className="btn ghost sm stu-panel-jump"
+              onClick={jumpToContents}
+            >
+              <Icon icon={ListVideo} size={13} />
+              الفصول ونقاط التفاعل
+            </button>
+          )}
 
-          <div className="lecture-progress">
-            <div className="lecture-progress-head">
-              <span>تقدّم المشاهدة</span>
-              <span className="lecture-progress-value">{watchPct}%</span>
+          {/* r365 (4-a): the watch-progress instrument re-seats on the
+              §B2 hairline register — the track is a token-styled hairline
+              instrument (the §2 anatomy), the fill anchors inline-start
+              (RTL-correct by construction, the .progress-fill idiom),
+              and the checkpoint notches keep their test-pinned
+              calc() offsets (LecturePlayerPage.test r165b). */}
+          <div className="lecture-progress flex flex-col gap-2">
+            <div className="lecture-progress-head flex items-center justify-between gap-2">
+              <span className="text-sm text-muted">تقدّم المشاهدة</span>
+              <span className="lecture-progress-value font-mono">{watchPct}%</span>
             </div>
             <div
               className="lecture-progress-track"
@@ -705,19 +748,38 @@ export default function LecturePlayerPage() {
               aria-valuenow={watchPct}
               aria-valuemin={0}
               aria-valuemax={100}
+              style={{
+                position: 'relative',
+                blockSize: 'var(--sp-2)',
+                background: 'var(--surface-2)',
+                borderRadius: 'var(--r-sm)',
+              }}
             >
-              {/* 5-C1 (A2 §1c #25): the value rides --fill-scale (0..1)
-                  consumed by the scaleX fill in student.css — the old
-                  inline inline-size transitioned layout per frame. */}
+              {/* The value anchors at inline-start (RTL-correct by
+                  construction — same anatomy as .progress-track); the
+                  one-second cadence rides a motion token. */}
               <span
                 className="lecture-progress-fill"
-                style={{ '--fill-scale': watchPct / 100 } as CSSProperties}
+                style={{
+                  position: 'absolute',
+                  insetBlock: 0,
+                  insetInlineStart: 0,
+                  inlineSize: `${watchPct}%`,
+                  background: 'var(--accent)',
+                  borderRadius: 'var(--r-sm)',
+                  transition: 'inline-size var(--motion-duration-stat) var(--motion-ease-standard)',
+                }}
               />
               {data.checkpoints.map((c) => (
                 <span
                   key={c.id}
                   className={`lecture-progress-mark${answeredCheckpointIds.has(c.id) ? ' done' : ''}`}
                   style={{
+                    position: 'absolute',
+                    insetBlockEnd: 0,
+                    inlineSize: 'var(--sp-1)',
+                    blockSize: 'var(--sp-3)',
+                    background: answeredCheckpointIds.has(c.id) ? 'var(--success-ink)' : 'var(--rule-strong)',
                     insetInlineStart: `calc(${reportTotalSec > 0 ? (c.triggerSec / reportTotalSec) * 100 : 0}% - 4px)`,
                   }}
                   aria-hidden
@@ -725,7 +787,7 @@ export default function LecturePlayerPage() {
               ))}
             </div>
             {checkpointsTotal > 0 && (
-              <div className={`lecture-progress-note${allCheckpointsAnswered ? ' done' : ''}`}>
+              <div className={`lecture-progress-note${allCheckpointsAnswered ? ' done' : ''} text-xs text-subtle`}>
                 أُجيب عن {checkpointsAnswered} من {countAr(checkpointsTotal, ['نقطة تفاعل واحدة', 'نقطتا تفاعل', 'نقاط تفاعل', 'نقطة تفاعل'])}
               </div>
             )}
@@ -812,7 +874,7 @@ export default function LecturePlayerPage() {
           {/* Prev / next (PP-X2 / audit P1-7) — the watch loop's exit ramp.
               prev rides the RTL back-chevron (ChevronRight), next the
               forward one (ChevronLeft); on end, next pulses once. */}
-          <nav className="lecture-nav" aria-label="التنقّل بين محاضرات المقرّر">
+          <nav className="lecture-nav flex flex-wrap items-center justify-between gap-2" aria-label="التنقّل بين محاضرات المقرّر">
             {prevLec ? (
               <Link to={`/student/lectures/${prevLec.id}`} className="btn ghost">
                 <Icon icon={ChevronRight} size={14} />
@@ -891,22 +953,36 @@ export default function LecturePlayerPage() {
                       أُجيب عن {formatInt(checkpointsAnswered)} من {formatInt(checkpointsTotal)}
                     </p>
                   </div>
-                  <div className="cp-list">
+                  {/* r365 (4-a): the board rows re-seat on the shared
+                      .list-row grammar (the §B2 row anatomy — flex, wrap,
+                      44px floor, hairline separators) with the §B2 mono
+                      time chip (.r319s-chip); the state rules in
+                      student.css/ds-courses.css (.cp-row.done,
+                      .chapter-row.on/.watched) keep their hooks. */}
+                  <div className="cp-list flex flex-col">
                   {data.checkpoints.map((c) => {
                     const answered = answeredCheckpointIds.has(c.id);
                     return (
                       <button
                         key={c.id}
                         type="button"
-                        className={`cp-row${answered ? ' done' : ''}`}
+                        className={`cp-row${answered ? ' done' : ''} list-row`}
+                        style={{
+                          textAlign: 'start',
+                          borderBlockEnd: '1px solid var(--surface-divider)',
+                        }}
                         onClick={() => (answered ? seekTo(c.triggerSec) : openCheckpoint(c))}
                         aria-label={answered
                           ? `راجع نقطة التفاعل عند ${formatMmSs(c.triggerSec)}: ${c.question}`
                           : `أجب عن نقطة التفاعل عند ${formatMmSs(c.triggerSec)}: ${c.question}`}
                       >
-                        <span className="chapter-time" dir="ltr">{formatMmSs(c.triggerSec)}</span>
-                        <span className="cp-row-q">{c.question}</span>
-                        <span className="chapter-state" aria-hidden>
+                        <span className="chapter-time r319s-chip" dir="ltr">{formatMmSs(c.triggerSec)}</span>
+                        <span className="cp-row-q list-row-body text-sm">{c.question}</span>
+                        <span
+                          className="chapter-state"
+                          aria-hidden
+                          style={{ color: answered ? 'var(--success-ink)' : 'var(--warning-ink)' }}
+                        >
                           <Icon icon={answered ? CheckCircle2 : AlertCircle} size={14} />
                         </span>
                       </button>
@@ -926,7 +1002,7 @@ export default function LecturePlayerPage() {
                 aside={<BarCount n={data.chapters.length} srLabel={countAr(data.chapters.length, ['فصل واحد', 'فصلان', 'فصول', 'فصلاً'])} />}
               >
               {data.chapters.length > 0 ? (
-                <div className="chapter-list">
+                <div className="chapter-list flex flex-col">
                   {data.chapters.map((ch, i) => {
                     const isActive = currentSec >= ch.startSec && currentSec < ch.endSec;
                     const isWatched = completed || currentSec >= ch.endSec;
@@ -934,17 +1010,25 @@ export default function LecturePlayerPage() {
                       <button
                         type="button"
                         key={ch.id}
-                        className={`chapter-row${isActive ? ' on' : ''}${isWatched ? ' watched' : ''}`}
+                        className={`chapter-row${isActive ? ' on' : ''}${isWatched ? ' watched' : ''} list-row`}
                         aria-current={isActive ? 'time' : undefined}
-                        style={{ '--ch-i': i } as CSSProperties}
+                        style={{
+                          '--ch-i': i,
+                          textAlign: 'start',
+                          borderBlockEnd: '1px solid var(--surface-divider)',
+                        } as CSSProperties}
                         onClick={() => seekTo(ch.startSec)}
                       >
-                        <span className="chapter-time" dir="ltr">{formatMmSs(ch.startSec)}</span>
-                        <span className="chapter-body">
-                          <span className="chapter-title">{ch.title}</span>
-                          {ch.concept && <span className="chapter-concept">{ch.concept.name}</span>}
+                        <span className="chapter-time r319s-chip" dir="ltr">{formatMmSs(ch.startSec)}</span>
+                        <span className="chapter-body list-row-body">
+                          <span className="chapter-title list-row-title">{ch.title}</span>
+                          {ch.concept && <span className="chapter-concept list-row-sub">{ch.concept.name}</span>}
                         </span>
-                        <span className="chapter-state" aria-hidden>
+                        <span
+                          className="chapter-state"
+                          aria-hidden
+                          style={isWatched ? { color: 'var(--success-ink)' } : undefined}
+                        >
                           {isWatched ? (
                             <Icon icon={CheckCircle2} size={14} />
                           ) : isActive ? (
@@ -1023,20 +1107,20 @@ export default function LecturePlayerPage() {
                 M mute — the same keys VideoPlayerChrome handles). */}
             {/* R321 B3: flush with the boards' paper edge (the family
                 sheet's §3). */}
-            <div className="lecture-keys" aria-label="اختصارات لوحة المفاتيح">
-              <span className="lecture-keys-row">
+            <div className="lecture-keys flex flex-col gap-2 text-sm text-muted" aria-label="اختصارات لوحة المفاتيح">
+              <span className="lecture-keys-row flex items-center gap-2">
                 <kbd className="kbd" dir="ltr">Space</kbd>
                 <span>تشغيل / إيقاف</span>
               </span>
-              <span className="lecture-keys-row">
+              <span className="lecture-keys-row flex items-center gap-2">
                 <kbd className="kbd" dir="ltr">→ ←</kbd>
                 <span>تنقّل <bdi>10</bdi> ثوان</span>
               </span>
-              <span className="lecture-keys-row">
+              <span className="lecture-keys-row flex items-center gap-2">
                 <kbd className="kbd" dir="ltr">F</kbd>
                 <span>ملء الشاشة</span>
               </span>
-              <span className="lecture-keys-row">
+              <span className="lecture-keys-row flex items-center gap-2">
                 <kbd className="kbd" dir="ltr">M</kbd>
                 <span>كتم الصوت</span>
               </span>

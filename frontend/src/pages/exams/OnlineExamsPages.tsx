@@ -484,11 +484,11 @@ function ExamCard({ exam, canStart, actNow }: { exam: MyExam; canStart: boolean;
         <span className="oex-row-title">{exam.title}</span>
         <span className="oex-row-kicker">{KIND_LABEL[exam.kind]} · {exam.courseName ?? exam.facultyName ?? 'موحد'}</span>
         <span className="oex-row-meta">
-          <span><Icon icon={Clock} size={12} /> <bdi>{exam.durationMin}</bdi> دقيقة</span>
+          <span><Icon icon={Clock} size={12} /> <bdi className="font-mono">{exam.durationMin}</bdi> دقيقة</span>
           {/* 22-c counted nouns — «N سؤال» broke the glossary for
               2 (سؤالان) and 3–10 (أسئلة); countAr speaks the forms. */}
           <span><Icon icon={ClipboardCheck} size={12} /> {countAr(exam.questionCount, ['سؤال', 'سؤالان', 'أسئلة', 'سؤالاً'])}</span>
-          <span>درجة النجاح <bdi>≥ {exam.passingScore}%</bdi></span>
+          <span>درجة النجاح <bdi className="font-mono">≥ {exam.passingScore}%</bdi></span>
           {/* 15-h P1-5 — an open-window exam carries its close deadline
               so the student knows how long they really have. */}
           {ws === 'open' && exam.closeAt && (
