@@ -140,6 +140,17 @@ export function Footer({ year }: { year: number }) {
   return (
     <footer className="fo-footer" data-spec="footer.root" aria-label={BRAND_LABEL}>
       <div className="fo-in" data-spec="footer.in">
+        {/* r368 — the closing call: a centred ruled cell with corner
+            coordinates, headline, one line and one button (the
+            reference's closing band grammar; copy is Ulara's own). */}
+        <div className="fo-cta" data-spec="footer.cta">
+          <span className="fo-cta-coord fo-cta-coord-a fo-mono" dir="ltr" aria-hidden="true">[0, 000]</span>
+          <span className="fo-cta-coord fo-cta-coord-b fo-mono" dir="ltr" aria-hidden="true">[1440, 000]</span>
+          <h2 className="fo-cta-title">شاهد أُلارا تعمل على جامعتك</h2>
+          <p className="fo-cta-sub">تصفح الكليات التجريبية وجرّب المحاضرات والاختبارات في مساحة عمل كاملة.</p>
+          <Link to="/colleges" className="fo-cta-btn fo-mono">تصفح الكليات</Link>
+        </div>
+
         {/* R345-ED — the drawing-sheet title block: the colophon opens
             with its own plate row (identity · sheet · scale · year),
             the footer reading as the SET'S CLOSING SHEET. */}

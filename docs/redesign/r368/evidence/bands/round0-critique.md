@@ -116,3 +116,6 @@ Rebuilt the procedural elevation: two slender outer fins, two heavy piers under 
 
 ## Slice 03 mobile round 1
 Whole building now shows at phone width (the crop cut it before). Still wrong: art is small in a tall empty frame, the three station markers float off the drawing (seated on the old raster), no cookie bar or sticky tag as in the reference. Status: FAILING.
+
+## Slice 21 footer round 1
+Added a centred ruled closing band (headline, one line, one button, corner coords) at the top of the footer, the reference's closing grammar. Still wrong: no use-case accordion beside a large art plate, the link index, early-access form and giant wordmark remain below, the band is not sized to the reference. Status: FAILING.
