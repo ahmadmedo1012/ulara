@@ -236,3 +236,6 @@ Title was 72px against about 44px measured in shot-top; now 3.5vw (50px at 1440,
 
 ## Elevation texture (1440)
 Tried a procedural grain overlay: it greyed the paper box (rejected, removed). Kept a contrast lift (1.18) on the light elevation at desktop. The reference drawing carries dense concrete hatching, window mullions and a stepped massing that the CSS cannot add; closing that needs a richer scripts/art elevation, which is the next real piece of work. Status: FAILING.
+
+## Elevation generator pass (1440)
+scripts/art/elevation-flat.mjs now adds formwork joints, board-form hatching, speckle, a stepped upper massing, deeper mullion shadows and corner plus marks. Concrete reads textured and the massing stepped. Trees are still thinner and sparser than the reference and the glass is flatter. Desktop svg only (247KB, 24KB gzip); mobile svg unchanged so mobile perf is untouched. Status: FAILING.

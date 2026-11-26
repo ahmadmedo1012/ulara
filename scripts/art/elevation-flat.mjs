@@ -47,6 +47,23 @@ s += ln(378, 120, 378, 612, 1, MID, 0.5); s += ln(1082, 120, 1082, 612, 1, MID, 
 // cast shadow wedge across podium and glass
 s += poly([[620, 262], [960, 262], [1060, 470], [1060, 612], [800, 612]], INK, 0.3);
 s += poly([[430, 470], [620, 470], [560, 612], [420, 612]], INK, 0.16);
+// r368 texture pass: formwork joints + board-form hatching + speckle on the concrete masses, corner plus marks
+const hatch = (x, y, w, h, n, o) => { let t = ''; for (let i = 0; i < n; i++) { const yy = y + rnd() * h, xx = x + rnd() * w; t += ln(xx, yy, Math.min(x + w, xx + 14 + rnd() * 40), yy + (rnd() - 0.5) * 2, 0.9, INK, o); } return t; };
+const joints = (x, y, w, h, cols, rows) => { let t = ''; for (let i = 1; i < cols; i++) t += ln(x + (w / cols) * i, y, x + (w / cols) * i, y + h, 0.8, INK, 0.45); for (let j = 1; j < rows; j++) t += ln(x, y + (h / rows) * j, x + w, y + (h / rows) * j, 0.8, INK, 0.45); return t; };
+const speck = (x, y, w, h, n) => { let t = ''; for (let i = 0; i < n; i++) t += `<circle cx="${f(x + rnd() * w)}" cy="${f(y + rnd() * h)}" r="${f(0.5 + rnd() * 0.9)}" fill="${INK}" opacity="${f(0.25 + rnd() * 0.35)}"/>`; return t; };
+const plus = (x, y, r = 9) => ln(x - r, y, x + r, y, 1.6) + ln(x, y - r, x, y + r, 1.6);
+s += hatch(400, 150, 660, 46, 70, 0.4) + joints(400, 150, 660, 46, 11, 1) + speck(400, 150, 660, 46, 60);
+s += hatch(430, 190, 70, 280, 60, 0.4) + hatch(960, 190, 70, 280, 60, 0.4) + joints(430, 190, 70, 280, 1, 8) + joints(960, 190, 70, 280, 1, 8);
+s += hatch(360, 120, 36, 492, 90, 0.4) + hatch(1064, 120, 36, 492, 90, 0.4) + joints(360, 120, 36, 492, 1, 14) + joints(1064, 120, 36, 492, 1, 14);
+s += joints(420, 470, 640, 142, 8, 1) + hatch(420, 470, 640, 142, 160, 0.35);
+s += speck(360, 120, 36, 492, 70) + speck(1064, 120, 36, 492, 70) + speck(430, 190, 70, 280, 60) + speck(960, 190, 70, 280, 60);
+// stepped upper massing + roof-edge parapet ticks
+s += rect(520, 120, 420, 30, PALE, INK, 2) + joints(520, 120, 420, 30, 9, 1) + hatch(520, 120, 420, 30, 40, 0.4);
+s += rect(600, 96, 260, 24, LIGHT, INK, 2) + joints(600, 96, 260, 24, 6, 1);
+// deeper mullion shadows on the glass
+for (let i = 1; i < 6; i++) s += rect(500 + i * 77 + 1.5, 232, 7, 238, INK, INK, 0, 0.18);
+// corner plus marks (survey grid)
+s += plus(60, 40) + plus(1380, 40) + plus(60, 660) + plus(1380, 660);
 // bare branching trees
 const branch = (x, y, len, ang, depth, sw) => {
   if (depth === 0 || len < 4) return '';

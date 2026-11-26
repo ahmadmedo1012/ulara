@@ -115,3 +115,4 @@ NEXT: 07/08 polish
 NEXT: more rounds
 - hero: title 3.5vw desktop, elevation full width
 NEXT: more
+- hero elevation: richer procedural generator (joints, hatching, stepped massing, plus marks), desktop svg only. NEXT: denser trees, glass depth, mobile art size.
