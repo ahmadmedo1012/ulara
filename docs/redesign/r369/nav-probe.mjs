@@ -1,0 +1,20 @@
+import { chromium } from 'playwright';
+const b = await chromium.launch({ channel: 'chrome' });
+const ctx = await b.newContext({ viewport: { width: 1440, height: 900 }, locale: 'ar-LY' });
+const p = await ctx.newPage();
+await p.addInitScript(() => sessionStorage.setItem('ulara-intro-skip', '1'));
+await p.goto('http://127.0.0.1:5310/', { waitUntil: 'networkidle' });
+await p.waitForTimeout(700);
+const read = () => p.evaluate(() => {
+  const pill = document.querySelector('.w369-stage-pill');
+  const on = document.querySelector('.w369-stage-item[data-on="true"]');
+  const st = document.querySelector('.w369-stage');
+  return { pill: getComputedStyle(pill).translate, width: getComputedStyle(pill).width, active: on?.textContent, x: getComputedStyle(st).getPropertyValue('--stage-x') };
+});
+const a = await read();
+await p.evaluate(() => document.querySelector('#stars')?.scrollIntoView());
+await p.waitForTimeout(900);
+const c = await read();
+await p.screenshot({ path: 'docs/redesign/r369/evidence/nav-1440.png', clip: { x: 0, y: 0, width: 1440, height: 220 } });
+console.log({ atTop: a, atStars: c });
+await b.close();

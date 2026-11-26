@@ -71,7 +71,11 @@
 
 .w369-h1 {
   font-size: var(--fs-d1);
-  line-height: 1.08;
+  /* Arabic cannot take the inspiration's 0.84 leading: the ascenders and
+   * the shadda sit inside the line box. 1.02 is the tight end that still
+   * paints every mark at 124px — checked at 1440 and 390. */
+  line-height: 1.02;
+  margin-block: 0;
 }
 
 .w369-h2 {
@@ -322,13 +326,17 @@
 /* ── hero ─────────────────────────────────────────────────────────── */
 
 .w369-hero {
+  position: relative;
   display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
-  align-items: center;
-  gap: clamp(var(--sp-7), 5vw, var(--sp-12));
+  grid-template-columns: 1.02fr 0.98fr;
+  align-items: start;
+  gap: clamp(var(--sp-6), 4vw, var(--sp-11));
   inline-size: min(100% - (var(--w369-gutter) * 2), var(--w369-max));
   margin-inline: auto;
-  padding-block: clamp(var(--sp-10), 7vw, var(--sp-14));
+  /* r369 §3 — the measured hero rhythm: 84px from the bar at 1440, a
+   * viewport-tall band (908px of 900), copy starts at the top edge. */
+  padding-block: clamp(var(--sp-9), 6vw, var(--sp-12)) clamp(var(--sp-9), 5vw, var(--sp-11));
+  min-block-size: calc(100svh - 76px);
 }
 
 .w369-hero-copy { min-inline-size: 0; }
@@ -368,22 +376,32 @@
 }
 
 .w369-phone {
-  inline-size: min(340px, 100%);
+  /* the inspiration's phone is the second column's whole width (~430px
+   * at 1440) with a dark bezel and a real notch — not a white card */
+  inline-size: min(430px, 100%);
   border-radius: var(--r-3xl);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  box-shadow:
-    var(--shadow-modal),
-    inset 0 0 0 6px color-mix(in srgb, var(--accent) 8%, transparent);
-  padding: var(--sp-3);
-  rotate: -2deg;
+  background: var(--ink);
+  border: 1px solid color-mix(in srgb, var(--ink) 70%, var(--ink));
+  box-shadow: var(--shadow-modal);
+  padding: 10px;
+  rotate: -1.5deg;
 }
 
 .w369-phone-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--sp-1) var(--sp-2) var(--sp-2);
+  padding: var(--sp-1) var(--sp-3) var(--sp-2);
+  /* the status row sits ON the dark bezel: it takes the light ink */
+  color: color-mix(in srgb, var(--paper) 82%, transparent);
+  font-size: var(--fs-xxs);
+  font-variant-numeric: tabular-nums;
+}
+
+.w369-phone-screen {
+  border-radius: calc(var(--r-3xl) - 10px);
+  background: var(--surface);
+  overflow: hidden;
 }
 
 .w369-phone-dot {
@@ -1522,4 +1540,219 @@
 .w369 .theme-toggle-option {
   min-inline-size: 44px;
   min-block-size: 44px;
+}
+
+
+/* ── the stage navigator (top bar) ────────────────────────────────── */
+
+.w369-stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.w369-stage-pill {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  block-size: 38px;
+  margin-block-start: -19px;
+  inline-size: var(--stage-w, 0px);
+  translate: var(--stage-x, 0px) 0;
+  border-radius: var(--r-full);
+  background: color-mix(in srgb, var(--gold) 20%, transparent);
+  /* transform-only: the pill never reflows, the label does not shift */
+  transition: translate var(--motion-duration-medium) var(--ease-out);
+  pointer-events: none;
+}
+
+.w369-stage-item {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 44px;
+  padding-inline: var(--sp-3);
+  border-radius: var(--r-full);
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+  font-weight: var(--fs-weight-semibold, 600);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color var(--motion-duration-micro) var(--ease-out);
+}
+
+.w369-stage-item[data-on='true'] {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.w369-stage-item:hover,
+.w369-stage-item:focus-visible {
+  color: var(--text-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w369-stage-pill { transition: none; }
+}
+
+
+/* ── hero: the tertiary tour button + the scroll cue ──────────────── */
+
+.w369-tour-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-block-size: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.w369-tour-play {
+  display: inline-grid;
+  place-items: center;
+  inline-size: 30px;
+  block-size: 30px;
+  border-radius: var(--r-full);
+  background: color-mix(in srgb, var(--gold) 22%, transparent);
+  color: var(--gold-ink);
+}
+
+.w369-tour-btn:hover .w369-tour-play,
+.w369-tour-btn:focus-visible .w369-tour-play {
+  background: color-mix(in srgb, var(--gold) 36%, transparent);
+}
+
+.w369-hero-cue {
+  min-block-size: 44px;
+  position: absolute;
+  inset-block-end: var(--sp-5);
+  inset-inline-start: 50%;
+  translate: -50% 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.w369-hero-cue-dot {
+  inline-size: 8px;
+  block-size: 8px;
+  border-radius: var(--r-full);
+  background: var(--gold);
+  animation: w369-cue-bob var(--motion-duration-ambient) var(--ease-standard) infinite;
+}
+
+@keyframes w369-cue-bob {
+  0%, 100% { translate: 0 0; opacity: 0.7; }
+  50% { translate: 0 6px; opacity: 1; }
+}
+
+/* ── the 30-second tour dialog ────────────────────────────────────── */
+
+.w369-tour {
+  inline-size: min(92vw, 520px);
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-xl);
+  background: var(--surface);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-lg);
+}
+
+.w369-tour::backdrop {
+  background: color-mix(in srgb, var(--ink) 45%, transparent);
+  backdrop-filter: blur(3px);
+}
+
+.w369-tour-inner {
+  position: relative;
+  display: grid;
+  gap: var(--sp-4);
+  padding: var(--sp-7);
+  text-align: center;
+  justify-items: center;
+}
+
+.w369-tour-close {
+  position: absolute;
+  inset-block-start: var(--sp-3);
+  inset-inline-end: var(--sp-3);
+  display: inline-grid;
+  place-items: center;
+  inline-size: 44px;
+  block-size: 44px;
+  border: 0;
+  border-radius: var(--r-full);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.w369-tour-stage {
+  display: grid;
+  gap: var(--sp-3);
+  justify-items: center;
+  animation: w369-tour-in var(--motion-duration-medium) var(--ease-out) both;
+}
+
+@keyframes w369-tour-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+.w369-tour-icon {
+  display: inline-grid;
+  place-items: center;
+  inline-size: 84px;
+  block-size: 84px;
+  border-radius: var(--r-full);
+  background: color-mix(in srgb, var(--gold) 20%, transparent);
+  color: var(--gold-ink);
+}
+
+.w369-tour-icon[data-tone='1'] { background: color-mix(in srgb, var(--violet) 18%, transparent); color: var(--violet-ink); }
+.w369-tour-icon[data-tone='2'] { background: color-mix(in srgb, var(--teal) 18%, transparent); color: var(--teal-ink); }
+.w369-tour-icon[data-tone='3'] { background: color-mix(in srgb, var(--coral) 18%, transparent); color: var(--coral-ink); }
+
+.w369-tour-title {
+  font-family: var(--font-display);
+  font-size: var(--fs-st);
+  font-weight: 700;
+  margin: 0;
+}
+
+.w369-tour-body { margin: 0; color: var(--text-secondary); max-inline-size: 34ch; }
+
+.w369-tour-dots { display: flex; gap: var(--sp-2); }
+
+.w369-tour-dot {
+  inline-size: 26px;
+  block-size: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-full);
+  background: color-mix(in srgb, var(--ink) 14%, transparent);
+  cursor: pointer;
+}
+
+.w369-tour-dot[data-on='true'] { background: var(--gold); }
+
+.w369-tour-actions { display: flex; gap: var(--sp-3); flex-wrap: wrap; justify-content: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  .w369-hero-cue-dot { animation: none; }
+  .w369-tour-stage { animation: none; }
 }

@@ -173,6 +173,70 @@ function useScrollProgress() {
   return p;
 }
 
+/**
+ * Which stage is on screen: the last band whose top has crossed the
+ * middle of the viewport. One passive rAF listener for the whole bar —
+ * five links never each own a scroll handler.
+ */
+function useActiveStage() {
+  const [active, setActive] = useState(0);
+  useEffect(() => {
+    let raf = 0;
+    const read = () => {
+      raf = 0;
+      const nodes = [...document.querySelectorAll<HTMLElement>('[data-stage]')];
+      if (!nodes.length) return;
+      const mid = window.innerHeight * 0.45;
+      let next = 0;
+      nodes.forEach((el, i) => {
+        if (el.getBoundingClientRect().top <= mid) next = i;
+      });
+      setActive(next);
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(read); };
+    read();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+  return active;
+}
+
+/** The stage pill: travels to the active item (measured, not guessed). */
+function StageNav({ active }: { active: number }) {
+  const ref = useRef<HTMLUListElement | null>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const items = el.querySelectorAll<HTMLElement>('.w369-stage-item');
+    const cur = items[active];
+    if (!cur) return;
+    el.style.setProperty('--stage-x', `${cur.offsetLeft}px`);
+    el.style.setProperty('--stage-w', `${cur.offsetWidth}px`);
+  }, [active]);
+  return (
+    <ul className="w369-stage" ref={ref}>
+      <li className="w369-stage-pill" aria-hidden="true" />
+      {STAGES.map((st, i) => (
+        <li key={st.id}>
+          <a
+            href={`#${st.id}`}
+            className="w369-stage-item"
+            aria-current={i === active ? 'true' : undefined}
+            data-on={i === active ? 'true' : 'false'}
+          >
+            {st.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 /** The slim progress rail: one 2px line in the signal colour. */
 function ScrollRail() {
   const p = useScrollProgress();
@@ -232,6 +296,18 @@ const MOBILE_EXTRA: readonly NavLink[] = [
   { href: '/app', label: 'التطبيق', external: true },
 ];
 
+/* r369 phase 3 — the top bar becomes a STAGE navigator: five steps, one
+   per story band, with a pill that travels to the active step as you
+   scroll. Labels are each band's subject, so the bar reads as the story
+   you are inside. */
+const STAGES = [
+  { id: 'story', label: 'المهام' },
+  { id: 'stars', label: 'النجوم' },
+  { id: 'progress', label: 'التقدّم' },
+  { id: 'rewards', label: 'المكافآت' },
+  { id: 'levels', label: 'العادات' },
+] as const;
+
 const NAV_LINKS: readonly NavLink[] = [
   { href: '#story', label: 'الحكاية' },
   { href: '#levels', label: 'المستويات' },
@@ -242,6 +318,7 @@ const NAV_LINKS: readonly NavLink[] = [
 
 export function LandingNav() {
   const [open, setOpen] = useState(false);
+  const active = useActiveStage();
   const burgerRef = useRef<HTMLButtonElement | null>(null);
   const close = useCallback(() => {
     setOpen(false);
@@ -262,12 +339,8 @@ export function LandingNav() {
           <span className="w369-brand-word">أُلارا</span>
         </Link>
 
-        <nav className="w369-nav-links" aria-label="أقسام الصفحة">
-          {NAV_LINKS.map((l) => (
-            l.external
-              ? <Link key={l.href} to={l.href} className="w369-nav-link">{l.label}</Link>
-              : <a key={l.href} href={l.href} className="w369-nav-link">{l.label}</a>
-          ))}
+        <nav className="w369-nav-links" aria-label="مراحل القصة">
+          <StageNav active={active} />
         </nav>
 
         <div className="w369-nav-actions">
@@ -329,9 +402,92 @@ const HERO_ROWS = [
   { title: 'اختبار قصير: الجبر الخطّي', meta: 'بعد يومين · ٢٠ دقيقة', tone: 'rose', icon: 'target' },
 ] as const;
 
+/**
+ * The 30-second tour — built in-page instead of shipping a video: one
+ * dialog, four beats, each beat is a real screen fragment of the story
+ * (task → star → progress → reward). Native <dialog> gives the focus
+ * trap, Escape and the backdrop for free; the beats advance on a timer
+ * and the reader can step them by hand or close at any point.
+ */
+const TOUR_BEATS = [
+  { icon: 'assignment' as const, title: 'تنجز مهمّة', body: 'واجب، محاضرة، اختبار — كلٌّ منها يظهر في يومك.' },
+  { icon: 'star' as const, title: 'تظهر النجمة', body: 'تنقر «أنجزت» فتظهر النجمات فورًا في رصيدك.' },
+  { icon: 'leaderboard' as const, title: 'يرتفع التقدّم', body: 'النجوم تترتّب في شريط تقدّم المقرّر ومصفوفة الإتقان.' },
+  { icon: 'medal' as const, title: 'تفتح مكافأة', body: 'عند العتبة تُفتح الشارة، وتُبنى السلسلة يومًا بعد يوم.' },
+];
+
+function TourDialog({ onClose }: { onClose: () => void }) {
+  const ref = useRef<HTMLDialogElement | null>(null);
+  const [beat, setBeat] = useState(0);
+  useEffect(() => {
+    const d = ref.current;
+    if (d && !d.open) d.showModal();
+  }, []);
+  useEffect(() => {
+    if (prefersReduced()) return undefined;
+    const t = window.setInterval(() => setBeat((b) => (b + 1) % TOUR_BEATS.length), 2200);
+    return () => window.clearInterval(t);
+  }, []);
+  const b = TOUR_BEATS[beat] ?? TOUR_BEATS[0]!;
+  return (
+    <dialog
+      ref={ref}
+      className="w369-tour"
+      aria-label="جولة سريعة في أُلارا"
+      onClose={onClose}
+      onClick={(e) => { if (e.target === ref.current) onClose(); }}
+    >
+      <div className="w369-tour-inner">
+        <button type="button" className="w369-tour-close" onClick={onClose} aria-label="إغلاق الجولة">
+          <Glyph name="close" size={20} />
+        </button>
+        <p className="w369-eyebrow">
+          <Glyph name="sparkle" size={15} /> جولة ٣٠ ثانية · نموذج توضيحي
+        </p>
+        <div className="w369-tour-stage" key={beat}>
+          <span className="w369-tour-icon" data-tone={beat}>
+            <Glyph name={b.icon} size={34} />
+          </span>
+          <h3 className="w369-tour-title">{b.title}</h3>
+          <p className="w369-tour-body">{b.body}</p>
+        </div>
+        <div className="w369-tour-dots" role="tablist" aria-label="خطوات الجولة">
+          {TOUR_BEATS.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              role="tab"
+              aria-selected={i === beat}
+              className="w369-tour-dot"
+              data-on={i === beat ? 'true' : 'false'}
+              onClick={() => setBeat(i)}
+            >
+              <span className="visually-hidden">{`الخطوة ${i + 1}`}</span>
+            </button>
+          ))}
+        </div>
+        <div className="w369-tour-actions">
+          <button
+            type="button"
+            className="w369-btn w369-btn-primary"
+            onClick={() => {
+              onClose();
+              document.getElementById('story')?.scrollIntoView({ block: 'start' });
+            }}
+          >
+            أكمل القصة
+          </button>
+          <button type="button" className="w369-btn w369-btn-ghost" onClick={onClose}>إغلاق</button>
+        </div>
+      </div>
+    </dialog>
+  );
+}
+
 export function Hero() {
   const [ref, seen] = useInView<HTMLDivElement>();
   const stars = useCountUp(6, seen);
+  const [tour, setTour] = useState(false);
   return (
     <section className="w369-hero" ref={ref} data-jar="01">
       <div className="w369-hero-copy">
@@ -356,13 +512,26 @@ export function Hero() {
             <Glyph name="arrowLeft" size={18} className="ui-glyph-nudge" />
           </Link>
           <Link to={ROUTES.auth} className="w369-btn w369-btn-ghost">لديك حساب؟ تسجيل الدخول</Link>
+          <button type="button" className="w369-tour-btn" onClick={() => setTour(true)}>
+            <span className="w369-tour-play" aria-hidden="true"><Glyph name="live" size={16} /></span>
+            شاهد الجولة · ٠:٣٠
+          </button>
         </div>
+        {/* mounted only while open — the funnel counts exactly five primary
+            doors in the page itself, and the dialog is a layer, not a sixth */}
+        {tour && <TourDialog onClose={() => setTour(false)} />}
         <ul className="w369-hero-facts">
           <li><Glyph name="certificate" size={16} /> للطلّاب وأعضاء الهيئة والإدارة</li>
           <li><Glyph name="star" size={16} /> نقاط إتقان حقيقية من بيانتك</li>
           <li><Glyph name="flame" size={16} /> عادات دراسة تُبنى يومًا بيوم</li>
+          <li><Glyph name="certificate" size={16} /> شهادات موثّقة داخل المنصّة</li>
         </ul>
       </div>
+
+      <a className="w369-hero-cue" href="#story">
+        <span className="w369-hero-cue-dot" aria-hidden="true" />
+        انزل لتجمع أول نجمة
+      </a>
 
       <div className="w369-hero-art">
         <div className="w369-phone" aria-hidden="false" role="img"
@@ -444,11 +613,13 @@ interface BandProps {
   jar: string;
   /** anchor target for the nav (#story, #levels …) */
   id?: string;
+  /** index in the top bar's stage navigator */
+  stage?: string;
 }
 
-function Band({ n, kicker, title, body, tint, icon, children, jar, id }: BandProps) {
+function Band({ n, kicker, title, body, tint, icon, children, jar, id, stage }: BandProps) {
   return (
-    <section className="w369-band" id={id} data-tint={tint} data-jar={jar}>
+    <section className="w369-band" id={id} data-tint={tint} data-jar={jar} data-stage={stage}>
       <div className="w369-band-head">
         <span className="w369-band-num" aria-hidden="true">{n}</span>
         <p className="w369-band-kicker"><Glyph name={icon} size={15} />{kicker}</p>
@@ -473,7 +644,7 @@ export function StarsBand() {
   const kinds = useCountUp(STAR_SOURCES.length, seen);
   return (
     <Band
-      n="02" jar="02" tint="violet" icon="sparkle" id="story"
+      n="02" jar="02" tint="violet" icon="sparkle" id="story" stage="0"
       kicker="المهمّة تصير نجمة"
       title={<>كل ما تُنجزه<br /><span className="w369-em">يصير نجمة</span></>}
       body="الواجب، المحاضرة، الاختبار القصير — كلٌّ منها يمنحك نقاط إتقان في اللحظة التي تُتمّها. لا انتظار لتصحيح، ولا أرقام ضائعة: النجوم تظهر أمامك فورًا، وتحتفظ بها."
@@ -515,7 +686,7 @@ const PROGRESS_ROWS = [
 export function ProgressBand() {
   return (
     <Band
-      n="03" jar="03" tint="teal" icon="leaderboard"
+      n="03" jar="03" tint="teal" icon="leaderboard" id="stars" stage="1"
       kicker="النجمة تصير تقدّمًا"
       title={<>النجوم ترتّب نفسها<br /><span className="w369-em">تقدّمًا تراه</span></>}
       body="نجومك لا تبقى أرقامًا متناثرة: تتجمّع في تقدّم المقرّر، وفي مصفوفة الإتقان التي تُظهر ما أتقنته وما يحتاج جهدًا. تعرف دائمًا أين أنت، وأين الخطوة التالية."
@@ -555,7 +726,7 @@ const REWARDS = [
 export function RewardsBand() {
   return (
     <Band
-      n="04" jar="04" tint="coral" icon="medal"
+      n="04" jar="04" tint="coral" icon="medal" id="progress" stage="2"
       kicker="التقدّم يصير مكافأة"
       title={<>والتقدّم؟<br /><span className="w369-em">يصير مكافأة</span></>}
       body="عندما يتراكم الإتقان، تصبح له علامات تراها: شارات تُفتح، وترتيب في لوحة المتصدّرين، وشهادة عند إكمال المقرّر. مكافآت حقيقية تخرج من بياناتك، لا جوائز معلّقة في الهواء."
@@ -580,7 +751,7 @@ const WEEK = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربع�
 export function HabitsBand() {
   return (
     <Band
-      n="05" jar="05" tint="sky" icon="flame"
+      n="05" jar="05" tint="sky" icon="flame" id="rewards" stage="3"
       kicker="المكافأة تصير عادة"
       title={<>والمكافأة؟<br /><span className="w369-em">تصير عادة</span></>}
       body="سلسلة الأيام المتتالية ليست عدّادًا للضغط، بل تذكيرًا لطيفًا بأنك تستمرّ. أُلارا تحفظ وتيرتك، وتذكّرك بلطف حين ينقطع يوم، وتحتفي حين تكتمل الأسبوع."
@@ -623,7 +794,7 @@ export function LevelsBand() {
   const n = useCountUp(LEVELS.length, seen);
   return (
     <Band
-      n="06" jar="06" tint="leaf" icon="admin" id="levels"
+      n="06" jar="06" tint="leaf" icon="admin" id="levels" stage="4"
       kicker="عشرون مستوى، أسماء عربية"
       title={<>سلّمٌ من<br /><span className="w369-em">عشرين مستوى</span></>}
       body="من «بذرة» إلى «المعلّم»: سلّم إتقان بأسماء عربية أصيلة، يفتح كل مستوى شارةً جديدة. لا تسريع ولا اختصار — كل مستوى يُفتح بما أنجزته فعلًا."

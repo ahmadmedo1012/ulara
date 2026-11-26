@@ -1348,7 +1348,7 @@
        Arabic-safe: 118px is the desktop ceiling (the brief's 100-120px),
        40px the phone floor, and 1.12/1.16 leading keeps Baloo's tall
        Arabic ascenders and diacritics clear of the next line. */
-    --fs-d1: clamp(38px, 8.2vw, 118px);   /* the page H1 */
+    --fs-d1: clamp(38px, 8.6vw, 124px);   /* the page H1 — r369 §3: the measured 123px cap at 1440 */
     --fs-d2: clamp(32px, 6.4vw, 92px);    /* the section H2 */
     --fs-d3: clamp(22px, 2.9vw, 36px);    /* the card title */
     --fs-st:  clamp(28px, 4vw, 56px);     /* the statement band */
