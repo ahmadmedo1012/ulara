@@ -161,24 +161,26 @@
   .fo-legal-row, .fo-footer-bottom, .fo-grid, .fo-in,
   .map-panel, .map-panel-clip, .map-panel-in,
   .jt-close-cms, .jt-close-cms-in, .jt-close-main, .jt-close-chiprow,
-  .jt-intro, .jt-intro-body,
+  .jt-intro, .jt-intro-body, .jt-intro-findings,
   .st-media, .st-media-in, .rl-deck, .rl-deckinner, .rl-media,
   .wy-head, .wy-panels, .pr-section > * {
     min-block-size: 0 !important;
   }
-  /* r367 fix: the findings deck is the ONE zeroed floor that must
-   * keep its authored height — the parked cards are absolutely
-   * seated, so a 0-height deck gave the current card NO flow seat
-   * and it rode over the closing column's chip (the r351 audit's
-   * «الباب [05]» × «[04]» 32×4 text kiss @360 seat 0.25, plus the
-   * card's own paper over the close head). The R342-11 compact box
-   * (10.2em) covers the tallest parked card at every ≤767 measure. */
-  .jt-intro-findings { min-block-size: 10.2em !important; }
   .fo-cta-band { block-size: auto !important; }
   .fo-c1-top { block-size: auto !important; }
   .fo-c1-sub { block-size: auto !important; }
   .jt-close-cms-in { gap: 0.15rem !important; }
   .jt-intro-body { padding-block: 0.5rem !important; }
+  /* r367 fix — the «الباب [05]» × «[04]» text kiss (the r351 audit's
+   * @360 seat-0.25 catch, 32×4px): the parked card's foot overflows
+   * the zero-floor deck into the closing column's head, and the chip's
+   * own 1em top margin sat its text inside the foot's y-band. The chip
+   * rises WITHIN the chiprow's fixed 4.64em box (the margin yields) —
+   * ZERO net height, so the phone scrub machine's pinned beat geometry
+   * (r312's camera keys, r349's beats, r354's warp window) is untouched
+   * byte for byte. A flow-side fix (a deck floor, padding) was tried
+   * and REVERTED: even +22px shifted the machine and broke seven pins. */
+  .jt-close-chip { margin-block-start: 0 !important; }
 }
 
 /* ═══ round 6 — THE FINAL 1,531px (measured whales @390, all-mounted) ══
