@@ -143,6 +143,14 @@ const MATRIX: Shot[] = [
 
 const SHOTS = SET === 'matrix' ? MATRIX : DASH;
 
+/* R365_ONLY=student-courses,teacher-grades — re-run a subset (crash
+ * recoveries on the 2-core sandbox; workers=2 or fewer there). */
+const ONLY = (process.env.R365_ONLY ?? '')
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);
+const SHOTS_FILTERED = ONLY.length > 0 ? SHOTS.filter((s) => ONLY.includes(s.name)) : SHOTS;
+
 const VIEWPORTS: Record<string, { width: number; height: number }> = {
   desktop: { width: 1440, height: 900 },
   phone: { width: 390, height: 844 },
@@ -153,7 +161,7 @@ test.skip(!CAPTURE, 'r365 capture harness — opt-in via R365_CAPTURE=1');
 const themeList = THEMES === 'both' ? (['light', 'dark'] as const) : ([THEMES] as const);
 const vpList = VPS === 'both' ? (['desktop', 'phone'] as const) : ([VPS] as const);
 
-const roles = [...new Set(SHOTS.map((s) => s.role))];
+const roles = [...new Set(SHOTS_FILTERED.map((s) => s.role))];
 
 for (const role of roles) {
   for (const vp of vpList) {
@@ -169,7 +177,7 @@ for (const role of roles) {
           reducedMotion: 'reduce',
         });
 
-        for (const shot of SHOTS.filter((s) => s.role === role)) {
+        for (const shot of SHOTS_FILTERED.filter((s) => s.role === role)) {
           test(`${shot.name} ${vp} ${theme}`, async ({ page }) => {
             test.setTimeout(45_000);
             const dir = join(OUT, `${vp}-${theme}`);
@@ -182,6 +190,21 @@ for (const role of roles) {
             await page.waitForSelector('main h1, h1.pf-page-title', { timeout: 20_000 }).catch(() => {});
             // settle: fonts, reveals, charts idle-warm
             await page.waitForTimeout(1100);
+            /* r365 — LONG-SHOT: the shell scrolls inside `.content` (the
+             * only scroll container), so Playwright's fullPage (body
+             * height) stops at the first viewport. Open the shell for
+             * the shot: the body grows to the full content height and
+             * the evidence sheet sees the whole page. */
+            await page.addStyleTag({
+              content: [
+                '.has-shell{height:auto!important;overflow:visible!important}',
+                '.has-shell .main{height:auto!important;overflow:visible!important}',
+                '.has-shell .content{height:auto!important;max-height:none!important;overflow:visible!important}',
+                '.has-shell .content-inner{overflow:visible!important}',
+                'html,body{overflow:visible!important;height:auto!important}',
+              ].join('\n'),
+            });
+            await page.waitForTimeout(250);
             await page.screenshot({
               path: join(dir, `${shot.name}.png`),
               fullPage: true,
