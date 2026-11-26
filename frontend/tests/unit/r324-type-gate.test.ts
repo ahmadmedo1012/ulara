@@ -50,7 +50,7 @@ const APP_RUNGS = [28, 24, 20, 16, 15];
 const TOL = 1.3;
 const MONO_FLOOR = 11;
 /** The H1 ≤ 3 lines @390 enabler: no H1 seat may resolve above this. */
-const H1_CEILING_AT_390 = 32;
+const H1_CEILING_AT_390 = 38; /* r369 — the friendly ladder's phone floor (was 32px, the reference era) */
 
 /* ── token resolution (the clamp/max/var grammar of tokens.css) ────── */
 
@@ -370,14 +370,17 @@ describe('r325 Y4 — the type census gate (every heading level × every seat ×
       });
     }
 
-    it('the d1 clamp still floors at 31.74px @390 (the ladder contract)', () => {
+    it('the d1 clamp floors at 38px @390 and caps at 118px (the r369 ladder contract)', () => {
       const m = tokenSrc.match(/--fs-d1:\s*clamp\(([^)]+)\)/);
       expect(m).toBeTruthy();
-      expect(m![1]).toContain('31.74px');
-      /* R359 (A3): the cap re-keys to the §2 measured h1 — 62.22px
-       * @1440 (7.4664rem on the 8.333px root); the floor contract
-       * above is unchanged. */
-      expect(m![1]).toContain('7.4664rem');
+      /* r369 — the friendly display ladder: the phone floor rises to 38px
+       * (the brief's huge-display intent) and the desktop ceiling to
+       * 118px. The 3-line rule this gate protects is kept by the r369
+       * sheet's own measure (the copy column, not the type size) — see
+       * tests/e2e/r369-landing. The old 31.74/62.22 pins encoded the
+       * retired reference ladder. */
+      expect(m![1]).toContain('38px');
+      expect(m![1]).toContain('118px');
     });
   });
 

@@ -36,7 +36,7 @@
         "200": "#423C6E",
         "300": "#5F5890",
         "400": "#8B86AD",
-        "500": "#B0AACB",
+        "500": "#C2BDDA",
         "700": "#D3CEE4",
         "800": "#E9E4F2",
         "900": "#F7F1E6"
@@ -67,7 +67,7 @@
         "dark": {
           "bg": "#16362E",
           "ink": "#5FD6AC",
-          "deep": "#A8EFD4"
+          "deep": "#5FD6AC"
         }
       },
       "sky": {
@@ -119,7 +119,7 @@
         "dark": {
           "bg": "#3A2F1A",
           "ink": "#F0C572",
-          "deep": "#F9E3B5"
+          "deep": "#F0C572"
         }
       },
       "rose": {
@@ -132,7 +132,7 @@
         "dark": {
           "bg": "#3B2320",
           "ink": "#FF8A7A",
-          "deep": "#FFBCB2"
+          "deep": "#FF8A7A"
         }
       },
       "sand": {
@@ -188,8 +188,8 @@
         "text": "neutral.900",
         "textStrong": "neutral.900",
         "textSecondary": "neutral.500",
-        "textMuted": "#756B5A",
-        "textFaint": "#7E7462",
+        "textMuted": "#6A6151",
+        "textFaint": "#6F6656",
         "textOnAccent": "#FBF6EC",
         "textOnDark": "neutral.50",
         "border": "neutral.200",
@@ -234,7 +234,7 @@
         "textStrong": "neutral.900",
         "textSecondary": "neutral.700",
         "textMuted": "neutral.500",
-        "textFaint": "#9A94B8",
+        "textFaint": "#B3ADC9",
         "textOnAccent": "#14122B",
         "textOnDark": "neutral.900",
         "border": "neutral.200",

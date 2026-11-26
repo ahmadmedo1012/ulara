@@ -56,13 +56,48 @@ resume pointer — update it whenever work stops mid-flight.
 13. `DESIGN.md` — new r369 canon installed at the top as the authority;
     older sections demoted to era history.
 
-## Verified in this session
+## Verified in this session (measured)
 
-- `npm run tokens:build` → PASS, no drift.
-- `tsc -b frontend` ran clean on the token/type changes (before the new
-  landing files existed).
-- `scripts/check-colors.sh` / `check-raw-css.sh` / `check-icons.sh` were
-  READ but not run to green in this session — see "Not done".
+- `npm run tokens:build` → PASS, no drift (10 triads · 43 seats · both themes).
+- `tsc -b frontend` → clean.
+- `npm run build -w frontend` → clean; `check-bundle-size` PASS
+  (818.5 KB gz total · entry 29.5 KB — the old landing's entry weight
+  left with it · pdf 95.4).
+- `eslint` on the new surface → clean.
+- `bash scripts/check-colors.sh --strict` → PASS.
+- `bash scripts/check-raw-css.sh --strict` → PASS (0 type · 0 radius ·
+  0 spacing findings).
+- `bash scripts/check-icons.sh` → PASS.
+- `bash scripts/check-csp-hash.sh` → PASS (pin re-computed + mirrored).
+- `bash scripts/brand/zero-trace.sh` → PASS.
+- `npx vitest run` (frontend) → **247 files · 3046 tests, all green**.
+- Rendered page inspected in the browser (1440 light + dark via
+  `data-theme`, and measured at 390): cream ground, 118px/38px display,
+  pill CTAs, 22px cards, no horizontal overflow, 44px burger.
+- Two real palette failures found and fixed by measurement, not by
+  editing the gate: dark `--text-muted` read 4.12:1 on `--surface-3`
+  (now `#C2BDDA`), and the status icon-well dark swap required
+  `-deep ≡ -ink` for mint/yellow/rose.
+
+## Tests re-pinned / retired in this session
+
+- `landing-funnel.test.tsx` — re-pinned to the `.w369-*` markup; every
+  route count (5 register / 5 login), copy check and the finale rule is
+  unchanged.
+- `r162-ux-cohesion.test.tsx` — selectors moved to the new surface; the
+  CTA test now asserts "CTA paints only token colours" (the honest form
+  of the old "no private background" pin); the focus test now allows a
+  functional `:focus-visible` rule but forbids any `outline` fork.
+- `r170d-a11y-pins.test.tsx` — burger test re-pinned to the new menu and
+  register; the destinations (`/colleges`, `/campus`, `/competitions`,
+  `/capabilities`) are the contract, the labels are copy.
+- `r324-type-gate.test.ts` — the ladder pins follow r369 (38px floor /
+  118px cap / 38px ceiling at 390).
+- DELETED (they tested surfaces that no longer exist): `r311-cursor-
+  ownership`, `landing-scrollspy-grain`, `r306-landing-sheet`,
+  `r312-guest-reveal`, `r312-mobile-camera`. The behaviours they guarded
+  (custom cursor, grain film, pinned journey map, route sweep) were
+  retired by the brief, not lost by accident.
 
 ## Not done (honest gaps)
 

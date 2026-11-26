@@ -101,8 +101,8 @@
     --text: var(--neutral-900);
     --text-strong: var(--neutral-900);
     --text-secondary: var(--neutral-500);
-    --text-muted: #756B5A;
-    --text-faint: #7E7462;
+    --text-muted: #6A6151;
+    --text-faint: #6F6656;
     --text-on-accent: #FBF6EC;
     --text-on-dark: var(--neutral-50);
     --border: var(--neutral-200);
@@ -146,19 +146,19 @@
     --neutral-200: #423C6E;
     --neutral-300: #5F5890;
     --neutral-400: #8B86AD;
-    --neutral-500: #B0AACB;
+    --neutral-500: #C2BDDA;
     --neutral-700: #D3CEE4;
     --neutral-800: #E9E4F2;
     --neutral-900: #F7F1E6;
 
     /* The 9 section families — soft ground · saturated ink · deep text */
     --c-lavender-bg: #2A2350;  --c-lavender-ink: #B49BF5;  --c-lavender-deep: #DED2FF;
-    --c-mint-bg: #16362E;  --c-mint-ink: #5FD6AC;  --c-mint-deep: #A8EFD4;
+    --c-mint-bg: #16362E;  --c-mint-ink: #5FD6AC;  --c-mint-deep: #5FD6AC;
     --c-sky-bg: #1D3045;  --c-sky-ink: #8CC7EC;  --c-sky-deep: #C6E4F8;
     --c-peach-bg: #3E2320;  --c-peach-ink: #FF9B7C;  --c-peach-deep: #FFC8B8;
     --c-copper-bg: #3E2320;  --c-copper-ink: #FF9B7C;  --c-copper-deep: #FFC8B8;
-    --c-yellow-bg: #3A2F1A;  --c-yellow-ink: #F0C572;  --c-yellow-deep: #F9E3B5;
-    --c-rose-bg: #3B2320;  --c-rose-ink: #FF8A7A;  --c-rose-deep: #FFBCB2;
+    --c-yellow-bg: #3A2F1A;  --c-yellow-ink: #F0C572;  --c-yellow-deep: #F0C572;
+    --c-rose-bg: #3B2320;  --c-rose-ink: #FF8A7A;  --c-rose-deep: #FF8A7A;
     --c-sand-bg: #26301C;  --c-sand-ink: #B7D77E;  --c-sand-deep: #DCEEBB;
     --c-grey-bg: #2B2750;  --c-grey-ink: #B9B3CE;  --c-grey-deep: #DCD8EA;
     --c-royal-bg: #252B54;  --c-royal-ink: #8AA0FF;  --c-royal-deep: #A9B8FF;
@@ -180,7 +180,7 @@
     --text-strong: var(--neutral-900);
     --text-secondary: var(--neutral-700);
     --text-muted: var(--neutral-500);
-    --text-faint: #9A94B8;
+    --text-faint: #B3ADC9;
     --text-on-accent: #14122B;
     --text-on-dark: var(--neutral-900);
     --border: var(--neutral-200);

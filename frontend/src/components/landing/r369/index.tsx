@@ -47,6 +47,7 @@ import {
 } from 'lucide-react';
 import { Icon } from '../../Icon';
 import { ROUTES } from '../../../lib/routes';
+import { ThemeToggle } from '../../layout/ThemeToggle';
 import { Mascot } from './Mascot';
 
 /* ─────────────────────────── motion helpers ─────────────────────────── */
@@ -74,7 +75,11 @@ function useInView<T extends HTMLElement>(rootMargin = '-12% 0px') {
       { rootMargin },
     );
     io.observe(el);
-    return () => io.disconnect();
+    /* Safety net: content may NEVER stay invisible. A section that is
+     * never scrolled into view (deep link, print, a screenshot tool, a
+     * browser that throttles IO) reveals itself after a short grace. */
+    const fallback = window.setTimeout(() => setSeen(true), 1200);
+    return () => { io.disconnect(); window.clearTimeout(fallback); };
   }, [rootMargin]);
   return [ref, seen] as const;
 }
@@ -151,6 +156,14 @@ function StarJar() {
 
 interface NavLink { href: string; label: string; external?: boolean }
 
+/* the phone menu carries the full public register; the desktop bar keeps
+   the five story seats so the bar never crowds. */
+const MOBILE_EXTRA: readonly NavLink[] = [
+  { href: '/campus', label: 'الحرم الجامعي', external: true },
+  { href: '/competitions', label: 'المسابقات', external: true },
+  { href: '/app', label: 'التطبيق', external: true },
+];
+
 const NAV_LINKS: readonly NavLink[] = [
   { href: '#story', label: 'الحكاية' },
   { href: '#levels', label: 'المستويات' },
@@ -161,11 +174,17 @@ const NAV_LINKS: readonly NavLink[] = [
 
 export function LandingNav() {
   const [open, setOpen] = useState(false);
+  const burgerRef = useRef<HTMLButtonElement | null>(null);
+  const close = useCallback(() => {
+    setOpen(false);
+    // the a11y contract: focus returns to the control that opened it
+    burgerRef.current?.focus();
+  }, []);
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close(); };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, []);
+  }, [close]);
   return (
     <header className="w369-nav">
       <div className="w369-nav-inner">
@@ -183,6 +202,7 @@ export function LandingNav() {
         </nav>
 
         <div className="w369-nav-actions">
+          <ThemeToggle />
           <Link to={ROUTES.auth} className="w369-btn w369-btn-ghost w369-nav-login">تسجيل الدخول</Link>
           <Link to={ROUTES.authRegister} className="w369-btn w369-btn-primary">
             أنشئ حسابك
@@ -191,6 +211,7 @@ export function LandingNav() {
         </div>
 
         <button
+          ref={burgerRef}
           type="button"
           className="w369-nav-burger"
           aria-expanded={open}
@@ -204,11 +225,19 @@ export function LandingNav() {
 
       {open && (
         <div className="w369-mobile-menu" id="w369-mobile-menu">
-          {NAV_LINKS.map((l) => (
+          {[...NAV_LINKS, ...MOBILE_EXTRA].map((l) => (
             l.external
-              ? <Link key={l.href} to={l.href} className="w369-mobile-link" onClick={() => setOpen(false)}>{l.label}</Link>
-              : <a key={l.href} href={l.href} className="w369-mobile-link" onClick={() => setOpen(false)}>{l.label}</a>
+              ? <Link key={l.href} to={l.href} className="w369-mobile-link">{l.label}</Link>
+              : <a key={l.href} href={l.href} className="w369-mobile-link">{l.label}</a>
           ))}
+          <div
+            className="w369-mobile-theme"
+            onClick={(e) => e.stopPropagation()}
+            role="presentation"
+          >
+            <span className="w369-mobile-theme-label">المظهر</span>
+            <ThemeToggle />
+          </div>
           <div className="w369-mobile-cta">
             <Link to={ROUTES.authRegister} className="w369-btn w369-btn-primary" onClick={() => setOpen(false)}>
               أنشئ حسابك

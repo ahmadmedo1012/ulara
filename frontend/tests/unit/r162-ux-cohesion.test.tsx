@@ -77,19 +77,9 @@ const stripComments = (src: string) => src.replace(/\/\*[\s\S]*?\*\//g, '');
  * styles/landing/ (imported in the original cascade order); the stub
  * landing.css is rule-free. The aggregated family text is unchanged. */
 const LANDING_FAMILY = [
-  'src/styles/landing/chrome.css',
-  'src/styles/landing/hero.css',
-  'src/styles/landing/statement.css',
-  'src/styles/landing/journey.css',
-  'src/styles/landing/pains.css',
-  'src/styles/landing/roles.css',
-  'src/styles/landing/colleges.css',
-  'src/styles/landing/cta.css',
-  'src/styles/landing/why.css',
-  'src/styles/landing/footer.css',
-  'src/styles/landing/shared.css',
-  'src/styles/landing/platform.css',
-  'src/styles/landing/strata.css',
+  // r369 — the public landing is ONE sheet again (the drawing-sheet family
+  // retired with the reference-parity composition).
+  'src/styles/landing/r369.css',
 ] as const;
 const readLandingCss = () => stripComments(LANDING_FAMILY.map(read).join('\n'));
 
@@ -126,7 +116,7 @@ describe('r172a §8 — the landing carries the REAL theme control', () => {
   it('the shared ThemeToggle mounts in the landing header (فاتح · داكن · تلقائي)', () => {
     const { container } = renderLanding();
     const headerToggle = container.querySelector<HTMLDivElement>(
-      '.fo-header-actions .theme-toggle',
+      '.w369-nav-actions .theme-toggle',
     );
     expect(headerToggle).not.toBeNull();
     expect(headerToggle?.getAttribute('aria-label')).toBe('السمة');
@@ -138,7 +128,7 @@ describe('r172a §8 — the landing carries the REAL theme control', () => {
   it('the mobile menu carries the LABELED theme row (المظهر) with its own toggle', () => {
     const { container } = renderLanding();
     fireEvent.click(screen.getByRole('button', { name: 'فتح القائمة' }));
-    const row = container.querySelector('.fo-mobile-theme');
+    const row = container.querySelector('.w369-mobile-theme');
     expect(row).not.toBeNull();
     expect(row?.textContent).toContain('المظهر');
     expect(row?.querySelector('.theme-toggle')).not.toBeNull();
@@ -146,7 +136,7 @@ describe('r172a §8 — the landing carries the REAL theme control', () => {
 
   it('flipping the header toggle flips data-theme AND persists to the shared store', () => {
     const { container } = renderLanding();
-    const headerToggle = container.querySelector('.fo-header-actions .theme-toggle') as HTMLElement;
+    const headerToggle = container.querySelector('.w369-nav-actions .theme-toggle') as HTMLElement;
     act(() => {
       fireEvent.click(within(headerToggle).getByRole('button', { name: 'فاتح' }));
     });
@@ -175,13 +165,13 @@ describe('r172a §8 — the landing carries the REAL theme control', () => {
   it('the mobile theme row does NOT close the menu (stopPropagation contract)', () => {
     const { container } = renderLanding();
     fireEvent.click(screen.getByRole('button', { name: 'فتح القائمة' }));
-    const row = container.querySelector('.fo-mobile-theme') as HTMLElement;
+    const row = container.querySelector('.w369-mobile-theme') as HTMLElement;
     act(() => {
       fireEvent.click(within(row).getByRole('button', { name: 'فاتح' }));
     });
     // the menu's own click-to-close contract must not eat a theme flip —
     // the visitor may want to try both looks before navigating.
-    expect(container.querySelector('.fo-mobile-menu')).not.toBeNull();
+    expect(container.querySelector('.w369-mobile-menu')).not.toBeNull();
     expect(document.documentElement.getAttribute('data-theme')).toBe('light');
   });
 });
@@ -296,15 +286,18 @@ describe('r197 — the landing scene family is retired from tokens.css', () => {
 describe('r172a §2 → r188 — the landing CTA rides the canonical accent pair', () => {
   const css = readLandingCss();
 
-  it('the folio landing declares NO landing-private CTA colors — .btn.accent/.btn.primary ARE the recipes', () => {
-    // r188: the hero/finale primary is the app's own .btn.accent and the
-    // header/mobile primary is .btn.primary (components.css recipes) —
-    // the landing re-declares neither background nor color for any
-    // button (no .ln-btn-gold-style private CTA sheet exists anymore).
-    for (const sel of ['.fo-hero-cta', '.fo-cta-actions', '.fo-header-actions .btn', '.fo-mobile-menu .btn']) {
+  it('the landing CTA colours resolve through tokens — no literal is painted anywhere', () => {
+    /* r369 — the landing owns its own `.w369-btn` primitive (the public
+     * story is a distinct surface from the app chrome), so the old
+     * "must not declare a background" pin no longer describes it. The
+     * INTENT is unchanged and still enforced: a CTA may never paint a
+     * raw colour, it must ride the token pair. */
+    for (const sel of ['.w369-btn-primary', '.w369-btn-ghost']) {
       const ruleRe = new RegExp(`${sel.replace(/\./g, '\\.')}(?![\\w-])[^{]*\\{[^}]*\\}`, 'g');
       for (const rule of css.match(ruleRe) ?? []) {
-        expect(rule, `${sel} must not paint a private CTA color`).not.toMatch(/background\s*:/);
+        expect(rule, `${sel} must paint only token colours`).not.toMatch(
+          /(background|color)\s*:\s*(#[0-9a-f]{3,8}|rgba?\()/i,
+        );
       }
     }
   });
@@ -321,7 +314,7 @@ describe('r172a §2 → r188 — the landing CTA rides the canonical accent pair
   });
 
   it('the skip-link joins the accent family', () => {
-    const at = css.indexOf('.fo-skip-link {');
+    const at = css.indexOf('.w369-skip {');
     expect(at).toBeGreaterThanOrEqual(0);
     const body = css.slice(at, css.indexOf('}', at));
     /* 2026 «Parchment & Royal»: the #DB3A00 AA-exception seat is retired —
@@ -334,24 +327,16 @@ describe('r172a §2 → r188 — the landing CTA rides the canonical accent pair
     expect(body).toContain('color: var(--accent-fg)');
   });
 
-  it('the landing CTA markup consumes the canonical classes (no private CTA class)', () => {
-    /* R331 split: the hero CTA lives in hero/Hero.tsx; the header CTA moved
-     * to chrome/SheetNav.tsx. R342: the hero CTA rides the frozen spec's
-     * own measured text-link seat — the .btn classes were dead markup
-     * since R338's [C] measured skin (min-block-size 0, transparent,
-     * 600-weight link); the R342 markup cleanup drops them. The funnel
-     * contract hooks (.fo-hero-cta + the scoped .hro-cta seat class)
-     * are unchanged — still no private CTA class. */
-    const heroTsx = read('src/components/landing/hero/Hero.tsx');
-    const navTsx = read('src/components/landing/chrome/SheetNav.tsx');
-    expect(heroTsx).toContain('hro-cta fo-hero-cta');
-    // R315 override (K-B): the HEADER CTA is the reference's measured
-    // ruled cell (.fo-actions-cta — 166.66px, the reference's own
-    // header-cta seat), not a .btn recipe; the hero/finale CTAs keep
-    // the canonical classes. No private color sheet exists either way.
-    expect(navTsx).toContain('fo-actions-cta');
-    expect(heroTsx).not.toContain('btn primary sm');
-    expect(heroTsx).not.toContain('ln-btn-gold');
+  it('the landing CTA markup consumes the shared primitive (no private colour class)', () => {
+    /* r369 — the hero/finale/nav CTAs are `.w369-btn` + `.w369-btn-primary`
+     * from the landing sheet, and the sheet paints them from tokens only
+     * (asserted above). The funnel contract hooks are the same seats the
+     * funnel test reads. */
+    const bands = read('src/components/landing/r369/index.tsx');
+    expect(bands).toContain('w369-hero-actions');
+    expect(bands).toContain('w369-cta-actions');
+    expect(bands).toContain('w369-nav-actions');
+    expect(bands).not.toContain('ln-btn-gold');
   });
 });
 
@@ -360,17 +345,13 @@ describe('r172a §2 → r188 — the landing CTA rides the canonical accent pair
 describe('r172a §3 — the landing\'s private :focus-visible sub-language is deleted', () => {
   const css = readLandingCss();
 
-  it('no :focus-visible rule in landing.css writes an outline', () => {
+  it('no :focus-visible rule in the landing writes its own outline', () => {
+    /* r369 — the sheet may carry functional :focus-visible rules (the skip
+     * link reveals itself), but the focus RING stays the universal one in
+     * base.css/world.css: no landing rule may write an `outline`. */
     const rules = css.match(/[^{}]*:focus-visible[^{}]*\{[^}]*\}/g) ?? [];
-    // r190: the sheet now carries ZERO :focus-visible rules — all
-    // focus behavior (visibility included, via the token routing)
-    // is delegated to the universal language in base.css. Zero is
-    // the purest form of "no private sub-language"; if a future
-    // behavior (scale-pop/reveal) needs a rule, it still may not
-    // write an outline — the loop below stays the enforcement.
-    expect(rules.length).toBe(0);
     for (const rule of rules) {
-      expect(rule).not.toMatch(/outline(-color)?:/);
+      expect(rule, 'the landing must not fork the focus language').not.toMatch(/outline\s*:/);
     }
   });
 

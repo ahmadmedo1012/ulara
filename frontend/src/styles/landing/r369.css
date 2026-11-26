@@ -768,6 +768,7 @@
   margin: 0;
   padding: 0;
   display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: var(--sp-4);
 }
 
@@ -1398,4 +1399,24 @@
 
 @media (max-width: 900px) {
   .w369-sources { grid-template-columns: 1fr; }
+}
+
+/* ── the theme row (mobile menu) ──────────────────────────────────── */
+
+.w369-mobile-theme {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  min-block-size: 48px;
+  padding-inline: var(--sp-3);
+  margin-block-start: var(--sp-2);
+  border-block-start: 1px solid var(--border);
+  padding-block-start: var(--sp-3);
+}
+
+.w369-mobile-theme-label {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--text-secondary);
 }

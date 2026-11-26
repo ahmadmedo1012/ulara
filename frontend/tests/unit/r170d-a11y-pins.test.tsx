@@ -176,7 +176,7 @@ describe('r170d → r188 — landing burger keyboard contract (Escape + aria-exp
     expect(trigger.getAttribute('aria-expanded')).toBe('true');
 
     // the menu's four section anchors + theme row + both funnel buttons
-    const menu = document.querySelector('.fo-mobile-menu') as HTMLElement;
+    const menu = document.querySelector('.w369-mobile-menu') as HTMLElement;
     expect(menu).not.toBeNull();
     const items = within(menu).getAllByRole('link');
     expect(items.length).toBeGreaterThanOrEqual(6);
@@ -184,8 +184,14 @@ describe('r170d → r188 — landing burger keyboard contract (Escape + aria-exp
     // structure — «الفصول» is now «الرحلة» (the pinned map section), and
     // «ما يعمل اليوم» routes to /capabilities (the ledger sub-page).
     // R331 register: the flat real-route seat register + the ledger row.
-    for (const name of ['الرئيسية', 'المقررات', 'الكليات', 'الحرم الجامعي', 'المسابقات', 'التطبيق', 'ما يعمل اليوم']) {
+    // r369 re-pin: the public register moved to the story seats + the real
+    // destinations. The DESTINATIONS are the contract (the labels are copy).
+    for (const name of ['الحكاية', 'المستويات', 'الأدوار', 'الكليات', 'الحرم الجامعي', 'المسابقات', 'التطبيق']) {
       expect(items.some((a) => (a.textContent || '').includes(name))).toBe(true);
+    }
+    const hrefs = items.map((a) => a.getAttribute('href'));
+    for (const route of ['/colleges', '/campus', '/competitions', '/capabilities']) {
+      expect(hrefs).toContain(route);
     }
 
     // focus is inside the menu, Escape fires there
