@@ -84,6 +84,41 @@ def dim(x0,y0,x1,y1):  # dimension string with end ticks
 def grid(x0,x1,y0,y1,st=3):
     for gx in range(int(x0),int(x1)+1,st):
         for gy in range(int(y0),int(y1)+1,st): box(gx-.08,gx+.08,gy-.08,gy+.08,0,.03,dk)
+
+def rbox(cx,cy,ln,ang,th=.07,m=None):  # thin rotated bar (hatching, door swing), sits above the floor slab
+    bpy.ops.mesh.primitive_cube_add(); o=bpy.context.object
+    o.location=(cx,cy,.16); o.scale=(ln/2,th/2,.03); o.rotation_euler=(0,0,math.radians(ang)); o.data.materials.append(m or dk)
+def hatch(x0,y0,x1,y1,st=.8,ang=45):  # 45-degree hatching, each line clipped to the rectangle
+    c=(x0-y1); 
+    while c<=x1-y0:
+        pts=[]
+        for (x,y) in ((c+y0,y0),(c+y1,y1),(x0,x0-c),(x1,x1-c)):
+            if x0-1e-6<=x<=x1+1e-6 and y0-1e-6<=y<=y1+1e-6: pts.append((x,y))
+        if len(pts)>=2:
+            (ax,ay),(bx,by)=pts[0],pts[-1]; ln=math.hypot(bx-ax,by-ay)
+            if ln>.2: rbox((ax+bx)/2,(ay+by)/2,ln,45,.05)
+        c+=st
+def swing(x,y,ln=2.1,ang=40):
+    rbox(x+ln*.5*math.cos(math.radians(ang)),y+ln*.5*math.sin(math.radians(ang)),ln,ang,.06)
+def chairs(x0,x1,y,n):  # small chairs either side of a table run
+    st=(x1-x0)/n
+    for i in range(n): box(x0+i*st+.3,x0+i*st+.8,y-.7,y-.25,0,.15,dk); box(x0+i*st+.3,x0+i*st+.8,y+.25,y+.7,0,.15,dk)
+if FLAT:
+    if kind=='lecture': hatch(-13.6,10.4,-4.4,15.6); swing(-9,9.9); box(-3,3,-8.5,-7.5,0,.15,dk); hatch(-13.6,-8.7,-4.4,-6.2,.6)
+    if kind=='library':
+        for i in range(6): chairs(-12,12,-6.8+i*2.6,12)
+        hatch(-19.7,-3.6,-15.3,3.6); hatch(15.3,-3.6,19.7,3.6); swing(-12,0)
+    if kind=='exam':
+        for i in range(6):
+            for j in range(12): box(-10.4+j*1.9,-9.8+j*1.9,-7.6+i*2.2,-7.2+i*2.2,0,.15,dk)
+        hatch(-18.7,-1.7,-14.3,3.7); swing(-12,-3)
+    if kind=='admin':
+        for i in range(5): box(-13.2,-12.6,-5.6+i*2.2,-5.0+i*2.2,0,.15,dk); box(-4.6,-4.0,-5.6+i*2.2,-5.0+i*2.2,0,.15,dk)
+        hatch(1.4,-7.6,15.6,-1.4); hatch(1.4,1.4,15.6,7.6); swing(-13,0)
+    if kind=='lab':
+        hatch(-19.7,-2.7,-14.3,2.7); swing(-11,-1); swing(11,-1,ang=140)
+    if kind=='campus':
+        for (x,y,w,d,h) in [(-18,-12,12,8,3.2),(-2,-12,8,12,4.6),(10,-12,10,8,2.8)]: hatch(x+.5,y+.5,x+w-.5,y+d-.5,1.2)
 if kind=='lecture': dim(-14,-12,14,-12); dim(-17,-9,-17,9); grid(-18,18,-13,13)
 if kind=='library': dim(-15,-13,15,-13); dim(-23,-10,-23,10); grid(-18,18,-13,13)
 if kind=='exam': dim(-13,-12,13,-12); dim(-17,-9,-17,9); grid(-18,18,-13,13)

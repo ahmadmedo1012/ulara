@@ -164,3 +164,4 @@ NEXT: origin/main sync ~9:50pm; remaining gaps 06 layout, hero photo look, no-co
 - r368 mobile hero now the Blender raster crop (137KB vs 543KB svg). perf p50 16.7, 6 frames>50ms, longtasks 0.52s. NEXT: no-corpus slices.
 - r368 no-corpus pass (404, login, about, desktop light): ruled frame, mono labels, royal accents consistent with matched slices; no corpus to measure so status stays FAILING (unverified vs reference). Mobile hero raster verified dark. NEXT: hourly sync, cross-slice analyze.
 - r368 cross-slice analyze (12:04 AM): 06 gets a third plate; 404/about keep the duotone photo (reference shows photo scenes in the use-case band, so no evidence to swap). 07 plate richness still open. All 22 FAILING.
+- r368 plates v3: clipped 45-degree poche hatching, chairs, door swings in plate.py flat mode. NEXT: sync, analyze.
