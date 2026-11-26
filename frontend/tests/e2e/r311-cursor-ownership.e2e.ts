@@ -44,7 +44,13 @@ const VW = {
  *  subtree owns the hit-test at the press point. */
 async function waitForHeroPointer(page: import('@playwright/test').Page, xf: number, yf: number) {
   await page.waitForFunction(
-    ([fx, fy]: [number, number]) => {
+    (arg) => {
+      /* the arg rides as unknown (Playwright's overload types it loose):
+       * destructure with guards — never a typed param (TS2769), never an
+       * unguarded read (TS18048) */
+      const pair = arg as [number, number];
+      const fx = pair?.[0] ?? 0.5;
+      const fy = pair?.[1] ?? 0.5;
       const st = document.querySelector('.hro-stage');
       if (!st) return false;
       const r = st.getBoundingClientRect();
