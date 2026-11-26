@@ -131,3 +131,6 @@ Rebuilt the phone band as an auto-height stack: title, paragraph, four ruled cap
 
 ## Phone roles round 2
 Art plate now tall (4/3, collage fills it). Still wrong: title column overlap, plate is not the reference flat massing with a sun disc. Status: FAILING.
+
+## Dark/RTL loop 1
+Phone roles title clip was a scroll-under-header capture artifact. Dark desktop hero: layout, nav and consent strip hold in RTL, but the art is still the old wireframe elevation, not the flat massing twin. Status: FAILING.

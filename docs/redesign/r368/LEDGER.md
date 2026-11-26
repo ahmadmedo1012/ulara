@@ -51,3 +51,5 @@ NEXT: platform grid to one tall plan cell + ledger rows; half-art/half-list role
 - phone roles: group divider wraps inside the frame, use-case chips dropped (FAILING; NEXT: big art plate above list, dark/RTL loop)
 - phone roles art plate restored to 4/3 over the diet shrink (additive media override)
 NEXT: dark and RTL loops
+- dark/RTL loop 1 logged
+NEXT: dark hero art flat massing
