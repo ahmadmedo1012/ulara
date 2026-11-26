@@ -848,3 +848,582 @@
     min-block-size: var(--touch-floor, 44px);
   }
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   r365 (7-c) — restored exa-* anatomy
+   ────────────────────────────────────────────────────────────────────
+   The upstream publish carried ExamAuthorPages.tsx but dropped the §4
+   exa- sheet rule bodies (patterns.css kept the anatomy comments, the
+   rules died) — the hub and the template detail rendered bare. This
+   ONE additive block restores every missing class the page uses, in
+   the r359/r365 product grammar: hairline rows on --rule, logical
+   properties, tokens for color/spacing/type/radius, no shadows, the
+   ONE signal per surface (royal --accent; the scoped ember where the
+   scope resolves). Unlayered like the r359 sheet — the house cascade
+   contract — so the restoration outranks the layered R304 base it
+   completes; ties resolve by source order, never !important.
+
+   Scoping: the two page roots mount .hr-scope (ExamAuthorPages.tsx
+   hub :622, detail :2152), so page-level rules ride the family scope
+   like the §B/§E blocks. The four authoring/grading MODALS portal to
+   document.body (components/overlays/Modal.tsx — createPortal), so
+   their classes (exa-form, exa-form-foot, exa-choice-*, exa-note-line,
+   exa-grade-*, exa-answer-*, exa-picker*, exa-pick-*) sit OUTSIDE the
+   scope and stay UNSCOPED — a .hr-scope prefix there could never
+   match. The builder's pick-order chip consequently speaks var(--accent)
+   (the scope-independent royal signal) instead of the §B ember vars,
+   which do not resolve inside the portal.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── the two §0 primitives the same publish dropped, restored for §B ──
+   .hr-toolbar: the one placement grammar for search + filters + actions
+   (paired by exa-toolbar here; TeacherPages/QualityPages compose it
+   too). .hr-rail/.hr-rail-step: the authored lifecycle strip the §B
+   sheet names ("the ol host needs only the list reset; the steps speak
+   the §0 step anatomy") — done = success ink, current = the royal
+   signal, rejected = danger, upcoming = muted; hairline connectors,
+   flat dot markers, aria-current stays the a11y contract. */
+.hr-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+.hr-rail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2) var(--sp-3);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.hr-rail-step {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1-5);
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+.hr-rail-step + .hr-rail-step {
+  border-inline-start: 1px solid var(--rule);
+  padding-inline-start: var(--sp-3);
+}
+.hr-rail-step::before {
+  content: '';
+  inline-size: var(--sp-1-5);
+  block-size: var(--sp-1-5);
+  flex: none;
+  border-radius: var(--r-full);
+  background: var(--rule);
+}
+.hr-rail-step[data-state='done'] { color: var(--text-secondary); }
+.hr-rail-step[data-state='done']::before { background: var(--success); }
+.hr-rail-step[data-state='current'] {
+  color: var(--text-strong);
+  font-weight: var(--fw-semibold);
+}
+.hr-rail-step[data-state='current']::before { background: var(--accent); }
+.hr-rail-step[data-state='rejected'] { color: var(--danger-ink); }
+.hr-rail-step[data-state='rejected']::before { background: var(--danger); }
+/* §B's rail host alias: one rung of air between the detail's status
+   line and the lifecycle strip (the list reset lives on .hr-rail). */
+.hr-scope .exa2-rail { margin-block-start: var(--sp-1); }
+@media (max-width: 640px) {
+  .hr-toolbar .btn { min-block-size: 44px; }
+}
+
+/* ── hub rows: the rejected note line, the take:100 cap note, the
+   gated-publish control with its honest reason ── */
+.hr-scope .exa-row-note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--sp-1-5);
+  margin: var(--sp-1) 0 0;
+  min-inline-size: 0;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+.hr-scope .exa-row-note > svg { flex: none; }
+.hr-scope .exa-cap-note { margin: var(--sp-2) 0 0; }
+.hr-scope .exa-gate {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+.hr-scope .exa-gate-note { flex: 1 1 auto; min-inline-size: 0; }
+
+/* ── the bank's one calm filter row (.exa-toolbar pairs .hr-toolbar):
+   search flexes, selects keep their label-safe width (the R304
+   160/140 budget, one rung), everything ≥44px ── */
+.hr-scope .exa-toolbar { margin-block-end: var(--sp-4); }
+.hr-scope .exa-toolbar select {
+  inline-size: auto;
+  flex: 0 1 auto;
+  /* label-safe floor for the Arabic option labels (raw width — not a
+     spacing-axis value; the R304 filter budgets did the same). */
+  min-inline-size: 160px;
+}
+.hr-scope .exa-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1 1 260px;
+  min-inline-size: 0;
+  cursor: text;
+}
+.hr-scope .exa-search-icon {
+  position: absolute;
+  inset-inline-start: var(--sp-2);
+  inset-block-start: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+.hr-scope .exa-search-input {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  padding-inline-start: var(--sp-7);
+}
+
+/* ── the question-bank accordion: collapsed = prompt (2-line clamp) +
+   chip meta + mono points; expanded = the full reading surface. Hover
+   names the disclosure while collapsed; an open row's tint rests. ── */
+.hr-scope .exa-bank-row { min-inline-size: 0; }
+@media (hover: hover) and (pointer: fine) {
+  .hr-scope .exa-bank-row:not(.is-open):hover { background: var(--surface-2); }
+}
+.hr-scope .exa-bank-toggle {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  inline-size: 100%;
+  min-block-size: 44px;
+  padding: var(--sp-4) var(--sp-5);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-align: start;
+  font: inherit;
+  color: inherit;
+}
+.hr-scope .exa-chevron {
+  display: inline-flex;
+  flex: none;
+  margin-block-start: var(--sp-1);
+  color: var(--text-muted);
+  transition: transform var(--t-fast) var(--ease);
+}
+.hr-scope .exa-bank-row.is-open .exa-chevron { transform: rotate(180deg); }
+.hr-scope .exa-bank-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-1-5);
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  text-align: start;
+}
+.hr-scope .exa-bank-prompt {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  font-size: var(--fs-body);
+  font-weight: var(--fw-semibold);
+  line-height: 1.4;
+  color: var(--text);
+}
+.hr-scope .exa-bank-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-1) var(--sp-2);
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+.hr-scope .exa-points {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.hr-scope .exa-bank-panel {
+  padding-block-start: var(--sp-2);
+  padding-block-end: var(--sp-4);
+  /* the detail indents past the chevron column */
+  padding-inline-start: calc(var(--sp-4) + var(--sp-5));
+  padding-inline-end: var(--sp-5);
+  border-block-start: 1px dashed var(--rule);
+}
+.hr-scope .exa-qtext {
+  margin: 0 0 var(--sp-3);
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  color: var(--text);
+}
+.hr-scope .exa-choices {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1-5);
+  list-style: none;
+  margin: 0 0 var(--sp-3);
+  padding: 0;
+}
+.hr-scope .exa-choice {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+}
+.hr-scope .exa-choice-index {
+  flex: none;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+.hr-scope .exa-byline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1) var(--sp-3);
+  margin: var(--sp-3) 0 0;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+.hr-scope .exa-immutable {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-1-5);
+  margin: var(--sp-3) 0 0;
+  padding-block-start: var(--sp-2-5);
+  border-block-start: 1px dashed var(--rule);
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+.hr-scope .exa-immutable > svg { flex: none; }
+
+/* ── the detail header: back-link row above, brow → clamped title →
+   status line, actions strip inline-end, hairline anchor closing the
+   block (§A's page-header register) ── */
+.hr-scope .exa-detail-head {
+  padding-block-end: var(--sp-4);
+  border-block-end: 1px solid var(--border);
+  margin-block-end: var(--sp-5);
+}
+.hr-scope .exa-detail-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+}
+.hr-scope .exa-detail-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  flex: 1 1 320px;
+  min-inline-size: 0;
+}
+.hr-scope .exa-detail-title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  margin: 0;
+  font-size: var(--fs-app-h2);
+  font-weight: var(--fw-semibold);
+  line-height: 1.15;
+  color: var(--text-strong);
+}
+.hr-scope .exa-detail-sub {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-1-5) var(--sp-2);
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+}
+.hr-scope .exa-detail-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  flex: none;
+}
+/* The quality note bar — a soft semantic well, never a raw stripe. */
+.hr-scope .exa-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  margin: 0 0 var(--sp-4);
+  padding: var(--sp-2-5) var(--sp-3);
+  background: var(--warning-soft);
+  color: var(--warning-ink);
+  border-radius: var(--r-sm);
+  font-size: var(--fs-sm);
+}
+.hr-scope .exa-note > svg { flex: none; }
+
+/* ── the detail split: questions + grading main, facts + decision
+   aside; the aside hangs off a full-height hairline rail (the sg-split
+   division) at desk widths, stacks below 920 ── */
+.hr-scope .exa-split {
+  display: grid;
+  gap: var(--sp-4);
+  align-items: start;
+}
+.hr-scope .exa-main,
+.hr-scope .exa-aside { min-inline-size: 0; }
+.hr-scope .exa-aside {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+@media (min-width: 921px) {
+  .hr-scope .exa-split { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+  .hr-scope .exa-split > * + * {
+    border-inline-start: 1px solid var(--rule);
+    padding-inline-start: var(--sp-4);
+  }
+}
+/* Aside panels — flat hairline sheets matching the row sheet. */
+.hr-scope .exa-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: var(--sp-4);
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-lg);
+}
+.hr-scope .exa-panel-title {
+  margin: 0;
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-semibold);
+  line-height: 1.2;
+  color: var(--text-strong);
+}
+.hr-scope .exa-panel-sub {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+/* The fact grid: hairline ledger rows, mono caption labels, a dotted
+   baseline leader between label and value (the DetailLine contract:
+   long values wrap to their own line, the leader shrinks to min). */
+.hr-scope .exa-facts {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+.hr-scope .exa-facts > * { padding-block: var(--sp-1-5); }
+.hr-scope .exa-facts > * + * {
+  border-block-start: 1px solid color-mix(in srgb, var(--border) 62%, transparent);
+}
+.hr-scope .exa-fact-label {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--text-secondary);
+}
+.hr-scope .exa-fact-leader {
+  flex: 1 1 var(--sp-3);
+  min-inline-size: var(--sp-3);
+  border-block-end: 1px dotted color-mix(in srgb, var(--border) 80%, transparent);
+}
+.hr-scope .exa-fact-value {
+  min-inline-size: 0;
+  font-weight: var(--fw-medium);
+  color: var(--text);
+  overflow-wrap: break-word;
+}
+
+/* ── the detail's question rows: top-aligned variant (trailing actions
+   ride beside a multi-line prompt), the wrapping title register, the
+   wire's own order numeral, the answer-key line, the moderation
+   column and the grading filter checkbox ── */
+.hr-scope .exa-row.exa-row-top { align-items: flex-start; }
+.hr-scope .exa-row-title-wrap {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+.hr-scope .exa-order {
+  flex: none;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.hr-scope .exa-key {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  margin: 0;
+  font-size: var(--fs-xs);
+  color: var(--success-ink);
+}
+.hr-scope .exa-mod-actions-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--sp-1-5);
+  flex: none;
+}
+.hr-scope .exa-check {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-xs);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+/* ── modal scaffolding (UNSCOPED — the portals sit outside .hr-scope):
+   the form stack, the hairline-anchored footer, the choices editor
+   with its correct-answer signal ── */
+.exa-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  min-inline-size: 0;
+}
+.exa-form-foot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-block-start: var(--sp-1);
+  padding-block-start: var(--sp-3);
+  border-block-start: 1px solid var(--rule);
+}
+.exa-choice-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.exa-choice-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.exa-choice-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+.exa-choice-correct {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  flex: none;
+  font-size: var(--fs-xs);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.exa-choice-correct:has(input:checked) { color: var(--accent-ink); }
+.exa-choice-field {
+  flex: 1 1 200px;
+  min-inline-size: 0;
+}
+.exa-choice-remove { flex: none; }
+.exa-note-line {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  margin: 0;
+}
+.exa-note-line > svg { flex: none; }
+
+/* ── the grading card: prompt + parked answer + verdict pair. The
+   failed-finalize cards still lacking a verdict take the danger edge
+   on the hairline frame (data-invalid; aria-invalid rides the group). ── */
+.exa-grade-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: var(--sp-3);
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-md);
+}
+.exa-grade-card[data-invalid] { border-color: var(--danger); }
+.exa-grade-prompt {
+  flex: 1 1 260px;
+  min-inline-size: 0;
+  overflow-wrap: break-word;
+}
+.exa-grade-side { flex: none; }
+.exa-answer-surface {
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--surface-2);
+  border-radius: var(--r-sm);
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+}
+.exa-answer-missing { color: var(--text-muted); }
+
+/* ── the builder's boxed picker: a hairline frame (the «أسئلة القالب»
+   boxed section), a bounded scroll region of hairline list rows, the
+   live pick-order chip in the ONE signal register ── */
+.exa-picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: var(--sp-3);
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-md);
+}
+.exa-picker-scroll {
+  display: flex;
+  flex-direction: column;
+  max-block-size: 50vh;
+  overflow-block: auto;
+}
+.exa-picker-scroll .list-row { padding-inline: var(--sp-3); }
+.exa-picker-scroll .list-row + .list-row {
+  border-block-start: 1px solid var(--rule);
+}
+.exa-pick-row {
+  align-items: flex-start;
+  cursor: pointer;
+}
+@media (hover: hover) and (pointer: fine) {
+  .exa-pick-row:hover { background: var(--surface-2); }
+}
+.exa-pick-check {
+  flex: none;
+  margin-block-start: var(--sp-2-5);
+  accent-color: var(--accent);
+}
+.exa-pick-order {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  margin-block-start: var(--sp-2);
+  padding: var(--sp-0-5) var(--sp-1-5);
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--rule));
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--accent-ink);
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+.exa-pick-sub {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-1) var(--sp-2);
+}
+
+/* [end r365 (7-c)] */

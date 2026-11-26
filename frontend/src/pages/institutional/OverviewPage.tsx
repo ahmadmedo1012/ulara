@@ -12,7 +12,7 @@ import { PageFrame, PageHeader, KpiBand } from '../../components/patterns';
 import { toast } from '../../lib/toast';
 import { formatDate } from '../../utils/numbers';
 import {
-  serverError, DetailList, EnumChip, InstFormDialog, InstSection, InstStates,
+  serverError, DetailList, EnumChip, InstFormDialog, InstSection, InstStates, StatusFlag,
   type InstField, type InstFormValues,
 } from '../../components/institutional/kit';
 import {
@@ -94,10 +94,6 @@ export function InstitutionOverviewPage() {
     }
   };
 
-  const activeLicenses = (licensesQuery.data?.data ?? []).filter(
-    (l) => l.status === 'ACTIVE' || l.status === 'RENEWED',
-  );
-
   return (
     <PageFrame width="default">
       <PageHeader
@@ -138,9 +134,9 @@ export function InstitutionOverviewPage() {
                 },
                 {
                   index: '03',
-                  caption: 'ACTIVE LICENSES',
-                  label: 'ترخيص/إذن ساري',
-                  value: licensesQuery.data == null ? 0 : activeLicenses.length,
+                  caption: 'LICENSE RECORDS',
+                  label: 'سجلات الترخيص (الأحدث)',
+                  value: licensesQuery.data?.meta?.total ?? 0,
                   empty: licensesQuery.data == null,
                   to: ROUTES.institutionLicenses,
                 },
@@ -197,7 +193,7 @@ export function InstitutionOverviewPage() {
                     label: LICENSE_KIND_LABELS[l.kind] ?? l.kind,
                     value: (
                       <span className="inst-actions">
-                        <EnumChip value={l.status} labels={LICENSE_STATUS_LABELS} />
+                        <StatusFlag value={l.status} labels={LICENSE_STATUS_LABELS} />
                         {l.expiresAt && (
                           <span className="inst-masthead-kind">
                             ينتهي {formatDate(l.expiresAt)}
