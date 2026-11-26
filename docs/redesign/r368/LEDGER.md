@@ -69,3 +69,5 @@ NEXT: colleges plan block
 NEXT: auth slice 19 / slices 05-06 declutter
 - auth audited (no reference shot); slice 05 order mismatch logged
 NEXT: slice 05 cards-first + empty statement field
+- slice 05 desktop: cards first, centred statement field
+NEXT: slice 05 statement scale, slice 06

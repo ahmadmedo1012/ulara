@@ -631,3 +631,20 @@
 .pm-section .pm-index {
   color: var(--text-muted);
 }
+
+/* r368 slice 05 — the reference runs its four ruled cards FIRST and the band closes on one big centred statement in an empty field. Desktop only: the band rides above the head (visual order; DOM and reading order are untouched), and the head becomes the statement field. */
+@media (min-width: 992px) {
+  .pm-inner { display: flex; flex-direction: column; }
+  .pm-inner > .pm-band { order: -1; }
+  .pm-inner > .pm-head {
+    min-block-size: 38rem;
+    align-content: center;
+    padding-block: 8rem;
+    border-block-start: 1px solid var(--rule);
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    text-align: center;
+  }
+  .pm-inner > .pm-head .pm-titleblock, .pm-inner > .pm-head .pm-subwrap { justify-self: center; text-align: center; }
+  .pm-inner > .pm-head .pm-subwrap { margin-block-start: 1.6rem; max-inline-size: 44rem; }
+}

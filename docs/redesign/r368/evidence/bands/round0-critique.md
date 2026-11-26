@@ -158,3 +158,6 @@ The plan plate is a thick-wall SVG asset (PlanPlate, r364). The corpus has no pl
 
 ## Auth and slice 05 audit
 Auth (/login): sheet chrome plus my column rules line up with the frame; it carries drafting captions (TEXT / 48PX) the reference has no analogue for, and the corpus has no auth shot, so left. /auth/login is a 404 (login lives at /login). Slice 05: reference reads four ruled cards on top then a big empty field with one centred statement; ours puts a heading and aside above the cards and the statement elsewhere. Order and field not yet matched. Status: FAILING.
+
+## Slice 05 round 2
+Desktop: the four ruled cards now ride above the head (CSS order, DOM untouched) and the head becomes a centred statement field, as in the reference. Still wrong: statement is a small heading in a mostly empty field rather than the reference one large line; card titles smaller than the reference; phone unchanged. Status: FAILING.
