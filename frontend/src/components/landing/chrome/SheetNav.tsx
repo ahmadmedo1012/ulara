@@ -59,6 +59,7 @@ import { acquireScrollLock, releaseScrollLock } from '../../../lib/scrollLock';
  * the block ships with the component that owns it (the R331
  * file-ownership contract — landing.css keeps nothing header-shaped). */
 import '../../../styles/landing/nav.css';
+import '../../../styles/landing/patterns.css'; // r368: inner pages share the nav, so its pixel-mask rule must load with it (the CTA slab painted as a solid block off the home route)
 import { BRAND_LABEL, LOGIN, START_NOW, WORKS_TODAY } from '../copy';
 import { cycleFocusTrap } from '../../../lib/focusTrap';
 

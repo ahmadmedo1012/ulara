@@ -146,3 +146,6 @@ The white panel is stable across two captures, so it is not a one-off paint. A D
 
 ## Platform blank panel resolved
 The white box is .map-panel mid-unfold (header and rows reveal only after the clip stands full), a transient animation frame at the capture scroll, not a defect. Footer corner label moved clear of the side tab (left 36px). Status: FAILING overall.
+
+## Inner pages: nav CTA slab
+/colleges header CTA painted a solid royal block because the pixel-mask rule lived only in the landing page stylesheet. SheetNav now imports it; re-captured, CTA reads as small text like home. Still wrong: no ruled column frame on inner pages, plan block boxed notes. Status: FAILING.

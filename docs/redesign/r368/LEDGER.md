@@ -61,3 +61,5 @@ NEXT: platform blank panel check, corner label clip
 NEXT: locate the panel by section class
 - platform panel = transient unfold frame (not a defect); footer corner label clear of side tab
 NEXT: remaining failing slices
+- inner-page nav CTA solid block fixed (patterns.css loads with SheetNav)
+NEXT: inner-page ruled column frame
