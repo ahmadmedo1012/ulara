@@ -285,3 +285,6 @@ Thumbnail plan now fades at stages 2-4 on desktop. A stack scale-up (1.22) was t
 
 ## Slice 06 platform frame (desktop-only layer)
 New aria-hidden .jt-platform inside the window: at stages 2-4 (>=992px, not reduced-motion) one large thick-wall plan, royal squares and a dark card sit on a grid ground over the walkthrough; the closing column with title + ruled rows remains left. Hidden below 992px so touch/mobile is unchanged (display:none, lazy img never loads). Journey tests 245 pass, no contract change. Fresh wheel frames w05-w08 inspected. Still unlike the reference: no per-stage different plan, no feature icon rows on the art side. Status: FAILING.
+
+## Slice 06 per-stage plans
+The platform frame now swaps plan by wash beat: lecture hall (lecture/checkpoint), exam hall, library (library/mastery). Found and fixed a cascade issue (another rule held img opacity at 1; the plan imgs use !important opacity scoped to .jt .jt-platform). Verified with fresh wheel frames. Feature rows stay in the left closing column (already ruled icon rows). Status: FAILING.

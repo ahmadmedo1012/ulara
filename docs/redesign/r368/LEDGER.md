@@ -131,3 +131,4 @@ NEXT: more
 - 08 dominant plan plates on desktop. NEXT: 06 platform layout, texture.
 - 06 thumbnail yields at stage 2-4 (scale-up tried, dropped). NEXT: texture/line weight.
 - 06 desktop platform frame: large plan + dark card at stages 2-4 (own commit). NEXT: mobile perf re-measure, texture.
+- 06 per-wash plan variants. NEXT: texture/line weight.

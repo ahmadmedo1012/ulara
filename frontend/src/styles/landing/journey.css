@@ -2018,3 +2018,13 @@ section.chapters {
   .jt[data-stage='3']:not([data-rm='on']) .jt-platform,
   .jt[data-stage='4']:not([data-rm='on']) .jt-platform { opacity: 1; visibility: visible; }
 }
+
+/* r368 slice 06 — one plan per wash beat (lecture/checkpoint: lecture hall, exam: exam hall, library/mastery: library),
+   as the reference changes the plan per frame. */
+@media (min-width: 992px) {
+  .jt .jt-platform img.jt-plat-img { opacity: 0 !important; transition: opacity var(--t-fast) var(--ease); }
+  .jt:not([data-wash='exam']):not([data-wash='library']):not([data-wash='mastery']) .jt-platform img.jt-plat-img-2,
+  .jt[data-wash='exam'] .jt-platform img.jt-plat-img-4,
+  .jt[data-wash='library'] .jt-platform img.jt-plat-img-3,
+  .jt[data-wash='mastery'] .jt-platform img.jt-plat-img-3 { opacity: 1 !important; }
+}
