@@ -565,3 +565,12 @@
 @media (max-width: 767px) {
   .hro-art { inline-size: 62%; margin-inline: auto; }
 }
+
+/* r368 slice 22 — dark: multiply on dark paper erases the ink. Invert the raster and screen it so the drawing reads as pale ink on the dark paper. */
+[data-theme="dark"] .hro-ink img.hro-elevation {
+  mix-blend-mode: screen;
+  filter: invert(1) grayscale(0.15) brightness(0.92) contrast(1.15);
+}
+
+/* r368 slice 21 — the reference's phone fold carries no drag hint over the art */
+@media (max-width: 767px) { .hro-hint { display: none; } }

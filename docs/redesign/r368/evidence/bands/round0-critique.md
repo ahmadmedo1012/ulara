@@ -104,3 +104,6 @@ Art box narrowed to 62% at phone widths; headline now rides inside the fold. Sti
 
 ## Slice 22 dark theme round 0
 Harness fix: capture.mjs now sets the real theme store key so dark captures are truly dark (earlier dark captures were light). Findings: dark tokens hold (royal becomes the light periwinkle, paper becomes ink); hero elevation is almost invisible in dark (very low contrast, dim hatching), roles scene and slab read fine. Status: FAILING on the hero art contrast. Full unit suite: 2964 of 2966 passed; the 2 failures were the type gate, fixed (127 pass) after the run started.
+
+## Slice 22 dark round 1
+Dark hero elevation inverted and screened: now reads as pale blueprint ink on dark paper, legible. A faint lighter patch edge remains at the plate boundary. Phone: the drag hint no longer overlaps the art (display none at <=767). Status: FAILING overall; hero art is still the raster drawing, not the reference's flat elevation.
