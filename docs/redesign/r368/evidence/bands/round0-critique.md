@@ -203,3 +203,6 @@ origin/main already merged (up to date), tsc clean, zero-trace PASS, targeted su
 
 ## Mobile scroll performance (7:30 PM)
 Probe: scripts/fidelity/scrollperf.mjs (390x844 touch, 4x CPU throttle, production build, 24px steps). Before: p50 66 ms/frame, 118 frames over 50 ms, 9.1 s long tasks. Culprit by elimination (animations/transitions off: 1.0 s): about 2000 infinite SVG iso-loop animations running on the main thread, offscreen included. Fix: on coarse pointers the loops settle to the authored plate (iso-plate.css); Lenis JS smooth-scroll is not initialised on coarse pointers (native compositor scroll). After: p50 33 ms, 32 frames over 50 ms, 1.5 s long tasks. Remaining spike near 1000-2000 px is a lazy section mount. Synthetic throttled desktop Chromium, not a real phone: unverified on device.
+
+## Mobile spike + slice 07 recheck (7:35 PM)
+Remaining 1-2k px spike is first mount cost of lazy sections (chunks are already warmed on idle); with transitions off the run drops to 1.1 s long tasks, so reveal transitions firing together on jump-scroll account for most of the rest (a real finger scroll arrives gradually). Slice 07 at 1440: the reference stage is bare ground with two floating plates and a royal annotation hairline; ours is a full-bleed photographic cantilever with a royal circle. Large structural gap, not closed. Status: FAILING.
