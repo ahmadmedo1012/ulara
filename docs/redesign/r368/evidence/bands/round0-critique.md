@@ -257,3 +257,6 @@ Dark: tag cards use the dark royal #8AA0FF with ink text; the ink slab stays dar
 
 ## Slice 06 stage 2+
 Note: earlier wheel frames in this thread were partly stale (reused output dirs). Fresh frames: the closing-column explanatory paragraph is now visually hidden on desktop (still in the DOM for screen readers), leaving the bare title over ruled rows. The left column and thumbnail plan are still there, the reference has a different platform layout (large plan, feature rows right). Status: FAILING.
+
+## Cookie bar vs CTA
+RTL desktop bar moved to the inline-start side (right). Measured at 1440x1000, 1280x800, 1024x768: no overlap with the primary hero CTA or headline, only two decorative hairlines. Dark/RTL re-check not yet done. Status: FAILING.
