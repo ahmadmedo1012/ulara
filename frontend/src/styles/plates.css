@@ -125,7 +125,7 @@
   inline-size: 8px;
   block-size: 8px;
   background: var(--accent);
-  border-radius: 0;
+  border-radius: var(--r-md);
 }
 
 /* the matrix rows */
@@ -213,7 +213,7 @@
 .plate-stage .metric,
 .plate-stage .alert-row,
 .plate-stage .plate-vignette {
-  border-radius: 0;
+  border-radius: var(--r-md);
   box-shadow: none;
 }
 

@@ -526,7 +526,7 @@
        the brand sans per the stack — the auth.css per-script recipe).
        The soft family fills + deep inks are UNTOUCHED (contrast
        ledger: badge-rarity-contrast pins hold). */
-    border-radius: 0; /* raw-css: permitted zero — the radius-0 chip ladder */
+    border-radius: var(--r-md); /* raw-css: permitted zero — the radius-0 chip ladder */
     border: 1px solid var(--rule);
     font-family: var(--font-mono);
     line-height: 1.4;
@@ -3065,7 +3065,7 @@
     inline-size: 8px;
     block-size: 8px;
     background: var(--accent);
-    border-radius: 0;   /* raw-css: permitted zero */
+    border-radius: var(--r-md);   /* raw-css: permitted zero */
   }
   /* r294 (polish v8 fold): the full meta line — sans at the 13px
      Arabic floor (r284 retired mono per the r197 voice contract),
@@ -3434,7 +3434,7 @@
   min-block-size: 38px; padding: var(--sp-1-5) 14px; /* spacing-gate: allow — reviewed authored literal (r-round sheet) */
   border: 1px solid var(--border); background: transparent;
   color: var(--text-secondary); font: inherit; font-size: 0.8125rem; /* type-gate: allow — reviewed authored literal (r-round sheet) */ font-weight: 600;
-  cursor: pointer; border-radius: 0;
+  cursor: pointer; border-radius: var(--r-md);
 }
 .fb-kind[data-active='true'] { border-color: var(--ink); color: var(--text); background: color-mix(in srgb, var(--ink) 4%, transparent); }
 
@@ -3443,7 +3443,7 @@
   min-block-size: 110px; padding: var(--sp-2-5) var(--sp-3); resize: vertical;
   border: 1px solid var(--border-strong, var(--border));
   background: transparent; color: var(--text); font: inherit;
-  border-radius: 0;
+  border-radius: var(--r-md);
 }
 
 .fb-shot-row { display: flex; align-items: center; gap: var(--sp-2-5); flex-wrap: wrap; }

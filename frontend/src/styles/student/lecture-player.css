@@ -65,7 +65,7 @@
     gap: var(--sp-4);
     background: none;
     border: 0;
-    border-radius: 0;
+    border-radius: var(--r-md);
   }
 
   /* ── 2 · the under-bar note rung ──────────────────────────────────
@@ -167,7 +167,7 @@
   border: 1px solid var(--border-strong, var(--border));
   background: transparent;
   color: var(--text);
-  border-radius: 0;
+  border-radius: var(--r-md);
 }
 .tr-search-input:focus-visible {
   outline: var(--state-focus-ring, 2px solid var(--accent));

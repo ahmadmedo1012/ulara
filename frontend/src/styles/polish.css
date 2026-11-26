@@ -684,7 +684,7 @@
      beats this sheet), but the shell surfaces (sidebar, topbar) no
      longer forward it. */
   .avatar {
-    border-radius: 0;
+    border-radius: var(--r-md);
     display: inline-flex;
     align-items: center;
     justify-content: center;

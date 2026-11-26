@@ -81,7 +81,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   border: 1px solid var(--rule);
-  border-radius: 0;
+  border-radius: var(--r-md);
   background: var(--surface);
   box-shadow: none;
 
@@ -172,7 +172,7 @@
   padding-block: var(--sp-1);
   padding-inline: var(--sp-1-5);
   border: 1px solid var(--rule);
-  border-radius: 0;
+  border-radius: var(--r-md);
   font-size: var(--fs-sm);
   line-height: 1;
   color: var(--text-faint);

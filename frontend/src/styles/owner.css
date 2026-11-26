@@ -957,7 +957,7 @@
    marker, not a status — the traffic-light semantics stay on the
    .owner-health-dot family. */
 .owner-live-tick {
-  border-radius: 0;   /* raw-css: permitted zero */
+  border-radius: var(--r-md);   /* raw-css: permitted zero */
   background: var(--accent);
 }
 

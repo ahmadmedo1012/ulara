@@ -36,25 +36,25 @@
     --sp-2-5: 10px;
 
     /* ── Radius — R313: the ladder collapses to 0; full = circular primitives ── */
-    --r-xs: 0px;
-    --r-sm: 0px;
-    --r-md: 0px;
-    --r-lg: 0px;
-    --r-xl: 0px;
-    --r-2xl: 0px;
-    --r-3xl: 0px;
+    --r-xs: 8px;
+    --r-sm: 10px;
+    --r-md: 14px;
+    --r-lg: 18px;
+    --r-xl: 22px;
+    --r-2xl: 28px;
+    --r-3xl: 36px;
     --r-full: 9999px;
 
     /* ── Motion — the measured motion register (r305) ── */
-    --t-micro: 160ms;
-    --t-fast: 320ms;
-    --t-base: 640ms;
-    --t-slow: 640ms;
-    --t-slower: 640ms;
-    --t-cinema: 640ms;
-    --t-sheet-exit: 320ms;
-    --t-guest-reveal: 640ms;
-    --ease: cubic-bezier(0.23, 1, 0.32, 1);
+    --t-micro: 120ms;
+    --t-fast: 220ms;
+    --t-base: 380ms;
+    --t-slow: 520ms;
+    --t-slower: 700ms;
+    --t-cinema: 700ms;
+    --t-sheet-exit: 240ms;
+    --t-guest-reveal: 520ms;
+    --ease: cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
   /* LIGHT THEME — the ds blueprint paper */
@@ -62,28 +62,28 @@
   [data-theme="light"] {
     /* The warm vintage-paper neutral ramp (light) */
     --neutral-0: #FFFFFF;
-    --neutral-50: #F2F1EC;
-    --neutral-100: #EBEBE5;
-    --neutral-150: #E7E7E1;
-    --neutral-200: #DBDBD5;
-    --neutral-300: #B3B3AF;
-    --neutral-400: #B4B4B0;
-    --neutral-500: #646464;
-    --neutral-700: #424242;
-    --neutral-800: #333333;
-    --neutral-900: #282828;
+    --neutral-50: #FBF6EC;
+    --neutral-100: #F5EDDF;
+    --neutral-150: #EDE3D1;
+    --neutral-200: #E3D8C2;
+    --neutral-300: #C9BCA3;
+    --neutral-400: #A99B82;
+    --neutral-500: #6E6455;
+    --neutral-700: #463F35;
+    --neutral-800: #2A2540;
+    --neutral-900: #1E1A3C;
 
     /* The 9 section families — soft ground · saturated ink · deep text */
-    --c-peach-bg: #FCE5DE;  --c-peach-ink: #F15534;  --c-peach-deep: #9C2B0F;
-    --c-mint-bg: #E2EFE8;  --c-mint-ink: #17724A;  --c-mint-deep: #0D5433;
-    --c-lavender-bg: #ECE6FA;  --c-lavender-ink: #8A6FE0;  --c-lavender-deep: #3F2D7A;
-    --c-sky-bg: #E1E9F0;  --c-sky-ink: #4A7FA8;  --c-sky-deep: #1F4968;
-    --c-yellow-bg: #F5EBD6;  --c-yellow-ink: #A8750F;  --c-yellow-deep: #5E420C;
-    --c-rose-bg: #FBE4E4;  --c-rose-ink: #C62828;  --c-rose-deep: #9E1A1A;
-    --c-sand-bg: #F1ECDF;  --c-sand-ink: #B59868;  --c-sand-deep: #5A4623;
-    --c-grey-bg: #ECEDEB;  --c-grey-ink: #626260;  --c-grey-deep: #1A1713;
+    --c-lavender-bg: #EDE6FB;  --c-lavender-ink: #7C5CE0;  --c-lavender-deep: #3D2A80;
+    --c-mint-bg: #DEF2EA;  --c-mint-ink: #12805C;  --c-mint-deep: #0A5A40;
+    --c-sky-bg: #DFEBF5;  --c-sky-ink: #2F7FB5;  --c-sky-deep: #14486B;
+    --c-peach-bg: #FCE4DE;  --c-peach-ink: #E8603F;  --c-peach-deep: #9B2E16;
+    --c-copper-bg: #FCE4DE;  --c-copper-ink: #E8603F;  --c-copper-deep: #9B2E16;
+    --c-yellow-bg: #FBEED4;  --c-yellow-ink: #A9740A;  --c-yellow-deep: #6B4708;
+    --c-rose-bg: #FBE3E0;  --c-rose-ink: #C23227;  --c-rose-deep: #8F1F16;
+    --c-sand-bg: #E9F1D8;  --c-sand-ink: #5D7C33;  --c-sand-deep: #36521C;
+    --c-grey-bg: #EFEBE4;  --c-grey-ink: #6A655C;  --c-grey-deep: #262233;
     --c-royal-bg: #E4E9FF;  --c-royal-ink: #2540D9;  --c-royal-deep: #1B30B0;
-    --c-copper-bg: #FCE5DE;  --c-copper-ink: #F15534;  --c-copper-deep: #9C2B0F;
 
     /* r305 — the coral alias namespace (resolves onto the peach seat) */
     --c-coral-bg: var(--c-peach-bg);
@@ -101,67 +101,67 @@
     --text: var(--neutral-900);
     --text-strong: var(--neutral-900);
     --text-secondary: var(--neutral-500);
-    --text-muted: #666663;
-    --text-faint: #676765;
-    --text-on-accent: #FFFFFF;
+    --text-muted: #756B5A;
+    --text-faint: #7E7462;
+    --text-on-accent: #FBF6EC;
     --text-on-dark: var(--neutral-50);
     --border: var(--neutral-200);
     --border-strong: var(--neutral-300);
-    --rule: var(--neutral-300);
+    --rule: var(--neutral-200);
     --rule-strong: var(--border-strong);
-    --accent: var(--c-royal-ink);
-    --accent-hover: var(--c-royal-deep);
-    --accent-hover-fg: #FFFFFF;
-    --accent-soft: var(--c-royal-bg);
-    --accent-strong: var(--c-royal-deep);
-    --accent-fg: #FFFFFF;
-    --accent-ink: var(--c-royal-ink);
+    --accent: var(--neutral-900);
+    --accent-hover: #332C5C;
+    --accent-hover-fg: #FBF6EC;
+    --accent-soft: #E6E1F2;
+    --accent-strong: #332C5C;
+    --accent-fg: #FBF6EC;
+    --accent-ink: var(--neutral-900);
     --success: var(--c-mint-ink);
     --success-soft: var(--c-mint-bg);
     --success-ink: var(--c-mint-deep);
     --warning: var(--c-yellow-ink);
     --warning-soft: var(--c-yellow-bg);
     --warning-ink: var(--c-yellow-deep);
-    --danger: #C62828;
+    --danger: #C23227;
     --danger-soft: var(--c-rose-bg);
     --danger-ink: var(--c-rose-deep);
     --danger-fg: #FFFFFF;
-    --info: var(--c-sky-ink);
-    --info-soft: var(--c-sky-bg);
-    --info-ink: var(--c-sky-deep);
+    --info: var(--c-royal-ink);
+    --info-soft: var(--c-royal-bg);
+    --info-ink: var(--c-royal-deep);
     --brand: var(--accent);
-    --gold: #B57438;
-    --gold-ink: #8F5A28;
-    --primary: var(--c-royal-ink);
-    --primary-fg: #FFFFFF;
+    --gold: #F29A1F;
+    --gold-ink: #A8620A;
+    --primary: var(--accent);
+    --primary-fg: var(--accent-fg);
   }
 
   /* DARK THEME — the charcoal night */
   [data-theme="dark"] {
     /* The warm vintage-paper neutral ramp (dark) */
-    --neutral-0: #2E2E2E;
-    --neutral-50: #262019;
-    --neutral-100: #353535;
-    --neutral-150: #3D3D3D;
-    --neutral-200: #6F6F6B;
-    --neutral-300: #85857F;
-    --neutral-400: #8A8A86;
-    --neutral-500: #B4B4B0;
-    --neutral-700: #C9C9C5;
-    --neutral-800: #E0E0DC;
-    --neutral-900: #F0F0EB;
+    --neutral-0: #1E1B3D;
+    --neutral-50: #14122B;
+    --neutral-100: #262251;
+    --neutral-150: #2E2960;
+    --neutral-200: #423C6E;
+    --neutral-300: #5F5890;
+    --neutral-400: #8B86AD;
+    --neutral-500: #B0AACB;
+    --neutral-700: #D3CEE4;
+    --neutral-800: #E9E4F2;
+    --neutral-900: #F7F1E6;
 
     /* The 9 section families — soft ground · saturated ink · deep text */
-    --c-peach-bg: #43241C;  --c-peach-ink: #FF8E68;  --c-peach-deep: #FFC5AE;
-    --c-mint-bg: #1F3A2E;  --c-mint-ink: #5FD39A;  --c-mint-deep: #5FD39A;
-    --c-lavender-bg: #2D2545;  --c-lavender-ink: #B7A0F4;  --c-lavender-deep: #DCD2F9;
-    --c-sky-bg: #23313F;  --c-sky-ink: #93C2E9;  --c-sky-deep: #C9E2F5;
-    --c-yellow-bg: #3B331F;  --c-yellow-ink: #EFC87B;  --c-yellow-deep: #F8E3B4;
-    --c-rose-bg: #3A2020;  --c-rose-ink: #FF7A70;  --c-rose-deep: #FF7A70;
-    --c-sand-bg: #2D2820;  --c-sand-ink: #D9C18C;  --c-sand-deep: #EFE2C5;
-    --c-grey-bg: #2A2A28;  --c-grey-ink: #B7B2A6;  --c-grey-deep: #DDD8CB;
-    --c-royal-bg: #2A2F4A;  --c-royal-ink: #8AA0FF;  --c-royal-deep: #A9B8FF;
-    --c-copper-bg: #43241C;  --c-copper-ink: #FF8E68;  --c-copper-deep: #FFC5AE;
+    --c-lavender-bg: #2A2350;  --c-lavender-ink: #B49BF5;  --c-lavender-deep: #DED2FF;
+    --c-mint-bg: #16362E;  --c-mint-ink: #5FD6AC;  --c-mint-deep: #A8EFD4;
+    --c-sky-bg: #1D3045;  --c-sky-ink: #8CC7EC;  --c-sky-deep: #C6E4F8;
+    --c-peach-bg: #3E2320;  --c-peach-ink: #FF9B7C;  --c-peach-deep: #FFC8B8;
+    --c-copper-bg: #3E2320;  --c-copper-ink: #FF9B7C;  --c-copper-deep: #FFC8B8;
+    --c-yellow-bg: #3A2F1A;  --c-yellow-ink: #F0C572;  --c-yellow-deep: #F9E3B5;
+    --c-rose-bg: #3B2320;  --c-rose-ink: #FF8A7A;  --c-rose-deep: #FFBCB2;
+    --c-sand-bg: #26301C;  --c-sand-ink: #B7D77E;  --c-sand-deep: #DCEEBB;
+    --c-grey-bg: #2B2750;  --c-grey-ink: #B9B3CE;  --c-grey-deep: #DCD8EA;
+    --c-royal-bg: #252B54;  --c-royal-ink: #8AA0FF;  --c-royal-deep: #A9B8FF;
 
     /* r305 — the coral alias namespace (resolves onto the peach seat) */
     --c-coral-bg: var(--c-peach-bg);
@@ -180,37 +180,37 @@
     --text-strong: var(--neutral-900);
     --text-secondary: var(--neutral-700);
     --text-muted: var(--neutral-500);
-    --text-faint: #A2A29D;
-    --text-on-accent: #262019;
+    --text-faint: #9A94B8;
+    --text-on-accent: #14122B;
     --text-on-dark: var(--neutral-900);
     --border: var(--neutral-200);
     --border-strong: var(--neutral-300);
     --rule: var(--neutral-200);
     --rule-strong: var(--border-strong);
-    --accent: var(--c-royal-ink);
-    --accent-hover: #4C63F0;
-    --accent-hover-fg: #FFFFFF;
-    --accent-soft: var(--c-royal-bg);
-    --accent-strong: var(--c-royal-deep);
-    --accent-fg: #262019;
-    --accent-ink: var(--c-royal-ink);
+    --accent: #EFE9FF;
+    --accent-hover: #FFFFFF;
+    --accent-hover-fg: #14122B;
+    --accent-soft: #2A2552;
+    --accent-strong: #FFFFFF;
+    --accent-fg: #14122B;
+    --accent-ink: #EFE9FF;
     --success: var(--c-mint-ink);
     --success-soft: var(--c-mint-bg);
-    --success-ink: #5FD39A;
+    --success-ink: var(--c-mint-deep);
     --warning: var(--c-yellow-ink);
     --warning-soft: var(--c-yellow-bg);
-    --warning-ink: var(--c-yellow-ink);
-    --danger: #FF7A70;
+    --warning-ink: var(--c-yellow-deep);
+    --danger: #FF8A7A;
     --danger-soft: var(--c-rose-bg);
-    --danger-ink: var(--c-rose-ink);
-    --danger-fg: #262019;
-    --info: var(--c-sky-ink);
-    --info-soft: var(--c-sky-bg);
-    --info-ink: var(--c-sky-ink);
+    --danger-ink: var(--c-rose-deep);
+    --danger-fg: #14122B;
+    --info: var(--c-royal-ink);
+    --info-soft: var(--c-royal-bg);
+    --info-ink: var(--c-royal-deep);
     --brand: var(--accent);
-    --gold: #E0A067;
-    --gold-ink: #F2B782;
-    --primary: var(--c-royal-ink);
-    --primary-fg: #262019;
+    --gold: #F7B34A;
+    --gold-ink: #F7C97E;
+    --primary: var(--accent);
+    --primary-fg: var(--accent-fg);
   }
 }

@@ -10,6 +10,137 @@
 > the R306 exclusivity decisions + rebuild plan: the retired r306 exclusivity spec.
 > Historical eras (Orbit Ink, Superlist/OPTIKKA, ultramarine, the editorial poster) are
 > The design history is retired with the archived eras — the canon in THIS file is the only truth.
+
+---
+
+# r369 — «عالم أُلارا الدافئ» · THE CURRENT CANON
+
+> **This section is the authority. Everything below it is era history**
+> (the r306 drawing sheet, the R313 reference-parity canon, R322–R361
+> additive layers). Where they disagree with this section, this section
+> wins. The r369 brief supersedes the radius-0 / no-shadow /
+> one-signal / hairline-grid grammar, the art-grammar docs and the
+> page-length and bundle ceilings; it does NOT supersede accessibility,
+> honest copy, RTL correctness, role/permission behaviour, the
+> zero-trace gate or the logo gate.
+
+## 1. The system in one paragraph
+
+A warm, playful, star-driven learning journey. **Cream paper**, **deep
+indigo ink**, and exactly ONE warm **amber signal** spent on rewards —
+stars, XP, achievement, celebration. Soft cards with a 22px radius and a
+coloured double shadow; pill actions (999px) with the secondary door
+carrying a 1.5px INSET outline instead of a fill. No hairline grids, no
+registration crosses, no mono-bracket indices, no drafting frame. Huge
+friendly Arabic display type with ONE emphasised word per heading —
+colour plus a hand-drawn underline, never italics (Arabic has no italic
+voice). Royal blue `#2540D9` / `#8AA0FF` survives **only** as the
+info/link colour. Dark theme is the deep indigo night with cream text and
+the same amber — a deliberate counterpart, not an inversion.
+
+## 2. Tokens — the source is `shared/design-tokens.json`
+
+`npm run tokens:build` emits `frontend/src/styles/tokens/tokens.generated.css`
+(web) and `apps/mobile/src/design/tokens.generated.ts` (mobile). The
+generated halves are never hand-edited; `npm run tokens:check` is the
+drift gate.
+
+| seat | light | dark | use |
+|---|---|---|---|
+| `--bg` | `#FBF6EC` | `#14122B` | page ground (cream / indigo night) |
+| `--surface` | `#FFFFFF` | `#1E1B3D` | card ground |
+| `--text` | `#1E1A3C` | `#F7F1E6` | ink (14.4:1 / 14.9:1 — AAA) |
+| `--accent` | `#1E1A3C` | `#EFE9FF` | the ink itself — primary fills, links, active |
+| `--accent-fg` | `#FBF6EC` | `#14122B` | labels on the accent fill (14:1 both) |
+| `--gold` | `#F29A1F` | `#F7B34A` | **the reward signal** — stars, XP, achievement |
+| `--gold-ink` | `#A8620A` | `#F7C97E` | amber TEXT (AA on paper) |
+| `--info` | `#2540D9` | `#8AA0FF` | links / informational only |
+
+**Tint families** (`--c-{family}-{bg,ink,deep}`) keep their historical
+names because mobile's `statusTones` consumes them; the r369 values are
+the college/role tints:
+
+| family (name) | reads as | light ink | dark ink |
+|---|---|---|---|
+| `lavender` | **violet** | `#7C5CE0` | `#B49BF5` |
+| `mint` | **teal** (success) | `#12805C` | `#5FD6AC` |
+| `peach` / `copper` | **coral** (warm) | `#E8603F` | `#FF9B7C` |
+| `sky` | **sky** | `#2F7FB5` | `#8CC7EC` |
+| `sand` | **leaf** | `#5D7C33` | `#B7D77E` |
+| `royal` | info / link only | `#2540D9` | `#8AA0FF` |
+| `rose` | danger | `#C23227` | `#FF8A7A` |
+| `yellow` | amber warning | `#A9740A` | `#F0C572` |
+| `grey` | dormant | `#6A655C` | `#B9B3CE` |
+
+**Radii** (`--r-*`): `xs 8 · sm 10 · md 14 · lg 18 · xl 22 · 2xl 28 ·
+3xl 36 · full 9999`. Cards ride `xl`, feature surfaces `3xl`, controls
+`md`, actions `full`.
+
+**Elevation:** `--shadow-card/-h`, `--shadow-pop`, `--shadow-modal`,
+`--shadow-signal` (the amber reward glow) and `--elev-1..5`. Shadows are
+soft, warm-indigo, and derived from `--black` through `color-mix` so one
+declaration serves both themes.
+
+**Motion:** `micro 120 · fast 220 · base 380 · slow 520 · slower 700` on
+ONE springy curve `cubic-bezier(0.34, 1.56, 0.64, 1)` (`--ease`), with
+`--ease-out cubic-bezier(0.22, 1, 0.36, 1)` reserved for large-surface
+colour/opacity work so nothing wobbles behind a modal.
+`prefers-reduced-motion` zeroes every rung.
+
+## 3. Typography
+
+Self-hosted, SIL OFL, arabic + latin subsets, `font-display: swap`:
+
+| voice | face | weights | use |
+|---|---|---|---|
+| **Display** | **Baloo Bhaijaan 2** | 400/600/700/**800** | h1/h2/h3, the huge public voice |
+| **Body** | **Readex Pro** | 400/500/600/700 | everything readable, chrome, numerals in prose |
+| **Numerals** | Geist Mono | 400/500 | tabular data cells only |
+
+The display ladder (tokens.css): `--fs-d1 clamp(38px, 8.2vw, 118px)` ·
+`--fs-d2 clamp(32px, 6.4vw, 92px)` · `--fs-d3 clamp(22px, 2.9vw, 36px)`.
+Leading floors **1.12 (tight) / 1.16 (display) / 1.28 (headline)** — at
+100px+ an Arabic line needs that air or the ascenders and diacritics
+clip. **Zero letter-spacing, ever.** The authenticated app rides its own
+calmer ladder (`--fs-app-h1` 28→48) — the huge voice belongs to the
+public story, not to a grade table.
+
+## 4. Shape layer — `frontend/src/styles/world.css`
+
+One sheet, imported LAST in `main.tsx`, in `@layer overrides`. It
+re-shapes the existing primitive classes (`.card`, `.btn`, fields,
+`.badge`/`.chip`, `.table-wrap`, `.nav-item`, overlays, progress) into
+the soft world and introduces **no new component names**. When a
+primitive needs a different shape, change it there — never with a
+per-page override.
+
+## 5. The public landing — the numbered story
+
+`pages/LandingPage.tsx` + `components/landing/r369/*` +
+`styles/landing/r369.css`. Bands: nav → **01** hero (huge h1 with one
+amber word + a composed phone mockup of the real product) → marquee →
+**02** tasks become stars → **03** stars become progress → **04**
+progress becomes rewards → **05** rewards become habits → **06** the
+20-level ladder → roles → FAQ → CTA with the mascot → footer. A star jar
+counts the reader's own journey down the page (6 bands = 6 stars) — it
+describes the PAGE, never product data. Honest copy rule: the mockup is
+labelled a demonstration, and no product statistic is invented.
+
+**The mascot** — «نجّوم», an original star character
+(`components/landing/r369/Mascot.tsx`), six poses (`hello`, `cheer`,
+`think`, `rest`, `wave`, `sleep`), token colours only, decorative by
+default.
+
+## 6. What this section retires (do not resurrect)
+
+Radius 0 · shadow-less depth · the hairline/registration frame · the
+mono-bracket index voice · the drafting/isometric/blueprint art systems
+(`shared/art` plates, `ElevationDrawing`, `LearningPlanDrawing`, the
+pinned journey scene) · the grain film · the royal-only signal · the
+reference-site parity program. The old landing tree and its sheets are
+deleted in the r369 cleanup batch.
+
+---
 > instructions.
 
 ---

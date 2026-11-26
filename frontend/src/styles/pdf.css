@@ -184,7 +184,7 @@
    listener in PdfViewer.tsx). */
 .pdf-viewer:fullscreen {
   border: 0;
-  border-radius: 0;
+  border-radius: var(--r-md);
   min-height: 0;
   height: 100%;
 }
@@ -747,7 +747,7 @@
   width: 100%;
   max-height: min(60dvh, 480px);
   border: 0;
-  border-radius: 0;
+  border-radius: var(--r-md);
   background: transparent;
 }
 
@@ -815,7 +815,7 @@
     background: transparent;
   }
   .pdf-page {
-    border-radius: 0;
+    border-radius: var(--r-md);
     break-inside: avoid;
     /* box-shadow is already frozen globally by the v22 print belt */
   }

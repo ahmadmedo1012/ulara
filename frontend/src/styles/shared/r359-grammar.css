@@ -722,7 +722,7 @@ a.pf-stat:hover { background: var(--surface-2); }
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--sg-kpi-min, 148px), 1fr));
   border: 1px solid var(--rule);
-  border-radius: 0;
+  border-radius: var(--r-md);
   background: transparent;
 }
 .stat-cell {

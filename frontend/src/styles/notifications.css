@@ -307,7 +307,7 @@
   font-weight: var(--fw-semibold); /* r157: 600 → --fw-semibold */
   /* R319 (c1-A · B1b): radius 0 — the dock is a hairline grid of
      square cells, no pill. */
-  border-radius: 0;
+  border-radius: var(--r-md);
   min-height: 52px;
   -webkit-tap-highlight-color: transparent;
   transition:
@@ -390,7 +390,7 @@
      the inked glyph itself ("filled" = the theme ink stroke), carried
      by the item's --_fg pair. will-change: background died with the
      wash (nothing paints a background here anymore). */
-  border-radius: 0;
+  border-radius: var(--r-md);
   transition:
     transform var(--motion-duration-medium) var(--ease);
 }

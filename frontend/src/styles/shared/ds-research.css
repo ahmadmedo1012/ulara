@@ -267,7 +267,7 @@
     border: 0;
     border-block-end: 1px solid var(--surface-divider);
     border-inline-start: 2px solid transparent;
-    border-radius: 0;
+    border-radius: var(--r-md);
     cursor: pointer;
     font-family: inherit;
     transition: background var(--t-fast) var(--ease);

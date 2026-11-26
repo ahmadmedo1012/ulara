@@ -426,7 +426,7 @@ html[data-theme='dark'] .fo-header {
   min-inline-size: 3.5rem;  /* 29px @1440 — a compact icon seat */
   min-block-size: 44px;
   border-inline-end: 1px solid var(--grid-line);
-  border-radius: 0;
+  border-radius: var(--r-md);
 }
 
 .fo-header-actions .theme-toggle-option:last-child {

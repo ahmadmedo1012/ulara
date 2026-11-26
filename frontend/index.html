@@ -28,8 +28,8 @@
          for the current devices). -->
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="apple-touch-icon" sizes="180x180" href="/brand/icon-180.png" />
-    <meta name="theme-color" content="#262019" media="(prefers-color-scheme: dark)" />
-    <meta name="theme-color" content="#F2F1EC" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#14122B" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#FBF6EC" media="(prefers-color-scheme: light)" />
     <meta name="description" content="أُلارا — نظام تشغيل الجامعة: منظومة متكاملة، عربية أولًا، لإدارة المؤسّسة الأكاديمية والتعلّم والبحث — كليات وأقسام ومقرّرات ومحاضرات واختبارات ومصفوفة إتقان وبحوث" />
     <title>أُلارا · نظام تشغيل الجامعة</title>
     <!-- 8-a (0-b P2-17) — canonical + Open Graph / Twitter card. og:image
@@ -79,8 +79,8 @@
          is dead weight competing with the LCP face's preload slot: at
          Fast-3G the display font queued behind the dead 700 while the
          LCP h1 waited — the single cheapest LCP cut on first visit). -->
-    <link rel="preload" href="/fonts/plex-sans-arabic-400-normal-arabic.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/plex-sans-arabic-600-normal-arabic.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/readex-pro-arabic-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/baloo-bhaijaan-2-arabic-800-normal.woff2" as="font" type="font/woff2" crossorigin />
     <template id="home-elevation-preload">
       <link rel="preload" as="image" href="../shared/art/svg/hero-elevation-mobile.svg" media="(max-width: 767px)" fetchpriority="high" />
       <link rel="preload" as="image" href="../shared/art/svg/hero-elevation.svg" media="(min-width: 768px)" fetchpriority="high" />
@@ -157,8 +157,8 @@
         var syncThemeColor = function () {
           var color =
             document.documentElement.getAttribute('data-theme') === 'dark'
-              ? '#262019'
-              : '#F2F1EC';
+              ? '#14122B'
+              : '#FBF6EC';
           var metas = document.querySelectorAll('meta[name="theme-color"]');
           for (var i = 0; i < metas.length; i++) {
             metas[i].removeAttribute('media');
@@ -276,7 +276,7 @@
         z-index: 2147482000; /* below the preloader's own sheet seat */
         display: grid;
         place-items: center;
-        background: #F2F1EC;
+        background: #FBF6EC;
         color: #282828; /* the 2026 approved light ink */
         font-family: system-ui, sans-serif;
         font-size: clamp(34px, 10vw, 72px); /* r360 F1 — outsizes the H1's lines on every phone width */
@@ -292,7 +292,7 @@
       }
       .ula-boot-plate span { display: block; inline-size: 100%; }
       html[data-theme="dark"] .ula-boot-plate {
-        background: #262019;
+        background: #14122B;
         color: #F0F0EB;
       }
     </style>

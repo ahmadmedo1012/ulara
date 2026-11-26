@@ -2462,13 +2462,13 @@ a.pf-row-link {
   /* The sticky command bar squares its corners (hairline instrument,
      not a card wall); the submit cell is radius 0 at the base rule. */
   .r321x-taker .oex-bar {
-    border-radius: 0;
+    border-radius: var(--r-md);
   }
 
   /* The jump-target landing ring follows its cell's square corners
      (the teacher-quality rule rounds it to the old card's --r-lg). */
   .r321x-taker .oex-q:focus {
-    border-radius: 0;
+    border-radius: var(--r-md);
   }
 
   /* ── 4 · P-G3b — the BEGIN cover (the staged exam-paper sheet) ─────
@@ -2492,7 +2492,7 @@ a.pf-row-link {
     margin-inline: auto;
     background: var(--surface-1);
     border: 1px solid var(--rule);
-    border-radius: 0;
+    border-radius: var(--r-md);
   }
 
   .r321x-taker .oex-cover-head {
@@ -2526,7 +2526,7 @@ a.pf-row-link {
     color: color-mix(in srgb, var(--kind, var(--accent)) 72%, var(--text));
     background: color-mix(in srgb, var(--kind, var(--accent)) 8%, transparent);
     border: 1px solid color-mix(in srgb, var(--kind, var(--accent)) 25%, transparent);
-    border-radius: 0;
+    border-radius: var(--r-md);
     white-space: nowrap;
   }
 
@@ -3084,7 +3084,7 @@ a.pf-row-link {
     padding: var(--sp-3) var(--sp-4);
     background: var(--surface-2);
     border: 1px solid var(--rule);
-    border-radius: 0;
+    border-radius: var(--r-md);
   }
 
   .oex-submit-bar .form-error { flex-basis: 100%; }

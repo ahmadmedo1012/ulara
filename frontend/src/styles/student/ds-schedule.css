@@ -99,7 +99,7 @@
   .cal-event-row {
     min-block-size: 44px;
     border-block-end: 1px solid var(--surface-divider);
-    border-radius: 0;
+    border-radius: var(--r-md);
   }
   .cal-event-row:last-child { border-block-end: 0; }
   .cal-event-time {
@@ -148,7 +148,7 @@
      data (name + chip status + %) in the list register. */
   @media (max-width: 640px) {
     .matrix-cell {
-      border-radius: 0;
+      border-radius: var(--r-md);
       border-inline: 0;
       padding-inline: 0;
     }

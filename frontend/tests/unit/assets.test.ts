@@ -29,7 +29,10 @@ describe('self-hosted fonts (perf fix: render-blocking Google Fonts)', () => {
 
   it('index.html preloads the two critical arabic subsets', () => {
     const html = read('index.html');
-    expect(html).toContain('rel="preload" href="/fonts/plex-sans-arabic-400-normal-arabic.woff2"');
+    // r369 — the identity moved to Readex Pro (body) + Baloo Bhaijaan 2
+    // (display): the LCP h1 is the Baloo 800 face, the reading voice is
+    // Readex 400 — exactly those two arabic subsets take the slots.
+    expect(html).toContain('rel="preload" href="/fonts/readex-pro-arabic-400-normal.woff2"');
     // R322 override (3-b · perf-baseline §7-4): the preload re-pin
     // 700 → 600 — the R322 C1 type system renders 400/500/600 ONLY;
     // the 700 face was dead weight competing for the preload slot the
@@ -38,8 +41,8 @@ describe('self-hosted fonts (perf fix: render-blocking Google Fonts)', () => {
     // first, ~3.5s expected after the re-pin). The map's display type
     // is w600-max by the brief's own cap, so 600 is doubly the LCP
     // face; the 700 preload must stay DEAD.
-    expect(html).toContain('rel="preload" href="/fonts/plex-sans-arabic-600-normal-arabic.woff2"');
-    expect(html).not.toContain('rel="preload" href="/fonts/plex-sans-arabic-700-normal-arabic.woff2"');
+    expect(html).toContain('rel="preload" href="/fonts/baloo-bhaijaan-2-arabic-800-normal.woff2"');
+    expect(html).not.toContain('rel="preload" href="/fonts/readex-pro-arabic-700-normal.woff2"');
     // both preloads must be CORS-mode font fetches
     expect(html.match(/as="font" type="font\/woff2" crossorigin/g)?.length).toBeGreaterThanOrEqual(2);
   });
@@ -47,13 +50,11 @@ describe('self-hosted fonts (perf fix: render-blocking Google Fonts)', () => {
   it('every @font-face in fonts.css points to an existing woff2 file', () => {
     const css = stripComments(read('src/styles/fonts.css'));
     const urls = [...css.matchAll(/url\('?(\/fonts\/[^)']+\.woff2)'?\)/g)].map((m) => m[1]!);
-    // 16 faces — 10 IBM Plex (Sans Arabic 400-700 arabic+latin + Mono
-    // ×2) + 4 Alexandria (r191: 600/700 only) + 2 Geist Mono (R313:
-    // the reference's instrument voice, latin subset, 400/500 — both
-    // weights resolve from the variable-font woff2 Google Fonts serves).
-    // r190 added Alexandria; Premium-polish PP-X1 deleted the dead Noto
-    // Kufi ×6 + Amiri + Rubik; r152j (A7) deleted the dead Serif ×2.
-    expect(urls.length).toBe(16);
+    // r369 — 18 faces: Baloo Bhaijaan 2 400/600/700/800 (arabic+latin = 8)
+    // + Readex Pro 400/500/600/700 (arabic+latin = 8) + Geist Mono 400/500
+    // (tabular numerals only). Alexandria, IBM Plex Sans Arabic and IBM
+    // Plex Mono are retired with the old display/body voice.
+    expect(urls.length).toBe(18);
     for (const u of urls) {
       const file = path.join(root, 'public', u.replace(/^\//, ''));
       expect(existsSync(file), `${u} missing from public/fonts`).toBe(true);
@@ -63,7 +64,7 @@ describe('self-hosted fonts (perf fix: render-blocking Google Fonts)', () => {
   it('all font faces use font-display: swap', () => {
     const css = stripComments(read('src/styles/fonts.css'));
     const faces = css.match(/@font-face\s*\{/g)?.length ?? 0;
-    expect(faces).toBe(16);   // 10 Plex + 4 Alexandria + 2 Geist Mono (R313)
+    expect(faces).toBe(18);   // r369 — 8 Baloo + 8 Readex Pro + 2 Geist Mono
     expect(css.match(/font-display:\s*swap/g)?.length).toBe(faces);
   });
 

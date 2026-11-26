@@ -53,6 +53,11 @@ import './styles/plates.css';
 import './styles/notifications.css';
 import './styles/student.css';
 import './styles/polish.css';
+// r369 «عالم أُلارا الدافئ» — the shape & voice layer. LAST in the chain
+// (after polish) so the new soft radii / pill actions / coloured shadows
+// are the last word on every primitive the r313 era painted square.
+// It introduces no new component names — see the sheet header.
+import './styles/world.css';
 // r304: the r301/r302 «final-visual-system.css» bolt-on is DELETED —
 // its declarations were folded back into their canonical layer homes
 // (layout.css for the sidebar/nav chrome, components.css for buttons/

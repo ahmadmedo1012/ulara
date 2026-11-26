@@ -467,7 +467,7 @@
   padding: var(--sp-1) var(--sp-3);
   background: none;
   border: 1px solid var(--text-muted);
-  border-radius: 0;
+  border-radius: var(--r-md);
   font-family: var(--font-mono);
   font-size: var(--fs-mono-xs);
   letter-spacing: 0.06em;

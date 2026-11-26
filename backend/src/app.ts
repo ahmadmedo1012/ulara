@@ -133,7 +133,7 @@ const FRONTEND_DIST = path.resolve(__dirname, '..', '..', 'frontend', 'dist');
  * (dark #282828 / light #F6F6EE — the warm vintage paper, owner
  * decision; audits/evidence/r313/reference/digest.json); the metas and
  * the boot plate moved with it. */
-const THEME_BOOTSTRAP_SHA256 = 'EQ1WmDEr5u21mF4M27uUrFoR7mtnS7wUAG6GrFlqNUg='; /* r360 F1 — the boot handoff gained the async-stylesheet gate (the sheet ships media=print; the watcher applies it and the plate fades only when BOTH React committed AND the sheet applied) */
+const THEME_BOOTSTRAP_SHA256 = 'GvEpltYkbxagVNJdebh3wK/p/eXbVPAZIoay13LLcag='; /* r369 — the boot plate and the theme-color metas re-keyed to the warm ground (#FBF6EC light · #14122B dark); the gate logic is unchanged */
 /* r188: pin refreshed — the JSON-LD block now describes the INDEPENDENT
  * platform alone (WebSite node; the retired pre-ULARA university
  * `about` node is gone — the only demo-data story is the labeled neutral

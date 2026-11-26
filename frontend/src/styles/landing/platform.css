@@ -231,7 +231,7 @@ html[data-theme='dark'] .pr-section .pr-cta {
   display: grid;
   place-items: center;
   border: 1px solid var(--pr-ink);
-  border-radius: 0; /* R344 (item 0): the frozen census records radius 0 on
+  border-radius: var(--r-md); /* R344 (item 0): the frozen census records radius 0 on
    * every arrow seat (all bps) — the reference's outline boxes are SQUARE rings
    * (the house law: radius 0 everywhere). The r338 "circular arrows"
    * reading was a visual guess; the spec is unambiguous. */

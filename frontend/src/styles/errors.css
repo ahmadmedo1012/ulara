@@ -280,7 +280,7 @@
 /* ── A8 · SQUARE STEP DOTS — radius 0 everywhere (r359 #1) ──────────── */
 
 .auth-shell .auth-step-dot {
-  border-radius: 0; /* the drafting cell voice — no circles on the sheet */
+  border-radius: var(--r-md); /* the drafting cell voice — no circles on the sheet */
 }
 
 /* ── A9 · REDUCED MOTION — the roll collapses with the fleet ────────── */

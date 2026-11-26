@@ -755,7 +755,7 @@
   background: transparent;
   color: var(--text);
   font: inherit;
-  border-radius: 0;
+  border-radius: var(--r-md);
 }
 .inv-note { display: flex; align-items: center; gap: var(--sp-1-5); font-size: var(--fs-xs); /* r341 D8 type-rung fix: same 0.75rem-on-fluid-root bug as .inv-field above */ color: var(--text-secondary); margin: var(--sp-2-5) 0 0; }
 

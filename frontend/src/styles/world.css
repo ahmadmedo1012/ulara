@@ -1,0 +1,315 @@
+/* ═════════════════════════════════════════════════════════════════════
+   world.css — r369 «عالم أُلارا الدافئ» · the shape & voice layer
+   ─────────────────────────────────────────────────────────────────────
+   ONE job: re-shape the EXISTING primitive classes into the warm,
+   playful world — soft radii, pill actions, coloured shadows, calm
+   borders, friendly density. It introduces NO new component names and
+   NO new colour values; every value resolves through the r369 token
+   set (design-tokens.json + tokens.css). It sits in @layer overrides
+   and is imported LAST (after polish.css), so it is the last word on
+   shape wherever a sheet forgot to consume a token.
+
+   Companion of the r369 token re-key: the tokens changed the PALETTE,
+   the RADIUS LADDER, the SHADOWS, the MOTION and the TYPE; this sheet
+   carries those into the primitives whose rules predate them (the
+   r313 era hard-coded square corners and painted away every shadow).
+
+   Rules of engagement (kept from the repo constitution):
+   · logical properties only (inline-start/end) — RTL is native;
+   · no raw colours, no raw radii, no raw type sizes (design gates);
+   · prefers-reduced-motion collapses every transition (motion.css);
+   · 44px touch floor at ≤767 everywhere;
+   · Arabic-first: never letter-spacing, leading never below the floor.
+   ════════════════════════════════════════════════════════════════════ */
+
+@layer overrides {
+
+  /* ── SURFACES ────────────────────────────────────────────────────────
+     Cards, panels, modal bodies, popovers, toasts: the 22px card rung,
+     a calm warm border, and the soft double shadow (a tight contact
+     shadow + a wide diffuse one — the brief's «soft cards»). */
+  .card,
+  .modal-card,
+  .dialog-card,
+  .sheet-card,
+  .popover,
+  .dropdown,
+  .toast,
+  .stat-card,
+  .metric-card,
+  .tile {
+    border-radius: var(--r-xl);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    box-shadow: var(--shadow-card);
+  }
+
+  .card:hover,
+  .stat-card:hover,
+  .metric-card:hover,
+  .tile:hover {
+    box-shadow: var(--shadow-card-h);
+  }
+
+  /* The feature/hero surface rung — the biggest radius for the pieces
+     that carry the story (the landing frames, the auth door, the
+     dashboard hero). */
+  .card.feature,
+  .auth-card,
+  .welcome-card,
+  .hero-card {
+    border-radius: var(--r-3xl);
+  }
+
+  /* ── ACTIONS ─────────────────────────────────────────────────────────
+     Pill buttons (999px) with a soft coloured shadow; secondary buttons
+     carry the 1.5px INSET outline instead of a fill (the brief's recipe).
+     The colour recipe stays the token one — only the SHAPE changed. */
+  .btn {
+    border-radius: var(--r-full);
+    min-block-size: 44px;
+    padding-inline: var(--sp-6);
+    padding-block: var(--sp-2-5);
+    font-weight: var(--fw-semibold);
+    box-shadow: var(--shadow-card);
+    transition:
+      transform var(--t-micro) var(--ease),
+      box-shadow var(--t-fast) var(--ease-out),
+      background-color var(--t-fast) var(--ease-out),
+      color var(--t-fast) var(--ease-out);
+  }
+
+  .btn:hover:not(:disabled):not([aria-disabled='true']) {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-card-h);
+  }
+
+  .btn:active:not(:disabled):not([aria-disabled='true']) {
+    transform: translateY(0) scale(var(--state-card-pressed-scale));
+    box-shadow: var(--shadow-card);
+  }
+
+  /* the secondary door: no fill, an INSET 1.5px outline at the ink/边框
+     tone — the brief's outlined pill. */
+  .btn.secondary,
+  .btn.ghost,
+  .btn.outline {
+    box-shadow: none;
+    background: transparent;
+    box-shadow: inset 0 0 0 1.5px var(--border-strong);
+  }
+
+  .btn.secondary:hover:not(:disabled),
+  .btn.ghost:hover:not(:disabled),
+  .btn.outline:hover:not(:disabled) {
+    box-shadow: inset 0 0 0 1.5px var(--accent);
+    background: var(--accent-soft);
+  }
+
+  /* Icon-only actions stay perfectly round — the pill rung is already
+     circular at a square box size, this just keeps the box square. */
+  .btn.icon-btn,
+  .icon-btn {
+    border-radius: var(--r-full);
+    aspect-ratio: 1;
+    padding-inline: 0;
+  }
+
+  /* small controls — one rung down, never below the 44px touch floor at
+     phone widths (the r360 F3 law). */
+  .btn.sm,
+  .btn.small {
+    min-block-size: 36px;
+    padding-inline: var(--sp-4);
+    padding-block: var(--sp-1-5);
+  }
+  @media (max-width: 767px) {
+    .btn.sm,
+    .btn.small { min-block-size: 44px; }
+  }
+
+  /* ── FIELDS ──────────────────────────────────────────────────────────
+     Inputs, selects, textareas: the 14px control rung, 1.5px warm
+     border, a soft inset ground, and the amber-tinted focus halo. */
+  input:not([type='checkbox']):not([type='radio']):not([type='range']),
+  select,
+  textarea,
+  .input,
+  .field-input {
+    border-radius: var(--r-md);
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    min-block-size: 44px;
+    transition:
+      border-color var(--t-fast) var(--ease-out),
+      box-shadow var(--t-fast) var(--ease-out);
+  }
+
+  textarea {
+    min-block-size: auto;
+  }
+
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):focus,
+  select:focus,
+  textarea:focus,
+  .input:focus {
+    border-color: var(--accent);
+    box-shadow: var(--state-input-focus-halo);
+    outline: none;
+  }
+
+  /* ── CHIPS / TAGS / BADGES ───────────────────────────────────────────
+     The pill family — every status chip is a full pill now (the brief's
+     warm language). Badge palettes keep their token triads. */
+  .badge,
+  .chip,
+  .tag,
+  .pill,
+  .status-chip,
+  .filter-pill {
+    border-radius: var(--r-full);
+    padding-inline: var(--sp-3);
+    padding-block: var(--sp-0-5);
+    font-weight: var(--fw-semibold);
+  }
+
+  /* the achievement chip rides the amber signal + its glow — the ONE
+     reward voice in the product. */
+  .badge.gold,
+  .badge.amber,
+  .chip.gold,
+  .chip.amber {
+    box-shadow: var(--shadow-signal);
+  }
+
+  /* ── DATA ────────────────────────────────────────────────────────────
+     Tables live inside a rounded, clipped frame; the header loses the
+     heavy rule and rides a soft tinted band; rows keep their 44px floor.
+     Numbers stay tabular through Geist Mono (the numeral seat only). */
+  .table-wrap {
+    border-radius: var(--r-xl);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-card);
+    overflow: clip;
+    background: var(--surface);
+  }
+
+  .table thead th {
+    background: var(--surface-2);
+    border-block-end: 1px solid var(--border);
+    font-weight: var(--fw-semibold);
+  }
+
+  .table tbody tr:last-child td {
+    border-block-end: 0;
+  }
+
+  /* ── NAVIGATION ──────────────────────────────────────────────────────
+     Rail items and nav rows become soft pills; the active row is a
+     filled pill (not an underline or a hairline bracket). */
+  .nav-item,
+  .rail-item,
+  .sidebar-item,
+  .settings-tab,
+  .tab {
+    border-radius: var(--r-md);
+    transition:
+      background-color var(--t-fast) var(--ease-out),
+      color var(--t-fast) var(--ease-out);
+  }
+
+  .nav-item.on,
+  .nav-item[aria-current='page'],
+  .rail-item.on,
+  .sidebar-item.on,
+  .sidebar-item.active,
+  .tab[aria-selected='true'] {
+    border-radius: var(--r-md);
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+
+  /* the shell chrome — the topbar and the sidebar ride the raised
+     surface with a soft edge, never a hard hairline seam. */
+  .topbar {
+    border-block-end: 1px solid var(--border);
+  }
+
+  .sidebar {
+    border-inline-end: 1px solid var(--border);
+  }
+
+  /* ── OVERLAYS ────────────────────────────────────────────────────────
+     Sheets, drawers and bottom sheets: the 28px top radius family. */
+  .modal-overlay,
+  .sheet-overlay,
+  .drawer-overlay {
+    backdrop-filter: blur(var(--scrim-blur));
+  }
+
+  .modal-card {
+    box-shadow: var(--shadow-modal);
+  }
+
+  @media (max-width: 767px) {
+    /* dialogs become bottom sheets on phones — big top corners, flush
+       bottom edge (the brief's mobile overlay language). */
+    .modal-card,
+    .dialog-card {
+      border-end-start-radius: 0;
+      border-end-end-radius: 0;
+      border-start-start-radius: var(--r-2xl);
+      border-start-end-radius: var(--r-2xl);
+    }
+  }
+
+  /* ── PROGRESS & METERS ───────────────────────────────────────────────
+     Every bar is a full pill track with a rounded fill. */
+  .progress,
+  .progress-track,
+  .meter,
+  .bar-track {
+    border-radius: var(--r-full);
+    overflow: clip;
+  }
+
+  .progress > *,
+  .progress-fill,
+  .meter-fill,
+  .bar-fill {
+    border-radius: var(--r-full);
+  }
+
+  /* ── PRE (code / document viewer) ────────────────────────────────────
+     The dark document ground keeps its own tokens; only the corners and
+     the shadow join the world. */
+  pre {
+    border-radius: var(--r-lg);
+  }
+
+  /* ── FOCUS ───────────────────────────────────────────────────────────
+     ONE focus language, warm and visible in both themes: a 3px ring at
+     the accent with a 2px offset (the base.css universal outline stays
+     the fallback belt; this only widens the offset so the ring clears
+     the new rounded edges). */
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 3px solid var(--state-focus-ring-color);
+    outline-offset: 2px;
+    border-radius: var(--r-sm);
+  }
+
+  /* ── MOTION ──────────────────────────────────────────────────────────
+     The springy register is the token --ease; the kill switch is
+     motion.css. Nothing here re-enables motion under RM. */
+  @media (prefers-reduced-motion: reduce) {
+    .btn,
+    .card,
+    .nav-item {
+      transition-duration: 0ms;
+    }
+    .btn:hover:not(:disabled),
+    .btn:active:not(:disabled) {
+      transform: none;
+    }
+  }
+}

@@ -397,7 +397,7 @@
     border: 1px solid var(--rule);
     background: var(--surface);
     color: var(--text);
-    border-radius: 0;
+    border-radius: var(--r-md);
     cursor: pointer;
     flex-shrink: 0;
     /* R329 (gate:clean): the transition is r305-shell.css's unlayered
@@ -572,7 +572,7 @@
        minimum). Radius 0 — no pill chrome on the menu. The wash/press
        states come from the paired tokens on .nav-item (base block). */
     .sidebar .nav-item {
-      border-radius: 0;
+      border-radius: var(--r-md);
       /* R329 (gate:clean): the row height is polish.css's overrides
       seat (44px) — the 48px here was inert. */
     }

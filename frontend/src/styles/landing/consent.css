@@ -39,7 +39,7 @@
 .cb-banner.cb-banner {
   border: 1px solid var(--rule);  /* the ONE hairline — retires the four
                                      .cb-rule ink spans (JSX deleted) */
-  border-radius: 0;               /* the cell canon: square, pinned */
+  border-radius: var(--r-md);               /* the cell canon: square, pinned */
   box-shadow: none;               /* «بلا ظلال» — pinned, never inherited back */
   background: var(--bg);          /* paper ground (re-pinned with the cell) */
   /* 320px ceiling (was 360). The calc floor keeps the card inside the
