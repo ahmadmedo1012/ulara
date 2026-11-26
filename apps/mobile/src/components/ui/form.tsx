@@ -22,6 +22,7 @@ import { ds, sp } from "@/design/tokens";
 import { FormFieldsContext, type FormFieldsApi } from "./fields";
 import { T } from "./text";
 import { Button, type ButtonKind } from "./pressables";
+import { sound } from "@/sound";
 
 /**
  * form.tsx — R334 B5 «النماذج» — the FormScreen pattern.
@@ -166,10 +167,14 @@ export function FormScreen({
     setBusy(true);
     try {
       await onSubmit();
+      // r367 D-P6 — the outcome sound rides the ONE seam every form
+      // shares (key feedback only: success on resolve)
+      sound.notify("success");
     } catch (err) {
       setSubmitError(
         err instanceof Error && err.message ? err.message : "تعذّر إتمام العملية — حاول مرة أخرى.",
       );
+      sound.notify("error");
     } finally {
       setBusy(false);
     }

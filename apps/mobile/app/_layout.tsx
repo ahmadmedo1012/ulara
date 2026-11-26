@@ -42,6 +42,7 @@ import { persistQueryClient } from "@/lib/resilience/persistence";
 import { RootSheetModalProvider } from "@/components/shell/SheetModalHost";
 // R334 2-b — hydrate the persisted haptics preference once at boot.
 import { haptics } from "@/haptics";
+import { sound } from "@/sound";
 import { ToastHost } from "@/components/ui/toast";
 import { useSession } from "@/auth/session";
 // R362 P1 — the kept-but-unverified session's two second chances
@@ -140,6 +141,8 @@ export default function RootLayout() {
     // R334 2-b — exact haptics gate state for this session (fire-and-forget;
     // the module already kicked its own cheap hydrate at import).
     void haptics.hydrate();
+    // r367 D-P6 — the same exact read for the sound gate.
+    void sound.hydrate();
   }, []);
 
   useEffect(() => {
