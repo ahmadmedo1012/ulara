@@ -152,7 +152,7 @@ function HeaderNav() {
           </>
         );
         return seat.anchor ? (
-          <a key={seat.href} href={seat.href} className={cls} data-spec={`nav.link.${i}`}>
+          <a key={seat.href} href={pathname === '/' ? seat.href : `/${seat.href}`} className={cls} data-spec={`nav.link.${i}`}>
             {inner}
           </a>
         ) : (

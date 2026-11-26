@@ -37,6 +37,7 @@ import '../styles/help.css';
 import '../styles/landing/art-v2.css';
 import { ArtPageHeroScene, ArtPageHeroPlan } from '../components/patterns/ArtPageHero';
 import podiumScene from '../assets/art-v2/podium-scene.webp';
+import { SheetNav } from '../components/landing/chrome/SheetNav';
 import lectureHall from '../assets/art-v2/lecture-hall.webp';
 
 /* ═══ [C-04] عن أُلارا ═══════════════════════════════════════════════ */
@@ -58,6 +59,8 @@ export function AboutPage() {
     <div className="ab">
       <a href="#main" className="skip-link">تخطَّ إلى المحتوى</a>
       <GuestSheetChrome />
+      {/* r368 slice 12: the reference's inner pages carry the same full navigation bar as the home page */}
+      <SheetNav />
 
       <header className="ab-header">
         <div className="ab-header-inner">

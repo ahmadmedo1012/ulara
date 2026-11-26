@@ -83,3 +83,6 @@ Progress rule now grows left to right with the % at its start (19% frame vs refe
 
 ## Slice 01 preloader round 3 (headline and timing)
 Headline now 2.4rem/600 at desktop. Timing measured from preloader-timeline.json: reference reaches 100% at about 4.5s and the loader is gone at about 7.2s, but that run is network-bound (the percent stalls at 58-60% between 1.8s and 2.7s, then jumps). Ours holds a pinned 2.0s floor, 2.6s cap, about 3.3-4.0s total (r309 belt tests). Decision: do not lengthen the wait to imitate a network stall; keep the progress curve front-loaded then eased. Status: FAILING on headline face (Arabic display vs grotesk, language only) and on the missing tick hairline.
+
+## Slice 12 about round 1 (inner-page template, compared to the only inner reference shot: the pricing top)
+Defect: the inner page opened with a thin guest header (logo + back link); the reference's inner pages carry the same full bar as the home page. Fix: SheetNav mounted on About; the old header stays in the DOM visually hidden (back link, tests, focus-reveal). Anchors on the bar now resolve to the landing off-home. Still wrong: reference page title is a centred 2-line grotesk in a framed cell with ruled columns; ours is a start-aligned title over a stack of boxed notes. Other inner pages (13-20) still use the old header. Status: FAILING.
