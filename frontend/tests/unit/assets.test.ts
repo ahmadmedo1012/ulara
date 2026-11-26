@@ -126,7 +126,7 @@ describe('r188 brand reset — campus photography retired (no real-university im
      * hold: the raster is GENERATED ink art, not photography. */
     /* r368: the desktop seat is now the procedural flat elevation (the reference's flat architectural drawing) */
     expect(src).toContain('hero-elevation-flat.svg');
-    expect(src).toContain('hero-elevation-mb.webp');
+    expect(src).toContain('hero-elevation-flat-mb.svg');
     expect(src).toContain('<ElevationArt className="hro-elevation" viewBox={mobile ? VB_MOBILE : \'0 0 1440 620\'} />');
     const ink = read('src/components/landing/hero/ElevationArt.tsx');
     // transparent paper — the raster <image> is gone from the plate

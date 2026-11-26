@@ -18,7 +18,7 @@ import '../../../styles/landing/hero-mechanics.css';
  * composed, not scaled). The old thin-line elevation retires from
  * the stage seat (kept as the img-failure fallback below). */
 import heroElevationDesktop from '../../../assets/art-v2/hero-elevation-flat.svg';
-import heroElevationMobile from '../../../assets/art-v2/hero-elevation-mb.webp';
+import heroElevationMobile from '../../../assets/art-v2/hero-elevation-flat-mb.svg';
 
 /* The display title — TWO authored lines at the reference's h1 scale
  * (r359 D1: the fluid N/864·vw law — 46.7px @1440, 31.8px @390). Line one

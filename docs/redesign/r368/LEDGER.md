@@ -35,3 +35,4 @@ NEXT: platform grid to one tall plan cell + ledger rows; half-art/half-list role
 - dark hero art legible; phone hint hidden (FAILING; NEXT: mobile platform/use-case, stored-shot loops)
 - hero desktop art is a procedural flat elevation (FAILING; NEXT: heavier massing + shadow, mobile elevation, mobile bands)
 - hero elevation v2: heavy massing, bare trees (FAILING; NEXT: mobile elevation, shadow tone)
+- mobile hero uses a cropped flat elevation (FAILING; NEXT: mobile platform/use-case, footer, cookie, cursor)
