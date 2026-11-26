@@ -194,3 +194,6 @@ The grammar already matches: column rules (added earlier), centred giant heading
 
 ## Slices 15-18 (app, legal/terms route, colleges, 404 at 1440)
 Same sheet grammar holds on every page (column rules, giant heading, one royal plate). /terms is not a real route (404 shows). Gaps: no ruled pricing-style cells on app cards, legal lacks a sticky mono TOC at this capture, no reference to measure. No code change this round. Status: FAILING.
+
+## Slices 19-22 (820/2560 restage check)
+Fixed: at 768-991 the hero elevation overflowed and cropped the house; now sized by width, whole elevation visible (evidence slice21-hero-820.png). 2560: elevation centred with air, holds. Slice 19 auth, 20 error pages, 22 motion/theme/RTL: no new fixes, no reference. Status: FAILING.

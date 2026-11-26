@@ -574,3 +574,10 @@
 
 /* r368 slice 21 — the reference's phone fold carries no drag hint over the art */
 @media (max-width: 767px) { .hro-hint { display: none; } }
+
+/* r368 slice 21: at tablet widths the 1440/700 elevation was sized by the stage
+ * height (block-size 100%) and overflowed sideways, cropping the house. Size it
+ * by width instead so the whole elevation shows. Additive, 768-991 only. */
+@media (min-width: 768px) and (max-width: 991px) {
+  .hro-art { block-size: auto; inline-size: 100%; max-inline-size: 96%; }
+}

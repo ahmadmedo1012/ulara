@@ -93,3 +93,5 @@ NEXT: main sync ~6:26; slices 12-14
 NEXT: main sync ~6:26; slices 15-18
 - slices 15-18 loop logged
 NEXT: main sync ~6:26; slices 19-22
+- slice 21: tablet hero elevation uncropped
+NEXT: main sync ~6:26; cross-slice analyze
