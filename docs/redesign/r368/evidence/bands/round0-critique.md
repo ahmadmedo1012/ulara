@@ -215,3 +215,6 @@ The plan strip now takes the left half as a stack of title-barred plates with th
 
 ## Slices 07/08 round 2 (1440)
 07: plates enlarged, royal tag cards (mono code plus label) overlap the plates like the reference tag cards. 08: all three plates now fit the seat (plate width 52%). Both still FAILING: sizes/offsets not measured to the pixel, no corner plus marks on plates.
+
+## Slices 05/06 round 8 (1440)
+05: the head is a centred statement on bare ground like the reference; the reference band then shows one more statement line only (ours keeps a sub paragraph and the four cards above). 06: the reference frame is a bare statement; ours keeps the measured 464px closing column (chip, title, ledger) and the iso map stage because the closing column is itself a measured reference seat (journey.css), and removing it needs a re-choreographed driver (timing belts pin it). Not changed. Status: FAILING.

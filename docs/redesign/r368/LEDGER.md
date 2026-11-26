@@ -105,3 +105,5 @@ NEXT: slice 08, 05, 06 redo
 NEXT: slice 05/06 redo, enlarge 07 plates + tag cards
 - slice 07/08 round 2: tag cards, larger plates, third plate fits
 NEXT: slice 05/06 redo
+- slices 05/06 round 8 logged; need driver re-choreography to go further
+NEXT: owner call
