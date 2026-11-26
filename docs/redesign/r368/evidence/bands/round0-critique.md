@@ -218,3 +218,6 @@ The plan strip now takes the left half as a stack of title-barred plates with th
 
 ## Slices 05/06 round 8 (1440)
 05: the head is a centred statement on bare ground like the reference; the reference band then shows one more statement line only (ours keeps a sub paragraph and the four cards above). 06: the reference frame is a bare statement; ours keeps the measured 464px closing column (chip, title, ledger) and the iso map stage because the closing column is itself a measured reference seat (journey.css), and removing it needs a re-choreographed driver (timing belts pin it). Not changed. Status: FAILING.
+
+## Slices 05/06 round 9 (1440)
+05: the sub paragraph is hidden at desktop (DOM kept); the head is now the title alone, like the reference. 06: a desktop-only opening statement on bare ground (aria-hidden, .jt-lede) shows while the scene is at stage 0 and hands off to the existing art and scrubbed statement; no driver or timing-test change (237 journey tests pass unchanged). Remaining: the left closing column and thumbnail stay once the art lands, and the opening statement copy is our own. Status: FAILING (closer).

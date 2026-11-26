@@ -934,6 +934,10 @@ export function IsoJourneyScene() {
       data-rm="off"
     >
       <div className="jt-pin">
+        {/* r368 slice 06: the reference opens this band on a bare centred statement
+            before any art lands. Decorative and aria-hidden; shown only at
+            desktop widths while the scene is at stage 0 (journey.css). */}
+        <div className="jt-lede" aria-hidden="true" data-spec="map.lede">من أول محاضرة إلى آخر اختبار</div>
         {/* the PLAN COLUMN — measured per bp; the ≤991 scroll track */}
         <div className="jt-map-col">
           {/* the stack seat @≥992 · the STICKY WINDOW @≤991 */}

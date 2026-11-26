@@ -107,3 +107,5 @@ NEXT: slice 05/06 redo, enlarge 07 plates + tag cards
 NEXT: slice 05/06 redo
 - slices 05/06 round 8 logged; need driver re-choreography to go further
 NEXT: owner call
+- slice 06: desktop bare opening statement at stage 0 (separate commit)
+NEXT: re-measure mobile scroll; further rounds

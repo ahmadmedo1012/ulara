@@ -1956,3 +1956,19 @@ section.chapters {
   .jt-dominant { z-index: 1; }
   .jt-stack { z-index: 2; }
 }
+
+/* r368 slice 06 (separate commit, revertable): desktop opening statement on bare
+ * ground, as the reference's frame before the plan art arrives. It rides the
+ * existing stage attribute (no new driver state): visible at data-stage 0 only,
+ * fades once the scene starts. Hidden below 992px and under reduced motion. */
+.jt-lede { display: none; }
+@media (min-width: 992px) {
+  .jt-lede {
+    display: grid; place-items: center; position: absolute; inset: 0; z-index: 6;
+    background: var(--bg); pointer-events: none; text-align: center;
+    font-size: clamp(3.4rem, 5.6vw, 8rem); font-weight: 600; line-height: 1.15; letter-spacing: -0.01em;
+    padding-inline: 12%; text-wrap: balance;
+    opacity: 0; visibility: hidden; transition: opacity var(--t-fast) var(--ease);
+  }
+  .jt[data-stage='0']:not([data-rm='on']) .jt-lede { opacity: 1; visibility: visible; }
+}
