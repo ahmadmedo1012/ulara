@@ -17,3 +17,11 @@ Still different:
 2. Layout: reference splits the band half art / half ruled role list with the heading above the list; ULARA stacks heading, wide photo, then cards.
 3. Tone: reference scene is high-key light grey; ULARA's is near black.
 Status: FAILING, closer on shape scale only.
+
+## Round 2 (sheet: round2-layering-why.webp)
+Done: shapes now sit behind the scene (layer order as the reference) and the scene is high-key and multiplies over them; paper tone shows through.
+Still different:
+1. The scene is a full-frame photograph, not a cut-out: the shapes show through its detailed sky and facade as muddy blue instead of sitting on bare paper beside a clean building edge. Needs a real cut-out scene (transparent ground) or a regenerated vector/raster cantilever: art generation work (slice 11) that cannot be done with CSS filters.
+2. Half-art/half-list layout not built (slice 08/09).
+3. Thick-wall plan at reference scale (slices 05/07) not started.
+Status: FAILING. 

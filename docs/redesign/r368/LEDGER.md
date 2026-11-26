@@ -7,5 +7,6 @@
 - Harness S00 built (scripts/fidelity/capture.mjs + sheet.py); slice 03 round-0 side-by-side sheet and written critique (failing).
 - Capture harness gains --selectors (band-aligned); bands round-0 sheet and critique for slices 04-09 (evidence/bands/). Live reference blocked by a bot challenge (not bypassed): corpus shots are the baseline.
 - Flat-shape kit scales with the scene (cqw) in art-v2.css; round-1 band sheet + critique.
+- Duotone layering: shapes behind scene, high-key scene (art-v2.css); round-2 critique.
 
-NEXT: slice 11/08/09 composition: cut-out light cantilever scene on paper, shapes behind it, half-art half-list layout; then 05/07 thick-wall plan scale.
+NEXT: cut-out cantilever art (slice 11), half-art/half-list roles layout (08/09), thick-wall plan scale (05/07).
