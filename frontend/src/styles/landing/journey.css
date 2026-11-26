@@ -2075,3 +2075,16 @@ section.chapters {
   .jt-plat-img, .jt-plat-aux img { mix-blend-mode: multiply; }
   [data-theme="dark"] .jt-plat-img, [data-theme="dark"] .jt-plat-aux img { mix-blend-mode: screen; }
 }
+
+/* r368 slice 06 collage — numbered royal pins on the plan and a hairline caption row, as the reference's platform frames carry */
+@media (min-width: 992px) {
+  .jt-plat-pin { position: absolute; z-index: 3; inline-size: 2rem; block-size: 2rem; display: grid; place-items: center; background: #2540d9; color: #fff; font-size: 10px; }
+  [data-theme="dark"] .jt-plat-pin { background: #8aa0ff; color: #0f1020; }
+  .jt-plat-pin-1 { inset-inline-start: 39%; inset-block-start: 34%; }
+  .jt-plat-pin-2 { inset-inline-start: 39%; inset-block-start: 52%; }
+  .jt-plat-pin-3 { inset-inline-start: 58%; inset-block-start: 60%; }
+  .jt-plat-cap { position: absolute; inset-inline: 0; inset-block-end: 0; z-index: 4; display: grid; grid-template-columns: 22% 1fr 38%; align-items: center; block-size: 9%; border-block-start: 1px solid var(--rule-strong); background: var(--bg); padding-inline: 1.2rem; gap: 1rem; }
+  .jt-plat-cap-id { font-size: 11px; opacity: .6; }
+  .jt-plat-cap-t { font-size: 15px; font-weight: 600; }
+  .jt-plat-cap-d { font-size: 11px; opacity: .7; }
+}

@@ -1027,6 +1027,14 @@ export function IsoJourneyScene() {
                   <polyline points="15.2,24 39,60 77,48 77,17" />
                 </svg>
                 <span className="jt-plat-sq jt-plat-sq-a" />
+                {['01', '02', '03'].map((n, k) => (
+                  <span key={n} className={`jt-plat-pin jt-plat-pin-${k + 1} fo-mono`} dir="ltr">{n}</span>
+                ))}
+                <div className="jt-plat-cap fo-mono" dir="rtl">
+                  <span className="jt-plat-cap-id" dir="ltr">[01]</span>
+                  <b className="jt-plat-cap-t">مساعد الحجز</b>
+                  <span className="jt-plat-cap-d">يعمل فوق جدولك، ويقترح ولا ينفّذ إلا بموافقتك.</span>
+                </div>
                 <span className="jt-plat-sq jt-plat-sq-b" />
                 <div className="jt-plat-card">
                   <DarkCard header="جارٍ الفحص…" rows={['سعة القراءة مقابل السجل', 'أوقات الذروة', 'الحجوزات المفتوحة']} />

@@ -160,3 +160,4 @@ NEXT: origin/main sync ~9:50pm; remaining gaps 06 layout, hero photo look, no-co
 - r368 hero v4: punched openings, railings, entrance recess+canopy, pergola, planters, pilotis, tower slits
 - r368 hero v5: weathering (vertical rain streaks + blotchy stains) on concrete; light+dark verified
 - r368 flat thick-wall plan plates replace iso plates (06/07), plate.py flat option. NEXT: royal dots/dashed lines on plates, 06 collage, mobile hero raster.
+- r368 06 collage: numbered royal pins + hairline caption row on the platform frame. NEXT: mobile hero raster, no-corpus slices.
