@@ -68,7 +68,7 @@ import { useSheetScroll } from '../../../lib/motion/useSheetScroll';
 import { clamp, setSheetVar } from '../../../lib/motion/sheetConductor';
 import { IsoCampusSheet, FRAG_VECTORS, PLAN_VB } from './IsoCampusSheet';
 import { RegCross } from '../../patterns/RegCross';
-import { PlanPlate } from '../plates/PlanPlate';
+import { PlanPlate, DarkCard } from '../plates/PlanPlate';
 
 /* ── The copy (our own words, honest, Arabic RTL — the r312/r322
  *    contract carried verbatim; the findings/ledger keep their
@@ -991,6 +991,20 @@ export function IsoJourneyScene() {
                   before. */}
               <div className="jt-dominant" data-spec="map.dominant">
                 <PlanPlate plan="plan-campus" title="الحرم الجامعي — المسقط الشامل" scale="1:500" rev="B" />
+              </div>
+
+              {/* r368 slice 06 (own commit): the reference's platform frames are ONE large plan with a dark
+                  card on bare ground. At stages 2-4 on desktop only, this decorative layer covers the walkthrough
+                  inside the window (journey.css); touch and mobile never show it. aria-hidden: the closing
+                  column and the panel keep the real story. */}
+              <div className="jt-platform" aria-hidden="true" data-spec="map.platform">
+                <div className="pat-linegrid jt-plat-grid" />
+                <img className="jt-plat-img" src={BIG_PLAN_SRC} alt="" loading="lazy" decoding="async" />
+                <span className="jt-plat-sq jt-plat-sq-a" />
+                <span className="jt-plat-sq jt-plat-sq-b" />
+                <div className="jt-plat-card">
+                  <DarkCard header="جارٍ الفحص…" rows={['سعة القراءة مقابل السجل', 'أوقات الذروة', 'الحجوزات المفتوحة']} />
+                </div>
               </div>
 
               {/* the drifting plan stack — the entrance descent's
