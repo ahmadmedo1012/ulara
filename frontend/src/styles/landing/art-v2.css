@@ -22,6 +22,7 @@
   overflow: hidden;
   margin: 0;
   background: var(--duo-paper);
+  container-type: inline-size; /* r368 slice 09/11: the flat shapes scale with the scene, not rem */
 }
 
 /* ── the kit pieces ─────────────────────────────────────────────── */
@@ -31,8 +32,8 @@
 .fs-circle-royal {
   position: absolute;
   z-index: 3;
-  block-size: 13rem;
-  inline-size: 13rem;
+  block-size: 26cqw; /* r368: reference circle ~39% of its panel; 26% of the wide stage */
+  inline-size: 26cqw;
   border-radius: 50%;
   background: var(--duo-signal);
   inset-block-start: -4.5rem;
@@ -45,8 +46,8 @@
 .fs-slab {
   position: absolute;
   z-index: 3;
-  block-size: 58%;
-  inline-size: 8.5rem;
+  block-size: 78%;
+  inline-size: 13cqw; /* r368: tall slab at reference proportion */
   background: var(--duo-signal);
   inset-block-start: 18%;
   inset-inline-end: 14%;
@@ -58,8 +59,8 @@
 .fs-circle-pale {
   position: absolute;
   z-index: 1;
-  block-size: 24rem;
-  inline-size: 24rem;
+  block-size: 22cqw;
+  inline-size: 22cqw;
   border-radius: 50%;
   background: var(--duo-pale);
   inset-block-end: -18%;
@@ -134,9 +135,9 @@
 }
 
 /* the strip's shapes re-seat for the low band */
-.duo-strip .fs-circle-royal { block-size: 10rem; inline-size: 10rem; inset-block-start: -3rem; }
-.duo-strip .fs-slab { block-size: 70%; inline-size: 6.5rem; inset-block-start: 10%; }
-.duo-strip .fs-circle-pale { block-size: 18rem; inline-size: 18rem; inset-block-end: -30%; }
+.duo-strip .fs-circle-royal { block-size: 22cqw; inline-size: 22cqw; inset-block-start: -8cqw; }
+.duo-strip .fs-slab { block-size: 80%; inline-size: 12cqw; inset-block-start: 8%; }
+.duo-strip .fs-circle-pale { block-size: 16cqw; inline-size: 16cqw; inset-block-end: -30%; }
 
 /* ── dark theme — the same seats invert with the paper ──────────── */
 [data-theme="dark"] .duo-scene {
@@ -154,13 +155,13 @@
 /* ── the phone re-stage (mission P5: composed, not scaled) ──────── */
 @media (max-width: 767px) {
   .duo-stage { aspect-ratio: 692 / 620; max-block-size: 460px; }
-  .fs-circle-royal { block-size: 9rem; inline-size: 9rem; inset-block-start: -2.5rem; inset-inline-start: 2%; }
-  .fs-slab { inline-size: 5.5rem; inset-inline-end: 6%; }
-  .fs-circle-pale { block-size: 16rem; inline-size: 16rem; }
+  .fs-circle-royal { block-size: 34cqw; inline-size: 34cqw; inset-block-start: -8cqw; inset-inline-start: 2%; }
+  .fs-slab { inline-size: 16cqw; inset-inline-end: 6%; }
+  .fs-circle-pale { block-size: 30cqw; inline-size: 30cqw; }
   .fs-line-b { inset-inline-start: 76%; }
-  .duo-strip .fs-circle-royal { block-size: 7rem; inline-size: 7rem; inset-block-start: -2rem; }
-  .duo-strip .fs-slab { inline-size: 4.5rem; }
-  .duo-strip .fs-circle-pale { block-size: 13rem; inline-size: 13rem; }
+  .duo-strip .fs-circle-royal { block-size: 30cqw; inline-size: 30cqw; inset-block-start: -8cqw; }
+  .duo-strip .fs-slab { inline-size: 14cqw; }
+  .duo-strip .fs-circle-pale { block-size: 26cqw; inline-size: 26cqw; }
 }
 
 /* ═══════════════════════════════════════════════════════════════════

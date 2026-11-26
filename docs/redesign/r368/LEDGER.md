@@ -6,5 +6,6 @@
 - Specs batch 3: slices 13-22 specified/planned/tasked/analysed/checklisted; cross-slice analysis written (specs/CROSS-SLICE-ANALYSIS.md). All 22 slices at spec stage.
 - Harness S00 built (scripts/fidelity/capture.mjs + sheet.py); slice 03 round-0 side-by-side sheet and written critique (failing).
 - Capture harness gains --selectors (band-aligned); bands round-0 sheet and critique for slices 04-09 (evidence/bands/). Live reference blocked by a bot challenge (not bypassed): corpus shots are the baseline.
+- Flat-shape kit scales with the scene (cqw) in art-v2.css; round-1 band sheet + critique.
 
-NEXT: verify band capture warm-up, then rebuild bands against the critique: 03 art (slice 11), 09 flat-shape scale, 07 thick-wall plan, 05 type scale.
+NEXT: slice 11/08/09 composition: cut-out light cantilever scene on paper, shapes behind it, half-art half-list layout; then 05/07 thick-wall plan scale.
