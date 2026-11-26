@@ -128,3 +128,6 @@ Dropped the plan chrome chips on phone (they overlapped the row copy). Still wro
 
 ## Slice 06/07 platform phone round 2
 Rebuilt the phone band as an auto-height stack: title, paragraph, four ruled capability rows (ledger), no thumbnail, no CTA strip, no overlap. Still wrong: row icons are empty squares not line icons, no hero-sized title, copy column padding unmeasured. Status: FAILING (much closer).
+
+## Phone roles round 2
+Art plate now tall (4/3, collage fills it). Still wrong: title column overlap, plate is not the reference flat massing with a sun disc. Status: FAILING.

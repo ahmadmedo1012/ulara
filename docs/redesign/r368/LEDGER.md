@@ -49,3 +49,5 @@ NEXT: platform grid to one tall plan cell + ledger rows; half-art/half-list role
 - ledger rows carry hexagon line icons with a glyph each (FAILING; NEXT: phone use-case band)
 - footer closing band classes renamed fo-close-* (fo-cta already belongs to the Vision section; my CSS had leaked onto it)
 - phone roles: group divider wraps inside the frame, use-case chips dropped (FAILING; NEXT: big art plate above list, dark/RTL loop)
+- phone roles art plate restored to 4/3 over the diet shrink (additive media override)
+NEXT: dark and RTL loops

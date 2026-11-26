@@ -654,3 +654,8 @@
   .rl-kind { display: none; }
   .rl-row { min-block-size: 52px; }
 }
+
+/* r368 — phone: the art plate runs taller (4:3), the reference's plate is a full-width picture, not a strip. */
+@media (max-width: 767px) {
+  .rl-section .rl-media { aspect-ratio: 4 / 3; min-block-size: 70vw !important; block-size: auto !important; }
+}
