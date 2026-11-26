@@ -91,3 +91,5 @@ NEXT: slice 10/11
 NEXT: main sync ~6:26; slices 12-14
 - slices 12-14 loop logged
 NEXT: main sync ~6:26; slices 15-18
+- slices 15-18 loop logged
+NEXT: main sync ~6:26; slices 19-22

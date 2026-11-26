@@ -191,3 +191,6 @@ Fixed: royal circle and tall royal slab now sit behind the cantilever (multiply)
 
 ## Slices 12-14 (about/help/contact vs the reference pricing-top template, 1440)
 The grammar already matches: column rules (added earlier), centred giant heading, mono labels, one royal-accented plate. Remaining differences: the reference header sits in a tall ruled cell with a full-width rule under it (ours has a short rule), no ruled tables, and the reference has no dedicated page to measure. No code change this round because remaining gaps are unmeasurable. Status: FAILING.
+
+## Slices 15-18 (app, legal/terms route, colleges, 404 at 1440)
+Same sheet grammar holds on every page (column rules, giant heading, one royal plate). /terms is not a real route (404 shows). Gaps: no ruled pricing-style cells on app cards, legal lacks a sticky mono TOC at this capture, no reference to measure. No code change this round. Status: FAILING.
