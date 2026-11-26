@@ -1549,5 +1549,7 @@
   --r359-paper: #1C1C1A;
 }
 
-/* The shared native radius remains available to native components. */
-body { --r-full: var(--r-sm); }
+/* r369 — the r361 square-everything hack (`body { --r-full: var(--r-sm) }`)
+   is RETIRED: it silently turned every pill and avatar on the platform into
+   a 10px corner, because custom properties inherit. `--r-full` is the real
+   circular/pill rung (9999px) everywhere again. */

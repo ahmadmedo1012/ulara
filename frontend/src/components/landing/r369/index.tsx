@@ -183,7 +183,7 @@ export function LandingNav() {
         </nav>
 
         <div className="w369-nav-actions">
-          <Link to={ROUTES.auth} className="w369-btn w369-btn-ghost w369-nav-login">دخول</Link>
+          <Link to={ROUTES.auth} className="w369-btn w369-btn-ghost w369-nav-login">تسجيل الدخول</Link>
           <Link to={ROUTES.authRegister} className="w369-btn w369-btn-primary">
             أنشئ حسابك
             <Icon icon={ArrowLeft} size={16} />
@@ -214,7 +214,7 @@ export function LandingNav() {
               أنشئ حسابك
             </Link>
             <Link to={ROUTES.auth} className="w369-btn w369-btn-ghost" onClick={() => setOpen(false)}>
-              دخول
+              تسجيل الدخول
             </Link>
           </div>
         </div>
@@ -254,10 +254,10 @@ export function Hero() {
         </p>
         <div className="w369-hero-actions">
           <Link to={ROUTES.authRegister} className="w369-btn w369-btn-primary w369-btn-lg">
-            أنشئ حسابك
+            أنشئ حسابك الجامعي
             <Icon icon={ArrowLeft} size={18} />
           </Link>
-          <Link to={ROUTES.auth} className="w369-btn w369-btn-ghost">لديك حساب؟ ادخل</Link>
+          <Link to={ROUTES.auth} className="w369-btn w369-btn-ghost">لديك حساب؟ تسجيل الدخول</Link>
         </div>
         <ul className="w369-hero-facts">
           <li><Icon icon={BadgeCheck} size={16} /> للطلّاب وأعضاء الهيئة والإدارة</li>
@@ -363,10 +363,15 @@ function Band({ n, kicker, title, body, tint, icon, children, jar }: BandProps) 
 
 /* ── 02 tasks become stars ── */
 
+const STAR_SOURCES = [
+  { icon: BookOpen, title: 'إتمام الواجب', body: 'تسلّمه في وقته، فتظهر النجمات فورًا في رصيدك.' },
+  { icon: GraduationCap, title: 'حضور المحاضرة', body: 'حضورك يُسجَّل، والنجمة تُضاف دون خطوة إضافية.' },
+  { icon: Target, title: 'اجتياز الاختبار', body: 'نتيجتك تُحدّد نجومك، وتُضاف إلى مصفوفة إتقانك.' },
+] as const;
+
 export function StarsBand() {
   const [ref, seen] = useInView<HTMLDivElement>();
-  const todays = useCountUp(24, seen);
-  const week = useCountUp(120, seen);
+  const kinds = useCountUp(STAR_SOURCES.length, seen);
   return (
     <Band
       n="02" jar="02" tint="violet" icon={Sparkles}
@@ -375,15 +380,10 @@ export function StarsBand() {
       body="الواجب، المحاضرة، الاختبار القصير — كلٌّ منها يمنحك نقاط إتقان في اللحظة التي تُتمّها. لا انتظار لتصحيح، ولا أرقام ضائعة: النجوم تظهر أمامك فورًا، وتحتفظ بها."
     >
       <div className="w369-star-grid" ref={ref}>
-        <div className="w369-stat">
+        <div className="w369-stat w369-stat-lead">
           <span className="w369-stat-ico"><Icon icon={Star} size={20} /></span>
-          <b className="w369-stat-num">{todays}</b>
-          <span className="w369-stat-label">نجمة في يوم واحد</span>
-        </div>
-        <div className="w369-stat">
-          <span className="w369-stat-ico"><Icon icon={Flame} size={20} /></span>
-          <b className="w369-stat-num">{week}</b>
-          <span className="w369-stat-label">نجمة في أسبوع منتظم</span>
+          <b className="w369-stat-num">{kinds}</b>
+          <span className="w369-stat-label">طرق راسخة لجمع النجوم في أُلارا</span>
         </div>
         <div className="w369-stat w369-stat-note">
           <Mascot pose="cheer" size={64} />
@@ -392,6 +392,15 @@ export function StarsBand() {
           </span>
         </div>
       </div>
+      <ul className="w369-sources">
+        {STAR_SOURCES.map((x) => (
+          <li key={x.title} className="w369-source">
+            <span className="w369-source-ico"><Icon icon={x.icon} size={18} /></span>
+            <b>{x.title}</b>
+            <span>{x.body}</span>
+          </li>
+        ))}
+      </ul>
     </Band>
   );
 }
@@ -415,7 +424,7 @@ export function ProgressBand() {
       <div className="w369-progress-card">
         <div className="w369-progress-head">
           <span className="w369-chip"><Icon icon={Target} size={14} />مصفوفة الإتقان</span>
-          <span className="w369-chip w369-chip-soft">الفصل الحالي</span>
+          <span className="w369-chip w369-chip-soft">نموذج توضيحي</span>
         </div>
         <ul className="w369-progress-list">
           {PROGRESS_ROWS.map((r) => (
@@ -482,7 +491,7 @@ export function HabitsBand() {
           <span className="w369-streak-flame"><Icon icon={Flame} size={22} /></span>
           <div>
             <b>سلسلة هذا الأسبوع</b>
-            <span>أكملت ٥ أيام من ٧ — استمرّ، أنت قريب.</span>
+            <span>هكذا تبدو خمسة أيام من سبعة — نموذج توضيحي، لا بياناتك.</span>
           </div>
         </div>
         <ul className="w369-streak-days">
@@ -641,10 +650,10 @@ export function CtaBand() {
         </p>
         <div className="w369-cta-actions">
           <Link to={ROUTES.authRegister} className="w369-btn w369-btn-primary w369-btn-lg">
-            أنشئ حسابك
+            أنشئ حسابك الجامعي
             <Icon icon={ArrowLeft} size={18} />
           </Link>
-          <Link to={ROUTES.auth} className="w369-btn w369-btn-ghost w369-btn-lg">دخول إلى حسابي</Link>
+          <Link to={ROUTES.auth} className="w369-btn w369-btn-ghost w369-btn-lg">تسجيل الدخول</Link>
         </div>
       </div>
     </section>
@@ -686,7 +695,7 @@ export function Footer({ year }: { year: number }) {
           <p className="w369-body">نظام تشغيل الجامعة — عربي أولًا، مستقلّ، ومن تصميم فريق واحد.</p>
           <div className="w369-footer-cta">
             <Link to={ROUTES.authRegister} className="w369-btn w369-btn-primary">أنشئ حسابك</Link>
-            <Link to={ROUTES.auth} className="w369-btn w369-btn-ghost">دخول</Link>
+            <Link to={ROUTES.auth} className="w369-btn w369-btn-ghost">تسجيل الدخول</Link>
           </div>
         </div>
         {FOOTER_COLS.map((c) => (

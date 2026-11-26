@@ -331,7 +331,7 @@
   padding-block: clamp(var(--sp-10), 7vw, var(--sp-14));
 }
 
-.w369-hero-copy { max-inline-size: 34ch; }
+.w369-hero-copy { min-inline-size: 0; }
 
 .w369-hero-actions {
   display: flex;
@@ -526,7 +526,7 @@
     grid-template-columns: 1fr;
     padding-block: var(--sp-9) var(--sp-10);
   }
-  .w369-hero-copy { max-inline-size: none; }
+  .w369-hero-copy { min-inline-size: 0; }
   .w369-phone { rotate: 0deg; }
 }
 
@@ -610,7 +610,7 @@
   box-shadow: var(--shadow-card);
 }
 
-.w369-band-head { max-inline-size: 42ch; }
+.w369-band-head { max-inline-size: 46ch; }
 
 .w369-band-body[data-seen='false'] {
   opacity: 0;
@@ -1349,3 +1349,53 @@
 }
 
 .w369-skip:focus-visible { transform: none; }
+
+/* ── 02 sources (the honest star origins) ─────────────────────────── */
+
+.w369-stat-lead { align-content: center; }
+
+.w369-sources {
+  list-style: none;
+  margin: var(--sp-4) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-3);
+}
+
+.w369-source {
+  display: grid;
+  gap: var(--sp-1);
+  padding: var(--sp-4);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+}
+
+.w369-source b {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  color: var(--text);
+}
+
+.w369-source span:last-child {
+  font-size: var(--fs-xs);
+  line-height: var(--lh-snug);
+  color: var(--text-secondary);
+}
+
+.w369-source-ico {
+  display: grid;
+  place-items: center;
+  inline-size: 32px;
+  block-size: 32px;
+  border-radius: var(--r-full);
+  background: var(--w369-tint-bg, var(--accent-soft));
+  color: var(--w369-tint-deep, var(--accent));
+  margin-block-end: var(--sp-1);
+}
+
+@media (max-width: 900px) {
+  .w369-sources { grid-template-columns: 1fr; }
+}

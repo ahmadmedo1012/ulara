@@ -78,13 +78,43 @@ export default function LandingPage() {
     }
   });
 
+  /* r162 → r164b (kept): warm BOTH auth boundaries while the visitor
+   * reads the hero — on intent (pointer/focus on a /auth link) plus a
+   * late idle fallback, so the door is instant without spending the
+   * first scroll's budget. */
+  useEffect(() => {
+    if (redirectHome || !import.meta.env.PROD) return undefined;
+    let warmed = false;
+    const warm = () => {
+      if (warmed) return;
+      warmed = true;
+      void import('./AuthPage').catch(() => undefined);
+      void import('./RegisterPage').catch(() => undefined);
+    };
+    const onIntent = (e: Event) => {
+      const t = e.target as Element | null;
+      if (t?.closest?.('a[href*="/auth"]')) warm();
+    };
+    document.addEventListener('pointerdown', onIntent, { passive: true });
+    document.addEventListener('focusin', onIntent);
+    const idle =
+      typeof window.requestIdleCallback === 'function'
+        ? window.setTimeout(warm, 15000)
+        : window.setTimeout(warm, 15000);
+    return () => {
+      document.removeEventListener('pointerdown', onIntent);
+      document.removeEventListener('focusin', onIntent);
+      window.clearTimeout(idle);
+    };
+  }, [redirectHome]);
+
   /* the warm ground is the page's own; drop the retired grain film and
      any legacy landing classes the old composition left on <body>. */
   useEffect(() => {
     if (typeof document === 'undefined') return undefined;
     document.body.classList.remove('ula-grain');
-    document.body.classList.add('w369-body');
-    return () => document.body.classList.remove('w369-body');
+    document.body.classList.add('w369-active');
+    return () => document.body.classList.remove('w369-active');
   }, []);
 
   if (redirectHome) return <Navigate to={redirectHome} replace />;
