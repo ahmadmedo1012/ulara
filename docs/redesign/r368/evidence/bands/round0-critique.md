@@ -53,3 +53,6 @@ Art now sits physically left, list right, as in the reference. Still wrong: scen
 
 ## Roles band round 2
 Shapes shrunk (slab 38% tall, circles smaller), scene seated bottom. Slab/circle still not aligned to the scene geometry; list still lacks reference scale. Status: FAILING.
+
+## Platform round 3
+Plate column is now one tall cell. Still wrong: copy column order/scale, no ledger rows or chat-widget dark card, plan needs numbered markers. Status: FAILING.

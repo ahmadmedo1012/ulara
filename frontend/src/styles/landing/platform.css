@@ -773,3 +773,10 @@ html[data-theme='dark'] .pr-section .pr-cta {
 
 .prp-plan { display: block; inline-size: 100%; block-size: 100%; object-fit: cover; object-position: center 35%; }
 .pr-img { position: relative; }
+
+/* r368 — the reference's plate column is ONE tall cell (not two stacked); the second plate and divider are retired at ≥992 */
+@media (min-width: 992px) {
+  .pr-section .pr-imgs { grid-template-rows: 85.14rem; }
+  .pr-section .pr-imgs-hrule, .pr-section .pr-img + .pr-imgs-hrule + .pr-img { display: none; }
+  .pr-section .pr-img .prp-plan { object-position: center 30%; }
+}
