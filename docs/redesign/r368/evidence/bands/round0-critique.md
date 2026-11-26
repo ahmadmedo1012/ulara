@@ -239,3 +239,6 @@ Tried a procedural grain overlay: it greyed the paper box (rejected, removed). K
 
 ## Elevation generator pass (1440)
 scripts/art/elevation-flat.mjs now adds formwork joints, board-form hatching, speckle, a stepped upper massing, deeper mullion shadows and corner plus marks. Concrete reads textured and the massing stepped. Trees are still thinner and sparser than the reference and the glass is flatter. Desktop svg only (247KB, 24KB gzip); mobile svg unchanged so mobile perf is untouched. Status: FAILING.
+
+## Trees and glass depth (1440)
+Glass now has a dark interior, floor plates, furniture silhouettes and light streaks; two trees per side, denser crowns. A first denser try (1.1MB) overshot the frame and was cut back; svg now 479KB raw, 41KB gzip. Still less hatched and heavy than the reference. Status: FAILING.

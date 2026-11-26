@@ -29,6 +29,10 @@ s += rect(500, 232, 460, 238, GLASS, INK, 2);
 for (let i = 1; i < 6; i++) s += ln(500 + i * 77, 232, 500 + i * 77, 470, 3, INK);
 s += ln(500, 350, 960, 350, 5, INK);
 for (let i = 1; i < 4; i++) { s += ln(500, 232 + i * 30, 960, 232 + i * 30, 1, INK, 0.5); s += ln(500, 350 + i * 30, 960, 350 + i * 30, 1, INK, 0.5); }
+// glass depth: dark interior, floor plates, ceiling beams, furniture silhouettes, sky reflection gradient
+for (let r = 0; r < 2; r++) { const y0 = 232 + r * 118; s += rect(504, y0 + 4, 452, 112, INK, INK, 0, 0.32); s += rect(504, y0 + 100, 452, 8, INK, INK, 0, 0.55); s += rect(504, y0 + 4, 452, 10, INK, INK, 0, 0.5);
+  for (let i = 0; i < 9; i++) { const x = 515 + rnd() * 410, w = 18 + rnd() * 40, h = 14 + rnd() * 30; s += rect(x, y0 + 100 - h, w, h, INK, INK, 0, 0.3 + rnd() * 0.25); }
+  for (let i = 0; i < 40; i++) { const x = 505 + rnd() * 450; s += ln(x, y0 + 6, x + 50 + rnd() * 40, y0 + 112, 0.8, '#ffffff', 0.14); } }
 // light reflections in glass
 s += poly([[540, 232], [600, 232], [520, 350], [500, 350], [500, 300]], '#ffffff', 0.18);
 s += poly([[760, 350], [830, 350], [740, 470], [690, 470]], '#ffffff', 0.18);
@@ -69,13 +73,13 @@ const branch = (x, y, len, ang, depth, sw) => {
   if (depth === 0 || len < 4) return '';
   const x2 = x + Math.cos(ang) * len, y2 = y + Math.sin(ang) * len;
   let t = ln(x, y, x2, y2, sw, INK, 0.95);
-  const n = depth > 3 ? 2 : 3;
+  const n = depth > 4 ? 2 : 3;
   for (let i = 0; i < n; i++) t += branch(x2, y2, len * (0.7 + rnd() * 0.14), ang + (rnd() - 0.5) * 1.2 + (i - (n - 1) / 2) * 0.35, depth - 1, Math.max(0.8, sw * 0.68));
   return t;
 };
 const tree = (cx, base, h) => ln(cx, base, cx, base - h * 0.28, 5) + branch(cx, base - h * 0.28, h * 0.27, -Math.PI / 2, 8, 4.4);
-s += tree(215, gy, 460);
-s += tree(1215, gy, 420);
+s += tree(215, gy, 400) + tree(285, gy, 300);
+s += tree(1215, gy, 380) + tree(1150, gy, 290);
 // a lone figure
 s += `<g stroke="${INK}" stroke-width="2.4" fill="none"><circle cx="700" cy="${gy - 40}" r="4.2"/>${ln(700, gy - 35, 700, gy - 14, 2.4)}${ln(700, gy - 14, 695, gy, 2.4)}${ln(700, gy - 14, 705, gy, 2.4)}</g>`;
 process.stdout.write(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">${s}</svg>\n`);
