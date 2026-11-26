@@ -647,4 +647,6 @@
   }
   .pm-inner > .pm-head .pm-titleblock, .pm-inner > .pm-head .pm-subwrap { justify-self: center; text-align: center; }
   .pm-inner > .pm-head .pm-subwrap { margin-block-start: 1.6rem; max-inline-size: 44rem; }
+  .pm-inner > .pm-head .pm-title { font-size: clamp(3.6rem, 5.4vw, 7.6rem); line-height: 1.08; max-inline-size: 22ch; margin-inline: auto; }
+  .pm-inner > .pm-head .pm-kicker { display: flex; justify-content: center; }
 }

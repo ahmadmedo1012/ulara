@@ -161,3 +161,6 @@ Auth (/login): sheet chrome plus my column rules line up with the frame; it carr
 
 ## Slice 05 round 2
 Desktop: the four ruled cards now ride above the head (CSS order, DOM untouched) and the head becomes a centred statement field, as in the reference. Still wrong: statement is a small heading in a mostly empty field rather than the reference one large line; card titles smaller than the reference; phone unchanged. Status: FAILING.
+
+## Slice 05 round 3
+Statement scaled to clamp(3.6rem,5.4vw,7.6rem), centred, two lines; kicker centred. Closer to the reference one-line statement but still two lines with a sub paragraph the reference lacks. Status: FAILING.

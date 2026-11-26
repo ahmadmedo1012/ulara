@@ -71,3 +71,5 @@ NEXT: auth slice 19 / slices 05-06 declutter
 NEXT: slice 05 cards-first + empty statement field
 - slice 05 desktop: cards first, centred statement field
 NEXT: slice 05 statement scale, slice 06
+- slice 05 statement scaled and centred
+NEXT: slice 06
