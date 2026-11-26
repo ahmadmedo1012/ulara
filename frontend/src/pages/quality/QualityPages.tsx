@@ -27,7 +27,7 @@ import { PageHeader } from '../../components/patterns';
 import { SheetSection, KpiBand } from '../../components/patterns';
 import { ChartFrame } from '../../components/charts';
 import { cartesianOptions, radialOptions, chartColors, useChartThemeKey } from '../../lib/chartTheme';
-import { ErrorState, EmptyState, ChartSkeleton, ListSkeleton, TableSkeleton, Skeleton, CardSkeleton } from '../../components/primitives/States';
+import { ErrorState, EmptyState, ChartSkeleton, ListSkeleton, TableSkeleton, Skeleton } from '../../components/primitives/States';
 import { useCompactRosterBand } from '../admin/AdminPages'; // R341 deadcode reconciliation — one definition (see the Professor Evaluation note)
 import { Icon } from '../../components/Icon';
 import { api, unwrap } from '../../lib/api';
@@ -760,10 +760,16 @@ export function QualityCoursesPage() {
       />
 
       {c.isPending ? (
-        /* The pending mirror keeps the resolved board's frame. */
-        <SheetSection index="01" caption="ACTIVE COURSES" title="المقرّرات النشطة" className="qlt-sec">
-          <TableSkeleton rows={4} cols={8} />
-        </SheetSection>
+        /* r365 (loading mirror §3/§6-4): the pending mirror keeps the
+         * resolved board's frame — the two-cell count band rides above
+         * the framed roster skeleton (the family's band-mirror pattern,
+         * cf. the professors page), so the handoff moves nothing. */
+        <>
+          <StatStripSkeleton cells={2} />
+          <SheetSection index="01" caption="ACTIVE COURSES" title="المقرّرات النشطة" className="qlt-sec">
+            <TableSkeleton rows={4} cols={8} />
+          </SheetSection>
+        </>
       ) :
        c.isError ? <ErrorState message="تعذّر تحميل قائمة المقرّرات" error={c.error} onRetry={() => c.refetch()} /> : (
         /* 5-A8 §6 step 6 (rhythm): the roster is the page's primary
@@ -906,7 +912,7 @@ export function QualityCoursesPage() {
                       <td data-label="اكتمال المحتوى">
                         {score === 0
                           ? <span className="hr-chip">لا محتوى بعد</span>
-                          : <span className="hr-chip" data-tone={tone}>{score}%</span>}
+                          : <span className="hr-chip" data-tone={tone}><bdi>{score}%</bdi></span>}
                       </td>
                     </tr>
                   );
@@ -1255,7 +1261,7 @@ export function QualityProfessorsPage() {
                     <td data-label="الالتزام">
                       <div className="q-compliance">
                         <ProgressBar value={t.compliance} showValue={false} ariaLabel={`التزام د. ${t.firstName} ${t.lastName}`} />
-                        <span className="hr-chip" data-tone={compTone}>{formatPct1(t.compliance)}%</span>
+                        <span className="hr-chip" data-tone={compTone}><bdi>{formatPct1(t.compliance)}%</bdi></span>
                       </div>
                     </td>
                   </tr>
@@ -1304,10 +1310,17 @@ export function QualityEngagementPage() {
         <div className="hr-scope">
         {pageHeader}
         <StatStripSkeleton cells={4} />
-        {/* The pending mirror keeps the resolved split's shape. */}
+        {/* r365 (loading mirror §3/§6-4): the pending split rides the
+         * resolved anatomy — the framed WEEKLY ACTIVITY chart cell + the
+         * VIEWING ANALYSIS ledger, so the handoff moves nothing. The
+         * bare Card pair flashed the retired card register. */}
         <div className="sg-split">
-          <Card><ChartSkeleton height={240} /></Card>
-          <Card><ListSkeleton rows={3} /></Card>
+          <SheetSection index="01" caption="WEEKLY ACTIVITY" title="النشاط الأسبوعي" className="qlt-sec">
+            <ChartSkeleton height={240} />
+          </SheetSection>
+          <SheetSection index="02" caption="VIEWING ANALYSIS" title="تحليل المشاهدة" className="qlt-sec">
+            <ListSkeleton rows={3} />
+          </SheetSection>
         </div>
         </div>
       </div>
@@ -1510,7 +1523,11 @@ export function QualityCurriculumPage() {
       <div className="page">
         <div className="hr-scope">
         {pageHeader}
-        <CardSkeleton lines={2} />
+        {/* r365 (loading mirror §3/§6-4): the pending board opens with
+         * the band mirror — the resolved page opens with the four-cell
+         * KPI band, so the generic CardSkeleton (a retired card
+         * register) flashed the wrong anatomy at the handoff. */}
+        <StatStripSkeleton cells={4} />
         {/* The pending mirror keeps the resolved tree's frame. */}
         <SheetSection index="02" caption="CURRICULUM TREE" title="شجرة المناهج" className="qlt-sec">
           {/* 5-C3 (A9 P2-5): the placeholder carries the primitives-family

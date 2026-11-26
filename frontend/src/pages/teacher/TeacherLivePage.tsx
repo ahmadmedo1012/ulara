@@ -14,7 +14,7 @@ import { useCallback, useMemo, useState } from 'react';
 import {
   Plus, Play, Square, X, Clock, AlertCircle, RefreshCw,
 } from 'lucide-react';
-import { Card, FormField } from '../../components/primitives';
+import { Button, Card, FormField } from '../../components/primitives';
 /* R359 (A3 · W2-c) — the sheet grammar joins the live board: the
  * status StatStrip re-keys onto the KpiBand (real session counts,
  * honest-empty while pending), the session regions ride framed
@@ -57,22 +57,24 @@ const STATUS_FLAG_TONE: Record<LiveSessionRow['status'], 'warning' | 'positive' 
   CANCELLED: 'quiet',
 };
 
-/** Shape-matched skeleton for the stat strip + session rows. */
+/** Shape-matched skeleton — the resolved anatomy: the KpiBand's hairline
+ *  cells (index/caption bar · display numeral · Arabic label · delta
+ *  line — the .sg-kpi register, not the retired .stat-strip) plus the
+ *  framed session rows the sections resolve into. */
 function LiveSkeleton() {
   return (
     <>
-      <div className="stat-strip" aria-busy="true" aria-live="polite">
+      <div className="sg-kpis" aria-busy="true" aria-live="polite">
         {[0, 1, 2].map((i) => (
-          <div key={i} className="stat-cell" aria-hidden>
-            <Skeleton width={70} height={11} />
-            <div style={{ marginBlock: 'var(--sp-1)' }}>
-              <Skeleton width={60} height={28} />
-            </div>
-            <Skeleton width={110} height={11} />
+          <div key={i} className="sg-kpi" aria-hidden>
+            <span className="sg-kpi-top"><Skeleton width={72} height={10} /></span>
+            <span className="sg-kpi-value"><Skeleton width={58} height={30} /></span>
+            <span className="sg-kpi-label"><Skeleton width={88} height={11} /></span>
+            <span className="sg-kpi-delta"><Skeleton width={112} height={10} /></span>
           </div>
         ))}
       </div>
-      <Card>
+      <SheetSection caption="SESSIONS" title="الجلسات" reveal={false}>
         <div className="flex-col gap-2" aria-hidden>
           {[0, 1, 2].map((i) => (
             <div key={i} className="run-row">
@@ -84,7 +86,7 @@ function LiveSkeleton() {
             </div>
           ))}
         </div>
-      </Card>
+      </SheetSection>
     </>
   );
 }
@@ -171,13 +173,13 @@ export default function TeacherLivePage() {
             جدولة المحاضرات الحية وتشغيلها وإيقافها. الطلاب يرون فقط الجلسات الخاصة بمقرّراتهم.
           </p>
         </div>
-        <button
-          type="button"
-          className="btn accent hr-cta"
+        <Button
+          variant="accent"
+          className="hr-cta"
           onClick={() => (showForm ? requestClose() : setShowForm(true))}
         >
           <Icon icon={Plus} size={14} /> {showForm ? 'إغلاق النموذج' : 'جلسة جديدة'}
-        </button>
+        </Button>
       </header>
 
       {/* Metrics read only from settled data — never a fake "0" while the
@@ -345,10 +347,19 @@ export default function TeacherLivePage() {
                   </div>
                 )}
                 <div className="flex justify-end gap-2">
-                  <button type="button" className="btn ghost" onClick={requestClose} disabled={create.isPending}>إلغاء</button>
-                  <button type="submit" className="btn primary" disabled={create.isPending || offerings.isError}>
-                    {create.isPending ? 'جارٍ الإنشاء…' : 'جدولة الجلسة'}
-                  </button>
+                  {/* The submit rides the Form kit's loading contract — the
+                      canonical spinner + aria-busy, the label kept for SRs. */}
+                  <Button variant="ghost" onClick={requestClose} disabled={create.isPending}>
+                    إلغاء
+                  </Button>
+                  <Button
+                    variant="primary"
+                    type="submit"
+                    loading={create.isPending}
+                    disabled={offerings.isError}
+                  >
+                    {create.isPending ? 'جارٍ إنشاء الجلسة…' : 'جدولة الجلسة'}
+                  </Button>
                 </div>
               </form>
               {guard}
@@ -517,26 +528,26 @@ function SessionRow({
       )}
       <div className="run-row-actions">
         {onStart && (
-          <button type="button" className="btn primary sm" onClick={onStart} title="بدء البث" disabled={busy}>
+          <Button variant="primary" size="sm" loading={busy} onClick={onStart} title="بدء البث">
             <Icon icon={Play} size={12} /> بدء
-          </button>
+          </Button>
         )}
         {onEnd && (
-          <button type="button" className="btn sm" onClick={onEnd} title="إنهاء البث" disabled={busy}>
+          <Button size="sm" loading={busy} onClick={onEnd} title="إنهاء البث">
             <Icon icon={Square} size={12} /> إنهاء
-          </button>
+          </Button>
         )}
         {onCancel && (
-          <button
-            type="button"
-            className="btn ghost sm"
+          <Button
+            variant="ghost"
+            size="sm"
+            loading={busy}
             onClick={onCancel}
             title="إلغاء الجلسة"
             aria-label="إلغاء الجلسة"
-            disabled={busy}
           >
             <Icon icon={X} size={12} />
-          </button>
+          </Button>
         )}
       </div>
     </div>
