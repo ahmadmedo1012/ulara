@@ -644,3 +644,13 @@
 /* the rows' stagger rides the house belt (reveals.ts assigns the
    .reveal-d-N ladder at intersect time — no second ladder here). */
 
+
+/* r368 — phone: the reference's use-case list is plain rows. The group divider wraps its sentence
+   inside the frame (it ran off the edge), the per-row "use case" chips are dropped, rows get more air. */
+@media (max-width: 767px) {
+  .rl-group { flex-wrap: wrap; row-gap: 4px; padding-inline: 1.6rem; }
+  .rl-group-label { flex: 1 1 100%; white-space: normal; }
+  .rl-group-rule { display: none; }
+  .rl-kind { display: none; }
+  .rl-row { min-block-size: 52px; }
+}
