@@ -905,3 +905,12 @@ footer.fo-footer {
   }
   .fo-uses-art img { position: relative; z-index: 1; mix-blend-mode: multiply; }
 }
+
+/* r368 slice 11: the reference's pale disc at the stage's lower left, painted
+ * as a background layer under the royal shapes (additive, desktop only). */
+@media (min-width: 900px) {
+  .fo-uses-art {
+    background-image: radial-gradient(circle at 12cqw 92%, var(--duo-pale, #e6e3da) 0 11cqw, transparent calc(11cqw + 1px));
+    background-repeat: no-repeat;
+  }
+}

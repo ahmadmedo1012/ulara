@@ -185,3 +185,6 @@ Statement 2 (t 1.6 to 2.35) rides while the first isometric fragments fly in and
 
 ## Slice 09 footer uses stage (1440)
 Fixed: royal circle and tall royal slab now sit behind the cantilever (multiply), matching the reference stage. Remaining: pale disc, different ground tint, cookie strip is blue-on-white vs reference. Status: FAILING.
+
+## Slices 10/11
+11: pale disc added to the footer art stage (hand-built kit shape under royal shapes). 10: cursor still spec-verified only, no reference to measure. Status: FAILING.

@@ -87,3 +87,5 @@ NEXT: sync origin/main into branch at ~6:26, then slice 07 and 08 loops
 NEXT: sync origin/main at ~6:26; slice 09-11 loops
 - slice 09: footer uses stage gains royal circle + slab
 NEXT: slice 10/11
+- slice 11: pale disc on footer stage
+NEXT: main sync ~6:26; slices 12-14
