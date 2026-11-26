@@ -95,6 +95,7 @@ export function LegalSheet({
   title,
   lede,
   updated,
+  art,
   children,
 }: {
   /** The page's ONE h1 (Arabic, no tashkeel). */
@@ -103,6 +104,11 @@ export function LegalSheet({
   lede: ReactNode;
   /** The آخر تحديث date (LEGAL_UPDATED — one stamp for the whole suite). */
   updated: string;
+  /** r364 art v2 — optional architectural hero imagery (the art-system
+   * v2 plates) seated under the header. The legal suite stays
+   * text-first (the reference's own legal pages carry no imagery);
+   * /contact seats the admin plan plate. */
+  art?: ReactNode;
   children: ReactNode;
 }) {
   useThemeSync();
@@ -138,6 +144,8 @@ export function LegalSheet({
               <Link to="/" className="lg-cta-ghost">الصفحة الرئيسية</Link>
             </div>
           </div>
+
+          {art}
 
           {children}
 

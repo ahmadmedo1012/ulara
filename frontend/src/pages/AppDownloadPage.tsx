@@ -18,6 +18,10 @@ import { apiBaseURL } from '../lib/api';
  * simulator note) lives in RELEASE.md, not on the user-facing sheet.
  * Every URL, live-status behaviour and honesty marker is UNCHANGED. */
 import '../styles/app.css';
+/* r364 art v2 — the page's architectural hero band + the kit */
+import '../styles/landing/art-v2.css';
+import { ArtPageHeroScene } from '../components/patterns/ArtPageHero';
+import towerScene from '../assets/art-v2/tower-elevation.webp';
 
 /**
  * /app — «تطبيق أُلارا: التنزيل والتحديث» (R327 D1 · M0.8).
@@ -117,6 +121,16 @@ export function AppDownloadPage() {
               <Link to="/" className="ap-cta-ghost">الصفحة الرئيسية</Link>
             </div>
           </div>
+
+          {/* r364 art v2 — the distribution sheet's hero: the tower
+              elevation ink drawing (the app's standing presence on the
+              device, drawn the way the campus stands). */}
+          <ArtPageHeroScene
+            src={towerScene}
+            alt="رسم حبري لواجهة برج جامعي حديث بأعمدة خرسانية رأسية وشبكة نوافذ"
+            caption="APK · IPA"
+            note="قناتا توزيع حقيقيتان"
+          />
 
           <section aria-labelledby="app-android">
             <div className="pf-section-header">

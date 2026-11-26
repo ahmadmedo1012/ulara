@@ -11,6 +11,10 @@ import { RevealCssClass } from '../../hooks/useReveal';
  * chrome-less guest surface. */
 import { GuestSheetChrome } from '../../components/layout/GuestSheetChrome';
 import '../../styles/campus-media.css'; // the page-scoped capture-grid sheet
+/* r364 art v2 — the page's architectural hero band + the kit */
+import '../../styles/landing/art-v2.css';
+import { ArtPageHeroScene } from '../../components/patterns/ArtPageHero';
+import podiumScene from '../../assets/art-v2/podium-scene.webp';
 
 /**
  * /campus — «بيئة العمل الرقمية» (Phase Ω).
@@ -70,6 +74,17 @@ export function CampusLifePage() {
               <Link to="/capabilities" className="btn ghost">ما يعمل اليوم</Link>
             </RevealCssClass>
           </div>
+
+
+          {/* r364 art v2 — the campus sheet's hero: the duotone podium
+              scene (the physical plaza the digital environment stands
+              for — one student, one scale). */}
+          <ArtPageHeroScene
+            src={podiumScene}
+            alt="طالب وحيد يعبر ساحة حرم جامعي خرساني بظلال طويلة"
+            caption="CAMPUS · PLAZA"
+            note="المقياس الواحد خلف البيئة الرقمية"
+          />
 
           {/* the capture band — the student surfaces (lead + two seats) */}
           <RevealCssClass as="div" className="cw-band" delay={2}>

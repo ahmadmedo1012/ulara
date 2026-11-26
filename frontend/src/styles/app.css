@@ -74,3 +74,23 @@
     }
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   r364 art v2 — the public pages' architectural hero band
+   (patterns/ArtPageHero.tsx). The kit's own seats (fs-*, duo-*,
+   plan-*, dark-card) live in styles/landing/art-v2.css — this block
+   seats the band inside the pf- page frame and re-exports the kit
+   tokens the guest sheets can see (the guest sheets never load the
+   landing sheet family, so the ONE kit block they need is the
+   landing-independent core below: the figure + titlebar + dark card).
+   ═══════════════════════════════════════════════════════════════════ */
+.pg-art-hero {
+  margin-block-start: 1.75rem;
+}
+.pg-art-hero-plan {
+  max-inline-size: 34rem;
+  margin-inline: auto;
+}
+.pg-plan-checked {
+  position: relative;
+}

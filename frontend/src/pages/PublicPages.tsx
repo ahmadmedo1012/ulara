@@ -31,6 +31,13 @@ import { LEGAL_UPDATED } from './legal/LegalPages';
  * /contact keeps LegalSheet below. */
 import '../styles/about.css';
 import '../styles/help.css';
+/* r364 art v2 — the flat-shape kit + the plan/duotone plates ride the
+   public pages too (ArtPageHero seats them; the sheet is class-scoped,
+   no cascade risk across pages). */
+import '../styles/landing/art-v2.css';
+import { ArtPageHeroScene, ArtPageHeroPlan } from '../components/patterns/ArtPageHero';
+import podiumScene from '../assets/art-v2/podium-scene.webp';
+import lectureHall from '../assets/art-v2/lecture-hall.webp';
 
 /* ═══ [C-04] عن أُلارا ═══════════════════════════════════════════════ */
 
@@ -80,6 +87,16 @@ export function AboutPage() {
               <Link to="/" className="ab-cta-ghost">الصفحة الرئيسية</Link>
             </div>
           </div>
+
+          {/* r364 art v2 — the page's architectural hero: the campus
+              plaza with the lone student (the scale the manifesto is
+              written for) under the flat-shape kit. */}
+          <ArtPageHeroScene
+            src={podiumScene}
+            alt="طالب وحيد يعبر ساحة الحرم الجامعي أمام مبنى أكاديمي من الخرسانة الصريحة"
+            caption="ABOUT · 2026"
+            note="البيان يُقرأ على مقياس الحرم"
+          />
 
           <section aria-labelledby="about-statement">
             <div className="pf-section-header">
@@ -338,6 +355,16 @@ export function HelpPage() {
             </div>
           </div>
 
+          {/* r364 art v2 — the help sheet's hero: the lecture hall ink
+              section (the questions live in the rooms where learning
+              happens). */}
+          <ArtPageHeroScene
+            src={lectureHall}
+            alt="قسم معماري حبري لقاعة محاضرات جامعية بمدرّجاتها المتدرجة وسقفها الخرساني"
+            caption="HELP · Q&A"
+            note="أسئلة من داخل القاعات"
+          />
+
           <div className="hp-faq">
             {faqList.map((f, i) => (
               <details className="hp-faq-item" key={f.q} open={i === 0}>
@@ -390,6 +417,16 @@ export function ContactPage() {
       title="التواصل والتسجيل المبكر"
       lede="لا نخترع قنوات تواصل — هذه هي القناة المتاحة فعلًا اليوم، مكتوبة كما هي."
       updated={LEGAL_UPDATED}
+      /* r364 art v2 — the contact sheet's hero: the admin building's
+          thick-wall plan (the offices the channel reaches) under its
+          title bar, with the dark 'قناة التشغيل' card. */
+      art={
+        <ArtPageHeroPlan
+          plan="plan-admin"
+          title="الإدارة — المسقط الأفقي"
+          dark={{ header: 'قناة التشغيل', rows: ['نموذج التسجيل المبكر', 'قناة الأمن المسؤولة', 'الرد عبر القناة نفسها'] }}
+        />
+      }
     >
       <LegalSectionBar index={1} title="القناة المتاحة" id="contact-channel" />
       <LegalCell>
