@@ -543,9 +543,9 @@
 .cb-banner.cb-banner {
   position: fixed;
   inset-block-end: 0;
-  inset-inline: 0;
-  margin-inline: auto;
-  inline-size: min(560px, 100%);
+  left: auto;
+  right: 0;
+  inline-size: min(440px, 100%);
   z-index: 40;
   border: 1px solid var(--text);
   background: var(--bg);

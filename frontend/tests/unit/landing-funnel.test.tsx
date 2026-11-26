@@ -278,7 +278,8 @@ describe('404 way-back (r164b → r188)', () => {
     // display tashkeel («تصفّح الكلّيّات» → «تصفح الكليات») per the
     // zero-tashkeel-on-display-text canon — same string as the landing's.
     const colleges = screen.getByRole('link', { name: /تصفح الكليات التجريبية/ });
-    const login = screen.getByRole('link', { name: 'تسجيل الدخول' });
+    // r368: the full nav bar now also carries a login link; pin the 404 way-back one only
+    const login = within(container.querySelector('.nf-actions') as HTMLElement).getByRole('link', { name: 'تسجيل الدخول' });
     expect(home.getAttribute('href')).toBe('/');
     expect(colleges.getAttribute('href')).toBe('/colleges');
     expect(login.getAttribute('href')).toBe('/auth');

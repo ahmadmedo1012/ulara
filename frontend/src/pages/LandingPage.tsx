@@ -59,6 +59,7 @@ const Footer = lazy(() => import('../components/landing/sections-lazy').then((m)
 // retired — the giant footer wordmark is <Logo variant="wordmark"> now
 // and the circle-star mark cell is removed (ONE mark per view).
 import { EdgeTab } from '../components/landing/chrome/EdgeTab';
+import { ConsentBanner } from '../components/landing/chrome/ConsentBanner';
 /* r339 T-18 (A6) — the scroll progress rule: the reference's measured
  * splitting 1px pair at 50vh + the mono % readout. Scroll-driven CSS
  * (zero JS ticks); reduced motion never mounts it. */
@@ -532,6 +533,8 @@ export default function LandingPage() {
           share one grid row). The right-edge vertical tab stays. Public
           surface only — these never mount on auth pages. */}
       <EdgeTab />
+      {/* r368 — the reference seats its cookie strip on the viewport edge from first paint, so the gate mounts at the page root (reason: appearance twin) */}
+      <ConsentBanner />
 
       {/* r359 A1 — the scroll rule (the 50vh splitting pair + the %
           readout) and the boot-log rail RETIRE: the reference carries

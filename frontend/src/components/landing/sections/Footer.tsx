@@ -45,7 +45,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { RevealCssClass } from '../../../hooks/useReveal';
 import { Logo } from '../../../brand';
 import { BRAND_LABEL, LOGIN } from '../copy';
-import { ConsentBanner } from '../chrome/ConsentBanner';
+
 import { DuotoneScene } from '../plates/DuotoneScene';
 import cantileverScene from '../../../assets/art-v2/cantilever.svg';
 import { RegCross } from '../../patterns/RegCross';
@@ -353,7 +353,6 @@ export function Footer({ year }: { year: number }) {
               [1440, 0]
             </span>
           </div>
-          <ConsentBanner />
         </div>
 
         {/* ── the © bar + the policy row — one ruled line (R321 §A2):
