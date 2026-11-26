@@ -323,6 +323,39 @@ section.chapters {
   will-change: transform;
 }
 
+/* the dominant plan — r367: the thick-wall campus plan's framed
+   sheet rides BESIDE the iso walkthrough (the r364 NEXT item; the
+   reference's map band carries ONE dominant plan, shot-map-2).
+   Seat: the window's free inline-end quarter (the markers own the
+   inline-start 28–68%), vertically centered, ~24% of the window —
+   the plan plate's own hairline frame + title bar carry the sheet
+   chrome. The iso stack keeps its full-width seat and the scrub's
+   choreography untouched; this plate is the band's companion sheet,
+   authored visible (the JS-off law). */
+.jt-dominant {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-end: 1.5%;
+  translate: 0 -50%;
+  inline-size: 24%;
+  z-index: 3;
+  pointer-events: none;
+}
+.jt-dominant .plan-plate {
+  margin: 0;
+  inline-size: 100%;
+  pointer-events: auto;
+}
+.jt-dominant .plan-plate-art {
+  inline-size: 100%;
+  block-size: auto;
+}
+/* ≤991: the stacked column clock has no side seat — the phone reads
+   the walkthrough alone (the pre-r367 behaviour, kept verbatim). */
+@media (max-width: 991px) {
+  .jt-dominant { display: none; }
+}
+
 /* the plan sheet — the svg element fills the stack box; the
    1200×760 viewBox letterboxes (meet) inside it exactly like the
    reference's plan area. */
