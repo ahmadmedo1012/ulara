@@ -1140,3 +1140,18 @@
      art-v2.css's .duo-stage seat */
   margin-inline: auto;
 }
+
+/* r368 slice 07: the reference's why stage is two floating plan plates on bare
+ * ground, a royal annotation hairline and one dark card; no full-bleed photo.
+ * Desktop only; the cantilever stage keeps its DOM and shows below 992px. */
+.wy-plates { display: none; }
+@media (min-width: 992px) {
+  .wy-section [data-spec="why.stage"] { display: none; }
+  .wy-plates {
+    display: grid; grid-template-columns: 1fr 1fr; direction: ltr; position: relative;
+    min-block-size: 62rem; padding: 3rem 5rem 6rem; align-items: start;
+  }
+  .wy-plates-a { grid-column: 1; max-inline-size: 32rem; inline-size: 32rem; }
+  .wy-plates-b { grid-column: 2; align-self: end; justify-self: end; max-inline-size: 44rem; inline-size: 44rem; position: relative; margin-block-start: 12rem; }
+  .wy-plates-line { position: absolute; inset-inline: 2rem; inset-block-start: 22rem; block-size: 1px; background: var(--duo-signal, #2540d9); }
+}

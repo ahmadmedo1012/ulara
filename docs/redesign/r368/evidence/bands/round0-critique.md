@@ -206,3 +206,6 @@ Probe: scripts/fidelity/scrollperf.mjs (390x844 touch, 4x CPU throttle, producti
 
 ## Mobile spike + slice 07 recheck (7:35 PM)
 Remaining 1-2k px spike is first mount cost of lazy sections (chunks are already warmed on idle); with transitions off the run drops to 1.1 s long tasks, so reveal transitions firing together on jump-scroll account for most of the rest (a real finger scroll arrives gradually). Slice 07 at 1440: the reference stage is bare ground with two floating plates and a royal annotation hairline; ours is a full-bleed photographic cantilever with a royal circle. Large structural gap, not closed. Status: FAILING.
+
+## Slice 07 redo (1440)
+Why stage is now two floating plan plates (campus, laboratory) on bare ground, a royal annotation hairline and the dark checking card, replacing the full-bleed cantilever on desktop (DOM kept, hidden at 992px and up). Remaining: plates are small and quiet versus the reference plates, no corner plus marks or red tag cards, the pillar panels still follow below. Status: FAILING (closer).

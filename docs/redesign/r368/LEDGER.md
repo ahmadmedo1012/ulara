@@ -99,3 +99,5 @@ NEXT: main sync ~6:26; cross-slice analyze
 NEXT: further fixes or mark Ready on owner call
 - mobile scroll: iso-loop settled + no Lenis on touch; probe scrollperf.mjs (long tasks 9.1s -> 1.5s)
 NEXT: more mobile scroll (lazy mount spike, rl-row transitions), then slices 05-08
+- slice 07: why stage = two plan plates + royal hairline + dark card
+NEXT: slice 08, 05, 06 redo

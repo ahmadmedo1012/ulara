@@ -19,6 +19,7 @@ import { RevealCssClass } from '../../../hooks/useReveal';
 import { WhyPanels } from '../plates/WhyPanels';
 import { DuotoneScene } from '../plates/DuotoneScene';
 import { DimensionLine } from '../../patterns/DimensionLine';
+import { PlanPlate, DarkCard } from '../plates/PlanPlate';
 import cantileverScene from '../../../assets/art-v2/cantilever.svg';
 
 export function Why() {
@@ -80,6 +81,19 @@ export function Why() {
           caption="Y:10168 · قاعدة التشغيل"
           note="مقياس واحد: الطالب على الساحة"
         />
+      </div>
+
+      {/* r368 slice 07 — desktop stage: two plan plates floating on bare
+          ground with a royal annotation hairline and one dark card (the
+          reference's why stage). The cantilever stage above retires from
+          the desktop view only (display:none at >=992; DOM kept). */}
+      <div className="wy-plates" aria-label="مخططات المباني خلف الأعمدة الأربعة" data-spec="why.plates">
+        <div className="wy-plates-a"><PlanPlate plan="plan-campus" title="الحرم الجامعي — المسقط العام" /></div>
+        <div className="wy-plates-line" aria-hidden="true" />
+        <div className="plan-plate plan-plate-checked wy-plates-b">
+          <PlanPlate plan="plan-laboratory" title="المختبر — المسقط الأفقي" />
+          <DarkCard header="جارٍ الفحص…" rows={['سعة المختبر مقابل الجدول', 'أوقات الذروة', 'الحجوزات المفتوحة']} />
+        </div>
       </div>
 
       {/* R346 — the isometric loop panels (the retired WhyScene's mount;
