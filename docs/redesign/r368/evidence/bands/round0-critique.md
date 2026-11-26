@@ -59,3 +59,6 @@ Plate column is now one tall cell. Still wrong: copy column order/scale, no ledg
 
 ## Platform round 4
 Ledger rows added (four ruled lines with icon). Still wrong: row scale/position vs reference, copy column too small, dark chat card only on hover. Status: FAILING.
+
+## Platform round 5
+Ledger row scale raised. Dark card stays hover-only (spec-measured rest state); not yet visible at rest like the reference. Status: FAILING.
