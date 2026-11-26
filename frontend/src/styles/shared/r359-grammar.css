@@ -214,6 +214,35 @@
 .sg-kpi-delta[data-tone='positive'] { color: var(--success-ink); }
 .sg-kpi-delta[data-tone='warning'] { color: var(--warning-ink); }
 .sg-kpi-delta[data-tone='danger'] { color: var(--danger-ink); }
+/* r365 — the flat signal FLAG: one solid triangle before the delta
+   caption (the reference's delta-flag register in the KPI band). A
+   border-triangle, 6px, tone ink, inline-start placement — RTL flips
+   with the direction naturally since the glyph is symmetric. */
+.sg-kpi-delta[data-dir] {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.sg-kpi-delta[data-dir]::before {
+  content: '';
+  inline-size: 0;
+  block-size: 0;
+  border-inline-start: 4px solid transparent;
+  border-inline-end: 4px solid transparent;
+  border-block-start: none;
+  flex: none;
+  transform-origin: center;
+}
+.sg-kpi-delta[data-dir='up']::before {
+  border-block-end: 6px solid currentColor;
+}
+.sg-kpi-delta[data-dir='down']::before {
+  border-block-start: 6px solid currentColor;
+}
+.sg-kpi-delta[data-dir='flat']::before {
+  border-block-end: 3px solid currentColor;
+  transform: translateY(1px);
+}
 .sg-kpi[data-empty='true'] .sg-kpi-value {
   font-family: var(--font-sans);
   font-size: var(--fs-body-lg);

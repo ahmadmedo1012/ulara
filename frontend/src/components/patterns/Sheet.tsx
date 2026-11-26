@@ -136,6 +136,11 @@ export interface KpiItem {
   /** The delta line (mono, tone-colored). */
   delta?: string;
   deltaTone?: KpiTone;
+  /* r365 — the flat delta FLAG: a small solid triangle rendered before
+   * the delta caption, playing the reference's signal-flag role in the
+   * KPI band (direction, not decoration: up/down/flat). Additive —
+   * every existing page keeps rendering unchanged when absent. */
+  deltaDir?: 'up' | 'down' | 'flat';
   tone?: KpiTone;
   /** Marks a not-yet datum — the honest-empty register. */
   empty?: boolean;
@@ -178,7 +183,11 @@ function KpiCell({ item }: { item: KpiItem }) {
       <span className="sg-kpi-value">{item.empty ? '—' : valueNode}</span>
       <span className="sg-kpi-label">{item.label}</span>
       {item.delta !== undefined && (
-        <span className="sg-kpi-delta" data-tone={DELTA_TONE[item.deltaTone ?? 'neutral']}>
+        <span
+          className="sg-kpi-delta"
+          data-tone={DELTA_TONE[item.deltaTone ?? 'neutral']}
+          data-dir={item.deltaDir}
+        >
           {item.delta}
         </span>
       )}
