@@ -241,6 +241,15 @@
     from { opacity: 0; }
     to   { opacity: 1; }
   }
+  /* r363 P4 (the RM probe's forensics): the lazy-fade is a MOTION —
+     under prefers-reduced-motion the image ships settled (opacity 1,
+     no animation registered), the same belt every ambient seat rides. */
+  @media (prefers-reduced-motion: reduce) {
+    img[loading="lazy"] {
+      animation: none;
+      opacity: 1;
+    }
+  }
 
   /* Audit 0-a P2-1/2/3: caret / autofill / underline-offset were
      completely absent. All themed from the palette so native chrome

@@ -174,48 +174,48 @@ jobs:
   #    installed as a draft comment UNTIL the probe scripts land;
   #    uncomment as each script/audit/p4/*.ts ships.
   #
-  # sweep-ux:
-  #   if: >
-  #     github.event_name == 'schedule' ||
-  #     (github.event_name == 'workflow_dispatch' && inputs.mode == 'ux')
-  #   needs: sweep-full
-  #   name: Product sweep (ux probes)
-  #   runs-on: ubuntu-24.04
-  #   timeout-minutes: 45
-  #   steps:
-  #     - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-  #     - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-  #       with:
-  #         node-version: ${{ env.NODE_VERSION }}
-  #         cache: 'npm'
-  #     - run: npm ci
-  #     - run: npm --prefix frontend run build
-  #     - name: Install chromium (audit sweep browser)
-  #       working-directory: frontend
-  #       run: npx playwright install chromium
-  #     - name: Serve the production build (hermetic)
-  #       working-directory: frontend
-  #       run: |
-  #         npx vite preview --port 4173 --strictPort &
-  #         echo "PREVIEW_PID=$!" >> "$GITHUB_ENV"
-  #         sleep 5
-  #     - name: Keyboard-only — the five main journeys
-  #       run: npx tsx scripts/audit/p4/keyboard-journeys.ts
-  #     - name: 200% text zoom — reflow gate (overflow/overlap/tap re-probe at half-viewport + rem×2)
-  #       run: npx tsx scripts/audit/p4/zoom-200.ts --routes /,/auth,/student/dashboard,/teacher/dashboard,/admin/dashboard,/quality/dashboard,/owner/dashboard
-  #     - name: prefers-reduced-motion — entrances resolve instantly, heights stable
-  #       run: npx tsx scripts/audit/p4/reduced-motion.ts --routes /,/student/dashboard
-  #     - name: Slow-3G + CPU 4× — landing + one page per role render core content
-  #       run: npx tsx scripts/audit/p4/throttle.ts --slow3g --cpu 4
-  #     - name: Tables → labelled cards ≤ 640px + bottom sheets + Arabic SR labels
-  #       run: npx tsx scripts/audit/p4/responsive-semantics.ts --phone-widths 360,390
-  #     - name: Stop the preview server
-  #       if: always()
-  #       run: kill "$PREVIEW_PID" || true
-  #     - name: Upload UX evidence
-  #       if: always()
-  #       uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-  #       with:
-  #         name: p4-sweep-ux
-  #         path: docs/redesign/p4/evidence/
-  #         retention-days: 14
+  sweep-ux:
+    # r363: the four probes shipped (probe-keyboard · probe-zoom ·
+    # probe-reduced-motion · probe-throttle); the responsive-semantics
+    # probe is the remaining P4 item and stays unwired.
+    if: >
+      github.event_name == 'schedule' ||
+      (github.event_name == 'workflow_dispatch' && inputs.mode == 'ux')
+    name: Product sweep (ux probes)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      - run: npm ci
+      - run: npm --prefix frontend run build
+      - name: Install chromium (audit sweep browser)
+        working-directory: frontend
+        run: npx playwright install chromium
+      - name: Serve the production build (hermetic)
+        working-directory: frontend
+        run: |
+          AUDIT_API_MOCK=1 npx vite preview --port 4173 --strictPort &
+          echo "PREVIEW_PID=$!" >> "$GITHUB_ENV"
+          sleep 5
+      - name: Keyboard-only — the five main journeys
+        run: ULARA_E2E_BASE_URL=http://localhost:4173 npx tsx scripts/audit/p4/probe-keyboard.ts --report docs/redesign/p4/evidence
+      - name: 200% text zoom — the reflow gate at half-viewport + rem×2
+        run: ULARA_E2E_BASE_URL=http://localhost:4173 npx tsx scripts/audit/p4/probe-zoom.ts --report docs/redesign/p4/evidence
+      - name: prefers-reduced-motion — ambient animations settle, reveals complete
+        run: ULARA_E2E_BASE_URL=http://localhost:4173 npx tsx scripts/audit/p4/probe-reduced-motion.ts --report docs/redesign/p4/evidence
+      - name: Slow-3G + CPU 4× — landing + /auth + one role page
+        run: ULARA_E2E_BASE_URL=http://localhost:4173 npx tsx scripts/audit/p4/probe-throttle.ts --report docs/redesign/p4/evidence
+      - name: Stop the preview server
+        if: always()
+        run: kill "$PREVIEW_PID" || true
+      - name: Upload UX evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: p4-sweep-ux
+          path: docs/redesign/p4/evidence/
+          retention-days: 14

@@ -307,6 +307,11 @@ export default function AuthPage() {
       </div>
       <div className="auth-grain" aria-hidden="true" />
 
+      {/* r363 P4 keyboard probe: the r305 law holds on EVERY guest
+          sheet — the skip link is the FIRST Tab stop (the auth page is
+          standalone, outside the shell that carries the shared one).
+          The target <main> below carries id="main". */}
+      <a href="#main" className="skip-link">تخطَّ إلى المحتوى</a>
       {/* imm-5 a11y fix (axe "all content in landmarks" — was a bare
           div): the page-level chrome reads as banner / contentinfo
           landmarks; <main> above already carried the form. RegisterPage
@@ -323,7 +328,7 @@ export default function AuthPage() {
         </span>
       </header>
 
-      <main className="auth-center">
+      <main id="main" className="auth-center">
         {/* R315 (K-I): the centred CARD is dissolved — the sheet column
             sits directly on the framed paper; the ruled cell composition
             carries all the structure (auth.css §2/§4). */}
