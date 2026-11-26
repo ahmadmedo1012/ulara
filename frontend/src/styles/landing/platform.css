@@ -802,8 +802,15 @@ html[data-theme='dark'] .pr-section .pr-cta {
     min-block-size: 0;
   }
   .pr-section .pr-row[aria-hidden="true"]:not(.pr-clone) { display: none; }
-  .pr-section .pr-row:not(.pr-clone) .pr-rowimg,
-  .pr-section .pr-row:not(.pr-clone) .pr-cta { display: none; }
+  .pr-section .pr-row:not(.pr-clone) .pr-rowimg { display: none; }
+  /* the CTA stays a real link (it is the band's only path to sign-up): a plain ruled row, the decorative menu and icons off */
+  .pr-section .pr-row:not(.pr-clone) .pr-cta { position: relative; inset: auto; display: block; block-size: auto; min-block-size: 0; padding: 16px; border-block-start: 1px solid var(--rule); }
+  .pr-section .pr-row:not(.pr-clone) .pr-cta .pr-menu,
+  .pr-section .pr-row:not(.pr-clone) .pr-cta .pr-cta-icons,
+  .pr-section .pr-row:not(.pr-clone) .pr-cta .pr-cta-rule { display: none; }
+  .pr-section .pr-row:not(.pr-clone) .pr-cta .pr-cta-body,
+  .pr-section .pr-row:not(.pr-clone) .pr-cta .pr-cta-row { position: static; inset: auto; block-size: auto; min-block-size: 0; display: block; }
+  .pr-section .pr-row:not(.pr-clone) .pr-cta .pr-cta-line { position: static; display: inline; font-size: 15px; font-weight: 600; }
   .pr-section .pr-row:not(.pr-clone) .pr-head,
   .pr-section .pr-row:not(.pr-clone) .pr-side,
   .pr-section .pr-row:not(.pr-clone) .pr-sidebox,
