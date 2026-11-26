@@ -3,6 +3,7 @@ import bpy, sys, math, random
 from mathutils import Vector
 a = sys.argv[sys.argv.index('--')+1:]
 out, W, H, S, kind = a[0], int(a[1]), int(a[2]), int(a[3]), a[4]
+FLAT = len(a) > 5 and a[5] == 'flat'   # top-down plan view instead of iso
 random.seed(abs(hash(kind)) % 1000 if False else sum(map(ord, kind)))
 bpy.ops.wm.read_factory_settings(use_empty=True)
 sc = bpy.context.scene
@@ -19,16 +20,33 @@ def mat(col, tex=50):
     l.new(t.outputs['Fac'],r.inputs['Fac']); l.new(r.outputs['Color'],bs.inputs['Base Color'])
     bu=n.new('ShaderNodeBump'); bu.inputs['Strength'].default_value=.5; l.new(t.outputs['Fac'],bu.inputs['Height']); l.new(bu.outputs['Normal'],bs.inputs['Normal']); return m
 conc=mat(.64); dk=mat(.2,30)
+def emis(v):
+    m=bpy.data.materials.new('e'); m.use_nodes=True; n=m.node_tree.nodes; l=m.node_tree.links
+    for x in list(n): n.remove(x)
+    e=n.new('ShaderNodeEmission'); e.inputs['Color'].default_value=(v,v,v,1); o=n.new('ShaderNodeOutputMaterial'); l.new(e.outputs[0],o.inputs[0]); return m
+paper=emis(1.0); fl=dk
+if FLAT: conc=emis(.06); dk=emis(.4); fl=emis(.9); paper=emis(1.0)
 def box(x0,x1,y0,y1,z0,z1,m=conc):
     bpy.ops.mesh.primitive_cube_add(); o=bpy.context.object
     o.location=((x0+x1)/2,(y0+y1)/2,(z0+z1)/2); o.scale=((x1-x0)/2,(y1-y0)/2,(z1-z0)/2); o.data.materials.append(m)
-def room(x,y,w,d,h,t=.25,door=True):  # walled room without roof (cut-away plan)
-    box(x,x+w,y,y+t,0,h); box(x,x+w,y+d-t,y+d,0,h); box(x,x+t,y,y+d,0,h); box(x+w-t,x+w,y,y+d,0,h)
-    box(x+t,x+w-t,y+t,y+d-t,0,.1,dk)
+def room(x,y,w,d,h,t=.25,door=True):  # walled room without roof (cut-away plan); front wall has a door gap
+    g=2.2
+    mx=x+w*0.38
+    box(x,mx,y,y+t,0,h); box(mx+g,x+w,y,y+t,0,h)
+    box(x,x+w,y+d-t,y+d,0,h); box(x,x+t,y,y+d,0,h); box(x+w-t,x+w,y,y+d,0,h)
+    box(x+t,x+w-t,y+t,y+d-t,0,.1,fl)
+    if FLAT: box(mx,mx+0.12,y,y+g*0.95,0,.2,dk)   # door leaf (swing line stand-in)
+def part(x0,y0,x1,y1,h=2.4,gap=None):  # interior partition with an optional door gap
+    if x0==x1:
+        if gap: box(x0-.12,x0+.12,y0,gap[0],0,h); box(x0-.12,x0+.12,gap[1],y1,0,h)
+        else: box(x0-.12,x0+.12,y0,y1,0,h)
+    else:
+        if gap: box(x0,gap[0],y0-.12,y0+.12,0,h); box(gap[1],x1,y0-.12,y0+.12,0,h)
+        else: box(x0,x1,y0-.12,y0+.12,0,h)
 def seats(x,y,rows,cols,dx=1.1,dy=1.0):
     for i in range(rows):
         for j in range(cols): box(x+j*dx,x+j*dx+.7,y+i*dy,y+i*dy+.4,0,.45,dk)
-box(-21,21,-15,15,-.3,0)
+box(-21,21,-15,15,-.3,0,paper if FLAT else conc)
 if kind=='lecture':
     room(-14,-9,28,18,2.4); seats(-10,-6,7,17); box(-9,9,6,7,0,.5,dk); room(-14,10,10,6,2.4)
 elif kind=='library':
@@ -55,6 +73,11 @@ elif kind=='lab':
         box(-10+i*8.5,-8.5+i*8.5,-1,0.3,1.1,1.4,dk)
     box(-12,12,5,5.6,0,1.1,dk); box(-12,12,6.4,7,0,1.1,dk); box(-8,-7.7,-8.8,9,0,2.6,conc); box(4,4.3,-8.8,9,0,2.6,conc)
     room(-20,-3,6,6,2.6); box(10,13,-8,-5,0,2.2,dk)
+if kind=='lecture': part(-4,-9,-4,-5,gap=None); part(4,-9,4,-5)
+if kind=='library': part(-15,0,-8,0,gap=(-12,-10)); part(8,0,15,0,gap=(11,13))
+if kind=='exam': part(-13,-3,-9,-3,gap=(-12,-10)); part(9,-3,13,-3)
+if kind=='admin': part(-8,-8,-8,-3,gap=None); part(-16,0,-8,0,gap=(-13,-11)); part(8,-8,8,-1)
+if kind=='lab': part(-14,-1,-6,-1,gap=(-11,-9)); part(6,-1,14,-1,gap=(9,11)); part(0,-9,0,-4)
 def dim(x0,y0,x1,y1):  # dimension string with end ticks
     box(min(x0,x1),max(x0,x1)+.08,min(y0,y1),max(y0,y1)+.08,0,.03,dk)
     for (x,y) in ((x0,y0),(x1,y1)): box(x-.5 if y0==y1 else x-.04,x+.5 if y0==y1 else x+.04,y-.04 if y0==y1 else y-.5,y+.04 if y0==y1 else y+.5,0,.03,dk)
@@ -72,8 +95,8 @@ vl=bpy.context.view_layer; vl.use_freestyle=True
 ls=vl.freestyle_settings.linesets.new('ink') if not vl.freestyle_settings.linesets else vl.freestyle_settings.linesets[0]
 ls.linestyle=bpy.data.linestyles.new('ls'); ls.select_silhouette=True; ls.select_border=True; ls.select_crease=True
 ls.linestyle.color=(0.02,0.02,0.02); ls.linestyle.thickness=1.3
-bpy.ops.object.light_add(type='SUN'); s=bpy.context.object; s.rotation_euler=(math.radians(50),0,math.radians(-50)); s.data.energy=5; s.data.angle=math.radians(1.2)
+bpy.ops.object.light_add(type='SUN'); s=bpy.context.object; s.rotation_euler=(math.radians(50),0,math.radians(-50)); s.data.energy=0.3 if FLAT else 5; s.data.angle=math.radians(1.2)
 bpy.ops.object.camera_add(); c=bpy.context.object
-d=Vector((1,-1,.85)).normalized()*60; c.location=d; c.rotation_euler=(-d).to_track_quat('-Z','Y').to_euler()
-c.data.type='ORTHO'; c.data.ortho_scale=(58 if kind=='campus' else 44); sc.camera=c
+d=(Vector((0.0001,-0.0001,1)).normalized() if FLAT else Vector((1,-1,.85)).normalized())*60; c.location=d+(Vector((0,1.5,0)) if FLAT else Vector((0,0,0))); c.rotation_euler=(-d).to_track_quat('-Z','Y').to_euler()
+c.data.type='ORTHO'; c.data.ortho_scale=((62 if kind=='campus' else 52) if FLAT else (58 if kind=='campus' else 44)); sc.camera=c
 bpy.ops.render.render(write_still=True)
