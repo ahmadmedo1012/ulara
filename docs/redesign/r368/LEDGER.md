@@ -123,3 +123,4 @@ NEXT: more
 - dark: tag cards royal-dark, ink slab stays dark. NEXT: 06 stage 2+, cookie vs CTA.
 - 06 stage 2+: closing paragraph visually hidden on desktop. NEXT: cookie vs CTA, dark/RTL recheck.
 - cookie bar clears hero CTA (RTL seat right). NEXT: dark/RTL recheck.
+- dark/RTL re-check logged; consent tests 129 pass. NEXT: 07/08 plate measurement, hatching density.

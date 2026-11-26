@@ -260,3 +260,6 @@ Note: earlier wheel frames in this thread were partly stale (reused output dirs)
 
 ## Cookie bar vs CTA
 RTL desktop bar moved to the inline-start side (right). Measured at 1440x1000, 1280x800, 1024x768: no overlap with the primary hero CTA or headline, only two decorative hairlines. Dark/RTL re-check not yet done. Status: FAILING.
+
+## Dark and RTL re-check (1440x1000)
+Dark hero, statement band and values band render coherently in RTL; the cookie bar sits right, clear of the CTA, in both themes. The scroll-2200 dark frame is a near-empty band with a single line (likely a reveal not yet triggered in a static capture; unverified). Consent tests: 129 passed. Status: FAILING.
