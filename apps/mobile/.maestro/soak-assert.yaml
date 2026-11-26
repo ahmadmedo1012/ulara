@@ -35,6 +35,9 @@ appId: ly.ulara.app
 # session ALIVE. The picker tap is the documented re-entry (the same
 # optional the bootstrap leg rides); absent picker → skipped.
 - tapOn:
+    text: "إلغاء عن مشكلة"
+    optional: true
+- tapOn:
     text: "مساحة عمل أُلارا التجريبية"
     optional: true
 # THE contract: still authenticated, still on the student dashboard.
