@@ -109,3 +109,5 @@ NEXT: slice 05/06 redo
 NEXT: owner call
 - slice 06: desktop bare opening statement at stage 0 (separate commit)
 NEXT: re-measure mobile scroll; further rounds
+- slice 06: stage 1 large thick-wall plan frame (desktop)
+NEXT: 07/08 polish

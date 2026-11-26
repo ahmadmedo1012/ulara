@@ -221,3 +221,6 @@ The plan strip now takes the left half as a stack of title-barred plates with th
 
 ## Slices 05/06 round 9 (1440)
 05: the sub paragraph is hidden at desktop (DOM kept); the head is now the title alone, like the reference. 06: a desktop-only opening statement on bare ground (aria-hidden, .jt-lede) shows while the scene is at stage 0 and hands off to the existing art and scrubbed statement; no driver or timing-test change (237 journey tests pass unchanged). Remaining: the left closing column and thumbnail stay once the art lands, and the opening statement copy is our own. Status: FAILING (closer).
+
+## Slice 06 round 10 (1440)
+Stage 1 now shows one large thick-wall plan on bare ground (aria-hidden .jt-bigplan, desktop only), matching the reference second frame (a plan filling the stage). Sequence on desktop: bare statement, big plan, then the existing iso art and scrubbed statement. No driver change. Remaining: the closing column and thumbnail stay for stages 2 and up, plan is the library plan not a measured one. Status: FAILING (closer).

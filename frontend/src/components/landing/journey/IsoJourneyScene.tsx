@@ -115,6 +115,7 @@ const FINDINGS_AR = [
  * aria-labelledby contract rides id="chapters-title"). */
 const CLOSE_CHIP_L1_AR = 'الفصول';
 const CLOSE_CHIP_L2_AR = '[04]';
+const BIG_PLAN_SRC = new URL('../../../assets/art-v2/plans/plan-library.svg', import.meta.url).href;
 const CLOSE_TITLE_AR = 'الرحلة — أربعة فصول تتحرك أمامك';
 /* R349 (D5 · the closing copy's diet): the retired three-sentence
  * block restated the funnel hint («وإنشاء الحساب في نهاية الصفحة» —
@@ -938,6 +939,11 @@ export function IsoJourneyScene() {
             before any art lands. Decorative and aria-hidden; shown only at
             desktop widths while the scene is at stage 0 (journey.css). */}
         <div className="jt-lede" aria-hidden="true" data-spec="map.lede">من أول محاضرة إلى آخر اختبار</div>
+        {/* r368 slice 06: the reference's second frame is one large thick-wall plan
+            filling the stage; shown at stage 1 on desktop only (journey.css). */}
+        <div className="jt-bigplan" aria-hidden="true" data-spec="map.bigplan">
+          <img src={BIG_PLAN_SRC} alt="" loading="lazy" decoding="async" />
+        </div>
         {/* the PLAN COLUMN — measured per bp; the ≤991 scroll track */}
         <div className="jt-map-col">
           {/* the stack seat @≥992 · the STICKY WINDOW @≤991 */}
