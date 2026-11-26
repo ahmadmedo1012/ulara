@@ -95,7 +95,7 @@ frontend/tests/audit/screenshots/
 !.agents/skills/**
 .claude-flow/
 .swarm/
-.specify/
+# r368: .specify/ is tracked on purpose (Spec Kit constitution, templates, scripts); machine-local bits are ignored by .specify/.gitignore
 .claude/
 test-results/
 .gstack/
