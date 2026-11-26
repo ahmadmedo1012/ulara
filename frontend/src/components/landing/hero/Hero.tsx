@@ -35,11 +35,12 @@ const LEAD_LINE = 'محاضرات تفاعلية، ومصفوفة إتقان، �
  * box maps them to % at render time so they ride ON the building
  * features: the curtain-wall glass upper field, the left stair run,
  * the right curtain wall, the right stair low wall. */
+/* r368: seats are the Blender raster's pixel coords, x mirrored (inline-start anchors in RTL) */
 const STATIONS = [
-  { id: 'C-01', label: 'مقرر تفاعلي', vx: 640, vy: 300, dir: 'up' },
-  { id: 'E-02', label: 'اختبار موثّق', vx: 430, vy: 600, dir: 'down' },
-  { id: 'R-03', label: 'بحث علمي', vx: 1040, vy: 280, dir: 'up' },
-  { id: 'I-04', label: 'مؤسسة أكاديمية', vx: 1150, vy: 620, dir: 'down' },
+  { id: 'C-01', label: 'مقرر تفاعلي', vx: 856, vy: 291, dir: 'up' },
+  { id: 'E-02', label: 'اختبار موثّق', vx: 1201, vy: 582, dir: 'down' },
+  { id: 'R-03', label: 'بحث علمي', vx: 527, vy: 362, dir: 'up' },
+  { id: 'I-04', label: 'مؤسسة أكاديمية', vx: 417, vy: 576, dir: 'down' },
 ] as const;
 
 /* r360 F2 — the MOBILE station seats: A2's mobile elevation (the art key

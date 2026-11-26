@@ -36,6 +36,7 @@ def mat(name, col, rough=0.9, tex=None, glass=False):
     return m
 concrete = mat('c',(0.62,0.62,0.6),0.95,tex=60)
 dark = mat('d',(0.03,0.03,0.03),0.5)
+fin = mat('f',(0.22,0.22,0.21),0.9,tex=40)
 glass = mat('g',(0.4,0.45,0.5),glass=True)
 def box(x0,x1,y0,y1,z0,z1,m):
     bpy.ops.mesh.primitive_cube_add()
@@ -62,8 +63,8 @@ for lvl,z0 in enumerate((3.2,7.4)):
     box(-5.2,5.2,0.6,1.3,z0+1.9,z0+2.0,dark)
 # big fins
 for x in (-9.3,-4.3,-0.6,0.6,4.3,9.3): pass
-box(-9.6,-9.0,-0.6,6,3.2,13.2,dark)
-box(9.0,9.6,-0.6,6,3.2,13.2,dark)
+box(-9.6,-9.0,-0.6,6,3.2,13.2,fin)
+box(9.0,9.6,-0.6,6,3.2,13.2,fin)
 box(-6.0,-5.4,-1.2,6,3.2,14.2,concrete); box(5.4,6.0,-1.2,6,3.2,14.2,concrete)
 # projecting centre frame
 box(-3.2,3.2,-1.4,-0.2,7.0,7.5,concrete); box(-3.2,-2.6,-1.4,-0.2,7.0,11.8,concrete)
@@ -72,6 +73,8 @@ box(2.6,3.2,-1.4,-0.2,7.0,11.8,concrete); box(-3.2,3.2,-1.4,-0.2,11.4,11.9,concr
 box(-9,-5.2,0.2,5.8,11.6,12.6,concrete); box(5.2,9,0.2,5.8,11.6,12.6,concrete)
 # retaining walls front
 box(-5.8,5.0,-2.2,-0.2,0,3.6,concrete); box(6.4,13.8,-1.5,-0.2,0,2.4,concrete)
+# massing variety: taller right tower block, left setback, deep cantilever
+box(5.2,9,0.2,5.8,12.6,16.6,concrete); box(5.0,9.2,-2.6,0.2,11.2,11.8,concrete); box(-9,-5.2,0.2,5.8,12.6,14.2,concrete); box(-12,-9.6,0.2,3,2.0,5.4,concrete); box(-14,-12,0.2,2.5,5.4,5.9,concrete)
 # trees (bare, thin branches)
 import bmesh
 from mathutils import Vector, Matrix
@@ -85,7 +88,7 @@ def tree(x,h):
         for _ in range(3 if dep>2 else 2):
             nd=Vector((d.x+random.uniform(-1.1,1.1),random.uniform(-.2,.2),d.z*0.55+random.uniform(0.0,.6))).normalized()
             br(q,nd,L*0.8,t*0.6,dep-1)
-    br(Vector((x,-3.0,0)),(random.uniform(-.1,.1),0,1),h*0.38,0.13,8)
+    br(Vector((x,-3.0,0)),(random.uniform(-.1,.1),0,1),h*0.38,0.075,8)
     me=bpy.data.meshes.new('t'); bm.to_mesh(me); o=bpy.data.objects.new('t',me); o.data.materials.append(dark)
     bpy.context.collection.objects.link(o)
 tree(-16.5,9); tree(16.5,9.5); tree(-19.5,7); tree(19.5,7.5)
