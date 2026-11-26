@@ -316,10 +316,15 @@ jobs:
       - name: Build for the simulator (Debug, unsigned)
         working-directory: apps/mobile
         run: |
-          SCHEME="$(basename "$(ls ios/*.xcodeproj | head -1)" .xcodeproj)"
-          echo "scheme: $SCHEME"
+          # expo prebuild names the workspace/scheme after the sanitized
+          # app name — detect both from the workspace file itself
+          # (`ls ios/*.xcodeproj` lists INSIDE the dir — run 45733427792's
+          # forensics: the build asked for 'ios/project.pbxproj.xcworkspace').
+          WS="$(ls -d ios/*.xcworkspace | head -1)"
+          SCHEME="$(basename "$WS" .xcworkspace)"
+          echo "workspace: $WS | scheme: $SCHEME"
           xcodebuild \
-            -workspace "ios/${SCHEME}.xcworkspace" \
+            -workspace "$WS" \
             -scheme "$SCHEME" \
             -configuration Debug \
             -sdk iphonesimulator \
