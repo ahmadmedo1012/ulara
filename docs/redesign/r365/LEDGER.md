@@ -15,5 +15,7 @@ Mission: every page after login becomes the reference's product-grade twin (stud
 - P0.4  capture harness (tests/e2e/r365-capture.e2e.ts, opt-in via R365_CAPTURE=1) — hermetic fixtures, all roles/themes/viewports. Baseline dashboards captured: all five carry the sheet grammar already (huge title, mono eyebrows, KPI hairline band, bracket indices); first defects: no delta flags on KPI cells, teacher dashboard bottom section renders empty, charts sparse. — DONE
 - P1.1  the flat delta flag primitive (KpiItem.deltaDir + CSS triangle, additive) + DesignPage demo wiring. — DONE
 - P1.2  student dashboard momentum strip lifted into the KPI-band register (huge numerals + flags), loading mirror re-seated on the .sg-kpis grid (CLS-safe handoff). — DONE
+- P0.5  capture harness upgraded: h1-settle wait, reduced-motion from context, R365_ONLY subset filter, LONG-SHOT expansion (the shell scrolls in .content — fullPage needs the shell opened; pass-1 shots were viewport-only). Preview-based baseline matrix (built assets): 90 desktop-light + 90 desktop-dark + 95 phone-light shots. — DONE
+- P0.6  quality-dashboard defect RESOLVED — the pass-1 skeleton was the dev-server chunk-compile race; built preview renders the full board (KPI band 5 cells, alerts flagged rows). — DONE
 
-NEXT: preview matrix (built assets) finishing; then vitest+e2e pins for the student dashboard; evidence sheets for the new band; then P2 student pages (AI assistant chat-widget grammar first).
+NEXT: long-shot matrix re-capture running; then evidence sheets per role from long-shots; P2 page loops begin (student first) — merge origin/main hourly.
