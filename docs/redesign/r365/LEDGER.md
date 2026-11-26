@@ -10,5 +10,8 @@ Mission: every page after login becomes the reference's product-grade twin (stud
 
 ## Ledger
 - P0.1  branch created from origin/main; ledger + draft PR with the DO-NOT-MERGE notice. — DONE
+- P0.2  route-map.md derived from routes.ts + App.tsx + nav.ts. — DONE
+- P0.3  product-grammar.md (shell anatomy, the table, KPI band, dark info cards, chat-widget grammar) + the real product capture from the vendor docs as evidence. Live crawl blocked by the edge wall — recorded honestly. — DONE
+- P0.4  capture harness (tests/e2e/r365-capture.e2e.ts, opt-in via R365_CAPTURE=1) — hermetic fixtures, all roles/themes/viewports. Baseline dashboards captured: all five carry the sheet grammar already (huge title, mono eyebrows, KPI hairline band, bracket indices); first defects: no delta flags on KPI cells, teacher dashboard bottom section renders empty, charts sparse. — DONE
 
-NEXT: P0 — npm ci + build/preview in background; derive route-map.md from router/nav config; reference product-grammar study; baseline capture matrix.
+NEXT: P0 — full matrix sweep running in background (desktop light+dark, then phone light); re-capture dashboards with reducedMotion-from-context; first evidence sheets + written critiques; then P1 primitives.
