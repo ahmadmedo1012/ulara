@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "Heron Data submissions list — clean, airy B2B SaaS layout, no chat panel, no KPI cards.\n\n1. **Overall layout**: fixed white left sidebar (~270px) with thin light-gray right border; top header bar with logo + horizontal nav; main content is a single full-width list view inside a subtle bordered panel on a white/very-light-gray page.\n2. **Sidebar**: bird logo mark + \"Heron Data\" wordmark (dark, ~20px semibold). Nav items with line icons: \"All Companies\" (active — light blue pill `#DBEAFE`-ish background, blue text `#2563EB`-like), \"Starred\" (star icon), \"Emails\" (envelope icon). Gray inactive text.\n3. **Header**: nav section label \"SUBMISSIONS\" in gray uppercase small caps, then tabs \"Submissions\" (active, blue text + blue underline) and \"Statistics\" (gray). White header, hairline bottom border.\n4. **Filter toolbar** (no card styling, just spaced inputs): star-outline icon button; search field \"Search Companies\" with magnifier and clear \"×\"; three outlined selects with floating labels above the border — \"Search By: Company Name\", \"Date Range: All Time\", \"Policy Result: All\", \"CRM Sync Result: All\" (wraps to second row); right-aligned primary button \"+ Add Company\" — solid blue (#3B82F6-ish), white text, slight rounded corners.\n5. **Table**: light gray header row, gray bold column labels with sort chevrons: drag handle icon, \"Name\", \"Files\", \"Policy Results\", \"CRM Sync\", plus a far-right blank action column. Hairline row separators only.\n6. **Rows** (3): each has star outline toggle, blue company-name link, gray monospace-looking ID string (e.g. `eus_JTYgYurmupJeXvvtLdLhS`), status pill in small gray outlined rounded rect (\"new\" / \"processed\"), clock icon + \"2 months ago\" + a second timestamp. Files column: table icon + \"10 / 10 Processed\", \"2 / 2 Processed\", \"12 / 12 Processed\". Policy Results: yellow warning triangle + \"0 / 1 Passed\" (rows 1–2), red exclamation circle + \"0 / 1 Passed\" (row 3). CRM Sync: gray \"No Syncs\". Row 3 has a light-gray selected/hover background.\n7. **Row actions**: vertical three-dot kebab per row in the rightmost column.\n8. **Colors**: white background, blue accent ~`#3B82F6`/`#2563EB`, yellow `#F59E0B`, red `#EF4444`, grays `#6B7280`–`#9CA3AF`, hairline borders `#E5E7EB`.\n9. **Typography**: modern sans (Inter-like), airy spacing, generous row height (~90px), semibold headings vs regular gray meta; IDs appear monospace.\n10. **Notable**: no pagination visible, no KPI/stat cards, no chat/assistant; large empty area below table; icons are thin-line style (Material-ish); timestamps duplicated with a divider pipe.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1795654819,
+  "id": "20261126090003c93223afac434f59",
+  "model": "glm-5.3-flash",
+  "object": "chat.completion",
+  "request_id": "20261126090003c93223afac434f59",
+  "usage": {
+    "completion_tokens": 701,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 2393,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 3094
+  }
+}
