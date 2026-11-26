@@ -33,12 +33,19 @@ best-in-class bar and the web's visual language).
   `ULARA_TEST_ACCOUNTS=1` on :4000, and the Maestro journeys
   (`shots-onboarding`, `shots-role`, `shots-size`, `smoke-role`) already
   exist.
-- **P0 found defect — the meetings detail route was a dead end.**
-  `app/institution/councils/[id]/meetings/eetingId].tsx` reached `main` with
-  its `[m` lost, so expo-router registered a static garbage route and every
-  meeting-detail push from `councils/[id].tsx` landed on `+not-found`. The
-  rename to `[meetingId].tsx` lands on this branch (via the Git Data API —
-  environment note above). No code change needed inside the file.
+- **P0 false alarm, caught and corrected by the byte-level proof.** The
+  route walk reported the meetings detail file as `eetingId].tsx` (its
+  `[m` lost) and a rename chase followed. The decisive check: the git tree
+  `e61c3ad3` that holds the route file hashes from the entry
+  `[meetingId].tsx` exactly (an old-name entry produces a different hash),
+  and `od` of the checkout shows the full bracket name — the file was and
+  is correctly named, the route works, and the "defect" was an artifact of
+  this sandbox's output filtering of `[...]` route-bracket paths (it
+  rewrites rendered paths, commit subjects and API JSON alike; the byte
+  comparisons in the ledger's environment note are the defence). Two
+  empty, content-identical commits (`ac4fc230`, `304fad2`) landed on the
+  branch during the chase — they are kept (no history rewrite) and carry
+  no tree change.
 - **P0 rule change (one line of reason): the portrait lock retires.**
   `app.config.ts` `orientation: "portrait"` → `"default"`. The prime
   directive names the lock as a rule standing between the app and
