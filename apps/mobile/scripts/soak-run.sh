@@ -40,19 +40,19 @@ open_app() {
 # maestro starts too late. Dismiss the menu HERE, by its own node
 # bounds, before any wait.
 dismiss_dev_menu() {
-  for _ in 1 2 3; do
-    adb shell uiautomator dump /sdcard/ula-dump.xml >/dev/null 2>&1 || true
-    LINE=$(adb shell cat /sdcard/ula-dump.xml 2>/dev/null | tr '\n' ' ' | grep -o 'text="Continue"[^>]*bounds="\[[0-9]*,[0-9]*\]\[[0-9]*,[0-9]*\]"' | head -1)
-    [ -z "$LINE" ] && return 0
-    B=$(printf '%s' "$LINE" | grep -o 'bounds="\[[0-9]*,[0-9]*\]\[[0-9]*,[0-9]*\]"' | sed 's/bounds="//; s/"//')
-    X1=$(printf '%s' "$B" | cut -d, -f1 | tr -d '[')
-    Y1=$(printf '%s' "$B" | cut -d, -f2 | cut -d] -f1)
-    X2=$(printf '%s' "$B" | awk -F'[][]' '{print $3}' | cut -d, -f1)
-    Y2=$(printf '%s' "$B" | awk -F'[][]' '{print $4}')
-    adb shell input tap $(((X1 + X2) / 2)) $(((Y1 + Y2) / 2))
-    echo "── dev menu dismissed (Continue at $((X1 + X2) / 2),$((Y1 + Y2) / 2))"
-    sleep 3
-  done
+  # run #14's forensics — THE BLIND SPOT: while the RN dev menu is up
+  # the app never idles, so `uiautomator dump` ERRORS OUT and the
+  # dump-based detection is blind exactly when it matters (the menu
+  # stayed open through the whole bootstrap; the a11y-tree wait could
+  # never see the app behind it). PROACTIVE closing instead: BACK
+  # closes the RN menu if it is up; if nothing is up it backgrounds
+  # the app and the deep link re-foregrounds it. Either branch
+  # converges to: overlay gone + app up. (The runner's own post-boot
+  # `input keyevent 82` is what OPENS the RN menu on this build.)
+  adb shell input keyevent 4 >/dev/null 2>&1 || true
+  sleep 2
+  open_app
+  sleep 4
 }
 
 # run #6's forensics: the deep link opens the app into "Bundling 26%…"

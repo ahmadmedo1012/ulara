@@ -37,3 +37,15 @@ keeps its choreography; the thick-wall plan band rides beside it), the phone
 re-stage sheets for every band, the preloader/nav/cursor frame sequences, the
 legal + auth + vision + competitions detail-page audit, and the round-2
 whole-site fidelity loop with the live deployment's own captures.
+- **P6 — the deploy-verification loop.** buildId 0da9912 = main's HEAD
+  verified LIVE; the CSP header serves the true bytes pin; the boot plate
+  retires (display:none) on the deployed load; React mounts; the hero art
+  img rides its 1008×490 seat. The production loop caught TWO real defects
+  this round (the collapsed art track → b4ad84c; the stale CSP pin →
+  384b504) — both fixed and verified in the browser, not assumed.
+
+NEXT: the chapters journey's dominant-plan seat (the thick-wall plan band
+beside the iso walkthrough), the per-band phone sheets (320→1920, both
+themes), the preloader/nav/cursor frame sequences against the r350 corpus,
+the legal + auth + vision + competitions audit, and the round-2 whole-site
+fidelity loop.

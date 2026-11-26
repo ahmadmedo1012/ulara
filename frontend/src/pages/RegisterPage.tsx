@@ -324,6 +324,9 @@ export default function RegisterPage() {
         <span className="auth-mark auth-mark-br" />
       </div>
       <div className="auth-grain" aria-hidden="true" />
+      {/* r363 P4 keyboard probe — the r305 skip-first law (AuthPage's
+          twin; the target <main> below carries id="main"). */}
+      <a href="#main" className="skip-link">تخطَّ إلى المحتوى</a>
 
       {/* a11y: page-level chrome as a banner landmark (matches AuthPage's
           imm-5 fix — axe "all content in landmarks"). */}
@@ -357,7 +360,7 @@ export default function RegisterPage() {
         )}
       </header>
 
-      <main className="auth-center">
+      <main id="main" className="auth-center">
         {/* R315 (K-I): the centred CARD is dissolved — one sheet column
             for BOTH steps (same width, same chrome) so stepping never
             reflows the layout; only the keyed panel slides. */}
