@@ -831,8 +831,8 @@ export default function DesignPage(): React.JSX.Element {
           <SheetSection index="02" caption="DEMO / KPI BAND" title="شريط المؤشرات" pad="none" className="r323d-sheet-demo">
             <KpiBand
               items={[
-                { index: '01', caption: 'STUDENTS', label: 'الطلاب النشطون', value: 1042, delta: '+3.2%', deltaTone: 'positive' },
-                { index: '02', caption: 'FACULTY', label: 'هيئة التدريس', value: 137, delta: 'ثابت' },
+                { index: '01', caption: 'STUDENTS', label: 'الطلاب النشطون', value: 1042, delta: '+3.2%', deltaTone: 'positive', deltaDir: 'up' },
+                { index: '02', caption: 'FACULTY', label: 'هيئة التدريس', value: 137, delta: 'ثابت', deltaDir: 'flat' },
                 { index: '03', caption: 'COURSES', label: 'مقرّرات نشطة', value: 486, to: '/__design' },
                 { index: '04', caption: 'ATTENDANCE', label: 'معدل الحضور', value: 82, unit: '%', deltaTone: 'warning', delta: 'مراجعة' },
                 { index: '05', caption: 'EMPTY', label: 'قيمة غير متاحة بعد', value: '—', empty: true },
