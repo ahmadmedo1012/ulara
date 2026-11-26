@@ -17,7 +17,7 @@ import '../../../styles/landing/hero-mechanics.css';
  * the entrance bay at the 390/560 lock (mission P5: phones are
  * composed, not scaled). The old thin-line elevation retires from
  * the stage seat (kept as the img-failure fallback below). */
-import heroElevationDesktop from '../../../assets/art-v2/hero-elevation-dt.webp';
+import heroElevationDesktop from '../../../assets/art-v2/hero-elevation-flat.svg';
 import heroElevationMobile from '../../../assets/art-v2/hero-elevation-mb.webp';
 
 /* The display title — TWO authored lines at the reference's h1 scale

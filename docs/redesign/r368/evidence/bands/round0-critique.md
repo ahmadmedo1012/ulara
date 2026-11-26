@@ -107,3 +107,6 @@ Harness fix: capture.mjs now sets the real theme store key so dark captures are 
 
 ## Slice 22 dark round 1
 Dark hero elevation inverted and screened: now reads as pale blueprint ink on dark paper, legible. A faint lighter patch edge remains at the plate boundary. Phone: the drag hint no longer overlaps the art (display none at <=767). Status: FAILING overall; hero art is still the raster drawing, not the reference's flat elevation.
+
+## Slice 03 hero round 2
+The desktop hero art is now an original procedural flat elevation (scripts/art/elevation-flat.mjs): concrete frame, glazed bays, roof slab, podium, steps, two line trees, a cast-shadow wedge. Flat architectural style, as in the reference, instead of dense photographic hatching. Still wrong: our massing is symmetric and thin; the reference stacks a deep solid concrete base under recessed glass with strong shadow tone and bare branching trees. Mobile still uses the raster. Two tests re-pinned to the new asset seat (reference wins over the old raster pin). Status: FAILING (closer).

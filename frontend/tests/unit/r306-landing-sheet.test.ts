@@ -213,7 +213,8 @@ describe('r306 → r310 — the elevation illustration (the honest interactive)'
      * window (never the art-v2 canvas mapping). The semantics (the
      * whole drafted elevation fills the stage; the fallback is one
      * SVG object on transparent paper) re-pin on the new seats. */
-    expect(liveTsx).toContain('hero-elevation-dt.webp');
+    /* r368: the desktop seat is now the procedural flat elevation (the reference's flat architectural drawing) */
+    expect(liveTsx).toContain('hero-elevation-flat.svg');
     expect(liveTsx).toContain('hero-elevation-mb.webp');
     expect(liveTsx).toContain('<ElevationArt className="hro-elevation" viewBox={mobile ? VB_MOBILE : \'0 0 1440 620\'} />');
     const ink = read('src/components/landing/hero/ElevationArt.tsx');

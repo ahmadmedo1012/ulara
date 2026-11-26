@@ -124,7 +124,8 @@ describe('r188 brand reset — campus photography retired (no real-university im
      * (desktop + the mobile re-stage crop); the SVG fallback keeps its
      * own doc window. The r188 semantics (original art, no photography)
      * hold: the raster is GENERATED ink art, not photography. */
-    expect(src).toContain('hero-elevation-dt.webp');
+    /* r368: the desktop seat is now the procedural flat elevation (the reference's flat architectural drawing) */
+    expect(src).toContain('hero-elevation-flat.svg');
     expect(src).toContain('hero-elevation-mb.webp');
     expect(src).toContain('<ElevationArt className="hro-elevation" viewBox={mobile ? VB_MOBILE : \'0 0 1440 620\'} />');
     const ink = read('src/components/landing/hero/ElevationArt.tsx');
