@@ -29,6 +29,14 @@ appId: ly.ulara.app
 - tapOn:
     text: "Wait"
     optional: true
+# run #17's forensics (the throttle round's screenshot): the account
+# carries TWO memberships and a networked relaunch re-resolves the
+# session context — the app lands on the INSTITUTION PICKER with the
+# session ALIVE. The picker tap is the documented re-entry (the same
+# optional the bootstrap leg rides); absent picker → skipped.
+- tapOn:
+    text: "مساحة عمل أُلارا التجريبية"
+    optional: true
 # THE contract: still authenticated, still on the student dashboard.
 - extendedWaitUntil:
     visible:
