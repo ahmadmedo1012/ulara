@@ -75,6 +75,47 @@ crosses a threshold؛ 6 stars unlocks 1 reward؛ level 12 reads سماء؛ the
 approval reaches «معتمد»؛ the carousel reads 02/07) with zero console
 errors · overlap audit 0 findings at 7 widths × 2 themes.
 
+## r369-mat — the maturity pass (owner ruling: university, not a game)
+
+The surface was still telling a children's story in a product's clothes.
+This pass changes the voice and the finish, not the facts:
+
+- **Vocabulary** — «نجوم/نجمة» is gone from the public surface. The unit
+  is **نقطة إتقان**, because that is what the product already computes
+  (`xp`): one name for one thing, and no reward-shaped claim the platform
+  does not make. Stage labels became الإنجاز · الإتقان · التقدّم · الاعتماد ·
+  السلّم; the rewards band now reads «والتقدّم؟ **يُوثَّق**» (a badge, a
+  course position, a certificate), and the habits band reads «والانتظام
+  **لا الضغط**».
+- **The character left the page.** The mascot (a smiling star) is no
+  longer on the public surface at all; the hero phone shows an initial
+  chip and a real date, the meter shows the number it earned, and the
+  finale is a hairline frame with one ghost mark. The component stays in
+  the tree for in-product empty states only.
+- **The confetti left too.** The six-spark burst became one `+N` line
+  that rises and fades: a product confirms a recorded entry.
+- **The star jar became a section index** («القسم ٣ من ٦»), which is the
+  honest thing it always was — a position in the argument.
+- **Type** — the h1 takes 100px (not the measured 124): Arabic carries
+  the same headline in two lines at that size, and four broken lines at
+  124 is not "matching", it is a translation failure. The section head
+  takes the measured 85px cap at 1.06 leading (the reference runs 0.94;
+  Arabic keep sits at 1.06 so diacritics never clip).
+- **Rhythm** — bands alternate sides, start-aligned, with 96–176px
+  padding instead of 176–320, so a section is dense because of content,
+  not because of air.
+- **Finish layer** — pointer-parallax on the hero art (±10px, fine
+  pointers, transform only), a 72px hairline grid behind the hero at 3%
+  ink, cards that lift 3px on hover with a deeper shadow and a gold
+  border tint, staggered reveals capped at six children, an elastic stage
+  pill, the marquee pausing on hover, and one global focus ring (this
+  sheet declares none — r172a owns it).
+
+Verified: tsc · build · bundle 827.6 KB gz (≤832) · tokens:check ·
+raw-css --strict · motion · colours --strict · icons · stylelint 0
+errors · 145 targeted tests · zero console errors at 1440 and 390 ·
+overlap audit 0 findings at 7 widths × 2 themes.
+
 NEXT (still open, in the order the brief asked for):
 - **B — the 13 public pages** on templates T1–T5 (about, help, contact,
   app, legal, colleges/leaderboard/detail, campus, capabilities, vision,

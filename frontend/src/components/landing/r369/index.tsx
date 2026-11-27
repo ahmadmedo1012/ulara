@@ -30,7 +30,6 @@ import { Link } from 'react-router-dom';
 import { Glyph, type GlyphName } from '../../icons';
 import { ROUTES } from '../../../lib/routes';
 import { ThemeToggle } from '../../layout/ThemeToggle';
-import { Mascot } from './Mascot';
 
 /* ─────────────────────────── motion helpers ─────────────────────────── */
 
@@ -250,9 +249,9 @@ function ScrollRail() {
 /* ─────────────────────────── star jar (scroll) ───────────────────────── */
 
 /**
- * The page counts the reader's own journey: each numbered band you pass
- * gives you a star. It is HONEST by construction — the number describes
- * this page, never the platform's data.
+ * The reader's position in the argument, not a reward: the index counts
+ * the numbered sections behind you. It describes THIS PAGE only, which is
+ * why it is safe to show — it makes no claim about the product.
  */
 const JAR_TOTAL = 6;
 
@@ -262,6 +261,8 @@ function StarJar() {
    * position in the story, never a claim about the product. */
   const progress = useScrollProgress();
   const n = Math.min(JAR_TOTAL, Math.round(progress * JAR_TOTAL));
+  /* the index names the section you are IN, so it starts at 1, not 0 */
+  const at = Math.max(1, n);
   const full = n >= JAR_TOTAL;
   /* the finale closes the loop: it says how many stars YOU collected on
    * the way down. A window event, not a context — one number, one hop. */
@@ -270,12 +271,12 @@ function StarJar() {
   }, [n]);
   return (
     <div className="w369-jar" data-full={full ? 'true' : 'false'}>
-      <span className="w369-jar-icon" aria-hidden="true"><Glyph name="star" size={16} className="ui-glyph-twinkle" /></span>
+      <span className="w369-jar-icon" aria-hidden="true"><Glyph name="compass" size={16} /></span>
       {/* the visible number is decoration for the eye; the live region
           below is the ONE announcement (otherwise a screen reader reads
           the same sentence twice). */}
       <span className="w369-jar-text" aria-hidden="true">
-        جمعتَ <b>{n}</b> من {JAR_TOTAL} نجوم في رحلتك
+        القسم <b>{at}</b> من {JAR_TOTAL}
       </span>
       <span className="w369-jar-track" aria-hidden="true">
         {Array.from({ length: JAR_TOTAL }).map((_, i) => (
@@ -283,7 +284,7 @@ function StarJar() {
         ))}
       </span>
       <span className="visually-hidden" role="status" aria-live="polite">
-        {n === JAR_TOTAL ? 'أكملت الرحلة: ستة نجوم من ستة' : `جمعت ${n} من ${JAR_TOTAL} نجوم`}
+        {n === JAR_TOTAL ? 'آخر قسم: الخاتمة' : `القسم ${at} من ${JAR_TOTAL}`}
       </span>
     </div>
   );
@@ -306,11 +307,11 @@ const MOBILE_EXTRA: readonly NavLink[] = [
    scroll. Labels are each band's subject, so the bar reads as the story
    you are inside. */
 const STAGES = [
-  { id: 'story', label: 'المهام' },
-  { id: 'stars', label: 'النجوم' },
+  { id: 'story', label: 'الإنجاز' },
+  { id: 'stars', label: 'الإتقان' },
   { id: 'progress', label: 'التقدّم' },
-  { id: 'rewards', label: 'المكافآت' },
-  { id: 'levels', label: 'العادات' },
+  { id: 'rewards', label: 'الاعتماد' },
+  { id: 'levels', label: 'السلّم' },
 ] as const;
 
 const NAV_LINKS: readonly NavLink[] = [
@@ -416,7 +417,7 @@ const HERO_ROWS = [
  */
 const TOUR_BEATS = [
   { icon: 'assignment' as const, title: 'تنجز مهمّة', body: 'واجب، محاضرة، اختبار — كلٌّ منها يظهر في يومك.' },
-  { icon: 'star' as const, title: 'تظهر النجمة', body: 'تنقر «أنجزت» فتظهر النجمات فورًا في رصيدك.' },
+  { icon: 'target' as const, title: 'تُسجَّل النقطة', body: 'يُسجَّل الإنجاز فتظهر نقاطه فورًا في رصيدك.' },
   { icon: 'leaderboard' as const, title: 'يرتفع التقدّم', body: 'النجوم تترتّب في شريط تقدّم المقرّر ومصفوفة الإتقان.' },
   { icon: 'medal' as const, title: 'تفتح مكافأة', body: 'عند العتبة تُفتح الشارة، وتُبنى السلسلة يومًا بعد يوم.' },
 ];
@@ -491,25 +492,46 @@ function TourDialog({ onClose }: { onClose: () => void }) {
 
 export function Hero() {
   const [ref, seen] = useInView<HTMLDivElement>();
-  const stars = useCountUp(6, seen);
+  const points = useCountUp(24, seen);
   const [tour, setTour] = useState(false);
+  const artRef = useRef<HTMLDivElement | null>(null);
+
+  /* depth, not decoration: the phone drifts a few pixels against the
+   * pointer. Fine pointers only, transform only, nothing under RM. */
+  const onMove = (e: React.PointerEvent<HTMLElement>) => {
+    const art = artRef.current;
+    if (!art || e.pointerType !== 'mouse' || prefersReduced()) return;
+    const box = e.currentTarget.getBoundingClientRect();
+    const dx = (e.clientX - box.left) / box.width - 0.5;
+    const dy = (e.clientY - box.top) / box.height - 0.5;
+    art.style.setProperty('--px', `${(dx * -10).toFixed(2)}px`);
+    art.style.setProperty('--py', `${(dy * -8).toFixed(2)}px`);
+  };
+  const onLeave = () => {
+    artRef.current?.style.setProperty('--px', '0px');
+    artRef.current?.style.setProperty('--py', '0px');
+  };
+
   return (
-    <section className="w369-hero" ref={ref} data-jar="01">
+    <section className="w369-hero" ref={ref} data-jar="01" onPointerMove={onMove} onPointerLeave={onLeave}>
       <div className="w369-hero-copy">
         <p className="w369-eyebrow">
           <Glyph name="sparkle" size={15} />
           نظام تشغيل الجامعة — عربي أولًا
         </p>
         <h1 className="w369-h1">
-          تعلّمك يصير
-          <span className="w369-em"> نجومًا</span>
-          <svg className="w369-underline" viewBox="0 0 240 16" aria-hidden="true" preserveAspectRatio="none">
-            <path d="M3 12 C60 4 150 3 237 9" fill="none" strokeWidth="5" strokeLinecap="round" stroke="var(--gold)" />
-          </svg>
+          جامعةٌ تعمل
+          <span className="w369-em">
+            في نظام واحد
+            <svg className="w369-underline" viewBox="0 0 240 16" aria-hidden="true" preserveAspectRatio="none">
+              <path d="M3 12 C60 4 150 3 237 9" fill="none" strokeWidth="5" strokeLinecap="round" stroke="var(--gold)" />
+            </svg>
+          </span>
         </h1>
         <p className="w369-lead">
-          كل واجب تُنجزه، وكل محاضرة تحضرها، وكل اختبار تجتازه — يتحوّل إلى نقاط إتقان
-          تراها وتشعر بها. أُلارا تحوّل رحلة الجامعة من قائمة مهامّ إلى حكاية تكبر معك.
+          المقرّرات والمحاضرات والتقييم والحضور ومؤشّرات الجودة في نظام واحد يربط الطالب
+          وعضو الهيئة والإدارة. لا أدوات متناثرة، ولا أرقام لا تُقاس: كل ما يحدث في
+          المقرّر يُسجَّل، ويُقرأ، ويُبنى عليه.
         </p>
         <div className="w369-hero-actions">
           <Link to={ROUTES.authRegister} className="w369-btn w369-btn-primary w369-btn-lg">
@@ -527,18 +549,18 @@ export function Hero() {
         {tour && <TourDialog onClose={() => setTour(false)} />}
         <ul className="w369-hero-facts">
           <li><Glyph name="certificate" size={16} /> للطلّاب وأعضاء الهيئة والإدارة</li>
-          <li><Glyph name="star" size={16} /> نقاط إتقان حقيقية من بيانتك</li>
-          <li><Glyph name="flame" size={16} /> عادات دراسة تُبنى يومًا بيوم</li>
-          <li><Glyph name="certificate" size={16} /> شهادات موثّقة داخل المنصّة</li>
+          <li><Glyph name="target" size={16} /> نقاط إتقان من الإنجاز المسجَّل</li>
+          <li><Glyph name="leaderboard" size={16} /> مؤشّرات جودة قابلة للتتبّع</li>
+          <li><Glyph name="certificate" size={16} /> شهادات وسجلات موثّقة</li>
         </ul>
       </div>
 
       <a className="w369-hero-cue" href="#story">
         <span className="w369-hero-cue-dot" aria-hidden="true" />
-        انزل لتجمع أول نجمة
+        تابع الأقسام
       </a>
 
-      <div className="w369-hero-art">
+      <div className="w369-hero-art" ref={artRef}>
         <div className="w369-phone" aria-hidden="false" role="img"
              aria-label="عرض توضيحي لشاشة الطالب في أُلارا: قائمة واجبات ومحاضرات مع شريط تقدّم">
           <div className="w369-phone-top">
@@ -547,15 +569,15 @@ export function Hero() {
           </div>
           <div className="w369-phone-screen">
             <div className="w369-phone-greet">
-              <Mascot pose="hello" size={44} />
+              <span className="w369-phone-avatar" aria-hidden="true">س</span>
               <div>
-                <p className="w369-phone-hi">صباح الخير، سارة</p>
-                <p className="w369-phone-sub">يومك فيه ٣ مهامّ — تبدأ بواحدة</p>
+                <p className="w369-phone-hi">الأحد · ٢٤ نوفمبر</p>
+                <p className="w369-phone-sub">سارة العتيبي · الأدب الحديث</p>
               </div>
             </div>
             <div className="w369-phone-stars">
-              <Glyph name="star" size={18} />
-              <b>{stars}</b> <span>نجوم اليوم</span>
+              <Glyph name="target" size={18} />
+              <b>{points}</b> <span>نقطة إتقان اليوم</span>
               <span className="w369-phone-ring" />
             </div>
             <ul className="w369-phone-list">
@@ -586,7 +608,7 @@ export function Hero() {
 
 const MARQUEE = [
   'مقرّرات ومحاضرات', 'واجبات واختبارات', 'مصفوفة إتقان', 'حضور ومتابعة',
-  'شهادات وإنجازات', 'لوحة متصدّرين', 'مكتبة وبحوث', 'تقارير الجودة',
+  'شهادات وسجلات', 'لوحة تقدّم المقرّر', 'مكتبة وبحوث', 'تقارير الجودة',
 ];
 
 export function Marquee() {
@@ -639,16 +661,14 @@ function Band({ n, kicker, title, body, tint, icon, children, jar, id, stage }: 
 /* ── shared: the burst ── */
 
 /**
- * A capped, self-cleaning star burst. Six sparks, CSS-only, removed by
- * React when the key changes — no interval, no particle pool, nothing
- * left in the DOM after 620ms.
+ * The earned-points note. r369-mat r1 replaced the six-spark confetti with
+ * this: one line that rises and fades. A university product confirms an
+ * entry; it does not throw a party over it.
  */
-function StarBurst({ seed }: { seed: number }) {
+function PointsGain({ seed, n }: { seed: number; n: number }) {
   return (
-    <span className="w369-burst" key={seed} aria-hidden="true">
-      {Array.from({ length: 6 }).map((_, i) => (
-        <span key={i} className="w369-spark" style={{ rotate: `${i * 60}deg` }} />
-      ))}
+    <span className="w369-gain" key={seed} aria-hidden="true">
+      +{n}
     </span>
   );
 }
@@ -688,9 +708,9 @@ export function StarsBand() {
   return (
     <Band
       n="02" jar="02" tint="violet" icon="sparkle" id="story" stage="0"
-      kicker="المهمّة تصير نجمة"
-      title={<>كل ما تُنجزه<br /><span className="w369-em">يصير نجمة</span></>}
-      body="الواجب، المحاضرة، الاختبار القصير — كلٌّ منها يمنحك نجومًا في اللحظة التي تُتمّها. جرّبها: اضغط أي مهمّة في القائمة، وشاهد النجوم تصل."
+      kicker="من الإنجاز إلى النقطة"
+      title={<>كل إنجاز<br /><span className="w369-em">يُقاس بصدق</span></>}
+      body="الواجب والمحاضرة والاختبار القصير — كلٌّ منها يُسجَّل لحظة إتمامه ويُحوَّل إلى نقاط إتقان. هذه هي القائمة كما يراها الطالب صباحًا."
     >
       <div className="w369-today">
         <div className="w369-today-head">
@@ -703,7 +723,7 @@ export function StarsBand() {
               <span> من {TODAY_TASKS.length} مهامّ</span>
             </p>
             <p className="w369-today-earn" data-on={collected > 0 ? 'true' : 'false'}>
-              <Glyph name="star" size={14} />+{collected} نجمة اليوم
+              <Glyph name="target" size={14} />+{collected} نقطة إتقان اليوم
             </p>
           </div>
           <div className="w369-goal" data-met={goalMet ? 'true' : 'false'}>
@@ -725,7 +745,7 @@ export function StarsBand() {
               ))}
             </span>
             <span className="w369-fine">
-              {goalMet ? 'أكملت هدف الأسبوع — ٢٥ نجمة' : `هدف الأسبوع: ${WEEK_GOAL} نجمة`}
+              {goalMet ? 'اكتمل هدف الأسبوع — ٢٥ نقطة' : `هدف الأسبوع: ${WEEK_GOAL} نقطة`}
             </span>
           </div>
         </div>
@@ -748,19 +768,19 @@ export function StarsBand() {
                     <span>{t.course}</span>
                   </span>
                   <span className="w369-task-stars" aria-hidden="true">
-                    <Glyph name="star" size={12} />{t.stars}
+                    {t.stars}
                   </span>
                   <span className="w369-task-check" aria-hidden="true">
                     {on ? <Glyph name="check" size={16} /> : <span className="w369-task-ring" />}
                   </span>
-                  {burstAt === t.id && on && <StarBurst seed={seed} />}
+                  {burstAt === t.id && on && <PointsGain seed={seed} n={t.stars} />}
                 </button>
               </li>
             );
           })}
         </ul>
         <p className="w369-fine">
-          نموذج تفاعلي — هذه مهامّ توضيحية، لا بيانات حسابك. في المنصّة تُمنح النجوم من إنجازاتك الحقيقية.
+          نموذج تفاعلي بمهامّ توضيحية، لا بيانات حساب. في المنصّة تُحتسب النقاط من الإنجاز المسجَّل وحده.
         </p>
       </div>
     </Band>
@@ -769,12 +789,12 @@ export function StarsBand() {
 
 /* ── 03 the rolling counter: /30, by scroll and by tap ── */
 
-const FIRST_STEP = { at: 0, msg: 'المسار يبدأ من هنا.', pose: 'think' as const };
+const FIRST_STEP = { at: 0, msg: 'المسار يبدأ من هنا.' };
 const PROGRESS_STEPS = [
   FIRST_STEP,
-  { at: 10, msg: 'ربع المسار: صار التقدّم مرئيًّا.', pose: 'wave' as const },
-  { at: 20, msg: 'ثلثا المسار: الإتقان يتراكم.', pose: 'cheer' as const },
-  { at: 30, msg: 'المسار مكتمل — وهذه شهادة المقرّر.', pose: 'cheer' as const },
+  { at: 10, msg: 'ربع المسار: صار التقدّم مقروءًا.' },
+  { at: 20, msg: 'ثلثا المسار: الإتقان يتراكم.' },
+  { at: 30, msg: 'المسار مكتمل — وهذه شهادة المقرّر.' },
 ];
 
 function RollingDigits({ value, total }: { value: number; total: number }) {
@@ -833,9 +853,9 @@ export function ProgressBand() {
   return (
     <Band
       n="03" jar="03" tint="teal" icon="leaderboard" id="stars" stage="1"
-      kicker="النجمة تصير تقدّمًا"
-      title={<>النجوم ترتّب نفسها<br /><span className="w369-em">تقدّمًا تراه</span></>}
-      body="نجومك لا تبقى أرقامًا متناثرة: تتجمّع في تقدّم المقرّر، وفي مصفوفة الإتقان. مرّر لتتحرّك، أو اضغط النجمة لتضيف واحدة."
+      kicker="من النقطة إلى التقدّم"
+      title={<>النقاط تصير<br /><span className="w369-em">تقدّمًا مقروءًا</span></>}
+      body="الأرقام لا تبقى متناثرة: تتجمّع في تقدّم المقرّر ومصفوفة الإتقان، فتعرف أين أنت وأين الخطوة التالية."
     >
       <div className="w369-meter" ref={ref} data-step={String(PROGRESS_STEPS.indexOf(step))}>
         <div className="w369-meter-head">
@@ -843,18 +863,17 @@ export function ProgressBand() {
           <span className="w369-chip w369-chip-soft">نموذج توضيحي</span>
         </div>
         <div className="w369-meter-body">
-          <Mascot pose={step.pose} size={104} className="w369-meter-mascot" />
           <div className="w369-meter-num">
             <RollingDigits value={value} total={TOTAL} />
-            <span className="w369-meter-unit">نجمة من ثلاثين</span>
+            <span className="w369-meter-unit">نقطة إتقان من ثلاثين</span>
             <p className="w369-meter-msg" aria-live="polite">{step.msg}</p>
             <button
               type="button"
               className="w369-btn w369-btn-small"
               onClick={() => setExtra((n) => (n >= TOTAL ? 0 : n + 1))}
             >
-              <Glyph name="star" size={14} />
-              {extra >= TOTAL ? 'أعد من البداية' : 'أضف نجمة'}
+              <Glyph name="target" size={14} />
+              {extra >= TOTAL ? 'أعد من البداية' : 'أضف نقطة'}
             </button>
           </div>
         </div>
@@ -876,7 +895,7 @@ export function ProgressBand() {
 
 const REWARDS = [
   { id: 'r1', icon: 'medal', title: 'شارة الإنجاز', cost: 6, body: 'تُفتح عند إتمام هدف حقيقي — أول واجب، أول أسبوع كامل، أول إتقان.' },
-  { id: 'r2', icon: 'trophy', title: 'لوحة المتصدّرين', cost: 12, body: 'ترتيبك بين زملائك في المقرّر، مبنيًّا على نقاط الإتقان لا على الحظّ.' },
+  { id: 'r2', icon: 'trophy', title: 'لوحة تقدّم المقرّر', cost: 12, body: 'موضعك بين زملائك في المقرّر، محسوبًا من نقاط الإتقان لا من الحظّ.' },
   { id: 'r3', icon: 'certificate', title: 'شهادة المقرّر', cost: 18, body: 'شهادة عند إكمال المقرّر، جاهزة للتنزيل وموثّقة داخل حسابك.' },
 ] as const;
 
@@ -888,20 +907,20 @@ export function RewardsBand() {
   return (
     <Band
       n="04" jar="04" tint="coral" icon="medal" id="progress" stage="2"
-      kicker="التقدّم يصير مكافأة"
-      title={<>والتقدّم؟<br /><span className="w369-em">يصير مكافأة</span></>}
-      body="عندما يتراكم الإتقان، تصبح له علامات تراها: شارة تُفتح، وترتيب في لوحة المتصدّرين، وشهادة عند إكمال المقرّر. الأخيرة تُفتح عند ١٨ نجمة."
+      kicker="من التقدّم إلى التوثيق"
+      title={<>والتقدّم؟<br /><span className="w369-em">يُوثَّق</span></>}
+      body="عندما يتراكم الإتقان تصبح له علامات موثّقة: شارة إنجاز، وموضع في لوحة تقدّم المقرّر، وشهادة عند إكماله. الأخيرة تُفتح عند ١٨ نقطة."
     >
       <div className="w369-wallet" data-opened={String(opened)}>
         <div className="w369-wallet-head">
-          <span className="w369-chip w369-chip-amber"><Glyph name="star" size={14} />رصيدك</span>
+          <span className="w369-chip w369-chip-amber"><Glyph name="target" size={14} />رصيد النقاط</span>
           <span className="w369-wallet-num"><b>{wallet}</b> / {WALLET_MAX}</span>
           <button
             type="button"
             className="w369-btn w369-btn-small"
             onClick={() => setWallet((n) => (n >= WALLET_MAX ? 0 : n + 1))}
           >
-            {wallet >= WALLET_MAX ? 'صفّر الرصيد' : 'اجمع نجمة'}
+            {wallet >= WALLET_MAX ? 'صفّر الرصيد' : 'أضف نقطة'}
           </button>
         </div>
         <span className="w369-wallet-track" aria-hidden="true">
@@ -917,11 +936,9 @@ export function RewardsBand() {
                 <span className="w369-reward-ico"><Glyph name={r.icon} size={22} /></span>
                 <h3 className="w369-h3">{r.title}</h3>
                 <p className="w369-body">{r.body}</p>
-                <span className="w369-reward-cost">
-                  <Glyph name="star" size={13} />{r.cost} نجمة
-                </span>
+                <span className="w369-reward-cost">{r.cost} نقطة</span>
                 <span className="w369-reward-state">
-                  {open ? <><Glyph name="check" size={14} />مفتوحة</> : <>مقفلة — تحتاج {r.cost - wallet} نجمة</>}
+                  {open ? <><Glyph name="check" size={14} />مفتوحة</> : <>تحتاج {r.cost - wallet} نقطة أخرى</>}
                 </span>
               </li>
             );
@@ -941,16 +958,16 @@ export function HabitsBand() {
   return (
     <Band
       n="05" jar="05" tint="sky" icon="flame" id="rewards" stage="3"
-      kicker="المكافأة تصير عادة"
-      title={<>والمكافأة؟<br /><span className="w369-em">تصير عادة</span></>}
-      body="سلسلة الأيام المتتالية ليست عدّادًا للضغط، بل تذكيرًا لطيفًا بأنك تستمرّ. أُلارا تحفظ وتيرتك، وتذكّرك بلطف حين ينقطع يوم، وتحتفي حين يكتمل الأسبوع."
+      kicker="من التوثيق إلى الانتظام"
+      title={<>والانتظام<br /><span className="w369-em">لا الضغط</span></>}
+      body="سلسلة النشاط ليست عدّادًا للضغط، بل قياسًا هادئًا للاستمرار. أُلارا تحفظ وتيرتك، وتتوقّف بلا عقوبة إن انقطع يوم، وتُظهر الصورة الأسبوعية كما هي."
     >
       <div className="w369-streak">
         <div className="w369-streak-head">
           <span className="w369-streak-flame"><Glyph name="flame" size={22} className="ui-glyph-flicker" /></span>
           <div>
-            <b>سلسلة هذا الأسبوع</b>
-            <span>خمسة أيام من سبعة — نموذج توضيحي، لا بياناتك.</span>
+            <b>سلسلة النشاط — هذا الأسبوع</b>
+            <span>خمسة أيام من سبعة، كما تُحسب في المنصّة.</span>
           </div>
           <span className="w369-streak-total"><b>{WEEK_ON}</b><span> أيام</span></span>
         </div>
@@ -965,7 +982,7 @@ export function HabitsBand() {
           ))}
         </ul>
         <p className="w369-fine">
-          السلسلة تُحسب من نشاطك الفعلي، وتتوقّف بهدوء عند الغياب — بلا عقوبات.
+          تُحسب من النشاط المسجَّل فقط، وتتوقّف عند الغياب بلا عقوبة ولا تصفير مُفاجئ.
         </p>
       </div>
     </Band>
@@ -1024,9 +1041,9 @@ export function LevelsBand() {
   return (
     <Band
       n="06" jar="06" tint="leaf" icon="admin" id="levels" stage="4"
-      kicker="عشرون مستوى، أسماء عربية"
+      kicker="سلّم الإتقان — عشرون مستوى"
       title={<>سلّمٌ من<br /><span className="w369-em">عشرين مستوى</span></>}
-      body="من «بذرة» إلى «المعلّم»: سلّم إتقان بأسماء عربية أصيلة، وكل مستوى له شارة مرسومة له وحده. اختر مستوى لتراه."
+      body="من «بذرة» إلى «المعلّم»: تدرّج إتقان بأسماء عربية أصيلة، ولكل مستوى شارة مرسومة له وحده. اختر مستوى لترى تعريفه."
     >
       <div className="w369-levels">
         <div className="w369-levels-head">
@@ -1080,7 +1097,7 @@ export function ShowcaseBand() {
   return (
     <section className="w369-handoff" id="handoff">
       <header className="w369-band-head">
-        <p className="w369-band-kicker"><Glyph name="users" size={15} />كيف تنتقل النجمة بين الأدوار</p>
+        <p className="w369-band-kicker"><Glyph name="users" size={15} />كيف ينتقل الإنجاز بين الأدوار</p>
         <h2 className="w369-h2">خطوةٌ من الطالب،<br /><span className="w369-em">تصل إلى الإدارة</span></h2>
         <p className="w369-body">
           أربع خطوات لا أكثر: يُنجز الطالب، فتُحسب النجوم، فيراها عضو الهيئة، فتعتمدها الإدارة.
@@ -1121,8 +1138,8 @@ export function ShowcaseBand() {
                 <b>متابعة الصفّ</b><span>الأدب الحديث · ٢٤ طالبًا</span>
               </div>
               <ul className="w369-mini-list">
-                <li><span>نورة الحربي</span><b>١٢ نجمة</b></li>
-                <li><span>سلمان القحطاني</span><b>٩ نجوم</b></li>
+                <li><span>نورة الحربي</span><b>١٢ نقطة</b></li>
+                <li><span>سلمان القحطاني</span><b>٩ نقاط</b></li>
                 <li data-warn="true"><span>ريم الزهراني</span><b>تحتاج متابعة</b></li>
               </ul>
               <button
@@ -1265,7 +1282,7 @@ export function PrinciplesBand() {
         <p className="w369-band-kicker"><Glyph name="shield" size={15} />ما لا نتنازل عنه</p>
         <h2 className="w369-h2">أربعة مبادئ،<br /><span className="w369-em">مكتوبة لا معلّقة</span></h2>
       </header>
-      <ul className="w369-principle-grid">
+      <ul className="w369-principle-grid" data-stagger="">
         {PRINCIPLES.map((p) => (
           <li key={p.title} className="w369-principle">
             <span className="w369-principle-ico"><Glyph name={p.icon} size={20} /></span>
@@ -1286,7 +1303,7 @@ export function PrinciplesBand() {
         <span className="w369-trust-item"><Glyph name="compass" size={16} />عربي RTL بالكامل</span>
       </div>
 
-      <ul className="w369-audience-grid">
+      <ul className="w369-audience-grid" data-stagger="">
         {AUDIENCES.map((a) => (
           <li key={a.title} className="w369-audience">
             <span className="w369-audience-ico"><Glyph name={a.icon} size={20} /></span>
@@ -1321,7 +1338,7 @@ export function RolesBand() {
           إلى مؤشّرات الجودة، نظام واحد ولغة واحدة.
         </p>
       </header>
-      <ul className="w369-role-grid">
+      <ul className="w369-role-grid" data-stagger="">
         {ROLES.map((r) => (
           <li key={r.title} className="w369-role">
             <span className="w369-role-ico"><Glyph name={r.icon} size={22} /></span>
@@ -1341,16 +1358,16 @@ export function RolesBand() {
 
 const FAQ = [
   {
-    q: 'هل النقاط والنجوم تُحسب يدويًا؟',
-    a: 'لا. تُحسب من إنجازاتك المسجّلة في المنصّة — إتمام الواجب، تسليم الاختبار، حضور المحاضرة — وتظهر مباشرة عند الإنجاز.',
+    q: 'كيف تُحسب نقاط الإتقان؟',
+    a: 'تُحسب من الإنجاز المسجَّل وحده — إتمام الواجب، تسليم الاختبار، حضور المحاضرة — وتظهر فور تسجيله، بلا إدخال يدوي.',
   },
   {
     q: 'هل يمكن للطالب رؤية تقدّمه في كل مقرّر؟',
     a: 'نعم. لكل مقرّر تقدّمه الخاص، ومصفوفة الإتقان تُظهر الدرجات والمواضيع التي أتقنتها والتي تحتاج مراجعة.',
   },
   {
-    q: 'ما فائدة السلسلة إن غاب الطالب يومًا؟',
-    a: 'السلسلة تتوقّف ولا تُعاقب: تعود من حيث توقّفت مع اليوم التالي. الغاية تشجيع الانتظام، لا معاقبة الانقطاع.',
+    q: 'ماذا يحدث لسلسلة النشاط إن غاب الطالب يومًا؟',
+    a: 'تتوقّف ولا تُعاقب: تعود من حيث توقّفت مع اليوم التالي. الغاية قياس الانتظام، لا معاقبة الانقطاع.',
   },
   {
     q: 'هل الشهادات معتمدة؟',
@@ -1374,7 +1391,6 @@ export function FaqBand() {
   return (
     <section className="w369-faq" id="faq">
       <div className="w369-faq-head">
-        <Mascot pose="think" size={72} />
         <div>
           <p className="w369-band-kicker"><Glyph name="sparkle" size={15} />أسئلة شائعة</p>
           <h2 className="w369-h2">قبل أن تبدأ</h2>
@@ -1398,25 +1414,24 @@ export function FaqBand() {
 /* ─────────────────────────────── CTA ─────────────────────────────── */
 
 export function CtaBand() {
-  const [mine, setMine] = useState(0);
+  const [read, setRead] = useState(0);
   useEffect(() => {
-    const on = (e: Event) => setMine((e as CustomEvent<number>).detail ?? 0);
+    const on = (e: Event) => setRead((e as CustomEvent<number>).detail ?? 0);
     window.addEventListener('ulara:stars', on as EventListener);
     return () => window.removeEventListener('ulara:stars', on as EventListener);
   }, []);
   return (
     <section className="w369-cta" data-jar="06">
       <div className="w369-cta-inner">
-        <Mascot pose="wave" size={110} className="w369-cta-mascot" />
-        <p className="w369-cta-tally" data-full={mine >= JAR_TOTAL ? 'true' : 'false'}>
-          <Glyph name="star" size={15} />
-          جمعت <b>{mine}</b> من {JAR_TOTAL} نجوم وأنت تقرأ — الأولى في حسابك تنتظرك
+        <p className="w369-cta-tally" data-full={read >= JAR_TOTAL ? 'true' : 'false'}>
+          <Glyph name="compass" size={15} />
+          قرأت <b>{read}</b> من {JAR_TOTAL} أقسام — والتفاصيل كلها في المنصّة
         </p>
         <h2 className="w369-h1 w369-cta-title">
-          خطوتك الأولى<br /><span className="w369-em">نجمة واحدة</span>
+          ابدأ من<br /><span className="w369-em">مقرّرك الأول</span>
         </h2>
         <p className="w369-lead">
-          أنشئ حسابك الجامعي، وسجّل أول مهمّة اليوم. الباقي يبني نفسه.
+          أنشئ حسابك الجامعي، وستجد مقرّراتك ومهامّك وتقدّمك جاهزة في مكان واحد.
         </p>
         <div className="w369-cta-actions">
           <Link to={ROUTES.authRegister} className="w369-btn w369-btn-primary w369-btn-lg">
