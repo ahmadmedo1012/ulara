@@ -235,18 +235,21 @@ export function InstitutionCouncilsPage() {
       </InstFilters>
 
       {/* R359 (W2-e) — the framed register (states + DataSheet + the
-          family pagination footer). */}
+          family pagination footer). The skeleton rides the DataSheet's
+          own loading register (same thead/hairline anatomy the resolved
+          rows occupy), so the swap is height-stable. */}
       <SheetSection index="01" caption="COUNCILS" title="سجلّ المجالس واللجان" pad="none">
         <InstStates
-          isLoading={councilsQuery.isLoading}
+          isLoading={false}
           error={councilsQuery.error}
-          isEmpty={(councilsQuery.data?.data ?? []).length === 0}
+          isEmpty={!councilsQuery.isLoading && (councilsQuery.data?.data ?? []).length === 0}
         >
           <DataSheet
             caption="سجلّ المجالس واللجان"
             columns={columns}
             rows={councilsQuery.data?.data ?? []}
             rowTone={(c) => rowToneFromStatus(c.status)}
+            loading={councilsQuery.isLoading}
           />
         </InstStates>
         {councilsQuery.data && councilsQuery.data.meta.totalPages > 1 && (

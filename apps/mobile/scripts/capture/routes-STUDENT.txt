@@ -1,0 +1,32 @@
+# r366 capture rig — STUDENT routes (login required; sweep after the
+# Maestro journey lands the session). Detail routes with params are
+# deferred until the seed's real ids are wired (ledger NEXT).
+# format: NAME|route-path
+dashboard|student/dashboard
+courses|student/courses
+ai|student/ai
+alerts|student/alerts
+profile|student/profile
+assignments|student/assignments
+calendar|student/calendar
+catalog|student/catalog
+results|student/results
+schedule|student/schedule
+materials|student/materials
+library|student/library
+research|student/research
+matrix|student/matrix
+skills|student/skills
+gamification|student/gamification
+social|student/social
+jobs|student/jobs
+mooc|student/mooc
+webinars|student/webinars
+live|student/live
+labs|student/labs
+ar|student/ar
+map|student/map
+payment|student/payment
+messages|student/messages
+achievements|achievements
+settings|settings

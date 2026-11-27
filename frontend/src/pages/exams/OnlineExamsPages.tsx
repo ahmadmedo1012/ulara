@@ -11,15 +11,17 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   ClipboardCheck, Clock, CheckCircle2, AlertTriangle, ChevronRight, ChevronDown, ChevronLeft,
   FileText, Hourglass, CalendarClock, ArrowLeft, Check,
-  ListChecks, Info, Ban, BarChart3, Compass,
+  ListChecks, Info, BarChart3, Compass,
 } from 'lucide-react';
-import { Card, Badge, PageHeader } from '../../components/primitives';
+import { Badge } from '../../components/primitives';
 import { StatStrip } from '../../components/primitives/Ledger';
 /* R321 B1a — the sheet-system kit: the frame + the patterns masthead
- * (aliased — the primitives PageHeader stays imported for the quality
- * moderation screen below), and the §B2 anatomy the converted family
- * mounts (SectionBar/BarCount/EmptyCell — the JobsPage recipe). */
-import { PageFrame, PageHeader as PatternPageHeader } from '../../components/patterns';
+ * (aliased), the §B2 anatomy the converted family mounts
+ * (SectionBar/BarCount/EmptyCell — the JobsPage recipe), and — since
+ * the quality-moderation conversion — the framed SheetSection the
+ * queue mounts (the primitives Card/PageHeader pair it replaced is
+ * retired from this file). */
+import { PageFrame, PageHeader as PatternPageHeader, SheetSection } from '../../components/patterns';
 import { SectionBar, BarCount, EmptyCell } from '../../components/student';
 import { Icon } from '../../components/Icon';
 import { Illustration as MkIllustration } from '../../components/illustrations/Illustration';
@@ -484,11 +486,11 @@ function ExamCard({ exam, canStart, actNow }: { exam: MyExam; canStart: boolean;
         <span className="oex-row-title">{exam.title}</span>
         <span className="oex-row-kicker">{KIND_LABEL[exam.kind]} · {exam.courseName ?? exam.facultyName ?? 'موحد'}</span>
         <span className="oex-row-meta">
-          <span><Icon icon={Clock} size={12} /> <bdi>{exam.durationMin}</bdi> دقيقة</span>
+          <span><Icon icon={Clock} size={12} /> <bdi className="font-mono">{exam.durationMin}</bdi> دقيقة</span>
           {/* 22-c counted nouns — «N سؤال» broke the glossary for
               2 (سؤالان) and 3–10 (أسئلة); countAr speaks the forms. */}
           <span><Icon icon={ClipboardCheck} size={12} /> {countAr(exam.questionCount, ['سؤال', 'سؤالان', 'أسئلة', 'سؤالاً'])}</span>
-          <span>درجة النجاح <bdi>≥ {exam.passingScore}%</bdi></span>
+          <span>درجة النجاح <bdi className="font-mono">≥ {exam.passingScore}%</bdi></span>
           {/* 15-h P1-5 — an open-window exam carries its close deadline
               so the student knows how long they really have. */}
           {ws === 'open' && exam.closeAt && (
@@ -628,10 +630,16 @@ function ReviewQuestionRow({ q, index }: { q: AttemptReviewQuestion; index: numb
       <div className="oex-review-head">
         <span className="oex-review-num" aria-hidden><bdi>{index + 1}</bdi></span>
         <span className="oex-review-prompt">{q.prompt}</span>
-        <Badge color={verdict.color}>{verdict.label}</Badge>
+        {/* R366 — the verdict rides the SAME flat dot-chip register the
+         * list rows speak (r305s-chip; tone on the dot, honest words in
+         * the body) — the teacher-side null verdict stays neutral. */}
+        <span className={`r305s-chip${verdict.color ? ` ${OEX_CHIP_TONE[verdict.color]}` : ''}`}>
+          <i className="r305s-chip-dot" aria-hidden />
+          <bdi>{verdict.label}</bdi>
+        </span>
       </div>
       <div className="oex-review-meta">
-        <bdi>{q.awardedPoints ?? 0} / {q.points}</bdi> درجة
+        <bdi className="font-mono">{q.awardedPoints ?? 0} / {q.points}</bdi> درجة
       </div>
       <div className="oex-review-ans">
         <span className="oex-review-label">إجابتك:</span>{' '}
@@ -1534,7 +1542,7 @@ export function ExamTakerPage() {
                 aria-label={`السؤال ${i + 1} من ${attempt.questions.length} — ${qFailed ? 'تعذَّر الحفظ' : qAnswered ? 'مُجاب' : 'بدون إجابة'}`}
                 onClick={() => jumpToQuestion(q.id)}
               >
-                <bdi>{i + 1}</bdi>
+                <bdi dir="ltr">[{i + 1}]</bdi>
               </button>
             );
           })}
@@ -1671,7 +1679,10 @@ export function ExamTakerPage() {
                 )}
                 {saveState && (
                   <div className="oex-q-foot">
-                    <span className={`oex-q-state ${saveState}`}>
+                    <span
+                      className="sg-flag"
+                      data-tone={saveState === 'failed' ? 'danger' : saveState === 'saved' ? 'positive' : undefined}
+                    >
                       <Icon
                         icon={saveState === 'failed' ? AlertTriangle : saveState === 'saving' ? Clock : CheckCircle2}
                         size={12}
@@ -1767,10 +1778,13 @@ const DIFFICULTY_LABEL: Record<Difficulty, string> = {
   MEDIUM: 'متوسط',
   HARD: 'صعب',
 };
-const DIFFICULTY_COLOR: Record<Difficulty, 'green' | 'amber' | 'red'> = {
-  EASY: 'green',
-  MEDIUM: 'amber',
-  HARD: 'red',
+/* R366 — the difficulty rides the flat sg-flag register now, so the
+ * projection targets flag tones (positive/quiet/danger), not Badge
+ * colors — same semantics, the square hairline chip form. */
+const DIFFICULTY_TONE: Record<Difficulty, 'positive' | 'quiet' | 'danger'> = {
+  EASY: 'positive',
+  MEDIUM: 'quiet',
+  HARD: 'danger',
 };
 
 /* توأم محلي دقيق للدالة النقية answerKeySummary في ExamAuthorPages —
@@ -1868,14 +1882,14 @@ function ModerationQuestionRow({
       <div className="list-row-body">
         <div className="list-row-title" title={q.prompt}>{q.prompt}</div>
         <div className="list-row-sub" style={{ display: 'flex', gap: 'var(--sp-2)', flexWrap: 'wrap', alignItems: 'center' }}>
-          <Badge>{QTYPE_LABEL[q.type]}</Badge>
-          <Badge color={DIFFICULTY_COLOR[q.difficulty]}>{DIFFICULTY_LABEL[q.difficulty]}</Badge>
+          <span className="sg-flag">{QTYPE_LABEL[q.type]}</span>
+          <span className="sg-flag" data-tone={DIFFICULTY_TONE[q.difficulty]}>{DIFFICULTY_LABEL[q.difficulty]}</span>
           {q.category && <span>{q.category.title}</span>}
           <span>
             {countAr(points, ['نقطة واحدة', 'نقطتان', 'نقاط', 'نقطة'])}
             {row.pointsOverride !== null && ' (معدَّلة)'}
           </span>
-          {!q.isApproved && <Badge color="red" icon={Ban}>موقوف</Badge>}
+          {!q.isApproved && <span className="sg-flag" data-tone="danger">موقوف</span>}
         </div>
         {/* مفتاح الإجابة — الخلفية تُخفيه (null) عن كل عارض ليس من
             أجله؛ null لا يُعرض إطلاقاً (لا مفتاحاً مزيّفاً). */}
@@ -1959,21 +1973,19 @@ export function ExamModerationPage() {
   const questionsAwaiting = (queue ?? []).reduce((sum, item) => sum + item._count.questions, 0);
 
   return (
-    <div className="hr-scope">
-    <div className="page">
-      {/* R305 DS — the oversight brow above the page header. R342-11:
-          the [05] QUALITY_NAV seat numeral rides the brow (the §B2
-          cover precedent — the family's own page-index mono label
-          carried by the brow line), closing the quality register:
+    <div className="r321x-page">
+    <PageFrame width="default">
+      {/* R305 DS / R366 — the oversight register. R342-11:
+          the [05] QUALITY_NAV seat numeral rides the masthead eyebrow (§B2
+          cover precedent — the family's own page-index mono label,
+          now the patterns masthead's index prop), closing the quality register:
           [01] لوحة الجودة … [04] الانخراط · [05] هنا · [06] المناهج …
           [09] التنبيهات. */}
-      <span className="hr-brow oex2-brow">
-        <span className="page-index" aria-hidden="true" dir="ltr">[05]</span>
-        طابور الاعتماد
-      </span>
-      <PageHeader
+      <PatternPageHeader
+        index="05"
+        eyebrow="طابور الاعتماد"
         title="مراجعة الاختبارات"
-        subtitle="مراجعة قوالب الاختبارات الموحَّدة قبل اعتمادها وإتاحتها للطلاب — صلاحية حصرية لمكتب الجودة."
+        description="مراجعة قوالب الاختبارات الموحَّدة قبل اعتمادها وإتاحتها للطلاب — صلاحية حصرية لمكتب الجودة."
         /* R342-11: the header CTA pair (the D10 quality-family grammar,
          * navigation-only — the queue's own decisions live on the rows).
          * The accent seat is the measured hover surface (.has-shell
@@ -2023,9 +2035,17 @@ export function ExamModerationPage() {
       />
 
       {/* The backend queue is strict FIFO oldest-first (exams.routes.ts
-          orders by createdAt asc) — the subtitle discloses the order the
-          rows arrive in, the honest contract for a read-heavy queue. */}
-      <Card title="قائمة الانتظار" icon={ClipboardCheck} subtitle="الطابور بالأقدم أولًا">
+          orders by createdAt asc) — the desc discloses the order the
+          rows arrive in, the honest contract for a read-heavy queue.
+          R366: the Card wall becomes the sheet's framed section — the
+          [01] gutter numeral + the Latin mono classification caption,
+          the queue's hairline rows riding inside the frame. */}
+      <SheetSection
+        index="01"
+        caption="REVIEW QUEUE"
+        title="قائمة الانتظار"
+        desc="الطابور بالأقدم أولًا"
+      >
         {queueQ.isPending ? (
           <ListSkeleton rows={4} />
         ) : queueQ.isError ? (
@@ -2047,16 +2067,21 @@ export function ExamModerationPage() {
                   <div className="oex-mod-main">
                     <div className="oex-mod-title">{item.title}</div>
                     <div className="oex-mod-meta">
-                      <Badge>{KIND_LABEL[item.kind]}</Badge>
-                      {item.offering && <Badge color="brand">{item.offering.course.name}</Badge>}
+                      {/* R366 — flat flags + prose, not pill chips: the kind
+                          is the row's one classification flag (the square
+                          hairline sg-flag register); the course name and
+                          the counted phrases are DATA, not status — quiet
+                          meta text, counted-noun grammar preserved. */}
+                      <span className="sg-flag">{KIND_LABEL[item.kind]}</span>
+                      {item.offering && <span className="text-xs text-muted">{item.offering.course.name}</span>}
                       {/* 22-c counted nouns — «N سؤال · N د» broke the
                           glossary for 2 (سؤالان/دقيقتين) and 3–10
                           (أسئلة/دقائق). */}
-                      <Badge>
-                        {countAr(item._count.questions, ['سؤال', 'سؤالان', 'أسئلة', 'سؤالاً'])
-                          + ' · '
-                          + countAr(item.durationMin, ['دقيقة', 'دقيقتين', 'دقائق', 'دقيقة'])}
-                      </Badge>
+                      <span className="text-xxs text-subtle">
+                        {countAr(item._count.questions, ['سؤال', 'سؤالان', 'أسئلة', 'سؤالاً'])}
+                        {' · '}
+                        {countAr(item.durationMin, ['دقيقة', 'دقيقتين', 'دقائق', 'دقيقة'])}
+                      </span>
                       <span className="text-xxs text-subtle">
                         قدّمه: {item.author.firstName} {item.author.lastName}
                       </span>
@@ -2163,7 +2188,7 @@ export function ExamModerationPage() {
             })}
           </div>
         )}
-      </Card>
+      </SheetSection>
 
       {/* Reject is destructive and unundoable — the queue loses the
           template on click. The dialog names the consequence before the
@@ -2183,7 +2208,7 @@ export function ExamModerationPage() {
         }}
         onCancel={() => setConfirmingReject(null)}
       />
-      </div>
+    </PageFrame>
     </div>
   );
 }

@@ -300,12 +300,15 @@ describe('R305 — the section kicker register', () => {
     expect(count?.getAttribute('aria-hidden')).toBe('true');
   });
 
-  it('the momentum strip rides the labeled rule (metadata band, not a boxed section)', async () => {
+  it('the momentum strip rides the labeled rule and the KPI-band register (r365)', async () => {
     renderPage();
     const rule = await screen.findByText('زخم الفصل');
     expect(rule.className).toContain('r305s-rule-labeled');
     const strip = rule.closest('.dash-momentum');
-    expect(strip?.querySelector('.pf-statline')).not.toBeNull();
+    /* r365 — the strip lifted into the KPI-band register: the huge-numeral
+       band (the reference's KPI grammar) renders inside the labeled rule,
+       not a boxed section. */
+    expect(strip?.querySelector('.sg-kpis')).not.toBeNull();
   });
 });
 
@@ -336,7 +339,7 @@ describe('R305 — the chip register on statuses', () => {
 /* ── 4 · The pending mirror keeps the reference anatomy ───────────────── */
 
 describe('R305 — the pending mirror', () => {
-  it('the hero skeleton slot carries the SAME deep-band classes; the momentum mirror keeps the labeled rule', async () => {
+  it('the hero skeleton slot carries the SAME deep-band classes; the momentum mirror holds the KPI band grid (r365)', async () => {
     PENDING.add('/me/dashboard');
     const { container } = renderPage();
     const skel = container.querySelector('.stu-hero-skel');
@@ -346,7 +349,11 @@ describe('R305 — the pending mirror', () => {
     const momentum = container.querySelector('.dash-momentum');
     expect(momentum?.getAttribute('aria-busy')).toBe('true');
     expect(momentum?.querySelector('.r305s-rule-labeled')?.textContent).toBe('زخم الفصل');
-    expect(momentum?.querySelectorAll('.pf-stat')).toHaveLength(4);
+    /* r365 — the mirror holds the RESOLVED register: the same .sg-kpis
+       grid the KPI band renders, five cells, each with the label +
+       numeral + delta bars (the loading-closure law). */
+    expect(momentum?.querySelector('.sg-kpis')).not.toBeNull();
+    expect(momentum?.querySelectorAll('.sg-kpi')).toHaveLength(5);
     // The identity contract survives the mirror (r168a re-pin).
     expect(screen.getByRole('heading', { level: 1, name: 'لوحة التحكم' })).toBeTruthy();
   });

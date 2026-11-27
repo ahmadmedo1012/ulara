@@ -40,6 +40,10 @@
  *                      no new colours (the owner alone carries the signal)
  *   [17] طبقة الأسفل   the §R325 bottom-stack pile (lib/bottomStack) —
  *                      consent banner → toast stack → FAB, live offsets
+ *   [19] أثاث المساحة  the P3 furniture kit — RegCross corners ·
+ *                      RulerStrip · DimensionLine · .pat-linegrid
+ *                      swatch, forced states (the /__plates-side
+ *                      drafting furniture, the DOM voice)
  *
  * Light/dark is structural (system tokens only); the page ships its own
  * theme seat so the reviewers flip both themes without the app shell.
@@ -74,6 +78,11 @@ import { getBottomStackTotal } from '../lib/bottomStack';
  * product's page language, demonstrated live. */
 import { SheetSection, KpiBand, DataSheet, CalloutTag, SheetEmpty } from '../components/patterns/Sheet';
 import type { DataSheetColumn } from '../components/patterns/Sheet';
+/* P3 (the furniture kit): the drafting furniture primitives join the
+ * sheet — the DOM voices of the reference's measured chrome. */
+import { RegCross } from '../components/patterns/RegCross';
+import { RulerStrip } from '../components/patterns/RulerStrip';
+import { DimensionLine } from '../components/patterns/DimensionLine';
 import '../styles/shared/design.css';
 /* §R325.n — the gallery is the specimen page FOR the app-grammar
    sheet: it mounts the same unlayered sheet AppShell mounts so the
@@ -848,8 +857,8 @@ export default function DesignPage(): React.JSX.Element {
           <SheetSection index="02" caption="DEMO / KPI BAND" title="شريط المؤشرات" pad="none" className="r323d-sheet-demo">
             <KpiBand
               items={[
-                { index: '01', caption: 'STUDENTS', label: 'الطلاب النشطون', value: 1042, delta: '+3.2%', deltaTone: 'positive' },
-                { index: '02', caption: 'FACULTY', label: 'هيئة التدريس', value: 137, delta: 'ثابت' },
+                { index: '01', caption: 'STUDENTS', label: 'الطلاب النشطون', value: 1042, delta: '+3.2%', deltaTone: 'positive', deltaDir: 'up' },
+                { index: '02', caption: 'FACULTY', label: 'هيئة التدريس', value: 137, delta: 'ثابت', deltaDir: 'flat' },
                 { index: '03', caption: 'COURSES', label: 'مقرّرات نشطة', value: 486, to: '/__design' },
                 { index: '04', caption: 'ATTENDANCE', label: 'معدل الحضور', value: 82, unit: '%', deltaTone: 'warning', delta: 'مراجعة' },
                 { index: '05', caption: 'EMPTY', label: 'قيمة غير متاحة بعد', value: '—', empty: true },
@@ -863,6 +872,84 @@ export default function DesignPage(): React.JSX.Element {
               rows={DS_ROWS}
             />
           </SheetSection>
+        </Section>
+
+        {/* P3 — the furniture kit: the DOM voices of the reference's
+            measured chrome (the RegCross crosshair, the tick ruler, the
+            slash-tick dimension chain, the drafting line-grid), forced
+            states, §15's tile grammar. */}
+        <Section index="19" title="أثاث المساحة" note="RegCross · RulerStrip · DimensionLine · pat-linegrid — عدّاد الورقة المشترك (P3)">
+          <div className="r323d-grid">
+            <Cell label="RegCross — زوايا الإطار (corner register)">
+              <div className="r323d-furn-frame" aria-hidden="true">
+                <RegCross corner="tl" />
+                <RegCross corner="tr" />
+                <RegCross corner="bl" />
+                <RegCross corner="br" />
+              </div>
+            </Cell>
+            <Cell label="RegCross — النغمات (ink · muted)">
+              <div className="r323d-furn-row" aria-hidden="true">
+                <div className="r323d-furn-frame r323d-furn-frame--sm">
+                  <RegCross corner="tl" tone="ink" />
+                  <RegCross corner="br" tone="ink" />
+                </div>
+                <div className="r323d-furn-frame r323d-furn-frame--sm">
+                  <RegCross corner="tl" tone="muted" />
+                  <RegCross corner="br" tone="muted" />
+                </div>
+              </div>
+            </Cell>
+            <Cell label="RulerStrip — أفقي · رأسي (orientation)">
+              <div className="r323d-furn-row" aria-hidden="true">
+                <div className="r323d-furn-ruler">
+                  <RulerStrip />
+                </div>
+                <div className="r323d-furn-ruler r323d-furn-ruler--v">
+                  <RulerStrip orientation="vertical" />
+                </div>
+              </div>
+            </Cell>
+            <Cell label="RulerStrip — النغمات والنبض (tones · pitch var)">
+              <div className="r323d-furn-stack" aria-hidden="true">
+                <div className="r323d-furn-ruler">
+                  <RulerStrip tone="ink" />
+                </div>
+                <div className="r323d-furn-ruler">
+                  <RulerStrip tone="muted" />
+                </div>
+                <div className="r323d-furn-ruler r323d-furn-pitch">
+                  <RulerStrip />
+                </div>
+              </div>
+            </Cell>
+            <Cell label="DimensionLine — أفقي (slash ticks + mono label)">
+              <div className="r323d-furn-stack" aria-hidden="true">
+                <div className="r323d-furn-dim">
+                  <DimensionLine label="54.0" />
+                </div>
+                <div className="r323d-furn-dim">
+                  <DimensionLine label="10168" />
+                </div>
+              </div>
+            </Cell>
+            <Cell label="DimensionLine — رأسي (vertical run)">
+              <div className="r323d-furn-row" aria-hidden="true">
+                <div className="r323d-furn-dimcol">
+                  <DimensionLine label="2550" orientation="vertical" />
+                </div>
+                <div className="r323d-furn-dimcol">
+                  <DimensionLine label="9" orientation="vertical" />
+                </div>
+              </div>
+            </Cell>
+            <Cell label=".pat-linegrid — الشبكة الخطية (32px sheet pitch)">
+              <div className="r323d-stack r323d-fill" aria-hidden="true">
+                <div className="r323d-pat pat-linegrid" />
+                <div className="r323d-pat pat-linegrid r323d-pat-muted" />
+              </div>
+            </Cell>
+          </div>
         </Section>
       </main>
 

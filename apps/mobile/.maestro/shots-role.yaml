@@ -34,12 +34,44 @@ appId: ly.ulara.app
 - tapOn:
     id: "login-password"
 - inputText: "${PASSWORD}"
+# r367: the capture rig's cold legs lost the submit tap (runs
+# 45835244276 · 45903140875 · 45914019092: «دخول» not found on every leg
+# — the fresh boot's IME state keeps BOTH the sticky bar and the resting
+# button out of the hit-test). The chain is now ALL-OPTIONAL (a required
+# first tap aborted the flow before ANY fallback ran — run
+# 45914019092's own trace) and rides three independent mechanisms:
+#   1. the sticky-bar tap ×2 (the smoke flow's proven seat — fires when
+#      the bar mounted);
+#   2. pressKey Enter (the R336 forensics' safe window: the IME is
+#      OPEN — the hardware enter submits the focused field; it only
+#      degenerates to BACK once the IME hides);
+#   3. the settled-form path: hideKeyboard (no-op when nothing is open)
+#      → scroll the resting submit into view → tap it (the regex rides
+#      the `text` property itself — this Maestro has no `textMatches`).
+# The dashboard extendedWaitUntil below remains the ONE verdict: the
+# chain's no-ops can never mask a failed login.
 - tapOn:
     text: "دخول"
-# r359 A4: the R336-E submit-race retry (a settled no-op when the first
-# tap fired; the retry when it was swallowed).
+    optional: true
 - tapOn:
     text: "دخول"
+    optional: true
+- pressKey:
+    key: Enter     # the field is `key`, not `text` (run 45919731339's
+                   # parse forensics: 'Config Field Required: key')
+    optional: true
+- hideKeyboard:
+    optional: true
+- scrollUntilVisible:
+    element:
+      text: "^دخول$"     # the text property IS the regex channel (the
+                          # smoke flow's documented anti-collision seat —
+                          # this Maestro has no `textMatches` property)
+    direction: DOWN
+    timeout: 8000
+    optional: true
+- tapOn:
+    text: "^دخول$"
     optional: true
 - tapOn:
     text: "تخطي"                   # the tour escape, when still owed

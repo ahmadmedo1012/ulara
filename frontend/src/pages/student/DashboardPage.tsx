@@ -5,9 +5,12 @@ import {
   ErrorState, EmptyState, ListSkeleton, Skeleton,
 } from '../../components/primitives/States';
 import {
-  PageFrame, PageHeader, RowList, RowItem, StatLine, TodayList,
-  type StatLineItem,
+  PageFrame, PageHeader, RowList, RowItem, TodayList,
 } from '../../components/patterns';
+/* r365 — the momentum strip rides the KPI-BAND register: huge numerals
+ * in hairline cells + flat delta flags (the reference's KPI grammar on
+ * the student's primary dashboard). Same five facts, same order. */
+import { KpiBand, type KpiItem } from '../../components/patterns';
 /* R325 P2.5 — the INDICATOR language (patterns/indicators): the
  * dashboard is its showpiece. Imported DIRECTLY, not via the patterns
  * barrel — the barrel's signatures are CONTRACT-frozen and a `RulerGauge`
@@ -63,9 +66,9 @@ import '../../styles/student/pages.css';
    above the lists) → «اليوم» TodayList (today's commitments + every
    still-actable exam) → the learning band (مقرّراتك rows with live
    progress in the main column, the recommended gaps rail beside it,
-   every gap row a direct remediation link) → the momentum StatLine
-   (compact typographic line, no icon boxes) → the week ledger
-   (day-anchored).
+   every gap row a direct remediation link) → the momentum KPI band
+   (r365: huge numerals + flat delta flags, the reference's KPI
+   register) → the week ledger (day-anchored).
    The pure helpers below (classWhenMs / safeMs / examAgendaRow /
    pickTrainingResume) keep their exported contracts — the unit pins
    (DashboardPage-agenda / -exams-resume) stay byte-identical.
@@ -571,16 +574,18 @@ export default function StudentDashboardPage() {
             </div>
           )}
           <ListSkeleton rows={3} />
-          {/* R305: the momentum strip mirrors the resolved anatomy — the
-              labeled rule (the reference annotated divider) above the stat
-              line. Same slots, same order, nothing moves at handoff. */}
+          {/* r365 — the momentum strip mirrors the RESOLVED register now:
+              the KPI band's grid (same .sg-kpis class → same columns →
+              the handoff moves nothing), each cell holding the label +
+              numeral bars (the loading-closure discipline). */}
           <div className="dash-momentum" aria-busy="true">
             <div className="r305s-rule-labeled" aria-hidden="true">زخم الفصل</div>
-            <div className="pf-statline" aria-busy="true">
-              {[0, 1, 2, 3].map((i) => (
-                <div key={i} className="pf-stat">
-                  <Skeleton width={70} height={13} />
-                  <Skeleton width={56} height={24} />
+            <div className="sg-kpis" aria-hidden="true">
+              {[0, 1, 2, 3, 4].map((i) => (
+                <div key={i} className="sg-kpi">
+                  <Skeleton width={84} height={12} />
+                  <Skeleton width={96} height={30} />
+                  <Skeleton width={72} height={12} />
                 </div>
               ))}
             </div>
@@ -739,49 +744,51 @@ export default function StudentDashboardPage() {
     ? gradeBands(gradedScores, results.data?.headline.avgGradePct ?? null)
     : null;
 
-  /* The momentum StatLine — same facts the old strip carried, printed
-     as one calm line (r183-B3's verdict copy stays pinned here).
-     r348: spread seats the five stats across the sheet's full line
-     (the inline-end half held ~750px of dead paper at 1440 — the same
-     «dead half» the teacher audit measured); the two not-yet data wear
-     the honest-empty register. */
-  const statLineItems: StatLineItem[] = [
+  /* r365 — the momentum KPIs: the same five facts, lifted into the
+     KPI-band register (huge mono-leading numerals, hairline cells,
+     flat delta flags). Deltas carry the old hint copy; the GPA flag
+     rides its REAL trend direction, attendance flags its threshold
+     register. Honest-empty stays (— + the empty register). */
+  const momentumKpis: KpiItem[] = [
     {
       label: 'المعدل التراكمي',
       value: formatNum(d.profile.gpa, { maximumFractionDigits: 2 }),
-      hint: tone.label,
-      tone: tone.trend === 'up' ? 'positive' : tone.trend === 'down' ? 'danger' : 'neutral',
+      delta: tone.label,
+      deltaTone: tone.trend === 'up' ? 'positive' : tone.trend === 'down' ? 'danger' : 'neutral',
+      deltaDir: tone.trend === 'up' ? 'up' : tone.trend === 'down' ? 'down' : undefined,
     },
     {
       label: 'نسبة الحضور',
-      value: d.kpi.attendancePct !== null ? <CountIn value={d.kpi.attendancePct} suffix="%" /> : '—',
-      hint: d.kpi.attendancePct !== null
+      value: d.kpi.attendancePct !== null ? <CountIn value={d.kpi.attendancePct} /> : '—',
+      unit: '%',
+      delta: d.kpi.attendancePct !== null
         ? d.kpi.attendancePct >= 80 ? 'فوق الحد' : d.kpi.attendancePct >= 60 ? 'قريب من الحد' : 'تحت الحد'
         : 'لا سجلات',
-      tone: d.kpi.attendancePct === null ? 'neutral' : d.kpi.attendancePct >= 80 ? 'positive' : d.kpi.attendancePct >= 60 ? 'warning' : 'danger',
+      deltaTone: d.kpi.attendancePct === null ? 'neutral' : d.kpi.attendancePct >= 80 ? 'positive' : d.kpi.attendancePct >= 60 ? 'warning' : 'danger',
       empty: d.kpi.attendancePct === null,
     },
     {
       label: 'مهام معلّقة',
       value: <CountIn value={d.kpi.pendingAssignmentsCount} />,
-      hint: d.agenda.assignments[0] ? formatDue(d.agenda.assignments[0].dueAt) : 'لا مهام قريبة',
-      tone: d.kpi.pendingAssignmentsCount === 0 ? 'positive' : 'neutral',
+      delta: d.agenda.assignments[0] ? formatDue(d.agenda.assignments[0].dueAt) : 'لا مهام قريبة',
+      deltaTone: d.kpi.pendingAssignmentsCount === 0 ? 'positive' : 'neutral',
+      deltaDir: d.kpi.pendingAssignmentsCount === 0 ? 'flat' : undefined,
     },
     {
       label: 'نقاط الإنجاز',
       value: <CountIn value={d.kpi.totalXp} />,
-      hint: d.kpi.cohortSize > 1
+      delta: d.kpi.cohortSize > 1
         ? `المركز ${d.kpi.rank}/${d.kpi.cohortSize}`
         : `مستوى ${d.profile.level}`,
-      tone: 'neutral',
     },
     {
       label: 'إنجاز المقرّرات',
-      value: d.kpi.courseCount > 0 ? <CountIn value={courseProgressPct} suffix="%" /> : '—',
-      hint: d.kpi.courseCount > 0
+      value: d.kpi.courseCount > 0 ? <CountIn value={courseProgressPct} /> : '—',
+      unit: '%',
+      delta: d.kpi.courseCount > 0
         ? countAr(d.kpi.courseCount, ['مقرّر نشط واحد', 'مقرّران نشطان', 'مقرّرات نشطة', 'مقررًا نشطًا'])
         : 'لا مقرّرات',
-      tone: d.kpi.courseCount === 0 ? 'warning' : courseProgressPct >= 75 ? 'positive' : courseProgressPct === 0 ? 'warning' : 'neutral',
+      deltaTone: d.kpi.courseCount === 0 ? 'warning' : courseProgressPct >= 75 ? 'positive' : courseProgressPct === 0 ? 'warning' : 'neutral',
       empty: d.kpi.courseCount === 0,
     },
   ];
@@ -1036,19 +1043,21 @@ export default function StudentDashboardPage() {
         </details>
       </div>
 
-      {/* الحالة — the momentum strip (r220 facts, R305 register): the
-          the reference labeled rule classifies the line as the page's metadata
-          band; the StatLine pattern below stays untouched. R319
-          (c2-G1): the KPI block's summary instrument — the AVG
-          CourseBar under the line (the same avgEnrollmentProgressPct
-          datum the «إنجاز المقرّرات» stat prints, as a hairline +
-          end-tick reading). P2.5: two more instruments join the band —
-          GradeBars (the graded works' real distribution, the student's
-          own band in orange) and StreakTicks (the weekly study log —
-          NO daily datum exists in the API yet, so the row renders its
-          honest empty register: seven empty ticks, today outlined). */}
+      {/* الحالة — the momentum strip (r220 facts, r365 register): the
+          the reference labeled rule classifies the band as the page's metadata
+          register; the KpiBand below replaces the StatLine era. R319
+          (c2-G1): the KPI block's summary instrument — the indicators
+          under the band (P2.5): GradeBars (the graded works' real
+          distribution, the student's own band marked) and StreakTicks
+          (the weekly study log — NO daily datum exists in the API yet,
+          so the row renders its honest empty register: seven empty
+          ticks, today outlined). */}
       <section aria-label="زخم الفصل" className="dash-momentum">
-        <StatLine items={statLineItems} spread discloseHints />
+        {/* r365 — the KPI-band register: huge numerals + flat delta flags
+            in hairline cells (the reference's KPI grammar). The facts,
+            order and honest-empty register are unchanged from the
+            StatLine era; the flags only ride REAL directions. */}
+        <KpiBand items={momentumKpis} label="زخم الفصل" />
         <details className="dash-disclosure">
           <summary>توزيع الدرجات والنشاط</summary>
           {/* r351 A2 (Q3): the AVG CourseBar retired — it re-printed the

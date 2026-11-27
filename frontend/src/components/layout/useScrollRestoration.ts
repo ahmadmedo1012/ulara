@@ -35,13 +35,27 @@ const persistScroll = (key: string, scrollTop: number): void => {
  * (measured in useScrollRestoration.test.tsx: POP into a route that
  * grows 100→2000px after the restore frame parks the user at the top,
  * forever). The watcher re-applies the stored offset for a bounded
- * window (~1s at 60fps) and stands down the moment the offset is
+ * window (wall-clock — see r363 below) and stands down the moment the offset is
  * honored, a new navigation replaces this effect, or the user scrolls
  * the container themselves (any position that isn't the one our own
  * write produced — the clamped result of our write always compares
  * equal to `expected`, user movement never does). PUSH/REPLACE —
- * always top, no stored offset to lose — are untouched. */
-const RESTORE_WATCH_FRAMES = 60;
+ * always top, no stored offset to lose — are untouched.
+ *
+ * r363 — the budget is WALL-CLOCK, not frame-count. The original
+ * window was "~60 rAF frames", which reads as ~1s at 60fps — but on a
+ * janking main thread (the CI e2e runners, low-end phones recovering
+ * from a background kill) 60 frames can stretch past any observer's
+ * patience, and the watcher stood down BEFORE the late height ever
+ * arrived: the restore was stranded at the clamped top and the test's
+ * own 40s window never saw the position return (measured twice in CI:
+ * 022f5db and ef92b4f, both attempts, while the same code passes 4/4
+ * locally — the frames were starved, not the restore lost). A
+ * wall-clock budget degrades honestly: under a healthy clock it
+ * re-applies for the same practical span and still stands down the
+ * moment the offset is honored; under starvation it keeps trying
+ * through the whole window instead of dying early. */
+const RESTORE_WATCH_MS = 4000;
 
 /**
  * useScrollRestoration — saves the content scroll position per history
@@ -87,12 +101,14 @@ export function useScrollRestoration(scrollRef: React.RefObject<HTMLElement | nu
     let applyRaf = 0;
     let watchRaf = 0;
     let honored = false;
-    let watched = 0;
     // What our last programmatic write produced (the clamped result).
     // -1 until the first apply: scroll events before the restore has
     // applied must not cancel it (old-code parity — the apply always
     // happened, even over a scroll that raced it).
     let expected = -1;
+    // The wall-clock budget's epoch — read once at arm time so a slow
+    // first frame never shortens the window.
+    const watchT0 = performance.now();
 
     const stopWatching = () => {
       if (applyRaf) {
@@ -124,11 +140,10 @@ export function useScrollRestoration(scrollRef: React.RefObject<HTMLElement | nu
     const tick = () => {
       watchRaf = 0;
       if (honored) return;
-      if (watched >= RESTORE_WATCH_FRAMES) {
+      if (performance.now() - watchT0 >= RESTORE_WATCH_MS) {
         stopWatching();
         return;
       }
-      watched += 1;
       watchRaf = requestAnimationFrame(() => {
         watchRaf = 0;
         if (honored) return;

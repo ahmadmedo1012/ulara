@@ -43,6 +43,31 @@ async function openAllStations(page: import('@playwright/test').Page) {
   await page.waitForTimeout(700); /* the tag transition settles */
 }
 
+/** r367: the hero's pointer surface is LIVE only after the guest
+ *  reveal's clip wipe finishes (guest-reveal-inner animates
+ *  clip-path inset 50%→0; a press mid-wipe lands on the wrapper and
+ *  the stage never sees it). The press waits until the stage's own
+ *  subtree owns the hit-test at the press point. */
+async function waitForHeroPointer(page: import('@playwright/test').Page, xf: number, yf: number) {
+  await page.waitForFunction(
+    (arg) => {
+      /* the arg rides as unknown (Playwright's overload types it loose):
+       * destructure with guards — never a typed param (TS2769), never an
+       * unguarded read (TS18048) */
+      const pair = arg as [number, number];
+      const fx = pair?.[0] ?? 0.5;
+      const fy = pair?.[1] ?? 0.5;
+      const st = document.querySelector('.hro-stage');
+      if (!st) return false;
+      const r = st.getBoundingClientRect();
+      const el = document.elementFromPoint(r.left + r.width * fx, r.top + r.height * fy);
+      return !!el && (st === el || st.contains(el));
+    },
+    [xf, yf],
+    { timeout: 20_000 },
+  );
+}
+
 /** r359: the stations are %-positioned at render (no ResizeObserver
  *  mapping) — ready once all four markers carry their data-marker. */
 async function waitForMapping(page: import('@playwright/test').Page) {
@@ -111,18 +136,30 @@ test.describe('R309 hero — drag-reveal geometry (the r359 rebuild contract)', 
      * transform of the landing chunk can outrun the 5s default (CI runs
      * a built app and is unaffected). */
     await expect(stage).toBeVisible({ timeout: 30_000 });
-    const sb = await stage.boundingBox();
-    expect(sb).not.toBeNull();
+    /* r363 — CI-hardening (the same window as the drag-release spec):
+     * CI's slower world once caught the sweep on a hero whose copy seat
+     * had not composed, so the sweep unsealed nothing. The same H1
+     * readiness sentinel gates the sweep. */
+    await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
     await waitForMapping(page);
     const centers = await markerCenters(page);
     expect(Object.keys(centers).sort()).toEqual([...STATION_IDS].sort());
+    /* r363 — CI-hardening round 2: the sweep measured the stage's box
+     * mid-reveal on the slower runners (the box moves with the entrance
+     * transform, so the press landed on paper, not the stage — 0
+     * stations, both attempts, while the sibling spec WITH settle waits
+     * passes). The settle + the re-measure at the drag moment pin the
+     * press to the stage's FINAL geometry. */
+    await page.waitForTimeout(800);
+    const sb = await stage.boundingBox();
+    expect(sb).not.toBeNull();
 
     /* the r359 gesture: press on the drawing and sweep — each 40px of
      * travel unmasks the next station in register order (Hero.tsx's
      * dragRef). A ~60% sweep crosses every rung by construction. */
     await page.mouse.move(sb!.x + sb!.width * 0.8, sb!.y + sb!.height * 0.5);
     await page.mouse.down();
-    await page.mouse.move(sb!.x + sb!.width * 0.2, sb!.y + sb!.height * 0.5, { steps: 12 });
+    await page.mouse.move(sb!.x + sb!.width * 0.2, sb!.y + sb!.height * 0.5, { steps: 24 });
     await page.waitForTimeout(250);
     await page.mouse.up();
     await page.waitForTimeout(700);
@@ -160,6 +197,13 @@ test.describe('R309 hero — drag-reveal geometry (the r359 rebuild contract)', 
     await page.goto('/');
     const stage = page.locator('.hro-stage');
     await expect(stage).toBeVisible({ timeout: 30_000 });
+    /* r367 fix: the entrance loader owns the pointer while it plays
+     * (R311 §1.7-4's law; R313 replays it on every load) — the eager
+     * LCP art lengthened the boot past this test's hover beat, so CI
+     * raced the handoff and the drag landed on the loader. Wait for
+     * the unmount, then for the reveal wipe to hand the surface back. */
+    await expect(page.locator('.pl')).toHaveCount(0, { timeout: 20_000 });
+    await waitForHeroPointer(page, 0.5, 0.5);
     const sb = await stage.boundingBox();
     expect(sb).not.toBeNull();
     await waitForMapping(page);
@@ -322,18 +366,61 @@ test.describe('R309 hero — the reveal-state lifecycle (§6)', () => {
     await page.goto('/');
     const stage = page.locator('.hro-stage');
     await expect(stage).toBeVisible({ timeout: 30_000 });
-    const sb = await stage.boundingBox();
-    expect(sb).not.toBeNull();
+    /* r363 — CI-hardening: the two CI-only failures (022f5db / 9a2356,
+     * both attempts, 0 stations open while the same code passes 4/4
+     * locally) share one window — the sweep ran on a hero that had not
+     * yet composed its copy seat, so the pointerdown never reached the
+     * stage's handlers. The sweep now rides behind the same hero-
+     * readiness sentinel every r354 spec waits on (the H1 copy renders
+     * => the hero tree is composed and interactive), and the sweep is
+     * delivered in finer steps. The semantics are unchanged: one sweep,
+     * release, the count must hold. */
+    await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
     await waitForMapping(page);
+    /* r363 — CI round 3: HERO_READY + the composed hero still lost
+     * twice in CI (0 stations, both attempts, 4/4 local): page.mouse
+     * is hit-target-blind, and the asset-gated entrance overlay can
+     * still own the press point when the sweep fires — every sibling
+     * spec rides locator clicks (which auto-wait for interception),
+     * a raw sweep does not. The sweep now settles like its sibling,
+     * then waits until the STAGE itself is the topmost element at the
+     * press point (the entrance overlay unmounted), re-measures, and
+     * observes the post-release count over a poll window. Semantics
+     * unchanged: one sweep, one release. */
+    await page.waitForTimeout(800);
+    let sb = await stage.boundingBox();
+    expect(sb).not.toBeNull();
+    await expect
+      .poll(
+        async () => {
+          sb = await stage.boundingBox();
+          if (!sb) return false;
+          const at = { x: sb.x + sb.width * 0.75, y: sb.y + sb.height * 0.5 };
+          return page.evaluate(({ x, y }) => {
+            const el = document.elementFromPoint(x, y);
+            return !!el && el.closest('.hro-stage') != null;
+          }, at);
+        },
+        {
+          timeout: 30_000,
+          message: 'the stage owns the press point (the entrance overlay is gone)',
+        },
+      )
+      .toBe(true);
     /* the reference's own semantics: pointer-up keeps whatever was
      * unsealed — one sweep, release, then the count must hold. */
-    await page.mouse.move(sb!.x + sb!.width * 0.75, sb!.y + sb!.height * 0.5);
+    const press = { x: sb!.x + sb!.width * 0.75, y: sb!.y + sb!.height * 0.5 };
+    await page.mouse.move(press.x, press.y);
     await page.mouse.down();
-    await page.mouse.move(sb!.x + sb!.width * 0.25, sb!.y + sb!.height * 0.5, { steps: 8 });
+    await page.mouse.move(sb!.x + sb!.width * 0.25, sb!.y + sb!.height * 0.5, { steps: 24 });
+    await page.waitForTimeout(250);
     await page.mouse.up();
-    await page.waitForTimeout(700);
-    const open = await page.locator('.hro-station.is-open').count();
-    expect(open).toBeGreaterThan(0);
+    await expect
+      .poll(() => page.locator('.hro-station.is-open').count(), {
+        timeout: 8_000,
+        message: 'the release keeps whatever the sweep unsealed',
+      })
+      .toBeGreaterThan(0);
   });
 
   test('the reveal persists across scroll-away AND return-to-top (r359 retired the auto-reset)', async ({ page }) => {

@@ -14,7 +14,7 @@ import { toast } from '../../lib/toast';
 import { formatDate } from '../../utils/numbers';
 import { serverError,
   DetailList, EnumChip, InstFilters, InstFormDialog, InstPagedTable, InstSection,
-  InstSelect, InstStates, type InstColumn, type InstField, type InstFormValues,
+  InstSelect, InstStates, StatusFlag, type InstColumn, type InstField, type InstFormValues,
 } from '../../components/institutional/kit';
 import { Icon } from '../../components/Icon';
 import {
@@ -159,8 +159,8 @@ export function InstitutionPositionsPage() {
     },
     { head: 'منذ', cell: (a) => formatDate(a.startDate) },
     { head: 'حتى', cell: (a) => (a.endDate ? formatDate(a.endDate) : '—') },
-    { head: 'الحالة', cell: (a) => <EnumChip value={a.status} labels={APPOINTMENT_STATUS_LABELS} /> },
-    { head: 'بقرار', mobileHidden: true, cell: (a) => <span className="font-mono">{a.decisionNumber ?? '—'}</span> },
+    { head: 'الحالة', cell: (a) => <StatusFlag value={a.status} labels={APPOINTMENT_STATUS_LABELS} /> },
+    { head: 'بقرار', mobileHidden: true, mono: true, cell: (a) => (a.decisionNumber ?? '—') },
     {
       head: 'إجراءات', mobileHidden: true,
       cell: (a) => canManage && (a.status === 'ACTIVE' || a.status === 'SCHEDULED') ? (
@@ -368,7 +368,7 @@ export function InstitutionAppointmentDetailPage() {
             <DetailList
               items={[
                 { label: 'الحامل', value: a.person?.fullNameAr ?? '—' },
-                { label: 'المنصب', value: a.position ? `${a.position.titleAr} (${a.position.code})` : '—' },
+                { label: 'المنصب', value: a.position ? (<>{a.position.titleAr} (<bdi>{a.position.code}</bdi>)</>) : '—' },
                 {
                   label: 'نطاق الوحدة',
                   value: a.orgUnit
@@ -378,7 +378,7 @@ export function InstitutionAppointmentDetailPage() {
                 { label: 'منذ', value: formatDate(a.startDate) },
                 { label: 'حتى', value: a.endDate ? formatDate(a.endDate) : 'مفتوح' },
                 { label: 'مدة (أشهر)', value: a.termMonths ? String(a.termMonths) : '—' },
-                { label: 'رقم القرار', value: a.decisionNumber ?? '—' },
+                { label: 'رقم القرار', value: a.decisionNumber ? <bdi>{a.decisionNumber}</bdi> : '—' },
                 { label: 'تاريخ القرار', value: a.decisionDate ? formatDate(a.decisionDate) : '—' },
               ]}
             />

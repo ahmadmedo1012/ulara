@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import { Sparkles } from 'lucide-react';
-import { Badge } from '../../components/primitives';
+import { Sparkles, AlertCircle } from 'lucide-react';
+import { AlertRow, Badge } from '../../components/primitives';
 import { Skeleton } from '../../components/primitives/States';
 import { PageFrame, PageHeader } from '../../components/patterns';
 import { useReducedMotion } from '../../components/motion';
@@ -514,15 +514,25 @@ export default function AiAssistantPage() {
                 {convLoad.phase === 'error' && (
                   <div className="chat-msg bot">
                     <span className="r305ai-role">المساعد</span>
+                    {/* r365 (4-a · §6.4): the recoverable error rides the
+                     * shared state kit (AlertRow — the sidebar's own error
+                     * register) instead of the unstyled .chat-error well;
+                     * role=alert + the retry verb are preserved verbatim. */}
                     <div className="chat-error" role="alert">
-                      <span>{convLoad.message}</span>
-                      <button
-                        type="button"
-                        className="chat-retry"
-                        onClick={() => void openConversation(convLoad.id)}
-                      >
-                        أعد الفتح
-                      </button>
+                      <AlertRow
+                        color="red"
+                        icon={AlertCircle}
+                        title={convLoad.message}
+                        actions={(
+                          <button
+                            type="button"
+                            className="chat-retry"
+                            onClick={() => void openConversation(convLoad.id)}
+                          >
+                            أعد الفتح
+                          </button>
+                        )}
+                      />
                     </div>
                   </div>
                 )}
@@ -533,11 +543,18 @@ export default function AiAssistantPage() {
                      * once tokens flow, the growing bubble is the
                      * indicator. The text keeps the moment accessible
                      * (the dots alone say nothing to AT). */}
-                    <div className="chat-typing">
-                      <span className="chat-typing-dot" />
-                      <span className="chat-typing-dot" />
-                      <span className="chat-typing-dot" />
-                      <span className="r305ai-status-text">المساعد يجهّز الردّ…</span>
+                    {/* r365 (4-a · §4): the typing state is THREE MONO
+                     * DOTS — the old dot spans carried no content and no
+                     * rule (the §D pending-row CSS is comment-only), so
+                     * the indicator rendered as nothing. The dots are
+                     * literal mono middots now: they render in both
+                     * themes with zero CSS, and the truthful status line
+                     * stays for AT. */}
+                    <div className="chat-typing" role="status">
+                      <span className="chat-typing-dot font-mono" aria-hidden="true">·</span>
+                      <span className="chat-typing-dot font-mono" aria-hidden="true">·</span>
+                      <span className="chat-typing-dot font-mono" aria-hidden="true">·</span>
+                      <span className="r305ai-status-text text-sm text-muted">المساعد يجهّز الردّ…</span>
                     </div>
                   </div>
                 )}

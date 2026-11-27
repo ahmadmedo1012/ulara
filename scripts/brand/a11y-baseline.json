@@ -1,22 +1,22 @@
 {
-  "_comment": "a11y ratchet floor (ULARA Ω §7 axe gate) — per-cell serious/critical node counts keyed route|viewport|theme|dir. The floor only tightens (same philosophy as scripts/gates/stylelint-baseline.json): edit DOWN as violations are burned down (§4 loop), NEVER up to force green. A missing cell key means floor 0. Regenerate deliberately with: node scripts/brand/a11y-gate.mjs --write-baseline",
+  "_comment": "a11y ratchet floor (ULARA Ω §7 axe gate) — per-cell serious/critical node counts keyed route|viewport|theme|dir. The floor only tightens (same philosophy as scripts/gates/stylelint-baseline.json): edit DOWN as violations are burned down (§4 loop), NEVER up to force green. A missing cell key means floor 0. Regenerate deliberately with: node scripts/brand/a11y-gate.mjs --write-baseline | r367 tighten (one line): the landing's four cells 5/1→0 — the plan-titlebar spec labels' contrast cure (55%→72% ink mix, 3.85→5.71:1) burned the last serious findings down; the whole matrix reads 0.",
   "generatedAt": "2026-11-22T03:35:18.560Z",
   "axe": "4.10.3",
   "cells": {
     "/|390x844|light|rtl": {
-      "serious": 5,
+      "serious": 0,
       "critical": 0
     },
     "/|1280x800|light|rtl": {
-      "serious": 1,
+      "serious": 0,
       "critical": 0
     },
     "/|390x844|dark|rtl": {
-      "serious": 5,
+      "serious": 0,
       "critical": 0
     },
     "/|1280x800|dark|rtl": {
-      "serious": 1,
+      "serious": 0,
       "critical": 0
     },
     "/auth|390x844|light|rtl": {

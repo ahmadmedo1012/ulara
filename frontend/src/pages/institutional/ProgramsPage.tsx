@@ -9,11 +9,14 @@
 import {
   useState, useNavigate, Plus, PageFrame,
   PageHeader, toast, formatDate, Icon,
-  serverError, DetailList, EnumChip, InstFilters,
+  serverError, DetailList, InstFilters,
   InstFormDialog, InstPagedTable, InstSection, InstStates,
   InstSelect, type InstColumn, type InstField, type InstFormValues,
 } from './scaffold';
+import { StatusFlag } from '../../components/institutional/kit';
 import { KpiBand } from '../../components/patterns';
+import { formatInt } from '../../utils/numbers';
+import { useInstitutionScope } from '../../stores/auth.store';
 import {
   useCredentialTypes, useMyCapabilities, usePrograms, useTerms, useInstActions } from '../../hooks/institutional/queries';
 import * as instApi from '../../lib/institutional/api';
@@ -28,6 +31,7 @@ export function InstitutionProgramsPage() {
   const navigate = useNavigate();
   const caps = useMyCapabilities();
   const canManage = caps.data?.has('PROGRAMS_MANAGE') ?? false;
+  const scope = useInstitutionScope();
 
   const [kind, setKind] = useState('');
   const [status, setStatus] = useState('');
@@ -110,10 +114,11 @@ export function InstitutionProgramsPage() {
 
   const columns: Array<InstColumn<Program>> = [
     { head: 'البرنامج', cell: (p) => <span className="inst-tree-name">{p.nameAr}</span> },
-    { head: 'الرمز', cell: (p) => <span className="font-mono">{p.code}</span> },
+    /* R359 (W2-e) — the code is the register's mono datum (bidi-isolated). */
+    { head: 'الرمز', mono: true, cell: (p) => <bdi>{p.code}</bdi> },
     { head: 'الطبيعة', cell: (p) => <span className="inst-tree-kind">{PROGRAM_KIND_LABELS[p.kind]}</span> },
-    { head: 'الحالة', cell: (p) => <EnumChip value={p.status} labels={PROGRAM_STATUS_LABELS} /> },
-    { head: 'المدة', mobileHidden: true, cell: (p) => (p.durationMonths ? `${p.durationMonths} شهر` : '—') },
+    { head: 'الحالة', cell: (p) => <StatusFlag value={p.status} labels={PROGRAM_STATUS_LABELS} /> },
+    { head: 'المدة', mobileHidden: true, cell: (p) => (p.durationMonths ? `${formatInt(p.durationMonths)} شهر` : '—') },
   ];
 
   return (
@@ -149,7 +154,9 @@ export function InstitutionProgramsPage() {
         />
       </InstFilters>
 
-      {/* R359 final · W3 — the programs facts ride the KPI band. */}
+      {/* R359 final · W3 — the programs facts ride the KPI band (gated
+          on the institution context like the family's other registers). */}
+      {scope !== null && (
       <KpiBand
         items={[
           {
@@ -174,6 +181,7 @@ export function InstitutionProgramsPage() {
           },
         ]}
       />
+      )}
 
       <InstSection index="01" caption="PROGRAMS" title="سجلّ البرامج" pad="none">
       <InstPagedTable
@@ -203,10 +211,10 @@ export function InstitutionProgramsPage() {
         >
           <DetailList
             items={(termsQuery.data ?? []).map((t) => ({
-              label: t.code,
+              label: <bdi>{t.code}</bdi>,
               value: (
                 <span className="inst-actions">
-                  {t.isCurrent && <EnumChip value="ACTIVE" labels={{ ACTIVE: 'الحالي' }} />}
+                  {t.isCurrent && <StatusFlag value="ACTIVE" labels={{ ACTIVE: 'الحالي' }} />}
                   <span className="inst-tree-kind">من {formatDate(t.startsAt)}</span>
                 </span>
               ),

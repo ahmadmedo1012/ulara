@@ -1,0 +1,33 @@
+r363 — P0-CI round three: local proof (the two holdout CI flakes + the late-mount reveals fix)
+Date: 2026-11-25 · box: 2 cores / 4 GB · chromium headless-shell 148 / vitest 2.1.9
+
+── targeted e2e (the three specs named in the ef92b4f CI failure) ──
+  ✓ r309-recovery.e2e.ts:106  desktop drag unseals every callout — no clipping, no pairwise overlap (11.2s)
+  ✓ r305-shell-ds.e2e.ts:285  علامة نشطة واحدة… والرجوع يستعيد التمرير (13.1s)
+  ✓ r309-recovery.e2e.ts:332  the reveal persists after drag release (5.1s)
+  3 passed (22.3s) · --workers=2
+
+── the full r309 file (the edited spec file) ──
+  22 passed (1.3m)
+
+── unit belts ──
+  useScrollRestoration.test.tsx ........ 8 passed (incl. the new wall-clock starvation pin)
+  r363-reveals-late-mount.test.tsx ..... 5 passed (late-arm · release · wordmark seat · destroy)
+  r312-guest-reveal + r306-landing-sheet + landing-scrollspy ... 34 passed
+  npm run typecheck -w frontend ........ clean (tsc -b --noEmit)
+  eslint (the five changed files) ...... 0 errors
+
+── the fixed causes ──
+1. the scroll-restore watcher's budget: frame-count (60 rAF) → WALL-CLOCK (4000ms,
+   perf.now epoch at arm time) — under runner jank the 60 frames stretched past the
+   spec's own window and the watcher stood down before the late height arrived.
+2. the drag-release sweep: raw page.mouse is hit-target-blind — the asset-gated
+   entrance overlay can still own the press point in CI. The sweep now settles,
+   polls document.elementFromPoint at the press point until the STAGE owns it,
+   and observes the post-release count over a poll window.
+3. (product bug, caught by the round audit) initReveals ran once before the lazy
+   chunks mounted — the footer skyline strip's armed clip (footer.css keys it off
+   the ROOT seam class) never released: the skyline never painted for JS-on
+   visitors. The engine now keeps a debounced MutationObserver re-admitting
+   through the same family table; the giant wordmark joined the rise family (R21);
+   the CTA mega title arms with its lazy chunk (R9).

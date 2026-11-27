@@ -241,6 +241,15 @@
     from { opacity: 0; }
     to   { opacity: 1; }
   }
+  /* r363 P4 (the RM probe's forensics): the lazy-fade is a MOTION —
+     under prefers-reduced-motion the image ships settled (opacity 1,
+     no animation registered), the same belt every ambient seat rides. */
+  @media (prefers-reduced-motion: reduce) {
+    img[loading="lazy"] {
+      animation: none;
+      opacity: 1;
+    }
+  }
 
   /* Audit 0-a P2-1/2/3: caret / autofill / underline-offset were
      completely absent. All themed from the palette so native chrome
@@ -384,13 +393,38 @@
     .has-shell { grid-template-columns: 1fr; }
     .has-shell > .sidebar { display: none; }
     .has-shell > .main { grid-column: 1; }
+    /* THE DOCK-BAND RESERVE (r363 P4 sweep fix — the shell's clearance
+       contract, upgraded from padding to structure). The bottom-nav is a
+       FIXED, opaque, always-visible band across the bottom 78px of the
+       phone viewport (polish v22 §F; the .is-hidden slide is not styled
+       anywhere, so the dock never actually moves). The scroller's visible
+       box used to run under it, so whatever content happened to flow into
+       the first screen's last 78px sat BEHIND the dock at scroll-0 —
+       unreadable ink over the nav labels (the sweep's 30 TEXT_COLLISION
+       P0s on /student/courses, /teacher/dashboard, /quality/dashboard and
+       /institution). End-of-scroll padding (the .content-inner pad below)
+       cannot prevent that: it only reserves daylight after the LAST row.
+       This margin is the structural seat instead: it lifts the scroller's
+       own bottom edge to the dock's top edge, so NO page content can ever
+       enter the dock's band at any scroll position — clearance is owned
+       by the shell once, not re-earned per page. The formula is the same
+       r350 B1 measured dock height (78px) + the dock's own safe-area
+       growth that the content-inner pad already carries. Sticky
+       bottom-anchored bars (patterns.css .oex-submit-bar) pin against
+       this same edge, which is why their `bottom` offsets read 0 now. */
+    .content {
+      margin-block-end: calc(78px + env(safe-area-inset-bottom)); /* spacing-gate: allow — the fixed-dock band reserve, r350 B1 measured dock height + safe-area (same instrument as the content-inner pad) */
+    }
     .content-inner {
       padding: var(--page-gutter-mobile);
       /* r351 A2 (Q1f): the mobile pad must clear the FIXED dock so the
          page's LAST row can scroll fully above it (the dock's own
          height + its safe-area growth + gutter daylight). 78px is the
          measured dock height (r350 B1) — a fixed instrument value the
-         dock family itself owns (chrome.css). */
+         dock family itself owns (chrome.css). (r363 P4: with the
+         .content margin above reserving the dock band structurally,
+         this pad is the LAST-ROW daylight only — kept so the scroll
+         end never kisses the dock hairline.) */
       padding-block-end: calc(78px + env(safe-area-inset-bottom) + var(--sp-4)); /* spacing-gate: allow — the measured fixed-dock height clearance, r350 B1 instrument value */
 
     }

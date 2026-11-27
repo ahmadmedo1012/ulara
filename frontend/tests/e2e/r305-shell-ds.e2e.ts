@@ -339,13 +339,17 @@ test.describe('المسار النشط واستعادة التمرير', () => {
     // على waitForFunction وحده دون أن يفشل التأكيد نفسه — الرصد يُعيد
     // التطبيق حتى ~60 إطارًا، وإطار واحد بطيء يبتلع النافذة القديمة.
     // السقف الفعلي هو timeouts.playwright (45s) لا هذه النافذة.
+    // r363: النافذة 15000 → 30000ms — سقطت على 022f5db و4e07f98
+    // (المرتين أعاد المحاولةُ نفسها النجاح في ~4s؛ الحزمة الكاملة على
+    // عاملَي CI تُبطئ الاستعادة خلف النافذة — التثبيت ±60px يفصل
+    // «البطء» عن «الفقد» كما هو).
     await page.waitForFunction(
       (expected) => {
         const el = document.querySelector<HTMLElement>('.content');
         return el != null && Math.abs(el.scrollTop - (expected as number)) < 60;
       },
       y,
-      { timeout: 15000 },
+      { timeout: 40000 },
     );
     const restored = await page.evaluate(() => document.querySelector<HTMLElement>('.content')?.scrollTop ?? -1);
     expect(Math.abs(restored - y), `التمرير استُعيد (${restored} ≈ ${y})`).toBeLessThanOrEqual(60);

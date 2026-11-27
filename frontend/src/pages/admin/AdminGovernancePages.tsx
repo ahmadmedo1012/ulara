@@ -18,7 +18,7 @@ import {
   AlertCircle, Sparkles, Briefcase, Building2, Users, Crown, BookOpen,
   X,
 } from 'lucide-react';
-import { Card, Badge, UserAvatar, AlertRow, FormField } from '../../components/primitives';
+import { Card, UserAvatar, AlertRow, FormField } from '../../components/primitives';
 import { StatStrip } from '../../components/primitives/Ledger';
 import { ConfirmDialog } from '../../components/owner/ConfirmDialog';
 import {
@@ -496,8 +496,11 @@ function TeacherProfileCard({ teacherId }: { teacherId: string }) {
   return (
     <div className="flex-col gap-3">
       <Card title="الملف الأكاديمي" icon={GraduationCap} actions={
+        /* R366 — the verification state rides the flat flag (the same
+         * register the roster's status column speaks): tone on the
+         * hairline square, the honest Arabic word as the body. */
         data.teacher.verified
-          ? <Badge color="green"><Icon icon={CheckCircle2} size={11} /> موثَّق</Badge>
+          ? <span className="sg-flag" data-tone="positive"><Icon icon={CheckCircle2} size={11} /> موثَّق</span>
           : <button
               type="button"
               className="btn primary sm"
@@ -540,7 +543,9 @@ function TeacherProfileCard({ teacherId }: { teacherId: string }) {
           <div className="gov-keywords">
             <div className="text-xxs text-subtle" style={{ marginBottom: 'var(--sp-1)' }}>المجالات</div>
             <div className="gov-keywords-list">
-              {data.teacher.subjectKeywords.map((k) => <Badge key={k}><bdi>{k}</bdi></Badge>)}
+              {/* R366 — the keyword tags join the flat flag register (square
+               * hairline chips): these are classifications, not status. */}
+              {data.teacher.subjectKeywords.map((k) => <span key={k} className="sg-flag" data-tone="quiet"><bdi>{k}</bdi></span>)}
             </div>
           </div>
         )}
@@ -566,7 +571,7 @@ function TeacherProfileCard({ teacherId }: { teacherId: string }) {
                 <Icon icon={Award} size={14} style={{ color: 'var(--chart-6)' }} />
                 <div style={{ flex: 1 }}>
                   <div className="text-sm" style={{ fontWeight: 600 }}>{c.title}</div>
-                  <div className="text-xxs text-subtle">{c.issuer} · {c.year}</div>
+                  <div className="text-xxs text-subtle">{c.issuer} · <bdi className="font-mono">{c.year}</bdi></div>
                 </div>
               </div>
             ))}
@@ -586,7 +591,12 @@ function TeacherProfileCard({ teacherId }: { teacherId: string }) {
                 </div>
               </div>
               <div className="suggested-course-score">
-                <Badge color="brand">{c.matchScore} درجة تطابق</Badge>
+                {/* R366 — the match score is a NUMERAL, not a status: it
+                 * rides the mono register (tabular instrument voice) as
+                 * quiet text instead of the brand pill. */}
+                <span className="text-sm">
+                  <bdi className="font-mono">{c.matchScore}</bdi> درجة تطابق
+                </span>
                 <span className="text-xxs text-subtle">{c.reason}</span>
               </div>
             </div>
@@ -1186,7 +1196,9 @@ export function AdminPermissionsPage() {
                       ['صلاحية واحدة مفعّلة', 'صلاحيتان مفعّلتان', 'صلاحيات مفعّلة', 'صلاحية مفعّلة'],
                     )}
                   >
-                    {formatNum(effectiveCount)} مفعّلة من {formatNum(caps.length)}
+                    {/* R366 — the head count is a mono numeral run (the
+                     * sheet's instrument voice): tabular, isolated. */}
+                    <bdi className="font-mono">{formatNum(effectiveCount)}</bdi> مفعّلة من <bdi className="font-mono">{formatNum(caps.length)}</bdi>
                   </span>
                 </div>
                 <div className="govx-rows">
@@ -1211,10 +1223,17 @@ export function AdminPermissionsPage() {
                           <div className="perm-row-title">{CAP_LABEL[cap]}</div>
                           <code className="perm-row-key"><bdi>{cap}</bdi></code>
                           <div className="perm-row-state">
-                            {state === 'role' && <Badge color="brand">من الدور</Badge>}
-                            {state === 'granted' && <Badge color="green">ممنوحة يدوياً</Badge>}
-                            {state === 'revoked' && <Badge color="amber">مسحوبة يدوياً</Badge>}
-                            {state === 'none' && <Badge>غير مفعّلة</Badge>}
+                            {/* R366 — the four matrix states ride the flat
+                             * flag register (tone on the hairline square,
+                             * never a fill): role default = neutral,
+                             * manual grant = positive, manual revoke =
+                             * danger, inactive = quiet. The signal tone
+                             * stays reserved (the roster's selected row
+                             * spends the one royal pin). */}
+                            {state === 'role' && <span className="sg-flag">من الدور</span>}
+                            {state === 'granted' && <span className="sg-flag" data-tone="positive">ممنوحة يدوياً</span>}
+                            {state === 'revoked' && <span className="sg-flag" data-tone="danger">مسحوبة يدوياً</span>}
+                            {state === 'none' && <span className="sg-flag" data-tone="quiet">غير مفعّلة</span>}
                           </div>
                         </div>
                         <div className="perm-row-actions">

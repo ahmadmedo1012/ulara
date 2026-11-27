@@ -1,0 +1,19 @@
+# r366 capture rig — TEACHER routes (login required)
+# format: NAME|route-path
+dashboard|teacher/dashboard
+schedule|teacher/schedule
+students|teacher/students
+intelligence|teacher/intelligence
+profile|teacher/profile
+assignments|teacher/assignments
+attendance|teacher/attendance
+grades|teacher/grades
+exams|teacher/exams
+curriculum|teacher/curriculum
+live|teacher/live
+materials|teacher/materials
+research-review|teacher/research-review
+labs|teacher/labs
+ai|teacher/ai
+alerts|teacher/alerts
+messages|teacher/messages

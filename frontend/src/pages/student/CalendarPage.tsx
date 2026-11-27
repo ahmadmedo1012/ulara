@@ -11,6 +11,7 @@ import { PageFrame, PageHeader } from '../../components/patterns';
  * + the KPI band of real payload counts replace the §B2 SectionBar /
  * BarCount register (the roster exemplar's recomposition). */
 import { SheetSection, KpiBand, SheetEmpty } from '../../components/patterns';
+import podiumScene from '../../assets/art-v2/podium-scene.webp';
 /* R319 (c3-S2) — the today week strip (the page's genuine week context)
  * keeps its seat above the framed sheet. */
 import { WeekStrip } from '../../components/student';
@@ -483,6 +484,7 @@ export default function StudentCalendarPage() {
               code="NO-EVENTS"
               title="شهر هادئ"
               desc={`لا مواعيد في ${monthTitleAr(view.year, view.month)} — جرّب شهرًا آخر، أو راجع جدولك ومقرّراتك.`}
+              art={podiumScene}
             />
           ) : selectedEvents.length === 0 ? (
             <EmptyState

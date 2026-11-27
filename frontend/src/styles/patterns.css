@@ -3,6 +3,211 @@
  * split, stats, filters, today. Tokens only; logical properties only;
  * 44px interaction floor. CONTRACT.md is the normative doc. */
 
+/* ═══ RegCross — THE ONE REGISTRATION CROSS (P3/r363 · B1) ══════════
+   The corpus shipped EIGHT cross constructions (10/11/13px, three
+   inks, font-glyph / CSS-bar / inline-SVG variants — the r363
+   inventory, deviation B1). This block is the ONE DOM drawing, and
+   components/patterns/RegCross.tsx is its ONE component; every seat
+   (sheet/auth/nf frame marks, sg-reg, bp-dmark/bp-plus, jt-mark,
+   st-draft-mark, fo-giant-plus, pl-rplus) renders through it and
+   keeps only its own POSITION classes.
+
+   THE CANONICAL CONSTRUCTION (measured spec + the r350 reference
+   stills): a 13px crosshair — two 1px strokes (the horizontal and
+   the vertical bar) crossing at the box center — the plus with the
+   HOLLOW center (no glyph, no circle), hairline ink var(--rule-
+   strong): the frame line's own ink, at one darkness with the frame
+   the mark rides (shot-top / shot-map-1 / shot-footer).
+
+   MODIFIERS — the complete list (two; documented here once):
+     .reg-cross--ink     ink var(--text)       — the solid-ink seats
+       (the journey window's measured solid mark colour);
+     .reg-cross--muted   ink var(--text-muted) — the in-composition
+       light seats (statement title box, footer wordmark, preloader
+       ruler crossings). Frame-line marks take the DEFAULT ink.
+   SIZE has no modifier: --reg-cross-size (default 13px, the largest
+   measured rung) is the one re-seating mechanism for the em-scaled
+   seats that measure against their band's type. The corner seats
+   (reg-cross-tl/tr/bl/br) use PHYSICAL anchors — a corner is a
+   physical seat, and the auth-mark note documents why logical
+   inline anchors drift one mark-width under RTL.
+
+   The SVG art-plate voices (shared/art/grammar.ts regCross(),
+   kernel/Iso.tsx RegMark) are deliberately NOT migrated: they draw
+   in viewBox units at the art hairline weight (0.75px) — a different
+   medium (inventory P3-1 keeps the art voice). */
+.reg-cross {
+  --reg-cross-size: 13px; /* the canonical measured rung — not a spacing-rung value */
+  position: absolute;
+  inline-size: var(--reg-cross-size);
+  block-size: var(--reg-cross-size);
+  pointer-events: none;
+  color: var(--rule-strong);
+}
+.reg-cross::before,
+.reg-cross::after {
+  content: '';
+  position: absolute;
+  background: currentColor;
+}
+.reg-cross::before {
+  /* the horizontal stroke — centered on the box's block axis */
+  inset-block-start: calc(50% - 0.5px);
+  inset-inline: 0;
+  block-size: 1px;
+}
+.reg-cross::after {
+  /* the vertical stroke — centered on the box's inline axis */
+  inset-inline-start: calc(50% - 0.5px);
+  inset-block: 0;
+  inline-size: 1px;
+}
+/* the frame-corner register — centered ON the corner point, the
+   cross straddling the frame line (half out, half in), the
+   reference's own LTR geometry, mirrored correctly under RTL by
+   the physical anchors. */
+.reg-cross-tl { top: 0; left: 0; translate: -50% -50%; }
+.reg-cross-tr { top: 0; right: 0; translate: 50% -50%; }
+.reg-cross-bl { bottom: 0; left: 0; translate: -50% 50%; }
+.reg-cross-br { bottom: 0; right: 0; translate: 50% 50%; }
+/* the two ink modifiers — the complete register (see the block head) */
+.reg-cross--ink { color: var(--text); }
+.reg-cross--muted { color: var(--text-muted); }
+
+/* ═══ RulerStrip — THE ruler tick strip (P3 furniture kit · B9) ═════
+   The corpus drew the tick-ruler motif TWICE by hand (the hero stage's
+   .bp-ruler-* and the preloader's dashed rules — the r363 inventory,
+   deviation B9). This block + components/patterns/RulerStrip.tsx are
+   the ONE DOM drawing: an evenly-spaced tick strip — 1px ticks on a
+   repeating gradient, pitch --ruler-strip-pitch (6px, the hero's
+   measured rhythm), thickness --ruler-strip-thickness (4px, the hero's
+   measured rung).
+
+   LENGTH IS THE SEAT: the orientation modifier stretches the strip
+   edge-to-edge of its positioning context (inset-inline: 0 on the
+   horizontal run, inset-block: 0 on the vertical); tick COUNT derives
+   from length ÷ pitch — never authored. Pure furniture: absolute,
+   pointer-events none, aria-hidden forced in the component.
+
+   INK register — the RegCross one (two modifiers, documented once):
+   default var(--rule-strong) · --ink var(--text) · --muted
+   var(--text-muted). Per-seat re-inking rides `color` on the seat
+   class (the hero's .bp-ruler keeps its stage-scoped --hro-hair). */
+.ruler-strip {
+  --ruler-strip-pitch: 6px;
+  --ruler-strip-thickness: 4px;
+  position: absolute;
+  pointer-events: none;
+  color: var(--rule-strong);
+}
+.ruler-strip--horizontal {
+  inset-inline: 0;
+  block-size: var(--ruler-strip-thickness);
+  background-image: repeating-linear-gradient(
+    to right,
+    currentColor 0 1px,
+    transparent 1px var(--ruler-strip-pitch)
+  );
+}
+.ruler-strip--vertical {
+  inset-block: 0;
+  inline-size: var(--ruler-strip-thickness);
+  background-image: repeating-linear-gradient(
+    to bottom,
+    currentColor 0 1px,
+    transparent 1px var(--ruler-strip-pitch)
+  );
+}
+/* the two ink modifiers — the complete register (see the block head) */
+.ruler-strip--ink { color: var(--text); }
+.ruler-strip--muted { color: var(--text-muted); }
+
+/* ═══ DimensionLine — THE dimension line (P3 furniture kit) ═════════
+   The reference frames its plans with dimension CHAINS as section
+   furniture — slash-tick strings with mono numerals (shot-platform-1)
+   — while ULARA drew them only inside SVG art plates (grammar.ts
+   dimH/dimV). This block + components/patterns/DimensionLine.tsx
+   translate that art construction to the DOM voice, measured parts
+   preserved: the 1px rule (the box's block-end edge on the horizontal
+   run / inline-start edge on the vertical), the 45° slash ticks at
+   both ends (the art voice's tick — a 1px bar rotated -45°, centered
+   ON the rule line via the +0.5px half-rule offset; length
+   --dim-line-tick, 9px), the mono mid-label (var(--font-mono)
+   var(--fs-mono-sm), muted ink, tabular numerals — the art voice's
+   4px label offset).
+
+   SEATING: the consumer owns the geometry (absolute, like
+   .reg-cross) — seat the box's block-end (h) / inline-start (v) edge
+   where the measurement reads and give it headroom for the label.
+   Length is the seat; ticks hug both ends via LOGICAL inset anchors,
+   so the pair mirrors correctly under RTL. pointer-events none,
+   aria-hidden forced in the component (the numerals are measurement
+   chrome). The SVG art voices are deliberately NOT migrated (they
+   draw in viewBox units at the 0.75px art hairline). */
+.dim-line {
+  --dim-line-tick: 9px;
+  position: absolute;
+  pointer-events: none;
+  color: var(--rule-strong);
+}
+/* the measured rule — the horizontal run, on the box's block-end edge */
+.dim-line::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  block-size: 1px;
+  background: currentColor;
+}
+.dim-line--v::before {
+  /* the vertical run — the rule on the box's inline-start edge */
+  inset-inline: 0 auto;
+  inset-block: 0;
+  inline-size: 1px;
+  block-size: auto;
+}
+/* the 45° slash ticks — centered ON the 1px rule (the +0.5px offset
+   is the rule's own half-weight; calc keeps it exact for any tick) */
+.dim-line-tick {
+  position: absolute;
+  inline-size: 1px;
+  block-size: var(--dim-line-tick);
+  background: currentColor;
+  rotate: -45deg;
+}
+.dim-line-tick-s { inset-inline-start: 0; inset-block-end: calc(var(--dim-line-tick) / -2 + 0.5px); }
+.dim-line-tick-e { inset-inline-end: 0; inset-block-end: calc(var(--dim-line-tick) / -2 + 0.5px); }
+.dim-line--v .dim-line-tick {
+  inline-size: var(--dim-line-tick);
+  block-size: 1px;
+  inset-block-end: auto;
+  inset-inline-start: calc(var(--dim-line-tick) / -2 + 0.5px);
+}
+.dim-line--v .dim-line-tick-s { inset-block-start: 0; }
+.dim-line--v .dim-line-tick-e { inset-block-end: 0; }
+/* the mono mid-label — muted ink, the art voice's 4px offset */
+.dim-line-label {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: var(--sp-1);
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-sm);
+  line-height: 1;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--text-muted);
+}
+.dim-line--v .dim-line-label {
+  /* the vertical run reads the label beside the rule, on the reading
+     side (inline-start), vertically centered along the measurement */
+  inset-inline: var(--sp-1-5) auto;
+  inset-block: 50% auto;
+  translate: 0 -50%;
+  text-align: start;
+}
+
 /* ═══ PageFrame ═══════════════════════════════════════════════ */
 .pf-page {
   display: flex;
@@ -659,40 +864,18 @@ a.pf-row-link {
     border: 1px solid var(--border-strong);
   }
 
-  /* the corner plus marks — the reference's 10×10 drafting crosses in
-     the mono voice, centered ON the frame's corner points (the
-     registration-mark convention; the .nf-mark twin joins this rule —
-     §7's sheet seats the same marks, W7 dedup).
-     R315 (K-I) engineering note: the anchors are PHYSICAL (top/left/
-     right/bottom), not logical — a corner is a physical seat, and the
-     logical-inline recipe the landing's .sheet-mark uses drifts the
-     mark one width (10px) inside the corner under RTL (the inline
-     anchor mirrors but the physical translate does not). Physical
-     anchors keep the plus ON the intersection in every direction —
-     the reference's own LTR geometry, mirrored correctly. */
-  .auth-mark,
-  .nf-mark {
-    position: absolute;
-    inline-size: 10px;
-    block-size: 10px;
-    display: grid;
-    place-items: center;
-    color: var(--border-strong);
-    font-family: var(--font-mono);
-    font-size: var(--fs-sm);
-    line-height: 1;
-  }
-  /* R321 §A6 — the glyph is pseudo-element content: the marks stay
-     OUT of innerText (the R320 text spans leaked `+ | + | + | +` into
-     every sheet's innerText even inside aria-hidden — innerText only
-     respects rendering, not ARIA). Same font/size/color seat, so the
-     drawn chrome is pixel-identical. */
-  .auth-mark::before { content: '+'; }
-  .nf-mark::before { content: '+'; } /* R341 w7-dedup repair: per-family content rules — the r321 §A6 pin reads each family's OWN ::before/::after rule (a grouped selector leaves the first family pre-comma and fails it); same declarations, two one-line rules */
-  .auth-mark-tl, .nf-mark-tl { top: 0; left: 0; translate: -50% -50%; }
-  .auth-mark-tr, .nf-mark-tr { top: 0; right: 0; translate: 50% -50%; }
-  .auth-mark-bl, .nf-mark-bl { bottom: 0; left: 0; translate: -50% 50%; }
-  .auth-mark-br, .nf-mark-br { bottom: 0; right: 0; translate: 50% 50%; }
+  /* the corner plus marks — P3/r363 (B1): the DRAWING moved to the
+     one .reg-cross primitive (top of this sheet) + RegCross.tsx; the
+     .auth-mark/.nf-mark names survive ONLY as marker classes in the
+     markup (the r320/legal count pins and the r321 §A6 decor scan
+     read them). The R315 (K-I) RTL engineering note lives on with
+     the primitive's corner register: PHYSICAL anchors (top/left/
+     right/bottom), not logical — a corner is a physical seat, and
+     the logical-inline recipe drifts the mark one width inside the
+     corner under RTL (the inline anchor mirrors but the physical
+     translate does not). Physical anchors keep the plus ON the
+     intersection in every direction — the reference's own LTR
+     geometry, mirrored correctly. */
 
   /* ══ 1c · THE PAPER GRAIN (R315 · K-I) — the landing's .fo-grain
      recipe verbatim (the r314 std-dev record, inline feTurbulence data-URIs per R344 C-6: tile std-dev
@@ -3114,17 +3297,26 @@ a.pf-row-link {
   @media (max-width: 920px) {
     .oex-submit-bar {
       position: sticky;
-      /* 641–920px: .content has no bottom padding — full nav clearance
-         (≈72px + safe area) so the bar docks above the bottom-nav. */
-      bottom: calc(72px + env(safe-area-inset-bottom) + var(--sp-2));
+      /* r363 P4: `bottom: 0` at every phone/table band. The shell's
+         ≤920px `.content` dock-band margin (base.css) now ends the
+         scroller's visible box AT the fixed bottom-nav's top edge, and
+         a sticky element pins against its containing block ∩ that
+         scrollport — so 0 docks the bar a hairline above the nav on
+         the whole ≤920px band. (The old `calc(72px + safe + --sp-2)`
+         offset lifted the pin ABOVE the viewport bottom to clear the
+         undocked dock — it would now float the bar ~74px off the dock
+         with a dead band under it.) */
+      bottom: 0;
       z-index: 20;
       padding: var(--sp-2) var(--sp-3);
       /* R313 (WP-F · D16): flat docked bar — hairline frame, no shadow. */
     }
   }
 
-  /* ≤640px: the scroller's own bottom padding reserves the nav clearance
-     (notifications.css idiom) — 0 docks the bar a hairline above it. */
+  /* ≤640px: same pin line as 641–920 — the dock-band margin owns the
+     clearance, so 0 keeps docking the bar a hairline above the nav
+     (the retired notifications.css scroller-pad idiom is documented at
+     its own seat). */
   @media (max-width: 640px) {
     .oex-submit-bar { bottom: 0; }
     .oex-qmap { flex-wrap: nowrap; overflow-x: auto; }
@@ -4457,6 +4649,183 @@ button.tq-row:focus-visible {
     gap: var(--sp-2);
   }
 
+  /* ── r365 · the oversight-row chrome, restored ─────────────────
+     The publish import carried the quality TSX but dropped §3's rules
+     (the anatomy comments above stayed; the declarations did not) —
+     the curriculum tree, the alerts queue and the reports ledger
+     rendered bare: no flex anatomy, no hairline separators, no
+     trailing register, no level dots, no filter dim. ONE flat
+     restoration seat on the §2 hairline-row grammar: identity
+     leading · body · trailing flag, hairline-only separators, mono
+     numerics, the §D severity rails (D3) + ember icon wells (D5),
+     the guarded hover wash on the link rows only. Logical properties
+     only; dark/RTL resolve from the tokens. */
+  .hr-scope .qlt-course-row,
+  .hr-scope .qlt-alert-row,
+  .hr-scope .qlt-link-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--sp-2) var(--sp-3);
+    padding-block: var(--sp-3);
+    border-block-end: 1px solid color-mix(in srgb, var(--border) 62%, transparent);
+    min-inline-size: 0;
+  }
+  .hr-scope .qlt-course-row:last-child,
+  .hr-scope .qlt-alert-row:last-child,
+  .hr-scope .qlt-link-row:last-child { border-block-end: 0; }
+  /* The body column owns the growth, so the trailing flag lands on the
+     rule's inline-end without margin tricks (the §2 row anatomy). */
+  .hr-scope .qlt-course-main,
+  .hr-scope .qlt-alert-row-body,
+  .hr-scope .qlt-link-row-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-0-5);
+    flex: 1 1 auto;
+    min-inline-size: 0;
+  }
+  .hr-scope .qlt-course-title {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    font-weight: var(--fw-semibold);
+    color: var(--text-strong);
+  }
+  .hr-scope .qlt-course-code,
+  .hr-scope .qlt-course-meta,
+  .hr-scope .qlt-alert-row-desc {
+    font-size: var(--fs-xs);
+    color: var(--text-secondary);
+  }
+  .hr-scope .qlt-course-code { font-family: var(--font-mono); }
+  /* The trailing register: mono tabular percentage + the level chip. */
+  .hr-scope .qlt-course-side {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    flex: none;
+  }
+  .hr-scope .qlt-course-pct {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--fw-semibold);
+    color: var(--text-strong);
+  }
+  .hr-scope .qlt-course-row.is-dim {
+    opacity: 0.5;
+    transition: opacity var(--t-fast) var(--ease);
+  }
+  /* The alerts queue (§D D3): the 3px severity rail + icon well. */
+  .hr-scope .qlt-alert-row {
+    border-inline-start: 3px solid transparent;
+    border-start-start-radius: var(--r-xs);
+    border-end-start-radius: var(--r-xs);
+  }
+  .hr-scope .qlt-sev-critical { border-inline-start-color: var(--danger); }
+  .hr-scope .qlt-sev-warning  { border-inline-start-color: var(--warning); }
+  .hr-scope .qlt-sev-info     { border-inline-start-color: var(--accent); }
+  .hr-scope .qlt-alert-row-icon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    inline-size: 36px;
+    block-size: 36px;
+    border-radius: var(--r-md);
+    background: var(--surface-2);
+    color: var(--text-secondary);
+  }
+  .hr-scope .qlt-alert-row-title { font-weight: var(--fw-semibold); color: var(--text-strong); }
+  .hr-scope .qlt-alert-row-time {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-variant-numeric: tabular-nums;
+    color: var(--text-faint);
+  }
+  /* The reports ledger (§D D5): the ember icon wells — the page's
+     primary actions — plus the ≥44px row floor and the guarded wash. */
+  .hr-scope a.qlt-link-row {
+    min-block-size: 44px;
+    color: inherit;
+    text-decoration: none;
+  }
+  .hr-scope .qlt-link-row-icon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    inline-size: 40px;
+    block-size: 40px;
+    border-radius: var(--r-md);
+    background: var(--hr-ember-soft);
+    color: var(--hr-ember-ink);
+  }
+  .hr-scope .qlt-link-row-title { font-weight: var(--fw-semibold); color: var(--text-strong); }
+  .hr-scope .qlt-link-row-chevron { flex: none; color: var(--text-faint); }
+  @media (hover: hover) and (pointer: fine) {
+    .hr-scope a.qlt-link-row:hover { background: var(--surface-2); }
+  }
+  /* The curriculum level legend — the dots ARE the data (invisible
+     when unstyled) — and the counted dept-stat row, the professors'
+     compliance pair + filter note, the rosters' §0 count chip and the
+     ledger lists' hairline rhythm. */
+  .hr-scope .heat-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-1) var(--sp-4);
+    margin-block-start: var(--sp-2);
+  }
+  .hr-scope .heat-legend-key {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    font-size: var(--fs-xs);
+    color: var(--text-secondary);
+  }
+  .hr-scope .heat-legend-dot {
+    inline-size: 10px;
+    block-size: 10px;
+    border-radius: var(--r-full);
+    flex: none;
+  }
+  .hr-scope .heat-legend-dot.lvl-strong { background: var(--success); }
+  .hr-scope .heat-legend-dot.lvl-weak   { background: var(--warning); }
+  .hr-scope .heat-legend-dot.lvl-poor   { background: var(--danger); }
+  .hr-scope .q-dept-stat {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: var(--sp-2) var(--sp-3);
+    margin-block-end: var(--sp-1);
+    font-size: var(--fs-xs);
+    color: var(--text-secondary);
+  }
+  .hr-scope .q-compliance {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    min-inline-size: 160px;
+  }
+  .hr-scope .qlt-filter-note {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    margin-block-end: var(--sp-3);
+  }
+  .hr-scope .hr-section-count {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-variant-numeric: tabular-nums;
+    color: var(--text-secondary);
+  }
+  .hr-scope .qlt-kpi-ledger,
+  .hr-scope .qlt-progress-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+  }
+
   /* ── 2 · Section rhythm ────────────────────────────────────────
      5-A8 §6 step 6: the page's primary board takes the breath after
      the stat strip (the desktop .page gap + this rung ≈ the 88px
@@ -4945,3 +5314,14 @@ button.tq-row:focus-visible {
  * @layer pages, no competitor remains in the sheets. */
 @layer pages {
 }
+
+/* ═══ R366 exam-look pass — the taker chrome joins the flat hairline
+ * register (ONE additive rule; unlayered so it settles the @layer ties,
+ * scoped under the family root .r321x-page so nothing leaks). The
+ * navigator dots become square hairline cells, the review rows ledger
+ * lines, the timer + autosave-failure chips square — radius 0, the
+ * sheet draws 1px lines only. Look-only: no behavior seat moves. */
+.r321x-page .oex-qmap-dot,
+.r321x-page .oex-review-q,
+.r321x-page .oex-timer,
+.r321x-page .oex-save-warn { border-radius: 0; }

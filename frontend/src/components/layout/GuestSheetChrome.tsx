@@ -1,4 +1,5 @@
 import { createPortal } from 'react-dom';
+import { RegCross } from '../patterns/RegCross';
 
 /**
  * GuestSheetChrome — the drawing-sheet frame layer for the chrome-less
@@ -44,12 +45,15 @@ export function GuestSheetChrome({ portal = false }: { portal?: boolean }) {
   const chrome = (
     <>
       <div className="auth-frame" aria-hidden="true">
-        {/* R321 §A6: empty spans — the '+' glyph is CSS ::before content
-            (auth.css), so the marks never leak into innerText. */}
-        <span className="auth-mark auth-mark-tl" />
-        <span className="auth-mark auth-mark-tr" />
-        <span className="auth-mark auth-mark-bl" />
-        <span className="auth-mark auth-mark-br" />
+        {/* P3/r363 (B1): the marks draw from the ONE RegCross primitive
+            (13px hollow-center crosshair, hairline ink) — the
+            .auth-mark marker class stays for the legal-pages count
+            pin + the r321 §A6 decor scan; the spans stay EMPTY (the
+            crosshair is two CSS bars, no glyph text at all). */}
+        <RegCross className="auth-mark" corner="tl" />
+        <RegCross className="auth-mark" corner="tr" />
+        <RegCross className="auth-mark" corner="bl" />
+        <RegCross className="auth-mark" corner="br" />
       </div>
       <div className="auth-grain" aria-hidden="true" />
     </>

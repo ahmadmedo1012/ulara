@@ -45,6 +45,9 @@ import '../../styles/colleges.css';
 // bridge's unlayered rules land last in the chunk-shared CSS).
 import '../../styles/landing/inner.css';
 import { formatDate } from '../../utils/numbers';
+/* r364 art v2 — the page's architectural hero band + the kit */
+import { ArtPageHeroPlan } from '../../components/patterns/ArtPageHero';
+import '../../styles/landing/art-v2.css';
 
 interface CollegeListItem {
   id: string;
@@ -285,6 +288,16 @@ export function CollegesIndexPage() {
            * carries the how. */
           description="ما تراه هنا هيكل مساحة العرض الموسومة — لا كتالوج جامعات."
           actions={isGuest ? <GuestJoinRow /> : undefined}
+        />
+
+        {/* r364 art v2 — the registry sheet's hero: the campus site's
+            thick-wall plan (the buildings the faculties live in) under
+            its title bar, with the honest dark card. */}
+        <ArtPageHeroPlan
+          plan="plan-campus"
+          title="الحرم الجامعي — المخطط العام"
+          scale="1:500"
+          dark={{ header: 'بيانات العرض', rows: ['هيكل مساحة العرض الموسومة', 'لا كتالوج جامعات', 'بيئة كل مؤسسة من بياناتها'] }}
         />
       </div>
 

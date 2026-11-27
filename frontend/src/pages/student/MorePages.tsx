@@ -10,8 +10,8 @@ import {
 } from 'lucide-react';
 import { Bar, Radar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, RadialLinearScale, PointElement, LineElement, Filler } from 'chart.js';
-import { Card, ProgressBar, Badge, UserAvatar, AlertRow } from '../../components/primitives';
-import { ErrorState, EmptyState, Skeleton, ChartSkeleton, CardSkeleton, ListSkeleton } from '../../components/primitives/States';
+import { ProgressBar, Badge, UserAvatar, AlertRow } from '../../components/primitives';
+import { ErrorState, EmptyState, Skeleton, ChartSkeleton, ListSkeleton } from '../../components/primitives/States';
 import { ChartFrame } from '../../components/charts';
 import { Icon } from '../../components/Icon';
 import { EmojiIcon } from '../../components/EmojiIcon';
@@ -40,7 +40,7 @@ import { EmptyMascot } from '../../components/mascot/EmptyMascot';
 /* R319 (c3-S2) — the §B2 kit: the BarCount meta, the mono status chip +
  * the today week strip (the pages-B sweep's shared barrel for this
  * file's pages; the SectionBar seats retire onto the framed sheets). */
-import { BarCount, StatusChip, WeekStrip } from '../../components/student';
+import { BarCount, EmptyCell, StatusChip, WeekStrip } from '../../components/student';
 import '../../styles/training.css'; // gamification .tier-orb/.xp-*/.leaderboard-*/.achievement-* families (D11 css split, 12-15)
 import { formatDate } from '../../utils/numbers';
 /* ── r305-c (schedule family) + r305-d (supplemental family) imports —
@@ -934,12 +934,20 @@ export function SchedulePage() {
             RowList rows); two day skeletons hold the visible band so
             the data-land swap doesn't jump (A9 V1). r299: the mirror
             recomposed for the pattern anatomy. */}
+        {/* r365 batch-2: the mirror holds the settled page's own framed
+            day sheets (the r172b loading-closure law — the old
+            .pf-section-header bar encoded the pre-R359 seat). The
+            weekday title/index are payload facts, so the pending head
+            is a bar, never a lie. */}
         {[0, 1].map((d) => (
           <section key={d} aria-hidden>
-            <div className="pf-section-header">
-              <Skeleton width={90} height={16} />
-            </div>
-            <ListSkeleton rows={d === 0 ? 3 : 2} />
+            <SheetSection
+              pad="none"
+              title={<Skeleton width={90} height={16} />}
+              aside={<Skeleton width={44} height={14} />}
+            >
+              <ListSkeleton rows={d === 0 ? 3 : 2} />
+            </SheetSection>
           </section>
         ))}
       </PageFrame>
@@ -951,7 +959,11 @@ export function SchedulePage() {
       <div className="r319s-page">
       <PageFrame width="default">
         <PatternPageHeader eyebrow="طلاب الجامعة" title="الجدول الدراسي" />
-        <ErrorState error={q.error} onRetry={() => q.refetch()} />
+        {/* r365 batch-2: the error rides the framed day sheet like the
+            settled week (the calendar/matrix precedent). */}
+        <SheetSection index="01" caption="WEEK SHEET" title="جدول الأسبوع">
+          <ErrorState error={q.error} onRetry={() => q.refetch()} />
+        </SheetSection>
       </PageFrame>
       </div>
     );
@@ -1129,6 +1141,7 @@ export function ResultsPage() {
 
   if (q.isPending) {
     return (
+      <div className="r319s-page">
       <PageFrame width="default">
         <PatternPageHeader eyebrow="طلاب الجامعة" title="النتائج والتقييمات" description="جارٍ جمع درجاتك…" />
         {/* 5-C3 (A9 P2-2): bare spinner → the shapes that land (A9 V1
@@ -1139,7 +1152,12 @@ export function ResultsPage() {
             r305-c: the mirror lives INSIDE the summary deep band — the
             pending → resolved swap keeps the band's footprint.
             R341 (D7c): layout on utilities — the local band rules were
-            promoted to the shared .r305s-band--deep seat. */}
+            promoted to the shared .r305s-band--deep seat.
+            r365 batch-2: the page joins the family's .r319s-page root
+            (the app-density masthead register its siblings carry), and
+            the chart mirror holds the settled [01] framed sheet — the
+            ChartSkeleton's bar rows replace the retired CardSkeleton
+            card (the skeleton mirrors what actually lands). */}
         <div className="r305s-band r305s-band--deep results-summary flex-col gap-3">
           <p className="r305s-eyebrow">ملخّص الدرجات</p>
           <div className="pf-statline" aria-busy="true">
@@ -1151,20 +1169,31 @@ export function ResultsPage() {
             ))}
           </div>
         </div>
-        <CardSkeleton lines={6} />
+        <SheetSection index="01" caption="GRADE CHART" title="درجاتك حسب المقرّر">
+          <div aria-busy="true" aria-live="polite">
+            <ChartSkeleton height={220} />
+          </div>
+        </SheetSection>
       </PageFrame>
+      </div>
     );
   }
   if (q.isError || !q.data) {
     return (
+      <div className="r319s-page">
       <PageFrame width="default">
         <PatternPageHeader eyebrow="طلاب الجامعة" title="النتائج والتقييمات" />
-        <ErrorState
+        {/* r365 batch-2: the error rides the framed sheet like every
+            other section on the page (the calendar/matrix precedent). */}
+        <SheetSection index="01" caption="RESULTS">
+          <ErrorState
           message="تعذَّر تحميل هذا القسم"
           error={q.error}
           onRetry={() => q.refetch()}
         />
+        </SheetSection>
       </PageFrame>
+      </div>
     );
   }
 
@@ -1203,6 +1232,7 @@ export function ResultsPage() {
   const baseOpts = cartesianOptions({ horizontal: true });
 
   return (
+    <div className="r319s-page">
     <PageFrame width="default">
       <PatternPageHeader
         eyebrow="طلاب الجامعة"
@@ -1242,17 +1272,23 @@ export function ResultsPage() {
           .results-summary hook with the layout on utilities. */}
       <div className="r305s-band r305s-band--deep results-summary flex-col gap-3">
         <p className="r305s-eyebrow">ملخّص الدرجات</p>
+        {/* r365 batch-2: the band IS the page's KPI seat - the three
+            headline stats spread across the full line (the r348 opt-in)
+            and a not-yet datum rides the honest-empty register. */}
         <StatLine
+        spread
         items={[
           {
             label: 'أعلى درجة',
             value: headline.highest ? <bdi>{formatPct1(headline.highest.gradePct)}%</bdi> : '—',
+            empty: !headline.highest,
             hint: headline.highest?.courseName ?? 'لا توجد درجات بعد',
             tone: headline.highest ? bandTone(headline.highest.gradePct) : 'neutral',
           },
           {
             label: 'المتوسّط',
             value: headline.avgGradePct !== null ? <bdi>{formatPct1(headline.avgGradePct)}%</bdi> : '—',
+            empty: headline.avgGradePct === null,
             hint: headline.courseCount > 0
               ? `عبر ${countAr(headline.courseCount, ['مقرّر واحد', 'مقرّرين', 'مقرّرات', 'مقرّراً'])}`
               : 'لا تقييمات بعد',
@@ -1261,6 +1297,7 @@ export function ResultsPage() {
           {
             label: 'أدنى درجة',
             value: headline.lowest ? <bdi>{formatPct1(headline.lowest.gradePct)}%</bdi> : '—',
+            empty: !headline.lowest,
             hint: headline.lowest?.courseName ?? '—',
             tone: headline.lowest ? bandTone(headline.lowest.gradePct) : 'neutral',
           },
@@ -1268,10 +1305,17 @@ export function ResultsPage() {
         />
       </div>
 
-      {/* 5-A6 P2-9 — the chart card carries its own hook class: on phone
-          (≤640px, student.css) it re-orders above the stacked KPI cards
-          so the page's one data visualization starts at the fold. */}
-      <Card title="درجاتك حسب المقرّر" icon={Activity} subtitle={hasGrades ? 'النسبة المرجَّحة لكل مقرّر' : 'ستظهر درجاتك هنا فور تسجيلها'} className="results-chart-card">
+      {/* 5-A6 P2-9 — r365 batch-2: the page's one data visualization
+          rides the framed sheet ([01] GRADE CHART) like every other
+          section — the §6.2 hairline anatomy, not a floating card. The
+          .results-chart-card hook class stays on the section. */}
+      <SheetSection
+        index="01"
+        caption="GRADE CHART"
+        title="درجاتك حسب المقرّر"
+        desc={hasGrades ? 'النسبة المرجَّحة لكل مقرّر' : 'ستظهر درجاتك هنا فور تسجيلها'}
+        className="results-chart-card"
+      >
         {!hasGrades ? (
           <EmptyState illustration="empty-list" title="لم تُسجَّل أي درجات بعد" description="يبدأ الحساب فور رصد أوّل تقييم في أي مقرّر." />
         ) : (
@@ -1327,7 +1371,7 @@ export function ResultsPage() {
             />
           </ChartFrame>
         )}
-      </Card>
+      </SheetSection>
 
       {/* r164-e (assessment loop) — the timeline's middle step. Submitted
           work that has not been graded yet had NO student surface at all:
@@ -1405,10 +1449,15 @@ export function ResultsPage() {
       )}
       </SheetSection>
 
-      <div className="grid-2">
-        <Card title="تفصيل النتائج" icon={Activity}>
+      {/* r365 batch-2 — the two §B2 Cards join the framed sheet
+          ([03] PER-COURSE BARS / [04] GRADED FEED): the ad-hoc card
+          grid was the §6.2 defect; the rows/bars keep their pinned
+          anatomy (the r164-a .progress-fill band tones are test law). */}
+      <SheetSection index="03" caption="PER-COURSE BARS" title="تفصيل النتائج">
           {!hasGrades ? (
-            <p className="text-sm text-muted" style={{ padding: 'var(--sp-3) 0' }}>لم تُسجَّل درجات بعد.</p>
+            <EmptyCell
+              label="لم تُسجَّل درجات بعد."
+            />
           ) : (
             <div className="flex-col gap-4">
               {courses.map((r) => (
@@ -1424,11 +1473,13 @@ export function ResultsPage() {
               ))}
             </div>
           )}
-        </Card>
+      </SheetSection>
 
-        <Card title="آخر الواجبات المقيَّمة">
+      <SheetSection index="04" caption="GRADED FEED" title="آخر الواجبات المقيَّمة">
           {recentAssignments.length === 0 ? (
-            <p className="text-sm text-muted" style={{ padding: 'var(--sp-3) 0' }}>لا توجد تقييمات حديثة.</p>
+            <EmptyCell
+              label="لا توجد تقييمات حديثة."
+            />
           ) : (
             <div className="flex-col gap-2">
               {recentAssignments.slice(0, 6).map((a) => {
@@ -1487,9 +1538,9 @@ export function ResultsPage() {
               })}
             </div>
           )}
-        </Card>
-      </div>
+      </SheetSection>
     </PageFrame>
+    </div>
   );
 }
 
@@ -2246,6 +2297,26 @@ export function UniversityInfoPage() {
         ]}
       />
 
+      {/* R305 DS: the identity card is the page's ONE deep band — the
+          authority surface. Facts ride the band-safe .r305u-fact anatomy
+          (the deep FactRow variant) inside the .r305u-facts grid.
+          R342-08: the section opener is the §B2 bar — [01] + the h2
+          (same heading semantics the r305s-kicker carried, on the
+          D7a family grammar).
+          r365 audit: [01] leads the DOM — the bracket indices must
+          follow reading order (the r351 A2 honesty law), so IDENTITY
+          sits before VISION & MISSION's [02]. */}
+      <SheetSection index="01" caption="IDENTITY" title="بطاقة تعريف">
+        <div className="r305u-facts">
+          <FactRow deep label="الاسم الرسميّ" value="مساحة عمل أُلارا التجريبية" />
+          <FactRow deep label="النطاق" value="اصطناعية" />
+          <FactRow deep label="النوع" value="تجريبية" />
+          <FactRow deep label="بريد العرض" value="demo.ulara.ly" mono />
+          <FactRow deep label="الموقع" value="افتراضية" />
+          <FactRow deep label="طابع البيانات" value="عرض فقط" />
+        </div>
+      </SheetSection>
+
       {/* Vision + Mission (the demo tenant's synthetic strategy —
           mirrors static-source.ts strategicPlan.*) */}
       <SheetSection index="02" caption="VISION & MISSION" title="الرؤية والرسالة">
@@ -2262,23 +2333,6 @@ export function UniversityInfoPage() {
               سير العمل الأكاديمي كاملًا: الطالب، الأستاذ، والجودة.
             </p>
           </div>
-        </div>
-      </SheetSection>
-
-      {/* R305 DS: the identity card is the page's ONE deep band — the
-          authority surface. Facts ride the band-safe .r305u-fact anatomy
-          (the deep FactRow variant) inside the .r305u-facts grid.
-          R342-08: the section opener is the §B2 bar — [01] + the h2
-          (same heading semantics the r305s-kicker carried, on the
-          D7a family grammar). */}
-      <SheetSection index="01" caption="IDENTITY" title="بطاقة تعريف">
-        <div className="r305u-facts">
-          <FactRow deep label="الاسم الرسميّ" value="مساحة عمل أُلارا التجريبية" />
-          <FactRow deep label="النطاق" value="اصطناعية" />
-          <FactRow deep label="النوع" value="تجريبية" />
-          <FactRow deep label="بريد العرض" value="demo.ulara.ly" mono />
-          <FactRow deep label="الموقع" value="افتراضية" />
-          <FactRow deep label="طابع البيانات" value="عرض فقط" />
         </div>
       </SheetSection>
 
@@ -2376,7 +2430,7 @@ export function UniversityInfoPage() {
       </SheetSection>
 
       <SheetSection index="06" caption="DEGREES" title="الشهادات والبرامج الأكاديميّة">
-        <div className="grid-3" style={{ gap: 'var(--sp-3)', marginBottom: 'var(--sp-4)' }}>
+        <div className="grid-3" style={{ gap: 'var(--sp-3)', marginBlockEnd: 'var(--sp-4)' }}>
           {[
             { ar: 'الإجازة الجامعيّة', en: 'Bachelor / Licence' },
             { ar: 'الدراسات العليا', en: "Master's" },

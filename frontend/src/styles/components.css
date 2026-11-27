@@ -227,6 +227,11 @@
     overflow: hidden;
     isolation: isolate; /* the wipe paints above the slab bg, below the label */
     display: inline-flex;
+    /* r363 P4 sweep: a flex-row that runs tight must never shrink a
+       button below its label — the clipped 78<80px box read as
+       «فتح شعبة» on /admin/courses @768/1024. A button that shrank
+       past its text is a bug everywhere (overflow:hidden above). */
+    flex-shrink: 0;
     align-items: center;
     justify-content: center;
     gap: var(--sp-2);

@@ -252,7 +252,9 @@ describe('r183-B8 — CI bundle-size gate (A11 finding 1)', () => {
     // integration raised 832→845 — the first all-four-branches
     // measurement (839.6 KB gz / 163 chunks); F1's below-fold
     // lazy-load diet and r361 carousel split pinned 866 to cover all chunks while shrinking entry.
-    expect(script).toContain('LIMIT_TOTAL_KB = 866');
+    // r367 raised 866→878 (documented in the gate): the r364 art system v2's
+    // route-lazy weight — the art is the prime directive's own payload.
+    expect(script).toContain('LIMIT_TOTAL_KB = 878');
     expect(script).toContain('LIMIT_ENTRY_KB = 92');
     expect(script).toContain('LIMIT_PDF_KB = 110');
     // Fail-closed scanner errors are a distinct exit code, so a missing
