@@ -1203,7 +1203,12 @@ export function ShowcaseBand() {
               <button
                 type="button"
                 className="w369-btn w369-btn-small w369-mini-cta"
-                disabled={approval === 'approved'}
+                /* r369 slice 06 (Lighthouse aria-hidden-focus): when the
+                   role toggle hides this phone (student mode), the CTA
+                   must leave the tab order with it — an aria-hidden
+                   ancestor may never hold a focusable. The demo itself
+                   is unchanged in teacher mode. */
+                disabled={role === 'student' || approval === 'approved'}
                 onClick={() => setApproval(approval === 'idle' ? 'sent' : 'approved')}
               >
                 {approval === 'idle' && <><Glyph name="check" size={14} />أرسل طلب اعتماد</>}
