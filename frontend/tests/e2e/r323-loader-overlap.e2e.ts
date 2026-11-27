@@ -168,7 +168,9 @@ for (const viewport of [
         await page.waitForTimeout(900); /* the lazy chunk + the cb-rise clip */
 
         const banner = page.locator('.cb-banner');
-        const bannerBox = await banner.boundingBox().catch(() => null);
+        const bannerBox = (await banner.count()) > 0
+          ? await banner.boundingBox({ timeout: 5_000 }).catch(() => null)
+          : null; /* absent banner: no 30s auto-wait */
         if (!bannerBox) {
           // unanswered consent is the ONLY state that shows the banner; a
           // fresh guest context must show it — but never fail the world
