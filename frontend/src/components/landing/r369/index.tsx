@@ -173,7 +173,7 @@ function useScrollProgress(steps = 0) {
       window.removeEventListener('resize', onScroll);
       if (raf) cancelAnimationFrame(raf);
     };
-  }, []);
+  }, [steps]);
   return p;
 }
 

@@ -310,7 +310,7 @@ describe('AuthPage — journey alignment (imm-5)', () => {
 
     const banner = container.querySelector('header.w369-nav');
     expect(banner).not.toBeNull();
-    expect(banner.querySelector('a[href="/"]')).not.toBeNull();
+    expect(banner!.querySelector('a[href="/"]')).not.toBeNull();
     expect(container.querySelector('main#main')).not.toBeNull();
     expect(container.querySelectorAll('main')).toHaveLength(1);
     const contentInfo = container.querySelector('footer.auth-bottom');

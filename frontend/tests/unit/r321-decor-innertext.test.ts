@@ -37,6 +37,9 @@ const DECOR_FAMILIES = [
   'fo-wordmark-reg',
 ];
 
+/** families kept only as marker classes (the glyph is drawn by <RegCross>). */
+const MARKER_ONLY = new Set(['auth-mark', 'nf-mark', 'sheet-mark']);
+
 function* walk(dir: string): Generator<string> {
   for (const name of readdirSync(dir)) {
     const p = path.join(dir, name);
@@ -93,10 +96,14 @@ describe('R321 §A6 — decorative marks never carry DOM text (the innerText lea
      * invariant is unchanged and now enforced on USE: a decorative family
      * that still appears in the sources must paint its glyph in CSS. */
     for (const fam of DECOR_FAMILIES) {
-      const used = liveSources.includes(`\${fam}"`) || liveSources.includes(`\${fam} `);
+      const used = liveSources.includes(`${fam}"`) || liveSources.includes(`${fam} `);
       if (!used) continue;
-      const re = new RegExp(`\\.\${fam}::(?:before|after)\\s*\\{[^}]*content\\s*:\\s*['"]\\+['"]`);
-      expect(re.test(styles), `.\${fam}::before { content: '+' } missing`).toBe(true);
+      /* auth-mark / nf-mark / sheet-mark survive ONLY as marker classes on
+       * <RegCross> (patterns.css: "marker classes"): the cross is drawn by
+       * the component, so there is no ::before glyph to pin. */
+      if (MARKER_ONLY.has(fam)) continue;
+      const re = new RegExp(`\\.${fam}::(?:before|after)\\s*\\{[^}]*content\\s*:\\s*['"]\\+['"]`);
+      expect(re.test(styles), `.${fam}::before { content: '+' } missing`).toBe(true);
     }
   });
 });

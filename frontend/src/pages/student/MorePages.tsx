@@ -95,7 +95,7 @@ export function GamificationPage() {
   useEffect(() => {
     if (levelNow === null || !userId) return;
     const key = `ula-level:${userId}`;
-    let remembered: number | null = null;
+    let remembered: number | null;
     try {
       const raw = window.localStorage.getItem(key);
       remembered = raw !== null ? Number(raw) : null;
