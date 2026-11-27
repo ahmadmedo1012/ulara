@@ -797,6 +797,14 @@ const PROGRESS_STEPS = [
   { at: 30, msg: 'المسار مكتمل — وهذه شهادة المقرّر.' },
 ];
 
+/* three courses with different weights: the same 30 points land at a
+   different mastery on each, which is the point of a matrix */
+const MASTERY_ROWS = [
+  { label: 'الأدب الحديث', scale: 100, tone: 'violet' },
+  { label: 'الإحصاء التطبيقي', scale: 68, tone: 'teal' },
+  { label: 'الجبر الخطّي', scale: 84, tone: 'coral' },
+] as const;
+
 function RollingDigits({ value, total }: { value: number; total: number }) {
   const digits = String(value).padStart(String(total).length, '0').split('');
   return (
@@ -805,7 +813,8 @@ function RollingDigits({ value, total }: { value: number; total: number }) {
         <span key={i} className="w369-roll">
           <span
             className="w369-roll-strip"
-            style={{ transform: `translateY(${-Number(d) * 10}%)` }}
+            style={{ ['--dig' as string]: String(d) } as React.CSSProperties}
+            aria-hidden="true"
           >
             {Array.from({ length: 10 }).map((_, n) => <span key={n}>{n}</span>)}
           </span>
@@ -886,6 +895,30 @@ export function ProgressBand() {
             </li>
           ))}
         </ul>
+
+        {/* the matrix the counter feeds: three courses, one scale */}
+        <div className="w369-matrix">
+          <div className="w369-matrix-head">
+            <span>المصفوفة</span>
+            <span>الإتقان</span>
+          </div>
+          <ul>
+            {MASTERY_ROWS.map((r) => {
+              /* the bars answer the same number as the counter: nothing
+               * here is a separate figure the page made up */
+              const pct = Math.min(100, Math.round((value / TOTAL) * r.scale));
+              return (
+                <li key={r.label} data-tone={r.tone}>
+                  <span className="w369-matrix-course">{r.label}</span>
+                  <span className="w369-matrix-bar" aria-hidden="true">
+                    <i style={{ transform: `scaleX(${pct / 100})` }} />
+                  </span>
+                  <b className="w369-matrix-pct">{pct}٪</b>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </div>
     </Band>
   );
@@ -944,6 +977,13 @@ export function RewardsBand() {
             );
           })}
         </ul>
+        <div className="w369-wallet-note">
+          <span className="w369-wallet-note-label">كيف تُحتسب؟</span>
+          <span className="w369-wallet-note-chip">واجب مُسلَّم · ٣</span>
+          <span className="w369-wallet-note-chip">اختبار مُجتاز · ٤</span>
+          <span className="w369-wallet-note-chip">محاضرة محضورة · ٢</span>
+          <span className="w369-fine">من السجل الأكاديمي نفسه، بلا إدخال يدوي.</span>
+        </div>
       </div>
     </Band>
   );
@@ -984,6 +1024,11 @@ export function HabitsBand() {
         <p className="w369-fine">
           تُحسب من النشاط المسجَّل فقط، وتتوقّف عند الغياب بلا عقوبة ولا تصفير مُفاجئ.
         </p>
+        <ul className="w369-rules">
+          <li><Glyph name="check" size={14} />تُقرأ من السجل الأكاديمي، لا من إدخال يدوي.</li>
+          <li><Glyph name="check" size={14} />العطلة الرسمية لا تُحتسب يومًا فائتًا.</li>
+          <li><Glyph name="check" size={14} />لا إشعارات ليلية ولا ضغط سلوكي: تقرير أسبوعي واحد.</li>
+        </ul>
       </div>
     </Band>
   );
@@ -1005,18 +1050,17 @@ const LEVELS = [
 function LevelBadge({ level, size = 40 }: { level: number; size?: number }) {
   const tier = Math.floor(level / 5);            // 0..3
   const rays = 3 + (level % 5);                  // 3..7
-  const r = 18;
-  const rail = Array.from({ length: rays * 2 }).map((_, i) => {
-    const a = (Math.PI * 2 * i) / (rays * 2);
-    const inner = i % 2 === 0 ? r + 2 : r + 5;
-    const outer = r + 9;
+  /* rays are ticks OUTSIDE the ring: r 18 → 21.5. They mark the level's
+   * place in its tier without drawing a wheel across the badge. */
+  const rail = Array.from({ length: rays }).map((_, i) => {
+    const a = (Math.PI * 2 * i) / rays - Math.PI / 2;
     return (
       <line
         key={i}
-        x1={24 + Math.cos(a) * (i % 2 === 0 ? r - 5 : inner)}
-        y1={24 + Math.sin(a) * (i % 2 === 0 ? r - 5 : inner)}
-        x2={24 + Math.cos(a) * outer}
-        y2={24 + Math.sin(a) * outer}
+        x1={24 + Math.cos(a) * 18.4}
+        y1={24 + Math.sin(a) * 18.4}
+        x2={24 + Math.cos(a) * 21.6}
+        y2={24 + Math.sin(a) * 21.6}
       />
     );
   });
@@ -1026,10 +1070,11 @@ function LevelBadge({ level, size = 40 }: { level: number; size?: number }) {
       className="w369-badge-svg" width={size} height={size} viewBox="0 0 48 48"
       data-tier={marks[tier]} aria-hidden="true" focusable="false"
     >
-      <circle cx="24" cy="24" r="15" className="w369-badge-ring" />
       {rail}
+      <circle cx="24" cy="24" r="14.5" className="w369-badge-ring" />
+      <circle cx="24" cy="24" r="10.5" className="w369-badge-inner" />
       {tier >= 2 && <circle cx="24" cy="24" r="20" className="w369-badge-halo" />}
-      <circle cx="24" cy="24" r={tier === 0 ? 4 : tier === 1 ? 5 : 6} className="w369-badge-core" />
+      <circle cx="24" cy="24" r={tier === 0 ? 3.4 : tier === 1 ? 4.2 : tier === 2 ? 5 : 5.6} className="w369-badge-core" />
       {tier === 3 && <path d="M18 24.5 22.5 29 31 19.5" className="w369-badge-tick" />}
     </svg>
   );
@@ -1060,6 +1105,19 @@ export function LevelsBand() {
             </span>
           </div>
         </div>
+        <ul className="w369-tiers">
+          {[
+            { name: 'بذور', range: '١–٥' },
+            { name: 'مسارات', range: '٦–١٠' },
+            { name: 'منائر', range: '١١–١٥' },
+            { name: 'قمم', range: '١٦–٢٠' },
+          ].map((t, i) => (
+            <li key={t.name} data-on={Math.floor(picked / 5) === i ? 'true' : 'false'}>
+              <b>{t.name}</b>
+              <span>{t.range}</span>
+            </li>
+          ))}
+        </ul>
         <ol className="w369-levels-grid">
           {LEVELS.map((n, i) => (
             <li key={n}>
@@ -1197,6 +1255,66 @@ const SLIDES = [
   { title: 'لوحة الجودة', body: 'مؤشّرات البرنامج والمقرّر في مكان واحد.', screen: 'quality' },
 ] as const;
 
+/**
+ * Seven small screens that actually say something — each is a labelled
+ * demonstration built from the same primitives as the page, so a reader
+ * can tell the student dashboard from the quality console at a glance.
+ * Every one is marked «نموذج توضيحي»; none of them shows invented data
+ * beyond the fixed demo numbers the rest of the page uses.
+ */
+interface MiniView { head: string; meta: string; rows: [string, string][] }
+const DEFAULT_VIEW: MiniView = {
+  head: 'اليوم', meta: '٣ مهامّ · ٢٤ نقطة',
+  rows: [['واجب تحليل النصّ', '✓ ٣'], ['اختبار الجبر الخطّي', '✓ ٤'], ['ورشة الكتابة', '٦']],
+};
+
+function MiniScreen({ screen }: { screen: string }) {
+  const views: Record<string, MiniView> = {
+    dashboard: DEFAULT_VIEW,
+    today: {
+      head: 'قائمة اليوم', meta: 'مرتّبة بالأولوية',
+      rows: [['الواجب — الأدب الحديث', '٣'], ['المحاضرة — ٩:٠٠', '٢'], ['الاختبار — غدًا', '٤']],
+    },
+    mastery: {
+      head: 'مصفوفة الإتقان', meta: 'الأدب الحديث',
+      rows: [['التحليل السردي', '٩٢٪'], ['الشعر الحديث', '٧٨٪'], ['النقد التطبيقي', '٥٤٪']],
+    },
+    leaderboard: {
+      head: 'لوحة تقدّم المقرّر', meta: '٢٤ طالبًا',
+      rows: [['نورة الحربي', '٤٢'], ['سلمان القحطاني', '٣٨'], ['سارة العتيبي', '٣٤']],
+    },
+    levels: {
+      head: 'سلّم الإتقان', meta: 'المستوى ٧ من ٢٠',
+      rows: [['فجر', 'مُكتمل'], ['شمس', 'الحالي'], ['مدار', 'مقفل']],
+    },
+    teacher: {
+      head: 'متابعة الصفّ', meta: 'الأدب الحديث',
+      rows: [['أنجزوا الواجب', '١٩ / ٢٤'], ['تحتاج متابعة', '٣'], ['متوسّط الإتقان', '٧١٪']],
+    },
+    quality: {
+      head: 'مؤشّرات البرنامج', meta: 'الفصل الأول',
+      rows: [['نسبة الاكتمال', '٨٦٪'], ['رضا الطلّاب', '٤٫٢ / ٥'], ['مقرّرات تحت المراجعة', '٢']],
+    },
+  };
+  const view = views[screen] ?? DEFAULT_VIEW;
+  return (
+    <div className="w369-mini-ui" data-screen={screen}>
+      <div className="w369-mini-head"><b>{view.head}</b><span>{view.meta}</span></div>
+      <ul className="w369-mini-list">
+        {view.rows.map(([label, value]) => (
+          <li key={label}><span>{label}</span><b>{value}</b></li>
+        ))}
+      </ul>
+      <div className="w369-mini-bars" aria-hidden="true">
+        {[72, 54, 88, 63].map((w, i) => (
+          <i key={i} style={{ transform: `scaleX(${w / 100})` }} />
+        ))}
+      </div>
+      <p className="w369-mini-note">نموذج توضيحي للواجهة.</p>
+    </div>
+  );
+}
+
 export function CarouselBand() {
   const [i, setI] = useState(0);
   const total = SLIDES.length;
@@ -1249,9 +1367,7 @@ export function CarouselBand() {
           <div className="w369-phone">
             <div className="w369-phone-screen">
               <div className="w369-mini-head"><b>{slide.title}</b><span>نموذج توضيحي</span></div>
-              <div className="w369-mini-skel" data-screen={slide.screen}>
-                <span /><span /><span /><span />
-              </div>
+              <MiniScreen screen={slide.screen} />
             </div>
           </div>
         </div>

@@ -353,22 +353,6 @@
   margin-block-start: var(--sp-7);
 }
 
-.w369-hero-facts {
-  list-style: none;
-  margin: var(--sp-7) 0 0;
-  padding: 0;
-  display: grid;
-  gap: var(--sp-2);
-}
-
-.w369-hero-facts li {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  font-size: var(--fs-sm);
-  color: var(--text-secondary);
-}
-
 .w369-hero-facts svg { color: var(--gold-ink); flex: none; }
 
 /* ── the phone mockup (composed, not scaled) ──────────────────────── */
@@ -1130,7 +1114,9 @@
   font-weight: var(--fw-semibold);
   color: var(--text);
   list-style: none;
+  transition: color var(--t-micro) var(--ease-out);
 }
+.w369-faq-q:hover { color: var(--accent); }
 
 .w369-faq-q::-webkit-details-marker { display: none; }
 
@@ -2059,13 +2045,20 @@
   overflow: hidden;
   vertical-align: baseline;
 }
+/* em-based, not percentage-based: a percentage height inside an
+   indefinite-height parent resolved to the wrong row and showed the
+   wrong digit. Each cell is exactly 1em and the strip steps by --dig. */
 .w369-roll-strip {
   display: flex;
   flex-direction: column;
-  block-size: 1000%;
   transition: transform var(--t-base) var(--ease-out);
+  transform: translateY(calc(var(--dig, 0) * -1em));
 }
-.w369-roll-strip > span { block-size: 10%; line-height: 1; text-align: center; }
+.w369-roll-strip > span {
+  block-size: 1em;
+  line-height: 1em;
+  text-align: center;
+}
 
 .w369-roll-total {
   font-size: 0.42em;
@@ -2423,18 +2416,23 @@
 .w369-dot[data-on='true']::after { background: var(--gold-ink); }
 
 .w369-slide-screen { display: grid; place-items: center; }
-.w369-mini-skel { display: grid; gap: var(--sp-2); padding: var(--sp-3) var(--sp-4) var(--sp-5); }
-.w369-mini-skel span {
-  display: block;
-  block-size: 44px;
-  border-radius: var(--r-md);
-  background: var(--surface-2);
+.w369-mini-ui { padding-block-end: var(--sp-2); }
+
+/* four quiet bars: the screen's "chart", drawn from the same rule set */
+.w369-mini-bars {
+  display: grid;
+  gap: 5px;
+  padding: var(--sp-3) var(--sp-4) 0;
 }
-.w369-mini-skel[data-screen='dashboard'] span:nth-child(1) { block-size: 76px; background: color-mix(in srgb, var(--gold) 26%, var(--surface-2)); }
-.w369-mini-skel[data-screen='mastery'] span { block-size: 30px; }
-.w369-mini-skel[data-screen='leaderboard'] span:nth-child(odd) { background: color-mix(in srgb, var(--accent) 12%, var(--surface-2)); }
-.w369-mini-skel[data-screen='levels'] span { block-size: 34px; border-radius: var(--r-full); }
-.w369-mini-skel[data-screen='quality'] span:nth-child(2) { block-size: 96px; }
+.w369-mini-bars i {
+  display: block;
+  block-size: 6px;
+  border-radius: var(--r-full);
+  background: color-mix(in srgb, var(--accent) 22%, var(--surface-2));
+  transform-origin: 100% 50%;
+}
+.w369-mini-ui[data-screen='quality'] .w369-mini-bars i { background: color-mix(in srgb, var(--gold) 38%, var(--surface-2)); }
+.w369-mini-ui[data-screen='leaderboard'] .w369-mini-bars i { background: color-mix(in srgb, var(--gold) 22%, var(--surface-2)); }
 
 /* ── 08 · principles, trust, audiences, finale tally ─────────────── */
 
@@ -2639,3 +2637,209 @@
   pointer-events: none;
 }
 .w369-cta-inner > * { position: relative; }
+
+
+/* ═════════════════════════════════════════════════════════════════════
+   r369-mat — the fine detail pass
+   The parts a reader never names but always feels: a matrix that answers
+   the counter, a legend that explains the ladder, a provenance row under
+   the wallet, and a phone frame that keeps its optical centre.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── the hero's four facts become a 2×2 plate with hairlines ─────── */
+.w369-hero-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  list-style: none;
+  border-block-start: 1px solid var(--border);
+  margin: var(--sp-7) 0 0;
+  padding: var(--sp-1) 0 0;
+}
+.w369-hero-facts li {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-2) var(--sp-3) 0;
+  border-block-end: 1px solid var(--border);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-snug);
+  color: var(--text-secondary);
+}
+.w369-hero-facts li:nth-child(odd) { padding-inline-end: var(--sp-5); }
+.w369-hero-facts li:nth-child(even) {
+  padding-inline-start: var(--sp-5);
+  border-inline-start: 1px solid var(--border);
+}
+
+/* ── the mastery matrix (03) ─────────────────────────────────────── */
+.w369-matrix {
+  margin-block-start: var(--sp-5);
+  padding-block-start: var(--sp-4);
+  border-block-start: 1px solid var(--border);
+}
+.w369-matrix-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0;
+  color: var(--text-muted);
+  margin-block-end: var(--sp-2);
+}
+.w369-matrix ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-2); }
+.w369-matrix li {
+  display: grid;
+  grid-template-columns: minmax(90px, 1fr) minmax(60px, 1.1fr) 3.4ch;
+  align-items: center;
+  gap: var(--sp-3);
+  font-size: var(--fs-sm);
+}
+.w369-matrix-course { color: var(--text); }
+.w369-matrix-bar {
+  display: block;
+  block-size: 8px;
+  border-radius: var(--r-full);
+  background: var(--surface-2);
+  box-shadow: inset 0 0 0 1px var(--border);
+  overflow: hidden;
+}
+.w369-matrix-bar i {
+  display: block;
+  block-size: 100%;
+  border-radius: var(--r-full);
+  background: var(--accent);
+  transform-origin: 100% 50%;
+  transition: transform var(--t-base) var(--ease-out);
+}
+.w369-matrix li[data-tone='teal'] .w369-matrix-bar i { background: color-mix(in srgb, var(--accent) 55%, var(--gold)); }
+.w369-matrix li[data-tone='coral'] .w369-matrix-bar i { background: color-mix(in srgb, var(--accent) 78%, var(--gold)); }
+.w369-matrix-pct {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
+  text-align: end;
+}
+
+/* ── the wallet's provenance row (04) ────────────────────────────── */
+.w369-wallet-note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-block-start: var(--sp-5);
+  padding-block-start: var(--sp-4);
+  border-block-start: 1px solid var(--border);
+}
+.w369-wallet-note-label {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--text);
+}
+.w369-wallet-note-chip {
+  font-size: var(--fs-xs);
+  color: var(--text-secondary);
+  background: var(--surface-2);
+  border-radius: var(--r-full);
+  padding: 5px var(--sp-3);
+  font-variant-numeric: tabular-nums;
+}
+.w369-wallet-note .w369-fine { margin: 0; flex-basis: 100%; }
+
+/* ── the ladder's four tiers (06) ───────────────────────────────── */
+.w369-tiers {
+  list-style: none;
+  margin: var(--sp-3) 0 var(--sp-4);
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--sp-2);
+}
+.w369-tiers li {
+  display: grid;
+  gap: 1px;
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  text-align: center;
+  border: 1px solid transparent;
+}
+.w369-tiers li b { font-size: var(--fs-sm); }
+.w369-tiers li span { font-size: var(--fs-xs); color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.w369-tiers li[data-on='true'] {
+  background: color-mix(in srgb, var(--gold) 16%, var(--surface));
+  border-color: color-mix(in srgb, var(--gold) 45%, transparent);
+}
+.w369-tiers li[data-on='true'] b { color: var(--gold-ink); }
+
+/* ── the badge's inner ring ─────────────────────────────────────── */
+.w369-badge-inner { fill: none; stroke: currentColor; stroke-width: 0.7; opacity: 0.35; }
+
+/* ── FAQ: the answer arrives instead of snapping ────────────────── */
+.w369-faq-item[open] .w369-faq-a {
+  animation: w369-fade var(--motion-duration-short) var(--ease-out) both;
+}
+@keyframes w369-fade {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ── typographic detail: no orphan lines in running text ────────── */
+.w369-body,
+.w369-lead,
+.w369-faq-a { text-wrap: pretty; }
+
+@media (max-width: 700px) {
+  .w369-hero-facts { grid-template-columns: 1fr; }
+  .w369-hero-facts li:nth-child(even) {
+    padding-inline-start: 0;
+    border-inline-start: 0;
+  }
+  .w369-tiers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w369-faq-item[open] .w369-faq-a { animation: none; }
+  .w369-matrix-bar i { transition: none; }
+}
+
+
+/* the streak's rules: three lines that keep it honest (05) */
+.w369-rules {
+  list-style: none;
+  margin: var(--sp-4) 0 0;
+  padding: var(--sp-4) 0 0;
+  border-block-start: 1px solid var(--border);
+  display: grid;
+  gap: var(--sp-2);
+}
+.w369-rules li {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+}
+.w369-rules svg { color: var(--accent); flex: none; }
+
+
+/* every anchor target clears the sticky bar (and the rail under it):
+ * without this a deep link parks the heading under the glass. */
+.w369 [id],
+.w369 section[id],
+.w369 [data-stage] { scroll-margin-block-start: 96px; }
+
+
+/* numerals are LTR runs even inside an RTL page: a two-cell odometer in
+ * an RTL box rendered "41" for 14, and every split-counter readout had
+ * the same fault. Isolation keeps the digits in reading order while the
+ * sentence around them stays Arabic. */
+.w369-rollnum,
+.w369-wallet-num,
+.w369-slide-count,
+.w369-matrix-pct,
+.w369-today-count b,
+.w369-streak-total {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
