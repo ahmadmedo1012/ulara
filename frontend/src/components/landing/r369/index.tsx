@@ -263,6 +263,11 @@ function StarJar() {
   const progress = useScrollProgress();
   const n = Math.min(JAR_TOTAL, Math.round(progress * JAR_TOTAL));
   const full = n >= JAR_TOTAL;
+  /* the finale closes the loop: it says how many stars YOU collected on
+   * the way down. A window event, not a context — one number, one hop. */
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent('ulara:stars', { detail: n }));
+  }, [n]);
   return (
     <div className="w369-jar" data-full={full ? 'true' : 'false'}>
       <span className="w369-jar-icon" aria-hidden="true"><Glyph name="star" size={16} className="ui-glyph-twinkle" /></span>
@@ -631,122 +636,306 @@ function Band({ n, kicker, title, body, tint, icon, children, jar, id, stage }: 
   );
 }
 
-/* ── 02 tasks become stars ── */
+/* ── shared: the burst ── */
 
-const STAR_SOURCES = [
-  { icon: 'book', title: 'إتمام الواجب', body: 'تسلّمه في وقته، فتظهر النجمات فورًا في رصيدك.' },
-  { icon: 'graduation', title: 'حضور المحاضرة', body: 'حضورك يُسجَّل، والنجمة تُضاف دون خطوة إضافية.' },
-  { icon: 'target', title: 'اجتياز الاختبار', body: 'نتيجتك تُحدّد نجومك، وتُضاف إلى مصفوفة إتقانك.' },
+/**
+ * A capped, self-cleaning star burst. Six sparks, CSS-only, removed by
+ * React when the key changes — no interval, no particle pool, nothing
+ * left in the DOM after 620ms.
+ */
+function StarBurst({ seed }: { seed: number }) {
+  return (
+    <span className="w369-burst" key={seed} aria-hidden="true">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <span key={i} className="w369-spark" style={{ rotate: `${i * 60}deg` }} />
+      ))}
+    </span>
+  );
+}
+
+/* ── 02 the today list: tap a task, earn its stars ── */
+
+const TODAY_TASKS = [
+  { id: 't1', icon: 'book', title: 'واجب تحليل النصّ الأدبي', course: 'الأدب الحديث', stars: 3 },
+  { id: 't2', icon: 'graduation', title: 'محاضرة مدخل إلى الإحصاء', course: 'الإحصاء التطبيقي', stars: 5 },
+  { id: 't3', icon: 'target', title: 'اختبار قصير في الجبر الخطّي', course: 'الجبر الخطّي', stars: 4 },
+  { id: 't4', icon: 'assignment', title: 'ورشة الكتابة الأكاديمية', course: 'مهارات أكاديمية', stars: 6 },
+  { id: 't5', icon: 'certificate', title: 'مراجعة ملفّ المشروع', course: 'مشروع التخرّج', stars: 7 },
 ] as const;
 
+/** the weekly goal, and where the three milestone ticks sit on it */
+const WEEK_GOAL = 25;
+const MILESTONES = [5, 15, 25] as const;
+
 export function StarsBand() {
-  const [ref, seen] = useInView<HTMLDivElement>();
-  const kinds = useCountUp(STAR_SOURCES.length, seen);
+  const [done, setDone] = useState<Record<string, boolean>>({});
+  const [seed, setSeed] = useState(0);
+  const [burstAt, setBurstAt] = useState<string | null>(null);
+  const collected = TODAY_TASKS.reduce((n, t) => (done[t.id] ? n + t.stars : n), 0);
+  const count = TODAY_TASKS.filter((t) => done[t.id]).length;
+  const pct = Math.round((collected / WEEK_GOAL) * 100);
+  const goalMet = collected >= WEEK_GOAL;
+
+  const toggle = (id: string) => {
+    setDone((prev) => {
+      const next = { ...prev, [id]: !prev[id] };
+      if (next[id]) { setSeed((n) => n + 1); setBurstAt(id); }
+      else setBurstAt(null);
+      return next;
+    });
+  };
+
   return (
     <Band
       n="02" jar="02" tint="violet" icon="sparkle" id="story" stage="0"
       kicker="المهمّة تصير نجمة"
       title={<>كل ما تُنجزه<br /><span className="w369-em">يصير نجمة</span></>}
-      body="الواجب، المحاضرة، الاختبار القصير — كلٌّ منها يمنحك نقاط إتقان في اللحظة التي تُتمّها. لا انتظار لتصحيح، ولا أرقام ضائعة: النجوم تظهر أمامك فورًا، وتحتفظ بها."
+      body="الواجب، المحاضرة، الاختبار القصير — كلٌّ منها يمنحك نجومًا في اللحظة التي تُتمّها. جرّبها: اضغط أي مهمّة في القائمة، وشاهد النجوم تصل."
     >
-      <div className="w369-star-grid" ref={ref}>
-        <div className="w369-stat w369-stat-lead">
-          <span className="w369-stat-ico"><Glyph name="star" size={20} className="ui-glyph-twinkle" /></span>
-          <b className="w369-stat-num">{kinds}</b>
-          <span className="w369-stat-label">طرق راسخة لجمع النجوم في أُلارا</span>
+      <div className="w369-today">
+        <div className="w369-today-head">
+          <div>
+            <span className="w369-chip w369-chip-amber">
+              <Glyph name="calendar" size={14} />اليوم
+            </span>
+            <p className="w369-today-count">
+              <b aria-live="polite">{count}</b>
+              <span> من {TODAY_TASKS.length} مهامّ</span>
+            </p>
+            <p className="w369-today-earn" data-on={collected > 0 ? 'true' : 'false'}>
+              <Glyph name="star" size={14} />+{collected} نجمة اليوم
+            </p>
+          </div>
+          <div className="w369-goal" data-met={goalMet ? 'true' : 'false'}>
+            <span className="w369-goal-num"><b>{collected}</b> / {WEEK_GOAL}</span>
+            <span className="w369-goal-track" aria-hidden="true">
+              <span
+                className="w369-goal-fill"
+                style={{ transform: `scaleX(${Math.min(1, pct / 100)})` }}
+              />
+              {MILESTONES.map((m) => (
+                <span
+                  key={m}
+                  className="w369-goal-tick"
+                  data-hit={collected >= m ? 'true' : 'false'}
+                  style={{ insetInlineStart: `${(m / WEEK_GOAL) * 100}%` }}
+                >
+                  <Glyph name="check" size={10} />
+                </span>
+              ))}
+            </span>
+            <span className="w369-fine">
+              {goalMet ? 'أكملت هدف الأسبوع — ٢٥ نجمة' : `هدف الأسبوع: ${WEEK_GOAL} نجمة`}
+            </span>
+          </div>
         </div>
-        <div className="w369-stat w369-stat-note">
-          <Mascot pose="cheer" size={64} />
-          <span className="w369-stat-label">
-            المكافأة ليست شهادة تُعلَّق، بل شعور يوميّ بأنك تتقدّم.
-          </span>
-        </div>
-      </div>
-      <ul className="w369-sources">
-        {STAR_SOURCES.map((x) => (
-          <li key={x.title} className="w369-source">
-            <span className="w369-source-ico"><Glyph name={x.icon} size={18} /></span>
-            <b>{x.title}</b>
-            <span>{x.body}</span>
-          </li>
-        ))}
-      </ul>
-    </Band>
-  );
-}
 
-/* ── 03 stars become progress ── */
-
-const PROGRESS_ROWS = [
-  { label: 'الأدب الحديث', pct: 78, tone: 'violet' },
-  { label: 'الإحصاء التطبيقي', pct: 54, tone: 'teal' },
-  { label: 'الجبر الخطّي', pct: 91, tone: 'coral' },
-] as const;
-
-export function ProgressBand() {
-  return (
-    <Band
-      n="03" jar="03" tint="teal" icon="leaderboard" id="stars" stage="1"
-      kicker="النجمة تصير تقدّمًا"
-      title={<>النجوم ترتّب نفسها<br /><span className="w369-em">تقدّمًا تراه</span></>}
-      body="نجومك لا تبقى أرقامًا متناثرة: تتجمّع في تقدّم المقرّر، وفي مصفوفة الإتقان التي تُظهر ما أتقنته وما يحتاج جهدًا. تعرف دائمًا أين أنت، وأين الخطوة التالية."
-    >
-      <div className="w369-progress-card">
-        <div className="w369-progress-head">
-          <span className="w369-chip"><Glyph name="target" size={14} />مصفوفة الإتقان</span>
-          <span className="w369-chip w369-chip-soft">نموذج توضيحي</span>
-        </div>
-        <ul className="w369-progress-list">
-          {PROGRESS_ROWS.map((r) => (
-            <li key={r.label} data-tone={r.tone}>
-              <div className="w369-progress-line">
-                <b>{r.label}</b>
-                <span>{r.pct}٪</span>
-              </div>
-              <span className="w369-progress-bar"><i style={{ inlineSize: `${r.pct}%` }} /></span>
-            </li>
-          ))}
+        <ul className="w369-tasks">
+          {TODAY_TASKS.map((t) => {
+            const on = !!done[t.id];
+            return (
+              <li key={t.id}>
+                <button
+                  type="button"
+                  className="w369-task"
+                  data-done={on ? 'true' : 'false'}
+                  aria-pressed={on}
+                  onClick={() => toggle(t.id)}
+                >
+                  <span className="w369-task-ico"><Glyph name={t.icon} size={18} /></span>
+                  <span className="w369-task-text">
+                    <b>{t.title}</b>
+                    <span>{t.course}</span>
+                  </span>
+                  <span className="w369-task-stars" aria-hidden="true">
+                    <Glyph name="star" size={12} />{t.stars}
+                  </span>
+                  <span className="w369-task-check" aria-hidden="true">
+                    {on ? <Glyph name="check" size={16} /> : <span className="w369-task-ring" />}
+                  </span>
+                  {burstAt === t.id && on && <StarBurst seed={seed} />}
+                </button>
+              </li>
+            );
+          })}
         </ul>
         <p className="w369-fine">
-          التقدّم محسوب من إنجازاتك الفعلية في المقرّر — لا تقديرات ولا أرقام مُجمّلة.
+          نموذج تفاعلي — هذه مهامّ توضيحية، لا بيانات حسابك. في المنصّة تُمنح النجوم من إنجازاتك الحقيقية.
         </p>
       </div>
     </Band>
   );
 }
 
-/* ── 04 progress becomes rewards ── */
+/* ── 03 the rolling counter: /30, by scroll and by tap ── */
+
+const FIRST_STEP = { at: 0, msg: 'المسار يبدأ من هنا.', pose: 'think' as const };
+const PROGRESS_STEPS = [
+  FIRST_STEP,
+  { at: 10, msg: 'ربع المسار: صار التقدّم مرئيًّا.', pose: 'wave' as const },
+  { at: 20, msg: 'ثلثا المسار: الإتقان يتراكم.', pose: 'cheer' as const },
+  { at: 30, msg: 'المسار مكتمل — وهذه شهادة المقرّر.', pose: 'cheer' as const },
+];
+
+function RollingDigits({ value, total }: { value: number; total: number }) {
+  const digits = String(value).padStart(String(total).length, '0').split('');
+  return (
+    <span className="w369-rollnum" aria-hidden="true">
+      {digits.map((d, i) => (
+        <span key={i} className="w369-roll">
+          <span
+            className="w369-roll-strip"
+            style={{ transform: `translateY(${-Number(d) * 10}%)` }}
+          >
+            {Array.from({ length: 10 }).map((_, n) => <span key={n}>{n}</span>)}
+          </span>
+        </span>
+      ))}
+      <span className="w369-roll-total">/{total}</span>
+    </span>
+  );
+}
+
+export function ProgressBand() {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [byScroll, setByScroll] = useState(0);
+  const [extra, setExtra] = useState(0);
+  const TOTAL = 30;
+
+  /* scroll drives the counter: how far this card has travelled through
+   * the viewport, 0 → 30. Reduce-motion readers still get the number
+   * (it is content), they simply get no interpolation. */
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return undefined;
+    let raf = 0;
+    const read = () => {
+      raf = 0;
+      const box = el.getBoundingClientRect();
+      const span = window.innerHeight + box.height;
+      const p = Math.min(1, Math.max(0, (window.innerHeight - box.top) / span));
+      setByScroll(Math.round(p * TOTAL));
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(read); };
+    read();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  const value = Math.min(TOTAL, Math.max(0, byScroll + extra));
+  const step = [...PROGRESS_STEPS].reverse().find((x) => value >= x.at) ?? FIRST_STEP;
+
+  return (
+    <Band
+      n="03" jar="03" tint="teal" icon="leaderboard" id="stars" stage="1"
+      kicker="النجمة تصير تقدّمًا"
+      title={<>النجوم ترتّب نفسها<br /><span className="w369-em">تقدّمًا تراه</span></>}
+      body="نجومك لا تبقى أرقامًا متناثرة: تتجمّع في تقدّم المقرّر، وفي مصفوفة الإتقان. مرّر لتتحرّك، أو اضغط النجمة لتضيف واحدة."
+    >
+      <div className="w369-meter" ref={ref} data-step={String(PROGRESS_STEPS.indexOf(step))}>
+        <div className="w369-meter-head">
+          <span className="w369-chip"><Glyph name="target" size={14} />مصفوفة الإتقان</span>
+          <span className="w369-chip w369-chip-soft">نموذج توضيحي</span>
+        </div>
+        <div className="w369-meter-body">
+          <Mascot pose={step.pose} size={104} className="w369-meter-mascot" />
+          <div className="w369-meter-num">
+            <RollingDigits value={value} total={TOTAL} />
+            <span className="w369-meter-unit">نجمة من ثلاثين</span>
+            <p className="w369-meter-msg" aria-live="polite">{step.msg}</p>
+            <button
+              type="button"
+              className="w369-btn w369-btn-small"
+              onClick={() => setExtra((n) => (n >= TOTAL ? 0 : n + 1))}
+            >
+              <Glyph name="star" size={14} />
+              {extra >= TOTAL ? 'أعد من البداية' : 'أضف نجمة'}
+            </button>
+          </div>
+        </div>
+        <ul className="w369-meter-rows">
+          {PROGRESS_STEPS.slice(1).map((x) => (
+            <li key={x.at} data-hit={value >= x.at ? 'true' : 'false'}>
+              <span className="w369-meter-dot" aria-hidden="true" />
+              <b>{x.at}</b>
+              <span>{x.msg}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </Band>
+  );
+}
+
+/* ── 04 rewards: costs, an 18-star fill, and the unlocked state ── */
 
 const REWARDS = [
-  { icon: 'medal', title: 'شارات الإنجاز', body: 'تُفتح عند إتمام هدف حقيقي — أول واجب، أول أسبوع كامل، أول إتقان.' },
-  { icon: 'trophy', title: 'لوحة المتصدّرين', body: 'ترتيبك بين زملائك في المقرّر، مبنيًّا على نقاط الإتقان لا على الحظّ.' },
-  { icon: 'certificate', title: 'شهادات المقرّر', body: 'شهادة عند إكمال المقرّر، جاهزة للتنزيل وموثّقة داخل المنصّة.' },
+  { id: 'r1', icon: 'medal', title: 'شارة الإنجاز', cost: 6, body: 'تُفتح عند إتمام هدف حقيقي — أول واجب، أول أسبوع كامل، أول إتقان.' },
+  { id: 'r2', icon: 'trophy', title: 'لوحة المتصدّرين', cost: 12, body: 'ترتيبك بين زملائك في المقرّر، مبنيًّا على نقاط الإتقان لا على الحظّ.' },
+  { id: 'r3', icon: 'certificate', title: 'شهادة المقرّر', cost: 18, body: 'شهادة عند إكمال المقرّر، جاهزة للتنزيل وموثّقة داخل حسابك.' },
 ] as const;
 
+const WALLET_MAX = 18;
+
 export function RewardsBand() {
+  const [wallet, setWallet] = useState(0);
+  const opened = REWARDS.filter((r) => wallet >= r.cost).length;
   return (
     <Band
       n="04" jar="04" tint="coral" icon="medal" id="progress" stage="2"
       kicker="التقدّم يصير مكافأة"
       title={<>والتقدّم؟<br /><span className="w369-em">يصير مكافأة</span></>}
-      body="عندما يتراكم الإتقان، تصبح له علامات تراها: شارات تُفتح، وترتيب في لوحة المتصدّرين، وشهادة عند إكمال المقرّر. مكافآت حقيقية تخرج من بياناتك، لا جوائز معلّقة في الهواء."
+      body="عندما يتراكم الإتقان، تصبح له علامات تراها: شارة تُفتح، وترتيب في لوحة المتصدّرين، وشهادة عند إكمال المقرّر. الأخيرة تُفتح عند ١٨ نجمة."
     >
-      <ul className="w369-reward-grid">
-        {REWARDS.map((r) => (
-          <li key={r.title} className="w369-reward">
-            <span className="w369-reward-ico"><Glyph name={r.icon} size={22} /></span>
-            <h3 className="w369-h3">{r.title}</h3>
-            <p className="w369-body">{r.body}</p>
-          </li>
-        ))}
-      </ul>
+      <div className="w369-wallet" data-opened={String(opened)}>
+        <div className="w369-wallet-head">
+          <span className="w369-chip w369-chip-amber"><Glyph name="star" size={14} />رصيدك</span>
+          <span className="w369-wallet-num"><b>{wallet}</b> / {WALLET_MAX}</span>
+          <button
+            type="button"
+            className="w369-btn w369-btn-small"
+            onClick={() => setWallet((n) => (n >= WALLET_MAX ? 0 : n + 1))}
+          >
+            {wallet >= WALLET_MAX ? 'صفّر الرصيد' : 'اجمع نجمة'}
+          </button>
+        </div>
+        <span className="w369-wallet-track" aria-hidden="true">
+          {Array.from({ length: WALLET_MAX }).map((_, i) => (
+            <span key={i} className="w369-wallet-pip" data-on={i < wallet ? 'true' : 'false'} />
+          ))}
+        </span>
+        <ul className="w369-reward-grid">
+          {REWARDS.map((r) => {
+            const open = wallet >= r.cost;
+            return (
+              <li key={r.id} className="w369-reward" data-open={open ? 'true' : 'false'}>
+                <span className="w369-reward-ico"><Glyph name={r.icon} size={22} /></span>
+                <h3 className="w369-h3">{r.title}</h3>
+                <p className="w369-body">{r.body}</p>
+                <span className="w369-reward-cost">
+                  <Glyph name="star" size={13} />{r.cost} نجمة
+                </span>
+                <span className="w369-reward-state">
+                  {open ? <><Glyph name="check" size={14} />مفتوحة</> : <>مقفلة — تحتاج {r.cost - wallet} نجمة</>}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
     </Band>
   );
 }
 
-/* ── 05 rewards become habits ── */
+/* ── 05 rewards become habits (Sat → Fri, the Gulf week) ── */
 
-const WEEK = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+const WEEK = ['السبت', 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'];
+const WEEK_ON = 5;
 
 export function HabitsBand() {
   return (
@@ -754,69 +943,362 @@ export function HabitsBand() {
       n="05" jar="05" tint="sky" icon="flame" id="rewards" stage="3"
       kicker="المكافأة تصير عادة"
       title={<>والمكافأة؟<br /><span className="w369-em">تصير عادة</span></>}
-      body="سلسلة الأيام المتتالية ليست عدّادًا للضغط، بل تذكيرًا لطيفًا بأنك تستمرّ. أُلارا تحفظ وتيرتك، وتذكّرك بلطف حين ينقطع يوم، وتحتفي حين تكتمل الأسبوع."
+      body="سلسلة الأيام المتتالية ليست عدّادًا للضغط، بل تذكيرًا لطيفًا بأنك تستمرّ. أُلارا تحفظ وتيرتك، وتذكّرك بلطف حين ينقطع يوم، وتحتفي حين يكتمل الأسبوع."
     >
       <div className="w369-streak">
         <div className="w369-streak-head">
           <span className="w369-streak-flame"><Glyph name="flame" size={22} className="ui-glyph-flicker" /></span>
           <div>
             <b>سلسلة هذا الأسبوع</b>
-            <span>هكذا تبدو خمسة أيام من سبعة — نموذج توضيحي، لا بياناتك.</span>
+            <span>خمسة أيام من سبعة — نموذج توضيحي، لا بياناتك.</span>
           </div>
+          <span className="w369-streak-total"><b>{WEEK_ON}</b><span> أيام</span></span>
         </div>
         <ul className="w369-streak-days">
           {WEEK.map((d, i) => (
-            <li key={d} data-on={i < 5 ? 'true' : 'false'}>
+            <li key={d} data-on={i < WEEK_ON ? 'true' : 'false'}>
               <span className="w369-streak-dot">
-                {i < 5 ? <Glyph name="star" size={16} /> : <span className="w369-streak-empty" />}
+                {i < WEEK_ON ? <Glyph name="star" size={16} /> : <span className="w369-streak-empty" />}
               </span>
               <span className="w369-streak-day">{d}</span>
             </li>
           ))}
         </ul>
         <p className="w369-fine">
-          السلسلة تُحسب من نشاطك الفعلي، وتُصفَّر بهدوء عند الغياب — بلا عقوبات.
+          السلسلة تُحسب من نشاطك الفعلي، وتتوقّف بهدوء عند الغياب — بلا عقوبات.
         </p>
       </div>
     </Band>
   );
 }
 
-/* ── the 20-level ladder (original Arabic names) ── */
+/* ── 06 the 20-level ladder, each level with its own drawing ── */
 
 const LEVELS = [
   'بذرة', 'برعمة', 'خطوة', 'طريق', 'مصباح', 'فجر', 'شمس', 'مدار', 'قمر', 'نجم',
   'كوكبة', 'سماء', 'قوس', 'منارة', 'برج', 'قلعة', 'أفق', 'قمّة', 'تاج', 'المعلّم',
 ];
 
+/**
+ * Twenty distinct badges, drawn from one rule instead of twenty files:
+ * the ring's rays grow every five levels, the inner mark changes tier,
+ * and the ink moves from leaf → sky → violet → amber → coral. Original
+ * geometry, generated — no borrowed badges.
+ */
+function LevelBadge({ level, size = 40 }: { level: number; size?: number }) {
+  const tier = Math.floor(level / 5);            // 0..3
+  const rays = 3 + (level % 5);                  // 3..7
+  const r = 18;
+  const rail = Array.from({ length: rays * 2 }).map((_, i) => {
+    const a = (Math.PI * 2 * i) / (rays * 2);
+    const inner = i % 2 === 0 ? r + 2 : r + 5;
+    const outer = r + 9;
+    return (
+      <line
+        key={i}
+        x1={24 + Math.cos(a) * (i % 2 === 0 ? r - 5 : inner)}
+        y1={24 + Math.sin(a) * (i % 2 === 0 ? r - 5 : inner)}
+        x2={24 + Math.cos(a) * outer}
+        y2={24 + Math.sin(a) * outer}
+      />
+    );
+  });
+  const marks = ['leaf', 'sky', 'violet', 'amber'] as const;
+  return (
+    <svg
+      className="w369-badge-svg" width={size} height={size} viewBox="0 0 48 48"
+      data-tier={marks[tier]} aria-hidden="true" focusable="false"
+    >
+      <circle cx="24" cy="24" r="15" className="w369-badge-ring" />
+      {rail}
+      {tier >= 2 && <circle cx="24" cy="24" r="20" className="w369-badge-halo" />}
+      <circle cx="24" cy="24" r={tier === 0 ? 4 : tier === 1 ? 5 : 6} className="w369-badge-core" />
+      {tier === 3 && <path d="M18 24.5 22.5 29 31 19.5" className="w369-badge-tick" />}
+    </svg>
+  );
+}
+
 export function LevelsBand() {
-  const [ref, seen] = useInView<HTMLDivElement>();
-  const n = useCountUp(LEVELS.length, seen);
+  const [picked, setPicked] = useState(0);
+  const name = LEVELS[picked];
   return (
     <Band
       n="06" jar="06" tint="leaf" icon="admin" id="levels" stage="4"
       kicker="عشرون مستوى، أسماء عربية"
       title={<>سلّمٌ من<br /><span className="w369-em">عشرين مستوى</span></>}
-      body="من «بذرة» إلى «المعلّم»: سلّم إتقان بأسماء عربية أصيلة، يفتح كل مستوى شارةً جديدة. لا تسريع ولا اختصار — كل مستوى يُفتح بما أنجزته فعلًا."
+      body="من «بذرة» إلى «المعلّم»: سلّم إتقان بأسماء عربية أصيلة، وكل مستوى له شارة مرسومة له وحده. اختر مستوى لتراه."
     >
-      <div className="w369-levels" ref={ref}>
+      <div className="w369-levels">
         <div className="w369-levels-head">
-          <span className="w369-chip w369-chip-amber"><Glyph name="star" size={14} />{n} مستوى</span>
-          <span className="w369-fine">أسماء السلّم من تصميم أُلارا، وتُمنح حسب نقاط الإتقان.</span>
+          <span className="w369-chip w369-chip-amber"><Glyph name="star" size={14} />المستوى {picked + 1} من ٢٠</span>
+          <span className="w369-fine">أسماء السلّم وشاراته من تصميم أُلارا، وتُمنح حسب نقاط الإتقان.</span>
+        </div>
+        <div className="w369-levels-stage">
+          <span className="w369-levels-big" aria-hidden="true"><LevelBadge level={picked} size={132} /></span>
+          <div className="w369-levels-read">
+            <b className="w369-levels-name">{name}</b>
+            <span className="w369-levels-idx">المستوى {picked + 1} / ٢٠</span>
+            <span className="w369-levels-tier">
+              {['بذور', 'مسارات', 'منائر', 'قمم'][Math.floor(picked / 5)]}
+            </span>
+          </div>
         </div>
         <ol className="w369-levels-grid">
-          {LEVELS.map((name, i) => (
-            <li key={name} className="w369-level" data-top={i >= LEVELS.length - 1 ? 'true' : 'false'}>
-              <span className="w369-level-badge" aria-hidden="true">
-                <Glyph name={i < 10 ? 'star' : 'medal'} size={i < 10 ? 16 : 18} />
-              </span>
-              <span className="w369-level-idx">{i + 1}</span>
-              <span className="w369-level-name">{name}</span>
+          {LEVELS.map((n, i) => (
+            <li key={n}>
+              <button
+                type="button"
+                className="w369-level"
+                data-on={i === picked ? 'true' : 'false'}
+                aria-pressed={i === picked}
+                onClick={() => setPicked(i)}
+              >
+                <span className="w369-level-badge"><LevelBadge level={i} size={30} /></span>
+                <span className="w369-level-idx">{i + 1}</span>
+                <span className="w369-level-name">{n}</span>
+              </button>
             </li>
           ))}
         </ol>
       </div>
     </Band>
+  );
+}
+
+/* ── 07 the hand-off: four steps, two phones, one approval ── */
+
+const HANDOFF = [
+  { n: '01', title: 'الطالب يُنجز', body: 'يُسلّم الواجب أو يُكمل الاختبار داخل أُلارا، فتُسجَّل النتيجة فورًا.' },
+  { n: '02', title: 'النجوم تُضاف', body: 'نقاط الإتقان تُحسب تلقائيًّا من الإنجاز — لا إدخال يدوي ولا انتظار.' },
+  { n: '03', title: 'عضو الهيئة يرى', body: 'تصل المتابعة إلى صفّه: من أنجز، ومن يحتاج تدخّلًا، وأين الإتقان الحقيقي.' },
+  { n: '04', title: 'الإدارة تُعتمد', body: 'البرنامج والمقرّر والمؤشّرات تُدار من مساحة واحدة، والاعتماد يمرّ بخطوة واحدة.' },
+] as const;
+
+export function ShowcaseBand() {
+  const [role, setRole] = useState<'student' | 'teacher'>('student');
+  const [approval, setApproval] = useState<'idle' | 'sent' | 'approved'>('idle');
+  return (
+    <section className="w369-handoff" id="handoff">
+      <header className="w369-band-head">
+        <p className="w369-band-kicker"><Glyph name="users" size={15} />كيف تنتقل النجمة بين الأدوار</p>
+        <h2 className="w369-h2">خطوةٌ من الطالب،<br /><span className="w369-em">تصل إلى الإدارة</span></h2>
+        <p className="w369-body">
+          أربع خطوات لا أكثر: يُنجز الطالب، فتُحسب النجوم، فيراها عضو الهيئة، فتعتمدها الإدارة.
+          بدّل بين الهاتفين لترى الطرفين.
+        </p>
+      </header>
+
+      <ol className="w369-steps">
+        {HANDOFF.map((h) => (
+          <li key={h.n} className="w369-step">
+            <span className="w369-step-n">{h.n}</span>
+            <b>{h.title}</b>
+            <span>{h.body}</span>
+          </li>
+        ))}
+      </ol>
+
+      <div className="w369-two">
+        <div className="w369-two-switch" role="group" aria-label="اختر الدور">
+          <button
+            type="button" className="w369-two-tab" aria-pressed={role === 'student'}
+            onClick={() => setRole('student')}
+          >
+            <Glyph name="student" size={16} />هاتف الطالب
+          </button>
+          <button
+            type="button" className="w369-two-tab" aria-pressed={role === 'teacher'}
+            onClick={() => setRole('teacher')}
+          >
+            <Glyph name="teacher" size={16} />هاتف عضو الهيئة
+          </button>
+        </div>
+
+        <div className="w369-two-phones" data-role={role}>
+          <div className="w369-phone w369-phone-back" aria-hidden={role === 'student'}>
+            <div className="w369-phone-screen">
+              <div className="w369-mini-head">
+                <b>متابعة الصفّ</b><span>الأدب الحديث · ٢٤ طالبًا</span>
+              </div>
+              <ul className="w369-mini-list">
+                <li><span>نورة الحربي</span><b>١٢ نجمة</b></li>
+                <li><span>سلمان القحطاني</span><b>٩ نجوم</b></li>
+                <li data-warn="true"><span>ريم الزهراني</span><b>تحتاج متابعة</b></li>
+              </ul>
+              <button
+                type="button"
+                className="w369-btn w369-btn-small w369-mini-cta"
+                disabled={approval === 'approved'}
+                onClick={() => setApproval(approval === 'idle' ? 'sent' : 'approved')}
+              >
+                {approval === 'idle' && <><Glyph name="check" size={14} />أرسل طلب اعتماد</>}
+                {approval === 'sent' && <>بانتظار الإدارة…</>}
+                {approval === 'approved' && <><Glyph name="check" size={14} />معتمد</>}
+              </button>
+              <p className="w369-mini-note" role="status">
+                {approval === 'approved'
+                  ? 'وصل الاعتماد إلى لوحة الإدارة.'
+                  : approval === 'sent'
+                    ? 'أُرسل الطلب — بانتظار اعتماد الإدارة.'
+                    : 'الاعتماد يمرّ بخطوة واحدة.'}
+              </p>
+            </div>
+          </div>
+
+          <div className="w369-phone w369-phone-front">
+            <div className="w369-phone-screen">
+              <div className="w369-mini-head">
+                <b>صباح الخير، سارة</b><span>اليوم · ٣ مهامّ</span>
+              </div>
+              <ul className="w369-mini-list">
+                <li data-done="true"><span>واجب تحليل النصّ</span><b>✓ ٣</b></li>
+                <li data-done="true"><span>اختبار الجبر</span><b>✓ ٤</b></li>
+                <li><span>ورشة الكتابة</span><b>٦</b></li>
+              </ul>
+              <div className="w369-mini-progress">
+                <span>تقدّم المقرّر</span><b>٪٧٨</b>
+              </div>
+              <p className="w369-mini-note">نموذج توضيحي لواجهة الطالب.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── 08 the showcase: seven real surfaces, one at a time ── */
+
+const FIRST_SLIDE = { title: 'لوحة الطالب', body: 'المهامّ والنجوم والتقدّم في شاشة واحدة.', screen: 'dashboard' };
+const SLIDES = [
+  FIRST_SLIDE,
+  { title: 'قائمة اليوم', body: 'ما يجب أن يُنجز الآن، مرتّبًا بالأولوية.', screen: 'today' },
+  { title: 'مصفوفة الإتقان', body: 'ما أتقنته وما يحتاج مراجعة، بمقرّر.', screen: 'mastery' },
+  { title: 'لوحة المتصدّرين', body: 'ترتيب الصفّ بنقاط الإتقان، لا بالحظّ.', screen: 'leaderboard' },
+  { title: 'سلّم المستويات', body: 'عشرون مستوى وشارة لكل واحد.', screen: 'levels' },
+  { title: 'مساحة عضو الهيئة', body: 'الصفّ كاملًا في شاشة، والمتابعة بخطوة.', screen: 'teacher' },
+  { title: 'لوحة الجودة', body: 'مؤشّرات البرنامج والمقرّر في مكان واحد.', screen: 'quality' },
+] as const;
+
+export function CarouselBand() {
+  const [i, setI] = useState(0);
+  const total = SLIDES.length;
+  const go = (d: number) => setI((n) => (n + d + total) % total);
+  const slide = SLIDES[i] ?? FIRST_SLIDE;
+  return (
+    <section className="w369-show" id="showcase">
+      <header className="w369-band-head">
+        <p className="w369-band-kicker"><Glyph name="compass" size={15} />من داخل المنصّة</p>
+        <h2 className="w369-h2">سبع شاشات،<br /><span className="w369-em">لغة واحدة</span></h2>
+      </header>
+      <div
+        className="w369-carousel"
+        role="group"
+        aria-roledescription="عرض شرائح"
+        aria-label="شاشات أُلارا"
+        onKeyDown={(e) => {
+          if (e.key === 'ArrowLeft') { e.preventDefault(); go(1); }
+          if (e.key === 'ArrowRight') { e.preventDefault(); go(-1); }
+        }}
+        tabIndex={0}
+      >
+        <div className="w369-slide-copy">
+          <span className="w369-slide-count" aria-hidden="true">
+            {String(i + 1).padStart(2, '0')}<i />{String(total).padStart(2, '0')}
+          </span>
+          <h3 className="w369-h3" aria-live="polite">{slide.title}</h3>
+          <p className="w369-body">{slide.body}</p>
+          <div className="w369-slide-nav">
+            <button type="button" className="w369-arrow" onClick={() => go(-1)} aria-label="السابق">
+              <Glyph name="arrowRight" size={18} />
+            </button>
+            <button type="button" className="w369-arrow" onClick={() => go(1)} aria-label="التالي">
+              <Glyph name="arrowLeft" size={18} />
+            </button>
+          </div>
+          <ul className="w369-dots">
+            {SLIDES.map((s, n) => (
+              <li key={s.title}>
+                <button
+                  type="button" className="w369-dot" data-on={n === i ? 'true' : 'false'}
+                  aria-label={`الشريحة ${n + 1}: ${s.title}`} aria-pressed={n === i}
+                  onClick={() => setI(n)}
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="w369-slide-screen" data-screen={slide.screen} aria-hidden="true">
+          <div className="w369-phone">
+            <div className="w369-phone-screen">
+              <div className="w369-mini-head"><b>{slide.title}</b><span>نموذج توضيحي</span></div>
+              <div className="w369-mini-skel" data-screen={slide.screen}>
+                <span /><span /><span /><span />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── 08 the principles, the true trust block, the audiences ── */
+
+const PRINCIPLES = [
+  { icon: 'shield', title: 'بياناتك لك', body: 'لا إعلانات، ولا بيع بيانات، وحذف حسابك متاح في أي وقت من إعداداتك.' },
+  { icon: 'compass', title: 'عربية أولًا', body: 'الواجهة كلها من اليمين إلى اليسار، والأرقام والمصطلحات كما تُكتب في جامعاتنا.' },
+  { icon: 'target', title: 'لا أرقام مُجمّلة', body: 'كل رقم في المنصّة مشتقّ من إنجاز مسجّل — لا تقديرات ولا نقاط تُدخل يدويًّا.' },
+  { icon: 'users', title: 'أدوار واضحة', body: 'الطالب وعضو الهيئة والإدارة والجودة يروْن ما يخصّهم فقط، بصلاحيات محدّدة.' },
+] as const;
+
+const AUDIENCES = [
+  { icon: 'graduation', title: 'الكليات والبرامج', body: 'مقرّرات وبرامج ومؤشّرات في مساحة واحدة.', to: ROUTES.colleges },
+  { icon: 'teacher', title: 'أعضاء الهيئة', body: 'متابعة الصفّ ومصفوفة الإتقان دون جداول يدوية.', to: '/capabilities' },
+  { icon: 'admin', title: 'مراكز الجودة', body: 'تقارير ومؤشّرات جاهزة للاعتماد الداخلي.', to: '/vision' },
+] as const;
+
+export function PrinciplesBand() {
+  return (
+    <section className="w369-principles" id="principles">
+      <header className="w369-band-head">
+        <p className="w369-band-kicker"><Glyph name="shield" size={15} />ما لا نتنازل عنه</p>
+        <h2 className="w369-h2">أربعة مبادئ،<br /><span className="w369-em">مكتوبة لا معلّقة</span></h2>
+      </header>
+      <ul className="w369-principle-grid">
+        {PRINCIPLES.map((p) => (
+          <li key={p.title} className="w369-principle">
+            <span className="w369-principle-ico"><Glyph name={p.icon} size={20} /></span>
+            <h3 className="w369-h3">{p.title}</h3>
+            <p className="w369-body">{p.body}</p>
+          </li>
+        ))}
+      </ul>
+      <p className="w369-fine">
+        كل ادّعاء هنا مطابق لما تنصّ عليه صفحاتنا القانونية فعليًّا —{' '}
+        <Link to="/legal/privacy" className="w369-link">سياسة الخصوصية</Link>.
+      </p>
+
+      <div className="w369-trust">
+        <span className="w369-trust-item"><Glyph name="shield" size={16} />بلا إعلانات</span>
+        <span className="w369-trust-item"><Glyph name="lock" size={16} />بلا بيع بيانات</span>
+        <span className="w369-trust-item"><Glyph name="close" size={16} />حذف الحساب في أي وقت</span>
+        <span className="w369-trust-item"><Glyph name="compass" size={16} />عربي RTL بالكامل</span>
+      </div>
+
+      <ul className="w369-audience-grid">
+        {AUDIENCES.map((a) => (
+          <li key={a.title} className="w369-audience">
+            <span className="w369-audience-ico"><Glyph name={a.icon} size={20} /></span>
+            <b>{a.title}</b>
+            <span>{a.body}</span>
+            <Link to={a.to} className="w369-link">
+              اعرف أكثر <Glyph name="arrowLeft" size={14} className="ui-glyph-nudge" />
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
 
@@ -878,6 +1360,14 @@ const FAQ = [
     q: 'هل تعمل أُلارا على الجوّال؟',
     a: 'نعم — تطبيق أندرويد و iOS، والواجهة تعمل كذلك في متصفّح الجوّال بالكامل بالعربية ومن اليمين إلى اليسار.',
   },
+  {
+    q: 'من يرى بياناتي داخل المقرّر؟',
+    a: 'عضو الهيئة يرى إنجازك داخل المقرّر الذي يُدرّسه، والإدارة ترى مؤشّرات مُجمّعة. لا أحد خارج مؤسستك يرى صفّك، والتفاصيل في سياسة الخصوصية.',
+  },
+  {
+    q: 'هل أستطيع حذف حسابي؟',
+    a: 'نعم، من إعدادات حسابك مباشرة. الحذف يُزيل بياناتك الشخصية، ويُبقي ما تفرضه مؤسستك من سجلات أكاديمية رسمية، وهذا موضّح في صفحة «بياناتك».',
+  },
 ];
 
 export function FaqBand() {
@@ -908,10 +1398,20 @@ export function FaqBand() {
 /* ─────────────────────────────── CTA ─────────────────────────────── */
 
 export function CtaBand() {
+  const [mine, setMine] = useState(0);
+  useEffect(() => {
+    const on = (e: Event) => setMine((e as CustomEvent<number>).detail ?? 0);
+    window.addEventListener('ulara:stars', on as EventListener);
+    return () => window.removeEventListener('ulara:stars', on as EventListener);
+  }, []);
   return (
     <section className="w369-cta" data-jar="06">
       <div className="w369-cta-inner">
         <Mascot pose="wave" size={110} className="w369-cta-mascot" />
+        <p className="w369-cta-tally" data-full={mine >= JAR_TOTAL ? 'true' : 'false'}>
+          <Glyph name="star" size={15} />
+          جمعت <b>{mine}</b> من {JAR_TOTAL} نجوم وأنت تقرأ — الأولى في حسابك تنتظرك
+        </p>
         <h2 className="w369-h1 w369-cta-title">
           خطوتك الأولى<br /><span className="w369-em">نجمة واحدة</span>
         </h2>

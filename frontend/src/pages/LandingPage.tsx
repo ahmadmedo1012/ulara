@@ -31,6 +31,7 @@ import { useThemeSync } from '../components/layout/ThemeToggle';
 import { useAuthStore } from '../stores/auth.store';
 import { shouldPlayIntro, introEnvironment } from '../lib/motion/introGate';
 import {
+  CarouselBand,
   CtaBand,
   FaqBand,
   Footer,
@@ -40,8 +41,10 @@ import {
   LevelsBand,
   Marquee,
   Preloader,
+  PrinciplesBand,
   ProgressBand,
   RewardsBand,
+  ShowcaseBand,
   RolesBand,
   StarJar,
   StarsBand,
@@ -148,7 +151,10 @@ export default function LandingPage() {
           <RewardsBand />
           <HabitsBand />
           <LevelsBand />
+          <ShowcaseBand />
+          <CarouselBand />
         </div>
+        <PrinciplesBand />
         <RolesBand />
         <FaqBand />
         <CtaBand />

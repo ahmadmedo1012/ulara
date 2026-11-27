@@ -46,15 +46,49 @@ hero band 908px tall with 84/64 padding, h1 123px at 0.84 leading with
 Verified: tsc · build · bundle 824.2 KB gz (≤832) · gates · 41 targeted
 tests · overlap audit 0 findings at 7 widths × 2 themes.
 
-NEXT (phase 3):
-1. Market bands 02–06 to the measured construction: the tappable «اليوم»
-   list with star burst and 0/5 counter, the rolling `/30` digit counter,
-   reward cards with costs + 0/18 fill + Sat–Fri dots, the 20-level ladder
-   with picker, the four hand-off steps + the two-phone (student/teacher)
-   toggle with the six trust chips.
-2. Showcase: marquee strip + the 7-slide carousel with 01/07 counter.
-3. Principles / privacy / organisations / FAQ (7) / final CTA with the
-   collected-stars total.
-4. Public pages on the same grammar (about, help, contact, app, legal,
-   colleges, campus, capabilities, vision, competitions, auth, 404).
-5. Baselines regeneration in one late commit.
+- **A · the interactive bands (02–08)**: every band now does something
+  real and shows its state in text, not only in colour.
+  · 02 — the «اليوم» list: five tappable tasks (`aria-pressed`), a 6-spark
+    burst that cleans itself, `0/5` counter, `+N نجمة اليوم`, a 25-star
+    weekly bar with ticks at 5/15/25 and an honest «أكملت هدف الأسبوع».
+  · 03 — the `/30` counter rolls on scroll AND on tap; four threshold
+    messages with the mascot's pose swapping; the milestone list fills.
+  · 04 — reward cards with star costs, an 18-pip wallet, and the
+    locked → unlocked state driven by the wallet.
+  · 05 — the 20-level ladder with a picker, «المستوى N من ٢٠», and twenty
+    DIFFERENT badge drawings generated from one rule (rays 3→7, four
+    tiers of ink) instead of twenty assets.
+  · 06 — the four hand-off steps plus the student/teacher two-phone
+    toggle and a real approval flow (idle → sent → approved) with a
+    `role="status"` line.
+  · showcase — the 7-slide carousel (01/07, keyboard arrows, dots,
+    prev/next) beside a phone frame.
+  · 08 — four principles whose claims are the ones /legal/privacy really
+    makes, a trust strip, and three audience doors; the finale now says
+    «جمعت N من ٦ نجوم وأنت تقرأ» from the same scroll count as the jar.
+  · FAQ grew 5 → 7 (who sees your class data; deleting your account).
+
+Verified for A: tsc · build · bundle 828.3 KB gz (≤832) · tokens:check ·
+raw-css · motion · colours · icons · csp · zero-trace · 17 targeted tests ·
+a headless behaviour pass (tap 3 tasks → 3 / +12؛ untap → 2؛ the counter
+crosses a threshold؛ 6 stars unlocks 1 reward؛ level 12 reads سماء؛ the
+approval reaches «معتمد»؛ the carousel reads 02/07) with zero console
+errors · overlap audit 0 findings at 7 widths × 2 themes.
+
+NEXT (still open, in the order the brief asked for):
+- **B — the 13 public pages** on templates T1–T5 (about, help, contact,
+  app, legal, colleges/leaderboard/detail, campus, capabilities, vision,
+  competitions, auth, 404) with the real loading/empty/error states.
+- **C — the logged-in web**: shell (rail, top bar, mobile bar + More
+  sheet, palette, notifications), primitives, every role's pages, and the
+  gamification layer wired to existing data only.
+- **D — the two apps**: tokens, fonts and splash in `apps/mobile`, the
+  re-skinned `components/ui/*`, the icon port, level/streak/badge views.
+- **E — effects + sound** beyond what A already ships (mascot idle/blink,
+  `<Celebrate/>`, press springs, shimmer skeletons, UI sounds OFF by
+  default with a Settings opt-in).
+- **F — close-out**: the inspiration's name in `zero-trace.sh` (it was
+  never written into the tree, by design — the owner must supply it),
+  dead-code sweep, baseline regeneration in one late commit, the full
+  gate sweep, Lighthouse on `/`, DESIGN.md / README / CHANGELOG.
+- **G — the pull request** `r369/new-identity → main` (ready, not merged).
