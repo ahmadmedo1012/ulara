@@ -163,6 +163,15 @@ export interface ImageAuditRow {
  * (naturalWidth === 0) is also flagged (broken image).
  */
 export async function expectImagesAudited(page: Page): Promise<void> {
+  /* settle first: lazy/decoding images report naturalWidth 0 until they land
+   * (flaked on a loaded CI runner) — wait for every img to finish, bounded. */
+  await page
+    .waitForFunction(
+      () => Array.from(document.querySelectorAll('img')).every((i) => i.complete),
+      undefined,
+      { timeout: 8_000 },
+    )
+    .catch(() => undefined);
   const rows = await page.evaluate<ImageAuditRow[]>(() =>
     Array.from(document.querySelectorAll('img')).map((img) => ({
       src: img.currentSrc || img.src,
