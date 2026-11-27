@@ -789,6 +789,9 @@ export function StarsBand() {
 
 /* ── 03 the rolling counter: /30, by scroll and by tap ── */
 
+/* the lane, in a 400x110 box; the CSS offset-path below is the SAME curve */
+const ROAD_D = 'M12 92 C 110 92, 110 22, 200 44 S 300 98, 388 22';
+
 const FIRST_STEP = { at: 0, msg: 'المسار يبدأ من هنا.' };
 const PROGRESS_STEPS = [
   FIRST_STEP,
@@ -859,6 +862,20 @@ export function ProgressBand() {
   const value = Math.min(TOTAL, Math.max(0, byScroll + extra));
   const step = [...PROGRESS_STEPS].reverse().find((x) => value >= x.at) ?? FIRST_STEP;
 
+  /* the road's geometry is read off the SVG path itself (one curve, one
+     truth): a point at pct% of its length, expressed as % of the 400x110
+     box so it scales with the container. Before the path mounts, the
+     start point. */
+  const roadRef = useRef<SVGPathElement>(null);
+  const roadAt = (pct: number): React.CSSProperties => {
+    const el = roadRef.current;
+    const len = el?.getTotalLength?.() ?? 0;
+    const pt = el && len ? el.getPointAtLength((pct / 100) * len) : { x: 12, y: 92 };
+    return { left: `${(pt.x / 400) * 100}%`, top: `${(pt.y / 110) * 100}%` };
+  };
+  const [, setRoadReady] = useState(false);
+  useEffect(() => setRoadReady(true), []);
+
   return (
     <Band
       n="03" jar="03" tint="teal" icon="leaderboard" id="stars" stage="1"
@@ -885,6 +902,28 @@ export function ProgressBand() {
               {extra >= TOTAL ? 'أعد من البداية' : 'أضف نقطة'}
             </button>
           </div>
+        </div>
+        {/* r369 round 3 — the mastery road (the reference's "progress you
+            can actually see" road, in our unit): ONE winding lane from
+            the start to the course certificate. The gold fill, the
+            marker and the milestone stars all read the SAME `value` the
+            counter shows (pathLength=100 -> % of 30), so the road is the
+            number drawn, never a second figure. Decorative: the counter
+            and the rows already carry the information for assistive tech. */}
+        <div className="w369-road" aria-hidden="true" style={{ ['--p' as string]: (value / TOTAL) * 100 }}>
+          <svg viewBox="0 0 400 110" preserveAspectRatio="none" className="w369-road-svg">
+            <path ref={roadRef} className="w369-road-lane" d={ROAD_D} pathLength={100} />
+            <path className="w369-road-fill" d={ROAD_D} pathLength={100} />
+          </svg>
+          {PROGRESS_STEPS.slice(1).map((x) => (
+            <span
+              key={x.at}
+              className="w369-road-stop"
+              data-hit={value >= x.at ? 'true' : 'false'}
+              style={roadAt((x.at / TOTAL) * 100)}
+            />
+          ))}
+          <span className="w369-road-dot" style={roadAt((value / TOTAL) * 100)} />
         </div>
         <ul className="w369-meter-rows">
           {PROGRESS_STEPS.slice(1).map((x) => (

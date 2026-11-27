@@ -453,3 +453,7 @@ Home, /support/, /privacy/, /guides/reward-chart-for-kids/, /tools/reward-chart/
 2. Scroll-pinned scenes / floating particles / 3D character hero — the reference's character art is a different product's mascot; ours is نجّوم by canon (off public hero by r369 ruling). Not ported by design.
 3. Reward cards fan (tilted deck) and the road path — OPEN, candidate for next batch.
 4. Inner pages not yet compared page-by-page — OPEN.
+
+### Round 2 additions (pushed at 25cd207) and ROUND 3 (started 14:13 EET, user Telegram 25478022)
+- Round 2 closed: band scene wash (b9c2cba), indigo footer ground (7d3dc25, also re-keyed two lagging pins: r177 favicon cornerstone, drift fixture rungs), reward-card fan (25cd207). Pushed origin/r369/new-identity 0e6d46b -> 25cd207, fast-forward.
+- Round 3 batch 1 — THE MASTERY ROAD (the reference's "progress you can actually see" road, in our unit): band 03's meter gains one winding lane from start to the course certificate. Fill, moving marker and the 10/20/30 milestone stops all read the SAME value as the counter (nothing invented). Geometry is read off the SVG path (getPointAtLength), % positioned so it scales; reads right-to-left under RTL; static under reduced motion; decorative (aria-hidden) because the counter and rows carry the information. Verified light 1440 + dark 390, 2 values, 0 console errors, no horizontal overflow; overlap audit on / at 7 widths x 2 themes: 0 findings; landing+r3xx groups 726/726; bundle 832.7 KB gz.

@@ -1618,6 +1618,79 @@ html:not([data-theme='dark']) .w369-footer {
   .w369-reward { transition: none; }
 }
 
+/* ── r369 round 3 — the mastery road ───────────────────────────────────
+ * The reference's progress road, drawn in our unit. Lane = a soft
+ * rounded stroke; fill = the gold stretch already travelled (dashoffset
+ * on pathLength 100); stops = the 10/20/30 milestones; dot = where the
+ * counter is NOW. Dot and stops ride CSS offset-path on the same curve
+ * as the SVG (400x110 box scaled to the container by aspect ratio).
+ * Motion = the shared fast token; reduced-motion = jump, no tween. */
+.w369-road {
+  position: relative;
+  inline-size: 100%;
+  aspect-ratio: 400 / 110;
+  margin-block: var(--sp-5) var(--sp-2);
+}
+.w369-road:dir(rtl) { scale: -1 1; } /* progress reads right to left, like the page; geometry is physical */
+.w369-road-svg { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; overflow: visible; }
+.w369-road-lane,
+.w369-road-fill {
+  fill: none;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+.w369-road-lane {
+  stroke: color-mix(in srgb, var(--text) 12%, transparent);
+  stroke-width: 14;
+}
+.w369-road-fill {
+  stroke: var(--gold);
+  stroke-width: 6;
+  stroke-dasharray: 100;
+  stroke-dashoffset: calc(100 - var(--p, 0));
+  transition: stroke-dashoffset var(--motion-duration-slow) var(--ease-out);
+}
+.w369-road-dot,
+.w369-road-stop {
+  position: absolute;
+  inline-size: 0;
+  block-size: 0;
+}
+.w369-road-dot::after,
+.w369-road-stop::after {
+  content: '';
+  position: absolute;
+  translate: -50% -50%;
+  border-radius: var(--r-full);
+}
+.w369-road-dot {
+  z-index: 2;
+  transition:
+    left var(--motion-duration-slow) var(--ease-out),
+    top var(--motion-duration-slow) var(--ease-out);
+}
+.w369-road-dot::after {
+  inline-size: 20px;
+  block-size: 20px;
+  background: var(--gold);
+  border: 3px solid var(--surface);
+  box-shadow: var(--shadow-signal);
+}
+.w369-road-stop::after {
+  inline-size: 12px;
+  block-size: 12px;
+  background: var(--surface);
+  border: 2px solid color-mix(in srgb, var(--text) 30%, transparent);
+}
+.w369-road-stop[data-hit='true']::after {
+  background: var(--gold);
+  border-color: var(--gold-ink);
+}
+@media (prefers-reduced-motion: reduce) {
+  .w369-road-fill,
+  .w369-road-dot { transition: none; }
+}
+
 /* ── anchors land under the sticky bar, never beneath it ─────────── */
 
 .w369-band[id],
