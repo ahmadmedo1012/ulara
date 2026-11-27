@@ -135,7 +135,8 @@ queue/ownership in the same directory.
   `LandingPage.tsx` header note); add the seat + import in `pages/LandingPage.tsx`;
   pin its geometry/a11y contract in the pixel-exact E2E belts (`frontend/tests/e2e/`,
   the r305/r308/r309/r311/r312 pattern) — that is the verification instrument, there is
-  no conformance mapping file; total bundle must stay ≤815 KB.
+  no conformance mapping file; total bundle must stay inside the ceiling pinned in
+  `scripts/check-bundle-size.mjs` (never restated here — the constant drifts).
 - **App page**: `frontend/src/pages/X.tsx` + route in `App.tsx` — mind entry-chunk weight
   (`App.tsx`, `GlobalSearch` are eager; prefer lazy routes); light+dark themes, RTL and
   a11y are contract, and `check-csp-hash.sh` must stay green.
@@ -173,9 +174,9 @@ queue/ownership in the same directory.
 
 ## 7. Never-do list
 
-- Never raise a ceiling (815 / 92 / 110) without a documented, measured reason in
-  `scripts/check-bundle-size.mjs`'s header, re-pin the retired reference spec baseline,
-  weaken an assertion or test, lower the ratchet, or
+- Never raise a ceiling (`scripts/check-bundle-size.mjs`: total / entry / pdf) without a
+  documented, measured reason in that file's header, re-pin the retired reference spec
+  baseline, weaken an assertion or test, lower the ratchet, or
   add `continue-on-error`.
 - Never paste the retired reference site's NAME anywhere (files, prose,
   commits — the zero-trace gate calls it «the reference site»; its artifacts
