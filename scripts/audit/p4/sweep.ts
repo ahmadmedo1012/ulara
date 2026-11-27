@@ -523,6 +523,38 @@ const pageMetricsSrc = (curWidth: number): string => `(function () {
     }
   }
   if (clipped.length > 0) issues.push({ type: 'TEXT_CLIPPED', severity: 'P2', count: clipped.length, samples: clipped.slice(0, 4) });
+  /* r369 NUMBER CENSUS — the displayed-number classes a render can get wrong:
+     P1 broken values (NaN / undefined / null / Infinity / [object …] printed);
+     P2 inventory: mixed Latin + Arabic-Indic digits in one text node, Arabic
+     separators (٬ ٫ ٪) against the Latin-digit policy, a percentage above 100,
+     negative zero, and a digit run glued to Arabic letters with no space. */
+  {
+    const bad = [];
+    const mixed = [];
+    const seps = [];
+    const over = [];
+    const glued = [];
+    const tw = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    while (tw.nextNode()) {
+      const n = tw.currentNode;
+      const el = n.parentElement;
+      const t = (n.textContent || '').trim();
+      if (!el || !t || el.closest('script,style,noscript,[hidden],[aria-hidden="true"],.visually-hidden,.sr-only')) continue;
+      const cs = getComputedStyle(el);
+      if (cs.display === 'none' || cs.visibility === 'hidden') continue;
+      if (/\\b(NaN|undefined|null|Infinity)\\b|\\[object |NaN%|%NaN/.test(t)) bad.push(t.slice(0, 40));
+      if (/[0-9]/.test(t) && /[\\u0660-\\u0669\\u06F0-\\u06F9]/.test(t)) mixed.push(t.slice(0, 40));
+      if (/[\\u066A\\u066B\\u066C]/.test(t)) seps.push(t.slice(0, 40));
+      for (const m of t.matchAll(/(\\d+(?:\\.\\d+)?)\\s?%/g)) if (Number(m[1]) > 100) over.push(m[0]);
+      if (/(^|[^\\d.])[-\\u2212]0(?![\\d.])/.test(t) && /[0-9]/.test(t) && !/[A-Za-z]-0/.test(t)) over.push('neg-zero:' + t.slice(0, 24));
+      if (/\\d[\\u0621-\\u064A]|[\\u0621-\\u064A]\\d/.test(t) && !el.closest('code,pre,bdi')) glued.push(t.slice(0, 40));
+    }
+    if (bad.length) issues.push({ type: 'NUMBER_ANOMALY', severity: 'P1', message: 'broken value printed', samples: bad.slice(0, 5) });
+    if (mixed.length) issues.push({ type: 'NUMBER_MIXED_DIGITS', severity: 'P2', count: mixed.length, samples: mixed.slice(0, 4) });
+    if (seps.length) issues.push({ type: 'NUMBER_ARABIC_SEPARATORS', severity: 'P2', count: seps.length, samples: seps.slice(0, 4) });
+    if (over.length) issues.push({ type: 'NUMBER_PCT_OVER_100_OR_NEG_ZERO', severity: 'P2', count: over.length, samples: over.slice(0, 5) });
+    if (glued.length) issues.push({ type: 'NUMBER_GLUED_TO_LETTERS', severity: 'P2', count: glued.length, samples: glued.slice(0, 5) });
+  }
   const root = document.getElementById('root');
   if (!root || root.children.length === 0) issues.push({ type: 'BLANK_PAGE', severity: 'P0', message: 'root has no children' });
   const banner = document.querySelector('[role="alert"], .error-boundary, .crash-boundary');
