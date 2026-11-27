@@ -2989,3 +2989,40 @@ html:not([data-theme='dark']) .w369-footer {
   direction: ltr;
   unicode-bidi: isolate;
 }
+
+/* press feedback: every tappable landing surface answers the finger.
+   Hover already lifts the cards; a press settles them back and dips the
+   control, so a tap never feels dead on a phone where hover does not exist. */
+.w369-principle:active,
+.w369-audience:active,
+.w369-step:active,
+.w369-reward:active,
+.w369-role:active,
+.w369-source:active {
+  transform: translateY(0) scale(var(--state-card-pressed-scale));
+  box-shadow: var(--shadow-card);
+}
+.w369-nav-link:active,
+.w369-footer-link:active,
+.w369-link:active,
+.w369-mobile-link:active,
+.w369-faq-q:active,
+.w369-tour-btn:active {
+  opacity: 0.72;
+}
+.w369-mobile-link:active { background: var(--surface-3, var(--surface-2)); }
+:where(.w369-nav-link, .w369-footer-link, .w369-link, .w369-mobile-link, .w369-faq-q, .w369-tour-btn) {
+  transition:
+    color var(--t-fast) var(--ease-out),
+    background-color var(--t-fast) var(--ease-out),
+    opacity var(--t-micro) var(--ease-out);
+}
+@media (prefers-reduced-motion: reduce) {
+  .w369-principle:active,
+  .w369-audience:active,
+  .w369-step:active,
+  .w369-reward:active,
+  .w369-role:active,
+  .w369-source:active { transform: none; }
+  :where(.w369-nav-link, .w369-footer-link, .w369-link, .w369-mobile-link, .w369-faq-q, .w369-tour-btn) { transition: none; }
+}
