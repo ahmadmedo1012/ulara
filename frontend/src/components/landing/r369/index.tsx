@@ -30,6 +30,7 @@ import { Link } from 'react-router-dom';
 import { Glyph, type GlyphName } from '../../icons';
 import { ROUTES } from '../../../lib/routes';
 import { ThemeToggle } from '../../layout/ThemeToggle';
+import { acquireScrollLock, releaseScrollLock } from '../../../lib/scrollLock';
 import { Logo } from '../../../brand';
 
 /* ─────────────────────────── motion helpers ─────────────────────────── */
@@ -353,6 +354,13 @@ export function LandingNav() {
     // the a11y contract: focus returns to the control that opened it
     burgerRef.current?.focus();
   }, []);
+  /* the open menu owns the scroll: the page never moves behind it
+   * (the shared ref-counted lock, so a nested overlay cannot drop it). */
+  useEffect(() => {
+    if (!open) return undefined;
+    acquireScrollLock('landing-mobile-menu');
+    return () => releaseScrollLock('landing-mobile-menu');
+  }, [open]);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close(); };
     window.addEventListener('keydown', onKey);
@@ -397,8 +405,8 @@ export function LandingNav() {
         <div className="w369-mobile-menu" id="w369-mobile-menu">
           {[...NAV_LINKS, ...MOBILE_EXTRA].map((l) => (
             l.external
-              ? <Link key={l.href} to={l.href} className="w369-mobile-link">{l.label}</Link>
-              : <a key={l.href} href={l.href} className="w369-mobile-link">{l.label}</a>
+              ? <Link key={l.href} to={l.href} className="w369-mobile-link" onClick={() => setOpen(false)}>{l.label}</Link>
+              : <a key={l.href} href={l.href} className="w369-mobile-link" onClick={() => setOpen(false)}>{l.label}</a>
           ))}
           <div
             className="w369-mobile-theme"

@@ -60,8 +60,38 @@ export default function LandingPage() {
   useEffect(() => {
     const onPrint = () => revealAllNow();
     window.addEventListener('beforeprint', onPrint);
-    if (window.location.hash) revealAllNow();
-    return () => window.removeEventListener('beforeprint', onPrint);
+    let raf = 0;
+    if (window.location.hash) {
+      revealAllNow();
+      /* the page mounts after the browser's own hash jump ran, so land the
+       * deep link once the section exists, then once more when the fonts
+       * settle the layout. Native, instant, and only if the reader has not
+       * already moved. */
+      const id = decodeURIComponent(window.location.hash.slice(1));
+      let moved = false;
+      const mark = () => { moved = true; };
+      window.addEventListener('wheel', mark, { passive: true, once: true });
+      window.addEventListener('touchstart', mark, { passive: true, once: true });
+      window.addEventListener('keydown', mark, { once: true });
+      let tries = 0;
+      const land = () => {
+        const el = id ? document.getElementById(id) : null;
+        if (el) {
+          el.scrollIntoView({ block: 'start' });
+        } else if (tries < 30) {
+          tries += 1;
+          raf = requestAnimationFrame(land);
+        }
+      };
+      raf = requestAnimationFrame(land);
+      void document.fonts?.ready.then(() => {
+        if (!moved) land();
+      });
+    }
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('beforeprint', onPrint);
+    };
   }, []);
   const user = useAuthStore((s) => s.user);
   const isHydrated = useAuthStore((s) => s.isHydrated);

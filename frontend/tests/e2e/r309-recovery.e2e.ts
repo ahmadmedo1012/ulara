@@ -129,10 +129,10 @@ test.describe('R309 menu — the scroll lock', () => {
     await page.goto('/');
     await page.locator('.w369-nav-burger').click();
     await expect(page.locator('.w369-mobile-menu')).toBeVisible({ timeout: 30_000 }); /* R312 (D4): mount-latency hardening */
-    await page.locator('.w369-mobile-menu a[href="#chapters"]').click();
+    await page.locator('.w369-mobile-menu a[href="#story"]').click();
     await expect(page.locator('.w369-mobile-menu')).toHaveCount(0);
     await expect(page.locator('body')).not.toHaveClass(/ula-scroll-locked/);
-    await expect(page.locator('#chapters')).toBeVisible();
+    await expect(page.locator('#story')).toBeVisible();
   });
 
   test('repeated open/close cycles leak neither the lock nor duplicated handlers', async ({ page }) => {
