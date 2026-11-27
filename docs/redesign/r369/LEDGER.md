@@ -387,3 +387,56 @@ AppShell surfaces, not public pages — they moved to slices 02/03.
 
 - Commits on r369/local-upgrade: 2391e9d (A), 9302d6a (B), 15ec247 (D), + this fix/evidence/LEDGER pass (C's finding + close).
 - All four spec areas landed: one celebration primitive, mascot in product empty states, press/shimmer audit (+ the hover-mask fix), sounds OFF-by-default. Debt riding forward: pre-existing gate:size + stylelint (final-commit pass); slice-06's dead .auth-shell sheets.
+
+## SLICE 06 — close-out (dead-code, baselines, gates, Lighthouse, docs) — CLOSED
+
+Commits on r369/local-upgrade: bd73c0f (dead-code sweep) · 0f399d2 (parent-approved hygiene: 219 evidence PNGs recompressed 125.3→51.0MB + 2 stylelint duplicate-rule errors fixed) · 3b98f3b (web mark + favicon re-keyed to the indigo cornerstone; r323 pins 18/18) · 436e16a (audit baseline re-promoted) · b0707fe (landing aria-hidden-focus fix) · this docs close.
+
+### 1. Dead-code sweep (bd73c0f) — shown in the diff
+- errors.css AUTH section retired (−251 lines) + patterns.css .auth-shell rule + 4 auth-page imports and stale comments; the AuthPage-alignment r359-grammar describe retired with a re-key comment. Proof: evidence/06-closeout/auth-{login,register}-{light,dark}.png render identical, 0 console errors. Tests: alignment 11/11, auth+register 38/38, type gate 118/118.
+
+### 2. Baselines regenerated once, late, in one commit (436e16a)
+- surface-baseline.json re-promoted: 72 cells (12 BASELINE_ROUTES × 3 viewports × 2 themes), captured in CI's mock mode (AUDIT_API_MOCK=1, vite preview :4173, chunked runs merged by route/theme/viewport). Harness re-keys in the same commit (one-cycle convention): KNOWN_DURATIONS_MS +220/380 −200/400 (retired); COLOR_SAMPLES probes + h1.w369-h1, h1.p369-h1, .w369-lead, .w369-band, .w369-progress-card.
+- Drift vs the promoted baseline: CLEAN (72 captures) under CI's AUDIT_FCP_RATIO=4. CAVEAT: under the strict local default ratio 5, five fcp notes remain on dark-1280 cells (620–832ms) — the hardware axis, not a regression; CI's ratio is the gate of record.
+
+### 3. Lighthouse on / (vite preview :4173, mobile default profile = the spec's mobile re-measure)
+- performance 73 (FCP 2.0s · LCP 3.4s · TBT 700ms · CLS 0 · SI 2.0s · TTI 3.6s) · accessibility 92 → **96** after the fix below · best-practices 100.
+- FIXED — aria-hidden-focus (b0707fe): the handoff demo CTA (.w369-mini-cta) stayed focusable while its phone was aria-hidden in student mode. It now disables when hidden; teacher mode unchanged. Verified: the audit passes, landing tests 11/11, tsc clean.
+- HONEST GAPS (recorded, not silently changed — both need an owner/design decision):
+  a. .w369-band-kicker — gold-ink #A8620A on cream = 4.41:1 vs AA 4.5 (misses by 0.09). The canon token itself; darkening it re-keys every gold-ink text on both platforms.
+  b. landing phone-mock mini text — computed #938b7c = the canon --text-muted #62625F (5.63:1, AA-pass) seen through the back phone's deliberate composition opacity (~0.7) over the white screen. A decorative demonstration effect, not a token defect; undimming or exempting it is a design call.
+
+### 4. Overlap audit — 0 findings
+- audit-authed.mjs (the S4 four-defect probe) on 6 authed routes — student dashboard · today · alerts · calendar · courses · online-exams — × 7 widths (320/360/390/768/1024/1440/1920) × both themes: «clean at every width, both themes», 0 findings on every cell.
+
+### 5. The full gate sweep (verbatim, this tree, this run)
+- npx tsc --noEmit → clean
+- npm run build → ✓ built in 12.96s
+- node scripts/check-bundle-size.mjs → PASS — الأوزان داخل الأسقف المثبَّتة (إجمالي 832.6 KB gz، الدخول 47.6 KB، pdf 95.7 KB). [Ceiling of record is the pinned 866 (R360-F1); slice 05's head measured 828.4 — the +4.2 KB gz is slices 05-06 feature weight: Celebrate, mascot seats, sounds settings row.]
+- npm run tokens:check → brand: mark/lockups/wordmark byte-identical web ↔ RN (green)
+- npm run check:raw-css → PASS: 0 finding(s) across 262 tsx file(s)
+- npm run check:colors → OK: no raw color literals outside the sanctioned zones (26 inline-allow suppressions)
+- npm run check:motion-tokens → OK
+- npm run check:icons → OK (Lucide-only discipline)
+- npm run check:csp-hash → OK json-ld pinned in app.ts + mirrored in vercel.json
+- stylelint-gate → ✓ ratchet green (rawHex 25 → 24); whole-tree stylelint 0 errors (0f399d2)
+- scripts/brand/zero-trace.sh → PASS with the placeholder name — the REAL-name run waits on the owner (supplied out of band, never committed; asked 7:32, pending)
+- vitest full: 6/6 shards 3004/3004 (7:37–7:42); post-b0707fe delta: landing 11/11 + tsc (7:56). Mobile jest full: 4/4 shards 1517/1517.
+- PRE-EXISTING (not this round's): gate:size rule 2 RED — docs/ tracked 114MB > 58MB budget; already exceeded at the branch base (101.4MB) before r369 began; the hygiene pass cut docs/ 183→116MB. Rule 3 (per-change growth) is green.
+
+### 6. Royal-remnant audit (parent 7:42:26 — recorded with file + reason, behaviour unchanged)
+- src/brand/mark.ts — header comments still narrate the r323 royal cornerstone/paper; the PAINT rides var(--accent), which r369 re-keys to the indigo cornerstone (evidence: slice-01/04 captures + 3b98f3b). Stale comment only; the file sits beside the r323 byte-pins, so the refresh is deferred, zero behaviour.
+- src/brand/Logo.tsx (tone="royal" slot) + src/pages/BrandPage.tsx:131 — the literal-royal tone's ONLY consumer is the /__brand showcase, labelled «استعمال نادر». A deliberate brand-history exhibit, not product chrome. Kept.
+- src/styles/tokens/tokens.css:663-676, 972-980 (@layer tokens) — old-era hand blocks declaring royal as --accent/role-accent; tokens.css imports AFTER tokens.generated.css (main.tsx 42→43), and the r369 canon seats live later in the cascade (generated + the hand file's own r369 seats, e.g. --text-muted #62625F at :1492) — the r369 values win; these are overridden era layers. Untangling which hand seats remain load-bearing is its own round (colors gate sanctions the zone).
+- src/styles/tokens/tokens.css:1248-1251 (@media print) — «print rides the royal seat»: print/PDF surfaces keep royal --accent #2540D9 intentionally per the old comment. Flagged for an owner decision (print identity: royal vs the indigo canon); untouched.
+- src/styles/unified-parity.css:423,459 — the parity sheet (deliberately NOT imported by the app; an internal verification surface) keeps --c-royal family (the canon's info/link tint, names preserved for mobile statusTones) + a scoped --accent #2540D9 of its own era grammar. Zero product reach.
+- src/lib/chartTheme.ts:263,270 — REVIEWED, NOT A REMNANT: series 1 = #2540D9 mirrors --chart-1 and is the r369 canon's --info seat (charts are informational). Canon, kept.
+
+### 7. Carry-overs restated for the PR
+- Pre-existing main e2e failures (r368 sweep list, dated): r311 route yield · r325 map-clip ×2 · r352 attach PDF · r353 reduced-motion PIXEL-visible · r354 ×4 · r305 focus-keyboard «first Tab» (partial). RESIDUAL: the r368 protocol's clean-main-worktree re-confirm was NOT re-run at this close-out (time); the list carries r368's dated evidence + per-slice local runs that matched it.
+- WebKit/iPhone e2e never run locally (no webkit browser); substitutes: chromium-iphone 8/8 under r368 + the audit matrix above.
+- Data honesty (slices 03/05): no streak data in any payload → no streak UI anywhere; the mobile payload carries level+totalXp only → no progress bar / toNext on mobile; first-visit level baseline records silently, never a faked celebration. Sounds are client-local (no server field exists; the Settings row says so).
+
+### Close-out — SLICE 06 CLOSED (8:08 EET)
+- All spec-06 local steps landed: sweep, baselines, gate sweep, Lighthouse (+ the a11y fix), overlap audit 0, DESIGN.md canon completed (§6-§9: authed world, mascot seat, effects+sound, mobile parity), CHANGELOG r369 entry, this LEDGER close.
+- OPEN (owner/parent): the zero-trace real name; the 2 contrast decisions (gold-ink kicker, phone-mock dimming); the print-royal decision; the PR r369/new-identity → main opened READY but NOT merged — the merge is the owner's act, on their signal. Nothing pushed; all work on r369/local-upgrade.
