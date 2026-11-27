@@ -61,7 +61,7 @@ export const MARK_GRID_POINTS: readonly (readonly [number, number])[] = [
  * thicker PROPORTIONAL ratio for 16 px legibility — the only sanctioned
  * deviation (BRAND.md §min-sizes). */
 const MARK_STROKE_COMPONENT = 1.5; /* px, non-scaling */
-  /* viewBox units, proportional */
+export const MARK_STROKE_FAVICON = 2.25;  /* viewBox units, proportional */
 
 /** The optical-size ramp (R324/X11). A CONSTANT 1.5 px screen stroke
  * below the 32-grid design size reads progressively heavier: 12.5 % of
