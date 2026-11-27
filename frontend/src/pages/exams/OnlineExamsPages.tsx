@@ -1404,7 +1404,7 @@ export function ExamTakerPage() {
                 semantics, exactly like the twin's lockup. */}
             <MkIllustration name="exam-complete" size={140} />
             <h1 className="oex-result-title">
-              {awaitingManual ? 'تم تسليم اختبارك' : result.passed ? 'مبروك — لقد اجتزت الاختبار!' : 'الاختبار انتهى'}
+              {awaitingManual ? 'تم تسليم اختبارك' : result.passed ? 'اجتزت الاختبار' : 'الاختبار انتهى'}
             </h1>
             {/* The authored moment — the grade reveal: the real score
                 lands as the visual anchor (same exam-grade language as
