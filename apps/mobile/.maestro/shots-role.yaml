@@ -40,9 +40,10 @@ appId: ly.ulara.app
 # never offset in and the inline resting button sat below the demo
 # ladder's fold). The tap now rides the smoke flow's proven sequence
 # PLUS the settled-form fallback: dismiss the IME (no-op when it never
-# opened), scroll the resting submit into view (exact-word regex — the
-# smoke flow's own anti-collision spelling so the taps can never land
-# on the «تسجيل الدخول» heading), tap it. Every fallback is optional:
+# opened), scroll the resting submit into view (the regex rides the
+# `text` property itself — this Maestro has no `textMatches` property;
+# run 45908749380's leg died on the unknown key before any tap), tap it.
+# Every fallback is optional:
 # when the sticky bar DID mount, the first tap already fired and the
 # rest are settled no-ops.
 - tapOn:
@@ -54,12 +55,14 @@ appId: ly.ulara.app
     optional: true
 - scrollUntilVisible:
     element:
-      textMatches: "^دخول$"
+      text: "^دخول$"     # the text property IS the regex channel (the
+                          # smoke flow's documented anti-collision seat —
+                          # this Maestro has no `textMatches` property)
     direction: DOWN
     timeout: 8000
     optional: true
 - tapOn:
-    textMatches: "^دخول$"
+    text: "^دخول$"
     optional: true
 - tapOn:
     text: "تخطي"                   # the tour escape, when still owed
