@@ -1671,7 +1671,7 @@ export function CtaBand() {
     return () => window.removeEventListener('ulara:stars', on as EventListener);
   }, []);
   return (
-    <section className="w369-cta" data-jar="06">
+    <section className="w369-cta" data-jar="06" data-scene="night" data-theme="dark">
       <div className="w369-cta-inner">
         <p className="w369-cta-tally" data-full={read >= JAR_TOTAL ? 'true' : 'false'}>
           <Glyph name="compass" size={15} />

@@ -1617,6 +1617,36 @@ html:not([data-theme='dark']) .w369-footer {
   border-block-start: 0;
 }
 
+/* the closing scene: the same night as the levels band, edge to edge,
+ * so the page ends the way the reference does, on a dark arrival with the
+ * one action. The card frame and its inner box give way to the ground. */
+.w369-cta[data-scene='night'] {
+  inline-size: 100%;
+  margin: var(--sp-11) 0 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  color: var(--text);
+  padding-block: clamp(var(--sp-11), 8vw, var(--sp-12));
+  background:
+    radial-gradient(1.5px 1.5px at 8% 22%, color-mix(in srgb, var(--text) 80%, transparent), transparent),
+    radial-gradient(1.5px 1.5px at 19% 70%, color-mix(in srgb, var(--text) 60%, transparent), transparent),
+    radial-gradient(2px 2px at 31% 14%, color-mix(in srgb, var(--gold) 90%, transparent), transparent),
+    radial-gradient(1.5px 1.5px at 44% 84%, color-mix(in srgb, var(--text) 55%, transparent), transparent),
+    radial-gradient(1.5px 1.5px at 58% 26%, color-mix(in srgb, var(--text) 75%, transparent), transparent),
+    radial-gradient(2px 2px at 69% 76%, color-mix(in srgb, var(--gold) 80%, transparent), transparent),
+    radial-gradient(1.5px 1.5px at 83% 18%, color-mix(in srgb, var(--text) 70%, transparent), transparent),
+    radial-gradient(1.5px 1.5px at 93% 64%, color-mix(in srgb, var(--text) 60%, transparent), transparent),
+    radial-gradient(70% 90% at 50% 0%, color-mix(in srgb, var(--c-lavender-deep) 34%, transparent), transparent 72%),
+    radial-gradient(50% 60% at 50% 100%, color-mix(in srgb, var(--gold) 16%, transparent), transparent 74%),
+    var(--bg);
+}
+.w369-cta[data-scene='night'] .w369-cta-inner {
+  border: 0;
+  background: transparent;
+  overflow: visible;
+}
+
 /* ── r369 round 2 — the reward fan ────────────────────────────────────
  * The reference lays its wishes as a tilted deck, the chosen one
  * squared up. Ours: at ≥900px the three reward cards fan (±3deg, the
