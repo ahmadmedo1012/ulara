@@ -75,6 +75,40 @@ crosses a threshold؛ 6 stars unlocks 1 reward؛ level 12 reads سماء؛ the
 approval reaches «معتمد»؛ the carousel reads 02/07) with zero console
 errors · overlap audit 0 findings at 7 widths × 2 themes.
 
+## r369-mat r2 — the fine detail pass
+
+Details a reader never names but always feels:
+
+- **The odometer was lying.** Each cell was `10%` of an indefinite-height
+  strip, so the strip rendered 10× the frame and the visible row was the
+  wrong digit (`14` painted as `41`). It is em-based now: cell 1em, frame
+  1em, step `--dig` em. Verified: 8 taps → `22`, and `/30` after it.
+- **Numerals are LTR runs.** A split counter inside an RTL box mirrors its
+  halves; every split readout (odometer, wallet, slide counter, matrix %,
+  streak total) is now `direction: ltr; unicode-bidi: isolate`.
+- **Anchors clear the bar**: `scroll-margin-block-start: 96px` on every id
+  and stage band, so a deep link no longer parks the heading under glass.
+- **03 gained its matrix**: three courses whose mastery is computed FROM
+  the counter above (30 points → 100/68/84%), so no figure on the page is
+  invented twice.
+- **04 gained provenance**: «كيف تُحتسب؟ واجب ٣ · اختبار ٤ · محاضرة ٢» and
+  the source line — the number's origin is on the page.
+- **05 gained its rules**: three lines (from the record, holidays not
+  counted, one weekly digest — no night notifications).
+- **06 gained the tier legend** (بذور ١–٥ · مسارات ٦–١٠ · منائر ١١–١٥ ·
+  قمم ١٦–٢٠), and the badge's rays moved outside the ring so a 132px badge
+  reads as a seal, not a wheel.
+- **The showcase screens now say something**: seven mini screens built
+  from the page's own primitives (dashboard, today, mastery, board,
+  ladder, teacher, quality) instead of four skeleton bars.
+- **Hero facts** became a 2×2 hairline plate; FAQ answers fade in; body
+  copy uses `text-wrap: pretty`; the rewards row is three across so the
+  third card leaves no hole.
+
+Verified: tsc · build · bundle 828.4 KB gz (≤832) · tokens:check ·
+raw-css · motion · colours --strict · icons · stylelint 0 errors ·
+58 targeted tests · overlap audit 0 findings at 7 widths × 2 themes.
+
 ## r369-mat — the maturity pass (owner ruling: university, not a game)
 
 The surface was still telling a children's story in a product's clothes.
