@@ -84,7 +84,7 @@ function StudentXpChip() {
   const dash = useStudentDashboard();
   const navigate = useNavigate();
   if (dash.isError) return null;
-  const totalXp = dash.data?.kpi.totalXp;
+  const totalXp = dash.data?.kpi?.totalXp;
   if (totalXp === undefined) {
     return (
       <span className="topbar-xp topbar-xp-loading" aria-hidden="true">

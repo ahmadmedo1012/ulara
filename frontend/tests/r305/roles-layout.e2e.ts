@@ -47,14 +47,15 @@ test.describe('الزائر — الأسطح العامة', () => {
 
   test('صفحة 404 المصمّمة على المسار الصريح', async ({ page }) => {
     await page.goto('/404');
-    await expect(page.locator('.nf-title')).toHaveText('هذه الصفحة تغيّبت عن الحضور');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('هذه الصفحة تغيّبت عن الحضور');
   });
 
   test('معرض الكلّيّات للزائر: قناة بلا هيكل بمخطّطها الخاص (skip link + عودة)', async ({ page }) => {
     await page.goto('/colleges');
     // CollegesLayout guest chrome (App.tsx — the r154a public funnel).
     await expect(page.locator('a.skip-link')).toHaveText('تخطَّ إلى المحتوى');
-    await expect(page.getByRole('link', { name: 'العودة إلى الصفحة الرئيسية' })).toBeVisible();
+    /* r369: the drafting back-link bar is retired; the warm nav carries the way home */
+    await expect(page.getByRole('banner').getByRole('link').first()).toBeVisible();
     await expect(page.locator('main#main')).toBeVisible();
     // Phase Ω: the public gallery is the multi-tenancy pitch — its h1
     // states the platform truth and the rows list the workspace's REAL
