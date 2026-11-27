@@ -385,17 +385,12 @@
     place-items: center;
     pointer-events: none;
   }
+  /* the player dial is the shared .spinner ring, larger and in the player accent */
   .vpc-spinner {
     inline-size: 34px;
     block-size: 34px;
-    /* The spinner ring is a circle primitive (the one sanctioned
-     round element — it reads as an instrument dial). */
-    border-radius: var(--r-full);
-    border: 2px solid color-mix(in srgb, var(--vpc-mist) 25%, transparent);
-    border-top-color: var(--vpc-accent);
-    animation: vpc-spin var(--t-cinema) var(--ease-linear) infinite; /* 720ms — the nearest duration token (premium-polish: gate-clean) */
+    color: var(--vpc-accent);
   }
-  @keyframes vpc-spin { to { transform: rotate(360deg); } }
 
   /* ── Error gate ────────────────────────────────────────────────── */
   .vpc-error {

@@ -754,7 +754,7 @@ function StudentForm({ form, error, isPending, faculties, institutions, institut
       )}
 
       <button type="submit" className="auth-submit" disabled={isPending} aria-busy={isPending}>
-        {isPending && <span className="auth-submit-spinner" aria-hidden />}
+        {isPending && <span className="spinner" aria-hidden />}
         {isPending ? 'جارٍ الإنشاء…' : (
           /* r359 grammar #4 — the primary's label ROLLS one line up on
              hover/focus (.auth-roll; the aria-hidden duplicate never
@@ -922,7 +922,7 @@ function TeacherForm({ form, error, isPending, faculties, institutions, institut
       )}
 
       <button type="submit" className="auth-submit" disabled={isPending} aria-busy={isPending}>
-        {isPending && <span className="auth-submit-spinner" aria-hidden />}
+        {isPending && <span className="spinner" aria-hidden />}
         {isPending ? 'جارٍ الإنشاء…' : (
           /* r359 grammar #4 — the primary's label ROLLS one line up on
              hover/focus (.auth-roll; the student form's twin seat). */

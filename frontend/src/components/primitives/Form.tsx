@@ -15,7 +15,7 @@ import type {
  * for `<button className="btn primary">` etc.
  *
  * Loading semantics:
- *   - Swaps the VISIBLE content to the canonical `.motion-spinner`;
+ *   - Swaps the VISIBLE content to the canonical `.spinner`;
  *     the real label stays in the DOM inside a visually-hidden span, so
  *     screen readers keep the button's actual name while it is busy
  *     (aria-busy announces the loading state).
@@ -175,7 +175,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     >
       {loading ? (
         <>
-          <span className="motion-spinner" aria-hidden="true" />
+          <span className="spinner" aria-hidden="true" />
           <span className="visually-hidden">
             {leadingIcon}
             {children}
@@ -262,7 +262,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         aria-busy="true"
         {...rest}
       />
-      <span className="motion-spinner input-affix-spinner" aria-hidden="true" />
+      <span className="spinner input-affix-spinner" aria-hidden="true" />
     </span>
   );
 });

@@ -562,12 +562,12 @@ export default function AuthPage() {
             >
               {wakingAttempt > 0 ? (
                 <>
-                  <span className="auth-submit-spinner" aria-hidden />
+                  <span className="spinner" aria-hidden />
                   <span>الخادم يستيقظ… إعادة محاولة تلقائية</span>
                 </>
               ) : login.isPending ? (
                 <>
-                  <span className="auth-submit-spinner" aria-hidden />
+                  <span className="spinner" aria-hidden />
                   <span>جارٍ الدخول…</span>
                 </>
               ) : (

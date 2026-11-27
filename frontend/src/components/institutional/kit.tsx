@@ -12,7 +12,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { Icon } from '../Icon';
-import { Search, X, Loader2, ChevronDown } from 'lucide-react';
+import { Search, X, ChevronDown } from 'lucide-react';
 import { EmptyState, ErrorState, ListSkeleton } from '../primitives/States';
 import { SheetEmpty, SheetSection, DataSheet, type DataSheetColumn } from '../patterns/Sheet';
 import podiumScene from '../../assets/art-v2/podium-scene.webp';
@@ -618,7 +618,7 @@ export function InstFormDialog({
           <footer className="inst-dialog-actions">
             <button type="button" className="btn ghost sm" onClick={onCancel}>إلغاء</button>
             <button type="submit" className="btn primary sm" disabled={busy}>
-              {busy && <Icon icon={Loader2} size={14} className="motion-spinner" />}
+              {busy && <span className="spinner" aria-hidden="true" />}
               {submitLabel}
             </button>
           </footer>
@@ -676,7 +676,7 @@ export function InstConfirm({
             onClick={onConfirm}
             disabled={busy}
           >
-            {busy && <Icon icon={Loader2} size={14} className="motion-spinner" />}
+            {busy && <span className="spinner" aria-hidden="true" />}
             {confirmLabel}
           </button>
         </footer>

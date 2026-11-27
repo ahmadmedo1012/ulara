@@ -690,12 +690,6 @@
 /* the retired sheet's hover-wipe pseudo has no seat in the warm pill */
 .p369 .auth-submit::before { content: none; }
 .p369 .auth-submit:hover:not(:disabled) { transform: translateY(-2px); box-shadow: var(--shadow-card-h); }
-.p369 .auth-submit-spinner {
-  inline-size: 16px; block-size: 16px; border-radius: 50%;
-  border: 2px solid currentColor; border-block-start-color: transparent;
-  animation: p369-spin var(--motion-duration-skeleton) var(--ease-linear) infinite;
-}
-@keyframes p369-spin { to { transform: rotate(1turn); } }
 .p369 .auth-roll { display: grid; overflow: hidden; }
 .p369 .auth-roll-line { grid-area: 1 / 1; transition: transform var(--t-fast) var(--ease-out); }
 .p369 .auth-roll-line + .auth-roll-line { transform: translateY(110%); }

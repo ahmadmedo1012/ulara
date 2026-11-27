@@ -199,7 +199,7 @@ export default function ForgotPasswordPage() {
             >
               {requestReset.isPending ? (
                 <>
-                  <span className="auth-submit-spinner" aria-hidden />
+                  <span className="spinner" aria-hidden />
                   <span>جارٍ الإرسال…</span>
                 </>
               ) : (

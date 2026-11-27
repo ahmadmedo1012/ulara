@@ -109,7 +109,7 @@ describe('Button[loading]', () => {
     expect(btn).toHaveAttribute('aria-disabled', 'true');
     // Visible content swaps to the spinner; the label survives only in
     // the visually-hidden span that keeps the accessible name alive.
-    expect(btn.querySelector('.motion-spinner')).not.toBeNull();
+    expect(btn.querySelector('.spinner')).not.toBeNull();
     expect(btn.querySelector('.visually-hidden')?.textContent).toBe('حفظ التغييرات');
   });
 
@@ -125,7 +125,7 @@ describe('Button[loading]', () => {
       </Button>,
     );
     const btn = screen.getByRole('button', { name: 'حفظ' });
-    expect(btn.querySelector('.motion-spinner')).toBeNull();
+    expect(btn.querySelector('.spinner')).toBeNull();
     // R313 override (WP-D · D4): the label roll is default ON for text
     // labels — textContent now carries the live row + the aria-hidden
     // duplicate; the ACCESSIBLE name stays one copy (getByRole above

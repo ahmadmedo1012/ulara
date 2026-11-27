@@ -272,7 +272,7 @@ export default function ResetPasswordPage() {
                 >
                   {resetPassword.isPending ? (
                     <>
-                      <span className="auth-submit-spinner" aria-hidden />
+                      <span className="spinner" aria-hidden />
                       <span>جارٍ الحفظ…</span>
                     </>
                   ) : (

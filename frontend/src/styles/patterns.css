@@ -1449,14 +1449,6 @@ a.pf-row-link {
   /* The platform's single press register — buttons scale (0.97). */
   .auth-submit:active { transform: scale(var(--press-scale)); }
   .auth-submit:disabled { opacity: var(--state-btn-disabled-opacity); cursor: not-allowed; transform: none; }
-  /* currentColor spins on both themes (accent-fg on the signal fill). */
-  .auth-submit-spinner {
-    inline-size: 16px; block-size: 16px;
-    border: 2px solid color-mix(in srgb, currentColor 30%, transparent);
-    border-block-start-color: currentColor;
-    border-radius: 50%;
-    animation: ulara-spin var(--motion-duration-stat) var(--ease-linear) infinite;
-  }
 
   /* Demo-account hint (dev-only): a quiet, dismissible ruled block —
      hairline rule on the bare paper, muted text. No pastels, no
