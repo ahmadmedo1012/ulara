@@ -710,12 +710,12 @@
   /* only an ARMED body (below the fold, JS confirmed) animates at all */
   transition:
     opacity var(--motion-duration-medium) var(--ease-out),
-    transform var(--motion-duration-medium) var(--ease-out);
+    transform var(--motion-duration-card) var(--ease-spring); /* P2b: the reference's springy settle */
 }
 
 .w369-band-body[data-reveal='pending'] {
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(var(--sp-8));
 }
 
 .w369-band-body[data-reveal='in'] {
