@@ -267,8 +267,12 @@ describe('R305 gamification — the level statement is the ONE deep band', () =>
     expect(captions).toEqual(['XP', 'LEVEL', 'RANK']);
 
     // The two lists are framed sheet sections with the same titles.
+    // r369 slice 03 batch B re-key: the ladder section «سلّم المستويات"
+    // » joins as the FIRST framed section — the reference's 20-level
+    // ladder grammar driven by the REAL useTrainingMe level (never a
+    // mock rung). The two R359 lists keep their titles + order after it.
     const titles = Array.from(container.querySelectorAll('.sg-section > .sg-head .sg-title')).map((h) => h.textContent);
-    expect(titles).toEqual(['الإنجازات المحققة', 'لوحة المتصدرين']);
+    expect(titles).toEqual(['سلّم المستويات', 'الإنجازات المحققة', 'لوحة المتصدرين']);
     // r351 A2 (Q2): the [0N] gutter register stays retired.
     expect(container.querySelectorAll('.r319s-bar-index')).toHaveLength(0);
   });

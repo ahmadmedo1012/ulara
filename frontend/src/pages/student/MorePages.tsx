@@ -29,6 +29,10 @@ import { PageFrame, PageHeader as PatternPageHeader, RowList, RowItem, StatLine 
  * SectionBar seats (the roster exemplar's recomposition); ResultsPage's
  * summary StatLine keeps its test-pinned deep-band seat. */
 import { SheetSection, KpiBand, DataSheet, SheetEmpty, type DataSheetColumn } from '../../components/patterns';
+/* r369 slice 03 — the 20-level ladder: the landing's generated badge
+ * rule (same geometry, extracted) driven by the REAL training level —
+ * never a mock ladder. */
+import { LevelBadge, LEVEL_NAMES, LEVEL_TIER_GROUPS } from '../../components/gamification/LevelBadge';
 /* R319 (c3-S2) — the §B2 kit: the BarCount meta, the mono status chip +
  * the today week strip (the pages-B sweep's shared barrel for this
  * file's pages; the SectionBar seats retire onto the framed sheets). */
@@ -175,9 +179,101 @@ export function GamificationPage() {
         </div>
       )}
 
+      {/* r369 slice 03 — the ladder section: the reference's 20-level
+          grammar made honest. The current level, the tier, the /N
+          progress into the next level and the remaining points all
+          come from useTrainingMe (the same payload the LEVEL cell
+          reads); when the read fails the section says so and offers
+          the same retry, and when the student has not started the
+          track the ladder renders fully locked — never a fabricated
+          rung. STREAK: no streak field exists in any payload the app
+          reads (verified hooks/resources/* — slice 02's finding), so
+          no streak row renders; the gap rides the LEDGER. */}
+      <SheetSection
+        index="01"
+        title="سلّم المستويات"
+        desc="عشرون مستوى من «بذرة» إلى «المعلّم» — تُفتح بنقاط التطوير الذاتي."
+      >
+        {(() => {
+          /* The real level, clamped to the ladder's twenty rungs — a
+             level past 20 keeps its number in the readout and lights
+             the full ladder (the honest reading of «ما بعد المعلّم»).
+             On a failed read the ladder still renders — fully locked —
+             under the honest error + retry (the grammar is never a
+             blank box). */
+          const real = training.isError ? 0 : (me?.level?.level ?? 0);
+          const current = Math.min(Math.max(real, 0), 20);
+          return (
+            <>
+              {training.isError && (
+                <SheetEmpty
+                  code="ERROR"
+                  title="تعذّر تحميل المستوى"
+                  desc="لم نستطع قراءة مستواك الحالي — السلّم يظهر كاملاً دون تحديد."
+                  action={<button type="button" className="btn ghost sm" onClick={() => training.refetch()}>إعادة المحاولة</button>}
+                />
+              )}
+              {!training.isError && (() => {
+            const pct = me?.level ? Math.max(0, Math.min(100, me.level.pctIntoLevel)) : 0;
+            const name = current >= 1 ? LEVEL_NAMES[current - 1] : null;
+            const group = current >= 1 ? LEVEL_TIER_GROUPS[Math.floor((current - 1) / 5)] : null;
+            return (
+              <div className="g369-progress">
+                <div className="g369-progress-read">
+                  <span className="g369-progress-name">
+                    {name ? `المستوى ${formatNum(real)} — ${name}` : 'لم يبدأ المسار بعد'}
+                  </span>
+                  {group && me?.level && (
+                    <span className="g369-progress-tier">
+                      {group} · {TIER_LABEL[me.level.tier]}
+                    </span>
+                  )}
+                </div>
+                {me?.level && (
+                  <>
+                    <ProgressBar
+                      value={pct}
+                      color="var(--gold)"
+                      ariaLabel={`التقدم نحو المستوى ${formatNum(real + 1)}`}
+                      label={`${formatNum(pct)}٪ من الطريق إلى المستوى ${formatNum(real + 1)}`}
+                      showValue={false}
+                    />
+                    <p className="g369-progress-note">
+                      {me.level.toNext > 0 && real < 20
+                        ? `متبقّي ${pointsAr(me.level.toNext)} لتفتح «${LEVEL_NAMES[real]}» — المستوى ${formatNum(real + 1)}.`
+                        : 'بلغت أعلى السلّم — إتقان موثّق.'}
+                    </p>
+                  </>
+                )}
+              </div>
+            );
+          })()}
+          <ol className="g369-ladder" aria-label="سلّم المستويات العشرون">
+            {LEVEL_NAMES.map((n, i) => {
+              const rung = i + 1;
+              return (
+                <li
+                  key={n}
+                  className="g369-level"
+                  data-earned={rung <= current ? 'true' : 'false'}
+                  data-current={rung === current ? 'true' : 'false'}
+                  aria-current={rung === current ? 'true' : undefined}
+                >
+                  <LevelBadge level={i} size={34} />
+                  <span className="g369-level-idx">{formatNum(rung)}</span>
+                  <span className="g369-level-name">{n}</span>
+                </li>
+              );
+            })}
+          </ol>
+            </>
+          );
+        })()}
+      </SheetSection>
+
       <div className="grid-2">
         <SheetSection
-          index="01"
+          index="02"
           caption="ACHIEVEMENTS"
           title="الإنجازات المحققة"
           aside={!ach.isPending && !ach.isError && (ach.data?.length ?? 0) > 0 ? (
@@ -218,7 +314,7 @@ export function GamificationPage() {
         </SheetSection>
 
         <SheetSection
-          index="02"
+          index="03"
           caption="LEADERBOARD"
           title="لوحة المتصدرين"
           aside={!lb.isPending && !lb.isError && (lb.data?.length ?? 0) > 0 ? (
