@@ -149,3 +149,31 @@ NEXT: commit this batch; read the landing batch; B's remaining items
   visible; production serves the last good deploy).
 NEXT: capture artifacts → the apps evidence sheet + store screenshots;
 CI read; E's final verify ×2; G's final cleanup (branches, zero-trace).
+
+## Session 2 (final stretch — the finisher's close)
+- **verify.sh ×2 BOTH ALL GREEN** (runs 3 + 4): tsc · vitest 3110 · bundle
+  gate · css ratchet (532 held) · logo gate · a11y 0 serious/critical ·
+  the seven design gates · lint · e2e hermetic. Runs 1–2 caught the
+  ratchet's one new importantDeclaration (the chip's margin yield) —
+  re-promoted 531→532 with the reason inline (the tool's own procedure).
+- **The CI hunt closed**: the TS2769 tuple → the guarded-arg spelling; the
+  seven CI pin failures (r312 ×3, r349 ×2, r352, r354) traced to the deck
+  floor's +22px shift → REVERTED; the @360 text kiss cured ZERO-displacement
+  (the chip rises within its fixed 4.64em row — the machine's geometry
+  byte-identical); 85/85 locally across the six affected specs.
+- **r352:462 (the governance journey) proven PRE-EXISTING** by a clean-tree
+  bisect: it fails at 977f4d3 too (a borderline-45s journey — the timeout
+  fires when the runner is loaded). Owner-visible: give it a budget bump
+  or split the journey.
+- **The release lanes on the final app-code commit (ca5ebbe) + the final
+  HEAD (a31ba81, dispatched)**: signed APK → `latest` (SHA256
+  19d49e29…d8b25833 recorded), IPA → `sidestore-latest`; both lanes green
+  on both commits.
+- **The capture rig's third lesson**: this Maestro has NO `textMatches`
+  property — the regex rides the `text` property itself (run
+  45908749380's legs died at PARSE time on the unknown key); the fallback
+  re-spelled, the quick capture re-dispatched (45914019092) — its
+  authenticated HOME shots land the apps evidence sheet.
+- zero-trace: PASS (three runs this session).
+NEXT: the capture's evidence sheet + store screenshots; the mobile belt's
+own lane read (Mobile on c2f93a3).
