@@ -21,6 +21,7 @@
 .w369 {
   --w369-gutter: clamp(var(--sp-5), 4vw, var(--sp-13));
   --w369-max: 1240px;
+  --w369-foot-ground: var(--text); /* round 2: footer ground seat (see footer) */
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-sans);
@@ -1192,9 +1193,26 @@
 
 /* ── footer ───────────────────────────────────────────────────────── */
 
+/* r369 round 2 — the reference closes every page on a deep ground (its
+ * footer is a dark band). Ours: the indigo ink in light, the raised
+ * night surface in dark, with the ink tokens re-seated INSIDE the footer
+ * only (cream text, softened secondary, faint rules, inverted accent) so
+ * every child rule keeps working unchanged. The ground is read from the
+ * theme tokens before the re-seat, via the --w369-foot-ground seat. */
+[data-theme='dark'] .w369 { --w369-foot-ground: var(--surface); }
+
 .w369-footer {
-  border-block-start: 1px solid var(--border);
-  background: color-mix(in srgb, var(--surface) 60%, var(--bg));
+  background: var(--w369-foot-ground);
+  color: var(--text);
+}
+/* light only: dark already IS a night ground, nothing to re-seat */
+html:not([data-theme='dark']) .w369-footer {
+  --text: var(--bg);
+  --text-secondary: color-mix(in srgb, var(--bg) 80%, transparent);
+  --text-muted: color-mix(in srgb, var(--bg) 66%, transparent);
+  --border: color-mix(in srgb, var(--bg) 20%, transparent);
+  --accent: var(--bg);
+  --accent-fg: var(--w369-foot-ground);
 }
 
 .w369-footer-grid {

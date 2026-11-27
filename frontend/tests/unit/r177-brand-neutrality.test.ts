@@ -306,7 +306,8 @@ describe('r183 — brand-identity closure (the surfaces r177 missed)', () => {
     // #2540D9 royal — was #262019 · #C43E16); copper/gold hexes stay
     // BANNED from the favicon (r323-brand-system gate (c) pins this too).
     expect(favicon).toContain('#1A1713');
-    expect(favicon).toContain('#2540D9');
+    // r369 round 2: the cornerstone is the indigo ink #1E1A3C (royal #2540D9 retired from the mark in 3b98f3b; this pin lagged)
+    expect(favicon).toContain('#1E1A3C');
     expect(favicon).not.toContain('#B57438');
     expect(favicon).not.toContain('#E9B44C');
     expect(favicon).not.toContain('#0E3F6C');

@@ -135,12 +135,14 @@ describe('detectDrift', () => {
     // (the audit engine was updated in 56c75f5e but this unit fixture
     // was missed) — the test failed on a clean origin/main checkout.
     // Re-pinned to live r305 rungs: 200 fast / 400 base.
+    // r369 round 2: the r369 ladder (fast 220 / base 380) replaced those
+    // rungs in KNOWN_DURATIONS_MS at 436e16a; this fixture lagged one cycle.
     const findings = detectDrift(
       inventory([
         emptyCapture({
           motionTreatments: [
-            { selector: '.x', durationMs: 200, easing: 'ease' },
-            { selector: '.y', durationMs: 400, easing: 'ease' },
+            { selector: '.x', durationMs: 220, easing: 'ease' },
+            { selector: '.y', durationMs: 380, easing: 'ease' },
           ],
         }),
       ]),
