@@ -60,8 +60,8 @@ test.describe('الزائر — فيض أفقي صفري', () => {
 
       test('/404 بلا فيض', async ({ page }) => {
         await page.goto('/404');
-        await expect(page.locator('.nf-title')).toHaveText('هذه الصفحة تغيّبت عن الحضور');
-        await expectNoHorizontalOverflow(page, ['.nf-title']);
+        await expect(page.getByRole('heading', { level: 1 })).toHaveText('هذه الصفحة تغيّبت عن الحضور');
+        await expectNoHorizontalOverflow(page, ['main h1']);
       });
 
       test('/ (الرئيسية) بلا فيض — فوق وطول الصفحة', async ({ page }) => {
@@ -74,7 +74,7 @@ test.describe('الزائر — فيض أفقي صفري', () => {
         await page.evaluate(() =>
           window.scrollTo(0, document.scrollingElement?.scrollHeight ?? 0),
         );
-        await expect(page.locator('.fo-in')).toBeVisible(); // R341 re-key: .fo-footer-inner → .fo-in (f301041a)
+        await expect(page.locator('.w369-footer')).toBeVisible(); // R341 re-key: .fo-footer-inner → .fo-in (f301041a)
         await expectNoHorizontalOverflow(page, LANDING_LANDMARKS);
       });
 
