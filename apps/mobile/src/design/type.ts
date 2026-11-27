@@ -2,13 +2,13 @@
  * R334 2-f — Arabic typography helpers.
  *
  * Four composing roles (display / title / body / numeric) on the LOADED
- * IBM Plex Sans Arabic weights (400 Regular · 500 Medium · 600 SemiBold ·
- * 700 Bold — see ./fonts). Hierarchy = weight + size rungs, never tracking
+ * Readex Pro weights (400 Regular · 500 Medium · 600 SemiBold · 700 Bold
+ * — see ./fonts; r369 slice 04 swapped the family, the keys never moved). Hierarchy = weight + size rungs, never tracking
  * or uppercase (ds). These are TextStyle building blocks for direct
  * composition; the <T> component (ui/text) stays the default way to render
- * prose — its `display` variant keeps the Alexandria brand face, this
- * module's display role is the Plex Arabic hero when the brand voice is
- * NOT wanted.
+ * prose — its `display` variant keeps the Baloo Bhaijaan 2 brand face,
+ * this module's display role is the Readex Pro hero when the brand voice
+ * is NOT wanted.
  *
  * ── Font-scale tolerance (Dynamic Type 100–200%) ─────────────────────────
  * RN <Text> scales by default (`allowFontScaling` is ON): every explicit
@@ -48,14 +48,14 @@ import { PixelRatio, type TextStyle } from "react-native";
 import { fonts } from "./fonts";
 import { touchFloor, type } from "./tokens";
 
-/** The composing role styles (families = the loaded Plex Arabic weights). */
+/** The composing role styles (families = the loaded Readex Pro weights). */
 export const typeStyles = {
-  /** Hero statements — 36/48, Bold (700). Plex Arabic; brand moments use <T variant="display"> (Alexandria) instead. */
+  /** Hero statements — 36/48, Bold (700). Readex Pro; brand moments use <T variant="display"> (Baloo Bhaijaan 2) instead. */
   display: { fontFamily: fonts.bodyBold, fontSize: type.display, lineHeight: 48 } as TextStyle,
   /** Section titles — 20/28, SemiBold (600). */
   title: { fontFamily: fonts.bodySemiBold, fontSize: type.sectionTitle, lineHeight: 28 } as TextStyle,
   /** The readability floor — 13/20, Regular (400). Byte-compatible with <T variant="body">. */
-  body: { fontFamily: fonts.body, fontSize: type.body, lineHeight: 20 } as TextStyle,
+  body: { fontFamily: fonts.body, fontSize: type.body, lineHeight: 21 } as TextStyle, // r369: 14/21 — the ≥1.5 leading floor survives the ladder's 14px body
   /** KPI hero numerals — 44/52, SemiBold (600). Consider maxFontSizeMultiplier on cramped dashboards. */
   numeric: { fontFamily: fonts.bodySemiBold, fontSize: type.statNumber, lineHeight: 52 } as TextStyle,
 } as const;

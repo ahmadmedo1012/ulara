@@ -201,8 +201,8 @@ const styles = StyleSheet.create({
   fill: { flex: 1 },
   content: { flex: 1, justifyContent: "center", padding: 24, gap: 12 },
   rule: { alignSelf: "flex-end", width: 56, height: 3 },
-  title: { fontFamily: "IBMPlexSansArabic_600SemiBold", fontSize: 24, writingDirection: "rtl", textAlign: "right" },
-  body: { fontFamily: "IBMPlexSansArabic_400Regular", fontSize: 15, lineHeight: 24, writingDirection: "rtl", textAlign: "right" },
+  title: { fontFamily: "Body-SemiBold", fontSize: 24, writingDirection: "rtl", textAlign: "right" },
+  body: { fontFamily: "Body-Regular", fontSize: 15, lineHeight: 24, writingDirection: "rtl", textAlign: "right" },
   button: { alignSelf: "flex-start", paddingHorizontal: 20, paddingVertical: 12, minWidth: 160, alignItems: "center" },
-  buttonText: { fontFamily: "IBMPlexSansArabic_600SemiBold", fontSize: 15 },
+  buttonText: { fontFamily: "Body-SemiBold", fontSize: 15 },
 });

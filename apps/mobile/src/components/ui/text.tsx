@@ -38,7 +38,7 @@ const sizes: Record<TextVariant, TextStyle> = {
   h3: { fontSize: type.h3, lineHeight: 28 },
   h4: { fontSize: type.h4, lineHeight: 24 },
   bodyLg: { fontSize: type.bodyLg, lineHeight: 24 },
-  body: { fontSize: type.body, lineHeight: 20 },
+  body: { fontSize: type.body, lineHeight: 21 }, // r369: 14/21 — the ≥1.5 leading floor
   sm: { fontSize: type.sm, lineHeight: 18 },
   xs: { fontSize: type.xs, lineHeight: 16 },
   mono: { fontFamily: fonts.mono, fontSize: type.body, lineHeight: 20 },

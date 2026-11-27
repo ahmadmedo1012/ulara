@@ -37,14 +37,14 @@ describe("semanticColorsFor — light/dark resolution", () => {
 
   it("surfaces follow the ds two-surface rule (ground / card / sunken)", () => {
     const light = semanticColorsFor("light");
-    expect(light.surface).toBe("#F2F1EC"); // paper ground
+    expect(light.surface).toBe("#FBF6EC"); // r369: the cream ground
     expect(light.surfaceElevated).toBe("#FFFFFF"); // card ground
-    expect(light.sunken).toBe("#EBEBE5"); // shared surface2/bkSoft
+    expect(light.sunken).toBe("#F5EDDF"); // r369: the warm sunken step (surfaceHover)
 
     const dark = semanticColorsFor("dark");
-    expect(dark.surface).toBe("#262019");
-    expect(dark.surfaceElevated).toBe("#2E2E2E"); // the Card component's dark ground
-    expect(dark.sunken).toBe("#353535"); // shared surface2 (dark)
+    expect(dark.surface).toBe("#14122B"); // r369: the night-indigo ground
+    expect(dark.surfaceElevated).toBe("#1E1B3D"); // r369: the dark card ground
+    expect(dark.sunken).toBe("#262251"); // r369: shared surfaceHover (dark)
   });
 
   it("sunken is one step BELOW card-on-ground in both themes (never equal to the ground)", () => {
@@ -57,60 +57,59 @@ describe("semanticColorsFor — light/dark resolution", () => {
 
   it("text tiers are distinct inks (primary → secondary → tertiary)", () => {
     const light = semanticColorsFor("light");
-    expect(light.textPrimary).toBe("#282828");
-    expect(light.textSecondary).toBe("#646464");
-    expect(light.textTertiary).toBe("#666663");
+    expect(light.textPrimary).toBe("#1E1A3C"); // r369: indigo ink
+    expect(light.textSecondary).toBe("#6E6455"); // r369: warm secondary
+    expect(light.textTertiary).toBe("#6A6151");
     const dark = semanticColorsFor("dark");
-    expect(dark.textPrimary).toBe("#F0F0EB");
-    expect(dark.textSecondary).toBe("#C9C9C5");
-    expect(dark.textTertiary).toBe("#B4B4B0");
+    expect(dark.textPrimary).toBe("#F7F1E6"); // r369: warm off-white
+    expect(dark.textSecondary).toBe("#D3CEE4");
+    expect(dark.textTertiary).toBe("#C2BDDA");
   });
 });
 
 describe("the ONE accent", () => {
-  it("is the royal blue in light and the luminous royal in dark (2026)", () => {
-    expect(semanticColorsFor("light").accent).toBe("#2540D9");
-    expect(semanticColorsFor("dark").accent).toBe("#8AA0FF");
+  it("is the indigo ink in light and the luminous lavender-ink in dark (r369 re-key: the royal blue retired with the old identity)", () => {
+    expect(semanticColorsFor("light").accent).toBe("#1E1A3C");
+    expect(semanticColorsFor("dark").accent).toBe("#EFE9FF");
   });
 
-  it("the royal clears AA as text itself — ink ≡ accent (the raw/ink split retired)", () => {
+  it("the accent clears AA as text itself — ink ≡ accent (the raw/ink split retired)", () => {
     const light = semanticColorsFor("light");
     expect(light.accentInk).toBe(light.accent);
-    expect(light.accentInk).toBe("#2540D9");
+    expect(light.accentInk).toBe("#1E1A3C");
     const dark = semanticColorsFor("dark");
     expect(dark.accentInk).toBe(dark.accent);
-    expect(dark.accentInk).toBe("#8AA0FF");
+    expect(dark.accentInk).toBe("#EFE9FF");
   });
 
-  it("the fg pairs ride the shared seats — never white on the dark royal, white on every hover tier (2026)", () => {
-    // resting fills: white on #2540D9 (7.46:1) · the DARK #262019 on #8AA0FF
-    // (6.56:1 — white would fail at 2.46:1 and must never appear).
-    expect(ds.light.accentFg).toBe("#FFFFFF");
-    expect(ds.light.primaryFg).toBe("#FFFFFF");
-    expect(ds.dark.accentFg).toBe("#262019");
-    expect(ds.dark.primaryFg).toBe("#262019");
-    // hover/pressed fills: the tiers are dark in BOTH themes (#1B30B0 ·
-    // #4C63F0), so the hovered label is WHITE everywhere (10.02:1 · 4.83:1)
-    // — the accentHoverFg contract the pressed states consume.
-    expect(ds.light.accentHoverFg).toBe("#FFFFFF");
-    expect(ds.dark.accentHoverFg).toBe("#FFFFFF");
-    // danger fills: white on #C62828 (5.62:1) · #262019 on #FF7A70 (6.35:1).
+  it("the fg pairs ride the shared seats — cream on the light indigo, night-ink on the dark lavender (r369 re-key)", () => {
+    // resting fills: cream #FBF6EC on indigo #1E1A3C (~14:1) · night-ink
+    // #14122B on lavender #EFE9FF (white on lavender would fail).
+    expect(ds.light.accentFg).toBe("#FBF6EC");
+    expect(ds.light.primaryFg).toBe("#FBF6EC");
+    expect(ds.dark.accentFg).toBe("#14122B");
+    expect(ds.dark.primaryFg).toBe("#14122B");
+    // hover/pressed fills: the hover tiers stay dark-on-light /
+    // light-on-dark, so the hovered label keeps the same seat.
+    expect(ds.light.accentHoverFg).toBe("#FBF6EC");
+    expect(ds.dark.accentHoverFg).toBe("#14122B");
+    // danger fills: white on #C23227 · night-ink #14122B on #FF8A7A.
     expect(ds.light.dangerFg).toBe("#FFFFFF");
-    expect(ds.dark.dangerFg).toBe("#262019");
+    expect(ds.dark.dangerFg).toBe("#14122B");
   });
 });
 
 describe("status triples — shared-JSON mapping (text ink = the family deep rung)", () => {
   it("success/warning/danger resolve fill/soft/ink from the tone families", () => {
     const light = semanticColorsFor("light");
-    expect(light.success).toEqual({ fill: "#17724A", soft: "#E2EFE8", ink: "#0D5433" });
-    expect(light.warning).toEqual({ fill: "#A8750F", soft: "#F5EBD6", ink: "#5E420C" });
-    expect(light.danger).toEqual({ fill: "#C62828", soft: "#FBE4E4", ink: "#9E1A1A" });
+    expect(light.success).toEqual({ fill: "#12805C", soft: "#DEF2EA", ink: "#0A5A40" }); // r369 re-key
+    expect(light.warning).toEqual({ fill: "#A9740A", soft: "#FBEED4", ink: "#6B4708" }); // r369 re-key
+    expect(light.danger).toEqual({ fill: "#C23227", soft: "#FBE3E0", ink: "#8F1F16" }); // r369 re-key
 
     const dark = semanticColorsFor("dark");
-    expect(dark.success).toEqual({ fill: "#5FD39A", soft: "#1F3A2E", ink: "#5FD39A" });
-    expect(dark.warning).toEqual({ fill: "#EFC87B", soft: "#3B331F", ink: "#F8E3B4" }); /* r351-main: the deep rung is the AAA text tier (mint/rose deep ≡ ink in dark; yellow deep is the lighter amber) */
-    expect(dark.danger).toEqual({ fill: "#FF7A70", soft: "#3A2020", ink: "#FF7A70" });
+    expect(dark.success).toEqual({ fill: "#5FD6AC", soft: "#16362E", ink: "#5FD6AC" }); // r369 re-key
+    expect(dark.warning).toEqual({ fill: "#F0C572", soft: "#3A2F1A", ink: "#F0C572" }); /* r369 re-key: mint/rose deep ≡ ink in dark; amber deep ≡ fill */
+    expect(dark.danger).toEqual({ fill: "#FF8A7A", soft: "#3B2320", ink: "#FF8A7A" }); // r369 re-key
   });
 
   it("stays in sync with the tone families it resolves from", () => {
