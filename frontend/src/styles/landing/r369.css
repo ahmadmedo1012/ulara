@@ -649,6 +649,20 @@
 @media (min-width: 1024px) {
   .w369-band { min-block-size: min(100svh, 56rem); align-items: center; }
 }
+/* P2b: two beats per band on desktop — the headline alone first (centred,
+ * large), then the one focal subject. The page gains real scroll length
+ * without losing a word; phones keep the single stacked column. */
+@media (min-width: 1024px) {
+  .w369-band { grid-template-columns: minmax(0, 1fr); row-gap: clamp(var(--sp-9), 7vw, var(--sp-12)); align-items: start; }
+  .w369-band-head,
+  .w369-band:nth-of-type(even) .w369-band-head,
+  .w369-band:nth-of-type(odd) .w369-band-head {
+    order: 0; max-inline-size: 40ch; margin-inline: auto; text-align: center;
+    padding-inline: 0; justify-items: center;
+    min-block-size: min(70svh, 40rem); display: grid; align-content: center;
+  }
+  .w369-band-head .w369-h2 { font-size: clamp(2.6rem, 5vw, 4.4rem); }
+}
 @media (max-width: 1023px) {
   .w369-band { min-block-size: min(80svh, 40rem); align-content: center; }
 }
