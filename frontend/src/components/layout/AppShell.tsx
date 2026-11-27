@@ -1,6 +1,7 @@
 import { Outlet, useLocation } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import { Suspense, useEffect, useRef, useState } from 'react';
+import { playSound } from '../../lib/sound';
 // R305-A4 the reference shell layer — the shell's own r305 treatment, scoped
 // here and UNLAYERED by design so it is the cascade's last word after
 // polish.css's overrides. Imported ONLY by the shell (the file itself
@@ -326,6 +327,21 @@ export function AppShell({ children }: { children?: ReactNode }) {
     onboardingAutoStarted.current = true;
     openOnboarding();
   }, [isRoleHome, onboardingShouldAutoStart, onboardingOpen, openOnboarding]);
+
+  /* r369 slice 05 — the «tap» sound seat: ONE delegated listener for
+     .btn presses inside the shell. The sound module enforces the
+     opt-in (default silent) and the reduced-motion/data-saver mutes,
+     so this listener is inert until the user asks for sound in
+     Settings «الصوت». Links (.pill chips, nav) keep their silence —
+     the tap belongs to actions, not navigation. */
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      const el = e.target as HTMLElement | null;
+      if (el?.closest('.btn')) playSound('tap');
+    };
+    document.addEventListener('click', onClick);
+    return () => document.removeEventListener('click', onClick);
+  }, []);
 
   const title = resolveTitle(location.pathname);
   /* r324 X10 — the sheet-code ambient context is RETIRED with the

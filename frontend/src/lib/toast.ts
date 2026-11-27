@@ -16,6 +16,7 @@
  * (session-scoped — no persist middleware; toasts are ephemeral).
  */
 import { create } from 'zustand';
+import { playSound } from './sound';
 // r147 (T1-g F5): the type lives HERE — its old home
 // (components/overlays/Toast.tsx) importing it back from lib/toast.ts
 // was the repo's only dependency cycle (type-only edge one way,
@@ -118,7 +119,13 @@ function show(variant: ToastVariant, message: string, opts?: ToastOptions): stri
 
 /** The programmatic surface: `toast.success('…')` from anywhere in the app. */
 export const toast = {
-  success: (message: string, opts?: ToastOptions) => show('success', message, opts),
+  /* r369 slice 05: a success toast is the «confirm» sound seat — the
+     sound module itself enforces the opt-in + reduced-motion/data-saver
+     mutes, so this call is always safe. */
+  success: (message: string, opts?: ToastOptions) => {
+    playSound('confirm');
+    return show('success', message, opts);
+  },
   error: (message: string, opts?: ToastOptions) => show('error', message, opts),
   info: (message: string, opts?: ToastOptions) => show('info', message, opts),
   warning: (message: string, opts?: ToastOptions) => show('warning', message, opts),

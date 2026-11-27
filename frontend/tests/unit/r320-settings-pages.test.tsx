@@ -106,7 +106,11 @@ describe('R320 cycle-3 — the settings door in every nav', () => {
 /* ── 2 · the settings sheet ─────────────────────────────────────── */
 
 describe('R320 cycle-3 — SettingsPage (any-authed)', () => {
-  it('renders the seven §B2 sections with the mono indexes', () => {
+  /* r369 slice 05 re-key: spec 05's sound toggle added the «الصوت»
+     section (client-local, default OFF) — seven sections became eight.
+     The mono indexes shifted (+1 from تغيير كلمة المرور onward); the
+     titles below are the contract, not the numbers. */
+  it('renders the eight §B2 sections with the mono indexes', () => {
     render(
       <QueryClientProvider client={QUERY_CLIENT}>
         <MemoryRouter>
@@ -119,6 +123,7 @@ describe('R320 cycle-3 — SettingsPage (any-authed)', () => {
     expect(titles).toEqual(
       expect.arrayContaining([
         'المظهر',
+        'الصوت',
         'تغيير كلمة المرور',
         'معلومات الحساب والتحقق',
         'الإشعارات',
@@ -127,7 +132,7 @@ describe('R320 cycle-3 — SettingsPage (any-authed)', () => {
         'بياناتي',
       ]),
     );
-    expect(bars).toHaveLength(7);
+    expect(bars).toHaveLength(8);
   });
 
   it('carries the theme group and the change-password form (the teacher gap closed)', () => {

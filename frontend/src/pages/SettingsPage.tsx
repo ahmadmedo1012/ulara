@@ -1,8 +1,9 @@
 import { useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { Bell, BellRing, Languages, LifeBuoy, Mail, MailCheck, MonitorSmartphone, Moon, Palette, Trash2 } from 'lucide-react';
+import { Bell, BellRing, Languages, LifeBuoy, Mail, MailCheck, MonitorSmartphone, Moon, Palette, Trash2, Volume2 } from 'lucide-react';
 import { Card } from '../components/primitives';
 import { Icon } from '../components/Icon';
+import { getSoundEnabled, setSoundEnabled, playSound } from '../lib/sound';
 import { PageFrame, PageHeader, SheetSection, SheetEmpty, DataSheet } from '../components/patterns';
 import { ChangePasswordCard } from '../components/account/ChangePasswordCard';
 import { ThemeToggle } from '../components/layout/ThemeToggle';
@@ -66,7 +67,7 @@ function NotificationSettingsSection() {
 
   return (
     <SheetSection
-      index="04"
+      index="05"
       caption="NOTIFICATIONS"
       title="الإشعارات"
       desc="حالتك اليوم وأجهزتك المسجّلة للإشعارات الفورية."
@@ -240,6 +241,46 @@ function NotificationSettingsSection() {
   );
 }
 
+/**
+ * SoundToggleRow — the slice-05 sound preference (client-local). Same
+ * pressed-pill grammar as PreferenceToggleRow, but the state lives in
+ * localStorage (no server field exists — a server-settled mutation
+ * would be a lie here). Flipping ON plays the «confirm» blip once as
+ * immediate, honest feedback; flipping OFF stays silent.
+ */
+function SoundToggleRow() {
+  const [on, setOn] = useState<boolean>(() => getSoundEnabled());
+  const flip = () => {
+    const next = !on;
+    setSoundEnabled(next);
+    setOn(next);
+    if (next) playSound('confirm');
+  };
+  return (
+    <div className="set-row">
+      <div className="set-row-main">
+        <Icon icon={Volume2} size={16} aria-hidden />
+        <div>
+          <div className="set-row-title">أصوات الواجهة</div>
+          <div className="set-row-note">
+            متوقفة افتراضيًا — وتلتزم دائمًا بإعداد «تقليل الحركة» ووضع توفير البيانات.
+          </div>
+        </div>
+      </div>
+      <button
+        type="button"
+        className="set-toggle"
+        aria-pressed={on}
+        aria-label={`أصوات الواجهة — ${on ? 'مفعّل' : 'موقوف'}`}
+        onClick={flip}
+      >
+        <span className="set-toggle-state" aria-hidden="true">{on ? 'مفعّل' : 'موقوف'}</span>
+        <span className="sg-label" aria-hidden="true">SOUND</span>
+      </button>
+    </div>
+  );
+}
+
 /* The preference row's own toggle: the repo's pressed-pill grammar
  * (aria-pressed), 44px touch floor, the signal wash when on. The
  * flip rides the optimistic mutation — the label answers the state,
@@ -402,9 +443,27 @@ export default function SettingsPage() {
         </Card>
       </SheetSection>
 
-      {/* ── [02] تغيير كلمة المرور ──────────────────────────────── */}
+      {/* ── [02] الصوت — r369 slice 05 (spec 05): the reference's
+          contract verbatim — default silent, ONE toggle, remembered,
+          never autoplay with sound, muted entirely under
+          reduced-motion or data-saver. CLIENT-LOCAL on purpose: no
+          server field exists for this preference, so the flip is
+          instant and honest (the §D discipline — never a fake
+          server-settled switch). */}
       <SheetSection
         index="02"
+        caption="SOUND"
+        title="الصوت"
+        desc="أصوات الواجهة — نقرة وتأكيد وإنجاز — متوقفة افتراضيًا وتُحفظ على هذا الجهاز."
+      >
+        <Card>
+          <SoundToggleRow />
+        </Card>
+      </SheetSection>
+
+      {/* ── [03] تغيير كلمة المرور ──────────────────────────────── */}
+      <SheetSection
+        index="03"
         caption="PASSWORD"
         title="تغيير كلمة المرور"
         desc="عند التغيير تُنهى جلساتك على بقية الأجهزة وتبقى جلستك مفتوحة."
@@ -412,9 +471,9 @@ export default function SettingsPage() {
         <ChangePasswordCard />
       </SheetSection>
 
-      {/* ── [03] معلومات الحساب والتحقق ─────────────────────────── */}
+      {/* ── [04] معلومات الحساب والتحقق ─────────────────────────── */}
       <SheetSection
-        index="03"
+        index="04"
         caption="ACCOUNT FACTS"
         title="معلومات الحساب والتحقق"
         desc="كما تقرؤها الخدمة الآن — لا حاجة لتخمين ما هو محفوظ."
@@ -469,12 +528,12 @@ export default function SettingsPage() {
         <EmailVerificationCard />
       </SheetSection>
 
-      {/* ── [04] الإشعارات — the real register (r359 §5.5) ─────── */}
+      {/* ── [05] الإشعارات — the real register (r359 §5.5) ─────── */}
       <NotificationSettingsSection />
 
-      {/* ── [05] اللغة والأرقام (مقعد صادق) ─────────────────────── */}
+      {/* ── [06] اللغة والأرقام (مقعد صادق) ─────────────────────── */}
       <SheetSection
-        index="05"
+        index="06"
         caption="LANGUAGE"
         title="اللغة والأرقام"
         desc="أُلارا عربية-أولًا بلغة واحدة اليوم؛ مقعد اللغة محجوز."
@@ -486,23 +545,23 @@ export default function SettingsPage() {
         />
       </SheetSection>
 
-      {/* ── [06] الجلسات والأجهزة (مقعد صادق) ───────────────────── */}
+      {/* ── [07] الجلسات والأجهزة (مقعد صادق) ───────────────────── */}
       <SheetSection
-        index="06"
+        index="07"
         caption="SESSIONS"
         title="الجلسات والأجهزة"
         desc="قائمة الجلسات النشطة غير متاحة بعد — وسيلة إنهائها الفعّالة متاحة الآن."
       >
         <SheetEmpty
           title="قريبًا"
-          desc="اليوم: تغيير كلمة المرور (القسم [02]) يُنهي جلسات بقية الأجهزة فورًا."
+          desc="اليوم: تغيير كلمة المرور (القسم [03]) يُنهي جلسات بقية الأجهزة فورًا."
           code="PENDING"
         />
       </SheetSection>
 
-      {/* ── [07] بياناتي (مقعد صادق + قناة) ─────────────────────── */}
+      {/* ── [08] بياناتي (مقعد صادق + قناة) ─────────────────────── */}
       <SheetSection
-        index="07"
+        index="08"
         caption="MY DATA"
         title="بياناتي"
         desc="لا يوجد تصدير ذاتي أو حذف ذاتي بعد — الطلب يصل عبر قناة التواصل."

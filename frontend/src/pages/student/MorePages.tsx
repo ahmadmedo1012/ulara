@@ -35,6 +35,7 @@ import { SheetSection, KpiBand, DataSheet, SheetEmpty, type DataSheetColumn } fr
  * never a mock ladder. */
 import { LevelBadge, LEVEL_NAMES, LEVEL_TIER_GROUPS } from '../../components/gamification/LevelBadge';
 import { Celebrate } from '../../components/gamification/Celebrate';
+import { playSound } from '../../lib/sound';
 import { EmptyMascot } from '../../components/mascot/EmptyMascot';
 /* R319 (c3-S2) — the §B2 kit: the BarCount meta, the mono status chip +
  * the today week strip (the pages-B sweep's shared barrel for this
@@ -112,6 +113,9 @@ export function GamificationPage() {
         rise: `+${levelNow - remembered}`,
         label: `مستوى جديد — ${name}`,
       });
+      /* slice 05: the milestone seat — plays only when the user opted
+         in (the module enforces it, plus RM/data-saver mutes). */
+      playSound('milestone');
     }
     if (remembered !== levelNow) {
       try { window.localStorage.setItem(key, String(levelNow)); } catch { /* ignore */ }
