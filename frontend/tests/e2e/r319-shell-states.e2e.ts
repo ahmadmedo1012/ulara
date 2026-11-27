@@ -50,8 +50,8 @@ const THEMES = ['light', 'dark'] as const;
 /* The theme's own paper ground (tokens.css --bg): light #F2F1EC, dark
  * #262019 — the ONLY grounds the sheet and the dock may paint. */
 const PAPER: Record<(typeof THEMES)[number], string> = {
-  light: 'rgb(242, 241, 236)',
-  dark: 'rgb(38, 32, 25)',
+  light: 'rgb(251, 246, 236)',
+  dark: 'rgb(20, 18, 43)',
 };
 
 /* ─── WCAG contrast math (real in-page functions, computed values) ─── */

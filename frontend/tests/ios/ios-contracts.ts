@@ -50,8 +50,8 @@ export const GHOST_ROW_TEXT = 'مقرّراتي الدراسية';
 
 /** The theme's own paper ground (tokens.css --bg) — the only ground the sheet may paint. */
 export const PAPER: Record<'light' | 'dark', string> = {
-  light: 'rgb(242, 241, 236)',
-  dark: 'rgb(38, 32, 25)',
+  light: 'rgb(251, 246, 236)',
+  dark: 'rgb(20, 18, 43)',
 };
 
 /** Runtime artifacts (gitignored) — plain screenshots, never pinned. */
@@ -164,10 +164,22 @@ export async function contrastRatio(page: Page, fg: string, bg: string): Promise
   return page.evaluate(
     (pair) => {
       const parse = (s: string) => {
-        const m = /rgba?\(([^)]+)\)/.exec(s);
-        if (!m) return null;
-        const p = m[1]!.split(',').map((x) => parseFloat(x));
-        return { r: p[0]!, g: p[1]!, b: p[2]! };
+        const m = /(rgba?)\(([^)]+)\)/.exec(s);
+        if (m) {
+          const p = m[2]!.split(',').map((x) => parseFloat(x));
+          return { r: p[0]!, g: p[1]!, b: p[2]! };
+        }
+        /* css Color 4 serialisation WebKit uses for translucent tokens:
+           color(srgb r g b / a), 0..1 channels. Composite over the
+           drawer sheet (the nav's own opaque paint) so the ratio is real. */
+        const c = /color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\)/.exec(s);
+        if (!c) return null;
+        const a = c[4] === undefined ? 1 : parseFloat(c[4]);
+        const nav = document.querySelector('nav.sidebar');
+        const bm = nav ? /rgba?\(([^)]+)\)/.exec(getComputedStyle(nav).backgroundColor) : null;
+        const bp = bm ? bm[1]!.split(',').map((x) => parseFloat(x)) : [255, 255, 255];
+        const ch = (v: string, i: number) => Math.round(parseFloat(v) * 255 * a + bp[i]! * (1 - a));
+        return { r: ch(c[1]!, 0), g: ch(c[2]!, 1), b: ch(c[3]!, 2) };
       };
       const lum = (c: { r: number; g: number; b: number }) => {
         const n = [c.r, c.g, c.b].map((v) => {
@@ -199,10 +211,22 @@ export interface IosRowContract {
 export async function drawerRowContracts(page: Page): Promise<IosRowContract[]> {
   return page.evaluate(() => {
     const parse = (s: string) => {
-      const m = /rgba?\(([^)]+)\)/.exec(s);
-      if (!m) return null;
-      const p = m[1]!.split(',').map((x) => parseFloat(x));
-      return { r: p[0]!, g: p[1]!, b: p[2]! };
+      const m = /(rgba?)\(([^)]+)\)/.exec(s);
+        if (m) {
+          const p = m[2]!.split(',').map((x) => parseFloat(x));
+          return { r: p[0]!, g: p[1]!, b: p[2]! };
+        }
+        /* css Color 4 serialisation WebKit uses for translucent tokens:
+           color(srgb r g b / a), 0..1 channels. Composite over the
+           drawer sheet (the nav's own opaque paint) so the ratio is real. */
+        const c = /color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\)/.exec(s);
+        if (!c) return null;
+        const a = c[4] === undefined ? 1 : parseFloat(c[4]);
+        const nav = document.querySelector('nav.sidebar');
+        const bm = nav ? /rgba?\(([^)]+)\)/.exec(getComputedStyle(nav).backgroundColor) : null;
+        const bp = bm ? bm[1]!.split(',').map((x) => parseFloat(x)) : [255, 255, 255];
+        const ch = (v: string, i: number) => Math.round(parseFloat(v) * 255 * a + bp[i]! * (1 - a));
+        return { r: ch(c[1]!, 0), g: ch(c[2]!, 1), b: ch(c[3]!, 2) };
     };
     const lum = (c: { r: number; g: number; b: number }) => {
       const n = [c.r, c.g, c.b].map((v) => {
