@@ -19,7 +19,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self';script-src 'self' 'sha256-saJY4bMFTOIusPjPuDje7LqxcOsbJet0IyMGGieESGQ=' 'sha256-FTZgL3xgqGP26FI9CPOLZDDtv3jS/uPOSGLVh+WbA/w=';style-src 'self' 'unsafe-inline';img-src 'self' data: blob:;font-src 'self';connect-src 'self';worker-src 'self' blob:;object-src 'none';base-uri 'self';frame-src 'self'"
+          "value": "default-src 'self';script-src 'self' 'sha256-saJY4bMFTOIusPjPuDje7LqxcOsbJet0IyMGGieESGQ=' 'sha256-zPiD2b4OyHpW8exHEX6QW42kwaI5EHDEyvUMpMyTN7Q=';style-src 'self' 'unsafe-inline';img-src 'self' data: blob:;font-src 'self';connect-src 'self';worker-src 'self' blob:;object-src 'none';base-uri 'self';frame-src 'self'"
         },
         { "key": "Cross-Origin-Opener-Policy", "value": "same-origin" },
         { "key": "Cross-Origin-Resource-Policy", "value": "cross-origin" },

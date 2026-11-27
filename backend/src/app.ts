@@ -142,7 +142,7 @@ const THEME_BOOTSTRAP_SHA256 = 'saJY4bMFTOIusPjPuDje7LqxcOsbJet0IyMGGieESGQ='; /
 // Phase Ω: pin refreshed — the JSON-LD description now names the demo
 // WORKSPACE (مساحة عمل أُلارا التجريبية) instead of the retired
 // fictional-university tenant.
-const JSON_LD_SHA256 = 'FTZgL3xgqGP26FI9CPOLZDDtv3jS/uPOSGLVh+WbA/w=';
+const JSON_LD_SHA256 = 'zPiD2b4OyHpW8exHEX6QW42kwaI5EHDEyvUMpMyTN7Q=';
 
 export function createApp() {
   const app = express();
