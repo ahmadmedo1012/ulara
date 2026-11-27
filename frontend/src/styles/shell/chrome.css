@@ -328,6 +328,15 @@
     transform: translateX(-0.1875rem);
     border-block-end-color: var(--accent-strong);
   }
+  /* r369 slice 05 (evidence press-cdp): a held press is ALWAYS also a
+     hover on fine pointers, and this unlayered nudge beat the layered
+     R313 press register — the primary/accent spring never showed. The
+     press wins while pressed; the nudge resumes on release. Same
+     register, same token — only the winner changes. */
+  .has-shell .btn.accent:active:not(:disabled),
+  .has-shell .btn.primary:active:not(:disabled) {
+    transform: scale(var(--press-scale));
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .has-shell .btn.accent:hover,
