@@ -662,13 +662,18 @@ interface BandProps {
   jar: string;
   /** anchor target for the nav (#story, #levels …) */
   id?: string;
+  /** 'night': the band is a full-bleed dark scene (the page's arrival moment) */
+  scene?: 'night';
   /** index in the top bar's stage navigator */
   stage?: string;
 }
 
-function Band({ n, kicker, title, body, tint, icon, children, jar, id, stage }: BandProps) {
+function Band({ n, kicker, title, body, tint, icon, children, jar, id, stage, scene }: BandProps) {
   return (
-    <section className="w369-band" id={id} data-tint={tint} data-jar={jar} data-stage={stage}>
+    <section
+      className="w369-band" id={id} data-tint={tint} data-jar={jar} data-stage={stage}
+      data-scene={scene} data-theme={scene === 'night' ? 'dark' : undefined}
+    >
       <div className="w369-band-head">
         <span className="w369-band-num" aria-hidden="true">{n}</span>
         <p className="w369-band-kicker"><Glyph name={icon} size={15} />{kicker}</p>
@@ -1210,7 +1215,7 @@ export function LevelsBand() {
   const name = LEVELS[picked];
   return (
     <Band
-      n="06" jar="06" tint="leaf" icon="admin" id="levels" stage="4"
+      n="06" jar="06" tint="leaf" icon="admin" id="levels" stage="4" scene="night"
       kicker="سلّم الإتقان — عشرون مستوى"
       title={<>سلّمٌ من<br /><span className="w369-em">عشرين مستوى</span></>}
       body="من «بذرة» إلى «المعلّم»: تدرّج إتقان بأسماء عربية أصيلة، ولكل مستوى شارة مرسومة له وحده. اختر مستوى لترى تعريفه."
