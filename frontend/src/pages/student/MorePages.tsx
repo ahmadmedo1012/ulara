@@ -35,7 +35,6 @@ import { SheetSection, KpiBand, DataSheet, SheetEmpty, type DataSheetColumn } fr
  * never a mock ladder. */
 import { LevelBadge, LEVEL_NAMES, LEVEL_TIER_GROUPS } from '../../components/gamification/LevelBadge';
 import { Celebrate } from '../../components/gamification/Celebrate';
-import { playSound } from '../../lib/sound';
 /* R319 (c3-S2) — the §B2 kit: the BarCount meta, the mono status chip +
  * the today week strip (the pages-B sweep's shared barrel for this
  * file's pages; the SectionBar seats retire onto the framed sheets). */
@@ -106,12 +105,9 @@ export function GamificationPage() {
       const name = LEVEL_NAMES[Math.min(Math.max(levelNow, 1), LEVEL_NAMES.length) - 1];
       setCelebration({
         id: `${key}:${levelNow}`,
-        rise: `+${levelNow - remembered}`,
-        label: `مستوى جديد — ${name}`,
+        label: `تحديث المستوى: بلغت المستوى ${levelNow} — ${name}`,
       });
-      /* slice 05: the milestone seat — plays only when the user opted
-         in (the module enforces it, plus RM/data-saver mutes). */
-      playSound('milestone');
+      /* r369 tone: a quiet text notice only — no sound, no rise counter. */
     }
     if (remembered !== levelNow) {
       try { window.localStorage.setItem(key, String(levelNow)); } catch { /* ignore */ }
@@ -201,8 +197,7 @@ export function GamificationPage() {
       {celebration && (
         <Celebrate
           id={celebration.id}
-          rise={celebration.rise}
-          label={celebration.label}
+                    label={celebration.label}
           onSettle={() => setCelebration(null)}
         />
       )}
