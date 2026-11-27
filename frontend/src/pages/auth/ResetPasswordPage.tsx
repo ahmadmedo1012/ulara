@@ -57,7 +57,7 @@ type ResetInputs = z.infer<typeof resetFormSchema>;
  * are indistinguishable by design (PAGES-GAP §5: no token-oracle). */
 const INVALID_TOKEN_TITLE = 'الرابط غير صالح أو انتهت صلاحيته';
 const INVALID_TOKEN_BODY =
-  'روابط الاستعادة تُستخدم مرة واحدة وتنتهي صلاحيتها بعد ٣٠ دقيقة — اطلب رابطًا جديدًا وأعد المحاولة.';
+  'روابط الاستعادة تُستخدم مرة واحدة وتنتهي صلاحيتها بعد 30 دقيقة — اطلب رابطًا جديدًا وأعد المحاولة.';
 
 /** Generic refusal ONLY for failures the server never answered (network). */
 const GENERIC_RESET_ERROR =
@@ -177,7 +177,7 @@ export default function ResetPasswordPage() {
                 <span className="auth-meta">(كلمة مرور جديدة)</span>
                 <h1 className="auth-form-title">عيّن كلمة مرور جديدة</h1>
                 <p className="auth-form-sub">
-                  اختر كلمة مرور قوية لحسابك — من ١٢ إلى ٧٢ حرفًا، ليست من الكلمات الشائعة.
+                  اختر كلمة مرور قوية لحسابك — من 12 إلى 72 حرفًا، ليست من الكلمات الشائعة.
                 </p>
               </div>
 
@@ -240,7 +240,7 @@ export default function ResetPasswordPage() {
                     12–72 + the common-password blocklist — nothing
                     invented, nothing hidden. */}
                 <div className="fp-mail-note" role="note">
-                  السياسة الفعلية: ١٢ حرفًا على الأقل و٧٢ كحدّ أقصى، وألا تكون من الكلمات الشائعة (تُرفض مثل password123). تعمل القاعدة نفسها في التسجيل وتغيير كلمة المرور.
+                  السياسة الفعلية: 12 حرفًا على الأقل و72 كحدّ أقصى، وألا تكون من الكلمات الشائعة (تُرفض مثل password123). تعمل القاعدة نفسها في التسجيل وتغيير كلمة المرور.
                 </div>
 
                 {resetPassword.isError && (

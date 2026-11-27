@@ -404,8 +404,8 @@ export function LandingNav() {
 
 const HERO_ROWS = [
   { title: 'واجب: تحليل النصّ الأدبي', meta: 'يُسلَّم غدًا · الأدب الحديث', tone: 'amber', icon: 'book' },
-  { title: 'محاضرة: مدخل إلى الإحصاء', meta: 'الأحد ٩:٠٠ · القاعة ٣', tone: 'sky', icon: 'graduation' },
-  { title: 'اختبار قصير: الجبر الخطّي', meta: 'بعد يومين · ٢٠ دقيقة', tone: 'rose', icon: 'target' },
+  { title: 'محاضرة: مدخل إلى الإحصاء', meta: 'الأحد 9:00 · القاعة 3', tone: 'sky', icon: 'graduation' },
+  { title: 'اختبار قصير: الجبر الخطّي', meta: 'بعد يومين · 20 دقيقة', tone: 'rose', icon: 'target' },
 ] as const;
 
 /**
@@ -448,7 +448,7 @@ function TourDialog({ onClose }: { onClose: () => void }) {
           <Glyph name="close" size={20} />
         </button>
         <p className="w369-eyebrow">
-          <Glyph name="sparkle" size={15} /> جولة ٣٠ ثانية · نموذج توضيحي
+          <Glyph name="sparkle" size={15} /> جولة 30 ثانية · نموذج توضيحي
         </p>
         <div className="w369-tour-stage" key={beat}>
           <span className="w369-tour-icon" data-tone={beat}>
@@ -541,7 +541,7 @@ export function Hero() {
           <Link to={ROUTES.auth} className="w369-btn w369-btn-ghost">لديك حساب؟ تسجيل الدخول</Link>
           <button type="button" className="w369-tour-btn" onClick={() => setTour(true)}>
             <span className="w369-tour-play" aria-hidden="true"><Glyph name="live" size={16} /></span>
-            شاهد الجولة · ٠:٣٠
+            شاهد الجولة · 0:30
           </button>
         </div>
         {/* mounted only while open — the funnel counts exactly five primary
@@ -565,13 +565,13 @@ export function Hero() {
              aria-label="عرض توضيحي لشاشة الطالب في أُلارا: قائمة واجبات ومحاضرات مع شريط تقدّم">
           <div className="w369-phone-top">
             <span className="w369-phone-dot" />
-            <span className="w369-phone-time">٩:٤١</span>
+            <span className="w369-phone-time">9:41</span>
           </div>
           <div className="w369-phone-screen">
             <div className="w369-phone-greet">
               <span className="w369-phone-avatar" aria-hidden="true">س</span>
               <div>
-                <p className="w369-phone-hi">الأحد · ٢٤ نوفمبر</p>
+                <p className="w369-phone-hi">الأحد · 24 نوفمبر</p>
                 <p className="w369-phone-sub">سارة العتيبي · الأدب الحديث</p>
               </div>
             </div>
@@ -594,7 +594,7 @@ export function Hero() {
             <div className="w369-phone-progress">
               <span>تقدّم المقرّر</span>
               <span className="w369-phone-bar"><i style={{ inlineSize: '62%' }} /></span>
-              <b>٦٢٪</b>
+              <b>62٪</b>
             </div>
           </div>
         </div>
@@ -745,7 +745,7 @@ export function StarsBand() {
               ))}
             </span>
             <span className="w369-fine">
-              {goalMet ? 'اكتمل هدف الأسبوع — ٢٥ نقطة' : `هدف الأسبوع: ${WEEK_GOAL} نقطة`}
+              {goalMet ? 'اكتمل هدف الأسبوع — 25 نقطة' : `هدف الأسبوع: ${WEEK_GOAL} نقطة`}
             </span>
           </div>
         </div>
@@ -998,7 +998,7 @@ export function RewardsBand() {
       n="04" jar="04" tint="coral" icon="medal" id="progress" stage="2"
       kicker="من التقدّم إلى التوثيق"
       title={<>والتقدّم؟<br /><span className="w369-em">يُوثَّق</span></>}
-      body="عندما يتراكم الإتقان تصبح له علامات موثّقة: شارة إنجاز، وموضع في لوحة تقدّم المقرّر، وشهادة عند إكماله. الأخيرة تُفتح عند ١٨ نقطة."
+      body="عندما يتراكم الإتقان تصبح له علامات موثّقة: شارة إنجاز، وموضع في لوحة تقدّم المقرّر، وشهادة عند إكماله. الأخيرة تُفتح عند 18 نقطة."
     >
       <div className="w369-wallet" data-opened={String(opened)}>
         <div className="w369-wallet-head">
@@ -1035,9 +1035,9 @@ export function RewardsBand() {
         </ul>
         <div className="w369-wallet-note">
           <span className="w369-wallet-note-label">كيف تُحتسب؟</span>
-          <span className="w369-wallet-note-chip">واجب مُسلَّم · ٣</span>
-          <span className="w369-wallet-note-chip">اختبار مُجتاز · ٤</span>
-          <span className="w369-wallet-note-chip">محاضرة محضورة · ٢</span>
+          <span className="w369-wallet-note-chip">واجب مُسلَّم · 3</span>
+          <span className="w369-wallet-note-chip">اختبار مُجتاز · 4</span>
+          <span className="w369-wallet-note-chip">محاضرة محضورة · 2</span>
           <span className="w369-fine">من السجل الأكاديمي نفسه، بلا إدخال يدوي.</span>
         </div>
       </div>
@@ -1148,14 +1148,14 @@ export function LevelsBand() {
     >
       <div className="w369-levels">
         <div className="w369-levels-head">
-          <span className="w369-chip w369-chip-amber"><Glyph name="star" size={14} />المستوى {picked + 1} من ٢٠</span>
+          <span className="w369-chip w369-chip-amber"><Glyph name="star" size={14} />المستوى {picked + 1} من 20</span>
           <span className="w369-fine">أسماء السلّم وشاراته من تصميم أُلارا، وتُمنح حسب نقاط الإتقان.</span>
         </div>
         <div className="w369-levels-stage">
           <span className="w369-levels-big" aria-hidden="true"><LevelBadge level={picked} size={132} /></span>
           <div className="w369-levels-read">
             <b className="w369-levels-name">{name}</b>
-            <span className="w369-levels-idx">المستوى {picked + 1} / ٢٠</span>
+            <span className="w369-levels-idx">المستوى {picked + 1} / 20</span>
             <span className="w369-levels-tier">
               {['بذور', 'مسارات', 'منائر', 'قمم'][Math.floor(picked / 5)]}
             </span>
@@ -1163,10 +1163,10 @@ export function LevelsBand() {
         </div>
         <ul className="w369-tiers">
           {[
-            { name: 'بذور', range: '١–٥' },
-            { name: 'مسارات', range: '٦–١٠' },
-            { name: 'منائر', range: '١١–١٥' },
-            { name: 'قمم', range: '١٦–٢٠' },
+            { name: 'بذور', range: '1–5' },
+            { name: 'مسارات', range: '6–10' },
+            { name: 'منائر', range: '11–15' },
+            { name: 'قمم', range: '16–20' },
           ].map((t, i) => (
             <li key={t.name} data-on={Math.floor(picked / 5) === i ? 'true' : 'false'}>
               <b>{t.name}</b>
@@ -1249,11 +1249,11 @@ export function ShowcaseBand() {
           <div className="w369-phone w369-phone-back" aria-hidden={role === 'student'}>
             <div className="w369-phone-screen">
               <div className="w369-mini-head">
-                <b>متابعة الصفّ</b><span>الأدب الحديث · ٢٤ طالبًا</span>
+                <b>متابعة الصفّ</b><span>الأدب الحديث · 24 طالبًا</span>
               </div>
               <ul className="w369-mini-list">
-                <li><span>نورة الحربي</span><b>١٢ نقطة</b></li>
-                <li><span>سلمان القحطاني</span><b>٩ نقاط</b></li>
+                <li><span>نورة الحربي</span><b>12 نقطة</b></li>
+                <li><span>سلمان القحطاني</span><b>9 نقاط</b></li>
                 <li data-warn="true"><span>ريم الزهراني</span><b>تحتاج متابعة</b></li>
               </ul>
               <button
@@ -1284,15 +1284,15 @@ export function ShowcaseBand() {
           <div className="w369-phone w369-phone-front">
             <div className="w369-phone-screen">
               <div className="w369-mini-head">
-                <b>صباح الخير، سارة</b><span>اليوم · ٣ مهامّ</span>
+                <b>صباح الخير، سارة</b><span>اليوم · 3 مهامّ</span>
               </div>
               <ul className="w369-mini-list">
-                <li data-done="true"><span>واجب تحليل النصّ</span><b>✓ ٣</b></li>
-                <li data-done="true"><span>اختبار الجبر</span><b>✓ ٤</b></li>
-                <li><span>ورشة الكتابة</span><b>٦</b></li>
+                <li data-done="true"><span>واجب تحليل النصّ</span><b>✓ 3</b></li>
+                <li data-done="true"><span>اختبار الجبر</span><b>✓ 4</b></li>
+                <li><span>ورشة الكتابة</span><b>6</b></li>
               </ul>
               <div className="w369-mini-progress">
-                <span>تقدّم المقرّر</span><b>٪٧٨</b>
+                <span>تقدّم المقرّر</span><b>78٪</b>
               </div>
               <p className="w369-mini-note">نموذج توضيحي لواجهة الطالب.</p>
             </div>
@@ -1325,8 +1325,8 @@ const SLIDES = [
  */
 interface MiniView { head: string; meta: string; rows: [string, string][] }
 const DEFAULT_VIEW: MiniView = {
-  head: 'اليوم', meta: '٣ مهامّ · ٢٤ نقطة',
-  rows: [['واجب تحليل النصّ', '✓ ٣'], ['اختبار الجبر الخطّي', '✓ ٤'], ['ورشة الكتابة', '٦']],
+  head: 'اليوم', meta: '3 مهامّ · 24 نقطة',
+  rows: [['واجب تحليل النصّ', '✓ 3'], ['اختبار الجبر الخطّي', '✓ 4'], ['ورشة الكتابة', '6']],
 };
 
 function MiniScreen({ screen }: { screen: string }) {
@@ -1334,27 +1334,27 @@ function MiniScreen({ screen }: { screen: string }) {
     dashboard: DEFAULT_VIEW,
     today: {
       head: 'قائمة اليوم', meta: 'مرتّبة بالأولوية',
-      rows: [['الواجب — الأدب الحديث', '٣'], ['المحاضرة — ٩:٠٠', '٢'], ['الاختبار — غدًا', '٤']],
+      rows: [['الواجب — الأدب الحديث', '3'], ['المحاضرة — 9:00', '2'], ['الاختبار — غدًا', '4']],
     },
     mastery: {
       head: 'مصفوفة الإتقان', meta: 'الأدب الحديث',
-      rows: [['التحليل السردي', '٩٢٪'], ['الشعر الحديث', '٧٨٪'], ['النقد التطبيقي', '٥٤٪']],
+      rows: [['التحليل السردي', '92٪'], ['الشعر الحديث', '78٪'], ['النقد التطبيقي', '54٪']],
     },
     leaderboard: {
-      head: 'لوحة تقدّم المقرّر', meta: '٢٤ طالبًا',
-      rows: [['نورة الحربي', '٤٢'], ['سلمان القحطاني', '٣٨'], ['سارة العتيبي', '٣٤']],
+      head: 'لوحة تقدّم المقرّر', meta: '24 طالبًا',
+      rows: [['نورة الحربي', '42'], ['سلمان القحطاني', '38'], ['سارة العتيبي', '34']],
     },
     levels: {
-      head: 'سلّم الإتقان', meta: 'المستوى ٧ من ٢٠',
+      head: 'سلّم الإتقان', meta: 'المستوى 7 من 20',
       rows: [['فجر', 'مُكتمل'], ['شمس', 'الحالي'], ['مدار', 'مقفل']],
     },
     teacher: {
       head: 'متابعة الصفّ', meta: 'الأدب الحديث',
-      rows: [['أنجزوا الواجب', '١٩ / ٢٤'], ['تحتاج متابعة', '٣'], ['متوسّط الإتقان', '٧١٪']],
+      rows: [['أنجزوا الواجب', '19 / 24'], ['تحتاج متابعة', '3'], ['متوسّط الإتقان', '71٪']],
     },
     quality: {
       head: 'مؤشّرات البرنامج', meta: 'الفصل الأول',
-      rows: [['نسبة الاكتمال', '٨٦٪'], ['رضا الطلّاب', '٤٫٢ / ٥'], ['مقرّرات تحت المراجعة', '٢']],
+      rows: [['نسبة الاكتمال', '86٪'], ['رضا الطلّاب', '4.2 / 5'], ['مقرّرات تحت المراجعة', '2']],
     },
   };
   const view = views[screen] ?? DEFAULT_VIEW;
