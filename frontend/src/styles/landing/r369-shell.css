@@ -193,3 +193,13 @@
   .has-shell .nav-group .nav-item + .nav-item { border-block-start: 0; }
   .has-shell .nav-section-label::before { content: none; }
 }
+
+/* ── 7 · the theme toggle's hit floor ───────────────────────────────
+   The sidebar's segmented theme control shipped 30×28 options — under
+   the 44px hit floor the slice's measured facts demand (the authed
+   overlap audit caught it at 1024/1440/1920, both themes). min-* so
+   the collapsed-rail twin keeps its own geometry contract. */
+.has-shell .theme-toggle-option {
+  min-inline-size: 44px;
+  min-block-size: 44px;
+}

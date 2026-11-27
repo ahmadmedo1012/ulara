@@ -281,3 +281,20 @@ AppShell surfaces, not public pages — they moved to slices 02/03.
   colors --strict / motion / icons / csp-hash PASS · 91 targeted shell
   tests green (nav-active-vocabulary, r305/r325 css contracts, r305
   states, r168a a11y, Sidebar-Topbar) — no re-keys needed.
+
+### Close-out — SLICE 02 CLOSED (2026-11-27)
+- Full unit suite: all 6 shards green (594+447+534+467+530+430 =
+  3002 tests, 243 files) after the slice-02 changes.
+- Overlap audit: new authed variant docs/redesign/r369/audit-authed.mjs
+  (seeds ula-auth + ulara-theme v2 persists, audits /student/dashboard
+  at the same 7 widths × 2 themes). Two audit fixes landed with it:
+  a fixed layer no longer "covers" its OWN children, and text rects
+  clip to their scrollport (the sidebar's opaque sticky footer
+  produced a false text-over-text on labels scrolled beneath it).
+  Result: 0 findings.
+- Real fix the audit caught: the sidebar theme toggle's options were
+  30×28 — under the 44px hit floor. r369-shell.css §7 raises them to
+  44×44 min (verified in close/shell-1440.png).
+- Evidence: evidence/02-product-shell/close/shell-{1440,390}.png.
+- Deferred: none new. (Slice-01 debt — dead .auth-shell sheets +
+  AuthPage-alignment text-pins — still rides to slice 06.)
