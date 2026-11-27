@@ -186,6 +186,26 @@ describe('refreshTokens — session-table gate', () => {
     });
   });
 
+  it('an un-migrated database (P2021 missing user_sessions) still refreshes — no 500 after login', async () => {
+    const { Prisma } = await import('@prisma/client');
+    userFindUnique.mockResolvedValue(makeUser({ tokenVersion: 2 }));
+    sessionFindUnique.mockRejectedValue(
+      new Prisma.PrismaClientKnownRequestError('The table `user_sessions` does not exist', {
+        code: 'P2021',
+        clientVersion: 'test',
+      }),
+    );
+    sessionUpdateMany.mockResolvedValue({ count: 0 });
+    const { refreshToken } = await refreshTokens(signRefreshToken('user-1', 2));
+    expect(payloadOf(refreshToken)).toMatchObject({ ver: 2 });
+  });
+
+  it('any OTHER database error on the session lookup still fails closed', async () => {
+    userFindUnique.mockResolvedValue(makeUser({ tokenVersion: 2 }));
+    sessionFindUnique.mockRejectedValue(new Error('connection reset'));
+    await expect(refreshTokens(signRefreshToken('user-1', 2))).rejects.toThrow('connection reset');
+  });
+
   it('a REVOKED-row presentation is THEFT: reusedAt stamp + family kill + atomic bump + 401', async () => {
     userFindUnique.mockResolvedValue(makeUser({ tokenVersion: 3 }));
     const presented = signRefreshToken('user-1', 3);

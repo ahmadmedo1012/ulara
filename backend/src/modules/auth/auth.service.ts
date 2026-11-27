@@ -1,4 +1,4 @@
-import { AcademicRank, Role, type User } from '@prisma/client';
+import { AcademicRank, Prisma, Role, type User } from '@prisma/client';
 import { prisma } from '../../db.js';
 import { hashPassword, verifyPassword } from '../../lib/password.js';
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from '../../lib/jwt.js';
@@ -674,9 +674,28 @@ export const refreshTokens = async (refreshToken: string, ctx: LoginContext = {}
   // P6 — the per-session gate (see docblock). handleRefreshTokenReuse
   // is deliberately NOT error-swallowed: if the theft response cannot
   // be written we fail CLOSED (500) rather than ever issuing tokens.
-  const sessionRow = await prisma.userSession.findUnique({
-    where: { refreshTokenHash: hashRefreshToken(refreshToken) },
-  });
+  // A database that has not yet received migration 0008 (the
+  // user_sessions table: P2021 missing table / P2022 missing column)
+  // must not turn every refresh into a 500 — that logged people out
+  // right after a successful sign-in. Only that exact "schema not
+  // migrated" class is treated as "no ledger row" (legacy behaviour,
+  // the tokenVersion revocation in decideRefresh still applies); any
+  // other database error still fails closed.
+  let sessionRow: Awaited<ReturnType<typeof prisma.userSession.findUnique>> = null;
+  try {
+    sessionRow = await prisma.userSession.findUnique({
+      where: { refreshTokenHash: hashRefreshToken(refreshToken) },
+    });
+  } catch (err) {
+    if (
+      err instanceof Prisma.PrismaClientKnownRequestError &&
+      (err.code === 'P2021' || err.code === 'P2022')
+    ) {
+      logger.error({ err }, 'user_sessions ledger missing — run prisma migrate deploy (0008_p6_auth_sessions); refresh continuing without it');
+    } else {
+      throw err;
+    }
+  }
   if (sessionRow) {
     // Hash-collision paranoia across users (sha-256 makes this
     // unreachable; the check costs nothing and fails closed).
