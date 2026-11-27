@@ -4189,6 +4189,14 @@ button.tq-row:focus-visible {
   }
 }
 
+/* press wash: hover is guarded to fine pointers, so on a phone the row gave
+   no answer to a tap. :active fires on touch and mouse alike. */
+a.tq-row:active,
+button.tq-row:active,
+a.list-row:active {
+  background: var(--surface-2);
+}
+
 /* The tinted icon well — flat, RTL-neutral, keyed by --tq-accent. */
 .tq-row-icon {
   inline-size: 44px;
