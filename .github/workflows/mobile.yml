@@ -70,6 +70,22 @@ on:
       - 'apps/mobile/**'
       - 'shared/**'
       - '.github/workflows/mobile.yml'
+  # R370 — the SAFE BRANCH CHECK. Before r370 a mobile change could only be
+  # validated on main (post-merge) or by a manual dispatch: a branch that
+  # touched apps/mobile/** got zero CI until it landed. This trigger runs
+  # the FAST lane only on a pull request — typecheck · expo lint ·
+  # contract-check · generated-drift · jest · export · bundle budget — the
+  # exact Lane A job set that needs NO secrets, NO Gradle, NO emulator and
+  # NO signing key, so a fork PR or a branch without any repository secret
+  # still validates. The lane normalizer below maps any non-push,
+  # non-dispatch event to `fast`, and native-build-devclient /
+  # android-smoke-prebuilt / android-smoke stay gated on native intent and
+  # explicit lanes, so a PR can never queue a native build.
+  pull_request:
+    paths:
+      - 'apps/mobile/**'
+      - 'shared/**'
+      - '.github/workflows/mobile.yml'
   # R327 D2 + R342 t09: the owner's manual trigger. The DEFAULT lane is
   # `fast` — an ordinary validation dispatch must not queue any native
   # build (the r341-era behavior: every dispatch ran an EAS cloud build
@@ -126,6 +142,8 @@ jobs:
           if [ "${{ github.event_name }}" = "push" ]; then
             echo "lane=push" >> "$GITHUB_OUTPUT"
           else
+            # r370: workflow_dispatch honours its input; a pull_request (or
+            # any other non-push event) normalizes to the secret-free fast lane.
             echo "lane=${{ github.event.inputs.lane || 'fast' }}" >> "$GITHUB_OUTPUT"
           fi
       # The NATIVE FINGERPRINT — every input that can change runtime-
