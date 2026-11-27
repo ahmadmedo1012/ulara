@@ -49,6 +49,7 @@ import {
 } from "@/features/notifications/grouping";
 import { safeDeepLink, useMarkAllRead, useMarkRead } from "@/hooks/useNotifications";
 import type { AppNotification, Paginated } from "@/api/types";
+import { pressFeedback } from "@/motion";
 
 const FEED_LIMIT = 30;
 
@@ -169,7 +170,7 @@ export function NotificationsScreen({
               accessibilityRole="button"
               accessibilityLabel="رجوع"
               onPress={onBack}
-              style={{ width: 44, height: 44, alignItems: "center", justifyContent: "center" }}
+              style={({ pressed }) => [{ width: 44, height: 44, alignItems: "center", justifyContent: "center" }, pressed && { opacity: pressFeedback.linkOpacity }]}
             >
               <ArrowRight size={22} color={p.text} />
             </Pressable>
@@ -189,7 +190,7 @@ export function NotificationsScreen({
               accessibilityLabel="تعليم الكل كمقروء"
               onPress={onMarkAll}
               disabled={markAll.isPending}
-              style={{ minHeight: 44, justifyContent: "center" }}
+              style={({ pressed }) => [{ minHeight: 44, justifyContent: "center" }, pressed && { opacity: pressFeedback.linkOpacity }]}
             >
               <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
                 <CheckCheck size={18} color={p.textSecondary} />

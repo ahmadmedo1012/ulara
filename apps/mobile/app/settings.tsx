@@ -29,6 +29,7 @@ import { authenticate, biometricAvailable, getBiometricLockEnabled, setBiometric
 import { humanizeError } from "@/lib/errors";
 import type { SessionResponse } from "@/api/types";
 import Constants from "expo-constants";
+import { pressFeedback } from "@/motion";
 
 /** /settings — the SHARED settings surface (every role). R341 M3: the
  *  30-row wall of boxed one-per-setting cards is dead — rows are grouped
@@ -581,7 +582,7 @@ function PrefRow({
           accessibilityState={{ checked: value }}
           testID={testID}
           onPress={() => onToggle(!value)}
-          style={{ minHeight: touchFloor, minWidth: touchFloor, alignItems: "center", justifyContent: "center" }}
+          style={({ pressed }) => [{ minHeight: touchFloor, minWidth: touchFloor, alignItems: "center", justifyContent: "center" }, pressed && { opacity: pressFeedback.linkOpacity }]}
         >
           <Switch
             pointerEvents="none"

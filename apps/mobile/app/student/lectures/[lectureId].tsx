@@ -75,7 +75,7 @@ import { EmptyState, ErrorState, SkeletonList } from "@/components/ui/states";
 import { AppSheet, PickerSheet } from "@/components/ui/sheet";
 import { toast } from "@/components/ui/toast";
 import { haptics } from "@/haptics";
-import { PressableScale } from "@/motion";
+import { PressableScale, pressFeedback } from "@/motion";
 import { useReduceMotion } from "@/hooks/useReduceMotion";
 import { humanizeError } from "@/lib/errors";
 import { arabicIndic, latn, sizeLabel, useNumerals, type NumeralsPreference } from "@/lib/format";
@@ -1073,10 +1073,10 @@ function LectureBody({ lecture, scope }: { lecture: Lecture; scope: string | nul
                     accessibilityLabel={`${mark} — ${opt}`}
                     disabled={picked !== null}
                     onPress={() => submitAnswer(i)}
-                    style={[
+                    style={({ pressed }) => [[
                       styles.option,
                       { borderColor: border, backgroundColor: bg, opacity: picked !== null && !reveal ? 0.9 : 1 },
-                    ]}
+                    ], pressed && { opacity: pressFeedback.linkOpacity }]}
                   >
                     <View style={[styles.mark, { borderColor: border }]}>
                       <T variant="sm" weight="bold">

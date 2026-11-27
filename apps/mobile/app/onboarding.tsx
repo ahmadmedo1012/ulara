@@ -15,6 +15,7 @@ import { requestAndRegisterPush, type PushPermissionState } from "@/lib/push";
 import Animated from "react-native-reanimated";
 import { fadeIn } from "@/motion/entrance";
 import { useTheme } from "@/design/theme";
+import { pressFeedback } from "@/motion";
 
 /**
  * /onboarding — r359 A4 (M2): the FIRST-RUN tour, four screens,
@@ -100,7 +101,7 @@ export default function OnboardingScreen() {
           testID="onboarding-skip"
           onPress={() => void complete()}
           hitSlop={12}
-          style={styles.skip}
+          style={({ pressed }) => [styles.skip, pressed && { opacity: pressFeedback.linkOpacity }]}
         >
           <T variant="body" color="secondary">
             تخطي

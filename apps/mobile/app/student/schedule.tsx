@@ -34,6 +34,7 @@ import { humanizeError } from "@/lib/errors";
 import { haptics } from "@/haptics";
 import { countAr } from "@/features/student/more";
 import { tripoliDow } from "@/features/student/components";
+import { pressFeedback } from "@/motion";
 
 interface DaySlot {
   dow: number;
@@ -284,7 +285,7 @@ function DayChip({
       accessibilityLabel={isToday ? `${label} — اليوم` : label}
       accessibilityState={{ selected }}
       onPress={() => onSelect(id)}
-      style={{
+      style={({ pressed }) => [{
         minHeight: touchFloor,
         justifyContent: "center",
         alignItems: "center",
@@ -297,7 +298,7 @@ function DayChip({
         borderColor: p.rule,
         backgroundColor: selected ? p.primary : "transparent",
         gap: 0,
-      }}
+      }, pressed && { opacity: pressFeedback.linkOpacity }]}
     >
       <T
         variant="sm"

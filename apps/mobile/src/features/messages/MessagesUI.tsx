@@ -49,7 +49,7 @@ import { T } from "@/components/ui/text";
 import { AppSheet, SheetTextInput } from "@/components/ui/sheet";
 import { Avatar, DataList, makeRow, usePagedList } from "@/components/ui/data";
 import { Button, IconButton } from "@/components/ui/pressables";
-import { useEntrance, fadeInUp } from "@/motion";
+import { useEntrance, fadeInUp, pressFeedback } from "@/motion";
 import { haptics } from "@/haptics";
 import { humanizeError } from "@/lib/errors";
 import { toast } from "@/components/ui/toast";
@@ -166,7 +166,7 @@ export function MessagesUI({ onBack }: { onBack?: () => void } = {}) {
             accessibilityRole="button"
             accessibilityLabel="رجوع"
             onPress={onBack}
-            style={{ width: 44, height: 44, alignItems: "center", justifyContent: "center" }}
+            style={({ pressed }) => [{ width: 44, height: 44, alignItems: "center", justifyContent: "center" }, pressed && { opacity: pressFeedback.linkOpacity }]}
           >
             <ArrowRight size={22} color={p.text} />
           </Pressable>

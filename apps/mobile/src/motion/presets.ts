@@ -89,6 +89,8 @@ export function timing(duration: number, easingFn: EasingFn = easings.ds): WithT
 export const pressFeedback = {
   scale: 0.98,
   opacity: 0.9,
+  /** text links, chips and bare rows: no scale, a clear fade (the app's 0.55-0.6 convention). */
+  linkOpacity: 0.6,
 } as const;
 
 /** Local clamp (reanimated's `clamp` is a worklet util — jest-mocked to a

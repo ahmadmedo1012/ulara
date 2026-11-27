@@ -20,6 +20,7 @@ import { sp } from "@/design/tokens";
 import { T, MonoLabel } from "@/components/ui/text";
 import { Markdown } from "@/components/ui/markdown";
 import { copyTextWithToast } from "./clipboard";
+import { pressFeedback } from "@/motion";
 
 /** One parsed segment: prose, or a fenced code block. */
 type Segment = { kind: "prose"; text: string } | { kind: "code"; text: string; lang?: string };
@@ -111,7 +112,7 @@ function CodeBlock({ text, lang }: { text: string; lang?: string }) {
           accessibilityLabel={copied ? "تم النسخ" : "نسخ الكود"}
           onPress={copy}
           hitSlop={6}
-          style={{ minHeight: 44, minWidth: 44, alignItems: "center", justifyContent: "center" }}
+          style={({ pressed }) => [{ minHeight: 44, minWidth: 44, alignItems: "center", justifyContent: "center" }, pressed && { opacity: pressFeedback.linkOpacity }]}
         >
           <Copy size={14} color={copied ? colors.accent : colors.textSecondary} />
         </Pressable>
@@ -161,14 +162,14 @@ export function AssistantMarkdown({
                 accessibilityRole="link"
                 accessibilityLabel={`مصدر: ${c.label}`}
                 onPress={() => onCitationPress?.(c.url as string)}
-                style={[
+                style={({ pressed }) => [[
                   {
                     backgroundColor: colors.sunken,
                     paddingVertical: sp[6],
                     paddingHorizontal: sp[12],
                   },
                   hairlines.border,
-                ]}
+                ], pressed && { opacity: pressFeedback.linkOpacity }]}
               >
                 <T variant="xs" color="accentInk">
                   {c.label}

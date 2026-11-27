@@ -5,7 +5,7 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import { springs, useReduceMotion } from "@/motion";
+import { springs, useReduceMotion, pressFeedback } from "@/motion";
 import { haptics } from "@/haptics";
 import { usePalette } from "@/design/theme";
 import { T } from "@/components/ui/text";
@@ -244,13 +244,13 @@ function TabButton({
       accessibilityLabel={tab.label}
       accessibilityState={{ selected: active }}
       onPress={onPress}
-      style={{
+      style={({ pressed }) => [{
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
         minHeight: 54,
         paddingTop: 8,
-      }}
+      }, pressed && { opacity: pressFeedback.linkOpacity }]}
     >
       <Animated.View style={iconStyle}>
         <View>

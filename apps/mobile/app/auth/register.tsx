@@ -16,6 +16,7 @@ import { Field, SecretField, SelectField } from "@/components/ui/fields";
 import { Logo } from "@/brand";
 import { humanizeError } from "@/lib/errors";
 import { haptics } from "@/haptics";
+import { pressFeedback } from "@/motion";
 
 interface InstitutionRow { id: string; name: string; slug: string }
 interface FacultyRow { id: string; name: string; departments: { id: string; name: string }[] }
@@ -164,7 +165,7 @@ export default function Register() {
             <Pressable
               accessibilityRole="link"
               onPress={() => router.back()}
-              style={{ alignItems: "center", paddingVertical: sp[8], minHeight: 44, justifyContent: "center" }}
+              style={({ pressed }) => [{ alignItems: "center", paddingVertical: sp[8], minHeight: 44, justifyContent: "center" }, pressed && { opacity: pressFeedback.linkOpacity }]}
             >
               <T variant="sm" color="muted">رجوع</T>
             </Pressable>
@@ -184,7 +185,7 @@ export default function Register() {
                 if (r !== role) haptics.selection();
                 setRole(r);
               }}
-              style={{
+              style={({ pressed }) => [{
                 flexDirection: "row",
                 alignItems: "center",
                 gap: sp[12],
@@ -193,7 +194,7 @@ export default function Register() {
                 borderWidth: r === role ? 2 : StyleSheet.hairlineWidth,
                 borderColor: r === role ? p.accent : p.border,
                 backgroundColor: p.surface,
-              }}
+              }, pressed && { opacity: pressFeedback.linkOpacity }]}
             >
               {r === "STUDENT" ? <GraduationCap size={28} color={p.text} /> : <School size={28} color={p.text} />}
               <View style={{ flex: 1, gap: 2 }}>
@@ -227,7 +228,7 @@ export default function Register() {
           <Pressable
             accessibilityRole="link"
             onPress={() => setStep(0)}
-            style={{ alignItems: "center", paddingVertical: sp[8], minHeight: 44, justifyContent: "center" }}
+            style={({ pressed }) => [{ alignItems: "center", paddingVertical: sp[8], minHeight: 44, justifyContent: "center" }, pressed && { opacity: pressFeedback.linkOpacity }]}
           >
             <T variant="sm" color="muted">رجوع — تغيير الصفة</T>
           </Pressable>

@@ -28,7 +28,7 @@ import { BidiText, T } from "@/components/ui/text";
 import { DataList, makeRow } from "@/components/ui/data";
 import { EmptyState, ErrorState, SkeletonList } from "@/components/ui/states";
 import { FilterSheet } from "@/components/ui/sheet";
-import { PressableScale, RingProgress, useStaggerEntrance } from "@/motion";
+import { PressableScale, RingProgress, useStaggerEntrance, pressFeedback } from "@/motion";
 import { haptics } from "@/haptics";
 import { humanizeError } from "@/lib/errors";
 import { dayName, latn, pct } from "@/lib/format";
@@ -227,7 +227,7 @@ function ViewToggle({ view, onChange }: { view: CourseView; onChange: (v: Course
                 onChange(key);
               }
             }}
-            style={{
+            style={({ pressed }) => [{
               /* minHeight, not height — a 200% font may wrap the label;
                * the 44pt floor stays. */
               minHeight: 44,
@@ -236,7 +236,7 @@ function ViewToggle({ view, onChange }: { view: CourseView; onChange: (v: Course
               alignItems: "center",
               gap: sp[6],
               backgroundColor: active ? p.accentSoft : "transparent",
-            }}
+            }, pressed && { opacity: pressFeedback.linkOpacity }]}
           >
             <Icon size={16} color={active ? p.accentInk : p.textMuted} />
             <T variant="sm" weight={active ? "bold" : "medium"} style={{ color: active ? p.accentInk : p.textSecondary }}>
@@ -267,13 +267,13 @@ function FilterOptionRow({
       accessibilityLabel={label}
       accessibilityState={{ selected }}
       onPress={onPress}
-      style={{
+      style={({ pressed }) => [{
         minHeight: touchFloor,
         justifyContent: "center",
         flexDirection: "row",
         alignItems: "center",
         gap: sp[8],
-      }}
+      }, pressed && { opacity: pressFeedback.linkOpacity }]}
     >
       <T
         variant="body"

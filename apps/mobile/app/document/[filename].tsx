@@ -21,7 +21,7 @@ import { Card, Hairline, Badge } from "@/components/ui/surfaces";
 import { ErrorState } from "@/components/ui/states";
 import { ActionSheet, AppSheet, SheetTextInput } from "@/components/ui/sheet";
 import { toast } from "@/components/ui/toast";
-import { RingProgress, Skeleton, SkeletonText } from "@/motion";
+import { RingProgress, Skeleton, SkeletonText, pressFeedback } from "@/motion";
 import { haptics } from "@/haptics";
 import { humanizeError } from "@/lib/errors";
 import { dateTime, latn } from "@/lib/format";
@@ -233,7 +233,7 @@ export default function DocumentViewer() {
                 accessibilityLabel="فتح في المتصفح"
                 onPress={openWeb}
                 hitSlop={8}
-                style={{ minHeight: 44, justifyContent: "center" }}
+                style={({ pressed }) => [{ minHeight: 44, justifyContent: "center" }, pressed && { opacity: pressFeedback.linkOpacity }]}
               >
                 <T variant="sm" color="accentInk">فتح في المتصفح</T>
               </Pressable>
@@ -361,7 +361,7 @@ function AnnotationRow({ a, onDelete }: { a: PaperAnnotation; onDelete: () => vo
           accessibilityLabel="حذف التعليق"
           onPress={onDelete}
           hitSlop={14}
-          style={{ width: 44, height: 44, alignItems: "center", justifyContent: "center" }}
+          style={({ pressed }) => [{ width: 44, height: 44, alignItems: "center", justifyContent: "center" }, pressed && { opacity: pressFeedback.linkOpacity }]}
         >
           <Trash2 size={16} color={p.accentInk} />
         </Pressable>

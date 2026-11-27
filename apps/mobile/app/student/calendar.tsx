@@ -45,7 +45,7 @@ import { EmptyState, ErrorState, SkeletonList } from "@/components/ui/states";
 import { AR_DAYS, timeOf, useNumerals } from "@/lib/format";
 import { humanizeError } from "@/lib/errors";
 import { haptics } from "@/haptics";
-import { fadeIn, useStaggerEntrance } from "@/motion";
+import { fadeIn, useStaggerEntrance, pressFeedback } from "@/motion";
 import { countAr } from "@/features/student/more";
 import {
   PushFrame,
@@ -308,7 +308,7 @@ export default function CalendarScreen() {
                           events: byDay.get(cell.key) ?? [],
                         });
                       }}
-                      style={[
+                      style={({ pressed }) => [[
                         styles.cell,
                         {
                           /* Today = the ONE emphasized cell: accent-soft
@@ -317,7 +317,7 @@ export default function CalendarScreen() {
                           borderColor: isToday ? p.accent : p.border,
                           backgroundColor: isToday ? p.accentSoft : "transparent",
                         },
-                      ]}
+                      ], pressed && { opacity: pressFeedback.linkOpacity }]}
                     >
                       {isToday ? (
                         <View

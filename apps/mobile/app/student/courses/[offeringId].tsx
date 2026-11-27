@@ -37,7 +37,7 @@ import { EmptyState, ErrorState, SkeletonList } from "@/components/ui/states";
 import { ActionSheet } from "@/components/ui/sheet";
 import { toast } from "@/components/ui/toast";
 import { StackHeader } from "@/components/shell/AppTopBar";
-import { PressableScale, RingProgress, useStaggerEntrance } from "@/motion";
+import { PressableScale, RingProgress, useStaggerEntrance, pressFeedback } from "@/motion";
 import { haptics } from "@/haptics";
 import { humanizeError } from "@/lib/errors";
 import { dayName, fromNow, latn, pct, sizeLabel } from "@/lib/format";
@@ -92,7 +92,7 @@ function CourseTabs({ tab, onChange }: { tab: CourseTab; onChange: (t: CourseTab
                 onChange(key);
               }
             }}
-            style={{
+            style={({ pressed }) => [{
               /* minHeight, not height — a 200% font may wrap the label;
                * the 44pt floor stays. */
               flex: 1,
@@ -100,7 +100,7 @@ function CourseTabs({ tab, onChange }: { tab: CourseTab; onChange: (t: CourseTab
               alignItems: "center",
               justifyContent: "center",
               backgroundColor: active ? p.accentSoft : "transparent",
-            }}
+            }, pressed && { opacity: pressFeedback.linkOpacity }]}
           >
             <T variant="sm" weight={active ? "bold" : "medium"} style={{ color: active ? p.accentInk : p.textSecondary }}>
               {label}
@@ -406,7 +406,7 @@ export default function CourseDetailScreen() {
               setActionsMounted(true);
               setActionsOpen(true);
             }}
-            style={{ width: touchFloor, height: touchFloor, alignItems: "center", justifyContent: "center" }}
+            style={({ pressed }) => [{ width: touchFloor, height: touchFloor, alignItems: "center", justifyContent: "center" }, pressed && { opacity: pressFeedback.linkOpacity }]}
           >
             <Ellipsis size={22} color={p.text} />
           </Pressable>

@@ -14,6 +14,7 @@ import { Logo } from "@/brand";
 import { resolveEntryDestination } from "@/components/ui/boot";
 import { humanizeError } from "@/lib/errors";
 import { haptics } from "@/haptics";
+import { pressFeedback } from "@/motion";
 
 const DEMO_ACCOUNTS = [
   { email: "student@test.ly", label: "طالب" },
@@ -89,14 +90,14 @@ export default function SignIn() {
                 accessibilityRole="link"
                 onPress={() => router.push("/auth/forgot-password")}
                 hitSlop={8}
-                style={{ minHeight: 44, justifyContent: "center" }}
+                style={({ pressed }) => [{ minHeight: 44, justifyContent: "center" }, pressed && { opacity: pressFeedback.linkOpacity }]}
               >
                 <T variant="sm" color="secondary">نسيت كلمة المرور؟</T>
               </Pressable>
               <Pressable
                 accessibilityRole="link"
                 hitSlop={8}
-                style={{ minHeight: 44, justifyContent: "center" }}
+                style={({ pressed }) => [{ minHeight: 44, justifyContent: "center" }, pressed && { opacity: pressFeedback.linkOpacity }]}
                 onPress={() =>
                   router.push(
                     params.continue
@@ -111,7 +112,7 @@ export default function SignIn() {
             <Pressable
               accessibilityRole="link"
               onPress={() => router.replace("/auth")}
-              style={{ alignItems: "center", paddingVertical: sp[8], minHeight: 44, justifyContent: "center" }}
+              style={({ pressed }) => [{ alignItems: "center", paddingVertical: sp[8], minHeight: 44, justifyContent: "center" }, pressed && { opacity: pressFeedback.linkOpacity }]}
             >
               <T variant="sm" color="muted">العودة إلى صفحة البداية</T>
             </Pressable>
@@ -161,13 +162,13 @@ export default function SignIn() {
                     form.setValue("identifier", a.email);
                     form.setValue("password", DEMO_PASSWORD);
                   }}
-                  style={{
+                  style={({ pressed }) => [{
                     borderWidth: StyleSheet.hairlineWidth,
                     borderColor: p.rule,
                     paddingHorizontal: sp[10],
                     paddingVertical: 6,
                     backgroundColor: p.surfaceHover,
-                  }}
+                  }, pressed && { opacity: pressFeedback.linkOpacity }]}
                 >
                   <T variant="sm" weight="medium">
                     {a.label} — {a.email}

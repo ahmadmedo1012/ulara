@@ -75,6 +75,7 @@ import { useStatusTones } from "@/design/theme";
 import { dsEase, sp } from "@/design/tokens";
 import { useReduceMotion } from "@/hooks/useReduceMotion";
 import { T } from "@/components/ui/text";
+import { pressFeedback } from "@/motion";
 
 /* ── the own-API reachability probe (R341 T03 → R342 t08) ────────────── */
 
@@ -723,7 +724,7 @@ export function NetworkBanner() {
           accessibilityRole="button"
           accessibilityLabel="إغلاق التنبيه"
           hitSlop={12}
-          style={{ marginStart: sp[8], padding: 2 }}
+          style={({ pressed }) => [{ marginStart: sp[8], padding: 2 }, pressed && { opacity: pressFeedback.linkOpacity }]}
         >
           <X size={14} color={tone.deep} />
         </Pressable>

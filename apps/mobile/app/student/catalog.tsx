@@ -37,7 +37,7 @@ import { DataList, makeRow, usePagedList } from "@/components/ui/data";
 import { EmptyState, ErrorState, OfflineState, SkeletonList } from "@/components/ui/states";
 import { AppSheet, FilterSheet } from "@/components/ui/sheet";
 import { StackHeader } from "@/components/shell/AppTopBar";
-import { PressableScale, useStaggerEntrance } from "@/motion";
+import { PressableScale, useStaggerEntrance, pressFeedback } from "@/motion";
 import { haptics } from "@/haptics";
 import { humanizeError } from "@/lib/errors";
 import { latn } from "@/lib/format";
@@ -130,13 +130,13 @@ function FilterOptionRow({
       accessibilityLabel={label}
       accessibilityState={{ selected }}
       onPress={onPress}
-      style={{
+      style={({ pressed }) => [{
         minHeight: touchFloor,
         justifyContent: "center",
         flexDirection: "row",
         alignItems: "center",
         gap: sp[8],
-      }}
+      }, pressed && { opacity: pressFeedback.linkOpacity }]}
     >
       <T
         variant="body"
