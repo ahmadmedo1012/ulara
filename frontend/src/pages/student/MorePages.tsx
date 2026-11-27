@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Trophy, Star, Medal, Activity, Crown,
@@ -33,6 +34,7 @@ import { SheetSection, KpiBand, DataSheet, SheetEmpty, type DataSheetColumn } fr
  * rule (same geometry, extracted) driven by the REAL training level —
  * never a mock ladder. */
 import { LevelBadge, LEVEL_NAMES, LEVEL_TIER_GROUPS } from '../../components/gamification/LevelBadge';
+import { Celebrate } from '../../components/gamification/Celebrate';
 /* R319 (c3-S2) — the §B2 kit: the BarCount meta, the mono status chip +
  * the today week strip (the pages-B sweep's shared barrel for this
  * file's pages; the SectionBar seats retire onto the framed sheets). */
@@ -80,6 +82,40 @@ export function GamificationPage() {
   const rank = dash.data?.kpi?.rank ?? null;
   const cohortSize = dash.data?.kpi?.cohortSize ?? 0;
   const me = training.data;
+  const authUser = useAuthStore((s) => s.user);
+
+  /* r369 slice 05 — <Celebrate/> fires on a REAL recorded level-up only:
+     the remembered level (localStorage per user) vs the level the
+     training payload reports. First-ever visit records silently (we
+     observed no change — inventing a celebration would be a lie); a
+     level drop (data correction) updates silently. The effect updates
+     memory before any paint that could re-fire, so the moment is
+     once-only across remounts, sessions and the celebration's own
+     re-render. */
+  const [celebration, setCelebration] = useState<{ id: string; rise?: string; label: string } | null>(null);
+  const levelNow = me?.level?.level ?? null;
+  const userId = authUser?.id ?? null;
+  useEffect(() => {
+    if (levelNow === null || !userId) return;
+    const key = `ula-level:${userId}`;
+    let remembered: number | null = null;
+    try {
+      const raw = window.localStorage.getItem(key);
+      remembered = raw !== null ? Number(raw) : null;
+      if (remembered !== null && !Number.isFinite(remembered)) remembered = null;
+    } catch { /* storage unavailable — no memory, no celebration */ return; }
+    if (remembered !== null && levelNow > remembered) {
+      const name = LEVEL_NAMES[Math.min(Math.max(levelNow, 1), LEVEL_NAMES.length) - 1];
+      setCelebration({
+        id: `${key}:${levelNow}`,
+        rise: `+${levelNow - remembered}`,
+        label: `مستوى جديد — ${name}`,
+      });
+    }
+    if (remembered !== levelNow) {
+      try { window.localStorage.setItem(key, String(levelNow)); } catch { /* ignore */ }
+    }
+  }, [levelNow, userId]);
 
   /* r224 (4A redesign — Superlist): the page opens with the pattern
      header + one calm stat line (points / tier / cohort rank), then the
@@ -156,6 +192,18 @@ export function GamificationPage() {
           },
         ]}
       />
+
+      {/* slice 05 — the once-only celebration moment for a real,
+          freshly-recorded level-up (spec 05: never for an invented
+          event). */}
+      {celebration && (
+        <Celebrate
+          id={celebration.id}
+          rise={celebration.rise}
+          label={celebration.label}
+          onSettle={() => setCelebration(null)}
+        />
+      )}
 
       {/* r224 retries (the old deep band's affordances, preserved):
           a failed XP or level read keeps its honest retry verb. */}

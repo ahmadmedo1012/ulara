@@ -212,3 +212,65 @@
   min-height: 36px;
   padding-block: 4px;
 }
+
+/* §8 — Celebrate (slice 05, spec 05): the +N rise line over a
+ * halo-pulsing gold dot — the reference's celebration grammar in the
+ * product register. Transform/opacity + paint only, token durations
+ * (the motion gate), total ≈0.64s under the 1.2s ceiling. Amber lives
+ * here because the moment is reward-shaped (a recorded achievement);
+ * it never touches chrome or navigation. */
+.has-shell .g369-celebrate {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-3, 12px);
+  margin: 0;
+  padding: 10px var(--sp-4, 16px);
+  border: 1px solid var(--border);
+  border-radius: var(--r-full);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+  position: relative;
+  overflow: visible;
+}
+.has-shell .g369-celebrate-halo {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 auto;
+  border-radius: var(--r-full);
+  background: var(--gold);
+  animation: g369-celebrate-halo var(--t-slower) var(--ease) var(--t-micro) both;
+}
+@keyframes g369-celebrate-halo {
+  0%   { box-shadow: 0 0 0 0 var(--gold-soft); transform: scale(0.6); }
+  45%  { transform: scale(1.15); }
+  100% { box-shadow: 0 0 0 16px transparent; transform: scale(1); }
+}
+.has-shell .g369-celebrate-rise {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-body);
+  color: var(--gold-ink);
+  font-variant-numeric: tabular-nums;
+  /* the landing's w369-gain recipe: rise 6px → crest −4px → away −16px */
+  animation: g369-celebrate-rise var(--t-base) var(--ease) both;
+}
+@keyframes g369-celebrate-rise {
+  from { opacity: 0; transform: translateY(6px); }
+  35%  { opacity: 1; transform: translateY(-4px); }
+  to   { opacity: 0; transform: translateY(-16px); }
+}
+.has-shell .g369-celebrate-label {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--text);
+  line-height: 1.5;
+}
+@media (prefers-reduced-motion: reduce) {
+  /* spec 05: the reduced form is the static fact line — no pulse, no
+   * rise, and the rise counter stays VISIBLE (it is part of the fact,
+   * not the flourish). */
+  .has-shell .g369-celebrate-halo,
+  .has-shell .g369-celebrate-rise {
+    animation: none;
+  }
+}
