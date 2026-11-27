@@ -620,6 +620,14 @@ export function Hero() {
             </div>
           </div>
         </div>
+        <div className="w369-float w369-float-a" aria-hidden="true">
+          <Glyph name="target" size={16} />
+          <span><b>12 / 30</b><em>نقطة إتقان في المقرّر</em></span>
+        </div>
+        <div className="w369-float w369-float-b" aria-hidden="true">
+          <Glyph name="live" size={16} />
+          <span><b>محاضرة 10:00</b><em>الحضور يُسجَّل تلقائيًا</em></span>
+        </div>
         <p className="w369-art-note">عرض توضيحي للواجهة — لا يعرض بيانات طالب حقيقي.</p>
       </div>
     </section>

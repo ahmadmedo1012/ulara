@@ -366,6 +366,32 @@
   transition: transform var(--t-base) var(--ease-out);
 }
 
+/* P3 layered cards: real-content floats overlapping the phone edge.
+ * Entry uses the spring ease; reduced motion shows them in place. */
+.w369-hero-art { position: relative; }
+.w369-float {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--elev-3);
+  color: var(--ink);
+}
+.w369-float span { display: grid; gap: var(--sp-1); }
+.w369-float b { font-weight: 700; }
+.w369-float em { font-style: normal; font-size: 0.8em; color: var(--ink-soft, var(--ink)); opacity: 0.75; }
+.w369-float-a { inset-block-start: 36%; inset-inline-end: -14%; }
+.w369-float-b { inset-block-end: 4%; inset-inline-end: -14%; }
+@media (max-width: 760px) { .w369-float { display: none; } }
+@media (prefers-reduced-motion: no-preference) {
+  .w369-float { animation: w369-float-in var(--t-slow) var(--ease-spring) 400ms both; }
+  @keyframes w369-float-in { from { opacity: 0; transform: translateY(var(--sp-5)); } }
+}
+
 .w369-phone {
   /* the inspiration's phone is the second column's whole width (~430px
    * at 1440) with a dark bezel and a real notch — not a white card */
