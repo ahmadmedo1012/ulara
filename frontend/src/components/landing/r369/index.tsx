@@ -867,6 +867,19 @@ export function ProgressBand() {
   const [byScroll, setByScroll] = useState(0);
   const [extra, setExtra] = useState(0);
   const TOTAL = 30;
+  /* the road is painted from the continuous scroll offset (a float), not
+   * from the rounded counter: a CSS custom property written straight on
+   * the element, no per-step React render, no transition to restart on
+   * every step. Taps on the button get a short eased tween (data-tap). */
+  const roadEl = useRef<HTMLDivElement | null>(null);
+  const scrollF = useRef(0);
+  const extraRef = useRef(0);
+  const paintRoad = () => {
+    const el = roadEl.current;
+    if (!el) return;
+    const v = Math.min(TOTAL, Math.max(0, scrollF.current + extraRef.current));
+    el.style.setProperty('--p', String((v / TOTAL) * 100));
+  };
 
   /* scroll drives the counter: how far this card has travelled through
    * the viewport, 0 → 30. Reduce-motion readers still get the number
@@ -893,6 +906,8 @@ export function ProgressBand() {
         const span = window.innerHeight + box.height;
         p = Math.min(1, Math.max(0, (window.innerHeight - box.top) / span));
       }
+      scrollF.current = p * TOTAL;
+      paintRoad();
       setByScroll(Math.round(p * TOTAL));
     };
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(read); };
@@ -926,6 +941,15 @@ export function ProgressBand() {
   }, []);
 
   const value = Math.min(TOTAL, Math.max(0, byScroll + extra));
+  useEffect(() => {
+    extraRef.current = extra;
+    const el = roadEl.current;
+    if (el) {
+      el.setAttribute('data-tap', '');
+      window.setTimeout(() => el.removeAttribute('data-tap'), 700);
+    }
+    paintRoad();
+  }, [extra]);
   const step = [...PROGRESS_STEPS].reverse().find((x) => value >= x.at) ?? FIRST_STEP;
 
   /* the road's geometry is read off the SVG path itself (one curve, one
@@ -976,10 +1000,15 @@ export function ProgressBand() {
             counter shows (pathLength=100 -> % of 30), so the road is the
             number drawn, never a second figure. Decorative: the counter
             and the rows already carry the information for assistive tech. */}
-        <div className="w369-road" aria-hidden="true" style={{ ['--p' as string]: (value / TOTAL) * 100 }}>
+        <div className="w369-road" aria-hidden="true" ref={roadEl}>
           <svg viewBox="0 0 400 110" preserveAspectRatio="none" className="w369-road-svg">
             <path ref={roadRef} className="w369-road-lane" d={ROAD_D} pathLength={100} />
             <path className="w369-road-fill" d={ROAD_D} pathLength={100} />
+            {/* the marker rides the SAME curve through CSS motion path
+                (offset-distance), so it never leaves the gold line and
+                animates off the layout thread */}
+            <circle className="w369-road-halo" r="17" cx="0" cy="0" />
+            <circle className="w369-road-dot" r="10" cx="0" cy="0" />
           </svg>
           {PROGRESS_STEPS.slice(1).map((x) => (
             <span
@@ -989,7 +1018,6 @@ export function ProgressBand() {
               style={roadAt((x.at / TOTAL) * 100)}
             />
           ))}
-          <span className="w369-road-dot" style={roadAt((value / TOTAL) * 100)} />
         </div>
         <ul className="w369-meter-rows">
           {PROGRESS_STEPS.slice(1).map((x) => (
