@@ -123,7 +123,7 @@
 
   /* Course blocks: hairline frame, no elevation story. The old lift +
      glow hover belongs to surfaces you ACT on; the matrix is a map. */
-  .matrix-course { border-color: var(--surface-divider); }
+  .matrix-course { border-color: var(--surface-divider); border-radius: var(--r-md); }
   @media (hover: hover) and (pointer: fine) {
     .matrix-course:hover {
       transform: none;

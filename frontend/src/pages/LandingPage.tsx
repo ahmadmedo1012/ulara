@@ -175,7 +175,7 @@ export default function LandingPage() {
       <main id="main" tabIndex={-1}>
         <Hero />
         <Marquee />
-        <div id="story">
+        <div className="w369-story">
           <StarsBand />
           <ProgressBand />
           <RewardsBand />

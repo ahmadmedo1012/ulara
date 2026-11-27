@@ -402,7 +402,8 @@ for (const theme of THEMES) {
       // rows: square, ≥44px, hairline-separated
       expect(R369_RADII).toContain(sheet.firstRow.radius as (typeof R369_RADII)[number]);
       expect(parseFloat(sheet.firstRow.minH)).toBeGreaterThanOrEqual(44);
-      expect(sheet.rowSep).toBe('1px');
+      /* r369: drawer rows are radius-scale pills separated by spacing, not hairlines */
+      expect(sheet.rowSep).toBe('0px');
 
       // mono gutter indexes [01], [02]… — TWO pins:
       //  a) the computed `content` carries the live counter machinery
@@ -555,7 +556,7 @@ for (const theme of THEMES) {
       // luminous royal #8AA0FF on dark (tokens.css --accent — the 2026
       // «Parchment & Royal» takeover).
       expect(dock.active.rule.h).toBe('2px');
-      const ACCENT = theme === 'light' ? 'rgb(37, 64, 217)' : 'rgb(138, 160, 255)';
+      const ACCENT = theme === 'light' ? 'rgb(30, 26, 60)' : 'rgb(239, 233, 255)'; /* r369 ink */
       expect(dock.active.rule.bg).toBe(ACCENT);
       expect(dock.active.iconBg, 'no pill wash on the icon').toBe('rgba(0, 0, 0, 0)');
       expect(R369_RADII).toContain(dock.active.iconRadius as (typeof R369_RADII)[number]);

@@ -465,3 +465,6 @@ a.ai-cite-chip:focus-visible {
       color var(--motion-duration-micro) var(--motion-ease-standard);
   }
 }
+
+/* r369: the gap cards sit on the --r-* radius scale. */
+.ai-gap-card { border-radius: var(--r-md); }
