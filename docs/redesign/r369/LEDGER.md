@@ -167,3 +167,117 @@ NEXT (still open, in the order the brief asked for):
   dead-code sweep, baseline regeneration in one late commit, the full
   gate sweep, Lighthouse on `/`, DESIGN.md / README / CHANGELOG.
 - **G — the pull request** `r369/new-identity → main` (ready, not merged).
+
+## SLICE 01 (local-upgrade) — the 13 public pages on T1–T5 — CLOSED
+
+Scope correction honoured: /vision + /competitions are authenticated
+AppShell surfaces, not public pages — they moved to slices 02/03.
+
+- Kit: PublicShell (imports r369.css + r369-pages.css), sections.tsx
+  (Em/PageHead/FactChips/StateCard/ShimmerRows/DoorGrid/ArticleSection/
+  BandSection/FactRail), styles/landing/r369-pages.css (T1–T5 wrappers,
+  lg-family re-skin, faq/cap/status/qr/captures, `.w369.p369` reveal
+  states, T5 auth block).
+- Pages: about, help, contact, 6× legal, 404, /app, campus (T4),
+  capabilities (ArticleSections) — copy verbatim, logic untouched.
+- Colleges funnel: guest chrome moved UP to CollegesLayout (App.tsx) —
+  guests ride PublicShell around the Outlet; page-level wraps removed.
+- Auth sheets (login/register/forgot/reset): PublicShell + p369-t5;
+  drafting frame/marks/grain/auth-top retired; flow navigation moved to
+  the in-column flowbar; logic, copy, demo table, consent line untouched.
+  The warm T5 auth block lives in r369-pages.css with explicit resets
+  (patterns.css base sheet is NOT .auth-shell-scoped — the 3-col cell
+  grid, ruled borders, submit wipe pseudo and mono captions needed
+  neutralizing; [NN] indices + TEXT·48PX captions hidden as retired
+  drafting voice).
+- Test re-keys (all recorded in comments): App-routes guest-shell pin,
+  landing-funnel 404 way-back (warm buttons, t5-scoped queries),
+  AuthPage-alignment landmarks (w369-nav + ONE main#main + auth-bottom),
+  r183-B8 skip-link pins (contract now read from PublicShell source).
+- OPEN DEBT to slice 06: the dead `.auth-shell` sheets (patterns.css
+  auth block + errors.css AUTH section) still ship and AuthPage-alignment
+  still text-pins some of that dead CSS — deletion + pin re-key belongs
+  to the close-out sweep. Polish backlog: capabilities §03 Em underline
+  spans wide on wrap; campus BandSection 02 body placement.
+- Gates: tsc clean · build ✓ · stylelint clean on the r369 sheets ·
+  tokens:check / raw-css / colors --strict / motion / icons / csp-hash
+  PASS · full unit suite green across all 6 shards (591+447+549+462+527
+  +419) · captures verified at 1440+390 for every slice-01 route
+  (docs/redesign/r369/evidence/01-inner-pages/slice01/). Known
+  pre-existing at HEAD: gate:size RED (36MB measure PNGs from 4382dd8 —
+  compress at final commit, owner-approved), stylelint whole-tree 2
+  duplicate-rule errors (world.css/tokens.css — fix at close-out).
+
+## SLICE 02 — the product shell (in progress)
+
+### Batch 1 — rail + topbar + mobile dock (2026-11-27)
+- New sheet `frontend/src/styles/landing/r369-shell.css` (scoped
+  `.has-shell`, unlayered, imported LAST in AppShell.tsx after
+  indicators.css). Rail rows are full-radius pills; the active row is
+  the stage-pill amber (color-mix gold 18%, gold-ink icon, bold ink
+  label). Retired: the charcoal nav-fill wipe + 2px accent tick
+  (::before content:none) + the world.css r368 lavender accent-soft
+  twin (beaten by setting `background`/`color` directly — the
+  --_bg/--_fg pair alone lost to world.css's direct paint, found via
+  computed-style probe). Hover/press = soft gold wash (8%/12%).
+  Mobile dock: active destination reads gold-ink bold, its 2px top
+  rule retired (notifications.css R319 twin).
+- Topbar.tsx: new `StudentXpChip` — the honest «نقاط إتقان» collector.
+  Student-only structural gate (same precedent as StudentScopeChip);
+  reads useStudentDashboard → kpi.totalXp (the EXISTING /me/dashboard
+  query the dashboard + gamification pages share — no new endpoint);
+  counted Arabic forms via lib/format countAr; links to
+  /student/gamification; hides on query error; renders «0 نقطة إتقان»
+  honestly at zero; a quiet aria-hidden pill while loading; hidden
+  ≤920px by CSS. STREAK DELIBERATELY ABSENT: no streak field exists
+  anywhere in the frontend data model (checked hooks/resources/*,
+  TrainingPages, MorePages, GamificationPage) — painting one would
+  lie. If a streak API lands later it earns its own chip row.
+- Test re-keys (recorded per slice protocol): Sidebar-Topbar.test.tsx
+  and Topbar-alertsPath.test.tsx gained a `hooks/resources/student`
+  stub (the chip's query) next to the existing useMyProfile stub —
+  harness-only change, comments in place. New pin file
+  Topbar-xp-chip.test.tsx (7 pins: student-only, counted forms,
+  honest zero, hides on error, routes to gamification, inert loading).
+- Evidence: docs/redesign/r369/evidence/02-product-shell/batch1/
+  shell-{1440,820,390}[-dark].png + probe-1440-{rail,chip}.png
+  (computed-style probe: activeBg = gold 18% color-mix, chip =
+  gold 12% / gold-ink text; all six captures visually verified).
+- Gates: tsc clean · build ✓ · stylelint clean on r369-shell.css ·
+  tokens:check / raw-css / colors --strict / motion / icons / csp-hash
+  PASS · 171 targeted shell/chip unit tests green across 11 files
+  (incl. nav-active-vocabulary, r305 shell states/cluster/css
+  contracts, r162, r168a, skiplink — no re-key needed beyond the two
+  harness stubs above).
+
+### Batch 2 — the panels (2026-11-27)
+- Command palette (GlobalSearch): 22px panel (r-xs → --r-xl), pill
+  rows (r-sm → --r-full), selected row = the amber pill (gold 18% +
+  gold-ink icon); the R313 2px accent rule ::before retired. Hover
+  stays the quiet surface step (r305 conservation: the signal belongs
+  to the committed cursor row).
+- Notifications panel: 22px corner. UNREAD HONESTY FIX — both swept
+  owners of .notif-item-dot died as dead twins (polish.css:606 +
+  notifications.css:203 comments admit it), so unread rendered as
+  nothing but a hover tint. The dot is RESTORED in the one amber,
+  paired with a bold ink title: a text state plus the dot, never
+  colour alone (spec). The unread hover tint re-keys accent → gold.
+  SCOPE NOTE: the whole panel tree portals to document.body (anchored
+  primitive), so this section scopes to .notification-panel, never
+  .has-shell — the batch-2 capture proved the .has-shell variants
+  matched nothing.
+- More sheet (mobile sidebar drawer): kept a SIDE sheet — the drawer
+  already owns the close grammar (× + Esc via overlay stack + focus
+  management) and the slice's measured facts forbid shell reflow.
+  Earned: 22px world corners on the free edge (RTL-safe inline-end),
+  grouped pill rows (R319 hairline-separated square cells retired),
+  and the mono [NN] gutter counter retired (the drafting grammar's
+  instrument voice leaves the product).
+- Evidence: docs/redesign/r369/evidence/02-product-shell/batch2/
+  palette-1440[-dark].png, notif-{1440,390}[-dark].png,
+  drawer-390[-dark].png — all visually verified (mocked /search/global
+  + /notifications; probe-panels.mjs kept at repo root for re-runs).
+- Gates: build ✓ · stylelint clean · tokens:check / raw-css /
+  colors --strict / motion / icons / csp-hash PASS · 91 targeted shell
+  tests green (nav-active-vocabulary, r305/r325 css contracts, r305
+  states, r168a a11y, Sidebar-Topbar) — no re-keys needed.

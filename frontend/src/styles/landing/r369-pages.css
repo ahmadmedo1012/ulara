@@ -1,0 +1,772 @@
+/* ═══════════════════════════════════════════════════════════════════
+   r369-pages — the inner public pages (slice B), templates T1–T5.
+   One sheet, on top of tokens + world.css + the landing's r369.css.
+   No new colour, radius or motion values: tokens only.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── shell ─────────────────────────────────────────────────────────── */
+
+:root {
+  /* the article reading measure (T1) */
+  --w369-reading: 880px;
+}
+
+.p369-main {
+  min-block-size: 60vh;
+}
+
+.p369-nav-links {
+  gap: var(--sp-2);
+}
+
+.p369-nav-link {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 44px;
+  padding-inline: var(--sp-3);
+  border-radius: var(--r-full);
+  font-size: var(--fs-chrome);
+  font-weight: var(--fw-semibold);
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+.p369-nav-link:hover {
+  color: var(--text);
+  background: color-mix(in srgb, var(--gold) 12%, transparent);
+}
+.p369-nav-link[aria-current='page'] {
+  color: var(--text);
+  background: color-mix(in srgb, var(--gold) 18%, transparent);
+}
+
+/* ── PageHead (all templates) ─────────────────────────────────────── */
+
+.p369-head {
+  padding-block: clamp(96px, 12vw, 176px) clamp(48px, 6vw, 96px);
+  inline-size: min(100% - (var(--w369-gutter) * 2), var(--w369-max));
+  margin-inline: auto;
+}
+
+.p369-h1 {
+  max-inline-size: 16ch;
+}
+
+.p369-head-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  margin-block-start: var(--sp-8);
+}
+
+/* ── FactChips ────────────────────────────────────────────────────── */
+
+.p369-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  list-style: none;
+  margin: var(--sp-8) 0 0;
+  padding: 0;
+}
+
+.p369-fact {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-block-size: 44px;
+  padding-inline: var(--sp-4);
+  border-radius: var(--r-full);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+  color: var(--text);
+  font-size: var(--fs-chrome);
+  font-weight: var(--fw-semibold);
+}
+.p369-fact .ui-glyph { color: var(--gold-ink); }
+
+/* ── layout wrappers per template ─────────────────────────────────── */
+
+.p369-t1,                     /* T1 Article: the reading column */
+.p369-t2,                     /* T2 Hub */
+.p369-t3,                     /* T3 Detail */
+.p369-t5 {                    /* T5 Focus */
+  inline-size: min(100% - (var(--w369-gutter) * 2), var(--w369-max));
+  margin-inline: auto;
+}
+
+.p369-t1 { max-inline-size: 860px; }
+.p369-t5 { max-inline-size: 560px; padding-block-end: clamp(64px, 8vw, 128px); }
+
+.p369-t2, .p369-t3 { padding-block-end: clamp(64px, 8vw, 128px); }
+
+/* T4 pages reuse .w369-band directly; this only recentres them. */
+.p369-band {
+  scroll-margin-block-start: 96px;
+}
+
+/* ── DoorGrid (T2) ────────────────────────────────────────────────── */
+
+.p369-doors {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
+  gap: var(--sp-5);
+  margin-block-start: var(--sp-8);
+}
+
+.p369-door {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-6);
+  border-radius: var(--r-2xl);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+  text-decoration: none;
+  color: var(--text);
+  transition: transform var(--t-fast) var(--ease-out),
+    box-shadow var(--t-fast) var(--ease-out);
+}
+.p369-door:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card-h);
+  outline: 1.5px solid color-mix(in srgb, var(--gold) 45%, transparent);
+}
+
+.p369-door-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 48px;
+  block-size: 48px;
+  border-radius: var(--r-md);
+  background: color-mix(in srgb, var(--gold) 14%, var(--surface));
+  color: var(--gold-ink);
+}
+
+.p369-door-title {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-d3);
+  line-height: 1.3;
+}
+
+.p369-door-body {
+  color: var(--text-secondary);
+  font-size: var(--fs-body);
+  line-height: var(--lh-base);
+}
+
+.p369-door-go {
+  position: absolute;
+  inset-block-start: var(--sp-6);
+  inset-inline-end: var(--sp-6);
+  color: var(--text-muted);
+}
+.p369-door:hover .p369-door-go { color: var(--gold-ink); }
+
+/* ── ArticleBody (T1) ─────────────────────────────────────────────── */
+
+.p369-article-sec {
+  padding-block: clamp(32px, 4vw, 64px);
+}
+
+.p369-article-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-4);
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-d3);
+  line-height: 1.2;
+  color: var(--text);
+  margin: 0 0 var(--sp-5);
+}
+
+.p369-article-num {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 40px;
+  block-size: 40px;
+  border-radius: 50%;
+  border: 1.5px solid color-mix(in srgb, var(--gold) 55%, transparent);
+  color: var(--gold-ink);
+  font-size: var(--fs-chrome);
+  font-weight: var(--fw-bold);
+}
+
+.p369-article-body {
+  font-size: var(--fs-body-lg);
+  line-height: var(--lh-base);
+  color: var(--text-secondary);
+  max-inline-size: 68ch;
+}
+.p369-article-body p { margin: 0 0 var(--sp-5); }
+.p369-article-body a { color: var(--info); text-decoration: underline; text-underline-offset: 3px; }
+.p369-article-body ul { margin: 0 0 var(--sp-5); padding-inline-start: var(--sp-6); }
+.p369-article-body li { margin-block-end: var(--sp-2); }
+.p369-article-body strong { color: var(--text); }
+
+.p369-article-card {
+  background: var(--surface);
+  border-radius: var(--r-2xl);
+  box-shadow: var(--shadow-card);
+  padding: var(--sp-6);
+  margin-block-end: var(--sp-5);
+}
+
+/* ── FactRail (T3) ────────────────────────────────────────────────── */
+
+.p369-rail {
+  display: grid;
+  gap: var(--sp-3);
+  margin: 0;
+}
+
+.p369-rail-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  min-block-size: 44px;
+  padding: var(--sp-3) var(--sp-5);
+  background: var(--surface);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-card);
+}
+
+.p369-rail-label { color: var(--text-muted); font-size: var(--fs-chrome); }
+.p369-rail-value { color: var(--text); font-weight: var(--fw-semibold); margin: 0; }
+
+.p369-t3-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: var(--sp-8);
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .p369-t3-grid { grid-template-columns: 1fr; }
+}
+
+/* ── StateCard + ShimmerRows ──────────────────────────────────────── */
+
+.p369-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--sp-2);
+  padding: clamp(32px, 6vw, 64px) var(--sp-6);
+  border-radius: var(--r-2xl);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+  margin-block: var(--sp-8);
+}
+
+.p369-state-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 56px;
+  block-size: 56px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--gold) 14%, var(--surface));
+  color: var(--gold-ink);
+  margin-block-end: var(--sp-2);
+}
+
+.p369-state-title {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-d3);
+  color: var(--text);
+  margin: 0;
+}
+
+.p369-state-body { color: var(--text-secondary); margin: 0; max-inline-size: 46ch; }
+.p369-state-action { margin-block-start: var(--sp-4); }
+
+.p369-shimmer { display: grid; gap: var(--sp-3); margin-block: var(--sp-8); }
+.p369-shimmer-row {
+  block-size: 88px;
+  border-radius: var(--r-2xl);
+  background: linear-gradient(
+    100deg,
+    var(--surface) 40%,
+    color-mix(in srgb, var(--gold) 10%, var(--surface)) 50%,
+    var(--surface) 60%
+  );
+  background-size: 200% 100%;
+  animation: p369-shimmer var(--motion-duration-skeleton) var(--ease-linear) infinite;
+}
+@keyframes p369-shimmer {
+  to { background-position: -200% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .p369-shimmer-row { animation: none; }
+}
+
+/* ── T5 Focus card ────────────────────────────────────────────────── */
+
+.p369-focus-card {
+  background: var(--surface);
+  border-radius: var(--r-2xl);
+  box-shadow: var(--shadow-card);
+  padding: clamp(24px, 4vw, 48px);
+  margin-block-start: var(--sp-8);
+}
+
+/* ── the page-level CTA band (shared by T1/T2/T3 feet) ────────────── */
+
+.p369-cta {
+  margin: clamp(48px, 8vw, 128px) auto;
+  padding: clamp(32px, 5vw, 64px);
+  inline-size: min(100% - (var(--w369-gutter) * 2), var(--w369-max));
+  border-radius: var(--r-2xl);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+  text-align: center;
+}
+.p369-cta .w369-h2 { max-inline-size: 20ch; margin-inline: auto; }
+.p369-cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sp-3);
+  margin-block-start: var(--sp-8);
+}
+
+/* ── the FAQ accordion (T1, /help) — world cards, circled numbers ── */
+
+.p369-faq {
+  display: grid;
+  gap: var(--sp-3);
+}
+
+.p369-faq-item {
+  background: var(--w369-card, var(--surface));
+  border: 1px solid var(--w369-line, var(--border));
+  border-radius: var(--r-2xl);
+  box-shadow: var(--shadow-card);
+  overflow: clip;
+  transition: box-shadow var(--t-fast) var(--ease-out);
+}
+.p369-faq-item:hover {
+  box-shadow: var(--shadow-card-h);
+}
+
+.p369-faq-q {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-4) var(--sp-5);
+  min-block-size: 44px;
+  cursor: pointer;
+  list-style: none;
+  text-align: start;
+}
+.p369-faq-q::-webkit-details-marker { display: none; }
+
+.p369-faq-q-text {
+  flex: 1;
+  margin: 0;
+  font-size: var(--fs-h3, var(--fs-lg));
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-snug);
+}
+
+.p369-faq-caret {
+  display: inline-flex;
+  color: var(--text-secondary);
+  transition: transform var(--t-fast) var(--ease-out);
+}
+.p369-faq-item[open] .p369-faq-caret {
+  transform: rotate(180deg);
+}
+
+.p369-faq-a {
+  margin: 0;
+  text-align: start;
+  padding: 0 var(--sp-5) var(--sp-5);
+  font-size: var(--fs-body);
+  line-height: var(--lh-loose);
+  color: var(--text-secondary);
+}
+.p369-faq-a a { color: var(--info); text-decoration: underline; text-underline-offset: 3px; }
+
+/* ── the legal sheet seats (lg-*) re-keyed to the world grammar ──────
+   The sheet markup rides the kit classes; these re-seat the lg-*
+   seats it still renders (bar, cell, colophon) onto circled numbers,
+   22px world cards with the double shadow, and the warm colophon.
+   Higher specificity than the retired §G grouped rules. */
+
+.lg.p369-t1 {
+  max-width: var(--w369-reading);
+  margin-inline: auto;
+  padding-inline: var(--w369-gutter, var(--sp-5));
+  /* the retired §G guest-root rule (div.lg) still matches this div;
+     the warm ground comes from the w369 shell, so the paint is
+     neutralised here */
+  background: transparent;
+}
+
+.lg.p369-t1 .lg-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin: var(--sp-8) 0 var(--sp-4);
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  /* the r324 seat law caps this seat at 600 — the display face carries
+     the weight visually instead */
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-tight);
+}
+
+.lg.p369-t1 .lg-cell {
+  text-align: start;
+  background: var(--w369-card, var(--surface));
+  border: 1px solid var(--w369-line, var(--border));
+  border-radius: var(--r-2xl);
+  box-shadow: var(--shadow-card);
+  padding: var(--sp-5) var(--sp-6);
+  margin-block-end: var(--sp-4);
+  transition: box-shadow var(--t-fast) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .lg.p369-t1 .lg-cell:hover {
+    box-shadow: var(--shadow-card-h);
+  }
+}
+
+.lg.p369-t1 .lg-colophon {
+  margin-block-start: var(--sp-10);
+  padding-block-start: var(--sp-5);
+  border-block-start: 1px solid var(--w369-line, var(--border));
+  text-align: center;
+  display: grid;
+  gap: var(--sp-2);
+}
+.lg.p369-t1 .lg-colophon-line { color: var(--text-secondary); font-size: var(--fs-sm); }
+.lg.p369-t1 .lg-colophon-stamp { color: var(--text-secondary); font-size: var(--fs-sm); }
+
+/* ── the 404 illustration seat (T5) ── */
+.p369-notfound-ill {
+  max-inline-size: 320px;
+  margin-inline: auto;
+  margin-block-end: var(--sp-6);
+}
+
+/* ── the /app QR seat (T1) ── */
+.lg-qr {
+  display: grid;
+  justify-items: center;
+  gap: var(--sp-3);
+  text-align: center;
+}
+.lg-qr img {
+  /* the SVG carries its own fixed white scan plate (r355) */
+  border-radius: var(--r-lg, 12px);
+  border: 1px solid var(--w369-line, var(--border));
+}
+
+/* ── the /campus capture bands (T4) ── */
+.p369-captures-lead {
+  margin-block-end: var(--sp-5);
+}
+.p369-captures-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--sp-4);
+}
+.p369-captures-foot {
+  margin-block-start: var(--sp-5);
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-loose);
+  text-align: center;
+}
+
+/* ── the capabilities ledger (T1) ── */
+.p369-cap-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--sp-2);
+}
+.p369-cap-row {
+  text-align: start;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  background: var(--w369-card, var(--surface));
+  border: 1px solid var(--w369-line, var(--border));
+  border-radius: var(--r-2xl);
+  box-shadow: var(--shadow-card);
+  padding: var(--sp-3) var(--sp-4);
+}
+.p369-cap-text { flex: 1; }
+.p369-cap-check { color: var(--gold-ink, var(--gold)); display: inline-flex; }
+.p369-cap-foot {
+  margin-block-start: var(--sp-3);
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+}
+
+.p369-status {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--sp-2);
+}
+.p369-status-row {
+  text-align: start;
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--r-xl, 16px);
+  border: 1px solid var(--w369-line, var(--border));
+}
+.p369-status-row[data-live] {
+  background: var(--w369-card, var(--surface));
+  box-shadow: var(--shadow-card);
+}
+.p369-status-k {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-weight: var(--fw-semibold);
+}
+.p369-status-v { flex: 1; color: var(--text-secondary); }
+.p369-status-tag {
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+}
+.p369-status-tag[data-live] { color: var(--gold-ink, var(--gold)); font-weight: var(--fw-semibold); }
+
+/* ── the reveal states for the kit's armed blocks ─────────────────────
+   The r369 hook arms [data-reveal='pending'|'in']; the global
+   shared-design-system rule keys on the OLD data-revealed="true"
+   contract and would hide these blocks forever, so the kit owns its
+   states here with winning specificity. */
+.w369.p369 .p369-article-sec[data-reveal],
+.w369.p369 .p369-doors[data-reveal],
+.w369.p369 .p369-band [data-reveal] {
+  transition:
+    opacity var(--motion-duration-reveal) var(--motion-ease-decelerate),
+    transform var(--motion-duration-reveal) var(--motion-ease-decelerate);
+}
+.w369.p369 .p369-article-sec[data-reveal='pending'],
+.w369.p369 .p369-doors[data-reveal='pending'],
+.w369.p369 .p369-band [data-reveal='pending'] {
+  opacity: 0;
+  transform: translateY(var(--motion-distance-medium, 16px));
+}
+.w369.p369 .p369-article-sec[data-reveal='in'],
+.w369.p369 .p369-doors[data-reveal='in'],
+.w369.p369 .p369-band [data-reveal='in'] {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .w369.p369 .p369-article-sec[data-reveal],
+  .w369.p369 .p369-doors[data-reveal],
+  .w369.p369 .p369-band [data-reveal] {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* ── r369 slice B · T5 auth sheets (/auth, /auth/register, /auth/forgot,
+     /auth/reset) — the warm re-shape. The retired drafting sheet
+     (patterns.css .auth-shell block + errors.css AUTH section) no longer
+     matches any markup; this block owns the four pages' look. Form
+     logic, copy, the demo table and the consent line are untouched. */
+
+.p369 .auth-flowbar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--sp-3); padding-block-start: var(--sp-4);
+}
+.p369 .auth-flowbar .auth-back-home {
+  display: inline-flex; align-items: center; gap: var(--sp-2);
+  border: 1px solid var(--border); border-radius: var(--r-full);
+  background: var(--surface); color: var(--text);
+  padding: 8px 16px; font: inherit; font-size: var(--fs-sm);
+  cursor: pointer; text-decoration: none;
+  transition: box-shadow var(--t-fast) var(--ease-out), transform var(--t-fast) var(--ease-out);
+}
+.p369 .auth-flowbar .auth-back-home:hover { box-shadow: var(--shadow-card); transform: translateY(-1px); }
+.p369 .auth-flowbar-quiet { color: var(--text-secondary); font-size: var(--fs-sm); text-decoration: none; }
+.p369 .auth-flowbar-quiet:hover { color: var(--text); text-decoration: underline; }
+
+.p369 .auth-center { display: grid; justify-items: center; padding-block: clamp(24px, 4vw, 48px) clamp(40px, 5vw, 80px); }
+
+.p369 .auth-card {
+  inline-size: 100%; max-inline-size: 520px;
+  display: flex; flex-direction: column; gap: var(--sp-5);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-2xl);
+  box-shadow: var(--shadow-card);
+  padding: clamp(24px, 4vw, 40px);
+}
+.p369 .auth-card--wide { max-inline-size: 720px; }
+
+.p369 .auth-form-header { display: grid; gap: var(--sp-2); text-align: start; }
+.p369 .auth-meta {
+  color: var(--gold-ink); font-size: var(--fs-chrome);
+  font-weight: var(--fw-semibold); letter-spacing: .04em;
+}
+.p369 .auth-form-title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3.4vw, 38px);
+  line-height: var(--lh-tight); font-weight: var(--fw-bold);
+  color: var(--text); margin: 0;
+}
+.p369 .auth-form-sub { color: var(--text-secondary); font-size: var(--fs-body); line-height: var(--lh-base); margin: 0; }
+
+/* the retired drafting captions (TEXT · 48PX …) belong to the sheet
+   grammar; the warm form needs none of them. */
+.p369 .auth-micro { display: none; }
+
+.p369 .auth-cells { display: grid; gap: var(--sp-4); border-block: 0; }
+.p369 .auth-cell { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--sp-2); }
+.p369 .auth-cell + .auth-cell { border-block-start: 0; }
+.p369 .auth-cell .form-label { font-size: var(--fs-body); font-weight: var(--fw-semibold); margin: 0; }
+.p369 .auth-cell-control { display: grid; gap: var(--sp-2); }
+/* the [NN] drafting indices retire with the sheet grammar (aria-hidden decoration) */
+.p369 .auth-cell-index { display: none; }
+
+.p369 .auth-input {
+  inline-size: 100%;
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border); border-radius: var(--r-md);
+  padding: 12px 16px; font: inherit;
+  font-size: 16px; /* iOS-zoom floor (21-c) — never below 16px */
+  transition: border-color var(--t-fast) var(--ease-out), box-shadow var(--t-fast) var(--ease-out);
+}
+.p369 .auth-input:focus-visible {
+  outline: none; border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.p369 .auth-input[aria-invalid="true"] { border-color: var(--coral); }
+.p369 .auth-input-wrap { position: relative; }
+.p369 .auth-input-wrap.has-toggle .auth-input { padding-inline-end: 48px; }
+.p369 .auth-input-toggle {
+  position: absolute; inset-inline-end: 6px; inset-block: 0; margin-block: auto;
+  display: inline-flex; align-items: center; justify-content: center;
+  inline-size: 36px; block-size: 36px;
+  background: none; border: 0; border-radius: var(--r-md);
+  color: var(--text-secondary); cursor: pointer;
+}
+.p369 .auth-input-toggle:hover { color: var(--text); background: var(--accent-soft); }
+
+.p369 .auth-field-error { color: var(--coral-ink); font-family: inherit; font-size: var(--fs-sm); }
+.p369 .auth-error {
+  background: var(--c-rose-bg); color: var(--text);
+  border: 1px solid var(--border); border-radius: var(--r-md);
+  padding: 12px 16px; font-family: inherit; font-size: var(--fs-body); line-height: var(--lh-base);
+}
+.p369 .auth-error-link, .p369 .auth-retry-link { color: var(--accent-ink); font-weight: var(--fw-semibold); }
+.p369 .auth-form-summary { color: var(--text-secondary); font-size: var(--fs-sm); margin: 0; }
+
+.p369 .auth-submit {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--sp-2);
+  inline-size: 100%;
+  background: var(--accent); color: var(--accent-fg);
+  border: 0; border-radius: var(--r-full);
+  padding: 14px 24px; font: inherit; font-size: var(--fs-body-lg); font-weight: var(--fw-bold);
+  cursor: pointer; box-shadow: var(--shadow-card); font-family: inherit;
+  transition: transform var(--t-fast) var(--ease-out), box-shadow var(--t-fast) var(--ease-out);
+}
+.p369 .auth-submit:disabled { opacity: .65; cursor: progress; }
+/* the retired sheet's hover-wipe pseudo has no seat in the warm pill */
+.p369 .auth-submit::before { content: none; }
+.p369 .auth-submit:hover:not(:disabled) { transform: translateY(-2px); box-shadow: var(--shadow-card-h); }
+.p369 .auth-submit-spinner {
+  inline-size: 16px; block-size: 16px; border-radius: 50%;
+  border: 2px solid currentColor; border-block-start-color: transparent;
+  animation: p369-spin var(--motion-duration-skeleton) var(--ease-linear) infinite;
+}
+@keyframes p369-spin { to { transform: rotate(1turn); } }
+.p369 .auth-roll { display: grid; overflow: hidden; }
+.p369 .auth-roll-line { grid-area: 1 / 1; transition: transform var(--t-fast) var(--ease-out); }
+.p369 .auth-roll-line + .auth-roll-line { transform: translateY(110%); }
+.p369 .auth-submit:hover:not(:disabled) .auth-roll-line:first-child { transform: translateY(-110%); }
+.p369 .auth-submit:hover:not(:disabled) .auth-roll-line + .auth-roll-line { transform: translateY(0); }
+
+.p369 .auth-forgot-row { display: flex; justify-content: flex-end; }
+.p369 .auth-forgot { color: var(--gold-ink); font-size: var(--fs-sm); text-decoration: none; }
+.p369 .auth-forgot:hover { text-decoration: underline; }
+
+.p369 .auth-demo-hint {
+  border: 1px solid var(--border); border-radius: var(--r-md);
+  background: var(--c-lavender-bg); padding: var(--sp-4);
+  display: grid; gap: var(--sp-3);
+}
+.p369 .auth-demo-hint-head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-2); font-weight: var(--fw-semibold); }
+.p369 .auth-demo-hint-close { background: none; border: 0; cursor: pointer; color: var(--text-secondary); padding: 4px; }
+.p369 .auth-demo-hint-body { color: var(--text-secondary); font-size: var(--fs-sm); margin: 0; }
+.p369 .auth-demo-hint-reopen {
+  border: 1px dashed var(--border-strong); border-radius: var(--r-full);
+  background: none; color: var(--text-secondary); cursor: pointer;
+  padding: 8px 16px; font: inherit; font-size: var(--fs-sm);
+}
+.p369 .auth-demo-table { display: grid; border: 0; background: transparent; }
+.p369 .auth-demo-group { display: grid; }
+.p369 .auth-demo-group + .auth-demo-group { border-block-start: 1px solid var(--border); }
+.p369 .auth-demo-group-head {
+  display: flex; align-items: center; gap: var(--sp-2);
+  padding-block: var(--sp-2) var(--sp-1);
+  color: var(--text-secondary); font-size: var(--fs-chrome); font-weight: var(--fw-semibold);
+}
+.p369 .auth-demo-group-rule { flex: 1; border-block-start: 1px solid var(--border); }
+.p369 .auth-demo-row {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center;
+  column-gap: var(--sp-3);
+  padding-block: 8px; border-block-start: 1px solid var(--border);
+}
+.p369 .auth-demo-row-index { display: none; }
+.p369 .auth-demo-row-job { grid-column: 1; font-weight: var(--fw-semibold); font-size: var(--fs-sm); }
+.p369 .auth-demo-row-creds { grid-column: 1; display: grid; text-align: start; min-inline-size: auto; }
+.p369 .auth-demo-cred { font-size: var(--fs-chrome); color: var(--text-secondary); word-break: keep-all; white-space: nowrap; }
+.p369 .auth-demo-fill {
+  border: 1px solid var(--border); border-radius: var(--r-full);
+  background: var(--surface); color: var(--text); cursor: pointer;
+  padding: 6px 12px; font: inherit; font-size: var(--fs-chrome); font-weight: var(--fw-semibold);
+}
+.p369 .auth-demo-fill:hover { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
+.p369 .auth-demo-row .auth-demo-fill { grid-column: 2; grid-row: 1 / span 2; margin-inline-start: 0; }
+
+.p369 .auth-register-prompt { text-align: center; color: var(--text-secondary); font-size: var(--fs-body); margin: 0; }
+.p369 .auth-register-link { color: var(--accent-ink); font-weight: var(--fw-semibold); }
+
+/* the register sheet's chooser cards (institution + role steps) */
+.p369 .role-card-grid { display: grid; gap: var(--sp-3); grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+.p369 .role-card {
+  display: grid; gap: var(--sp-1); text-align: start;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r-md); padding: var(--sp-4);
+  font: inherit; cursor: pointer;
+  transition: box-shadow var(--t-fast) var(--ease-out), transform var(--t-fast) var(--ease-out);
+}
+.p369 .role-card:hover { box-shadow: var(--shadow-card); transform: translateY(-1px); }
+.p369 .role-card-index { color: var(--gold-ink); font-size: var(--fs-chrome); }
+
+.p369 .auth-steps { display: flex; gap: var(--sp-2); justify-content: center; }
+.p369 .auth-step-dot { inline-size: 8px; block-size: 8px; border-radius: 50%; background: var(--border-strong); }
+.p369 .auth-step[data-state="current"] .auth-step-dot { background: var(--gold); }
+
+.p369 .auth-bottom {
+  text-align: center; color: var(--text-secondary);
+  font-size: var(--fs-sm); line-height: var(--lh-loose);
+  padding-block-end: clamp(40px, 5vw, 80px);
+}
+.p369 .auth-bottom strong { color: var(--text); }

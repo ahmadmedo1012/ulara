@@ -299,12 +299,17 @@ describe('AuthPage — journey alignment (imm-5)', () => {
   });
 
   it('page chrome lives in landmarks — banner, main, contentinfo (axe: all content in landmarks)', () => {
+    /* r369 re-key (slice B · T5): the retired auth-top bar left with the
+       drafting chrome; the warm PublicShell owns the banner + the ONE
+       main#main landmark, and the consent line stays the section's
+       contentinfo. */
     const { container } = renderPage();
 
-    const banner = container.querySelector('header.auth-top');
+    const banner = container.querySelector('header.w369-nav');
     expect(banner).not.toBeNull();
-    expect(banner).toContainElement(screen.getByRole('link', { name: /الصفحة الرئيسية/ }));
-    expect(container.querySelector('main.auth-center')).not.toBeNull();
+    expect(banner.querySelector('a[href="/"]')).not.toBeNull();
+    expect(container.querySelector('main#main')).not.toBeNull();
+    expect(container.querySelectorAll('main')).toHaveLength(1);
     const contentInfo = container.querySelector('footer.auth-bottom');
     expect(contentInfo).not.toBeNull();
     // r191: the rejected slogan is gone; the identity reads ذكية.

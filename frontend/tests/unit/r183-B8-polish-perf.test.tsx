@@ -101,11 +101,18 @@ describe('r183-B8 — CollegesLayout skip link (A10 finding 3)', () => {
   })();
 
   it('the guest branch ships the skip link — AppShell a11y pattern, #main anchor, first DOM child', () => {
-    expect(fn).toContain('<a href="#main" className="skip-link">تخطَّ إلى المحتوى</a>');
+    /* r369 re-key (slice B): the guest branch renders <PublicShell/>,
+       which owns the skip-link + #main contract (PublicShell.tsx:122 —
+       the same <a class="skip-link" href="#main"> base.css pattern). */
+    expect(fn).toContain('<PublicShell>');
   });
 
   it('the #main target accepts programmatic focus after the skip (AppShell parity)', () => {
-    expect(fn).toContain('<main id="main" tabIndex={-1}');
+    /* r369 re-key (slice B): PublicShell emits
+       <main id="main" tabIndex={-1} className="p369-main"> — pin the
+       contract at its source instead of duplicating it here. */
+    const shell = read('src/components/landing/r369/pages/PublicShell.tsx');
+    expect(shell).toContain('<main id="main" tabIndex={-1}');
   });
 
   it('the product class is the AppShell family — not a bespoke public pill', () => {

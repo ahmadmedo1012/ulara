@@ -8,7 +8,6 @@ import {
   Eye, EyeOff, Check,
 } from 'lucide-react';
 import { Icon } from '../components/Icon';
-import { Logo } from '../brand';
 import { useRegister } from '../hooks/useAuth';
 import { useFaculties } from '../hooks/useResources';
 import { useInstitutions } from '../hooks/useInstitutions';
@@ -29,6 +28,7 @@ import type { AppRole } from '../stores/auth.store';
 // so only these four sheets drift). The base sheet rules stay in
 // patterns.css.
 import '../styles/errors.css';
+import { PublicShell } from '../components/landing/r369/pages/PublicShell';
 
 /**
  * Self-serve registration is restricted to academic roles.
@@ -313,21 +313,15 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="auth-shell">
-      {/* ═══ THE SHEET CHROME (R315 · K-I — the landing's frame grammar,
-          shared with the login sheet): the full-page drafting frame +
-          the measured paper grain film. Decorative only. */}
-      <div className="auth-frame" aria-hidden="true">
-        <span className="auth-mark auth-mark-tl" />
-        <span className="auth-mark auth-mark-tr" />
-        <span className="auth-mark auth-mark-bl" />
-        <span className="auth-mark auth-mark-br" />
-      </div>
-      <div className="auth-grain" aria-hidden="true" />
-
-      {/* a11y: page-level chrome as a banner landmark (matches AuthPage's
-          imm-5 fix — axe "all content in landmarks"). */}
-      <header className="auth-top">
+    /* r369 slice B · T5 — PublicShell chrome replaces the retired
+       drafting frame/marks/grain + auth-top bar. The FLOW navigation
+       (step-back «تغيير نوع الحساب» + the login link) moves into the
+       in-column flow bar; logic untouched. r157 F5 stands: step 2
+       carries ONE loud action (the step-back), the login link stays
+       quiet. */
+    <PublicShell>
+      <div className="p369-t5">
+      <div className="auth-flowbar">
         {role ? (
           <button type="button" className="auth-back-home" onClick={backToRoles}>
             <Icon icon={ArrowRight} size={14} />
@@ -339,25 +333,11 @@ export default function RegisterPage() {
             تسجيل الدخول
           </Link>
         )}
-        {/* r341 (t05 · brand parity): the canonical brand mark chip —
-            the SAME grammar every sibling auth surface carries in its
-            auth-top (AuthPage / ForgotPasswordPage / ResetPasswordPage):
-            the mark + «أُلارا» in a quiet .auth-context seat (same
-            variant, size and classes as AuthPage's r191 chip). */}
-        <span className="auth-context">
-          <Logo variant="mark" size={14} /> أُلارا
-        </span>
-        {/* r157 F5: on step 2 the login link is demoted to a quiet
-            .auth-context chip — the header carries ONE pill («تغيير
-            نوع الحساب»); a second loud action competed with it. */}
-        {role ? (
-          <Link to="/auth" className="auth-context">تسجيل الدخول</Link>
-        ) : (
-          <span className="auth-context">إنشاء حساب جديد</span>
+        {role && (
+          <Link to="/auth" className="auth-flowbar-quiet">تسجيل الدخول</Link>
         )}
-      </header>
-
-      <main className="auth-center">
+      </div>
+      <div className="auth-center">
         {/* R315 (K-I): the centred CARD is dissolved — one sheet column
             for BOTH steps (same width, same chrome) so stepping never
             reflows the layout; only the keyed panel slides. */}
@@ -504,14 +484,15 @@ export default function RegisterPage() {
             )}
           </div>
         </div>
-      </main>
+      </div>
 
       <footer className="auth-bottom">
         {/* r177 → r191: the platform's own identity; the operator-rejected
             provenance slogan is gone — the honest identity stays. */}
         <strong>منصّة تعليم ذكية مستقلّة</strong> · عربية أولًا
       </footer>
-    </div>
+      </div>
+    </PublicShell>
   );
 }
 

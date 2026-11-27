@@ -1,23 +1,15 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
-import { Icon } from '../components/Icon';
-import { Logo } from '../brand';
-import { useThemeSync } from '../components/layout/ThemeToggle';
-import { GuestSheetChrome } from '../components/layout/GuestSheetChrome';
 import { useLegalMeta } from './legal/LegalSheet';
 import { apiBaseURL } from '../lib/api';
-/* R341 D4 — the distribution sheet rebuilt on the PATTERN LIBRARY (the
- * r340 T-D1a recipe, the D2 about / D3 help / D5 legal precedents):
- * pf-page/pf-page-header/pf-eyebrow/pf-page-actions carry the frame and
- * the app sheet's own ap-* grammar (styles/app.css) owns the rest. The
- * page left the lg-* legal-sheet family — zero lg-* seats remain here
- * (grep-proven), so the /app rules in legal.css died with this rebuild.
- * r350-B2: the prose cut to the B2 law — each section = heading + at
- * most one operative sentence; the ops detail (AAB prep, channel table,
- * simulator note) lives in RELEASE.md, not on the user-facing sheet.
- * Every URL, live-status behaviour and honesty marker is UNCHANGED. */
-import '../styles/app.css';
+import { PublicShell } from '../components/landing/r369/pages/PublicShell';
+import { Em, PageHead } from '../components/landing/r369/pages/sections';
+import { LegalCell, LegalSectionBar } from './legal/LegalSheet';
+/* r369 slice B — the distribution sheet rides the warm world:
+ * PublicShell chrome, the kit's PageHead, circled-number section bars
+ * and world-card cells (the lg document family). Every URL, live-status
+ * behaviour, honesty marker and word is UNCHANGED from the r341/r350
+ * sheet; the pf and ap drafting grammar is retired. */
 
 /**
  * /app — «تطبيق أُلارا: التنزيل والتحديث» (R327 D1 · M0.8).
@@ -58,7 +50,6 @@ interface StatusShape {
 }
 
 export function AppDownloadPage() {
-  useThemeSync();
   useLegalMeta({
     title: 'تطبيق أُلارا — التنزيل والتحديث',
     path: '/app',
@@ -83,55 +74,31 @@ export function AppDownloadPage() {
   }, []);
 
   return (
-    <div className="ap">
-      <a href="#main" className="skip-link">تخطَّ إلى المحتوى</a>
-      <GuestSheetChrome />
-
-      <header className="ap-header">
-        <div className="ap-header-inner">
-          <Link to="/" className="btn ghost sm">
-            <Icon icon={ArrowRight} size={14} />
-            العودة إلى الصفحة الرئيسية
-          </Link>
-          <Link to="/" className="ap-header-brand" aria-label="أُلارا — الصفحة الرئيسية">
-            <Logo variant="mark" size={22} />
-            أُلارا
-          </Link>
-        </div>
-      </header>
-
-      <main id="main" tabIndex={-1} className="ap-main">
-        <div className="pf-page" data-width="reading">
-          <div className="pf-page-header">
-            <div className="pf-page-header-text">
-              <p className="fo-eyebrow"><span className="fo-mono" dir="ltr">[01]</span> وثيقة التوزيع</p>
-              <h1 className="pf-page-title">تطبيق أُلارا — التنزيل والتحديث</h1>
-              <p className="pf-page-desc">
-                تنزيل أندرويد المباشر، حالة iOS، وكيف تصل التحديثات — قراءة حيّة من الخادم.
-              </p>
-            </div>
-            <div className="pf-page-actions">
-              <a className="ap-cta-primary" href={ANDROID_APK_URL} dir="ltr">
-                تنزيل APK
-              </a>
-              <Link to="/" className="ap-cta-ghost">الصفحة الرئيسية</Link>
-            </div>
-          </div>
+    <PublicShell>
+      <div className="lg p369-t1">
+        <PageHead
+          n="03"
+          icon="download"
+          kicker="وثيقة التوزيع"
+          title={<>تطبيق <Em>أُلارا</Em> — التنزيل والتحديث</>}
+          lead="تنزيل أندرويد المباشر، حالة iOS، وكيف تصل التحديثات — قراءة حيّة من الخادم."
+          actions={(
+            <>
+              <a className="w369-btn w369-btn-primary" href={ANDROID_APK_URL} dir="ltr">تنزيل APK</a>
+              <Link to="/" className="w369-btn w369-btn-ghost">الصفحة الرئيسية</Link>
+            </>
+          )}
+        />
 
           <section aria-labelledby="app-android">
-            <div className="pf-section-header">
-              <h2 className="ap-bar" id="app-android">
-                <span className="ap-bar-index ap-mono" dir="ltr" aria-hidden="true">[01]</span>
-                <span className="ap-bar-title">تنزيل أندرويد (APK)</span>
-              </h2>
-            </div>
-            <div className="ap-cell">
-              <p className="ap-p">
-                الإصدار <span className="ap-mono" dir="ltr">{APP_VERSION}</span> — أحدث بناء موقّع
+            <LegalSectionBar index={1} title="تنزيل أندرويد (APK)" id="app-android" />
+            <LegalCell>
+              <p className="lg-p">
+                الإصدار <span className="lg-mono" dir="ltr">{APP_VERSION}</span> — أحدث بناء موقّع
                 تلقائيًا من أحدث شيفرة؛ اسمح بـ«التثبيت من مصادر غير معروفة» أول مرة، وصفحة
                 الإصدارات هي المرجع الدائم.
               </p>
-              <p className="ap-p ap-actions">
+              <p className="lg-p lg-actions">
                 <a className="btn primary sm" href={ANDROID_APK_URL} dir="ltr">
                   تنزيل APK
                 </a>
@@ -139,33 +106,23 @@ export function AppDownloadPage() {
                   صفحة الإصدارات
                 </a>
               </p>
-            </div>
+            </LegalCell>
           </section>
 
           <section aria-labelledby="app-ios">
-            <div className="pf-section-header">
-              <h2 className="ap-bar" id="app-ios">
-                <span className="ap-bar-index ap-mono" dir="ltr" aria-hidden="true">[02]</span>
-                <span className="ap-bar-title">نسخة iPhone وiPad</span>
-              </h2>
-            </div>
-            <div className="ap-cell">
-              <p className="ap-p">
+            <LegalSectionBar index={2} title="نسخة iPhone وiPad" id="app-ios" />
+            <LegalCell>
+              <p className="lg-p">
                 نسخة iOS قيد الاستعدادات — سنبّلغك عند توفرها. تطبيق أندرويد
                 متاح الآن للتنزيل المباشر، وكل حسابك وبياناتك واحد في النسختين.
               </p>
-            </div>
+            </LegalCell>
           </section>
 
           <section aria-labelledby="app-qr">
-            <div className="pf-section-header">
-              <h2 className="ap-bar" id="app-qr">
-                <span className="ap-bar-index ap-mono" dir="ltr" aria-hidden="true">[03]</span>
-                <span className="ap-bar-title">رمز QR — افتح هذه الصفحة من جوالك</span>
-              </h2>
-            </div>
-            <div className="ap-cell">
-              <div className="ap-qr">
+            <LegalSectionBar index={3} title="رمز QR — افتح هذه الصفحة من جوالك" id="app-qr" />
+            <LegalCell>
+              <div className="lg-qr">
                 <img
                   /* R355 (raster-art elimination + retired-identity purge):
                    * the r349 honest-PNG fix kept a BINARY asset that —
@@ -183,48 +140,38 @@ export function AppDownloadPage() {
                   height={168}
                   loading="lazy"
                 />
-                <p className="ap-p ap-p-note">
+                <p className="lg-p lg-p-note">
                   امسح الرمز بكاميرا هاتفك — تُفتح هذه الصفحة نفسها على الجوال، بلا خدمة خارجية.
                 </p>
               </div>
-            </div>
+            </LegalCell>
           </section>
 
           <section aria-labelledby="app-updates">
-            <div className="pf-section-header">
-              <h2 className="ap-bar" id="app-updates">
-                <span className="ap-bar-index ap-mono" dir="ltr" aria-hidden="true">[04]</span>
-                <span className="ap-bar-title">كيف أحدّث التطبيق؟</span>
-              </h2>
-            </div>
-            <div className="ap-cell">
-              <p className="ap-p">
+            <LegalSectionBar index={4} title="كيف أحدّث التطبيق؟" id="app-updates" />
+            <LegalCell>
+              <p className="lg-p">
                 على أندرويد، نزّل النسخة الجديدة من هذه الصفحة وثبّتها فوق نسختك الحالية للاحتفاظ ببياناتك.
               </p>
-            </div>
+            </LegalCell>
           </section>
 
           <section aria-labelledby="app-min-version">
-            <div className="pf-section-header">
-              <h2 className="ap-bar" id="app-min-version">
-                <span className="ap-bar-index ap-mono" dir="ltr" aria-hidden="true">[05]</span>
-                <span className="ap-bar-title">الحد الأدنى للإصدار — قراءة حيّة</span>
-              </h2>
-            </div>
-            <div className="ap-cell">
+            <LegalSectionBar index={5} title="الحد الأدنى للإصدار — قراءة حيّة" id="app-min-version" />
+            <LegalCell>
               {statusState === 'loading' ? (
-                <p className="ap-p">جارٍ قراءة حالة الخادم…</p>
+                <p className="lg-p">جارٍ قراءة حالة الخادم…</p>
               ) : statusState === 'error' ? (
-                <p className="ap-p">
+                <p className="lg-p">
                   تعذّر قراءة الحالة الآن — الخادم المجاني قد يكون نائمًا؛ حدّث الصفحة بعد لحظات.
                 </p>
               ) : (
                 <>
-                  <p className="ap-p">
+                  <p className="lg-p">
                     {status?.minAppVersion ? (
                       <>
                         الخادم يفرض الآن حدًا أدنى{' '}
-                        <span className="ap-mono" dir="ltr">{status.minAppVersion}</span> — إن كان
+                        <span className="lg-mono" dir="ltr">{status.minAppVersion}</span> — إن كان
                         تطبيقك أقدم يعيدك إلى هذه الصفحة حتى تُحدّث.
                       </>
                     ) : (
@@ -233,43 +180,37 @@ export function AppDownloadPage() {
                       </>
                     )}
                   </p>
-                  <p className="ap-p ap-p-note">
-                    إصدار الخادم الحالي: <span className="ap-mono" dir="ltr">{status?.buildId ?? '—'}</span>
+                  <p className="lg-p lg-p-note">
+                    إصدار الخادم الحالي: <span className="lg-mono" dir="ltr">{status?.buildId ?? '—'}</span>
                     {status?.updateUrl ? (
                       <>
                         {' '}· رابط التحديث الرسمي: {' '}
-                        <span className="ap-mono" dir="ltr">{status.updateUrl}</span>
+                        <span className="lg-mono" dir="ltr">{status.updateUrl}</span>
                       </>
                     ) : null}
                   </p>
                 </>
               )}
-            </div>
+            </LegalCell>
           </section>
 
           <section aria-labelledby="app-requirements">
-            <div className="pf-section-header">
-              <h2 className="ap-bar" id="app-requirements">
-                <span className="ap-bar-index ap-mono" dir="ltr" aria-hidden="true">[06]</span>
-                <span className="ap-bar-title">المتطلبات والدعم</span>
-              </h2>
-            </div>
-            <div className="ap-cell">
-              <p className="ap-p">
-                أندرويد <bdi className="ap-mono" dir="ltr">8.0+</bdi> و<bdi className="ap-mono" dir="ltr">iOS 15+</bdi> — عربية بالكامل، بالوضعين الفاتح والداكن. للبلاغ عن
-                مشكلة: <Link to="/contact" className="ap-link">قناة التواصل</Link>.
+            <LegalSectionBar index={6} title="المتطلبات والدعم" id="app-requirements" />
+            <LegalCell>
+              <p className="lg-p">
+                أندرويد <bdi className="lg-mono" dir="ltr">8.0+</bdi> و<bdi className="lg-mono" dir="ltr">iOS 15+</bdi> — عربية بالكامل، بالوضعين الفاتح والداكن. للبلاغ عن
+                مشكلة: <Link to="/contact" className="lg-link">قناة التواصل</Link>.
               </p>
-            </div>
+            </LegalCell>
           </section>
 
-          <footer className="ap-colophon">
-            <p className="ap-colophon-line">منصّة مستقلّة · عربية أولًا · بيانات العرض اصطناعية بالكامل</p>
-            <p className="ap-colophon-stamp">
-              آخر تحديث: <span className="ap-mono" dir="ltr">2026-11-11</span>
-            </p>
-          </footer>
-        </div>
-      </main>
-    </div>
+        <footer className="lg-colophon">
+          <p className="lg-colophon-line">منصّة مستقلّة · عربية أولًا · بيانات العرض اصطناعية بالكامل</p>
+          <p className="lg-colophon-stamp">
+            آخر تحديث: <span className="lg-mono" dir="ltr">2026-11-11</span>
+          </p>
+        </footer>
+      </div>
+    </PublicShell>
   );
 }

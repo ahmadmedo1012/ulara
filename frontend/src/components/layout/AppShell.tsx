@@ -42,6 +42,12 @@ import '../../styles/shared/r359-grammar.css';
 // every ink is currentColor/theme-token, so the instruments are
 // theme-proof and deep-band-proof by construction.
 import '../../styles/shared/indicators.css';
+/* r369 slice 02 — the warm product shell: pill rail rows with the
+ * amber active pill, the honest نقاط إتقان chip, and the mobile
+ * dock's amber active destination. Imported LAST so its unlayered
+ * rules take the final word over layout/notifications/chrome twins
+ * (the same cascade contract indicators.css above documents). */
+import '../../styles/landing/r369-shell.css';
 import { SheetFrame, SheetGrain } from './SheetFrame';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';

@@ -83,7 +83,7 @@ function useInView<T extends HTMLElement>(rootMargin = '-12% 0px') {
  * The visual grammar lives in the sheet (`[data-reveal='pending']`), so
  * this hook carries no timing of its own.
  */
-function useReveal<T extends HTMLElement>() {
+export function useReveal<T extends HTMLElement>() {
   const ref = useRef<T | null>(null);
   useEffect(() => {
     const el = ref.current;

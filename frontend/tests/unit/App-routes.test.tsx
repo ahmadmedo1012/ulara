@@ -158,10 +158,14 @@ describe('AppRoutes — public colleges (r154a, audit 4-A14 P1-2)', () => {
     expect(screen.queryByTestId('auth-page')).toBeNull();
   });
 
-  it('renders the guest back-to-home link on the chrome-less colleges shell', async () => {
+  it('renders the warm public shell on the guest colleges funnel (r369 re-key)', async () => {
+    /* r369 slice B: the retired drafting chrome's back-link bar left;
+       CollegesLayout now wraps guests in PublicShell — the warm nav is
+       the funnel's way home (brand + menu links to /). */
     renderAt('/colleges');
     await screen.findByTestId('colleges-page');
-    expect(screen.getByText('العودة إلى الصفحة الرئيسية')).toBeTruthy();
+    expect(document.querySelector('header.w369-nav')).toBeTruthy();
+    expect(document.querySelector('a.skip-link')).toBeTruthy();
   });
 });
 

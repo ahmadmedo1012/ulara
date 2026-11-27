@@ -1,7 +1,6 @@
-import { BrowserRouter, Link, Navigate, Outlet, Route, Routes, useLocation, useNavigationType, useParams } from 'react-router-dom';
+import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation, useNavigationType, useParams } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { lazy, Suspense, useEffect } from 'react';
-import { ArrowRight } from 'lucide-react';
 import { ROUTES } from './lib/routes';
 import { queryClient } from './lib/queryClient';
 import { ProtectedRoute } from './components/layout/ProtectedRoute';
@@ -16,6 +15,7 @@ import { ProtectedRoute } from './components/layout/ProtectedRoute';
 const AppShell = lazy(() => import('./components/layout/AppShell').then((m) => ({ default: m.AppShell })));
 import { GuestReveal } from './components/motion';
 import { useAuthStore } from './stores/auth.store';
+import { PublicShell } from './components/landing/r369/pages/PublicShell';
 import { ROLE_HOME } from './lib/roleHome'; /* r360 F1 — the icon-free source (lib/nav drags the lucide registry into the entry) */
 import { HydrationSplash } from './components/HydrationSplash';
 /* R323 §A2 — the ONE loading surface: boot splash (the new mark's
@@ -30,7 +30,6 @@ import { loaderOrchestrator, useLoaderState } from './lib/loaderOrchestrator';
 import { subscribeServerWake } from './lib/serverWake';
 import { RouteErrorBoundary } from './components/ErrorBoundary';
 import { ToastStack } from './components/overlays/Toast';
-import { Icon } from './components/Icon';
 /* r305-A2: the single global cursor mount — a gated, additive pointer
  * layer (fine pointer + ≥992px + motion allowed only) that renders null
  * everywhere else, so touch/coarse/reduced-motion users keep the native
@@ -374,30 +373,18 @@ function CollegesLayout() {
    * (see HomeRedirect) — null, never a second branded surface. */
   if (!isHydrated) return null;
   if (user) return <AppShell />;
+  /* r369 slice B — the guest funnel rides the warm world: PublicShell
+   * (the landing's nav + skip link + #main + footer) wraps the Outlet,
+   * replacing the retired drafting-chrome back-link bar. The funnel
+   * home path lives in the warm nav brand + its menu items. */
   return (
-    <>
-      {/* r183-B8 (A10 finding 3): the chrome-less public funnel was the
-       * ONLY probed surface without a skip link — AppShell.tsx:360 is
-       * the sole emitter and the landing ships its own (r172a), so a
-       * keyboard user on the guest gallery tabbed through the whole
-       * funnel chrome before the content. Same a11y pattern/anchor as
-       * AppShell: the base.css .skip-link contract makes any
-       * <a class="skip-link" href="#main"> the first Tab stop, visually
-       * hidden until focused; tabIndex=-1 on the target lets
-       * programmatic focus land after the skip. */}
-      <a href="#main" className="skip-link">تخطَّ إلى المحتوى</a>
-      <main id="main" tabIndex={-1} className="content-inner">
-        <div style={{ marginBlockEnd: 'var(--sp-6)' }}>
-          <Link to={ROUTES.root} className="btn ghost sm">
-            <Icon icon={ArrowRight} size={14} />
-            العودة إلى الصفحة الرئيسية
-          </Link>
-        </div>
+    <PublicShell>
+      <div className="content-inner">
         <GuestReveal>
           <Outlet />
         </GuestReveal>
-      </main>
-    </>
+      </div>
+    </PublicShell>
   );
 }
 

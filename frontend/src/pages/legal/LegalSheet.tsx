@@ -1,20 +1,15 @@
 import type { ReactNode } from 'react';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
-import { Icon } from '../../components/Icon';
-import { Logo } from '../../brand';
-import { useThemeSync } from '../../components/layout/ThemeToggle';
-import { GuestSheetChrome } from '../../components/layout/GuestSheetChrome';
 import { usePageTitle } from '../../hooks/usePageTitle';
-// R341 D5 — the sheet rebuilt on the PATTERN LIBRARY (the r340 T-D1a
-// recipe proved on /auth, the D2 about precedent): pf-page carries the
-// reading measure, pf-page-header/pf-eyebrow the title block,
-// pf-page-actions the CTA pair; legal.css keeps only what the library
-// does not own — the sticky guest header, the [nn] section bars, the
-// hairline cells, the ledger table, the FAQ cells, the colophon — all
-// still in the lg-* names /help · /contact · /app seat from THIS
-// module's exports (their D-tasks re-key them). The public chunk never
+import { PublicShell } from '../../components/landing/r369/pages/PublicShell';
+import { PageHead } from '../../components/landing/r369/pages/sections';
+// r369 slice B — the sheet rides the warm world: PublicShell chrome
+// (the landing's nav + footer), the kit's PageHead, and the T1 article
+// grammar. The lg-* names stay as the API the nine pages and their
+// tests already speak; their LOOK is re-keyed in legal.css to tokens +
+// world shapes (22px cards, circled numbers, no hairline drafting
+// frame, no mono-bracket indices, no grain). The public chunk never
 // imports the student kit (components/student).
 import '../../styles/legal.css';
 
@@ -80,16 +75,14 @@ export function useLegalMeta(opts: {
 /* ═══ The shell ══════════════════════════════════════════════════════ */
 
 /**
- * LegalSheet — the R320 §D public document shell (R341 D5 rebuild):
- * the /capabilities chrome-less guest grammar (GuestSheetChrome frame
- * + grain, sticky guest header with the back-to-home funnel + the
- * brand mark) wrapped around a POLICY DOCUMENT on the pattern library
- * — pf-page[data-width=reading] carries the measure, pf-page-header /
- * pf-eyebrow / pf-page-desc the title block, pf-page-actions the CTA
- * pair (the escalation channel + the way home) — then the numbered
- * section bars, hairline cells, and the honest colophon with the آخر
- * تحديث stamp. Everything the nine public pages share; the page
- * components own only their words.
+ * LegalSheet — the public document shell, r369 slice B: the warm
+ * world's PublicShell chrome (nav + footer + theme control) around a
+ * POLICY DOCUMENT on the T1 article grammar — the kit's PageHead
+ * (circled index, display head, lede, pill actions), then the circled
+ * section bars, world-card cells, and the honest colophon with the
+ * آخر تحديث stamp. Everything the nine public pages share; the page
+ * components own only their words. The R320–R341 drafting grammar
+ * (frame, grain, mono brackets, hairline cells) is retired.
  */
 export function LegalSheet({
   title,
@@ -105,51 +98,36 @@ export function LegalSheet({
   updated: string;
   children: ReactNode;
 }) {
-  useThemeSync();
-
+  /* r369 — the T1 article: PublicShell chrome, the kit's head, then the
+     numbered sections as world cards. Same words, same colophon, same
+     stamp; the drafting frame is retired. */
   return (
-    <div className="lg">
-      <a href="#main" className="skip-link">تخطَّ إلى المحتوى</a>
-      <GuestSheetChrome />
+    <PublicShell>
+      <div className="lg p369-t1">
+        <PageHead
+          n="01"
+          icon="shield"
+          kicker="وثيقة سياسة"
+          title={title}
+          lead={lede}
+          actions={(
+            <>
+              <Link to="/contact" className="w369-btn w369-btn-primary">قناة التواصل</Link>
+              <Link to="/" className="w369-btn w369-btn-ghost">الصفحة الرئيسية</Link>
+            </>
+          )}
+        />
 
-      <header className="lg-header">
-        <div className="lg-header-inner">
-          <Link to="/" className="btn ghost sm">
-            <Icon icon={ArrowRight} size={14} />
-            العودة إلى الصفحة الرئيسية
-          </Link>
-          <Link to="/" className="lg-header-brand" aria-label="أُلارا — الصفحة الرئيسية">
-            <Logo variant="mark" size={22} />
-            أُلارا
-          </Link>
-        </div>
-      </header>
+        {children}
 
-      <main id="main" tabIndex={-1} className="lg-main">
-        <div className="pf-page" data-width="reading">
-          <div className="pf-page-header">
-            <div className="pf-page-header-text">
-              <p className="pf-eyebrow">وثيقة سياسة</p>
-              <h1 className="pf-page-title">{title}</h1>
-              <p className="pf-page-desc">{lede}</p>
-            </div>
-            <div className="pf-page-actions">
-              <Link to="/contact" className="lg-cta-primary">قناة التواصل</Link>
-              <Link to="/" className="lg-cta-ghost">الصفحة الرئيسية</Link>
-            </div>
-          </div>
-
-          {children}
-
-          <footer className="lg-colophon">
-            <p className="lg-colophon-line">منصّة مستقلّة · عربية أولًا · بيانات العرض اصطناعية بالكامل</p>
-            <p className="lg-colophon-stamp">
-              آخر تحديث: <span className="lg-mono" dir="ltr">{updated}</span>
-            </p>
-          </footer>
-        </div>
-      </main>
-    </div>
+        <footer className="lg-colophon">
+          <p className="lg-colophon-line">منصّة مستقلّة · عربية أولًا · بيانات العرض اصطناعية بالكامل</p>
+          <p className="lg-colophon-stamp">
+            آخر تحديث: <span className="lg-mono" dir="ltr">{updated}</span>
+          </p>
+        </footer>
+      </div>
+    </PublicShell>
   );
 }
 
@@ -166,21 +144,22 @@ export function LegalSectionBar({
   title,
   id,
 }: {
-  /** 1-based — rendered zero-padded [01], [02]… */
+  /** 1-based — rendered zero-padded 01, 02… */
   index: number;
   title: string;
   /** Optional anchor id (aria-labelledby wiring). */
   id?: string;
 }) {
+  /* r369 — the circled number replaces the mono-bracket index (the
+     drafting grammar is retired); still LTR and decorative, the Arabic
+     title still carries the meaning. */
   return (
-    <div className="pf-section-header">
-      <h2 className="lg-bar" id={id}>
-        <span className="lg-bar-index lg-mono" dir="ltr" aria-hidden="true">
-          [{String(index).padStart(2, '0')}]
-        </span>
-        <span className="lg-bar-title">{title}</span>
-      </h2>
-    </div>
+    <h2 className="lg-bar p369-article-head" id={id}>
+      <span className="lg-bar-index p369-article-num" dir="ltr" aria-hidden="true">
+        {String(index).padStart(2, '0')}
+      </span>
+      <span className="lg-bar-title">{title}</span>
+    </h2>
   );
 }
 

@@ -31,7 +31,7 @@ mkdirSync(outDir, { recursive: true });
  * unavailable for the distro (ubuntu26.04), so the rig drives the
  * installed browser through the `chrome` channel — same engine, no
  * download, and the evidence is still headless. */
-const browser = await chromium.launch({ channel: 'chrome' });
+const browser = await chromium.launch(process.env.PW_CHROME_CHANNEL === 'bundled' ? {} : { channel: 'chrome' });
 for (const p of PRESETS) {
   const ctx = await browser.newContext({
     viewport: p.viewport,
