@@ -57,7 +57,8 @@ appId: ly.ulara.app
     text: "دخول"
     optional: true
 - pressKey:
-    text: Enter
+    key: Enter     # the field is `key`, not `text` (run 45919731339's
+                   # parse forensics: 'Config Field Required: key')
     optional: true
 - hideKeyboard:
     optional: true

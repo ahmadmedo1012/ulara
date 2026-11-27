@@ -297,6 +297,10 @@ jobs:
             shots/
             backend.log
             crash-report.txt
+            # r367: Maestro's own debug dump (the UI hierarchy + its
+            # screenshots at every failed assert) — the authenticated
+            # leg's next debugging pass reads THIS, not guesses.
+            /home/runner/.maestro/tests/
           retention-days: 14
           if-no-files-found: warn
 
