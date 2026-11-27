@@ -27,10 +27,8 @@
  *   6. THEME — the dark tier resolves the royal seat to its measured
  *      dark value (the strong text tier), through the real store.
  */
-import { test, expect } from './fixtures/e2e';
-import { approachSection } from './fixtures/landing-scene';
+import { test } from './fixtures/e2e';
 
-const HERO_READY = 'في نظام واحد';
 
 /** band progress → the scene clock t (desktop: linear; mobile: the warp). */
 
@@ -55,58 +53,8 @@ test.describe('R354-final · the why plates', () => {
 });
 
 
-/* ── 5 · the roles truth ─────────────────────────────────────────── */
-
-test.describe('R354-final · five platform roles, honestly separated', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/');
-    await expect(page.locator('h1.w369-h1')).toContainText(HERO_READY);
-    await approachSection(page, 'roles');
-    await page.locator('.rl-section').scrollIntoViewIfNeeded();
-    await page.waitForTimeout(600);
-  });
-
-  test('8 rows: 5 platform roles, 3 use-case chips, the [05/05] divider', async ({ page }) => {
-    const truth = await page.evaluate(() => {
-      const rows = Array.from(document.querySelectorAll('.rl-row'));
-      const chips = rows.map((r) => !!r.querySelector('.rl-kind'));
-      const divider = document.querySelector('.rl-group');
-      return {
-        rowCount: rows.length,
-        chipCount: chips.filter(Boolean).length,
-        firstChipIndex: chips.findIndex(Boolean),
-        divider: divider
-          ? { visible: getComputedStyle(divider).display !== 'none', text: divider.textContent || '' }
-          : null,
-      };
-    });
-    expect(truth.rowCount).toBe(8);
-    expect(truth.chipCount, 'exactly three use-case rows (06–08)').toBe(3);
-    expect(truth.firstChipIndex, 'the chips begin at row 06 (after the five platform roles)').toBe(5);
-    expect(truth.divider).not.toBeNull();
-    expect(truth.divider!.visible, 'the group divider renders').toBe(true);
-    expect(truth.divider!.text).toContain('[05/05]');
-    expect(truth.divider!.text).toContain('أدوار المنصّة الخمسة');
-  });
-
-  test('the accordion is keyboard-operable and communicates its state', async ({ page }) => {
-    /* row 06 (a use-case persona) opens via its icon button */
-    const row6 = page.locator('.rl-row').nth(5);
-    const icon = row6.locator('.rl-row-icon');
-    await expect(icon).toHaveAttribute('role', 'button');
-    await expect(icon).toHaveAttribute('tabindex', '0');
-    await icon.focus();
-    await expect(icon).toBeFocused();
-    await page.keyboard.press('Enter');
-    await page.waitForTimeout(600);
-    await expect(row6).toHaveClass(/is-open/);
-    const deck = await page.evaluate(() => document.querySelector('.rl-deck-count')?.textContent?.trim() || '');
-    expect(deck, 'the media deck follows the open row').toBe('[06/08]');
-    /* the chip is inside the open row's title */
-    expect(row6.locator('.rl-kind')).toHaveText('حالة استخدام');
-  });
-});
+/* ── 5 · the roles truth — RETIRED (r369): the 8-row accordion, [05/05] divider and media deck
+   no longer exist; the r369 RolesBand is a 3-card grid (.w369-role) covered by the landing specs. */
 
 /* ── 6 · the dark tier ───────────────────────────────────────────── */
 
