@@ -14,21 +14,22 @@ import { clamp, durations, easings, pressFeedback, springs, timing } from "./pre
 
 describe("durations — shared token alignment", () => {
   it("uses the shared scale verbatim where it exists", () => {
-    expect(durations.micro).toBe(motion.micro); // 160
-    expect(durations.fast).toBe(motion.fast); // 320
-    expect(durations.base).toBe(motion.base); // 640
-    expect(durations.slow).toBe(motion.slow); // 640
-    expect(durations.countUp).toBe(motion.slower); // 640
+    expect(durations.micro).toBe(motion.micro); // 120 (r369)
+    expect(durations.fast).toBe(motion.fast); // 220 (r369)
+    expect(durations.base).toBe(motion.base); // 380 (r369)
+    expect(durations.slow).toBe(motion.slow); // 520 (r369)
+    expect(durations.countUp).toBe(motion.slower); // 700 (r369)
     expect(durations.press).toBe(motion.durationPress); // 120
     expect(durations.entrance).toBe(motion.durationNav); // 240
   });
 
   it("keeps the shared values the docs promise (guards the token source too)", () => {
-    expect(motion.micro).toBe(160);
-    expect(motion.fast).toBe(320);
-    expect(motion.base).toBe(640);
-    expect(motion.slow).toBe(640);
-    expect(motion.slower).toBe(640);
+    // r369 re-key: the springy register — 120/220/380/520/700, ONE overshoot curve.
+    expect(motion.micro).toBe(120);
+    expect(motion.fast).toBe(220);
+    expect(motion.base).toBe(380);
+    expect(motion.slow).toBe(520);
+    expect(motion.slower).toBe(700);
   });
 
   it("defines the mobile-only additions at the documented values", () => {
@@ -47,7 +48,7 @@ describe("durations — shared token alignment", () => {
 describe("easings", () => {
   it("carries the shared dsEase token as the lead curve", () => {
     // the shared source of truth (generated from shared/design-tokens.json)
-    expect(dsEase).toEqual([0.23, 1, 0.32, 1]);
+    expect(dsEase).toEqual([0.34, 1.56, 0.64, 1]); // r369: the ONE overshoot curve
     // easings.ds is built from exactly those numbers (EasingFunctionFactory
     // shape — holds under both the real runtime and the jest mock)
     const ds = easings.ds as unknown as { factory?: unknown };
@@ -81,7 +82,7 @@ describe("springs — physical parameters, one per feel", () => {
 describe("timing / pressFeedback / clamp", () => {
   it("timing() bakes duration + the ds ease by default", () => {
     const cfg = timing(durations.fast);
-    expect(cfg.duration).toBe(320);
+    expect(cfg.duration).toBe(220); // r369: durations.fast
     expect(cfg.easing).toBe(easings.ds);
   });
 

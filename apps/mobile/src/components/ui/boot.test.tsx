@@ -164,8 +164,8 @@ describe("BootMark — render net (real svg subtree, the Logo pattern)", () => {
 
   it("themes through the live palette — ink vessel stroke, primary cornerstone fill", async () => {
     const { toJSON } = await render(<BootMark size={SEAT} />);
-    expect(collectProp(toJSON(), "stroke")).toContainEqual(processed("#282828")); // the light palette ink (2026)
-    expect(collectProp(toJSON(), "fill")).toContainEqual(processed("#2540D9")); // the light palette accent — the royal cornerstone
+    expect(collectProp(toJSON(), "stroke")).toContainEqual(processed("#1E1A3C")); // r369 re-key: the light palette ink
+    expect(collectProp(toJSON(), "fill")).toContainEqual(processed("#1E1A3C")); // r369 re-key: the cornerstone rides var(--accent) ≡ the indigo ink (the web's r369 seat collapses the same way)
   });
 
   it("composes exactly one cornerstone rect — the solid accent 4×4", async () => {
