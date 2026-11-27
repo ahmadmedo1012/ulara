@@ -35,6 +35,7 @@ import { SheetSection, KpiBand, DataSheet, SheetEmpty, type DataSheetColumn } fr
  * never a mock ladder. */
 import { LevelBadge, LEVEL_NAMES, LEVEL_TIER_GROUPS } from '../../components/gamification/LevelBadge';
 import { Celebrate } from '../../components/gamification/Celebrate';
+import { EmptyMascot } from '../../components/mascot/EmptyMascot';
 /* R319 (c3-S2) — the §B2 kit: the BarCount meta, the mono status chip +
  * the today week strip (the pages-B sweep's shared barrel for this
  * file's pages; the SectionBar seats retire onto the framed sheets). */
@@ -338,12 +339,18 @@ export function GamificationPage() {
               empty={
                 /* R359: the reserved-but-empty region — the hairline
                    placeholder frame (same copy, same one action). */
-                <SheetEmpty
-                  code="NO-DATA"
-                  title="لا إنجازات بعد"
-                  desc="أكمل دروساً ومسارات في التطوير الذاتي لتفتح أول إنجاز."
-                  action={<Link to="/training" className="btn primary sm">استكشف المسارات</Link>}
-                />
+                /* slice 05: نجّوم keeps the empty state company (the
+                   spec's one in-product seat — never a grading or
+                   recording flow) — open-eyed pose, idle + blink. */
+                <>
+                  <EmptyMascot pose="think" />
+                  <SheetEmpty
+                    code="NO-DATA"
+                    title="لا إنجازات بعد"
+                    desc="أكمل دروساً ومسارات في التطوير الذاتي لتفتح أول إنجاز."
+                    action={<Link to="/training" className="btn primary sm">استكشف المسارات</Link>}
+                  />
+                </>
               }
             >
               {ach.data?.map((a) => (
@@ -794,7 +801,12 @@ export function AlertsPage() {
         ) : items.length === 0 ? (
           /* R359: the reserved-but-empty region — the hairline
              placeholder frame (same honest copy). */
-          <SheetEmpty code="NO-DATA" title="لا توجد إشعارات بعد" desc="ستظهر التذكيرات والتحديثات الأكاديميّة هنا." />
+          /* slice 05: the quiet twin for the quiet zero-state — resting
+             pose, idle only (closed eyes, no blink to miss). */
+          <>
+            <EmptyMascot pose="rest" />
+            <SheetEmpty code="NO-DATA" title="لا توجد إشعارات بعد" desc="ستظهر التذكيرات والتحديثات الأكاديميّة هنا." />
+          </>
         ) : (
           <div className="np-list">
             {items.map((n) => {

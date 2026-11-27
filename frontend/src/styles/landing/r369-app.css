@@ -274,3 +274,36 @@
     animation: none;
   }
 }
+
+/* §9 — the mascot in product empty states (slice 05, spec 05): a slow
+ * idle (3.6s ambient-slow, transform-only bob) and an occasional blink
+ * on open-eyed poses (one 240ms dip inside a 6s ambient-drift loop —
+ * ≈4% of the loop, so the blink reads as a blink, not a flutter).
+ * Reduced motion kills both in one place; the star then sits still. */
+.has-shell .g369-mascot-empty {
+  display: flex;
+  justify-content: center;
+  margin-block-end: var(--sp-3, 12px);
+}
+.has-shell .g369-mascot-idle {
+  animation: g369-mascot-idle var(--motion-duration-ambient-slow) var(--ease-out) infinite;
+}
+@keyframes g369-mascot-idle {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+.has-shell .g369-mascot-idle .m369-eyes-open {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: g369-mascot-blink var(--motion-duration-ambient-drift) var(--ease-linear) infinite;
+}
+@keyframes g369-mascot-blink {
+  0%, 91%, 97%, 100% { transform: scaleY(1); }
+  94%                { transform: scaleY(0.08); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .has-shell .g369-mascot-idle,
+  .has-shell .g369-mascot-idle .m369-eyes-open {
+    animation: none;
+  }
+}

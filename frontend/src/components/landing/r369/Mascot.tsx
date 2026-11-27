@@ -63,12 +63,15 @@ function Face({ pose }: { pose: MascotPose }) {
           <path d="M58 52 q5 5 10 0" />
         </g>
       ) : (
-        <>
+        /* m369-eyes-open — the CSS hook for the product's occasional
+           blink (slice 05): the animation lives in the consuming sheet
+           (the rule above), this class only names the part. */
+        <g className="m369-eyes-open">
           <ellipse cx="41" cy="50" rx="4.2" ry="5" fill="var(--accent-ink)" />
           <ellipse cx="63" cy="50" rx="4.2" ry="5" fill="var(--accent-ink)" />
           <circle cx="42.6" cy="48.2" r="1.4" fill="var(--c-yellow-bg)" />
           <circle cx="64.6" cy="48.2" r="1.4" fill="var(--c-yellow-bg)" />
-        </>
+        </g>
       )}
       {/* cheeks */}
       <ellipse cx="30" cy="62" rx="5" ry="3.4" fill="var(--c-peach-bg)" opacity="0.9" />
