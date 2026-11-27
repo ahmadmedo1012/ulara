@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  Trophy, Star, Medal, Activity, Crown,
+  Medal, Activity,
   Headset,
   Bell, AlertTriangle, BookOpen, Download, CalendarDays,
   CheckCircle2, Check, Heart, GraduationCap,
@@ -15,7 +15,7 @@ import { ErrorState, EmptyState, Skeleton, ChartSkeleton, ListSkeleton } from '.
 import { ChartFrame } from '../../components/charts';
 import { Icon } from '../../components/Icon';
 import { EmojiIcon } from '../../components/EmojiIcon';
-import { useMyAchievements, useLeaderboard, useMySkills, useStudentResults, useMyEnrollments, useNotificationsFeed, useMarkNotifRead, useMarkAllNotifsRead, notifDeepLink, useArExperiences, useStudentMaterials, useFaculties, useCurrentInstitutionSlug, useStudentDashboard, useTrainingMe, submissionStatusAr, type StudentMaterial } from '../../hooks/useResources';
+import { useMyAchievements, useMySkills, useStudentResults, useMyEnrollments, useNotificationsFeed, useMarkNotifRead, useMarkAllNotifsRead, notifDeepLink, useArExperiences, useStudentMaterials, useFaculties, useCurrentInstitutionSlug, useStudentDashboard, useTrainingMe, submissionStatusAr, type StudentMaterial } from '../../hooks/useResources';
 import { materialHref } from '../../lib/materialHref';
 import { usePostsFeed } from '../../components/community/usePostsFeed';
 import { formatNum, formatPct1 } from '../../utils/numbers';
@@ -36,7 +36,6 @@ import { SheetSection, KpiBand, DataSheet, SheetEmpty, type DataSheetColumn } fr
 import { LevelBadge, LEVEL_NAMES, LEVEL_TIER_GROUPS } from '../../components/gamification/LevelBadge';
 import { Celebrate } from '../../components/gamification/Celebrate';
 import { playSound } from '../../lib/sound';
-import { EmptyMascot } from '../../components/mascot/EmptyMascot';
 /* R319 (c3-S2) — the §B2 kit: the BarCount meta, the mono status chip +
  * the today week strip (the pages-B sweep's shared barrel for this
  * file's pages; the SectionBar seats retire onto the framed sheets). */
@@ -74,15 +73,12 @@ function pointsAr(n: number): string {
 
 export function GamificationPage() {
   const ach = useMyAchievements();
-  const lb = useLeaderboard();
   // Real XP economy — same scale the leaderboard ranks by.
   const dash = useStudentDashboard();
   // Real self-development progression (level / tier / distance to next level).
   const training = useTrainingMe();
 
   const xp = dash.data?.kpi?.totalXp ?? null;
-  const rank = dash.data?.kpi?.rank ?? null;
-  const cohortSize = dash.data?.kpi?.cohortSize ?? 0;
   const me = training.data;
   const authUser = useAuthStore((s) => s.user);
 
@@ -131,8 +127,8 @@ export function GamificationPage() {
     <PageFrame width="default">
       <PatternPageHeader
         eyebrow="طلاب الجامعة"
-        title="الإنجازات والنقاط"
-        description="تقدّمك ومستواك مقارنة بزملائك في المنصة."
+        title="الإنجازات ونقاط الإتقان"
+        description="تقدّمك ومستواك في مسارات التطوير الذاتي."
         actions={
           /* 22-c (A5 P3-2): one unit voice — the page mixed «XP»,
              «نقطة/نقاط» and bare «+N». pointsAr everywhere.
@@ -146,7 +142,7 @@ export function GamificationPage() {
              law; the gold seat stays on medal glyphs alone). */
           <>
             <Link to="/achievements" className="btn primary sm">
-              <Icon icon={Trophy} size={13} />
+              <Icon icon={BadgeCheck} size={13} />
               الإنجازات والشهادات
             </Link>
             <Link to="/student/skills" className="btn ghost sm">
@@ -154,7 +150,7 @@ export function GamificationPage() {
               مهاراتي
             </Link>
             {xp !== null && (
-              <span className="sg-flag"><Icon icon={Star} size={11} aria-hidden /> {pointsAr(xp)}</span>
+              <span className="sg-flag"><Icon icon={BadgeCheck} size={11} aria-hidden /> {pointsAr(xp)}</span>
             )}
           </>
         }
@@ -191,9 +187,10 @@ export function GamificationPage() {
           },
           {
             index: '03',
-            caption: 'RANK',
-            label: 'مركزك على الدفعة',
-            value: rank !== null && cohortSize > 1 ? `${formatNum(rank)} / ${formatNum(cohortSize)}` : '—',
+            caption: 'BADGES',
+            label: 'الشارات الموثّقة',
+            value: me?.badgeCount ?? 0,
+            empty: !me,
           },
         ]}
       />
@@ -324,7 +321,7 @@ export function GamificationPage() {
         })()}
       </SheetSection>
 
-      <div className="grid-2">
+      <div>
         <SheetSection
           index="02"
           caption="ACHIEVEMENTS"
@@ -343,11 +340,7 @@ export function GamificationPage() {
               empty={
                 /* R359: the reserved-but-empty region — the hairline
                    placeholder frame (same copy, same one action). */
-                /* slice 05: نجّوم keeps the empty state company (the
-                   spec's one in-product seat — never a grading or
-                   recording flow) — open-eyed pose, idle + blink. */
                 <>
-                  <EmptyMascot pose="think" />
                   <SheetEmpty
                     code="NO-DATA"
                     title="لا إنجازات بعد"
@@ -360,7 +353,7 @@ export function GamificationPage() {
               {ach.data?.map((a) => (
                 <RowItem
                   key={a.achievement.id}
-                  leading={<span className="achievement-icon" aria-hidden><Icon icon={Trophy} size={16} /></span>}
+                  leading={<span className="achievement-icon" aria-hidden><Icon icon={BadgeCheck} size={16} /></span>}
                   title={a.achievement.name}
                   meta={a.achievement.description}
                   /* R359: the earned XP is an INK mono numeral — the
@@ -369,69 +362,6 @@ export function GamificationPage() {
                 />
               ))}
             </RowList>
-          )}
-        </SheetSection>
-
-        <SheetSection
-          index="03"
-          caption="LEADERBOARD"
-          title="لوحة المتصدرين"
-          aside={!lb.isPending && !lb.isError && (lb.data?.length ?? 0) > 0 ? (
-            <BarCount
-              n={lb.data!.length}
-              srLabel={countAr(lb.data!.length, ['طالب واحد مرتّب', 'طالبان مرتّبان', 'طلاب مرتّبون', 'طالباً مرتّباً'])}
-            />
-          ) : undefined}
-        >
-          {lb.isPending ? (
-            /* shape-matched skeleton: ranked rows */
-            <div className="flex-col gap-1" aria-busy="true">
-              {[0, 1, 2, 3, 4].map((i) => (
-                <div className="leaderboard-row" key={i} aria-hidden>
-                  <Skeleton width={30} height={30} rounded="var(--r-full)" />
-                  <Skeleton width={32} height={32} rounded="50%" />
-                  <Skeleton width="40%" height={13} />
-                  <Skeleton width={64} height={13} />
-                </div>
-              ))}
-            </div>
-          ) : lb.isError ? <ErrorState error={lb.error} onRetry={() => lb.refetch()} /> :
-           !lb.data?.length ? (
-            <SheetEmpty
-              code="NO-RANKING"
-              title="لا يوجد ترتيب بعد"
-              desc="اكسب النقاط بإكمال الدروس والمسارات — يظهر ترتيبك فور تسجيل أول نقطة."
-              action={<Link to="/training" className="btn primary sm">ابدأ من التطوير الذاتي</Link>}
-            />
-          ) : (
-            /* same ranked-list grammar as the training achievements page
-               (styles/training.css §achievements) — one system */
-            <ol className="leaderboard-list" aria-label="ترتيب الطلاب بالنقاط">
-              {lb.data.map((l, i) => (
-                <li className="leaderboard-row" key={l.id} style={{ ['--lb-i' as never]: Math.min(i, 6) }}>
-                  {/* r169a: role="img" — aria-label on a bare span has no
-                      valid meaning (axe aria-label-named); the rank badge
-                      is a self-contained visual token. */}
-                  <span className={`leaderboard-rank rank-${i + 1}`} role="img" aria-label={`المركز ${i + 1}`}>
-                    {i < 3
-                      ? <Icon icon={i === 0 ? Crown : i === 1 ? Star : Medal} size={16} />
-                      : <bdi className="font-mono">#{i + 1}</bdi>}
-                  </span>
-                  <UserAvatar
-                    initials={l.avatarInitials ?? `${l.firstName?.[0] ?? ''}${l.lastName?.[0] ?? ''}`}
-                    color={l.avatarColor ?? undefined}
-                    size={32}
-                  />
-                  <span className="leaderboard-name" title={`${l.firstName} ${l.lastName}`}>
-                    {l.firstName} {l.lastName}
-                  </span>
-                  {/* 22-c (A5 P3-1): «L2» Latin tier label → Arabic
-                      «المستوى ٢» (formatNum = ar-LY digits). */}
-                  <span className="leaderboard-tier">المستوى <bdi>{formatNum(l.level)}</bdi></span>
-                  <span className="leaderboard-points">{pointsAr(l.totalXp)}</span>
-                </li>
-              ))}
-            </ol>
           )}
         </SheetSection>
       </div>
@@ -805,12 +735,9 @@ export function AlertsPage() {
         ) : items.length === 0 ? (
           /* R359: the reserved-but-empty region — the hairline
              placeholder frame (same honest copy). */
-          /* slice 05: the quiet twin for the quiet zero-state — resting
-             pose, idle only (closed eyes, no blink to miss). */
-          <>
-            <EmptyMascot pose="rest" />
-            <SheetEmpty code="NO-DATA" title="لا توجد إشعارات بعد" desc="ستظهر التذكيرات والتحديثات الأكاديميّة هنا." />
-          </>
+          /* r369 tone: no mascot in product empty states — a calm,
+             plain zero-state. */
+          <SheetEmpty code="NO-DATA" title="لا توجد إشعارات بعد" desc="ستظهر التذكيرات والتحديثات الأكاديميّة هنا." />
         ) : (
           <div className="np-list">
             {items.map((n) => {

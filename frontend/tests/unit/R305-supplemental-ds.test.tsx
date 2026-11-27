@@ -262,9 +262,9 @@ describe('R305 gamification — the level statement is the ONE deep band', () =>
 
     // The three facts ride the band: XP / LEVEL / RANK (ink numerals).
     const labels = Array.from(container.querySelectorAll('.sg-kpi-label')).map((l) => l.textContent);
-    expect(labels).toEqual(['نقاط الإنجاز', 'مستوى التطوير الذاتي', 'مركزك على الدفعة']);
+    expect(labels).toEqual(['نقاط الإنجاز', 'مستوى التطوير الذاتي', 'الشارات الموثّقة']); // r369 tone: cohort rank retired (no student-vs-student ranking)
     const captions = Array.from(container.querySelectorAll('.sg-kpi-top .sg-label')).map((l) => l.textContent);
-    expect(captions).toEqual(['XP', 'LEVEL', 'RANK']);
+    expect(captions).toEqual(['XP', 'LEVEL', 'BADGES']);
 
     // The two lists are framed sheet sections with the same titles.
     // r369 slice 03 batch B re-key: the ladder section «سلّم المستويات"
@@ -272,7 +272,8 @@ describe('R305 gamification — the level statement is the ONE deep band', () =>
     // ladder grammar driven by the REAL useTrainingMe level (never a
     // mock rung). The two R359 lists keep their titles + order after it.
     const titles = Array.from(container.querySelectorAll('.sg-section > .sg-head .sg-title')).map((h) => h.textContent);
-    expect(titles).toEqual(['سلّم المستويات', 'الإنجازات المحققة', 'لوحة المتصدرين']);
+    // r369 tone: leaderboard section removed (no student-vs-student ranking)
+    expect(titles).toEqual(['سلّم المستويات', 'الإنجازات المحققة']);
     // r351 A2 (Q2): the [0N] gutter register stays retired.
     expect(container.querySelectorAll('.r319s-bar-index')).toHaveLength(0);
   });
