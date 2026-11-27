@@ -65,8 +65,8 @@ bash scripts/verify.sh --specs r305-shell-ds   # scope e2e by spec file stem
 Conformance instrument — RETIRED (R342-final): the `scripts/conformance/` tree this
 section once described never existed in this repository (verified across the full git
 history; the text was aspirational). Visual conformance rides the pixel-exact E2E belts
-(`tests/e2e/r309-recovery`, `r308-landing-instruments`, `r311-cursor-ownership`,
-`r312-*`, `r305/*`) + `tests/audit/` (surface drift) — measured, never self-reported.
+(`tests/e2e/r309-recovery`, `r312-guest-reveal`, `r349-*`, `r354-final`,
+`r305/*`) + `tests/audit/` (surface drift) — measured, never self-reported.
 
 CSS: `npm run lint:css -w frontend` (stylelint 16), `npm run gate:css-coverage -w frontend`.
 
