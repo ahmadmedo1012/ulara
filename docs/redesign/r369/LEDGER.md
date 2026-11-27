@@ -440,3 +440,16 @@ Commits on r369/local-upgrade: bd73c0f (dead-code sweep) · 0f399d2 (parent-appr
 ### Close-out — SLICE 06 CLOSED (8:08 EET)
 - All spec-06 local steps landed: sweep, baselines, gate sweep, Lighthouse (+ the a11y fix), overlap audit 0, DESIGN.md canon completed (§6-§9: authed world, mascot seat, effects+sound, mobile parity), CHANGELOG r369 entry, this LEDGER close.
 - OPEN (owner/parent): the zero-trace real name; the 2 contrast decisions (gold-ink kicker, phone-mock dimming); the print-royal decision; the PR r369/new-identity → main opened READY but NOT merged — the merge is the owner's act, on their signal. Nothing pushed; all work on r369/local-upgrade.
+
+## ROUND 2 — re-compare against the live reference (started 10:02 EET, user Telegram 24730228)
+
+Branch r369/local-upgrade only; nothing pushed; origin/r369/new-identity still 0e6d46b at start.
+
+### Reference inventory (sparkle.ankatms.com sitemap, English)
+Home, /support/, /privacy/, /guides/reward-chart-for-kids/, /tools/reward-chart/, /impressum/ (+ localized trees). Home = 10 bands: hero · tasks · progress road · wishes · habits (night) · family · in-action reel · pedagogy · FAQ · finale. Ours maps 1:1 (hero, 02-06, handoff, showcase, principles, roles, FAQ, CTA); our counterparts for inner pages: /help·/contact (support), /legal/privacy, /about·/campus (guide), /legal/* (impressum). The reference's interactive reward-chart TOOL has no educational-platform equivalent (a family chore tool is not our product); not ported.
+
+### Gap list (viewport-by-viewport, 1440, home)
+1. Per-scene ambient grounds (reference: peach/sky/blush washes per band; ours: flat cream) — CLOSED this round (b9c2cba: feathered tint wash, tokens only, both themes).
+2. Scroll-pinned scenes / floating particles / 3D character hero — the reference's character art is a different product's mascot; ours is نجّوم by canon (off public hero by r369 ruling). Not ported by design.
+3. Reward cards fan (tilted deck) and the road path — OPEN, candidate for next batch.
+4. Inner pages not yet compared page-by-page — OPEN.
