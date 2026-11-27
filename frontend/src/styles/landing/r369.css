@@ -618,6 +618,15 @@
   padding-block: clamp(var(--sp-9), 5.5vw, var(--sp-13));
 }
 
+/* P2 rhythm: on desktop each band is a full-viewport beat with one focal
+ * subject centred; phones keep natural height (no pinning, native scroll). */
+@media (min-width: 1024px) {
+  .w369-band { min-block-size: min(100svh, 56rem); align-items: center; }
+}
+@media (max-width: 1023px) {
+  .w369-band { min-block-size: min(80svh, 40rem); align-content: center; }
+}
+
 .w369-band:nth-of-type(even) .w369-band-head {
   order: 2;
   padding-inline-start: clamp(var(--sp-4), 3vw, var(--sp-8));
