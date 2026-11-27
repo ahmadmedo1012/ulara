@@ -344,6 +344,21 @@
   min-block-size: calc(100svh - 76px);
 }
 
+/* the reference's hero ground: a full-bleed peach-to-lavender wash that
+ * ends in the cream of the next band (token colors, so dark stays dark) */
+.w369-hero { isolation: isolate; }
+.w369-hero::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline: calc(50% - 50vw);
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 70% at 85% 10%, color-mix(in srgb, var(--c-peach-bg) 85%, transparent), transparent 70%),
+    linear-gradient(180deg, transparent 35%, color-mix(in srgb, var(--c-lavender-bg) 80%, transparent) 100%);
+}
+
 .w369-hero-copy { min-inline-size: 0; }
 
 .w369-hero-actions {
