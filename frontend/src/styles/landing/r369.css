@@ -589,6 +589,16 @@
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
 }
+/* RTL reading flow: the ticker travels left to right, so new items enter
+   from the leading (left) edge the way an Arabic news strip does. The track
+   is anchored at the right in RTL, so +50% lands exactly one run over. */
+@keyframes w369-marquee-rtl {
+  from { transform: translateX(0); }
+  to { transform: translateX(50%); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .w369-marquee-track:dir(rtl) { animation-name: w369-marquee-rtl; }
+}
 
 /* ── story bands ──────────────────────────────────────────────────── */
 
