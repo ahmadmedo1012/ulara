@@ -23,11 +23,6 @@ import { isCommonPassword } from '../lib/commonPasswords';
 // seat PAGES-GAP §4 maps (RegisterPage.tsx:655 area), both role forms.
 import { ConsentLine } from '../components/ConsentLine';
 import type { AppRole } from '../stores/auth.store';
-// r359 · A1-AUTH — the auth sheets' measured grammar (the appended
-// AUTH section of errors.css, A1-owned; unlayered + .auth-shell-scoped
-// so only these four sheets drift). The base sheet rules stay in
-// patterns.css.
-import '../styles/errors.css';
 import { PublicShell } from '../components/landing/r369/pages/PublicShell';
 
 /**

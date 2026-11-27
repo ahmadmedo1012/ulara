@@ -586,8 +586,8 @@
 
 /* ── r369 slice B · T5 auth sheets (/auth, /auth/register, /auth/forgot,
      /auth/reset) — the warm re-shape. The retired drafting sheet
-     (patterns.css .auth-shell block + errors.css AUTH section) no longer
-     matches any markup; this block owns the four pages' look. Form
+     (the patterns.css .auth-shell rule + errors.css AUTH section) — both
+     DELETED in the slice-06 close-out sweep; this block owns the four pages' look. Form
      logic, copy, the demo table and the consent line are untouched. */
 
 .p369 .auth-flowbar {

@@ -546,13 +546,6 @@ a.pf-row-link {
 
   /* ══ 1 · SHELL — login / register share the framed sheet ground ══ */
 
-  .auth-shell {
-    min-block-size: 100dvh;
-    display: flex;
-    flex-direction: column;
-    background: var(--bg);
-  }
-
   .auth-top {
     padding: var(--sp-4) var(--page-gutter);
     display: flex; align-items: center; justify-content: space-between;

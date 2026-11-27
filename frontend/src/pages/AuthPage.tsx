@@ -35,11 +35,6 @@ import {
 // ONLY AuthPage edits.
 import { ConsentLine } from '../components/ConsentLine';
 import type { AppRole, MembershipInfo } from '../stores/auth.store';
-// r359 · A1-AUTH — the auth sheets' measured grammar (the appended
-// AUTH section of errors.css, A1-owned; unlayered + .auth-shell-scoped
-// so only these four sheets drift). The base sheet rules stay in
-// patterns.css.
-import '../styles/errors.css';
 import type { ApiError } from '../lib/api';
 
 /** Login-error envelope the backend rejects with (lib/errors.ts):
