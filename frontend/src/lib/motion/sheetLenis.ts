@@ -70,7 +70,7 @@ import { subscribeSheetFrame } from './sheetConductor';
  * defaults this module relies on by omission, exactly like the reference
  * omits what it does not override.
  */
-export const DS_LENIS_PARAMS = {
+const DS_LENIS_PARAMS = {
   /** lerp mode (duration stays undefined) — the reference's 0.1 glide. */
   lerp: 0.1,
   /** undefined → the constructor's lerp branch, never a fixed duration. */
@@ -203,11 +203,6 @@ function onVisibilityChange(): void {
  * existed; observability rides isGuestLenisIdle(). */
 let lenisIdle = false;
 
-/** R321 §A1 — the idle observability seat (was html[data-lenis-idle]). */
-export function isGuestLenisIdle(): boolean {
-  return lenisIdle;
-}
-
 function bumpIdle(): void {
   if (typeof window === 'undefined' || typeof document === 'undefined') return;
   if (idleTimer) window.clearTimeout(idleTimer);
@@ -225,11 +220,6 @@ function bumpIdle(): void {
 /** The live engine, or null (tests + ScrollResetOnPush's reset path). */
 export function getLenis(): Lenis | null {
   return lenis;
-}
-
-/** Introspection twin of getLenis() for cheap boolean assertions. */
-export function isGuestLenisOn(): boolean {
-  return lenis !== null;
 }
 
 /**

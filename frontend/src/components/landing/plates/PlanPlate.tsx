@@ -68,23 +68,4 @@ export function PlanPlate({
 /* the ink slab info card — mono header + hairline rows. `variant`
  * picks the content voice: "checking" (the audit run) or "learned"
  * (the pattern the platform keeps). */
-export function DarkCard({
-  header,
-  rows,
-  className,
-}: {
-  header: string;
-  rows: string[];
-  className?: string;
-}) {
-  return (
-    <aside className={`dark-card ${className ?? ''}`} aria-label={header}>
-      <span className="dark-card-head fo-mono" dir="rtl">{header}</span>
-      <ul className="dark-card-rows">
-        {rows.map((r) => (
-          <li key={r} className="dark-card-row fo-mono">{r}</li>
-        ))}
-      </ul>
-    </aside>
-  );
-}
+

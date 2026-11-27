@@ -13,26 +13,7 @@
  *   <ArtPageHero scene={podiumScene} alt="…" caption="…" note="…" />
  *   <ArtPageHero plan="plan-campus" title="مخطط الحرم الجامعي" />
  */
-import { DuotoneScene } from '../landing/plates/DuotoneScene';
 import { PlanPlate, type PlanId } from '../landing/plates/PlanPlate';
-
-export function ArtPageHeroScene({
-  src,
-  alt,
-  caption,
-  note,
-}: {
-  src: string;
-  alt: string;
-  caption?: string;
-  note?: string;
-}) {
-  return (
-    <div className="pg-art-hero">
-      <DuotoneScene src={src} alt={alt} variant="stage" caption={caption} note={note} />
-    </div>
-  );
-}
 
 export function ArtPageHeroPlan({
   plan,

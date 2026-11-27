@@ -92,19 +92,15 @@ describe('r188 brand reset — campus photography retired (no real-university im
     }
   });
 
-  it('r369 — the hero art is our own mascot SVG (no raster, no photo)', () => {
-    /* r369 replaced the drafted-elevation hero art with the mascot
-     * «نجّوم» — the same contract holds: an original inline SVG, no
-     * <picture>, no campus raster. */
-    const src = read('src/components/landing/r369/Mascot.tsx');
+  it('r369 — the landing carries no raster hero and no photo (the mascot is retired)', () => {
+    /* the r369 identity has no mascot: the hero art is inline SVG/CSS only,
+     * no <picture>, no campus raster. */
     const page = read('src/pages/LandingPage.tsx');
+    const landing = read('src/components/landing/r369/index.tsx');
     expect(page).not.toContain('<picture>');
     expect(page).not.toContain('main_photo');
-    expect(src).not.toContain('<picture>');
-    expect(src).not.toContain('<image');
-    expect(src).toContain('viewBox');
-    // decorative by default — the band supplies any meaning in text
-    expect(src).toContain('aria-hidden');
+    expect(landing).not.toContain('<picture>');
+    expect(landing).not.toContain('<image');
   });
 
   it('r198 — the retired landing raster family stays deleted', () => {

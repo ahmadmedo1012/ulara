@@ -29,7 +29,7 @@ const PAGE_LINKS = [
   { to: '/help', label: 'المساعدة' },
 ] as const;
 
-export function PublicNav() {
+function PublicNav() {
   const [open, setOpen] = useState(false);
   const burgerRef = useRef<HTMLButtonElement | null>(null);
   const close = useCallback(() => {

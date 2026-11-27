@@ -195,9 +195,6 @@ const LOADER_ACCEL_MAX = 1.0;
  * visitor; the release lands at the authored plateau's end so the
  * fallback 100% at LOADER_DONE_MS is exactly the slowest run. */
 export const LOADER_GATE_TIMEOUT_MS = 3840;
-/** The measured hold at 100% before the exit split (reference: 717ms
- * between the counter's 100% and the first clip frame — 5649→6366). */
-export const LOADER_HOLD_MS = 717;
 
 /** The tail's internal shape — the accelerating tail's proportions
  * (63.4% of the distance at 40% of the time, 95.1% at 80%), reused

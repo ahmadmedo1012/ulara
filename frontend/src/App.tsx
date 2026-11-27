@@ -889,7 +889,7 @@ function ScrollResetOnPush() {
  * other route (auth, shell, public /colleges, 404) keeps the r305-A2
  * behavior unchanged. Exported for the r311 ownership integration
  * test (tests/motion/r311-cursor-ownership.test.tsx). */
-export function RoutedCursorManager() {
+function RoutedCursorManager() {
   const { pathname } = useLocation();
   return <CursorManager suspended={pathname === ROUTES.root} />;
 }
@@ -976,7 +976,7 @@ function BootOrchestration() {
   return null;
 }
 
-export function GuestLenisMount() {
+function GuestLenisMount() {
   const { pathname } = useLocation();
   const user = useAuthStore((s) => s.user);
   const isHydrated = useAuthStore((s) => s.isHydrated);

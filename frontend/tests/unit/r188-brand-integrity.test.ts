@@ -120,7 +120,6 @@ describe('r188 — brand-integrity gate (active surfaces stay university-identit
     const landing = [
       'frontend/src/pages/LandingPage.tsx',
       'frontend/src/components/landing/r369/index.tsx',
-      'frontend/src/components/landing/r369/Mascot.tsx',
       'frontend/src/pages/LandingPage.tsx',
     ].map((p) => readFileSync(path.join(root, p), 'utf8')).join('\n');
     expect(landing).toContain('مساحة عمل أُلارا التجريبية');

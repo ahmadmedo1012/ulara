@@ -117,7 +117,6 @@ describe('r177 — landing/auth copy is affiliation-free', () => {
     const landing = [
       'src/pages/LandingPage.tsx',
       'src/components/landing/r369/index.tsx',
-      'src/components/landing/r369/Mascot.tsx',
       'src/pages/LandingPage.tsx',
     ].map(read).join('\n');
     for (const claim of OFFICIAL_CLAIMS) {

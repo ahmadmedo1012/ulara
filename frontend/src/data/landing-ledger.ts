@@ -36,14 +36,6 @@ export const LIVE_COUNT = LIVE_CAPABILITIES.length;
  * subject of its LIVE_CAPABILITIES sentence (same truth, shorter
  * breath), never a new claim; the full sentences stay on
  * /capabilities. */
-export const HERO_WORK_ITEMS = [
-  'المحاضرات التفاعلية',
-  'الاختبارات',
-  'مصفوفة الإتقان',
-  'مكتبة البحوث',
-  'الرسائل المباشرة',
-  'الجدول الأسبوعي',
-];
 
 /* ── Honest status pairs (إلى أين) — natural wording for the ledger's
  * local/sim/soon rows; no operational jargon, no invented claims.
