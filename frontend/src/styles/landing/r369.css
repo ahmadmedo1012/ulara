@@ -1594,6 +1594,30 @@ html:not([data-theme='dark']) .w369-footer {
     radial-gradient(55% 60% at 90% 92%, color-mix(in srgb, var(--gold) 10%, transparent), transparent 72%);
 }
 
+/* ── r369 round 2 — the reward fan ────────────────────────────────────
+ * The reference lays its wishes as a tilted deck, the chosen one
+ * squared up. Ours: at ≥900px the three reward cards fan (±3deg, the
+ * middle lifted a touch, small overlap), and a card that has OPENED
+ * (wallet >= cost) squares up and lifts — the state reads as a pose,
+ * not only a colour. Individual `rotate`/`translate` properties so the
+ * hover `transform` and the reveal animation never fight it. Static
+ * under reduced motion (a pose, not movement); no text rotates out of
+ * its box at these angles. */
+@media (min-width: 900px) {
+  .w369-reward-grid { gap: 0; }
+  .w369-reward:nth-child(3n + 1) { rotate: -3deg; translate: 0 var(--sp-2); }
+  .w369-reward:nth-child(3n + 2) { translate: 0 calc(var(--sp-2) * -1); z-index: 1; }
+  .w369-reward:nth-child(3n) { rotate: 3deg; translate: 0 var(--sp-2); }
+  .w369-reward[data-open='true'] { rotate: 0deg; z-index: 2; }
+  .w369-reward {
+    margin-inline: calc(var(--sp-1) * -1);
+    transition-property: transform, box-shadow, border-color, rotate, translate;
+  }
+}
+@media (min-width: 900px) and (prefers-reduced-motion: reduce) {
+  .w369-reward { transition: none; }
+}
+
 /* ── anchors land under the sticky bar, never beneath it ─────────── */
 
 .w369-band[id],
