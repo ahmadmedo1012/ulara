@@ -2093,3 +2093,8 @@ section.chapters {
 @media (min-width: 992px) {
   .jt-plat-aux-3 { inset-inline-end: auto; inset-inline-start: 3%; inset-block-start: 6%; inline-size: 14%; }
 }
+
+/* r368 06 collage — a fourth plate (clinic wing) on the far edge, one more layer of the reference's stack */
+@media (min-width: 992px) {
+  .jt-plat-aux-4 { inset-inline-start: 44%; inset-inline-end: auto; inset-block-start: 9%; inset-block-end: auto; inline-size: 13%; }
+}

@@ -65,6 +65,10 @@ elif kind=='campus':
 elif kind=='admin':
     room(-16,-8,16,16,2.8); room(1,-8,15,7,2.8); room(1,1,15,7,2.8)
     for i in range(5): box(-14,-3,-5+i*2.2,-4.5+i*2.2,0,.9,dk)
+elif kind=='wing':
+    room(-16,-9,32,18,2.6)
+    for i in range(5): box(-15.6+i*6.3,-15.3+i*6.3,-8.7,-1.5,0,2.4,dk); box(-15.6+i*6.3,-9.4+i*6.3,1.2,1.5,0,2.4,dk)
+    for i in range(5): box(-14+i*6.3,-12.5+i*6.3,-6.5,-5.2,0,.6,conc)
 elif kind=='lab':
     room(-14,-9,28,18,2.6)
     for i in range(3):
@@ -115,6 +119,8 @@ if FLAT:
     if kind=='admin':
         for i in range(5): box(-13.2,-12.6,-5.6+i*2.2,-5.0+i*2.2,0,.15,dk); box(-4.6,-4.0,-5.6+i*2.2,-5.0+i*2.2,0,.15,dk)
         hatch(1.4,-7.6,15.6,-1.4,1.5); hatch(1.4,1.4,15.6,7.6,1.5); swing(-13,0)
+    if kind=='wing':
+        hatch(-15.5,-8.6,15.5,-1.6,1.3); swing(-9,1.2); swing(3.6,1.2,ang=140)
     if kind=='lab':
         hatch(-19.7,-2.7,-14.3,2.7); swing(-11,-1); swing(11,-1,ang=140)
     if kind=='campus':
@@ -123,6 +129,7 @@ if kind=='lecture': dim(-14,-12,14,-12); dim(-17,-9,-17,9); grid(-18,18,-13,13)
 if kind=='library': dim(-15,-13,15,-13); dim(-23,-10,-23,10); grid(-18,18,-13,13)
 if kind=='exam': dim(-13,-12,13,-12); dim(-17,-9,-17,9); grid(-18,18,-13,13)
 if kind=='admin': dim(-16,-11,16,-11); dim(-19,-8,-19,8); grid(-18,18,-13,13)
+if kind=='wing': dim(-16,-12,16,-12); dim(-19,-9,-19,9); grid(-18,18,-13,13)
 if kind=='lab': dim(-14,-12,14,-12); dim(-17,-9,-17,9); grid(-18,18,-13,13)
 if kind=='campus': dim(-18,-15,20,-15); grid(-20,20,-14,14,4)
 sc.render.use_freestyle=True; sc.render.line_thickness_mode='ABSOLUTE'; sc.render.line_thickness=1.1

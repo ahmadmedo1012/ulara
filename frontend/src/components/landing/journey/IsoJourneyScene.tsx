@@ -119,7 +119,7 @@ const CLOSE_CHIP_L2_AR = '[04]';
 const PLAT_PLAN_SRCS = ['lecture', 'library', 'exam'].map(
   (n) => new URL(`../../../assets/art-v2/plates-bl/${n}.webp`, import.meta.url).href,
 );
-const PLAT_AUX_SRCS = ['campus', 'admin', 'lab'].map(
+const PLAT_AUX_SRCS = ['campus', 'admin', 'lab', 'wing'].map(
   (n) => new URL(`../../../assets/art-v2/plates-bl/${n}.webp`, import.meta.url).href,
 );
 const BIG_PLAN_SRC = new URL('../../../assets/art-v2/plans/plan-library.svg', import.meta.url).href;

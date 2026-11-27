@@ -379,3 +379,8 @@ html[data-theme='dark'] body.ula-grain::before {
     display: none;
   }
 }
+
+/* r368 type tuning — the reference's display voice is a medium grotesque with tight word gaps: Plex Arabic 500 (already wired) and a slightly closed word space on headings; no letter-spacing, so Arabic joins stay intact */
+@media (min-width: 992px) {
+  .landing :is(h1, h2) { font-weight: 500; word-spacing: -0.04em; font-synthesis: none; }
+}
