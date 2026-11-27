@@ -311,11 +311,13 @@ const COLOR_SAMPLES: ReadonlyArray<[string, string, boolean]> = [
    * without a direct text node). hasDirectText(body) was ALWAYS false
    * — the ground sample never shipped; it no longer gates. */
   ['body', 'body', false],
-  ['page-title', 'h1.pf-page-title, h1.page-title, h1.fo-hero-title, h1.auth-form-title, h1.nf-title', true],
-  ['page-subtitle', '.pf-page-desc, .page-subtitle', true],
+  /* r369: the landing's warm-anatomy hooks join current-first (the
+   * w369 hero H1 + lead, the band cards) — same r291 convention. */
+  ['page-title', 'h1.pf-page-title, h1.page-title, h1.w369-h1, h1.p369-h1, h1.fo-hero-title, h1.auth-form-title, h1.nf-title', true],
+  ['page-subtitle', '.pf-page-desc, .page-subtitle, .w369-lead', true],
   ['metric-value', '.pf-stat-value, .metric-value', true],
   ['metric-label', '.pf-stat-label, .metric-label', true],
-  ['card', '.card, .hro-work-item, .rl-row', false],
+  ['card', '.card, .hro-work-item, .rl-row, .w369-band, .w369-progress-card', false],
   ['sidebar-item', '.nav-item.on, .sidebar .nav-item', true],
   ['text-subtle', '.text-subtle', true],
 ];

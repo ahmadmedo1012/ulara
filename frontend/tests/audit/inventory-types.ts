@@ -211,9 +211,14 @@ export const KNOWN_DURATIONS_MS: ReadonlyArray<number> = [
   // one-cycle convention above; the new --t-* rungs joined instead:
   // 200 fast / 400 base+page / 480 reveal / 500 slow / 650 slower.
   // 900 cinema is animation-only and never captured as a transition.)
-  80, 200, 400, 480, 500, 650, 700, 1200,
+  80, 480, 500, 650, 700, 1200,
   // 012 additions (animation-only)
   120, 180, 0,
+  // r369 slice 06 (the same one-cycle convention as the r305 re-key
+  // above): the r369 ladder re-keyed --t-fast 200 → 220 and --t-base
+  // 400 → 380 (tokens.css); the retired 200/400 rungs leave with this
+  // update and the baseline re-promotes in the same commit.
+  220, 380,
   // r164 integration: the token ladder's slower rungs (tokens.css
   // --t-slower: 520ms, --t-cinema: 720ms) — used by the landing
   // reveal-up family and the auth card entrance; without them the
