@@ -198,3 +198,17 @@
   color: var(--text-secondary);
   line-height: 1.6;
 }
+
+/* §7 — 44px touch floor for .btn.sm inside the shell (slice 03 batch B
+ * audit: «مهاراتي» / «الإنجازات والشهادات» / «إعادة تحميل النقاط» all
+ * measured 36px at every width). The small register's font + radius
+ * stay; the hit area grows. In-TABLE row actions keep the dense 36px
+ * register — a data row is not a standalone target. */
+.has-shell .btn.sm {
+  min-height: 44px;
+  padding-block: 10px;
+}
+.has-shell table .btn.sm {
+  min-height: 36px;
+  padding-block: 4px;
+}

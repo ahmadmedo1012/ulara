@@ -333,3 +333,15 @@ AppShell surfaces, not public pages — they moved to slices 02/03.
   unit tests green (CoursesPage-summary, R305-courses-ds,
   R305-supplemental-ds, r305a7 lib/res, QualityPages-rosters) — no
   re-keys.
+
+## SLICE 03 — batch B (gamification ladder) — WIP
+
+- LevelBadge generator extracted to `src/components/gamification/LevelBadge.tsx` — byte-identical geometry to the landing's badge (rays 3→7, leaf/sky/violet/amber tiers), exporting LEVEL_NAMES (20 Arabic names) + LEVEL_TIER_GROUPS (بذور/مسارات/منائر/قمم). Product class prefix .g369-badge-*; the landing keeps .w369-badge-*.
+- GamificationPage: new framed section «سلّم المستويات» (index 01) ahead of the two R359 lists. The readout (level name, tier group + real TIER_LABEL tier, pctIntoLevel bar in var(--gold), «متبقّي X نقطة» via pointsAr) and the 20-rung ladder (data-earned/data-current/aria-current) are driven ONLY by useTrainingMe — never a mock rung. Level >20 clamps to a fully-lit ladder with the real number kept in the readout.
+- Honest states: training.isError renders SheetEmpty + retry AND the fully locked ladder (the error copy promises the ladder, so it renders); no level yet → «لم يبدأ المسار بعد» + locked ladder.
+- HONESTY GAP (carried): no streak field exists in any payload the app reads (verified hooks/resources/*, slice 02 finding) → no streak row renders. If a streak API lands, add the row then.
+- r369-app.css §6: .g369-badge-* ladder + progress styles under .has-shell (twin of r369.css:2228-37+2775). §7: 44px touch floor for .btn.sm in the shell (audit finding: page-head CTAs + retries measured 36px at every width); in-table row actions keep the dense 36px register.
+- Icon gate: `frontend/src/components/gamification/` added to check-icons.sh's documented allowlist — the generated badge is bespoke achievement symbology (same category as the landing's allowlisted twin + the brand mark), NOT UI iconography.
+- Re-keys: R305-supplemental-ds.test.tsx — the framed-section titles pin now expects «سلّم المستويات» first; change recorded in a test comment.
+- Evidence: evidence/03-role-pages/batch-b/ — 6 route cells + capture-ladder.mjs element shots (ladder-{1440,390}{,-dark}.png, 20 rungs verified, RTL order, locked state legible both themes).
+- Gates: tokens:check · raw-css · motion · csp-hash · colors --strict · zero-trace · icons PASS; tsc + build + stylelint clean; R305 + gamification suites 24/24; overlap audit-authed on /student/gamification → 0 findings, all widths, both themes.
