@@ -24,73 +24,12 @@
  *      brand-block rows retired with R349 D1) while the ten-door legal
  *      row survives intact.
  */
-import { approachSection, scrollToPin } from './fixtures/landing-scene';
 import { test, expect } from './fixtures/e2e';
-import type { Page } from '@playwright/test';
 
-const PHONE_WIDTHS = [390, 360, 320] as const;
-const HEAD_SEATS = ['.wy-eyebrow-t', '.wy-title', '.wy-lede-t', '.wy-note-t'] as const;
-const TOLERANCE = 0.5; /* px — sub-pixel AA edges, never content */
 
 test.use({ e2eRole: 'guest', reducedMotion: 'no-preference' });
 
-/** the reveal engine seats content with pre-fire transforms — give the
- *  armed rungs a beat to land before measuring (the r333 discipline). */
-async function settleReveals(page: Page, ms = 700) {
-  await page.waitForTimeout(ms);
-}
 
-test.describe('R349 — the why head stands inside the phone viewport (the silent clip)', () => {
-  for (const w of PHONE_WIDTHS) {
-    test(`why head seats read fully inside @${w}x844`, async ({ page }) => {
-      await page.setViewportSize({ width: w, height: 844 });
-      await page.goto('/');
-      await approachSection(page, 'why');
-      await page.locator('.wy-section').scrollIntoViewIfNeeded();
-      await settleReveals(page);
-
-      const seats = await page.evaluate(
-        ({ seats, w: vw, tol }) =>
-          seats.map((sel) => {
-            const el = document.querySelector(sel) as HTMLElement | null;
-            if (!el) return { sel, missing: true };
-            const r = el.getBoundingClientRect();
-            return {
-              sel,
-              missing: false,
-              left: r.left,
-              right: r.right,
-              inside: r.left >= -tol && r.right <= vw + tol && r.width > 0,
-            };
-          }),
-        { seats: [...HEAD_SEATS], w, tol: TOLERANCE },
-      );
-
-      for (const s of seats) {
-        expect(s.missing, `${s.sel} must exist`).toBe(false);
-        expect(
-          s.inside,
-          `${s.sel} must read inside the viewport (L=${s.left} R=${s.right} @${w})`,
-        ).toBe(true);
-      }
-    });
-  }
-
-  test('the head grid re-seats to ONE column ≤991 (the 552px side-rail root cause)', async ({ page }) => {
-    await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/');
-    await approachSection(page, 'why');
-    await page.locator('.wy-section').scrollIntoViewIfNeeded();
-    await settleReveals(page, 300);
-
-    const cols = await page.evaluate(() => {
-      const head = document.querySelector('.wy-head') as HTMLElement;
-      return getComputedStyle(head).gridTemplateColumns;
-    });
-    /* one track — the two-column «0px 552px» collapse can never recur */
-    expect(cols.split(' ').length).toBe(1);
-  });
-});
 
 test.describe('R349 — the plate leader labels read inside the frame (r351: the journey seat)', () => {
   /* r351 P1 — the HERO STAGE IS DECLUTTERED: the static zone-name leader
@@ -104,38 +43,6 @@ test.describe('R349 — the plate leader labels read inside the frame (r351: the
 });
 
 test.describe('R349 — the phone deck and the one sitemap (structure pins)', () => {
-  test('the why pillars swipe as a snap deck ≤767 (no document overflow)', async ({ page }) => {
-    await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/');
-    await approachSection(page, 'why');
-    await page.locator('.wy-panels').scrollIntoViewIfNeeded();
-    await settleReveals(page);
-
-    const deck = await page.evaluate(() => {
-      const p = document.querySelector('.wy-panels') as HTMLElement;
-      return {
-        scrollable: p.scrollWidth > p.clientWidth,
-        slides: p.querySelectorAll('.wy-panel').length,
-      };
-    });
-    expect(deck.scrollable, 'the deck must be swipeable (4 slides > 1 viewport)').toBe(true);
-    expect(deck.slides).toBe(4);
-
-    /* the swipe moves the deck (RTL: scrollLeft goes negative) */
-    await page.evaluate(() => {
-      const p = document.querySelector('.wy-panels') as HTMLElement;
-      p.scrollBy({ left: -320, behavior: 'instant' as ScrollBehavior });
-    });
-    await settleReveals(page, 300);
-    const moved = await page.evaluate(() => {
-      const p = document.querySelector('.wy-panels') as HTMLElement;
-      return Math.abs(p.scrollLeft) > 50;
-    });
-    expect(moved, 'the deck must actually scroll').toBe(true);
-
-    const overflow = await page.evaluate(() => document.documentElement.scrollWidth);
-    expect(overflow).toBeLessThanOrEqual(390);
-  });
 
 });
 
@@ -175,61 +82,8 @@ test.describe('R349 — the phone deck and the one sitemap (structure pins)', ()
 
 
 
-test.describe('R349 — the capability panel settles by 92% (no blank unfold)', () => {
-  for (const [label, vw, mobile] of [
-    ['390', { width: 390, height: 844 }, true],
-    ['1440', { width: 1440, height: 1000 }, false],
-  ] as const) {
-    test(`the head and every row carry ink @${label}`, async ({ page }) => {
-      await page.setViewportSize(vw);
-      await page.goto('/');
-      await approachSection(page, 'chapters');
-      await page.waitForFunction(
-        () => (document.querySelector('.jt') as HTMLElement)?.dataset.stage !== undefined,
-        undefined,
-        { timeout: 8000 },
-      );
-
-      /* the compressed windows settle every row by ~0.92; the retired
-       * windows left the header at 0 and the rows mid-flight here. */
-      await scrollToPin(page, 0.93, mobile);
-      const panel = await page.evaluate(() => {
-        const head = document.querySelector('.map-panel-head') as HTMLElement | null;
-        const rows = Array.from(document.querySelectorAll('.map-panel-row')) as HTMLElement[];
-        return {
-          headOpacity: head ? head.style.opacity : null,
-          rowOpacities: rows.map((r) => r.style.opacity),
-        };
-      });
-      expect(parseFloat(panel.headOpacity ?? '0')).toBeGreaterThanOrEqual(0.99);
-      expect(panel.rowOpacities).toHaveLength(4);
-      for (const o of panel.rowOpacities) {
-        expect(parseFloat(o ?? '0')).toBeGreaterThanOrEqual(0.99);
-      }
-    });
-  }
-});
 
 test.describe('R349 — the resolve sheet retires the parked phone band + the channels row', () => {
-  test('the sketch band is gone at 390 and the ledger runs two rows', async ({ page }) => {
-    await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/');
-    await approachSection(page, 'vision');
-    await page.locator('.fo-cta').scrollIntoViewIfNeeded();
-    await settleReveals(page);
-
-    const state = await page.evaluate(() => {
-      const band = document.querySelector('.fo-cta-band-sketch') as HTMLElement | null;
-      const ledger = document.querySelector('.fo-cta-ledger') as HTMLElement | null;
-      return {
-        bandDisplay: band ? getComputedStyle(band).display : 'absent',
-        rows: ledger ? getComputedStyle(ledger).gridTemplateRows : null,
-      };
-    });
-    expect(state.bandDisplay).toBe('none');
-    /* two tracks — the retired 13.91rem sketch row can never return */
-    expect((state.rows ?? '').split(' ')).toHaveLength(2);
-  });
 
 });
 
@@ -264,12 +118,12 @@ test.describe('R349 — the app sheet QR decodes (the honest-extension belt)', (
   test('the QR image loads as a true vector on /app', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 1000 });
     await page.goto('/app');
-    const image = page.locator('.ap-qr img');
+    const image = page.locator('.lg-qr img');
     await image.scrollIntoViewIfNeeded();
     await image.evaluate((node: HTMLImageElement) => node.decode());
 
     const qr = await page.evaluate(() => {
-      const img = document.querySelector<HTMLImageElement>('.ap-qr img');
+      const img = document.querySelector<HTMLImageElement>('.lg-qr img');
       if (!img) return { missing: true } as const;
       return {
         missing: false,

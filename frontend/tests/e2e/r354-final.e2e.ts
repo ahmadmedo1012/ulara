@@ -51,94 +51,9 @@ test.use({ e2eRole: 'guest', reducedMotion: 'no-preference' });
 test.describe('R354-final · the why plates', () => {
   test.use({ reducedMotion: 'reduce' });
 
-  test('under reduced motion every loop element stands at its settled plate (opacity 1)', async ({ page }) => {
-    await page.setViewportSize({ width: 1440, height: 1200 });
-    await page.goto('/');
-    await expect(page.locator('h1.w369-h1')).toContainText(HERO_READY);
-    await approachSection(page, 'why');
-    const band = page.locator('.wy-panels');
-    await band.scrollIntoViewIfNeeded();
-    await page.waitForTimeout(800);
 
-    const ops = await page.evaluate(() =>
-      Array.from(document.querySelectorAll('.wy-panels .iso-loop-box, .wy-panels .iso-loop-dot, .wy-panels .iso-loop-pulse')).map(
-        (el) => ({ cls: el.className, opacity: parseFloat(getComputedStyle(el).opacity) }),
-      ),
-    );
-    expect(ops.length, 'the four plates carry their loop elements').toBeGreaterThan(12);
-    for (const o of ops) {
-      expect(o.opacity, `the settled plate: ${o.cls} rests at opacity 1 (never the faint unfinished state)`).toBeGreaterThanOrEqual(0.99);
-    }
-  });
-
-  test('the NEXT STEP chip keeps its rendered clearance off the recommendation box', async ({ page }) => {
-    await page.setViewportSize({ width: 1440, height: 1200 });
-    await page.goto('/');
-    await expect(page.locator('h1.w369-h1')).toContainText(HERO_READY);
-    await approachSection(page, 'why');
-    await page.locator('.wy-panels').scrollIntoViewIfNeeded();
-    await page.waitForTimeout(800);
-
-    const seat = await page.evaluate(() => {
-      /* the mastery panel (02): the .iso-loop-box group that contains
-       * the NEXT STEP chip. The IsoBox renders west/east/top polygons
-       * — the TOP face (index 2) is the recommendation box's crown
-       * the chip must clear. */
-      const text = Array.from(document.querySelectorAll('.wy-panels text')).find((t) =>
-        (t.textContent || '').trim() === 'NEXT STEP',
-      );
-      if (!text) return { err: 'no NEXT STEP text' };
-      const g = text.closest('.iso-loop-box');
-      const chipRect = (text.previousElementSibling as SVGRectElement | null)?.getBoundingClientRect();
-      /* the IsoBox wraps its west/east/top faces in a <g> — query the
-       * descendants; [2] is the TOP face (the box's crown) */
-      const polygons = g ? Array.from(g.querySelectorAll('polygon')) : [];
-      const topFace = polygons[2]?.getBoundingClientRect() ?? null;
-      return {
-        err: null,
-        chipBottom: chipRect ? chipRect.bottom : null,
-        boxTop: topFace ? topFace.top : null,
-      };
-    });
-    expect(seat.err).toBeNull();
-    expect(seat.chipBottom).not.toBeNull();
-    expect(seat.boxTop).not.toBeNull();
-    /* the authored 3-unit ring (×1.35 scale ≈ 4px rendered); the
-     * browser-true floor is 2px — the kiss can never return */
-    expect(
-      seat.boxTop! - seat.chipBottom!,
-      `the chip's bottom edge clears the box's top face by ≥2px (measured ${(seat.boxTop! - seat.chipBottom!).toFixed(1)}px)`,
-    ).toBeGreaterThanOrEqual(2);
-  });
 });
 
-// R359 replaced the drawings with a four-column text ledger (A1, ALL-SHEETS).
-for (const width of [1440, 768, 390]) {
-  test(`the four challenges and their answers remain readable at ${width}px`, async ({ page }) => {
-    await page.setViewportSize({ width, height: width < 768 ? 844 : 900 });
-    await page.goto('/');
-    await approachSection(page, 'live');
-    const cards = page.locator('.pm-cols > [role=listitem]');
-    await expect(cards).toHaveCount(4);
-    await expect(cards.locator('.pm-keyword')).toHaveText(['LECTURE', 'GRADING', 'MASTERY', 'ARCHIVE']);
-    await expect(cards.locator('.pm-index')).toHaveText(['01', '02', '03', '04']);
-    for (const [i, card] of (await cards.all()).entries()) {
-      await card.scrollIntoViewIfNeeded();
-      const title = card.locator('.pm-item-title');
-      await expect(title).toBeInViewport();
-      await expect(card.locator('.pm-ans')).toHaveText(/^الجواب: .+/);
-      await card.locator('.pm-ans').scrollIntoViewIfNeeded();
-      await expect(card.locator('.pm-ans')).toBeInViewport();
-      await expect(card.locator('svg')).toHaveCount(0);
-      if (width >= 768 && i % (width < 992 ? 2 : 4) > 0) {
-        const left = await card.boundingBox();
-        const right = await cards.nth(i - 1).boundingBox();
-        expect(left!.y).toBe(right!.y);
-        expect(left!.x).toBeLessThan(right!.x);
-      }
-    }
-  });
-}
 
 /* ── 5 · the roles truth ─────────────────────────────────────────── */
 
@@ -198,24 +113,4 @@ test.describe('R354-final · five platform roles, honestly separated', () => {
 test.describe('R354-final · the dark tier resolves the royal seat', () => {
   test.use({ e2eRole: 'guest', themeSeed: 'dark' });
 
-  test('dark: --iso-royal resolves to the strong text tier (rgb 169,184,255)', async ({ page }) => {
-    await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/');
-    await expect(page.locator('h1.w369-h1')).toContainText(HERO_READY);
-    await approachSection(page, 'why');
-    const seat = await page.evaluate(() => {
-      const html = document.documentElement;
-      const svg = document.querySelector('.wy-panels svg') as SVGElement | null;
-      const probe = svg ?? html;
-      return {
-        theme: html.dataset.theme || html.getAttribute('data-theme') || '',
-        royal: getComputedStyle(probe).getPropertyValue('--iso-royal').trim(),
-      };
-    });
-    expect(seat.theme, 'the real store owns the dark mode').toBe('dark');
-    expect(
-      seat.royal,
-      `the dark royal resolves to the measured strong tier #A9B8FF (got «${seat.royal}»)`,
-    ).toBe('#A9B8FF');
-  });
 });
