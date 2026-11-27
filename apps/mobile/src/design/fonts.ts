@@ -48,6 +48,7 @@ export const fonts = {
   bodySemiBold: "Body-SemiBold",
   bodyBold: "Body-Bold",
   display: "Display-SemiBold",
+  displayMedium: "Display-Medium",
   displayBold: "Display-Bold",
   mono: "Mono-Regular",
   monoMedium: "Mono-Medium",

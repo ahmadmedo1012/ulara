@@ -6,8 +6,8 @@ import path from "node:path";
 /**
  * أُلارا — Ulara mobile (Expo / React Native).
  *
- * Brand: the ULARA system — paper #F5F1E8 · ink #1A1713 · royal #2540D9
- * (the 2026 «Parchment & Royal» takeover; the sienna era is retired).
+ * Brand: the ULARA system — r369: cream paper #FBF6EC · ink #1A1713 ·
+ * indigo cornerstone #1E1A3C (the collapsed light --accent seat).
  * The API base URL is public configuration (EXPO_PUBLIC_API_BASE_URL);
  * secrets never belong in this file or in the app bundle.
  */
@@ -100,7 +100,7 @@ const config: ExpoConfig = {
   icon: "./assets/images/icon.png",
   userInterfaceStyle: "automatic",
   description: "أُلارا — نظام تشغيل الجامعة (تطبيق الجوال الرسمي)",
-  backgroundColor: "#F5F1E8",
+  backgroundColor: "#FBF6EC", // r369: cream --bg
   primaryColor: "#2540D9",
   ios: {
     bundleIdentifier: "ly.ulara.app",
@@ -137,14 +137,17 @@ const config: ExpoConfig = {
     [
       "expo-splash-screen",
       {
-        backgroundColor: "#F5F1E8",
+        // r369: the cream --bg (tokens.generated.ts light) — ONE ground from
+        // the first frame, matching the web's retired-indigo boot decision.
+        backgroundColor: "#FBF6EC",
         // Dark ground: the PAPER-INK mark derivation (splash-icon-dark.png,
         // generated from the canonical mark.ts by scripts/build-splash-dark.mjs
         // — same geometry/weight/box as the light asset, ink swapped to the
         // paper rung). The ink-mark-on-ink-ground variant rendered the
         // vessel invisible (1:1 against its own ground) on dark cold boots.
         dark: {
-          backgroundColor: "#262019",
+          // r369: the indigo-night dark --bg (tokens.generated.ts dark).
+          backgroundColor: "#14122B",
           image: "./assets/images/splash-icon-dark.png",
           imageWidth: 120,
         },
