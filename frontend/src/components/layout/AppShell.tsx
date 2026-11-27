@@ -48,6 +48,12 @@ import '../../styles/shared/indicators.css';
  * rules take the final word over layout/notifications/chrome twins
  * (the same cascade contract indicators.css above documents). */
 import '../../styles/landing/r369-shell.css';
+/* r369 slice 03 — the world re-shape for the role families: the
+ * elevation ladder returns under .has-shell, cards answer the hand,
+ * the .sg instruments (indices/captions/crosses/rules) retire, KPI
+ * numerals take the display face, fields and tables take the world's
+ * corners. Last word, same cascade contract. */
+import '../../styles/landing/r369-app.css';
 import { SheetFrame, SheetGrain } from './SheetFrame';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';

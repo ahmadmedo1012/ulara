@@ -298,3 +298,38 @@ AppShell surfaces, not public pages — they moved to slices 02/03.
 - Evidence: evidence/02-product-shell/close/shell-{1440,390}.png.
 - Deferred: none new. (Slice-01 debt — dead .auth-shell sheets +
   AuthPage-alignment text-pins — still rides to slice 06.)
+
+## SLICE 03 — role pages + the gamification layer (in progress)
+
+### Batch A — the shared world re-shape (2026-11-27)
+- New sheet `frontend/src/styles/landing/r369-app.css` (scoped
+  `.has-shell`, unlayered, imported last in AppShell.tsx). ONE sheet
+  re-shapes all 47 page files that compose from the r359 .sg
+  instrument family (student/teacher/admin/quality/owner/
+  institutional trees all consume it via patterns/Sheet.tsx).
+- §0 the elevation ladder returns: tokens.css's r369 double-shadow
+  values re-declared under .has-shell (the R313 flat override zeroed
+  them for the product). Every existing .card lights up without a
+  single edited rule — .card already read var(--shadow-card).
+- §1 cards answer the hand: lift 3px + deeper shadow + gold border
+  tint on hover (fine-pointer guarded) — the landing's exact grammar.
+- §2 .sg-section becomes a warm card (22px, surface, shadow, overflow
+  clip); the reveal draw-in hairline, registration crosses and the
+  head's bottom rule retire.
+- §3 the mono instruments retire: .sg-index, .sg-caption, and the
+  KPI's .sg-label caption seat. .sg-label is NOT hidden wholesale —
+  it carries real content elsewhere (sg-empty sheet codes, MonoLabel
+  Arabic counts in teacher pages).
+- §4 the KPI band un-rules (cell hairlines gone); numerals take the
+  display face (Baloo, tabular kept).
+- §5 fields → 14px (r-md); tables rounded — a .table-wrap inside an
+  sg-section loses its own border (the card clips it), standalone
+  wraps keep 18px.
+- Verified: student courses (KPI band + list card), gamification
+  (honest error cells + warm card), teacher dashboard (dark rail) at
+  1440/820/390 × light/dark in evidence/03-role-pages/batch-a/.
+- Gates: tsc · build · stylelint · tokens:check · raw-css ·
+  colors --strict · motion · icons · csp-hash PASS · 88 .sg-adjacent
+  unit tests green (CoursesPage-summary, R305-courses-ds,
+  R305-supplemental-ds, r305a7 lib/res, QualityPages-rosters) — no
+  re-keys.
