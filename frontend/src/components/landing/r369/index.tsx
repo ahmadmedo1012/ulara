@@ -150,14 +150,18 @@ export function revealAllNow() {
  * subscribes to it — no element polls layout, no scroll listener inside
  * an animation loop, no `will-change` left behind.
  */
-function useScrollProgress() {
+function useScrollProgress(steps = 0) {
   const [p, setP] = useState(0);
   useEffect(() => {
     let raf = 0;
     const read = () => {
       raf = 0;
       const max = document.documentElement.scrollHeight - window.innerHeight;
-      setP(max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0);
+      const raw = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+      /* r369 phone-smoothness: consumers that show a STEP (the section
+       * index) subscribe to the quantised value, so React re-renders only
+       * when the step changes, not on every scroll frame. */
+      setP(steps > 0 ? Math.round(raw * steps) / steps : raw);
     };
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(read); };
     read();
@@ -238,10 +242,31 @@ function StageNav({ active }: { active: number }) {
 
 /** The slim progress rail: one 2px line in the signal colour. */
 function ScrollRail() {
-  const p = useScrollProgress();
+  /* r369 phone-smoothness: the rail writes its transform straight to the
+   * DOM from one passive rAF listener. It never goes through React state,
+   * so a scroll frame costs no render at all. */
+  const fill = useRef<HTMLSpanElement | null>(null);
+  useEffect(() => {
+    let raf = 0;
+    const read = () => {
+      raf = 0;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+      if (fill.current) fill.current.style.transform = `scaleX(${p})`;
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(read); };
+    read();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
   return (
     <div className="w369-rail" aria-hidden="true">
-      <span className="w369-rail-fill" style={{ transform: `scaleX(${p})` }} />
+      <span className="w369-rail-fill" ref={fill} />
     </div>
   );
 }
@@ -259,7 +284,7 @@ function StarJar() {
   /* Continuous, not a one-shot trigger: the jar fills as you actually
    * read, and it empties again if you go back up — the number is your
    * position in the story, never a claim about the product. */
-  const progress = useScrollProgress();
+  const progress = useScrollProgress(JAR_TOTAL);
   const n = Math.min(JAR_TOTAL, Math.round(progress * JAR_TOTAL));
   /* the index names the section you are IN, so it starts at 1, not 0 */
   const at = Math.max(1, n);

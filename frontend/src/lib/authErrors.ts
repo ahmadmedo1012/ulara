@@ -40,8 +40,29 @@ function statusOf(error: unknown): number | undefined {
  * طاقة عرض واحدة لكل استمارات المصادقة (تسجيل الدخول + إنشاء الحساب):
  * النص الحرفي للخلفية حين يكون عربيًا، وتبديل الحكم على تعارض 409.
  */
+/**
+ * جواب وصل من منصّة الاستضافة لا من واجهة ألارا: لا غلاف `{ error: { code } }`
+ * وحالة 401/403/404/502/503 (مثل حماية النشر في Vercel على نسخ المعاينة،
+ * أو واجهة خلفية غير موجودة). رسالة «بيانات غير صحيحة» هنا مضلّلة، فنقول
+ * السبب الحقيقي بدل الرسالة العامة.
+ */
+export const PLATFORM_BLOCK_MESSAGE =
+  'لم يصل طلب الدخول إلى خادم ألارا: العنوان الحالي محمي أو غير موصول بالخلفية (غالبًا نسخة معاينة). سجّل الدخول إلى حساب الاستضافة أو افتح النطاق الرسمي، أو تواصل مع مسؤول النشر.';
+
+function isPlatformBlock(error: unknown): boolean {
+  const res = (error as { response?: { status?: unknown; data?: unknown } } | null)?.response;
+  if (!res) return false;
+  const status = typeof res.status === 'number' ? res.status : 0;
+  if (![401, 403, 404, 502, 503].includes(status)) return false;
+  const data = res.data as { error?: { code?: unknown } } | string | null | undefined;
+  return !(data && typeof data === 'object' && typeof data.error?.code === 'string');
+}
+
 export function authErrorView(error: unknown): AuthErrorView {
   const responded = hasResponse(error);
+  if (responded && isPlatformBlock(error)) {
+    return { serverMessage: PLATFORM_BLOCK_MESSAGE, isConflict: false };
+  }
   return {
     serverMessage: responded ? (apiErrorDetail(error) ?? undefined) : undefined,
     isConflict: statusOf(error) === 409,

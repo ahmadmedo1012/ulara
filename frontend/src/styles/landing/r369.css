@@ -1288,6 +1288,15 @@ html:not([data-theme='dark']) .w369-footer {
   .w369-footer-grid { grid-template-columns: 1fr; gap: var(--sp-7); }
 }
 
+/* r369 phone-smoothness/legibility: on a real phone the two-line section
+ * head (a shadda on line 1, a damma + shadda on the emphasised line 2)
+ * collided at 1.06 leading. Phones get 1.22 and the emphasised word gets
+ * head-room, so every mark paints inside its own line. */
+@media (max-width: 700px) {
+  .w369-h2 { line-height: 1.22; }
+  .w369-h2 .w369-em { padding-block-start: var(--sp-1); }
+}
+
 /* ── star jar (the scroll counter) ────────────────────────────────── */
 
 .w369-jar {
@@ -1333,10 +1342,12 @@ html:not([data-theme='dark']) .w369-footer {
 }
 
 @media (max-width: 700px) {
-  .w369-jar { inset-block-end: var(--sp-3); inset-inline-start: var(--sp-3); font-size: var(--fs-xxs); }
+  /* r369 phone-smoothness: the floating section index covered cards and
+   * text on real phones, so it is not shown here; the stage bar already
+   * says where you are. */
+  .w369-jar { display: none; }
   /* the floating jar must never sit on top of the closing CTA */
   .w369-cta { padding-block-end: calc(var(--sp-8) + var(--sp-7)); }
-  .w369-jar-track { display: none; }
 }
 
 /* ── preloader (the star burst) ───────────────────────────────────── */
