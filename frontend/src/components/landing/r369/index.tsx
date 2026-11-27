@@ -363,7 +363,7 @@ export function LandingNav() {
       <ScrollRail />
       <div className="w369-nav-inner">
         <Link to={ROUTES.root} className="w369-brand" aria-label="أُلارا — الصفحة الرئيسية">
-          <span className="w369-brand-mark" aria-hidden="true"><Logo variant="mark" size={30} /></span>
+          <span className="w369-brand-mark" aria-hidden="true"><Logo variant="mark" size={36} /></span>
           <span className="w369-brand-word">أُلارا</span>
         </Link>
 
@@ -1706,7 +1706,7 @@ export function Footer({ year }: { year: number }) {
       <div className="w369-footer-grid">
         <div className="w369-footer-brand">
           <Link to={ROUTES.root} className="w369-brand">
-            <span className="w369-brand-mark" aria-hidden="true"><Logo variant="mark" size={30} /></span>
+            <span className="w369-brand-mark" aria-hidden="true"><Logo variant="mark" size={36} /></span>
             <span className="w369-brand-word">أُلارا</span>
           </Link>
           {/* the honest identity statement — the SAME sentence /about and

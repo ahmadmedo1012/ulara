@@ -45,7 +45,7 @@ export function PublicNav() {
     <header className="w369-nav p369-nav">
       <div className="w369-nav-inner">
         <Link to={ROUTES.root} className="w369-brand" aria-label="أُلارا — الصفحة الرئيسية">
-          <span className="w369-brand-mark" aria-hidden="true"><Logo variant="mark" size={30} /></span>
+          <span className="w369-brand-mark" aria-hidden="true"><Logo variant="mark" size={36} /></span>
           <span className="w369-brand-word">أُلارا</span>
         </Link>
 
