@@ -6,7 +6,7 @@ import Check from "lucide-react-native/icons/check";
 import X from "lucide-react-native/icons/x";
 import type { BottomSheetFooterProps } from "@gorhom/bottom-sheet";
 import { usePalette } from "@/design/theme";
-import { dsEase, motion, sp, touchFloor } from "@/design/tokens";
+import { radius, dsEase, motion, sp, touchFloor } from "@/design/tokens";
 import { useReduceMotion } from "@/hooks/useReduceMotion";
 import { T } from "./text";
 import { Button } from "./pressables";
@@ -211,6 +211,8 @@ export function AppSheet({
       <View
         style={{
           backgroundColor: p.surface,
+          borderTopLeftRadius: radius["2xl"], // r369: the 28px sheet corner
+          borderTopRightRadius: radius["2xl"],
           borderTopWidth: StyleSheet.hairlineWidth,
           borderTopColor: p.rule,
           paddingTop: sp[12],
@@ -291,8 +293,8 @@ export function AppSheet({
       handleStyle={{ paddingTop: sp[8], paddingBottom: sp[4] }}
       backgroundStyle={{
         backgroundColor: p.surface,
-        borderTopLeftRadius: 0,
-        borderTopRightRadius: 0,
+        borderTopLeftRadius: radius["2xl"], // r369: the 28px sheet corner
+        borderTopRightRadius: radius["2xl"],
         borderTopWidth: StyleSheet.hairlineWidth,
         borderTopColor: p.rule,
       }}
@@ -363,6 +365,7 @@ export function SheetTextInput(props: ComponentProps<BottomSheetTextInputComp>) 
           backgroundColor: p.surface,
           borderWidth: StyleSheet.hairlineWidth,
           borderColor: p.rule,
+          borderRadius: radius.md, // r369: the 14px field corner
           paddingHorizontal: sp[12],
           minHeight: 48,
           color: p.text,

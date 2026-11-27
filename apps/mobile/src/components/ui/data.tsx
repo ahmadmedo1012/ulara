@@ -14,7 +14,8 @@ import {
 import { FlashList, type FlashListProps, type RenderTarget } from "@shopify/flash-list";
 import { useInfiniteQuery, type InfiniteData, type UseInfiniteQueryResult } from "@tanstack/react-query";
 import { usePalette, useStatusTones } from "@/design/theme";
-import { sp, type Spacing } from "@/design/tokens";
+import { radius, sp, type Spacing } from "@/design/tokens";
+import { fonts } from "@/design/fonts";
 import { latn, num } from "@/lib/format";
 import type { PageMeta, Paginated } from "@/api/types";
 import { T } from "./text";
@@ -80,6 +81,7 @@ export function KpiCard({
           backgroundColor: p.surface,
           borderWidth: StyleSheet.hairlineWidth,
           borderColor: p.border,
+          borderRadius: radius.xl, // r369: the 22px card corner
           padding: sp[12],
           flex: 1,
         },
@@ -95,7 +97,9 @@ export function KpiCard({
         <T
           variant="h3"
           weight="bold"
-          style={{ color: tone === "accent" ? p.accentInk : tone === "gold" ? p.goldInk : p.text }}
+          // r369: KPI values ride the display face (the web canon) — Baloo
+          // Bhaijaan 2 at the h3 rung, never a bigger size.
+          style={[{ fontFamily: fonts.display }, { color: tone === "accent" ? p.accentInk : tone === "gold" ? p.goldInk : p.text }]}
         >
           {typeof value === "number" ? num(value) : (value ?? "—")}
         </T>
@@ -123,12 +127,17 @@ export function ProgressBar({
 }) {
   const p = usePalette();
   const w = Math.min(1, Math.max(0, Number.isFinite(ratio) ? ratio : 0));
+  // r369: the pill track — both ends round (the hairline square track retired).
   return (
-    <View accessibilityLabel={label} style={{ height, backgroundColor: p.border, overflow: "hidden" }}>
+    <View
+      accessibilityLabel={label}
+      style={{ height, backgroundColor: p.border, borderRadius: height / 2, overflow: "hidden" }}
+    >
       <View
         style={{
           height,
           width: `${w * 100}%`,
+          borderRadius: height / 2,
           backgroundColor: accent ? p.accent : p.primary,
         }}
       />
