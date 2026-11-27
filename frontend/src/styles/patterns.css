@@ -447,6 +447,7 @@ a.pf-row-link {
   border-radius: var(--r-sm);
   cursor: pointer;
 }
+.pf-row-toggle:active { background: var(--surface-2); color: var(--text); }
 @media (hover: hover) and (pointer: fine) {
   .pf-row-toggle:hover { background: var(--surface-2); color: var(--text); }
 }

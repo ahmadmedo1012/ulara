@@ -177,12 +177,17 @@
   font-size: var(--fs-sm);
   font-weight: var(--fw-medium);
   cursor: pointer;
-  transition: color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+  transition: color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease), background-color var(--t-fast) var(--ease), transform var(--t-micro) var(--ease);
 }
 .ai-surface .ai-quick-chip:is(:hover, :focus-visible),
 .ai-surface .chat-retry:is(:hover, :focus-visible) {
   color: var(--c-copper-deep);
   border-color: var(--c-copper-ink);
+}
+.ai-surface .ai-quick-chip:active:not(:disabled),
+.ai-surface .chat-retry:active:not(:disabled) {
+  background: var(--surface-2);
+  transform: scale(var(--press-scale));
 }
 .ai-surface .ai-quick-chip:disabled,
 .ai-surface .chat-retry:disabled {
