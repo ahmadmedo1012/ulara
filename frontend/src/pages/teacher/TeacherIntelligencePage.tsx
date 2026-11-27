@@ -99,7 +99,7 @@ export default function TeacherIntelligencePage() {
           <span className="hr-brow">عضو هيئة التدريس · تحليل لحظي</span>
           <h1 className="page-title">الذكاء الأكاديمي</h1>
           <p className="page-subtitle">
-            متابعة أداء طلابك مدعومة بتحليل لحظي للحضور والدرجات والمتابعة، مع توصيات تدخّل ذكية.
+            متابعة أداء طلابك من الحضور والدرجات والمتابعة، مع توصيات للتدخّل.
           </p>
         </div>
         {/* R342-09 (D8 header-CTA law): the catalog's ONE honest next

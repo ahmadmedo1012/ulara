@@ -30,7 +30,7 @@ export function AboutPage() {
   useLegalMeta({
     title: 'عن أُلارا',
     path: '/about',
-    description: 'منصّة تعليمية تقنية مستقلّة، عربية أولًا — البيان كاملًا كما هو في صفحة البداية، بلا إضافات.',
+    description: 'منصّة تعليمية تقنية مستقلّة — البيان كاملًا كما هو في صفحة البداية، بلا إضافات.',
   });
 
   /* r369 slice B — the about sheet rides the warm world: PublicShell
@@ -64,7 +64,7 @@ export function AboutPage() {
                 discipline holds here). LEGAL-TODO row 14: nothing may be
                 added about who builds أُلارا until the owner states it. */}
             <p className="lg-p lg-p-statement">
-              منصّة تعليمية تقنية مستقلّة، عربية أولًا. لا تنتمي إلى أيّ مؤسّسة تعليمية ولا تمثّلها؛ وبيانات العرض داخلها تخصّ «مساحة عمل أُلارا التجريبية» — مساحة اصطناعية بالكامل لأغراض العرض، لا تحاكي أي جامعة.
+              منصّة تعليمية تقنية مستقلّة. لا تنتمي إلى أيّ مؤسّسة تعليمية ولا تمثّلها؛ وبيانات العرض داخلها تخصّ «مساحة عمل أُلارا التجريبية» — مساحة اصطناعية بالكامل لأغراض العرض، لا تحاكي أي جامعة.
             </p>
           </LegalCell>
         </section>
@@ -103,7 +103,7 @@ export function AboutPage() {
         </section>
 
         <footer className="lg-colophon">
-          <p className="lg-colophon-line">منصّة مستقلّة · عربية أولًا · بيانات العرض اصطناعية بالكامل</p>
+          <p className="lg-colophon-line">منصّة مستقلّة · بيانات العرض اصطناعية بالكامل</p>
           <p className="lg-colophon-stamp">
             آخر تحديث: <span className="lg-mono" dir="ltr">{LEGAL_UPDATED}</span>
           </p>
@@ -286,7 +286,7 @@ export function HelpPage() {
         </div>
 
         <footer className="lg-colophon">
-          <p className="lg-colophon-line">منصّة مستقلّة · عربية أولًا · بيانات العرض اصطناعية بالكامل</p>
+          <p className="lg-colophon-line">منصّة مستقلّة · بيانات العرض اصطناعية بالكامل</p>
           <p className="lg-colophon-stamp">
             آخر تحديث: <span className="lg-mono" dir="ltr">{LEGAL_UPDATED}</span>
           </p>

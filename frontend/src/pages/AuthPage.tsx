@@ -684,7 +684,7 @@ export default function AuthPage() {
       <footer className="auth-bottom">
         {/* r177 → r191: the platform's own identity; the operator-rejected
             provenance slogan is gone — the honest identity stays. */}
-        <strong>منصّة تعليم ذكية مستقلّة</strong> · عربية أولًا
+        <strong>منصّة تعليمية مستقلّة</strong>
         {/* R320 §D (c2-LEGAL): the login footer's consent line — the same
             two links the register flow acknowledges, at the door the
             returning visitor actually uses. */}

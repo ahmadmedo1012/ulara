@@ -536,7 +536,7 @@ export default function SettingsPage() {
         index="06"
         caption="LANGUAGE"
         title="اللغة والأرقام"
-        desc="أُلارا عربية-أولًا بلغة واحدة اليوم؛ مقعد اللغة محجوز."
+        desc="الواجهة بالعربية حاليًّا، ولا توجد لغات أخرى بعد."
       >
         <SheetEmpty
           title="العربية (الوحيدة حاليًا)"

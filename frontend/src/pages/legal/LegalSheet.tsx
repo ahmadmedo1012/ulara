@@ -121,7 +121,7 @@ export function LegalSheet({
         {children}
 
         <footer className="lg-colophon">
-          <p className="lg-colophon-line">منصّة مستقلّة · عربية أولًا · بيانات العرض اصطناعية بالكامل</p>
+          <p className="lg-colophon-line">منصّة مستقلّة · بيانات العرض اصطناعية بالكامل</p>
           <p className="lg-colophon-stamp">
             آخر تحديث: <span className="lg-mono" dir="ltr">{updated}</span>
           </p>

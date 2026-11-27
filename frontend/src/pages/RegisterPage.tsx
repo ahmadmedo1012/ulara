@@ -484,7 +484,7 @@ export default function RegisterPage() {
       <footer className="auth-bottom">
         {/* r177 → r191: the platform's own identity; the operator-rejected
             provenance slogan is gone — the honest identity stays. */}
-        <strong>منصّة تعليم ذكية مستقلّة</strong> · عربية أولًا
+        <strong>منصّة تعليمية مستقلّة</strong>
       </footer>
       </div>
     </PublicShell>

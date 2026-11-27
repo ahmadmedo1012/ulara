@@ -205,7 +205,7 @@ export function AppDownloadPage() {
           </section>
 
         <footer className="lg-colophon">
-          <p className="lg-colophon-line">منصّة مستقلّة · عربية أولًا · بيانات العرض اصطناعية بالكامل</p>
+          <p className="lg-colophon-line">منصّة مستقلّة · بيانات العرض اصطناعية بالكامل</p>
           <p className="lg-colophon-stamp">
             آخر تحديث: <span className="lg-mono" dir="ltr">2026-11-11</span>
           </p>

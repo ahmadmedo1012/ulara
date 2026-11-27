@@ -300,7 +300,7 @@ export default function ResetPasswordPage() {
       </div>
 
       <footer className="auth-bottom">
-        <strong>منصّة تعليم ذكية مستقلّة</strong> · عربية أولًا
+        <strong>منصّة تعليمية مستقلّة</strong>
       </footer>
       </div>
     </PublicShell>

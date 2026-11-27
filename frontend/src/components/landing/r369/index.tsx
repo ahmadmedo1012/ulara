@@ -545,10 +545,6 @@ export function Hero() {
   return (
     <section className="w369-hero" ref={ref} data-jar="01" onPointerMove={onMove} onPointerLeave={onLeave}>
       <div className="w369-hero-copy">
-        <p className="w369-eyebrow">
-          <Glyph name="sparkle" size={15} />
-          نظام تشغيل الجامعة — عربي أولًا
-        </p>
         <h1 className="w369-h1">
           جامعةٌ تعمل
           <span className="w369-em">
@@ -559,9 +555,8 @@ export function Hero() {
           </span>
         </h1>
         <p className="w369-lead">
-          المقرّرات والمحاضرات والتقييم والحضور ومؤشّرات الجودة في نظام واحد يربط الطالب
-          وعضو الهيئة والإدارة. لا أدوات متناثرة، ولا أرقام لا تُقاس: كل ما يحدث في
-          المقرّر يُسجَّل، ويُقرأ، ويُبنى عليه.
+          المقرّرات والمحاضرات والتقييم والحضور ومؤشّرات الجودة في نظام واحد يجمع الطالب
+          وعضو الهيئة والإدارة. ما يحدث في المقرّر يُسجَّل ويظهر لصاحبه.
         </p>
         <div className="w369-hero-actions">
           <Link to={ROUTES.authRegister} className="w369-btn w369-btn-primary w369-btn-lg">
@@ -578,10 +573,7 @@ export function Hero() {
             doors in the page itself, and the dialog is a layer, not a sixth */}
         {tour && <TourDialog onClose={() => setTour(false)} />}
         <ul className="w369-hero-facts">
-          <li><Glyph name="certificate" size={16} /> للطلّاب وأعضاء الهيئة والإدارة</li>
           <li><Glyph name="target" size={16} /> نقاط إتقان من الإنجاز المسجَّل</li>
-          <li><Glyph name="leaderboard" size={16} /> مؤشّرات جودة قابلة للتتبّع</li>
-          <li><Glyph name="certificate" size={16} /> شهادات وسجلات موثّقة</li>
         </ul>
       </div>
 
@@ -1518,8 +1510,8 @@ export function CarouselBand() {
 
 const PRINCIPLES = [
   { icon: 'shield', title: 'بياناتك لك', body: 'لا إعلانات، ولا بيع بيانات، وحذف حسابك متاح في أي وقت من إعداداتك.' },
-  { icon: 'compass', title: 'عربية أولًا', body: 'الواجهة كلها من اليمين إلى اليسار، والأرقام والمصطلحات كما تُكتب في جامعاتنا.' },
-  { icon: 'target', title: 'لا أرقام مُجمّلة', body: 'كل رقم في المنصّة مشتقّ من إنجاز مسجّل — لا تقديرات ولا نقاط تُدخل يدويًّا.' },
+  { icon: 'compass', title: 'واجهة من اليمين إلى اليسار', body: 'كل الشاشات مكتوبة للعربية من الأساس، بأرقام لاتينية ومصطلحات جامعية معتادة.' },
+  { icon: 'target', title: 'الأرقام من الإنجاز المسجَّل', body: 'كل رقم في المنصّة مشتقّ من إنجاز مسجّل — لا تقديرات ولا نقاط تُدخل يدويًّا.' },
   { icon: 'users', title: 'أدوار واضحة', body: 'الطالب وعضو الهيئة والإدارة والجودة يروْن ما يخصّهم فقط، بصلاحيات محدّدة.' },
 ] as const;
 
@@ -1533,8 +1525,8 @@ export function PrinciplesBand() {
   return (
     <section className="w369-principles" id="principles">
       <header className="w369-band-head">
-        <p className="w369-band-kicker"><Glyph name="shield" size={15} />ما لا نتنازل عنه</p>
-        <h2 className="w369-h2">أربعة مبادئ،<br /><span className="w369-em">مكتوبة لا معلّقة</span></h2>
+        <p className="w369-band-kicker"><Glyph name="shield" size={15} />عن المنصّة</p>
+        <h2 className="w369-h2">أربع نقاط<br /><span className="w369-em">عن البيانات والأدوار</span></h2>
       </header>
       <ul className="w369-principle-grid" data-stagger="">
         {PRINCIPLES.map((p) => (
@@ -1546,7 +1538,7 @@ export function PrinciplesBand() {
         ))}
       </ul>
       <p className="w369-fine">
-        كل ادّعاء هنا مطابق لما تنصّ عليه صفحاتنا القانونية فعليًّا —{' '}
+        التفاصيل في{' '}
         <Link to="/legal/privacy" className="w369-link">سياسة الخصوصية</Link>.
       </p>
 
@@ -1554,7 +1546,6 @@ export function PrinciplesBand() {
         <span className="w369-trust-item"><Glyph name="shield" size={16} />بلا إعلانات</span>
         <span className="w369-trust-item"><Glyph name="lock" size={16} />بلا بيع بيانات</span>
         <span className="w369-trust-item"><Glyph name="close" size={16} />حذف الحساب في أي وقت</span>
-        <span className="w369-trust-item"><Glyph name="compass" size={16} />عربي RTL بالكامل</span>
       </div>
 
       <ul className="w369-audience-grid" data-stagger="">
@@ -1747,7 +1738,7 @@ export function Footer({ year }: { year: number }) {
           </Link>
           {/* the honest identity statement — the SAME sentence /about and
               /legal render (one text, three seats; tests pin the equality). */}
-          <p className="w369-footer-note">منصّة تعليمية تقنية مستقلّة، عربية أولًا. لا تنتمي إلى أيّ مؤسّسة تعليمية ولا تمثّلها؛ وبيانات العرض داخلها تخصّ «مساحة عمل أُلارا التجريبية» — مساحة اصطناعية بالكامل لأغراض العرض، لا تحاكي أي جامعة.</p>
+          <p className="w369-footer-note">منصّة تعليمية تقنية مستقلّة. لا تنتمي إلى أيّ مؤسّسة تعليمية ولا تمثّلها؛ وبيانات العرض داخلها تخصّ «مساحة عمل أُلارا التجريبية» — مساحة اصطناعية بالكامل لأغراض العرض، لا تحاكي أي جامعة.</p>
           <div className="w369-footer-cta">
             <Link to={ROUTES.authRegister} className="w369-btn w369-btn-primary">أنشئ حسابك</Link>
             <Link to={ROUTES.auth} className="w369-btn w369-btn-ghost">تسجيل الدخول</Link>

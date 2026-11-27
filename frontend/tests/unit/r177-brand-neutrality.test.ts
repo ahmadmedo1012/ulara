@@ -74,7 +74,7 @@ describe('r177 — public metadata is platform-neutral (index.html)', () => {
     expect(html).toContain('<title>أُلارا · نظام تشغيل الجامعة</title>');
     // ULARA takeover: the meta description is the platform's own
     // one-line identity — the full Arabic-first descriptor.
-    expect(html).toContain('منظومة متكاملة، عربية أولًا');
+    expect(html).toContain('منظومة لإدارة المؤسّسة');
     expect(html).not.toContain('منصّة تعليم ذكية مستقلّة'); // the r191 slogan seat is retired
   });
 
@@ -154,7 +154,7 @@ describe('r177 — landing/auth copy is affiliation-free', () => {
         expect(src, `${f} still carries: ${claim}`).not.toContain(claim);
       }
       // r191: the auth identity strip (rejected slogan removed).
-      expect(src).toContain('منصّة تعليم ذكية مستقلّة');
+      expect(src).toContain('منصّة تعليمية مستقلّة');
     }
   });
 

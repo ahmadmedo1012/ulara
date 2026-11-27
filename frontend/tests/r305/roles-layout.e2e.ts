@@ -34,7 +34,7 @@ test.describe('الزائر — الأسطح العامة', () => {
     await expect(page.getByRole('button', { name: 'تسجيل الدخول' })).toBeVisible();
     // The auth chrome carries its own banner/contentinfo landmarks.
     await expect(page.getByRole('link', { name: 'الصفحة الرئيسية' })).toBeVisible();
-    await expect(page.locator('.auth-bottom')).toContainText('منصّة تعليم ذكية مستقلّة');
+    await expect(page.locator('.auth-bottom')).toContainText('منصّة تعليمية مستقلّة');
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
     await expect(page.locator('html')).toHaveAttribute('lang', 'ar');
   });

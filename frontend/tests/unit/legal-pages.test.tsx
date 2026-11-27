@@ -121,7 +121,7 @@ describe('R320 §D — the 9-page grammar (the reference public sheet)', () => {
      * retired drafting headers (lg/ab/hp). */
     expect(container.querySelector('header.w369-nav')).toBeTruthy();
     // the honest colophon cluster + the آخر تحديث stamp
-    expect(screen.getByText('منصّة مستقلّة · عربية أولًا · بيانات العرض اصطناعية بالكامل')).toBeTruthy();
+    expect(screen.getByText('منصّة مستقلّة · بيانات العرض اصطناعية بالكامل')).toBeTruthy();
     expect(screen.getAllByText(/آخر تحديث/).length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText(LEGAL_UPDATED).length).toBeGreaterThanOrEqual(1);
   });
@@ -388,7 +388,7 @@ describe('R320 §D — the real facts (every sentence from real code)', () => {
      * footer band — sections/Footer.tsx. */
     const landing = read('src/components/landing/r369/index.tsx');
     // extract the honest identity paragraph from the landing source
-    const m = landing.match(/منصّة تعليمية تقنية مستقلّة، عربية أولًا\.[^<]+/);
+    const m = landing.match(/منصّة تعليمية تقنية مستقلّة\.[^<]+/);
     expect(m).toBeTruthy();
     const paragraph = m![0].trim();
     expect(paragraph).toContain('اصطناعية بالكامل لأغراض العرض');
