@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { haptics } from "@/haptics";
 import { useTheme } from "@/design/theme";
-import { sp, touchFloor } from "@/design/tokens";
+import { radius, sp, touchFloor } from "@/design/tokens";
 import { T } from "./text";
 
 import { InlineBusy, useStableFlag } from "./boot";
@@ -27,11 +27,12 @@ export interface ButtonProps {
 }
 
 /**
- * ds buttons: the royal slab (primary — #2540D9 light / #8AA0FF dark
- * via the shared tokens), the royal fill (accent), the red destructive
- * fill (danger — the rose family, NOT the accent: 2026 fixes the
- * danger ≡ accent coupling of the sienna era), hairline ghost.
- * Loading never double-submits; 44px touch floor.
+ * r369 slice 04 — the pill register: every button is a full-radius
+ * pill (the warm identity's action shape). primary = the indigo slab
+ * (cream label), accent = the luminous pill in dark, danger = the rose
+ * family (never the accent), ghost = the inset-outline secondary
+ * (1.5px rule ring, transparent fill). Loading never double-submits;
+ * 44px touch floor (styles.base minHeight clamps the small 36 height).
  */
 export function Button({
   label,
@@ -69,6 +70,10 @@ export function Button({
    * fixed for the web hover states, now honored on press here too. */
   const pressedFg = kind === "primary" || kind === "accent" ? p.accentHoverFg : fg;
   const border = kind === "ghost" ? p.rule : "transparent";
+  // r369: the ghost's inset outline reads at 1.5px — the hairline was
+  // the drawing-sheet era's ring; the warm identity's secondary is a
+  // visible inset outline (spec 04: "pill with the inset-outline secondary").
+  const borderWidth = kind === "ghost" ? 1.5 : StyleSheet.hairlineWidth;
   return (
     <Pressable
       accessibilityRole="button"
@@ -86,7 +91,8 @@ export function Button({
         {
           height,
           backgroundColor: kind === "ghost" ? (pressed ? p.surfaceHover : "transparent") : pressed ? pressedBg : bg,
-          borderWidth: StyleSheet.hairlineWidth,
+          borderRadius: radius.full,
+          borderWidth,
           borderColor: border,
           opacity: disabled && !loading ? 0.45 : 1,
         },

@@ -142,10 +142,17 @@ export const motion = {
 
 export const dsEase = [0.34, 1.56, 0.64, 1] as const;
 
-// radius discipline: 0 everywhere; circles only for round elements.
+// radius: the r369 soft ladder (shared JSON is the source of truth).
 export const radius = {
-  none: 8,
-  full: 9999,
+  "xs": 8,
+  "sm": 10,
+  "md": 14,
+  "lg": 18,
+  "xl": 22,
+  "2xl": 28,
+  "3xl": 36,
+  "full": 9999,
+  none: 8, // back-compat alias (= xs) for the pre-r369 call sites
 } as const;
 
 export const touchFloor = 44;

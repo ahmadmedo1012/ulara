@@ -25,7 +25,7 @@ import EyeOff from "lucide-react-native/icons/eye-off";
 import Search from "lucide-react-native/icons/search";
 import X from "lucide-react-native/icons/x";
 import { usePalette, useStatusTones } from "@/design/theme";
-import { sp, touchFloor } from "@/design/tokens";
+import { radius, sp, touchFloor } from "@/design/tokens";
 import { T } from "./text";
 import { OptionSheet } from "./surfaces";
 import { InlineBusy } from "./boot";
@@ -264,6 +264,7 @@ export function Field({
             {
               backgroundColor: p.surface,
               borderWidth: focused ? 1 : StyleSheet.hairlineWidth,
+              borderRadius: radius.md, // r369: the 14px field corner
               borderColor: error ? tones.rose.ink : focused ? p.text : p.rule,
               paddingHorizontal: sp[12],
               paddingLeft: leadingWidth ? leadingWidth + sp[8] : sp[12],
@@ -398,6 +399,7 @@ export function SelectField({
           gap: sp[8],
           backgroundColor: pressed ? p.surfaceHover : p.surface,
           borderWidth: StyleSheet.hairlineWidth,
+          borderRadius: radius.md, // r369: the 14px field corner
           borderColor: error ? tones.rose.ink : p.rule,
           paddingHorizontal: sp[12],
           minHeight: 48,
@@ -452,6 +454,7 @@ export function SearchBar({
         alignItems: "center",
         gap: sp[8],
         borderWidth: StyleSheet.hairlineWidth,
+        borderRadius: radius.md, // r369: the 14px field corner
         borderColor: p.rule,
         backgroundColor: p.surface,
         paddingHorizontal: sp[12],
@@ -503,6 +506,7 @@ export function Segmented({
         {
           flexDirection: "row",
           borderWidth: StyleSheet.hairlineWidth,
+          borderRadius: radius.md, // r369: the 14px field corner
           borderColor: p.rule,
           backgroundColor: p.surface,
         },
@@ -574,6 +578,7 @@ export function ChipGroup({
               justifyContent: "center",
               paddingHorizontal: sp[12],
               borderWidth: StyleSheet.hairlineWidth,
+              borderRadius: radius.md, // r369: the 14px field corner
               borderColor: active ? p.primary : p.rule,
               backgroundColor: active ? p.primary : p.surface,
             }}
