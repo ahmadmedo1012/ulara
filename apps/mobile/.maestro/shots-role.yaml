@@ -34,22 +34,30 @@ appId: ly.ulara.app
 - tapOn:
     id: "login-password"
 - inputText: "${PASSWORD}"
-# r367: the capture rig's cold legs lost the submit tap (run
-# 45835244276: «دخول» not found for EVERY role — the fresh boot's IME
-# never rose after the password input, so the KeyboardStickyView bar
-# never offset in and the inline resting button sat below the demo
-# ladder's fold). The tap now rides the smoke flow's proven sequence
-# PLUS the settled-form fallback: dismiss the IME (no-op when it never
-# opened), scroll the resting submit into view (the regex rides the
-# `text` property itself — this Maestro has no `textMatches` property;
-# run 45908749380's leg died on the unknown key before any tap), tap it.
-# Every fallback is optional:
-# when the sticky bar DID mount, the first tap already fired and the
-# rest are settled no-ops.
+# r367: the capture rig's cold legs lost the submit tap (runs
+# 45835244276 · 45903140875 · 45914019092: «دخول» not found on every leg
+# — the fresh boot's IME state keeps BOTH the sticky bar and the resting
+# button out of the hit-test). The chain is now ALL-OPTIONAL (a required
+# first tap aborted the flow before ANY fallback ran — run
+# 45914019092's own trace) and rides three independent mechanisms:
+#   1. the sticky-bar tap ×2 (the smoke flow's proven seat — fires when
+#      the bar mounted);
+#   2. pressKey Enter (the R336 forensics' safe window: the IME is
+#      OPEN — the hardware enter submits the focused field; it only
+#      degenerates to BACK once the IME hides);
+#   3. the settled-form path: hideKeyboard (no-op when nothing is open)
+#      → scroll the resting submit into view → tap it (the regex rides
+#      the `text` property itself — this Maestro has no `textMatches`).
+# The dashboard extendedWaitUntil below remains the ONE verdict: the
+# chain's no-ops can never mask a failed login.
 - tapOn:
     text: "دخول"
+    optional: true
 - tapOn:
     text: "دخول"
+    optional: true
+- pressKey:
+    text: Enter
     optional: true
 - hideKeyboard:
     optional: true
