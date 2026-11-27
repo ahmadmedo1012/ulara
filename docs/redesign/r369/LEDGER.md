@@ -475,3 +475,12 @@ Home, /support/, /privacy/, /guides/reward-chart-for-kids/, /tools/reward-chart/
 - Mobile kept per owner (26605111): opt-in Arabic-Indic numerals (Latin default) and the leaderboard.
 - CI repairs: test typecheck, lint, r321 decor test made real, parity gate 201/201 (77bf02df, cc6415ad); docs PNGs recompressed + baseline allowlisted (5f1973c3); dead-code ratchet back to 47/19/215 (286a698f); web/mobile mark.ts twins restored (97bfeb22); iOS WebKit contrast harness reads color(srgb) and PAPER pins follow r369 (e979ef70, 6d88ce7a).
 - Open: Size gate rule 2 (docs/ ~99 MB vs 64 MB, older rounds r358/r351/r350 untouched, owner decision).
+
+## Reference-match batch (user Telegram 27305981 and flaws, Nov 27-28)
+- Landing: ticker travels with the RTL flow (0ea34071); progress road drawn from the continuous scroll offset (d6291d19); copy pass 1 removed the «عربية أولًا» slogan family across web, meta and mobile (535058be, CSP hash re-pinned 09bad20a); pass 2 scan found 0 residual hits.
+- Scenes and rhythm: levels band is a night scene (bddfa1d9); closing CTA is a full-bleed night scene (6f821496); P2 band rhythm (21d5e589); P2b desktop bands are two beats, headline then subject (edd9ce57); reveal settles on the spring ease token (3f5adf2e); P3 hero layered content cards, desktop only (0c48035d). Page height at 1440: 12554 -> 13924 px; phone unchanged at 16677 px.
+- Flaw #1 (calendar «retrying» card): the slow-server card is suppressed 15 s after any answered request, warm sessions wait 20 s, the false auto-retry line is gone (d67adeff).
+- Real bug found by CI: StudentXpChip crashed the student shell on a dashboard payload without kpi (b58cc500).
+- Tests: stale r3xx/r305 pins re-keyed to r369 selectors; retirements limited to subjects absent in src (r319 drawer [01] index counter, r354 roles accordion). r305 image audit now waits for img.complete (4d05643a).
+- Mobile: workflows mobile.yml, android-apk.yml, build-ios-sidestore.yml run only on main or dispatch, so the branch has no mobile CI; local gates clean (tsc, contract-check, jest 1528).
+- Open: Size gate rule 2 (docs/ size, owner decision); page height still about half the reference.
