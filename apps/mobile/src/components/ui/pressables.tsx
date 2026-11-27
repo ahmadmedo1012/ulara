@@ -9,9 +9,6 @@ import {
 import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 import { durations, easings, pressFeedback, springs, useReduceMotion } from "@/motion";
 
-/** Animated Pressable — module scope so the component type is stable. */
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-
 /**
  * r369 slice 04 — the press spring on the ds buttons: the deterministic
  * 120ms outCubic down-beat + the snappy spring release (the same contract
@@ -106,8 +103,15 @@ export function Button({
   // the drawing-sheet era's ring; the warm identity's secondary is a
   // visible inset outline (spec 04: "pill with the inset-outline secondary").
   const borderWidth = kind === "ghost" ? 1.5 : StyleSheet.hairlineWidth;
+  /* Structure: a plain Pressable frame + an inner Animated.View carrying
+   * the chrome AND the spring. A reanimated component cannot take a
+   * function style — RNW drops the whole array, which shipped as an
+   * invisible 21px button on the web export (the jest mock masked it).
+   * The frame keeps the `pressed` render-prop for the colour swap; the
+   * transform lives on the inner view, so the whole pill (bg included)
+   * rides the down-beat exactly as before. */
   return (
-    <AnimatedPressable
+    <Pressable
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel ?? label}
       accessibilityState={{ disabled: busy }}
@@ -120,37 +124,40 @@ export function Button({
         haptics.impact("light");
         onPress?.();
       }}
-      style={({ pressed }: { pressed: boolean }) => [
-        styles.base,
-        {
-          height,
-          backgroundColor: kind === "ghost" ? (pressed ? p.surfaceHover : "transparent") : pressed ? pressedBg : bg,
-          borderRadius: radius.full,
-          borderWidth,
-          borderColor: border,
-          opacity: disabled && !loading ? 0.45 : 1,
-        },
-        style,
-        spring.animatedStyle,
-      ]}
+      style={style}
     >
-      {({ pressed }: { pressed: boolean }) =>
-        showBusy ? (
-          <InlineBusy size={12} color={kind === "ghost" ? p.text : pressed ? pressedFg : fg} />
-        ) : (
-          <View style={{ flexDirection: "row", alignItems: "center", gap: sp[8] }}>
-            {icon}
-            <T
-              variant={small ? "sm" : "body"}
-              weight="bold"
-              style={{ color: pressed ? pressedFg : fg }}
-            >
-              {label}
-            </T>
-          </View>
-        )
-      }
-    </AnimatedPressable>
+      {({ pressed }: { pressed: boolean }) => (
+        <Animated.View
+          style={[
+            styles.base,
+            {
+              height,
+              backgroundColor: kind === "ghost" ? (pressed ? p.surfaceHover : "transparent") : pressed ? pressedBg : bg,
+              borderRadius: radius.full,
+              borderWidth,
+              borderColor: border,
+              opacity: disabled && !loading ? 0.45 : 1,
+            },
+            spring.animatedStyle,
+          ]}
+        >
+          {showBusy ? (
+            <InlineBusy size={12} color={kind === "ghost" ? p.text : pressed ? pressedFg : fg} />
+          ) : (
+            <View style={{ flexDirection: "row", alignItems: "center", gap: sp[8] }}>
+              {icon}
+              <T
+                variant={small ? "sm" : "body"}
+                weight="bold"
+                style={{ color: pressed ? pressedFg : fg }}
+              >
+                {label}
+              </T>
+            </View>
+          )}
+        </Animated.View>
+      )}
+    </Pressable>
   );
 }
 
