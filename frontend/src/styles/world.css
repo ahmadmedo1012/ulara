@@ -94,8 +94,10 @@
   .btn.secondary,
   .btn.ghost,
   .btn.outline {
-    box-shadow: none;
     background: transparent;
+    /* r369 slice 06: the dead `box-shadow: none` above the inset
+       declaration dropped (stylelint no-duplicate-properties) — the
+       inset rule already wins in the same block. */
     box-shadow: inset 0 0 0 1.5px var(--border-strong);
   }
 
