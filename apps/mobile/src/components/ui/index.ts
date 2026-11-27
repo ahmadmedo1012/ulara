@@ -10,3 +10,5 @@ export * from "./states";
 export * from "./toast";
 export * from "./brand";
 export * from "./markdown";
+export * from "./Glyph";
+export type { GlyphName } from "./glyphs";
