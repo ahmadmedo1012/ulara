@@ -592,6 +592,8 @@
 /* ── story bands ──────────────────────────────────────────────────── */
 
 .w369-band {
+  position: relative; /* round 2: hosts the scene wash (::before) */
+  isolation: isolate;
   display: grid;
   grid-template-columns: 0.8fr 1.2fr;
   align-items: start;
@@ -1545,6 +1547,33 @@
   background: var(--gold);
   /* scale only: the rail never reflows and never triggers layout */
   transition: transform var(--motion-duration-micro) var(--ease-linear);
+}
+
+/* ── r369 round 2 — the scene wash ───────────────────────────────────
+ * The reference gives every band its own soft ambient ground (peach →
+ * sky → blush) edge to edge; ours was one flat cream. Each band now
+ * carries a full-bleed wash keyed to its tint token: two radial blooms
+ * (inline-start high, inline-end low) fading to the page ground. Pure
+ * paint behind content (z-index -1, pointer-events none), token colours
+ * only via color-mix, so both themes resolve; reduced-motion unaffected
+ * (static). */
+.w369-band::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline: calc(50% - 50vw);
+  z-index: -1;
+  pointer-events: none;
+  /* feather the top/bottom seams so adjacent bands melt, never cut */
+  mask-image: linear-gradient(to bottom, transparent, CanvasText 22%, CanvasText 78%, transparent);
+  background:
+    radial-gradient(60% 55% at 12% 8%, color-mix(in srgb, var(--w369-tint-bg, var(--gold)) 85%, transparent), transparent 70%),
+    radial-gradient(55% 60% at 90% 92%, color-mix(in srgb, var(--gold) 14%, transparent), transparent 72%);
+}
+[data-theme='dark'] .w369-band::before {
+  background:
+    radial-gradient(60% 55% at 12% 8%, color-mix(in srgb, var(--w369-tint-deep, var(--gold)) 38%, transparent), transparent 70%),
+    radial-gradient(55% 60% at 90% 92%, color-mix(in srgb, var(--gold) 10%, transparent), transparent 72%);
 }
 
 /* ── anchors land under the sticky bar, never beneath it ─────────── */
