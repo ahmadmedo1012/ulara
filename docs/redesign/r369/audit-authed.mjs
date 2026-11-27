@@ -56,6 +56,9 @@ for (const dark of [false, true]) {
         const cs = getComputedStyle(el);
         if (cs.visibility === 'hidden' || cs.display === 'none' || Number(cs.opacity) === 0) continue;
         if (el.closest('.visually-hidden, [aria-hidden="true"], .w369-marquee, .w369-pre, .w369-jar')) continue;
+        /* a CLOSED <details>' body is content-visibility:hidden — Chrome keeps
+           its boxes (so rects exist) but nothing paints; only the summary shows. */
+        { const d = el.closest('details:not([open])'); if (d && !el.closest('summary')) continue; }
         let r = el.getBoundingClientRect();
         if (r.width < 8 || r.height < 8) continue;
         /* clip to the nearest scrollport: text scrolled OUT of its
@@ -77,7 +80,15 @@ for (const dark of [false, true]) {
           sc = sc.parentElement;
         }
         if (r.width < 8 || r.height < 8) continue;
-        text.push({ el, r, t: t.slice(0, 24) });
+        /* the TEXT NODE's own line boxes (Range rects), clipped to the same
+           scrollport as r — a wrapped inline link's union box (el rect)
+           spans every line it wraps and falsely overlaps its neighbours. */
+        const rg = document.createRange(); rg.selectNodeContents(walker.currentNode);
+        const lines = [...rg.getClientRects()].filter((q) => q.width >= 2 && q.height >= 2).map((q) => new DOMRect(
+          Math.max(q.left, r.left), Math.max(q.top, r.top),
+          Math.max(0, Math.min(q.right, r.right) - Math.max(q.left, r.left)),
+          Math.max(0, Math.min(q.bottom, r.bottom) - Math.max(q.top, r.top))));
+        text.push({ el, r, lines, t: t.slice(0, 24) });
       }
 
       const area = (a, b) =>
@@ -90,9 +101,13 @@ for (const dark of [false, true]) {
           if (a.el.contains(b.el) || b.el.contains(a.el)) continue;
           // only DOM text overlapping in the SAME stacking glyph area counts
           if (a.r.bottom < 0 || b.r.bottom < 0 || a.r.top > window.innerHeight * 3) continue;
-          const ov = area(a.r, b.r);
-          const min = Math.min(a.r.width * a.r.height, b.r.width * b.r.height);
-          if (min > 0 && ov / min > 0.35) {
+          let hit = false;
+          for (const la of a.lines) for (const lb of b.lines) {
+            const ov = area(la, lb);
+            const min = Math.min(la.width * la.height, lb.width * lb.height);
+            if (min > 0 && ov / min > 0.35) hit = true;
+          }
+          if (hit) {
             out.textOverText.push(`${a.t} ∩ ${b.t}`);
             if (out.textOverText.length > 6) break;
           }
