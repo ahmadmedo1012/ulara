@@ -24,6 +24,15 @@
  * the user experiences.
  */
 const SLOW_AFTER_MS = 4000;
+/* A server that has answered this session is awake: one slow endpoint
+ * (a heavy report, a long list) must not take over the whole screen.
+ * While it answered anything in the last RECENT_ANSWER_MS the card stays
+ * away; after that a lone request still has to be in flight
+ * WARM_SLOW_AFTER_MS before the page is judged to be waiting on a
+ * sleeping instance. Only a session that has never been answered (the
+ * genuine cold start) uses the short threshold. */
+const RECENT_ANSWER_MS = 15_000;
+const WARM_SLOW_AFTER_MS = 20_000;
 const CHECK_EVERY_MS = 1000;
 
 type WakeListener = (slow: boolean) => void;
@@ -32,6 +41,7 @@ const starts = new Map<number, number>();
 const listeners = new Set<WakeListener>();
 let timer: ReturnType<typeof setInterval> | null = null;
 let slow = false;
+let lastAnsweredAt = 0;
 
 function oldestAge(): number {
   let oldest = Infinity;
@@ -40,7 +50,11 @@ function oldestAge(): number {
 }
 
 function recompute() {
-  const next = starts.size > 0 && oldestAge() >= SLOW_AFTER_MS;
+  let threshold = SLOW_AFTER_MS;
+  if (lastAnsweredAt > 0) {
+    threshold = Date.now() - lastAnsweredAt < RECENT_ANSWER_MS ? Infinity : WARM_SLOW_AFTER_MS;
+  }
+  const next = starts.size > 0 && oldestAge() >= threshold;
   if (next !== slow) {
     slow = next;
     for (const l of listeners) l(slow);
@@ -58,8 +72,11 @@ export function wakeRequestStart(id: number, ts = Date.now()) {
   }
 }
 
-export function wakeRequestSettle(id: number | undefined) {
+/** `answered`: the server replied (any HTTP status). Only a network
+ *  fault or timeout leaves it false. */
+export function wakeRequestSettle(id: number | undefined, answered = true) {
   if (id !== undefined) starts.delete(id);
+  if (answered) lastAnsweredAt = Date.now();
   if (starts.size === 0 && timer !== null) {
     clearInterval(timer);
     timer = null;

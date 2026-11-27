@@ -28,7 +28,6 @@ import { useLoaderState } from '../../lib/loaderOrchestrator';
 const STATUS_LINES: readonly string[] = [
   'الخادم يستيقظ… — عادةً يستغرق 30–60 ثانية',
   'لا تقلق، بياناتك محفوظة',
-  'نُعيد المحاولة تلقائيًا كل بضع ثوانٍ',
   'التحميل ما زال جاريًا، لحظات من فضلك',
 ];
 
