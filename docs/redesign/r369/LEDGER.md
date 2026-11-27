@@ -468,3 +468,10 @@ Home, /support/, /privacy/, /guides/reward-chart-for-kids/, /tools/reward-chart/
 - Decision B: star/trophy glyphs on that page became the neutral BadgeCheck mark; EmptyMascot and its CSS retired from product empty states (landing mascot art untouched).
 - Judgment calls left: college-vs-college leaderboard (/colleges/leaderboard, institutional, not student); competitions page ranking (exam competitions); card fan and pinned scene kept (Decision C).
 - Sound (tone batch 2): per-button tap sound seat retired; level-up is a quiet text notice (no milestone sound, no rise counter). Opt-in toggle + confirm-on-success kept.
+
+## Hardening batch (CI + motion + dead code)
+- Logo/loader: one U-vessel `<Logo>` on landing nav, footer and loader (b465e847). One `.spinner` ring from motion.css everywhere (20181b39).
+- Press feedback through motion tokens: landing cards/links (bd16fd61), list rows and chips (ca77dd8a, 4c9f25a1), mobile links via `pressFeedback.linkOpacity` (78e88e3e). prefers-reduced-motion respected, no sound, native touch scroll kept.
+- Mobile kept per owner (26605111): opt-in Arabic-Indic numerals (Latin default) and the leaderboard.
+- CI repairs: test typecheck, lint, r321 decor test made real, parity gate 201/201 (77bf02df, cc6415ad); docs PNGs recompressed + baseline allowlisted (5f1973c3); dead-code ratchet back to 47/19/215 (286a698f); web/mobile mark.ts twins restored (97bfeb22); iOS WebKit contrast harness reads color(srgb) and PAPER pins follow r369 (e979ef70, 6d88ce7a).
+- Open: Size gate rule 2 (docs/ ~99 MB vs 64 MB, older rounds r358/r351/r350 untouched, owner decision).
