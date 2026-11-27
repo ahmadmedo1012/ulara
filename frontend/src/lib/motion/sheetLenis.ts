@@ -97,6 +97,13 @@ let unsubFrame: (() => void) | null = null;
 let offLenisScroll: (() => void) | null = null;
 let idleTimer = 0;
 
+function coarsePointer(): boolean {
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+    return false;
+  }
+  return window.matchMedia('(pointer: coarse)').matches;
+}
+
 function reducedMotion(): boolean {
   if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
     return false;
@@ -264,6 +271,13 @@ export function initGuestLenis(): boolean {
   }
   if (lenis) return true;
   if (reducedMotion()) return false; /* RM: NEVER init — native scroll */
+  /* r369 phone-smoothness: on a touch-first device (pointer: coarse) the
+   * engine's syncTouch mode replaces the browser's own momentum scroll
+   * with a JS-driven one, which reads layout every frame and is visibly
+   * choppy on iOS Safari (measured under a 4x CPU throttle: ~865ms of
+   * scroll-position reads across one 17k px scroll). Phones scroll
+   * natively; the glide stays for mouse/trackpad. */
+  if (coarsePointer()) return false;
 
   /* The ONE frame clock stays the conductor (r308/r313 pinned
    * contracts — Lenis's raf rides its subscriber slot). R342-final:

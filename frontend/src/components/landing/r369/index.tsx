@@ -184,27 +184,23 @@ function useScrollProgress(steps = 0) {
 function useActiveStage() {
   const [active, setActive] = useState(0);
   useEffect(() => {
-    let raf = 0;
-    const read = () => {
-      raf = 0;
-      const nodes = [...document.querySelectorAll<HTMLElement>('[data-stage]')];
-      if (!nodes.length) return;
-      const mid = window.innerHeight * 0.45;
-      let next = 0;
-      nodes.forEach((el, i) => {
-        if (el.getBoundingClientRect().top <= mid) next = i;
-      });
-      setActive(next);
-    };
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(read); };
-    read();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-      if (raf) cancelAnimationFrame(raf);
-    };
+    const nodes = [...document.querySelectorAll<HTMLElement>('[data-stage]')];
+    if (!nodes.length) return undefined;
+    /* r369 phone-smoothness: no scroll listener and no per-frame
+     * getBoundingClientRect. A thin observation line sits at 45% of the
+     * viewport; the band that crosses it is the active one. The browser
+     * reports crossings off the main thread's layout path. */
+    if (typeof IntersectionObserver === 'undefined') return undefined;
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((en) => {
+          if (en.isIntersecting) setActive(Math.max(0, nodes.indexOf(en.target as HTMLElement)));
+        });
+      },
+      { rootMargin: '-45% 0px -54.9% 0px', threshold: 0 },
+    );
+    nodes.forEach((n) => io.observe(n));
+    return () => io.disconnect();
   }, []);
   return active;
 }
@@ -892,11 +888,30 @@ export function ProgressBand() {
     };
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(read); };
     read();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
-    return () => {
+    /* r369 phone-smoothness: the scroll listener is attached only while
+     * the band is on screen (an observer toggles it), so the other
+     * screens of the page pay nothing for this counter. */
+    let listening = false;
+    const on = () => {
+      if (listening) return;
+      listening = true;
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+    };
+    const off = () => {
+      if (!listening) return;
+      listening = false;
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onScroll);
+    };
+    const host = el.closest('section') ?? el;
+    const io = typeof IntersectionObserver === 'undefined'
+      ? null
+      : new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { on(); onScroll(); } else off(); }, { rootMargin: '100px 0px' });
+    if (io) io.observe(host); else on();
+    return () => {
+      io?.disconnect();
+      off();
       if (raf) cancelAnimationFrame(raf);
     };
   }, []);
