@@ -472,7 +472,7 @@ test.describe('r352 — the institutional workspace journey (hermetic)', () => {
     await expect(page.getByText('أ. فاطمة الأمينة').first()).toBeVisible();
 
     // → meeting detail (the numbered section grammar)
-    await page.getByRole('row').filter({ hasText: 'قاعة المجلس' }).click();
+    await page.getByRole('button').filter({ hasText: 'قاعة المجلس' }).click();
     await expect(page.getByRole('heading', { name: 'التحضير — جدول الأعمال' })).toBeVisible();
     await expect(page.getByText('خطط 2027 المقترحة')).toBeVisible();
     await expect(page.getByText('اعتماد خطة 2027 بعد التعديلات')).toBeVisible();

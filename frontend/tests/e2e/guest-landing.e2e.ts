@@ -20,7 +20,7 @@ test.describe('الصفحة العامة للزوار', () => {
     // هوية المنصّة في الترويسة (r188: لا جامعة حقيقية — الاستقلالية؛ r191: العبارة المحذوفة صُنعت في ليبيا لم تعد اسم المنتج)
     await expect(page.locator('.w369-nav-actions')).toBeVisible();
     await page.locator('.w369-footer').scrollIntoViewIfNeeded();
-    await expect(page.getByText('نظام تشغيل الجامعة').first()).toBeVisible();
+    await expect(page.locator('.w369-footer').getByText('منصّة تعليمية تقنية مستقلّة').first()).toBeVisible();
     // بيان الاستقلالية يسمّي المؤسّسة التجريبية الاصطناعية بالاسم
     await expect(page.getByText('مساحة عمل أُلارا التجريبية').first()).toBeVisible();
     // دفتر الصدق: التذييل يربط بسجلّ القدرات (ما يعمل اليوم فعلًا)

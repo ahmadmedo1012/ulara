@@ -405,19 +405,10 @@ for (const theme of THEMES) {
       /* r369: drawer rows are radius-scale pills separated by spacing, not hairlines */
       expect(sheet.rowSep).toBe('0px');
 
-      // mono gutter indexes [01], [02]… — TWO pins:
-      //  a) the computed `content` carries the live counter machinery
-      //     (nav-section, decimal-leading-zero, brackets, bidi
-      //     isolates) — before the fix this computed to the retired
-      //     underline's "";
-      //  b) RENDERED geometry: two inline-block clones of the first
-      //     heading — one with the pseudo, one with content:none —
-      //     must differ by a real glyph run (the [01] index measures
-      //     wider than nothing). Cleanup leaves no DOM residue.
-      expect(sheet.firstIndexContent).toContain('counter(nav-section, decimal-leading-zero)');
-      expect(sheet.firstIndexContent).toContain('[');
-      expect(sheet.secondIndexContent).toContain('counter(nav-section, decimal-leading-zero)');
-      expect(sheet.indexDeltaW, 'the [01] index renders a real glyph run').toBeGreaterThan(10);
+      /* r369: the [01] mono gutter indexes of the sheet-era drawer are retired
+         (the group labels carry no counter pseudo); the group labels still
+         render, which the groupCount/labelCount pins below keep. */
+      expect(sheet.firstIndexContent).toBe('none');
 
       // every student group present — «المصفوفة التعليمية»'s group included
       expect(sheet.groupCount).toBeGreaterThanOrEqual(6);
