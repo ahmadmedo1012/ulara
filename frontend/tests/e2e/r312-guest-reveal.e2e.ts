@@ -24,7 +24,7 @@ test.describe('R312 — the guest route reveal (§R D7)', () => {
   test('landing → /colleges: the sweep plays on the colleges mount and settles', async ({ page }) => {
     await page.setViewportSize({ width: 1024, height: 640 });
     await page.goto('/');
-    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
+    await expect(page.locator('h1.w369-h1')).toContainText(HERO_READY);
 
     /* warm the /colleges chunk first (the D4 latency class must not
      * swallow the measurement), then measure the SECOND crossing */
@@ -33,7 +33,7 @@ test.describe('R312 — the guest route reveal (§R D7)', () => {
     await expect(page.locator('.guest-reveal-inner')).toHaveCount(1);
     await page.waitForTimeout(1000);
     await page.goBack();
-    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
+    await expect(page.locator('h1.w369-h1')).toContainText(HERO_READY);
     await page.waitForTimeout(1000);
 
     /* the measured crossing */
@@ -78,7 +78,7 @@ test.describe('R312 — the guest route reveal (§R D7)', () => {
   test('browser back → the landing: the same reveal on the landing mount', async ({ page }) => {
     await page.setViewportSize({ width: 1024, height: 640 });
     await page.goto('/');
-    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
+    await expect(page.locator('h1.w369-h1')).toContainText(HERO_READY);
     await page.locator('a[href="/colleges"]').first().scrollIntoViewIfNeeded();
     await page.locator('a[href="/colleges"]').first().click();
     await page.waitForTimeout(1200);
@@ -93,11 +93,11 @@ test.describe('R312 — the guest route reveal (§R D7)', () => {
       undefined,
       { timeout: 8000 },
     );
-    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
+    await expect(page.locator('h1.w369-h1')).toContainText(HERO_READY);
     /* the landing tree is inside the reveal stage */
     const inside = await page.evaluate(() => {
       const inner = document.querySelector('.guest-reveal-inner');
-      return !!inner?.contains(document.querySelector('.w369-h1'));
+      return !!inner?.contains(document.querySelector('h1.w369-h1'));
     });
     expect(inside).toBe(true);
     await page.waitForTimeout(900);
@@ -108,7 +108,7 @@ test.describe('R312 — the guest route reveal (§R D7)', () => {
   test('the traveling rule: fixed, 1px, on the rule token', async ({ page }) => {
     await page.setViewportSize({ width: 1024, height: 640 });
     await page.goto('/');
-    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
+    await expect(page.locator('h1.w369-h1')).toContainText(HERO_READY);
     const line = await page.evaluate(() => {
       const wrap = document.querySelector('.guest-reveal');
       const cs = getComputedStyle(wrap as Element, '::after');
@@ -132,7 +132,7 @@ test.describe('R312 — reduced motion: the standing page', () => {
   test('no sweep, no line, no clip — the page stands', async ({ page }) => {
     await page.setViewportSize({ width: 1024, height: 640 });
     await page.goto('/');
-    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
+    await expect(page.locator('h1.w369-h1')).toContainText(HERO_READY);
     await page.locator('a[href="/colleges"]').first().scrollIntoViewIfNeeded();
     await page.locator('a[href="/colleges"]').first().click();
     await page.waitForTimeout(1200);

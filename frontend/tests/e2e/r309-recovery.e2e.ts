@@ -140,7 +140,7 @@ test.describe('R309 hero — drag-reveal geometry (the r359 rebuild contract)', 
      * CI's slower world once caught the sweep on a hero whose copy seat
      * had not composed, so the sweep unsealed nothing. The same H1
      * readiness sentinel gates the sweep. */
-    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
+    await expect(page.locator('h1.w369-h1')).toContainText(HERO_READY);
     await waitForMapping(page);
     const centers = await markerCenters(page);
     expect(Object.keys(centers).sort()).toEqual([...STATION_IDS].sort());
@@ -375,7 +375,7 @@ test.describe('R309 hero — the reveal-state lifecycle (§6)', () => {
      * => the hero tree is composed and interactive), and the sweep is
      * delivered in finer steps. The semantics are unchanged: one sweep,
      * release, the count must hold. */
-    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
+    await expect(page.locator('h1.w369-h1')).toContainText(HERO_READY);
     await waitForMapping(page);
     /* r363 — CI round 3: HERO_READY + the composed hero still lost
      * twice in CI (0 stations, both attempts, 4/4 local): page.mouse
@@ -626,7 +626,7 @@ test.describe('R309/R313 loader — the asset-gated entrance clock and the lock 
      * pin is retired per the round brief's owner order. */
     await page.reload();
     await expect(page.locator('.pl')).toHaveCount(0, { timeout: 4000 });
-    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
+    await expect(page.locator('h1.w369-h1')).toContainText(HERO_READY);
   });
 
   test('the skip path restores the scroll lock too', async ({ page }) => {
@@ -656,7 +656,7 @@ test.describe('R309/R313 loader — the asset-gated entrance clock and the lock 
       });
       await page.goto('/');
       await expect(page.locator('.pl')).toHaveCount(0);
-      await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
+      await expect(page.locator('h1.w369-h1')).toContainText(HERO_READY);
       expect(await page.evaluate(() => document.documentElement.style.overflow)).toBe('');
     });
   });
@@ -723,6 +723,6 @@ test.describe('R309 non-regression — the scroll experience and routes', () => 
     await expect(page).toHaveURL(/\/colleges/);
     await page.goBack();
     await expect(page).toHaveURL(/\/$/);
-    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
+    await expect(page.locator('h1.w369-h1')).toContainText(HERO_READY);
   });
 });

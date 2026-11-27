@@ -45,7 +45,7 @@ const SHELL_LANDMARKS = ['.topbar-title', 'h1.pf-page-title', '.bottom-nav'];
  * was dead, so the pin silently rotted). Re-keyed to the live class;
  * the contract itself (container inside footer, no overflow) is
  * unchanged. */
-const LANDING_LANDMARKS = ['main#main', '.w369-h1'];
+const LANDING_LANDMARKS = ['main#main', 'h1.w369-h1'];
 
 test.describe('الزائر — فيض أفقي صفري', () => {
   for (const vp of NARROW_VIEWPORTS) {
@@ -66,7 +66,7 @@ test.describe('الزائر — فيض أفقي صفري', () => {
 
       test('/ (الرئيسية) بلا فيض — فوق وطول الصفحة', async ({ page }) => {
         await page.goto('/');
-        await expect(page.locator('.w369-h1')).toBeVisible();
+        await expect(page.locator('h1.w369-h1')).toBeVisible();
         await expectNoHorizontalOverflow(page, LANDING_LANDMARKS);
         // The landing is the longest public sheet — lazy sections
         // (reveal-on-scroll, footer) only lay out once scrolled past,
