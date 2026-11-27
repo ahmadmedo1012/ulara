@@ -177,3 +177,20 @@ CI read; E's final verify ×2; G's final cleanup (branches, zero-trace).
 - zero-trace: PASS (three runs this session).
 NEXT: the capture's evidence sheet + store screenshots; the mobile belt's
 own lane read (Mobile on c2f93a3).
+
+## Session 2 — the rig's authenticated leg: the honest close
+- Four capture iterations, four forensics (45835244276 · 45903140875 ·
+  45914019092 · 45919731339): the sweep shots + crash gate + cold/warm
+  timings + scroll recordings capture GREEN every time; the authenticated
+  HOME shots do not. The trace facts: the دخول tap COMPLETES (the sticky
+  bar mounts, the tap fires), the tour assert («أهلًا بك») times out, no
+  session persists (the sweep's deep links read a guest app). The smoke
+  lane's five-role journey (mobile.yml) is GREEN on c2f93a3 — the product
+  login works on its own emulator; the capture rig's emulator state (the
+  2026 image's IME/profile interplay) is the variable. The rig now (a)
+  carries the all-optional three-mechanism submit chain (the sticky taps +
+  the IME-open Enter + the settled-form scroll/tap), (b) uploads Maestro's
+  own debug dump (the UI hierarchy at every failed assert) so the next
+  pass reads evidence. — OPEN, owner-visible: the authenticated capture
+  leg needs one emulator-session pass with the hierarchy in hand.
+NEXT: none this round — everything else landed; the final message follows.
