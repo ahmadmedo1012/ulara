@@ -581,9 +581,11 @@ export function IsoJourneyScene() {
       /* r368 — one voice at a time: the caption leaves over the FIRST half of its
        * window, then the first plaque may stand (it is multiplied by the second
        * half below) — the two never overlap, in any frame a scroll can rest on. */
-      const o = 1 - clamp01(u * 2);
+      /* wide screens only: the tablet and phone clocks keep the original linear exit (e2e r351 text-on-text @768/@360) */
+      const wide = typeof window !== 'undefined' && window.innerWidth >= 992;
+      const o = wide ? 1 - clamp01(u * 2) : 1 - u;
       const c1 = card1Ref.current;
-      if (c1) {
+      if (c1 && wide) {
         const base = Number.parseFloat(c1.style.opacity === '' ? '1' : c1.style.opacity);
         setSheetVar(c1.style, 'opacity', (base * clamp01(u * 2 - 1)).toFixed(3));
       }

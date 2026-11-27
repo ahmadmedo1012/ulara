@@ -173,3 +173,4 @@ NEXT: origin/main sync ~9:50pm; remaining gaps 06 layout, hero photo look, no-co
 - r368 post-merge FULL unit run (1:39 AM, 10 shards of vitest, TZ=UTC): 253 files, 3110 tests, 0 failures. tsc clean, zero-trace PASS. e2e not run.
 - r368 cross-slice analyze (1:39 AM): all 22 FAILING. Closest: 03 hero desktop and mobile, 05 statement field, 06/07 plan plates (flat grammar, hatched). Furthest: hero hand-inked complexity (clean massing study), 06 full collage (3 plates vs the reference stack), type face (Arabic display vs the reference grotesque, unavoidable), slices 10, 12-20, 22 (no corpus, spec-verified only). Live reference blocked (403), corpus only.
 - r368 fix: phone Product band had lost its sign-up CTA link (hidden by my phone rebuild); restored as a plain ruled row. Caught by e2e landing-fragment.
+- fix: journey exit/card1 timing scoped to >=992px (r351 @768/@360 text-on-text regression); NEXT: e2e shards 13-16, ios, r305, 06 plates, type tuning
