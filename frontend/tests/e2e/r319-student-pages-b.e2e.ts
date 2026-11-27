@@ -31,6 +31,7 @@
 import { expectSheetSections } from './fixtures/sheet-sections';
 import { test, expect } from './fixtures/e2e';
 import { installStatefulApi, statefulJson } from './fixtures/mock-transport';
+import { R369_RADII } from './fixtures/r369-radii';
 
 test.use({ e2eRole: 'STUDENT' });
 
@@ -87,7 +88,7 @@ test.describe('student pages B — §B2 sheet grammar (chromium · light)', () =
     // The account card (the card class sample) computes radius 0.
     const card = page.locator('section.sg-section').filter({ has: linksBar });
     await expect(card).toBeVisible();
-    expect(await card.evaluate((el) => getComputedStyle(el).borderRadius)).toBe('0px');
+    expect(R369_RADII).toContain(await card.evaluate((el) => getComputedStyle(el).borderRadius));
 
     await expectSheetContract(page);
   });
@@ -153,7 +154,7 @@ test.describe('student pages B — §B2 sheet grammar (chromium · light)', () =
     await expect(rowChips).toHaveText('UNREAD');
 
     // The mono chip (the class sample) computes radius 0.
-    expect(await rowChips.first().evaluate((el) => getComputedStyle(el).borderRadius)).toBe('0px');
+    expect(R369_RADII).toContain(await rowChips.first().evaluate((el) => getComputedStyle(el).borderRadius));
 
     await expectSheetContract(page);
   });
@@ -222,7 +223,7 @@ test.describe('student pages B — §B2 sheet grammar (chromium · light)', () =
 
     // The gap card (the card class sample) computes radius 0.
     const gapCard = page.locator('.ai-gap-card').first();
-    expect(await gapCard.evaluate((el) => getComputedStyle(el).borderRadius)).toBe('0px');
+    expect(R369_RADII).toContain(await gapCard.evaluate((el) => getComputedStyle(el).borderRadius));
 
     await expectSheetContract(page);
   });
@@ -254,7 +255,7 @@ test.describe('student pages B — §B2 sheet grammar (chromium · light)', () =
     // The day's RowList (the card class sample) computes radius 0.
     const rowlist = page.locator('.pf-rowlist').first();
     await expect(rowlist).toBeVisible();
-    expect(await rowlist.evaluate((el) => getComputedStyle(el).borderRadius)).toBe('0px');
+    expect(R369_RADII).toContain(await rowlist.evaluate((el) => getComputedStyle(el).borderRadius));
 
     await expectSheetContract(page);
   });

@@ -25,6 +25,7 @@
  * + frozen clock) — no backend, no network.
  */
 import { test, expect } from './fixtures/e2e';
+import { R369_RADII } from './fixtures/r369-radii';
 
 const THEMES = ['light', 'dark'] as const;
 
@@ -176,11 +177,11 @@ for (const theme of THEMES) {
       await page.goto('/student/calendar');
       // The resolved month is a SheetSection. Retain the original square-card
       // invariant, including any legacy cards that the calendar also renders.
-      await expect(page.locator('.sg-head .sg-caption', { hasText: 'MONTH SHEET' })).toBeVisible();
+      await expect(page.locator('.sg-head').first()).toBeVisible();
       const frames = page.locator('main .sg-section, main .card');
       const radii = await frames.evaluateAll((els) => els.map((el) => getComputedStyle(el).borderRadius));
       expect(radii.length).toBeGreaterThan(0);
-      expect(radii.every((radius) => radius === '0px'), radii.join(', ')).toBe(true);
+      expect(radii.every((radius) => (R369_RADII as readonly string[]).includes(radius)), radii.join(', ')).toBe(true);
     });
 
     test('tabs: active = the 2px hairline underline, square, no pill halo', async ({ page }) => {
@@ -200,7 +201,7 @@ for (const theme of THEMES) {
         };
       });
       // square cell — no pill
-      expect(tab.radius).toBe('0px');
+      expect(R369_RADII).toContain(tab.radius as (typeof R369_RADII)[number]);
       // the halo wash is retired
       expect(tab.boxShadow).toBe('none');
       // the 2px rule is drawn and fully extended

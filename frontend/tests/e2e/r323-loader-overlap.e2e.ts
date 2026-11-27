@@ -160,8 +160,8 @@ for (const viewport of [
          * MountOnVisible (.lz-mount[data-lz="footer"]): the band mounts
          * when the colophon nears, not at page load. Scroll the
          * placeholder in first, wait for the footer, then measure. */
-        await page.locator('.lz-mount[data-lz="footer"]').scrollIntoViewIfNeeded();
-        await page.locator('.fo-footer').waitFor({ state: 'attached' });
+        await page.locator('.w369-footer').scrollIntoViewIfNeeded();
+        await page.locator('.w369-footer').waitFor({ state: 'attached' });
         await page.waitForTimeout(900); /* the lazy chunk + the cb-rise clip */
 
         const banner = page.locator('.cb-banner');
