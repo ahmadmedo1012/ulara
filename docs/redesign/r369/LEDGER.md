@@ -276,7 +276,7 @@ AppShell surfaces, not public pages — they moved to slices 02/03.
 - Evidence: docs/redesign/r369/evidence/02-product-shell/batch2/
   palette-1440[-dark].png, notif-{1440,390}[-dark].png,
   drawer-390[-dark].png — all visually verified (mocked /search/global
-  + /notifications; probe-panels.mjs kept at repo root for re-runs).
+  + /notifications; tools/probes/probe-panels.mjs kept for re-runs).
 - Gates: build ✓ · stylelint clean · tokens:check / raw-css /
   colors --strict / motion / icons / csp-hash PASS · 91 targeted shell
   tests green (nav-active-vocabulary, r305/r325 css contracts, r305
