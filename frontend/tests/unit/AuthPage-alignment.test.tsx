@@ -115,7 +115,10 @@ describe('AuthPage — journey alignment (imm-5)', () => {
     expect(css).not.toContain('.nf-scene::after');
     // No gradient ambients survive in the sheet (comments aside).
     const declarations = css.replace(/\/\*[\s\S]*?\*\//g, '');
-    expect(declarations).not.toMatch(/radial-gradient|linear-gradient/);
+    // r369 merge: main's ruler-strip repeating-gradient ticks (P3 furniture
+    // kit, patterns.css) are furniture, not ambience — the same exemption main's own pin carries.
+    const withoutTicks = declarations.replace(/\.ruler-strip[^{]*\{[^}]*\}/g, '');
+    expect(withoutTicks).not.toMatch(/radial-gradient|linear-gradient/);
     // The card's whole elevation story is the strong hairline.
     const cardAt = declarations.indexOf('.auth-card');
     const cardRule = declarations.slice(cardAt, declarations.indexOf('}', cardAt));
