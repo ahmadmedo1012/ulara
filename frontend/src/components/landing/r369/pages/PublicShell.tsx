@@ -9,6 +9,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Glyph } from '../../../icons';
+import { Logo } from '../../../../brand';
 import { ROUTES } from '../../../../lib/routes';
 import { ThemeToggle, useThemeSync } from '../../../layout/ThemeToggle';
 import { Footer } from '..';
@@ -44,7 +45,7 @@ export function PublicNav() {
     <header className="w369-nav p369-nav">
       <div className="w369-nav-inner">
         <Link to={ROUTES.root} className="w369-brand" aria-label="أُلارا — الصفحة الرئيسية">
-          <span className="w369-brand-mark" aria-hidden="true"><Glyph name="star" size={18} /></span>
+          <span className="w369-brand-mark" aria-hidden="true"><Logo variant="mark" size={30} /></span>
           <span className="w369-brand-word">أُلارا</span>
         </Link>
 

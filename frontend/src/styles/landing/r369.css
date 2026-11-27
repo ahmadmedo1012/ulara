@@ -244,15 +244,13 @@
   color: var(--text);
 }
 
+/* r369 identity unification: the nav carries the ONE brand mark (the
+ * U-vessel, same as favicon / manifest / app sidebar), not a star in a
+ * gold disc. Ink on the page, the cornerstone rides --accent. */
 .w369-brand-mark {
-  display: grid;
-  place-items: center;
-  inline-size: 34px;
-  block-size: 34px;
-  border-radius: var(--r-full);
-  background: var(--gold);
-  color: var(--accent-ink);
-  box-shadow: var(--shadow-signal);
+  display: inline-flex;
+  align-items: center;
+  color: var(--text);
 }
 
 .w369-brand-word {
@@ -1350,7 +1348,7 @@ html:not([data-theme='dark']) .w369-footer {
   .w369-cta { padding-block-end: calc(var(--sp-8) + var(--sp-7)); }
 }
 
-/* ── preloader (the star burst) ───────────────────────────────────── */
+/* ── preloader (the brand mark) ───────────────────────────────────── */
 
 .w369-pre {
   position: fixed;
@@ -1377,38 +1375,6 @@ html:not([data-theme='dark']) .w369-footer {
   place-items: center;
 }
 
-.w369-pre-ray {
-  position: absolute;
-  inset: 0;
-  border-radius: var(--r-full);
-  border-block-start: 3px solid var(--gold);
-  opacity: 0.5;
-  animation: w369-ray var(--motion-duration-long) var(--ease-out) both;
-}
-
-@keyframes w369-ray {
-  from { scale: 0.35; opacity: 0; }
-  to { scale: 1; opacity: 0.5; }
-}
-
-.w369-pre-star {
-  display: grid;
-  place-items: center;
-  inline-size: 76px;
-  block-size: 76px;
-  border-radius: var(--r-full);
-  background: var(--gold);
-  color: var(--accent-ink);
-  box-shadow: var(--shadow-signal);
-  animation: w369-pop var(--motion-duration-medium) var(--ease-out) both;
-}
-
-@keyframes w369-pop {
-  from { transform: scale(0.2); opacity: 0; }
-  60% { transform: scale(1.12); opacity: 1; }
-  to { transform: scale(1); opacity: 1; }
-}
-
 .w369-pre-word {
   font-family: var(--font-display);
   font-weight: var(--fw-black);
@@ -1421,9 +1387,7 @@ html:not([data-theme='dark']) .w369-footer {
 
 @media (prefers-reduced-motion: reduce) {
   .w369-marquee-track,
-  .w369-cta-mascot,
-  .w369-pre-ray,
-  .w369-pre-star {
+  .w369-cta-mascot {
     animation: none;
   }
   .w369-band-body[data-reveal='pending'] {

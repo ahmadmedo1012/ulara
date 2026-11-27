@@ -30,6 +30,7 @@ import { Link } from 'react-router-dom';
 import { Glyph, type GlyphName } from '../../icons';
 import { ROUTES } from '../../../lib/routes';
 import { ThemeToggle } from '../../layout/ThemeToggle';
+import { Logo } from '../../../brand';
 
 /* ─────────────────────────── motion helpers ─────────────────────────── */
 
@@ -362,7 +363,7 @@ export function LandingNav() {
       <ScrollRail />
       <div className="w369-nav-inner">
         <Link to={ROUTES.root} className="w369-brand" aria-label="أُلارا — الصفحة الرئيسية">
-          <span className="w369-brand-mark" aria-hidden="true"><Glyph name="star" size={18} /></span>
+          <span className="w369-brand-mark" aria-hidden="true"><Logo variant="mark" size={30} /></span>
           <span className="w369-brand-word">أُلارا</span>
         </Link>
 
@@ -1705,7 +1706,7 @@ export function Footer({ year }: { year: number }) {
       <div className="w369-footer-grid">
         <div className="w369-footer-brand">
           <Link to={ROUTES.root} className="w369-brand">
-            <span className="w369-brand-mark" aria-hidden="true"><Glyph name="star" size={18} /></span>
+            <span className="w369-brand-mark" aria-hidden="true"><Logo variant="mark" size={30} /></span>
             <span className="w369-brand-word">أُلارا</span>
           </Link>
           {/* the honest identity statement — the SAME sentence /about and
@@ -1745,7 +1746,7 @@ export function Footer({ year }: { year: number }) {
 /* ───────────────────────────── preloader ───────────────────────────── */
 
 /**
- * The entrance: a short star-burst, once per session, skippable and
+ * The entrance: the brand mark drawing itself, once per session, skippable and
  * entirely skipped under reduced motion. It never blocks the page —
  * the sheet renders underneath and the overlay fades itself out.
  */
@@ -1760,10 +1761,10 @@ export function Preloader({ onDone }: { onDone: () => void }) {
   return (
     <div className="w369-pre" data-leaving={leaving ? 'true' : 'false'} aria-hidden="true">
       <div className="w369-pre-burst">
-        {Array.from({ length: 8 }).map((_, i) => (
-          <span key={i} className="w369-pre-ray" style={{ rotate: `${i * 45}deg` }} />
-        ))}
-        <span className="w369-pre-star"><Glyph name="star" size={34} /></span>
+        {/* r369 loader unification: the same animated mark the app's boot
+            splash draws (hairline vessel first, cornerstone last), not a
+            star burst. */}
+        <Logo variant="mark" size={72} animated />
       </div>
       <p className="w369-pre-word">أُلارا</p>
     </div>
