@@ -345,3 +345,11 @@ AppShell surfaces, not public pages — they moved to slices 02/03.
 - Re-keys: R305-supplemental-ds.test.tsx — the framed-section titles pin now expects «سلّم المستويات» first; change recorded in a test comment.
 - Evidence: evidence/03-role-pages/batch-b/ — 6 route cells + capture-ladder.mjs element shots (ladder-{1440,390}{,-dark}.png, 20 rungs verified, RTL order, locked state legible both themes).
 - Gates: tokens:check · raw-css · motion · csp-hash · colors --strict · zero-trace · icons PASS; tsc + build + stylelint clean; R305 + gamification suites 24/24; overlap audit-authed on /student/gamification → 0 findings, all widths, both themes.
+
+### Close-out — SLICE 03 CLOSED (5:55 EET)
+
+- Batch A (r369-app.css §0-§5: shadow ladder re-declared, card hover lift, sg-section 22px warm cards, retired sg-index/caption/kpi-top labels, KPI hairlines off + display-font values, 14px fields) — commit dddd570.
+- Batch B (gamification ladder, this file's batch-B entry above) — commits cf86ec1 + 0d8f778.
+- FULL SUITE after the .btn.sm touch floor: 6/6 shards, 3002/3002 tests green. The floor broke nothing app-wide.
+- Gates: tokens:check · raw-css · motion · csp-hash · colors --strict · zero-trace · icons PASS; tsc + build + stylelint (changed files) clean; overlap audit-authed on /student/gamification → 0 findings, all widths, both themes. Pre-existing debt untouched: gate:size RED (36MB measure PNGs from 4382dd8) + 2 whole-tree stylelint duplicate-rule errors (world.css/tokens.css) — both approved for the final-commit pass (parent 3:45:29).
+- Known cosmetic gap (accepted): batch-a evidence lacks the 820-dark cells; batch-b has all cells. Not blocking: the 820 layout is covered by batch-a light + batch-b dark evidence.
