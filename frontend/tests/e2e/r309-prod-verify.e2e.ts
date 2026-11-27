@@ -63,7 +63,7 @@ test('prod · desktop drag reveals [CP] unclipped, no RR/MG overlap, guides conf
       cards[el.getAttribute('data-marker') ?? '?'] = { l: r.left, r: r.right, t: r.top, b: r.bottom };
     });
     const layer = document.querySelector('.hi-layer')!.getBoundingClientRect();
-    const copy = document.querySelector('.fo-hero-copy')?.getBoundingClientRect();
+    const copy = document.querySelector('.w369-hero-copy')?.getBoundingClientRect();
     const inst = [
       ...Array.from(document.querySelectorAll('.hi-guide')),
       document.querySelector('.hi-plus'),
@@ -97,7 +97,7 @@ test('prod · desktop drag reveals [CP] unclipped, no RR/MG overlap, guides conf
   const g = await page.evaluate(() => {
     const layer = document.querySelector('.hi-layer') as HTMLElement;
     const lr = layer.getBoundingClientRect();
-    const copy = document.querySelector('.fo-hero-copy')?.getBoundingClientRect();
+    const copy = document.querySelector('.w369-hero-copy')?.getBoundingClientRect();
     const rects = [
       ...Array.from(document.querySelectorAll('.hi-guide')),
       document.querySelector('.hi-plus'),
@@ -148,16 +148,16 @@ test('prod · mobile 390 — flow cards inside the viewport; menu owns the scrol
   }
 
   /* the menu scroll-lock — the audit's exact wheel gesture */
-  await page.locator('.fo-burger').click();
-  await expect(page.locator('.fo-mobile-menu')).toBeVisible();
+  await page.locator('.w369-nav-burger').click();
+  await expect(page.locator('.w369-mobile-menu')).toBeVisible();
   await page.screenshot({ path: `${SHOTS}/prod-menu-open-390.png` });
   const before = await page.evaluate(() => window.scrollY);
   await page.mouse.wheel(0, 600);
   await page.waitForTimeout(400);
   const during = await page.evaluate(() => window.scrollY);
   expect(during, 'the page scrolled behind the open menu (prod)').toBe(before);
-  await page.locator('.fo-burger').click();
-  await expect(page.locator('.fo-mobile-menu')).toHaveCount(0);
+  await page.locator('.w369-nav-burger').click();
+  await expect(page.locator('.w369-mobile-menu')).toHaveCount(0);
   const after = await page.evaluate(() => window.scrollY);
   expect(after).toBe(before);
 });
@@ -225,5 +225,5 @@ test('prod · non-regression — scenes, /colleges, browser back', async ({ page
   await expect(page).toHaveURL(/\/colleges/);
   await page.goBack();
   await expect(page).toHaveURL(/\/$/);
-  await expect(page.locator('.fo-hero-title')).toContainText('أُلارا');
+  await expect(page.locator('.w369-h1')).toContainText('في نظام واحد');
 });

@@ -44,14 +44,14 @@ test.describe('R308 — لوحة البدء (the entrance)', () => {
     await expect(page.locator('.pl')).toHaveCount(0, { timeout: 20000 });
     /* R315 (B1·A.2) re-pin: the display H1 is «رحلة تعلم واحدة / من
      * المحاضرة إلى الإتقان» — the sheet-stands proof now anchors on it */
-    await expect(page.locator('.fo-hero-title')).toContainText('رحلة تعلم واحدة');
+    await expect(page.locator('.w369-h1')).toContainText('في نظام واحد');
     /* R313 override: the loader REPLAYS on a same-tab reload (the
      * reference's own measured reloadGate; the session flag is
      * inert) — and exits by itself again */
     await page.reload();
     await expect(page.locator('.pl')).toBeVisible({ timeout: 15_000 });
     await expect(page.locator('.pl')).toHaveCount(0, { timeout: 20000 });
-    await expect(page.locator('.fo-hero-title')).toContainText('رحلة تعلم واحدة');
+    await expect(page.locator('.w369-h1')).toContainText('في نظام واحد');
   });
 
   test('the skip control ends the entrance immediately', async ({ page }) => {
@@ -70,7 +70,7 @@ test.describe('R308 — لوحة البدء (the entrance)', () => {
     await expect(page.locator('.pl')).toHaveCount(0, { timeout: 3000 });
     /* R315 (B1·A.2) re-pin: the sheet-stands proof anchors on the
      * current display H1 (was the pre-r306 «أُلارا» title) */
-    await expect(page.locator('.fo-hero-title')).toContainText('رحلة تعلم واحدة');
+    await expect(page.locator('.w369-h1')).toContainText('في نظام واحد');
   });
 });
 
@@ -180,7 +180,7 @@ test.describe('R308 — the static belt', () => {
     await expect(page.locator('.sc-canvas')).toHaveCount(0);
     /* R315 (B1·A.2) re-pin: the static belt's complete-sheet proof
      * anchors on the current display H1 (was «أُلارا») */
-    await expect(page.locator('.fo-hero-title')).toContainText('رحلة تعلم واحدة');
+    await expect(page.locator('.w369-h1')).toContainText('في نظام واحد');
     /* the drawing is complete, not dash-hidden — R359 A1: the rebuilt
      * hero seats FOUR bracket-index stations (see r309-recovery's
      * STATION_IDS); under RM they stand OPEN (the static sheet's own

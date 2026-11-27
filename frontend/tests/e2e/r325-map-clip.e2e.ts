@@ -35,7 +35,7 @@ const VW = { mobile: { width: 390, height: 844 }, desktop: { width: 1440, height
 
 /* R315 (c4-E) re-pin: the page-ready sentinel — the current H1's first
  * line (the brand name lives in the header/footer, not the H1). */
-const HERO_READY = 'رحلة تعلم واحدة';
+const HERO_READY = 'في نظام واحد';
 
 const PROGRESS_STEPS = [0, 0.25, 0.5, 0.75, 1] as const;
 
@@ -119,7 +119,7 @@ test.describe('R325 Y1 — the map intro clip gate', () => {
       await page.setViewportSize(vp);
       await page.goto('/');
       await approachSection(page, 'chapters');
-      await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
+      await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
       await page.waitForFunction(
         () => (document.querySelector('.jt') as HTMLElement)?.dataset.stage !== undefined,
         undefined,
@@ -141,7 +141,7 @@ test.describe('R325 Y1 — the map intro clip gate', () => {
     await page.setViewportSize(VW.mobile);
     await page.goto('/');
     await approachSection(page, 'chapters');
-    await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
+    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
     await page.waitForFunction(
       () => (document.querySelector('.jt') as HTMLElement)?.dataset.stage !== undefined,
       undefined,
@@ -181,7 +181,7 @@ test.describe('R325 Y1 — the map intro clip gate', () => {
     await page.setViewportSize(VW.desktop);
     await page.goto('/');
     await approachSection(page, 'chapters');
-    await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
+    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
     await page.waitForFunction(
       () => (document.querySelector('.jt') as HTMLElement)?.dataset.stage !== undefined,
       undefined,

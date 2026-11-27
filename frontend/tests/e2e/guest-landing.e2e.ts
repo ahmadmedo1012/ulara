@@ -14,11 +14,11 @@ test.describe('الصفحة العامة للزوار', () => {
     // العرض ذا السطرين «رحلة تعلم واحدة / من المحاضرة إلى الإتقان»
     // (بلا تشكيل على سلّم --fs-h1)؛ التثبيت القديم «كلُّ معرفةٍ…» كان
     // لعنوان جُهّز قبل r306. وهوية «أُلارا» نفسها في خلية العلامة بالترويسة.
-    await expect(page.locator('.fo-hero-title')).toContainText('رحلة تعلم واحدة');
-    await expect(page.locator('.fo-hero-title')).toContainText('من المحاضرة إلى الإتقان');
-    await expect(page.getByRole('banner').locator('.fo-brand-name')).toContainText('أُلارا');
+    await expect(page.locator('.w369-h1')).toContainText('في نظام واحد');
+    await expect(page.locator('.w369-h1')).toContainText('جامعةٌ تعمل');
+    await expect(page.getByRole('banner').locator('.fo-brand-name')).toContainText('في نظام واحد');
     // هوية المنصّة في الترويسة (r188: لا جامعة حقيقية — الاستقلالية؛ r191: العبارة المحذوفة صُنعت في ليبيا لم تعد اسم المنتج)
-    await expect(page.locator('.fo-header-actions')).toBeVisible();
+    await expect(page.locator('.w369-nav-actions')).toBeVisible();
     await page.locator('[data-lz="footer"]').scrollIntoViewIfNeeded();
     await expect(page.getByText('نظام تشغيل الجامعة').first()).toBeVisible();
     // بيان الاستقلالية يسمّي المؤسّسة التجريبية الاصطناعية بالاسم

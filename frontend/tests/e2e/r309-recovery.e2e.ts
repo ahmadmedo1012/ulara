@@ -14,7 +14,7 @@ import { test, expect } from './fixtures/e2e';
  * de-tashkeeled the display line — «رحلةُ تعلُّمٍ واحدة» is gone too).
  * The brand «أُلارا» lives in the header/footer brand cells, not the H1;
  * this sentinel is the page-ready proof, not a copy pin. */
-const HERO_READY = 'رحلة تعلم واحدة';
+const HERO_READY = 'في نظام واحد';
 
 const VW = { desktop: { width: 1440, height: 900 }, tablet: { width: 768, height: 1024 } };
 
@@ -140,7 +140,7 @@ test.describe('R309 hero — drag-reveal geometry (the r359 rebuild contract)', 
      * CI's slower world once caught the sweep on a hero whose copy seat
      * had not composed, so the sweep unsealed nothing. The same H1
      * readiness sentinel gates the sweep. */
-    await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
+    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
     await waitForMapping(page);
     const centers = await markerCenters(page);
     expect(Object.keys(centers).sort()).toEqual([...STATION_IDS].sort());
@@ -375,7 +375,7 @@ test.describe('R309 hero — the reveal-state lifecycle (§6)', () => {
      * => the hero tree is composed and interactive), and the sweep is
      * delivered in finer steps. The semantics are unchanged: one sweep,
      * release, the count must hold. */
-    await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
+    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
     await waitForMapping(page);
     /* r363 — CI round 3: HERO_READY + the composed hero still lost
      * twice in CI (0 stations, both attempts, 4/4 local): page.mouse
@@ -452,8 +452,8 @@ test.describe('R309 menu — the scroll lock', () => {
   test('the page does not scroll behind the open menu; closing restores the position', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
-    await page.locator('.fo-burger').click();
-    await expect(page.locator('.fo-mobile-menu')).toBeVisible({ timeout: 30_000 }); /* R312 (D4): mount-latency hardening */
+    await page.locator('.w369-nav-burger').click();
+    await expect(page.locator('.w369-mobile-menu')).toBeVisible({ timeout: 30_000 }); /* R312 (D4): mount-latency hardening */
 
     /* scroll position before the wheel attempts */
     const before = await page.evaluate(() => window.scrollY);
@@ -468,8 +468,8 @@ test.describe('R309 menu — the scroll lock', () => {
     await expect(page.locator('body')).toHaveClass(/ula-scroll-locked/);
 
     /* close → lock released, position preserved */
-    await page.locator('.fo-burger').click();
-    await expect(page.locator('.fo-mobile-menu')).toHaveCount(0);
+    await page.locator('.w369-nav-burger').click();
+    await expect(page.locator('.w369-mobile-menu')).toHaveCount(0);
     await expect(page.locator('body')).not.toHaveClass(/ula-scroll-locked/);
     const after = await page.evaluate(() => window.scrollY);
     expect(after).toBe(before);
@@ -483,21 +483,21 @@ test.describe('R309 menu — the scroll lock', () => {
   test('Escape closes the menu and focus returns to the trigger', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
-    await page.locator('.fo-burger').click();
-    await expect(page.locator('.fo-mobile-menu')).toBeVisible({ timeout: 30_000 }); /* R312 (D4): mount-latency hardening */
+    await page.locator('.w369-nav-burger').click();
+    await expect(page.locator('.w369-mobile-menu')).toBeVisible({ timeout: 30_000 }); /* R312 (D4): mount-latency hardening */
     await page.keyboard.press('Escape');
-    await expect(page.locator('.fo-mobile-menu')).toHaveCount(0);
-    await expect(page.locator('.fo-burger')).toBeFocused();
-    await expect(page.locator('.fo-burger')).toHaveAttribute('aria-expanded', 'false');
+    await expect(page.locator('.w369-mobile-menu')).toHaveCount(0);
+    await expect(page.locator('.w369-nav-burger')).toBeFocused();
+    await expect(page.locator('.w369-nav-burger')).toHaveAttribute('aria-expanded', 'false');
   });
 
   test('a menu link navigates and closes the menu', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
-    await page.locator('.fo-burger').click();
-    await expect(page.locator('.fo-mobile-menu')).toBeVisible({ timeout: 30_000 }); /* R312 (D4): mount-latency hardening */
-    await page.locator('.fo-mobile-menu a[href="#chapters"]').click();
-    await expect(page.locator('.fo-mobile-menu')).toHaveCount(0);
+    await page.locator('.w369-nav-burger').click();
+    await expect(page.locator('.w369-mobile-menu')).toBeVisible({ timeout: 30_000 }); /* R312 (D4): mount-latency hardening */
+    await page.locator('.w369-mobile-menu a[href="#chapters"]').click();
+    await expect(page.locator('.w369-mobile-menu')).toHaveCount(0);
     await expect(page.locator('body')).not.toHaveClass(/ula-scroll-locked/);
     await expect(page.locator('#chapters')).toBeVisible();
   });
@@ -506,11 +506,11 @@ test.describe('R309 menu — the scroll lock', () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
     for (let i = 0; i < 3; i += 1) {
-      await page.locator('.fo-burger').click();
-      await expect(page.locator('.fo-mobile-menu')).toBeVisible({ timeout: 30_000 }); /* R312 (D4): mount-latency hardening */
+      await page.locator('.w369-nav-burger').click();
+      await expect(page.locator('.w369-mobile-menu')).toBeVisible({ timeout: 30_000 }); /* R312 (D4): mount-latency hardening */
       await expect(page.locator('body')).toHaveClass(/ula-scroll-locked/);
-      await page.locator('.fo-burger').click();
-      await expect(page.locator('.fo-mobile-menu')).toHaveCount(0);
+      await page.locator('.w369-nav-burger').click();
+      await expect(page.locator('.w369-mobile-menu')).toHaveCount(0);
     }
     /* after the cycles: unlocked and scrollable */
     await expect(page.locator('body')).not.toHaveClass(/ula-scroll-locked/);
@@ -626,7 +626,7 @@ test.describe('R309/R313 loader — the asset-gated entrance clock and the lock 
      * pin is retired per the round brief's owner order. */
     await page.reload();
     await expect(page.locator('.pl')).toHaveCount(0, { timeout: 4000 });
-    await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
+    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
   });
 
   test('the skip path restores the scroll lock too', async ({ page }) => {
@@ -656,7 +656,7 @@ test.describe('R309/R313 loader — the asset-gated entrance clock and the lock 
       });
       await page.goto('/');
       await expect(page.locator('.pl')).toHaveCount(0);
-      await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
+      await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
       expect(await page.evaluate(() => document.documentElement.style.overflow)).toBe('');
     });
   });
@@ -723,6 +723,6 @@ test.describe('R309 non-regression — the scroll experience and routes', () => 
     await expect(page).toHaveURL(/\/colleges/);
     await page.goBack();
     await expect(page).toHaveURL(/\/$/);
-    await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
+    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
   });
 });

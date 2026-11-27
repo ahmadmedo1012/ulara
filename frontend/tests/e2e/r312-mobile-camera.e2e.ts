@@ -31,7 +31,7 @@ const VW = { mobile: { width: 390, height: 844 }, desktop: { width: 1440, height
  * (45f8c32) replaced the H1 copy; the old 'أُلارا' sentinel has been
  * stale since (the brand name lives in the header/footer, not the
  * H1). The sentinel now waits on the current H1's first line. */
-const HERO_READY = 'رحلة تعلم واحدة';
+const HERO_READY = 'في نظام واحد';
 
 test.use({ e2eRole: 'guest', reducedMotion: 'no-preference' });
 
@@ -101,7 +101,7 @@ test.describe('R312 — the mobile map (§R R1, R322 override)', () => {
     await page.setViewportSize(VW.mobile);
     await page.goto('/');
     await approachSection(page, 'chapters');
-    await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
+    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
 
     /* the driver's prime frame (rAF on mount) — wait for the track */
     await page.waitForFunction(
@@ -149,7 +149,7 @@ test.describe('R312 — the mobile map (§R R1, R322 override)', () => {
     await page.setViewportSize(VW.mobile);
     await page.goto('/');
     await approachSection(page, 'chapters');
-    await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
+    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
     await page.waitForFunction(
       () => (document.querySelector('.jt') as HTMLElement)?.dataset.stage !== undefined,
       undefined,
@@ -213,7 +213,7 @@ test.describe('R312 — the mobile map (§R R1, R322 override)', () => {
     await page.setViewportSize(VW.mobile);
     await page.goto('/');
     await approachSection(page, 'chapters');
-    await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
+    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
     await page.waitForFunction(
       () => (document.querySelector('.jt') as HTMLElement)?.dataset.stage !== undefined,
       undefined,
@@ -278,7 +278,7 @@ test.describe('R312 — the mobile map (§R R1, R322 override)', () => {
     await page.setViewportSize(VW.mobile);
     await page.goto('/');
     await approachSection(page, 'chapters');
-    await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
+    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
     await page.waitForFunction(
       () => (document.querySelector('.jt') as HTMLElement)?.dataset.stage !== undefined,
       undefined,
@@ -323,7 +323,7 @@ test.describe('R312 — reduced motion at mobile: the complete static sheet', ()
     await page.setViewportSize(VW.mobile);
     await page.goto('/');
     await approachSection(page, 'chapters');
-    await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
+    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
     await page.waitForFunction(
       () => (document.querySelector('.jt') as HTMLElement)?.dataset.rm === 'on',
       undefined,
@@ -354,7 +354,7 @@ test.describe('R312 — the desktop map contract (the R322 transplant)', () => {
     await page.setViewportSize(VW.desktop);
     await page.goto('/');
     await approachSection(page, 'chapters');
-    await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
+    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
     await page.waitForFunction(
       () => (document.querySelector('.jt') as HTMLElement)?.dataset.stage !== undefined,
       undefined,

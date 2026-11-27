@@ -31,7 +31,7 @@ import { test, expect } from './fixtures/e2e';
 import { approachSection, scrollToPin } from './fixtures/landing-scene';
 import type { Page } from '@playwright/test';
 
-const HERO_READY = 'رحلة تعلم واحدة';
+const HERO_READY = 'في نظام واحد';
 
 /** band progress → the scene clock t (desktop: linear; mobile: the warp). */
 const pinForT = (t: number, mobile: boolean) =>
@@ -66,12 +66,12 @@ test.describe('R354-final · the hero campus geometry (real browser)', () => {
     test(`${w}x${h}: the campus reads at scale, stations sit on the art, no overflow`, async ({ page }) => {
       await page.setViewportSize({ width: w, height: h });
       await page.goto('/');
-      await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
+      await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
       await page.waitForTimeout(600);
 
       const seat = await page.evaluate(() => {
         const svg = document.querySelector<SVGSVGElement | HTMLImageElement>('.hro-stage .hro-elevation');
-        const stations = Array.from(document.querySelectorAll('.fo-hero .hi-marker')).map((el) => {
+        const stations = Array.from(document.querySelectorAll('.w369-hero .hi-marker')).map((el) => {
           const r = el.getBoundingClientRect();
           return {
             id: el.getAttribute('data-marker'),
@@ -127,8 +127,8 @@ test.describe('R354-final · the hero campus geometry (real browser)', () => {
   test('the first station opens by keyboard (focus + Enter reveals its panel)', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/');
-    await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
-    const first = page.locator('.fo-hero .hi-marker').first();
+    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
+    const first = page.locator('.w369-hero .hi-marker').first();
     // Keyboard focus previews the first station; Enter toggles that same
     // named callout, and a second Enter must restore it without losing focus.
     await page.keyboard.press('Tab');
@@ -153,7 +153,7 @@ test.describe('R354-final · the journey statement exit (t out 2.15–2.35)', ()
   test('1440: full presence holds to t2.10, falls fast, is gone by t2.35 — before the satellites resolve', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/');
-    await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
+    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
     await awaitJourney(page);
 
     const read = async () =>
@@ -195,7 +195,7 @@ test.describe('R354-final · the journey statement exit (t out 2.15–2.35)', ()
   test('390: the mobile warp rides the same window (present t2.0, gone by t2.4)', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
-    await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
+    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
     await awaitJourney(page);
 
     const alpha = () =>
@@ -213,7 +213,7 @@ test.describe('R354-final · the journey statement exit (t out 2.15–2.35)', ()
   test('the plaques are opaque paper plates; the halo belt and the dead SVG-stroke declarations stay retired', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/');
-    await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
+    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
     await awaitJourney(page);
     await scrollToPin(page, pinForT(2.0, false), false);
 
@@ -259,7 +259,7 @@ test.describe('R354-final · the why plates', () => {
   test('under reduced motion every loop element stands at its settled plate (opacity 1)', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 1200 });
     await page.goto('/');
-    await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
+    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
     await approachSection(page, 'why');
     const band = page.locator('.wy-panels');
     await band.scrollIntoViewIfNeeded();
@@ -279,7 +279,7 @@ test.describe('R354-final · the why plates', () => {
   test('the NEXT STEP chip keeps its rendered clearance off the recommendation box', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 1200 });
     await page.goto('/');
-    await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
+    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
     await approachSection(page, 'why');
     await page.locator('.wy-panels').scrollIntoViewIfNeeded();
     await page.waitForTimeout(800);
@@ -351,7 +351,7 @@ test.describe('R354-final · five platform roles, honestly separated', () => {
   test.beforeEach(async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/');
-    await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
+    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
     await approachSection(page, 'roles');
     await page.locator('.rl-section').scrollIntoViewIfNeeded();
     await page.waitForTimeout(600);
@@ -406,7 +406,7 @@ test.describe('R354-final · the dark tier resolves the royal seat', () => {
   test('dark: --iso-royal resolves to the strong text tier (rgb 169,184,255)', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/');
-    await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
+    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
     await approachSection(page, 'why');
     const seat = await page.evaluate(() => {
       const html = document.documentElement;

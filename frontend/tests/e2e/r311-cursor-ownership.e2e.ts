@@ -29,7 +29,7 @@ import { test, expect } from './fixtures/e2e';
  * de-tashkeeled the display line — «رحلةُ تعلُّمٍ واحدة» is gone too).
  * The brand «أُلارا» lives in the header/footer brand cells, not the H1;
  * this sentinel is the page-ready proof, not a copy pin. */
-const HERO_READY = 'رحلة تعلم واحدة';
+const HERO_READY = 'في نظام واحد';
 
 const VW = {
   desktop: { width: 1440, height: 900 },
@@ -70,7 +70,7 @@ test.describe('R311 — the landing owns its pointer', () => {
   test('exactly one pointer system renders: the sheet dot, no app layer, native pointer never hidden', async ({ page }) => {
     await page.setViewportSize(VW.desktop);
     await page.goto('/');
-    await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
+    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
 
     /* the app-level circular layer is FULLY down on this route */
     await expect(page.locator('.cursor-layer')).toHaveCount(0);
@@ -94,7 +94,7 @@ test.describe('R311 — the landing owns its pointer', () => {
     );
     expect(groundCursor).not.toBe('none');
     const ctaCursor = await page.evaluate(
-      () => getComputedStyle(document.querySelector('.fo-hero-cta') as Element).cursor,
+      () => getComputedStyle(document.querySelector('.w369-hero-actions') as Element).cursor,
     );
     expect(ctaCursor).toBe('pointer');
 
@@ -117,7 +117,7 @@ test.describe('R311 — the landing owns its pointer', () => {
   test('link hover: the dot lights + grows on the tokens — never a ring, no press contraction', async ({ page }) => {
     await page.setViewportSize(VW.desktop);
     await page.goto('/');
-    const cta = page.locator('.fo-hero-cta').first();
+    const cta = page.locator('.w369-hero-actions').first();
     await expect(cta).toBeVisible();
 
     const box = await cta.boundingBox();
@@ -162,7 +162,7 @@ test.describe('R311 — the landing owns its pointer', () => {
     expect(dotStyle.backgroundColor).toBe(dotStyle.accent); /* the dot rides var(--accent) */
 
     /* back over plain ground: the dot hides again (opacity 0 at rest) */
-    const title = page.locator('.fo-hero-title').first();
+    const title = page.locator('.w369-h1').first();
     const tb = await title.boundingBox();
     expect(tb).not.toBeNull();
     await page.mouse.move(tb!.x + tb!.width / 2, tb!.y + tb!.height / 2, { steps: 4 });
@@ -274,7 +274,7 @@ test.describe('R311 — the entrance loader', () => {
     await expect(page.locator('.pl')).toHaveCount(0, { timeout: 20000 });
     await expect(page.locator('.cursor-layer')).toHaveCount(0);
     await expect(page.locator('.sc-cursor')).toHaveCount(1);
-    await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
+    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
   });
 });
 
@@ -318,7 +318,7 @@ test.describe('R311 — native fallback', () => {
   test('reduced motion: no custom layers, the native cursor stays', async ({ page }) => {
     await page.setViewportSize(VW.desktop);
     await page.goto('/');
-    await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
+    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
     await expect(page.locator('.sc-cursor')).toHaveCount(0);
     await expect(page.locator('.sc-cursor-dot')).toHaveCount(0);
     await expect(page.locator('.cursor-layer')).toHaveCount(0);
@@ -329,7 +329,7 @@ test.describe('R311 — native fallback', () => {
   test('touch viewport: no custom layers, the native pointer stays', async ({ page }) => {
     await page.setViewportSize(VW.mobile);
     await page.goto('/');
-    await expect(page.locator('.fo-hero-title')).toContainText(HERO_READY);
+    await expect(page.locator('.w369-h1')).toContainText(HERO_READY);
     await expect(page.locator('.sc-cursor')).toHaveCount(0);
     await expect(page.locator('.sc-cursor-dot')).toHaveCount(0);
     await expect(page.locator('.cursor-layer')).toHaveCount(0);

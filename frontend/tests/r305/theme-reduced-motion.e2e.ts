@@ -34,7 +34,7 @@ test.describe('السمة — تبديل وثبات على سطح عام', () =>
 
     // The landing header's own ThemeToggle (the mobile-drawer twin is
     // hidden on desktop — scope keeps strict mode happy).
-    await page.locator('.fo-header-actions button[aria-label="داكن"]').click();
+    await page.locator('.w369-nav-actions button[aria-label="داكن"]').click();
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 
     // The surface var actually flips (body paints the dark ground), not
