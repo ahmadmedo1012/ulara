@@ -110,7 +110,7 @@ interface PageIssue {
   count?: number;
   samples?: unknown[];
   errors?: string[];
-  violations?: { id: string; impact: string; nodesCount: number }[];
+  violations?: { id: string; impact: string; nodesCount: number; targets?: string[]; data?: string[] }[];
 }
 
 interface Collision {
@@ -503,7 +503,7 @@ const pageMetricsSrc = (curWidth: number): string => `(function () {
       const rect = target.getBoundingClientRect();
       if (rect.width === 0 || rect.height === 0) continue;
       if (Math.round(rect.width) < 44 || Math.round(rect.height) < 44) {
-        small.push({ tag: el.tagName.toLowerCase(), text: (el.textContent || '').slice(0, 26).trim(), w: Math.round(rect.width), h: Math.round(rect.height) });
+        small.push({ tag: el.tagName.toLowerCase(), cls: String(el.className || '').slice(0, 60), text: (el.textContent || '').slice(0, 26).trim(), w: Math.round(rect.width), h: Math.round(rect.height) });
       }
     }
     if (small.length > 0) issues.push({ type: 'SMALL_TAP_TARGETS', severity: 'P1', count: small.length, samples: small.slice(0, 6) });
@@ -769,7 +769,7 @@ async function main() {
               });
               const violations = (axeResult.violations || [])
                 .filter((v) => ['serious', 'critical'].includes(v.impact))
-                .map((v) => ({ id: v.id, impact: v.impact, nodesCount: v.nodes.length }));
+                .map((v) => ({ id: v.id, impact: v.impact, nodesCount: v.nodes.length, targets: v.nodes.slice(0, 3).map((n) => String(n.target)), data: v.nodes.slice(0, 3).map((n) => (n.any?.[0]?.message || '').slice(0, 200)) }));
               if (violations.length > 0) {
                 push('AXE_VIOLATIONS', 'P1', violations.map((v) => `${v.id}/${v.impact}×${v.nodesCount}`).join(', '), { violations });
               }

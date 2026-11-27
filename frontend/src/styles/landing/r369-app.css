@@ -212,6 +212,15 @@
   min-height: 36px;
   padding-block: 4px;
 }
+/* …except a row's ONE act-now verb on the phone: it is the page's only
+ * primary CTA at 390 and stands alone as a target (the sweep's last
+ * SMALL_TAP_TARGETS), so it keeps the 44px floor inside the table. */
+@media (max-width: 640px) {
+  .has-shell table .btn.sm.courses-row-go--now {
+    min-height: 44px;
+    padding-block: 10px;
+  }
+}
 
 /* §8 — Celebrate (slice 05, spec 05): the +N rise line over a
  * halo-pulsing gold dot — the reference's celebration grammar in the

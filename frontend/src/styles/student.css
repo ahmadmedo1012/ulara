@@ -569,7 +569,10 @@
        is reserved for THE actionable state, and the page's only
        primary CTA at 390). The 44px craft floor rides with it (the
        touch floor law; .btn.sm alone renders a 32px box). */
-    .courses-row-go { display: none; }
+    /* r369 merge: .btn.sm out-specified the bare hide (a 76x36 ghost verb
+       kept showing at 390 — the sweep's one SMALL_TAP_TARGETS), so the hide
+       now names the non-act-now verb at .btn weight. */
+    .btn.courses-row-go:not(.courses-row-go--now) { display: none; }
     .courses-row-go--now {
       display: inline-flex;
       min-block-size: 44px;

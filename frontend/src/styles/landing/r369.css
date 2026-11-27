@@ -144,7 +144,9 @@
   gap: var(--sp-2);
   font-size: var(--fs-chrome);
   font-weight: var(--fw-semibold);
-  color: var(--gold-ink);
+  /* 88% gold-ink toward the ink: the tinted bands (#showcase, #roles) read
+     the plain gold-ink at 4.41:1 (axe serious at 390); this clears 4.5 */
+  color: color-mix(in srgb, var(--gold-ink) 88%, var(--text));
   margin: 0 0 var(--sp-4);
 }
 
@@ -1242,6 +1244,7 @@ html:not([data-theme='dark']) .w369-footer {
   display: inline-flex;
   align-items: center;
   min-block-size: 44px;
+  min-inline-size: 44px;
   font-size: var(--fs-sm);
   color: var(--text-secondary);
   text-decoration: none;
@@ -1273,8 +1276,10 @@ html:not([data-theme='dark']) .w369-footer {
   color: var(--text-secondary);
   text-decoration: none;
   min-block-size: 44px;
+  min-inline-size: 44px;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
 }
 
 .w369-legal-links a:hover { color: var(--text); }
@@ -2560,10 +2565,10 @@ html:not([data-theme='dark']) .w369-footer {
 .w369-arrow:hover { background: var(--accent-soft); }
 .w369-arrow:active { transform: scale(var(--state-card-pressed-scale)); }
 
-.w369-dots { list-style: none; display: flex; gap: 6px; margin: var(--sp-4) 0 0; padding: 0; }
+.w369-dots { list-style: none; display: flex; gap: 0; margin: var(--sp-4) 0 0; padding: 0; }
 .w369-dot {
-  inline-size: 26px;
-  block-size: 26px;
+  inline-size: var(--touch-floor, 44px);
+  block-size: var(--touch-floor, 44px);
   border: 0;
   padding: 0;
   border-radius: var(--r-full);
@@ -2574,7 +2579,7 @@ html:not([data-theme='dark']) .w369-footer {
 .w369-dot::after {
   content: '';
   position: absolute;
-  inset: 9px 4px;
+  inset: 18px 13px;
   border-radius: var(--r-full);
   background: var(--border-strong);
   transition: background-color var(--t-micro) var(--ease-out);

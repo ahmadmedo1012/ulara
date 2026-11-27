@@ -85,7 +85,9 @@
   border-radius: var(--r-full);
   border: 1px solid color-mix(in srgb, var(--gold) 35%, transparent);
   background: color-mix(in srgb, var(--gold) 12%, transparent);
-  color: var(--gold-ink);
+  /* 85% gold-ink toward the page ink: 5.29:1 on the chip's wash (plain
+     --gold-ink read 4.32:1, the sweep's axe finding on every student page) */
+  color: color-mix(in srgb, var(--gold-ink) 85%, var(--text));
   font-size: var(--fs-sm);
   font-weight: var(--fw-semibold);
   text-decoration: none;
@@ -95,7 +97,7 @@
 .has-shell .topbar-xp:hover {
   background: color-mix(in srgb, var(--gold) 18%, transparent);
 }
-.has-shell .topbar-xp svg { color: var(--gold-ink); flex: none; }
+.has-shell .topbar-xp svg { color: inherit; flex: none; }
 .has-shell .topbar-xp-loading {
   color: var(--text-secondary);
   border-color: var(--border);
