@@ -1691,6 +1691,28 @@ html:not([data-theme='dark']) .w369-footer {
   .w369-road-dot { transition: none; }
 }
 
+/* ── r369 round 3 — the pinned scene ───────────────────────────────────
+ * The reference pins each scene's stage (sticky, 100svh) while a tall
+ * track scrolls past and the scene's value follows the scroll. Ours does
+ * it for the ONE band whose content is scroll-driven — the stars band
+ * (03, #stars): the band is ~2 screens tall and its meter card stays
+ * seated under the bar while the counter, the road and the matrix climb
+ * with the page. Desktop only, and only when motion is allowed (the
+ * query is mirrored in index.tsx PINNED_Q); on phones and under
+ * reduced-motion the band stays the normal flow it was. */
+@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+  #stars.w369-band {
+    min-block-size: 190svh;
+    align-items: start;
+  }
+  #stars .w369-band-head,
+  #stars .w369-band-body {
+    position: sticky;
+    inset-block-start: calc(var(--sp-11) + var(--sp-4));
+    align-self: start;
+  }
+}
+
 /* ── anchors land under the sticky bar, never beneath it ─────────── */
 
 .w369-band[id],

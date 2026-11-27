@@ -828,6 +828,10 @@ function RollingDigits({ value, total }: { value: number; total: number }) {
   );
 }
 
+/* desktop + motion allowed: the stars band becomes a pinned scene (see
+   landing/r369.css "round 3 — the pinned scene"; the query is mirrored there) */
+const PINNED_Q = '(min-width: 900px) and (prefers-reduced-motion: no-preference)';
+
 export function ProgressBand() {
   const ref = useRef<HTMLDivElement | null>(null);
   const [byScroll, setByScroll] = useState(0);
@@ -843,9 +847,22 @@ export function ProgressBand() {
     let raf = 0;
     const read = () => {
       raf = 0;
-      const box = el.getBoundingClientRect();
-      const span = window.innerHeight + box.height;
-      const p = Math.min(1, Math.max(0, (window.innerHeight - box.top) / span));
+      const sec = el.closest('section');
+      const pinned = !!sec && window.matchMedia(PINNED_Q).matches;
+      let p: number;
+      if (pinned && sec) {
+        /* r369 round 3 — the pinned scene: the band is ~2 screens tall
+         * and its card stays seated while the page scrolls past, so the
+         * counter reads the band's own travel (0 when its top reaches the
+         * bar, 30 when its bottom leaves). */
+        const b = sec.getBoundingClientRect();
+        const travel = Math.max(1, b.height - window.innerHeight);
+        p = Math.min(1, Math.max(0, -b.top / travel));
+      } else {
+        const box = el.getBoundingClientRect();
+        const span = window.innerHeight + box.height;
+        p = Math.min(1, Math.max(0, (window.innerHeight - box.top) / span));
+      }
       setByScroll(Math.round(p * TOTAL));
     };
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(read); };
