@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { Role, AttendanceStatus, SubmissionStatus, ResearchPaperStatus, Prisma, AssignmentType } from '@prisma/client';
+import type { PrismaClient } from '@prisma/client';
 import { prisma } from '../../db.js';
 import { authMiddleware } from '../middleware/auth.js';
 import { requireRole } from '../middleware/requireRole.js';
@@ -350,6 +351,66 @@ export function attendanceAlertFeedItem(
     title: `${g._count.studentId} غيابات في آخر 30 يوماً — ${student ? `${student.firstName} ${student.lastName}` : 'طالب'} يحتاج متابعة`,
     actionTo: TEACHER_FEED_ACTIONS.attendance,
   };
+}
+
+// ─── Latest-absence lookup (r370 — the feed's last N+1) ────────
+
+/** Rows the latest-absence query reads: one per ABSENT record inside the
+ *  alert window, for the flagged students only. */
+export interface AbsenceRow {
+  studentId: string;
+  session: { date: Date };
+}
+
+/**
+ * Fold absence rows → each student's MOST RECENT absence date.
+ * Pure + exported for DB-free tests. Order-independent (takes the max),
+ * so the query's ordering is an optimisation, never a correctness
+ * dependency.
+ */
+export function foldLatestAbsenceDates(
+  rows: ReadonlyArray<AbsenceRow>,
+): Map<string, Date> {
+  const latest = new Map<string, Date>();
+  for (const row of rows) {
+    const previous = latest.get(row.studentId);
+    if (!previous || row.session.date > previous) latest.set(row.studentId, row.session.date);
+  }
+  return latest;
+}
+
+/**
+ * The dashboard feed used to resolve each flagged student's last absence
+ * with its OWN `attendanceRecord.findFirst` inside a `Promise.all`
+ * (r370 found it: up to 4 extra round trips per dashboard load, one per
+ * alert row — the classic N+1 on the slowest teacher surface). One
+ * bounded query now answers all of them; the fold above picks each
+ * student's max date.
+ *
+ * Bounded by the flagged students (the groupBy's `take` is small) ×
+ * their absent records inside the 30-day alert window, not by the
+ * school's attendance history. Taking a narrow `db` parameter keeps the
+ * unit test DB-free.
+ */
+export async function latestAbsenceDates(
+  db: Pick<PrismaClient, 'attendanceRecord'>,
+  studentIds: readonly string[],
+  offeringIds: readonly string[],
+  since: Date,
+): Promise<Map<string, Date>> {
+  if (studentIds.length === 0) return new Map();
+  const rows = await db.attendanceRecord.findMany({
+    where: {
+      studentId: { in: [...studentIds] },
+      status: AttendanceStatus.ABSENT,
+      session: { offeringId: { in: [...offeringIds] }, date: { gte: since } },
+    },
+    // Newest first so the fold's first row per student is usually the
+    // answer — the map still takes the max, never the first.
+    orderBy: { session: { date: 'desc' } },
+    select: { studentId: true, session: { select: { date: true } } },
+  });
+  return foldLatestAbsenceDates(rows);
 }
 
 /**
@@ -720,27 +781,17 @@ router.get('/dashboard', async (req, res, next) => {
     // 11-d P2-6 — `when: now` made absence alerts permanently outrank
     // genuinely fresh submissions and papers in the recency sort below).
     const absentStudentIds = lowAttendanceStudents.map((g) => g.studentId);
-    const [absentStudents, lastAbsenceEntries] = await Promise.all([
+    // r370: ONE query for every flagged student's last absence (was a
+    // findFirst per student — an N+1 on the teacher dashboard).
+    const [absentStudents, lastAbsenceAt] = await Promise.all([
       absentStudentIds.length
         ? prisma.user.findMany({
             where: { id: { in: absentStudentIds } },
             select: { id: true, firstName: true, lastName: true, avatarInitials: true, avatarColor: true },
           })
         : [],
-      Promise.all(lowAttendanceStudents.map(async (g) => {
-        const latest = await prisma.attendanceRecord.findFirst({
-          where: {
-            studentId: g.studentId,
-            status: AttendanceStatus.ABSENT,
-            session: { offeringId: { in: offeringIds }, date: { gte: thirtyDaysAgo } },
-          },
-          orderBy: { session: { date: 'desc' } },
-          select: { session: { select: { date: true } } },
-        });
-        return [g.studentId, latest?.session.date ?? now] as const;
-      })),
+      latestAbsenceDates(prisma, absentStudentIds, offeringIds, thirtyDaysAgo),
     ]);
-    const lastAbsenceAt = new Map(lastAbsenceEntries);
 
     const feed = [
       ...recentSubs.map(submissionFeedItem),

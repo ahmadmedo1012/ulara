@@ -736,6 +736,52 @@ router.post(
   },
 );
 
+/**
+ * Statuses that mean the student HAS handed the work in — the complement
+ * of «pending». DRAFT is deliberately absent: a draft is not delivered,
+ * so it keeps the assignment on the agenda.
+ *
+ * r370: LATE was missing. submissions.routes.ts writes LATE (not
+ * SUBMITTED) for anything handed in after `dueAt` (submissionStatusFor),
+ * so a late submission stayed invisible to this filter: the assignment
+ * kept sitting in «التزامات اليوم» and inflated
+ * kpi.pendingAssignmentsCount for the rest of the week, telling the
+ * student to hand in work they had already delivered. The teacher side
+ * has counted LATE as handed-in since r157 (PENDING_SUBMISSION_STATUSES
+ * — the two ends of the loop must agree on what «submitted» means).
+ */
+export const HANDED_IN_SUBMISSION_STATUSES: readonly SubmissionStatus[] = [
+  SubmissionStatus.SUBMITTED,
+  SubmissionStatus.LATE,
+  SubmissionStatus.GRADED,
+  SubmissionStatus.RETURNED,
+];
+
+/**
+ * The dashboard's pending-assignments predicate: due inside [now, horizon]
+ * on one of the student's offerings, with no handed-in submission from
+ * them. One predicate feeds BOTH the agenda list (take: 6) and the
+ * uncapped KPI count — they can never disagree (audit 11-d P1-8).
+ * Exported pure so the status set is pinned by a DB-free test.
+ */
+export function pendingAssignmentsWhere(
+  offeringIds: readonly string[],
+  studentId: string,
+  now: Date,
+  horizon: Date,
+): Prisma.AssignmentWhereInput {
+  return {
+    offeringId: { in: [...offeringIds] },
+    dueAt: { gte: now, lte: horizon },
+    submissions: {
+      none: {
+        studentId,
+        status: { in: [...HANDED_IN_SUBMISSION_STATUSES] },
+      },
+    },
+  };
+}
+
 router.get('/me/dashboard', async (req, res, next) => {
   try {
     const userId = req.user!.id;
@@ -851,20 +897,12 @@ router.get('/me/dashboard', async (req, res, next) => {
     // One predicate feeds BOTH the agenda list (take: 6) and the uncapped
     // KPI count — the count used to be `list.length`, so a student with 9
     // assignments due this week saw "6" on the KPI card (audit 11-d P1-8).
-    const pendingAssignmentsWhere = {
-      offeringId: { in: offeringIds },
-      dueAt: { gte: now, lte: horizon },
-      // Exclude assignments the student has already submitted.
-      submissions: {
-        none: {
-          studentId: userId,
-          status: { in: [SubmissionStatus.SUBMITTED, SubmissionStatus.GRADED, SubmissionStatus.RETURNED] },
-        },
-      },
-    } satisfies Prisma.AssignmentWhereInput;
+    // Exclude assignments the student has already handed in — LATE
+    // included (r370): late work IS delivered work.
+    const pendingWhere = pendingAssignmentsWhere(offeringIds, userId, now, horizon);
     const [upcomingAssignments, pendingAssignmentsCount] = await Promise.all([
       prisma.assignment.findMany({
-        where: pendingAssignmentsWhere,
+        where: pendingWhere,
         orderBy: { dueAt: 'asc' },
         take: 6,
         select: {
@@ -876,7 +914,7 @@ router.get('/me/dashboard', async (req, res, next) => {
           offering: { select: { course: { select: { name: true, code: true } } } },
         },
       }),
-      prisma.assignment.count({ where: pendingAssignmentsWhere }),
+      prisma.assignment.count({ where: pendingWhere }),
     ]);
 
     // ── Upcoming live sessions for enrolled offerings ─────────
