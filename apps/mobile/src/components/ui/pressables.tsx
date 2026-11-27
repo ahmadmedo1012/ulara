@@ -6,6 +6,37 @@ import {
   type StyleProp,
   type ViewStyle,
 } from "react-native";
+import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
+import { durations, easings, pressFeedback, springs, useReduceMotion } from "@/motion";
+
+/** Animated Pressable — module scope so the component type is stable. */
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+/**
+ * r369 slice 04 — the press spring on the ds buttons: the deterministic
+ * 120ms outCubic down-beat + the snappy spring release (the same contract
+ * PressableScale owns), honoring reduced-motion as a full no-op. Only
+ * transform/opacity animate; the colour press logic below is unchanged.
+ */
+function usePressSpring(disabled: boolean) {
+  const reduced = useReduceMotion();
+  const pressed = useSharedValue(0);
+  const animates = !disabled && !reduced;
+  const animatedStyle = useAnimatedStyle(() => {
+    const t = pressed.value;
+    return {
+      transform: [{ scale: 1 + (pressFeedback.scale - 1) * t }],
+      opacity: 1 + (pressFeedback.opacity - 1) * t,
+    };
+  });
+  const onPressIn = () => {
+    if (animates) pressed.value = withTiming(1, { duration: durations.press, easing: easings.outCubic });
+  };
+  const onPressOut = () => {
+    if (animates) pressed.value = withSpring(0, springs.snappy);
+  };
+  return { animatedStyle, onPressIn, onPressOut };
+}
 import { haptics } from "@/haptics";
 import { useTheme } from "@/design/theme";
 import { radius, sp, touchFloor } from "@/design/tokens";
@@ -70,23 +101,26 @@ export function Button({
    * fixed for the web hover states, now honored on press here too. */
   const pressedFg = kind === "primary" || kind === "accent" ? p.accentHoverFg : fg;
   const border = kind === "ghost" ? p.rule : "transparent";
+  const spring = usePressSpring(busy);
   // r369: the ghost's inset outline reads at 1.5px — the hairline was
   // the drawing-sheet era's ring; the warm identity's secondary is a
   // visible inset outline (spec 04: "pill with the inset-outline secondary").
   const borderWidth = kind === "ghost" ? 1.5 : StyleSheet.hairlineWidth;
   return (
-    <Pressable
+    <AnimatedPressable
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel ?? label}
       accessibilityState={{ disabled: busy }}
       disabled={busy}
+      onPressIn={spring.onPressIn}
+      onPressOut={spring.onPressOut}
       onPress={() => {
         if (busy) return;
         // R334 review-3 T1 — through the gated, throttled module (kill-switch + spam guard)
         haptics.impact("light");
         onPress?.();
       }}
-      style={({ pressed }) => [
+      style={({ pressed }: { pressed: boolean }) => [
         styles.base,
         {
           height,
@@ -97,9 +131,10 @@ export function Button({
           opacity: disabled && !loading ? 0.45 : 1,
         },
         style,
+        spring.animatedStyle,
       ]}
     >
-      {({ pressed }) =>
+      {({ pressed }: { pressed: boolean }) =>
         showBusy ? (
           <InlineBusy size={12} color={kind === "ghost" ? p.text : pressed ? pressedFg : fg} />
         ) : (
@@ -115,7 +150,7 @@ export function Button({
           </View>
         )
       }
-    </Pressable>
+    </AnimatedPressable>
   );
 }
 
