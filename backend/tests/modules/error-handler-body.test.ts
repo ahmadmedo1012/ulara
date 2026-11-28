@@ -252,7 +252,6 @@ describe('errorHandler — reject detection is shape-guarded', () => {
       {
         code: 'invalid_type',
         expected: 'string',
-        received: 'number',
         path: ['title'],
         message: 'Expected string, received number',
       },
