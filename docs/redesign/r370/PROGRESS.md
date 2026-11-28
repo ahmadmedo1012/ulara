@@ -103,3 +103,38 @@ OpenAPI regenerated deterministically (87 insertions, the new path + a count);
 mobile `schema.generated.ts` regenerated from it (+78 lines, nothing else).
 No frontend file touched — the view keeps composing from the old payload until
 it is deliberately switched over.
+
+## Item 3 — `/me/results` paging + summary mode (DONE, additive)
+
+**Spec.** The handler loaded every graded submission of the student with a
+wide select (feedback, title, type, status, submittedAt) and then kept 20;
+the payload grew with the whole academic history and there was no way to ask
+for the numbers alone or to page the feed. Old shape must keep working.
+
+**Change.** Rollup query selects only the columns the fold reads; the feed is
+its own bounded query ordered `(gradedAt desc, id desc)` with an opaque keyset
+cursor; `mode=summary` returns `{headline, courses}` and runs neither feed
+query; `recentLimit` (0–100, default 20) and `recentCursor` are new optional
+params; unknown params are ignored (cache-busters must not 400 a read), a
+malformed cursor is a 400. The bare request keeps all four old keys.
+
+**Numbers** (16,099 graded rows on the load dataset, same Prisma client):
+
+| select | time | payload | bytes/row |
+|---|---|---|---|
+| old (wide) | 723 ms | 6.05 MiB | 394 B |
+| r370 (lean rollup) | 532 ms | 3.18 MiB | 207 B |
+
+→ **−47.4% payload, −26% query time** for the same fold. Per-student the page
+drops to `headline + courses + ≤20 feed rows` (`recentLimit=0` and `summary`
+skip the two feed queries entirely).
+
+**Evidence.** `backend/tests/modules/me-results-paging.test.ts` — **13 tests,
+13 passed** (defaults, unknown-param tolerance, bounds, cursor round-trip,
+shared-instant tie-break, null-gradedAt refusal, malformed cursors, old shape,
+summary mode's single query, `recentLimit=0`, page-2 predicate, 400s).
+The r164-e source pins in `dashboard-logic.test.ts` were re-pinned to the new
+structure and **strengthened**: the feed must carry `feedback`/`submittedAt`,
+the rollup must not (83/83 in that file). Backend suite: **2291 passed | 19
+skipped**, `tsc` 0. OpenAPI now documents the three query params; mobile types
+regenerated.

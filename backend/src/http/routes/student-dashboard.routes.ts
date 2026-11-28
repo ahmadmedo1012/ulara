@@ -484,8 +484,75 @@ export function selectAgendaExams(
  * additions are additive: pre-r164-e consumers keep compiling against
  * the old shape.
  */
-router.get('/me/results', async (req, res, next) => {
+/**
+ * r370 — /me/results query contract (additive: the bare request is
+ * byte-identical to the old one).
+ *
+ * The handler used to ship EVERY graded submission of the student with a
+ * wide select (feedback, title, type, status, submittedAt) and then keep
+ * 20 of them — the page grew with the student's whole academic history,
+ * and there was no way to ask for the numbers alone.
+ *
+ *   mode=summary   headline + courses, and neither feed query runs
+ *   recentLimit    rows in `recentAssignments` (0…100, default 20)
+ *   recentCursor   opaque keyset cursor from `recentNextCursor`
+ *
+ * Unknown parameters are ignored on purpose (cache-busters must not turn
+ * a read into a 400); a malformed cursor is a 400.
+ */
+export const meResultsQuerySchema = z.object({
+  mode: z.enum(['full', 'summary']).default('full'),
+  recentLimit: z.coerce.number().int().min(0).max(100).default(20),
+  recentCursor: z.string().min(1).max(200).optional(),
+});
+
+export const RESULTS_DEFAULT_RECENT_LIMIT = 20;
+export const RESULTS_MAX_RECENT_LIMIT = 100;
+
+/** Keyset cursor over the feed's own ordering: (gradedAt desc, id desc).
+ *  A cursor that only carried `gradedAt` would drop rows when two
+ *  submissions share an instant. */
+export function encodeResultsCursor(row: { gradedAt: Date | null; id: string }): string | null {
+  // gradedAt is nullable in the schema (a legacy GRADED row may have none).
+  // Such rows sort first under `DESC` and can never anchor a keyset.
+  if (!row.gradedAt) return null;
+  return Buffer.from(`${row.gradedAt.toISOString()}|${row.id}`, 'utf8').toString('base64url');
+}
+
+export function decodeResultsCursor(cursor: string): { gradedAt: Date; id: string } | null {
+  const [iso, id, ...rest] = Buffer.from(cursor, 'base64url').toString('utf8').split('|');
+  if (rest.length > 0 || !iso || !id) return null;
+  const gradedAt = new Date(iso);
+  if (Number.isNaN(gradedAt.getTime())) return null;
+  return { gradedAt, id };
+}
+
+/** The `recentAssignments` keyset predicate, or an empty object for page 1. */
+export function resultsRecentWhere(
+  base: Prisma.SubmissionWhereInput,
+  cursor: { gradedAt: Date; id: string } | null,
+): Prisma.SubmissionWhereInput {
+  if (!cursor) return base;
+  return {
+    ...base,
+    OR: [
+      { gradedAt: { lt: cursor.gradedAt } },
+      { gradedAt: cursor.gradedAt, id: { lt: cursor.id } },
+    ],
+  };
+}
+
+router.get('/me/results', validate(meResultsQuerySchema, 'query'), async (req, res, next) => {
   try {
+    const { mode, recentLimit, recentCursor } = req.query as unknown as {
+      mode: 'full' | 'summary';
+      recentLimit: number;
+      recentCursor?: string;
+    };
+    const cursor = recentCursor ? decodeResultsCursor(recentCursor) : null;
+    if (recentCursor && !cursor) {
+      throw AppError.badRequest('مؤشر الصفحة غير صالح');
+    }
     const userId = req.user!.id;
     // r179 (phase-5): a STUDENT caller needs a DB-verified institution
     // context (403 INSTITUTION_CONTEXT_REQUIRED without one) and every
@@ -516,11 +583,12 @@ router.get('/me/results', async (req, res, next) => {
       orderBy: { recordedAt: 'desc' },
     });
 
-    // Graded assignment submissions (audit 11-d P1-6): one query feeds
-    // both the rollup fold below and the recent feed — bounded by the
-    // student's own submission count. r164-e: the select grows
-    // feedback/submittedAt/status so the recent feed can render the
-    // teacher's verdict and the timeline's first step.
+    // Graded assignment submissions (audit 11-d P1-6) feed the weighted
+    // rollup. r370: this query now selects ONLY the columns the fold reads
+    // (grade + the assignment's weight/maxScore/offering) — the feed's
+    // wide columns (feedback, title, type, status, submittedAt) moved to
+    // their own bounded, pageable query below, so the rollup no longer
+    // pays for bytes it throws away.
     const gradedSubs = await prisma.submission.findMany({
       where: {
         studentId: userId,
@@ -530,42 +598,12 @@ router.get('/me/results', async (req, res, next) => {
           ? { assignment: { offering: { course: { institutionId: studentInstitution } } } }
           : {}),
       },
-      orderBy: { gradedAt: 'desc' },
       select: {
-        id: true,
-        gradedAt: true,
-        submittedAt: true,
         grade: true,
-        feedback: true,
-        status: true,
         assignment: {
           select: {
-            title: true, type: true, weight: true, maxScore: true, offeringId: true,
+            weight: true, maxScore: true, offeringId: true,
             offering: { select: { term: true, course: { select: { code: true, name: true, themeColor: true } } } },
-          },
-        },
-      },
-    });
-
-    // r164-e: the awaiting-grading half of the timeline — the same
-    // statuses the teacher's pending queue counts
-    // (PENDING_SUBMISSION_STATUSES), bounded like every /me feed.
-    const awaitingSubs = await prisma.submission.findMany({
-      where: {
-        studentId: userId,
-        status: { in: [...AWAITING_GRADE_STATUSES] },
-        ...(studentInstitution
-          ? { assignment: { offering: { course: { institutionId: studentInstitution } } } }
-          : {}),
-      },
-      orderBy: { submittedAt: 'desc' },
-      take: 20,
-      select: {
-        id: true, status: true, submittedAt: true,
-        assignment: {
-          select: {
-            title: true, type: true, offeringId: true,
-            offering: { select: { course: { select: { code: true, name: true } } } },
           },
         },
       },
@@ -573,9 +611,72 @@ router.get('/me/results', async (req, res, next) => {
 
     const courses = rollupCourseGrades(grades, gradedSubs);
 
-    // Secondary "what was just returned to me" feed — the 20 most recent
-    // of the same graded submissions folded into the rollup above.
-    const recentAssignments = recentAssignmentFeed(gradedSubs.slice(0, 20));
+    // summary mode: the numbers alone. Neither feed query runs.
+    if (mode === 'summary') {
+      res.json({ data: { headline: resultsHeadline(courses), courses } });
+      return;
+    }
+
+    const gradedWhere: Prisma.SubmissionWhereInput = {
+      studentId: userId,
+      status: SubmissionStatus.GRADED,
+      grade: { not: null },
+      ...(studentInstitution
+        ? { assignment: { offering: { course: { institutionId: studentInstitution } } } }
+        : {}),
+    };
+
+    // Secondary "what was just returned to me" feed — bounded and pageable
+    // (r370). Default order/limit are exactly the old `slice(0, 20)`; the
+    // awaiting-grading half runs here too so `mode=summary` skips both.
+    const [recentSubs, awaitingSubs] = await Promise.all([
+      recentLimit === 0
+        ? Promise.resolve([])
+        : prisma.submission.findMany({
+            where: resultsRecentWhere(gradedWhere, cursor),
+            orderBy: [{ gradedAt: 'desc' }, { id: 'desc' }],
+            take: recentLimit,
+            select: {
+              id: true,
+              gradedAt: true,
+              submittedAt: true,
+              grade: true,
+              feedback: true,
+              status: true,
+              assignment: {
+                select: {
+                  title: true, type: true, weight: true, maxScore: true, offeringId: true,
+                  offering: { select: { term: true, course: { select: { code: true, name: true, themeColor: true } } } },
+                },
+              },
+            },
+          }),
+      prisma.submission.findMany({
+        where: {
+          studentId: userId,
+          status: { in: [...AWAITING_GRADE_STATUSES] },
+          ...(studentInstitution
+            ? { assignment: { offering: { course: { institutionId: studentInstitution } } } }
+            : {}),
+        },
+        orderBy: { submittedAt: 'desc' },
+        take: 20,
+        select: {
+          id: true, status: true, submittedAt: true,
+          assignment: {
+            select: {
+              title: true, type: true, offeringId: true,
+              offering: { select: { course: { select: { code: true, name: true } } } },
+            },
+          },
+        },
+      }),
+    ]);
+    const recentAssignments = recentAssignmentFeed(recentSubs);
+    // A full page means there may be more; anything shorter is the tail.
+    const last = recentSubs.length === recentLimit && recentLimit > 0
+      ? recentSubs[recentSubs.length - 1]
+      : null;
 
     res.json({
       data: {
@@ -583,6 +684,7 @@ router.get('/me/results', async (req, res, next) => {
         courses,
         recentAssignments,
         pendingSubmissions: pendingSubmissionFeed(awaitingSubs),
+        recentNextCursor: last ? encodeResultsCursor(last) : null,
       },
     });
   } catch (e) { next(e); }

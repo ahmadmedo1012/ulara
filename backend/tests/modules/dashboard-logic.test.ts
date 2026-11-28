@@ -797,15 +797,15 @@ describe('pendingSubmissionFeed (r164-e — the awaiting-grading middle step)', 
   });
 });
 
-describe('/me/results wiring (source-scan pins — r164-e, no drift)', () => {
+describe('/me/results wiring (source-scan pins — r164-e, r370 paging, no drift)', () => {
   it('GET /me/results assembles both feeds from the exported mappers', () => {
     // The handler consumes the pure mappers — a re-inlined twin would
     // pass the pure suite while drifting from the pinned shapes.
     expect(studentDashboardRouteSource).toMatch(
-      /router\.get\('\/me\/results',[\s\S]*?recentAssignmentFeed\(gradedSubs\.slice\(0, 20\)\);/,
+      /const recentAssignments = recentAssignmentFeed\(recentSubs\);/,
     );
     expect(studentDashboardRouteSource).toMatch(
-      /router\.get\('\/me\/results',[\s\S]*?pendingSubmissionFeed\(awaitingSubs\),/,
+      /pendingSubmissionFeed\(awaitingSubs\),/,
     );
   });
 
@@ -814,13 +814,22 @@ describe('/me/results wiring (source-scan pins — r164-e, no drift)', () => {
     // institution filter (assignment → offering → course chain) — the
     // status set, bound and ordering are unchanged.
     expect(studentDashboardRouteSource).toMatch(
-      /const awaitingSubs = await prisma\.submission\.findMany\(\{\s*where: \{\s*studentId: userId,\s*status: \{ in: \[\.\.\.AWAITING_GRADE_STATUSES\] \},\s*\.\.\.\(studentInstitution[\s\S]*?orderBy: \{ submittedAt: 'desc' \},\s*take: 20,/,
+      /status: \{ in: \[\.\.\.AWAITING_GRADE_STATUSES\] \},[\s\S]*?studentInstitution[\s\S]*?orderBy: \{ submittedAt: 'desc' \},\s*take: 20,/,
     );
   });
 
-  it('the graded feed select carries feedback + submittedAt (loop traceability fields)', () => {
+  it('the feed query carries feedback + submittedAt, and the rollup query does not (r370)', () => {
+    // r164-e: the loop-traceability fields must reach the feed. r370: they
+    // must NOT reach the rollup query any more — that query ships every
+    // graded row of the student's history, and the fold never reads them.
     expect(studentDashboardRouteSource).toMatch(
-      /const gradedSubs = await prisma\.submission\.findMany\(\{[\s\S]*?feedback: true,[\s\S]*?submittedAt: true,[\s\S]*?recentAssignmentFeed/,
+      /resultsRecentWhere\(gradedWhere, cursor\),[\s\S]*?feedback: true,[\s\S]*?submittedAt: true,/,
+    );
+    expect(studentDashboardRouteSource).toMatch(
+      /const gradedSubs = await prisma\.submission\.findMany\(\{[\s\S]*?select: \{\s*grade: true,\s*assignment:/,
+    );
+    expect(studentDashboardRouteSource).not.toMatch(
+      /const gradedSubs = await prisma\.submission\.findMany\(\{[\s\S]{0,400}?feedback: true/,
     );
   });
 });

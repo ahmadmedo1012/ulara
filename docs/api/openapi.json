@@ -19014,7 +19014,43 @@
             }
           }
         },
-        "security": []
+        "security": [],
+        "parameters": [
+          {
+            "name": "mode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "full",
+                "summary"
+              ],
+              "default": "full"
+            }
+          },
+          {
+            "name": "recentLimit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "recentCursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        ]
       }
     },
     "/api/v1/me/resume": {
@@ -35000,7 +35036,7 @@
   },
   "x-generator": {
     "tool": "backend/scripts/generate-openapi.ts (hand-rolled: express-stack walk + zod-v3 walker)",
-    "generatedAt": "2026-11-28T00:26:09.604Z",
+    "generatedAt": "2026-11-28T00:36:52.562Z",
     "operationCount": 391,
     "pathCount": 318,
     "contractSnapshotCovered": 13,
