@@ -77,10 +77,11 @@ db-integration, e2e, ios-webkit, design-gates, surface-drift; plus `size-gate.ym
 mirrors these local gates — all runners pinned `ubuntu-24.04`:
 
 - **Bundle** — `scripts/check-bundle-size.mjs`, gz, `dist/assets/*.js` ONLY (CSS is not in
-  the gate): **total ≤ 866 KB HARD** (R360-F1 raised 845 → 866, +2.4%, documented in the
-  gate header: the F1 boot diet moved the authed shell + six below-fold landing sections
-  behind lazy boundaries — per-boot weight DROPPED while the all-route total grew to the
-  measured 865.6; the full raise ledger lives in the gate header), entry ≤ 92,
+  the gate): **total ≤ the `LIMIT_TOTAL_KB` constant (currently 878 KB) HARD** — read the
+  number from that file, never from this line (this sentence was already one raise stale on
+  the r369 merge); every raise and its measurement lives in the gate header. (R360-F1's
+  documented raise: the boot diet moved the authed shell + six below-fold landing sections
+  behind lazy boundaries — per-boot weight DROPPED while the all-route total grew), entry ≤ 92,
   pdf ≤ 110. It
   sums ALL js chunks **including async chunks** — lazy-splitting only moves weight; the
   honest lever is real code cuts (e.g. the axios→native-fetch diet, −17.9 KB).
