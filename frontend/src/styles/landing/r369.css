@@ -3290,3 +3290,50 @@ html:not([data-theme='dark']) .w369-footer {
 [data-theme='dark'] .w369-principles, [data-theme='dark'] .w369-roles {
   --w369-pastel: color-mix(in srgb, var(--c-lavender-deep) 12%, var(--bg));
 }
+
+/* ── r369 reference-match: every band's headline scene STOPS the scroll ──
+ * Measured on the reference (desktop 1440x900 and phone 390x844): no
+ * scroll-snap, no wheel/touch handling, html scroll-behavior smooth, and
+ * every scene is a tall track (3 to 4.6 screens) holding a position:
+ * sticky stage of exactly one viewport at top 0. The section "stops"
+ * because its stage stays seated while the native scroll keeps moving.
+ * Ours does the same for each band's headline scene: the head is a
+ * runway, its stage is the sticky one-viewport beat, then the subject
+ * scene scrolls in normally (never trapped: only the headline is pinned,
+ * the long content flows). Native scroll everywhere; the runway is short
+ * on phones; reduced-motion gets the plain flow. The pinned #stars band
+ * keeps its own rule. */
+.w369-band-stage { display: grid; justify-items: inherit; text-align: inherit; }
+@media (prefers-reduced-motion: no-preference) {
+  .w369-band:not(#stars) > .w369-band-head {
+    min-block-size: 175svh;
+    display: block;
+    align-content: normal;
+  }
+  .w369-band:not(#stars) .w369-band-stage {
+    position: sticky;
+    inset-block-start: 0;
+    min-block-size: 100svh;
+    box-sizing: border-box;
+    padding-block-start: var(--sp-11);
+    align-content: center;
+    justify-items: center;
+    text-align: center;
+    margin-inline: auto;
+    max-inline-size: 48ch;
+  }
+  @supports (animation-timeline: view()) {
+    .w369-band:not(#stars) .w369-band-stage > * {
+      animation: w369-stage-in var(--ease-linear) both;
+      animation-timeline: view(block);
+      animation-range: entry 10% entry 70%;
+    }
+  }
+}
+@media (prefers-reduced-motion: no-preference) and (max-width: 1023px) {
+  .w369-band:not(#stars) > .w369-band-head { min-block-size: 150svh; }
+}
+@keyframes w369-stage-in {
+  from { opacity: 0; transform: translateY(var(--sp-6)) scale(0.97); }
+  to   { opacity: 1; transform: none; }
+}
