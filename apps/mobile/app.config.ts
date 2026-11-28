@@ -3,6 +3,17 @@ import { withAndroidManifest, withDangerousMod, type ConfigPlugin } from "expo/c
 import fs from "node:fs";
 import path from "node:path";
 
+/* r370 — the monotonic Android build number. A plain CommonJS module, not
+ * a relative TS import: Expo transpiles this file to app.config.js and
+ * `require`s it during prebuild, where "./src/lib/app-version" does not
+ * resolve (verified against the real loader). scripts/version-code.cjs
+ * owns the arithmetic and the channel ranges; src/lib/app-version.ts owns
+ * the /status policy and is tested in src/lib/app-version.test.ts. */
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { resolveVersionCode } = require("./scripts/version-code.cjs") as {
+  resolveVersionCode: (channel?: string, run?: string) => number;
+};
+
 /**
  * أُلارا — Ulara mobile (Expo / React Native).
  *
@@ -94,7 +105,7 @@ const PUSH_PROJECT_ID =
 const config: ExpoConfig = {
   name: "أُلارا",
   slug: "ulara",
-  version: "1.0.0",
+  version: process.env.ULARA_APP_VERSION?.trim() || "1.0.0",
   scheme: "ulara",
   // r366: the portrait lock retires — "default" lets the OS rotate (the
   // prime directive: allow landscape and tablets). Every orientation the
@@ -127,6 +138,16 @@ const config: ExpoConfig = {
   },
   android: {
     package: "ly.ulara.app",
+    // r370 — the monotonic native build number. Found: every APK shipped
+    // `versionCode 1`, so Android refused to install a newer build over an
+    // older one and /status could not tell builds apart. The APK lanes set
+    // ULARA_BUILD_CHANNEL (release|qa|devclient) + ULARA_VERSION_CODE
+    // (github.run_number); see src/lib/app-version.ts for the arithmetic and
+    // the disjoint channel ranges. No env = a local prebuild (code 1).
+    versionCode: resolveVersionCode(
+      process.env.ULARA_BUILD_CHANNEL,
+      process.env.ULARA_VERSION_CODE,
+    ),
     adaptiveIcon: {
       foregroundImage: "./assets/images/adaptive-foreground.png",
       backgroundImage: "./assets/images/adaptive-background.png",

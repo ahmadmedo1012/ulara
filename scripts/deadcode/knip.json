@@ -8,9 +8,13 @@
     "tests/audit/**/*.ts",
     "tests/r305/**/*.ts",
     "tests/ios/**/*.ts",
-    "tests/motion/**/*.ts"
+    "tests/motion/**/*.ts",
+    "src/components/illustrations/r359/*.tsx"
   ],
   "ignore": [
-    "postcss.config.cjs"
+    "postcss.config.cjs",
+    "public/sw.js",
+    "scripts/measure-web-vitals.mjs",
+    "scripts/report-route-js.mjs"
   ]
 }

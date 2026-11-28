@@ -77,10 +77,11 @@ db-integration, e2e, ios-webkit, design-gates, surface-drift; plus `size-gate.ym
 mirrors these local gates — all runners pinned `ubuntu-24.04`:
 
 - **Bundle** — `scripts/check-bundle-size.mjs`, gz, `dist/assets/*.js` ONLY (CSS is not in
-  the gate): **total ≤ 866 KB HARD** (R360-F1 raised 845 → 866, +2.4%, documented in the
-  gate header: the F1 boot diet moved the authed shell + six below-fold landing sections
-  behind lazy boundaries — per-boot weight DROPPED while the all-route total grew to the
-  measured 865.6; the full raise ledger lives in the gate header), entry ≤ 92,
+  the gate): **total ≤ the `LIMIT_TOTAL_KB` constant (currently 878 KB) HARD** — read the
+  number from that file, never from this line (this sentence was already one raise stale on
+  the r369 merge); every raise and its measurement lives in the gate header. (R360-F1's
+  documented raise: the boot diet moved the authed shell + six below-fold landing sections
+  behind lazy boundaries — per-boot weight DROPPED while the all-route total grew), entry ≤ 92,
   pdf ≤ 110. It
   sums ALL js chunks **including async chunks** — lazy-splitting only moves weight; the
   honest lever is real code cuts (e.g. the axios→native-fetch diet, −17.9 KB).
@@ -135,7 +136,8 @@ queue/ownership in the same directory.
   `LandingPage.tsx` header note); add the seat + import in `pages/LandingPage.tsx`;
   pin its geometry/a11y contract in the pixel-exact E2E belts (`frontend/tests/e2e/`,
   the r305/r308/r309/r311/r312 pattern) — that is the verification instrument, there is
-  no conformance mapping file; total bundle must stay ≤866 KB (§3).
+  no conformance mapping file; total bundle must stay inside the ceiling pinned in
+  `scripts/check-bundle-size.mjs` (never restated here — the constant drifts).
 - **App page**: `frontend/src/pages/X.tsx` + route in `App.tsx` — mind entry-chunk weight
   (`App.tsx`, `GlobalSearch` are eager; prefer lazy routes); light+dark themes, RTL and
   a11y are contract, and `check-csp-hash.sh` must stay green.
@@ -173,9 +175,9 @@ queue/ownership in the same directory.
 
 ## 7. Never-do list
 
-- Never raise a ceiling (866 / 92 / 110) without a documented, measured reason in
-  `scripts/check-bundle-size.mjs`'s header, re-pin the retired reference spec baseline,
-  weaken an assertion or test, lower the ratchet, or
+- Never raise a ceiling (`scripts/check-bundle-size.mjs`: total / entry / pdf) without a
+  documented, measured reason in that file's header, re-pin the retired reference spec
+  baseline, weaken an assertion or test, lower the ratchet, or
   add `continue-on-error`.
 - Never paste the retired reference site's NAME anywhere (files, prose,
   commits — the zero-trace gate calls it «the reference site»; its artifacts

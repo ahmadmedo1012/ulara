@@ -5,6 +5,7 @@ import type { Submission } from '@prisma/client';
 import { prisma } from '../../db.js';
 import { logger } from '../../logger.js';
 import { authMiddleware } from '../middleware/auth.js';
+import { idempotencyMiddleware } from '../middleware/idempotency.js';
 import { requireRole } from '../middleware/requireRole.js';
 import { validate } from '../validate.js';
 import { AppError } from '../../lib/errors.js';
@@ -146,6 +147,10 @@ export function buildGradedNotification(
 
 router.post(
   '/offerings/:offeringId/assignments/:assignmentId/submit',
+  // r370 — a submit is a write a client retries on a flaky network; with
+  // `Idempotency-Key` the replay returns the first response instead of
+  // creating a second submission row (no header = unchanged behaviour).
+  idempotencyMiddleware(),
   requireRole(Role.STUDENT),
   validate(submitBodySchema),
   async (req, res, next) => {
@@ -241,6 +246,9 @@ router.post(
 
 router.post(
   '/submissions/:id/grade',
+  // r370 — grading is a money write: a retried request must not overwrite
+  // a newer grade or re-fire the notification twice.
+  idempotencyMiddleware(),
   requireRole(Role.TEACHER, Role.ADMIN, Role.OWNER),
   validate(gradeBodySchema),
   async (req, res, next) => {

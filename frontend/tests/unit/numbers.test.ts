@@ -138,7 +138,10 @@ describe('formatDate / formatTime (same file, Latin-digit pins)', () => {
   });
 
   it('formatTime renders the Arabic meridiem with Latin digits', () => {
-    expect(formatTime('2026-03-05T14:30:00Z', { hour: 'numeric', minute: '2-digit' })).toBe('2:30 م');
+    // Local 14:30 → 2:30 م. Built from local components so the pin holds in
+    // any timezone (a 14:30Z literal renders as 4:30 م at UTC+02:00).
+    const localAfternoon = new Date(2026, 2, 5, 14, 30, 0).toISOString();
+    expect(formatTime(localAfternoon, { hour: 'numeric', minute: '2-digit' })).toBe('2:30 م');
   });
 
   it('both return "" for invalid dates instead of throwing', () => {

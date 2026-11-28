@@ -57,7 +57,7 @@ export function useNotifications() {
   const inst = useInstitutionScope();
   return useQuery({
     queryKey: withInstitutionScope(['notifications'], inst),
-    queryFn: () => unwrap<Notification[]>(api.get('/notifications?limit=50')),
+    queryFn: ({ signal }) => unwrap<Notification[]>(api.get('/notifications?limit=50', { signal })),
   });
 }
 
@@ -78,7 +78,7 @@ export interface PushDevice {
 export function usePushDevices() {
   return useQuery({
     queryKey: ['push-devices'],
-    queryFn: () => unwrap<PushDevice[]>(api.get('/me/push-devices')),
+    queryFn: ({ signal }) => unwrap<PushDevice[]>(api.get('/me/push-devices', { signal })),
     staleTime: 60_000,
   });
 }
@@ -112,7 +112,7 @@ export interface NotificationPreferences {
 export function useNotificationPreferences() {
   return useQuery({
     queryKey: ['notification-preferences'],
-    queryFn: () => unwrap<NotificationPreferences>(api.get('/me/notification-preferences')),
+    queryFn: ({ signal }) => unwrap<NotificationPreferences>(api.get('/me/notification-preferences', { signal })),
     staleTime: 30_000,
   });
 }

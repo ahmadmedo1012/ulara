@@ -43,6 +43,8 @@ import {
   pendingGradingFromGroups,
   pendingSubmissionWhere,
   researchFeedItem,
+  foldLatestAbsenceDates,
+  latestAbsenceDates,
   submissionFeedItem,
   TEACHER_FEED_ACTIONS,
   type PendingGradingAssignmentRow,
@@ -56,6 +58,8 @@ import {
   rollupCourseGrades,
   resultsHeadline,
   AWAITING_GRADE_STATUSES,
+  HANDED_IN_SUBMISSION_STATUSES,
+  pendingAssignmentsWhere,
   recentAssignmentFeed,
   pendingSubmissionFeed,
   type GradeRollupRow,
@@ -793,15 +797,15 @@ describe('pendingSubmissionFeed (r164-e — the awaiting-grading middle step)', 
   });
 });
 
-describe('/me/results wiring (source-scan pins — r164-e, no drift)', () => {
+describe('/me/results wiring (source-scan pins — r164-e, r370 paging, no drift)', () => {
   it('GET /me/results assembles both feeds from the exported mappers', () => {
     // The handler consumes the pure mappers — a re-inlined twin would
     // pass the pure suite while drifting from the pinned shapes.
     expect(studentDashboardRouteSource).toMatch(
-      /router\.get\('\/me\/results',[\s\S]*?recentAssignmentFeed\(gradedSubs\.slice\(0, 20\)\);/,
+      /const recentAssignments = recentAssignmentFeed\(recentSubs\);/,
     );
     expect(studentDashboardRouteSource).toMatch(
-      /router\.get\('\/me\/results',[\s\S]*?pendingSubmissionFeed\(awaitingSubs\),/,
+      /pendingSubmissionFeed\(awaitingSubs\),/,
     );
   });
 
@@ -810,13 +814,137 @@ describe('/me/results wiring (source-scan pins — r164-e, no drift)', () => {
     // institution filter (assignment → offering → course chain) — the
     // status set, bound and ordering are unchanged.
     expect(studentDashboardRouteSource).toMatch(
-      /const awaitingSubs = await prisma\.submission\.findMany\(\{\s*where: \{\s*studentId: userId,\s*status: \{ in: \[\.\.\.AWAITING_GRADE_STATUSES\] \},\s*\.\.\.\(studentInstitution[\s\S]*?orderBy: \{ submittedAt: 'desc' \},\s*take: 20,/,
+      /status: \{ in: \[\.\.\.AWAITING_GRADE_STATUSES\] \},[\s\S]*?studentInstitution[\s\S]*?orderBy: \{ submittedAt: 'desc' \},\s*take: 20,/,
     );
   });
 
-  it('the graded feed select carries feedback + submittedAt (loop traceability fields)', () => {
+  it('the feed query carries feedback + submittedAt, and the rollup query does not (r370)', () => {
+    // r164-e: the loop-traceability fields must reach the feed. r370: they
+    // must NOT reach the rollup query any more — that query ships every
+    // graded row of the student's history, and the fold never reads them.
     expect(studentDashboardRouteSource).toMatch(
-      /const gradedSubs = await prisma\.submission\.findMany\(\{[\s\S]*?feedback: true,[\s\S]*?submittedAt: true,[\s\S]*?recentAssignmentFeed/,
+      /resultsRecentWhere\(gradedWhere, cursor\),[\s\S]*?feedback: true,[\s\S]*?submittedAt: true,/,
     );
+    expect(studentDashboardRouteSource).toMatch(
+      /const gradedSubs = await prisma\.submission\.findMany\(\{[\s\S]*?select: \{\s*grade: true,\s*assignment:/,
+    );
+    expect(studentDashboardRouteSource).not.toMatch(
+      /const gradedSubs = await prisma\.submission\.findMany\(\{[\s\S]{0,400}?feedback: true/,
+    );
+  });
+});
+
+// ─── r370 hardening — the pending predicate + the feed's N+1 ────────
+
+describe('pendingAssignmentsWhere (r370 — LATE is handed-in work)', () => {
+  const NOW = new Date('2026-11-24T08:00:00Z');
+  const HORIZON = new Date('2026-12-01T08:00:00Z');
+  const where = pendingAssignmentsWhere(['o1', 'o2'], 's1', NOW, HORIZON);
+  // Narrow structural view of the generated `none` filter.
+  const none = (where.submissions as {
+    none: { studentId: string; status: { in: SubmissionStatus[] } };
+  }).none;
+
+  it('excludes LATE — a late submission is delivered work', () => {
+    // The bug (r370): submissions.routes.ts writes LATE for anything past
+    // dueAt, so a SUBMITTED-only exclusion left the assignment pending for
+    // the rest of the week and inflated the dashboard KPI.
+    expect(none.status.in).toContain(SubmissionStatus.LATE);
+  });
+
+  it('excludes every terminal handed-in status', () => {
+    expect(none.status.in).toEqual(
+      expect.arrayContaining([
+        SubmissionStatus.SUBMITTED,
+        SubmissionStatus.GRADED,
+        SubmissionStatus.RETURNED,
+      ]),
+    );
+  });
+
+  it('keeps DRAFT pending — a draft was never delivered', () => {
+    expect(none.status.in).not.toContain(SubmissionStatus.DRAFT);
+  });
+
+  it('stays scoped to the student, the offerings and the week window', () => {
+    expect(none.studentId).toBe('s1');
+    expect(where.offeringId).toEqual({ in: ['o1', 'o2'] });
+    expect(where.dueAt).toEqual({ gte: NOW, lte: HORIZON });
+  });
+
+  it('contains every status the teacher queue awaits a grade on', () => {
+    // The two ends of the loop must never disagree about «submitted»: any
+    // row the teacher is waiting to grade has, by definition, been handed
+    // in — so the teacher's awaiting set is a SUBSET of the student's
+    // handed-in set (r370: LATE is the member the student side lacked).
+    for (const status of PENDING_SUBMISSION_STATUSES) {
+      expect(HANDED_IN_SUBMISSION_STATUSES).toContain(status);
+    }
+    // …and grading is handed-in without being actionable any more.
+    expect(PENDING_SUBMISSION_STATUSES).not.toContain(SubmissionStatus.GRADED);
+    expect(HANDED_IN_SUBMISSION_STATUSES).toContain(SubmissionStatus.GRADED);
+  });
+});
+
+describe('latestAbsenceDates (r370 — one query, not one per flagged student)', () => {
+  const SINCE = new Date('2026-10-25T00:00:00Z');
+  const rows: Parameters<typeof foldLatestAbsenceDates>[0] = [
+    { studentId: 'a', session: { date: new Date('2026-11-10T00:00:00Z') } },
+    { studentId: 'b', session: { date: new Date('2026-11-02T00:00:00Z') } },
+    { studentId: 'a', session: { date: new Date('2026-11-20T00:00:00Z') } },
+  ];
+
+  it('folds each student to their most recent absence, order-independent', () => {
+    const map = foldLatestAbsenceDates(rows);
+    expect(map.get('a')).toEqual(new Date('2026-11-20T00:00:00Z'));
+    expect(map.get('b')).toEqual(new Date('2026-11-02T00:00:00Z'));
+    expect(map.size).toBe(2);
+  });
+
+  it('answers every student with exactly ONE findMany and zero findFirst', async () => {
+    const calls: string[] = [];
+    let capturedArgs: Record<string, unknown> | undefined;
+    const db = {
+      attendanceRecord: {
+        findMany: async (args: Record<string, unknown>) => {
+          calls.push('findMany');
+          capturedArgs = args;
+          return rows;
+        },
+        findFirst: async () => {
+          calls.push('findFirst');
+          return null;
+        },
+      },
+    } as unknown as Parameters<typeof latestAbsenceDates>[0];
+
+    const map = await latestAbsenceDates(db, ['a', 'b'], ['o1'], SINCE);
+
+    // The N+1 the r370 pass removed: one findFirst per flagged student.
+    expect(calls).toEqual(['findMany']);
+    expect(map.size).toBe(2);
+    // …and the single query keeps the alert window's exact scope.
+    expect(capturedArgs).toMatchObject({
+      where: {
+        studentId: { in: ['a', 'b'] },
+        status: AttendanceStatus.ABSENT,
+        session: { offeringId: { in: ['o1'] }, date: { gte: SINCE } },
+      },
+    });
+  });
+
+  it('short-circuits with no query when nothing is flagged', async () => {
+    let queried = false;
+    const db = {
+      attendanceRecord: {
+        findMany: async () => {
+          queried = true;
+          return [];
+        },
+      },
+    } as unknown as Parameters<typeof latestAbsenceDates>[0];
+    const map = await latestAbsenceDates(db, [], ['o1'], SINCE);
+    expect(map.size).toBe(0);
+    expect(queried).toBe(false);
   });
 });

@@ -145,8 +145,14 @@ export ULARA_ANDROID_KEYSTORE_PASSWORD='…'        # بعيدًا عن سجل �
 - الناتج: `apps/mobile/android/app/build/outputs/apk/release/app-release.apk`
   (للمتجر: `./gradlew bundleRelease` ← AAB). المسار ذاته يقوده CI في
   `android-apk.yml` وينشر لإصدار `latest` (§7).
-- `versionCode`: كل بناء يقرأه من `app.config.ts` (اضبطه صراحة
-  لكل إصدار) — لا تُشحن ثنائيتين برقم واحد أبدًا.
+- `versionCode`: يُحقن من CI (r370) — كل مسار رفع يضبط
+  `ULARA_BUILD_CHANNEL` و`ULARA_VERSION_CODE=${{ github.run_number }}`
+  فيقرأهما `app.config.ts` عبر `src/lib/app-version.ts`:
+  `versionCode = قاعدة القناة + رقم التشغيل` (release ‎+1M، qa ‎+2M،
+  devclient ‎+3M). القاعدة رتيبة داخل القناة ومتنافية بينها، فلا تُشحن
+  ثنائيتان برقم واحد. بناء محلي بلا متغيرات = `versionCode 1`.
+  `/status` ينشر `minVersionCode`/`latestVersionCode` ليقارن التطبيق
+  بالرقم لا بالسلسلة (`ULARA_APP_VERSION` يضبط `version` عند الحاجة).
 - استكشاف سريع: «Unsupported class file» = JDK قديم؛ «target android-37»
   = مكونات/تراخيص SDK ناقصة؛ exit «template drift» = تحديث مرساة
   المُرقِّع في السكربت بعد تغيّر قالب prebuild؛ OOM على أجهزة 4GB =

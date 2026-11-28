@@ -843,6 +843,12 @@ model Submission {
 
   @@unique([assignmentId, studentId])
   @@index([studentId])
+  // r370 — the teacher dashboard's two aggregates: per-assignment rollups
+  // over a slice of offerings (assignmentId, status, grade is index-only),
+  // and the 6-week trend (status + gradedAt range). Measured 40.2 → 21.6 ms
+  // on the constant load dataset; see the migration header.
+  @@index([assignmentId, status, grade])
+  @@index([status, gradedAt])
 }
 
 // ────────────────────────────────────────────────────────────────
@@ -888,6 +894,10 @@ model AttendanceRecord {
 
   @@unique([sessionId, studentId])
   @@index([studentId])
+  // r370 — the teacher attendance rollups filter a slice of sessions and
+  // group by status; without this key the join seq-scans every record in
+  // the institution (12.25 → 2.65 ms on the load dataset).
+  @@index([sessionId, status])
 }
 
 // ────────────────────────────────────────────────────────────────

@@ -484,8 +484,75 @@ export function selectAgendaExams(
  * additions are additive: pre-r164-e consumers keep compiling against
  * the old shape.
  */
-router.get('/me/results', async (req, res, next) => {
+/**
+ * r370 — /me/results query contract (additive: the bare request is
+ * byte-identical to the old one).
+ *
+ * The handler used to ship EVERY graded submission of the student with a
+ * wide select (feedback, title, type, status, submittedAt) and then keep
+ * 20 of them — the page grew with the student's whole academic history,
+ * and there was no way to ask for the numbers alone.
+ *
+ *   mode=summary   headline + courses, and neither feed query runs
+ *   recentLimit    rows in `recentAssignments` (0…100, default 20)
+ *   recentCursor   opaque keyset cursor from `recentNextCursor`
+ *
+ * Unknown parameters are ignored on purpose (cache-busters must not turn
+ * a read into a 400); a malformed cursor is a 400.
+ */
+export const meResultsQuerySchema = z.object({
+  mode: z.enum(['full', 'summary']).default('full'),
+  recentLimit: z.coerce.number().int().min(0).max(100).default(20),
+  recentCursor: z.string().min(1).max(200).optional(),
+});
+
+export const RESULTS_DEFAULT_RECENT_LIMIT = 20;
+export const RESULTS_MAX_RECENT_LIMIT = 100;
+
+/** Keyset cursor over the feed's own ordering: (gradedAt desc, id desc).
+ *  A cursor that only carried `gradedAt` would drop rows when two
+ *  submissions share an instant. */
+export function encodeResultsCursor(row: { gradedAt: Date | null; id: string }): string | null {
+  // gradedAt is nullable in the schema (a legacy GRADED row may have none).
+  // Such rows sort first under `DESC` and can never anchor a keyset.
+  if (!row.gradedAt) return null;
+  return Buffer.from(`${row.gradedAt.toISOString()}|${row.id}`, 'utf8').toString('base64url');
+}
+
+export function decodeResultsCursor(cursor: string): { gradedAt: Date; id: string } | null {
+  const [iso, id, ...rest] = Buffer.from(cursor, 'base64url').toString('utf8').split('|');
+  if (rest.length > 0 || !iso || !id) return null;
+  const gradedAt = new Date(iso);
+  if (Number.isNaN(gradedAt.getTime())) return null;
+  return { gradedAt, id };
+}
+
+/** The `recentAssignments` keyset predicate, or an empty object for page 1. */
+export function resultsRecentWhere(
+  base: Prisma.SubmissionWhereInput,
+  cursor: { gradedAt: Date; id: string } | null,
+): Prisma.SubmissionWhereInput {
+  if (!cursor) return base;
+  return {
+    ...base,
+    OR: [
+      { gradedAt: { lt: cursor.gradedAt } },
+      { gradedAt: cursor.gradedAt, id: { lt: cursor.id } },
+    ],
+  };
+}
+
+router.get('/me/results', validate(meResultsQuerySchema, 'query'), async (req, res, next) => {
   try {
+    const { mode, recentLimit, recentCursor } = req.query as unknown as {
+      mode: 'full' | 'summary';
+      recentLimit: number;
+      recentCursor?: string;
+    };
+    const cursor = recentCursor ? decodeResultsCursor(recentCursor) : null;
+    if (recentCursor && !cursor) {
+      throw AppError.badRequest('مؤشر الصفحة غير صالح');
+    }
     const userId = req.user!.id;
     // r179 (phase-5): a STUDENT caller needs a DB-verified institution
     // context (403 INSTITUTION_CONTEXT_REQUIRED without one) and every
@@ -516,11 +583,12 @@ router.get('/me/results', async (req, res, next) => {
       orderBy: { recordedAt: 'desc' },
     });
 
-    // Graded assignment submissions (audit 11-d P1-6): one query feeds
-    // both the rollup fold below and the recent feed — bounded by the
-    // student's own submission count. r164-e: the select grows
-    // feedback/submittedAt/status so the recent feed can render the
-    // teacher's verdict and the timeline's first step.
+    // Graded assignment submissions (audit 11-d P1-6) feed the weighted
+    // rollup. r370: this query now selects ONLY the columns the fold reads
+    // (grade + the assignment's weight/maxScore/offering) — the feed's
+    // wide columns (feedback, title, type, status, submittedAt) moved to
+    // their own bounded, pageable query below, so the rollup no longer
+    // pays for bytes it throws away.
     const gradedSubs = await prisma.submission.findMany({
       where: {
         studentId: userId,
@@ -530,42 +598,12 @@ router.get('/me/results', async (req, res, next) => {
           ? { assignment: { offering: { course: { institutionId: studentInstitution } } } }
           : {}),
       },
-      orderBy: { gradedAt: 'desc' },
       select: {
-        id: true,
-        gradedAt: true,
-        submittedAt: true,
         grade: true,
-        feedback: true,
-        status: true,
         assignment: {
           select: {
-            title: true, type: true, weight: true, maxScore: true, offeringId: true,
+            weight: true, maxScore: true, offeringId: true,
             offering: { select: { term: true, course: { select: { code: true, name: true, themeColor: true } } } },
-          },
-        },
-      },
-    });
-
-    // r164-e: the awaiting-grading half of the timeline — the same
-    // statuses the teacher's pending queue counts
-    // (PENDING_SUBMISSION_STATUSES), bounded like every /me feed.
-    const awaitingSubs = await prisma.submission.findMany({
-      where: {
-        studentId: userId,
-        status: { in: [...AWAITING_GRADE_STATUSES] },
-        ...(studentInstitution
-          ? { assignment: { offering: { course: { institutionId: studentInstitution } } } }
-          : {}),
-      },
-      orderBy: { submittedAt: 'desc' },
-      take: 20,
-      select: {
-        id: true, status: true, submittedAt: true,
-        assignment: {
-          select: {
-            title: true, type: true, offeringId: true,
-            offering: { select: { course: { select: { code: true, name: true } } } },
           },
         },
       },
@@ -573,9 +611,72 @@ router.get('/me/results', async (req, res, next) => {
 
     const courses = rollupCourseGrades(grades, gradedSubs);
 
-    // Secondary "what was just returned to me" feed — the 20 most recent
-    // of the same graded submissions folded into the rollup above.
-    const recentAssignments = recentAssignmentFeed(gradedSubs.slice(0, 20));
+    // summary mode: the numbers alone. Neither feed query runs.
+    if (mode === 'summary') {
+      res.json({ data: { headline: resultsHeadline(courses), courses } });
+      return;
+    }
+
+    const gradedWhere: Prisma.SubmissionWhereInput = {
+      studentId: userId,
+      status: SubmissionStatus.GRADED,
+      grade: { not: null },
+      ...(studentInstitution
+        ? { assignment: { offering: { course: { institutionId: studentInstitution } } } }
+        : {}),
+    };
+
+    // Secondary "what was just returned to me" feed — bounded and pageable
+    // (r370). Default order/limit are exactly the old `slice(0, 20)`; the
+    // awaiting-grading half runs here too so `mode=summary` skips both.
+    const [recentSubs, awaitingSubs] = await Promise.all([
+      recentLimit === 0
+        ? Promise.resolve([])
+        : prisma.submission.findMany({
+            where: resultsRecentWhere(gradedWhere, cursor),
+            orderBy: [{ gradedAt: 'desc' }, { id: 'desc' }],
+            take: recentLimit,
+            select: {
+              id: true,
+              gradedAt: true,
+              submittedAt: true,
+              grade: true,
+              feedback: true,
+              status: true,
+              assignment: {
+                select: {
+                  title: true, type: true, weight: true, maxScore: true, offeringId: true,
+                  offering: { select: { term: true, course: { select: { code: true, name: true, themeColor: true } } } },
+                },
+              },
+            },
+          }),
+      prisma.submission.findMany({
+        where: {
+          studentId: userId,
+          status: { in: [...AWAITING_GRADE_STATUSES] },
+          ...(studentInstitution
+            ? { assignment: { offering: { course: { institutionId: studentInstitution } } } }
+            : {}),
+        },
+        orderBy: { submittedAt: 'desc' },
+        take: 20,
+        select: {
+          id: true, status: true, submittedAt: true,
+          assignment: {
+            select: {
+              title: true, type: true, offeringId: true,
+              offering: { select: { course: { select: { code: true, name: true } } } },
+            },
+          },
+        },
+      }),
+    ]);
+    const recentAssignments = recentAssignmentFeed(recentSubs);
+    // A full page means there may be more; anything shorter is the tail.
+    const last = recentSubs.length === recentLimit && recentLimit > 0
+      ? recentSubs[recentSubs.length - 1]
+      : null;
 
     res.json({
       data: {
@@ -583,6 +684,7 @@ router.get('/me/results', async (req, res, next) => {
         courses,
         recentAssignments,
         pendingSubmissions: pendingSubmissionFeed(awaitingSubs),
+        recentNextCursor: last ? encodeResultsCursor(last) : null,
       },
     });
   } catch (e) { next(e); }
@@ -736,6 +838,303 @@ router.post(
   },
 );
 
+// ─── r370 — GET /me/calendar: the WINDOWED agenda (additive) ─────────
+//
+// Why: /me/dashboard's agenda is deliberately a 7-DAY window (classes for
+// today/tomorrow, assignments + live sessions inside `horizon`, exams
+// inside the week). The student calendar then composed its MONTH grid from
+// that payload, so browsing any other month showed an essentially empty
+// sheet — the deadlines were in the database but never in the window.
+//
+// This endpoint answers the same four surfaces for an ARBITRARY range and
+// changes nothing about /me/dashboard (no field, no default, no shape):
+//   · assignments — due inside [from, to]
+//   · live        — scheduled inside [from, to]
+//   · exams       — PUBLISHED windows that OVERLAP [from, to] (an exam that
+//                   opened in September and closes in December is visible
+//                   in November), the same offering-or-faculty scope as
+//                   /me/dashboard
+//   · schedule    — the recurring weekly slots behind the month grid
+//
+// Bounds: the window is capped at CALENDAR_MAX_RANGE_DAYS and every
+// collection has a documented `take`, so a client cannot turn the month
+// browse into an unbounded read.
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/** Largest window a single request may ask for (one full academic year). */
+export const CALENDAR_MAX_RANGE_DAYS = 366;
+
+/** Per-collection ceilings — a month of one student's life, not the school's. */
+export const CALENDAR_TAKE = {
+  assignments: 500,
+  live: 300,
+  exams: 200,
+  schedule: 500,
+} as const;
+
+/**
+ * Query contract: `from` and `to` are required ISO-8601 instants (a plain
+ * `YYYY-MM-DD` is accepted and read as UTC midnight — the calendar's civil
+ * keys are built client-side). Anything unparseable is a 400.
+ */
+export const calendarQuerySchema = z
+  .object({
+    from: z.coerce.date(),
+    to: z.coerce.date(),
+  })
+  .strict();
+
+/**
+ * Window validation, separated from the route so the rules are testable
+ * without HTTP: parseable, `to > from`, and at most CALENDAR_MAX_RANGE_DAYS.
+ * Returns null when the window is legal (the message is user-facing Arabic
+ * copy — D17-3 — with the numbers left for the FE to localise).
+ */
+export function calendarRangeError(from: Date, to: Date): string | null {
+  if (Number.isNaN(from.getTime()) || Number.isNaN(to.getTime())) {
+    return 'صيغة التاريخ غير صالحة';
+  }
+  if (to.getTime() <= from.getTime()) {
+    return 'نهاية النطاق يجب أن تكون بعد بدايته';
+  }
+  if (to.getTime() - from.getTime() > CALENDAR_MAX_RANGE_DAYS * DAY_MS) {
+    return `أقصى نطاق للتقويم ${CALENDAR_MAX_RANGE_DAYS} يوم`;
+  }
+  return null;
+}
+
+/** Assignments due inside the window, for the student's offerings. */
+export function calendarAssignmentWhere(
+  offeringIds: readonly string[],
+  from: Date,
+  to: Date,
+): Prisma.AssignmentWhereInput {
+  return { offeringId: { in: [...offeringIds] }, dueAt: { gte: from, lte: to } };
+}
+
+/** Live sessions scheduled inside the window (cancelled ones included —
+ *  the calendar is a record of the month, not a to-do list). */
+export function calendarLiveWhere(
+  offeringIds: readonly string[],
+  from: Date,
+  to: Date,
+): Prisma.LiveSessionWhereInput {
+  return { offeringId: { in: [...offeringIds] }, scheduledAt: { gte: from, lte: to } };
+}
+
+/**
+ * Published exam windows that OVERLAP the range: the window opened before
+ * the range ends AND (it has no close, or it closes after the range
+ * starts). A not-yet-open exam is included — its `openAt` is a real event
+ * inside a future month. Faculty-wide templates join the union exactly as
+ * they do on /me/dashboard.
+ */
+export function calendarExamWhere(
+  offeringIds: readonly string[],
+  facultyId: string | null,
+  from: Date,
+  to: Date,
+): Prisma.ExamTemplateWhereInput {
+  return {
+    status: 'PUBLISHED',
+    AND: [
+      {
+        OR: [
+          { offeringId: { in: [...offeringIds] } },
+          ...(facultyId ? [{ facultyId }] : []),
+        ],
+      },
+      { OR: [{ openAt: null }, { openAt: { lte: to } }] },
+      { OR: [{ closeAt: null }, { closeAt: { gte: from } }] },
+    ],
+  };
+}
+
+router.get(
+  '/me/calendar',
+  validate(calendarQuerySchema, 'query'),
+  async (req, res, next) => {
+    try {
+      const { from, to } = req.query as unknown as { from: Date; to: Date };
+      const rangeError = calendarRangeError(from, to);
+      if (rangeError) throw AppError.badRequest(rangeError);
+
+      const userId = req.user!.id;
+      // Same scoping law as every other /me feed: a STUDENT needs a
+      // DB-verified institution context; the offerings are pinned to it.
+      const institution = await resolveCallerInstitutionScope(
+        req.user!.id,
+        req.user!.institutionId,
+      );
+      if (req.user!.role === Role.STUDENT && !institution) {
+        throw institutionContextRequiredError();
+      }
+
+      const enrollments = await prisma.enrollment.findMany({
+        where: {
+          studentId: userId,
+          status: 'active',
+          ...(institution
+            ? { offering: { course: { institutionId: institution } } }
+            : {}),
+        },
+        select: { offeringId: true },
+      });
+      const offeringIds = enrollments.map((e) => e.offeringId);
+      if (offeringIds.length === 0) {
+        res.json({
+          data: { from, to, assignments: [], live: [], exams: [], schedule: [] },
+        });
+        return;
+      }
+
+      const profile = institution
+        ? await prisma.studentProfile.findFirst({
+            where: {
+              userId,
+              institutionId: institution,
+              membership: { isActive: true },
+            },
+            select: { facultyId: true },
+          })
+        : null;
+
+      const [assignments, live, exams, schedule] = await Promise.all([
+        prisma.assignment.findMany({
+          where: calendarAssignmentWhere(offeringIds, from, to),
+          orderBy: { dueAt: 'asc' },
+          take: CALENDAR_TAKE.assignments,
+          select: {
+            id: true, title: true, type: true, dueAt: true, offeringId: true,
+            offering: { select: { course: { select: { name: true, code: true } } } },
+          },
+        }),
+        prisma.liveSession.findMany({
+          where: calendarLiveWhere(offeringIds, from, to),
+          orderBy: { scheduledAt: 'asc' },
+          take: CALENDAR_TAKE.live,
+          select: {
+            id: true, title: true, scheduledAt: true, status: true, offeringId: true,
+            offering: { select: { course: { select: { name: true, code: true } } } },
+          },
+        }),
+        prisma.examTemplate.findMany({
+          where: calendarExamWhere(offeringIds, profile?.facultyId ?? null, from, to),
+          orderBy: { openAt: 'asc' },
+          take: CALENDAR_TAKE.exams,
+          select: {
+            id: true, title: true, kind: true, openAt: true, closeAt: true,
+            offering: { select: { course: { select: { name: true, code: true } } } },
+            faculty: { select: { name: true } },
+          },
+        }),
+        prisma.scheduleSlot.findMany({
+          where: { offeringId: { in: offeringIds } },
+          orderBy: [{ dayOfWeek: 'asc' }, { startTime: 'asc' }],
+          take: CALENDAR_TAKE.schedule,
+          select: {
+            id: true, dayOfWeek: true, startTime: true, endTime: true, room: true,
+            offeringId: true,
+            offering: { select: { course: { select: { name: true, code: true } } } },
+          },
+        }),
+      ]);
+
+      res.json({
+        data: {
+          from,
+          to,
+          assignments: assignments.map((a) => ({
+            id: a.id,
+            offeringId: a.offeringId,
+            title: a.title,
+            type: a.type,
+            dueAt: a.dueAt,
+            courseName: a.offering.course.name,
+            courseCode: a.offering.course.code,
+          })),
+          live: live.map((l) => ({
+            id: l.id,
+            offeringId: l.offeringId,
+            title: l.title,
+            scheduledAt: l.scheduledAt,
+            status: l.status,
+            courseName: l.offering.course.name,
+            courseCode: l.offering.course.code,
+          })),
+          exams: exams.map((e) => ({
+            id: e.id,
+            title: e.title,
+            kind: e.kind,
+            openAt: e.openAt,
+            closeAt: e.closeAt,
+            courseName: e.offering?.course.name ?? null,
+            courseCode: e.offering?.course.code ?? null,
+            facultyName: e.faculty?.name ?? null,
+          })),
+          schedule: schedule.map((s) => ({
+            id: s.id,
+            offeringId: s.offeringId,
+            dayOfWeek: s.dayOfWeek,
+            startTime: s.startTime,
+            endTime: s.endTime,
+            room: s.room,
+            courseName: s.offering.course.name,
+            courseCode: s.offering.course.code,
+          })),
+        },
+      });
+    } catch (e) { next(e); }
+  },
+);
+
+/**
+ * Statuses that mean the student HAS handed the work in — the complement
+ * of «pending». DRAFT is deliberately absent: a draft is not delivered,
+ * so it keeps the assignment on the agenda.
+ *
+ * r370: LATE was missing. submissions.routes.ts writes LATE (not
+ * SUBMITTED) for anything handed in after `dueAt` (submissionStatusFor),
+ * so a late submission stayed invisible to this filter: the assignment
+ * kept sitting in «التزامات اليوم» and inflated
+ * kpi.pendingAssignmentsCount for the rest of the week, telling the
+ * student to hand in work they had already delivered. The teacher side
+ * has counted LATE as handed-in since r157 (PENDING_SUBMISSION_STATUSES
+ * — the two ends of the loop must agree on what «submitted» means).
+ */
+export const HANDED_IN_SUBMISSION_STATUSES: readonly SubmissionStatus[] = [
+  SubmissionStatus.SUBMITTED,
+  SubmissionStatus.LATE,
+  SubmissionStatus.GRADED,
+  SubmissionStatus.RETURNED,
+];
+
+/**
+ * The dashboard's pending-assignments predicate: due inside [now, horizon]
+ * on one of the student's offerings, with no handed-in submission from
+ * them. One predicate feeds BOTH the agenda list (take: 6) and the
+ * uncapped KPI count — they can never disagree (audit 11-d P1-8).
+ * Exported pure so the status set is pinned by a DB-free test.
+ */
+export function pendingAssignmentsWhere(
+  offeringIds: readonly string[],
+  studentId: string,
+  now: Date,
+  horizon: Date,
+): Prisma.AssignmentWhereInput {
+  return {
+    offeringId: { in: [...offeringIds] },
+    dueAt: { gte: now, lte: horizon },
+    submissions: {
+      none: {
+        studentId,
+        status: { in: [...HANDED_IN_SUBMISSION_STATUSES] },
+      },
+    },
+  };
+}
+
 router.get('/me/dashboard', async (req, res, next) => {
   try {
     const userId = req.user!.id;
@@ -851,20 +1250,12 @@ router.get('/me/dashboard', async (req, res, next) => {
     // One predicate feeds BOTH the agenda list (take: 6) and the uncapped
     // KPI count — the count used to be `list.length`, so a student with 9
     // assignments due this week saw "6" on the KPI card (audit 11-d P1-8).
-    const pendingAssignmentsWhere = {
-      offeringId: { in: offeringIds },
-      dueAt: { gte: now, lte: horizon },
-      // Exclude assignments the student has already submitted.
-      submissions: {
-        none: {
-          studentId: userId,
-          status: { in: [SubmissionStatus.SUBMITTED, SubmissionStatus.GRADED, SubmissionStatus.RETURNED] },
-        },
-      },
-    } satisfies Prisma.AssignmentWhereInput;
+    // Exclude assignments the student has already handed in — LATE
+    // included (r370): late work IS delivered work.
+    const pendingWhere = pendingAssignmentsWhere(offeringIds, userId, now, horizon);
     const [upcomingAssignments, pendingAssignmentsCount] = await Promise.all([
       prisma.assignment.findMany({
-        where: pendingAssignmentsWhere,
+        where: pendingWhere,
         orderBy: { dueAt: 'asc' },
         take: 6,
         select: {
@@ -876,7 +1267,7 @@ router.get('/me/dashboard', async (req, res, next) => {
           offering: { select: { course: { select: { name: true, code: true } } } },
         },
       }),
-      prisma.assignment.count({ where: pendingAssignmentsWhere }),
+      prisma.assignment.count({ where: pendingWhere }),
     ]);
 
     // ── Upcoming live sessions for enrolled offerings ─────────

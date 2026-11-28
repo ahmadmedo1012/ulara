@@ -35,6 +35,7 @@ import { mailConfig, renderResetEmail, sendMail } from '../../lib/mail.js';
 import { parseDurationMs, verifyRefreshToken } from '../../lib/jwt.js';
 import { AppError } from '../../lib/errors.js';
 import { logger } from '../../logger.js';
+import { emailLogRef } from '../../lib/privacy.js';
 // r359 A4 — the email verification flow (single-use 48h tokens).
 import { consumeVerificationToken, issueVerificationEmail } from '../../modules/email/outbox.js';
 import { z } from 'zod';
@@ -318,7 +319,8 @@ router.post(
         const resetUrl = `${rawOrigin.replace(/\/+$/, '')}/auth/reset-password?token=${encodeURIComponent(token)}`;
         const mail = renderResetEmail(resetUrl, MAIL_TTL_MINUTES);
         const sent = await sendMail(mailConfig, { to: email, ...mail });
-        if (!sent) logger.warn({ email }, 'forgot-password: mail send failed — generic response kept');
+        // r370 (privacy): pseudonymous reference, never the raw address.
+        if (!sent) logger.warn({ emailRef: emailLogRef(email) }, 'forgot-password: mail send failed — generic response kept');
       }
       res.json({ data });
     } catch (e) {

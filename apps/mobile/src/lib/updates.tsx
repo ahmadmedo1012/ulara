@@ -23,6 +23,9 @@ import Constants from "expo-constants";
 import { toast } from "@/components/ui/toast";
 import { crumb, reportClientError } from "@/lib/telemetry";
 import { themeFor } from "@/design/theme";
+import { compareSemver, decideUpdate } from "@/lib/app-version";
+
+export { compareSemver };
 
 const STATUS_URL =
   (process.env.EXPO_PUBLIC_API_BASE_URL as string | undefined) ||
@@ -36,15 +39,18 @@ function appSemver(): string {
   );
 }
 
-/** semver a.b.c comparison: -1 | 0 | 1 (tolerant of missing parts). */
-export function compareSemver(a: string, b: string): number {
-  const pa = a.split(".").map((x) => Number(x) || 0);
-  const pb = b.split(".").map((x) => Number(x) || 0);
-  for (let i = 0; i < 3; i += 1) {
-    const d = (pa[i] ?? 0) - (pb[i] ?? 0);
-    if (d !== 0) return d > 0 ? 1 : -1;
-  }
-  return 0;
+/**
+ * r370 — the running build's native number. `version` is a product string
+ * every build used to share; the versionCode is what actually orders
+ * native builds, so the gate prefers it whenever the server publishes one.
+ */
+function appVersionCode(): number | null {
+  const code = Constants.expoConfig?.android?.versionCode;
+  return typeof code === "number" && Number.isInteger(code) && code > 0 ? code : null;
+}
+
+function runningBuild() {
+  return { semver: appSemver(), code: appVersionCode() };
 }
 
 /* ── the new-build half ─────────────────────────────────────────────── */
@@ -52,6 +58,8 @@ export function compareSemver(a: string, b: string): number {
 interface StatusVersionShape {
   minAppVersion?: string | null;
   latestAppVersion?: string | null;
+  minVersionCode?: number | null;
+  latestVersionCode?: number | null;
   updateUrl?: string | null;
 }
 
@@ -78,9 +86,12 @@ export function useAppUpdates(): void {
     try {
       const v = await fetchStatusVersions(ctrl.signal);
       const latest = v?.latestAppVersion ?? null;
-      if (v && latest && compareSemver(appSemver(), latest) < 0 && !announced.current) {
+      const decision = v ? decideUpdate(runningBuild(), v) : null;
+      if (v && decision?.newer && !announced.current) {
         announced.current = true; // once per app session, ever
-        crumb(`update: new build published (app ${appSemver()} < latest ${latest})`);
+        crumb(
+          `update: new build published (app ${appSemver()} / code ${String(appVersionCode())} < latest ${latest ?? ""} / ${String(v.latestVersionCode ?? "")})`,
+        );
         toast.info("يتوفر إصدار جديد من أُلارا — حمّله من صفحة التطبيق", "تحديث أُلارا");
       }
     } catch {
@@ -127,8 +138,12 @@ export function useVersionGate(): VersionGate {
         const min = v?.minAppVersion ?? null;
         const updateUrl = v?.updateUrl ?? "https://ulara.vercel.app/app";
         if (cancelled) return;
-        if (min && compareSemver(appSemver(), min) < 0) {
-          crumb(`version gate: BLOCKED (app ${appSemver()} < min ${min})`);
+        // r370: prefers the numeric floor — the semver string is shared by
+        // every build, so on its own it can never enforce a native floor.
+        if (v && decideUpdate(runningBuild(), v).blocked) {
+          crumb(
+            `version gate: BLOCKED (app ${appSemver()} / code ${String(appVersionCode())} < min ${min ?? ""} / ${String(v.minVersionCode ?? "")})`,
+          );
           setGate({ status: "blocked", updateUrl });
         } else {
           setGate({ status: "ok", updateUrl });

@@ -94,7 +94,7 @@ export function useStudentDashboard() {
   const inst = useInstitutionScope();
   return useQuery({
     queryKey: withInstitutionScope(['me', 'dashboard'], inst),
-    queryFn: () => unwrap<StudentDashboard>(api.get('/me/dashboard')),
+    queryFn: ({ signal }) => unwrap<StudentDashboard>(api.get('/me/dashboard', { signal })),
     staleTime: 60_000,
   });
 }
@@ -125,7 +125,7 @@ export function useResume() {
   const inst = useInstitutionScope();
   return useQuery({
     queryKey: withInstitutionScope(['me', 'resume'], inst),
-    queryFn: () => unwrap<ResumeState | null>(api.get('/me/resume')),
+    queryFn: ({ signal }) => unwrap<ResumeState | null>(api.get('/me/resume', { signal })),
     // 30s default staleTime would lag a just-finished lecture; the
     // ['me'] invalidation on watch-completion (useReportWatch) covers
     // the transition, and a window-focus refetch catches the rest.
@@ -188,7 +188,7 @@ export function useStudentResults() {
   const inst = useInstitutionScope();
   return useQuery({
     queryKey: withInstitutionScope(['me', 'results'], inst),
-    queryFn: () => unwrap<StudentResults>(api.get('/me/results')),
+    queryFn: ({ signal }) => unwrap<StudentResults>(api.get('/me/results', { signal })),
     staleTime: 60_000,
   });
 }
@@ -207,7 +207,7 @@ export function useStudentMaterials() {
   const inst = useInstitutionScope();
   return useQuery({
     queryKey: withInstitutionScope(['me', 'materials'], inst),
-    queryFn: () => unwrap<StudentMaterial[]>(api.get('/me/materials')),
+    queryFn: ({ signal }) => unwrap<StudentMaterial[]>(api.get('/me/materials', { signal })),
     staleTime: 60_000,
   });
 }
@@ -228,7 +228,7 @@ export function useMyEnrollments() {
   const inst = useInstitutionScope();
   return useQuery({
     queryKey: withInstitutionScope(['me', 'enrollments'], inst),
-    queryFn: () => unwrap<MyEnrollment[]>(api.get('/enrollments/me')),
+    queryFn: ({ signal }) => unwrap<MyEnrollment[]>(api.get('/enrollments/me', { signal })),
   });
 }
 
@@ -245,7 +245,7 @@ export function useMatrix() {
   const inst = useInstitutionScope();
   return useQuery({
     queryKey: withInstitutionScope(['me', 'matrix'], inst),
-    queryFn: () => unwrap<MatrixCourse[]>(api.get('/me/matrix')),
+    queryFn: ({ signal }) => unwrap<MatrixCourse[]>(api.get('/me/matrix', { signal })),
   });
 }
 
@@ -263,7 +263,7 @@ export function useGaps() {
   const inst = useInstitutionScope();
   return useQuery({
     queryKey: withInstitutionScope(['me', 'gaps'], inst),
-    queryFn: () => unwrap<Gap[]>(api.get('/me/gaps')),
+    queryFn: ({ signal }) => unwrap<Gap[]>(api.get('/me/gaps', { signal })),
   });
 }
 
@@ -400,6 +400,6 @@ export function useMyProfile() {
   const inst = useInstitutionScope();
   return useQuery({
     queryKey: withInstitutionScope(['me', 'profile'], inst),
-    queryFn: () => unwrap<MyProfile>(api.get('/me/profile')),
+    queryFn: ({ signal }) => unwrap<MyProfile>(api.get('/me/profile', { signal })),
   });
 }

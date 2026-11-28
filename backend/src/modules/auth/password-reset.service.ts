@@ -23,6 +23,7 @@ import { prisma } from '../../db.js';
 import { hashPassword } from '../../lib/password.js';
 import { AppError } from '../../lib/errors.js';
 import { logger } from '../../logger.js';
+import { emailLogRef } from '../../lib/privacy.js';
 import { interpretRevocationBump } from './rotation.js';
 import { passwordSchema } from './auth.dto.js';
 
@@ -66,7 +67,11 @@ export const requestPasswordReset = async (email: string): Promise<string | null
 
   if (!user) {
     await prisma.passwordResetToken.findUnique({ where: { tokenHash } });
-    logger.info({ email: normalized }, 'password reset requested for unknown email');
+    // r370 (privacy): never log the raw address — a pseudonymous hash
+    // keeps ops correlation without storing personal data in the log
+    // stream (the reset flow's generic 200 exists so the address is
+    // never observable; the log must not undo that).
+    logger.info({ emailRef: emailLogRef(normalized) }, 'password reset requested for unknown email');
     return null;
   }
 
@@ -79,7 +84,7 @@ export const requestPasswordReset = async (email: string): Promise<string | null
   await prisma.passwordResetToken.create({
     data: { userId: user.id, tokenHash, expiresAt: new Date(Date.now() + TOKEN_TTL_MS) },
   });
-  logger.info({ email: normalized, userId: user.id }, 'password reset token minted');
+  logger.info({ emailRef: emailLogRef(normalized), userId: user.id }, 'password reset token minted');
   return token;
 };
 
