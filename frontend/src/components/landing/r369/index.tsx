@@ -292,8 +292,19 @@ function StarJar() {
   useEffect(() => {
     window.dispatchEvent(new CustomEvent('ulara:stars', { detail: n }));
   }, [n]);
+  /* the footer owns the bottom edge: once it scrolls into view the
+   * floating index steps aside instead of sitting on the legal row.
+   * One observer, no scroll handler. */
+  const [atFooter, setAtFooter] = useState(false);
+  useEffect(() => {
+    const el = document.querySelector('.w369-footer');
+    if (!el || typeof IntersectionObserver === 'undefined') return;
+    const io = new IntersectionObserver((entries) => setAtFooter(entries.some((e) => e.isIntersecting)), { threshold: 0.05 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
   return (
-    <div className="w369-jar" data-full={full ? 'true' : 'false'}>
+    <div className="w369-jar" data-full={full ? 'true' : 'false'} data-at-footer={atFooter ? 'true' : 'false'}>
       <span className="w369-jar-icon" aria-hidden="true"><Glyph name="compass" size={16} /></span>
       {/* the visible number is decoration for the eye; the live region
           below is the ONE announcement (otherwise a screen reader reads

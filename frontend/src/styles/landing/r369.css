@@ -1389,7 +1389,12 @@ html:not([data-theme='dark']) .w369-footer {
   font-size: var(--fs-xs);
   color: var(--text-secondary);
   max-inline-size: calc(100vw - var(--sp-10));
+  transition: opacity var(--t-base) var(--ease-out);
 }
+
+/* over the footer the index would sit on the legal row: it fades out and
+   stops taking pointer events (opacity only, through the motion tokens) */
+.w369-jar[data-at-footer='true'] { opacity: 0; pointer-events: none; }
 
 .w369-jar[data-full='true'] {
   background: color-mix(in srgb, var(--gold) 22%, var(--surface));
