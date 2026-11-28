@@ -1074,8 +1074,41 @@ const REWARDS = [
 
 const WALLET_MAX = 18;
 
+/* Scroll scrub: drives a quantised step (0..max) from how far the section
+   has travelled through the viewport. Motion-allowed only; one rect read per
+   frame, state set only when the step changes. Clicks still work. */
+function useScrub(id: string, max: number, onStep: (n: number) => void) {
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    let raf = 0;
+    let last = -1;
+    const tick = () => {
+      raf = 0;
+      const el = document.getElementById(id);
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const span = r.height - vh * 0.5;
+      const p = Math.min(1, Math.max(0, (vh * 0.55 - r.top) / Math.max(1, span)));
+      const step = Math.round(p * max);
+      if (step !== last) { last = step; onStep(step); }
+    };
+    const on = () => { if (!raf) raf = requestAnimationFrame(tick); };
+    window.addEventListener('scroll', on, { passive: true });
+    window.addEventListener('resize', on, { passive: true });
+    on();
+    return () => {
+      window.removeEventListener('scroll', on);
+      window.removeEventListener('resize', on);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [id, max, onStep]);
+}
+
 export function RewardsBand() {
   const [wallet, setWallet] = useState(0);
+  useScrub('progress', WALLET_MAX, setWallet);
   const opened = REWARDS.filter((r) => wallet >= r.cost).length;
   return (
     <Band
@@ -1135,6 +1168,11 @@ const WEEK = ['السبت', 'الأحد', 'الاثنين', 'الثلاثاء', 
 const WEEK_ON = 5;
 
 export function HabitsBand() {
+  const [lit, setLit] = useState(WEEK_ON);
+  const [scrubbed, setScrubbed] = useState(false);
+  const onWeek = useCallback((n: number) => { setScrubbed(true); setLit(n); }, []);
+  useScrub('rewards', WEEK.length, onWeek);
+  const on = scrubbed ? lit : WEEK_ON;
   return (
     <Band
       n="05" jar="05" tint="sky" icon="flame" id="rewards" stage="3"
@@ -1149,13 +1187,13 @@ export function HabitsBand() {
             <b>سلسلة النشاط — هذا الأسبوع</b>
             <span>خمسة أيام من سبعة، كما تُحسب في المنصّة.</span>
           </div>
-          <span className="w369-streak-total"><b>{WEEK_ON}</b><span> أيام</span></span>
+          <span className="w369-streak-total"><b>{on}</b><span> أيام</span></span>
         </div>
         <ul className="w369-streak-days">
           {WEEK.map((d, i) => (
-            <li key={d} data-on={i < WEEK_ON ? 'true' : 'false'}>
+            <li key={d} data-on={i < on ? 'true' : 'false'}>
               <span className="w369-streak-dot">
-                {i < WEEK_ON ? <Glyph name="star" size={16} /> : <span className="w369-streak-empty" />}
+                {i < on ? <Glyph name="star" size={16} /> : <span className="w369-streak-empty" />}
               </span>
               <span className="w369-streak-day">{d}</span>
             </li>
@@ -1222,6 +1260,7 @@ function LevelBadge({ level, size = 40 }: { level: number; size?: number }) {
 
 export function LevelsBand() {
   const [picked, setPicked] = useState(0);
+  useScrub('levels', LEVELS.length - 1, setPicked);
   const name = LEVELS[picked];
   return (
     <Band
