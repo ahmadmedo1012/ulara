@@ -27,7 +27,6 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter } from 'react-router-dom';
-import type { AxiosError } from 'axios';
 
 type LoginState = {
   mutateAsync: (values?: unknown) => Promise<never>;
@@ -55,14 +54,23 @@ vi.mock('../../src/hooks/useAuth', () => ({
 
 import AuthPage from '../../src/pages/AuthPage';
 
-function axError(status: number, code?: string, message?: string): AxiosError<{ error?: { code?: string; message?: string } }> {
+/** The transport's error shape, structural on purpose: the fetch client
+ *  (lib/api.ts, r338) still resolves the old axios response shape, and
+ *  axios itself is no longer a dependency (r370). */
+interface HttpError<T = unknown> {
+  response?: { status: number; data?: T };
+}
+
+type ErrorEnvelope = { error?: { code?: string; message?: string } };
+
+function axError(status: number, code?: string, message?: string): HttpError<ErrorEnvelope> {
   return {
     name: 'AxiosError',
     message: 'Request failed',
     isAxiosError: true,
     config: {},
     response: { status, data: { error: { code, message } } },
-  } as unknown as AxiosError<{ error?: { code?: string; message?: string } }>;
+  } as unknown as HttpError<ErrorEnvelope>;
 }
 
 function renderPage() {
@@ -161,7 +169,7 @@ describe('AuthPage — 429 lockout copy (4-A13 P2-1)', () => {
       message: 'Network Error',
       isAxiosError: true,
       config: {},
-    } as unknown as AxiosError;
+    } as unknown as HttpError;
     renderPage();
 
     const alert = screen.getByRole('alert');
@@ -190,7 +198,7 @@ describe('AuthPage — 429 lockout copy (4-A13 P2-1)', () => {
         message: 'Network Error',
         isAxiosError: true,
         config: {},
-      } as unknown as AxiosError;
+      } as unknown as HttpError;
       const mutateAsync = vi.fn(() => Promise.reject(netErr));
       loginState.current.mutateAsync = mutateAsync as unknown as LoginState['mutateAsync'];
       const { unmount } = renderPage();

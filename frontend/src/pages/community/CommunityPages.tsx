@@ -694,7 +694,10 @@ const announcementSchema = z.object({
     ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['scopeId'], message: 'مطلوب لهذا النطاق' });
   }
 });
-type AnnouncementInputs = z.infer<typeof announcementSchema>;
+/* r370 — zod 4 + resolvers 5: `pinned: z.boolean().default(false)` is
+ * OPTIONAL on input and required on output; the form is typed by z.input. */
+type AnnouncementInputs = z.output<typeof announcementSchema>;
+type AnnouncementFormValues = z.input<typeof announcementSchema>;
 
 const ANN_ICONS = ['📢', '📌', '🎓', '🏆', '⚠️', '✨', '📝', '🗓️']; // allow-emoji: admin icon-picker palette
 /* r152a (A6 P3-5): controlled Arabic names so SR announcements stay in
@@ -717,7 +720,7 @@ function CreateAnnouncementModal({ canPlatform, canOffering, onClose }: {
   const offeringScopeId = useId();
   const pinnedId = useId();
 
-  const form = useForm<AnnouncementInputs>({
+  const form = useForm<AnnouncementFormValues, unknown, AnnouncementInputs>({
     resolver: zodResolver(announcementSchema),
     defaultValues: {
       scope: canPlatform ? 'PLATFORM' : 'FACULTY',
@@ -904,7 +907,8 @@ const eventSchema = z.object({
 }).refine((d) => new Date(d.endsAt) > new Date(d.startsAt), {
   message: 'النهاية يجب أن تكون بعد البداية', path: ['endsAt'],
 });
-type EventInputs = z.infer<typeof eventSchema>;
+type EventInputs = z.output<typeof eventSchema>;
+type EventFormValues = z.input<typeof eventSchema>;
 
 const EVENT_ICONS = ['📅', '🎤', '🎓', '🔬', '⚽', '🎨', '🧑‍🏫', '🤝']; // allow-emoji: admin icon-picker palette
 /* r152a (A6 P3-5): controlled Arabic names for SR announcements. */
@@ -916,7 +920,7 @@ const EVENT_ICON_NAMES_AR: Record<string, string> = {
 function CreateEventModal({ onClose }: { onClose: () => void }) {
   const create = useCreateCampusEvent();
 
-  const form = useForm<EventInputs>({
+  const form = useForm<EventFormValues, unknown, EventInputs>({
     resolver: zodResolver(eventSchema),
     defaultValues: {
       title: '', description: '', location: '',

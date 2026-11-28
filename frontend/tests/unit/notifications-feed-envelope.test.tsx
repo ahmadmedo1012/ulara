@@ -30,12 +30,13 @@ import { MemoryRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AlertsPage } from '../../src/pages/student/MorePages';
 import { NOTIFICATIONS_FEED_LIMIT } from '../../src/hooks/resources/notifications';
-import type { AxiosResponse } from 'axios';
 
 /** The backend's wire shape for GET /notifications (me.routes.ts +
  *  lib/pagination.buildMeta): `meta` is a SIBLING of `data`. */
 function envelopePage(rows: Array<Record<string, unknown>>, meta: Record<string, number>) {
-  return { data: { data: rows, meta } } as AxiosResponse;
+  // r370: axios is gone (the transport is fetch) — the envelope is
+  // structural, exactly what `unwrap` reads.
+  return { data: { data: rows, meta } };
 }
 
 function notifFixture(over: Record<string, unknown> = {}): Record<string, unknown> {
@@ -57,7 +58,7 @@ const mocks = vi.hoisted(() => ({
 vi.mock('../../src/lib/api', () => ({
   api: { get: mocks.get, patch: vi.fn(), post: vi.fn(), put: vi.fn(), delete: vi.fn() },
   apiBaseURL: '/api/v1',
-  unwrap: async (promise: Promise<AxiosResponse<{ data: unknown }>>) =>
+  unwrap: async (promise: Promise<{ data: { data: unknown } }>) =>
     (await promise).data.data,
 }));
 

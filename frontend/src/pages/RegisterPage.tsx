@@ -98,8 +98,14 @@ const teacherSchema = z.object({
   specialty: z.string().trim().min(2, 'مطلوب').max(120),
 });
 
-type StudentInputs = z.infer<typeof studentSchema>;
-type TeacherInputs = z.infer<typeof teacherSchema>;
+/* r370 (zod 4 + @hookform/resolvers 5): a coerced field's INPUT type is
+ * `unknown` while its OUTPUT is the coerced type. react-hook-form now takes
+ * all three generics (values / context / transformed), so the form is typed
+ * by z.input and the submit handler by z.output — no cast, no suppression. */
+type StudentInputs = z.output<typeof studentSchema>;
+type StudentFormValues = z.input<typeof studentSchema>;
+type TeacherInputs = z.output<typeof teacherSchema>;
+type TeacherFormValues = z.input<typeof teacherSchema>;
 
 /** Direction of the last step change — keys the slide animation so
  *  step 2 always enters from the reading-ahead edge and step 1 comes
@@ -236,11 +242,11 @@ export default function RegisterPage() {
   // student who picked the wrong role (or stepped away and back)
   // retyped the whole form. With the RHF state hoisted here, the
   // remount only resets transient view state (the password toggle).
-  const studentForm = useForm<StudentInputs>({
+  const studentForm = useForm<StudentFormValues, unknown, StudentInputs>({
     resolver: zodResolver(studentSchema),
     defaultValues: { firstName: '', lastName: '', email: '', password: '', universityId: '', institutionId: '', facultyId: '', departmentId: '', year: 1, inviteCode: '' },
   });
-  const teacherForm = useForm<TeacherInputs>({
+  const teacherForm = useForm<TeacherFormValues, unknown, TeacherInputs>({
     resolver: zodResolver(teacherSchema),
     defaultValues: { firstName: '', lastName: '', email: '', password: '', institutionId: '', facultyId: '', departmentId: '', specialty: '' },
   });
@@ -530,7 +536,7 @@ interface RegisterFormProps {
 }
 
 interface StudentFormProps extends RegisterFormProps {
-  form: UseFormReturn<StudentInputs>;
+  form: UseFormReturn<StudentFormValues, unknown, StudentInputs>;
   onSubmit: (values: StudentInputs) => Promise<void>;
 }
 
@@ -572,7 +578,7 @@ function InviteCodeField({ index, error, hint, register }: {
   index: string;
   error?: string;
   hint: InviteHint;
-  register: ReturnType<UseFormReturn<StudentInputs>['register']>;
+  register: ReturnType<UseFormReturn<StudentFormValues, unknown, StudentInputs>['register']>;
 }) {
   return (
     <Field index={index} label="كود الدعوة (اختياري)" error={error} micro="TEXT · 48PX">
@@ -783,7 +789,7 @@ function StudentForm({ form, error, isPending, faculties, institutions, institut
 }
 
 interface TeacherFormProps extends RegisterFormProps {
-  form: UseFormReturn<TeacherInputs>;
+  form: UseFormReturn<TeacherFormValues, unknown, TeacherInputs>;
   onSubmit: (values: TeacherInputs) => Promise<void>;
 }
 
