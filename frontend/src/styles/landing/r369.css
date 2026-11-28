@@ -3305,12 +3305,12 @@ html:not([data-theme='dark']) .w369-footer {
  * keeps its own rule. */
 .w369-band-stage { display: grid; justify-items: inherit; text-align: inherit; }
 @media (prefers-reduced-motion: no-preference) {
-  .w369-band:not(#stars) > .w369-band-head {
+  :is(.w369-band, .w369-handoff, .w369-show, .w369-principles, .w369-roles):not(#stars) > .w369-band-head {
     min-block-size: 175svh;
     display: block;
     align-content: normal;
   }
-  .w369-band:not(#stars) .w369-band-stage {
+  :is(.w369-band, .w369-handoff, .w369-show, .w369-principles, .w369-roles):not(#stars) .w369-band-stage {
     position: sticky;
     inset-block-start: 0;
     min-block-size: 100svh;
@@ -3323,7 +3323,7 @@ html:not([data-theme='dark']) .w369-footer {
     max-inline-size: 48ch;
   }
   @supports (animation-timeline: view()) {
-    .w369-band:not(#stars) .w369-band-stage > * {
+    :is(.w369-band, .w369-handoff, .w369-show, .w369-principles, .w369-roles):not(#stars) .w369-band-stage > * {
       animation: w369-stage-in var(--ease-linear) both;
       animation-timeline: view(block);
       animation-range: entry 10% entry 70%;
@@ -3331,7 +3331,7 @@ html:not([data-theme='dark']) .w369-footer {
   }
 }
 @media (prefers-reduced-motion: no-preference) and (max-width: 1023px) {
-  .w369-band:not(#stars) > .w369-band-head { min-block-size: 150svh; }
+  :is(.w369-band, .w369-handoff, .w369-show, .w369-principles, .w369-roles):not(#stars) > .w369-band-head { min-block-size: 150svh; }
 }
 @keyframes w369-stage-in {
   from { opacity: 0; transform: translateY(var(--sp-6)) scale(0.97); }

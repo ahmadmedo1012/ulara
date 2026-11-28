@@ -1295,12 +1295,14 @@ export function ShowcaseBand() {
   return (
     <section className="w369-handoff" id="handoff">
       <header className="w369-band-head">
-        <p className="w369-band-kicker"><Glyph name="users" size={15} />كيف ينتقل الإنجاز بين الأدوار</p>
-        <h2 className="w369-h2">خطوةٌ من الطالب،<br /><span className="w369-em">تصل إلى الإدارة</span></h2>
-        <p className="w369-body">
-          أربع خطوات لا أكثر: يُنجز الطالب، فتُحتسب نقاط الإتقان، فيراها عضو الهيئة، فتعتمدها الإدارة.
-          بدّل بين الهاتفين لترى الطرفين.
-        </p>
+        <div className="w369-band-stage">
+          <p className="w369-band-kicker"><Glyph name="users" size={15} />كيف ينتقل الإنجاز بين الأدوار</p>
+          <h2 className="w369-h2">خطوةٌ من الطالب،<br /><span className="w369-em">تصل إلى الإدارة</span></h2>
+          <p className="w369-body">
+            أربع خطوات لا أكثر: يُنجز الطالب، فتُحتسب نقاط الإتقان، فيراها عضو الهيئة، فتعتمدها الإدارة.
+            بدّل بين الهاتفين لترى الطرفين.
+          </p>
+        </div>
       </header>
 
       <ol className="w369-steps">
@@ -1468,8 +1470,10 @@ export function CarouselBand() {
   return (
     <section className="w369-show" id="showcase">
       <header className="w369-band-head">
-        <p className="w369-band-kicker"><Glyph name="compass" size={15} />من داخل المنصّة</p>
-        <h2 className="w369-h2">سبع شاشات،<br /><span className="w369-em">لغة واحدة</span></h2>
+        <div className="w369-band-stage">
+          <p className="w369-band-kicker"><Glyph name="compass" size={15} />من داخل المنصّة</p>
+          <h2 className="w369-h2">سبع شاشات،<br /><span className="w369-em">لغة واحدة</span></h2>
+        </div>
       </header>
       <div
         className="w369-carousel"
@@ -1540,8 +1544,10 @@ export function PrinciplesBand() {
   return (
     <section className="w369-principles" id="principles">
       <header className="w369-band-head">
-        <p className="w369-band-kicker"><Glyph name="shield" size={15} />عن المنصّة</p>
-        <h2 className="w369-h2">أربع نقاط<br /><span className="w369-em">عن البيانات والأدوار</span></h2>
+        <div className="w369-band-stage">
+          <p className="w369-band-kicker"><Glyph name="shield" size={15} />عن المنصّة</p>
+          <h2 className="w369-h2">أربع نقاط<br /><span className="w369-em">عن البيانات والأدوار</span></h2>
+        </div>
       </header>
       <ul className="w369-principle-grid" data-stagger="">
         {PRINCIPLES.map((p) => (
@@ -1591,12 +1597,14 @@ export function RolesBand() {
   return (
     <section className="w369-roles" id="roles" data-jar="06">
       <header className="w369-band-head">
-        <p className="w369-band-kicker"><Glyph name="users" size={15} />معًا</p>
-        <h2 className="w369-h2">طالبٌ يتعلّم، عضو هيئةٍ يتابع،<br /><span className="w369-em">وإدارةٌ ترى الصورة</span></h2>
-        <p className="w369-body">
-          الفكرة نفسها تتكرّر في كل دور: عملٌ صغير، يراه صاحبه، ويُبنى عليه. من مهامّ الطالب
-          إلى مؤشّرات الجودة، نظام واحد ولغة واحدة.
-        </p>
+        <div className="w369-band-stage">
+          <p className="w369-band-kicker"><Glyph name="users" size={15} />معًا</p>
+          <h2 className="w369-h2">طالبٌ يتعلّم، عضو هيئةٍ يتابع،<br /><span className="w369-em">وإدارةٌ ترى الصورة</span></h2>
+          <p className="w369-body">
+            الفكرة نفسها تتكرّر في كل دور: عملٌ صغير، يراه صاحبه، ويُبنى عليه. من مهامّ الطالب
+            إلى مؤشّرات الجودة، نظام واحد ولغة واحدة.
+          </p>
+        </div>
       </header>
       <ul className="w369-role-grid" data-stagger="">
         {ROLES.map((r) => (

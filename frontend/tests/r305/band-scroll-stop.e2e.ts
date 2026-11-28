@@ -12,7 +12,7 @@
  */
 import { test, expect } from './fixtures/qa';
 
-const BANDS = ['progress', 'rewards', 'levels'] as const;
+const BANDS = ['story', 'progress', 'rewards', 'levels', 'handoff', 'showcase', 'principles', 'roles'] as const;
 
 async function pinnedPx(page: import('@playwright/test').Page, id: string) {
   return page.evaluate(async (bandId) => {
