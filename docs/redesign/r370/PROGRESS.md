@@ -545,3 +545,48 @@ Running backend + frontend + mobile vitest/jest simultaneously produced a
 phantom `r324-type-gate` failure and 13 phantom mobile failures (and dropped 6
 frontend files). Re-run alone, everything is green. Measured numbers must come
 from one suite at a time.
+
+## Item 5 — dependency majors (branch `r370/deps`, DONE, not merged)
+
+**Spec.** Clear the 3 production audit findings (zod high, react-router
+moderate ×2) behind a separate branch with a full test pass, and drop `axios`
+from production dependencies if only types used it.
+
+**Found.** `axios` had **zero runtime imports** in `frontend/src` — `lib/api.ts`
+moved to native `fetch` in r338 and kept only the response shape; the sole
+users were 3 test files importing `AxiosError`/`AxiosResponse` types. zod 4
+was *already* proven in the monorepo (`apps/mobile` runs ^4.6.7). The
+frontend's `@hookform/resolvers@3.10` only speaks zod 3, which is why the
+first bump left 13 validation tests silently passing no errors.
+
+**Change (all on `r370/deps`, branched from the r370 head).**
+- `axios` removed; the 3 tests declare a structural `HttpError`/envelope
+  type instead (no axios types, no casts beyond what they already had).
+- `zod` 3.23.8/3.25.76 → **4.6.7** (frontend + backend).
+- `react-router-dom` 6.30.6 → **7.18.7**.
+- `@hookform/resolvers` 3.10 → **5.9.2** + `react-hook-form` 7.54.2 →
+  **7.92.0**: resolvers 5 is the first line that understands zod 4.
+- The two coerced-field forms are typed with the three RHF generics
+  (`z.input` values / `z.output` transformed) — zod 4 models a coerced
+  field's input as `unknown`, and a cast would have hidden that.
+
+**Numbers.**
+
+| gate | before | after |
+|---|---|---|
+| `npm audit --omit=dev` (frontend) | 3 findings (zod high, react-router moderate ×2) | **0 vulnerabilities** |
+| `npm audit --omit=dev` (backend) | zod high | **0 vulnerabilities** |
+| backend suite | 2296 passed / 19 skipped | **2296 passed / 19 skipped** (on zod 4) |
+| frontend suite (TZ=UTC) | 3015 tests | **3015 passed / 246 suites** |
+| frontend `tsc --noEmit` | 0 | 0 |
+| frontend build + bundle gate | 828.4 KB gz | **852.6 KB gz** (ceiling 878) |
+
+**Not merged** (`r370/deps` is pushed separately, as asked): `react-router-dom`
+7 renames nothing this tree uses (`Link`, `useParams`, `useSearchParams`,
+`useNavigate`, `useLocation`, `MemoryRouter`, `Routes`), but it is a major on
+the app shell — the owner's landing work owns `src/pages/LandingPage.tsx` and
+the shell, so the merge decision is theirs, not a silent one. 5 frontend
+tests are **timezone-sensitive** (`formatTime`, `groupMessagesByDay`,
+`isoToLocalInputValue`): they pass under `TZ=UTC` (the CI default) and fail on
+this machine's UTC+2 — pre-existing, unrelated to the bump, recorded rather
+than "fixed" by editing expectations.

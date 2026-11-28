@@ -31,7 +31,6 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import type { AxiosError } from 'axios';
 
 type RegisterState = {
   mutateAsync: () => Promise<never>;
@@ -96,14 +95,22 @@ vi.mock('../../src/hooks/useInstitutions', () => ({
 
 import RegisterPage from '../../src/pages/RegisterPage';
 
-function axError(status: number, code?: string, message?: string): AxiosError<{ error?: { code?: string; message?: string } }> {
+/** The transport's error shape, structural on purpose (r370: axios is no
+ *  longer a dependency — lib/api.ts went to fetch in r338). */
+interface HttpError<T = unknown> {
+  response?: { status: number; data?: T };
+}
+
+type ErrorEnvelope = { error?: { code?: string; message?: string } };
+
+function axError(status: number, code?: string, message?: string): HttpError<ErrorEnvelope> {
   return {
     name: 'AxiosError',
     message: 'Request failed',
     isAxiosError: true,
     config: {},
     response: { status, data: { error: { code, message } } },
-  } as unknown as AxiosError<{ error?: { code?: string; message?: string } }>;
+  } as unknown as HttpError<ErrorEnvelope>;
 }
 
 const NO_DEPARTMENTS_TEXT =
@@ -263,7 +270,7 @@ describe('RegisterPage — server-error contract (r157 F5 / D17-3)', () => {
       message: 'Network Error',
       isAxiosError: true,
       config: {},
-    } as unknown as AxiosError;
+    } as unknown as HttpError;
     renderPage();
     chooseStudent();
 
