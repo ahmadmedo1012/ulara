@@ -3295,7 +3295,7 @@ html:not([data-theme='dark']) .w369-footer {
 .w369-band-stage { display: grid; justify-items: inherit; text-align: inherit; }
 @media (prefers-reduced-motion: no-preference) {
   :is(.w369-band, .w369-handoff, .w369-show, .w369-principles, .w369-roles):not(#stars) > .w369-band-head {
-    min-block-size: 175svh;
+    min-block-size: 200svh;
     display: block;
     align-content: normal;
   }
@@ -3312,15 +3312,28 @@ html:not([data-theme='dark']) .w369-footer {
     max-inline-size: 48ch;
   }
   @supports (animation-timeline: view()) {
+    /* scene choreography: the runway is the timeline. The headline scene
+     * builds in beats while the stage rises and seats (number + kicker,
+     * then the headline, then the sentence under it), so arrival is a
+     * reveal, never an empty half-screen. */
+    :is(.w369-band, .w369-handoff, .w369-show, .w369-principles, .w369-roles):not(#stars) > .w369-band-head {
+      view-timeline: --w369-run block;
+    }
     :is(.w369-band, .w369-handoff, .w369-show, .w369-principles, .w369-roles):not(#stars) .w369-band-stage > * {
       animation: w369-stage-in var(--ease-linear) both;
-      animation-timeline: view(block);
-      animation-range: entry 10% entry 70%;
+      animation-timeline: --w369-run;
+      animation-range: cover 10% cover 26%;
+    }
+    :is(.w369-band, .w369-handoff, .w369-show, .w369-principles, .w369-roles):not(#stars) .w369-band-stage > .w369-h2 {
+      animation-range: cover 16% cover 32%;
+    }
+    :is(.w369-band, .w369-handoff, .w369-show, .w369-principles, .w369-roles):not(#stars) .w369-band-stage > .w369-body {
+      animation-range: cover 24% cover 40%;
     }
   }
 }
 @media (prefers-reduced-motion: no-preference) and (max-width: 1023px) {
-  :is(.w369-band, .w369-handoff, .w369-show, .w369-principles, .w369-roles):not(#stars) > .w369-band-head { min-block-size: 150svh; }
+  :is(.w369-band, .w369-handoff, .w369-show, .w369-principles, .w369-roles):not(#stars) > .w369-band-head { min-block-size: 170svh; }
 }
 @keyframes w369-stage-in {
   from { opacity: 0; transform: translateY(var(--sp-6)) scale(0.97); }
