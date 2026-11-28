@@ -185,7 +185,7 @@ describe('GET /me/results', () => {
     expect(status).toBe(200);
     expect(Object.keys(json.data).sort()).toEqual(['courses', 'headline']);
     expect(submissionFindMany).toHaveBeenCalledTimes(1); // the rollup only
-    const rollupArgs = submissionFindMany.mock.calls[0][0] as any;
+    const rollupArgs = submissionFindMany.mock.calls[0]![0] as any;
     // The wide feed columns are NOT part of the rollup select any more.
     expect(rollupArgs.select.feedback).toBeUndefined();
     expect(rollupArgs.select.gradedAt).toBeUndefined();

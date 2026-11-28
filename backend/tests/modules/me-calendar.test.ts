@@ -260,14 +260,14 @@ describe('GET /me/calendar', () => {
     expect(json.data.schedule[0]).toMatchObject({ id: 's1', dayOfWeek: 3, room: 'قاعة ٤' });
 
     // The window reached the database, and every collection is capped.
-    const assignmentArgs = assignmentFindMany.mock.calls[0][0] as any;
+    const assignmentArgs = assignmentFindMany.mock.calls[0]![0] as any;
     expect(assignmentArgs.where.dueAt).toEqual({ gte: ISO('2026-09-01'), lte: ISO('2026-09-30') });
     expect(assignmentArgs.take).toBe(CALENDAR_TAKE.assignments);
-    expect((liveFindMany.mock.calls[0][0] as any).take).toBe(CALENDAR_TAKE.live);
-    expect((examFindMany.mock.calls[0][0] as any).take).toBe(CALENDAR_TAKE.exams);
-    expect((slotFindMany.mock.calls[0][0] as any).take).toBe(CALENDAR_TAKE.schedule);
+    expect((liveFindMany.mock.calls[0]![0] as any).take).toBe(CALENDAR_TAKE.live);
+    expect((examFindMany.mock.calls[0]![0] as any).take).toBe(CALENDAR_TAKE.exams);
+    expect((slotFindMany.mock.calls[0]![0] as any).take).toBe(CALENDAR_TAKE.schedule);
     // Enrollments were pinned to the verified institution.
-    const enrollmentArgs = enrollmentFindMany.mock.calls[0][0] as any;
+    const enrollmentArgs = enrollmentFindMany.mock.calls[0]![0] as any;
     expect(enrollmentArgs.where.offering.course.institutionId).toBe(INSTITUTION);
   });
 });
