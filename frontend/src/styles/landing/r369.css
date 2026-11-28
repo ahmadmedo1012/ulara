@@ -3467,6 +3467,32 @@ html:not([data-theme='dark']) .w369-footer {
   .w369-handoff > .w369-two { grid-column: 2; grid-row: 2; margin-block: var(--sp-10) var(--sp-11); }
 }
 
+/* ── the showcase split: headline beside the carousel, one beat ──────────
+ * 08's carousel is interactive, not scroll-driven, so it gets no runway:
+ * the headline and the carousel share one full-height beat, side by side
+ * (the reference's heading-left, device-right frame). */
+@media (min-width: 1200px) and (min-height: 720px) and (prefers-reduced-motion: no-preference) {
+  .w369-show {
+    display: grid;
+    grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+    column-gap: clamp(var(--sp-7), 3vw, var(--sp-10));
+    align-items: center;
+    min-block-size: 100svh;
+  }
+  .w369-show:not(#stars) > .w369-band-head { min-block-size: 0; align-self: center; }
+  .w369-show:not(#stars) .w369-band-stage {
+    position: static;
+    min-block-size: 0;
+    max-inline-size: 30rem;
+    margin-inline: 0;
+    padding-block-start: 0;
+    justify-items: start;
+    text-align: start;
+  }
+  .w369-show .w369-band-head .w369-h2 { font-size: clamp(2.2rem, 3.6vw, 3.4rem); }
+  .w369-show > .w369-carousel { margin-block-start: 0; }
+}
+
 /* ── stage rail: the pinned headline scene shows the scroll's progress ── */
 .w369-srail { display: none; }
 @media (prefers-reduced-motion: no-preference) {
