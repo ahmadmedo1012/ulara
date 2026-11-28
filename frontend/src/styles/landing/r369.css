@@ -1675,7 +1675,7 @@ html:not([data-theme='dark']) .w369-footer {
     radial-gradient(1px 1px at 95% 88%, color-mix(in srgb, var(--text) 55%, transparent), transparent),
     radial-gradient(60% 55% at 12% 8%, color-mix(in srgb, var(--c-lavender-deep) 34%, transparent), transparent 70%),
     radial-gradient(55% 60% at 90% 92%, color-mix(in srgb, var(--gold) 12%, transparent), transparent 72%),
-    var(--bg);
+    color-mix(in srgb, var(--c-lavender-deep) 12%, var(--bg));
 }
 .w369-band[data-scene='night'] + .w369-band,
 .w369-band[data-scene='night'] {
@@ -3249,7 +3249,7 @@ html:not([data-theme='dark']) .w369-footer {
     radial-gradient(2px 2px at 86% 58%, color-mix(in srgb, var(--gold) 80%, transparent), transparent),
     radial-gradient(1px 1px at 92% 18%, color-mix(in srgb, var(--text) 60%, transparent), transparent),
     radial-gradient(50% 60% at 50% 45%, color-mix(in srgb, var(--c-lavender-deep) 26%, transparent), transparent 75%),
-    color-mix(in srgb, var(--bg) 82%, black);
+    color-mix(in srgb, var(--c-lavender-deep) 9%, color-mix(in srgb, var(--bg) 85%, black));
   mask-image: linear-gradient(to bottom, transparent, CanvasText 18%, CanvasText 80%, transparent);
 }
 
@@ -3338,4 +3338,24 @@ html:not([data-theme='dark']) .w369-footer {
 @keyframes w369-stage-in {
   from { opacity: 0; transform: translateY(var(--sp-6)) scale(0.97); }
   to   { opacity: 1; transform: none; }
+}
+
+/* ── r369 reference-match: the focal subject card holds in the stage ──
+ * The reference keeps each scene's object (phone, path) seated while the
+ * scene scrolls. Ours seats the wallet (04), the week (05) and the level
+ * path (06) the same way: the body is a short runway and its one card is
+ * sticky under the bar. Only where the card fits the viewport with the
+ * bar (tall desktop windows, motion allowed); phones and short windows
+ * keep the plain flow so nothing is ever trapped. */
+@media (min-width: 1024px) and (min-height: 900px) and (prefers-reduced-motion: no-preference) {
+  :is(#progress, #rewards, #levels).w369-band .w369-band-body { min-block-size: 150svh; }
+  :is(#progress, #rewards, #levels).w369-band .w369-band-body > :only-child {
+    position: sticky;
+    inset-block-start: calc(var(--sp-11) + var(--sp-4));
+  }
+}
+@media (min-width: 1024px) and (min-height: 900px) and (prefers-reduced-motion: no-preference) {
+  /* the level path is the tallest card: seat it right under the bar so it
+   * still fits a 900px window whole */
+  #levels.w369-band .w369-band-body > :only-child { inset-block-start: calc(var(--sp-11) + var(--sp-1)); }
 }

@@ -21,7 +21,7 @@ async function pinnedPx(page: import('@playwright/test').Page, id: string) {
     const top0 = el.getBoundingClientRect().top + scrollY;
     let pinned = 0;
     for (let y = Math.max(0, top0 - innerHeight); y < top0 + el.offsetHeight; y += 20) {
-      scrollTo(0, y);
+      scrollTo({ top: y, behavior: 'instant' });
       await new Promise((r) => setTimeout(r, 8));
       if (Math.abs(stage.getBoundingClientRect().top) <= 2) pinned += 20;
     }
@@ -69,3 +69,33 @@ for (const vp of [{ name: '1440x900', width: 1440, height: 900 }, { name: '390x8
     });
   });
 }
+
+test.describe('band subject card holds in the stage (tall desktop)', () => {
+  test.use({ viewport: { width: 1440, height: 900 } });
+  for (const id of ['progress', 'rewards', 'levels']) {
+    test(`#${id} subject card stays seated while the page scrolls past it`, async ({ page }) => {
+      await page.goto('/');
+      await page.waitForSelector(`#${id} .w369-band-body`);
+      const geo = await page.evaluate((bandId) => {
+        const body = document.querySelector(`#${bandId} .w369-band-body`) as HTMLElement;
+        const card = body.firstElementChild as HTMLElement;
+        return { top0: body.getBoundingClientRect().top + scrollY, bodyH: body.offsetHeight, cardH: card.offsetHeight, seat: parseFloat(getComputedStyle(card).top) };
+      }, id);
+      // travel = bodyH - cardH; sample the card at 25%, 50% and 75% of it
+      const travel = geo.bodyH - geo.cardH;
+      expect(travel, `#${id} pin travel ${travel}px`).toBeGreaterThanOrEqual(300);
+      for (const f of [0.25, 0.5, 0.75]) {
+        const y = geo.top0 - geo.seat + travel * f;
+        await page.evaluate((yy) => scrollTo({ top: yy, behavior: 'instant' }), y);
+        await page.waitForTimeout(700);
+        const rc = await page.evaluate((bandId) => {
+          const c = (document.querySelector(`#${bandId} .w369-band-body`) as HTMLElement).firstElementChild as HTMLElement;
+          const r = c.getBoundingClientRect();
+          return { top: r.top, bottom: r.bottom, vh: innerHeight };
+        }, id);
+        expect(Math.abs(rc.top - geo.seat), `#${id} at ${f}: card top ${rc.top} vs seat ${geo.seat}`).toBeLessThanOrEqual(6);
+        expect(rc.bottom, `#${id} card fits the viewport while pinned`).toBeLessThanOrEqual(rc.vh);
+      }
+    });
+  }
+});
