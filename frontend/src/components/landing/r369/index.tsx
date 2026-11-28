@@ -740,6 +740,12 @@ export function StarsBand() {
   const [done, setDone] = useState<Record<string, boolean>>({});
   const [seed, setSeed] = useState(0);
   const [burstAt, setBurstAt] = useState<string | null>(null);
+  const onTasks = useCallback((n: number) => {
+    setDone(Object.fromEntries(TODAY_TASKS.map((t, i) => [t.id, i < n])));
+    setBurstAt(n > 0 ? TODAY_TASKS[n - 1]!.id : null);
+    if (n > 0) setSeed((x) => x + 1);
+  }, []);
+  useScrub('story', TODAY_TASKS.length, onTasks);
   const collected = TODAY_TASKS.reduce((n, t) => (done[t.id] ? n + t.stars : n), 0);
   const count = TODAY_TASKS.filter((t) => done[t.id]).length;
   const pct = Math.round((collected / WEEK_GOAL) * 100);
