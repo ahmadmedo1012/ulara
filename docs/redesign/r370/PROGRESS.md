@@ -357,3 +357,34 @@ and any iOS build: this machine has no Android SDK, no emulator and no
 Xcode/macOS, and installing them is out of scope (the SDK download alone is
 several GB) — so the Gradle and Xcode lanes are reviewed statically, not
 run. Mobile suite unchanged at 1544 passed / 59 suites.
+
+## Item 10 — repo health: the gate document that lies (DONE, scoped)
+
+**Spec.** Accurate setup docs and a CONTRIBUTING whose gate commands are the
+ones CI actually runs.
+
+**Found in `CONTRIBUTING.md` (all stale, all now fixed).**
+* The bundle ceiling was stated as **770 KB gz** in two places; the real
+  ceiling is **878 KB** (`AGENTS.md` §3 `LIMIT_TOTAL_KB`, and the current
+  build is 852.6 KB gz — so the document described a gate that fails on a
+  green tree).
+* "current round: R341" and a branch-naming rule (`wip/<task>`) that no
+  longer matches the round branches actually in use (`r370/hardening`).
+* The gates table listed a `npm test` that hides the single most common
+  local trap: **five frontend tests are timezone-sensitive** and fail on a
+  UTC+2 machine while CI (UTC) is green. It never mentioned the mobile
+  suite at all.
+
+**Change.** The gates table now carries the exact command, the environment
+(`TZ=UTC`, enforced by `frontend/package.json`'s test script), and the last
+measured count for each gate: frontend **3018/247**, backend **2307/19**,
+mobile **1544/59**, parity export PASS (201), the stylelint ratchet's four
+remaining `no-duplicate-selectors` in `styles/landing/r369.css`, and the
+878 KB ceiling. A timezone warning sits directly under the table.
+
+**Not done, and why.** Sharding the frontend test job: it would rename the
+`Test (frontend)` status check, which is what branch protection keys on —
+that needs the owner's confirmation of the protection rules, not a unilateral
+edit. Dead-code removal "the ratchet allows" and duplicated-helper merging:
+both are repo-wide sweeps with no measurement behind them in this round;
+doing them blind is how a hardening pass turns into churn.

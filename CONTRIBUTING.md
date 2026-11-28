@@ -14,8 +14,8 @@ Copy `.env.example` → `.env`, then follow the README quickstart. Node `>=20 <2
 
 ## اتفاقيات العمل | Working agreements (set in R339, still in force)
 
-هذه قواعد العمل القائمة، ملزمة لكل وكيل/مساهم (الجولة الحالية R341) | Binding for every agent
-and contributor (current round: R341):
+هذه قواعد العمل القائمة، ملزمة لكل وكيل/مساهم (الجولة الحالية R370) | Binding for every agent
+and contributor (current round: R370):
 
 1. **بوابة الدفع**: `bash scripts/verify.sh --fast` أخضر قبل كل دفع — هذا
    عقد R337 بعد حادثتي main الأحمر. | `verify.sh --fast` green before every
@@ -23,7 +23,7 @@ and contributor (current round: R341):
 2. **الاختبارات قانون**: لا يُحذف اختبار ولا يُضعَف تأكيد ليمرّ الكود —
    إن فشل الاختبار فالخلل في الكود. | Tests are law: never delete a test
    or weaken an assertion to make code pass.
-3. **لا رفع سقوف**: لا يُرفع سقف (bundle ≤ 770 KB gz…) ولا يُعاد تثبيت خط
+3. **لا رفع سقوف**: لا يُرفع سقف (bundle ≤ 878 KB gz…) ولا يُعاد تثبيت خط
    أساس بوابة إلا بتوثيق سبب مقنع في نفس الـ PR. | Never raise a ceiling
    or re-pin a gate baseline without a documented justification.
 4. **انضباط السقاطة (ratchet)**: أرقام المطابقة تتحسن فقط؛ التحسن يُثبَّت
@@ -33,8 +33,8 @@ and contributor (current round: R341):
 5. **سقف الاستثناء 5%**: دلتا العناصر المستثناة (excused) في أي قسم < 5%
    — الاستثناءات تكلفة تُدار لا بابًا خلفيًا. | Excused-element delta per
    section stays under 5%.
-6. **تسمية الفروع**: `wip/<task>` في الجولة الحالية (قانون R341؛ تاريخيًا
-   `rNNN/<task>` مثل `r339/t23`) — تجنّب
+6. **تسمية الفروع**: `rNNN/<task>` للجولات البرمجية (`r370/hardening`، `r339/t23`)
+   أو `wip/<task>` لأعمال الصيانة القصيرة — تجنّب
    نمط `r338/t13*` (محجوز بقواعد المستودع). | Branches: `wip/<task>` this wave
    (r341 law; historically `rNNN/<task>`);
    the `r338/t13*` pattern is reserved by a repo ruleset — avoid it.
@@ -74,18 +74,31 @@ package.json — يعاد ضبطه مع كل `npm install`). | Wired via core.ho
 
 ## بوابات الجودة | Quality gates
 
-| الفحص | الأمر |
-|---|---|
-| **المجموعة الكاملة** | `bash scripts/verify.sh` (أو `--fast`) |
-| lint | `npm run lint` |
-| typecheck | `npm run typecheck` |
-| tests | `npm test` |
-| icons (Lucide فقط) | `bash scripts/check-icons.sh` |
-| motion tokens (لا قيم خام) | `bash scripts/check-motion-tokens.sh` |
-| بصمات CSP | `bash scripts/check-csp-hash.sh` |
-| تكافؤ التصدير | `node scripts/verify-parity-export.mjs` |
-| dead-code ratchet | `bash scripts/deadcode/check.sh` |
-| build | `npm run build -w backend && npm run build -w frontend` |
+كل أمر هنا مُشغَّل فعلًا على `r370` (آخر أرقام مقاسة بجانبه). | Every command
+below was actually run on `r370`; the counts are the last measured ones.
+
+| الفحص | الأمر | آخر قياس |
+|---|---|---|
+| **المجموعة الكاملة** | `bash scripts/verify.sh` (أو `--fast`) | — |
+| lint | `npm run lint` | 0 errors |
+| typecheck (4 مشاريع) | `npm run typecheck` | 0 |
+| اختبارات الواجهة | `cd frontend && npm test` (**TZ=UTC** مثبّت في السكربت) | 3018 passed / 247 suites |
+| اختبارات الخادم | `cd backend && npm test` | 2307 passed / 19 skipped |
+| اختبارات الجوال | `cd apps/mobile && npx jest` | 1544 passed / 59 suites |
+| أيقونات (Lucide فقط) | `bash scripts/check-icons.sh` | — |
+| motion tokens (لا قيم خام) | `bash scripts/check-motion-tokens.sh` | — |
+| بصمات CSP | `bash scripts/check-csp-hash.sh` | — |
+| ألوان/CSS خام | `bash scripts/check-colors.sh` · `bash scripts/check-raw-css.sh` | — |
+| تكافؤ التصدير | `node scripts/verify-parity-export.mjs` | PASS (201) |
+| stylelint (سقاطة) | `bash scripts/gates/stylelint-gate.sh` | 4 `no-duplicate-selectors` في `styles/landing/r369.css` (closeout الواجهة) |
+| dead-code ratchet | `bash scripts/deadcode/check.sh` | — |
+| حجم الملفات/المستندات | `npm run gate:size` | — |
+| build | `npm run build -w backend && npm run build -w frontend` | حزمة ≤ 878 KB gz |
+
+**تحذير التوقيت | Timezone trap.** خمسة اختبارات واجهة تعتمد على منطقة
+زمنية غير UTC وتفشل على جهاز بـ UTC+2 — السكربت يفرض `TZ=UTC`، فلا تشغّلها
+بـ `npx vitest` مباشرة. | Five frontend tests are timezone-sensitive; run
+them through `npm test` (TZ=UTC), never bare `npx vitest`.
 
 (القائمة الكاملة بأوامرها في AGENTS.md §3.) البوابات خضراء قبل كل دفعة،
 والـ CI يفرضها على كل PR. | All gates green before every push; CI enforces
@@ -96,7 +109,7 @@ them on every PR.
 1. فرع لكل عمل (`r339/<task>` لجولات البرنامج، أو `feat/…`/`fix/…`)
    يفتح PR إلى `main` — لا دفع مباشر إلى `main` إلا بترتيب مسبق مع المشرف.
 2. املأ قائمة تدقيق الـ PR (`.github/PULL_REQUEST_TEMPLATE.md`): البوابات،
-   أثر المطابقة (قبل ← بعد)، حجم الحزمة (≤ 770 KB gz)، المظهران، 390،
+   أثر المطابقة (قبل ← بعد)، حجم الحزمة (≤ 878 KB gz)، المظهران، 390،
    RTL، لقطات الشاشة لتغييرات الواجهة.
 3. أي تغيير يستحق سطرًا في `CHANGELOG.md` يُحدَّث في نفس الـ PR.
 
