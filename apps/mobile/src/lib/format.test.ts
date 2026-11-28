@@ -9,6 +9,10 @@
 import { renderHook, act } from "@testing-library/react-native";
 import {
   arabicIndic,
+  fromNow,
+  latn,
+  num,
+  pct,
   formatNumber,
   NUMERALS_OPTIONS,
   setNumeralsPreference,
@@ -100,5 +104,32 @@ describe("the persisted preference + hook", () => {
   afterAll(() => {
     // Module-global store: restore the default for other suites.
     setNumeralsPreference("latin");
+  });
+});
+
+describe("num / pct / fromNow follow the persisted numerals preference", () => {
+  afterEach(() => setNumeralsPreference("latin"));
+
+  it("stay Latin by default", () => {
+    expect(num(42)).toBe("42");
+    expect(pct(87.4)).toBe("87%");
+  });
+
+  it("switch to Arabic-Indic digits when the user opts in, on every screen", () => {
+    setNumeralsPreference("arabic-indic");
+    expect(num(1240)).toBe("١٢٤٠");
+    expect(pct(87.4)).toBe("٨٧%");
+    expect(fromNow(new Date(Date.now() - 5 * 60000))).toBe("قبل ٥ دقيقة");
+  });
+
+  it("keeps latn() for keys and ids regardless of the preference", () => {
+    setNumeralsPreference("arabic-indic");
+    expect(latn(2026)).toBe("2026");
+  });
+
+  it("returns the fallback untouched", () => {
+    setNumeralsPreference("arabic-indic");
+    expect(num(null)).toBe("—");
+    expect(pct(undefined, "n/a")).toBe("n/a");
   });
 });

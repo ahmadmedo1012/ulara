@@ -181,14 +181,24 @@ export function useNumerals(): NumeralsApi {
   };
 }
 
+/**
+ * Display-only: honours the persisted numerals preference without a hook, so
+ * the shared helpers follow the Settings choice on EVERY screen (not only the
+ * five that adopted useNumerals). Latin unless the user opted in. Never used
+ * for keys, ids or API params: those keep latn().
+ */
+function shown(s: string): string {
+  return useNumeralsStore.getState().preference === "arabic-indic" ? arabicIndic(s) : s;
+}
+
 export function num(n: number | null | undefined, fallback = "—"): string {
   if (n === null || n === undefined || Number.isNaN(n)) return fallback;
-  return latn(n);
+  return shown(latn(n));
 }
 
 export function pct(n: number | null | undefined, fallback = "—"): string {
   if (n === null || n === undefined || Number.isNaN(n)) return fallback;
-  return `${latn(Math.round(n))}%`;
+  return shown(`${latn(Math.round(n))}%`);
 }
 
 const AR_DATE_OPTS: DateTimeFormatOptions = { day: "numeric", month: "long", year: "numeric" };
@@ -243,11 +253,11 @@ export function fromNow(d: string | Date | null | undefined): string {
   const diffMs = Date.now() - new Date(d).getTime();
   const min = Math.round(diffMs / 60000);
   if (min < 1) return "الآن";
-  if (min < 60) return `قبل ${latn(min)} دقيقة`;
+  if (min < 60) return shown(`قبل ${latn(min)} دقيقة`);
   const hours = Math.round(min / 60);
-  if (hours < 24) return `قبل ${latn(hours)} ساعة`;
+  if (hours < 24) return shown(`قبل ${latn(hours)} ساعة`);
   const days = Math.round(hours / 24);
-  if (days < 30) return `قبل ${latn(days)} يومًا`;
+  if (days < 30) return shown(`قبل ${latn(days)} يومًا`);
   return fullDate(d);
 }
 
