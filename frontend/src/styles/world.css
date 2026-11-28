@@ -113,6 +113,24 @@
     background: var(--accent-soft);
   }
 
+  /* The destructive row action pairs .btn.ghost with .r305ao-btn-danger
+     (the admin and owner lists). The ghost fill above is in this later
+     layer, so it beat the danger fill and left the warm-ink label on the
+     page ground (1.1:1). The pair is one control: fill, label and hover
+     all ride the danger tokens. */
+  .btn.r305ao-btn-danger {
+    background: var(--danger);
+    color: var(--danger-fg);
+    box-shadow: none;
+    --_btn-fg: var(--danger-fg);
+    --_btn-wipe: color-mix(in oklab, var(--danger) 86%, var(--neutral-0));
+    --_btn-wipe-fg: var(--danger-fg);
+  }
+  .btn.r305ao-btn-danger:hover:not(:disabled) {
+    background: color-mix(in oklab, var(--danger) 86%, var(--neutral-0));
+    box-shadow: none;
+  }
+
   /* Icon-only actions stay perfectly round — the pill rung is already
      circular at a square box size, this just keeps the box square. */
   .btn.icon-btn,
