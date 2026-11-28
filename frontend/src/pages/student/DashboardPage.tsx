@@ -258,8 +258,8 @@ function nodeText(n: ReactNode): string {
  * for a scheduled session. Pure; feeds both the TodayList action slot
  * and the week ledger's trailing chip group. */
 function agendaChip(item: AgendaItem, now: number): { label: string; tone: StatusChipTone } {
-  if (item.kind === 'live') return { label: 'LIVE', tone: 'live' };
-  if (item.kind === 'class') return { label: 'CLASS', tone: 'quiet' };
+  if (item.kind === 'live') return { label: 'مباشر', tone: 'live' };
+  if (item.kind === 'class') return { label: 'محاضرة', tone: 'quiet' };
   if (item.whenMs === Number.MAX_SAFE_INTEGER) return dueChip(Number.MAX_SAFE_INTEGER);
   return dueChip(Math.round((item.whenMs - now) / 86_400_000));
 }

@@ -50,11 +50,11 @@ test('F13 · student applies to a job and browses the MOOC catalog states', asyn
     const applyBtn = jobRow.getByRole('button', { name: 'تقدّم' });
     if (await applyBtn.count()) {
       await applyBtn.click();
-      await expect(jobRow.getByText('APPLIED')).toBeVisible({ timeout: 20_000 });
+      await expect(jobRow.getByText('تم التقديم')).toBeVisible({ timeout: 20_000 });
     } else {
       // A prior rehearsal run already applied — the standing chip IS
       // the server-truth state this half proves.
-      await expect(jobRow.getByText('APPLIED')).toBeVisible();
+      await expect(jobRow.getByText('تم التقديم')).toBeVisible();
     }
     await flowShot(page, 'flow-13-jobs-applied');
 

@@ -304,7 +304,7 @@ export function MessagesInbox({
                 srLabel={countAr(meta.total, ['رسالة واحدة', 'رسالتان', 'رسائل', 'رسالة'])}
               />
               {unread > 0 && (
-                <StatusChip label={`UNREAD ${unread}`} tone="new" />
+                <StatusChip label={`غير مقروءة ${unread}`} tone="new" />
               )}
             </span>
           ) : undefined}
@@ -381,7 +381,7 @@ export function MessagesInbox({
                             {/* R319 (c3-S2): the row's read state rides the
                                 §B2 mono chip register — square hairline
                                 ink, never a color-only Badge. */}
-                            {unreadRow && <StatusChip label="UNREAD" tone="new" />}
+                            {unreadRow && <StatusChip label="غير مقروءة" tone="new" />}
                           </div>
                           {/* 5-B6 messages craft: the body clamps to one line —
                               30 rows of arbitrary prose otherwise rag the log's

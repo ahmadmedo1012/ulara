@@ -59,15 +59,15 @@ for (const theme of THEMES) {
       await expect(bars.locator('.r319s-bar-rule')).toHaveCount(4);
     });
 
-    test('the semester ruler: W07/16 mono head, one tick per week, the 45% quiet meta', async ({ page }) => {
+    test('the semester ruler: «أسبوع 7 من 16» head, one tick per week, the 45% quiet meta', async ({ page }) => {
       await page.goto('/student/dashboard');
       await expect(page.locator('.r319s-ruler')).toBeVisible({ timeout: 20000 });
 
       const ruler = page.locator('.r319s-ruler');
       // The fixture term (startsAt −42d, endsAt +70d) spans 112 days =
       // 16 whole weeks; day 42 → week 7.
-      await expect(ruler.locator('.r319s-ruler-head')).toHaveText(/^W\d{2}\/\d{2}$/);
-      await expect(ruler.locator('.r319s-ruler-head')).toHaveText('W07/16');
+      await expect(ruler.locator('.r319s-ruler-head')).toHaveText(/^أسبوع \d+ من \d+$/);
+      await expect(ruler.locator('.r319s-ruler-head')).toHaveText('أسبوع 7 من 16');
       await expect(ruler.locator('.r319s-ruler-tick')).toHaveCount(16);
       // The API's percentage as quiet mono meta (replaces the old
       // «X% من الفصل مضى» prose line).
@@ -76,7 +76,7 @@ for (const theme of THEMES) {
       // carry the whole reading.
       // The meter contract for assistive tech.
       await expect(ruler).toHaveAttribute('role', 'meter');
-      await expect(ruler).toHaveAttribute('aria-valuetext', 'W07/16 · 45%');
+      await expect(ruler).toHaveAttribute('aria-valuetext', 'أسبوع 7 من 16 · 45%');
       // The orange fill reaches exactly the term's progress.
       const fill = await ruler.locator('.r319s-ruler-fill').evaluate((el) => el.style.inlineSize);
       expect(fill).toBe('45%');
@@ -108,19 +108,19 @@ for (const theme of THEMES) {
       await expect(chips.first()).toBeVisible();
       expect(await chips.count()).toBeGreaterThanOrEqual(2);
       // Today's class row → its quiet CLASS chip in the TodayList.
-      await expect(page.locator('.pf-today-item .r319s-chip', { hasText: 'CLASS' })).toBeVisible();
+      await expect(page.locator('.pf-today-item .r319s-chip', { hasText: 'محاضرة' })).toBeVisible();
       // r351 A2 (Q3): the +3-day assignment rides the TODAY list's
       // upcoming row now (the week ledger retired with its section).
-      await expect(page.locator('.pf-today-list .r319s-chip', { hasText: 'DUE 3D' })).toBeVisible();
-      // Square (radius 0), the mono voice, LTR isolation.
+      await expect(page.locator('.pf-today-list .r319s-chip', { hasText: 'بعد 3 أيام' })).toBeVisible();
+      // Pill on the radius scale, the Readex voice, inherits the page direction.
       const style = await chips.first().evaluate((el) => ({
         radius: getComputedStyle(el).borderRadius,
         mono: getComputedStyle(el).fontFamily,
         dir: el.getAttribute('dir'),
       }));
       expect(R369_RADII).toContain(style.radius as (typeof R369_RADII)[number]);
-      expect(style.mono).toContain('Geist Mono');
-      expect(style.dir).toBe('ltr');
+      expect(style.mono).toContain('Readex Pro');
+      expect(style.dir).toBeNull();
     });
 
     test('the week strip: 7 Sunday-first cells, exactly today inked', async ({ page }) => {

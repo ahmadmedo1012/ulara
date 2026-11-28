@@ -209,7 +209,7 @@ describe('R305 courses — the upcoming-assignments due chips', () => {
        in the row's meta («الموعد …»). The r305 dot-tone map is retired. */
     const chips = Array.from(container.querySelectorAll('.pf-row-trailing .r319s-chip'));
     expect(chips).toHaveLength(3);
-    expect(chips.map((c) => c.textContent)).toEqual(['OVERDUE', 'DUE 1D', 'DUE 9D']);
+    expect(chips.map((c) => c.textContent)).toEqual(['متأخر', 'غدًا', 'بعد 9 أيام']);
     // All three are the `due` tone (neutral ink — orange stays LIVE-only).
     expect(chips.every((c) => c.classList.contains('r319s-chip--due'))).toBe(true);
     // The ONE clear action per row survives (the due chip is quiet chrome).

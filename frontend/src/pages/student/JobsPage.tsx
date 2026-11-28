@@ -90,7 +90,7 @@ function JobActions({ job, applied }: { job: Job; applied: boolean }) {
   if (isApplied) {
     /* R319 (c3-S2): the applied state rides the §B2 mono chip
        register — square hairline ink, never a color-only Badge. */
-    return <StatusChip label="APPLIED" tone="done" />;
+    return <StatusChip label="تم التقديم" tone="done" />;
   }
   return (
     <span className="sg-cell-stack">

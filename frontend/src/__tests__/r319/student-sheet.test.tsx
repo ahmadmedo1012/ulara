@@ -68,15 +68,15 @@ describe('R319 · RulerGauge — the semester week math (W09/15)', () => {
     expect(semesterWeeks(STARTS, ENDS, NOW)).toEqual({ week: 9, totalWeeks: 15 });
   });
 
-  it('renders the mono W09/15 head, one tick per week, and the API % as quiet meta', () => {
+  it('renders the «أسبوع 9 من 15» head, one tick per week, and the API % as quiet meta', () => {
     const { container } = render(
       <RulerGauge startsAt={STARTS} endsAt={ENDS} progressPct={60} now={NOW} />,
     );
-    expect(container.querySelector('.r319s-ruler-head')?.textContent).toBe('W09/15');
+    expect(container.querySelector('.r319s-ruler-head')?.textContent).toBe('أسبوع 9 من 15');
     expect(container.querySelectorAll('.r319s-ruler-tick')).toHaveLength(15);
     // The meter contract: the same reading for assistive tech.
     const meter = container.querySelector('[role="meter"]');
-    expect(meter?.getAttribute('aria-valuetext')).toBe('W09/15 · 60%');
+    expect(meter?.getAttribute('aria-valuetext')).toBe('أسبوع 9 من 15 · 60%');
     expect(meter?.getAttribute('aria-valuenow')).toBe('60');
     expect(container.querySelector('.r319s-ruler-pct')?.textContent).toBe('60%');
     /* r351 A2 (Q3): the prose caption retired — the % + W head carry
@@ -124,25 +124,27 @@ describe('R319 · CourseBar — the per-course hairline with the end-tick', () =
 
 describe('R319 · StatusChip — the mono status register', () => {
   it('maps every day-count to the honest deadline label (the formatDue arithmetic)', () => {
-    expect(dueChip(-2)).toEqual({ label: 'OVERDUE', tone: 'due' });
-    expect(dueChip(0)).toEqual({ label: 'DUE TODAY', tone: 'due' });
-    expect(dueChip(3)).toEqual({ label: 'DUE 3D', tone: 'due' });
-    expect(dueChip(9)).toEqual({ label: 'DUE 9D', tone: 'due' });
-    expect(dueChip(30)).toEqual({ label: 'DUE', tone: 'due' });
+    expect(dueChip(-2)).toEqual({ label: 'متأخر', tone: 'due' });
+    expect(dueChip(0)).toEqual({ label: 'اليوم', tone: 'due' });
+    expect(dueChip(1)).toEqual({ label: 'غدًا', tone: 'due' });
+    expect(dueChip(2)).toEqual({ label: 'بعد يومين', tone: 'due' });
+    expect(dueChip(3)).toEqual({ label: 'بعد 3 أيام', tone: 'due' });
+    expect(dueChip(9)).toEqual({ label: 'بعد 9 أيام', tone: 'due' });
+    expect(dueChip(30)).toEqual({ label: 'موعد', tone: 'due' });
   });
 
-  it('renders every tone of the register as a square mono chip, LTR-isolated', () => {
+  it('renders every tone of the register as an Arabic pill chip that inherits the page direction', () => {
     for (const tone of STATUS_CHIP_TONES) {
-      const { container } = render(<StatusChip label="LIVE" tone={tone} />);
+      const { container } = render(<StatusChip label="مباشر" tone={tone} />);
       const chip = container.querySelector(`.r319s-chip.r319s-chip--${tone}`);
       expect(chip, `tone ${tone} must render its class`).not.toBeNull();
-      expect(chip?.getAttribute('dir')).toBe('ltr');
-      expect(chip?.textContent).toBe('LIVE');
+      expect(chip?.getAttribute('dir')).toBeNull();
+      expect(chip?.textContent).toBe('مباشر');
     }
   });
 
   it('orange is LIVE ONLY — no other tone carries the live class', () => {
-    const { container } = render(<StatusChip label="DUE 3D" tone="due" />);
+    const { container } = render(<StatusChip label="بعد 3 أيام" tone="due" />);
     expect(container.querySelector('.r319s-chip')?.className).not.toContain('--live');
   });
 });

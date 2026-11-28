@@ -213,7 +213,7 @@ describe('MessagesPage — read-state visibility (r164-h)', () => {
 
     /* R319 override (c3-S2): the shared inbox's read-state rides the
        §B2 mono chip register — UNREAD — for BOTH roles. */
-    expect(screen.getAllByText('UNREAD')).toHaveLength(1);
+    expect(screen.getAllByText('غير مقروءة')).toHaveLength(1);
     // All three rows rendered (the read + sent rows stay unbadged).
     expect(screen.getAllByText(/لدي سؤال عن الواجب/)).toHaveLength(3);
   });
@@ -229,7 +229,7 @@ describe('MessagesPage — read-state visibility (r164-h)', () => {
 
     render(<MemoryRouter><MessagesPage /></MemoryRouter>);
 
-    expect(screen.queryByText('UNREAD')).toBeNull();
+    expect(screen.queryByText('غير مقروءة')).toBeNull();
     expect(screen.queryByRole('button', { name: /تعليم الكل كمقروء/ })).toBeNull();
   });
 });

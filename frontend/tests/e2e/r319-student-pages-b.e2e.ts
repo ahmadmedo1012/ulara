@@ -67,7 +67,7 @@ async function expectSheetContract(page: import('@playwright/test').Page) {
 test.describe('student pages B — §B2 sheet grammar (chromium · light)', () => {
   test.use({ themeSeed: 'light' });
 
-  test('/student/profile — indexed sheet sections, UNLINKED mono chips, radius-0 cards', async ({ page }) => {
+  test('/student/profile — indexed sheet sections, غير مرتبط chips, scale-radius cards', async ({ page }) => {
     await page.goto('/student/profile');
     await expect(page.locator('h1.pf-page-title')).toBeVisible({ timeout: 20000 });
     /* The default academic tab shows its bar; the account-level password
@@ -79,9 +79,9 @@ test.describe('student pages B — §B2 sheet grammar (chromium · light)', () =
      * mono ratio meta (0/3 — real localStorage data, nothing linked). */
     await page.getByRole('tab', { name: 'الحسابات البحثية' }).click();
     await expect(page.getByRole('heading', { name: 'الحسابات الأكاديمية' })).toBeVisible();
-    const chips = page.locator('.r319s-chip', { hasText: 'UNLINKED' });
+    const chips = page.locator('.r319s-chip', { hasText: 'غير مرتبط' });
     await expect(chips).toHaveCount(3);
-    expect(await chips.first().getAttribute('dir')).toBe('ltr');
+    expect(await chips.first().getAttribute('dir')).toBeNull();
     const linksBar = page.locator('.sg-head', { hasText: 'الحسابات الأكاديمية' });
     await expect(linksBar.locator('.sg-aside bdi[dir=ltr]')).toHaveText('0/3');
 
@@ -145,13 +145,13 @@ test.describe('student pages B — §B2 sheet grammar (chromium · light)', () =
      * summary chip (the same register the rows ride). */
     const meta = page.locator('.r319s-bar-meta');
     await expect(meta.locator('.r319s-count')).toHaveText('02');
-    await expect(meta.locator('.r319s-chip')).toHaveText('UNREAD 1');
+    await expect(meta.locator('.r319s-chip')).toHaveText('غير مقروءة 1');
 
     /* The unread incoming row carries its §B2 mono chip; the sent row
      * never does. */
     const rowChips = page.locator('.list-row .r319s-chip');
     await expect(rowChips).toHaveCount(1);
-    await expect(rowChips).toHaveText('UNREAD');
+    await expect(rowChips).toHaveText('غير مقروءة');
 
     // The mono chip (the class sample) computes radius 0.
     expect(R369_RADII).toContain(await rowChips.first().evaluate((el) => getComputedStyle(el).borderRadius));
@@ -250,7 +250,7 @@ test.describe('student pages B — §B2 sheet grammar (chromium · light)', () =
     expect(counts).toEqual(['01', '01']);
 
     // Today's marker — the §B2 mono chip register.
-    await expect(page.locator('.r319s-chip', { hasText: 'TODAY' })).toHaveCount(1);
+    await expect(page.locator('.r319s-chip', { hasText: 'اليوم' })).toHaveCount(1);
 
     // The day's RowList (the card class sample) computes radius 0.
     const rowlist = page.locator('.pf-rowlist').first();

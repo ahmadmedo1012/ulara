@@ -403,11 +403,11 @@ export default function DesignPage(): React.JSX.Element {
             </Cell>
             <Cell label="StatusChip — سجل r319s الأحادي">
               <div className="r323d-row">
-                <StatusChip label="LIVE" tone="live" />
+                <StatusChip label="مباشر" tone="live" />
                 <StatusChip label={dueChip(3).label} tone={dueChip(3).tone} />
-                <StatusChip label="DONE" tone="done" />
-                <StatusChip label="NEW" tone="new" />
-                <StatusChip label="ARCHIVED" />
+                <StatusChip label="مكتمل" tone="done" />
+                <StatusChip label="جديد" tone="new" />
+                <StatusChip label="مؤرشف" />
               </div>
             </Cell>
             <Cell label="§R325.f — محور النقطة (تجمّد/مستقر/انتظار)">
@@ -478,7 +478,7 @@ export default function DesignPage(): React.JSX.Element {
                   <td className="r323d-num" dir="ltr">101</td>
                   <td className="tbl-strong">سلمى الطارق</td>
                   <td className="r323d-num" dir="ltr">87.50</td>
-                  <td><StatusChip label="GRADED" tone="done" /></td>
+                  <td><StatusChip label="مُقيَّم" tone="done" /></td>
                   <td>
                     <span className="table-row-actions">
                       <Button size="sm" variant="ghost">عرض</Button>
@@ -489,7 +489,7 @@ export default function DesignPage(): React.JSX.Element {
                   <td className="r323d-num" dir="ltr">102</td>
                   <td className="tbl-strong"><bdi>عبدالرحمن بن فيصل آل سعد العتيبي الكلثامي</bdi></td>
                   <td className="r323d-num" dir="ltr">72.00</td>
-                  <td><StatusChip label="DUE 3D" tone="due" /></td>
+                  <td><StatusChip label="بعد 3 أيام" tone="due" /></td>
                   <td>
                     <span className="table-row-actions">
                       <Button size="sm" variant="ghost">عرض</Button>
@@ -500,7 +500,7 @@ export default function DesignPage(): React.JSX.Element {
                   <td className="r323d-num" dir="ltr">103</td>
                   <td className="tbl-strong">مراد الترهوني</td>
                   <td className="r323d-num" dir="ltr">—</td>
-                  <td><StatusChip label="DRAFT" /></td>
+                  <td><StatusChip label="مسودة" /></td>
                   <td>
                     <span className="table-row-actions">
                       <Button size="sm" variant="ghost">عرض</Button>
@@ -550,7 +550,7 @@ export default function DesignPage(): React.JSX.Element {
                 lead="09:00"
                 title="محاضرة قواعد البيانات — التطبيع"
                 subtitle="القاعة بـ2 · د. الطرابلسي"
-                tail={<StatusChip label="LIVE" tone="live" />}
+                tail={<StatusChip label="مباشر" tone="live" />}
               />
               <LedgerRow
                 lead="11:30"
@@ -562,7 +562,7 @@ export default function DesignPage(): React.JSX.Element {
                 leadLabel="أسبوع 7"
                 lead="W07"
                 title="ورشة المشاريع — مناقشة أولى"
-                tail={<StatusChip label="GRADED" tone="done" />}
+                tail={<StatusChip label="مُقيَّم" tone="done" />}
               />
             </LedgerPanel>
           </div>

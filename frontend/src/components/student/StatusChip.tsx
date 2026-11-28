@@ -6,10 +6,10 @@
  * ink-on-paper. Orange (text + border) is reserved for LIVE ONLY — the
  * one signal state; everything else stays neutral ink:
  *
- *      [LIVE]  [DUE 3D]  [DONE]  [NEW]
+ *      [مباشر]  [بعد 3 أيام]  [مكتمل]  [جديد]
  *
  * `dueChip(n)` maps a day-count to the honest deadline label
- * (DUE TODAY / DUE nD / OVERDUE / DUE) so every consumer derives the
+ * (اليوم / غدًا / بعد n أيام / متأخر / موعد) so every consumer derives the
  * same string from the same arithmetic.
  */
 export type StatusChipTone = 'live' | 'due' | 'done' | 'new' | 'quiet';
@@ -18,7 +18,7 @@ export const STATUS_CHIP_TONES: readonly StatusChipTone[] = ['live', 'due', 'don
 
 export function StatusChip({ label, tone = 'quiet' }: { label: string; tone?: StatusChipTone }) {
   return (
-    <span className={`r319s-chip r319s-chip--${tone}`} dir="ltr">
+    <span className={`r319s-chip r319s-chip--${tone}`}>
       {label}
     </span>
   );
@@ -26,10 +26,12 @@ export function StatusChip({ label, tone = 'quiet' }: { label: string; tone?: St
 
 /** The deadline chip for a whole-day count (negative = overdue). */
 export function dueChip(days: number): { label: string; tone: StatusChipTone } {
-  if (days < 0) return { label: 'OVERDUE', tone: 'due' };
-  if (days === 0) return { label: 'DUE TODAY', tone: 'due' };
-  if (days <= 9) return { label: `DUE ${days}D`, tone: 'due' };
-  return { label: 'DUE', tone: 'due' };
+  if (days < 0) return { label: 'متأخر', tone: 'due' };
+  if (days === 0) return { label: 'اليوم', tone: 'due' };
+  if (days === 1) return { label: 'غدًا', tone: 'due' };
+  if (days === 2) return { label: 'بعد يومين', tone: 'due' };
+  if (days <= 9) return { label: `بعد ${days} أيام`, tone: 'due' };
+  return { label: 'موعد', tone: 'due' };
 }
 
 /** Whole days from `now` to `iso` (rounded — mirrors formatDue's math). */

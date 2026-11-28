@@ -75,7 +75,7 @@ export function RulerGauge({
   const pct = Number.isFinite(progressPct)
     ? Math.min(100, Math.max(0, progressPct))
     : 0;
-  const head = `W${String(week).padStart(2, '0')}/${String(totalWeeks).padStart(2, '0')}`;
+  const head = `أسبوع ${week} من ${totalWeeks}`;
   return (
     <div
       className="r319s-ruler"
@@ -109,8 +109,8 @@ export function RulerGauge({
             L-strong + neutral digits: one LTR run, bidi order intact
             without the isolation. */}
         <span
-          className="r319s-ruler-head r319s-mono"
-          style={{ insetInlineStart: `clamp(0px, ${pct}%, calc(100% - 52px))` }}
+          className="r319s-ruler-head"
+          style={{ insetInlineStart: `clamp(0px, ${pct}%, calc(100% - 88px))` }}
         >
           {head}
         </span>

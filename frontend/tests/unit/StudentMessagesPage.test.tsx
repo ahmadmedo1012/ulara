@@ -163,7 +163,7 @@ describe('StudentMessagesPage — inbox rows (r171a)', () => {
     expect(screen.getAllByText(/سالم الطاهر/)).toHaveLength(3);
     // Exactly ONE unread chip (the unread incoming row) — R319 override
     // (c3-S2): the §B2 mono chip register (UNREAD) replaced the brand Badge.
-    expect(screen.getAllByText('UNREAD')).toHaveLength(1);
+    expect(screen.getAllByText('غير مقروءة')).toHaveLength(1);
     // The sent row carries the «أنت:» prefix.
     expect(screen.getByText(/أنت: مرحباً، لدي سؤال عن موعد الاختبار/)).toBeInTheDocument();
   });

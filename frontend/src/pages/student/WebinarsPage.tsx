@@ -161,7 +161,7 @@ export default function WebinarsPage() {
                     <>
                       {/* R319 (c3-S2): the live state rides THE §B2 LIVE
                           mono chip — the one orange signal register. */}
-                      <StatusChip label="LIVE" tone="live" />
+                      <StatusChip label="مباشر" tone="live" />
                       {externalJoin ? (
                         <a
                           href={externalJoin}
@@ -178,7 +178,7 @@ export default function WebinarsPage() {
                       )}
                     </>
                   ) : (
-                    <StatusChip label="UPCOMING" />
+                    <StatusChip label="قادمة" />
                   )}
                 </div>
               );

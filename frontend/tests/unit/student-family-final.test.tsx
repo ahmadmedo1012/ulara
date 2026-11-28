@@ -186,7 +186,9 @@ describe('r299 — the student-learning family rides the patterns contract', () 
     expect(h1).toHaveClass('pf-page-title');
 
     // today's group is first and badged…
-    expect(screen.getByText('اليوم')).toBeInTheDocument();
+    const todayChip = container.querySelector('.r319s-chip--due');
+    expect(todayChip).not.toBeNull();
+    expect(todayChip).toHaveTextContent('اليوم');
     // …its rows ride the RowList surface with the slot facts.
     const rows = container.querySelectorAll('.pf-rowlist .pf-row');
     expect(rows.length).toBe(2);

@@ -1020,7 +1020,7 @@ export function SchedulePage() {
                     n={d.items.length}
                     srLabel={countAr(d.items.length, ['حصة واحدة', 'حصتان', 'حصص', 'حصة'])}
                   />
-                  {d.dow === todayDow ? <StatusChip label="TODAY" tone="due" /> : null}
+                  {d.dow === todayDow ? <StatusChip label="اليوم" tone="due" /> : null}
                 </>
               )}
               pad="none"

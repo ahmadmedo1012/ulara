@@ -89,13 +89,13 @@ describe('JobsPage — the honest applied state (18-G payload, 18-F2 consumption
     const appliedRow = rowOf('مهندس واجهات أمامية');
     /* R319 override (c3-S2): the applied state rides the §B2 mono
        chip register — APPLIED, square hairline ink. */
-    expect(within(appliedRow).getByText('APPLIED')).toBeInTheDocument();
+    expect(within(appliedRow).getByText('تم التقديم')).toBeInTheDocument();
     expect(within(appliedRow).queryByRole('button', { name: 'تقدّم' })).toBeNull();
 
     // The un-applied job still offers the real action.
     const openRow = rowOf('محلل بيانات');
     expect(within(openRow).getByRole('button', { name: 'تقدّم' })).toBeInTheDocument();
-    expect(within(openRow).queryByText('APPLIED')).toBeNull();
+    expect(within(openRow).queryByText('تم التقديم')).toBeNull();
   });
 
   it('requests the full payload — the whole body is the query result', async () => {
@@ -113,6 +113,6 @@ describe('JobsPage — the honest applied state (18-G payload, 18-F2 consumption
     await waitFor(() => {
       expect(mocks.post).toHaveBeenCalledWith('/jobs/j2/apply');
     });
-    expect(await within(openRow).findByText('APPLIED')).toBeInTheDocument();
+    expect(await within(openRow).findByText('تم التقديم')).toBeInTheDocument();
   });
 });

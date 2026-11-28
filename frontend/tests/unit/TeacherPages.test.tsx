@@ -982,7 +982,7 @@ describe('MessagesPage — unread count + mark-all-read (r157 / 6A9 · R319 c3-S
        («45 رسالة · 3 رسائل غير مقروءة»); it now rides the §B2 title
        bar's mono meta — the tabular total + the UNREAD n chip — with
        the countAr phrase kept for assistive tech. */
-    expect(screen.getByText('UNREAD 3')).toBeInTheDocument();
+    expect(screen.getByText('غير مقروءة 3')).toBeInTheDocument();
     const barMeta = document.querySelector('.r319s-bar-meta');
     expect(barMeta).not.toBeNull();
     expect(barMeta!.textContent).toContain('45');
@@ -1001,7 +1001,7 @@ describe('MessagesPage — unread count + mark-all-read (r157 / 6A9 · R319 c3-S
 
     // The bar meta stays the plain count (no UNREAD summary chip — the
     // fixture's rows keep their own honest per-row chips)…
-    expect(screen.queryByText(/^UNREAD \d+$/)).toBeNull();
+    expect(screen.queryByText(/^غير مقروءة \d+$/)).toBeNull();
     expect(screen.getByText('45 رسالة')).toBeInTheDocument(); // the sr-only countAr phrase
     // …and the button never renders (hidden at unread = 0).
     expect(screen.queryByRole('button', { name: 'تعليم الكل كمقروء' })).toBeNull();

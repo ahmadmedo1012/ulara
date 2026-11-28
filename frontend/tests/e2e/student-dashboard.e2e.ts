@@ -72,7 +72,7 @@ test.describe('لوحة تحكم الطالب', () => {
     /* r351 A2 (Q3): the honest deadline chip carries the reading (the
        relative-date meta retired with the week section). */
     await expect(taskRow.first()).toContainText('واجب الأسبوع الثالث');
-    await expect(taskRow.first().locator('.r319s-chip')).toContainText('DUE 3D');
+    await expect(taskRow.first().locator('.r319s-chip')).toContainText('بعد 3 أيام');
     // صف الأجندة: العنوان نفسه هو الرابط (PP-X2 audit P1-8 — Link على مستوى الصف).
     // الحصة والواجب كلاهما يقود إلى المقرّر نفسه، فالتحديد على صفّ الحصة
     // لا على الـhref وحده (r351 A2: الواجب صار صفًّا في القائمة نفسها).

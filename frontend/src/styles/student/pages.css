@@ -134,9 +134,9 @@
     inset-block-end: 12px;
     background: var(--bg);
     padding-inline: var(--sp-1);
-    font-size: var(--fs-mono-sm);
-    font-weight: var(--fw-medium);
-    letter-spacing: 0.04em;
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0;
     color: var(--accent-ink);
     white-space: nowrap;
   }
@@ -216,13 +216,13 @@
     align-items: center;
     padding: var(--sp-1) var(--sp-2);
     border: 1px solid var(--border-strong);
-    border-radius: var(--r-sm); /* 0 — the r313 squared ladder */
+    border-radius: var(--r-full); /* r369: the landing chip shape (pill) */
     background: transparent;
-    font-family: var(--font-mono);
-    font-size: var(--fs-mono-sm);
-    font-weight: var(--fw-medium);
+    font-family: inherit;
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
     line-height: 1.3;
-    letter-spacing: 0.04em;
+    letter-spacing: 0;
     color: var(--text-secondary);
     white-space: nowrap;
   }

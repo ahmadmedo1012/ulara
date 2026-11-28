@@ -391,9 +391,9 @@ export default function ProfilePage() {
                             a color-only Badge (state never rides color
                             alone). */}
                         {value ? (
-                          <StatusChip label="LINKED" tone="done" />
+                          <StatusChip label="مرتبط" tone="done" />
                         ) : (
-                          <StatusChip label="UNLINKED" />
+                          <StatusChip label="غير مرتبط" />
                         )}
                         {savedKey === l.key && (
                           <span className="profile-link-saved" role="status">
