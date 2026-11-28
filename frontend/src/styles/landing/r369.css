@@ -342,11 +342,11 @@
    * viewport-tall band (908px of 900), copy starts at the top edge. */
   padding-block: clamp(var(--sp-9), 6vw, var(--sp-12)) clamp(var(--sp-9), 5vw, var(--sp-11));
   min-block-size: calc(100svh - 76px);
+  isolation: isolate;
 }
 
 /* the reference's hero ground: a full-bleed peach-to-lavender wash that
  * ends in the cream of the next band (token colors, so dark stays dark) */
-.w369-hero { isolation: isolate; }
 .w369-hero::before {
   content: '';
   position: absolute;
@@ -379,11 +379,11 @@
   gap: var(--sp-3);
   transform: translate3d(var(--px, 0px), var(--py, 0px), 0);
   transition: transform var(--t-base) var(--ease-out);
+  position: relative;
 }
 
 /* P3 layered cards: real-content floats overlapping the phone edge.
  * Entry uses the spring ease; reduced motion shows them in place. */
-.w369-hero-art { position: relative; }
 .w369-float {
   position: absolute;
   display: flex;
@@ -1107,6 +1107,7 @@
   margin-inline: auto;
   padding-block: clamp(var(--sp-11), 8vw, var(--sp-14));
   text-align: center;
+  --w369-pastel: color-mix(in srgb, var(--c-peach-bg) 80%, var(--bg));
 }
 
 .w369-roles .w369-band-head { margin-inline: auto; text-align: center; max-inline-size: 52ch; }
@@ -1786,6 +1787,10 @@ html:not([data-theme='dark']) .w369-footer {
   position: absolute;
   translate: -50% -50%;
   border-radius: var(--r-full);
+  inline-size: 12px;
+  block-size: 12px;
+  background: var(--surface);
+  border: 2px solid color-mix(in srgb, var(--text) 30%, transparent);
 }
 .w369-road-dot,
 .w369-road-halo {
@@ -1801,12 +1806,6 @@ html:not([data-theme='dark']) .w369-footer {
 .w369-road-halo {
   fill: var(--gold);
   opacity: 0.22;
-}
-.w369-road-stop::after {
-  inline-size: 12px;
-  block-size: 12px;
-  background: var(--surface);
-  border: 2px solid color-mix(in srgb, var(--text) 30%, transparent);
 }
 .w369-road-stop[data-hit='true']::after {
   background: var(--gold);
@@ -2832,7 +2831,7 @@ html:not([data-theme='dark']) .w369-footer {
 
 /* a technical hairline grid behind the hero — the "this is a system"
    texture, at 3% ink, so it reads as paper, never as a pattern */
-.w369-hero::before {
+.w369-hero::after {
   content: '';
   position: absolute;
   inset-block-start: calc(var(--sp-9) * -1);
@@ -3183,13 +3182,10 @@ html:not([data-theme='dark']) .w369-footer {
  * The pinned #stars scene and the night band keep their own grounds. */
 .w369-band:not([data-scene='night']):not(#stars)::before {
   mask-image: linear-gradient(to bottom, transparent, CanvasText 8%, CanvasText 90%, transparent);
-  background:
-    radial-gradient(70% 45% at 50% 14%, color-mix(in srgb, var(--w369-tint-deep, var(--gold)) 16%, transparent), transparent 72%),
-    linear-gradient(to bottom,
-      var(--w369-tint-bg, var(--bg)) 0%,
-      var(--w369-tint-bg, var(--bg)) 34%,
-      color-mix(in srgb, var(--w369-tint-bg, var(--bg)) 45%, var(--bg)) 62%,
-      var(--bg) 100%);
+  background: linear-gradient(to bottom,
+    transparent 0%,
+    color-mix(in srgb, var(--w369-tint-bg, var(--bg)) 40%, var(--bg)) 40%,
+    var(--bg) 100%);
 }
 [data-theme='dark'] .w369-band:not([data-scene='night']):not(#stars)::before {
   background:
@@ -3225,12 +3221,6 @@ html:not([data-theme='dark']) .w369-footer {
     radial-gradient(60% 70% at 50% 40%, color-mix(in srgb, var(--w369-tint-deep, var(--gold)) 14%, transparent), transparent 75%),
     var(--w369-tint-bg, var(--bg));
   mask-image: linear-gradient(to bottom, transparent, CanvasText 10%, CanvasText 82%, transparent);
-}
-.w369-band:not([data-scene='night']):not(#stars)::before {
-  background: linear-gradient(to bottom,
-    transparent 0%,
-    color-mix(in srgb, var(--w369-tint-bg, var(--bg)) 40%, var(--bg)) 40%,
-    var(--bg) 100%);
 }
 [data-theme='dark'] .w369-band:not([data-scene='night']):not(#stars) .w369-band-head::before {
   background:
@@ -3285,7 +3275,6 @@ html:not([data-theme='dark']) .w369-footer {
 .w369-handoff   { --w369-pastel: color-mix(in srgb, var(--c-sky-bg) 80%, var(--bg)); }
 .w369-show      { --w369-pastel: color-mix(in srgb, var(--c-mint-bg) 80%, var(--bg)); }
 .w369-principles{ --w369-pastel: color-mix(in srgb, var(--c-lavender-bg) 80%, var(--bg)); }
-.w369-roles     { --w369-pastel: color-mix(in srgb, var(--c-peach-bg) 80%, var(--bg)); }
 [data-theme='dark'] .w369-handoff, [data-theme='dark'] .w369-show,
 [data-theme='dark'] .w369-principles, [data-theme='dark'] .w369-roles {
   --w369-pastel: color-mix(in srgb, var(--c-lavender-deep) 12%, var(--bg));
