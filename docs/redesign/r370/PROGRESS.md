@@ -239,3 +239,40 @@ idempotency mounted before the role gate on both writes, and 3 live-app
 cases: JSON still parses to a validation 400, 1.2 MB → 413, webhook without
 a signature → 400/401 never 500). Suite after: **2307 passed | 19 skipped**,
 `tsc` 0.
+
+## Item 7 — load test, p50/p90/p97.5/p99 (DONE)
+
+**Spec.** A repeatable load script for the five hottest reads, with real
+percentiles and a before/after that means something.
+
+**Harness** `backend/scripts/load-hotspots.mjs` (autocannon 7 via npx, no
+dependency added): one FRESH server process per endpoint — the app's real
+global limiter is 1000 req / 15 min / IP and must not be tuned away for a
+benchmark, so each endpoint fires a bounded 900 requests on 25 connections
+(0 non-2xx in both runs). autocannon has no p95 column; p97.5 is quoted as
+the nearest neighbour. Found while building it: `npx tsx src/index.ts`
+forks a grandchild that survives a SIGTERM to the wrapper and keeps the
+port (EADDRINUSE + a next endpoint hitting the OLD server's spent bucket) —
+the script now spawns `node --import tsx` directly.
+
+**Before / after, same machine, same seeded data (1,200 students, 22,948
+submissions, 57,600 attendance rows), same code, only the three item-1
+indexes dropped for the "before" run:**
+
+| endpoint | before rps · p50 | after rps · p50 | after p90 · p97.5 · p99 |
+|---|---|---|---|
+| teacher.dashboard | 69 · **338 ms** | 129 · **166 ms** | 186 · 210 · 215 ms |
+| student.dashboard | 300 · 72 ms | 300 · 71 ms | 86 · 118 · 146 ms |
+| me.results | 300 · 58 ms | 300 · 58 ms | 68 · 85 · 99 ms |
+| me.results?mode=summary | 450 · 48 ms | 450 · 47 ms | 55 · 75 · 81 ms |
+| me.calendar (1-year window) | 300 · 64 ms | 300 · 62 ms | 76 · 85 · 147 ms |
+
+→ the index set is worth **+87% throughput and −51% p50** on the one endpoint
+it targets, and nothing regressed. `me.results?mode=summary` sustains 1.5×
+the rps of the full read at 3 ms lower p50 (item 3's win, seen end to end).
+Indexes were re-created and `ANALYZE`d after the "before" run; the EXPLAIN
+instrument is back at 20.96 ms total.
+
+Reproduce: `cd backend && node scripts/load-hotspots.mjs --label after`
+(`--drop-indexes` for the before run; needs `DATABASE_URL`, both JWT
+secrets, and the seeded DB).
