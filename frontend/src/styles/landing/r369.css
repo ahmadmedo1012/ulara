@@ -3365,6 +3365,81 @@ html:not([data-theme='dark']) .w369-footer {
   #levels.w369-band .w369-band-body > :only-child { inset-block-start: calc(var(--sp-11) + var(--sp-1)); }
 }
 
+/* ── r369 reference-match: the split stage (desktop) ─────────────────────
+ * The reference pins the heading and the scene's object on the same
+ * screen while scroll drives the object. The three card bands (04 wallet,
+ * 05 week, 06 level path) now do the same: the band is two columns, the
+ * headline stage seats in the first and the one subject card seats in the
+ * second, both sticky over one shared runway. Only where the viewport can
+ * hold the card with the bar (width 1200+, height 720+ for the wallet and
+ * the week, 880+ for the tall level path) and motion is allowed; everything else keeps the stacked flow, so nothing is trapped.
+ * The sentence still builds in beats; no word moves or goes away. */
+@media (min-width: 1200px) and (min-height: 720px) and (prefers-reduced-motion: no-preference) {
+  :is(#progress, #rewards).w369-band {
+    grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+    column-gap: clamp(var(--sp-7), 3vw, var(--sp-10));
+    align-items: stretch;
+  }
+  :is(#progress, #rewards).w369-band > .w369-band-head,
+  :is(#progress, #rewards).w369-band:nth-of-type(even) > .w369-band-head,
+  :is(#progress, #rewards).w369-band:nth-of-type(odd) > .w369-band-head {
+    order: 0;
+    max-inline-size: none;
+    margin-inline: 0;
+    padding-inline: 0;
+    text-align: start;
+    justify-items: start;
+    min-block-size: 220svh;
+  }
+  :is(#progress, #rewards).w369-band .w369-band-stage {
+    max-inline-size: 30rem;
+    margin-inline: 0;
+    justify-items: start;
+    text-align: start;
+    padding-block-start: var(--sp-11);
+  }
+  :is(#progress, #rewards).w369-band .w369-band-head .w369-h2 { font-size: clamp(2.2rem, 3.6vw, 3.4rem); }
+  :is(#progress, #rewards).w369-band .w369-band-body { min-block-size: 220svh; }
+  :is(#progress, #rewards).w369-band .w369-band-body > :only-child {
+    position: sticky;
+    inset-block-start: calc(var(--sp-11) + var(--sp-4));
+  }
+}
+
+
+@media (min-width: 1200px) and (min-height: 880px) and (prefers-reduced-motion: no-preference) {
+  #levels.w369-band {
+    grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+    column-gap: clamp(var(--sp-7), 3vw, var(--sp-10));
+    align-items: stretch;
+  }
+  #levels.w369-band > .w369-band-head,
+  #levels.w369-band:nth-of-type(even) > .w369-band-head,
+  #levels.w369-band:nth-of-type(odd) > .w369-band-head {
+    order: 0;
+    max-inline-size: none;
+    margin-inline: 0;
+    padding-inline: 0;
+    text-align: start;
+    justify-items: start;
+    min-block-size: 220svh;
+  }
+  #levels.w369-band .w369-band-stage {
+    max-inline-size: 30rem;
+    margin-inline: 0;
+    justify-items: start;
+    text-align: start;
+    padding-block-start: var(--sp-11);
+  }
+  #levels.w369-band .w369-band-head .w369-h2 { font-size: clamp(2.2rem, 3.6vw, 3.4rem); }
+  #levels.w369-band .w369-band-body { min-block-size: 220svh; }
+  #levels.w369-band .w369-band-body > :only-child {
+    position: sticky;
+    inset-block-start: calc(var(--sp-11) + var(--sp-1));
+  }
+}
+
+
 /* ── stage rail: the pinned headline scene shows the scroll's progress ── */
 .w369-srail { display: none; }
 @media (prefers-reduced-motion: no-preference) {
