@@ -76,6 +76,10 @@ test.describe('band subject card holds in the stage (tall desktop)', () => {
     test(`#${id} subject card stays seated while the page scrolls past it`, async ({ page }) => {
       await page.goto('/');
       await page.waitForSelector(`#${id} .w369-band-body`);
+      // geometry is read once, so let fonts and the first layout passes land
+      // first (a late font swap above the band moves every offset by pixels)
+      await page.evaluate(() => document.fonts.ready);
+      await page.waitForTimeout(600);
       const geo = await page.evaluate((bandId) => {
         const body = document.querySelector(`#${bandId} .w369-band-body`) as HTMLElement;
         const card = body.firstElementChild as HTMLElement;
