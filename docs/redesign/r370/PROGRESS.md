@@ -276,3 +276,37 @@ instrument is back at 20.96 ms total.
 Reproduce: `cd backend && node scripts/load-hotspots.mjs --label after`
 (`--drop-indexes` for the before run; needs `DATABASE_URL`, both JWT
 secrets, and the seeded DB).
+
+## Item 9 — frontend data layer outside the landing (DONE for the real gap)
+
+**Spec.** Query keys, prefetch on route intent, request dedupe, abort on
+navigation, optimistic updates — measured, not assumed.
+
+**Found.** `lib/api.ts` supports `signal` completely (AbortController wired
+into fetch and `xhr.abort()`), but **not one hook forwarded TanStack Query's
+per-query signal**: cancelling a query on navigation left the HTTP request
+running, its body parsed and discarded. On a slow network that is the
+request holding the browser's connection pool while the next screen waits.
+Query keys were already consistent (`withInstitutionScope` appends the scope
+segment so prefix invalidations keep matching), `onMutate` optimistic
+updates exist in 10 modules, and structural sharing/dedupe come from the
+shared client.
+
+**Change.** Every single-line read in `hooks/resources/student.ts` (8) and
+`hooks/resources/notifications.ts` (3) now passes `{ signal }` into
+`api.get` — dashboard, resume, results, materials, enrolments, matrix, gaps,
+profile, notifications, push devices, preferences.
+
+**Evidence.** `frontend/tests/unit/query-abort-signal.test.tsx` — **3 tests**
+(real hooks, real QueryClient): the signal reaches `api.get`, it is live
+before unmount, and it is **aborted after unmount** for
+`useStudentDashboard`, `useStudentResults` and `useNotifications`.
+Frontend suite: **3018 passed / 247 suites** (TZ=UTC), `tsc` 0, eslint 0 on
+the touched files.
+
+**Not done, deliberately.** *Prefetch on route intent* — no honest target
+without a trace to prove which navigation pays for it (a hover prefetch on a
+first visit costs bytes, not time); the abort fix already removes the
+wasted-request half of the problem. *Optimistic updates* already exist where
+the UI needs them (10 modules with `onMutate`); adding more without a
+specific jank report would be guessing.
