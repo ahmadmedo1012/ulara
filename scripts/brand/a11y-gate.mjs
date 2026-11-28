@@ -118,7 +118,7 @@ const ROUTE_READY = {
    * commit; the stepped walk below then mounts everything else. */
   '/': 'main#main',
   '/auth': '.auth-card',     // the r369 auth card (AuthPage.tsx; .auth-shell retired)
-  '/404': '.nf-shell',       // NotFoundPage sheet root (also the `*` catch-all)
+  '/404': '.p369-t5',        // NotFoundPage r369 PublicShell root (.nf-shell retired; also the `*` catch-all)
 };
 
 mkdirSync(OUT, { recursive: true });
