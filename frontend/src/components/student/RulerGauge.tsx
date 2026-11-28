@@ -75,7 +75,8 @@ export function RulerGauge({
   const pct = Number.isFinite(progressPct)
     ? Math.min(100, Math.max(0, progressPct))
     : 0;
-  const head = `أسبوع ${week} من ${totalWeeks}`;
+  const head = `أسبوع ${week}/${totalWeeks}`;
+  const spoken = `أسبوع ${week} من ${totalWeeks}`;
   return (
     <div
       className="r319s-ruler"
@@ -83,7 +84,7 @@ export function RulerGauge({
       aria-valuemin={0}
       aria-valuemax={100}
       aria-valuenow={Math.round(pct)}
-      aria-valuetext={`${head} · ${Math.round(pct)}%`}
+      aria-valuetext={`${spoken} · ${Math.round(pct)}%`}
       aria-label={ariaLabel}
     >
       <div className="r319s-ruler-track">

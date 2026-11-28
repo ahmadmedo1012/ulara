@@ -68,11 +68,11 @@ describe('R319 · RulerGauge — the semester week math (W09/15)', () => {
     expect(semesterWeeks(STARTS, ENDS, NOW)).toEqual({ week: 9, totalWeeks: 15 });
   });
 
-  it('renders the «أسبوع 9 من 15» head, one tick per week, and the API % as quiet meta', () => {
+  it('renders the «أسبوع 9/15» head, one tick per week, and the API % as quiet meta', () => {
     const { container } = render(
       <RulerGauge startsAt={STARTS} endsAt={ENDS} progressPct={60} now={NOW} />,
     );
-    expect(container.querySelector('.r319s-ruler-head')?.textContent).toBe('أسبوع 9 من 15');
+    expect(container.querySelector('.r319s-ruler-head')?.textContent).toBe('أسبوع 9/15');
     expect(container.querySelectorAll('.r319s-ruler-tick')).toHaveLength(15);
     // The meter contract: the same reading for assistive tech.
     const meter = container.querySelector('[role="meter"]');

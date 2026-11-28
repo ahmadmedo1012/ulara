@@ -100,7 +100,7 @@ test.describe('student pages A — §B2 sheet grammar (chromium · light)', () =
 
     // The upcoming assignment's due state — the mono chip register.
     const chip = page.locator('.r319s-chip').first();
-    await expect(chip).toHaveText(/^DUE \d+D$/);
+    await expect(chip).toHaveText(/^(متأخر|اليوم|غدًا|بعد يومين|بعد \d+ أيام|موعد)$/);
     expect(R369_RADII).toContain(await chip.evaluate((el) => getComputedStyle(el).borderRadius));
 
     // The card-class sample computes radius 0 (the collapsed ladder).
@@ -122,7 +122,7 @@ test.describe('student pages A — §B2 sheet grammar (chromium · light)', () =
     await expect(lecBar.locator('.r319s-coursebar-pct')).toHaveText(['100%', '62%']);
 
     // The assignment row's due chip — the mono register.
-    await expect(page.locator('.r319s-chip').first()).toHaveText(/^DUE \d+D$/);
+    await expect(page.locator('.r319s-chip').first()).toHaveText(/^(متأخر|اليوم|غدًا|بعد يومين|بعد \d+ أيام|موعد)$/);
 
     // The continue strip (the page's one-action rail) computes radius 0.
     const rail = page.locator('.r305c-continue');

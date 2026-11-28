@@ -59,15 +59,15 @@ for (const theme of THEMES) {
       await expect(bars.locator('.r319s-bar-rule')).toHaveCount(4);
     });
 
-    test('the semester ruler: «أسبوع 7 من 16» head, one tick per week, the 45% quiet meta', async ({ page }) => {
+    test('the semester ruler: «أسبوع 7/16» head, one tick per week, the 45% quiet meta', async ({ page }) => {
       await page.goto('/student/dashboard');
       await expect(page.locator('.r319s-ruler')).toBeVisible({ timeout: 20000 });
 
       const ruler = page.locator('.r319s-ruler');
       // The fixture term (startsAt −42d, endsAt +70d) spans 112 days =
       // 16 whole weeks; day 42 → week 7.
-      await expect(ruler.locator('.r319s-ruler-head')).toHaveText(/^أسبوع \d+ من \d+$/);
-      await expect(ruler.locator('.r319s-ruler-head')).toHaveText('أسبوع 7 من 16');
+      await expect(ruler.locator('.r319s-ruler-head')).toHaveText(/^أسبوع \d+\/\d+$/);
+      await expect(ruler.locator('.r319s-ruler-head')).toHaveText('أسبوع 7/16');
       await expect(ruler.locator('.r319s-ruler-tick')).toHaveCount(16);
       // The API's percentage as quiet mono meta (replaces the old
       // «X% من الفصل مضى» prose line).
