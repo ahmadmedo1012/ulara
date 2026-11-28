@@ -64,7 +64,9 @@
      gold/amber ramp. Light theme pulls it deeper for AA contrast on
      paper grounds; dark lifts it toward the copper ink. */
   --hr-ember: color-mix(in srgb, var(--gold) 72%, var(--warning));
-  --hr-ember-ink: var(--gold-ink);
+  /* Light: the bare gold-ink measures 4.4:1 on the soft wash the brow and
+     today head sit on; a 18% step toward black clears AA on both. */
+  --hr-ember-ink: color-mix(in srgb, var(--gold-ink) 82%, var(--black));
   --hr-ember-soft: color-mix(in srgb, var(--gold-soft) 55%, transparent);
   --hr-ember-edge: color-mix(in srgb, var(--gold-ink) 22%, transparent);
   --hr-ember-wash: color-mix(in srgb, var(--gold-soft) 26%, transparent);
