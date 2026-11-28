@@ -326,6 +326,16 @@ test.describe('المساعد الذكيّ — الوصول (r351 AI-5)', () => 
       await page.emulateMedia({ colorScheme: scheme });
       await page.goto('/student/ai');
       await expect(page.locator('h1.pf-page-title')).toBeVisible();
+      // axe reads computed colors: let every finite transition/animation settle
+      // first, so a mid-fade theme swap is never scored as a contrast failure.
+      await page.evaluate(() =>
+        Promise.all(
+          document
+            .getAnimations()
+            .filter((a) => a.effect?.getComputedTiming().iterations !== Infinity)
+            .map((a) => a.finished.catch(() => undefined)),
+        ),
+      );
       await page.evaluate(axeSource);
       const result = await page.evaluate(async () => {
         const run = await (window as unknown as { axe: { run: (ctx: unknown) => Promise<{ violations: Array<{ impact: string; id: string }> }> } }).axe.run(document);
