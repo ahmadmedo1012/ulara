@@ -3173,3 +3173,36 @@ html:not([data-theme='dark']) .w369-footer {
   .w369-source:active { transform: none; }
   :where(.w369-nav-link, .w369-footer-link, .w369-link, .w369-mobile-link, .w369-faq-q, .w369-tour-btn) { transition: none; }
 }
+
+/* ── r369 reference-match: per-section palette + bigger headline scene ──
+ * The reference moves through distinct grounds (peach, sky, pastel, then
+ * night); ours was one faint bloom per band. Each daylight band now
+ * paints a vertical two-scene ground: the headline scene at the full
+ * tint token, easing into a lighter pastel for the subject scene, then
+ * to the page ground. Token colours only (color-mix), so dark resolves.
+ * The pinned #stars scene and the night band keep their own grounds. */
+.w369-band:not([data-scene='night']):not(#stars)::before {
+  mask-image: linear-gradient(to bottom, transparent, CanvasText 8%, CanvasText 90%, transparent);
+  background:
+    radial-gradient(70% 45% at 50% 14%, color-mix(in srgb, var(--w369-tint-deep, var(--gold)) 16%, transparent), transparent 72%),
+    linear-gradient(to bottom,
+      var(--w369-tint-bg, var(--bg)) 0%,
+      var(--w369-tint-bg, var(--bg)) 34%,
+      color-mix(in srgb, var(--w369-tint-bg, var(--bg)) 45%, var(--bg)) 62%,
+      var(--bg) 100%);
+}
+[data-theme='dark'] .w369-band:not([data-scene='night']):not(#stars)::before {
+  background:
+    radial-gradient(70% 45% at 50% 14%, color-mix(in srgb, var(--w369-tint-deep, var(--gold)) 30%, transparent), transparent 72%),
+    linear-gradient(to bottom,
+      color-mix(in srgb, var(--w369-tint-deep, var(--bg)) 22%, var(--bg)) 0%,
+      color-mix(in srgb, var(--w369-tint-deep, var(--bg)) 12%, var(--bg)) 40%,
+      var(--bg) 100%);
+}
+@media (min-width: 1024px) {
+  .w369-band-head .w369-h2 { font-size: clamp(3.2rem, 6.6vw, 6rem); line-height: 1.12; }
+  .w369-band-head { max-inline-size: 48ch; }
+}
+@media (max-width: 1023px) {
+  .w369-band-head .w369-h2 { font-size: clamp(2.3rem, 10vw, 3.2rem); line-height: 1.16; }
+}
