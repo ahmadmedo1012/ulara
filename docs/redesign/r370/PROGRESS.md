@@ -187,3 +187,55 @@ suite **2296 passed | 19 skipped**, `tsc` 0. `docs/mobile.md` §6 documents
 the CI contract. Not run: a real Gradle build (no Android SDK here) — the
 config output above is the executable proof that the number reaches the
 manifest input.
+
+## Item 6 — backend resilience (DONE, honest scope)
+
+**Spec.** Look at body-buffer capture cost, socket timeouts, graceful
+shutdown, health/readiness, error codes, idempotency, rate-limit edges and
+migration safety; fix what the code proves wrong, with tests.
+
+**Found / fixed.**
+
+1. **Raw-body capture on every request.** `express.json({ verify })` did
+   `req.rawBody = Buffer.from(buf)` for EVERY request, while only
+   `POST /api/v1/webhooks/resend` reads those bytes. Now gated by
+   `shouldCaptureRawBody` (webhook prefix only) and it stores the parser's
+   own `buf` — no second allocation. **Measured honestly:** the copy was not
+   a throughput problem — `scripts/measure-rawbody.mjs` (400 × 1 MiB bodies,
+   one keep-alive socket) gives 333 ms with capture vs 362 ms gated, i.e.
+   inside run-to-run noise (±10%). The win is retention: one extra body per
+   in-flight request eliminated, 400 MiB of copies per 400 requests.
+2. **Socket budgets were implicit** (Node: headersTimeout 60 s,
+   requestTimeout 300 s). Now explicit in `index.ts`: headers 20 s,
+   request 60 s, keep-alive 65 s, `maxRequestsPerSocket` 1000 — a stalled
+   upload can no longer pin a socket for five minutes. Graceful shutdown was
+   already correct (SIGTERM/SIGINT → `stopScheduler` →
+   `closeIdleConnections` → `$disconnect` → exit, 10 s force-exit); pinned
+   by test so it cannot regress.
+3. **Idempotency was already built** (`IdempotencyRecord`, 24 h retention,
+   `Idempotency-Replayed: true`) but not mounted on the two writes a mobile
+   client retries: `POST …/assignments/:id/submit` and
+   `POST /submissions/:id/grade`. Both now run `idempotencyMiddleware()`
+   before the role gate. No header = behaviour unchanged.
+4. **Already sound, pinned not changed:** `/health` (503 + `DB_UNAVAILABLE`
+   on a 5 s DB timeout, 30/min limiter), `/ping` (DB-free liveness),
+   `errorHandler` (AppError codes, ZodError → `VALIDATION_ERROR`, Prisma
+   P2002 → `CONFLICT`, no stack leak, 5xx raise an operational alert),
+   `trust proxy = 1`, and express-rate-limit 7.4.1 (its MemoryStore prunes
+   expired keys — no unbounded map).
+
+**Not done, with the reason.** *Full* per-route idempotency (exam starts,
+enrolment writes) — the middleware is DB-backed and per-route, so extending
+it is mechanical but touches routes this round did not otherwise open; and
+`express-rate-limit`'s IPv6 keying helper (`ipKeyGenerator`) landed in 7.5,
+so the per-IP limiters stay as they are until the dependency round that owns
+that bump. Migration safety stays where it already is: `prisma migrate
+deploy` in CI plus the CONCURRENTLY script from item 1.
+
+**Evidence.** `backend/tests/modules/resilience-r370.test.ts` — **11 tests**
+(gate true/false matrix incl. look-alikes and query strings, "no Buffer.from
+copy" source pin, the three timeouts + proxy-window ordering, shutdown pin,
+idempotency mounted before the role gate on both writes, and 3 live-app
+cases: JSON still parses to a validation 400, 1.2 MB → 413, webhook without
+a signature → 400/401 never 500). Suite after: **2307 passed | 19 skipped**,
+`tsc` 0.

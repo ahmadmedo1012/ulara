@@ -61,6 +61,21 @@ async function main() {
   const server = app.listen(env.PORT, () => {
     logger.info(`🚀 ULARA Platform API listening on http://0.0.0.0:${env.PORT} (${env.NODE_ENV})`);
   });
+  // r370 — explicit socket budgets instead of Node's implicit ones.
+  //   headersTimeout 20s: a client has 20s to send its headers
+  //     (slowloris); Node's default is 60s, doubled over keep-alive.
+  //   requestTimeout 60s: any single request must finish in a minute —
+  //     the longest honest route here is a PDF upload, which streams its
+  //     body inside multipart and is bounded by the 20 MiB product cap,
+  //     not by wall time. Node's default is 300s, so a stalled upload used
+  //     to pin a socket for five minutes.
+  //   keepAliveTimeout 65s / headersTimeout 20s: must stay below the
+  //     platform proxy's idle timeout (65s) so the next request lands on a
+  //     live socket, not a race with the proxy closing it.
+  server.headersTimeout = 20_000;
+  server.requestTimeout = 60_000;
+  server.keepAliveTimeout = 65_000;
+  server.maxRequestsPerSocket = 1_000;
 
   // Start the daily ticker (r342 t13: login-event retention only — the zu-sync job was retired)
   startScheduler();
