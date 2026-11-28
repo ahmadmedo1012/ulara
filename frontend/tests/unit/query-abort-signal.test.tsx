@@ -56,7 +56,7 @@ describe('read hooks forward TanStack Query’s abort signal', () => {
     const { unmount } = renderHook(() => hook(), { wrapper });
 
     await waitFor(() => expect(get).toHaveBeenCalled());
-    expect(get.mock.calls[0][0]).toBe(path);
+    expect(get.mock.calls[0]![0]).toBe(path);
     expect(captured).toBeInstanceOf(AbortSignal);
     expect(captured!.aborted).toBe(false);
 
