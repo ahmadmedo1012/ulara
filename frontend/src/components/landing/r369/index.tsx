@@ -674,9 +674,11 @@ interface BandProps {
   scene?: 'night';
   /** index in the top bar's stage navigator */
   stage?: string;
+  /** scroll-linked progress rail shown in the pinned stage */
+  rail?: { count: number; on: number; unit: string };
 }
 
-function Band({ n, kicker, title, body, tint, icon, children, jar, id, stage, scene }: BandProps) {
+function Band({ n, kicker, title, body, tint, icon, children, jar, id, stage, scene, rail }: BandProps) {
   return (
     <section
       className="w369-band" id={id} data-tint={tint} data-jar={jar} data-stage={stage}
@@ -688,6 +690,16 @@ function Band({ n, kicker, title, body, tint, icon, children, jar, id, stage, sc
           <p className="w369-band-kicker"><Glyph name={icon} size={15} />{kicker}</p>
           <h2 className="w369-h2">{title}</h2>
           <p className="w369-body">{body}</p>
+          {rail && (
+            <div className="w369-srail" aria-hidden="true">
+              <span className="w369-srail-read"><b>{rail.on}</b> / {rail.count} {rail.unit}</span>
+              <span className="w369-srail-dots">
+                {Array.from({ length: rail.count }).map((_, i) => (
+                  <i key={i} data-on={i < rail.on ? 'true' : 'false'} />
+                ))}
+              </span>
+            </div>
+          )}
         </div>
       </div>
       <div className="w369-band-body" ref={useReveal<HTMLDivElement>()}>{children}</div>
@@ -1112,7 +1124,7 @@ export function RewardsBand() {
   const opened = REWARDS.filter((r) => wallet >= r.cost).length;
   return (
     <Band
-      n="04" jar="04" tint="coral" icon="medal" id="progress" stage="2"
+      n="04" jar="04" tint="coral" icon="medal" id="progress" stage="2" rail={{ count: WALLET_MAX, on: wallet, unit: 'نقطة' }}
       kicker="من التقدّم إلى التوثيق"
       title={<>والتقدّم؟<br /><span className="w369-em">يُوثَّق</span></>}
       body="عندما يتراكم الإتقان تصبح له علامات موثّقة: شارة إنجاز، وموضع في لوحة تقدّم المقرّر، وشهادة عند إكماله. الأخيرة تُفتح عند 18 نقطة."
@@ -1175,7 +1187,7 @@ export function HabitsBand() {
   const on = scrubbed ? lit : WEEK_ON;
   return (
     <Band
-      n="05" jar="05" tint="sky" icon="flame" id="rewards" stage="3"
+      n="05" jar="05" tint="sky" icon="flame" id="rewards" stage="3" rail={{ count: WEEK.length, on, unit: 'أيام' }}
       kicker="من التوثيق إلى الانتظام"
       title={<>والانتظام<br /><span className="w369-em">لا الضغط</span></>}
       body="سلسلة النشاط ليست عدّادًا للضغط، بل قياسًا هادئًا للاستمرار. أُلارا تحفظ وتيرتك، وتتوقّف بلا عقوبة إن انقطع يوم، وتُظهر الصورة الأسبوعية كما هي."
@@ -1264,7 +1276,7 @@ export function LevelsBand() {
   const name = LEVELS[picked];
   return (
     <Band
-      n="06" jar="06" tint="leaf" icon="admin" id="levels" stage="4" scene="night"
+      n="06" jar="06" tint="leaf" icon="admin" id="levels" stage="4" scene="night" rail={{ count: LEVELS.length, on: picked + 1, unit: 'مستوى' }}
       kicker="سلّم الإتقان — عشرون مستوى"
       title={<>سلّمٌ من<br /><span className="w369-em">عشرين مستوى</span></>}
       body="من «بذرة» إلى «المعلّم»: تدرّج إتقان بأسماء عربية أصيلة، ولكل مستوى شارة مرسومة له وحده. اختر مستوى لترى تعريفه."

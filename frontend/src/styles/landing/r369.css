@@ -3359,3 +3359,28 @@ html:not([data-theme='dark']) .w369-footer {
    * still fits a 900px window whole */
   #levels.w369-band .w369-band-body > :only-child { inset-block-start: calc(var(--sp-11) + var(--sp-1)); }
 }
+
+/* ── stage rail: the pinned headline scene shows the scroll's progress ── */
+.w369-srail { display: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .w369-band-stage .w369-srail {
+    display: grid;
+    justify-items: center;
+    gap: var(--sp-3);
+    margin-block-start: var(--sp-6);
+    inline-size: min(100%, 24rem);
+  }
+  .w369-srail-read { font-size: var(--fs-sm); color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+  .w369-srail-read b { color: var(--gold-ink); font-size: var(--fs-lg); }
+  .w369-band[data-scene='night'] .w369-srail-read b { color: var(--gold); }
+  .w369-srail-dots { display: flex; flex-wrap: nowrap; justify-content: center; gap: var(--sp-1); inline-size: 100%; }
+  .w369-srail-dots i {
+    flex: 0 1 10px;
+    min-inline-size: 0;
+    aspect-ratio: 1;
+    border-radius: var(--r-full);
+    background: color-mix(in srgb, var(--text-secondary) 22%, transparent);
+    transition: background var(--t-base) var(--ease-out), transform var(--t-base) var(--ease-out);
+  }
+  .w369-srail-dots i[data-on='true'] { background: var(--gold); transform: scale(1.25); }
+}
