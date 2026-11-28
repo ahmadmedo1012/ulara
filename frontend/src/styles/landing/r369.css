@@ -3206,3 +3206,34 @@ html:not([data-theme='dark']) .w369-footer {
 @media (max-width: 1023px) {
   .w369-band-head .w369-h2 { font-size: clamp(2.3rem, 10vw, 3.2rem); line-height: 1.16; }
 }
+
+/* ── r369 reference-match: two scenes per daylight band ──────────────
+ * The headline is its own scene (full-bleed tint ground of its own) and
+ * the subject is the second (the pastel ground below). One section, one
+ * anchor, no copy moved: only the paint is split, so the nav ids, the
+ * stage navigator and the reveal observers are untouched. Phones keep
+ * the single natural-height column (the head ground is just shorter). */
+.w369-band:not([data-scene='night']):not(#stars) .w369-band-head { position: relative; }
+.w369-band:not([data-scene='night']):not(#stars) .w369-band-head::before {
+  content: '';
+  position: absolute;
+  inset-block: calc(var(--sp-9) * -1) 0;
+  inset-inline: calc(50% - 50vw);
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 70% at 50% 40%, color-mix(in srgb, var(--w369-tint-deep, var(--gold)) 14%, transparent), transparent 75%),
+    var(--w369-tint-bg, var(--bg));
+  mask-image: linear-gradient(to bottom, transparent, CanvasText 10%, CanvasText 82%, transparent);
+}
+.w369-band:not([data-scene='night']):not(#stars)::before {
+  background: linear-gradient(to bottom,
+    transparent 0%,
+    color-mix(in srgb, var(--w369-tint-bg, var(--bg)) 40%, var(--bg)) 40%,
+    var(--bg) 100%);
+}
+[data-theme='dark'] .w369-band:not([data-scene='night']):not(#stars) .w369-band-head::before {
+  background:
+    radial-gradient(60% 70% at 50% 40%, color-mix(in srgb, var(--w369-tint-deep, var(--gold)) 30%, transparent), transparent 75%),
+    color-mix(in srgb, var(--w369-tint-deep, var(--bg)) 18%, var(--bg));
+}
