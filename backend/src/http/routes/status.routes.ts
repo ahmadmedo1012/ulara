@@ -101,6 +101,12 @@ router.get('/status', async (_req, res) => {
       // non-blocking «يتوفر إصدار جديد» toast when below it. Unset =
       // no toast (bare-clone default).
       latestAppVersion: env.LATEST_APP_VERSION ?? null,
+      // r370 — the native pair the app prefers over the semver strings: a
+      // versionCode is monotonic per build channel (CI run number + the
+      // channel base), so it can actually order two APKs that both say
+      // "1.0.0". null = unset (bare clone / old deployment).
+      minVersionCode: env.MIN_VERSION_CODE ?? null,
+      latestVersionCode: env.LATEST_VERSION_CODE ?? null,
     },
   });
 });

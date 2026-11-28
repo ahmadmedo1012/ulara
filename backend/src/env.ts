@@ -141,6 +141,13 @@ const schema = z
     // «يتوفر إصدار جديد» toast when below (there is no OTA layer —
     // updates ARE new builds). Unset = no toast (bare-clone default).
     LATEST_APP_VERSION: z.string().trim().regex(/^\d+\.\d+\.\d+$/, 'LATEST_APP_VERSION must be semver (e.g. 1.0.0)').optional(),
+    // ── r370 — the NATIVE half of the same gate. Android orders builds by
+    // versionCode, and every APK used to ship `1`; the app now sends its
+    // own code (CI run number through the channel base in
+    // apps/mobile/src/lib/app-version.ts) and /status publishes the floor
+    // and the newest code. Unset = the semver pair decides (old servers).
+    MIN_VERSION_CODE: z.coerce.number().int().positive().optional(),
+    LATEST_VERSION_CODE: z.coerce.number().int().positive().optional(),
     // ── r326 M2.6 — Expo push fan-out switch ── dark until the project
     // is fully configured on the Expo dashboard (FCM/APNs credentials);
     // registration routes are always on, only the send path is gated.

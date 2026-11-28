@@ -135,7 +135,11 @@ jobs:
           ALLOW_DEBUG_KEYSTORE: '1'
           EXPO_NO_TELEMETRY: '1'
           CI: 'true'
-        run: scripts/build-android-local.sh
+          # r370 — the monotonic native build number (app.config.ts →
+          # src/lib/app-version.ts). run_number never repeats inside this
+          # workflow; the qa base keeps QA codes disjoint from release ones.
+          ULARA_BUILD_CHANNEL: 'qa'
+          ULARA_VERSION_CODE: ${{ github.run_number }}
 
       - name: Verify the QA artifact + signature
         run: |
@@ -303,6 +307,9 @@ jobs:
       - name: Build the signed release APK (the repo's own recipe)
         if: steps.secrets.outputs.available == 'true'
         env:
+          # r370 — the release lane's own monotonic series (see the QA note).
+          ULARA_BUILD_CHANNEL: 'release'
+          ULARA_VERSION_CODE: ${{ github.run_number }}
           ULARA_ANDROID_KEYSTORE: ${{ runner.temp }}/ulara-direct.jks
           ULARA_ANDROID_KEYSTORE_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ULARA_ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}

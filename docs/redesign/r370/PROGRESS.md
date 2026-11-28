@@ -138,3 +138,52 @@ structure and **strengthened**: the feed must carry `feedback`/`submittedAt`,
 the rollup must not (83/83 in that file). Backend suite: **2291 passed | 19
 skipped**, `tsc` 0. OpenAPI now documents the three query params; mobile types
 regenerated.
+
+## Item 4 — Android `versionCode` from CI + the /status comparison (DONE)
+
+**Spec.** Every APK shipped `versionCode 1` and `version: "1.0.0"` (no
+`android.versionCode` in `app.config.ts`), so Android refused to install a
+newer build over an older one and the `/status` gate compared a constant —
+it could never fire. Inject a monotonic value from CI and make the gate
+compare what actually orders native builds.
+
+**Change.**
+`versionCode = CHANNEL_BASE[channel] + github.run_number`, with disjoint
+per-lane bases (release 1,000,000 · qa 2,000,000 · devclient 3,000,000) so a
+channel is strictly increasing and the lanes never outrank each other.
+The arithmetic lives in `apps/mobile/scripts/version-code.cjs` — plain CJS
+on purpose: **Expo's config loader `require`s the transpiled
+`app.config.js` during prebuild and cannot resolve a relative TS import**
+(found by running `npx expo config` against the real loader, which failed
+with `Cannot find module './src/lib/app-version'` before the split).
+`app.config.ts` reads `ULARA_BUILD_CHANNEL` + `ULARA_VERSION_CODE`; the APK
+lanes (`android-apk.yml` QA + release) and the dev-client lane
+(`mobile.yml`) set them from `github.run_number`. No env (local prebuild) =
+`versionCode 1`, never an error.
+`src/lib/app-version.ts` holds the pure decision (`decideUpdate`): the
+**versionCode wins whenever both sides have one**, semver is the fallback
+for old servers; `updates.tsx` now uses it for both the blocking floor and
+the "new build" toast, and `/status` publishes `minVersionCode` /
+`latestVersionCode` (env `MIN_VERSION_CODE` / `LATEST_VERSION_CODE`, unset
+→ null → no gate).
+
+**Verified with the real Expo loader** (`npx expo config --type public`):
+
+| env | version | versionCode |
+|---|---|---|
+| `ULARA_BUILD_CHANNEL=qa ULARA_VERSION_CODE=4242` | 1.0.0 | **2,004,242** |
+| none (bare clone / local prebuild) | 1.0.0 | **1** |
+
+**Evidence.** `apps/mobile/src/lib/version-code.test.ts` — **8 tests**
+(monotonicity, lane disjointness, 32-bit ceiling, fail-loud run numbers,
+bare-clone default, channel mapping, unknown channel) and
+`apps/mobile/src/lib/app-version.test.ts` — **8 tests** (numeric ordering,
+null sides, the "blocks a 1.0.0 build below a numeric floor" case the old
+gate could never catch, semver fallback, bare clone, code-over-semver
+precedence). Mobile: `tsc` 0, jest **1544 passed / 59 suites**, eslint 0 on
+the touched files. Backend: `tests/http/status-versions.test.ts` — **5
+tests** (shape, null when unset, semver pair kept, DB ping unchanged);
+suite **2296 passed | 19 skipped**, `tsc` 0. `docs/mobile.md` §6 documents
+the CI contract. Not run: a real Gradle build (no Android SDK here) — the
+config output above is the executable proof that the number reaches the
+manifest input.

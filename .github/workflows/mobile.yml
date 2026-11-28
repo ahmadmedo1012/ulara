@@ -346,6 +346,12 @@ jobs:
         # the default DEBUG keystore — a dev-client artifact is NEVER a
         # release artifact (android-apk.yml owns the signed release cut).
         working-directory: apps/mobile
+        env:
+          # r370 — the dev-client lane's own monotonic series. It can never
+          # outrank a release build (separate channel base in
+          # src/lib/app-version.ts), so QA installs stay ordered per lane.
+          ULARA_BUILD_CHANNEL: 'devclient'
+          ULARA_VERSION_CODE: ${{ github.run_number }}
         run: |
           npx expo prebuild -p android --no-install
           cd android && ./gradlew assembleDebug
