@@ -3467,30 +3467,32 @@ html:not([data-theme='dark']) .w369-footer {
   .w369-handoff > .w369-two { grid-column: 2; grid-row: 2; margin-block: var(--sp-10) var(--sp-11); }
 }
 
-/* ── the showcase split: headline beside the carousel, one beat ──────────
- * 08's carousel is interactive, not scroll-driven, so it gets no runway:
- * the headline and the carousel share one full-height beat, side by side
- * (the reference's heading-left, device-right frame). */
+/* ── the showcase split: headline pinned beside the carousel ─────────────
+ * 08's carousel is interactive, not scroll-driven, so it seats too: the
+ * headline stage pins in the first column while the carousel sits
+ * sticky in the second, over one 160svh beat (the reference's
+ * heading-left, device-right frame). */
 @media (min-width: 1200px) and (min-height: 720px) and (prefers-reduced-motion: no-preference) {
   .w369-show {
     display: grid;
     grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
     column-gap: clamp(var(--sp-7), 3vw, var(--sp-10));
-    align-items: center;
-    min-block-size: 100svh;
+    align-items: start;
+    min-block-size: 160svh;
   }
-  .w369-show:not(#stars) > .w369-band-head { min-block-size: 0; align-self: center; }
+  .w369-show:not(#stars) > .w369-band-head { min-block-size: 0; align-self: stretch; }
   .w369-show:not(#stars) .w369-band-stage {
-    position: static;
-    min-block-size: 0;
     max-inline-size: 30rem;
     margin-inline: 0;
-    padding-block-start: 0;
     justify-items: start;
     text-align: start;
   }
   .w369-show .w369-band-head .w369-h2 { font-size: clamp(2.2rem, 3.6vw, 3.4rem); }
-  .w369-show > .w369-carousel { margin-block-start: 0; }
+  .w369-show > .w369-carousel {
+    margin-block-start: 0;
+    position: sticky;
+    inset-block-start: 26svh;
+  }
 }
 
 /* ── the principles and roles split: headline seated, the grids flow past ──
@@ -3510,6 +3512,7 @@ html:not([data-theme='dark']) .w369-footer {
     min-block-size: 0;
   }
   :is(.w369-principles, .w369-roles):not(#stars) .w369-band-stage {
+    min-block-size: 70svh; /* leaves a real stretch of pin beside the flowing cards */
     max-inline-size: 30rem;
     margin-inline: 0;
     justify-items: start;
