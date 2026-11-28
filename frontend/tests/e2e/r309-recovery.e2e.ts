@@ -149,8 +149,12 @@ test.describe('R309 menu — the scroll lock', () => {
     await expect(page.locator('body')).not.toHaveClass(/ula-scroll-locked/);
     const y0 = await page.evaluate(() => window.scrollY);
     await page.mouse.wheel(0, 500);
-    await page.waitForTimeout(350);
-    expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(y0);
+    /* the wheel lands on the compositor's smooth-scroll animation: poll for
+       the offset to move instead of betting on a fixed 350 ms (a loaded CI
+       main thread starts the animation late; the assertion is unchanged) */
+    await expect
+      .poll(() => page.evaluate(() => window.scrollY), { timeout: 5_000 })
+      .toBeGreaterThan(y0);
   });
 });
 
