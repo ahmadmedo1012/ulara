@@ -195,6 +195,8 @@
   letter-spacing: -0.01em;
   direction: ltr;
   unicode-bidi: isolate;
+  /* a figure and its unit read as one token: «78.4 ٪» never breaks */
+  white-space: nowrap;
 }
 .sg-kpi[data-size='xl'] .sg-kpi-value { font-size: var(--fs-metric-xl); }
 .sg-kpi-label {
