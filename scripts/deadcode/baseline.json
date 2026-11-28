@@ -1,9 +1,9 @@
 {
-  "_comment": "T-22 Track B ratchet baseline — measured analyzer output. Counts may only improve; when a count drops, re-pin it here in the SAME commit (scripts/deadcode/check.sh --update). Pinned tools: knip@5.88.1, jscpd@5.4.2, dependency-cruiser@18.7.2 (+ typescript@5.7.2 for depcruise); jscpd minTokens=70.",
+  "_comment": "T-22 Track B ratchet baseline — measured analyzer output. Counts may only improve; when a count drops, re-pin it here in the SAME commit (scripts/deadcode/check.sh --update). r370: knip's entry now declares the glob-consumed r359 art (import.meta.glob in PlatesPage) and ignores public/sw.js + the two standalone perf scripts — 49 \"unused\" files were mostly entry-graph blind spots; the real dead file (src/lib/paperStatus.ts) was deleted. Pinned tools: knip@5.88.1, jscpd@5.4.2, dependency-cruiser@18.7.2 (+ typescript@5.7.2 for depcruise); jscpd minTokens=70.",
   "knip": {
-    "unusedFiles": 47,
+    "unusedFiles": 1,
     "unusedExports": 19,
-    "unusedExportedTypes": 220,
+    "unusedExportedTypes": 215,
     "unusedDependencies": 0,
     "unusedDevDependencies": 1,
     "unlisted": 0,
