@@ -8,8 +8,11 @@
  *      week (Date#getDay 0 = الأحد), first-appearance group order
  *      (never re-sorted), same-day rows sharing one group, and label
  *      determinism. Clock conventions follow format.test.ts: the
- *      suite runs TZ=UTC and fixtures sit at noon UTC so the calendar
- *      day is stable.
+ *      suite must hold in ANY timezone (CI is UTC, developers are
+ *      not), so fixtures are built from LOCAL calendar components —
+ *      `at(day, h)` — instead of fixed UTC instants (which silently
+ *      encode the runner's offset: a 23:59Z fixture is "tomorrow"
+ *      at UTC+02:00).
  *   2. RENDER — the shared MessagesInbox inserts the header rows:
  *      aria-hidden (presentational organization — never joins row
  *      semantics), the ROW pins stay byte-identical (same count, same
@@ -42,13 +45,18 @@ const componentsCss = readFileSync(path.join(STYLES_DIR, 'components.css'), 'utf
 
 /* ── Fixtures: the format.test.ts fixed-clock convention ────────── */
 
-// Wednesday, noon UTC — a mid-week vantage where "this week" has
+// The fixtures are LOCAL instants: the helper groups by the user's local
+// calendar day, so a UTC literal would mean a different day on a UTC+02:00
+// runner (and the assertions would only pass under TZ=UTC).
+const at = (day: number, h = 0, m = 0, s = 0) => new Date(2026, 2, day, h, m, s).toISOString();
+
+// Wednesday, noon local — a mid-week vantage where "this week" has
 // real members on both sides of أمس.
-const NOW_WED = new Date('2026-03-18T12:00:00Z');
-// Sunday, noon UTC — the week-seam edge case: the Arabic week began
+const NOW_WED = new Date(2026, 2, 18, 12, 0, 0);
+// Sunday, noon local — the week-seam edge case: the Arabic week began
 // TODAY, so this-week holds only today and yesterday (Saturday)
 // already took أمس.
-const NOW_SUN = new Date('2026-03-15T12:00:00Z');
+const NOW_SUN = new Date(2026, 2, 15, 12, 0, 0);
 
 const row = (id: string, createdAt: string) => ({ id, createdAt });
 
@@ -57,7 +65,7 @@ const row = (id: string, createdAt: string) => ({ id, createdAt });
 describe('groupMessagesByDay — boundaries (r173a)', () => {
   it('اليوم: same local calendar day — midnight inclusive, and future clock-skew lands honestly in today', () => {
     const groups = groupMessagesByDay(
-      [row('a', '2026-03-18T00:00:00Z'), row('b', '2026-03-18T23:59:59Z'), row('c', '2026-03-18T13:00:00Z')],
+      [row('a', at(18, 0, 0, 0)), row('b', at(18, 23, 59, 59)), row('c', at(18, 13))],
       NOW_WED,
     );
     expect(groups).toHaveLength(1);
@@ -67,7 +75,7 @@ describe('groupMessagesByDay — boundaries (r173a)', () => {
 
   it('أمس: the whole calendar day before today (not a rolling 24h window)', () => {
     const groups = groupMessagesByDay(
-      [row('a', '2026-03-17T00:00:00Z'), row('b', '2026-03-17T23:59:59Z')],
+      [row('a', at(17, 0)), row('b', at(17, 23, 59, 59))],
       NOW_WED,
     );
     expect(groups).toHaveLength(1);
@@ -77,7 +85,7 @@ describe('groupMessagesByDay — boundaries (r173a)', () => {
   it('هذا الأسبوع: the Sunday-start week\'s remaining days, LUMPED into one group', () => {
     // NOW_WED is Wednesday 2026-03-18 → the week began Sunday 2026-03-15.
     const groups = groupMessagesByDay(
-      [row('mon', '2026-03-16T12:00:00Z'), row('sun', '2026-03-15T12:00:00Z')],
+      [row('mon', at(16, 12)), row('sun', at(15, 12))],
       NOW_WED,
     );
     expect(groups).toHaveLength(1);
@@ -87,7 +95,7 @@ describe('groupMessagesByDay — boundaries (r173a)', () => {
 
   it('older rows: one ar-LY dated group per day (the app\'s formatDateWithYearAr option set)', () => {
     const groups = groupMessagesByDay(
-      [row('sat', '2026-03-14T23:59:59Z'), row('old1', '2026-03-05T10:00:00Z'), row('old2', '2026-03-05T08:00:00Z')],
+      [row('sat', at(14, 23, 59, 59)), row('old1', at(5, 10)), row('old2', at(5, 8))],
       NOW_WED,
     );
     expect(groups.map((g) => g.label)).toEqual(['14 مارس 2026', '5 مارس 2026']);
@@ -99,7 +107,7 @@ describe('groupMessagesByDay — boundaries (r173a)', () => {
 
   it('the week seam on a Sunday: this-week holds only today — yesterday took أمس and older rows fall to dated labels', () => {
     const groups = groupMessagesByDay(
-      [row('today', '2026-03-15T08:00:00Z'), row('sat', '2026-03-14T20:00:00Z'), row('fri', '2026-03-13T12:00:00Z')],
+      [row('today', at(15, 8)), row('sat', at(14, 20)), row('fri', at(13, 12))],
       NOW_SUN,
     );
     expect(groups.map((g) => g.label)).toEqual(['اليوم', 'أمس', '13 مارس 2026']);
@@ -108,7 +116,7 @@ describe('groupMessagesByDay — boundaries (r173a)', () => {
 
   it('group order follows FIRST APPEARANCE (server order is never re-sorted)', () => {
     const groups = groupMessagesByDay(
-      [row('old', '2026-03-05T10:00:00Z'), row('now', '2026-03-18T10:00:00Z')],
+      [row('old', at(5, 10)), row('now', at(18, 10))],
       NOW_WED,
     );
     expect(groups.map((g) => g.label)).toEqual(['5 مارس 2026', 'اليوم']);
@@ -120,10 +128,10 @@ describe('groupMessagesByDay — boundaries (r173a)', () => {
 
   it('deterministic: the same (rows, now) produce the identical grouping twice', () => {
     const rows = [
-      row('a', '2026-03-18T09:00:00Z'),
-      row('b', '2026-03-17T09:00:00Z'),
-      row('c', '2026-03-16T09:00:00Z'),
-      row('d', '2026-03-05T09:00:00Z'),
+      row('a', at(18, 9)),
+      row('b', at(17, 9)),
+      row('c', at(16, 9)),
+      row('d', at(5, 9)),
     ];
     expect(groupMessagesByDay(rows, NOW_WED)).toEqual(groupMessagesByDay(rows, NOW_WED));
   });
@@ -132,7 +140,7 @@ describe('groupMessagesByDay — boundaries (r173a)', () => {
     vi.useFakeTimers();
     vi.setSystemTime(NOW_WED);
     try {
-      const groups = groupMessagesByDay([row('a', '2026-03-18T10:00:00Z')]);
+      const groups = groupMessagesByDay([row('a', at(18, 10))]);
       expect(groups[0]).toMatchObject({ key: 'today', label: 'اليوم' });
     } finally {
       vi.useRealTimers();
@@ -210,12 +218,12 @@ describe('MessagesInbox — day-group headers in the rendered list (r173a)', () 
     mocks.messages = {
       pages: {
         1: [
-          message('m1', '2026-03-18T09:00:00Z', { readAt: null }),
-          message('m2', '2026-03-18T07:00:00Z', { readAt: '2026-03-18T08:00:00Z' }),
-          message('m3', '2026-03-17T10:00:00Z', { readAt: '2026-03-17T11:00:00Z' }),
-          message('m4', '2026-03-16T10:00:00Z', { readAt: '2026-03-16T11:00:00Z' }),
-          message('m5', '2026-03-05T10:00:00Z', { readAt: '2026-03-05T11:00:00Z' }),
-          message('m6', '2026-03-05T08:00:00Z', { readAt: '2026-03-05T09:00:00Z' }),
+          message('m1', at(18, 9), { readAt: null }),
+          message('m2', at(18, 7), { readAt: at(18, 8) }),
+          message('m3', at(17, 10), { readAt: at(17, 11) }),
+          message('m4', at(16, 10), { readAt: at(16, 11) }),
+          message('m5', at(5, 10), { readAt: at(5, 11) }),
+          message('m6', at(5, 8), { readAt: at(5, 9) }),
         ],
       },
       total: 35,
@@ -261,8 +269,8 @@ describe('MessagesInbox — day-group headers in the rendered list (r173a)', () 
     mocks.messages = {
       pages: {
         1: [
-          message('m1', '2026-03-18T09:00:00Z', { readAt: null }),
-          message('m2', '2026-03-18T07:30:00Z', { readAt: null }),
+          message('m1', at(18, 9), { readAt: null }),
+          message('m2', at(18, 7, 30), { readAt: null }),
         ],
       },
       total: 2,

@@ -236,8 +236,11 @@ describe('isoToLocalInputValue (ISO → datetime-local seed)', () => {
   it('renders the stored instant in local time; null/invalid → empty', () => {
     expect(isoToLocalInputValue(null)).toBe('');
     expect(isoToLocalInputValue('not-a-date')).toBe('');
-    // TZ=UTC in the vitest env → local == UTC.
-    expect(isoToLocalInputValue('2026-11-01T09:05:00.000Z')).toBe('2026-11-01T09:05');
+    // The seed is the LOCAL wall-clock the picker shows, so the fixture is
+    // built from local components — a Z literal would render as 11:05 at
+    // UTC+02:00 and this pin would only hold under TZ=UTC.
+    const localInstant = new Date(2026, 10, 1, 9, 5, 0, 0).toISOString();
+    expect(isoToLocalInputValue(localInstant)).toBe('2026-11-01T09:05');
   });
 });
 
@@ -271,8 +274,11 @@ describe('validateEditTemplateDraft + buildUpdateTemplateInput', () => {
   });
   it('a picked window ships as ISO', () => {
     const input = buildUpdateTemplateInput({ ...valid, openAt: '2026-11-01T09:00', closeAt: '2026-11-01T11:00' });
-    expect(input.openAt).toBe('2026-11-01T09:00:00.000Z');
-    expect(input.closeAt).toBe('2026-11-01T11:00:00.000Z');
+    // A datetime-local value has no zone: the wire body is that wall-clock in
+    // the author's zone. Compare against the same local interpretation so the
+    // pin is honest in every timezone.
+    expect(input.openAt).toBe(new Date(2026, 10, 1, 9, 0, 0, 0).toISOString());
+    expect(input.closeAt).toBe(new Date(2026, 10, 1, 11, 0, 0, 0).toISOString());
   });
 });
 
