@@ -3384,3 +3384,30 @@ html:not([data-theme='dark']) .w369-footer {
   }
   .w369-srail-dots i[data-on='true'] { background: var(--gold); transform: scale(1.25); }
 }
+
+/* ── r369 phone fold ──────────────────────────────────────────────────
+ * The reference opens with the product on screen: its phone fills about
+ * half the first phone screen. Ours stacked a full copy column first, so
+ * the device only peeked in. At 480px and below the hero copy gets a
+ * tighter rhythm so roughly 40% of the device sits above the fold. Only
+ * spacing and the two door sizes change; the words stay. */
+@media (max-width: 480px) {
+  .w369-hero {
+    min-block-size: 0;
+    gap: var(--sp-5);
+    padding-block: var(--sp-6) var(--sp-8);
+  }
+  .w369-hero-copy .w369-h1 { margin-block-end: var(--sp-3); }
+  .w369-hero-copy .w369-lead {
+    font-size: var(--fs-sm);
+    line-height: var(--lh-snug);
+    margin-block-end: 0;
+  }
+  .w369-hero-actions {
+    margin-block-start: var(--sp-4);
+    gap: var(--sp-2);
+  }
+  .w369-hero-actions .w369-btn { min-block-size: 44px; padding-block: var(--sp-2); }
+  .w369-hero-facts { margin-block-start: var(--sp-3); }
+  .w369-hero-facts li { padding-block: var(--sp-2); }
+}
